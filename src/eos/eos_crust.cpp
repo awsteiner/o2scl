@@ -47,7 +47,8 @@ eos_crust::eos_crust() {
 }
 
 double eos_crust::lattice_energy(int Z) {
-  return -1.444*pow(Z,2.0/3.0)*o2scl_const::fine_structure*pow(e.n,4.0/3.0);
+  return -1.444*pow(Z,2.0/3.0)*o2scl_const::fine_structure_f<double>()*
+    pow(e.n,4.0/3.0);
 }
 
 double eos_crust::mass_formula(int Z, int A) {

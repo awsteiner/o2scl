@@ -153,7 +153,7 @@ double nucmass_ldrop::drip_binding_energy_d
       
   // Add Coulomb energy per baryon
   coul=coul_coeff*0.8*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure*Rp*Rp*np*np/nL;
+    o2scl_const::fine_structure_f<double>()*Rp*Rp*np*np/nL;
   ret+=coul;
       
   // Convert to total binding energy
@@ -439,7 +439,8 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   double fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/
     (dim+2.0);
   coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure*Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
+    o2scl_const::fine_structure_f<double>()*
+    Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
   ret+=coul;
   
   // Convert to total binding energy
