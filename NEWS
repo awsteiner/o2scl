@@ -18,14 +18,19 @@ EOS code which is under development).
 
 Classes funct_python, fermion_rel, polylog, eos_quark_njl, nstar_cold,
 eos_had_rmf_hyp, multi_funct_python, mm_funct_python, interp_krige,
-interpm_krige, inte_qagi_gsl, inte_adapt_cern,
-bessel_K_exp_integ_boost, nucmass_dz, calc_utf8, convert_units, and
-inte_double_exp_boost have been updated.
+interpm_krige, inte_qagi_gsl, inte_adapt_cern, eos_had_base,
+bessel_K_exp_integ_boost, nucmass_dz, calc_utf8, convert_units,
+boson_rel, part_pdg, and inte_double_exp_boost, have been updated.
 
-The strings_spec function has been updated.
+Class eos_cs2_const was removed since its functionality is in
+eos_tov_linear.
 
-New classes eos_leptons, fermi_dirac_integ_bf, and eos_quark_njl_vec
-have been created.
+New classes eos_leptons, emulator, emulator_python,
+emulator_interpm_idw_table, fermi_dirac_integ_bf, part_funcs, and
+eos_quark_njl_vec have been created.
+
+The strings_spec function has been updated. New function unc_to_string()
+has been added.
 
 The ex_eos_gibbs and ex_lambda examples have been updated.
 
@@ -36,7 +41,7 @@ been corresponding work on the examples in o2sclpy.
 The Doxygen XML and run-time acol documentation has been synchronized
 so that acol documentation will be clearer and more easily updated.
 A corresponding new "vec_vec_string" type has been added to acol
-and hdf_file. 
+and hdf_file. New command 'ninteg' was added to acol.
 
 New index classes ix_fixed, ix_sum, etc. have been created for index
 specifications. These are used in the tensor rearrange_and_copy()

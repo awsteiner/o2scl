@@ -433,7 +433,7 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf,
   // zER is in MeV since the the nuclear mass is in 1/fm
   double zER=0.5/m/zR/zR*hc_mev_fm;
   // zEc is in MeV
-  double zEc=(Z-1.0)*fine_structure/zR*hc_mev_fm;
+  double zEc=(Z-1.0)*fine_structure_f<double>()/zR*hc_mev_fm;
   // zEt is in MeV
   double zEt=min(Sneut+zER,Sprot+zER+zEc/2.0);
   // zrA is in fm
