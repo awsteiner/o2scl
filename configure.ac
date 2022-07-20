@@ -17,7 +17,10 @@ AC_PROG_MAKE_SET
 # detected when it's present (notably in travis), so we make it
 # optional here and users will have to modify their flags if this
 # fails. AWS, 1/5/22, this is probably unnecessary now
-AX_CXX_COMPILE_STDCXX_11(,[optional])
+#
+# 7/20/22, commenting this out now as o2scl uses c++14 extensions
+#
+# AX_CXX_COMPILE_STDCXX_11(,[optional])
 
 # Newer replacement for LT_INIT
 LT_INIT
