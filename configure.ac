@@ -13,14 +13,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-# O2scl requires c++11 support, but sometimes it isn't properly
-# detected when it's present (notably in travis), so we make it
-# optional here and users will have to modify their flags if this
-# fails. AWS, 1/5/22, this is probably unnecessary now
-#
 # 7/20/22, fixing this since o2scl uses c++14 extensions
 #
-AX_CXX_COMPILE_STDCXX('14',[optional])
+AX_CXX_COMPILE_STDCXX(14,[],[optional])
 
 # Newer replacement for LT_INIT
 LT_INIT
