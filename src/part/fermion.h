@@ -477,7 +477,7 @@ namespace o2scl {
       // Ratio of last term to first term in the pressure expansion
       fp_t rat;
       fp_t dj1=((fp_t)max_term), jot1=max_term/tt;
-      fp_t dj2=1.0, jot2=1.0/tt;
+      fp_t dj2=1.0, jot2=1/tt;
       
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
