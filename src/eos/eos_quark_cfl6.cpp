@@ -390,7 +390,7 @@ int eos_quark_cfl6::test_derivatives(double lmom, double mu3, double mu8,
     vector_sort<double[36],double>(36,tmpt);
     for(size_t i=0;i<36;i++) {
       if (fabs(d2[i])>1.0e-4) {
-	t.test_rel(d2[i],tmpt[i],1.0e-4,"qqu");
+	t.test_rel(d2[i],tmpt[i],2.0e-4,"qqu");
       }
     }
     up->qq-=h;
