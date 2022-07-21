@@ -3,14 +3,17 @@
 Object-oriented Scientific Computing Library: v0.927
 ====================================================
 
-O₂scl is a C++ library for object-oriented scientific computing. This
-is a beta version. The library should install and test successfully,
-and most of the classes are ready for production use. Some of the
-interfaces may change slightly in future versions. There are a few
-classes which are more experimental, and this is stated at the top of
-the documentation for these classes. O₂scl also computes the
-thermodynamics of particles and nuclei and equations of state of dense
-matter.
+O₂scl is a C++ library for object-oriented scientific computing which
+has been in active development for over 15 years. This is a beta
+version. While some O₂scl classes are still state-of-the-art, others
+are more experimental. O₂scl continues to evolve as compilers and
+other libraries replace or improve on the some of methods which are
+used. Release versions should install and test successfully, and most
+of the classes are ready for production use. Some of the interfaces
+may change slightly in future versions. Additionally, O₂scl computes
+the thermodynamics of particles and nuclei, constructs equations of
+state of dense matter, and solves equations related to neutron star
+structure.
 
 Gallery
 =======

@@ -1,5 +1,5 @@
-Multiprecision Support
-======================
+Multiprecision Support for Particles
+====================================
 
 :ref:`O2scl <o2scl>`
 

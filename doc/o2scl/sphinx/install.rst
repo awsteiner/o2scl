@@ -6,12 +6,12 @@ Installation
 Installation Contents
 ---------------------
 
-- :ref:`Compiling O2scl on Ubuntu with Snap <compile_snap>`
-- :ref:`Compiling O2scl on Mac OSX with Homebrew <compile_homebrew>`
-- :ref:`Compiling O2scl from a release distribution <compile_dist>`
-- :ref:`Compiling O2scl from a release on Linux <compile_release>`
-- :ref:`Compiling O2scl from the source code <compile_source>`
-- :ref:`Compiling O2scl on Docker <compile_docker>`
+- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
+- :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
+- :ref:`Compiling O₂scl from a release distribution <compile_dist>`
+- :ref:`Compiling O₂scl from a release on Linux <compile_release>`
+- :ref:`Compiling O₂scl from the source code <compile_source>`
+- :ref:`Compiling O₂scl on Docker <compile_docker>`
 - :ref:`Optional linear algebra libraries`
 - :ref:`Range-checking`
 - :ref:`More configure flags`
@@ -64,6 +64,7 @@ compiler. However, a homebrew installation of O₂scl will also install
 package requires ``gcc``. (As of 7/21/22, the homebrew installation of
 boost also appears to require libquadmath when using
 ``boost/multiprecision``.)
+
 
 .. _compile_dist:
 
@@ -187,11 +188,14 @@ Compiling O₂scl on Docker
 
 There are also some experimental dockerfiles which you can use to
 install O₂scl which can be found at
-https://github.com/awsteiner/o2scl/tree/main/docker . For those on
-MacOS, I recommend the guide at
-https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
-to installing docker (though this may need revision as now
-docker-machine is deprecated on homebrew).
+https://github.com/awsteiner/o2scl/tree/main/docker .
+
+..
+   For those on
+   MacOS, I recommend the guide at
+   https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
+   to installing docker (though this may need revision as now
+   docker-machine is deprecated on homebrew).
 
 Optional linear algebra libraries
 ---------------------------------

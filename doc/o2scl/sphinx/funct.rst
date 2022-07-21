@@ -20,10 +20,9 @@ Lambda functions and ``std::mem_fn``
 Functions are passed to numerical routines using template-based
 function classes, sometimes called "functors". O₂scl
 classes which accept functions as parameters generally default to
-types built upon ``std::function``. If the
-user would like to use Boost function objects instead, these may
-also be used, simply by specifying the Boost function type in the
-template parameter. 
+types built upon ``std::function``. Alternative
+function objects can be used by changing the associated template
+parameter.
 
 Some template aliases are defined to save typing of the function
 types, e.g.

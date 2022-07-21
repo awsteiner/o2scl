@@ -28,7 +28,6 @@ using namespace std;
 using namespace o2scl;
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#include <boost/multiprecision/float128.hpp>
 
 int main(void) {
 
@@ -163,14 +162,6 @@ int main(void) {
     double pi=boost::math::constants::pi<double>();
     cout << dtos(pi,-1) << endl;
   }
-  /*
-  AWS this appears to require libquadmath
-  typedef boost::multiprecision::float128 float128;
-    {
-    float128 pi=boost::math::constants::pi<float128>();
-    cout << dtos(pi,-1) << endl;
-    }
-  */
   {
     cpp_dec_float_50 pi=boost::math::constants::pi<cpp_dec_float_50>();
     cout << dtos(pi,-1) << endl;
