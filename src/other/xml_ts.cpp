@@ -47,15 +47,20 @@ int main(void) {
   cout << "dxg: " << n.name() << endl;
   ostream_walker walker;
   n.traverse(walker);
-  
-  std::string doc2_fn=o2scl_settings.get_doc_dir()+
+
+  /*
+    AWS, 7/21/22: this file is no longer part of the installation so
+    this test no longer works
+    
+    std::string doc2_fn=o2scl_settings.get_doc_dir()+
     "xml/classo2scl_1_1gen__test__number.xml";
-  
-  pugi::xml_node n2=doxygen_xml_member_get
+    
+    pugi::xml_node n2=doxygen_xml_member_get
     (doc2_fn,"gen_test_number","set_radix","detaileddescription",doc2);
-  
-  cout << "dxmg: " << n2.name() << endl;
-  n2.traverse(walker);
+    
+    cout << "dxmg: " << n2.name() << endl;
+    n2.traverse(walker);
+  */
   
 #endif
   
