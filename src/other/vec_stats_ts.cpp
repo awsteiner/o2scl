@@ -217,7 +217,7 @@ int main(void) {
     std::vector<double> ac, ac2, ftom, ftom2;
     o2scl::vector_autocorr_vector(act,ac);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-    t.test_abs(((double)ac_len),25.0,5.0,"vector_autocorr_tau 2");
+    t.test_abs(((double)ac_len),25.0,6.0,"vector_autocorr_tau 2");
     cout << "ac_len: " << ac_len << endl;
     cout << endl;
 
