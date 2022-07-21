@@ -95,8 +95,6 @@ yanic_SOURCES = yanic.cpp
 
 make_rst_SOURCES = make_rst.cpp
 
-#xml_acol_SOURCES = xml_acol.cpp
-
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
 # so we look for them in pkglibdir. Removing -fopenmp here since
@@ -104,15 +102,7 @@ make_rst_SOURCES = make_rst.cpp
 
 if O2SCL_SNAP
 
-#if O2SCL_OPENMP
-#acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-#	-Wl,/snap/o2scl/current/lib -fopenmp
-#ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-#	-Wl,/snap/o2scl/current/lib -fopenmp
-#yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-#	-Wl,/snap/o2scl/current/lib -fopenmp
-#else
-
+# if snap true
 acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
@@ -121,10 +111,6 @@ yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 make_rst_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
-#xml_acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
-#	-Wl,/snap/o2scl/current/lib
-
-#endif
 
 else
 
@@ -138,39 +124,51 @@ else
 
 if O2SCL_OPENMP
 
-#acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-#ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-#yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -fopenmp
-
 if O2SCL_PYTHON
 
+# snap false, openmp true, python true
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-#xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 
 else
 
+# snap false, openmp true, python false
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp
-#xml_acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 
 endif
 
 else
 
+if O2SCL_PYTHON
+
+# snap false, openmp false, python true
 acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 make_rst_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
-#xml_acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
+
+else
+
+# snap false, openmp false, python false
+acol_LDFLAGS = -L../src -L../src/hdf
+ame_parse_LDFLAGS = -L../src -L../src/hdf
+yanic_LDFLAGS = -L../src -L../src/hdf
+make_rst_LDFLAGS = -L../src -L../src/hdf
 
 endif
 
 endif
+
+endif
+
+# End of conditionals for LDFLAGS
+# --------------------------------------------------
+# Start of conditionals for LDADD
 
 if O2SCL_PYTHON
 
@@ -178,7 +176,6 @@ acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-#xml_acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 
 else
 
@@ -186,9 +183,6 @@ acol_LDADD = -lo2scl -lgsl -lgslcblas
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas
 yanic_LDADD = -lo2scl -lgsl -lgslcblas
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas
-#xml_acol_LDADD = -lo2scl -lgsl -lgslcblas
-
-endif
 
 endif
 

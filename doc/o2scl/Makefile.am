@@ -25,7 +25,7 @@ docdir = $(prefix)/share/doc/o2scl
 dist_doc_DATA = 
 
 # These are the files included in the distribution
-EXTRA_DIST = o2scl.tag make_rst.cpp 
+EXTRA_DIST = o2scl.tag 
 
 SUBDIRS = sphinx xml
 
