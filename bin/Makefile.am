@@ -186,3 +186,5 @@ make_rst_LDADD = -lo2scl -lgsl -lgslcblas
 
 endif
 
+# end of 'if O2SCL_ENABLE_ACOL'
+endif
