@@ -1,9 +1,6 @@
 FROM ubuntu:latest 
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 
-# 9/29/21: This curently fails, because of an openmp linking error on
-# o2graph. Need to fix.
-
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
 ARG DEBIAN_FRONTEND=noninteractive
@@ -24,7 +21,7 @@ WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
-RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw
+RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
 RUN make blank-doc
 RUN make
 RUN make install

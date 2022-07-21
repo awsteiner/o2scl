@@ -33,7 +33,7 @@ using namespace o2scl;
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
-  
+
   t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,
 	     o2scl_cgs::speed_of_light,1.0e-7,
 	     "CGS speed_of_light");

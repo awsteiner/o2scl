@@ -6,8 +6,8 @@ help:
 	@echo "build_opensuse_leap_dev:"
 	@echo "build_ubuntu:"
 	@echo "build_ubuntu_notest:"
-	@echo "build_ubuntu_dev:"
-	@echo "build_ubuntu_dev_nolinalg:"
+	@echo "build_ubuntu_dev_full:"
+	@echo "build_ubuntu_dev_min:"
 
 docker_clean:
 	-sudo docker rm \
@@ -35,10 +35,10 @@ build_ubuntu_notest:
 	sudo docker build - < ubuntu_notest \
 		> ubuntu_notest.out 2>&1 &
 
-build_ubuntu_dev:
-	sudo docker build - < ubuntu_dev \
-		> ubuntu_dev.out 2>&1 &
+build_ubuntu_dev_full:
+	sudo docker build - < ubuntu_dev_full \
+		> ubuntu_dev_full.out 2>&1 &
 
-build_ubuntu_dev_nolinalg:
-	sudo docker build - < ubuntu_dev_nolinalg \
-		> ubuntu_dev_nolinalg.out 2>&1 &
+build_ubuntu_dev_min:
+	sudo docker build - < ubuntu_dev_min \
+		> ubuntu_dev_min.out 2>&1 &
