@@ -642,11 +642,11 @@ public:
     if (andrew_mode) {
       esurf=dim*xglen*sigma/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
-	o2scl_const::fine_structure*r_rare*r_rare*xglen*fcoul(dim,xglen);
+	o2scl_const::fine_structure_f<double>()*r_rare*r_rare*xglen*fcoul(dim,xglen);
     } else {
       esurf=dim*chi*sigma/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
-	o2scl_const::fine_structure*r_rare*r_rare*chi*fcoul(dim,xglen);
+	o2scl_const::fine_structure_f<double>()*r_rare*r_rare*chi*fcoul(dim,xglen);
     }
 
     // Update the energy density and pressure
@@ -657,7 +657,7 @@ public:
       quark_nQ*(1.0-chi)*n.mu/3.0;
 
     //cout << 1.0/cbrt(4.0*pi*fabs(p.n*p.n-quark_nqch*quark_nqch)*
-    //o2scl_const::fine_structure/
+    //o2scl_const::fine_structure_f<double>()/
     //		       sigma/dim*fcoul(dim,chi)) << endl;
     /*
       cout << "z: " << x[0] << " " << x[1] << " "

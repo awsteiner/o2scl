@@ -17,7 +17,6 @@ RUN apt-get -y install libboost-all-dev
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN mkdir m4
 RUN autoreconf -i
 RUN LDFLAGS="-lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
 RUN make blank-doc

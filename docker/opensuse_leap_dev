@@ -17,7 +17,6 @@ RUN zypper install -y boost-devel autoconf automake libtool
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN mkdir m4
 RUN autoreconf -i
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 RUN make blank-doc
