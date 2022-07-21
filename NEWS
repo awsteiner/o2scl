@@ -23,7 +23,7 @@ bessel_K_exp_integ_boost, nucmass_dz, calc_utf8, convert_units,
 boson_rel, part_pdg, and inte_double_exp_boost, have been updated.
 
 Class eos_cs2_const was removed since its functionality is in
-eos_tov_linear.
+contained in eos_tov_linear.
 
 New classes eos_leptons, emulator, emulator_python,
 emulator_interpm_idw_table, fermi_dirac_integ_bf, part_funcs, and

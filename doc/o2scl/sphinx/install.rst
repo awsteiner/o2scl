@@ -39,7 +39,7 @@ where I use snap to install in my ``.bashrc``, I use::
 .. _compile_homebrew:
   
 Compiling O₂scl on Mac OSX with Homebrew
----------------------------------------------------
+----------------------------------------
 
 The easiest way to install on Mac OSX is with homebrew. Use::
 
@@ -58,16 +58,17 @@ sub-libraries and readline support. The O₂scl homebrew
 recipes are stored at the
 https://github.com/awsteiner/homebrew-science repository.
 
-(By default, a homebrew installation of O₂scl uses the OSX LLVM
-compiler. However, a homebrew installation of O₂scl will also
-install ``gcc`` because O₂scl requires ``hdf5``, and the homebrew
-``hdf5`` package requires ``gcc``. The homebrew installation of 
-O₂scl is tested by Travis CI.)
+By default, a homebrew installation of O₂scl uses the OSX LLVM
+compiler. However, a homebrew installation of O₂scl will also install
+``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
+package requires ``gcc``. (As of 7/21/22, the homebrew installation of
+boost also appears to require libquadmath when using
+``boost/multiprecision``.)
 
 .. _compile_dist:
 
 Compiling O₂scl from a release distribution
-------------------------------------------------------
+-------------------------------------------
 
 O₂scl installation is generally similar to that for
 GNU-style libraries. The file ``INSTALL`` has some details on this
@@ -119,14 +120,10 @@ o2scl-test``, running ``src/base/lib_settings_ts`` will output several
 of the installation settings. If HDF5 is enabled, ``acol -v`` also
 outputs the installation settings.
 
-O₂scl uses Travis CI (see
-https://travis-ci.org/awsteiner/o2scl ) to ensure that compilation and
-testing works on standard Ubuntu and Mac OS X environments.
-
 .. _compile_release:
 
 Compiling O₂scl from a release on Linux
---------------------------------------------------
+---------------------------------------
 
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
@@ -135,8 +132,7 @@ package), Boost (the ``libboost-all-dev`` package), GNU readline (the
 packages), and HDF5 the ``libhdf5-dev`` package). You can then install
 O₂scl from one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
-(which sometimes requires ``sudo``). This installation method is
-tested by the Travis CI script.
+(which sometimes requires ``sudo``). 
  
 The HDF5 package for Ubuntu and many other Linux systems is
 installed in ``hdf5/serial/hdf5.h`` instead of
@@ -163,7 +159,7 @@ hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
 .. _compile_source:
 
 Compiling O₂scl from the source code
------------------------------------------------
+------------------------------------
 
 If you want to install from source (without generating the
 documentation), then you must first install ``g++``, ``make``,
@@ -187,7 +183,7 @@ typically also install ``libopenmpi-dev`` and then use
 .. _compile_docker:
 
 Compiling O₂scl on Docker
-------------------------------------
+-------------------------
 
 There are also some experimental dockerfiles which you can use to
 install O₂scl which can be found at
