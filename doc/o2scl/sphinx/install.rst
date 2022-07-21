@@ -61,10 +61,7 @@ https://github.com/awsteiner/homebrew-science repository.
 By default, a homebrew installation of O₂scl uses the OSX LLVM
 compiler. However, a homebrew installation of O₂scl will also install
 ``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
-package requires ``gcc``. (As of 7/21/22, the homebrew installation of
-boost also appears to require libquadmath when using
-``boost/multiprecision``.)
-
+package requires ``gcc``. 
 
 .. _compile_dist:
 
