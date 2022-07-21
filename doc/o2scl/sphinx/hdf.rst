@@ -16,7 +16,7 @@ not output through O₂scl cannot always be read by O₂scl.
 
 HDF5 files which are written by O₂scl can be viewed and
 manipulated on the command line using the ``acol`` utility. See
-:ref:`The acol Command-line Utility` for more information.
+:ref:`The acol Command Line Utility` for more information.
 
 Objects are stored by referring to their dataset name. I/O for basic
 objects is provided directly in the :ref:`hdf_file <hdf_file>` class.

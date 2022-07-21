@@ -96,5 +96,5 @@ Note that the traditional Monte Carlo integration routines
 significant autocorrelations by construction, so long as the random
 number generator does not have any.
     
-For Markov chain Monte Carlo, see the discussion in :ref:`Markov chain
-Monte Carlo`.
+For Markov chain Monte Carlo, see the discussion in :ref:`Probability
+Distributions and Markov Chain Monte Carlo`.

@@ -44,8 +44,7 @@ dist_dochtmlsourcesfunction_DATA = ../html/_sources/function/*.txt
 # AWS 5/22/2020: I think all of the files listed for the make install
 # target above are already included so all we need are the 'extra'
 # files
-EXTRA_DIST = conf.py class_list function_list variable_list \
-	enum_list 
+EXTRA_DIST = conf.py 
 
 #SUBDOC_DIRS = eos part 
 

@@ -23,11 +23,11 @@ formats:
 The :ref:`O2scl <o2scl>` distribution does not contain the tables
 themselves, as they are quite large and most are freely available.
 :ref:`O2scl <o2scl>` includes code which parses these tables and
-puts them in \ref o2scl::tensor_grid3 objects for analysis by the
+puts them in :ref:`tensor_grid3 <tensor_grid3>` objects for analysis by the
 user.
 
 The EOSs are stored in a set of :ref:`tensor_grid3
-<o2scl:tensor_grid3>` objects on grids with baryon density in
+<tensor_grid3>` objects on grids with baryon density in
 :math:`\mathrm{fm}^{-3}`, electron fraction (unitless) and temperature
 in :math:`\mathrm{MeV}`. The choice of baryon density is preferred to
 that of 'rest mass density' (commonly denoted :math:`\rho`) because

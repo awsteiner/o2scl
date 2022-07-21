@@ -14,7 +14,6 @@ Installation Contents
 - :ref:`Compiling O2scl on Docker <compile_docker>`
 - :ref:`Optional linear algebra libraries`
 - :ref:`Range-checking`
-- :ref:`Optional physics libraries`
 - :ref:`More configure flags`
 - :ref:`Generation of documentation`
 - :ref:`Uninstallation`
@@ -22,7 +21,7 @@ Installation Contents
 .. _compile_snap:
 
 Compiling O₂scl on Ubuntu with Snap
-----------------------------------------------
+-----------------------------------
 
 The easiest way to install on Ubuntu is with snap (see
 https://snapcraft.io/o2scl). Use::
