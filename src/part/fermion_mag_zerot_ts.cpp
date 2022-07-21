@@ -39,7 +39,7 @@ int main(void) {
 
   // In "Gaussian units":
   cout << pow(4.414e13*o2scl_const::ec_gauss_fm2,2.0)*hc_mev_fm/8.0/pi/
-    o2scl_const::fine_structure << endl;
+    o2scl_const::fine_structure_f<double>() << endl;
 
   fermion_mag_zerot mfz;
   fermion e(0.5,2.0);
