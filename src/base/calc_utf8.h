@@ -455,10 +455,14 @@ namespace o2scl {
 	\ref RPN .
     */
     void cleanRPN(token_queue_t &rpn) {
+      //std::cout << "1" << std::endl;
       while (rpn.size()) {
+        //std::cout << "3 " << rpn.size() << std::endl;
         delete rpn.front();
+        //std::cout << "4" << std::endl;
         rpn.pop();
       }
+      //std::cout << "2" << std::endl;
       return;
     }
     

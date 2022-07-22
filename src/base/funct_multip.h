@@ -171,6 +171,10 @@ namespace o2scl {
       err_nonconv=true;
     }
 
+    ~funct_multip() {
+      std::cout << "Funct multip destructor." << std::endl;
+    }
+    
     /** \brief Verbosity parameter
      */
     int verbose;
@@ -629,6 +633,10 @@ namespace o2scl {
       compiled=false;
     }
 
+    ~funct_multip_string() {
+      std::cout << "Funct_multip_string destructor." << std::endl;
+    }
+    
     /** \brief Set the function to compute
      */
     int set_function(std::string expr, std::string var) {

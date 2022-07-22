@@ -803,7 +803,8 @@ namespace o2scl {
       G_is_1=false;
     }
     
-    virtual ~convert_units() {}
+    virtual ~convert_units() {
+    }
 
     /// The associated \ref o2scl::find_constants object
     find_constants<fp_t> fc;
