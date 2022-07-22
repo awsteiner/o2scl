@@ -1,9 +1,8 @@
-#
 # This dockerfile is for the full development version directly from
 # main branch in the current repo, complete with python, armadillo,
 # eigen, fftw, OpenMP, regex, and HDF5 compression support. It
-# attempts to run all of the o2scl test and examples. It also
-# installs and tests the main branch github version of o2sclpy
+# attempts to run all of the o2scl test and examples. It also installs
+# and tests the main branch github version of o2sclpy
 
 FROM ubuntu:latest 
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
@@ -34,6 +33,7 @@ RUN make
 RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -h
 RUN acol -v
 WORKDIR /opt/o2scl
 RUN make o2scl-test
@@ -47,7 +47,8 @@ WORKDIR /opt/o2sclpy
 RUN pip3 install .
 # To ensure o2graph loads OpenMP appropriately
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
-RUN o2graph -help
+RUN o2graph -h
+RUN o2graph -v
 RUN make test
 
 

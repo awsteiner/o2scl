@@ -352,19 +352,23 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+EXTRA_DIST = *_ts.cpp *_funct_test.py 
 
 emacs-clean: 
 	-rm *~
-
-qbkup:
-	cp *.cpp *.h Makefile.am bkup
 
 # ------------------------------------------------------------
 # Testing
 # ------------------------------------------------------------
 
+if O2SCL_PYTHON
+PYPATH_CHECK = python output_path.py
+else
+PYPATH_CHECK = @echo
+endif
+
 o2scl-test: $(TEST_VAR)
+	$(PYPATH_CHECK)
 	echo $(TEST_VAR) > testlist
 	../internal/tsumm$(EXEEXT)
 

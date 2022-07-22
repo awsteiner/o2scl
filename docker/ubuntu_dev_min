@@ -1,3 +1,8 @@
+# This dockerfile performs a (nearly) minimal O2scl installation of
+# the development version directly from main branch in the current
+# repository. It includes readline, OpenMP and HDF5 compression
+# support. It runs all of the O2scl tests and examples.
+
 FROM ubuntu:latest 
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 
@@ -25,6 +30,7 @@ RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
+RUN acol -h
 WORKDIR /opt/o2scl
 RUN make o2scl-test
 RUN make o2scl-examples

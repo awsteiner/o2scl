@@ -121,7 +121,7 @@ int main(void) {
       // Compare the different approaches
       for(i=0;i<size;i++) {
 	t.test_rel(gsl_vector_get(gv,i),gsl_vector_get(gv2,i),1.0e-8,"eigen1");
-	t.test_rel(gsl_vector_get(gv,i),gsl_vector_get(eval,i),1.0e-8,"eigen2");
+	t.test_rel(gsl_vector_get(gv,i),gsl_vector_get(eval,i),5.0e-8,"eigen2");
 	t.test_rel(gsl_vector_get(gv,i),d2[i],1.0e-8,"eigen3");
       }
 
