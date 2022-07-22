@@ -361,15 +361,7 @@ emacs-clean:
 # Testing
 # ------------------------------------------------------------
 
-if O2SCL_PYTHON
-PYPATH_CHECK = python output_path.py
-else
-PYPATH_CHECK = @echo
-endif
-
 o2scl-test: $(TEST_VAR)
-	$(PYPATH_CHECK)
-	echo $(TEST_VAR) > testlist
 	../internal/tsumm$(EXEEXT)
 
 o2scl-test-rec: $(TEST_VAR)

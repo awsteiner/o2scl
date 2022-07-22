@@ -172,7 +172,6 @@ namespace o2scl {
     }
 
     ~funct_multip() {
-      std::cout << "Funct multip destructor." << std::endl;
     }
     
     /** \brief Verbosity parameter

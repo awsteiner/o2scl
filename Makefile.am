@@ -65,7 +65,8 @@ o2scl-examples:
 #
 # The command echo " " > ./testlist creates a blank testlist file
 # which the various subdirectories can add to.
-o2scl-test: 
+o2scl-test:
+	cd src/base && python3 output_path.py | tee output_path.scr
 	echo " " > ./testlist
 	cd src && $(MAKE) o2scl-test-rec
 	./src/internal/tsumm$(EXEEXT) summary
