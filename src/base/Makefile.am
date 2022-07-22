@@ -352,7 +352,7 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp *_funct_test.py 
+EXTRA_DIST = *_ts.cpp *_funct_test.py output_path.py
 
 emacs-clean: 
 	-rm *~
