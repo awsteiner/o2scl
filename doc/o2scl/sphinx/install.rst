@@ -18,6 +18,10 @@ Installation Contents
 - :ref:`Generation of documentation`
 - :ref:`Uninstallation`
 
+.. note::
+   7/23/22: On OSX, boost multiprecision (used by O₂scl) appears to
+   currently also include libquadmath.
+   
 .. _compile_snap:
 
 Compiling O₂scl on Ubuntu with Snap
@@ -87,14 +91,13 @@ distribution and automatically installed by ``make install``.
    HDF5 earlier than 1.12 you will need to compile with
    ``-DO2SCL_HDF5_PRE_1_12``.
 
-O₂scl requires the Boost (any relatively recent version)
-and the GSL libraries (version 2.0 or later). If the
-``configure`` script cannot find Boost or GSL, you may have to
-specify their location for the associated header files in the
-``CXXFLAGS`` variable and the associated libraries in the
-``LDFLAGS`` environment variable. Running ``./configure
---help`` shows some information on this. For example, in a bash
-shell, you could do something like::
+O₂scl requires the Boost (any relatively recent version) and the GSL
+libraries (version 2.0 or later). If the ``configure`` script cannot
+find Boost or GSL, you may have to specify their location for the
+associated header files in the ``CXXFLAGS`` variable and the
+associated libraries in the ``LDFLAGS`` environment variable. Running
+``./configure --help`` shows some information on this. For example, in
+a bash shell, you could do something like::
 
   CXX="g++" CXXFLAGS="-I/dir/to/gsl/include" LDFLAGS="-L/dir/to/gsl/libs" ./configure --prefix=="/dir/to/destination_directory
 

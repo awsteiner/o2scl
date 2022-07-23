@@ -24,12 +24,12 @@ Release procedure
 - For most recent commit, make sure the tests, examples, and
   documentation all succeed. Check source installs on ubuntu and
   OS X and a homebrew HEAD install.
-- Try a test build on travis-ci.org
+- Try a test build on docker
 - Make sure snaps are working using 
   ``snapcraft build --debug``.
 - Update NEWS file with recent changes.
 - Make the final commit targeted for release. 
-- Check the commit succeeds on travis-ci.org
+- Check the commit succeeds on docker
 - Promote the snaps on snapcraft from edge to beta
   at https://snapcraft.io/o2scl/releases .
 - Refresh the documentation using ``make o2scl-doc``.

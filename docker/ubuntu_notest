@@ -6,21 +6,24 @@ MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
-RUN apt-get -y install g++ make libgsl-dev
-RUN apt-get -y install libhdf5-dev libncurses-dev libreadline-dev curl
+# compiler, make, gsl, and utilities
+RUN apt-get -y install g++ make libgsl-dev curl tar gzip
+# HDF5, ncurses, and readline
+RUN apt-get -y install libhdf5-dev libncurses-dev libreadline-dev
+# Boost
 RUN apt-get -y install libboost-all-dev
 
 # Now install o2scl
 WORKDIR /opt
-RUN curl https://github.com/awsteiner/o2scl/releases/download/v0.925/o2scl-0.925.tar.gz
-RUN tar xvzf o2scl-0.925.tar.gz
-WORKDIR /opt/o2scl-0.925
+RUN curl -L https://github.com/awsteiner/o2scl/releases/download/v0.927/o2scl-0.927.tar.gz --output o2scl-0.927.tar.gz
+RUN tar xvzf o2scl-0.927.tar.gz
+WORKDIR /opt/o2scl-0.927
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure
-RUN make blank-doc
 RUN make
 RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -h
 RUN acol -v
 
 
