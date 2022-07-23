@@ -29,7 +29,9 @@
 
 // AWS, 7/22/22, commenting this out because this is a relatively
 // new function in boost and not available everywhere yet
-//#include <boost/math/differentiation/finite_difference.hpp>
+#ifndef O2SCL_OLD_BOOST
+#include <boost/math/differentiation/finite_difference.hpp>
+#endif
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 using namespace std;
@@ -95,8 +97,10 @@ int main(void) {
   double err;
   // AWS, 7/22/22, commenting this out because this is a relatively
   // new function in boost and not available everywhere yet
-  //cout << boost::math::differentiation::finite_difference_derivative
-  //(tf,0.5,&err) << " " << err << endl;
+#ifndef O2SCL_OLD_BOOST
+  cout << boost::math::differentiation::finite_difference_derivative
+    (tf,0.5,&err) << " " << err << endl;
+#endif
   
   cout << "Second derivative: " << endl;
   res=de.deriv2(0.5,tf);
