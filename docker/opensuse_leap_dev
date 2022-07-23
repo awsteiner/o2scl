@@ -29,9 +29,13 @@ WORKDIR /opt/o2scl
 RUN make o2scl-test
 RUN make o2scl-examples
 
-# Python3, and o2sclpy via pip
-RUN zypper install -y python3 python3-pip texlive dvipng python3-h5py
-RUN pip3 install o2sclpy
+# Python3, and o2sclpy via pip. Note that the dvipng package is named
+# differently in OpenSUSE
+WORKDIR /opt
+RUN zypper install -y python3 python3-pip texlive texlive-dvipng python3-h5py
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2sclpy
+RUN pip3 install .
 # To ensure o2graph loads OpenMP appropriately
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/10/libgomp.so
 RUN o2graph -help

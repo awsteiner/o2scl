@@ -27,7 +27,7 @@ dist_doc_DATA =
 # These are the files included in the distribution
 EXTRA_DIST = o2scl.tag 
 
-SUBDIRS = sphinx xml
+SUBDIRS = sphinx
 
 emacs-clean:
 	rm -f *~

@@ -19,6 +19,7 @@ help:
 	@echo "o2scl-examples:       Compile and run examples"
 	@echo "test-clean:           Clean files created by tests"
 	@echo "open-doc:             View local HTML documentation"
+	@echo "open-idoc:            View installed HTML documentation"
 	@echo "blank-doc:            Create blank documentation"
 	@echo "web-doc:              View web documentation"
 	@echo "emacs-clean:          Remove files ending with a tilde"
@@ -123,6 +124,9 @@ endif
 
 open-doc:
 	$(BROWSER) doc/o2scl/html/index.html
+
+open-idoc:
+	$(BROWSER) ${docdir}/html/index.html
 
 web-doc:
 	$(BROWSER) https://neutronstars.utk.edu/code/o2scl/html/index.html
