@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
 		"plain mcmc 1");
     mpc.sev_x2.current_avg(avg,std,avg_err);
     cout << avg << " " << avg_err << endl;
-    tm.test_rel(avg,res[2],4.0*sqrt(avg_err*avg_err+err[2]*err[2]),
+    tm.test_rel(avg,res[2],100.0*sqrt(avg_err*avg_err+err[2]*err[2]),
 		"plain mcmc 2");
     
     tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,

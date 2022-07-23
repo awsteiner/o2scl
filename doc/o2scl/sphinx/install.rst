@@ -132,27 +132,29 @@ O₂scl from one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
 (which sometimes requires ``sudo``). 
  
-The HDF5 package for Ubuntu and many other Linux systems is
-installed in ``hdf5/serial/hdf5.h`` instead of
-``hdf5.h``, so O₂scl presumes that Linux systems are arranged
-that way. If HDF5 include statements should not have the
-``hdf5/serial/`` prefix, then you can use
+The HDF5 package for Ubuntu and many other Linux systems is installed
+in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
+that Linux systems are arranged that way. If HDF5 include statements
+should not have the ``hdf5/serial/`` prefix, then you can use
 ``-DO2SCL_HDF5_PLAIN_HEADER``, i.e.::
 
   CXXFLAGS="-DO2SCL_PLAIN_HDF5_HEADER" ./configure
 
 to instruct O₂scl to look for them there (for example, on bridges at
-the PSC). On many systems, one can use a parallel HDF5 library
-using ``-DO2SCL_HDF5_PLAIN_HEADER`` and a ``-I`` option
-to select the proper location for the parallel HDF5 header files.
-Finally, if your version of HDF5 is earlier than 1.12,
-you will need to let O₂scl know, using::
+the PSC). On many systems, one can use a parallel HDF5 library using
+``-DO2SCL_HDF5_PLAIN_HEADER`` and a ``-I`` option to select the proper
+location for the parallel HDF5 header files. Finally, if your version
+of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 
   CXXFLAGS="-DO2SCL_HDF5_PRE_1_12" ./configure
 
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
 hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
+
+Note that if your boost installation is earlier than 1.70,
+you will need to use the -DO2SCL_OLD_BOOST flag to get all of the
+tests to run successfully.
 
 .. _compile_source:
 
