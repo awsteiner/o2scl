@@ -534,8 +534,7 @@ AC_CONFIG_FILES([Makefile
 		 examples/plot/Makefile
                  doc/Makefile
                  doc/o2scl/Makefile
-                 doc/o2scl/sphinx/Makefile
-                 doc/o2scl/xml/Makefile])
+                 doc/o2scl/sphinx/Makefile])
 
 AC_OUTPUT
 
