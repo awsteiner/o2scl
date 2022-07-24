@@ -1,5 +1,5 @@
 Download O₂scl
-=========================
+==============
 
 :ref:`O2scl <o2scl>`
 
@@ -12,49 +12,50 @@ obtain the most recent development version (0.928a1), use, e.g.::
 
   git clone https://github.com/awsteiner/o2scl.git
 
-Please verify the release tarball before installation, either
-using ``md5sum`` or ``openssl dgst -sha256`` and compare with
-the following values.
+Please verify the release tarball before installation using ``openssl
+dgst -sha256`` and compare with the following values.
 
-===================== ================================
-Release tarball       MD5 sum
-===================== ================================
-o2scl-0.8.tar.gz      ab15fa71b8a7f4329e7dab98eaaa2898
-o2scl-0.801.tar.gz    3bc753c8b55ec78ceeb2a3b85b713d2b
-o2scl-0.802.tar.gz    cc47b07799fe134640c41b66397363c2
-o2scl-0.803.tar.gz    9fe47a9746fa58c719765f6b0f07d571
-o2scl-0.804.tar.gz    0ba9a3cb664a1314887c058dd9ce44cc
-o2scl-0.805.tar.gz    d734e2b4f02ad56af815e7890df3a325
-o2scl-0.806.tar.gz    ec622a4df36cb0ac99502616066798e6
-o2scl-0.9.tar.gz      4acab40f80cac4bd2278edb5bba67a25
-o2scl-0.901.tar.gz    df6b0cb898535429452fb4d29fbea089
-o2scl-0.902.tar.gz    36f2595c5efddb36efc429b5309d4879
-v0.903 does not exist (none)
-o2scl-0.904.tar.gz    60e1a4375a965a51adebeae45668b687
-o2scl-0.905.tar.gz    eb1cce07ae5b5faeb90e635d0c5f3be3
-o2scl-0.906.tar.gz    d1043bb0c5ef9ad02e624b41be518a9f
-o2scl-0.907.tar.gz    f9d75ef52abab0a8ce25cbe8b9f3d5ff
-o2scl-0.908.tar.gz    3ac8de3ce7225b105566f15c5ecb8605
-o2scl-0.909.tar.gz    667d3af00a89f446be1e1b439e3dc33f
-o2scl-0.910.tar.gz    0b6f90b4dd2a46bc3bdbd9de1886d2a0
-o2scl-0.911.tar.gz    f9ced431653313ffea9cbe806d6900e1
-o2scl-0.912.tar.gz    345dbb02482608c876beda083a87b71d
-o2scl-0.913.tar.gz    ce9d3c5b84e4de8a66d1a4f307e1121e
-o2scl-0.914.tar.gz    c5a5847d8c97889e6315af72d054eac8
-o2scl-0.915.tar.gz    44b2410e26d6fe764f20a6b9b5421510
-o2scl-0.916.tar.gz    748a2bb1ebc5169f1d6ba36b6e64b40c
-o2scl-0.917.tar.gz    cedd7c408574c643d7e829a14542e814
-o2scl-0.918.tar.gz    5749e0fe55c6837fcd1f975ecc307bfb  
-o2scl-0.919.tar.gz    3bf931cd743f58a7fdf2e8af8044848b
-o2scl-0.920.tar.gz    9796a74f5e3d8eda13b7d55f5871941b
-o2scl-0.921.tar.gz    bc58909f869cd2931b03cec1d8bb85ea
-o2scl-0.922.tar.gz    12a531f652d299af213a5f1f9bc46866
-o2scl-0.923.tar.gz    7896282e992b9be41797d25bb8ac697d
-o2scl-0.924.tar.gz    1c0175b80a86bcbff8d25294415409f8
-o2scl-0.925.tar.gz    17e1e979297ed3778f5a957aa500bfec
-o2scl-0.926.tar.gz    afe826ac5366810eecb7c7303a2a9f49
-o2scl-0.927.tar.gz    201cec9ccbcf11bf704a824c774e6db2
-===================== ================================
+.. md5sum results
+
+.. ===================== ================================
+   Release tarball       MD5 sum
+   ===================== ================================
+   o2scl-0.8.tar.gz      ab15fa71b8a7f4329e7dab98eaaa2898
+   o2scl-0.801.tar.gz    3bc753c8b55ec78ceeb2a3b85b713d2b
+   o2scl-0.802.tar.gz    cc47b07799fe134640c41b66397363c2
+   o2scl-0.803.tar.gz    9fe47a9746fa58c719765f6b0f07d571
+   o2scl-0.804.tar.gz    0ba9a3cb664a1314887c058dd9ce44cc
+   o2scl-0.805.tar.gz    d734e2b4f02ad56af815e7890df3a325
+   o2scl-0.806.tar.gz    ec622a4df36cb0ac99502616066798e6
+   o2scl-0.9.tar.gz      4acab40f80cac4bd2278edb5bba67a25
+   o2scl-0.901.tar.gz    df6b0cb898535429452fb4d29fbea089
+   o2scl-0.902.tar.gz    36f2595c5efddb36efc429b5309d4879
+   v0.903 does not exist (none)
+   o2scl-0.904.tar.gz    60e1a4375a965a51adebeae45668b687
+   o2scl-0.905.tar.gz    eb1cce07ae5b5faeb90e635d0c5f3be3
+   o2scl-0.906.tar.gz    d1043bb0c5ef9ad02e624b41be518a9f
+   o2scl-0.907.tar.gz    f9d75ef52abab0a8ce25cbe8b9f3d5ff
+   o2scl-0.908.tar.gz    3ac8de3ce7225b105566f15c5ecb8605
+   o2scl-0.909.tar.gz    667d3af00a89f446be1e1b439e3dc33f
+   o2scl-0.910.tar.gz    0b6f90b4dd2a46bc3bdbd9de1886d2a0
+   o2scl-0.911.tar.gz    f9ced431653313ffea9cbe806d6900e1
+   o2scl-0.912.tar.gz    345dbb02482608c876beda083a87b71d
+   o2scl-0.913.tar.gz    ce9d3c5b84e4de8a66d1a4f307e1121e
+   o2scl-0.914.tar.gz    c5a5847d8c97889e6315af72d054eac8
+   o2scl-0.915.tar.gz    44b2410e26d6fe764f20a6b9b5421510
+   o2scl-0.916.tar.gz    748a2bb1ebc5169f1d6ba36b6e64b40c
+   o2scl-0.917.tar.gz    cedd7c408574c643d7e829a14542e814
+   o2scl-0.918.tar.gz    5749e0fe55c6837fcd1f975ecc307bfb  
+   o2scl-0.919.tar.gz    3bf931cd743f58a7fdf2e8af8044848b
+   o2scl-0.920.tar.gz    9796a74f5e3d8eda13b7d55f5871941b
+   o2scl-0.921.tar.gz    bc58909f869cd2931b03cec1d8bb85ea
+   o2scl-0.922.tar.gz    12a531f652d299af213a5f1f9bc46866
+   o2scl-0.923.tar.gz    7896282e992b9be41797d25bb8ac697d
+   o2scl-0.924.tar.gz    1c0175b80a86bcbff8d25294415409f8
+   o2scl-0.925.tar.gz    17e1e979297ed3778f5a957aa500bfec
+   o2scl-0.926.tar.gz    afe826ac5366810eecb7c7303a2a9f49
+   o2scl-0.927.tar.gz    201cec9ccbcf11bf704a824c774e6db2
+   ===================== ================================
 
 ===================== ================================================================
 Release tarball       SHA256 digest

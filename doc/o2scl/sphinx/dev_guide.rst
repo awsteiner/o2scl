@@ -12,11 +12,9 @@ Release procedure
 
   * ``configure.ac``
   * ``doc/o2scl/doxyfile``
-  * ``doc/o2scl/part/doxyfile``
-  * ``doc/o2scl/eos/doxyfile``
   * ``doc/o2scl/sphinx/conf.py``
-  * ``doc/o2scl/part/sphinx/conf.py``
-  * ``doc/o2scl/eos/sphinx/conf.py``
+  * ``doc/o2scl/sphinx/index.rst``
+  * ``doc/o2scl/sphinx/downloads.rst``
   * ``snap/snapcraft.yaml``
 
   and the tables in ``doc/o2scl/sphinx/download.rst`` are updated with
@@ -29,7 +27,8 @@ Release procedure
   ``snapcraft build --debug``.
 - Update NEWS file with recent changes.
 - Make the final commit targeted for release. 
-- Check the commit succeeds on docker
+- Check the commit succeeds on ``docker/ubuntu_dev_full`` and
+  ``docker/ubuntu_dev_min`` and ``docker/opensuse_leap_dev``.
 - Promote the snaps on snapcraft from edge to beta
   at https://snapcraft.io/o2scl/releases .
 - Refresh the documentation using ``make o2scl-doc``.
@@ -45,16 +44,22 @@ Release procedure
   https://isospin.roam.utk.edu/public_data/o2scl_dists/
 - Update homebrew recipe with the new version number and new hash.
 - Check installation using homebrew directly.
-- Turn on build pushes in travis-ci.org and commit again since
-  ``doc/o2scl/sphinx/download.rst`` has changed. 
+- Check build using e.g. ``docker/ubuntu`` and ``docker/opensuse_leap``
 
 Procedure for moving to new development version
 -----------------------------------------------
 
-- Update to the new development version number and new OLIB numbers
-  in ``configure.ac``.
-- Update version numbers in doxyfile files and main.dox files
-  and in dl_page.dox .
+- Update to the new development version number and new OLIB numbers in
+  ``configure.ac``.
+  
+- Update version numbers in:
+
+  * ``doc/o2scl/doxyfile``
+  * ``doc/o2scl/sphinx/conf.py``
+  * ``doc/o2scl/sphinx/index.rst``
+  * ``doc/o2scl/sphinx/downloads.rst``
+  * ``snap/snapcraft.yaml``
+
 - Update local configure scripts to refer to new version number
   if necessary
     
