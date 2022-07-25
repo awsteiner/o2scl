@@ -349,12 +349,17 @@ int main(int argc, char *argv[]) {
   if (mpc.mct.n_threads>1) {
     tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
   }
+  cout << "Here: " << mpc.mct.n_accept[0] << " "
+       << mpc.mct.n_reject[0] << " " << mpc.mct.max_iters << endl;
   tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
 	      "plain table n_iters 0");
   if (mpc.mct.n_threads>1) {
+    cout << "Here: " << mpc.mct.n_accept[1] << " "
+         << mpc.mct.n_reject[1] << endl;
     tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
 		"plain table n_iters 1");
   }
+  exit(-1);
   cout << endl;
     
   // ----------------------------------------------------------------
