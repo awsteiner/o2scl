@@ -65,7 +65,7 @@ assigning the address of a descendant of :ref:`err_hnd_type
 
 .. note::
    The alternate error handler is particularly useful to avoid
-   throwing exceptions across DLL boundaries, when O₂scl
+   throwing exceptions across DLL boundaries, e.g. when O₂scl
    is loaded as a DLL in python. 
    
 ..

@@ -66,7 +66,7 @@ Procedure for moving to new development version
 o2sclpy release procedure
 -------------------------
 
-- Update version numbers in ``o2sclpy/__init.py``, 
+- Update version numbers in ``o2sclpy/doc_data.py``, 
   ``doc/conf.py``, ``setup.py``, ``snap/snapcraft.yaml`` and ``doc/index.rst``
 - Regenerate the o2sclpy documentation using ``make doc``
   and upload it to web using ``make sync-doc``
