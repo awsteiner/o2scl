@@ -60,9 +60,11 @@ public:
 
   int count;
   
-  mcmc_para_base<point_funct,measure_funct,std::array<double,1>,ubvector> mc;
+  mcmc_para_base<point_funct,measure_funct,std::array<double,1>,
+                     ubvector> mc;
 
-  mcmc_para_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
+  mcmc_para_table<point_funct,fill_funct,std::array<double,1>,
+                      ubvector> mct;
 
   expval_scalar sev_x;
   
@@ -180,7 +182,8 @@ int main(int argc, char *argv[]) {
      std::placeholders::_4);
   measure_funct mf=std::bind
     (std::mem_fn<int(const ubvector &,double,size_t,int,bool,
-		     std::array<double,1> &)>(&mcmc_para_class::measure),&mpc,
+		     std::array<double,1> &)>
+     (&mcmc_para_class::measure),&mpc,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4,std::placeholders::_5,std::placeholders::_6);
 
@@ -193,6 +196,9 @@ int main(int argc, char *argv[]) {
   vector<point_funct> flat_vec(n_threads);
   vector<measure_funct> meas_vec(n_threads);
   vector<fill_funct> fill_vec(n_threads);
+
+  // Enough for 10 walkers, 2 threads, times 2
+  vector<array<double,1> > data_vec(40);
   for(size_t i=0;i<n_threads;i++) {
     gauss_vec[i]=gauss_func;
     flat_vec[i]=flat_func;
@@ -203,7 +209,7 @@ int main(int argc, char *argv[]) {
   cout << "n_threads: " << n_threads << endl;
   cout << endl;
 
-  static const size_t N=20000;
+  size_t N=20000;
   
   double avg, std, avg_err;
   size_t i1, i2;
@@ -214,7 +220,7 @@ int main(int argc, char *argv[]) {
   if (true) {
     
     cout << "Plain MCMC: " << endl;
-    
+
     mpc.mc.step_fac=10.0;
     mpc.mc.verbose=2;
     mpc.mc.n_threads=1;
@@ -226,7 +232,7 @@ int main(int argc, char *argv[]) {
 
     mpc.mc.meas_for_initial=false;
     
-    mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec);
+    mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec,data_vec);
     
     tm.test_gen(mpc.sev_x.finished(),"plain sev finished");
     
@@ -236,7 +242,7 @@ int main(int argc, char *argv[]) {
 		"plain mcmc 1");
     mpc.sev_x2.current_avg(avg,std,avg_err);
     cout << avg << " " << avg_err << endl;
-    tm.test_rel(avg,res[2],100.0*sqrt(avg_err*avg_err+err[2]*err[2]),
+    tm.test_rel(avg,res[2],4.0*sqrt(avg_err*avg_err+err[2]*err[2]),
 		"plain mcmc 2");
     
     tm.test_gen(mpc.mc.n_accept[0]+mpc.mc.n_reject[0]==mpc.mc.max_iters,
@@ -246,23 +252,24 @@ int main(int argc, char *argv[]) {
 		  "plain n_iters 1");
     }
     cout << endl;
-  
+
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    
   }
 
   // ----------------------------------------------------------------
   // Affine-invariant MCMC
 
-  if (false) {
+  if (true) {
     cout << "Affine-invariant MCMC: " << endl;
-    
-    //mpc.sev_x.set_blocks(20,N/20+1);
-    //mpc.sev_x2.set_blocks(20,N/20+1);
+
     mpc.sev_x.set_blocks(40,1);
     mpc.sev_x2.set_blocks(40,1);
     
     mpc.sev_x.get_block_indices(i1,i2);
     cout << i1 << " " << i2 << endl;
-    
+
     mpc.mc.aff_inv=true;
     mpc.mc.n_walk=10;
     mpc.mc.step_fac=2.0;
@@ -271,8 +278,8 @@ int main(int argc, char *argv[]) {
     mpc.mc.max_iters=N*10;
     mpc.mc.prefix="mcmc_ai";
     
-    mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec);
-    
+    mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec,data_vec);
+
     mpc.sev_x.get_block_indices(i1,i2);
     cout << i1 << " " << i2 << endl;
     
@@ -294,6 +301,10 @@ int main(int argc, char *argv[]) {
 		  "aff_inc n_iters 1");
     }
     cout << endl;
+
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    
   }
 
   // ----------------------------------------------------------------
@@ -313,7 +324,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.prefix="mcmct";
   mpc.mct.table_prealloc=N*n_threads;
 
-  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
+  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
   std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
   
@@ -343,8 +354,9 @@ int main(int argc, char *argv[]) {
   if (mpc.mct.n_threads>1) {
     tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
   }
+  
   tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
-	      "plain table n_iters 0");
+              "plain table n_iters 0");
   if (mpc.mct.n_threads>1) {
     tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
 		"plain table n_iters 1");
@@ -365,7 +377,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.prefix="mcmct_ai";
   mpc.mct.table_prealloc=N*n_threads;
 
-  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
+  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
   // Get results
   table=mpc.mct.get_table();
@@ -426,7 +438,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.prefix="mcmct_flat";
     mpc.mct.table_prealloc=N*n_threads;
     
-    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
     uniform_grid_end<double> ug(low[0],high[0],20);
     size_t hist_ix=0;
@@ -480,7 +492,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.prefix="mcmct_ai_flat";
     mpc.mct.table_prealloc=N*n_threads;
     
-    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
     uniform_grid_end<double> ug(low[0],high[0],20);
     size_t hist_ix=0;
@@ -539,7 +551,7 @@ int main(int argc, char *argv[]) {
 
     cout << "Going to mcmc." << endl;
     mpc.mct.verbose=1;
-    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec);
+    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
     // Get results
     table=mpc.mct.get_table();

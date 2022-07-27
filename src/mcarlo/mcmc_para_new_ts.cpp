@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
   cout << "n_threads: " << n_threads << endl;
   cout << endl;
 
-  static const size_t N=20000;
+  size_t N=20000;
   
   double avg, std, avg_err;
   size_t i1, i2;
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
   if (true) {
     
     cout << "Plain MCMC: " << endl;
-    
+
     mpc.mc.step_fac=10.0;
     mpc.mc.verbose=2;
     mpc.mc.n_threads=1;
@@ -252,23 +252,24 @@ int main(int argc, char *argv[]) {
 		  "plain n_iters 1");
     }
     cout << endl;
-  
+
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    
   }
 
   // ----------------------------------------------------------------
   // Affine-invariant MCMC
 
-  if (false) {
+  if (true) {
     cout << "Affine-invariant MCMC: " << endl;
-    
-    //mpc.sev_x.set_blocks(20,N/20+1);
-    //mpc.sev_x2.set_blocks(20,N/20+1);
+
     mpc.sev_x.set_blocks(40,1);
     mpc.sev_x2.set_blocks(40,1);
     
     mpc.sev_x.get_block_indices(i1,i2);
     cout << i1 << " " << i2 << endl;
-    
+
     mpc.mc.aff_inv=true;
     mpc.mc.n_walk=10;
     mpc.mc.step_fac=2.0;
@@ -278,7 +279,7 @@ int main(int argc, char *argv[]) {
     mpc.mc.prefix="mcmc_ai";
     
     mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec,data_vec);
-    
+
     mpc.sev_x.get_block_indices(i1,i2);
     cout << i1 << " " << i2 << endl;
     
@@ -300,6 +301,10 @@ int main(int argc, char *argv[]) {
 		  "aff_inc n_iters 1");
     }
     cout << endl;
+
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    
   }
 
   // ----------------------------------------------------------------
@@ -349,17 +354,13 @@ int main(int argc, char *argv[]) {
   if (mpc.mct.n_threads>1) {
     tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
   }
-  cout << "Here: " << mpc.mct.n_accept[0] << " "
-       << mpc.mct.n_reject[0] << " " << mpc.mct.max_iters << endl;
+  
   tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
-	      "plain table n_iters 0");
+              "plain table n_iters 0");
   if (mpc.mct.n_threads>1) {
-    cout << "Here: " << mpc.mct.n_accept[1] << " "
-         << mpc.mct.n_reject[1] << endl;
     tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
 		"plain table n_iters 1");
   }
-  exit(-1);
   cout << endl;
     
   // ----------------------------------------------------------------

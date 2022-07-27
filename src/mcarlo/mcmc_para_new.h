@@ -1111,10 +1111,14 @@ namespace o2scl {
         // Start of main loop over threads for aff_inv=false
 
         bool main_done=false;
-        size_t mcmc_iters=0;
+        
+        std::vector<size_t> mcmc_iters(n_threads);
+        for(size_t it=0;it<n_threads;it++) {
+          mcmc_iters[it]=0;
+        }
         
         while (!main_done) {
-            
+          
 #ifdef O2SCL_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1123,10 +1127,18 @@ namespace o2scl {
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
-              
+
               bool inner_done=false;
               while (!inner_done && !main_done) {
               
+                if (verbose>=2) {
+                  scr_out << "Iteration " << mcmc_iters[it] << " of "
+                          << max_iters << " thread " << it << " "
+                          << n_accept[it] << " " << n_reject[it]
+                          << " " << omp_get_num_threads() 
+                          << std::endl;
+                }
+          
                 // ---------------------------------------------------
                 // Select next point for aff_inv=false
           
@@ -1318,12 +1330,13 @@ namespace o2scl {
                 // Update iteration count and reset counters for
                 // warm up iterations if necessary
                 if (main_done==false) {
+
+                  scr_out << "Incrementing mcmc_iters." << std::endl;
+                  mcmc_iters[it]++;
               
-                  mcmc_iters++;
-              
-                  if (warm_up && mcmc_iters==n_warm_up) {
+                  if (warm_up && mcmc_iters[it]==n_warm_up) {
                     warm_up=false;
-                    mcmc_iters=0;
+                    mcmc_iters[it]=0;
                     n_accept[it]=0;
                     n_reject[it]=0;
                     if (verbose>=1) {
@@ -1334,20 +1347,20 @@ namespace o2scl {
                   }
                 }
             
-                // Stop if iterations greater than max
-                if (main_done==false && warm_up==false && max_iters>0 &&
-                    mcmc_iters==max_iters) {
+                // Stop this thread if iterations greater than max_iters
+                if (inner_done==false && warm_up==false && max_iters>0 &&
+                    mcmc_iters[it]==max_iters) {
                   if (verbose>=1) {
                     scr_out << "o2scl::mcmc_para_new: Thread " << it
                             << " stopping because number of iterations ("
-                            << mcmc_iters << ") equal to max_iters ("
+                            << mcmc_iters[it] << ") equal to max_iters ("
                             << max_iters << ")." << std::endl;
                   }
-                  main_done=true;
+                  inner_done=true;
                 }
             
+                // If we're out of time, stop all threads
                 if (main_done==false) {
-                  // Check to see if we're out of time
 #ifdef O2SCL_MPI
                   double elapsed=MPI_Wtime()-mpi_start_time;
 #else
@@ -1364,11 +1377,14 @@ namespace o2scl {
                   }
                 }
 
-                if (steps_in_parallel<1 ||
-                    mcmc_iters%steps_in_parallel==steps_in_parallel-1) {
-                  inner_done=false;
+                // If we have requested a particular number of steps
+                // in parallel, then end the inner loop and continue
+                // later
+                if (steps_in_parallel>0 &&
+                    mcmc_iters[it]%steps_in_parallel==0) {
+                  inner_done=true;
                 }
-                
+
                 // End of while loop for inner_done==false and
                 // main_done==false
               }
@@ -1386,7 +1402,14 @@ namespace o2scl {
               best=best_t[it];
             }
           }
-          
+
+          if (main_done==false && max_iters>0) {
+            main_done=true;
+            for(size_t it=0;it<n_threads;it++) {
+              if (mcmc_iters[it]<max_iters) main_done=false;
+            }
+          }
+            
           // Call function outside parallel region 
           outside_parallel();
           
@@ -1985,7 +2008,7 @@ namespace o2scl {
           walker_reject_rows[i]=-1;
         }
       
-        if (this->verbose>=2) {
+        if (this->verbose>=3) {
           std::cout << "mcmc: Table column names and units: " << std::endl;
           for(size_t i=0;i<table->get_ncolumns();i++) {
             std::cout << table->get_column_name(i) << " "
@@ -2943,6 +2966,8 @@ namespace o2scl {
             if (this->verbose>=2) {
               this->scr_out << "mcmc: Setting data at row " << next_row
                             << std::endl;
+            }
+            if (this->verbose>=3) {
               for(size_t k=0;k<line.size();k++) {
                 this->scr_out << k << ". ";
                 this->scr_out << table->get_column_name(k) << " ";
