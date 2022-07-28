@@ -1111,7 +1111,8 @@ namespace o2scl {
         // Start of main loop over threads for aff_inv=false
 
         bool main_done=false;
-        
+
+        // Initialize the number of iterations for each thread
         std::vector<size_t> mcmc_iters(n_threads);
         for(size_t it=0;it<n_threads;it++) {
           mcmc_iters[it]=0;

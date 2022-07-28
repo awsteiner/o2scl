@@ -25,6 +25,8 @@
 #include <o2scl/rng.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/inte_qag_gsl.h>
+#include <o2scl/deriv_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -46,22 +48,26 @@ double d2f(double x, double sd) {
 }
 
 double covar(double x, double y) {
-  return exp(-2.0*(x-y)*(x-y)/0.1);
+  return exp(-20.0*(x-y)*(x-y));
 }
 
 double covard(double x, double y) {
-  return exp(-2.0*(x-y)*(x-y)/0.1)*(x-y)*4.0/0.1;
+  return exp(-20.0*(x-y)*(x-y))*(x-y)*40.0;
 }
 
 double covard2(double x, double y) {
-  return -4.0*exp(-2.0*(x-y)*(x-y)/0.1)/0.1+
-    16.0*exp(-2.0*(x-y)*(x-y)/0.1)*(x-y)*(x-y)/0.1/0.1;
+  return -40.0*exp(-20.0*(x-y)*(x-y))+
+    1600.0*exp(-20.0*(x-y)*(x-y))*(x-y)*(x-y);
 }
 
 double covari(double x, double a, double b) {
   return 0.1*sqrt(o2scl_const::pi/2.0)*
     (gsl_sf_erf((b+x)/0.1/sqrt(2.0))-
      gsl_sf_erf((a+x)/0.1/sqrt(2.0)));
+  //double ret=sqrt(o2scl_const::pi/20.0)/2.0*
+  //(gsl_sf_erf(sqrt(20.0)*(x-a))-
+  //gsl_sf_erf(sqrt(20.0)*(x-b)));
+  //return ret;
 }
 
 int main(void) {
@@ -154,7 +160,7 @@ int main(void) {
   t.test_rel(ik.eval(x[N-1]),y[N-1],1.0e-8,"ik 7");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),
              (y[0]+y[1])/2.0,1.0e-4,"ik 8");
-  t.test_abs(ik.sigma(x[0]),0.0,1.0e-7,"ik 9");
+  t.test_abs(ik.sigma(x[0]),0.0,1.0e-6,"ik 9");
   t.test_abs(ik.sigma(x[N-1]),0.0,1.0e-7,"ik 10");
   cout << endl;
 
@@ -213,6 +219,11 @@ int main(void) {
     y2[i]/=y2_sd;
   }
 
+  deriv_gsl<> dg;
+  inte_qag_gsl<> iqg;
+  funct fptr=std::bind(f,std::placeholders::_1,std::ref(y2_mean),
+                       std::ref(y2_sd));
+  
   cout << "Test derivatives and integrals:" << endl;
   
   ik.set_covar_di_noise(N,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
@@ -220,16 +231,24 @@ int main(void) {
   t.test_rel(ik.deriv(x2[N-1]),df(x2[N-1],y2_sd),1.0e-4,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
              df((x2[0]+x2[1])/2.0,y2_sd),1.0e-4,"der 13");
+  cout << dg.deriv(x2[0],fptr) << " "
+       << df(x2[0],y2_sd) << endl;
   
   t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
   t.test_rel(ik.deriv2(x2[N-1]),d2f(x2[N-1],y2_sd),0.01,"der2 12");
   t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
              d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
 
-  //t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 1");
-  //t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 2");
-  //t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 3");
+  /*
+  cout << iqg.integ(fptr,0.0,0.5) << endl;
+  cout << iqg.integ(fptr,0.5,1.0) << endl;
+  cout << iqg.integ(fptr,1.0,1.5) << endl;
+  t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 1");
+  t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 2");
+  t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 3");
+  exit(-1);
   cout << endl;
+  */
 
   cout << "Test derivatives and integrals with rescaling:" << endl;
   
