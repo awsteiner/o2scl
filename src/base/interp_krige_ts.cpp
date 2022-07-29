@@ -285,11 +285,11 @@ int main(void) {
 
   interp_krige_optim<ubvector> iko;
 
+  cout << "Class interp_krige_optim with simple interface." << endl;
   iko.verbose=1;
   iko.set(N,x,y);
   iko.verbose=0;
 
-  cout << "Class interp_krige_optim with simple interface." << endl;
   t.test_rel(iko.eval(x[0]),y[0],1.0e-2,"iko 1");
   t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-4,"iko 2");
   t.test_rel(iko.eval((x[0]+x[1])/2.0),
@@ -314,18 +314,17 @@ int main(void) {
 
   iko.full_min=true;
   
+  cout << "Class interp_krige_optim with full minimization" << endl;
   iko.verbose=1;
   iko.set(N,x,y);
   iko.verbose=0;
 
-  cout << "Class interp_krige_optim with full minimization" << endl;
   double exact=f(1.01,y_mean,y_sd);
   double res=iko.eval(1.01);
   t.test_rel(exact,res,1.0e-1,"iko 4");
   exact=f(1.0,y_mean,y_sd);
   res=iko.eval(1.0);
   t.test_rel(exact,res,1.0e-1,"iko 5");
-  cout << endl;
 
   iko.set(N,x,y,true);
 

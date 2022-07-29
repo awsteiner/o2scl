@@ -458,7 +458,7 @@ namespace o2scl {
 
 
   /** \brief One-dimensional interpolation using an 
-      optimized covariance function
+      simple optimized covariance function
 
       \verbatim embed:rst
       See also the :ref:`Interpolation` section of the 
@@ -556,10 +556,10 @@ namespace o2scl {
         \mathrm{erf}\left( \frac{a+x_i}{L \sqrt{2}} \right) \right]
         \f]
      */
-    double integ_covar(double x, double x1, double x2) {
+    double integ_covar(double x, double a, double b) {
       return len*sqrt(o2scl_const::pi/2.0)*
-        (gsl_sf_erf((x2+x)/len/sqrt(2.0))-
-         gsl_sf_erf((x1+x)/len/sqrt(2.0)));
+        (gsl_sf_erf((b+x)/len/sqrt(2.0))-
+         gsl_sf_erf((a+x)/len/sqrt(2.0)));
     }
 
     /// Pointer to the user-specified minimizer
@@ -649,7 +649,7 @@ namespace o2scl {
           qual+=pow(yact-ypred,2.0);
 	
         }
-        if (verbose>0) {
+        if (verbose>1) {
           std::cout << "len,qual (loo_cv): " << len << " "
                     << qual << std::endl;
         }
@@ -805,17 +805,18 @@ namespace o2scl {
       nlen=20;
       full_min=false;
       mp=&def_min;
+      def_min.ntrial*=10;
       verbose=0;
-      mode=mode_loo_cv;
+      mode=mode_max_lml;
     }
 
     /// \name Function to minimize and various option
     //@{
-    /// Leave-one-out cross validation
+    /// Leave-one-out cross validation (default)
     static const size_t mode_loo_cv=1;
-    /// Minus Log-marginal-likelihood
+    /// Maximize Log-marginal-likelihood
     static const size_t mode_max_lml=2;
-    /// New leave-one-out cross validation method
+    /// New leave-one-out cross validation method (not working yet)
     static const size_t mode_loo_cv_new=3;
     /// Function to minimize (default \ref mode_loo_cv)
     size_t mode;
