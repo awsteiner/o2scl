@@ -515,13 +515,16 @@ namespace o2scl {
       return exp(-(x1-x2)*(x1-x2)/len/len/2.0);
     }
 
-    /** \brief The derivative of the covariance function
+    /** \brief The derivative of the covariance function with
+        respect to the first argument
      */
     double deriv_covar(double x1, double x2) {
       return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
     }
     
-    /// The second derivative of the covariance function
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+     */
     double deriv2_covar(double x1, double x2) {
       return ((x1-x2)*(x1-x2)-len*len)*
         exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;

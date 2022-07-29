@@ -39,7 +39,7 @@ double f(double x, double mean, double sd) {
 }
 
 double df(double x, double sd) {
-  return cos(1.0/(0.3+x))/sd/pow(0.3+x,2.0);
+  return -cos(1.0/(0.3+x))/sd/pow(0.3+x,2.0);
 }
 
 double d2f(double x, double sd) {
@@ -52,7 +52,7 @@ double covar(double x, double y) {
 }
 
 double covard(double x, double y) {
-  return exp(-20.0*(x-y)*(x-y))*(x-y)*40.0;
+  return -exp(-20.0*(x-y)*(x-y))*(x-y)*40.0;
 }
 
 double covard2(double x, double y) {
@@ -61,19 +61,20 @@ double covard2(double x, double y) {
 }
 
 double covari(double x, double a, double b) {
-  return 0.1*sqrt(o2scl_const::pi/2.0)*
-    (gsl_sf_erf((b+x)/0.1/sqrt(2.0))-
-     gsl_sf_erf((a+x)/0.1/sqrt(2.0)));
-  //double ret=sqrt(o2scl_const::pi/20.0)/2.0*
-  //(gsl_sf_erf(sqrt(20.0)*(x-a))-
-  //gsl_sf_erf(sqrt(20.0)*(x-b)));
-  //return ret;
+  double alpha=20.0;
+  double ret=sqrt(o2scl_const::pi/alpha)/2.0*
+    (gsl_sf_erf(sqrt(alpha)*(b-x))-
+     gsl_sf_erf(sqrt(alpha)*(a-x)));
+  return ret;
 }
 
 int main(void) {
 
   cout.setf(ios::scientific);
 
+  deriv_gsl<> dg;
+  inte_qag_gsl<> iqg;
+  
   test_mgr t;
   t.set_output_level(2);
 
@@ -117,7 +118,22 @@ int main(void) {
   cout << endl;
 
   // ---------------------------------------------------------------
-  // First test the interp_krige class
+  // Test the exact derivatives
+
+  if (true) {
+    funct fptrx=std::bind(f,std::placeholders::_1,std::ref(y_mean),
+                          std::ref(y_sd));
+    for(size_t i=0;i<N;i++) {
+      t.test_rel(dg.deriv(x[i],fptrx),
+                 df(x[i],y_sd),1.0e-8,"deriv");
+      t.test_rel(dg.deriv2(x[i],fptrx),
+                 d2f(x[i],y_sd),4.0e-3,"deriv2");
+    }
+  }
+  
+  
+  // ---------------------------------------------------------------
+  // Test the interp_krige class
 
   interp_krige<ubvector> ik;
   std::function<double(double,double)> fp=covar;
@@ -219,57 +235,50 @@ int main(void) {
     y2[i]/=y2_sd;
   }
 
-  deriv_gsl<> dg;
-  inte_qag_gsl<> iqg;
   funct fptr=std::bind(f,std::placeholders::_1,std::ref(y2_mean),
                        std::ref(y2_sd));
   
   cout << "Test derivatives and integrals:" << endl;
   
-  ik.set_covar_di_noise(N,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
-  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),4.0e-4,"der 11");
-  t.test_rel(ik.deriv(x2[N-1]),df(x2[N-1],y2_sd),1.0e-4,"der 12");
+  ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
+  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),5.0e-3,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
-             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-4,"der 13");
-  cout << dg.deriv(x2[0],fptr) << " "
-       << df(x2[0],y2_sd) << endl;
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
   
   t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
-  t.test_rel(ik.deriv2(x2[N-1]),d2f(x2[N-1],y2_sd),0.01,"der2 12");
+  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.05,"der2 12");
   t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
              d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
 
-  /*
-  cout << iqg.integ(fptr,0.0,0.5) << endl;
-  cout << iqg.integ(fptr,0.5,1.0) << endl;
-  cout << iqg.integ(fptr,1.0,1.5) << endl;
-  t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 1");
-  t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 2");
-  t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 3");
-  exit(-1);
+  t.test_rel(iqg.integ(fptr,0.0,0.5),ik.integ(0.0,0.5),
+             5.0e-2,"integ 1");
+  t.test_rel(iqg.integ(fptr,0.5,1.0),ik.integ(0.5,1.0),
+             5.0e-2,"integ 2");
+  t.test_rel(iqg.integ(fptr,1.0,1.5),ik.integ(1.0,1.5),
+             5.0e-2,"integ 3");
   cout << endl;
-  */
 
   cout << "Test derivatives and integrals with rescaling:" << endl;
   
-  ik.set_covar_di_noise(N,x2,y2,fp,fpd,fpd2,fpi,1.0e-12,true);
-  /*
-  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),4.0e-4,"der 11");
-  t.test_rel(ik.deriv(x2[N-1]),df(x2[N-1],y2_sd),1.0e-4,"der 12");
+  ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12,true);
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
+  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),5.0e-3,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
-             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-4,"der 13");
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
   
   t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
-  t.test_rel(ik.deriv2(x2[N-1]),d2f(x2[N-1],y2_sd),0.01,"der2 12");
+  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.05,"der2 12");
   t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
              d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
-
-  t.test_rel(ik.integ(0.0,0.5),0.396839,1.0,"integ 4");
-  t.test_rel(ik.integ(0.5,1.0),0.408849,1.0,"integ 5");
-  t.test_rel(ik.integ(1.0,1.5),0.302358,1.0,"integ 6");
+  
+  t.test_rel(iqg.integ(fptr,0.0,0.5),ik.integ(0.0,0.5),
+             5.0e-2,"integ 1");
+  t.test_rel(iqg.integ(fptr,0.5,1.0),ik.integ(0.5,1.0),
+             5.0e-2,"integ 2");
+  t.test_rel(iqg.integ(fptr,1.0,1.5),ik.integ(1.0,1.5),
+             5.0e-2,"integ 3");
   cout << endl;
-  exit(-1);
-  */
   
   // ---------------------------------------------------------------
   // Test interp_krige_optim interface
