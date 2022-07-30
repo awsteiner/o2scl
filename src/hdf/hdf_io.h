@@ -1925,7 +1925,9 @@ namespace o2scl_hdf {
             std::cout << "col_spec: " << col_spec << std::endl;
 
             std::vector<size_t> uint_list;
-            o2scl::string_to_uint_list(row_list,uint_list);
+            if (row_list!="*") {
+              o2scl::string_to_uint_list(row_list,uint_list);
+            }
             
             std::vector<size_t> col_ix;
 
@@ -1955,13 +1957,23 @@ namespace o2scl_hdf {
               }
             }
 
-            for(size_t j=0;j<uint_list.size();j++) {
-              vec_t vtemp(col_ix.size());
-              for(size_t k=0;k<col_ix.size();k++) {
-                vtemp[k]=t.get(col_ix[k],j);
+            if (row_list=="*") {
+              for(size_t j=0;j<t.get_nlines();j++) {
+                vec_t vtemp(col_ix.size());
+                for(size_t k=0;k<col_ix.size();k++) {
+                  vtemp[k]=t.get(col_ix[k],j);
+                }
+                v.push_back(vtemp);
               }
-              v.push_back(vtemp);
-            }              
+            } else {
+              for(size_t j=0;j<uint_list.size();j++) {
+                vec_t vtemp(col_ix.size());
+                for(size_t k=0;k<col_ix.size();k++) {
+                  vtemp[k]=t.get(col_ix[k],j);
+                }
+                v.push_back(vtemp);
+              }
+            }
 
 	  } else {
 
