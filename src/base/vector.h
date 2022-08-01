@@ -2482,7 +2482,8 @@ namespace o2scl {
       This function is used in \ref o2scl::interp_krige_optim::qual_fun() .
   */
   template<class vec_t, class vec2_t> 
-    void vector_copy_jackknife(const vec_t &src, size_t iout, vec2_t &dest) {
+    void vector_copy_jackknife(const vec_t &src, size_t iout,
+                               vec2_t &dest) {
     if (src.size()==0) {
       O2SCL_ERR("Empty source vector.",o2scl::exc_einval);
     }

@@ -72,8 +72,6 @@ namespace o2scl {
       return (*fptr)(cstr,itive_com);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The pointer to the member function
@@ -89,8 +87,6 @@ namespace o2scl {
       fptr=f.fptr;
       return *this;
     }
-    
-#endif
     
   };
 
@@ -113,8 +109,6 @@ namespace o2scl {
       return (*tptr.*fptr)(cstr,itive_com);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The pointer to the member function
@@ -136,8 +130,6 @@ namespace o2scl {
       return *this;
     }
 
-#endif
-    
   };
 
   /** \brief Command for interactive mode in \ref o2scl::cli

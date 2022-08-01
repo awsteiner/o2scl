@@ -300,8 +300,9 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-                                   std::vector<size_t> >(dists,points+n_extra,index);
-
+                                   std::vector<size_t> >
+        (dists,points+n_extra,index);
+      
       if (n_extra>0) {
         // Remove degenerate points to ensure accurate interpolation
         bool found=true;
@@ -362,7 +363,8 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-                                   std::vector<size_t> >(dists,points+1+n_extra,index);
+                                   std::vector<size_t> >
+        (dists,points+1+n_extra,index);
 
       if (n_extra>0) {
         // Remove degenerate points to ensure accurate interpolation
@@ -451,7 +453,8 @@ namespace o2scl {
       // Find closest points
       std::vector<size_t> index;
       o2scl::vector_smallest_index<std::vector<double>,double,
-                                   std::vector<size_t> >(dists,points,index);
+                                   std::vector<size_t> >
+        (dists,points,index);
       if (verbose>0) {
         for(size_t i=0;i<points;i++) {
           std::cout << "interpm_idw: closest point: ";
@@ -737,7 +740,8 @@ namespace o2scl {
       size_t max_smallest=(nd_in+2)*2;
       if (max_smallest>np) max_smallest=np;
       if (max_smallest<nd_in+1) {
-        O2SCL_ERR("Couldn't find enough nearby points.",o2scl::exc_einval);
+        O2SCL_ERR("Couldn't find enough nearby points.",
+                  o2scl::exc_einval);
       }
 
       if (verbose>0) {
@@ -745,7 +749,8 @@ namespace o2scl {
       }
       
       o2scl::vector_smallest_index<std::vector<double>,double,
-                                   std::vector<size_t> >(dists,max_smallest,index);
+                                   std::vector<size_t> >
+        (dists,max_smallest,index);
 
       if (verbose>0) {
         for(size_t i=0;i<index.size();i++) {
@@ -879,8 +884,6 @@ namespace o2scl {
     }
     //@}
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /// The number of points
@@ -926,8 +929,6 @@ namespace o2scl {
       return sqrt(ret);
     }
     //@}
-    
-#endif
     
   };
     

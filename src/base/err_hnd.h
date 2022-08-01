@@ -239,8 +239,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// Convert an error number to a string
     std::string errno_to_string(int errnox);
 
@@ -260,8 +258,6 @@ namespace o2scl {
     char a_reason[rsize];
     /// A full string with explanation and line and file info
     char fullstr[fsize];
-
-#endif
 
   };
 

@@ -217,8 +217,6 @@ namespace o2scl {
     
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// \name Internal data set in the constructor [protected]
     //@{
     /// The present data directory
@@ -234,8 +232,6 @@ namespace o2scl {
     find_constants<> *fcp;
     //@}
 
-#endif
-  
   };
 
   /** \brief The global library settings object

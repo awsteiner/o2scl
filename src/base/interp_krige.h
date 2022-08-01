@@ -61,19 +61,6 @@ namespace o2scl {
       of scope before any of the interpolation functions are called.
 
       \note This class is experimental.
-
-      \verbatim embed:rst
-
-      .. todo:
-
-         In class interp_krige:
-
-         - The cross validation method may need to be fixed to match,
-           e.g. R&W.
-         - Fix integrals.
-         
-      \endverbatim
-
   */
   template<class vec_t, class vec2_t=vec_t,
            class covar_func_t=std::function<double(double,double)>,
@@ -131,21 +118,21 @@ namespace o2scl {
 
     /// The matrix inversion object
     mat_inv_t mi;
-    
-    /** \brief Initialize interpolation routine, specifying derivatives
-	and integrals, internal version
+
+    /** \brief Initialize interpolation routine, internal version
+        with pointers for derivative and integral functions
     */
     virtual int set_covar_di_noise_internal
       (size_t n_dim, const vec_t &x, const vec_t &y,
        covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
        covar_integ_t *finteg, double noise_var, bool rescale=false,
        bool err_on_fail=true) {
-
+      
       f=&fcovar;
       fd=fderiv;
       fd2=fderiv2;
       fi=finteg;
-
+      
       if (n_dim<this->min_size) {
 	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+
                    ", is less than "+szttos(this->min_size)+
@@ -208,8 +195,8 @@ namespace o2scl {
       this->sz=n_dim;
       
       return 0;
-    }
-    
+   }
+   
   public:
     
     interp_krige() {
@@ -227,7 +214,7 @@ namespace o2scl {
 
         This must be set to true in order to use \ref sigma() or
         \ref gen_dist() .
-     */
+    */
     bool keep_matrix;
     
     /// Initialize interpolation routine
@@ -237,16 +224,8 @@ namespace o2scl {
       return;
     }
     
-    /// Initialize interpolation routine
-    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
-				covar_func_t &fcovar, double noise_var,
-                                bool rescale=false, bool err_on_fail=true) {
-      return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
-                                         rescale,err_on_fail);
-    }
-
-    /** \brief Initialize interpolation routine, specifying derivatives
-	and integrals [not yet implemented]
+    /** \brief Initialize interpolation routine with covariance
+        function, derivatives and integrals, and noise term
     */
     virtual int set_covar_di_noise
       (size_t n_dim, const vec_t &x,
@@ -254,17 +233,40 @@ namespace o2scl {
        covar_func_t &fderiv, covar_func_t &fderiv2,
        covar_integ_t &finteg, double noise_var, bool rescale=false,
        bool err_on_fail=true) {
-      
       return set_covar_di_noise_internal(n_dim,x,y,fcovar,
                                          &fderiv,&fderiv2,&finteg,noise_var,
                                          rescale,err_on_fail);
     }
     
-    /// Initialize interpolation routine
+    /** \brief Initialize interpolation routine with covariance
+        function and noise term, but without derivatives and integrals
+    */
+    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
+				covar_func_t &fcovar, double noise_var,
+                                bool rescale=false, bool err_on_fail=true) {
+      return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
+                                         rescale,err_on_fail);
+    }
+    
+    /** \brief Initialize interpolation routine with covariance
+        function, with automatic noise term and without derivatives and
+        integrals
+    */
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
 			  covar_func_t &fcovar, bool rescale=false,
                           bool err_on_fail=true) {
-      return set_covar_noise(n_dim,x,y,fcovar,0.0,rescale,err_on_fail);
+      
+      // Use the mean absolute value to determine noise AWS, 7/30/22,
+      // I don't know why, but using mean_abs/1.0e8 makes the
+      // testing code fail
+      double mean_abs=0.0;
+      for(size_t j=0;j<n_dim;j++) {
+        mean_abs+=fabs(y[j]);
+      }
+      mean_abs/=n_dim;
+      
+      return set_covar_noise(n_dim,x,y,fcovar,0.0,
+                             rescale,err_on_fail);
     }
 
     /// Give the value of the function \f$ y(x=x_0) \f$ .
@@ -354,7 +356,7 @@ namespace o2scl {
       
       if (!keep_matrix) {
         O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
-                  "interp_krige::sigma().",o2scl::exc_einval);
+                   "interp_krige::sigma().",o2scl::exc_einval);
       }
       
       double sigma;
@@ -379,7 +381,7 @@ namespace o2scl {
         at a specified point
 
         This function implements Eq. 2.19 of R&W
-     */
+    */
     prob_dens_gaussian gen_dist(double x0) const {
 
       if (!keep_matrix) {
@@ -419,14 +421,14 @@ namespace o2scl {
         samples that distribution. If one wants to perform several
         samples at the same point, it is much more efficient to
         use gen_dist() instead.
-     */
+    */
     double sample(double x0) const {
       return gen_dist(x0)();
     }
     
     /** \brief Generate a probability distribution for the interpolation
         at a vector of points
-     */
+    */
     template<class vec3_t, class vec4_t>
       void sample_vec(vec3_t &x, vec4_t &y) const {
       y.resize(x.size());
@@ -439,8 +441,6 @@ namespace o2scl {
     /// Return the type, \c "interp_krige".
     virtual const char *type() const { return "interp_krige"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     interp_krige<vec_t,vec2_t,covar_func_t,
@@ -452,8 +452,6 @@ namespace o2scl {
       (const interp_krige<vec_t,vec2_t,covar_func_t,
        covar_integ_t,mat_t,mat_inv_t>&);
     
-#endif
-
   };
 
 
@@ -517,14 +515,14 @@ namespace o2scl {
 
     /** \brief The derivative of the covariance function with
         respect to the first argument
-     */
+    */
     double deriv_covar(double x1, double x2) {
       return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
     }
     
     /** \brief The second derivative of the covariance function with
         respect to the first argument
-     */
+    */
     double deriv2_covar(double x1, double x2) {
       return ((x1-x2)*(x1-x2)-len*len)*
         exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;
@@ -555,16 +553,19 @@ namespace o2scl {
         \mathrm{erf}\left( \frac{b+x_i}{L \sqrt{2}} \right) - 
         \mathrm{erf}\left( \frac{a+x_i}{L \sqrt{2}} \right) \right]
         \f]
-     */
+    */
     double integ_covar(double x, double a, double b) {
-      return len*sqrt(o2scl_const::pi/2.0)*
-        (gsl_sf_erf((b+x)/len/sqrt(2.0))-
-         gsl_sf_erf((a+x)/len/sqrt(2.0)));
+      double alpha=1.0/(len*len*2.0);
+      return sqrt(o2scl_const::pi/alpha)/2.0*
+        (gsl_sf_erf(sqrt(alpha)*(b-x))-
+         gsl_sf_erf(sqrt(alpha)*(a-x)));
     }
 
     /// Pointer to the user-specified minimizer
     min_base<> *mp;
-  
+
+  public:
+    
     /** \brief Function to optimize the covariance parameters
      */
     double qual_fun(double x, double noise_var, int &success) {
@@ -582,63 +583,68 @@ namespace o2scl {
           // Leave one observation out
           ubvector x2(size-1);
           ubvector y2(size-1);
+          o2scl::vector_copy_jackknife((*this->px),k,x2);
           if (this->rescaled) {
-            o2scl::vector_copy_jackknife((*this->px),k,x2);
             o2scl::vector_copy_jackknife(this->y_r,k,y2);
           } else {
-            o2scl::vector_copy_jackknife((*this->px),k,x2);
             o2scl::vector_copy_jackknife((*this->py),k,y2);
           }
 	
-          // Construct the KXX matrix
-          mat_t KXX(size-1,size-1);
+          // Construct the inverse of the KXX matrix. Note
+          // that we don't use the inv_KXX data member
+          // because of the size mismatch
+          mat_t inv_KXX2(size-1,size-1);
           for(size_t irow=0;irow<size-1;irow++) {
             for(size_t icol=0;icol<size-1;icol++) {
               if (irow>icol) {
-                KXX(irow,icol)=KXX(icol,irow);
+                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
               } else {
-                KXX(irow,icol)=exp(-pow((x2[irow]-x2[icol])/len,2.0)/2.0);
-                if (irow==icol) KXX(irow,icol)+=noise_var;
+                inv_KXX2(irow,icol)=covar(x2[irow],x2[icol]);
+                if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
               }
             }
           }
-          
+
           // Construct the inverse of KXX
-          this->inv_KXX=KXX;
-          this->mi.invert_inplace(size-1,this->inv_KXX);
+          this->mi.invert_inplace(size-1,inv_KXX2);
 	  
           // Inverse covariance matrix times function vector
-          this->Kinvf.resize(size-1);
+          
+          ubvector Kinvf2(size-1);
           o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                              o2scl_cblas::o2cblas_NoTrans,
-                             size-1,size-1,1.0,this->inv_KXX,y2,0.0,
-                             this->Kinvf);
+                             size-1,size-1,1.0,inv_KXX2,y2,0.0,
+                             Kinvf2);
 	  
-          double ypred=0.0;
-          double kx0x0;
-          ubvector kxx0(size-1), prod(size-1);
+          // The actual value
           double yact;
           if (this->rescaled) {
             yact=this->y_r[k];
           } else {
             yact=(*this->py)[k];
           }
+
+          // Compute the predicted value
+          double ypred=0.0;
+          ubvector kxx0(size-1);
           if (this->rescaled) {
-            kx0x0=covar((*this->px)[k],(*this->px)[k]);
             for(size_t i=0;i<size-1;i++) {
               kxx0[i]=covar((*this->px)[k],x2[i]);
-              ypred+=kxx0[i]*this->Kinvf[i];
+              ypred+=kxx0[i]*Kinvf2[i];
+              if (false && k==0) {
+                std::cout << "  " << Kinvf2[i] << " " << x2[i] << " "
+                          << kxx0[i] << " " << ypred
+                          << std::endl;
+              }
             }
           } else {
-            kx0x0=covar((*this->px)[k],(*this->px)[k]);
             for(size_t i=0;i<size-1;i++) {
               kxx0[i]=covar((*this->px)[k],x2[i]);
-              ypred+=kxx0[i]*this->Kinvf[i];
+              ypred+=kxx0[i]*Kinvf2[i];
             }
           }
           
-          boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
-          if (false) {
+          if (false && k==0) {
             std::cout.setf(std::ios::showpos);
             std::cout << "k,x,yact,ypred: " << k << " "
                       << (*this->px)[k] << " "
@@ -649,93 +655,165 @@ namespace o2scl {
           qual+=pow(yact-ypred,2.0);
 	
         }
-        if (verbose>1) {
+        if (verbose>0) {
           std::cout << "len,qual (loo_cv): " << len << " "
                     << qual << std::endl;
+          //std::cout << "--" << std::endl;
         }
 
       } else if (mode==mode_loo_cv_new) {
-      
-        qual=0.0;
-        for(size_t k=0;k<size;k++) {
+
+        if (false) {
+          
+          // AWS, 7/30/22: This is the old version using the loo_cv
+          // method to compute mu and sigma and Eq 5.10 in R&W, I
+          // think it should work, but it doesn't quite work, however,
+          // using Eq. 5.12 to compute mu and sigma (below) seems to
+          // work well (and is more efficient), so I'm keeping that
+          
+          qual=0.0;
+          for(size_t k=0;k<size;k++) {
 	
-          // Leave one observation out
-          ubvector x2(size-1);
-          ubvector y2(size-1);
-          if (this->rescaled) {
+            // Leave one observation out
+            ubvector x2(size-1);
+            ubvector y2(size-1);
             o2scl::vector_copy_jackknife((*this->px),k,x2);
-            o2scl::vector_copy_jackknife(this->y_r,k,y2);
-          } else {
-            o2scl::vector_copy_jackknife((*this->px),k,x2);
-            o2scl::vector_copy_jackknife((*this->py),k,y2);
+            if (this->rescaled) {
+              o2scl::vector_copy_jackknife(this->y_r,k,y2);
+            } else {
+              o2scl::vector_copy_jackknife((*this->py),k,y2);
+            }
+	
+            // Construct the KXX matrix
+            mat_t inv_KXX2(size-1,size-1);
+            for(size_t irow=0;irow<size-1;irow++) {
+              for(size_t icol=0;icol<size-1;icol++) {
+                if (irow>icol) {
+                  inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
+                } else {
+                  inv_KXX2(irow,icol)=covar(x2[irow],x2[icol]);
+                  if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
+                }
+              }
+            }
+          
+            // Construct the inverse of KXX
+            this->mi.invert_inplace(size-1,inv_KXX2);
+	  
+            // Inverse covariance matrix times function vector
+            ubvector Kinvf2(size-1);
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size-1,size-1,1.0,inv_KXX2,y2,0.0,
+                               Kinvf2);
+	  
+            double yact;
+            if (this->rescaled) {
+              yact=this->y_r[k];
+            } else {
+              yact=(*this->py)[k];
+            }
+          
+            double ypred=0.0;
+            ubvector kxx0(size-1);
+            if (this->rescaled) {
+              for(size_t i=0;i<size-1;i++) {
+                kxx0[i]=covar((*this->px)[k],x2[i]);
+                ypred+=kxx0[i]*Kinvf2[i];
+              }
+            } else {
+              for(size_t i=0;i<size-1;i++) {
+                kxx0[i]=covar((*this->px)[k],x2[i]);
+                ypred+=kxx0[i]*Kinvf2[i];
+              }
+            }
+          
+            double kx0x0=covar((*this->px)[k],(*this->px)[k]);
+            ubvector prod(size-1);
+          
+            boost::numeric::ublas::axpy_prod(inv_KXX2,kxx0,prod,true);
+            double sigma=kx0x0-
+              boost::numeric::ublas::inner_prod(kxx0,prod);
+
+            if (this->rescaled) {
+              sigma*=this->std_y;
+            }
+
+            if (false && k==0) {
+              std::cout.setf(std::ios::showpos);
+              std::cout << "k,x,yact,ypred,sigma: " << k << " "
+                        << (*this->px)[k] << " "
+                        << yact << " " << ypred << " "
+                        << sigma << std::endl;
+              std::cout.unsetf(std::ios::showpos);
+            }
+
+            // We maximize the predictive log probability, Eq 5.10
+            // in R&W
+            qual+=pow(yact-ypred,2.0)/sigma/sigma/2.0;
+            qual+=0.5*log(sigma*sigma);
+	
           }
-	
+
+        }
+
+        if (true) {
+          
           // Construct the KXX matrix
-          mat_t KXX(size-1,size-1);
-          for(size_t irow=0;irow<size-1;irow++) {
-            for(size_t icol=0;icol<size-1;icol++) {
+          mat_t inv_KXX2(size,size);
+          for(size_t irow=0;irow<size;irow++) {
+            for(size_t icol=0;icol<size;icol++) {
               if (irow>icol) {
-                KXX(irow,icol)=KXX(icol,irow);
+                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
               } else {
-                KXX(irow,icol)=exp(-pow((x2[irow]-x2[icol])/len,2.0)/2.0);
-                if (irow==icol) KXX(irow,icol)+=noise_var;
+                inv_KXX2(irow,icol)=covar((*this->px)[irow],
+                                          (*this->px)[icol]);
+                if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
               }
             }
           }
           
           // Construct the inverse of KXX
-          this->inv_KXX=KXX;
-          this->mi.invert_inplace(size-1,this->inv_KXX);
+          this->mi.invert_inplace(size-1,inv_KXX2);
 	  
           // Inverse covariance matrix times function vector
-          this->Kinvf.resize(size-1);
-          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                             o2scl_cblas::o2cblas_NoTrans,
-                             size-1,size-1,1.0,this->inv_KXX,y2,0.0,
-                             this->Kinvf);
-	  
-          double ypred=0.0;
-          double kx0x0;
-          ubvector kxx0(size-1), prod(size-1);
-          double yact;
+          ubvector Kinvf2(size);
           if (this->rescaled) {
-            yact=this->y_r[k];
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size,size,1.0,inv_KXX2,this->y_r,0.0,
+                               Kinvf2);
           } else {
-            yact=(*this->py)[k];
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size,size,1.0,inv_KXX2,*(this->py),0.0,
+                               Kinvf2);
           }
-          if (this->rescaled) {
-            kx0x0=covar((*this->px)[k],(*this->px)[k]);
-            for(size_t i=0;i<size-1;i++) {
-              kxx0[i]=covar((*this->px)[k],x2[i]);
-              ypred+=kxx0[i]*this->Kinvf[i];
-            }
-          } else {
-            kx0x0=covar((*this->px)[k],(*this->px)[k]);
-            for(size_t i=0;i<size-1;i++) {
-              kxx0[i]=covar((*this->px)[k],x2[i]);
-              ypred+=kxx0[i]*this->Kinvf[i];
-            }
-          }
-          
-          boost::numeric::ublas::axpy_prod(this->inv_KXX,kxx0,prod,true);
-          double sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
-          sigma=sqrt(this->inv_KXX(k,k));
-          std::cout.setf(std::ios::showpos);
-          std::cout << "k,x,yact,ypred,sigma: " << k << " "
-                    << (*this->px)[k] << " "
-                    << yact << " " << ypred << " "
-                    << sigma << std::endl;
-          std::cout.unsetf(std::ios::showpos);
-          
-          // We maximize the predictive log probability, Eq 5.10
-          // in R&W
-          qual+=pow(yact-ypred,2.0)/sigma/sigma/2.0;
-          qual+=0.5*log(sigma*sigma);
-	
-        }
 
+          qual=0.0;
+          for(size_t ii=0;ii<size;ii++) {
+            
+            double yact;
+            if (this->rescaled) {
+              yact=this->y_r[ii];
+            } else {
+              yact=(*this->py)[ii];
+            }
+
+            // Compute sigma and ypred from Eq. 5.12
+            double sigma2=1.0/inv_KXX2(ii,ii);
+            double ypred=yact-Kinvf2[ii]*sigma2;
+
+            // Then use Eq. 5.10
+            qual+=pow(yact-ypred,2.0)/sigma2/2.0;
+            qual+=0.5*log(sigma2);
+          }
+	  
+        }
+        
         if (verbose>0) {
-          std::cout << "qual (loo_cv_new): " << qual << std::endl;
+          std::cout << "len,qual (loo_cv_new): " << len << " "
+                    << qual << std::endl;
         }
       
       } else if (mode==mode_max_lml) {
@@ -747,8 +825,8 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=exp(-pow(((*this->px)[irow]-
-                                       (*this->px)[icol])/len,2.0)/2.0);
+              KXX(irow,icol)=covar((*this->px)[irow],
+                                   (*this->px)[icol]);
               if (irow==icol) KXX(irow,icol)+=noise_var;
             }
           }
@@ -763,8 +841,10 @@ namespace o2scl {
       
         // Inverse covariance matrix times function vector
         this->Kinvf.resize(size);
-        if (this->rescaled) {
 
+        qual=0.0;
+        
+        if (this->rescaled) {
           o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                              o2scl_cblas::o2cblas_NoTrans,
                              size,size,1.0,this->inv_KXX,this->y_r,0.0,
@@ -790,24 +870,31 @@ namespace o2scl {
             qual+=0.5*(*this->py)[i]*this->Kinvf[i];
           }
           qual+=0.5*lndet;
+
         }
+
+        // Sometimes the calculation fails, and this helps avoid
+        // those regions
+        if (qual==-std::numeric_limits<double>::infinity()) {
+          qual=std::numeric_limits<double>::infinity();
+        }
+        
         if (verbose>0) {
-          std::cout << "qual (lml): " << qual << std::endl;
+          std::cout << "len,qual (lml): " << len << " " << qual << std::endl;
         }
       }
 
       return qual;
     }
   
-  public:
-
     interp_krige_optim() {
       nlen=20;
       full_min=false;
       mp=&def_min;
       def_min.ntrial*=10;
       verbose=0;
-      mode=mode_max_lml;
+      //mode=mode_max_lml;
+      mode=mode_loo_cv;
     }
 
     /// \name Function to minimize and various option
@@ -824,7 +911,13 @@ namespace o2scl {
     
     /// Verbosity parameter
     int verbose;
-  
+
+    /** \brief Return the current length parameter
+     */
+    double get_length() {
+      return len;
+    }
+    
     /** \brief Number of length scale points to try when full minimizer 
         is not used (default 20)
     */
@@ -972,18 +1065,19 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "Optimum length: " << len << std::endl;
+        std::cout << "interp_krige_optim::set_noise(): optimum length: "
+                  << len << std::endl;
       }
       
       ff=std::bind(std::mem_fn<double(double,double)>
                    (&interp_krige_optim<vec_t,vec2_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
       ffd=std::bind(std::mem_fn<double(double,double)>
-                   (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
-                   std::placeholders::_1,std::placeholders::_2);
+                    (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
+                    std::placeholders::_1,std::placeholders::_2);
       ffd2=std::bind(std::mem_fn<double(double,double)>
-                   (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
-                   std::placeholders::_1,std::placeholders::_2);
+                     (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
+                     std::placeholders::_1,std::placeholders::_2);
       ffi=std::bind(std::mem_fn<double(double,double,double)>
                     (&interp_krige_optim<vec_t,vec2_t>::integ_covar),this,
                     std::placeholders::_1,std::placeholders::_2,

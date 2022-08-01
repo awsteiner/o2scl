@@ -70,7 +70,7 @@ namespace o2scl_linalg {
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         modifying the original matrix A 
     */
-    virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
+    virtual int invert_det(size_t n, mat_t &A, mat_t &A_inv) {
       return invert(n,A,A_inv);
     }
     

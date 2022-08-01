@@ -524,8 +524,6 @@ namespace o2scl {
   */
   template<class fp_t=double> class gen_test_number {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// Count number of numbers generated so far
@@ -533,8 +531,6 @@ namespace o2scl {
 
     /// The radix for the nuber generation (default 2.0)
     fp_t radix;
-
-#endif
 
   public:
 

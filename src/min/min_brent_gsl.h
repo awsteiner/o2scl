@@ -170,6 +170,8 @@ namespace o2scl {
 	O2SCL_ERR(tmp.c_str(),exc_einval);
       }
       if (fmin>=fl || fmin>=fu) {
+        std::cout << "fmin,fl,fu: " << fmin << " " << fl << " " << fu
+                  << std::endl;
 	std::string tmp=((std::string)"Endpoints don't enclose minimum ")+
 	"in min_brent_gsl::set_with_values().";
 	O2SCL_ERR(tmp.c_str(),exc_einval);
@@ -225,7 +227,7 @@ namespace o2scl {
       double p=0, q=0, r=0;
     
       const double midpoint=0.5*(x_left+x_right);
-    
+
       if (fabs (e) > tolerance) {
 	/* fit parabola */
 	  
@@ -262,7 +264,6 @@ namespace o2scl {
 	d=golden*e;
 
       }
-    
     
       if (fabs (d) >= tolerance) {
 	u=z+d;

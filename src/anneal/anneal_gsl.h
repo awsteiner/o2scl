@@ -316,8 +316,6 @@ namespace o2scl {
     return *this;
   }
       
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
       
   /// \name Storage for points in parameter space
@@ -384,8 +382,6 @@ namespace o2scl {
     return 0;
   }
   
-#endif
-
   };
 
 }

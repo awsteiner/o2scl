@@ -166,10 +166,11 @@ namespace o2scl {
       fx3=func(x3);
 
       if (verbose>0) {
-	std::cout << "Function min::bracket(), Iteration: " 
+	std::cout << "min::bracket(): iteration: " 
 		  << i << std::endl;
-	std::cout << " " << x << " " << x3 << " " << x2 << std::endl;
-	std::cout << " " << fx << " " << fx3 << " " << fx2 << std::endl;
+	std::cout << " x,x3,x2: " << x << " " << x3 << " " << x2 << std::endl;
+	std::cout << " fx,fx3,fx2: "
+                  << fx << " " << fx3 << " " << fx2 << std::endl;
 	if (verbose>1) {
 	  char ch;
 	  std::cout << "Press a key and type enter to continue. ";

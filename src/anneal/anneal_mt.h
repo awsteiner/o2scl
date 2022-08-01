@@ -337,8 +337,6 @@ namespace o2scl {
     return 0;
   }
 
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
 
   /// The function wrapper executed by thread with index \c ip
@@ -398,8 +396,6 @@ namespace o2scl {
     return 0;
   }
   
-#endif
-
   };
 
 }

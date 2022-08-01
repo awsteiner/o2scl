@@ -129,8 +129,6 @@ namespace o2scl {
       std::string name;
     } der_unit;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// \name Unit data and associated objects
@@ -592,8 +590,6 @@ namespace o2scl {
     }
     //@}
   
-#endif
-
   public:
 
     /// Create a unit-conversion object

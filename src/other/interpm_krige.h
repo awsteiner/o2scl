@@ -63,7 +63,7 @@ namespace o2scl {
       call to set_data() is the same as that passed to the
       eval() functions. If this is not the case, the
       behavior of this class is undefined.
-
+      
       \note Experimental.
   */
   template<class vec_t,
