@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
   bimodal_vec.push_back(bimodal_func);
   vector<fill_funct> fill_vec;
   fill_vec.push_back(fill_func);
+  vector<std::array<double,1> > data_vec(2);
 
   cout << "----------------------------------------------------------"
        << endl;
@@ -132,7 +133,8 @@ int main(int argc, char *argv[]) {
   mct.table_prealloc=mct.max_iters/3;
   
   // Perform MCMC
-  mct.mcmc_fill(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec);
+  mct.mcmc_fill(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec,
+                data_vec);
 
   // Output acceptance and rejection rate
   cout << "n_accept, n_reject: " << mct.n_accept[0] << " "
