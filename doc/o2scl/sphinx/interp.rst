@@ -47,6 +47,12 @@ These interpolation classes will extrapolate to regions outside
 those defined by the user-specified vectors and will not warn you
 when they do this (this is not the same behavior as in GSL).
 
+One-dimensional Gaussian process interpolation (i.e. Kriging) is also
+provided in :ref:`interp_krige <interp_krige>` for a generic
+user-specified covariance function and :ref:`interp_krige_optim
+<interp_krige_optim>` for a simple covariance function with a single
+length parameter.
+
 The different interpolation types are defined in ``src/base/interp.h``
 
 .. doxygenenumvalue:: itp_linear
@@ -82,8 +88,6 @@ Two specializations for C-style arrays of double-precision numbers are
 provided in :ref:`interp_array <interp_array>` and
 :ref:`interp_array_vec <interp_array_vec>`.
 
-An experimental class for one-dimensional kriging is also provided in
-:ref:`interp_krige <interp_krige>`.
     
 Lookup and binary search
 ------------------------
