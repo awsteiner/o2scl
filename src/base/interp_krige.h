@@ -38,7 +38,6 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 
 #include <o2scl/interp.h>
-#include <o2scl/columnify.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/min_brent_gsl.h>

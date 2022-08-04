@@ -38,6 +38,36 @@ using namespace o2scl_acol;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
+                                bool itive_com) {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Not enough arguments for to-gaussian." << endl;
+    }
+
+    int n_dim=sv.size()-1;
+    vector<string> col_names;
+    cout << "X columns: " << endl;
+    for(size_t i=1;i<sv.size();i++) {
+      col_names.push_back(sv[i]);
+      cout << i-1 << ": " << sv[i] << endl;
+    }
+
+    matrix_view_table mvt(table_obj,col_names);
+    
+    pdmg_obj.set(n_dim,table_obj.get_nlines(),mvt);
+    
+    command_del(type);
+    clear_obj();
+    command_add("prob_dens_mdim_gaussian");
+    type="prob_dens_mdim_gaussian";
+    
+  }
+    
+  return 0;
+}
+
 int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="double[]") {

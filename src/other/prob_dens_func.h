@@ -705,7 +705,7 @@ namespace o2scl {
 
   /** \brief A multi-dimensional probability density function
       
-      This class is experimental.
+      \note This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double> >
   class prob_dens_mdim {
@@ -794,9 +794,9 @@ namespace o2scl {
 
     /// The log of the normalized density 
     virtual double log_pdf(const vec_t &x) const {
-      double ret=1.0;
-      for(size_t i=0;i<list.size();i++) ret*=list[i].pdf(x[i]);
-      return log(ret);
+      double ret=0.0;
+      for(size_t i=0;i<list.size();i++) ret+=list[i].log_pdf(x[i]);
+      return ret;
     }
     
     /// Sample the distribution
@@ -876,7 +876,7 @@ namespace o2scl {
     /// The y standard deviation
     double sig_y;
 
-    /// The covariance
+    /// The covariance (always between -1 and 1)
     double rho;
   
   public:
@@ -926,7 +926,21 @@ namespace o2scl {
       rho=covar;
       return;
     }
-  
+
+    /** \brief Get the properties of the distribution
+     */
+    void get(double &x_cent, double &y_cent, double &x_std, double &y_std,
+             double &covar) {
+      
+      x_cent=x0;
+      y_cent=y0;
+      x_std=sig_x;
+      y_std=sig_y;
+      covar=rho;
+      
+      return;
+    }
+    
     /** \brief Compute the normalized probability density
      */
     virtual double pdf(const vec_t &v) const {
@@ -1000,14 +1014,12 @@ namespace o2scl {
       matrices the inversion can be a waste of computation if the pdf
       is not needed.
 
-      A separate class for the two-dimensional case is \ref
+      A separate class for the two-dimensional case is in \ref
       prob_dens_mdim_biv_gaussian .
       
-      \note Const functions are not thread-safe because
-      mutable storage is used.
-
       \future Create alternate versions based on other
-      matrix decompositions?
+      matrix decompositions, including support for Eigen and
+      Armadillo, maybe using a invert_det object?
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=boost::numeric::ublas::matrix<double> >
@@ -1029,12 +1041,6 @@ namespace o2scl {
 
     /// Number of dimensions
     size_t ndim;
-
-    /// Temporary storage 1
-    mutable vec_t q;
-
-    /// Temporary storage 2
-    mutable vec_t vtmp;
 
   public:
   
@@ -1086,25 +1092,30 @@ namespace o2scl {
       chol=pdmg_loc.chol;
       covar_inv=pdmg_loc.covar_inv;
       norm=pdmg_loc.norm;
-      q.resize(ndim);
-      vtmp.resize(ndim);
     }
   
+    /** \brief Create a distribution from the covariance matrix
+     */
+    prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+      set(p_ndim,p_peak,covar);
+    }
+
     /// Copy constructor with operator=
-    prob_dens_mdim_gaussian &operator=(const prob_dens_mdim_gaussian &pdmg_loc) {
+    prob_dens_mdim_gaussian &operator=
+    (const prob_dens_mdim_gaussian &pdmg_loc) {
       // Check for self-assignment
       if (this!=&pdmg_loc) {
         ndim=pdmg_loc.ndim;
         chol=pdmg_loc.chol;
         covar_inv=pdmg_loc.covar_inv;
         norm=pdmg_loc.norm;
-        q.resize(ndim);
-        vtmp.resize(ndim);
       }
       return *this;
     }
-  
-    /** \brief Create a distribution from a set of samples from a 
+
+    /// \name Set functions
+    //@{
+    /** \brief Create a distribution from a set of weighted samples from a 
         multidimensional Gaussian, returning the peak values and
         covariance matrix
       
@@ -1113,8 +1124,8 @@ namespace o2scl {
     */
     template<class mat2_t, class vec2_t,
              class mat2_col_t=const_matrix_column_gen<mat2_t> >
-    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-            const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
+    int set_wgts(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+                 const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
     
       // Set peak with average and diagonal elements in covariance
       // matrix with variance
@@ -1125,6 +1136,7 @@ namespace o2scl {
         covar_arg(i,i)=o2scl::wvector_stddev<mat2_col_t>(n_pts,col,vals);
         covar_arg(i,i)*=covar_arg(i,i);
       }
+      
       // Setup off-diagonal covariance matrix
       for(size_t i=0;i<p_mdim;i++) {
         mat2_col_t col_i(pts,i);
@@ -1138,7 +1150,65 @@ namespace o2scl {
       set(p_mdim,peak_arg,covar_arg);
       return 0;
     }
+
+    /** \brief Create a distribution from a set of samples from a 
+        multidimensional Gaussian, returning the peak values and
+        covariance matrix
+      
+        The matrix \c pts should have a size of \c n_pts in the first
+        index and \c p_mdim in the second index
+    */
+    template<class mat2_t, 
+             class mat2_col_t=const_matrix_column_gen<mat2_t> >
+    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+            vec_t &peak_arg, mat_t &covar_arg) {
+    
+      // Set peak with average and diagonal elements in covariance
+      // matrix with variance
+      for(size_t i=0;i<p_mdim;i++) {
+        const mat2_col_t col(pts,i);
+        peak_arg[i]=o2scl::vector_mean<mat2_col_t>(n_pts,col);
+        // Square standard deviation
+        covar_arg(i,i)=o2scl::vector_stddev<mat2_col_t>(n_pts,col);
+        covar_arg(i,i)*=covar_arg(i,i);
+      }
+      
+      // Setup off-diagonal covariance matrix
+      for(size_t i=0;i<p_mdim;i++) {
+        mat2_col_t col_i(pts,i);
+        for(size_t j=i+1;j<p_mdim;j++) {
+          const mat2_col_t col_j(pts,j);
+          double cov=o2scl::vector_covariance(n_pts,col_i,col_j);
+          covar_arg(i,j)=cov;
+          covar_arg(j,i)=cov;
+        }
+      }
+      
+      set(p_mdim,peak_arg,covar_arg);
+      
+      return 0;
+    }
   
+    /** \brief Create a distribution from a set of weighted samples from a 
+        multidimensional Gaussian
+      
+        The matrix \c pts should have a size of \c n_pts in the first
+        index and \c p_mdim in the second index
+    */
+    template<class mat2_t, class vec2_t,
+             class mat2_col_t=const_matrix_column_gen<mat2_t> >
+    int set_wgts(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+                 const vec2_t &vals) {
+      
+      vec_t peak_arg(p_mdim);
+      mat_t covar_arg(p_mdim,p_mdim);
+
+      set_wgts<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,
+                                         peak_arg,covar_arg);
+
+      return 0;
+    }
+    
     /** \brief Create a distribution from a set of samples from a 
         multidimensional Gaussian
       
@@ -1149,7 +1219,7 @@ namespace o2scl {
              class mat2_col_t=const_matrix_column_gen<mat2_t> >
     int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
             const vec2_t &vals) {
-    
+      
       vec_t peak_arg(p_mdim);
       mat_t covar_arg(p_mdim,p_mdim);
 
@@ -1157,12 +1227,7 @@ namespace o2scl {
 
       return 0;
     }
-    /** \brief Create a distribution from the covariance matrix
-     */
-    prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
-      set(p_ndim,p_peak,covar);
-    }
-
+    
     /** \brief Set the peak and covariance matrix for the distribution
 
         \note This function is called in constructors and thus 
@@ -1177,8 +1242,6 @@ namespace o2scl {
       norm=1.0;
       peak.resize(ndim);
       for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
-      q.resize(ndim);
-      vtmp.resize(ndim);
 
       // Perform the Cholesky decomposition of the covariance matrix
       chol=covar;
@@ -1209,7 +1272,30 @@ namespace o2scl {
                    "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
       }
     }
-  
+
+    /** \brief Set the probability distribution from a 
+        bivariate Gaussian
+     */
+    int set(prob_dens_mdim_biv_gaussian<vec_t> &pdmbg) {
+
+      double x_cent, y_cent, x_std, y_std, covar;
+      pdmbg.get(x_cent,y_cent,x_std,y_std,covar);
+      
+      vec_t peak(2);
+      peak[0]=x_cent;
+      peak[1]=y_cent;
+
+      mat_t m_covar(2,2);
+      m_covar(0,0)=x_std*x_std;
+      m_covar(0,1)=x_std*y_std*m_covar;
+      m_covar(1,0)=m_covar(0,1);
+      m_covar(1,1)=y_std*y_std;
+
+      set(2,peak,m_covar);
+      
+      return 0;
+    }
+    
     /** \brief Alternate set function for use when covariance matrix
         has already been decomposed and inverted
     */
@@ -1220,15 +1306,12 @@ namespace o2scl {
       chol=p_chol;
       covar_inv=p_covar_inv;
       norm=p_norm;
-      q.resize(ndim);
-      vtmp.resize(ndim);
       return;
     }
 
     /** \brief Given a data set and a covariance function, construct
-        probability distribution based on a Gaussian process which
-        includes noise
-
+        probability distribution based on a Gaussian process
+        
         \note The type <tt>mat_col_t</tt> is a matrix column type
         for the internal object matrix type <tt>mat_t</tt>, and
         not associated with the data type <tt>vec_vec_t</tt>.
@@ -1239,11 +1322,14 @@ namespace o2scl {
         boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
         This matrix column type is needed for the LU 
         decomposition and inversion.
+
+        \future Clarify the relationship between this and
+        interpm_krige.
     */
     template<class vec_vec_t, class mat_col_t, class func_t> 
     void set_gproc(size_t n_dim, size_t n_init, 
                    vec_vec_t &x, vec_t &y, func_t &fcovar) {
-    
+      
       // Construct the four covariance matrices
     
       mat_t KXsX(n_dim,n_init);
@@ -1304,7 +1390,10 @@ namespace o2scl {
       this->set(n_dim,mean,covar);
     
     }
+    //@}
 
+    /// \name Generic methods for multidimensional prob. dists.
+    //@{
     /// The normalized density 
     virtual double pdf(const vec_t &x) const {
       if (ndim==0) {
@@ -1312,11 +1401,12 @@ namespace o2scl {
                    "pdf().",o2scl::exc_einval);
       }
       double ret=norm;
+      vec_t qq(ndim), vtmpx(ndim);
       for(size_t i=0;i<ndim;i++) {
-        q[i]=x[i]-peak[i];
+        qq[i]=x[i]-peak[i];
       }
-      vtmp=prod(covar_inv,q);
-      ret*=exp(-0.5*inner_prod(q,vtmp));
+      vtmpx=prod(covar_inv,qq);
+      ret*=exp(-0.5*inner_prod(qq,vtmpx));
       return ret;
     }
 
@@ -1327,9 +1417,10 @@ namespace o2scl {
                    "pdf().",o2scl::exc_einval);
       }
       double ret=log(norm);
-      for(size_t i=0;i<ndim;i++) q[i]=x[i]-peak[i];
-      vtmp=prod(covar_inv,q);
-      ret+=-0.5*inner_prod(q,vtmp);
+      vec_t qq(ndim), vtmpx(ndim);
+      for(size_t i=0;i<ndim;i++) qq[i]=x[i]-peak[i];
+      vtmpx=prod(covar_inv,qq);
+      ret+=-0.5*inner_prod(qq,vtmpx);
       return ret;
     }
 
@@ -1339,12 +1430,43 @@ namespace o2scl {
         O2SCL_ERR2("Distribution not set in prob_dens_mdim_gaussian::",
                    "operator().",o2scl::exc_einval);
       }
-      for(size_t i=0;i<ndim;i++) q[i]=pdg();
-      vtmp=prod(chol,q);
-      for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmp[i];
+      vec_t qq(ndim), vtmpx(ndim);
+      for(size_t i=0;i<ndim;i++) qq[i]=pdg();
+      vtmpx=prod(chol,qq);
+      for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmpx[i];
       return;
     }
-  
+    //@}
+
+    /** \brief Create a bivariate Gaussian probability distribution
+     */
+    prob_dens_mdim_biv_gaussian<vec_t> make_biv() {
+
+      if (ndim!=2) {
+        O2SCL_ERR2("Distribution not two-dimensional in ",
+                   "prob_dens_mdim_gaussian::make_biv().",
+                   o2scl::exc_einval);
+      }
+      
+      prob_dens_mdim_biv_gaussian<vec_t> pdmbg;
+      
+      double x_cent=peak[0], y_cent=peak[1];
+
+      // The determinant of the inverse covariance matrix
+      double det=covar_inv(0,0)*covar_inv(1,1)-
+        covar_inv(0,1)*covar_inv(1,0);
+
+      // Obtain the covariances by directly inverting the
+      // inverse covariance matrix
+      double x_std=covar_inv(1,1)/det, y_std=covar_inv(0,0)/det;
+      double covar=-covar_inv(1,0)/det/x_std/y_std;
+
+      // Set the bivariate Gaussian 
+      pdmbg.set(x_cent,y_cent,x_std,y_std,covar);
+      
+      return pdmbg;
+    }
+    
   };
 
   /** \brief Gaussian distribution bounded by a hypercube

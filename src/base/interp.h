@@ -59,6 +59,7 @@
 #include <o2scl/search_vec.h>
 #include <o2scl/tridiag.h>
 #include <o2scl/vector.h>
+#include <o2scl/invert.h>
 
 namespace o2scl {
   

@@ -95,6 +95,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("tensor<int>");
   type_list.push_back("tensor<size_t>");
   type_list.push_back("prob_dens_mdim_amr");
+  type_list.push_back("prob_dens_mdim_gaussian");
   type_list.push_back("vec_vec_string");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
   
@@ -119,7 +120,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
       "to-hist","to-hist-2d","to-table3d","wstats",
-      "ser-hist-t3d",
+      "ser-hist-t3d","to-gaussian",
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
@@ -151,6 +152,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"to-table3d"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_amr",itmp));
+  }
+  {
+    vector<std::string> itmp={"sample"};
+    type_comm_list.insert(std::make_pair("prob_dens_mdim_gaussian",itmp));
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
@@ -444,7 +449,7 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=42;
+    static const size_t narr=43;
     comm_option_s options_arr[narr]=
       {{0,"ac-len","",0,1,"","",
          new comm_option_mfptr<acol_manager>
@@ -569,6 +574,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-table3d","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_table3d),both},
+       {0,"to-gaussian","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_gaussian),both},
        {0,"wstats","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_wstats),both}
@@ -829,6 +837,18 @@ void acol_manager::command_add(std::string new_type) {
         {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
+      };
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="prob_dens_mdim_gaussian") {
+    
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]=
+      {
+        {0,"sample","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sample),both}
       };
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);

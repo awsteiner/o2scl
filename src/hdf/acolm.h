@@ -269,6 +269,7 @@ namespace o2scl_acol {
     o2scl::tensor_grid<> tensor_grid_obj;
 
     o2scl::prob_dens_mdim_amr<> pdma_obj;
+    o2scl::prob_dens_mdim_gaussian<> pdmg_obj;
     //@}
     
     /** \brief True if we should run interactive mode after parsing
@@ -824,6 +825,29 @@ namespace o2scl_acol {
     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Construct a multivariate Gaussian distribution
+
+        For objects of type table:
+        
+        Construct a multivariate Gaussian distribution
+
+        Arguments: <column 1> [column 2] ...
+
+        This creates an object of type <tt>prob_dens_mdim_gaussian</tt>
+        based on the columns of data in the table.
+     */
+    virtual int comm_to_gaussian(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Sample a distribution
+
+        For objects of type prob_dens_mdim_gaussian:
+
+        Arguments: <number of samples>
+
+        Sample the distribution to create a <tt>table</tt> object.
+     */
+    virtual int comm_sample(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Get entries along the main diagonal
 
         For objects of type tensor:
@@ -1218,7 +1242,8 @@ namespace o2scl_acol {
         <tt>double[]</tt>, <tt>string[]</tt>, <tt>size_t</tt>,
         <tt>size_t[]</tt>, <tt>uniform_grid<double></tt>,
         <tt>tensor_grid</tt>, <tt>tensor</tt>, <tt>tensor<int></tt>,
-        <tt>tensor<size_t></tt> or <tt>prob_dens_mdim_amr</tt>.
+        <tt>tensor<size_t></tt>, <tt>prob_dens_mdim_amr</tt>, 
+        or <tt>prob_dens_mdim_gaussian</tt>.
     */
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
