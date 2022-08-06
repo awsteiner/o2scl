@@ -54,9 +54,9 @@ int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
       cout << i-1 << ": " << sv[i] << endl;
     }
 
-    matrix_view_table mvt(table_obj,col_names);
+    matrix_view_table<> mvt(table_obj,col_names);
     
-    pdmg_obj.set(n_dim,table_obj.get_nlines(),mvt);
+    pdmg_obj.set<matrix_view_table<> >(n_dim,table_obj.get_nlines(),mvt);
     
     command_del(type);
     clear_obj();

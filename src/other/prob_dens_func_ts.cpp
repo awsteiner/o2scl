@@ -163,7 +163,7 @@ int main(void) {
   covar(1,1)=4.0;
   covar(0,1)=-1.0;
   covar(1,0)=-1.0;
-  pdmg.set(2,cent,covar);
+  pdmg.set_covar(2,cent,covar);
 
   // Test the gaussian PDF normalization
   {

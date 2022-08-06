@@ -43,21 +43,42 @@ double covar(const vec_t &x, const vec2_t &y, double len) {
   return ret;
 }
 
+template<class vec_t, class vec2_t>
+double covar_deriv(const vec_t &x, const vec2_t &y, size_t i, double len) {
+  double ret;
+  if (i==0) {
+    ret=-exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0)/
+      len/len*(x[0]-y[0]);
+  } else {
+    ret=-exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0)/
+      len/len*(x[1]-y[1]);
+  }
+  return ret;
+}
+
 double ft(double x, double y) {
   return 3.0-2.0*x*x+7.0*y;
+}
+
+double ftdx(double x, double y) {
+  return -4.0*x;
+}
+
+double ftdy(double x, double y) {
+  return 7.0;
 }
 
 void generate_table(table<> &tab) {
   tab.clear();
   
   tab.line_of_names("x y z");
-
-  for(size_t i=0;i<100;i++) {
+  
+  for(size_t i=0;i<1000;i++) {
     double x=3.0*sin(i*i);
     double y=5.0*cos(pow(i,4.0));
     vector<double> line={x,y,ft(x,y)};
     cout.setf(ios::showpos);
-    //cout << line[0] << " " << line[1] << " " << line[2] << endl;
+    cout << line[0] << " " << line[1] << " " << line[2] << endl;
     tab.line_of_data(3,line);
   }
   //cout << endl;
@@ -78,7 +99,7 @@ int main(void) {
     generate_table(tab);
     
     hdf_file hf;
-    hf.open_or_create("ik.dat");
+    hf.open_or_create("interpm_krige_ts_data.o2");
     hdf_output(hf,tab,"tab");
     hf.close();
     
@@ -122,8 +143,10 @@ int main(void) {
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;
+        t.test_rel(out[0],ft(point[0],point[1]),1.0e-5,"unscaled 1");
       }
     }
+    exit(-1);
     cout << endl;
     
     // Now with rescaled=true
@@ -148,6 +171,7 @@ int main(void) {
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;
+        t.test_rel(out[0],ft(point[0],point[1]),1.0e-5,"rescaled 1");
       }
     }
     cout << endl;

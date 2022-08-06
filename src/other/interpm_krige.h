@@ -176,11 +176,12 @@ namespace o2scl {
       std::swap(y,user_y);
       
       rescaled=rescale;
-    
+      
       data_set=true;
     
       if (verbose>0) {
-        std::cout << "interpm_krige::set_data_noise() : Using " << n_points
+        std::cout << "interpm_krige::set_data_di_noise()_internal:\n  "
+                  << "Using " << n_points
                   << " points with " << nd_in << " input variables and\n\t"
                   << nd_out << " output variables." << std::endl;
       }
@@ -202,7 +203,8 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_noise() rescaled."
+          std::cout << "interpm_krige::set_data_di_noise_internal(): "
+                    << "rescaling."
                     << std::endl;
         }
       }

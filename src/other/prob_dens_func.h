@@ -1124,8 +1124,8 @@ namespace o2scl {
     */
     template<class mat2_t, class vec2_t,
              class mat2_col_t=const_matrix_column_gen<mat2_t> >
-    int set_wgts(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-                 const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
+    int set_ret_wgts(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+                     const vec2_t &vals, vec_t &peak_arg, mat_t &covar_arg) {
     
       // Set peak with average and diagonal elements in covariance
       // matrix with variance
@@ -1147,7 +1147,7 @@ namespace o2scl {
           covar_arg(j,i)=cov;
         }
       }
-      set(p_mdim,peak_arg,covar_arg);
+      set_covar(p_mdim,peak_arg,covar_arg);
       return 0;
     }
 
@@ -1160,9 +1160,9 @@ namespace o2scl {
     */
     template<class mat2_t, 
              class mat2_col_t=const_matrix_column_gen<mat2_t> >
-    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-            vec_t &peak_arg, mat_t &covar_arg) {
-    
+    int set_ret(size_t p_mdim, size_t n_pts, const mat2_t &pts,
+                vec_t &peak_arg, mat_t &covar_arg) {
+      
       // Set peak with average and diagonal elements in covariance
       // matrix with variance
       for(size_t i=0;i<p_mdim;i++) {
@@ -1184,7 +1184,7 @@ namespace o2scl {
         }
       }
       
-      set(p_mdim,peak_arg,covar_arg);
+      set_covar(p_mdim,peak_arg,covar_arg);
       
       return 0;
     }
@@ -1203,8 +1203,8 @@ namespace o2scl {
       vec_t peak_arg(p_mdim);
       mat_t covar_arg(p_mdim,p_mdim);
 
-      set_wgts<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,
-                                         peak_arg,covar_arg);
+      set_ret_wgts<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,
+                                             peak_arg,covar_arg);
 
       return 0;
     }
@@ -1215,16 +1215,16 @@ namespace o2scl {
         The matrix \c pts should have a size of \c n_pts in the first
         index and \c p_mdim in the second index
     */
-    template<class mat2_t, class vec2_t,
+    template<class mat2_t, 
              class mat2_col_t=const_matrix_column_gen<mat2_t> >
-    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts,
-            const vec2_t &vals) {
+    int set(size_t p_mdim, size_t n_pts, const mat2_t &pts) {
       
       vec_t peak_arg(p_mdim);
       mat_t covar_arg(p_mdim,p_mdim);
 
-      set<mat2_t,vec2_t,mat2_col_t>(p_mdim,n_pts,pts,vals,peak_arg,covar_arg);
-
+      set_ret<mat2_t,mat2_col_t>(p_mdim,n_pts,pts,peak_arg,
+                                       covar_arg);
+      
       return 0;
     }
     
@@ -1233,7 +1233,8 @@ namespace o2scl {
         \note This function is called in constructors and thus 
         should not be virtual.
     */
-    void set(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+    void set_covar(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+      
       if (p_ndim==0) {
         O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
                   o2scl::exc_einval);
@@ -1256,8 +1257,9 @@ namespace o2scl {
       double sqrt_det=1.0;
       for(size_t i=0;i<ndim;i++) {
         if (!std::isfinite(chol(i,i))) {
-          O2SCL_ERR2("An entry of the Cholesky decomposition was not finite ",
-                     "in prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+          O2SCL_ERR2("An entry of the Cholesky decomposition was ",
+                     "not finite in prob_dens_mdim_gaussian::set().",
+                     o2scl::exc_einval);
         }
         sqrt_det*=chol(i,i);
         for(size_t j=0;j<ndim;j++) {
@@ -1276,7 +1278,7 @@ namespace o2scl {
     /** \brief Set the probability distribution from a 
         bivariate Gaussian
      */
-    int set(prob_dens_mdim_biv_gaussian<vec_t> &pdmbg) {
+    int set_from_biv(prob_dens_mdim_biv_gaussian<vec_t> &pdmbg) {
 
       double x_cent, y_cent, x_std, y_std, covar;
       pdmbg.get(x_cent,y_cent,x_std,y_std,covar);
@@ -1291,7 +1293,7 @@ namespace o2scl {
       m_covar(1,0)=m_covar(0,1);
       m_covar(1,1)=y_std*y_std;
 
-      set(2,peak,m_covar);
+      set_covar(2,peak,m_covar);
       
       return 0;
     }
