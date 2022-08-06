@@ -28,9 +28,17 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/deriv_gsl.h>
 
+#ifdef O2SCL_ARMA
+#include <armadillo>
+#endif
+#ifdef O2SCL_EIGEN
+#include <eigen3/Eigen/Dense>
+#endif
+
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
+using namespace o2scl_linalg;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
@@ -290,10 +298,10 @@ int main(void) {
   iko.set(N,x,y);
   iko.verbose=0;
 
-  t.test_rel(iko.eval(x[0]),y[0],1.0e-2,"iko 1");
-  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-4,"iko 2");
+  t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"iko 1");
+  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-7,"iko 2");
   t.test_rel(iko.eval((x[0]+x[1])/2.0),
-             (y[0]+y[1])/2.0,1.0e-2,"iko 3");
+             (y[0]+y[1])/2.0,1.0e-5,"iko 3");
   cout << endl;
 
   //cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
@@ -305,11 +313,45 @@ int main(void) {
   iko.set(N,x,y,true);
   double len2=iko.get_length();
 
-  t.test_rel(iko.eval(x[0]),y[0],1.0e-2,"ikor 1");
-  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-4,"ikor 2");
-  t.test_rel(iko.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-2,"ikor 3");
+  t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"ikor 1");
+  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-7,"ikor 2");
+  t.test_rel(iko.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-5,"ikor 3");
   cout << endl;
 
+#ifdef O2SCL_ARMA
+  
+  interp_krige_optim<ubvector,ubvector,arma::mat,
+                     matrix_invert_det_arma<>> iko_arma;
+
+  iko_arma.verbose=1;
+  iko_arma.set(N,x,y);
+  iko_arma.verbose=0;
+
+  t.test_rel(iko_arma.eval(x[0]),y[0],1.0e-4,"iko_arma 1");
+  t.test_rel(iko_arma.eval(x[N-1]),y[N-1],1.0e-7,"iko_arma 2");
+  t.test_rel(iko_arma.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,1.0e-5,"iko_arma 3");
+  cout << endl;
+  
+#endif
+
+#ifdef O2SCL_EIGEN
+  
+  interp_krige_optim<ubvector,ubvector,Eigen::MatrixXd,
+                     matrix_invert_det_eigen<>> iko_eigen;
+
+  iko_eigen.verbose=1;
+  iko_eigen.set(N,x,y);
+  iko_eigen.verbose=0;
+
+  t.test_rel(iko_eigen.eval(x[0]),y[0],1.0e-4,"iko_eigen 1");
+  t.test_rel(iko_eigen.eval(x[N-1]),y[N-1],1.0e-7,"iko_eigen 2");
+  t.test_rel(iko_eigen.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,1.0e-5,"iko_eigen 3");
+  cout << endl;
+  
+#endif
+  
   // ---------------------------------------------------------------
   // Compare minimization functions
 
@@ -328,7 +370,7 @@ int main(void) {
   iko.verbose=0;
   for(double ell=len/500.0;ell<len*30.01;ell*=pow(15000.0,0.01)) {
     cout << ell << " ";
-    iko.mode=iko.mode_loo_cv;
+    iko.mode=iko.mode_loo_cv_bf;
     double q=iko.qual_fun(ell,mean_abs/1.0e8,success);
     cout.setf(ios::showpos);
     cout << q << " ";
@@ -340,7 +382,7 @@ int main(void) {
     cout << q << " ";
     cout.unsetf(ios::showpos);
     cout << success << " ";
-    iko.mode=iko.mode_loo_cv_new;
+    iko.mode=iko.mode_loo_cv;
     q=iko.qual_fun(ell,mean_abs/1.0e8,success);
     cout.setf(ios::showpos);
     cout << q << " ";

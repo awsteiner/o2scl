@@ -574,7 +574,7 @@ namespace o2scl {
 
       size_t size=this->sz;
 
-      if (mode==mode_loo_cv) {
+      if (mode==mode_loo_cv_bf) {
       
         qual=0.0;
         for(size_t k=0;k<size;k++) {
@@ -655,17 +655,19 @@ namespace o2scl {
 	
         }
         if (verbose>0) {
-          std::cout << "len,qual (loo_cv): " << len << " "
+          std::cout << "len,qual (loo_cv_bf): " << len << " "
                     << qual << std::endl;
           //std::cout << "--" << std::endl;
         }
 
-      } else if (mode==mode_loo_cv_new) {
+      } else if (mode==mode_loo_cv) {
 
+#ifdef O2SCL_NEVER_DEFINED
+        
         if (false) {
           
-          // AWS, 7/30/22: This is the old version using the loo_cv
-          // method to compute mu and sigma and Eq 5.10 in R&W, I
+          // AWS, 7/30/22: This is the loo_cv
+          // method to compute mu and sigma and Eq 5.10 in R&W., I
           // think it should work, but it doesn't quite work, however,
           // using Eq. 5.12 to compute mu and sigma (below) seems to
           // work well (and is more efficient), so I'm keeping that
@@ -755,6 +757,8 @@ namespace o2scl {
           }
 
         }
+        
+#endif
 
         if (true) {
           
@@ -811,7 +815,7 @@ namespace o2scl {
         }
         
         if (verbose>0) {
-          std::cout << "len,qual (loo_cv_new): " << len << " "
+          std::cout << "len,qual (loo_cv): " << len << " "
                     << qual << std::endl;
         }
       
@@ -892,18 +896,17 @@ namespace o2scl {
       mp=&def_min;
       def_min.ntrial*=10;
       verbose=0;
-      //mode=mode_max_lml;
       mode=mode_loo_cv;
     }
 
     /// \name Function to minimize and various option
     //@{
-    /// Leave-one-out cross validation (default)
-    static const size_t mode_loo_cv=1;
+    /// Leave-one-out cross validation (brute force version)
+    static const size_t mode_loo_cv_bf=1;
     /// Maximize Log-marginal-likelihood
     static const size_t mode_max_lml=2;
-    /// New leave-one-out cross validation method (not working yet)
-    static const size_t mode_loo_cv_new=3;
+    /// New leave-one-out cross validation method (default)
+    static const size_t mode_loo_cv=3;
     /// Function to minimize (default \ref mode_loo_cv)
     size_t mode;
     ///@}
@@ -915,6 +918,17 @@ namespace o2scl {
      */
     double get_length() {
       return len;
+    }
+
+    /** \brief Set the current length parameter
+     */
+    void set_length(double user_len) {
+      if (user_len<=0.0) {
+        O2SCL_ERR("Length cannot be less than or equal to zero.",
+                  o2scl::exc_einval);
+      }
+      len=user_len;
+      return;
     }
     
     /** \brief Number of length scale points to try when full minimizer 
@@ -928,7 +942,11 @@ namespace o2scl {
     /// If true, use the full minimizer
     bool full_min;
     
-    /// Initialize interpolation routine
+    /** \brief Initialize interpolation routine with optional
+        rescaling, and user-specified noise parameter and length scale
+
+        No optimization of the length scale is performed.
+     */
     virtual int set_noise_len(size_t size, const vec_t &x, const vec2_t &y,
                               double noise_var, double user_len,
                               bool rescale=false) {
@@ -936,16 +954,20 @@ namespace o2scl {
       len=user_len;
       
       ff=std::bind(std::mem_fn<double(double,double)>
-                   (&interp_krige_optim<vec_t,vec2_t>::covar),this,
+                   (&interp_krige_optim
+                    <vec_t,vec2_t,mat_t,mat_inv_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
       ffd=std::bind(std::mem_fn<double(double,double)>
-                    (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
+                    (&interp_krige_optim
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::deriv_covar),this,
                     std::placeholders::_1,std::placeholders::_2);
       ffd2=std::bind(std::mem_fn<double(double,double)>
-                     (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
+                     (&interp_krige_optim
+                      <vec_t,vec2_t,mat_t,mat_inv_t>::deriv2_covar),this,
                      std::placeholders::_1,std::placeholders::_2);
       ffi=std::bind(std::mem_fn<double(double,double,double)>
-                    (&interp_krige_optim<vec_t,vec2_t>::integ_covar),this,
+                    (&interp_krige_optim
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::integ_covar),this,
                     std::placeholders::_1,std::placeholders::_2,
                     std::placeholders::_3);
       
@@ -955,7 +977,9 @@ namespace o2scl {
       return 0;
     }
     
-    /// Initialize interpolation routine
+    /** \brief Initialize using optimization to find best length scale
+        with optional rescaling and user-specified noise parameter
+     */
     virtual int set_noise(size_t size, const vec_t &x, const vec2_t &y,
                           double noise_var, bool rescale=false) {
 
@@ -983,7 +1007,9 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << "Class interp_krige_optim: full minimization, "
                     << std::endl;
-          if (mode==mode_loo_cv) {
+          if (mode==mode_loo_cv_bf) {
+            std::cout << "  leave one-out cross validation (brute force). ";
+          } else if (mode==mode_loo_cv) {
             std::cout << "  leave one-out cross validation. ";
           } else {
             std::cout << "  log marginal likelihood. ";
@@ -996,8 +1022,9 @@ namespace o2scl {
 
         funct mf=std::bind
           (std::mem_fn<double(double,double,int &)>
-           (&interp_krige_optim<vec_t,vec2_t>::qual_fun),this,
-           std::placeholders::_1,noise_var,std::ref(success));
+           (&interp_krige_optim<vec_t,vec2_t,mat_t,mat_inv_t>::qual_fun),
+           this,std::placeholders::_1,noise_var,std::ref(success));
+           
       
         mp->min(len_opt,qual,mf);
         len=len_opt;
@@ -1013,7 +1040,9 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << "Class interp_krige_optim: simple minimization, "
                     << std::endl;
-          if (mode==mode_loo_cv) {
+          if (mode==mode_loo_cv_bf) {
+            std::cout << "  leave one-out cross validation (brute force). ";
+          } else if (mode==mode_loo_cv) {
             std::cout << "  leave one-out cross validation. ";
           } else {
             std::cout << "  maximize marginal likelihood. ";
@@ -1093,16 +1122,20 @@ namespace o2scl {
       }
       
       ff=std::bind(std::mem_fn<double(double,double)>
-                   (&interp_krige_optim<vec_t,vec2_t>::covar),this,
+                   (&interp_krige_optim
+                    <vec_t,vec2_t,mat_t,mat_inv_t>::covar),this,
                    std::placeholders::_1,std::placeholders::_2);
       ffd=std::bind(std::mem_fn<double(double,double)>
-                    (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
+                    (&interp_krige_optim
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::deriv_covar),this,
                     std::placeholders::_1,std::placeholders::_2);
       ffd2=std::bind(std::mem_fn<double(double,double)>
-                     (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
+                     (&interp_krige_optim
+                      <vec_t,vec2_t,mat_t,mat_inv_t>::deriv2_covar),this,
                      std::placeholders::_1,std::placeholders::_2);
       ffi=std::bind(std::mem_fn<double(double,double,double)>
-                    (&interp_krige_optim<vec_t,vec2_t>::integ_covar),this,
+                    (&interp_krige_optim
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::integ_covar),this,
                     std::placeholders::_1,std::placeholders::_2,
                     std::placeholders::_3);
       
@@ -1112,7 +1145,9 @@ namespace o2scl {
       return 0;
     }
 
-    /// Initialize interpolation routine
+    /** \brief Initialize interpolation with default noise parameter
+        and no rescaling
+     */
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
 
       // Use the mean absolute value to determine noise
@@ -1127,7 +1162,9 @@ namespace o2scl {
       return;
     }
   
-    /// Initialize interpolation routine
+    /** \brief Initialize interpolation with default noise parameter
+        and optional rescaling
+     */
     virtual void set(size_t size, const vec_t &x, const vec2_t &y,
                      bool rescale) {
 
