@@ -124,8 +124,7 @@ namespace o2scl {
     virtual int set_covar_di_noise_internal
       (size_t n_dim, const vec_t &x, const vec_t &y,
        covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
-       covar_integ_t *finteg, double noise_var, bool rescale=false,
-       bool err_on_fail=true) {
+       covar_integ_t *finteg, double noise_var, bool rescale=false) {
       
       f=&fcovar;
       fd=fderiv;
@@ -205,9 +204,12 @@ namespace o2scl {
       fd=0;
       fd2=0;
       fi=0;
+      err_nonconv=true;
     }
     
     virtual ~interp_krige() {}
+
+    bool err_nonconv;
     
     /** \brief If true, keep \f$ K^{-1} \f$ (default true)
 
@@ -230,11 +232,10 @@ namespace o2scl {
       (size_t n_dim, const vec_t &x,
        const vec_t &y, covar_func_t &fcovar,
        covar_func_t &fderiv, covar_func_t &fderiv2,
-       covar_integ_t &finteg, double noise_var, bool rescale=false,
-       bool err_on_fail=true) {
+       covar_integ_t &finteg, double noise_var, bool rescale=false) {
       return set_covar_di_noise_internal(n_dim,x,y,fcovar,
                                          &fderiv,&fderiv2,&finteg,noise_var,
-                                         rescale,err_on_fail);
+                                         rescale);
     }
     
     /** \brief Initialize interpolation routine with covariance
@@ -242,9 +243,9 @@ namespace o2scl {
     */
     virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
 				covar_func_t &fcovar, double noise_var,
-                                bool rescale=false, bool err_on_fail=true) {
+                                bool rescale=false) {
       return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
-                                         rescale,err_on_fail);
+                                         rescale);
     }
     
     /** \brief Initialize interpolation routine with covariance
@@ -252,8 +253,7 @@ namespace o2scl {
         integrals
     */
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
-			  covar_func_t &fcovar, bool rescale=false,
-                          bool err_on_fail=true) {
+			  covar_func_t &fcovar, bool rescale=false) {
       
       // Use the mean absolute value to determine noise AWS, 7/30/22,
       // I don't know why, but using mean_abs/1.0e8 makes the
@@ -264,8 +264,8 @@ namespace o2scl {
       }
       mean_abs/=n_dim;
       
-      return set_covar_noise(n_dim,x,y,fcovar,0.0,
-                             rescale,err_on_fail);
+      return set_covar_noise(n_dim,x,y,fcovar,0.0,rescale);
+                             
     }
 
     /// Give the value of the function \f$ y(x=x_0) \f$ .
@@ -927,11 +927,37 @@ namespace o2scl {
 
     /// If true, use the full minimizer
     bool full_min;
+    
+    /// Initialize interpolation routine
+    virtual int set_noise_len(size_t size, const vec_t &x, const vec2_t &y,
+                              double noise_var, double user_len,
+                              bool rescale=false) {
 
+      len=user_len;
+      
+      ff=std::bind(std::mem_fn<double(double,double)>
+                   (&interp_krige_optim<vec_t,vec2_t>::covar),this,
+                   std::placeholders::_1,std::placeholders::_2);
+      ffd=std::bind(std::mem_fn<double(double,double)>
+                    (&interp_krige_optim<vec_t,vec2_t>::deriv_covar),this,
+                    std::placeholders::_1,std::placeholders::_2);
+      ffd2=std::bind(std::mem_fn<double(double,double)>
+                     (&interp_krige_optim<vec_t,vec2_t>::deriv2_covar),this,
+                     std::placeholders::_1,std::placeholders::_2);
+      ffi=std::bind(std::mem_fn<double(double,double,double)>
+                    (&interp_krige_optim<vec_t,vec2_t>::integ_covar),this,
+                    std::placeholders::_1,std::placeholders::_2,
+                    std::placeholders::_3);
+      
+      this->set_covar_di_noise(size,x,y,ff,ffd,
+                               ffd2,ffi,noise_var,this->rescaled);
+      
+      return 0;
+    }
+    
     /// Initialize interpolation routine
     virtual int set_noise(size_t size, const vec_t &x, const vec2_t &y,
-                          double noise_var, bool rescale=false,
-                          bool err_on_fail=true) {
+                          double noise_var, bool rescale=false) {
 
       // Set parent data members
       this->px=&x;
@@ -977,11 +1003,9 @@ namespace o2scl {
         len=len_opt;
 
         if (success!=0) {
-          if (err_on_fail) {
-            O2SCL_ERR2("Minimization failed in ",
-                       "interp_krige_optim::set_noise().",
-                       o2scl::exc_efailed);
-          }
+          O2SCL_CONV2("Minimization failed in ",
+                      "interp_krige_optim::set_noise().",
+                      o2scl::exc_efailed,this->err_nonconv);
         }
 
       } else {
@@ -1098,14 +1122,14 @@ namespace o2scl {
       }
       mean_abs/=size;
 
-      set_noise(size,x,y,mean_abs/1.0e8,false,true);
+      set_noise(size,x,y,mean_abs/1.0e8,false);
     
       return;
     }
   
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y,
-                     bool rescale, bool err_on_fail=true) {
+                     bool rescale) {
 
       // Use the mean absolute value to determine noise
       double mean_abs=0.0;
@@ -1114,7 +1138,7 @@ namespace o2scl {
       }
       mean_abs/=size;
 
-      set_noise(size,x,y,mean_abs/1.0e8,rescale,err_on_fail);
+      set_noise(size,x,y,mean_abs/1.0e8,rescale);
     
       return;
     }

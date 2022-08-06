@@ -180,13 +180,18 @@ namespace o2scl {
       data_set=true;
     
       if (verbose>0) {
-        std::cout << "interpm_krige::set_data_di_noise()_internal:\n  "
+        std::cout << "interpm_krige::set_data_di_noise_internal():\n  "
                   << "Using " << n_points
-                  << " points with " << nd_in << " input variables and\n\t"
+                  << " points with " << nd_in << " input variables and "
                   << nd_out << " output variables." << std::endl;
       }
     
       if (rescale==true) {
+        if (verbose>1) {
+          std::cout << "interpm_krige::set_data_di_noise_internal(): "
+                    << "rescaling."
+                    << std::endl;
+        }
         mean_y.resize(n_out);
         std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
@@ -199,13 +204,8 @@ namespace o2scl {
                       << mean_y[j] << " " << std_y[j] << std::endl;
           }
           for(size_t i=0;i<n_points;i++) {
-            user_y(j,i)=(user_y(j,i)-mean_y[j])/std_y[j];
+            y(j,i)=(y(j,i)-mean_y[j])/std_y[j];
           }
-        }
-        if (verbose>1) {
-          std::cout << "interpm_krige::set_data_di_noise_internal(): "
-                    << "rescaling."
-                    << std::endl;
         }
       }
 
@@ -239,7 +239,6 @@ namespace o2scl {
             }
           }
         }
-        std::cout << "Hx: " << KXX(0,1) << std::endl;
         
         inv_KXX[iout].resize(n_points,n_points);
         mi.invert(n_points,KXX,inv_KXX[iout]);
@@ -252,7 +251,8 @@ namespace o2scl {
                            yiout,0.0,Kinvf[iout]);
 	
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_noise() finished " << iout+1
+          std::cout << "interpm_krige::set_data_di_noise_internal() "
+                    << "finished " << iout+1
                     << " of " << n_out << "." << std::endl;
         }
         
@@ -263,7 +263,7 @@ namespace o2scl {
       }
       
       if (verbose>1) {
-        std::cout << "interpm_krige::set_data_noise() done."
+        std::cout << "interpm_krige::set_data_di_noise_internal() done."
                   << std::endl;
       }
       
@@ -328,7 +328,7 @@ namespace o2scl {
           mat_x_row_t xrow(x,ipoints);
           double covar_val=f2[icovar](xrow,x0);
           y0[iout]+=covar_val*Kinvf[iout][ipoints];
-          if (ipoints==0) {
+          if (ipoints==0 && false) {
             std::cout << "H2: " << iout << " "
                       << f2[icovar](xrow,x0) << " "
                       << Kinvf[iout][ipoints] << " "
@@ -342,7 +342,7 @@ namespace o2scl {
           y0[iout]+=mean_y[iout];
         }
       }
-
+      
       return;
       
     }
@@ -504,7 +504,7 @@ namespace o2scl {
           matrix_view_omit_row<mat_x_t> x_jk(this->x,row);
           ubvector y_jk(size-1);
           // FIXME
-          //vector_copy_jackknife(size,*this->y,row,y_jk);
+          vector_copy_jackknife(size,y,row,y_jk);
 
           // Now perform the matrix analysis with those objects
 
@@ -581,10 +581,15 @@ namespace o2scl {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
               KXX(irow,icol)=covar<mat_x_row_t,mat_x_row_t>(xrow,xcol,
-                                                        this->nd_in,xlen);
+                                                            this->nd_in,xlen);
               if (irow==icol) KXX(irow,icol)+=noise_var;
             }
           }
+        }
+
+        if (verbose>2) {
+          std::cout << "Done creating covariance matrix with size "
+                    << size << std::endl;
         }
 
         // Note: We have to use LU here because O2scl doesn't yet
@@ -597,6 +602,7 @@ namespace o2scl {
           std::cout << "Performing matrix inversion with size "
                     << size << std::endl;
         }
+        this->inv_KXX[iout].resize(size,size);
         int cret=this->mi.invert_det(size,KXX,this->inv_KXX[iout],lndet);
         if (cret!=0) {
           success=1;
@@ -605,11 +611,16 @@ namespace o2scl {
 	
         lndet=log(lndet);
 	
+        if (verbose>2) {
+          std::cout << "Done performing matrix inversion with size "
+                    << size << std::endl;
+        }
+        
         // Inverse covariance matrix times function vector
         this->Kinvf[iout].resize(size);
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                            o2scl_cblas::o2cblas_NoTrans,
-                           size,size,1.0,KXX,
+                           size,size,1.0,this->inv_KXX[iout],
                            y,0.0,this->Kinvf[iout]);
 	
         if (mode==mode_max_lml) {
@@ -623,7 +634,7 @@ namespace o2scl {
 
       }
 
-      std::cout << "Here." << std::endl;
+      if (!isfinite(ret)) success=0;
       
       return ret;
     }
@@ -635,7 +646,7 @@ namespace o2scl {
       full_min=false;
       mp=&def_min;
       verbose=0;
-      mode=mode_loo_cv;
+      mode=mode_max_lml;
       loo_npts=100;
       len_guess_set=false;
     }
@@ -755,6 +766,8 @@ namespace o2scl {
       int success=0;
 
       this->Kinvf.resize(n_out);
+      this->inv_KXX.resize(n_out);
+      
       qual.resize(n_out);
       len.resize(n_out);
       ff1.resize(n_out);
@@ -870,14 +883,16 @@ namespace o2scl {
 	
         }
 
-        std::cout << "A: " << iout << " " << len.size() << " "
-                  << noise_var.size() << " " << qual.size() << " "
-                  << mode << std::endl;
+        //std::cout << "A: " << iout << " " << len.size() << " "
+        //<< noise_var.size() << " " << qual.size() << " "
+        //<< mode << std::endl;
+        
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
         mode=mode_temp;
-        std::cout << "A2: " << iout << std::endl;
+        
+        //std::cout << "A2: " << iout << std::endl;
         
         ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const mat_x_row_t &,
@@ -904,6 +919,38 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Given covariance function \c fcovar and input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec3_t>
+    void eval2(const vec2_t &x0, vec3_t &y0) {
+    
+      //if (data_set==false) {
+      //O2SCL_ERR("Data not set in interpm_krige_optim::eval().",
+      //exc_einval);
+      //}
+
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->nd_out;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
+          mat_x_row_t xrow(this->x,ipoints);
+          double covar_val=covar<mat_x_row_t,vec2_t>
+            (xrow,x0,this->nd_in,len[iout]);
+          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
+        }
+        //if (rescaled) {
+          //std::cout << "here: " << std_y[iout] << " "
+          //<< mean_y[iout] << std::endl;
+          //y0[iout]*=std_y[iout];
+          //y0[iout]+=mean_y[iout];
+        //}
+      }
+      
+      return;
+      
+    }
+    
     /** \brief Initialize the data for the interpolation
       
         \note This function works differently than 

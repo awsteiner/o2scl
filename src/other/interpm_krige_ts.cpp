@@ -24,6 +24,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/interpm_krige.h>
+#include <o2scl/interp_krige.h>
 #include <o2scl/table.h>
 #include <o2scl/interp2_neigh.h>
 #include <o2scl/interp2_planar.h>
@@ -35,16 +36,19 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
+double f(double x, double mean, double sd) {
+  return (sin(1.0/(0.3+x))-mean)/sd;
+}
+
 template<class vec_t, class vec2_t>
 double covar(const vec_t &x, const vec2_t &y, double len) {
   double ret=exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0);
-  //cout << len << " " << x[0] << " " << y[0] << " "
-  //<< x[1] << " " << y[1] << " " << ret << endl;
   return ret;
 }
 
 template<class vec_t, class vec2_t>
-double covar_deriv(const vec_t &x, const vec2_t &y, size_t i, double len) {
+double covar_deriv(const vec_t &x, const vec2_t &y, size_t i,
+                   double len) {
   double ret;
   if (i==0) {
     ret=-exp(-(pow(x[0]-y[0],2.0)+pow(x[1]-y[1],2.0))/len/len/2.0)/
@@ -69,33 +73,44 @@ double ftdy(double x, double y) {
 }
 
 void generate_table(table<> &tab) {
+
   tab.clear();
   
   tab.line_of_names("x y z");
   
-  for(size_t i=0;i<1000;i++) {
+  for(size_t i=0;i<100;i++) {
     double x=3.0*sin(i*i);
     double y=5.0*cos(pow(i,4.0));
     vector<double> line={x,y,ft(x,y)};
-    cout.setf(ios::showpos);
-    cout << line[0] << " " << line[1] << " " << line[2] << endl;
     tab.line_of_data(3,line);
   }
-  //cout << endl;
   
   return;
 }
 
 int main(void) {
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   cout.setf(ios::scientific);
-
-  table<> tab;
+  
+  vector<string> col_list_x={"x","y"};
+  vector<string> col_list_y={"z"};
+  
+  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  typedef o2scl::matrix_view_table<> mat_x_t;
+  typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+  typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
+  typedef o2scl::matrix_view_table_transpose<> mat_y_t;
+  typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+  typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
+  typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
+    
   {
     cout << "interpm_krige, not rescaled" << endl;
-
+    
+    table<> tab;
     generate_table(tab);
     
     hdf_file hf;
@@ -103,51 +118,43 @@ int main(void) {
     hdf_output(hf,tab,"tab");
     hf.close();
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef o2scl::matrix_view_table<> mat_x_t;
-    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
-    typedef o2scl::matrix_view_table_transpose<> mat_y_t;
-    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
-    typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
-    typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
-    
     interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
                   mat_y_t,mat_y_row_t,ubmatrix,f1_t,
                   o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
     
     f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
-                        std::placeholders::_1,std::placeholders::_2,0.70)};
+                        std::placeholders::_1,std::placeholders::_2,1.1)};
     f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
-                        std::placeholders::_1,std::placeholders::_2,0.70)};
+                        std::placeholders::_1,std::placeholders::_2,1.1)};
     
-    vector<string> col_list_x={"x","y"};
-    vector<string> col_list_y={"z"};
     matrix_view_table<> mvt_x(tab,col_list_x);
     matrix_view_table_transpose<> mvt_y(tab,col_list_y);
 
+    ik.verbose=2;
     ik.set_data(2,1,tab.get_nlines(),mvt_x,mvt_y,fa1);
 
-    gen_test_number<> gtn_x2, gtn_y2;
-    gtn_x2.set_radix(1.9);
-    gtn_y2.set_radix(1.9);
+    gen_test_number<> gtn_x, gtn_y;
+    gtn_x.set_radix(1.9);
+    gtn_y.set_radix(1.9);
 
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
-      point[0]=gtn_x2.gen();
-      point[1]=gtn_y2.gen();
-      if (fabs(point[0])<1.5 && fabs(point[1])<1.5) {
+      point[0]=gtn_x.gen();
+      point[1]=gtn_y.gen();
         
-        ik.eval(point,out,fa2);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        t.test_rel(out[0],ft(point[0],point[1]),1.0e-5,"unscaled 1");
-      }
+      ik.eval(point,out,fa2);
+      cout.setf(ios::showpos);
+      cout << point[0] << " " << point[1] << " "
+           << out[0] << " " << ft(point[0],point[1]) << endl;
+      cout.unsetf(ios::showpos);
+      t.test_rel(out[0],ft(point[0],point[1]),1.0,"unscaled 1");
+
     }
-    exit(-1);
     cout << endl;
+
+  }
+
+  {
     
     // Now with rescaled=true
     cout << "interpm_krige, rescaled" << endl;
@@ -158,6 +165,19 @@ int main(void) {
     matrix_view_table<> mvt_x2(tab2,col_list_x);
     matrix_view_table_transpose<> mvt_y2(tab2,col_list_y);
 
+    gen_test_number<> gtn_x2, gtn_y2;
+    gtn_x2.set_radix(1.9);
+    gtn_y2.set_radix(1.9);
+    
+    interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+                  mat_y_t,mat_y_row_t,ubmatrix,f1_t,
+                  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
+    
+    f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
+                        std::placeholders::_1,std::placeholders::_2,1.1)};
+    f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
+                        std::placeholders::_1,std::placeholders::_2,1.1)};
+    
     ik.verbose=2;
     ik.set_data(2,1,tab2.get_nlines(),mvt_x2,mvt_y2,fa1,true);
 
@@ -165,89 +185,55 @@ int main(void) {
       ubvector point(2), out(1);
       point[0]=gtn_x2.gen();
       point[1]=gtn_y2.gen();
-      if (fabs(point[0])<1.5 && fabs(point[1])<1.5) {
-        
-        ik.eval(point,out,fa2);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        t.test_rel(out[0],ft(point[0],point[1]),1.0e-5,"rescaled 1");
-      }
+      
+      ik.eval(point,out,fa2);
+      cout.setf(ios::showpos);
+      cout << point[0] << " " << point[1] << " "
+           << out[0] << " " << ft(point[0],point[1]) << endl;
+      cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),1.0,"rescaled 1");
     }
     cout << endl;
+
+  }
+  {
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
        mat_y_t,mat_y_row_t,ubmatrix,
        o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
 
-    /*
-    if (false) {
-      ubvector len_precompute;
-      iko.set_data(2,1,8,mvt_x,mvt_y,len_precompute);
-      
-      point[0]=0.4;
-      point[1]=0.5;
-      iko.eval(point,out,fa2);
-      t.test_rel(out[0],ft(point[0],point[1]),2.0e-1,"iko 0");
-      cout << out[0] << " " << ft(point[0],point[1]) << endl;
-      point[0]=0.0301;
-      point[1]=0.9901;
-      iko.eval(point,out,fa2);
-      t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"iko 1");
-      cout << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout << endl;
-      }
-    */
+    table<> tab3;
+    generate_table(tab3);
     
-  }
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
-  if (false) {
-    cout << "interpm_krige_optim, rescaled, with data in a table" << endl;
-    // Try a table representation
-    table<> tab;
-    tab.line_of_names("x y z");
-    tab.line_of_data(2,vector<double>({1.04,0.02}));
-    tab.line_of_data(2,vector<double>({0.03,1.01}));
-    tab.line_of_data(2,vector<double>({0.81,0.23}));
-    tab.line_of_data(2,vector<double>({0.03,0.83}));
-    tab.line_of_data(2,vector<double>({0.03,0.99}));
-    tab.line_of_data(2,vector<double>({0.82,0.84}));
-    tab.line_of_data(2,vector<double>({0.03,0.24}));
-    tab.line_of_data(2,vector<double>({0.03,1.02}));
-    for(size_t i=0;i<8;i++) {
-      tab.set("z",i,ft(tab.get("x",i),tab.get("y",i)));
-    }
-    matrix_view_table<> cmvtx(tab,{"x","y"});
-    matrix_view_table_transpose<> cmvty(tab,{"z"});
+    gen_test_number<> gtn_x3, gtn_y3;
+    gtn_x3.set_radix(1.9);
+    gtn_y3.set_radix(1.9);
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    
-    typedef matrix_view_table<> mat_x_t;
-    typedef matrix_view_table_transpose<> mat_y_t;
-    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
-    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
-    
-    
-    interpm_krige_optim<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
-                        mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.verbose=2;
-
-    ubvector len;
-    iko.set_data(2,1,8,cmvtx,cmvty,len,true);
+    iko.nlen=200;
+    ubvector len_precompute;
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
+                len_precompute);
     
-    ubvector point(2);
-    ubvector out(1);
-    point[0]=0.4;
-    point[1]=0.5;
-    iko.eval(point,out,iko.ff2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    point[0]=0.0301;
-    point[1]=0.9901;
-    iko.eval(point,out,iko.ff2);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_y3.gen();
+      
+      iko.eval2(point,out);
+      cout.setf(ios::showpos);
+      cout << point[0] << " " << point[1] << " "
+           << out[0] << " " << ft(point[0],point[1]) << endl;
+      cout.unsetf(ios::showpos);
+      t.test_rel(out[0],ft(point[0],point[1]),4.0e-2,"unscaled 2");
+
+    }
+    cout << endl;
+    
   }
 
   /*
