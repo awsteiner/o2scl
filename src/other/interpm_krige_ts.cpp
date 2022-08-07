@@ -109,7 +109,6 @@ int main(void) {
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef o2scl::matrix_view_table<> mat_x_t;
   typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-  typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
   typedef o2scl::matrix_view_table_transpose<> mat_y_t;
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
   typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
@@ -126,7 +125,7 @@ int main(void) {
     hdf_output(hf,tab,"tab");
     hf.close();
     
-    interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+    interpm_krige<ubvector,mat_x_t,mat_x_row_t,
                   mat_y_t,mat_y_row_t,ubmatrix,f1_t,
                   o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
     
@@ -177,7 +176,7 @@ int main(void) {
     gtn_x2.set_radix(1.9);
     gtn_y2.set_radix(1.9);
     
-    interpm_krige<ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+    interpm_krige<ubvector,mat_x_t,mat_x_row_t,
                   mat_y_t,mat_y_row_t,ubmatrix,f1_t,
                   o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
     
@@ -205,12 +204,22 @@ int main(void) {
 
   }
   
-  for(size_t k=0;k<2;k++) {
+  for(size_t k=0;k<4;k++) {
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+      <ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,ubmatrix,
        o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
+
+    if (k==0) {
+      cout << "lml unscaled" << endl;
+    } else if (k==1) {
+      cout << "loo_cv unscaled" << endl;
+    } else if (k==2) {
+      cout << "lml rescaled" << endl;
+    } else {
+      cout << "loo_cv rescaled" << endl;
+    }
 
     table<> tab3;
     generate_table(tab3);
@@ -224,10 +233,15 @@ int main(void) {
     
     iko.verbose=1;
     iko.nlen=200;
-    if (k==1) iko.mode=iko.mode_loo_cv;
+    if (k==1 || k==3) iko.mode=iko.mode_loo_cv;
     ubvector len_precompute;
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
-                len_precompute);
+    if (k==2 || k==3) {
+      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
+                   len_precompute,true);
+    } else {
+      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
+                   len_precompute);
+    }
     
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
@@ -241,8 +255,12 @@ int main(void) {
       cout.unsetf(ios::showpos);
       if (k==0) {
         t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled lml 2");
-      } else {
+      } else if (k==1) {
         t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled loo_cv 2");
+      } else if (k==2) {
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"rescaled lml 2");
+      } else {
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"rescaled loo_cv 2");
       }
 
     }
@@ -255,7 +273,7 @@ int main(void) {
   {
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+      <ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,arma::mat,
        matrix_invert_det_sympd_arma<> > iko_arma;
 
@@ -299,7 +317,7 @@ int main(void) {
   {
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+      <ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,Eigen::MatrixXd,
        matrix_invert_det_eigen<> > iko_eigen;
 

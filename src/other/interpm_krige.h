@@ -67,7 +67,7 @@ namespace o2scl {
       \note Experimental.
   */
   template<class vec_t,
-           class mat_x_t, class mat_x_row_t, class mat_x_col_t,
+           class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class covar_func_t=std::vector
            <std::function<double(double,double)>>,
@@ -166,14 +166,16 @@ namespace o2scl {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
-                   "interpm_krige::set_data_di_noise_internal().",o2scl::exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal().",
+                   o2scl::exc_efailed);
       }
     
       if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
-                   "interpm_krige::set_data_di_noise_internal().",o2scl::exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal().",
+                   o2scl::exc_efailed);
       }
 
       std::swap(x,user_x);
@@ -189,7 +191,7 @@ namespace o2scl {
                   << " points with " << nd_in << " input variables and "
                   << nd_out << " output variables." << std::endl;
       }
-    
+      
       if (rescale==true) {
         if (verbose>1) {
           std::cout << "interpm_krige::set_data_di_noise_internal(): "
@@ -285,7 +287,7 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige::unscale() "
+          std::cout << "interpm_krige::unscale(): "
                     << "returned to original values." 
                     << std::endl;
         }
@@ -427,12 +429,12 @@ namespace o2scl {
 
       \note This class is experimental.
   */
-  template<class vec_t, class mat_x_t, class mat_x_row_t, class mat_x_col_t,
+  template<class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige_optim :
-    public interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_x_col_t,mat_y_t,
+    public interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
                          mat_y_row_t,mat_inv_kxx_t,
                          std::vector
                          <std::function<double(mat_x_row_t &,mat_x_row_t &)>>,
@@ -750,7 +752,7 @@ namespace o2scl {
                       << this->mean_y[j] << " " << this->std_y[j] << std::endl;
           }
           for(size_t i=0;i<n_points;i++) {
-            user_y(j,i)=(user_y(j,i)-this->mean_y[j])/this->std_y[j];
+            this->y(j,i)=(this->y(j,i)-this->mean_y[j])/this->std_y[j];
           }
         }
         if (verbose>1) {
@@ -797,7 +799,7 @@ namespace o2scl {
           funct mf=std::bind
             (std::mem_fn<double(double,double,size_t,mat_y_row_t &,bool &)>
              (&interpm_krige_optim<vec_t,mat_x_t,
-              mat_x_row_t,mat_x_col_t,mat_y_t,mat_y_row_t,
+              mat_x_row_t,mat_y_t,mat_y_row_t,
               mat_inv_kxx_t,mat_inv_t>::qual_fun<mat_y_row_t>),
              this,std::placeholders::_1,noise_var[iout],iout,yiout,
              std::ref(success));
@@ -879,10 +881,6 @@ namespace o2scl {
 	
         }
 
-        //std::cout << "A: " << iout << " " << len.size() << " "
-        //<< noise_var.size() << " " << qual.size() << " "
-        //<< mode << std::endl;
-
         if (verbose>0) {
           std::cout << "interpm_krige_optim::set_data_di_noise_"
                     << "internal():\n  "
@@ -894,13 +892,11 @@ namespace o2scl {
         qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
         mode=mode_temp;
         
-        //std::cout << "A2: " << iout << std::endl;
-        
         ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const mat_x_row_t &,
                                                size_t,double)>
                             (&interpm_krige_optim<vec_t,mat_x_t,
-                             mat_x_row_t,mat_x_col_t,mat_y_t,mat_y_row_t,
+                             mat_x_row_t,mat_y_t,mat_y_row_t,
                              mat_inv_kxx_t,mat_inv_t>::covar<mat_x_row_t,
                              mat_x_row_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
@@ -909,7 +905,7 @@ namespace o2scl {
                                                const vec_t &,
                                                size_t,double)>
                             (&interpm_krige_optim<vec_t,mat_x_t,
-                             mat_x_row_t,mat_x_col_t,mat_y_t,mat_y_row_t,
+                             mat_x_row_t,mat_y_t,mat_y_row_t,
                              mat_inv_kxx_t,mat_inv_t>::covar<mat_x_row_t,
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
@@ -941,12 +937,12 @@ namespace o2scl {
             (xrow,x0,this->nd_in,len[iout]);
           y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
-        //if (rescaled) {
+        if (this->rescaled) {
           //std::cout << "here: " << std_y[iout] << " "
           //<< mean_y[iout] << std::endl;
-          //y0[iout]*=std_y[iout];
-          //y0[iout]+=mean_y[iout];
-        //}
+          y0[iout]*=this->std_y[iout];
+          y0[iout]+=this->mean_y[iout];
+        }
       }
       
       return;
