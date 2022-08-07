@@ -267,7 +267,7 @@ namespace o2scl_linalg {
       This class is only defined if Armadillo support was enabled
       during installation
   */
-  template<class arma_mat_t> class matrix_invert_det_sympd_arma : 
+  template<class arma_mat_t=arma::mat> class matrix_invert_det_sympd_arma : 
     public matrix_invert_det<arma_mat_t> {
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
