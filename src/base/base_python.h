@@ -995,6 +995,9 @@ void o2scl_free_interp_krige_optim_std_vector_double_(void *vptr);
 size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv(void *vptr);
 
 
+size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv_bf(void *vptr);
+
+
 size_t o2scl_interp_krige_optim_std_vector_double__get_mode_max_lml(void *vptr);
 
 
@@ -1014,9 +1017,9 @@ bool o2scl_interp_krige_optim_std_vector_double__get_full_min(void *vptr);
 
 void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v);
 
-int o2scl_interp_krige_optim_std_vector_double__set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale=false, bool err_on_fail=true);
+int o2scl_interp_krige_optim_std_vector_double__set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale=false);
 
-void o2scl_interp_krige_optim_std_vector_double__set(void *vptr, size_t size, void *ptr_x, void *ptr_y, bool rescale, bool err_on_fail=true);
+void o2scl_interp_krige_optim_std_vector_double__set(void *vptr, size_t size, void *ptr_x, void *ptr_y, bool rescale);
 
 double o2scl_interp_krige_optim_std_vector_double__eval(void *vptr, double x0);
 

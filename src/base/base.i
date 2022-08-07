@@ -1874,6 +1874,7 @@ class interp_vec<std::vector<double>>
 class interp_krige_optim<std::vector<double>>
 - py_name interp_krige_optim  
 - static const size_t mode_loo_cv
+- static const size_t mode_loo_cv_bf
 - static const size_t mode_max_lml
 - int verbose
 - size_t mode
@@ -1886,14 +1887,12 @@ class interp_krige_optim<std::vector<double>>
   - io const std::vector<double> &y
   - double noise_var
   - bool rescale [false]
-  - bool err_on_fail [true]    
 - function set
   - void
   - size_t size
   - io const std::vector<double> &x
   - io const std::vector<double> &y
   - bool rescale
-  - bool err_on_fail [true]
 - function eval
   - double
   - double x0
