@@ -321,7 +321,7 @@ int main(void) {
 #ifdef O2SCL_ARMA
   
   interp_krige_optim<ubvector,ubvector,arma::mat,
-                     matrix_invert_det_arma<>> iko_arma;
+                     matrix_invert_det_sympd_arma<>> iko_arma;
 
   iko_arma.verbose=1;
   iko_arma.set(N,x,y);

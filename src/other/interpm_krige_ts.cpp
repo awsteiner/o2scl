@@ -32,8 +32,16 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
+#ifdef O2SCL_ARMA
+#include <armadillo>
+#endif
+#ifdef O2SCL_EIGEN
+#include <eigen3/Eigen/Dense>
+#endif
+
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_linalg;
 using namespace o2scl_hdf;
 
 double f(double x, double mean, double sd) {
@@ -142,7 +150,7 @@ int main(void) {
       point[0]=gtn_x.gen();
       point[1]=gtn_y.gen();
         
-      ik.eval(point,out,fa2);
+      ik.eval_covar(point,out,fa2);
       cout.setf(ios::showpos);
       cout << point[0] << " " << point[1] << " "
            << out[0] << " " << ft(point[0],point[1]) << endl;
@@ -186,7 +194,7 @@ int main(void) {
       point[0]=gtn_x2.gen();
       point[1]=gtn_y2.gen();
       
-      ik.eval(point,out,fa2);
+      ik.eval_covar(point,out,fa2);
       cout.setf(ios::showpos);
       cout << point[0] << " " << point[1] << " "
            << out[0] << " " << ft(point[0],point[1]) << endl;
@@ -196,7 +204,8 @@ int main(void) {
     cout << endl;
 
   }
-  {
+  
+  for(size_t k=0;k<2;k++) {
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
@@ -213,8 +222,9 @@ int main(void) {
     gtn_x3.set_radix(1.9);
     gtn_y3.set_radix(1.9);
     
-    iko.verbose=2;
+    iko.verbose=1;
     iko.nlen=200;
+    if (k==1) iko.mode=iko.mode_loo_cv;
     ubvector len_precompute;
     iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
                 len_precompute);
@@ -224,17 +234,109 @@ int main(void) {
       point[0]=gtn_x3.gen();
       point[1]=gtn_y3.gen();
       
-      iko.eval2(point,out);
+      iko.eval(point,out);
       cout.setf(ios::showpos);
       cout << point[0] << " " << point[1] << " "
            << out[0] << " " << ft(point[0],point[1]) << endl;
       cout.unsetf(ios::showpos);
-      t.test_rel(out[0],ft(point[0],point[1]),4.0e-2,"unscaled 2");
+      if (k==0) {
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled lml 2");
+      } else {
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled loo_cv 2");
+      }
 
     }
     cout << endl;
     
   }
+
+#ifdef O2SCL_ARMA  
+  
+  {
+    
+    interpm_krige_optim
+      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+       mat_y_t,mat_y_row_t,arma::mat,
+       matrix_invert_det_sympd_arma<> > iko_arma;
+
+    table<> tab3;
+    generate_table(tab3);
+    
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+
+    gen_test_number<> gtn_x3, gtn_y3;
+    gtn_x3.set_radix(1.9);
+    gtn_y3.set_radix(1.9);
+    
+    iko_arma.verbose=2;
+    iko_arma.nlen=200;
+    ubvector len_precompute;
+    iko_arma.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
+                len_precompute);
+    
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_y3.gen();
+      
+      iko_arma.eval(point,out);
+      cout.setf(ios::showpos);
+      cout << point[0] << " " << point[1] << " "
+           << out[0] << " " << ft(point[0],point[1]) << endl;
+      cout.unsetf(ios::showpos);
+      t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled arma 2");
+
+    }
+    cout << endl;
+    
+  }
+
+#endif  
+
+#ifdef O2SCL_EIGEN  
+  
+  {
+    
+    interpm_krige_optim
+      <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+       mat_y_t,mat_y_row_t,Eigen::MatrixXd,
+       matrix_invert_det_eigen<> > iko_eigen;
+
+    table<> tab3;
+    generate_table(tab3);
+    
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+
+    gen_test_number<> gtn_x3, gtn_y3;
+    gtn_x3.set_radix(1.9);
+    gtn_y3.set_radix(1.9);
+    
+    iko_eigen.verbose=2;
+    iko_eigen.nlen=200;
+    ubvector len_precompute;
+    iko_eigen.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
+                len_precompute);
+    
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_y3.gen();
+      
+      iko_eigen.eval(point,out);
+      cout.setf(ios::showpos);
+      cout << point[0] << " " << point[1] << " "
+           << out[0] << " " << ft(point[0],point[1]) << endl;
+      cout.unsetf(ios::showpos);
+      t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled eigen 2");
+
+    }
+    cout << endl;
+    
+  }
+
+#endif  
 
   /*
     AWS: 5/11/22: Old interpm_krige_nn test which is not working

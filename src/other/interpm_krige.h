@@ -134,19 +134,23 @@ namespace o2scl {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige::set_data_noise()",exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige::set_data_noise()",exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige::set_data_noise()",exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (noise_var.size()<1) {
         O2SCL_ERR2("Noise vector empty in ",
-                   "interpm_krige::set_data_noise()",exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       
       np=n_points;
@@ -162,14 +166,14 @@ namespace o2scl {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
-                   "interpm_krige::set_data_noise().",o2scl::exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal().",o2scl::exc_efailed);
       }
     
       if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
-                   "interpm_krige::set_data_noise().",o2scl::exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal().",o2scl::exc_efailed);
       }
 
       std::swap(x,user_x);
@@ -281,7 +285,7 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_noise() "
+          std::cout << "interpm_krige::unscale() "
                     << "returned to original values." 
                     << std::endl;
         }
@@ -313,8 +317,8 @@ namespace o2scl {
         store the result of the interpolation in \c y
     */
     template<class vec2_t, class vec3_t, class covar_func2_t>
-    void eval(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
-    
+    void eval_covar(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
+      
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::eval().",
                   exc_einval);
@@ -487,82 +491,82 @@ namespace o2scl {
      */
     template<class vec3_t> 
     double qual_fun(double xlen, double noise_var, size_t iout,
-                    vec3_t &y, int &success) {
+                    vec3_t &y, bool &success) {
 
       double ret=0.0;
     
-      success=0;
+      success=true;
 
       size_t size=this->x.size1();
 
       if (mode==mode_loo_cv) {
 
-        for(size_t ell=0;ell<loo_npts;ell++) {
-
-          // Create the new data objects, x_jk and y_jk
-          size_t row=ell*size/loo_npts;
-          matrix_view_omit_row<mat_x_t> x_jk(this->x,row);
-          ubvector y_jk(size-1);
-          // FIXME
-          vector_copy_jackknife(size,y,row,y_jk);
-
-          // Now perform the matrix analysis with those objects
-
-          // Construct the KXX matrix
-          mat_inv_kxx_t KXX(size-1,size-1);
-          for(size_t irow=0;irow<size-1;irow++) {
-            matrix_row_gen<matrix_view_omit_row<mat_x_t> > xrow(x_jk,irow);
-            for(size_t icol=0;icol<size-1;icol++) {
-              matrix_row_gen<matrix_view_omit_row<mat_x_t> > xcol(x_jk,icol);
-              if (irow>icol) {
-                KXX(irow,icol)=KXX(icol,irow);
-              } else {
-                KXX(irow,icol)=covar<
-                  matrix_row_gen<matrix_view_omit_row<mat_x_t> >,
-                  matrix_row_gen<matrix_view_omit_row<mat_x_t> > >
-                  (xrow,xcol,this->nd_in,xlen);
-                if (irow==icol) KXX(irow,icol)+=noise_var;
-              }
+        // Construct the KXX matrix
+        this->inv_KXX[iout].resize(size,size);
+        for(size_t irow=0;irow<size;irow++) {
+          mat_x_row_t xrow(this->x,irow);
+          for(size_t icol=0;icol<size;icol++) {
+            mat_x_row_t xcol(this->x,icol);
+            if (irow>icol) {
+              this->inv_KXX[iout](irow,icol)=this->inv_KXX[iout](icol,irow);
+            } else {
+              this->inv_KXX[iout](irow,icol)=
+                covar<mat_x_row_t,mat_x_row_t>(xrow,xcol,
+                                               this->nd_in,xlen);
+              if (irow==icol) this->inv_KXX[iout](irow,icol)+=noise_var;
             }
           }
-          
-          // Construct the inverse of KXX
-          if (verbose>2) {
-            std::cout << "Performing matrix inversion with size "
-                      << size-1 << std::endl;
-          }
-          int cret=this->mi.invert_inplace(size-1,KXX);
-          if (cret!=0) {
-            success=1;
-            return 1.0e99;
-          }
-	  
-          // Inverse covariance matrix times function vector
-          this->Kinvf[iout].resize(size-1);
-          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                             o2scl_cblas::o2cblas_NoTrans,
-                             size-1,size-1,1.0,KXX,
-                             y,0.0,this->Kinvf[iout]);
-          
-          double ypred=0.0;
-          double yact=y[row];
-          for(size_t i=0;i<size-1;i++) {
-            matrix_row_gen<matrix_view_omit_row<mat_x_t> > xrow(x_jk,i);
-            mat_x_row_t xcol(this->x,row);
-            ypred+=covar<matrix_row_gen<matrix_view_omit_row<mat_x_t> >,
-                         mat_x_row_t>(xrow,xcol,this->nd_in,xlen)*
-              this->Kinvf[iout][i];
-          }
-
-          std::cout << "iko: ell,act,pred: " << ell << " "
-                    << yact << " " << ypred << std::endl;
-        
-          // Measure the quality with a chi-squared like function
-          ret+=pow(yact-ypred,2.0);
-
-          // Proceed to next point to omit
         }
-        std::cout << "ret: " << ret << std::endl;
+
+        if (verbose>2) {
+          std::cout << "Done creating covariance matrix with size "
+                    << size << std::endl;
+        }
+
+        // Construct the inverse of KXX
+        if (verbose>2) {
+          std::cout << "Performing matrix inversion with size "
+                    << size << std::endl;
+        }
+        int cret=this->mi.invert_inplace(size,this->inv_KXX[iout]);
+        if (cret!=0) {
+          success=false;
+          return 1.0e99;
+        }
+	
+        if (verbose>2) {
+          std::cout << "Done performing matrix inversion with size "
+                    << size << std::endl;
+        }
+        
+        // Inverse covariance matrix times function vector
+        this->Kinvf[iout].resize(size);
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           size,size,1.0,this->inv_KXX[iout],
+                           y,0.0,this->Kinvf[iout]);
+        
+        ret=0.0;
+        
+        // Select the row of the data matrix
+        mat_y_row_t yiout(this->y,iout);
+        
+        for(size_t ii=0;ii<size;ii++) {
+          
+          double yact=yiout[ii];
+          
+          // Compute sigma and ypred from Eq. 5.12
+          double sigma2=1.0/this->inv_KXX[iout](ii,ii);
+          double ypred=yact-this->Kinvf[iout][ii]*sigma2;
+          
+          // Then use Eq. 5.10
+          ret+=pow(yact-ypred,2.0)/sigma2/2.0;
+          ret+=0.5*log(sigma2);
+        }
+
+        if (verbose>2) {
+          std::cout << "ret: " << ret << std::endl;
+        }
       
       } else if (mode==mode_max_lml || mode==mode_final) {
 
@@ -605,7 +609,7 @@ namespace o2scl {
         this->inv_KXX[iout].resize(size,size);
         int cret=this->mi.invert_det(size,KXX,this->inv_KXX[iout],lndet);
         if (cret!=0) {
-          success=1;
+          success=false;
           return 1.0e99;
         }
 	
@@ -634,7 +638,7 @@ namespace o2scl {
 
       }
 
-      if (!isfinite(ret)) success=0;
+      if (!isfinite(ret)) success=false;
       
       return ret;
     }
@@ -689,18 +693,6 @@ namespace o2scl {
     }
   
     /** \brief Initialize interpolation routine
-        
-        \verbatim embed:rst
-        
-        .. todo:
-
-           In interpm_krige_optim::set_data_noise():
-
-           - AWS, 12/6/21: I'm not sure why this function has a
-             len_precompute argument but the corresponding function
-             interp_krige_optim::set_data_noise() does not.
-
-        \endverbatim
      */
     template<class vec2_t, class vec3_t>
     int set_data_di_noise_internal
@@ -711,19 +703,23 @@ namespace o2scl {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige_optim::set_data_noise()",exc_efailed);
+                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige_optim::set_data_noise()",exc_efailed);
+                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige_optim::set_data_noise()",exc_efailed);
+                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   exc_efailed);
       }
       if (noise_var.size()<1) {
         O2SCL_ERR2("Noise vector empty in ",
-                   "interpm_krige::set_data_noise()",exc_efailed);
+                   "interpm_krige::set_data_di_noise_internal()",
+                   exc_efailed);
       }
    
       // Set parent data members
@@ -736,8 +732,8 @@ namespace o2scl {
       std::swap(this->y,user_y);
        
       if (verbose>0) {
-        std::cout << "interpm_krige_optim::set_data_noise() : Using "
-                  << n_points
+        std::cout << "interpm_krige_optim::set_data_di_noise_internal(): "
+                  << "Using " << n_points
                   << " points with\n " << n_in << " input variables and "
                   << this->nd_out << " output variables." << std::endl;
       }
@@ -758,12 +754,12 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige_optim::set_data_noise() rescaled."
-                    << std::endl;
+          std::cout << "interpm_krige_optim::set_data_di_noise_internal(): "
+                    << "data rescaled." << std::endl;
         }
       }
 
-      int success=0;
+      bool success=true;
 
       this->Kinvf.resize(n_out);
       this->inv_KXX.resize(n_out);
@@ -799,7 +795,7 @@ namespace o2scl {
           len_opt=2.0/((double)this->np);
 	
           funct mf=std::bind
-            (std::mem_fn<double(double,double,size_t,mat_y_row_t &,int &)>
+            (std::mem_fn<double(double,double,size_t,mat_y_row_t &,bool &)>
              (&interpm_krige_optim<vec_t,mat_x_t,
               mat_x_row_t,mat_x_col_t,mat_y_t,mat_y_row_t,
               mat_inv_kxx_t,mat_inv_t>::qual_fun<mat_y_row_t>),
@@ -809,7 +805,7 @@ namespace o2scl {
           mp->min(len_opt,qual[iout],mf);
           len[iout]=len_opt;
 	
-          if (success!=0) {
+          if (success!=true) {
             if (err_on_fail) {
               O2SCL_ERR2("Minimization failed in ",
                          "interp_krige_optim::set_noise().",
@@ -820,7 +816,7 @@ namespace o2scl {
         } else {
 	
           if (verbose>1) {
-            std::cout << "interp_krige_optim::set_data_noise() : "
+            std::cout << "interp_krige_optim::set_data_di_noise_internal() : "
                       << "simple minimization" << std::endl;
           }
 	
@@ -853,10 +849,10 @@ namespace o2scl {
           for(size_t j=0;j<nlen;j++) {
             double xlen=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
 
-            success=0;
+            success=true;
             qual[iout]=qual_fun(xlen,noise_var[iout],iout,yiout,success);
 	
-            if (success==0 && (min_set==false || qual[iout]<min_qual)) {
+            if (success==true && (min_set==false || qual[iout]<min_qual)) {
               len_opt=xlen;
               min_qual=qual[iout];
               min_set=true;
@@ -886,6 +882,12 @@ namespace o2scl {
         //std::cout << "A: " << iout << " " << len.size() << " "
         //<< noise_var.size() << " " << qual.size() << " "
         //<< mode << std::endl;
+
+        if (verbose>0) {
+          std::cout << "interpm_krige_optim::set_data_di_noise_"
+                    << "internal():\n  "
+                    << "optimal length: " << len[iout] << std::endl;
+        }
         
         size_t mode_temp=mode;
         mode=mode_final;
@@ -923,7 +925,7 @@ namespace o2scl {
         store the result of the interpolation in \c y
     */
     template<class vec2_t, class vec3_t>
-    void eval2(const vec2_t &x0, vec3_t &y0) {
+    void eval(const vec2_t &x0, vec3_t &y0) {
     
       //if (data_set==false) {
       //O2SCL_ERR("Data not set in interpm_krige_optim::eval().",
