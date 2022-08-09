@@ -31,6 +31,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <ctime>
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/operation.hpp>
@@ -94,14 +95,6 @@ namespace o2scl {
      */
     covar_func_t *f;
     
-    /** \brief Pointer to user-specified derivative
-     */
-    covar_func_t *fd;
-    
-    /** \brief Pointer to user-specified second derivative
-     */
-    covar_func_t *fd2;
-    
     /// The matrix inversion object
     mat_inv_t mi;
     
@@ -121,35 +114,31 @@ namespace o2scl {
     int verbose;
     
     /** \brief Initialize the data for the interpolation
-
-        \note This function works differently than \ref
-        o2scl::interpm_idw::set_data() . See this class description
-        for more details.
     */
-    int set_data_di_noise_internal
+    int set_data_noise_internal
     (size_t n_in, size_t n_out, size_t n_points, mat_x_t &user_x, 
-     mat_y_t &user_y, covar_func_t &fcovar, covar_func_t *fderiv, 
-     covar_func_t *fderiv2, const vec_t &noise_var, bool rescale=false,
+     mat_y_t &user_y, covar_func_t &fcovar, 
+     const vec_t &noise_var, bool rescale=false,
      bool err_on_fail=true) {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige::set_data_di_noise_internal()",
+                   "interpm_krige::set_data_noise_internal()",
                    exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige::set_data_di_noise_internal()",
+                   "interpm_krige::set_data_noise_internal()",
                    exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige::set_data_di_noise_internal()",
+                   "interpm_krige::set_data_noise_internal()",
                    exc_efailed);
       }
       if (noise_var.size()<1) {
         O2SCL_ERR2("Noise vector empty in ",
-                   "interpm_krige::set_data_di_noise_internal()",
+                   "interpm_krige::set_data_noise_internal()",
                    exc_efailed);
       }
       
@@ -158,15 +147,13 @@ namespace o2scl {
       nd_out=n_out;
 
       f=&fcovar;
-      fd=fderiv;
-      fd2=fderiv2;
     
       // Check that the data is properly sized
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
-                   "interpm_krige::set_data_di_noise_internal().",
+                   "interpm_krige::set_data_noise_internal().",
                    o2scl::exc_efailed);
       }
     
@@ -174,7 +161,7 @@ namespace o2scl {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
-                   "interpm_krige::set_data_di_noise_internal().",
+                   "interpm_krige::set_data_noise_internal().",
                    o2scl::exc_efailed);
       }
 
@@ -186,7 +173,7 @@ namespace o2scl {
       data_set=true;
     
       if (verbose>0) {
-        std::cout << "interpm_krige::set_data_di_noise_internal():\n  "
+        std::cout << "interpm_krige::set_data_noise_internal():\n  "
                   << "Using " << n_points
                   << " points with " << nd_in << " input variables and "
                   << nd_out << " output variables." << std::endl;
@@ -194,7 +181,7 @@ namespace o2scl {
       
       if (rescale==true) {
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_di_noise_internal(): "
+          std::cout << "interpm_krige::set_data_noise_internal(): "
                     << "rescaling."
                     << std::endl;
         }
@@ -257,7 +244,7 @@ namespace o2scl {
                            yiout,0.0,Kinvf[iout]);
 	
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_di_noise_internal() "
+          std::cout << "interpm_krige::set_data_noise_internal() "
                     << "finished " << iout+1
                     << " of " << n_out << "." << std::endl;
         }
@@ -269,7 +256,7 @@ namespace o2scl {
       }
       
       if (verbose>1) {
-        std::cout << "interpm_krige::set_data_di_noise_internal() done."
+        std::cout << "interpm_krige::set_data_noise_internal() done."
                   << std::endl;
       }
       
@@ -297,10 +284,6 @@ namespace o2scl {
     }      
 
     /** \brief Initialize the data for the interpolation
-      
-        \note This function works differently than 
-        \ref o2scl::interpm_idw::set_data() . See this
-        class description for more details.
     */
     int set_data(size_t n_in, size_t n_out, size_t n_points,
                  mat_x_t &user_x, mat_y_t &user_y,
@@ -310,8 +293,8 @@ namespace o2scl {
       vec_t noise_vec;
       noise_vec.resize(1);
       noise_vec[0]=0.0;
-      return set_data_di_noise_internal
-        (n_in,n_out,n_points,user_x,user_y,fcovar,0,0,
+      return set_data_noise_internal
+        (n_in,n_out,n_points,user_x,user_y,fcovar,
          noise_vec,rescale,err_on_fail);
     }
 
@@ -322,7 +305,7 @@ namespace o2scl {
     void eval_covar(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige::eval().",
+        O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
                   exc_einval);
       }
 
@@ -360,7 +343,7 @@ namespace o2scl {
     void sigma(const vec2_t &x0, vec3_t &dy0) {
     
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige::eval().",
+        O2SCL_ERR("Data not set in interpm_krige::sigma().",
                   exc_einval);
       }
       if (!keep_matrix) {
@@ -383,7 +366,6 @@ namespace o2scl {
         dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
         
         if (rescaled) {
-          
           dy0[iout]*=std_y[iout];
         }
       }
@@ -454,9 +436,9 @@ namespace o2scl {
                                              const mat_x_row_t &)> >
     covar_func_t;
     
-    /// Function objects for the covariance
-    std::vector<std::function<double(const mat_x_row_t &,
-                                     const mat_x_row_t &)> > ff1;
+    // Function objects for the covariance
+    //std::vector<std::function<double(const mat_x_row_t &,
+    //const mat_x_row_t &)> > ff1;
     
     /// The covariance function length scale for each output function
     std::vector<double> len;
@@ -464,10 +446,13 @@ namespace o2scl {
     /// The quality factor of the optimization for each output function
     std::vector<double> qual;
 
-    /// If true, min and max has been set for the length parameter
+    /** \brief If true, min and max has been set for the length 
+        parameter (default false)
+    */
     bool len_guess_set;
 
-    /// Minimum for length parameter range
+    /** \brief Minimum for length parameter range
+     */
     double len_min;
 
     /// Maximum for length parameter range
@@ -486,6 +471,21 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief The derivative of the covariance function with respect
+        to variable \c ix
+    */
+    template<class vec2_t, class vec3_t>
+    double covar_deriv(const vec2_t &x1, const vec3_t &x2, size_t sz,
+                       double len2, size_t ix) {
+      
+      double ret=0.0;
+      for(size_t i=0;i<sz;i++) {
+        ret+=pow(x1[i]-x2[i],2.0);
+      }
+      ret=-exp(-ret/len2/len2/2.0)/len2/len2*(x1[ix]-x2[ix]);
+      return ret;
+    }
+
     /// Pointer to the user-specified minimizer
     min_base<> *mp;
   
@@ -501,6 +501,8 @@ namespace o2scl {
 
       size_t size=this->x.size1();
 
+      time_t t1=0, t2=0, t3=0, t4=0;
+      
       if (mode==mode_loo_cv) {
 
         // Construct the KXX matrix
@@ -525,6 +527,10 @@ namespace o2scl {
                     << size << std::endl;
         }
 
+        if (timing) {
+          t1=time(0);          
+        }
+        
         // Construct the inverse of KXX
         if (verbose>2) {
           std::cout << "Performing matrix inversion with size "
@@ -536,6 +542,12 @@ namespace o2scl {
           return 1.0e99;
         }
 	
+        if (timing) {
+          t2=time(0);          
+          std::cout << "Matrix inversion took "
+                    << t2-t1 << " seconds." << std::endl;
+        }
+        
         if (verbose>2) {
           std::cout << "Done performing matrix inversion with size "
                     << size << std::endl;
@@ -547,6 +559,12 @@ namespace o2scl {
                            o2scl_cblas::o2cblas_NoTrans,
                            size,size,1.0,this->inv_KXX[iout],
                            y,0.0,this->Kinvf[iout]);
+        
+        if (timing) {
+          t3=time(0);          
+          std::cout << "Matrix vector multiply took "
+                    << t3-t2 << " seconds." << std::endl;
+        }
         
         ret=0.0;
         
@@ -566,6 +584,12 @@ namespace o2scl {
           ret+=0.5*log(sigma2);
         }
 
+        if (timing) {
+          t4=time(0);          
+          std::cout << "Final evaluation took "
+                    << t4-t3 << " seconds." << std::endl;
+        }
+        
         if (verbose>2) {
           std::cout << "ret: " << ret << std::endl;
         }
@@ -603,6 +627,10 @@ namespace o2scl {
 
         double lndet;
 	
+        if (timing) {
+          t1=time(0);          
+        }
+        
         // Construct the inverse of KXX
         if (verbose>2) {
           std::cout << "Performing matrix inversion with size "
@@ -622,6 +650,12 @@ namespace o2scl {
                     << size << std::endl;
         }
         
+        if (timing) {
+          t2=time(0);          
+          std::cout << "Matrix inversion took "
+                    << t2-t1 << " seconds." << std::endl;
+        }
+        
         // Inverse covariance matrix times function vector
         this->Kinvf[iout].resize(size);
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
@@ -629,6 +663,12 @@ namespace o2scl {
                            size,size,1.0,this->inv_KXX[iout],
                            y,0.0,this->Kinvf[iout]);
 	
+        if (timing) {
+          t3=time(0);          
+          std::cout << "Matrix vector multiply took "
+                    << t3-t2 << " seconds." << std::endl;
+        }
+        
         if (mode==mode_max_lml) {
           // Compute the log of the marginal likelihood, without
           // the constant term
@@ -638,6 +678,12 @@ namespace o2scl {
           ret+=0.5*lndet;
         }
 
+        if (timing) {
+          t4=time(0);          
+          std::cout << "Final evaluation took "
+                    << t4-t3 << " seconds." << std::endl;
+        }
+        
       }
 
       if (!isfinite(ret)) success=false;
@@ -652,9 +698,10 @@ namespace o2scl {
       full_min=false;
       mp=&def_min;
       verbose=0;
-      mode=mode_max_lml;
+      mode=mode_loo_cv;
       loo_npts=100;
       len_guess_set=false;
+      timing=false;
     }
 
     /// \name Function to minimize and various option
@@ -682,6 +729,10 @@ namespace o2scl {
     /// Default minimizer
     min_brent_gsl<> def_min;
 
+    /** \brief If true, output timing results
+     */
+    bool timing;
+    
     /// If true, use the full minimizer
     bool full_min;
   
@@ -697,7 +748,7 @@ namespace o2scl {
     /** \brief Initialize interpolation routine
      */
     template<class vec2_t, class vec3_t>
-    int set_data_di_noise_internal
+    int set_data_noise_internal
     (size_t n_in, size_t n_out, size_t n_points,
      mat_x_t &user_x, mat_y_t &user_y, 
      const vec2_t &noise_var, const vec3_t &len_precompute,
@@ -705,22 +756,22 @@ namespace o2scl {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   "interpm_krige_optim::set_data_noise_internal()",
                    exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   "interpm_krige_optim::set_data_noise_internal()",
                    exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige_optim::set_data_di_noise_internal()",
+                   "interpm_krige_optim::set_data_noise_internal()",
                    exc_efailed);
       }
       if (noise_var.size()<1) {
         O2SCL_ERR2("Noise vector empty in ",
-                   "interpm_krige::set_data_di_noise_internal()",
+                   "interpm_krige::set_data_noise_internal()",
                    exc_efailed);
       }
    
@@ -730,11 +781,22 @@ namespace o2scl {
       this->nd_out=n_out;
       this->rescaled=rescale;
       this->data_set=true;
+
+      time_t t1=0, t2=0, t3=0, t4=0, t5=0;
+      if (timing) {
+        t1=time(0);
+      }
+      
       std::swap(this->x,user_x);
       std::swap(this->y,user_y);
-       
+
+      if (timing) {
+        t2=time(0);
+        std::cout << "Swap took " << t2-t1 << " seconds." << std::endl;
+      }
+      
       if (verbose>0) {
-        std::cout << "interpm_krige_optim::set_data_di_noise_internal(): "
+        std::cout << "interpm_krige_optim::set_data_noise_internal(): "
                   << "Using " << n_points
                   << " points with\n " << n_in << " input variables and "
                   << this->nd_out << " output variables." << std::endl;
@@ -756,11 +818,16 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige_optim::set_data_di_noise_internal(): "
+          std::cout << "interpm_krige_optim::set_data_noise_internal(): "
                     << "data rescaled." << std::endl;
         }
       }
 
+      if (timing) {
+        t3=time(0);
+        std::cout << "Rescale took " << t3-t2 << " seconds." << std::endl;
+      }
+      
       bool success=true;
 
       this->Kinvf.resize(n_out);
@@ -768,12 +835,16 @@ namespace o2scl {
       
       qual.resize(n_out);
       len.resize(n_out);
-      ff1.resize(n_out);
+      //ff1.resize(n_out);
       ff2.resize(n_out);
 
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
       
+        if (timing) {
+          t4=time(0);
+        }
+        
         // Select the row of the data matrix
         mat_y_row_t yiout(this->y,iout);
       
@@ -818,7 +889,7 @@ namespace o2scl {
         } else {
 	
           if (verbose>1) {
-            std::cout << "interp_krige_optim::set_data_di_noise_internal() : "
+            std::cout << "interp_krige_optim::set_data_noise_internal() : "
                       << "simple minimization" << std::endl;
           }
 	
@@ -853,6 +924,10 @@ namespace o2scl {
 
             success=true;
             qual[iout]=qual_fun(xlen,noise_var[iout],iout,yiout,success);
+            if (timing) {
+              std::cout << "qual_fun() completed " << j+1 << " out of "
+                        << nlen << " iterations." << std::endl;
+            }
 	
             if (success==true && (min_set==false || qual[iout]<min_qual)) {
               len_opt=xlen;
@@ -882,7 +957,7 @@ namespace o2scl {
         }
 
         if (verbose>0) {
-          std::cout << "interpm_krige_optim::set_data_di_noise_"
+          std::cout << "interpm_krige_optim::set_data_noise_"
                     << "internal():\n  "
                     << "optimal length: " << len[iout] << std::endl;
         }
@@ -891,7 +966,8 @@ namespace o2scl {
         mode=mode_final;
         qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
         mode=mode_temp;
-        
+
+        /*
         ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const mat_x_row_t &,
                                                size_t,double)>
@@ -901,6 +977,7 @@ namespace o2scl {
                              mat_x_row_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
+        */
         ff2[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const vec_t &,
                                                size_t,double)>
@@ -910,6 +987,12 @@ namespace o2scl {
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
+
+        if (timing) {
+          t5=time(0);
+          std::cout << "Optimization of output " << iout << " took "
+                    << t5-t4 << " seconds." << std::endl;
+        }
         
         // End of loop over iout
       }
@@ -917,16 +1000,19 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Given covariance function \c fcovar and input vector \c x
+    /** \brief Given input vector \c x
         store the result of the interpolation in \c y
     */
     template<class vec2_t, class vec3_t>
     void eval(const vec2_t &x0, vec3_t &y0) {
-    
-      //if (data_set==false) {
-      //O2SCL_ERR("Data not set in interpm_krige_optim::eval().",
-      //exc_einval);
-      //}
+
+      return this->eval_covar(x0,y0,ff2);
+
+      /*
+      if (this->data_set==false) {
+        O2SCL_ERR("Data not set in interpm_krige_optim::eval().",
+                  exc_einval);
+      }
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<this->nd_out;iout++) {
@@ -938,33 +1024,111 @@ namespace o2scl {
           y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {
-          //std::cout << "here: " << std_y[iout] << " "
-          //<< mean_y[iout] << std::endl;
           y0[iout]*=this->std_y[iout];
           y0[iout]+=this->mean_y[iout];
         }
       }
+      */
       
       return;
       
     }
     
-    /** \brief Initialize the data for the interpolation
+    /** \brief Given input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec3_t>
+    void deriv(const vec2_t &x0, vec3_t &y0, size_t ix) {
       
-        \note This function works differently than 
-        \ref o2scl::interpm_idw::set_data() . See this
-        class description for more details.
+      /// Function objects for the covariance
+      std::vector<std::function<double(const mat_x_row_t &,
+                                       const vec_t &)> > ffd;
+      ffd.resize(this->nd_out);
+
+      for(size_t iout=0;iout<this->nd_out;iout++) {
+        ffd[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
+                                               const vec_t &,
+                                               size_t,double,size_t)>
+                            (&interpm_krige_optim<vec_t,mat_x_t,
+                             mat_x_row_t,mat_y_t,mat_y_row_t,mat_inv_kxx_t,
+                             mat_inv_t>::covar_deriv<mat_x_row_t,
+                             vec_t>),this,
+                            std::placeholders::_1,std::placeholders::_2,
+                            this->nd_in,len[iout],ix);
+      }
+      
+      return this->eval_covar(x0,y0,ffd);
+    }
+    
+    /** \brief Initialize the data for the interpolation
     */
     template<class vec2_t>
+    int set_data_len(size_t n_in, size_t n_out, size_t n_points,
+                     mat_x_t &user_x, mat_y_t &user_y,
+                     const vec2_t &len_precompute,
+                     bool rescale=false, bool err_on_fail=true) {
+                 
+      vec_t noise_vec(n_out);
+      for(size_t iout=0;iout<n_out;iout++) {
+        double mean_abs=0.0;
+        for(size_t j=0;j<n_points;j++) {
+          mean_abs+=fabs(user_y(iout,j));
+        }
+        mean_abs/=n_points;
+        noise_vec[iout]=mean_abs/1.0e8;
+      }
+      
+      return set_data_noise_internal<vec_t,vec2_t>
+        (n_in,n_out,n_points,user_x,
+         user_y,noise_vec,len_precompute,rescale,err_on_fail);
+    }
+
+    /** \brief Initialize the data for the interpolation
+    */
     int set_data(size_t n_in, size_t n_out, size_t n_points,
                  mat_x_t &user_x, mat_y_t &user_y,
-                 const vec2_t &len_precompute,
                  bool rescale=false, bool err_on_fail=true) {
-                 
-      vec_t noise_vec;
-      noise_vec.resize(1);
-      noise_vec[0]=0.0;
-      return set_data_di_noise_internal<vec_t,vec2_t>
+      
+      vec_t noise_vec(n_out);
+      for(size_t iout=0;iout<n_out;iout++) {
+        double mean_abs=0.0;
+        for(size_t j=0;j<n_points;j++) {
+          mean_abs+=fabs(user_y(iout,j));
+        }
+        mean_abs/=n_points;
+        noise_vec[iout]=mean_abs/1.0e8;
+      }
+        
+      vec_t len2;
+      
+      return set_data_noise_internal<vec_t,vec_t>
+        (n_in,n_out,n_points,user_x,
+         user_y,noise_vec,len2,rescale,err_on_fail);
+    }
+
+    /** \brief Initialize the data for the interpolation
+    */
+    template<class vec2_t>
+    int set_data_noise(size_t n_in, size_t n_out, size_t n_points,
+                       mat_x_t &user_x, mat_y_t &user_y, vec2_t noise_vec,
+                       bool rescale=false, bool err_on_fail=true) {
+      
+      vec_t len2;
+      
+      return set_data_noise_internal<vec2_t,vec_t>
+        (n_in,n_out,n_points,user_x,
+         user_y,noise_vec,len2,rescale,err_on_fail);
+    }
+
+    /** \brief Initialize the data for the interpolation
+    */
+    template<class vec2_t, class vec3_t>
+    int set_data_noise_len(size_t n_in, size_t n_out, size_t n_points,
+                           mat_x_t &user_x, mat_y_t &user_y,
+                           vec2_t noise_vec, vec3_t len_precompute,
+                           bool rescale=false, bool err_on_fail=true) {
+      
+      return set_data_noise_internal<vec2_t,vec_t>
         (n_in,n_out,n_points,user_x,
          user_y,noise_vec,len_precompute,rescale,err_on_fail);
     }

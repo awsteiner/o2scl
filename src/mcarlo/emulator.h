@@ -93,7 +93,8 @@ namespace o2scl {
       
       This class is experimental.
   */
-  template<class vec2_t, class vec_t> class emulator_interpm_idw_table :
+  template<class vec2_t=ubvector, class vec_t=ubvector>
+  class emulator_interpm_idw_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
 
   protected:
@@ -153,7 +154,8 @@ namespace o2scl {
 
       This class is experimental.
    */
-  template<class vec2_t, class vec_t> class emulator_interpm_krige_table :
+  template<class vec2_t=ubvector, class vec_t=ubvector>
+  class emulator_interpm_krige_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
 
   protected:
@@ -162,7 +164,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef o2scl::matrix_view_table<> mat_x_t;
     typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
     typedef o2scl::matrix_view_table_transpose<> mat_y_t;
     typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
     
@@ -180,7 +181,7 @@ namespace o2scl {
     
     /// The internal interpolation object
     interpm_krige_optim
-    <ubvector,mat_x_t,mat_x_row_t,mat_x_col_t,
+    <ubvector,mat_x_t,mat_x_row_t,
      mat_y_t,mat_y_row_t,ubmatrix,
      o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
 
@@ -212,8 +213,7 @@ namespace o2scl {
       mvt_x.set(t,col_list_x);
       mvt_y.set(t,col_list_y);
       
-      ubvector len_precompute;
-      iko.set_data<>(2,1,8,mvt_x,mvt_y,len_precompute);
+      iko.set_data(2,1,8,mvt_x,mvt_y);
 
       return;
     }

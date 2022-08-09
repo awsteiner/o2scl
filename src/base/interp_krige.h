@@ -255,9 +255,10 @@ namespace o2scl {
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
 			  covar_func_t &fcovar, bool rescale=false) {
       
-      // Use the mean absolute value to determine noise AWS, 7/30/22,
-      // I don't know why, but using mean_abs/1.0e8 makes the
-      // testing code fail
+      // Use the mean absolute value to determine noise
+
+      // AWS, 7/30/22, I don't know why, but using mean_abs/1.0e8
+      // makes the testing code fail
       double mean_abs=0.0;
       for(size_t j=0;j<n_dim;j++) {
         mean_abs+=fabs(y[j]);
@@ -275,6 +276,25 @@ namespace o2scl {
       
       for(size_t i=0;i<this->sz;i++) {
         ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
+      }
+
+      if (rescaled) {
+        ret=ret*std_y+mean_y;
+      }
+
+      return ret;
+    }
+
+    /** \brief Evaluate the interpolation at \f$ x=x_0 \f$ using
+        an alternate covariance function
+    */
+    template<class covar_func2_t>
+      double eval_covar(double x0, covar_func2_t &user_f) const {
+      
+      double ret=0.0;
+      
+      for(size_t i=0;i<this->sz;i++) {
+        ret+=user_f(x0,(*this->px)[i])*Kinvf[i];
       }
 
       if (rescaled) {

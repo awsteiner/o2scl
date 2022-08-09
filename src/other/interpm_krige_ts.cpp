@@ -26,9 +26,6 @@
 #include <o2scl/interpm_krige.h>
 #include <o2scl/interp_krige.h>
 #include <o2scl/table.h>
-#include <o2scl/interp2_neigh.h>
-#include <o2scl/interp2_planar.h>
-#include <o2scl/rng.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
@@ -80,13 +77,13 @@ double ftdy(double x, double y) {
   return 7.0;
 }
 
-void generate_table(table<> &tab) {
+void generate_table(table<> &tab, size_t N=100) {
 
   tab.clear();
   
   tab.line_of_names("x y z");
   
-  for(size_t i=0;i<100;i++) {
+  for(size_t i=0;i<N;i++) {
     double x=3.0*sin(i*i);
     double y=5.0*cos(pow(i,4.0));
     vector<double> line={x,y,ft(x,y)};
@@ -140,21 +137,22 @@ int main(void) {
     ik.verbose=2;
     ik.set_data(2,1,tab.get_nlines(),mvt_x,mvt_y,fa1);
 
-    gen_test_number<> gtn_x, gtn_y;
+    gen_test_number<> gtn_x;
     gtn_x.set_radix(1.9);
-    gtn_y.set_radix(1.9);
 
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
       point[0]=gtn_x.gen();
-      point[1]=gtn_y.gen();
-        
-      ik.eval_covar(point,out,fa2);
-      cout.setf(ios::showpos);
-      cout << point[0] << " " << point[1] << " "
-           << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout.unsetf(ios::showpos);
-      t.test_rel(out[0],ft(point[0],point[1]),1.0,"unscaled 1");
+      point[1]=gtn_x.gen();
+
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        ik.eval_covar(point,out,fa2);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),1.0,"unscaled 1");
+      }
 
     }
     cout << endl;
@@ -172,9 +170,8 @@ int main(void) {
     matrix_view_table<> mvt_x2(tab2,col_list_x);
     matrix_view_table_transpose<> mvt_y2(tab2,col_list_y);
 
-    gen_test_number<> gtn_x2, gtn_y2;
+    gen_test_number<> gtn_x2;
     gtn_x2.set_radix(1.9);
-    gtn_y2.set_radix(1.9);
     
     interpm_krige<ubvector,mat_x_t,mat_x_row_t,
                   mat_y_t,mat_y_row_t,ubmatrix,f1_t,
@@ -191,14 +188,16 @@ int main(void) {
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
       point[0]=gtn_x2.gen();
-      point[1]=gtn_y2.gen();
+      point[1]=gtn_x2.gen();
       
-      ik.eval_covar(point,out,fa2);
-      cout.setf(ios::showpos);
-      cout << point[0] << " " << point[1] << " "
-           << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout.unsetf(ios::showpos);
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        ik.eval_covar(point,out,fa2);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
         t.test_rel(out[0],ft(point[0],point[1]),1.0,"rescaled 1");
+      }
     }
     cout << endl;
 
@@ -227,43 +226,93 @@ int main(void) {
     matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
-    gen_test_number<> gtn_x3, gtn_y3;
+    gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
-    gtn_y3.set_radix(1.9);
     
     iko.verbose=1;
-    iko.nlen=200;
+    iko.nlen=50;
     if (k==1 || k==3) iko.mode=iko.mode_loo_cv;
-    ubvector len_precompute;
     if (k==2 || k==3) {
-      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
-                   len_precompute,true);
+      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
     } else {
-      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
-                   len_precompute);
+      iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     }
     
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
       point[0]=gtn_x3.gen();
-      point[1]=gtn_y3.gen();
+      point[1]=gtn_x3.gen();
       
-      iko.eval(point,out);
-      cout.setf(ios::showpos);
-      cout << point[0] << " " << point[1] << " "
-           << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout.unsetf(ios::showpos);
-      if (k==0) {
-        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled lml 2");
-      } else if (k==1) {
-        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled loo_cv 2");
-      } else if (k==2) {
-        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"rescaled lml 2");
-      } else {
-        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"rescaled loo_cv 2");
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        if (k==0) {
+          t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled lml 2");
+        } else if (k==1) {
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-1,"unscaled loo_cv 2");
+        } else if (k==2) {
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"rescaled lml 2");
+        } else {
+          t.test_rel(out[0],ft(point[0],point[1]),4.0e-3,"rescaled loo_cv 2");
+        }
       }
 
     }
+    cout << endl;
+    
+  }
+
+  // More refined data set to test derivatives
+  
+  if (true) {
+    
+    interpm_krige_optim
+      <ubvector,mat_x_t,mat_x_row_t,
+       mat_y_t,mat_y_row_t,ubmatrix,
+       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
+
+    table<> tab3;
+    generate_table(tab3);
+    
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    
+    gen_test_number<> gtn_x3;
+    gtn_x3.set_radix(1.9);
+    
+    iko.verbose=1;
+    iko.nlen=50;
+    iko.timing=true;
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
+    
+    for(size_t j=0;j<20;j++) {
+      
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_x3.gen();
+      
+      cout.setf(ios::showpos);
+      
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        cout << point[0] << " " << point[1] << endl;
+        iko.eval(point,out);
+        cout << "  " << out[0] << " " << ft(point[0],point[1]) << endl;
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"deriv");
+        
+        iko.deriv(point,out,0);
+        cout << "  " << out[0] << " " << ftdx(point[0],point[1]) << endl;
+        
+        iko.deriv(point,out,1);
+        cout << "  " << out[0] << " " << ftdy(point[0],point[1]) << endl;
+        
+        cout.unsetf(ios::showpos);
+      }
+      
+    }
+    exit(-1);
     cout << endl;
     
   }
@@ -283,27 +332,26 @@ int main(void) {
     matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
-    gen_test_number<> gtn_x3, gtn_y3;
+    gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
-    gtn_y3.set_radix(1.9);
     
     iko_arma.verbose=2;
-    iko_arma.nlen=200;
-    ubvector len_precompute;
-    iko_arma.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
-                len_precompute);
+    iko_arma.nlen=50;
+    iko_arma.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
       point[0]=gtn_x3.gen();
-      point[1]=gtn_y3.gen();
+      point[1]=gtn_x3.gen();
       
-      iko_arma.eval(point,out);
-      cout.setf(ios::showpos);
-      cout << point[0] << " " << point[1] << " "
-           << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout.unsetf(ios::showpos);
-      t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled arma 2");
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko_arma.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled arma 2");
+      }
 
     }
     cout << endl;
@@ -327,27 +375,26 @@ int main(void) {
     matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
-    gen_test_number<> gtn_x3, gtn_y3;
+    gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
-    gtn_y3.set_radix(1.9);
     
     iko_eigen.verbose=2;
-    iko_eigen.nlen=200;
-    ubvector len_precompute;
-    iko_eigen.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,
-                len_precompute);
-    
+    iko_eigen.nlen=50;
+    iko_eigen.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
+        
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
       point[0]=gtn_x3.gen();
-      point[1]=gtn_y3.gen();
+      point[1]=gtn_x3.gen();
       
-      iko_eigen.eval(point,out);
-      cout.setf(ios::showpos);
-      cout << point[0] << " " << point[1] << " "
-           << out[0] << " " << ft(point[0],point[1]) << endl;
-      cout.unsetf(ios::showpos);
-      t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled eigen 2");
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko_eigen.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled eigen 2");
+      }
 
     }
     cout << endl;
