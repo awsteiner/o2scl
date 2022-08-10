@@ -105,6 +105,9 @@ namespace o2scl {
       verbose=0;
       keep_matrix=true;
     }
+
+    virtual ~interpm_krige() {
+    }
     
     /// If true, keep \f$ K^{-1} \f$ (default true)
     bool keep_matrix;
@@ -704,6 +707,9 @@ namespace o2scl {
       timing=false;
     }
 
+    virtual ~interpm_krige_optim() {
+    }
+    
     /// \name Function to minimize and various option
     //@{
     /// Leave-one-out cross validation

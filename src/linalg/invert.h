@@ -269,6 +269,8 @@ namespace o2scl_linalg {
   */
   template<class arma_mat_t=arma::mat> class matrix_invert_det_sympd_arma : 
     public matrix_invert_det<arma_mat_t> {
+
+  public:
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
     virtual int invert(size_t n, const arma_mat_t &A, arma_mat_t &A_inv) {
