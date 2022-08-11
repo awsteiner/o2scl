@@ -1419,7 +1419,11 @@ int main(int argc, char *argv[]) {
             //fout << "  " << ifv.ift.name << " *p_tgot=("
             //<< ifv.ift.name << " *)p_v;" << endl;
             //fout << "  *(p_tgot)=ptr->" << ifv.name << ";" << endl;
-            fout << "  return (void *)(&(ptr->" << ifv.name << "));" << endl;
+            if (ifv.ift.is_pointer()) {
+              fout << "  return (void *)((ptr->" << ifv.name << "));" << endl;
+            } else {
+              fout << "  return (void *)(&(ptr->" << ifv.name << "));" << endl;
+            }
             fout << "}" << endl;
           }
           

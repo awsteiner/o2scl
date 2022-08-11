@@ -194,6 +194,11 @@ class hist
   - size_t nv
   - io std::vector<double> &v
   - size_t n_bins
+- function get_wgts
+  - const ublas_vector &
+- function create_rep_vec
+  - void
+  - io std_vector &v                             
 - function from_table
   - void                             
   - io table<> &t
@@ -256,7 +261,24 @@ class contour_line
 - double level
 - std::vector<double> x  
 - std::vector<double> y
-- std_cc  
+- std_cc
+class std::vector<contour_line>
+- py_name vector_contour_line
+- function operator[]
+  - std::vector<contour_line> &
+  - size_t n
+- function resize
+  - void
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: an int
+|     """
+|     return self.length()
+| 
 class contour
 - int verbose
 - double lev_adjust

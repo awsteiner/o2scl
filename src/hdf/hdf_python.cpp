@@ -391,7 +391,7 @@ void o2scl_hdf_acol_manager_set_env_var_name(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_cl(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
-  return (void *)(&(ptr->cl));
+  return (void *)((ptr->cl));
 }
 
 void o2scl_hdf_acol_manager_set_cl(void *vptr, void *p_v) {
@@ -530,6 +530,12 @@ void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v) {
   std::string *p_tsot=(std::string *)p_v;
   ptr->string_obj=*(p_tsot);
   return;
+}
+
+int o2scl_hdf_acol_manager_run_o2graph(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  int ret=ptr->run_o2graph();
+  return ret;
 }
 
 void *o2scl_hdf_create_cloud_file() {

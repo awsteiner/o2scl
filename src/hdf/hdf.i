@@ -377,9 +377,11 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
+- function run_o2graph
+  - int                             
 #- function run
-#  - int argv
-#  - char *argc[]
+#  - int argv [0]
+#  - char *argc[] [0]
 #  - bool full_process [true]
 #
 # Class cloud_file

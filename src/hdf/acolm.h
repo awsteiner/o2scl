@@ -331,6 +331,11 @@ namespace o2scl_acol {
     */
     virtual int run(int argv, char *argc[], bool full_process=true);
 
+    /// Desc
+    int run_o2graph() {
+      return run(0,0,false);
+    }
+    
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();
 
