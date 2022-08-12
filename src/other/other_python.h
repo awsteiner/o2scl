@@ -25,6 +25,7 @@
 #include <o2scl/poly.h>
 #include <o2scl/polylog.h>
 #include <o2scl/hist.h>
+#include <o2scl/contour.h>
 
 extern "C" {
 
@@ -144,6 +145,12 @@ bool o2scl_hist_get_extend_lhs(void *vptr);
 
 void o2scl_hist_set_extend_lhs(void *vptr, bool v);
 
+void o2scl_hist_create_rep_vec(void *vptr, void *ptr_v);
+
+void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins);
+
+void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins);
+
 size_t o2scl_hist_size(void *vptr);
 
 void o2scl_hist_set_bin_edges_grid(void *vptr, void *ptr_g);
@@ -169,5 +176,47 @@ size_t o2scl_hist_get_bin_index(void *vptr, double x);
 int o2scl_hist_function(void *vptr, char *func);
 
 void o2scl_hist_clear(void *vptr);
+
+void *o2scl_create_contour_line();
+
+void o2scl_free_contour_line(void *vptr);
+
+void o2scl_copy_contour_line(void *vsrc, void *vdest);
+
+double o2scl_contour_line_get_level(void *vptr);
+
+void o2scl_contour_line_set_level(void *vptr, double v);
+
+void *o2scl_contour_line_get_x(void *vptr);
+
+void o2scl_contour_line_set_x(void *vptr, void *p_v);
+
+void *o2scl_contour_line_get_y(void *vptr);
+
+void o2scl_contour_line_set_y(void *vptr, void *p_v);
+
+void *o2scl_create_std_vector_contour_line_();
+
+void o2scl_free_std_vector_contour_line_(void *vptr);
+
+void o2scl_std_vector_contour_line__resize(void *vptr, size_t n);
+
+void *o2scl_create_contour();
+
+void o2scl_free_contour(void *vptr);
+
+int o2scl_contour_get_verbose(void *vptr);
+
+void o2scl_contour_set_verbose(void *vptr, int v);
+
+double o2scl_contour_get_lev_adjust(void *vptr);
+
+void o2scl_contour_set_lev_adjust(void *vptr, double v);
+
+bool o2scl_contour_get_debug_next_point(void *vptr);
+
+void o2scl_contour_set_debug_next_point(void *vptr, bool v);
+
+void o2scl_contour_calc_contours(void *vptr, void *ptr_clines);
 
 }

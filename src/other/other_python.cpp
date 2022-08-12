@@ -380,6 +380,27 @@ void o2scl_hist_set_extend_lhs(void *vptr, bool v) {
   return;
 }
 
+void o2scl_hist_create_rep_vec(void *vptr, void *ptr_v) {
+  hist *ptr=(hist *)vptr;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  ptr->create_rep_vec(*v);
+  return;
+}
+
+void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins) {
+  hist *ptr=(hist *)vptr;
+  table<> *t=(table<> *)ptr_t;
+  ptr->from_table(*t,colx,n_bins);
+  return;
+}
+
+void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins) {
+  hist *ptr=(hist *)vptr;
+  table<> *t=(table<> *)ptr_t;
+  ptr->from_table(*t,colx,coly,n_bins);
+  return;
+}
+
 size_t o2scl_hist_size(void *vptr) {
   hist *ptr=(hist *)vptr;
   size_t ret=ptr->size();
@@ -457,6 +478,126 @@ int o2scl_hist_function(void *vptr, char *func) {
 void o2scl_hist_clear(void *vptr) {
   hist *ptr=(hist *)vptr;
   ptr->clear();
+  return;
+}
+
+void *o2scl_create_contour_line() {
+  contour_line *ptr=new contour_line;
+  return ptr;
+}
+
+void o2scl_free_contour_line(void *vptr) {
+  contour_line *ptr=(contour_line *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_contour_line(void *vsrc, void *vdest) {
+  contour_line *src=(contour_line *)vsrc;
+  contour_line *dest=(contour_line *)vdest;
+  *dest=*src;
+}
+
+double o2scl_contour_line_get_level(void *vptr) {
+  contour_line *ptr=(contour_line *)vptr;
+  return ptr->level;
+}
+
+void o2scl_contour_line_set_level(void *vptr, double v) {
+  contour_line *ptr=(contour_line *)vptr;
+  ptr->level=v;
+  return;
+}
+
+void *o2scl_contour_line_get_x(void *vptr) {
+  contour_line *ptr=(contour_line *)vptr;
+  return (void *)(&(ptr->x));
+}
+
+void o2scl_contour_line_set_x(void *vptr, void *p_v) {
+  contour_line *ptr=(contour_line *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->x=*(p_tsot);
+  return;
+}
+
+void *o2scl_contour_line_get_y(void *vptr) {
+  contour_line *ptr=(contour_line *)vptr;
+  return (void *)(&(ptr->y));
+}
+
+void o2scl_contour_line_set_y(void *vptr, void *p_v) {
+  contour_line *ptr=(contour_line *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->y=*(p_tsot);
+  return;
+}
+
+void *o2scl_create_std_vector_contour_line_() {
+  std::vector<contour_line> *ptr=new std::vector<contour_line>;
+  return ptr;
+}
+
+void o2scl_free_std_vector_contour_line_(void *vptr) {
+  std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_std_vector_contour_line__resize(void *vptr, size_t n) {
+  std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+void *o2scl_create_contour() {
+  contour *ptr=new contour;
+  return ptr;
+}
+
+void o2scl_free_contour(void *vptr) {
+  contour *ptr=(contour *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_contour_get_verbose(void *vptr) {
+  contour *ptr=(contour *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_contour_set_verbose(void *vptr, int v) {
+  contour *ptr=(contour *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+double o2scl_contour_get_lev_adjust(void *vptr) {
+  contour *ptr=(contour *)vptr;
+  return ptr->lev_adjust;
+}
+
+void o2scl_contour_set_lev_adjust(void *vptr, double v) {
+  contour *ptr=(contour *)vptr;
+  ptr->lev_adjust=v;
+  return;
+}
+
+bool o2scl_contour_get_debug_next_point(void *vptr) {
+  contour *ptr=(contour *)vptr;
+  return ptr->debug_next_point;
+}
+
+void o2scl_contour_set_debug_next_point(void *vptr, bool v) {
+  contour *ptr=(contour *)vptr;
+  ptr->debug_next_point=v;
+  return;
+}
+
+void o2scl_contour_calc_contours(void *vptr, void *ptr_clines) {
+  contour *ptr=(contour *)vptr;
+  vector<contour_line> *clines=(vector<contour_line> *)ptr_clines;
+  ptr->calc_contours(*clines);
   return;
 }
 

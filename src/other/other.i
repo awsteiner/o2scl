@@ -190,17 +190,18 @@ class bessel_K_exp_integ_gsl
 # - double y
 class hist
 - std_cc
-- cons init
-  - size_t nv
-  - io std::vector<double> &v
-  - size_t n_bins
-- function get_wgts
-  - const ublas_vector &
+#- cons init
+#  - size_t nv
+#  - io std::vector<double> &v
+#  - size_t n_bins
+#- function get_wgts
+#  - const ublas_vector &
 - function create_rep_vec
   - void
   - io std_vector &v                             
 - function from_table
   - void                             
+  - py_name from_table
   - io table<> &t
   - std::string colx
   - size_t n_bins
@@ -264,9 +265,9 @@ class contour_line
 - std_cc
 class std::vector<contour_line>
 - py_name vector_contour_line
-- function operator[]
-  - std::vector<contour_line> &
-  - size_t n
+#- function operator[]
+#  - contour_line &
+#  - size_t n
 - function resize
   - void
   - size_t n
@@ -283,15 +284,15 @@ class contour
 - int verbose
 - double lev_adjust
 - bool debug_next_point
-- function set_data
-  - void
-  - io const uniform_grid<double> &ugx
-  - io const uniform_grid<double> &ugy
-  - io const ubmatrix &udata
-- function set_levels
-  - int
-  - size_t n_levels
-  - io vector<size_t> &levels
+#- function set_data
+#  - void
+#  - io const uniform_grid<double> &ugx
+#  - io const uniform_grid<double> &ugy
+#  - io const ubmatrix &udata
+#- function set_levels
+#  - int
+#  - size_t n_levels
+#  - io vector<size_t> &levels
 - function calc_contours
   - void
   - io vector<contour_line> &clines
