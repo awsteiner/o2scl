@@ -217,6 +217,10 @@ bool o2scl_contour_get_debug_next_point(void *vptr);
 
 void o2scl_contour_set_debug_next_point(void *vptr, bool v);
 
+void o2scl_contour_set_data(void *vptr, void *ptr_ugx, void *ptr_ugy, void *ptr_udata);
+
+void o2scl_contour_set_levels(void *vptr, size_t n_levels, void *ptr_levels);
+
 void o2scl_contour_calc_contours(void *vptr, void *ptr_clines);
 
 }

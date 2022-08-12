@@ -284,15 +284,15 @@ class contour
 - int verbose
 - double lev_adjust
 - bool debug_next_point
-#- function set_data
-#  - void
-#  - io const uniform_grid<double> &ugx
-#  - io const uniform_grid<double> &ugy
-#  - io const ubmatrix &udata
-#- function set_levels
-#  - int
-#  - size_t n_levels
-#  - io vector<size_t> &levels
+- function set_data
+  - void
+  - io const uniform_grid<double> &ugx
+  - io const uniform_grid<double> &ugy
+  - io const boost::numeric::ublas::matrix<double> &udata
+- function set_levels
+  - void
+  - size_t n_levels
+  - io vector<size_t> &levels
 - function calc_contours
   - void
   - io vector<contour_line> &clines

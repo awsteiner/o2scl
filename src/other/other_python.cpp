@@ -594,6 +594,22 @@ void o2scl_contour_set_debug_next_point(void *vptr, bool v) {
   return;
 }
 
+void o2scl_contour_set_data(void *vptr, void *ptr_ugx, void *ptr_ugy, void *ptr_udata) {
+  contour *ptr=(contour *)vptr;
+  uniform_grid<double> *ugx=(uniform_grid<double> *)ptr_ugx;
+  uniform_grid<double> *ugy=(uniform_grid<double> *)ptr_ugy;
+  boost::numeric::ublas::matrix<double> *udata=(boost::numeric::ublas::matrix<double> *)ptr_udata;
+  ptr->set_data(*ugx,*ugy,*udata);
+  return;
+}
+
+void o2scl_contour_set_levels(void *vptr, size_t n_levels, void *ptr_levels) {
+  contour *ptr=(contour *)vptr;
+  vector<size_t> *levels=(vector<size_t> *)ptr_levels;
+  ptr->set_levels(n_levels,*levels);
+  return;
+}
+
 void o2scl_contour_calc_contours(void *vptr, void *ptr_clines) {
   contour *ptr=(contour *)vptr;
   vector<contour_line> *clines=(vector<contour_line> *)ptr_clines;

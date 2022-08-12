@@ -20,9 +20,9 @@ rst_header |
 |
 | :ref:`O2sclpy <o2sclpy>`
 |
-| Note that these classes are experimental. They are not intended
-| to provide the full functionality
-| of the corresponding C++ class.
+| Note that this python interface is not intended
+| to provide the full functionality of the corresponding C++ 
+| class.
 # 
 # Include statements for C++ header file
 # 
@@ -66,7 +66,11 @@ py_header itp_nearest_neigh=8
 # Class string
 # 
 class std::string
+- py_class_doc |
+| Note that std_string objects are not "immutable" like Python
+| strings.
 - py_name std_string
+- std_cc                             
 - function length
   - size_t
 - function operator[]
@@ -89,7 +93,7 @@ class std::string
 |     Initialize the string from a Python bytes object
 |
 |     | Parameters:
-|     | *s* a Python bytes string
+|     | *s*: a Python bytes string
 |     """
 |     self.resize(len(s))
 |     for i in range(0,len(s)):
@@ -114,6 +118,7 @@ class std::string
 #
 class std::vector<double>
 - py_name std_vector
+- std_cc                             
 - function resize
   - void
   - size_t n                             
@@ -143,6 +148,7 @@ class std::vector<double>
 |     return ret
 class std::vector<int>
 - py_name std_vector_int
+- std_cc                             
 - function resize
   - void
   - size_t n                             
@@ -172,6 +178,7 @@ class std::vector<int>
 |     return ret
 class std::vector<size_t>
 - py_name std_vector_size_t
+- std_cc                             
 - function resize
   - void
   - size_t n                             
@@ -223,6 +230,7 @@ class std::vector<size_t>
 |     
 class std::vector<std::string>
 - py_name std_vector_string
+- std_cc                             
 - function resize
   - void
   - size_t n                             
@@ -244,6 +252,7 @@ class std::vector<std::string>
 # 
 class boost::numeric::ublas::vector<double>
 - py_name ublas_vector
+- std_cc                             
 - function size
   - size_t
 - function resize
@@ -276,6 +285,7 @@ class boost::numeric::ublas::vector<double>
 # 
 class boost::numeric::ublas::vector<int>
 - py_name ublas_vector_int
+- std_cc                             
 - function size
   - size_t
 - function resize
@@ -308,6 +318,7 @@ class boost::numeric::ublas::vector<int>
 # 
 class boost::numeric::ublas::matrix<double>
 - py_name ublas_matrix
+- std_cc                             
 - function size1
   - size_t
 - function size2
@@ -338,6 +349,7 @@ class boost::numeric::ublas::matrix<double>
 # 
 class boost::numeric::ublas::matrix<int>
 - py_name ublas_matrix_int
+- std_cc                             
 - function size1
   - size_t
 - function size2
@@ -371,6 +383,7 @@ class boost::numeric::ublas::matrix<int>
 #
 class std::vector<std::vector<double>>
 - py_name std_vector_vector
+- std_cc                             
 - function resize
   - void
   - size_t n                             
@@ -389,6 +402,7 @@ class std::vector<std::vector<double>>
 |     return self.size()
 class std::vector<std::vector<std::string>>
 - py_name vec_vec_string
+- std_cc                             
 - function resize
   - void
   - size_t n                             

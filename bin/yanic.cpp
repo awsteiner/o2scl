@@ -2246,7 +2246,7 @@ int main(int argc, char *argv[]) {
       fout << ifc.name << endl;
     }
     fout << "        " << endl;
-    fout << "        Returns: a ";
+    fout << "        Returns: ";
     if (ifc.py_name!="") {
       fout << ifc.py_name << " object" <<  endl;
     } else {
@@ -2272,7 +2272,7 @@ int main(int argc, char *argv[]) {
         fout << ifc.name << endl;
       }
       fout << "        " << endl;
-      fout << "        Returns: a new copy of the ";
+      fout << "        Returns: new copy of the ";
       if (ifc.py_name!="") {
         fout << ifc.py_name << " object" <<  endl;
       } else {
@@ -2569,7 +2569,7 @@ int main(int argc, char *argv[]) {
           return_docs="Python bytes object";
           restype_string="ctypes.c_void_p";
         } else if (iff.ret.name=="std::vector<std::string>") {
-          return_docs="vec_vec_string object";
+          return_docs="std_vector_string object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
@@ -2769,6 +2769,13 @@ int main(int argc, char *argv[]) {
         post_func_code.push_back("strt=std_string(self._link,ret)");
         post_func_code.push_back("strt._owner=True");
         
+      } else if (iff.ret.name=="std::vector<std::string>") {
+        
+        function_start="ret=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back("strt=std_vector_string(self._link,ret)");
+        post_func_code.push_back("strt._owner=True");
+        
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
         function_end=")";
@@ -2888,7 +2895,7 @@ int main(int argc, char *argv[]) {
         } else if (iff.ret.name=="std::vector<std::string>") {
           fout << "        | *value*: std_vector_string object" << endl;
         } else {
-          fout << "        | *value*: " << iff.ret.name << endl;
+          fout << "        | *value*: ``" << iff.ret.name << "``" << endl;
         }
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "."
@@ -3324,6 +3331,51 @@ int main(int argc, char *argv[]) {
     fout2 << rst_header[j] << endl;
   }
   fout2 << endl;
+
+  // First, begin with a "table of contents" which lists
+  // all classes and functions
+  
+  for(size_t i=0;i<classes.size();i++) {
+
+    if_class &ifc=classes[i];
+
+    fout2 << "* :ref:`Class ";
+    if (ifc.py_name=="") {
+      fout2 << ifc.name << "`" << endl;
+    } else {
+      fout2 << ifc.py_name << "`" << endl;
+    }
+    
+  }
+
+  for(size_t i=0;i<sps.size();i++) {
+
+    if_shared_ptr &ifsp=sps[i];
+
+    fout2 << "* :ref:`Class shared_ptr_";
+    
+    if (ifsp.py_name=="") {
+      fout2 << ifsp.name << "`" << endl;
+    } else {
+      fout2 << ifsp.py_name << "`" << endl;
+    }
+
+  }
+  
+  for(size_t j=0;j<functions.size();j++) {
+    
+    if_func &iff=functions[j];
+
+    fout2 << "* :ref:`Function ";
+    
+    if (iff.overloaded || iff.py_name.length()>0) {
+      fout2 << iff.py_name << "`" << endl;
+    } else {
+      fout2 << iff.name << "`" << endl;
+    }
+  }
+
+  // Now go through each object invidiually
   
   for(size_t i=0;i<classes.size();i++) {
 

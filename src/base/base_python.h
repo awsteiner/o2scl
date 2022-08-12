@@ -42,6 +42,8 @@ void *o2scl_create_std_string();
 
 void o2scl_free_std_string(void *vptr);
 
+void o2scl_copy_std_string(void *vsrc, void *vdest);
+
 size_t o2scl_std_string_length(void *vptr);
 
 char o2scl_std_string_getitem(void *vptr, size_t n);
@@ -53,6 +55,8 @@ void o2scl_std_string_resize(void *vptr, size_t n);
 void *o2scl_create_std_vector_double_();
 
 void o2scl_free_std_vector_double_(void *vptr);
+
+void o2scl_copy_std_vector_double_(void *vsrc, void *vdest);
 
 void o2scl_std_vector_double__resize(void *vptr, size_t n);
 
@@ -66,6 +70,8 @@ void *o2scl_create_std_vector_int_();
 
 void o2scl_free_std_vector_int_(void *vptr);
 
+void o2scl_copy_std_vector_int_(void *vsrc, void *vdest);
+
 void o2scl_std_vector_int__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_int__size(void *vptr);
@@ -77,6 +83,8 @@ void o2scl_std_vector_int__setitem(void *vptr, size_t i, int val);
 void *o2scl_create_std_vector_size_t_();
 
 void o2scl_free_std_vector_size_t_(void *vptr);
+
+void o2scl_copy_std_vector_size_t_(void *vsrc, void *vdest);
 
 void o2scl_std_vector_size_t__resize(void *vptr, size_t n);
 
@@ -90,6 +98,8 @@ void *o2scl_create_std_vector_std_string_();
 
 void o2scl_free_std_vector_std_string_(void *vptr);
 
+void o2scl_copy_std_vector_std_string_(void *vsrc, void *vdest);
+
 void o2scl_std_vector_std_string__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_std_string__size(void *vptr);
@@ -101,6 +111,8 @@ void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, std::string *val
 void *o2scl_create_boost_numeric_ublas_vector_double_();
 
 void o2scl_free_boost_numeric_ublas_vector_double_(void *vptr);
+
+void o2scl_copy_boost_numeric_ublas_vector_double_(void *vsrc, void *vdest);
 
 size_t o2scl_boost_numeric_ublas_vector_double__size(void *vptr);
 
@@ -114,6 +126,8 @@ void *o2scl_create_boost_numeric_ublas_vector_int_();
 
 void o2scl_free_boost_numeric_ublas_vector_int_(void *vptr);
 
+void o2scl_copy_boost_numeric_ublas_vector_int_(void *vsrc, void *vdest);
+
 size_t o2scl_boost_numeric_ublas_vector_int__size(void *vptr);
 
 void o2scl_boost_numeric_ublas_vector_int__resize(void *vptr, size_t n);
@@ -125,6 +139,8 @@ void o2scl_boost_numeric_ublas_vector_int__setitem(void *vptr, size_t i, int val
 void *o2scl_create_boost_numeric_ublas_matrix_double_();
 
 void o2scl_free_boost_numeric_ublas_matrix_double_(void *vptr);
+
+void o2scl_copy_boost_numeric_ublas_matrix_double_(void *vsrc, void *vdest);
 
 size_t o2scl_boost_numeric_ublas_matrix_double__size1(void *vptr);
 
@@ -140,6 +156,8 @@ void *o2scl_create_boost_numeric_ublas_matrix_int_();
 
 void o2scl_free_boost_numeric_ublas_matrix_int_(void *vptr);
 
+void o2scl_copy_boost_numeric_ublas_matrix_int_(void *vsrc, void *vdest);
+
 size_t o2scl_boost_numeric_ublas_matrix_int__size1(void *vptr);
 
 size_t o2scl_boost_numeric_ublas_matrix_int__size2(void *vptr);
@@ -154,6 +172,8 @@ void *o2scl_create_std_vector_std_vector_double_();
 
 void o2scl_free_std_vector_std_vector_double_(void *vptr);
 
+void o2scl_copy_std_vector_std_vector_double_(void *vsrc, void *vdest);
+
 void o2scl_std_vector_std_vector_double__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_std_vector_double__size(void *vptr);
@@ -165,6 +185,8 @@ void o2scl_std_vector_std_vector_double__setitem(void *vptr, size_t i, void *val
 void *o2scl_create_std_vector_std_vector_std_string_();
 
 void o2scl_free_std_vector_std_vector_std_string_(void *vptr);
+
+void o2scl_copy_std_vector_std_vector_std_string_(void *vsrc, void *vdest);
 
 void o2scl_std_vector_std_vector_std_string__resize(void *vptr, size_t n);
 
