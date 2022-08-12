@@ -96,7 +96,7 @@ size_t o2scl_std_vector_std_string__size(void *vptr);
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n);
 
-void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, char *val);
+void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, std::string *val);
 
 void *o2scl_create_boost_numeric_ublas_vector_double_();
 

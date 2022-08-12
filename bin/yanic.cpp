@@ -1748,7 +1748,7 @@ int main(int argc, char *argv[]) {
             iff.ret.suffix=="&") {
           if (iff.ret.name=="std::string") {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
-                 << "_setitem(void *vptr, size_t i, char *val)";
+                 << "_setitem(void *vptr, size_t i, std::string *val)";
           } else if (iff.ret.name=="std::vector<double>") {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, "
@@ -1768,6 +1768,8 @@ int main(int argc, char *argv[]) {
               fout << "  std::vector<double> *valptr2="
                    << "(std::vector<double> *)valptr;" << endl;
               fout << "  (*ptr)[i]=*valptr2;" << endl;
+            } else if (iff.ret.name=="std::string") {
+              fout << "  (*ptr)[i]=*val;" << endl;
             } else {
               fout << "  (*ptr)[i]=val;" << endl;
             }
@@ -2563,7 +2565,8 @@ int main(int argc, char *argv[]) {
       std::string return_docs, restype_string;
       if (iff.name=="operator[]" || iff.name=="operator()") {
         if (iff.ret.name=="std::string") {
-          return_docs="std_string object";
+          //return_docs="std_string object";
+          return_docs="Python bytes object";
           restype_string="ctypes.c_void_p";
         } else if (iff.ret.name=="std::vector<std::string>") {
           return_docs="vec_vec_string object";
@@ -2879,7 +2882,7 @@ int main(int argc, char *argv[]) {
         fout << "        | Parameters:" << endl;
         fout << "        | *i*: ``size_t``" << endl;
         if (iff.ret.name=="std::string") {
-          fout << "        | *value*: Python bytes string" << endl;
+          fout << "        | *value*: Python bytes object" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
           fout << "        | *value*: Python array" << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
@@ -2893,9 +2896,11 @@ int main(int argc, char *argv[]) {
              << endl;
         if (iff.ret.name=="std::string") {
           fout << "        func.argtypes=[ctypes.c_void_p,"
-               << "ctypes.c_size_t,ctypes.c_char_p]"
+               << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;
-          fout << "        func(self._ptr,i,value)" << endl;
+          fout << "        s=std_string(self._link)" << endl;
+          fout << "        s.init_bytes(value)" << endl;
+          fout << "        func(self._ptr,i,s._ptr)" << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"

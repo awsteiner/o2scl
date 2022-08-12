@@ -378,7 +378,10 @@ class acol_manager
 - size_t size_t_obj
 - std::string string_obj
 - function run_o2graph
-  - int                             
+  - int
+- function parse_o2graph
+  - void
+  - io std::vector<std::string> &args
 #- function run
 #  - int argv [0]
 #  - char *argc[] [0]

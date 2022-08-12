@@ -538,6 +538,13 @@ int o2scl_hdf_acol_manager_run_o2graph(void *vptr) {
   return ret;
 }
 
+void o2scl_hdf_acol_manager_parse_o2graph(void *vptr, void *ptr_args) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<std::string> *args=(std::vector<std::string> *)ptr_args;
+  ptr->parse_o2graph(*args);
+  return;
+}
+
 void *o2scl_hdf_create_cloud_file() {
   cloud_file *ptr=new cloud_file;
   return ptr;

@@ -335,6 +335,14 @@ namespace o2scl_acol {
     int run_o2graph() {
       return run(0,0,false);
     }
+
+    /// Desc
+    void parse_o2graph(std::vector<std::string> &args) {
+      std::vector<o2scl::cmd_line_arg> ca;
+      cl->process_args(args,ca,0);
+      cl->call_args(ca);
+      return;
+    }      
     
     /// Create the cli object (with readline support if available)
     virtual int setup_cli();

@@ -196,9 +196,9 @@ void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {
   return sptr;
 }
 
-void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, char *val) {
+void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, std::string *val) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
-  (*ptr)[i]=val;
+  (*ptr)[i]=*val;
   return;
 }
 
