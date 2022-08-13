@@ -3375,6 +3375,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  fout2 << endl;
+
   // Now go through each object invidiually
   
   for(size_t i=0;i<classes.size();i++) {

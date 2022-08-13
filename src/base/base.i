@@ -420,25 +420,17 @@ class std::vector<std::vector<std::string>>
 |     """
 |     return self.size()
 #
-# -------------------------------------------------------------------
-#
-# Set the python class documentation for the following classes
-# 
-py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``%name%``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
-|
-| Note that python complex numbers are immutable, but this class is
-| not, so the real and imaginary parts can be changed with real_set()
-| and imag_set(). 
-|                              
 # Class complex<double>
 #                              
 # Create a python interface to std::vector<double> for vector
-# arguments to O2scl functions                             
+# arguments to O₂scl functions                             
 #
 class std::complex<double>
+- py_class_doc |
+| Note that python complex numbers are immutable, but this class is
+| not, so the real and imaginary parts can be changed with real_set()
+| and imag_set(). 
+|     
 - py_name std_complex
 - cons init
   - double re
@@ -466,6 +458,15 @@ class std::complex<double>
 |     """
 |     ret=self.real()+self.imag()*1j
 |     return ret
+# -------------------------------------------------------------------
+#
+# Set the python class documentation for the following classes
+# 
+py_class_doc |
+| Python interface for O₂scl class ``%name%``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+|
 # 
 # Class lib_settings_class
 #
@@ -514,10 +515,6 @@ class lib_settings_class
 # Class table
 #
 class table<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -772,10 +769,6 @@ class table<>
 # Class table_units<>
 #
 class table_units<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table_units``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -806,10 +799,6 @@ shared_ptr table_units<>
 # Class uniform_grid
 #
 class uniform_grid<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
 - py_name uniform_grid                             
 - function get_nbins
   - size_t                             
@@ -833,10 +822,6 @@ class uniform_grid<>
 # Class uniform_grid_end
 #
 class uniform_grid_end<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - cons init
@@ -847,10 +832,6 @@ class uniform_grid_end<>
 # Class uniform_grid_width
 #
 class uniform_grid_width<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - cons init
@@ -861,10 +842,6 @@ class uniform_grid_width<>
 # Class uniform_grid_end_width
 #
 class uniform_grid_end_width<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - cons init
@@ -875,10 +852,6 @@ class uniform_grid_end_width<>
 # Class uniform_grid_log_end
 #
 class uniform_grid_log_end<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - cons init
