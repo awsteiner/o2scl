@@ -544,6 +544,19 @@ void o2scl_free_std_vector_contour_line_(void *vptr) {
   return;
 }
 
+void *o2scl_std_vector_contour_line__getitem(void *vptr, size_t n) {
+  std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
+  contour_line *ret=&(ptr->operator[](n));
+  return ret;
+}
+
+void o2scl_std_vector_contour_line__setitem(void *vptr, size_t i, void *valptr) {
+  std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
+  contour_line *valptr2=(contour_line *)valptr;
+  (*ptr)[i]=*valptr2;
+  return;
+}
+
 void o2scl_std_vector_contour_line__resize(void *vptr, size_t n) {
   std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
   ptr->resize(n);

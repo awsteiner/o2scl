@@ -1529,16 +1529,14 @@ int main(int argc, char *argv[]) {
           fout << ret_type << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_" << iff.py_name
                << "(void *vptr";
+        } else if (iff.name=="operator[]" || iff.name=="operator()") {
+          fout << ret_type << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_getitem"
+               << "(void *vptr";
         } else {
-          if (iff.name=="operator[]" || iff.name=="operator()") {
-            fout << ret_type << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_getitem"
-                 << "(void *vptr";
-          } else {
-            fout << ret_type << underscoreify(ifc.ns) << "_"
-                 << underscoreify(ifc.name) << "_" << iff.name
-                 << "(void *vptr";
-          }
+          fout << ret_type << underscoreify(ifc.ns) << "_"
+               << underscoreify(ifc.name) << "_" << iff.name
+               << "(void *vptr";
         }
         if (iff.args.size()>0) {
           fout << ", ";
@@ -1632,6 +1630,9 @@ int main(int argc, char *argv[]) {
               fout << "  std::vector<std::string> *vsptr="
                    << "new std::vector<std::string>;" << endl;
               fout << "  *vsptr=ptr->" << iff.name << "(";
+            } else if (iff.ret.name=="contour_line") {
+              fout << "  " << iff.ret.name
+                   << " *ret=&(ptr->" << iff.name << "(";
             } else {
               fout << "  " << iff.ret.name
                    << " ret=ptr->" << iff.name << "(";
@@ -1691,7 +1692,11 @@ int main(int argc, char *argv[]) {
               fout << ",";
             }
           }
-          fout << ");" << endl;
+          if (iff.name=="operator[]" && iff.ret.name=="contour_line") {
+            fout << "));" << endl;
+          } else {
+            fout << ");" << endl;
+          }
 
           // Construct the function return statement
           
@@ -1753,6 +1758,10 @@ int main(int argc, char *argv[]) {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, "
                  << "void *valptr)";
+          } else if (iff.ret.name=="contour_line") {
+            fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
+                 << "_setitem(void *vptr, size_t i, "
+                 << "void *valptr)";
           } else {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, " << iff.ret.name
@@ -1767,6 +1776,10 @@ int main(int argc, char *argv[]) {
             if (iff.ret.name=="std::vector<double>") {
               fout << "  std::vector<double> *valptr2="
                    << "(std::vector<double> *)valptr;" << endl;
+              fout << "  (*ptr)[i]=*valptr2;" << endl;
+            } else if (iff.ret.name=="contour_line") {
+              fout << "  contour_line *valptr2="
+                   << "(contour_line *)valptr;" << endl;
               fout << "  (*ptr)[i]=*valptr2;" << endl;
             } else if (iff.ret.name=="std::string") {
               fout << "  (*ptr)[i]=*val;" << endl;

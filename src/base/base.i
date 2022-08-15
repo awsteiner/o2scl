@@ -515,6 +515,10 @@ class lib_settings_class
 # Class table
 #
 class table<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``table``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -769,6 +773,10 @@ class table<>
 # Class table_units<>
 #
 class table_units<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``table_units``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -799,7 +807,11 @@ shared_ptr table_units<>
 # Class uniform_grid
 #
 class uniform_grid<>
-- py_name uniform_grid                             
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
+- py_name uniform_grid
 - function get_nbins
   - size_t                             
 - function get_npoints
@@ -822,6 +834,10 @@ class uniform_grid<>
 # Class uniform_grid_end
 #
 class uniform_grid_end<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - cons init
@@ -832,6 +848,10 @@ class uniform_grid_end<>
 # Class uniform_grid_width
 #
 class uniform_grid_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - cons init
@@ -842,6 +862,10 @@ class uniform_grid_width<>
 # Class uniform_grid_end_width
 #
 class uniform_grid_end_width<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - cons init
@@ -852,6 +876,10 @@ class uniform_grid_end_width<>
 # Class uniform_grid_log_end
 #
 class uniform_grid_log_end<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - cons init
@@ -1251,14 +1279,14 @@ class tensor<>
   - out double &max_value    
 - function total_sum
   - double
-#- function convert_table3d_sum
-#  - void
-#  - size_t ix_x
-#  - size_t ix_y
-#  - out table3d &tab
-#  - std::string x_name ["x"]
-#  - std::string y_name ["y"]
-#  - std::string slice_name ["z"]
+- function convert_table3d_sum
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
 - function rearrange_and_copy
   - tensor<>
   - std::string spec

@@ -1919,6 +1919,13 @@ double o2scl_tensor__total_sum(void *vptr) {
   return ret;
 }
 
+void o2scl_tensor__convert_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->convert_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
 void *o2scl_tensor__rearrange_and_copy(void *vptr, char *spec, int verbose, bool err_on_fail) {
   tensor<> *ptr=(tensor<> *)vptr;
   tensor<> *ret=new tensor<>;
