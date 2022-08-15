@@ -39,7 +39,7 @@ int main(void) {
   
   pugi::xml_document doc1, doc2;
   
-  std::string doc_fn=o2scl_settings.get_doc_dir()+
+  std::string doc_fn=((string)"../../doc/o2scl/")+
     "xml/namespaceo2scl.xml";
   
   pugi::xml_node n=doxygen_xml_get(doc_fn,"glob_wrapper",
