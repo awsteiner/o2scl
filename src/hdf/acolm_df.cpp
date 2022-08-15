@@ -463,19 +463,19 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
       "html/"+sv[1]+".html";
     if (file_exists(topic_fn)) {
       cout << "Found documentation file:\n  " << topic_fn << endl;
-      cmd+=((string)"\"file://")+topic_fn+"\" &";
+      cmd+=((string)"\"file://")+topic_fn+"\"";
     } else {
       std::string class_fn=o2scl_settings.get_doc_dir()+
         "html/class/"+sv[1]+".html";
       if (file_exists(class_fn)) {
         cout << "Found documentation file:\n  " << class_fn << endl;
-        cmd+=((string)"\"file://")+class_fn+"\" &";
+        cmd+=((string)"\"file://")+class_fn+"\"";
       } else {
         std::string function_fn=o2scl_settings.get_doc_dir()+
           "html/function/"+sv[1]+".html";
         if (file_exists(function_fn)) {
           cout << "Found documentation file:\n  " << function_fn << endl;
-          cmd+=((string)"\"file://")+function_fn+"\" &";
+          cmd+=((string)"\"file://")+function_fn+"\"";
         } else {
           cerr << "Could not find class, function, or topic "
                << "named '" << sv[1] << "'." << endl;
@@ -506,7 +506,7 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
     */
     
   } else {
-    cmd+="file://"+o2scl_settings.get_doc_dir()+"html/index.html &";
+    cmd+="file://"+o2scl_settings.get_doc_dir()+"html/index.html";
   }
   
   cout << "Using command:\n  " << cmd << endl;
