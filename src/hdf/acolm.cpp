@@ -196,6 +196,16 @@ void acol_manager::update_o2_docs(size_t narr,
 
   int loc_verbose=0;
 
+  if (verbose>2 || loc_verbose>1) {
+    if (new_type.length()>0) {
+      cout << "acol_manager::update_o2_docs(): Updating documentation "
+           << "for type " << new_type << endl;
+    } else {
+      cout << "acol_manager::update_o2_docs(): Updating documentation "
+           << "(no current object)." << endl;
+    }
+  }
+  
   // Loop through all options, attempting to assign docs for all
   for(size_t j=0;j<narr;j++) {
     
@@ -206,9 +216,6 @@ void acol_manager::update_o2_docs(size_t narr,
 
       // We found a match for option j and list of doc strings k
       if (cmd_doc_strings[k][0]==options_arr[j].lng) {
-
-        //if (options_arr[j].lng==(string)"stats") loc_verbose=3;
-        //else loc_verbose=0;
         
         if (loc_verbose>1) {
           cout << "Found documentation for " << options_arr[j].lng << endl;
@@ -230,6 +237,7 @@ void acol_manager::update_o2_docs(size_t narr,
               cout << "Found detailed desc." << endl;
             }
             bool generic_docs=true;
+            bool no_obj_docs=false;
             
             if (cmd_doc_strings[k][2].substr(0,19)==
                 ((string)"For objects of type")) {
@@ -237,6 +245,7 @@ void acol_manager::update_o2_docs(size_t narr,
             } else if (cmd_doc_strings[k][2].substr(0,30)==
                        ((string)"If there is no current object:")) {
               generic_docs=false;
+              no_obj_docs=true;
             }
             
             if (generic_docs) {
@@ -260,9 +269,42 @@ void acol_manager::update_o2_docs(size_t narr,
                 }
               }
             }
+            if (loc_verbose>1 && new_type.length()==0) {
+              if (no_obj_docs) {
+                cout << "Found no-object docs." << endl;
+              } else {
+                cout << "No no-object docs." << endl;
+              }
+            }
             
             if (new_type.length()==0) {
-              if (generic_docs==true) {
+              
+              if (no_obj_docs) {
+                
+                if (loc_verbose>1) {
+                  cout << "Reading no-object docs: " << endl;
+                }
+                
+                options_arr[j].desc=cmd_doc_strings[k][3];
+                options_arr[j].parm_desc=cmd_doc_strings[k][4];
+                bool loop_done=false;
+                if (cmd_doc_strings[k].size()>=6) {
+                  options_arr[j].help=cmd_doc_strings[k][5];
+                }
+                for(size_t kk=6;kk<cmd_doc_strings[k].size() &&
+                      loop_done==false;kk++) {
+                  if (cmd_doc_strings[k][kk].substr(0,19)==
+                      ((string)"For objects of type")) {
+                    loop_done=true;
+                  } else if (cmd_doc_strings[k][kk].substr(0,30)==
+                             ((string)"If there is no current object:")) {
+                    loop_done=true;
+                  }
+                  options_arr[j].help+="\n\n"+cmd_doc_strings[k][kk];
+                }
+                
+              } else if (generic_docs==true) {
+                
                 if (loc_verbose>1) {
                   cout << "Reading generic docs: " << endl;
                 }
@@ -312,8 +354,8 @@ void acol_manager::update_o2_docs(size_t narr,
                     cmd_doc_strings[k][kk].substr(0,s2.length())==s2) {
                   
                   if (loc_verbose>1) {
-                    cout << "Found type-specific docs [" << new_type
-                         << "]." << endl;
+                    cout << "Found type-specific docs for type " << new_type
+                         << "." << endl;
                   }
                   loop1_done=true;
                   bool loop2_done=false;
@@ -373,12 +415,12 @@ void acol_manager::update_o2_docs(size_t narr,
     
     if (found==true) {
       if (verbose>2 || loc_verbose>1) {
-        cout << "Function acol_manager::update_o2_docs() "
+        cout << "acol_manager::update_o2_docs() "
              << "found documentation for command "
              << options_arr[j].lng << " ." << endl;
       }
     } else {
-      cout << "Function acol_manager::update_o2_docs() could not "
+      cout << "acol_manager::update_o2_docs() could not "
            << "find documentation for command "
            << options_arr[j].lng << " ." << endl;
     }

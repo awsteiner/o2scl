@@ -400,6 +400,12 @@ class std::vector<std::vector<double>>
 |     Returns: a Python int
 |     """
 |     return self.size()
+#
+# Class vector<vector<string>>
+#                              
+# Create a python interface to std::vector<std::vector<std::string>> for
+# vector of vector arguments to O2scl functions                             
+#
 class std::vector<std::vector<std::string>>
 - py_name vec_vec_string
 - std_cc                             

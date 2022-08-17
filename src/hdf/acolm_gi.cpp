@@ -28,17 +28,10 @@
 #include <o2scl/inte_kronrod_boost.h>
 #include <o2scl/inte_qag_gsl.h>
 
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/vector_proxy.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
-
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_acol;
-
-typedef boost::numeric::ublas::vector<double> ubvector;
-typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 /*
   int acol_manager::comm_generic()

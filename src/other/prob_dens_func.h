@@ -1283,9 +1283,9 @@ namespace o2scl {
       double x_cent, y_cent, x_std, y_std, covar;
       pdmbg.get(x_cent,y_cent,x_std,y_std,covar);
       
-      vec_t peak(2);
-      peak[0]=x_cent;
-      peak[1]=y_cent;
+      vec_t peak2(2);
+      peak2[0]=x_cent;
+      peak2[1]=y_cent;
 
       mat_t m_covar(2,2);
       m_covar(0,0)=x_std*x_std;
@@ -1293,7 +1293,7 @@ namespace o2scl {
       m_covar(1,0)=m_covar(0,1);
       m_covar(1,1)=y_std*y_std;
 
-      set_covar(2,peak,m_covar);
+      set_covar(2,peak2,m_covar);
       
       return 0;
     }
