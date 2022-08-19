@@ -932,6 +932,16 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
+  } else if (type=="vec_vec_double") {
+    
+    (*fout) << vvdouble_obj.size() << endl;
+    for(size_t k=0;k<vvdouble_obj.size();k++) {
+      for(size_t kk=0;kk<vvdouble_obj[k].size();kk++) {
+        (*fout) << vvdouble_obj[k][kk] << " ";
+      }
+      (*fout) << endl;
+    }
+
   } else if (type=="hist_2d") {
     
     for(size_t k=0;k<hist_2d_obj.size_x();k++) {

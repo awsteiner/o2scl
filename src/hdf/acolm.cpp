@@ -1119,11 +1119,6 @@ void acol_manager::command_add(std::string new_type) {
     cl->set_comm_option_vec(narr,options_arr);
   }
 
-  // Update autocorr docs for every type because its
-  // documentation changes for each type. This must also be
-  // done in comm_clear()
-  update_o2_docs(1,cl->get_option_pointer("autocorr"),new_type);
-  
   return;
 }
 

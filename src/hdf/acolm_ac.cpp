@@ -529,7 +529,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     options=sv[1];
   }
   vector<string> voptions;
-  split_string(options,voptions);
+  split_string_delim(options,voptions,',');
   
   size_t ix;
 
@@ -604,7 +604,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     for(size_t i=2;i<sv.size();i++) in.push_back(sv[i]);
     cout << "in: ";
     vector_out(cout,in,true);
-
+    
     if (in.size()==0) {
       cerr << "No columns or vectors specified." << endl;
       return 2;
@@ -650,7 +650,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   } else {
     
     vector<string> in, pr;
-    if (sv.size()<4) {
+    if (sv.size()<3) {
       pr.push_back("Enter options");
       pr.push_back("Enter multiple vector specification for data");
       int ret=get_input(sv,pr,in,"autocorr",itive_com);
@@ -736,6 +736,10 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
   if (store) {
     std::swap(ac_vec,vvdouble_obj);
+    command_del(type);
+    clear_obj();
+    command_add("vec_vec_double");
+    type="vec_vec_double";
   }
     
   return 0;
@@ -1180,9 +1184,6 @@ int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
   // The clear_obj() function sets type to an empty string.
   clear_obj();
 
-  // This is also done in command_add()
-  update_o2_docs(1,cl->get_option_pointer("autocorr"),"");
-  
   return 0;
 }
 

@@ -1077,61 +1077,43 @@ namespace o2scl_acol {
     virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
                                     bool itive_com);
 
-    /** \brief Compute the autocorrelation coefficients
+    /** \brief Compute autocorrelation coefficients from a set of vectors
 
-        If there is no current object:
-
-        Compute autocorrelation coefficients from a set of vectors
-
-        Arguments: <tt><mult. vec. spec. 1> [mult. vec. spec. 2]</tt>
+        Arguments: <tt><options> ...</tt>
         
-        This command computes the autocorrelation coefficients for all
-        vectors specified as multiple vector specifications in the
-        arguments, then averages those autocorrelation coefficients
-        together. The averaged autocorrelation coefficients are kept
-        as a new <tt>double[]</tt> object. See ``Multiple vector
+        This command computes autocorrelation coefficients for the
+        specified vector(s) and then estimates the associated 
+        autocorrelation length(s). 
+
+        There are three algorithms a brute force algorithm (the
+        default), the algorithm from "acor", and a method using
+        FFTW ("fft"). This algorithm can be specified in the
+        options argument. 
+
+        If multiple vectors are given, then there are two options.
+        Option "max" (the default) means that autocorrelation 
+        coefficients are computed separately for each vector and
+        then the maximum autocorrelation length is specified at
+        the end. Option "avg" means that the autocorrelation 
+        coefficients are averaged over all vectors and a single
+        averaged autocorrelation length is reported at the end.
+
+        Finally, the "store" option, if specified, means that the
+        autocorrelation coefficients are stored afterwards in 
+        a <tt>vec_vec_double</tt> object (and the current object,
+        if present, is cleared).
+
+        If there is no current object, then the user may specify one
+        or more multiple vector specifications. See ``Multiple vector
         specifications`` for more information.
 
-        For objects of type int[]:
+        If the current object is of type int[], double[], or size_t[],
+        then the autocorrelation coefficients of the current vector
+        are computed.
 
-        Compute autocorrelation coefficients from the current vector
-
-        Arguments: (No arguments.)
-
-        Replace the current object with a <tt>double[]</tt> object which
-        contains the autocorrelation coefficient as a function of the
-        step size.
-
-        For objects of type double[]:
-
-        Compute autocorrelation coefficients from the current vector
-
-        Arguments: (No arguments.)
-
-        Replace the current object with a <tt>double[]</tt> object which
-        contains the autocorrelation coefficient as a function of the
-        step size.
-
-        For objects of type table:
-
-        Compute autocorrelation coefficients from the table columns
-
-        Arguments: <tt><ac> <ftom> <column or mult. vector specification>
-        [second column or mult. vector specification] ...</tt>
-
-        Compute autocorrelation coefficients from a column of a table.
-        The first argument, <ac>, is the name of the column in which
-        the autocorrelation coefficients will be stored. The second
-        argument, <ftom>, is the name of the column in which the
-        quantity '5*tau/M' will be stored. The data may be either a
-        column in the table or a vector specification. Columns <ac>
-        and <ftom> are created if they are not already present and
-        overwritten if they already contain data. Also, the
-        autocorrelation length and estimated sample size are output to
-        the screen. If multiple data sources are given, then the
-        autocorrelation coefficients are averaged together. See also
-        ``Multiple vector specifications`` for more information on the
-        third and fourth arguments.
+        If the current object is of type table, then the user may
+        specify either columns of the table or a multiple vector
+        specification.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 

@@ -871,7 +871,7 @@ int acol_manager::comm_type(std::vector<std::string> &sv,
     cerr << "No current object to display type of." << endl;
     return 1;
   }
-  cout << "Type is " << type << " ." << endl;
+  cout << "The current object has type " << type << "." << endl;
   return 0;
 }
 
