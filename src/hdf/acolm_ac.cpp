@@ -176,6 +176,8 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   return ret;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
+
 int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 				bool itive_com) {
 
@@ -340,6 +342,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
     } else if (alg=="fft") {
 
+#ifdef O2SCL_FFTW
       double mean=vector_mean(doublev_obj);
       double stddev=vector_stddev(doublev_obj);
       vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
@@ -351,9 +354,14 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
         cout << "Autocorrelation length determination failed." << endl;
       }
       doublev_obj=ac_vec;
+#else
+      cerr << "FFTW was not enabled in this installation."
+           << endl;
+#endif
       
     } else if (alg=="fft_len") {
 
+#ifdef O2SCL_FFTW
       double mean=vector_mean(doublev_obj);
       double stddev=vector_stddev(doublev_obj);
       vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
@@ -364,6 +372,10 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       } else {
         cout << "Autocorrelation length determination failed." << endl;
       }
+#else
+      cerr << "FFTW was not enabled in this installation."
+           << endl;
+#endif
 
     } else {
 
@@ -504,6 +516,214 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     }
   }    
   
+  return 0;
+}
+
+#endif
+
+int acol_manager::comm_autocorr(std::vector<std::string> &sv,
+				bool itive_com) {
+
+  string options="";
+  if (sv.size()>=2) {
+    options=sv[1];
+  }
+  vector<string> voptions;
+  split_string(options,voptions);
+  
+  size_t ix;
+
+  // Either 'def', 'acor', or 'fft'
+  string alg;
+  if (vector_search(voptions,"acor",ix)==true) {
+    alg="acor";
+    if (verbose>0) {
+      cout << "autocorr using acor algorithm." << endl;
+    }
+  } else if (vector_search(voptions,"fft",ix)==true) {
+    alg="fft";
+    if (verbose>0) {
+      cout << "autocorr using FFT algorithm." << endl;
+    }
+  } else {
+    alg="def";
+    if (verbose>0) {
+      cout << "autocorr using default algorithm." << endl;
+    }
+  }
+  
+  // Either 'max' or 'avg'
+  string combine;
+  if (vector_search(voptions,"avg",ix)==true) {
+    combine="avg";
+    if (verbose>0) {
+      cout << "autocorr will average autocorrelation data." << endl;
+    }
+  } else {
+    combine="max";
+    if (verbose>0) {
+      cout << "autocorr will report maximum autocorrelation length." << endl;
+    }
+  }
+  
+  vector<vector<double>> ac_vec, ftom;
+  vector<vector<double>> vvd;
+
+  if (type=="int[]") {
+
+    vvd.resize(1);
+    vector_copy(intv_obj,vvd[0]);
+    
+  } else if (type=="size_t[]") {
+    
+    vvd.resize(1);
+    vector_copy(size_tv_obj,vvd[0]);
+    
+  } else if (type=="double[]") {
+    
+    vvd.resize(1);
+    vector_copy(doublev_obj,vvd[0]);
+    
+  } else if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "Table has no lines of data to compute "
+	   << "autocorrelations with." << endl;
+      return exc_efailed;
+    }
+
+    vector<string> in, pr;
+    if (sv.size()<4) {
+      pr.push_back("Enter output column for autocorrelations");
+      pr.push_back("Enter output column for 5*tau/m");
+      pr.push_back("Enter vector specification for data");
+      int ret=get_input(sv,pr,in,"autocorr",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
+    }
+
+    for(size_t ix=2;ix<in.size();ix++) {
+
+      // Determine vector from table column (requires copy) or
+      // multiple vector specification
+      
+      if (in[ix].find(':')==std::string::npos) {
+
+        if (table_obj.is_column(in[ix])==false) {
+          cerr << "Could not find column named '" << in[ix] << "'." << endl;
+          return exc_efailed;
+        }
+        
+        vector<double> v;
+	v.resize(table_obj.get_nlines());
+	for(size_t i=0;i<table_obj.get_nlines();i++) {
+	  v[i]=table_obj.get(in[ix],i);
+	}
+        vvd.push_back(v);
+        
+      } else {
+
+        vector<vector<double> > vvd2;
+        
+        int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],vvd2,verbose,false);
+	if (vs_ret!=0) {
+	  cerr << "Multiple vector specification failed." << endl;
+	  return 1;
+	}
+
+        for(size_t kk=0;kk<vvd2.size();kk++) {
+          vvd.push_back(vvd[kk]);
+        }
+      }
+      
+    }
+    
+  } else {
+    
+    vector<string> in, pr;
+    if (sv.size()<4) {
+      pr.push_back("Enter options");
+      pr.push_back("Enter multiple vector specification for data");
+      int ret=get_input(sv,pr,in,"autocorr",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
+    }
+
+    vector<vector<double> > vvd2;
+    
+    int vs_ret=o2scl_hdf::mult_vector_spec(in[1],vvd2,verbose,false);
+    if (vs_ret!=0) {
+      cerr << "Multiple vector specification failed." << endl;
+      return 1;
+    }
+    
+    for(size_t kk=0;kk<vvd2.size();kk++) {
+      vvd.push_back(vvd[kk]);
+    }
+    
+  }
+
+  size_t max_ac_size=0;
+  ac_vec.resize(vvd.size());
+  for(size_t jj=0;jj<vvd.size();jj++) {
+    if (alg=="acor") {
+      double mean, sigma, tau;
+      vector_acor<vector<double>>(vvd[jj].size(),vvd[jj],
+                                  mean,sigma,tau);
+    } else if (alg=="fft") {
+#ifdef O2SCL_FFTW
+      double mean=vector_mean(vvd[jj]);
+      double stddev=vector_stddev(vvd[jj]);
+      vector_autocorr_vector_fftw(vvd[jj],ac_vec[jj],mean,stddev);
+#else
+      cerr << "FFTW support not included." << endl;
+      return 1;
+#endif
+    } else {
+      vector_autocorr_vector(vvd[jj],ac_vec[jj]);
+    }
+    if (ac_vec[jj].size()>max_ac_size) {
+      max_ac_size=ac_vec[jj].size();
+    }
+  }
+    
+  if (combine=="max") {
+    size_t len_max=0;
+    for(size_t jj=0;jj<vvd.size();jj++) {
+      size_t len=vector_autocorr_tau(ac_vec[jj],ftom[jj]);
+      if (len>0) {
+        cout << "Autocorrelation length: " << len << " sample size: "
+             << vvd[jj].size()/len << endl;
+      } else {
+        cout << "Autocorrelation length determination failed." << endl;
+      }
+      if (len>len_max) len=len_max;
+    }
+  } else {
+    vector<double> ac_avg(max_ac_size);
+    for(size_t i=0;i<max_ac_size;i++) {
+      size_t n=0;
+      ac_avg[i]=0.0;
+      for(size_t j=0;j<ac_vec.size();j++) {
+	if (i<ac_vec[j].size()) {
+	  n++;
+	  ac_avg[i]+=ac_vec[j][i];
+	}
+      }
+      ac_avg[i]/=((double)n);
+    }
+
+    ftom.resize(1);
+    size_t len=vector_autocorr_tau(ac_avg,ftom[0]);
+    if (len>0) {
+      cout << "Autocorrelation length: " << len << "." << endl;
+    } else {
+      cout << "Autocorrelation length determination failed." << endl;
+    }
+  }
+    
   return 0;
 }
 
@@ -945,6 +1165,9 @@ int acol_manager::comm_clear(std::vector<std::string> &sv, bool itive_com) {
 
   // The clear_obj() function sets type to an empty string.
   clear_obj();
+
+  // This is also done in command_add()
+  update_o2_docs(1,cl->get_option_pointer("autocorr"),"");
   
   return 0;
 }

@@ -3519,3 +3519,14 @@ int cli::read_docs() {
 
   return 0;
 }
+
+comm_option_s *cli::get_option_pointer(std::string name) {
+  for(size_t i=0;i<clist.size();i++) {
+    if (string_equal_dash(clist[i].lng,name)) {
+      return &clist[i];
+    }
+  }
+  O2SCL_ERR("Option not found in cli::get_option_pointer().",
+            o2scl::exc_esanity);
+  return 0;
+}

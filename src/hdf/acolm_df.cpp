@@ -452,6 +452,8 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
     See percent encoding at: https://www.w3schools.com/tags/ref_urlencode.asp
    */
 
+  bool find_failed=false;
+  
   if (sv.size()>=2) {
 
     if (sv[1].length()>40) {
@@ -479,7 +481,7 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
         } else {
           cerr << "Could not find class, function, or topic "
                << "named '" << sv[1] << "'." << endl;
-          return 2;
+          find_failed=true;
         }
       }
     }
@@ -505,13 +507,21 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
       "html/search.html?q="+sv[1]+"\" &";
     */
     
-  } else {
-    cmd+="file://"+o2scl_settings.get_doc_dir()+"html/index.html";
   }
-  
-  cout << "Using command:\n  " << cmd << endl;
 
-  int xret=system(cmd.c_str());
+  std::string index_fn=o2scl_settings.get_doc_dir()+
+    "html/index.html";
+  if (file_exists(index_fn)) {
+    
+    cmd+="\"file://"+index_fn+"\"";
+    
+    cout << "docs using command:\n  " << cmd << endl;
+    int xret=system(cmd.c_str());
+    
+  } else {
+    cerr << "docs could not find file " << index_fn << endl;
+  }
+    
   
   return 0;
 }

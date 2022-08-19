@@ -189,9 +189,9 @@ void *o2scl_hdf_acol_manager_get_string_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v);
 
-int o2scl_hdf_acol_manager_run_o2graph(void *vptr);
+int o2scl_hdf_acol_manager_run_empty(void *vptr);
 
-void o2scl_hdf_acol_manager_parse_o2graph(void *vptr, void *ptr_args);
+void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
 
 void *o2scl_hdf_create_cloud_file();
 

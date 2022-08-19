@@ -377,9 +377,9 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
-- function run_o2graph
+- function run_empty
   - int
-- function parse_o2graph
+- function parse_vec_string
   - void
   - io std::vector<std::string> &args
 #- function run

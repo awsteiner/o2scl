@@ -532,16 +532,16 @@ void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v) {
   return;
 }
 
-int o2scl_hdf_acol_manager_run_o2graph(void *vptr) {
+int o2scl_hdf_acol_manager_run_empty(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
-  int ret=ptr->run_o2graph();
+  int ret=ptr->run_empty();
   return ret;
 }
 
-void o2scl_hdf_acol_manager_parse_o2graph(void *vptr, void *ptr_args) {
+void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args) {
   acol_manager *ptr=(acol_manager *)vptr;
   std::vector<std::string> *args=(std::vector<std::string> *)ptr_args;
-  ptr->parse_o2graph(*args);
+  ptr->parse_vec_string(*args);
   return;
 }
 

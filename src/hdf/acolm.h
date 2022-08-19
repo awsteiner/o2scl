@@ -304,6 +304,14 @@ namespace o2scl_acol {
     
     /** \brief Update the command documentation from the o2scl
         data file
+
+        This function iterates through all of the command line
+        interface options and sets their documentation from the o2scl
+        file.
+
+        This function is called in \ref command_add() to update
+        the documentation for a new type and in \ref setup_options()
+        to set up the initial documentation.
     */
     void update_o2_docs(size_t narr,
                         o2scl::comm_option_s *options_arr,
@@ -331,13 +339,17 @@ namespace o2scl_acol {
     */
     virtual int run(int argv, char *argc[], bool full_process=true);
 
-    /// Desc
-    int run_o2graph() {
+    /** \brief Call \ref run() with no arguments and with 
+        \c full_process equal to false
+     */
+    int run_empty() {
       return run(0,0,false);
     }
 
-    /// Desc
-    void parse_o2graph(std::vector<std::string> &args) {
+    /** \brief Process and call the arguments specified in the
+        string vector \c args 
+     */
+    void parse_vec_string(std::vector<std::string> &args) {
       std::vector<o2scl::cmd_line_arg> ca;
       cl->process_args(args,ca,0);
       cl->call_args(ca);
@@ -652,11 +664,15 @@ namespace o2scl_acol {
         HTML documentation for O₂scl in the default web browser using
         'open' on OSX and 'xdg-open' on other systems. If a topic is
         specified, then the <tt>docs</tt> command looks for the O₂scl
-        documentation web page for the specified section, class, or
+        local HTML documentation for the specified section, class, or
         function. If the documentation is found, then that web page is
-        opened instead. In order to open the remote version of the
-        documentation instead of the local copy, use the
-        <tt>wdocs</tt> command instead.
+        opened instead. 
+
+        The operation of the <tt>docs</tt> command depends on the
+        assumption that the HTML documentation files have not been
+        moved after the installation process. In order to open the
+        remote version of the documentation instead of the local copy,
+        use the <tt>wdocs</tt> command instead.
     */
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
@@ -1077,6 +1093,8 @@ namespace o2scl_acol {
 
         For objects of type int[]:
 
+        Compute autocorrelation coefficients from the current vector
+
         Arguments: (No arguments.)
 
         Replace the current object with a <tt>double[]</tt> object which
@@ -1084,6 +1102,8 @@ namespace o2scl_acol {
         step size.
 
         For objects of type double[]:
+
+        Compute autocorrelation coefficients from the current vector
 
         Arguments: (No arguments.)
 
@@ -1093,8 +1113,10 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Arguments: <tt><ac> <ftom> <column or vector specification>
-        [second column or vector specification] ...</tt>
+        Compute autocorrelation coefficients from the table columns
+
+        Arguments: <tt><ac> <ftom> <column or mult. vector specification>
+        [second column or mult. vector specification] ...</tt>
 
         Compute autocorrelation coefficients from a column of a table.
         The first argument, <ac>, is the name of the column in which
@@ -1107,9 +1129,8 @@ namespace o2scl_acol {
         autocorrelation length and estimated sample size are output to
         the screen. If multiple data sources are given, then the
         autocorrelation coefficients are averaged together. See also
-        ``Vector specifications`` for more information on the third
-        and fourth arguments.
-
+        ``Multiple vector specifications`` for more information on the
+        third and fourth arguments.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 

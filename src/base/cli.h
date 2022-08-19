@@ -608,7 +608,7 @@ namespace o2scl {
     //@}
     
     /** \brief The function which obtains input from the user
-
+        
 	\future Think about whether or not this should be protected?
 	(Possibly not, as it's extensively used by acolm.cpp)
     */
@@ -627,8 +627,8 @@ namespace o2scl {
 	the name of the command, and should thus be ignored.
     */
     int process_args_c(int argc, char *argv[], 
-		     std::vector<cmd_line_arg> &ca, int debug=0,
-		     bool also_call_args=false);
+                       std::vector<cmd_line_arg> &ca, int debug=0,
+                       bool also_call_args=false);
 
     /** \brief Go through the argument list in \c sv and add
 	any alias definitions which appear
@@ -655,7 +655,7 @@ namespace o2scl {
 	from (const char *) which needs reworking.
      */
     int process_args_str(std::string s, std::vector<cmd_line_arg> &ca, 
-		     int debug=0, bool also_call_args=false);
+                         int debug=0, bool also_call_args=false);
 
     /** \brief Set verbosity
 	
@@ -665,9 +665,6 @@ namespace o2scl {
 
     /// Run the interactive mode
     int run_interactive();
-
-    // Create a new command
-    //    int replace_command(comm_option &ic);
 
     /** \brief Set an alias \c alias for the string \c str
 
@@ -712,7 +709,13 @@ namespace o2scl {
      */
     int read_docs();
 
+    /** \brief Make standard replacements of the Doxygen XML output
+     */
     void xml_replacements(std::string &s);
+
+    /** \brief Desc
+     */
+    comm_option_s *get_option_pointer(std::string name);
     
   };
 

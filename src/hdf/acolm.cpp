@@ -199,10 +199,11 @@ void acol_manager::update_o2_docs(size_t narr,
   if (verbose>2 || loc_verbose>1) {
     if (new_type.length()>0) {
       cout << "acol_manager::update_o2_docs(): Updating documentation "
-           << "for type " << new_type << endl;
+           << "for type " << new_type << " with " << narr
+           << " options " << endl;
     } else {
       cout << "acol_manager::update_o2_docs(): Updating documentation "
-           << "(no current object)." << endl;
+           << "(no current object) with " << narr << "options." << endl;
     }
   }
   
@@ -335,7 +336,7 @@ void acol_manager::update_o2_docs(size_t narr,
             } else {
               
               if (loc_verbose>1) {
-                cout << "Current type is '" << new_type << "'" << endl;
+                cout << "Current type is '" << new_type << "'." << endl;
               }
               options_arr[j].desc="";
               options_arr[j].parm_desc="";
@@ -359,7 +360,10 @@ void acol_manager::update_o2_docs(size_t narr,
                   }
                   loop1_done=true;
                   bool loop2_done=false;
-                  
+
+                  bool short_set=false;
+                  bool pd_set=false;
+                  bool long_set=false;
                   for(size_t kl=kk+1;kl<cmd_doc_strings[k].size() &&
                         loop2_done==false;kl++) {
                     
@@ -369,24 +373,27 @@ void acol_manager::update_o2_docs(size_t narr,
                     } else if (cmd_doc_strings[k][kl].substr(0,30)==
                                ((string)"If there is no current object:")) {
                       loop2_done=true;
-                    } else if (options_arr[j].desc=="") {
+                    } else if (short_set==false) {
                       if (loc_verbose>2) {
                         cout << "Adding desc: "
                              << cmd_doc_strings[k][kl] << endl;
                       }
                       options_arr[j].desc=cmd_doc_strings[k][kl];
-                    } else if (options_arr[j].parm_desc=="") {
+                      short_set=true;
+                    } else if (pd_set==false) {
                       if (loc_verbose>2) {
                         cout << "Adding parm_desc: "
                              << cmd_doc_strings[k][kl] << endl;
                       }
                       options_arr[j].parm_desc=cmd_doc_strings[k][kl];
-                    } else if (options_arr[j].help=="") {
+                      pd_set=true;
+                    } else if (long_set==false) {
                       if (loc_verbose>2) {
                         cout << "Adding first doc string: \n  "
                              << cmd_doc_strings[k][kl] << endl;
                       }
                       options_arr[j].help=cmd_doc_strings[k][kl];
+                      long_set=true;
                     } else {
                       if (loc_verbose>2) {
                         cout << "Adding doc string: \n  "
@@ -439,6 +446,9 @@ void acol_manager::command_add(std::string new_type) {
   const int both=cli::comm_option_both;
   
   terminal ter;
+
+  // For now, for each type we just verify that the
+  // type_comm_list has the same size as the array here
   
   if (new_type=="int") {
     static const size_t narr=1;
@@ -448,6 +458,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both}
       };
+    if (narr!=type_comm_list["int"].size()) {
+      O2SCL_ERR("Type comm list does not match for int",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="double") {
@@ -458,6 +472,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both}
       };
+    if (narr!=type_comm_list["double"].size()) {
+      O2SCL_ERR("Type comm list does not match for double",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="char") {
@@ -468,6 +486,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both}
       };
+    if (narr!=type_comm_list["char"].size()) {
+      O2SCL_ERR("Type comm list does not match for char",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="size_t") {
@@ -478,6 +500,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both}
       };
+    if (narr!=type_comm_list["size_t"].size()) {
+      O2SCL_ERR("Type comm list does not match for size_t",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="string") {
@@ -488,6 +514,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both}
       };
+    if (narr!=type_comm_list["string"].size()) {
+      O2SCL_ERR("Type comm list does not match for string",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
@@ -623,6 +653,10 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_wstats),both}
       };
+    if (narr!=type_comm_list["table"].size()) {
+      O2SCL_ERR("Type comm list does not match for table",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
 
@@ -709,6 +743,10 @@ void acol_manager::command_add(std::string new_type) {
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_y_name),both}
       };
+    if (narr!=type_comm_list["table3d"].size()) {
+      O2SCL_ERR("Type comm list does not match for table3d",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -757,6 +795,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor_grid),both}
       };
+    if (narr!=type_comm_list["tensor"].size()) {
+      O2SCL_ERR("Type comm list does not match for tensor",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -781,6 +823,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
+    if (narr!=type_comm_list["tensor<int>"].size()) {
+      O2SCL_ERR("Type comm list does not match for tensor<int>",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -805,6 +851,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_min),both}
       };
+    if (narr!=type_comm_list["tensor<size_t>"].size()) {
+      O2SCL_ERR("Type comm list does not match for tensor<size_t>",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -868,6 +918,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_tensor),both}
       };
+    if (narr!=type_comm_list["tensor_grid"].size()) {
+      O2SCL_ERR("Type comm list does not match for tensor_grid",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
 
@@ -880,6 +934,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both}
       };
+    if (narr!=type_comm_list["prob_dens_mdim_amr"].size()) {
+      O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -892,6 +950,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sample),both}
       };
+    if (narr!=type_comm_list["prob_dens_mdim_gaussian"].size()) {
+      O2SCL_ERR("Type comm list does not match for prob_dens_mdim_gaussian",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -907,6 +969,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both}
       };
+    if (narr!=type_comm_list["hist"].size()) {
+      O2SCL_ERR("Type comm list does not match for hist",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -940,6 +1006,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}      
       };
+    if (narr!=type_comm_list["double[]"].size()) {
+      O2SCL_ERR("Type comm list does not match for double[]",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -973,6 +1043,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}     
       };
+    if (narr!=type_comm_list["int[]"].size()) {
+      O2SCL_ERR("Type comm list does not match for int[]",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -1006,6 +1080,10 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both}
       };
+    if (narr!=type_comm_list["size_t[]"].size()) {
+      O2SCL_ERR("Type comm list does not match for size_t[]",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
@@ -1032,9 +1110,18 @@ void acol_manager::command_add(std::string new_type) {
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_contours),both},
       };
+    if (narr!=type_comm_list["hist_2d"].size()) {
+      O2SCL_ERR("Type comm list does not match for hist_2d",
+                o2scl::exc_esanity);
+    }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   }
+
+  // Update autocorr docs for every type because its
+  // documentation changes for each type. This must also be
+  // done in comm_clear()
+  update_o2_docs(1,cl->get_option_pointer("autocorr"),new_type);
   
   return;
 }
@@ -1193,20 +1280,6 @@ int acol_manager::setup_options() {
     }
   }
   
-  /*
-    {0,"find-x","Find an entry in the x-grid (3d only)",1,1,"<value>","",
-    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_x),
-    comm_option::both},
-    {0,"find-y","Find an entry in the y-grid (3d only)",1,1,"<value>","",
-    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_y),
-    comm_option::both},
-    {0,"find-xy",
-    "Find the closest grid point to a pair of values (3d only)",
-    1,1,"<x value> <y value>","",
-    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_find_y),
-    comm_option::both},
-  */
-
   update_o2_docs(narr,&options_arr[0]);
   
   cl->set_comm_option_vec(narr,options_arr);
