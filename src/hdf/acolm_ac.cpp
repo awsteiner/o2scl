@@ -533,6 +533,14 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   
   size_t ix;
 
+  bool store=false;
+  if (vector_search(voptions,"store",ix)==true) {
+    store=true;
+    if (verbose>0) {
+      cout << "autocorr storing autocorrelation vector(s)." << endl;
+    }
+  }
+
   // Either 'def', 'acor', or 'fft'
   string alg;
   if (vector_search(voptions,"acor",ix)==true) {
@@ -592,29 +600,29 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       return exc_efailed;
     }
 
-    vector<string> in, pr;
-    if (sv.size()<4) {
-      pr.push_back("Enter output column for autocorrelations");
-      pr.push_back("Enter output column for 5*tau/m");
-      pr.push_back("Enter vector specification for data");
-      int ret=get_input(sv,pr,in,"autocorr",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
+    vector<string> in;
+    for(size_t i=2;i<sv.size();i++) in.push_back(sv[i]);
+    cout << "in: ";
+    vector_out(cout,in,true);
+
+    if (in.size()==0) {
+      cerr << "No columns or vectors specified." << endl;
+      return 2;
     }
 
-    for(size_t ix=2;ix<in.size();ix++) {
+    for(size_t ix=0;ix<in.size();ix++) {
 
       // Determine vector from table column (requires copy) or
       // multiple vector specification
       
       if (in[ix].find(':')==std::string::npos) {
+        cout << "column: " << in[ix] << endl;
 
         if (table_obj.is_column(in[ix])==false) {
           cerr << "Could not find column named '" << in[ix] << "'." << endl;
           return exc_efailed;
         }
-        
+
         vector<double> v;
 	v.resize(table_obj.get_nlines());
 	for(size_t i=0;i<table_obj.get_nlines();i++) {
@@ -691,6 +699,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
   if (combine=="max") {
     size_t len_max=0;
+    ftom.resize(vvd.size());
     for(size_t jj=0;jj<vvd.size();jj++) {
       size_t len=vector_autocorr_tau(ac_vec[jj],ftom[jj]);
       if (len>0) {
@@ -702,6 +711,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       if (len>len_max) len=len_max;
     }
   } else {
+
     vector<double> ac_avg(max_ac_size);
     for(size_t i=0;i<max_ac_size;i++) {
       size_t n=0;
@@ -722,6 +732,10 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     } else {
       cout << "Autocorrelation length determination failed." << endl;
     }
+  }
+
+  if (store) {
+    std::swap(ac_vec,vvdouble_obj);
   }
     
   return 0;

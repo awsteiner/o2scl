@@ -97,6 +97,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("prob_dens_mdim_amr");
   type_list.push_back("prob_dens_mdim_gaussian");
   type_list.push_back("vec_vec_string");
+  type_list.push_back("vec_vec_double");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
   
   {
