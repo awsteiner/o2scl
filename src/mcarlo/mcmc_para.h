@@ -3216,7 +3216,7 @@ namespace o2scl {
     /** \brief Initial write to HDF5 file 
      */
     virtual void file_header(o2scl_hdf::hdf_file &hf) {
-      hf.sets_vec("cl_args",this->cl_args);
+      hf.sets_vec_copy("cl_args",this->cl_args);
       return;
     }
   

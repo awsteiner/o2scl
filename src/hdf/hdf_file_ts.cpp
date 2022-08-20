@@ -248,7 +248,7 @@ int main(void) {
       hf.set_current_id(file_id);
       hf.close_group(group_id);
 
-      hf.sets_vec("testsa2",vs);
+      hf.sets_vec_copy("testsa2",vs);
 
       hf.close();
 
@@ -268,7 +268,7 @@ int main(void) {
 
       vs.push_back("Another");
       vs.push_back("test.");
-      hf.sets_vec("testsa2",vs);
+      hf.sets_vec_copy("testsa2",vs);
 
       hf.close();
 
@@ -286,7 +286,7 @@ int main(void) {
       hf.set_current_id(file_id2);
       hf.close_group(group_id2);
 
-      hf.gets_vec("testsa2",vs2);
+      hf.gets_vec_copy("testsa2",vs2);
 
       hf.close();
 
@@ -632,7 +632,7 @@ int main(void) {
       hf.set_current_id(file_id);
       hf.close_group(group_id);
 
-      hf.sets_vec("testsa2",vs);
+      hf.sets_vec_copy("testsa2",vs);
 
       hf.close();
 
@@ -652,9 +652,9 @@ int main(void) {
 
       vs.push_back("Another");
       vs.push_back("test.");
-      hf.sets_vec("testsa2",vs);
+      hf.sets_vec_copy("testsa2",vs);
 
-      hf.sets_vec_vec("testvvs",vvs);
+      hf.sets_vec_vec_copy("testvvs",vvs);
 
       hf.close();
 
@@ -672,9 +672,9 @@ int main(void) {
       hf.set_current_id(file_id2);
       hf.close_group(group_id2);
 
-      hf.gets_vec("testsa2",vs2);
+      hf.gets_vec_copy("testsa2",vs2);
 
-      hf.gets_vec_vec("testvvs",vvs2);
+      hf.gets_vec_vec_copy("testvvs",vvs2);
       
       hf.close();
 

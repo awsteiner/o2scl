@@ -256,7 +256,7 @@ int main(void) {
         } else if (k==2) {
           t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"rescaled lml 2");
         } else {
-          t.test_rel(out[0],ft(point[0],point[1]),4.0e-3,"rescaled loo_cv 2");
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"rescaled loo_cv 2");
         }
       }
 
@@ -312,7 +312,6 @@ int main(void) {
       }
       
     }
-    exit(-1);
     cout << endl;
     
   }
