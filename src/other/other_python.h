@@ -232,10 +232,6 @@ void *o2scl_create_prob_dens_mdim_std_vector_double_();
 
 void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr);
 
-double o2scl_prob_dens_mdim_std_vector_double__pdf(void *vptr, std_vector x);
-
-double o2scl_prob_dens_mdim_std_vector_double__log_pdf(void *vptr, std::vector<double> x);
-
 size_t o2scl_prob_dens_mdim_std_vector_double__dim(void *vptr);
 
 void *o2scl_create_prob_dens_mdim_biv_gaussian_std_vector_double_();

@@ -641,18 +641,6 @@ void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr) {
   return;
 }
 
-double o2scl_prob_dens_mdim_std_vector_double__pdf(void *vptr, std_vector x) {
-  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
-  double ret=ptr->pdf(x);
-  return ret;
-}
-
-double o2scl_prob_dens_mdim_std_vector_double__log_pdf(void *vptr, std::vector<double> x) {
-  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
-  double ret=ptr->log_pdf(x);
-  return ret;
-}
-
 size_t o2scl_prob_dens_mdim_std_vector_double__dim(void *vptr) {
   prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
   size_t ret=ptr->dim();

@@ -299,12 +299,12 @@ class contour
   - io vector<contour_line> &clines
 class prob_dens_mdim<std::vector<double>>
 - py_name prob_dens_mdim
-- function pdf
-  - double
-  - std_vector x
-- function log_pdf
-  - double
-  - std::vector<double> x
+#- function pdf
+#  - double
+#  - std_vector x
+#- function log_pdf
+#  - double
+#  - std::vector<double> x
 - function dim
   - size_t
 #- function operator()
