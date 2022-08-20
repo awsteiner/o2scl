@@ -2078,17 +2078,24 @@ class gen_test_number<double>
 - function gen
   - double
 #
+# Functions from lib_settings.h
+#
+function function_to_double
+- double
+- std::string s
+- int verbose [0]
+function function_to_double_nothrow
+- int
+- std::string s
+- out double &result
+- int verbose [0]
+function find_constant
+- double
+- std::string name
+- std::string unit  
+#
 # Functions from string_conv.h
 #
-#function function_to_double
-#- double
-#- std::string s
-#- int verbose [0]
-#function function_to_double_nothrow
-#- int
-#- std::string s
-#- out double &result
-#- int verbose [0]
 function string_to_uint_list<vector<size_t>>
 - int
 - py_name string_to_uint_list
@@ -2099,10 +2106,6 @@ function string_to_uint_list<vector<size_t>>
 #- std::string s
 #- char *x
 #- int len
-#function find_constant
-#- double
-#- std::string name
-#- std::string unit  
 #
 # Functions from interp.h
 # 

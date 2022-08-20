@@ -2443,6 +2443,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("prob_dens_mdim_amr");
       type="prob_dens_mdim_amr";
       return 0;
+    } else if (ip.type=="prob_dens_mdim_gaussian") {
+      if (verbose>2) {
+	cout << "Reading prob_dens_mdim_gaussian." << endl;
+      }
+      hdf_input(hf,pdmg_obj,in[1]);
+      obj_name=in[1];
+      command_add("prob_dens_mdim_gaussian");
+      type="prob_dens_mdim_gaussian";
+      return 0;
     } else if (ip.type.substr(0,10)==((string)"double[][]").substr(0,10)) {
       if (verbose>2) {
 	cout << "Reading tensor." << endl;

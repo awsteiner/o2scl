@@ -1072,7 +1072,7 @@ namespace o2scl {
 
     /** \brief Get the normalization
      */
-    const double &get_norm() {
+    double get_norm() {
       return norm;
     }
 

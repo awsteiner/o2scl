@@ -43,11 +43,106 @@
 #include <o2scl/contour.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/prob_dens_mdim_amr.h>
+#include <o2scl/prob_dens_func.h>
 
 /** \brief The \o2 namespace for I/O with HDF
  */
 namespace o2scl_hdf {
 
+  /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
+      \ref hdf_file
+  */
+  template<class vec_t, class mat_t> 
+  void hdf_input_n(hdf_file &hf,
+                   o2scl::prob_dens_mdim_gaussian<vec_t,mat_t> &p,
+                   std::string &name) {
+
+    // If no name specified, find name of first group of specified type
+    if (name.length()==0) {
+      hf.find_object_by_type("prob_dens_mdim_gaussian",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type prob_dens_mdim_gaussian found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
+    }
+    
+    // Open main group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+
+    vec_t peak;
+    mat_t chol, covar_inv;
+    double norm;
+
+    hf.getd("norm",norm);
+    hf.getd_vec_copy("peak",peak);
+    hf.getd_mat_copy("chol",chol);
+    hf.getd_mat_copy("covar_inv",covar_inv);
+
+    p.set_alt(peak.size(),chol,covar_inv,norm);
+
+    // Close group
+    hf.close_group(group);
+
+    // Return location to previous value
+    hf.set_current_id(top);
+
+    return;
+  }
+
+  /** \brief Input a \ref o2scl::prob_dens_mdim_gaussian object from a \ref
+      hdf_file
+  */
+  template<class vec_t, class mat_t> 
+  void hdf_input(hdf_file &hf,
+                 o2scl::prob_dens_mdim_gaussian<vec_t,mat_t> &p,
+                 std::string name="") {
+    hdf_input_n<vec_t,mat_t>(hf,p,name);
+    return;
+  }
+  
+  /** \brief Output a \ref o2scl::prob_dens_mdim_gaussian 
+      object to a \ref hdf_file
+  */
+  template<class vec_t, class mat_t> 
+  void hdf_output(hdf_file &hf,
+                  o2scl::prob_dens_mdim_gaussian<vec_t,mat_t> &p,
+                  std::string name) {
+    
+    if (hf.has_write_access()==false) {
+      O2SCL_ERR2("File not opened with write access in hdf_output",
+		 "(hdf_file,prob_dens_mdim_gaussian<>,string).",
+		 o2scl::exc_efailed);
+    }
+    
+    // Start group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+    
+    // Add typename
+    hf.sets_fixed("o2scl_type","prob_dens_mdim_gaussian");
+    
+    const vec_t &peak=p.get_peak();
+    const mat_t &chol=p.get_chol();
+    const mat_t &covar_inv=p.get_covar_inv();
+    double norm=p.get_norm();
+
+    hf.setd("norm",norm);
+    hf.setd_vec_copy("peak",peak);
+    hf.setd_mat_copy("chol",chol);
+    hf.setd_mat_copy("covar_inv",covar_inv);
+
+    // Close table_units group
+    hf.close_group(group);
+    
+    // Return location to previous value
+    hf.set_current_id(top);
+    
+    return;
+  }
+  
   /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
       \ref hdf_file
   */

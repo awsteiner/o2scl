@@ -1464,6 +1464,14 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
     hdf_output(hf,table_obj,obj_name);
 
+  } else if (type=="prob_dens_mdim_amr") {
+    
+    hdf_output(hf,pdma_obj,obj_name);
+
+  } else if (type=="prob_dens_mdim_gaussian") {
+    
+    hdf_output(hf,pdmg_obj,obj_name);
+
   } else if (type=="hist") {
 
     hdf_output(hf,hist_obj,obj_name);
