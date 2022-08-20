@@ -754,7 +754,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       } else {
         cout << "(empty)" << endl;
       }
-      cout << endl;
     }
     
     return 0;

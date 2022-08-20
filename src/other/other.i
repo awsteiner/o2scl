@@ -21,6 +21,7 @@ h_include <o2scl/poly.h>
 h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
 h_include <o2scl/contour.h>
+h_include <o2scl/prob_dens_func.h>
 # 
 # Include statement for C++ source code
 # 
@@ -296,3 +297,41 @@ class contour
 - function calc_contours
   - void
   - io vector<contour_line> &clines
+class prob_dens_mdim<std::vector<double>>
+- py_name prob_dens_mdim
+- function pdf
+  - double
+  - std_vector x
+- function log_pdf
+  - double
+  - std::vector<double> x
+- function dim
+  - size_t
+#- function operator()
+#  - void
+#  - out std::vector<double> &x
+class prob_dens_mdim_biv_gaussian<std::vector<double>>
+- py_name prob_dens_mdim_biv_gaussian
+- parent prob_dens_mdim<std::vector<double>>
+- function set
+  - void
+  - double x_cent
+  - double y_cent
+  - double x_std
+  - double y_std
+  - double covar
+- function get
+  - void
+  - out double &x_cent
+  - out double &y_cent
+  - out double &x_std
+  - out double &y_std
+  - out double &covar
+- function level_fixed_integral
+  - double
+  - double integral
+class prob_dens_mdim_gaussian<>
+- py_name prob_dens_mdim_gaussian
+- parent prob_dens_mdim<std::vector<double>>
+#- function make_biv
+#  - prob_dens_mdim_biv_gaussian

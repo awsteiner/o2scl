@@ -19,7 +19,7 @@ WORKDIR /opt/o2scl-0.927
 # AWS, 8/20/22: For some reason there is a problem with isfinite() in
 # lib_settings.o unless we use -fpermissive.
 
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12 -fpermissive" ./configure
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 
 RUN make
 RUN make install

@@ -26,6 +26,7 @@
 #include <o2scl/polylog.h>
 #include <o2scl/hist.h>
 #include <o2scl/contour.h>
+#include <o2scl/prob_dens_func.h>
 
 extern "C" {
 
@@ -226,5 +227,29 @@ void o2scl_contour_set_data(void *vptr, void *ptr_ugx, void *ptr_ugy, void *ptr_
 void o2scl_contour_set_levels(void *vptr, size_t n_levels, void *ptr_levels);
 
 void o2scl_contour_calc_contours(void *vptr, void *ptr_clines);
+
+void *o2scl_create_prob_dens_mdim_std_vector_double_();
+
+void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr);
+
+double o2scl_prob_dens_mdim_std_vector_double__pdf(void *vptr, std_vector x);
+
+double o2scl_prob_dens_mdim_std_vector_double__log_pdf(void *vptr, std::vector<double> x);
+
+size_t o2scl_prob_dens_mdim_std_vector_double__dim(void *vptr);
+
+void *o2scl_create_prob_dens_mdim_biv_gaussian_std_vector_double_();
+
+void o2scl_free_prob_dens_mdim_biv_gaussian_std_vector_double_(void *vptr);
+
+void o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__set(void *vptr, double x_cent, double y_cent, double x_std, double y_std, double covar);
+
+void o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__get(void *vptr, double *x_cent, double *y_cent, double *x_std, double *y_std, double *covar);
+
+double o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__level_fixed_integral(void *vptr, double integral);
+
+void *o2scl_create_prob_dens_mdim_gaussian_();
+
+void o2scl_free_prob_dens_mdim_gaussian_(void *vptr);
 
 }

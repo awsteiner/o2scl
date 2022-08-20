@@ -614,6 +614,10 @@ int main(void) {
       int *i2=new int[6];
       float *f2=new float[6];
       vector<string> vs2;
+
+      vector<vector<double>> vvd, vvd2;
+      vvd.push_back({3,1,4});
+      vvd.push_back({1,5,9,2});
     
       hdf_file hf;
       hf.compr_type=1;
@@ -655,6 +659,7 @@ int main(void) {
       hf.sets_vec_copy("testsa2",vs);
 
       hf.sets_vec_vec_copy("testvvs",vvs);
+      hf.setd_vec_vec_copy("testvvd",vvd);
 
       hf.close();
 
@@ -675,6 +680,7 @@ int main(void) {
       hf.gets_vec_copy("testsa2",vs2);
 
       hf.gets_vec_vec_copy("testvvs",vvs2);
+      hf.getd_vec_vec_copy("testvvd",vvd2);
       
       hf.close();
 
@@ -692,6 +698,12 @@ int main(void) {
       for(size_t j=0;j<vvs.size();j++) {
         for(size_t k=0;k<vvs[j].size();k++) {
           t.test_gen(vvs[j][k]==vvs2[j][k],"vvs string");
+        }
+      }
+
+      for(size_t j=0;j<vvd.size();j++) {
+        for(size_t k=0;k<vvd[j].size();k++) {
+          t.test_rel(vvd[j][k],vvd2[j][k],1.0e-14,"vvd");
         }
       }
 

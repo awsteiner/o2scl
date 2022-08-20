@@ -630,3 +630,72 @@ void o2scl_contour_calc_contours(void *vptr, void *ptr_clines) {
   return;
 }
 
+void *o2scl_create_prob_dens_mdim_std_vector_double_() {
+  prob_dens_mdim<std::vector<double>> *ptr=new prob_dens_mdim<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_prob_dens_mdim_std_vector_double__pdf(void *vptr, std_vector x) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  double ret=ptr->pdf(x);
+  return ret;
+}
+
+double o2scl_prob_dens_mdim_std_vector_double__log_pdf(void *vptr, std::vector<double> x) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  double ret=ptr->log_pdf(x);
+  return ret;
+}
+
+size_t o2scl_prob_dens_mdim_std_vector_double__dim(void *vptr) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  size_t ret=ptr->dim();
+  return ret;
+}
+
+void *o2scl_create_prob_dens_mdim_biv_gaussian_std_vector_double_() {
+  prob_dens_mdim_biv_gaussian<std::vector<double>> *ptr=new prob_dens_mdim_biv_gaussian<std::vector<double>>;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_mdim_biv_gaussian_std_vector_double_(void *vptr) {
+  prob_dens_mdim_biv_gaussian<std::vector<double>> *ptr=(prob_dens_mdim_biv_gaussian<std::vector<double>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__set(void *vptr, double x_cent, double y_cent, double x_std, double y_std, double covar) {
+  prob_dens_mdim_biv_gaussian<std::vector<double>> *ptr=(prob_dens_mdim_biv_gaussian<std::vector<double>> *)vptr;
+  ptr->set(x_cent,y_cent,x_std,y_std,covar);
+  return;
+}
+
+void o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__get(void *vptr, double *x_cent, double *y_cent, double *x_std, double *y_std, double *covar) {
+  prob_dens_mdim_biv_gaussian<std::vector<double>> *ptr=(prob_dens_mdim_biv_gaussian<std::vector<double>> *)vptr;
+  ptr->get(*x_cent,*y_cent,*x_std,*y_std,*covar);
+  return;
+}
+
+double o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__level_fixed_integral(void *vptr, double integral) {
+  prob_dens_mdim_biv_gaussian<std::vector<double>> *ptr=(prob_dens_mdim_biv_gaussian<std::vector<double>> *)vptr;
+  double ret=ptr->level_fixed_integral(integral);
+  return ret;
+}
+
+void *o2scl_create_prob_dens_mdim_gaussian_() {
+  prob_dens_mdim_gaussian<> *ptr=new prob_dens_mdim_gaussian<>;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_mdim_gaussian_(void *vptr) {
+  prob_dens_mdim_gaussian<> *ptr=(prob_dens_mdim_gaussian<> *)vptr;
+  delete ptr;
+  return;
+}
+

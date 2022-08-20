@@ -663,7 +663,7 @@ namespace o2scl {
   
     prob_dens_hist();
   
-    ~prob_dens_hist();
+    virtual ~prob_dens_hist();
 
     /// Initialize with histogram \c h
     void init(hist &h);
@@ -711,7 +711,10 @@ namespace o2scl {
   class prob_dens_mdim {
     
   public:
-  
+
+    virtual ~prob_dens_mdim() {
+    }
+    
     /// Return the dimensionality
     virtual size_t dim() const {
       O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
@@ -882,6 +885,9 @@ namespace o2scl {
   public:
   
     prob_dens_mdim_biv_gaussian() {
+    }
+  
+    virtual ~prob_dens_mdim_biv_gaussian() {
     }
   
     /// Copy constructor
@@ -1086,6 +1092,10 @@ namespace o2scl {
       ndim=0;
     }
 
+    virtual ~prob_dens_mdim_gaussian() {
+      ndim=0;
+    }
+    
     /// Copy constructor
     prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
       ndim=pdmg_loc.ndim;

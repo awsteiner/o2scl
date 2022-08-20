@@ -1554,8 +1554,8 @@ namespace o2scl {
         // powers of K
         set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
         kb_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
-        if (!isfinite(calc.eval(&vars)) ||
-            !isfinite(calc2.eval(&vars))) {
+        if (!boost::math::isfinite(calc.eval(&vars)) ||
+            !boost::math::isfinite(calc2.eval(&vars))) {
           std::cout << "Not finite result in convert."
                     << std::endl;
           O2SCL_ERR("Not finite.",o2scl::exc_efailed);
