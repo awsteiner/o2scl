@@ -362,12 +362,18 @@ namespace o2scl_hdf {
     }
     /** \brief Get a vector of strings named \c name and store it in \c s
      */
-    int gets_vec(std::string name, std::vector<std::string> &s);
+    int gets_vec_copy(std::string name, std::vector<std::string> &s);
 
-    /** \brief Desc
+    /** \brief Get a vector of a vector of strings named \c name
+        and store it in \c s
      */
-    int gets_vec_vec(std::string name,
-                     std::vector<std::vector<std::string>> &s);
+    int gets_vec_vec_copy(std::string name,
+                          std::vector<std::vector<std::string>> &s);
+    /** \brief Get a vector of a vector of strings named \c name
+        and store it in \c s
+     */
+    int getd_vec_vec_copy(std::string name,
+                          std::vector<std::vector<double>> &s);
     //@}
 
     /** \name Vector set functions
@@ -451,14 +457,30 @@ namespace o2scl_hdf {
 	make each string extensible. The size of the vector \c s is
 	stored as an integer named <tt>nw</tt>.
     */
-    int sets_vec(std::string name, const std::vector<std::string> &s);
+    int sets_vec_copy(std::string name, const std::vector<std::string> &s);
     
     /** \brief Set a vector of vectors of strings named \c name
 
+        \warning This function copies the data in the vector of strings
+        to a new string before writing the data to the HDF5 file and
+        thus may be less useful for larger vectors or vectors which
+        contain longer strings.
+
+        \devnote 
+	String vectors are reformatted as a single character array, in
+	order to allow each string to have different length and to
+	make each string extensible. The size of the vector \c s is
+	stored as an integer named <tt>nw</tt>.
+
         (experimental)
      */
-    int sets_vec_vec(std::string name,
-                     const std::vector<std::vector<std::string>> &s);
+    int sets_vec_vec_copy(std::string name,
+                          const std::vector<std::vector<std::string>> &s);
+    
+    /** \brief Set a vector of vectors named \c name
+     */
+    int setd_vec_vec_copy(std::string name,
+                          const std::vector<std::vector<double>> &vvd);
     //@}
 
     /** \name Matrix get functions

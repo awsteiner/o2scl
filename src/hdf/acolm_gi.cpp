@@ -1442,11 +1442,15 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="string[]") {
 
-    hf.sets_vec(obj_name,stringv_obj);
+    hf.sets_vec_copy(obj_name,stringv_obj);
     
   } else if (type=="vec_vec_string") {
 
-    hf.sets_vec_vec(obj_name,vvstring_obj);
+    hf.sets_vec_vec_copy(obj_name,vvstring_obj);
+    
+  } else if (type=="vec_vec_double") {
+
+    hf.setd_vec_vec_copy(obj_name,vvdouble_obj);
     
   } else if (type=="table3d") {
     

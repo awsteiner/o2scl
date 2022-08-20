@@ -2315,7 +2315,7 @@ int hdf_file::get_szt_vec(std::string name, std::vector<size_t> &v) {
   return 0;
 }
 
-int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
+int hdf_file::gets_vec_copy(std::string name, std::vector<std::string> &s) {
 		  
   int nc, nw;
 
@@ -2374,8 +2374,8 @@ int hdf_file::gets_vec(std::string name, std::vector<std::string> &s) {
   return 0;
 }
 
-int hdf_file::sets_vec(std::string name,
-                       const std::vector<std::string> &s) {
+int hdf_file::sets_vec_copy(std::string name,
+                            const std::vector<std::string> &s) {
 
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
@@ -2423,8 +2423,8 @@ int hdf_file::sets_vec(std::string name,
   return 0;
 }
 
-int hdf_file::gets_vec_vec(std::string name,
-                           std::vector<std::vector<std::string>> &s) {
+int hdf_file::gets_vec_vec_copy
+(std::string name, std::vector<std::vector<std::string>> &s) {
   
   // Open the group
   hid_t top=get_current_id();
@@ -2480,8 +2480,56 @@ int hdf_file::gets_vec_vec(std::string name,
   return 0;
 }
 
-int hdf_file::sets_vec_vec(std::string name,
-                           const std::vector<std::vector<std::string>> &s) {
+int hdf_file::getd_vec_vec_copy
+(std::string name, std::vector<std::vector<double>> &vvd) {
+  
+  // Open the group
+  hid_t top=get_current_id();
+  hid_t group=open_group(name);
+  set_current_id(group);
+
+  string o2t;
+  gets_fixed("o2scl_type",o2t);
+  if (o2t!="vec_vec_double") {
+    set_current_id(top);
+    O2SCL_ERR2("The specified name does not refer to data which ",
+	       "can be read by O₂scl in hdf_file::gets_vec().",
+	       exc_efailed);
+  }
+
+  size_t n;
+  get_szt("n",n);
+  
+  if (n>0) {
+    
+    vvd.resize(n);
+    
+    vector<int> sizes;
+    geti_vec("sizes",sizes);
+
+    vector<double> vd;
+    getd_vec("data",vd);
+
+    size_t ic=0;
+    for(size_t i=0;i<n;i++) {
+      vvd[i].resize(sizes[i]);
+      for(size_t j=0;j<vvd[i].size();j++) {
+        vvd[i][j]=vd[ic];
+        ic++;
+      }
+    }
+  }
+
+  close_group(group);
+
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::sets_vec_vec_copy
+(std::string name, const std::vector<std::vector<std::string>> &s) {
   
   if (write_access==false) {
     O2SCL_ERR2("File not opened with write access ",
@@ -2520,6 +2568,51 @@ int hdf_file::sets_vec_vec(std::string name,
     }
     
     sets("data",cp);
+  }
+  
+  // Close the group
+  close_group(group);
+  
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::setd_vec_vec_copy
+(std::string name, const std::vector<std::vector<double>> &vvd) {
+  
+  if (write_access==false) {
+    O2SCL_ERR2("File not opened with write access ",
+	       "in hdf_file::sets_vec_vec().",exc_efailed);
+  }
+
+  // Create the group
+  hid_t top=current;
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  sets_fixed("o2scl_type","vec_vec_double");
+  
+  set_szt("n",vvd.size());
+
+  if (vvd.size()>0) {
+    
+    vector<int> sizes;
+    
+    for(size_t i=0;i<vvd.size();i++) {
+      sizes.push_back(vvd[i].size());
+    }
+    seti_vec("sizes",sizes);
+
+    vector<double> vd;
+    for(size_t i=0;i<vvd.size();i++) {
+      for(size_t j=0;j<vvd[i].size();j++) {
+        vd.push_back(vvd[i][j]);
+      }
+    }
+    
+    setd_vec("data",vd);
   }
   
   // Close the group
@@ -3782,8 +3875,8 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
     // An o2scl group
     if (otype==((string)"string[]")) {
       vector<string> s;
-      hf.gets_vec(name,s);
-      hf2.sets_vec(name,s);
+      hf.gets_vec_copy(name,s);
+      hf2.sets_vec_copy(name,s);
     } else if (otype==((string)"table_units")) {
       table_units<> t;
       hdf_input(hf,t,name2);
@@ -3890,8 +3983,8 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
 	}
       } else if (ndims==2) {
 	vector<string> vs;
-	hf.gets_vec(name,vs);
-	hf2.sets_vec(name,vs);
+	hf.gets_vec_copy(name,vs);
+	hf2.sets_vec_copy(name,vs);
       } else {
 	O2SCL_ERR("HDF5 copy char[][][]... failed.",o2scl::exc_einval);
       }

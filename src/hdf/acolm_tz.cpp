@@ -1562,9 +1562,9 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
   hdf_file hf;
   hf.open_or_create("data/o2scl/acol_docs.o2");
-  hf.sets_vec_vec("cmd_doc_strings",cmd_doc_strings);
-  hf.sets_vec_vec("help_doc_strings",help_doc_strings);
-  hf.sets_vec_vec("param_doc_strings",param_doc_strings);
+  hf.sets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings);
+  hf.sets_vec_vec_copy("help_doc_strings",help_doc_strings);
+  hf.sets_vec_vec_copy("param_doc_strings",param_doc_strings);
   hf.close();
   cout << "Created file data/o2scl/acol_docs.o2." << endl;
 

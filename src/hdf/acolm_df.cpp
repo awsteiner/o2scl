@@ -452,7 +452,7 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
     See percent encoding at: https://www.w3schools.com/tags/ref_urlencode.asp
    */
 
-  bool find_failed=false;
+  bool found_file=false;
   
   if (sv.size()>=2) {
 
@@ -466,22 +466,24 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
     if (file_exists(topic_fn)) {
       cout << "Found documentation file:\n  " << topic_fn << endl;
       cmd+=((string)"\"file://")+topic_fn+"\"";
+      found_file=true;
     } else {
       std::string class_fn=o2scl_settings.get_doc_dir()+
         "html/class/"+sv[1]+".html";
       if (file_exists(class_fn)) {
         cout << "Found documentation file:\n  " << class_fn << endl;
         cmd+=((string)"\"file://")+class_fn+"\"";
+        found_file=true;
       } else {
         std::string function_fn=o2scl_settings.get_doc_dir()+
           "html/function/"+sv[1]+".html";
         if (file_exists(function_fn)) {
           cout << "Found documentation file:\n  " << function_fn << endl;
           cmd+=((string)"\"file://")+function_fn+"\"";
+          found_file=true;
         } else {
           cerr << "Could not find class, function, or topic "
                << "named '" << sv[1] << "'." << endl;
-          find_failed=true;
         }
       }
     }
@@ -509,17 +511,23 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
     
   }
 
-  std::string index_fn=o2scl_settings.get_doc_dir()+
-    "html/index.html";
-  if (file_exists(index_fn)) {
-    
-    cmd+="\"file://"+index_fn+"\"";
+  if (found_file==false) {
+    std::string index_fn=o2scl_settings.get_doc_dir()+
+      "html/index.html";
+    if (file_exists(index_fn)) {
+      
+      cmd+="\"file://"+index_fn+"\"";
+      found_file=true;
+    } else {
+      cerr << "docs could not find file " << index_fn << endl;
+    }
+  }
+
+  if (found_file==true) {
     
     cout << "docs using command:\n  " << cmd << endl;
     int xret=system(cmd.c_str());
     
-  } else {
-    cerr << "docs could not find file " << index_fn << endl;
   }
     
   

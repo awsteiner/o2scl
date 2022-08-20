@@ -154,8 +154,8 @@ void eos_sn_base::output(std::string fname) {
       O2SCL_ERR("Lists oth_names or oth_units don't match n_oth.",
 		o2scl::exc_einval);
     }
-    hf.sets_vec("oth_names",oth_names);
-    hf.sets_vec("oth_units",oth_units);
+    hf.sets_vec_copy("oth_names",oth_names);
+    hf.sets_vec_copy("oth_units",oth_units);
     for(size_t i=0;i<n_oth;i++) {
       hdf_output(hf,other[i],oth_names[i]);
     }
@@ -237,8 +237,8 @@ void eos_sn_base::load(std::string fname, size_t mode) {
   // Other data
   hf.get_szt("n_oth",n_oth);
   if (n_oth>0) {
-    hf.gets_vec("oth_names",oth_names);
-    hf.gets_vec("oth_units",oth_units);
+    hf.gets_vec_copy("oth_names",oth_names);
+    hf.gets_vec_copy("oth_units",oth_units);
     for(size_t i=0;i<n_oth;i++) {
       hdf_input(hf,other[i],oth_names[i]);
     }

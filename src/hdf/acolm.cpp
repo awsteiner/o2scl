@@ -1267,9 +1267,9 @@ int acol_manager::setup_options() {
     if (file_exists(doc_fn)) {
       hdf_file hf;
       hf.open(doc_fn);
-      hf.gets_vec_vec("cmd_doc_strings",cmd_doc_strings);
-      hf.gets_vec_vec("param_doc_strings",param_doc_strings);
-      hf.gets_vec_vec("help_doc_strings",help_doc_strings);
+      hf.gets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings);
+      hf.gets_vec_vec_copy("param_doc_strings",param_doc_strings);
+      hf.gets_vec_vec_copy("help_doc_strings",help_doc_strings);
       hf.close();
     } else {
       cout << "Couldn't find file " << doc_fn << endl;

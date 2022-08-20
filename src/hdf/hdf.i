@@ -126,7 +126,7 @@ class hdf_file
   - int
   - std::string name
   - out std::vector<size_t> &v
-- function gets_vec
+- function gets_vec_copy
   - int
   - std::string name
   - out std::vector<std::string> &s
@@ -142,7 +142,7 @@ class hdf_file
   - int
   - std::string name
   - io std::vector<size_t> &v
-- function sets_vec
+- function sets_vec_copy
   - int
   - std::string name
   - io std::vector<std::string> &s

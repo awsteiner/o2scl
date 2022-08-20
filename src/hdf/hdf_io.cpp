@@ -405,7 +405,7 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table_units<> &t) {
   }
       
   // Output units
-  hf.sets_vec("units",units);
+  hf.sets_vec_copy("units",units);
 
   return;
 }
@@ -429,7 +429,7 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
   }
       
   // Output constants
-  hf.sets_vec("con_names",cnames);
+  hf.sets_vec_copy("con_names",cnames);
   hf.setd_vec("con_values",cvalues);
       
   // Restructure column names
@@ -438,7 +438,7 @@ void o2scl_hdf::hdf_output_data(hdf_file &hf, o2scl::table<> &t) {
   }
       
   // Output column names
-  hf.sets_vec("col_names",cols);
+  hf.sets_vec_copy("col_names",cols);
       
   // Output unit info
   hf.seti("unit_flag",0);
@@ -764,7 +764,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, const table3d &t,
   }
 
   // Output constants
-  hf.sets_vec("con_names",cnames);
+  hf.sets_vec_copy("con_names",cnames);
   hf.setd_vec("con_values",cvalues);
       
   // Restructure slice names
@@ -774,7 +774,7 @@ void o2scl_hdf::hdf_output(o2scl_hdf::hdf_file &hf, const table3d &t,
   }
 
   // Output slice names
-  hf.sets_vec("slice_names",slnames);
+  hf.sets_vec_copy("slice_names",slnames);
 
   // Output unit info
   hf.seti("unit_flag",0);
@@ -852,7 +852,7 @@ void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, table3d &t,
   ubvector cvalues;
 
   // Get constants
-  hf.gets_vec("con_names",cnames);
+  hf.gets_vec_copy("con_names",cnames);
   hf.getd_vec("con_values",cvalues);
   for(size_t i=0;i<cnames.size();i++) {
     t.add_constant(cnames[i],cvalues[i]);
@@ -890,7 +890,7 @@ void o2scl_hdf::hdf_input_n(o2scl_hdf::hdf_file &hf, table3d &t,
 
     // Get slice names
     std::vector<std::string> slnames;
-    hf.gets_vec("slice_names",slnames);
+    hf.gets_vec_copy("slice_names",slnames);
     for(size_t i=0;i<slnames.size();i++) {
       t.new_slice(slnames[i]);
     }

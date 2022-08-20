@@ -231,7 +231,7 @@ namespace o2scl_hdf {
     ubvector cvalues;
       
     // Get constants
-    hf.gets_vec("con_names",cnames);
+    hf.gets_vec_copy("con_names",cnames);
     hf.getd_vec_copy("con_values",cvalues);
     if (cnames.size()!=cvalues.size()) {
       O2SCL_ERR2("Size mismatch between constant names and values ",
@@ -242,7 +242,7 @@ namespace o2scl_hdf {
     }
 
     // Get column names
-    hf.gets_vec("col_names",cols);
+    hf.gets_vec_copy("col_names",cols);
     for(size_t i=0;i<cols.size();i++) {
       t.new_column(cols[i]);
     }
@@ -366,7 +366,7 @@ namespace o2scl_hdf {
     // If present, get units
     if (uf>0) {
       std::vector<std::string> units;
-      hf.gets_vec("units",units);
+      hf.gets_vec_copy("units",units);
       for(size_t i=0;i<units.size();i++) {
 	t.set_unit(t.get_column_name(i),units[i]);
       }
@@ -1449,7 +1449,7 @@ namespace o2scl_hdf {
       } else if (type=="string[]") {
 
 	std::vector<std::string> vtmp;
-	hf.gets_vec(obj_name,vtmp);
+	hf.gets_vec_copy(obj_name,vtmp);
 	for(size_t k=0;k<vtmp.size();k++) {
 	  v.push_back(vtmp[k]);
 	}

@@ -194,10 +194,10 @@ int o2scl_hdf_hdf_file_get_szt_vec(void *vptr, char *name, void *ptr_v) {
   return ret;
 }
 
-int o2scl_hdf_hdf_file_gets_vec(void *vptr, char *name, void *ptr_s) {
+int o2scl_hdf_hdf_file_gets_vec_copy(void *vptr, char *name, void *ptr_s) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
-  int ret=ptr->gets_vec(name,*s);
+  int ret=ptr->gets_vec_copy(name,*s);
   return ret;
 }
 
@@ -222,10 +222,10 @@ int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, char *name, void *ptr_v) {
   return ret;
 }
 
-int o2scl_hdf_hdf_file_sets_vec(void *vptr, char *name, void *ptr_s) {
+int o2scl_hdf_hdf_file_sets_vec_copy(void *vptr, char *name, void *ptr_s) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
-  int ret=ptr->sets_vec(name,*s);
+  int ret=ptr->sets_vec_copy(name,*s);
   return ret;
 }
 

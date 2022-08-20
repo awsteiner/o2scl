@@ -735,21 +735,78 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     }
     
     return 0;
+    
+  } else if (type=="vec_vec_string") {
+
+    for(size_t i=0;i<vvstring_obj.size();i++) {
+      cout.width(4);
+      size_t sz=vvstring_obj[i].size();
+      cout << sz << " ";
+      if (sz>3) {
+        cout << vvstring_obj[i][0].substr(0,20) << "... ";
+        cout << vvstring_obj[i][1].substr(0,20) << "... ... ";
+        cout << vvstring_obj[i][sz-1].substr(0,20) << "..." << endl;
+      } else if (sz>=1 && sz<=3) {
+        for(size_t j=0;j<sz;j++) {
+          cout << vvstring_obj[i][j].substr(0,20) << "... ";
+        }
+        cout << endl;
+      } else {
+        cout << "(empty)" << endl;
+      }
+      cout << endl;
+    }
+    
+    return 0;
+    
+  } else if (type=="vec_vec_double") {
+
+    for(size_t i=0;i<vvdouble_obj.size();i++) {
+      cout.width(4);
+      size_t sz=vvdouble_obj[i].size();
+      cout << sz << " ";
+      if (sz>3) {
+        cout << vvdouble_obj[i][0] << " ";
+        cout << vvdouble_obj[i][1] << " ... ";
+        cout << vvdouble_obj[i][sz-1] << endl;
+      } else if (sz>=1 && sz<=3) {
+        for(size_t j=0;j<sz;j++) {
+          cout << vvdouble_obj[i][j] << " ";
+        }
+        cout << endl;
+      } else {
+        cout << "(empty)" << endl;
+      }
+      cout << endl;
+    }
+    
+    return 0;
+    
   } else if (type=="int") {
+    
     cout << "Value is " << int_obj << endl;
     return 0;
+    
   } else if (type=="double") {
+    
     cout << "Value is " << double_obj << endl;
     return 0;
+    
   } else if (type=="char") {
+    
     cout << "Value is " << char_obj << endl;
     return 0;
+    
   } else if (type=="string") {
+    
     cout << "Value is " << string_obj << endl;
     return 0;
+    
   } else if (type=="size_t") {
+    
     cout << "Value is " << size_t_obj << endl;
     return 0;
+    
   } else if (type=="int[]") {
     
     vector<string> inc, outc;
@@ -2453,7 +2510,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading string[]." << endl;
       }
-      hf.gets_vec(in[1],stringv_obj);
+      hf.gets_vec_copy(in[1],stringv_obj);
       obj_name=in[1];
       command_add("string[]");
       type="string[]";
@@ -2462,10 +2519,19 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       if (verbose>2) {
 	cout << "Reading vec_vec_string." << endl;
       }
-      hf.gets_vec_vec(in[1],vvstring_obj);
+      hf.gets_vec_vec_copy(in[1],vvstring_obj);
       obj_name=in[1];
       command_add("vec_vec_string");
       type="vec_vec_string";
+      return 0;
+    } else if (ip.type=="vec_vec_double") {
+      if (verbose>2) {
+	cout << "Reading vec_vec_double." << endl;
+      }
+      hf.getd_vec_vec_copy(in[1],vvdouble_obj);
+      obj_name=in[1];
+      command_add("vec_vec_double");
+      type="vec_vec_double";
       return 0;
     } else if (ip.type=="int") {
       if (verbose>2) {
@@ -2741,7 +2807,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 	   << "object named '"
 	   << in[1] << "'." << endl;
     }
-    hf.gets_vec(in[1],stringv_obj);
+    hf.gets_vec_copy(in[1],stringv_obj);
     obj_name=in[1];
     command_add("string[]");
     type="string[]";

@@ -2140,10 +2140,10 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
     o2scl_hdf::hdf_file hf;
     hf.open_or_create(doc_o2_file);
     if (cmd_doc_strings.size()>0) {
-      hf.sets_vec_vec("cmd_doc_strings",cmd_doc_strings);
+      hf.sets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings);
     }
     if (param_doc_strings.size()>0) {
-      hf.sets_vec_vec("param_doc_strings",param_doc_strings);
+      hf.sets_vec_vec_copy("param_doc_strings",param_doc_strings);
     }
     hf.close();
     cout << "Created file " << doc_o2_file << endl;
@@ -3452,8 +3452,8 @@ int cli::read_docs() {
     o2scl_hdf::hdf_file hf;
     hf.open(doc_o2_file);
     vector<vector<string>> cmd_doc_strings, param_doc_strings;
-    hf.gets_vec_vec("cmd_doc_strings",cmd_doc_strings);
-    hf.gets_vec_vec("param_doc_strings",param_doc_strings);
+    hf.gets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings);
+    hf.gets_vec_vec_copy("param_doc_strings",param_doc_strings);
     hf.close();
     
     for(size_t j=0;j<clist.size();j++) {
