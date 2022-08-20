@@ -677,7 +677,7 @@ int acol_manager::comm_to_table3d_sum(std::vector<std::string> &sv,
     }
 
     table3d_obj.clear();
-    tensor_obj.convert_table3d_sum(ix_x,ix_y,table3d_obj,in[0],
+    tensor_obj.copy_table3d_sum(ix_x,ix_y,table3d_obj,in[0],
 				   in[2],in[4]);
 
     command_del(type);

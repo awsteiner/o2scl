@@ -80,7 +80,7 @@ namespace o2scl_hdf {
     hf.getd_mat_copy("chol",chol);
     hf.getd_mat_copy("covar_inv",covar_inv);
 
-    p.set_alt(peak.size(),chol,covar_inv,norm);
+    p.set_alt(peak.size(),peak,chol,covar_inv,norm);
 
     // Close group
     hf.close_group(group);

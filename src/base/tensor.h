@@ -1082,13 +1082,15 @@ namespace o2scl {
   
     /// \name Slicing and converting to table3d objects
     //@{
-    /** \brief Convert to a \ref o2scl::table3d object by
+    /** \brief Copy to a \ref o2scl::table3d object by
         summing over all but two indices
     */
-    void convert_table3d_sum
+    void copy_table3d_sum
     (size_t ix_x, size_t ix_y, table3d &tab, std::string x_name="x",
      std::string y_name="y", std::string slice_name="z") {
-    
+
+      tab.clear();
+      
       // Get current table3d grid
       size_t nx, ny;
       tab.get_size(nx,ny);
@@ -1116,7 +1118,7 @@ namespace o2scl {
       // Check that the grids are commensurate
       if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
         O2SCL_ERR2("Grids not commensurate in ",
-                   "tensor_grid::convert_table3d_sum().",exc_einval);
+                   "tensor_grid::copy_table3d_sum().",exc_einval);
       }
     
       tab.set_slice_all(slice_name,0.0);
@@ -1129,6 +1131,68 @@ namespace o2scl {
                 this->data[i]);
       }
     
+      return;
+    }
+
+    /** \brief Copy to a table3d object by fixing two indices
+
+        \warning The vector input \c index must be initialized
+        before calling this function so that all elements in the
+        vector (except for those at index \c ix_x and \c ix_y)
+        are specified. If this is not the case, then this function
+        will return unpredictable results.
+     */
+    template<class size_vec2_t> 
+    void copy_table3d(size_t ix_x, size_t ix_y, size_vec2_t &index, 
+                      table3d &tab, std::string x_name="x",
+                      std::string y_name="y",
+                      std::string slice_name="z") const {
+      
+      if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
+        O2SCL_ERR2("Either indices greater than rank or x and y ind",
+                   "ices equal in tensor_grid::copy_table3d_align().",
+                   exc_efailed);
+      }
+
+      size_t nx, ny;
+      nx=get_size(ix_x);
+      ny=get_size(ix_y);
+
+      // Set the table3d grid using the indexes
+      tab.clear();
+      tab.set_xy(x_name,uniform_grid_end_width<double>(0,nx-1,1),
+                 y_name,uniform_grid_end_width<double>(0,ny-1,1));
+      
+      // Create slice if not already present
+      size_t is;
+      if (!tab.is_slice(slice_name,is)) tab.new_slice(slice_name);
+      
+      // Copy over data
+      for(size_t i=0;i<nx;i++) {
+        for(size_t j=0;j<ny;j++) {
+          index[ix_x]=i;
+          index[ix_y]=j;
+          double val=this->get(index);
+          tab.set(i,j,slice_name,val);
+        }
+      }
+      
+      return;
+    }
+    
+    /** \brief Copy to a table3d object by fixing two indices
+
+        In this function, all other indices are set to 0. The indices
+        \c ix_x and \c ix_y may be the same, in which case this
+        function effectively performs a trace over those two indices.
+     */
+    void copy_table3d(size_t ix_x, size_t ix_y, 
+                      table3d &tab, std::string x_name="x",
+                      std::string y_name="y",
+                      std::string slice_name="z") const {
+      std::vector<size_t> ix(rk);
+      for(size_t i=0;i<rk;i++) ix[i]=0;
+      copy_table3d(ix_x,ix_y,ix,tab,x_name,y_name,slice_name);
       return;
     }
     //@}
