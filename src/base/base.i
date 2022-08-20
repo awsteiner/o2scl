@@ -1285,7 +1285,15 @@ class tensor<>
   - out double &max_value    
 - function total_sum
   - double
-- function convert_table3d_sum
+- function copy_table3d
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
+- function copy_table3d_sum
   - void
   - size_t ix_x
   - size_t ix_y
@@ -1406,14 +1414,6 @@ class tensor_grid<>
   - size_t
   - size_t i
   - double val
-#- function convert_table3d_sum  
-#  - void
-#  - size_t ix_x
-#  - size_t ix_y
-#  - io table3d &tab
-#  - std::string x_name ["x"]
-#  - std::string y_name ["y"]
-#  - std::string z_name ["z"]
 - function copy_table3d_align
   - void
   - size_t ix_x

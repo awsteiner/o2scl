@@ -365,7 +365,7 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf,
   double T_MeV=cu.convert("K","MeV",T_K);
     
   /// Nuclear level spacing in 1/MeV
-  double a;
+  double a=0.0;
     
   /// Backshift parameter in MeV
   double delta;
