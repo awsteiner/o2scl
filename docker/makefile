@@ -19,6 +19,10 @@ build_opensuse_leap:
 	sudo docker build - < opensuse_leap \
 		> opensuse_leap.out 2>&1 &
 
+build_opensuse_tumble:
+	sudo docker build - < opensuse_tumble \
+		> opensuse_tumble.out 2>&1 &
+
 build_opensuse_leap_notest:
 	sudo docker build - < opensuse_leap_notest \
 		> opensuse_leap_notest.out 2>&1 &
