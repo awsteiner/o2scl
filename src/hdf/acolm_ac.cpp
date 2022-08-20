@@ -2236,6 +2236,36 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     command_add("size_t");
     obj_name="size_t";
     
+  } else if (ctype=="string[]") {
+
+    int ret=get_input_one(sv2,"Enter string spec.",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+    
+    int ssret=strings_spec(tval,stringv_obj,verbose,false);
+    if (ssret!=0) {
+      cerr << "Strings specification failed." << endl;
+    } else {
+      type="string[]";
+      command_add("string[]");
+      obj_name="string[]";
+    }
+    
+  } else if (ctype=="vec_vec_double") {
+
+    int ret=get_input_one(sv2,"Enter mult-vector spec.",tval,"create",
+			  itive_com);
+    if (ret!=0) return ret;
+
+    int mvs_ret=mult_vector_spec(tval,vvdouble_obj,false,verbose,false);
+    if (mvs_ret!=0) {
+      cerr << "Multiple vector specification failed." << endl;
+    } else {
+      type="vec_vec_double";
+      command_add("vec_vec_double");
+      obj_name="vec_vec_double";
+    }
+    
   } else if (ctype=="char") {
 
     int ret=get_input_one(sv2,"Enter char",tval,"create",
