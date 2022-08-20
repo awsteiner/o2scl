@@ -15,12 +15,13 @@ WORKDIR /opt
 RUN curl -L https://github.com/awsteiner/o2scl/releases/download/v0.927/o2scl-0.927.tar.gz --output o2scl-0.927.tar.gz
 RUN tar xzf o2scl-0.927.tar.gz
 WORKDIR /opt/o2scl-0.927
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12 -DO2SCL_OLD_BOOST" ./configure
 RUN make
 RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
+WORKDIR /opt/o2scl-0.927
 RUN make o2scl-test
 RUN make o2scl-examples
 
