@@ -377,6 +377,16 @@ class acol_manager
 - double double_obj
 - size_t size_t_obj
 - std::string string_obj
+- std::vector<contour_line> cont_obj
+- uniform_grid<double> ug_obj
+- std::vector<int> intv_obj
+- std::vector<double> doublev_obj
+- std::vector<size_t> size_tv_obj
+- std::vector<std::string> stringv_obj
+- std::vector<std::vector<double>> vvdouble_obj
+- std::vector<std::vector<std::string>> vvstring_obj
+- prob_dens_mdim_amr<> pdma_obj  
+- prob_dens_mdim_gaussian<> pdmg_obj  
 - function run_empty
   - int
 - function parse_vec_string

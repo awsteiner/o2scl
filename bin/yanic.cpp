@@ -616,7 +616,7 @@ int main(int argc, char *argv[]) {
                                        "std_vector_string"));
   class_py_names.insert(std::make_pair("std::vector<std::vector<std::string>>",
                                        "vec_vec_string"));
-  class_py_names.insert(std::make_pair("std::vector<std::vector<std::string>>",
+  class_py_names.insert(std::make_pair("std::vector<std::vector<double>>",
                                        "std_vector_vector"));
   class_py_names.insert(std::make_pair("tensor<>","tensor"));
   class_py_names.insert(std::make_pair
@@ -631,6 +631,8 @@ int main(int argc, char *argv[]) {
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::matrix<int>",
                          "ublas_matrix_int"));
+  class_py_names.insert(std::make_pair("std::vector<contour_line>",
+                                       "vector_contour_line"));
   
   // Open file
   ifstream fin;

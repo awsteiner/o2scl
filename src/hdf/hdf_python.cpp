@@ -532,6 +532,126 @@ void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v) {
   return;
 }
 
+void *o2scl_hdf_acol_manager_get_cont_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->cont_obj));
+}
+
+void o2scl_hdf_acol_manager_set_cont_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<contour_line> *p_tsot=(std::vector<contour_line> *)p_v;
+  ptr->cont_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_ug_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->ug_obj));
+}
+
+void o2scl_hdf_acol_manager_set_ug_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  uniform_grid<double> *p_tsot=(uniform_grid<double> *)p_v;
+  ptr->ug_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_intv_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->intv_obj));
+}
+
+void o2scl_hdf_acol_manager_set_intv_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<int> *p_tsot=(std::vector<int> *)p_v;
+  ptr->intv_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_doublev_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->doublev_obj));
+}
+
+void o2scl_hdf_acol_manager_set_doublev_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->doublev_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_size_tv_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->size_tv_obj));
+}
+
+void o2scl_hdf_acol_manager_set_size_tv_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<size_t> *p_tsot=(std::vector<size_t> *)p_v;
+  ptr->size_tv_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_stringv_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->stringv_obj));
+}
+
+void o2scl_hdf_acol_manager_set_stringv_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<std::string> *p_tsot=(std::vector<std::string> *)p_v;
+  ptr->stringv_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_vvdouble_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->vvdouble_obj));
+}
+
+void o2scl_hdf_acol_manager_set_vvdouble_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<std::vector<double>> *p_tsot=(std::vector<std::vector<double>> *)p_v;
+  ptr->vvdouble_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->vvstring_obj));
+}
+
+void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<std::vector<std::string>> *p_tsot=(std::vector<std::vector<std::string>> *)p_v;
+  ptr->vvstring_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_pdma_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->pdma_obj));
+}
+
+void o2scl_hdf_acol_manager_set_pdma_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  prob_dens_mdim_amr<> *p_tsot=(prob_dens_mdim_amr<> *)p_v;
+  ptr->pdma_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_pdmg_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->pdmg_obj));
+}
+
+void o2scl_hdf_acol_manager_set_pdmg_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  prob_dens_mdim_gaussian<> *p_tsot=(prob_dens_mdim_gaussian<> *)p_v;
+  ptr->pdmg_obj=*(p_tsot);
+  return;
+}
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   int ret=ptr->run_empty();

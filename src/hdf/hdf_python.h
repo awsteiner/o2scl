@@ -189,6 +189,46 @@ void *o2scl_hdf_acol_manager_get_string_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_string_obj(void *vptr, void *p_v);
 
+void *o2scl_hdf_acol_manager_get_cont_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_cont_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_ug_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_ug_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_intv_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_intv_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_doublev_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_doublev_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_size_tv_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_size_tv_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_stringv_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_stringv_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_vvdouble_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_vvdouble_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_pdma_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_pdma_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_pdmg_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_pdmg_obj(void *vptr, void *p_v);
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr);
 
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
