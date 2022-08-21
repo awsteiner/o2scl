@@ -641,10 +641,31 @@ void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr) {
   return;
 }
 
+double o2scl_prob_dens_mdim_std_vector_double__pdf(void *vptr, void *ptr_x) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  double ret=ptr->pdf(*x);
+  return ret;
+}
+
+double o2scl_prob_dens_mdim_std_vector_double__log_pdf(void *vptr, void *ptr_x) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  double ret=ptr->log_pdf(*x);
+  return ret;
+}
+
 size_t o2scl_prob_dens_mdim_std_vector_double__dim(void *vptr) {
   prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
   size_t ret=ptr->dim();
   return ret;
+}
+
+void o2scl_prob_dens_mdim_std_vector_double__getitem(void *vptr, void *ptr_x) {
+  prob_dens_mdim<std::vector<double>> *ptr=(prob_dens_mdim<std::vector<double>> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  ptr->operator()(*x);
+  return;
 }
 
 void *o2scl_create_prob_dens_mdim_biv_gaussian_std_vector_double_() {

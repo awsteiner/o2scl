@@ -299,17 +299,20 @@ class contour
   - io vector<contour_line> &clines
 class prob_dens_mdim<std::vector<double>>
 - py_name prob_dens_mdim
-#- function pdf
-#  - double
-#  - std_vector x
-#- function log_pdf
-#  - double
-#  - std::vector<double> x
+- function pdf
+  - double
+  - io std_vector &x
+- function log_pdf
+  - double
+  - io std_vector &x
 - function dim
   - size_t
-#- function operator()
-#  - void
-#  - out std::vector<double> &x
+# The operator() class is parsed by yanic as a __getitem__() magic
+# method, which is ok because this implies a similar syntax compared
+# to the C++ usage.
+- function operator()
+  - void
+  - io std_vector &x
 class prob_dens_mdim_biv_gaussian<std::vector<double>>
 - py_name prob_dens_mdim_biv_gaussian
 - parent prob_dens_mdim<std::vector<double>>

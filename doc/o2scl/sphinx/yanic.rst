@@ -21,7 +21,7 @@ the following way::
   [static] [const] [std::shared_ptr] <type name> [*] [&] [**]
 
 Non-alphabetic characters in class names are always converted to
-underscores.
+underscores. Other type decorators are not yet supported.
 
 Comments (all lines beginning with ``#`` are comments). Comments may
 appear anywhere, including inside a class or function definition.
@@ -34,7 +34,8 @@ Header items
     namespace <name>
 
   The namespace is used to name the automatically name the ``extern
-  C`` functions which access the class.
+  C`` functions which access the class. The namespace is assumed to
+  apply to all classes and functions which follow.
     
 - Template for class documentation, using ``%name%`` to refer to the
   class name. Specified either as::
@@ -52,6 +53,9 @@ Header items
 
     dll_name <name>
 
+  This is the name of the python data member in the ``link`` class
+  which holds the ctypes.CDLL object.
+  
 - Header for .rst files::
 
     rst_header {}
@@ -67,10 +71,19 @@ Header items
     
     h_include <file (including quotes or angle brackets)>
 
+  Many include files can be specified with many include statements
+  and all of them will be included at the top of the generated
+  .h files.
+
 - Include statement for C++ source code::
 
     cpp_include <file (including quotes or angle brackets)>
 
+  Many include files can be specified with many include statements
+  and all of them will be included at the top of the generated
+  .cpp files. At least one is required to find the generated
+  .h file.
+    
 - Namespaces to use in C++ source code::
 
     cpp_using <namespace>
@@ -78,6 +91,9 @@ Header items
 - Additional python header lines::
 
     py_header {}
+
+  For example, this can include import statements or definitions of
+  other global objects.
 
 Functions
 ---------
@@ -108,7 +124,8 @@ Classes
   function is created to create an object. A ``free`` function is
   always created to destroy an object. If ``std_cc`` is specified,
   then a C function named ``copy`` is created along with an analogous
-  ``__deepcopy__`` python method.
+  ``__deepcopy__`` python method which wraps around the default C++
+  copy constructor.
     
 - Python name of class (optional)::
 
@@ -130,7 +147,7 @@ Classes
     - parent <parent class name>
 
 - Python documentation for this class (overrides template
-  specification above)::
+  specification above which doesn't have a hyphen)::
 
     - py_class_doc {}
 
@@ -255,7 +272,7 @@ Return values:
 - ``std::string``: Return a Python bytes object
 - ``std::string &``: Return a std_string object
 
-Special funcions:
+Special functions:
 
 - Array-indexing, ``operator[]`` functions are translated to
   ``__getitem__`` functions on the python side. If the ``operator[]``

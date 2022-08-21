@@ -75,8 +75,11 @@ void next_line(ifstream &fin, std::string &line,
 
 /** \brief Parse a potentially multi-line string in the interface
     file
+
+    This is used for rst_header, py_class_doc and extra_py. 
 */
-void parse_vector_string(ifstream &fin, std::string type, std::string &line,
+void parse_vector_string(ifstream &fin, std::string type,
+                         std::string &line,
                          std::vector<std::string> &vs, bool &done,
                          std::vector<std::string> &output) {
 
@@ -1633,6 +1636,8 @@ int main(int argc, char *argv[]) {
             } else if (iff.ret.name=="contour_line") {
               fout << "  " << iff.ret.name
                    << " *ret=&(ptr->" << iff.name << "(";
+            } else if (iff.ret.name=="void") {
+              fout << "  ptr->" << iff.name << "(";
             } else {
               fout << "  " << iff.ret.name
                    << " ret=ptr->" << iff.name << "(";
@@ -2486,16 +2491,14 @@ int main(int argc, char *argv[]) {
         fout << "    def " << iff.name << "(self";
       }
       for(size_t k=0;k<iff.args.size();k++) {
-        if (k==0 && iff.name=="operator()") {
-          fout << ",tup";
+        if (k==0 && iff.name=="operator()" &&
+            (ifc.py_name=="ublas_matrix" ||
+             ifc.py_name=="ublas_matrix_int")) {
+          fout << ",matrix_tuple";
           k++;
-        } else if (iff.args[k].ift.is_ctype() &&
-                   iff.args[k].ift.is_reference() &&
-                   iff.args[k].ift.is_out()) {
-          // Don't do anything here because it is only an output
-          // parameter
-          ;
-        } else {
+        } else if (!iff.args[k].ift.is_ctype() ||
+                   !iff.args[k].ift.is_reference() ||
+                   !iff.args[k].ift.is_out()) {
           fout << "," << iff.args[k].name;
           if (iff.args[k].value.length()>0) {
             if (iff.args[k].value=="true") {
@@ -2743,13 +2746,13 @@ int main(int argc, char *argv[]) {
         }
       }
 
-      //
-      if (iff.name=="operator()") {
-        pre_func_code.push_back("m,n=tup");
+      if (iff.name=="operator()" &&
+          (ifc.py_name=="ublas_matrix" || ifc.py_name=="ublas_matrix_int")) {
+        pre_func_code.push_back("m,n=matrix_tuple");
       }
       
-      // Instead of returning an array, we send a pointer to the
-      // C wrapper
+      // Instead of returning an array, we send a pointer to the C
+      // wrapper
       if ((iff.ret.name=="vector<double>" ||
            iff.ret.name=="std::vector<double>") &&
           iff.ret.suffix=="&") {
@@ -2952,8 +2955,8 @@ int main(int argc, char *argv[]) {
       // code.
       if (iff.name=="operator()" && !iff.ret.is_const() &&
           iff.ret.suffix=="&") {
-        fout << "    def __setitem__(self,tup,value):" << endl;
-        fout << "        m,n=tup" << endl;
+        fout << "    def __setitem__(self,matrix_tuple,value):" << endl;
+        fout << "        m,n=matrix_tuple" << endl;
         fout << "        func=self._link." << dll_name << "."
              << ifc.ns << "_" << underscoreify(ifc.name) << "_setitem"
              << endl;
@@ -3541,6 +3544,8 @@ int main(int argc, char *argv[]) {
   }    
   
   fout2.close();
+
+  cout << "Yanic completed successfully." << endl;
   
   return 0;
 }
