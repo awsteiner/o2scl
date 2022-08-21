@@ -247,6 +247,12 @@ class std::vector<std::string>
 |     Returns: a Python int
 |     """
 |     return self.size()
+|
+| def set_list(self,ls):
+|     self.resize(len(ls))
+|     for i in range(0,len(ls)):
+|         self[i]=force_bytes(ls[i])
+|     return
 #
 # Class ublas_vector
 # 

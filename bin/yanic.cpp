@@ -2786,8 +2786,8 @@ int main(int argc, char *argv[]) {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("strt=std_vector_string(self._link,ret)");
-        post_func_code.push_back("strt._owner=True");
+        post_func_code.push_back("vstrt=std_vector_string(self._link,ret)");
+        post_func_code.push_back("vstrt._owner=True");
         
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
@@ -2856,6 +2856,8 @@ int main(int argc, char *argv[]) {
         fout << "        return ret";
         if (addl_ret.length()>0) fout << "," << addl_ret << endl;
         else fout << endl;
+      } else if (iff.ret.name=="std::vector<std::string>") {
+        fout << "        return vstrt" << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         if (iff.name=="operator[]") {
           fout << "        return strt.to_bytes()" << endl;
