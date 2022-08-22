@@ -387,6 +387,12 @@ void o2scl_hist_create_rep_vec(void *vptr, void *ptr_v) {
   return;
 }
 
+void *o2scl_hist_get_wgts(void *vptr) {
+  hist *ptr=(hist *)vptr;
+  const boost::numeric::ublas::vector<double> *ret=&ptr->get_wgts();
+  return (void *)ret;
+}
+
 void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins) {
   hist *ptr=(hist *)vptr;
   table<> *t=(table<> *)ptr_t;

@@ -36,6 +36,7 @@ cpp_using o2scl_acol
 # Additional python headers
 #
 py_header from o2sclpy.base import *
+py_header from o2sclpy.other import *
 #
 #
 # Class hdf_file

@@ -148,6 +148,8 @@ void o2scl_hist_set_extend_lhs(void *vptr, bool v);
 
 void o2scl_hist_create_rep_vec(void *vptr, void *ptr_v);
 
+void *o2scl_hist_get_wgts(void *vptr);
+
 void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins);
 
 void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins);

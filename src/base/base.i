@@ -1247,7 +1247,7 @@ class tensor<>
 - function get_size_arr
   - const std::vector<size_t> &
 - function get_data
-  - vector<double> &
+  - const vector<double> &
 - function total_size
   - size_t
 - function pack_indices

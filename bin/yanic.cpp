@@ -1729,6 +1729,7 @@ int main(int argc, char *argv[]) {
                        iff.ret.is_shared_ptr()) {
               if ((iff.ret.name=="std::vector<double>" ||
                    iff.ret.name=="std::vector<int>" ||
+                   iff.ret.name=="boost::numeric::ublas::vector<double>" ||
                    iff.ret.name=="std::vector<size_t>") &&
                   iff.ret.is_const()) {
                 // Cast away const for conversions between const pointers
@@ -2605,11 +2606,11 @@ int main(int argc, char *argv[]) {
         restype_string="";
       } else if (iff.ret.name=="boost::numeric::ublas::vector<double>" &&
                  iff.ret.suffix=="&") {
-        return_docs="ublas_matrix object";
+        return_docs="ublas_vector object";
         restype_string="";
       } else if (iff.ret.name=="boost::numeric::ublas::vector<int>" &&
                  iff.ret.suffix=="&") {
-        return_docs="ublas_matrix_int object";
+        return_docs="ublas_vector_int object";
         restype_string="";
       } else if (iff.ret.prefix.find("shared_ptr")!=std::string::npos ||
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
@@ -2749,7 +2750,8 @@ int main(int argc, char *argv[]) {
       }
 
       if (iff.name=="operator()" &&
-          (ifc.py_name=="ublas_matrix" || ifc.py_name=="ublas_matrix_int")) {
+          (ifc.py_name=="ublas_matrix" ||
+           ifc.py_name=="ublas_matrix_int")) {
         pre_func_code.push_back("m,n=matrix_tuple");
       }
       

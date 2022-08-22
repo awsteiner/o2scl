@@ -195,11 +195,11 @@ class hist
 #  - size_t nv
 #  - io std::vector<double> &v
 #  - size_t n_bins
-#- function get_wgts
-#  - const ublas_vector &
 - function create_rep_vec
   - void
-  - io std_vector &v                             
+  - io std_vector &v
+- function get_wgts
+  - const boost::numeric::ublas::vector<double> &
 - function from_table
   - void                             
   - py_name from_table
