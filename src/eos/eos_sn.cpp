@@ -2161,6 +2161,42 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
   return;
 }
 
+void eos_sn_hfsl::load_auto(std::string model, std::string directory) {
+  
+  string fname, name;
+  
+  cloud_file cf;
+  cf.verbose=2;
+  if (model=="sfho") {
+    std::string sha=((std::string)"0d93b91b9359c6c6ca17d703262a2f1b3")+
+      "8593f71cd40dfc9aae130062c29109a";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("sfho_frdm_shen98_v1.03.tab",
+       ((string)"https://isospin.roam.utk.edu/public_data/eos_tables")+
+       "/hfsl/sfho_frdm_shen98_v1.03.tab",sha,directory);
+    name="sfho";
+    fname=directory+"/sfho_frdm_shen98_v1.03.tab";
+  } else if (model=="sfhx") {
+    std::string sha=((std::string)"67f5464b783078107b9309d83a75471fdf")+
+      "dcc9d02939b9212d17e8c01371bc6f";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("sfhx_frdm_shen98_v1.03.tab",
+       ((string)"https://isospin.roam.utk.edu/public_data/eos_tables")+
+       "/hfsl/sfhx_frdm_shen98_v1.03.tab",sha,directory);
+    name="sfhx";
+    fname=directory+"/sfhx_frdm_shen98_v1.03.tab";
+  } else {
+    O2SCL_ERR("Invalid model in eos_sn_hfsl::load_auto().",
+              o2scl::exc_einval);
+  }
+
+  load(fname);
+  
+  return;
+}
+
 void eos_sn_hfsl::load(std::string fname, size_t mode) {
 
   wordexp_single_file(fname);
@@ -2176,6 +2212,10 @@ void eos_sn_hfsl::load(std::string fname, size_t mode) {
   std::string tstr;
 
   fin.open(fname.c_str());
+  if (!fin) {
+    O2SCL_ERR("Failed to find file in eos_sn_hfsl::load().",
+              o2scl::exc_einval);
+  }
 
   n_nB=326;
   n_T=81;

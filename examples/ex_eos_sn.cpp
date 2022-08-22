@@ -308,20 +308,8 @@ protected:
    */
   int hfsl_fun(std::vector<std::string> &sv, bool itive_com) {
 
-    string fname=directory;
-
-    if (sv[1]=="sfho") {
-      fname+="sfho_frdm_shen98_v1.03.tab";
-      name="hfsl_sfho";
-    } else if (sv[1]=="sfhx") {
-      fname+="sfhx_frdm_shen98_v1.03.tab";
-      name="hfsl_sfhx";
-    } else {
-      O2SCL_ERR("Need EOS type.",exc_efailed);
-    }
-    
     hfsl.verbose=verbose;
-    hfsl.load(fname);
+    hfsl.load_auto(sv[1],directory);
     genp=&hfsl;
     
     return 0;

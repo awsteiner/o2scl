@@ -935,8 +935,14 @@ namespace o2scl {
       m_amu=931.49432;
     }
     
-    /// Load table from filename \c fname
+    /** \brief Load table from filename \c fname
+        
+        The variable \c mode is ignored in this EOS.
+     */
     virtual void load(std::string fname, size_t mode=0);
+
+    /// Desc
+    virtual void load_auto(std::string model, std::string directory);
     
   };
 
