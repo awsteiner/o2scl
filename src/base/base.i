@@ -634,6 +634,11 @@ class table<>
   - void
   - py_name line_of_data_vector
   - io std::vector<double> &data
+- function insert_row
+  - void
+  - size_t nv
+  - io std::vector<double> &data
+  - size_t row
 - function ordered_lookup
   - size_t
   - std::string scol

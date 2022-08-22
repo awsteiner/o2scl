@@ -314,6 +314,8 @@ void o2scl_table__line_of_names(void *vptr, char *names);
 
 void o2scl_table__line_of_data(void *vptr, void *ptr_data);
 
+void o2scl_table__insert_row(void *vptr, size_t nv, void *ptr_data, size_t row);
+
 size_t o2scl_table__ordered_lookup(void *vptr, char *scol, double val);
 
 size_t o2scl_table__lookup(void *vptr, char *scol, double val);

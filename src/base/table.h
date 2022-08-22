@@ -1677,6 +1677,51 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Insert \c nv entries from \c v as a new row in 
+        the table at row \c row
+
+        \warning This function potentially requires reallocating
+        and copying a portion of the entire table.
+    */
+    template<class vec2_t> void insert_row(size_t nv, const vec2_t &v,
+                                           size_t row) {
+
+      if (row>nlines) {
+        O2SCL_ERR("Row greater than nlines in insert_row().",
+                  o2scl::exc_einval);
+      }
+      
+      if (maxlines==0) inc_maxlines(1);
+      if (nlines>=maxlines) inc_maxlines(maxlines);
+    
+      if (intp_set) {
+        intp_set=false;
+        delete si;
+      }
+      
+      if (nlines<maxlines && nv<=(atree.size())) {
+        
+        set_nlines_auto(nlines+1);
+        
+        if (nlines>=2 && nlines-2>=row) {
+          for(int i=((int)nlines-2);i>=((int)row);i--) {
+            for(size_t j=0;j<atree.size();j++) {
+              (*this).set(j,i+1,(*this).get(j,i));
+            }
+          }
+        }
+
+        for(size_t i=0;i<nv;i++) {
+          (*this).set(i,row,v[i]);
+        }
+        
+        return;
+      }
+
+      O2SCL_ERR("Not enough lines or columns in insert_row().",exc_einval);
+      return;
+    }
+
     /** \brief Read a line of data and store in a new row of the
         table
 

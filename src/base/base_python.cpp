@@ -858,6 +858,13 @@ void o2scl_table__line_of_data(void *vptr, void *ptr_data) {
   return;
 }
 
+void o2scl_table__insert_row(void *vptr, size_t nv, void *ptr_data, size_t row) {
+  table<> *ptr=(table<> *)vptr;
+  std::vector<double> *data=(std::vector<double> *)ptr_data;
+  ptr->insert_row(nv,*data,row);
+  return;
+}
+
 size_t o2scl_table__ordered_lookup(void *vptr, char *scol, double val) {
   table<> *ptr=(table<> *)vptr;
   size_t ret=ptr->ordered_lookup(scol,val);
