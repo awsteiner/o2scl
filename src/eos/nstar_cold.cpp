@@ -637,7 +637,7 @@ int nstar_hot::solve_fun_T(size_t nv, const ubvector &x,
 }
 
 int nstar_hot::solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
-			   thermo &hb, double s, double n_B) {
+			   thermo &hb, double sonb, double n_B) {
   neut.n=x[0];
   double T=x[1];
   
@@ -655,7 +655,7 @@ int nstar_hot::solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
     y[0]-=mu.n;
   }
 
-  y[1]=hb.en/n_B-s;
+  y[1]=hb.en/n_B-sonb;
   
   return 0;
 }
@@ -699,6 +699,29 @@ int nstar_hot::calc_eos_point_beta_T(double nb, double T, double &np,
                         (&nstar_hot::solve_fun_T),
                         this,std::placeholders::_1,std::placeholders::_2,
                         std::placeholders::_3,std::ref(hb),T,nb);
+  
+  ubvector ux(1), uy(1);
+  ux[0]=np;
+  int tret=mh.msolve(1,ux,sf);
+  np=ux[0];
+  
+  return tret;
+}
+  
+int nstar_hot::calc_eos_point_beta_s(double nb, double sonb, double &np,
+                                     thermo &hb) {
+  
+  if (eos_T_set==false) {
+    O2SCL_ERR("EOS not set in calc_eos_T_point().",exc_efailed);
+  }
+
+  if (np<=0.0) np=nb/2.0;
+
+  mm_funct sf=std::bind(std::mem_fn<int(size_t,const ubvector &,
+                                        ubvector &, thermo &, double,double)>
+                        (&nstar_hot::solve_fun_s),
+                        this,std::placeholders::_1,std::placeholders::_2,
+                        std::placeholders::_3,std::ref(hb),sonb,nb);
   
   ubvector ux(1), uy(1);
   ux[0]=np;

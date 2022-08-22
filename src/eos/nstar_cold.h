@@ -483,10 +483,10 @@ namespace o2scl {
                      ubvector &y, thermo &hb, double T,
                      double n_B);
     
-    /** \brief Solve for beta equilibrium at finite temperature
+    /** \brief Solve for beta equilibrium at finite entropy per baryon
      */
     int solve_fun_s(size_t nv, const ubvector &x, ubvector &y,
-                    thermo &hb, double s, double n_B);
+                    thermo &hb, double sonb, double n_B);
 
     /** \brief Solve for beta equilibrium at finite temperature
      */
@@ -517,10 +517,16 @@ namespace o2scl {
     
     /** \brief Compute the EOS in betq-equilibrium at finite temperature
         at a particular density
-     */
+    */
     int calc_eos_point_beta_T(double nb, double T, double &np,
-                                         thermo &hb);
-  
+                              thermo &hb);
+    
+    /** \brief Compute the EOS in betq-equilibrium at finite entropy
+        per baryon
+    */
+    int calc_eos_point_beta_s(double nb, double sonb, double &np,
+                              thermo &hb);
+    
     /** \brief Compute the EOS in betq-equilibrium at fixed entropy per baryon
      */
     int calc_eos_s(double s, double np_0=0.0);
