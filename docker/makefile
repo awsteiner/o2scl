@@ -1,6 +1,8 @@
 help:
 	@echo "Docker targets (not part of autoconf package):"
 	@echo "---------------------------------------------------"
+	@echo "docker_clean:"
+	@echo "docker_show:"
 	@echo "build_opensuse_leap:"
 	@echo "build_opensuse_leap_notest:"
 	@echo "build_opensuse_leap_dev:"
@@ -14,6 +16,10 @@ docker_clean:
 	`sudo docker ps --all | grep -i -v container | awk '{print $$1}'`
 	-sudo docker rmi \
 	`sudo docker images --all | grep -i -v container | awk '{print $$3}'`
+
+docker_show:
+	- sudo docker ps --all
+	- sudo docker images --all
 
 build_opensuse_leap:
 	sudo docker build - < opensuse_leap \
