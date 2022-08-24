@@ -27,6 +27,7 @@
 #include <o2scl/hist.h>
 #include <o2scl/contour.h>
 #include <o2scl/prob_dens_func.h>
+#include <o2scl/prob_dens_mdim_amr.h>
 
 extern "C" {
 
@@ -150,6 +151,8 @@ void o2scl_hist_create_rep_vec(void *vptr, void *ptr_v);
 
 void *o2scl_hist_get_wgts(void *vptr);
 
+void *o2scl_hist_get_bins(void *vptr);
+
 void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins);
 
 void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins);
@@ -255,5 +258,33 @@ double o2scl_prob_dens_mdim_biv_gaussian_std_vector_double__level_fixed_integral
 void *o2scl_create_prob_dens_mdim_gaussian_();
 
 void o2scl_free_prob_dens_mdim_gaussian_(void *vptr);
+
+void *o2scl_create_prob_dens_mdim_amr_hypercube();
+
+void o2scl_free_prob_dens_mdim_amr_hypercube(void *vptr);
+
+size_t o2scl_prob_dens_mdim_amr_hypercube_get_n_dim(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_n_dim(void *vptr, size_t v);
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_low(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_low(void *vptr, void *p_v);
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_high(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_high(void *vptr, void *p_v);
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_inside(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_inside(void *vptr, void *p_v);
+
+double o2scl_prob_dens_mdim_amr_hypercube_get_frac_vol(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_frac_vol(void *vptr, double v);
+
+double o2scl_prob_dens_mdim_amr_hypercube_get_weight(void *vptr);
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_weight(void *vptr, double v);
 
 }

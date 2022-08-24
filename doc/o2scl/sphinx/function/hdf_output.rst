@@ -13,6 +13,8 @@ Function hdf_output (o2scl_hdf)
 
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::uniform_grid< double > &h, std::string name)
 
+.. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_gaussian< vec_t, mat_t > &p, std::string name)
+
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_amr< vec_t, mat_t > &p, std::string name)
 
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name)

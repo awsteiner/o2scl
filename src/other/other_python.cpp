@@ -393,6 +393,12 @@ void *o2scl_hist_get_wgts(void *vptr) {
   return (void *)ret;
 }
 
+void *o2scl_hist_get_bins(void *vptr) {
+  hist *ptr=(hist *)vptr;
+  const boost::numeric::ublas::vector<double> *ret=&ptr->get_bins();
+  return (void *)ret;
+}
+
 void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins) {
   hist *ptr=(hist *)vptr;
   table<> *t=(table<> *)ptr_t;
@@ -711,6 +717,86 @@ void *o2scl_create_prob_dens_mdim_gaussian_() {
 void o2scl_free_prob_dens_mdim_gaussian_(void *vptr) {
   prob_dens_mdim_gaussian<> *ptr=(prob_dens_mdim_gaussian<> *)vptr;
   delete ptr;
+  return;
+}
+
+void *o2scl_create_prob_dens_mdim_amr_hypercube() {
+  prob_dens_mdim_amr<>::hypercube *ptr=new prob_dens_mdim_amr<>::hypercube;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_mdim_amr_hypercube(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  delete ptr;
+  return;
+}
+
+size_t o2scl_prob_dens_mdim_amr_hypercube_get_n_dim(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return ptr->n_dim;
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_n_dim(void *vptr, size_t v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  ptr->n_dim=v;
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_low(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return (void *)(&(ptr->low));
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_low(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->low=*(p_tsot);
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_high(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return (void *)(&(ptr->high));
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_high(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->high=*(p_tsot);
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr_hypercube_get_inside(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return (void *)(&(ptr->inside));
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_inside(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  std::vector<size_t> *p_tsot=(std::vector<size_t> *)p_v;
+  ptr->inside=*(p_tsot);
+  return;
+}
+
+double o2scl_prob_dens_mdim_amr_hypercube_get_frac_vol(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return ptr->frac_vol;
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_frac_vol(void *vptr, double v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  ptr->frac_vol=v;
+  return;
+}
+
+double o2scl_prob_dens_mdim_amr_hypercube_get_weight(void *vptr) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  return ptr->weight;
+}
+
+void o2scl_prob_dens_mdim_amr_hypercube_set_weight(void *vptr, double v) {
+  prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
+  ptr->weight=v;
   return;
 }
 

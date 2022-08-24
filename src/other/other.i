@@ -22,6 +22,7 @@ h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
 h_include <o2scl/contour.h>
 h_include <o2scl/prob_dens_func.h>
+h_include <o2scl/prob_dens_mdim_amr.h>
 # 
 # Include statement for C++ source code
 # 
@@ -200,6 +201,8 @@ class hist
   - io std_vector &v
 - function get_wgts
   - const boost::numeric::ublas::vector<double> &
+- function get_bins
+  - const boost::numeric::ublas::vector<double> &
 - function from_table
   - void                             
   - py_name from_table
@@ -338,3 +341,12 @@ class prob_dens_mdim_gaussian<>
 - parent prob_dens_mdim<std::vector<double>>
 #- function make_biv
 #  - prob_dens_mdim_biv_gaussian
+class prob_dens_mdim_amr<>::hypercube
+- py_name prob_dens_mdim_amr_hypercube
+- size_t n_dim
+- std::vector<double> low
+- std::vector<double> high
+- std::vector<size_t> inside
+- double frac_vol
+- double weight  
+

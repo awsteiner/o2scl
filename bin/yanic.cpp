@@ -2607,7 +2607,7 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="boost::numeric::ublas::vector<double>" &&
                  iff.ret.suffix=="&") {
         return_docs="ublas_vector object";
-        restype_string="";
+        restype_string="ctypes.c_void_p";
       } else if (iff.ret.name=="boost::numeric::ublas::vector<int>" &&
                  iff.ret.suffix=="&") {
         return_docs="ublas_vector_int object";
