@@ -1095,7 +1095,7 @@ void *o2scl_terminal_green_bg(void *vptr);
 
 void *o2scl_terminal_blue_bg(void *vptr);
 
-void *o2scl_terminal_default_fg(void *vptr);
+void *o2scl_terminal_default_fgbg(void *vptr);
 
 void *o2scl_terminal_bold(void *vptr);
 

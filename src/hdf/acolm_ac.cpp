@@ -1197,7 +1197,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
 
   if (type.length()>0) {
     cout << "Current object named \"" << obj_name << "\" has type "
-         << ter.bold() << ter.magenta_fg() << type << ter.default_fg()
+         << ter.bold() << ter.magenta_fg() << type << ter.default_fgbg()
          << ".\n" << endl;
   } else {
     cout << "No current object.\n" << endl;
@@ -1224,7 +1224,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       vector_sort<std::vector<std::string>,std::string>
         (comm_list.size(),comm_list);
       for(size_t j=0;j<comm_list.size();j++) {
-	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fg();
+	comm_list[j]=ter.cyan_fg()+ter.bold()+comm_list[j]+ter.default_fgbg();
       }
       screenify(comm_list.size(),comm_list,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
@@ -1239,11 +1239,11 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       std::map<std::string,std::vector<std::string> >::iterator it;
       for(it=type_comm_list.begin();it!=type_comm_list.end();it++) {
 	cout << "Commands for an object of type " << ter.bold()
-	     << ter.magenta_fg() << it->first << ter.default_fg()
+	     << ter.magenta_fg() << it->first << ter.default_fgbg()
 	     << ":\n" << endl;
 	std::vector<std::string> clist=it->second;
 	for(size_t j=0;j<clist.size();j++) {
-	  clist[j]=ter.cyan_fg()+ter.bold()+clist[j]+ter.default_fg();
+	  clist[j]=ter.cyan_fg()+ter.bold()+clist[j]+ter.default_fgbg();
 	}
 	comm_out.clear();
 	screenify(clist.size(),clist,comm_out);
@@ -1285,7 +1285,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       std::vector<std::string> comm_list_decor(comm_list.size());
       for(size_t j=0;j<comm_list.size();j++) {
 	comm_list_decor[j]=ter.cyan_fg()+ter.bold()+
-          comm_list[j]+ter.default_fg();
+          comm_list[j]+ter.default_fgbg();
       }
       screenify(comm_list_decor.size(),comm_list_decor,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {
@@ -1294,7 +1294,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       cout << endl;
       
       cout << "Commands for an object of type " << ter.bold()
-           << ter.magenta_fg() << temp_type << ter.default_fg()
+           << ter.magenta_fg() << temp_type << ter.default_fgbg()
            << ":\n" << endl;
       
       command_del(curr_type);
@@ -1316,7 +1316,7 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
       comm_out.clear();
       for(size_t j=0;j<comm_list_type_only.size();j++) {
 	comm_list_type_only[j]=ter.cyan_fg()+ter.bold()+
-          comm_list_type_only[j]+ter.default_fg();
+          comm_list_type_only[j]+ter.default_fgbg();
       }
       screenify(comm_list_type_only.size(),comm_list_type_only,comm_out);
       for(size_t j=0;j<comm_out.size();j++) {

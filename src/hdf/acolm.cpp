@@ -1313,7 +1313,7 @@ int acol_manager::setup_help() {
 
   terminal ter;
   cl->desc=((string)"acol: A data viewing and processing ")+
-    "program for "+ter.bold()+"O₂scl"+ter.default_fg()+".\n";
+    "program for "+ter.bold()+"O₂scl"+ter.default_fgbg()+".\n";
   
   return 0;
 }

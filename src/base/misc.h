@@ -758,8 +758,8 @@ namespace o2scl {
     /// Switch to blue background
     std::string blue_bg();
     
-    /// Switch to default foreground
-    std::string default_fg();
+    /// Switch to default foreground and background
+    std::string default_fgbg();
     
     /// Switch to bold foreground
     std::string bold();

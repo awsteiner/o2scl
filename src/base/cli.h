@@ -231,6 +231,33 @@ namespace o2scl {
   class cli {
 
   public:
+
+#ifdef NEVER_DEFINED
+    static const int underline=1000;
+    static const int high_int=10000;
+    static const int low_int=20000;
+    static const int bg_prefix=1000000;
+    static const int c_black=0;
+    static const int c_red=1;
+    static const int c_green=2;
+    static const int c_yellow=3;
+    static const int c_blue=4;
+    static const int c_magenta=5;
+    static const int c_cyan=6;
+    static const int c_light_grey=7;
+    static const int c_dark_grey=8;
+    static const int c_hi_red=9;
+    static const int c_hi_green=10;
+    static const int c_hi_yellow=11;
+    static const int c_hi_blue=12;
+    static const int c_hi_magenta=13;
+    static const int c_hi_cyan=14;
+    static const int c_white=15;
+    int command_color=cyan+high_int;
+    int type_color=magneta+high_int;
+    int param_color=red+high_int;
+    int help_color=green+high_int;
+#endif    
     
     /// Parameter for \ref o2scl::cli
     class parameter {

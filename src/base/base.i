@@ -1980,7 +1980,7 @@ class terminal
   - std::string
 - function blue_bg
   - std::string
-- function default_fg
+- function default_fgbg
   - std::string
 - function bold
   - std::string

@@ -421,7 +421,7 @@ int cli::comm_option_commands(vector<string> &sv, bool itive_com) {
   // Form a list of the commands
   std::string *slist=new string[clist.size()];
   for(size_t i=0;i<clist.size();i++) {
-    slist[i]=ter.bold()+ter.cyan_fg()+clist[i].lng+ter.default_fg();
+    slist[i]=ter.bold()+ter.cyan_fg()+clist[i].lng+ter.default_fgbg();
   }
 
   // Sort
@@ -977,7 +977,7 @@ int cli::output_param_list() {
     tab_names[0][0]="Name";
     tab_values[0][0]="Value";
     for(size_t i=0;i<par_list.size();i++) {
-      tab_names[0][i+1]=ter.red_fg()+ter.bold()+it->first+ter.default_fg();
+      tab_names[0][i+1]=ter.red_fg()+ter.bold()+it->first+ter.default_fgbg();
       string stmp=it->second->get();
       // FIXME, AWS 3/28/22, why 64?
       static const size_t nc2=64;
@@ -1139,7 +1139,7 @@ int cli::print_option_list() {
     if (c[1][i].length()>=2 && c[1][i][0]=='-') {
       size_t len=c[1][i].length();
       cout << "-" << ter.cyan_fg() << ter.bold()
-	   << c[1][i].substr(1,len-1) << ter.default_fg() << " ";
+	   << c[1][i].substr(1,len-1) << ter.default_fgbg() << " ";
       for(size_t j=c[1][i].length();j<maxlen;j++) {
 	cout << " ";
       }
@@ -1224,7 +1224,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 	if (string_equal_dash(it->first,sv[1])) {
 	  
 	  cout << "Parameter: " << ter.red_fg() << ter.bold() << sv[1]
-	       << ter.default_fg() << " value: " << (it->second)->get()
+	       << ter.default_fgbg() << " value: " << (it->second)->get()
                << endl;
 
 	  vector<string> desc2;
@@ -1253,11 +1253,11 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
       
       if (clist[ix].parm_desc.length()==0) {
 	cout << "Usage: " << ter.cyan_fg() << ter.bold() 
-	     << clist[ix].lng << ter.default_fg()
+	     << clist[ix].lng << ter.default_fgbg()
 	     << " (no arguments)" << endl;
       } else {
 	cout << "Usage: " << ter.cyan_fg() << ter.bold() 
-	     << clist[ix].lng << ter.default_fg()
+	     << clist[ix].lng << ter.default_fgbg()
 	     << " " << clist[ix].parm_desc << endl;
       }
 
@@ -1830,7 +1830,7 @@ void cli::xml_replacements(std::string &s) {
     string_replace(s,"<computeroutput> "+comm_list[i]+
                    " </computeroutput>",
                    ter.cyan_fg()+ter.bold()+comm_list[i]+
-                   ter.default_fg());
+                   ter.default_fgbg());
   }
   
   // Make the command replacements from the current parameter list
@@ -1838,7 +1838,7 @@ void cli::xml_replacements(std::string &s) {
     string_replace(s,"<computeroutput> "+it->first+
                    " </computeroutput>",
                    ter.red_fg()+ter.bold()+it->first+
-                   ter.default_fg());
+                   ter.default_fgbg());
   }
   
   string_replace(s,"  "," ");

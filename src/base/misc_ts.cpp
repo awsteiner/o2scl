@@ -144,7 +144,7 @@ int main(void) {
        << ter.cyan_fg() << "test" << ter.default_fg() << " test"
        << endl;
   cout << endl;
-  cout << "Bold and eight_-bit color test: " << endl;
+  cout << "Bold and eight-bit color test: " << endl;
   cout << ter.bold() 
        << ter.eight_bit_fg(202) << "test" << ter.default_fg() << "test2"
        << endl;
@@ -157,7 +157,7 @@ int main(void) {
        << "abcdefghijklmnopqrstuvwxyz" << ter.normal_font() << endl;
   cout << endl;
 
-  cout << "eight_-bit color summary:" << endl;
+  cout << "eight-bit color summary:" << endl;
   cout << ter.eight_bit_summ() << endl;
   cout << endl;
 
