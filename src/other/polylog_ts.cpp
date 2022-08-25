@@ -68,10 +68,6 @@ int main(void) {
   // Compare polylog values with hard-coded values
   polylog<> p;
   t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
-  //#ifdef O2SCL_POLYLOGARITHM
-  //t.test_rel(p.calc(2,-0.5),
-  //polylogarithm::Li(2,-0.5).real(),4.0e-15,"pl 1b");
-  //#endif
   t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
   t.test_rel(p.calc(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
   t.test_rel(p.calc(3,-2.0),-1.66828336396657,4.0e-15,"pl 4");

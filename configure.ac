@@ -237,20 +237,6 @@ AS_IF([test "x$enable_python" == "xyes"], [
 ])
 
 # ------------------------------------------------------------------
-# Check for Polylogarithm library
-# ------------------------------------------------------------------
-
-AC_ARG_ENABLE(polylogarithm,
-[  --enable-polylogarithm  Include polylogarithm support @<:@default=no@:>@],
-	[case "${enableval}" in
-	yes) polylogarithm=true ;;
-	no)  polylogarithm=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-polylogarithm) ;;
-	esac],[polylogarithm=false])
-
-AM_CONDITIONAL(O2SCL_POLYLOGARITHM, test x$polylogarithm = xtrue)
-
-# ------------------------------------------------------------------
 # If enabled, check for the polylogarithm library
 # ------------------------------------------------------------------
 
