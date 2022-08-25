@@ -839,10 +839,9 @@ std::string terminal::color_from_int(int col) {
   int fg=col%1000;
   if (fg<10 && fg>=1) {
     std::ostringstream oss;
-    fg+=30;
-    oss << ((char)27) << "[" << fg << "m";
+    oss << ((char)27) << "[" << fg+30 << "m";
     ret+=oss.str();
-  } else if (fg<256) {
+  } else if (fg<256 && fg>1) {
     ret+=eight_bit_fg(fg);
   } else if (fg==256) {
     ret+=black_fg();
@@ -870,10 +869,9 @@ std::string terminal::color_from_int(int col) {
       
   if (col<10 && col>=1) {
     std::ostringstream oss;
-    col+=40;
-    oss << ((char)27) << "[" << col << "m";
+    oss << ((char)27) << "[" << col+40 << "m";
     ret+=oss.str();
-  } else if (col<256) {
+  } else if (col<256 && col>1) {
     ret+=eight_bit_bg(col);
   } else if (col==256) {
     ret+=black_bg();

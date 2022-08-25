@@ -286,6 +286,25 @@ namespace o2scl_acol {
 
   protected:
 
+    /// \name Colors
+    //@{
+    /// Desc
+    std::string command_color;
+    /// Desc
+    std::string type_color;
+    /// Desc
+    std::string param_color;
+    /// Desc
+    std::string help_color;
+    /// Desc
+    std::string exec_color;
+    /// Desc
+    std::string url_color;
+    /// Desc
+    std::string default_color;
+    /// Desc
+    //@}
+    
     /** \brief Clear memory associated with the current object and set
         type to ""
     */

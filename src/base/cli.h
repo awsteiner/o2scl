@@ -428,6 +428,22 @@ namespace o2scl {
     std::vector<std::string> ph_name, ph_desc;
     //@}
 
+    /// \name Aliases
+    //@{
+    std::map<std::string,std::string,std::greater<std::string> > als;
+    typedef std::map<std::string,std::string,
+      std::greater<std::string> >::iterator al_it;
+    //@}
+    
+    /// Compare two strings, treating dashes and underscores as equivalent
+    bool string_equal_dash(std::string s1, std::string s2);
+
+  public:
+
+    cli();
+
+    virtual ~cli();
+
     /// \name Colors
     //@{
     /// Desc
@@ -447,22 +463,6 @@ namespace o2scl {
     /// Desc
     std::string colors;
     //@}
-
-    /// \name Aliases
-    //@{
-    std::map<std::string,std::string,std::greater<std::string> > als;
-    typedef std::map<std::string,std::string,
-      std::greater<std::string> >::iterator al_it;
-    //@}
-    
-    /// Compare two strings, treating dashes and underscores as equivalent
-    bool string_equal_dash(std::string s1, std::string s2);
-
-  public:
-
-    cli();
-
-    virtual ~cli();
 
     /// \name The hard-coded command functions
     //@{

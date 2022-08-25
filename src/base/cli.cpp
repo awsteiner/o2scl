@@ -315,10 +315,9 @@ cli::cli() {
   type_color=ter.color_from_int(ter.c_magenta+ter.int_high);
   param_color=ter.color_from_int(ter.c_red+ter.int_high);
   help_color=ter.color_from_int(ter.c_green+ter.int_high);
-  exec_color=ter.color_from_int(ter.c_white+ter.int_high);
+  exec_color=ter.color_from_int(ter.int_high);
   url_color=ter.color_from_int(ter.att_underline);
   default_color=ter.default_fgbg();
-
 }
 
 cli::~cli() {
@@ -3543,7 +3542,7 @@ void cli::set_colors(std::string c) {
   std::vector<std::string> vs;
   split_string_delim(c,vs,',');
   for(size_t j=0;j<vs.size();j++) {
-    if (vs[j].size()<3) {
+    if (vs[j].size()<2) {
       O2SCL_ERR("Field size too short in set_colors().",
                 o2scl::exc_einval);
     }
@@ -3552,23 +3551,59 @@ void cli::set_colors(std::string c) {
                 o2scl::exc_einval);
     }
     if (vs[j][0]=='c') {
-      std::string scol=vs[j].substr(2,vs[j].length()-2);
-      command_color=ter.color_from_int(o2scl::stoi(scol));
+      //cout << "Set command color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        command_color="";
+      } else {
+        std::string scol=vs[j].substr(2,vs[j].length()-2);
+        command_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << command_color << "command" << default_color << endl;
     } else if (vs[j][0]=='t') {
+      //cout << "Set type color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        type_color="";
+      } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         type_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << type_color << "type" << default_color << endl;
     } else if (vs[j][0]=='p') {
+      //cout << "Set param color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        param_color="";
+      } else {
           std::string scol=vs[j].substr(2,vs[j].length()-2);
           param_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << param_color << "param" << default_color << endl;
     } else if (vs[j][0]=='h') {
-      std::string scol=vs[j].substr(2,vs[j].length()-2);
-      help_color=ter.color_from_int(o2scl::stoi(scol));
+      //cout << "Set help color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        help_color="";
+      } else {
+        std::string scol=vs[j].substr(2,vs[j].length()-2);
+        help_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << help_color << "help" << default_color << endl;
     } else if (vs[j][0]=='e') {
-      std::string scol=vs[j].substr(2,vs[j].length()-2);
-      exec_color=ter.color_from_int(o2scl::stoi(scol));
+      //cout << "Set exec color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        exec_color="";
+      } else {
+        std::string scol=vs[j].substr(2,vs[j].length()-2);
+        exec_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << exec_color << "exec" << default_color << endl;
     } else if (vs[j][0]=='u') {
-      std::string scol=vs[j].substr(2,vs[j].length()-2);
-      url_color=ter.color_from_int(o2scl::stoi(scol));
+      //cout << "Set url color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        url_color="";
+      } else {
+        std::string scol=vs[j].substr(2,vs[j].length()-2);
+        url_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << url_color << "url" << default_color << endl;
     } else {
       O2SCL_ERR("Invalid prefix in set_colors().",
                 o2scl::exc_einval);
