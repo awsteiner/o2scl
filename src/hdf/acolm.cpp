@@ -1319,7 +1319,6 @@ int acol_manager::setup_cli() {
   char *ac=getenv("ACOL_COLORS");
   if (ac) {
     string acs=ac;
-    cout << "Setting colors with string: " << acs << endl;
     cl->set_colors(acs);
     command_color=cl->command_color;
     type_color=cl->type_color;
