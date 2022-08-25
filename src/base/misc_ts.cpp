@@ -141,12 +141,12 @@ int main(void) {
   terminal ter;
   cout << "Underline and standard color test:" << endl;
   cout << ter.underline() 
-       << ter.cyan_fg() << "test" << ter.default_fg() << " test"
+       << ter.cyan_fg() << "test" << ter.default_fgbg() << " test"
        << endl;
   cout << endl;
-  cout << "Bold and eight_-bit color test: " << endl;
+  cout << "Bold and eight-bit color test: " << endl;
   cout << ter.bold() 
-       << ter.eight_bit_fg(202) << "test" << ter.default_fg() << "test2"
+       << ter.eight_bit_fg(202) << "test" << ter.default_fgbg() << "test2"
        << endl;
   cout << "horizonal_rule: " << ter.hrule(40) << endl;
   cout << endl;
@@ -157,7 +157,25 @@ int main(void) {
        << "abcdefghijklmnopqrstuvwxyz" << ter.normal_font() << endl;
   cout << endl;
 
-  cout << "eight_-bit color summary:" << endl;
+  cout << "vt100 colors:" << endl;
+  cout << ter.black_fg() << "  0 " << ter.bold() << "  0 "
+       << ter.default_fgbg() << ter.black_bg() << "  0"
+       << ter.default_fgbg() << " ";
+  cout << ter.red_fg() << "  1 " << ter.bold() << "  1 "
+       << ter.default_fgbg() << ter.red_bg() << "  1"
+       << ter.default_fgbg() << " ";
+  cout << ter.green_fg() << "  2 " << ter.bold() << "  2 "
+       << ter.default_fgbg() << ter.green_bg() << "  2"
+       << ter.default_fgbg() << " ";
+  cout << ter.yellow_fg() << "  3 " << ter.bold() << "  3 "
+       << ter.default_fgbg() << ter.yellow_bg() << "  3"
+       << ter.default_fgbg() << " ";
+  cout << ter.blue_fg() << "  4 " << ter.bold() << "  4 "
+       << ter.default_fgbg() << ter.blue_bg() << "  4"
+       << ter.default_fgbg() << endl;
+  cout << endl;
+  
+  cout << "eight-bit color summary:" << endl;
   cout << ter.eight_bit_summ() << endl;
   cout << endl;
 

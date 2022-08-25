@@ -570,11 +570,11 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	it++;
 	sv.erase(it);
 	
-	cout << "Help for command " << ter.cyan_fg() << ter.bold()
-	     << cmd << ter.default_fg() << " given object of type "
-	     << ter.magenta_fg() << ter.bold()
-	     << temp_type << ter.default_fg() << ".\n" << endl;
-	
+	cout << "Help for command " << command_color
+	     << cmd << default_color << " given object of type "
+             << type_color << temp_type << default_color
+             << ".\n" << endl;
+        
 	int ret=cl->comm_option_help(sv,itive_com);
 	
 	command_del(temp_type);
@@ -587,10 +587,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	command_del(temp_type);
 	command_add(cur_type);
 	
-	cout << "Command " << ter.cyan_fg() << ter.bold()
-	     << sv[2] << ter.default_fg() << " not valid for type "
-	     << ter.magenta_fg() << ter.bold()
-	     << sv[1] << ter.default_fg() << ".\n" << endl;
+	cout << "Command " << command_color
+	     << sv[2] << default_color << " not valid for type "
+             << type_color << sv[1] << default_color 
+	     << ".\n" << endl;
 	
 	vector<string> sv2={"help","help"};
 	cl->comm_option_help(sv2,itive_com);
@@ -599,8 +599,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       }
       
     } else {
-      cout << "Type " << ter.magenta_fg() << ter.bold()
-	   << sv[1] << ter.default_fg() << " not found.\n" << endl;
+      cout << "Type " << type_color
+	   << sv[1] << default_color << " not found.\n" << endl;
 
       vector<string> sv2={"help","help"};
       cl->comm_option_help(sv2,itive_com);
@@ -611,8 +611,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help functions'
   if (sv.size()==2 && sv[1]=="functions") {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "functions" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "functions" << default_color << endl;
     cout << line << "\n" << endl;
     string str=((std::string)"Functions can be created using the ");
     str+="operators and functions listed below. Examples are ";
@@ -653,17 +653,17 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   // Handle the special case 'help types'
   if (sv.size()==2 && sv[1]=="types") {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "types" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "types" << default_color << endl;
     cout << line << "\n" << endl;
 
     string str="The O2scl types which can be handled by "+cl->cmd_name;
     str+=" are ";
     for(size_t i=0;i<type_list.size()-1;i++) {
-      str+=ter.magenta_fg()+ter.bold()+type_list[i]+ter.default_fg()+", ";
+      str+=type_color+type_list[i]+default_color+", ";
     }
-    str+="and "+ter.magenta_fg()+ter.bold()+
-      type_list[type_list.size()-1]+ter.default_fg()+'.';
+    str+="and "+type_color+
+      type_list[type_list.size()-1]+default_color+'.';
 
     std::vector<std::string> sv;
     o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
@@ -676,8 +676,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   // Handle the special case 'help index-spec'
   if (sv.size()==2 && (sv[1]=="index-spec" || sv[1]=="index_spec")) {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "index-spec" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "index-spec" << default_color << endl;
     cout << line << "\n" << endl;
     std::string str=((std::string)"Index specification ")+
       "description:\n\nThe tensor rearrange commands use index "+
@@ -731,8 +731,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     
   // Handle the special case 'help value-spec'
   if (sv.size()==2 && (sv[1]=="value-spec" || sv[1]=="value_spec")) {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "value-spec" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "value-spec" << default_color << endl;
     cout << line << "\n" << endl;
 
     std::string help;
@@ -761,8 +761,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help vector-spec'
   if (sv.size()==2 && (sv[1]=="vector-spec" || sv[1]=="vector_spec")) {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "vector-spec" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "vector-spec" << default_color << endl;
     cout << line << "\n" << endl;
 
     std::string help;
@@ -789,8 +789,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 
   // Handle the special case 'help strings-spec'
   if (sv.size()==2 && (sv[1]=="strings-spec" || sv[1]=="strings_spec")) {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "strings-spec" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "strings-spec" << default_color << endl;
     cout << line << "\n" << endl;
     
     std::string help;
@@ -820,8 +820,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // Handle the special case 'help mult-vector-spec'
   if (sv.size()==2 && (sv[1]=="mult-vector-spec" ||
 		       sv[1]=="mult_vector_spec")) {
-    cout << "Documentation for help topic: " << ter.green_fg() << ter.bold()
-	 << "mult-vector-spec" << ter.default_fg() << endl;
+    cout << "Documentation for help topic: " << help_color
+	 << "mult-vector-spec" << default_color << endl;
     cout << line << "\n" << endl;
     
     std::string help;
@@ -851,11 +851,11 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   // Handle the case 'help <type>' where <type> is an acol o2scl type
   for(size_t i=0;i<type_list.size();i++) {
     if (sv.size()>=2 && sv[1]==type_list[i]) {
-      cout << "Documentation for type: " << ter.magenta_fg() << ter.bold()
-	   << type_list[i] << ter.default_fg() << endl;
+      cout << "Documentation for type: " << type_color
+	   << type_list[i] << default_color << endl;
       cout << line << "\n" << endl;
-      std::string str="Objects of type "+ter.magenta_fg()+ter.bold()+
-	type_list[i]+ter.default_fg()+
+      std::string str="Objects of type "+type_color+
+	type_list[i]+default_color+
 	" can be read, written, or modified by "+cl->cmd_name+".";
       std::vector<std::string> svx;
       o2scl::rewrap_keep_endlines(str,svx,ncols_loc-1);
@@ -872,20 +872,20 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	    str=((string)"The type-specific commands for objects ")+
 	      "of type "+type_list[i]+" are: ";
 	    for(size_t j=0;j<clist.size()-1;j++) {
-	      str+=ter.cyan_fg()+ter.bold()+clist[j]+ter.default_fg()+", ";
+	      str+=command_color+clist[j]+default_color+", ";
 	    }
-	    str+=" and "+ter.cyan_fg()+ter.bold()+
-	      clist[clist.size()-1]+ter.default_fg()+".";
+	    str+=" and "+command_color+
+	      clist[clist.size()-1]+default_color+".";
 	    o2scl::rewrap_ignore_vt100(str,svx,ncols_loc-1);
 	    for(size_t j=0;j<svx.size();j++) {
 	      cout << svx[j] << endl;
 	    }
 	  } else {
 	    cout << "The only type-specific command for objects of type "
-		 << ter.magenta_fg() << ter.bold()
-		 << type_list[i] << ter.default_fg()
-		 << " is " << ter.cyan_fg() << ter.bold()
-		 << clist[0] << ter.default_fg() << "." << endl;
+		 << type_color
+		 << type_list[i] << default_color
+		 << " is " << command_color
+		 << clist[0] << default_color << "." << endl;
 	  }
 	}
       }
@@ -933,8 +933,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	  command_add(it->first);
 	  type=it->first;
 
-	  cout << "Type " << ter.magenta_fg() << ter.bold() << it->first
-	       << ter.default_fg() << ":" << endl;
+	  cout << "Type " << type_color << it->first
+	       << default_color << ":" << endl;
 	  int ret=cl->comm_option_help(sv2,itive_com);
 	  cout << endl;
 
@@ -1004,18 +1004,24 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (ter.is_redirected()==false) {
-    stemp="6. Types are denoted as "+ter.magenta_fg()+ter.bold()+"char";
-    stemp+=ter.default_fg()+", commands as "+ter.cyan_fg()+ter.bold();
-    stemp+="function"+ter.default_fg()+",\n   get/set parameters as ";
-    stemp+=ter.red_fg()+ter.bold()+"verbose"+ter.default_fg();
-    stemp+=", and help topics as\n   ";
-    stemp+=ter.green_fg()+ter.bold()+"functions"+ter.default_fg();
-    stemp+=".\n";
+    
+    stemp="6. Types are denoted as "+type_color+"char";
+    stemp+=default_color+", commands as "+command_color;
+    stemp+="function"+default_color+",\n   get/set parameters as ";
+    stemp+=param_color+"verbose"+default_color;
+    stemp+=", help topics as\n   ";
+    stemp+=help_color+"functions"+default_color+", command-line ";
+    stemp+="scripts as "+exec_color+"acol -help"+default_color;
+    stemp+=", and URLs as "+url_color+"https://arxiv.org";
+    stemp+=default_color+".\n";
+    
     rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
+    
     dsc+=sv2[0]+"\n";
     for(size_t j=1;j<sv2.size();j++) {
       dsc+="   "+sv2[j]+"\n";
     }
+    
   }
   
   dsc+="\n"+line+"\n";
@@ -1036,19 +1042,19 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     terminal ter;
 
     cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
-    cout << ter.green_fg() << ter.bold() << "functions" << ter.default_fg()
+    cout << help_color << "functions" << default_color
 	 << "," << endl;
-    cout << ter.green_fg() << ter.bold() << "index-spec"
-	 << ter.default_fg() << ", ";
-    cout << ter.green_fg() << ter.bold() << "mult-vector-spec"
-	 << ter.default_fg() << ", ";
-    cout << ter.green_fg() << ter.bold() << "strings-spec" << ter.default_fg()
+    cout << help_color << "index-spec"
+	 << default_color << ", ";
+    cout << help_color << "mult-vector-spec"
+	 << default_color << ", ";
+    cout << help_color << "strings-spec" << default_color
 	 << ", ";
-    cout << ter.green_fg() << ter.bold() << "types" << ter.default_fg()
+    cout << help_color << "types" << default_color
 	 << ", ";
-    cout << ter.green_fg() << ter.bold() << "value-spec" << ter.default_fg()
+    cout << help_color << "value-spec" << default_color
 	 << ", and\n";
-    cout << ter.green_fg() << ter.bold() << "vector-spec" << ter.default_fg()
+    cout << help_color << "vector-spec" << default_color
 	 << ".\n" << endl;
 
     cout << line << endl;
@@ -1056,10 +1062,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 #ifndef O2SCL_UBUNTU_PKG
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
       ((string)__DATE__)+" for "+ter.bold()+"O₂scl"+
-      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
+      default_color+", version "+((string)VERSION)+".\n" << endl;
 #else
     cout << ((string)"Compiled for ")+ter.bold()+"O₂scl"+
-      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
+      default_color+", version "+((string)VERSION)+".\n" << endl;
 #endif
 
   }
@@ -1070,8 +1076,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_h5_copy(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
-  cout << "Warning h5-copy is still experimental." << endl;
-  
   vector<string> in, pr;
   
   pr.push_back("Source file");

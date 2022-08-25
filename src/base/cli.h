@@ -231,7 +231,7 @@ namespace o2scl {
   class cli {
 
   public:
-    
+
     /// Parameter for \ref o2scl::cli
     class parameter {
       
@@ -444,6 +444,26 @@ namespace o2scl {
 
     virtual ~cli();
 
+    /// \name Colors
+    //@{
+    /// Desc
+    std::string command_color;
+    /// Desc
+    std::string type_color;
+    /// Desc
+    std::string param_color;
+    /// Desc
+    std::string help_color;
+    /// Desc
+    std::string exec_color;
+    /// Desc
+    std::string url_color;
+    /// Desc
+    std::string default_color;
+    /// Desc
+    std::string colors;
+    //@}
+
     /// \name The hard-coded command functions
     //@{
     int comm_option_alias(std::vector<std::string> &sv, bool itive_com);
@@ -534,6 +554,10 @@ namespace o2scl {
     /// Additional help text for command-line (default is empty string)
     std::string addl_help_cli;
 
+    /** \brief Desc
+     */
+    void set_colors(std::string c);
+   
     /// \name Basic operation
     //@{
     /** \brief Add a new command

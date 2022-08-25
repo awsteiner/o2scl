@@ -918,10 +918,10 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   if (cl->cmd_name==((string)"acol")) {
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
       ((string)__DATE__)+" for "+ter.bold()+"O₂scl"+
-      ter.default_fg()+", version "+((string)VERSION)+".\n" << endl;
+      default_color+", version "+((string)VERSION)+".\n" << endl;
   }
 
-  cout << ter.bold() << "O₂scl" << ter.default_fg()
+  cout << ter.bold() << "O₂scl" << default_color
        << " version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   if (true) {
@@ -1090,14 +1090,14 @@ void acol_manager::xml_replacements(std::string &s,
   
   vector<string> subs={((string)"<computeroutput> Vector ")+
     "specifications </computeroutput>",
-    "'acol -help "+ter.green_fg()+ter.bold()+"vector-spec"+
-    ter.default_fg()+"'",
+    "'acol -help "+help_color+"vector-spec"+
+    default_color+"'",
     "<computeroutput> Multiple vector specifications </computeroutput>",
-    "'acol -help "+ter.green_fg()+ter.bold()+"mult-vector-spec"+
-    ter.default_fg()+"'",
+    "'acol -help "+help_color+"mult-vector-spec"+
+    default_color+"'",
     "\"acol -help <computeroutput> functions </computeroutput> \"",
-    "\"acol -help "+ter.green_fg()+ter.bold()+"functions"+
-    ter.default_fg()+"\""};
+    "\"acol -help "+help_color+"functions"+
+    default_color+"\""};
   
   // Make the manual replacements from the 'subs' list
   // above
@@ -1109,56 +1109,51 @@ void acol_manager::xml_replacements(std::string &s,
   for(size_t i=0;i<type_list.size();i++) {
     string_replace(s,"<computeroutput> <ref> "+type_list[i]+
                    " </ref> </computeroutput>",
-                   ter.magenta_fg()+ter.bold()+type_list[i]+
-                   ter.default_fg());
+                   type_color+type_list[i]+default_color);
     string_replace(s,"<computeroutput> "+type_list[i]+
                    " </computeroutput>",
-                   ter.magenta_fg()+ter.bold()+type_list[i]+
-                   ter.default_fg());
+                   type_color+type_list[i]+default_color);
     string_replace(s,"<ref> "+type_list[i]+
                    " </ref>",
-                   ter.magenta_fg()+ter.bold()+type_list[i]+
-                   ter.default_fg());
+                   type_color+type_list[i]+default_color);
   }
                 
   // Make the command replacements
   for(size_t i=0;i<clist.size();i++) {
     string_replace(s,"<computeroutput> "+clist[i]+
                    " </computeroutput>",
-                   ter.cyan_fg()+ter.bold()+clist[i]+
-                   ter.default_fg());
+                   command_color+clist[i]+default_color);
   }
   
   // Make the command replacements from the current parameter list
   for(cli::par_t it=cl->par_list.begin();it!=cl->par_list.end();it++) {
     string_replace(s,"<computeroutput> "+it->first+
-                   " </computeroutput>",
-                   ter.red_fg()+ter.bold()+it->first+
-                   ter.default_fg());
+                   " </computeroutput>",param_color+it->first+
+                   default_color);
   }
   
   // Make the help topic replacements
   string_replace(s,"<computeroutput> functions </computeroutput>",
-                 ter.green_fg()+ter.bold()+"functions"+
-                 ter.default_fg());
+                 help_color+"functions"+
+                 default_color);
   string_replace(s,"<computeroutput> types </computeroutput>",
-                 ter.green_fg()+ter.bold()+"types"+
-                 ter.default_fg());
+                 help_color+"types"+
+                 default_color);
   string_replace(s,"<computeroutput> value-spec </computeroutput>",
-                 ter.green_fg()+ter.bold()+"value-spec"+
-                 ter.default_fg());
+                 help_color+"value-spec"+
+                 default_color);
   string_replace(s,"<computeroutput> vector-spec </computeroutput>",
-                 ter.green_fg()+ter.bold()+"vector-spec"+
-                 ter.default_fg());
+                 help_color+"vector-spec"+
+                 default_color);
   string_replace(s,"<computeroutput> mult-vector-spec </computeroutput>",
-                 ter.green_fg()+ter.bold()+"mult-vector-spec"+
-                 ter.default_fg());
+                 help_color+"mult-vector-spec"+
+                 default_color);
   string_replace(s,"<computeroutput> strings-spec </computeroutput>",
-                 ter.green_fg()+ter.bold()+"strings-spec"+
-                 ter.default_fg());
+                 help_color+"strings-spec"+
+                 default_color);
   string_replace(s,"<computeroutput> index-spec </computeroutput>",
-                 ter.green_fg()+ter.bold()+"index-spec"+
-                 ter.default_fg());
+                 help_color+"index-spec"+
+                 default_color);
 
   // Other miscellaneous replacements
   string_replace(s,"<itemizedlist> <listitem>","•");

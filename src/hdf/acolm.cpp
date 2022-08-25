@@ -189,6 +189,15 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   // Ensure the RNGs for different types are somewhat uncorrelated
   rng.clock_seed();
   rng_ld.set_seed(rng.get_seed()*2);
+
+  terminal ter;
+  command_color=ter.color_from_int(ter.c_cyan+ter.int_high);
+  type_color=ter.color_from_int(ter.c_magenta+ter.int_high);
+  param_color=ter.color_from_int(ter.c_red+ter.int_high);
+  help_color=ter.color_from_int(ter.c_green+ter.int_high);
+  exec_color=ter.color_from_int(ter.c_white+ter.int_high);
+  url_color=ter.color_from_int(ter.att_underline);
+  default_color=ter.default_fgbg();
 }
 
 void acol_manager::update_o2_docs(size_t narr,
@@ -1304,6 +1313,22 @@ int acol_manager::setup_cli() {
   cl=new cli;
 #endif
 
+  //---------------------------------------------------------------------
+  // Set colors
+  
+  char *ac=getenv("ACOL_COLORS");
+  if (ac) {
+    string acs=ac;
+    cout << "Setting colors with string: " << acs << endl;
+    cl->set_colors(acs);
+    command_color=cl->command_color;
+    type_color=cl->type_color;
+    param_color=cl->param_color;
+    help_color=cl->help_color;
+    exec_color=cl->exec_color;
+    url_color=cl->url_color;
+  }
+    
   return 0;
 }
 
@@ -1313,7 +1338,7 @@ int acol_manager::setup_help() {
 
   terminal ter;
   cl->desc=((string)"acol: A data viewing and processing ")+
-    "program for "+ter.bold()+"O₂scl"+ter.default_fg()+".\n";
+    "program for "+ter.bold()+"O₂scl"+ter.default_fgbg()+".\n";
   
   return 0;
 }

@@ -542,6 +542,13 @@ std::string terminal::red_fg() {
   return oss.str();
 }
 
+std::string terminal::black_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[30m";
+  return oss.str();
+}
+
 std::string terminal::green_fg() {
   if (redirected) return "";
   std::ostringstream oss;
@@ -584,6 +591,13 @@ std::string terminal::red_bg() {
   return oss.str();
 }
 
+std::string terminal::black_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[40m";
+  return oss.str();
+}
+
 std::string terminal::green_bg() {
   if (redirected) return "";
   std::ostringstream oss;
@@ -598,7 +612,7 @@ std::string terminal::blue_bg() {
   return oss.str();
 }
 
-std::string terminal::default_fg() {
+std::string terminal::default_fgbg() {
   if (redirected) return "";
   std::ostringstream oss;
   oss << ((char)27) << "[m";
@@ -748,8 +762,11 @@ std::string terminal::three_byte_summ() {
 std::string terminal::eight_bit_summ() {
   if (redirected) return "";
   std::ostringstream oss;
-  for(size_t i=0;i<256;i++) {
-    oss << ((char)27) << "[38;5;" << i << "m";
+
+  for(short i=0;i<256;i++) {
+    
+    oss << eight_bit_fg(i);
+    
     if (i<10) {
       oss << "  " << i;
     } else if (i<100) {
@@ -757,9 +774,10 @@ std::string terminal::eight_bit_summ() {
     } else {
       oss << i;
     }
-    oss << ((char)27) << "[m";
     oss << " ";
-    oss << ((char)27) << "[48;5;" << i << "m";
+    
+    oss << bold();
+
     if (i<10) {
       oss << "  " << i;
     } else if (i<100) {
@@ -767,11 +785,28 @@ std::string terminal::eight_bit_summ() {
     } else {
       oss << i;
     }
-    oss << ((char)27) << "[m";
     oss << " ";
-    if (i%10==9) {
+    
+    oss << default_fgbg();
+
+    oss << eight_bit_bg(i);
+
+    if (i<10) {
+      oss << "  " << i;
+    } else if (i<100) {
+      oss << " " << i;
+    } else {
+      oss << i;
+    }
+    
+    oss << default_fgbg();
+    
+    if (i%5==4) {
       oss << endl;
+    } else {
+      oss << " ";
     }
+    
   }
   return oss.str();
 }
@@ -797,3 +832,50 @@ size_t terminal::str_len(std::string str) {
   return cnt;
 }
 
+std::string terminal::color_from_int(int col) {
+  std::string ret=default_fgbg();
+
+  // Take care of the foreground color
+  int fg=col%1000;
+  if (fg<10 && fg>=1) {
+    std::ostringstream oss;
+    oss << ((char)27) << "[" << fg+30 << "m";
+    ret+=oss.str();
+  } else if (fg<256 && fg>1) {
+    ret+=eight_bit_fg(fg);
+  } else if (fg==256) {
+    ret+=black_fg();
+  } 
+  col-=fg;
+
+  // Underline if specified
+  if (col%2000==1000) {
+    ret+=underline();
+    col-=1000;
+  }
+
+  // Intensity specification
+  int intensity=col%40000;
+  if (intensity==int_high) {
+    col-=int_high;
+    ret+=bold();
+  } else if (intensity==int_low) {
+    col-=int_low;
+    ret+=lowint();
+  }
+
+  // Handle background
+  col/=bg_prefix;
+      
+  if (col<10 && col>=1) {
+    std::ostringstream oss;
+    oss << ((char)27) << "[" << col+40 << "m";
+    ret+=oss.str();
+  } else if (col<256 && col>1) {
+    ret+=eight_bit_bg(col);
+  } else if (col==256) {
+    ret+=black_bg();
+  } 
+
+  return ret;
+}

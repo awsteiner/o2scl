@@ -733,6 +733,9 @@ namespace o2scl {
     
     /// Switch to red foreground
     std::string red_fg();
+
+    /// Switch to black foreground
+    std::string black_fg();
     
     /// Switch to green foreground
     std::string green_fg();
@@ -752,14 +755,17 @@ namespace o2scl {
     /// Switch to red background
     std::string red_bg();
     
+    /// Switch to black background
+    std::string black_bg();
+    
     /// Switch to green background
     std::string green_bg();
     
     /// Switch to blue background
     std::string blue_bg();
     
-    /// Switch to default foreground
-    std::string default_fg();
+    /// Switch to default foreground and background
+    std::string default_fgbg();
     
     /// Switch to bold foreground
     std::string bold();
@@ -799,6 +805,34 @@ namespace o2scl {
     
     /// Summarize 3-byte colors (long form)
     std::string three_byte_summ_long();
+
+    /// \name Desc
+    //@{
+    static const int att_underline=1000;
+    static const int int_high=10000;
+    static const int int_low=20000;
+    static const int bg_prefix=100000;
+    static const int c_black=256;
+    static const int c_red=1;
+    static const int c_green=2;
+    static const int c_yellow=3;
+    static const int c_blue=4;
+    static const int c_magenta=5;
+    static const int c_cyan=6;
+    static const int c_light_grey=7;
+    static const int c_dark_grey=8;
+    static const int c_hi_red=9;
+    static const int c_hi_green=10;
+    static const int c_hi_yellow=11;
+    static const int c_hi_blue=12;
+    static const int c_hi_magenta=13;
+    static const int c_hi_cyan=14;
+    static const int c_white=15;
+    //@}
+    
+    /** \brief Desc
+     */
+    std::string color_from_int(int col);
     
   };
   
