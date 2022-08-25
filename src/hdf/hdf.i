@@ -388,6 +388,13 @@ class acol_manager
 - std::vector<std::vector<std::string>> vvstring_obj
 - prob_dens_mdim_amr<> pdma_obj  
 - prob_dens_mdim_gaussian<> pdmg_obj  
+- std::string command_color
+- std::string type_color
+- std::string param_color
+- std::string help_color
+- std::string exec_color
+- std::string url_color
+- std::string default_color
 - function run_empty
   - int
 - function parse_vec_string

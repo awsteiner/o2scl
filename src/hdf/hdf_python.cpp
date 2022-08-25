@@ -652,6 +652,104 @@ void o2scl_hdf_acol_manager_set_pdmg_obj(void *vptr, void *p_v) {
   return;
 }
 
+void *o2scl_hdf_acol_manager_get_command_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->command_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_command_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->command_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_type_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->type_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_type_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->type_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_param_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->param_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_param_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->param_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_help_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->help_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_help_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->help_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_exec_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->exec_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_exec_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->exec_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_url_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->url_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_url_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->url_color=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_default_color(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *sptr=new std::string;
+  *sptr=ptr->default_color;
+  return sptr;
+}
+
+void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::string *p_tsot=(std::string *)p_v;
+  ptr->default_color=*(p_tsot);
+  return;
+}
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   int ret=ptr->run_empty();

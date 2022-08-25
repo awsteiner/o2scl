@@ -284,8 +284,6 @@ namespace o2scl_acol {
     /// Integer parameters
     std::map<std::string,int *> int_params;
 
-  protected:
-
     /// \name Colors
     //@{
     /// Desc
@@ -305,6 +303,8 @@ namespace o2scl_acol {
     /// Desc
     //@}
     
+  protected:
+
     /** \brief Clear memory associated with the current object and set
         type to ""
     */
