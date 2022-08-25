@@ -133,9 +133,6 @@ namespace o2scl {
     /// Return true if \o2 was installed with CUBATURE support
     bool cubature_support();
 
-    /// Return true if \o2 was installed with POLYLOGARITHM support
-    bool polylogarithm_support();
-
     // Return true if \o2 was installed with Python support
     bool python_support();
 

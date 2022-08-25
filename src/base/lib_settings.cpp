@@ -355,14 +355,6 @@ bool lib_settings_class::fftw_support() {
 #endif
 }
 
-bool lib_settings_class::polylogarithm_support() {
-#ifdef O2SCL_POLYLOGARITHM
-  return true;
-#else
-  return false;
-#endif
-}
-
 bool lib_settings_class::cubature_support() {
 #ifdef O2SCL_CUBATURE
   return true;
