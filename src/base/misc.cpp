@@ -832,3 +832,52 @@ size_t terminal::str_len(std::string str) {
   return cnt;
 }
 
+std::string terminal::color_from_int(int col) {
+  std::string ret=default_fgbg();
+
+  // Take care of the foreground color
+  int fg=col%1000;
+  if (fg<10 && fg>=1) {
+    std::ostringstream oss;
+    fg+=30;
+    oss << ((char)27) << "[" << fg << "m";
+    ret+=oss.str();
+  } else if (fg<256) {
+    ret+=eight_bit_fg(fg);
+  } else if (fg==256) {
+    ret+=black_fg();
+  } 
+  col-=fg;
+
+  // Underline if specified
+  if (col%2000==1000) {
+    ret+=underline();
+    col-=1000;
+  }
+
+  // Intensity specification
+  int intensity=col%40000;
+  if (intensity==int_high) {
+    col-=int_high;
+    ret+=bold();
+  } else if (intensity==int_low) {
+    col-=int_low;
+    ret+=lowint();
+  }
+
+  // Handle background
+  col/=bg_prefix;
+      
+  if (col<10 && col>=1) {
+    std::ostringstream oss;
+    col+=40;
+    oss << ((char)27) << "[" << col << "m";
+    ret+=oss.str();
+  } else if (col<256) {
+    ret+=eight_bit_bg(col);
+  } else if (col==256) {
+    ret+=black_bg();
+  } 
+
+  return ret;
+}
