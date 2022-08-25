@@ -733,6 +733,9 @@ namespace o2scl {
     
     /// Switch to red foreground
     std::string red_fg();
+
+    /// Switch to black foreground
+    std::string black_fg();
     
     /// Switch to green foreground
     std::string green_fg();
@@ -751,6 +754,9 @@ namespace o2scl {
     
     /// Switch to red background
     std::string red_bg();
+    
+    /// Switch to black background
+    std::string black_bg();
     
     /// Switch to green background
     std::string green_bg();

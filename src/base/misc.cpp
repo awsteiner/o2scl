@@ -542,6 +542,13 @@ std::string terminal::red_fg() {
   return oss.str();
 }
 
+std::string terminal::black_fg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[30m";
+  return oss.str();
+}
+
 std::string terminal::green_fg() {
   if (redirected) return "";
   std::ostringstream oss;
@@ -581,6 +588,13 @@ std::string terminal::red_bg() {
   if (redirected) return "";
   std::ostringstream oss;
   oss << ((char)27) << "[41m";
+  return oss.str();
+}
+
+std::string terminal::black_bg() {
+  if (redirected) return "";
+  std::ostringstream oss;
+  oss << ((char)27) << "[40m";
   return oss.str();
 }
 

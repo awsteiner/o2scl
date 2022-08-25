@@ -232,12 +232,13 @@ namespace o2scl {
 
   public:
 
-#ifdef NEVER_DEFINED
+#ifdef O2SCL_NEVER_DEFINED
+    
     static const int underline=1000;
     static const int high_int=10000;
     static const int low_int=20000;
-    static const int bg_prefix=1000000;
-    static const int c_black=0;
+    static const int bg_prefix=100000;
+    static const int c_black=256;
     static const int c_red=1;
     static const int c_green=2;
     static const int c_yellow=3;
@@ -253,10 +254,65 @@ namespace o2scl {
     static const int c_hi_magenta=13;
     static const int c_hi_cyan=14;
     static const int c_white=15;
-    int command_color=cyan+high_int;
-    int type_color=magneta+high_int;
-    int param_color=red+high_int;
-    int help_color=green+high_int;
+    
+    int command_color=c_cyan+high_int;
+    int type_color=c_magenta+high_int;
+    int param_color=c_red+high_int;
+    int help_color=c_green+high_int;
+    int exec_color=c_white+high_int;
+    int url_color=underline;
+
+    /** \brief Desc
+     */
+    std::string color_from_int(int col) {
+      std::string ret=default_fgbg();
+
+      // Take care of the foreground color
+      int fg=col%1000;
+      if (fg<10 && fg>=1) {
+        std::ostringstream oss;
+        fg+=30;
+        oss << ((char)27) << "[" << fg << "m";
+        ret+=oss.str();
+      } else if (fg<256) {
+        ret+=eight_bit_fg(fg);
+      } else if (fg==256) {
+        ret+=black_fg();
+      } 
+      col-=fg;
+
+      // Underline if specified
+      if (col%2000==1000) {
+        ret+=underline();
+        col-=1000;
+      }
+
+      // Intensity specification
+      int intensity=col%40000;
+      if (intensity==high_int) {
+        col-=high_int;
+        ret+=bold();
+      } else if (intensity==low_int) {
+        col-=low_int;
+        ret+=lowint();
+      }
+
+      // Handle background
+      col/=bg_prefix;
+      
+      if (col<10 && col>=1) {
+        std::ostringstream oss;
+        col+=40;
+        oss << ((char)27) << "[" << col << "m";
+        ret+=oss.str();
+      } else if (col<256) {
+        ret+=eight_bit_bg(col);
+      } else if (col==256) {
+        ret+=black_bg();
+      } 
+
+      return ret;
+    }
 #endif    
     
     /// Parameter for \ref o2scl::cli
