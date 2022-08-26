@@ -127,6 +127,7 @@ namespace o2scl_acol {
     /// Random number generator
     o2scl::rng<> rng;
     
+    /// Random number generator for long double types
     o2scl::rng<long double> rng_ld;
     
     /// The object which sends Slack messages
@@ -139,10 +140,6 @@ namespace o2scl_acol {
     /** \brief A list of all types
      */
     std::vector<std::string> type_list;
-    
-    /** \brief If true, then run in o2graph mode
-     */
-    bool o2graph_mode;
     
     /** \brief The object for the set function
      */
@@ -280,9 +277,6 @@ namespace o2scl_acol {
 
     /// The environment variable to read from 
     std::string env_var_name;
-
-    /// Integer parameters
-    std::map<std::string,int *> int_params;
 
     /// \name Colors
     //@{
@@ -2697,191 +2691,18 @@ namespace o2scl_acol {
     std::vector<char> ctemp;
     //@}
 
+    /** \brief Validate the setting of \ref interp_type
+        
+        Used in \ref comm_set().
+     */
     int validate_interp_type();
     
     // End of class acol_manager
   };
 
-  /** \brief Construct a string vector from the data in 
-      \c n_entries, \c sizes, and \c str
-
-      This function operates on an integer \c n_entries, an array \c
-      sizes (which has length \c n_entries) and an array of characters
-      \c str which has a length equal to the sum of the entries in the
-      array \c sizes. The \c sizes array contains the length of each
-      string, and the \c str array contains the characters in multiple
-      strings, concatenated together to form a single combined string.
-      This function takes the data in these three objects and creates
-      an object of type <tt>vector&lt;string&gt;</tt> from it, similar
-      to the way that \ref o2scl_hdf::hdf_file::gets_vec() reads a string
-      array from an HDF5 file.
-
-      This function is used in \ref o2scl_acol_parse(), \ref
-      o2scl_acol_alias_counts() and \ref o2scl_acol_apply_aliases() .
-  */
-  std::vector<std::string> parse_arrays
-  (int n_entries, int *sizes, char *str);
-  
 }
 
 extern "C" {
-
-  // (remember that \ref's don't work in \name groups)
-  /// \name Functions to integrate o2scl_acol::acol_manager with python
-  //@{
-  /** \brief Create an \ref o2scl_acol::acol_manager object
-      
-      This function creates an object of type
-      \ref o2scl_acol::acol_manager with the <tt>new</tt>
-      operator and then calls the function
-      \ref o2scl_acol::acol_manager::run() .
-  */
-  void *o2scl_create_acol_manager();
-  
-  /** \brief Free memory associated with a \ref
-      o2scl_acol::acol_manager object
-
-      This function uses <tt>delete</tt> to free the
-      memory associated with an object of type
-      \ref o2scl_acol::acol_manager .
-  */
-  void o2scl_free_acol_manager(void *vp);
-
-  /** \brief Using the commands stored in
-      <tt>(n_entries,sizes,str)</tt>, apply the aliases stored in the
-      \ref o2scl::cli object and return the counts
-      <tt>(n_new,s_new)</tt> for memory allocation
-
-      This function is used in \o2y in
-      <tt>o2graph_plotter::parse_argv()</tt> to process aliases in the
-      \c o2graph executable. It converts the input data to a
-      <tt>vector&lt;string&gt;</tt> object, applies any aliases stored
-      in the \ref o2scl::cli (or \ref o2scl::cli_readline) object, and
-      then counts the new number of arguments (\c n_new) and string
-      length for all arguments (\c s_new). These counts are used to
-      allocate memory in Python in
-      <tt>o2graph_plotter::parse_argv()</tt> in order to prepare for a
-      call to \ref o2scl_acol_apply_aliases() .
-  */
-  void o2scl_acol_alias_counts(void *vp, int n_entries, int *sizes, 
-                               char *str, int &n_new, int &s_new);
-
-  /** \brief \brief Using the commands stored in
-      <tt>(n_entries,sizes,str)</tt>, apply the aliases stored in the
-      \ref o2scl::cli object and place them in the pre-allocated 
-      arrays \c sizes_new and \c str_new
-
-      This function is used in \o2y in
-      <tt>o2graph_plotter::parse_argv()</tt> to process aliases in the
-      \c o2graph executable. It converts the input data to a
-      <tt>vector&lt;string&gt;</tt> object, applies any aliases stored
-      in the \ref o2scl::cli (or \ref o2scl::cli_readline) object, and
-      then stores the results in \c sizes_new and \c str_new (which
-      are allocated beforehand in Python.
-  */
-  void o2scl_acol_apply_aliases(void *vp, int n_entries, int *sizes, 
-                                char *str, int *sizes_new, char *str_new);
-  
-  /** \brief Set the command name, the short description,
-      and the environment variable name
-      
-      This function is used in \o2y in
-      <tt>o2graph_plotter::parse_argv()</tt> to communicate three
-      strings which are used in the \ref o2scl_acol::acol_manager class.
-  */
-  void o2scl_acol_set_names(void *vp, int n1, char *cmd_name,
-                            int n2, char *short_desc, int n3,
-                            char *env_var);
-
-  /** \brief Convert a rank 2 \ref o2scl::tensor (with data types
-      \c double, \c int, or \c size_t) or \ref o2scl::tensor_grid
-      object to a \ref o2scl::table3d object
-
-      There are two sets of values for \c i1 and \c i2 which are
-      allowed, either <tt>i1=0, i2=1</tt> or <tt>i1=1, i2=0</tt>, the
-      latter of which corresponds to transposing the two indices.
-
-      This function is used in o2graph_plotter::den_plot().
-  */
-  int o2scl_acol_tensor_to_table3d(void *vp, int i1, int i2);
-  
-  /** \brief Parse the set of commands in \c n_entries, \c sizes
-      and \c str
-      
-      This function uses the executes the commands stored \c
-      n_entries, \c sizes, and \c str using the \ref o2scl::cli object
-      in \ref o2scl_acol::acol_manager as if they were typed on the command
-      line.
-
-      This function is used in \o2y in o2graph_plotter::set_wrapper(),
-      o2graph_plotter::get_wrapper(), and o2graph_plotter::gen_acol().
-  */
-  void o2scl_acol_parse(void *vp, int n_entries, int *sizes, 
-                        char *str);
-
-  /** \brief Return the size and a pointer to the column
-      named \c col_name in a \ref o2scl::table object
-
-      This function is used in o2graph_plotter::plot(),
-      o2graph_plotter::plot1(), o2graph_plotter::rplot(),
-      o2graph_plotter::scatter(), o2graph_plotter::histplot(),
-      o2graph_plotter::hist2dplot(), and o2graph_plotter::errorbar().
-  */
-  int o2scl_acol_get_column(void *vp, char *col_name,
-                            int &n, double *&ptr);
-
-  /** \brief Return the size and a pointer to the row
-      with index \c row_index in a \ref o2scl::table object
-      
-      \note This function is currently unused. It may have been a
-      precursor for a mult-vector-spec?
-
-      \note Deprecating this for now.
-  */
-  //int o2scl_acol_get_row_ser(void *vp, char *parttern, int row_index,
-  //int &n, double *&ptr);
-  
-  /** \brief Return the size and a pointer to a double array
-      corresponding to a <tt>int[]</tt>, <tt>size_t[]</tt>, or
-      <tt>double[]</tt> object
-
-      This function is used in o2graph_plotter::plot1().
-  */
-  int o2scl_acol_get_double_arr(void *vp, int &n, double *&ptr);
-
-  /** \brief Return the sizes, grid, and data pointer for 
-      a rank 3 \ref o2scl::tensor_grid object
-
-      This function is used in <tt>o2graph_plotter</tt> for 
-      <tt>yt-add-vol</tt>.
-  */
-  int o2scl_acol_get_tensor_grid3(void *vp, int &nx, int &ny,
-                                  int &nz, const double *&xg,
-                                  const double *&yg,
-                                  const double *&zg, const double *&data);
-  
-  /** \brief Return the size and a pointer to the histogram
-      representative x values in a \ref o2scl::hist object
-
-      This function is used in o2graph_plotter::plot() and
-      o2graph_plotter::hist_plot().
-  */
-  int o2scl_acol_get_hist_reps(void *vp, int &n, double *&ptr);
-
-  /** \brief Return the size and a pointer to the histogram bin edges
-      in a \ref o2scl::hist object
-
-      This function is used in o2graph_plotter::hist_plot().
-  */
-  int o2scl_acol_get_hist_bins(void *vp, int &n, double *&ptr);
-
-  /** \brief Return the size and a pointer to the histogram weights in
-      a \ref o2scl::hist object
-
-      This function is used in o2graph_plotter::plot() and
-      o2graph_plotter::hist_plot().
-  */
-  int o2scl_acol_get_hist_wgts(void *vp, int &n, double *&ptr);
 
   /** \brief Return the dimensionality, mesh size, and 
       lower and upper limits for a \ref o2scl::prob_dens_mdim_amr 
@@ -2902,66 +2723,6 @@ extern "C" {
                                double *&low, double *&high,
                                double &frac_vol, double &weight);
 
-  /** \brief Return the number of contour lines associated with
-      the current contour line vector object
-
-      This function is used in o2graph_plotter::plot() and 
-      o2graph_plotter::plotv().
-  */
-  int o2scl_acol_contours_n(void *vp);
-  
-  /** \brief For the current contour line vector object, set the
-      pointers to the x- and y-values in the contour lines and return
-      the contour level
-  */
-  double o2scl_acol_contours_line(void *vp, int i, int &n, double *&ptrx,
-                                  double *&ptry);
-
-  /** \brief Return the type of the current object 
-
-      This function is used in o2graph_plotter::get_type(), 
-      o2graph_plotter::den_plot(), o2graph_plotter::plot(), 
-      o2graph_plotter::rplot(), o2graph_plotter::scatter(), 
-      o2graph_plotter::histplot(), o2graph_plotter::hist2dplot(), 
-      o2graph_plotter::errorbar(), o2graph_plotter::plot1(), 
-      and o2graph_plotter::parse_string_list().
-  */
-  void o2scl_acol_get_type(void *vp, int &n, char *&str);
-
-  /** \brief Return the size and a pointer to the slice
-      named \c sl_name in a \ref o2scl::table object
-      
-      This function is used in o2graph_plotter::den_plot().
-  */
-  int o2scl_acol_get_slice(void *vp, char *slice_name,
-                           int &nx, double *&xptr,
-                           int &ny, double *&yptr,
-                           double *&data);
-  
-  /** \brief For a two-dimensional histogram, return the bin edges,
-      number of bins in both directions, and the weights in each bin
-
-      This function is used in o2graph_plotter::den_plot().
-  */
-  int o2scl_acol_get_hist_2d(void *vp, 
-                             int &nx, double *&xptr,
-                             int &ny, double *&yptr,
-                             double *&data);
-
-  /** \brief Convert two multiple vector specifications to
-      the a list of \ref o2scl::contour_line objects
-
-      This function is used in o2graph_plotter::plotv().
-  */
-  int o2scl_acol_mult_vectors_to_conts(void *vp, char *str1,
-                                       char *str2);
-
-  /** \brief Get the list of parameters from the acol_manager cli
-      object
-  */
-  int o2scl_acol_get_cli_parameters(void *vp, int &n, int *&sizes,
-                                    char *&chlist);
-
   /** \brief Get the list of options/commands from the acol_manager
       cli object
   */
@@ -2974,20 +2735,6 @@ extern "C" {
   int o2scl_acol_get_cli_options_type(void *vp, char *type,
                                       int &n, int *&sizes,
                                       char *&chlist);
-  
-  /** \brief Obtain the description of a parameter from the 
-      acol_manager cli object
-  */
-  int o2scl_acol_cli_param_desc(void *vp, char *name, int &ndesc, 
-                                char *&chlist);
-  
-  /** \brief Obtain the short description of an option/command from
-      the acol_manager cli object
-  */
-  int o2scl_acol_cli_option_desc(void *vp, char *name, int &ndesc, 
-                                 char *&chlist);
-  
-  //@}
   
 }
 

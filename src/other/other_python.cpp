@@ -575,6 +575,12 @@ void o2scl_std_vector_contour_line__resize(void *vptr, size_t n) {
   return;
 }
 
+size_t o2scl_std_vector_contour_line__size(void *vptr) {
+  std::vector<contour_line> *ptr=(std::vector<contour_line> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
 void *o2scl_create_contour() {
   contour *ptr=new contour;
   return ptr;
@@ -797,6 +803,40 @@ double o2scl_prob_dens_mdim_amr_hypercube_get_weight(void *vptr) {
 void o2scl_prob_dens_mdim_amr_hypercube_set_weight(void *vptr, double v) {
   prob_dens_mdim_amr<>::hypercube *ptr=(prob_dens_mdim_amr<>::hypercube *)vptr;
   ptr->weight=v;
+  return;
+}
+
+void *o2scl_create_std_vector_prob_dens_mdim_amr_hypercube_() {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=new std::vector<prob_dens_mdim_amr<>::hypercube>;
+  return ptr;
+}
+
+void o2scl_free_std_vector_prob_dens_mdim_amr_hypercube_(void *vptr) {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_std_vector_prob_dens_mdim_amr_hypercube__resize(void *vptr, size_t n) {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_std_vector_prob_dens_mdim_amr_hypercube__size(void *vptr) {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void *o2scl_create_prob_dens_mdim_amr_() {
+  prob_dens_mdim_amr<> *ptr=new prob_dens_mdim_amr<>;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_mdim_amr_(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  delete ptr;
   return;
 }
 

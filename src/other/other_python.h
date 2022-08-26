@@ -211,6 +211,8 @@ void o2scl_std_vector_contour_line__setitem(void *vptr, size_t i, void *valptr);
 
 void o2scl_std_vector_contour_line__resize(void *vptr, size_t n);
 
+size_t o2scl_std_vector_contour_line__size(void *vptr);
+
 void *o2scl_create_contour();
 
 void o2scl_free_contour(void *vptr);
@@ -286,5 +288,17 @@ void o2scl_prob_dens_mdim_amr_hypercube_set_frac_vol(void *vptr, double v);
 double o2scl_prob_dens_mdim_amr_hypercube_get_weight(void *vptr);
 
 void o2scl_prob_dens_mdim_amr_hypercube_set_weight(void *vptr, double v);
+
+void *o2scl_create_std_vector_prob_dens_mdim_amr_hypercube_();
+
+void o2scl_free_std_vector_prob_dens_mdim_amr_hypercube_(void *vptr);
+
+void o2scl_std_vector_prob_dens_mdim_amr_hypercube__resize(void *vptr, size_t n);
+
+size_t o2scl_std_vector_prob_dens_mdim_amr_hypercube__size(void *vptr);
+
+void *o2scl_create_prob_dens_mdim_amr_();
+
+void o2scl_free_prob_dens_mdim_amr_(void *vptr);
 
 }

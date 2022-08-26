@@ -604,6 +604,18 @@ void o2scl_hdf_acol_manager_set_stringv_obj(void *vptr, void *p_v) {
   return;
 }
 
+void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->vvstring_obj));
+}
+
+void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  std::vector<std::vector<std::string>> *p_tsot=(std::vector<std::vector<std::string>> *)p_v;
+  ptr->vvstring_obj=*(p_tsot);
+  return;
+}
+
 void *o2scl_hdf_acol_manager_get_vvdouble_obj(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   return (void *)(&(ptr->vvdouble_obj));
@@ -616,15 +628,51 @@ void o2scl_hdf_acol_manager_set_vvdouble_obj(void *vptr, void *p_v) {
   return;
 }
 
-void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr) {
+void *o2scl_hdf_acol_manager_get_tensor_obj(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
-  return (void *)(&(ptr->vvstring_obj));
+  return (void *)(&(ptr->tensor_obj));
 }
 
-void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v) {
+void o2scl_hdf_acol_manager_set_tensor_obj(void *vptr, void *p_v) {
   acol_manager *ptr=(acol_manager *)vptr;
-  std::vector<std::vector<std::string>> *p_tsot=(std::vector<std::vector<std::string>> *)p_v;
-  ptr->vvstring_obj=*(p_tsot);
+  tensor<> *p_tsot=(tensor<> *)p_v;
+  ptr->tensor_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_tensor_int_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->tensor_int_obj));
+}
+
+void o2scl_hdf_acol_manager_set_tensor_int_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  tensor<int> *p_tsot=(tensor<int> *)p_v;
+  ptr->tensor_int_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_tensor_size_t_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->tensor_size_t_obj));
+}
+
+void o2scl_hdf_acol_manager_set_tensor_size_t_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  tensor<size_t> *p_tsot=(tensor<size_t> *)p_v;
+  ptr->tensor_size_t_obj=*(p_tsot);
+  return;
+}
+
+void *o2scl_hdf_acol_manager_get_tensor_grid_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  return (void *)(&(ptr->tensor_grid_obj));
+}
+
+void o2scl_hdf_acol_manager_set_tensor_grid_obj(void *vptr, void *p_v) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  tensor_grid<> *p_tsot=(tensor_grid<> *)p_v;
+  ptr->tensor_grid_obj=*(p_tsot);
   return;
 }
 

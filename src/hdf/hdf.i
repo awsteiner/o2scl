@@ -384,8 +384,12 @@ class acol_manager
 - std::vector<double> doublev_obj
 - std::vector<size_t> size_tv_obj
 - std::vector<std::string> stringv_obj
-- std::vector<std::vector<double>> vvdouble_obj
 - std::vector<std::vector<std::string>> vvstring_obj
+- std::vector<std::vector<double>> vvdouble_obj
+- tensor<> tensor_obj
+- tensor<int> tensor_int_obj
+- tensor<size_t> tensor_size_t_obj
+- tensor_grid<> tensor_grid_obj
 - prob_dens_mdim_amr<> pdma_obj  
 - prob_dens_mdim_gaussian<> pdmg_obj  
 - std::string command_color

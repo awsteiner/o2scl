@@ -213,13 +213,29 @@ void *o2scl_hdf_acol_manager_get_stringv_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_stringv_obj(void *vptr, void *p_v);
 
+void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v);
+
 void *o2scl_hdf_acol_manager_get_vvdouble_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_set_vvdouble_obj(void *vptr, void *p_v);
 
-void *o2scl_hdf_acol_manager_get_vvstring_obj(void *vptr);
+void *o2scl_hdf_acol_manager_get_tensor_obj(void *vptr);
 
-void o2scl_hdf_acol_manager_set_vvstring_obj(void *vptr, void *p_v);
+void o2scl_hdf_acol_manager_set_tensor_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_tensor_int_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_tensor_int_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_tensor_size_t_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_tensor_size_t_obj(void *vptr, void *p_v);
+
+void *o2scl_hdf_acol_manager_get_tensor_grid_obj(void *vptr);
+
+void o2scl_hdf_acol_manager_set_tensor_grid_obj(void *vptr, void *p_v);
 
 void *o2scl_hdf_acol_manager_get_pdma_obj(void *vptr);
 

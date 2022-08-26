@@ -275,6 +275,8 @@ class std::vector<contour_line>
 - function resize
   - void
   - size_t n
+- function size
+  - size_t                        
 - extra_py |
 | def __len__(self):
 |     """
@@ -342,11 +344,23 @@ class prob_dens_mdim_gaussian<>
 #- function make_biv
 #  - prob_dens_mdim_biv_gaussian
 class prob_dens_mdim_amr<>::hypercube
-- py_name prob_dens_mdim_amr_hypercube
+- py_name hypercube
 - size_t n_dim
 - std::vector<double> low
 - std::vector<double> high
 - std::vector<size_t> inside
 - double frac_vol
 - double weight  
-
+class std::vector<prob_dens_mdim_amr<>::hypercube>
+- py_name std_vector_hypercube
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+#- function operator[]
+#  - prob_dens_mdim_amr<>::hypercube &
+#  - size_t n
+class prob_dens_mdim_amr<>
+- py_name prob_dens_mdim_amr
+#- std::vector<prob_dens_mdim_amr<>::hypercube> mesh
