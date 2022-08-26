@@ -587,6 +587,8 @@ int o2scl_tov_solve_mvsr(void *vptr);
 
 int o2scl_tov_solve_fixed(void *vptr, double mass, double pmax=1.0e20);
 
+int o2scl_tov_solve_fixed_pr(void *vptr, double pcent, double pmax=1.0e20);
+
 int o2scl_tov_solve_max(void *vptr);
 
 void *o2scl_tov_solve_get_results(void *vptr);

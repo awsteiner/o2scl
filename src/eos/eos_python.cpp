@@ -1590,6 +1590,12 @@ int o2scl_tov_solve_fixed(void *vptr, double mass, double pmax) {
   return ret;
 }
 
+int o2scl_tov_solve_fixed_pr(void *vptr, double pcent, double pmax) {
+  tov_solve *ptr=(tov_solve *)vptr;
+  int ret=ptr->fixed_pr(pcent,pmax);
+  return ret;
+}
+
 int o2scl_tov_solve_max(void *vptr) {
   tov_solve *ptr=(tov_solve *)vptr;
   int ret=ptr->max();

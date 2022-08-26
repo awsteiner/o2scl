@@ -506,6 +506,10 @@ class tov_solve
   - int
   - double mass
   - double pmax [1.0e20]
+- function fixed_pr
+  - int
+  - double pcent
+  - double pmax [1.0e20]
 - function max
   - int
 - function get_results
