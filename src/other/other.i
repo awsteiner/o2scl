@@ -269,9 +269,9 @@ class contour_line
 - std_cc
 class std::vector<contour_line>
 - py_name vector_contour_line
-- function operator[]
-  - contour_line &
-  - size_t n
+#- function operator[]
+#  - contour_line &
+#  - size_t n
 - function resize
   - void
   - size_t n

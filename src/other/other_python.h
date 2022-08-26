@@ -205,10 +205,6 @@ void *o2scl_create_std_vector_contour_line_();
 
 void o2scl_free_std_vector_contour_line_(void *vptr);
 
-void *o2scl_std_vector_contour_line__getitem(void *vptr, size_t n);
-
-void o2scl_std_vector_contour_line__setitem(void *vptr, size_t i, void *valptr);
-
 void o2scl_std_vector_contour_line__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_contour_line__size(void *vptr);
