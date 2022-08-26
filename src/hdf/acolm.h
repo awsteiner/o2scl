@@ -1264,16 +1264,17 @@ namespace o2scl_acol {
     /** \brief Output the type of the current object
 
         Arguments: (No arguments.)
-
-        Show the current object type, either <tt>table</tt>,
-        <tt>table3d</tt>, <tt>hist</tt>, <tt>hist_2d</tt>,
-        <tt>vector<contour_line></tt>, <tt>int</tt>, <tt>double</tt>,
-        <tt>char</tt>, <tt>string</tt>, <tt>int[]</tt>,
-        <tt>double[]</tt>, <tt>string[]</tt>, <tt>size_t</tt>,
-        <tt>size_t[]</tt>, <tt>uniform_grid<double></tt>,
-        <tt>tensor_grid</tt>, <tt>tensor</tt>, <tt>tensor<int></tt>,
-        <tt>tensor<size_t></tt>, <tt>prob_dens_mdim_amr</tt>, 
-        or <tt>prob_dens_mdim_gaussian</tt>.
+        
+        Show the current object type. Type can be <tt>char</tt>,
+        <tt>double</tt>, <tt>double[]</tt>, <tt>hist</tt>,
+        <tt>hist_2d</tt>, <tt>int</tt>, <tt>int[]</tt>,
+        <tt>prob_dens_mdim_amr</tt>, <tt>prob_dens_mdim_gaussian</tt>,
+        <tt>size_t</tt>, <tt>size_t[]</tt>, <tt>string</tt>,
+        <tt>string[]</tt>, <tt>table</tt>, <tt>table3d</tt>,
+        <tt>tensor</tt>, <tt>tensor<int></tt>,
+        <tt>tensor<size_t></tt>, <tt>tensor_grid</tt>,
+        <tt>uniform_grid<double></tt>, <tt>vec_vec_double</tt>,
+        <tt>vec_vec_string</tt>, or <tt>vector<contour_line></tt>.
     */
     virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
     
