@@ -1164,8 +1164,20 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"<simplesect>","");
   string_replace(s,"</simplesect>","");
 
-  string_replace(s,"<computeroutput> ","");
-  string_replace(s," </computeroutput>","");
+  /*
+  if (s.find("<computeroutput>")!=std::string::npos &&
+      s.find("</computeroutput>",s.find("<computeroutput>"))!=
+      std::string::npos) {
+    size_t s1=s.find("<computeroutput>");
+    size_t s2=s.find("</computeroutput>",s.find("<computeroutput>"));
+    if (s2-s1>16 && s2+17<s.length()) {
+      s.replace(s2,17,default_color);
+      s.replace(s1,16,exec_color);
+    }
+  }
+  */
+  string_replace(s,"<computeroutput> ",exec_color);
+  string_replace(s," </computeroutput>",default_color);
   string_replace(s,"<linebreak> ","");
   string_replace(s," </linebreak>","");
   

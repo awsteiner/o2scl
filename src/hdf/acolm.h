@@ -404,13 +404,17 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Histogram series in a table3d object.
+        Store a histogram series in a table3d object.
 
         Arguments: <tt><grid vector spec.> <direction (\"x\" or
         \"y\")> <grid name> <bin edges vector spec.> "<bin grid vector
         spec.> <bin name> <pattern> <new slice></tt>
 
-        Detailed desc.
+        Construct a series of histograms from a series of columnns in
+        a <tt>table</tt> object and then store them in a
+        <tt>table3d</tt> object. The <tt>ser-hist-t3d</tt> command
+        begins by creating a histogram from a series of columns
+        specified in <grid vector spec.>.
     */
     virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
                                   bool itive_com);
@@ -423,12 +427,13 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> <object name> <function></tt>
 
-        Read tensor_grid named <object name> from file <file> and use
-        it along with the function <function> to modify the current
-        tensor_grid object. The <function> parameter should be a
-        mathematical function of the value in the current tensor (v),
-        the value in the tensor named <object name> (w), the indices
-        (i0, i1, ...) or the grid points (x0, x1, ...).
+        Read a <tt>tensor_grid</tt> named <object name> from file
+        <file> and use it along with the function <function> to modify
+        the current <tt>tensor_grid</tt> object. The <function>
+        parameter should be a mathematical function of the value in
+        the current tensor (v), the value in the tensor named <object
+        name> (w), the indices (i0, i1, ...) or the grid points (x0,
+        x1, ...).
     */
     virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
@@ -474,7 +479,11 @@ namespace o2scl_acol {
 
         Arguments: <tt><index column> <factor></tt>
 
-        Detailed desc.
+        Refine the data by interpolating a fixed number of rows in
+        between every row of the original table. The type of
+        interpolation is determined by the value of
+        <tt>interp_type</tt>. If the initial number of rows is N, then
+        the final number of rows is 1+(N-1)*<factor>.
     */
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 
@@ -1098,34 +1107,38 @@ namespace o2scl_acol {
         specified vector(s) and then estimates the associated 
         autocorrelation length(s). 
 
-        There are three algorithms a brute force algorithm (the
-        default), the algorithm from "acor", and a method using
-        FFTW ("fft"). This algorithm can be specified in the
-        options argument. 
+        There are three algorithms: a brute force algorithm (the
+        default specified with the string "def"), the algorithm from
+        "acor", and a method using FFTW ("fft"). The choice of
+        algorithm can be specified in the options argument.
 
         If multiple vectors are given, then there are two options.
-        Option "max" (the default) means that autocorrelation 
-        coefficients are computed separately for each vector and
-        then the maximum autocorrelation length is specified at
-        the end. Option "avg" means that the autocorrelation 
-        coefficients are averaged over all vectors and a single
-        averaged autocorrelation length is reported at the end.
+        Option "max" (the default) means that autocorrelation
+        coefficients are computed separately for each vector and then
+        the maximum autocorrelation length is specified at the end.
+        Option "avg" means that the autocorrelation coefficients are
+        averaged over all vectors and a single autocorrelation length
+        for the averaged data is reported at the end.
 
         Finally, the "store" option, if specified, means that the
         autocorrelation coefficients are stored afterwards in 
         a <tt>vec_vec_double</tt> object (and the current object,
         if present, is cleared).
 
+        Options can be combined with commas (but no spaces), for
+        example <tt>fft,max,store</tt> or <tt>def,avg</tt>
+
         If there is no current object, then the user may specify one
         or more multiple vector specifications. See ``Multiple vector
         specifications`` for more information.
 
-        If the current object is of type int[], double[], or size_t[],
-        then the autocorrelation coefficients of the current vector
-        are computed.
+        If the current object is of type <tt>int[]</tt>,
+        <tt>double[]</tt>, or <tt>size_t[]</tt>, then the
+        autocorrelation coefficients of the current vector are
+        computed.
 
-        If the current object is of type table, then the user may
-        specify either columns of the table or a multiple vector
+        If the current object is of type <tt>table</tt>, then the user
+        may specify either columns of the table or a multiple vector
         specification.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
@@ -1210,7 +1223,7 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Add 'nlines' as a constant to a table object.
+        Add 'nlines' as a constant to a <tt>table</tt> object.
 
         Arguments: (No arguments.)
 
@@ -1227,12 +1240,9 @@ namespace o2scl_acol {
 
         Arguments: <tt><col> <n_bins> [wgts]</tt>
 
-        The 'to-hist' command creates a 1D histogram from 'col' using
-        exactly 'n_bins' bins and (optionally) weighting the entries
-        by the values in column 'wgts'. The second form creates a 2D
-        histogram from 'col1' and 'col2' using N1 bins in the x
-        direction and N2 bins in the y direction, optionally weighting
-        the entries by the column 'wgts'.
+        The <tt>to-hist</tt> command creates a 1D histogram from
+        column <col> using exactly <n_bins> bins and (optionally)
+        weighting the entries by the values in column [wgts]. 
     */
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
@@ -1245,10 +1255,10 @@ namespace o2scl_acol {
         Arguments: <tt><col x> <col y> <n_x_bins> <n_y_bins>
         [wgts]</tt>
 
-        The 'to-hist-2d' command creates a 2D histogram from 'col x'
-        and 'col y' using 'n_x_bins' bins in the x direction and
-        'n_y_bins' bins in the y direction, optionally weighting the
-        entries by the column 'wgts'.
+        The <tt>to-hist-2d</tt> command creates a 2D histogram from
+        <col x> and <col y> using <n_x_bins> bins in the x direction
+        and <n_y_bins> bins in the y direction, optionally weighting
+        the entries by the column [wgts].
 
         For objects of type table3d:
 
@@ -1256,8 +1266,8 @@ namespace o2scl_acol {
 
         <slice>
 
-        The 'to-hist-2d' command creates a 2D histogram from slice
-        <slice>.
+        The <tt>to-hist-2d</tt> command creates a 2D histogram from
+        slice <slice>.
     */
     virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
 
@@ -1286,12 +1296,12 @@ namespace o2scl_acol {
 
         Arguments: <tt><func> or find-row <col> <val></tt>
 
-        If one argument is given, then find-row finds the row which
-        maximizes the value of the expression given in <func>, and
-        then output the entire row. Otherwise find-row finds the row
-        for which the value in column named <col> is as close as
-        possible to the value <val>. See command 'get-row' to get a
-        row by it's index.
+        If one argument is given, then <tt>find-row</tt> finds the row
+        which maximizes the value of the expression given in <func>,
+        and then output the entire row. Otherwise <tt>find-row</tt>
+        finds the row for which the value in column named <col> is as
+        close as possible to the value <val>. See command
+        <tt>get-row</tt> to get a row by its index.
     */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
@@ -1306,8 +1316,8 @@ namespace o2scl_acol {
         Set the column named <name> to the result of a function,
         <func>, in terms of the other columns. If the column does not
         already exist, a new one is added to the table. For example,
-        for a table containing columns named 'c1' and 'c2', 'function
-        c1-c2 c3' would create a new column c3 which contains the
+        for a table containing columns named 'c1' and 'c2', <tt>function
+        c1-c2 c3</tt> would create a new column c3 which contains the
         difference of columns 'c1' and 'c2'.
 
         For objects of type double[]:
@@ -1963,7 +1973,7 @@ namespace o2scl_acol {
 
         Output the object to the screen, or if the [file] argument is
         specified, to a file. This is the same format as can be read
-        using the 'generic' command.
+        using the <tt>generic</tt> command.
     */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 
