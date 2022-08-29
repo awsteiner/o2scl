@@ -1761,34 +1761,36 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
-
-  validate_interp_type();
-
-  if (interp_type==1) {
-    cout << "Set interpolation type to linear interpolation (1)."
-         << endl;
-  } else if (interp_type==2) {
-    cout << "Set interpolation type to cubic spline interpolation "
-         << "with natural boundary conditions (2)." << endl;
-  } else if (interp_type==3) {
-    cout << "Set interpolation type to cubic spline interpolation "
-         << "with periodic boundary conditions (2)." << endl;
-  } else if (interp_type==4) {
-    cout << "Set interpolation type to Akima spline interpolation "
-         << "with natural boundary conditions (2)." << endl;
-  } else if (interp_type==5) {
-    cout << "Set interpolation type to Akima spline interpolation "
-         << "with periodic boundary conditions (2)." << endl;
-  } else if (interp_type==6) {
-    cout << "Set interpolation type to monotonic interpolation "
-         << "(experimental; 6)." << endl;
-  } else if (interp_type==7) {
-    cout << "Set interpolation type to Steffen's monotonic "
+  
+  if (sv.size()>=2 && sv[1]=="interp_type") {
+    validate_interp_type();
+    
+    if (interp_type==1) {
+      cout << "Set interpolation type to linear interpolation (1)."
+           << endl;
+    } else if (interp_type==2) {
+      cout << "Set interpolation type to cubic spline interpolation "
+           << "with natural boundary conditions (2)." << endl;
+    } else if (interp_type==3) {
+      cout << "Set interpolation type to cubic spline interpolation "
+           << "with periodic boundary conditions (2)." << endl;
+    } else if (interp_type==4) {
+      cout << "Set interpolation type to Akima spline interpolation "
+           << "with natural boundary conditions (2)." << endl;
+    } else if (interp_type==5) {
+      cout << "Set interpolation type to Akima spline interpolation "
+           << "with periodic boundary conditions (2)." << endl;
+    } else if (interp_type==6) {
+      cout << "Set interpolation type to monotonic interpolation "
+           << "(experimental; 6)." << endl;
+    } else if (interp_type==7) {
+      cout << "Set interpolation type to Steffen's monotonic "
          << "interpolation (7)." << endl;
-  } else if (interp_type==8) {
-    cout << "Set interpolation type to nearest neighbor "
-         << "interpolation (experimental; 8)." << endl;
-  } 
+    } else if (interp_type==8) {
+      cout << "Set interpolation type to nearest neighbor "
+           << "interpolation (experimental; 8)." << endl;
+    } 
+  }
   
   // Make sure the object interpolation types coincide with the
   // variable setting
@@ -1800,6 +1802,39 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     hist_obj.set_interp_type(interp_type);
   }
 
+  if (sv.size()>=2 && sv[1]=="colors") {
+    if (colors=="0") {
+      cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
+    } else if (colors=="default") {
+      cl->set_colors("c:10006,d:,e:10015,h:10002,p:10001,t:10005,u:1000");
+    } else {
+      cl->set_colors(colors);
+    }
+
+    command_color=cl->command_color;
+    type_color=cl->type_color;
+    param_color=cl->param_color;
+    help_color=cl->help_color;
+    exec_color=cl->exec_color;
+    url_color=cl->url_color;
+    
+    string stemp;
+    stemp="Terminal colors updated. Types are denoted as "+type_color+"char";
+    stemp+=default_color+", commands as "+command_color;
+    stemp+="function"+default_color+", get/set parameters as ";
+    stemp+=param_color+"verbose"+default_color;
+    stemp+=", help topics as ";
+    stemp+=help_color+"functions"+default_color+", command-line ";
+    stemp+="scripts as "+exec_color+"acol -help"+default_color;
+    stemp+=", and URLs as "+url_color+"https://arxiv.org";
+    stemp+=default_color+".";
+    vector<string> vsx;
+    rewrap_ignore_vt100(stemp,vsx);
+    for(size_t ik=0;ik<vsx.size();ik++) {
+      cout << vsx[ik] << endl;
+    }
+  }
+  
   return 0;
 }
 

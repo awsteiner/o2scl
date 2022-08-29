@@ -210,6 +210,7 @@ namespace o2scl_acol {
     //@{
     o2scl::cli::parameter_string p_obj_name;
     o2scl::cli::parameter_string p_def_args;
+    o2scl::cli::parameter_string p_colors;
     o2scl::cli::parameter_int p_verbose;
     o2scl::cli::parameter_int p_compress;
     o2scl::cli::parameter_int p_precision;
@@ -296,6 +297,10 @@ namespace o2scl_acol {
     std::string default_color;
     /// Desc
     //@}
+
+    /** \brief Color specification for terminal output
+     */
+    std::string colors;
     
   protected:
 
@@ -315,7 +320,11 @@ namespace o2scl_acol {
     /** \brief Add new commands for type \c new_type
      */
     void command_add(std::string new_type);
-    
+
+    /** \brief Desc
+     */
+    void color_replacements(std::string &s);
+  
     /** \brief Update the command documentation from the o2scl
         data file
 

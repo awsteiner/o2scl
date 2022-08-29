@@ -200,6 +200,17 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   default_color=ter.default_fgbg();
 }
 
+void acol_manager::color_replacements(std::string &s) {
+  string_replace(s,"[c]",command_color);
+  string_replace(s,"[d]",default_color);
+  string_replace(s,"[e]",exec_color);
+  string_replace(s,"[h]",help_color);
+  string_replace(s,"[p]",param_color);
+  string_replace(s,"[t]",type_color);
+  string_replace(s,"[u]",url_color);
+  return;
+}
+
 void acol_manager::update_o2_docs(size_t narr,
                                   o2scl::comm_option_s *options_arr,
                                   std::string new_type) {
@@ -445,6 +456,10 @@ void acol_manager::update_o2_docs(size_t narr,
       cout << endl;
     }
 
+    color_replacements(options_arr[j].lng);
+    color_replacements(options_arr[j].desc);
+    color_replacements(options_arr[j].parm_desc);
+    
     // End of 'j' loop over list of options
   }
     
@@ -1318,8 +1333,8 @@ int acol_manager::setup_cli() {
   
   char *ac=getenv("ACOL_COLORS");
   if (ac) {
-    string acs=ac;
-    cl->set_colors(acs);
+    colors=ac;
+    cl->set_colors(colors);
     command_color=cl->command_color;
     type_color=cl->type_color;
     param_color=cl->param_color;
@@ -1346,6 +1361,7 @@ int acol_manager::setup_parameters() {
   
   p_obj_name.str=&obj_name;
   p_def_args.str=&def_args;
+  p_colors.str=&colors;
   p_verbose.i=&verbose;
   p_compress.i=&compress;
   p_precision.i=&precision;
@@ -1357,6 +1373,7 @@ int acol_manager::setup_parameters() {
   p_use_regex.b=&use_regex;
   
   p_obj_name.help="The current object name.";
+  p_colors.help="The color specification for terminal output.";
   p_def_args.help=((std::string)"The default arguments from the ")+
     "environment varable "+env_var_name+".";
   p_precision.help="The numerical precision.";
@@ -1374,6 +1391,7 @@ int acol_manager::setup_parameters() {
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
+  cl->par_list.insert(make_pair("colors",&p_colors));
   cl->par_list.insert(make_pair("precision",&p_precision));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
   cl->par_list.insert(make_pair("compress",&p_compress));

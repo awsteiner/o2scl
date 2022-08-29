@@ -3595,6 +3595,15 @@ void cli::set_colors(std::string c) {
         exec_color=ter.color_from_int(o2scl::stoi(scol));
       }
       //cout << exec_color << "exec" << default_color << endl;
+    } else if (vs[j][0]=='d') {
+      //cout << "Set default color with: " << vs[j] << endl;
+      if (vs[j].size()<3) {
+        default_color="";
+      } else {
+        std::string scol=vs[j].substr(2,vs[j].length()-2);
+        default_color=ter.color_from_int(o2scl::stoi(scol));
+      }
+      //cout << default_color << "default" << default_color << endl;
     } else if (vs[j][0]=='u') {
       //cout << "Set url color with: " << vs[j] << endl;
       if (vs[j].size()<3) {

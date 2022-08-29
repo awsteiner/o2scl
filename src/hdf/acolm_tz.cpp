@@ -1087,17 +1087,20 @@ void acol_manager::xml_replacements(std::string &s,
                                     std::vector<std::string> &clist) {
 
   terminal ter;
+
+  /*
+    We can't make the full color replacements here because
+    the actual colors aren't known until runtime, so we
+    use [c], [d], [e], [h], [p], [t], and [u]
+   */
   
   vector<string> subs={((string)"<computeroutput> Vector ")+
     "specifications </computeroutput>",
-    "'acol -help "+help_color+"vector-spec"+
-    default_color+"'",
+    "'acol -help [h]vector-spec[d]'",
     "<computeroutput> Multiple vector specifications </computeroutput>",
-    "'acol -help "+help_color+"mult-vector-spec"+
-    default_color+"'",
+    "'acol -help [h]mult-vector-spec[d]'",
     "\"acol -help <computeroutput> functions </computeroutput> \"",
-    "\"acol -help "+help_color+"functions"+
-    default_color+"\""};
+    "'acol -help [h]functions[d]'"};
   
   // Make the manual replacements from the 'subs' list
   // above
@@ -1109,51 +1112,44 @@ void acol_manager::xml_replacements(std::string &s,
   for(size_t i=0;i<type_list.size();i++) {
     string_replace(s,"<computeroutput> <ref> "+type_list[i]+
                    " </ref> </computeroutput>",
-                   type_color+type_list[i]+default_color);
+                   "[t]"+type_list[i]+"[d]");
     string_replace(s,"<computeroutput> "+type_list[i]+
                    " </computeroutput>",
                    type_color+type_list[i]+default_color);
     string_replace(s,"<ref> "+type_list[i]+
                    " </ref>",
-                   type_color+type_list[i]+default_color);
+                   "[t]"+type_list[i]+"[d]");
   }
                 
   // Make the command replacements
   for(size_t i=0;i<clist.size();i++) {
     string_replace(s,"<computeroutput> "+clist[i]+
                    " </computeroutput>",
-                   command_color+clist[i]+default_color);
+                   "[c]"+clist[i]+"[d]");
   }
   
   // Make the command replacements from the current parameter list
   for(cli::par_t it=cl->par_list.begin();it!=cl->par_list.end();it++) {
     string_replace(s,"<computeroutput> "+it->first+
-                   " </computeroutput>",param_color+it->first+
-                   default_color);
+                   " </computeroutput>",
+                   "[c]"+it->first+"[d]");
   }
   
   // Make the help topic replacements
   string_replace(s,"<computeroutput> functions </computeroutput>",
-                 help_color+"functions"+
-                 default_color);
+                 "[h]functions[d]");
   string_replace(s,"<computeroutput> types </computeroutput>",
-                 help_color+"types"+
-                 default_color);
+                 "[h]types[d]");
   string_replace(s,"<computeroutput> value-spec </computeroutput>",
-                 help_color+"value-spec"+
-                 default_color);
+                 "[h]value-spec[d]");
   string_replace(s,"<computeroutput> vector-spec </computeroutput>",
-                 help_color+"vector-spec"+
-                 default_color);
+                 "[h]vector-spec[d]");
   string_replace(s,"<computeroutput> mult-vector-spec </computeroutput>",
-                 help_color+"mult-vector-spec"+
-                 default_color);
+                 "[h]mult-vector-spec[d]");
   string_replace(s,"<computeroutput> strings-spec </computeroutput>",
-                 help_color+"strings-spec"+
-                 default_color);
+                 "[h]strings-spec[d]");
   string_replace(s,"<computeroutput> index-spec </computeroutput>",
-                 help_color+"index-spec"+
-                 default_color);
+                 "[h]index-spec[d]");
 
   // Other miscellaneous replacements
   string_replace(s,"<itemizedlist> <listitem>","•");
@@ -1180,8 +1176,8 @@ void acol_manager::xml_replacements(std::string &s,
     string_replace(s,"<computeroutput> ","");
     string_replace(s," </computeroutput>","");
   } else {
-    string_replace(s,"<computeroutput> ",exec_color);
-    string_replace(s," </computeroutput>",default_color);
+    string_replace(s,"<computeroutput> ","[e]");
+    string_replace(s," </computeroutput>","[d]");
   }
   string_replace(s,"<linebreak> ","");
   string_replace(s," </linebreak>","");
