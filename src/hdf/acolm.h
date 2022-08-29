@@ -937,7 +937,7 @@ namespace o2scl_acol {
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
         fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
         coordinate of the new table3d object, uses index 1 for the y
         coordinate of the new table3d object, uses 5 for index 0, and
         uses 3 for index 2."+ The x- and y-grids in he table3d object
@@ -955,7 +955,7 @@ namespace o2scl_acol {
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
         fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
         coordinate of the new table3d object, uses index 1 for the y
         coordinate of the new table3d object, uses 5 for index 0, and
         uses 3 for index 2."+ The x- and y-grids in he table3d object
@@ -973,7 +973,7 @@ namespace o2scl_acol {
         This command uses two indices in the current tensor object to
         create a table3d object. The values for the remaining indices
         fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, "to-table3d 3 1 z 5 3" uses index 3 for the x
+        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
         coordinate of the new table3d object, uses index 1 for the y
         coordinate of the new table3d object, uses 5 for index 0, and
         uses 3 for index 2."+ The x- and y-grids in he table3d object
@@ -991,8 +991,8 @@ namespace o2scl_acol {
         This command uses two indices in the current tensor_grid
         object to create a table3d object. The values for the
         remaining indices are by interpolation to [value 1], [value
-        2], etc. in that order. For example, "to-table3d 3 1 z 0.5
-        2.0" uses index 3 for the x coordinate of the new table3d
+        2], etc. in that order. For example, <tt>to-table3d 3 1 z 0.5
+        2.0</tt> uses index 3 for the x coordinate of the new table3d
         object, uses index 1 for the y coordinate of the new table3d
         object, uses interpolation to set the value of the index 0 to
         0.5, and uses interpolation to set the value of index 2 to to
@@ -1327,7 +1327,7 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
-        'i'. For example, "(sin(i)>1)*4".
+        'i'. For example, <tt>(sin(i)>1)*4</tt>.
 
         For objects of type int[]:
 
@@ -1336,7 +1336,7 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
-        'i'. For example, "(sin(i)>1)*4".
+        'i'. For example, <tt>(sin(i)>1)*4</tt>.
 
         For objects of type size_t[]:
 
@@ -1345,7 +1345,7 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Set the values of the array given a user-specified function of
-        'i'. For example, "(sin(i)>1)*4".
+        'i'. For example, <tt>(sin(i)>1)*4</tt>.
 
         For objects of type hist:
 
@@ -1462,10 +1462,10 @@ namespace o2scl_acol {
 
         Get a row by index. The first row has index 0, and the last
         row has index n-1, where n is the total number of rows as
-        returned by the 'list' command. The 'index' command creates a
-        column of row indexes. To find a row which contains a
-        particular value or maximizes a specified function, use
-        'find-row'.
+        returned by the <tt>list</tt> command. The <tt>index</tt>
+        command creates a column of row indexes. To find a row which
+        contains a particular value or maximizes a specified function,
+        use <tt>find-row</tt>.
     */
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
@@ -1599,9 +1599,8 @@ namespace o2scl_acol {
         10^{-11} \f$.
 
         An example demonstrating a dilogarithm ladder:
-
-        acol -set verbose 2 -set precision 30 \
-        -calc "pi^2/10-(log((sqrt(5)-1)/2)^2)" 1
+        <tt>acol -set verbose 2 -set precision 30
+        -calc "pi^2/10-(log((sqrt(5)-1)/2)^2)" 1</tt>
 
         Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
 
@@ -1609,10 +1608,10 @@ namespace o2scl_acol {
         to 35 digits. It then starts with 35-digit precision and then
         compares that result to that obtained with 50-digit precision
         and finds that those two are equal to within the requested
-        precision.
+        precision. 
 
-        acol -set verbose 2 -set precision 30 \
-        -ninteg "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1
+        For example, <tt> acol -set verbose 2 -set precision 30 
+        -ninteg "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1</tt>
 
         Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
 
@@ -2502,21 +2501,21 @@ namespace o2scl_acol {
 
         Show tensor statistics.
 
-        (No arguments.)
+        Arguments: (None.)
 
-        The 'stats' command outputs the number of entries, their mean,
-        standard deviation, minimum and maximum. It also counts the
-        number of infinite or NaN values.
+        The <tt>stats</tt> command outputs the number of entries,
+        their mean, standard deviation, minimum and maximum. It also
+        counts the number of infinite or NaN values.
 
         For objects of type tensor_grid:
 
         Show tensor statistics.
 
-        (No arguments.)
+        Arguments: (None.)
 
-        The 'stats' command outputs the number of entries, their mean,
-        standard deviation, minimum and maximum. It also counts the
-        number of infinite or NaN values.
+        The <tt>stats</tt> command outputs the number of entries,
+        their mean, standard deviation, minimum and maximum. It also
+        counts the number of infinite or NaN values.
     */
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
 
@@ -2526,7 +2525,7 @@ namespace o2scl_acol {
 
         Show weighted column statistics.
 
-        <column> <weights>
+        Arguments: <tt><column> <weights></tt>
 
         Output the average, std. dev, max and min of <column>, using
         the weights specified in <weights>.
@@ -2535,11 +2534,11 @@ namespace o2scl_acol {
         
         Show stats for the data in the tensor.
 
-        (No arguments.)
+        Arguments: (none)
 
-        The 'stats' command outputs the number of entries, their mean,
-        standard deviation, minimum and maximum. It also counts the
-        number of infinite or NaN values.
+        The <tt>stats</tt> command outputs the number of entries,
+        their mean, standard deviation, minimum and maximum. It also
+        counts the number of infinite or NaN values.
     */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
@@ -2549,15 +2548,16 @@ namespace o2scl_acol {
 
     /** \brief Manipulate or use a unit conversion factor
 
-        <old unit (or "list", "add", "del", or "nat")> <new unit>
-        [value to convert]
+        Arguments: <tt><old unit (or "list", "add", "del", or "nat")> 
+        <new unit> [value to convert]</tt>
+        
 
         The <tt>convert</tt> command handles unit conversions. To
         compute a unit conversion factor and then optionally apply
         than conversion factor to a user-specified value. use the form
         <tt>'acol -convert <old unit> <new unit> [value]'</tt>.
         Conversions which presume ħ=c=kB=1 are allowed by default. For
-        example, <tt>'acol -convert MeV 1/fm'</tt> returns
+        example, <tt>acol -convert MeV 1/fm</tt> returns
         '1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor
         is output at the current value of <tt>precision</tt>, but is
         always internally stored with full double precision. 
@@ -2572,21 +2572,21 @@ namespace o2scl_acol {
 
         The <tt>convert</tt> command attempts to handle arbitrary
         combinations of powers of SI base units to automatically
-        compute new unit conversion. For example, <tt>'acol -convert
-        "fm^10/g^30" "m^10/kg^30"'</tt> reports <tt>1.000000e+00
+        compute new unit conversion. For example, <tt>acol -convert
+        "fm^10/g^30" "m^10/kg^30"</tt> reports <tt>1.000000e+00
         fm^10/g^30 = 1.000000e-60 m^10/kg^30</tt>. 
 
         Unit conversions containing constants stored in the
         <tt>constant</tt> library are also allowed. For example,
-        <tt>'acol -convert "Msun^2" "g^2"'</tt> gives <tt>1.000000e+00
+        <tt>acol -convert "Msun^2" "g^2"</tt> gives <tt>1.000000e+00
         Msun^2 = 3.953774e+66 g^2</tt>. SI units are also understood,
         and both μ and "mu" are interpreted as the "micro" prefix. For
-        example, <tt>'acol -convert "μm" "pc"'</tt> or <tt>'acol
-        -convert "mum" "pc"'</tt> both report the conversion between
+        example, <tt>acol -convert "μm" "pc"</tt> or <tt>acol
+        -convert "mum" "pc"</tt> both report the conversion between
         micrometers and parsecs.
 
         To print the list of known units, SI prefixes, and the unit
-        conversion cache, use <tt>'acol -convert list'</tt>. 
+        conversion cache, use <tt>acol -convert list</tt>. 
 
         To add a unit (only MKS is supported) the format is:
 
@@ -2603,15 +2603,14 @@ namespace o2scl_acol {
 
         While ħ=c=kB=1 is assumed by default, the user can disable
         conversions taking advantage of these assignments. To modify
-        the use of natural units, use:
-
-        -convert nat <boolean for c=1> <boolean for ħ=1> <boolean for kB=1>
+        the use of natural units, use <tt> -convert nat <boolean for
+        c=1> <boolean for ħ=1> <boolean for kB=1></tt>
     */
     virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Copy an O₂scl-generated HDF5 file
 
-        <source> <destination>
+        Arguments: <tt><source> <destination></tt>
 
         Copy all O₂scl objects from one HDF5 file to another. This may
         not work for HDF5 files generated outside of O₂scl. The source
@@ -2624,7 +2623,8 @@ namespace o2scl_acol {
 
     /** \brief Get or modify a physical or numerical constant.
 
-        <name, pattern, "add", "del", "list", "list-full"> [unit]
+        Arguments: <tt><name, pattern, "add", "del", "list", or 
+        "list-full"> [unit]</tt>
 
         If the constant has no units, like the Euler-Mascheroni
         constant, then e.g. <tt>acol -constant euler</tt> will report
@@ -2639,16 +2639,16 @@ namespace o2scl_acol {
         unit is specified, then the <tt>constant</tt> command tries to
         find the unique value with the specified unit. The user can
         specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
-        of the constant. For example, <tt>'acol -constant hbar cgs'</tt>
-        and <tt>'acol -constant hbar g*cm^2/s'</tt> both work and return
+        of the constant. For example, <tt>acol -constant hbar cgs</tt>
+        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
         the same value.
 
         Note that some constants in the library are not known to 
         full double precision and acol currently has no way of
         reporting this.
 
-        Search patterns are also allowed, for example <tt>'acol
-        -constant "satur*"'</tt> returns all the constants related to
+        Search patterns are also allowed, for example <tt>acol
+        -constant "satur*"</tt> returns all the constants related to
         saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
         to true, then regex is used to do the pattern matching, and
         otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
@@ -2660,8 +2660,8 @@ namespace o2scl_acol {
         including all aliases, the source, and all the decompositions
         into base units.
 
-        One can delete a constant with, e.g. <tt>'acol -del
-        pi'</tt> (this doesn't quite work yet for constants with
+        One can delete a constant with, e.g. <tt>acol -del
+        pi</tt> (this doesn't quite work yet for constants with
         different values in different unit systems).
 
         To add a constant, one must specify the name of the constant,

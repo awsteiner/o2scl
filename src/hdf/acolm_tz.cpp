@@ -1176,8 +1176,13 @@ void acol_manager::xml_replacements(std::string &s,
     }
   }
   */
-  string_replace(s,"<computeroutput> ",exec_color);
-  string_replace(s," </computeroutput>",default_color);
+  if (s.find("Arguments:")==0) {
+    string_replace(s,"<computeroutput> ","");
+    string_replace(s," </computeroutput>","");
+  } else {
+    string_replace(s,"<computeroutput> ",exec_color);
+    string_replace(s," </computeroutput>",default_color);
+  }
   string_replace(s,"<linebreak> ","");
   string_replace(s," </linebreak>","");
   
