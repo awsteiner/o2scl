@@ -675,6 +675,9 @@ namespace o2scl_acol {
         to download a fresh copy from the specified URL. If the
         filename is "_", then the file is extracted from the end of
         the URL.
+
+        This function uses \ref o2scl::cloud_file to handle the 
+        file acquisition.
     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
@@ -720,12 +723,11 @@ namespace o2scl_acol {
         the argument does not match an already known topic, then the
         search feature on the O₂scl web page is opened using the
         specified search term. Note that, for search terms, spaces can
-        be included using e.g. '-wdocs \"Simulated annealing\"'. Valid
-        sections are either \"eos\" or \"part\". If the optional
-        argument "dev" is given, then the development raterh than
-        release documentation is used. In order to open the local
-        version of the documentation instead of the remote copy, use
-        <tt>docs</tt> instead of <tt>wdocs</tt>.
+        be included using e.g. '-wdocs \"Simulated annealing\"'. If
+        the optional argument "dev" is given, then the development
+        rather than release documentation is used. In order to open
+        the local version of the documentation instead of the remote
+        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
     */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 

@@ -456,9 +456,9 @@ void acol_manager::update_o2_docs(size_t narr,
       cout << endl;
     }
 
-    color_replacements(options_arr[j].lng);
     color_replacements(options_arr[j].desc);
     color_replacements(options_arr[j].parm_desc);
+    color_replacements(options_arr[j].help);
     
     // End of 'j' loop over list of options
   }
