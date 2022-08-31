@@ -1213,6 +1213,75 @@ int acol_manager::setup_options() {
   
   terminal ter;
 
+  opts_new.resize(narr);
+  opts_new[0]={0,"autocorr","",0,-1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
+    both};
+  opts_new[1]={0,"calc","",0,2,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
+    both};
+  opts_new[2]={0,"clear","",0,0,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
+    both};
+  opts_new[3]={'c',"create","",0,-1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
+    both};
+  opts_new[4]={0,"docs","",0,1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
+    both};
+  opts_new[5]={0,"wdocs","",0,2,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
+    both};
+  opts_new[6]={0,"download","",0,4,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
+    both};
+  opts_new[7]={0,"filelist","",0,1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
+    both};
+  opts_new[8]={'g',"generic","",0,2,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
+    both};
+  opts_new[9]={0,"convert","",0,9,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
+    both};
+  opts_new[10]={0,"h5-copy","",-1,-1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
+    both};
+  opts_new[11]={0,"constant","",0,-1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
+    both};
+  opts_new[12]={'q',"interactive","",0,0,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
+    cl_param};
+  opts_new[13]={'i',"internal","",0,1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
+    both};
+  opts_new[14]={0,"ninteg","",0,5,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ninteg),
+    both};
+  opts_new[15]={'o',"output","",0,1,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
+    both};
+  opts_new[16]={'P',"preview","",0,2,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
+    both};
+  opts_new[17]={'r',"read","",0,2,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
+    both};
+  opts_new[18]={0,"slack","",0,6,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
+    both};
+  opts_new[19]={0,"type","",0,0,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
+    both};
+  opts_new[20]={'v',"version","",0,0,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
+    both};
+  opts_new[21]={0,"xml-to-o2","",0,0,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
+    both};
+
+    /*
   // Options, sorted by long name. We allow 0 parameters in many of these
   // options so they can be requested from the user in interactive mode. 
   comm_option_s options_arr[narr]=
@@ -1283,6 +1352,7 @@ int acol_manager::setup_options() {
       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
       both}
     };
+    */
 
   cl->remove_comm_option("xml-to-o2");
 
@@ -1300,9 +1370,9 @@ int acol_manager::setup_options() {
     }
   }
   
-  update_o2_docs(narr,&options_arr[0]);
+  update_o2_docs(narr,&opts_new[0]);
   
-  cl->set_comm_option_vec(narr,options_arr);
+  cl->set_comm_option_vec(narr,opts_new);
   
   return 0;
 }

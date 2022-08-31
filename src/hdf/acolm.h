@@ -160,6 +160,8 @@ namespace o2scl_acol {
     /// Convert units object (initialized by constructor to global object)
     o2scl::convert_units<double> &cng;
 
+    std::vector<o2scl::comm_option_s> opts_new;
+    
     /// \name Parameters modifiable by the user
     //@{
     /// The output precision (default 6)

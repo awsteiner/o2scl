@@ -556,7 +556,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void set_colors(std::string c);
+    void set_colors(std::string c, int verbose=0);
    
     /// \name Basic operation
     //@{

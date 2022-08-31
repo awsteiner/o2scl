@@ -1806,9 +1806,9 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     if (colors=="0") {
       cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
     } else if (colors=="default") {
-      cl->set_colors("c:10006,d:,e:10015,h:10002,p:10001,t:10005,u:1000");
+      cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
     } else {
-      cl->set_colors(colors);
+      cl->set_colors(colors,1);
     }
 
     command_color=cl->command_color;
@@ -1817,6 +1817,7 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     help_color=cl->help_color;
     exec_color=cl->exec_color;
     url_color=cl->url_color;
+    default_color=cl->default_color;
     
     string stemp;
     stemp="Terminal colors updated. Types are denoted as "+type_color+"char";
@@ -1833,6 +1834,12 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     for(size_t ik=0;ik<vsx.size();ik++) {
       cout << vsx[ik] << endl;
     }
+
+    // Update the doc colors for the type-independent commands
+    update_o2_docs(opts_new.size(),&opts_new[0]);
+    // Update the doc colors for commands which depend on a type
+    command_del(type);
+    command_add(type);
   }
   
   return 0;

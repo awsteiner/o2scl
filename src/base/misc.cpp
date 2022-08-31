@@ -833,7 +833,12 @@ size_t terminal::str_len(std::string str) {
 }
 
 std::string terminal::color_from_int(int col) {
-  std::string ret=default_fgbg();
+
+  if (col==0) {
+    return default_fgbg();
+  }
+
+  std::string ret;
 
   // Take care of the foreground color
   int fg=col%1000;
@@ -845,7 +850,7 @@ std::string terminal::color_from_int(int col) {
     ret+=eight_bit_fg(fg);
   } else if (fg==256) {
     ret+=black_fg();
-  } 
+  }
   col-=fg;
 
   // Underline if specified
