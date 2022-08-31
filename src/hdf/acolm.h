@@ -1166,8 +1166,8 @@ namespace o2scl_acol {
 
         Detailed desc.
     */
-    virtual int comm_ac_len(std::vector<std::string> &sv,
-                            bool itive_com);
+    //virtual int comm_ac_len(std::vector<std::string> &sv,
+    //bool itive_com);
 
     /** \brief Create a slice which is the derivative wrt x of another
 

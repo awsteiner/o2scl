@@ -109,7 +109,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("string",itmp));
   }
   {
-    vector<std::string> itmp={"ac-len","add-vec","average-rows",
+    vector<std::string> itmp={"add-vec","average-rows",
       "assign","cat","convert-unit",
       "correl","delete-col",
       "delete-rows","delete-rows-tol",
@@ -546,12 +546,9 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=43;
+    static const size_t narr=42;
     comm_option_s options_arr[narr]=
-      {{0,"ac-len","",0,1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_ac_len),both},
-       {0,"add-vec","",0,2,"","",
+      {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_add_vec),both},
        {0,"average-rows","",0,3,"","",
@@ -1421,8 +1418,10 @@ int acol_manager::setup_help() {
   cl->cmd_name="acol";
 
   terminal ter;
+  //cl->desc=((string)"acol: A data viewing and processing ")+
+  //"program for "+ter.bold()+"O₂scl"+ter.default_fgbg()+".\n";
   cl->desc=((string)"acol: A data viewing and processing ")+
-    "program for "+ter.bold()+"O₂scl"+ter.default_fgbg()+".\n";
+    "program for O₂scl.\n";
   
   return 0;
 }

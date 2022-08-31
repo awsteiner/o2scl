@@ -56,6 +56,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_create()
 */
 
+/*
 int acol_manager::comm_ac_len(std::vector<std::string> &sv,
                               bool itive_com) {
 
@@ -90,6 +91,7 @@ int acol_manager::comm_ac_len(std::vector<std::string> &sv,
   cout << "ac_len does not work for type " << type << endl;
   return 1;
 }
+*/
 
 int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
 

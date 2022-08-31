@@ -917,11 +917,11 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   terminal ter;
   if (cl->cmd_name==((string)"acol")) {
     cout << ((string)"Compiled at ")+((string)__TIME__)+" on "+
-      ((string)__DATE__)+" for "+ter.bold()+"O₂scl"+
+      ((string)__DATE__)+" for "+exec_color+"O₂scl"+
       default_color+", version "+((string)VERSION)+".\n" << endl;
   }
 
-  cout << ter.bold() << "O₂scl" << default_color
+  cout << exec_color << "O₂scl" << default_color
        << " version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   if (true) {
