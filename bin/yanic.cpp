@@ -2582,6 +2582,7 @@ int main(int argc, char *argv[]) {
       // Depending on return type, set return document string
       // and return python code
       std::string return_docs, restype_string;
+      
       if (iff.name=="operator[]" || iff.name=="operator()") {
         if (iff.ret.name=="std::string") {
           //return_docs="std_string object";
@@ -2589,6 +2590,10 @@ int main(int argc, char *argv[]) {
           restype_string="ctypes.c_void_p";
         } else if (iff.ret.name=="std::vector<std::string>") {
           return_docs="std_vector_string object";
+          restype_string="ctypes.c_void_p";
+        } else if (iff.ret.name=="contour_line" &&
+                   iff.ret.suffix=="&") {
+          return_docs="contour_line object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
@@ -2794,7 +2799,17 @@ int main(int argc, char *argv[]) {
         function_start="ret=func(self._ptr";
         function_end=")";
         post_func_code.push_back("vstrt=std_vector_string(self._link,ret)");
-        post_func_code.push_back("vstrt._owner=True");
+        // AWS, 9/1/22: I commented this out because I think, in
+        // analogy to the contour_line case below, this owner flag
+        // should be false.
+        //post_func_code.push_back("vstrt._owner=True");
+        
+      } else if (iff.ret.name=="contour_line") {
+        
+        function_start="ret=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back("vcl=contour_line(self._link,ret)");
+        //post_func_code.push_back("vcl._owner=True");
         
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
@@ -2865,6 +2880,8 @@ int main(int argc, char *argv[]) {
         else fout << endl;
       } else if (iff.ret.name=="std::vector<std::string>") {
         fout << "        return vstrt" << endl;
+      } else if (iff.ret.name=="contour_line") {
+        fout << "        return vcl" << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         if (iff.name=="operator[]") {
           fout << "        return strt.to_bytes()" << endl;
@@ -2914,6 +2931,8 @@ int main(int argc, char *argv[]) {
           fout << "        | *value*: Python bytes object" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
           fout << "        | *value*: Python array" << endl;
+        } else if (iff.ret.name=="contour_line") {
+          fout << "        | *value*: contour_line object" << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
           fout << "        | *value*: std_vector_string object" << endl;
         } else {
@@ -2931,6 +2950,11 @@ int main(int argc, char *argv[]) {
           fout << "        s.init_bytes(value)" << endl;
           fout << "        func(self._ptr,i,s._ptr)" << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
+          fout << "        func.argtypes=[ctypes.c_void_p,"
+               << "ctypes.c_size_t,ctypes.c_void_p]"
+               << endl;
+          fout << "        func(self._ptr,i,value._ptr)" << endl;
+        } else if (iff.ret.name=="contour_line") {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;

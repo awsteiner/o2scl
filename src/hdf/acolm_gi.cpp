@@ -664,12 +664,39 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     str+="and "+type_color+
       type_list[type_list.size()-1]+default_color+'.';
+    str+="\n\n";
+    str+="For more information on some of the types:\n";
+    str+=type_color+"hist"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/hist.html"+
+      default_color+"\n";
+    str+=type_color+"hist_2d"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/hist_2d.html"+
+      default_color+"\n";
+    str+=type_color+"table"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/table.html"+
+      default_color+"\n";
+    str+=type_color+"table3d"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/table3d.html"+
+      default_color+"\n";
+    str+=type_color+"tensor"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html"+
+      default_color+"\n";
+    str+=type_color+"tensor_grid"+default_color+
+      ": "+url_color+
+      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html"+
+      default_color+"\n";
 
     std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
+    o2scl::rewrap_ignore_vt100(str,sv,ncols_loc-1);
     for(size_t i=0;i<sv.size();i++) {
       cout << sv[i] << endl;
     }
+    cout << endl;
       
     return 0;
   }
