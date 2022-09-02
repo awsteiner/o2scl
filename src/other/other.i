@@ -342,7 +342,7 @@ class prob_dens_mdim_gaussian<>
 - py_name prob_dens_mdim_gaussian
 - parent prob_dens_mdim<std::vector<double>>
 #- function make_biv
-#  - prob_dens_mdim_biv_gaussian
+#  - prob_dens_mdim_biv_gaussian<>
 class prob_dens_mdim_amr<>::hypercube
 - py_name hypercube
 - size_t n_dim
@@ -363,4 +363,4 @@ class std::vector<prob_dens_mdim_amr<>::hypercube>
 #  - size_t n
 class prob_dens_mdim_amr<>
 - py_name prob_dens_mdim_amr
-#- std::vector<prob_dens_mdim_amr<>::hypercube> mesh
+- std::vector<prob_dens_mdim_amr<>::hypercube> mesh

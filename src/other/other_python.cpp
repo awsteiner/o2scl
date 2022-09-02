@@ -840,3 +840,15 @@ void o2scl_free_prob_dens_mdim_amr_(void *vptr) {
   return;
 }
 
+void *o2scl_prob_dens_mdim_amr__get_mesh(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return (void *)(&(ptr->mesh));
+}
+
+void o2scl_prob_dens_mdim_amr__set_mesh(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  std::vector<prob_dens_mdim_amr<>::hypercube> *p_tsot=(std::vector<prob_dens_mdim_amr<>::hypercube> *)p_v;
+  ptr->mesh=*(p_tsot);
+  return;
+}
+

@@ -301,4 +301,8 @@ void *o2scl_create_prob_dens_mdim_amr_();
 
 void o2scl_free_prob_dens_mdim_amr_(void *vptr);
 
+void *o2scl_prob_dens_mdim_amr__get_mesh(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_mesh(void *vptr, void *p_v);
+
 }

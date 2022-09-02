@@ -633,7 +633,10 @@ int main(int argc, char *argv[]) {
                          "ublas_matrix_int"));
   class_py_names.insert(std::make_pair("std::vector<contour_line>",
                                        "vector_contour_line"));
-  
+  class_py_names.insert
+    (std::make_pair("std::vector<prob_dens_mdim_amr<>::hypercube>",
+                    "std_vector_hypercube"));
+                    
   // Open file
   ifstream fin;
   fin.open(fname.c_str());
