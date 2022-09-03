@@ -634,6 +634,9 @@ int main(int argc, char *argv[]) {
   class_py_names.insert(std::make_pair("std::vector<contour_line>",
                                        "vector_contour_line"));
   class_py_names.insert
+    (std::make_pair("prob_dens_mdim_amr<>::hypercube",
+                    "hypercube"));
+  class_py_names.insert
     (std::make_pair("std::vector<prob_dens_mdim_amr<>::hypercube>",
                     "std_vector_hypercube"));
                     
@@ -1638,7 +1641,8 @@ int main(int argc, char *argv[]) {
               fout << "  std::vector<std::string> *vsptr="
                    << "new std::vector<std::string>;" << endl;
               fout << "  *vsptr=ptr->" << iff.name << "(";
-            } else if (iff.ret.name=="contour_line") {
+            } else if (iff.ret.name=="contour_line" ||
+                       iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
               fout << "  " << iff.ret.name
                    << " *ret=&(ptr->" << iff.name << "(";
             } else if (iff.ret.name=="void") {
@@ -1702,7 +1706,9 @@ int main(int argc, char *argv[]) {
               fout << ",";
             }
           }
-          if (iff.name=="operator[]" && iff.ret.name=="contour_line") {
+          if (iff.name=="operator[]" &&
+              (iff.ret.name=="contour_line" ||
+               iff.ret.name=="prob_dens_mdim_amr<>::hypercube")) {
             fout << "));" << endl;
           } else {
             fout << ");" << endl;
@@ -1769,7 +1775,8 @@ int main(int argc, char *argv[]) {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, "
                  << "void *valptr)";
-          } else if (iff.ret.name=="contour_line") {
+          } else if (iff.ret.name=="contour_line" ||
+                     iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, "
                  << "void *valptr)";
@@ -1788,9 +1795,10 @@ int main(int argc, char *argv[]) {
               fout << "  std::vector<double> *valptr2="
                    << "(std::vector<double> *)valptr;" << endl;
               fout << "  (*ptr)[i]=*valptr2;" << endl;
-            } else if (iff.ret.name=="contour_line") {
-              fout << "  contour_line *valptr2="
-                   << "(contour_line *)valptr;" << endl;
+            } else if (iff.ret.name=="contour_line" ||
+                       iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
+              fout << "  " << iff.ret.name << " *valptr2="
+                   << "(" << iff.ret.name << " *)valptr;" << endl;
               fout << "  (*ptr)[i]=*valptr2;" << endl;
             } else if (iff.ret.name=="std::string") {
               fout << "  (*ptr)[i]=*val;" << endl;
@@ -2594,9 +2602,10 @@ int main(int argc, char *argv[]) {
         } else if (iff.ret.name=="std::vector<std::string>") {
           return_docs="std_vector_string object";
           restype_string="ctypes.c_void_p";
-        } else if (iff.ret.name=="contour_line" &&
+        } else if ((iff.ret.name=="contour_line" ||
+                    iff.ret.name=="prob_dens_mdim_amr<>::hypercube") &&
                    iff.ret.suffix=="&") {
-          return_docs="contour_line object";
+          return_docs=iff.ret.name+" object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
              iff.ret.name!="std::vector<double>") ||
@@ -2936,6 +2945,9 @@ int main(int argc, char *argv[]) {
           fout << "        | *value*: Python array" << endl;
         } else if (iff.ret.name=="contour_line") {
           fout << "        | *value*: contour_line object" << endl;
+        } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
+          fout << "        | *value*: prob_dens_mdim_amr<>::hypercube object"
+               << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
           fout << "        | *value*: std_vector_string object" << endl;
         } else {
@@ -2957,7 +2969,8 @@ int main(int argc, char *argv[]) {
                << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;
           fout << "        func(self._ptr,i,value._ptr)" << endl;
-        } else if (iff.ret.name=="contour_line") {
+        } else if (iff.ret.name=="contour_line" ||
+                   iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;

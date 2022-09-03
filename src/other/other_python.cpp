@@ -726,6 +726,13 @@ void o2scl_free_prob_dens_mdim_gaussian_(void *vptr) {
   return;
 }
 
+void *o2scl_prob_dens_mdim_gaussian__make_biv(void *vptr) {
+  prob_dens_mdim_gaussian<> *ptr=(prob_dens_mdim_gaussian<> *)vptr;
+  prob_dens_mdim_biv_gaussian<> *ret=new prob_dens_mdim_biv_gaussian<>;
+  *ret=ptr->make_biv();
+  return ret;
+}
+
 void *o2scl_create_prob_dens_mdim_amr_hypercube() {
   prob_dens_mdim_amr<>::hypercube *ptr=new prob_dens_mdim_amr<>::hypercube;
   return ptr;
@@ -827,6 +834,19 @@ size_t o2scl_std_vector_prob_dens_mdim_amr_hypercube__size(void *vptr) {
   std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
   size_t ret=ptr->size();
   return ret;
+}
+
+void *o2scl_std_vector_prob_dens_mdim_amr_hypercube__getitem(void *vptr, size_t n) {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
+  prob_dens_mdim_amr<>::hypercube *ret=&(ptr->operator[](n));
+  return ret;
+}
+
+void o2scl_std_vector_prob_dens_mdim_amr_hypercube__setitem(void *vptr, size_t i, void *valptr) {
+  std::vector<prob_dens_mdim_amr<>::hypercube> *ptr=(std::vector<prob_dens_mdim_amr<>::hypercube> *)vptr;
+  prob_dens_mdim_amr<>::hypercube *valptr2=(prob_dens_mdim_amr<>::hypercube *)valptr;
+  (*ptr)[i]=*valptr2;
+  return;
 }
 
 void *o2scl_create_prob_dens_mdim_amr_() {

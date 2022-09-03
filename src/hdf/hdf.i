@@ -359,6 +359,7 @@ function mult_vector_spec<std::vector<double>>
 - py_name mult_vector_spec  
 - std::string spec
 - out std::vector<std::vector<double>> &v
+- bool use_regex [false]                             
 - int verbose [0]
 - bool err_on_fail [true]
 #

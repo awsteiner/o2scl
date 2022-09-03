@@ -1893,7 +1893,7 @@ namespace o2scl_hdf {
       fin.close();
       
     } else if (spec.find("hdf5:")==0) {
-	
+
       // HDF5 object in a file
       if (verbose>1) {
 	std::cout << "mult_vector_spec(), HDF5 file, spec: "
@@ -2071,7 +2071,7 @@ namespace o2scl_hdf {
             }
 
 	  } else {
-
+            
             if (use_regex) {
               std::regex r(addl_spec);
               for(size_t j=0;j<t.get_ncolumns();j++) {
@@ -2114,7 +2114,7 @@ namespace o2scl_hdf {
 		   type=="int" || type=="int[]" || type=="size_t" ||
 		   type=="size_t[]" || type=="uniform_grid<double>") {
 
-	  // If the spec can be interpreted as a single vector spec,
+          // If the spec can be interpreted as a single vector spec,
 	  // then just use the vector_spec() function. Close the
 	  // file so vector_spec() can reopen it.
 	  hf.close();

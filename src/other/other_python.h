@@ -261,6 +261,8 @@ void *o2scl_create_prob_dens_mdim_gaussian_();
 
 void o2scl_free_prob_dens_mdim_gaussian_(void *vptr);
 
+void *o2scl_prob_dens_mdim_gaussian__make_biv(void *vptr);
+
 void *o2scl_create_prob_dens_mdim_amr_hypercube();
 
 void o2scl_free_prob_dens_mdim_amr_hypercube(void *vptr);
@@ -296,6 +298,10 @@ void o2scl_free_std_vector_prob_dens_mdim_amr_hypercube_(void *vptr);
 void o2scl_std_vector_prob_dens_mdim_amr_hypercube__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_prob_dens_mdim_amr_hypercube__size(void *vptr);
+
+void *o2scl_std_vector_prob_dens_mdim_amr_hypercube__getitem(void *vptr, size_t n);
+
+void o2scl_std_vector_prob_dens_mdim_amr_hypercube__setitem(void *vptr, size_t i, void *valptr);
 
 void *o2scl_create_prob_dens_mdim_amr_();
 

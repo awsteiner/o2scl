@@ -1042,9 +1042,9 @@ void *o2scl_hdf_vector_spec_wrapper(char *spec) {
   return ret;
 }
 
-int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
+int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, bool use_regex, int verbose, bool err_on_fail) {
   std::vector<std::vector<double>> *v=(std::vector<std::vector<double>> *)ptr_v;
-  int ret=mult_vector_spec<std::vector<double>>(spec,*v,verbose,err_on_fail);
+  int ret=mult_vector_spec<std::vector<double>>(spec,*v,use_regex,verbose,err_on_fail);
   return ret;
 }
 
