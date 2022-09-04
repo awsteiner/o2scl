@@ -872,3 +872,90 @@ void o2scl_prob_dens_mdim_amr__set_mesh(void *vptr, void *p_v) {
   return;
 }
 
+size_t o2scl_prob_dens_mdim_amr__get_n_dim(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return ptr->n_dim;
+}
+
+void o2scl_prob_dens_mdim_amr__set_n_dim(void *vptr, size_t v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  ptr->n_dim=v;
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr__get_low(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return (void *)(&(ptr->low));
+}
+
+void o2scl_prob_dens_mdim_amr__set_low(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->low=*(p_tsot);
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr__get_high(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return (void *)(&(ptr->high));
+}
+
+void o2scl_prob_dens_mdim_amr__set_high(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->high=*(p_tsot);
+  return;
+}
+
+bool o2scl_prob_dens_mdim_amr__get_allow_resampling(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return ptr->allow_resampling;
+}
+
+void o2scl_prob_dens_mdim_amr__set_allow_resampling(void *vptr, bool v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  ptr->allow_resampling=v;
+  return;
+}
+
+void *o2scl_prob_dens_mdim_amr__get_scale(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return (void *)(&(ptr->scale));
+}
+
+void o2scl_prob_dens_mdim_amr__set_scale(void *vptr, void *p_v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->scale=*(p_tsot);
+  return;
+}
+
+int o2scl_prob_dens_mdim_amr__get_verbose(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_prob_dens_mdim_amr__set_verbose(void *vptr, int v) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+void o2scl_prob_dens_mdim_amr__clear(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_prob_dens_mdim_amr__clear_mesh(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  ptr->clear_mesh();
+  return;
+}
+
+double o2scl_prob_dens_mdim_amr__total_volume(void *vptr) {
+  prob_dens_mdim_amr<> *ptr=(prob_dens_mdim_amr<> *)vptr;
+  double ret=ptr->total_volume();
+  return ret;
+}
+

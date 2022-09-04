@@ -811,6 +811,18 @@ void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args) {
   return;
 }
 
+void o2scl_hdf_acol_manager_command_add(void *vptr, char *new_type) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->command_add(new_type);
+  return;
+}
+
+void o2scl_hdf_acol_manager_command_del(void *vptr, char *ltype) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->command_del(ltype);
+  return;
+}
+
 void *o2scl_hdf_create_cloud_file() {
   cloud_file *ptr=new cloud_file;
   return ptr;

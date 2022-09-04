@@ -1227,6 +1227,8 @@ int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed);
 
 int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug=false);
 
+void *o2scl_cli_get_option_list(void *vptr);
+
 void *o2scl_cli_parameter_desc(void *vptr, char *name);
 
 void *o2scl_cli_option_short_desc(void *vptr, char *name);

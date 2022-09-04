@@ -1731,7 +1731,11 @@ int main(int argc, char *argv[]) {
             if (iff.ret.name=="std::string") {
               fout << "  return sptr;" << endl;
             } else if (iff.ret.name=="std::vector<std::string>") {
-              fout << "  return vsptr;" << endl;
+              if (iff.ret.is_reference()) {
+                fout << "  return vsptr;" << endl;
+              } else {
+                fout << "  return ret;" << endl;
+              }
             } else if (iff.ret.name=="void") {
               fout << "  return;" << endl;
             } else if (iff.ret.is_ctype() || iff.ret.is_reference() ||

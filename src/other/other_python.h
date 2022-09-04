@@ -311,4 +311,34 @@ void *o2scl_prob_dens_mdim_amr__get_mesh(void *vptr);
 
 void o2scl_prob_dens_mdim_amr__set_mesh(void *vptr, void *p_v);
 
+size_t o2scl_prob_dens_mdim_amr__get_n_dim(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_n_dim(void *vptr, size_t v);
+
+void *o2scl_prob_dens_mdim_amr__get_low(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_low(void *vptr, void *p_v);
+
+void *o2scl_prob_dens_mdim_amr__get_high(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_high(void *vptr, void *p_v);
+
+bool o2scl_prob_dens_mdim_amr__get_allow_resampling(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_allow_resampling(void *vptr, bool v);
+
+void *o2scl_prob_dens_mdim_amr__get_scale(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_scale(void *vptr, void *p_v);
+
+int o2scl_prob_dens_mdim_amr__get_verbose(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__set_verbose(void *vptr, int v);
+
+void o2scl_prob_dens_mdim_amr__clear(void *vptr);
+
+void o2scl_prob_dens_mdim_amr__clear_mesh(void *vptr);
+
+double o2scl_prob_dens_mdim_amr__total_volume(void *vptr);
+
 }

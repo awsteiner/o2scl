@@ -277,6 +277,10 @@ int o2scl_hdf_acol_manager_run_empty(void *vptr);
 
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
 
+void o2scl_hdf_acol_manager_command_add(void *vptr, char *new_type);
+
+void o2scl_hdf_acol_manager_command_del(void *vptr, char *ltype);
+
 void *o2scl_hdf_create_cloud_file();
 
 void o2scl_hdf_free_cloud_file(void *vptr);

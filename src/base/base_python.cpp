@@ -3612,6 +3612,13 @@ int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug)
   return ret;
 }
 
+void *o2scl_cli_get_option_list(void *vptr) {
+  cli *ptr=(cli *)vptr;
+  std::vector<std::string> *ret=new std::vector<std::string>;
+  *ret=ptr->get_option_list();
+  return ret;
+}
+
 void *o2scl_cli_parameter_desc(void *vptr, char *name) {
   cli *ptr=(cli *)vptr;
   std::string *sptr=new std::string;

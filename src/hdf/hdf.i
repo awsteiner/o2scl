@@ -405,6 +405,12 @@ class acol_manager
 - function parse_vec_string
   - void
   - io std::vector<std::string> &args
+- function command_add
+  - void
+  - std::string new_type    
+- function command_del
+  - void
+  - std::string ltype    
 #- function run
 #  - int argv [0]
 #  - char *argc[] [0]

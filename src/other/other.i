@@ -363,4 +363,17 @@ class std::vector<prob_dens_mdim_amr<>::hypercube>
   - size_t n
 class prob_dens_mdim_amr<>
 - py_name prob_dens_mdim_amr
+- parent prob_dens_mdim<std::vector<double>>
 - std::vector<prob_dens_mdim_amr<>::hypercube> mesh
+- size_t n_dim
+- std::vector<double> low
+- std::vector<double> high
+- bool allow_resampling
+- std::vector<double> scale
+- int verbose
+- function clear
+  - void
+- function clear_mesh
+  - void
+- function total_volume
+  - double

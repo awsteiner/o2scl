@@ -2332,8 +2332,8 @@ class cli
   - bool debug [false]
 #- function get_parameter_list
 #  - std::vector<std::string>
-#- function get_option_list
-#  - std::vector<std::string>
+- function get_option_list
+  - std::vector<std::string>
 - function parameter_desc
   - std::string
   - std::string name

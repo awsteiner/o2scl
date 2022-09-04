@@ -992,7 +992,7 @@ namespace o2scl {
       return pdf_ret;
     }
 
-    /// Desc
+    /// Return the maximum weight over all hypercubes in the mesh
     virtual double max_weight() const {
    
       if (mesh.size()==0) {
@@ -1009,7 +1009,7 @@ namespace o2scl {
       return wgt;
     }
   
-    /// Desc
+    /// Return the maximum fractional volume over all hypercubes in the mesh
     virtual double max_frac_vol() const {
    
       if (mesh.size()==0) {
@@ -1026,8 +1026,10 @@ namespace o2scl {
       }
       return fv;
     }
-  
-    /// Desc
+    
+    /** \brief Return the maximum fractional volume times weight over all 
+        hypercubes in the mesh
+     */
     virtual double max_weighted_vol() const {
    
       if (mesh.size()==0) {
@@ -1050,7 +1052,8 @@ namespace o2scl {
    
       if (mesh.size()==0) {
         O2SCL_ERR2("Mesh empty in ",
-                   "prob_dens_mdim_amr::select_in_largest().",o2scl::exc_einval);
+                   "prob_dens_mdim_amr::select_in_largest().",
+                   o2scl::exc_einval);
       }
 
       size_t im=0;
