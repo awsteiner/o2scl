@@ -2726,40 +2726,4 @@ namespace o2scl_acol {
 
 }
 
-extern "C" {
-
-  /** \brief Return the dimensionality, mesh size, and 
-      lower and upper limits for a \ref o2scl::prob_dens_mdim_amr 
-      object.
-
-      This function is used in o2graph_plotter::plot().
-  */
-  int o2scl_acol_pdma_get_base(void *vp, int &ndim, int &n, 
-                               double *&low, double *&high);
-
-  /** \brief Return the lower and upper limits, fractional volume, and
-      weight for the \ref o2scl::prob_dens_mdim_amr::hypercube object
-      of index \c ix
-
-      This function is used in o2graph_plotter::plot().
-  */
-  int o2scl_acol_pdma_get_cube(void *vp, int ix, 
-                               double *&low, double *&high,
-                               double &frac_vol, double &weight);
-
-  /** \brief Get the list of options/commands from the acol_manager
-      cli object
-  */
-  int o2scl_acol_get_cli_options(void *vp, int &n, int *&sizes,
-                                 char *&chlist);
-
-  /** \brief Get the list of options/commands from the acol_manager
-      cli object
-  */
-  int o2scl_acol_get_cli_options_type(void *vp, char *type,
-                                      int &n, int *&sizes,
-                                      char *&chlist);
-  
-}
-
 #endif
