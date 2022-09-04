@@ -818,15 +818,38 @@ size_t terminal::str_len(std::string str) {
     if (ic!=27) {
       cnt++;
     } else if (i+2<len && str[i+1]=='[' && str[i+2]=='m') {
+      // default_fgbg case
       i+=2;
     } else if (i+2<len && str[i+1]=='[' && str[i+3]=='m') {
+      // underline, lowint, bold case
       i+=3;
     } else if (i+2<len && str[i+1]=='[' && str[i+4]=='m') {
+      // red_fg, blue_fg, etc. case
       i+=4;
     } else if (i+2<len && str[i+1]=='(' && str[i+2]=='0') {
+      // alt font case
       i+=2;
     } else if (i+2<len && str[i+1]=='(' && str[i+2]=='B') {
+      // normal font case
       i+=2;
+    } else if (i+8<len && str[i+1]=='[' && (str[i+2]=='3' ||
+                                            str[i+2]=='4') &&
+               str[i+3]=='8' && str[i+4]==';' && str[i+5]=='5' &&
+               str[i+6]==';' && str[i+8]=='m') {
+      // eight bit fg/bg case with single digit color
+      i+=8;
+    } else if (i+9<len && str[i+1]=='[' && (str[i+2]=='3' ||
+                                            str[i+2]=='4') &&
+               str[i+3]=='8' && str[i+4]==';' && str[i+5]=='5' &&
+               str[i+6]==';' && str[i+9]=='m') {
+      // eight bit fg/bg case with double digit color
+      i+=9;
+    } else if (i+10<len && str[i+1]=='[' && (str[i+2]=='3' ||
+                                            str[i+2]=='4') &&
+               str[i+3]=='8' && str[i+4]==';' && str[i+5]=='5' &&
+               str[i+6]==';' && str[i+10]=='m') {
+      // eight bit fg/bg case with triple digit color
+      i+=10;
     }
   }
   return cnt;
