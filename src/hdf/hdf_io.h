@@ -773,6 +773,10 @@ namespace o2scl_hdf {
       std::vector<std::string> sv;
       o2scl::split_string_delim(temp,sv,',');
       if (sv.size()<3) {
+        if (verbose>0) {
+          std::cerr << "Grid spec only given " << sv.size()
+                    << " arguments: " << temp << std::endl;
+        }
 	if (err_on_fail) {
 	  O2SCL_ERR2("Not enough information for grid ",
 		     "in vector_spec().",o2scl::exc_einval);

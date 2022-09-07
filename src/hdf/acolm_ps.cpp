@@ -55,19 +55,19 @@ int acol_manager::comm_ser_hist_t3d(std::vector<std::string> &sv,
   if (ret!=0) return ret;
   
   std::vector<double> grid, bin_edges, bin_grid;
-  int ret2=vector_spec(in[0],grid,0,false);
+  int ret2=vector_spec(in[0],grid,false,verbose,false);
 
   if (in[3]=="auto") {
     size_t n_bins=o2scl::stoszt(in[4]);
     table3d_obj.create_table_hist_set(grid,in[1],in[2],n_bins,
                                       in[5],table_obj,in[6],in[7]);
   } else if (in[4]=="auto") {
-    int ret3=vector_spec(in[3],bin_edges,0,false);
+    int ret3=vector_spec(in[3],bin_edges,false,verbose,false);
     table3d_obj.create_table_hist_set(grid,in[1],in[2],bin_edges,
                                       in[5],table_obj,in[6],in[7]);
   } else {
-    int ret3=vector_spec(in[3],bin_edges,0,false);
-    int ret4=vector_spec(in[4],bin_grid,0,false);
+    int ret3=vector_spec(in[3],bin_edges,false,verbose,false);
+    int ret4=vector_spec(in[4],bin_grid,false,verbose,false);
     table3d_obj.create_table_hist_set(grid,in[1],in[2],bin_edges,
                                       bin_grid,in[5],table_obj,in[6],in[7]);
   }
@@ -2350,7 +2350,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     } else {
       
       std::vector<double> vtemp;
-      int ret=vector_spec(in[1],vtemp,3,false);
+      int ret=vector_spec(in[1],vtemp,false,verbose,false);
       if (ret!=0) {
 	cerr << "Interpretation of vector specification failed."
 	     << endl;

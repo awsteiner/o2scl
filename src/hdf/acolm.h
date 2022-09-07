@@ -1112,7 +1112,7 @@ namespace o2scl_acol {
     virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
                                     bool itive_com);
 
-    /** \brief Compute autocorrelation coefficients from a set of vectors
+    /** \brief Compute autocorrelation coefficients
 
         Arguments: <tt><options> ...</tt>
         

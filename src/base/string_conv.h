@@ -331,14 +331,6 @@ namespace o2scl {
   size_t string_replace(std::string &s, const std::string &s1,
                         const std::string &s2);
   
-  /** \brief Desc
-
-      \note I'm deprecating this function as I'm not sure 
-      it is different from rewrap_ignore_vt100().
-  */
-  void rewrap_colorx(std::string str, std::vector<std::string> &sv,
-                     size_t ncol=79);
-
   /** \brief Convert from UTF-8 to 32-bit integers
 
       \warning This depends on C++ extensions that will 

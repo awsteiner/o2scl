@@ -514,65 +514,6 @@ void o2scl::rewrap_ignore_vt100(std::string str,
   return;
 }
 
-void o2scl::rewrap_colorx(std::string str, std::vector<std::string> &sv,
-			 size_t ncol) {
-
-  if (sv.size()>0) sv.clear();
-  
-  std::vector<std::string> sv_tmp;
-  split_string(str,sv_tmp);
-
-  terminal ter;
-  size_t color_len=(ter.magenta_fg()+ter.bold()+
-		    ter.default_fgbg()).length();
-  size_t extra_len=0;
-
-  string stmp;
-  if (sv.size()>0) sv.clear();
-  for(size_t old_ix=0;old_ix<sv_tmp.size();old_ix++) {
-    if (stmp.length()+sv_tmp[old_ix].length()+1<ncol+extra_len) {
-      size_t len=sv_tmp[old_ix].length();
-      if (stmp.length()==0) {
-	if (len>=2 && sv_tmp[old_ix][len-1]==':') {
-	  stmp+=ter.magenta_fg()+ter.bold()+
-	    sv_tmp[old_ix].substr(0,len-1)+ter.default_fgbg()+":";
-	  extra_len+=color_len;
-	} else {
-	  if (sv_tmp[old_ix][len-1]==',') {
-	    stmp+=ter.cyan_fg()+ter.bold()+
-	      sv_tmp[old_ix].substr(0,len-1)+ter.default_fgbg()+",";
-	    extra_len+=color_len;
-	  } else {
-	    stmp+=ter.cyan_fg()+ter.bold()+
-	      sv_tmp[old_ix]+ter.default_fgbg();
-	    extra_len+=color_len;
-	  }
-	}
-      } else {
-	stmp+=" ";
-	if (sv_tmp[old_ix][len-1]==',') {
-	  stmp+=ter.cyan_fg()+ter.bold()+
-	    sv_tmp[old_ix].substr(0,len-1)+ter.default_fgbg()+",";
-	  extra_len+=color_len;
-	} else {
-	  stmp+=ter.cyan_fg()+ter.bold()+
-	    sv_tmp[old_ix]+ter.default_fgbg();
-	  extra_len+=color_len;
-	}
-      }
-    } else {
-      sv.push_back(stmp);
-      stmp=ter.cyan_fg()+ter.bold()+sv_tmp[old_ix]+ter.default_fgbg();
-      extra_len=color_len;
-    }
-  }
-  if (stmp.size()>0) {
-    sv.push_back(stmp);
-  }
-  
-  return;
-}
-
 void o2scl::rewrap_keep_endlines(std::string str,
 				 std::vector<std::string> &sv,
 				 size_t ncol, int verbose,

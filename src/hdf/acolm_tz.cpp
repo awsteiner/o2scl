@@ -796,7 +796,7 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 	}
       }
 
-      int vs_ret=vector_spec(funcs[j],grid[j],verbose,false);
+      int vs_ret=vector_spec(funcs[j],grid[j],false,verbose,false);
       if (vs_ret!=0) {
 	cerr << "Function vector_spec() failed." << endl;
 	return 1;

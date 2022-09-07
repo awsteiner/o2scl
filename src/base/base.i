@@ -2117,6 +2117,13 @@ function string_to_uint_list<vector<size_t>>
 #- std::string s
 #- char *x
 #- int len
+function rewrap_keep_endlines
+- void
+- std::string str
+- out std::vector<std::string> &sv
+- size_t ncol [79]
+- int verbose [0]
+- bool ignore_vt100 [True]  
 #
 # Functions from interp.h
 # 

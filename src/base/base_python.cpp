@@ -3733,6 +3733,12 @@ int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_lis
   return ret;
 }
 
+void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol, int verbose, bool ignore_vt100) {
+  std::vector<std::string> *sv=(std::vector<std::string> *)ptr_sv;
+  rewrap_keep_endlines(str,*sv,ncol,verbose,ignore_vt100);
+  return;
+}
+
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y) {
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;

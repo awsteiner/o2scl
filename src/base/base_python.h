@@ -1267,6 +1267,8 @@ double o2scl_find_constant_wrapper(char *name, char *unit);
 
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list);
 
+void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
+
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
 
 void o2scl_vector_deriv_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type=2);

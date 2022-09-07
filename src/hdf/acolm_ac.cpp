@@ -115,7 +115,7 @@ int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
     }
 
     std::vector<double> vec;
-    int vret=vector_spec(in[0],vec,verbose,false);
+    int vret=vector_spec(in[0],vec,false,verbose,false);
     if (vret!=0) {
       cerr << "Vector spec failed in add-vec." << endl;
       return exc_efailed;
@@ -225,7 +225,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	  v[i]=table_obj.get(in[ix],i);
 	}
       } else {
-	int vs_ret=o2scl_hdf::vector_spec(in[ix],v,verbose,false);
+	int vs_ret=o2scl_hdf::vector_spec(in[ix],v,false,verbose,false);
 	if (vs_ret!=0) {
 	  cout << "Vector specification failed." << endl;
 	  return 1;
@@ -442,7 +442,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       
       vector<vector<double> > v;
 
-      int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],v,verbose,false);
+      int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],v,false,verbose,false);
       if (vs_ret!=0) {
 	cout << "Vector specification failed (returned " << vs_ret << ")."
 	     << endl;
@@ -663,7 +663,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
     vector<vector<double> > vvd2;
     
-    int vs_ret=o2scl_hdf::mult_vector_spec(in[1],vvd2,verbose,false);
+    int vs_ret=o2scl_hdf::mult_vector_spec(in[1],vvd2,false,verbose,false);
     if (vs_ret!=0) {
       cerr << "Multiple vector specification failed." << endl;
       return 1;
@@ -2335,7 +2335,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       
     } else {
 
-      int ret2=vector_spec(in1,doublev_obj,verbose,false);
+      int ret2=vector_spec(in1,doublev_obj,false,verbose,false);
       if (ret2!=0) {
 	cerr << "Function vector_spec() failed." << endl;
 	return ret2;
@@ -2399,7 +2399,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
 
     std::vector<double> d;
-    int vs_ret=vector_spec(in[1],d,verbose,false);
+    int vs_ret=vector_spec(in[1],d,false,verbose,false);
     if (vs_ret!=0) {
       cerr << "Vector specification " << in[1] << " failed." << endl;
       return 1;
@@ -2448,7 +2448,7 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
 	return 1;
       }
 
-      int vs_ret=mult_vector_spec(in[ik*2+1],d,verbose,false);
+      int vs_ret=mult_vector_spec(in[ik*2+1],d,false,verbose,false);
       if (vs_ret!=0) {
 	cerr << "Multiple vector specification "
 	     << in[ik*2+1] << " failed." << endl;
@@ -2581,13 +2581,13 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     std::vector<double> dx, dy;
     
     std::string xname=in[0];
-    int vs_ret=vector_spec(in[1],dx,0,false);
+    int vs_ret=vector_spec(in[1],dx,false,verbose,false);
     if (vs_ret!=0) {
       cerr << "Vector specification " << in[1] << " failed." << endl;
     }
 
     std::string yname=in[2];
-    vs_ret=vector_spec(in[3],dy,0,false);
+    vs_ret=vector_spec(in[3],dy,false,verbose,false);
     if (vs_ret!=0) {
       cerr << "Vector specification " << in[3] << " failed." << endl;
     }

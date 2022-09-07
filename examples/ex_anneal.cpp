@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
   cout << endl;
 
   // Test that it found the global minimum
-  t.test_rel(init[0],2.0,1.0e-3,"another test - value");
-  t.test_rel(init[1],-3.0,1.0e-3,"another test - value 2");
+  t.test_rel(init[0],2.0,8.0e-2,"another test - value");
+  t.test_rel(init[1],-3.0,1.0e-2,"another test - value 2");
   t.test_rel(result,-1.0,1.0e-3,"another test - min");
 
   make_plot_data();
