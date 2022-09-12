@@ -566,6 +566,7 @@ class nstar_cold
 - double acausal_nb
 - double acausal_ed
 - double acausal_pr
+- tov_solve def_tov                             
 - bool eos_neg
 - int verbose
 - function get_eos_results

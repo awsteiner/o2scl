@@ -661,6 +661,9 @@ double o2scl_nstar_cold_get_acausal_pr(void *vptr);
 
 void o2scl_nstar_cold_set_acausal_pr(void *vptr, double v);
 
+void *o2scl_nstar_cold_get_def_tov(void *vptr);
+
+
 bool o2scl_nstar_cold_get_eos_neg(void *vptr);
 
 void o2scl_nstar_cold_set_eos_neg(void *vptr, bool v);

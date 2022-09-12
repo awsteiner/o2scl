@@ -1802,6 +1802,12 @@ void o2scl_nstar_cold_set_acausal_pr(void *vptr, double v) {
   return;
 }
 
+void *o2scl_nstar_cold_get_def_tov(void *vptr) {
+  nstar_cold *ptr=(nstar_cold *)vptr;
+  return (void *)(&(ptr->def_tov));
+}
+
+
 bool o2scl_nstar_cold_get_eos_neg(void *vptr) {
   nstar_cold *ptr=(nstar_cold *)vptr;
   return ptr->eos_neg;

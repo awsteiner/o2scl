@@ -1462,6 +1462,13 @@ int main(int argc, char *argv[]) {
             }
           }
         } else {
+          // AWS, 9/12/21: We have to skip tov_solve types because
+          // they have no copy constructor. This is a temporary hack
+          // which we need for now. Just using "const tov_solve
+          // def_tov" in the interface file doesn't quite work,
+          // because that doesn't allow the user to change the
+          // properties of the tov_solve object.
+          if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
           // Set function for other types
           fout << "void " << underscoreify(ifc.ns) << "_"
                << underscoreify(ifc.name) << "_set_" << ifv.name
@@ -1495,6 +1502,7 @@ int main(int argc, char *argv[]) {
               fout << "  return;" << endl;
               fout << "}" << endl;
             }
+          }
           }
         }
         fout << endl;
@@ -2469,10 +2477,11 @@ int main(int argc, char *argv[]) {
                << ifv.ift.name << "]" << endl;
           fout << "        func(self._ptr,value)" << endl;
           fout << "        return" << endl;
+          fout << endl;
           
         }
         
-      } else {
+      } else if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
         
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;
@@ -2490,9 +2499,9 @@ int main(int argc, char *argv[]) {
           fout << "        func(self._ptr,value._ptr)" << endl;
         }
         fout << "        return" << endl;
+        fout << endl;
         
       }
-      fout << endl;
     }
 
     // Define methods
