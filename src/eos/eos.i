@@ -433,6 +433,9 @@ class eos_tov_linear
 class eos_tov_interp
 - parent eos_tov
 - bool err_nonconv
+- std::vector<double> full_vece
+- std::vector<double> full_vecp
+- std::vector<double> full_vecnb
 - function read_table
   - void
   - table_units<> &eos

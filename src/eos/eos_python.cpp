@@ -1192,6 +1192,42 @@ void o2scl_eos_tov_interp_set_err_nonconv(void *vptr, bool v) {
   return;
 }
 
+void *o2scl_eos_tov_interp_get_full_vece(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  return (void *)(&(ptr->full_vece));
+}
+
+void o2scl_eos_tov_interp_set_full_vece(void *vptr, void *p_v) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->full_vece=*(p_tsot);
+  return;
+}
+
+void *o2scl_eos_tov_interp_get_full_vecp(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  return (void *)(&(ptr->full_vecp));
+}
+
+void o2scl_eos_tov_interp_set_full_vecp(void *vptr, void *p_v) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->full_vecp=*(p_tsot);
+  return;
+}
+
+void *o2scl_eos_tov_interp_get_full_vecnb(void *vptr) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  return (void *)(&(ptr->full_vecnb));
+}
+
+void o2scl_eos_tov_interp_set_full_vecnb(void *vptr, void *p_v) {
+  eos_tov_interp *ptr=(eos_tov_interp *)vptr;
+  std::vector<double> *p_tsot=(std::vector<double> *)p_v;
+  ptr->full_vecnb=*(p_tsot);
+  return;
+}
+
 void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
   table_units<> *eos=(table_units<> *)ptr_eos;

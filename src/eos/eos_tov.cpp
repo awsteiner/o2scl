@@ -1410,7 +1410,6 @@ void eos_tov_interp::gcp10_low_dens_eos(string model, bool external) {
 
   std::string fname;
   std::string dir=o2scl::o2scl_settings.get_data_dir();
-  cout << "dir: " << dir << endl;
   if (external) {
     fname=model;
   } else {

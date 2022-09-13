@@ -445,6 +445,18 @@ bool o2scl_eos_tov_interp_get_err_nonconv(void *vptr);
 
 void o2scl_eos_tov_interp_set_err_nonconv(void *vptr, bool v);
 
+void *o2scl_eos_tov_interp_get_full_vece(void *vptr);
+
+void o2scl_eos_tov_interp_set_full_vece(void *vptr, void *p_v);
+
+void *o2scl_eos_tov_interp_get_full_vecp(void *vptr);
+
+void o2scl_eos_tov_interp_set_full_vecp(void *vptr, void *p_v);
+
+void *o2scl_eos_tov_interp_get_full_vecnb(void *vptr);
+
+void o2scl_eos_tov_interp_set_full_vecnb(void *vptr, void *p_v);
+
 void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
 
 void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
