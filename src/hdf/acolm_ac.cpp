@@ -756,8 +756,8 @@ int acol_manager::comm_average_rows(std::vector<std::string> &sv,
   }
 
   if (sv.size()==3) {
-
-    if (sv[1]=="*") {
+    
+    if (sv[1]=="*" && sv.size()>=4 && o2scl::stob(sv[3])) {
       table_obj.average_rows(o2scl::stoszt(sv[2]));
     } else {
       table_obj.average_col_roll(sv[1],o2scl::stoszt(sv[2]));
@@ -780,11 +780,7 @@ int acol_manager::comm_average_rows(std::vector<std::string> &sv,
 	return 2;
       }
     } else {
-      if (in[0]=="*") {
-	table_obj.average_rows(o2scl::stoszt(in[1]),false);
-      } else {
-	table_obj.average_col_roll(in[0],o2scl::stoszt(in[1]));
-      }
+      table_obj.average_col_roll(in[0],o2scl::stoszt(in[1]));
     }
 
   }
@@ -1313,6 +1309,8 @@ int acol_manager::comm_commands(std::vector<std::string> &sv,
           comm_list_type_only.push_back(comm_list_type[i]);
         }
       }
+      vector_sort<vector<string>,string>(comm_list_type_only.size(),
+                                         comm_list_type_only);
 
       // Decorate, screenify, and output
       comm_out.clear();

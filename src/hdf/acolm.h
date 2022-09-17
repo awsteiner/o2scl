@@ -395,6 +395,20 @@ namespace o2scl_acol {
 
     /// \name Functions for the command-line interface
     //@{
+    /** \brief Add a vector_specification
+
+        For objects of type table:
+
+        Add column from a vector specification to the table.
+
+        Arguments: <tt><vec. spec.> <column></tt>
+
+        Add the vector specification <vec. spec.> to the table and
+        store in the column named <column>. (see ``Vector
+        specifications`` for more information.)
+    */
+    virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Assign a constant
 
         For objects of type table:
@@ -459,11 +473,12 @@ namespace o2scl_acol {
 
         The first argument is the column to be modified. If the first
         argument is '*', then all columns are averaged. The second
-        argument is the size of the window. If the third argument
-        evaluates to false, then block averages instead of rolling
-        averages are computed, and then the number of rows is divided
-        by the window parameter. If block averages are requested, then
-        the first argument must be '*'.
+        argument is the size of the window. By default, rolling
+        averages are computed and the size of the column is unchanged.
+        If the third argument evaluates to true and the first argument
+        is '*', then block averages instead of rolling averages are
+        computed, and then the number of rows is divided by the window
+        parameter. 
     */
     virtual int comm_average_rows(std::vector<std::string> &sv,
                                   bool itive_com);
@@ -1419,18 +1434,6 @@ namespace o2scl_acol {
     */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Add a vector_specification
-
-        For objects of type table:
-
-        Add column from a vector specification to the table.
-
-        Arguments: <tt><vec. spec.> <column></tt>
-
-        Detailed spec.
-    */
-    virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
-
     /** \brief Read an object generic text file
         
         Arguments: <tt><type> <file></tt>
@@ -2138,8 +2141,8 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> [name]</tt>
 
-        Add all slices from the second table3d object which aren't
-        already present in the current table3d object.
+        Add all slices from the second \c table3d object which are not
+        already present in the current \c table3d object.
 
     */
     virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
@@ -2335,7 +2338,7 @@ namespace o2scl_acol {
         contour lines are stored in the file named output_filename and
         the object is named object_name. If the file does not exist,
         it is created. If no contours are found, then no file I/O is
-        performed and the current table3d object is unmodified.
+        performed and the current \c table3d object is unmodified.
 
         For objects of type hist_2d:
 
