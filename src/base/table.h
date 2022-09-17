@@ -1544,6 +1544,11 @@ namespace o2scl {
     /** \brief Exaustively search for groups of rows which match within a
         specified tolerance and remove all but one of each group
 
+        For each column, the entries in the two rows do not match if 
+        either of their absolute values are greater the absolute
+        tolerance and their relative deviation is greater than
+        the relative tolerance.
+
         This function returns the number of rows deleted.
     */
     size_t delete_rows_tolerance(double tol_rel=1.0e-12,

@@ -756,7 +756,7 @@ namespace o2scl_acol {
         Delete the set of rows for which a function evaluates to a
         number greater than 0.5. For example, <tt>-delete-rows
         if(col1+col2>10,1,0)</tt> will delete all columns where the
-        sum of the entries in \c col1 and \c col2 is larger than 10.
+        sum of the entries in col1 and col2 is larger than 10.
         See also the \c select-rows command.
     */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
@@ -769,9 +769,15 @@ namespace o2scl_acol {
 
         Arguments: <tt>[relative tol.] [absolute tol.]</tt>
 
-        This command deletes all rows which match within the specified
-        tolerances. If verbose is larger than zero then information
-        about how many rows were deleted is provided.
+        for every column, the entries in the two rows do not match if
+        either of their absolute values are greater the absolute
+        tolerance and their relative deviation is greater than the
+        relative tolerance. if all columns match, then the rows match.
+
+        The \c delete-rows-tol command deletes all rows which
+        match a row earlier in the table. if verbose is larger than
+        zero then information about how many rows were deleted is
+        provided.
     */
     virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
                                      bool itive_com);
@@ -785,7 +791,7 @@ namespace o2scl_acol {
         Arguments: <tt><x> <y> <name></tt>
 
         Create a new column named <name> filled with the derivative
-        of the function y(x) obtained from columns <x> and <y>.
+        of the function \f$ y(x) \f$ obtained from columns <x> and <y>.
 
         For objects of type tensor:
 
@@ -934,11 +940,11 @@ namespace o2scl_acol {
 
         Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
 
-        The 'to-table3d' creates a table3d object using 'x column' and
-        'y column' as the data for the x and y grids. If 'empty
-        value', then this value is used for points not given by the
-        table. If 'eps' is specified, then use that value as the
-        minimum value between grid points.
+        The \c to-table3d command creates a \c table3d object using <x
+        column> and <y column> as the data for the x and y grids. If
+        [empty value] is given, then this value is used for points not
+        given by the table. If [eps] is specified, then that value is
+        used as the minimum value between grid points.
 
         For objects of type tensor:
 
@@ -947,16 +953,16 @@ namespace o2scl_acol {
         Arguments: <tt><x index> <y index> <slice name> [fixed 1]
         [fixed 2] ...</tt>
 
-        This command uses two indices in the current tensor object to
-        create a table3d object. The values for the remaining indices
-        fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
-        coordinate of the new table3d object, uses index 1 for the y
-        coordinate of the new table3d object, uses 5 for index 0, and
-        uses 3 for index 2."+ The x- and y-grids in he table3d object
-        are named "x" and "y" and filled with the grid index by
-        default."+ To set the x- or y-grid names afterwards, use
-        commands 'x-name' and 'y-name'.
+        The \c to-table3d command uses two indices in the current
+        tensor object to create a \c table3d object. The values for
+        the remaining indices fixed to [fixed 1], [fixed 2], etc. in
+        that order. For example, <tt>to-table3d 3 1 z 5 3</tt> uses
+        index 3 for the x coordinate of the new table3d object, uses
+        index 1 for the y coordinate of the new table3d object, uses 5
+        for index 0, and uses 3 for index 2. The x- and y-grids in
+        he table3d object are named "x" and "y" and filled with the
+        grid index by default. To set the x- or y-grid names
+        afterwards, use commands 'x-name' and 'y-name'.
 
         For objects of type tensor<int>:
 
@@ -971,9 +977,9 @@ namespace o2scl_acol {
         example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
         coordinate of the new table3d object, uses index 1 for the y
         coordinate of the new table3d object, uses 5 for index 0, and
-        uses 3 for index 2."+ The x- and y-grids in he table3d object
+        uses 3 for index 2. The x- and y-grids in he table3d object
         are named "x" and "y" and filled with the grid index by
-        default."+ To set the x- or y-grid names afterwards, use
+        default. To set the x- or y-grid names afterwards, use
         commands 'x-name' and 'y-name'.
 
         For objects of type tensor<size_t>:
@@ -989,9 +995,9 @@ namespace o2scl_acol {
         example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
         coordinate of the new table3d object, uses index 1 for the y
         coordinate of the new table3d object, uses 5 for index 0, and
-        uses 3 for index 2."+ The x- and y-grids in he table3d object
+        uses 3 for index 2. The x- and y-grids in he table3d object
         are named "x" and "y" and filled with the grid index by
-        default."+ To set the x- or y-grid names afterwards, use
+        default. To set the x- or y-grid names afterwards, use
         commands 'x-name' and 'y-name'.
 
         For objects of type tensor_grid:
@@ -1400,7 +1406,7 @@ namespace o2scl_acol {
         Arguments: <tt>[conditional func.] <func. of v, i0, i1, ...
         and x0, x1, ...></tt>
 
-        The "function" command sets all the data entries in a
+        The \c function command sets all the data entries in a
         tensor_grid equal to a user-specified mathematical function of
         the value in the tensor (v), the indices (i0, i1, ...) or the
         grid points (x0, x1, ...). If two function arguments are given
@@ -2190,7 +2196,7 @@ namespace o2scl_acol {
 
         (No arguments.)
 
-        The "sum" command outputs the total tensor size
+        The \c sum command outputs the total tensor size
         and the sum over all entries. Note, to perform a partial
         sum over sum of the tensor indices, use the 
         <tt>rearrange</tt> command.
@@ -2201,10 +2207,9 @@ namespace o2scl_acol {
 
         (No arguments.)
 
-        The "sum" command outputs the total tensor size
-        and the sum over all entries. Note, to perform a partial
-        sum over sum of the tensor indices, use the 
-        <tt>rearrange</tt> command.
+        The \c sum command outputs the total tensor size and the sum
+        over all entries. Note, to perform a partial sum over sum of
+        the tensor indices, use the <tt>rearrange</tt> command.
     */
     virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
 
@@ -2324,7 +2329,7 @@ namespace o2scl_acol {
         Arguments: <tt><val> <slice_name> [output_filename
         object_name]</tt>
         
-        The "contours" command constructs a set of contour lines using
+        The \c contours command constructs a set of contour lines using
         the data in slice named <slice> at the fixed value given in
         <val>. If two additional arguments are given, then the
         contour lines are stored in the file named output_filename and
@@ -2338,14 +2343,14 @@ namespace o2scl_acol {
 
         Arguments: <tt>["frac"] <val> [output file] [output name]</tt>
 
-        If the argument "frac" is not present, the "contours" command
-        constructs a set of contour lines using at the fixed value
-        given in <val>. If two additional arguments are given, then
-        the contour lines are stored in the file named output_filename
-        and the object is named object_name. If the file does not
-        exist, it is created. If no contours are found, then no file
-        I/O is performed and the current table3d object is
-        unmodified."+ If the argument "frac" is present, then the
+        If the optional argument "frac" is not present, the \c contours
+        command constructs a set of contour lines using at the fixed
+        value given in <val>. If two additional arguments are given,
+        then the contour lines are stored in the file named
+        output_filename and the object is named \c object_name. If the
+        file does not exist, it is created. If no contours are found,
+        then no file I/O is performed and the current table3d object
+        is unmodified. If the argument "frac" is present, then the
         operation is the same except that <val> is interpreted as a
         fraction of the total integral under the data.
     */
@@ -2373,8 +2378,8 @@ namespace o2scl_acol {
 
         This command gets or sets the value in the specified column
         and row. If "none" is specified as the third argument, then
-        "entry" just prints out the specified entry as if the third
-        argument was not specified.
+        the \c entry command just prints out the specified entry as if
+        the third argument was not specified.
 
         For objects of type table3d:
 
@@ -2388,7 +2393,8 @@ namespace o2scl_acol {
 
         Get or set a single entry in a tensor object.
 
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
+        "none"]</tt>
 
         Detailed desc.
 
@@ -2398,9 +2404,11 @@ namespace o2scl_acol {
 
         Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
 
-        The \"entry\" command gets or sets a value in the tensor_grid
-        object. The arguments are a list of indices and (optionally) a
-        new value to store in that location.
+        The \c entry command gets or sets a value in the \c
+        tensor_grid object. The arguments are a list of indices and
+        (optionally) a new value to store in that location.
+        See the \c entry-grid command to specify a grid location
+        rather than specifying indices.
     */
     virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
 
@@ -2410,14 +2418,15 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table.
         
-        Arguments: <tt><index column> <index value> <target column> [value or "none"]</tt>
+        Arguments: <tt><index column> <index value> <target column>
+        [value or "none"]</tt>
         
-        The "entry-grid" command first looks for the value closest to
+        The \c entry-grid command first looks for the value closest to
         <index value> in the column <index column> to determine a row
-        in the table. Next "entry-grid" gets or sets the value of the
+        in the table. Next \c entry-grid gets or sets the value of the
         target column in that row. If "none" is specified as the
-        fourth argument, then "entry" just prints out the specified
-        entry as if the third argument was not specified.
+        fourth argument, then \c entry-grid just prints out the
+        specified entry as if the third argument was not specified.
 
         For objects of type table3d:
 
@@ -2429,12 +2438,13 @@ namespace o2scl_acol {
 
         For objects of type tensor_grid:
 
-        Get a single entry in a tensor_grid object.
+        Get a single entry in a \c tensor_grid object.
 
-        Arguments: <tt><value 1> <value 2> <value 3> ... [value or "none"]</tt>
+        Arguments: <tt><value 1> <value 2> <value 3> ... [value or
+        "none"]</tt>
 
-        The "entry-grid" command gets or sets a value in the
-        tensor_grid object. The arguments are a list of grid values
+        The \c entry-grid command gets or sets a value in the
+        \c tensor_grid object. The arguments are a list of grid values
         and (optionally) a new value to store in the location closest
         to the specified grid values.
     */
@@ -2448,8 +2458,9 @@ namespace o2scl_acol {
 
         Arguments: <tt><column> <new_unit></tt>
 
-        Convert the units of a column to <new unit>, multipliying all
-        entries in that column by the appropriate factor.
+        Convert the units of column <column> to <new unit>,
+        multipliying all entries in that column by the appropriate
+        factor.
     */
     virtual int comm_convert_unit(std::vector<std::string> &sv, 
                                   bool itive_com);
@@ -2484,9 +2495,9 @@ namespace o2scl_acol {
 
         Sort the entire table by one column.
 
-        Arguments: <tt><col> [unique]</tt>
+        Arguments: <tt><column> [unique]</tt>
 
-        Sorts the entire table by the column specified in <col>.
+        Sorts the entire table by the column specified in <column>.
         If the word "unique" is specified as the second argument, then
         delete duplicate rows after sorting.
     */
@@ -2500,7 +2511,8 @@ namespace o2scl_acol {
 
         Arguments: <tt><column></tt>
 
-        Output the average, std. dev, max and min of <column>.
+        Output the average, standard deviation, max and min of
+        <column>.
 
         For objects of type table3d:
 
@@ -2508,7 +2520,8 @@ namespace o2scl_acol {
 
         Arguments: <tt><slice></tt>
 
-        Output the average, std. dev, max and min of <slice>.
+        Output the average, standard deviation, max and min of
+        <slice>.
 
         For objects of type tensor:
 
@@ -2540,8 +2553,8 @@ namespace o2scl_acol {
 
         Arguments: <tt><column> <weights></tt>
 
-        Output the average, std. dev, max and min of <column>, using
-        the weights specified in <weights>.
+        Output the average, standard deviation, max and min of
+        <column>, using the weights specified in <weights>.
 
         For objects of type tensor:
         
