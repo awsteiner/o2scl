@@ -7,9 +7,9 @@ acol contents
 -------------
 
 - :ref:`acol introduction`
-- :ref:`acol functions`
 - :ref:`acol types`
 - :ref:`Value specifications`
+- :ref:`Function specifications`
 - :ref:`Vector specifications`
 - :ref:`String list specifications`
 - :ref:`Multiple vector specifications`
@@ -54,36 +54,21 @@ script in the ``extras`` directory of the documentation is
 named ``acol.scr``. The associated output is a useful demonstration
 of the capabilities of ``acol``.
 
-acol functions
---------------
-
-Some ``acol`` commands can work with mathematical function arguments.
-Functions can be created using the operators and functions listed below.
-Examples are ``x==5 && y<1``, ``acos(-1)``, and ``sin(x>5)``.
-Comparison operators result in either 1.0 (true) or 0.0 (false).
-
-Operators: ``() ^ * / % + - == != < > && || << >> >= <=``
-
-Functions: ``exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
-asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x) acosh(x)
-atanh(x) floor(x)``
-
-There is also a command called ``function`` which works with several
-different types to generate data based on functions. Use ``acol -help
-function`` to get more information on these type-specific commands.
-
 acol types
 ----------
 
-The types which can be handled by ``acol`` are either related to C++
-internal types: ``char, double, double[], int, int[], size_t,
-size_t[], std::string``, and ``std::string[]``, or O₂scl
-types :ref:`hist <hist>`, :ref:`hist_2d <hist_2d>`,
-:ref:`prob_dens_mdim_amr <prob_dens_mdim_amr>`, :ref:`table <table>`,
-:ref:`table3d <table3d>`, :ref:`tensor <tensor>` (including
-``double``, ``int``, and ``size_t`` versions), :ref:`tensor_grid
-<tensor_grid>` :ref:`uniform_grid <uniform_grid>`, and
-vector<:ref:`contour_line <contour_line>`>. 
+The types which can be handled by ``acol`` are either C++ standard
+types or O₂scl types. The standard types which acol can manipulate are
+``char, double, double[], int, int[], size_t, size_t[], std::string``,
+``string[]``, ``vector<vector<double>>``, and
+``vector<vector<string>>``. The relevant O₂scl types are :ref:`hist
+<hist>`, :ref:`hist_2d <hist_2d>`, :ref:`prob_dens_mdim_amr
+<prob_dens_mdim_amr>`, :ref:`prob_dens_mdim_gaussian
+<prob_dens_mdim_gaussian>`, :ref:`table <table>`, :ref:`table3d
+<table3d>`, :ref:`tensor <tensor>` (including ``double``, ``int``, and
+``size_t`` versions), :ref:`tensor_grid <tensor_grid>`
+:ref:`uniform_grid <uniform_grid>`, and vector<:ref:`contour_line
+<contour_line>`>.
 
 Value specifications
 --------------------
@@ -97,7 +82,7 @@ colon is present, then a "func:" prefix is assumed. The different
 types for a value specification are:
 
 1. ``<numeric value or function>`` - Value equal to the result of
-<function>, e.g. "7.6" or "sin(0.5)". See :ref:`acol Functions` for a
+<function>, e.g. "7.6" or "sin(0.5)". See :ref:`Function specfications` for a
 list of functions that can be used.
 
 2. ``hdf5:<object name>:[addl. spec.]`` - Read an HDF5 value and obtain
@@ -121,6 +106,24 @@ Type                   Additional specification Description
 
 3. ``shell:<shell command>`` - Set the value equal to the first result
 obtained using the specified shell command.
+
+Function specifications
+-----------------------
+
+Some ``acol`` commands can work with mathematical function arguments.
+Functions can be created using the operators and functions listed below.
+Examples are ``x==5 && y<1``, ``acos(-1)``, and ``sin(x>5)``.
+Comparison operators result in either 1.0 (true) or 0.0 (false).
+
+Operators: ``() ^ * / % + - == != < > && || << >> >= <=``
+
+Functions: ``exp(x) log(x) log10(x) sin(x) cos(x) tan(x) sqrt(x) abs(x)
+asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x) acosh(x)
+atanh(x) floor(x)``
+
+There is also a command called ``function`` which works with several
+different types to generate data based on functions. Use ``acol -help
+function`` to get more information on these type-specific commands.
 
 Vector specifications
 ---------------------

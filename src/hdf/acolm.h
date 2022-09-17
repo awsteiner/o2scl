@@ -483,17 +483,18 @@ namespace o2scl_acol {
     virtual int comm_average_rows(std::vector<std::string> &sv,
                                   bool itive_com);
 
-    /** \brief Compute correlation
+    /** \brief Compute correlation coefficients.
 
         For objects of type table:
 
         Compute the correlation coefficient between two columns.
 
-        Arguments: <tt><column 1> <column 2></tt>
+        Arguments: <tt>[column 1, column 2]</tt>
 
         Compute the correlation coefficient between two columns, or,
         if no arguments are given, then compute the correlation
-        coefficients between all pairs of columns.
+        coefficients between all pairs of columns. Results are output
+        to the screen.
     */
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
@@ -769,10 +770,11 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Delete the set of rows for which a function evaluates to a
-        number greater than 0.5. For example, <tt>-delete-rows
-        if(col1+col2>10,1,0)</tt> will delete all columns where the
-        sum of the entries in col1 and col2 is larger than 10.
-        See also the \c select-rows command.
+        number greater than 0.5. See ``Function specifications`` for
+        more information on what kinds of functions are allowed. For
+        example, <tt>-delete-rows if(col1+col2>10,1,0)</tt> will
+        delete all columns where the sum of the entries in col1 and
+        col2 is larger than 10. See also the \c select-rows command.
     */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     
@@ -792,7 +794,7 @@ namespace o2scl_acol {
         The \c delete-rows-tol command deletes all rows which
         match a row earlier in the table. if verbose is larger than
         zero then information about how many rows were deleted is
-        provided.
+        provided. 
     */
     virtual int comm_delete_rows_tol(std::vector<std::string> &sv,
                                      bool itive_com);
