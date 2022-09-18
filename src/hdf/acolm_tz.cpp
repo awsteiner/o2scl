@@ -1115,7 +1115,7 @@ void acol_manager::xml_replacements(std::string &s,
                    "[t]"+type_list[i]+"[d]");
     string_replace(s,"<computeroutput> "+type_list[i]+
                    " </computeroutput>",
-                   type_color+type_list[i]+default_color);
+                   "[t]"+type_list[i]+"[d]");
     string_replace(s,"<ref> "+type_list[i]+
                    " </ref>",
                    "[t]"+type_list[i]+"[d]");

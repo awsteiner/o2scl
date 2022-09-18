@@ -82,8 +82,8 @@ colon is present, then a "func:" prefix is assumed. The different
 types for a value specification are:
 
 1. ``<numeric value or function>`` - Value equal to the result of
-<function>, e.g. "7.6" or "sin(0.5)". See :ref:`Function specfications` for a
-list of functions that can be used.
+<function>, e.g. "7.6" or "sin(0.5)". See :ref:`Function
+specifications` for a list of functions that can be used.
 
 2. ``hdf5:<object name>:[addl. spec.]`` - Read an HDF5 value and obtain
 the value from object named <object name>. For some object types,

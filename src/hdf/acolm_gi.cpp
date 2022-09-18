@@ -1143,6 +1143,14 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
 
   std::string i1="N";
   if (sv.size()>1) i1=sv[1];
+  int j;
+  for (j=0;j<10 && table_obj.is_column(i1);j++) {
+    i1+="_";
+  }
+  if (j==10) {
+    cerr << "Could not find unique column name in 'index'." << endl;
+    return 1;
+  }
   table_obj.new_column(i1);
   for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(i1,i,((double)i));
 

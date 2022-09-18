@@ -408,6 +408,50 @@ namespace o2scl_acol {
         specifications`` for more information.)
     */
     virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Compute autocorrelation coefficients
+
+        Arguments: <tt><options> ...</tt>
+        
+        This command computes autocorrelation coefficients for the
+        specified vector(s) and then estimates the associated 
+        autocorrelation length(s). 
+
+        There are three algorithms: a brute force algorithm (the
+        default specified with the string "def"), the algorithm from
+        "acor", and a method using FFTW ("fft"). The choice of
+        algorithm can be specified in the options argument.
+
+        If multiple vectors are given, then there are two options.
+        Option "max" (the default) means that autocorrelation
+        coefficients are computed separately for each vector and then
+        the maximum autocorrelation length is specified at the end.
+        Option "avg" means that the autocorrelation coefficients are
+        averaged over all vectors and a single autocorrelation length
+        for the averaged data is reported at the end.
+
+        Finally, the "store" option, if specified, means that the
+        autocorrelation coefficients are stored afterwards in 
+        a <tt>vec_vec_double</tt> object (and the current object,
+        if present, is cleared).
+
+        Options can be combined with commas (but no spaces), for
+        example "fft,max,store" or "def,avg".
+
+        If there is no current object, then the user may specify one
+        or more multiple vector specifications. See ``Multiple vector
+        specifications`` for more information.
+
+        If the current object is of type <tt>int[]</tt>,
+        <tt>double[]</tt>, or <tt>size_t[]</tt>, then the
+        autocorrelation coefficients of the current vector are
+        computed.
+
+        If the current object is of type <tt>table</tt>, then the user
+        may specify either columns of the table or a multiple vector
+        specification.
+    */
+    virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Assign a constant
 
@@ -424,43 +468,6 @@ namespace o2scl_acol {
         assignment, call assign with a blank value.
     */
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert a series of histograms to a table3d object
-
-        For objects of type table:
-
-        Store a histogram series in a table3d object.
-
-        Arguments: <tt><grid vector spec.> <direction (\"x\" or
-        \"y\")> <grid name> <bin edges vector spec.> "<bin grid vector
-        spec.> <bin name> <pattern> <new slice></tt>
-
-        Construct a series of histograms from a series of columnns in
-        a <tt>table</tt> object and then store them in a
-        <tt>table3d</tt> object. The <tt>ser-hist-t3d</tt> command
-        begins by creating a histogram from a series of columns
-        specified in <grid vector spec.>.
-    */
-    virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
-                                  bool itive_com);
-
-    /** \brief Binary function for tensors
-
-        For objects of type tensor_grid:
-
-        Apply a binary function to two tensor_grid objects.
-
-        Arguments: <tt><file> <object name> <function></tt>
-
-        Read a <tt>tensor_grid</tt> named <object name> from file
-        <file> and use it along with the function <function> to modify
-        the current <tt>tensor_grid</tt> object. The <function>
-        parameter should be a mathematical function of the value in
-        the current tensor (v), the value in the tensor named <object
-        name> (w), the indices (i0, i1, ...) or the grid points (x0,
-        x1, ...).
-    */
-    virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Average rows together 
 
@@ -483,36 +490,23 @@ namespace o2scl_acol {
     virtual int comm_average_rows(std::vector<std::string> &sv,
                                   bool itive_com);
 
-    /** \brief Compute correlation coefficients.
+    /** \brief Binary function for tensors
 
-        For objects of type table:
+        For objects of type tensor_grid:
 
-        Compute the correlation coefficient between two columns.
+        Apply a binary function to two tensor_grid objects.
 
-        Arguments: <tt>[column 1, column 2]</tt>
+        Arguments: <tt><file> <object name> <function></tt>
 
-        Compute the correlation coefficient between two columns, or,
-        if no arguments are given, then compute the correlation
-        coefficients between all pairs of columns. Results are output
-        to the screen.
+        Read a <tt>tensor_grid</tt> named <object name> from file
+        <file> and use it along with the function <function> to modify
+        the current <tt>tensor_grid</tt> object. The <function>
+        parameter should be a mathematical function of the value in
+        the current tensor (v), the value in the tensor named <object
+        name> (w), the indices (i0, i1, ...) or the grid points (x0,
+        x1, ...).
     */
-    virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Refine an object
-
-        For objects of type table:
-
-        Refine the table.
-
-        Arguments: <tt><index column> <factor></tt>
-
-        Refine the data by interpolating a fixed number of rows in
-        between every row of the original table. The type of
-        interpolation is determined by the value of
-        <tt>interp_type</tt>. If the initial number of rows is N, then
-        the final number of rows is 1+(N-1)*<factor>.
-    */
-    virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_binary(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Compute the value of a constant expression.
 
@@ -548,6 +542,29 @@ namespace o2scl_acol {
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Concatenate two objects
+
+        For objects of type table:
+
+        Concatenate a second table object onto current table.
+
+        <file> [name]
+
+        Add a second table to the end of the first, creating new
+        columns if necessary.
+
+        For objects of type table3d:
+
+        Concatenate data from a second table3d onto current table3d.
+
+        Arguments: <tt><file> [name]</tt>
+
+        Add all slices from the second \c table3d object which are not
+        already present in the current \c table3d object.
+
+    */
+    virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Clear the current object
 
         Arguments: (No arguments.)
@@ -557,23 +574,6 @@ namespace o2scl_acol {
     */
     virtual int comm_clear(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get help
-
-        Arguments: <tt>[command or parameter or type or topic]</tt>
-
-        If no argument is specified, this outputs all of the commands
-        which are valid for the current type, and then some generic
-        help for using acol. If a command is specified as the
-        argument, then help for that command is printed. If a
-        parameter which is modifiable by the \c get or \c set commands
-        is specified as the argument, then the help for that parameter
-        is printed. If a type is specified as the argument, then a
-        list of commands which operate on objects of that type is
-        printed. Finally, if a help topic is specified as the
-        argument, then that help information is printed.
-    */
-    virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
-    
     /** \brief List commands, with an optional type argument
 
         Arguments: <tt>[type]</tt>
@@ -585,6 +585,186 @@ namespace o2scl_acol {
     */
     virtual int comm_commands(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Get or modify a physical or numerical constant.
+
+        Arguments: <tt><name, pattern, "add", "del", "list", or 
+        "list-full"> [unit]</tt>
+
+        If the constant has no units, like the Euler-Mascheroni
+        constant, then e.g. <tt>acol -constant euler</tt> will report
+        the value 5.772157e-1 (at the default precision which is 6).
+        If the user requests a <tt>precision</tt> larger than 15
+        (double precision), then the <tt>constant</tt> command fails
+        and prints an error message.
+
+        If the constant has units but no units are specified as
+        arguments to the <tt>constant</tt> command, then all values of
+        the constant in the library are written to the screen. If a
+        unit is specified, then the <tt>constant</tt> command tries to
+        find the unique value with the specified unit. The user can
+        specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
+        of the constant. For example, <tt>acol -constant hbar cgs</tt>
+        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
+        the same value.
+
+        Note that some constants in the library are not known to 
+        full double precision and \c acol currently has no way of
+        reporting this.
+
+        Search patterns are also allowed, for example <tt>acol
+        -constant "satur*"</tt> returns all the constants related to
+        saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
+        to true, then regex is used to do the pattern matching, and
+        otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
+        pattern matching and unicode is not fully functional.
+
+        To list all the constants in the library, use <tt>'acol
+        -constant list'</tt>. Alternatively, <tt>acol -constant
+        list-full</tt> gives all information for all constants,
+        including all aliases, the source, and all the decompositions
+        into base units.
+
+        One can delete a constant with, e.g. <tt>acol -del
+        pi</tt> (this doesn't quite work yet for constants with
+        different values in different unit systems).
+
+        To add a constant, one must specify the name of the constant,
+        the value, the unit system, the unit flag, the source, and
+        then the 7 powers of the SI base units (in order
+        m,kg,s,K,A,mol,cd).
+    */
+    virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Compute contour lines
+
+        For objects of type table3d:
+
+        Create contour lines from a table3d slice.
+
+        Arguments: <tt><val> <slice_name> [output_filename
+        object_name]</tt>
+        
+        The \c contours command constructs a set of contour lines using
+        the data in slice named <slice> at the fixed value given in
+        <val>. If two additional arguments are given, then the
+        contour lines are stored in the file named output_filename and
+        the object is named object_name. If the file does not exist,
+        it is created. If no contours are found, then no file I/O is
+        performed and the current \c table3d object is unmodified.
+
+        For objects of type hist_2d:
+
+        Create contour lines from a table3d slice.
+
+        Arguments: <tt>["frac"] <val> [output file] [output name]</tt>
+
+        If the optional argument "frac" is not present, the \c contours
+        command constructs a set of contour lines using at the fixed
+        value given in <val>. If two additional arguments are given,
+        then the contour lines are stored in the file named
+        output_filename and the object is named \c object_name. If the
+        file does not exist, it is created. If no contours are found,
+        then no file I/O is performed and the current table3d object
+        is unmodified. If the argument "frac" is present, then the
+        operation is the same except that <val> is interpreted as a
+        fraction of the total integral under the data.
+    */
+    virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Manipulate or use a unit conversion factor
+
+        Arguments: <tt><old unit (or "list", "add", "del", or "nat")> 
+        <new unit> [value to convert]</tt>
+
+        The <tt>convert</tt> command handles unit conversions. To
+        compute a unit conversion factor and then optionally apply
+        than conversion factor to a user-specified value. use the form
+        <tt>acol -convert <old unit> <new unit> [value]</tt>.
+        Conversions which presume ħ=c=kB=1 are allowed by default. For
+        example, <tt>acol -convert MeV 1/fm</tt> returns
+        <tt>1.000000e+00 MeV = 5.067731e-03 1/fm</tt>. The conversion
+        factor is output at the current value of <tt>precision</tt>,
+        but is always internally stored with full double precision.
+
+        If no value to convert is specified, then a value of 1.0
+        is assumed.
+
+        Conversions are cached, so that if the user requests 
+        an identical conversion with a different numerical value,
+        then obtaining the conversion from the cache is faster than
+        looking it up and processing it each time.
+
+        The <tt>convert</tt> command attempts to handle arbitrary
+        combinations of powers of SI base units to automatically
+        compute new unit conversion. For example, <tt>acol -convert
+        "fm^10/g^30" "m^10/kg^30"</tt> reports <tt>1.000000e+00
+        fm^10/g^30 = 1.000000e-60 m^10/kg^30</tt>. 
+
+        Unit conversions containing constants stored in the
+        <tt>constant</tt> library are also allowed. For example,
+        <tt>acol -convert "Msun^2" "g^2"</tt> gives <tt>1.000000e+00
+        Msun^2 = 3.953774e+66 g^2</tt>. SI units are also understood,
+        and both μ and "mu" are interpreted as the "micro" prefix. For
+        example, <tt>acol -convert "μm" "pc"</tt> or <tt>acol
+        -convert "mum" "pc"</tt> both report the conversion between
+        micrometers and parsecs.
+
+        To print the list of known units, SI prefixes, and the unit
+        conversion cache, use <tt>acol -convert list</tt>. 
+
+        To add a unit (only MKS is supported) the format is:
+
+        <tt>-convert add <unit> <power of meters> <power of kg>
+        <power of seconds> <power of Kelvin> <power of amps>
+        <power of moles> <power of candelas> <val> <long name></tt>
+
+        To delete a unit, the format is:
+
+        <tt>-convert del <unit></tt>
+
+        However, note that deleting a unit does not delete its
+        occurrences in the unit conversion cache. 
+
+        While ħ=c=kB=1 is assumed by default, the user can disable
+        conversions taking advantage of these assignments. To modify
+        the use of natural units, use e.g. <tt>-convert nat 0 1 0</tt>.
+        The second argument is 1 for c=1 and 0 otherwise, the third
+        argument is 1 for ħ=1 and 0 otherwise, and finally the
+        fourth argument is 1 for kB=1 and 0 otherwise.
+    */
+    virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert units
+
+        For objects of type table:
+
+        Convert a column to a new unit.
+
+        Arguments: <tt><column> <new_unit></tt>
+
+        Convert the units of column <column> to <new unit>,
+        multipliying all entries in that column by the appropriate
+        factor. See <tt>acol -convert list</tt> for a list of units
+        and prefixes which can be automatically converted.
+    */
+    virtual int comm_convert_unit(std::vector<std::string> &sv, 
+                                  bool itive_com);
+    
+    /** \brief Compute correlation coefficients.
+
+        For objects of type table:
+
+        Compute the correlation coefficient between two columns.
+
+        Arguments: <tt>[column 1, column 2]</tt>
+
+        Compute the correlation coefficient between two columns, or,
+        if no arguments are given, then compute the correlation
+        coefficients between all pairs of columns. Results are output
+        to the screen.
+    */
+    virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Create an object.
 
         Arguments: <tt><type> [...]</tt>
@@ -598,9 +778,9 @@ namespace o2scl_acol {
 
         <tt>create double <value spec.></tt>: Create a <tt>double</tt>
         object and set it equal to the value specified by <value
-        spec.>. (See "acol -help <tt>functions</tt>' for help on specifying
-        functions and "acol -help value-spec" for help on value
-        specifications.)
+        spec.>. (See ``Function specifications`` for help on specifying
+        functions and ``Value specifications`` for specifying single
+        numbers.
 
         <tt>create <type> <size> <function of "i"></tt>: For array
         types <tt>int[]</tt> and <tt>size_t[]</tt>, the user must
@@ -643,111 +823,6 @@ namespace o2scl_acol {
         -ytitle y -show</tt>
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Set the grid for a \ref o2scl::tensor_grid object
-
-        For objects of type tensor_grid:
-
-        Set the tensor grid.
-
-        Arguments: <tt><index> <func. or vector spec></tt>
-
-        The first argument for the \c set-grid command specifies the
-        index for which grid to set. The second argument specifies the
-        grid. If it contains a ':', it is assumed to be a vector
-        specification (see 'help vector-spec'). Otherwise, the
-        argument is assumed to be a function which specifies the grid
-        value as a function of the variables 'i' and 'x'. The value of
-        'i' ranges from 0 to m-1, where 'm' is the tensor size for
-        each rank and the value of 'x' is equal to the previous grid
-        value.
-    */
-    virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Get the grid for a \ref o2scl::tensor_grid object
-
-        For objects of type table3d:
-
-        Print out the table3d grid.
-
-        Arguments: (No arguments.)
-
-        Output the table3d grid as a series of columns.
-
-        For objects of type tensor_grid:
-
-        Get the tensor grid.
-
-        Arguments: (No arguments.)
-
-        Output the tensor grid as a series of columns.
-    */
-    virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Download a file from the specified URL.
-
-        Arguments: <tt><file> <URL> [hash, \"file:\"hash_filename, or
-        \"none\"] [directory]</tt>
-
-        Check if a file matches a specified hash, and if not, attempt
-        to download a fresh copy from the specified URL. If the
-        filename is "_", then the file is extracted from the end of
-        the URL.
-
-        This function uses \ref o2scl::cloud_file to handle the 
-        file acquisition.
-    */
-    virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Parse doxygen XML to generate runtime docs.
-        
-        Arguments: (No arguments.)
-
-        When pugixml is enabled, this function reads the
-        doxygen XML output and generates an HDF5 file which acol reads
-        to generate the runtime documentation.
-    */
-    virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Open local HTML docs for O₂scl documentation.
-
-        Arguments: <tt>[section, class, or function]</tt>
-
-        If [topic] is unspecified, this command opens up the local
-        HTML documentation for O₂scl in the default web browser using
-        'open' on OSX and 'xdg-open' on other systems. If a topic is
-        specified, then the <tt>docs</tt> command looks for the O₂scl
-        local HTML documentation for the specified section, class, or
-        function. If the documentation is found, then that web page is
-        opened instead. 
-
-        The operation of the <tt>docs</tt> command depends on the
-        assumption that the HTML documentation files have not been
-        moved after the installation process. In order to open the
-        remote version of the documentation instead of the local copy,
-        use the <tt>wdocs</tt> command instead.
-    */
-    virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Open remote HTML docs for acol or an O₂scl topic.
-
-        Arguments: <tt>["dev"] [search_term], [topic] or [section
-        search_term]</tt>
-        
-        If no arguments are given, this command opens up the remote
-        HTML documentation for acol in the default web browser using
-        'open' on OSX and 'xdg-open' on other systems. If a [topic] is
-        specified, then the associated O₂scl web page is opened. If
-        the argument does not match an already known topic, then the
-        search feature on the O₂scl web page is opened using the
-        specified search term. Note that, for search terms, spaces can
-        be included using e.g. '-wdocs \"Simulated annealing\"'. If
-        the optional argument "dev" is given, then the development
-        rather than release documentation is used. In order to open
-        the local version of the documentation instead of the remote
-        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
-    */
-    virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Delete a column
 
@@ -857,341 +932,6 @@ namespace o2scl_acol {
     */
     virtual int comm_deriv(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Convert object to a \ref o2scl::table object
-
-        For objects of type double[]:
-
-        Convert to a table object.
-
-        Arguments: <tt><column name></tt>
-        
-        Convert the vector to a table with a single column named
-        <column name>.
-
-        For objects of type int[]:
-
-        Convert to a table object.
-
-        Arguments: <tt><column name></tt>
-        
-        Convert the vector to a table with a single column named
-        <column name>.
-
-        For objects of type size_t[]:
-
-        Convert to a table object.
-
-        Arguments: <tt><column name></tt>
-        
-        Convert the vector to a table with a single column named
-        <column name>.
-
-        For objects of type tensor_grid:
-
-        Convert to a table object.
-
-        Arguments: <tt><index> <grid name> <data name> [values of
-        fixed indices]</tt>
-        
-        Detailed desc.
-
-        For objects of type table3d:
-
-        Convert to a table object.
-
-        Arguments: (No arguments.)
-        
-        Detailed desc.
-
-        For objects of type hist:
-
-        Convert to a table object.
-
-        Arguments: (No arguments.)
-        
-        Convert to a table object.
-    */
-    virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Construct a multivariate Gaussian distribution
-
-        For objects of type table:
-        
-        Construct a multivariate Gaussian distribution
-
-        Arguments: <column 1> [column 2] ...
-
-        This creates an object of type <tt>prob_dens_mdim_gaussian</tt>
-        based on the columns of data in the table.
-     */
-    virtual int comm_to_gaussian(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Sample a distribution
-
-        For objects of type prob_dens_mdim_gaussian:
-
-        Arguments: <number of samples>
-
-        Sample the distribution to create a <tt>table</tt> object.
-     */
-    virtual int comm_sample(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Get entries along the main diagonal
-
-        For objects of type tensor:
-
-        Get diagonal elements.
-
-        Arguments: (No arguments.)
-
-        Extract only the elements on the main diagonal to create a
-        <tt>double[]</tt> object.
-    */
-    virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert object to a \ref o2scl::table3d object
-
-        For objects of type table:
-
-        Convert a <tt>table</tt> to a <tt>table3d</tt> object.
-
-        Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
-
-        The \c to-table3d command creates a \c table3d object using <x
-        column> and <y column> as the data for the x and y grids. If
-        [empty value] is given, then this value is used for points not
-        given by the table. If [eps] is specified, then that value is
-        used as the minimum value between grid points.
-
-        For objects of type tensor:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
-        [fixed 2] ...</tt>
-
-        The \c to-table3d command uses two indices in the current
-        tensor object to create a \c table3d object. The values for
-        the remaining indices fixed to [fixed 1], [fixed 2], etc. in
-        that order. For example, <tt>to-table3d 3 1 z 5 3</tt> uses
-        index 3 for the x coordinate of the new table3d object, uses
-        index 1 for the y coordinate of the new table3d object, uses 5
-        for index 0, and uses 3 for index 2. The x- and y-grids in
-        he table3d object are named "x" and "y" and filled with the
-        grid index by default. To set the x- or y-grid names
-        afterwards, use commands 'x-name' and 'y-name'.
-
-        For objects of type tensor<int>:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
-        [fixed 2] ...</tt>
-
-        This command uses two indices in the current tensor object to
-        create a table3d object. The values for the remaining indices
-        fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
-        coordinate of the new table3d object, uses index 1 for the y
-        coordinate of the new table3d object, uses 5 for index 0, and
-        uses 3 for index 2. The x- and y-grids in he table3d object
-        are named "x" and "y" and filled with the grid index by
-        default. To set the x- or y-grid names afterwards, use
-        commands 'x-name' and 'y-name'.
-
-        For objects of type tensor<size_t>:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
-        [fixed 2] ...</tt>
-
-        This command uses two indices in the current tensor object to
-        create a table3d object. The values for the remaining indices
-        fixed to [fixed 1], [fixed 2], etc. in that order. For
-        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
-        coordinate of the new table3d object, uses index 1 for the y
-        coordinate of the new table3d object, uses 5 for index 0, and
-        uses 3 for index 2. The x- and y-grids in he table3d object
-        are named "x" and "y" and filled with the grid index by
-        default. To set the x- or y-grid names afterwards, use
-        commands 'x-name' and 'y-name'.
-
-        For objects of type tensor_grid:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x index> <y index> <slice name> [value 1]
-        [value 2] ...</tt>
-
-        This command uses two indices in the current tensor_grid
-        object to create a table3d object. The values for the
-        remaining indices are by interpolation to [value 1], [value
-        2], etc. in that order. For example, <tt>to-table3d 3 1 z 0.5
-        2.0</tt> uses index 3 for the x coordinate of the new table3d
-        object, uses index 1 for the y coordinate of the new table3d
-        object, uses interpolation to set the value of the index 0 to
-        0.5, and uses interpolation to set the value of index 2 to to
-        2.0. The x- and y-grids in the table3d object are named "x"
-        and "y" by default. To set the x- or y-grid names
-        afterwards, use commands 'x-name' and 'y-name'.
-
-        For objects of type hist_2d:
-
-        Convert to a hist_2d object.
-
-        Arguments: <tt><x name> <y name> <weight name></tt>
-
-        Convert to a hist_2d object using the specified names.
-        
-        For objects of type prob_dens_mdim_amr:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x index> <y index> <x name> <x points> <y
-        name> <y points> <slice name></tt>
-
-        Select two indices and convert to a table3d object.
-    */
-    virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert object to a \ref o2scl::tensor_grid object
-
-        For objects of type table3d:
-
-        Convert a slice of the table3d object to a tensor_grid object.
-
-        Arguments: <tt><slice></tt>
-
-        Detailed desc.
-
-        For objects of type tensor:
-
-        Convert the tensor to a tensor_grid object.
-
-        Arguments: <tt>[function 1] [function 2] ...</tt>
-
-        Convert a tensor to a tensor_grid object, using functions to
-        specify the grid for each index. The functions should be
-        specified as functions of the variable 'i', which runs from 0
-        to size-1 for each index. Any user-specified functions are
-        used up to the rank of the tensor, and if not enough functions
-        are specified, then the function 'i' is used.
-    */
-    virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
-                                    bool itive_com);
-
-    /** \brief Convert object to a \ref o2scl::tensor_grid object
-
-        For objects of type table3d:
-
-        Convert a slice of the table3d object to a tensor_grid object.
-
-        Arguments: <tt><slice></tt>
-
-        Detailed desc.
-
-        For objects of type tensor:
-
-        Convert the tensor to a tensor_grid object.
-
-        Arguments: <tt>[function 1] [function 2] ...</tt>
-
-        Convert a tensor to a tensor_grid object, using functions to
-        specify the grid for each index. The functions should be
-        specified as functions of the variable 'i', which runs from 0
-        to size-1 for each index. Any user-specified functions are
-        used up to the rank of the tensor, and if not enough functions
-        are specified, then the function 'i' is used.
-    */
-    virtual int comm_to_tg_fermi(std::vector<std::string> &sv,
-                                 bool itive_com);
-    
-    /** \brief Convert object to a \ref o2scl::tensor object
-
-        For objects of type tensor_grid:
-
-        Convert to a tensor object.
-
-        Arguments: (No arguments.)
-        
-        Convert to a tensor object, ignoring the grid.
-    */
-    virtual int comm_to_tensor(std::vector<std::string> &sv,
-                               bool itive_com);
-
-    /** \brief Convert object to a \ref o2scl::table3d object
-        by summing over tensor indices
-
-        For objects of type tensor:
-
-        Select two indices and convert to a table3d object.
-
-        Arguments: <tt><x name> <y name> <slice name> [fixed 1] [fixed
-        2] ...</tt>
-
-        Detailed desc.
-    */
-    virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
-                                    bool itive_com);
-
-    /** \brief Compute autocorrelation coefficients
-
-        Arguments: <tt><options> ...</tt>
-        
-        This command computes autocorrelation coefficients for the
-        specified vector(s) and then estimates the associated 
-        autocorrelation length(s). 
-
-        There are three algorithms: a brute force algorithm (the
-        default specified with the string "def"), the algorithm from
-        "acor", and a method using FFTW ("fft"). The choice of
-        algorithm can be specified in the options argument.
-
-        If multiple vectors are given, then there are two options.
-        Option "max" (the default) means that autocorrelation
-        coefficients are computed separately for each vector and then
-        the maximum autocorrelation length is specified at the end.
-        Option "avg" means that the autocorrelation coefficients are
-        averaged over all vectors and a single autocorrelation length
-        for the averaged data is reported at the end.
-
-        Finally, the "store" option, if specified, means that the
-        autocorrelation coefficients are stored afterwards in 
-        a <tt>vec_vec_double</tt> object (and the current object,
-        if present, is cleared).
-
-        Options can be combined with commas (but no spaces), for
-        example <tt>fft,max,store</tt> or <tt>def,avg</tt>
-
-        If there is no current object, then the user may specify one
-        or more multiple vector specifications. See ``Multiple vector
-        specifications`` for more information.
-
-        If the current object is of type <tt>int[]</tt>,
-        <tt>double[]</tt>, or <tt>size_t[]</tt>, then the
-        autocorrelation coefficients of the current vector are
-        computed.
-
-        If the current object is of type <tt>table</tt>, then the user
-        may specify either columns of the table or a multiple vector
-        specification.
-    */
-    virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Compute the autocorrelation coefficient using \c acor
-
-        For objects of type table:
-
-        Compute the autocorrelation coefficient using \c acor
-
-        Arguments: <tt><column></tt>
-
-        Detailed desc.
-    */
-    //virtual int comm_ac_len(std::vector<std::string> &sv,
-    //bool itive_com);
-
     /** \brief Create a slice which is the derivative wrt x of another
 
         For objects of type table3d:
@@ -1232,6 +972,136 @@ namespace o2scl_acol {
     */
     virtual int comm_deriv2(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Get entries along the main diagonal
+
+        For objects of type tensor:
+
+        Get diagonal elements.
+
+        Arguments: (No arguments.)
+
+        Extract only the elements on the main diagonal to create a
+        <tt>double[]</tt> object.
+    */
+    virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Open local HTML docs for O₂scl documentation.
+
+        Arguments: <tt>[section, class, or function]</tt>
+
+        If [topic] is unspecified, this command opens up the local
+        HTML documentation for O₂scl in the default web browser using
+        'open' on OSX and 'xdg-open' on other systems. If a topic is
+        specified, then the <tt>docs</tt> command looks for the O₂scl
+        local HTML documentation for the specified section, class, or
+        function. If the documentation is found, then that web page is
+        opened instead. 
+
+        The operation of the <tt>docs</tt> command depends on the
+        assumption that the HTML documentation files have not been
+        moved after the installation process. In order to open the
+        remote version of the documentation instead of the local copy,
+        use the <tt>wdocs</tt> command instead.
+    */
+    virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Download a file from the specified URL.
+
+        Arguments: <tt><file> <URL> [hash, \"file:\"hash_filename, or
+        \"none\"] [directory]</tt>
+
+        Check if a file matches a specified hash, and if not, attempt
+        to download a fresh copy from the specified URL. If the
+        filename is "_", then the file is extracted from the end of
+        the URL.
+
+        This function uses \ref o2scl::cloud_file to handle the 
+        file acquisition.
+    */
+    virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Get or set an entry
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+
+        Arguments: <tt><column> <row> [value or "none"]</tt>
+
+        This command gets or sets the value in the specified column
+        and row. If "none" is specified as the third argument, then
+        the \c entry command just prints out the specified entry as if
+        the third argument was not specified.
+
+        For objects of type table3d:
+
+        Get or set a single entry in a table3d object.
+
+        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
+
+        Detailed desc.
+
+        For objects of type tensor:
+
+        Get or set a single entry in a tensor object.
+
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
+        "none"]</tt>
+
+        Detailed desc.
+
+        For objects of type tensor_grid:
+
+        Get or set a single entry in a tensor_grid object.
+
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
+
+        The \c entry command gets or sets a value in the \c
+        tensor_grid object. The arguments are a list of indices and
+        (optionally) a new value to store in that location.
+        See the \c entry-grid command to specify a grid location
+        rather than specifying indices.
+    */
+    virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Get an entry by grid point
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+        
+        Arguments: <tt><index column> <index value> <target column>
+        [value or "none"]</tt>
+        
+        The \c entry-grid command first looks for the value closest to
+        <index value> in the column <index column> to determine a row
+        in the table. Next \c entry-grid gets or sets the value of the
+        target column in that row. If "none" is specified as the
+        fourth argument, then \c entry-grid just prints out the
+        specified entry as if the third argument was not specified.
+
+        For objects of type table3d:
+
+        Get a single entry in a table3d object.
+
+        Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
+
+        Detailed desc.
+
+        For objects of type tensor_grid:
+
+        Get a single entry in a \c tensor_grid object.
+
+        Arguments: <tt><value 1> <value 2> <value 3> ... [value or
+        "none"]</tt>
+
+        The \c entry-grid command gets or sets a value in the
+        \c tensor_grid object. The arguments are a list of grid values
+        and (optionally) a new value to store in the location closest
+        to the specified grid values.
+    */
+    virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief List objects in a HDF5 file
 
         Arguments: <tt><file></tt>
@@ -1243,87 +1113,6 @@ namespace o2scl_acol {
     */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Read an object from an O₂scl-style HDF5 file.
-
-        Arguments: <tt><file> [object name]</tt>
-
-        Read an HDF5 file with the specified filename. If the [object
-        name] argument is specified, then read the object with the
-        specified name. Otherwise, look for the first <tt>table</tt>
-        object, and if not found, look for the first <tt>table3d</tt>
-        object, and so on, attempting to find a readable O₂scl object.
-    */
-    virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Add 'nlines' as a constant to a \ref o2scl::table object
-
-        For objects of type table:
-
-        Add 'nlines' as a constant to a <tt>table</tt> object.
-
-        Arguments: (No arguments.)
-
-        Add a constant called 'nlines' to the table and set it equal
-        to the number of lines (rows) in the table.
-    */
-    virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert to a \ref o2scl::hist object
-
-        For objects of type table:
-
-        Convert a table to a histogram.
-
-        Arguments: <tt><col> <n_bins> [wgts]</tt>
-
-        The <tt>to-hist</tt> command creates a 1D histogram from
-        column <col> using exactly <n_bins> bins and (optionally)
-        weighting the entries by the values in column [wgts]. 
-    */
-    virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert to a \ref o2scl::hist_2d object
-
-        For objects of type table:
-
-        Convert a table to a 2d histogram.
-
-        Arguments: <tt><col x> <col y> <n_x_bins> <n_y_bins>
-        [wgts]</tt>
-
-        The <tt>to-hist-2d</tt> command creates a 2D histogram from
-        <col x> and <col y> using <n_x_bins> bins in the x direction
-        and <n_y_bins> bins in the y direction, optionally weighting
-        the entries by the column [wgts].
-
-        For objects of type table3d:
-
-        Convert a table3d slice to a 2d histogram.
-
-        <slice>
-
-        The <tt>to-hist-2d</tt> command creates a 2D histogram from
-        slice <slice>.
-    */
-    virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Output the type of the current object
-
-        Arguments: (No arguments.)
-        
-        Show the current object type. Type can be <tt>char</tt>,
-        <tt>double</tt>, <tt>double[]</tt>, <tt>hist</tt>,
-        <tt>hist_2d</tt>, <tt>int</tt>, <tt>int[]</tt>,
-        <tt>prob_dens_mdim_amr</tt>, <tt>prob_dens_mdim_gaussian</tt>,
-        <tt>size_t</tt>, <tt>size_t[]</tt>, <tt>string</tt>,
-        <tt>string[]</tt>, <tt>table</tt>, <tt>table3d</tt>,
-        <tt>tensor</tt>, <tt>tensor<int></tt>,
-        <tt>tensor<size_t></tt>, <tt>tensor_grid</tt>,
-        <tt>uniform_grid<double></tt>, <tt>vec_vec_double</tt>,
-        <tt>vec_vec_string</tt>, or <tt>vector<contour_line></tt>.
-    */
-    virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
-    
     /** \brief Find a row
 
         For objects of type table:
@@ -1334,13 +1123,26 @@ namespace o2scl_acol {
 
         If one argument is given, then <tt>find-row</tt> finds the row
         which maximizes the value of the expression given in <func>,
-        and then output the entire row. Otherwise <tt>find-row</tt>
-        finds the row for which the value in column named <col> is as
-        close as possible to the value <val>. See command
-        <tt>get-row</tt> to get a row by its index.
+        and then output the entire row. See ``Function
+        specifications`` for more help on specifying functions.
+        Otherwise, <tt>find-row</tt> finds the row for which the value
+        in column named <col> is as close as possible to the value
+        <val>. See command <tt>get-row</tt> to get a row by its index.
     */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Fit data to a function
+
+        For objects of type table:
+
+        Fit two columns to a function (experimental).
+
+        Arguments: <tt><x> <y> <yerr> <ynew> <par names> <func> <vals></tt>
+
+        Detailed desc.
+    */
+    virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Create a column from a function
 
         For objects of type table:
@@ -1354,7 +1156,8 @@ namespace o2scl_acol {
         already exist, a new one is added to the table. For example,
         for a table containing columns named 'c1' and 'c2', <tt>function
         c1-c2 c3</tt> would create a new column c3 which contains the
-        difference of columns 'c1' and 'c2'.
+        difference of columns 'c1' and 'c2'. See ``Function
+        specifications`` for more help on specifying functions.
 
         For objects of type double[]:
 
@@ -1476,6 +1279,26 @@ namespace o2scl_acol {
     */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Get the grid for a \ref o2scl::tensor_grid object
+
+        For objects of type table3d:
+
+        Print out the table3d grid.
+
+        Arguments: (No arguments.)
+
+        Output the table3d grid as a series of columns.
+
+        For objects of type tensor_grid:
+
+        Get the tensor grid.
+
+        Arguments: (No arguments.)
+
+        Output the tensor grid as a series of columns.
+    */
+    virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Print out an entire row
 
         For objects of type table:
@@ -1485,62 +1308,73 @@ namespace o2scl_acol {
         Arguments: <tt><index></tt>
 
         Get a row by index. The first row has index 0, and the last
-        row has index n-1, where n is the total number of rows as
-        returned by the <tt>list</tt> command. The <tt>index</tt>
-        command creates a column of row indexes. To find a row which
-        contains a particular value or maximizes a specified function,
-        use <tt>find-row</tt>.
+        row has index n-1, where n is the total number of rows (which
+        can be determined by the \c nlines or \c list commands). The
+        <tt>index</tt> command creates a column of row indexes (which
+        is called 'N' by default). To find a row which contains a
+        particular value or maximizes a specified function, use
+        <tt>find-row</tt>.
     */
     virtual int comm_get_row(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Extract a slice from a table3d object to generate a 
-        \ref o2scl::table object
-
-        For objects of type table3d:
-
-        Convert a slice to a table object.
-
-        Arguments: <tt><"x" or "y"> <val></tt>
-
-        Extract a slice of a table3d object at fixed x or fixed y to
-        create a new table object. This function uses interpolation
-        with the current interpolation type to interpolate all of the
-        slices in the table3d object to create a table with a column
-        for each slice.
-
-        For objects of type tensor_grid:
-
-        Slice to a smaller rank tensor_grid object.
-
-        Arguments: <tt><index 1> <value 1> <index 2> <value 2> ...</tt>
-
-        Detailed desc.
-    */
-    virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Convert a slice to a histogram
-
-        For objects of type table3d:
-
-        Construct a histogram from a slice.
-
-        Arguments: <tt><slice></tt>
-
-        Detailed desc.
-    */
-    virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Fit data to a function
+    /** \brief Get units of a column
 
         For objects of type table:
 
-        Fit two columns to a function (experimental).
+        Get the units for a specified column.
 
-        Arguments: <tt><x> <y> <yerr> <ynew> <par names> <func> <vals></tt>
+        Arguments: <tt><column></tt>
 
-        Detailed desc.
+        Obtains the units for the specified column. 
     */
-    virtual int comm_fit(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Get help
+
+        Arguments: <tt>[command or parameter or type or topic]</tt>
+
+        If no argument is specified, this outputs all of the commands
+        which are valid for the current type, and then some generic
+        help for using acol. If a command is specified as the
+        argument, then help for that command is printed. If a
+        parameter which is modifiable by the \c get or \c set commands
+        is specified as the argument, then the help for that parameter
+        is printed. If a type is specified as the argument, then a
+        list of commands which operate on objects of that type is
+        printed. Finally, if a help topic is specified as the
+        argument, then that help information is printed.
+    */
+    virtual int comm_help(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Copy an O₂scl-generated HDF5 file
+
+        Arguments: <tt><source> <destination></tt>
+
+        Copy all O₂scl objects from one HDF5 file to another. This may
+        not work for HDF5 files generated outside of O₂scl. The source
+        and destination filenames may not be identical. The
+        destination file may not be the same size as the source, but
+        will contain the same information.
+    */
+    virtual int comm_h5_copy(std::vector<std::string> &sv, 
+                             bool itive_com);
+
+    /** \brief Add a column for line numbers
+
+        For objects of type table:
+
+        Add a column containing the row numbers.
+
+        Arguments: <tt>[column name]</tt>
+        
+        Define a new column named [column name] and fill the column
+        with the row indexes, beginning with zero. If no argument is
+        given, the new column is named 'N'. If a column named 'N' is
+        already present, then \c index adds underscores (up to a
+        maximum of 10) in an attempt to create a new unique column
+        name.
+    */
+    virtual int comm_index(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Insert a column from an external table using 
         interpolation
@@ -1551,18 +1385,22 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> <table> <oldx> <oldy> <newx> [newy]</tt>
 
-        Insert a column from file <fname> interpolating it into the
-        current table. The column <oldy> is the columns in the file
+        Insert a column from file <fname>, interpolating it into the
+        current table. The column <oldy> is the column in the file
         which is to be inserted into the table, using the column
         <oldx> in the file and <newx> in the table. The new column in
         the table is named <oldy>, or it is named [newy] if the
-        additional argument is given.
+        additional argument is given. Note that extrapolation is
+        allowed, and the operation of the \c insert command is not
+        well-defined if some of the column entries are not finite.
 
         For objects of type table3d:
 
         Interpolate a slice from another file.
 
         Arguments: <tt><file> <table> <old> [new]</tt>
+
+        Detailed desc.
     */
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
 
@@ -1576,7 +1414,7 @@ namespace o2scl_acol {
 
         Insert all columns from file <fname> into the current table.
         The first table is used or the table object named table_name,
-        if specified. If index columns old_x and new_x are not
+        if specified. If index columns [old_x] and [new_x] are not
         specified, then the insert requires both the current and the
         source table to have the same number of rows. If they are
         specified, then interpolation using those index columns is
@@ -1584,7 +1422,7 @@ namespace o2scl_acol {
         current table, then they are added automatically. If a column
         in the current table has the same name as one in the new table
         then it is rewritten with new data, with one exception. If a
-        column in the new table has the same name as old_x, then it is
+        column in the new table has the same name as [old_x], then it is
         left unmodified.
     */
     virtual int comm_insert_full(std::vector<std::string> &sv, bool itive_com);
@@ -1602,58 +1440,15 @@ namespace o2scl_acol {
     */
     virtual int comm_integ(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Numerically integrate a user-specified function 
-
-        Arguments: <tt><function> <variable> <lower limit> 
-        <upper limit> ["1" for multiprecision]</tt>
-
-        This command numerically integrates <function> with respect to
-        <variable> from <lower limit> to <upper limit>. If the fifth
-        argument is either \c "1" or \c "true", then multiprecision is
-        used to attempt to ensure the result is accurate to within the
-        requested precision.
-
-        At the moment, infinite upper or lower limits are not
-        supported.
-
-        Note that the variable "precision" is used for the argument to
-        the <tt>cout.precision()</tt> function, so precision of 10 is
-        actually 11 significant figures. Thus in multiprecision mode,
-        the integral is computed to within a relative tolerance of \f$
-        10^{-11} \f$.
-
-        An example demonstrating a dilogarithm ladder:
-        <tt>acol -set verbose 2 -set precision 30
-        -calc "pi^2/10-(log((sqrt(5)-1)/2)^2)" 1</tt>
-
-        Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
-
-        The <tt>calc</tt> command begins by obtaining the value of pi
-        to 35 digits. It then starts with 35-digit precision and then
-        compares that result to that obtained with 50-digit precision
-        and finds that those two are equal to within the requested
-        precision. 
-
-        For example, <tt> acol -set verbose 2 -set precision 30 
-        -ninteg "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1</tt>
-
-        Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
-
-        The <tt>ninteg</tt> command computes this same value using
-        numerical integration (and obtains the same result), using
-        42-digit -precision internally to evaluate the integrand.
-    */
-    virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
-
     /** \brief Toggle interactive mode
 
         Arguments: (No arguments.)
 
-        If given as a command-line parameter, 'interactive' toggles
-        the execution of the interactive mode after the command-line
-        parameters are processed. If zero arguments are given to
-        'acol' on the command-line then the interactive interface is
-        automatically turned on.
+        If given as a command-line parameter, the \c interactive
+        command toggles the execution of the interactive mode after
+        the command-line parameters are processed. If zero arguments
+        are given to \c acol on the command-line then the interactive
+        interface is automatically turned on.
     */
     virtual int comm_interactive(std::vector<std::string> &sv, bool itive_com);
 
@@ -1661,8 +1456,12 @@ namespace o2scl_acol {
         
         Arguments: <tt><file></tt>
 
-        Output the current object to the specified file
-        in the internal HDF5 format. 
+        Output the current object to the specified file in the
+        internal HDF5 format. If there is an object of the same
+        name in the HDF5 file of the same type, then that object
+        is overwritten. If there is an object of the same name
+        in the HDF5 file with a different time, then the file
+        write will fail and \c acol will exit.
     */
     virtual int comm_internal(std::vector<std::string> &sv, bool itive_com);
 
@@ -1675,24 +1474,29 @@ namespace o2scl_acol {
         Arguments: <tt><x name> <x value> <y name></tt>
 
         Interpolate <x value> from column named <x name> into column
-        named <y name>.
+        named <y name> using the current interpolation type 
+        as specified in \c interp_type .
 
         For objects of type double[]:
 
-        Interpolate an index into the array
+        Interpolate an index into the array using the current
+        interpolation type as specified in \c interp_type .
 
         Arguments: <tt><x value></tt>
 
-        Interpolate <x value> in the array.
+        Interpolate <x value> in the array using the current
+        interpolation type as specified in \c interp_type .
 
         For objects of type int[]:
 
-        Interpolate an index into the array
+        Interpolate an index into the array using the current
+        interpolation type as specified in \c interp_type .
 
         Arguments: <tt><x value></tt>
 
-        Interpolate <x value> in the array and print out the result
-        as a double.
+        Interpolate <x value> in the array using the current
+        interpolation type as specified in \c interp_type and print
+        out the result as a double.
 
         For objects of type size_t[]:
 
@@ -1700,8 +1504,9 @@ namespace o2scl_acol {
 
         Arguments: <tt><x value></tt>
 
-        Interpolate <x value> in the array and print out the result
-        as a double.
+        Interpolate <x value> in the array using the current
+        interpolation type as specified in \c interp_type and print
+        out the result as a double.
 
         For objects of type table3d:
 
@@ -1710,7 +1515,8 @@ namespace o2scl_acol {
         Arguments: <tt><z name> <x value> <y value></tt>
 
         Interpolate (<x value>,<y value>) into the slice named <z
-        name>.
+        name> using the current interpolation type 
+        as specified in \c interp_type .
 
         For objects of type tensor_grid:
 
@@ -1718,9 +1524,10 @@ namespace o2scl_acol {
 
         Arguments: <tt><value 1> <value 2> <value 3> ...</tt>
 
-        The command "interp" uses linear interpolation to interpolate
-        an array with size equal to the tensor rank into the tensor
-        grid and outputs the result.
+        When the current object is a \c tensor_grid object, the \c
+        interp uses linear interpolation (independent of the value of
+        \c interp_type) to interpolate an array with size equal to the
+        tensor rank into the tensor grid and outputs the result.
     */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
@@ -1781,6 +1588,8 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
 
         For objects of type hist_2d:
+
+        List the bin edges.
     */
     virtual int comm_list(std::vector<std::string> &sv, bool itive_com);
 
@@ -1824,7 +1633,7 @@ namespace o2scl_acol {
 
         Arguments: <tt><slice name></tt>
 
-        Compute the maximum value of a slice.
+        Compute the maximum value of <slice name>.
 
         For objects of type tensor:
 
@@ -1952,43 +1761,66 @@ namespace o2scl_acol {
     */
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Set the name of the x grid
+    /** \brief Numerically integrate a user-specified function 
 
-        For objects of type table3d:
+        Arguments: <tt><function> <variable> <lower limit> 
+        <upper limit> ["1" for multiprecision]</tt>
 
-        Get or set the name of the x grid.
+        This command numerically integrates <function> with respect to
+        <variable> from <lower limit> to <upper limit>. If the fifth
+        argument is either \c "1" or \c "true", then multiprecision is
+        used to attempt to ensure the result is accurate to within the
+        requested precision.
 
-        Arguments: <tt>[name]</tt>
+        At the moment, infinite upper or lower limits are not
+        supported.
 
-        Get or set the name of the x grid.
+        Note that the variable \c precision is used for the argument to
+        the <tt>cout.precision()</tt> function, so precision of 10 is
+        actually 11 significant figures. Thus in multiprecision mode,
+        the integral is computed to within a relative tolerance of \f$
+        10^{-11} \f$.
+
+        Here is an example demonstrating a dilogarithm ladder. First,
+        the exact result, computed using the \c calc command.
+
+        <tt>acol -set verbose 2 -set precision 30 -calc
+        "pi^2/10-(log((sqrt(5)-1)/2)^2)" 1</tt>
+
+        <tt>Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
+        </tt>
+
+        In this example, the \c calc command begins by
+        obtaining the value of π to 35 digits. It then starts with
+        35-digit precision and then compares that result to that
+        obtained with 50-digit precision and finds that those two are
+        equal to within the requested precision. Now, using 
+        the \c ninteg command to achieve the same result:
+
+        <tt>acol -set verbose 2 -set precision 30 -ninteg
+        "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1</tt>
+
+        <tt>Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
+        </tt>
+
+        The <tt>ninteg</tt> command computes this same value using
+        numerical integration (and obtains the same result), using
+        42-digit precision internally to evaluate the integrand.
     */
-    virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Set the name of the y grid
-
-        For objects of type table3d:
-
-        Get or set the name of the y grid.
-
-        Arguments: <tt>[name]</tt>
-
-        Get or set the name of the y grid.
-    */
-    virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Add a column for line numbers
+    /** \brief Add 'nlines' as a constant to a \ref o2scl::table object
 
         For objects of type table:
 
-        Add a column containing the row numbers.
+        Add 'nlines' as a constant to a <tt>table</tt> object.
 
-        Arguments: <tt>[column name]</tt>
-        
-        Define a new column named [column name] and fill the column
-        with the row indexes, beginning with zero. If no argument is
-        given, the new column is named 'N'.
+        Arguments: (No arguments.)
+
+        Add a constant called 'nlines' to the table and set it equal
+        to the number of lines (rows) in the table.
     */
-    virtual int comm_index(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Output the current object to screen or text file.
 
@@ -1999,6 +1831,18 @@ namespace o2scl_acol {
         using the <tt>generic</tt> command.
     */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Read an object from an O₂scl-style HDF5 file.
+
+        Arguments: <tt><file> [object name]</tt>
+
+        Read an HDF5 file with the specified filename. If the [object
+        name] argument is specified, then read the object with the
+        specified name. Otherwise, look for the first <tt>table</tt>
+        object, and if not found, look for the first <tt>table3d</tt>
+        object, and so on, attempting to find a readable O₂scl object.
+    */
+    virtual int comm_read(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Rearrange a tensor
 
@@ -2065,158 +1909,21 @@ namespace o2scl_acol {
     */
     virtual int comm_rearrange(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Preview the current object
-
-        Arguments: <tt>[number of lines] [number of columns]</tt>
-
-        Print out all or part of the current object in format suitable
-        for the screen.
-    */
-    virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Send a slack message
-
-        Arguments: <tt>["#channel"] <strings-spec></tt>
-
-        Send a message to slack, using the specified channel. If the
-        channel is not specified, it is taken from the environment
-        variable O2SCL_SLACK_CHANNEL. The '#' sign should be included
-        with the channel name. The Slack webhook URL is taken from the
-        environment variable O2SCL_SLACK_URL and the username is taken
-        from the environment variable O2SCL_SLACK_USERNAME. The
-        message is constructed from the string list specification in
-        <strings-spec> (see 'acol -help strings-spec' for more
-        information).
-    */
-    virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Get or set the value of an object
-
-        For objects of type int:
-
-        Arguments: <tt>[value]</tt>
-
-        Get or set the integer.
-
-        For objects of type size_t:
-
-        Arguments: <tt>[value]</tt>
-
-        Get or set the size_t object.
-
-        For objects of type string:
-
-        Arguments: <tt>[value]</tt>
-
-        Get or set the string.
-
-        For objects of type double:
-
-        Arguments: <tt>[value spec.]</tt>
-
-        Get or set the value of the double object. See ``Value
-        specifications`` for more information.
-
-        For objects of type char:
-
-        Arguments: <tt>[value]</tt>
-
-        Get or set the character.
-
-    */
-    virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Concatenate two objects
+    /** \brief Refine an object
 
         For objects of type table:
 
-        Concatenate a second table object onto current table.
+        Refine the table.
 
-        <file> [name]
+        Arguments: <tt><index column> <factor></tt>
 
-        Add a second table to the end of the first, creating new
-        columns if necessary.
-
-        For objects of type table3d:
-
-        Concatenate data from a second table3d onto current table3d.
-
-        Arguments: <tt><file> [name]</tt>
-
-        Add all slices from the second \c table3d object which are not
-        already present in the current \c table3d object.
-
+        Refine the data by interpolating a fixed number of rows in
+        between every row of the original table. The type of
+        interpolation is determined by the value of
+        <tt>interp_type</tt>. If the initial number of rows is N, then
+        the final number of rows is 1+(N-1)*<factor>.
     */
-    virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
-
-    /** \brief Sum two objects
-
-        For objects of type table:
-
-        Add data from a second table object to current table.
-
-        Arguments: <tt><file> [name]</tt>
-
-        Add all columns from the second table to their corresponding
-        columns in the current table, creating new columns if
-        necessary.
-
-        For objects of type double[]:
-
-        Compute the vector sum.
-
-        (No arguments.)
-
-        Compute the vector sum.
-
-        For objects of type int[]:
-
-        Compute the vector sum.
-
-        (No arguments.)
-
-        Compute the vector sum.
-
-        For objects of type size_t[]:
-
-        Compute the vector sum.
-
-        (No arguments.)
-
-        Compute the vector sum.
-
-        For objects of type table3d:
-
-        Add data from a second table3d object to current table3d.
-        
-        Arguments: <tt><file> [name]</tt>
-
-        Add all slides from the second table3d to their corresponding
-        slices in the current table3d, creating new slices if
-        necessary.
-
-        For objects of type tensor:
-
-        Output the sum of all the tensor entries.
-
-        (No arguments.)
-
-        The \c sum command outputs the total tensor size
-        and the sum over all entries. Note, to perform a partial
-        sum over sum of the tensor indices, use the 
-        <tt>rearrange</tt> command.
-
-        For objects of type tensor_grid:
-
-        Output the sum of all the tensor entries.
-
-        (No arguments.)
-
-        The \c sum command outputs the total tensor size and the sum
-        over all entries. Note, to perform a partial sum over sum of
-        the tensor indices, use the <tt>rearrange</tt> command.
-    */
-    virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Rename a part of an object
 
@@ -2239,6 +1946,25 @@ namespace o2scl_acol {
         entire object, you should use <tt>-set obj_name new_name</tt>.
     */
     virtual int comm_rename(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Preview the current object
+
+        Arguments: <tt>[number of lines] [number of columns]</tt>
+
+        Print out all or part of the current object in format suitable
+        for the screen.
+    */
+    virtual int comm_preview(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Sample a distribution
+
+        For objects of type prob_dens_mdim_gaussian:
+
+        Arguments: <number of samples>
+
+        Sample the distribution to create a <tt>table</tt> object.
+     */
+    virtual int comm_sample(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Select part of an object
 
@@ -2285,6 +2011,25 @@ namespace o2scl_acol {
     virtual int comm_select_rows(std::vector<std::string> &sv,
                                  bool itive_com);
 
+    /** \brief Convert a series of histograms to a table3d object
+
+        For objects of type table:
+
+        Store a histogram series in a table3d object.
+
+        Arguments: <tt><grid vector spec.> <direction (\"x\" or
+        \"y\")> <grid name> <bin edges vector spec.> "<bin grid vector
+        spec.> <bin name> <pattern> <new slice></tt>
+
+        Construct a series of histograms from a series of columnns in
+        a <tt>table</tt> object and then store them in a
+        <tt>table3d</tt> object. The <tt>ser-hist-t3d</tt> command
+        begins by creating a histogram from a series of columns
+        specified in <grid vector spec.>.
+    */
+    virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
+                                  bool itive_com);
+
     /// Post-processing for setting a value
     virtual int comm_set(std::vector<std::string> &sv, bool itive_com);
 
@@ -2313,6 +2058,26 @@ namespace o2scl_acol {
     */
     virtual int comm_set_data(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Set the grid for a \ref o2scl::tensor_grid object
+
+        For objects of type tensor_grid:
+
+        Set the tensor grid.
+
+        Arguments: <tt><index> <func. or vector spec></tt>
+
+        The first argument for the \c set-grid command specifies the
+        index for which grid to set. The second argument specifies the
+        grid. If it contains a ':', it is assumed to be a vector
+        specification (see 'help vector-spec'). Otherwise, the
+        argument is assumed to be a function which specifies the grid
+        value as a function of the variables 'i' and 'x'. The value of
+        'i' ranges from 0 to m-1, where 'm' is the tensor size for
+        each rank and the value of 'x' is equal to the previous grid
+        value.
+    */
+    virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Set units of a column
 
         For objects of type table:
@@ -2321,155 +2086,65 @@ namespace o2scl_acol {
 
         Arguments: <tt><column> <unit></tt>
 
-        Detailed desc.
+        Set the unit string of <column>. Any string is allowed, but
+        only those based on the output of <tt>acol -convert list</tt>
+        can be automatically converted.
     */
     virtual int comm_set_unit(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Compute contour lines
+    /** \brief Send a slack message
+
+        Arguments: <tt>["#channel"] <strings-spec></tt>
+
+        Send a message to slack, using the specified channel. If the
+        channel is not specified, it is taken from the environment
+        variable O2SCL_SLACK_CHANNEL. The '#' sign should be included
+        with the channel name. The Slack webhook URL is taken from the
+        environment variable O2SCL_SLACK_URL and the username is taken
+        from the environment variable O2SCL_SLACK_USERNAME. The
+        message is constructed from the string list specification in
+        <strings-spec> (see 'acol -help strings-spec' for more
+        information).
+    */
+    virtual int comm_slack(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Extract a slice from a table3d object to generate a 
+        \ref o2scl::table object
 
         For objects of type table3d:
 
-        Create contour lines from a table3d slice.
+        Convert a slice to a table object.
 
-        Arguments: <tt><val> <slice_name> [output_filename
-        object_name]</tt>
-        
-        The \c contours command constructs a set of contour lines using
-        the data in slice named <slice> at the fixed value given in
-        <val>. If two additional arguments are given, then the
-        contour lines are stored in the file named output_filename and
-        the object is named object_name. If the file does not exist,
-        it is created. If no contours are found, then no file I/O is
-        performed and the current \c table3d object is unmodified.
+        Arguments: <tt><"x" or "y"> <val></tt>
 
-        For objects of type hist_2d:
-
-        Create contour lines from a table3d slice.
-
-        Arguments: <tt>["frac"] <val> [output file] [output name]</tt>
-
-        If the optional argument "frac" is not present, the \c contours
-        command constructs a set of contour lines using at the fixed
-        value given in <val>. If two additional arguments are given,
-        then the contour lines are stored in the file named
-        output_filename and the object is named \c object_name. If the
-        file does not exist, it is created. If no contours are found,
-        then no file I/O is performed and the current table3d object
-        is unmodified. If the argument "frac" is present, then the
-        operation is the same except that <val> is interpreted as a
-        fraction of the total integral under the data.
-    */
-    virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Get units of a column
-
-        For objects of type table:
-
-        Get the units for a specified column.
-
-        Arguments: <tt><column></tt>
-
-        Obtains the units for the specified column.
-    */
-    virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Get or set an entry
-
-        For objects of type table:
-
-        Get or set a single entry in a table.
-
-        Arguments: <tt><column> <row> [value or "none"]</tt>
-
-        This command gets or sets the value in the specified column
-        and row. If "none" is specified as the third argument, then
-        the \c entry command just prints out the specified entry as if
-        the third argument was not specified.
-
-        For objects of type table3d:
-
-        Get or set a single entry in a table3d object.
-
-        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
-
-        Detailed desc.
-
-        For objects of type tensor:
-
-        Get or set a single entry in a tensor object.
-
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
-        "none"]</tt>
-
-        Detailed desc.
+        Extract a slice of a table3d object at fixed x or fixed y to
+        create a new table object. This function uses interpolation
+        with the current interpolation type to interpolate all of the
+        slices in the table3d object to create a table with a column
+        for each slice.
 
         For objects of type tensor_grid:
 
-        Get or set a single entry in a tensor_grid object.
+        Slice to a smaller rank tensor_grid object.
 
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
+        Arguments: <tt><index 1> <value 1> <index 2> <value 2> ...</tt>
 
-        The \c entry command gets or sets a value in the \c
-        tensor_grid object. The arguments are a list of indices and
-        (optionally) a new value to store in that location.
-        See the \c entry-grid command to specify a grid location
-        rather than specifying indices.
+        Detailed desc.
     */
-    virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get an entry by grid point
-
-        For objects of type table:
-
-        Get or set a single entry in a table.
-        
-        Arguments: <tt><index column> <index value> <target column>
-        [value or "none"]</tt>
-        
-        The \c entry-grid command first looks for the value closest to
-        <index value> in the column <index column> to determine a row
-        in the table. Next \c entry-grid gets or sets the value of the
-        target column in that row. If "none" is specified as the
-        fourth argument, then \c entry-grid just prints out the
-        specified entry as if the third argument was not specified.
+    /** \brief Convert a slice to a histogram
 
         For objects of type table3d:
 
-        Get a single entry in a table3d object.
+        Construct a histogram from a slice.
 
-        Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
+        Arguments: <tt><slice></tt>
 
         Detailed desc.
-
-        For objects of type tensor_grid:
-
-        Get a single entry in a \c tensor_grid object.
-
-        Arguments: <tt><value 1> <value 2> <value 3> ... [value or
-        "none"]</tt>
-
-        The \c entry-grid command gets or sets a value in the
-        \c tensor_grid object. The arguments are a list of grid values
-        and (optionally) a new value to store in the location closest
-        to the specified grid values.
     */
-    virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
-    
-    /** \brief Convert units
+    virtual int comm_slice_hist(std::vector<std::string> &sv, bool itive_com);
 
-        For objects of type table:
-
-        Convert a column to a new unit.
-
-        Arguments: <tt><column> <new_unit></tt>
-
-        Convert the units of column <column> to <new unit>,
-        multipliying all entries in that column by the appropriate
-        factor.
-    */
-    virtual int comm_convert_unit(std::vector<std::string> &sv, 
-                                  bool itive_com);
-    
     /** \brief Sort data
 
         For objects of type int[]:
@@ -2550,6 +2225,453 @@ namespace o2scl_acol {
     */
     virtual int comm_stats(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Compute the sum of two objects
+
+        For objects of type table:
+
+        Add data from a second table object to current table.
+
+        Arguments: <tt><file> [name]</tt>
+
+        Add all columns from the second table to their corresponding
+        columns in the current table, creating new columns if
+        necessary.
+
+        For objects of type double[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type int[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type size_t[]:
+
+        Compute the vector sum.
+
+        (No arguments.)
+
+        Compute the vector sum.
+
+        For objects of type table3d:
+
+        Add data from a second table3d object to current table3d.
+        
+        Arguments: <tt><file> [name]</tt>
+
+        Add all slides from the second table3d to their corresponding
+        slices in the current table3d, creating new slices if
+        necessary.
+
+        For objects of type tensor:
+
+        Output the sum of all the tensor entries.
+
+        (No arguments.)
+
+        The \c sum command outputs the total tensor size
+        and the sum over all entries. Note, to perform a partial
+        sum over sum of the tensor indices, use the 
+        <tt>rearrange</tt> command.
+
+        For objects of type tensor_grid:
+
+        Output the sum of all the tensor entries.
+
+        (No arguments.)
+
+        The \c sum command outputs the total tensor size and the sum
+        over all entries. Note, to perform a partial sum over sum of
+        the tensor indices, use the <tt>rearrange</tt> command.
+    */
+    virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Construct a multivariate Gaussian distribution
+
+        For objects of type table:
+        
+        Construct a multivariate Gaussian distribution
+
+        Arguments: <column 1> [column 2] ...
+
+        This creates an object of type <tt>prob_dens_mdim_gaussian</tt>
+        based on the columns of data in the table.
+     */
+    virtual int comm_to_gaussian(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert to a \ref o2scl::hist object
+
+        For objects of type table:
+
+        Convert a table to a histogram.
+
+        Arguments: <tt><col> <n_bins> [wgts]</tt>
+
+        The <tt>to-hist</tt> command creates a 1D histogram from
+        column <col> using exactly <n_bins> bins and (optionally)
+        weighting the entries by the values in column [wgts]. 
+    */
+    virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert to a \ref o2scl::hist_2d object
+
+        For objects of type table:
+
+        Convert a table to a 2d histogram.
+
+        Arguments: <tt><col x> <col y> <n_x_bins> <n_y_bins>
+        [wgts]</tt>
+
+        The <tt>to-hist-2d</tt> command creates a 2D histogram from
+        <col x> and <col y> using <n_x_bins> bins in the x direction
+        and <n_y_bins> bins in the y direction, optionally weighting
+        the entries by the column [wgts].
+
+        For objects of type table3d:
+
+        Convert a table3d slice to a 2d histogram.
+
+        <slice>
+
+        The <tt>to-hist-2d</tt> command creates a 2D histogram from
+        slice <slice>.
+    */
+    virtual int comm_to_hist_2d(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::table object
+
+        For objects of type double[]:
+
+        Convert to a table object.
+
+        Arguments: <tt><column name></tt>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
+        For objects of type int[]:
+
+        Convert to a table object.
+
+        Arguments: <tt><column name></tt>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
+        For objects of type size_t[]:
+
+        Convert to a table object.
+
+        Arguments: <tt><column name></tt>
+        
+        Convert the vector to a table with a single column named
+        <column name>.
+
+        For objects of type tensor_grid:
+
+        Convert to a table object.
+
+        Arguments: <tt><index> <grid name> <data name> [values of
+        fixed indices]</tt>
+        
+        Detailed desc.
+
+        For objects of type table3d:
+
+        Convert to a table object.
+
+        Arguments: (No arguments.)
+        
+        Detailed desc.
+
+        For objects of type hist:
+
+        Convert to a table object.
+
+        Arguments: (No arguments.)
+        
+        Convert to a table object.
+    */
+    virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::table3d object
+
+        For objects of type table:
+
+        Convert a <tt>table</tt> to a <tt>table3d</tt> object.
+
+        Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
+
+        The \c to-table3d command creates a \c table3d object using <x
+        column> and <y column> as the data for the x and y grids. If
+        [empty value] is given, then this value is used for points not
+        given by the table. If [eps] is specified, then that value is
+        used as the minimum value between grid points.
+
+        For objects of type tensor:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
+
+        The \c to-table3d command uses two indices in the current
+        tensor object to create a \c table3d object. The values for
+        the remaining indices fixed to [fixed 1], [fixed 2], etc. in
+        that order. For example, <tt>to-table3d 3 1 z 5 3</tt> uses
+        index 3 for the x coordinate of the new table3d object, uses
+        index 1 for the y coordinate of the new table3d object, uses 5
+        for index 0, and uses 3 for index 2. The x- and y-grids in
+        he table3d object are named "x" and "y" and filled with the
+        grid index by default. To set the x- or y-grid names
+        afterwards, use commands 'x-name' and 'y-name'.
+
+        For objects of type tensor<int>:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
+
+        This command uses two indices in the current tensor object to
+        create a table3d object. The values for the remaining indices
+        fixed to [fixed 1], [fixed 2], etc. in that order. For
+        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
+        coordinate of the new table3d object, uses index 1 for the y
+        coordinate of the new table3d object, uses 5 for index 0, and
+        uses 3 for index 2. The x- and y-grids in he table3d object
+        are named "x" and "y" and filled with the grid index by
+        default. To set the x- or y-grid names afterwards, use
+        commands 'x-name' and 'y-name'.
+
+        For objects of type tensor<size_t>:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x index> <y index> <slice name> [fixed 1]
+        [fixed 2] ...</tt>
+
+        This command uses two indices in the current tensor object to
+        create a table3d object. The values for the remaining indices
+        fixed to [fixed 1], [fixed 2], etc. in that order. For
+        example, <tt>to-table3d 3 1 z 5 3</tt> uses index 3 for the x
+        coordinate of the new table3d object, uses index 1 for the y
+        coordinate of the new table3d object, uses 5 for index 0, and
+        uses 3 for index 2. The x- and y-grids in he table3d object
+        are named "x" and "y" and filled with the grid index by
+        default. To set the x- or y-grid names afterwards, use
+        commands 'x-name' and 'y-name'.
+
+        For objects of type tensor_grid:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x index> <y index> <slice name> [value 1]
+        [value 2] ...</tt>
+
+        This command uses two indices in the current tensor_grid
+        object to create a table3d object. The values for the
+        remaining indices are by interpolation to [value 1], [value
+        2], etc. in that order. For example, <tt>to-table3d 3 1 z 0.5
+        2.0</tt> uses index 3 for the x coordinate of the new table3d
+        object, uses index 1 for the y coordinate of the new table3d
+        object, uses interpolation to set the value of the index 0 to
+        0.5, and uses interpolation to set the value of index 2 to to
+        2.0. The x- and y-grids in the table3d object are named "x"
+        and "y" by default. To set the x- or y-grid names
+        afterwards, use commands 'x-name' and 'y-name'.
+
+        For objects of type hist_2d:
+
+        Convert to a hist_2d object.
+
+        Arguments: <tt><x name> <y name> <weight name></tt>
+
+        Convert to a hist_2d object using the specified names.
+        
+        For objects of type prob_dens_mdim_amr:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x index> <y index> <x name> <x points> <y
+        name> <y points> <slice name></tt>
+
+        Select two indices and convert to a table3d object.
+    */
+    virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::table3d object
+        by summing over tensor indices
+
+        For objects of type tensor:
+
+        Select two indices and convert to a table3d object.
+
+        Arguments: <tt><x name> <y name> <slice name> [fixed 1] [fixed
+        2] ...</tt>
+
+        Detailed desc.
+    */
+    virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
+                                    bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::tensor object
+
+        For objects of type tensor_grid:
+
+        Convert to a tensor object.
+
+        Arguments: (No arguments.)
+        
+        Convert to a tensor object, ignoring the grid.
+    */
+    virtual int comm_to_tensor(std::vector<std::string> &sv,
+                               bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::tensor_grid object
+
+        For objects of type table3d:
+
+        Convert a slice of the table3d object to a tensor_grid object.
+
+        Arguments: <tt><slice></tt>
+
+        Detailed desc.
+
+        For objects of type tensor:
+
+        Convert the tensor to a tensor_grid object.
+
+        Arguments: <tt>[function 1] [function 2] ...</tt>
+
+        Convert a tensor to a tensor_grid object, using functions to
+        specify the grid for each index. The functions should be
+        specified as functions of the variable 'i', which runs from 0
+        to size-1 for each index. Any user-specified functions are
+        used up to the rank of the tensor, and if not enough functions
+        are specified, then the function 'i' is used.
+    */
+    virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
+                                    bool itive_com);
+
+    /** \brief Convert object to a \ref o2scl::tensor_grid object
+
+        For objects of type table3d:
+
+        Convert a slice of the table3d object to a tensor_grid object.
+
+        Arguments: <tt><slice></tt>
+
+        Detailed desc.
+
+        For objects of type tensor:
+
+        Convert the tensor to a tensor_grid object.
+
+        Arguments: <tt>[function 1] [function 2] ...</tt>
+
+        Convert a tensor to a tensor_grid object, using functions to
+        specify the grid for each index. The functions should be
+        specified as functions of the variable 'i', which runs from 0
+        to size-1 for each index. Any user-specified functions are
+        used up to the rank of the tensor, and if not enough functions
+        are specified, then the function 'i' is used.
+    */
+    virtual int comm_to_tg_fermi(std::vector<std::string> &sv,
+                                 bool itive_com);
+    
+    /** \brief Output the type of the current object
+
+        Arguments: (No arguments.)
+        
+        Show the current object type. Type can be <tt>char</tt>,
+        <tt>double</tt>, <tt>double[]</tt>, <tt>hist</tt>,
+        <tt>hist_2d</tt>, <tt>int</tt>, <tt>int[]</tt>,
+        <tt>prob_dens_mdim_amr</tt>, <tt>prob_dens_mdim_gaussian</tt>,
+        <tt>size_t</tt>, <tt>size_t[]</tt>, <tt>string</tt>,
+        <tt>string[]</tt>, <tt>table</tt>, <tt>table3d</tt>,
+        <tt>tensor</tt>, <tt>tensor<int></tt>,
+        <tt>tensor<size_t></tt>, <tt>tensor_grid</tt>,
+        <tt>uniform_grid<double></tt>, <tt>vec_vec_double</tt>,
+        <tt>vec_vec_string</tt>, or <tt>vector<contour_line></tt>.
+    */
+    virtual int comm_type(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Get or set the value of an object
+
+        For objects of type int:
+
+        Arguments: <tt>[value]</tt>
+
+        Get or set the integer.
+
+        For objects of type size_t:
+
+        Arguments: <tt>[value]</tt>
+
+        Get or set the size_t object.
+
+        For objects of type string:
+
+        Arguments: <tt>[value]</tt>
+
+        Get or set the string.
+
+        For objects of type double:
+
+        Arguments: <tt>[value spec.]</tt>
+
+        Get or set the value of the double object. See ``Value
+        specifications`` for more information.
+
+        For objects of type char:
+
+        Arguments: <tt>[value]</tt>
+
+        Get or set the character.
+
+    */
+    virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
+    
+    /** \brief Print version information and O₂scl settings.
+
+        Arguments: (No arguments.)
+
+        This prints the O₂scl version, when it was compiled, HDF5
+        version information, what packages were enabled during
+        installation, the data and documentation directories, and
+        other miscellaneous information about O₂scl.
+     */
+    virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Open remote HTML docs for acol or an O₂scl topic.
+
+        Arguments: <tt>["dev"] [search_term], [topic] or [section
+        search_term]</tt>
+        
+        If no arguments are given, this command opens up the remote
+        HTML documentation for acol in the default web browser using
+        'open' on OSX and 'xdg-open' on other systems. If a [topic] is
+        specified, then the associated O₂scl web page is opened. If
+        the argument does not match an already known topic, then the
+        search feature on the O₂scl web page is opened using the
+        specified search term. Note that, for search terms, spaces can
+        be included using e.g. '-wdocs \"Simulated annealing\"'. If
+        the optional argument "dev" is given, then the development
+        rather than release documentation is used. In order to open
+        the local version of the documentation instead of the remote
+        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
+    */
+    virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Get weighted statistics
 
         For objects of type table:
@@ -2573,134 +2695,39 @@ namespace o2scl_acol {
     */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Print version information and O₂scl settings.
-     */
-    virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
+    /** \brief Set the name of the x grid
 
-    /** \brief Manipulate or use a unit conversion factor
+        For objects of type table3d:
 
-        Arguments: <tt><old unit (or "list", "add", "del", or "nat")> 
-        <new unit> [value to convert]</tt>
+        Get or set the name of the x grid.
+
+        Arguments: <tt>[name]</tt>
+
+        Get or set the name of the x grid.
+    */
+    virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Parse doxygen XML to generate runtime docs.
         
+        Arguments: (No arguments.)
 
-        The <tt>convert</tt> command handles unit conversions. To
-        compute a unit conversion factor and then optionally apply
-        than conversion factor to a user-specified value. use the form
-        <tt>'acol -convert <old unit> <new unit> [value]'</tt>.
-        Conversions which presume ħ=c=kB=1 are allowed by default. For
-        example, <tt>acol -convert MeV 1/fm</tt> returns
-        '1.000000e+00 MeV = 5.067731e-03 1/fm'. The conversion factor
-        is output at the current value of <tt>precision</tt>, but is
-        always internally stored with full double precision. 
-
-        If no value to convert is specified, then a value of 1.0
-        is assumed.
-
-        Conversions are cached, so that if the user requests 
-        an identical conversion with a different numerical value,
-        then obtaining the conversion from the cache is faster than
-        looking it up and processing it each time.
-
-        The <tt>convert</tt> command attempts to handle arbitrary
-        combinations of powers of SI base units to automatically
-        compute new unit conversion. For example, <tt>acol -convert
-        "fm^10/g^30" "m^10/kg^30"</tt> reports <tt>1.000000e+00
-        fm^10/g^30 = 1.000000e-60 m^10/kg^30</tt>. 
-
-        Unit conversions containing constants stored in the
-        <tt>constant</tt> library are also allowed. For example,
-        <tt>acol -convert "Msun^2" "g^2"</tt> gives <tt>1.000000e+00
-        Msun^2 = 3.953774e+66 g^2</tt>. SI units are also understood,
-        and both μ and "mu" are interpreted as the "micro" prefix. For
-        example, <tt>acol -convert "μm" "pc"</tt> or <tt>acol
-        -convert "mum" "pc"</tt> both report the conversion between
-        micrometers and parsecs.
-
-        To print the list of known units, SI prefixes, and the unit
-        conversion cache, use <tt>acol -convert list</tt>. 
-
-        To add a unit (only MKS is supported) the format is:
-
-        -convert add <unit> <power of meters> <power of kg>
-        <power of seconds> <power of Kelvin> <power of amps>
-        <power of moles> <power of candelas> <val> <long name>
-
-        To delete a unit, the format is:
-
-        -convert del <unit>
-
-        However, note that deleting a unit does not delete its
-        occurences in the unit conversion cache. 
-
-        While ħ=c=kB=1 is assumed by default, the user can disable
-        conversions taking advantage of these assignments. To modify
-        the use of natural units, use <tt> -convert nat <boolean for
-        c=1> <boolean for ħ=1> <boolean for kB=1></tt>
+        When pugixml is enabled, this function reads the
+        doxygen XML output and generates an HDF5 file which acol reads
+        to generate the runtime documentation.
     */
-    virtual int comm_convert(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Copy an O₂scl-generated HDF5 file
+    /** \brief Set the name of the y grid
 
-        Arguments: <tt><source> <destination></tt>
+        For objects of type table3d:
 
-        Copy all O₂scl objects from one HDF5 file to another. This may
-        not work for HDF5 files generated outside of O₂scl. The source
-        and destination filenames may not be identical. The
-        destination file may not be the same size as the source, but
-        will contain the same information.
+        Get or set the name of the y grid.
+
+        Arguments: <tt>[name]</tt>
+
+        Get or set the name of the y grid.
     */
-    virtual int comm_h5_copy(std::vector<std::string> &sv, 
-                             bool itive_com);
-
-    /** \brief Get or modify a physical or numerical constant.
-
-        Arguments: <tt><name, pattern, "add", "del", "list", or 
-        "list-full"> [unit]</tt>
-
-        If the constant has no units, like the Euler-Mascheroni
-        constant, then e.g. <tt>acol -constant euler</tt> will report
-        the value 5.772157e-1 (at the default precision which is 6).
-        If the user requests a <tt>precision</tt> larger than 15
-        (double precision), then the <tt>constant</tt> command fails
-        and prints an error message.
-
-        If the constant has units but no units are specified as
-        arguments to the <tt>constant</tt> command, then all values of
-        the constant in the library are written to the screen. If a
-        unit is specified, then the <tt>constant</tt> command tries to
-        find the unique value with the specified unit. The user can
-        specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
-        of the constant. For example, <tt>acol -constant hbar cgs</tt>
-        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
-        the same value.
-
-        Note that some constants in the library are not known to 
-        full double precision and acol currently has no way of
-        reporting this.
-
-        Search patterns are also allowed, for example <tt>acol
-        -constant "satur*"</tt> returns all the constants related to
-        saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
-        to true, then regex is used to do the pattern matching, and
-        otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
-        pattern matching and unicode is not fully functional.
-
-        To list all the constants in the library, use <tt>'acol
-        -constant list'</tt>. Alternatively, <tt>acol -constant
-        list-full</tt> gives all information for all constants,
-        including all aliases, the source, and all the decompositions
-        into base units.
-
-        One can delete a constant with, e.g. <tt>acol -del
-        pi</tt> (this doesn't quite work yet for constants with
-        different values in different unit systems).
-
-        To add a constant, one must specify the name of the constant,
-        the value, the unit system, the unit flag, the source, and
-        then the 7 powers of the SI base units (in order
-        m,kg,s,K,A,mol,cd).
-    */
-    virtual int comm_constant(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     //@}
     
   protected:
