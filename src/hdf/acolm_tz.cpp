@@ -1494,7 +1494,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
   
   // Help topic list
   vector<string> flist={"value_spec","vector_spec","mult_vector_spec",
-    "strings_spec"};
+    "strings_spec","index_spec","functions"};
   
   for(size_t j=0;j<flist.size();j++) {
 

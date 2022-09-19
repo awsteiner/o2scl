@@ -30,6 +30,14 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
+void o2scl_hdf::index_spec() {
+  return;
+}
+
+void o2scl_hdf::functions() {
+  return;
+}
+
 void o2scl_hdf::hdf5_write_file(o2scl::table_units<> &t, std::string fn,
                                 std::string name) {
   hdf_file hf;

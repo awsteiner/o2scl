@@ -108,6 +108,10 @@ prerelease-sync-doc:
 o2scl-doc:
 	cd doc/o2scl && $(MAKE) o2scl-doc
 
+# Run doxygen to create documentation
+o2scl-xml:
+	cd doc/o2scl && $(MAKE) o2scl-xml
+
 # Clean all generated documentation
 clean-doc:
 	cd doc/o2scl && $(MAKE) clean-doc-recursive

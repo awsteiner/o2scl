@@ -49,6 +49,9 @@ o2scl-doc:
 	doxygen doxyfile > doxygen.scr
 	cd sphinx && $(MAKE) o2scl-doc
 
+o2scl-xml:
+	doxygen doxyfile > doxygen.scr
+
 clean-doc:
 	cd html; rm -f *.html *.png formula.repository doxygen.css \
 		_formulas* installdox tab*.gif tabs.css

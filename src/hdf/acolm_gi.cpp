@@ -609,48 +609,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     
   }
 
-  // Handle the special case 'help functions'
-  if (sv.size()==2 && sv[1]=="functions") {
-    cout << "Documentation for help topic: " << help_color
-	 << "functions" << default_color << endl;
-    cout << line << "\n" << endl;
-    string str=((std::string)"Functions can be created using the ");
-    str+="operators and functions listed below. Examples are ";
-    str+="\"x==5 && y<1\", \"acos(-1)\", and \"sin(x>5)\". ";
-    str+="Comparison operators result in either 1.0 (true) or ";
-    str+="0.0 (false).\n\n";
-    str+="Operators:\n\n() ^ * / % + - == != < > && || << >> >= <=\n\n";
-    str+="Power functions:\n\n";
-    str+="sqrt(x) cbrt(x) pow(x,y) hypot(x,y)\n\n";
-    str+="Exponential functions:\n\n";
-    str+="exp(x) log(x) log10(x) log1p(x) expm1(x)\n\n";
-    str+="Trigonometric functions:\n\n";
-    str+="asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x) ";
-    str+="acosh(x) atanh(x) atan2(y,x)\n\n";
-    str+="Exponential functions:\n\n";
-    str+="erf(x) [2/sqrt(pi) int_0^{x} exp(-t^2) dt]\n";
-    str+="erfc(x) [2/sqrt(pi) int_x^{infty} exp(-t^2) dt = 1-erf(x)]\n\n";
-    //lgamma(x) tgamma(x)\n\n";
-    //str+="Bessel functions:\n\n";
-    //str+="cyl_bessel_j(ν,x)\n\n";
-    str+="Other functions:\n\n";
-    str+="abs(x) min(x,y) max(x,y) floor(x) ceil(x)\n";
-    str+="sqrt1pm1(x) [√(1+x)-1]\n";
-    str+="if(t,x,y) [If t>0.5 then x, otherwise y.]\n\n";
-    str+="Special values:\n\n";
-    str+="false = 0, true = 1, rand = random number\n\n";
-    str+="Use \"acol -help function\" to get more information on the ";
-    str+="type-specific command called \"function\".\n\n";
-
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(str,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
-    }
-      
-    return 0;
-  }
-  
   // Handle the special case 'help types'
   if (sv.size()==2 && sv[1]=="types") {
     cout << "Documentation for help topic: " << help_color
@@ -701,6 +659,37 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
   
+  // Handle the special case 'help functions'
+  if (sv.size()==2 && (sv[1]=="functions" || sv[1]=="functions")) {
+    cout << "Documentation for help topic: " << help_color
+	 << "functions" << default_color << endl;
+    cout << line << "\n" << endl;
+
+    std::string help;
+    for(size_t j=0;j<help_doc_strings.size();j++) {
+      if (help_doc_strings[j][0]=="functions") {
+        for(size_t kk=1;kk<help_doc_strings[j].size();kk++) {
+          if (kk==1) {
+            help=help_doc_strings[j][kk];
+          } else {
+            if (help_doc_strings[j][kk].length()>0) {
+              help+="\n\n"+help_doc_strings[j][kk];
+            }
+          }
+        }
+      }
+    }
+
+    color_replacements(help);
+    std::vector<std::string> sv;
+    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
+    for(size_t i=0;i<sv.size();i++) {
+      cout << sv[i] << endl;
+    }
+      
+    return 0;
+  }
+
   // Handle the special case 'help index-spec'
   if (sv.size()==2 && (sv[1]=="index-spec" || sv[1]=="index_spec")) {
     cout << "Documentation for help topic: " << help_color

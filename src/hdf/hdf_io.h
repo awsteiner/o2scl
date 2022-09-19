@@ -608,23 +608,23 @@ namespace o2scl_hdf {
   
   /** \brief A vector specified by a string
       
-      Some acol commands take arguments which are 'vector
-      specifications', i.e. an array specified as a string. The
+      Some acol commands take arguments which are "vector
+      specifications", i.e. an array specified as a string. The
       different parts of the string are separated by a colon, and the
       first part specifes the type of vector specification. The
       different types are:
 
       1. val:<value> - Create a vector with one element equal to
       <value>, which may be a number or a simple function, e.g.
-      'val:sin(0.5)'.
+      <tt>val:sin(0.5)</tt>.
 
       2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a vector
       with a simple list of numbers or functions, e.g.
-      'list:3.0,1.0e-3,sqrt(2.0)'.
+      <tt>list:3.0,1.0e-3,sqrt(2.0)</tt>.
 
       3. func:<N>:<function of i> - Create a vector by specifying the
       length of the vector and a function used to fill the elements.
-      For example: 'func:41:sin(i/20.0*acos(-1))'.
+      For example: <tt>func:41:sin(i/20.0*acos(-1))</tt>.
 
       4. grid:<begin>,<end>,<width>,["log"] - Create a vector equal to
       a uniform grid, e.g. use 'grid:1.0,10.0,1.0' for a 10-element
@@ -634,9 +634,10 @@ namespace o2scl_hdf {
       5. text:<filename>:<column index> - Read a text file and extract
       a vector of numbers from a column of the text file (starting
       with zero for the first column), ignoring any header rows which
-      contain non-numeric values. For example 'text:~/temp.dat:2' will
-      construct a vector from the third column of the file 'temp.dat'
-      in the user's home directory.
+      contain non-numeric values. For example
+      <tt>text:~/temp.dat:2</tt> will construct a vector from the
+      third column of the file "temp.dat" in the user's home
+      directory.
 
       6. hdf5:<file name>:<object name>:[addtional spec.] - Read an
       HDF5 file and obtain a vector from the object with the specified
@@ -2160,6 +2161,116 @@ namespace o2scl_hdf {
       \c std::vector
   */
   std::vector<std::vector<double>> mult_vector_spec(std::string spec);
+
+  /** \brief Functions for acol
+      
+      Functions can be created using the operators and functions
+      listed below. Examples are <tt>x==5 && y<1</tt>,
+      <tt>acos(-1)</tt>, and <tt>sin(x>5)</tt>. Comparison operators
+      result in either 1.0 (true) or 0.0 (false).
+
+      There are two additional limitations. First, in order to avoid
+      confusion between arguments and functions, use parenthesis and
+      quotes, i.e. <tt>(-x*2)</tt> instead of <tt>-x*2</tt>. 
+      Also, do not use a unary minus
+      next to a binary operator, i.e. use <tt>a>(-1)</tt> instead of 
+      <tt>a>-1</tt>.
+
+      Operators:
+
+      () ^ * / % + - == != < > && || << >> >= <=
+
+      Power functions:
+
+      sqrt(x) cbrt(x) pow(x,y) hypot(x,y)
+
+      Exponential functions:
+
+      exp(x) log(x) log10(x) log1p(x) expm1(x)
+
+      Trigonometric functions:
+
+      asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x)
+      acosh(x) atanh(x) atan2(y,x)
+
+      Exponential functions:
+
+      erf(x) [2/sqrt(pi) int_0^{x} exp(-t^2) dt]
+      erfc(x) [2/sqrt(pi) int_x^{infty} exp(-t^2) dt = 1-erf(x)]
+
+      Other functions:
+
+      abs(x) min(x,y) max(x,y) floor(x) ceil(x)
+      sqrt1pm1(x) [√(1+x)-1]
+      if(t,x,y) [If t>0.5 then x, otherwise y.]
+
+      Special values:
+
+      false = 0, true = 1, rand = random number
+
+      Use <tt>acol -help function</tt> to get more information on the
+      type-specific command called \c function .
+  */
+  void functions();
+
+  /** \brief Index specifications for acol
+
+      The \c tensor rearrange commands use index specifications to
+      specify how the tensor should be rearranged. Index
+      specifications may be specified as separate arguments e.g.
+      <tt>index(1)</tt> <tt>fixed(2,10)</tt> or multiple index
+      specifications may be given in a single argument separated by
+      spaces or commas, e.g. <tt>index(1) fixed(2,10)</tt> or
+      <tt>index(1),fixed(2,10)</tt>. The indices begin with 0, the
+      first index so that index 1 is the second index. The list of
+      index specification is:
+
+      - index(ix): Retain index ix in the new tensor.
+
+      - fixed(ix): Fix the value of index ix.
+
+      - sum(ix): Sum over the value of index ix
+
+      - trace(ix1,ix2): Trace (sum) over indices ix and ix2. If the
+        number of entries in either index is smaller than the other,
+        then the remaining entries are ignored in the sum.
+
+      - reverse(ix): Retain index ix but reverse the order.
+
+      - range(ix,start,end): Retain index ix but modify range. Ranges
+        include both of their endpoints.
+
+      - interp(ix,value) (for tensor_grid): fix index ix by
+        interpolating 'value' into the grid for index ix.
+
+      - grid(ix,begin,end,n_bins,log) (for tensor_grid): interpolate
+        the specified index on a grid to create a new index. If the
+        value of log is 1, then the grid is logarithmic.
+
+      - gridw(ix,begin,end,bin_width,log) (for tensor_grid):
+        interpolate the specified index on a grid with a fixed bin
+        width to create a new index. If the value of log is 1, then
+        the grid is logarithmic and the bin_width is the
+        multiplicative factor between bin edges.
+
+      Note that the index specifications which result in a tensor
+      index (all except 'fixed', 'sum', 'trace' and 'interp') must be
+      given in the order they should appear in the tensor which
+      results. Also, the 'rearrange' commands require that the result
+      of the rearrangement must have at least one index left.
+
+      Examples:
+
+      <tt>index(1),index(0)</tt> - take the transpose of a rank 2 
+      tensor (i.e. a matrix)
+
+      <tt>index(1),fixed(2,0),index(0)</tt> - fix the value of index 2
+      (i.e. the third index) to zero and transpose the other two
+      indices
+      
+      <tt>fixed(2,0),index(1),index(0)</tt> - same as above
+  */
+  void index_spec();
   
 }
 
