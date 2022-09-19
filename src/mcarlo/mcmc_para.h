@@ -546,7 +546,8 @@ namespace o2scl {
           for(size_t ipar=0;ipar<n_params;ipar++) {
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
-              std::cout << "Parameters: " << std::endl;
+              std::cout << "Parameters for point " << iip+1 << " of "
+                        << initial_points.size() << "." << std::endl;
               for(size_t iki=0;iki<n_params;iki++) {
                 std::cout << iki << " " << low[iki] << " "
                           << initial_points[iip][iki] << " "
@@ -559,7 +560,8 @@ namespace o2scl {
                 std::cout << std::endl;
               }
               O2SCL_ERR((((std::string)"Parameter ")+o2scl::szttos(ipar)+
-                         " of "+o2scl::szttos(n_params)+" out of range (value="+
+                         " of "+o2scl::szttos(n_params)+
+                         " out of range (value="+
                          o2scl::dtos(initial_points[iip][ipar])+
                          " low="+o2scl::dtos(low[ipar])+" high="+
                          o2scl::dtos(high[ipar])+
@@ -2393,7 +2395,13 @@ namespace o2scl {
           // If we can't find a row with the proper thread and walker
           // index, then just use one of the points from the end of
           // the file
-          if (found==false && tip.get_nlines()>this->n_walk*this->n_threads) {
+          if (found==false && tip.get_nlines()>this->n_walk*
+              this->n_threads) {
+            std::cout << "Could not find guess for rank " << this->mpi_rank
+                      << " thread " << it
+                      << " and walker " << iw
+                      << ". Trying to find a point at the end of "
+                      << "the file to use." << std::endl;
             int row=tip.get_nlines()-this->n_walk*this->n_threads+windex;
             this->initial_points[windex].resize(n_param_loc);
             for(size_t ip=0;ip<n_param_loc;ip++) {
@@ -2403,8 +2411,10 @@ namespace o2scl {
           }
         
           if (found==false) {
-            std::cout << "No initial guess found for rank " << this->mpi_rank
-                      << " thread " << it << " and walker " << iw << std::endl;
+            std::cout << "No initial guess found for rank "
+                      << this->mpi_rank
+                      << " thread " << it << " and walker " << iw
+                      << std::endl;
             O2SCL_ERR("Function initial_points_file_last() failed.",
                       o2scl::exc_einval);
           }
