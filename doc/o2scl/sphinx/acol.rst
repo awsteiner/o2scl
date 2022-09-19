@@ -18,13 +18,11 @@ acol contents
 acol introduction
 -----------------
   
-O₂scl contains a command line utility, \c acol, designed to
+O₂scl contains a command line utility, acol, designed to
 facilitate the manipulation of various objects stored in HDF5 files.
 It can handle integers, characters, double-precision floating point
-numbers, size_t objects, arrays of any of these types, or O\ :sub:`2`\
-scl objects of type :ref:`table <table>`, :ref:`hist <hist>`,
-:ref:`table3d <table3d>`, :ref:`hist_2d <hist_2d>`, :ref:`tensor_grid
-<tensor_grid>` :ref:`contour_line <contour_line>` .
+numbers, size_t objects, arrays of any of these types, or
+O₂scl objects of selected types.
 
 ``acol`` can only operate with one object at a time. The
 basic workflow is:
@@ -33,26 +31,25 @@ basic workflow is:
 - perform operations on that object
 - output the object to the screen or write it to an HDF5 file
 
-The available command list can be obtained using ``'help'`` or
-``'commands'`` and changes depending on what type of object is
-currently in memory. In order to list the commands which would be
-available given a particular type, give ``'commands'`` the type as an
-argument, i.e. ``acol -commands table`` . In order to
-get detailed help on how a command operates on a particular type,
-give the type and the command as arguments to help, e.g.
-``acol -help table interp``. There are some commands
-which are available for all types, and obtaining the help
-information for these commands does not require a type argument,
-i.e. ``acol -commands`` or ``acol -help read``.
+The available command list can be obtained using ``help`` or
+``commands`` and changes depending on what type of object is currently
+in memory. In order to list the commands which would be available
+given a particular type, give ``commands`` the type as an argument,
+i.e. ``acol -commands table`` . In order to get detailed help on how a
+command operates on a particular type, give the type and the command
+as arguments to help, e.g. ``acol -help table interp``. There are some
+commands which are available for all types, and obtaining the help
+information for these commands does not require a type argument, i.e.
+``acol -commands`` or ``acol -help read``.
 
-``acol`` can sometimes, but not always read and write HDF5
-files generated outside of O₂scl.
+``acol`` can sometimes, but not always read and write HDF5 files
+generated outside of O₂scl.
 
-``acol`` has a command, ``run``, which allows you to run
-a set of commands which are given in a separate file. An example
-script in the ``extras`` directory of the documentation is 
-named ``acol.scr``. The associated output is a useful demonstration
-of the capabilities of ``acol``.
+``acol`` has a command, ``run``, which allows you to run a set of
+commands which are given in a separate file. An example script in the
+``extras`` directory of the documentation is named ``acol.scr``. The
+associated output is a useful demonstration of the capabilities of
+``acol``.
 
 acol types
 ----------
@@ -60,9 +57,10 @@ acol types
 The types which can be handled by ``acol`` are either C++ standard
 types or O₂scl types. The standard types which acol can manipulate are
 ``char, double, double[], int, int[], size_t, size_t[], std::string``,
-``string[]``, ``vector<vector<double>>``, and
-``vector<vector<string>>``. The relevant O₂scl types are :ref:`hist
-<hist>`, :ref:`hist_2d <hist_2d>`, :ref:`prob_dens_mdim_amr
+``string[]``, ``vector<vector<double>>`` (shortened to
+``vec_vec_double``), and ``vector<vector<string>>`` (shortened to
+``vec_vec_string``). The relevant O₂scl types are :ref:`hist <hist>`,
+:ref:`hist_2d <hist_2d>`, :ref:`prob_dens_mdim_amr
 <prob_dens_mdim_amr>`, :ref:`prob_dens_mdim_gaussian
 <prob_dens_mdim_gaussian>`, :ref:`table <table>`, :ref:`table3d
 <table3d>`, :ref:`tensor <tensor>` (including ``double``, ``int``, and
@@ -184,6 +182,59 @@ For table <row> <col pat>, the first additional specification is a row
 number, which can be negative to refer to counting from the end of the
 table. The second additional specification is a pattern of column
 names using either '*' or '?'.
+
+Index specifications
+--------------------
+
+The tensor rearrange commands use index specifications to specify how
+the tensor should be rearranged. Index specifications may be specified
+as separate arguments e.g. "index(1)" "fixed(2,10)" or multiple index
+specifications may be given in a single argument separated by spaces
+or commas, e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". The
+indices begin with 0, the first index so that index 1 is the second
+index. The list of index specification is:
+ 
+- index(ix): Retain index ix in the new tensor.
+   
+- fixed(ix): Fix the value of index ix.
+   
+- sum(ix): Sum over the value of index ix
+   
+- trace(ix1,ix2): Trace (sum) over indices ix and ix2. If the  
+  number of entries in either index is smaller than the other, then  
+  the remaining entries are ignored in the sum.
+  
+- reverse(ix): Retain index ix but reverse the order.
+
+- range(ix,start,end): Retain index ix but modify range. Ranges  
+  include both of their endpoints.
+ 
+- interp(ix,value) (for tensor_grid): fix index ix by  
+  interpolating 'value' into the grid for index ix.
+ 
+- grid(ix,begin,end,n_bins,log) (for tensor_grid): interpolate the  
+  specified index on a grid to create a new index. If the value of  
+  log is 1, then the grid is logarithmic.
+  
+- gridw(ix,begin,end,bin_width,log) (for tensor_grid): interpolate the
+  specified index on a grid with a fixed bin width to create a new
+  index. If the value of log is 1, then the grid is logarithmic and
+  the bin_width is the multiplicative factor between bin edges.
+ 
+Note that the index specifications which result in a tensor index (all
+except 'fixed', 'sum', 'trace' and 'interp') must be given in the
+order they should appear in the tensor which results. Also, the
+'rearrange' commands require that the result of the rearrangement must
+have at least one index left.
+ 
+Examples:
+
+index(1),index(0) - take the transpose of a rank 2  
+tensor (i.e. a matrix)
+ 
+index(1),fixed(2,0),index(0) - fix the value of index 2 (i.e. the  
+third index) to zero and transpose the other two indices\n\n 
+fixed(2,0),index(1),index(0) - same as above\n\n";
 
 String list specifications
 --------------------------

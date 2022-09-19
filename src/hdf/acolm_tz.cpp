@@ -1099,8 +1099,13 @@ void acol_manager::xml_replacements(std::string &s,
     "'acol -help [h]vector-spec[d]'",
     "<computeroutput> Multiple vector specifications </computeroutput>",
     "'acol -help [h]mult-vector-spec[d]'",
-    "\"acol -help <computeroutput> functions </computeroutput> \"",
-    "'acol -help [h]functions[d]'"};
+    "\"acol -help <computeroutput> Function specifications </computeroutput> \"",
+    "'acol -help [h]functions[d]'",
+    "`String list specifications`","'[e]acol -help strings-spec[d]'",
+    "`Vector specifications`","'[e]acol -help vector-spec[d]'",
+    "`Multiple vector specifications`","'[e]acol -help mult-vector-spec[d]'",
+    "`Value specifications`","'[e]acol -help value-spec[d]'",
+    "`Function specifications`","'[e]acol -help functions[d]'"};
   
   // Make the manual replacements from the 'subs' list
   // above
@@ -1152,13 +1157,14 @@ void acol_manager::xml_replacements(std::string &s,
                  "[h]index-spec[d]");
 
   // Other miscellaneous replacements
-  string_replace(s,"<itemizedlist> <listitem>","•");
-  string_replace(s,"</listitem> <listitem>","•");
+  string_replace(s,"<itemizedlist> <listitem>","★");
+  string_replace(s,"</listitem> <listitem>","★");
   string_replace(s,"</listitem> </itemizedlist>","");
-  string_replace(s,"<orderedlist> <listitem>","•");
+  string_replace(s,"<orderedlist> <listitem>","★");
   string_replace(s,"</listitem> </orderedlist>","");
   string_replace(s,"<simplesect>","");
   string_replace(s,"</simplesect>","");
+  string_replace(s," ★","★");
 
   /*
   if (s.find("<computeroutput>")!=std::string::npos &&
@@ -1181,11 +1187,16 @@ void acol_manager::xml_replacements(std::string &s,
   }
   string_replace(s,"<linebreak> ","");
   string_replace(s," </linebreak>","");
+
+  string_replace(s,"<verbatim> embed:rst","");
+  string_replace(s," </verbatim","");
   
+  string_replace(s,":ref:"," ");
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");
   string_replace(s," .",".");
+  string_replace(s," :",":");
   /*
   string_replace(s,"</itemizedlist>","");
   string_replace(s,"</listitem>","");

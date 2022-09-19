@@ -562,46 +562,46 @@ namespace o2scl_hdf {
       different types for a value specification are:
       
       1. <numeric value or function> - Value equal to the result of
-      <function>, e.g. "7.6" or "sin(0.5)". See the \c functions
-      help topic for a list of functions that can be used.
+         <function>, e.g. "7.6" or "sin(0.5)". See the \c functions
+         help topic for a list of functions that can be used.
       
-      For example:
+         For example:
       
-      <tt>acol -create double "sqrt(5)" -output</tt>
+         <tt>acol -create double "sqrt(5)" -output</tt>
       
       2. hdf5:<file>:<object name>:[addl. spec.] - Read an HDF5 value
-      and obtain the value from object named <object name>. For some
-      object types, additional specifications are required to specify
-      which value should be used. A list of object types and
-      additional specifications and more detail is given below.
+         and obtain the value from object named <object name>. For
+         some object types, additional specifications are required to
+         specify which value should be used. A list of object types
+         and additional specifications and more detail is given below.
       
-      - <tt>double</tt>: (no addl. spec.)
-      - <tt>int</tt>: (no addl. spec.)
-      - <tt>size_t</tt>: (no addl. spec.)
-      - <tt>double[]</tt>: index
-      - <tt>int[]</tt>: index
-      - <tt>size_t[]</tt>: index
-      - <tt>uniform_grid<double></tt>: index
-      - <tt>table</tt>: column name,row index
+         - <tt>double</tt>: (no addl. spec.)
+         - <tt>int</tt>: (no addl. spec.)
+         - <tt>size_t</tt>: (no addl. spec.)
+         - <tt>double[]</tt>: index
+         - <tt>int[]</tt>: index
+         - <tt>size_t[]</tt>: index
+         - <tt>uniform_grid<double></tt>: index
+         - <tt>table</tt>: column name,row index
       
-      For example:
+         For example:
       
-      <tt>acol -create double hdf5:data/o2scl/apr98.o2:apr:rho,0 
-      -output</tt>
+         <tt>acol -create double hdf5:data/o2scl/apr98.o2:apr:rho,0 
+         -output</tt>
       
       3. shell:<shell command> - Set the value equal to the first
-      result obtained using the specified shell command. For example
-      (using bash):
+         result obtained using the specified shell command. For
+         example (using bash):
       
-      <tt>acol -create double shell:"ls | wc | awk '{print $1}'" 
-      -output</tt>
+         <tt>acol -create double shell:"ls | wc | awk '{print $1}'" 
+         -output</tt>
       
       4. python:<python code> - Set the value equal to the result
-      obtained using the specified python code. For example (using
-      bash):
+         obtained using the specified python code. For example (using
+         bash):
       
-      <tt>acol -create double 
-      $'python:\"import numpy\nprint(numpy.sin(4))\"' -output</tt>
+         <tt>acol -create double 
+         $'python:\"import numpy\nprint(numpy.sin(4))\"' -output</tt>
   */
   int value_spec(std::string spec, double &d,
 		 int verbose=0, bool err_on_fail=true);

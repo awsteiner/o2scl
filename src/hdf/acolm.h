@@ -809,7 +809,7 @@ namespace o2scl_acol {
         using <tt>set-grid</tt>.
 
         <tt>create table3d <x name> <x vector spec.> <y name> <y
-        vector spec.>\n <slice name> <slice function></tt>: Create a
+        vector spec.> <slice name> <slice func.></tt>: Create a
         new <tt>table3d</tt> object which has one slice. The x and y
         grids are given as vector specifications (see "acol -help
         vector-spec" for the syntax). The slice function can be
@@ -821,6 +821,12 @@ namespace o2scl_acol {
         <tt>o2graph -create table3d x func:100:i/200 y func:100:i/200
         z "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
         -ytitle y -show</tt>
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::value_spec()` for help on value
+        specifications and :cpp:func:`function_to_double()` for help
+        on function specifications.
+        \endverbatim
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
 
