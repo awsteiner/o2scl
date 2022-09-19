@@ -4,12 +4,12 @@
 
 TEST_VAR = mcarlo_plain.scr mcarlo_miser.scr mcarlo_vegas.scr \
 	expval.scr rng_gsl.scr mcmc_para.scr rng.scr \
-	mcmc_para_new.scr emulator.scr
+	emulator.scr
 
 MCARLO_SRCS = expval.cpp rng_gsl.cpp
 
 HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
-	expval.h rng_gsl.h mcmc_para.h rng.h mcmc_para_new.h \
+	expval.h rng_gsl.h mcmc_para.h rng.h \
 	emulator.h 
 
 # fit_bayes.scr
@@ -75,10 +75,10 @@ pkginclude_HEADERS = $(HEADER_VARS)
 
 if O2SCL_OPENMP
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
-	rng_gsl_ts mcmc_para_ts mcmc_para_new_ts rng_ts emulator_ts
+	rng_gsl_ts mcmc_para_ts rng_ts emulator_ts
 else
 check_PROGRAMS = mcarlo_miser_ts mcarlo_vegas_ts mcarlo_plain_ts expval_ts \
-	rng_gsl_ts mcmc_para_new_ts rng_ts emulator_ts
+	rng_gsl_ts rng_ts emulator_ts
 endif
 
 check_SCRIPTS = o2scl-test
@@ -115,7 +115,6 @@ mcarlo_plain_ts_LDADD = $(ADDL_TEST_LIBS)
 mcarlo_vegas_ts_LDADD = $(ADDL_TEST_LIBS)
 expval_ts_LDADD = $(ADDL_TEST_LIBS)
 mcmc_para_ts_LDADD = $(ADDL_TEST_LIBS)
-mcmc_para_new_ts_LDADD = $(ADDL_TEST_LIBS)
 
 mcarlo_miser_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 rng_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -125,7 +124,6 @@ mcarlo_plain_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 mcarlo_vegas_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 expval_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 mcmc_para_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
-mcmc_para_new_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 mcarlo_miser.scr: mcarlo_miser_ts$(EXEEXT)
 	./mcarlo_miser_ts$(EXEEXT) > mcarlo_miser.scr
@@ -143,8 +141,6 @@ expval.scr: expval_ts$(EXEEXT)
 	./expval_ts$(EXEEXT) > expval.scr
 mcmc_para.scr: mcmc_para_ts$(EXEEXT)
 	./mcmc_para_ts$(EXEEXT) -exit > mcmc_para.scr
-mcmc_para_new.scr: mcmc_para_new_ts$(EXEEXT)
-	./mcmc_para_new_ts$(EXEEXT) -exit > mcmc_para_new.scr
 
 mcarlo_miser_ts_SOURCES = mcarlo_miser_ts.cpp
 rng_ts_SOURCES = rng_ts.cpp
@@ -154,7 +150,6 @@ mcarlo_plain_ts_SOURCES = mcarlo_plain_ts.cpp
 mcarlo_vegas_ts_SOURCES = mcarlo_vegas_ts.cpp
 expval_ts_SOURCES = expval_ts.cpp
 mcmc_para_ts_SOURCES = mcmc_para_ts.cpp
-mcmc_para_new_ts_SOURCES = mcmc_para_new_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_mcarlo
