@@ -404,8 +404,12 @@ namespace o2scl_acol {
         Arguments: <tt><vec. spec.> <column></tt>
 
         Add the vector specification <vec. spec.> to the table and
-        store in the column named <column>. (see ``Vector
-        specifications`` for more information.)
+        store in the column named <column>.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::vector_spec()` for help
+        on vector specifications.
+        \endverbatim
     */
     virtual int comm_add_vec(std::vector<std::string> &sv, bool itive_com);
     
@@ -439,17 +443,18 @@ namespace o2scl_acol {
         example "fft,max,store" or "def,avg".
 
         If there is no current object, then the user may specify one
-        or more multiple vector specifications. See ``Multiple vector
-        specifications`` for more information.
+        or more multiple vector specifications. If the current object
+        is of type <tt>int[]</tt>, <tt>double[]</tt>, or
+        <tt>size_t[]</tt>, then the autocorrelation coefficients of
+        the current vector are computed. If the current object is of
+        type <tt>table</tt>, then the user may specify either columns
+        of the table or a multiple vector specification.
 
-        If the current object is of type <tt>int[]</tt>,
-        <tt>double[]</tt>, or <tt>size_t[]</tt>, then the
-        autocorrelation coefficients of the current vector are
-        computed.
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
+        on multiple specifications.
+        \endverbatim
 
-        If the current object is of type <tt>table</tt>, then the user
-        may specify either columns of the table or a multiple vector
-        specification.
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
@@ -778,9 +783,7 @@ namespace o2scl_acol {
 
         <tt>create double <value spec.></tt>: Create a <tt>double</tt>
         object and set it equal to the value specified by <value
-        spec.>. (See ``Function specifications`` for help on specifying
-        functions and ``Value specifications`` for specifying single
-        numbers.
+        spec.>.
 
         <tt>create <type> <size> <function of "i"></tt>: For array
         types <tt>int[]</tt> and <tt>size_t[]</tt>, the user must
@@ -794,8 +797,7 @@ namespace o2scl_acol {
 
         <tt>create table <name> <vector spec.></tt>:
         Create a new <tt>table</tt> object with one column named <name>
-        from a vector specification (see ``Vector specifications``
-        for the syntax).
+        from a vector specification.
         
         <tt>create tensor <rank> <size 0> <size 1> ...</tt>: Create a
         <tt>tensor</tt> object with the specified rank and sizes. All
@@ -824,7 +826,7 @@ namespace o2scl_acol {
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value
-        specifications and :cpp:func:`function_to_double()` for help
+        specifications and :cpp:func:`o2scl_hdf::functions()` for help
         on function specifications.
         \endverbatim
     */
@@ -851,11 +853,16 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Delete the set of rows for which a function evaluates to a
-        number greater than 0.5. See ``Function specifications`` for
-        more information on what kinds of functions are allowed. For
+        number greater than 0.5. For
         example, <tt>-delete-rows if(col1+col2>10,1,0)</tt> will
         delete all columns where the sum of the entries in col1 and
         col2 is larger than 10. See also the \c select-rows command.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
     */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     
@@ -1129,11 +1136,15 @@ namespace o2scl_acol {
 
         If one argument is given, then <tt>find-row</tt> finds the row
         which maximizes the value of the expression given in <func>,
-        and then output the entire row. See ``Function
-        specifications`` for more help on specifying functions.
+        and then output the entire row. 
         Otherwise, <tt>find-row</tt> finds the row for which the value
         in column named <col> is as close as possible to the value
         <val>. See command <tt>get-row</tt> to get a row by its index.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
     */
     virtual int comm_find_row(std::vector<std::string> &sv, bool itive_com);
     
@@ -1162,8 +1173,12 @@ namespace o2scl_acol {
         already exist, a new one is added to the table. For example,
         for a table containing columns named 'c1' and 'c2', <tt>function
         c1-c2 c3</tt> would create a new column c3 which contains the
-        difference of columns 'c1' and 'c2'. See ``Function
-        specifications`` for more help on specifying functions.
+        difference of columns 'c1' and 'c2'. 
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
 
         For objects of type double[]:
 
@@ -1174,6 +1189,11 @@ namespace o2scl_acol {
         Set the values of the array given a user-specified function of
         'i'. For example, <tt>(sin(i)>1)*4</tt>.
 
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
         For objects of type int[]:
 
         Set the values of the array given a function.
@@ -1182,6 +1202,11 @@ namespace o2scl_acol {
 
         Set the values of the array given a user-specified function of
         'i'. For example, <tt>(sin(i)>1)*4</tt>.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
 
         For objects of type size_t[]:
 
@@ -1192,6 +1217,11 @@ namespace o2scl_acol {
         Set the values of the array given a user-specified function of
         'i'. For example, <tt>(sin(i)>1)*4</tt>.
 
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
         For objects of type hist:
 
         Apply a function to the weights.
@@ -1199,6 +1229,11 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Apply a function to the weights.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
 
         For objects of type table3d:
 
@@ -1213,6 +1248,11 @@ namespace o2scl_acol {
         s3' would create a new column 's3' which contains the
         difference of columns 's1' and 's2'.
 
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
         For objects of type tensor:
 
         Set the tensor values from a function.
@@ -1224,6 +1264,11 @@ namespace o2scl_acol {
         the conditional function evaluates to a number less than or
         equal to 0.5, then the tensor entry will be unchanged. (For
         more help with functions, type acol -help functions)
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
 
         For objects of type tensor_grid:
 
@@ -1242,6 +1287,11 @@ namespace o2scl_acol {
         less than or equal to 0.5, then the tensor entry will be "
         unchanged. (For more help with functions, type "acol -help
         functions.".)
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
     */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
@@ -1863,9 +1913,12 @@ namespace o2scl_acol {
         specifications may be specified as separate arguments e.g.
         "index(1)" "fixed(2,10)" or multiple index specifications may
         be given in a single argument separated by spaces or commas,
-        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
-        '-help index-spec for more information on the tensor index
-        specifications.
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". 
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::index_spec()` for help
+        on index specifications.
+        \endverbatim
 
         For objects of type tensor<int>:
 
@@ -1878,9 +1931,12 @@ namespace o2scl_acol {
         specifications may be specified as separate arguments e.g.
         "index(1)" "fixed(2,10)" or multiple index specifications may
         be given in a single argument separated by spaces or commas,
-        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
-        '-help index-spec for more information on the tensor index
-        specifications.
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". 
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::index_spec()` for help
+        on index specifications.
+        \endverbatim
 
         For objects of type tensor<size_t>:
 
@@ -1893,9 +1949,12 @@ namespace o2scl_acol {
         specifications may be specified as separate arguments e.g.
         "index(1)" "fixed(2,10)" or multiple index specifications may
         be given in a single argument separated by spaces or commas,
-        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". See
-        '-help index-spec for more information on the tensor index
-        specifications.
+        e.g. "index(1) fixed(2,10)" or "index(1),fixed(2,10)". 
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::index_spec()` for help
+        on index specifications.
+        \endverbatim
 
         For objects of type tensor_grid:
 
@@ -1910,8 +1969,12 @@ namespace o2scl_acol {
         specified as separate arguments e.g. "index(1)" "fixed(2,10)"
         or multiple index specifications may be given in a single
         argument separated by spaces or commas, e.g. "index(1)
-        fixed(2,10)" or "index(1),fixed(2,10)". See '-help index-spec'
-        for more information on the tensor index specifications.
+        fixed(2,10)" or "index(1),fixed(2,10)". 
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::index_spec()` for help
+        on index specifications.
+        \endverbatim
     */
     virtual int comm_rearrange(std::vector<std::string> &sv, bool itive_com);
 
@@ -2075,12 +2138,18 @@ namespace o2scl_acol {
         The first argument for the \c set-grid command specifies the
         index for which grid to set. The second argument specifies the
         grid. If it contains a ':', it is assumed to be a vector
-        specification (see 'help vector-spec'). Otherwise, the
+        specification. Otherwise, the
         argument is assumed to be a function which specifies the grid
         value as a function of the variables 'i' and 'x'. The value of
         'i' ranges from 0 to m-1, where 'm' is the tensor size for
         each rank and the value of 'x' is equal to the previous grid
         value.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::vector_spec()` for help on vector
+        specifications and :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
     */
     virtual int comm_set_grid(std::vector<std::string> &sv, bool itive_com);
 

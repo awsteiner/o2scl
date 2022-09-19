@@ -614,8 +614,8 @@ namespace o2scl_hdf {
       first part specifes the type of vector specification. The
       different types are:
 
-      1. val:<value> - Create a vector with one element equal to
-      <value>, which may be a number or a simple function, e.g.
+      1. val:<number or function> - Create a vector with one element,
+      which may be a number or a simple function, e.g.
       <tt>val:sin(0.5)</tt>.
 
       2. list:<entry 0>,<entry 1>, ..., <entry n-1> - Create a vector

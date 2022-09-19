@@ -1096,16 +1096,24 @@ void acol_manager::xml_replacements(std::string &s,
   
   vector<string> subs={((string)"<computeroutput> Vector ")+
     "specifications </computeroutput>",
-    "'acol -help [h]vector-spec[d]'",
+    "'acol -help [h]vector-spec[d]",
     "<computeroutput> Multiple vector specifications </computeroutput>",
-    "'acol -help [h]mult-vector-spec[d]'",
-    "\"acol -help <computeroutput> Function specifications </computeroutput> \"",
-    "'acol -help [h]functions[d]'",
-    "`String list specifications`","'[e]acol -help strings-spec[d]'",
-    "`Vector specifications`","'[e]acol -help vector-spec[d]'",
-    "`Multiple vector specifications`","'[e]acol -help mult-vector-spec[d]'",
-    "`Value specifications`","'[e]acol -help value-spec[d]'",
-    "`Function specifications`","'[e]acol -help functions[d]'"};
+    "'acol -help [h]mult-vector-spec[d]",
+    ((string)"\"acol -help <computeroutput> Function ")+
+    "specifications </computeroutput> \"",
+    "'acol -help [h]functions[d]",
+    "`String list specifications`","[e]acol -help strings-spec[d]",
+    "`Vector specifications`","[e]acol -help vector-spec[d]",
+    "`Multiple vector specifications`","[e]acol -help mult-vector-spec[d]",
+    "`Value specifications`","[e]acol -help value-spec[d]",
+    "`Function specifications`","[e]acol -help functions[d]",
+    "cpp:func:`o2scl_hdf::functions()`","[e]acol -help functions[d]",
+    "cpp:func:`o2scl_hdf::value_spec()`","[e]acol -help value-spec[d]",
+    "cpp:func:`o2scl_hdf::vector_spec()`","[e]acol -help vector-spec[d]",
+    "cpp:func:`o2scl_hdf::mult_vector_spec()`",
+    "[e]acol -help mult_vector-spec[d]",
+    "cpp:func:`o2scl_hdf::index_spec()`","[e]acol -help index-spec[d]",
+    "cpp:func:`o2scl_hdf::strings_spec()`","[e]acol -help strings-spec[d]"};
   
   // Make the manual replacements from the 'subs' list
   // above
@@ -1191,12 +1199,15 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"<verbatim> embed:rst","");
   string_replace(s," </verbatim","");
   
-  string_replace(s,":ref:"," ");
+  string_replace(s,"See:ref:"," ");
+  string_replace(s,"See:cpp:func:`","See ");
+  string_replace(s,"See[","See [");
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");
   string_replace(s," .",".");
   string_replace(s," :",":");
+  string_replace(s,"`","");
   /*
   string_replace(s,"</itemizedlist>","");
   string_replace(s,"</listitem>","");
