@@ -1114,6 +1114,8 @@ void acol_manager::xml_replacements(std::string &s,
     "[e]acol -help mult_vector-spec[d]",
     "cpp:func:`o2scl_hdf::index_spec()`","[e]acol -help index-spec[d]",
     "cpp:func:`o2scl_hdf::strings_spec()`","[e]acol -help strings-spec[d]"};
+
+  string_replace(s,"\n"," ");
   
   // Make the manual replacements from the 'subs' list
   // above
@@ -1197,10 +1199,11 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s," </linebreak>","");
 
   string_replace(s,"<verbatim> embed:rst","");
-  string_replace(s," </verbatim","");
+  string_replace(s," </verbatim>","");
   
   string_replace(s,"See:ref:"," ");
   string_replace(s,"See:cpp:func:`","See ");
+  string_replace(s,"See:[","See: [");
   string_replace(s,"See[","See [");
   string_replace(s,"  "," ");
   string_replace(s," )",")");
@@ -1308,7 +1311,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       }
       
       xml_replacements(stmp,clist);
-      
+
       // Add brief description to stmp
       vs_tmp.push_back(stmp);
 
@@ -1341,8 +1344,16 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
               if (vsw.output[k]==((string)"</para>")) {
                 found=true;
                 
+                if (verbose>1) {
+                  cout << "stmp before: " << stmp << endl;
+                }
+      
                 xml_replacements(stmp,clist);
                 
+                if (verbose>1) {
+                  cout << "stmp after: " << stmp << endl;
+                }
+      
                 if (stmp.length()>0) vs_tmp.push_back(stmp);
                 stmp.clear();
               } else {
