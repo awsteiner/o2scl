@@ -1138,7 +1138,6 @@ namespace o2scl {
                   scr_out << "Iteration " << mcmc_iters[it] << " of "
                           << max_iters << " thread " << it << " "
                           << n_accept[it] << " " << n_reject[it]
-                          << " " << omp_get_num_threads() 
                           << std::endl;
                 }
           
