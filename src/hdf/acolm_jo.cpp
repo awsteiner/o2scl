@@ -654,12 +654,8 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
     return 1;
   }
 
-  if (table_obj.is_constant("nlines")) {
-    cerr << "Constant 'nlines' already exists." << endl;
-    return 2;
-  }
-
   table_obj.add_constant("nlines",table_obj.get_nlines());
+  cout << "The table has " << table_obj.get_nlines() << " lines." << endl;
   
   return 0;
 }
