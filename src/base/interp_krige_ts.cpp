@@ -250,7 +250,7 @@ int main(void) {
   
   ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
   t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
-  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),5.0e-3,"der 12");
+  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),1.0e-2,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
              df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
   
@@ -271,7 +271,7 @@ int main(void) {
   
   ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12,true);
   t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
-  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),5.0e-3,"der 12");
+  t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),1.0e-2,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
              df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
   
