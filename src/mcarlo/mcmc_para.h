@@ -2586,6 +2586,8 @@ namespace o2scl {
 
       // Check to see if we have enough
       if (m.size()<n_points) {
+	std::cerr << "m.size() is " << m.size() << " and n_points is "
+		  << n_points << std::endl;
         O2SCL_ERR2("Could not find enough points in file in ",
                    "mcmc_para::initial_points_file_best().",
                    o2scl::exc_efailed);
