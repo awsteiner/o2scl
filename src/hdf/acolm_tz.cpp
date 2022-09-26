@@ -1203,7 +1203,8 @@ void acol_manager::xml_replacements(std::string &s,
   
   string_replace(s,"See:ref:"," ");
   string_replace(s,"See:cpp:func:`","See ");
-  string_replace(s,"See:[","See: [");
+  string_replace(s," See:[","See: [");
+  string_replace(s,"and:[","and: [");
   string_replace(s,"See[","See [");
   string_replace(s,"  "," ");
   string_replace(s," )",")");

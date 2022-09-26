@@ -2590,10 +2590,13 @@ namespace o2scl_acol {
 
         Select two indices and convert to a table3d object.
 
-        Arguments: <tt><x name> <y name> <slice name> [fixed 1] [fixed
-        2] ...</tt>
+        Arguments: <tt><x name> <x index> <y name> <y index> 
+        <slice name></tt>
 
-        Detailed desc.
+        Convert the \c tensor object to a \c table3d object by
+        assigning index <x index> to the x value, index <y index> to
+        the <y value>, and summing over all remaining indices to
+        create a slice of named <slice name>.
     */
     virtual int comm_to_table3d_sum(std::vector<std::string> &sv,
                                     bool itive_com);
@@ -2606,7 +2609,7 @@ namespace o2scl_acol {
 
         Arguments: (No arguments.)
         
-        Convert to a tensor object, ignoring the grid.
+        Convert to a tensor object, removing the grid information.
     */
     virtual int comm_to_tensor(std::vector<std::string> &sv,
                                bool itive_com);
@@ -2619,7 +2622,8 @@ namespace o2scl_acol {
 
         Arguments: <tt><slice></tt>
 
-        Detailed desc.
+        Convert a \c table3d object to a rank 2 \c tensor_grid object,
+        directly copying the grid over.
 
         For objects of type tensor:
 
@@ -2627,12 +2631,12 @@ namespace o2scl_acol {
 
         Arguments: <tt>[function 1] [function 2] ...</tt>
 
-        Convert a tensor to a tensor_grid object, using functions to
-        specify the grid for each index. The functions should be
-        specified as functions of the variable 'i', which runs from 0
-        to size-1 for each index. Any user-specified functions are
-        used up to the rank of the tensor, and if not enough functions
-        are specified, then the function 'i' is used.
+        Convert a \c tensor to a \c tensor_grid object, using
+        functions to specify the grid for each index. The functions
+        should be specified as functions of the variable 'i', which
+        runs from 0 to size-1 for each index. Any user-specified
+        functions are used up to the rank of the tensor, and if not
+        enough functions are specified, then the function 'i' is used.
     */
     virtual int comm_to_tensor_grid(std::vector<std::string> &sv,
                                     bool itive_com);
@@ -2712,7 +2716,6 @@ namespace o2scl_acol {
         Arguments: <tt>[value]</tt>
 
         Get or set the character.
-
     */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
     
@@ -2734,13 +2737,16 @@ namespace o2scl_acol {
         
         If no arguments are given, this command opens up the remote
         HTML documentation for acol in the default web browser using
-        'open' on OSX and 'xdg-open' on other systems. If a [topic] is
-        specified, then the associated O₂scl web page is opened. If
-        the argument does not match an already known topic, then the
-        search feature on the O₂scl web page is opened using the
-        specified search term. Note that, for search terms, spaces can
-        be included using e.g. '-wdocs \"Simulated annealing\"'. If
-        the optional argument "dev" is given, then the development
+        \c open on OSX and \c xdg-open on other systems. If a help
+        topic, [topic] is specified, then the associated O₂scl web
+        page is opened. If the argument does not match an already
+        known topic, then the search feature on the O₂scl web page is
+        opened using the specified search term. Note that, for search
+        terms, spaces can be included using e.g.
+
+        <tt>-wdocs \"Simulated annealing\"</tt>
+
+        If the optional argument "dev" is given, then the development
         rather than release documentation is used. In order to open
         the local version of the documentation instead of the remote
         copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
@@ -2757,16 +2763,6 @@ namespace o2scl_acol {
 
         Output the average, standard deviation, max and min of
         <column>, using the weights specified in <weights>.
-
-        For objects of type tensor:
-        
-        Show stats for the data in the tensor.
-
-        Arguments: (none)
-
-        The <tt>stats</tt> command outputs the number of entries,
-        their mean, standard deviation, minimum and maximum. It also
-        counts the number of infinite or NaN values.
     */
     virtual int comm_wstats(std::vector<std::string> &sv, bool itive_com);
 
@@ -2778,7 +2774,8 @@ namespace o2scl_acol {
 
         Arguments: <tt>[name]</tt>
 
-        Get or set the name of the x grid.
+        Get the name of the x grid, or, if [name] is specified, change
+        the x grid name to [name].
     */
     virtual int comm_x_name(std::vector<std::string> &sv, bool itive_com);
 
@@ -2786,9 +2783,11 @@ namespace o2scl_acol {
         
         Arguments: (No arguments.)
 
-        When pugixml is enabled, this function reads the
-        doxygen XML output and generates an HDF5 file which acol reads
-        to generate the runtime documentation.
+        When pugixml is enabled, this function reads the doxygen XML
+        output and generates an HDF5 file which acol reads to generate
+        the runtime documentation. This command is principally
+        designed for developers and requires several additional tools
+        not otherwise required during installation.
     */
     virtual int comm_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
 
@@ -2800,7 +2799,8 @@ namespace o2scl_acol {
 
         Arguments: <tt>[name]</tt>
 
-        Get or set the name of the y grid.
+        Get the name of the y grid, or, if [name] is specified, change
+        the y grid name to [name].
     */
     virtual int comm_y_name(std::vector<std::string> &sv, bool itive_com);
     //@}
