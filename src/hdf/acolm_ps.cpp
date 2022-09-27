@@ -30,6 +30,7 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
 #include <o2scl/acolm.h>
+#include <o2scl/interp2_seq.h>
 
 using namespace std;
 using namespace o2scl;
@@ -82,17 +83,17 @@ int acol_manager::comm_ser_hist_t3d(std::vector<std::string> &sv,
 
 int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
 
-  vector<string> in, pr;
-  pr.push_back("Index column");
-  pr.push_back("Refinement factor");
-  int ret=get_input(sv,pr,in,"slice",itive_com);
-  if (ret!=0) return ret;
-
-  string index=in[0];
-  size_t factor=o2scl::stoszt(in[1]);
-
   if (type=="table") {
-
+    
+    vector<string> in, pr;
+    pr.push_back("Index column");
+    pr.push_back("Refinement factor");
+    int ret=get_input(sv,pr,in,"refine",itive_com);
+    if (ret!=0) return ret;
+    
+    string index=in[0];
+    size_t factor=o2scl::stoszt(in[1]);
+    
     o2scl::table_units<> table_new;
 
     // Copy over column names and units
@@ -119,8 +120,115 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     table_new.insert_table(table_obj,index);
     table_obj=table_new;
     
+  } else if (type=="table3d") {
+    
+    vector<string> in, pr;
+    pr.push_back("Refinement factor");
+    pr.push_back("Log scaling?");
+    int ret=get_input(sv,pr,in,"refine",itive_com);
+    if (ret!=0) return ret;
+    
+    size_t factor=o2scl::stoszt(in[0]);
+
+    bool log_mode=o2scl::stob(in[1]);
+
+    // Check if log scaling makes sense
+    if (log_mode) {
+      double xfirst=table3d_obj.get_grid_x(0);
+      double xlast=table3d_obj.get_grid_x(table3d_obj.get_nx()-1);
+      double yfirst=table3d_obj.get_grid_y(0);
+      double ylast=table3d_obj.get_grid_y(table3d_obj.get_ny()-1);
+      if (xfirst*xlast<=0.0) {
+        cerr << "The x grid in the table3d object does not allow log "
+             << "spacing." << endl;
+        return 1;
+      }
+      if (yfirst*ylast<=0.0) {
+        cerr << "The y grid in the table3d object does not allow log "
+             << "spacing." << endl;
+        return 2;
+      }
+    }
+
+    o2scl::table3d t3d_new;
+
+    ubvector xg=table3d_obj.get_x_data();
+    ubvector yg=table3d_obj.get_y_data();
+    vector_refine_inplace(xg,factor,log_mode);
+    vector_refine_inplace(yg,factor,log_mode);
+    t3d_new.set_xy(table3d_obj.get_x_name(),xg.size(),xg,
+                   table3d_obj.get_y_name(),yg.size(),yg);
+    
+    // Copy over column names and units
+    for(size_t j=0;j<table3d_obj.get_nslices();j++) {
+      t3d_new.new_slice(table3d_obj.get_slice_name(j));
+      for(size_t ix=0;ix<t3d_new.get_nx();ix++) {
+        for(size_t iy=0;iy<t3d_new.get_ny();iy++) {
+          t3d_new.set(ix,iy,table3d_obj.get_slice_name(j),
+                      table3d_obj.interp(t3d_new.get_grid_x(ix),
+                                         t3d_new.get_grid_y(iy),
+                                         table3d_obj.get_slice_name(j)));
+        }
+      }
+    }
+    
+    table3d_obj=t3d_new;
+    
+  } else if (type=="hist_2d") {
+    
+    vector<string> in, pr;
+    pr.push_back("Refinement factor");
+    pr.push_back("Log scaling?");
+    int ret=get_input(sv,pr,in,"refine",itive_com);
+    if (ret!=0) return ret;
+    
+    size_t factor=o2scl::stoszt(in[0]);
+
+    bool log_mode=o2scl::stob(in[1]);
+    ubvector xb=hist_2d_obj.get_x_bins();
+    ubvector yb=hist_2d_obj.get_y_bins();
+    
+    // Check if log scaling makes sense
+    if (log_mode) {
+      double xfirst=xb[0];
+      double xlast=xb[xb.size()-1];
+      double yfirst=yb[0];
+      double ylast=yb[yb.size()-1];
+      if (xfirst*xlast<=0.0) {
+        cerr << "The x grid in the table3d object does not allow log "
+             << "spacing." << endl;
+        return 1;
+      }
+      if (yfirst*ylast<=0.0) {
+        cerr << "The y grid in the table3d object does not allow log "
+             << "spacing." << endl;
+        return 2;
+      }
+    }
+    
+    o2scl::hist_2d h2d_new;
+
+    vector_refine_inplace(xb,factor,log_mode);
+    vector_refine_inplace(yb,factor,log_mode);
+
+    h2d_new.set_bin_edges(xb.size(),xb,yb.size(),yb);
+    ubmatrix m=hist_2d_obj.get_wgts();
+    interp2_seq<> is;
+    is.set_data(xb.size(),yb.size(),xb,yb,m,interp_type);
+    
+    // Copy over column names and units
+    for(size_t ix=0;ix<xb.size();ix++) {
+      for(size_t iy=0;iy<yb.size();iy++) {
+        h2d_new.set_wgt_i(ix,iy,is.eval(xb[ix],yb[iy]));
+      }
+    }
+    
+    hist_2d_obj=h2d_new;
+    
   } else {
+    
     cerr << "Refine does not work with " << type << " objects." << endl;
+    
   }
     
   return 0;

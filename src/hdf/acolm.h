@@ -1991,6 +1991,17 @@ namespace o2scl_acol {
         interpolation is determined by the value of
         <tt>interp_type</tt>. If the initial number of rows is N, then
         the final number of rows is 1+(N-1)*<factor>.
+
+        For objects of type table3d:
+
+        Refine the table3d.
+
+        Arguments: <tt><factor> [log mode]</tt>
+        
+        Refine the data by interpolating. The type of interpolation is
+        determined by the value of <tt>interp_type</tt>. If the
+        initial number of rows is N, then the final number of rows is
+        1+(N-1)*<factor>.
     */
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 

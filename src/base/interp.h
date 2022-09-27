@@ -2825,6 +2825,37 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Desc
+
+      \warning Untested.
+   */
+  template<class vec_t>
+  void vector_refine_inplace(vec_t &v, size_t factor, bool log=false) {
+    if (factor<2) {
+      O2SCL_ERR("Factor less than 2 in vector_refine_inplace().",
+                o2scl::exc_einval);
+    }
+    vec_t v2((v.size()-1)*factor+1);
+    v2[v2.size()-1]=v[v.size()-1];
+    if (log) {
+      size_t ix=0;
+      for(size_t i=0;i<v.size()-1;i++) {
+        for(size_t j=0;j<factor;j++) {
+          v2[ix]=((double)j)/((double)factor)*(v[i+1]-v[i])+v[i];
+          ix++;
+        }
+      }
+    } else {
+      size_t ix=0;
+      for(size_t i=0;i<v.size()-1;i++) {
+        for(size_t j=0;j<factor;j++) {
+          v2[ix]=v[i]*pow(v[i+1]/v[i],((double)j)/((double)factor));
+        }
+      }
+    }
+    return;
+  }
+  
   /** \brief Refine a vector by interpolating with a second
       index vector
 
