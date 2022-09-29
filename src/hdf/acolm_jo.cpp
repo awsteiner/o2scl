@@ -63,7 +63,9 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
   } else {
     ncols_loc=ncols;
   }
-  cout << "Number of columns: " << ncols_loc << endl;
+  if (verbose>1) {
+    cout << "Number of screen columns: " << ncols_loc << endl;
+  }
   
   if (type=="table3d") {
     cout << "table3d name: " << obj_name << endl;
@@ -78,20 +80,33 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="hist_2d") {
     cout << "hist_2d name: " << obj_name << endl;
     cout << "x y" << endl;
-    for(size_t i=0;i<hist_2d_obj.size_x()+1 && hist_2d_obj.size_y()+1;i++) {
+    size_t max=hist_2d_obj.size_x()+1;
+    if (hist_2d_obj.size_y()+1>max) {
+      max=hist_2d_obj.size_y()+1;
+    }
+    for(size_t i=0;i<max;i++) {
+      if (max>=10000) cout.width(8);
+      else if (max>=1000) cout.width(4);
+      else if (max>=100) cout.width(3);
+      else if (max>=10) cout.width(2);
+      cout << i << " ";
       if (i<hist_2d_obj.size_x()) {
 	cout << hist_2d_obj.get_x_low_i(i) << " ";
       } else if (i==hist_2d_obj.size_x()) {
 	cout << hist_2d_obj.get_x_high_i(i-1) << " ";
       } else {
-	cout << 0.0 << " ";
+	cout << "       ";
+        for(int jj=0;jj<precision;jj++) cout << ' ';
+          
       }
       if (i<hist_2d_obj.size_y()) {
 	cout << hist_2d_obj.get_y_low_i(i) << endl;
       } else if (i==hist_2d_obj.size_y()) {
 	cout << hist_2d_obj.get_y_high_i(i-1) << endl;
       } else {
-	cout << 0.0 << endl;
+	cout << "       ";
+        for(int jj=0;jj<precision;jj++) cout << ' ';
+	cout << endl;
       }
     }
   } else if (type=="tensor") {

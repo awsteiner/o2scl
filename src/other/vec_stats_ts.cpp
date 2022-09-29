@@ -252,6 +252,24 @@ int main(void) {
   double kl2=kl_div_gaussian(mean_prior(0),mean_post(0),
                              covar_prior(0,0),covar_post(0,0));
   t.test_rel(kl1,kl2,1.0e-12,"KL div");
+
+  if (true) {
+    vector<double> sines;
+    for(double x=0.0;x<o2scl_const::pi*4.001;
+        x+=o2scl_const::pi*0.1) {
+      sines.push_back(sin(2.0*x)+sin(4.0*x));
+    }
+    vector<complex<double>> fft;
+    vector_forward_fft(sines,fft);
+    cout.setf(ios::showpos);
+    for(size_t j=0;j<fft.size();j++) {
+      cout.width(2);
+      cout << j << " ";
+      cout << sines[j] << " ";
+      cout << fft[j].real() << " " << fft[j].imag() << endl;
+    }
+    cout.unsetf(ios::showpos);
+  }
   
   t.report();
   

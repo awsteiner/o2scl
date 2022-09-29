@@ -151,7 +151,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
   {
-    vector<std::string> itmp={"to-table3d"};
+    vector<std::string> itmp={"to-table3d","sample"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_amr",itmp));
   }
   {
@@ -168,7 +168,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
   {
-    vector<std::string> itmp={"max","min","contours","list","to-table3d"};
+    vector<std::string> itmp={"max","min","contours","list","to-table3d",
+    "refine"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
@@ -737,7 +738,7 @@ void acol_manager::command_add(std::string new_type) {
        {0,"min","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_min),both},
-       {0,"refine","",0,2,"","",
+       {0,"refine","",0,-1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_refine),both},
        {0,"rename","",0,2,"","",
@@ -952,12 +953,15 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="prob_dens_mdim_amr") {
     
-    static const size_t narr=1;
+    static const size_t narr=2;
     comm_option_s options_arr[narr]=
       {
         {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table3d),both}
+         (this,&acol_manager::comm_to_table3d),both},
+        {0,"sample","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sample),both}
       };
     if (narr!=type_comm_list["prob_dens_mdim_amr"].size()) {
       O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
@@ -1116,9 +1120,12 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="hist_2d") {
 
-    static const size_t narr=5;
+    static const size_t narr=6;
     comm_option_s options_arr[narr]=
       {
+        {0,"refine","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_refine),both},
         {'l',"list","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},

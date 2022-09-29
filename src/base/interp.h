@@ -2825,9 +2825,7 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Desc
-
-      \warning Untested.
+  /** \brief Fill in between vector entries with linear interpolation
    */
   template<class vec_t>
   void vector_refine_inplace(vec_t &v, size_t factor, bool log=false) {
@@ -2841,7 +2839,7 @@ namespace o2scl {
       size_t ix=0;
       for(size_t i=0;i<v.size()-1;i++) {
         for(size_t j=0;j<factor;j++) {
-          v2[ix]=((double)j)/((double)factor)*(v[i+1]-v[i])+v[i];
+          v2[ix]=v[i]*pow(v[i+1]/v[i],((double)j)/((double)factor));
           ix++;
         }
       }
@@ -2849,10 +2847,12 @@ namespace o2scl {
       size_t ix=0;
       for(size_t i=0;i<v.size()-1;i++) {
         for(size_t j=0;j<factor;j++) {
-          v2[ix]=v[i]*pow(v[i+1]/v[i],((double)j)/((double)factor));
+          v2[ix]=((double)j)/((double)factor)*(v[i+1]-v[i])+v[i];
+          ix++;
         }
       }
     }
+    v=v2;
     return;
   }
   

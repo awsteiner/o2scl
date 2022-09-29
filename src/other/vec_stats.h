@@ -1904,6 +1904,47 @@ namespace o2scl {
     return;
   }
 
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      real data
+   */
+  template<class vec_t, class cx_resize_vec_t> void vector_forward_fft
+  (const vec_t &data, cx_resize_vec_t &fft) {
+    
+#ifdef O2SCL_FFTW
+
+    fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                 data.size());
+    fftw_complex *out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                  data.size());
+    
+    for(size_t i=0;i<data.size();i++) {
+      in[i][0]=data[i];
+      in[i][1]=0.0;
+    }
+    
+    // The forward FFT
+    fftw_plan plan=fftw_plan_dft_1d(data.size(),in,out,
+                                    FFTW_FORWARD,FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    // Allocate the output vectors
+    
+    fft.resize(data.size());
+    
+    // Copy from the FFTW objects to the output vectors
+    for(size_t i=0;i<data.size();i++) {
+      fft[i].real(out[i][0]);
+      fft[i].imag(out[i][1]);
+    }
+
+    fftw_free(in);
+    fftw_free(out);
+
+#endif
+
+    return;
+  }
+  
   /** \brief Use FFTW to construct the autocorrelation vector
 
       From https://github.com/kaityo256/fftw_sample

@@ -2002,6 +2002,17 @@ namespace o2scl_acol {
         determined by the value of <tt>interp_type</tt>. If the
         initial number of rows is N, then the final number of rows is
         1+(N-1)*<factor>.
+
+        For objects of type hist_2d:
+
+        Refine the hist_2d.
+
+        Arguments: <tt><factor> [log mode]</tt>
+        
+        Refine the data by interpolating. The type of interpolation is
+        determined by the value of <tt>interp_type</tt>. If the
+        initial number of rows is N, then the final number of rows is
+        1+(N-1)*<factor>.
     */
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 
@@ -2040,6 +2051,12 @@ namespace o2scl_acol {
 
         For objects of type prob_dens_mdim_gaussian:
 
+        Arguments: <number of samples>
+
+        Sample the distribution to create a <tt>table</tt> object.
+
+        For objects of type prob_dens_mdim_amr:
+        
         Arguments: <number of samples>
 
         Sample the distribution to create a <tt>table</tt> object.

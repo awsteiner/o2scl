@@ -121,16 +121,26 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     table_obj=table_new;
     
   } else if (type=="table3d") {
-    
-    vector<string> in, pr;
-    pr.push_back("Refinement factor");
-    pr.push_back("Log scaling?");
-    int ret=get_input(sv,pr,in,"refine",itive_com);
-    if (ret!=0) return ret;
-    
-    size_t factor=o2scl::stoszt(in[0]);
 
-    bool log_mode=o2scl::stob(in[1]);
+    size_t factor;
+    bool log_mode;
+    if (sv.size()==1 || sv.size()>=3) {
+      vector<string> in, pr;
+      pr.push_back("Refinement factor");
+      pr.push_back("Log scaling?");
+      int ret=get_input(sv,pr,in,"refine",itive_com);
+      if (ret!=0) return ret;
+      factor=o2scl::stoszt(in[0]);
+      log_mode=o2scl::stob(in[1]);
+    } else {
+      factor=o2scl::stoszt(sv[1]);
+      log_mode=false;
+    }
+    
+    if (verbose>1) {
+      cout << "Refining with factor: " << factor << " and log mode "
+           << log_mode << endl;
+    }
 
     // Check if log scaling makes sense
     if (log_mode) {
@@ -152,6 +162,9 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
 
     o2scl::table3d t3d_new;
 
+    if (verbose>1) {
+      cout << "factor, log_mode: " << factor << " " << log_mode << endl;
+    }
     ubvector xg=table3d_obj.get_x_data();
     ubvector yg=table3d_obj.get_y_data();
     vector_refine_inplace(xg,factor,log_mode);
@@ -175,16 +188,23 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     table3d_obj=t3d_new;
     
   } else if (type=="hist_2d") {
-    
-    vector<string> in, pr;
-    pr.push_back("Refinement factor");
-    pr.push_back("Log scaling?");
-    int ret=get_input(sv,pr,in,"refine",itive_com);
-    if (ret!=0) return ret;
-    
-    size_t factor=o2scl::stoszt(in[0]);
 
-    bool log_mode=o2scl::stob(in[1]);
+    size_t factor;
+    bool log_mode;
+    if (sv.size()==1 || sv.size()>=3) {
+      vector<string> in, pr;
+      pr.push_back("Refinement factor");
+      pr.push_back("Log scaling?");
+      int ret=get_input(sv,pr,in,"refine",itive_com);
+      if (ret!=0) return ret;
+      
+      factor=o2scl::stoszt(in[0]);
+      log_mode=o2scl::stob(in[1]);
+    } else {
+      factor=o2scl::stoszt(sv[1]);
+      log_mode=false;
+    }
+    
     ubvector xb=hist_2d_obj.get_x_bins();
     ubvector yb=hist_2d_obj.get_y_bins();
     
@@ -208,8 +228,15 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     
     o2scl::hist_2d h2d_new;
 
+    if (verbose>1) {
+      cout << "factor, log_mode: " << factor << " " << log_mode << endl;
+      cout << xb.size() << " " << yb.size() << endl;
+    }
     vector_refine_inplace(xb,factor,log_mode);
     vector_refine_inplace(yb,factor,log_mode);
+    if (verbose>1) {
+      cout << xb.size() << " " << yb.size() << endl;
+    }
 
     h2d_new.set_bin_edges(xb.size(),xb,yb.size(),yb);
     ubmatrix m=hist_2d_obj.get_wgts();
@@ -3167,6 +3194,35 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
     for(int i=0;i<N;i++) {
       ubvector x(pdmg_obj.dim());
       pdmg_obj(x);
+      table_obj.line_of_data(x.size(),x);
+    }
+
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+
+  } else if (type=="prob_dens_mdim_amr") {
+    
+    if (sv.size()<2) {
+      cerr << "Not enough arguments to sample." << endl;
+      return exc_efailed;
+    }
+
+    table_obj.clear();
+    
+    int N=o2scl::stoi(sv[1]);
+
+    std::cout << "Constructing " << N << " samples of the multivariate "
+              << "distribution." << std::endl;
+    
+    for(size_t j=0;j<pdma_obj.dim();j++) {
+      table_obj.new_column(((string)"c_")+o2scl::szttos(j));
+    }
+
+    for(int i=0;i<N;i++) {
+      vector<double> x(pdma_obj.dim());
+      pdma_obj(x);
       table_obj.line_of_data(x.size(),x);
     }
 
