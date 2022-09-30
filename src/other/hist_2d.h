@@ -571,6 +571,28 @@ namespace o2scl {
 	computed representatives, since they don't always exist.
     */
     double get_y_rep_i(size_t j);
+
+    /** \brief Create a vector filled with the representatives for 
+	each bin
+     */
+    template<class resize_vec_t> void create_x_rep_vec(resize_vec_t &v) {
+      v.resize(hsize_x);
+      for(size_t i=0;i<hsize_x;i++) {
+	v[i]=get_x_rep_i(i);
+      }
+      return;
+    }
+
+    /** \brief Create a vector filled with the representatives for 
+	each bin
+     */
+    template<class resize_vec_t> void create_y_rep_vec(resize_vec_t &v) {
+      v.resize(hsize_y);
+      for(size_t i=0;i<hsize_y;i++) {
+	v[i]=get_y_rep_i(i);
+      }
+      return;
+    }
     //@}
 
     /* \brief Set up a twod_intp object for interpolation

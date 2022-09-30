@@ -142,6 +142,11 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
            << log_mode << endl;
     }
 
+    if (factor<=1) {
+      cerr << "The refinement factor must be 2 or larger." << endl;
+      return 1;
+    }
+
     // Check if log scaling makes sense
     if (log_mode) {
       double xfirst=table3d_obj.get_grid_x(0);
@@ -205,6 +210,11 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
       log_mode=false;
     }
     
+    if (factor<=1) {
+      cerr << "The refinement factor must be 2 or larger." << endl;
+      return 1;
+    }
+
     ubvector xb=hist_2d_obj.get_x_bins();
     ubvector yb=hist_2d_obj.get_y_bins();
     
@@ -234,19 +244,19 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     }
     vector_refine_inplace(xb,factor,log_mode);
     vector_refine_inplace(yb,factor,log_mode);
-    if (verbose>1) {
-      cout << xb.size() << " " << yb.size() << endl;
-    }
 
     h2d_new.set_bin_edges(xb.size(),xb,yb.size(),yb);
     ubmatrix m=hist_2d_obj.get_wgts();
+    ubvector xr, yr;
+    hist_2d_obj.create_x_rep_vec(xr);
+    hist_2d_obj.create_y_rep_vec(yr);
     interp2_seq<> is;
-    is.set_data(xb.size(),yb.size(),xb,yb,m,interp_type);
+    is.set_data(xr.size(),yr.size(),xr,yr,m,interp_type);
     
     // Copy over column names and units
-    for(size_t ix=0;ix<xb.size();ix++) {
-      for(size_t iy=0;iy<yb.size();iy++) {
-        h2d_new.set_wgt_i(ix,iy,is.eval(xb[ix],yb[iy]));
+    for(size_t ix=0;ix<xr.size();ix++) {
+      for(size_t iy=0;iy<yr.size();iy++) {
+        h2d_new.set_wgt_i(ix,iy,is.eval(xr[ix],yr[iy]));
       }
     }
     
