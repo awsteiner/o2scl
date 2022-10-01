@@ -1201,11 +1201,19 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"<verbatim> embed:rst","");
   string_replace(s," </verbatim>","");
   
+  if (s.find("See")!=std::string::npos) {
+    std::cout << "1: " << s << endl;
+  } else {
+    std::cout << "1b: " << s << std::endl;
+  }
   string_replace(s,"See:ref:"," ");
   string_replace(s,"See:cpp:func:`","See ");
-  string_replace(s," See:[","See: [");
-  string_replace(s,"and:[","and: [");
+  string_replace(s," See :[","See: [");
+  string_replace(s," and :[","and: [");
   string_replace(s,"See[","See [");
+  if (s.find("See")!=std::string::npos) {
+    std::cout << "2: " << s << endl;
+  }
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");

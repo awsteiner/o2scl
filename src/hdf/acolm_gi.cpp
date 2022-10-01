@@ -903,7 +903,8 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
 	if (clist[j]==sv[1]) {
 
 	  if (found==false) {
-	    cout << "Command \"" << sv[1] << "\" is a type specific "
+	    cout << "Command " << command_color << sv[1]
+                 << default_color << " is a type specific "
 		 << "command. Below are "
 		 << "the various\ndescriptions of its operation with "
 		 << "the relevant types." << endl;
