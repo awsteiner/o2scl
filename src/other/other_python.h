@@ -25,6 +25,7 @@
 #include <o2scl/poly.h>
 #include <o2scl/polylog.h>
 #include <o2scl/hist.h>
+#include <o2scl/hist_2d.h>
 #include <o2scl/contour.h>
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/prob_dens_mdim_amr.h>
@@ -182,6 +183,52 @@ size_t o2scl_hist_get_bin_index(void *vptr, double x);
 int o2scl_hist_function(void *vptr, char *func);
 
 void o2scl_hist_clear(void *vptr);
+
+void *o2scl_create_hist_2d();
+
+void o2scl_free_hist_2d(void *vptr);
+
+void o2scl_copy_hist_2d(void *vsrc, void *vdest);
+
+bool o2scl_hist_2d_get_extend_rhs(void *vptr);
+
+void o2scl_hist_2d_set_extend_rhs(void *vptr, bool v);
+
+bool o2scl_hist_2d_get_extend_lhs(void *vptr);
+
+void o2scl_hist_2d_set_extend_lhs(void *vptr, bool v);
+
+void o2scl_hist_2d_create_x_rep_vec(void *vptr, void *ptr_v);
+
+void o2scl_hist_2d_create_y_rep_vec(void *vptr, void *ptr_v);
+
+void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins_x, size_t n_bins_y);
+
+void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, char *colx, char *coly, char *colz, size_t n_bins_x, size_t n_bins_y);
+
+size_t o2scl_hist_2d_size_x(void *vptr);
+
+size_t o2scl_hist_2d_size_y(void *vptr);
+
+void o2scl_hist_2d_set_bin_edges_grid(void *vptr, void *ptr_gx, void *ptr_gy);
+
+void o2scl_hist_2d_set_bin_edges_vec(void *vptr, size_t nx, void *ptr_vx, size_t ny, void *ptr_vy);
+
+void o2scl_hist_2d_update(void *vptr, double x, double y, double val=1.0);
+
+void o2scl_hist_2d_update_i(void *vptr, size_t i, size_t j, double val=1.0);
+
+double o2scl_hist_2d_get_wgt_i(void *vptr, size_t i, size_t j);
+
+double o2scl_hist_2d_get_wgt(void *vptr, double x, double y);
+
+void o2scl_hist_2d_set_wgt_i(void *vptr, size_t i, size_t j, double val);
+
+void o2scl_hist_2d_set_wgt(void *vptr, double x, double y, double val);
+
+void o2scl_hist_2d_clear(void *vptr);
+
+void o2scl_hist_2d_clear_wgts(void *vptr);
 
 void *o2scl_create_contour_line();
 

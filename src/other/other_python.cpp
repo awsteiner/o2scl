@@ -493,6 +493,149 @@ void o2scl_hist_clear(void *vptr) {
   return;
 }
 
+void *o2scl_create_hist_2d() {
+  hist_2d *ptr=new hist_2d;
+  return ptr;
+}
+
+void o2scl_free_hist_2d(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_hist_2d(void *vsrc, void *vdest) {
+  hist_2d *src=(hist_2d *)vsrc;
+  hist_2d *dest=(hist_2d *)vdest;
+  *dest=*src;
+}
+
+bool o2scl_hist_2d_get_extend_rhs(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  return ptr->extend_rhs;
+}
+
+void o2scl_hist_2d_set_extend_rhs(void *vptr, bool v) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->extend_rhs=v;
+  return;
+}
+
+bool o2scl_hist_2d_get_extend_lhs(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  return ptr->extend_lhs;
+}
+
+void o2scl_hist_2d_set_extend_lhs(void *vptr, bool v) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->extend_lhs=v;
+  return;
+}
+
+void o2scl_hist_2d_create_x_rep_vec(void *vptr, void *ptr_v) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  ptr->create_x_rep_vec(*v);
+  return;
+}
+
+void o2scl_hist_2d_create_y_rep_vec(void *vptr, void *ptr_v) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  ptr->create_y_rep_vec(*v);
+  return;
+}
+
+void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins_x, size_t n_bins_y) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  table<> *t=(table<> *)ptr_t;
+  ptr->from_table(*t,colx,coly,n_bins_x,n_bins_y);
+  return;
+}
+
+void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, char *colx, char *coly, char *colz, size_t n_bins_x, size_t n_bins_y) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  table<> *t=(table<> *)ptr_t;
+  ptr->from_table(*t,colx,coly,colz,n_bins_x,n_bins_y);
+  return;
+}
+
+size_t o2scl_hist_2d_size_x(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  size_t ret=ptr->size_x();
+  return ret;
+}
+
+size_t o2scl_hist_2d_size_y(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  size_t ret=ptr->size_y();
+  return ret;
+}
+
+void o2scl_hist_2d_set_bin_edges_grid(void *vptr, void *ptr_gx, void *ptr_gy) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  uniform_grid<double> *gx=(uniform_grid<double> *)ptr_gx;
+  uniform_grid<double> *gy=(uniform_grid<double> *)ptr_gy;
+  ptr->set_bin_edges(*gx,*gy);
+  return;
+}
+
+void o2scl_hist_2d_set_bin_edges_vec(void *vptr, size_t nx, void *ptr_vx, size_t ny, void *ptr_vy) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  vector<double> *vx=(vector<double> *)ptr_vx;
+  vector<double> *vy=(vector<double> *)ptr_vy;
+  ptr->set_bin_edges(nx,*vx,ny,*vy);
+  return;
+}
+
+void o2scl_hist_2d_update(void *vptr, double x, double y, double val) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->update(x,y,val);
+  return;
+}
+
+void o2scl_hist_2d_update_i(void *vptr, size_t i, size_t j, double val) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->update_i(i,j,val);
+  return;
+}
+
+double o2scl_hist_2d_get_wgt_i(void *vptr, size_t i, size_t j) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_wgt_i(i,j);
+  return ret;
+}
+
+double o2scl_hist_2d_get_wgt(void *vptr, double x, double y) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_wgt(x,y);
+  return ret;
+}
+
+void o2scl_hist_2d_set_wgt_i(void *vptr, size_t i, size_t j, double val) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->set_wgt_i(i,j,val);
+  return;
+}
+
+void o2scl_hist_2d_set_wgt(void *vptr, double x, double y, double val) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->set_wgt(x,y,val);
+  return;
+}
+
+void o2scl_hist_2d_clear(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_hist_2d_clear_wgts(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  ptr->clear_wgts();
+  return;
+}
+
 void *o2scl_create_contour_line() {
   contour_line *ptr=new contour_line;
   return ptr;

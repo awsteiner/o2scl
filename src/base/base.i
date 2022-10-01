@@ -146,6 +146,15 @@ class std::vector<double>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
+|
+| def from_list(self,lst):
+|     """
+|     Set the vector with a python list
+|     """
+|     self.resize(len(lst))
+|     for i in range(0,len(lst)):
+|         self[i]=lst[i]
+|     return
 class std::vector<int>
 - py_name std_vector_int
 - std_cc                             

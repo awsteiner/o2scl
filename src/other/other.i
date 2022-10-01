@@ -20,6 +20,7 @@ h_include <o2scl/slack_messenger.h>
 h_include <o2scl/poly.h>
 h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
+h_include <o2scl/hist_2d.h>
 h_include <o2scl/contour.h>
 h_include <o2scl/prob_dens_func.h>
 h_include <o2scl/prob_dens_mdim_amr.h>
@@ -261,6 +262,89 @@ class hist
   - int
   - std::string func
 - function clear
+  - void
+class hist_2d
+- std_cc
+- function create_x_rep_vec
+  - void
+  - io std_vector &v
+- function create_y_rep_vec
+  - void
+  - io std_vector &v
+#- function get_wgts
+#  - const boost::numeric::ublas::matrix<double> &
+- function from_table
+  - void                             
+  - py_name from_table
+  - io table<> &t
+  - std::string colx
+  - std::string coly
+  - size_t n_bins_x
+  - size_t n_bins_y
+- function from_table
+  - void                             
+  - py_name from_table_wgt
+  - io table<> &t
+  - std::string colx
+  - std::string coly
+  - std::string colz
+  - size_t n_bins_x
+  - size_t n_bins_y
+- function size_x
+  - size_t
+- function size_y
+  - size_t
+- bool extend_rhs
+- bool extend_lhs
+- function set_bin_edges
+  - void
+  - py_name set_bin_edges_grid
+  - io uniform_grid<double> &gx
+  - io uniform_grid<double> &gy
+- function set_bin_edges
+  - void
+  - py_name set_bin_edges_vec
+  - size_t nx
+  - io vector<double> &vx
+  - size_t ny
+  - io vector<double> &vy
+- function update
+  - void
+  - double x
+  - double y
+  - double val [1.0]
+- function update_i
+  - void
+  - size_t i
+  - size_t j
+  - double val [1.0]
+- function get_wgt_i
+  - double
+  - size_t i
+  - size_t j
+- function get_wgt
+  - double
+  - double x
+  - double y
+- function set_wgt_i
+  - void 
+  - size_t i
+  - size_t j
+  - double val
+- function set_wgt
+  - void
+  - double x
+  - double y
+  - double val
+#- function get_bin_indices
+#  - size_t
+#  - double x
+#  - double y
+#  - out size_t &ix
+#  - out size_t &iy
+- function clear
+  - void
+- function clear_wgts
   - void
 class contour_line
 - double level
