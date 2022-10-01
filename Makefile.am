@@ -31,6 +31,7 @@ help:
 	"-------------------------------------"
 	@echo "sinstall:             Install headers and libraries only"
 	@echo "o2scl-doc:            Make HTML documentation"
+	@echo "o2scl-xml:            Generate XML from doxygen"
 	@echo "clean-doc:            Remove generated documentation files"
 	@echo "release-sync-doc:     Copy docs from /usr/local on isospin "\
 	"to the web page "

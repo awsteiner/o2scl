@@ -956,9 +956,9 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   
   stemp="1. Help for commands which apply to the current object ";
   stemp+="may be obtained with '-help ";
-  stemp+="<command>'. Help for type-specific commands can be obtained ";
-  stemp+="by '-help <type> <command>'. A list of commands for each type ";
-  stemp+="can be obtained with 'commands <type>', or for all commands ";
+  stemp+="[command]'. Help for type-specific commands can be obtained ";
+  stemp+="by '-help [type] [command]'. A list of commands for each type ";
+  stemp+="can be obtained with 'commands [type]', or for all commands ";
   stemp+="use '-commands all'. Required arguments ";
   stemp+="are surrounded by ";
   stemp+="<>'s and optional arguments are surrounded by []'s.\n";
@@ -984,7 +984,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   stemp="4. In order to avoid confusion between arguments and functions, ";
-  stemp+="use parenthesis and quotes, i.e. \"(-x*2)\" instead of -x*2.\n";
+  stemp+="use parenthesis and quotes, i.e. '(-x*2)' instead of -x*2.\n";
   rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
@@ -992,7 +992,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   }
 
   stemp="5. Also, do not use a unary minus next to a binary operator, ";
-  stemp+="i.e. use \"a>(-1)\" instead of \"a>-1\".\n\n";
+  stemp+="i.e. use 'a>(-1)' instead of 'a>-1'.\n\n";
   rewrap_ignore_vt100(stemp,sv2,ncols_loc-4);
   dsc+=sv2[0]+"\n";
   for(size_t j=1;j<sv2.size();j++) {
@@ -1037,7 +1037,7 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     
     terminal ter;
 
-    cout << "List of additional help topics (e.g. \"acol -help <topic>\"): ";
+    cout << "List of additional help topics (e.g. \"acol -help [topic]\"): ";
     cout << help_color << "functions" << default_color
 	 << "," << endl;
     cout << help_color << "index-spec"
