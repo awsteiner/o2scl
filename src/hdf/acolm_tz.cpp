@@ -1201,19 +1201,12 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"<verbatim> embed:rst","");
   string_replace(s," </verbatim>","");
   
-  if (s.find("See")!=std::string::npos) {
-    std::cout << "1: " << s << endl;
-  } else {
-    std::cout << "1b: " << s << std::endl;
-  }
   string_replace(s,"See:ref:"," ");
   string_replace(s,"See:cpp:func:`","See ");
-  string_replace(s," See :[","See: [");
-  string_replace(s," and :[","and: [");
+  string_replace(s," See :[","See [");
+  string_replace(s," and :["," and [");
   string_replace(s,"See[","See [");
-  if (s.find("See")!=std::string::npos) {
-    std::cout << "2: " << s << endl;
-  }
+
   string_replace(s,"  "," ");
   string_replace(s," )",")");
   string_replace(s," ,",",");
@@ -1233,8 +1226,6 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
 #ifdef O2SCL_PUGIXML
 
-  verbose=2;
-  
   terminal ter;
   
   // XML walkers
@@ -1377,15 +1368,13 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       }
       
       if (vs_tmp.size()>=2) {
-        if (verbose>1) {
-          cout << "Command:" << endl;
+        if (verbose>0) {
+          cout << "Adding documention for command: " << vs_tmp[0]
+               << endl;
           for(size_t jj=0;jj<vs_tmp.size();jj++) {
             cout << jj << ": \"" << vs_tmp[jj] << "\"" << endl;
           }
           cout << endl;
-        } else if (verbose>0) {
-          cout << "Adding documention for command: " << vs_tmp[0]
-               << endl;
         }
         cmd_doc_strings.push_back(vs_tmp);
       }
@@ -1506,14 +1495,12 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       }
       
       if (vs_tmp.size()>=2) {
-        if (verbose>1) {
-          cout << "Parameter:" << endl;
+        if (verbose>0) {
+          cout << "Adding documentation for parameter " << vs_tmp[0] << endl;
           for(size_t jj=0;jj<vs_tmp.size();jj++) {
             cout << jj << ": \"" << vs_tmp[jj] << "\"" << endl;
           }
           cout << endl;
-        } else if (verbose>0) {
-          cout << "Adding documentation for parameter " << vs_tmp[0] << endl;
         }
         param_doc_strings.push_back(vs_tmp);
       }
@@ -1593,8 +1580,8 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       }
 
       if (found) {
-        if (vs_tmp.size()>=4 || true) {
-          cout << "Help topic:" << endl;
+        if (vs_tmp.size()>=4 && verbose>0) {
+          cout << "Adding doccumentation for help topic " << vs_tmp[0] << endl;
           for(size_t jj=0;jj<vs_tmp.size();jj++) {
             cout << jj << ": \"" << vs_tmp[jj] << "\"" << endl;
           }

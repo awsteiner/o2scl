@@ -2069,41 +2069,87 @@ namespace o2scl_acol {
 
         Select columns for a new table.
 
-        Arguments: <tt><column 1> [column 2] ...</tt>
+        Arguments: <tt><column, pattern, or function 1> 
+        [column, pattern, or function 2] ...</tt>
 
-        Select creates a new table from the present table, including
-        only the columns specified in <cols>. The column specification
-        is a list of column names, functions, or patterns which match
-        the column names. Patterns must be preceeded by a colon ':'
-        and use ECMAScript regular expressions. All of the rows of
-        data are copied over. If functions are specified, the result
-        can be named using '='.
+        The \c select command creates a new table from the present
+        table, including some or all of the columns based on the
+        arguments. Each argument can be a column, a pattern, or a
+        assignment and a new function, If the argument is a column,
+        the specified column is added to the new table. If the
+        argument begins with a colon ':', then the remainder of the
+        string is interpreted as a pattern. All columns which match
+        the pattern are added to the new table. If a column in the old
+        table is specified multiple times in the arguments, then it is
+        only included in the new table once. Finally, if the argument
+        contains an equals sign, '=', then the string to the left of
+        '=' is interpreted as a new column name and the string to the
+        right of the column is interpreted as a function (built from
+        the columns in the old table).
+
+        Depending on the value of \c use_regex, patterns are built
+        upon the rules of fnmatch() or regex. For fnmatch(), '*'
+        represents multiple and '?' represents a single character.
+
+        For example, given a table with columns 'c1dab c2dxy c13d
+        c13def' the command <tt>-select c1dab :c?d*
+        d2=c13d+c13def</tt> creates a new table with columns 'c1dab
+        c2dxy d2' where the third column in the new table is given by
+        the sum of the third and fourth columns in the old table.
 
         For objects of type table3d:
 
-        Select columns for a new table3d.
+        Select columns for a new table3d object.
 
-        Arguments: <tt><slice 1> [slice 2] ...</tt>
+        Arguments: <tt><slice, pattern, or function 1> 
+        [slice, pattern, or function 2] ...</tt>
 
-        Select creates a new table3d from the present table3d,
-        including only the slices specified in <slice spec.>. The
-        slice specification is a list of slice names, functions, or
-        patterns which match the slice names. Patterns must be
-        preceeded by a colon ':' and can use wildcards like '*' and
-        '?'. All of the rows of data are copied over. If functions are
-        specified, the result can be named using '='.
+        The \c select command creates a new \c table3d object from the
+        present \c table3d object, including some or all of the slices
+        based on the arguments. Each argument can be a slice, a
+        pattern, or a assignment and a new function, If the argument
+        is a slice, the specified slice is added to the new \c table3d
+        object. If the argument begins with a colon ':', then the
+        remainder of the string is interpreted as a pattern. All
+        slices which match the pattern are added to the new \c table3d
+        object. If a slice in the old \c table3d object is specified
+        multiple times in the arguments, then it is only included in
+        the new \c table3d object once. Finally, if the argument
+        contains an equals sign, '=', then the string to the left of
+        '=' is interpreted as a new slice name and the string to the
+        right of the slice is interpreted as a function (built from
+        the slices in the old \c table3d object).
 
+        Depending on the value of \c use_regex, patterns are built
+        upon the rules of fnmatch() or regex. For fnmatch(), '*'
+        represents multiple and '?' represents a single character.
+
+        For example, given a \c table3d object with slices 'c1dab
+        c2dxy c13d c13def' the command <tt>-select c1dab :c?d*
+        d2=c13d+c13def</tt> creates a new \c table3d object with
+        slices 'c1dab c2dxy d2' where the third slice in the new \c
+        table3d object is given by the sum of the third and fourth
+        slices in the old \c table3d object.
     */
     virtual int comm_select(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Select rows from an object
 
         For objects of type table:
+
+        Select rows from the table
         
         Arguments: <tt><row specification></tt>
 
-        Select the rows from a table for which the row specification
-        in <row_spec> evaluates to a number greater than 0.5.
+        Select the rows from a table for which the function (based on
+        columns in the current \c table) in <row_spec> evaluates to a
+        number greater than 0.5.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
     */
     virtual int comm_select_rows(std::vector<std::string> &sv,
                                  bool itive_com);
