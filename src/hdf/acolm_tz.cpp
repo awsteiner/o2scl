@@ -89,6 +89,47 @@ int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_pdma(std::vector<std::string> &sv,
+                               bool itive_com) {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Not enough arguments for to-pdma." << endl;
+    }
+
+    int n_dim=sv.size()-1;
+    vector<string> col_names;
+    cout << "X columns: " << endl;
+    vector<double> max, min;
+    for(size_t i=1;i<sv.size();i++) {
+      col_names.push_back(sv[i]);
+      if (i==sv.size()-1) {
+        cout << "Y column: " << endl;
+        cout << sv[i] << endl;
+      } else {
+        cout << i-1 << ": " << sv[i] << endl;
+      }
+      if (i!=sv.size()-1) {
+        max.push_back(table_obj.max(sv[i]));
+        min.push_back(table_obj.min(sv[i]));
+      }
+    }
+
+    const_matrix_view_table<> mvt(table_obj,col_names);
+
+    pdma_obj.set(min,max);
+    pdma_obj.initial_parse(mvt);
+    
+    command_del(type);
+    clear_obj();
+    command_add("prob_dens_mdim_amr");
+    type="prob_dens_mdim_amr";
+    
+  }
+    
+  return 0;
+}
+
 int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
 			       bool itive_com) {
 

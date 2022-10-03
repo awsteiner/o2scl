@@ -2836,6 +2836,12 @@ int main(int argc, char *argv[]) {
         post_func_code.push_back("vcl=contour_line(self._link,ret)");
         //post_func_code.push_back("vcl._owner=True");
         
+      } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
+        
+        function_start="ret=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back("hc=hypercube(self._link,ret)");
+        
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
         function_end=")";
@@ -2907,6 +2913,8 @@ int main(int argc, char *argv[]) {
         fout << "        return vstrt" << endl;
       } else if (iff.ret.name=="contour_line") {
         fout << "        return vcl" << endl;
+      } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
+        fout << "        return hc" << endl;
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         if (iff.name=="operator[]") {
           fout << "        return strt.to_bytes()" << endl;

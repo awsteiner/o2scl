@@ -1046,13 +1046,23 @@ namespace o2scl_acol {
         the \c entry command just prints out the specified entry as if
         the third argument was not specified.
 
+        To refer to a location by the x and y values instead of 
+        indices, use the \c entry-grid command.
+
         For objects of type table3d:
 
         Get or set a single entry in a table3d object.
 
         Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
 
-        Detailed desc.
+        This command gets or sets the value in the specified slice at
+        the location specified by <x index> and <y index>. If "none"
+        is specified as the fourth argument, or if only three
+        arguments are given, then the \c entry command just prints out
+        the specified value.
+
+        To refer to a location by the x and y values instead of 
+        indices, use the \c entry-grid command.
 
         For objects of type tensor:
 
@@ -1061,7 +1071,11 @@ namespace o2scl_acol {
         Arguments: <tt><index 1> <index 2> <index 3> ... [value or
         "none"]</tt>
 
-        Detailed desc.
+        This command gets or sets the value in the tensor at the
+        location given by the specified indices. If an an argument is
+        given at the end and that arguemnt is not "none", then it is
+        used to set the new value. If only the indices are given, then
+        the \c entry command just prints out the specified value.
 
         For objects of type tensor_grid:
 
@@ -1072,6 +1086,7 @@ namespace o2scl_acol {
         The \c entry command gets or sets a value in the \c
         tensor_grid object. The arguments are a list of indices and
         (optionally) a new value to store in that location.
+
         See the \c entry-grid command to specify a grid location
         rather than specifying indices.
     */
@@ -1099,7 +1114,13 @@ namespace o2scl_acol {
 
         Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
 
-        Detailed desc.
+        The \c entry-grid command first looks for the value closest to
+        <x value> and <y value> in the slice <index slice> to
+        determine a row in the table. Next, \c entry-grid gets or sets
+        the value of of the specified slice in that location. If
+        "none" is specified as the fourth argument, then \c entry-grid
+        just prints out the specified entry as if the third argument
+        was not specified.
 
         For objects of type tensor_grid:
 
@@ -1456,7 +1477,14 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> <table> <old> [new]</tt>
 
-        Detailed desc.
+        Insert a slice from file <fname>, interpolating it into the
+        current table. The slice <old> is the slice in the file which
+        is to be inserted into the \c table3d object, using the slice
+        <old> in the file and <new> in the current \c table3d object.
+        The new slice in the table is named <old>, or [new] if the
+        additional argument is given. Note that extrapolation is
+        allowed, and the operation of the \c insert command is not
+        well-defined if some of the slice entries are not finite.
     */
     virtual int comm_insert(std::vector<std::string> &sv, bool itive_com);
 
@@ -2272,6 +2300,9 @@ namespace o2scl_acol {
         slices in the table3d object to create a table with a column
         for each slice.
 
+        TODO: explain how this is different from the \c to-table
+        command.
+
         For objects of type tensor_grid:
 
         Slice to a smaller rank tensor_grid object.
@@ -2279,6 +2310,8 @@ namespace o2scl_acol {
         Arguments: <tt><index 1> <value 1> <index 2> <value 2> ...</tt>
 
         Detailed desc.
+
+        TODO: explain how this is different from to-table
     */
     virtual int comm_slice(std::vector<std::string> &sv, bool itive_com);
 
@@ -2452,9 +2485,24 @@ namespace o2scl_acol {
         Arguments: <column 1> [column 2] ...
 
         This creates an object of type <tt>prob_dens_mdim_gaussian</tt>
-        based on the columns of data in the table.
+        based on the given columns of data in the table.
      */
-    virtual int comm_to_gaussian(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_to_gaussian(std::vector<std::string> &sv,
+                                 bool itive_com);
+    
+    /** \brief Construct a AMR-based probability distribution
+
+        For objects of type table:
+
+        Construct a AMR-based probability distribution
+
+        Arguments: <column 1> [column 2] ...
+
+        This creates an object of type <tt>prob_dens_mdim_amr</tt>
+        based on the given columns of data in the table.
+     */
+    virtual int comm_to_pdma(std::vector<std::string> &sv,
+                             bool itive_com);
 
     /** \brief Convert to a \ref o2scl::hist object
 
@@ -2531,7 +2579,13 @@ namespace o2scl_acol {
         Arguments: <tt><index> <grid name> <data name> [values of
         fixed indices]</tt>
         
-        Detailed desc.
+        Convert the \c tensor_grid object to a \c table object by
+        choosing an index to vary and fixing the remaining indices.
+        The resulting table has two columns. The grid associated with
+        the specified index is stored in a new column named <grid
+        name> and the values of the tensor are stored in a column
+        named <data name>. Linear interpolation is used, so the values
+        for the fixed indices need not lie on grid points.
 
         For objects of type table3d:
 
@@ -2539,15 +2593,27 @@ namespace o2scl_acol {
 
         Arguments: (No arguments.)
         
-        Detailed desc.
+        Given a \c table3d object with C slices which each have N
+        values in the x direction and M values in the y direction,
+        this command creates a table with C+2 columns and N times M
+        rows. The x name from the \c table3d object is the first
+        column, the y name from the \c table3d object is the 
+        second column, and the remaining columns correspond to the
+        slices. Then the \c to-table command loops through all
+        of the x and y values, creating a row from the values in
+        each slice. 
 
         For objects of type hist:
 
-        Convert to a table object.
+        Convert to a \c hist object to a \c table object.
 
         Arguments: (No arguments.)
         
-        Convert to a table object.
+        This function creates a new table with four columns from
+        the current \c hist object. The columns are named
+        "rep", "low", "high", "wgt". In order, for each bin,
+        each row stores the bin representative, the lower edge,
+        the upper edge, and the bin weight. 
     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
@@ -2721,7 +2787,7 @@ namespace o2scl_acol {
 
         Convert a slice of the table3d object to a tensor_grid object.
 
-        Arguments: <tt><slice></tt>
+        Arguments: <tt><slice> <n points></tt>
 
         Detailed desc.
 

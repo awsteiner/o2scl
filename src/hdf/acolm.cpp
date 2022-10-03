@@ -121,7 +121,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
       "to-hist","to-hist-2d","to-table3d","wstats",
-      "ser-hist-t3d","to-gaussian",
+      "ser-hist-t3d","to-gaussian","to-pdma"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
@@ -372,9 +372,11 @@ void acol_manager::update_o2_docs(size_t narr,
                 // (When types contain <>'s, the xml parser manges them
                 // and ends up adding a space.)
                 string s2="For objects of type "+new_type+" :";
+                string s3="For objects of type [t]"+new_type+"[d]:";
 
                 if (cmd_doc_strings[k][kk].substr(0,s.length())==s ||
-                    cmd_doc_strings[k][kk].substr(0,s2.length())==s2) {
+                    cmd_doc_strings[k][kk].substr(0,s2.length())==s2 ||
+                    cmd_doc_strings[k][kk].substr(0,s3.length())==s3) {
                   
                   if (loc_verbose>1) {
                     cout << "Found type-specific docs for type " << new_type
@@ -547,7 +549,7 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=42;
+    static const size_t narr=43;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -672,6 +674,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-gaussian","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gaussian),both},
+       {0,"to-pdma","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_pdma),both},
        {0,"wstats","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_wstats),both}
