@@ -1475,8 +1475,8 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type!="table3d" && type!="hist_2d") {
+  
+  if (type!="table3d" && type!="hist_2d" && type!="prob_dens_mdim_gaussian") {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
@@ -1896,6 +1896,15 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	return 1;
       }
     }
+    
+  } else if (type=="prob_dens_mdim_gaussian") {
+
+    if (pdmg_obj.dim()!=2) {
+      cerr << "Command contours only works with dim=2." << endl;
+      return 1;
+    }
+
+    prob_dens_mdim_biv_gaussian<> biv=pdmg_obj.make_biv();
     
   }
   

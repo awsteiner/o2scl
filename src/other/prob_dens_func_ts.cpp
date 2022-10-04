@@ -187,16 +187,27 @@ int main(void) {
   }
 
   {
+    double one_sigma=erf(1.0/sqrt(2.0));
+    double two_sigma=erf(2.0/sqrt(2.0));
+    
     ubvector xx(2);
     prob_dens_mdim_biv_gaussian<ubvector> biv;
-    biv.set(2.0,3.0,1.0,0.5,-0.5);
+    biv.set(0.0,0.0,1.0,1.0,0.0);
+    cout << biv.level_fixed_integral(one_sigma) << endl;
+    //biv.set(2.0,3.0,1.0,0.5,-0.5);
+    biv.set(2.0,3.0,1.0,0.5,0.0);
     xx[0]=2.0;
     xx[1]=3.0;
     cout << biv.pdf(xx) << endl;
     biv.contour(0.3,0.0,xx);
     cout << xx[0] << " " << xx[1] << endl;
     cout << biv.pdf(xx) << endl;
-    t.test_rel(biv.pdf(xx),0.3,1.0e-6,"biv contour");
+    //t.test_rel(biv.pdf(xx),0.3,1.0e-6,"biv contour");
+    double x0, x1, x2, x3, x4, x5;
+    biv.ellipse_frac_integral(one_sigma,x0,x1,x2,x3,x4);
+    cout << x0 << " " << x1 << " " << x2 << " " << x3 << " " << x4 << endl;
+    biv.ellipse_frac_integral(two_sigma,x0,x1,x2,x3,x4);
+    cout << x0 << " " << x1 << " " << x2 << " " << x3 << " " << x4 << endl;
   }
   
   t.report();

@@ -839,7 +839,7 @@ namespace o2scl {
       PDF given an angle \f$ \theta \f$. In particular,
       it solves 
       \f[
-      c = pdf(r \cos \theta + \mu_x, r \sin \theta + \mu_y )
+      c = \mathrm{pdf}(r \cos \theta + \mu_x, r \sin \theta + \mu_y )
       \f]
       for the radius \f$ r \f$ and then stores the values 
       \f$ r \cos \theta + \mu_x \f$ and \f$ r \sin \theta + \mu_y \f$
@@ -946,7 +946,7 @@ namespace o2scl {
       
       return;
     }
-    
+
     /** \brief Compute the normalized probability density
      */
     virtual double pdf(const vec_t &v) const {
@@ -961,6 +961,20 @@ namespace o2scl {
   
     /** \brief Return the contour level corresponding to a fixed
         integral
+
+        This function returns the value of the PDF (as returned by
+        pdf()) for which the integral inside the contour line for that
+        value is equal to the specified integral. 
+
+        For example, in the standard two-dimensional normal case, if
+        \f[
+        \int_0^{a}~r dr~\exp\left( - \frac{r^2}{2} \right) 
+        \f]
+        is equal to the value given in \c integral, then this 
+        function returns the value
+        \[f
+        \frac{1}{2 \pi} \exp \left( - \frac{a^2}{2} \right) \, .
+        \f]
     */
     virtual double level_fixed_integral(double integral) {
       // This comes from inverting the cumulative distribution function
@@ -973,6 +987,30 @@ namespace o2scl {
         sig_y/sqrt(1.0-rho*rho);
     }
   
+    /** \brief Return the properties of an ellipse based on the 
+        integral
+    */
+    void ellipse_frac_integral(double integral, double &x_cent,
+                               double &y_cent, double &x_wid,
+                               double &y_wid, double &angle) {
+                               
+      if (frac<=0.0 || frac>=1.0) {
+        O2SCL_ERR("Invalid fraction in ellipse_frac_integral().",
+                  o2scl::exc_einval);
+      }
+      x_cent=x0;
+      y_cent=y0;
+      // Compute the level for the specified integral
+      double level=level_fixed_integral(integral);
+      // Compute the associated argument to the exponential,
+      // this is (x-x0)^2/sig_x^2+(y-y0)^2/sig_y^2 
+      double arg=-2.0*log(level*sig_x*sig_y*sqrt(1.0-rho*rho));
+      x_wid=sig_x*sqrt(arg);
+      y_wid=sig_y*sqrt(arg);
+      angle=atan(rho);
+      return;
+    }
+    
     /** \brief Return a point on the contour for a specified level
         given an angle
     */
