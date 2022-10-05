@@ -994,7 +994,7 @@ namespace o2scl {
                                double &y_cent, double &x_wid,
                                double &y_wid, double &angle) {
                                
-      if (frac<=0.0 || frac>=1.0) {
+      if (integral<=0.0 || integral>=1.0) {
         O2SCL_ERR("Invalid fraction in ellipse_frac_integral().",
                   o2scl::exc_einval);
       }
