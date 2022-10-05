@@ -2217,13 +2217,11 @@ namespace o2scl_hdf {
 
       The \c tensor rearrange commands use index specifications to
       specify how the tensor should be rearranged. Index
-      specifications may be specified as separate arguments e.g.
-      <tt>index(1)</tt> <tt>fixed(2,10)</tt> or multiple index
-      specifications may be given in a single argument separated by
-      spaces or commas, e.g. <tt>index(1) fixed(2,10)</tt> or
-      <tt>index(1),fixed(2,10)</tt>. The indices begin with 0, the
+      specifications may be specified as separate arguments or
+      multiple index specifications may be given in a single argument
+      separated by spaces or commas. The indices begin with 0, the
       first index so that index 1 is the second index. The list of
-      index specification is:
+      index specifications is:
 
       - index(ix): Retain index ix in the new tensor.
 
@@ -2240,26 +2238,31 @@ namespace o2scl_hdf {
       - range(ix,start,end): Retain index ix but modify range. Ranges
         include both of their endpoints.
 
-      - interp(ix,value) (for tensor_grid): fix index ix by
+      - interp(ix,value) (for \c tensor_grid ): fix index ix by
         interpolating 'value' into the grid for index ix.
 
-      - grid(ix,begin,end,n_bins,log) (for tensor_grid): interpolate
-        the specified index on a grid to create a new index. If the
-        value of log is 1, then the grid is logarithmic.
+      - grid(ix,begin,end,n_bins,log) (for \c tensor_grid ):
+        interpolate the specified index on a grid to create a new
+        index. If the value of 'log' is 1, then the grid is
+        logarithmic.
 
-      - gridw(ix,begin,end,bin_width,log) (for tensor_grid):
+      - gridw(ix,begin,end,bin_width,log) (for \c tensor_grid ):
         interpolate the specified index on a grid with a fixed bin
-        width to create a new index. If the value of log is 1, then
-        the grid is logarithmic and the bin_width is the
+        width to create a new index. If the value of 'log' is 1, then
+        the grid is logarithmic and 'bin_width' is the
         multiplicative factor between bin edges.
 
       Note that the index specifications which result in a tensor
       index (all except 'fixed', 'sum', 'trace' and 'interp') must be
       given in the order they should appear in the tensor which
-      results. Also, the 'rearrange' commands require that the result
+      results. Also, the \c rearrange commands require that the result
       of the rearrangement must have at least one index left.
 
       Examples:
+
+      <tt>acol -create tensor_grid 3 10 10 10 -set-grid 0 "i^2" 
+      -set-grid 1 "2*i" -set-grid 2 "(2-i)" -function 
+      "sin(x0+x1*x2)"</tt>
 
       <tt>index(1),index(0)</tt> - take the transpose of a rank 2 
       tensor (i.e. a matrix)

@@ -2675,6 +2675,79 @@ namespace o2scl {
     }
 
   };
+
+  /** \brief Desc
+   */
+  template<class tensor_grid_t>
+  void tensor_grid_out(std::ostream &os, tensor_grid_t &t,
+                       bool pretty=true) {
+
+    if (pretty) {
+      
+      size_t rk=t.get_rank();
+      os << "rank: " << rk << " sizes: ";
+      for(size_t i=0;i<rk;i++) {
+	os << t.get_size(i) << " ";
+      }
+      os << std::endl;
+      os << "grids:" << std::endl;
+      auto &grid=t.get_grid();
+      size_t jtmp=0;
+      for(size_t i=0;i<rk;i++) {
+	os << i << ": ";
+        for(size_t j=0;j<t.get_size(i);j++) {
+          os << grid[jtmp];
+          if (j!=t.get_size(i)-1) os << " ";
+          jtmp++;
+        }
+        os << std::endl;
+      }
+      auto &data=t.get_data();
+      std::vector<size_t> ix(rk);
+      std::vector<std::string> sv, sv_out;
+      for(size_t i=0;i<t.total_size();i++) {
+	t.unpack_index(i,ix);
+	std::string tmp="(";
+	for(size_t j=0;j<rk;j++) {
+	  if (j!=rk-1) {
+	    tmp+=o2scl::szttos(ix[j])+",";
+	  } else {
+	    tmp+=o2scl::szttos(ix[j]);
+	  }
+	}
+	tmp+="): "+o2scl::dtos(data[i]);
+	sv.push_back(tmp);
+      }
+      screenify(sv.size(),sv,sv_out);
+      for(size_t k=0;k<sv_out.size();k++) {
+	os << sv_out[k] << std::endl;
+      }
+
+    } else {
+      
+      size_t rk=t.get_rank();
+      os << rk << " ";
+      for(size_t i=0;i<rk;i++) {
+	os << t.get_size(i) << " ";
+      }
+      os << std::endl;
+      for(size_t i=0;i<rk;i++) {
+        auto &grid=t.get_grid();
+        vector_out(os,grid,true);
+      }
+      auto &data=t.get_data();
+      for(size_t i=0;i<t.total_size();i++) {
+	os << data[i] << " ";
+	if (i%10==9) os << std::endl;
+      }
+      os << std::endl;
+      
+    }
+    
+    return;
+  }
+
+  
   
 }
 
