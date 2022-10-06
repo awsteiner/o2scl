@@ -255,11 +255,12 @@ int main(void) {
 
   if (true) {
     vector<double> sines;
+    vector<complex<double>> fft;
     for(double x=0.0;x<o2scl_const::pi*4.001;
         x+=o2scl_const::pi*0.1) {
       sines.push_back(sin(2.0*x)+sin(4.0*x));
     }
-    vector<complex<double>> fft;
+    
     vector_forward_fft(sines,fft);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
@@ -269,6 +270,29 @@ int main(void) {
       cout << fft[j].real() << " " << fft[j].imag() << endl;
     }
     cout.unsetf(ios::showpos);
+    cout << endl;
+  }
+
+  if (true) {
+    vector<double> sines;
+    for(double x=0.0;x<o2scl_const::pi*3.99;
+        x+=o2scl_const::pi*0.1) {
+      sines.push_back(sin(2.0*x)+sin(4.0*x));
+    }
+    vector<complex<double>> fft;
+    
+    matrix_forward_fft(4,10,sines,fft);
+    cout.setf(ios::showpos);
+    for(size_t j=0;j<fft.size();j++) {
+      cout.width(2);
+      cout << j << " ";
+      cout << sines[j] << " ";
+      cout << fft[j].real() << " " << fft[j].imag() << endl;
+    }
+    cout.unsetf(ios::showpos);
+    cout << endl;
+    
+    
   }
   
   t.report();

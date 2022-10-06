@@ -823,9 +823,9 @@ int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
     // Output indices, grid point, value
     cout << "Indices, grid point, value: ";
     vector_out(cout,ix,false);
-    cout << " ";
+    cout << ", ";
     vector_out(cout,vals,false);
-    cout << " " << tensor_grid_obj.get(ix) << endl;
+    cout << ", " << tensor_grid_obj.get(ix) << endl;
     
   } else {
     cerr << "Command 'entry' not implemented for type " << type << " ."

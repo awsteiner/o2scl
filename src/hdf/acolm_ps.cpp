@@ -2487,6 +2487,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
       for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
 	vars["i"]=((double)i);
 	vars["x"]=tensor_grid_obj.get_grid(k,i);
+        vars["m"]=tensor_grid_obj.get_size(k);
 	calc.compile(in[1].c_str(),&vars);
 	double val=calc.eval(&vars);
 	tensor_grid_obj.set_grid(k,i,val);

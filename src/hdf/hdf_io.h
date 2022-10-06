@@ -2260,18 +2260,50 @@ namespace o2scl_hdf {
 
       Examples:
 
-      <tt>acol -create tensor_grid 3 10 10 10 -set-grid 0 "i^2" 
-      -set-grid 1 "2*i" -set-grid 2 "(2-i)" -function 
-      "sin(x0+x1*x2)"</tt>
+      <tt>acol -create tensor_grid 3 9 10 11 -set-grid 0 "i^2"
+      -set-grid 1 "2*i" -set-grid 2 "(2-i)" -function "sin(x0+x1*x2)"
+      -entry 4 2 5 -rearrange "index(1) index(0)" "fixed(2,5)"
+      -output</tt>
 
-      <tt>index(1),index(0)</tt> - take the transpose of a rank 2 
-      tensor (i.e. a matrix)
+      This example creates a rank three tensor of size 9 by 10 by 11
+      and then flips the first two indices while fixing the third
+      index to select the 6th value to create a rank 2 tensor of 
+      size 10 by 9. Additionally, this example demonstrates that
+      one can put multiple index specifications into the same
+      argument (as in the first argument to rearrange) or place
+      additional index specifications in additional arguments.
+      The \c entry command shows an entry in the original rank 3 
+      tensor and the \c output command shows that that entry 
+      has now moved to the to the (2,4) location in the final
+      rank 2 tensor.
 
-      <tt>index(1),fixed(2,0),index(0)</tt> - fix the value of index 2
-      (i.e. the third index) to zero and transpose the other two
-      indices
-      
-      <tt>fixed(2,0),index(1),index(0)</tt> - same as above
+      <tt>acol -create tensor_grid 3 8 10 6 -set-grid 0 "i*m" \\
+      -set-grid 1 "m/5*i+x" -set-grid 2 "(2-i)" -function \\
+      "sin(x0+x1*x2)" -get-grid -entry 5 1 3 -entry 5 2 3 -rearrange \\
+      "reverse(2),range(0,3,7),interp(1,4.5)" -get-grid -entry 2 2</tt>
+
+      This example creates a rank three tensor of size 8 by 10 by 6
+      and then creates a rank 2 tensor from it. In this example, the
+      <tt>set-grid</tt> commands use variables 'm' and 'x'. In the
+      first call to <tt>set-grid</tt>, the variable m refers to the
+      value 8, while in the second call, the variable m refers to the
+      value 10. The value 'x' always refers to the previous grid value
+      which is set by the <tt>create</tt> command to be equal to the
+      index. The first index in the rank 2 tensor is a reversed
+      version of the last index in the rank 3 tensor. The second index
+      of the rank 2 tensor is constructed from a subset of the second
+      index of the rank 3 tensor. The rank two tensor is constructed
+      by linearly interpolating the value 4.5 into the second index of
+      the rank three tensor, thus halfway between values when the
+      index takes values 1 and 2. The final tensor thus has size 6 by
+      5. As an example, the (2,2) entry in the final tensor comes from
+      the average of the (5,1,3) and (5,2,3) entries in the original
+      rank 3 tensor.
+
+      <tt>acol -create tensor_grid 3 6 8 4 -set-grid 0 "erf(i*m/20)"
+      -set-grid 1 "m/(i+1)" -set-grid 2 "exp(i)" -function
+      "sin(x0+x1*x2+i0+i2)" -get-grid -rearrange "grid(2,5,20,5)"
+      "gridw(1,2,7,1)" "interp(0,0.5)" -get-grid</tt>
   */
   void index_spec();
   

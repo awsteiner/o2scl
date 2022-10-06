@@ -2242,7 +2242,7 @@ namespace o2scl_acol {
         grid. If it contains a ':', it is assumed to be a vector
         specification. Otherwise, the
         argument is assumed to be a function which specifies the grid
-        value as a function of the variables 'i' and 'x'. The value of
+        value as a function of the variables 'i', 'm', and 'x'. The value of
         'i' ranges from 0 to m-1, where 'm' is the tensor size for
         each rank and the value of 'x' is equal to the previous grid
         value.
