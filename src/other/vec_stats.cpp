@@ -40,3 +40,63 @@ double o2scl::kl_div_gaussian(double mean_prior, double mean_post,
   
   return div;
 }
+
+void o2scl::vector_forward_fft(const std::vector<double> &data,
+                               std::vector<std::complex<double>> &fft) {
+  
+#ifdef O2SCL_FFTW
+  
+  fft.resize(data.size()/2+1);
+  
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  double *non_const=(double *)(&(data[0]));
+  fftw_complex *fft2=reinterpret_cast<fftw_complex *>(&(fft[0]));
+  fftw_plan plan=fftw_plan_dft_r2c_1d(data.size(),non_const,fft2,
+                                      FFTW_ESTIMATE);
+  fftw_execute(plan);
+  
+#else
+  
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+  
+#endif
+  
+  return;
+}
+
+void o2scl::matrix_forward_fft
+(size_t m, size_t n, const std::vector<double> &data,
+ std::vector<std::complex<double>> &fft) {
+  
+#ifdef O2SCL_FFTW
+
+  fft.resize(m*(n/2+1));
+    
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  double *non_const=(double *)(&(data[0]));
+  fftw_complex *fft2=reinterpret_cast<fftw_complex *>(&(fft[0]));
+    
+  // The forward FFT
+  fftw_plan plan=fftw_plan_dft_r2c_2d(m,n,non_const,fft2,
+                                      FFTW_ESTIMATE);
+  fftw_execute(plan);
+
+#else
+    
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+    
+#endif
+
+  return;
+}
+
