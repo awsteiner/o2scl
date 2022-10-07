@@ -136,8 +136,8 @@ void o2scl::matrix_forward_complex_fft
  std::vector<std::complex<double>> &fft) {
   
 #ifdef O2SCL_FFTW
-
-  fft.resize(m*(n/2+1));
+  
+  fft.resize(m*n);
     
   // First, note that FFTW_ESTIMATE means that FFTW is estimating an
   // efficient plan, not that FFTW is estimating the FFT. The result
