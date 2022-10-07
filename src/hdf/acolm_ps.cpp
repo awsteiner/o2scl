@@ -3114,7 +3114,8 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     tensor_obj.strings_to_indexes(sv2,vis,verbose);
     
     tensor<> t;
-    t=rearrange_and_copy2(tensor_obj,vis,verbose,false);
+    t=rearrange_and_copy2<double,tensor<>>
+      (tensor_obj,vis,verbose,false);
     //t=tensor_obj.rearrange_and_copy(vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;

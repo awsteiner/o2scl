@@ -1896,7 +1896,7 @@ namespace o2scl {
             return tensor_t();
           }
         }
-        size_new.push_back(t.get_size[spec[i].ix1]);
+        size_new.push_back(t.get_size(spec[i].ix1));
         // Use ix1 to store the destination index (which is
         // at this point equal to rank_new)
         spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new);
@@ -1908,8 +1908,8 @@ namespace o2scl {
                     << spec[i].ix2 << " " << spec[i].ix3 << std::endl;
         }
         if (spec[i].ix1>=rank_old ||
-            spec[i].ix2>=t.get_size[spec[i].ix1] ||
-            spec[i].ix3>=t.get_size[spec[i].ix1]) {
+            spec[i].ix2>=t.get_size(spec[i].ix1) ||
+            spec[i].ix3>=t.get_size(spec[i].ix1)) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (range) in ",
                        "tensor::rearrange_and_copy2().",o2scl::exc_einval);
@@ -1990,7 +1990,7 @@ namespace o2scl {
                                          spec[i].ix1,spec[i].ix2,0);
       } else if (spec[i].type==index_spec::fixed) {
         if (spec[i].ix1>=rank_old ||
-            spec[i].ix2>=t.get_t.get_size(spec[i].ix1)) {
+            spec[i].ix2>=t.get_size(spec[i].ix1)) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (fixed) in ",
                        "tensor::rearrange_and_copy2().",o2scl::exc_einval);

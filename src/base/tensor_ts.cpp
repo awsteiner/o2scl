@@ -126,7 +126,7 @@ int main(void) {
     hf.close();
 
     // First test
-    tx2=tx.rearrange_and_copy({ix_index(1),ix_reverse(4),
+    tx2=rearrange_and_copy2<double,tensor<>>(tx,{ix_index(1),ix_reverse(4),
 	  ix_fixed(3,2),ix_sum(0),ix_sum(2)},1);
     size_t sz2b[2]={3,3};
     tx2b.resize(2,sz2b);
@@ -146,7 +146,7 @@ int main(void) {
     t.test_gen(tx2==tx2b,"rearrange 1");
     
     // Second test
-    tx3=tx.rearrange_and_copy({ix_index(1),ix_range(4,1,0),
+    tx3=rearrange_and_copy2<double,tensor<>>(tx,{ix_index(1),ix_range(4,1,0),
 	  ix_fixed(3,2),ix_trace(0,2)},2);
     size_t sz3b[2]={3,2};
     tx3b.resize(2,sz3b);
