@@ -1848,6 +1848,360 @@ namespace o2scl {
     }
   
   };
+
+  int strings_to_indexes2(std::vector<std::string> sv2,
+                          std::vector<o2scl::index_spec> &vis,
+                          int verbose=0, bool err_on_fail=false);
+  
+  void index_spec_preprocess2(std::string str,
+                              std::vector<std::string> &sv, int verbose=0);
+  
+  template<class data_t, class tensor_t>
+  tensor_t rearrange_and_copy2(tensor_t &t, std::vector<index_spec> spec,
+                               int verbose=0, bool err_on_fail=true) {
+    
+    // Old rank and new rank (computed later)
+    size_t rank_old=t.get_rank();
+    size_t rank_new=0;
+    
+    // Size of the new indices
+    std::vector<size_t> size_new;
+    
+    // Reorganize the index specifications by both the old
+    // and new indexing system
+    std::vector<index_spec> spec_old(rank_old);
+    std::vector<index_spec> spec_new;
+    
+    // Number of elements to sum over
+    size_t n_sum_loop=1;
+    
+    // Size of sums
+    std::vector<size_t> sum_sizes;
+    
+    // Collect the statistics on the transformation
+    for(size_t i=0;i<spec.size();i++) {
+      if (spec[i].type==index_spec::index ||
+          spec[i].type==index_spec::reverse) {
+        if (spec[i].ix1>=rank_old) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Index too large (index,reverse) in ",
+                       "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Index " << spec[i].ix1
+                        << " too large (index,reverse) in "
+                        << "tensor in tensor::rearrange_and_copy2()."
+                        << std::endl;
+            }
+            return tensor_t();
+          }
+        }
+        size_new.push_back(t.get_size[spec[i].ix1]);
+        // Use ix1 to store the destination index (which is
+        // at this point equal to rank_new)
+        spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new);
+        spec_new.push_back(index_spec(spec[i].type,spec[i].ix1));
+        rank_new++;
+      } else if (spec[i].type==index_spec::range) {
+        if (verbose>2) {
+          std::cout << "In range " << spec[i].ix1 << " "
+                    << spec[i].ix2 << " " << spec[i].ix3 << std::endl;
+        }
+        if (spec[i].ix1>=rank_old ||
+            spec[i].ix2>=t.get_size[spec[i].ix1] ||
+            spec[i].ix3>=t.get_size[spec[i].ix1]) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Index too large (range) in ",
+                       "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Index " << spec[i].ix1 << " "
+                        << spec[i].ix2 << " " << spec[i].ix3
+                        << " too large (range) in "
+                        << "tensor in tensor::rearrange_and_copy2()."
+                        << std::endl;
+            }
+            return tensor_t();
+          }
+        }
+        if (spec[i].ix3>spec[i].ix2) {
+          size_new.push_back(spec[i].ix3-spec[i].ix2+1);
+        } else {
+          size_new.push_back(spec[i].ix2-spec[i].ix3+1);
+        }
+        // Use ix1 to store the destination index (which is
+        // at this point equal to rank_new)
+        spec_old[spec[i].ix1]=
+          index_spec(spec[i].type,rank_new,spec[i].ix2,spec[i].ix3);
+        spec_new.push_back
+          (index_spec(spec[i].type,spec[i].ix1,
+                      spec[i].ix2,spec[i].ix3));
+        rank_new++;
+        if (verbose>2) {
+          std::cout << "Out range " << size_new[size_new.size()-1]
+                    << std::endl;
+        }
+      } else if (spec[i].type==index_spec::trace) {
+        if (spec[i].ix1>=rank_old || spec[i].ix2>=rank_old) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Index too large (trace) in ",
+                       "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Indices " << spec[i].ix1 << " or "
+                        << spec[i].ix2 << " too large (trace) in "
+                        << "tensor in tensor::rearrange_and_copy2()."
+                        << std::endl;
+            }
+            return tensor_t();
+          }
+        }
+        if (t.get_size(spec[i].ix1)<t.get_size(spec[i].ix2)) {
+          n_sum_loop*=t.get_size(spec[i].ix1);
+          sum_sizes.push_back(t.get_size(spec[i].ix1));
+        } else {
+          n_sum_loop*=t.get_size(spec[i].ix2);
+          sum_sizes.push_back(t.get_size(spec[i].ix2));
+        }
+        // We set the values of ix1 and ix2 so that ix2
+        // always refers to the other index being traced over
+        spec_old[spec[i].ix1]=index_spec(spec[i].type,
+                                         spec[i].ix1,spec[i].ix2);
+        spec_old[spec[i].ix2]=index_spec(spec[i].type,
+                                         spec[i].ix2,spec[i].ix1);
+      } else if (spec[i].type==index_spec::sum) {
+        if (spec[i].ix1>=rank_old) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Index too large (sum) in ",
+                       "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Index " << spec[i].ix1
+                        << " too large (sum) in "
+                        << "tensor in tensor::rearrange_and_copy2()."
+                        << std::endl;
+            }
+            return tensor_t();
+          }
+        }
+        n_sum_loop*=t.get_size(spec[i].ix1);
+        sum_sizes.push_back(t.get_size(spec[i].ix1));
+        spec_old[spec[i].ix1]=index_spec(spec[i].type,
+                                         spec[i].ix1,spec[i].ix2,0);
+      } else if (spec[i].type==index_spec::fixed) {
+        if (spec[i].ix1>=rank_old ||
+            spec[i].ix2>=t.get_t.get_size(spec[i].ix1)) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Index too large (fixed) in ",
+                       "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Index too large (fixed) in "
+                        << "tensor in tensor::rearrange_and_copy2()."
+                        << std::endl;
+            }
+            return tensor_t();
+          }
+        }
+        // Use ix1 to store the destination index (which is
+        // at this point equal to rank_new)
+        spec_old[spec[i].ix1]=index_spec(spec[i].type,
+                                         rank_new,spec[i].ix2);
+      } else {
+        if (err_on_fail) {
+          O2SCL_ERR2("Index specification type not allowed in ",
+                     "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+        } else {
+          if (verbose>0) {
+            std::cout << "Index specification type not allowed in "
+                      << "tensor::rearrange_and_copy2()." << std::endl;
+          }
+          return tensor_t();
+        }
+      }
+    }
+    size_t n_sums=sum_sizes.size();
+    
+    // Call the error handler if the input is invalid
+    if (rank_new==0) {
+      if (err_on_fail) {
+        O2SCL_ERR2("Zero new indices in ",
+                   "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+      } else {
+        if (verbose>0) {
+          std::cout << "Zero new indices in "
+                    << "tensor::rearrange_and_copy2()." << std::endl;
+        }
+        return tensor_t();
+      }
+    }
+    
+    for(size_t i=0;i<rank_old;i++) {
+      if (spec_old[i].type==index_spec::empty) {
+        if (err_on_fail) {
+          O2SCL_ERR2("Not all indices accounted for in ",
+                     "tensor::rearrange_and_copy2().",o2scl::exc_einval);
+        } else {
+          if (verbose>0) {
+            std::cout << "Index " << i << " not accounted for in "
+                      << "tensor::rearrange_and_copy2()." << std::endl;
+          }
+          return tensor_t();
+        }
+      }
+    }
+    
+    // Verbose output if necessary
+    if (verbose>0) {
+      std::cout << "Using a " << rank_old << " rank tensor to create a new "
+                << rank_new << " rank tensor." << std::endl;
+    }
+    if (verbose>1) {
+      for(size_t i=0;i<rank_old;i++) {
+        std::cout << "Old index " << i;
+        if (spec_old[i].type==index_spec::index) {
+          std::cout << " is being remapped to new index " << spec_old[i].ix1
+                    << "." << std::endl;
+        } else if (spec_old[i].type==index_spec::range) {
+          std::cout << " is being remapped to new index " << spec_old[i].ix1
+                    << " with a range from " << spec_old[i].ix2
+                    << " to " << spec_old[i].ix3 << "." << std::endl;
+        } else if (spec_old[i].type==index_spec::reverse) {
+          std::cout << " is being reversed and remapped to new index "
+                    << spec_old[i].ix1 << "." << std::endl;
+        } else if (spec_old[i].type==index_spec::trace) {
+          std::cout << " is being traced with index "
+                    << spec_old[i].ix2 << "." << std::endl;
+        } else if (spec_old[i].type==index_spec::sum) {
+            std::cout << " is being summed." << std::endl;
+        } else if (spec_old[i].type==index_spec::fixed) {
+          std::cout << " is being fixed to " << spec_old[i].ix2
+                    << "." << std::endl;
+        }
+      }
+      for(size_t i=0;i<rank_new;i++) {
+        std::cout << "New index " << i;
+        if (spec_new[i].type==index_spec::index) {
+          std::cout << " was remapped from old index " << spec_new[i].ix1
+                    << "." << std::endl;
+        } else if (spec_new[i].type==index_spec::range) {
+          std::cout << " was remapped from old index " << spec_new[i].ix1
+                    << " using range from " << spec_new[i].ix2 << " to "
+                    << spec_new[i].ix3 << "." << std::endl;
+        } else if (spec_new[i].type==index_spec::reverse) {
+          std::cout << " was reversed and remapped from old index "
+                    << spec_new[i].ix1 << "." << std::endl;
+        }
+      }
+    }
+    
+    // Create the new tensor object
+    tensor_t t_new(rank_new,size_new);
+    
+    // Index arrays
+    std::vector<size_t> ix_new(rank_new);
+    std::vector<size_t> ix_old(rank_old);
+    std::vector<size_t> sum_ix(n_sums);
+    
+    // Loop over the new tensor object
+    for(size_t i=0;i<t_new.total_size();i++) {
+      
+      // Find the location in the new tensor object
+      t_new.unpack_index(i,ix_new);
+      
+      // Determine the location in the old tensor object
+      for(size_t j=0;j<rank_old;j++) {
+        if (spec_old[j].type==index_spec::index) {
+          ix_old[j]=ix_new[spec_old[j].ix1];
+        } else if (spec_old[j].type==index_spec::range) {
+          if (spec_old[j].ix2<spec_old[j].ix3) {
+            ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
+          } else {
+            ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+          }
+        } else if (spec_old[j].type==index_spec::reverse) {
+          ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
+        } else if (spec_old[j].type==index_spec::fixed) {
+          ix_old[j]=spec_old[j].ix2;
+        }
+      }
+      
+      data_t val=0;
+      
+      for(size_t j=0;j<n_sum_loop;j++) {
+        
+        // This code is similar to tensor::unpack_index(), it unpacks
+        // the index j to the indices which we are summing over.
+        size_t j2=j, sub_size;
+        for(size_t k=0;k<n_sums;k++) {
+          if (k==n_sums-1) {
+            sum_ix[k]=j2;
+          } else {
+            sub_size=1;
+            for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+            sum_ix[k]=j2/sub_size;
+            j2-=sub_size*(j2/sub_size);
+          }
+        }
+        if (verbose>2) {
+          std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
+                    << n_sums << " sum_sizes: ";
+          vector_out(std::cout,sum_sizes,true);
+          std::cout << "j: " << j << " sum_ix: ";
+          vector_out(std::cout,sum_ix,true);
+        }
+        
+        // Remap from sum_ix to ix_old
+        size_t cnt=0;
+        for(size_t k=0;k<rank_old;k++) {
+          if (spec_old[k].type==index_spec::sum) {
+            if (cnt>=sum_ix.size()) {
+              std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+              O2SCL_ERR2("Bad sync 1 in sum_ix in ",
+                         "tensor::rearrange_and_copy2()",o2scl::exc_esanity);
+            }
+            ix_old[k]=sum_ix[cnt];
+            cnt++;
+          } else if (spec_old[k].type==index_spec::trace &&
+                     spec_old[k].ix1<spec_old[k].ix2) {
+            if (cnt>=sum_ix.size()) {
+              std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+              O2SCL_ERR2("Bad sync 2 in sum_ix in ",
+                         "tensor::rearrange_and_copy2()",o2scl::exc_esanity);
+            }
+            ix_old[spec_old[k].ix1]=sum_ix[cnt];
+            ix_old[spec_old[k].ix2]=sum_ix[cnt];
+            cnt++;
+          }
+        }
+        
+        if (verbose>2) {
+          std::cout << "Here old: ";
+          vector_out(std::cout,ix_old,true);
+          std::cout << "Here new: ";
+          vector_out(std::cout,ix_new,true);
+        }
+        val+=t.get(ix_old);
+        
+      }
+      
+      // Set the new point by performing the linear interpolation
+      t_new.set(ix_new,val);
+    }
+    
+    return t_new;
+  }
+
+  template<class tensor_t>
+  tensor_t rearrange_and_copy2(tensor_t &t, std::string spec,
+                               int verbose=0, bool err_on_fail=true) {
+    
+    std::vector<std::string> sv2;
+    index_spec_preprocess2(spec,sv2);
+    std::vector<o2scl::index_spec> vis;
+    strings_to_indexes2(sv2,vis,verbose);
+    return rearrange_and_copy2(t,vis,verbose,err_on_fail);
+  }
   
   /** \brief Rank 1 tensor
    */

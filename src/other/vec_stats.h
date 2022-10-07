@@ -1955,6 +1955,10 @@ namespace o2scl {
 
     return;
   }
+
+  void vector_forward_complex_fft
+  (const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
   
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       complex data
