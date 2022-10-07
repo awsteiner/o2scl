@@ -265,6 +265,7 @@ int main(void) {
       cout << xc.real() << endl;
       sines2.push_back(xc);
     }
+    cout << endl;
 
     cout << "Real: " << endl;
     vector_forward_fft(sines,fft);
@@ -284,6 +285,14 @@ int main(void) {
       cout.width(2);
       cout << j << " ";
       cout << fft2[j].real() << " " << fft2[j].imag() << endl;
+      if (j<fft.size()) {
+        if (abs(fft2[j].real())>1.0e-4) {
+          t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
+        }
+        if (abs(fft2[j].imag())>1.0e-4) {
+          t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,"fft imag part");
+        }
+      }
     }
     cout.unsetf(ios::showpos);
     cout << endl;
@@ -293,7 +302,7 @@ int main(void) {
     vector<double> sines;
     vector<complex<double>> fft, sines2, fft2;
 
-    cout << "Data: " << endl;
+    cout << "Matrix data: " << endl;
     for(double x=0.0;x<o2scl_const::pi*3.99;
         x+=o2scl_const::pi*0.1) {
       sines.push_back(sin(2.0*x)+sin(4.0*x));
@@ -301,24 +310,34 @@ int main(void) {
       cout << xc.real() << endl;
       sines2.push_back(xc);
     }
+    cout << endl;
 
-    cout << "Real: " << endl;
+    cout << "Matrix real: " << endl;
     matrix_forward_fft(4,10,sines,fft);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
       cout.width(2);
       cout << j << " ";
-      cout << fft[j].real() << " " << fft[j].imag() << " ";
+      cout << fft[j].real() << " " << fft[j].imag() << endl;
     }
     cout.unsetf(ios::showpos);
     cout << endl;
 
+    cout << "Matrix complex: " << endl;
     matrix_forward_complex_fft(4,10,sines2,fft2);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft2.size();j++) {
       cout.width(2);
       cout << j << " ";
-      cout << fft2[j].real() << " " << fft2[j].imag() << " ";
+      cout << fft2[j].real() << " " << fft2[j].imag() << endl;
+      if (false && j<fft.size()) {
+        if (abs(fft2[j].real())>1.0e-4) {
+          t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
+        }
+        if (abs(fft2[j].imag())>1.0e-4) {
+          t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,"fft imag part");
+        }
+      }
     }
     cout.unsetf(ios::showpos);
     cout << endl;
