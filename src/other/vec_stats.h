@@ -2030,6 +2030,10 @@ namespace o2scl {
   (size_t m, size_t n, const std::vector<double> &data,
    std::vector<std::complex<double>> &fft);
   
+  void matrix_forward_complex_fft
+  (size_t m, size_t n, const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
+  
   /** \brief Use FFTW to construct the autocorrelation vector
 
       From https://github.com/kaityo256/fftw_sample

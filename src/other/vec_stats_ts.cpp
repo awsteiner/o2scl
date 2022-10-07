@@ -279,19 +279,23 @@ int main(void) {
 
   if (true) {
     vector<double> sines;
+    vector<complex<double>> fft, sines2, fft2;
     for(double x=0.0;x<o2scl_const::pi*3.99;
         x+=o2scl_const::pi*0.1) {
       sines.push_back(sin(2.0*x)+sin(4.0*x));
+      complex<double> xc=sin(2.0*x)+sin(4.0*x);
+      sines2.push_back(xc);
     }
-    vector<complex<double>> fft;
     
     matrix_forward_fft(4,10,sines,fft);
+    matrix_forward_complex_fft(4,10,sines2,fft2);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
       cout.width(2);
       cout << j << " ";
       cout << sines[j] << " ";
-      cout << fft[j].real() << " " << fft[j].imag() << endl;
+      cout << fft[j].real() << " " << fft[j].imag() << " ";
+      cout << fft2[j].real() << " " << fft2[j].imag() << endl;
     }
     cout.unsetf(ios::showpos);
     cout << endl;
