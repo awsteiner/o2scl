@@ -2263,7 +2263,7 @@ namespace o2scl_hdf {
       <tt>acol -create tensor_grid 3 9 10 11 -set-grid 0 "i^2"
       -set-grid 1 "2*i" -set-grid 2 "(2-i)" -function "sin(x0+x1*x2)"
       -entry 4 2 5 -rearrange "index(1) index(0)" "fixed(2,5)"
-      -output</tt>
+      -entry 2 4</tt>
 
       This example creates a rank three tensor of size 9 by 10 by 11
       and then flips the first two indices while fixing the third

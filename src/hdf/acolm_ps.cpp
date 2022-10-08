@@ -3107,16 +3107,15 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_obj.index_spec_preprocess(sv[j],sv2);
+         index_spec_preprocess2(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes2(sv2,vis,verbose);
     
     tensor<> t;
-    t=rearrange_and_copy2<double,tensor<>>
+    t=rearrange_and_copy2<tensor<>,double>
       (tensor_obj,vis,verbose,false);
-    //t=tensor_obj.rearrange_and_copy(vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3127,14 +3126,14 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_int_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess2(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_int_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes2(sv2,vis,verbose);
     
     tensor<int> t;
-    t=tensor_int_obj.rearrange_and_copy(vis,verbose,false);
+    t=rearrange_and_copy2<tensor<int>,int>(tensor_int_obj,vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3145,14 +3144,15 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_size_t_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess2(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_size_t_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes2(sv2,vis,verbose);
     
     tensor<size_t> t;
-    t=tensor_size_t_obj.rearrange_and_copy(vis,verbose,false);
+    t=rearrange_and_copy2<tensor<size_t>,size_t>(tensor_size_t_obj,
+                                                 vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3163,11 +3163,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_grid_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess2(sv[j],sv2);
     }
 
     vector<o2scl::index_spec> vis;
-    tensor_grid_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes2(sv2,vis,verbose);
     
     tensor_grid<> t;
     t=tensor_grid_obj.rearrange_and_copy(vis,verbose,false);

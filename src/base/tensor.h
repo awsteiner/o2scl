@@ -1197,6 +1197,7 @@ namespace o2scl {
     }
     //@}
 
+#ifdef O2SCL_NEVER_DEFINED    
     /** \brief Take a set of index specifications contained in a
         single string \c str and arrange them in \c sv
 
@@ -1499,8 +1500,8 @@ namespace o2scl {
            
         \endverbatim
     */
-    tensor<data_t> rearrange_and_copy(std::vector<index_spec> spec,
-                                      int verbose=0, bool err_on_fail=true) {
+    tensor<data_t> rearrange_and_copy_old(std::vector<index_spec> spec,
+                                          int verbose=0, bool err_on_fail=true) {
     
       // Old rank and new rank (computed later)
       size_t rank_old=this->rk;
@@ -1846,7 +1847,8 @@ namespace o2scl {
       strings_to_indexes(sv2,vis,verbose);
       return rearrange_and_copy(vis,verbose,err_on_fail);
     }
-  
+#endif
+    
   };
 
   int strings_to_indexes2(std::vector<std::string> sv2,
@@ -1856,7 +1858,7 @@ namespace o2scl {
   void index_spec_preprocess2(std::string str,
                               std::vector<std::string> &sv, int verbose=0);
   
-  template<class data_t, class tensor_t>
+  template<class tensor_t, class data_t>
   tensor_t rearrange_and_copy2(tensor_t &t, std::vector<index_spec> spec,
                                int verbose=0, bool err_on_fail=true) {
     
@@ -2192,7 +2194,7 @@ namespace o2scl {
     return t_new;
   }
 
-  template<class tensor_t>
+  template<class tensor_t, class data_t>
   tensor_t rearrange_and_copy2(tensor_t &t, std::string spec,
                                int verbose=0, bool err_on_fail=true) {
     
@@ -2200,7 +2202,7 @@ namespace o2scl {
     index_spec_preprocess2(spec,sv2);
     std::vector<o2scl::index_spec> vis;
     strings_to_indexes2(sv2,vis,verbose);
-    return rearrange_and_copy2(t,vis,verbose,err_on_fail);
+    return rearrange_and_copy2<tensor_t,data_t>(t,vis,verbose,err_on_fail);
   }
   
   /** \brief Rank 1 tensor

@@ -2403,9 +2403,9 @@ namespace o2scl {
                          int verbose=0, bool err_on_fail=true) {
       
       std::vector<std::string> sv2;
-      this->index_spec_preprocess(spec,sv2);
+      index_spec_preprocess2(spec,sv2);
       std::vector<o2scl::index_spec> vis;
-      this->strings_to_indexes(sv2,vis,verbose);
+      strings_to_indexes2(sv2,vis,verbose);
       return rearrange_and_copy(vis,verbose,err_on_fail);
     }
     

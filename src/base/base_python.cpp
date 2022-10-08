@@ -1940,13 +1940,6 @@ void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *
   return;
 }
 
-void *o2scl_tensor__rearrange_and_copy(void *vptr, char *spec, int verbose, bool err_on_fail) {
-  tensor<> *ptr=(tensor<> *)vptr;
-  tensor<> *ret=new tensor<>;
-  *ret=ptr->rearrange_and_copy(spec,verbose,err_on_fail);
-  return ret;
-}
-
 void *o2scl_tensor__create_size(size_t rank, void *ptr_sizes) {
   std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
   tensor<> *ptr=new tensor<>(rank,*sizes);
@@ -3649,24 +3642,31 @@ void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   return ref;
 }
 
+void *o2scl_rearrange_and_copy2_tensor_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+  tensor<> *t=(tensor<> *)ptr_t;
+  tensor<> *func_ret=new tensor<>;
+  *func_ret=rearrange_and_copy2<tensor<>,double>(*t,spec,verbose,err_on_fail);
+  return func_ret;
+}
+
 double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit) {
-  double ret=fermi_function(E,mu,T,limit);
-  return ret;
+  double func_ret=fermi_function(E,mu,T,limit);
+  return func_ret;
 }
 
 double o2scl_bose_function_wrapper(double E, double mu, double T, double limit) {
-  double ret=bose_function(E,mu,T,limit);
-  return ret;
+  double func_ret=bose_function(E,mu,T,limit);
+  return func_ret;
 }
 
 double o2scl_quadratic_extremum_x_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3) {
-  double ret=quadratic_extremum_x<double>(x1,x2,x3,y1,y2,y3);
-  return ret;
+  double func_ret=quadratic_extremum_x<double>(x1,x2,x3,y1,y2,y3);
+  return func_ret;
 }
 
 double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3) {
-  double ret=quadratic_extremum_y<double>(x1,x2,x3,y1,y2,y3);
-  return ret;
+  double func_ret=quadratic_extremum_y<double>(x1,x2,x3,y1,y2,y3);
+  return func_ret;
 }
 
 void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size) {
@@ -3677,8 +3677,8 @@ void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, v
 }
 
 bool o2scl_file_exists_wrapper(char *fname) {
-  bool ret=file_exists(fname);
-  return ret;
+  bool func_ret=file_exists(fname);
+  return func_ret;
 }
 
 void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr_s, void *ptr_v) {
@@ -3711,26 +3711,26 @@ void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches) {
 }
 
 double o2scl_function_to_double_wrapper(char *s, int verbose) {
-  double ret=function_to_double(s,verbose);
-  return ret;
+  double func_ret=function_to_double(s,verbose);
+  return func_ret;
 }
 
 int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose) {
   double *result=(double *)ptr_result;
-  int ret=function_to_double_nothrow(s,*result,verbose);
-  return ret;
+  int func_ret=function_to_double_nothrow(s,*result,verbose);
+  return func_ret;
 }
 
 double o2scl_find_constant_wrapper(char *name, char *unit) {
-  double ret=find_constant(name,unit);
-  return ret;
+  double func_ret=find_constant(name,unit);
+  return func_ret;
 }
 
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list) {
   std::string *x=new std::string;
   vector<size_t> *list=(vector<size_t> *)ptr_list;
-  int ret=string_to_uint_list<vector<size_t>>(*x,*list);
-  return ret;
+  int func_ret=string_to_uint_list<vector<size_t>>(*x,*list);
+  return func_ret;
 }
 
 void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol, int verbose, bool ignore_vt100) {
@@ -3742,8 +3742,8 @@ void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol, in
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y) {
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
-  size_t ret=vector_level_count<std::vector<double>,std::vector<double>>(level,n,*x,*y);
-  return ret;
+  size_t func_ret=vector_level_count<std::vector<double>,std::vector<double>>(level,n,*x,*y);
+  return func_ret;
 }
 
 void o2scl_vector_deriv_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_dv, size_t interp_type) {
@@ -3778,28 +3778,28 @@ void o2scl_vector_deriv2_xy_interp_std_vector_double_std_vector_double_std_vecto
 
 double o2scl_vector_integ_interp_std_vector_double__wrapper(size_t n, void *ptr_vx, size_t interp_type) {
   std::vector<double> *vx=(std::vector<double> *)ptr_vx;
-  double ret=vector_integ_interp<std::vector<double>>(n,*vx,interp_type);
-  return ret;
+  double func_ret=vector_integ_interp<std::vector<double>>(n,*vx,interp_type);
+  return func_ret;
 }
 
 double o2scl_vector_integ_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_vx, void *ptr_vy, size_t interp_type) {
   std::vector<double> *vx=(std::vector<double> *)ptr_vx;
   std::vector<double> *vy=(std::vector<double> *)ptr_vy;
-  double ret=vector_integ_xy_interp<std::vector<double>,std::vector<double>>(n,*vx,*vy,interp_type);
-  return ret;
+  double func_ret=vector_integ_xy_interp<std::vector<double>,std::vector<double>>(n,*vx,*vy,interp_type);
+  return func_ret;
 }
 
 double o2scl_vector_integ_ul_interp_std_vector_double__wrapper(size_t n, double x2, void *ptr_v, size_t interp_type) {
   std::vector<double> *v=(std::vector<double> *)ptr_v;
-  double ret=vector_integ_ul_interp<std::vector<double>>(n,x2,*v,interp_type);
-  return ret;
+  double func_ret=vector_integ_ul_interp<std::vector<double>>(n,x2,*v,interp_type);
+  return func_ret;
 }
 
 double o2scl_vector_integ_ul_xy_interp_std_vector_double_std_vector_double__wrapper(size_t n, double x2, void *ptr_vx, void *ptr_vy, size_t interp_type) {
   std::vector<double> *vx=(std::vector<double> *)ptr_vx;
   std::vector<double> *vy=(std::vector<double> *)ptr_vy;
-  double ret=vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>(n,x2,*vx,*vy,interp_type);
-  return ret;
+  double func_ret=vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>(n,x2,*vx,*vy,interp_type);
+  return func_ret;
 }
 
 void o2scl_vector_find_level_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y, void *ptr_locs) {
@@ -3822,16 +3822,16 @@ int o2scl_vector_region_int_std_vector_double_std_vector_double__wrapper(size_t 
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   std::vector<double> *locs=(std::vector<double> *)ptr_locs;
-  int ret=vector_region_int<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
-  return ret;
+  int func_ret=vector_region_int<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
+  return func_ret;
 }
 
 int o2scl_vector_region_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double intl, void *ptr_locs, int boundaries, int verbose, bool err_on_fail) {
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   std::vector<double> *locs=(std::vector<double> *)ptr_locs;
-  int ret=vector_region_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
-  return ret;
+  int func_ret=vector_region_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,intl,*locs,boundaries,verbose,err_on_fail);
+  return func_ret;
 }
 
 int o2scl_vector_bound_fracint_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries, int verbose, bool err_on_fail) {
@@ -3839,8 +3839,8 @@ int o2scl_vector_bound_fracint_std_vector_double_std_vector_double__wrapper(size
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   double *low=(double *)ptr_low;
   double *high=(double *)ptr_high;
-  int ret=vector_bound_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
-  return ret;
+  int func_ret=vector_bound_fracint<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
+  return func_ret;
 }
 
 int o2scl_vector_bound_int_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_x, void *ptr_y, double frac, void *ptr_low, void *ptr_high, int boundaries, int verbose, bool err_on_fail) {
@@ -3848,8 +3848,8 @@ int o2scl_vector_bound_int_std_vector_double_std_vector_double__wrapper(size_t n
   std::vector<double> *y=(std::vector<double> *)ptr_y;
   double *low=(double *)ptr_low;
   double *high=(double *)ptr_high;
-  int ret=vector_bound_int<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
-  return ret;
+  int func_ret=vector_bound_int<std::vector<double>,std::vector<double>>(n,*x,*y,frac,*low,*high,boundaries,verbose,err_on_fail);
+  return func_ret;
 }
 
 void o2scl_rebin_xy_std_vector_double_std_vector_double_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_x_out, void *ptr_y_out, size_t n_pts, size_t interp_type) {
@@ -3864,8 +3864,8 @@ void o2scl_rebin_xy_std_vector_double_std_vector_double_std_vector_double_std_ve
 double o2scl_linear_or_log_chi2_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y) {
   std::vector<double> *x=(std::vector<double> *)ptr_x;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
-  double ret=linear_or_log_chi2<std::vector<double>,std::vector<double>>(*x,*y);
-  return ret;
+  double func_ret=linear_or_log_chi2<std::vector<double>,std::vector<double>>(*x,*y);
+  return func_ret;
 }
 
 void o2scl_linear_or_log_std_vector_double_std_vector_double__wrapper(void *ptr_x, void *ptr_y, void *ptr_log_x, void *ptr_log_y) {
@@ -3894,7 +3894,7 @@ void o2scl_linear_or_log_std_vector_double__wrapper(void *ptr_x, void *ptr_log_x
 int o2scl_get_screen_size_ioctl_wrapper(void *ptr_row, void *ptr_col) {
   int *row=(int *)ptr_row;
   int *col=(int *)ptr_col;
-  int ret=get_screen_size_ioctl(*row,*col);
-  return ret;
+  int func_ret=get_screen_size_ioctl(*row,*col);
+  return func_ret;
 }
 

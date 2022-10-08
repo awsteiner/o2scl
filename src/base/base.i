@@ -1333,11 +1333,6 @@ class tensor<>
   - std::string x_name ["x"]
   - std::string y_name ["y"]
   - std::string slice_name ["z"]
-- function rearrange_and_copy
-  - tensor<>
-  - std::string spec
-  - int verbose [0]
-  - bool err_on_fail [true]
 - extra_py |
 | def create_size(self,v):
 |     """
@@ -1380,7 +1375,17 @@ class tensor<>
 |     svst.init_py(index)
 |     self.resize_vector(len(svst),svst)
 |     return
-# 
+#
+# New rearrange function
+#
+function rearrange_and_copy2<tensor<>,double>
+- tensor<>
+- py_name rearrange_and_copy2
+- tensor<> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
+#
 # Class tensor_grid
 #
 class tensor_grid<>

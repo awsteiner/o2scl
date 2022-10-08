@@ -2100,11 +2100,11 @@ int main(int argc, char *argv[]) {
         } else {
           
           if (iff.ret.is_ctype() || iff.ret.is_reference()) {
-            fout << "  " << iff.ret.name << " ret=" << iff.name << "(";
+            fout << "  " << iff.ret.name << " func_ret=" << iff.name << "(";
           } else {
-            fout << "  " << iff.ret.name << " *ret=new "
+            fout << "  " << iff.ret.name << " *func_ret=new "
                  << iff.ret.name << ";" << endl;
-            fout << "  *ret=" << iff.name << "(";
+            fout << "  *func_ret=" << iff.name << "(";
           }
 
           for(size_t k=0;k<iff.args.size();k++) {
@@ -2119,7 +2119,7 @@ int main(int argc, char *argv[]) {
           }
           fout << ");" << endl;
           
-          fout << "  return ret;" << endl;
+          fout << "  return func_ret;" << endl;
         }
         fout << "}" << endl;
         
