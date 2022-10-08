@@ -299,17 +299,29 @@ int main(void) {
   }
 
   if (true) {
-    vector<double> sines;
+    vector<double> sines(40);
     vector<complex<double>> fft, sines2, fft2;
+    vector_view_matrix<vector<double>,double>
+      vvm_sines(sines,sines.size(),4);
 
     cout << "Matrix data: " << endl;
-    for(double x=0.0;x<o2scl_const::pi*3.99;
-        x+=o2scl_const::pi*0.1) {
-      sines.push_back(sin(2.0*x)+sin(4.0*x));
-      complex<double> xc=sin(2.0*x)+sin(4.0*x);
-      cout << xc.real() << endl;
+    cout.setf(ios::showpos);
+    for(size_t ii=0;ii<40;ii++) {
+      size_t i, j;
+      vvm_sines.matrix_indices(ii,i,j);
+
+      double x=sin(i*o2scl_const::pi/2)+sin(j*o2scl_const::pi/2)+
+        sin(i*o2scl_const::pi/4)+sin((i+j)*o2scl_const::pi/8);
+      vvm_sines(i,j)=x;
+
+      complex<double> xc=x;
       sines2.push_back(xc);
+      cout.width(2);
+      cout << i << " ";
+      cout.width(2);
+      cout << j << " " << sin(i*o2scl_const::pi*2) << " " << x << endl;
     }
+    cout.unsetf(ios::showpos);
     cout << endl;
 
     cout << "Matrix real: " << endl;
@@ -330,12 +342,31 @@ int main(void) {
       cout.width(2);
       cout << j << " ";
       cout << fft2[j].real() << " " << fft2[j].imag() << endl;
-      if (false && j<fft.size()) {
-        if (abs(fft2[j].real())>1.0e-4) {
-          t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
+    }
+    cout << endl;
+    vector_view_matrix<vector<complex<double>>,complex<double>>
+      vvm_fft(fft,fft.size(),4);
+    vector_view_matrix<vector<complex<double>>,complex<double>>
+      vvm_fft2(fft2,fft2.size(),4);
+    for(size_t i=0;i<4;i++) {
+      for(size_t j=0;j<10;j++) {
+        cout.width(2);
+        cout << i << " ";
+        cout.width(2);
+        cout << j << " ";
+        if (j<vvm_fft.size2()) {
+          cout << fft[j].real() << " " << fft[j].imag() << " ";
+        } else {
+          cout << "+x.xxxxxxe+xx +x.xxxxxxe+xx ";
         }
-        if (abs(fft2[j].imag())>1.0e-4) {
-          t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,"fft imag part");
+        cout << fft2[j].real() << " " << fft2[j].imag() << endl;
+        if (j<vvm_fft.size2()) {
+          if (abs(fft2[j].real())>1.0e-4) {
+            t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
+          }
+          if (abs(fft2[j].imag())>1.0e-4) {
+            t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,"fft imag part");
+          }
         }
       }
     }

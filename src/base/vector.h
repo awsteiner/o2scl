@@ -2772,6 +2772,88 @@ namespace o2scl {
     return mat_row_t(M,row);
   }
 
+  /** \brief View a vector as a matrix
+  */
+  template<class vec_t, class data_t=double> class vector_view_matrix {
+
+  protected:
+
+    /// A reference to the original vector
+    vec_t &v_;
+
+    /// The vector size, equal to rows_ times cols_
+    size_t sz_;
+    
+    /// The number of rows in the matrix
+    size_t rows_;
+    
+    /// The number of columns in the matrix
+    size_t cols_;
+
+  public:
+
+    /// Create
+    vector_view_matrix(vec_t &v, size_t sz, size_t rows) : v_(v) {
+      size_t cols=sz/rows;
+      if (sz==0) {
+        O2SCL_ERR2("Vector has no size in ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      if (cols*rows!=sz) {
+        O2SCL_ERR2("Rows do not evenly divide vector in ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      sz_=sz;
+      rows_=rows;
+      cols_=cols;
+    }
+    
+    /// Return a reference
+    data_t &operator()(size_t i, size_t j) {
+      if (i>=rows_ && j>=cols_) {
+        O2SCL_ERR2("Invalid index ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      return v_[i*cols_+j];
+    }
+    
+    /// Return a const reference
+    const data_t &operator()(size_t i, size_t j) const {
+      if (i>=rows_ && j>=cols_) {
+        O2SCL_ERR2("Invalid index ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      return v_[i*cols_+j];
+    }
+
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return rows_;
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      return cols_;
+    }
+
+    /** \brief Desc
+     */
+    size_t array_index(size_t i, size_t j) const {
+      return i*cols_+j;
+    }
+
+    /** \brief Desc
+     */
+    void matrix_indices(size_t ii, size_t &i, size_t &j) const {
+      i=ii/cols_;
+      j=ii-i*cols_;
+      return;
+    }
+    
+  };
+
   /** \brief Generic object which represents a row of a matrix
 
       \note This class is experimental.
