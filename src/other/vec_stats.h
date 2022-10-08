@@ -2030,6 +2030,16 @@ namespace o2scl {
   (size_t m, size_t n, const std::vector<double> &data,
    std::vector<std::complex<double>> &fft);
   
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      This function does not require any copying of the input or
+      output arrays. The input matrix must be stored as a vector in
+      row-major order. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an input
+      implying a matrix with size1() equal to m and and size2() equal
+      to n, the output vector is resized to have size \f$ m*n \f$.
+   */
   void matrix_forward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
    std::vector<std::complex<double>> &fft);
@@ -2400,7 +2410,7 @@ namespace o2scl {
     
     return;
   }
-
+  
   /** \brief Compute the autocorrelation length using 
       Goodman's algorithm from \c acor
       
@@ -2589,7 +2599,7 @@ namespace o2scl {
 
   /** \brief Compute the KL divergence of two one-dimensional Gaussian
       distributions
-
+      
       The result is returned in units of nats.
   */
   double kl_div_gaussian(double mean_prior, double mean_post,

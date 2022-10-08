@@ -86,7 +86,7 @@ namespace o2scl {
 
     /** \brief Load all of the data necessary
      */
-    void load(std::string dir="") {
+    void load(std::string dir="", int verbose=0) {
       if (dir.length()>0) {
         load_rt00(dir+"/pf_frdm_low.o2");
         load_r03(dir+"/pf_frdm_high.o2");
@@ -103,11 +103,13 @@ namespace o2scl {
         o2scl_hdf::mnmsk_load(mnmsk);
         o2scl_hdf::hfb_sp_load(hfb,27);
       }
-      std::cout << "rt00: " << tab_rt00.get_nlines() << std::endl;
-      std::cout << "r03: " << tab_r03.get_nlines() << std::endl;
-      std::cout << "ame: " << ame.is_included(28,28) << std::endl;
-      std::cout << "mnmsk: " << mnmsk.is_included(28,28) << std::endl;
-      std::cout << "hfb: " << hfb.is_included(28,28) << std::endl;
+      if (verbose>0) {
+        std::cout << "rt00: " << tab_rt00.get_nlines() << std::endl;
+        std::cout << "r03: " << tab_r03.get_nlines() << std::endl;
+        std::cout << "ame: " << ame.is_included(28,28) << std::endl;
+        std::cout << "mnmsk: " << mnmsk.is_included(28,28) << std::endl;
+        std::cout << "hfb: " << hfb.is_included(28,28) << std::endl;
+      }
       return;
     }
     //@}
