@@ -1235,13 +1235,13 @@ void o2scl_free_shared_ptr_table_units_(void *vptr);
 
 void *o2scl_shared_ptr_table_units__ptr(void *vp);
 
-void *o2scl_rearrange_and_copy2_tensor_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy2_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy2_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_grid_rearrange_and_copy2_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
 double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit=40.0);
 

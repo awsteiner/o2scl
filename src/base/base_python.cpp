@@ -3635,31 +3635,31 @@ void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   return ref;
 }
 
-void *o2scl_rearrange_and_copy2_tensor_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
   tensor<> *t=(tensor<> *)ptr_t;
   tensor<> *func_ret=new tensor<>;
-  *func_ret=rearrange_and_copy2<tensor<>,double>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<>,double>(*t,spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_rearrange_and_copy2_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
   tensor<int> *t=(tensor<int> *)ptr_t;
   tensor<int> *func_ret=new tensor<int>;
-  *func_ret=rearrange_and_copy2<tensor<int>,int>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<int>,int>(*t,spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_rearrange_and_copy2_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
   tensor<size_t> *t=(tensor<size_t> *)ptr_t;
   tensor<size_t> *func_ret=new tensor<size_t>;
-  *func_ret=rearrange_and_copy2<tensor<size_t>,size_t>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<size_t>,size_t>(*t,spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_grid_rearrange_and_copy2_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
   tensor_grid<> *t=(tensor_grid<> *)ptr_t;
   tensor_grid<> *func_ret=new tensor_grid<>;
-  *func_ret=grid_rearrange_and_copy2<tensor_grid<>,double>(*t,spec,verbose,err_on_fail);
+  *func_ret=grid_rearrange_and_copy<tensor_grid<>,double>(*t,spec,verbose,err_on_fail);
   return func_ret;
 }
 

@@ -1759,7 +1759,7 @@ namespace o2scl {
       and the one in the tensor class.
   */
   template<class tensor_t, class data_t>
-  tensor_t grid_rearrange_and_copy2(const tensor_t &t,
+  tensor_t grid_rearrange_and_copy(const tensor_t &t,
                                     std::vector<index_spec> spec,
                                int verbose=0, bool err_on_fail=true) {
     
@@ -2402,14 +2402,14 @@ namespace o2scl {
       (string input version)
   */
   template<class tensor_t, class data_t>
-  tensor_t grid_rearrange_and_copy2(const tensor_t &t, std::string spec,
+  tensor_t grid_rearrange_and_copy(const tensor_t &t, std::string spec,
                                int verbose=0, bool err_on_fail=true) {
     
     std::vector<std::string> sv2;
     index_spec_preprocess2(spec,sv2);
     std::vector<o2scl::index_spec> vis;
     strings_to_indexes2(sv2,vis,verbose);
-    return grid_rearrange_and_copy2<tensor_t,data_t>(t,vis,verbose,err_on_fail);
+    return grid_rearrange_and_copy<tensor_t,data_t>(t,vis,verbose,err_on_fail);
   }
   
   /** \brief Rank 1 tensor with a grid
