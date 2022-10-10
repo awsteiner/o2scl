@@ -1385,6 +1385,20 @@ function rearrange_and_copy2<tensor<>,double>
 - std::string spec
 - int verbose [0]
 - bool err_on_fail [true]
+function rearrange_and_copy2<tensor<int>,int>
+- tensor<int>
+- py_name rearrange_and_copy2_int
+- tensor<int> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
+function rearrange_and_copy2<tensor<size_t>,size_t>
+- tensor<size_t>
+- py_name rearrange_and_copy2_size_t
+- tensor<size_t> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
 #
 # Class tensor_grid
 #
@@ -1480,16 +1494,13 @@ class tensor_grid<>
   - double low [0.0]
   - double high [0.0]
   - double width [0.0]
-#- function rearrange_and_copy
-#  - tensor_grid<>
-#  - std::vector<index_spec> spec
-#  - int verbose [0]
-#  - bool err_on_fail [true]
-- function rearrange_and_copy
-  - tensor_grid<>
-  - std::string spec
-  - int verbose [0]
-  - bool err_on_fail [true]
+function grid_rearrange_and_copy2<tensor_grid<>,double>
+- tensor_grid<>
+- py_name grid_rearrange_and_copy
+- tensor_grid<> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
 # 
 # Class tensor_int
 #

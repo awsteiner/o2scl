@@ -3170,7 +3170,8 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     strings_to_indexes2(sv2,vis,verbose);
     
     tensor_grid<> t;
-    t=tensor_grid_obj.rearrange_and_copy(vis,verbose,false);
+    t=grid_rearrange_and_copy2<tensor_grid<>,double>
+      (tensor_grid_obj,vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;

@@ -437,8 +437,9 @@ int main(void) {
     // First test. ix_interp(1,3.0) has the same effect as
     // ix_fixed(1,0) and ix_grid(4,...) has the same effect
     // as ix_index(4)
-    tx2=tx.rearrange_and_copy({ix_interp(1,3.0),ix_gridw(4,10.0,15.0,1.0),
-			       ix_fixed(3,2),ix_sum(0),ix_sum(2)},3);
+    tx2=grid_rearrange_and_copy2<tensor_grid<>,double>
+      (tx,{ix_interp(1,3.0),ix_gridw(4,10.0,15.0,1.0),
+        ix_fixed(3,2),ix_sum(0),ix_sum(2)},3);
     cout << tx2.get_size(0) << " " << tx2.get_rank() << endl;
     for(size_t k=0;k<tx2.get_size(0);k++) {
       cout << tx2.get_grid(0,k) << " ";
@@ -464,8 +465,9 @@ int main(void) {
       t.test_gen(tx2==tx2b,"rearrange 1");
       
       // Second test
-      tx3=tx.rearrange_and_copy({ix_index(1),ix_range(4,1,0),
-	    ix_interp(3,9.5),ix_trace(0,2)},2);
+      tx3=grid_rearrange_and_copy2<tensor_grid<>,double>
+        (tx,{ix_index(1),ix_range(4,1,0),
+          ix_interp(3,9.5),ix_trace(0,2)},2);
       size_t sz3b[2]={3,2};
       tx3b.resize(2,sz3b);
       for(size_t i1=0;i1<3;i1++) {

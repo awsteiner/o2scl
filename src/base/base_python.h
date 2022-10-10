@@ -722,8 +722,6 @@ double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v);
 
 void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slice, size_t n_points, double low=0.0, double high=0.0, double width=0.0);
 
-void *o2scl_tensor_grid__rearrange_and_copy(void *vptr, char *spec, int verbose=0, bool err_on_fail=true);
-
 void *o2scl_create_tensor_int_std_vector_int_();
 
 void o2scl_free_tensor_int_std_vector_int_(void *vptr);
@@ -1238,6 +1236,12 @@ void o2scl_free_shared_ptr_table_units_(void *vptr);
 void *o2scl_shared_ptr_table_units__ptr(void *vp);
 
 void *o2scl_rearrange_and_copy2_tensor_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+
+void *o2scl_rearrange_and_copy2_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+
+void *o2scl_rearrange_and_copy2_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+
+void *o2scl_grid_rearrange_and_copy2_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
 double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit=40.0);
 

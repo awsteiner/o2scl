@@ -2091,13 +2091,6 @@ void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slic
   return;
 }
 
-void *o2scl_tensor_grid__rearrange_and_copy(void *vptr, char *spec, int verbose, bool err_on_fail) {
-  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
-  tensor_grid<> *ret=new tensor_grid<>;
-  *ret=ptr->rearrange_and_copy(spec,verbose,err_on_fail);
-  return ret;
-}
-
 void *o2scl_create_tensor_int_std_vector_int_() {
   tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>;
   return ptr;
@@ -3646,6 +3639,27 @@ void *o2scl_rearrange_and_copy2_tensor_double__wrapper(void *ptr_t, char *spec, 
   tensor<> *t=(tensor<> *)ptr_t;
   tensor<> *func_ret=new tensor<>;
   *func_ret=rearrange_and_copy2<tensor<>,double>(*t,spec,verbose,err_on_fail);
+  return func_ret;
+}
+
+void *o2scl_rearrange_and_copy2_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+  tensor<int> *t=(tensor<int> *)ptr_t;
+  tensor<int> *func_ret=new tensor<int>;
+  *func_ret=rearrange_and_copy2<tensor<int>,int>(*t,spec,verbose,err_on_fail);
+  return func_ret;
+}
+
+void *o2scl_rearrange_and_copy2_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+  tensor<size_t> *t=(tensor<size_t> *)ptr_t;
+  tensor<size_t> *func_ret=new tensor<size_t>;
+  *func_ret=rearrange_and_copy2<tensor<size_t>,size_t>(*t,spec,verbose,err_on_fail);
+  return func_ret;
+}
+
+void *o2scl_grid_rearrange_and_copy2_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+  tensor_grid<> *t=(tensor_grid<> *)ptr_t;
+  tensor_grid<> *func_ret=new tensor_grid<>;
+  *func_ret=grid_rearrange_and_copy2<tensor_grid<>,double>(*t,spec,verbose,err_on_fail);
   return func_ret;
 }
 
