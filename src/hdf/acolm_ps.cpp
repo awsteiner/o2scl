@@ -3107,11 +3107,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-         index_spec_preprocess2(sv[j],sv2);
+         index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<> t;
     t=rearrange_and_copy<tensor<>,double>
@@ -3126,11 +3126,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      index_spec_preprocess2(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<int> t;
     t=rearrange_and_copy<tensor<int>,int>(tensor_int_obj,vis,verbose,false);
@@ -3144,11 +3144,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      index_spec_preprocess2(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<size_t> t;
     t=rearrange_and_copy<tensor<size_t>,size_t>(tensor_size_t_obj,
@@ -3163,11 +3163,11 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      index_spec_preprocess2(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
 
     vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor_grid<> t;
     t=grid_rearrange_and_copy<tensor_grid<>,double>

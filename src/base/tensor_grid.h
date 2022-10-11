@@ -1760,8 +1760,8 @@ namespace o2scl {
   */
   template<class tensor_t, class data_t>
   tensor_t grid_rearrange_and_copy(const tensor_t &t,
-                                    std::vector<index_spec> spec,
-                               int verbose=0, bool err_on_fail=true) {
+                                   std::vector<index_spec> spec,
+                                   int verbose=0, bool err_on_fail=true) {
     
     // Old rank and new rank (computed later)
     size_t rank_old=t.get_rank();
@@ -1798,17 +1798,18 @@ namespace o2scl {
     // yet.
       
     for(size_t i=0;i<spec.size();i++) {
+      
       if (spec[i].type==index_spec::index ||
           spec[i].type==index_spec::reverse) {
         if (spec[i].ix1>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (index,reverse) in ",
-                       "tensor_grid::rearrange_and_copy().",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index too large (index,reverse) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
@@ -1817,15 +1818,10 @@ namespace o2scl {
         size_new.push_back(t.get_size(spec[i].ix1));
         // Use ix1 to store the destination index (which is
         // at this point equal to rank_new)
-        spec_old[spec[i].ix1]=index_spec(spec[i].type,
-                                         rank_new,
-                                         spec[i].ix2,0,
-                                         spec[i].val1);
-        spec_new.push_back(index_spec(spec[i].type,
-                                      spec[i].ix1,
-                                      spec[i].ix2,0,
-                                      spec[i].val1));
+        spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new);
+        spec_new.push_back(index_spec(spec[i].type,spec[i].ix1));
         rank_new++;
+        
         // Update the new grid
         if (spec[i].type==index_spec::index) {
           for(size_t k=0;k<t.get_size(spec[i].ix1);k++) {
@@ -1837,17 +1833,24 @@ namespace o2scl {
             new_grid.push_back(t.get_grid(spec[i].ix1,nt-1-k));
           }
         }
+        
       } else if (spec[i].type==index_spec::range) {
+        
+        if (verbose>2) {
+          std::cout << "In range " << spec[i].ix1 << " "
+                    << spec[i].ix2 << " " << spec[i].ix3 << std::endl;
+        }
         if (spec[i].ix1>=rank_old ||
             spec[i].ix2>=t.get_size(spec[i].ix1) ||
             spec[i].ix3>=t.get_size(spec[i].ix1)) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (range) in ",
-                       "tensor::rearrange_and_copy().",o2scl::exc_einval);
+                       "tensor_grid::grid_rearrange_and_copy().",
+                       o2scl::exc_einval);
           } else {
             if (verbose>0) {
-              std::cout << "Index too large (range) in "
-                        << "tensor in tensor::rearrange_and_copy()."
+              std::cout << "Index too large (range) in tensor in "
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
@@ -1867,6 +1870,7 @@ namespace o2scl {
           (index_spec(spec[i].type,spec[i].ix1,
                       spec[i].ix2,spec[i].ix3,spec[i].val1));
         rank_new++;
+        
         // Update the new grid
         if (spec[i].ix3>spec[i].ix2) {
           for(size_t k=0;k<spec[i].ix3-spec[i].ix2+1;k++) {
@@ -1874,24 +1878,32 @@ namespace o2scl {
           }
         } else {
           for(size_t k=0;k<spec[i].ix2-spec[i].ix3+1;k++) {
-            new_grid.push_back(t.get_grid(spec[i].ix1,k+spec[i].ix3));
+            new_grid.push_back(t.get_grid(spec[i].ix1,spec[i].ix2-k));
           }
         }
+        
+        if (verbose>2) {
+          std::cout << "Out range " << size_new[size_new.size()-1]
+                    << std::endl;
+        }
+        
       } else if (spec[i].type==index_spec::trace) {
+        
         if (spec[i].ix1>=rank_old || spec[i].ix2>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (trace) in ",
-                       "tensor_grid::rearrange_and_copy().",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index too large (trace) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
           }
         }
+        
         if (t.get_size(spec[i].ix1)<t.get_size(spec[i].ix2)) {
           n_sum_loop*=t.get_size(spec[i].ix1);
           sum_sizes.push_back(t.get_size(spec[i].ix1));
@@ -1905,17 +1917,19 @@ namespace o2scl {
                                          spec[i].ix2);
         spec_old[spec[i].ix2]=index_spec(spec[i].type,spec[i].ix2,
                                          spec[i].ix1);
+        
       } else if (spec[i].type==index_spec::sum) {
+        
         if (spec[i].ix1>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (sum) in ",
-                       "tensor_grid::rearrange_and_copy().",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index " << spec[i].ix1
                         << " too large (sum) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
@@ -1925,45 +1939,50 @@ namespace o2scl {
         sum_sizes.push_back(t.get_size(spec[i].ix1));
         spec_old[spec[i].ix1]=index_spec(spec[i].type,
                                          spec[i].ix1,
-                                         spec[i].ix2,0,
-                                         spec[i].val1);
+                                         spec[i].ix2,0);
+        
       } else if (spec[i].type==index_spec::fixed) {
+        
         if (spec[i].ix1>=rank_old ||
             spec[i].ix2>=t.get_size(spec[i].ix1)) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (fixed) in ",
-                       "tensor_grid::rearrange_and_copy().",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index " << spec[i].ix1 << " or "
                         << spec[i].ix2 << " too large (fixed) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
           }
         }
+        
         // Use ix1 to store the destination index (which is
         // at this point equal to rank_new)
         spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new,
                                          spec[i].ix2);
+        
       } else if (spec[i].type==index_spec::interp) {
+        
         if (spec[i].ix1>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (interp) in ",
-                       "tensor_grid::rearrange_and_copy().",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index " << spec[i].ix1
                         << " too large (interp) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
           }
         }
+        
         // Use ix1 to store the destination index (which is
         // at this point equal to rank_new)
         spec_old[spec[i].ix1]=index_spec(spec[i].type,
@@ -1972,24 +1991,87 @@ namespace o2scl {
                                          spec[i].val1);
         n_interps++;
         ix_to_interp.push_back(spec[i].ix1);
+        
       } else if (spec[i].type==index_spec::grid ||
                  spec[i].type==index_spec::gridw) {
+        
         if (spec[i].ix1>=rank_old) {
           if (err_on_fail) {
-            O2SCL_ERR2("Index too large (grid) in ",
-                       "tensor_grid::rearrange_and_copy().",
+            O2SCL_ERR2("Index too large (grid/gridw) in ",
+                       "tensor_grid::grid_rearrange_and_copy().",
                        o2scl::exc_einval);
           } else {
             if (verbose>0) {
               std::cout << "Index " << spec[i].ix1
-                        << " too large (grid) in "
-                        << "tensor_grid::rearrange_and_copy()."
+                        << " too large (grid/gridw) in "
+                        << "tensor_grid::grid_rearrange_and_copy()."
                         << std::endl;
             }
             return tensor_grid<>();
           }
         }
 
+        // Make sure, for log mode, the limits have the same sign
+        if (spec[i].ix3==1 && spec[i].val1*spec[i].val2<=0.0) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Log mode is true but product is not positive (grid",
+                       "/gridw) in tensor_grid::grid_rearrange_and_copy().",
+                       o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Log mode is true but product of "
+                        << spec[i].val1 << " and " << spec[i].val2 
+                        << " is negative (grid/gridw) in "
+                        << "tensor_grid::grid_rearrange_and_copy()."
+                        << std::endl;
+            }
+            return tensor_grid<>();
+          }
+        }
+
+        // Make sure that the number of bins is finite
+        if (spec[i].type==index_spec::gridw && spec[i].ix3==1 &&
+            ((spec[i].val1<spec[i].val2 && spec[i].val3<=1.0) ||
+             (spec[i].val2<spec[i].val1 && spec[i].val3>=1.0) ||
+             spec[i].val3<=0.0)) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Width does not match limits (log mode) ",
+                       "(gridw) in tensor_grid::grid_rearrange_and_copy().",
+                       o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Width " << spec[i].val3
+                        << " does not match limits (log mode)"
+                        << spec[i].val1 << " and " << spec[i].val2 
+                        << " (gridw) in "
+                        << "tensor_grid::grid_rearrange_and_copy()."
+                        << std::endl;
+            }
+            return tensor_grid<>();
+          }
+        }
+        
+        // Make sure that the number of bins is finite
+        if (spec[i].type==index_spec::gridw && spec[i].ix3==0 &&
+            ((spec[i].val1<spec[i].val2 && spec[i].val3<=0.0) ||
+             (spec[i].val2<spec[i].val1 && spec[i].val3>=0.0))) {
+          if (err_on_fail) {
+            O2SCL_ERR2("Width does not match limits (linear mode) ",
+                       "(gridw) in tensor_grid::grid_rearrange_and_copy().",
+                       o2scl::exc_einval);
+          } else {
+            if (verbose>0) {
+              std::cout << "Width " << spec[i].val3
+                        << " does not match limits (linear mode) "
+                        << spec[i].val1 << " and " << spec[i].val2 
+                        << " (gridw) in "
+                        << "tensor_grid::grid_rearrange_and_copy()."
+                        << std::endl;
+            }
+            return tensor_grid<>();
+          }
+        }
+        
         // Setup new grid in log or linear mode and determine
         // spacing between grid points for later use
         if (spec[i].ix3==1) {
@@ -2004,6 +2086,12 @@ namespace o2scl {
             rat=spec[i].val3;
             curr_grid_size=((size_t)(log(spec[i].val2/spec[i].val1)/
                                      log(spec[i].val3)));
+            if (verbose>0) {
+              std::cout << "Current grid size for gridw: "
+                        << spec[i].val1 << " " << spec[i].val2 << " "
+                        << spec[i].val3 << " " << curr_grid_size
+                        << std::endl;
+            }
           }
           size_new.push_back(curr_grid_size);
           for(int k=0;k<curr_grid_size;k++) {
@@ -2015,7 +2103,9 @@ namespace o2scl {
               new_grid.push_back(spec[i].val1*pow(rat,((double)k)));
             }
           }
+          
         } else {
+          
           // Linear mode
           double width;
           int curr_grid_size;
@@ -2027,6 +2117,12 @@ namespace o2scl {
             width=spec[i].val3;
             curr_grid_size=((size_t)(1+(spec[i].val2-
                                         spec[i].val1)/spec[i].val3));
+            if (verbose>0) {
+              std::cout << "Current grid size for gridw: "
+                        << spec[i].val1 << " " << spec[i].val2 << " "
+                        << spec[i].val3 << " " << curr_grid_size
+                        << std::endl;
+            }
           }
           size_new.push_back(curr_grid_size);
           for(int k=0;k<curr_grid_size;k++) {
@@ -2056,17 +2152,19 @@ namespace o2scl {
         rank_new++;
           
       } else {
+        
         if (err_on_fail) {
           O2SCL_ERR2("Index specification type not allowed in ",
-                     "tensor_grid::rearrange_and_copy()",
+                     "tensor_grid::grid_rearrange_and_copy()",
                      o2scl::exc_einval);
         } else {
           if (verbose>0) {
             std::cout << "Index specification type not allowed in "
-                      << "tensor_grid::rearrange_and_copy()." << std::endl;
+                      << "tensor_grid::grid_rearrange_and_copy()." << std::endl;
           }
           return tensor_grid<>();
         }
+        
       }
         
       // End of loop over index specifications
@@ -2079,12 +2177,12 @@ namespace o2scl {
     if (rank_new==0) {
       if (err_on_fail) {
         O2SCL_ERR2("Zero new indices in ",
-                   "tensor_grid::rearrange_and_copy()",
+                   "tensor_grid::grid_rearrange_and_copy()",
                    o2scl::exc_einval);
       } else {
         if (verbose>0) {
           std::cout << "Zero new indices in " 
-                    << "tensor_grid::rearrange_and_copy()." << std::endl;
+                    << "tensor_grid::grid_rearrange_and_copy()." << std::endl;
         }
         return tensor_grid<>();
       }
@@ -2096,12 +2194,12 @@ namespace o2scl {
       if (spec_old[i].type==index_spec::empty) {
         if (err_on_fail) {
           O2SCL_ERR2("Not all indices accounted for in ",
-                     "tensor_grid::rearrange_and_copy()",
+                     "tensor_grid::grid_rearrange_and_copy()",
                      o2scl::exc_einval);
         } else {
           if (verbose>0) {
             std::cout << "Index " << i << " not accounted for in "
-                      << "tensor_grid::rearrange_and_copy()." << std::endl;
+                      << "tensor_grid::grid_rearrange_and_copy()." << std::endl;
           }
           return tensor_grid<>();
         }
@@ -2110,15 +2208,15 @@ namespace o2scl {
 
     // Verbose output of change in rank
     if (verbose>0) {
-      std::cout << "Using a " << rank_old
-                << " rank tensor to create a new "
+      std::cout << "grid_rearrange_and_copy(): using a " << rank_old
+                << " rank tensor to create\n  a new "
                 << rank_new << " rank tensor." << std::endl;
     }
 
     // Verbose output looping over the spec_old list
     if (verbose>1) {
       for(size_t i=0;i<rank_old;i++) {
-        std::cout << "Old index " << i;
+        std::cout << "  Old index " << i;
         if (spec_old[i].type==index_spec::index) {
           std::cout << " is being remapped to new index "
                     << spec_old[i].ix1 << "." << std::endl;
@@ -2163,7 +2261,7 @@ namespace o2scl {
 
       // Verbose output looping over the spec_new list
       for(size_t i=0;i<rank_new;i++) {
-        std::cout << "New index " << i;
+        std::cout << "  New index " << i;
         if (spec_new[i].type==index_spec::index) {
           std::cout << " was remapped from old index " << spec_new[i].ix1
                     << "." << std::endl;
@@ -2195,7 +2293,8 @@ namespace o2scl {
       }
 
       // Output sum information
-      std::cout << "n_sums, n_sum_loop: " << n_sums << " "
+      std::cout << "grid_rearrange_and_copy(): n_sums, n_sum_loop: "
+                << n_sums << " "
                 << n_sum_loop << std::endl;
         
       // End of 'if (verbose>1)'
@@ -2205,9 +2304,9 @@ namespace o2scl {
     tensor_grid<> t_new(rank_new,size_new);
     t_new.set_grid_packed(new_grid);
     if (verbose>1) {
-      std::cout << "New grid is: " << std::endl;
+      std::cout << "grid_rearrange_and_copy(): new grid is: " << std::endl;
       for(size_t k=0;k<rank_new;k++) {
-        std::cout << k << " (" << t_new.get_size(k) << "): ";
+        std::cout << "  " << k << " (" << t_new.get_size(k) << "): ";
         if (t_new.get_size(k)>3) {
           std::cout << t_new.get_grid(k,0) << ", ";
           std::cout << t_new.get_grid(k,1) << " ... ";
@@ -2218,8 +2317,9 @@ namespace o2scl {
         }
         std::cout << t_new.get_grid(k,t_new.get_size(k)-1) << std::endl;
       }
-      std::cout << "Number of interpolations: " << n_interps
-                << ", indexes to interpolate: ";
+      std::cout << "grid_rearrange_and_copy(): "
+                << "interpolations: number: " << n_interps
+                << " indexes: ";
       o2scl::vector_out(std::cout,ix_to_interp,true);
     }
     
@@ -2298,10 +2398,10 @@ namespace o2scl {
               std::cout << "\n\nj2,ix_old.size(): "
                         << j2 << " " << ix_old.size() << std::endl;
               O2SCL_ERR2("Indexing problem 1 in",
-                         "tensor_grid::rearrange_and_copy().",
+                         "tensor_grid::grid_rearrange_and_copy().",
                          o2scl::exc_esanity);
             } else {
-              std::cout << ix_old[j2] << " ";
+              std::cout << "  " << ix_old[j2] << " ";
             }
           } else {
             if (k>=interp_vals.size()) {
@@ -2310,7 +2410,7 @@ namespace o2scl {
                         << std::endl;
               o2scl::vector_out(std::cout,interp_vals,true);
               O2SCL_ERR2("Indexing problem w in",
-                         "tensor_grid::rearrange_and_copy().",
+                         "tensor_grid::grid_rearrange_and_copy().",
                          o2scl::exc_esanity);
             } else {
               std::cout << "(" << interp_vals[k] << ") ";
@@ -2355,7 +2455,7 @@ namespace o2scl {
               std::cout << "X: " << cnt << " " << sum_ix.size()
                         << std::endl;
               O2SCL_ERR2("Bad sync 1 in sum_ix in ",
-                         "tensor_grid::rearrange_and_copy()",
+                         "tensor_grid::grid_rearrange_and_copy()",
                          o2scl::exc_esanity);
             }
             ix_old[k]=sum_ix[cnt];
@@ -2366,7 +2466,7 @@ namespace o2scl {
               std::cout << "X: " << cnt << " " << sum_ix.size()
                         << std::endl;
               O2SCL_ERR2("Bad sync 2 in sum_ix in ",
-                         "tensor_grid::rearrange_and_copy()",
+                         "tensor_grid::grid_rearrange_and_copy()",
                          o2scl::exc_esanity);
             }
             ix_old[spec_old[k].ix1]=sum_ix[cnt];
@@ -2394,6 +2494,10 @@ namespace o2scl {
       // Set the new point by performing the linear interpolation
       t_new.set(ix_new,val);
     }
+
+    if (verbose>1) {
+      std::cout << "grid_rearrange_and_copy() done." << std::endl;
+    }
     
     return t_new;
   }
@@ -2403,12 +2507,13 @@ namespace o2scl {
   */
   template<class tensor_t, class data_t>
   tensor_t grid_rearrange_and_copy(const tensor_t &t, std::string spec,
-                               int verbose=0, bool err_on_fail=true) {
+                                   int verbose=0, bool err_on_fail=true) {
     
     std::vector<std::string> sv2;
-    index_spec_preprocess2(spec,sv2);
+    index_spec_preprocess(spec,sv2);
     std::vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
+    
     return grid_rearrange_and_copy<tensor_t,data_t>(t,vis,verbose,err_on_fail);
   }
   
@@ -2748,8 +2853,29 @@ namespace o2scl {
     return;
   }
 
-  
-  
+  /** \brief Compare two tensors for equality
+   */
+  template<class vec_t, class vec_size_t,
+           class vec2_t, class vec2_size_t>
+  bool operator==(const tensor_grid<vec_t,vec_size_t> &t1,
+                  const tensor_grid<vec2_t,vec2_size_t> &t2) {
+    if (t1.get_rank()!=t2.get_rank()) return false;
+    for(size_t i=0;i<t1.get_rank();i++) {
+      if (t1.get_size(i)!=t2.get_size(i)) return false;
+    }
+    const vec_t &g1=t1.get_grid();
+    const vec2_t &g2=t2.get_grid();
+    for(size_t i=0;i<g1.size();i++) {
+      if (g1[i]!=g2[i]) return false;
+    }
+    const vec_t &v1=t1.get_data();
+    const vec2_t &v2=t2.get_data();
+    for(size_t i=0;i<t1.total_size();i++) {
+      if (v1[i]!=v2[i]) return false;
+    }
+    return true;
+  }
+
 }
 
 #endif

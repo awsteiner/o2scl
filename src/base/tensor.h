@@ -153,10 +153,10 @@ namespace o2scl {
 
   public:
 
-    /// Desc
+    /// Create an ix_index object from index \c ix
     ix_index(size_t ix);
     
-    /// Desc
+    /// Create an ix_index object from a index_spec object
     ix_index(index_spec &is) {
       if (is.type!=index_spec::index) {
 	O2SCL_ERR("Invalid index_spec in ix_index",
@@ -179,9 +179,10 @@ namespace o2scl {
 
   public:
 
+    /// The value at which the specified index is to be fixed
     size_t &fixed_value;
 
-    /// Desc
+    /// Create an ix_fixed object for index \c ix at value \c fix
     ix_fixed(size_t ix, size_t fix) : fixed_value(this->ix2) {
       this->type=index_spec::fixed;
       this->ix1=ix;
@@ -192,6 +193,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
+    /// Create an ix_fixed object from a index_spec object
     ix_fixed(index_spec &is) : fixed_value(this->ix2) {
       if (is.type!=index_spec::fixed) {
 	O2SCL_ERR("Invalid index_spec in ix_fixed",
@@ -214,7 +216,7 @@ namespace o2scl {
 
   public:
 
-    /// Desc
+    /// Create an ix_sum object for index \c ix 
     ix_sum(size_t ix) {
       this->type=index_spec::sum;
       this->ix1=ix;
@@ -225,7 +227,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
-    /// Desc
+    /// Create an ix_sum object from a index_spec object
     ix_sum(index_spec &is) {
       if (is.type!=index_spec::sum) {
 	O2SCL_ERR("Invalid index_spec in ix_sum",
@@ -248,8 +250,10 @@ namespace o2scl {
 
   public:
 
+    /// The second index to trace over
     size_t &second_index;
 
+    /// Create an ix_trace object for indices \c ix and \c jx
     ix_trace(size_t ix, size_t jx) : second_index(this->ix2) {
       this->type=index_spec::trace;
       this->ix1=ix;
@@ -260,6 +264,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
+    /// Create an ix_trace object from a index_spec object
     ix_trace(index_spec &is) : second_index(is.ix2) {
       if (is.type!=index_spec::trace) {
 	O2SCL_ERR("Invalid index_spec in ix_trace",
@@ -282,6 +287,7 @@ namespace o2scl {
 
   public:
 
+    /// Create an ix_reverse object for index \c ix
     ix_reverse(size_t ix) {
       this->type=index_spec::reverse;
       this->ix1=ix;
@@ -292,6 +298,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
+    /// Create an ix_reverse object from a index_spec object
     ix_reverse(index_spec &is) {
       if (is.type!=index_spec::reverse) {
 	O2SCL_ERR("Invalid index_spec in ix_reverse",
@@ -313,11 +320,16 @@ namespace o2scl {
   class ix_range : public index_spec {
 
   public:
-    
+
+    /// The beginning of the range
     size_t &begin;
 
+    /// The end of the range
     size_t &end;
 
+    /** \brief Create an ix_range object for index \c ix beginning at \c 
+        start and ending at \c finish
+    */
     ix_range(size_t ix, size_t start, size_t finish) :
       begin(this->ix2), end(this->ix3) {
       this->type=index_spec::range;
@@ -329,6 +341,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
+    /// Create an ix_range object from a index_spec object
     ix_range(index_spec &is) : begin(this->ix2), end(this->ix3) {
       if (is.type!=index_spec::range) {
 	O2SCL_ERR("Invalid index_spec in ix_range",
@@ -351,9 +364,11 @@ namespace o2scl {
   class ix_interp : public index_spec {
 
   public:
-    
+
+    /// The value to be interpolated into index \c ix
     double &val;
 
+    /// Create an ix_interp object for index \c ix and value \c v
     ix_interp(size_t ix, double v) : val(this->val1) {
       this->type=index_spec::interp;
       this->ix1=ix;
@@ -364,6 +379,7 @@ namespace o2scl {
       this->val3=0.0;
     }
     
+    /// Create an ix_interp object from a index_spec object
     ix_interp(index_spec &is) : val(this->val1) {
       if (is.type!=index_spec::interp) {
 	O2SCL_ERR("Invalid index_spec in ix_interp",
@@ -385,15 +401,20 @@ namespace o2scl {
   class ix_grid : public index_spec {
 
   public:
-    
+
+    /// The first grid point
     double &begin;
 
+    /// The last grid point
     double &end;
 
+    /// The number of intervals between grid points
     size_t &n_bins;
 
+    /// True for a logarithmic grid
     size_t &log_flag;
     
+    /// Create an ix_grid object from the specified inputs
     ix_grid(size_t ix, double start, double finish, size_t bins,
             bool log=false) : begin(this->val1), end(this->val2),
                         n_bins(this->ix2), log_flag(this->ix3) {
@@ -410,6 +431,7 @@ namespace o2scl {
       this->val3=0.0;
     }
 
+    /// Create an ix_grid object from a index_spec object
     ix_grid(index_spec &is) : begin(this->val1), end(this->val2),
                               n_bins(this->ix2), log_flag(this->ix3) {
       if (is.type!=index_spec::grid) {
@@ -434,14 +456,19 @@ namespace o2scl {
 
   public:
     
+    /// The first grid point
     double &begin;
 
+    /// The last grid point
     double &end;
 
+    /// The size of the interval between grid points
     double &width;
 
+    /// True for a logarithmic grid
     size_t &log_flag;
     
+    /// Create an ix_gridw object from the specified inputs
     ix_gridw(size_t ix, double start, double finish, double wid,
              bool log=false) : begin(this->val1), end(this->val2),
                          width(this->val3), log_flag(this->ix3) {
@@ -458,6 +485,7 @@ namespace o2scl {
       this->val3=wid;
     }
 
+    /// Create an ix_gridw object from a index_spec object
     ix_gridw(index_spec &is) : begin(this->val1), end(this->val2),
                                width(this->val3), log_flag(this->ix3) {
       if (is.type!=index_spec::gridw) {
@@ -1257,7 +1285,7 @@ namespace o2scl {
       fixed(2,0),index(1),index(0) - same as above
       
   */
-  int strings_to_indexes2(std::vector<std::string> sv2,
+  int strings_to_indexes(std::vector<std::string> sv2,
                           std::vector<o2scl::index_spec> &vis,
                           int verbose=0, bool err_on_fail=false);
   
@@ -1277,7 +1305,7 @@ namespace o2scl {
          
       \endverbatim
   */
-  void index_spec_preprocess2(std::string str,
+  void index_spec_preprocess(std::string str,
                               std::vector<std::string> &sv, int verbose=0);
   
   /** \brief Rearrange, sum and copy current tensor to a new tensor
@@ -1298,8 +1326,9 @@ namespace o2scl {
       \endverbatim
   */
   template<class tensor_t, class data_t>
-  tensor_t rearrange_and_copy(const tensor_t &t, std::vector<index_spec> spec,
-                               int verbose=0, bool err_on_fail=true) {
+  tensor_t rearrange_and_copy(const tensor_t &t,
+                              std::vector<index_spec> spec,
+                              int verbose=0, bool err_on_fail=true) {
     
     // Old rank and new rank (computed later)
     size_t rank_old=t.get_rank();
@@ -1319,8 +1348,14 @@ namespace o2scl {
     // Size of sums
     std::vector<size_t> sum_sizes;
     
-    // Collect the statistics on the transformation
+    // Loop through the index specifications and add them to spec_old
+    // and spec_new (if necessary). This loop also determines the rank
+    // of the new tensor, "rank_new", and the sizes of the indices
+    // "size_new". No actual copying or summing is done in this loop
+    // yet.
+      
     for(size_t i=0;i<spec.size();i++) {
+      
       if (spec[i].type==index_spec::index ||
           spec[i].type==index_spec::reverse) {
         if (spec[i].ix1>=rank_old) {
@@ -1343,7 +1378,9 @@ namespace o2scl {
         spec_old[spec[i].ix1]=index_spec(spec[i].type,rank_new);
         spec_new.push_back(index_spec(spec[i].type,spec[i].ix1));
         rank_new++;
+        
       } else if (spec[i].type==index_spec::range) {
+        
         if (verbose>2) {
           std::cout << "In range " << spec[i].ix1 << " "
                     << spec[i].ix2 << " " << spec[i].ix3 << std::endl;
@@ -1378,11 +1415,14 @@ namespace o2scl {
           (index_spec(spec[i].type,spec[i].ix1,
                       spec[i].ix2,spec[i].ix3));
         rank_new++;
+        
         if (verbose>2) {
           std::cout << "Out range " << size_new[size_new.size()-1]
                     << std::endl;
         }
+        
       } else if (spec[i].type==index_spec::trace) {
+        
         if (spec[i].ix1>=rank_old || spec[i].ix2>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (trace) in ",
@@ -1397,6 +1437,7 @@ namespace o2scl {
             return tensor_t();
           }
         }
+        
         if (t.get_size(spec[i].ix1)<t.get_size(spec[i].ix2)) {
           n_sum_loop*=t.get_size(spec[i].ix1);
           sum_sizes.push_back(t.get_size(spec[i].ix1));
@@ -1410,7 +1451,9 @@ namespace o2scl {
                                          spec[i].ix1,spec[i].ix2);
         spec_old[spec[i].ix2]=index_spec(spec[i].type,
                                          spec[i].ix2,spec[i].ix1);
+        
       } else if (spec[i].type==index_spec::sum) {
+        
         if (spec[i].ix1>=rank_old) {
           if (err_on_fail) {
             O2SCL_ERR2("Index too large (sum) in ",
@@ -1429,7 +1472,9 @@ namespace o2scl {
         sum_sizes.push_back(t.get_size(spec[i].ix1));
         spec_old[spec[i].ix1]=index_spec(spec[i].type,
                                          spec[i].ix1,spec[i].ix2,0);
+        
       } else if (spec[i].type==index_spec::fixed) {
+        
         if (spec[i].ix1>=rank_old ||
             spec[i].ix2>=t.get_size(spec[i].ix1)) {
           if (err_on_fail) {
@@ -1444,11 +1489,14 @@ namespace o2scl {
             return tensor_t();
           }
         }
+        
         // Use ix1 to store the destination index (which is
         // at this point equal to rank_new)
         spec_old[spec[i].ix1]=index_spec(spec[i].type,
                                          rank_new,spec[i].ix2);
+        
       } else {
+        
         if (err_on_fail) {
           O2SCL_ERR2("Index specification type not allowed in ",
                      "tensor::rearrange_and_copy().",o2scl::exc_einval);
@@ -1459,8 +1507,10 @@ namespace o2scl {
           }
           return tensor_t();
         }
+        
       }
     }
+    
     size_t n_sums=sum_sizes.size();
     
     // Call the error handler if the input is invalid
@@ -1494,12 +1544,13 @@ namespace o2scl {
     
     // Verbose output if necessary
     if (verbose>0) {
-      std::cout << "Using a " << rank_old << " rank tensor to create a new "
+      std::cout << "rearrange_and_copy(): using a " << rank_old
+                << " rank tensor to create\n  a new "
                 << rank_new << " rank tensor." << std::endl;
     }
     if (verbose>1) {
       for(size_t i=0;i<rank_old;i++) {
-        std::cout << "Old index " << i;
+        std::cout << "  Old index " << i;
         if (spec_old[i].type==index_spec::index) {
           std::cout << " is being remapped to new index " << spec_old[i].ix1
                     << "." << std::endl;
@@ -1521,7 +1572,7 @@ namespace o2scl {
         }
       }
       for(size_t i=0;i<rank_new;i++) {
-        std::cout << "New index " << i;
+        std::cout << "  New index " << i;
         if (spec_new[i].type==index_spec::index) {
           std::cout << " was remapped from old index " << spec_new[i].ix1
                     << "." << std::endl;
@@ -1585,7 +1636,8 @@ namespace o2scl {
           }
         }
         if (verbose>2) {
-          std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
+          std::cout << "rearrange_and_copy(): n_sum_loop: "
+                    << n_sum_loop << " n_sums: "
                     << n_sums << " sum_sizes: ";
           vector_out(std::cout,sum_sizes,true);
           std::cout << "j: " << j << " sum_ix: ";
@@ -1641,9 +1693,9 @@ namespace o2scl {
                                int verbose=0, bool err_on_fail=true) {
     
     std::vector<std::string> sv2;
-    index_spec_preprocess2(spec,sv2);
+    index_spec_preprocess(spec,sv2);
     std::vector<o2scl::index_spec> vis;
-    strings_to_indexes2(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     return rearrange_and_copy<tensor_t,data_t>(t,vis,verbose,err_on_fail);
   }
   
@@ -2012,20 +2064,69 @@ namespace o2scl {
 
   /** \brief Compare two tensors for equality
    */
-  template<class data_t, class vec_t, class vec_size_t>
+  template<class data_t, class vec_t, class vec_size_t,
+           class data2_t, class vec2_t, class vec2_size_t>
   bool operator==(const tensor<data_t,vec_t,vec_size_t> &t1,
-                  const tensor<data_t,vec_t,vec_size_t> &t2) {
+                  const tensor<data2_t,vec2_t,vec2_size_t> &t2) {
     if (t1.get_rank()!=t2.get_rank()) return false;
     for(size_t i=0;i<t1.get_rank();i++) {
       if (t1.get_size(i)!=t2.get_size(i)) return false;
     }
     const vec_t &v1=t1.get_data();
-    const vec_t &v2=t2.get_data();
+    const vec2_t &v2=t2.get_data();
     for(size_t i=0;i<t1.total_size();i++) {
       if (v1[i]!=v2[i]) return false;
     }
     return true;
   }
+
+#ifdef O2SCL_NEVER_DEFINED  
+  /** \brief Add two tensors (possibly of different types)
+   */
+  template<class data_t, class vec_t, class vec_size_t,
+           class data2_t, class vec2_t, class vec2_size_t>
+  tensor<data_t,vec_t,vec_size_t>
+  operator+(const tensor<data_t,vec_t,vec_size_t> &t1,
+            const tensor<data2_t,vec2_t,vec2_size_t> &t2) {
+    if (t1.get_rank()!=t2.get_rank()) return false;
+    vec_size_t ndims(t1.get_rank);
+    for(size_t i=0;i<t1.get_rank();i++) {
+      if (t1.get_size(i)!=t2.get_size(i)) return false;
+      ndims[i]=t1.get_size(i);
+    }
+    tensor<data_t,vec_t,vec_size_t> t3(t1.get_rank(),ndims);
+    const vec_t &v1=t1.get_data();
+    const vec_t &v2=t2.get_data();
+    const vec_t &v3=t3.get_data();
+    for(size_t i=0;i<t1.total_size();i++) {
+      v3[i]=v1[i]+v2[i];
+    }
+    return t3;
+  }
+
+  /** \brief Subtract two tensors (possibly of different types)
+   */
+  template<class data_t, class vec_t, class vec_size_t,
+           class data2_t, class vec2_t, class vec2_size_t>
+  tensor<data_t,vec_t,vec_size_t>
+  operator-(const tensor<data_t,vec_t,vec_size_t> &t1,
+            const tensor<data2_t,vec2_t,vec2_size_t> &t2) {
+    if (t1.get_rank()!=t2.get_rank()) return false;
+    vec_size_t ndims(t1.get_rank);
+    for(size_t i=0;i<t1.get_rank();i++) {
+      if (t1.get_size(i)!=t2.get_size(i)) return false;
+      ndims[i]=t1.get_size(i);
+    }
+    tensor<data_t,vec_t,vec_size_t> t3(t1.get_rank(),ndims);
+    const vec_t &v1=t1.get_data();
+    const vec_t &v2=t2.get_data();
+    const vec_t &v3=t3.get_data();
+    for(size_t i=0;i<t1.total_size();i++) {
+      v3[i]=v1[i]-v2[i];
+    }
+    return t3;
+  }
+#endif
   //@}
   
 }

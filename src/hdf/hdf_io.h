@@ -2280,7 +2280,7 @@ namespace o2scl_hdf {
       <tt>acol -create tensor_grid 3 8 10 6 -set-grid 0 "i*m" \\
       -set-grid 1 "m/5*i+x" -set-grid 2 "(2-i)" -function \\
       "sin(x0+x1*x2)" -get-grid -entry 5 1 3 -entry 5 2 3 -rearrange \\
-      "reverse(2),range(0,3,7),interp(1,4.5)" -get-grid -entry 2 2</tt>
+      "reverse(2),range(0,7,3),interp(1,4.5)" -get-grid -entry 2 2</tt>
 
       This example creates a rank three tensor of size 8 by 10 by 6
       and then creates a rank 2 tensor from it. In this example, the
@@ -2292,7 +2292,8 @@ namespace o2scl_hdf {
       index. The first index in the rank 2 tensor is a reversed
       version of the last index in the rank 3 tensor. The second index
       of the rank 2 tensor is constructed from a subset of the second
-      index of the rank 3 tensor. The rank two tensor is constructed
+      index of the rank 3 tensor and also reversed (since 7 and 3 are
+      given in the opposite order). The rank two tensor is constructed
       by linearly interpolating the value 4.5 into the second index of
       the rank three tensor, thus halfway between values when the
       index takes values 1 and 2. The final tensor thus has size 6 by
@@ -2303,7 +2304,8 @@ namespace o2scl_hdf {
       <tt>acol -create tensor_grid 3 6 8 4 -set-grid 0 "erf(i*m/20)"
       -set-grid 1 "m/(i+1)" -set-grid 2 "exp(i)" -function
       "sin(x0+x1*x2+i0+i2)" -get-grid -rearrange "grid(2,5,20,5)"
-      "gridw(1,2,7,1)" "interp(0,0.5)" -get-grid</tt>
+      "gridw(1,7,1.2,0.9,1)" "interp(0,(erf(6/20)+erf(12/20))/2)" 
+      -get-grid</tt>
   */
   void index_spec();
   
