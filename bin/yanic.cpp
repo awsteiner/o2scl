@@ -619,6 +619,8 @@ int main(int argc, char *argv[]) {
   class_py_names.insert(std::make_pair("std::vector<std::vector<double>>",
                                        "std_vector_vector"));
   class_py_names.insert(std::make_pair("tensor<>","tensor"));
+  class_py_names.insert(std::make_pair("tensor<int>","tensor_int"));
+  class_py_names.insert(std::make_pair("tensor<size_t>","tensor_size_t"));
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::vector<double>",
                          "ublas_vector"));

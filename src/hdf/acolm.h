@@ -153,15 +153,13 @@ namespace o2scl_acol {
     
     /// Document strings for parameters
     std::vector<std::vector<std::string>> param_doc_strings;
-
+    
     /// Document strings for help topics
     std::vector<std::vector<std::string>> help_doc_strings;
     
     /// Convert units object (initialized by constructor to global object)
     o2scl::convert_units<double> &cng;
 
-    std::vector<o2scl::comm_option_s> opts_new;
-    
     /// \name Parameters modifiable by the user
     //@{
     /// The output precision (default 6)
@@ -174,7 +172,7 @@ namespace o2scl_acol {
      */
     bool names_out;
 
-    /// True to use regex (false)
+    /// If true, use regex (false)
     bool use_regex;
 
     /// The name of the table
@@ -283,23 +281,25 @@ namespace o2scl_acol {
 
     /// \name Colors
     //@{
-    /// Desc
+    /// Color for commands
     std::string command_color;
-    /// Desc
+    /// Color for types
     std::string type_color;
-    /// Desc
+    /// Color for parameters
     std::string param_color;
-    /// Desc
+    /// Color for help topics
     std::string help_color;
-    /// Desc
+    /// Color for executable strings
     std::string exec_color;
-    /// Desc
+    /// Color for URLSs
     std::string url_color;
-    /// Desc
+    /// Default color
     std::string default_color;
-    /// Desc
     //@}
 
+    /// Default acol options for any type
+    std::vector<o2scl::comm_option_s> opts_new;
+    
     /** \brief Color specification for terminal output
      */
     std::string colors;
@@ -313,6 +313,14 @@ namespace o2scl_acol {
 
   public:
 
+    /** \brief Return true if acol can provide help on the
+        specified arguments
+
+        This function is used by o2graph to determine if
+        the acol help command should be called.
+     */
+    bool help_found(std::string arg1, std::string arg2="");
+    
     /** \brief Make all of the XML replacements in string \c s
         based on the command list \c clist
     */
@@ -323,7 +331,10 @@ namespace o2scl_acol {
      */
     void command_add(std::string new_type);
 
-    /** \brief Desc
+    /** \brief Perform the current color replacements on string \c s
+
+        This function replaces "[c]", "[d]", etc. with the
+        user-specified color strings.
      */
     void color_replacements(std::string &s);
   

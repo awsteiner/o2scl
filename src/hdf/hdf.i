@@ -400,6 +400,10 @@ class acol_manager
 - std::string exec_color
 - std::string url_color
 - std::string default_color
+- function help_found
+  - bool
+  - std::string arg1
+  - std::string arg2
 - function run_empty
   - int
 - function parse_vec_string

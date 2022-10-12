@@ -2296,8 +2296,8 @@ namespace o2scl_hdf {
       given in the opposite order). The rank two tensor is constructed
       by linearly interpolating the value 4.5 into the second index of
       the rank three tensor, thus halfway between values when the
-      index takes values 1 and 2. The final tensor thus has size 6 by
-      5. As an example, the (2,2) entry in the final tensor comes from
+      index takes values 1 and 2. The final tensor thus has size 6x5.
+      As an example, the (2,2) entry in the final tensor comes from
       the average of the (5,1,3) and (5,2,3) entries in the original
       rank 3 tensor.
 
@@ -2306,6 +2306,20 @@ namespace o2scl_hdf {
       "sin(x0+x1*x2+i0+i2)" -get-grid -rearrange "grid(2,5,20,5)"
       "gridw(1,7,1.2,0.9,1)" "interp(0,(erf(6/20)+erf(12/20))/2)" 
       -get-grid</tt>
+
+      This example creates a rank three tensor of size 6 by 8 by 4 and
+      then creates a rank 2 tensor from it. In this example, the
+      <tt>set-grid</tt> commands uses the error and exponential
+      functions to set the initial grid. The first index of the final
+      tensor comes from the last index of the initial tensor, and the
+      values are obtained by interpolating the original exponential
+      grid to a linear grid beginning at 5 and ending at 20 with 5
+      bins (i.e. 6 grid points). The second index of the final tensor
+      is obtained by interpolating the second index of the initial
+      tensor, creating a logarithmic grid from 7 to 1.2. The final
+      tensor is also created by interpolating the result of the
+      mathematical expression "(erf(6/20)+erf(12/20))/2" into the
+      first index of the initial tensor.
   */
   void index_spec();
   

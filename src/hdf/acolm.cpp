@@ -212,6 +212,40 @@ void acol_manager::color_replacements(std::string &s) {
   return;
 }
 
+bool acol_manager::help_found(std::string arg1, std::string arg2) {
+
+  if (arg2=="") {
+    for(size_t i=0;i<type_list.size();i++) {
+      if (cl->string_equal_dash(arg1,type_list[i])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<help_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,help_doc_strings[i][0])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<param_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,param_doc_strings[i][0])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<cmd_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,cmd_doc_strings[i][0])) {
+        return true;
+      }
+    }
+  } else {
+    for(size_t i=0;i<cmd_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg2,cmd_doc_strings[i][0])) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
 void acol_manager::update_o2_docs(size_t narr,
                                   o2scl::comm_option_s *options_arr,
                                   std::string new_type) {

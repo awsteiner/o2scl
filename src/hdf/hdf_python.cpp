@@ -798,6 +798,12 @@ void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v) {
   return;
 }
 
+bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  bool ret=ptr->help_found(arg1,arg2);
+  return ret;
+}
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   int ret=ptr->run_empty();
