@@ -1450,7 +1450,15 @@ int acol_manager::setup_cli() {
   char *ac=getenv("ACOL_COLORS");
   if (ac) {
     color_spec=ac;
-    cl->set_colors(color_spec);
+    
+    if (color_spec=="0") {
+      cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
+    } else if (color_spec=="default") {
+      cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
+    } else {
+      cl->set_colors(color_spec,1);
+    }
+    
     command_color=cl->command_color;
     type_color=cl->type_color;
     param_color=cl->param_color;

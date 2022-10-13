@@ -1947,7 +1947,7 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     hist_obj.set_interp_type(interp_type);
   }
 
-  if (sv.size()>=2 && sv[1]=="colors") {
+  if (sv.size()>=2 && sv[1]=="color_spec") {
     if (color_spec=="0") {
       cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
     } else if (color_spec=="default") {
