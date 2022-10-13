@@ -1948,12 +1948,12 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
   }
 
   if (sv.size()>=2 && sv[1]=="colors") {
-    if (colors=="0") {
+    if (color_spec=="0") {
       cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
-    } else if (colors=="default") {
+    } else if (color_spec=="default") {
       cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
     } else {
-      cl->set_colors(colors,1);
+      cl->set_colors(color_spec,1);
     }
 
     command_color=cl->command_color;

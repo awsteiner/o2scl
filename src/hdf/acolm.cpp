@@ -1449,8 +1449,8 @@ int acol_manager::setup_cli() {
   
   char *ac=getenv("ACOL_COLORS");
   if (ac) {
-    colors=ac;
-    cl->set_colors(colors);
+    color_spec=ac;
+    cl->set_colors(color_spec);
     command_color=cl->command_color;
     type_color=cl->type_color;
     param_color=cl->param_color;
@@ -1479,7 +1479,7 @@ int acol_manager::setup_parameters() {
   
   p_obj_name.str=&obj_name;
   p_def_args.str=&def_args;
-  p_colors.str=&colors;
+  p_color_spec.str=&color_spec;
   p_verbose.i=&verbose;
   p_compress.i=&compress;
   p_precision.i=&precision;
@@ -1491,7 +1491,7 @@ int acol_manager::setup_parameters() {
   p_use_regex.b=&use_regex;
   
   p_obj_name.help="The current object name.";
-  p_colors.help="The color specification for terminal output.";
+  p_color_spec.help="The color specification for terminal output.";
   p_def_args.help=((std::string)"The default arguments from the ")+
     "environment varable "+env_var_name+".";
   p_precision.help="The numerical precision.";
@@ -1509,7 +1509,7 @@ int acol_manager::setup_parameters() {
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
-  cl->par_list.insert(make_pair("colors",&p_colors));
+  cl->par_list.insert(make_pair("color_spec",&p_color_spec));
   cl->par_list.insert(make_pair("precision",&p_precision));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
   cl->par_list.insert(make_pair("compress",&p_compress));

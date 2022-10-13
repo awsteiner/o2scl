@@ -210,7 +210,7 @@ namespace o2scl_acol {
     //@{
     o2scl::cli::parameter_string p_obj_name;
     o2scl::cli::parameter_string p_def_args;
-    o2scl::cli::parameter_string p_colors;
+    o2scl::cli::parameter_string p_color_spec;
     o2scl::cli::parameter_int p_verbose;
     o2scl::cli::parameter_int p_compress;
     o2scl::cli::parameter_int p_precision;
@@ -301,8 +301,23 @@ namespace o2scl_acol {
     std::vector<o2scl::comm_option_s> opts_new;
     
     /** \brief Color specification for terminal output
-     */
-    std::string colors;
+
+        Note that full 3 byte colors are not supported in OSX terminal
+        and not yet supported here.
+
+        The 16 basic VT100 colors are 1-15 except for black which is
+        assigned value 256. For 8 bit colors, use values greater than
+        15 and smaller than 256. The thousands digit is used for the
+        underline attribute, the tens of thousands digit is used for
+        the intensity attribute (0 is normal, 1 is high intensity, and
+        2 is low intensity). Background colors are specified similarly
+        to foreground colors, but multipled by 100,000.
+
+        By default, commands are cyan, types are magenta, parameters
+        are red, help topics are green, executable commands are white,
+        and URLS are underlined.
+    */
+    std::string color_spec;
     
   protected:
 

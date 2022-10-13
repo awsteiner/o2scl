@@ -806,7 +806,7 @@ namespace o2scl {
     /// Summarize 3-byte colors (long form)
     std::string three_byte_summ_long();
 
-    /// \name Desc
+    /// \name Integers specifying terminal colors and attributes 
     //@{
     static const int att_underline=1000;
     static const int int_high=10000;
@@ -830,7 +830,7 @@ namespace o2scl {
     static const int c_white=15;
     //@}
     
-    /** \brief Desc
+    /** \brief Create a terminal color string from an integer
      */
     std::string color_from_int(int col);
     
