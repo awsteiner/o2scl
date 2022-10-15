@@ -46,7 +46,7 @@
 #include <o2scl/misc.h>
 
 namespace o2scl {
-  
+
   /** \brief Index specification 
 
       \comment
@@ -1774,7 +1774,17 @@ namespace o2scl {
     /// Get an element using operator() (const version)
     const data_t &operator()(size_t ix) const { return this->data[ix]; }
     //@}
+
+#ifdef O2SCL_NEVER_DEFINED
   
+    template<class dataf_t, class vecf_t, class vecf_size_t,
+             class data2_t, class vec2_t, class vec2_size_t>
+    friend tensor<dataf_t,vecf_t,vecf_size_t>
+    operator+(const tensor<dataf_t,vecf_t,vecf_size_t> &t1,
+              const tensor<data2_t,vec2_t,vec2_size_t> &t2);
+
+#endif    
+      
   };
 
   /** \brief Rank 2 tensor
@@ -2003,7 +2013,7 @@ namespace o2scl {
       tensor<data_t,vec_t,vec_size_t>::set(index,val);
       return;
     }
-    //@}
+    //@}    
   };
 
   /// \name Tensor functions in src/base/tensor.h
@@ -2080,7 +2090,11 @@ namespace o2scl {
     return true;
   }
 
-#ifdef O2SCL_NEVER_DEFINED  
+#ifdef O2SCL_NEVER_DEFINED
+  
+  // AWS: I need to make these friends to access get_data()
+  // before these will work
+  
   /** \brief Add two tensors (possibly of different types)
    */
   template<class data_t, class vec_t, class vec_size_t,
@@ -2088,16 +2102,24 @@ namespace o2scl {
   tensor<data_t,vec_t,vec_size_t>
   operator+(const tensor<data_t,vec_t,vec_size_t> &t1,
             const tensor<data2_t,vec2_t,vec2_size_t> &t2) {
-    if (t1.get_rank()!=t2.get_rank()) return false;
-    vec_size_t ndims(t1.get_rank);
+    if (t1.get_rank()!=t2.get_rank()) {
+      O2SCL_ERR2("Tensors do not have equal rank in ",
+                 "operator+().",o2scl::exc_einval);
+    }
+    vec_size_t ndims(t1.get_rank());
     for(size_t i=0;i<t1.get_rank();i++) {
-      if (t1.get_size(i)!=t2.get_size(i)) return false;
+      if (t1.get_size(i)!=t2.get_size(i)) {
+        if (t1.get_rank()!=t2.get_rank()) {
+          O2SCL_ERR2("Tensors do not have the same size in ",
+                     "operator+().",o2scl::exc_einval);
+        }
+      }
       ndims[i]=t1.get_size(i);
     }
     tensor<data_t,vec_t,vec_size_t> t3(t1.get_rank(),ndims);
     const vec_t &v1=t1.get_data();
     const vec_t &v2=t2.get_data();
-    const vec_t &v3=t3.get_data();
+    vec_t &v3=t3.data;
     for(size_t i=0;i<t1.total_size();i++) {
       v3[i]=v1[i]+v2[i];
     }
@@ -2111,10 +2133,16 @@ namespace o2scl {
   tensor<data_t,vec_t,vec_size_t>
   operator-(const tensor<data_t,vec_t,vec_size_t> &t1,
             const tensor<data2_t,vec2_t,vec2_size_t> &t2) {
-    if (t1.get_rank()!=t2.get_rank()) return false;
-    vec_size_t ndims(t1.get_rank);
+    if (t1.get_rank()!=t2.get_rank()) {
+      O2SCL_ERR2("Tensors do not have equal rank in ",
+                 "operator-().",o2scl::exc_einval);
+    }
+    vec_size_t ndims(t1.get_rank());
     for(size_t i=0;i<t1.get_rank();i++) {
-      if (t1.get_size(i)!=t2.get_size(i)) return false;
+      if (t1.get_size(i)!=t2.get_size(i)) {
+        O2SCL_ERR2("Tensors do not have the same size in ",
+                   "operator-().",o2scl::exc_einval);
+      }
       ndims[i]=t1.get_size(i);
     }
     tensor<data_t,vec_t,vec_size_t> t3(t1.get_rank(),ndims);
@@ -2126,7 +2154,9 @@ namespace o2scl {
     }
     return t3;
   }
+  
 #endif
+  
   //@}
   
 }

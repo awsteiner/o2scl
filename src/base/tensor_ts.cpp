@@ -162,6 +162,10 @@ int main(void) {
       }
     }
     t.test_gen(tx3==tx3b,"rearrange 2");
+
+    //tensor<> tx4=tx3;
+    //tensor<> tx5=tx3+tx4;
+    
     
   }
   

@@ -2782,7 +2782,7 @@ namespace o2scl {
 
   };
 
-  /** \brief Desc
+  /** \brief Output a tensor_grid object to a stream
    */
   template<class tensor_grid_t>
   void tensor_grid_out(std::ostream &os, tensor_grid_t &t,

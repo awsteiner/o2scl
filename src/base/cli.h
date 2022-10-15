@@ -737,7 +737,7 @@ namespace o2scl {
      */
     void xml_replacements(std::string &s);
 
-    /** \brief Desc
+    /** \brief Get a pointer to the option of name \c name
      */
     comm_option_s *get_option_pointer(std::string name);
     

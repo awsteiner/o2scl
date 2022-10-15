@@ -1456,7 +1456,7 @@ int acol_manager::setup_cli() {
     } else if (color_spec=="default") {
       cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
     } else {
-      cl->set_colors(color_spec,1);
+      cl->set_colors(color_spec);
     }
     
     command_color=cl->command_color;

@@ -1407,6 +1407,7 @@ class tensor_grid<>
 | Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
+- parent tensor<>
 - std_cc                             
 - py_name tensor_grid
 - function is_valid
