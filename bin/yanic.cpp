@@ -3328,6 +3328,11 @@ int main(int argc, char *argv[]) {
 
         if (iff.ret.is_ctype()) {
           fout << "    func.restype=ctypes.c_" << iff.ret.name << endl;
+        } else if (iff.ret.name=="tensor<>" ||
+                   iff.ret.name=="tensor<int>" ||
+                   iff.ret.name=="tensor<size_t>" ||
+                   iff.ret.name=="tensor_grid<>") {
+          fout << "    func.restype=ctypes.c_void_p" << endl;
         } else {
           size_t len=iff.ret.name.length();
           std::string reformat_ret_type=iff.ret.name;
@@ -3393,13 +3398,24 @@ int main(int argc, char *argv[]) {
         }
       }
     }
-    
+
     // Return
-    if (iff.ret.name=="void") {
-      fout << "    return" << endl;
+    if (iff.ret.name=="tensor<>" ||
+        iff.ret.name=="tensor<int>" ||
+        iff.ret.name=="tensor<size_t>" ||
+        iff.ret.name=="tensor_grid<>") {
+      fout << "    ten=tensor(link,ret)" << endl;
+      fout << "    ten._owner=True" << endl;
+      fout << "    return ten" << endl;
     } else {
-      fout << "    return ret" << endl;
+      if (iff.ret.name=="void") {
+        fout << "    return" << endl;
+      } else {
+        fout << "    return ret" << endl;
+      }
     }
+
+    // Final endline for spacing
     fout << endl;
     
   }
