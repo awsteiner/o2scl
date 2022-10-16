@@ -1873,8 +1873,8 @@ namespace o2scl {
       composed of a floating point number of type \c fp_t for which
       the function \c abs() is defined.
   */
-  template<class vec_t, class fp_t>
-    size_t vector_lookup(size_t n, const vec_t &x, fp_t x0) {
+  template<class vec_t, class data_t>
+    size_t vector_lookup(size_t n, const vec_t &x, data_t x0) {
     if (n==0) {
       O2SCL_ERR("Empty vector in function vector_lookup().",
 		exc_einval);
@@ -1887,7 +1887,7 @@ namespace o2scl {
 		 "function vector_lookup()",exc_einval);
       return 0;
     }
-    fp_t best=x[i], bdiff=abs(x[i]-x0);
+    data_t best=x[i], bdiff=abs(x[i]-x0);
     for(;i<n;i++) {
       if (std::isfinite(x[i]) && abs(x[i]-x0)<bdiff) {
 	row=i;

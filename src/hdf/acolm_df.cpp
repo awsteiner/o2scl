@@ -50,6 +50,7 @@ int acol_manager::comm_download
 int acol_manager::comm_entry
 int acol_manager::comm_entry_grid
 int acol_manager::comm_filelist
+int acol_manager::comm_find
 int acol_manager::comm_find_row
 int acol_manager::comm_fit
 int acol_manager::comm_function
@@ -327,7 +328,8 @@ int acol_manager::comm_deriv_x(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_deriv_y(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_deriv_y(std::vector<std::string> &sv,
+                               bool itive_com) {
 
   if (type!="table3d") {
     cerr << "Not implemented for type " << type << " ." << endl;
@@ -534,7 +536,8 @@ int acol_manager::comm_docs(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_download(std::vector<std::string> &sv,
+                                bool itive_com) {
 
   cloud_file cf;
   std::string file, hash="", url, fname, dir="";
@@ -615,378 +618,6 @@ int acol_manager::comm_download(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_entry(std::vector<std::string> &sv, bool itive_com) {
-
-  if (type=="table") {
-
-    // If we have no 'value' entry and we're not in interactive mode,
-    // then just presume that the user is asking us to just output
-    // the current value
-    vector<string> pr, in;
-    if (itive_com==true || sv.size()<3) {
-    
-      pr.push_back("Enter column name");
-      pr.push_back("Enter row index");
-      pr.push_back("Enter new value (or \"none\") to keep original value");
-      int ret=get_input(sv,pr,in,"entry",itive_com);
-      if (ret!=0) return ret;
-
-    } else if (sv.size()>=4) {
-      in.resize(3);
-      in[0]=sv[1];
-      in[1]=sv[2];
-      in[2]=sv[3];
-    } else {
-      in.resize(2);
-      in[0]=sv[1];
-      in[1]=sv[2];
-    }
-
-    int row;
-    int ret2=o2scl::stoi_nothrow(in[1],row);
-    if (ret2!=0) {
-      std::cerr << "Failed to convert " << in[1]
-		<< " to a number." << endl;
-      return exc_efailed;
-    }
-    if (row<0) {
-      std::cerr << "Conversion of " << in[1]
-		<< " resulted in, " << row << ", a negative number." << endl;
-      return exc_efailed;
-    }
-
-    if (in.size()>=3) {
-      // Convert in[2] to lower case
-      std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
-    }
-
-    if (in.size()<=2 || in[2]=="none") {
-      cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
-	   << table_obj.get(in[0],row) << endl;
-    } else {
-      cout << "Entry for column " << in[0] << " at row " << in[1]
-	   << " is has been changed from "
-	   << table_obj.get(in[0],row);
-      table_obj.set(in[0],row,o2scl::function_to_double(in[2]));
-      cout << " to " << table_obj.get(in[0],row) << endl;
-    }
-    
-  } else if (type=="table3d") {
-
-    vector<string> pr, in;
-    if (sv.size()==4) {
-      // If there are three arguments, then presume a new value
-      // wasn't specified, so we have enough information to proceed
-      in.push_back(sv[1]);
-      in.push_back(sv[2]);
-      in.push_back(sv[3]);
-    } else {
-      pr.push_back("Enter slice name");
-      pr.push_back("Enter first index");
-      pr.push_back("Enter second index");
-      pr.push_back("Enter new value (or \"none\") to keep original value");
-      int ret=get_input(sv,pr,in,"entry",itive_com);
-      if (ret!=0) return ret;
-    }
-
-    int xix;
-    int ret2=o2scl::stoi_nothrow(in[1],xix);
-    if (ret2!=0) {
-      std::cerr << "Failed to convert " << in[1]
-		<< " to a number." << endl;
-      return exc_efailed;
-    }
-    if (xix<0) {
-      std::cerr << "Conversion of " << in[1]
-		<< " resulted in, " << xix
-		<< ", a negative number." << endl;
-      return exc_efailed;
-    }
-
-    int yix;
-    int ret3=o2scl::stoi_nothrow(in[2],yix);
-    if (ret3!=0) {
-      std::cerr << "Failed to convert " << in[2]
-		<< " to a number." << endl;
-      return exc_efailed;
-    }
-    if (yix<0) {
-      std::cerr << "Conversion of " << in[2]
-		<< " resulted in, " << yix
-		<< ", a negative number." << endl;
-      return exc_efailed;
-    }
-
-    if (in.size()>3) {
-      // Convert in[3] to lower case
-      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
-    }
-    
-    if (in.size()<=3 || in[3]=="none") {
-      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
-	   << in[2] << ") is "
-	   << table3d_obj.get(xix,yix,in[0]) << endl;
-    } else {
-      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
-	   << in[2] << ") has been changed from "
-	   << table3d_obj.get(xix,yix,in[0]);
-      table3d_obj.set(xix,yix,in[0],o2scl::function_to_double(in[3]));
-      cout << " to " << table3d_obj.get(xix,yix,in[0]) << endl;
-    }
-    
-  } else if (type=="tensor") {
-
-    size_t rk=tensor_obj.get_rank();
-    
-    // Handle arguments
-    vector<string> in;
-    if (sv.size()<rk+1) {
-      vector<string> pr;
-      for(size_t i=0;i<rk;i++) {
-	pr.push_back(((std::string)"Index ")+
-		     o2scl::szttos(i));
-      }
-      pr.push_back("Enter new value (or \"none\") to keep original value");
-      int ret=get_input(sv,pr,in,"entry",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      for(size_t i=0;i<sv.size()-1;i++) {
-	in.push_back(sv[i+1]);
-      }
-    }
-
-    // Parse to array
-    vector<size_t> ix;
-    for(size_t i=0;i<rk;i++) {
-      ix.push_back(o2scl::stoszt(in[i]));
-    }
-
-    // Set value if necessary
-    if (in.size()>tensor_grid_obj.get_rank()) {
-      // convert to lower case
-      std::transform(in[rk].begin(),
-		     in[rk].end(),
-		     in[rk].begin(),::tolower);
-      if (in[rk]!="none") {
-	tensor_obj.set
-	  (ix,o2scl::stod(in[rk]));
-      }
-    }
-
-    // Output indices and value
-    double value=tensor_obj.get(ix);
-    cout << "Indices, value: ";
-    vector_out(cout,ix,false);
-    cout << " " << value << endl;
-    
-  } else if (type=="tensor_grid") {
-
-    size_t rk=tensor_grid_obj.get_rank();
-
-    // Handle arguments if they weren't specified
-    vector<string> in;
-    if (sv.size()<rk+1) {
-      vector<string> pr;
-      for(size_t i=0;i<rk;i++) {
-	pr.push_back(((std::string)"Index ")+
-		     o2scl::szttos(i));
-      }
-      pr.push_back("Enter new value (or \"none\") to keep original value");
-      int ret=get_input(sv,pr,in,"entry",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      // If the user specified enough indices, then interpret the
-      // command as a 'get' request and proceed without prompting for
-      // more information.
-      for(size_t i=0;i<sv.size()-1;i++) {
-	in.push_back(sv[i+1]);
-      }
-    }
-
-    // Parse to array
-    vector<size_t> ix;
-    for(size_t i=0;i<rk;i++) {
-      ix.push_back(o2scl::stoszt(in[i]));
-    }
-
-    // Set value if necessary
-    if (in.size()>rk && in[rk]!="none") {
-      tensor_grid_obj.set(ix,o2scl::stod(in[rk]));
-    }
-
-    // Get associated grid points
-    std::vector<double> vals(rk);
-    for(size_t i=0;i<rk;i++) {
-      vals[i]=tensor_grid_obj.get_grid(i,ix[i]);
-    }
-    
-    // Output indices, grid point, value
-    cout << "Indices, grid point, value: ";
-    vector_out(cout,ix,false);
-    cout << ", ";
-    vector_out(cout,vals,false);
-    cout << ", " << tensor_grid_obj.get(ix) << endl;
-    
-  } else {
-    cerr << "Command 'entry' not implemented for type " << type << " ."
-	 << endl;
-    return exc_efailed;
-  }
-
-  return 0;
-}
-
-int acol_manager::comm_entry_grid(std::vector<std::string> &sv,
-				  bool itive_com) {
-
-  if (type=="table") {
-
-    vector<string> pr, in;
-    pr.push_back("Enter index column name");
-    pr.push_back("Enter index column value");
-    pr.push_back("Enter target column name");
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry-grid",itive_com);
-    if (ret!=0) return ret;
-
-    double val=o2scl::stod(in[1]);
-    int row=table_obj.lookup(in[0],val);
-    cout << "Looking up value " << val << " in column " << in[0]
-	 << " results in row " << row << " with value "
-	 << table_obj.get(in[0],row) << endl;
-    
-    if (in.size()>=4) {
-      // Convert in[3] to lower case
-      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
-    }
-    
-    if (in.size()<=2 || in[3]=="none") {
-      cout << "Entry for column " << in[2] << " at row " << row << " is "
-	   << table_obj.get(in[2],row) << endl;
-    } else {
-      cout << "Entry for column " << in[2] << " at row " << row
-	   << " is has been changed from "
-	   << table_obj.get(in[2],row);
-      table_obj.set(in[0],row,o2scl::function_to_double(in[3]));
-      cout << " to " << table_obj.get(in[2],row) << endl;
-    }
-    
-  } else if (type=="table3d") {
-
-    vector<string> pr, in;
-    pr.push_back("Enter slice name");
-    pr.push_back("Enter first grid point");
-    pr.push_back("Enter second grid point");
-    pr.push_back("Enter new value (or \"none\") to keep original value");
-    int ret=get_input(sv,pr,in,"entry-grid",itive_com);
-    if (ret!=0) return ret;
-
-    int xix;
-    int ret2=o2scl::stoi_nothrow(in[1],xix);
-    if (ret2!=0) {
-      std::cerr << "Failed to convert " << in[1]
-		<< " to a number." << endl;
-      return exc_efailed;
-    }
-    if (xix<0) {
-      std::cerr << "Conversion of " << in[1]
-		<< " resulted in, " << xix
-		<< ", a negative number." << endl;
-      return exc_efailed;
-    }
-
-    int yix;
-    int ret3=o2scl::stoi_nothrow(in[2],yix);
-    if (ret3!=0) {
-      std::cerr << "Failed to convert " << in[2]
-		<< " to a number." << endl;
-      return exc_efailed;
-    }
-    if (yix<0) {
-      std::cerr << "Conversion of " << in[2]
-		<< " resulted in, " << yix
-		<< ", a negative number." << endl;
-      return exc_efailed;
-    }
-
-    if (in.size()>3) {
-      // Convert in[3] to lower case
-      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
-    }
-    
-    if (in.size()<=3 || in[3]=="none") {
-      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
-	   << in[2] << ") is "
-	   << table3d_obj.get(xix,yix,in[0]) << endl;
-    } else {
-      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
-	   << in[2] << ") has been changed from "
-	   << table3d_obj.get(xix,yix,in[0]);
-      table3d_obj.set(xix,yix,in[0],o2scl::function_to_double(in[3]));
-      cout << " to " << table3d_obj.get(xix,yix,in[0]) << endl;
-    }
-    
-  } else if (type=="tensor_grid") {
-
-    size_t rk=tensor_grid_obj.get_rank();
-    
-    vector<string> in;
-    if (sv.size()<rk+1) {
-      // Handle arguments
-      vector<string> pr;
-      for(size_t i=0;i<rk;i++) {
-	pr.push_back(((std::string)"Value for index ")+
-		     o2scl::szttos(i));
-      }
-      pr.push_back("Enter new value (or \"none\") to keep original value");
-      int ret=get_input(sv,pr,in,"entry-grid",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      // If the user specified enough indices, then interpret the
-      // command as a 'get' request and proceed without prompting for
-      // more information.
-      for(size_t i=0;i<sv.size()-1;i++) {
-	in.push_back(sv[i+1]);
-      }
-    }
-
-    // Parse to array
-    vector<double> vals;
-    for(size_t i=0;i<rk;i++) {
-      vals.push_back(o2scl::stod(in[i]));
-    }
-
-    // Set value if necessary
-    if (in.size()>rk && in[rk]!="none") {
-      tensor_grid_obj.set_val
-	(vals,o2scl::stod(in[rk]));
-    }
-
-    // Lookup closest grid point
-    double value=tensor_grid_obj.get_val(vals,vals);
-    vector<size_t> ix(rk);
-    tensor_grid_obj.lookup_grid_vec(vals,ix);
-
-    if (scientific) cout.setf(ios::scientific);
-    else cout.unsetf(ios::scientific);
-    cout.precision(precision);
-    
-    // Output indices, grid point, value
-    cout << "Indices, grid point, value: ";
-    vector_out(cout,ix,false);
-    cout << " ";
-    vector_out(cout,vals,false);
-    cout << " " << value << endl;
-    
-  } else {
-    cerr << "Command 'entry-grid' not implemented for type " << type << " ."
-	 << endl;
-    return exc_efailed;
-  }
-
-  return 0;
-}
-
 int acol_manager::comm_filelist(std::vector<std::string> &sv, 
 				bool itive_com) {
 
@@ -1013,7 +644,53 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   return 0;
 }
 
-int acol_manager::comm_find_row(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_find(std::vector<std::string> &sv, 
+				bool itive_com) {
+
+  std::string i1;
+  int ret=get_input_one(sv,"Enter value",i1,"find",
+			itive_com);
+  if (ret!=0) return ret;
+
+  if (type=="double[]") {
+
+    double x0=o2scl::stod(i1);
+    double x1=x0;
+    size_t ix=vector_lookup<vector<double>,double>(doublev_obj.size(),
+                                                   doublev_obj,x1);
+    cout << "Searched for " << x0 << " found " << x1
+         << " at index " << ix << "." << endl;
+    
+  } else if (type=="int[]") {
+    
+    int x0=o2scl::stoi(i1);
+    int x1=x0;
+    size_t ix=vector_lookup<vector<int>,int>(intv_obj.size(),
+                                                   intv_obj,x1);
+    cout << "Searched for " << x0 << " found " << x1
+         << " at index " << ix << "." << endl;
+      
+  } else if (type=="size_t[]") {
+
+    size_t x0=o2scl::stoszt(i1);
+    size_t x1=x0;
+    cerr << "Problem." << endl;
+    cout << "Problem." << endl;
+    //size_t ix=vector_lookup<vector<size_t>,size_t>(size_tv_obj.size(),
+    //size_tv_obj,x1);
+    //cout << "Searched for " << x0 << " found " << x1
+    //<< " at index " << ix << "." << endl;
+      
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
+int acol_manager::comm_find_row(std::vector<std::string> &sv,
+                                bool itive_com) {
 
   if (type!="table") {
     cerr << "Not implemented for type " << type << " ." << endl;
@@ -1202,7 +879,8 @@ int acol_manager::comm_fit(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_function(std::vector<std::string> &sv,
+                                bool itive_com) {
 
   if (type=="table3d") {
     
@@ -1213,8 +891,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv, bool itive_com) {
     if (ret!=0) return ret;
     
     // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+    if (in[0].size()>=3 && ((in[0][0]=='\'' &&
+                             in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' &&
+                             in[0][in[0].size()-1]=='\"'))) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
     

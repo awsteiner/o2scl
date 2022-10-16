@@ -113,9 +113,9 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "assign","cat","convert-unit",
       "correl","delete-col",
       "delete-rows","delete-rows-tol",
-      "deriv","deriv2","entry-grid",
+      "deriv","deriv2","value-grid",
       "find-row","fit","function",
-      "get-row","get-unit","entry","index",
+      "get-row","get-unit","value","index",
       "insert","insert-full","integ","interp",
       "list","max","min","nlines","refine","rename",
       "select","select-rows",
@@ -128,7 +128,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
-      "function","entry","entry-grid","get-grid",
+      "function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
       "list","max","min","rename","set-data",
       "slice","slice-hist","sum","to-hist-2d","to-table",
@@ -146,7 +146,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
       "max","min","to-tensor-grid","rearrange",
-      "entry","function","sum","stats","deriv"};
+      "value","function","sum","stats","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
@@ -161,8 +161,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
       "set-grid","max","min","rearrange",
-      "get-grid","interp","entry","to-tensor",
-      "entry-grid","function","sum","stats",
+      "get-grid","interp","value","to-tensor",
+      "value-grid","function","sum","stats",
       "binary","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
@@ -180,7 +180,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-      "to-table","function","sum"};
+      "to-table","function","sum","find","value"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
@@ -618,12 +618,12 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv2","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv2),both},
-       {0,"entry","",0,3,"","",
+       {0,"value","",0,3,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry),both},
-       {0,"entry-grid","",0,4,"","",
+        (this,&acol_manager::comm_value),both},
+       {0,"value-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry_grid),both},
+        (this,&acol_manager::comm_value_grid),both},
        {0,"find-row","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_find_row),both},
@@ -753,12 +753,12 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv-y","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv_y),both},
-       {0,"entry","",0,4,"","",
+       {0,"value","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry),both},
-       {0,"entry-grid","",0,4,"","",
+        (this,&acol_manager::comm_value),both},
+       {0,"value-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry_grid),both},
+        (this,&acol_manager::comm_value_grid),both},
        {'f',"function","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_function),both},
@@ -832,9 +832,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"diag","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_diag),both},
-        {0,"entry","",-1,-1,"","",
+        {0,"value","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry),both},
+         (this,&acol_manager::comm_value),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -937,15 +937,15 @@ void acol_manager::command_add(std::string new_type) {
         {0,"stats","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_stats),both},
-        {0,"entry","",-1,-1,"","",
+        {0,"value","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry),both},
+         (this,&acol_manager::comm_value),both},
         {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"entry-grid","",-1,-1,"","",
+        {0,"value-grid","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry_grid),both},
+         (this,&acol_manager::comm_value_grid),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -1046,12 +1046,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
     
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
@@ -1083,12 +1089,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sort),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"sum","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sum),both},
@@ -1120,12 +1132,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
         {0,"sort","",0,0,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
-         both},
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sort),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"sum","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sum),both},

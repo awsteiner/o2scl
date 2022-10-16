@@ -526,7 +526,7 @@ namespace o2scl_acol {
         For objects of type tensor_grid:
 
         Apply a binary function to two tensor_grid objects.
-
+        
         Arguments: <tt><file> <object name> <function></tt>
 
         Read a <tt>tensor_grid</tt> named <object name> from file
@@ -579,7 +579,7 @@ namespace o2scl_acol {
 
         Concatenate a second table object onto current table.
 
-        <file> [name]
+        Arguments: <tt><file> [name]</tt>
 
         Add a second table to the end of the first, creating new
         columns if necessary.
@@ -1059,65 +1059,6 @@ namespace o2scl_acol {
     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get or set an entry
-
-        For objects of type table:
-
-        Get or set a single entry in a table.
-
-        Arguments: <tt><column> <row> [value or "none"]</tt>
-
-        This command gets or sets the value in the specified column
-        and row. If "none" is specified as the third argument, then
-        the \c entry command just prints out the specified entry as if
-        the third argument was not specified.
-
-        To refer to a location by the x and y values instead of 
-        indices, use the \c entry-grid command.
-
-        For objects of type table3d:
-
-        Get or set a single entry in a table3d object.
-
-        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
-
-        This command gets or sets the value in the specified slice at
-        the location specified by <x index> and <y index>. If "none"
-        is specified as the fourth argument, or if only three
-        arguments are given, then the \c entry command just prints out
-        the specified value.
-
-        To refer to a location by the x and y values instead of 
-        indices, use the \c entry-grid command.
-
-        For objects of type tensor:
-
-        Get or set a single entry in a tensor object.
-
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
-        "none"]</tt>
-
-        This command gets or sets the value in the tensor at the
-        location given by the specified indices. If an an argument is
-        given at the end and that arguemnt is not "none", then it is
-        used to set the new value. If only the indices are given, then
-        the \c entry command just prints out the specified value.
-
-        For objects of type tensor_grid:
-
-        Get or set a single entry in a tensor_grid object.
-
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
-
-        The \c entry command gets or sets a value in the \c
-        tensor_grid object. The arguments are a list of indices and
-        (optionally) a new value to store in that location.
-
-        See the \c entry-grid command to specify a grid location
-        rather than specifying indices.
-    */
-    virtual int comm_entry(std::vector<std::string> &sv, bool itive_com);
-
     /** \brief Get an entry by grid point
 
         For objects of type table:
@@ -1127,11 +1068,11 @@ namespace o2scl_acol {
         Arguments: <tt><index column> <index value> <target column>
         [value or "none"]</tt>
         
-        The \c entry-grid command first looks for the value closest to
+        The \c value-grid command first looks for the value closest to
         <index value> in the column <index column> to determine a row
-        in the table. Next \c entry-grid gets or sets the value of the
+        in the table. Next \c value-grid gets or sets the value of the
         target column in that row. If "none" is specified as the
-        fourth argument, then \c entry-grid just prints out the
+        fourth argument, then \c value-grid just prints out the
         specified entry as if the third argument was not specified.
 
         For objects of type table3d:
@@ -1140,11 +1081,11 @@ namespace o2scl_acol {
 
         Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
 
-        The \c entry-grid command first looks for the value closest to
+        The \c value-grid command first looks for the value closest to
         <x value> and <y value> in the slice <index slice> to
-        determine a row in the table. Next, \c entry-grid gets or sets
+        determine a row in the table. Next, \c value-grid gets or sets
         the value of of the specified slice in that location. If
-        "none" is specified as the fourth argument, then \c entry-grid
+        "none" is specified as the fourth argument, then \c value-grid
         just prints out the specified entry as if the third argument
         was not specified.
 
@@ -1155,12 +1096,12 @@ namespace o2scl_acol {
         Arguments: <tt><value 1> <value 2> <value 3> ... [value or
         "none"]</tt>
 
-        The \c entry-grid command gets or sets a value in the
+        The \c value-grid command gets or sets a value in the
         \c tensor_grid object. The arguments are a list of grid values
         and (optionally) a new value to store in the location closest
         to the specified grid values.
     */
-    virtual int comm_entry_grid(std::vector<std::string> &sv, bool itive_com);
+    virtual int comm_value_grid(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief List objects in a HDF5 file
 
@@ -1172,6 +1113,38 @@ namespace o2scl_acol {
         group.
     */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Find a value in an object
+
+        For objects of type double[]:
+
+        Find a value in the array
+
+        Arguments: <tt><value></tt>
+
+        Find the closest value to <value> in the array and print 
+        out the associated index.
+        
+        For objects of type int[]:
+
+        Find a value in the array
+
+        Arguments: <tt><value></tt>
+
+        Find the closest value to <value> in the array and print 
+        out the associated index.
+        
+        For objects of type size_t[]:
+
+        Find a value in the array
+
+        Arguments: <tt><value></tt>
+
+        Find the closest value to <value> in the array and print 
+        out the associated index.
+        
+     */
+    virtual int comm_find(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Find a row
 
@@ -2854,11 +2827,15 @@ namespace o2scl_acol {
 
         For objects of type int:
 
+        Get or set the integer.
+
         Arguments: <tt>[value]</tt>
 
         Get or set the integer.
 
         For objects of type size_t:
+
+        Get or set the size_t object.
 
         Arguments: <tt>[value]</tt>
 
@@ -2866,11 +2843,15 @@ namespace o2scl_acol {
 
         For objects of type string:
 
+        Get or set the string.
+
         Arguments: <tt>[value]</tt>
 
         Get or set the string.
 
         For objects of type double:
+
+        Get or set the value of the double object. 
 
         Arguments: <tt>[value spec.]</tt>
 
@@ -2879,9 +2860,90 @@ namespace o2scl_acol {
 
         For objects of type char:
 
+        Get or set the character.
+
         Arguments: <tt>[value]</tt>
 
         Get or set the character.
+
+        For objects of type double[]:
+
+        Get an entry in the array
+
+        Arguments: <tt><index></tt>
+
+        Get entry at index <index>.
+
+        For objects of type int[]:
+
+        Get an entry in the array
+
+        Arguments: <tt><index></tt>
+
+        Get entry at index <index>.
+
+        For objects of type size_t[]:
+
+        Get an entry in the array
+
+        Arguments: <tt><index></tt>
+
+        Get entry at index <index>.
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+
+        Arguments: <tt><column> <row> [value or "none"]</tt>
+
+        This command gets or sets the value in the specified column
+        and row. If "none" is specified as the third argument, then
+        the \c value command just prints out the specified entry as if
+        the third argument was not specified.
+
+        To refer to a location by the x and y values instead of 
+        indices, use the \c value-grid command.
+
+        For objects of type table3d:
+
+        Get or set a single entry in a table3d object.
+
+        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
+
+        This command gets or sets the value in the specified slice at
+        the location specified by <x index> and <y index>. If "none"
+        is specified as the fourth argument, or if only three
+        arguments are given, then the \c value command just prints out
+        the specified value.
+
+        To refer to a location by the x and y values instead of 
+        indices, use the \c value-grid command.
+
+        For objects of type tensor:
+
+        Get or set a single entry in a tensor object.
+
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
+        "none"]</tt>
+
+        This command gets or sets the value in the tensor at the
+        location given by the specified indices. If an an argument is
+        given at the end and that arguemnt is not "none", then it is
+        used to set the new value. If only the indices are given, then
+        the \c value command just prints out the specified value.
+
+        For objects of type tensor_grid:
+
+        Get or set a single entry in a tensor_grid object.
+
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
+
+        The \c value command gets or sets a value in the \c
+        tensor_grid object. The arguments are a list of indices and
+        (optionally) a new value to store in that location.
+
+        See the \c value-grid command to specify a grid location
+        rather than specifying indices.
     */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
     
