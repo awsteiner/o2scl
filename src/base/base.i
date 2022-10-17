@@ -1376,7 +1376,7 @@ class tensor<>
 |     self.resize_vector(len(svst),svst)
 |     return
 #
-# New rearrange function
+# Function rearrange_and_copy() from tensor.h
 #
 function rearrange_and_copy<tensor<>,double>
 - tensor<>
@@ -1423,6 +1423,7 @@ class tensor_grid<>
   - io vector<double> &grid_point
 - function resize
   - void
+  - py_name resize_vector
   - size_t rank
   - io vector<size_t> &dim  
 - function is_grid_set
@@ -1495,6 +1496,19 @@ class tensor_grid<>
   - double low [0.0]
   - double high [0.0]
   - double width [0.0]
+- extra_py |
+| def resize(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object 
+|     and resize
+|     """
+|     svst=std_vector_size_t(self._link)
+|     svst.init_py(index)
+|     self.resize_vector(len(svst),svst)
+|     return
+#
+# Function grid_rearrange_and_copy() from tensor_grid.h
+#
 function grid_rearrange_and_copy<tensor_grid<>,double>
 - tensor_grid<>
 - py_name grid_rearrange_and_copy
@@ -1727,7 +1741,7 @@ class convert_units<>::der_unit
 | def set(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
 |     """
 |     Set the properties of a derived unit
-|     FIXME: beter docs here
+|     FIXME: better docs here
 |     """
 |     label2=std_string(self._link)
 |     label2.init_bytes(force_bytes(label))
@@ -2385,8 +2399,6 @@ class cli
 - function option_short_desc
   - std::string
   - std::string name
-#  amp->cl->process_args(args,ca,0);
-#  amp->cl->call_args(ca);
 #
 # Function from cursesw.h
 #

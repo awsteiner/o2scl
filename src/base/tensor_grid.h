@@ -941,14 +941,30 @@ namespace o2scl {
                    exc_efailed);
       }
 
-      // Get current table3d grid
       size_t nx, ny;
-      tab.get_size(nx,ny);
+      if (tab.is_size_set()==false) {
+        
+        std::vector<double> gx, gy;
+        for(size_t j=0;j<this->size[ix_x];j++) {
+          gx.push_back(this->get_grid(ix_x,j));
+        }
+        for(size_t j=0;j<this->size[ix_y];j++) {
+          gy.push_back(this->get_grid(ix_y,j));
+        }
+        tab.set_xy("x",gx.size(),gx,"y",gy.size(),gy);
+        
+        tab.get_size(nx,ny);
 
-      // Check that the grids are commensurate
-      if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
-        O2SCL_ERR2("Grids not commensurate in ",
-                   "tensor_grid::copy_table3d_align().",exc_einval);
+      } else {
+        
+        // Get current table3d grid
+        tab.get_size(nx,ny);
+        
+        // Check that the grids are commensurate
+        if (nx!=this->size[ix_x] || ny!=this->size[ix_y]) {
+          O2SCL_ERR2("Grids not commensurate in ",
+                     "tensor_grid::copy_table3d_align().",exc_einval);
+        }
       }
 
       // Create slice if not already present
