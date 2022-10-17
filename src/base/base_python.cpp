@@ -1926,13 +1926,6 @@ double o2scl_tensor__total_sum(void *vptr) {
   return ret;
 }
 
-void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
-  tensor<> *ptr=(tensor<> *)vptr;
-  table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
-  return;
-}
-
 void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
   tensor<> *ptr=(tensor<> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
@@ -1940,9 +1933,366 @@ void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *
   return;
 }
 
+void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<> *ptr=(tensor<> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
 void *o2scl_tensor__create_size(size_t rank, void *ptr_sizes) {
   std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
   tensor<> *ptr=new tensor<>(rank,*sizes);
+  return ptr;
+}
+
+void *o2scl_create_tensor_int_std_vector_int_() {
+  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>;
+  return ptr;
+}
+
+void o2scl_free_tensor_int_std_vector_int_(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_tensor_int_std_vector_int_(void *vsrc, void *vdest) {
+  tensor<int,std::vector<int>> *src=(tensor<int,std::vector<int>> *)vsrc;
+  tensor<int,std::vector<int>> *dest=(tensor<int,std::vector<int>> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_tensor_int_std_vector_int__is_valid(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__clear(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__set(void *vptr, void *ptr_index, int val) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->set(*index,val);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__set_all(void *vptr, int x) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->set_all(x);
+  return;
+}
+
+int o2scl_tensor_int_std_vector_int__get(void *vptr, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  int ret=ptr->get(*index);
+  return ret;
+}
+
+void o2scl_tensor_int_std_vector_int__resize(void *vptr, size_t n, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->resize(n,*index);
+  return;
+}
+
+size_t o2scl_tensor_int_std_vector_int__get_rank(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->get_rank();
+  return ret;
+}
+
+size_t o2scl_tensor_int_std_vector_int__get_size(void *vptr, size_t i) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->get_size(i);
+  return ret;
+}
+
+void *o2scl_tensor_int_std_vector_int__get_data(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  const std::vector<int> *ret=&ptr->get_data();
+  return (void *)ret;
+}
+
+size_t o2scl_tensor_int_std_vector_int__total_size(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  size_t ret=ptr->total_size();
+  return ret;
+}
+
+size_t o2scl_tensor_int_std_vector_int__pack_indices(void *vptr, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  size_t ret=ptr->pack_indices(*index);
+  return ret;
+}
+
+void o2scl_tensor_int_std_vector_int__unpack_index(void *vptr, size_t ix, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->unpack_index(ix,*index);
+  return;
+}
+
+int o2scl_tensor_int_std_vector_int__min_value(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->min_value();
+  return ret;
+}
+
+void o2scl_tensor_int_std_vector_int__min_index(void *vptr, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->min_index(*index);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__min(void *vptr, void *ptr_index, int *val) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->min(*index,*val);
+  return;
+}
+
+int o2scl_tensor_int_std_vector_int__max_value(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->max_value();
+  return ret;
+}
+
+void o2scl_tensor_int_std_vector_int__max_index(void *vptr, void *ptr_index) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->max_index(*index);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__max(void *vptr, void *ptr_index, int *val) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->max(*index,*val);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__minmax_value(void *vptr, int *min, int *max) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  ptr->minmax_value(*min,*max);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__minmax_index(void *vptr, void *ptr_index_min, void *ptr_index_max) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index_min=(std::vector<size_t> *)ptr_index_min;
+  std::vector<size_t> *index_max=(std::vector<size_t> *)ptr_index_max;
+  ptr->minmax_index(*index_min,*index_max);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__minmax(void *vptr, void *ptr_index_min, int *min, void *ptr_index_max, int *max) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  std::vector<size_t> *index_min=(std::vector<size_t> *)ptr_index_min;
+  std::vector<size_t> *index_max=(std::vector<size_t> *)ptr_index_max;
+  ptr->minmax(*index_min,*min,*index_max,*max);
+  return;
+}
+
+int o2scl_tensor_int_std_vector_int__total_sum(void *vptr) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  int ret=ptr->total_sum();
+  return ret;
+}
+
+void o2scl_tensor_int_std_vector_int__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
+void o2scl_tensor_int_std_vector_int__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
+void *o2scl_tensor_int_std_vector_int__create_size(size_t rank, void *ptr_sizes) {
+  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
+  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>(rank,*sizes);
+  return ptr;
+}
+
+void *o2scl_create_tensor_size_t_std_vector_size_t_() {
+  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>;
+  return ptr;
+}
+
+void o2scl_free_tensor_size_t_std_vector_size_t_(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_tensor_size_t_std_vector_size_t_(void *vsrc, void *vdest) {
+  tensor<size_t,std::vector<size_t>> *src=(tensor<size_t,std::vector<size_t>> *)vsrc;
+  tensor<size_t,std::vector<size_t>> *dest=(tensor<size_t,std::vector<size_t>> *)vdest;
+  *dest=*src;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__is_valid(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->is_valid();
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__clear(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->clear();
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__set(void *vptr, void *ptr_index, size_t val) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->set(*index,val);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__set_all(void *vptr, size_t x) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->set_all(x);
+  return;
+}
+
+int o2scl_tensor_size_t_std_vector_size_t__get(void *vptr, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  int ret=ptr->get(*index);
+  return ret;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__resize(void *vptr, size_t n, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  vector<size_t> *index=(vector<size_t> *)ptr_index;
+  ptr->resize(n,*index);
+  return;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__get_rank(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->get_rank();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__get_size(void *vptr, size_t i) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->get_size(i);
+  return ret;
+}
+
+void *o2scl_tensor_size_t_std_vector_size_t__get_data(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  const std::vector<size_t> *ret=&ptr->get_data();
+  return (void *)ret;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__total_size(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->total_size();
+  return ret;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__min_value(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->min_value();
+  return ret;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__min_index(void *vptr, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->min_index(*index);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__min(void *vptr, void *ptr_index, size_t *val) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->min(*index,*val);
+  return;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__max_value(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->max_value();
+  return ret;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__max_index(void *vptr, void *ptr_index) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->max_index(*index);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__max(void *vptr, void *ptr_index, size_t *val) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  ptr->max(*index,*val);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__minmax_value(void *vptr, size_t *min, size_t *max) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  ptr->minmax_value(*min,*max);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__minmax_index(void *vptr, void *ptr_index_min, void *ptr_index_max) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index_min=(std::vector<size_t> *)ptr_index_min;
+  std::vector<size_t> *index_max=(std::vector<size_t> *)ptr_index_max;
+  ptr->minmax_index(*index_min,*index_max);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__minmax(void *vptr, void *ptr_index_min, size_t *min, void *ptr_index_max, size_t *max) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  std::vector<size_t> *index_min=(std::vector<size_t> *)ptr_index_min;
+  std::vector<size_t> *index_max=(std::vector<size_t> *)ptr_index_max;
+  ptr->minmax(*index_min,*min,*index_max,*max);
+  return;
+}
+
+size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  size_t ret=ptr->total_sum();
+  return ret;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  return;
+}
+
+void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes) {
+  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
+  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>(rank,*sizes);
   return ptr;
 }
 
@@ -2055,6 +2405,15 @@ size_t o2scl_tensor_grid__lookup_grid(void *vptr, size_t i, double val) {
   return ret;
 }
 
+void *o2scl_tensor_grid__copy_slice_interp(void *vptr, void *ptr_ifix, void *ptr_vals) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  std::vector<size_t> *ifix=(std::vector<size_t> *)ptr_ifix;
+  std::vector<double> *vals=(std::vector<double> *)ptr_vals;
+  tensor_grid<> *ret=new tensor_grid<>;
+  *ret=ptr->copy_slice_interp(*ifix,*vals);
+  return ret;
+}
+
 void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *z_name) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
@@ -2071,10 +2430,49 @@ void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t
   return;
 }
 
+void o2scl_tensor_grid__copy_table3d_interp(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *slice_name) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_interp(ix_x,ix_y,*index,*tab,slice_name);
+  return;
+}
+
+void o2scl_tensor_grid__copy_table3d_interp_values(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *slice_name, int verbose) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  std::vector<double> *values=(std::vector<double> *)ptr_values;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_interp_values(ix_x,ix_y,*values,*tab,slice_name,verbose);
+  return;
+}
+
+void o2scl_tensor_grid__copy_table3d_interp_values_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  std::vector<double> *values=(std::vector<double> *)ptr_values;
+  table3d *tab=(table3d *)ptr_tab;
+  ptr->copy_table3d_interp_values_setxy(ix_x,ix_y,*values,*tab,x_name,y_name,slice_name);
+  return;
+}
+
 void o2scl_tensor_grid__clear(void *vptr) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   ptr->clear();
   return;
+}
+
+void o2scl_tensor_grid__set_interp_type(void *vptr, size_t interp_type) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  ptr->set_interp_type(interp_type);
+  return;
+}
+
+double o2scl_tensor_grid__interp_linear_partial(void *vptr, void *ptr_ix_to_interp, void *ptr_ix, void *ptr_val) {
+  tensor_grid<> *ptr=(tensor_grid<> *)vptr;
+  std::vector<size_t> *ix_to_interp=(std::vector<size_t> *)ptr_ix_to_interp;
+  std::vector<size_t> *ix=(std::vector<size_t> *)ptr_ix;
+  std::vector<double> *val=(std::vector<double> *)ptr_val;
+  double ret=ptr->interp_linear_partial(*ix_to_interp,*ix,*val);
+  return ret;
 }
 
 double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v) {
@@ -2089,214 +2487,6 @@ void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slic
   table3d *t3d=(table3d *)ptr_t3d;
   ptr->from_table3d_fermi(*t3d,slice,n_points,low,high,width);
   return;
-}
-
-void *o2scl_create_tensor_int_std_vector_int_() {
-  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>;
-  return ptr;
-}
-
-void o2scl_free_tensor_int_std_vector_int_(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  delete ptr;
-  return;
-}
-
-void o2scl_copy_tensor_int_std_vector_int_(void *vsrc, void *vdest) {
-  tensor<int,std::vector<int>> *src=(tensor<int,std::vector<int>> *)vsrc;
-  tensor<int,std::vector<int>> *dest=(tensor<int,std::vector<int>> *)vdest;
-  *dest=*src;
-}
-
-void o2scl_tensor_int_std_vector_int__is_valid(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  ptr->is_valid();
-  return;
-}
-
-void o2scl_tensor_int_std_vector_int__clear(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  ptr->clear();
-  return;
-}
-
-void o2scl_tensor_int_std_vector_int__set(void *vptr, void *ptr_index, int val) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  ptr->set(*index,val);
-  return;
-}
-
-void o2scl_tensor_int_std_vector_int__set_all(void *vptr, int x) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  ptr->set_all(x);
-  return;
-}
-
-int o2scl_tensor_int_std_vector_int__get(void *vptr, void *ptr_index) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  int ret=ptr->get(*index);
-  return ret;
-}
-
-void o2scl_tensor_int_std_vector_int__resize(void *vptr, size_t n, void *ptr_index) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  ptr->resize(n,*index);
-  return;
-}
-
-size_t o2scl_tensor_int_std_vector_int__get_rank(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  size_t ret=ptr->get_rank();
-  return ret;
-}
-
-size_t o2scl_tensor_int_std_vector_int__get_size(void *vptr, size_t i) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  size_t ret=ptr->get_size(i);
-  return ret;
-}
-
-void *o2scl_tensor_int_std_vector_int__get_data(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  const std::vector<int> *ret=&ptr->get_data();
-  return (void *)ret;
-}
-
-size_t o2scl_tensor_int_std_vector_int__total_size(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  size_t ret=ptr->total_size();
-  return ret;
-}
-
-int o2scl_tensor_int_std_vector_int__min_value(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  int ret=ptr->min_value();
-  return ret;
-}
-
-int o2scl_tensor_int_std_vector_int__max_value(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  int ret=ptr->max_value();
-  return ret;
-}
-
-int o2scl_tensor_int_std_vector_int__total_sum(void *vptr) {
-  tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
-  int ret=ptr->total_sum();
-  return ret;
-}
-
-void *o2scl_tensor_int_std_vector_int__create_size(size_t rank, void *ptr_sizes) {
-  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
-  tensor<int,std::vector<int>> *ptr=new tensor<int,std::vector<int>>(rank,*sizes);
-  return ptr;
-}
-
-void *o2scl_create_tensor_size_t_std_vector_size_t_() {
-  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>;
-  return ptr;
-}
-
-void o2scl_free_tensor_size_t_std_vector_size_t_(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  delete ptr;
-  return;
-}
-
-void o2scl_copy_tensor_size_t_std_vector_size_t_(void *vsrc, void *vdest) {
-  tensor<size_t,std::vector<size_t>> *src=(tensor<size_t,std::vector<size_t>> *)vsrc;
-  tensor<size_t,std::vector<size_t>> *dest=(tensor<size_t,std::vector<size_t>> *)vdest;
-  *dest=*src;
-}
-
-void o2scl_tensor_size_t_std_vector_size_t__is_valid(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  ptr->is_valid();
-  return;
-}
-
-void o2scl_tensor_size_t_std_vector_size_t__clear(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  ptr->clear();
-  return;
-}
-
-void o2scl_tensor_size_t_std_vector_size_t__set(void *vptr, void *ptr_index, size_t val) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  ptr->set(*index,val);
-  return;
-}
-
-void o2scl_tensor_size_t_std_vector_size_t__set_all(void *vptr, size_t x) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  ptr->set_all(x);
-  return;
-}
-
-int o2scl_tensor_size_t_std_vector_size_t__get(void *vptr, void *ptr_index) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  int ret=ptr->get(*index);
-  return ret;
-}
-
-void o2scl_tensor_size_t_std_vector_size_t__resize(void *vptr, size_t n, void *ptr_index) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  vector<size_t> *index=(vector<size_t> *)ptr_index;
-  ptr->resize(n,*index);
-  return;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__get_rank(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->get_rank();
-  return ret;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__get_size(void *vptr, size_t i) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->get_size(i);
-  return ret;
-}
-
-void *o2scl_tensor_size_t_std_vector_size_t__get_data(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  const std::vector<size_t> *ret=&ptr->get_data();
-  return (void *)ret;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__total_size(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->total_size();
-  return ret;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__min_value(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->min_value();
-  return ret;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__max_value(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->max_value();
-  return ret;
-}
-
-size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr) {
-  tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
-  size_t ret=ptr->total_sum();
-  return ret;
-}
-
-void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes) {
-  std::vector<size_t> *sizes=(std::vector<size_t> *)ptr_sizes;
-  tensor<size_t,std::vector<size_t>> *ptr=new tensor<size_t,std::vector<size_t>>(rank,*sizes);
-  return ptr;
 }
 
 void *o2scl_create_find_constants_const_entry() {

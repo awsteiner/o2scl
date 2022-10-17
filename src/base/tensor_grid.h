@@ -932,8 +932,9 @@ namespace o2scl {
         than or equal to the tensor rank.
     */
     template<class size_vec2_t> 
-      void copy_table3d_align(size_t ix_x, size_t ix_y, size_vec2_t &index, 
-                              table3d &tab, std::string slice_name="z") const {
+      void copy_table3d_align(size_t ix_x, size_t ix_y,
+                              size_vec2_t &index, table3d &tab,
+                              std::string slice_name="z") const {
       
       if (ix_x>=this->rk || ix_y>=this->rk || ix_x==ix_y) {
         O2SCL_ERR2("Either indices greater than rank or x and y ind",
@@ -943,7 +944,7 @@ namespace o2scl {
 
       size_t nx, ny;
       if (tab.is_size_set()==false) {
-        
+
         std::vector<double> gx, gy;
         for(size_t j=0;j<this->size[ix_x];j++) {
           gx.push_back(this->get_grid(ix_x,j));
