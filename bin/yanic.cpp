@@ -3402,9 +3402,12 @@ int main(int argc, char *argv[]) {
     // Return
     if (iff.ret.name=="tensor<>" ||
         iff.ret.name=="tensor<int>" ||
-        iff.ret.name=="tensor<size_t>" ||
-        iff.ret.name=="tensor_grid<>") {
+        iff.ret.name=="tensor<size_t>") {
       fout << "    ten=tensor(link,ret)" << endl;
+      fout << "    ten._owner=True" << endl;
+      fout << "    return ten" << endl;
+    } else if (iff.ret.name=="tensor_grid<>") {
+      fout << "    ten=tensor_grid(link,ret)" << endl;
       fout << "    ten._owner=True" << endl;
       fout << "    return ten" << endl;
     } else {
