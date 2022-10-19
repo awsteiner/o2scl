@@ -2034,7 +2034,11 @@ int main(int argc, char *argv[]) {
               fout << "=true";
             } else if (iff.args[k].value=="False") {
               fout << "=false";
-            } else {
+            } else if (iff.args[k].ift.name!="std::string") {
+              // Strings are converted to char *'s, and those can't
+              // have default values in the C wrappers, but the
+              // default value can still be used in the python code
+              // generation below.
               fout << "=" << iff.args[k].value;
             }
           }
