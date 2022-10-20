@@ -3901,10 +3901,9 @@ void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr
   return;
 }
 
-void o2scl_wordexp_single_file_wrapper(void *&ptr_fname) {
-  std::string *fname=new std::string;
+void o2scl_wordexp_single_file_wrapper(void *ptr_fname) {
+  std::string *fname=(std::string *)ptr_fname;
   wordexp_single_file(*fname);
-  ptr_fname=(void *)fname;
   return;
 }
 
@@ -3930,8 +3929,8 @@ double o2scl_find_constant_wrapper(char *name, char *unit) {
   return func_ret;
 }
 
-int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list) {
-  std::string *x=new std::string;
+int o2scl_string_to_uint_list_vector_size_t__wrapper(void *ptr_x, void *ptr_list) {
+  std::string *x=(std::string *)ptr_x;
   vector<size_t> *list=(vector<size_t> *)ptr_list;
   int func_ret=string_to_uint_list<vector<size_t>>(*x,*list);
   return func_ret;

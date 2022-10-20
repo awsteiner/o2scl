@@ -1311,7 +1311,7 @@ void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr
 
 void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr_g, void *ptr_b);
 
-void o2scl_wordexp_single_file_wrapper(void *&ptr_fname);
+void o2scl_wordexp_single_file_wrapper(void *ptr_fname);
 
 void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
 
@@ -1321,7 +1321,7 @@ int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verb
 
 double o2scl_find_constant_wrapper(char *name, char *unit);
 
-int o2scl_string_to_uint_list_vector_size_t__wrapper(void *&ptr_x, void *ptr_list);
+int o2scl_string_to_uint_list_vector_size_t__wrapper(void *ptr_x, void *ptr_list);
 
 void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
 

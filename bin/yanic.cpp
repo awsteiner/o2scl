@@ -2020,11 +2020,11 @@ int main(int argc, char *argv[]) {
             fout << iff.args[k].ift.name << " " << iff.args[k].name;
           }
         } else if (iff.args[k].ift.suffix=="&") {
-          if (iff.args[k].ift.name=="std::string") {
-            fout << "void *&ptr_" << iff.args[k].name;
-          } else {
-            fout << "void *ptr_" << iff.args[k].name;
-          }
+          //if (iff.args[k].ift.name=="std::string") {
+          //fout << "void *&ptr_" << iff.args[k].name;
+          //} else {
+          fout << "void *ptr_" << iff.args[k].name;
+          //}
         }
         
         // Output default value
@@ -2060,16 +2060,16 @@ int main(int argc, char *argv[]) {
         // Pointer assignments for arguments
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
-            if (iff.args[k].ift.name=="std::string") {
-              fout << "  std::string *"
-                   << iff.args[k].name
-                   << "=new std::string;" << endl;
-            } else {
-              fout << "  " << iff.args[k].ift.name << " *"
-                   << iff.args[k].name << "=("
-                   << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                   << ";" << endl;
-            }
+            //if (iff.args[k].ift.name=="std::string") {
+            //fout << "  std::string *"
+            //<< iff.args[k].name
+            //<< "=new std::string;" << endl;
+            //} else {
+            fout << "  " << iff.args[k].ift.name << " *"
+                 << iff.args[k].name << "=("
+                 << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                 << ";" << endl;
+            //}
           }
         }
         
@@ -2086,10 +2086,10 @@ int main(int argc, char *argv[]) {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
-              if (iff.args[k].ift.name=="std::string") {
-                addl_code.push_back(((string)"ptr_")+iff.args[k].name+
-                                    "=(void *)"+iff.args[k].name+";");
-              }
+              //if (iff.args[k].ift.name=="std::string") {
+              //addl_code.push_back(((string)"ptr_")+iff.args[k].name+
+              //"=(void *)"+iff.args[k].name+";");
+              //}
             }
             if (k!=iff.args.size()-1) {
               fout << ",";
@@ -3305,9 +3305,9 @@ int main(int argc, char *argv[]) {
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.name=="std::string") {
         if (iff.args[k].ift.suffix=="&") {
-          fout << "    " << iff.args[k].name << ".__del__()" << endl;
-          fout << "    " << iff.args[k].name
-               << "._ptr=ctypes.c_void_p()" << endl;
+          //fout << "    " << iff.args[k].name << ".__del__()" << endl;
+          //fout << "    " << iff.args[k].name
+          //<< "._ptr=ctypes.c_void_p()" << endl;
         } else {
           fout << "    " << iff.args[k].name
                << "_=ctypes.c_char_p(force_bytes("
@@ -3357,11 +3357,11 @@ int main(int argc, char *argv[]) {
     fout << "    func.argtypes=[";
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        if (iff.args[k].ift.name=="std::string") {
-          fout << "ctypes.POINTER(ctypes.c_void_p)";
-        } else {
-          fout << "ctypes.c_void_p";
-        }
+        //if (iff.args[k].ift.name=="std::string") {
+        //fout << "ctypes.POINTER(ctypes.c_void_p)";
+        //} else {
+        fout << "ctypes.c_void_p";
+        //}
       } else if (iff.args[k].ift.name=="std::string") {
         fout << "ctypes.c_char_p";
       } else {
@@ -3381,11 +3381,11 @@ int main(int argc, char *argv[]) {
     }
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        if (iff.args[k].ift.name=="std::string") {
-          fout << "ctypes.byref(" << iff.args[k].name << "._ptr)";
-        } else {
-          fout << iff.args[k].name << "._ptr";
-        }
+        //if (iff.args[k].ift.name=="std::string") {
+        //fout << "ctypes.byref(" << iff.args[k].name << "._ptr)";
+        //} else {
+        fout << iff.args[k].name << "._ptr";
+        //}
       } else if (iff.args[k].ift.name=="std::string") {
         fout << iff.args[k].name << "_";
       } else {
