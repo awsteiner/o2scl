@@ -281,7 +281,8 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
      std::placeholders::_3);
 
   if (eos_mroot->msolve(3,x,fmf)!=0) {
-    O2SCL_CONV_RET("Solution failed in calparfun().",exc_efailed);
+    O2SCL_CONV_RET("Solution failed in calparfun().",exc_efailed,
+                   this->err_nonconv);
   }
   t0=x[0];
   t3=x[1];
@@ -290,7 +291,8 @@ int eos_had_skyrme::calpar(double gt0, double gt3, double galpha,
   x[0]=gt1;
   x[1]=gt2;
   if (eos_mroot->msolve(2,x,fmf2)!=0) {
-    O2SCL_CONV_RET("Solution failed in calparfun2().",exc_efailed);
+    O2SCL_CONV_RET("Solution failed in calparfun2().",exc_efailed,
+                   this->err_nonconv);
   }
   t1=x[0];
   t2=x[1];
