@@ -1103,7 +1103,12 @@ namespace o2scl_hdf {
     int find_object_by_type(std::string type, std::string &name,
                             bool use_regex=false, int verbose=0);
 
-    /// Desc
+    /** \brief Find all objects in hdf_file \c hf of type \c
+	type and store the names in \c vs
+        
+	This function returns 0 if an object of type \c type is found
+	and \ref o2scl::exc_enoprog if it fails.
+    */
     int list_objects_by_type(std::string type,
                              std::vector<std::string> &vs,
                              bool use_regex=false, int verbose=0);
@@ -1159,7 +1164,7 @@ namespace o2scl_hdf {
       int mode;
       /// If true, then use regex to match names
       bool use_regex;
-      /// Desc
+      /// The list of names, used by \ref list_objects_of_type()
       std::vector<std::string> name_list;
     } iterate_parms;
 

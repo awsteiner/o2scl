@@ -51,6 +51,16 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
       \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref prob_dens_mdim_gaussian,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref prob_dens_mdim_gaussian, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref prob_dens_mdim_gaussian, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
   */
   template<class vec_t, class mat_t> 
   void hdf_input_n(hdf_file &hf,
@@ -93,6 +103,15 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::prob_dens_mdim_gaussian object from a \ref
       hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref prob_dens_mdim_gaussian,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref prob_dens_mdim_gaussian, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref prob_dens_mdim_gaussian, then the
+      error handler is called.
   */
   template<class vec_t, class mat_t> 
   void hdf_input(hdf_file &hf,
@@ -134,7 +153,7 @@ namespace o2scl_hdf {
     hf.setd_mat_copy("chol",chol);
     hf.setd_mat_copy("covar_inv",covar_inv);
 
-    // Close table_units group
+    // Close prob_dens_mdim_gaussian group
     hf.close_group(group);
     
     // Return location to previous value
@@ -145,6 +164,16 @@ namespace o2scl_hdf {
   
   /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
       \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref prob_dens_mdim_amr,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref prob_dens_mdim_amr, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref prob_dens_mdim_amr, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
   */
   template<class vec_t, class mat_t> 
   void hdf_input_n(hdf_file &hf,
@@ -188,6 +217,15 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a \ref
       hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref prob_dens_mdim_amr,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref prob_dens_mdim_amr, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref prob_dens_mdim_amr, then the
+      error handler is called. 
   */
   template<class vec_t, class mat_t> 
   void hdf_input(hdf_file &hf,
@@ -231,7 +269,7 @@ namespace o2scl_hdf {
     hf.setd_vec("data",data);
     hf.set_szt_vec("insides",insides);
 
-    // Close table_units group
+    // Close prob_dens_mdim_amr group
     hf.close_group(group);
     
     // Return location to previous value
@@ -244,13 +282,17 @@ namespace o2scl_hdf {
    */
   void hdf_output(hdf_file &hf, o2scl::table<> &t, std::string name);
 
-#ifndef O2SCL_NO_HDF_INPUT  
   /** \brief Input a \ref o2scl::table object from a \ref hdf_file
 
-      \comment
-      Note that a default value is not allowed here because this
-      is a template function
-      \endcomment
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref table, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref table, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
   */
   template<class vec_t> 
   void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
@@ -263,12 +305,19 @@ namespace o2scl_hdf {
 		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
       }
     }
-    
+
     // Open main group
     hid_t top=hf.get_current_id();
     hid_t group=hf.open_group(name);
     hf.set_current_id(group);
 
+    std::string type;
+    hf.gets_fixed("o2scl_type",type);
+    if (type!="table") {
+      O2SCL_ERR("Object is not of type table in hdf_input_n().",
+                o2scl::exc_einval);
+    }
+    
     // Input the table data
     hdf_input_data(hf,t);
 
@@ -282,7 +331,6 @@ namespace o2scl_hdf {
 
     return;
   }
-#endif
 
   /** \brief Input a \ref o2scl::table object from a \ref
       hdf_file
@@ -290,12 +338,19 @@ namespace o2scl_hdf {
       \note This function is declared in <tt>table.h</tt>, and 
       thus the default argument to the \c name parameter 
       appears there instead of here.
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref table, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref table, then the
+      error handler is called. 
   */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
-      
     hdf_input_n<vec_t>(hf,t,name);
-    
     return;
   }
   /** \brief Internal function for outputting a \ref o2scl::table object
@@ -385,10 +440,14 @@ namespace o2scl_hdf {
 
   /** \brief Input a \ref o2scl::table_units object from a \ref hdf_file
 
-      \comment
-      Note that a default value is not allowed here because this
-      is a template function
-      \endcomment
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table_units, otherwise, it reads
+      the object of the specified name. If \c name is specified and no
+      object is found, or if the object with the specified name is not
+      of type \ref table_units, then the error handler is called. If
+      \c name is unspecified and there is no object with type \ref
+      table_units, then the error handler is called. Upon exit, \c
+      name contains the name of the object which was read.
   */
   template<class vec_t> 
   void hdf_input_n(hdf_file &hf, o2scl::table_units<vec_t> &t, 
@@ -428,13 +487,19 @@ namespace o2scl_hdf {
       \note This function is declared in <tt>table_units.h</tt>, and 
       thus the default argument to the \c name parameter 
       appears there instead of here.
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table_units, otherwise, it reads
+      the object of the specified name. If \c name is specified and no
+      object is found, or if the object with the specified name is not
+      of type \ref table_units, then the error handler is called. If
+      \c name is unspecified and there is no object with type \ref
+      table_units, then the error handler is called.
   */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 
                  std::string name) {
-    
     hdf_input_n<vec_t>(hf,t,name);
-    
     return;
   }
   
@@ -446,6 +511,7 @@ namespace o2scl_hdf {
    */
   template<class vec_t> 
   void hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t) {
+    
     // Input base table object
     o2scl::table<vec_t> *tbase=dynamic_cast<o2scl::table_units<vec_t> *>(&t);
     if (tbase==0) {
@@ -470,83 +536,310 @@ namespace o2scl_hdf {
     return;
   }
   
-  /// Output a \ref o2scl::hist object to a \ref hdf_file
+  /** \brief Output a \ref o2scl::hist object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::hist &h, std::string name);
-  /// Input a \ref o2scl::hist object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
-  /// Input a \ref o2scl::hist object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref hist,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref hist, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref hist, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::hist &h, std::string &name);
-  /// Output a \ref o2scl::hist_2d object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref hist,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref hist, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref hist, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
+  /** \brief Output a \ref o2scl::hist_2d object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name);
-  /// Input a \ref o2scl::hist_2d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
-  /// Input a \ref o2scl::hist_2d object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref hist_2d,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref hist_2d, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref hist_2d, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::hist_2d &h, std::string &name);
-  /// Output a \ref o2scl::table3d object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref hist_2d,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref hist_2d, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref hist_2d, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
+  /** \brief Output a \ref o2scl::table3d object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name);
-  /// Input a \ref o2scl::table3d object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
-  /// Input a \ref o2scl::table3d object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table3d,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref table3d, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref table3d, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::table3d &h, std::string &name);
-  /// Output a \ref o2scl::expval_scalar object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref table3d,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref table3d, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref table3d, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
+  /** \brief Output a \ref o2scl::expval_scalar object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::expval_scalar &h,
 		  std::string name);
-  /// Input a \ref o2scl::expval_scalar object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
-		 std::string name="");
-  /// Input a \ref o2scl::expval_scalar object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_scalar object from a \ref
+      hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_scalar,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_scalar, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_scalar, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::expval_scalar &h,
                    std::string &name);
-  /// Output a \ref o2scl::expval_vector object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_scalar object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_scalar,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_scalar, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_scalar, then the
+      error handler is called.
+   */
+  void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
+		 std::string name="");
+  /** \brief Output a \ref o2scl::expval_vector object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::expval_vector &h,
 		  std::string name);
-  /// Input a \ref o2scl::expval_vector object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
-  /// Input a \ref o2scl::expval_vector object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_vector,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_vector, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_vector, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::expval_vector &h, std::string &name);
-  /// Output a \ref o2scl::expval_matrix object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_vector,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_vector, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_vector, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
+  /** \brief Output a \ref o2scl::expval_matrix object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &h,
 		  std::string name);
-  /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
-  /// Input a \ref o2scl::expval_matrix object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_matrix,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_matrix, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_matrix, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::expval_matrix &h, std::string &name);
-  /// Output a \ref o2scl::uniform_grid object to a \ref hdf_file
+  /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref expval_matrix,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref expval_matrix, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref expval_matrix, then the
+      error handler is called.
+   */
+  void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
+  /** \brief Output a \ref o2scl::uniform_grid object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &h, 
 		  std::string name);
-  /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
-		 std::string name="");
-  /// Input a \ref o2scl::uniform_grid object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref uniform_grid,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref uniform_grid, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref uniform_grid, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, 
                    std::string &name);
-  /// Output a vector of \ref o2scl::contour_line objects to a \ref hdf_file
+  /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref uniform_grid,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref uniform_grid, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref uniform_grid, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
+		 std::string name="");
+  /** \brief Output a vector of \ref o2scl::contour_line objects to a
+      \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, const std::vector<o2scl::contour_line> &cl, 
 		  std::string name);
-  /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
-  void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
-		 std::string name="");
-  /// Input a vector of \ref o2scl::contour_line objects from a \ref hdf_file
+  /** \brief Input a vector of \ref o2scl::contour_line objects from a
+      \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref contour_line,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref contour_line, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref contour_line, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
                    std::string &name);
-  /// Output a vector of \ref o2scl::edge_crossings objects to a \ref hdf_file
+  /** \brief Input a vector of \ref o2scl::contour_line objects from a
+      \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref contour_line,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref contour_line, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref contour_line, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
+		 std::string name="");
+  /** \brief Output a vector of \ref o2scl::edge_crossings objects to
+      a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, const std::vector<o2scl::edge_crossings> &ec, 
 		  std::string name);
-  /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
-  void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
-		 std::string name="");
-  /// Input a vector of \ref o2scl::edge_crossings objects from a \ref hdf_file
+  /** \brief Input a vector of \ref o2scl::edge_crossings objects from 
+      a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref edge_crossings,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref edge_crossings, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref edge_crossings, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+  */
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
                    std::string &name);
-  /// Output a \ref o2scl::tensor_grid object to a \ref hdf_file
+  /** \brief Input a vector of \ref o2scl::edge_crossings objects from
+      a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref edge_crossings,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref edge_crossings, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref edge_crossings, then the
+      error handler is called.
+   */
+  void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
+		 std::string name="");
+  /** \brief Output a \ref o2scl::tensor_grid object to a \ref hdf_file
+   */
   void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 		  std::vector<size_t> > &t, std::string name);
-  /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
-  void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
-		 std::vector<size_t> > &t, std::string name="");
-  /// Input a \ref o2scl::tensor_grid object from a \ref hdf_file
+  /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref tensor_grid,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref tensor_grid, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref tensor_grid, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+   */
   void hdf_input_n(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
                    std::vector<size_t> > &t, std::string &name);
+  /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref tensor_grid,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref tensor_grid, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref tensor_grid, then the
+      error handler is called. 
+   */
+  void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
+		 std::vector<size_t> > &t, std::string name="");
 
   /** \brief Write a \ref o2scl::table_units object to an HDF5 file 
       with a given filename
@@ -2217,13 +2510,11 @@ namespace o2scl_hdf {
 
       The \c tensor rearrange commands use index specifications to
       specify how the tensor should be rearranged. Index
-      specifications may be specified as separate arguments e.g.
-      <tt>index(1)</tt> <tt>fixed(2,10)</tt> or multiple index
-      specifications may be given in a single argument separated by
-      spaces or commas, e.g. <tt>index(1) fixed(2,10)</tt> or
-      <tt>index(1),fixed(2,10)</tt>. The indices begin with 0, the
+      specifications may be specified as separate arguments or
+      multiple index specifications may be given in a single argument
+      separated by spaces or commas. The indices begin with 0, the
       first index so that index 1 is the second index. The list of
-      index specification is:
+      index specifications is:
 
       - index(ix): Retain index ix in the new tensor.
 
@@ -2240,35 +2531,88 @@ namespace o2scl_hdf {
       - range(ix,start,end): Retain index ix but modify range. Ranges
         include both of their endpoints.
 
-      - interp(ix,value) (for tensor_grid): fix index ix by
+      - interp(ix,value) (for \c tensor_grid ): fix index ix by
         interpolating 'value' into the grid for index ix.
 
-      - grid(ix,begin,end,n_bins,log) (for tensor_grid): interpolate
-        the specified index on a grid to create a new index. If the
-        value of log is 1, then the grid is logarithmic.
+      - grid(ix,begin,end,n_bins,log) (for \c tensor_grid ):
+        interpolate the specified index on a grid to create a new
+        index. If the value of 'log' is 1, then the grid is
+        logarithmic.
 
-      - gridw(ix,begin,end,bin_width,log) (for tensor_grid):
+      - gridw(ix,begin,end,bin_width,log) (for \c tensor_grid ):
         interpolate the specified index on a grid with a fixed bin
-        width to create a new index. If the value of log is 1, then
-        the grid is logarithmic and the bin_width is the
+        width to create a new index. If the value of 'log' is 1, then
+        the grid is logarithmic and 'bin_width' is the
         multiplicative factor between bin edges.
 
       Note that the index specifications which result in a tensor
       index (all except 'fixed', 'sum', 'trace' and 'interp') must be
       given in the order they should appear in the tensor which
-      results. Also, the 'rearrange' commands require that the result
+      results. Also, the \c rearrange commands require that the result
       of the rearrangement must have at least one index left.
 
       Examples:
 
-      <tt>index(1),index(0)</tt> - take the transpose of a rank 2 
-      tensor (i.e. a matrix)
+      <tt>acol -create tensor_grid 3 9 10 11 -set-grid 0 "i^2"
+      -set-grid 1 "2*i" -set-grid 2 "(2-i)" -function "sin(x0+x1*x2)"
+      -entry 4 2 5 -rearrange "index(1) index(0)" "fixed(2,5)"
+      -entry 2 4</tt>
 
-      <tt>index(1),fixed(2,0),index(0)</tt> - fix the value of index 2
-      (i.e. the third index) to zero and transpose the other two
-      indices
-      
-      <tt>fixed(2,0),index(1),index(0)</tt> - same as above
+      This example creates a rank three tensor of size 9 by 10 by 11
+      and then flips the first two indices while fixing the third
+      index to select the 6th value to create a rank 2 tensor of 
+      size 10 by 9. Additionally, this example demonstrates that
+      one can put multiple index specifications into the same
+      argument (as in the first argument to rearrange) or place
+      additional index specifications in additional arguments.
+      The \c entry command shows an entry in the original rank 3 
+      tensor and the \c output command shows that that entry 
+      has now moved to the to the (2,4) location in the final
+      rank 2 tensor.
+
+      <tt>acol -create tensor_grid 3 8 10 6 -set-grid 0 "i*m" \\
+      -set-grid 1 "m/5*i+x" -set-grid 2 "(2-i)" -function \\
+      "sin(x0+x1*x2)" -get-grid -entry 5 1 3 -entry 5 2 3 -rearrange \\
+      "reverse(2),range(0,7,3),interp(1,4.5)" -get-grid -entry 2 2</tt>
+
+      This example creates a rank three tensor of size 8 by 10 by 6
+      and then creates a rank 2 tensor from it. In this example, the
+      <tt>set-grid</tt> commands use variables 'm' and 'x'. In the
+      first call to <tt>set-grid</tt>, the variable m refers to the
+      value 8, while in the second call, the variable m refers to the
+      value 10. The value 'x' always refers to the previous grid value
+      which is set by the <tt>create</tt> command to be equal to the
+      index. The first index in the rank 2 tensor is a reversed
+      version of the last index in the rank 3 tensor. The second index
+      of the rank 2 tensor is constructed from a subset of the second
+      index of the rank 3 tensor and also reversed (since 7 and 3 are
+      given in the opposite order). The rank two tensor is constructed
+      by linearly interpolating the value 4.5 into the second index of
+      the rank three tensor, thus halfway between values when the
+      index takes values 1 and 2. The final tensor thus has size 6x5.
+      As an example, the (2,2) entry in the final tensor comes from
+      the average of the (5,1,3) and (5,2,3) entries in the original
+      rank 3 tensor.
+
+      <tt>acol -create tensor_grid 3 6 8 4 -set-grid 0 "erf(i*m/20)"
+      -set-grid 1 "m/(i+1)" -set-grid 2 "exp(i)" -function
+      "sin(x0+x1*x2+i0+i2)" -get-grid -rearrange "grid(2,5,20,5)"
+      "gridw(1,7,1.2,0.9,1)" "interp(0,(erf(6/20)+erf(12/20))/2)" 
+      -get-grid</tt>
+
+      This example creates a rank three tensor of size 6 by 8 by 4 and
+      then creates a rank 2 tensor from it. In this example, the
+      <tt>set-grid</tt> commands uses the error and exponential
+      functions to set the initial grid. The first index of the final
+      tensor comes from the last index of the initial tensor, and the
+      values are obtained by interpolating the original exponential
+      grid to a linear grid beginning at 5 and ending at 20 with 5
+      bins (i.e. 6 grid points). The second index of the final tensor
+      is obtained by interpolating the second index of the initial
+      tensor, creating a logarithmic grid from 7 to 1.2. The final
+      tensor is also created by interpolating the result of the
+      mathematical expression "(erf(6/20)+erf(12/20))/2" into the
+      first index of the initial tensor.
   */
   void index_spec();
   

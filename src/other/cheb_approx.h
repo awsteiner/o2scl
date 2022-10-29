@@ -69,7 +69,7 @@ namespace o2scl {
   /// True if init has been called
   bool init_called;
 
-  /// Desc
+  /// The constant \f$ \pi \f$
   fp_t pi;
   
   public:

@@ -273,6 +273,8 @@ void *o2scl_hdf_acol_manager_get_default_color(void *vptr);
 
 void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v);
 
+bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2);
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr);
 
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
@@ -315,31 +317,31 @@ int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, char *file, ch
 
 void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_n_table_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_n_table_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_n_table_units_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_n_table_units_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_input_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_output_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_input_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_output_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
 void o2scl_hdf_hdf_input_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
-void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name);
+void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
 

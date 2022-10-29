@@ -2942,7 +2942,7 @@ namespace o2scl {
             // may or may not be correct.
             ret_value=this->mcmc_done;
           
-          } else {
+          } else if (fret!=this->mcmc_skip) {
 
             // First, double check that the table has the right
             // number of columns

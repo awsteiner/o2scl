@@ -798,6 +798,12 @@ void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v) {
   return;
 }
 
+bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  bool ret=ptr->help_found(arg1,arg2);
+  return ret;
+}
+
 int o2scl_hdf_acol_manager_run_empty(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
   int ret=ptr->run_empty();
@@ -922,12 +928,11 @@ void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name) {
   return;
 }
 
-void o2scl_hdf_hdf_input_n_table_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_n_table_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table<> *t=(table<> *)ptr_t;
-  std::string *name=new std::string;
+  std::string *name=(std::string *)ptr_name;
   hdf_input_n(*hf,*t,*name);
-  ptr_name=(void *)name;
   return;
 }
 
@@ -945,12 +950,11 @@ void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *na
   return;
 }
 
-void o2scl_hdf_hdf_input_n_table_units_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_n_table_units_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table_units<> *t=(table_units<> *)ptr_t;
-  std::string *name=new std::string;
+  std::string *name=(std::string *)ptr_name;
   hdf_input_n(*hf,*t,*name);
-  ptr_name=(void *)name;
   return;
 }
 
@@ -968,12 +972,11 @@ void o2scl_hdf_hdf_input_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name) 
   return;
 }
 
-void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   table3d *t=(table3d *)ptr_t;
-  std::string *name=new std::string;
+  std::string *name=(std::string *)ptr_name;
   hdf_input_n(*hf,*t,*name);
-  ptr_name=(void *)name;
   return;
 }
 
@@ -991,12 +994,11 @@ void o2scl_hdf_hdf_input_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *n
   return;
 }
 
-void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   uniform_grid<> *t=(uniform_grid<> *)ptr_t;
-  std::string *name=new std::string;
+  std::string *name=(std::string *)ptr_name;
   hdf_input_n(*hf,*t,*name);
-  ptr_name=(void *)name;
   return;
 }
 
@@ -1014,12 +1016,11 @@ void o2scl_hdf_hdf_input_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *na
   return;
 }
 
-void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *&ptr_name) {
+void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name) {
   hdf_file *hf=(hdf_file *)ptr_hf;
   tensor_grid<> *t=(tensor_grid<> *)ptr_t;
-  std::string *name=new std::string;
+  std::string *name=(std::string *)ptr_name;
   hdf_input_n(*hf,*t,*name);
-  ptr_name=(void *)name;
   return;
 }
 
@@ -1032,31 +1033,31 @@ void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *n
 
 int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose, bool err_on_fail) {
   double *d=(double *)ptr_d;
-  int ret=value_spec(spec,*d,verbose,err_on_fail);
-  return ret;
+  int func_ret=value_spec(spec,*d,verbose,err_on_fail);
+  return func_ret;
 }
 
 int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
   std::vector<double> *v=(std::vector<double> *)ptr_v;
-  int ret=vector_spec<std::vector<double>>(spec,*v,verbose,err_on_fail);
-  return ret;
+  int func_ret=vector_spec<std::vector<double>>(spec,*v,verbose,err_on_fail);
+  return func_ret;
 }
 
 int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(char *spec, void *ptr_v, int verbose, bool err_on_fail) {
   std::vector<std::string> *v=(std::vector<std::string> *)ptr_v;
-  int ret=strings_spec<std::vector<std::string>>(spec,*v,verbose,err_on_fail);
-  return ret;
+  int func_ret=strings_spec<std::vector<std::string>>(spec,*v,verbose,err_on_fail);
+  return func_ret;
 }
 
 void *o2scl_hdf_vector_spec_wrapper(char *spec) {
-  std::vector<double> *ret=new std::vector<double>;
-  *ret=vector_spec(spec);
-  return ret;
+  std::vector<double> *func_ret=new std::vector<double>;
+  *func_ret=vector_spec(spec);
+  return func_ret;
 }
 
 int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, bool use_regex, int verbose, bool err_on_fail) {
   std::vector<std::vector<double>> *v=(std::vector<std::vector<double>> *)ptr_v;
-  int ret=mult_vector_spec<std::vector<double>>(spec,*v,use_regex,verbose,err_on_fail);
-  return ret;
+  int func_ret=mult_vector_spec<std::vector<double>>(spec,*v,use_regex,verbose,err_on_fail);
+  return func_ret;
 }
 

@@ -32,6 +32,7 @@ help:
 	@echo "sinstall:             Install headers and libraries only"
 	@echo "o2scl-doc:            Make HTML documentation"
 	@echo "o2scl-xml:            Generate XML from doxygen"
+	@echo "acol-docs-auto:       Update acol docs"
 	@echo "clean-doc:            Remove generated documentation files"
 	@echo "release-sync-doc:     Copy docs from /usr/local on isospin "\
 	"to the web page "
@@ -112,6 +113,13 @@ o2scl-doc:
 # Run doxygen to create documentation
 o2scl-xml:
 	cd doc/o2scl && $(MAKE) o2scl-xml
+
+# Run doxygen to create documentation
+acol-docs-auto:
+	cd doc/o2scl && $(MAKE) o2scl-xml
+	cd doc && $(MAKE) install
+	acol -xml-to-o2
+	cd data && $(MAKE) install
 
 # Clean all generated documentation
 clean-doc:

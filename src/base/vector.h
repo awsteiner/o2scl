@@ -72,16 +72,21 @@ namespace o2scl {
       pointers and is not safe or fully const-correct. 
   */
   class gsl_vector_wrap {
+    /// A pointer to the data
     const double *d;
+    /// The vector size
     size_t sz;
   public:
-    gsl_vector_wrap(gsl_vector *m) {
-      d=(const double *)m->data;
-      sz=m->size;
+    /// Create a wrapper given gsl_vector object \c v
+    gsl_vector_wrap(gsl_vector *v) {
+      d=(const double *)v->data;
+      sz=v->size;
     }
+    /// Access a vector element by the index
     double operator[](size_t i) const {
       return d[i];
     }
+    /// Return the vector size
     size_t size() {
       return sz;
     }
@@ -93,23 +98,32 @@ namespace o2scl {
       pointers and is not safe or fully const-correct. 
   */
   class gsl_matrix_wrap {
+  protected:
+    /// A pointer to the data
     const double *d;
+    /// The size of the first index
     size_t sz1;
+    /// The size of the second index
     size_t sz2;
+    /// The matrix stride
     size_t tda;
   public:
+    /// Create a wrapper given gsl_matrix object \c m
     gsl_matrix_wrap(gsl_matrix *m) {
       d=(const double *)m->data;
       sz1=m->size1;
       sz2=m->size2;
       tda=m->tda;
     }
+    /// Access the matrix by the indices
     double operator()(size_t i, size_t j) const {
       return *(d+i*tda+j);
     }
+    /// Return the size in the first index
     size_t size1() const {
       return sz1;
     }
+    /// Return the size in the second index
     size_t size2() const {
       return sz2;
     }
@@ -1859,8 +1873,8 @@ namespace o2scl {
       composed of a floating point number of type \c fp_t for which
       the function \c abs() is defined.
   */
-  template<class vec_t, class fp_t>
-    size_t vector_lookup(size_t n, const vec_t &x, fp_t x0) {
+  template<class vec_t, class data_t>
+    size_t vector_lookup(size_t n, const vec_t &x, data_t x0) {
     if (n==0) {
       O2SCL_ERR("Empty vector in function vector_lookup().",
 		exc_einval);
@@ -1873,7 +1887,7 @@ namespace o2scl {
 		 "function vector_lookup()",exc_einval);
       return 0;
     }
-    fp_t best=x[i], bdiff=abs(x[i]-x0);
+    data_t best=x[i], bdiff=abs(x[i]-x0);
     for(;i<n;i++) {
       if (std::isfinite(x[i]) && abs(x[i]-x0)<bdiff) {
 	row=i;
@@ -2772,6 +2786,88 @@ namespace o2scl {
     return mat_row_t(M,row);
   }
 
+  /** \brief View a vector as a matrix
+  */
+  template<class vec_t, class data_t=double> class vector_view_matrix {
+
+  protected:
+
+    /// A reference to the original vector
+    vec_t &v_;
+
+    /// The vector size, equal to rows_ times cols_
+    size_t sz_;
+    
+    /// The size of the first matrix index
+    size_t rows_;
+    
+    /// The size of the second matrix index
+    size_t cols_;
+
+  public:
+
+    /// Create a matrix view of a vector with size \c sz
+    vector_view_matrix(vec_t &v, size_t sz, size_t rows) : v_(v) {
+      size_t cols=sz/rows;
+      if (sz==0) {
+        O2SCL_ERR2("Vector has no size in ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      if (cols*rows!=sz) {
+        O2SCL_ERR2("Rows do not evenly divide vector in ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      sz_=sz;
+      rows_=rows;
+      cols_=cols;
+    }
+    
+    /// Return a reference
+    data_t &operator()(size_t i, size_t j) {
+      if (i>=rows_ && j>=cols_) {
+        O2SCL_ERR2("Invalid index ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      return v_[i*cols_+j];
+    }
+    
+    /// Return a const reference
+    const data_t &operator()(size_t i, size_t j) const {
+      if (i>=rows_ && j>=cols_) {
+        O2SCL_ERR2("Invalid index ",
+                   "vector_view_matrix.",o2scl::exc_einval);
+      }
+      return v_[i*cols_+j];
+    }
+
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      return rows_;
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      return cols_;
+    }
+
+    /** \brief Construct an array index from matrix indices
+     */
+    size_t array_index(size_t i, size_t j) const {
+      return i*cols_+j;
+    }
+
+    /** \brief Construct matrix indices from an array index
+     */
+    void matrix_indices(size_t ii, size_t &i, size_t &j) const {
+      i=ii/cols_;
+      j=ii-i*cols_;
+      return;
+    }
+    
+  };
+
   /** \brief Generic object which represents a row of a matrix
 
       \note This class is experimental.
@@ -2897,9 +2993,9 @@ namespace o2scl {
     mat_t &m_;
 
   public:
-
+    
     /// Create a row object from row \c row of matrix \c m 
-  matrix_view_transpose(mat_t &m) : m_(m) {
+    matrix_view_transpose(mat_t &m) : m_(m) {
     }
     
     /// Return a reference to the ith column of the selected row
@@ -2938,12 +3034,13 @@ namespace o2scl {
     /// A reference to the original matrix
     mat_t &m_;
 
+    /// The row to omit
     size_t ro;
 
   public:
-
+    
     /// Create
-  matrix_view_omit_row(mat_t &m, size_t row_omit) : m_(m) {
+    matrix_view_omit_row(mat_t &m, size_t row_omit) : m_(m) {
       ro=row_omit;
     }
     
@@ -2989,12 +3086,13 @@ namespace o2scl {
     /// A reference to the original matrix
     mat_t &m_;
 
+    /// The column to omit
     size_t co;
 
   public:
 
     /// Create
-  matrix_view_omit_column(mat_t &m, size_t column_omit) : m_(m) {
+    matrix_view_omit_column(mat_t &m, size_t column_omit) : m_(m) {
       co=column_omit;
     }
     
@@ -3025,7 +3123,6 @@ namespace o2scl {
     size_t size2() const {
       return m_.size2()-1;
     }
-  
     
   };
 
@@ -3040,7 +3137,7 @@ namespace o2scl {
       \endcode
   */
   template<class mat_t> class const_matrix_row_gen {
-
+    
   protected:
 
     /// A reference to the original matrix
@@ -3050,9 +3147,9 @@ namespace o2scl {
     size_t row_;
 
   public:
-
+    
     /// Create a row object from row \c row of matrix \c m 
-  const_matrix_row_gen(const mat_t &m, size_t row) : m_(m), row_(row) {
+    const_matrix_row_gen(const mat_t &m, size_t row) : m_(m), row_(row) {
     }
     
     /// Return a const reference to the ith column of the selected row
@@ -3127,94 +3224,94 @@ namespace o2scl {
   */
   template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
     class matrix_view_vec_vec : public matrix_view {
-  
-  protected:
-  
-  /// Pointer to the table
-  vec2_t *vvp;
-
-  public:
-
-  /** \brief Swap method
-   */
-  friend void swap(matrix_view_vec_vec &t1,
-		   matrix_view_vec_vec &t2) {
-    /// Just swap the pointer
-    std::swap(t1.vvp,t2.vvp);
-    return;
-  }
-
-  matrix_view_vec_vec() {
-    vvp=0;
-  }
-  
-  /** \brief Create a matrix view object from the specified 
-      table and list of rows
-  */
-  matrix_view_vec_vec(vec2_t &vv) {
-    vvp=&vv;
-  }
-  
-  /** \brief Return the number of rows
-   */
-  size_t size1() const {
-    if (vvp==0) return 0;
-    return vvp->size();
-  }
-  
-  /** \brief Return the number of columns
-   */
-  size_t size2() const {
-    if (vvp==0) return 0;
-    if (vvp->size()==0) return 0;
-    return (*vvp)[0].size();
-  }
-  
-  /** \brief Return a reference to the element at row \c row
-      and column \c col
-  */
-  const double &operator()(size_t row, size_t col) const {
-    if (vvp==0) {
-      O2SCL_ERR2("Object empty in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
-    }
-    if (row>=vvp->size()) {
-      O2SCL_ERR2("Row exceeds max in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
-    }
-    if (col>=(*vvp)[row].size()) {
-      O2SCL_ERR2("Column exceeds max in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
-    }
-    return (*vvp)[row][col];
-  }
     
-  /** \brief Return a reference to the element at row \c row
-      and column \c col
-  */
-  double &operator()(size_t row, size_t col) {
+  protected:
+    
+    /// Pointer to the table
+    vec2_t *vvp;
+    
+  public:
+    
+    /** \brief Swap method
+     */
+    friend void swap(matrix_view_vec_vec &t1,
+                     matrix_view_vec_vec &t2) {
+      /// Just swap the pointer
+      std::swap(t1.vvp,t2.vvp);
+      return;
+    }
+    
+    matrix_view_vec_vec() {
+      vvp=0;
+    }
+    
+    /** \brief Create a matrix view object from the specified 
+        table and list of rows
+    */
+    matrix_view_vec_vec(vec2_t &vv) {
+      vvp=&vv;
+    }
+    
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      if (vvp==0) return 0;
+      return vvp->size();
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      if (vvp==0) return 0;
+      if (vvp->size()==0) return 0;
+      return (*vvp)[0].size();
+    }
+    
+    /** \brief Return a reference to the element at row \c row
+        and column \c col
+    */
+    const double &operator()(size_t row, size_t col) const {
       if (vvp==0) {
-      O2SCL_ERR2("Object empty in ",
-                "matrix_view_vec_vec::operator().",
-                o2scl::exc_einval);
+        O2SCL_ERR2("Object empty in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (row>=vvp->size()) {
+        O2SCL_ERR2("Row exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (col>=(*vvp)[row].size()) {
+        O2SCL_ERR2("Column exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      return (*vvp)[row][col];
     }
-    if (row>=vvp->size()) {
-      O2SCL_ERR2("Row exceeds max in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
+    
+    /** \brief Return a reference to the element at row \c row
+        and column \c col
+    */
+    double &operator()(size_t row, size_t col) {
+      if (vvp==0) {
+        O2SCL_ERR2("Object empty in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (row>=vvp->size()) {
+        O2SCL_ERR2("Row exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (col>=(*vvp)[row].size()) {
+        std::cout << row << " " << col << " "
+                  << (*vvp)[row].size() << std::endl;
+        O2SCL_ERR2("Column exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      return (*vvp)[row][col];
     }
-    if (col>=(*vvp)[row].size()) {
-      std::cout << row << " " << col << " "
-      << (*vvp)[row].size() << std::endl;
-      O2SCL_ERR2("Column exceeds max in ",
-		 "matrix_view_vec_vec::operator().",
-		 o2scl::exc_einval);
-    }
-    return (*vvp)[row][col];
-  }
     
   };
 
@@ -3266,7 +3363,7 @@ namespace o2scl {
   public:
     
     /// Create a column object from column \c column of matrix \c m 
-  matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
+    matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
     }
     
     /// Return a reference to the ith row of the selected column
@@ -3305,8 +3402,8 @@ namespace o2scl {
   public:
     
     /// Create a column object from column \c column of matrix \c m 
-  const_matrix_column_gen(const mat_t &m, size_t column) :
-    m_(m), column_(column) {
+    const_matrix_column_gen(const mat_t &m, size_t column) :
+      m_(m), column_(column) {
     }
     
     /// Return a const reference to the ith row of the selected column
@@ -3460,7 +3557,7 @@ namespace o2scl {
       type of the first parameter. 
   */
   template<class dat_t> dat_t *vector_range
-    (dat_t *v, size_t start, size_t last) {
+  (dat_t *v, size_t start, size_t last) {
     return v+start;
   }
   
@@ -3652,8 +3749,8 @@ namespace o2scl {
   public:
     
     /// Create an object starting with index \c start in vector \c v
-  vector_range_gen(vec_t &v, size_t start, size_t last) : v_(v), 
-      start_(start), last_(last) {
+    vector_range_gen(vec_t &v, size_t start, size_t last) :
+      v_(v), start_(start), last_(last) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
 	O2SCL_ERR2("End before beginning in vector_range_gen::",
@@ -3664,9 +3761,9 @@ namespace o2scl {
     }
     
     /// Create an object from a previously constructed range object
-  vector_range_gen(const vector_range_gen &v2, size_t start,
-		   size_t last) : v_(v2.v_), 
-      start_(start+v2.start_), last_(last+v2.start_) {
+    vector_range_gen(const vector_range_gen &v2, size_t start,
+                     size_t last) :
+      v_(v2.v_), start_(start+v2.start_), last_(last+v2.start_) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
 	O2SCL_ERR2("End before beginning in vector_range_gen::",
@@ -3727,21 +3824,39 @@ namespace o2scl {
   public:
     
     /// Create an object starting with index \c start in vector \c v
-  const_vector_range_gen(const vec_t &v, size_t start, size_t last) : v_(v), 
-      start_(start), last_(last) {
+    const_vector_range_gen(const vec_t &v, size_t start, size_t last) :
+      v_(v), start_(start), last_(last) {
+#if !O2SCL_NO_RANGE_CHECK
+      if (last<start) {
+        O2SCL_ERR2("End before beginning in vector_range_gen::",
+                   "vector_range_gen(vec_t,size_t,size_t)",
+                   o2scl::exc_einval);
+      }
+#endif
+    }
+    
+    /// Create an object from a previously constructed range object
+    const_vector_range_gen(const const_vector_range_gen &v2, size_t start,
+                           size_t last) :
+      v_(v2.v_), start_(start+v2.start_), last_(last+v2.start_) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
 	O2SCL_ERR2("End before beginning in vector_range_gen::",
-		   "vector_range_gen(vec_t,size_t,size_t)",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
+		   o2scl::exc_einval);
+      }
+      if (last>v2.last_) {
+	O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
+		   "vector_range_gen(vector_range_gen,size_t,size_t)",
 		   o2scl::exc_einval);
       }
 #endif
     }
     
     /// Create an object from a previously constructed range object
-  const_vector_range_gen(const const_vector_range_gen &v2, size_t start,
-			 size_t last) : v_(v2.v_), 
-      start_(start+v2.start_), last_(last+v2.start_) {
+    const_vector_range_gen(const vector_range_gen<vec_t> &v2, size_t start,
+                           size_t last) :
+      v_(v2.v_), start_(start+v2.start_), last_(last+v2.start_) {
 #if !O2SCL_NO_RANGE_CHECK
       if (last<start) {
 	O2SCL_ERR2("End before beginning in vector_range_gen::",
@@ -3755,25 +3870,7 @@ namespace o2scl {
       }
 #endif
     }
-      
-    /// Create an object from a previously constructed range object
-  const_vector_range_gen(const vector_range_gen<vec_t> &v2, size_t start,
-			 size_t last) : v_(v2.v_), 
-      start_(start+v2.start_), last_(last+v2.start_) {
-#if !O2SCL_NO_RANGE_CHECK
-      if (last<start) {
-	O2SCL_ERR2("End before beginning in vector_range_gen::",
-		   "vector_range_gen(vector_range_gen,size_t,size_t)",
-		   o2scl::exc_einval);
-      }
-      if (last>v2.last_) {
-	O2SCL_ERR2("End beyond end of previous vector in vector_range_gen::",
-		   "vector_range_gen(vector_range_gen,size_t,size_t)",
-		   o2scl::exc_einval);
-      }
-#endif
-    }
-      
+    
     /// Return the vector size
     size_t size() const {
       return last_-start_;
@@ -3795,10 +3892,10 @@ namespace o2scl {
       from a <tt>std::vector</tt>
   */
   template<class data_t> vector_range_gen<std::vector<data_t> >
-    vector_range(std::vector<data_t> &v, size_t start, size_t last) {
+  vector_range(std::vector<data_t> &v, size_t start, size_t last) {
     return vector_range_gen<std::vector<data_t> >(v,start,last);
   }
-
+  
   /** \brief Create a \ref o2scl::vector_range_gen object 
       from a <tt>std::vector</tt>
   */
@@ -3864,10 +3961,10 @@ namespace o2scl {
       a copy. 
   */
   template<class dat_t> std::vector<dat_t>
-    vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
+  vector_range_copy(const std::vector<dat_t> &v, size_t start, size_t last) {
     return std::vector<dat_t> (v.begin()+start,v.begin()+last);
   }
-
+  
 #ifdef O2SCL_NEVER_DEFINED
   // AWS, 12/30/2020, this function is unnecessary
   

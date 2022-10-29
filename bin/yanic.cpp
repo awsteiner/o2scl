@@ -619,6 +619,8 @@ int main(int argc, char *argv[]) {
   class_py_names.insert(std::make_pair("std::vector<std::vector<double>>",
                                        "std_vector_vector"));
   class_py_names.insert(std::make_pair("tensor<>","tensor"));
+  class_py_names.insert(std::make_pair("tensor<int>","tensor_int"));
+  class_py_names.insert(std::make_pair("tensor<size_t>","tensor_size_t"));
   class_py_names.insert(std::make_pair
                         ("boost::numeric::ublas::vector<double>",
                          "ublas_vector"));
@@ -2018,11 +2020,11 @@ int main(int argc, char *argv[]) {
             fout << iff.args[k].ift.name << " " << iff.args[k].name;
           }
         } else if (iff.args[k].ift.suffix=="&") {
-          if (iff.args[k].ift.name=="std::string") {
-            fout << "void *&ptr_" << iff.args[k].name;
-          } else {
-            fout << "void *ptr_" << iff.args[k].name;
-          }
+          //if (iff.args[k].ift.name=="std::string") {
+          //fout << "void *&ptr_" << iff.args[k].name;
+          //} else {
+          fout << "void *ptr_" << iff.args[k].name;
+          //}
         }
         
         // Output default value
@@ -2032,7 +2034,11 @@ int main(int argc, char *argv[]) {
               fout << "=true";
             } else if (iff.args[k].value=="False") {
               fout << "=false";
-            } else {
+            } else if (iff.args[k].ift.name!="std::string") {
+              // Strings are converted to char *'s, and those can't
+              // have default values in the C wrappers, but the
+              // default value can still be used in the python code
+              // generation below.
               fout << "=" << iff.args[k].value;
             }
           }
@@ -2054,16 +2060,16 @@ int main(int argc, char *argv[]) {
         // Pointer assignments for arguments
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="&") {
-            if (iff.args[k].ift.name=="std::string") {
-              fout << "  std::string *"
-                   << iff.args[k].name
-                   << "=new std::string;" << endl;
-            } else {
-              fout << "  " << iff.args[k].ift.name << " *"
-                   << iff.args[k].name << "=("
-                   << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
-                   << ";" << endl;
-            }
+            //if (iff.args[k].ift.name=="std::string") {
+            //fout << "  std::string *"
+            //<< iff.args[k].name
+            //<< "=new std::string;" << endl;
+            //} else {
+            fout << "  " << iff.args[k].ift.name << " *"
+                 << iff.args[k].name << "=("
+                 << iff.args[k].ift.name << " *)ptr_" << iff.args[k].name
+                 << ";" << endl;
+            //}
           }
         }
         
@@ -2080,10 +2086,10 @@ int main(int argc, char *argv[]) {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
-              if (iff.args[k].ift.name=="std::string") {
-                addl_code.push_back(((string)"ptr_")+iff.args[k].name+
-                                    "=(void *)"+iff.args[k].name+";");
-              }
+              //if (iff.args[k].ift.name=="std::string") {
+              //addl_code.push_back(((string)"ptr_")+iff.args[k].name+
+              //"=(void *)"+iff.args[k].name+";");
+              //}
             }
             if (k!=iff.args.size()-1) {
               fout << ",";
@@ -2100,11 +2106,11 @@ int main(int argc, char *argv[]) {
         } else {
           
           if (iff.ret.is_ctype() || iff.ret.is_reference()) {
-            fout << "  " << iff.ret.name << " ret=" << iff.name << "(";
+            fout << "  " << iff.ret.name << " func_ret=" << iff.name << "(";
           } else {
-            fout << "  " << iff.ret.name << " *ret=new "
+            fout << "  " << iff.ret.name << " *func_ret=new "
                  << iff.ret.name << ";" << endl;
-            fout << "  *ret=" << iff.name << "(";
+            fout << "  *func_ret=" << iff.name << "(";
           }
 
           for(size_t k=0;k<iff.args.size();k++) {
@@ -2119,7 +2125,7 @@ int main(int argc, char *argv[]) {
           }
           fout << ");" << endl;
           
-          fout << "  return ret;" << endl;
+          fout << "  return func_ret;" << endl;
         }
         fout << "}" << endl;
         
@@ -3299,9 +3305,9 @@ int main(int argc, char *argv[]) {
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.name=="std::string") {
         if (iff.args[k].ift.suffix=="&") {
-          fout << "    " << iff.args[k].name << ".__del__()" << endl;
-          fout << "    " << iff.args[k].name
-               << "._ptr=ctypes.c_void_p()" << endl;
+          //fout << "    " << iff.args[k].name << ".__del__()" << endl;
+          //fout << "    " << iff.args[k].name
+          //<< "._ptr=ctypes.c_void_p()" << endl;
         } else {
           fout << "    " << iff.args[k].name
                << "_=ctypes.c_char_p(force_bytes("
@@ -3326,6 +3332,11 @@ int main(int argc, char *argv[]) {
 
         if (iff.ret.is_ctype()) {
           fout << "    func.restype=ctypes.c_" << iff.ret.name << endl;
+        } else if (iff.ret.name=="tensor<>" ||
+                   iff.ret.name=="tensor<int>" ||
+                   iff.ret.name=="tensor<size_t>" ||
+                   iff.ret.name=="tensor_grid<>") {
+          fout << "    func.restype=ctypes.c_void_p" << endl;
         } else {
           size_t len=iff.ret.name.length();
           std::string reformat_ret_type=iff.ret.name;
@@ -3346,11 +3357,11 @@ int main(int argc, char *argv[]) {
     fout << "    func.argtypes=[";
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        if (iff.args[k].ift.name=="std::string") {
-          fout << "ctypes.POINTER(ctypes.c_void_p)";
-        } else {
-          fout << "ctypes.c_void_p";
-        }
+        //if (iff.args[k].ift.name=="std::string") {
+        //fout << "ctypes.POINTER(ctypes.c_void_p)";
+        //} else {
+        fout << "ctypes.c_void_p";
+        //}
       } else if (iff.args[k].ift.name=="std::string") {
         fout << "ctypes.c_char_p";
       } else {
@@ -3370,11 +3381,11 @@ int main(int argc, char *argv[]) {
     }
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.suffix=="&") {
-        if (iff.args[k].ift.name=="std::string") {
-          fout << "ctypes.byref(" << iff.args[k].name << "._ptr)";
-        } else {
-          fout << iff.args[k].name << "._ptr";
-        }
+        //if (iff.args[k].ift.name=="std::string") {
+        //fout << "ctypes.byref(" << iff.args[k].name << "._ptr)";
+        //} else {
+        fout << iff.args[k].name << "._ptr";
+        //}
       } else if (iff.args[k].ift.name=="std::string") {
         fout << iff.args[k].name << "_";
       } else {
@@ -3391,13 +3402,27 @@ int main(int argc, char *argv[]) {
         }
       }
     }
-    
+
     // Return
-    if (iff.ret.name=="void") {
-      fout << "    return" << endl;
+    if (iff.ret.name=="tensor<>" ||
+        iff.ret.name=="tensor<int>" ||
+        iff.ret.name=="tensor<size_t>") {
+      fout << "    ten=tensor(link,ret)" << endl;
+      fout << "    ten._owner=True" << endl;
+      fout << "    return ten" << endl;
+    } else if (iff.ret.name=="tensor_grid<>") {
+      fout << "    ten=tensor_grid(link,ret)" << endl;
+      fout << "    ten._owner=True" << endl;
+      fout << "    return ten" << endl;
     } else {
-      fout << "    return ret" << endl;
+      if (iff.ret.name=="void") {
+        fout << "    return" << endl;
+      } else {
+        fout << "    return ret" << endl;
+      }
     }
+
+    // Final endline for spacing
     fout << endl;
     
   }

@@ -1087,7 +1087,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
     
   } else if (type=="tensor_grid") {
-    
+
     size_t rk=tensor_grid_obj.get_rank();
     cout << "Rank: " << rk << endl;
     for(size_t i=0;i<rk;i++) {
@@ -1125,13 +1125,18 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     double x=tensor_grid_obj.get_data()[total_size-1];
     vector<size_t> ix(rk);
     tensor_grid_obj.unpack_index(total_size-1,ix);
-    string test="(";
+    
+    string linet="(";
     for(size_t i=0;i<rk-1;i++) {
-      test+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
+      linet+=szttos(ix[i])+",";
     }
-    test+=o2scl::dtos(tensor_grid_obj.get_grid(rk-1,ix[rk-1]))+"): ";
-    test+=o2scl::dtos(x);
-    size_t maxwid=test.length();
+    linet+=szttos(ix[rk-1])+") (";
+    for(size_t i=0;i<rk-1;i++) {
+      linet+=o2scl::dtos(tensor_grid_obj.get_grid(i,ix[i]))+",";
+    }
+    linet+=o2scl::dtos(tensor_grid_obj.get_grid(rk-1,ix[rk-1]))+"): ";
+    linet+=o2scl::dtos(x);
+    size_t maxwid=linet.length();
     if (!has_minus_sign(&x)) maxwid++;
 
     // Number of 'columns' is equal to the number of columns
@@ -1143,6 +1148,10 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     for(size_t i=0;i<total_size;i+=step) {
       tensor_grid_obj.unpack_index(i,ix);
       string stemp="(";
+      for(size_t j=0;j<rk-1;j++) {
+	stemp+=szttos(ix[j])+",";
+      }
+      stemp+=szttos(ix[rk-1])+") (";
       for(size_t j=0;j<rk-1;j++) {
 	stemp+=o2scl::dtos(tensor_grid_obj.get_grid(j,ix[j]))+",";
       }
@@ -1947,13 +1956,13 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     hist_obj.set_interp_type(interp_type);
   }
 
-  if (sv.size()>=2 && sv[1]=="colors") {
-    if (colors=="0") {
+  if (sv.size()>=2 && sv[1]=="color_spec") {
+    if (color_spec=="0") {
       cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
-    } else if (colors=="default") {
+    } else if (color_spec=="default") {
       cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
     } else {
-      cl->set_colors(colors,1);
+      cl->set_colors(color_spec,1);
     }
 
     command_color=cl->command_color;
@@ -2487,6 +2496,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
       for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
 	vars["i"]=((double)i);
 	vars["x"]=tensor_grid_obj.get_grid(k,i);
+        vars["m"]=tensor_grid_obj.get_size(k);
 	calc.compile(in[1].c_str(),&vars);
 	double val=calc.eval(&vars);
 	tensor_grid_obj.set_grid(k,i,val);
@@ -3106,14 +3116,15 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_obj.index_spec_preprocess(sv[j],sv2);
+         index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<> t;
-    t=tensor_obj.rearrange_and_copy(vis,verbose,false);
+    t=rearrange_and_copy<tensor<>,double>
+      (tensor_obj,vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3124,14 +3135,14 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_int_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_int_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<int> t;
-    t=tensor_int_obj.rearrange_and_copy(vis,verbose,false);
+    t=rearrange_and_copy<tensor<int>,int>(tensor_int_obj,vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3142,14 +3153,15 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_size_t_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
     
     vector<o2scl::index_spec> vis;
-    tensor_size_t_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor<size_t> t;
-    t=tensor_size_t_obj.rearrange_and_copy(vis,verbose,false);
+    t=rearrange_and_copy<tensor<size_t>,size_t>(tensor_size_t_obj,
+                                                 vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3160,14 +3172,15 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
 
     vector<string> sv2;
     for(size_t j=1;j<sv.size();j++) {
-      tensor_grid_obj.index_spec_preprocess(sv[j],sv2);
+      index_spec_preprocess(sv[j],sv2);
     }
 
     vector<o2scl::index_spec> vis;
-    tensor_grid_obj.strings_to_indexes(sv2,vis,verbose);
+    strings_to_indexes(sv2,vis,verbose);
     
     tensor_grid<> t;
-    t=tensor_grid_obj.rearrange_and_copy(vis,verbose,false);
+    t=grid_rearrange_and_copy<tensor_grid<>,double>
+      (tensor_grid_obj,vis,verbose,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;

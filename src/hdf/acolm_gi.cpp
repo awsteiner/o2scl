@@ -540,7 +540,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   } else {
     ncols_loc=ncols;
   }
-
   
   // Create a line for separating help text sections
   string line=ter.hrule(ncols_loc-2);

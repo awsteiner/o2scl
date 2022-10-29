@@ -987,6 +987,10 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
     tensor_out(*fout,tensor_obj,pretty);
     
+  } else if (type=="tensor_grid") {
+
+    tensor_grid_out(*fout,tensor_grid_obj,pretty);
+    
   } else if (type=="tensor<int>") {
 
     tensor_out(*fout,tensor_int_obj,pretty);

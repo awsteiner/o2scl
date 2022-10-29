@@ -435,9 +435,6 @@ namespace o2scl {
       std::greater<std::string> >::iterator al_it;
     //@}
     
-    /// Compare two strings, treating dashes and underscores as equivalent
-    bool string_equal_dash(std::string s1, std::string s2);
-
   public:
 
     cli();
@@ -446,21 +443,21 @@ namespace o2scl {
 
     /// \name Colors
     //@{
-    /// Desc
+    /// Color for commands
     std::string command_color;
-    /// Desc
+    /// Color for types
     std::string type_color;
-    /// Desc
+    /// Color for parameters
     std::string param_color;
-    /// Desc
+    /// Color for help topics
     std::string help_color;
-    /// Desc
+    /// Color for executable strings
     std::string exec_color;
-    /// Desc
+    /// Color for URLSs
     std::string url_color;
-    /// Desc
+    /// Default color
     std::string default_color;
-    /// Desc
+    /// Color string
     std::string colors;
     //@}
 
@@ -478,6 +475,9 @@ namespace o2scl {
     int comm_option_warranty(std::vector<std::string> &sv, bool itive_com);
     int comm_option_xml_to_o2(std::vector<std::string> &sv, bool itive_com);
     //@}
+
+    /// Compare two strings, treating dashes and underscores as equivalent
+    bool string_equal_dash(std::string s1, std::string s2);
 
     /** \brief Proceed through \c sv, applying all previously
 	defined aliases
@@ -554,7 +554,7 @@ namespace o2scl {
     /// Additional help text for command-line (default is empty string)
     std::string addl_help_cli;
 
-    /** \brief Desc
+    /** \brief Set the colors to the values from string \c c
      */
     void set_colors(std::string c, int verbose=0);
    
@@ -737,7 +737,7 @@ namespace o2scl {
      */
     void xml_replacements(std::string &s);
 
-    /** \brief Desc
+    /** \brief Get a pointer to the option of name \c name
      */
     comm_option_s *get_option_pointer(std::string name);
     

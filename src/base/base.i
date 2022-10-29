@@ -1317,14 +1317,6 @@ class tensor<>
   - out double &max_value    
 - function total_sum
   - double
-- function copy_table3d
-  - void
-  - size_t ix_x
-  - size_t ix_y
-  - io table3d &tab
-  - std::string x_name ["x"]
-  - std::string y_name ["y"]
-  - std::string slice_name ["z"]
 - function copy_table3d_sum
   - void
   - size_t ix_x
@@ -1333,11 +1325,14 @@ class tensor<>
   - std::string x_name ["x"]
   - std::string y_name ["y"]
   - std::string slice_name ["z"]
-- function rearrange_and_copy
-  - tensor<>
-  - std::string spec
-  - int verbose [0]
-  - bool err_on_fail [true]
+- function copy_table3d
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
 - extra_py |
 | def create_size(self,v):
 |     """
@@ -1380,111 +1375,30 @@ class tensor<>
 |     svst.init_py(index)
 |     self.resize_vector(len(svst),svst)
 |     return
-# 
-# Class tensor_grid
 #
-class tensor_grid<>
-- py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
-| see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
-- std_cc                             
-- py_name tensor_grid
-- function is_valid
-  - void
-- function set_val
-  - void
-  - py_name set_val_vector
-  - io vector<double> &grid_point
-  - double val
-- function get_val
-  - double
-  - py_name get_val_vector
-  - io vector<double> &grid_point
-- function resize
-  - void
-  - size_t rank
-  - io vector<size_t> &dim  
-- function is_grid_set
-  - bool
-- function set_grid_packed
-  - void
-  - io vector<double> &grid
-- function set_grid
-  - void
-  - py_name set_grid_vec_vec
-  - vector<vector<double>> &grid_vecs
-- function default_grid
-  - void
-- function set_grid_i_vec    
-  - void
-  - size_t i
-  - io vector<double> &grid
-- function set_grid_i_func
-  - void
-  - size_t ix
-  - std::string func
-- function get_grid
-  - double
-  - py_name get_grid
-  - size_t i
-  - size_t j
-- function get_grid
-  - const vector<double> &
-  - py_name get_grid_packed
-- function set_grid
-  - void
-  - py_name set_grid
-  - size_t i
-  - size_t j
-  - double val
-#- function lookup_grid_val
-#  - void
-#  - io const double &val
-#  - out double &val2
-- function lookup_grid
-  - size_t
-  - size_t i
-  - double val
-- function copy_table3d_align
-  - void
-  - size_t ix_x
-  - size_t ix_y
-  - io vector<size_t> &index
-  - io table3d &tab
-  - std::string z_name ["z"]
-- function copy_table3d_align_setxy
-  - void
-  - size_t ix_x
-  - size_t ix_y
-  - io vector<size_t> &index
-  - io table3d &tab
-  - std::string x_name ["x"]
-  - std::string y_name ["y"]
-  - std::string z_name ["z"]
-- function clear
-  - void
-- function interp_linear
-  - double
-  - io vector<double> &v
-- function from_table3d_fermi
-  - void
-  - const table3d &t3d
-  - std::string slice
-  - size_t n_points
-  - double low [0.0]
-  - double high [0.0]
-  - double width [0.0]
-#- function rearrange_and_copy
-#  - tensor_grid<>
-#  - std::vector<index_spec> spec
-#  - int verbose [0]
-#  - bool err_on_fail [true]
-- function rearrange_and_copy
-  - tensor_grid<>
-  - std::string spec
-  - int verbose [0]
-  - bool err_on_fail [true]
+# Function rearrange_and_copy() from tensor.h
+#
+function rearrange_and_copy<tensor<>,double>
+- tensor<>
+- py_name rearrange_and_copy
+- tensor<> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
+function rearrange_and_copy<tensor<int>,int>
+- tensor<int>
+- py_name rearrange_and_copy_int
+- tensor<int> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
+function rearrange_and_copy<tensor<size_t>,size_t>
+- tensor<size_t>
+- py_name rearrange_and_copy_size_t
+- tensor<size_t> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
 # 
 # Class tensor_int
 #
@@ -1529,12 +1443,63 @@ class tensor<int,std::vector<int>>
   - const std::vector<int> &
 - function total_size
   - size_t
+- function pack_indices
+  - size_t
+  - io const std::vector<size_t> &index
+- function unpack_index
+  - void
+  - size_t ix
+  - io const std::vector<size_t> &index
 - function min_value
   - int
+- function min_index
+  - void
+  - out std::vector<size_t> &index
+- function min
+  - void
+  - out std::vector<size_t> &index
+  - out int &val
 - function max_value
   - int
+- function max_index
+  - void
+  - out std::vector<size_t> &index
+- function max
+  - void
+  - out std::vector<size_t> &index
+  - out int &val
+- function minmax_value
+  - void
+  - out int &min
+  - out int &max
+- function minmax_index
+  - void
+  - out std::vector<size_t> &index_min
+  - out std::vector<size_t> &index_max
+- function minmax
+  - void
+  - out std::vector<size_t> &index_min
+  - out int &min
+  - out std::vector<size_t> &index_max
+  - out int &max
 - function total_sum
   - int
+- function copy_table3d_sum
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
+- function copy_table3d
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
 - extra_py |
 | def create_size(self,v):
 |     """
@@ -1623,10 +1588,54 @@ class tensor<size_t,std::vector<size_t>>
   - size_t
 - function min_value
   - size_t
+- function min_index
+  - void
+  - out std::vector<size_t> &index
+- function min
+  - void
+  - out std::vector<size_t> &index
+  - out size_t &val
 - function max_value
   - size_t
+- function max_index
+  - void
+  - out std::vector<size_t> &index
+- function max
+  - void
+  - out std::vector<size_t> &index
+  - out size_t &val
+- function minmax_value
+  - void
+  - out size_t &min
+  - out size_t &max
+- function minmax_index
+  - void
+  - out std::vector<size_t> &index_min
+  - out std::vector<size_t> &index_max
+- function minmax
+  - void
+  - out std::vector<size_t> &index_min
+  - out size_t &min
+  - out std::vector<size_t> &index_max
+  - out size_t &max
 - function total_sum
   - size_t
+- function copy_table3d_sum
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
+- function copy_table3d
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
 - extra_py |
 | def create_size(self,v):
 |     """
@@ -1669,6 +1678,167 @@ class tensor<size_t,std::vector<size_t>>
 |     svst.init_py(index)
 |     self.resize_vector(svst)
 |     return
+#
+# Class tensor_grid
+#
+class tensor_grid<>
+- py_class_doc |
+| Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
+| see
+| https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
+- parent tensor<>
+- std_cc                             
+- py_name tensor_grid
+- function is_valid
+  - void
+- function set_val
+  - void
+  - py_name set_val_vector
+  - io vector<double> &grid_point
+  - double val
+- function get_val
+  - double
+  - py_name get_val_vector
+  - io vector<double> &grid_point
+- function resize
+  - void
+  - py_name resize_vector
+  - size_t rank
+  - io vector<size_t> &dim  
+- function is_grid_set
+  - bool
+- function set_grid_packed
+  - void
+  - io vector<double> &grid
+- function set_grid
+  - void
+  - py_name set_grid_vec_vec
+  - vector<vector<double>> &grid_vecs
+- function default_grid
+  - void
+- function set_grid_i_vec    
+  - void
+  - size_t i
+  - io vector<double> &grid
+- function set_grid_i_func
+  - void
+  - size_t ix
+  - std::string func
+- function get_grid
+  - double
+  - py_name get_grid
+  - size_t i
+  - size_t j
+- function get_grid
+  - const vector<double> &
+  - py_name get_grid_packed
+- function set_grid
+  - void
+  - py_name set_grid
+  - size_t i
+  - size_t j
+  - double val
+#- function lookup_grid_val
+#  - void
+#  - io const double &val
+#  - out double &val2
+- function lookup_grid
+  - size_t
+  - size_t i
+  - double val
+- function copy_slice_interp
+  - tensor_grid<>
+  - io std::vector<size_t> &ifix
+  - oi std::vector<double> &vals
+#- function convert_table3d_sum
+#  - void
+#  - size_t ix_x
+#  - size_t ix_y
+#  - out table3d &tab
+#  - std::string x_name ["x"]
+#  - std::string y_name ["y"]
+#  - std::string slice_name ["z"]
+- function copy_table3d_align
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io vector<size_t> &index
+  - io table3d &tab
+  - std::string z_name ["z"]
+- function copy_table3d_align_setxy
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io vector<size_t> &index
+  - io table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string z_name ["z"]
+- function copy_table3d_interp
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io std::vector<size_t> &index
+  - out table3d &tab
+  - std::string slice_name ["z"]
+- function copy_table3d_interp_values
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io std::vector<double> &values
+  - out table3d &tab
+  - std::string slice_name ["z"]
+  - int verbose [0]
+- function copy_table3d_interp_values_setxy
+  - void
+  - size_t ix_x
+  - size_t ix_y
+  - io std::vector<double> &values
+  - out table3d &tab
+  - std::string x_name ["x"]
+  - std::string y_name ["y"]
+  - std::string slice_name ["z"]
+- function clear
+  - void
+- function set_interp_type
+  - void
+  - size_t interp_type
+- function interp_linear_partial
+  - double
+  - io const std::vector<size_t> &ix_to_interp
+  - io std::vector<size_t> &ix
+  - io const std::vector<double> &val
+- function interp_linear
+  - double
+  - io vector<double> &v
+- function from_table3d_fermi
+  - void
+  - const table3d &t3d
+  - std::string slice
+  - size_t n_points
+  - double low [0.0]
+  - double high [0.0]
+  - double width [0.0]
+- extra_py |
+| def resize(self,index):
+|     """
+|     Copy ``index`` to an :class:`std_vector_size_t` object 
+|     and resize
+|     """
+|     svst=std_vector_size_t(self._link)
+|     svst.init_py(index)
+|     self.resize_vector(len(svst),svst)
+|     return
+#
+# Function grid_rearrange_and_copy() from tensor_grid.h
+#
+function grid_rearrange_and_copy<tensor_grid<>,double>
+- tensor_grid<>
+- py_name grid_rearrange_and_copy
+- tensor_grid<> &t
+- std::string spec
+- int verbose [0]
+- bool err_on_fail [true]
 # 
 # Class find_constants::const_entry
 #
@@ -1710,7 +1880,7 @@ class convert_units<>::der_unit
 | def set(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
 |     """
 |     Set the properties of a derived unit
-|     FIXME: beter docs here
+|     FIXME: better docs here
 |     """
 |     label2=std_string(self._link)
 |     label2.init_bytes(force_bytes(label))
@@ -2368,8 +2538,6 @@ class cli
 - function option_short_desc
   - std::string
   - std::string name
-#  amp->cl->process_args(args,ca,0);
-#  amp->cl->call_args(ca);
 #
 # Function from cursesw.h
 #

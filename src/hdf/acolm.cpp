@@ -113,9 +113,9 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "assign","cat","convert-unit",
       "correl","delete-col",
       "delete-rows","delete-rows-tol",
-      "deriv","deriv2","entry-grid",
+      "deriv","deriv2","value-grid",
       "find-row","fit","function",
-      "get-row","get-unit","entry","index",
+      "get-row","get-unit","value","index",
       "insert","insert-full","integ","interp",
       "list","max","min","nlines","refine","rename",
       "select","select-rows",
@@ -128,7 +128,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
-      "function","entry","entry-grid","get-grid",
+      "function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
       "list","max","min","rename","set-data",
       "slice","slice-hist","sum","to-hist-2d","to-table",
@@ -146,7 +146,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","diag","to-table3d","to-table3d-sum",
       "max","min","to-tensor-grid","rearrange",
-      "entry","function","sum","stats","deriv"};
+      "value","function","sum","stats","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor",itmp));
   }
@@ -161,8 +161,8 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
       "set-grid","max","min","rearrange",
-      "get-grid","interp","entry","to-tensor",
-      "entry-grid","function","sum","stats",
+      "get-grid","interp","value","to-tensor",
+      "value-grid","function","sum","stats",
       "binary","deriv"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
@@ -180,7 +180,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-      "to-table","function","sum"};
+      "to-table","function","sum","find","value"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
@@ -210,6 +210,40 @@ void acol_manager::color_replacements(std::string &s) {
   string_replace(s,"[t]",type_color);
   string_replace(s,"[u]",url_color);
   return;
+}
+
+bool acol_manager::help_found(std::string arg1, std::string arg2) {
+
+  if (arg2=="") {
+    for(size_t i=0;i<type_list.size();i++) {
+      if (cl->string_equal_dash(arg1,type_list[i])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<help_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,help_doc_strings[i][0])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<param_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,param_doc_strings[i][0])) {
+        return true;
+      }
+    }
+    for(size_t i=0;i<cmd_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg1,cmd_doc_strings[i][0])) {
+        return true;
+      }
+    }
+  } else {
+    for(size_t i=0;i<cmd_doc_strings.size();i++) {
+      if (cl->string_equal_dash(arg2,cmd_doc_strings[i][0])) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
 }
 
 void acol_manager::update_o2_docs(size_t narr,
@@ -584,12 +618,12 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv2","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv2),both},
-       {0,"entry","",0,3,"","",
+       {0,"value","",0,3,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry),both},
-       {0,"entry-grid","",0,4,"","",
+        (this,&acol_manager::comm_value),both},
+       {0,"value-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry_grid),both},
+        (this,&acol_manager::comm_value_grid),both},
        {0,"find-row","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_find_row),both},
@@ -719,12 +753,12 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv-y","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv_y),both},
-       {0,"entry","",0,4,"","",
+       {0,"value","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry),both},
-       {0,"entry-grid","",0,4,"","",
+        (this,&acol_manager::comm_value),both},
+       {0,"value-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_entry_grid),both},
+        (this,&acol_manager::comm_value_grid),both},
        {'f',"function","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_function),both},
@@ -798,9 +832,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"diag","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_diag),both},
-        {0,"entry","",-1,-1,"","",
+        {0,"value","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry),both},
+         (this,&acol_manager::comm_value),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -903,15 +937,15 @@ void acol_manager::command_add(std::string new_type) {
         {0,"stats","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_stats),both},
-        {0,"entry","",-1,-1,"","",
+        {0,"value","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry),both},
+         (this,&acol_manager::comm_value),both},
         {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"entry-grid","",-1,-1,"","",
+        {0,"value-grid","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_entry_grid),both},
+         (this,&acol_manager::comm_value_grid),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -1012,12 +1046,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
     
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
@@ -1049,12 +1089,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sort),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"sum","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sum),both},
@@ -1086,12 +1132,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=8;
+    static const size_t narr=10;
     comm_option_s options_arr[narr]=
       {
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
         {0,"sort","",0,0,"","",
-         new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_sort),
-         both},
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sort),both},
+        {0,"find","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_find),both},
         {0,"sum","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sum),both},
@@ -1415,8 +1467,16 @@ int acol_manager::setup_cli() {
   
   char *ac=getenv("ACOL_COLORS");
   if (ac) {
-    colors=ac;
-    cl->set_colors(colors);
+    color_spec=ac;
+    
+    if (color_spec=="0") {
+      cl->set_colors("c:,d:,e:,h:,p:,t:,u:");
+    } else if (color_spec=="default") {
+      cl->set_colors("c:10006,d:0,e:10015,h:10002,p:10001,t:10005,u:1000");
+    } else {
+      cl->set_colors(color_spec);
+    }
+    
     command_color=cl->command_color;
     type_color=cl->type_color;
     param_color=cl->param_color;
@@ -1445,7 +1505,7 @@ int acol_manager::setup_parameters() {
   
   p_obj_name.str=&obj_name;
   p_def_args.str=&def_args;
-  p_colors.str=&colors;
+  p_color_spec.str=&color_spec;
   p_verbose.i=&verbose;
   p_compress.i=&compress;
   p_precision.i=&precision;
@@ -1457,7 +1517,7 @@ int acol_manager::setup_parameters() {
   p_use_regex.b=&use_regex;
   
   p_obj_name.help="The current object name.";
-  p_colors.help="The color specification for terminal output.";
+  p_color_spec.help="The color specification for terminal output.";
   p_def_args.help=((std::string)"The default arguments from the ")+
     "environment varable "+env_var_name+".";
   p_precision.help="The numerical precision.";
@@ -1475,7 +1535,7 @@ int acol_manager::setup_parameters() {
   
   cl->par_list.insert(make_pair("obj_name",&p_obj_name));
   cl->par_list.insert(make_pair("def_args",&p_def_args));
-  cl->par_list.insert(make_pair("colors",&p_colors));
+  cl->par_list.insert(make_pair("color_spec",&p_color_spec));
   cl->par_list.insert(make_pair("precision",&p_precision));
   cl->par_list.insert(make_pair("verbose",&p_verbose));
   cl->par_list.insert(make_pair("compress",&p_compress));

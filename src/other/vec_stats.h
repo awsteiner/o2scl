@@ -1906,9 +1906,72 @@ namespace o2scl {
 
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       real data
+
+      This function does not require any copying of the input or
+      output arrays. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an 
+      input vector of size n, the output vector is resized to
+      have size \f$ n/2+1 \f$ .
    */
-  template<class vec_t, class cx_resize_vec_t> void vector_forward_fft
-  (const vec_t &data, cx_resize_vec_t &fft) {
+  void vector_forward_fft(const std::vector<double> &data,
+                          std::vector<std::complex<double>> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      real data
+
+      This function copies the input and output arrays once to convert
+      them into the FFTW format. The FFTW_ESTIMATE flag is used and so
+      little or no optimization of the FFTW algorithm is done. Given
+      an input vector of size n, the output vector is resized to have
+      size \f$ n/2+1 \f$ .
+   */
+  template<class vec_t, class resize_vec_t>
+  void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
+    
+#ifdef O2SCL_FFTW
+
+    std::vector<double> data2(data.size());
+    std::vector<std::complex<double>> fft2(data2.size()/2+1);
+    vector_copy(data.size(),data,data2);
+    
+    // The forward FFT, we have to cast away const-ness for the FFTW
+    // plan
+    double *non_const=(double *)(&(data2[0]));
+    fftw_complex *fft3=reinterpret_cast<fftw_complex *>(&(fft2[0]));
+    fftw_plan plan=fftw_plan_dft_r2c_1d(data.size(),non_const,fft3,
+                                        FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    fft.resize(data.size()/2+1);
+    vector_copy(fft2.size(),fft2,fft);
+    
+    
+#else
+    
+    O2SCL_ERR("FFTW support not included in this O2scl installation.",
+              o2scl::exc_eunsup);
+    
+#endif
+
+    return;
+  }
+
+  void vector_forward_complex_fft
+  (const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      This function copies the input and output arrays once to 
+      convert them into the FFTW format. The FFTW_ESTIMATE flag is used
+      and so little or no optimization of the FFTW algorithm is done.
+      The output vector is resized to have the same size as the 
+      input vector.
+  */
+  template<class cx_vec_t, class cx_resize_vec_t>
+  void vector_forward_complex_fft_copy
+  (const cx_vec_t &data, cx_resize_vec_t &fft) {
     
 #ifdef O2SCL_FFTW
 
@@ -1918,8 +1981,8 @@ namespace o2scl {
                                                   data.size());
     
     for(size_t i=0;i<data.size();i++) {
-      in[i][0]=data[i];
-      in[i][1]=0.0;
+      in[i][0]=data[i].real();
+      in[i][1]=data[i].imag();
     }
     
     // The forward FFT
@@ -1940,10 +2003,46 @@ namespace o2scl {
     fftw_free(in);
     fftw_free(out);
 
+#else
+    
+    O2SCL_ERR("FFTW support not included in this O2scl installation.",
+              o2scl::exc_eunsup);
+    
 #endif
 
     return;
   }
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      real data
+
+      This function does not require any copying of the input or
+      output arrays. The input matrix must be stored as a vector in
+      row-major order. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an input
+      vector of size m times n, implying a matrix with size1() equal
+      to m and and size2() equal to n, the output vector is resized to
+      have size \f$ m(n/2+1) \f$ representing a matrix with size1()
+      equal to m and size2() equal to \f$ (n/2+1) \f$, stored in
+      row-major order.
+   */
+  void matrix_forward_fft
+  (size_t m, size_t n, const std::vector<double> &data,
+   std::vector<std::complex<double>> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      This function does not require any copying of the input or
+      output arrays. The input matrix must be stored as a vector in
+      row-major order. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an input
+      implying a matrix with size1() equal to m and and size2() equal
+      to n, the output vector is resized to have size \f$ m*n \f$.
+   */
+  void matrix_forward_complex_fft
+  (size_t m, size_t n, const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
   
   /** \brief Use FFTW to construct the autocorrelation vector
 
@@ -2311,7 +2410,7 @@ namespace o2scl {
     
     return;
   }
-
+  
   /** \brief Compute the autocorrelation length using 
       Goodman's algorithm from \c acor
       
@@ -2500,7 +2599,7 @@ namespace o2scl {
 
   /** \brief Compute the KL divergence of two one-dimensional Gaussian
       distributions
-
+      
       The result is returned in units of nats.
   */
   double kl_div_gaussian(double mean_prior, double mean_post,

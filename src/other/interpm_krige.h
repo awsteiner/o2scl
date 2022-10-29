@@ -67,8 +67,7 @@ namespace o2scl {
       
       \note Experimental.
   */
-  template<class vec_t,
-           class mat_x_t, class mat_x_row_t, 
+  template<class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class covar_func_t=std::vector
            <std::function<double(double,double)>>,

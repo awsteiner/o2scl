@@ -918,39 +918,445 @@ int acol_manager::comm_type(std::vector<std::string> &sv,
 
 int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 
-  if (sv.size()>1) {
-    if (type=="int") {
+  if (type=="table") {
+
+    // If we have no 'value' entry and we're not in interactive mode,
+    // then just presume that the user is asking us to just output
+    // the current value
+    vector<string> pr, in;
+    if (itive_com==true || sv.size()<3) {
+    
+      pr.push_back("Enter column name");
+      pr.push_back("Enter row index");
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+
+    } else if (sv.size()>=4) {
+      in.resize(3);
+      in[0]=sv[1];
+      in[1]=sv[2];
+      in[2]=sv[3];
+    } else {
+      in.resize(2);
+      in[0]=sv[1];
+      in[1]=sv[2];
+    }
+
+    int row;
+    int ret2=o2scl::stoi_nothrow(in[1],row);
+    if (ret2!=0) {
+      std::cerr << "Failed to convert " << in[1]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (row<0) {
+      std::cerr << "Conversion of " << in[1]
+		<< " resulted in, " << row << ", a negative number." << endl;
+      return exc_efailed;
+    }
+
+    if (in.size()>=3) {
+      // Convert in[2] to lower case
+      std::transform(in[2].begin(),in[2].end(),in[2].begin(),::tolower);
+    }
+
+    if (in.size()<=2 || in[2]=="none") {
+      cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
+	   << table_obj.get(in[0],row) << endl;
+    } else {
+      cout << "Entry for column " << in[0] << " at row " << in[1]
+	   << " is has been changed from "
+	   << table_obj.get(in[0],row);
+      table_obj.set(in[0],row,o2scl::function_to_double(in[2]));
+      cout << " to " << table_obj.get(in[0],row) << endl;
+    }
+    
+  } else if (type=="table3d") {
+
+    vector<string> pr, in;
+    if (sv.size()==4) {
+      // If there are three arguments, then presume a new value
+      // wasn't specified, so we have enough information to proceed
+      in.push_back(sv[1]);
+      in.push_back(sv[2]);
+      in.push_back(sv[3]);
+    } else {
+      pr.push_back("Enter slice name");
+      pr.push_back("Enter first index");
+      pr.push_back("Enter second index");
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    }
+
+    int xix;
+    int ret2=o2scl::stoi_nothrow(in[1],xix);
+    if (ret2!=0) {
+      std::cerr << "Failed to convert " << in[1]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (xix<0) {
+      std::cerr << "Conversion of " << in[1]
+		<< " resulted in, " << xix
+		<< ", a negative number." << endl;
+      return exc_efailed;
+    }
+
+    int yix;
+    int ret3=o2scl::stoi_nothrow(in[2],yix);
+    if (ret3!=0) {
+      std::cerr << "Failed to convert " << in[2]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (yix<0) {
+      std::cerr << "Conversion of " << in[2]
+		<< " resulted in, " << yix
+		<< ", a negative number." << endl;
+      return exc_efailed;
+    }
+
+    if (in.size()>3) {
+      // Convert in[3] to lower case
+      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
+    }
+    
+    if (in.size()<=3 || in[3]=="none") {
+      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
+	   << in[2] << ") is "
+	   << table3d_obj.get(xix,yix,in[0]) << endl;
+    } else {
+      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
+	   << in[2] << ") has been changed from "
+	   << table3d_obj.get(xix,yix,in[0]);
+      table3d_obj.set(xix,yix,in[0],o2scl::function_to_double(in[3]));
+      cout << " to " << table3d_obj.get(xix,yix,in[0]) << endl;
+    }
+    
+  } else if (type=="tensor") {
+
+    size_t rk=tensor_obj.get_rank();
+    
+    // Handle arguments
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
+    }
+
+    // Parse to array
+    vector<size_t> ix;
+    for(size_t i=0;i<rk;i++) {
+      ix.push_back(o2scl::stoszt(in[i]));
+    }
+
+    // Set value if necessary
+    if (in.size()>tensor_grid_obj.get_rank()) {
+      // convert to lower case
+      std::transform(in[rk].begin(),
+		     in[rk].end(),
+		     in[rk].begin(),::tolower);
+      if (in[rk]!="none") {
+	tensor_obj.set
+	  (ix,o2scl::stod(in[rk]));
+      }
+    }
+
+    // Output indices and value
+    double value=tensor_obj.get(ix);
+    cout << "Indices, value: ";
+    vector_out(cout,ix,false);
+    cout << " " << value << endl;
+    
+  } else if (type=="tensor_grid") {
+
+    size_t rk=tensor_grid_obj.get_rank();
+
+    // Handle arguments if they weren't specified
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"entry",itive_com);
+      if (ret!=0) return ret;
+    } else {
+      // If the user specified enough indices, then interpret the
+      // command as a 'get' request and proceed without prompting for
+      // more information.
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
+    }
+
+    // Parse to array
+    vector<size_t> ix;
+    for(size_t i=0;i<rk;i++) {
+      ix.push_back(o2scl::stoszt(in[i]));
+    }
+
+    // Set value if necessary
+    if (in.size()>rk && in[rk]!="none") {
+      tensor_grid_obj.set(ix,o2scl::stod(in[rk]));
+    }
+
+    // Get associated grid points
+    std::vector<double> vals(rk);
+    for(size_t i=0;i<rk;i++) {
+      vals[i]=tensor_grid_obj.get_grid(i,ix[i]);
+    }
+    
+    // Output indices, grid point, value
+    cout << "Indices, grid point, value: ";
+    vector_out(cout,ix,false);
+    cout << ", ";
+    vector_out(cout,vals,false);
+    cout << ", " << tensor_grid_obj.get(ix) << endl;
+
+  } else if (type=="int") {
+    
+    if (sv.size()>1) {
       int_obj=o2scl::stoi(sv[1]);
-    } else if (type=="double") {
+    }
+    cout << "Value of " << obj_name << " is " << int_obj << endl;
+    
+  } else if (type=="double") {
+    
+    if (sv.size()>1) {
       int vsret=value_spec(sv[1],double_obj,verbose,false);
       if (vsret!=0) {
 	cerr << "Function value_spec() failed." << endl;
 	return 1;
       }
-    } else if (type=="char") {
+    }
+    cout << "Value of " << obj_name << " is " << double_obj << endl;
+    
+  } else if (type=="char") {
+    
+    if (sv.size()>1) {
       char_obj=sv[1][0];
-    } else if (type=="size_t") {
+    }
+    cout << "Value of " << obj_name << " is " << char_obj << endl;
+    
+  } else if (type=="size_t") {
+    
+    if (sv.size()>1) {
       size_t_obj=o2scl::stoszt(sv[1]);
-    } else if (type=="string") {
+    }
+    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
+    
+  } else if (type=="string") {
+    
+    if (sv.size()>1) {
       string_obj=sv[1];
     }
-  }
-  
-  if (type=="int") {
-    cout << "Value of " << obj_name << " is " << int_obj << endl;
-  } else if (type=="double") {
-    cout << "Value of " << obj_name << " is " << double_obj << endl;
-  } else if (type=="char") {
-    cout << "Value of " << obj_name << " is " << char_obj << endl;
-  } else if (type=="size_t") {
-    cout << "Value of " << obj_name << " is " << size_t_obj << endl;
-  } else if (type=="string") {
     cout << "Value of " << obj_name << " is " << string_obj << endl;
+    
+  } else if (type=="double[]") {
+    
+    if (sv.size()>1) {
+      size_t ix=o2scl::stoszt(sv[1]);
+      cout << "The value at index " << ix << " is " << doublev_obj[ix]
+           << "." << endl;
+      return 0;
+    }
+    
+  } else if (type=="int[]") {
+    
+    if (sv.size()>1) {
+      size_t ix=o2scl::stoszt(sv[1]);
+      cout << "The value at index " << ix << " is " << intv_obj[ix]
+           << "." << endl;
+      return 0;
+    }
+    
+  } else if (type=="size_t[]") {
+    
+    if (sv.size()>1) {
+      size_t ix=o2scl::stoszt(sv[1]);
+      cout << "The value at index " << ix << " is " << size_tv_obj[ix]
+           << "." << endl;
+      return 0;
+    }
+    
+  } else {
+    
+    cerr << "Command 'value' not implemented for type " << type << " ."
+	 << endl;
+    
+    return exc_efailed;
   }
   
   return 0;
 }
   
+int acol_manager::comm_value_grid(std::vector<std::string> &sv,
+				  bool itive_com) {
+
+  if (type=="table") {
+
+    vector<string> pr, in;
+    pr.push_back("Enter index column name");
+    pr.push_back("Enter index column value");
+    pr.push_back("Enter target column name");
+    pr.push_back("Enter new value (or \"none\") to keep original value");
+    int ret=get_input(sv,pr,in,"value-grid",itive_com);
+    if (ret!=0) return ret;
+
+    double val=o2scl::stod(in[1]);
+    int row=table_obj.lookup(in[0],val);
+    cout << "Looking up value " << val << " in column " << in[0]
+	 << " results in row " << row << " with value "
+	 << table_obj.get(in[0],row) << endl;
+    
+    if (in.size()>=4) {
+      // Convert in[3] to lower case
+      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
+    }
+    
+    if (in.size()<=2 || in[3]=="none") {
+      cout << "Entry for column " << in[2] << " at row " << row << " is "
+	   << table_obj.get(in[2],row) << endl;
+    } else {
+      cout << "Entry for column " << in[2] << " at row " << row
+	   << " is has been changed from "
+	   << table_obj.get(in[2],row);
+      table_obj.set(in[0],row,o2scl::function_to_double(in[3]));
+      cout << " to " << table_obj.get(in[2],row) << endl;
+    }
+    
+  } else if (type=="table3d") {
+
+    vector<string> pr, in;
+    pr.push_back("Enter slice name");
+    pr.push_back("Enter first grid point");
+    pr.push_back("Enter second grid point");
+    pr.push_back("Enter new value (or \"none\") to keep original value");
+    int ret=get_input(sv,pr,in,"value-grid",itive_com);
+    if (ret!=0) return ret;
+
+    int xix;
+    int ret2=o2scl::stoi_nothrow(in[1],xix);
+    if (ret2!=0) {
+      std::cerr << "Failed to convert " << in[1]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (xix<0) {
+      std::cerr << "Conversion of " << in[1]
+		<< " resulted in, " << xix
+		<< ", a negative number." << endl;
+      return exc_efailed;
+    }
+
+    int yix;
+    int ret3=o2scl::stoi_nothrow(in[2],yix);
+    if (ret3!=0) {
+      std::cerr << "Failed to convert " << in[2]
+		<< " to a number." << endl;
+      return exc_efailed;
+    }
+    if (yix<0) {
+      std::cerr << "Conversion of " << in[2]
+		<< " resulted in, " << yix
+		<< ", a negative number." << endl;
+      return exc_efailed;
+    }
+
+    if (in.size()>3) {
+      // Convert in[3] to lower case
+      std::transform(in[3].begin(),in[3].end(),in[3].begin(),::tolower);
+    }
+    
+    if (in.size()<=3 || in[3]=="none") {
+      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
+	   << in[2] << ") is "
+	   << table3d_obj.get(xix,yix,in[0]) << endl;
+    } else {
+      cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
+	   << in[2] << ") has been changed from "
+	   << table3d_obj.get(xix,yix,in[0]);
+      table3d_obj.set(xix,yix,in[0],o2scl::function_to_double(in[3]));
+      cout << " to " << table3d_obj.get(xix,yix,in[0]) << endl;
+    }
+    
+  } else if (type=="tensor_grid") {
+
+    size_t rk=tensor_grid_obj.get_rank();
+    
+    vector<string> in;
+    if (sv.size()<rk+1) {
+      // Handle arguments
+      vector<string> pr;
+      for(size_t i=0;i<rk;i++) {
+	pr.push_back(((std::string)"Value for index ")+
+		     o2scl::szttos(i));
+      }
+      pr.push_back("Enter new value (or \"none\") to keep original value");
+      int ret=get_input(sv,pr,in,"value-grid",itive_com);
+      if (ret!=0) return ret;
+      
+    } else {
+      // If the user specified enough indices, then interpret the
+      // command as a 'get' request and proceed without prompting for
+      // more information.
+      for(size_t i=0;i<sv.size()-1;i++) {
+	in.push_back(sv[i+1]);
+      }
+    }
+
+    // Parse to array
+    vector<double> vals;
+    for(size_t i=0;i<rk;i++) {
+      vals.push_back(o2scl::stod(in[i]));
+    }
+
+    // Set value if necessary
+    if (in.size()>rk && in[rk]!="none") {
+      tensor_grid_obj.set_val
+	(vals,o2scl::stod(in[rk]));
+    }
+
+    // Lookup closest grid point
+    double value=tensor_grid_obj.get_val(vals,vals);
+    vector<size_t> ix(rk);
+    tensor_grid_obj.lookup_grid_vec(vals,ix);
+
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(precision);
+    
+    // Output indices, grid point, value
+    cout << "Indices, grid point, value: ";
+    vector_out(cout,ix,false);
+    cout << " ";
+    vector_out(cout,vals,false);
+    cout << " " << value << endl;
+    
+  } else {
+    cerr << "Command 'value-grid' not implemented for type " << type << " ."
+	 << endl;
+    return exc_efailed;
+  }
+
+  return 0;
+}
+
 int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
 
   cout << "\n" << cl->desc << endl;

@@ -147,7 +147,7 @@ namespace o2scl {
     /// Solve for the density in calc_density()
     int solve_fun(size_t nv, const ubvector &x, ubvector &y,
                   double density, boson &b, double T);
-    /// Desc
+    /// Solve for the density in pair_density()
     int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
                          double density, boson &b, double T);
 

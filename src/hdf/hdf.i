@@ -245,7 +245,7 @@ function hdf_input
 - py_name hdf_input_table
 - hdf_file &hf
 - table<> &t
-- std::string name  
+- std::string name [""]  
 function hdf_input_n
 - void                             
 - py_name hdf_input_n_table
@@ -263,7 +263,7 @@ function hdf_input
 - py_name hdf_input_table_units
 - hdf_file &hf
 - table_units<> &t
-- std::string name  
+- std::string name [""]
 function hdf_input_n
 - void                             
 - py_name hdf_input_n_table_units
@@ -281,7 +281,7 @@ function hdf_input
 - py_name hdf_input_table3d
 - hdf_file &hf
 - table3d &t
-- std::string name  
+- std::string name [""]
 function hdf_input_n
 - void                             
 - py_name hdf_input_n_table3d
@@ -299,7 +299,7 @@ function hdf_input
 - py_name hdf_input_uniform_grid
 - hdf_file &hf
 - uniform_grid<> &t
-- std::string name  
+- std::string name [""]
 function hdf_input_n
 - void                             
 - py_name hdf_input_n_uniform_grid
@@ -317,7 +317,7 @@ function hdf_input
 - py_name hdf_input_tensor_grid
 - hdf_file &hf
 - tensor_grid<> &t
-- std::string name  
+- std::string name [""]
 function hdf_input_n
 - void                             
 - py_name hdf_input_n_tensor_grid
@@ -400,6 +400,10 @@ class acol_manager
 - std::string exec_color
 - std::string url_color
 - std::string default_color
+- function help_found
+  - bool
+  - std::string arg1
+  - std::string arg2
 - function run_empty
   - int
 - function parse_vec_string
