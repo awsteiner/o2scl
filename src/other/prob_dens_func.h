@@ -38,6 +38,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/operation.hpp>
 
+#include <o2scl/columnify.h>
 #include <o2scl/hist.h>
 #include <o2scl/rng.h>
 #include <o2scl/search_vec.h>
@@ -1087,7 +1088,9 @@ namespace o2scl {
     size_t ndim;
 
   public:
-  
+
+    int verbose;
+    
     /** \brief Standard normal
         \comment
         This has to be public so the user can set the random seed,
@@ -1128,6 +1131,7 @@ namespace o2scl {
     /// Create an empty distribution
     prob_dens_mdim_gaussian() {
       ndim=0;
+      verbose=0;
     }
 
     virtual ~prob_dens_mdim_gaussian() {
@@ -1231,6 +1235,13 @@ namespace o2scl {
           covar_arg(j,i)=cov;
         }
       }
+
+      if (verbose>0) {
+        std::cout << "peak: ";
+        vector_out(std::cout,peak_arg,true);
+        std::cout << "covar: " << std::endl;
+        matrix_out(std::cout,p_mdim,p_mdim,covar_arg);
+      }
       
       set_covar(p_mdim,peak_arg,covar_arg);
       
@@ -1292,6 +1303,11 @@ namespace o2scl {
       peak.resize(ndim);
       for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
 
+      if (verbose>0) {
+        std::cout << "covar: " << std::endl;
+        matrix_out(std::cout,ndim,ndim,covar);
+      }
+      
       // Perform the Cholesky decomposition of the covariance matrix
       chol=covar;
       o2scl_linalg::cholesky_decomp(ndim,chol);
@@ -1311,8 +1327,13 @@ namespace o2scl {
         }
         sqrt_det*=chol(i,i);
         for(size_t j=0;j<ndim;j++) {
-          if (i<j) chol(i,j)=0.0;
+          if (i<j) chol(i,j)=chol(j,i);
         }
+      }
+
+      if (verbose>0) {
+        std::cout << "chol: " << std::endl;
+        matrix_out(std::cout,ndim,ndim,chol);
       }
 
       // Compute normalization

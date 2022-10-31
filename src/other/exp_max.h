@@ -52,6 +52,118 @@ namespace o2scl {
     
   protected:
     
+    /** \brief Desc
+     */
+    int calc_internal(size_t n_gauss=1) {
+      
+      ubmatrix last_means(n_gauss,nd_in);
+      for(size_t k=0;k<n_gauss;k++) {
+        const ubvector &peak=pdmg[k].get_peak();
+        if (verbose>0) {
+          std::cout << "Means before: " << k << std::endl;
+          vector_out(std::cout,peak,true);
+        }
+        for(size_t i=0;i<nd_in;i++) {
+          last_means(k,i)=peak[i];
+        }
+      }
+      
+      bool done=false;
+      for(int it=0;it<ntrial && done==false;it++) {
+        
+        // Calc responsibilities (expectation step)
+        
+        double total=0.0;
+        for(size_t i=0;i<np;i++) {
+          double total=0.0;
+          ubvector data_i(nd_in);
+          for(size_t j=0;j<nd_in;j++) {
+            data_i[j]=data(i,j);
+          }
+          for(size_t k=0;k<n_gauss;k++) {
+            total+=pdmg[k].pdf(data_i)*weights[k];
+          }
+          for(size_t k=0;k<n_gauss;k++) {
+            resps(i,k)=pdmg[k].pdf(data_i)*weights[k]/total;
+            if (verbose>2) {
+              std::cout << "resp: " << i << " " << k << " "
+                        << resps(i,k) << std::endl;
+            }
+          }
+        }
+        
+        // Maximization step
+
+        // Compute weights
+        for(size_t k=0;k<n_gauss;k++) {
+          weights[k]=0.0;
+          for(size_t i=0;i<np;i++) {
+            weights[k]+=resps(i,k);
+          }
+          weights[k]/=np;
+          if (verbose>0) {
+            std::cout << "weights: " << k << " " << weights[k] << std::endl;
+          }
+        }
+        
+        // Compute means and covariances
+        for(size_t k=0;k<n_gauss;k++) {
+          matrix_column_gen<ubmatrix> resp_k(resps,k);
+          pdmg[k].set_wgts(nd_in,np,data,resp_k);
+        }
+        
+        // Compare means with previous values to test for convergence
+        done=true;
+        for(size_t k=0;k<n_gauss;k++) {
+          const ubvector &peak=pdmg[k].get_peak();
+          if (verbose>0) {
+            std::cout << "Means: " << k << std::endl;
+            vector_out(std::cout,peak,true);
+          }
+          for(size_t i=0;i<nd_in;i++) {
+            if (done==true && (last_means(k,i)!=0.0 || peak[i]!=0.0)) {
+              double rel_diff;
+              if (last_means(k,i)==0.0) {
+                rel_diff=abs(peak[i]-last_means(k,i))/abs(peak[i]);
+              } else {
+                rel_diff=abs(peak[i]-last_means(k,i))/abs(last_means(k,i));
+              }
+              if (tol_abs>0.0 && peak[i]>tol_abs) {
+                if (verbose>0) {
+                  std::cout << "Setting done to false because peak(k,i) "
+                            << "at k,i=" << k << "," << i << " is "
+                            << peak[i] << " and tol_abs is "
+                            << tol_abs << std::endl;
+                }
+                done=false;
+              }
+              if (rel_diff>tol_rel) {
+                if (verbose>0) {
+                  std::cout << "Setting done to false because peak(k,i) "
+                            << "at k,i=" << k << "," << i << " is "
+                            << peak[i] << " last_mean is "
+                            << last_means(k,i) << " and tol_rel is "
+                            << tol_rel << std::endl;
+                }
+                done=false;
+              }
+            }
+            last_means(k,i)=peak[i];
+          }
+        }
+
+        if (verbose>0) {
+          std::cout << "Iteration " << it << " of " << ntrial << std::endl;
+          if (verbose>1) {
+            char ch;
+            std::cin >> ch;
+          }
+        }
+      }
+      
+      return 0;
+    }
+    
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -60,12 +172,24 @@ namespace o2scl {
     
     exp_max_gmm() {
       data_set=false;
-      verbose=1;
+      verbose=2;
+      ntrial=100;
+      tol_rel=1.0e-8;
+      tol_abs=0.0;
     }
     
     /** \brief Verbosity parameter (default 0)
      */
     int verbose;
+
+    /// Desc
+    int ntrial;
+
+    /// Desc
+    double tol_rel;
+
+    /// Desc
+    double tol_abs;
     
     /** \brief Initialize the data
         The object \c vecs should be a matrix with a
@@ -104,10 +228,10 @@ namespace o2scl {
     //@{
     /** \brief Perform the interpolation over the first function
      */
-    int compute_auto(size_t n_gauss=1) {
+    int calc_auto(size_t n_gauss=1) {
       
       if (n_gauss==0) {
-        O2SCL_ERR("Cannot select zero gaussians in compute().",
+        O2SCL_ERR("Cannot select zero gaussians in calc_auto().",
                   o2scl::exc_einval);
       }
       
@@ -140,19 +264,19 @@ namespace o2scl {
         weights[k]=0.5;
       }
 
-      compute(n_gauss);
+      calc_internal(n_gauss);
       
       return 0;
     }
 
     /** \brief Desc
      */
-    template<class ten_t, class mat2_t, class vec_t>
-    int compute_guess(size_t n_gauss, vec_t &wgts,
+    template<class vec_t, class mat2_t, class ten_t>
+    int calc_guess(size_t n_gauss, vec_t &wgts,
                       mat2_t &means, ten_t &covars) {
       
       if (n_gauss==0) {
-        O2SCL_ERR("Cannot select zero gaussians in compute().",
+        O2SCL_ERR("Cannot select zero gaussians in calc_guess().",
                   o2scl::exc_einval);
       }
       
@@ -162,83 +286,44 @@ namespace o2scl {
 
       for(size_t k=0;k<n_gauss;k++) {
         weights[k]=wgts[k];
+        if (verbose>0) {
+          std::cout << "User-specified weights: " << weights[k] << std::endl;
+        }
         ubvector mean(nd_in);
         ubmatrix covar(nd_in,nd_in);
         for(size_t j=0;j<nd_in;j++) {
           mean[j]=means(k,j);
         }
+        if (verbose>0) {
+          std::cout << "User-specified mean: ";
+          vector_out(std::cout,mean,true);
+        }
         for(size_t i=0;i<nd_in;i++) {
           for(size_t j=0;j<nd_in;j++) {
-            covar(i,j)=covars(k,i,j);
+            covar(i,j)=covars.get(k,i,j);
           }
         }
+        if (verbose>0) {
+          std::cout << "User-specified covariance matrix: ";
+          matrix_out(std::cout,nd_in,nd_in,covar);
+        }
+        pdmg[k].set_covar(2,mean,covar);
       }
 
-      compute(n_gauss);
-      
-      return 0;
-    }
-
-    /** \brief Desc
-     */
-    int compute(size_t n_gauss=1) {
-      
-      for(size_t it=0;it<20;it++) {
-        
-        // Compute responsibilities (expectation step)
-        
-        double total=0.0;
-        for(size_t i=0;i<np;i++) {
-          double total=0.0;
-          ubvector data_i(nd_in);
-          for(size_t j=0;j<nd_in;j++) {
-            data_i[j]=data(i,j);
-          }
-          for(size_t k=0;k<n_gauss;k++) {
-            total+=pdmg[k].pdf(data_i)*weights[k];
-          }
-          for(size_t k=0;k<n_gauss;k++) {
-            resps(i,k)=pdmg[k].pdf(data_i)*weights[k]/total;
-            if (verbose>1) {
-              std::cout << "resp: " << i << " " << k << " "
-                        << resps(i,k) << std::endl;
-            }
-          }
-        }
-        
-        // Maximization step
-
-        // Compute weights
-        for(size_t k=0;k<n_gauss;k++) {
-          weights[k]=0.0;
-          for(size_t i=0;i<nd_in;i++) {
-            weights[k]+=resps(i,k);
-          }
-          weights[k]/=np;
-          if (verbose>0) {
-            std::cout << "weights: " << k << " " << weights[k] << std::endl;
-          }
-        }
-        
-        // Compute means and covariances
-        for(size_t k=0;k<n_gauss;k++) {
-          matrix_column_gen<ubmatrix> resp_k(resps,k);
-          pdmg[k].set_wgts(nd_in,np,data,resp_k);
-          if (verbose>0) {
-            std::cout << "Means: " << k << std::endl;
-            const ubvector &peak=pdmg[k].get_peak();
-            vector_out(std::cout,peak,true);
-          }
-        }
-
-        std::cout << "Iteration " << it << " of 20" << std::endl;
-        char ch;
-        std::cin >> ch;
-      }
+      calc_internal(n_gauss);
       
       return 0;
     }
     //@}
+    
+    /// The gaussians
+    std::vector<o2scl::prob_dens_mdim_gaussian<>> pdmg;
+    
+    /// The weights 
+    ubvector weights;
+    
+    /// The responsibilities
+    ubmatrix resps;
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -253,13 +338,6 @@ namespace o2scl {
     /// True if the data has been specified
     bool data_set;
 
-    /// Weights 
-    ubvector weights;
-    /// Responsibilities
-    ubmatrix resps;
-    /// The gaussians
-    std::vector<o2scl::prob_dens_mdim_gaussian<>> pdmg;
-    
 #endif
     
   };
