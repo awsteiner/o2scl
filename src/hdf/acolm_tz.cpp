@@ -89,6 +89,38 @@ int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
+                                bool itive_com) {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Not enough arguments for to-gmm." << endl;
+    }
+
+    int n_dim=sv.size()-1;
+    vector<string> col_names;
+    cout << "X columns: " << endl;
+    for(size_t i=1;i<sv.size();i++) {
+      col_names.push_back(sv[i]);
+      cout << i-1 << ": " << sv[i] << endl;
+    }
+
+    matrix_view_table<> mvt(table_obj,col_names);
+    
+    //emg_obj.set_data(n_dim,table_obj.get_nlines(),mvt);
+    size_t n_gauss=1;
+    emg_obj.calc_auto(n_gauss);
+    
+    command_del(type);
+    clear_obj();
+    command_add("prob_dens_mdim_gaussian");
+    type="prob_dens_mdim_gaussian";
+    
+  }
+    
+  return 0;
+}
+
 int acol_manager::comm_to_pdma(std::vector<std::string> &sv,
                                bool itive_com) {
   if (type=="table") {

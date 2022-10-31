@@ -48,11 +48,14 @@ namespace o2scl {
 
   /** \brief Expectation maximization for a Gaussian mixture model
    */
-  template<class mat_t=const_matrix_view_table<> > class exp_max_gmm {
+  template<class mat_t=const_matrix_view_table<>,
+           class vecp_t=boost::numeric::ublas::vector<double> >
+  class exp_max_gmm : prob_dens_mdim<vecp_t> {
     
   protected:
     
-    /** \brief Desc
+    /** \brief Use the expectation-maximization algorithm to 
+        optimize the Gaussian mixture
      */
     int calc_internal(size_t n_gauss=1) {
       
@@ -70,8 +73,9 @@ namespace o2scl {
       
       bool done=false;
       for(int it=0;it<ntrial && done==false;it++) {
-        
-        // Calc responsibilities (expectation step)
+
+        // -----------------------------------------------------
+        // Compute responsibilities (expectation step)
         
         double total=0.0;
         for(size_t i=0;i<np;i++) {
@@ -92,6 +96,7 @@ namespace o2scl {
           }
         }
         
+        // -----------------------------------------------------
         // Maximization step
 
         // Compute weights
@@ -176,6 +181,8 @@ namespace o2scl {
       ntrial=100;
       tol_rel=1.0e-8;
       tol_abs=0.0;
+      nd_in=0;
+      np=0;
     }
     
     /** \brief Verbosity parameter (default 0)
@@ -190,6 +197,59 @@ namespace o2scl {
 
     /// Desc
     double tol_abs;
+    
+    /// Base random number generator
+    mutable rng<> r2;
+    
+    /** \brief Desc
+     */
+    virtual size_t dim() const {
+      return nd_in;
+    }
+
+    /** \brief Desc
+     */
+    virtual double pdf(const vecp_t &x) const {
+      double ret=0.0;
+      double weight_sum=0.0;
+      for(size_t k=0;k<weights.size();k++) weight_sum+=weights[k];
+      for(size_t k=0;k<weights.size();k++) {
+        ret+=weights[k]/weight_sum*pdmg[k].pdf(x);
+      }
+      return ret;
+    }
+    
+    /** \brief Desc
+     */
+    virtual double log_pdf(const vecp_t &x) const {
+      return log(pdf(x));
+    }
+
+    /** \brief Desc
+     */
+    virtual void operator()(vecp_t &x) const {
+      double weight_sum=0.0;
+      for(size_t i=0;i<weights.size();i++) weight_sum+=weights[i];
+      ubvector partial_sums(weights.size());
+      for(size_t i=0;i<weights.size();i++) {
+        if (i==0) {
+          partial_sums[0]=weights[0]/weight_sum;
+        } else {
+          partial_sums[i]=partial_sums[i-1]+weights[i]/weight_sum;
+        }
+      }
+
+      double v=r2.random();
+      for(size_t k=0;k<weights.size();k++) {
+        if (v<partial_sums[k] || k==weights.size()-1) {
+          pdmg[k](x);
+          return;
+        }
+      }
+      O2SCL_ERR("Weight arithmetic problem in operator().",
+                o2scl::exc_esanity);
+      return;
+    }
     
     /** \brief Initialize the data
         The object \c vecs should be a matrix with a
@@ -224,11 +284,17 @@ namespace o2scl {
     }
     //@}
 
-    /// \name Evaluate interpolation
+    /// \name Compute the Gaussian mixture model
     //@{
-    /** \brief Perform the interpolation over the first function
+    /** \brief Compute the Gaussian mixture model using random 
+        guesses based on the data
      */
-    int calc_auto(size_t n_gauss=1) {
+    int calc_auto(size_t n_gauss) {
+
+      if (np==0 || nd_in==0) {
+        O2SCL_ERR2("Data not set in ","exp_max_gmm::calc_auto().",
+                   o2scl::exc_einval);
+      }
       
       if (n_gauss==0) {
         O2SCL_ERR("Cannot select zero gaussians in calc_auto().",
@@ -269,11 +335,17 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Desc
-     */
+    /** \brief Compute the Gaussian mixture model using the 
+        specified initial weights, means, and covariance matrices
+    */
     template<class vec_t, class mat2_t, class ten_t>
     int calc_guess(size_t n_gauss, vec_t &wgts,
                       mat2_t &means, ten_t &covars) {
+      
+      if (np==0 || nd_in==0) {
+        O2SCL_ERR2("Data not set in ","exp_max_gmm::calc_guess().",
+                   o2scl::exc_einval);
+      }
       
       if (n_gauss==0) {
         O2SCL_ERR("Cannot select zero gaussians in calc_guess().",
@@ -316,14 +388,11 @@ namespace o2scl {
     }
     //@}
     
-    /// The gaussians
+    /// The Gaussians
     std::vector<o2scl::prob_dens_mdim_gaussian<>> pdmg;
     
     /// The weights 
     ubvector weights;
-    
-    /// The responsibilities
-    ubmatrix resps;
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -338,6 +407,9 @@ namespace o2scl {
     /// True if the data has been specified
     bool data_set;
 
+    /// The responsibilities
+    ubmatrix resps;
+    
 #endif
     
   };

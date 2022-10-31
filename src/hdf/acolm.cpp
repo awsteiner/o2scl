@@ -96,6 +96,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("tensor<size_t>");
   type_list.push_back("prob_dens_mdim_amr");
   type_list.push_back("prob_dens_mdim_gaussian");
+  type_list.push_back("exp_max_gmm");
   type_list.push_back("vec_vec_string");
   type_list.push_back("vec_vec_double");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
@@ -157,6 +158,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"sample"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_gaussian",itmp));
+  }
+  {
+    vector<std::string> itmp={"sample","list"};
+    type_comm_list.insert(std::make_pair("exp_max_gmm",itmp));
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
@@ -583,7 +588,7 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=43;
+    static const size_t narr=44;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -708,6 +713,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-gaussian","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gaussian),both},
+       {0,"to-gmm","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_gmm),both},
        {0,"to-pdma","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_pdma),both},

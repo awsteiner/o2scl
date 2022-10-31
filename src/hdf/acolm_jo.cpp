@@ -133,6 +133,14 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     for(size_t j=0;j<rk;j++) {
       cout << "Size of rank " << j << " is " << sarr[j] << endl;
     }
+  } else if (type=="exp_max_gmm") {
+    cout << "exp_max_gmm name: " << obj_name << endl;
+    size_t n=emg_obj.pdmg.size();
+    for(size_t j=0;j<n;j++) {
+      const ubvector &peak=emg_obj.pdmg[j].get_peak();
+      cout << "Gaussian " << j << " has mean ";
+      vector_out(std::cout,peak,true);
+    }
   } else if (type=="tensor_grid") {
     cout << "tensor_grid name: " << obj_name << endl;
     size_t rk=tensor_grid_obj.get_rank();

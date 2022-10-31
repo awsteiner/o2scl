@@ -44,12 +44,13 @@
 #include <o2scl/uniform_grid.h>
 #include <o2scl/prob_dens_mdim_amr.h>
 #include <o2scl/prob_dens_func.h>
+#include <o2scl/exp_max.h>
 
 /** \brief The \o2 namespace for I/O with HDF
  */
 namespace o2scl_hdf {
 
-  /** \brief Input a \ref o2scl::prob_dens_mdim_amr object from a 
+  /** \brief Input a \ref o2scl::prob_dens_mdim_gaussian object from a 
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -154,6 +155,115 @@ namespace o2scl_hdf {
     hf.setd_mat_copy("covar_inv",covar_inv);
 
     // Close prob_dens_mdim_gaussian group
+    hf.close_group(group);
+    
+    // Return location to previous value
+    hf.set_current_id(top);
+    
+    return;
+  }
+  
+  /** \brief Input a \ref o2scl::exp_max_gmm object from a 
+      \ref hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref exp_max_gmm,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref exp_max_gmm, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref exp_max_gmm, then the
+      error handler is called. Upon exit, \c name contains the name
+      of the object which was read.
+  */
+  template<class mat_t, class vecp_t> 
+  void hdf_input_n(hdf_file &hf,
+                   o2scl::exp_max_gmm<mat_t,vecp_t> &p,
+                   std::string &name) {
+
+    // If no name specified, find name of first group of specified type
+    if (name.length()==0) {
+      hf.find_object_by_type("exp_max_gmm",name);
+      if (name.length()==0) {
+	O2SCL_ERR2("No object of type exp_max_gmm found in ",
+		   "o2scl_hdf::hdf_input().",o2scl::exc_efailed);
+      }
+    }
+    
+    // Open main group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+
+    size_t n;
+    hf.get_szt("n",n);
+    p.weights.resize(n);
+    hf.getd_vec_copy("weights",p.weights);
+
+    for(size_t i=0;i<n;i++) {
+      std::string name=((std::string)"pdmg")+o2scl::szttos(i);
+      hdf_input_n(hf,p.pdmg[i],name);
+    }
+
+    // Close group
+    hf.close_group(group);
+
+    // Return location to previous value
+    hf.set_current_id(top);
+
+    return;
+  }
+  
+  /** \brief Input a \ref o2scl::exp_max_gmm object from a \ref
+      hdf_file
+
+      If \c name has a non-zero length, then this function first reads
+      the first object of type \ref exp_max_gmm,
+      otherwise, it reads the object of the specified name. If \c name
+      is specified and no object is found, or if the object with the
+      specified name is not of type \ref exp_max_gmm, then
+      the error handler is called. If \c name is unspecified and there
+      is no object with type \ref exp_max_gmm, then the
+      error handler is called.
+  */
+  template<class mat_t, class vecp_t> 
+  void hdf_input(hdf_file &hf,
+                 o2scl::exp_max_gmm<mat_t,vecp_t> &p,
+                 std::string name="") {
+    hdf_input_n<mat_t,vecp_t>(hf,p,name);
+    return;
+  }
+  
+  /** \brief Output a \ref o2scl::exp_max_gmm 
+      object to a \ref hdf_file
+  */
+  template<class mat_t, class vecp_t> 
+  void hdf_output(hdf_file &hf,
+                  o2scl::exp_max_gmm<mat_t,vecp_t> &p,
+                  std::string name) {
+    
+    if (hf.has_write_access()==false) {
+      O2SCL_ERR2("File not opened with write access in hdf_output",
+		 "(hdf_file,exp_max_gmm<>,string).",
+		 o2scl::exc_efailed);
+    }
+    
+    // Start group
+    hid_t top=hf.get_current_id();
+    hid_t group=hf.open_group(name);
+    hf.set_current_id(group);
+    
+    // Add typename
+    hf.sets_fixed("o2scl_type","exp_max_gmm");
+    
+    hf.set_szt("n",p.pdmg.size());
+    hf.setd_vec_copy("weights",p.weights);
+    for(size_t i=0;i<p.pdmg.size();i++) {
+      std::string name=((std::string)"pdmg")+o2scl::szttos(i);
+      hdf_output(hf,p.pdmg[i],name);
+    }
+
+    // Close exp_max_gmm group
     hf.close_group(group);
     
     // Return location to previous value
