@@ -42,13 +42,13 @@
 #include <o2scl/columnify.h>
 #include <o2scl/table.h>
 #include <o2scl/tensor.h>
+#include <o2scl/prob_dens_func.h>
 
 namespace o2scl {
 
-  /** \brief Expectation maximization
+  /** \brief Expectation maximization for a Gaussian mixture model
    */
-  template<class mat_t=const_matrix_view_table<> >
-  class exp_mat {
+  template<class mat_t=const_matrix_view_table<> > class exp_max_gmm {
     
   protected:
     
@@ -58,8 +58,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
     
-    exp_max() {
+    exp_max_gmm() {
       data_set=false;
+      verbose=1;
     }
     
     /** \brief Verbosity parameter (default 0)
@@ -68,24 +69,15 @@ namespace o2scl {
     
     /** \brief Initialize the data
         The object \c vecs should be a matrix with a
-        first index of size <tt>n_in+n_out</tt> and a second 
+        first index of size <tt>n_in</tt> and a second 
         index of size <tt>n_points</tt>. It may have be
         any type which allows the use of <tt>operator(,)</tt>
         and <tt>std::swap</tt>.
     */
-    void set_data(size_t n_in, size_t n_points,
-                  mat_t &dat) {
+    void set_data(size_t n_in, size_t n_points, mat_t &dat) {
       
-      if (n_points<points) {
-        O2SCL_ERR2("Not enough points provided in ",
-                   "exp_max::set_data()",exc_efailed);
-      }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "exp_max::set_data()",exc_efailed);
-      }
-      if (n_out<1) {
-        O2SCL_ERR2("Must provide at least one output column in ",
                    "exp_max::set_data()",exc_efailed);
       }
       np=n_points;
@@ -104,8 +96,6 @@ namespace o2scl {
       n_in=nd_in;
       std::swap(data,dat);
       data_set=false;
-      n_points=0;
-      n_in=0;
       return;
     }
     //@}
@@ -114,53 +104,137 @@ namespace o2scl {
     //@{
     /** \brief Perform the interpolation over the first function
      */
-    template<class mat_t> int compute(size_t n_gauss,
-                                      const mat_t &mean_init) {
-
+    int compute_auto(size_t n_gauss=1) {
+      
       if (n_gauss==0) {
         O2SCL_ERR("Cannot select zero gaussians in compute().",
                   o2scl::exc_einval);
       }
       
       weights.resize(n_gauss);
-      resps.resize(n_gauss,np);
-      means.resize(n_gauss,nd_in);
-      covars.resize(n_gauss,nd_in,nd_in);
+      resps.resize(np,n_gauss);
       pdmg.resize(n_gauss);
       
-      // ------------------------------------------------------------
-      // Initialize by setting the responsibilities to 1 for the
-      // closest Gaussian and 0 for the other Gaussians. Additionally,
-      // set the weights equal to the number of points closest to each
-      // mean. This code also works for the trivial single Gaussian
-      // case.
+      // Randomly initialize the Gaussians and the weights
       
-      vector_set_all(n_gauss,weights,0.0);
-
-      for(size_t i=0;i<np;i++) {
-        double dist_min;
-        size_t j_min=0;
-        for(size_t j=0;j<n_gauss;j++) {
-          double dist=0.0;
-          for(size_t k=0;k<nd_in;k++) {
-            dist+=pow(mean_init[j][k]-data[i][k],2.0);
-          }
-          if (j==0 || dist<dist_min) {
-            dist_min=dist;
-            j_min=j;
-          }
+      ubmatrix tcovar(nd_in,nd_in);
+      ubvector tmean(nd_in);
+      pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
+      
+      if (verbose>0) {
+        std::cout << "tmean: " << std::endl;
+        vector_out(std::cout,tmean,true);
+        std::cout << "tcovar: " << std::endl;
+        matrix_out(std::cout,nd_in,nd_in,tcovar);
+      }
+      
+      for(int k=n_gauss-1;k>=0;k--) {
+        pdmg[0](tmean);
+        if (verbose>0) {
+          std::cout << "tmean: " << k << std::endl;
+          vector_out(std::cout,tmean,true);
         }
-        for(size_t j=0;j<n_gauss;j++) {
-          if (j==j_min) resp(j,i)=1.0;
-          else resp(j,i)=0.0;
-        }
-        weights[j_min]+=1;
+        pdmg[k].set_covar(nd_in,tmean,tcovar);
+      }
+      for(size_t k=0;k<n_gauss;k++) {
+        weights[k]=0.5;
       }
 
-      vals.resize(np);
-      vector_set_all(np,vals,1.0);
+      compute(n_gauss);
       
-      pdmg.set(nd_in,np,data,vals,
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    template<class ten_t, class mat2_t, class vec_t>
+    int compute_guess(size_t n_gauss, vec_t &wgts,
+                      mat2_t &means, ten_t &covars) {
+      
+      if (n_gauss==0) {
+        O2SCL_ERR("Cannot select zero gaussians in compute().",
+                  o2scl::exc_einval);
+      }
+      
+      weights.resize(n_gauss);
+      resps.resize(np,n_gauss);
+      pdmg.resize(n_gauss);
+
+      for(size_t k=0;k<n_gauss;k++) {
+        weights[k]=wgts[k];
+        ubvector mean(nd_in);
+        ubmatrix covar(nd_in,nd_in);
+        for(size_t j=0;j<nd_in;j++) {
+          mean[j]=means(k,j);
+        }
+        for(size_t i=0;i<nd_in;i++) {
+          for(size_t j=0;j<nd_in;j++) {
+            covar(i,j)=covars(k,i,j);
+          }
+        }
+      }
+
+      compute(n_gauss);
+      
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    int compute(size_t n_gauss=1) {
+      
+      for(size_t it=0;it<20;it++) {
+        
+        // Compute responsibilities (expectation step)
+        
+        double total=0.0;
+        for(size_t i=0;i<np;i++) {
+          double total=0.0;
+          ubvector data_i(nd_in);
+          for(size_t j=0;j<nd_in;j++) {
+            data_i[j]=data(i,j);
+          }
+          for(size_t k=0;k<n_gauss;k++) {
+            total+=pdmg[k].pdf(data_i)*weights[k];
+          }
+          for(size_t k=0;k<n_gauss;k++) {
+            resps(i,k)=pdmg[k].pdf(data_i)*weights[k]/total;
+            if (verbose>1) {
+              std::cout << "resp: " << i << " " << k << " "
+                        << resps(i,k) << std::endl;
+            }
+          }
+        }
+        
+        // Maximization step
+
+        // Compute weights
+        for(size_t k=0;k<n_gauss;k++) {
+          weights[k]=0.0;
+          for(size_t i=0;i<nd_in;i++) {
+            weights[k]+=resps(i,k);
+          }
+          weights[k]/=np;
+          if (verbose>0) {
+            std::cout << "weights: " << k << " " << weights[k] << std::endl;
+          }
+        }
+        
+        // Compute means and covariances
+        for(size_t k=0;k<n_gauss;k++) {
+          matrix_column_gen<ubmatrix> resp_k(resps,k);
+          pdmg[k].set_wgts(nd_in,np,data,resp_k);
+          if (verbose>0) {
+            std::cout << "Means: " << k << std::endl;
+            const ubvector &peak=pdmg[k].get_peak();
+            vector_out(std::cout,peak,true);
+          }
+        }
+
+        std::cout << "Iteration " << it << " of 20" << std::endl;
+        char ch;
+        std::cin >> ch;
+      }
       
       return 0;
     }
@@ -179,12 +253,12 @@ namespace o2scl {
     /// True if the data has been specified
     bool data_set;
 
+    /// Weights 
     ubvector weights;
+    /// Responsibilities
     ubmatrix resps;
-    ubmatrix means;
-    tensor3 covars;
-
-    std::vector<prob_dens_mdim_gaussian> pdmg;
+    /// The gaussians
+    std::vector<o2scl::prob_dens_mdim_gaussian<>> pdmg;
     
 #endif
     
