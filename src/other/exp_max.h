@@ -24,7 +24,7 @@
 #define O2SCL_EXP_MAX_H
 
 /** \file exp_max.h
-    \brief File defining \ref o2scl::exp_max
+    \brief File defining \ref o2scl::exp_max_gmm
 */
 
 #include <iostream>
@@ -189,17 +189,17 @@ namespace o2scl {
      */
     int verbose;
 
-    /// Desc
+    /// Maximum number of iterations
     int ntrial;
 
-    /// Desc
+    /// Relative tolerance (default \f$ 10^[-6} \f$)
     double tol_rel;
 
-    /// Desc
+    /// Absolute tolerance (default \f$ 0 \f$)
     double tol_abs;
     
     /// Base random number generator
-    mutable rng<> r2;
+    rng<> r2;
     
     /** \brief Desc
      */

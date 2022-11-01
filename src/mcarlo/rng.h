@@ -40,7 +40,7 @@ namespace o2scl {
   protected:
 
     /// Distribution for \f$ [0,1) \f$
-    std::uniform_real_distribution<fp_t> dist;
+    mutable std::uniform_real_distribution<fp_t> dist;
 
     /// Seed for the random number generator
     unsigned int seed;
@@ -48,7 +48,7 @@ namespace o2scl {
   public:
     
     /// Random number engine
-    std::mt19937 def_engine;
+    mutable std::mt19937 def_engine;
 
     rng() {
       seed=time(0);
@@ -63,12 +63,12 @@ namespace o2scl {
     }
 
     /// Get the seed
-    unsigned int get_seed() {
+    unsigned int get_seed() const {
       return seed;
     }
     
     /// Return a random number in \f$(0,1]\f$
-    fp_t random() {
+    fp_t random() const {
       return dist(def_engine);
     }
   
@@ -80,7 +80,7 @@ namespace o2scl {
     }
 
     /// Return random integer in \f$[0,\mathrm{max}-1]\f$.
-    unsigned long int random_int(unsigned long int max=1) {
+    unsigned long int random_int(unsigned long int max=1) const {
       if (max<1) {
         O2SCL_ERR("Cannot specify max less than 1.",o2scl::exc_einval);
       }
@@ -108,67 +108,21 @@ namespace o2scl {
     
   };
 
-  /** \brief Swap function for vector_shuffle()
-      
-      \note This function is based on the static GSL swap function in
-      <tt>randist/shuffle.c</tt>.
-   */
-  template<class data_t>
-  void shuffle_swap(data_t *base, size_t size, size_t i, size_t j) {
-    char * a = size * i + (char *) base ;
-    char * b = size * j + (char *) base ;
-    size_t s = size ;
-    
-    if (i == j) {
-      return;
-    }
-    
-    do {                                       
-      char tmp = *a;                            
-      *a++ = *b;                                
-      *b++ = tmp;                               
-    } while (--s > 0);
-    
-    return;
-  }
-
-  /** \brief Copy function for vector_choose()
-
-      \note This function is based on the static GSL copy function in
-      <tt>randist/shuffle.c</tt>.
-   */
-  template<class data_t>
-  void choose_copy(data_t *dest, size_t i, data_t *src, size_t j,
-		    size_t size) {
-    char * a = size * i + (char *) dest;
-    char * b = size * j + (char *) src;
-    size_t s = size ;
-    
-    do {                                          
-      *a++ = *b++;                              
-    } 
-    while (--s > 0);
-
-    return;
-  }
-
   /** \brief Shuffle the first \c n elements of vector \c data
 
-      \note This function is based on the GSL function
-      <tt>gsl_ran_shuffle()</tt> in <tt>randist/shuffle.c</tt>.
-
-      \note This function works only on vector types which
-      guarantee adjacent storage, such as <tt>vector<double></tt>.
-      
       \note If \c n is 0, this function silently does nothing.
-   */
+  */
   template<class vec_t, class data_t>
   void vector_shuffle(rng<> &r, size_t n, vec_t &data) {
     if (n==0) return;
     
-    for (size_t i = n - 1; i > 0; i--) {
-      size_t j = r.random_int(i+1);
-      shuffle_swap(&data[0],sizeof(data_t),i,j);
+    for (int i=0;i<((int)n)-1;i++) {
+      int j=r.random_int(n-i)+i;
+      if (i!=j) {
+        data_t tmp=data[i];
+        data[i]=data[j];
+        data[j]=tmp;
+      }
     }
     
     return;

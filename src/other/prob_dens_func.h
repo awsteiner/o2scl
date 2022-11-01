@@ -128,7 +128,7 @@ namespace o2scl {
     double sigma_;
 
     /// Base random number generator
-    mutable rng<> r2;
+    rng<> r2;
     
     /// C++ base normal distribution
     mutable std::normal_distribution<double> nd;
@@ -314,7 +314,7 @@ namespace o2scl {
     double ul;
 
     /// The GSL random number generator
-    mutable rng<> r;
+    rng<> r;
     
   public:
 
@@ -497,7 +497,7 @@ namespace o2scl {
     double mu_;
 
     /// The GSL random number generator
-    mutable rng<> r;
+    rng<> r;
 
     /// C++ base normal distribution
     std::lognormal_distribution<double> lnd;
@@ -658,7 +658,7 @@ namespace o2scl {
     ubvector range;
   
     /// Random number generator
-    mutable rng<> rg;
+    rng<> rg;
   
   public:
   
@@ -1821,7 +1821,7 @@ namespace o2scl {
 
     /** \brief Internal random number generator
      */
-    mutable rng<> rg;
+    rng<> rg;
   
     /** \brief Internal set function
 
