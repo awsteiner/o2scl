@@ -122,7 +122,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
       "to-hist","to-hist-2d","to-table3d","wstats",
-      "ser-hist-t3d","to-gaussian","to-pdma"
+      "ser-hist-t3d","to-gaussian","to-pdma","to-gmm"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
@@ -724,6 +724,8 @@ void acol_manager::command_add(std::string new_type) {
         (this,&acol_manager::comm_wstats),both}
       };
     if (narr!=type_comm_list["table"].size()) {
+      std::cout << "1,2: " << narr << " "
+                << type_comm_list["table"].size() << std::endl;
       O2SCL_ERR("Type comm list does not match for table",
                 o2scl::exc_esanity);
     }

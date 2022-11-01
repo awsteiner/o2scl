@@ -2496,9 +2496,9 @@ namespace o2scl_acol {
         
         Construct a multivariate Gaussian distribution
 
-        Arguments: <column 1> [column 2] ...
-
-        This creates an object of type <tt>prob_dens_mdim_gaussian</tt>
+        Arguments: <number of Gaussians> <column 1> [column 2] ...
+        
+        This creates an object of type <tt>exp_max_gmm</tt>
         based on the given columns of data in the table.
      */
     virtual int comm_to_gmm(std::vector<std::string> &sv,

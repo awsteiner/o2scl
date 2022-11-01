@@ -97,18 +97,17 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
       cerr << "Not enough arguments for to-gmm." << endl;
     }
 
-    int n_dim=sv.size()-1;
+    size_t n_gauss=o2scl::stoszt(sv[1]);
     vector<string> col_names;
     cout << "X columns: " << endl;
-    for(size_t i=1;i<sv.size();i++) {
+    for(size_t i=2;i<sv.size();i++) {
       col_names.push_back(sv[i]);
-      cout << i-1 << ": " << sv[i] << endl;
+      cout << i-2 << ": " << sv[i] << endl;
     }
-
-    matrix_view_table<> mvt(table_obj,col_names);
     
-    //emg_obj.set_data(n_dim,table_obj.get_nlines(),mvt);
-    size_t n_gauss=1;
+    const_matrix_view_table<> cmvt(table_obj,col_names);
+    
+    emg_obj.set_data(col_names.size(),table_obj.get_nlines(),cmvt);
     emg_obj.calc_auto(n_gauss);
     
     command_del(type);
