@@ -51,6 +51,13 @@ namespace o2scl {
   template<class mat_t=const_matrix_view_table<>,
            class vecp_t=boost::numeric::ublas::vector<double> >
   class exp_max_gmm : prob_dens_mdim<vecp_t> {
+
+  public:
+
+    /** \brief If true, call the error handler if the calculation
+        fails
+    */
+    bool err_nonconv;
     
   protected:
     
@@ -59,11 +66,15 @@ namespace o2scl {
      */
     int calc_internal(size_t n_gauss=1) {
       
+      std::cout << "exp_max_gmm::calc_internal()" << std::endl;
+
       ubmatrix last_means(n_gauss,nd_in);
       for(size_t k=0;k<n_gauss;k++) {
         const ubvector &peak=pdmg[k].get_peak();
         if (verbose>0) {
-          std::cout << "Means before: " << k << std::endl;
+          std::cout << "  Mean " << k+1 << " of " << n_gauss
+                    << " before: " << k << std::endl;
+          std::cout << "  ";
           vector_out(std::cout,peak,true);
         }
         for(size_t i=0;i<nd_in;i++) {
@@ -77,7 +88,6 @@ namespace o2scl {
         // -----------------------------------------------------
         // Compute responsibilities (expectation step)
         
-        double total=0.0;
         for(size_t i=0;i<np;i++) {
           double total=0.0;
           ubvector data_i(nd_in);
@@ -90,7 +100,7 @@ namespace o2scl {
           for(size_t k=0;k<n_gauss;k++) {
             resps(i,k)=pdmg[k].pdf(data_i)*weights[k]/total;
             if (verbose>2) {
-              std::cout << "resp: " << i << " " << k << " "
+              std::cout << "  resp: " << i << " " << k << " "
                         << resps(i,k) << std::endl;
             }
           }
@@ -107,13 +117,15 @@ namespace o2scl {
           }
           weights[k]/=np;
           if (verbose>0) {
-            std::cout << "weights: " << k << " " << weights[k] << std::endl;
+            std::cout << "  weight: " << k+1 << " of "
+                      << n_gauss << ": " << weights[k] << std::endl;
           }
         }
         
         // Compute means and covariances
         for(size_t k=0;k<n_gauss;k++) {
           matrix_column_gen<ubmatrix> resp_k(resps,k);
+          pdmg[k].verbose=1;
           pdmg[k].set_wgts(nd_in,np,data,resp_k);
         }
         
@@ -122,7 +134,9 @@ namespace o2scl {
         for(size_t k=0;k<n_gauss;k++) {
           const ubvector &peak=pdmg[k].get_peak();
           if (verbose>0) {
-            std::cout << "Means: " << k << std::endl;
+            std::cout << "  Mean: " << k+1 << " of " << n_gauss << ":"
+                      << std::endl;
+            std::cout << "  ";
             vector_out(std::cout,peak,true);
           }
           for(size_t i=0;i<nd_in;i++) {
@@ -134,7 +148,7 @@ namespace o2scl {
                 rel_diff=abs(peak[i]-last_means(k,i))/abs(last_means(k,i));
               }
               if (tol_abs>0.0 && peak[i]>tol_abs) {
-                if (verbose>0) {
+                if (verbose>2) {
                   std::cout << "Setting done to false because peak(k,i) "
                             << "at k,i=" << k << "," << i << " is "
                             << peak[i] << " and tol_abs is "
@@ -143,7 +157,7 @@ namespace o2scl {
                 done=false;
               }
               if (rel_diff>tol_rel) {
-                if (verbose>0) {
+                if (verbose>2) {
                   std::cout << "Setting done to false because peak(k,i) "
                             << "at k,i=" << k << "," << i << " is "
                             << peak[i] << " last_mean is "
@@ -158,12 +172,18 @@ namespace o2scl {
         }
 
         if (verbose>0) {
-          std::cout << "Iteration " << it << " of " << ntrial << std::endl;
+          std::cout << "Iteration " << it+1 << " of " << ntrial << std::endl;
           if (verbose>1) {
             char ch;
             std::cin >> ch;
           }
         }
+      }
+
+      if (done==false) {
+        O2SCL_CONV_RET("Did not converge in "
+                       "exp_max_gmm::calc_internal().",o2scl::exc_einval,
+                       err_nonconv);
       }
       
       return 0;
@@ -177,12 +197,13 @@ namespace o2scl {
     
     exp_max_gmm() {
       data_set=false;
-      verbose=2;
+      verbose=0;
       ntrial=100;
       tol_rel=1.0e-8;
       tol_abs=0.0;
       nd_in=0;
       np=0;
+      err_nonconv=true;
     }
     
     /** \brief Verbosity parameter (default 0)
@@ -198,11 +219,14 @@ namespace o2scl {
     /// Absolute tolerance (default \f$ 0 \f$)
     double tol_abs;
     
-    /// Base random number generator
+    /** \brief Base random number generator
+
+        This is used to automatically generate initial means for the
+        Gaussians if a user-specified guess is not provided.
+     */
     rng<> r2;
     
-    /** \brief Desc
-     */
+    /// Return the dimensionality
     virtual size_t dim() const {
       return nd_in;
     }
@@ -312,16 +336,19 @@ namespace o2scl {
       pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
       
       if (verbose>0) {
-        std::cout << "tmean: " << std::endl;
+        std::cout << "exp_max_gmm::calc_auto(): initial mean: " << std::endl;
+        std::cout << "  ";
         vector_out(std::cout,tmean,true);
-        std::cout << "tcovar: " << std::endl;
-        matrix_out(std::cout,nd_in,nd_in,tcovar);
+        std::cout << "exp_max_gmm::calc_auto(): initial covar: " << std::endl;
+        matrix_out(std::cout,nd_in,nd_in,tcovar,"  ");
       }
       
       for(int k=n_gauss-1;k>=0;k--) {
         pdmg[0](tmean);
         if (verbose>0) {
-          std::cout << "tmean: " << k << std::endl;
+          std::cout << "exp_max_gmm::calc_auto(): random mean: "
+                    << k << std::endl;
+          std::cout << "  ";
           vector_out(std::cout,tmean,true);
         }
         pdmg[k].set_covar(nd_in,tmean,tcovar);
@@ -330,9 +357,7 @@ namespace o2scl {
         weights[k]=0.5;
       }
 
-      calc_internal(n_gauss);
-      
-      return 0;
+      return calc_internal(n_gauss);
     }
 
     /** \brief Compute the Gaussian mixture model using the 
@@ -382,9 +407,7 @@ namespace o2scl {
         pdmg[k].set_covar(2,mean,covar);
       }
 
-      calc_internal(n_gauss);
-      
-      return 0;
+      return calc_internal(n_gauss);
     }
     //@}
     

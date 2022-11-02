@@ -76,8 +76,9 @@ namespace o2scl_linalg {
 
     if (A_00<=0.0) {
       if (err_on_fail) {
-	O2SCL_ERR2("Matrix not positive definite (A[0][0]<=0) in ",
-		   "cholesky_decomp().",o2scl::exc_einval);
+	O2SCL_ERR((((std::string)"Matrix not positive definite ")+
+                   "(A[0][0]="+o2scl::dtos(A_00)+"<=0) in "+
+                   "cholesky_decomp().").c_str(),o2scl::exc_einval);
       } else {
 	return 1;
       }
@@ -95,6 +96,8 @@ namespace o2scl_linalg {
     
       if (diag<=0.0) {
 	if (err_on_fail) {
+          std::cerr.setf(std::ios::scientific);
+          std::cerr << A_00 << " " << A_10 << " " << A_11 << std::endl;
 	  O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
 		     "cholesky_decomp().",o2scl::exc_einval);
 	} else {

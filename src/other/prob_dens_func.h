@@ -713,8 +713,16 @@ namespace o2scl {
     
   public:
 
+    prob_dens_mdim() {
+      verbose=0;
+    }
+    
     virtual ~prob_dens_mdim() {
     }
+    
+    /** \brief Verbosity parameter
+     */
+    int verbose;
     
     /// Return the dimensionality
     virtual size_t dim() const {
@@ -1089,8 +1097,6 @@ namespace o2scl {
 
   public:
 
-    int verbose;
-    
     /** \brief Standard normal
         \comment
         This has to be public so the user can set the random seed,
@@ -1131,13 +1137,13 @@ namespace o2scl {
     /// Create an empty distribution
     prob_dens_mdim_gaussian() {
       ndim=0;
-      verbose=0;
+      err_nonconv=true;
     }
 
     virtual ~prob_dens_mdim_gaussian() {
       ndim=0;
     }
-    
+
     /// Copy constructor
     prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
       ndim=pdmg_loc.ndim;
@@ -1145,7 +1151,9 @@ namespace o2scl {
       covar_inv=pdmg_loc.covar_inv;
       norm=pdmg_loc.norm;
     }
-  
+
+    bool err_nonconv;
+    
     /** \brief Create a distribution from the covariance matrix
      */
     prob_dens_mdim_gaussian(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
@@ -1236,11 +1244,13 @@ namespace o2scl {
         }
       }
 
-      if (verbose>0) {
-        std::cout << "peak: ";
+      if (this->verbose>0) {
+        std::cout << "prob_dens_mdim_gaussian::set_ret():"
+                  << std::endl;
+        std::cout << "  peak: ";
         vector_out(std::cout,peak_arg,true);
-        std::cout << "covar: " << std::endl;
-        matrix_out(std::cout,p_mdim,p_mdim,covar_arg);
+        std::cout << "  covar: " << std::endl;
+        matrix_out(std::cout,p_mdim,p_mdim,covar_arg,"  ");
       }
       
       set_covar(p_mdim,peak_arg,covar_arg);
@@ -1292,20 +1302,21 @@ namespace o2scl {
         \note This function is called in constructors and thus 
         should not be virtual.
     */
-    void set_covar(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
+    int set_covar(size_t p_ndim, vec_t &p_peak, mat_t &covar) {
       
       if (p_ndim==0) {
         O2SCL_ERR("Zero dimension in prob_dens_mdim_gaussian::set().",
-                  o2scl::exc_einval);
+                       o2scl::exc_einval);
       }
       ndim=p_ndim;
       norm=1.0;
       peak.resize(ndim);
       for(size_t i=0;i<ndim;i++) peak[i]=p_peak[i];
 
-      if (verbose>0) {
-        std::cout << "covar: " << std::endl;
-        matrix_out(std::cout,ndim,ndim,covar);
+      if (this->verbose>0) {
+        std::cout << "prob_dens_mdim_gaussian::set_covar():" << std::endl;
+        std::cout << "  covar: " << std::endl;
+        matrix_out(std::cout,ndim,ndim,covar,"  ");
       }
       
       // Perform the Cholesky decomposition of the covariance matrix
@@ -1321,9 +1332,9 @@ namespace o2scl {
       double sqrt_det=1.0;
       for(size_t i=0;i<ndim;i++) {
         if (!std::isfinite(chol(i,i))) {
-          O2SCL_ERR2("An entry of the Cholesky decomposition was ",
-                     "not finite in prob_dens_mdim_gaussian::set().",
-                     o2scl::exc_einval);
+          O2SCL_CONV2_RET("An entry of the Cholesky decomposition was ",
+                         "not finite in prob_dens_mdim_gaussian::set().",
+                         o2scl::exc_einval,err_nonconv);
         }
         sqrt_det*=chol(i,i);
         for(size_t j=0;j<ndim;j++) {
@@ -1331,17 +1342,20 @@ namespace o2scl {
         }
       }
 
-      if (verbose>0) {
-        std::cout << "chol: " << std::endl;
-        matrix_out(std::cout,ndim,ndim,chol);
+      if (this->verbose>0) {
+        std::cout << "  chol: " << std::endl;
+        matrix_out(std::cout,ndim,ndim,chol,"  ");
       }
 
       // Compute normalization
       norm=pow(2.0*o2scl_const::pi,-((double)ndim)/2.0)/sqrt_det;
       if (!std::isfinite(norm)) {
-        O2SCL_ERR2("Normalization not finite in ",
-                   "prob_dens_mdim_gaussian::set().",o2scl::exc_einval);
+        O2SCL_CONV2_RET("Normalization not finite in ",
+                        "prob_dens_mdim_gaussian::set().",
+                        o2scl::exc_einval,err_nonconv);
       }
+      
+      return 0;
     }
 
     /** \brief Set the probability distribution from a 
@@ -1383,16 +1397,15 @@ namespace o2scl {
     /** \brief Given a data set and a covariance function, construct
         probability distribution based on a Gaussian process
         
-        \note The type <tt>mat_col_t</tt> is a matrix column type
-        for the internal object matrix type <tt>mat_t</tt>, and
-        not associated with the data type <tt>vec_vec_t</tt>.
-        Since the default matrix type is 
-        <tt>boost::numeric::ublas::matrix &lt; double &gt; </tt>
-        a good matrix column type for this function is 
-        <tt>boost::numeric::ublas::matrix_column &lt; 
+        \note The type <tt>mat_col_t</tt> is a matrix column type for
+        the internal object matrix type <tt>mat_t</tt>, and not
+        associated with the data type <tt>vec_vec_t</tt>. Since the
+        default matrix type is <tt>boost::numeric::ublas::matrix &lt;
+        double &gt; </tt> a good matrix column type for this function
+        is <tt>boost::numeric::ublas::matrix_column &lt;
         boost::numeric::ublas::matrix &lt; double &gt; &gt;</tt> .
-        This matrix column type is needed for the LU 
-        decomposition and inversion.
+        This matrix column type is needed for the LU decomposition and
+        inversion.
 
         \future Clarify the relationship between this and
         interpm_krige.
@@ -1645,13 +1658,9 @@ namespace o2scl {
         for(size_t i=0;i<this->ndim;i++) {
           if (x[i]<low[i]) {
             done=false;
-            //std::cout << "Too small " << i << " " << x[i] << " "
-            //<< low[i] << std::endl;
             i=this->ndim;
           } else if (x[i]>high[i]) {
             done=false;
-            //std::cout << "Too large " << i << " " << x[i] << " "
-            //<< high[i] << std::endl;
             i=this->ndim;
           }
         }

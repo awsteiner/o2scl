@@ -404,7 +404,8 @@ namespace o2scl {
       opposite convention, use \ref matrix_trans_out().
   */
   template<class mat_t> void matrix_out(std::ostream &os, size_t nrows, 
-				       size_t ncols, const mat_t &A) {
+                                        size_t ncols, const mat_t &A,
+                                        std::string prefix="") {
     
     columnify co;
     std::vector<std::vector<std::string> > stab(ncols);
@@ -419,7 +420,7 @@ namespace o2scl {
     }
     co.align(stab,ncols,nrows,ctable,alig);
     for(size_t i=0;i<nrows;i++) {
-      os << ctable[i] << std::endl;
+      os << prefix << ctable[i] << std::endl;
     }
 
     return;
@@ -443,7 +444,8 @@ namespace o2scl {
       row index and the second index is the column index. For the
       opposite convention, use \ref matrix_trans_out().
   */
-  template<class mat_t> void matrix_out(std::ostream &os, const mat_t &A) {
+  template<class mat_t> void matrix_out(std::ostream &os, const mat_t &A,
+                                        std::string prefix="") {
 
     size_t nrows=A.size1();
     size_t ncols=A.size2();
@@ -461,7 +463,7 @@ namespace o2scl {
     }
     co.align(stab,ncols,nrows,ctable,alig);
     for(size_t i=0;i<nrows;i++) {
-      os << ctable[i] << std::endl;
+      os << prefix << ctable[i] << std::endl;
     }
 
     return;
@@ -484,7 +486,8 @@ namespace o2scl {
       opposite convention, use \ref matrix_out().
   */
   template<class mat_t> void matrix_trans_out(std::ostream &os, size_t nrows, 
-					     size_t ncols, const mat_t &A) {
+                                              size_t ncols, const mat_t &A,
+                                              std::string prefix="") {
    
     columnify co;
     std::vector<std::vector<std::string> > stab(nrows);
@@ -499,7 +502,7 @@ namespace o2scl {
     }
     co.align(stab,nrows,ncols,ctable,alig);
     for(size_t i=0;i<ncols;i++) {
-      os << ctable[i] << std::endl;
+      os << prefix << ctable[i] << std::endl;
     }
 
     return;
@@ -524,7 +527,8 @@ namespace o2scl {
       opposite convention, use \ref matrix_out().
   */
   template<class mat_t> void matrix_trans_out(std::ostream &os,
-					     const mat_t &A) {
+                                              const mat_t &A,
+                                              std::string prefix="") {
 
     size_t nrows=A.size1();
     size_t ncols=A.size2();
@@ -542,7 +546,7 @@ namespace o2scl {
     }
     co.align(stab,nrows,ncols,ctable,alig);
     for(size_t i=0;i<ncols;i++) {
-      os << ctable[i] << std::endl;
+      os << prefix << ctable[i] << std::endl;
     }
 
     return;

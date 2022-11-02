@@ -106,14 +106,23 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
     }
     
     const_matrix_view_table<> cmvt(table_obj,col_names);
-    
+
+    emg_obj.verbose=verbose;
+    emg_obj.err_nonconv=false;
     emg_obj.set_data(col_names.size(),table_obj.get_nlines(),cmvt);
-    emg_obj.calc_auto(n_gauss);
+    int ca_ret=emg_obj.calc_auto(n_gauss);
+    for (int i=0;i<20 && ca_ret!=0;i++) {
+      ca_ret=emg_obj.calc_auto(n_gauss);
+      std::cout << "GMM attempt " << i+1 << " of 20" << std::endl;
+    }
+    if (ca_ret!=0) {
+      cerr << "GMM conversion failed after 20 attempts." << endl;
+    }
     
     command_del(type);
     clear_obj();
-    command_add("prob_dens_mdim_gaussian");
-    type="prob_dens_mdim_gaussian";
+    command_add("exp_max_gmm");
+    type="exp_max_gmm";
     
   }
     

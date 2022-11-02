@@ -201,8 +201,8 @@ namespace o2scl_hdf {
     hf.getd_vec_copy("weights",p.weights);
 
     for(size_t i=0;i<n;i++) {
-      std::string name=((std::string)"pdmg")+o2scl::szttos(i);
-      hdf_input_n(hf,p.pdmg[i],name);
+      std::string pdmg_name=((std::string)"pdmg")+o2scl::szttos(i);
+      hdf_input_n(hf,p.pdmg[i],pdmg_name);
     }
 
     // Close group
@@ -259,8 +259,8 @@ namespace o2scl_hdf {
     hf.set_szt("n",p.pdmg.size());
     hf.setd_vec_copy("weights",p.weights);
     for(size_t i=0;i<p.pdmg.size();i++) {
-      std::string name=((std::string)"pdmg")+o2scl::szttos(i);
-      hdf_output(hf,p.pdmg[i],name);
+      std::string pdmg_name=((std::string)"pdmg")+o2scl::szttos(i);
+      hdf_output(hf,p.pdmg[i],pdmg_name);
     }
 
     // Close exp_max_gmm group
