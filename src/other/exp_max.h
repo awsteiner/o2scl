@@ -48,9 +48,10 @@ namespace o2scl {
 
   /** \brief Expectation maximization for a Gaussian mixture model
    */
-  template<class mat_t=const_matrix_view_table<>,
-           class vecp_t=boost::numeric::ublas::vector<double> >
-  class exp_max_gmm : prob_dens_mdim<vecp_t> {
+  template<class data_mat_t=const_matrix_view_table<>,
+           class gauss_vec_t=boost::numeric::ublas::vector<double>,
+           class gauss_mat_t=boost::numeric::ublas::matrix<double>>
+  class exp_max_gmm : prob_dens_mdim<gauss_vec_t> {
 
   public:
 
@@ -60,6 +61,9 @@ namespace o2scl {
     bool err_nonconv;
     
   protected:
+
+    typedef boost::numeric::ublas::vector<double> internal_vec_t;
+    typedef boost::numeric::ublas::matrix<double> internal_mat_t;
     
     /** \brief Use the expectation-maximization algorithm to 
         optimize the Gaussian mixture
@@ -68,9 +72,9 @@ namespace o2scl {
       
       std::cout << "exp_max_gmm::calc_internal()" << std::endl;
 
-      ubmatrix last_means(n_gauss,nd_in);
+      internal_mat_t last_means(n_gauss,nd_in);
       for(size_t k=0;k<n_gauss;k++) {
-        const ubvector &peak=pdmg[k].get_peak();
+        const gauss_vec_t &peak=pdmg[k].get_peak();
         if (verbose>0) {
           std::cout << "  Mean " << k+1 << " of " << n_gauss
                     << " before: " << k << std::endl;
@@ -90,7 +94,7 @@ namespace o2scl {
         
         for(size_t i=0;i<np;i++) {
           double total=0.0;
-          ubvector data_i(nd_in);
+          internal_vec_t data_i(nd_in);
           for(size_t j=0;j<nd_in;j++) {
             data_i[j]=data(i,j);
           }
@@ -124,7 +128,7 @@ namespace o2scl {
         
         // Compute means and covariances
         for(size_t k=0;k<n_gauss;k++) {
-          matrix_column_gen<ubmatrix> resp_k(resps,k);
+          matrix_column_gen<internal_mat_t> resp_k(resps,k);
           pdmg[k].verbose=1;
           pdmg[k].set_wgts(nd_in,np,data,resp_k);
         }
@@ -132,7 +136,7 @@ namespace o2scl {
         // Compare means with previous values to test for convergence
         done=true;
         for(size_t k=0;k<n_gauss;k++) {
-          const ubvector &peak=pdmg[k].get_peak();
+          const gauss_vec_t &peak=pdmg[k].get_peak();
           if (verbose>0) {
             std::cout << "  Mean: " << k+1 << " of " << n_gauss << ":"
                       << std::endl;
@@ -191,10 +195,6 @@ namespace o2scl {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
-    typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    
     exp_max_gmm() {
       data_set=false;
       verbose=0;
@@ -231,9 +231,9 @@ namespace o2scl {
       return nd_in;
     }
 
-    /** \brief Desc
+    /** \brief Compute the normalized probability density
      */
-    virtual double pdf(const vecp_t &x) const {
+    virtual double pdf(const gauss_vec_t &x) const {
       double ret=0.0;
       double weight_sum=0.0;
       for(size_t k=0;k<weights.size();k++) weight_sum+=weights[k];
@@ -243,18 +243,18 @@ namespace o2scl {
       return ret;
     }
     
-    /** \brief Desc
+    /** \brief The log of the normalized density
      */
-    virtual double log_pdf(const vecp_t &x) const {
+    virtual double log_pdf(const gauss_vec_t &x) const {
       return log(pdf(x));
     }
 
-    /** \brief Desc
+    /** \brief Sample the distribution
      */
-    virtual void operator()(vecp_t &x) const {
+    virtual void operator()(gauss_vec_t &x) const {
       double weight_sum=0.0;
       for(size_t i=0;i<weights.size();i++) weight_sum+=weights[i];
-      ubvector partial_sums(weights.size());
+      internal_vec_t partial_sums(weights.size());
       for(size_t i=0;i<weights.size();i++) {
         if (i==0) {
           partial_sums[0]=weights[0]/weight_sum;
@@ -282,7 +282,7 @@ namespace o2scl {
         any type which allows the use of <tt>operator(,)</tt>
         and <tt>std::swap</tt>.
     */
-    void set_data(size_t n_in, size_t n_points, mat_t &dat) {
+    void set_data(size_t n_in, size_t n_points, data_mat_t &dat) {
       
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
@@ -299,7 +299,7 @@ namespace o2scl {
     /** \brief Get the data used for interpolation
      */
     void get_data(size_t &n_in, size_t &n_points,
-                  mat_t &dat) {
+                  data_mat_t &dat) {
       n_points=np;
       n_in=nd_in;
       std::swap(data,dat);
@@ -331,8 +331,8 @@ namespace o2scl {
       
       // Randomly initialize the Gaussians and the weights
       
-      ubmatrix tcovar(nd_in,nd_in);
-      ubvector tmean(nd_in);
+      internal_mat_t tcovar(nd_in,nd_in);
+      internal_vec_t tmean(nd_in);
       pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
       
       if (verbose>0) {
@@ -386,8 +386,8 @@ namespace o2scl {
         if (verbose>0) {
           std::cout << "User-specified weights: " << weights[k] << std::endl;
         }
-        ubvector mean(nd_in);
-        ubmatrix covar(nd_in,nd_in);
+        internal_vec_t mean(nd_in);
+        internal_mat_t covar(nd_in,nd_in);
         for(size_t j=0;j<nd_in;j++) {
           mean[j]=means(k,j);
         }
@@ -412,10 +412,11 @@ namespace o2scl {
     //@}
     
     /// The Gaussians
-    std::vector<o2scl::prob_dens_mdim_gaussian<>> pdmg;
+    std::vector<o2scl::prob_dens_mdim_gaussian<gauss_vec_t,
+                                               gauss_mat_t>> pdmg;
     
     /// The weights 
-    ubvector weights;
+    internal_vec_t weights;
     
 #ifndef DOXYGEN_INTERNAL
     
@@ -426,12 +427,12 @@ namespace o2scl {
     /// The number of dimensions of the inputs
     size_t nd_in;
     /// The copy of the data
-    mat_t data;
+    data_mat_t data;
     /// True if the data has been specified
     bool data_set;
 
     /// The responsibilities
-    ubmatrix resps;
+    internal_mat_t resps;
     
 #endif
     
