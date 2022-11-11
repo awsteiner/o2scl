@@ -807,6 +807,16 @@ class table<>
 |         vec[i]=v[i]
 |     self.line_of_data_vector(vec)
 |     return
+|                              
+| def row_to_dict(self,row):
+|     """
+|     Convert the specified row to a python dictionary
+|     """
+|     dct={}
+|     for i in range(0,self.get_ncolumns()):
+|         dct[self.get_column_name(i)]=self.get(self.get_column_name(i),
+|                                               row)
+|     return dct
 # 
 # Class table_units<>
 #

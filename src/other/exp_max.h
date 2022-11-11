@@ -94,7 +94,7 @@ namespace o2scl {
         
         for(size_t i=0;i<np;i++) {
           double total=0.0;
-          internal_vec_t data_i(nd_in);
+          gauss_vec_t data_i(nd_in);
           for(size_t j=0;j<nd_in;j++) {
             data_i[j]=data(i,j);
           }
@@ -209,7 +209,7 @@ namespace o2scl {
     /** \brief Verbosity parameter (default 0)
      */
     int verbose;
-
+    
     /// Maximum number of iterations
     int ntrial;
 
@@ -331,8 +331,8 @@ namespace o2scl {
       
       // Randomly initialize the Gaussians and the weights
       
-      internal_mat_t tcovar(nd_in,nd_in);
-      internal_vec_t tmean(nd_in);
+      gauss_mat_t tcovar(nd_in,nd_in);
+      gauss_vec_t tmean(nd_in);
       pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
       
       if (verbose>0) {

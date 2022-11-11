@@ -155,37 +155,66 @@ int main(void) {
     t.test_rel(h2[i],h4[i],1.0e-10,"o2scl vs std::normal");
   }
 
-  ubvector cent(2);
-  ubmatrix covar(2,2);
-  cent[0]=2.0;
-  cent[1]=3.0;
-  covar(0,0)=1.0;
-  covar(1,1)=4.0;
-  covar(0,1)=-1.0;
-  covar(1,0)=-1.0;
-  pdmg.set_covar(2,cent,covar);
-
-  // Test the gaussian PDF normalization
-  {
-    mcarlo_plain<> gm;
+  if (true) {
     
-    ubvector a(2), b(2);
-    a[0]=-15.0;
-    a[1]=-15.0;
-    b[0]=15.0;
-    b[1]=15.0;
+    ubvector cent(2);
+    ubmatrix covar(2,2);
+    cent[0]=2.0;
+    cent[1]=3.0;
+    covar(0,0)=1.0;
+    covar(1,1)=4.0;
+    covar(0,1)=-1.0;
+    covar(1,0)=-1.0;
+    pdmg.set_covar(2,cent,covar);
     
-    multi_funct tf=test_fun;
+    // Test the gaussian PDF normalization
+    {
+      mcarlo_plain<> gm;
+      
+      ubvector a(2), b(2);
+      a[0]=-15.0;
+      a[1]=-15.0;
+      b[0]=15.0;
+      b[1]=15.0;
+      
+      multi_funct tf=test_fun;
+      
+      gm.n_points=100000;
+      double res, err;
+      gm.minteg_err(tf,2,a,b,res,err);
+      
+      cout << "O2scl res,err,rel: " 
+           << res << " " << err << endl;
+      t.test_rel(res,1.0,3.0*err,"normalization");
+    }
     
-    gm.n_points=100000;
-    double res, err;
-    gm.minteg_err(tf,2,a,b,res,err);
-    
-    cout << "O2scl res,err,rel: " 
-	 << res << " " << err << endl;
-    t.test_rel(res,1.0,3.0*err,"normalization");
   }
 
+#ifdef O2SCL_EIGEN
+  
+  if (true) {
+    
+    Eigen::VectorXd cent(2);
+    Eigen::MatrixXd covar(2,2);
+    cent[0]=2.0;
+    cent[1]=3.0;
+    covar(0,0)=1.0;
+    covar(1,1)=4.0;
+    covar(0,1)=-1.0;
+    covar(1,0)=-1.0;
+    
+    prob_dens_mdim_gaussian<Eigen::VectorXd,Eigen::MatrixXd> pdmg2;
+
+    pdmg2.set_covar(2,cent,covar);
+    
+    t.test_rel(pdmg.get_chol()(1,1),
+               pdmg2.get_chol()(1,1),1.0e-14,"ublas vs. eigen");
+    
+  }
+  
+
+#endif
+  
   {
     double one_sigma=erf(1.0/sqrt(2.0));
     double two_sigma=erf(2.0/sqrt(2.0));

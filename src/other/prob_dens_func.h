@@ -1489,8 +1489,20 @@ namespace o2scl {
       for(size_t i=0;i<ndim;i++) {
         qq[i]=x[i]-peak[i];
       }
-      vtmpx=prod(covar_inv,qq);
-      ret*=exp(-0.5*inner_prod(qq,vtmpx));
+
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         ndim,ndim,1.0,covar_inv,qq,0.0,vtmpx);
+
+      double ip=0.0;
+      for(size_t i=0;i<ndim;i++) {
+        ip+=qq[i]*vtmpx[i];
+      }
+      ret*=exp(-0.5*ip);
+      
+      //vtmpx=prod(covar_inv,qq);
+      //ret*=exp(-0.5*inner_prod(qq,vtmpx));
+      
       return ret;
     }
 
@@ -1503,8 +1515,20 @@ namespace o2scl {
       double ret=log(norm);
       vec_t qq(ndim), vtmpx(ndim);
       for(size_t i=0;i<ndim;i++) qq[i]=x[i]-peak[i];
-      vtmpx=prod(covar_inv,qq);
-      ret+=-0.5*inner_prod(qq,vtmpx);
+      
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         ndim,ndim,1.0,covar_inv,qq,0.0,vtmpx);
+
+      double ip=0.0;
+      for(size_t i=0;i<ndim;i++) {
+        ip+=qq[i]*vtmpx[i];
+      }
+      ret+=-0.5*ip;
+      
+      //vtmpx=prod(covar_inv,qq);
+      //ret+=-0.5*inner_prod(qq,vtmpx);
+      
       return ret;
     }
 
@@ -1516,7 +1540,12 @@ namespace o2scl {
       }
       vec_t qq(ndim), vtmpx(ndim);
       for(size_t i=0;i<ndim;i++) qq[i]=pdg();
-      vtmpx=prod(chol,qq);
+
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         ndim,ndim,1.0,chol,qq,0.0,vtmpx);
+
+      //vtmpx=prod(chol,qq);
       for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmpx[i];
       return;
     }

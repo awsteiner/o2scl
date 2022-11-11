@@ -49,64 +49,136 @@ int main(void) {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-  ubvector mean1(2), mean2(2);
-  ubmatrix covar1(2,2), covar2(2,2);
-
-  mean1[0]=0.75;
-  mean1[1]=0.6;
-  mean2[0]=0.25;
-  mean2[1]=0.25;
-  double covar=1.6e-3;
-  covar1(0,0)=covar;
-  covar1(1,1)=covar;
-  covar1(0,1)=covar*0.9;
-  covar1(1,0)=covar*0.9;
-  covar2(0,0)=covar;
-  covar2(1,1)=covar;
-  covar2(0,1)=0.0;
-  covar2(1,0)=0.0;
-
-  prob_dens_mdim_gaussian<> pdmg1, pdmg2;
-  pdmg1.set_covar(2,mean1,covar1);
-  pdmg2.set_covar(2,mean2,covar2);
-  
-  table<> tab;
-  tab.line_of_names("x y");
-
-  ubvector tvec(2);
-  for(size_t i=0;i<80;i++) {
-    pdmg1(tvec);
-    tab.line_of_data(2,tvec);
-  }
-  for(size_t i=0;i<40;i++) {
-    pdmg2(tvec);
-    tab.line_of_data(2,tvec);
-  }
-
-  hdf_file hf;
-  hf.open_or_create("em.o2");
-  hdf_output(hf,tab,"em");
-  hf.close();
-  
-  exp_max_gmm<> emg;
-  const_matrix_view_table<> cmvt(tab,{"x","y"});
-  emg.set_data(2,tab.get_nlines(),cmvt);
+  if (true) {
     
-  emg.calc_auto(2);
-  const ubvector &test_mean1=emg.pdmg[0].get_peak();
-  const ubvector &test_mean2=emg.pdmg[1].get_peak();
-  if (test_mean1[0]>test_mean2[0]) {
-    t.test_rel(test_mean1[0],0.75,1.0e-2,"mean 1");
-    t.test_rel(test_mean1[1],0.6,1.0e-2,"mean 2");
-    t.test_rel(test_mean2[0],0.25,2.0e-2,"mean 3");
-    t.test_rel(test_mean2[1],0.25,2.0e-2,"mean 4");
-  } else {
-    t.test_rel(test_mean2[0],0.75,1.0e-2,"mean 1b");
-    t.test_rel(test_mean2[1],0.6,1.0e-2,"mean 2b");
-    t.test_rel(test_mean1[0],0.25,2.0e-2,"mean 3b");
-    t.test_rel(test_mean1[1],0.25,2.0e-2,"mean 4b");
+    ubvector mean1(2), mean2(2);
+    ubmatrix covar1(2,2), covar2(2,2);
+
+    mean1[0]=0.75;
+    mean1[1]=0.6;
+    mean2[0]=0.25;
+    mean2[1]=0.25;
+    double covar=1.6e-3;
+    covar1(0,0)=covar;
+    covar1(1,1)=covar;
+    covar1(0,1)=covar*0.9;
+    covar1(1,0)=covar*0.9;
+    covar2(0,0)=covar;
+    covar2(1,1)=covar;
+    covar2(0,1)=0.0;
+    covar2(1,0)=0.0;
+
+    prob_dens_mdim_gaussian<> pdmg1, pdmg2;
+    pdmg1.set_covar(2,mean1,covar1);
+    pdmg2.set_covar(2,mean2,covar2);
+
+    table<> tab;
+    tab.line_of_names("x y");
+
+    ubvector tvec(2);
+    for(size_t i=0;i<80;i++) {
+      pdmg1(tvec);
+      tab.line_of_data(2,tvec);
+    }
+    for(size_t i=0;i<40;i++) {
+      pdmg2(tvec);
+      tab.line_of_data(2,tvec);
+    }
+
+    hdf_file hf;
+    hf.open_or_create("em.o2");
+    hdf_output(hf,tab,"em");
+    hf.close();
+  
+    exp_max_gmm<> emg;
+    const_matrix_view_table<> cmvt(tab,{"x","y"});
+    emg.set_data(2,tab.get_nlines(),cmvt);
+    
+    emg.calc_auto(2);
+    const ubvector &test_mean1=emg.pdmg[0].get_peak();
+    const ubvector &test_mean2=emg.pdmg[1].get_peak();
+    if (test_mean1[0]>test_mean2[0]) {
+      t.test_rel(test_mean1[0],0.75,1.0e-2,"mean 1");
+      t.test_rel(test_mean1[1],0.6,1.0e-2,"mean 2");
+      t.test_rel(test_mean2[0],0.25,2.0e-2,"mean 3");
+      t.test_rel(test_mean2[1],0.25,2.0e-2,"mean 4");
+    } else {
+      t.test_rel(test_mean2[0],0.75,1.0e-2,"mean 1b");
+      t.test_rel(test_mean2[1],0.6,1.0e-2,"mean 2b");
+      t.test_rel(test_mean1[0],0.25,2.0e-2,"mean 3b");
+      t.test_rel(test_mean1[1],0.25,2.0e-2,"mean 4b");
+    }
+
   }
 
+#ifdef O2SCL_EIGEN
+
+  if (true) {
+  
+    ubvector mean1(2), mean2(2);
+    ubmatrix covar1(2,2), covar2(2,2);
+
+    mean1[0]=0.75;
+    mean1[1]=0.6;
+    mean2[0]=0.25;
+    mean2[1]=0.25;
+    double covar=1.6e-3;
+    covar1(0,0)=covar;
+    covar1(1,1)=covar;
+    covar1(0,1)=covar*0.9;
+    covar1(1,0)=covar*0.9;
+    covar2(0,0)=covar;
+    covar2(1,1)=covar;
+    covar2(0,1)=0.0;
+    covar2(1,0)=0.0;
+
+    prob_dens_mdim_gaussian<> pdmg1, pdmg2;
+    pdmg1.set_covar(2,mean1,covar1);
+    pdmg2.set_covar(2,mean2,covar2);
+
+    table<> tab;
+    tab.line_of_names("x y");
+
+    ubvector tvec(2);
+    for(size_t i=0;i<80;i++) {
+      pdmg1(tvec);
+      tab.line_of_data(2,tvec);
+    }
+    for(size_t i=0;i<40;i++) {
+      pdmg2(tvec);
+      tab.line_of_data(2,tvec);
+    }
+
+    hdf_file hf;
+    hf.open_or_create("em.o2");
+    hdf_output(hf,tab,"em");
+    hf.close();
+    
+    exp_max_gmm<const_matrix_view_table<>,Eigen::VectorXd,
+                Eigen::MatrixXd> emg;
+  
+    const_matrix_view_table<> cmvt(tab,{"x","y"});
+    emg.set_data(2,tab.get_nlines(),cmvt);
+    
+    emg.calc_auto(2);
+    const Eigen::VectorXd &test_mean1=emg.pdmg[0].get_peak();
+    const Eigen::VectorXd &test_mean2=emg.pdmg[1].get_peak();
+    if (test_mean1[0]>test_mean2[0]) {
+      t.test_rel(test_mean1[0],0.75,1.0e-2,"mean 1");
+      t.test_rel(test_mean1[1],0.6,1.0e-2,"mean 2");
+      t.test_rel(test_mean2[0],0.25,2.0e-2,"mean 3");
+      t.test_rel(test_mean2[1],0.25,2.0e-2,"mean 4");
+    } else {
+      t.test_rel(test_mean2[0],0.75,1.0e-2,"mean 1b");
+      t.test_rel(test_mean2[1],0.6,1.0e-2,"mean 2b");
+      t.test_rel(test_mean1[0],0.25,2.0e-2,"mean 3b");
+      t.test_rel(test_mean1[1],0.25,2.0e-2,"mean 4b");
+    }
+
+  }
+  
+#endif
+  
   t.report();
   return 0;
 }
