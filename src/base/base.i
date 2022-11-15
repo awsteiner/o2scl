@@ -878,6 +878,19 @@ class uniform_grid<>
 - function vector
   - void
   - out std::vector<double> &v
+- extra_py |
+| def to_numpy(self):
+|     """
+|     Copy the vector to a numpy array
+|
+|     Returns: a one-dimensional ``numpy`` array
+|     """
+|     v=std_vector(self._link)
+|     self.vector(v)
+|     ret=numpy.zeros((self.get_npoints()))
+|     for i in range(0,self.get_npoints()):
+|         ret[i]=v[i]
+|     return ret
 # 
 # Class uniform_grid_end
 #
