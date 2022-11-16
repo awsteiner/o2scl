@@ -345,6 +345,12 @@ void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *
 
 void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
 
+void o2scl_hdf_hdf_input_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name);
+
+void o2scl_hdf_hdf_input_n_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, void *ptr_name);
+
+void o2scl_hdf_hdf_output_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name);
+
 int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose=0, bool err_on_fail=true);
 
 int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);

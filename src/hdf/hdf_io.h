@@ -649,6 +649,7 @@ namespace o2scl_hdf {
   /** \brief Output a \ref o2scl::hist object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::hist &h, std::string name);
+
   /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -662,6 +663,7 @@ namespace o2scl_hdf {
       of the object which was read.
    */
   void hdf_input_n(hdf_file &hf, o2scl::hist &h, std::string &name);
+
   /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -674,9 +676,11 @@ namespace o2scl_hdf {
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
+
   /** \brief Output a \ref o2scl::hist_2d object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, const o2scl::hist_2d &h, std::string name);
+
   /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -690,6 +694,7 @@ namespace o2scl_hdf {
       of the object which was read.
    */
   void hdf_input_n(hdf_file &hf, o2scl::hist_2d &h, std::string &name);
+
   /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -702,9 +707,11 @@ namespace o2scl_hdf {
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
+
   /** \brief Output a \ref o2scl::table3d object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name);
+
   /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -718,6 +725,7 @@ namespace o2scl_hdf {
       of the object which was read.
    */
   void hdf_input_n(hdf_file &hf, o2scl::table3d &h, std::string &name);
+
   /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -730,10 +738,12 @@ namespace o2scl_hdf {
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
+
   /** \brief Output a \ref o2scl::expval_scalar object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::expval_scalar &h,
 		  std::string name);
+
   /** \brief Input a \ref o2scl::expval_scalar object from a \ref
       hdf_file
 
@@ -749,6 +759,7 @@ namespace o2scl_hdf {
    */
   void hdf_input_n(hdf_file &hf, o2scl::expval_scalar &h,
                    std::string &name);
+
   /** \brief Input a \ref o2scl::expval_scalar object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -762,10 +773,12 @@ namespace o2scl_hdf {
    */
   void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
 		 std::string name="");
+
   /** \brief Output a \ref o2scl::expval_vector object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::expval_vector &h,
 		  std::string name);
+
   /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -779,6 +792,7 @@ namespace o2scl_hdf {
       of the object which was read.
    */
   void hdf_input_n(hdf_file &hf, o2scl::expval_vector &h, std::string &name);
+
   /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -791,10 +805,12 @@ namespace o2scl_hdf {
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
+
   /** \brief Output a \ref o2scl::expval_matrix object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::expval_matrix &h,
 		  std::string name);
+
   /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -808,6 +824,7 @@ namespace o2scl_hdf {
       of the object which was read.
    */
   void hdf_input_n(hdf_file &hf, o2scl::expval_matrix &h, std::string &name);
+
   /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -820,10 +837,12 @@ namespace o2scl_hdf {
       error handler is called.
    */
   void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
+
   /** \brief Output a \ref o2scl::uniform_grid object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::uniform_grid<double> &h, 
 		  std::string name);
+
   /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -838,6 +857,7 @@ namespace o2scl_hdf {
    */
   void hdf_input_n(hdf_file &hf, o2scl::uniform_grid<double> &h, 
                    std::string &name);
+  
   /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -851,11 +871,13 @@ namespace o2scl_hdf {
    */
   void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
 		 std::string name="");
+  
   /** \brief Output a vector of \ref o2scl::contour_line objects to a
       \ref hdf_file
    */
   void hdf_output(hdf_file &hf, const std::vector<o2scl::contour_line> &cl, 
 		  std::string name);
+  
   /** \brief Input a vector of \ref o2scl::contour_line objects from a
       \ref hdf_file
 
@@ -871,6 +893,7 @@ namespace o2scl_hdf {
    */
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
                    std::string &name);
+  
   /** \brief Input a vector of \ref o2scl::contour_line objects from a
       \ref hdf_file
 
@@ -885,11 +908,13 @@ namespace o2scl_hdf {
    */
   void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
 		 std::string name="");
+  
   /** \brief Output a vector of \ref o2scl::edge_crossings objects to
       a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, const std::vector<o2scl::edge_crossings> &ec, 
 		  std::string name);
+  
   /** \brief Input a vector of \ref o2scl::edge_crossings objects from 
       a \ref hdf_file
 
@@ -905,6 +930,7 @@ namespace o2scl_hdf {
   */
   void hdf_input_n(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
                    std::string &name);
+  
   /** \brief Input a vector of \ref o2scl::edge_crossings objects from
       a \ref hdf_file
 
@@ -919,10 +945,12 @@ namespace o2scl_hdf {
    */
   void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
 		 std::string name="");
+  
   /** \brief Output a \ref o2scl::tensor_grid object to a \ref hdf_file
    */
   void hdf_output(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
 		  std::vector<size_t> > &t, std::string name);
+  
   /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
@@ -937,6 +965,7 @@ namespace o2scl_hdf {
    */
   void hdf_input_n(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
                    std::vector<size_t> > &t, std::string &name);
+  
   /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads

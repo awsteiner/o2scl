@@ -330,6 +330,24 @@ function hdf_output
 - hdf_file &hf
 - tensor_grid<> &t
 - std::string name
+function hdf_input
+- void                             
+- py_name hdf_input_vector_contour_line
+- hdf_file &hf
+- std::vector<contour_line> &v
+- std::string name [""]
+function hdf_input_n
+- void                             
+- py_name hdf_input_n_vector_contour_line
+- hdf_file &hf
+- std::vector<contour_line> &v
+- std::string &name  
+function hdf_output
+- void                             
+- py_name hdf_output_vector_contour_line
+- hdf_file &hf
+- std::vector<contour_line> &v
+- std::string name
 function value_spec
 - int
 - std::string spec

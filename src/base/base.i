@@ -6,7 +6,6 @@
 # 3. Fix all of the functions at the end
 # 4. Check links in python docs to o2scl website
 # 5. global functions like abs() and norm() for complex numbers
-# 6. Create o2sclpy/test/test_tensor_grid.py
 #
 namespace o2scl
 py_class_doc |
@@ -881,7 +880,7 @@ class uniform_grid<>
 - extra_py |
 | def to_numpy(self):
 |     """
-|     Copy the vector to a numpy array
+|     Copy the ``uniform_grid`` object to a numpy array
 |
 |     Returns: a one-dimensional ``numpy`` array
 |     """

@@ -1031,6 +1031,28 @@ void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *n
   return;
 }
 
+void o2scl_hdf_hdf_input_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  std::vector<contour_line> *v=(std::vector<contour_line> *)ptr_v;
+  hdf_input(*hf,*v,name);
+  return;
+}
+
+void o2scl_hdf_hdf_input_n_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, void *ptr_name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  std::vector<contour_line> *v=(std::vector<contour_line> *)ptr_v;
+  std::string *name=(std::string *)ptr_name;
+  hdf_input_n(*hf,*v,*name);
+  return;
+}
+
+void o2scl_hdf_hdf_output_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name) {
+  hdf_file *hf=(hdf_file *)ptr_hf;
+  std::vector<contour_line> *v=(std::vector<contour_line> *)ptr_v;
+  hdf_output(*hf,*v,name);
+  return;
+}
+
 int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose, bool err_on_fail) {
   double *d=(double *)ptr_d;
   int func_ret=value_spec(spec,*d,verbose,err_on_fail);
