@@ -1704,7 +1704,17 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     
   } else if (type=="hist_2d") {
-
+    
+    /*
+      Note that when "frac" or "frac2" is present, the contour level
+      is not computed with full double precision accuracy, The
+      integrals for one hundred levels between the min and max are
+      computed by directly summing the histogram weights. This data is
+      then linearly interpolated to obtain the appropriate absolute
+      contour level. However, the contour calculation is also an
+      approximate method based on linear interpolation so no more
+      accuracy is likely warranted here.
+    */
     int frac_mode=0;
 
     if (sv.size()<2) {

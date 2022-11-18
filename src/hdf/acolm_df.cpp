@@ -639,7 +639,7 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
 
-  hf.file_list(verbose);
+  hf.file_list(use_regex,verbose);
   
   return 0;
 }

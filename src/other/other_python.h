@@ -224,7 +224,17 @@ double o2scl_hist_2d_get_wgt(void *vptr, double x, double y);
 
 void o2scl_hist_2d_set_wgt_i(void *vptr, size_t i, size_t j, double val);
 
+double o2scl_hist_2d_get_x_low_i(void *vptr, size_t i);
+
+double o2scl_hist_2d_get_x_high_i(void *vptr, size_t i);
+
+double o2scl_hist_2d_get_y_low_i(void *vptr, size_t i);
+
+double o2scl_hist_2d_get_y_high_i(void *vptr, size_t i);
+
 void o2scl_hist_2d_set_wgt(void *vptr, double x, double y, double val);
+
+void *o2scl_hist_2d_get_wgts(void *vptr);
 
 void o2scl_hist_2d_clear(void *vptr);
 

@@ -676,30 +676,68 @@ namespace o2scl_acol {
         Arguments: <tt><val> <slice_name> [output_filename
         object_name]</tt>
         
-        The \c contours command constructs a set of contour lines using
-        the data in slice named <slice> at the fixed value given in
-        <val>. If two additional arguments are given, then the
-        contour lines are stored in the file named output_filename and
-        the object is named object_name. If the file does not exist,
-        it is created. If no contours are found, then no file I/O is
-        performed and the current \c table3d object is unmodified.
+        The \c contours command constructs a set of contour lines
+        using the data in slice named <slice> at the fixed value given
+        in <val>. If no additional arguments are given, then the \c
+        table3d object is deleted from memory and the contour lines
+        which were computed become the new current object of type
+        <tt>vector<contour_line></tt>. If two additional arguments are
+        given, then the contour lines are stored in the file named
+        output_filename and the object is named object_name and the
+        current \c table3d object is retained. If the file does not
+        exist, it is created. If no contours are found, then a message
+        is output to the screen, no file I/O is performed, and the
+        current \c table3d object is unmodified.
+
+        Countours are computed by the \ref o2scl::contours class, by
+        piecing together line segments across grid lines. The best way
+        to obtain more accurate contours is to compute them using data
+        with a smaller grid spacing. The \c refine command can be used
+        to refine the data using a simple interpolation scheme, but
+        the accuracy of the contours is then limited by the accuracy
+        of the interpolation.
 
         For objects of type hist_2d:
 
         Create contour lines from a table3d slice.
 
-        Arguments: <tt>["frac"] <val> [output file] [output name]</tt>
+        Arguments: <tt>["frac" or "frac2"] <val> [output file] 
+        [output name]</tt>
 
-        If the optional argument "frac" is not present, the \c contours
-        command constructs a set of contour lines using at the fixed
-        value given in <val>. If two additional arguments are given,
-        then the contour lines are stored in the file named
-        output_filename and the object is named \c object_name. If the
-        file does not exist, it is created. If no contours are found,
-        then no file I/O is performed and the current table3d object
-        is unmodified. If the argument "frac" is present, then the
-        operation is the same except that <val> is interpreted as a
-        fraction of the total integral under the data.
+        If the optional arguments "frac" or "frac2" are not present,
+        the \c contours command constructs a set of contour lines
+        using at the fixed value given in <val>. If no additional
+        arguments are given, then the \c table3d object is deleted
+        from memory and the contour lines which were computed become
+        the new current object of type <tt>vector<contour_line></tt>
+        If two additional arguments are given, then the contour lines
+        are stored in the file named output_filename, the object is
+        named \c object_name, and the current \c hist_2d object
+        retained. If the file does not exist, it is created. If no
+        contours are found, then a message is output to the screen,
+        no file I/O is performed, and the
+        current table3d object is unmodified.
+
+        If the argument "frac" is present, then the operation of the
+        \c contours command is the same except that <val> is
+        interpreted as a fraction of the total integral under the
+        data. The integral is computed as the sum of (w-min) Δx Δy .
+        where "min" is the minimum weight over all bins. This
+        definition ensures that the contours exist for all values
+        between 0 and 1.
+
+        If the argument "frac2" is present, then the <val> is
+        interpreted as a fraction of the total integral, but the
+        integral is computed as the sum of w Δx Δy and thus there are
+        no guarantees that contours exist.
+
+        Countours are computed by the \ref o2scl::contours class, by
+        piecing together line segments across grid lines. The best way
+        to obtain more accurate contours is to compute them using data
+        with a smaller grid spacing. The \c refine command can be used
+        to refine the data using a simple interpolation scheme, but
+        the accuracy of the contours is then limited by the accuracy
+        of the interpolation.
     */
     virtual int comm_contours(std::vector<std::string> &sv, bool itive_com);
     
@@ -2029,7 +2067,11 @@ namespace o2scl_acol {
         Refine the data by interpolating. The type of interpolation is
         determined by the value of <tt>interp_type</tt>. If the
         initial number of rows is N, then the final number of rows is
-        1+(N-1)*<factor>.
+        1+(N-1)*<factor>. If [log mode] is unspecified or "auto",
+        then O₂scl attempts to automatically determine if the 
+        x or y grids are more linear or logarithmic. Other options
+        for [log mode] include "none" (for linear refinement),
+        "x" (logarithmic in x and linear in y), "y", or "xy".
 
         For objects of type hist_2d:
 
@@ -2040,7 +2082,11 @@ namespace o2scl_acol {
         Refine the data by interpolating. The type of interpolation is
         determined by the value of <tt>interp_type</tt>. If the
         initial number of rows is N, then the final number of rows is
-        1+(N-1)*<factor>.
+        1+(N-1)*<factor>. If [log mode] is unspecified or "auto",
+        then O₂scl attempts to automatically determine if the 
+        x or y grids are more linear or logarithmic. Other options
+        for [log mode] include "none" (for linear refinement),
+        "x" (logarithmic in x and linear in y), "y", or "xy".
     */
     virtual int comm_refine(std::vector<std::string> &sv, bool itive_com);
 

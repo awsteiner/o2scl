@@ -664,9 +664,9 @@ namespace o2scl {
 	levs .
     */
     template<class vec_t> 
-      void slice_contours(std::string name, size_t nlev, vec_t &levs,
-			  std::vector<contour_line> &clines) {
-
+    void slice_contours(std::string name, size_t nlev, vec_t &levs,
+                        std::vector<contour_line> &clines) {
+      
       size_t z=lookup_slice(name);
       
       contour co;

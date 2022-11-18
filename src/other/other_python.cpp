@@ -618,10 +618,40 @@ void o2scl_hist_2d_set_wgt_i(void *vptr, size_t i, size_t j, double val) {
   return;
 }
 
+double o2scl_hist_2d_get_x_low_i(void *vptr, size_t i) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_x_low_i(i);
+  return ret;
+}
+
+double o2scl_hist_2d_get_x_high_i(void *vptr, size_t i) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_x_high_i(i);
+  return ret;
+}
+
+double o2scl_hist_2d_get_y_low_i(void *vptr, size_t i) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_y_low_i(i);
+  return ret;
+}
+
+double o2scl_hist_2d_get_y_high_i(void *vptr, size_t i) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  double ret=ptr->get_y_high_i(i);
+  return ret;
+}
+
 void o2scl_hist_2d_set_wgt(void *vptr, double x, double y, double val) {
   hist_2d *ptr=(hist_2d *)vptr;
   ptr->set_wgt(x,y,val);
   return;
+}
+
+void *o2scl_hist_2d_get_wgts(void *vptr) {
+  hist_2d *ptr=(hist_2d *)vptr;
+  boost::numeric::ublas::matrix<double> *ret=&ptr->get_wgts();
+  return ret;
 }
 
 void o2scl_hist_2d_clear(void *vptr) {

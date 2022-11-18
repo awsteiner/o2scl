@@ -2628,7 +2628,7 @@ namespace o2scl {
     
     // Allocate space and interpolate into y_out
     y_out.resize(n_pts);
-    interp_vec<vec3_t,vec4_t> itp(n,x,y,interp_type);
+    interp_vec<vec_t,vec2_t> itp(n,x,y,interp_type);
     for(size_t i=0;i<n_pts;i++) {
       y_out[i]=itp.eval(x_out[i]);
     }
@@ -2888,7 +2888,7 @@ namespace o2scl {
       could be streamlined.
   */
   template<class vec_t>
-    void linear_or_log(vec_t &y, bool &log_y) {
+  void linear_or_log(vec_t &y, bool &log_y) {
     std::vector<double> x(y.size());
     for(size_t i=0;i<y.size();i++) {
       x[i]=((double)i);

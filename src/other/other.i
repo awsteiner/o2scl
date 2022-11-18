@@ -331,6 +331,18 @@ class hist_2d
   - size_t i
   - size_t j
   - double val
+- function get_x_low_i
+  - double
+  - size_t i
+- function get_x_high_i
+  - double
+  - size_t i
+- function get_y_low_i
+  - double
+  - size_t i
+- function get_y_high_i
+  - double
+  - size_t i
 - function set_wgt
   - void
   - double x
@@ -342,6 +354,8 @@ class hist_2d
 #  - double y
 #  - out size_t &ix
 #  - out size_t &iy
+- function get_wgts
+  - boost::numeric::ublas::matrix<double> &
 - function clear
   - void
 - function clear_wgts

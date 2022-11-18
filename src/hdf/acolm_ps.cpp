@@ -126,7 +126,8 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="table3d") {
 
     size_t factor;
-    bool log_mode;
+    std::string log_mode;
+    
     if (sv.size()==1 || sv.size()>=3) {
       vector<string> in, pr;
       pr.push_back("Refinement factor");
@@ -134,10 +135,9 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
       int ret=get_input(sv,pr,in,"refine",itive_com);
       if (ret!=0) return ret;
       factor=o2scl::stoszt(in[0]);
-      log_mode=o2scl::stob(in[1]);
+      log_mode=in[1];
     } else {
       factor=o2scl::stoszt(sv[1]);
-      log_mode=false;
     }
     
     if (verbose>1) {
@@ -151,16 +151,18 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     }
 
     // Check if log scaling makes sense
-    if (log_mode) {
+    if (log_mode=="x" || log_mode=="xy" || log_mode=="yx") {
       double xfirst=table3d_obj.get_grid_x(0);
       double xlast=table3d_obj.get_grid_x(table3d_obj.get_nx()-1);
-      double yfirst=table3d_obj.get_grid_y(0);
-      double ylast=table3d_obj.get_grid_y(table3d_obj.get_ny()-1);
       if (xfirst*xlast<=0.0) {
         cerr << "The x grid in the table3d object does not allow log "
              << "spacing." << endl;
         return 1;
       }
+    }
+    if (log_mode=="y" || log_mode=="xy" || log_mode=="yx") {
+      double yfirst=table3d_obj.get_grid_y(0);
+      double ylast=table3d_obj.get_grid_y(table3d_obj.get_ny()-1);
       if (yfirst*ylast<=0.0) {
         cerr << "The y grid in the table3d object does not allow log "
              << "spacing." << endl;
@@ -175,8 +177,36 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     }
     ubvector xg=table3d_obj.get_x_data();
     ubvector yg=table3d_obj.get_y_data();
-    vector_refine_inplace(xg,factor,log_mode);
-    vector_refine_inplace(yg,factor,log_mode);
+    bool log_x, log_y;
+    if (log_mode.length()==0 || log_mode=="auto") {
+      linear_or_log(xg,log_x);
+      if (log_x) {
+        cout << "Automatically determined that x scale is more logarithmic "
+             << "than linear." << endl;
+      }
+      linear_or_log(yg,log_y);
+      if (log_y) {
+        cout << "Automatically determined that y scale is more logarithmic "
+             << "than linear." << endl;
+      }
+    } else if (log_mode=="none") {
+      log_x=false;
+      log_y=false;
+    } else if (log_mode=="x") {
+      log_x=true;
+      log_y=false;
+    } else if (log_mode=="y") {
+      log_x=false;
+      log_y=true;
+    } else if (log_mode=="xy" || log_mode=="yx") {
+      log_x=true;
+      log_y=true;
+    } else {
+      cerr << "Could not interpret log mode." << endl;
+      return 2;
+    }
+    vector_refine_inplace(xg,factor,log_x);
+    vector_refine_inplace(yg,factor,log_y);
     t3d_new.set_xy(table3d_obj.get_x_name(),xg.size(),xg,
                    table3d_obj.get_y_name(),yg.size(),yg);
     
@@ -198,7 +228,7 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="hist_2d") {
 
     size_t factor;
-    bool log_mode;
+    std::string log_mode;
     if (sv.size()==1 || sv.size()>=3) {
       vector<string> in, pr;
       pr.push_back("Refinement factor");
@@ -207,10 +237,9 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
       if (ret!=0) return ret;
       
       factor=o2scl::stoszt(in[0]);
-      log_mode=o2scl::stob(in[1]);
+      log_mode=in[1];
     } else {
       factor=o2scl::stoszt(sv[1]);
-      log_mode=false;
     }
     
     if (factor<=1) {
@@ -222,32 +251,63 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     ubvector yb=hist_2d_obj.get_y_bins();
     
     // Check if log scaling makes sense
-    if (log_mode) {
+    if (log_mode=="x" || log_mode=="xy" || log_mode=="yx") {
       double xfirst=xb[0];
       double xlast=xb[xb.size()-1];
-      double yfirst=yb[0];
-      double ylast=yb[yb.size()-1];
       if (xfirst*xlast<=0.0) {
         cerr << "The x grid in the table3d object does not allow log "
              << "spacing." << endl;
         return 1;
       }
+    }
+    if (log_mode=="y" || log_mode=="xy" || log_mode=="yx") {
+      double yfirst=yb[0];
+      double ylast=yb[yb.size()-1];
       if (yfirst*ylast<=0.0) {
         cerr << "The y grid in the table3d object does not allow log "
              << "spacing." << endl;
         return 2;
       }
     }
-    
+
     o2scl::hist_2d h2d_new;
 
     if (verbose>1) {
       cout << "factor, log_mode: " << factor << " " << log_mode << endl;
       cout << xb.size() << " " << yb.size() << endl;
     }
-    vector_refine_inplace(xb,factor,log_mode);
-    vector_refine_inplace(yb,factor,log_mode);
 
+    bool log_x, log_y;
+    if (log_mode.length()==0 || log_mode=="auto") {
+      linear_or_log(xb,log_x);
+      if (log_x) {
+        cout << "Automatically determined that x scale is more logarithmic "
+             << "than linear." << endl;
+      }
+      linear_or_log(yb,log_y);
+      if (log_y) {
+        cout << "Automatically determined that y scale is more logarithmic "
+             << "than linear." << endl;
+      }
+    } else if (log_mode=="none") {
+      log_x=false;
+      log_y=false;
+    } else if (log_mode=="x") {
+      log_x=true;
+      log_y=false;
+    } else if (log_mode=="y") {
+      log_x=false;
+      log_y=true;
+    } else if (log_mode=="xy" || log_mode=="yx") {
+      log_x=true;
+      log_y=true;
+    } else {
+      cerr << "Could not interpret log mode." << endl;
+      return 2;
+    }
+    vector_refine_inplace(xb,factor,log_x);
+    vector_refine_inplace(yb,factor,log_y);
+    
     h2d_new.set_bin_edges(xb.size(),xb,yb.size(),yb);
     ubmatrix m=hist_2d_obj.get_wgts();
     ubvector xr, yr;
