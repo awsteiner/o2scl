@@ -937,7 +937,8 @@ namespace o2scl {
                                std::string name, vec2_t &bin_edges,
                                vec3_t &bin_grid, std::string bin_name,
                                o2scl::table_units<> &t, std::string pattern,
-                               std::string slice, int verbose=0) {
+                               std::string slice, bool use_regex=false,
+                               int verbose=0) {
 
       clear();
 
@@ -949,11 +950,20 @@ namespace o2scl {
       
       // First, get all the columns which match the pattern
       std::vector<std::string> matched;
-      
-      for(size_t j=0;j<t.get_ncolumns();j++) {
-        std::regex r(pattern);
-        if (std::regex_search(t.get_column_name(j),r)) {
-          matched.push_back(t.get_column_name(j));
+
+      if (use_regex) {
+        for(size_t j=0;j<t.get_ncolumns();j++) {
+          std::regex r(pattern);
+          if (std::regex_search(t.get_column_name(j),r)) {
+            matched.push_back(t.get_column_name(j));
+          }
+        }
+      } else {
+        for(size_t j=0;j<t.get_ncolumns();j++) {
+          if (fnmatch(pattern.c_str(),
+                      t.get_column_name(j).c_str(),0)==0) {
+            matched.push_back(t.get_column_name(j));
+          }
         }
       }
 
@@ -1090,20 +1100,28 @@ namespace o2scl {
         bin_edges objects.
     */
     template<class vec_t>
-    void create_table_hist_set(vec_t &grid, std::string direction,
-                               std::string name, size_t n_bins,
-                               std::string bin_name,
-                               o2scl::table_units<> &t, std::string pattern,
-                               std::string slice, double factor=1.0e-10,
-                               int verbose=0) {
-
+    void create_table_hist_set_minmax
+    (vec_t &grid, std::string direction, std::string name, size_t n_bins,
+     std::string bin_name, o2scl::table_units<> &t, std::string pattern,
+     std::string slice, double factor=1.0e-10,
+     bool use_regex=false, int verbose=0) {
+      
       // First, get all the columns which match the pattern
       std::vector<std::string> matched;
-      
-      for(size_t j=0;j<t.get_ncolumns();j++) {
-        std::regex r(pattern);
-        if (std::regex_search(t.get_column_name(j),r)) {
-          matched.push_back(t.get_column_name(j));
+
+      if (use_regex) {
+        for(size_t j=0;j<t.get_ncolumns();j++) {
+          std::regex r(pattern);
+          if (std::regex_search(t.get_column_name(j),r)) {
+            matched.push_back(t.get_column_name(j));
+          }
+        }
+      } else {
+        for(size_t j=0;j<t.get_ncolumns();j++) {
+          if (fnmatch(pattern.c_str(),
+                      t.get_column_name(j).c_str(),0)==0) {
+            matched.push_back(t.get_column_name(j));
+          }
         }
       }
 
@@ -1147,7 +1165,7 @@ namespace o2scl {
       }
       
       create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
-                            bin_name,t,pattern,slice);
+                            bin_name,t,pattern,slice,use_regex);
       
       return;
     }
@@ -1162,12 +1180,11 @@ namespace o2scl {
         adjacent edges, otherwise it uses the arithmetic mean.
      */
     template<class vec_t, class vec2_t>
-    void create_table_hist_set(vec_t &grid, std::string direction,
-                               std::string name, vec2_t &bin_edges,
-                               std::string bin_name,
-                               o2scl::table_units<> &t, std::string pattern,
-                               std::string slice, int verbose=0) {
-
+    void create_table_hist_set_edgeonly
+    (vec_t &grid, std::string direction, std::string name, vec2_t &bin_edges,
+     std::string bin_name, o2scl::table_units<> &t, std::string pattern,
+     std::string slice, bool use_regex=false, int verbose=0) {
+      
       bool log=false;
       linear_or_log(bin_edges,log);
       std::vector<double> bin_grid(bin_edges.size()-1);
@@ -1191,7 +1208,7 @@ namespace o2scl {
       }
 
       create_table_hist_set(grid,direction,name,bin_edges,bin_grid,
-                            bin_name,t,pattern,slice,verbose);
+                            bin_name,t,pattern,slice,use_regex,verbose);
       
       return;
     }

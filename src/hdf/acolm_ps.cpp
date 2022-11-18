@@ -60,17 +60,20 @@ int acol_manager::comm_ser_hist_t3d(std::vector<std::string> &sv,
 
   if (in[3]=="auto") {
     size_t n_bins=o2scl::stoszt(in[4]);
-    table3d_obj.create_table_hist_set(grid,in[1],in[2],n_bins,
-                                      in[5],table_obj,in[6],in[7]);
+    table3d_obj.create_table_hist_set_minmax(grid,in[1],in[2],n_bins,
+                                             in[5],table_obj,in[6],in[7],
+                                             use_regex);
   } else if (in[4]=="auto") {
     int ret3=vector_spec(in[3],bin_edges,false,verbose,false);
-    table3d_obj.create_table_hist_set(grid,in[1],in[2],bin_edges,
-                                      in[5],table_obj,in[6],in[7]);
+    table3d_obj.create_table_hist_set_edgeonly(grid,in[1],in[2],bin_edges,
+                                               in[5],table_obj,in[6],in[7],
+                                               use_regex);
   } else {
     int ret3=vector_spec(in[3],bin_edges,false,verbose,false);
     int ret4=vector_spec(in[4],bin_grid,false,verbose,false);
     table3d_obj.create_table_hist_set(grid,in[1],in[2],bin_edges,
-                                      bin_grid,in[5],table_obj,in[6],in[7]);
+                                      bin_grid,in[5],table_obj,in[6],
+                                      in[7],use_regex);
   }
 
   command_del(type);
