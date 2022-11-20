@@ -159,6 +159,9 @@ namespace o2scl {
     /// The decimal point (default <tt>'.'</tt>)
     std::string dpt;
     //@}
+
+    bool alt_exp_digits;
+    std::vector<std::string> exp_digits;
     
     /** \brief Remove extra zeros and decimal point from mantisaa
      */
@@ -216,6 +219,8 @@ namespace o2scl {
 	in LaTeX's "math mode" already.
     */
     void latex_mode();
+
+    void unicode_mode();
     
     /** \brief C-like mode
 

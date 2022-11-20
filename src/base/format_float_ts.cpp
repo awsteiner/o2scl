@@ -330,6 +330,13 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  cout << "Unicode: " << endl;
+  ff.unicode_mode();
+  cout << ff.convert(sqrt(2.0)*1.0e-10) << endl;
+  cout << ff.convert(sqrt(2.0)*1.0e-5) << endl;
+  cout << ff.convert(sqrt(2.0)*1.0e7) << endl;
+  cout << ff.convert(sqrt(2.0)*1.0e14) << endl;
+  
   t.report();
   return 0;
 }

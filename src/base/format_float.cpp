@@ -52,6 +52,17 @@ format_float::format_float() {
   dpt='.';
   exp_dgs=0;
   show_exp_sgn=false;
+  alt_exp_digits=false;
+  exp_digits.push_back("⁰");
+  exp_digits.push_back("¹");
+  exp_digits.push_back("²");
+  exp_digits.push_back("³");
+  exp_digits.push_back("⁴");
+  exp_digits.push_back("⁵");
+  exp_digits.push_back("⁶");
+  exp_digits.push_back("⁷");
+  exp_digits.push_back("⁸");
+  exp_digits.push_back("⁹");
 }
 
 void format_float::html_mode() {
@@ -69,6 +80,26 @@ void format_float::html_mode() {
   zeros="0";
   exp_dgs=0;
   show_exp_sgn=false;
+  alt_exp_digits=false;
+  return;
+}
+
+void format_float::unicode_mode() {
+  prefx="";
+  sgn="-";
+  suffx="";
+  sci_prefx="";
+  tmes=" × ";
+  exp_prefx="10";
+  exp_sgn="⁻";
+  sci_sgn="-";
+  exp_suffx="";
+  sci_suffx="";
+  not_finte="Nan";
+  zeros="0";
+  exp_dgs=0;
+  show_exp_sgn=false;
+  alt_exp_digits=true;
   return;
 }
 
@@ -87,6 +118,7 @@ void format_float::latex_mode() {
   zeros="0";
   exp_dgs=0;
   show_exp_sgn=false;
+  alt_exp_digits=false;
   return;
 }      
 
@@ -107,6 +139,7 @@ void format_float::c_mode() {
   ex_mx=5;
   exp_dgs=2;
   show_exp_sgn=true;
+  alt_exp_digits=false;
   return;
 }
 
@@ -342,6 +375,37 @@ string format_float::convert(double x, bool debug) {
     if (exp_dgs>0 && expo_str.length()<exp_dgs) {
       for(size_t i=0;i<exp_dgs-expo_str.length();i++) {
 	expo_str='0'+expo_str;
+      }
+    }
+
+    // Re-express in terms of alternate digits if required
+    if (alt_exp_digits) {
+      string expo_str_old=expo_str;
+      expo_str="";
+      for(size_t j=0;j<expo_str_old.size();j++) {
+        if (expo_str_old[j]=='0') {
+          expo_str+=exp_digits[0];
+        } else if (expo_str_old[j]=='1') {
+          expo_str+=exp_digits[1];
+        } else if (expo_str_old[j]=='2') {
+          expo_str+=exp_digits[2];
+        } else if (expo_str_old[j]=='3') {
+          expo_str+=exp_digits[3];
+        } else if (expo_str_old[j]=='4') {
+          expo_str+=exp_digits[4];
+        } else if (expo_str_old[j]=='5') {
+          expo_str+=exp_digits[5];
+        } else if (expo_str_old[j]=='6') {
+          expo_str+=exp_digits[6];
+        } else if (expo_str_old[j]=='7') {
+          expo_str+=exp_digits[7];
+        } else if (expo_str_old[j]=='8') {
+          expo_str+=exp_digits[8];
+        } else if (expo_str_old[j]=='9') {
+          expo_str+=exp_digits[9];
+        } else {
+          expo_str+=expo_str_old[j];
+        }
       }
     }
     
