@@ -852,6 +852,10 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
+
+  format_float ff;
+  ff.unicode_mode();
+  ff.set_sig_figs(precision+1);
   
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
@@ -929,7 +933,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (long double): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(d,precision) << " " << endl;
       
       return 0;
     }
@@ -945,7 +949,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     else cout.unsetf(ios::scientific);
     cout.precision(precision);
     if (verbose>0) cout << "Result: ";
-    cout << d << endl;
+    cout << d << " (" << ff.convert(d) << ")" << endl;
     return 0;
     
 #else
@@ -1037,7 +1041,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
-  cout << d << endl;
+  cout << d << " (" << ff.convert(d) << ")" << endl;
   return 0;
 }
 
@@ -1924,6 +1928,10 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_convert
 (std::vector<std::string> &sv, bool itive_com) {
 
+  format_float ff;
+  ff.unicode_mode();
+  ff.set_sig_figs(precision+1);
+  
   if (verbose>=2) {
     cng.verbose=verbose;
   } else {
