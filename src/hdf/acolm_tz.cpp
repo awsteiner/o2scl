@@ -177,15 +177,16 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
 
   if (type=="table") {
 
-    int ret=get_input_one(sv,((string)"Enter \"2d\" for 2d histogram ")+
-			  +"and \"1d\" for 1d histogram",i1,"to-hist",
-			  itive_com);
-    if (ret!=0) return ret;
+    // AWS, 11/22/22, This looks like it could be old, so I'm removing
+    //it for now.
+    //int ret=get_input_one(sv,((string)"Enter \"2d\" for
+    //2d histogram ")+ +"and \"1d\" for 1d histogram",i1,"to-hist",
+    //itive_com); if (ret!=0) return ret;
     
     vector<string> in, pr;
     pr.push_back("Column name");
     pr.push_back("Number of bins");
-    ret=get_input(sv,pr,in,"to-hist",itive_com);
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
     if (ret!=0) return ret;
       
     std::string col2;
@@ -208,6 +209,55 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       hist_obj.from_table(table_obj,in[0],col2,nbins);
     }
 
+    command_del(type);
+    clear_obj();
+    command_add("hist");
+    type="hist";
+
+    return 0;
+  } 
+
+  if (type=="table3d") {
+
+    vector<string> in, pr;
+    pr.push_back("Slice name");
+    pr.push_back("Number of bins");
+    int ret=get_input(sv,pr,in,"to-hist",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix;
+    if (!table3d_obj.is_slice(in[0],ix)) {
+      cerr << "No slice named " << in[0] << " in table3d." << endl;
+      return 11;
+    }
+    
+    const ubmatrix &sl=table3d_obj.get_slice(i1);
+    size_t n_bins=o2scl::stoszt(in[1]);
+
+    double min=1.0, max=0.0;
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        if (i==0 && j==0) {
+          min=sl(i,j);
+          max=sl(i,j);
+        } else if (sl(i,j)<min) {
+          min=sl(i,j);
+        } else if (sl(i,j)>max) {
+          max=sl(i,j);
+        }
+      }
+    }
+
+    hist_obj.clear();
+    uniform_grid<double> ug=uniform_grid_end<double>(min,max,n_bins);
+    hist_obj.set_bin_edges(ug);
+    
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        hist_obj.update(sl(i,j));
+      }
+    }
+    
     command_del(type);
     clear_obj();
     command_add("hist");

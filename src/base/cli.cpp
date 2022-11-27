@@ -532,7 +532,7 @@ int cli::process_args(std::vector<std::string> &svsv,
     if (debug>0) cout << "Processing: " << s << endl;
     
     // If it's an option, it begins with '-'. Otherwise, just skip it
-    if (s[0]=='-') {
+    if (s[0]=='-' && s.length()>=2 && isalpha(s[1])) {
 
       // The corresponding index in clist
       int option_index=0;
@@ -639,7 +639,7 @@ int cli::process_args(std::vector<std::string> &svsv,
 	    string s2=svsv[current+1];
 
 	    // The next string is an argument, so assume 'get'
-	    if (s2[0]=='-') {
+	    if (s2[0]=='-' && s2.length()>=2 && isalpha(s2[1])) {
 
 	      bool found_get_cmd=false;
 	      for(size_t i=0;found_get_cmd==false && i<clist.size();i++) {
@@ -765,7 +765,8 @@ int cli::process_args(std::vector<std::string> &svsv,
 
 	    // If we still haven't got the minimum number of parameters
 	    // or if the next entry is not an argument
-	    if (j<clist[option_index].min_parms-1 || s[0]!='-') {
+	    if (j<clist[option_index].min_parms-1 || s[0]!='-' ||
+                s.length()<2 || !isalpha(s[1])) {
 		
 	      if (debug>0) {
 		cout << "Adding argument (before min) to list." << endl;
@@ -778,11 +779,15 @@ int cli::process_args(std::vector<std::string> &svsv,
 	      // If the entry begins with a dash or and we've got at
 	      // least the minimum number of parameters, then we've
 	      // got a new option.
-	      if (s[0]=='-' && ((j>clist[option_index].min_parms-1) || 
-				(clist[option_index].min_parms==-1))) {
+	      if (s[0]=='-' && s.length()>=2 && isalpha(s[1]) && 
+                  ((j>clist[option_index].min_parms-1) || 
+                   (clist[option_index].min_parms==-1))) {
+                
 		if (debug>0) cout << "Parsed an option" << endl;
 		option_done=true;
+                
 	      } else {
+                
 		// Otherwise, we have a new parameter for the option.
 		if (debug>0) {
 		  cout << "Adding argument (after min) to list." << endl;

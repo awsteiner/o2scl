@@ -131,7 +131,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
       "function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
-      "list","max","min","rename","set-data",
+      "list","max","min","rename","set-data","hist",
       "slice","slice-hist","sum","to-hist-2d","to-table",
       "to-tensor-grid","to-tg-fermi","x-name","y-name"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
@@ -734,7 +734,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=27;
+    static const size_t narr=28;
     comm_option_s options_arr[narr]=
       {{0,"to-tensor-grid","",0,1,"","",
          new comm_option_mfptr<acol_manager>
@@ -742,6 +742,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-table","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_table),both},
+       {0,"to-hist","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_hist),both},
        {0,"to-tg-fermi","",0,5,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_tg_fermi),both},

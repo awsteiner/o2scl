@@ -2568,13 +2568,22 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Convert a table to a histogram.
+        Convert a table column to a histogram.
 
         Arguments: <tt><col> <n_bins> [wgts]</tt>
 
         The <tt>to-hist</tt> command creates a 1D histogram from
         column <col> using exactly <n_bins> bins and (optionally)
         weighting the entries by the values in column [wgts]. 
+
+        For objects of type table:
+
+        Convert a table3d slice to a histogram.
+
+        Arguments: <tt><slice> <n_bins></tt>
+
+        The <tt>to-hist</tt> command creates a 1D histogram from
+        slice <slice> using exactly <n_bins> bins.
     */
     virtual int comm_to_hist(std::vector<std::string> &sv, bool itive_com);
 
