@@ -131,7 +131,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
       "function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
-      "list","max","min","rename","set-data","hist",
+      "list","max","min","rename","set-data","to-hist",
       "slice","slice-hist","sum","to-hist-2d","to-table",
       "to-tensor-grid","to-tg-fermi","x-name","y-name"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
@@ -160,6 +160,18 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("prob_dens_mdim_gaussian",itmp));
   }
   {
+    vector<std::string> itmp={"list"};
+    type_comm_list.insert(std::make_pair("vector<contour_line>",itmp));
+  }
+  {
+    vector<std::string> itmp={"list"};
+    type_comm_list.insert(std::make_pair("vec_vec_double",itmp));
+  }
+  {
+    vector<std::string> itmp={"list"};
+    type_comm_list.insert(std::make_pair("vec_vec_string",itmp));
+  }
+  {
     vector<std::string> itmp={"sample","list"};
     type_comm_list.insert(std::make_pair("exp_max_gmm",itmp));
   }
@@ -179,7 +191,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("hist_2d",itmp));
   }
   {
-    vector<std::string> itmp={"to-table","function"};
+    vector<std::string> itmp={"to-table","function","list"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("hist",itmp));
   }
@@ -1040,7 +1052,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="hist") {
 
-    static const size_t narr=2;
+    static const size_t narr=3;
     comm_option_s options_arr[narr]=
       {
         {0,"function","",0,1,"","",
@@ -1048,7 +1060,10 @@ void acol_manager::command_add(std::string new_type) {
          (this,&acol_manager::comm_function),both},
         {0,"to-table","",0,0,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table),both}
+         (this,&acol_manager::comm_to_table),both},
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
       };
     if (narr!=type_comm_list["hist"].size()) {
       O2SCL_ERR("Type comm list does not match for hist",
@@ -1188,6 +1203,52 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="vector<contour_line>") {
 
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]=
+      {
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_list),both}
+      };
+    if (narr!=type_comm_list["vector<contour_line>"].size()) {
+      O2SCL_ERR("Type comm list does not match for vector<contour_line>",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="vec_vec_double") {
+
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]=
+      {
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_list),both}
+      };
+    if (narr!=type_comm_list["vec_vec_double"].size()) {
+      O2SCL_ERR("Type comm list does not match for vec_vec_double",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="vec_vec_string") {
+
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]=
+      {
+        {'l',"list","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both}
+      };
+    if (narr!=type_comm_list["vec_vec_string"].size()) {
+      O2SCL_ERR("Type comm list does not match for vec_vec_string",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="hist_2d") {
 
     static const size_t narr=6;

@@ -1721,6 +1721,13 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
       cout << "Object of type double[] sorted." << endl;
     }
 
+  } else if (type=="string[]") {
+
+    vector_sort<vector<string>,string>(stringv_obj.size(),stringv_obj);
+    if (verbose>0) {
+      cout << "Object of type double[] sorted." << endl;
+    }
+
   } else {
 
     cout << "Not implemented for type " << type << endl;
@@ -1733,7 +1740,66 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type=="table") {
+  if (type=="double[]") {
+    
+    cout << "N        : " << doublev_obj.size() << endl;
+    cout << "Sum      : "
+         << vector_mean(doublev_obj.size(),doublev_obj)*
+      doublev_obj.size() << endl;
+    cout << "Mean     : " << vector_mean(doublev_obj.size(),
+                                         doublev_obj) << endl;
+    cout << "Std. dev.: " << vector_stddev(doublev_obj.size(),
+                                           doublev_obj) << endl;
+    size_t ix;
+    double val;
+    vector_min(doublev_obj.size(),doublev_obj,ix,val);
+    cout << "Min      : " << val << " at index: " << ix << endl;
+    vector_max(doublev_obj.size(),doublev_obj,ix,val);
+    cout << "Max      : " << val << " at index: " << ix << endl;
+    
+    size_t dup=0, inc=0, dec=0;
+    for(size_t i=0;i<doublev_obj.size()-1;i++) {
+      if (doublev_obj[i+1]==doublev_obj[i]) dup++;
+      if (doublev_obj[i]<doublev_obj[i+1]) inc++;
+      if (doublev_obj[i]>doublev_obj[i+1]) dec++;
+    }
+
+    size_t ninf=0, nnan=0;
+    for(size_t i=0;i<doublev_obj.size();i++) {
+      if (std::isinf(doublev_obj[i])) ninf++;
+      if (std::isnan(doublev_obj[i])) nnan++;
+    }
+    
+    if (inc>0 && dec==0) {
+      if (dup>0) {
+	cout << "Increasing (" << dup << " duplicates)." << endl;
+      } else {
+	cout << "Strictly increasing. No duplicates." << endl;
+      }
+    } else if (dec>0 && inc==0) {
+      if (dup>0) {
+	cout << "Decreasing (" << dup << " duplicates)." << endl;
+      } else {
+	cout << "Strictly decreasing. No duplicates." << endl;
+      }
+    } else if (dec==0 && inc==0) {
+      cout << "Constant (" << dup << " duplicates)." << endl;
+    } else {
+      cout << "Non-monotonic (" << inc << " increasing, " << dec 
+	   << " decreasing, and " << dup << " duplicates)." << endl;
+    }
+    if (ninf>0) {
+      cout << ninf << " infinite values." << endl;
+    }
+    if (nnan>0) {
+      cout << nnan << " NaN values." << endl;
+    }
+    if ((dup+inc+dec)!=(doublev_obj.size()-1)) {
+      cout << "Counting mismatch from non-finite values or signed zeros."
+	   << endl;
+    }
+    
+  } else if (type=="table") {
     
     if (table_obj.get_nlines()==0) {
       cerr << "No table to analyze." << endl;

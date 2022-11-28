@@ -1671,6 +1671,14 @@ namespace o2scl_acol {
 
         List the slice names and print out grid info.
 
+        For objects of type hist:
+
+        List the ...
+
+        Arguments: (No arguments.)
+
+        List the ...
+
         For objects of type tensor:
 
         List the tensor rank and index sizes.
@@ -1678,6 +1686,30 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
 
         List the tensor rank and index sizes.
+
+        For objects of type vector<contour_line>:
+
+        List the contour line levels and sizes.
+
+        Arguments: (No arguments.)
+
+        List the contour line levels and sizes.
+
+        For objects of type vector<vector<double>>:
+
+        List the number of entries and their respective sizes.
+
+        Arguments: (No arguments.)
+
+        List the number of entries and their respective sizes.
+
+        For objects of type vector<vector<string>>:
+
+        List the number of entries and their respective sizes.
+
+        Arguments: (No arguments.)
+
+        List the number of entries and their respective sizes.
 
         For objects of type tensor<int>:
 
@@ -2399,6 +2431,14 @@ namespace o2scl_acol {
 
         Sort the vector (in-place).
 
+        For objects of type string[]:
+
+        Sort the vector.
+
+        (No arguments.)
+
+        Sort the vector (in-place).
+
         For objects of type table:
 
         Sort the entire table by one column.
@@ -2421,6 +2461,14 @@ namespace o2scl_acol {
 
         Output the average, standard deviation, max and min of
         <column>.
+
+        For objects of type double[]:
+
+        Show vector statistics.
+
+        Arguments: (None.)
+
+        Output the average, standard deviation, max and min.
 
         For objects of type table3d:
 
@@ -2576,7 +2624,7 @@ namespace o2scl_acol {
         column <col> using exactly <n_bins> bins and (optionally)
         weighting the entries by the values in column [wgts]. 
 
-        For objects of type table:
+        For objects of type table3d:
 
         Convert a table3d slice to a histogram.
 

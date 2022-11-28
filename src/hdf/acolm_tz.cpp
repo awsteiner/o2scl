@@ -173,12 +173,11 @@ int acol_manager::comm_to_pdma(std::vector<std::string> &sv,
 int acol_manager::comm_to_hist(std::vector<std::string> &sv, 
 			       bool itive_com) {
 
-  std::string i1;
-
   if (type=="table") {
 
     // AWS, 11/22/22, This looks like it could be old, so I'm removing
     //it for now.
+    // std::string i1;
     //int ret=get_input_one(sv,((string)"Enter \"2d\" for
     //2d histogram ")+ +"and \"1d\" for 1d histogram",i1,"to-hist",
     //itive_com); if (ret!=0) return ret;
@@ -231,7 +230,7 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       return 11;
     }
     
-    const ubmatrix &sl=table3d_obj.get_slice(i1);
+    const ubmatrix &sl=table3d_obj.get_slice(in[0]);
     size_t n_bins=o2scl::stoszt(in[1]);
 
     double min=1.0, max=0.0;

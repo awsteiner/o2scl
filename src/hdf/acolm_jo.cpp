@@ -117,6 +117,11 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     for(size_t j=0;j<rk;j++) {
       cout << "Size of rank " << j << " is " << sarr[j] << endl;
     }
+  } else if (type=="hist") {
+    cout << "hist name: " << obj_name << endl;
+    cout << hist_obj.size() << " bins" << endl;
+    cout << "Bin edges: " << endl;
+    vector_out(cout,hist_obj.get_bins(),true);
   } else if (type=="tensor<int>") {
     cout << "tensor<int> name: " << obj_name << endl;
     size_t rk=tensor_int_obj.get_rank();
@@ -132,6 +137,33 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
     const std::vector<size_t> &sarr=tensor_size_t_obj.get_size_arr();
     for(size_t j=0;j<rk;j++) {
       cout << "Size of rank " << j << " is " << sarr[j] << endl;
+    }
+  } else if (type=="vector<contour_line>") {
+    cout << "vector<contour_line> name: " << obj_name << endl;
+    cout << cont_obj.size() << " contour lines." << endl;
+    for(size_t j=0;j<cont_obj.size();j++) {
+      cout << "Contour line " << j << " has level "
+           << cont_obj[j].level << " and has "
+           << cont_obj[j].x.size() << " points." << endl;
+    }
+  } else if (type=="vec_vec_double") {
+    cout << "vector<vector<double>> name: " << obj_name << endl;
+    cout << vvdouble_obj.size() << " entries." << endl;
+    for(size_t j=0;j<vvdouble_obj.size();j++) {
+      cout << "Entry " << j << " is an array of size "
+           << vvdouble_obj[j].size() << endl;
+    }
+  } else if (type=="vec_vec_string") {
+    cout << "vector<vector<string>> name: " << obj_name << endl;
+    cout << vvstring_obj.size() << " entries." << endl;
+    for(size_t j=0;j<vvstring_obj.size();j++) {
+      size_t count=0;
+      for(size_t k=0;k<vvstring_obj[j].size();k++) {
+        count+=vvstring_obj[j][k].length();
+      }
+      cout << "Entry " << j << " is an array of size "
+           << vvstring_obj[j].size() << " with " << count
+           << " total characters." << endl;
     }
   } else if (type=="exp_max_gmm") {
     cout << "exp_max_gmm name: " << obj_name << endl;
