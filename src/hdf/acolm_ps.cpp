@@ -3525,6 +3525,14 @@ int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
     const std::vector<double> &data=tensor_grid_obj.get_data();
     cout << "Sum of all " << data.size() << " entries in the tensor is: "
 	 << o2scl::vector_sum<const vector<double>,double>(data) << endl;
+  } else if (type=="hist") {
+    cout << "Sum of all " << hist_obj.size() << " bins in the histogram is: "
+         << hist_obj.sum_wgts() << endl;
+  } else if (type=="hist_2d") {
+    cout << "Sum of all " << hist_2d_obj.size_x() << " by "
+         << hist_2d_obj.size_y() 
+         << " bins in the histogram is: "
+         << hist_2d_obj.sum_wgts() << endl;
   } else if (type=="tensor") {
     const std::vector<double> &data=tensor_obj.get_data();
     cout << "Sum of all " << data.size() << " entries in the tensor is: "

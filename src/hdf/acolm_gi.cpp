@@ -1368,32 +1368,52 @@ int acol_manager::comm_insert_full(std::vector<std::string> &sv,
 
 int acol_manager::comm_integ(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type!="table") {
-    cerr << "Not implemented for type " << type << " ." << endl;
+  ff.set_sig_figs(precision+1);
+  
+  if (type=="table") {
+
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table with columns to integrate." << endl;
+      return exc_efailed;
+    }
+    vector<string> pr, in;
+    pr.push_back("Enter 'x' column");
+    pr.push_back("Enter 'y' column");
+    pr.push_back("Enter name of new column");
+    int ret=get_input(sv,pr,in,"integ",itive_com);
+    if (ret!=0) return ret;
+    
+    if (table_obj.is_column(in[0])==false) {
+      cerr << "Could not find column named '" << in[0] << "'." << endl;
+      return exc_efailed;
+    }
+    if (table_obj.is_column(in[1])==false) {
+      cerr << "Could not find column named '" << in[1] << "'." << endl;
+      return exc_efailed;
+    }
+    
+    table_obj.integ(in[0],in[1],in[2]);
+  
+  } else if (type=="hist") {
+
+    double d=hist_obj.integ_wgts();
+    cout << "Integral over all "
+         << hist_obj.size() << " bins in the histogram is "
+         << d << " (" << ff.convert(d) << ")." << endl;
+  
+  } else if (type=="hist_2d") {
+
+    double d=hist_2d_obj.integ_wgts();
+    cout << "Integral over all "
+         << hist_2d_obj.size_x() << " by "
+         << hist_2d_obj.size_y() << " bins in the histogram is "
+         << d << " (" << ff.convert(d) << ")." << endl;
+  
+  } else {
+    cerr << "Command 'integ' not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
 
-  if (table_obj.get_nlines()==0) {
-    cerr << "No table with columns to integrate." << endl;
-    return exc_efailed;
-  }
-  vector<string> pr, in;
-  pr.push_back("Enter 'x' column");
-  pr.push_back("Enter 'y' column");
-  pr.push_back("Enter name of new column");
-  int ret=get_input(sv,pr,in,"integ",itive_com);
-  if (ret!=0) return ret;
-
-  if (table_obj.is_column(in[0])==false) {
-    cerr << "Could not find column named '" << in[0] << "'." << endl;
-    return exc_efailed;
-  }
-  if (table_obj.is_column(in[1])==false) {
-    cerr << "Could not find column named '" << in[1] << "'." << endl;
-    return exc_efailed;
-  }
-
-  table_obj.integ(in[0],in[1],in[2]);
 
   return 0;
 }

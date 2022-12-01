@@ -853,8 +853,6 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
-  format_float ff;
-  ff.unicode_mode();
   ff.set_sig_figs(precision+1);
   
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {

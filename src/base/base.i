@@ -154,6 +154,20 @@ class std::vector<double>
 |     for i in range(0,len(lst)):
 |         self[i]=lst[i]
 |     return
+|              
+| def erase(self,index):
+|     """
+|     Erase item at specified index
+|     """
+|     n=self.size()
+|     v2=self.deepcopy()
+|     self.resize(n-1)
+|     for i in range(0,n-1):
+|         if i<index:
+|             self[i]=v2[i]
+|         else:
+|             self[i]=v2[i+1]
+|     return
 class std::vector<int>
 - py_name std_vector_int
 - std_cc                             

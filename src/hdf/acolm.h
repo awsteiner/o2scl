@@ -145,9 +145,6 @@ namespace o2scl_acol {
      */
     o2scl::comm_option_mfptr<acol_manager> cset;
     
-    /// The number formatter for html output
-    o2scl::format_float ffl;
-
     /// Document strings for commands
     std::vector<std::vector<std::string>> cmd_doc_strings;
     
@@ -159,6 +156,9 @@ namespace o2scl_acol {
     
     /// Convert units object (initialized by constructor to global object)
     o2scl::convert_units<double> &cng;
+
+    /// The number formatter for unicode output
+    o2scl::format_float ff;
 
     /// \name Parameters modifiable by the user
     //@{

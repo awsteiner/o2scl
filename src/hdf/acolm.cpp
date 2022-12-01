@@ -48,6 +48,8 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
 			       cng(o2scl_settings.get_convert_units()) {
   
+  ff.unicode_mode();
+  
   obj_name="acol";
   verbose=1;
   pretty=true;
@@ -59,8 +61,6 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   ncols=0;
   
   post_interactive=false;
-
-  ffl.html_mode();
 
   type="";
 
