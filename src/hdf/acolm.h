@@ -2266,15 +2266,39 @@ namespace o2scl_acol {
 
         Store a histogram series in a table3d object.
 
-        Arguments: <tt><grid vector spec.> <direction (\"x\" or
-        \"y\")> <grid name> <bin edges vector spec.> "<bin grid vector
-        spec.> <bin name> <pattern> <new slice></tt>
+        Arguments: <tt><grid vector spec.> <direction: "x" or
+        "y"> <grid name> <bin spec.> <bin name> <pattern> <new slice></tt>
 
-        Construct a series of histograms from a series of columnns in
-        a <tt>table</tt> object and then store them in a
+        Construct a series of histograms from a series of columns in a
+        <tt>table</tt> object and then store them in a
         <tt>table3d</tt> object. The <tt>ser-hist-t3d</tt> command
-        begins by creating a histogram from a series of columns
-        specified in <grid vector spec.>.
+        begins by creating a set of histograms, one for each entry of
+        the grid specified in <grid vector spec.>. This grid is used
+        as either the x or the y-grid in the new table3d object,
+        depending on which is given for the <direction> argument. 
+
+        The bin edges for the histogram are specified in a "bin
+        specification", <bin spec.>, which consists of two arguments.
+        The first argument is the bin edges for the histograms, the
+        second is the grid values of the table3d object. The grid
+        values in the table3d object can be computed automatically as
+        the average of the bin edges if the word "auto" is given for
+        the second argument of the bin specification. The 
+        linear_or_log() function is used to attempt to automatically
+        determine logarithmic bin edges. 
+
+        The data for the histograms is pulled from the columns
+        specified in the search pattern <pattern>. There must be one
+        column for each histogram, and thus each element in <grid
+        vector spec.>. The <bin name> argument is used as the name of
+        the bin grid in the table3d object. Finally, the <new slice>
+        argument is the name of the new slice in the table3d object
+        which stores the histogram data. 
+
+        Finally, if the bin specification is the string "auto" and
+        then a number of bins, then the bin edges and the associated
+        grid are automatically computed by the minimum and maximum
+        value over all the columns specified in <pattern>.
     */
     virtual int comm_ser_hist_t3d(std::vector<std::string> &sv,
                                   bool itive_com);
