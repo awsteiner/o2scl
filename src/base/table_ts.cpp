@@ -116,13 +116,9 @@ int main(void) {
     t.test_rel(at5.get("rcol1",2),3.0,1.0e-12,"ren 3");
 
     // Test swap
-    std::cout << "X1." << std::endl;
     at4.summary(&cout);
-    std::cout << "X3." << std::endl;
     at5.summary(&cout);
-    std::cout << "X4." << std::endl;
     swap(at4,at5);
-    std::cout << "X2." << std::endl;
   }
 
   {
@@ -164,15 +160,7 @@ int main(void) {
 		 at.get("m1",ii),1.0e-12,"fc2");
     }
 
-    cout << "Here." << endl;
-    at.summary(&cout);
-    cout << "Here2" << endl;
-    //at.delete_column("col1");
-    std::cout << "Here4x." << endl;
     at.is_valid();
-    std::cout << "Here3x." << endl;
-    at.summary(&cout);
-    //exit(-1);
 
     // -------------------------------------------------------------
     // Test constants
@@ -189,20 +177,13 @@ int main(void) {
     // -------------------------------------------------------------
     // Test copy constructors
 
-    std::cout << "Hereax." << endl;
     table<boost::numeric::ublas::vector<double> > at4(at);
     table<boost::numeric::ublas::vector<double> > at5;
-    std::cout << "Here6x." << std::endl;
     at5=at;
-    std::cout << "Here7x." << std::endl;
     t.test_gen(at4.get_nlines()==at.get_nlines(),"cc 1");
-    std::cout << "Here8x." << std::endl;
     t.test_gen(at4.get_ncolumns()==at.get_ncolumns(),"cc 2");
-    std::cout << "Here9x." << std::endl;
     t.test_gen(at5.get_nlines()==at.get_nlines(),"cc 3");
-    std::cout << "Here10x." << std::endl;
     t.test_gen(at5.get_ncolumns()==at.get_ncolumns(),"cc 4");
-    std::cout << "Here11x." << std::endl;
 
     // -------------------------------------------------------------
     // Test swap column data and rename

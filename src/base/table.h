@@ -342,15 +342,12 @@ namespace o2scl {
      */
     friend void swap(table &t1, table &t2) {
 
-      std::cout << "Am2." << std::endl;
       using std::swap;
 
       // The data
       swap(t1.maxlines,t2.maxlines);
       swap(t1.nlines,t2.nlines);
-      std::cout << "Am1." << std::endl;
       swap(t1.atree,t2.atree);
-      std::cout << "A0." << std::endl;
 
       // Take care of interpolation
       swap(t1.itype,t2.itype);
@@ -363,15 +360,10 @@ namespace o2scl {
       swap(t1.constants,t2.constants);
 
       // Recreate iterator lists
-      std::cout << "A1." << std::endl;
       t1.alist.resize(t1.atree.size());
-      std::cout << "A2." << std::endl;
       t1.reset_list();
-      std::cout << "A3." << std::endl;
       t2.alist.resize(t2.atree.size());
-      std::cout << "A4." << std::endl;
       t2.reset_list();
-      std::cout << "A5." << std::endl;
 
       // Check that it worked
       t1.is_valid();
@@ -944,9 +936,7 @@ namespace o2scl {
       new_column(dest);
       aiter itd=atree.find(dest);
       std::swap(its->second.dat,itd->second.dat);
-      std::cout << "H1 " << src << " " << dest << std::endl;
       delete_column(src);
-      std::cout << "H2." << std::endl;
       return;
     }
 
@@ -969,15 +959,7 @@ namespace o2scl {
       if (true) {
 
         int ix_match=it->second.index;
-        std::cout << "index of column to delete: " << it->second.index
-                  << std::endl;
         
-        std::cout << "M1 " << atree.size() << " " << alist.size() << std::endl;
-        for(aiter it=atree.begin();it!=atree.end();it++) {
-          std::cout << it->first << std::endl;
-        }
-        std::cout << "M2: " << std::endl;
-
         for(aiter it2=atree.begin();it2!=atree.end();it2++) {
           if (it2->second.index>ix_match) {
             it2->second.index=it2->second.index-1;
@@ -1016,17 +998,8 @@ namespace o2scl {
         intp_set=false;
       }
 
-      std::cout << "V1." << std::endl;
       is_valid();
-      std::cout << "V2." << std::endl;
 
-      std::cout << "M5: " << std::endl;
-      for(aiter it=atree.begin();it!=atree.end();it++) {
-        std::cout << it->first << std::endl;
-      }
-      std::cout << "M6: " << std::endl;
-        
-      
       return;
     }
 
@@ -3465,10 +3438,8 @@ namespace o2scl {
        */
       friend void swap(col &t1, col &t2) {
         using std::swap;
-        std::cout << "B1." << std::endl;
         swap(t1.dat,t2.dat);
         swap(t1.index,t2.index);
-        std::cout << "B2." << std::endl;
         return;
       }
     };

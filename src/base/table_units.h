@@ -543,22 +543,52 @@ namespace o2scl {
       // Remove the unit for the specified column
       if (get_unit(scol).length()>0) remove_unit(scol);
 
-      // Find the corresponding list iterator
-      typename table<vec_t>::aviter vit=this->alist.begin();
-      vit+=it->second.index;
-  
-      // Find the last element in the list and it's corresponding table
-      // entry. Change it's index to the index of the column to be
-      // deleted.
-      this->alist[this->alist.size()-1]->second.index=it->second.index;
+      if (true) {
 
-      // Erase the elements from the list and the tree
-      this->atree.erase(it);
-      this->alist.erase(vit);
+        int ix_match=it->second.index;
+        
+        for(typename table<vec_t>::aiter it2=this->atree.begin();
+            it2!=this->atree.end();it2++) {
+          if (it2->second.index>ix_match) {
+            it2->second.index=it2->second.index-1;
+          }
+        }
+        
+        // Erase the elements from the list and the tree
+        this->atree.erase(it);
 
+        
+        // Resize the list to the correct size
+        this->alist.resize(this->atree.size());
+        
+      } else {
+        
+        // Find the corresponding list iterator
+        typename table<vec_t>::aviter vit=this->alist.begin();
+        vit+=it->second.index;
+        
+        // Find the last element in the list and it's corresponding table
+        // entry. Change it's index to the index of the column to be
+        // deleted.
+        this->alist[this->alist.size()-1]->second.index=it->second.index;
+        
+        // Erase the elements from the list and the tree
+        this->atree.erase(it);
+        this->alist.erase(vit);
+
+      }
+      
       // Reset the list to reflect the proper iterators
       this->reset_list();
 
+      if ((this->intp_colx==scol || this->intp_coly==scol) &&
+          this->intp_set==true) {
+        delete this->si;
+        this->intp_set=false;
+      }
+
+      this->is_valid();
+      
       return;
     }
 
