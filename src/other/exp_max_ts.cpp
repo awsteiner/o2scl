@@ -49,7 +49,7 @@ int main(void) {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-  if (true) {
+  if (false) {
     
     ubvector mean1(2), mean2(2);
     ubmatrix covar1(2,2), covar2(2,2);
