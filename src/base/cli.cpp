@@ -282,7 +282,7 @@ cli::cli() {
   c_xml_to_o2.lng="xml-to-o2";
   c_xml_to_o2.min_parms=0;
   c_xml_to_o2.max_parms=0;
-  c_xml_to_o2.desc="Read doxygen XML files to generate run-time documentation";
+  c_xml_to_o2.desc="Read doxygen XML files to create run-time documentation.";
   c_xml_to_o2.help="X";
   c_xml_to_o2.parm_desc="(no parameters).";
   c_xml_to_o2.func=new comm_option_mfptr<cli>(this,&cli::comm_option_xml_to_o2);
