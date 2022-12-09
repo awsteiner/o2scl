@@ -255,6 +255,7 @@ namespace o2scl {
           if (val<min) min=val;
         }
         scales[i]=max-min;
+	if (scales[i]==0.0) scales[i]=1.0;
       }
       return;
     }
@@ -555,6 +556,19 @@ namespace o2scl {
       std::vector<double> dists(np);
       for(size_t i=0;i<np;i++) {
         dists[i]=dist(i,x);
+	if (!std::isfinite(dists[i])) {
+	  std::cout << "i,dists[i]: " << i << " " << dists[i] << std::endl;
+	  std::cout << "x: ";
+	  vector_out(std::cout,x,true);
+	  std::cout << "data: ";
+	  for(size_t jj=0;jj<nd_in;jj++) {
+	    std::cout << data(jj,i) << " ";
+	  }
+	  std::cout << std::endl;
+	  std::cout << "scales: ";
+	  vector_out(std::cout,scales,true);
+	  O2SCL_ERR("Distance not finite.",o2scl::exc_einval);
+	}
       }
 
       if (this->verbose>2) {
@@ -609,6 +623,12 @@ namespace o2scl {
         // errors
         for(size_t k=0;k<nd_out;k++) {
           val[k]=data(nd_in+k,index[0]);
+	  if (!std::isfinite(val[k])) {
+	    std::cout << "n_extra,min_dist,k,nd_out,val[k]: "
+		      << n_extra << " " << min_dist << " " << k << " "
+		      << nd_out << " " << val[k] << std::endl;
+	    O2SCL_ERR("Infinite value in interpm_idw() 1.",o2scl::exc_efailed);
+	  }
           err[k]=0.0;
         }
         return;
@@ -658,6 +678,14 @@ namespace o2scl {
             }
 
             vals[j]/=norm;
+	    if (!std::isfinite(val[j])) {
+	      std::cout << "j,n_extra,min_dist,nd_out,norm,val[j]: "
+			<< j << " " << n_extra << " " << min_dist
+			<< " " << nd_out << " " << norm << " "
+			<< val[j] << std::endl;
+	      o2scl::vector_out(std::cout,dists,true);
+	      O2SCL_ERR("Infinite value in interpm_idw 2.",o2scl::exc_efailed);
+	    }
 
           }
 
