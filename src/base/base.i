@@ -2559,6 +2559,7 @@ class cli
   - int
   - io std::vector<std::string> &sv
   - bool allow_undashed
+  - bool debug [false]
 - function apply_aliases
   - int
   - io std::vector<std::string> &sv

@@ -387,6 +387,7 @@ class acol_manager
 - std::string env_var_name
 - cli *cl
 - int verbose
+- std::string def_args
 - std::string type
 - table_units<> table_obj
 - table3d table3d_obj
@@ -418,11 +419,14 @@ class acol_manager
 - std::string exec_color
 - std::string url_color
 - std::string default_color
+- std::string color_spec
 - function help_found
   - bool
   - std::string arg1
   - std::string arg2
 - function run_empty
+  - int
+- function validate_interp_type
   - int
 - function parse_vec_string
   - void

@@ -1271,7 +1271,7 @@ void o2scl_cli_set_addl_help_cli(void *vptr, void *p_v);
 
 int o2scl_cli_set_verbose(void *vptr, int v);
 
-int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed);
+int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed, bool debug=false);
 
 int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug=false);
 

@@ -178,9 +178,6 @@ namespace o2scl_acol {
     /// The name of the table
     std::string obj_name;
   
-    /// Default arguments from environment
-    std::string def_args;
-
     /** \brief The number of columns requested by the user 
         (default 0 for autodetect)
     */
@@ -229,6 +226,9 @@ namespace o2scl_acol {
     acol_manager();
 
     virtual ~acol_manager() {}
+
+    /// Default arguments from environment
+    std::string def_args;
 
     /// The verbosity level (default 1)
     int verbose;
@@ -3190,21 +3190,6 @@ namespace o2scl_acol {
 
   public:
     
-    /** \name Temporary storage 
-
-        These are used in \ref o2scl_acol_get_slice(), \ref
-        o2scl_acol_get_hist_reps(), \ref o2scl_acol_get_hist_wgts(),
-        \ref o2scl_acol_get_hist_bins(), and \ref
-        o2scl_acol_get_hist_2d(),
-    */
-    //@{
-    std::vector<double> xtemp;
-    std::vector<double> ytemp;
-    std::vector<double> stemp;
-    std::vector<int> itemp;
-    std::vector<char> ctemp;
-    //@}
-
     /** \brief Validate the setting of \ref interp_type
         
         Used in \ref comm_set().

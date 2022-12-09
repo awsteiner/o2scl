@@ -149,6 +149,10 @@ int o2scl_hdf_acol_manager_get_verbose(void *vptr);
 
 void o2scl_hdf_acol_manager_set_verbose(void *vptr, int v);
 
+void *o2scl_hdf_acol_manager_get_def_args(void *vptr);
+
+void o2scl_hdf_acol_manager_set_def_args(void *vptr, void *p_v);
+
 void *o2scl_hdf_acol_manager_get_type(void *vptr);
 
 void o2scl_hdf_acol_manager_set_type(void *vptr, void *p_v);
@@ -273,9 +277,15 @@ void *o2scl_hdf_acol_manager_get_default_color(void *vptr);
 
 void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v);
 
+void *o2scl_hdf_acol_manager_get_color_spec(void *vptr);
+
+void o2scl_hdf_acol_manager_set_color_spec(void *vptr, void *p_v);
+
 bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2);
 
 int o2scl_hdf_acol_manager_run_empty(void *vptr);
+
+int o2scl_hdf_acol_manager_validate_interp_type(void *vptr);
 
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
 

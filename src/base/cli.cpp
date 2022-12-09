@@ -463,8 +463,8 @@ int cli::process_args_str(string s, vector<cmd_line_arg> &ca,
 }
 
 int cli::parse_for_aliases(std::vector<std::string> &svsv,
-			   bool allow_undashed) {
-  
+			   bool allow_undashed, bool debug) {
+
   for (int c2=0;c2<((int)svsv.size());c2++) {
     if ((svsv[c2]==((string)"alias") || svsv[c2]==((string)"-alias") ||
 	 svsv[c2]==((string)"--alias")) && c2+2<((int)svsv.size())) {
@@ -478,12 +478,12 @@ int cli::parse_for_aliases(std::vector<std::string> &svsv,
 	if (als.find(svsv[c2+1])==als.end()) {
 	  // Add alias
 	  als.insert(std::make_pair(svsv[c2+1],svsv[c2+2]));
-	  if (verbose>1) {
+	  if (debug || verbose>1) {
 	    cout << "New alias \"" << svsv[c2+1] << "\" = \"" << svsv[c2+2]
 		 << "\"" << endl;
 	  }
 	} else {
-	  if (verbose>1) {
+	  if (debug || verbose>1) {
 	    cout << "Redefining alias \"" << svsv[c2+1]
 		 << "\" from \"" << als[svsv[c2+1]]
 		 << "\" to \"" << svsv[c2+2] << "\"" << endl;

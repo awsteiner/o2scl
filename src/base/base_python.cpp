@@ -3774,10 +3774,10 @@ int o2scl_cli_set_verbose(void *vptr, int v) {
   return ret;
 }
 
-int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed) {
+int o2scl_cli_parse_for_aliases(void *vptr, void *ptr_sv, bool allow_undashed, bool debug) {
   cli *ptr=(cli *)vptr;
   std::vector<std::string> *sv=(std::vector<std::string> *)ptr_sv;
-  int ret=ptr->parse_for_aliases(*sv,allow_undashed);
+  int ret=ptr->parse_for_aliases(*sv,allow_undashed,debug);
   return ret;
 }
 

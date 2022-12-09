@@ -661,7 +661,7 @@ namespace o2scl {
 	definitions will be output to the screen. 
      */
     int parse_for_aliases(std::vector<std::string> &svsv,
-			  bool allow_undashed);
+			  bool allow_undashed, bool debug=false);
     
     /** \brief Process command-line arguments from a vector of strings
 	

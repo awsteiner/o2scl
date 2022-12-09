@@ -276,7 +276,7 @@ void acol_manager::update_o2_docs(size_t narr,
            << " options " << endl;
     } else {
       cout << "acol_manager::update_o2_docs(): Updating documentation "
-           << "(no current object) with " << narr << "options." << endl;
+           << "(no current object) with " << narr << " options." << endl;
     }
   }
   
