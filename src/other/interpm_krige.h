@@ -64,13 +64,19 @@ namespace o2scl {
       call to set_data() is the same as that passed to the
       eval() functions. If this is not the case, the
       behavior of this class is undefined.
+
+      Because the data structure need not match the vector type of the
+      input vectors, there are actually three different covariance
+      functions (for the different pairwise combinations of the two
+      vector types). In addition, different outputs may have different
+      covariance functions. Thus there are three array types used for
+      covariance functions. For convenience, these are typedef'd as
+      f1_t, f2_t, and f3_t.
       
       \note Experimental.
   */
   template<class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
-           class covar_func_t=std::vector
-           <std::function<double(double,double)>>,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t> >
   class interpm_krige {    
@@ -78,6 +84,12 @@ namespace o2scl {
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef std::vector<std::function<double(mat_x_row_t &,
+                                             mat_x_row_t &) > > f1_t;
+    typedef std::vector<std::function<double(mat_x_row_t &,
+                                             const ubvector &) > > f2_t;
+    typedef std::vector<std::function<double(const ubvector &,
+                                             const ubvector &) > > f3_t;
     
   protected:
 
@@ -90,10 +102,6 @@ namespace o2scl {
     */
     std::vector<mat_inv_kxx_t> inv_KXX;
 
-    /** \brief Pointer to user-specified covariance function
-     */
-    covar_func_t *f;
-    
     /// The matrix inversion object
     mat_inv_t mi;
     
@@ -117,6 +125,7 @@ namespace o2scl {
     
     /** \brief Initialize the data for the interpolation
     */
+    template<class covar_func_t>
     int set_data_noise_internal
     (size_t n_in, size_t n_out, size_t n_points, mat_x_t &user_x, 
      mat_y_t &user_y, covar_func_t &fcovar, 
@@ -148,8 +157,6 @@ namespace o2scl {
       nd_in=n_in;
       nd_out=n_out;
 
-      f=&fcovar;
-    
       // Check that the data is properly sized
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
         std::cout << "Object user_x, function size1() and size2(): "
@@ -287,6 +294,7 @@ namespace o2scl {
 
     /** \brief Initialize the data for the interpolation
     */
+    template<class covar_func_t>
     int set_data(size_t n_in, size_t n_out, size_t n_points,
                  mat_x_t &user_x, mat_y_t &user_y,
                  covar_func_t &fcovar, bool rescale=false,
@@ -338,21 +346,21 @@ namespace o2scl {
       
     }
     
-    /** \brief Given covariance function \c fcovar and input vector \c x
-        store the result of the interpolation in \c y
+    /** \brief Given covariance function \c fcovar and input vector \c
+        x store the result of the interpolation in \c y
     */
     template<class vec2_t, class vec3_t, class covar_func2_t,
       class covar_func3_t>
-    void sigma(const vec2_t &x0, vec3_t &dy0, covar_func2_t &f2,
-               covar_func3_t &f3) {
+    void sigma_covar(const vec2_t &x0, vec3_t &dy0, covar_func2_t &f2,
+                     covar_func3_t &f3) {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige::sigma().",
+        O2SCL_ERR("Data not set in interpm_krige::sigma_covar().",
                   exc_einval);
       }
       if (!keep_matrix) {
         O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
-                   "interpm_krige::sigma().",o2scl::exc_einval);
+                   "interpm_krige::sigma_covar().",o2scl::exc_einval);
       }
       
       // Evaluate the interpolated result
@@ -422,24 +430,23 @@ namespace o2scl {
   class interpm_krige_optim :
     public interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
                          mat_y_row_t,mat_inv_kxx_t,
-                         std::vector
-                         <std::function<double(mat_x_row_t &,mat_x_row_t &)>>,
                          mat_inv_t> {    
 
   public:
 
-    typedef boost::numeric::ublas::vector<double> ubvector;
-
+    /// The parent class type
+    typedef interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
+                          mat_y_row_t,mat_inv_kxx_t,
+                          mat_inv_t> parent_t;
+    
     /// Function objects for the covariance
-    std::vector<std::function<double(const mat_x_row_t &,
-                                     const vec_t &)> > ff2;
+    typename parent_t::f2_t ff2;
+    
+    /// Function objects for the covariance
+    typename parent_t::f3_t ff3;
     
   protected:
 
-    typedef std::vector<std::function<double(const mat_x_row_t &,
-                                             const mat_x_row_t &)> >
-    covar_func_t;
-    
     /// The covariance function length scale for each output function
     std::vector<double> len;
   
@@ -839,6 +846,7 @@ namespace o2scl {
       len.resize(n_out);
       //ff1.resize(n_out);
       ff2.resize(n_out);
+      ff3.resize(n_out);
 
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
@@ -989,6 +997,17 @@ namespace o2scl {
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
+        /*
+          ff3[iout]=std::bind(std::mem_fn<double(const vec_t &,
+          const vec_t &,
+          size_t,double)>
+          (&interpm_krige_optim<vec_t,mat_x_t,
+          mat_x_row_t,mat_y_t,mat_y_row_t,
+          mat_inv_kxx_t,mat_inv_t>::covar<mat_x_row_t,
+          vec_t>),this,
+          std::placeholders::_1,std::placeholders::_2,
+          n_in,len[iout]);
+        */
 
         if (timing) {
           t5=time(0);
@@ -1034,6 +1053,15 @@ namespace o2scl {
       
       return;
       
+    }
+
+    /** \brief Desc
+     */
+    template<class vec2_t, class vec3_t>
+    void sigma(const vec2_t &x0, vec3_t &y0) {
+
+      return this->sigma_covar(x0,y0,ff2,ff3);
+
     }
     
     /** \brief Given input vector \c x

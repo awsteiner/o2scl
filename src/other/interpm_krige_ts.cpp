@@ -108,11 +108,12 @@ int main(void) {
   typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
   typedef o2scl::matrix_view_table_transpose<> mat_y_t;
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
-  typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
-  typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
-  typedef vector<function<double(const ubvector &,
-                                 const ubvector &) > > f3_t;
-    
+  
+  typedef interpm_krige<ubvector,mat_x_t,mat_x_row_t,
+                        mat_y_t,mat_y_row_t,ubmatrix,
+                        o2scl_linalg::matrix_invert_det_cholesky
+                        <ubmatrix> > ik_t;
+  
   {
     cout << "interpm_krige, not rescaled" << endl;
     
@@ -123,17 +124,19 @@ int main(void) {
     hf.open_or_create("interpm_krige_ts_data.o2");
     hdf_output(hf,tab,"tab");
     hf.close();
+
+
+    ik_t ik;
     
-    interpm_krige<ubvector,mat_x_t,mat_x_row_t,
-                  mat_y_t,mat_y_row_t,ubmatrix,f1_t,
-                  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
-    
-    f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
-                        std::placeholders::_1,std::placeholders::_2,1.1)};
-    f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
-                        std::placeholders::_1,std::placeholders::_2,1.1)};
-    f3_t fa3={std::bind(&covar<ubvector,ubvector>,
-                        std::placeholders::_1,std::placeholders::_2,1.1)};
+    ik_t::f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
+                              std::placeholders::_1,
+                              std::placeholders::_2,1.1)};
+    ik_t::f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
+                              std::placeholders::_1,
+                              std::placeholders::_2,1.1)};
+    ik_t::f3_t fa3={std::bind(&covar<ubvector,ubvector>,
+                              std::placeholders::_1,
+                              std::placeholders::_2,1.1)};
     
     matrix_view_table<> mvt_x(tab,col_list_x);
     matrix_view_table_transpose<> mvt_y(tab,col_list_y);
@@ -151,7 +154,7 @@ int main(void) {
 
       if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
         ik.eval_covar(point,out,fa2);
-        ik.sigma(point,sig,fa2,fa3);
+        ik.sigma_covar(point,sig,fa2,fa3);
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;
@@ -177,15 +180,14 @@ int main(void) {
 
     gen_test_number<> gtn_x2;
     gtn_x2.set_radix(1.9);
+
+    ik_t ik;
     
-    interpm_krige<ubvector,mat_x_t,mat_x_row_t,
-                  mat_y_t,mat_y_row_t,ubmatrix,f1_t,
-                  o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > ik;
-    
-    f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
+    ik_t::f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
                         std::placeholders::_1,std::placeholders::_2,1.1)};
-    f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
-                        std::placeholders::_1,std::placeholders::_2,1.1)};
+    ik_t::f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
+                              std::placeholders::_1,
+                              std::placeholders::_2,1.1)};
     
     ik.verbose=2;
     ik.set_data(2,1,tab2.get_nlines(),mvt_x2,mvt_y2,fa1,true);
@@ -244,24 +246,29 @@ int main(void) {
     }
     
     for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
+      ubvector point(2), out(1), sig(1);
       point[0]=gtn_x3.gen();
       point[1]=gtn_x3.gen();
       
       if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
         iko.eval(point,out);
+        iko.sigma(point,sig);
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;
         cout.unsetf(ios::showpos);
         if (k==0) {
-          t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled lml 2");
+          t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,
+                     "unscaled lml 2");
         } else if (k==1) {
-          t.test_rel(out[0],ft(point[0],point[1]),1.0e-1,"unscaled loo_cv 2");
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-1,
+                     "unscaled loo_cv 2");
         } else if (k==2) {
-          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"rescaled lml 2");
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,
+                     "rescaled lml 2");
         } else {
-          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,"rescaled loo_cv 2");
+          t.test_rel(out[0],ft(point[0],point[1]),1.0e-2,
+                     "rescaled loo_cv 2");
         }
       }
 

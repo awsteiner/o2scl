@@ -37,6 +37,8 @@ using namespace o2scl;
 using namespace o2scl_linalg;
 using namespace o2scl_hdf;
 
+typedef boost::numeric::ublas::vector<double> ubvector;
+
 double ft(double x, double y) {
   return 3.0-2.0*x*x+7.0*y;
 }
