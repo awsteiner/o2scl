@@ -110,6 +110,8 @@ int main(void) {
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
   typedef vector<function<double(mat_x_row_t &, mat_x_row_t &) > > f1_t;
   typedef vector<function<double(mat_x_row_t &, const ubvector &) > > f2_t;
+  typedef vector<function<double(const ubvector &,
+                                 const ubvector &) > > f3_t;
     
   {
     cout << "interpm_krige, not rescaled" << endl;
@@ -130,6 +132,8 @@ int main(void) {
                         std::placeholders::_1,std::placeholders::_2,1.1)};
     f2_t fa2={std::bind(&covar<mat_x_row_t,ubvector>,
                         std::placeholders::_1,std::placeholders::_2,1.1)};
+    f3_t fa3={std::bind(&covar<ubvector,ubvector>,
+                        std::placeholders::_1,std::placeholders::_2,1.1)};
     
     matrix_view_table<> mvt_x(tab,col_list_x);
     matrix_view_table_transpose<> mvt_y(tab,col_list_y);
@@ -141,12 +145,13 @@ int main(void) {
     gtn_x.set_radix(1.9);
 
     for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
+      ubvector point(2), out(1), sig(1);
       point[0]=gtn_x.gen();
       point[1]=gtn_x.gen();
 
       if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
         ik.eval_covar(point,out,fa2);
+        ik.sigma(point,sig,fa2,fa3);
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;

@@ -209,6 +209,9 @@ namespace o2scl {
     
     virtual ~interp_krige() {}
 
+    /** \brief If true, call the error handler for convergence 
+        errors (default true)
+     */
     bool err_nonconv;
     
     /** \brief If true, keep \f$ K^{-1} \f$ (default true)

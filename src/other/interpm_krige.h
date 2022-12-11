@@ -300,8 +300,8 @@ namespace o2scl {
          noise_vec,rescale,err_on_fail);
     }
 
-    /** \brief Given covariance function \c fcovar and input vector \c x
-        store the result of the interpolation in \c y
+    /** \brief Given covariance function \c fcovar and input vector \c x0
+        store the result of the interpolation in \c y0
     */
     template<class vec2_t, class vec3_t, class covar_func2_t>
     void eval_covar(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
@@ -341,9 +341,11 @@ namespace o2scl {
     /** \brief Given covariance function \c fcovar and input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec3_t>
-    void sigma(const vec2_t &x0, vec3_t &dy0) {
-    
+    template<class vec2_t, class vec3_t, class covar_func2_t,
+      class covar_func3_t>
+    void sigma(const vec2_t &x0, vec3_t &dy0, covar_func2_t &f2,
+               covar_func3_t &f3) {
+      
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::sigma().",
                   exc_einval);
@@ -355,14 +357,14 @@ namespace o2scl {
       
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
-        size_t icovar=iout % (*f).size();
-        double kx0x0=(*f)[icovar](x0,x0);
+        size_t icovar=iout % f2.size();
+        double kx0x0=f3[icovar](x0,x0);
         
         vec_t kxx0(np), prod(np);
         
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          kxx0[ipoints]=(*f)[icovar](x0,xrow);
+          kxx0[ipoints]=f2[icovar](xrow,x0);
         }
         boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
         dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
@@ -437,10 +439,6 @@ namespace o2scl {
     typedef std::vector<std::function<double(const mat_x_row_t &,
                                              const mat_x_row_t &)> >
     covar_func_t;
-    
-    // Function objects for the covariance
-    //std::vector<std::function<double(const mat_x_row_t &,
-    //const mat_x_row_t &)> > ff1;
     
     /// The covariance function length scale for each output function
     std::vector<double> len;
@@ -612,8 +610,8 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=covar<mat_x_row_t,mat_x_row_t>(xrow,xcol,
-                                                            this->nd_in,xlen);
+              KXX(irow,icol)=covar<mat_x_row_t,mat_x_row_t>
+                (xrow,xcol,this->nd_in,xlen);
               if (irow==icol) KXX(irow,icol)+=noise_var;
             }
           }
@@ -624,8 +622,7 @@ namespace o2scl {
                     << size << std::endl;
         }
 
-        // Note: We have to use LU here because O2scl doesn't yet
-        // have a lndet() function for Cholesky decomp
+        // Perform the matrix inversion and compute the determinant
 
         double lndet;
 	
@@ -971,7 +968,7 @@ namespace o2scl {
         mode=mode_final;
         qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
         mode=mode_temp;
-
+        
         /*
         ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const mat_x_row_t &,
@@ -1049,7 +1046,7 @@ namespace o2scl {
       std::vector<std::function<double(const mat_x_row_t &,
                                        const vec_t &)> > ffd;
       ffd.resize(this->nd_out);
-
+      
       for(size_t iout=0;iout<this->nd_out;iout++) {
         ffd[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const vec_t &,

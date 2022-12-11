@@ -38,12 +38,11 @@
 
 namespace o2scl {
   
-  typedef boost::numeric::ublas::vector<double> ubvector;
-  typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  
   /** \brief Emulator base class
    */
-  template<class data_t, class vec_t=ubvector> class emulator_base {
+  template<class data_t,
+           class vec_t=boost::numeric::ublas::vector<double>>
+  class emulator_base {
     
   protected:
     
@@ -51,7 +50,7 @@ namespace o2scl {
     
     /** \brief Evaluate the emulator at the point \c p returning
         \c log_wgt and \c dat
-     */
+    */
     virtual int eval(size_t n, const vec_t &p, double &log_wgt,
                      data_t &dat)=0;
     
@@ -60,8 +59,8 @@ namespace o2scl {
   /** \brief Emulator with uncertainty base class
    */
   template<class data_t, class data_unc_t,
-           class vec_t=ubvector> class emulator_unc : public
-  emulator_base<data_t,vec_t> {
+           class vec_t=boost::numeric::ublas::vector<double>>
+  class emulator_unc : public emulator_base<data_t,vec_t> {
     
   public:
     
@@ -78,7 +77,7 @@ namespace o2scl {
              data_t &dat) {
       double log_wgt_unc;
       // This assignment effectively allocates memory for
-      // dat_unc object using a copy constructor
+      // a new dat_unc object using a copy constructor
       data_unc_t dat_unc=dat;
       return eval_unc(n,p,log_wgt,log_wgt_unc,dat,dat_unc);
     }
@@ -93,7 +92,8 @@ namespace o2scl {
       
       This class is experimental.
   */
-  template<class vec2_t=ubvector, class vec_t=ubvector>
+  template<class vec2_t=boost::numeric::ublas::vector<double>,
+           class vec_t=boost::numeric::ublas::vector<double>>
   class emulator_interpm_idw_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
 
@@ -154,7 +154,8 @@ namespace o2scl {
 
       This class is experimental.
    */
-  template<class vec2_t=ubvector, class vec_t=ubvector>
+  template<class vec2_t=boost::numeric::ublas::vector<double>,
+           class vec_t=boost::numeric::ublas::vector<double>>
   class emulator_interpm_krige_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
 
@@ -198,7 +199,7 @@ namespace o2scl {
         variables, from 0 to <tt>n_out-1</tt>. The list, \c list,
         should include the column names of the parameters and then the
         output quantities (including the log weight column), in order.
-     */
+    */
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
              table<> &t, std::vector<std::string> list) {
 
@@ -222,8 +223,10 @@ namespace o2scl {
         \c log_wgt and \c dat and their uncertainties
      */
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
-                 double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
+                         double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
       
+      iko.eval(p,dat);
+      iko.sigma(p,dat);
       //iko.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
       log_wgt=dat[ix];
       log_wgt_unc=dat_unc[ix];
