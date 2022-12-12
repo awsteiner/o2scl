@@ -171,13 +171,9 @@ namespace o2scl {
     /// The view of the user-specified table
     matrix_view_table_transpose<> cmvtt;
 
+    /// Index of the "log weight" in the MCMC data vector
     size_t ix;
 
-    std::vector<std::string> col_list_x;
-    std::vector<std::string> col_list_y;
-    matrix_view_table<> mvt_x;
-    matrix_view_table_transpose<> mvt_y;
-    
   public:
     
     /// The internal interpolation object
@@ -205,12 +201,17 @@ namespace o2scl {
 
       ix=ix_log_wgt;
 
-      col_list_x.clear();
-      col_list_y.clear();
+      std::vector<std::string> col_list_x;
+      std::vector<std::string> col_list_y;
+      
       for(size_t j=0;j<list.size();j++) {
         if (j<np) col_list_x.push_back(list[j]);
         else col_list_y.push_back(list[j]);
       }
+      
+      matrix_view_table<> mvt_x;
+      matrix_view_table_transpose<> mvt_y;
+    
       mvt_x.set(t,col_list_x);
       mvt_y.set(t,col_list_y);
       
@@ -226,8 +227,7 @@ namespace o2scl {
                          double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
       
       iko.eval(p,dat);
-      iko.sigma(p,dat);
-      //iko.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
+      iko.sigma(p,dat_unc);
       log_wgt=dat[ix];
       log_wgt_unc=dat_unc[ix];
       return 0;

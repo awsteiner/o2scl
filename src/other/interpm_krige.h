@@ -844,7 +844,6 @@ namespace o2scl {
       
       qual.resize(n_out);
       len.resize(n_out);
-      //ff1.resize(n_out);
       ff2.resize(n_out);
       ff3.resize(n_out);
 
@@ -977,17 +976,6 @@ namespace o2scl {
         qual[iout]=qual_fun(len[iout],noise_var[iout],iout,yiout,success);
         mode=mode_temp;
         
-        /*
-        ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
-                                               const mat_x_row_t &,
-                                               size_t,double)>
-                            (&interpm_krige_optim<vec_t,mat_x_t,
-                             mat_x_row_t,mat_y_t,mat_y_row_t,
-                             mat_inv_kxx_t,mat_inv_t>::covar<mat_x_row_t,
-                             mat_x_row_t>),this,
-                            std::placeholders::_1,std::placeholders::_2,
-                            n_in,len[iout]);
-        */
         ff2[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
                                                const vec_t &,
                                                size_t,double)>
@@ -997,17 +985,15 @@ namespace o2scl {
                              vec_t>),this,
                             std::placeholders::_1,std::placeholders::_2,
                             n_in,len[iout]);
-        /*
-          ff3[iout]=std::bind(std::mem_fn<double(const vec_t &,
-          const vec_t &,
-          size_t,double)>
-          (&interpm_krige_optim<vec_t,mat_x_t,
-          mat_x_row_t,mat_y_t,mat_y_row_t,
-          mat_inv_kxx_t,mat_inv_t>::covar<mat_x_row_t,
-          vec_t>),this,
-          std::placeholders::_1,std::placeholders::_2,
-          n_in,len[iout]);
-        */
+        ff3[iout]=std::bind(std::mem_fn<double(const vec_t &,
+                                               const vec_t &,
+                                               size_t,double)>
+                            (&interpm_krige_optim<vec_t,mat_x_t,
+                             mat_x_row_t,mat_y_t,mat_y_row_t,
+                             mat_inv_kxx_t,mat_inv_t>::covar<vec_t,
+                             vec_t>),this,
+                            std::placeholders::_1,std::placeholders::_2,
+                            n_in,len[iout]);
 
         if (timing) {
           t5=time(0);
@@ -1029,34 +1015,13 @@ namespace o2scl {
 
       return this->eval_covar(x0,y0,ff2);
 
-      /*
-      if (this->data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige_optim::eval().",
-                  exc_einval);
-      }
-
-      // Evaluate the interpolated result
-      for(size_t iout=0;iout<this->nd_out;iout++) {
-        y0[iout]=0.0;
-        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
-          mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=covar<mat_x_row_t,vec2_t>
-            (xrow,x0,this->nd_in,len[iout]);
-          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
-        }
-        if (this->rescaled) {
-          y0[iout]*=this->std_y[iout];
-          y0[iout]+=this->mean_y[iout];
-        }
-      }
-      */
-      
       return;
       
     }
 
-    /** \brief Desc
-     */
+    /** \brief Return the interpolation uncertainty from the 
+        Gaussian process
+    */
     template<class vec2_t, class vec3_t>
     void sigma(const vec2_t &x0, vec3_t &y0) {
 
