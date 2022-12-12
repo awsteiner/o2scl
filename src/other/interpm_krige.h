@@ -374,8 +374,13 @@ namespace o2scl {
           mat_x_row_t xrow(x,ipoints);
           kxx0[ipoints]=f2[icovar](xrow,x0);
         }
-        boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
-        dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+        
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           np,np,1.0,inv_KXX[iout],kxx0,0.0,prod);
+        dy0[iout]=kx0x0-o2scl_cblas::ddot(np,kxx0,prod);
+        //boost::numeric::ublas::axpy_prod(inv_KXX[iout],kxx0,prod,true);
+        //dy0[iout]=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
         
         if (rescaled) {
           dy0[iout]*=std_y[iout];
@@ -500,7 +505,7 @@ namespace o2scl {
      */
     template<class vec3_t> 
     double qual_fun(double xlen, double noise_var, size_t iout,
-                    vec3_t &y, bool &success) {
+                    vec3_t &yout, bool &success) {
 
       double ret=0.0;
     
@@ -565,7 +570,7 @@ namespace o2scl {
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                            o2scl_cblas::o2cblas_NoTrans,
                            size,size,1.0,this->inv_KXX[iout],
-                           y,0.0,this->Kinvf[iout]);
+                           yout,0.0,this->Kinvf[iout]);
         
         if (timing) {
           t3=time(0);          
@@ -667,7 +672,7 @@ namespace o2scl {
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                            o2scl_cblas::o2cblas_NoTrans,
                            size,size,1.0,this->inv_KXX[iout],
-                           y,0.0,this->Kinvf[iout]);
+                           yout,0.0,this->Kinvf[iout]);
 	
         if (timing) {
           t3=time(0);          
@@ -679,7 +684,7 @@ namespace o2scl {
           // Compute the log of the marginal likelihood, without
           // the constant term
           for(size_t i=0;i<size;i++) {
-            ret+=0.5*y[i]*this->Kinvf[iout][i];
+            ret+=0.5*yout[i]*this->Kinvf[iout][i];
           }
           ret+=0.5*lndet;
         }
@@ -1268,7 +1273,12 @@ namespace o2scl {
       
         // Inverse covariance matrix times function vector
         ubvector Kinvf(n_order);
-        boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_order,n_order,1.0,inv_KXX,func,0.0,Kinvf);
+        
+        //boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
 
         // Comput the final result
         y0[iout]=0.0;
@@ -1427,7 +1437,12 @@ namespace o2scl {
       
       // Inverse covariance matrix times function vector
       ubvector Kinvf(n_order);
-      boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         n_order,n_order,1.0,inv_KXX,func,0.0,Kinvf);
+      
+      //boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
 
       // Comput the final result
       ret=0.0;
@@ -1520,7 +1535,12 @@ namespace o2scl {
       
         // Inverse covariance matrix times function vector
         ubvector Kinvf(n_order-1);
-        boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
+
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_order-1,n_order-1,1.0,inv_KXX,func,0.0,Kinvf);
+        
+        //boost::numeric::ublas::axpy_prod(inv_KXX,func,Kinvf,true);
       
         // Comput the final result
         ytmp=0.0;

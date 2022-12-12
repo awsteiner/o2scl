@@ -155,10 +155,13 @@ namespace o2scl {
       This class is experimental.
    */
   template<class vec2_t=boost::numeric::ublas::vector<double>,
-           class vec_t=boost::numeric::ublas::vector<double>>
+           class vec_t=boost::numeric::ublas::vector<double>,
+           class mat_t=boost::numeric::ublas::matrix<double>,
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<
+             boost::numeric::ublas::matrix<double> >>
   class emulator_interpm_krige_table :
     public emulator_unc<vec2_t,vec2_t,vec_t> {
-
+    
   protected:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -179,8 +182,7 @@ namespace o2scl {
     /// The internal interpolation object
     interpm_krige_optim
     <ubvector,mat_x_t,mat_x_row_t,
-     mat_y_t,mat_y_row_t,ubmatrix,
-     o2scl_linalg::matrix_invert_det_cholesky<ubmatrix> > iko;
+     mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
 
     /** \brief Create an emulator
      */
@@ -215,7 +217,7 @@ namespace o2scl {
       mvt_x.set(t,col_list_x);
       mvt_y.set(t,col_list_y);
       
-      iko.set_data(2,1,8,mvt_x,mvt_y);
+      iko.set_data(np,n_out,t.get_nlines(),mvt_x,mvt_y,true);
 
       return;
     }

@@ -388,9 +388,13 @@ namespace o2scl {
       for(size_t i=0;i<this->sz;i++) {
         kxx0[i]=(*f)(x0,(*this->px)[i]);
       }
-      
-      boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
-      sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         this->sz,this->sz,1.0,inv_KXX,kxx0,0.0,prod);
+      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+      //boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
+      //sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
       
       if (rescaled) {
         sigma*=std_y;
@@ -425,8 +429,12 @@ namespace o2scl {
         cent=cent*std_y+mean_y;
       }
         
-      boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
-      sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         this->sz,this->sz,1.0,inv_KXX,kxx0,0.0,prod);
+      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+      //boost::numeric::ublas::axpy_prod(inv_KXX,kxx0,prod,true);
+      //sigma=kx0x0-boost::numeric::ublas::inner_prod(kxx0,prod);
 
       if (rescaled) {
         sigma*=std_y;
