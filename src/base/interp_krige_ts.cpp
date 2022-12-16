@@ -497,6 +497,8 @@ int main(void) {
     cout << endl;
 
   }
+
+  covar_funct_strings cfs;
   
   t.report();
 

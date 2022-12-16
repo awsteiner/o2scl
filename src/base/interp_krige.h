@@ -46,6 +46,221 @@
 #include <o2scl/prob_dens_func.h>
 
 namespace o2scl {
+
+  /** \brief Desc
+   */
+  class covar_funct {
+    
+  public:
+    
+    /// The function
+    virtual double operator()(double x, double y)=0;
+
+    /// The function
+    virtual double deriv(double x, double y)=0;
+    
+    /// The function
+    virtual double deriv2(double x, double y)=0;
+    
+    /// The function
+    virtual double integ(double x, double a, double b)=0;
+    
+  };
+  
+  /** \brief Desc
+   */
+  class covar_funct_rbf_noise : public covar_funct {
+    
+  public:
+
+    /// Desc
+    double len;
+    
+    /// Desc
+    double log10_noise;
+    
+    /// The covariance function
+    virtual double operator()(double x1, double x2) {
+      double ret=exp(-(x1-x2)*(x1-x2)/len/len/2.0);
+      if (x1==x2) ret+=pow(10.0,log10_noise);
+      return ret;
+    }
+
+    /** \brief The derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv(double x1, double x2) {
+      return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
+    }
+    
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv2(double x1, double x2) {
+      return ((x1-x2)*(x1-x2)-len*len)*
+        exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;
+    }
+
+    /** \brief The integral of the covariance function over 
+        \f$ [a,b] \f$
+        
+        The integral of the function is
+        \f[
+        \int_a^b f(x) dx = \sum_i A_i \int_a^b C(x,x_i) dx
+        \f]
+        where \f$ A_i = (K^{-1})_{ij} f_j \f$. To compute
+        the integral we use
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        \int_{a+x_i}^{b+x_i} \exp \left( - \frac{x^2}{2 L^2} \right) dx = 
+        \int_{(a+x_i)/(L\sqrt{2})}^{(b+x_i)/(L\sqrt{2})} 
+        L \sqrt{2} \exp \left( - y^2 \right) dy 
+        \f]
+        But 
+        \f[
+        \mathrm{erf}(x) \equiv \frac{2}{\sqrt{\pi}} \int_0^{x} e^{-t^2}
+        \f]
+        so
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        L \frac{\sqrt{\pi}}{\sqrt{2}} \left[ 
+        \mathrm{erf}\left( \frac{b+x_i}{L \sqrt{2}} \right) - 
+        \mathrm{erf}\left( \frac{a+x_i}{L \sqrt{2}} \right) \right]
+        \f]
+    */
+    virtual double integ(double x, double a, double b) {
+      double alpha=1.0/(len*len*2.0);
+      return sqrt(o2scl_const::pi/alpha)/2.0*
+        (gsl_sf_erf(sqrt(alpha)*(b-x))-
+         gsl_sf_erf(sqrt(alpha)*(a-x)));
+    }
+
+  };
+
+  /** \brief Desc
+   */
+  class covar_funct_strings : public covar_funct {
+    
+  public:
+
+    covar_funct_strings() {
+    }
+    
+    /** \brief Desc
+     */
+    template<class vec_string_t=std::vector<std::string> >
+    covar_funct_strings(std::string expr, std::string expr_d,
+                        std::string expr_d2, std::string expr_i,
+                        vec_string_t &parms, 
+                        std::string var, std::string var2,
+                        std::string var_lo, std::string var_hi) {
+      set(expr,expr_d,expr_d2,expr_i,parms,var,var2,var_lo,var_hi);
+    }
+    
+    /** \brief Desc
+     */
+    template<class vec_string_t=std::vector<std::string> >
+    void set(std::string expr, std::string expr_d,
+             std::string expr_d2, std::string expr_i,
+             vec_string_t &parms, 
+             std::string var, std::string var2,
+             std::string var_lo, std::string var_hi) {
+      
+      calc.compile(expr.c_str(),0);
+      st_expr=expr;
+      calc_d.compile(expr_d.c_str(),0);
+      st_expr_d=expr_d;
+      calc_d2.compile(expr_d2.c_str(),0);
+      st_expr_d2=expr_d2;
+      calc_i.compile(expr_i.c_str(),0);
+      st_expr_i=expr_i;
+      
+      int np=parms.size();
+      st_parms.resize(np);
+      for (int i=0;i<np;i++) {
+	st_parms[i]=parms[i];
+      }
+      st_var=var;
+      st_var2=var;
+      st_var_lo=var_lo;
+      st_var_hi=var_hi;
+      
+      return;
+    }
+
+    /// The function parser
+    o2scl::calc_utf8<> calc;
+    o2scl::calc_utf8<> calc_d;
+    o2scl::calc_utf8<> calc_d2;
+    o2scl::calc_utf8<> calc_i;
+
+    /// The variable values
+    std::map<std::string,double> vars;
+      
+    /// The expression
+    std::string st_expr;
+    std::string st_expr_d;
+    std::string st_expr_d2;
+    std::string st_expr_i;
+      
+    /// The parameters
+    std::vector<std::string> st_parms; 
+
+    /// The variable
+    std::string st_var; 
+
+    /// The variable
+    std::string st_var2; 
+
+    /// The variable
+    std::string st_var_lo; 
+
+    /// The variable
+    std::string st_var_hi; 
+
+    /// To evaluate the fit quality
+    template<class vec_t>
+    void set_params(size_t np, vec_t &v) {
+      for(size_t i=0;i<np;i++) {
+	vars[st_parms[i]]=v[i];
+      }
+      return;
+    }
+    
+    /// The function
+    double operator()(double x, double y) {
+      vars[st_var]=x;
+      vars[st_var2]=y;
+      double z=calc.eval(&vars);
+      return z;
+    }
+
+    /// The function
+    double deriv(double x, double y) {
+      vars[st_var]=x;
+      vars[st_var2]=y;
+      double z=calc_d.eval(&vars);
+      return z;
+    }
+    
+    /// The function
+    double deriv2(double x, double y) {
+      vars[st_var]=x;
+      vars[st_var2]=y;
+      double z=calc_d2.eval(&vars);
+      return z;
+    }
+    
+    /// The function
+    double integ(double x, double a, double b) {
+      vars[st_var]=x;
+      vars[st_var_lo]=a;
+      vars[st_var_hi]=b;
+      double z=calc_i.eval(&vars);
+      return z;
+    }
+    
+  };
   
   /** \brief Interpolation by Kriging with a user-specified 
       covariance function
@@ -1213,6 +1428,648 @@ namespace o2scl {
   
   
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  template<class vec_t, class vec2_t=vec_t, class func_t=covar_funct,
+           class mat_t=boost::numeric::ublas::matrix<double>,
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t> >
+  class interp_krige_optim_new :
+    public interp_krige<vec_t,vec2_t,
+                        std::function<double(double,double)>,
+                        std::function<double(double,double,double)>,
+                        mat_t,mat_inv_t> {
+
+  public:
+
+    typedef boost::numeric::ublas::vector<double> ubvector;
+
+  protected:
+
+    /// Desc
+    func_t cf;
+  
+    /// The quality factor of the optimization
+    double qual;
+    
+    /// Pointer to the user-specified minimizer
+    mmin_base<> *mp;
+
+  public:
+    
+    /** \brief Function to optimize the covariance parameters
+     */
+    double qual_fun(double x, double noise_var, int &success) {
+
+      len=x;
+      success=0;
+
+      size_t size=this->sz;
+
+      if (mode==mode_loo_cv_bf) {
+      
+        qual=0.0;
+        for(size_t k=0;k<size;k++) {
+	
+          // Leave one observation out
+          ubvector x2(size-1);
+          ubvector y2(size-1);
+          o2scl::vector_copy_jackknife((*this->px),k,x2);
+          if (this->rescaled) {
+            o2scl::vector_copy_jackknife(this->y_r,k,y2);
+          } else {
+            o2scl::vector_copy_jackknife((*this->py),k,y2);
+          }
+	
+          // Construct the inverse of the KXX matrix. Note
+          // that we don't use the inv_KXX data member
+          // because of the size mismatch
+          mat_t inv_KXX2(size-1,size-1);
+          for(size_t irow=0;irow<size-1;irow++) {
+            for(size_t icol=0;icol<size-1;icol++) {
+              if (irow>icol) {
+                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
+              } else {
+                inv_KXX2(irow,icol)=cf(x2[irow],x2[icol]);
+                if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
+              }
+            }
+          }
+
+          // Construct the inverse of KXX
+          this->mi.invert_inplace(size-1,inv_KXX2);
+	  
+          // Inverse covariance matrix times function vector
+          
+          ubvector Kinvf2(size-1);
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size-1,size-1,1.0,inv_KXX2,y2,0.0,
+                             Kinvf2);
+	  
+          // The actual value
+          double yact;
+          if (this->rescaled) {
+            yact=this->y_r[k];
+          } else {
+            yact=(*this->py)[k];
+          }
+
+          // Compute the predicted value
+          double ypred=0.0;
+          ubvector kxx0(size-1);
+          if (this->rescaled) {
+            for(size_t i=0;i<size-1;i++) {
+              kxx0[i]=cf((*this->px)[k],x2[i]);
+              ypred+=kxx0[i]*Kinvf2[i];
+              if (false && k==0) {
+                std::cout << "  " << Kinvf2[i] << " " << x2[i] << " "
+                          << kxx0[i] << " " << ypred
+                          << std::endl;
+              }
+            }
+          } else {
+            for(size_t i=0;i<size-1;i++) {
+              kxx0[i]=cf((*this->px)[k],x2[i]);
+              ypred+=kxx0[i]*Kinvf2[i];
+            }
+          }
+          
+          if (false && k==0) {
+            std::cout.setf(std::ios::showpos);
+            std::cout << "k,x,yact,ypred: " << k << " "
+                      << (*this->px)[k] << " "
+                      << yact << " " << ypred << std::endl;
+            std::cout.unsetf(std::ios::showpos);
+          }
+          
+          qual+=pow(yact-ypred,2.0);
+	
+        }
+        if (verbose>0) {
+          std::cout << "len,qual (loo_cv_bf): " << len << " "
+                    << qual << std::endl;
+          //std::cout << "--" << std::endl;
+        }
+
+      } else if (mode==mode_loo_cv) {
+
+#ifdef O2SCL_NEVER_DEFINED
+        
+        if (false) {
+          
+          // AWS, 7/30/22: This is the loo_cv
+          // method to compute mu and sigma and Eq 5.10 in R&W., I
+          // think it should work, but it doesn't quite work, however,
+          // using Eq. 5.12 to compute mu and sigma (below) seems to
+          // work well (and is more efficient), so I'm keeping that
+          
+          qual=0.0;
+          for(size_t k=0;k<size;k++) {
+	
+            // Leave one observation out
+            ubvector x2(size-1);
+            ubvector y2(size-1);
+            o2scl::vector_copy_jackknife((*this->px),k,x2);
+            if (this->rescaled) {
+              o2scl::vector_copy_jackknife(this->y_r,k,y2);
+            } else {
+              o2scl::vector_copy_jackknife((*this->py),k,y2);
+            }
+	
+            // Construct the KXX matrix
+            mat_t inv_KXX2(size-1,size-1);
+            for(size_t irow=0;irow<size-1;irow++) {
+              for(size_t icol=0;icol<size-1;icol++) {
+                if (irow>icol) {
+                  inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
+                } else {
+                  inv_KXX2(irow,icol)=cf(x2[irow],x2[icol]);
+                  if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
+                }
+              }
+            }
+          
+            // Construct the inverse of KXX
+            this->mi.invert_inplace(size-1,inv_KXX2);
+	  
+            // Inverse covariance matrix times function vector
+            ubvector Kinvf2(size-1);
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size-1,size-1,1.0,inv_KXX2,y2,0.0,
+                               Kinvf2);
+	  
+            double yact;
+            if (this->rescaled) {
+              yact=this->y_r[k];
+            } else {
+              yact=(*this->py)[k];
+            }
+          
+            double ypred=0.0;
+            ubvector kxx0(size-1);
+            if (this->rescaled) {
+              for(size_t i=0;i<size-1;i++) {
+                kxx0[i]=cf((*this->px)[k],x2[i]);
+                ypred+=kxx0[i]*Kinvf2[i];
+              }
+            } else {
+              for(size_t i=0;i<size-1;i++) {
+                kxx0[i]=cf((*this->px)[k],x2[i]);
+                ypred+=kxx0[i]*Kinvf2[i];
+              }
+            }
+          
+            double kx0x0=cf((*this->px)[k],(*this->px)[k]);
+            ubvector prod(size-1);
+          
+            boost::numeric::ublas::axpy_prod(inv_KXX2,kxx0,prod,true);
+            double sigma=kx0x0-
+              boost::numeric::ublas::inner_prod(kxx0,prod);
+
+            if (this->rescaled) {
+              sigma*=this->std_y;
+            }
+
+            if (false && k==0) {
+              std::cout.setf(std::ios::showpos);
+              std::cout << "k,x,yact,ypred,sigma: " << k << " "
+                        << (*this->px)[k] << " "
+                        << yact << " " << ypred << " "
+                        << sigma << std::endl;
+              std::cout.unsetf(std::ios::showpos);
+            }
+
+            // We maximize the predictive log probability, Eq 5.10
+            // in R&W
+            qual+=pow(yact-ypred,2.0)/sigma/sigma/2.0;
+            qual+=0.5*log(sigma*sigma);
+	
+          }
+
+        }
+        
+#endif
+
+        if (true) {
+          
+          // Construct the KXX matrix
+          mat_t inv_KXX2(size,size);
+          for(size_t irow=0;irow<size;irow++) {
+            for(size_t icol=0;icol<size;icol++) {
+              if (irow>icol) {
+                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
+              } else {
+                inv_KXX2(irow,icol)=cf((*this->px)[irow],
+                                          (*this->px)[icol]);
+                if (irow==icol) inv_KXX2(irow,icol)+=noise_var;
+              }
+            }
+          }
+          
+          // Construct the inverse of KXX
+          this->mi.invert_inplace(size-1,inv_KXX2);
+	  
+          // Inverse covariance matrix times function vector
+          ubvector Kinvf2(size);
+          if (this->rescaled) {
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size,size,1.0,inv_KXX2,this->y_r,0.0,
+                               Kinvf2);
+          } else {
+            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                               o2scl_cblas::o2cblas_NoTrans,
+                               size,size,1.0,inv_KXX2,*(this->py),0.0,
+                               Kinvf2);
+          }
+
+          qual=0.0;
+          for(size_t ii=0;ii<size;ii++) {
+            
+            double yact;
+            if (this->rescaled) {
+              yact=this->y_r[ii];
+            } else {
+              yact=(*this->py)[ii];
+            }
+
+            // Compute sigma and ypred from Eq. 5.12
+            double sigma2=1.0/inv_KXX2(ii,ii);
+            double ypred=yact-Kinvf2[ii]*sigma2;
+
+            // Then use Eq. 5.10
+            qual+=pow(yact-ypred,2.0)/sigma2/2.0;
+            qual+=0.5*log(sigma2);
+          }
+	  
+        }
+        
+        if (verbose>0) {
+          std::cout << "len,qual (loo_cv): " << len << " "
+                    << qual << std::endl;
+        }
+      
+      } else if (mode==mode_max_lml) {
+
+        // Construct the KXX matrix
+        mat_t KXX(size,size);
+        for(size_t irow=0;irow<size;irow++) {
+          for(size_t icol=0;icol<size;icol++) {
+            if (irow>icol) {
+              KXX(irow,icol)=KXX(icol,irow);
+            } else {
+              KXX(irow,icol)=cf((*this->px)[irow],
+                                   (*this->px)[icol]);
+              if (irow==icol) KXX(irow,icol)+=noise_var;
+            }
+          }
+        }
+
+        // Compute the additive inverse of the log of the marginal
+        // likelihood, from Eq. 5.8 of R&W, without the constant term
+        
+        double lndet;
+        this->mi.invert_det(size,KXX,this->inv_KXX,lndet);
+        lndet=log(lndet);
+      
+        // Inverse covariance matrix times function vector
+        this->Kinvf.resize(size);
+
+        qual=0.0;
+        
+        if (this->rescaled) {
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,this->inv_KXX,this->y_r,0.0,
+                             this->Kinvf);
+          
+          // Compute the log of the marginal likelihood, without
+          // the constant term
+          for(size_t i=0;i<size;i++) {
+            qual+=0.5*this->y_r[i]*this->Kinvf[i];
+          }
+          qual+=0.5*lndet;
+          
+        } else {
+
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,this->inv_KXX,*this->py,0.0,
+                             this->Kinvf);
+          
+          // Compute the log of the marginal likelihood, without
+          // the constant term
+          for(size_t i=0;i<size;i++) {
+            qual+=0.5*(*this->py)[i]*this->Kinvf[i];
+          }
+          qual+=0.5*lndet;
+
+        }
+
+        // Sometimes the calculation fails, and this helps avoid
+        // those regions
+        if (qual==-std::numeric_limits<double>::infinity()) {
+          qual=std::numeric_limits<double>::infinity();
+        }
+        
+        if (verbose>0) {
+          std::cout << "len,qual (lml): " << len << " " << qual << std::endl;
+        }
+      }
+
+      return qual;
+    }
+  
+    interp_krige_optim_new() {
+      nlen=20;
+      full_min=false;
+      mp=&def_min;
+      def_min.ntrial*=10;
+      verbose=0;
+      mode=mode_loo_cv;
+    }
+
+    /// \name Function to minimize and various option
+    //@{
+    /// Leave-one-out cross validation (brute force version)
+    static const size_t mode_loo_cv_bf=1;
+    /// Maximize Log-marginal-likelihood
+    static const size_t mode_max_lml=2;
+    /// New leave-one-out cross validation method (default)
+    static const size_t mode_loo_cv=3;
+    /// Function to minimize (default \ref mode_loo_cv)
+    size_t mode;
+    ///@}
+    
+    /// Verbosity parameter
+    int verbose;
+
+    /** \brief Set the current length parameter
+     */
+    void set_length(double user_len) {
+      if (user_len<=0.0) {
+        O2SCL_ERR("Length cannot be less than or equal to zero.",
+                  o2scl::exc_einval);
+      }
+      len=user_len;
+      return;
+    }
+    
+    /** \brief Number of length scale points to try when full minimizer 
+        is not used (default 20)
+    */
+    size_t nlen;
+
+    /// Default minimizer
+    mmin_simp2<> def_mmin;
+
+    /// If true, use the full minimizer
+    bool full_min;
+    
+    /** \brief Initialize interpolation routine with optional
+        rescaling, and user-specified noise parameter and length scale
+
+        No optimization of the length scale is performed.
+     */
+    virtual int set_noise_len(size_t size, const vec_t &x, const vec2_t &y,
+                              double noise_var, double user_len,
+                              bool rescale=false) {
+
+      len=user_len;
+      
+      ff=std::bind(std::mem_fn<double(double,double)>
+                   (&interp_krige_optim_new
+                    <vec_t,vec2_t,mat_t,mat_inv_t>::covar),this,
+                   std::placeholders::_1,std::placeholders::_2);
+      ffd=std::bind(std::mem_fn<double(double,double)>
+                    (&interp_krige_optim_new
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::deriv_covar),this,
+                    std::placeholders::_1,std::placeholders::_2);
+      ffd2=std::bind(std::mem_fn<double(double,double)>
+                     (&interp_krige_optim_new
+                      <vec_t,vec2_t,mat_t,mat_inv_t>::deriv2_covar),this,
+                     std::placeholders::_1,std::placeholders::_2);
+      ffi=std::bind(std::mem_fn<double(double,double,double)>
+                    (&interp_krige_optim_new
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::integ_covar),this,
+                    std::placeholders::_1,std::placeholders::_2,
+                    std::placeholders::_3);
+      
+      this->set_covar_di_noise(size,x,y,ff,ffd,
+                               ffd2,ffi,noise_var,this->rescaled);
+      
+      return 0;
+    }
+    
+    /** \brief Initialize using optimization to find best length scale
+        with optional rescaling and user-specified noise parameter
+     */
+    virtual int set_noise(size_t size, const vec_t &x, const vec2_t &y,
+                          double noise_var, bool rescale=false) {
+
+      // Set parent data members
+      this->px=&x;
+      this->py=&y;
+      this->sz=size;
+
+      if (rescale==true) {
+        this->rescaled=true;
+        this->mean_y=o2scl::vector_mean(size,y);
+        this->std_y=o2scl::vector_stddev(size,y,this->mean_y);
+        this->y_r.resize(size);
+        for (size_t j=0;j<size;j++) {
+          this->y_r[j]=(y[j]-this->mean_y)/this->std_y;
+        }
+      } else {
+        this->rescaled=false;
+      }
+
+      int success=0;
+      
+      if (full_min) {
+
+        if (verbose>1) {
+          std::cout << "Class interp_krige_optim_new: full minimization, "
+                    << std::endl;
+          if (mode==mode_loo_cv_bf) {
+            std::cout << "  leave one-out cross validation (brute force). ";
+          } else if (mode==mode_loo_cv) {
+            std::cout << "  leave one-out cross validation. ";
+          } else {
+            std::cout << "  log marginal likelihood. ";
+          }
+          std::cout << std::endl;
+        }
+      
+        // Choose first interval as initial guess
+        double len_opt=x[1]-x[0];
+
+        funct mf=std::bind
+          (std::mem_fn<double(double,double,int &)>
+           (&interp_krige_optim_new<vec_t,vec2_t,mat_t,mat_inv_t>::qual_fun),
+           this,std::placeholders::_1,noise_var,std::ref(success));
+           
+      
+        mp->min(len_opt,qual,mf);
+        len=len_opt;
+
+        if (success!=0) {
+          O2SCL_CONV2("Minimization failed in ",
+                      "interp_krige_optim_new::set_noise().",
+                      o2scl::exc_efailed,this->err_nonconv);
+        }
+
+      } else {
+
+        if (verbose>1) {
+          std::cout << "Class interp_krige_optim_new: simple minimization, "
+                    << std::endl;
+          if (mode==mode_loo_cv_bf) {
+            std::cout << "  leave one-out cross validation (brute force). ";
+          } else if (mode==mode_loo_cv) {
+            std::cout << "  leave one-out cross validation. ";
+          } else {
+            std::cout << "  maximize marginal likelihood. ";
+          }
+          std::cout << std::endl;
+        }
+
+        // Compute a finite-difference array
+        std::vector<double> diff(size-1);
+        for(size_t i=0;i<size-1;i++) {
+          diff[i]=fabs(x[i+1]-x[i]);
+        }
+      
+        // Range of the length parameter
+        double len_min=o2scl::vector_min_value
+          <std::vector<double>,double>(size-1,diff)/3.0;
+        double len_max;
+        if (this->rescaled) {
+          len_max=fabs((*this->px)[size-1]-(*this->px)[0])*3.0;
+        } else {
+          len_max=fabs(x[size-1]-x[0])*3.0;
+        }
+        double len_ratio=len_max/len_min;
+
+        if (verbose>1) {
+          std::cout << "             len (min,max,ratio): "
+                    << len_min << " " << len_max << " "
+                    << pow(len_ratio,((double)1)/((double)nlen-1))
+                    << std::endl;
+        }
+	
+        // Initialize to zero to prevent uninit'ed var. warnings
+        double min_qual=0.0, len_opt=0.0;
+      
+        if (verbose>1) {
+          std::cout << "             "
+                    << "ilen qual len fail min_qual best_len"
+                    << std::endl;
+        }
+
+        // Loop over the full range, finding the optimum
+        bool min_set=false;
+        for(size_t j=0;j<nlen;j++) {
+          len=len_min*pow(len_ratio,((double)j)/((double)nlen-1));
+
+          int success=0;
+          qual=qual_fun(len,noise_var,success);
+	
+          if (success==0 && (min_set==false || qual<min_qual)) {
+            len_opt=len;
+            min_qual=qual;
+            min_set=true;
+          }
+	
+          if (verbose>1) {
+            std::cout << "krige_optim: ";
+            std::cout.width(2);
+            std::cout << j << " ";
+            std::cout.setf(std::ios::showpos);
+            std::cout << qual << " " << len << " "
+                      << success << " " << min_qual << " "
+                      << len_opt << std::endl;
+            std::cout.unsetf(std::ios::showpos);
+          }
+	  
+        }
+
+        // Now that we've optimized the covariance function,
+        // just use the parent class to interpolate
+        len=len_opt;
+
+      }
+
+      if (verbose>0) {
+        std::cout << "interp_krige_optim_new::set_noise(): optimum length: "
+                  << len << std::endl;
+      }
+      
+      ff=std::bind(std::mem_fn<double(double,double)>
+                   (&interp_krige_optim_new
+                    <vec_t,vec2_t,mat_t,mat_inv_t>::covar),this,
+                   std::placeholders::_1,std::placeholders::_2);
+      ffd=std::bind(std::mem_fn<double(double,double)>
+                    (&interp_krige_optim_new
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::deriv_covar),this,
+                    std::placeholders::_1,std::placeholders::_2);
+      ffd2=std::bind(std::mem_fn<double(double,double)>
+                     (&interp_krige_optim_new
+                      <vec_t,vec2_t,mat_t,mat_inv_t>::deriv2_covar),this,
+                     std::placeholders::_1,std::placeholders::_2);
+      ffi=std::bind(std::mem_fn<double(double,double,double)>
+                    (&interp_krige_optim_new
+                     <vec_t,vec2_t,mat_t,mat_inv_t>::integ_covar),this,
+                    std::placeholders::_1,std::placeholders::_2,
+                    std::placeholders::_3);
+      
+      this->set_covar_di_noise(size,x,y,ff,ffd,
+                               ffd2,ffi,noise_var,this->rescaled);
+      
+      return 0;
+    }
+
+    /** \brief Initialize interpolation with default noise parameter
+        and no rescaling
+     */
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
+
+      // Use the mean absolute value to determine noise
+      double mean_abs=0.0;
+      for(size_t j=0;j<size;j++) {
+        mean_abs+=fabs(y[j]);
+      }
+      mean_abs/=size;
+
+      set_noise(size,x,y,mean_abs/1.0e8,false);
+    
+      return;
+    }
+  
+    /** \brief Initialize interpolation with default noise parameter
+        and optional rescaling
+     */
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y,
+                     bool rescale) {
+
+      // Use the mean absolute value to determine noise
+      double mean_abs=0.0;
+      for(size_t j=0;j<size;j++) {
+        mean_abs+=fabs(y[j]);
+      }
+      mean_abs/=size;
+
+      set_noise(size,x,y,mean_abs/1.0e8,rescale);
+    
+      return;
+    }
+  
+  
+  };
+  
+#endif
   
 }
 
