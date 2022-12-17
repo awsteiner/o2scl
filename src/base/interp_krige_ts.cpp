@@ -498,7 +498,34 @@ int main(void) {
 
   }
 
-  covar_funct_strings cfs;
+  if (true) {
+    
+    covar_funct_strings cfs;
+    covar_funct_rbf_noise cfrn;
+    
+    vector<vector<double>> param_lists;
+    param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});
+    param_lists.push_back({-15.0,-13.0,-11.0,-9.0});
+    
+    ubvector x(40), y(40);
+    for(size_t i=0;i<40;i++) {
+      x[i]=((double)i)*0.05;
+      double xx=x[i];
+      y[i]=xx*xx*xx*exp(-4.0*xx);
+    }
+    
+    interp_krige_optim_new<covar_funct_rbf_noise,ubvector> ikon;
+    ikon.mode=1;
+    ikon.verbose=2;
+    ikon.set(40,x,y,cfrn,param_lists,true);
+    
+    for(double xt=0.017;xt<2.0;xt+=0.017) {
+      cout << xt << " " << ikon.eval(xt) << " "
+           << xt*xt*xt*exp(-4.0*xt) << " "
+           << ikon.deriv(xt) << " "
+           << 3.0*xt*xt*exp(-4.0*xt)-4.0*xt*xt*xt*exp(-4.0*xt) << endl;
+    }
+  }
   
   t.report();
 
