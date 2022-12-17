@@ -501,6 +501,13 @@ int main(void) {
   if (true) {
     
     covar_funct_strings cfs;
+    vector<string> vars={"len"};
+    cfs.set("exp(-(x-y)^2/len^2/2)",
+            "-exp(-(x-y)^2/len^2/2)/len^2/(x-y)",
+            "exp(-(x-y)^2/len^2/2)/len^4*((x-y)^2-len^2)",
+            ((string)"sqrt(pi*len^2*2)/2*(erf(sqrt(1/len^2/2)*(b-x))-")+
+            "erf(sqrt(1/len^2/2)*(a-x)))",vars,"x","y","a","b");
+            
     covar_funct_rbf_noise cfrn;
     
     vector<vector<double>> param_lists;
@@ -513,17 +520,23 @@ int main(void) {
       double xx=x[i];
       y[i]=xx*xx*xx*exp(-4.0*xx);
     }
+
+    funct_string fs("x^3*exp(-4*x)","x");
+    inte_qag_gsl<funct_string> iqg;
     
     interp_krige_optim_new<covar_funct_rbf_noise,ubvector> ikon;
     ikon.mode=1;
     ikon.verbose=2;
     ikon.set(40,x,y,cfrn,param_lists,true);
-    
+
+    cout.precision(4);
     for(double xt=0.017;xt<2.0;xt+=0.017) {
       cout << xt << " " << ikon.eval(xt) << " "
            << xt*xt*xt*exp(-4.0*xt) << " "
            << ikon.deriv(xt) << " "
-           << 3.0*xt*xt*exp(-4.0*xt)-4.0*xt*xt*xt*exp(-4.0*xt) << endl;
+           << 3.0*xt*xt*exp(-4.0*xt)-4.0*xt*xt*xt*exp(-4.0*xt) << " "
+           << ikon.integ(0.0,xt) << " "
+           << iqg.integ(fs,0.0,xt) << endl;
     }
   }
   

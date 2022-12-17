@@ -73,14 +73,92 @@ namespace o2scl {
   
   /** \brief Covariance function: 1D RBF with a noise term
    */
+  class covar_funct_rbf : public covar_funct {
+    
+  public:
+
+    /// Length parameter
+    double len;
+    
+    /// Get the number of parameters
+    virtual size_t get_n_params() {
+      return 1;
+    }
+    
+    /// Set the parameters
+    template<class vec_t>
+    void set_params(vec_t &p) {
+      len=p[0];
+      return;
+    }
+    
+    /// The covariance function
+    virtual double operator()(double x1, double x2) {
+      double ret=exp(-(x1-x2)*(x1-x2)/len/len/2.0);
+      return ret;
+    }
+
+    /** \brief The derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv(double x1, double x2) {
+      return -exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len*(x1-x2);
+    }
+    
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv2(double x1, double x2) {
+      return ((x1-x2)*(x1-x2)-len*len)*
+        exp(-(x1-x2)*(x1-x2)/len/len/2.0)/len/len/len/len;
+    }
+
+    /** \brief The integral of the covariance function over 
+        \f$ [a,b] \f$
+        
+        The integral of the function is
+        \f[
+        \int_a^b f(x) dx = \sum_i A_i \int_a^b C(x,x_i) dx
+        \f]
+        where \f$ A_i = (K^{-1})_{ij} f_j \f$. To compute
+        the integral we use
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        \int_{a+x_i}^{b+x_i} \exp \left( - \frac{x^2}{2 L^2} \right) dx = 
+        \int_{(a+x_i)/(L\sqrt{2})}^{(b+x_i)/(L\sqrt{2})} 
+        L \sqrt{2} \exp \left( - y^2 \right) dy 
+        \f]
+        But 
+        \f[
+        \mathrm{erf}(x) \equiv \frac{2}{\sqrt{\pi}} \int_0^{x} e^{-t^2}
+        \f]
+        so
+        \f[
+        \int_a^b C(x,x_i) dx = 
+        L \frac{\sqrt{\pi}}{\sqrt{2}} \left[ 
+        \mathrm{erf}\left( \frac{b+x_i}{L \sqrt{2}} \right) - 
+        \mathrm{erf}\left( \frac{a+x_i}{L \sqrt{2}} \right) \right]
+        \f]
+    */
+    virtual double integ(double x, double a, double b) {
+      double alpha=1.0/(len*len*2.0);
+      return sqrt(o2scl_const::pi/alpha)/2.0*
+        (gsl_sf_erf(sqrt(alpha)*(b-x))-
+         gsl_sf_erf(sqrt(alpha)*(a-x)));
+    }
+
+  };
+
+  /** \brief Covariance function: 1D RBF with a noise term
+   */
   class covar_funct_rbf_noise : public covar_funct {
     
   public:
 
-    /// Desc
+    /// Length parameter
     double len;
     
-    /// Desc
+    /// Noise parameter
     double log10_noise;
     
     /// Get the number of parameters
@@ -531,14 +609,16 @@ namespace o2scl {
     template<class covar_func2_t>
       double eval_covar(double x0, covar_func2_t &user_f) const {
       
+      if (rescaled) {
+        O2SCL_ERR2("Function eval_covar() doesn't know how to interpret ",
+                   "scaling for generic covariance functions.",
+                   o2scl::exc_einval);
+      }
+
       double ret=0.0;
       
       for(size_t i=0;i<this->sz;i++) {
         ret+=user_f(x0,(*this->px)[i])*Kinvf[i];
-      }
-
-      if (rescaled) {
-        ret=ret*std_y+mean_y;
       }
 
       return ret;
@@ -602,7 +682,7 @@ namespace o2scl {
       }
       
       if (rescaled) {
-        ret=ret*std_y+mean_y;
+        ret=ret*std_y+(b-a)*mean_y;
       }
 
       return ret;
@@ -1447,8 +1527,9 @@ namespace o2scl {
   
   };
 
-  /** \brief Desc
-   */
+  /** \brief One-dimensional interpolation optimizing a 
+      user-specified covariance function
+  */
   template<class func_t=covar_funct,
            class vec_t=boost::numeric::ublas::vector<double>,
            class vec2_t=vec_t, 
@@ -1466,7 +1547,7 @@ namespace o2scl {
 
   protected:
 
-    /// Desc
+    /// Pointer to the covariance function
     func_t *cf;
   
     /// The quality factor of the optimization
@@ -1572,7 +1653,6 @@ namespace o2scl {
         if (verbose>0) {
           std::cout << "len (loo_cv_bf): "
                     << qual << std::endl;
-          //std::cout << "--" << std::endl;
         }
 
       } else if (mode==mode_loo_cv) {
