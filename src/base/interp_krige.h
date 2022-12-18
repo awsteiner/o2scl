@@ -71,7 +71,7 @@ namespace o2scl {
     
   };
   
-  /** \brief Covariance function: 1D RBF with a noise term
+  /** \brief Covariance function: one-dimensional radial basis function
    */
   class covar_funct_rbf : public covar_funct {
     
@@ -1534,7 +1534,8 @@ namespace o2scl {
            class vec_t=boost::numeric::ublas::vector<double>,
            class vec2_t=vec_t, 
            class mat_t=boost::numeric::ublas::matrix<double>,
-           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t> >
+           class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t>,
+           class vec_vec_t=std::vector<std::vector<double>> >
   class interp_krige_optim_new :
     public interp_krige<vec_t,vec2_t,
                         std::function<double(double,double)>,
@@ -1549,6 +1550,9 @@ namespace o2scl {
 
     /// Pointer to the covariance function
     func_t *cf;
+
+    /// List of parameter values to try
+    vec_vec_t plists;
   
     /// The quality factor of the optimization
     double qual;
@@ -1906,32 +1910,30 @@ namespace o2scl {
     /// Default minimizer
     mmin_simp2<> def_mmin;
 
-    /** \brief Initialize interpolation routine with optional
-        rescaling, and user-specified noise parameter and length scale
-
-        No optimization of the length scale is performed.
+    /** \brief Desc
      */
-    template<class vec_vec_t>
-    int set(size_t size, const vec_t &x, const vec2_t &y,
-            func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
-      
+    int set_covar(func_t &covar, vec_vec_t &param_lists) {
       cf=&covar;
+      plists=param_lists;
+      return 0;
+    }
+    
+    /** \brief Desc
+     */
+    virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       
       // Set parent data members
       this->px=&x;
       this->py=&y;
       this->sz=size;
 
-      if (rescale==true) {
-        this->rescaled=true;
+      if (this->rescaled) {
         this->mean_y=o2scl::vector_mean(size,y);
         this->std_y=o2scl::vector_stddev(size,y,this->mean_y);
         this->y_r.resize(size);
         for (size_t j=0;j<size;j++) {
           this->y_r[j]=(y[j]-this->mean_y)/this->std_y;
         }
-      } else {
-        this->rescaled=false;
       }
 
       int success=0;
@@ -1969,7 +1971,7 @@ namespace o2scl {
       while (done==false) {
 
         for(size_t i=0;i<np;i++) {
-          params[i]=param_lists[i][index_list[i]];
+          params[i]=plists[i][index_list[i]];
         }
         cf->set_params(params);
         
@@ -2000,7 +2002,7 @@ namespace o2scl {
 
         index_list[0]++;
         for(size_t k=0;k<np;k++) {
-          if (index_list[k]==param_lists[k].size()) {
+          if (index_list[k]==plists[k].size()) {
             if (k==np-1) {
               done=true;
             } else {
@@ -2033,8 +2035,23 @@ namespace o2scl {
       this->set_covar_di_noise(size,x,y,ff,ffd,
                                ffd2,ffi,0.0,this->rescaled);
       
+      return;
+    }
+
+    /** \brief Initialize interpolation routine with optional
+        rescaling, and user-specified noise parameter and length scale
+
+        No optimization of the length scale is performed.
+     */
+    int set(size_t size, const vec_t &x, const vec2_t &y,
+            func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
+      set_covar(covar,param_lists);
+      this->rescaled=rescale;
+      set(size,x,y);
       return 0;
     }
+    
+    
   
   };
   
