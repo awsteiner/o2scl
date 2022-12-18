@@ -1034,20 +1034,6 @@ void o2scl_format_float_c_mode(void *vptr);
 
 void *o2scl_format_float_convert(void *vptr, double x, bool debug=false);
 
-void *o2scl_create_interp_std_vector_double_();
-
-void o2scl_free_interp_std_vector_double_(void *vptr);
-
-double o2scl_interp_std_vector_double__eval(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y);
-
-double o2scl_interp_std_vector_double__deriv(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y);
-
-double o2scl_interp_std_vector_double__deriv2(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y);
-
-double o2scl_interp_std_vector_double__integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y);
-
-void o2scl_interp_std_vector_double__set_type(void *vptr, int interp_type);
-
 void *o2scl_create_interp_vec_std_vector_double_();
 
 void o2scl_free_interp_vec_std_vector_double_(void *vptr);

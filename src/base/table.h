@@ -2045,7 +2045,8 @@ namespace o2scl {
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-                   "' not found in table::deriv(string,double,string).").c_str(),
+                   "' not found in table::deriv("+
+                   "string,double,string).").c_str(),
                   exc_enotfound);
         return 0.0;
       }

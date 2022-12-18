@@ -108,10 +108,6 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t=vec_t> class interp_base {
 
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-    
 #ifndef DOXYGEN_INTERNAL
     
   protected:
@@ -215,10 +211,6 @@ namespace o2scl {
   template<class vec_t, class vec2_t=vec_t> class interp_linear : 
   public interp_base<vec_t,vec2_t> {
     
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-
   public:
     
     interp_linear() {
@@ -352,10 +344,6 @@ namespace o2scl {
   template<class vec_t, class vec2_t=vec_t> class interp_nearest_neigh : 
   public interp_base<vec_t,vec2_t> {
     
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-
   public:
     
     interp_nearest_neigh() {
@@ -432,10 +420,6 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t=vec_t> class interp_cspline : 
   public interp_base<vec_t,vec2_t> {
-    
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
     
   public:
     
@@ -693,10 +677,6 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t=vec_t> class interp_cspline_peri : 
   public interp_cspline<vec_t,vec2_t> {
-
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
 
   protected:
     
@@ -1155,10 +1135,6 @@ namespace o2scl {
   template<class vec_t, class vec2_t=vec_t> class interp_steffen : 
   public interp_base<vec_t,vec2_t> {
     
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-    
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -1418,10 +1394,6 @@ namespace o2scl {
   template<class vec_t, class vec2_t=vec_t> class interp_monotonic :
   public interp_base<vec_t,vec2_t> {
     
-#ifdef O2SCL_NEVER_DEFINED
-  }{
-#endif
-
   public:
     
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -1660,6 +1632,8 @@ namespace o2scl {
 #endif
 
   };
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief Interpolation class for general vectors
       
@@ -1723,7 +1697,7 @@ namespace o2scl {
       specified as the first \c n elements of vectors \c x and \c y
    */
   virtual double eval(const double x0, size_t n, const vec_t &x, 
-                        const vec2_t &y) {
+                      const vec2_t &y) {
     itp->set(n,x,y);
     return itp->eval(x0);
   }                   
@@ -1796,6 +1770,8 @@ namespace o2scl {
 #endif
 
   };
+
+#endif
   
   /** \brief Interpolation class for pre-specified vector
       
@@ -1839,9 +1815,14 @@ namespace o2scl {
   public:
 
   /// Blank interpolator
-  interp_vec() {
+  interp_vec(size_t interp_type=itp_cspline) {
     itp=0;
-    itype=itp_cspline;
+    itype=interp_type;
+  }
+
+  void set_type(size_t interp_type=itp_cspline) {
+    itype=interp_type;
+    return;
   }
     
   /** \brief Create an interpolation object with interpolation type
@@ -1943,6 +1924,8 @@ namespace o2scl {
     itype=interp_type;
     
     itp->set(n,x,y);
+
+    return;
   }
 
   /** \brief Manually clear the pointer to the user-specified vector
@@ -2018,6 +2001,8 @@ namespace o2scl {
 #endif
   
   };
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief A specialization of interp for C-style double arrays
 
@@ -2027,7 +2012,7 @@ namespace o2scl {
       \endverbatim
    */
   template<size_t n> class interp_array : 
-  public interp<double[n]> {
+    public interp<double[n]> {
     
   public:
     
@@ -2041,6 +2026,8 @@ namespace o2scl {
   interp_array() : interp<double[n]>() {}
     
   };
+
+#endif  
   
   /** \brief A specialization of \ref o2scl::interp_vec for C-style arrays
 
@@ -2187,10 +2174,11 @@ namespace o2scl {
                                   size_t interp_type=itp_linear) {
     
     // Interpolation object
-    interp<vec_t,vec2_t> si(interp_type);
+    interp_vec<vec_t,vec2_t> si(interp_type);
 
     // Compute full integral
-    double total=si.integ(x[0],x[n-1],n,x,y);
+    si.set(n,x,y);
+    double total=si.integ(x[0],x[n-1]);//,n,x,y);
 
     return total;
   }
@@ -2203,12 +2191,13 @@ namespace o2scl {
                                 vec3_t &iy, size_t interp_type=itp_linear) {
     
     // Interpolation object
-    interp<vec_t,vec2_t> si(interp_type);
+    interp_vec<vec_t,vec2_t> si(interp_type);
     
     // Compute full integral
     iy[0]=0.0;
+    si.set(n,x,y);
     for(size_t i=1;i<n;i++) {
-      iy[i]=si.integ(x[0],x[i],n,x,y);
+      iy[i]=si.integ(x[0],x[i]);//,n,x,y);
     }
 
     return;
@@ -2235,10 +2224,11 @@ namespace o2scl {
                                      size_t interp_type=itp_linear) {
     
     // Interpolation object
-    interp<vec_t,vec2_t> si(interp_type);
+    interp_vec<vec_t,vec2_t> si(interp_type);
 
     // Compute full integral
-    double total=si.integ(x[0],x2,n,x,y);
+    si.set(n,x,y);
+    double total=si.integ(x[0],x2);//,n,x,y);
 
     return total;
   }
@@ -2423,8 +2413,8 @@ namespace o2scl {
     
     // Interpolation objects. We need two, one for the
     // user-specified vector type, and one for std::vector<double>
-    interp<vec_t,vec2_t> itp(itp_linear);
-    interp<std::vector<double>,std::vector<double> > itp2(itp_linear);
+    interp_vec<vec_t,vec2_t> itp(itp_linear);
+    interp_vec<std::vector<double>,std::vector<double> > itp2(itp_linear);
     
     // Construct vectors for interpolation
     std::vector<double> xi, yi;
@@ -2443,10 +2433,11 @@ namespace o2scl {
         }
       } else {
         double sum_temp=0.0;
+        itp2.set(n2,x2,y2);
         for(size_t i=0;i<locs.size()/2;i++) {
           double x0=locs[2*i];
           double x1=locs[2*i+1];
-          sum_temp+=itp2.integ(x0,x1,n2,x2,y2);
+          sum_temp+=itp2.integ(x0,x1);//,n2,x2,y2);
         }
         xi.push_back(sum_temp);
         yi.push_back(lev_tmp);
@@ -2468,7 +2459,9 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    lev=itp2.eval(sum,xi.size(),xi,yi);
+    itp2.set(xi.size(),xi,yi);
+    lev=itp2.eval(sum);
+    //lev=itp2.eval(sum,xi.size(),xi,yi);
     
     return 0;
   }

@@ -499,11 +499,11 @@ namespace o2scl {
 			    edge_crossings &xedges, edge_crossings &yedges);
 
     /// Interpolate all right edge crossings 
-    void edges_in_y_direct(double level, interp<ubvector> &si,
+    void edges_in_y_direct(double level, interp_vec<ubvector> &si,
 			   edge_crossings &yedges);
     
     /// Interpolate all bottom edge crossings
-    void edges_in_x_direct(double level, interp<ubvector> &si,
+    void edges_in_x_direct(double level, interp_vec<ubvector> &si,
 			   edge_crossings &xedges);
 
     /// Create a contour line from a starting edge

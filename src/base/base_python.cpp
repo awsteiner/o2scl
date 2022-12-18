@@ -3034,55 +3034,6 @@ void *o2scl_format_float_convert(void *vptr, double x, bool debug) {
   return sptr;
 }
 
-void *o2scl_create_interp_std_vector_double_() {
-  interp<std::vector<double>> *ptr=new interp<std::vector<double>>;
-  return ptr;
-}
-
-void o2scl_free_interp_std_vector_double_(void *vptr) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  delete ptr;
-  return;
-}
-
-double o2scl_interp_std_vector_double__eval(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  std::vector<double> *x=(std::vector<double> *)ptr_x;
-  std::vector<double> *y=(std::vector<double> *)ptr_y;
-  double ret=ptr->eval(x0,n,*x,*y);
-  return ret;
-}
-
-double o2scl_interp_std_vector_double__deriv(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  std::vector<double> *x=(std::vector<double> *)ptr_x;
-  std::vector<double> *y=(std::vector<double> *)ptr_y;
-  double ret=ptr->deriv(x0,n,*x,*y);
-  return ret;
-}
-
-double o2scl_interp_std_vector_double__deriv2(void *vptr, double x0, size_t n, void *ptr_x, void *ptr_y) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  std::vector<double> *x=(std::vector<double> *)ptr_x;
-  std::vector<double> *y=(std::vector<double> *)ptr_y;
-  double ret=ptr->deriv2(x0,n,*x,*y);
-  return ret;
-}
-
-double o2scl_interp_std_vector_double__integ(void *vptr, double x1, double x2, size_t n, void *ptr_x, void *ptr_y) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  std::vector<double> *x=(std::vector<double> *)ptr_x;
-  std::vector<double> *y=(std::vector<double> *)ptr_y;
-  double ret=ptr->integ(x1,x2,n,*x,*y);
-  return ret;
-}
-
-void o2scl_interp_std_vector_double__set_type(void *vptr, int interp_type) {
-  interp<std::vector<double>> *ptr=(interp<std::vector<double>> *)vptr;
-  ptr->set_type(interp_type);
-  return;
-}
-
 void *o2scl_create_interp_vec_std_vector_double_() {
   interp_vec<std::vector<double>> *ptr=new interp_vec<std::vector<double>>;
   return ptr;

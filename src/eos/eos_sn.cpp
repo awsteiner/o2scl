@@ -567,7 +567,7 @@ void eos_sn_base::beta_eq_sfixed(double nB, double entr,
   }
 
   // Linear interpolation for the temperature
-  interp<> it(itp_linear);
+  interp_vec<> it(itp_linear);
 
   // Create a vector for the temperature and entropy
   ubvector Tvec(n_T), Svec(n_T);
@@ -586,7 +586,8 @@ void eos_sn_base::beta_eq_sfixed(double nB, double entr,
     for(size_t k=0;k<n_T;k++) {
       Svec[k]=S.interp_linear(nB,Ye,Tvec[k]);
     }
-    T=it.eval(entr,n_T,Svec,Tvec);
+    it.set(n_T,Svec,Tvec);
+    T=it.eval(entr);
 
     // Add the free energy at this temperature for this electron 
     // fraction
@@ -606,7 +607,8 @@ void eos_sn_base::beta_eq_sfixed(double nB, double entr,
   for(size_t k=0;k<n_T;k++) {
     Svec[k]=S.interp_linear(nB,Ye,Tvec[k]);
   }
-  T=it.eval(entr,n_T,Svec,Tvec);
+  it.set(n_T,Svec,Tvec);
+  T=it.eval(entr);
 
   return;
 }

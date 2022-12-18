@@ -1058,7 +1058,7 @@ namespace o2scl {
     //@{
     interp_vec<std::vector<double> > pe_int;
     interp_vec<std::vector<double> > pnb_int;
-    interp<std::vector<double> > gen_int;
+    interp_vec<std::vector<double> > gen_int;
     //@}
 
     /// \name Unit conversion factors for core EOS

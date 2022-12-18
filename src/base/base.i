@@ -2064,39 +2064,6 @@ class format_float
   - double x
   - bool debug [false]
 #
-# Class interp
-#
-class interp<std::vector<double>>
-- py_name interp                      
-- function eval
-  - double
-  - double x0
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &y
-- function deriv
-  - double
-  - double x0
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &y
-- function deriv2
-  - double
-  - double x0
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &y
-- function integ
-  - double
-  - double x1
-  - double x2
-  - size_t n
-  - std::vector<double> &x
-  - std::vector<double> &y
-- function set_type
-  - void
-  - int interp_type
-#
 # Class interp_vec
 #
 class interp_vec<std::vector<double>>

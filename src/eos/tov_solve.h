@@ -369,7 +369,7 @@ namespace o2scl {
     ode_funct ofm;
 
     /// Interpolation object for listed radii in \ref mvsr()
-    interp<ubvector> iop;
+    interp_vec<ubvector> iop;
 
     /** \brief Set up column names and units
 

@@ -647,7 +647,7 @@ void contour::find_intersections(size_t ilev, double &level,
   return;
 }
 
-void contour::edges_in_y_direct(double level, interp<ubvector> &si,
+void contour::edges_in_y_direct(double level, interp_vec<ubvector> &si,
 				edge_crossings &yedges) {
 
   for(int k=0;k<ny-1;k++) {
@@ -669,7 +669,8 @@ void contour::edges_in_y_direct(double level, interp<ubvector> &si,
 	yi[1]=yfun[ileft+1];
 	
 	// Do the interpolation and set the edge appropriately
-	yedges.values(j,k)=si.eval(level,nint,xi,yi);
+        si.set(nint,xi,yi);
+	yedges.values(j,k)=si.eval(level);//,nint,xi,yi);
 	
 	if (verbose>1) {
 	  cout << "Horizontal edge: (" << k << "," << j << ") -> ("
@@ -688,7 +689,7 @@ void contour::edges_in_y_direct(double level, interp<ubvector> &si,
   return;
 }
 
-void contour::edges_in_x_direct(double level, interp<ubvector> &si,
+void contour::edges_in_x_direct(double level, interp_vec<ubvector> &si,
 				edge_crossings &xedges) {
 
   for(int k=0;k<ny;k++) {
@@ -710,7 +711,8 @@ void contour::edges_in_x_direct(double level, interp<ubvector> &si,
 	yi[1]=xfun[ileft+1];
 
 	// Do the interpolation and set the edge appropriately
-	xedges.values(j,k)=si.eval(level,nint,xi,yi);
+        si.set(nint,xi,yi);
+	xedges.values(j,k)=si.eval(level);//,nint,xi,yi);
 	
 	if (verbose>1) {
 	  cout << "Vertical edge:   (" << k << "," << j << ") -> ("
@@ -765,7 +767,8 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
       }
 
       yedges.status(j,k)=contourp;
-      fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
+      fp=find_next_point_y_direct(j,k,jnext,knext,dir_next,edge,
+                                  xedges,yedges);
     } else {
       if (verbose>0) {
 	cout << "(" << xedges.values(j,k) << ", " << yfun[k] << ")" << endl;
@@ -780,7 +783,8 @@ void contour::process_line(int j, int k, int dir, std::vector<double> &x,
       }
 
       xedges.status(j,k)=contourp;
-      fp=find_next_point_x_direct(j,k,jnext,knext,dir_next,edge,xedges,yedges);
+      fp=find_next_point_x_direct(j,k,jnext,knext,dir_next,edge,
+                                  xedges,yedges);
     }
   }
   
@@ -878,7 +882,7 @@ void contour::calc_contours(std::vector<contour_line> &clines) {
   
   // The interpolation object (only works with linear interpolation
   // at the moment)
-  interp<ubvector> oi(itp_linear);
+  interp_vec<ubvector> oi(itp_linear);
   
   // For each level
   for(int i=0;i<nlev;i++) {

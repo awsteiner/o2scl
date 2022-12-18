@@ -83,7 +83,7 @@ int part_funcs::load_g08(std::string fname, bool external) {
 int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 
   int A=Z+N;
-  interp<vector<double>> itp(itp_linear);
+  interp_vec<vector<double>> itp(itp_linear);
   for(size_t i=0;i<tab_rt00.get_nlines();i++) {
     if (fabs(tab_rt00.get("Z",i)-Z)+fabs(tab_rt00.get("A",i)-A)<1.0e-4) {
       vector<double> x={0.01,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,
@@ -93,8 +93,9 @@ int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &TdpfdT) {
       for(size_t j=3;j<27;j++) {
         y.push_back(tab_rt00.get(tab_rt00.get_column_name(j),i));
       }
-      pf=itp.eval(T_K,x.size(),x,y);
-      TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
+      itp.set(x.size(),x,y);
+      pf=itp.eval(T_K);//,x.size(),x,y);
+      TdpfdT=T_K*itp.deriv(T_K);//,x.size(),x,y);
       double g=tab_rt00.get("spin",i)*2.0+1.0;
       pf*=g;
       TdpfdT*=g;
@@ -107,7 +108,7 @@ int part_funcs::rt00(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 int part_funcs::r03(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 
   int A=Z+N;
-  interp<vector<double>> itp(itp_linear);
+  interp_vec<vector<double>> itp(itp_linear);
   for(size_t i=0;i<tab_r03.get_nlines();i++) {
     if (fabs(tab_r03.get("Z",i)-Z)+fabs(tab_r03.get("A",i)-A)<1.0e-4) {
       vector<double> x={12,14,16,18,20,22,24,26,28,30,35,40,45,50,
@@ -119,8 +120,9 @@ int part_funcs::r03(int Z, int N, double T_K, double &pf, double &TdpfdT) {
       for(size_t j=3;j<3+x.size();j++) {
         y.push_back(tab_r03.get(tab_r03.get_column_name(j),i));
       }
-      pf=itp.eval(T_K,x.size(),x,y);
-      TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
+      itp.set(x.size(),x,y);
+      pf=itp.eval(T_K);//,x.size(),x,y);
+      TdpfdT=T_K*itp.deriv(T_K);//,x.size(),x,y);
       double g=tab_r03.get("J0",i)*2.0+1.0;
       pf*=g;
       TdpfdT*=g;
@@ -133,7 +135,7 @@ int part_funcs::r03(int Z, int N, double T_K, double &pf, double &TdpfdT) {
 int part_funcs::ghk08(int Z, int N, double T_K, double &pf,
                       double &TdpfdT) {
 
-  interp<vector<double>> itp(itp_linear);
+  interp_vec<vector<double>> itp(itp_linear);
   for(size_t i=0;i<tab_g08.get_nlines();i++) {
     if (fabs(tab_g08.get("Z",i)-Z)+fabs(tab_g08.get("N",i)-N)<1.0e-4) {
       vector<double> x={0.001,0.005,0.010,0.050,0.100,0.150,0.200,0.250,
@@ -145,8 +147,9 @@ int part_funcs::ghk08(int Z, int N, double T_K, double &pf,
       for(size_t j=3;j<3+x.size();j++) {
         y.push_back(tab_g08.get(tab_g08.get_column_name(j),i));
       }
-      pf=itp.eval(T_K,x.size(),x,y);
-      TdpfdT=T_K*itp.deriv(T_K,x.size(),x,y);
+      itp.set(x.size(),x,y);
+      pf=itp.eval(T_K);//,x.size(),x,y);
+      TdpfdT=T_K*itp.deriv(T_K);//,x.size(),x,y);
       double g=tab_g08.get("spin",i)*2.0+1.0;
       pf*=g;
       TdpfdT*=g;

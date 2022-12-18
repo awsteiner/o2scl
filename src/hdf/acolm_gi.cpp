@@ -261,10 +261,12 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
     // Now the grid data
     for(size_t ell=0;ell<max_size;ell++) {
       if (ell<table3d_obj.get_nx()) {
-	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),precision);
+	string_mat[1][ell+1]=o2scl::dtos(table3d_obj.get_grid_x(ell),
+                                         precision);
       }
       if (ell<table3d_obj.get_ny()) {
-	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),precision);
+	string_mat[2][ell+1]=o2scl::dtos(table3d_obj.get_grid_y(ell),
+                                         precision);
       }
     }
 
@@ -328,7 +330,8 @@ int acol_manager::comm_get_grid(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_get_row(std::vector<std::string> &sv,
+                               bool itive_com) {
 
   if (type!="table") {
     cerr << "Not implemented for type " << type << " ." << endl;
@@ -400,7 +403,8 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
 	// Count column name
 	this_col+=table_obj.get_column_name(i).size();
 	// Count extra spaces to format number
-	int num_spaces=precision+6-((int)(table_obj.get_column_name(i).size()));
+	int num_spaces=precision+6-
+          ((int)(table_obj.get_column_name(i).size()));
 	if (num_spaces>0) this_col+=num_spaces;
 	// See if there will be space
 	if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
@@ -449,7 +453,8 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
       // Count space for number
       size_t this_col=precision+8;
       // Count extra spaces if necessary
-      int num_spaces=((int)(table_obj.get_column_name(i).size())-precision-6);
+      int num_spaces=((int)(table_obj.get_column_name(i).size())-
+                      precision-6);
       if (num_spaces>0) this_col+=num_spaces;
       // See if there will be space
       if (running_width>0 && ((int)(running_width+this_col))>=ncols_loc) {
@@ -499,7 +504,8 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int acol_manager::comm_get_unit(std::vector<std::string> &sv, bool itive_com) {
+int acol_manager::comm_get_unit(std::vector<std::string> &sv,
+                                bool itive_com) {
 
   if (type!="table") {
     cerr << "Not implemented for type " << type << " ." << endl;
@@ -1627,10 +1633,10 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     std::vector<double> index(n);
     for(size_t i=0;i<n;i++) index[i]=((double)i);
 
-    o2scl::interp<vector<double> > it(interp_type);
+    o2scl::interp_vec<vector<double> > it(interp_type);
     double x=o2scl::stod(sv[1]);
-    cout << "Interpolation result: "
-	 << it.eval(x,n,index,doublev_obj) << endl;
+    it.set(n,index,doublev_obj);
+    cout << "Interpolation result: " << it.eval(x) << endl;
 
   } else if (type=="tensor_grid") {
     
@@ -1657,10 +1663,11 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     o2scl::vector_copy(intv_obj,value);
     for(size_t i=0;i<n;i++) index[i]=((double)i);
 
-    o2scl::interp<vector<double> > it(interp_type);
+    o2scl::interp_vec<vector<double> > it(interp_type);
     double x=o2scl::stod(sv[1]);
-    cout << "Interpolation result: "
-	 << it.eval(x,n,index,value) << endl;
+    it.set(n,index,value);
+    cout << "Interpolation result: " << it.eval(x) << endl;
+	 
 
   } else if (type=="size_t[]") {
 
@@ -1669,10 +1676,10 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
     o2scl::vector_copy(size_tv_obj,value);
     for(size_t i=0;i<n;i++) index[i]=((double)i);
 
-    o2scl::interp<vector<double> > it(interp_type);
+    o2scl::interp_vec<vector<double> > it(interp_type);
     double x=o2scl::stod(sv[1]);
-    cout << "Interpolation result: "
-	 << it.eval(x,n,index,value) << endl;
+    it.set(n,index,value);
+    cout << "Interpolation result: " << it.eval(x) << endl;
 
   } else {
     cout << "Not implemented for type " << type << endl;

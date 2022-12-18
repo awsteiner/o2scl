@@ -942,10 +942,11 @@ int tov_solve::mvsr() {
 	}
       }
       for(size_t ii=0;ii<pr_list.size();ii++) {
-	double thisr=iop.eval(log(pr_list[ii]*pfactor),
-				ix_last-1,lpr_col,rkx);
-	double thisgm=iop.eval(log(pr_list[ii]*pfactor),
-				 ix_last-1,lpr_col,gm_col);
+        iop.set(ix_last-1,lpr_col,rkx);
+	double thisr=iop.eval(log(pr_list[ii]*pfactor));
+        iop.set(ix_last-1,lpr_col,gm_col);
+	double thisgm=iop.eval(log(pr_list[ii]*pfactor));
+                               
 	if (!std::isfinite(thisr)) {
 	  string str=((string)"Obtained non-finite value when ")+
 	    "interpolating radius for pressure "+dtos(pr_list[ii])+
@@ -961,8 +962,9 @@ int tov_solve::mvsr() {
 	}
 	line.push_back(thisgm);
 	if (te->has_baryons()) {
-	  double thisbm=iop.eval(log(pr_list[ii]*pfactor),
-				 ix_last-1,lpr_col,bm_col);
+          iop.set(ix_last-1,lpr_col,bm_col);
+	  double thisbm=iop.eval(log(pr_list[ii]*pfactor));
+				 
 	  if (!std::isfinite(thisbm)) {
 	    string str=((string)"Obtained non-finite value when ")+
 	      "interpolating baryon mass for pressure "+dtos(pr_list[ii])+

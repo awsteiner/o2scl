@@ -628,13 +628,15 @@ void eos_tov_interp::internal_read() {
       double ed_lo=0.0, ed_hi=0.0, nb_lo=0.0, nb_hi=0.0;
 
       if (transition_mode==match_line) {
-	ed_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vece);
-	ed_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
-			   core_vece)*efactor;
+        gen_int.set(crust_nlines,crust_vecp,crust_vece);
+	ed_lo=gen_int.eval(pr_lo);
+        gen_int.set(core_nlines,core_vecp,core_vece);
+	ed_hi=gen_int.eval(pr_hi/pfactor)*efactor;
 	if (baryon_column) {
-	  nb_lo=gen_int.eval(pr_lo,crust_nlines,crust_vecp,crust_vecnb);
-	  nb_hi=gen_int.eval(pr_hi/pfactor,core_nlines,core_vecp,
-			     core_vecnb)*nfactor;
+          gen_int.set(crust_nlines,crust_vecp,crust_vecnb);
+	  nb_lo=gen_int.eval(pr_lo);
+          gen_int.set(core_nlines,core_vecp,core_vecnb);
+	  nb_hi=gen_int.eval(pr_hi/pfactor)*nfactor;
 	}
       }
 
@@ -645,18 +647,20 @@ void eos_tov_interp::internal_read() {
 	double chi=(pr-pr_lo)/(pr_hi-pr_lo);
 
 	if (transition_mode==smooth_trans) {
-	  ed_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vece);
-	  ed_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
-			     core_vece)*efactor;
+          gen_int.set(crust_nlines,crust_vecp,crust_vece);
+	  ed_lo=gen_int.eval(pr);
+          gen_int.set(core_nlines,core_vecp,core_vece);
+	  ed_hi=gen_int.eval(pr/pfactor)*efactor;
 	  ed=(1.0-chi)*ed_lo+chi*ed_hi;
       
 	  if (baryon_column) {
-	    nb_lo=gen_int.eval(pr,crust_nlines,crust_vecp,crust_vecnb);
-	    nb_hi=gen_int.eval(pr/pfactor,core_nlines,core_vecp,
-			       core_vecnb)*nfactor;
+            gen_int.set(crust_nlines,crust_vecp,crust_vecnb);
+	    nb_lo=gen_int.eval(pr);
+            gen_int.set(core_nlines,core_vecp,core_vecnb);
+	    nb_hi=gen_int.eval(pr/pfactor)*nfactor;
 	    nb=(1.0-chi)*nb_lo+chi*nb_hi;
 	  }
-      
+          
 	} else {
       
 	  ed=(ed_hi-ed_lo)*chi+ed_lo;
@@ -1164,9 +1168,11 @@ void eos_tov_interp::ngl13_low_dens_eos(double L, string model,
     ntv.push_back(0.0427856);
   }
 
-  o2scl::interp<std::vector<double> > itp(itp_linear);
-  double nt=itp.eval(L,19,Lv,ntv);
-  trans_pres=itp.eval(nt,crust_vece.size(),crust_vecnb,crust_vecp);
+  o2scl::interp_vec<std::vector<double> > itp(itp_linear);
+  itp.set(19,Lv,ntv);
+  double nt=itp.eval(L);
+  itp.set(crust_vece.size(),crust_vecnb,crust_vecp);
+  trans_pres=itp.eval(nt);
 
   // The energy density and pressure are already in Msun/km^3 and the
   // baryon density is in fm^{-3}
@@ -1288,8 +1294,9 @@ void eos_tov_interp::ngl13_low_dens_eos2(double S, double L, double nt,
   // --------------------------------------------------------------
   // Transition pressure
 
-  o2scl::interp<std::vector<double> > itp(itp_linear);
-  trans_pres=itp.eval(nt,crust_nlines,crust_vecnb,crust_vecp);
+  o2scl::interp_vec<std::vector<double> > itp(itp_linear);
+  itp.set(crust_nlines,crust_vecnb,crust_vecp);
+  trans_pres=itp.eval(nt);
   
   // --------------------------------------------------------------
   // Unit system
@@ -1388,8 +1395,9 @@ void eos_tov_interp::s12_low_dens_eos(string model, bool external) {
   // --------------------------------------------------------------
   // Manually set the transition pressure by interpolating 
 
-  o2scl::interp<std::vector<double> > itp(itp_linear);
-  trans_pres=itp.eval(0.08,crust_nlines,crust_vecnb,crust_vecp);
+  o2scl::interp_vec<std::vector<double> > itp(itp_linear);
+  itp.set(crust_nlines,crust_vecnb,crust_vecp);
+  trans_pres=itp.eval(0.08);
 
   // --------------------------------------------------------------
   // Set columns and limiting values
@@ -1535,7 +1543,8 @@ double eos_tov_interp::ed_from_pr(double pr) {
 }
 
 double eos_tov_interp::ed_from_nb(double nb) {
-  return gen_int.eval(nb,full_vece.size(),full_vecnb,full_vece);
+  gen_int.set(full_vece.size(),full_vecnb,full_vece);
+  return gen_int.eval(nb);
 }
 
 double eos_tov_interp::nb_from_pr(double pr) {
@@ -1543,15 +1552,18 @@ double eos_tov_interp::nb_from_pr(double pr) {
 }
 
 double eos_tov_interp::nb_from_ed(double ed) {
-  return gen_int.eval(ed,full_vece.size(),full_vece,full_vecnb);
+  gen_int.set(full_vece.size(),full_vece,full_vecnb);
+  return gen_int.eval(ed);
 }
 
 double eos_tov_interp::pr_from_nb(double nb) {
-  return gen_int.eval(nb,full_vece.size(),full_vecnb,full_vecp);
+  gen_int.set(full_vecnb.size(),full_vecnb,full_vecp);
+  return gen_int.eval(nb);
 }
 
 double eos_tov_interp::pr_from_ed(double ed) {
-  return gen_int.eval(ed,full_vece.size(),full_vece,full_vecp);
+  gen_int.set(full_vece.size(),full_vece,full_vecp);
+  return gen_int.eval(ed);
 }
 
 void eos_tov_interp::get_eden_user(double pres, double &ed, double &nb) {

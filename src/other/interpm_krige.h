@@ -86,7 +86,6 @@ namespace o2scl {
     }
     
     /// Set the parameters
-    template<class vec_t>
     void set_params(vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
