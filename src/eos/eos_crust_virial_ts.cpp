@@ -56,7 +56,7 @@ int main(void) {
   fermion_rel rf;
 
   vector<double> nba, pra, soaa;
-  interp<vector<double> > it(itp_cspline);
+  interp_vec<vector<double> > it(itp_cspline);
 
   /* 
      This reproduces the pressure at n_B=0.05 fm^{-3} in 
@@ -70,7 +70,8 @@ int main(void) {
     nba.push_back(n.n+p.n+4.0*ve.alpha.n);
     pra.push_back(th.pr*hc);
   }
-  t.test_rel(it.eval(0.05,nba.size(),nba,pra),0.162,0.01,"Fig 10.");
+  it.set(nba.size(),nba,pra);
+  t.test_rel(it.eval(0.05),0.162,0.01,"Fig 10.");
   nba.clear();
   pra.clear();
 
@@ -87,9 +88,10 @@ int main(void) {
     pra.push_back((th.pr+e.pr)*hc);
     soaa.push_back((th.en+e.en)/(n.n+p.n+4.0*ve.alpha.n));
   }
-  t.test_rel(it.eval(0.0016,nba.size(),nba,pra),0.015,5.0e-2,"Fig 11 right.");
-  t.test_rel(it.eval(0.05,nba.size(),nba,soaa),1.35,1.0e-1,"Fig 13 right.");
-  t.test_rel(it.eval(1.0e-4,nba.size(),nba,soaa),7.5,2.0e-2,"Fig 13 left.");
+  t.test_rel(it.eval(0.0016),0.015,5.0e-2,"Fig 11 right.");
+  it.set(nba.size(),nba,soaa);
+  t.test_rel(it.eval(0.05),1.35,1.0e-1,"Fig 13 right.");
+  t.test_rel(it.eval(1.0e-4),7.5,2.0e-2,"Fig 13 left.");
   
   t.report();
   
