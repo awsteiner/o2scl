@@ -54,7 +54,7 @@ int main(void) {
   // ---------------------------------------------------------------
   // Use linear interpolation
 
-  interp<> gi(itp_linear);
+  interp_vec<> gi(itp_linear);
   interp_vec<> giv1(5,x,y,itp_linear);
 
   // ---------------------------------------------------------------
@@ -62,26 +62,29 @@ int main(void) {
 
   double x0=2.5;
   double y0;
-  
-  y0=gi.eval(x0,5,x,y);
-  t.test_rel(y0,6.5,1.0e-5,"intp 1a.");
-  y0=gi.deriv(x0,5,x,y);
-  t.test_rel(y0,5.0,1.0e-5,"intp 1b.");
-  y0=gi.deriv2(x0,5,x,y);
-  t.test_rel(y0,0.0,1.0e-5,"intp 1c.");
-  y0=gi.integ(x0,3.5,5,x,y);
-  t.test_rel(y0,9.25,1.0e-5,"intp 1d.");
 
+  gi.set(5,x,y);
+  y0=gi.eval(x0);
+  t.test_rel(y0,6.5,1.0e-5,"intp 1a.");
+  y0=gi.deriv(x0);
+  t.test_rel(y0,5.0,1.0e-5,"intp 1b.");
+  y0=gi.deriv2(x0);
+  t.test_rel(y0,0.0,1.0e-5,"intp 1c.");
+  y0=gi.integ(x0,3.5);
+  t.test_rel(y0,9.25,1.0e-5,"intp 1d.");
+  
   // ---------------------------------------------------------------
   // Test normal interpolation with a reversed array
   
-  y0=gi.eval(x0,5,rx,ry);
+
+  gi.set(5,rx,ry);
+  y0=gi.eval(x0);
   t.test_rel(y0,6.5,1.0e-5,"rintp 1a.");
-  y0=gi.deriv(x0,5,rx,ry);
+  y0=gi.deriv(x0);
   t.test_rel(y0,5.0,1.0e-5,"rintp 1b.");
-  y0=gi.deriv2(x0,5,rx,ry);
+  y0=gi.deriv2(x0);
   t.test_rel(y0,0.0,1.0e-5,"rintp 1c.");
-  y0=gi.integ(x0,3.5,5,rx,ry);
+  y0=gi.integ(x0,3.5);
   t.test_rel(y0,9.25,1.0e-5,"rintp 1d.");
 
   // ---------------------------------------------------------------
@@ -106,25 +109,27 @@ int main(void) {
   // ---------------------------------------------------------------
   // Test normal interpolation
 
-  y0=gi.eval(x0,5,x,y);
+  gi.set(5,x,y);
+  y0=gi.eval(x0);
   t.test_rel(y0,6.232143,1.0e-5,"intp 3a.");
-  y0=gi.deriv(x0,5,x,y);
+  y0=gi.deriv(x0);
   t.test_rel(y0,4.964286,1.0e-5,"intp 3b.");
-  y0=gi.deriv2(x0,5,x,y);
+  y0=gi.deriv2(x0);
   t.test_rel(y0,2.142857,1.0e-5,"intp 3c.");
-  y0=gi.integ(x0,3.5,5,x,y);
+  y0=gi.integ(x0,3.5);
   t.test_rel(y0,9.098214,1.0e-5,"intp 3d.");
 
   // ---------------------------------------------------------------
   // Test normal interpolation with a reversed array
-  
-  y0=gi.eval(x0,5,rx,ry);
+
+  gi.set(5,rx,ry);
+  y0=gi.eval(x0);
   t.test_rel(y0,6.232143,1.0e-5,"rintp 3a.");
-  y0=gi.deriv(x0,5,rx,ry);
+  y0=gi.deriv(x0);
   t.test_rel(y0,4.964286,1.0e-5,"rintp 3b.");
-  y0=gi.deriv2(x0,5,rx,ry);
+  y0=gi.deriv2(x0);
   t.test_rel(y0,2.142857,1.0e-5,"rintp 3c.");
-  y0=gi.integ(x0,3.5,5,rx,ry);
+  y0=gi.integ(x0,3.5);
   t.test_rel(y0,9.098214,1.0e-5,"rintp 3d.");
 
   // ---------------------------------------------------------------
@@ -158,33 +163,35 @@ int main(void) {
   // ---------------------------------------------------------------
   // Use linear interpolation
 
-  interp_array<5> gia(itp_linear);
+  interp_array_vec<double[5]> gia(itp_linear);
   interp_array_vec<double[5]> giv1a(5,xa,ya,itp_linear);
 
   // ---------------------------------------------------------------
   // Test normal interpolation
   
   x0=2.5;
-  
-  y0=gia.eval(x0,5,xa,ya);
+
+  gia.set(5,xa,ya);
+  y0=gia.eval(x0);
   t.test_rel(y0,6.5,1.0e-5,"intp 1a.");
-  y0=gia.deriv(x0,5,xa,ya);
+  y0=gia.deriv(x0);
   t.test_rel(y0,5.0,1.0e-5,"intp 1b.");
-  y0=gia.deriv2(x0,5,xa,ya);
+  y0=gia.deriv2(x0);
   t.test_rel(y0,0.0,1.0e-5,"intp 1c.");
-  y0=gia.integ(x0,3.5,5,xa,ya);
+  y0=gia.integ(x0,3.5);
   t.test_rel(y0,9.25,1.0e-5,"intp 1d.");
 
   // ---------------------------------------------------------------
   // Test normal interpolation with a reversed array
-  
-  y0=gia.eval(x0,5,rxa,rya);
+
+  gia.set(5,rxa,rya);
+  y0=gia.eval(x0);
   t.test_rel(y0,6.5,1.0e-5,"rintp 1a.");
-  y0=gia.deriv(x0,5,rxa,rya);
+  y0=gia.deriv(x0);
   t.test_rel(y0,5.0,1.0e-5,"rintp 1b.");
-  y0=gia.deriv2(x0,5,rxa,rya);
+  y0=gia.deriv2(x0);
   t.test_rel(y0,0.0,1.0e-5,"rintp 1c.");
-  y0=gia.integ(x0,3.5,5,rxa,rya);
+  y0=gia.integ(x0,3.5);
   t.test_rel(y0,9.25,1.0e-5,"rintp 1d.");
 
   // ---------------------------------------------------------------
@@ -209,25 +216,27 @@ int main(void) {
   // ---------------------------------------------------------------
   // Test normal interpolation
 
-  y0=gia.eval(x0,5,xa,ya);
+  gia.set(5,xa,ya);
+  y0=gia.eval(x0);
   t.test_rel(y0,6.232143,1.0e-5,"intp 3a.");
-  y0=gia.deriv(x0,5,xa,ya);
+  y0=gia.deriv(x0);
   t.test_rel(y0,4.964286,1.0e-5,"intp 3b.");
-  y0=gia.deriv2(x0,5,xa,ya);
+  y0=gia.deriv2(x0);
   t.test_rel(y0,2.142857,1.0e-5,"intp 3c.");
-  y0=gia.integ(x0,3.5,5,xa,ya);
+  y0=gia.integ(x0,3.5);
   t.test_rel(y0,9.098214,1.0e-5,"intp 3d.");
 
   // ---------------------------------------------------------------
   // Test normal interpolation with a reversed array
-  
-  y0=gia.eval(x0,5,rxa,rya);
+
+  gia.set(5,rxa,rya);
+  y0=gia.eval(x0);
   t.test_rel(y0,6.232143,1.0e-5,"rintp 3a.");
-  y0=gia.deriv(x0,5,rxa,rya);
+  y0=gia.deriv(x0);
   t.test_rel(y0,4.964286,1.0e-5,"rintp 3b.");
-  y0=gia.deriv2(x0,5,rxa,rya);
+  y0=gia.deriv2(x0);
   t.test_rel(y0,2.142857,1.0e-5,"rintp 3c.");
-  y0=gia.integ(x0,3.5,5,rxa,rya);
+  y0=gia.integ(x0,3.5);
   t.test_rel(y0,9.098214,1.0e-5,"rintp 3d.");
 
   // ---------------------------------------------------------------
@@ -259,13 +268,14 @@ int main(void) {
   // Test akima
 
   gia.set_type(itp_akima);
-  y0=gia.eval(x0,5,xa,ya);
+  gia.set(5,xa,ya);
+  y0=gia.eval(x0);
   t.test_rel(y0,6.25,1.0e-7,"intp 3a.");
-  y0=gia.deriv(x0,5,xa,ya);
+  y0=gia.deriv(x0);
   t.test_rel(y0,5.0,1.0e-7,"intp 3b.");
-  y0=gia.deriv2(x0,5,xa,ya);
+  y0=gia.deriv2(x0);
   t.test_rel(y0,2.0,1.0e-7,"intp 3c.");
-  y0=gia.integ(x0,3.5,5,xa,ya);
+  y0=gia.integ(x0,3.5);
   t.test_rel(y0,9.0833333,1.0e-7,"intp 3d.");
 
   // ---------------------------------------------------------------
@@ -273,112 +283,117 @@ int main(void) {
   // in base_interp classes
 
   {
-    interp<> oic(itp_linear);
+    interp_vec<> oic(itp_linear);
     interp_linear<ubvector> cic;
     cic.set(5,rx,ry);
+    oic.set(5,rx,ry);
     double yc;
 
     for(double x0c=sqrt(2.0);x0c<=10.0;x0c+=2.0) {
       yc=cic.eval(x0c);
       //cout << yc << " " << oic.eval(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.eval(x0c,5,rx,ry),1.0e-12,"interp");
+      t.test_rel(yc,oic.eval(x0c),1.0e-12,"interp");
       yc=cic.deriv(x0c);
       //cout << yc << " " << oic.deriv(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv(x0c,5,rx,ry),1.0e-12,"deriv");
+      t.test_rel(yc,oic.deriv(x0c),1.0e-12,"deriv");
       yc=cic.deriv2(x0c);
       //cout << yc << " " << oic.deriv2(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv2(x0c,5,rx,ry),1.0e-12,"deriv2");
+      t.test_rel(yc,oic.deriv2(x0c),1.0e-12,"deriv2");
       yc=cic.integ(x0c,x0c-1.0);
       //cout << yc << " " << oic.integ(x0c,x0c-1.0,5,rx,ry) << endl;
-      t.test_rel(yc,oic.integ(x0c,x0c-1.0,5,rx,ry),1.0e-12,"integ l");
+      t.test_rel(yc,oic.integ(x0c,x0c-1.0),1.0e-12,"integ l");
     }
   }
 
   {
-    interp<> oic(itp_cspline);
+    interp_vec<> oic(itp_cspline);
     interp_cspline<ubvector> cic;
     cic.set(5,rx,ry);
+    oic.set(5,rx,ry);
     double yc;
 
     for(double x0c=sqrt(2.0);x0c<=10.0;x0c+=2.0) {
       yc=cic.eval(x0c);
       //cout << yc << " " << oic.eval(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.eval(x0c,5,rx,ry),1.0e-12,"interp");
+      t.test_rel(yc,oic.eval(x0c),1.0e-12,"interp");
       yc=cic.deriv(x0c);
       //cout << yc << " " << oic.deriv(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv(x0c,5,rx,ry),1.0e-12,"deriv");
+      t.test_rel(yc,oic.deriv(x0c),1.0e-12,"deriv");
       yc=cic.deriv2(x0c);
       //cout << yc << " " << oic.deriv2(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv2(x0c,5,rx,ry),1.0e-12,"deriv2");
+      t.test_rel(yc,oic.deriv2(x0c),1.0e-12,"deriv2");
       yc=cic.integ(x0c,x0c-1.0);
       //cout << yc << " " << oic.integ(x0c,x0c-1.0,5,rx,ry) << endl;
-      t.test_rel(yc,oic.integ(x0c,x0c-1.0,5,rx,ry),1.0e-12,"integ c");
+      t.test_rel(yc,oic.integ(x0c,x0c-1.0),1.0e-12,"integ c");
     }
   }
 
   {
-    interp<> oic(itp_cspline_peri);
+    interp_vec<> oic(itp_cspline_peri);
     interp_cspline_peri<ubvector> cic;
+    oic.set(5,rx,ry);
     cic.set(5,rx,ry);
     double yc;
 
     for(double x0c=sqrt(2.0);x0c<=10.0;x0c+=2.0) {
       yc=cic.eval(x0c);
-      //cout << yc << " " << oic.eval(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.eval(x0c,5,rx,ry),1.0e-12,"interp");
+      //cout << yc << " " << oic.eval(x0c) << " ";
+      t.test_rel(yc,oic.eval(x0c),1.0e-12,"interp");
       yc=cic.deriv(x0c);
-      //cout << yc << " " << oic.deriv(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv(x0c,5,rx,ry),1.0e-12,"deriv");
+      //cout << yc << " " << oic.deriv(x0c) << " ";
+      t.test_rel(yc,oic.deriv(x0c),1.0e-12,"deriv");
       yc=cic.deriv2(x0c);
-      //cout << yc << " " << oic.deriv2(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv2(x0c,5,rx,ry),1.0e-12,"deriv2");
+      //cout << yc << " " << oic.deriv2(x0c) << " ";
+      t.test_rel(yc,oic.deriv2(x0c),1.0e-12,"deriv2");
       yc=cic.integ(x0c,x0c-1.0);
-      //cout << yc << " " << oic.integ(x0c,x0c-1.0,5,rx,ry) << endl;
-      t.test_rel(yc,oic.integ(x0c,x0c-1.0,5,rx,ry),1.0e-12,"integ c");
+      //cout << yc << " " << oic.integ(x0c,x0c-1.0) << endl;
+      t.test_rel(yc,oic.integ(x0c,x0c-1.0),1.0e-12,"integ c");
     }
   }
 
   {
-    interp<> oic(itp_akima);
+    interp_vec<> oic(itp_akima);
     interp_akima<ubvector> cic;
     cic.set(5,rx,ry);
+    oic.set(5,rx,ry);
     double yc;
 
     for(double x0c=sqrt(2.0);x0c<=10.0;x0c+=2.0) {
       yc=cic.eval(x0c);
-      //cout << yc << " " << oic.eval(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.eval(x0c,5,rx,ry),1.0e-12,"interp");
+      //cout << yc << " " << oic.eval(x0c) << " ";
+      t.test_rel(yc,oic.eval(x0c),1.0e-12,"interp");
       yc=cic.deriv(x0c);
-      //cout << yc << " " << oic.deriv(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv(x0c,5,rx,ry),1.0e-12,"deriv");
+      //cout << yc << " " << oic.deriv(x0c) << " ";
+      t.test_rel(yc,oic.deriv(x0c),1.0e-12,"deriv");
       yc=cic.deriv2(x0c);
-      //cout << yc << " " << oic.deriv2(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv2(x0c,5,rx,ry),1.0e-12,"deriv2");
+      //cout << yc << " " << oic.deriv2(x0c) << " ";
+      t.test_rel(yc,oic.deriv2(x0c),1.0e-12,"deriv2");
       yc=cic.integ(x0c,x0c-1.0);
-      //cout << yc << " " << oic.integ(x0c,x0c-1.0,5,rx,ry) << endl;
-      t.test_rel(yc,oic.integ(x0c,x0c-1.0,5,rx,ry),1.0e-12,"integ c");
+      //cout << yc << " " << oic.integ(x0c,x0c-1.0) << endl;
+      t.test_rel(yc,oic.integ(x0c,x0c-1.0),1.0e-12,"integ c");
     }
   }
 
   {
-    interp<> oic(itp_akima_peri);
+    interp_vec<> oic(itp_akima_peri);
     interp_akima_peri<ubvector> cic;
     cic.set(5,rx,ry);
+    oic.set(5,rx,ry);
     double yc;
 
     for(double x0c=sqrt(2.0);x0c<=10.0;x0c+=2.0) {
       yc=cic.eval(x0c);
-      //cout << yc << " " << oic.eval(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.eval(x0c,5,rx,ry),1.0e-12,"interp");
+      //cout << yc << " " << oic.eval(x0c) << " ";
+      t.test_rel(yc,oic.eval(x0c),1.0e-12,"interp");
       yc=cic.deriv(x0c);
-      //cout << yc << " " << oic.deriv(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv(x0c,5,rx,ry),1.0e-12,"deriv");
+      //cout << yc << " " << oic.deriv(x0c) << " ";
+      t.test_rel(yc,oic.deriv(x0c),1.0e-12,"deriv");
       yc=cic.deriv2(x0c);
-      //cout << yc << " " << oic.deriv2(x0c,5,rx,ry) << " ";
-      t.test_rel(yc,oic.deriv2(x0c,5,rx,ry),1.0e-12,"deriv2");
+      //cout << yc << " " << oic.deriv2(x0c) << " ";
+      t.test_rel(yc,oic.deriv2(x0c),1.0e-12,"deriv2");
       yc=cic.integ(x0c,x0c-1.0);
-      //cout << yc << " " << oic.integ(x0c,x0c-1.0,5,rx,ry) << endl;
-      t.test_rel(yc,oic.integ(x0c,x0c-1.0,5,rx,ry),1.0e-12,"integ c");
+      //cout << yc << " " << oic.integ(x0c,x0c-1.0) << endl;
+      t.test_rel(yc,oic.integ(x0c,x0c-1.0),1.0e-12,"integ c");
     }
   }
 
@@ -405,7 +420,6 @@ int main(void) {
     }
     if (debug) cout << endl;
 
-    interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
 
     double last=-1.0;
@@ -413,16 +427,13 @@ int main(void) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
       double deriv2=-sin(x/2.0)/4.0;
-      double interpa=io.eval(x,N,vx,vy);
-      double interpb=iov.eval(x);
-      double deriva=io.deriv(x,N,vx,vy);
-      double derivb=iov.deriv(x);
-      double deriv2a=io.deriv2(x,N,vx,vy);
-      double deriv2b=iov.deriv2(x);
+      double interpa=iov.eval(x);
+      double deriva=iov.deriv(x);
+      double deriv2a=iov.deriv2(x);
       if (debug) {
-	cout << x << " " << exact << " " << interpa << " " 
-	     << deriv << " " << deriva << " "
-	     << deriv2 << " " << deriv2a << endl;
+        cout << x << " " << exact << " " << interpa << " " 
+             << deriv << " " << deriva << " "
+             << deriv2 << " " << deriv2a << endl;
       }
       t.test_gen(interpa>last,"monotonic 2");
       t.test_rel(interpa,exact,4.0e-2,"interp");
@@ -451,7 +462,6 @@ int main(void) {
     }
     if (debug) cout << endl;
 
-    interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
 
     double last=-1.0;
@@ -459,32 +469,24 @@ int main(void) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
       double deriv2=-sin(x/2.0)/4.0;
-      double interpa=io.eval(x,N,vx,vy);
-      double interpb=iov.eval(x);
-      double deriva=io.deriv(x,N,vx,vy);
-      double derivb=iov.deriv(x);
-      double deriv2a=io.deriv2(x,N,vx,vy);
-      double deriv2b=iov.deriv2(x);
+      double interpa=iov.eval(x);
+      double deriva=iov.deriv(x);
+      double deriv2a=iov.deriv2(x);
       if (debug) {
-	cout << x << " " << exact << " " << interpa << " " 
-	     << deriv << " " << deriva << " "
-	     << deriv2 << " " << deriv2a << endl;
+        cout << x << " " << exact << " " << interpa << " " 
+             << deriv << " " << deriva << " "
+             << deriv2 << " " << deriv2a << endl;
       }
       t.test_gen(interpa>last,"monotonic 2");
-      t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,3.0e-4,"interp");
-      t.test_gen(deriva==derivb,"types d");
       t.test_rel(deriva,deriv,1.0e-1,"deriv");
-      t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
       for(double x2=0.0;x2<=7.0001;x2+=1.0) {
-	if (fabs(x-x2)>1.0e-5) {
-	  double intega=io.integ(x,x2,N,vx,vy);
-	  double integb=iov.integ(x,x2);
-	  double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
-	  t.test_gen(intega==integb,"types integ");
-	  t.test_rel(intega,integ,2.0e-1,"integ");
-	}
+        if (fabs(x-x2)>1.0e-5) {
+          double intega=iov.integ(x,x2);
+          double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
+          t.test_rel(intega,integ,2.0e-1,"integ");
+        }
       }
       last=interpa;
     }
@@ -509,7 +511,6 @@ int main(void) {
     }
     //cout << endl;
 
-    interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
 
     double last=-1.0;
@@ -517,32 +518,26 @@ int main(void) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
       double deriv2=-sin(x/2.0)/4.0;
-      double interpa=io.eval(x,N,vx,vy);
-      double interpb=iov.eval(x);
-      double deriva=io.deriv(x,N,vx,vy);
-      double derivb=iov.deriv(x);
-      double deriv2a=io.deriv2(x,N,vx,vy);
-      double deriv2b=iov.deriv2(x);
+      double interpa=iov.eval(x);
+      double deriva=iov.deriv(x);
+      double deriv2a=iov.deriv2(x);
       //cout << x << " " << exact << " " << interpa << " " 
       //<< deriv << " " << deriva << " "
       //<< deriv2 << " " << deriv2a << endl;
       t.test_gen(interpa>last,"monotonic 2");
-      t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,3.0e-4,"interp");
-      t.test_gen(deriva==derivb,"types d");
       t.test_rel(deriva,deriv,1.0e-1,"deriv");
-      t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
       /*
-	for(double x2=0.0;x2<=7.0001;x2+=1.0) {
-	if (fabs(x-x2)>1.0e-5) {
-	double intega=io.integ(x,x2,N,vx,vy);
-	double integb=iov.integ(x,x2);
-	double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
-	t.test_gen(intega==integb,"types integ pass2");
-	t.test_rel(intega,integ,2.0e-1,"integ pass2");
-	}
-	}
+        for(double x2=0.0;x2<=7.0001;x2+=1.0) {
+        if (fabs(x-x2)>1.0e-5) {
+        double intega=io.integ(x,x2,N,vx,vy);
+        double integb=iov.integ(x,x2);
+        double integ=(-x*x+x2*x2+4.0*a*cos(x/2.0)-4.0*a*cos(x2/2.0))/2.0/a;
+        t.test_gen(intega==integb,"types integ pass2");
+        t.test_rel(intega,integ,2.0e-1,"integ pass2");
+        }
+        }
       */
       last=interpa;
     }
@@ -565,7 +560,6 @@ int main(void) {
     }
     //cout << endl;
 
-    interp<> io(itp_monotonic);
     interp_vec<> iov(N,vx,vy,itp_monotonic);
 
     double last=-1.0;
@@ -573,29 +567,21 @@ int main(void) {
       double exact=sin(x/2.0);
       double deriv=cos(x/2.0)/2.0;
       double deriv2=-sin(x/2.0)/4.0;
-      double interpa=io.eval(x,N,vx,vy);
-      double interpb=iov.eval(x);
-      double deriva=io.deriv(x,N,vx,vy);
-      double derivb=iov.deriv(x);
-      double deriv2a=io.deriv2(x,N,vx,vy);
-      double deriv2b=iov.deriv2(x);
+      double interpa=iov.eval(x);
+      double deriva=iov.deriv(x);
+      double deriv2a=iov.deriv2(x);
       //cout << x << " " << exact << " " << interpa << " " 
       //<< deriv << " " << deriva << " "
       //<< deriv2 << " " << deriv2a << endl;
-      t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,4.0e-3,"interp");
-      t.test_gen(deriva==derivb,"types d");
       t.test_rel(deriva,deriv,7.0,"deriv");
-      t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,2.0e2,"deriv2");
       for(double x2=0.0;x2<=7.0001;x2+=1.0) {
-	if (fabs(x-x2)>1.0e-5) {
-	  double intega=io.integ(x,x2,N,vx,vy);
-	  double integb=iov.integ(x,x2);
-	  double integ=2.0*(cos(x/2.0)-cos(x2/2.0));
-	  t.test_gen(intega==integb,"types integ pass3");
-	  t.test_rel(intega,integ,5.0,"integ pass3");
-	}
+        if (fabs(x-x2)>1.0e-5) {
+          double intega=iov.integ(x,x2);
+          double integ=2.0*(cos(x/2.0)-cos(x2/2.0));
+          t.test_rel(intega,integ,5.0,"integ pass3");
+        }
       }
       last=interpa;
     }
@@ -624,14 +610,14 @@ int main(void) {
     cout << "e1 e2 e3 e4 e5 e6" << endl;
     for(double x=0.0;x<12.001;x+=0.2) {
       cout << x << " " << io1(x) << " " << io2(x) << " "
-	   << io3(x) << " " << io4(x) << " " << io5(x) << " " 
-	   << io6(x) << " ";
+           << io3(x) << " " << io4(x) << " " << io5(x) << " " 
+           << io6(x) << " ";
       cout << io1.deriv(x) << " " << io2.deriv(x) << " "
-	   << io3.deriv(x) << " " << io4.deriv(x) << " " 
-	   << io5.deriv(x) << " " << io6.deriv(x) << " ";
+           << io3.deriv(x) << " " << io4.deriv(x) << " " 
+           << io5.deriv(x) << " " << io6.deriv(x) << " ";
       cout << io1.deriv2(x) << " " << io2.deriv2(x) << " "
-	   << io3.deriv2(x) << " " << io4.deriv2(x) << " " 
-	   << io5.deriv2(x) << " " << io6.deriv2(x) << endl;
+           << io3.deriv2(x) << " " << io4.deriv2(x) << " " 
+           << io5.deriv2(x) << " " << io6.deriv2(x) << endl;
     }
     cout.unsetf(ios::showpos);
 
@@ -660,7 +646,6 @@ int main(void) {
     }
     if (debug) cout << endl;
 
-    interp<> io(itp_steffen);
     interp_vec<> iov(N,vx,vy,itp_steffen);
 
     double last=-1.0;
@@ -668,31 +653,23 @@ int main(void) {
       double exact=sin(x/2.0)+x/a;
       double deriv=cos(x/2.0)/2.0+1.0/a;
       double deriv2=-sin(x/2.0)/4.0;
-      double interpa=io.eval(x,N,vx,vy);
-      double interpb=iov.eval(x);
-      double deriva=io.deriv(x,N,vx,vy);
-      double derivb=iov.deriv(x);
-      double deriv2a=io.deriv2(x,N,vx,vy);
-      double deriv2b=iov.deriv2(x);
+      double interpa=iov.eval(x);
+      double deriva=iov.deriv(x);
+      double deriv2a=iov.deriv2(x);
       double integ=-2.0*cos(x/2.0)+x*x/2.0/a+2.0;
-      double intega=io.integ(0.0,x,N,vx,vy);
-      double integb=iov.integ(0.0,x);
+      double intega=iov.integ(0.0,x);
       if (debug) {
-	cout.precision(4);
-	cout << x << " " << exact << " " << interpa << " " 
-	     << deriv << " " << deriva << " "
-	     << deriv2 << " " << deriv2a << " "
-	     << integ << " " << intega << " " << integb << endl;
-	cout.precision(6);
+        cout.precision(4);
+        cout << x << " " << exact << " " << interpa << " " 
+             << deriv << " " << deriva << " "
+             << deriv2 << " " << deriv2a << " "
+             << integ << " " << intega << " " << endl;
+        cout.precision(6);
       }
       t.test_gen(interpa>last,"steffen 2");
-      t.test_gen(interpa==interpb,"types");
       t.test_rel(interpa,exact,4.0e-2,"interp");
-      t.test_gen(deriva==derivb,"types d");
       t.test_rel(deriva,deriv,100.0,"deriv");
-      t.test_gen(deriv2a==deriv2b,"types d2");
       t.test_rel(deriv2a,deriv2,50.0,"deriv2");
-      t.test_gen(intega==integb,"types i");
       t.test_rel(intega,integ,4.0e-1,"integ2");
       last=interpa;
     }
@@ -710,7 +687,7 @@ int main(void) {
     for(size_t j=0;j<2;j++) {
       vector<double> y;
       for(size_t i=0;i<100;i++) {
-	y.push_back(x[j][i]);
+        y.push_back(x[j][i]);
       }
       bool lx, ly;
       linear_or_log(x[j],y,lx,ly);
@@ -720,7 +697,7 @@ int main(void) {
     for(size_t j=0;j<3;j++) {
       vector<double> y;
       for(size_t i=0;i<100;i++) {
-	y.push_back(log(x[j][i]));
+        y.push_back(log(x[j][i]));
       }
       bool lx, ly;
       linear_or_log(x[j],y,lx,ly);
@@ -730,7 +707,7 @@ int main(void) {
     for(size_t j=0;j<3;j++) {
       vector<double> y;
       for(size_t i=0;i<100;i++) {
-	y.push_back(exp(x[j][i]));
+        y.push_back(exp(x[j][i]));
       }
       bool lx, ly;
       linear_or_log(x[j],y,lx,ly);
@@ -740,7 +717,7 @@ int main(void) {
     for(size_t j=0;j<3;j++) {
       vector<double> y;
       for(size_t i=0;i<100;i++) {
-	y.push_back(pow(x[j][i],4.0));
+        y.push_back(pow(x[j][i],4.0));
       }
       bool lx, ly;
       linear_or_log(x[j],y,lx,ly);

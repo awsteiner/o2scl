@@ -2041,12 +2041,16 @@ namespace o2scl {
     
  public:
     
+    /// Desc
+    interp_array_vec(size_t interp_type) 
+      : interp_vec<arr_t>(interp_type) {}
+    
     /// Create with base interpolation object \c it
-  interp_array_vec(size_t nv, const arr_t &x, const arr_t &y,
-           size_t interp_type) :
-    interp_vec<arr_t>(nv,x,y,interp_type) {}
+    interp_array_vec(size_t nv, const arr_t &x, const arr_t &y,
+                     size_t interp_type) :
+      interp_vec<arr_t>(nv,x,y,interp_type) {}
   };
-
+  
   /// \name A function for inverse interpolation in src/base/interp.h
   //@{
   /** \brief Count level crossings
