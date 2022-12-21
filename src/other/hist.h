@@ -31,7 +31,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/convert_units.h>
-#include <o2scl/interp.h>
+#include <o2scl/interp_vec.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/table.h>
 

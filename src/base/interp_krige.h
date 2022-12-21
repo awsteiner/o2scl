@@ -43,7 +43,6 @@
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/constants.h>
 #include <o2scl/invert.h>
-#include <o2scl/prob_dens_func.h>
 #include <o2scl/min_brent_gsl.h>
 
 namespace o2scl {
@@ -276,7 +275,7 @@ namespace o2scl {
 	st_parms[i]=parms[i];
       }
       st_var=var;
-      st_var2=var;
+      st_var2=var2;
       st_var_lo=var_lo;
       st_var_hi=var_hi;
       
@@ -328,7 +327,7 @@ namespace o2scl {
     }
     
     /// The function
-    double operator()(double x, double y) {
+    virtual double operator()(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
       double z=calc.eval(&vars);
@@ -336,7 +335,7 @@ namespace o2scl {
     }
 
     /// The function
-    double deriv(double x, double y) {
+    virtual double deriv(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
       double z=calc_d.eval(&vars);
@@ -344,7 +343,7 @@ namespace o2scl {
     }
     
     /// The function
-    double deriv2(double x, double y) {
+    virtual double deriv2(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
       double z=calc_d2.eval(&vars);
@@ -352,7 +351,7 @@ namespace o2scl {
     }
     
     /// The function
-    double integ(double x, double a, double b) {
+    virtual double integ(double x, double a, double b) {
       vars[st_var]=x;
       vars[st_var_lo]=a;
       vars[st_var_hi]=b;
@@ -595,7 +594,7 @@ namespace o2scl {
       for(size_t i=0;i<this->sz;i++) {
         ret+=(*f)(x0,(*this->px)[i])*Kinvf[i];
       }
-
+      
       if (rescaled) {
         ret=ret*std_y+mean_y;
       }
@@ -717,7 +716,8 @@ namespace o2scl {
 
       return sigma;
     }
-    
+
+#ifdef O2SCL_NEVER_DEFINED
     /** \brief Generate a probability distribution for the interpolation
         at a specified point
 
@@ -780,6 +780,7 @@ namespace o2scl {
       }
       return;
     }
+#endif
     
     /// Return the type, \c "interp_krige".
     virtual const char *type() const { return "interp_krige"; }
@@ -1630,11 +1631,6 @@ namespace o2scl {
             for(size_t i=0;i<size-1;i++) {
               kxx0[i]=(*cf)((*this->px)[k],x2[i]);
               ypred+=kxx0[i]*Kinvf2[i];
-              if (false && k==0) {
-                std::cout << "  " << Kinvf2[i] << " " << x2[i] << " "
-                          << kxx0[i] << " " << ypred
-                          << std::endl;
-              }
             }
           } else {
             for(size_t i=0;i<size-1;i++) {
@@ -1643,20 +1639,8 @@ namespace o2scl {
             }
           }
           
-          if (false && k==0) {
-            std::cout.setf(std::ios::showpos);
-            std::cout << "k,x,yact,ypred: " << k << " "
-                      << (*this->px)[k] << " "
-                      << yact << " " << ypred << std::endl;
-            std::cout.unsetf(std::ios::showpos);
-          }
-          
           qual+=pow(yact-ypred,2.0);
 	
-        }
-        if (verbose>0) {
-          std::cout << "len (loo_cv_bf): "
-                    << qual << std::endl;
         }
 
       } else if (mode==mode_loo_cv) {
@@ -1956,7 +1940,7 @@ namespace o2scl {
       
       if (verbose>1) {
         std::cout << "             "
-                  << "ilen qual len fail min_qual best_len"
+                  << "index_list params qual min_qual success"
                   << std::endl;
       }
       

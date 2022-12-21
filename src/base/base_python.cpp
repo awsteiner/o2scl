@@ -3196,20 +3196,6 @@ double o2scl_interp_krige_optim_std_vector_double__sigma(void *vptr, double x0) 
   return ret;
 }
 
-double o2scl_interp_krige_optim_std_vector_double__sample(void *vptr, double x0) {
-  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
-  double ret=ptr->sample(x0);
-  return ret;
-}
-
-void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *ptr_x, void *ptr_y) {
-  interp_krige_optim<std::vector<double>> *ptr=(interp_krige_optim<std::vector<double>> *)vptr;
-  std::vector<double> *x=(std::vector<double> *)ptr_x;
-  std::vector<double> *y=(std::vector<double> *)ptr_y;
-  ptr->sample_vec(*x,*y);
-  return;
-}
-
 void *o2scl_create_terminal() {
   terminal *ptr=new terminal;
   return ptr;

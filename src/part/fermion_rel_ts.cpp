@@ -259,10 +259,14 @@ int main(void) {
       fr25.fri.verbose=2;
       fr25.fri.it.verbose=2;
       ret=fr25.calc_mu(f25,T25);
-      cout << dtos(f.n,0) << " " << abs(f.n-fld.n)/abs(fld.n) << endl;
-      cout << dtos(f.ed,0) << " " << abs(f.ed-fld.ed)/abs(fld.ed) << endl;
-      cout << dtos(f.pr,0) << " " << abs(f.pr-fld.pr)/abs(fld.pr) << endl;
-      cout << dtos(f.en,0) << " " << abs(f.en-fld.en)/abs(fld.en) << endl;
+      cout << dtos(f.n,0) << " "
+           << abs(f.n-fld.n)/abs(fld.n) << endl;
+      cout << dtos(f.ed,0) << " "
+           << abs(f.ed-fld.ed)/abs(fld.ed) << endl;
+      cout << dtos(f.pr,0) << " "
+           << abs(f.pr-fld.pr)/abs(fld.pr) << endl;
+      cout << dtos(f.en,0) << " "
+           << abs(f.en-fld.en)/abs(fld.en) << endl;
 
       if (abs(f.n-fld.n)/abs(fld.n)>max) {
         max=abs(f.n-fld.n)/abs(fld.n);
@@ -278,10 +282,14 @@ int main(void) {
       }
       cout << "max: " << max << endl;
       
-      cout << dtos(fld.n,0) << " " << abs(fld.n-f25.n)/abs(f25.n) << endl;
-      cout << dtos(fld.ed,0) << " " << abs(fld.ed-f25.ed)/abs(f25.ed) << endl;
-      cout << dtos(fld.pr,0) << " " << abs(fld.pr-f25.pr)/abs(f25.pr) << endl;
-      cout << dtos(fld.en,0) << " " << abs(fld.en-f25.en)/abs(f25.en) << endl;
+      cout << dtos(fld.n,0) << " "
+           << abs(fld.n-f25.n)/abs(f25.n) << endl;
+      cout << dtos(fld.ed,0) << " "
+           << abs(fld.ed-f25.ed)/abs(f25.ed) << endl;
+      cout << dtos(fld.pr,0) << " "
+           << abs(fld.pr-f25.pr)/abs(f25.pr) << endl;
+      cout << dtos(fld.en,0) << " "
+           << abs(fld.en-f25.en)/abs(f25.en) << endl;
 
       if (abs(fld.n-f25.n)/abs(f25.n)>maxld) {
         maxld=abs(fld.n-f25.n)/abs(f25.n);

@@ -503,12 +503,27 @@ int main(void) {
     covar_funct_strings cfs;
     vector<string> vars={"len"};
     cfs.set("exp(-(x-y)^2/len^2/2)",
-            "-exp(-(x-y)^2/len^2/2)/len^2/(x-y)",
+            "-exp(-(x-y)^2/len^2/2)/len^2*(x-y)",
             "exp(-(x-y)^2/len^2/2)/len^4*((x-y)^2-len^2)",
             ((string)"sqrt(pi*len^2*2)/2*(erf(sqrt(1/len^2/2)*(b-x))-")+
             "erf(sqrt(1/len^2/2)*(a-x)))",vars,"x","y","a","b");
             
     covar_funct_rbf_noise cfrn;
+
+    vector<double> p={1.0};
+    cfs.set_params(p);
+    vector<double> p2={1.0,-15.0};
+    cfrn.set_params(p);
+    
+    t.test_rel(cfs(2.0,2.1),cfrn(2.0,2.1),1.0e-12,"covar_funct_string");
+    t.test_rel(cfs.deriv(2.0,2.1),
+               cfrn.deriv(2.0,2.1),1.0e-12,"covar_funct_string d");
+    t.test_rel(cfs.deriv2(2.0,2.1),
+               cfrn.deriv2(2.0,2.1),1.0e-12,"covar_funct_string d2");
+    cout << cfs.integ(2.0,0.0,1.0) << " "
+         << cfrn.integ(2.0,0.0,1.0) << endl;
+    //t.test_rel(cfs.integ(2.0,0.0,1.0),
+    //cfrn.integ(2.0,0.0,1.0),1.0e-12,"covar_funct_string i");
     
     vector<vector<double>> param_lists;
     param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});

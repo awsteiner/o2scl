@@ -2072,6 +2072,8 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     } else if (interp_type==8) {
       cout << "Set interpolation type to nearest neighbor "
            << "interpolation (experimental; 8)." << endl;
+    } else if (interp_type==20) {
+      cout << "Testing GP RBF interpolation." << endl;
     } 
   }
   

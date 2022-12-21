@@ -113,6 +113,55 @@ int main(void) {
                         mat_y_t,mat_y_row_t,ubmatrix,
                         o2scl_linalg::matrix_invert_det_cholesky
                         <ubmatrix> > ik_t;
+
+  {
+
+    vector<mcovar_funct_rbf_noise> mfrn;
+    
+    interpm_krige_optim_new
+      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
+       mat_y_t,mat_y_row_t,ubmatrix,
+       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
+       std::vector<std::vector<double>> > ikon;
+
+    table<> tab3;
+    generate_table(tab3);
+    
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+
+    gen_test_number<> gtn_x3;
+    gtn_x3.set_radix(1.9);
+    
+    ikon.verbose=2;
+    vector<double> len_list={0.01,0.03,0.1,0.3,1.0};
+    vector<double> l10_list={-15,-13,-11,-9};
+    vector<vector<double> > param_lists;
+    param_lists.push_back(len_list);
+    param_lists.push_back(len_list);
+    param_lists.push_back(l10_list);
+    
+    ikon.set_covar(mfrn,param_lists);
+    ikon.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
+        
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_x3.gen();
+      
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        ikon.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled eigen 2");
+      }
+
+    }
+    cout << endl;
+    
+  }
   
   {
     cout << "interpm_krige, not rescaled" << endl;
@@ -140,7 +189,7 @@ int main(void) {
     
     matrix_view_table<> mvt_x(tab,col_list_x);
     matrix_view_table_transpose<> mvt_y(tab,col_list_y);
-
+    
     ik.verbose=2;
     ik.set_data(2,1,tab.get_nlines(),mvt_x,mvt_y,fa1);
 
@@ -412,60 +461,7 @@ int main(void) {
     
   }
 
-#endif  
-
-  /*
-    AWS: 5/11/22: Old interpm_krige_nn test which is not working
-
-    if (false) {
-    // Construct the data
-    vector<ubvector> x;
-    ubvector tmp(2);
-    tmp[0]=1.04; tmp[1]=0.02;
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.01; 
-    x.push_back(tmp);
-    tmp[0]=0.81; tmp[1]=0.23; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.83; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.99; 
-    x.push_back(tmp);
-    tmp[0]=0.82; tmp[1]=0.84; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=0.24; 
-    x.push_back(tmp);
-    tmp[0]=0.03; tmp[1]=1.02; 
-    x.push_back(tmp);
-    mat_x_t x2(x);
-
-    vector<ubvector> y;
-    tmp.resize(8);
-    for(size_t i=0;i<8;i++) {
-    tmp[i]=ft(x[i][0],x[i][1]);
-    }
-    y.push_back(tmp);
-    mat_x_t y2(y);
-
-    interpm_krige_nn<ubvector,mat_x_t,
-    matrix_row_gen<mat_x_t> > ik;
-    vector<function<double(const ubvector &,const ubvector &)> > fa={covar};
-    ik.set_data(2,1,8,x2,y2,fa,4);
-  
-    cout << "Interpolate at a point and compare the three methods:" << endl;
-    ubvector point(2);
-    ubvector out(1);
-    point[0]=0.4;
-    point[1]=0.5;
-    ik.eval(point,out,fa);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-    point[0]=0.0301;
-    point[1]=0.9901;
-    ik.eval(point,out,fa);
-    cout << out[0] << " " << ft(point[0],point[1]) << endl;
-
-    }
-  */
+#endif    
 
   t.report();
   return 0;

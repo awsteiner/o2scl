@@ -311,10 +311,16 @@ namespace o2scl {
 
   public:
 
+    /** \brief Desc
+     */
     int verbose;
     
+    /** \brief Desc
+     */
     inte_multip_tanh_sinh_boost<> it;
 
+    /** \brief Desc
+     */
     double tol_rel;
 
     fermion_rel_integ_multip2() {
@@ -557,6 +563,8 @@ namespace o2scl {
       return ret;
     }
     
+    /** \brief Desc
+     */
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
       fp_t zero=0;
@@ -572,6 +580,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
       fp_t zero=0;
@@ -587,6 +597,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
       fp_t zero=0;
@@ -602,6 +614,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
       fp_t zero=0;
@@ -617,6 +631,8 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
 
@@ -633,6 +649,8 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Desc
+     */
     int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                         fp_t ul, fp_t &res, fp_t &err) {
 
@@ -649,6 +667,8 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Desc
+     */
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
 
@@ -663,6 +683,8 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Desc
+     */
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
 

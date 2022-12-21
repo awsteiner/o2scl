@@ -42,7 +42,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/misc.h>
-#include <o2scl/interp.h>
+#include <o2scl/interp_vec.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/lib_settings.h>
 
@@ -1922,6 +1922,29 @@ namespace o2scl {
       return itype;
     }
 
+    /// Desc
+    int set_interp_obj(std::string sx, std::string sy,
+                       interp_base<vec_t> *si2) {
+      if (intp_set==true) {
+        delete si;
+      } else {
+        intp_set=true;
+      }
+      intp_colx=sx;
+      intp_coly=sy;
+      si=si2;
+      return 0;
+    }
+
+    /// Desc
+    void clear_interp_obj() {
+      if (intp_set) {
+        delete si;
+        intp_set=false;
+      }
+      return;
+    }
+    
     /** \brief Interpolate value \c x0 from column named \c sx 
         into column named \c sy
 
@@ -2167,7 +2190,8 @@ namespace o2scl {
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
-                   "' not found in table::deriv2(string,double,string).").c_str(),
+                   "' not found in table::deriv2("+
+                   "string,double,string).").c_str(),
                   exc_enotfound);
         return 0.0;
       }
@@ -3511,7 +3535,7 @@ namespace o2scl {
     size_t itype;
 
     /// Interpolation object
-    interp_vec<vec_t> *si;
+    interp_base<vec_t> *si;
 
     /// The last x-column interpolated
     std::string intp_colx;
