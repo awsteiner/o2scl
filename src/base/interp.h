@@ -81,7 +81,9 @@ namespace o2scl {
     /// Steffen's monotonic method
     itp_steffen=7,
     /// Nearest-neighbor lookup
-    itp_nearest_neigh=8
+    itp_nearest_neigh=8,
+    /// Nearest-neighbor lookup
+    itp_gp_rbf_noise=9
   };
 
   /** \brief Base low-level interpolation class [abstract base]

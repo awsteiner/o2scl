@@ -33,7 +33,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include <o2scl/interp.h>
+#include <o2scl/interp_vec.h>
 #include <o2scl/uniform_grid.h>
 
 namespace o2scl {

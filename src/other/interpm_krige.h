@@ -1222,8 +1222,7 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  template<class func_t,
-           class vec_t, class mat_x_t, class mat_x_row_t, 
+  template<class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t>,
@@ -1242,7 +1241,7 @@ namespace o2scl {
     
 
     /// The current class type
-    typedef interpm_krige_optim_new<func_t,vec_t,mat_x_t,mat_x_row_t,mat_y_t,
+    typedef interpm_krige_optim_new<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
                                     mat_y_row_t,mat_inv_kxx_t,
                                     mat_inv_t,vec_vec_t> current_t;
     
@@ -1520,9 +1519,10 @@ namespace o2scl {
 
     /** \brief Initialize interpolation routine
      */
+    template<class covar_func_t>
     int set_data_internal
     (size_t n_in, size_t n_out, size_t n_points,
-     mat_x_t &user_x, mat_y_t &user_y, 
+     mat_x_t &user_x, mat_y_t &user_y, covar_func_t &func,
      bool rescale=false, bool err_on_fail=true) {
 
       if (n_points<2) {

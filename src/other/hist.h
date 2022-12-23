@@ -34,6 +34,7 @@
 #include <o2scl/interp_vec.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/table.h>
+#include <o2scl/prob_dens_func.h>
 
 // Forward definition of the hist class for HDF I/O
 namespace o2scl {
@@ -667,6 +668,84 @@ namespace o2scl {
 
   };
 
+  /** \brief Probability density function based on a histogram
+
+      \note This class is experimental.
+  */
+  class prob_dens_hist : public prob_dens_frange {
+    
+  public:
+
+    typedef boost::numeric::ublas::vector<double> ubvector;
+
+  protected:
+    
+    /// Search through the partial sums
+    search_vec<ubvector> sv;
+  
+    /// Number of original histogram bins
+    size_t n;
+  
+    /** \brief Normalized partial sum of histogram bins
+	
+	This vector has size \ref n plus one.
+    */
+    ubvector sum;
+  
+    /** \brief Vector specifying original histogram bins
+	
+	This vector has size \ref n plus one.
+    */
+    ubvector range;
+  
+    /// Random number generator
+    rng<> rg;
+  
+  public:
+  
+    prob_dens_hist();
+  
+    virtual ~prob_dens_hist();
+
+    /// Initialize with histogram \c h
+    void init(hist &h);
+
+    /// Get reference to partial sums
+    const ubvector &partial_sums() { return sum; }
+    
+    /// Get reference to bin ranges
+    const ubvector &bin_ranges() { return range; }
+    
+    /// Generate a sample
+    virtual double operator()() const;
+
+    /// Lower limit of the range
+    virtual double lower_limit() const;
+    
+    /// Uower limit of the range
+    virtual double upper_limit() const;
+
+    /// The normalized density 
+    virtual double pdf(double x) const;
+    
+    /// The log of the normalized density 
+    virtual double log_pdf(double x) const;
+    
+    /// Cumulative distribution function (from the lower tail)
+    virtual double cdf(double x) const;
+
+    /// Inverse cumulative distribution function (from the lower tail)
+    virtual double invert_cdf(double x) const;
+
+    /// Entropy of the distribution (\f$ - \int f \ln f \f$ )
+    virtual double entropy() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return 0.0;
+    }
+    
+  };
+
+  
 }
 
 #endif

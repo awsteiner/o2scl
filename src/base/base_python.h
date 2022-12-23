@@ -1091,6 +1091,10 @@ double o2scl_interp_krige_optim_std_vector_double__deriv2(void *vptr, double x0)
 
 double o2scl_interp_krige_optim_std_vector_double__sigma(void *vptr, double x0);
 
+double o2scl_interp_krige_optim_std_vector_double__sample(void *vptr, double x0);
+
+void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *ptr_x, void *ptr_y);
+
 void *o2scl_create_terminal();
 
 void o2scl_free_terminal(void *vptr);

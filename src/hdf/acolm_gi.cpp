@@ -1618,6 +1618,7 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
+    /*
     if (interp_type==20) {
 
       interp_krige_optim_new<covar_funct_rbf_noise,
@@ -1650,6 +1651,7 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
       
       return 0;
     }
+    */
     
     double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
     

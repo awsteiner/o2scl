@@ -2131,13 +2131,13 @@ class interp_krige_optim<std::vector<double>>
 - function sigma
   - double
   - double x0
-#- function sample
-#  - double
-#  - double x0
-#- function sample_vec
-#  - void
-#  - io std::vector<double> &x
-#  - io std::vector<double> &y
+- function sample
+  - double
+  - double x0
+- function sample_vec
+  - void
+  - io std::vector<double> &x
+  - io std::vector<double> &y
 #
 # Functions and classes from misc.h
 #

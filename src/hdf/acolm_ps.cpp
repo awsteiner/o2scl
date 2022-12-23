@@ -923,7 +923,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
 	cout << endl;
 	
-	//--------------------------------------------------------------------
+	//----------------------------------------------------------------
 	// Continue to next row
       }
       
@@ -2056,13 +2056,13 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
            << "with natural boundary conditions (2)." << endl;
     } else if (interp_type==3) {
       cout << "Set interpolation type to cubic spline interpolation "
-           << "with periodic boundary conditions (2)." << endl;
+           << "with periodic boundary conditions (3)." << endl;
     } else if (interp_type==4) {
       cout << "Set interpolation type to Akima spline interpolation "
-           << "with natural boundary conditions (2)." << endl;
+           << "with natural boundary conditions (4)." << endl;
     } else if (interp_type==5) {
       cout << "Set interpolation type to Akima spline interpolation "
-           << "with periodic boundary conditions (2)." << endl;
+           << "with periodic boundary conditions (5)." << endl;
     } else if (interp_type==6) {
       cout << "Set interpolation type to monotonic interpolation "
            << "(experimental; 6)." << endl;
@@ -2072,7 +2072,7 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     } else if (interp_type==8) {
       cout << "Set interpolation type to nearest neighbor "
            << "interpolation (experimental; 8)." << endl;
-    } else if (interp_type==20) {
+    } else if (interp_type==9) {
       cout << "Testing GP RBF interpolation." << endl;
     } 
   }

@@ -44,6 +44,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/invert.h>
 #include <o2scl/min_brent_gsl.h>
+#include <o2scl/prob_dens_func.h>
 
 namespace o2scl {
 
@@ -56,16 +57,19 @@ namespace o2scl {
     /// Get the number of parameters
     virtual size_t get_n_params()=0;
     
-    /// The function
+    virtual ~covar_funct() {
+    }
+    
+    /// The covariance function
     virtual double operator()(double x, double y)=0;
 
-    /// The function
+    /// The derivative of the covariance function with respect to x
     virtual double deriv(double x, double y)=0;
     
-    /// The function
+    /// The second derivative of the covariance function with respect to x
     virtual double deriv2(double x, double y)=0;
     
-    /// The function
+    /// The integral of the covariance function at x between a and b
     virtual double integ(double x, double a, double b)=0;
     
   };
@@ -79,7 +83,10 @@ namespace o2scl {
     /// Length parameter
     double len;
     
-    /// Get the number of parameters
+    virtual ~covar_funct_rbf() {
+    }
+    
+    /// Get the number of parameters (always returns 1)
     virtual size_t get_n_params() {
       return 1;
     }
@@ -159,8 +166,11 @@ namespace o2scl {
     
     /// Noise parameter
     double log10_noise;
+
+    virtual ~covar_funct_rbf_noise() {
+    }
     
-    /// Get the number of parameters
+    /// Get the number of parameters (always returns 2)
     virtual size_t get_n_params() {
       return 2;
     }
@@ -282,20 +292,24 @@ namespace o2scl {
       return;
     }
 
-    /// The function parser
+    /// The expression evaulation objects
+    //@{
     o2scl::calc_utf8<> calc;
     o2scl::calc_utf8<> calc_d;
     o2scl::calc_utf8<> calc_d2;
     o2scl::calc_utf8<> calc_i;
+    //@}
 
     /// The variable values
     std::map<std::string,double> vars;
       
-    /// The expression
+    /// The expressions to evaluate, stored as strings
+    //@{
     std::string st_expr;
     std::string st_expr_d;
     std::string st_expr_d2;
     std::string st_expr_i;
+    //@}
       
     /// The parameters
     std::vector<std::string> st_parms; 
@@ -303,13 +317,13 @@ namespace o2scl {
     /// The variable
     std::string st_var; 
 
-    /// The variable
+    /// The second variable
     std::string st_var2; 
 
-    /// The variable
+    /// The lower limit variable
     std::string st_var_lo; 
 
-    /// The variable
+    /// The upper limit variable
     std::string st_var_hi; 
 
     /// Get the number of parameters
@@ -325,8 +339,8 @@ namespace o2scl {
       }
       return;
     }
-    
-    /// The function
+
+    /// The covariance function
     virtual double operator()(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
@@ -334,7 +348,7 @@ namespace o2scl {
       return z;
     }
 
-    /// The function
+    /// The derivative of the covariance function with respect to x
     virtual double deriv(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
@@ -342,7 +356,7 @@ namespace o2scl {
       return z;
     }
     
-    /// The function
+    /// The second derivative of the covariance function with respect to x
     virtual double deriv2(double x, double y) {
       vars[st_var]=x;
       vars[st_var2]=y;
@@ -350,7 +364,7 @@ namespace o2scl {
       return z;
     }
     
-    /// The function
+    /// The integral of the covariance function at x between a and b
     virtual double integ(double x, double a, double b) {
       vars[st_var]=x;
       vars[st_var_lo]=a;
@@ -436,7 +450,7 @@ namespace o2scl {
         with pointers for derivative and integral functions
     */
     virtual int set_covar_di_noise_internal
-      (size_t n_dim, const vec_t &x, const vec_t &y,
+      (size_t n_dim, const vec_t &x, const vec2_t &y,
        covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
        covar_integ_t *finteg, double noise_var, bool rescale=false) {
       
@@ -547,7 +561,7 @@ namespace o2scl {
     */
     virtual int set_covar_di_noise
       (size_t n_dim, const vec_t &x,
-       const vec_t &y, covar_func_t &fcovar,
+       const vec2_t &y, covar_func_t &fcovar,
        covar_func_t &fderiv, covar_func_t &fderiv2,
        covar_integ_t &finteg, double noise_var, bool rescale=false) {
       return set_covar_di_noise_internal(n_dim,x,y,fcovar,
@@ -558,7 +572,7 @@ namespace o2scl {
     /** \brief Initialize interpolation routine with covariance
         function and noise term, but without derivatives and integrals
     */
-    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec_t &y,
+    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec2_t &y,
 				covar_func_t &fcovar, double noise_var,
                                 bool rescale=false) {
       return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
@@ -569,7 +583,7 @@ namespace o2scl {
         function, with automatic noise term and without derivatives and
         integrals
     */
-    virtual int set_covar(size_t n_dim, const vec_t &x, const vec_t &y,
+    virtual int set_covar(size_t n_dim, const vec_t &x, const vec2_t &y,
 			  covar_func_t &fcovar, bool rescale=false) {
       
       // Use the mean absolute value to determine noise
@@ -604,6 +618,8 @@ namespace o2scl {
 
     /** \brief Evaluate the interpolation at \f$ x=x_0 \f$ using
         an alternate covariance function
+
+        \note This function only works if the data is not rescaled.
     */
     template<class covar_func2_t>
       double eval_covar(double x0, covar_func2_t &user_f) const {
@@ -717,7 +733,6 @@ namespace o2scl {
       return sigma;
     }
 
-#ifdef O2SCL_NEVER_DEFINED
     /** \brief Generate a probability distribution for the interpolation
         at a specified point
 
@@ -780,7 +795,6 @@ namespace o2scl {
       }
       return;
     }
-#endif
     
     /// Return the type, \c "interp_krige".
     virtual const char *type() const { return "interp_krige"; }
@@ -927,11 +941,11 @@ namespace o2scl {
           // Leave one observation out
           ubvector x2(size-1);
           ubvector y2(size-1);
-          o2scl::vector_copy_jackknife((*this->px),k,x2);
+          o2scl::vector_copy_jackknife(size,(*this->px),k,x2);
           if (this->rescaled) {
-            o2scl::vector_copy_jackknife(this->y_r,k,y2);
+            o2scl::vector_copy_jackknife(size,this->y_r,k,y2);
           } else {
-            o2scl::vector_copy_jackknife((*this->py),k,y2);
+            o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
           }
 	
           // Construct the inverse of the KXX matrix. Note
@@ -1023,11 +1037,11 @@ namespace o2scl {
             // Leave one observation out
             ubvector x2(size-1);
             ubvector y2(size-1);
-            o2scl::vector_copy_jackknife((*this->px),k,x2);
+            o2scl::vector_copy_jackknife(size,(*this->px),k,x2);
             if (this->rescaled) {
-              o2scl::vector_copy_jackknife(this->y_r,k,y2);
+              o2scl::vector_copy_jackknife(size,this->y_r,k,y2);
             } else {
-              o2scl::vector_copy_jackknife((*this->py),k,y2);
+              o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
             }
 	
             // Construct the KXX matrix
@@ -1584,11 +1598,11 @@ namespace o2scl {
           // Leave one observation out
           ubvector x2(size-1);
           ubvector y2(size-1);
-          o2scl::vector_copy_jackknife((*this->px),k,x2);
+          o2scl::vector_copy_jackknife(size,(*this->px),k,x2);
           if (this->rescaled) {
-            o2scl::vector_copy_jackknife(this->y_r,k,y2);
+            o2scl::vector_copy_jackknife(size,this->y_r,k,y2);
           } else {
-            o2scl::vector_copy_jackknife((*this->py),k,y2);
+            o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
           }
 	
           // Construct the inverse of the KXX matrix. Note
@@ -1661,11 +1675,11 @@ namespace o2scl {
             // Leave one observation out
             ubvector x2(size-1);
             ubvector y2(size-1);
-            o2scl::vector_copy_jackknife((*this->px),k,x2);
+            o2scl::vector_copy_jackknife(size,(*this->px),k,x2);
             if (this->rescaled) {
-              o2scl::vector_copy_jackknife(this->y_r,k,y2);
+              o2scl::vector_copy_jackknife(size,this->y_r,k,y2);
             } else {
-              o2scl::vector_copy_jackknife((*this->py),k,y2);
+              o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
             }
 	
             // Construct the KXX matrix
@@ -1894,7 +1908,7 @@ namespace o2scl {
     /// Default minimizer
     mmin_simp2<> def_mmin;
 
-    /** \brief Desc
+    /** \brief Set the covariance function and parameter lists
      */
     int set_covar(func_t &covar, vec_vec_t &param_lists) {
       cf=&covar;
@@ -1902,7 +1916,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief Desc
+    /** \brief Set the vectors
      */
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       
