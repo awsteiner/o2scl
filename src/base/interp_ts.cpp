@@ -164,8 +164,8 @@ int main(void) {
   // ---------------------------------------------------------------
   // Use linear interpolation
 
-  interp_array_vec<double[5]> gia(itp_linear);
-  interp_array_vec<double[5]> giv1a(5,xa,ya,itp_linear);
+  interp_vec<double[5]> gia(itp_linear);
+  interp_vec<double[5]> giv1a(5,xa,ya,itp_linear);
 
   // ---------------------------------------------------------------
   // Test normal interpolation
@@ -211,8 +211,8 @@ int main(void) {
   // Use cspline interpolation
   
   gia.set_type(itp_cspline);
-  interp_array_vec<double[5]> giv3a(5,xa,ya,itp_cspline);
-  interp_array_vec<double[5]> giv4a(5,rxa,rya,itp_cspline);
+  interp_vec<double[5]> giv3a(5,xa,ya,itp_cspline);
+  interp_vec<double[5]> giv4a(5,rxa,rya,itp_cspline);
   
   // ---------------------------------------------------------------
   // Test normal interpolation

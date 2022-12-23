@@ -95,7 +95,7 @@ namespace o2scl {
     /// Covariance function for Gaussian process interpolation
     covar_funct *cf;
 
-    /// Parameter list 
+    /// Parameter list for Gaussian process interpolation
     std::vector<std::vector<double>> param_list;
     
 #endif
@@ -105,15 +105,8 @@ namespace o2scl {
     /// Blank interpolator
     interp_vec(size_t interp_type=itp_cspline) {
       itp=0;
-      itype=interp_type;
       cf=0;
-    }
-
-    /** \brief Set the interpolation type
-     */
-    void set_type(size_t interp_type=itp_cspline) {
       itype=interp_type;
-      return;
     }
 
     /** \brief Create an interpolation object with interpolation type
@@ -122,16 +115,22 @@ namespace o2scl {
     */
     interp_vec(size_t n, const vec_t &x, 
                const vec2_t &y, size_t interp_type=itp_cspline) {
+      cf=0;
+      itp=0;
       set(n,x,y,interp_type);
     }
 
     virtual ~interp_vec() {
-      if (itp!=0) {
-        if (cf!=0) {
-          delete cf;
-        }
-        delete itp;
-      }
+      clear();
+    }
+
+    /// \name Set methods
+    //@{
+    /** \brief Set the interpolation type
+     */
+    void set_type(size_t interp_type=itp_cspline) {
+      itype=interp_type;
+      return;
     }
 
     /** \brief Modify the interpolation object to operate on the first
@@ -157,8 +156,8 @@ namespace o2scl {
                    o2scl::dtos(x[0])+") in interp_vec()::"+
                    "interp_vec().").c_str(),exc_einval);
       }
-
-      if (itp!=0) delete itp;
+      
+      clear();
     
       if (interp_type==itp_linear) {
         itp=new interp_linear<vec_t,vec2_t>;
@@ -176,6 +175,7 @@ namespace o2scl {
         itp=new interp_steffen<vec_t,vec2_t>;
       } else if (interp_type==itp_nearest_neigh) {
         itp=new interp_nearest_neigh<vec_t,vec2_t>;
+        
       } else if (interp_type==itp_gp_rbf_noise) {
 
         interp_krige_optim_new<covar_funct_rbf_noise,vec_t,vec2_t> *ikon=
@@ -219,21 +219,10 @@ namespace o2scl {
 
       return;
     }
+    //@}
 
-    /** \brief Manually clear the pointer to the user-specified vector
-     */
-    void clear() {
-      if (itp!=0) {
-        if (cf!=0) {
-          delete cf;
-          cf=0;
-        }
-        delete itp;
-        itp=0;
-      }
-      return;
-    }
-      
+    /// \name Interpolation methods
+    //@{
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(const double x0) const {
       if (itp==0) {
@@ -279,12 +268,31 @@ namespace o2scl {
                   exc_einval);
       }
       return itp->integ(x1,x2);
-    }                   
-  
+    }
+    //@}
+
+    /// \name Other methods
+    //@{
+    /** \brief Clear the base interpolation object and covariance function
+        (if necessary)
+     */
+    void clear() {
+      if (itp!=0) {
+        if (cf!=0) {
+          delete cf;
+          cf=0;
+        }
+        delete itp;
+        itp=0;
+      }
+      return;
+    }
+
     /// Return the type, "interp_vec"
     virtual const char *type() const {
       return "interp_vec";
     }
+    //@}
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -298,28 +306,6 @@ namespace o2scl {
   
   };
 
-  /** \brief A specialization of \ref o2scl::interp_vec for C-style arrays
-
-      \verbatim embed:rst
-      See also the :ref:`Interpolation` section of the 
-      O\ :sub:`2`\ scl User's guide. 
-      \endverbatim
-  */
-  template<class arr_t> class interp_array_vec : 
-    public interp_vec<arr_t> {
-    
-  public:
-    
-    /// Desc
-    interp_array_vec(size_t interp_type) 
-      : interp_vec<arr_t>(interp_type) {}
-    
-    /// Create with base interpolation object \c it
-    interp_array_vec(size_t nv, const arr_t &x, const arr_t &y,
-                     size_t interp_type) :
-      interp_vec<arr_t>(nv,x,y,interp_type) {}
-  };
-  
   /// \name A function for inverse interpolation in src/base/interp.h
   //@{
   /** \brief Count level crossings
