@@ -74,9 +74,8 @@ namespace o2scl {
       using the set_type() function. The default is cubic splines
       with natural boundary conditions. 
 
-      \future Make version which copies vectors
-      rather than storing pointers might be better and then
-      has copy constructors.
+      \future Make version which copies vectors rather than storing
+      pointers might be better and then has copy constructors.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class vec2_t=vec_t> class interp_vec : 
@@ -102,7 +101,9 @@ namespace o2scl {
       
   public:
 
-    /// Blank interpolator
+    /** \brief Create an interpolation object with interpolation type
+        \c interp_type
+    */
     interp_vec(size_t interp_type=itp_cspline) {
       itp=0;
       cf=0;
@@ -110,7 +111,7 @@ namespace o2scl {
     }
 
     /** \brief Create an interpolation object with interpolation type
-        \c itp_cspline based on the first \c n entries of vectors
+        \c interp_type based on the first \c n entries of vectors
         \c x and \c y
     */
     interp_vec(size_t n, const vec_t &x, 
@@ -120,6 +121,7 @@ namespace o2scl {
       set(n,x,y,interp_type);
     }
 
+    /// Free the memory associated with the interpolation object
     virtual ~interp_vec() {
       clear();
     }
