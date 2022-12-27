@@ -180,8 +180,8 @@ namespace o2scl {
         
       } else if (interp_type==itp_gp_rbf_noise) {
 
-        interp_krige_optim_new<covar_funct_rbf_noise,vec_t,vec2_t> *ikon=
-          new interp_krige_optim_new<covar_funct_rbf_noise,vec_t,vec2_t>;
+        interp_krige_optim_new<vec_t,vec2_t,covar_funct_rbf_noise> *ikon=
+          new interp_krige_optim_new<vec_t,vec2_t,covar_funct_rbf_noise>;
         itp=ikon;
         covar_funct_rbf_noise *cfrn=new covar_funct_rbf_noise;
         cf=cfrn;

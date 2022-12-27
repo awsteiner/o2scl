@@ -69,13 +69,13 @@ namespace o2scl {
     double log10_noise;
     
     /// Get the number of parameters
-    size_t get_n_params() {
+    size_t get_n_params(size_t ic) {
       return len.size()+1;
     }
     
     /// Set the parameters
     template<class vec_t>
-    void set_params(vec_t &p) {
+    void set_params(size_t ic, vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
       }
@@ -85,7 +85,7 @@ namespace o2scl {
     
     /// The covariance function
     template<class vec_t, class vec2_t>
-    double operator()(const vec_t &x1, const vec2_t &x2) {
+    double operator()(size_t ic, const vec_t &x1, const vec2_t &x2) {
       double sum=0.0;
       bool equal=true;
       for(size_t j=0;j<len.size();j++) {
@@ -100,7 +100,7 @@ namespace o2scl {
         respect to the first argument
     */
     template<class vec_t, class vec2_t>
-    double deriv(vec_t &x1, vec_t &x2, size_t ix) {
+    double deriv(size_t ic, vec_t &x1, vec_t &x2, size_t ix) {
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
@@ -394,7 +394,7 @@ namespace o2scl {
         store the result of the interpolation in \c y0
     */
     template<class vec2_t, class vec3_t, class covar_func2_t>
-    void eval_covar(const vec2_t &x0, vec3_t &y0, covar_func2_t &f2) {
+    void eval_covar(const vec2_t &x0, vec3_t &y0, covar_func2_t &fcovar) {
       
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
@@ -403,15 +403,14 @@ namespace o2scl {
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
-        size_t icovar=iout % f2.size();
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          double covar_val=f2[icovar](xrow,x0);
+          double covar_val=fcovar(iout,xrow,x0);
           y0[iout]+=covar_val*Kinvf[iout][ipoints];
           if (ipoints==0 && false) {
             std::cout << "H2: " << iout << " "
-                      << f2[icovar](xrow,x0) << " "
+                      << fcovar(iout,xrow,x0) << " "
                       << Kinvf[iout][ipoints] << " "
                       << ipoints << " " << y0[iout] << std::endl;
           }
@@ -499,6 +498,8 @@ namespace o2scl {
 #endif
   
   };
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional interpolation using an 
       optimized covariance function
@@ -1220,9 +1221,11 @@ namespace o2scl {
 
   };
 
+#endif
+  
   /** \brief Desc
    */
-  template<class vec_t, class mat_x_t, class mat_x_row_t, 
+  template<class func_t, class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t>,
@@ -1245,24 +1248,10 @@ namespace o2scl {
                                     mat_y_row_t,mat_inv_kxx_t,
                                     mat_inv_t,vec_vec_t> current_t;
     
-    /// Function objects for the covariance
-    typename parent_t::f1_t ff1;
-    
-    /// Function objects for the covariance
-    typename parent_t::f2_t ff2;
-    
-    /// Function objects for the covariance
-    typename parent_t::f3_t ff3;
-
-    /// Function objects for the covariance
-    typedef std::vector<std::function<double(const vec_t &,
-                                             const vec_t &,
-                                             size_t ix) > > fd_t;
-
   protected:
 
     /// Pointer to the covariance function
-    std::vector<func_t> *cf;
+    func_t *cf;
     
     /// List of parameter values to try
     vec_vec_t plists;
@@ -1297,7 +1286,7 @@ namespace o2scl {
             if (irow>icol) {
               this->inv_KXX[iout](irow,icol)=this->inv_KXX[iout](icol,irow);
             } else {
-              this->inv_KXX[iout](irow,icol)=ff1[iout](xrow,xcol);
+              this->inv_KXX[iout](irow,icol)=(*cf)(iout,xrow,xcol);
             }
           }
         }
@@ -1390,7 +1379,7 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=ff1[iout](xrow,xcol);
+              KXX(irow,icol)=(*cf)(iout,xrow,xcol);
             }
           }
         }
@@ -1511,7 +1500,7 @@ namespace o2scl {
   
     /** \brief Desc
      */
-    int set_covar(std::vector<func_t> &covar, vec_vec_t &param_lists) {
+    int set_covar(func_t &covar, vec_vec_t &param_lists) {
       cf=&covar;
       plists=param_lists;
       return 0;
@@ -1519,10 +1508,9 @@ namespace o2scl {
 
     /** \brief Initialize interpolation routine
      */
-    template<class covar_func_t>
     int set_data_internal
     (size_t n_in, size_t n_out, size_t n_points,
-     mat_x_t &user_x, mat_y_t &user_y, covar_func_t &func,
+     mat_x_t &user_x, mat_y_t &user_y, 
      bool rescale=false, bool err_on_fail=true) {
 
       if (n_points<2) {
@@ -1601,30 +1589,9 @@ namespace o2scl {
       this->inv_KXX.resize(n_out);
 
       qual.resize(n_out);
-      ff1.resize(n_out);
-      ff2.resize(n_out);
-      ff3.resize(n_out);
 
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
-
-        size_t icovar=iout % cf->size();
-        
-        ff1[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
-                                               const mat_x_row_t &)>
-                            (&func_t::operator()),
-                            &(cf[icovar]),std::placeholders::_1,
-                            std::placeholders::_2);
-        ff2[iout]=std::bind(std::mem_fn<double(const mat_x_row_t &,
-                                               const vec_t &)>
-                            (&func_t::operator()),
-                            &(cf[icovar]),
-                            std::placeholders::_1,std::placeholders::_2);
-        ff3[iout]=std::bind(std::mem_fn<double(const vec_t &,
-                                               const vec_t &)>
-                            (&func_t::operator()),
-                            &(cf[icovar]),
-                            std::placeholders::_1,std::placeholders::_2);
         
         if (timing) {
           t4=time(0);
@@ -1633,21 +1600,25 @@ namespace o2scl {
         // Select the row of the data matrix
         mat_y_row_t yiout(this->y,iout);
       
-        if (verbose>1) {
-          std::cout << "interp_krige_optim_new::set_data_internal() : "
-                    << "simple minimization" << std::endl;
-        }
-	
         // Initialize to zero to prevent uninit'ed var. warnings
-        double min_qual=0.0, len_opt=0.0;
+        double min_qual=0.0;
 	
         if (verbose>1) {
-          std::cout << "qual fail min_qual len_opt" << std::endl;
+          std::cout << "qual fail min_qual" << std::endl;
         }
 	
         bool min_set=false, done=false;
         
-        size_t np=(*cf)[icovar].get_n_params();
+        size_t np=cf->get_n_params(iout);
+        if (verbose>1) {
+          std::cout << "interp_krige_optim_new::set_data_internal() : "
+                    << "simple minimization with " << np
+                    << " parameters." << std::endl;
+          for(size_t jk=0;jk<plists.size();jk++) {
+            std::cout << jk << " ";
+            o2scl::vector_out(std::cout,plists[jk],true);
+          }
+        }
         std::vector<size_t> index_list(np);
         vector_set_all(np,index_list,0);
         std::vector<double> params(np), min_params(np);
@@ -1657,9 +1628,9 @@ namespace o2scl {
           for(size_t i=0;i<np;i++) {
             params[i]=plists[i][index_list[i]];
           }
-          (*cf)[iout].set_params(params);
+          cf->set_params(iout,params);
           
-          int success=true;
+          bool success=true;
           qual[iout]=qual_fun(iout,yiout,success);
           
           if (success==true && (min_set==false || qual[iout]<min_qual)) {
@@ -1670,11 +1641,29 @@ namespace o2scl {
           
           if (verbose>1) {
             std::cout << "interp_krige_optim_new: ";
-            std::cout.width(2);
-            std::cout << qual[iout] << " "
+            o2scl::vector_out(std::cout,index_list);
+            std::cout << " ";
+            o2scl::vector_out(std::cout,params);
+            std::cout << " " << qual[iout] << " "
                       << success << " " << min_qual << std::endl;
+            if (verbose>2) {
+              char ch;
+              std::cin >> ch;
+            }
           }
-	  
+
+          index_list[0]++;
+          for(size_t k=0;k<np;k++) {
+            if (index_list[k]==plists[k].size()) {
+              if (k==np-1) {
+                done=true;
+              } else {
+                index_list[k]=0;
+                index_list[k+1]++;
+              }
+            }
+          }
+          
         }
         
         if (verbose>1) {
@@ -1682,7 +1671,7 @@ namespace o2scl {
           std::cout.width(2);
           std::cout << "   " << min_qual << std::endl;
         }
-        (*cf)[iout].set_params(min_params);
+        cf->set_params(iout,min_params);
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(iout,yiout,success);
@@ -1713,7 +1702,7 @@ namespace o2scl {
     template<class vec2_t, class vec3_t>
     void eval(const vec2_t &x0, vec3_t &y0) {
 
-      return this->eval_covar(x0,y0,ff2);
+      return this->eval_covar(x0,y0,*cf);
 
       return;
       
@@ -1725,7 +1714,7 @@ namespace o2scl {
     template<class vec2_t, class vec3_t>
     void sigma(const vec2_t &x0, vec3_t &y0) {
 
-      return this->sigma_covar(x0,y0,ff2,ff3);
+      return this->sigma_covar(x0,y0,*cf);
 
     }
     
@@ -1739,10 +1728,9 @@ namespace o2scl {
       typename parent_t::f3_t ffd(this->nd_out);
       
       for(size_t i=0;i<this->nd_out;i++) {
-        size_t icovar=i % cf->size();
         
         ffd[i]=std::bind(std::mem_fn<double(const vec_t &, const vec_t &)>
-                         (&func_t::deriv),&(cf[icovar]),
+                         (&func_t::deriv),cf,i,
                          std::placeholders::_1,std::placeholders::_2,ix);
       }
       

@@ -292,15 +292,36 @@ int main(void) {
   // Test interp_krige_optim interface
 
   interp_krige_optim<ubvector> iko;
+  interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf> ikon2;
 
   cout << "Class interp_krige_optim with simple interface." << endl;
   iko.verbose=1;
   iko.set(N,x,y);
   iko.verbose=0;
 
+  vector<double> plist;
+  for(size_t i=0;i<20;i++) {
+    plist.push_back(2.08333e-4*pow(4.63125/2.083333e-4,((double)i)/19));
+    cout << plist[i] << endl;
+  }
+  covar_funct_rbf cfr;
+  cfr.noise=8.471085e-9;
+  vector<vector<double>> plist2;
+  plist2.push_back(plist);
+  ikon2.set_covar(cfr,plist2);
+  cout << "here." << endl;
+  ikon2.verbose=2;
+  ikon2.set(N,x,y);
+
   t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"iko 1");
   t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-7,"iko 2");
   t.test_rel(iko.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,1.0e-5,"iko 3");
+  cout << endl;
+
+  t.test_rel(ikon2.eval(x[0]),y[0],1.0e-4,"iko 1");
+  t.test_rel(ikon2.eval(x[N-1]),y[N-1],1.0e-7,"iko 2");
+  t.test_rel(ikon2.eval((x[0]+x[1])/2.0),
              (y[0]+y[1])/2.0,1.0e-5,"iko 3");
   cout << endl;
 
@@ -311,6 +332,8 @@ int main(void) {
        << "rescaled version." << endl;
   
   iko.set(N,x,y,true);
+  ikon2.set(N,x,y,cfr,plist2,true);
+  
   double len2=iko.get_length();
 
   t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"ikor 1");
@@ -318,6 +341,11 @@ int main(void) {
   t.test_rel(iko.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-5,"ikor 3");
   cout << endl;
 
+  t.test_rel(ikon2.eval(x[0]),y[0],1.0e-4,"ikor 1");
+  t.test_rel(ikon2.eval(x[N-1]),y[N-1],1.0e-7,"ikor 2");
+  t.test_rel(ikon2.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-5,"ikor 3");
+  cout << endl;
+  
 #ifdef O2SCL_ARMA
   
   interp_krige_optim<ubvector,ubvector,arma::mat,
@@ -339,14 +367,27 @@ int main(void) {
   
   interp_krige_optim<ubvector,ubvector,Eigen::MatrixXd,
                      matrix_invert_det_eigen<>> iko_eigen;
+  interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf,
+                         Eigen::MatrixXd,
+                         matrix_invert_det_eigen<>> ikon_eigen;
+  ikon_eigen.set_covar(cfr,plist2);
 
   iko_eigen.verbose=1;
   iko_eigen.set(N,x,y);
   iko_eigen.verbose=0;
+  ikon_eigen.verbose=1;
+  ikon_eigen.set(N,x,y);
+  ikon_eigen.verbose=0;
 
   t.test_rel(iko_eigen.eval(x[0]),y[0],1.0e-4,"iko_eigen 1");
   t.test_rel(iko_eigen.eval(x[N-1]),y[N-1],1.0e-7,"iko_eigen 2");
   t.test_rel(iko_eigen.eval((x[0]+x[1])/2.0),
+             (y[0]+y[1])/2.0,1.0e-5,"iko_eigen 3");
+  cout << endl;
+
+  t.test_rel(ikon_eigen.eval(x[0]),y[0],1.0e-4,"iko_eigen 1");
+  t.test_rel(ikon_eigen.eval(x[N-1]),y[N-1],1.0e-7,"iko_eigen 2");
+  t.test_rel(ikon_eigen.eval((x[0]+x[1])/2.0),
              (y[0]+y[1])/2.0,1.0e-5,"iko_eigen 3");
   cout << endl;
   
@@ -365,10 +406,19 @@ int main(void) {
     mean_abs+=fabs(y[j]);
   }
   mean_abs/=N;
+
+  cfr.noise=mean_abs/1.0e8;
+  vector<double> par(1);
   
   int success;
+  
   iko.verbose=0;
+  ikon2.verbose=0;
+
+  cout << endl;
+  
   for(double ell=len/500.0;ell<len*30.01;ell*=pow(15000.0,0.01)) {
+    
     cout << ell << " ";
     iko.mode=iko.mode_loo_cv_bf;
     double q=iko.qual_fun(ell,mean_abs/1.0e8,success);
@@ -388,6 +438,33 @@ int main(void) {
     cout << q << " ";
     cout.unsetf(ios::showpos);
     cout << success << endl;
+
+    par[0]=ell;
+    cout << ell << " ";
+    cfr.set_params(par);
+    
+    ikon2.mode=ikon2.mode_loo_cv_bf;
+    q=ikon2.qual_fun(success);
+    cout.setf(ios::showpos);
+    cout << q << " ";
+    cout.unsetf(ios::showpos);
+    cout << success << " ";
+
+    ikon2.mode=ikon2.mode_max_lml;
+    q=ikon2.qual_fun(success);
+    cout.setf(ios::showpos);
+    cout << q << " ";
+    cout.unsetf(ios::showpos);
+    cout << success << " ";
+
+    ikon2.mode=ikon2.mode_loo_cv;
+    q=ikon2.qual_fun(success);
+    cout.setf(ios::showpos);
+    cout << q << " ";
+    cout.unsetf(ios::showpos);
+    cout << success << endl;
+    cout << endl;
+    
   }
   cout << endl;
 
@@ -396,6 +473,7 @@ int main(void) {
 
   iko.full_min=true;
   iko.mode=iko.mode_loo_cv;
+  ikon2.full_min=true;
   
   cout << "Class interp_krige_optim with full minimization" << endl;
   iko.verbose=1;
@@ -539,7 +617,7 @@ int main(void) {
     funct_string fs("x^3*exp(-4*x)","x");
     inte_qag_gsl<funct_string> iqg;
     
-    interp_krige_optim_new<covar_funct_rbf_noise,ubvector> ikon;
+    interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf_noise> ikon;
     ikon.mode=1;
     ikon.verbose=2;
     ikon.set(40,x,y,cfrn,param_lists,true);

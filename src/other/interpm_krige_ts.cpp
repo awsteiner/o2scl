@@ -116,13 +116,19 @@ int main(void) {
 
   {
 
-    vector<mcovar_funct_rbf_noise> mfrn;
+    mcovar_funct_rbf_noise mfrn;
+    mfrn.len.resize(2);
     
     interpm_krige_optim_new
       <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,ubmatrix,
        o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
        std::vector<std::vector<double>> > ikon;
+    ikon.mode=interpm_krige_optim_new
+      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
+       mat_y_t,mat_y_row_t,ubmatrix,
+       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
+       std::vector<std::vector<double>> >::mode_loo_cv;
 
     table<> tab3;
     generate_table(tab3);
@@ -162,6 +168,9 @@ int main(void) {
     cout << endl;
     
   }
+
+#ifdef O2SCL_NEVER_DEFINED
+  
   
   {
     cout << "interpm_krige, not rescaled" << endl;
@@ -463,6 +472,8 @@ int main(void) {
 
 #endif    
 
+#endif
+  
   t.report();
   return 0;
 }

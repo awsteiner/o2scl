@@ -82,6 +82,13 @@ namespace o2scl {
 
     /// Length parameter
     double len;
+
+    /// Noise (not a parameter)
+    double noise;
+
+    covar_funct_rbf() {
+      noise=0.0;
+    }
     
     virtual ~covar_funct_rbf() {
     }
@@ -101,6 +108,7 @@ namespace o2scl {
     /// The covariance function
     virtual double operator()(double x1, double x2) {
       double ret=exp(-(x1-x2)*(x1-x2)/len/len/2.0);
+      if (x1==x2) ret+=noise;
       return ret;
     }
 
@@ -1516,6 +1524,7 @@ namespace o2scl {
       }
       mean_abs/=size;
 
+      std::cout << "Auto noise: " << mean_abs/1.0e8 << std::endl;
       set_noise(size,x,y,mean_abs/1.0e8,false);
     
       return;
@@ -1545,9 +1554,9 @@ namespace o2scl {
   /** \brief One-dimensional interpolation optimizing a 
       user-specified covariance function
   */
-  template<class func_t=covar_funct,
-           class vec_t=boost::numeric::ublas::vector<double>,
-           class vec2_t=vec_t, 
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+           class vec2_t=vec_t,
+           class func_t=covar_funct,
            class mat_t=boost::numeric::ublas::matrix<double>,
            class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t>,
            class vec_vec_t=std::vector<std::vector<double>> >
@@ -1575,10 +1584,13 @@ namespace o2scl {
     /// Pointer to the user-specified minimizer
     mmin_base<> *mp;
 
+    /// \name Interface with \ref o2scl::interp_krige
+    //@{
     std::function<double(double,double)> ff;
     std::function<double(double,double)> ffd;
     std::function<double(double,double)> ffd2;
     std::function<double(double,double,double)> ffi;
+    //@}
 
   public:
     
@@ -1962,6 +1974,13 @@ namespace o2scl {
       bool min_set=false, done=false;
 
       size_t np=cf->get_n_params();
+      if (verbose>1) {
+        if (np==1) {
+          std::cout << np << " parameter." << std::endl;
+        } else {
+          std::cout << np << " parameters." << std::endl;
+        }
+      }
       std::vector<size_t> index_list(np);
       vector_set_all(np,index_list,0);
       std::vector<double> params(np), min_params(np);
@@ -1969,6 +1988,10 @@ namespace o2scl {
       while (done==false) {
 
         for(size_t i=0;i<np;i++) {
+          if (index_list[i]>=plists[i].size()) {
+            O2SCL_ERR("Parameter list incorrectly sized.",
+                      o2scl::exc_einval);
+          }
           params[i]=plists[i][index_list[i]];
         }
         cf->set_params(params);
@@ -1987,7 +2010,7 @@ namespace o2scl {
           std::cout.setf(std::ios::showpos);
           vector_out(std::cout,index_list,false);
           std::cout << " ";
-          vector_out(std::cout,params,false);
+          vector_out(std::cout,min_params,false);
           std::cout << " ";
           std::cout << qual << " " << min_qual << " " << success 
                     << std::endl;
@@ -2015,7 +2038,7 @@ namespace o2scl {
       // Now that we've optimized the covariance function,
       // just use the parent class to interpolate
       cf->set_params(min_params);
-      
+
       ff=std::bind(std::mem_fn<double(double,double)>
                    (&func_t::operator()),cf,
                    std::placeholders::_1,std::placeholders::_2);
