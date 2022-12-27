@@ -1050,51 +1050,6 @@ double o2scl_interp_vec_std_vector_double__deriv2(void *vptr, double x0);
 
 double o2scl_interp_vec_std_vector_double__integ(void *vptr, double x1, double x2);
 
-void *o2scl_create_interp_krige_optim_std_vector_double_();
-
-void o2scl_free_interp_krige_optim_std_vector_double_(void *vptr);
-
-size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv(void *vptr);
-
-
-size_t o2scl_interp_krige_optim_std_vector_double__get_mode_loo_cv_bf(void *vptr);
-
-
-size_t o2scl_interp_krige_optim_std_vector_double__get_mode_max_lml(void *vptr);
-
-
-int o2scl_interp_krige_optim_std_vector_double__get_verbose(void *vptr);
-
-void o2scl_interp_krige_optim_std_vector_double__set_verbose(void *vptr, int v);
-
-size_t o2scl_interp_krige_optim_std_vector_double__get_mode(void *vptr);
-
-void o2scl_interp_krige_optim_std_vector_double__set_mode(void *vptr, size_t v);
-
-size_t o2scl_interp_krige_optim_std_vector_double__get_nlen(void *vptr);
-
-void o2scl_interp_krige_optim_std_vector_double__set_nlen(void *vptr, size_t v);
-
-bool o2scl_interp_krige_optim_std_vector_double__get_full_min(void *vptr);
-
-void o2scl_interp_krige_optim_std_vector_double__set_full_min(void *vptr, bool v);
-
-int o2scl_interp_krige_optim_std_vector_double__set_noise(void *vptr, size_t size, void *ptr_x, void *ptr_y, double noise_var, bool rescale=false);
-
-void o2scl_interp_krige_optim_std_vector_double__set(void *vptr, size_t size, void *ptr_x, void *ptr_y, bool rescale);
-
-double o2scl_interp_krige_optim_std_vector_double__eval(void *vptr, double x0);
-
-double o2scl_interp_krige_optim_std_vector_double__deriv(void *vptr, double x0);
-
-double o2scl_interp_krige_optim_std_vector_double__deriv2(void *vptr, double x0);
-
-double o2scl_interp_krige_optim_std_vector_double__sigma(void *vptr, double x0);
-
-double o2scl_interp_krige_optim_std_vector_double__sample(void *vptr, double x0);
-
-void o2scl_interp_krige_optim_std_vector_double__sample_vec(void *vptr, void *ptr_x, void *ptr_y);
-
 void *o2scl_create_terminal();
 
 void o2scl_free_terminal(void *vptr);
