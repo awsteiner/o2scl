@@ -1050,6 +1050,41 @@ double o2scl_interp_vec_std_vector_double__deriv2(void *vptr, double x0);
 
 double o2scl_interp_vec_std_vector_double__integ(void *vptr, double x1, double x2);
 
+void *o2scl_create_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise_();
+
+void o2scl_free_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise_(void *vptr);
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_loo_cv(void *vptr);
+
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_loo_cv_bf(void *vptr);
+
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_max_lml(void *vptr);
+
+
+int o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_verbose(void *vptr);
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set_verbose(void *vptr, int v);
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode(void *vptr);
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set_mode(void *vptr, size_t v);
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set(void *vptr, size_t size, void *ptr_x, void *ptr_y);
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__eval(void *vptr, double x0);
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__deriv(void *vptr, double x0);
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__deriv2(void *vptr, double x0);
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sigma(void *vptr, double x0);
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sample(void *vptr, double x0);
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sample_vec(void *vptr, void *ptr_x, void *ptr_y);
+
 void *o2scl_create_terminal();
 
 void o2scl_free_terminal(void *vptr);

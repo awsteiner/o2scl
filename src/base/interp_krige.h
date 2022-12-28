@@ -83,7 +83,7 @@ namespace o2scl {
     /// Length parameter
     double len;
 
-    /// Noise (not a parameter)
+    /// Noise (fixed value; not a parameter)
     double noise;
 
     covar_funct_rbf() {
@@ -541,6 +541,7 @@ namespace o2scl {
       fd2=0;
       fi=0;
       err_nonconv=true;
+      rescaled=false;
     }
     
     virtual ~interp_krige() {}
@@ -822,6 +823,11 @@ namespace o2scl {
 
   /** \brief One-dimensional interpolation optimizing a 
       user-specified covariance function
+
+      \verbatim embed:rst
+      See also the :ref:`Interpolation` section of the 
+      O\ :sub:`2`\ scl User's guide. 
+      \endverbatim      
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class vec2_t=vec_t,
@@ -829,7 +835,7 @@ namespace o2scl {
            class mat_t=boost::numeric::ublas::matrix<double>,
            class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t>,
            class vec_vec_t=std::vector<std::vector<double>> >
-  class interp_krige_optim_new :
+  class interp_krige_optim :
     public interp_krige<vec_t,vec2_t,
                         std::function<double(double,double)>,
                         std::function<double(double,double,double)>,
@@ -1049,11 +1055,15 @@ namespace o2scl {
                 inv_KXX2(irow,icol)=(*cf)((*this->px)[irow],
                                           (*this->px)[icol]);
               }
+              //if (irow<2 && icol<2) {
+              //std::cout << "test1: " << irow << " " << icol << " "
+              //<< inv_KXX2(irow,icol) << std::endl;
+              //}
             }
           }
           
           // Construct the inverse of KXX
-          this->mi.invert_inplace(size-1,inv_KXX2);
+          this->mi.invert_inplace(size,inv_KXX2);
 	  
           // Inverse covariance matrix times function vector
           ubvector Kinvf2(size);
@@ -1082,6 +1092,9 @@ namespace o2scl {
             // Compute sigma and ypred from Eq. 5.12
             double sigma2=1.0/inv_KXX2(ii,ii);
             double ypred=yact-Kinvf2[ii]*sigma2;
+            //std::cout << "test3: " << this->rescaled << " "
+            //<< sigma2 << " " << yact << " "
+            //<< ypred << std::endl;
 
             // Then use Eq. 5.10
             qual+=pow(yact-ypred,2.0)/sigma2/2.0;
@@ -1164,7 +1177,7 @@ namespace o2scl {
       return qual;
     }
   
-    interp_krige_optim_new() {
+    interp_krige_optim() {
       mp=&def_mmin;
       def_mmin.ntrial*=10;
       verbose=0;
@@ -1218,7 +1231,7 @@ namespace o2scl {
       int success=0;
       
       if (verbose>1) {
-        std::cout << "Class interp_krige_optim_new: simple minimization, "
+        std::cout << "Class interp_krige_optim: simple minimization, "
                   << std::endl;
         if (mode==mode_loo_cv_bf) {
           std::cout << "  leave one-out cross validation (brute force). ";
@@ -1275,7 +1288,7 @@ namespace o2scl {
         }
 	
         if (verbose>1) {
-          std::cout << "krige_optim_new: ";
+          std::cout << "krige_optim: ";
           std::cout.setf(std::ios::showpos);
           vector_out(std::cout,index_list,false);
           std::cout << " ";

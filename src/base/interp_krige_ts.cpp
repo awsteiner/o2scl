@@ -167,6 +167,7 @@ int main(void) {
   cout << endl;
 
   // Show how extrapolation works
+
   cout << "Test extrapolation:" << endl;
   t.test_rel(ik.eval(10.0),0.0,1.0e-10,"ik 4");
   t.test_rel(ik.sigma(10.0),1.0,1.0e-10,"ik 5");
@@ -291,13 +292,9 @@ int main(void) {
   // ---------------------------------------------------------------
   // Test interp_krige_optim interface
 
-  //interp_krige_optim<ubvector> iko;
-  interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf> ikon2;
+  interp_krige_optim<ubvector,ubvector,covar_funct_rbf> ikon2;
 
   cout << "Class interp_krige_optim with simple interface." << endl;
-  //iko.verbose=1;
-  //iko.set(N,x,y);
-  //iko.verbose=0;
 
   vector<double> plist;
   for(size_t i=0;i<20;i++) {
@@ -313,36 +310,17 @@ int main(void) {
   ikon2.verbose=2;
   ikon2.set(N,x,y);
 
-  /*
-  t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"iko 1");
-  t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-7,"iko 2");
-  t.test_rel(iko.eval((x[0]+x[1])/2.0),
-             (y[0]+y[1])/2.0,1.0e-5,"iko 3");
-  cout << endl;
-  */
-
   t.test_rel(ikon2.eval(x[0]),y[0],1.0e-4,"iko 1");
   t.test_rel(ikon2.eval(x[N-1]),y[N-1],1.0e-7,"iko 2");
   t.test_rel(ikon2.eval((x[0]+x[1])/2.0),
              (y[0]+y[1])/2.0,1.0e-5,"iko 3");
   cout << endl;
 
-  //cout << iko.deriv(1.5) << " " << cos(1.5) << endl;
-  //cout << iko.deriv2(1.5) << " " << -sin(1.5) << endl;
-
   cout << "Class interp_krige_optim with simple interface, "
        << "rescaled version." << endl;
   
-  //iko.set(N,x,y,true);
   ikon2.set(N,x,y,cfr,plist2,true);
   
-  //double len2=iko.get_length();
-
-  //t.test_rel(iko.eval(x[0]),y[0],1.0e-4,"ikor 1");
-  //t.test_rel(iko.eval(x[N-1]),y[N-1],1.0e-7,"ikor 2");
-  //t.test_rel(iko.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-5,"ikor 3");
-  //cout << endl;
-
   t.test_rel(ikon2.eval(x[0]),y[0],1.0e-4,"ikor 1");
   t.test_rel(ikon2.eval(x[N-1]),y[N-1],1.0e-7,"ikor 2");
   t.test_rel(ikon2.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,1.0e-5,"ikor 3");
@@ -369,25 +347,14 @@ int main(void) {
 
 #ifdef O2SCL_EIGEN
   
-  //interp_krige_optim<ubvector,ubvector,Eigen::MatrixXd,
-  //matrix_invert_det_eigen<>> iko_eigen;
-  interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf,
+  interp_krige_optim<ubvector,ubvector,covar_funct_rbf,
                          Eigen::MatrixXd,
                          matrix_invert_det_eigen<>> ikon_eigen;
   ikon_eigen.set_covar(cfr,plist2);
 
-  //iko_eigen.verbose=1;
-  //iko_eigen.set(N,x,y);
-  //iko_eigen.verbose=0;
   ikon_eigen.verbose=1;
   ikon_eigen.set(N,x,y);
   ikon_eigen.verbose=0;
-
-  //t.test_rel(iko_eigen.eval(x[0]),y[0],1.0e-4,"iko_eigen 1");
-  //t.test_rel(iko_eigen.eval(x[N-1]),y[N-1],1.0e-7,"iko_eigen 2");
-  //t.test_rel(iko_eigen.eval((x[0]+x[1])/2.0),
-  //(y[0]+y[1])/2.0,1.0e-5,"iko_eigen 3");
-  //cout << endl;
 
   t.test_rel(ikon_eigen.eval(x[0]),y[0],1.0e-4,"iko_eigen 1");
   t.test_rel(ikon_eigen.eval(x[N-1]),y[N-1],1.0e-7,"iko_eigen 2");
@@ -400,11 +367,6 @@ int main(void) {
   // ---------------------------------------------------------------
   // Compare minimization functions
 
-  // Start with the optimal length
-  //iko.verbose=1;
-  //iko.set(N,x,y,true);
-  //double len=iko.get_length();
-
   double mean_abs=0.0;
   for(size_t j=0;j<N;j++) {
     mean_abs+=fabs(y[j]);
@@ -416,36 +378,13 @@ int main(void) {
   
   int success;
   
-  //iko.verbose=0;
   ikon2.verbose=0;
 
   cout << endl;
 
-  double len=2.318591e-4;
+  double len=2.318591e-4*500.0;
   
   for(double ell=len/500.0;ell<len*30.01;ell*=pow(15000.0,0.01)) {
-
-    /*
-    cout << ell << " ";
-    iko.mode=iko.mode_loo_cv_bf;
-    double q=iko.qual_fun(ell,mean_abs/1.0e8,success);
-    cout.setf(ios::showpos);
-    cout << q << " ";
-    cout.unsetf(ios::showpos);
-    cout << success << " ";
-    iko.mode=iko.mode_max_lml;
-    q=iko.qual_fun(ell,mean_abs/1.0e8,success);
-    cout.setf(ios::showpos);
-    cout << q << " ";
-    cout.unsetf(ios::showpos);
-    cout << success << " ";
-    iko.mode=iko.mode_loo_cv;
-    q=iko.qual_fun(ell,mean_abs/1.0e8,success);
-    cout.setf(ios::showpos);
-    cout << q << " ";
-    cout.unsetf(ios::showpos);
-    cout << success << endl;
-    */
 
     par[0]=ell;
     cout << ell << " ";
@@ -471,7 +410,7 @@ int main(void) {
     cout << q << " ";
     cout.unsetf(ios::showpos);
     cout << success << endl;
-    cout << endl;
+    //cout << endl;
     
   }
   cout << endl;
@@ -610,8 +549,6 @@ int main(void) {
                cfrn.deriv2(2.0,2.1),1.0e-12,"covar_funct_string d2");
     cout << cfs.integ(2.0,0.0,1.0) << " "
          << cfrn.integ(2.0,0.0,1.0) << endl;
-    //t.test_rel(cfs.integ(2.0,0.0,1.0),
-    //cfrn.integ(2.0,0.0,1.0),1.0e-12,"covar_funct_string i");
     
     vector<vector<double>> param_lists;
     param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});
@@ -627,7 +564,7 @@ int main(void) {
     funct_string fs("x^3*exp(-4*x)","x");
     inte_qag_gsl<funct_string> iqg;
     
-    interp_krige_optim_new<ubvector,ubvector,covar_funct_rbf_noise> ikon;
+    interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> ikon;
     ikon.mode=1;
     ikon.verbose=2;
     ikon.set(40,x,y,cfrn,param_lists,true);

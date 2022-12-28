@@ -2097,47 +2097,38 @@ class interp_vec<std::vector<double>>
 #
 # Class interp_krige_optim
 #
-#class interp_krige_optim<std::vector<double>>
-#- py_name interp_krige_optim  
-#- static const size_t mode_loo_cv
-#- static const size_t mode_loo_cv_bf
-#- static const size_t mode_max_lml
-#- int verbose
-#- size_t mode
-#- size_t nlen
+class interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise>
+- py_name interp_krige_optim_rbf_noise
+- static const size_t mode_loo_cv
+- static const size_t mode_loo_cv_bf
+- static const size_t mode_max_lml
+- int verbose
+- size_t mode
 #- bool full_min
-#- function set_noise
-#  - int
-#  - size_t size
-#  - io const std::vector<double> &x
-#  - io const std::vector<double> &y
-#  - double noise_var
-#  - bool rescale [false]
-#- function set
-#  - void
-#  - size_t size
-#  - io const std::vector<double> &x
-#  - io const std::vector<double> &y
-#  - bool rescale
-#- function eval
-#  - double
-#  - double x0
-#- function deriv
-#  - double
-#  - double x0
-#- function deriv2
-#  - double
-#  - double x0
-#- function sigma
-#  - double
-#  - double x0
-#- function sample
-#  - double
-#  - double x0
-#- function sample_vec
-#  - void
-#  - io std::vector<double> &x
-#  - io std::vector<double> &y
+- function set
+  - void
+  - size_t size
+  - io const std::vector<double> &x
+  - io const std::vector<double> &y
+- function eval
+  - double
+  - double x0
+- function deriv
+  - double
+  - double x0
+- function deriv2
+  - double
+  - double x0
+- function sigma
+  - double
+  - double x0
+- function sample
+  - double
+  - double x0
+- function sample_vec
+  - void
+  - io std::vector<double> &x
+  - io std::vector<double> &y
 #
 # Functions and classes from misc.h
 #

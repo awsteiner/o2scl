@@ -3083,6 +3083,103 @@ double o2scl_interp_vec_std_vector_double__integ(void *vptr, double x1, double x
   return ret;
 }
 
+void *o2scl_create_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise_() {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=new interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise>;
+  return ptr;
+}
+
+void o2scl_free_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise_(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  delete ptr;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_loo_cv(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  return ptr->mode_loo_cv;
+}
+
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_loo_cv_bf(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  return ptr->mode_loo_cv_bf;
+}
+
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode_max_lml(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  return ptr->mode_max_lml;
+}
+
+
+int o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_verbose(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set_verbose(void *vptr, int v) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+size_t o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__get_mode(void *vptr) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  return ptr->mode;
+}
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set_mode(void *vptr, size_t v) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  ptr->mode=v;
+  return;
+}
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__set(void *vptr, size_t size, void *ptr_x, void *ptr_y) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->set(size,*x,*y);
+  return;
+}
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__eval(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  double ret=ptr->eval(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__deriv(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  double ret=ptr->deriv(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__deriv2(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  double ret=ptr->deriv2(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sigma(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  double ret=ptr->sigma(x0);
+  return ret;
+}
+
+double o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sample(void *vptr, double x0) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  double ret=ptr->sample(x0);
+  return ret;
+}
+
+void o2scl_interp_krige_optim_std_vector_double_std_vector_double_covar_funct_rbf_noise__sample_vec(void *vptr, void *ptr_x, void *ptr_y) {
+  interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *ptr=(interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf_noise> *)vptr;
+  std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::vector<double> *y=(std::vector<double> *)ptr_y;
+  ptr->sample_vec(*x,*y);
+  return;
+}
+
 void *o2scl_create_terminal() {
   terminal *ptr=new terminal;
   return ptr;

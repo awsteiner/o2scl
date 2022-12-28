@@ -1618,41 +1618,6 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
-    /*
-    if (interp_type==20) {
-
-      interp_krige_optim_new<covar_funct_rbf_noise,
-                             std::vector<double> > *ikon;
-      
-      vector<vector<double>> param_lists;
-      param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});
-      param_lists.push_back({-15.0,-13.0,-11.0,-9.0});
-
-      covar_funct_rbf_noise cfrn;
-
-      ikon=new interp_krige_optim_new<covar_funct_rbf_noise,
-                                      std::vector<double> >;
-      ikon->mode=1;
-      ikon->verbose=2;
-
-      ikon->set(table_obj.get_nlines(),
-                table_obj[in[0]],table_obj[in[2]],
-                cfrn,param_lists,true);
-
-      interp_base<std::vector<double>> *ibp=
-        static_cast<interp_base<std::vector<double>> *>(ikon);
-      table_obj.set_interp_obj(in[0],in[2],ibp);
-      
-      double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
-      
-      table_obj.clear_interp_obj();
-      
-      cout << "Interpolation result: " << ret << endl;
-      
-      return 0;
-    }
-    */
-    
     double ret=table_obj.interp(in[0],function_to_double(in[1]),in[2]);
     
     if (err_hnd->get_errno()!=0) {
