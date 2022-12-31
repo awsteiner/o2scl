@@ -178,13 +178,20 @@ namespace o2scl {
       } else if (interp_type==itp_nearest_neigh) {
         itp=new interp_nearest_neigh<vec_t,vec2_t>;
         
-      } else if (interp_type==itp_gp_rbf_noise) {
+      } else if (interp_type==itp_gp_rbf_noise_loo_cv ||
+                 interp_type==itp_gp_rbf_noise_max_lml) {
 
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise> *ikon=
           new interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise>;
         itp=ikon;
         covar_funct_rbf_noise *cfrn=new covar_funct_rbf_noise;
         cf=cfrn;
+
+        if (interp_type==itp_gp_rbf_noise_loo_cv) {
+          ikon->mode=ikon->mode_loo_cv;
+        } else {
+          ikon->mode=ikon->mode_max_lml;
+        }
 
         std::vector<double> diff;
         o2scl::vector_diffs(n,x,diff);
@@ -208,7 +215,7 @@ namespace o2scl {
         }
 
         ikon->verbose=2;
-        ikon->set_covar(*cfrn,param_list);
+        ikon->set_covar(*cfrn,param_list,true);
         
       } else {
         O2SCL_ERR((((std::string)"Invalid interpolation type, ")+

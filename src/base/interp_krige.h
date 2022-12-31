@@ -290,7 +290,7 @@ namespace o2scl {
       int np=parms.size();
       st_parms.resize(np);
       for (int i=0;i<np;i++) {
-	st_parms[i]=parms[i];
+        st_parms[i]=parms[i];
       }
       st_var=var;
       st_var2=var2;
@@ -300,7 +300,7 @@ namespace o2scl {
       return;
     }
 
-    /// The expression evaulation objects
+    /// The expression evaluation objects
     //@{
     o2scl::calc_utf8<> calc;
     o2scl::calc_utf8<> calc_d;
@@ -343,7 +343,7 @@ namespace o2scl {
     template<class vec_t>
     void set_params(vec_t &v) {
       for(size_t i=0;i<st_parms.size();i++) {
-	vars[st_parms[i]]=v[i];
+        vars[st_parms[i]]=v[i];
       }
       return;
     }
@@ -457,10 +457,10 @@ namespace o2scl {
     /** \brief Initialize interpolation routine, internal version
         with pointers for derivative and integral functions
     */
-    virtual int set_covar_di_noise_internal
+    virtual int set_covar_di_internal
       (size_t n_dim, const vec_t &x, const vec2_t &y,
        covar_func_t &fcovar, covar_func_t *fderiv, covar_func_t *fderiv2,
-       covar_integ_t *finteg, double noise_var, bool rescale=false) {
+       covar_integ_t *finteg, bool rescale=false) {
       
       f=&fcovar;
       fd=fderiv;
@@ -468,7 +468,7 @@ namespace o2scl {
       fi=finteg;
       
       if (n_dim<this->min_size) {
-	O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+
+        O2SCL_ERR((((std::string)"Vector size, ")+szttos(n_dim)+
                    ", is less than "+szttos(this->min_size)+
                    " in interp_krige::"+"set().").c_str(),
                   exc_einval);
@@ -495,8 +495,6 @@ namespace o2scl {
         for(size_t icol=0;icol<n_dim;icol++) {
           if (irow>icol) {
             inv_KXX(irow,icol)=inv_KXX(icol,irow);
-          } else if (irow==icol) {
-            inv_KXX(irow,icol)=fcovar(x[irow],x[icol])+noise_var;
           } else {
             inv_KXX(irow,icol)=fcovar(x[irow],x[icol]);
           }
@@ -561,54 +559,30 @@ namespace o2scl {
     /// Initialize interpolation routine
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       O2SCL_ERR2("Function set(size_t,vec_t,vec_t) unimplemented ",
-		 "in interp_krige.",o2scl::exc_eunimpl);
+                 "in interp_krige.",o2scl::exc_eunimpl);
       return;
     }
     
     /** \brief Initialize interpolation routine with covariance
-        function, derivatives and integrals, and noise term
+        function, derivatives and integrals
     */
-    virtual int set_covar_di_noise
+    virtual int set_covar_di
       (size_t n_dim, const vec_t &x,
        const vec2_t &y, covar_func_t &fcovar,
        covar_func_t &fderiv, covar_func_t &fderiv2,
-       covar_integ_t &finteg, double noise_var, bool rescale=false) {
-      return set_covar_di_noise_internal(n_dim,x,y,fcovar,
-                                         &fderiv,&fderiv2,&finteg,noise_var,
-                                         rescale);
+       covar_integ_t &finteg, bool rescale=false) {
+      return set_covar_di_internal(n_dim,x,y,fcovar,&fderiv,
+                                   &fderiv2,&finteg,rescale);
     }
     
     /** \brief Initialize interpolation routine with covariance
-        function and noise term, but without derivatives and integrals
-    */
-    virtual int set_covar_noise(size_t n_dim, const vec_t &x, const vec2_t &y,
-				covar_func_t &fcovar, double noise_var,
-                                bool rescale=false) {
-      return set_covar_di_noise_internal(n_dim,x,y,fcovar,0,0,0,noise_var,
-                                         rescale);
-    }
-    
-    /** \brief Initialize interpolation routine with covariance
-        function, with automatic noise term and without derivatives and
-        integrals
+        function, but without derivatives and integrals
     */
     virtual int set_covar(size_t n_dim, const vec_t &x, const vec2_t &y,
-			  covar_func_t &fcovar, bool rescale=false) {
-      
-      // Use the mean absolute value to determine noise
-
-      // AWS, 7/30/22, I don't know why, but using mean_abs/1.0e8
-      // makes the testing code fail
-      double mean_abs=0.0;
-      for(size_t j=0;j<n_dim;j++) {
-        mean_abs+=fabs(y[j]);
-      }
-      mean_abs/=n_dim;
-      
-      return set_covar_noise(n_dim,x,y,fcovar,0.0,rescale);
-                             
+                          covar_func_t &fcovar, bool rescale=false) {
+      return set_covar_di_internal(n_dim,x,y,fcovar,0,0,0,rescale);
     }
-
+    
     /// Give the value of the function \f$ y(x=x_0) \f$ .
     virtual double eval(double x0) const {
 
@@ -670,7 +644,7 @@ namespace o2scl {
     }
     
     /** \brief Give the value of the second derivative  
-	\f$ y^{\prime \prime}(x=x_0) \f$
+        \f$ y^{\prime \prime}(x=x_0) \f$
     */
     virtual double deriv2(double x0) const {
       
@@ -778,6 +752,7 @@ namespace o2scl {
       }
 
       if (sigma<0.0) sigma=0.0;
+      
       return prob_dens_gaussian(cent,sigma);
     }
     
@@ -828,10 +803,11 @@ namespace o2scl {
       See also the :ref:`Interpolation` section of the 
       O\ :sub:`2`\ scl User's guide. 
       \endverbatim      
+
+      \note This class is experimental.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-           class vec2_t=vec_t,
-           class func_t=covar_funct,
+           class vec2_t=vec_t, class func_t=covar_funct,
            class mat_t=boost::numeric::ublas::matrix<double>,
            class mat_inv_t=o2scl_linalg::matrix_invert_det_cholesky<mat_t>,
            class vec_vec_t=std::vector<std::vector<double>> >
@@ -881,7 +857,7 @@ namespace o2scl {
       
         qual=0.0;
         for(size_t k=0;k<size;k++) {
-	
+        
           // Leave one observation out
           ubvector x2(size-1);
           ubvector y2(size-1);
@@ -891,10 +867,10 @@ namespace o2scl {
           } else {
             o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
           }
-	
-          // Construct the inverse of the KXX matrix. Note
-          // that we don't use the inv_KXX data member
-          // because of the size mismatch
+          
+          // Construct the inverse of the KXX matrix. Note that we
+          // don't use the inv_KXX data member because of the size
+          // mismatch
           mat_t inv_KXX2(size-1,size-1);
           for(size_t irow=0;irow<size-1;irow++) {
             for(size_t icol=0;icol<size-1;icol++) {
@@ -908,15 +884,14 @@ namespace o2scl {
 
           // Construct the inverse of KXX
           this->mi.invert_inplace(size-1,inv_KXX2);
-	  
-          // Inverse covariance matrix times function vector
           
+          // Inverse covariance matrix times function vector
           ubvector Kinvf2(size-1);
           o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                              o2scl_cblas::o2cblas_NoTrans,
                              size-1,size-1,1.0,inv_KXX2,y2,0.0,
                              Kinvf2);
-	  
+          
           // The actual value
           double yact;
           if (this->rescaled) {
@@ -939,9 +914,13 @@ namespace o2scl {
               ypred+=kxx0[i]*Kinvf2[i];
             }
           }
-          
+
+          // AWS 12/31/22: This uses absolute, rather than relative
+          // differences to evaluate the quality, but this seems
+          // sensible to me because we are presuming the data has zero
+          // mean and unit standard deviation.
           qual+=pow(yact-ypred,2.0);
-	
+        
         }
 
       } else if (mode==mode_loo_cv) {
@@ -958,7 +937,7 @@ namespace o2scl {
           
           qual=0.0;
           for(size_t k=0;k<size;k++) {
-	
+        
             // Leave one observation out
             ubvector x2(size-1);
             ubvector y2(size-1);
@@ -968,7 +947,7 @@ namespace o2scl {
             } else {
               o2scl::vector_copy_jackknife(size,(*this->py),k,y2);
             }
-	
+        
             // Construct the KXX matrix
             mat_t inv_KXX2(size-1,size-1);
             for(size_t irow=0;irow<size-1;irow++) {
@@ -983,14 +962,14 @@ namespace o2scl {
           
             // Construct the inverse of KXX
             this->mi.invert_inplace(size-1,inv_KXX2);
-	  
+          
             // Inverse covariance matrix times function vector
             ubvector Kinvf2(size-1);
             o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
                                o2scl_cblas::o2cblas_NoTrans,
                                size-1,size-1,1.0,inv_KXX2,y2,0.0,
                                Kinvf2);
-	  
+          
             double yact;
             if (this->rescaled) {
               yact=this->y_r[k];
@@ -1036,73 +1015,62 @@ namespace o2scl {
             // in R&W
             qual+=pow(yact-ypred,2.0)/sigma/sigma/2.0;
             qual+=0.5*log(sigma*sigma);
-	
+        
           }
 
         }
         
 #endif
 
-        if (true) {
-          
-          // Construct the KXX matrix
-          mat_t inv_KXX2(size,size);
-          for(size_t irow=0;irow<size;irow++) {
-            for(size_t icol=0;icol<size;icol++) {
-              if (irow>icol) {
-                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
-              } else {
-                inv_KXX2(irow,icol)=(*cf)((*this->px)[irow],
-                                          (*this->px)[icol]);
-              }
-              //if (irow<2 && icol<2) {
-              //std::cout << "test1: " << irow << " " << icol << " "
-              //<< inv_KXX2(irow,icol) << std::endl;
-              //}
-            }
-          }
-          
-          // Construct the inverse of KXX
-          this->mi.invert_inplace(size,inv_KXX2);
-	  
-          // Inverse covariance matrix times function vector
-          ubvector Kinvf2(size);
-          if (this->rescaled) {
-            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                               o2scl_cblas::o2cblas_NoTrans,
-                               size,size,1.0,inv_KXX2,this->y_r,0.0,
-                               Kinvf2);
-          } else {
-            o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                               o2scl_cblas::o2cblas_NoTrans,
-                               size,size,1.0,inv_KXX2,*(this->py),0.0,
-                               Kinvf2);
-          }
-
-          qual=0.0;
-          for(size_t ii=0;ii<size;ii++) {
-            
-            double yact;
-            if (this->rescaled) {
-              yact=this->y_r[ii];
+        // Construct the KXX matrix
+        mat_t inv_KXX2(size,size);
+        for(size_t irow=0;irow<size;irow++) {
+          for(size_t icol=0;icol<size;icol++) {
+            if (irow>icol) {
+              inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
             } else {
-              yact=(*this->py)[ii];
+              inv_KXX2(irow,icol)=(*cf)((*this->px)[irow],
+                                        (*this->px)[icol]);
             }
-
-            // Compute sigma and ypred from Eq. 5.12
-            double sigma2=1.0/inv_KXX2(ii,ii);
-            double ypred=yact-Kinvf2[ii]*sigma2;
-            //std::cout << "test3: " << this->rescaled << " "
-            //<< sigma2 << " " << yact << " "
-            //<< ypred << std::endl;
-
-            // Then use Eq. 5.10
-            qual+=pow(yact-ypred,2.0)/sigma2/2.0;
-            qual+=0.5*log(sigma2);
           }
-	  
         }
         
+        // Construct the inverse of KXX
+        this->mi.invert_inplace(size,inv_KXX2);
+        
+        // Inverse covariance matrix times function vector
+        ubvector Kinvf2(size);
+        if (this->rescaled) {
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,inv_KXX2,this->y_r,0.0,
+                             Kinvf2);
+        } else {
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size,size,1.0,inv_KXX2,*(this->py),0.0,
+                             Kinvf2);
+        }
+        
+        qual=0.0;
+        for(size_t ii=0;ii<size;ii++) {
+          
+          double yact;
+          if (this->rescaled) {
+            yact=this->y_r[ii];
+          } else {
+            yact=(*this->py)[ii];
+          }
+          
+          // Compute sigma and ypred from Eq. 5.12
+          double sigma2=1.0/inv_KXX2(ii,ii);
+          double ypred=yact-Kinvf2[ii]*sigma2;
+          
+          // Then use Eq. 5.10
+          qual+=pow(yact-ypred,2.0)/sigma2/2.0;
+          qual+=0.5*log(sigma2);
+        }
+          
         if (verbose>0) {
           std::cout << "qual (loo_cv): " << qual << std::endl;
         }
@@ -1204,13 +1172,22 @@ namespace o2scl {
 
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(func_t &covar, vec_vec_t &param_lists) {
+    int set_covar(func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
       cf=&covar;
       plists=param_lists;
+      this->rescaled=rescale;
+      this->sz=0;
+      this->px=0;
+      this->py=0;
       return 0;
     }
     
     /** \brief Set the vectors
+
+        \note This function always uses the previous value of the
+        rescaling parameter, which is different than the other form of
+        the \ref set() function which sets \c rescale to false by
+        default.
      */
     virtual void set(size_t size, const vec_t &x, const vec2_t &y) {
       
@@ -1280,13 +1257,13 @@ namespace o2scl {
         
         int success=0;
         double qual=qual_fun(success);
-	
+        
         if (success==0 && (min_set==false || qual<min_qual)) {
           min_params=params;
           min_qual=qual;
           min_set=true;
         }
-	
+        
         if (verbose>1) {
           std::cout << "krige_optim: ";
           std::cout.setf(std::ios::showpos);
@@ -1335,17 +1312,19 @@ namespace o2scl {
                    std::placeholders::_1,std::placeholders::_2,
                    std::placeholders::_3);
     
-      this->set_covar_di_noise(size,x,y,ff,ffd,
-                               ffd2,ffi,0.0,this->rescaled);
+      this->set_covar_di(size,x,y,ff,ffd,
+                         ffd2,ffi,this->rescaled);
       
       return;
     }
 
     /** \brief Initialize interpolation routine with optional
-        rescaling, and user-specified noise parameter and length scale
+        rescaling
 
-        No optimization of the length scale is performed.
-     */
+        \note This function sets \c rescale to false by default which
+        is different than the other form of the \ref set() function
+        which always uses the previous value.
+    */
     int set(size_t size, const vec_t &x, const vec2_t &y,
             func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
       set_covar(covar,param_lists);
@@ -1354,8 +1333,6 @@ namespace o2scl {
       return 0;
     }
     
-    
-  
   };
   
 }

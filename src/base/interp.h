@@ -82,8 +82,10 @@ namespace o2scl {
     itp_steffen=7,
     /// Nearest-neighbor lookup
     itp_nearest_neigh=8,
-    /// Nearest-neighbor lookup
-    itp_gp_rbf_noise=9
+    /// Gaussian process with leave-one out cross validation
+    itp_gp_rbf_noise_loo_cv=9,
+    /// Gaussian process with maximum log marginal likelihood
+    itp_gp_rbf_noise_max_lml=10
   };
 
   /** \brief Base low-level interpolation class [abstract base]

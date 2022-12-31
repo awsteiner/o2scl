@@ -56,7 +56,9 @@ double d2f(double x, double sd) {
 }
 
 double covar(double x, double y) {
-  return exp(-20.0*(x-y)*(x-y));
+  double ret=exp(-20.0*(x-y)*(x-y));
+  if (x==y) ret+=1.0e-9;
+  return ret;
 }
 
 double covard(double x, double y) {
@@ -170,14 +172,14 @@ int main(void) {
 
   cout << "Test extrapolation:" << endl;
   t.test_rel(ik.eval(10.0),0.0,1.0e-10,"ik 4");
-  t.test_rel(ik.sigma(10.0),1.0,1.0e-10,"ik 5");
+  t.test_rel(ik.sigma(10.0),1.0,1.0e-8,"ik 5");
   cout << endl;
   
   // But now when the noise is non-zero, the interpolation is
   // of higher quality
   
   cout << "Normal interpolation with noise:" << endl;
-  ik.set_covar_noise(N,x,y,fp,1.0e-9);
+  ik.set_covar(N,x,y,fp);
   double xn0=ik.eval(x[0]);
   double xn1=ik.eval(x[N-1]);
   double xn2=ik.eval((x[0]+x[0])/2.0);
@@ -191,7 +193,7 @@ int main(void) {
 
   // Test derivative -- this is extremely inaccurate
   cout << "Derivatives:" << endl;
-  ik.set_covar_di_noise(N,x,y,fp,fpd,fpd2,fpi,1.0e-9);
+  ik.set_covar_di(N,x,y,fp,fpd,fpd2,fpi);
   t.test_rel(ik.deriv(x[0]),df(x[0],y_sd),1.0,"ik 11");
   t.test_rel(ik.deriv(x[N-1]),df(x[N-1],y_sd),10.0,"ik 12");
   t.test_rel(ik.deriv((x[0]+x[1])/2.0),
@@ -202,13 +204,13 @@ int main(void) {
   // Test normal interpolation with rescaling
   
   cout << "Normal interpolation with rescaling:" << endl;
-  ik.set_covar_noise(N,x,y,fp,0.0,true);
+  ik.set_covar(N,x,y,fp,true);
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 1");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
   t.test_rel(ik.eval(x[0]),xi0,5.0e-2,"ikr vs. ik 1");
   t.test_rel(ik.eval(x[N-1]),xi1,1.0e-12,"ikr vs. ik 2");
-  t.test_rel(ik.eval((x[0]+x[1])/2.0),xi2,2.0e-3,"ikr vs. ik 3");
+  t.test_rel(ik.eval((x[0]+x[1])/2.0),xi2,5.0e-3,"ikr vs. ik 3");
   cout << endl;
 
   // Just make sure this compiles
@@ -219,7 +221,7 @@ int main(void) {
   // Test interpolation with noise and rescaling
   
   cout << "Noisy interpolation with rescaling:" << endl;
-  ik.set_covar_noise(N,x,y,fp,1.0e-9,true);
+  ik.set_covar(N,x,y,fp,true);
   t.test_rel(ik.eval(x[0]),y[0],0.2,"ikr 4");
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 5");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 6");
@@ -249,16 +251,16 @@ int main(void) {
   
   cout << "Test derivatives and integrals:" << endl;
   
-  ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12);
-  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
+  ik.set_covar_di(N2,x2,y2,fp,fpd,fpd2,fpi);
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-2,"der 11");
   t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),1.0e-2,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
-             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-2,"der 13");
   
-  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
-  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.05,"der2 12");
+  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.1,"der2 11");
+  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.2,"der2 12");
   t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
-             d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
+             d2f((x2[0]+x2[1])/2.0,y2_sd),0.1,"der2 13");
 
   t.test_rel(iqg.integ(fptr,0.0,0.5),ik.integ(0.0,0.5),
              5.0e-2,"integ 1");
@@ -270,16 +272,16 @@ int main(void) {
 
   cout << "Test derivatives and integrals with rescaling:" << endl;
   
-  ik.set_covar_di_noise(N2,x2,y2,fp,fpd,fpd2,fpi,1.0e-12,true);
-  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-3,"der 11");
+  ik.set_covar_di(N2,x2,y2,fp,fpd,fpd2,fpi,true);
+  t.test_rel(ik.deriv(x2[0]),df(x2[0],y2_sd),1.0e-2,"der 11");
   t.test_rel(ik.deriv(x2[N2-1]),df(x2[N2-1],y2_sd),1.0e-2,"der 12");
   t.test_rel(ik.deriv((x2[0]+x2[1])/2.0),
-             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-3,"der 13");
+             df((x2[0]+x2[1])/2.0,y2_sd),1.0e-2,"der 13");
   
-  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.05,"der2 11");
-  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.05,"der2 12");
+  t.test_rel(ik.deriv2(x2[0]),d2f(x2[0],y2_sd),0.1,"der2 11");
+  t.test_rel(ik.deriv2(x2[N2-1]),d2f(x2[N2-1],y2_sd),0.2,"der2 12");
   t.test_rel(ik.deriv2((x2[0]+x2[1])/2.0),
-             d2f((x2[0]+x2[1])/2.0,y2_sd),0.02,"der2 13");
+             d2f((x2[0]+x2[1])/2.0,y2_sd),0.1,"der2 13");
   
   t.test_rel(iqg.integ(fptr,0.0,0.5),ik.integ(0.0,0.5),
              5.0e-2,"integ 1");

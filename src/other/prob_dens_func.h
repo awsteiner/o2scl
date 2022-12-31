@@ -993,9 +993,12 @@ namespace o2scl {
       A separate class for the two-dimensional case is in \ref
       prob_dens_mdim_biv_gaussian .
       
-      \future Create alternate versions based on other
-      matrix decompositions, including support for Eigen and
-      Armadillo, maybe using a invert_det object?
+      \note Note that, for example, a LU decomposition does not work
+      for this class because a Cholesky decomposition (or a spectral
+      decomposition) is required for sampling. For this reason, we
+      cannot use a generic \ref o2scl::matrix_invert_det object.
+      However, we still could use Cholesky decompositions from
+      armadillo or Eigen.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=boost::numeric::ublas::matrix<double> >
@@ -1241,30 +1244,42 @@ namespace o2scl {
         std::cout << "  covar: " << std::endl;
         matrix_out(std::cout,ndim,ndim,covar,"  ");
       }
-      
-      // Perform the Cholesky decomposition of the covariance matrix
-      chol=covar;
-      o2scl_linalg::cholesky_decomp(ndim,chol);
-      
-      // Find the inverse
-      covar_inv=chol;
-      o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
 
-      // Force chol to be lower triangular and compute the square root
-      // of the determinant
-      double sqrt_det=1.0;
-      for(size_t i=0;i<ndim;i++) {
-        if (!std::isfinite(chol(i,i))) {
-          O2SCL_CONV2_RET("An entry of the Cholesky decomposition was ",
-                         "not finite in prob_dens_mdim_gaussian::set().",
-                         o2scl::exc_einval,err_nonconv);
+      double sqrt_det;
+      
+      if (true) {
+        
+        // Perform the Cholesky decomposition of the covariance matrix
+        chol=covar;
+        o2scl_linalg::cholesky_decomp(ndim,chol);
+        
+        // Find the inverse
+        covar_inv=chol;
+        o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
+        
+        // Force chol to be lower triangular and compute the square root
+        // of the determinant
+        sqrt_det=1.0;
+        for(size_t i=0;i<ndim;i++) {
+          if (!std::isfinite(chol(i,i))) {
+            O2SCL_CONV2_RET("An entry of the Cholesky decomposition was ",
+                            "not finite in prob_dens_mdim_gaussian::set().",
+                            o2scl::exc_einval,err_nonconv);
+          }
+          sqrt_det*=chol(i,i);
+          for(size_t j=0;j<ndim;j++) {
+            if (i<j) chol(i,j)=chol(j,i);
+          }
         }
-        sqrt_det*=chol(i,i);
-        for(size_t j=0;j<ndim;j++) {
-          if (i<j) chol(i,j)=chol(j,i);
-        }
+        
+      } else {
+
+        o2scl_linalg::matrix_invert_det_cholesky<mat_t> mi;
+        mi.invert_det(ndim,covar,covar_inv,sqrt_det);
+        sqrt_det=sqrt(sqrt_det);
+        
       }
-
+      
       if (this->verbose>0) {
         std::cout << "  chol: " << std::endl;
         matrix_out(std::cout,ndim,ndim,chol,"  ");
@@ -1369,30 +1384,63 @@ namespace o2scl {
           }
         }
       }
-    
+
       // Construct the inverse of KXX
       mat_t inv_KXX(n_init,n_init);
-      o2scl::permutation p;
-      int signum;
-      o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
-      if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
-        O2SCL_ERR2("KXX matrix is singular in ",
-                   "prob_dens_mdim_gaussian::set_gproc().",
-                   o2scl::exc_efailed);
+      vec_t mean(n_dim);
+      mat_t covar(n_dim,n_dim);
+      
+      if (true) {
+      
+        o2scl::permutation p;
+        int signum;
+        o2scl_linalg::LU_decomp(n_init,KXX,p,signum);
+        if (o2scl_linalg::diagonal_has_zero(n_dim,KXX)) {
+          O2SCL_ERR2("KXX matrix is singular in ",
+                     "prob_dens_mdim_gaussian::set_gproc().",
+                     o2scl::exc_efailed);
+        }
+        o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
+        
+        // Compute the mean vector
+        vec_t prod(n_init);
+        boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
+        boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
+        
+        // Compute the covariance matrix
+        mat_t prod2(n_init,n_dim), prod3(n_dim,n_dim);
+        boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
+        boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
+        covar=KXsXs-prod3;
+        
+      } else {
+        
+        o2scl_linalg::matrix_invert_det_cholesky<mat_t> mi;
+        mi.invert(n_init,KXX,inv_KXX);
+
+        // Compute the mean vector
+        vec_t prod(n_init);
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_init,n_init,1.0,inv_KXX,y,0.0,prod);
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_init,n_init,1.0,KXsX,prod,0.0,mean);
+
+        // Compute the covariance matrix
+        mat_t prod2(n_init,n_dim), prod3(n_dim,n_dim);
+        o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_init,n_dim,n_dim,1.0,inv_KXX,KXXs,0.0,prod2);
+        o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           n_dim,n_init,n_dim,1.0,KXsX,prod2,0.0,prod3);
+        covar=KXsXs-prod3;
+        
       }
-      o2scl_linalg::LU_invert<mat_t,mat_t,mat_col_t>(n_init,KXX,p,inv_KXX);
-    
-      // Compute the mean vector
-      vec_t prod(n_init), mean(n_dim);
-      boost::numeric::ublas::axpy_prod(inv_KXX,y,prod,true);
-      boost::numeric::ublas::axpy_prod(KXsX,prod,mean,true);
-    
-      // Compute the covariance matrix
-      mat_t covar(n_dim,n_dim), prod2(n_init,n_dim), prod3(n_dim,n_dim);
-      boost::numeric::ublas::axpy_prod(inv_KXX,KXXs,prod2,true);
-      boost::numeric::ublas::axpy_prod(KXsX,prod2,prod3,true);
-      covar=KXsXs-prod3;
-    
+      
       // Now use set() in the parent class
       this->set(n_dim,mean,covar);
     

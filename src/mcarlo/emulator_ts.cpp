@@ -64,6 +64,8 @@ int main(void) {
   t.set_output_level(2);
 
   cout.setf(ios::scientific);
+
+#ifdef O2SCL_NEVER_DEFINED
   
   vector<string> col_list={"x","y","z"};
     
@@ -124,6 +126,8 @@ int main(void) {
     }
     
   }
+
+#endif
   
   t.report();
   return 0;

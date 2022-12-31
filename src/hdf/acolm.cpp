@@ -1887,8 +1887,8 @@ int acol_manager::validate_interp_type() {
          << endl;
     interp_type=1;
     return 1;
-  } else if (interp_type>9) {
-    cout << "Interpolation type invalid, greater than 9. "
+  } else if (interp_type>10) {
+    cout << "Interpolation type invalid, greater than 10. "
          << "Setting to 1 (linear)."
          << endl;
     interp_type=1;

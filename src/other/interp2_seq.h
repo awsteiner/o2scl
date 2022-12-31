@@ -36,6 +36,7 @@
 
 #include <o2scl/interp.h>
 #include <o2scl/interp2.h>
+#include <o2scl/interp_vec.h>
 
 namespace o2scl {
 

@@ -32,6 +32,7 @@
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/mcarlo_plain.h>
+#include <o2scl/hist.h>
 
 using namespace std;
 using namespace o2scl;
