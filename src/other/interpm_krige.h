@@ -192,13 +192,18 @@ namespace o2scl {
         respect to the first argument
     */
     template<class vec_t, class vec2_t>
-    double deriv2(size_t ic, vec_t &x1, vec2_t &x2, size_t ix) {
+    double deriv2(size_t ic, vec_t &x1, vec2_t &x2, size_t ix,
+                  size_t iy) {
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
       }
-      return exp(sum)/len[ix]/len[ix]/len[ix]/len[ix]*
-        ((x1[ix]-x2[ix])*(x1[ix]-x2[ix])-len[ix]*len[ix]);
+      if (ix==iy) {
+        return exp(sum)/len[ix]/len[ix]/len[ix]/len[ix]*
+          ((x1[ix]-x2[ix])*(x1[ix]-x2[ix])-len[ix]*len[ix]);
+      }
+      return exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix])/
+        len[iy]/len[iy]*(x1[iy]-x2[iy]);
     }
     
   };
@@ -593,6 +598,8 @@ namespace o2scl {
 
   public:
 
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    
     /// The parent class type
     typedef interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
                           mat_y_row_t,mat_inv_kxx_t,
@@ -635,8 +642,71 @@ namespace o2scl {
 
       time_t t1=0, t2=0, t3=0, t4=0;
 
-      if (mode==mode_loo_cv) {
+      if (mode==mode_loo_cv_bf) {
 
+        for(size_t k=0;k<size;k++) {
+          // Leave one observation out
+
+          mat_x_row_t xk(this->x,k);
+          
+          ubvector y2(size-1);
+          o2scl::vector_copy_jackknife(size,yiout2,k,y2);
+
+          // Construct the inverse of the KXX matrix. Note that we
+          // don't use the inv_KXX data member because of the size
+          // mismatch
+          mat_inv_kxx_t inv_KXX2(size-1,size-1);
+          for(size_t irow=0;irow<size-1;irow++) {
+            size_t irow2=irow;
+            if (irow>=k) irow2++;        
+            mat_x_row_t xrow(this->x,irow2);
+            for(size_t icol=0;icol<size-1;icol++) {
+              size_t icol2=icol;
+              if (icol>=k) icol2++;        
+              mat_x_row_t xcol(this->x,icol2);
+              if (irow2>icol2) {
+                inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
+              } else {
+                inv_KXX2(irow,icol)=(*cf)(iout,xrow,xcol);
+              }
+            }
+          }
+
+          // Construct the inverse of KXX
+          this->mi.invert_inplace(size-1,inv_KXX2);
+          
+          // Inverse covariance matrix times function vector
+          ubvector Kinvf2(size-1);
+          o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                             o2scl_cblas::o2cblas_NoTrans,
+                             size-1,size-1,1.0,inv_KXX2,y2,0.0,
+                             Kinvf2);
+          
+
+          // The actual value
+          double yact=yiout2[k];
+
+          // Compute the predicted value
+          double ypred=0.0;
+          ubvector kxx0(size-1);
+          for(size_t i=0;i<size-1;i++) {
+            size_t i2=i;
+            if (i>=k) i2++;        
+            mat_x_row_t xi2(this->x,i2);
+            kxx0[i]=(*cf)(iout,xi2,xk);
+            ypred+=kxx0[i]*Kinvf2[i];
+          }
+
+          // AWS 12/31/22: This uses absolute, rather than relative
+          // differences to evaluate the quality, but this seems
+          // sensible to me because we are presuming the data has zero
+          // mean and unit standard deviation.
+          ret+=pow(yact-ypred,2.0);
+          
+        }
+
+      } else if (mode==mode_loo_cv) {
+        
         // Construct the KXX matrix
         this->inv_KXX[iout].resize(size,size);
         for(size_t irow=0;irow<size;irow++) {
@@ -835,6 +905,7 @@ namespace o2scl {
     static const size_t mode_loo_cv=1;
     /// Minus Log-marginal-likelihood
     static const size_t mode_max_lml=2;
+    static const size_t mode_loo_cv_bf=3;
     /// No optimization (for internal use)
     static const size_t mode_final=10;
     /// Function to minimize (default \ref mode_loo_cv)
@@ -1106,7 +1177,7 @@ namespace o2scl {
         for(size_t ipoints=0;ipoints<this->np;ipoints++) {
           mat_x_row_t xrow(this->x,ipoints);
           double covar_val=cf->deriv2(iout,xrow,x0,ix,iy);
-          y0[iout]-=covar_val*this->Kinvf[iout][ipoints];
+          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {
           y0[iout]*=this->std_y[iout];
