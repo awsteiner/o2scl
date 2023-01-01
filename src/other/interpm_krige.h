@@ -103,12 +103,30 @@ namespace o2scl {
         respect to the first argument
     */
     template<class vec_t, class vec2_t>
-    double deriv(size_t ic, vec_t &x1, vec_t &x2, size_t ix) {
+    double deriv(size_t ic, vec_t &x1, vec2_t &x2, size_t ix) {
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
       }
       return -exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix]);
+    }
+    
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+    */
+    template<class vec_t, class vec2_t>
+    double deriv2(size_t ic, vec_t &x1, vec2_t &x2, size_t ix,
+                  size_t iy) {
+      double sum=0.0;
+      for(size_t j=0;j<len.size();j++) {
+        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
+      }
+      if (ix==iy) {
+        return exp(sum)/len[ix]/len[ix]/len[ix]/len[ix]*
+          ((x1[ix]-x2[ix])*(x1[ix]-x2[ix])-len[ix]*len[ix]);
+      }
+      return exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix])/
+        len[iy]/len[iy]*(x1[iy]-x2[iy]);
     }
     
   };
@@ -162,12 +180,25 @@ namespace o2scl {
         respect to the first argument
     */
     template<class vec_t, class vec2_t>
-    double deriv(size_t ic, vec_t &x1, vec_t &x2, size_t ix) {
+    double deriv(size_t ic, vec_t &x1, vec2_t &x2, size_t ix) {
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
       }
       return -exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix]);
+    }
+
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+    */
+    template<class vec_t, class vec2_t>
+    double deriv2(size_t ic, vec_t &x1, vec2_t &x2, size_t ix) {
+      double sum=0.0;
+      for(size_t j=0;j<len.size();j++) {
+        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
+      }
+      return exp(sum)/len[ix]/len[ix]/len[ix]/len[ix]*
+        ((x1[ix]-x2[ix])*(x1[ix]-x2[ix])-len[ix]*len[ix]);
     }
     
   };
@@ -252,30 +283,24 @@ namespace o2scl {
     /** \brief Initialize the data for the interpolation
     */
     template<class covar_func_t>
-    int set_data_noise_internal
+    int set_data_internal
     (size_t n_in, size_t n_out, size_t n_points, mat_x_t &user_x, 
-     mat_y_t &user_y, covar_func_t &fcovar, 
-     const vec_t &noise_var, bool rescale=false,
+     mat_y_t &user_y, covar_func_t &fcovar, bool rescale=false,
      bool err_on_fail=true) {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige::set_data_noise_internal()",
+                   "interpm_krige::set_data_internal()",
                    exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige::set_data_noise_internal()",
+                   "interpm_krige::set_data_internal()",
                    exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige::set_data_noise_internal()",
-                   exc_efailed);
-      }
-      if (noise_var.size()<1) {
-        O2SCL_ERR2("Noise vector empty in ",
-                   "interpm_krige::set_data_noise_internal()",
+                   "interpm_krige::set_data_internal()",
                    exc_efailed);
       }
       
@@ -288,7 +313,7 @@ namespace o2scl {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
-                   "interpm_krige::set_data_noise_internal().",
+                   "interpm_krige::set_data_internal().",
                    o2scl::exc_efailed);
       }
     
@@ -296,7 +321,7 @@ namespace o2scl {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
-                   "interpm_krige::set_data_noise_internal().",
+                   "interpm_krige::set_data_internal().",
                    o2scl::exc_efailed);
       }
 
@@ -308,16 +333,22 @@ namespace o2scl {
       data_set=true;
     
       if (verbose>0) {
-        std::cout << "interpm_krige::set_data_noise_internal():\n  "
+        std::cout << "interpm_krige::set_data_internal():\n  "
                   << "Using " << n_points
                   << " points with " << nd_in << " input variables and "
                   << nd_out << " output variables." << std::endl;
       }
       
+      if (verbose>0 && rescale==false) {
+        std::cout << "interpm_krige::set_data_internal(): "
+                  << "No rescaling."
+                  << std::endl;
+      }
+      
       if (rescale==true) {
-        if (verbose>1) {
-          std::cout << "interpm_krige::set_data_noise_internal(): "
-                    << "rescaling."
+        if (verbose>0) {
+          std::cout << "interpm_krige::set_data_internal(): "
+                    << "Rescaling."
                     << std::endl;
         }
         mean_y.resize(n_out);
@@ -327,7 +358,7 @@ namespace o2scl {
           mean_y[j]=vector_mean(n_points,vec);
           std_y[j]=vector_stddev(n_points,vec);
           if (verbose>1) {
-            std::cout << "Mean,stddev of y " << j << " of "
+            std::cout << "  Mean, std. dev. for y " << j << " of "
                       << n_out << " is "
                       << mean_y[j] << " " << std_y[j] << std::endl;
           }
@@ -346,7 +377,6 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
 
         size_t icovar=iout % n_covar;
-        size_t inoise=iout % noise_var.size();
 
         // Select the row of the data matrix
         mat_y_row_t yiout(y,iout);
@@ -359,9 +389,6 @@ namespace o2scl {
             mat_x_row_t xcol(x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
-            } else if (irow==icol) {
-              KXX(irow,icol)=fcovar[icovar](xrow,xcol)+
-                noise_var[inoise];
             } else {
               KXX(irow,icol)=fcovar[icovar](xrow,xcol);
             }
@@ -379,7 +406,7 @@ namespace o2scl {
                            yiout,0.0,Kinvf[iout]);
 	
         if (verbose>1) {
-          std::cout << "interpm_krige::set_data_noise_internal() "
+          std::cout << "interpm_krige::set_data_internal() "
                     << "finished " << iout+1
                     << " of " << n_out << "." << std::endl;
         }
@@ -391,7 +418,7 @@ namespace o2scl {
       }
       
       if (verbose>1) {
-        std::cout << "interpm_krige::set_data_noise_internal() done."
+        std::cout << "interpm_krige::set_data_internal() done."
                   << std::endl;
       }
       
@@ -443,12 +470,9 @@ namespace o2scl {
                  covar_func_t &fcovar, bool rescale=false,
                  bool err_on_fail=true) {
       
-      vec_t noise_vec;
-      noise_vec.resize(1);
-      noise_vec[0]=0.0;
-      return set_data_noise_internal
+      return set_data_internal
         (n_in,n_out,n_points,user_x,user_y,fcovar,
-         noise_vec,rescale,err_on_fail);
+         rescale,err_on_fail);
     }
 
     /** \brief Given covariance function \c fcovar and input vector \c x0
@@ -1010,8 +1034,8 @@ namespace o2scl {
 	
         if (verbose>0) {
           std::cout << "interpm_krige_optim::set_data_"
-                    << "internal():\n  "
-                    << "optimal params: ";
+                    << "internal(),\n  "
+                    << "optimal parameters: ";
           o2scl::vector_out(std::cout,min_params,true);
         }
         
@@ -1054,17 +1078,42 @@ namespace o2scl {
     template<class vec2_t, class vec3_t>
     void deriv(const vec2_t &x0, vec3_t &y0, size_t ix) {
 
-      /// Desc
-      typename parent_t::f3_t ffd(this->nd_out);
-      
-      for(size_t i=0;i<this->nd_out;i++) {
-        
-        ffd[i]=std::bind(std::mem_fn<double(const vec_t &, const vec_t &)>
-                         (&func_t::deriv),cf,i,
-                         std::placeholders::_1,std::placeholders::_2,ix);
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->nd_out;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
+          mat_x_row_t xrow(this->x,ipoints);
+          double covar_val=cf->deriv(iout,xrow,x0,ix);
+          y0[iout]-=covar_val*this->Kinvf[iout][ipoints];
+        }
+        if (this->rescaled) {
+          y0[iout]*=this->std_y[iout];
+        }
       }
-      
-      return this->eval_covar(x0,y0,ffd);
+
+      return;
+    }
+
+    /** \brief Given input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec3_t>
+    void deriv2(const vec2_t &x0, vec3_t &y0, size_t ix, size_t iy) {
+
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->nd_out;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
+          mat_x_row_t xrow(this->x,ipoints);
+          double covar_val=cf->deriv2(iout,xrow,x0,ix,iy);
+          y0[iout]-=covar_val*this->Kinvf[iout][ipoints];
+        }
+        if (this->rescaled) {
+          y0[iout]*=this->std_y[iout];
+        }
+      }
+
+      return;
     }
 
     /** \brief Initialize the data for the interpolation
