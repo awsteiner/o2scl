@@ -947,13 +947,30 @@ namespace o2scl {
                    exc_efailed);
       }
    
+      // Check that the data is properly sized
+      if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
+        std::cout << "Object user_x, function size1() and size2(): "
+                  << user_x.size1() << " " << user_x.size2() << std::endl;
+        O2SCL_ERR2("Size of x not correct in ",
+                   "interpm_krige::set_data_internal().",
+                   o2scl::exc_efailed);
+      }
+    
+      if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
+        std::cout << "Object user_y, function size1() and size2(): "
+                  << user_y.size1() << " " << user_y.size2() << std::endl;
+        O2SCL_ERR2("Size of y not correct in ",
+                   "interpm_krige::set_data_internal().",
+                   o2scl::exc_efailed);
+      }
+
       // Set parent data members
       this->np=n_points;
       this->nd_in=n_in;
       this->nd_out=n_out;
       this->rescaled=rescale;
       this->data_set=true;
-
+      
       time_t t1=0, t2=0, t3=0, t4=0, t5=0;
       if (timing) {
         t1=time(0);
