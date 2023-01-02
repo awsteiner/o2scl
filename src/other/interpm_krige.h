@@ -600,17 +600,6 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     
-    /// The parent class type
-    typedef interpm_krige<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
-                          mat_y_row_t,mat_inv_kxx_t,
-                          mat_inv_t> parent_t;
-    
-
-    /// The current class type
-    typedef interpm_krige_optim<vec_t,mat_x_t,mat_x_row_t,mat_y_t,
-                                    mat_y_row_t,mat_inv_kxx_t,
-                                    mat_inv_t,vec_vec_t> current_t;
-    
   protected:
 
     /// Pointer to the covariance function
@@ -629,7 +618,7 @@ namespace o2scl {
     
     /** \brief Function to optimize the covariance parameters
      */
-    double qual_fun(size_t iout, int &success) {
+    virtual double qual_fun(size_t iout, int &success) {
 
       // Select the row of the data matrix
       mat_y_row_t yiout2(this->y,iout);
@@ -1035,28 +1024,27 @@ namespace o2scl {
 	
         bool min_set=false, done=false;
         
-        size_t np=cf->get_n_params(iout);
+        size_t np_covar=cf->get_n_params(iout);
         if (verbose>1) {
           std::cout << "interpm_krige_optim::set_data_internal() : "
-                    << "simple minimization with " << np
+                    << "simple minimization with " << np_covar
                     << " parameters." << std::endl;
           for(size_t jk=0;jk<plists.size();jk++) {
             std::cout << jk << " ";
             o2scl::vector_out(std::cout,plists[jk],true);
           }
         }
-        std::vector<size_t> index_list(np);
-        vector_set_all(np,index_list,0);
-        std::vector<double> params(np), min_params(np);
+        std::vector<size_t> index_list(np_covar);
+        vector_set_all(np_covar,index_list,0);
+        std::vector<double> params(np_covar), min_params(np_covar);
         
         while (done==false) {
           
-          for(size_t i=0;i<np;i++) {
+          for(size_t i=0;i<np_covar;i++) {
             params[i]=plists[i][index_list[i]];
           }
           cf->set_params(iout,params);
           
-          int success=0;
           qual[iout]=qual_fun(iout,success);
           
           if (success==0 && (min_set==false || qual[iout]<min_qual)) {
@@ -1079,9 +1067,9 @@ namespace o2scl {
           }
 
           index_list[0]++;
-          for(size_t k=0;k<np;k++) {
+          for(size_t k=0;k<np_covar;k++) {
             if (index_list[k]==plists[k].size()) {
-              if (k==np-1) {
+              if (k==np_covar-1) {
                 done=true;
               } else {
                 index_list[k]=0;

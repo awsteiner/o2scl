@@ -1255,8 +1255,7 @@ namespace o2scl {
         }
         cf->set_params(params);
         
-        int success=0;
-        double qual=qual_fun(success);
+        qual=qual_fun(success);
         
         if (success==0 && (min_set==false || qual<min_qual)) {
           min_params=params;
