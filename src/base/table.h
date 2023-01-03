@@ -1594,10 +1594,10 @@ namespace o2scl {
           }
           if (match==true) {
             list.push_back(j);
-            if (verbose>0) {
+            if (verbose>1) {
               std::cout << "Match between rows " << i << " and " << j
                         << std::endl;
-              if (verbose>1) {
+              if (verbose>2) {
                 for(size_t k=0;k<get_ncolumns();k++) {
                   std::cout << k << " " << get(k,i) << " " << get(k,j)
                             << std::endl;
