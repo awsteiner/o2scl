@@ -819,6 +819,7 @@ namespace o2scl {
 
   public:
 
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<double> ubvector;
 
   protected:
@@ -844,7 +845,7 @@ namespace o2scl {
     //@}
 
   public:
-    
+
     /** \brief Function to optimize the covariance parameters
      */
     double qual_fun(int &success) {
@@ -1144,12 +1145,28 @@ namespace o2scl {
 
       return qual;
     }
-  
+
+    /// If true, perform a full minimization (default false)
+    bool full_min;
+    
+    /** \brief Minimization function for the covariance parameters
+     */
+    double min_fun(size_t n, const ubvector &v) {
+      cf->set_params(v);
+      int success;
+      double ret=qual_fun(success);
+      if (success!=0) {
+        ret=1.0e99;
+      }
+      return ret;
+    }
+    
     interp_krige_optim() {
       mp=&def_mmin;
       def_mmin.ntrial*=10;
       verbose=0;
       mode=mode_loo_cv;
+      full_min=false;
     }
 
     /// \name Function to minimize and various option
@@ -1172,7 +1189,8 @@ namespace o2scl {
 
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
+    int set_covar(func_t &covar, vec_vec_t &param_lists,
+                  bool rescale=false) {
       cf=&covar;
       plists=param_lists;
       this->rescaled=rescale;
@@ -1240,55 +1258,95 @@ namespace o2scl {
           std::cout << np << " parameters." << std::endl;
         }
       }
-      std::vector<size_t> index_list(np);
-      vector_set_all(np,index_list,0);
+
       std::vector<double> params(np), min_params(np);
+
+      if (plists.size()<np) {
+        O2SCL_ERR("Parameter list incorrectly sized.",
+                  o2scl::exc_einval);
+      }
       
-      while (done==false) {
+      if (full_min) {
 
+        ubmatrix sx(np+1,np);
+        for(size_t j=0;j<np;j++) {
+          sx(0,j)=plists[j][plists[j].size()/2];
+        }
         for(size_t i=0;i<np;i++) {
-          if (index_list[i]>=plists[i].size()) {
-            O2SCL_ERR("Parameter list incorrectly sized.",
-                      o2scl::exc_einval);
-          }
-          params[i]=plists[i][index_list[i]];
-        }
-        cf->set_params(params);
-        
-        qual=qual_fun(success);
-        
-        if (success==0 && (min_set==false || qual<min_qual)) {
-          min_params=params;
-          min_qual=qual;
-          min_set=true;
-        }
-        
-        if (verbose>1) {
-          std::cout << "krige_optim: ";
-          std::cout.setf(std::ios::showpos);
-          vector_out(std::cout,index_list,false);
-          std::cout << " ";
-          vector_out(std::cout,min_params,false);
-          std::cout << " ";
-          std::cout << qual << " " << min_qual << " " << success 
-                    << std::endl;
-          std::cout.unsetf(std::ios::showpos);
-          if (verbose>2) {
-            char ch;
-            std::cin >> ch;
+          for(size_t j=0;j<np;j++) {
+            if (i==j) {
+              sx(i+1,j)=plists[j][plists[j].size()-1];
+            } else {
+              sx(i+1,j)=plists[j][0];
+            } 
           }
         }
 
-        index_list[0]++;
-        for(size_t k=0;k<np;k++) {
-          if (index_list[k]==plists[k].size()) {
-            if (k==np-1) {
-              done=true;
-            } else {
-              index_list[k]=0;
-              index_list[k+1]++;
+        double fmin;
+
+        multi_funct mf=std::bind
+          (std::mem_fn<double(size_t,const ubvector &)>
+           (&interp_krige_optim::min_fun),this,
+           std::placeholders::_1,std::placeholders::_2);
+        
+        def_mmin.mmin_simplex(np,sx,fmin,mf);
+
+        for(size_t j=0;j<np;j++) {
+          min_params[j]=sx(0,j);
+        }
+        
+      } else {
+        
+        std::vector<size_t> index_list(np);
+        vector_set_all(np,index_list,0);
+        
+        while (done==false) {
+          
+          for(size_t i=0;i<np;i++) {
+            if (index_list[i]>=plists[i].size()) {
+              O2SCL_ERR("Parameter list incorrectly sized.",
+                        o2scl::exc_einval);
+            }
+            params[i]=plists[i][index_list[i]];
+          }
+          cf->set_params(params);
+          
+          qual=qual_fun(success);
+          
+          if (success==0 && (min_set==false || qual<min_qual)) {
+            min_params=params;
+            min_qual=qual;
+            min_set=true;
+          }
+          
+          if (verbose>1) {
+            std::cout << "krige_optim: ";
+            std::cout.setf(std::ios::showpos);
+            vector_out(std::cout,index_list,false);
+            std::cout << " ";
+            vector_out(std::cout,min_params,false);
+            std::cout << " ";
+            std::cout << qual << " " << min_qual << " " << success 
+                      << std::endl;
+            std::cout.unsetf(std::ios::showpos);
+            if (verbose>2) {
+              char ch;
+              std::cin >> ch;
             }
           }
+          
+          index_list[0]++;
+          for(size_t k=0;k<np;k++) {
+            if (index_list[k]==plists[k].size()) {
+              if (k==np-1) {
+                done=true;
+              } else {
+                index_list[k]=0;
+                index_list[k+1]++;
+              }
+            }
+          }
+          
         }
         
       }

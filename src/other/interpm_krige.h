@@ -599,6 +599,10 @@ namespace o2scl {
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    typedef interpm_krige_optim<func_t,vec_t,mat_x_t,mat_x_row_t, 
+                                mat_y_t,mat_y_row_t,mat_inv_kxx_t,
+                                mat_inv_t,vec_vec_t> parent_t;
     
   protected:
 
@@ -876,8 +880,23 @@ namespace o2scl {
       return ret;
     }
 
+    /** \brief Minimization function for the covariance parameters
+     */
+    double min_fun(size_t iout, size_t n, const ubvector &v, double max_val) {
+      cf->set_params(iout,v);
+      int success;
+      double ret=qual_fun(iout,success);
+      if (success!=0) {
+        ret=max_val;
+      }
+      //vector_out(std::cout,v);
+      //std::cout << " " << ret << std::endl;
+      return ret;
+    }
+    
     interpm_krige_optim() {
       full_min=false;
+      def_mmin.ntrial*=10;
       mp=&def_mmin;
       verbose=0;
       mode=mode_loo_cv;
@@ -1034,67 +1053,124 @@ namespace o2scl {
         
         // Initialize to zero to prevent uninit'ed var. warnings
         double min_qual=0.0;
-	
-        if (verbose>1) {
-          std::cout << "qual fail min_qual" << std::endl;
-        }
-	
-        bool min_set=false, done=false;
-        
+
         size_t np_covar=cf->get_n_params(iout);
-        if (verbose>1) {
-          std::cout << "interpm_krige_optim::set_data_internal() : "
-                    << "simple minimization with " << np_covar
-                    << " parameters." << std::endl;
-          for(size_t jk=0;jk<plists.size();jk++) {
-            std::cout << jk << " ";
-            o2scl::vector_out(std::cout,plists[jk],true);
-          }
-        }
-        std::vector<size_t> index_list(np_covar);
-        vector_set_all(np_covar,index_list,0);
         std::vector<double> params(np_covar), min_params(np_covar);
         
-        while (done==false) {
-          
+        if (full_min) {
+
+          // Create the simplex
+          ubmatrix sx(np_covar+1,np_covar);
+          for(size_t j=0;j<np_covar;j++) {
+            sx(0,j)=plists[j][plists[j].size()/2];
+          }
           for(size_t i=0;i<np_covar;i++) {
-            params[i]=plists[i][index_list[i]];
-          }
-          cf->set_params(iout,params);
-          
-          qual[iout]=qual_fun(iout,success);
-          
-          if (success==0 && (min_set==false || qual[iout]<min_qual)) {
-            min_params=params;
-            min_qual=qual[iout];
-            min_set=true;
-          }
-          
-          if (verbose>1) {
-            std::cout << "interpm_krige_optim: ";
-            o2scl::vector_out(std::cout,index_list);
-            std::cout << " ";
-            o2scl::vector_out(std::cout,params);
-            std::cout << " " << qual[iout] << " "
-                      << success << " " << min_qual << std::endl;
-            if (verbose>2) {
-              char ch;
-              std::cin >> ch;
+            for(size_t j=0;j<np_covar;j++) {
+              if (i==j) {
+                sx(i+1,j)=plists[j][plists[j].size()-1];
+              } else {
+                sx(i+1,j)=plists[j][0];
+              } 
             }
           }
 
-          index_list[0]++;
-          for(size_t k=0;k<np_covar;k++) {
-            if (index_list[k]==plists[k].size()) {
-              if (k==np_covar-1) {
-                done=true;
-              } else {
-                index_list[k]=0;
-                index_list[k+1]++;
+          // Construct a maximum value to use if qual_fun() fails
+          double max_val=0.0;
+          bool max_val_set=false;
+          for(size_t i=0;i<np_covar+1;i++) {
+            for(size_t j=0;j<np_covar;j++) {
+              params[j]=sx(i,j);
+            }
+            cf->set_params(iout,params);
+            double qtmp=qual_fun(iout,success);
+            if (success==0) {
+              if (max_val_set==false || qtmp>max_val) {
+                max_val=qtmp;
+                max_val_set=true;
               }
             }
+            //std::cout << "H: " << success << " "
+            //<< qtmp << " " << max_val << std::endl;
+          }
+          if (max_val_set==false) {
+            O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
           }
           
+          multi_funct mf=std::bind
+            (std::mem_fn<double(size_t,size_t,const ubvector &,double)>
+             (&parent_t::min_fun),this,iout,
+             std::placeholders::_1,std::placeholders::_2,max_val);
+          
+          //matrix_out(std::cout,np_covar+1,np_covar,sx);
+          def_mmin.mmin_simplex(np_covar,sx,min_qual,mf);
+          
+          for(size_t j=0;j<np_covar;j++) {
+            min_params[j]=sx(0,j);
+          }
+        
+        } else {
+          
+          if (verbose>1) {
+            std::cout << "qual fail min_qual" << std::endl;
+          }
+          
+          bool min_set=false, done=false;
+          
+          if (verbose>1) {
+            std::cout << "interpm_krige_optim::set_data_internal() : "
+                      << "simple minimization with " << np_covar
+                      << " parameters." << std::endl;
+            for(size_t jk=0;jk<plists.size();jk++) {
+              std::cout << jk << " ";
+              o2scl::vector_out(std::cout,plists[jk],true);
+            }
+          }
+          std::vector<size_t> index_list(np_covar);
+          vector_set_all(np_covar,index_list,0);
+          
+          while (done==false) {
+            
+            for(size_t i=0;i<np_covar;i++) {
+              params[i]=plists[i][index_list[i]];
+            }
+            cf->set_params(iout,params);
+            
+            qual[iout]=qual_fun(iout,success);
+            
+            if (success==0 && (min_set==false || qual[iout]<min_qual)) {
+              min_params=params;
+              min_qual=qual[iout];
+              min_set=true;
+            }
+            
+            if (verbose>1) {
+              std::cout << "interpm_krige_optim: ";
+              o2scl::vector_out(std::cout,index_list);
+              std::cout << " ";
+              o2scl::vector_out(std::cout,params);
+              std::cout << " " << qual[iout] << " "
+                        << success << " " << min_qual << std::endl;
+              if (verbose>2) {
+                char ch;
+                std::cin >> ch;
+              }
+            }
+            
+            index_list[0]++;
+            for(size_t k=0;k<np_covar;k++) {
+              if (index_list[k]==plists[k].size()) {
+                if (k==np_covar-1) {
+                  done=true;
+                } else {
+                  index_list[k]=0;
+                  index_list[k+1]++;
+                }
+              }
+            }
+            
+          }
+          
+
         }
         
         if (verbose>1) {

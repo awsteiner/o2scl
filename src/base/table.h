@@ -1593,7 +1593,13 @@ namespace o2scl {
             }
           }
           if (match==true) {
+            
             list.push_back(j);
+            
+            // AWS, 1/3/22: The verbose parameter here is from acol,
+            // and I don't want this output to occur in acol when
+            // verbose=1, so I require verbose to be 2 or larger in
+            // order for this output to show up.
             if (verbose>1) {
               std::cout << "Match between rows " << i << " and " << j
                         << std::endl;
