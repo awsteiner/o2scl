@@ -207,11 +207,11 @@ namespace o2scl {
         param_list.clear();
         param_list.push_back(len_list);
         double min_y=vector_min_value<vec2_t,double>(n,y);
-        if (min_y==0.0) {
+        if (min_y<=0.0) {
           param_list.push_back({-15,-13,-11,-9});
         } else {
-          param_list.push_back({log10(min_y)-6.0,log10(min_y)-4.0,
-              log10(min_y)-2.0,log10(min_y)});
+          param_list.push_back({log10(min_y)-15.0,log10(min_y)-13.0,
+              log10(min_y)-11.0,log10(min_y)-9.0});
         }
 
         ikon->verbose=2;

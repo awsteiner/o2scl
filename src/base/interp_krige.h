@@ -924,6 +924,10 @@ namespace o2scl {
         
         }
 
+        if (verbose>2) {
+          std::cout << "qual (loo_cv_bf): " << qual << std::endl;
+        }
+        
       } else if (mode==mode_loo_cv) {
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1072,7 +1076,7 @@ namespace o2scl {
           qual+=0.5*log(sigma2);
         }
           
-        if (verbose>0) {
+        if (verbose>2) {
           std::cout << "qual (loo_cv): " << qual << std::endl;
         }
       
@@ -1138,8 +1142,8 @@ namespace o2scl {
           qual=std::numeric_limits<double>::infinity();
         }
         
-        if (verbose>0) {
-          std::cout << "qual (lml): " << qual << std::endl;
+        if (verbose>2) {
+          std::cout << "qual (max_lml): " << qual << std::endl;
         }
       }
 
@@ -1300,6 +1304,15 @@ namespace o2scl {
         std::vector<size_t> index_list(np);
         vector_set_all(np,index_list,0);
         
+        if (verbose>1) {
+          std::cout << "interp_krige_optim:" << std::endl;
+          std::cout << "  parameter list:" << std::endl;
+          for(size_t j=0;j<plists.size();j++) {
+            std::cout << "  ";
+            vector_out(std::cout,plists[j].size(),plists[j],true);
+          }
+        }
+          
         while (done==false) {
           
           for(size_t i=0;i<np;i++) {
@@ -1310,7 +1323,7 @@ namespace o2scl {
             params[i]=plists[i][index_list[i]];
           }
           cf->set_params(params);
-          
+
           qual=qual_fun(success);
           
           if (success==0 && (min_set==false || qual<min_qual)) {
@@ -1320,8 +1333,8 @@ namespace o2scl {
           }
           
           if (verbose>1) {
-            std::cout << "krige_optim: ";
             std::cout.setf(std::ios::showpos);
+            std::cout << "  ";
             vector_out(std::cout,index_list,false);
             std::cout << " ";
             vector_out(std::cout,min_params,false);
