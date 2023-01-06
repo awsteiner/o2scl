@@ -389,9 +389,8 @@ int main(void) {
     gtn_x3.set_radix(1.9);
     
     iko.verbose=2;
-    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
-      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
-    vector<double> l10_list={-15,-13,-11,-9};
+    vector<double> len_list={0.9,0.95,1.0,1.25,1.5,2.0,3.0,7.0};
+    vector<double> l10_list={-15,-13,-11};
     vector<vector<double> > param_lists;
     param_lists.push_back(len_list);
     param_lists.push_back(len_list);
@@ -546,7 +545,7 @@ int main(void) {
     mfrn.len.resize(1);
 
     iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab4.get_nlines(),mvt_x4,mvt_y4);
+    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4);
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
     
@@ -619,7 +618,7 @@ int main(void) {
     mfrn.len.resize(1);
 
     iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab4.get_nlines(),mvt_x4,mvt_y4,true);
+    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4,true);
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
     
