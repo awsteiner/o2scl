@@ -1337,7 +1337,7 @@ namespace o2scl {
             std::cout << "  ";
             vector_out(std::cout,index_list,false);
             std::cout << " ";
-            vector_out(std::cout,min_params,false);
+            vector_out(std::cout,params,false);
             std::cout << " ";
             std::cout << qual << " " << min_qual << " " << success 
                       << std::endl;
@@ -1366,6 +1366,10 @@ namespace o2scl {
 
       // Now that we've optimized the covariance function,
       // just use the parent class to interpolate
+      if (verbose>1) {
+        std::cout << "  min_params: ";
+        vector_out(std::cout,min_params,true);
+      }
       cf->set_params(min_params);
 
       ff=std::bind(std::mem_fn<double(double,double)>
