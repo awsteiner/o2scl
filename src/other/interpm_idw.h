@@ -138,6 +138,10 @@ namespace o2scl {
       dist_expo=2.0;
     }
 
+    /** \brief Extrapolation factor (computed in eval_err() )
+     */
+    double extrap;
+    
     /** \brief Exponent in computing distance (default 2.0)
      */
     double dist_expo;
@@ -348,7 +352,7 @@ namespace o2scl {
         with uncertainty
     */
     template<class vec2_t> void eval_err(const vec2_t &x, double &val,
-                                         double &err) const {
+                                         double &err) {
       
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_idw::eval_err().",
@@ -390,11 +394,16 @@ namespace o2scl {
         // If the closest distance is zero, just set the value
         val=data(nd_in,index[0]);
         err=0.0;
+        extrap=0.0;
         return;
 
       } else {
 
         std::vector<double> vals(points+1);
+        /// Distances between the selected points and the first point
+        std::vector<double> dists_bw;
+        /// Distances from the selected point to the user point
+        std::vector<double> dists_to;
 
         // We construct points+1 estimates of the result and take the
         // average. Use the standard deviation for the uncertainty.
@@ -404,6 +413,13 @@ namespace o2scl {
           double norm=0.0;
           for(size_t i=0;i<points+1;i++) {
             if (i!=j) norm+=1.0/dists[index[i]];
+            dists_to.push_back(dists[index[i]]);
+            if (i!=0) {
+              double d=dist(index[0],index[i]);
+              if (d!=0.0) {
+                dists_bw.push_back(d);
+              }
+            }
           }
 	  
           // Compute the inverse-distance weighted average
@@ -420,7 +436,14 @@ namespace o2scl {
 
         val=vals[points];
         err=o2scl::vector_stddev(vals);
-
+        if (dists_bw.size()>0) {
+          double max_bw=vector_max_value<std::vector<double>,double>(dists_bw);
+          double min_to=vector_min_value<std::vector<double>,double>(dists_to);
+          extrap=min_to/max_bw;
+        } else {
+          extrap=0.0;
+        }
+        
       }
 
       return;

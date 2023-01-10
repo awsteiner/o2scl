@@ -84,7 +84,7 @@ int main(void) {
     tab.set("z",i,1.0-pow(x[i]-0.5,2.0)-pow(y[i]-0.5,2.0));
   }
   const_matrix_view_table_transpose<> cmvt(tab,{"x","y","z"});
-  
+
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
   interp2_planar<ubvector> i2p;
@@ -112,6 +112,14 @@ int main(void) {
   t.test_rel(imi2.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi2 vs. i2p 1");
   cout << endl;
 
+  cout << "Test the extrapolation factor." << endl;
+  for(point[0]=0.5;point[0]<20.0;point[0]*=2.0) {
+    point[1]=point[0];
+    imi.eval_err(point,val,err);
+    cout << point[0] << " " << imi.extrap << endl;
+  }
+  cout << endl;
+  
   cout << "Interpolate at another point and compare the three methods:"
        << endl;
   point[0]=0.03;
