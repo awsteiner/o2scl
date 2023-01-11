@@ -88,18 +88,29 @@ int main(void) {
   interp_vec<ubvector> iv_mon(N,x,y,itp_monotonic);
   interp_vec<ubvector> iv_stef(N,x,y,itp_steffen);
 
-  interp_krige_optim<ubvector> iko;
-  iko.verbose=2;
-  iko.nlen=10000;
-  iko.mode=interp_krige_optim<ubvector>::mode_loo_cv;
-  iko.set_noise(N,x,y,1.0e-10);
-  cout << endl;
+  covar_funct_rbf_noise cfrn;
 
-  interp_krige_optim<ubvector> iko2;
+  vector<double> p={1.0e-4,1.0};
+  vector<double> p2={-9.0,-15.0};
+  vector<vector<double>> param_lists;
+  param_lists.push_back(p);
+  param_lists.push_back(p2);
+  
+  interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko;
+  iko.verbose=2;
+  //iko.def_mmin.verbose=2;
+  iko.full_min=true;
+  iko.mode=iko.mode_loo_cv;
+  iko.set_covar(cfrn,param_lists);
+  iko.set(N,x,y);
+
+  interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
   iko2.verbose=2;
-  iko2.nlen=10000;
-  iko2.mode=interp_krige_optim<ubvector>::mode_max_lml;
-  iko2.set_noise(N,x,y,1.0e-10);
+  //iko2.def_mmin.verbose=2;
+  iko2.full_min=true;
+  iko2.mode=iko2.mode_max_lml;
+  iko2.set_covar(cfrn,param_lists);
+  iko2.set(N,x,y);
   cout << endl;
 
   double max=x[x.size()-1];
