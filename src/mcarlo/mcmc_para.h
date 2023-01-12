@@ -2501,14 +2501,30 @@ namespace o2scl {
     /** \brief Read initial points from the best points recorded in file
         named \c fname
 
-        The values of \ref o2scl::mcmc_para_base::n_walk and \ref
-        o2scl::mcmc_para_base::n_threads, must be set to their
-        correct values before calling this function. This function
-        requires that a table is present in \c fname which stores
-        parameters in a block of columns and contains a separate
-        column named \c log_wgt . This function does not double check
-        that the columns in the file associated with the parameters
-        have the correct names.
+        Before calling this function, the values the values of \ref
+        o2scl::mcmc_para_base::n_walk and \ref
+        o2scl::mcmc_para_base::n_threads should have been set by the
+        user to the correct values for the future call to \ref
+        mcmc_para_base::mcmc() .
+
+        In order for this function to succeed, a table must be present
+        (the function just reads the first \ref o2scl::table_units or
+        \ref o2scl::table_units object it can find) in the HDF5 file
+        named \c fname. This table should store parameters in a block
+        of columns beginning with column \c offset. It should also
+        contain a separate column named \c log_wgt for the log
+        likelihood. The table must have at least as unique rows as
+        input points required by the \ref mcmc_para_base::mcmc()
+        function, i.e. the product of \ref
+        o2scl::mcmc_para_base::n_walk and
+        o2scl::mcmc_para_base::n_threads. Rows are presumed to be
+        identical if all of their values differ by a value less than
+        \c thresh, which defaults to \f$ 10^{-6} \f$.
+
+        This function does not double check that the columns in the
+        file associated with the parameters have the correct names.
+        The values in the "walker", "thread", and "rank" columns in
+        the table, if present, are ignored by this function.
     */
     virtual void initial_points_file_best(std::string fname,
                                           size_t n_param_loc,
