@@ -730,18 +730,21 @@ namespace o2scl {
       
       if (verbose>=1) {
         if (aff_inv) {
-          scr_out << "mcmc: Affine-invariant step, n_params="
+          scr_out << "mcmc_para_base::mcmc(): "
+                  << "Affine-invariant step, n_params="
                   << n_params << ", n_walk=" << n_walk
-                  << ", n_threads=" << n_threads << ", rank="
+                  << ", n_threads=" << n_threads << ",\n  rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
         } else if (pd_mode==true) {
-          scr_out << "mcmc: With proposal distribution, n_params="
+          scr_out << "mcmc_para_base::mcmc(): "
+                  << "With proposal distribution, n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
         } else {
-          scr_out << "mcmc: Random-walk w/uniform dist., n_params="
+          scr_out << "mcmc_para_base::mcmc(): "
+                  << "Random-walk w/uniform dist., n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
@@ -2423,8 +2426,8 @@ namespace o2scl {
       return;
     }
   
-    /** \brief Read initial points from file
-        named \c fname, distributing across the chain if necessary
+    /** \brief Read initial points from file named \c fname,
+        distributing across the chain if necessary
 
         The values of \ref o2scl::mcmc_para_base::n_walk and \ref
         o2scl::mcmc_para_base::n_threads, must be set to their

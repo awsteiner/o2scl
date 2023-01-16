@@ -140,7 +140,7 @@ namespace o2scl {
 
     /** \brief Extrapolation factor (computed in eval_err() )
      */
-    double extrap;
+    std::vector<double> extrap;
     
     /** \brief Exponent in computing distance (default 2.0)
      */
@@ -227,6 +227,8 @@ namespace o2scl {
       if (auto_scale_flag) {
         auto_scale();
       }
+
+      extrap.resize(n_out);
 
       return;
     }
@@ -371,6 +373,10 @@ namespace o2scl {
                                    std::vector<size_t> >
         (dists,points+1+n_extra,index);
 
+      if (verbose>1) {
+        std::cout << "interpm_idw::eval_err(): n_extra is " << n_extra
+                  << std::endl;
+      }
       if (n_extra>0) {
         // Remove degenerate points to ensure accurate interpolation
         bool found=true;
@@ -383,6 +389,9 @@ namespace o2scl {
               if (index.size()>points+1 && dist_jk<min_dist) {
                 found=true;
                 index.erase(index.begin()+j);
+                if (verbose>1) {
+                  std::cout << "  Found degenerate point." << std::endl;
+                }
               }
             }
           }
@@ -392,9 +401,12 @@ namespace o2scl {
       if (dists[index[0]]<=0.0) {
 
         // If the closest distance is zero, just set the value
+        if (verbose>1) {
+          std::cout << "  Closest distance is zero." << std::endl;
+        }
         val=data(nd_in,index[0]);
         err=0.0;
-        extrap=0.0;
+        extrap[0]=0.0;
         return;
 
       } else {
@@ -439,9 +451,9 @@ namespace o2scl {
         if (dists_bw.size()>0) {
           double max_bw=vector_max_value<std::vector<double>,double>(dists_bw);
           double min_to=vector_min_value<std::vector<double>,double>(dists_to);
-          extrap=min_to/max_bw;
+          extrap[0]=min_to/max_bw;
         } else {
-          extrap=0.0;
+          extrap[0]=0.0;
         }
         
       }
@@ -568,11 +580,16 @@ namespace o2scl {
     */
     template<class vec2_t, class vec3_t, class vec4_t>
     void eval_err_index(const vec2_t &x, vec3_t &val, vec4_t &err,
-                        std::vector<size_t> &index) const {
+                        std::vector<size_t> &index) {
       
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_idw::eval_err().",
                   exc_einval);
+      }
+      
+      if (verbose>1) {
+        std::cout << "interpm_idw::eval_err_index(): n_extra is " << n_extra
+                  << std::endl;
       }
       
       // Compute distances
@@ -653,6 +670,7 @@ namespace o2scl {
 	    O2SCL_ERR("Infinite value in interpm_idw() 1.",o2scl::exc_efailed);
 	  }
           err[k]=0.0;
+          extrap[k]=0.0;
         }
         return;
 
@@ -667,6 +685,11 @@ namespace o2scl {
         
           std::vector<double> vals(points+1);
 
+          /// Distances between the selected points and the first point
+          std::vector<double> dists_bw;
+          /// Distances from the selected point to the user point
+          std::vector<double> dists_to;
+        
           // We construct points+1 estimates of the result and take the
           // average. Use the standard deviation for the uncertainty.
           for(size_t j=0;j<points+1;j++) {
@@ -680,6 +703,13 @@ namespace o2scl {
             double norm=0.0;
             for(size_t i=0;i<points+1;i++) {
               if (i!=j) norm+=1.0/dists[index[i]];
+              dists_to.push_back(dists[index[i]]);
+              if (i!=0) {
+                double d=dist(index[0],index[i]);
+                if (d!=0.0) {
+                  dists_bw.push_back(d);
+                }
+              }
             }
 
             if (verbose>2) {
@@ -718,6 +748,16 @@ namespace o2scl {
           val[k]=vals[points];
 	  
           err[k]=o2scl::vector_stddev(vals);
+          
+          if (dists_bw.size()>0) {
+            double max_bw=vector_max_value<std::vector<double>,
+                                           double>(dists_bw);
+            double min_to=vector_min_value<std::vector<double>,
+                                           double>(dists_to);
+            extrap[k]=min_to/max_bw;
+          } else {
+            extrap[k]=0.0;
+          }
 
           if (verbose>2) {
             std::cout << "Final value, err: " << val[k] << " "
@@ -736,7 +776,7 @@ namespace o2scl {
         with uncertainties
     */
     template<class vec2_t, class vec3_t, class vec4_t>
-    void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) const {
+    void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) {
       std::vector<size_t> index;
       return eval_err_index(x,val,err,index);
     }
