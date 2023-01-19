@@ -449,8 +449,10 @@ namespace o2scl {
         val=vals[points];
         err=o2scl::vector_stddev(vals);
         if (dists_bw.size()>0) {
-          double max_bw=vector_max_value<std::vector<double>,double>(dists_bw);
-          double min_to=vector_min_value<std::vector<double>,double>(dists_to);
+          double max_bw=vector_max_value<std::vector<double>,double>
+	    (dists_bw);
+          double min_to=vector_min_value<std::vector<double>,double>
+	    (dists_to);
           extrap[0]=min_to/max_bw;
         } else {
           extrap[0]=0.0;
@@ -527,7 +529,8 @@ namespace o2scl {
         }
         if (verbose>0) {
           std::cout << "interpm_idw: distance zero. "
-                    << "Returning values at index: " << index[0] << std::endl;
+                    << "Returning values at index: " << index[0]
+		    << std::endl;
           std::cout << "\t";
           o2scl::vector_out(std::cout,nd_out,y,true);
         }
@@ -591,6 +594,11 @@ namespace o2scl {
         std::cout << "interpm_idw::eval_err_index(): n_extra is " << n_extra
                   << std::endl;
       }
+
+      if (verbose>2) {
+	std::cout << "x: ";
+	o2scl::vector_out(std::cout,x,true);
+      }
       
       // Compute distances
       std::vector<double> dists(np);
@@ -624,10 +632,11 @@ namespace o2scl {
         (dists,points+1+n_extra,index);
 
       if (this->verbose>2) {
-        std::cout << "index: ";
+        std::cout << "  Indexes of closest points: ";
         o2scl::vector_out(std::cout,points+1+n_extra,index,true);
+	std::cout << "  Distances:" << std::endl;
         for(size_t kk=0;kk<points+1+n_extra;kk++) {
-          std::cout << kk << " " << dists[index[kk]] << std::endl;
+          std::cout << "  " << kk << " " << dists[index[kk]] << std::endl;
         }
       }
     
@@ -657,6 +666,18 @@ namespace o2scl {
         }
       }
 
+      if (verbose>2) {
+	std::cout << "Closest: ";
+	for(size_t j=0;j<nd_in+nd_out;j++) {
+	  std::cout << data(j,index[0]) << " ";
+	}
+	std::cout << std::endl;
+	for(size_t j=0;j<nd_out;j++) {
+	  std::cout << data(j+nd_in,index[0]) << " ";
+	}
+	std::cout << std::endl;
+      }
+      
       if (dists[index[0]]<=0.0) {
 
         // If the closest distance is zero, just set the values and
@@ -667,7 +688,8 @@ namespace o2scl {
 	    std::cout << "n_extra,min_dist,k,nd_out,val[k]: "
 		      << n_extra << " " << min_dist << " " << k << " "
 		      << nd_out << " " << val[k] << std::endl;
-	    O2SCL_ERR("Infinite value in interpm_idw() 1.",o2scl::exc_efailed);
+	    O2SCL_ERR("Infinite value in interpm_idw() 1.",
+		      o2scl::exc_efailed);
 	  }
           err[k]=0.0;
           extrap[k]=0.0;
@@ -679,7 +701,7 @@ namespace o2scl {
         for(size_t k=0;k<nd_out;k++) {
 
           if (verbose>2) {
-            std::cout << "Output quantity " << k << " of " << nd_out
+            std::cout << "  Output quantity " << k << " of " << nd_out
                       << std::endl;
           }
         
@@ -695,7 +717,7 @@ namespace o2scl {
           for(size_t j=0;j<points+1;j++) {
 
             if (verbose>2) {
-              std::cout << "point " << j << " of " << points+1
+              std::cout << "  Point " << j << " of " << points+1
                         << std::endl;
             }
 	    
@@ -713,7 +735,7 @@ namespace o2scl {
             }
 
             if (verbose>2) {
-              std::cout << "norm: " << norm << std::endl;
+              std::cout << "  Norm: " << norm << std::endl;
             }
 	    
             // Compute the inverse-distance weighted average
@@ -737,7 +759,8 @@ namespace o2scl {
 			<< " " << nd_out << " " << norm << " "
 			<< val[j] << std::endl;
 	      o2scl::vector_out(std::cout,dists,true);
-	      O2SCL_ERR("Infinite value in interpm_idw 2.",o2scl::exc_efailed);
+	      O2SCL_ERR("Infinite value in interpm_idw 2.",
+			o2scl::exc_efailed);
 	    }
 
           }
@@ -748,6 +771,11 @@ namespace o2scl {
           val[k]=vals[points];
 	  
           err[k]=o2scl::vector_stddev(vals);
+
+	  if (verbose>2) {
+	    std::cout << "  Value, error: " << val[k] << " "
+		      << err[k] << std::endl;
+	  }
           
           if (dists_bw.size()>0) {
             double max_bw=vector_max_value<std::vector<double>,
