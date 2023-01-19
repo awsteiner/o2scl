@@ -116,7 +116,7 @@ int main(void) {
   for(point[0]=0.5;point[0]<20.0;point[0]*=2.0) {
     point[1]=point[0];
     imi.eval_err(point,val,err);
-    cout << point[0] << " " << imi.extrap << endl;
+    cout << point[0] << " " << imi.extrap[0] << endl;
   }
   cout << endl;
   
