@@ -185,6 +185,61 @@ int main(void) {
 
   }
 
+  if (true) {
+
+    cout << "--------------------------------------------" << endl;
+    cout << "interpm_krige_new_optim, unscaled, loo_cv\n" << endl;
+    
+    interpm_krige_new_optim
+      <mcovar_new_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
+       mat_y_t,mat_y_row_t,ubmatrix,
+       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
+       std::vector<std::vector<double>> > iko;
+    iko.mode=iko.mode_loo_cv;
+
+    table<> tab3;
+    generate_table(tab3);
+    
+    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+
+    gen_test_number<> gtn_x3;
+    gtn_x3.set_radix(1.9);
+    
+    iko.verbose=1;
+    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
+      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
+    vector<double> l10_list={-15,-13,-11,-9};
+    vector<vector<double> > param_lists;
+    param_lists.push_back(len_list);
+    param_lists.push_back(len_list);
+    param_lists.push_back(l10_list);
+    
+    iko.set_covar(param_lists);
+    iko.cf[0].len.resize(2);
+
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
+    cout << endl;
+        
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_x3.gen();
+      
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),1.0e+1,
+                   "optim, unscaled, loo_cv");
+      }
+
+    }
+    cout << endl;
+  }
+
   {
 
     cout << "--------------------------------------------" << endl;
