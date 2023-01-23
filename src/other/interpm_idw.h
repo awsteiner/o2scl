@@ -591,7 +591,7 @@ namespace o2scl {
       }
       
       if (verbose>1) {
-        std::cout << "interpm_idw::eval_err_index(): n_extra is " << n_extra
+        std::cout << "interpm_idw::eval_err_index(): n_extra: " << n_extra
                   << std::endl;
       }
 
@@ -620,8 +620,8 @@ namespace o2scl {
       }
 
       if (this->verbose>2) {
-        std::cout << "interpm_idw::eval_err_index(): " << np << " "
-                  << nd_in << " " << nd_out
+        std::cout << "interpm_idw::eval_err_index(): np,nd_in,nd_out: "
+                  << np << " " << nd_in << " " << nd_out
                   << std::endl;
       }
 
@@ -753,11 +753,11 @@ namespace o2scl {
             }
 
             vals[j]/=norm;
-	    if (!std::isfinite(val[j])) {
-	      std::cout << "j,n_extra,min_dist,nd_out,norm,val[j]: "
+	    if (!std::isfinite(vals[j])) {
+	      std::cout << "j,n_extra,min_dist,nd_out,norm,vals[j]: "
 			<< j << " " << n_extra << " " << min_dist
 			<< " " << nd_out << " " << norm << " "
-			<< val[j] << std::endl;
+			<< vals[j] << std::endl;
 	      o2scl::vector_out(std::cout,dists,true);
 	      O2SCL_ERR("Infinite value in interpm_idw 2.",
 			o2scl::exc_efailed);
