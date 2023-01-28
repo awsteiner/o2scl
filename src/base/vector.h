@@ -2891,6 +2891,10 @@ namespace o2scl {
       \code 
       std::function<double &(size_t,size_t)>
       \endcode
+
+      This class has no size() method because ublas,
+      Eigen, and armadillo matrix types do not have a consistent
+      interface for obtaining the matrix dimensions.
   */
   template<class mat_t> class matrix_row_gen {
 
@@ -2998,6 +3002,11 @@ namespace o2scl {
   /** \brief Construct a view of the transpose of a matrix
 
       \note This class is experimental.
+
+      Note that this class stores a reference to the original matrix
+      specified by the user. If this class is used after that
+      reference becomes invalid then the results will be
+      unpredictable.
   */
   template<class mat_t> class matrix_view_transpose {
 
@@ -3033,13 +3042,17 @@ namespace o2scl {
     size_t size2() const {
       return m_.size1();
     }
-  
     
   };
 
   /** \brief Construct a view of a matrix omtting a specified row
 
       \note This class is experimental.
+
+      Note that this class stores a reference to the original matrix
+      specified by the user. If this class is used after that
+      reference becomes invalid then the results will be
+      unpredictable.
   */
   template<class mat_t> class matrix_view_omit_row {
 
@@ -3092,6 +3105,11 @@ namespace o2scl {
   /** \brief Construct a view of a matrix omitting one specified column
 
       \note This class is experimental.
+
+      Note that this class stores a reference to the original matrix
+      specified by the user. If this class is used after that
+      reference becomes invalid then the results will be
+      unpredictable.
   */
   template<class mat_t> class matrix_view_omit_column {
 
@@ -3149,6 +3167,10 @@ namespace o2scl {
       \code 
       std::function<double &(size_t,size_t)>
       \endcode
+
+      This class has no size() method because ublas,
+      Eigen, and armadillo matrix types do not have a consistent
+      interface for obtaining the matrix dimensions.
   */
   template<class mat_t> class const_matrix_row_gen {
     
@@ -3219,29 +3241,32 @@ namespace o2scl {
   
   };
 
-  /** \brief View a o2scl::table object as a matrix
+  /** \brief View a vector of vectors as a matrix
 
-      \note This stores a pointer to the table and the user must ensure
-      that the pointer is valid with the matrix view is accessed.
+      \note This stores a pointer to the original object and the user
+      must ensure that the pointer is valid while the matrix view is
+      accessed.
 
-      \verbatim embed:rst
+      \note This class presumes that all of the "inner" vectors are at
+      least as large as the first "inner" vector in the "outer" 
+      vector object.
 
-      .. todo:: 
+      This class is used in <tt>interpm_idw_ts.cpp</tt>.
 
-         In class matrix_view_vec_vec:
-
-         - Future: It would be nice to store a reference rather than a
-           pointer, but this causes problems with \ref
-           o2scl::interpm_idw .
-         
-      \endverbatim
+      \comment
+      AWS, 1/28/23: I originally had the following comment "Future: It
+      would be nice to store a reference rather than a pointer, but
+      this causes problems with \ref o2scl::interpm_idw." But a
+      pointer and a reference aren't that different and still have the
+      same scope issues
+      \endcomment
   */
   template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
     class matrix_view_vec_vec : public matrix_view {
     
   protected:
     
-    /// Pointer to the table
+    /// Pointer to the object
     vec2_t *vvp;
     
   public:
@@ -3260,9 +3285,16 @@ namespace o2scl {
     }
     
     /** \brief Create a matrix view object from the specified 
-        table and list of rows
+        vector of vectors
     */
     matrix_view_vec_vec(vec2_t &vv) {
+      for(size_t j=1;j<vv.size();j++) {
+        if (vv[j].size()<vv[0].size()) {
+          O2SCL_ERR2("A vector does not have sufficient elements to form a ",
+                     "matrix in matrix_view_vec_vec::matrix_view_vec_vec().",
+                     o2scl::exc_einval);
+        }
+      }
       vvp=&vv;
     }
     
@@ -3363,6 +3395,10 @@ namespace o2scl {
       \code 
       std::function<double &(size_t,size_t)>
       \endcode
+
+      This class has no size() method because ublas,
+      Eigen, and armadillo matrix types do not have a consistent
+      interface for obtaining the matrix dimensions.
   */
   template<class mat_t> class matrix_column_gen {
     
@@ -3379,7 +3415,7 @@ namespace o2scl {
     /// Create a column object from column \c column of matrix \c m 
     matrix_column_gen(mat_t &m, size_t column) : m_(m), column_(column) {
     }
-    
+
     /// Return a reference to the ith row of the selected column
     double &operator[](size_t i) {
       return m_(i,column_);
@@ -3402,6 +3438,10 @@ namespace o2scl {
 
       This class is used in one of
       the \ref o2scl::prob_dens_mdim_gaussian constructors.
+
+      This class has no size() method because ublas,
+      Eigen, and armadillo matrix types do not have a consistent
+      interface for obtaining the matrix dimensions.
   */
   template<class mat_t> class const_matrix_column_gen {
 

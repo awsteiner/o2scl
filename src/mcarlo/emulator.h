@@ -35,6 +35,7 @@
 
 #include <o2scl/interpm_idw.h>
 #include <o2scl/interpm_krige.h>
+#include <o2scl/vec_stats.h>
 
 namespace o2scl {
   
@@ -126,6 +127,10 @@ namespace o2scl {
      */
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
              table<> &t, std::vector<std::string> list) {
+      if (ix_log_wgt>list.size()-np) {
+        O2SCL_ERR2("Index of log_wgt is too large in ",
+                   "emulator_interpm_idw_table::set().",o2scl::exc_einval);
+      }
       cmvtt.set(t,list);
       ix=ix_log_wgt;
       ii.set_data(np,n_out,t.get_nlines(),cmvtt);
@@ -180,10 +185,13 @@ namespace o2scl {
   public:
     
     /// The internal interpolation object
-    interpm_krige_optim
-    <ubvector,mat_x_t,mat_x_row_t,
-     mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
+    interpm_krige_new_optim
+    <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+     mat_x_row_t,mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
 
+    /// Desc
+    std::vector<mcovar_new_funct_rbf_noise> mfrn;
+    
     /** \brief Create an emulator
      */
     emulator_interpm_krige_table() {
@@ -201,22 +209,88 @@ namespace o2scl {
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
              table<> &t, std::vector<std::string> list) {
 
+      if (ix_log_wgt>list.size()-np) {
+        O2SCL_ERR2("Index of log_wgt is too large in ",
+                   "emulator_interpm_idw_table::set().",o2scl::exc_einval);
+      }
+
+      iko.full_min=true;
+      
+      std::cout << "0." << std::endl;
+      
+      mfrn.resize(n_out);
+      
       ix=ix_log_wgt;
+
+      std::vector<std::vector<std::vector<double>>> param_lists;
 
       std::vector<std::string> col_list_x;
       std::vector<std::string> col_list_y;
+
+      std::cout << "1." << std::endl;
       
       for(size_t j=0;j<list.size();j++) {
         if (j<np) col_list_x.push_back(list[j]);
         else col_list_y.push_back(list[j]);
       }
+        
+      std::cout << "2." << std::endl;
       
       matrix_view_table<> mvt_x;
       matrix_view_table_transpose<> mvt_y;
-    
+      
       mvt_x.set(t,col_list_x);
       mvt_y.set(t,col_list_y);
       
+      std::cout << "x: " << mvt_x.size1() << " " << mvt_x.size2() << std::endl;
+      std::cout << "y: " << mvt_y.size1() << " " << mvt_y.size2() << std::endl;
+
+      std::vector<std::vector<double>> ptemp;
+      
+      for(size_t j=0;j<np;j++) {
+
+        std::cout << "A: " << j << std::endl;
+        
+        const_matrix_column_gen<mat_x_t> xj(mvt_x,j);
+        std::cout << "A: " << j << std::endl;
+        std::vector<double> xj_sort(t.get_nlines());
+        std::cout << "B: " << j << std::endl;
+        vector_copy(t.get_nlines(),xj,xj_sort);
+        std::cout << "A: " << j << std::endl;
+        vector_sort_double(t.get_nlines(),xj_sort);
+        std::cout << "A: " << j << std::endl;
+        
+        std::vector<double> diffs;
+        std::cout << "C: " << j << std::endl;
+        o2scl::vector_diffs<std::vector<double>,std::vector<double>>
+          (xj_sort,diffs);
+        std::cout << "A: " << j << std::endl;
+        std::cout << "Y: " << diffs.size() << std::endl;
+        double min=vector_min_value<std::vector<double>,double>
+          (diffs.size(),diffs);
+        double max=vector_max_value<std::vector<double>,double>
+          (diffs.size(),diffs);
+        std::cout << "min,max: " << min << " " << max << std::endl;
+        
+        std::vector<double> len_list={min/10.0,max*10.0};
+        ptemp.push_back(len_list);
+      }
+
+      for(size_t iout=0;iout<n_out;iout++) {
+        std::cout << "J: " << iout << std::endl;
+
+        std::vector<double> l10_list={-15,-13,-11,-9};
+        
+        mfrn[iout].len.resize(np);
+        
+        std::vector<std::vector<double>> ptemp2=ptemp;
+        
+        ptemp2.push_back(l10_list);
+        param_lists.push_back(ptemp2);
+        
+      }
+
+      iko.set_covar(mfrn,param_lists);
       iko.set_data(np,n_out,t.get_nlines(),mvt_x,mvt_y,true);
 
       return;

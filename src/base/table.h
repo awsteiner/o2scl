@@ -3824,14 +3824,14 @@ namespace o2scl {
   
     /** \brief Return the number of rows
      */
-    size_t size1() {
+    size_t size1() const {
       if (nlines==0) return 0;
       return nr;
     }
   
     /** \brief Return the number of columns
      */
-    size_t size2() {
+    size_t size2() const {
       return nlines;
     }
   

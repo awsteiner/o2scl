@@ -1308,8 +1308,7 @@ namespace o2scl {
     }
     
     /// Set the parameters
-    template<class vec_t>
-    void set_params(vec_t &p) {
+    template<class vec_t> void set_params(vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
       }
@@ -1450,7 +1449,7 @@ namespace o2scl {
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t>,
-           class vec_vec_t=std::vector<std::vector<double>> >
+           class vec3_t=std::vector<std::vector<std::vector<double>>> >
   class interpm_krige_new_optim {
 
   public:
@@ -1458,8 +1457,8 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef interpm_krige_new_optim<func_vec_t,vec_t,mat_x_t,mat_x_row_t, 
-                                mat_y_t,mat_y_row_t,mat_inv_kxx_t,
-                                mat_inv_t,vec_vec_t> class_t;
+                                    mat_y_t,mat_y_row_t,mat_inv_kxx_t,
+                                    mat_inv_t,vec3_t> class_t;
     
   protected:
 
@@ -1476,7 +1475,7 @@ namespace o2scl {
     mat_inv_t mi;
 
     /// List of parameter values to try
-    vec_vec_t plists;
+    vec3_t plists;
   
      /// The quality factor of the optimization for each output function
     std::vector<double> qual;
@@ -1800,6 +1799,7 @@ namespace o2scl {
       mode=mode_loo_cv;
       loo_npts=100;
       timing=false;
+      keep_matrix=true;
     }
 
     virtual ~interpm_krige_new_optim() {
@@ -1829,7 +1829,7 @@ namespace o2scl {
   
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(func_vec_t &covar, vec_vec_t &param_lists) {
+    int set_covar(func_vec_t &covar, vec3_t &param_lists) {
       cf=&covar;
       plists=param_lists;
       return 0;
@@ -1954,14 +1954,14 @@ namespace o2scl {
           // Create the simplex
           ubmatrix sx(np_covar+1,np_covar);
           for(size_t j=0;j<np_covar;j++) {
-            sx(0,j)=plists[j][plists[j].size()/2];
+            sx(0,j)=plists[iout][j][plists[iout][j].size()/2];
           }
           for(size_t i=0;i<np_covar;i++) {
             for(size_t j=0;j<np_covar;j++) {
               if (i==j) {
-                sx(i+1,j)=plists[j][plists[j].size()-1];
+                sx(i+1,j)=plists[iout][j][plists[iout][j].size()-1];
               } else {
-                sx(i+1,j)=plists[j][0];
+                sx(i+1,j)=plists[iout][j][0];
               } 
             }
           }
@@ -2012,9 +2012,9 @@ namespace o2scl {
             std::cout << "interpm_krige_new_optim::set_data_internal() : "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
-            for(size_t jk=0;jk<plists.size();jk++) {
+            for(size_t jk=0;jk<plists[iout].size();jk++) {
               std::cout << jk << " ";
-              o2scl::vector_out(std::cout,plists[jk],true);
+              o2scl::vector_out(std::cout,plists[iout][jk],true);
             }
           }
           std::vector<size_t> index_list(np_covar);
@@ -2023,7 +2023,7 @@ namespace o2scl {
           while (done==false) {
             
             for(size_t i=0;i<np_covar;i++) {
-              params[i]=plists[i][index_list[i]];
+              params[i]=plists[iout][i][index_list[i]];
             }
             (*cf)[iout].set_params(params);
             
@@ -2050,7 +2050,7 @@ namespace o2scl {
             
             index_list[0]++;
             for(size_t k=0;k<np_covar;k++) {
-              if (index_list[k]==plists[k].size()) {
+              if (index_list[k]==plists[iout][k].size()) {
                 if (k==np_covar-1) {
                   done=true;
                 } else {
@@ -2098,8 +2098,8 @@ namespace o2scl {
     /** \brief Given input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec3_t>
-    void eval(const vec2_t &x0, vec3_t &y0) {
+    template<class vec2_t, class vec4_t>
+    void eval(const vec2_t &x0, vec4_t &y0) {
 
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
@@ -2126,8 +2126,8 @@ namespace o2scl {
     /** \brief Return the interpolation uncertainty from the 
         Gaussian process
     */
-    template<class vec2_t, class vec3_t>
-    void sigma(const vec2_t &x0, vec3_t &dy0) {
+    template<class vec2_t, class vec4_t>
+    void sigma(const vec2_t &x0, vec4_t &dy0) {
 
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::sigma_covar().",
@@ -2140,13 +2140,14 @@ namespace o2scl {
       
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
-        double kx0x0=f3(iout,x0,x0);
+        
+        double kx0x0=(*cf)[iout](x0,x0);
         
         vec_t kxx0(np), prod(np);
         
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          kxx0[ipoints]=f2(iout,xrow,x0);
+          kxx0[ipoints]=(*cf)[iout](xrow,x0);
         }
         
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
@@ -2165,15 +2166,15 @@ namespace o2scl {
     /** \brief Given input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec3_t>
-    void deriv(const vec2_t &x0, vec3_t &y0, size_t ix) {
+    template<class vec2_t, class vec4_t>
+    void deriv(const vec2_t &x0, vec4_t &y0, size_t ix) {
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<this->nd_out;iout++) {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<this->np;ipoints++) {
           mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=cf[iout].deriv(xrow,x0,ix);
+          double covar_val=(*cf)[iout].deriv(xrow,x0,ix);
           y0[iout]-=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {
@@ -2187,15 +2188,15 @@ namespace o2scl {
     /** \brief Given input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec3_t>
-    void deriv2(const vec2_t &x0, vec3_t &y0, size_t ix, size_t iy) {
+    template<class vec2_t, class vec4_t>
+    void deriv2(const vec2_t &x0, vec4_t &y0, size_t ix, size_t iy) {
 
       // Evaluate the interpolated result
       for(size_t iout=0;iout<this->nd_out;iout++) {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<this->np;ipoints++) {
           mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=cf[iout].deriv2(xrow,x0,ix,iy);
+          double covar_val=(*cf)[iout].deriv2(xrow,x0,ix,iy);
           y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {

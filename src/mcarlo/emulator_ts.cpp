@@ -65,35 +65,27 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   vector<string> col_list={"x","y","z"};
-    
+
   if (true) {
     
     table<> tab;
     generate_table(tab);
 
     emulator_interpm_idw_table<> em1;
-    em1.set(2,1,2,tab,col_list);
+    em1.set(2,1,0,tab,col_list);
     
-    if (false) {
-      for(size_t j=0;j<20;j++) {
-        
-        ubvector p(2);
-        p[0]=1.0;
-        p[1]=2.0;
-        double z;
-        double dz;
-        ubvector dat(1), datu(1);
-        em1.eval_unc(2,p,z,dz,dat,datu);
-        cout << z << " " << dz << endl;
-        exit(-1);
-        //em1.eval_unc(
-        //virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
-        //double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
-        
-      }
+    for(size_t j=0;j<20;j++) {
+      
+      ubvector p(2);
+      p[0]=1.0+sin(j*4);
+      p[1]=2.0+sin(j*5);
+      double z;
+      double dz;
+      ubvector dat(1), datu(1);
+      em1.eval_unc(2,p,z,dz,dat,datu);
+      cout << z << " " << dz << endl;
+      
     }
     
   }
@@ -103,32 +95,24 @@ int main(void) {
     table<> tab;
     generate_table(tab);
 
+    cout << "X." << endl;
     emulator_interpm_krige_table<> em2;
-    em2.set(2,1,2,tab,col_list);
+    em2.set(2,1,0,tab,col_list);
     
-    if (false) {
-      for(size_t j=0;j<20;j++) {
-        
-        ubvector p(2);
-        p[0]=1.0;
-        p[1]=2.0;
-        double z;
-        double dz;
-        ubvector dat(1), datu(1);
-        em2.eval_unc(2,p,z,dz,dat,datu);
-        cout << z << " " << dz << endl;
-        exit(-1);
-        //em1.eval_unc(
-        //virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
-        //double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
-        
-      }
+    for(size_t j=0;j<20;j++) {
+      
+      ubvector p(2);
+      p[0]=1.0;
+      p[1]=2.0;
+      double z;
+      double dz;
+      ubvector dat(1), datu(1);
+      em2.eval_unc(2,p,z,dz,dat,datu);
+      
     }
     
   }
 
-#endif
-  
   t.report();
   return 0;
 }
