@@ -1446,7 +1446,7 @@ namespace o2scl {
       section of the User's guide. 
       \endverbatim
   */
-  template<class func_t, class vec_t, class mat_x_t, class mat_x_row_t, 
+  template<class func_vec_t, class vec_t, class mat_x_t, class mat_x_row_t, 
            class mat_y_t, class mat_y_row_t, class mat_inv_kxx_t,
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t>,
@@ -1457,7 +1457,7 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef interpm_krige_new_optim<func_t,vec_t,mat_x_t,mat_x_row_t, 
+    typedef interpm_krige_new_optim<func_vec_t,vec_t,mat_x_t,mat_x_row_t, 
                                 mat_y_t,mat_y_row_t,mat_inv_kxx_t,
                                 mat_inv_t,vec_vec_t> class_t;
     
@@ -1516,7 +1516,7 @@ namespace o2scl {
     mmin_simp2<> def_mmin;
 
     /// Pointer to the covariance function
-    std::vector<func_t> cf;
+    func_vec_t *cf;
     
     /** \brief Function to optimize the covariance parameters
      */
@@ -1558,7 +1558,7 @@ namespace o2scl {
               if (irow2>icol2) {
                 inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
               } else {
-                inv_KXX2(irow,icol)=cf[iout](xrow,xcol);
+                inv_KXX2(irow,icol)=(*cf)[iout](xrow,xcol);
               }
             }
           }
@@ -1584,7 +1584,7 @@ namespace o2scl {
             size_t i2=i;
             if (i>=k) i2++;        
             mat_x_row_t xi2(this->x,i2);
-            kxx0[i]=cf[iout](xi2,xk);
+            kxx0[i]=(*cf)[iout](xi2,xk);
             ypred+=kxx0[i]*Kinvf2[i];
           }
 
@@ -1607,7 +1607,7 @@ namespace o2scl {
             if (irow>icol) {
               this->inv_KXX[iout](irow,icol)=this->inv_KXX[iout](icol,irow);
             } else {
-              this->inv_KXX[iout](irow,icol)=cf[iout](xrow,xcol);
+              this->inv_KXX[iout](irow,icol)=(*cf)[iout](xrow,xcol);
             }
           }
         }
@@ -1700,7 +1700,7 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=cf[iout](xrow,xcol);
+              KXX(irow,icol)=(*cf)[iout](xrow,xcol);
             }
           }
         }
@@ -1781,7 +1781,7 @@ namespace o2scl {
     /** \brief Minimization function for the covariance parameters
      */
     double min_fun(size_t iout, size_t n, const ubvector &v, double max_val) {
-      cf[iout].set_params(v);
+      (*cf)[iout].set_params(v);
       int success;
       double ret=qual_fun(iout,success);
       if (success!=0) {
@@ -1829,8 +1829,8 @@ namespace o2scl {
   
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(vec_vec_t &param_lists) {
-      cf.resize(nd_out);
+    int set_covar(func_vec_t &covar, vec_vec_t &param_lists) {
+      cf=&covar;
       plists=param_lists;
       return 0;
     }
@@ -1946,7 +1946,7 @@ namespace o2scl {
         // Initialize to zero to prevent uninit'ed var. warnings
         double min_qual=0.0;
 
-        size_t np_covar=cf[iout].get_n_params();
+        size_t np_covar=(*cf)[iout].get_n_params();
         std::vector<double> params(np_covar), min_params(np_covar);
         
         if (full_min) {
@@ -1973,7 +1973,7 @@ namespace o2scl {
             for(size_t j=0;j<np_covar;j++) {
               params[j]=sx(i,j);
             }
-            cf[iout].set_params(params);
+            (*cf)[iout].set_params(params);
             double qtmp=qual_fun(iout,success);
             if (success==0) {
               if (max_val_set==false || qtmp>max_val) {
@@ -2025,7 +2025,7 @@ namespace o2scl {
             for(size_t i=0;i<np_covar;i++) {
               params[i]=plists[i][index_list[i]];
             }
-            cf[iout].set_params(params);
+            (*cf)[iout].set_params(params);
             
             qual[iout]=qual_fun(iout,success);
             
@@ -2070,7 +2070,7 @@ namespace o2scl {
           std::cout.width(2);
           std::cout << "   " << min_qual << std::endl;
         }
-        cf[iout].set_params(min_params);
+        (*cf)[iout].set_params(min_params);
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(iout,success);
@@ -2111,7 +2111,7 @@ namespace o2scl {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          double covar_val=cf[iout](xrow,x0);
+          double covar_val=(*cf)[iout](xrow,x0);
           y0[iout]+=covar_val*Kinvf[iout][ipoints];
         }
         if (rescaled) {

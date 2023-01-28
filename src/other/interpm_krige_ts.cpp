@@ -190,9 +190,12 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_new_optim, unscaled, loo_cv\n" << endl;
     
+    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    mfrn[0].len.resize(2);
+    
     interpm_krige_new_optim
-      <mcovar_new_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
+      <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+       mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix,
        o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
        std::vector<std::vector<double>> > iko;
     iko.mode=iko.mode_loo_cv;
@@ -215,8 +218,7 @@ int main(void) {
     param_lists.push_back(len_list);
     param_lists.push_back(l10_list);
     
-    iko.set_covar(param_lists);
-    iko.cf[0].len.resize(2);
+    iko.set_covar(mfrn,param_lists);
 
     iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
