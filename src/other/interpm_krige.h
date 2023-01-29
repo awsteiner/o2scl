@@ -1046,6 +1046,12 @@ namespace o2scl {
 
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
+
+        if (verbose>0) {
+          std::cout << "interpm_krige_optim::set_data_internal(): "
+                    << "Output " << iout+1 << " of " << n_out
+                    << std::endl;
+        }
         
         if (timing) {
           t4=time(0);
@@ -1074,6 +1080,14 @@ namespace o2scl {
             }
           }
 
+          if (verbose>0) {
+            std::cout << "interpm_krige_optim::set_data_internal() : "
+                      << "full minimization with " << np_covar
+                      << " parameters." << std::endl;
+            std::cout << "Simplex:" << std::endl;
+            matrix_out(std::cout,np_covar+1,np_covar,sx);
+          }
+          
           // Construct a maximum value to use if qual_fun() fails
           double max_val=0.0;
           bool max_val_set=false;
@@ -1116,7 +1130,7 @@ namespace o2scl {
           
           bool min_set=false, done=false;
           
-          if (verbose>1) {
+          if (verbose>0) {
             std::cout << "interpm_krige_optim::set_data_internal() : "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
@@ -1939,6 +1953,12 @@ namespace o2scl {
       // Loop over all output functions
       for(size_t iout=0;iout<n_out;iout++) {
         
+        if (verbose>0) {
+          std::cout << "interpm_krige_optim::set_data_internal(): "
+                    << "Output " << iout+1 << " of " << n_out
+                    << std::endl;
+        }
+        
         if (timing) {
           t4=time(0);
         }
@@ -1966,6 +1986,14 @@ namespace o2scl {
             }
           }
 
+          if (verbose>0) {
+            std::cout << "interpm_krige_new_optim::set_data_internal(): "
+                      << "full minimization with\n  " << np_covar
+                      << " parameters." << std::endl;
+            std::cout << "  Simplex:" << std::endl;
+            matrix_out(std::cout,np_covar+1,np_covar,sx,"  ");
+          }
+          
           // Construct a maximum value to use if qual_fun() fails
           double max_val=0.0;
           bool max_val_set=false;
@@ -1981,8 +2009,6 @@ namespace o2scl {
                 max_val_set=true;
               }
             }
-            //std::cout << "H: " << success << " "
-            //<< qtmp << " " << max_val << std::endl;
           }
           if (max_val_set==false) {
             O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
