@@ -63,26 +63,25 @@ class emu_py:
         self.gpr=GaussianProcessRegressor(kernel=kernel).fit(x,y)
         print('done fit')
 
-        v=[2,3]
+        v=[1,2]
 
         x2=numpy.array(v).reshape(1,-1)
         print('a',x2,self.gpr)
         yp=self.gpr.predict(x2)
         print('b',yp)
+        print('xx',self.gpr.get_params(deep=True))
         
         return
 
     def point(self,v):
         print('v',v)
-        print('v2',numpy.array(v))
-        print('v3',numpy.array(v).reshape(1,-1))
-
-        x2=numpy.array(v).reshape(1,-1)
-        print('a',x2)
-        print('a2',self.gpr)
-        yp=self.gpr.predict(x2)
-        print('b',yp)
-
+        v2=[v[i] for i in range(0,2)]
+        print('x')
+        print('z')
+        print('xx',self.gpr.get_params(deep=True))
+        print('z')
+        yp=self.gpr.predict([v2])
+        print('x2')
         print('yp',yp[0])
         
         return yp[0]
