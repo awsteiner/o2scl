@@ -340,7 +340,7 @@ namespace o2scl {
     /// The number of parameters
     size_t num_param;
 
-    /// The number of output data points
+    /// The number of output data points (not including log_wgt)
     size_t num_out;
 
     /// If true, then the emulator provides uncertainties (default true)
@@ -372,14 +372,22 @@ namespace o2scl {
       if (p_modname!=0) {
         if (verbose>0) {
           std::cout << "Executing decrefs." << std::endl;
+          std::cout << "p_modname " << p_modname << std::endl;
         }
-        Py_DECREF(p_modname);
-        Py_DECREF(p_module);
-        Py_DECREF(p_class);
-        Py_DECREF(p_instance);
-        Py_DECREF(p_point_func);
-        Py_DECREF(p_np);
-        Py_DECREF(p_ix);
+        Py_XDECREF(p_modname);
+        if (verbose>0) std::cout << "p_module." << p_module << std::endl;
+        Py_XDECREF(p_module);
+        if (verbose>0) std::cout << "p_class " << p_class << std::endl;
+        Py_XDECREF(p_class);
+        if (verbose>0) std::cout << "p_instance " << p_instance << std::endl;
+        Py_XDECREF(p_instance);
+        if (verbose>0) std::cout << "p_point_func "
+                                 << p_point_func << std::endl;
+        Py_XDECREF(p_point_func);
+        if (verbose>0) std::cout << "p_np " << p_np << std::endl;
+        Py_XDECREF(p_np);
+        if (verbose>0) std::cout << "p_ix " << p_ix << std::endl;
+        Py_XDECREF(p_ix);
         p_modname=0;
         p_module=0;
         p_class=0;
@@ -387,6 +395,9 @@ namespace o2scl {
         p_point_func=0;
         p_np=0;
         p_ix=0;
+        if (verbose>0) {
+          std::cout << "Finished decrefs." << std::endl;
+        }
       }
       return;
     }
@@ -395,7 +406,9 @@ namespace o2scl {
     int verbose;
     
     virtual ~emulator_python() {
+      std::cout << "H0." << std::endl;
       decref();
+      std::cout << "Hm1." << std::endl;
     }
     
     /** \brief Set the emulator
@@ -412,18 +425,27 @@ namespace o2scl {
              size_t ix_log_wgt, std::vector<std::string> list,
              bool has_uncerts=true) {
       
+      std::cout << "x1" << std::endl;
       decref();
+      std::cout << "x2" << std::endl;
 
       ix=ix_log_wgt;
       
       int ret;
       
-      if (verbose>0) {
-        std::cout << "Bookkeeping." << std::endl;
-      }
       num_param=np;
-      num_out=list.size()-np-1;
+      num_out=list.size()-np;
       has_unc=has_uncerts;
+      if (verbose>0) {
+        std::cout << "emulator_python::set():" << std::endl;
+        std::cout << "  " << np << " parameters." << std::endl;
+        std::cout << "  " << num_out << " output quantities." << std::endl;
+        if (has_unc) {
+          std::cout << "  Uncertainties provided." << std::endl;
+        } else {
+          std::cout << "  Uncertainties not provided." << std::endl;
+        }
+      }
 
       if (verbose>0) {
         std::cout << "Getting module name in unicode." << std::endl;
@@ -604,12 +626,13 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Decref value and result." << std::endl;
       }
-      Py_DECREF(p_train_func);
-      Py_DECREF(p_file);
-      Py_DECREF(p_list);
-      Py_DECREF(p_args);
-      Py_DECREF(p_result);
-
+      
+      Py_XDECREF(p_train_func);
+      Py_XDECREF(p_file);
+      Py_XDECREF(p_list);
+      Py_XDECREF(p_args);
+      Py_XDECREF(p_result);
+      
       if (verbose>0) {
         std::cout << "Done in emulator_python::set()." << std::endl;
       }
@@ -659,7 +682,7 @@ namespace o2scl {
                      "emulator_python::eval_unc().",o2scl::exc_efailed);
         }
       }
-      
+
       PyObject *p_args=PyTuple_New(1);
       if (p_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
@@ -681,9 +704,13 @@ namespace o2scl {
         O2SCL_ERR2("Function call failed in ",
                    "emulator_python::eval_unc().",o2scl::exc_efailed);
       }
+
+      if (PyList_Check(p_result)==0) {
+        O2SCL_ERR2("Function call did not return a list ",
+                   "emulator_python::eval_unc().",o2scl::exc_efailed);
+      }
       
-      for(size_t i=0;i<num_out+1;i++) {
-        std::cout << "Hx: " << i << " " << num_out << std::endl;
+      for(size_t i=0;i<num_out;i++) {
         PyObject *p_y_val=PyList_GetItem(p_result,i);
         if (p_y_val==0) {
           O2SCL_ERR2("Failed to get y list value in ",
@@ -692,18 +719,18 @@ namespace o2scl {
         if (i==0) {
           log_wgt=PyFloat_AsDouble(p_y_val);
         } else {
-          dat[i-1]=PyFloat_AsDouble(p_y_val);
-          std::cout << "B: " << i << " " << dat[i-1] << std::endl;
+          dat[i]=PyFloat_AsDouble(p_y_val);
+          std::cout << "B: " << i << " " << dat[i] << std::endl;
         }
         if (verbose>0) {
           std::cout << "Decref yval " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_DECREF(p_y_val);
+        Py_XDECREF(p_y_val);
       }
 
       if (has_unc) {
-        size_t n2=num_out+1;
+        size_t n2=num_out;
         for(size_t i=n2;i<2*n2;i++) {
           PyObject *p_y_val=PyList_GetItem(p_result,i);
           if (p_y_val==0) {
@@ -719,7 +746,7 @@ namespace o2scl {
             std::cout << "Decref yval " << i << " of " << p_values.size()
                       << std::endl;
           }
-          Py_DECREF(p_y_val);
+          Py_XDECREF(p_y_val);
         }
       }
 
@@ -728,17 +755,17 @@ namespace o2scl {
           std::cout << "Decref value " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_DECREF(p_values[i]);
+        Py_XDECREF(p_values[i]);
       }
       if (verbose>0) {
         std::cout << "Decref list." << std::endl;
       }
-      Py_DECREF(p_list);
+      Py_XDECREF(p_list);
       
       if (verbose>0) {
         std::cout << "Decref result." << std::endl;
       }
-      Py_DECREF(p_result);
+      Py_XDECREF(p_result);
   
       return 0;
     }

@@ -61,107 +61,120 @@ void generate_table(table<> &tab, size_t N=100) {
 }
 
 int main(void) {
-  test_mgr t;
-  t.set_output_level(2);
-
-  cout.setf(ios::scientific);
-
-  vector<string> col_list={"x","y","z","d"};
 
   if (true) {
     
-    table<> tab;
-    generate_table(tab);
+    test_mgr t;
+    t.set_output_level(2);
 
-    emulator_interpm_idw_table<> em1;
-    em1.set(2,2,0,tab,col_list);
+    cout.setf(ios::scientific);
+
+    vector<string> col_list={"x","y","z","d"};
+
+    if (true) {
     
-    for(size_t j=0;j<20;j++) {
-      
-      ubvector p(2);
-      p[0]=1.0+sin(j*4);
-      p[1]=2.0+sin(j*5);
-      double z;
-      double dz;
-      ubvector dat(2), datu(2);
-      em1.eval_unc(2,p,z,dz,dat,datu);
-      cout << ft(p[0],p[1]) << " " << z << " ";
-      cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << " ";
-      cout << dat[0] << " " << dat[1] << endl;
-      
-    }
+      table<> tab;
+      generate_table(tab);
 
-    cout << endl;
-  }
+      emulator_interpm_idw_table<> em1;
+      em1.set(2,2,0,tab,col_list);
+    
+      for(size_t j=0;j<20;j++) {
+      
+        ubvector p(2);
+        p[0]=1.0+sin(j*4);
+        p[1]=2.0+sin(j*5);
+        double z;
+        double dz;
+        ubvector dat(2), datu(2);
+        em1.eval_unc(2,p,z,dz,dat,datu);
+        cout << ft(p[0],p[1]) << " " << z << " ";
+        cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << " ";
+        cout << dat[0] << " " << dat[1] << endl;
+      
+      }
+
+      cout << endl;
+    }
   
-  if (false) {
+    if (false) {
     
-    table<> tab;
-    generate_table(tab);
+      table<> tab;
+      generate_table(tab);
 
-    emulator_interpm_krige_table<> em2;
-    em2.iko.verbose=1;
-    em2.set(2,2,0,tab,col_list);
+      emulator_interpm_krige_table<> em2;
+      em2.iko.verbose=1;
+      em2.set(2,2,0,tab,col_list);
     
-    for(size_t j=0;j<20;j++) {
+      for(size_t j=0;j<20;j++) {
       
-      ubvector p(2);
-      p[0]=1.0+sin(j*4);
-      p[1]=2.0+sin(j*5);
-      double z;
-      double dz;
-      ubvector dat(2), datu(2);
-      em2.eval_unc(2,p,z,dz,dat,datu);
-      cout << ft(p[0],p[1]) << " " << z << " ";
-      cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << endl;
+        ubvector p(2);
+        p[0]=1.0+sin(j*4);
+        p[1]=2.0+sin(j*5);
+        double z;
+        double dz;
+        ubvector dat(2), datu(2);
+        em2.eval_unc(2,p,z,dz,dat,datu);
+        cout << ft(p[0],p[1]) << " " << z << " ";
+        cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << endl;
       
+      }
+    
+      cout << endl;
     }
-    
-    cout << endl;
-  }
 
 #ifdef O2SCL_PYTHON
   
-  if (true) {
+    if (true) {
     
-    o2scl_settings.py_init();
-    o2scl_settings.add_python_path("./");
+      o2scl_settings.py_init();
+      o2scl_settings.add_python_path("./");
   
-    table<> tab;
-    generate_table(tab);
+      table<> tab;
+      generate_table(tab);
 
-    hdf_file hf;
-    hf.open_or_create("emu_data.o2");
-    hdf_output(hf,tab,"tab");
-    hf.close();
+      hdf_file hf;
+      hf.open_or_create("emu_data.o2");
+      hdf_output(hf,tab,"tab");
+      hf.close();
 
-    std::cout << "H1." << std::endl;
-    emulator_python<ubvector,ubvector> em3;
-    std::cout << "H2." << std::endl;
-    em3.verbose=3;
-    em3.set("emu_sklearn","emu_py","train","point",2,
-            "emu_data.o2",0,col_list,false);
+      std::cout << "H1." << std::endl;
+      {
+        emulator_python<ubvector,ubvector> em3;
+        std::cout << "H2." << std::endl;
+        em3.verbose=3;
+        em3.set("emu_test","emu_py","train","point",2,
+                "emu_data.o2",0,col_list,false);
     
-    for(size_t j=0;j<20;j++) {
+        for(size_t j=0;j<10;j++) {
       
-      ubvector p(2);
-      p[0]=1.0+sin(j*4);
-      p[1]=2.0+sin(j*5);
-      double z;
-      double dz;
-      ubvector dat(1), datu(1);
-      em3.eval_unc(2,p,z,dz,dat,datu);
-      cout << ft(p[0],p[1]) << " " << z << " ";
-      cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << endl;
+          ubvector p(2);
+          p[0]=1.0+sin(j*4);
+          p[1]=2.0+sin(j*5);
+          double z;
+          double dz;
+          ubvector dat(2), datu(2);
+          //em3.eval_unc(2,p,z,dz,dat,datu);
+          cout << ft(p[0],p[1]) << " " << z << endl;
       
+        }
+
+        std::cout << "H4." << std::endl;
+      }
+      
+      std::cout << "H5." << std::endl;
+      o2scl_settings.py_final();
+      std::cout << "H6." << std::endl;
+      cout << endl;
     }
-    
-    cout << endl;
-  }
 
 #endif
   
-  t.report();
+    t.report();
+
+  }
+  
+  std::cout << "H3." << std::endl;
   
   return 0;
 }

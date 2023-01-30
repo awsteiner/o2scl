@@ -2,18 +2,26 @@ import numpy
 import sklearn
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
+import gc
 
 class emu_py:
 
     link=0
     gpr=0
+
+    def __init__(self):
+        print('init')
+        gc.disable()
     
     def train(self,num_params,filename,ix_log_wgt,col_list,verbose):
-        print('num_params:',num_params)
-        print('filename:',filename)
-        print('ix_log_wgt:',ix_log_wgt)
-        print('col_list:',col_list)
-        print('verbose:',num_params)
+
+        if verbose>0:
+            print('num_params:',num_params)
+            print('filename:',filename)
+            print('ix_log_wgt:',ix_log_wgt)
+            print('col_list:',col_list)
+            print('verbose:',num_params)
+        return
 
         col_list2=col_list.split(',')
         lw_col=col_list2[0]
@@ -30,7 +38,8 @@ class emu_py:
         print('param_list:',param_list)
         print('data_list:',data_list)
             
-        if False:
+        if True:
+            
             import o2sclpy
             
             self.link=o2sclpy.linker()
@@ -70,43 +79,28 @@ class emu_py:
             for i in range(0,tfile['tab/nlines'][0]):
                 for j in range(0,num_params):
                     x[i,j]=tfile['tab/data/'+param_list[j]][i]
-            print('set x')
+            print('set x2')
                     
             y=numpy.zeros((tfile['tab/nlines'][0],len(data_list)))
             for i in range(0,tfile['tab/nlines'][0]):
                 for j in range(0,len(data_list)):
                     y[i,j]=tfile['tab/data/'+data_list[j]][i]
-            print('set y')
+            print('set y2')
             
         # Perform the GP fit
         kernel=RBF(1.0,(1.0e0,1.0e2))
-        print('start fit')
         self.gpr=GaussianProcessRegressor(kernel=kernel).fit(x,y)
-        print('done fit')
-
-        v=[1,2]
-
-        x2=numpy.array(v).reshape(1,-1)
-        print('a',x2,self.gpr)
-        yp=self.gpr.predict(x2)
-        print('b',yp)
-        print('xx',self.gpr.get_params(deep=True))
         
         return
 
     def point(self,v):
-        print('v',v)
-        v2=[v[i] for i in range(0,2)]
-        print('x')
-        print('z')
-        print('xx',self.gpr.get_params(deep=True))
-        print('z')
-        yp=self.gpr.predict([v2])
-        print('x2')
-        print('yp',yp[0])
-        
-        return yp[0]
+        yp=self.gpr.predict([v])
+        return yp[0].tolist()
 
+    def __del__(self):
+        print('del')
+        gc.enable()
+        
 if __name__ == '__main__':
     epy=emu_py();
     epy.train(2,'emu_data.o2',0,'z,x,y,d',1)
