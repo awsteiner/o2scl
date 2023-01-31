@@ -1,2 +1,4 @@
 mcmc*_scr
 mcmc*_out
+
+__pycache__

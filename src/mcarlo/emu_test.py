@@ -1,7 +1,7 @@
 import numpy
-import sklearn
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF
+#import sklearn
+#from sklearn.gaussian_process import GaussianProcessRegressor
+#from sklearn.gaussian_process.kernels import RBF
 import gc
 
 class emu_py:

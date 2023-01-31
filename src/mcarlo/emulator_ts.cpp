@@ -62,13 +62,13 @@ void generate_table(table<> &tab, size_t N=100) {
 
 int main(void) {
 
+  test_mgr t;
+  t.set_output_level(2);
+  
+  cout.setf(ios::scientific);
+  
   if (true) {
     
-    test_mgr t;
-    t.set_output_level(2);
-
-    cout.setf(ios::scientific);
-
     vector<string> col_list={"x","y","z","d"};
 
     if (true) {
@@ -123,6 +123,7 @@ int main(void) {
       cout << endl;
     }
 
+#ifdef O2SCL_NEVER_DEFINED
 #ifdef O2SCL_PYTHON
   
     if (true) {
@@ -169,13 +170,12 @@ int main(void) {
     }
 
 #endif
+#endif
   
-    t.report();
-
   }
   
-  std::cout << "H3." << std::endl;
-  
+  t.report();
+
   return 0;
 }
 
