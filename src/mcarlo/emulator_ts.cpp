@@ -91,20 +91,23 @@ int main(void) {
         cout << ft(p[0],p[1]) << " " << z << " ";
         cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << " ";
         cout << dat[0] << " " << dat[1] << endl;
+        t.test_abs(dz,0.0,10.0,"dz idw");
       
       }
 
       cout << endl;
     }
   
-    if (false) {
+    if (true) {
     
       table<> tab;
       generate_table(tab);
 
+      vector<string> col_list2={"x","y","z"};
+      
       emulator_interpm_krige_table<> em2;
       em2.iko.verbose=1;
-      em2.set(2,2,0,tab,col_list);
+      em2.set(2,1,0,tab,col_list2);
     
       for(size_t j=0;j<20;j++) {
       
@@ -113,10 +116,11 @@ int main(void) {
         p[1]=2.0+sin(j*5);
         double z;
         double dz;
-        ubvector dat(2), datu(2);
+        ubvector dat(1), datu(1);
         em2.eval_unc(2,p,z,dz,dat,datu);
         cout << ft(p[0],p[1]) << " " << z << " ";
         cout << dz << " " << fabs(ft(p[0],p[1])-z)/dz << endl;
+        t.test_abs(dz,0.0,1.0e-3,"dz krige");
       
       }
     
