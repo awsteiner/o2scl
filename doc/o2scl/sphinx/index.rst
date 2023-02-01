@@ -78,6 +78,7 @@ User's Guide
    eos_quarks
    eos_beta
    eos_tov
+   tov_solve
    eos_momi
    eos_tidal
    eos_cnstar

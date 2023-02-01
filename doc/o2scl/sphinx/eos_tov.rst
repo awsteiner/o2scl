@@ -1,188 +1,80 @@
-Solution of the Tolman-Oppenheimer-Volkov Equations
-===================================================
+Equations of State for the TOV equations
+========================================
 
 :ref:`O2scl <o2scl>`
+
+From pressure and energy density
+--------------------------------
      
-The class :ref:`tov_solve <tov_solve>` provides a solution to the
-Tolman-Oppenheimer-Volkov (TOV) equations given an equation of state
-(EOS), provided as an object of type :ref:`eos_tov <eos_tov>`. These
-classes are particularly useful for static neutron star structure:
-given any equation of state one can calculate the mass vs. radius
-curve and the properties of any star of a given mass.
-
-The EOS can be specified as an object of type :ref:`eos_tov
-<eos_tov>`. The documentation of this parent class contains more
-information. The class :ref:`eos_tov_interp <eos_tov_interp>` is used
-most frequently. It uses linear interpolation to interpolate a
-user-specified :ref:`table <table>` object. A faster lower-level EOS
-interpolation is performed by :ref:`eos_tov_vectors
-<eos_tov_vectors>`. The Buchdahl EOS is given in
-:ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is
-given in :ref:`eos_tov_polytrope <eos_tov_polytrope>`, a linear
-EOS is given in :ref:`eos_tov_linear <eos_tov_linear>`, and an
-EOS with a polynomial form for the speed of sound is given
-in :ref:`eos_cs2_poly <eos_cs2_poly>`
-
-In units where :math:`c=1`, the most general static and 
-spherically symmetric metric is of the form
+Given a relationship between pressure and energy density in
+beta-equilibrium, one can obtain the baryon density and the baryon
+chemical potential up to a constant. To see this, start with the
+thermodynamic identity
 
 .. math::
 
-   ds^2 = - e^{2 \Phi(r)} d t^2 + e^{2 \Lambda(r)} d r^2 + 
-   r^2 d \theta^2 + r^2 \sin^2 \theta~d \phi^2
+   P + \varepsilon = \mu_B n_B = n_B \left(\frac{\partial
+   \varepsilon}{\partial n_B}\right)
 
-where :math:`\theta` is the polar angle and :math:`\phi`
-is the azimuthal angle. Often we will not write explicitly
-the radial dependence for many of the quantities defined
-below, i.e. :math:`\Phi \equiv \Phi(r)`.
-
-This leads to the TOV equation (i.e. Einstein's
-equations for a static and spherically symmetric star)
+Then, expressing the pressure in terms of the energy density
 
 .. math::
 
-  \frac{d P}{d r} = - \frac{G \varepsilon m}{r^2}
-  \left( 1+\frac{P}{\varepsilon}\right)
-  \left( 1+\frac{4 \pi P r^3}{m} \right)
-  \left( 1-\frac{2 G m}{r}\right)^{-1}
+   \frac{d \varepsilon}{P(\varepsilon)+\varepsilon} =
+   \frac{d n_B}{n_B}
 
-where :math:`r` is the radial coordinate, :math:`m(r)` is the
-gravitational mass enclosed within a radius :math:`r`, and
-:math:`\varepsilon(r)` and :math:`P(r)` are the energy density and
-pressure at :math:`r`, and :math:`G` is the gravitational constant.
-The mass enclosed, :math:`m(r)`, is related to the energy density
-through
+Now we integrate, to get
 
 .. math::
+
+   \int \frac{d \varepsilon}{P(\varepsilon)+\varepsilon} =
+   \ln n_B + C
+
+where :math:`C` is an undetermined constant. If we create a
+new integration variable for the energy density and
+presume that :math:`\varepsilon_1 \equiv \varepsilon(n_B = n_{B,1})`,
+then we can fix :math:`C`
+
+.. math::
+
+   \int_{\varepsilon_1}^{\varepsilon}
+   \frac{d \tilde{\varepsilon}}{P(\tilde{\varepsilon})+\tilde{\varepsilon}} =
+   \ln n_B - \ln n_{B,1}
+
+Going back to the original thermodynamic identity, we can also
+write
+
+.. math::
+
+   P + \varepsilon = \mu_B \left( \frac{\partial
+   P}{\partial \mu_B}\right)
+
+to obtain (similar to the method above)
+
+.. math::
+
+   \int \frac{d P}{\varepsilon(P)+P} =
+   \ln \mu_B + C
+
+and thus if :math:`P_1=P(\mu_B=\mu_{B,1})`:
+
+.. math::
+
+   \int_{P_1}^{P}
+   \frac{d \tilde{P}}{\varepsilon(\tilde{P})+\tilde{P}} =
+   \ln \mu_B - \ln \mu_{B,1}
+
+At low densities, if one assumes the low-density equation of state
+made of an ideal gas of nuclei, then at :math:`P=0`, :math:`\mu_{B}` is
+about 931 MeV (approximately the atomic mass unit, :math:`m_u`). Then
+we get
+
+.. math::
+
+   \int_{0}^{P}
+   \frac{d \tilde{P}}{\varepsilon(\tilde{P})+\tilde{P}} =
+   \ln \mu_B - \ln m_u
+
+
    
-   \frac{d m}{d r} = 4 \pi r^2 \varepsilon
-
-and these two differential equations can be solved simultaneously
-given an equation of state, :math:`P(\varepsilon)`.
-The total gravitational mass is given by
-
-.. math::
    
-   M = \int_0^R 4 \pi r^2 \varepsilon d r
-
-The boundary conditions are :math:`m(r=0)=0` and the condition
-:math:`P(r=R)=0` for some fixed radius :math:`R`. These boundary
-conditions give a one-dimensional family solutions to the TOV
-equations as a function of the central pressure. Each central
-pressure implies a gravitational mass, :math:`M`, and radius,
-:math:`R`, and thus defines a mass-radius curve.
-
-The metric function :math:`\Lambda` is
-
-.. math::
-
-   e^{2 \Lambda} = \left( 1-\frac{2 G m}{r}\right)^{-1}
-
-The other metric function, :math:`\Phi(r)` is sometimes referred
-to as the gravitational potential. In vacuum above the star, it is
-
-.. math::
-
-   e^{2 \Phi} = \left( 1-\frac{2 G M}{r}\right)
-
-and inside the star it is determined by
-
-.. math::
-   
-   \frac{d \Phi}{d r} = - \frac{1}{\varepsilon}
-   \frac{ d P}{d r} \left(1+\frac{P}{\varepsilon}\right)^{-1} =
-   \frac{G m}{r^2} \left( 1+\frac{4 \pi P r^3}{m} \right)
-   \left( 1-\frac{2 G m}{r}\right)^{-1}
-
-Alternatively, that this can be rewritten as
-
-.. math::
-
-   -d \Phi = \frac{d P}{P+\varepsilon} \, .
-
-In this form, :math:`\Phi` has no explicit dependence on :math:`r`
-so it can be computed (up to a constant) directly from the 
-EOS.
-
-If the neutron star is at zero temperature and there is
-only one conserved charge, (i.e. baryon number), then
-
-.. math::
-   
-   -d \Phi = \frac{d P}{\mu n} = \frac{d \mu}{\mu}
-
-and this implies that :math:`\mu e^{\Phi}` is everywhere
-constant in the star. If one defines the
-"enthalpy" by
-
-.. math::
-   
-   d h = \frac{dP}{P + \varepsilon} 
-
-then
-
-.. math::
-   
-   -d \Phi = dh
-
-and thus :math:`\mu \propto e^{h}` or :math:`h = \ln \mu + C`.
-This is the enthalpy used by the :ref:`nstar_rot <nstar_rot>` class.
-
-Keep in mind that this enthalpy is determined by integrating
-the quantities in the stellar profile (which may be, for example,
-in beta-equilibrium). Thus, 
-this is not equal the usual thermodynamic enthalpy which is
-
-.. math::
-   
-   H(P,S,N) = E + P V = T S + \sum_i \mu_i N_i
-
-or in differential form
-
-.. math::
-
-   d H = T dS + V dP + \sum_i \mu_i d N_i \, .
-
-The proper boundary condition for the gravitational potential
-is
-
-.. math::
-   
-   \Phi(r=R) = \frac{1}{2} \ln \left(1-\frac{2 G M}{R} \right)
-
-which ensures that :math:`\Phi(r)` matches the metric
-above in vacuum. Since the expression for :math:`d\Phi/dr`
-is independent of :math:`\Phi`, the differential equation
-can be solved for an arbitrary value of :math:`\Phi(r=0)`
-and then shifted afterwards to obtain the correct
-boundary condition at :math:`r=R` .
-
-The surface gravity is defined to be
-
-.. math::
-
-   g = \frac{G m}{r^2}\left(1-\frac{2 G m}{r}\right)^{-1/2}
-
-which is computed in units of inverse
-kilometers, and the redshift is defined to be
-
-.. math::
-
-   z = \left(1-\frac{2 G m}{r}\right)^{-1/2} - 1
-
-which is unitless.
-
-The baryonic mass is typically defined by
-
-.. math::
-   
-   M_B = \int_0^R 4 \pi r^2 n_B m_B 
-   \left(1-\frac{2 G m}{r}\right)^{-1/2} d r
-
-where :math:`n_B(r)` is the baryon number density at radius :math:`r`
-and :math:`m_B` is the mass one baryon (taken to be the mass of the
-proton by default and stored in
-:cpp:var:`o2scl::tov_solve::baryon_mass`). If the EOS specifies the
-baryon density (i.e. if :cpp:var:`o2scl::eos_tov::baryon_column` is
-true), then :ref:`tov_solve <tov_solve>` will compute the associated
-baryonic mass for you.
