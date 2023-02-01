@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2022, Andrew W. Steiner
+  Copyright (C) 2006-2023, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -2362,6 +2362,14 @@ int hdf_file::gets_vec_copy(std::string name, std::vector<std::string> &s) {
 	s.push_back(tmp);
       }
 
+    } else {
+
+      // If nw>0 and nc==0 then there are a number of strings,
+      // all of which are empty.
+      for(int i=0;i<nw;i++) {
+        s.push_back("");
+      }
+      
     }
     
   }

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2018-2022, Xingfu Du and Andrew W. Steiner
+  Copyright (C) 2018-2023, Xingfu Du and Andrew W. Steiner
   
   This file is part of O2scl.
   

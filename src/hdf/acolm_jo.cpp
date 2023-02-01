@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2022, Andrew W. Steiner
+  Copyright (C) 2006-2023, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -969,7 +969,11 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="string[]") {
     
     for(size_t k=0;k<stringv_obj.size();k++) {
-      (*fout) << stringv_obj[k] << endl;
+      if (stringv_obj[k].length()==0) {
+        (*fout) << "(empty string)" << endl;
+      } else {
+        (*fout) << stringv_obj[k] << endl;
+      }
     }
     (*fout) << endl;
 

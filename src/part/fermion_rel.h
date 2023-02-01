@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------
   
-   Copyright (C) 2006-2022, Andrew W. Steiner
+   Copyright (C) 2006-2023, Andrew W. Steiner
   
    This file is part of O2scl.
   
