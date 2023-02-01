@@ -335,7 +335,20 @@ namespace o2scl {
       }
       return 0;
     }
-    
+
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ 
+        and place the result in \c res and the error in \c err
+
+        There are three tolerances:
+        - \c target_tol is the target tolerance which is sent to
+        the boost integration function. The error value returned 
+        by the boost integration function is often larger than this
+        - \c integ_tol is the desired final tolerance of the integration.
+        This function regards the integration as a failure if the 
+        error value is larger than \c integ_tol
+        - \c func_tol is the tolerance for evaluations of the 
+        integrand. This value is passed to \ref o2scl::funct_multip.
+     */
     template <typename func_t, class fp_t, class it_t>
     int integ_iu_err_int(it_t &it, func_t &&func, fp_t a, 
                          fp_t &res, fp_t &err, fp_t &L1norm,

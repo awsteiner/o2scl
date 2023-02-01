@@ -305,6 +305,10 @@ namespace o2scl {
   };
   
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
+
+      \note This version uses the multiprecision integrator
+      \ref inte_multip_tanh_sinh_boost which automatically
+      increases precision in order to achieve accuracy
    */
   template<class fp_t> class fermion_rel_integ_multip2 :
     public fermion_rel_integ_base {
