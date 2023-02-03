@@ -303,6 +303,11 @@ namespace o2scl {
                    "mm_funct_python::operator().",o2scl::exc_efailed);
       }
 
+      if (PyList_Check(result)==0) {
+        O2SCL_ERR2("Function call did not return a list in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
       for(size_t i=0;i<n;i++) {
         PyObject *yval=PyList_GetItem(result,i);
         if (yval==0) {

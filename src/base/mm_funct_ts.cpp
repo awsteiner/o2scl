@@ -60,6 +60,32 @@ int main(void) {
     y2[0]=x[0]*o2scl_const::pi;
     y2[1]=x[1]*o2scl_const::pi;
     t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
+    cout << endl;
+
+    cout << "Calling fun() in mm_funct_test.py:" << endl;
+    for(size_t j=0;j<10;j++) {
+      x[0]=sin(j);
+      x[1]=cos(j);
+      fp(2,x,y);
+    }
+    cout << endl;
+
+    cout << "Calling train() in mm_funct_test.py:" << endl;
+    mm_funct_python<ubvector> fp2("mm_funct_test","train");
+    fp2(2,x,y);
+    cout << x[0] << " " << x[1] << endl;
+    cout << y[0] << " " << y[1] << endl;
+    cout << endl;
+    
+    cout << "Calling feval() in mm_funct_test.py:" << endl;
+    mm_funct_python<ubvector> fp3("mm_funct_test","feval");
+    for(size_t j=0;j<10;j++) {
+      ubvector xa(1), ya(1);
+      xa[0]=sin(j)+1.0;
+      fp3(1,xa,ya);
+      cout << xa[0] << " " << ya[0] << " " << cos(xa[0]) << endl;
+    }
+    cout << endl;
   }
   o2scl_settings.py_final();
   
