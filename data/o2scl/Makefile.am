@@ -1,4 +1,4 @@
-SUBDIRVAR = nucmass rmfdata skdata
+SUBDIRVAR = nucmass rmfdata skdata python
 
 DATAVAR = bbp71.o2 bps71.o2 fmt49.o2 hzd89.o2 dh01.o2 \
 	nvbps.o2 apr98.o2 fp81.o2 hz90.o2 \

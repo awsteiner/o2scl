@@ -51,6 +51,8 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Covariance function: 1D RBF with a noise term
 
       \note There's no point making a base class, since there
@@ -1295,6 +1297,8 @@ namespace o2scl {
 
   };
 
+#endif
+  
   /** \brief Covariance function: 1D RBF with a noise term
 
       \note There's no point making a base class, since there
@@ -1302,7 +1306,7 @@ namespace o2scl {
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
    */
-  class mcovar_new_funct_rbf {
+  class mcovar_funct_rbf {
     
   public:
 
@@ -1312,7 +1316,7 @@ namespace o2scl {
     /// Noise parameter
     double noise;
 
-    mcovar_new_funct_rbf() {
+    mcovar_funct_rbf() {
       noise=0.0;
     }
     
@@ -1381,7 +1385,7 @@ namespace o2scl {
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
    */
-  class mcovar_new_funct_rbf_noise {
+  class mcovar_funct_rbf_noise {
     
   public:
 
@@ -1464,13 +1468,13 @@ namespace o2scl {
            class mat_inv_t=
            o2scl_linalg::matrix_invert_det_cholesky<mat_inv_kxx_t>,
            class vec3_t=std::vector<std::vector<std::vector<double>>> >
-  class interpm_krige_new_optim {
+  class interpm_krige_optim {
 
   public:
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef interpm_krige_new_optim<func_vec_t,vec_t,mat_x_t,mat_x_row_t, 
+    typedef interpm_krige_optim<func_vec_t,vec_t,mat_x_t,mat_x_row_t, 
                                     mat_y_t,mat_y_row_t,mat_inv_kxx_t,
                                     mat_inv_t,vec3_t> class_t;
     
@@ -1805,7 +1809,7 @@ namespace o2scl {
       return ret;
     }
     
-    interpm_krige_new_optim() {
+    interpm_krige_optim() {
       full_min=false;
       def_mmin.ntrial*=10;
       mp=&def_mmin;
@@ -1816,7 +1820,7 @@ namespace o2scl {
       keep_matrix=true;
     }
 
-    virtual ~interpm_krige_new_optim() {
+    virtual ~interpm_krige_optim() {
     }
     
     /// \name Function to minimize and various option
@@ -1858,17 +1862,17 @@ namespace o2scl {
 
       if (n_points<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige_new_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data_internal()",
                    exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige_new_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data_internal()",
                    exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige_new_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data_internal()",
                    exc_efailed);
       }
    
@@ -1910,7 +1914,7 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        std::cout << "interpm_krige_new_optim::set_data_internal(): "
+        std::cout << "interpm_krige_optim::set_data_internal(): "
                   << "Using " << n_points
                   << " points with\n " << n_in << " input variables and "
                   << this->nd_out << " output variables." << std::endl;
@@ -1933,7 +1937,7 @@ namespace o2scl {
           }
         }
         if (verbose>1) {
-          std::cout << "interpm_krige_new_optim::set_data_internal(): "
+          std::cout << "interpm_krige_optim::set_data_internal(): "
                     << "data rescaled." << std::endl;
         }
       }
@@ -1987,7 +1991,7 @@ namespace o2scl {
           }
 
           if (verbose>0) {
-            std::cout << "interpm_krige_new_optim::set_data_internal(): "
+            std::cout << "interpm_krige_optim::set_data_internal(): "
                       << "full minimization with\n  " << np_covar
                       << " parameters." << std::endl;
             std::cout << "  Simplex:" << std::endl;
@@ -2035,7 +2039,7 @@ namespace o2scl {
           bool min_set=false, done=false;
           
           if (verbose>1) {
-            std::cout << "interpm_krige_new_optim::set_data_internal() : "
+            std::cout << "interpm_krige_optim::set_data_internal() : "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
             for(size_t jk=0;jk<plists[iout].size();jk++) {
@@ -2062,7 +2066,7 @@ namespace o2scl {
             }
             
             if (verbose>1) {
-              std::cout << "interpm_krige_new_optim: ";
+              std::cout << "interpm_krige_optim: ";
               o2scl::vector_out(std::cout,index_list);
               std::cout << " ";
               o2scl::vector_out(std::cout,params);
@@ -2092,7 +2096,7 @@ namespace o2scl {
         }
         
         if (verbose>1) {
-          std::cout << "interpm_krige_new_optim: ";
+          std::cout << "interpm_krige_optim: ";
           std::cout.width(2);
           std::cout << "   " << min_qual << std::endl;
         }
@@ -2103,7 +2107,7 @@ namespace o2scl {
         mode=mode_temp;
 	
         if (verbose>0) {
-          std::cout << "interpm_krige_new_optim::set_data_"
+          std::cout << "interpm_krige_optim::set_data_"
                     << "internal(),\n  "
                     << "optimal parameters: ";
           o2scl::vector_out(std::cout,min_params,true);

@@ -122,79 +122,16 @@ int main(void) {
   typedef o2scl::matrix_view_table_transpose<> mat_y_t;
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
   
-  typedef interpm_krige<ubvector,mat_x_t,mat_x_row_t,
-                        mat_y_t,mat_y_row_t,ubmatrix,
-                        o2scl_linalg::matrix_invert_det_cholesky
-                        <ubmatrix> > ik_t;
-
-
-  {
+  if (true) {
 
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, unscaled, loo_cv\n" << endl;
     
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(2);
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    iko.mode=iko.mode_loo_cv;
-
-    table<> tab3;
-    generate_table(tab3);
-    
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
-
-    gen_test_number<> gtn_x3;
-    gtn_x3.set_radix(1.9);
-    
-    iko.verbose=1;
-    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
-      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
-    vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-    
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
-    cout << endl;
-        
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x3.gen();
-      point[1]=gtn_x3.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        iko.eval(point,out);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),1.0e+1,
-                   "optim, unscaled, loo_cv");
-      }
-
-    }
-    cout << endl;
-
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_new_optim, unscaled, loo_cv\n" << endl;
-    
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(2);
     
-    interpm_krige_new_optim
-      <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+    interpm_krige_optim
+      <std::vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,
        mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.mode=iko.mode_loo_cv;
 
@@ -242,102 +179,16 @@ int main(void) {
     cout << endl;
   }
 
-  {
+  if (true) {
 
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, max_lml\n" << endl;
   
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(2);
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    iko.mode=iko.mode_max_lml;
-
-    table<> tab3;
-    generate_table(tab3,100);
-    
-    hdf_file hf;
-    hf.open_or_create("interpm_krige_ts_data2.o2");
-    hdf_output(hf,tab3,"tab");
-    hf.close();
-    
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
-
-    gen_test_number<> gtn_x3;
-    gtn_x3.set_radix(1.9);
-    
-    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
-      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
-    vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-    
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
-    cout << endl;
-        
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x3.gen();
-      point[1]=gtn_x3.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        iko.eval(point,out);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),6.0,
-                   "optim, rescaled, max_lml");
-        
-        iko.deriv(point,out,0);
-        cout << "  " << out[0] << " " << ftdx(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx");
-        
-        iko.deriv(point,out,1);
-        cout << out[0] << " " << ftdy(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy(point[0],point[1]),1.0e1,
-                   "optim, rescaled, max_lml, dfdy");
-        
-        iko.deriv2(point,out,0,0);
-        cout << "  " << out[0] << " " << ftdx2(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx2(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx2");
-        
-        iko.deriv2(point,out,0,1);
-        cout << out[0] << " " << ftdxdy(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdxdy(point[0],point[1]),100.0,
-                   "optim, rescaled, max_lml, dfdxdy");
-        
-        iko.deriv2(point,out,1,1);
-        cout << out[0] << " " << ftdy2(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy2(point[0],point[1]),1.0e3,
-                   "optim, rescaled, max_lml, dfdy2");
-      }
-
-    }
-    cout << endl;
-
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_new_optim, rescaled, max_lml\n" << endl;
-  
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(2);
     
-    interpm_krige_new_optim
-      <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+    interpm_krige_optim
+      <std::vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,
        mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.mode=iko.mode_max_lml;
 
@@ -345,7 +196,7 @@ int main(void) {
     generate_table(tab3);
     
     hdf_file hf;
-    hf.open_or_create("interpm_krige_new_ts_data2.o2");
+    hf.open_or_create("interpm_krige_ts_data2.o2");
     hdf_output(hf,tab3,"tab");
     hf.close();
     
@@ -414,102 +265,16 @@ int main(void) {
 
   }
 
-  {
+  if (true) {
 
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, max_lml, full min.\n" << endl;
   
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(2);
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    iko.mode=iko.mode_max_lml;
-    iko.full_min=true;
-
-    table<> tab3;
-    generate_table(tab3,100);
-    
-    hdf_file hf;
-    hf.open_or_create("interpm_krige_ts_data2.o2");
-    hdf_output(hf,tab3,"tab");
-    hf.close();
-    
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
-
-    gen_test_number<> gtn_x3;
-    gtn_x3.set_radix(1.9);
-    
-    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
-      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
-    vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-    
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
-        
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x3.gen();
-      point[1]=gtn_x3.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        iko.eval(point,out);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),6.0,
-                   "optim, rescaled, max_lml");
-        
-        iko.deriv(point,out,0);
-        cout << "  " << out[0] << " " << ftdx(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx");
-        
-        iko.deriv(point,out,1);
-        cout << out[0] << " " << ftdy(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy(point[0],point[1]),1.0e1,
-                   "optim, rescaled, max_lml, dfdy");
-        
-        iko.deriv2(point,out,0,0);
-        cout << "  " << out[0] << " " << ftdx2(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx2(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx2");
-        
-        iko.deriv2(point,out,0,1);
-        cout << out[0] << " " << ftdxdy(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdxdy(point[0],point[1]),100.0,
-                   "optim, rescaled, max_lml, dfdxdy");
-        
-        iko.deriv2(point,out,1,1);
-        cout << out[0] << " " << ftdy2(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy2(point[0],point[1]),1.0e3,
-                   "optim, rescaled, max_lml, dfdy2");
-      }
-
-    }
-    cout << endl;
-    
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_new_optim, rescaled, max_lml, full min.\n" << endl;
-  
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(2);
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,
        mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.mode=iko.mode_max_lml;
     iko.full_min=true;
@@ -518,7 +283,7 @@ int main(void) {
     generate_table(tab3);
     
     hdf_file hf;
-    hf.open_or_create("interpm_krige_new_ts_data2.o2");
+    hf.open_or_create("interpm_krige_ts_data2.o2");
     hdf_output(hf,tab3,"tab");
     hf.close();
     
@@ -586,102 +351,16 @@ int main(void) {
     
   }
 
-  {
+  if (true) {
 
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, loo_cv_bf\n" << endl;
   
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(2);
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    iko.mode=iko.mode_loo_cv_bf;
-
-    table<> tab3;
-    generate_table(tab3,100);
-    
-    hdf_file hf;
-    hf.open_or_create("interpm_krige_ts_data2.o2");
-    hdf_output(hf,tab3,"tab");
-    hf.close();
-    
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
-
-    gen_test_number<> gtn_x3;
-    gtn_x3.set_radix(1.9);
-    
-    iko.verbose=1;
-    vector<double> len_list={0.9,0.95,1.0,1.25,1.5,2.0,3.0,7.0};
-    vector<double> l10_list={-15,-13,-11};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-    
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
-    cout << endl;
-        
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x3.gen();
-      point[1]=gtn_x3.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        iko.eval(point,out);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),6.0,
-                   "optim, rescaled, max_lml");
-        
-        iko.deriv(point,out,0);
-        cout << "  " << out[0] << " " << ftdx(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx");
-        
-        iko.deriv(point,out,1);
-        cout << out[0] << " " << ftdy(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy(point[0],point[1]),1.0e1,
-                   "optim, rescaled, max_lml, dfdy");
-        
-        iko.deriv2(point,out,0,0);
-        cout << "  " << out[0] << " " << ftdx2(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdx2(point[0],point[1]),10.0,
-                   "optim, rescaled, max_lml, dfdx2");
-        
-        iko.deriv2(point,out,0,1);
-        cout << out[0] << " " << ftdxdy(point[0],point[1]) << " ";
-        t.test_rel(out[0],ftdxdy(point[0],point[1]),100.0,
-                   "optim, rescaled, max_lml, dfdxdy");
-        
-        iko.deriv2(point,out,1,1);
-        cout << out[0] << " " << ftdy2(point[0],point[1]) << endl;
-        t.test_rel(out[0],ftdy2(point[0],point[1]),1.0e3,
-                   "optim, rescaled, max_lml, dfdy2");
-      }
-
-    }
-    cout << endl;
-
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_new_optim, rescaled, loo_cv_bf\n" << endl;
-  
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(2);
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,ubmatrix> iko;
     iko.mode=iko.mode_loo_cv_bf;
 
@@ -689,7 +368,7 @@ int main(void) {
     generate_table(tab3);
     
     hdf_file hf;
-    hf.open_or_create("interpm_krige_new_ts_data2.o2");
+    hf.open_or_create("interpm_krige_ts_data2.o2");
     hdf_output(hf,tab3,"tab");
     hf.close();
     
@@ -750,65 +429,6 @@ int main(void) {
         cout << out[0] << " " << ftdy2(point[0],point[1]) << endl;
         t.test_rel(out[0],ftdy2(point[0],point[1]),1.0e3,
                    "optim, rescaled, max_lml, dfdy2");
-      }
-
-    }
-    cout << endl;
-
-  }
-
-  if (false) {
-
-    // AWS, 12/31/22, This test fails I'm not sure why.
-
-    cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_optim, rescaled, loo_cv\n" << endl;
-  
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(2);
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    iko.mode=iko.mode_loo_cv;
-
-    table<> tab3;
-    generate_table(tab3);
-    
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
-
-    gen_test_number<> gtn_x3;
-    gtn_x3.set_radix(1.9);
-    
-    iko.verbose=1;
-    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
-      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
-    vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-    
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
-    cout << endl;
-        
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x3.gen();
-      point[1]=gtn_x3.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        iko.eval(point,out);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),1.0e-1,
-                   "optim, rescaled, loo_cv");
       }
 
     }
@@ -840,79 +460,6 @@ int main(void) {
 
     vector<double> len_list={0.01,0.03,0.1,0.3,1.0};
     vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-
-    matrix_view_table<> mvt_x4(tab4,{"x"});
-    matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(1);
-
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4);
-    
-    interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
-    
-    covar_funct_rbf_noise cfrn;
-    
-    iko2.set_covar(cfrn,param_lists);
-    iko2.set(N,x,y);
-
-    vector<double> p={0.1,0.1,1.0e-8};
-    mfrn.set_params(0,p);
-    cfrn.set_params(p);
-
-    int success;
-
-    t.set_output_level(2);
-    iko2.mode=iko2.mode_loo_cv;
-    iko.mode=iko.mode_loo_cv;
-    t.test_rel(iko.qual_fun(0,success),
-               iko2.qual_fun(success),1.0e-10,
-               "optim, compare multid and 1d, unscaled, loo_cv.");
-
-    iko2.mode=iko2.mode_max_lml;
-    iko.mode=iko.mode_max_lml;
-    t.test_rel(iko.qual_fun(0,success),
-               iko2.qual_fun(success),1.0e-10,
-               "optim, compare multid and 1d, unscaled, max_lml.");
-    t.set_output_level(1);
-    cout << endl;
-    
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "Compare qual_fun() for interpm_krige_new_optim" << endl;
-    cout << " and interp_krige_new_optim (unscaled):\n" << endl;
-    
-    static const size_t N=20;
-    ubvector x(N), y(N);
-    x[0]=0.0;
-    y[0]=f(x[0],0.0,1.0);
-    for(size_t i=1;i<N;i++) {
-      x[i]=x[i-1]+pow(((double)i)/40.0,2.0);
-      y[i]=f(x[i],0.0,1.0);
-    }
-
-    table<> tab4;
-    tab4.line_of_names("x y");
-    for(size_t i=0;i<N;i++) {
-      vector<double> line={x[i],y[i]};
-      tab4.line_of_data(2,line);
-    }
-
-    vector<double> len_list={0.01,0.03,0.1,0.3,1.0};
-    vector<double> l10_list={-15,-13,-11,-9};
     vector<vector<double> > ptemp;
     ptemp.push_back(len_list);
     ptemp.push_back(l10_list);
@@ -922,11 +469,11 @@ int main(void) {
     matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,ubmatrix> iko;
     
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(1);
 
     iko.set_covar(mfrn,param_lists);
@@ -986,77 +533,6 @@ int main(void) {
 
     vector<double> len_list={0.01,0.03,0.1,0.3,1.0};
     vector<double> l10_list={-15,-13,-11,-9};
-    vector<vector<double> > param_lists;
-    param_lists.push_back(len_list);
-    param_lists.push_back(l10_list);
-
-    matrix_view_table<> mvt_x4(tab4,{"x"});
-    matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
-    
-    interpm_krige_optim
-      <mcovar_funct_rbf_noise,ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix,
-       o2scl_linalg::matrix_invert_det_cholesky<ubmatrix>,
-       std::vector<std::vector<double>> > iko;
-    
-    mcovar_funct_rbf_noise mfrn;
-    mfrn.len.resize(1);
-
-    iko.set_covar(mfrn,param_lists);
-    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4,true);
-    
-    interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
-    
-    covar_funct_rbf_noise cfrn;
-    
-    iko2.set(N,x,y,cfrn,param_lists,true);
-
-    vector<double> p={0.1,0.1,1.0e-8};
-    mfrn.set_params(0,p);
-    cfrn.set_params(p);
-
-    int success;
-    
-    t.set_output_level(2);
-    iko2.mode=iko2.mode_loo_cv;
-    iko.mode=iko.mode_loo_cv;
-    t.test_rel(iko.qual_fun(0,success),
-               iko2.qual_fun(success),1.0e-10,
-               "compare multid and 1d, rescaled, loo_cv");
-
-    iko2.mode=iko2.mode_max_lml;
-    iko.mode=iko.mode_max_lml;
-    t.test_rel(iko.qual_fun(0,success),
-               iko2.qual_fun(success),1.0e-10,
-               "compare multid and 1d, rescaled, max_lml.");
-    t.set_output_level(1);
-    cout << endl;
-  }
-
-  if (true) {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "Compare qual_fun() for interpm_krige_new_optim" << endl;
-    cout << " and interp_krige_optim (rescaled):\n" << endl;
-    
-    static const size_t N=20;
-    ubvector x(N), y(N);
-    x[0]=0.0;
-    y[0]=f(x[0],0.0,1.0);
-    for(size_t i=1;i<N;i++) {
-      x[i]=x[i-1]+pow(((double)i)/40.0,2.0);
-      y[i]=f(x[i],0.0,1.0);
-    }
-
-    table<> tab4;
-    tab4.line_of_names("x y");
-    for(size_t i=0;i<N;i++) {
-      vector<double> line={x[i],y[i]};
-      tab4.line_of_data(2,line);
-    }
-
-    vector<double> len_list={0.01,0.03,0.1,0.3,1.0};
-    vector<double> l10_list={-15,-13,-11,-9};
     vector<vector<double> > ptemp;
     ptemp.push_back(len_list);
     ptemp.push_back(l10_list);
@@ -1066,11 +542,11 @@ int main(void) {
     matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,ubmatrix> iko;
     
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(1);
 
     iko.set_covar(mfrn,param_lists);
@@ -1103,125 +579,19 @@ int main(void) {
     t.set_output_level(1);
     cout << endl;
   }
-
-  {
-
-    cout << "--------------------------------------------" << endl;
-    cout << "Test interpm_krige, unscaled, default mode:\n" << endl;
-    
-    table<> tab;
-    generate_table(tab);
-    
-    hdf_file hf;
-    hf.open_or_create("interpm_krige_ts_data.o2");
-    hdf_output(hf,tab,"tab");
-    hf.close();
-
-    ik_t ik;
-    
-    ik_t::f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
-                              std::placeholders::_1,
-                              std::placeholders::_2,1.1)};
-    std::function<double(size_t,mat_x_row_t &,
-                         const ubvector &) >
-      fa2=std::bind(&covar<mat_x_row_t,ubvector>,
-                    std::placeholders::_2,
-                    std::placeholders::_3,1.1);
-    std::function<double(size_t,const ubvector &,
-                         const ubvector &) >
-      fa3=std::bind(&covar<ubvector,ubvector>,
-                    std::placeholders::_2,
-                    std::placeholders::_3,1.1);
-    
-    matrix_view_table<> mvt_x(tab,col_list_x);
-    matrix_view_table_transpose<> mvt_y(tab,col_list_y);
-    
-    ik.verbose=1;
-    ik.set_data(2,1,tab.get_nlines(),mvt_x,mvt_y,fa1);
-    cout << endl;
-
-    gen_test_number<> gtn_x;
-    gtn_x.set_radix(1.9);
-
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1), sig(1);
-      point[0]=gtn_x.gen();
-      point[1]=gtn_x.gen();
-
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        ik.eval_covar(point,out,fa2);
-        ik.sigma_covar(point,sig,fa2,fa3);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),1.4,"unscaled 1");
-      }
-
-    }
-    cout << endl;
-
-  }
-
-  {
-    
-    cout << "--------------------------------------------" << endl;
-    cout << "Test interpm_krige, rescaled, default mode:\n" << endl;
-    
-    table<> tab2;
-    
-    generate_table(tab2);
-    
-    matrix_view_table<> mvt_x2(tab2,col_list_x);
-    matrix_view_table_transpose<> mvt_y2(tab2,col_list_y);
-
-    gen_test_number<> gtn_x2;
-    gtn_x2.set_radix(1.9);
-
-    ik_t ik;
-    
-    ik_t::f1_t fa1={std::bind(&covar<mat_x_row_t,mat_x_row_t>,
-                        std::placeholders::_1,std::placeholders::_2,1.1)};
-    std::function<double(size_t,mat_x_row_t &,
-                         const ubvector &) >
-      fa2=std::bind(&covar<mat_x_row_t,ubvector>,
-                    std::placeholders::_2,
-                    std::placeholders::_3,1.1);
-    
-    ik.verbose=1;
-    ik.set_data(2,1,tab2.get_nlines(),mvt_x2,mvt_y2,fa1,true);
-    cout << endl;
-
-    for(size_t j=0;j<20;j++) {
-      ubvector point(2), out(1);
-      point[0]=gtn_x2.gen();
-      point[1]=gtn_x2.gen();
-      
-      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
-        ik.eval_covar(point,out,fa2);
-        cout.setf(ios::showpos);
-        cout << point[0] << " " << point[1] << " "
-             << out[0] << " " << ft(point[0],point[1]) << endl;
-        cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),4.0,"rescaled 1");
-      }
-    }
-    cout << endl;
-
-  }
   
 #ifdef O2SCL_EIGEN  
 
   {
 
     cout << "--------------------------------------------" << endl;
-    cout << "interpm_krige_new_optim, eigen, rescaled, max_lml\n" << endl;
+    cout << "interpm_krige_optim, eigen, rescaled, max_lml\n" << endl;
   
-    vector<mcovar_new_funct_rbf_noise> mfrn(1);
+    vector<mcovar_funct_rbf_noise> mfrn(1);
     mfrn[0].len.resize(2);
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,Eigen::MatrixXd,
        matrix_invert_det_eigen<> > iko_eigen;
     
@@ -1279,8 +649,8 @@ int main(void) {
   
   {
     
-    interpm_krige_new_optim
-      <vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
+    interpm_krige_optim
+      <vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,mat_x_row_t,
        mat_y_t,mat_y_row_t,arma::mat,
        matrix_invert_det_sympd_arma<> > iko_arma;
 

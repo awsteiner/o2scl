@@ -517,6 +517,7 @@ AC_CONFIG_FILES([Makefile
                  data/o2scl/nucmass/ame20/Makefile
                  data/o2scl/rmfdata/Makefile
                  data/o2scl/skdata/Makefile
+                 data/o2scl/python/Makefile
 		 examples/Makefile
 		 examples/plot/Makefile
                  doc/Makefile

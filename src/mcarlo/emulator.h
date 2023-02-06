@@ -183,7 +183,7 @@ namespace o2scl {
   public:
     
     /// The internal interpolation object
-    interpm_krige_new_optim
+    interpm_krige_optim
     <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
      mat_x_row_t,mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
 
