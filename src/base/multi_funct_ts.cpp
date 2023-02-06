@@ -46,7 +46,7 @@ int main(void) {
 #ifdef O2SCL_PYTHON
 
   o2scl_settings.py_init();
-  o2scl_settings.add_python_path("./");
+  o2scl_settings.add_python_path("../../data/o2scl/python/");
   {
     // We use the brackets to force the multi_funct_python
     // destructor to run before py_final()

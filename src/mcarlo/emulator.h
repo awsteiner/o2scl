@@ -184,11 +184,11 @@ namespace o2scl {
     
     /// The internal interpolation object
     interpm_krige_optim
-    <std::vector<mcovar_new_funct_rbf_noise>,ubvector,mat_x_t,
+    <std::vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,
      mat_x_row_t,mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
 
     /// The covariance functions
-    std::vector<mcovar_new_funct_rbf_noise> mfrn;
+    std::vector<mcovar_funct_rbf_noise> mfrn;
     
     /** \brief Create an emulator
      */
