@@ -144,8 +144,22 @@ namespace o2scl {
 
 #ifdef O2SCL_PYTHON
   
-  /** \brief One-dimensional function from a python function
-   */
+  /** \brief One-dimensional function from a Python function
+
+      This class allows one to specify a Python function from a module
+      and call that function from C++. The python function must have
+      one positional argument which is a Python list (no keyword
+      arguments will be passed) and it must return a Python list.
+
+      The Python library must be initialized before using
+      this class (for example with \ref o2scl_settings::py_init())
+      and finalized after this class calls its destructor (for
+      example with \ref o2scl_settings::py_final()). 
+
+      \future Find a way to transmit Python exception information
+      back to this class and see if it can be handled with a C++
+      try block. 
+  */
   template<class vec_t=boost::numeric::ublas::vector<double> >
   class mm_funct_python {
     
@@ -168,7 +182,7 @@ namespace o2scl {
     
   public:
     
-    /** \brief Specify the python and the parameters
+    /** \brief Specify the Python module, function, and the parameters
      */
     mm_funct_python(std::string module, std::string func, int v=0) {
       verbose=v;
