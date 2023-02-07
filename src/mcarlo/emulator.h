@@ -374,20 +374,20 @@ namespace o2scl {
           std::cout << "Executing decrefs." << std::endl;
           std::cout << "p_modname " << p_modname << std::endl;
         }
-        Py_XDECREF(p_modname);
+        Py_DECREF(p_modname);
         if (verbose>0) std::cout << "p_module." << p_module << std::endl;
-        Py_XDECREF(p_module);
+        Py_DECREF(p_module);
         if (verbose>0) std::cout << "p_class " << p_class << std::endl;
-        Py_XDECREF(p_class);
+        Py_DECREF(p_class);
         if (verbose>0) std::cout << "p_instance " << p_instance << std::endl;
-        Py_XDECREF(p_instance);
+        Py_DECREF(p_instance);
         if (verbose>0) std::cout << "p_point_func "
                                  << p_point_func << std::endl;
-        Py_XDECREF(p_point_func);
+        Py_DECREF(p_point_func);
         if (verbose>0) std::cout << "p_np " << p_np << std::endl;
-        Py_XDECREF(p_np);
+        Py_DECREF(p_np);
         if (verbose>0) std::cout << "p_ix " << p_ix << std::endl;
-        Py_XDECREF(p_ix);
+        Py_DECREF(p_ix);
         p_modname=0;
         p_module=0;
         p_class=0;
@@ -627,11 +627,14 @@ namespace o2scl {
         std::cout << "Decref value and result." << std::endl;
       }
       
-      Py_XDECREF(p_train_func);
-      Py_XDECREF(p_file);
-      Py_XDECREF(p_list);
-      Py_XDECREF(p_args);
-      Py_XDECREF(p_result);
+      Py_DECREF(p_train_func);
+      // AWS 3/7/23: once we put the file and list in the args
+      // tuple, then they take over the memory so no need to
+      // decref() them.
+      //Py_DECREF(p_file);
+      //Py_DECREF(p_list);
+      Py_DECREF(p_args);
+      Py_DECREF(p_result);
       
       if (verbose>0) {
         std::cout << "Done in emulator_python::set()." << std::endl;
@@ -726,7 +729,7 @@ namespace o2scl {
           std::cout << "Decref yval " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_XDECREF(p_y_val);
+        //Py_DECREF(p_y_val);
       }
 
       if (has_unc) {
@@ -746,7 +749,7 @@ namespace o2scl {
             std::cout << "Decref yval " << i << " of " << p_values.size()
                       << std::endl;
           }
-          Py_XDECREF(p_y_val);
+          //Py_DECREF(p_y_val);
         }
       }
 
@@ -755,17 +758,17 @@ namespace o2scl {
           std::cout << "Decref value " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_XDECREF(p_values[i]);
+        //Py_DECREF(p_values[i]);
       }
       if (verbose>0) {
         std::cout << "Decref list." << std::endl;
       }
-      Py_XDECREF(p_list);
+      Py_DECREF(p_list);
       
       if (verbose>0) {
         std::cout << "Decref result." << std::endl;
       }
-      Py_XDECREF(p_result);
+      Py_DECREF(p_result);
   
       return 0;
     }

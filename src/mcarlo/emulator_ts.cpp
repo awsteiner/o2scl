@@ -98,7 +98,7 @@ int main(void) {
       cout << endl;
     }
   
-    if (true) {
+    if (false) {
     
       table<> tab;
       generate_table(tab);
@@ -127,7 +127,6 @@ int main(void) {
       cout << endl;
     }
 
-#ifdef O2SCL_NEVER_DEFINED
 #ifdef O2SCL_PYTHON
   
     if (true) {
@@ -148,7 +147,7 @@ int main(void) {
         emulator_python<ubvector,ubvector> em3;
         std::cout << "H2." << std::endl;
         em3.verbose=3;
-        em3.set("emu_test","emu_py","train","point",2,
+        em3.set("emu_sklearn","emu_py","train","point",2,
                 "emu_data.o2",0,col_list,false);
     
         for(size_t j=0;j<10;j++) {
@@ -159,7 +158,7 @@ int main(void) {
           double z;
           double dz;
           ubvector dat(2), datu(2);
-          //em3.eval_unc(2,p,z,dz,dat,datu);
+          em3.eval_unc(2,p,z,dz,dat,datu);
           cout << ft(p[0],p[1]) << " " << z << endl;
       
         }
@@ -173,7 +172,6 @@ int main(void) {
       cout << endl;
     }
 
-#endif
 #endif
   
   }

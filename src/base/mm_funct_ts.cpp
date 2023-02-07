@@ -74,12 +74,12 @@ int main(void) {
     }
     cout << endl;
 
-    mm_funct_class_python<ubvector> fp4("mm_funct_test","mft","fun");
+    mm_funct_python<ubvector> fp4("mm_funct_test","fun","mft");
     cout << "Calling mft.fun() in mm_funct_test.py:" << endl;
     x[0]=2.0;
     x[1]=3.0;
     int mfcp_ret=fp4(2,x,y);
-    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_class_python");
+    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
     cout << endl;
 
     for(size_t j=0;j<10;j++) {
