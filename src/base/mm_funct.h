@@ -156,6 +156,10 @@ namespace o2scl {
       and finalized after this class calls its destructor (for
       example with \ref o2scl_settings::py_final()). 
 
+      This class presumes that the input and output lists 
+      occupy different memory. If this is not the case, the
+      results will be unpredictable.
+
       \future Find a way to transmit Python exception information
       back to this class and see if it can be handled with a C++
       try block. 
@@ -166,16 +170,16 @@ namespace o2scl {
   protected:
 
     /// Python unicode object containing function name
-    PyObject *pName;
+    PyObject *p_name;
     
     /// Python module containing function
-    PyObject *pModule;
+    PyObject *p_module;
     
     /// Function arguments
-    PyObject *pArgs;
+    PyObject *p_args;
 
     /// Python function
-    PyObject *pFunc;
+    PyObject *p_func;
 
     /// Verbosity parameter
     int verbose;
@@ -200,19 +204,19 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Decref func." << std::endl;
       }
-      Py_DECREF(pFunc);
+      Py_DECREF(p_func);
       if (verbose>0) {
         std::cout << "Decref args." << std::endl;
       }
-      Py_DECREF(pArgs);
+      Py_DECREF(p_args);
       if (verbose>0) {
         std::cout << "Decref module." << std::endl;
       }
-      Py_DECREF(pModule);
+      Py_DECREF(p_module);
       if (verbose>0) {
         std::cout << "Decref name." << std::endl;
       }
-      Py_DECREF(pName);
+      Py_DECREF(p_name);
       if (verbose>0) {
         std::cout << "Done in mm_funct_python destructor." << std::endl;
       }
@@ -229,8 +233,8 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Getting unicode for module name()." << std::endl;
       }
-      pName=PyUnicode_FromString(module.c_str());
-      if (pName==0) {
+      p_name=PyUnicode_FromString(module.c_str());
+      if (p_name==0) {
         O2SCL_ERR2("Create module name failed in ",
                    "mm_funct_python::set_function().",o2scl::exc_efailed);
       }
@@ -239,8 +243,8 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Importing module." << std::endl;
       }
-      pModule=PyImport_Import(pName);
-      if (pModule==0) {
+      p_module=PyImport_Import(p_name);
+      if (p_module==0) {
         O2SCL_ERR2("Load module failed in ",
                    "mm_funct_python::set_function().",o2scl::exc_efailed);
       }
@@ -249,8 +253,8 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Getting arguments for python function." << std::endl;
       }
-      pArgs=PyTuple_New(1);
-      if (pArgs==0) {
+      p_args=PyTuple_New(1);
+      if (p_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
                    "mm_funct_python::set_function().",o2scl::exc_efailed);
       }
@@ -259,8 +263,8 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Loading python function." << std::endl;
       }
-      pFunc=PyObject_GetAttrString(pModule,func.c_str());
-      if (pFunc==0) {
+      p_func=PyObject_GetAttrString(p_module,func.c_str());
+      if (p_func==0) {
         O2SCL_ERR2("Get function failed in ",
                    "mm_funct_python::set_function().",o2scl::exc_efailed);
       }
@@ -281,27 +285,33 @@ namespace o2scl {
       }
 
       // Create a python object from the vector
-      std::vector<PyObject *> pValues(n);
+      std::vector<PyObject *> p_values(n);
       if (verbose>0) {
         std::cout << "Creating python object from vector." << std::endl;
       }
       
       for(size_t i=0;i<n;i++) {
-        pValues[i]=PyFloat_FromDouble(v[i]);
-        if (pValues[i]==0) {
+        p_values[i]=PyFloat_FromDouble(v[i]);
+        if (p_values[i]==0) {
           O2SCL_ERR2("Value creation failed in ",
                      "mm_funct_python::operator().",o2scl::exc_efailed);
         }
         
+        // AWS, 2/7/23: Set the python function arguments. Note that
+        // after we use this function, the list "steals" the memory
+        // for the individual elements, so no need to decref them
+        // below. See https://pythonextensionpatterns.readthedocs.io/
+        // en/latest/refcount.html for more.
+        
         // Set the python function arguments
-        int iret=PyList_SetItem(pList_x,i,pValues[i]);
+        int iret=PyList_SetItem(pList_x,i,p_values[i]);
         if (iret!=0) {
           O2SCL_ERR2("Item set failed in ",
                      "mm_funct_python::operator().",o2scl::exc_efailed);
         }
       }
       
-      int ret=PyTuple_SetItem(pArgs,0,pList_x);
+      int ret=PyTuple_SetItem(p_args,0,pList_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -311,7 +321,7 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "Call python function." << std::endl;
       }
-      PyObject *result=PyObject_CallObject(pFunc,pArgs);
+      PyObject *result=PyObject_CallObject(p_func,p_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -329,20 +339,29 @@ namespace o2scl {
                      "mm_funct_python::operator().",o2scl::exc_efailed);
         }
         y[i]=PyFloat_AsDouble(yval);
+        /*
+          AWS, 2/7/23: I believe the list maintains the ownership of 
+          the memory so there's no need to decref the individual 
+          elements
+
+          if (verbose>0) {
+          std::cout << "Decref yval " << i << " of " << p_values.size()
+          << std::endl;
+          }
+          Py_DECREF(yval);
+        */
+      }
+
+      /*
+      for(size_t i=0;i<p_values.size();i++) {
         if (verbose>0) {
-          std::cout << "Decref yval " << i << " of " << pValues.size()
+          std::cout << "Decref value " << i << " of " << p_values.size()
                     << std::endl;
         }
-        Py_DECREF(yval);
+        Py_DECREF(p_values[i]);
       }
+      */
       
-      for(size_t i=0;i<pValues.size();i++) {
-        if (verbose>0) {
-          std::cout << "Decref value " << i << " of " << pValues.size()
-                    << std::endl;
-        }
-        Py_DECREF(pValues[i]);
-      }
       if (verbose>0) {
         std::cout << "Decref list." << std::endl;
       }
@@ -368,6 +387,293 @@ namespace o2scl {
 
     mm_funct_python(const mm_funct_python &);
     mm_funct_python& operator=(const mm_funct_python&);
+
+  };
+
+  /** \brief One-dimensional function from a Python function
+
+      This class allows one to specify a Python function from a module
+      and call that function from C++. The python function must have
+      one positional argument which is a Python list (no keyword
+      arguments will be passed) and it must return a Python list.
+
+      The Python library must be initialized before using
+      this class (for example with \ref o2scl_settings::py_init())
+      and finalized after this class calls its destructor (for
+      example with \ref o2scl_settings::py_final()). 
+
+      \future Find a way to transmit Python exception information
+      back to this class and see if it can be handled with a C++
+      try block. 
+  */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+  class mm_funct_class_python {
+    
+  protected:
+
+    /// Python unicode object containing function name
+    PyObject *p_name;
+    
+    /// Python module containing function
+    PyObject *p_module;
+    
+    /// The class
+    PyObject *p_class;
+
+    /// An instance of the class
+    PyObject *p_instance;
+
+    /// Function arguments
+    PyObject *p_args;
+
+    /// Python function
+    PyObject *p_func;
+
+    /// Verbosity parameter
+    int verbose;
+    
+  public:
+    
+    /** \brief Specify the Python module, function, and the parameters
+     */
+    mm_funct_class_python(std::string module, std::string class_name,
+                          std::string func, int v=0) {
+      verbose=v;
+      
+      if (o2scl_settings.py_initialized==false) {
+        if (verbose>0) {
+          std::cout << "Running py_init()." << std::endl;
+        }
+        o2scl_settings.py_init();
+      }
+      set_function(module,class_name,func);
+    }      
+    
+    virtual ~mm_funct_class_python() {
+      if (verbose>0) {
+        std::cout << "Decref func." << std::endl;
+      }
+      Py_DECREF(p_func);
+      if (verbose>0) {
+        std::cout << "Decref args." << std::endl;
+      }
+      if (verbose>0) {
+        std::cout << "Decref instance." << std::endl;
+      }
+      Py_DECREF(p_instance);
+      if (verbose>0) {
+        std::cout << "Decref class." << std::endl;
+      }
+      Py_DECREF(p_class);
+      if (verbose>0) {
+        std::cout << "Decref module." << std::endl;
+      }
+      Py_DECREF(p_module);
+      if (verbose>0) {
+        std::cout << "Decref name." << std::endl;
+      }
+      Py_DECREF(p_name);
+      if (verbose>0) {
+        std::cout << "Done in mm_funct_class_python destructor." << std::endl;
+      }
+    }      
+  
+    /** \brief Specify the python and the parameters
+
+        This function is called by the constructor and thus
+        cannot be virtual.
+    */
+    int set_function(std::string module, std::string class_name,
+                     std::string func) {
+      
+      // Get the Unicode name of the user-specified module
+      if (verbose>0) {
+        std::cout << "Getting unicode for module name()." << std::endl;
+      }
+      p_name=PyUnicode_FromString(module.c_str());
+      if (p_name==0) {
+        O2SCL_ERR2("Create module name failed in ",
+                   "mm_funct_class_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      // Import the user-specified module
+      if (verbose>0) {
+        std::cout << "Importing module." << std::endl;
+      }
+      p_module=PyImport_Import(p_name);
+      if (p_module==0) {
+        O2SCL_ERR2("Load module failed in ",
+                   "mm_funct_class_python::set_function().",o2scl::exc_efailed);
+      }
+
+      if (verbose>0) {
+        std::cout << "Obtaining python class." << std::endl;
+      }
+      p_class=PyObject_GetAttrString(p_module,class_name.c_str());
+      if (p_class==0) {
+        O2SCL_ERR2("Get class failed in ",
+                   "emulator_python::set().",o2scl::exc_efailed);
+      }
+
+      // Create an instance of the class
+      if (verbose>0) {
+        std::cout << "Loading python class." << std::endl;
+      }
+      if (PyCallable_Check(p_class)==false) {
+        O2SCL_ERR2("Check class callable failed in ",
+                   "funct_python_method::set_function().",
+                   o2scl::exc_efailed);
+      }
+      
+      if (verbose>0) {
+        std::cout << "Loading python class instance." << std::endl;
+      }
+      p_instance=PyObject_CallObject(p_class,0);
+      if (p_instance==0) {
+        O2SCL_ERR2("Instantiate class failed in ",
+                   "funct_python_method::set_function().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Setup the arguments to the python function
+      if (verbose>0) {
+        std::cout << "Getting arguments for python function." << std::endl;
+      }
+      p_args=PyTuple_New(1);
+      if (p_args==0) {
+        O2SCL_ERR2("Create arg tuple failed in ",
+                   "mm_funct_class_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      // Load the python function
+      if (verbose>0) {
+        std::cout << "Loading python function." << std::endl;
+      }
+      p_func=PyObject_GetAttrString(p_instance,func.c_str());
+      if (p_func==0) {
+        O2SCL_ERR2("Get function failed in ",
+                   "mm_funct_class_python::set_function().",o2scl::exc_efailed);
+      }
+      
+      return 0;
+    }
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual int operator()(size_t n, const vec_t &v,
+                           vec_t &y) const {
+      
+      // Create the list object
+      PyObject *pList_x=PyList_New(n);
+      if (pList_x==0) {
+        O2SCL_ERR2("List creation for x failed in ",
+                   "mm_funct_class_python::operator().",o2scl::exc_efailed);
+      }
+
+      // Create a python object from the vector
+      std::vector<PyObject *> p_values(n);
+      if (verbose>0) {
+        std::cout << "Creating python object from vector." << std::endl;
+      }
+      
+      for(size_t i=0;i<n;i++) {
+        p_values[i]=PyFloat_FromDouble(v[i]);
+        if (p_values[i]==0) {
+          O2SCL_ERR2("Value creation failed in ",
+                     "mm_funct_class_python::operator().",o2scl::exc_efailed);
+        }
+        
+        // AWS, 2/7/23: Set the python function arguments. Note that
+        // after we use this function, the list "steals" the memory
+        // for the individual elements, so no need to decref them
+        // below. See https://pythonextensionpatterns.readthedocs.io/
+        // en/latest/refcount.html for more.
+        
+        int iret=PyList_SetItem(pList_x,i,p_values[i]);
+        if (iret!=0) {
+          O2SCL_ERR2("Item set failed in ",
+                     "mm_funct_class_python::operator().",o2scl::exc_efailed);
+        }
+      }
+      
+      int ret=PyTuple_SetItem(p_args,0,pList_x);
+      if (ret!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_class_python::operator().",o2scl::exc_efailed);
+      }
+
+      // Call the python function
+      if (verbose>0) {
+        std::cout << "Call python function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_func,p_args);
+      if (result==0) {
+        O2SCL_ERR2("Function call failed in ",
+                   "mm_funct_class_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (PyList_Check(result)==0) {
+        O2SCL_ERR2("Function call did not return a list in ",
+                   "mm_funct_class_python::operator().",o2scl::exc_efailed);
+      }
+      
+      for(size_t i=0;i<n;i++) {
+        PyObject *yval=PyList_GetItem(result,i);
+        if (yval==0) {
+          O2SCL_ERR2("Failed to get y list value in ",
+                     "mm_funct_class_python::operator().",o2scl::exc_efailed);
+        }
+        y[i]=PyFloat_AsDouble(yval);
+        /*
+          AWS, 2/7/23: I believe the list maintains the ownership of 
+          the memory so there's no need to decref the individual 
+          elements
+          
+          if (verbose>0) {
+          std::cout << "Decref yval " << i << " of " << p_values.size()
+          << std::endl;
+          }
+          Py_DECREF(yval);
+          std::cout << i << " " << yval << std::endl;
+        */
+      }
+
+      /*
+      for(size_t i=0;i<p_values.size();i++) {
+        if (verbose>0) {
+          std::cout << "Decref value " << i << " of " << p_values.size()
+                    << std::endl;
+        }
+        std::cout << i << " " << p_values[i] << std::endl;
+        //Py_DECREF(p_values[i]);
+      }
+      */
+      
+      if (verbose>0) {
+        std::cout << "Decref list." << std::endl;
+      }
+      Py_DECREF(pList_x);
+      
+      if (verbose>0) {
+        std::cout << "Decref result." << std::endl;
+      }
+      Py_DECREF(result);
+  
+      if (verbose>0) {
+        std::cout << "Done in mm_funct_class_python::operator()." << std::endl;
+      }
+
+      return 0;
+    }      
+
+  protected:
+
+    mm_funct_class_python() {};
+
+  private:
+
+    mm_funct_class_python(const mm_funct_class_python &);
+    mm_funct_class_python& operator=(const mm_funct_class_python&);
 
   };
 

@@ -32,7 +32,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
   vector<string> list(2), funcs(2);
   list[0]="x1";
@@ -54,15 +54,19 @@ int main(void) {
   {
     // We use the brackets to force the mm_funct_python
     // destructor to run before py_final()
+    
+    ubvector x(2), y(2), y2(2);
+    y2[0]=2.0*o2scl_const::pi;
+    y2[1]=3.0*o2scl_const::pi;
+
+    cout << "Calling fun() in mm_funct_test.py:" << endl;
     mm_funct_python<ubvector> fp("mm_funct_test","fun");
+    x[0]=2.0;
+    x[1]=3.0;
     int mfp_ret=fp(2,x,y);
-    ubvector y2(2);
-    y2[0]=x[0]*o2scl_const::pi;
-    y2[1]=x[1]*o2scl_const::pi;
     t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
     cout << endl;
 
-    cout << "Calling fun() in mm_funct_test.py:" << endl;
     for(size_t j=0;j<10;j++) {
       x[0]=sin(j);
       x[1]=cos(j);
@@ -70,22 +74,22 @@ int main(void) {
     }
     cout << endl;
 
-    cout << "Calling train() in mm_funct_test.py:" << endl;
-    mm_funct_python<ubvector> fp2("mm_funct_test","train");
-    fp2(2,x,y);
-    cout << x[0] << " " << x[1] << endl;
-    cout << y[0] << " " << y[1] << endl;
+    mm_funct_class_python<ubvector> fp4("mm_funct_test","mft","fun");
+    cout << "Calling mft.fun() in mm_funct_test.py:" << endl;
+    x[0]=2.0;
+    x[1]=3.0;
+    int mfcp_ret=fp4(2,x,y);
+    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_class_python");
     cout << endl;
-    
-    cout << "Calling feval() in mm_funct_test.py:" << endl;
-    mm_funct_python<ubvector> fp3("mm_funct_test","feval");
+
     for(size_t j=0;j<10;j++) {
-      ubvector xa(1), ya(1);
-      xa[0]=sin(j)+1.0;
-      fp3(1,xa,ya);
-      cout << xa[0] << " " << ya[0] << " " << cos(xa[0]) << endl;
+      x[0]=sin(j);
+      x[1]=cos(j);
+      fp4(2,x,y);
     }
     cout << endl;
+
+    
   }
   o2scl_settings.py_final();
   
