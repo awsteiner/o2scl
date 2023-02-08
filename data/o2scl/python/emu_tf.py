@@ -41,7 +41,7 @@ class emu_dnn:
     def __init__(self):
         # Class variable for DNN
         self.dnn=0
-        self.train_table=0
+        self.data=0
         self.input_list=[]
         self.output_list=[]
         self.SS1=QuantileTransformer()
@@ -56,66 +56,49 @@ class emu_dnn:
         link=o2sclpy.linker()
         link.link_o2scl()
         
-        new_data=o2sclpy.table(link)
-        data=o2sclpy.table(link)
-        train_table=o2sclpy.table(link)
+        self.data=o2sclpy.table(link)
+
+        col_list_arr=col_list.split(',')
 
         for i in range(0, nd_in):
-            self.input_list.append(col_list[i])
+            self.input_list.append(col_list_arr[i])
 
-        for i in range(nd_in, len(col_list)):
-           self.output_list.append(col_list[i])
+        for i in range(nd_in, len(col_list_arr)):
+           self.output_list.append(col_list_arr[i])
 
         print("emu_dnn::read_data(): Reading file:",hdf_file)
         hf=o2sclpy.hdf_file(link)
         hf.open(hdf_file)
-        new_data.clear_table()
-        o2sclpy.hdf_input_table(link,hf,new_data)
+        o2sclpy.hdf_input_table(link,hf,self.data)
         hf.close()
         print("emu_dnn::read_data(): Done reading file.")
         print("emu_dnn::read_data(): Table in file", hdf_file,"has",
-              new_data.get_nlines(),"lines.")
-
-        train_table.add_table(data)
-        self.train_table=train_table
+              self.data.get_nlines(),"lines.")
 
         print("emu_dnn::read_data(): table now has",
-              self.train_table.get_nlines(),
+              self.data.get_nlines(),
               "lines.")
 
         train_data=[]
         output_data=[]
 
-        if (self.tracker!=0):
-            train_data.clear()
-            output_data.clear()
-            print(np.shape(train_data),np.shape(output_data))
-            print(len(self.input_list),len(self.output_list))
-            train_data=[]
-            output_data=[]
-        
         for i in self.input_list:
-            train_data.append(np.array(self.train_table[i]
-                                       [0:self.train_table.get_nlines()]))
-        #print("Pymodule: ",np.shape(np.array(data1.__getitem__("log10_Tcn"))))
+            train_data.append(np.array(self.data[i]
+                                       [0:self.data.get_nlines()]))
         train_data=self.SS1.fit_transform(np.asarray(train_data).transpose())
          
         for i in self.output_list:
-            output_data.append(np.array(self.train_table[i]
-                                        [0:self.train_table.get_nlines()]))
+            output_data.append(np.array(self.data[i]
+                                        [0:self.data.get_nlines()]))
         output_data=self.SS2.fit_transform(np.asarray(output_data).transpose())
         
-        #self.output_data=self.SS2.fit_transform(output_data)
-        #print("emu_dnn::read_data(): log_wgt: ", self.log_wgt)
-        
-        print("emu_dnn::read_data(): input data: ", np.shape(train_data))
-        print("emu_dnn::read_data(): output data: ", np.shape(output_data))
-        #print(output_data)
+        print("emu_dnn::read_data(): Input data:",np.shape(train_data))
+        print("emu_dnn::read_data(): Output data:",np.shape(output_data))
 
-        x_train, x_test, y_train, y_test=train_test_split(
-            train_data, output_data, test_size=0.15)
-        print("emu_dnn::read_data(): Training array : ", x_train.shape)
-        print("emu_dnn::read_data(): Target array : ", y_train.shape)
+        x_train,x_test,y_train,y_test=train_test_split(
+            train_data,output_data,test_size=0.15)
+        print("emu_dnn::read_data(): Training array:",x_train.shape)
+        print("emu_dnn::read_data(): Target array:",y_train.shape)
 
         def custom_loss(y_true, y_pred):
             # first output neuron
@@ -131,14 +114,14 @@ class emu_dnn:
         model=tf.keras.Sequential(
             [
                 tf.keras.layers.Dense(
-                    302,input_shape=(155,), activation='tanh'),
-                tf.keras.layers.Dense(32, activation='tanh'),
-                tf.keras.layers.Dense(21, activation='sigmoid')
+                    302,input_shape=(nd_in,),activation='tanh'),
+                tf.keras.layers.Dense(32,activation='tanh'),
+                tf.keras.layers.Dense(21,activation='sigmoid')
             ])
         print(model.summary())
 
         model.compile(loss='mean_squared_error',
-                      optimizer='adam', metrics=['accuracy'])
+                      optimizer='adam',metrics=['accuracy'])
         model.fit(x_train,y_train,batch_size=128,epochs=150,
                   validation_data=(x_test,y_test),verbose=0)
 
@@ -146,20 +129,6 @@ class emu_dnn:
         print("emu_dnn::read_data(): Test Score: [loss, accuracy]: ",
               model.evaluate(x_test, y_test, verbose=0))
         self.dnn=model
-
-        return
-    
-    def upTrain(self, vec):
-        """
-        Desc.
-        """
-        
-        self.train_table.line_of_data(vec)
-        self.tracker=self.tracker + 1
-        print("emu_dnn::upTrain(): Tracker: ", self.tracker)
-        if self.tracker == 300:
-            self.train()
-            self.tracker=0
 
         return
     
@@ -192,6 +161,6 @@ class emu_dnn:
 
 if __name__ == '__main__':
     ednn=emu_dnn();
-    ednn.read_data(2,'emu_data.o2',0,'z,x,y,d',1)
+    ednn.read_data(2,'emu_data.o2',0,'x,y,z,d',1)
     print(ednn.predict([1,2]))
     

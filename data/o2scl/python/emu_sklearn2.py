@@ -63,23 +63,22 @@ class emu_gpr:
 
         for i in range(nd_in,len(col_list2)):
            self.output_list.append(col_list2[i])
+        if verbose>0:
+            print("emu_gpr::read_data(): Input list, output list:",
+                  self.input_list,self.output_list)
 
-        print("emu_gpr::read_data(): Filename:",hdf_file)
+        if verbose>0:
+            print("emu_gpr::read_data(): Filename:",hdf_file)
         hf=o2sclpy.hdf_file(link)
         hf.open(hdf_file)
         self.train_table.clear_table()
         o2sclpy.hdf_input_table(link,hf,self.train_table)
         hf.close()
-        print("emu_gpr::read_data(): Table has",
-              self.train_table.get_nlines(),"lines.")
+        if verbose>0:
+            print("emu_gpr::read_data(): Table has",
+                  self.train_table.get_nlines(),"lines.")
 
-        input_data=[]
-        for i in self.input_list:
-            input_data.append(np.array(self.train_table.__getitem__(i)))
-
-        input_data=self.SS1.fit_transform(np.asarray(input_data).transpose())
-
-        train_data =[]
+        train_data=[]
         output_data=[]
 
         for i in self.input_list:
@@ -91,26 +90,31 @@ class emu_gpr:
             output_data.append(np.array(self.train_table[i]
                                         [0:self.train_table.get_nlines()]))
         output_data=np.asarray(output_data).transpose()
-        print("emu_gpr::read_data(): Input data:",
-              np.shape(train_data))
-        print("emu_gpr::read_data(): Output data:",
-              np.shape(output_data))
+        
+        if verbose>0:
+            print("emu_gpr::read_data(): Input data:",
+                  np.shape(train_data))
+            print("emu_gpr::read_data(): Output data:",
+                  np.shape(output_data))
 
-        x_train, x_test, y_train, y_test=train_test_split(
-            train_data, output_data, test_size=0.15)
-        print("emu_gpr::read_data(): Training array:",
-              x_train.shape)
-        print("emu_gpr::read_data(): Target array:",
-              y_train.shape)
+        x_train,x_test,y_train,y_test=train_test_split(
+            train_data,output_data,test_size=0.15)
+        if verbose>0:
+            print("emu_gpr::read_data(): Training array:",
+                  x_train.shape)
+            print("emu_gpr::read_data(): Target array:",
+                  y_train.shape)
 
-        print("emu_gpr::read_data(): Training GPR model.")
+        if verbose>0:
+            print("emu_gpr::read_data(): Training GPR model.")
         
         self.gpr=GPR(kernel=self.kernel,random_state=0,
                      n_restarts_optimizer=5, 
                      normalize_y=True).fit(x_train,y_train)
         
-        print("emu_gpr::read_data(): Training done. Score:",
-              self.gpr.score(x_test,y_test))
+        if verbose>0:
+            print("emu_gpr::read_data(): Training done. Score:",
+                  self.gpr.score(x_test,y_test))
         
         return
 
@@ -120,23 +124,19 @@ class emu_gpr:
         """
 
         print("emu_gpr::predict(): Starting.")
+        
         trial_input=np.asarray(trial_input)
         trial_input=trial_input.reshape(1,len(self.input_list))
         trial_input=self.SS1.transform(trial_input)
         
-        predicted, std_dev=self.gpr.predict(
-            trial_input, return_std=True, return_cov=False)
+        predicted,std_dev=self.gpr.predict(
+            trial_input,return_std=True,return_cov=False)
+        
         #predicted=self.SS2.inverse_transform(predicted)
 
-        re_predicted=[]
-        for i in range(0, len(self.output_list)):
-            #print(self.output_list[i], predicted[0][i])
-            re_predicted.append(predicted[0][i])
-        re_predicted.append(std_dev[0][i])
-             
-        return re_predicted
+        return predicted.tolist()
 
 if __name__ == '__main__':
     egpr=emu_gpr();
-    egpr.read_data(2,'emu_data.o2',0,'z,x,y,d',1)
-    print(egpr.predict([1,2]))
+    egpr.read_data(2,'emu_data.o2',0,'x,y,z,d',1)
+    print(egpr.predict([1,2])[0])

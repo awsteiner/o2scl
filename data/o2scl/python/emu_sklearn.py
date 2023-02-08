@@ -1,7 +1,7 @@
 """
   -------------------------------------------------------------------
   
-  Copyright (C) 2022-2023, Andrew W. Steiner
+  Copyright (C) 2022-2023, Satyajit Roy and Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -86,7 +86,8 @@ class emu_py:
             
         # Perform the GP fit
         kernel=RBF(1.0,(1.0e0,1.0e2))
-        self.gpr=GaussianProcessRegressor(kernel=kernel).fit(x,y)
+        self.gpr=GaussianProcessRegressor(kernel=kernel,
+                                          normalize_y=True).fit(x,y)
         
         return
 
@@ -96,7 +97,7 @@ class emu_py:
 
 if __name__ == '__main__':
     epy=emu_py();
-    epy.train(2,'emu_data.o2',0,'z,x,y,d',1)
-    print(epy.point([1,2]))
+    epy.train(2,'emu_data.o2',0,'x,y,z,d',1)
+    print("Output at [1,2]:",epy.point([1,2]))
     
     
