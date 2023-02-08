@@ -90,8 +90,8 @@ class emu_gpr:
         log_wgt=np.array(data.__getitem__("log_wgt")).transpose()
         log_wgt=log_wgt.reshape(len(log_wgt),1)
         for value in log_wgt:
-        if value[0]<=(-80): value[0]=0
-        else: value[0]=1
+            if value[0]<=(-80): value[0]=0
+            else: value[0]=1
 
         print("PyModule 1: input data: ", np.shape(input_data))
         print("emu_sklearn2.py:read_data(): log_wgt: ", np.shape(log_wgt))
@@ -197,3 +197,7 @@ class emu_gpr:
              
         return re_predicted
 
+if __name__ == '__main__':
+    epy=emu_py();
+    epy.read_data(2,'emu_data.o2',0,'z,x,y,d',1)
+    print(epy.predict([1,2]))

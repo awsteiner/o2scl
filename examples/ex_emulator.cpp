@@ -107,7 +107,7 @@ int main(void) {
 
       }
       
-      {
+      if (false) {
         cout << "Emulator from emu_sklearn2.py" << endl;
         emulator_python<ubvector,ubvector> em2;
         em2.verbose=3;
@@ -123,6 +123,27 @@ int main(void) {
           double dz;
           ubvector dat(2), datu(2);
           em2.eval_unc(2,p,z,dz,dat,datu);
+          cout << ft(p[0],p[1]) << " " << z << endl;
+      
+        }
+      }
+      
+      if (true) {
+        cout << "Emulator from emu_tf.py" << endl;
+        emulator_python<ubvector,ubvector> em3;
+        em3.verbose=3;
+        em3.set("emu_tf","emu_dnn","read_data","predict",2,
+                "emu_data.o2",0,col_list,false);
+    
+        for(size_t j=0;j<10;j++) {
+      
+          ubvector p(2);
+          p[0]=1.0+sin(j*4);
+          p[1]=2.0+sin(j*5);
+          double z;
+          double dz;
+          ubvector dat(2), datu(2);
+          em3.eval_unc(2,p,z,dz,dat,datu);
           cout << ft(p[0],p[1]) << " " << z << endl;
       
         }

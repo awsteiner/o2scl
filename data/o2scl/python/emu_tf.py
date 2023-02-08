@@ -40,117 +40,98 @@ class emu_dnn:
 
     def __init__(self):
         # Class variable for DNN
-        self.dnn = 0
-        self.train_table = 0
-        self.input_list = []
-        self.output_list = []
-        self.SS1 = QuantileTransformer()
-        self.SS2 = QuantileTransformer()
-        self.tracker = 0
+        self.dnn=0
+        self.train_table=0
+        self.input_list=[]
+        self.output_list=[]
+        self.SS1=QuantileTransformer()
+        self.SS2=QuantileTransformer()
+        self.tracker=0
 
-    def read_data(self, file_list, ds_name, nd_in, param_list):
+    def read_data(self,nd_in,hdf_file,ix_log_wgt,col_list,verbose):
         """
         Desc.
         """
 
         link=o2sclpy.linker()
         link.link_o2scl()
-        new_data = o2sclpy.table(link)
-        data = o2sclpy.table(link)
-        train_table = o2sclpy.table(link)
-        p=o2sclpy.o2graph_plotter()
+        
+        new_data=o2sclpy.table(link)
+        data=o2sclpy.table(link)
+        train_table=o2sclpy.table(link)
 
         for i in range(0, nd_in):
-            self.input_list.append(param_list[i])
+            self.input_list.append(col_list[i])
 
-        for i in range(nd_in, len(param_list)):
-           self.output_list.append(param_list[i])
+        for i in range(nd_in, len(col_list)):
+           self.output_list.append(col_list[i])
 
-        for hdf_file in file_list:
-            print("PyModule : Reading File: ", hdf_file)
-            hf=o2sclpy.hdf_file(link)
-            hf.open(hdf_file)
-            new_data.clear_table()
-            o2sclpy.hdf_input_table(link,hf,new_data)
-            hf.close()
-            print("PyModule : Done Reading File: ")
-            print("Pymodule : Table in file ", hdf_file, " has lines ",
-                  new_data.get_nlines())
-
-            # Delete any rows with a small log_wgt, which are emulated, or
-            # have a value of "mult" which is zero
-            print("Pymodule : table has ", data.get_nlines(), " lines.")
-            """
-            if new_data.is_column("emulated"):
-                if new_data.is_column("mult"):
-                    new_data.delete_rows_func("emulated>0.5 || mult<0.5")
-                else:
-                    new_data.delete_rows_func("emulated>0.5")
-            else:
-                if new_data.is_column("mult"):
-                    new_data.delete_rows_func("mult<0.5")
-            """
-            data.add_table(new_data)
-            print("Pymodule : table now has ", data.get_nlines(), " lines.")
-
-        print("Pymodule : table now has ", data.get_nlines(), " lines.")
+        print("emu_dnn::read_data(): Reading file:",hdf_file)
+        hf=o2sclpy.hdf_file(link)
+        hf.open(hdf_file)
+        new_data.clear_table()
+        o2sclpy.hdf_input_table(link,hf,new_data)
+        hf.close()
+        print("emu_dnn::read_data(): Done reading file.")
+        print("emu_dnn::read_data(): Table in file", hdf_file,"has",
+              new_data.get_nlines(),"lines.")
 
         train_table.add_table(data)
-        self.train_table = train_table
+        self.train_table=train_table
 
-        return
-    
-    def train(self):
-        """
-        Desc.
-        """
-        print("Pymodule : table now has ", self.train_table.get_nlines(),
-              " lines.")
+        print("emu_dnn::read_data(): table now has",
+              self.train_table.get_nlines(),
+              "lines.")
 
-        train_data =[]
-        output_data = []
+        train_data=[]
+        output_data=[]
 
-        if (self.tracker !=0):
+        if (self.tracker!=0):
             train_data.clear()
             output_data.clear()
-            print( np.shape(train_data),  np.shape(output_data))
-            print(len(self.input_list), len(self.output_list))
-            train_data = []
-            output_data = []
+            print(np.shape(train_data),np.shape(output_data))
+            print(len(self.input_list),len(self.output_list))
+            train_data=[]
+            output_data=[]
         
         for i in self.input_list:
             train_data.append(np.array(self.train_table[i]
                                        [0:self.train_table.get_nlines()]))
         #print("Pymodule: ",np.shape(np.array(data1.__getitem__("log10_Tcn"))))
-        train_data = self.SS1.fit_transform(np.asarray(train_data).transpose())
+        train_data=self.SS1.fit_transform(np.asarray(train_data).transpose())
          
         for i in self.output_list:
             output_data.append(np.array(self.train_table[i]
                                         [0:self.train_table.get_nlines()]))
         output_data=self.SS2.fit_transform(np.asarray(output_data).transpose())
-        #self.output_data = self.SS2.fit_transform(output_data)
-        #print("PyModule : log_wgt: ", self.log_wgt)
-        print("PyModule 2: input data: ", np.shape(train_data))
-        print("PyModule 2: output data: ", np.shape(output_data))
+        
+        #self.output_data=self.SS2.fit_transform(output_data)
+        #print("emu_dnn::read_data(): log_wgt: ", self.log_wgt)
+        
+        print("emu_dnn::read_data(): input data: ", np.shape(train_data))
+        print("emu_dnn::read_data(): output data: ", np.shape(output_data))
         #print(output_data)
 
-        x_train, x_test, y_train, y_test = train_test_split(
+        x_train, x_test, y_train, y_test=train_test_split(
             train_data, output_data, test_size=0.15)
-        print("PyModule : Training array : ", x_train.shape)
-        print("PyModule : Target array : ", y_train.shape)
+        print("emu_dnn::read_data(): Training array : ", x_train.shape)
+        print("emu_dnn::read_data(): Target array : ", y_train.shape)
 
         def custom_loss(y_true, y_pred):
-            mu = y_pred[:, :1]  # first output neuron
-            log_sig = y_pred[:, 1:]  # second output neuron
-            sig = tf.exp(log_sig)  # undo the log
+            # first output neuron
+            mu=y_pred[:,:1]
+            # second output neuron
+            log_sig=y_pred[:,1:]
+            # undo the log
+            sig=tf.exp(log_sig)  
 
-            return tf.reduce_mean(2*log_sig + ((y_true-mu)/sig)**2)
+            return tf.reduce_mean(2*log_sig+((y_true-mu)/sig)**2)
 
-        print("PyModule : Training DNN model.")
-        model = tf.keras.Sequential(
+        print("emu_dnn::read_data(): Training DNN model.")
+        model=tf.keras.Sequential(
             [
                 tf.keras.layers.Dense(
-                    302, input_shape=(155,), activation='tanh'),
+                    302,input_shape=(155,), activation='tanh'),
                 tf.keras.layers.Dense(32, activation='tanh'),
                 tf.keras.layers.Dense(21, activation='sigmoid')
             ])
@@ -158,13 +139,13 @@ class emu_dnn:
 
         model.compile(loss='mean_squared_error',
                       optimizer='adam', metrics=['accuracy'])
-        model.fit(x_train, y_train, batch_size=128, epochs=150,
-                  validation_data=(x_test, y_test), verbose=0)
+        model.fit(x_train,y_train,batch_size=128,epochs=150,
+                  validation_data=(x_test,y_test),verbose=0)
 
-        print("PyModule : Training done")
-        print("PyModule: Test Score: [loss, accuracy]: ",
+        print("emu_dnn::read_data(): Training done.")
+        print("emu_dnn::read_data(): Test Score: [loss, accuracy]: ",
               model.evaluate(x_test, y_test, verbose=0))
-        self.dnn = model
+        self.dnn=model
 
         return
     
@@ -174,11 +155,11 @@ class emu_dnn:
         """
         
         self.train_table.line_of_data(vec)
-        self.tracker = self.tracker + 1
-        print("PyModule : Tracker: ", self.tracker)
+        self.tracker=self.tracker + 1
+        print("emu_dnn::upTrain(): Tracker: ", self.tracker)
         if self.tracker == 300:
             self.train()
-            self.tracker = 0
+            self.tracker=0
 
         return
     
@@ -187,17 +168,19 @@ class emu_dnn:
         Desc.
         """
 
-        print("PyModule : starting predict")
-        trial_input = np.asarray(trial_input)
-        trial_input = trial_input.reshape(1, len(self.input_list))
-        trial_input = self.SS1.transform(trial_input)
+        print("emu_dnn::predict(): starting predict")
+        trial_input=np.asarray(trial_input)
+        trial_input=trial_input.reshape(1, len(self.input_list))
+        trial_input=self.SS1.transform(trial_input)
+        
         # Predict gives the output and the std_dev in normal scale
         # no need to inverse transform anything
-        re_predicted = []
+        
+        re_predicted=[]
 
-        predicted = self.dnn.predict(trial_input, verbose=1)
+        predicted=self.dnn.predict(trial_input, verbose=1)
         trial_input.__del__()
-        predicted = self.SS2.inverse_transform(predicted)
+        predicted=self.SS2.inverse_transform(predicted)
     
         for i in range(0, len(self.output_list)):
             #print(self.output_list[i], predicted[0][i])
@@ -206,3 +189,9 @@ class emu_dnn:
 
         predicted.__del__()
         return re_predicted
+
+if __name__ == '__main__':
+    ednn=emu_dnn();
+    ednn.read_data(2,'emu_data.o2',0,'z,x,y,d',1)
+    print(ednn.predict([1,2]))
+    
