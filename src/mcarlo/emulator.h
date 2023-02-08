@@ -406,9 +406,7 @@ namespace o2scl {
     int verbose;
     
     virtual ~emulator_python() {
-      std::cout << "H0." << std::endl;
       decref();
-      std::cout << "Hm1." << std::endl;
     }
     
     /** \brief Set the emulator
@@ -425,9 +423,7 @@ namespace o2scl {
              size_t ix_log_wgt, std::vector<std::string> list,
              bool has_uncerts=true) {
       
-      std::cout << "x1" << std::endl;
       decref();
-      std::cout << "x2" << std::endl;
 
       ix=ix_log_wgt;
       
@@ -628,11 +624,11 @@ namespace o2scl {
       }
       
       Py_DECREF(p_train_func);
+
       // AWS 3/7/23: once we put the file and list in the args
       // tuple, then they take over the memory so no need to
-      // decref() them.
-      //Py_DECREF(p_file);
-      //Py_DECREF(p_list);
+      // call Py_DECREF() for them.
+
       Py_DECREF(p_args);
       Py_DECREF(p_result);
       
@@ -657,7 +653,6 @@ namespace o2scl {
 
       
       // Create the list object
-      std::cout << "n: " << n << std::endl;
       PyObject *p_list=PyList_New(n);
       if (p_list==0) {
         O2SCL_ERR2("List creation failed in ",
@@ -723,13 +718,7 @@ namespace o2scl {
           log_wgt=PyFloat_AsDouble(p_y_val);
         } else {
           dat[i]=PyFloat_AsDouble(p_y_val);
-          std::cout << "B: " << i << " " << dat[i] << std::endl;
         }
-        if (verbose>0) {
-          std::cout << "Decref yval " << i << " of " << p_values.size()
-                    << std::endl;
-        }
-        //Py_DECREF(p_y_val);
       }
 
       if (has_unc) {
@@ -745,21 +734,9 @@ namespace o2scl {
           } else {
             dat_unc[i-n2-1]=PyFloat_AsDouble(p_y_val);
           }
-          if (verbose>0) {
-            std::cout << "Decref yval " << i << " of " << p_values.size()
-                      << std::endl;
-          }
-          //Py_DECREF(p_y_val);
         }
       }
 
-      for(size_t i=0;i<p_values.size();i++) {
-        if (verbose>0) {
-          std::cout << "Decref value " << i << " of " << p_values.size()
-                    << std::endl;
-        }
-        //Py_DECREF(p_values[i]);
-      }
       if (verbose>0) {
         std::cout << "Decref list." << std::endl;
       }

@@ -25,17 +25,12 @@ import numpy
 import sklearn
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
-import gc
 
 class emu_py:
 
     link=0
     gpr=0
 
-    def __init__(self):
-        print('init')
-        #gc.disable()
-    
     def train(self,num_params,filename,ix_log_wgt,col_list,verbose):
 
         if verbose>0:
@@ -98,10 +93,6 @@ class emu_py:
         yp=self.gpr.predict([v])
         return yp[0].tolist()
 
-    def __del__(self):
-        print('del')
-        #gc.enable()
-        
 if __name__ == '__main__':
     epy=emu_py();
     epy.train(2,'emu_data.o2',0,'z,x,y,d',1)

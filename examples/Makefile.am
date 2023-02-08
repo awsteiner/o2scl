@@ -105,9 +105,16 @@ else
 O2SCL_OPENMP_MVAR =
 endif
 
+if O2SCL_PYTHON
+O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON -I$(PYTHON_INCLUDE_DIR)
+else 
+O2SCL_PYTHON_MVAR = 
+endif
+
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_MPFR_MVAR) \
-	$(O2SCL_HDF_MVAR) -DO2SCL_COND_FLAG $(O2SCL_OPENMP_MVAR)
+	$(O2SCL_HDF_MVAR) -DO2SCL_COND_FLAG $(O2SCL_OPENMP_MVAR) \
+	$(O2SCL_PYTHON_MVAR)
 
 # -------------------------------------------------------------
 # Distribution files
@@ -145,6 +152,7 @@ EXTRA_PROGRAMS = \
 	ex_contour \
 	ex_deriv \
 	ex_diff \
+	ex_emulator \
 	ex_eos_crust \
 	ex_eos_gibbs \
 	ex_eos_had_apr \
@@ -374,6 +382,12 @@ ex_eos_crust_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_crust_SOURCES = ex_eos_crust.cpp
 ex_eos_crust.scr: ex_eos_crust
 	./ex_eos_crust > ex_eos_crust.scr
+
+ex_emulator_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_emulator_LDADD = $(ADDL_TEST_LIBS)
+ex_emulator_SOURCES = ex_emulator.cpp
+ex_emulator.scr: ex_emulator
+	./ex_emulator > ex_emulator.scr
 
 ex_eos_had_apr_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_eos_had_apr_LDADD = $(ADDL_TEST_LIBS)
