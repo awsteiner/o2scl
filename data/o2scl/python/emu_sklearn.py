@@ -40,20 +40,22 @@ class emu_py:
             print('col_list:',col_list)
             print('verbose:',num_params)
 
-        col_list2=col_list.split(',')
-        lw_col=col_list2[0]
-        print('col_list2,lw_col:',col_list2,lw_col)
+        col_list_arr=col_list.split(',')
+        lw_col=col_list_arr[0]
+        if verbose>0:
+            print('col_list_arr,lw_col:',col_list_arr,lw_col)
             
         param_list=[]
         data_list=[]
             
-        for i in range(0,len(col_list2)):
+        for i in range(0,len(col_list_arr)):
             if i<num_params:
-                param_list.append(col_list2[i])
+                param_list.append(col_list_arr[i])
             else:
-                data_list.append(col_list2[i])
-        print('param_list:',param_list)
-        print('data_list:',data_list)
+                data_list.append(col_list_arr[i])
+        if verbose>0:
+            print('param_list:',param_list)
+            print('data_list:',data_list)
             
         import o2sclpy
         
@@ -69,19 +71,18 @@ class emu_py:
         o2sclpy.hdf_input_table(self.link,hf,tab)
         hf.close()
         
-        print('o2sclpy nlines',tab.get_nlines())
+        if verbose>0:
+            print('o2sclpy nlines',tab.get_nlines())
         
         x=numpy.zeros((tab.get_nlines(),num_params))
         for i in range(0,tab.get_nlines()):
             for j in range(0,num_params):
                 x[i,j]=tab.get(param_list[j],i)
-        print('set x')
                     
         y=numpy.zeros((tab.get_nlines(),len(data_list)))
         for i in range(0,tab.get_nlines()):
             for j in range(0,len(data_list)):
                 y[i,j]=tab.get(data_list[j],i)
-        print('set y')
             
         # Perform the GP fit
         kernel=RBF(1.0,(1.0e0,1.0e2))
