@@ -99,6 +99,23 @@ void lib_settings_class::py_init(int verbose) {
   return;
 }
 
+std::string lib_settings_class::py_get_module_path(std::string module) {
+#ifdef O2SCL_PYTHON
+  PyObject *p_module;
+  p_module=PyImport_ImportModule("o2sclpy");
+  //cout << "module: " << p_module << endl;
+  PyObject *p_path=PyObject_GetAttrString(p_module,"__path__");
+  //cout << "path: " << p_path << endl;
+  //cout << PyList_Check(p_path) << endl;
+  PyObject *p_item=PyList_GetItem(p_path,0);
+  const char *result=PyUnicode_AsUTF8(p_item);
+  std::string s_res=result;
+  return s_res;
+#else
+  return "";
+#endif
+}
+
 int lib_settings_class::py_final_nothrow(int verbose) {
 #ifdef O2SCL_PYTHON
   if (verbose>0) {

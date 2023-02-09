@@ -209,6 +209,9 @@ namespace o2scl {
     /// Finalize the python interface
     void py_final(int verbose=0);
 
+    /// Get the path for the Python module named \c module
+    std::string py_get_module_path(std::string module);
+    
     /// Add path \c path to the python system search path
     void add_python_path(std::string path, int verbose=0);
     
