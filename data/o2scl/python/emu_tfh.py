@@ -111,6 +111,74 @@ class emu_dnn:
 
             return tf.reduce_mean(2*log_sig+((y_true-mu)/sig)**2)
 
+        class RegressionHyperModel(HyperModel):
+            def __init__(self, input_shape):
+                self.input_shape = input_shape    
+        
+            def build(self, hp):
+                model = keras.Sequential()
+                # Tune the number of layers
+                for i in range(hp.Int('num_layers', 1, 6)):
+                    model.add(
+                        layers.Dense(
+                            # Tune number of units separately
+                            units=hp.Int(f"units_{i}",
+                                         min_value=50,
+                                         max_value=200, step=50),
+                            activation='relu'
+                        )
+                    )
+                model.add(layers.Dense(1, activation='linear'))
+                model.compile(loss='mean_squared_error', optimizer='adam')
+                return model
+
+        # Initialize the input shape
+        input_shape = (x_tr.shape[1],)
+        hypermodel = RegressionHyperModel(input_shape)
+
+        tuner = kt.RandomSearch(
+            # Pass the hypermodel object
+            hypermodel,
+            # Quantity to monitor during tuning
+            objective='val_loss',
+            # Set reproducibility of randomness
+            seed=42,
+            # Max number of trials with different hyperparameters
+            max_trials=100,
+            # Number of repeated trials with same hyperparameters
+            executions_per_trial=1,
+            # Set directory to store search results
+            directory="random_search",
+            # Set the subdirectory name
+            project_name="np",
+            # Choose if previous search results should be ignored
+            overwrite=True             
+        )
+        
+        # Set up callback for early stopping 
+        stop_early=tf.keras.callbacks.EarlyStopping(monitor='loss',
+                                                    min_delta=1.0e-10,
+                                                    patience=10)
+        
+        # Print the summary of search space
+        tuner.search_space_summary()
+
+        tuner.search(x_tr, y_tr, batch_size=32, epochs=1000,
+                     validation_data=(x_ts, y_ts),
+                     callbacks=[stop_early], verbose=2)
+
+        tuner.results_summary(num_trials=10)
+
+        # Get the top model
+        models = tuner.get_best_models(num_models=10)
+        best_model = models[0]
+        
+        # Build the best model
+        best_model.build(input_shape=(None, 91))
+        
+        # Show the best model
+        best_model.summary()
+        
         print("emu_dnn::read_data(): Training DNN model.")
         model=tf.keras.Sequential(
             [

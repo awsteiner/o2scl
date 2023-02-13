@@ -29,6 +29,7 @@
 
 #ifdef O2SCL_PYTHON
 #include <Python.h>
+#include <numpy/arrayobject.h>
 #endif
 
 #ifdef O2SCL_PLAIN_HDF5_HEADER
@@ -114,6 +115,24 @@ std::string lib_settings_class::py_get_module_path(std::string module) {
 #else
   return "";
 #endif
+}
+
+void *lib_settings_class::py_array_import() {
+  
+  // AWS, 2/12/23: The import_array() function is a macro (?!) which
+  // returns NULL if it fails, but then throws a python, not a C++
+  // exception. This forces us to use "void *" for the return type to
+  // this function. This function uses PyErr_Occurred() to throw a C++
+  // exception if an error occurs, so this function either fails, or
+  // returns 0.
+
+  std::cout << "Running import_array()." << std::endl;
+  import_array();
+  if (PyErr_Occurred()) {
+    O2SCL_ERR("Failed to import numpy Python module(s).",
+              o2scl::exc_efailed);
+  }
+  return 0;
 }
 
 int lib_settings_class::py_final_nothrow(int verbose) {

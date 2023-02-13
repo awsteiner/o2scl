@@ -71,21 +71,31 @@ int main(void) {
       x[0]=sin(j);
       x[1]=cos(j);
       fp(2,x,y);
+      t.test_rel(y[0],x[0]*o2scl_const::pi,1.0e-10,"mm_funct_python 1");
+      t.test_rel(y[1],x[1]*o2scl_const::pi,1.0e-10,"mm_funct_python 2");
     }
     cout << endl;
 
-    mm_funct_python<ubvector> fp4("mm_funct_test","fun","mft");
-    cout << "Calling mft.fun() in mm_funct_test.py:" << endl;
-    x[0]=2.0;
-    x[1]=3.0;
-    int mfcp_ret=fp4(2,x,y);
-    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
+    mm_funct_python_ndarray<std::vector<double> >
+      fp4("mm_funct_test","fun_numpy","mft",0);
+    cout << "Calling mft.fun_numpy() in mm_funct_test.py:" << endl;
+    std::vector<double> sx(2), sy(2), sy2(2);
+    sx[0]=2.0;
+    sx[1]=3.0;
+    sy2[0]=2.0*o2scl_const::pi;
+    sy2[1]=3.0*o2scl_const::pi;
+    int mfcp_ret=fp4(2,sx,sy);
+    t.test_rel_vec(2,sy,sy2,1.0e-12,"mm_funct_python_ndarray");
     cout << endl;
 
     for(size_t j=0;j<10;j++) {
-      x[0]=sin(j);
-      x[1]=cos(j);
-      fp4(2,x,y);
+      sx[0]=sin(j);
+      sx[1]=cos(j);
+      fp4(2,sx,sy);
+      t.test_rel(sy[0],sx[0]*o2scl_const::pi,1.0e-10,
+                 "mm_funct_python_ndarray 1");
+      t.test_rel(sy[1],sx[1]*o2scl_const::pi,1.0e-10,
+                 "mm_funct_python_ndarray 2");
     }
     cout << endl;
 

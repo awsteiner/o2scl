@@ -36,6 +36,7 @@
 
 #ifdef O2SCL_PYTHON
 #include <Python.h>
+#include <numpy/arrayobject.h>
 #endif
 
 namespace o2scl {
@@ -494,6 +495,305 @@ namespace o2scl {
 
     mm_funct_python(const mm_funct_python &);
     mm_funct_python& operator=(const mm_funct_python&);
+
+  };
+
+  template<class vec_t=boost::numeric::ublas::vector<double> >
+  class mm_funct_python_ndarray {
+    
+  protected:
+
+    /// Python unicode object containing function name
+    PyObject *p_name;
+    
+    /// Python module containing function
+    PyObject *p_module;
+    
+    /// The class
+    PyObject *p_class;
+
+    /// An instance of the class
+    PyObject *p_instance;
+
+    /// Function arguments
+    PyObject *p_args;
+
+    /// Python function
+    PyObject *p_func;
+
+    /// Verbosity parameter
+    int verbose;
+    
+  public:
+    
+    /** \brief Specify the Python module and function
+     */
+    mm_funct_python_ndarray(std::string module="", std::string func="",
+                    std::string class_name="", int v=0) {
+                    
+      verbose=v;
+
+      if (o2scl_settings.py_initialized==false) {
+        if (verbose>0) {
+          std::cout << "Running py_init()." << std::endl;
+        }
+        o2scl_settings.py_init();
+      }
+      p_func=0;
+      p_args=0;
+      p_instance=0;
+      p_class=0;
+      p_module=0;
+      p_name=0;
+      if (module.length()>0) {
+        set_function(module,func,class_name);
+      }
+    }      
+    
+    void free() {
+      if (verbose>0) {
+        std::cout << "Starting mm_funct_python_ndarray::free()." << std::endl;
+      }
+      if (p_func!=0) {
+        if (verbose>0) {
+          std::cout << "Decref func." << std::endl;
+        }
+        Py_DECREF(p_func);
+      }
+      if (p_args!=0) {
+        if (verbose>0) {
+          std::cout << "Decref args." << std::endl;
+        }
+        Py_DECREF(p_args);
+      }
+      if (p_instance!=0) {
+        if (verbose>0) {
+          std::cout << "Decref instance." << std::endl;
+        }
+        Py_DECREF(p_instance);
+      }
+      if (p_class!=0) {
+        if (verbose>0) {
+          std::cout << "Decref class." << std::endl;
+        }
+        Py_DECREF(p_class);
+      }
+      if (p_module!=0) {
+        if (verbose>0) {
+          std::cout << "Decref module." << std::endl;
+        }
+        Py_DECREF(p_module);
+      }
+      if (p_name!=0) {
+        if (verbose>0) {
+          std::cout << "Decref name." << std::endl;
+        }
+        Py_DECREF(p_name);
+      }
+      p_func=0;
+      p_args=0;
+      p_instance=0;
+      p_class=0;
+      p_module=0;
+      p_name=0;
+      if (verbose>0) {
+        std::cout << "Done in mm_funct_python_ndarray::free()." << std::endl;
+      }
+    }      
+    
+    virtual ~mm_funct_python_ndarray() {
+      free();
+    }      
+  
+    /** \brief Specify the python and the parameters
+
+        This function is called by the constructor and thus
+        cannot be virtual.
+    */
+    int set_function(std::string module, std::string func,
+                     std::string class_name) {
+
+      free();
+      
+      // Get the Unicode name of the user-specified module
+      if (verbose>0) {
+        std::cout << "Staring mm_funct_python_ndarray::set_function()."
+                  << std::endl;
+        std::cout << "  Getting unicode for module name()." << std::endl;
+      }
+      p_name=PyUnicode_FromString(module.c_str());
+      if (p_name==0) {
+        O2SCL_ERR2("Create module name failed in ",
+                   "mm_funct_python_ndarray::set_function().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Import the user-specified module
+      if (verbose>0) {
+        std::cout << "  Importing module." << std::endl;
+      }
+      p_module=PyImport_Import(p_name);
+      if (p_module==0) {
+        O2SCL_ERR2("Load module failed in ",
+                   "mm_funct_python_ndarray::set_function().",
+                   o2scl::exc_efailed);
+      }
+
+      if (class_name.length()>0) {
+        if (verbose>0) {
+          std::cout << "  Obtaining python class." << std::endl;
+        }
+        p_class=PyObject_GetAttrString(p_module,class_name.c_str());
+        if (p_class==0) {
+          O2SCL_ERR2("Get class failed in ",
+                     "emulator_python::set().",o2scl::exc_efailed);
+        }
+        
+        // Create an instance of the class
+        if (verbose>0) {
+          std::cout << "  Loading python class." << std::endl;
+        }
+        if (PyCallable_Check(p_class)==false) {
+          O2SCL_ERR2("Check class callable failed in ",
+                     "funct_python_method::set_function().",
+                     o2scl::exc_efailed);
+        }
+        
+        if (verbose>0) {
+          std::cout << "  Loading python class instance." << std::endl;
+        }
+        p_instance=PyObject_CallObject(p_class,0);
+        if (p_instance==0) {
+          O2SCL_ERR2("Instantiate class failed in ",
+                     "funct_python_method::set_function().",
+                     o2scl::exc_efailed);
+        }
+      }
+      
+      // Setup the arguments to the python function
+      if (verbose>0) {
+        std::cout << "  Making argument object for function." << std::endl;
+      }
+      p_args=PyTuple_New(1);
+      if (p_args==0) {
+        O2SCL_ERR2("Create arg tuple failed in ",
+                   "mm_funct_python_ndarray::set_function().",
+                   o2scl::exc_efailed);
+      }
+
+      if (class_name.length()>0) {
+        // Load the python function
+        if (verbose>0) {
+          std::cout << "  Loading python member function." << std::endl;
+        }
+        p_func=PyObject_GetAttrString(p_instance,func.c_str());
+        if (p_func==0) {
+          O2SCL_ERR2("Get function failed in ",
+                     "mm_funct_python_ndarray::set_function().",
+                     o2scl::exc_efailed);
+        }
+      } else {
+        // Load the python function
+        if (verbose>0) {
+          std::cout << "  Loading python function." << std::endl;
+        }
+        p_func=PyObject_GetAttrString(p_module,func.c_str());
+        if (p_func==0) {
+          O2SCL_ERR2("Get function failed in ",
+                     "mm_funct_python_ndarray::set_function().",
+                     o2scl::exc_efailed);
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "Done with mm_funct_python_ndarray::set_function()."
+                  << std::endl;
+      }
+      
+      return 0;
+    }
+    
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual int operator()(size_t n, const vec_t &v,
+                           vec_t &y) const {
+
+      if (p_func==0) {
+        O2SCL_ERR2("No function found in ",
+                   "mm_funct_python_ndarray::operator().",
+                   o2scl::exc_efailed);
+      }
+
+      /*
+        AWS, 2/12/23, Check: 
+        https://stackoverflow.com/questions/52731884/pyarray-simplenewfromdata
+        if I have trouble with memory leaks
+       */
+
+      // I'm not sure why it has to be done here and not in
+      // mm_funct_ts.cpp
+      import_array();
+      
+      npy_intp dims[]={(npy_intp)n};
+      if (verbose>0) {
+        std::cout << "mm_funct_python_ndarray::operator():" << std::endl;
+        std::cout << "  Input array: " << v[0] << " " << v[1] << std::endl;
+      }
+      PyObject *array_in=PyArray_SimpleNewFromData
+        (1,dims,NPY_DOUBLE,(void *)(&(v[0])));
+         
+      int ret=PyTuple_SetItem(p_args,0,array_in);
+      if (ret!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (verbose>0) {
+        std::cout << "  Calling python function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_func,p_args);
+      if (result==0) {
+        O2SCL_ERR2("Function call failed in ",
+                   "mm_funct_python_ndarray::operator().",o2scl::exc_efailed);
+      }
+
+      if (PyArray_Check(result)==0) {
+        O2SCL_ERR2("Function call did not return a numpy array in ",
+                   "mm_funct_python_ndarray::operator().",o2scl::exc_efailed);
+      }
+      
+      if (verbose>0) {
+        std::cout << "  Obtaining output." << std::endl;
+      }
+      for(size_t i=0;i<n;i++) {
+        void *vp=PyArray_GETPTR1(result,i);
+        double *dp=(double *)vp;
+        y[i]=*dp;
+        std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+      }
+      
+      if (verbose>0) {
+        std::cout << "  Decref result." << std::endl;
+      }
+      Py_DECREF(result);
+  
+      if (verbose>0) {
+        std::cout << "Done in mm_funct_python_ndarray::operator()."
+                  << std::endl;
+      }
+
+      return 0;
+    }      
+
+  protected:
+
+    mm_funct_python_ndarray() {};
+
+  private:
+
+    mm_funct_python_ndarray(const mm_funct_python_ndarray &);
+    mm_funct_python_ndarray& operator=(const mm_funct_python_ndarray&);
 
   };
 

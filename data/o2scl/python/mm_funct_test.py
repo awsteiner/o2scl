@@ -45,10 +45,18 @@ class mft:
             print('%d %7.6e %7.6e' % (self.count,x[i],y[i]))
         self.count=self.count+1
         return y
-            
+
+    def fun_numpy(self,x):
+        y=numpy.zeros(len(x))
+        for i in range(0,len(x)):
+            y[i]=x[i]*numpy.pi
+            print('%d %7.6e %7.6e' % (self.count,x[i],y[i]))
+        return y
+    
 if __name__ == '__main__':
-    print(fun([1,2]))
+    print(fun([1.2,2.3]))
     mft=mft()
-    print(mft.fun([1,2]))
+    print(mft.fun([1.2,2.3]))
+    print(mft.fun_numpy(numpy.array([1.2,2.3])))
 
     
