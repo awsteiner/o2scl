@@ -1098,50 +1098,6 @@ namespace o2scl_acol {
     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get an entry by grid point
-
-        For objects of type table:
-
-        Get or set a single entry in a table.
-        
-        Arguments: <tt><index column> <index value> <target column>
-        [value or "none"]</tt>
-        
-        The \c value-grid command first looks for the value closest to
-        <index value> in the column <index column> to determine a row
-        in the table. Next \c value-grid gets or sets the value of the
-        target column in that row. If "none" is specified as the
-        fourth argument, then \c value-grid just prints out the
-        specified entry as if the third argument was not specified.
-
-        For objects of type table3d:
-
-        Get a single entry in a table3d object.
-
-        Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
-
-        The \c value-grid command first looks for the value closest to
-        <x value> and <y value> in the slice <index slice> to
-        determine a row in the table. Next, \c value-grid gets or sets
-        the value of of the specified slice in that location. If
-        "none" is specified as the fourth argument, then \c value-grid
-        just prints out the specified entry as if the third argument
-        was not specified.
-
-        For objects of type tensor_grid:
-
-        Get a single entry in a \c tensor_grid object.
-
-        Arguments: <tt><value 1> <value 2> <value 3> ... [value or
-        "none"]</tt>
-
-        The \c value-grid command gets or sets a value in the
-        \c tensor_grid object. The arguments are a list of grid values
-        and (optionally) a new value to store in the location closest
-        to the specified grid values.
-    */
-    virtual int comm_value_grid(std::vector<std::string> &sv, bool itive_com);
-
     /** \brief List objects in a HDF5 file
 
         Arguments: <tt><file></tt>
@@ -1356,23 +1312,21 @@ namespace o2scl_acol {
 
     /** \brief Read an object generic text file
         
-        Arguments: <tt><type> <file></tt>
+        Arguments: <tt><type> <file or "cin"></tt>
         
-        Read an object of type <type> from a text file named <file>.
-        The allowed text file formats depend on the particular type
-        specified.
+        Read an object of type <type> from a text file named <file>,
+        or from <tt>std::cin</tt>.
 
-        For <tt>int</tt>, <tt>char</tt>, <tt>double</tt>, or 
-        <tt>size_t</tt> objects, the
-        file is assumed to begin with the desired object and it is
-        read using operator>>().
+        For <tt>int</tt>, <tt>char</tt>, <tt>double</tt>, or
+        <tt>size_t</tt> objects, the input is assumed to begin
+        with the object and it is read using <tt>operator>>()</tt>.
 
-        For <tt>string</tt> objects, the first line is read using
-        <tt>std::getline()</tt>.
+        For <tt>int[]</tt>, <tt>double[]</tt>, or
+        <tt>size_t[]</tt> objects, the input file is assumed to begin
+        with the desired object and it is read using operator>>().
 
-        For array objects, it is assumed that all array entries are on
-        the first line of the file and no carriage returns are present
-        between entries.
+        For <tt>string</tt> or <tt>string[]</tt> objects, the strings
+        are read using <tt>std::getline()</tt>.
 
         For <tt>table</tt> objects, the first line of the file must
         either contain numeric data or column names separated by white
@@ -2143,6 +2097,43 @@ namespace o2scl_acol {
         entire object, you should use <tt>-set obj_name new_name</tt>.
     */
     virtual int comm_rename(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Resize an object
+
+        For objects of type double[]:
+
+        Resize the vector, ensuring no elements are deleted where possible.
+
+        Arguments: <tt><new size></tt>
+
+        Desc.
+
+        For objects of type int[]:
+
+        Resize the vector, ensuring no elements are deleted where possible.
+
+        Arguments: <tt><new size></tt>
+
+        Desc.
+
+        For objects of type size_t[]:
+
+        Resize the vector, ensuring no elements are deleted where possible.
+
+        Arguments: <tt><new size></tt>
+
+        Desc.
+
+        For objects of type string[]:
+
+        Resize the vector, ensuring no elements are deleted where possible.
+
+        Arguments: <tt><new size></tt>
+
+        Desc.
+
+    */
+    virtual int comm_resize(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Preview the current object
 
@@ -3010,27 +3001,35 @@ namespace o2scl_acol {
 
         For objects of type double[]:
 
-        Get an entry in the array
+        Get or set an entry in the array
 
-        Arguments: <tt><index></tt>
+        Arguments: <tt><index> [value]</tt>
 
-        Get entry at index <index>.
+        Get or set entry at index <index>.
 
         For objects of type int[]:
 
-        Get an entry in the array
+        Get or set an entry in the array
 
-        Arguments: <tt><index></tt>
+        Arguments: <tt><index> [value]</tt>
 
-        Get entry at index <index>.
+        Get or set entry at index <index>.
 
         For objects of type size_t[]:
 
-        Get an entry in the array
+        Get or set an entry in the array
 
-        Arguments: <tt><index></tt>
+        Arguments: <tt><index> [value]</tt>
 
-        Get entry at index <index>.
+        Get or set entry at index <index>.
+
+        For objects of type string[]:
+
+        Get or set an entry in the array
+
+        Arguments: <tt><index> [value]</tt>
+
+        Get or set entry at index <index>.
 
         For objects of type table:
 
@@ -3089,6 +3088,50 @@ namespace o2scl_acol {
     */
     virtual int comm_value(std::vector<std::string> &sv, bool itive_com);
     
+    /** \brief Get an entry by grid point
+
+        For objects of type table:
+
+        Get or set a single entry in a table.
+        
+        Arguments: <tt><index column> <index value> <target column>
+        [value or "none"]</tt>
+        
+        The \c value-grid command first looks for the value closest to
+        <index value> in the column <index column> to determine a row
+        in the table. Next \c value-grid gets or sets the value of the
+        target column in that row. If "none" is specified as the
+        fourth argument, then \c value-grid just prints out the
+        specified entry as if the third argument was not specified.
+
+        For objects of type table3d:
+
+        Get a single entry in a table3d object.
+
+        Arguments: <tt><slice> <x value> <y value> [value or "none"]</tt>
+
+        The \c value-grid command first looks for the value closest to
+        <x value> and <y value> in the slice <index slice> to
+        determine a row in the table. Next, \c value-grid gets or sets
+        the value of of the specified slice in that location. If
+        "none" is specified as the fourth argument, then \c value-grid
+        just prints out the specified entry as if the third argument
+        was not specified.
+
+        For objects of type tensor_grid:
+
+        Get a single entry in a \c tensor_grid object.
+
+        Arguments: <tt><value 1> <value 2> <value 3> ... [value or
+        "none"]</tt>
+
+        The \c value-grid command gets or sets a value in the
+        \c tensor_grid object. The arguments are a list of grid values
+        and (optionally) a new value to store in the location closest
+        to the specified grid values.
+    */
+    virtual int comm_value_grid(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Print version information and O₂scl settings.
 
         Arguments: (No arguments.)

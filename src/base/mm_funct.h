@@ -162,9 +162,13 @@ namespace o2scl {
       and finalized after this class calls its destructor (for
       example with \ref o2scl_settings::py_final()). 
 
-      This class presumes that the input and output lists 
-      occupy different memory. If this is not the case, the
-      results will be unpredictable.
+      \note This class presumes that the input and output lists occupy
+      different memory (i.e. they are different python objects). If
+      this is not the case, the results will be unpredictable.
+
+      \warning This function requires copying all of the elements to
+      the C++ array to a Python object and vice versa. The 
+      \ref o2scl::mm_funct_python_ndarray requires less copying.
 
       \future Find a way to transmit Python exception information
       back to this class and see if it can be handled with a C++
@@ -280,8 +284,9 @@ namespace o2scl {
         cannot be virtual.
     */
     int set_function(std::string module, std::string func,
-                     std::string class_name) {
+                     std::string class_name, int v=0) {
 
+      verbose=v;
       free();
       
       // Get the Unicode name of the user-specified module
@@ -498,7 +503,37 @@ namespace o2scl {
 
   };
 
-  template<class vec_t=boost::numeric::ublas::vector<double> >
+  /** \brief One-dimensional function from a Python function
+      which uses numpy arrays
+
+      This class allows one to specify a Python function from a module
+      (or optionally a class instide that module) and call that
+      function from C++. The python function must have one positional
+      argument which is a numpy array (no keyword arguments will be
+      passed) and it must return a numpy array.
+
+      If a class is specified in the constructor or with 
+      \ref set_function(), then an instance of that Python class
+      is automatically constructed.
+
+      The Python library must be initialized before using
+      this class (for example with \ref o2scl_settings::py_init())
+      and finalized after this class calls its destructor (for
+      example with \ref o2scl_settings::py_final()). 
+
+      \note This class presumes that the input and output lists occupy
+      different memory (i.e. they are different python objects). If
+      this is not the case, the results will be unpredictable.
+
+      \warning This function requires copying all of the elements to
+      the C++ array to a Python object and vice versa. The 
+      \ref o2scl::mm_funct_python_ndarray requires less copying.
+
+      \future Find a way to transmit Python exception information
+      back to this class and see if it can be handled with a C++
+      try block. 
+  */
+  template<class vec_t=std::vector<double> >
   class mm_funct_python_ndarray {
     
   protected:
@@ -705,6 +740,10 @@ namespace o2scl {
         }
       }
 
+      // I'm not sure why it has to be done here and not in
+      // mm_funct_ts.cpp
+      import_array();
+      
       if (verbose>0) {
         std::cout << "Done with mm_funct_python_ndarray::set_function()."
                   << std::endl;
@@ -730,10 +769,6 @@ namespace o2scl {
         if I have trouble with memory leaks
        */
 
-      // I'm not sure why it has to be done here and not in
-      // mm_funct_ts.cpp
-      import_array();
-      
       npy_intp dims[]={(npy_intp)n};
       if (verbose>0) {
         std::cout << "mm_funct_python_ndarray::operator():" << std::endl;

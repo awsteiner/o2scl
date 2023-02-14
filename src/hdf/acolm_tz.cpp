@@ -1260,7 +1260,34 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
     
     if (sv.size()>1) {
       size_t ix=o2scl::stoszt(sv[1]);
+      if (ix>=doublev_obj.size()) {
+        cerr << "The double[] object only has "
+             << doublev_obj.size() << " elements. Use the 'resize' "
+             << "command to resize." << endl;
+        return 1;
+      }
+      if (sv.size()>2) {
+        doublev_obj[ix]=o2scl::function_to_double(sv[2]);
+      }
       cout << "The value at index " << ix << " is " << doublev_obj[ix]
+           << "." << endl;
+      return 0;
+    }
+
+  } else if (type=="string[]") {
+    
+    if (sv.size()>1) {
+      size_t ix=o2scl::stoszt(sv[1]);
+      if (ix>=stringv_obj.size()) {
+        cerr << "The string[] object only has "
+             << stringv_obj.size() << " elements. Use the 'resize' "
+             << "command to resize." << endl;
+        return 1;
+      }
+      if (sv.size()>2) {
+        stringv_obj[ix]=sv[2];
+      }
+      cout << "The value at index " << ix << " is " << stringv_obj[ix]
            << "." << endl;
       return 0;
     }
@@ -1269,6 +1296,15 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
     
     if (sv.size()>1) {
       size_t ix=o2scl::stoszt(sv[1]);
+      if (ix>=intv_obj.size()) {
+        cerr << "The double[] object only has "
+             << intv_obj.size() << " elements. Use the 'resize' "
+             << "command to resize." << endl;
+        return 1;
+      }
+      if (sv.size()>2) {
+        intv_obj[ix]=o2scl::stoi(sv[2]);
+      }
       cout << "The value at index " << ix << " is " << intv_obj[ix]
            << "." << endl;
       return 0;
@@ -1278,6 +1314,15 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
     
     if (sv.size()>1) {
       size_t ix=o2scl::stoszt(sv[1]);
+      if (ix>=size_tv_obj.size()) {
+        cerr << "The double[] object only has "
+             << size_tv_obj.size() << " elements. Use the 'resize' "
+             << "command to resize." << endl;
+        return 1;
+      }
+      if (sv.size()>2) {
+        size_tv_obj[ix]=o2scl::stoi(sv[2]);
+      }
       cout << "The value at index " << ix << " is " << size_tv_obj[ix]
            << "." << endl;
       return 0;

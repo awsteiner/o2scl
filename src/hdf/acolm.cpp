@@ -197,11 +197,16 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"deriv","interp","max","min","sort",
-      "to-table","function","sum","find","value"};
+      "to-table","function","sum","find","value","resize"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("double[]",itmp));
     type_comm_list.insert(std::make_pair("int[]",itmp));
     type_comm_list.insert(std::make_pair("size_t[]",itmp));
+  }
+  {
+    vector<std::string> itmp={"value","resize"};
+    vector_sort<vector<string>,string>(itmp.size(),itmp);
+    type_comm_list.insert(std::make_pair("string[]",itmp));
   }
 
   // Ensure the RNGs for different types are somewhat uncorrelated
@@ -1074,7 +1079,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="double[]") {
     
-    static const size_t narr=10;
+    static const size_t narr=11;
     comm_option_s options_arr[narr]=
       {
         {0,"deriv","",0,0,"","",
@@ -1095,6 +1100,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"min","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_min),both},
+        {0,"resize","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_resize),both},
         {0,"sort","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sort),both},
@@ -1117,7 +1125,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="int[]") {
 
-    static const size_t narr=10;
+    static const size_t narr=11;
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,-1,"","",
@@ -1144,6 +1152,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
+        {0,"resize","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_resize),both},
         {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},
@@ -1158,9 +1169,28 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
     
+  } else if (new_type=="string[]") {
+
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]=
+      {
+        {0,"value","",0,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
+        {0,"resize","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_resize),both}
+      };
+    if (narr!=type_comm_list["string[]"].size()) {
+      O2SCL_ERR("Type comm list does not match for string[]",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="size_t[]") {
 
-    static const size_t narr=10;
+    static const size_t narr=11;
     comm_option_s options_arr[narr]=
       {
         {0,"value","",0,-1,"","",
@@ -1187,6 +1217,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
+        {0,"resize","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_resize),both},
         {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},

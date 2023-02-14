@@ -1645,6 +1645,88 @@ int acol_manager::comm_rename(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_resize(std::vector<std::string> &sv, bool itive_com) {
+
+  if (type=="double[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"New vector size",i1,"resize",
+                          itive_com);
+
+    vector<double> vnew(o2scl::stoszt(i1));
+    if (vnew.size()<doublev_obj.size()) {
+      vector_copy(vnew.size(),doublev_obj,vnew);
+    } else {
+      for(size_t i=doublev_obj.size();i<vnew.size();i++) {
+        vnew[i]=0;
+      }
+      vector_copy(doublev_obj.size(),doublev_obj,vnew);
+    }
+
+    std::swap(doublev_obj,vnew);
+    
+  } else if (type=="int[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"New vector size",i1,"resize",
+                          itive_com);
+
+    vector<int> vnew(o2scl::stoszt(i1));
+    if (vnew.size()<intv_obj.size()) {
+      vector_copy(vnew.size(),intv_obj,vnew);
+    } else {
+      for(size_t i=intv_obj.size();i<vnew.size();i++) {
+        vnew[i]=0;
+      }
+      vector_copy(intv_obj.size(),intv_obj,vnew);
+    }
+
+    std::swap(intv_obj,vnew);
+    
+  } else if (type=="size_t[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"New vector size",i1,"resize",
+                          itive_com);
+
+    vector<size_t> vnew(o2scl::stoszt(i1));
+    if (vnew.size()<size_tv_obj.size()) {
+      vector_copy(vnew.size(),size_tv_obj,vnew);
+    } else {
+      for(size_t i=size_tv_obj.size();i<vnew.size();i++) {
+        vnew[i]=0;
+      }
+      vector_copy(size_tv_obj.size(),size_tv_obj,vnew);
+    }
+
+    std::swap(size_tv_obj,vnew);
+    
+  } else if (type=="string[]") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"New vector size",i1,"resize",
+                          itive_com);
+
+    vector<string> vnew(o2scl::stoszt(i1));
+    if (vnew.size()<stringv_obj.size()) {
+      vector_copy(vnew.size(),stringv_obj,vnew);
+    } else {
+      for(size_t i=stringv_obj.size();i<vnew.size();i++) {
+        vnew[i]="";
+      }
+      vector_copy(stringv_obj.size(),stringv_obj,vnew);
+    }
+
+    std::swap(stringv_obj,vnew);
+    
+  } else {
+    cerr << "Not implemented for type " << type << " ." << endl;
+    return exc_efailed;
+  }    
+
+  return 0;
+}
+
 int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table") {
