@@ -1100,7 +1100,7 @@ void acol_manager::command_add(std::string new_type) {
         {0,"min","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_min),both},
-        {0,"resize","",0,0,"","",
+        {0,"resize","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_resize),both},
         {0,"sort","",0,0,"","",
@@ -1152,7 +1152,7 @@ void acol_manager::command_add(std::string new_type) {
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
-        {0,"resize","",0,1,"","",
+        {0,"resize","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_resize),both},
         {0,"to-table","",0,1,"","",
@@ -1177,7 +1177,7 @@ void acol_manager::command_add(std::string new_type) {
         {0,"value","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both},
-        {0,"resize","",0,0,"","",
+        {0,"resize","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_resize),both}
       };
@@ -1217,7 +1217,7 @@ void acol_manager::command_add(std::string new_type) {
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
-        {0,"resize","",0,1,"","",
+        {0,"resize","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_resize),both},
         {0,"to-table","",0,1,"","",
