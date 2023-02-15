@@ -118,7 +118,8 @@ std::string lib_settings_class::py_get_module_path(std::string module) {
 }
 
 void *lib_settings_class::py_array_import() {
-  
+
+#ifdef O2SCL_PYTHON
   // AWS, 2/12/23: The import_array() function is a macro (?!) which
   // returns NULL if it fails, but then throws a python, not a C++
   // exception. This forces us to use "void *" for the return type to
@@ -132,6 +133,8 @@ void *lib_settings_class::py_array_import() {
     O2SCL_ERR("Failed to import numpy Python module(s).",
               o2scl::exc_efailed);
   }
+#endif
+  
   return 0;
 }
 
