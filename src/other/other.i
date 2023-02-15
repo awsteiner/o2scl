@@ -2,7 +2,7 @@
 # 
 namespace o2scl
 py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``%name%``,
+| Python interface for O2scl class ``%name%``,
 | See
 | https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
 dll_name o2scl
