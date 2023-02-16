@@ -84,6 +84,12 @@ int main(void) {
     funct_python_method fp("funct_test","c","fun2",2);
     t.test_rel(fp(2.0),o2scl_const::pi*4.0,1.0e-12,"funct_python");
   }
+  {
+    // We use the brackets to force the funct_python
+    // destructor to run before py_final()
+    funct_python fp("o2sclpy","cpp_test",2);
+    t.test_rel(fp(2.0),o2scl_const::pi*2.0,1.0e-12,"funct_python");
+  }
 
   o2scl_settings.py_final();
   
