@@ -1328,24 +1328,27 @@ namespace o2scl {
       }
 
       if (class_name.length()>0) {
+
         // Load the python function
         if (verbose>0) {
-          std::cout << "  Loading python member function set." << std::endl;
+          std::cout << "  Loading python member function set: "
+                    << set_func << std::endl;
         }
         p_set_func=PyObject_GetAttrString(p_instance,set_func.c_str());
         if (p_set_func==0) {
-          O2SCL_ERR2("Get function failed in ",
+          O2SCL_ERR2("Get set function failed in ",
                      "interpm_python::set_function().",
                      o2scl::exc_efailed);
         }
 
         // Load the python function
         if (verbose>0) {
-          std::cout << "  Loading python member function eval." << std::endl;
+          std::cout << "  Loading python member function eval: "
+                    << eval_func<< std::endl;
         }
         p_eval_func=PyObject_GetAttrString(p_instance,eval_func.c_str());
         if (p_eval_func==0) {
-          O2SCL_ERR2("Get function failed in ",
+          O2SCL_ERR2("Get eval function failed in ",
                      "interpm_python::set_function().",
                      o2scl::exc_efailed);
         }

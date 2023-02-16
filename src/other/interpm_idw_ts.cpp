@@ -205,20 +205,24 @@ int main(void) {
   }
 
 #ifdef O2SCL_PYTHON
-  tensor<> tin, tout;
-  vector<size_t> in_size={2,8}, out_size={1,8};
-  tin.resize(2,in_size);
-  tout.resize(2,out_size);
-  for(size_t j=0;j<8;j++) {
-    vector<size_t> ix={0,j};
-    tin.get(ix)=x[j];
-    tout.get(ix)=dp[j];
-    ix[0]++;
-    tin.get(ix)=y[j];
-  }
-  interpm_python ip("o2sclpy","set_data_str","eval",2,8,1,
-                    tin,tout,"","interpm_sklearn_gpr",2);
 
+  if (false) {
+  
+    tensor<> tin, tout;
+    vector<size_t> in_size={2,8}, out_size={1,8};
+    tin.resize(2,in_size);
+    tout.resize(2,out_size);
+    for(size_t j=0;j<8;j++) {
+      vector<size_t> ix={0,j};
+      tin.get(ix)=x[j];
+      tout.get(ix)=dp[j];
+      ix[0]++;
+      tin.get(ix)=y[j];
+    }
+    interpm_python ip("o2sclpy","set_data_str","eval",2,8,1,
+                      tin,tout,"","interpm_sklearn_gpr",2);
+  }
+    
 #endif
     
   t.report();
