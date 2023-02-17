@@ -1410,7 +1410,8 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "Creating python unicode" << std::endl;
+        std::cout << "Creating python unicode for string: "
+                  << options.length() << " " << options << std::endl;
       }
       PyObject *p_options=PyUnicode_FromString(options.c_str());
       if (p_options==0) {
@@ -1418,7 +1419,7 @@ namespace o2scl {
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
-      int ret3=PyTuple_SetItem(p_set_args,2,array_in);
+      int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -1426,7 +1427,7 @@ namespace o2scl {
 
       // Call the python function
       if (verbose>0) {
-        std::cout << "  Calling python function." << std::endl;
+        std::cout << "  Calling python set function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
       if (result==0) {
@@ -1434,11 +1435,6 @@ namespace o2scl {
                    "interpm_python::operator().",o2scl::exc_efailed);
       }
 
-      if (PyArray_Check(result)==0) {
-        O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
-      }
-      
       if (verbose>0) {
         std::cout << "Done with interpm_python::set_function()."
                   << std::endl;
