@@ -310,6 +310,8 @@ void o2scl_table__delete_row(void *vptr, char *scol, double val);
 
 void o2scl_table__delete_rows_func(void *vptr, char *func);
 
+void o2scl_table__delete_rows_ends(void *vptr, size_t row_start, size_t row_end);
+
 void o2scl_table__line_of_names(void *vptr, char *names);
 
 void o2scl_table__line_of_data(void *vptr, void *ptr_data);

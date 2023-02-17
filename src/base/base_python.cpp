@@ -845,6 +845,12 @@ void o2scl_table__delete_rows_func(void *vptr, char *func) {
   return;
 }
 
+void o2scl_table__delete_rows_ends(void *vptr, size_t row_start, size_t row_end) {
+  table<> *ptr=(table<> *)vptr;
+  ptr->delete_rows_ends(row_start,row_end);
+  return;
+}
+
 void o2scl_table__line_of_names(void *vptr, char *names) {
   table<> *ptr=(table<> *)vptr;
   ptr->line_of_names(names);

@@ -657,6 +657,10 @@ class table<>
 - function delete_rows_func
   - void
   - std::string func
+- function delete_rows_ends
+  - void
+  - size_t row_start
+  - size_t row_end
 - function line_of_names
   - void
   - std::string names
