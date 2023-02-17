@@ -1331,6 +1331,18 @@ namespace o2scl {
 
         // Load the python function
         if (verbose>0) {
+          std::cout << "  Loading python member function eval: "
+                    << eval_func<< std::endl;
+        }
+        p_eval_func=PyObject_GetAttrString(p_instance,eval_func.c_str());
+        if (p_eval_func==0) {
+          O2SCL_ERR2("Get eval function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+        
+        // Load the python function
+        if (verbose>0) {
           std::cout << "  Loading python member function set: "
                     << set_func << std::endl;
         }
@@ -1341,17 +1353,6 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
 
-        // Load the python function
-        if (verbose>0) {
-          std::cout << "  Loading python member function eval: "
-                    << eval_func<< std::endl;
-        }
-        p_eval_func=PyObject_GetAttrString(p_instance,eval_func.c_str());
-        if (p_eval_func==0) {
-          O2SCL_ERR2("Get eval function failed in ",
-                     "interpm_python::set_function().",
-                     o2scl::exc_efailed);
-        }
       } else {
         // Load the python function
         if (verbose>0) {
