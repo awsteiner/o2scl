@@ -939,7 +939,11 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
 			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
-    
+
+    if (verbose>1) {
+      cout << "Creating new column " << in[1] << " from function "
+           << in[0] << endl;
+    }
     table_obj.function_column(in[0],in[1]);
 
   } else if (type=="double[]") {

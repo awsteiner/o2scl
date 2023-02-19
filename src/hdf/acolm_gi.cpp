@@ -28,6 +28,8 @@
 #include <o2scl/inte_kronrod_boost.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/interp_krige.h>
+#include <o2scl/interpm_idw.h>
+#include <o2scl/interpm_krige.h>
 
 using namespace std;
 using namespace o2scl;
@@ -110,6 +112,22 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       table3d_obj.read_gen3_list(ifs,verbose);
     } else {
       table3d_obj.read_gen3_list(std::cin,verbose);
+    }
+    
+  } else if (ctype=="exp_max_gmm") {
+    
+    if (fname!=((std::string)"cin")) {
+      emg_obj.read_generic(ifs,verbose);
+    } else {
+      emg_obj.read_generic(std::cin,verbose);
+    }
+    
+  } else if (ctype=="prob_dens_mdim_gaussian") {
+    
+    if (fname!=((std::string)"cin")) {
+      pdmg_obj.read_generic(ifs,verbose);
+    } else {
+      pdmg_obj.read_generic(std::cin,verbose);
     }
     
   } else if (ctype=="int") {
@@ -1685,6 +1703,246 @@ int acol_manager::comm_interp(std::vector<std::string> &sv, bool itive_com) {
 
   } else {
     cout << "Not implemented for type " << type << endl;
+    return 1;
+  }    
+  
+  return 0;
+}
+
+int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
+                                      bool itive_com) {
+
+  if (type=="table") {
+    
+    // --------------------------------------------------------------
+    // 2d table interpolation
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to interpolate into." << endl;
+      return exc_efailed;
+    }
+    
+    vector<std::string> in;
+    
+    if (sv.size()<8) {
+
+      in.resize(7);
+      vector<std::string> pr=
+        {"Enter method (or blank to stop): ",
+         "Enter options (or blank to stop): ",
+         "Enter x column (or blank to stop): ",
+         "Enter y column (or blank to stop): ",
+         "Enter x grid, \"auto\", (or blank to stop): ",
+         "Enter y grid, \"auto\", (or blank to stop): ",
+         "Enter the z column (or blank to stop): "};
+      int ret=get_input(sv,pr,in,"interp-table3d",itive_com);
+      if (ret!=0) return ret;
+      
+    } else {
+      for(size_t j=1;j<sv.size();j++) {
+        in.push_back(sv[j]);
+      }
+    }
+
+    // Determine method and options
+    std::string method=in[0];
+    if (verbose>1) {
+      std::cout << "In acol command 'interp-table3d':" << endl;
+      std::cout << "  Using method: " << method << endl;
+    }
+    std::string options=in[1];
+
+    // Set up x and y-grids
+    vector<double> gx, gy;
+    
+    double n_bins_d=pow(table_obj.get_nlines(),1.0/3.0);
+    size_t n_bins;
+    if (n_bins_d<5.0) {
+      n_bins=5;
+    } else {
+      n_bins=(size_t)n_bins_d;
+    }
+    
+    if (in[4]=="auto") {
+      double min_x=vector_min_value<vector<double>,double>
+        (table_obj[in[2]]);
+      double max_x=vector_max_value<vector<double>,double>
+        (table_obj[in[2]]);
+      uniform_grid_end<double> ugx(min_x,max_x,n_bins);
+      ugx.vector(gx);
+    } else {
+      vector_spec(in[4],gx,false,2);
+      
+    }
+    if (in[5]=="auto") {
+      double min_y=vector_min_value<vector<double>,double>
+        (table_obj[in[3]]);
+      double max_y=vector_max_value<vector<double>,double>
+        (table_obj[in[3]]);
+      uniform_grid_end<double> ugy(min_y,max_y,n_bins);
+      ugy.vector(gy);
+    } else {
+      vector_spec(in[5],gy,false,2);
+    }
+
+    // Clear table3d, set up grids and slices
+    table3d_obj.clear();
+    
+    table3d_obj.set_xy(in[2],gx.size(),gx,in[3],gy.size(),gy);
+      
+    for(size_t k=6;k<in.size();k++) {
+      table3d_obj.new_slice(in[k]);
+    }
+
+    // Perform the final interpolation
+    if (method=="idw") {
+
+      vector<string> col_list={in[2],in[3]};
+      for (size_t j=6;j<in.size();j++) {
+        col_list.push_back(in[j]);
+      }
+      cout << "  Column list: ";
+      vector_out(cout,col_list,true);
+      
+      const_matrix_view_table_transpose<> cmvt(table_obj,col_list);
+      interpm_idw<const_matrix_view_table_transpose<> > imi;
+
+      imi.set_data(2,col_list.size()-2,table_obj.get_nlines(),cmvt);
+      
+      for(size_t i=0;i<table3d_obj.get_nx();i++) {
+        for(size_t j=0;j<table3d_obj.get_ny();j++) {
+          vector<double> px={table3d_obj.get_grid_x(i),
+            table3d_obj.get_grid_y(j)};
+          vector<double> py(in.size()-6);
+          imi.eval(px,py);
+          for(size_t k=6;k<in.size();k++) {
+            table3d_obj.set(i,j,k-6,py[k-6]);
+          }
+        }
+      }
+      
+      command_del(type);
+      clear_obj();
+      command_add("table3d");
+      type="table3d";
+      
+    } else if (method=="gp") {
+      
+      vector<string> col_list_x={in[2],in[3]}, col_list_y;
+      for (size_t j=6;j<in.size();j++) {
+        col_list_y.push_back(in[j]);
+      }
+      cout << "  Column list for x: ";
+      vector_out(cout,col_list_x,true);
+      cout << "  Column list for y: ";
+      vector_out(cout,col_list_y,true);
+
+      cout << "1." << endl;
+      vector<mcovar_funct_rbf_noise> mfrn(col_list_y.size());
+      for(size_t i=0;i<col_list_y.size();i++) {
+        mfrn[i].len.resize(2);
+      }
+      
+      matrix_view_table<> mvt_x(table_obj,col_list_x);
+      matrix_view_table_transpose<> mvt_y(table_obj,col_list_y);
+      
+      cout << "2." << endl;
+      interpm_krige_optim<vector<mcovar_funct_rbf_noise>> iko;
+      cout << "3." << endl;
+
+      vector<vector<vector<double>>> param_lists;
+
+      for(size_t i=0;i<col_list_y.size();i++) {
+        std::vector<std::vector<double>> ptemp;
+        
+        for(size_t j=0;j<2;j++) {
+          std::vector<double> diffs;
+          o2scl::vector_diffs<std::vector<double>,std::vector<double>>
+            (table_obj[in[j+2]],diffs);
+          double min=vector_min_value<std::vector<double>,double>
+            (diffs.size(),diffs);
+          double max=vector_max_value<std::vector<double>,double>
+            (diffs.size(),diffs);
+          std::vector<double> len_list={min/10.0,max*10.0};
+          ptemp.push_back(len_list);
+        }
+        vector<double> l10_list={-15,-9};
+        param_lists.push_back(ptemp);
+      }
+      
+      iko.full_min=true;
+      iko.def_mmin.verbose=2;
+      cout << "4." << endl;
+      iko.set_covar(mfrn,param_lists);
+      cout << "5." << endl;
+      
+      iko.set_data(2,col_list_y.size(),table_obj.get_nlines(),
+                   mvt_x,mvt_y);
+      cout << "6." << endl;
+      
+      for(size_t i=0;i<table3d_obj.get_nx();i++) {
+        for(size_t j=0;j<table3d_obj.get_ny();j++) {
+          vector<double> px={table3d_obj.get_grid_x(i),
+            table3d_obj.get_grid_y(j)};
+          vector<double> py(in.size()-6);
+          iko.eval(px,py);
+          for(size_t k=6;k<in.size();k++) {
+            table3d_obj.set(i,j,k-6,py[k-6]);
+          }
+        }
+      }
+      
+      command_del(type);
+      clear_obj();
+      command_add("table3d");
+      type="table3d";
+      
+    } else if (method=="py_gp" || method=="py_dnn") {
+      
+      tensor<> tin, tout;
+      vector<size_t> in_size={table_obj.get_nlines(),2};
+      vector<size_t> out_size={table_obj.get_nlines(),in.size()-6};
+      tin.resize(2,in_size);
+      tout.resize(2,out_size);
+      for(size_t j=0;j<table_obj.get_nlines();j++) {
+        vector<size_t> ix={j,0};
+        tin.get(ix)=table_obj.get(in[2],j);
+        ix={j,0};
+        tin.get(ix)=table_obj.get(in[3],j);
+        for(size_t k=6;k<in.size();k++) {
+          ix={j,k-6};
+          tout.get(ix)=table_obj.get(in[k],j);
+        }
+      }
+      interpm_python ip("o2sclpy","set_data_str","eval",
+                        2,table_obj.get_nlines(),in.size()-6,
+                        tin,tout,"verbose=2","interpm_sklearn_gpr",2);
+        
+      for(size_t i=0;i<table3d_obj.get_nx();i++) {
+        for(size_t j=0;j<table3d_obj.get_ny();j++) {
+          vector<double> px={table3d_obj.get_grid_x(i),
+            table3d_obj.get_grid_y(j)};
+          vector<double> py(in.size()-6);
+          ip.eval(px,py);
+          for(size_t k=6;k<in.size();k++) {
+            table3d_obj.set(i,j,k-6,py[k-6]);
+          }
+        }
+      }
+      
+      command_del(type);
+      clear_obj();
+      command_add("table3d");
+      type="table3d";
+      
+    } else {
+      cerr << "Method " << method << " not understood in interp-table3d."
+           << endl;
+      return 2;
+    }
+    
+  } else {
+    cerr << "Command interp-table3d implemented for type " << type << endl;
     return 1;
   }    
   

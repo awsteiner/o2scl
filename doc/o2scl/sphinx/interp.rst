@@ -13,14 +13,14 @@ Interpolation introduction
 --------------------------
 
 Basic interpolation of generic vector types is performed by
-:ref:`interp <interp>` and :ref:`interp_vec <interp_vec>`. The vector
-representing the independent variable must be monotonic, but need
-not be equally-spaced. The difference between the two classes is
-analogous to the difference between using ``gsl_interp_eval()`` and
-``gsl_spline_eval()`` in GSL. You can create a :ref:`interp <interp>`
-object and use it to interpolate among any
-pair of chosen vectors. For example, cubic spline interpolation
-with natural boundary conditions::
+:ref:`interp_vec <interp_vec>` and its children. The vector
+representing the independent variable must be monotonic, but need not
+be equally-spaced. The difference between the two classes is analogous
+to the difference between using ``gsl_interp_eval()`` and
+``gsl_spline_eval()`` in GSL. You can create a :ref:`interp_vec
+<interp_vec>` object and use it to interpolate among any pair of
+chosen vectors. For example, cubic spline interpolation with natural
+boundary conditions::
 
   boost::numeric::ublas::vector<double> x(20), y(20);
   // fill x and y with data
@@ -77,18 +77,13 @@ ordered so that if the upper limit appears earlier in the array
 has the opposite sign than if the upper limit appears later in the
 array ``x``.
 
-The classes :ref:`interp <interp>` and :ref:`interp_vec <interp_vec>`
-are based on the lower-level interpolation classes of type
+The class :ref:`interp_vec <interp_vec>`
+is based on the lower-level interpolation classes of type
 :ref:`interp_base <interp_base>`. Also, the interpolation classes
 based on :ref:`interp_base <interp_base>` and also the class
 :ref:`interp_vec <interp_vec>` also have defined a function
 ``operator()`` which also returns the result of the interpolation.
 
-Two specializations for C-style arrays of double-precision numbers are
-provided in :ref:`interp_array <interp_array>` and
-:ref:`interp_array_vec <interp_array_vec>`.
-
-    
 Lookup and binary search
 ------------------------
 

@@ -231,6 +231,27 @@ namespace o2scl {
       return nd_in;
     }
 
+    /** \brief Read the Gaussian mixture from an input file
+     */
+    virtual int read_generic(std::istream &fin, int verbose=0) {
+
+      double data;
+      std::string line;
+      std::string cname;
+
+      // Read first line and into list
+      fin >> nd_in;
+      weights.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        fin >> weights[i];
+      }
+      pdmg.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        pdmg[i].read_generic(fin,verbose);
+      }
+      return 0;
+    }
+    
     /** \brief Compute the normalized probability density
      */
     virtual double pdf(const gauss_vec_t &x) const {

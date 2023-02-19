@@ -6,6 +6,8 @@ Installation
 Installation Contents
 ---------------------
 
+- :ref:`General notes <install_general>`
+- :ref:`Python support <python_support>`  
 - :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
 - :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
 - :ref:`Compiling O₂scl from a release distribution <compile_dist>`
@@ -21,7 +23,51 @@ Installation Contents
 .. note::
    7/23/22: On OSX, boost multiprecision (used by O₂scl) appears to
    currently also include libquadmath.
+
+.. _install_general:
    
+General notes
+-------------
+
+O₂scl requires Boost, GSL, and the HDF5 libraries. O₂scl is designed
+to be used with the most recent release version of all of these
+libraries, but is sometimes compatible with recent older versions.
+The sections below describe several different ways of installing
+O₂scl.
+
+It is important to ensure that O₂scl is compiled with the same
+version of the HDF5 libraries that it is linked with when
+compiling code based on O₂scl. In order to help resolve these
+version conflitcts, ``acol -v`` reports the two different
+HDF5 versions so that it is easy to check that they are the same.
+This is also particularly important when python support is
+enabled, as O₂scl and h5py should also be working from the same
+HDF5 version (see more information about Python support below).
+
+.. _python_support:
+
+Python support
+--------------
+
+O₂scl can be compiled with python support (still experimental) by
+providing the option ``--enable-python`` when the library is
+configured. This may also require adjusting CXXFLAGS and LDFLAGS in
+order to ensure the Python headers and libraries can be found. O₂scl
+code which uses Python also assumes that numpy was installed, so the
+numpy package may need to be specified. For example, using g++ on
+MacOS may need something of the form::
+
+  CXX="g++-12"
+  CXXFLAGS="-I/usr/local/lib/python3.11/site-packages/numpy/core/include
+  `python3-config --includes`" LDFLAGS="`python3-config --ldflags`"
+  ./configure --enable-python
+
+Including Python support also requires the installation of \c o2sclpy
+(for example, using \c pip) to ensure that the tests pass
+successfully. Thus, when including Python support it is best to
+install O₂scl first, install O₂sclpy second, and then test O₂scl and
+O₂sclpy last. See also :ref:`Python Integration` for more details.
+
 .. _compile_snap:
 
 Compiling O₂scl on Ubuntu with Snap
@@ -118,8 +164,7 @@ directory to individually test the classes and functions in that part
 of O₂scl. The testing code in ``src/base/lib_settings_ts.cpp`` can be
 useful in finding out how O₂scl was compiled. After ``make
 o2scl-test``, running ``src/base/lib_settings_ts`` will output several
-of the installation settings. If HDF5 is enabled, ``acol -v`` also
-outputs the installation settings.
+of the installation settings. 
 
 .. _compile_release:
 

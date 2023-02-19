@@ -1023,6 +1023,67 @@ namespace o2scl {
 
   public:
 
+    /** \brief Read the distribution from an input file
+     */
+    virtual int read_generic(std::istream &fin, int verbose=0) {
+
+      std::string stemp;
+      
+      // Read first line and into list
+      fin >> ndim;
+      if (verbose>1) {
+        std::cout << "prob_dens_mdim_gaussian::read_generic():" << std::endl;
+        std::cout << "  ndim: " << ndim << std::endl;
+      }
+      peak.resize(ndim);
+      std::cout << "  peak: ";
+      for(size_t i=0;i<ndim;i++) {
+        fin >> peak[i];
+        std::cout << peak[i] << " ";
+      }
+      std::cout << std::endl;
+      fin >> stemp;
+      
+      typedef boost::numeric::ublas::matrix<double> ubmatrix;
+      ubmatrix covar(ndim,ndim);
+      
+      if (stemp[0]=='s' || stemp[0]=='S') {
+        vec_t stds(ndim);
+        std::cout << "  width: ";
+        for(size_t i=0;i<ndim;i++) {
+          fin >> stds[i];
+          std::cout << stds[i] << " ";
+        }
+        std::cout << std::endl;
+        for(size_t i=0;i<ndim;i++) {
+          for(size_t j=0;j<=i;j++) {
+            if (i==j) {
+              covar(i,j)=stds[i]*stds[i];
+            } else {
+              fin >> covar(i,j);
+              covar(i,j)*=stds[i]*stds[j];
+              covar(j,i)=covar(i,j);
+            }
+          }
+        }
+      } else {
+        covar(0,0)=o2scl::stod(stemp);
+        ubmatrix covar(ndim,ndim);
+        for(size_t i=0;i<ndim;i++) {
+          for(size_t j=0;j<=i;j++) {
+            if (i>0) {
+              fin >> covar(i,j);
+            }
+            covar(j,i)=covar(i,j);
+          }
+        }
+      }
+
+      set_covar(ndim,peak,covar);
+      
+      return 0;
+    }
+    
     /** \brief Standard normal
         \comment
         This has to be public so the user can set the random seed,

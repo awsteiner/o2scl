@@ -117,7 +117,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "deriv","deriv2","value-grid",
       "find-row","fit","function",
       "get-row","get-unit","value","index",
-      "insert","insert-full","integ","interp",
+      "insert","insert-full","integ","interp","interp-table3d",
       "list","max","min","nlines","refine","rename",
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
@@ -605,7 +605,7 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=44;
+    static const size_t narr=45;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -676,6 +676,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"interp","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_interp),both},
+       {0,"interp-table3d","",0,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_interp_table3d),both},
        {'l',"list","",0,0,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_list),both},

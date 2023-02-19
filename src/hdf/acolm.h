@@ -1607,6 +1607,19 @@ namespace o2scl_acol {
     */
     virtual int comm_interp(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Interpolate into a table3d object
+        
+        For objects of type table:
+
+        Interpolate the values to create a table3d object
+
+        Arguments: <tt><method> <options> 
+        <x column> <y column> <x grid or "auto">
+        <y grid or "auto"> <z column 1> <z column 2> ...</tt>
+    */
+    virtual int comm_interp_table3d(std::vector<std::string> &sv,
+                                    bool itive_com);
+
     /** \brief List properties of an object
 
         For objects of type table:
@@ -2151,6 +2164,12 @@ namespace o2scl_acol {
         Arguments: <number of samples>
 
         Sample the distribution to create a <tt>table</tt> object.
+
+        For objects of type exp_max_gmm:
+
+        Arguments: <number of samples>
+
+        Sample the Gaussian mixture to create a <tt>table</tt> object.
 
         For objects of type prob_dens_mdim_amr:
         
@@ -2757,11 +2776,14 @@ namespace o2scl_acol {
 
         Arguments: <tt><x column> <y column> [empty value] [eps]</tt>
 
-        The \c to-table3d command creates a \c table3d object using <x
-        column> and <y column> as the data for the x and y grids. If
-        [empty value] is given, then this value is used for points not
-        given by the table. If [eps] is specified, then that value is
-        used as the minimum value between grid points.
+        The \c to-table3d command converts the entire \c table to a a
+        \c table3d object assuming that the \c table is consists of a
+        list of entries in the new \c table3d object. The <x column>
+        and <y column> arguments are used as the data for the x and y
+        grids in the new \c table3d object. If [empty value] is given,
+        then this value is used for points not given by the table. If
+        [eps] is specified, then that value (instead of the default of
+        10^{-12}) is used as the minimum value between grid points.
 
         For objects of type tensor:
 

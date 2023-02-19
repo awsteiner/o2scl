@@ -50,7 +50,7 @@ If the data is not on a grid, then inverse distance weighted
 interpolation is performed by :ref:`interpm_idw <interpm_idw>`.
 
 An experimental class for multidimensional-dimensional kriging is also 
-provided in :ref:`interpm_krige <interpm_krige>` .
+provided in :ref:`interpm_krige_optim <interpm_krige_optim>` .
     
 Interpolation on a rectangular grid
 -----------------------------------
