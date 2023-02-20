@@ -203,27 +203,6 @@ int main(void) {
     cout << "\t" << errs[0] << " " << errs[1] << " " << errs[2] << endl;
     cout << endl;
   }
-
-#ifdef O2SCL_PYTHON
-
-  if (true) {
-  
-    tensor<> tin, tout;
-    vector<size_t> in_size={8,2}, out_size={8,1};
-    tin.resize(2,in_size);
-    tout.resize(2,out_size);
-    for(size_t j=0;j<8;j++) {
-      vector<size_t> ix={j,0};
-      tin.get(ix)=x[j];
-      tout.get(ix)=dp[j];
-      ix[1]++;
-      tin.get(ix)=y[j];
-    }
-    interpm_python ip("o2sclpy","set_data_str","eval",2,8,1,
-                      tin,tout,"verbose=2","interpm_sklearn_gpr",2);
-  }
-    
-#endif
     
   t.report();
   return 0;

@@ -29,6 +29,7 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/interp_krige.h>
 #include <o2scl/interpm_idw.h>
+#include <o2scl/interpm_python.h>
 #include <o2scl/interpm_krige.h>
 
 using namespace std;
@@ -1837,7 +1838,6 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       cout << "  Column list for y: ";
       vector_out(cout,col_list_y,true);
 
-      cout << "1." << endl;
       vector<mcovar_funct_rbf_noise> mfrn(col_list_y.size());
       for(size_t i=0;i<col_list_y.size();i++) {
         mfrn[i].len.resize(2);
@@ -1846,9 +1846,7 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       matrix_view_table<> mvt_x(table_obj,col_list_x);
       matrix_view_table_transpose<> mvt_y(table_obj,col_list_y);
       
-      cout << "2." << endl;
       interpm_krige_optim<vector<mcovar_funct_rbf_noise>> iko;
-      cout << "3." << endl;
 
       vector<vector<vector<double>>> param_lists;
 
@@ -1867,18 +1865,16 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
           ptemp.push_back(len_list);
         }
         vector<double> l10_list={-15,-9};
+        ptemp.push_back(l10_list);
         param_lists.push_back(ptemp);
       }
       
       iko.full_min=true;
-      iko.def_mmin.verbose=2;
-      cout << "4." << endl;
+      iko.def_mmin.verbose=1;
       iko.set_covar(mfrn,param_lists);
-      cout << "5." << endl;
       
       iko.set_data(2,col_list_y.size(),table_obj.get_nlines(),
                    mvt_x,mvt_y);
-      cout << "6." << endl;
       
       for(size_t i=0;i<table3d_obj.get_nx();i++) {
         for(size_t j=0;j<table3d_obj.get_ny();j++) {
@@ -1907,13 +1903,14 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       for(size_t j=0;j<table_obj.get_nlines();j++) {
         vector<size_t> ix={j,0};
         tin.get(ix)=table_obj.get(in[2],j);
-        ix={j,0};
+        ix={j,1};
         tin.get(ix)=table_obj.get(in[3],j);
         for(size_t k=6;k<in.size();k++) {
           ix={j,k-6};
           tout.get(ix)=table_obj.get(in[k],j);
         }
       }
+      o2scl_settings.py_init();
       interpm_python ip("o2sclpy","set_data_str","eval",
                         2,table_obj.get_nlines(),in.size()-6,
                         tin,tout,"verbose=2","interpm_sklearn_gpr",2);
