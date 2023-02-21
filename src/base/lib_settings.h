@@ -212,7 +212,7 @@ namespace o2scl {
     std::string py_version();
     
     /// Import arrays for numpy C api
-    void *py_array_import();
+    void *py_import_array();
     
     /// Get the path for the Python module named \c module
     std::string py_get_module_path(std::string module);

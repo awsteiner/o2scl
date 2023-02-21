@@ -38,6 +38,7 @@
 #include <o2scl/lib_settings.h>
 
 #ifdef O2SCL_PYTHON
+//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #endif
 

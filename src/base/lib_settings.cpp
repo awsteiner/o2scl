@@ -28,6 +28,7 @@
 #include <o2scl/prev_commit.h>
 
 #ifdef O2SCL_PYTHON
+//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #endif
@@ -117,7 +118,7 @@ std::string lib_settings_class::py_get_module_path(std::string module) {
 #endif
 }
 
-void *lib_settings_class::py_array_import() {
+void *lib_settings_class::py_import_array() {
 
 #ifdef O2SCL_PYTHON
   // AWS, 2/12/23: The import_array() function is a macro (?!) which
