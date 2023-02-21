@@ -172,10 +172,8 @@ int interpm_python::set_function(std::string module, std::string set_func,
       
   // Get the Unicode name of the user-specified module
   if (verbose>0) {
-    std::cout << "Python version: " << PY_MAJOR_VERSION << " "
-              << PY_MINOR_VERSION << " " << PY_MICRO_VERSION << " "
-              << PY_RELEASE_LEVEL << " " << PY_RELEASE_SERIAL << " "
-              << Py_Version << std::endl;
+    std::cout << "Python version: "
+              << o2scl_settings.py_version() << std::endl;
     std::cout << "Staring interpm_python::set_function()."
               << std::endl;
     std::cout << "  Getting unicode for module named "
@@ -307,6 +305,23 @@ int interpm_python::set_function(std::string module, std::string set_func,
   // I'm not sure why it has to be done here and not in
   // mm_funct_ts.cpp
   import_array();
+
+  if (params.get_size(0)!=n_points) {
+    O2SCL_ERR("Input data does not have correct number of rows.",
+              o2scl::exc_einval);
+  }
+  if (params.get_size(1)!=n_params) {
+    O2SCL_ERR("Input data does not have correct number of columns.",
+              o2scl::exc_einval);
+  }
+  if (outputs.get_size(0)!=n_points) {
+    O2SCL_ERR("Output data does not have correct number of rows.",
+              o2scl::exc_einval);
+  }
+  if (outputs.get_size(1)!=n_outputs) {
+    O2SCL_ERR("Output data does not have correct number of columns.",
+              o2scl::exc_einval);
+  }
       
   npy_intp params_dims[]={(npy_intp)params.get_size(0),
     (npy_intp)params.get_size(1)};
@@ -373,6 +388,17 @@ int interpm_python::set_function(std::string module, std::string set_func,
 int interpm_python::eval(const std::vector<double> &x,
                          std::vector<double> &y) const {
 
+  if (x.size()!=n_params) {
+    O2SCL_ERR("Input vector does not have correct size.",
+              o2scl::exc_einval);
+  }
+  if (y.size()!=n_outputs) {
+    O2SCL_ERR("Output vector does not have correct size.",
+              o2scl::exc_einval);
+  }
+  
+  //import_array();
+  
   if (p_set_func==0 || p_eval_func==0) {
     O2SCL_ERR2("No functions found in ",
                "interpm_python::operator().",

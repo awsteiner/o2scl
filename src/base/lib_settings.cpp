@@ -638,3 +638,12 @@ double o2scl::function_to_double(std::string s, int verbose) {
   }
   return res;
 }
+
+std::string lib_settings_class::py_version() {
+  ostringstream oss;
+  oss << PY_MAJOR_VERSION << " "
+      << PY_MINOR_VERSION << " " << PY_MICRO_VERSION << " "
+      << PY_RELEASE_LEVEL << " " << PY_RELEASE_SERIAL << " "
+      << Py_Version;
+  return oss.str();
+}

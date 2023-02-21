@@ -458,6 +458,8 @@ namespace o2scl {
 	list.
     */
     void rename_slice(std::string olds, std::string news);
+
+    void delete_slice(std::string sl);
     
     /** \brief Make a new slice named \c dest which is a copy 
 	of the slice with name given in \c src. 

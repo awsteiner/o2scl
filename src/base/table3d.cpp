@@ -807,7 +807,29 @@ bool table3d::is_slice(std::string name, size_t &ix) const {
   return false;
 }
 
+void table3d::delete_slice(std::string sl) {
+  size_t ix;
+  for(map_const_iter mit=const_begin();mit!=const_end();mit++) {
+    if (mit->first==sl) {
+      ix=mit->second;
+      list.erase(list.begin()+ix);
+      for(map_iter mit2=tree.begin();mit2!=tree.end();mit2++) {
+        if (mit2->second>ix) mit2->second--;
+      }
+      tree.erase(mit);
+      cout << "Here: " << list.size() << " " << tree.size() << endl;
+      return;
+    }
+  }
+  O2SCL_ERR((((string)"Failed to find slice named '")+sl+
+             "' in table3d::delete_slice().").c_str(),exc_efailed);
+  return;
+}
+
 void table3d::rename_slice(std::string olds, std::string news) {
+
+  if (news==olds) return;
+  
   size_t oi=0;
   if (!is_slice(olds,oi)) {
     O2SCL_ERR((((string)"Failed to find slice named '")+olds+
@@ -816,12 +838,16 @@ void table3d::rename_slice(std::string olds, std::string news) {
 
   new_slice(news);
   size_t ni=lookup_slice(news);
+  oi=lookup_slice(olds);
   
   for(size_t i=0;i<numx;i++) {
     for(size_t j=0;j<numy;j++) {
       list[ni](i,j)=list[oi](i,j);
     }
   }
+
+  delete_slice(olds);
+  
   return;
 }
 

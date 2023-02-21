@@ -1911,9 +1911,16 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
         }
       }
       o2scl_settings.py_init();
-      interpm_python ip("o2sclpy","set_data_str","eval",
+      interpm_python ip;
+      if (method=="py_gp") {
+        ip.set_function("o2sclpy","set_data_str","eval",
                         2,table_obj.get_nlines(),in.size()-6,
-                        tin,tout,"verbose=2","interpm_sklearn_gpr",2);
+                        tin,tout,"verbose=2","interpm_sklearn_gp",2);
+      } else {
+        ip.set_function("o2sclpy","set_data_str","eval",
+                        2,table_obj.get_nlines(),in.size()-6,
+                        tin,tout,"verbose=2","interpm_tf_dnn",2);
+      }
         
       for(size_t i=0;i<table3d_obj.get_nx();i++) {
         for(size_t j=0;j<table3d_obj.get_ny();j++) {

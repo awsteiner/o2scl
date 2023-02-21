@@ -52,7 +52,7 @@ namespace o2scl {
 
 #ifdef O2SCL_PYTHON
 
-  /** \brief Desc
+  /** \brief Multidimensional interpolation interface for python
    */
   class interpm_python {
     

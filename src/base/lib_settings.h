@@ -209,6 +209,8 @@ namespace o2scl {
     /// Finalize the python interface
     void py_final(int verbose=0);
 
+    std::string py_version();
+    
     /// Import arrays for numpy C api
     void *py_array_import();
     
