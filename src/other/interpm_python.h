@@ -44,7 +44,7 @@
 #include <o2scl/tensor.h>
 
 #ifdef O2SCL_PYTHON
-//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #endif

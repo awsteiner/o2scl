@@ -302,9 +302,10 @@ int interpm_python::set_function(std::string module, std::string set_func,
     }
   }
 
-  // I'm not sure why it has to be done here and not in
-  // mm_funct_ts.cpp
-  void *vp=o2scl_settings.py_import_array();
+  // AWS, 2/21/23: I'm not sure why it has to be done here and not in
+  // a different function, but if I don't do it here I get a seg fault.
+  //void *vp=o2scl_settings.py_import_array();
+  import_array();
 
   if (params.get_size(0)!=n_points) {
     O2SCL_ERR("Input data does not have correct number of rows.",
@@ -437,11 +438,22 @@ int interpm_python::eval(const std::vector<double> &x,
   if (verbose>0) {
     std::cout << "  Obtaining output." << std::endl;
   }
-  for(size_t i=0;i<n_outputs;i++) {
-    void *vp=PyArray_GETPTR1(result,i);
+  if (false) {
+    /*
+    for(size_t i=0;i<n_outputs;i++) {
+      void *vp=PyArray_GETPTR1(result,i);
+      double *dp=(double *)vp;
+      y[i]=*dp;
+      std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+    }
+    */
+  } else {
+    void *vp=PyArray_DATA((PyArrayObject *)result);
     double *dp=(double *)vp;
-    y[i]=*dp;
-    std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+    for(size_t i=0;i<n_outputs;i++) {
+      y[i]=dp[i];
+      std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+    }
   }
       
   if (verbose>0) {

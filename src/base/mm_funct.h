@@ -35,7 +35,7 @@
 #include <o2scl/lib_settings.h>
 
 #ifdef O2SCL_PYTHON
-//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #endif
@@ -802,11 +802,22 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "  Obtaining output." << std::endl;
       }
-      for(size_t i=0;i<n;i++) {
-        void *vp=PyArray_GETPTR1(result,i);
+      if (false) {
+        /*
+        for(size_t i=0;i<n;i++) {
+          void *vp=PyArray_GETPTR1(result,i);
+          double *dp=(double *)vp;
+          y[i]=*dp;
+          std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+        }
+        */
+      } else {
+        void *vp=PyArray_DATA((PyArrayObject *)result);
         double *dp=(double *)vp;
-        y[i]=*dp;
-        std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+        for(size_t i=0;i<n;i++) {
+          y[i]=dp[i];
+          std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+        }
       }
       
       if (verbose>0) {
