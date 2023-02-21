@@ -304,7 +304,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
 
   // I'm not sure why it has to be done here and not in
   // mm_funct_ts.cpp
-  void *vp=lib_settings.py_import_array();
+  void *vp=o2scl_settings.py_import_array();
 
   if (params.get_size(0)!=n_points) {
     O2SCL_ERR("Input data does not have correct number of rows.",
