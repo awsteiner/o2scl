@@ -51,7 +51,7 @@ class mft:
         for i in range(0,len(x)):
             y[i]=x[i]*numpy.pi
             print('%d %7.6e %7.6e' % (self.count,x[i],y[i]))
-        return y
+        return numpy.ascontiguousarray(y)
     
 if __name__ == '__main__':
     print(fun([1.2,2.3]))
