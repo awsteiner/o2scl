@@ -40,6 +40,7 @@ RUN pip3 install numpy scipy yt matplotlib requests pytest Pillow
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install --no-binary=h5py h5py
+RUN pip3 install scikit-learn tensorflow
 
 # -----------------------------------------------------------------
 # Install o2scl
