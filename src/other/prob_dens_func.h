@@ -1044,8 +1044,8 @@ namespace o2scl {
       std::cout << std::endl;
       fin >> stemp;
       
-      typedef boost::numeric::ublas::matrix<double> ubmatrix;
-      ubmatrix covar(ndim,ndim);
+      //typedef boost::numeric::ublas::matrix<double> ubmatrix;
+      mat_t covar(ndim,ndim);
       
       if (stemp[0]=='s' || stemp[0]=='S') {
         vec_t stds(ndim);
@@ -1068,7 +1068,7 @@ namespace o2scl {
         }
       } else {
         covar(0,0)=o2scl::stod(stemp);
-        ubmatrix covar(ndim,ndim);
+        mat_t covar(ndim,ndim);
         for(size_t i=0;i<ndim;i++) {
           for(size_t j=0;j<=i;j++) {
             if (i>0) {

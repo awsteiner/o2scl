@@ -21,7 +21,7 @@ TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
-	prob_dens_mdim_amr.scr xml.scr exp_max.scr interp_python.scr
+	prob_dens_mdim_amr.scr xml.scr exp_max.scr interpm_python.scr
 
 # ------------------------------------------------------------
 # Includes
