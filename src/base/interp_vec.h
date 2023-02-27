@@ -188,10 +188,12 @@ namespace o2scl {
 #ifdef O2SCL_EIGEN
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
                            Eigen::MatrixXd,
-                           o2scl_linalg::matrix_invert_det_eigen<>> *ikon=
+                           o2scl_linalg::matrix_invert_det_eigen
+                           <Eigen::MatrixXd>> *ikon=
           new interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
                                  Eigen::MatrixXd,
-                                 o2scl_linalg::matrix_invert_det_eigen<>>;
+                                 o2scl_linalg::matrix_invert_det_eigen
+                                 <Eigen::MatrixXd>>;
 #else        
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise> *ikon=
           new interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise>;
