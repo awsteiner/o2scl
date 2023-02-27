@@ -272,9 +272,9 @@ namespace o2scl {
     mat_y_t y;
     /// True if the data has been specified
     bool data_set;
-    /// Desc
+    /// The output means
     ubvector mean_y;
-    /// Desc
+    /// The output standard deviations
     ubvector std_y;
     /// True if the data needs to be rescaled
     bool rescaled;
@@ -584,11 +584,12 @@ namespace o2scl {
     
     /// \name Function to minimize and various option
     //@{
-    /// Leave-one-out cross validation
-    static const size_t mode_loo_cv=1;
+    /// Leave-one-out cross validation (brute force version)
+    static const size_t mode_loo_cv_bf=1;
     /// Minus Log-marginal-likelihood
     static const size_t mode_max_lml=2;
-    static const size_t mode_loo_cv_bf=3;
+    /// Leave-one-out cross validation (default)
+    static const size_t mode_loo_cv=3;
     /// No optimization (for internal use)
     static const size_t mode_final=10;
     /// Function to minimize (default \ref mode_loo_cv)

@@ -20,11 +20,11 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_INTERPM_PYTHON_H
-#define O2SCL_INTERPM_PYTHON_H
+#ifndef O2SCL_GMM_PYTHON_H
+#define O2SCL_GMM_PYTHON_H
 
-/** \file interpm_python.h
-    \brief File defining \ref o2scl::interpm_python
+/** \file gmm_python.h
+    \brief File defining \ref o2scl::gmm_python
 */
 
 #include <iostream>
@@ -33,6 +33,7 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/tensor.h>
+#include <o2scl/exp_max.h>
 
 #ifdef O2SCL_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -46,7 +47,7 @@ namespace o2scl {
 
   /** \brief Multidimensional interpolation interface for python
    */
-  class interpm_python {
+  class gmm_python {
     
   protected:
 
@@ -68,52 +69,61 @@ namespace o2scl {
     /// Function arguments
     PyObject *p_eval_args;
 
+    /// Function arguments
+    PyObject *p_get_args;
+
     /// Python function
     PyObject *p_set_func;
 
     /// Python function
     PyObject *p_eval_func;
 
-    /// Verbosity parameter
-    int verbose;
+    /// Python function
+    PyObject *p_get_func;
 
     /// Number of parameters
     size_t n_params;
     
-    /// Number of outputs
-    size_t n_outputs;
-    
     /// Number of points
     size_t n_points;
+
+    /// Number of components
+    size_t n_components;
+
+    /// Underlying probability distribution
+    prob_dens_mdim_gmm<> pdm_gmm;
     
   public:
 
-    interpm_python();
+    gmm_python();
     
     /** \brief Specify the Python module and function
      */
-    interpm_python(std::string module, std::string set_func,
-                   std::string eval_func, 
-                   size_t n_pars, size_t n_dat, size_t n_out,
-                   const o2scl::tensor<> &params,
-                   const o2scl::tensor<> &outputs,
-                   std::string options="", 
-                   std::string class_name="", int v=0);
-    
+    gmm_python(std::string module, std::string set_func,
+               std::string eval_func, std::string get_func,
+               size_t n_pars, size_t n_dat, size_t n_comp,
+               const o2scl::tensor<> &params,
+               std::string options="", 
+               std::string class_name="", int v=0);
+
+    virtual ~gmm_python();
+  
+    /** \brief Free the associated memory
+     */
     void free();
     
-    virtual ~interpm_python();
-  
+    /// Verbosity parameter
+    int verbose;
+
     /** \brief Specify the python and the parameters
 
         This function is called by the constructor and thus
         cannot be virtual.
     */
     int set_function(std::string module, std::string set_func,
-                     std::string eval_func, 
-                     size_t n_pars, size_t n_dat, size_t n_out,
+                     std::string eval_func, std::string get_func,
+                     size_t n_pars, size_t n_dat, size_t n_comp,
                      const o2scl::tensor<> &params,
-                     const o2scl::tensor<> &outputs,
                      std::string options="",
                      std::string class_name="", int v=0);
     
@@ -122,10 +132,21 @@ namespace o2scl {
     virtual int eval(const std::vector<double> &x,
                      std::vector<double> &y) const;
     
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual int get_python();
+
+    /** \brief Get the underlying Gaussian mixture probability
+        density
+     */
+    const prob_dens_mdim_gmm<> &get_gmm() {
+      return pdm_gmm;
+    }
+    
   private:
 
-    interpm_python(const interpm_python &);
-    interpm_python& operator=(const interpm_python&);
+    gmm_python(const gmm_python &);
+    gmm_python& operator=(const gmm_python&);
 
   };
   

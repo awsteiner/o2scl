@@ -53,6 +53,10 @@
 #include <o2scl/interp.h>
 #include <o2scl/interp_krige.h>
 
+#ifdef O2SCL_EIGEN
+#include <eigen3/Eigen/Dense>
+#endif
+
 namespace o2scl {
 
   /** \brief Interpolation class for pre-specified vector
@@ -181,8 +185,18 @@ namespace o2scl {
       } else if (interp_type==itp_gp_rbf_noise_loo_cv ||
                  interp_type==itp_gp_rbf_noise_max_lml) {
 
+#ifdef O2SCL_EIGEN
+        interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
+                           Eigen::MatrixXd,
+                           o2scl_linalg::matrix_invert_det_eigen<>> *ikon=
+          new interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
+                                 Eigen::MatrixXd,
+                                 o2scl_linalg::matrix_invert_det_eigen<>>;
+#else        
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise> *ikon=
           new interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise>;
+#endif
+        
         itp=ikon;
         covar_funct_rbf_noise *cfrn=new covar_funct_rbf_noise;
         cf=cfrn;

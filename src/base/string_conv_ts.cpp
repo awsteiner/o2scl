@@ -195,6 +195,10 @@ int main(void) {
   cout << "\nG: " << endl;
   us1=unc_to_string(1.45245234,2.45e-2,1);
   cout << us1 << endl;
+
+  kwargs kw("dtest=2.0,btest=True");
+  cout << kw.get_double("dtest") << endl;
+  cout << kw.get_bool("btest") << endl;
   
   t.report();
   return 0;

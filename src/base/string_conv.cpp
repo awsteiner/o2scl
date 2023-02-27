@@ -673,3 +673,63 @@ void o2scl::string_to_char_array(std::string s, char *x, int len) {
   return;
 }
 
+kwargs::kwargs(std::string s) {
+  set(s);
+}
+void kwargs::set(std::string s) {
+  k.clear();
+  if (s.length()>0) {
+    std::vector<std::string> vs;
+    split_string_delim(s,vs,',');
+    for(size_t i=0;i<vs.size();i++) {
+      std::vector<std::string> vs2;
+      split_string_delim(vs[i],vs2,'=');
+      if (vs2.size()!=2) {
+        O2SCL_ERR("Could not interpret in kwargs.",
+                  o2scl::exc_einval);
+      }
+      k.insert(std::make_pair(vs2[0],vs2[1]));
+    }
+  }
+  return;
+}
+
+bool kwargs::get_bool(std::string name, bool def) {
+  std::map<std::string,std::string>::iterator it;
+  for(it=k.begin();it!=k.end();it++) {
+    if (it->first==name) return o2scl::stob(it->second);
+  }
+  return def;
+}
+
+int kwargs::get_int(std::string name, int def) {
+  std::map<std::string,std::string>::iterator it;
+  for(it=k.begin();it!=k.end();it++) {
+    if (it->first==name) return o2scl::stoi(it->second);
+  }
+  return def;
+}
+
+size_t kwargs::get_size_t(std::string name, size_t def) {
+  std::map<std::string,std::string>::iterator it;
+  for(it=k.begin();it!=k.end();it++) {
+    if (it->first==name) return o2scl::stoszt(it->second);
+  }
+  return def;
+}
+
+double kwargs::get_double(std::string name, double def) {
+  std::map<std::string,std::string>::iterator it;
+  for(it=k.begin();it!=k.end();it++) {
+    if (it->first==name) return o2scl::stod(it->second);
+  }
+  return def;
+}
+
+std::string kwargs::get_string(std::string name, std::string def) {
+  std::map<std::string,std::string>::iterator it;
+  for(it=k.begin();it!=k.end();it++) {
+    if (it->first==name) return it->second;
+  }
+  return def;
+}

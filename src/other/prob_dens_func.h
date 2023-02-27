@@ -1094,25 +1094,25 @@ namespace o2scl {
 
     /** \brief Get the Cholesky decomposition 
      */
-    const mat_t &get_chol() {
+    const mat_t &get_chol() const {
       return chol;
     }
 
     /** \brief Get the inverse of the covariance matrix
      */
-    const mat_t &get_covar_inv() {
+    const mat_t &get_covar_inv() const {
       return covar_inv;
     }
 
     /** \brief Get the peak location
      */
-    const vec_t &get_peak() {
+    const vec_t &get_peak() const {
       return peak;
     }
 
     /** \brief Get the normalization
      */
-    double get_norm() {
+    double get_norm() const {
       return norm;
     }
 
@@ -1139,6 +1139,8 @@ namespace o2scl {
       norm=pdmg_loc.norm;
     }
 
+    /** \brief Desc
+     */
     bool err_nonconv;
     
     /** \brief Create a distribution from the covariance matrix
@@ -1344,6 +1346,8 @@ namespace o2scl {
       if (this->verbose>0) {
         std::cout << "  chol: " << std::endl;
         matrix_out(std::cout,ndim,ndim,chol,"  ");
+        std::cout << "  covar_inv: " << std::endl;
+        matrix_out(std::cout,ndim,ndim,covar_inv,"  ");
       }
 
       // Compute normalization
@@ -1585,7 +1589,7 @@ namespace o2scl {
 
     /** \brief Create a bivariate Gaussian probability distribution
      */
-    prob_dens_mdim_biv_gaussian<vec_t> make_biv() {
+    prob_dens_mdim_biv_gaussian<vec_t> make_biv() const {
 
       if (ndim!=2) {
         O2SCL_ERR2("Distribution not two-dimensional in ",

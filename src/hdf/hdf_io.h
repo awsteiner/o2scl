@@ -197,6 +197,7 @@ namespace o2scl_hdf {
 
     size_t n;
     hf.get_szt("n",n);
+    /*
     p.weights.resize(n);
     hf.getd_vec_copy("weights",p.weights);
 
@@ -204,6 +205,7 @@ namespace o2scl_hdf {
       std::string pdmg_name=((std::string)"pdmg")+o2scl::szttos(i);
       hdf_input_n(hf,p.pdmg[i],pdmg_name);
     }
+    */
 
     // Close group
     hf.close_group(group);

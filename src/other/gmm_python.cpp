@@ -20,12 +20,12 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/interpm_python.h>
+#include <o2scl/gmm_python.h>
 
 using namespace std;
 using namespace o2scl;
 
-interpm_python::interpm_python() {
+gmm_python::gmm_python() {
   p_set_func=0;
   p_eval_func=0;
   p_set_args=0;
@@ -36,19 +36,18 @@ interpm_python::interpm_python() {
   p_name=0;
       
   n_params=0;
-  n_outputs=0;
   n_points=0;
+  n_components=0;
 }
     
 /** \brief Specify the Python module and function
  */
-interpm_python::interpm_python(std::string module, std::string set_func,
-                               std::string eval_func, 
-                               size_t n_pars, size_t n_dat, size_t n_out,
-                               const o2scl::tensor<> &params,
-                               const o2scl::tensor<> &outputs,
-                               std::string options, 
-                               std::string class_name, int v) {
+gmm_python::gmm_python(std::string module, std::string set_func,
+                       std::string eval_func, std::string get_func,
+                       size_t n_pars, size_t n_dat, size_t n_comp,
+                       const o2scl::tensor<> &params,
+                       std::string options, 
+                       std::string class_name, int v) {
                     
   verbose=v;
 
@@ -60,6 +59,7 @@ interpm_python::interpm_python(std::string module, std::string set_func,
   }
   p_set_func=0;
   p_eval_func=0;
+  p_get_func=0;
   p_set_args=0;
   p_eval_args=0;
   p_instance=0;
@@ -68,18 +68,18 @@ interpm_python::interpm_python(std::string module, std::string set_func,
   p_name=0;
       
   n_params=0;
-  n_outputs=0;
   n_points=0;
-      
+  n_components=0;
+
   if (module.length()>0) {
-    set_function(module,set_func,eval_func,n_pars,n_dat,n_out,
-                 params,outputs,options,class_name,v);
+    set_function(module,set_func,eval_func,get_func,
+                 n_pars,n_dat,n_comp,params,options,class_name,v);
   }
 }      
     
-void interpm_python::free() {
+void gmm_python::free() {
   if (verbose>0) {
-    std::cout << "Starting interpm_python::free()." << std::endl;
+    std::cout << "Starting gmm_python::free()." << std::endl;
   }
   if (p_set_func!=0) {
     if (verbose>0) {
@@ -92,6 +92,12 @@ void interpm_python::free() {
       std::cout << "Decref eval_func." << std::endl;
     }
     Py_DECREF(p_eval_func);
+  }
+  if (p_get_func!=0) {
+    if (verbose>0) {
+      std::cout << "Decref get_func." << std::endl;
+    }
+    Py_DECREF(p_get_func);
   }
   if (p_set_args!=0) {
     if (verbose>0) {
@@ -139,42 +145,46 @@ void interpm_python::free() {
   p_name=0;
       
   n_params=0;
-  n_outputs=0;
   n_points=0;
       
   if (verbose>0) {
-    std::cout << "Done in interpm_python::free()." << std::endl;
+    std::cout << "Done in gmm_python::free()." << std::endl;
   }
 }      
     
-interpm_python::~interpm_python() {
+gmm_python::~gmm_python() {
   free();
 }      
+
+int gmm_python::set_function(std::string module, std::string set_func,
+                             std::string eval_func, std::string get_func,
+                             size_t n_pars, size_t n_dat, size_t n_comp,
+                             const o2scl::tensor<> &params,
+                             std::string options,
+                             std::string class_name, int v) {
   
-int interpm_python::set_function(std::string module, std::string set_func,
-                                 std::string eval_func, 
-                                 size_t n_pars, size_t n_dat, size_t n_out,
-                                 const o2scl::tensor<> &params,
-                                 const o2scl::tensor<> &outputs,
-                                 std::string options,
-                                 std::string class_name, int v) {
-      
-  if (params.get_rank()!=2 || outputs.get_rank()!=2) {
+  if (params.get_rank()!=2) {
     O2SCL_ERR2("Invalid rank for input tensors in ",
-               "interpm_python::set_function().",o2scl::exc_einval);
+               "gmm_python().",o2scl::exc_einval);
   }
       
   free();
 
   n_params=n_pars;
   n_points=n_dat;
-  n_outputs=n_out;
+  n_components=n_comp;
+      
+  if (options.length()>0) {
+    options+=",n_components="+o2scl::szttos(n_comp);
+  } else {
+    options="n_components="+o2scl::szttos(n_comp);
+  }
       
   // Get the Unicode name of the user-specified module
   if (verbose>0) {
     std::cout << "Python version: "
               << o2scl_settings.py_version() << std::endl;
-    std::cout << "Staring interpm_python::set_function()."
+    std::cout << "Staring gmm_python::set_function()."
               << std::endl;
     std::cout << "  Getting unicode for module named "
               << module << std::endl;
@@ -182,7 +192,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
   p_name=PyUnicode_FromString(module.c_str());
   if (p_name==0) {
     O2SCL_ERR2("Create module name failed in ",
-               "interpm_python::set_function().",
+               "gmm_python::set_function().",
                o2scl::exc_efailed);
   }
       
@@ -193,7 +203,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
   p_module=PyImport_Import(p_name);
   if (p_module==0) {
     O2SCL_ERR2("Load module failed in ",
-               "interpm_python::set_function().",
+               "gmm_python::set_function().",
                o2scl::exc_efailed);
   }
 
@@ -204,7 +214,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
     p_class=PyObject_GetAttrString(p_module,class_name.c_str());
     if (p_class==0) {
       O2SCL_ERR2("Get class failed in ",
-                 "interpm_python::set_function().",o2scl::exc_efailed);
+                 "emulator_python::set().",o2scl::exc_efailed);
     }
         
     // Create an instance of the class
@@ -233,10 +243,10 @@ int interpm_python::set_function(std::string module, std::string set_func,
     std::cout << "  Making argument object for set function."
               << std::endl;
   }
-  p_set_args=PyTuple_New(3);
+  p_set_args=PyTuple_New(2);
   if (p_set_args==0) {
     O2SCL_ERR2("Create arg tuple failed in ",
-               "interpm_python::set_function().",
+               "gmm_python::set_function().",
                o2scl::exc_efailed);
   }
 
@@ -248,7 +258,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
   p_eval_args=PyTuple_New(1);
   if (p_eval_args==0) {
     O2SCL_ERR2("Create arg tuple failed in ",
-               "interpm_python::set_function().",
+               "gmm_python::set_function().",
                o2scl::exc_efailed);
   }
 
@@ -262,7 +272,19 @@ int interpm_python::set_function(std::string module, std::string set_func,
     p_eval_func=PyObject_GetAttrString(p_instance,eval_func.c_str());
     if (p_eval_func==0) {
       O2SCL_ERR2("Get eval function failed in ",
-                 "interpm_python::set_function().",
+                 "gmm_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+        
+    // Load the python function
+    if (verbose>0) {
+      std::cout << "  Loading python member function get: "
+                << get_func<< std::endl;
+    }
+    p_get_func=PyObject_GetAttrString(p_instance,get_func.c_str());
+    if (p_get_func==0) {
+      O2SCL_ERR2("Get get function failed in ",
+                 "gmm_python::set_function().",
                  o2scl::exc_efailed);
     }
         
@@ -274,7 +296,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
     p_set_func=PyObject_GetAttrString(p_instance,set_func.c_str());
     if (p_set_func==0) {
       O2SCL_ERR2("Get set function failed in ",
-                 "interpm_python::set_function().",
+                 "gmm_python::set_function().",
                  o2scl::exc_efailed);
     }
 
@@ -286,7 +308,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
     p_set_func=PyObject_GetAttrString(p_module,set_func.c_str());
     if (p_set_func==0) {
       O2SCL_ERR2("Get function failed in ",
-                 "interpm_python::set_function().",
+                 "gmm_python::set_function().",
                  o2scl::exc_efailed);
     }
 
@@ -297,7 +319,18 @@ int interpm_python::set_function(std::string module, std::string set_func,
     p_eval_func=PyObject_GetAttrString(p_module,eval_func.c_str());
     if (p_eval_func==0) {
       O2SCL_ERR2("Get function failed in ",
-                 "interpm_python::set_function().",
+                 "gmm_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+
+    // Load the python function
+    if (verbose>0) {
+      std::cout << "  Loading python function get." << std::endl;
+    }
+    p_get_func=PyObject_GetAttrString(p_module,get_func.c_str());
+    if (p_get_func==0) {
+      O2SCL_ERR2("Get function failed in ",
+                 "gmm_python::set_function().",
                  o2scl::exc_efailed);
     }
   }
@@ -315,19 +348,11 @@ int interpm_python::set_function(std::string module, std::string set_func,
     O2SCL_ERR("Input data does not have correct number of columns.",
               o2scl::exc_einval);
   }
-  if (outputs.get_size(0)!=n_points) {
-    O2SCL_ERR("Output data does not have correct number of rows.",
-              o2scl::exc_einval);
-  }
-  if (outputs.get_size(1)!=n_outputs) {
-    O2SCL_ERR("Output data does not have correct number of columns.",
-              o2scl::exc_einval);
-  }
       
   npy_intp params_dims[]={(npy_intp)params.get_size(0),
     (npy_intp)params.get_size(1)};
   if (verbose>0) {
-    std::cout << "interpm_python::operator():" << std::endl;
+    std::cout << "gmm_python::operator():" << std::endl;
   }
   PyObject *array_in=PyArray_SimpleNewFromData
     (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
@@ -338,20 +363,6 @@ int interpm_python::set_function(std::string module, std::string set_func,
                "mm_funct_python::operator().",o2scl::exc_efailed);
   }
       
-  npy_intp outputs_dims[]={(npy_intp)outputs.get_size(0),
-    (npy_intp)outputs.get_size(1)};
-  if (verbose>0) {
-    std::cout << "interpm_python::operator():" << std::endl;
-  }
-  PyObject *array_out=PyArray_SimpleNewFromData
-    (2,outputs_dims,NPY_DOUBLE,(void *)(&(outputs.get_data()[0])));
-      
-  int ret2=PyTuple_SetItem(p_set_args,1,array_out);
-  if (ret2!=0) {
-    O2SCL_ERR2("Tuple set failed in ",
-               "mm_funct_python::operator().",o2scl::exc_efailed);
-  }
-
   if (verbose>0) {
     std::cout << "Creating python unicode for string: "
               << options.length() << " " << options << std::endl;
@@ -362,7 +373,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
                "emulator_python::set().",o2scl::exc_efailed);
   }
       
-  int ret3=PyTuple_SetItem(p_set_args,2,p_options);
+  int ret3=PyTuple_SetItem(p_set_args,1,p_options);
   if (ret3!=0) {
     O2SCL_ERR2("Tuple set failed in ",
                "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -374,27 +385,25 @@ int interpm_python::set_function(std::string module, std::string set_func,
   }
   PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
   if (result==0) {
-    O2SCL_ERR2("Function call failed in ",
-               "interpm_python::operator().",o2scl::exc_efailed);
+    O2SCL_ERR2("Function set call failed in ",
+               "gmm_python::operator().",o2scl::exc_efailed);
   }
 
   if (verbose>0) {
-    std::cout << "Done with interpm_python::set_function()."
+    std::cout << p_set_func << " " << p_eval_func << " "
+              << p_get_func << std::endl;
+    std::cout << "Done with gmm_python::set_function()."
               << std::endl;
   }
       
   return 0;
 }
     
-int interpm_python::eval(const std::vector<double> &x,
-                         std::vector<double> &y) const {
+int gmm_python::eval(const std::vector<double> &x,
+                     std::vector<double> &y) const {
 
   if (x.size()!=n_params) {
     O2SCL_ERR("Input vector does not have correct size.",
-              o2scl::exc_einval);
-  }
-  if (y.size()!=n_outputs) {
-    O2SCL_ERR("Output vector does not have correct size.",
               o2scl::exc_einval);
   }
   
@@ -402,13 +411,13 @@ int interpm_python::eval(const std::vector<double> &x,
   
   if (p_set_func==0 || p_eval_func==0) {
     O2SCL_ERR2("No functions found in ",
-               "interpm_python::operator().",
+               "gmm_python::operator().",
                o2scl::exc_efailed);
   }
 
   npy_intp x_dims[]={(npy_intp)x.size()};
   if (verbose>0) {
-    std::cout << "interpm_python::operator():" << std::endl;
+    std::cout << "gmm_python::operator():" << std::endl;
     std::cout << "  Array x: " << x.size() << std::endl;
   }
   PyObject *array_x=PyArray_SimpleNewFromData
@@ -426,25 +435,23 @@ int interpm_python::eval(const std::vector<double> &x,
   }
   PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
   if (result==0) {
-    O2SCL_ERR2("Function call failed in ",
-               "interpm_python::operator().",o2scl::exc_efailed);
+    O2SCL_ERR2("Function eval call failed in ",
+               "gmm_python::operator().",o2scl::exc_efailed);
   }
 
   if (PyArray_Check(result)==0) {
     O2SCL_ERR2("Function call did not return a numpy array in ",
-               "interpm_python::operator().",o2scl::exc_efailed);
+               "gmm_python::operator().",o2scl::exc_efailed);
   }
       
   if (verbose>0) {
-    std::cout << "  Obtaining output." << std::endl;
+    std::cout << "  Obtaining output 1." << std::endl;
   }
   void *vp=PyArray_DATA((PyArrayObject *)result);
   double *dp=(double *)vp;
-  for(size_t i=0;i<n_outputs;i++) {
+  for(size_t i=0;i<1;i++) {
     y[i]=dp[i];
-    if (verbose>0) {
-      std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
-    }
+    std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
   }
       
   if (verbose>0) {
@@ -453,7 +460,132 @@ int interpm_python::eval(const std::vector<double> &x,
   Py_DECREF(result);
   
   if (verbose>0) {
-    std::cout << "Done in interpm_python::operator()."
+    std::cout << "Done in gmm_python::operator()."
+              << std::endl;
+  }
+
+  return 0;
+}      
+
+int gmm_python::get_python() {
+
+  import_array();
+  
+  if (p_set_func==0 || p_eval_func==0 || p_get_func==0) {
+    O2SCL_ERR2("No functions found in ",
+               "gmm_python::operator().",
+               o2scl::exc_efailed);
+  }
+
+  // Call the python function
+  if (verbose>0) {
+    std::cout << "  Calling python get function." << std::endl;
+  }
+  PyObject *result=PyObject_CallObject(p_get_func,0);
+  if (result==0) {
+    O2SCL_ERR2("Function get call failed in ",
+               "gmm_python::operator().",o2scl::exc_efailed);
+  }
+
+  if (PyTuple_Check(result)==0) {
+    O2SCL_ERR2("Function call did not return a tuple in ",
+               "gmm_python::operator().",o2scl::exc_efailed);
+  }
+      
+  if (verbose>0) {
+    std::cout << "  Obtaining output 2." << std::endl;
+  }
+
+  PyObject *get_w, *get_m, *get_c, *get_p, *get_pc;
+  
+  get_w=PyTuple_GetItem(result,0);
+  get_m=PyTuple_GetItem(result,1);
+  get_c=PyTuple_GetItem(result,2);
+  get_p=PyTuple_GetItem(result,3);
+  get_pc=PyTuple_GetItem(result,4);
+  if (get_w==0 || get_m==0 || get_c==0 || get_p==0 || get_pc==0) {
+    O2SCL_ERR("Get tuple failed",o2scl::exc_einval);
+  }
+  
+  if (PyArray_Check(get_w)==0) {
+    O2SCL_ERR2("Function call did not return a numpy array 1 in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  if (PyArray_Check(get_m)==0) {
+    O2SCL_ERR2("Function call did not return a numpy array 2 in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  if (PyArray_Check(get_c)==0) {
+    O2SCL_ERR2("Function call did not return a numpy array 3 in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  if (PyArray_Check(get_p)==0) {
+    O2SCL_ERR2("Function call did not return a numpy array 4 in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  if (PyArray_Check(get_pc)==0) {
+    O2SCL_ERR2("Function call did not return a numpy array 5 in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  
+  if (verbose>0) {
+    std::cout << "  Obtaining output." << std::endl;
+  }
+  double *ptr_w=(double *)PyArray_DATA((PyArrayObject *)get_w);
+  double *ptr_m=(double *)PyArray_DATA((PyArrayObject *)get_m);
+  double *ptr_c=(double *)PyArray_DATA((PyArrayObject *)get_c);
+  double *ptr_p=(double *)PyArray_DATA((PyArrayObject *)get_p);
+  double *ptr_pc=(double *)PyArray_DATA((PyArrayObject *)get_pc);
+  
+  pdm_gmm.weights.resize(n_components);
+  pdm_gmm.pdmg.resize(n_components);
+  
+  for(size_t i=0;i<n_components;i++) {
+    pdm_gmm.weights[i]=ptr_w[i];
+    if (verbose>1) {
+      std::cout << "Component " << i << " with weight: "
+                << pdm_gmm.weights[i] << std::endl;
+    }
+    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    ubvector mean(n_params);
+    ubmatrix covar(n_params,n_params);
+    for(size_t j=0;j<n_params;j++) {
+      mean[j]=ptr_m[n_params*i+j];
+      if (verbose>1) {
+        std::cout << "mean[" << j << "]: " << mean[j] << std::endl;
+      }
+      for(size_t k=0;k<n_params;k++) {
+        covar(j,k)=ptr_c[n_params*n_params*i+n_params*j+k];
+        if (verbose>1) {
+          std::cout << "covar(" << j << "," << k << "): " << covar(j,k)
+                    << std::endl;
+        }
+      }
+    }
+    //pdm_gmm.pdmg[i].verbose=2;
+    
+    // AWS, 2/25/23: Unfortunately sklearn handles it's Gaussian
+    // distributions a bit differently than O2scl. O2scl uses the
+    // Cholesky decomposition of the covariance matrix, while sklearn
+    // uses the Cholesky decomposition of the "precisions" matrix,
+    // which is the inverse of the covariance matrix. We recompute the
+    // Gaussians here, but there is probably a faster way.
+    pdm_gmm.pdmg[i].verbose=verbose;
+    pdm_gmm.pdmg[i].set_covar(n_params,mean,covar);
+
+    if (verbose>1) {
+      cout << endl;
+    }
+  }
+  
+  if (verbose>0) {
+    std::cout << "  Decref result." << std::endl;
+  }
+  Py_DECREF(result);
+  
+  if (verbose>0) {
+    std::cout << "Done in gmm_python::get_python()."
               << std::endl;
   }
 

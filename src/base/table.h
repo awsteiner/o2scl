@@ -1928,7 +1928,9 @@ namespace o2scl {
       return itype;
     }
 
-    /// Desc
+    /** \brief Set the interpolation object for strings \c sx and 
+        \c sy to the specified pointer
+    */
     int set_interp_obj(std::string sx, std::string sy,
                        interp_base<vec_t> *si2) {
       if (intp_set==true) {
@@ -1942,7 +1944,8 @@ namespace o2scl {
       return 0;
     }
 
-    /// Desc
+    /** \brief Clear the interpolation object
+     */
     void clear_interp_obj() {
       if (intp_set) {
         delete si;

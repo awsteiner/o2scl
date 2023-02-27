@@ -854,7 +854,7 @@ namespace o2scl {
 
       size_t size=this->sz;
 
-      if (mode==mode_loo_cv_bf) {
+      if (mode==mode_loo_cv_bf || mode==mode_loo_cv_bf_rel) {
       
         qual=0.0;
         for(size_t k=0;k<size;k++) {
@@ -920,12 +920,20 @@ namespace o2scl {
           // differences to evaluate the quality, but this seems
           // sensible to me because we are presuming the data has zero
           // mean and unit standard deviation.
-          qual+=pow(yact-ypred,2.0);
+          if (mode==mode_loo_cv_bf_rel && yact!=0.0) {
+            qual+=pow(yact-ypred,2.0)/yact/yact;
+          } else {
+            qual+=pow(yact-ypred,2.0);
+          }
         
         }
 
         if (verbose>2) {
-          std::cout << "qual (loo_cv_bf): " << qual << std::endl;
+          if (mode==mode_loo_cv_bf_rel) {
+            std::cout << "qual (loo_cv_bf_rel): " << qual << std::endl;
+          } else {
+            std::cout << "qual (loo_cv_bf): " << qual << std::endl;
+          }
         }
         
       } else if (mode==mode_loo_cv) {
@@ -1179,8 +1187,12 @@ namespace o2scl {
     static const size_t mode_loo_cv_bf=1;
     /// Maximize Log-marginal-likelihood
     static const size_t mode_max_lml=2;
-    /// New leave-one-out cross validation method (default)
+    /// Leave-one-out cross validation method (default)
     static const size_t mode_loo_cv=3;
+    /** \brief Leave-one-out cross validation with relative deviations 
+        (brute force version)
+    */
+    static const size_t mode_loo_cv_bf_rel=4;
     /// Function to minimize (default \ref mode_loo_cv)
     size_t mode;
     ///@}
@@ -1234,6 +1246,9 @@ namespace o2scl {
                   << std::endl;
         if (mode==mode_loo_cv_bf) {
           std::cout << "  leave one-out cross validation (brute force). ";
+        } else if (mode==mode_loo_cv_bf_rel) {
+          std::cout << "  leave one-out cross validation with relative "
+                    << "deviations (brute force). ";
         } else if (mode==mode_loo_cv) {
           std::cout << "  leave one-out cross validation. ";
         } else {

@@ -46,12 +46,111 @@
 
 namespace o2scl {
 
-  /** \brief Expectation maximization for a Gaussian mixture model
+  /** \brief A probability density distribution from a Gaussian 
+      mixture model
    */
   template<class data_mat_t=const_matrix_view_table<>,
            class gauss_vec_t=boost::numeric::ublas::vector<double>,
            class gauss_mat_t=boost::numeric::ublas::matrix<double>>
-  class exp_max_gmm : prob_dens_mdim<gauss_vec_t> {
+  class prob_dens_mdim_gmm : prob_dens_mdim<gauss_vec_t> {
+    
+  public:
+
+    /** \brief Base random number generator
+
+        This is used to automatically generate initial means for the
+        Gaussians if a user-specified guess is not provided.
+     */
+    rng<> r2;
+    
+    /// The Gaussians
+    std::vector<o2scl::prob_dens_mdim_gaussian
+                <gauss_vec_t,gauss_mat_t>> pdmg;
+    
+    typedef boost::numeric::ublas::vector<double> internal_vec_t;
+    
+    /// The weights (must add to 1) 
+    internal_vec_t weights;
+
+    /** \brief Read the Gaussian mixture from an input file
+     */
+    virtual int read_generic(std::istream &fin, int verbose=0) {
+
+      double data;
+      std::string line;
+      std::string cname;
+
+      size_t nd_in;
+      // Read first line and into list
+      fin >> nd_in;
+      weights.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        fin >> weights[i];
+      }
+      pdmg.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        pdmg[i].read_generic(fin,verbose);
+      }
+      return 0;
+    }
+    
+    /** \brief Sample the distribution
+     */
+    virtual void operator()(gauss_vec_t &x) const {
+      internal_vec_t partial_sums(weights.size());
+      for(size_t i=0;i<weights.size();i++) {
+        if (i==0) {
+          partial_sums[0]=weights[0];
+        } else {
+          partial_sums[i]=partial_sums[i-1]+weights[i];
+        }
+      }
+
+      double v=r2.random();
+      for(size_t k=0;k<weights.size();k++) {
+        if (v<partial_sums[k] || k==weights.size()-1) {
+          pdmg[k](x);
+          return;
+        }
+      }
+      O2SCL_ERR2("Weight arithmetic problem in ",
+                 "prob_dens_mdim_gmm::operator().",
+                 o2scl::exc_esanity);
+      return;
+    }
+
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      return weights.size();
+    }
+
+    /** \brief Compute the normalized probability density
+     */
+    virtual double pdf(const gauss_vec_t &x) const {
+      double ret=0.0;
+      for(size_t k=0;k<weights.size();k++) {
+        ret+=weights[k]*pdmg[k].pdf(x);
+      }
+      return ret;
+    }
+    
+    /** \brief The log of the normalized density
+     */
+    virtual double log_pdf(const gauss_vec_t &x) const {
+      return log(pdf(x));
+    }
+    
+  };
+
+    
+  /** \brief Expectation maximization for a Gaussian mixture model
+
+      (very experimental and not working yet)
+   */
+  template<class data_mat_t=const_matrix_view_table<>,
+           class gauss_vec_t=boost::numeric::ublas::vector<double>,
+           class gauss_mat_t=boost::numeric::ublas::matrix<double>>
+  class exp_max_gmm {
 
   public:
 
@@ -59,9 +158,19 @@ namespace o2scl {
         fails
     */
     bool err_nonconv;
+
+    /** \brief Get the underlying Gaussian mixture probability
+        density
+     */
+    const prob_dens_mdim_gmm<> &get_gmm() {
+      return pdmg;
+    }
     
   protected:
-
+    
+    /// The underlying Gaussian mixture probability density
+    prob_dens_mdim_gmm<data_mat_t,gauss_vec_t,gauss_mat_t> pdmg;
+    
     typedef boost::numeric::ublas::vector<double> internal_vec_t;
     typedef boost::numeric::ublas::matrix<double> internal_mat_t;
     
@@ -74,7 +183,7 @@ namespace o2scl {
 
       internal_mat_t last_means(n_gauss,nd_in);
       for(size_t k=0;k<n_gauss;k++) {
-        const gauss_vec_t &peak=pdmg[k].get_peak();
+        const gauss_vec_t &peak=pdmg.pdmg[k].get_peak();
         if (verbose>0) {
           std::cout << "  Mean " << k+1 << " of " << n_gauss
                     << " before: " << k << std::endl;
@@ -99,10 +208,10 @@ namespace o2scl {
             data_i[j]=data(i,j);
           }
           for(size_t k=0;k<n_gauss;k++) {
-            total+=pdmg[k].pdf(data_i)*weights[k];
+            total+=pdmg.pdmg[k].pdf(data_i)*pdmg.weights[k];
           }
           for(size_t k=0;k<n_gauss;k++) {
-            resps(i,k)=pdmg[k].pdf(data_i)*weights[k]/total;
+            resps(i,k)=pdmg.pdmg[k].pdf(data_i)*pdmg.weights[k]/total;
             if (verbose>2) {
               std::cout << "  resp: " << i << " " << k << " "
                         << resps(i,k) << std::endl;
@@ -113,30 +222,30 @@ namespace o2scl {
         // -----------------------------------------------------
         // Maximization step
 
-        // Compute weights
+        // Compute pdmg.weights
         for(size_t k=0;k<n_gauss;k++) {
-          weights[k]=0.0;
+          pdmg.weights[k]=0.0;
           for(size_t i=0;i<np;i++) {
-            weights[k]+=resps(i,k);
+            pdmg.weights[k]+=resps(i,k);
           }
-          weights[k]/=np;
+          pdmg.weights[k]/=np;
           if (verbose>0) {
             std::cout << "  weight: " << k+1 << " of "
-                      << n_gauss << ": " << weights[k] << std::endl;
+                      << n_gauss << ": " << pdmg.weights[k] << std::endl;
           }
         }
         
         // Compute means and covariances
         for(size_t k=0;k<n_gauss;k++) {
           matrix_column_gen<internal_mat_t> resp_k(resps,k);
-          pdmg[k].verbose=1;
-          pdmg[k].set_wgts(nd_in,np,data,resp_k);
+          pdmg.pdmg[k].verbose=1;
+          pdmg.pdmg[k].set_wgts(nd_in,np,data,resp_k);
         }
         
         // Compare means with previous values to test for convergence
         done=true;
         for(size_t k=0;k<n_gauss;k++) {
-          const gauss_vec_t &peak=pdmg[k].get_peak();
+          const gauss_vec_t &peak=pdmg.pdmg[k].get_peak();
           if (verbose>0) {
             std::cout << "  Mean: " << k+1 << " of " << n_gauss << ":"
                       << std::endl;
@@ -186,8 +295,8 @@ namespace o2scl {
 
       if (done==false) {
         O2SCL_CONV_RET("Did not converge in "
-                       "exp_max_gmm::calc_internal().",o2scl::exc_einval,
-                       err_nonconv);
+                       "exp_max_gmm::calc_internal().",
+                       o2scl::exc_einval,err_nonconv);
       }
       
       return 0;
@@ -226,76 +335,6 @@ namespace o2scl {
      */
     rng<> r2;
     
-    /// Return the dimensionality
-    virtual size_t dim() const {
-      return nd_in;
-    }
-
-    /** \brief Read the Gaussian mixture from an input file
-     */
-    virtual int read_generic(std::istream &fin, int verbose=0) {
-
-      double data;
-      std::string line;
-      std::string cname;
-
-      // Read first line and into list
-      fin >> nd_in;
-      weights.resize(nd_in);
-      for(size_t i=0;i<nd_in;i++) {
-        fin >> weights[i];
-      }
-      pdmg.resize(nd_in);
-      for(size_t i=0;i<nd_in;i++) {
-        pdmg[i].read_generic(fin,verbose);
-      }
-      return 0;
-    }
-    
-    /** \brief Compute the normalized probability density
-     */
-    virtual double pdf(const gauss_vec_t &x) const {
-      double ret=0.0;
-      double weight_sum=0.0;
-      for(size_t k=0;k<weights.size();k++) weight_sum+=weights[k];
-      for(size_t k=0;k<weights.size();k++) {
-        ret+=weights[k]/weight_sum*pdmg[k].pdf(x);
-      }
-      return ret;
-    }
-    
-    /** \brief The log of the normalized density
-     */
-    virtual double log_pdf(const gauss_vec_t &x) const {
-      return log(pdf(x));
-    }
-
-    /** \brief Sample the distribution
-     */
-    virtual void operator()(gauss_vec_t &x) const {
-      double weight_sum=0.0;
-      for(size_t i=0;i<weights.size();i++) weight_sum+=weights[i];
-      internal_vec_t partial_sums(weights.size());
-      for(size_t i=0;i<weights.size();i++) {
-        if (i==0) {
-          partial_sums[0]=weights[0]/weight_sum;
-        } else {
-          partial_sums[i]=partial_sums[i-1]+weights[i]/weight_sum;
-        }
-      }
-
-      double v=r2.random();
-      for(size_t k=0;k<weights.size();k++) {
-        if (v<partial_sums[k] || k==weights.size()-1) {
-          pdmg[k](x);
-          return;
-        }
-      }
-      O2SCL_ERR("Weight arithmetic problem in operator().",
-                o2scl::exc_esanity);
-      return;
-    }
-    
     /** \brief Initialize the data
         The object \c vecs should be a matrix with a
         first index of size <tt>n_in</tt> and a second 
@@ -307,7 +346,7 @@ namespace o2scl {
       
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "exp_max::set_data()",exc_efailed);
+                   "exp_max_gmm::set_data()",exc_efailed);
       }
       np=n_points;
       nd_in=n_in;
@@ -342,19 +381,20 @@ namespace o2scl {
       }
       
       if (n_gauss==0) {
-        O2SCL_ERR("Cannot select zero gaussians in calc_auto().",
-                  o2scl::exc_einval);
+        O2SCL_ERR2("Cannot select zero gaussians in ",
+                   "exp_max_gmm::calc_auto().",
+                   o2scl::exc_einval);
       }
       
-      weights.resize(n_gauss);
+      pdmg.weights.resize(n_gauss);
       resps.resize(np,n_gauss);
-      pdmg.resize(n_gauss);
+      pdmg.pdmg.resize(n_gauss);
       
-      // Randomly initialize the Gaussians and the weights
+      // Randomly initialize the Gaussians and the pdmg.weights
       
       gauss_mat_t tcovar(nd_in,nd_in);
       gauss_vec_t tmean(nd_in);
-      pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
+      pdmg.pdmg[0].set_ret(nd_in,np,data,tmean,tcovar);
       
       if (verbose>0) {
         std::cout << "exp_max_gmm::calc_auto(): initial mean: " << std::endl;
@@ -365,24 +405,24 @@ namespace o2scl {
       }
       
       for(int k=n_gauss-1;k>=0;k--) {
-        pdmg[0](tmean);
+        pdmg.pdmg[0](tmean);
         if (verbose>0) {
           std::cout << "exp_max_gmm::calc_auto(): random mean: "
                     << k << std::endl;
           std::cout << "  ";
           vector_out(std::cout,tmean,true);
         }
-        pdmg[k].set_covar(nd_in,tmean,tcovar);
+        pdmg.pdmg[k].set_covar(nd_in,tmean,tcovar);
       }
       for(size_t k=0;k<n_gauss;k++) {
-        weights[k]=0.5;
+        pdmg.weights[k]=0.5;
       }
 
       return calc_internal(n_gauss);
     }
 
     /** \brief Compute the Gaussian mixture model using the 
-        specified initial weights, means, and covariance matrices
+        specified initial pdmg.weights, means, and covariance matrices
     */
     template<class vec_t, class mat2_t, class ten_t>
     int calc_guess(size_t n_gauss, vec_t &wgts,
@@ -394,18 +434,20 @@ namespace o2scl {
       }
       
       if (n_gauss==0) {
-        O2SCL_ERR("Cannot select zero gaussians in calc_guess().",
-                  o2scl::exc_einval);
+        O2SCL_ERR2("Cannot select zero gaussians in ",
+                   "exp_max_gmm::calc_guess().",
+                   o2scl::exc_einval);
       }
       
-      weights.resize(n_gauss);
+      pdmg.weights.resize(n_gauss);
       resps.resize(np,n_gauss);
-      pdmg.resize(n_gauss);
+      pdmg.pdmg.resize(n_gauss);
 
       for(size_t k=0;k<n_gauss;k++) {
-        weights[k]=wgts[k];
+        pdmg.weights[k]=wgts[k];
         if (verbose>0) {
-          std::cout << "User-specified weights: " << weights[k] << std::endl;
+          std::cout << "User-specified pdmg.weights: "
+                    << pdmg.weights[k] << std::endl;
         }
         internal_vec_t mean(nd_in);
         internal_mat_t covar(nd_in,nd_in);
@@ -425,19 +467,12 @@ namespace o2scl {
           std::cout << "User-specified covariance matrix: ";
           matrix_out(std::cout,nd_in,nd_in,covar);
         }
-        pdmg[k].set_covar(2,mean,covar);
+        pdmg.pdmg[k].set_covar(2,mean,covar);
       }
 
       return calc_internal(n_gauss);
     }
     //@}
-    
-    /// The Gaussians
-    std::vector<o2scl::prob_dens_mdim_gaussian<gauss_vec_t,
-                                               gauss_mat_t>> pdmg;
-    
-    /// The weights 
-    internal_vec_t weights;
     
 #ifndef DOXYGEN_INTERNAL
     

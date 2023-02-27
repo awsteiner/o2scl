@@ -115,13 +115,14 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       table3d_obj.read_gen3_list(std::cin,verbose);
     }
     
-  } else if (ctype=="exp_max_gmm") {
-    
-    if (fname!=((std::string)"cin")) {
-      emg_obj.read_generic(ifs,verbose);
-    } else {
-      emg_obj.read_generic(std::cin,verbose);
-    }
+    /*  } else if (ctype=="exp_max_gmm") {
+        
+        if (fname!=((std::string)"cin")) {
+        emg_obj.read_generic(ifs,verbose);
+        } else {
+        emg_obj.read_generic(std::cin,verbose);
+        }
+    */
     
   } else if (ctype=="prob_dens_mdim_gaussian") {
     

@@ -2115,36 +2115,47 @@ namespace o2scl_acol {
 
         For objects of type double[]:
 
-        Resize the vector, ensuring no elements are deleted where possible.
+        Resize the vector.
 
         Arguments: <tt><new size></tt>
 
-        Desc.
+        Resize the vector. If the new size is larger than the old
+        size, then the old entries are retained and the new entries
+        are set to zero. If the old size is larger, then the first new
+        size entries are left unchanged.
 
         For objects of type int[]:
 
-        Resize the vector, ensuring no elements are deleted where possible.
+        Resize the vector.
 
         Arguments: <tt><new size></tt>
 
-        Desc.
+        Resize the vector. If the new size is larger than the old
+        size, then the old entries are retained and the new entries
+        are set to zero. If the old size is larger, then the first new
+        size entries are left unchanged.
 
         For objects of type size_t[]:
 
-        Resize the vector, ensuring no elements are deleted where possible.
+        Resize the vector.
 
         Arguments: <tt><new size></tt>
 
-        Desc.
+        Resize the vector. If the new size is larger than the old
+        size, then the old entries are retained and the new entries
+        are set to zero. If the old size is larger, then the first new
+        size entries are left unchanged.
 
         For objects of type string[]:
 
-        Resize the vector, ensuring no elements are deleted where possible.
+        Resize the vector.
 
         Arguments: <tt><new size></tt>
 
-        Desc.
-
+        Resize the vector. If the new size is larger than the old
+        size, then the old entries are retained and the new entries
+        are set to zero. If the old size is larger, then the first new
+        size entries are left unchanged.
     */
     virtual int comm_resize(std::vector<std::string> &sv, bool itive_com);
 

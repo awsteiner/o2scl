@@ -6,7 +6,7 @@ OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp other_python.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp xml.cpp \
 	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp \
-	interpm_python.cpp
+	interpm_python.cpp gmm_python.cpp
 
 HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
@@ -14,14 +14,16 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
-	slack_messenger.h xml.h exp_max.h interpm_python.h
+	slack_messenger.h xml.h exp_max.h interpm_python.h \
+	gmm_python.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
-	prob_dens_mdim_amr.scr xml.scr exp_max.scr interpm_python.scr
+	prob_dens_mdim_amr.scr xml.scr exp_max.scr interpm_python.scr \
+	gmm_python.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -122,7 +124,8 @@ check_PROGRAMS = series_acc_ts interp2_planar_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
 	prob_dens_func_ts interp2_neigh_ts \
 	interpm_idw_ts interpm_krige_ts smooth_func_ts \
-	prob_dens_mdim_amr_ts xml_ts exp_max_ts interpm_python_ts
+	prob_dens_mdim_amr_ts xml_ts exp_max_ts interpm_python_ts \
+	gmm_python_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -157,6 +160,7 @@ interp2_planar_ts_LDADD = $(ADDL_TEST_LIBS)
 interp2_neigh_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_idw_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_python_ts_LDADD = $(ADDL_TEST_LIBS)
+gmm_python_ts_LDADD = $(ADDL_TEST_LIBS)
 smooth_func_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_krige_ts_LDADD = $(ADDL_TEST_LIBS)
 contour_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -180,6 +184,7 @@ interp2_planar_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interp2_neigh_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_idw_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+gmm_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 smooth_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 contour_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -210,6 +215,8 @@ interpm_idw.scr: interpm_idw_ts$(EXEEXT)
 	./interpm_idw_ts$(EXEEXT) > interpm_idw.scr
 interpm_python.scr: interpm_python_ts$(EXEEXT) 
 	./interpm_python_ts$(EXEEXT) > interpm_python.scr
+gmm_python.scr: gmm_python_ts$(EXEEXT) 
+	./gmm_python_ts$(EXEEXT) > gmm_python.scr
 smooth_func.scr: smooth_func_ts$(EXEEXT) 
 	./smooth_func_ts$(EXEEXT) > smooth_func.scr
 interpm_krige.scr: interpm_krige_ts$(EXEEXT) 
@@ -249,6 +256,7 @@ hist_2d_ts_SOURCES = hist_2d_ts.cpp
 interp2_neigh_ts_SOURCES = interp2_neigh_ts.cpp
 interpm_idw_ts_SOURCES = interpm_idw_ts.cpp
 interpm_python_ts_SOURCES = interpm_python_ts.cpp
+gmm_python_ts_SOURCES = gmm_python_ts.cpp
 smooth_func_ts_SOURCES = smooth_func_ts.cpp
 interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
 interp2_planar_ts_SOURCES = interp2_planar_ts.cpp

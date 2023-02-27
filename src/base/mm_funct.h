@@ -802,20 +802,11 @@ namespace o2scl {
       if (verbose>0) {
         std::cout << "  Obtaining output." << std::endl;
       }
-      if (false) {
-        /*
-        for(size_t i=0;i<n;i++) {
-          void *vp=PyArray_GETPTR1(result,i);
-          double *dp=(double *)vp;
-          y[i]=*dp;
-          std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
-        }
-        */
-      } else {
-        void *vp=PyArray_DATA((PyArrayObject *)result);
-        double *dp=(double *)vp;
-        for(size_t i=0;i<n;i++) {
-          y[i]=dp[i];
+      void *vp=PyArray_DATA((PyArrayObject *)result);
+      double *dp=(double *)vp;
+      for(size_t i=0;i<n;i++) {
+        y[i]=dp[i];
+        if (verbose>0) {
           std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
         }
       }
