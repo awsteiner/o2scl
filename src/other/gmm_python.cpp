@@ -52,7 +52,7 @@ gmm_python::gmm_python(std::string module, std::string set_func,
   verbose=v;
 
   if (o2scl_settings.py_initialized==false) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Running py_init()." << std::endl;
     }
     o2scl_settings.py_init();
@@ -78,59 +78,59 @@ gmm_python::gmm_python(std::string module, std::string set_func,
 }      
     
 void gmm_python::free() {
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Starting gmm_python::free()." << std::endl;
   }
   if (p_set_func!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref set_func." << std::endl;
     }
     Py_DECREF(p_set_func);
   }
   if (p_eval_func!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref eval_func." << std::endl;
     }
     Py_DECREF(p_eval_func);
   }
   if (p_get_func!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref get_func." << std::endl;
     }
     Py_DECREF(p_get_func);
   }
   if (p_set_args!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref set_args." << std::endl;
     }
     Py_DECREF(p_set_args);
   }
   if (p_eval_args!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref eval_args." << std::endl;
     }
     Py_DECREF(p_eval_args);
   }
   if (p_instance!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref instance." << std::endl;
     }
     Py_DECREF(p_instance);
   }
   if (p_class!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref class." << std::endl;
     }
     Py_DECREF(p_class);
   }
   if (p_module!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref module." << std::endl;
     }
     Py_DECREF(p_module);
   }
   if (p_name!=0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "Decref name." << std::endl;
     }
     Py_DECREF(p_name);
@@ -147,7 +147,7 @@ void gmm_python::free() {
   n_params=0;
   n_points=0;
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Done in gmm_python::free()." << std::endl;
   }
 }      
@@ -181,7 +181,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
       
   // Get the Unicode name of the user-specified module
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Python version: "
               << o2scl_settings.py_version() << std::endl;
     std::cout << "Staring gmm_python::set_function()."
@@ -197,7 +197,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
       
   // Import the user-specified module
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Importing module." << std::endl;
   }
   p_module=PyImport_Import(p_name);
@@ -208,7 +208,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
 
   if (class_name.length()>0) {
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Obtaining python class." << std::endl;
     }
     p_class=PyObject_GetAttrString(p_module,class_name.c_str());
@@ -218,7 +218,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
     }
         
     // Create an instance of the class
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python class." << std::endl;
     }
     if (PyCallable_Check(p_class)==false) {
@@ -227,7 +227,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
                  o2scl::exc_efailed);
     }
         
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python class instance." << std::endl;
     }
     p_instance=PyObject_CallObject(p_class,0);
@@ -239,7 +239,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
       
   // Setup the arguments to the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Making argument object for set function."
               << std::endl;
   }
@@ -251,7 +251,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
 
   // Setup the arguments to the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Making argument object for eval function."
               << std::endl;
   }
@@ -265,7 +265,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   if (class_name.length()>0) {
 
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python member function eval: "
                 << eval_func<< std::endl;
     }
@@ -277,7 +277,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
     }
         
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python member function get: "
                 << get_func<< std::endl;
     }
@@ -289,7 +289,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
     }
         
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python member function set: "
                 << set_func << std::endl;
     }
@@ -302,7 +302,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
 
   } else {
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python function set." << std::endl;
     }
     p_set_func=PyObject_GetAttrString(p_module,set_func.c_str());
@@ -313,7 +313,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
     }
 
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python function eval." << std::endl;
     }
     p_eval_func=PyObject_GetAttrString(p_module,eval_func.c_str());
@@ -324,7 +324,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
     }
 
     // Load the python function
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  Loading python function get." << std::endl;
     }
     p_get_func=PyObject_GetAttrString(p_module,get_func.c_str());
@@ -351,7 +351,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
       
   npy_intp params_dims[]={(npy_intp)params.get_size(0),
     (npy_intp)params.get_size(1)};
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "gmm_python::operator():" << std::endl;
   }
   PyObject *array_in=PyArray_SimpleNewFromData
@@ -363,7 +363,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
                "mm_funct_python::operator().",o2scl::exc_efailed);
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Creating python unicode for string: "
               << options.length() << " " << options << std::endl;
   }
@@ -380,7 +380,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
 
   // Call the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Calling python set function." << std::endl;
   }
   PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
@@ -389,7 +389,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
                "gmm_python::operator().",o2scl::exc_efailed);
   }
 
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << p_set_func << " " << p_eval_func << " "
               << p_get_func << std::endl;
     std::cout << "Done with gmm_python::set_function()."
@@ -416,7 +416,7 @@ int gmm_python::eval(const std::vector<double> &x,
   }
 
   npy_intp x_dims[]={(npy_intp)x.size()};
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "gmm_python::operator():" << std::endl;
     std::cout << "  Array x: " << x.size() << std::endl;
   }
@@ -430,7 +430,7 @@ int gmm_python::eval(const std::vector<double> &x,
   }
       
   // Call the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Calling python eval function." << std::endl;
   }
   PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
@@ -444,7 +444,7 @@ int gmm_python::eval(const std::vector<double> &x,
                "gmm_python::operator().",o2scl::exc_efailed);
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Obtaining output 1." << std::endl;
   }
   void *vp=PyArray_DATA((PyArrayObject *)result);
@@ -454,12 +454,12 @@ int gmm_python::eval(const std::vector<double> &x,
     std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Decref result." << std::endl;
   }
   Py_DECREF(result);
   
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Done in gmm_python::operator()."
               << std::endl;
   }
@@ -478,7 +478,7 @@ int gmm_python::get_python() {
   }
 
   // Call the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Calling python get function." << std::endl;
   }
   PyObject *result=PyObject_CallObject(p_get_func,0);
@@ -492,7 +492,7 @@ int gmm_python::get_python() {
                "gmm_python::operator().",o2scl::exc_efailed);
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Obtaining output 2." << std::endl;
   }
 
@@ -528,7 +528,7 @@ int gmm_python::get_python() {
                "interpm_python::operator().",o2scl::exc_efailed);
   }
   
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Obtaining output." << std::endl;
   }
   double *ptr_w=(double *)PyArray_DATA((PyArrayObject *)get_w);
@@ -579,12 +579,12 @@ int gmm_python::get_python() {
     }
   }
   
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Decref result." << std::endl;
   }
   Py_DECREF(result);
   
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Done in gmm_python::get_python()."
               << std::endl;
   }

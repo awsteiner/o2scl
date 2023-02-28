@@ -1132,6 +1132,7 @@ namespace o2scl {
     /// Copy constructor
     prob_dens_mdim_gaussian(const prob_dens_mdim_gaussian &pdmg_loc) {
       ndim=pdmg_loc.ndim;
+      peak=pdmg_loc.peak;
       chol=pdmg_loc.chol;
       covar_inv=pdmg_loc.covar_inv;
       norm=pdmg_loc.norm;
@@ -1153,6 +1154,7 @@ namespace o2scl {
       // Check for self-assignment
       if (this!=&pdmg_loc) {
         ndim=pdmg_loc.ndim;
+        peak=pdmg_loc.peak;
         chol=pdmg_loc.chol;
         covar_inv=pdmg_loc.covar_inv;
         norm=pdmg_loc.norm;
@@ -1579,7 +1581,6 @@ namespace o2scl {
                          o2scl_cblas::o2cblas_NoTrans,
                          ndim,ndim,1.0,chol,qq,0.0,vtmpx);
 
-      //vtmpx=prod(chol,qq);
       for(size_t i=0;i<ndim;i++) x[i]=peak[i]+vtmpx[i];
       return;
     }
@@ -2334,6 +2335,121 @@ namespace o2scl {
   
   };
 #endif
+
+  /** \brief A probability density distribution from a Gaussian 
+      mixture model
+   */
+  template<class gauss_vec_t=boost::numeric::ublas::vector<double>,
+           class gauss_mat_t=boost::numeric::ublas::matrix<double>>
+  class prob_dens_mdim_gmm : public prob_dens_mdim<gauss_vec_t> {
+    
+  public:
+
+    /** \brief Base random number generator
+
+        This is used to automatically generate initial means for the
+        Gaussians if a user-specified guess is not provided.
+     */
+    rng<> r2;
+    
+    /// The Gaussians
+    std::vector<o2scl::prob_dens_mdim_gaussian
+                <gauss_vec_t,gauss_mat_t>> pdmg;
+    
+    typedef boost::numeric::ublas::vector<double> internal_vec_t;
+    
+    /// The weights (must add to 1) 
+    internal_vec_t weights;
+
+    prob_dens_mdim_gmm() {
+    }
+    
+    /// Copy constructor
+    prob_dens_mdim_gmm(const prob_dens_mdim_gmm &pdmg_loc) {
+      pdmg=pdmg_loc.pdmg;
+      weights=pdmg_loc.weights;
+    }
+
+    /// Copy constructor with operator=
+    prob_dens_mdim_gmm &operator=
+    (const prob_dens_mdim_gmm &pdmg_loc) {
+      // Check for self-assignment
+      if (this!=&pdmg_loc) {
+        pdmg=pdmg_loc.pdmg;
+        weights=pdmg_loc.weights;
+      }
+      return *this;
+    }
+
+    /** \brief Read the Gaussian mixture from an input file
+     */
+    virtual int read_generic(std::istream &fin, int verbose=0) {
+
+      double data;
+      std::string line;
+      std::string cname;
+
+      size_t nd_in;
+      // Read first line and into list
+      fin >> nd_in;
+      weights.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        fin >> weights[i];
+      }
+      pdmg.resize(nd_in);
+      for(size_t i=0;i<nd_in;i++) {
+        pdmg[i].read_generic(fin,verbose);
+      }
+      return 0;
+    }
+    
+    /** \brief Sample the distribution
+     */
+    virtual void operator()(gauss_vec_t &x) const {
+      internal_vec_t partial_sums(weights.size());
+      for(size_t i=0;i<weights.size();i++) {
+        if (i==0) {
+          partial_sums[0]=weights[0];
+        } else {
+          partial_sums[i]=partial_sums[i-1]+weights[i];
+        }
+      }
+
+      double v=r2.random();
+      for(size_t k=0;k<weights.size();k++) {
+        if (v<partial_sums[k] || k==weights.size()-1) {
+          pdmg[k](x);
+          return;
+        }
+      }
+      O2SCL_ERR2("Weight arithmetic problem in ",
+                 "prob_dens_mdim_gmm::operator().",
+                 o2scl::exc_esanity);
+      return;
+    }
+
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      return weights.size();
+    }
+
+    /** \brief Compute the normalized probability density
+     */
+    virtual double pdf(const gauss_vec_t &x) const {
+      double ret=0.0;
+      for(size_t k=0;k<weights.size();k++) {
+        ret+=weights[k]*pdmg[k].pdf(x);
+      }
+      return ret;
+    }
+    
+    /** \brief The log of the normalized density
+     */
+    virtual double log_pdf(const gauss_vec_t &x) const {
+      return log(pdf(x));
+    }
+    
+  };
   
 }
 

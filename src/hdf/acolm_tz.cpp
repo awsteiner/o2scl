@@ -25,6 +25,7 @@
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 #include <o2scl/xml.h>
+#include <o2scl/gmm_python.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -105,24 +106,34 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
       cout << i-2 << ": " << sv[i] << endl;
     }
     
-    const_matrix_view_table<> cmvt(table_obj,col_names);
+    pgmm_obj.verbose=verbose;
 
-    emg_obj.verbose=verbose;
-    emg_obj.err_nonconv=false;
-    emg_obj.set_data(col_names.size(),table_obj.get_nlines(),cmvt);
-    int ca_ret=emg_obj.calc_auto(n_gauss);
-    for (int i=0;i<20 && ca_ret!=0;i++) {
-      ca_ret=emg_obj.calc_auto(n_gauss);
-      std::cout << "GMM attempt " << i+1 << " of 20" << std::endl;
+    // Copy the table data to a tensor for use in gmm_python
+    tensor<> tin;
+    vector<size_t> in_size={table_obj.get_nlines(),col_names.size()};
+    tin.resize(2,in_size);
+
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      for(size_t j=0;j<col_names.size();j++) {
+        vector<size_t> ix;
+        ix={i,j};
+        tin.get(ix)=table_obj.get(j,i);
+      }
     }
-    if (ca_ret!=0) {
-      cerr << "GMM conversion failed after 20 attempts." << endl;
-    }
+    
+    gmm_python gp("o2sclpy","set_data_str","eval","get_data",
+                  col_names.size(),table_obj.get_nlines(),n_gauss,tin,
+                  ((string)"verbose=")+o2scl::itos(verbose),
+                  "gmm_sklearn",verbose);
+                  
+    gp.get_python();
+
+    pgmm_obj=gp.get_gmm();
     
     command_del(type);
     clear_obj();
-    command_add("exp_max_gmm");
-    type="exp_max_gmm";
+    command_add("prob_dens_mdim_gmm");
+    type="prob_dens_mdim_gmm";
     
   }
     

@@ -96,7 +96,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("tensor<size_t>");
   type_list.push_back("prob_dens_mdim_amr");
   type_list.push_back("prob_dens_mdim_gaussian");
-  type_list.push_back("exp_max_gmm");
+  type_list.push_back("prob_dens_mdim_gmm");
   type_list.push_back("vec_vec_string");
   type_list.push_back("vec_vec_double");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
@@ -173,7 +173,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
   {
     vector<std::string> itmp={"sample","list"};
-    type_comm_list.insert(std::make_pair("exp_max_gmm",itmp));
+    type_comm_list.insert(std::make_pair("prob_dens_mdim_gmm",itmp));
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
@@ -1036,6 +1036,25 @@ void acol_manager::command_add(std::string new_type) {
          (this,&acol_manager::comm_sample),both}
       };
     if (narr!=type_comm_list["prob_dens_mdim_amr"].size()) {
+      O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="prob_dens_mdim_gmm") {
+    
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]=
+      {
+        {0,"list","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"sample","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sample),both}
+      };
+    if (narr!=type_comm_list["prob_dens_mdim_gmm"].size()) {
       O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
                 o2scl::exc_esanity);
     }

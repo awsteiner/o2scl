@@ -115,14 +115,13 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       table3d_obj.read_gen3_list(std::cin,verbose);
     }
     
-    /*  } else if (ctype=="exp_max_gmm") {
-        
-        if (fname!=((std::string)"cin")) {
-        emg_obj.read_generic(ifs,verbose);
-        } else {
-        emg_obj.read_generic(std::cin,verbose);
-        }
-    */
+  } else if (ctype=="prob_dens_mdim_gmm") {
+    
+    if (fname!=((std::string)"cin")) {
+      pgmm_obj.read_generic(ifs,verbose);
+    } else {
+      pgmm_obj.read_generic(std::cin,verbose);
+    }
     
   } else if (ctype=="prob_dens_mdim_gaussian") {
     
@@ -390,9 +389,9 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv,
   if (ncols<=0) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
-    //std::cout << "iret,srow,scol: " << iret << " " << srow << " "
+    //std::cout << "get-row: iret,srow,scol: " << iret << " " << srow << " "
     //<< scol << std::endl;
-    if (scol>10 && iret==0) ncols_loc=scol;
+    if (scol>10 || iret!=0) ncols_loc=scol;
     else ncols_loc=80;
   } else {
     ncols_loc=ncols;
