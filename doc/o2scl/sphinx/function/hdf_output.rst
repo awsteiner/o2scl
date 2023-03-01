@@ -15,7 +15,7 @@ Function hdf_output (o2scl_hdf)
 
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_gaussian< vec_t, mat_t > &p, std::string name)
 
-.. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::exp_max_gmm< mat_t, vecp_t > &p, std::string name)
+.. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_gmm< mat_t, vecp_t > &p, std::string name)
 
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::prob_dens_mdim_amr< vec_t, mat_t > &p, std::string name)
 

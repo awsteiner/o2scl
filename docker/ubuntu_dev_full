@@ -40,7 +40,7 @@ RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install --no-binary=h5py
 RUN apt-get -y install texlive dvipng texlive-latex-extra cm-super
 # We need pillow to compare images for o2sclpy tests
 RUN pip3 install numpy scipy yt matplotlib requests pytest Pillow
-RUN pip3 install scikit-learn tensorflow
+RUN pip3 install scikit-learn tensorflow-cpu
 
 # -----------------------------------------------------------------
 # Install o2scl
