@@ -59,13 +59,6 @@ RUN acol -h
 RUN acol -v
 
 # --------------------------------------------------------------------------
-# O2scl testing and examples
-
-WORKDIR /opt/o2scl
-RUN make o2scl-test
-RUN make o2scl-examples
-
-# --------------------------------------------------------------------------
 # Install o2sclpy via pip
 
 WORKDIR /opt
@@ -76,6 +69,13 @@ RUN pip3 install .
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
+
+# --------------------------------------------------------------------------
+# O2scl testing and examples
+
+WORKDIR /opt/o2scl
+RUN make o2scl-test
+RUN make o2scl-examples
 
 # --------------------------------------------------------------------------
 # Test o2sclpy
