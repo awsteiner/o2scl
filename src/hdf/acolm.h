@@ -269,7 +269,7 @@ namespace o2scl_acol {
 
     o2scl::prob_dens_mdim_amr<> pdma_obj;
     o2scl::prob_dens_mdim_gaussian<> pdmg_obj;
-    o2scl::exp_max_gmm<> emg_obj;
+    o2scl::prob_dens_mdim_gmm<> pgmm_obj;
     //@}
     
     /** \brief True if we should run interactive mode after parsing
@@ -2176,7 +2176,7 @@ namespace o2scl_acol {
 
         Sample the distribution to create a <tt>table</tt> object.
 
-        For objects of type exp_max_gmm:
+        For objects of type prob_dens_mdim_gmm:
 
         Arguments: <number of samples>
 
@@ -2637,7 +2637,7 @@ namespace o2scl_acol {
 
         Arguments: <number of Gaussians> <column 1> [column 2] ...
         
-        This creates an object of type <tt>exp_max_gmm</tt>
+        This creates an object of type <tt>prob_dens_mdim_gmm</tt>
         based on the given columns of data in the table.
      */
     virtual int comm_to_gmm(std::vector<std::string> &sv,

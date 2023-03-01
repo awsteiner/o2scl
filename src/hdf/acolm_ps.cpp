@@ -2861,16 +2861,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       command_add("prob_dens_mdim_gaussian");
       type="prob_dens_mdim_gaussian";
       return 0;
-      /*    } else if (ip.type=="exp_max_gmm") {
+    } else if (ip.type=="prob_dens_mdim_gmm") {
       if (verbose>2) {
-	cout << "Reading exp_max_gmm." << endl;
+	cout << "Reading prob_dens_mdim_gmm." << endl;
       }
-      hdf_input(hf,emg_obj,in[1]);
+      hdf_input(hf,pgmm_obj,in[1]);
       obj_name=in[1];
-      command_add("exp_max_gmm");
-      type="exp_max_gmm";
+      command_add("prob_dens_mdim_gmm");
+      type="prob_dens_mdim_gmm";
       return 0;
-      */
     } else if (ip.type.substr(0,10)==((string)"double[][]").substr(0,10)) {
       if (verbose>2) {
 	cout << "Reading tensor." << endl;
@@ -3477,7 +3476,7 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
 
-  } else if (type=="exp_max_gmm") {
+  } else if (type=="prob_dens_mdim_gmm") {
     
     if (sv.size()<2) {
       cerr << "Not enough arguments to sample." << endl;
@@ -3491,17 +3490,15 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
     std::cout << "Constructing " << N << " samples of the multivariate "
               << "distribution." << std::endl;
 
-    /*
-    for(size_t j=0;j<emg_obj.dim();j++) {
+    for(size_t j=0;j<pgmm_obj.dim();j++) {
       table_obj.new_column(((string)"c_")+o2scl::szttos(j));
     }
 
     for(int i=0;i<N;i++) {
-      ubvector x(emg_obj.dim());
-      emg_obj(x);
+      ubvector x(pgmm_obj.dim());
+      pgmm_obj(x);
       table_obj.line_of_data(x.size(),x);
     }
-    */
 
     command_del(type);
     clear_obj();

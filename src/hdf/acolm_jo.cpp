@@ -165,11 +165,11 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
            << vvstring_obj[j].size() << " with " << count
            << " total characters." << endl;
     }
-  } else if (type=="exp_max_gmm") {
-    cout << "exp_max_gmm name: " << obj_name << endl;
-    size_t n=emg_obj.get_gmm().pdmg.size();
+  } else if (type=="prob_dens_mdim_gmm") {
+    cout << "prob_dens_mdim_gmm name: " << obj_name << endl;
+    size_t n=pgmm_obj.pdmg.size();
     for(size_t j=0;j<n;j++) {
-      const ubvector &peak=emg_obj.get_gmm().pdmg[j].get_peak();
+      const ubvector &peak=pgmm_obj.pdmg[j].get_peak();
       cout << "Gaussian " << j << " has mean ";
       vector_out(std::cout,peak,true);
     }
