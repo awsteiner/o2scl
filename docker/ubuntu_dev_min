@@ -6,9 +6,14 @@
 FROM ubuntu:latest 
 MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
 
+# -----------------------------------------------------------------
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
+
 ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# apt packages
 
 RUN apt-get -y update
 # compiler, make and gsl
@@ -18,7 +23,9 @@ RUN apt-get -y install libhdf5-dev libncurses-dev libreadline-dev
 # Boost and Eigen
 RUN apt-get -y install libboost-all-dev
 
+# -----------------------------------------------------------------
 # Now install o2scl
+
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
