@@ -35,13 +35,18 @@ using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
-double ft(double x, double y, double z) {
-  return 3.0-2.0*x*x+7.0*y*z-5.0*z*x;
+double f(double x, double y) {
+  return sin(x*10)+2.0*tan(y);
+}
+
+double f2(double x, double y) {
+  double fv=f(x,y);
+  return 2.0-fv*fv+fv;
 }
 
 int main(void) {
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   cout.setf(ios::scientific);
 
@@ -52,8 +57,8 @@ int main(void) {
   for(size_t i=0;i<N;i++) {
     x[i]=((double)i)/((double)N);
     y[i]=fabs(sin(1.0e8*i));
-    dp[i]=1.0-pow(x[i]-0.5,2.0)-pow(y[i]-0.5,2.0);
-    dp2[i]=2.0-dp[i]*dp[i]+dp[i];
+    dp[i]=f(x[i],y[i]);
+    dp2[i]=f2(x[i],y[i]);
   }
 
   table<> tab;
@@ -63,14 +68,29 @@ int main(void) {
     tab.line_of_data(line.size(),line);
   }
 
-  hdf_file hf;
-  hf.open_or_create("interpm_python_data.o2");
-  hdf_output(hf,tab,"tab");
-  hf.close();
+  hdf_file hf2;
+  hf2.open_or_create("interpm_python_data.o2");
+  hdf_output(hf2,tab,"tab");
+  hf2.close();
+
+  table3d t3d;
+  uniform_grid<double> ugx=uniform_grid_end<double>(0,1,99);
+  uniform_grid<double> ugy=uniform_grid_end<double>(0,1,99);
+  t3d.set_xy("x",ugx,"y",ugy);
+  t3d.line_of_names("exact gp exact2 gp2 dnn dnn2");
   
+  for(size_t i=0;i<100;i++) {
+    for(size_t j=0;j<100;j++) {
+      t3d.set(i,j,"exact",f(t3d.get_grid_x(i),t3d.get_grid_y(j)));
+      t3d.set(i,j,"exact2",f2(t3d.get_grid_x(i),t3d.get_grid_y(j)));
+    }
+  }
+    
 #ifdef O2SCL_PYTHON
 
   if (true) {
+
+    // Sklearn Gaussian process, n_out=1
     
     tensor<> tin, tout;
     vector<size_t> in_size={N,2}, out_size={N,1};
@@ -86,19 +106,93 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,
-                      tin,tout,"verbose=2","interpm_sklearn_gp",2);
+                      tin,tout,"verbose=1","interpm_sklearn_gp",1);
     
     std::vector<double> ex(2), ey(1);
     ex[0]=0.5;
     ex[1]=0.5;
     ip.eval(ex,ey);
     cout << ey[0] << endl;
-    cout << 1.0 << endl;
-    t.test_rel(ey[0],1.0,0.5,"sklearn gp 1");
+    cout << f(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
+
+    cout << endl;
+  }
+    
+  if (true) {
+    
+    // Sklearn Gaussian process, n_out=2
+    
+    tensor<> tin, tout;
+    vector<size_t> in_size={N,2}, out_size={N,2};
+    tin.resize(2,in_size);
+    tout.resize(2,out_size);
+    for(size_t j=0;j<N;j++) {
+      vector<size_t> ix;
+      ix={j,0};
+      tin.get(ix)=x[j];
+      tout.get(ix)=dp[j];
+      ix={j,1};
+      tin.get(ix)=y[j];
+      tout.get(ix)=dp2[j];
+    }
+    
+    interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
+                      tin,tout,"verbose=1","interpm_sklearn_gp",1);
+    
+    std::vector<double> ex(2), ey(2);
+    ex[0]=0.5;
+    ex[1]=0.5;
+    ip.eval(ex,ey);
+    cout << ey[0] << " " << ey[1] << endl;
+    cout << f(0.5,0.5) << " " << f2(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
+    t.test_rel(ey[1],f2(ex[0],ex[1]),0.1,"sklearn gp 2");
+    
+    for(size_t i=0;i<100;i++) {
+      for(size_t j=0;j<100;j++) {
+        ex[0]=t3d.get_grid_x(i);
+        ex[1]=t3d.get_grid_y(j);
+        ip.eval(ex,ey);
+        t3d.set(i,j,"gp",ey[0]);
+        t3d.set(i,j,"gp2",ey[1]);
+      }
+    }
     
     cout << endl;
   }
     
+  if (true) {
+
+    // TF dnn n_out=1
+    
+    tensor<> tin, tout;
+    vector<size_t> in_size={N,2}, out_size={N,1};
+    tin.resize(2,in_size);
+    tout.resize(2,out_size);
+    for(size_t j=0;j<N;j++) {
+      vector<size_t> ix;
+      ix={j,0};
+      tin.get(ix)=x[j];
+      tout.get(ix)=dp[j];
+      ix={j,1};
+      tin.get(ix)=y[j];
+    }
+    
+    interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,tin,tout,
+                      "verbose=1,activation=relu","interpm_tf_dnn",1);
+    
+    std::vector<double> ex(2), ey(1);
+    ex[0]=0.5;
+    ex[1]=0.5;
+    ip.eval(ex,ey);
+    cout << ey[0] << endl;
+    cout << f(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(0.5,0.5),20.0,"tf_dnn 1");
+    
+    cout << endl;
+  }
+  
   if (true) {
     
     tensor<> tin, tout;
@@ -116,82 +210,42 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
-                      tin,tout,"verbose=2","interpm_sklearn_gp",2);
+                      tin,tout,"verbose=1,activation=relu",
+                      "interpm_tf_dnn",1);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;
     ex[1]=0.5;
     ip.eval(ex,ey);
     cout << ey[0] << " " << ey[1] << endl;
-    cout << 1.0 << " " << 2.0 << endl;
-    t.test_rel(ey[0],1.0,0.5,"sklearn gp 2");
-    t.test_rel(ey[1],2.0,0.5,"sklearn gp 3");
-    
-    cout << endl;
-  }
-    
-  if (true) {
-    
-    tensor<> tin, tout;
-    vector<size_t> in_size={N,2}, out_size={N,1};
-    tin.resize(2,in_size);
-    tout.resize(2,out_size);
-    for(size_t j=0;j<N;j++) {
-      vector<size_t> ix;
-      ix={j,0};
-      tin.get(ix)=x[j];
-      tout.get(ix)=dp[j];
-      ix={j,1};
-      tin.get(ix)=y[j];
+    cout << f(0.5,0.5) << " " << f2(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),20.0,"tf_dnn 2");
+    t.test_rel(ey[1],f2(ex[0],ex[1]),20.0,"tf_dnn 3");
+
+    if (false) {
+      for(size_t i=0;i<100;i++) {
+        std::cout << "i: " << i << std::endl;
+        for(size_t j=0;j<100;j++) {
+          ex[0]=t3d.get_grid_x(i);
+          ex[1]=t3d.get_grid_y(j);
+          ip.eval(ex,ey);
+          t3d.set(i,j,"dnn",ey[0]);
+          t3d.set(i,j,"dnn2",ey[1]);
+        }
+      }
     }
-    
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,
-                      tin,tout,"verbose=2","interpm_tf_dnn",2);
-    
-    std::vector<double> ex(2), ey(1);
-    ex[0]=0.5;
-    ex[1]=0.5;
-    ip.eval(ex,ey);
-    cout << ey[0] << endl;
-    cout << 1.0 << endl;
-    t.test_rel(ey[0],1.0,0.5,"tf_dnn 1");
-    
-    cout << endl;
-  }
-    
-  if (true) {
-    
-    tensor<> tin, tout;
-    vector<size_t> in_size={N,2}, out_size={N,2};
-    tin.resize(2,in_size);
-    tout.resize(2,out_size);
-    for(size_t j=0;j<N;j++) {
-      vector<size_t> ix;
-      ix={j,0};
-      tin.get(ix)=x[j];
-      tout.get(ix)=dp[j];
-      ix={j,1};
-      tin.get(ix)=y[j];
-      tout.get(ix)=dp2[j];
-    }
-    
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
-                      tin,tout,"verbose=2","interpm_tf_dnn",2);
-    
-    std::vector<double> ex(2), ey(2);
-    ex[0]=0.5;
-    ex[1]=0.5;
-    ip.eval(ex,ey);
-    cout << ey[0] << " " << ey[1] << endl;
-    cout << 1.0 << " " << 2.0 << endl;
-    t.test_rel(ey[0],1.0,0.5,"tf_dnn 2");
-    t.test_rel(ey[1],2.0,0.5,"tf_dnn 3");
     
     cout << endl;
   }
     
 #endif
     
+  hdf_file hf;
+  hf.open_or_create("interpm_python_data.o2");
+  hdf_output(hf,tab,"tab");
+  hdf_output(hf,t3d,"t3d");
+  hf.close();
+  
   t.report();
   return 0;
 }

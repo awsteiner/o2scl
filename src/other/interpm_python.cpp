@@ -326,7 +326,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
       
   npy_intp params_dims[]={(npy_intp)params.get_size(0),
     (npy_intp)params.get_size(1)};
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "interpm_python::operator():" << std::endl;
   }
   PyObject *array_in=PyArray_SimpleNewFromData
@@ -340,7 +340,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
       
   npy_intp outputs_dims[]={(npy_intp)outputs.get_size(0),
     (npy_intp)outputs.get_size(1)};
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "interpm_python::operator():" << std::endl;
   }
   PyObject *array_out=PyArray_SimpleNewFromData
@@ -407,7 +407,7 @@ int interpm_python::eval(const std::vector<double> &x,
   }
 
   npy_intp x_dims[]={(npy_intp)x.size()};
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "interpm_python::operator():" << std::endl;
     std::cout << "  Array x: " << x.size() << std::endl;
   }
@@ -421,7 +421,7 @@ int interpm_python::eval(const std::vector<double> &x,
   }
       
   // Call the python function
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Calling python eval function." << std::endl;
   }
   PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
@@ -435,24 +435,24 @@ int interpm_python::eval(const std::vector<double> &x,
                "interpm_python::operator().",o2scl::exc_efailed);
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Obtaining output." << std::endl;
   }
   void *vp=PyArray_DATA((PyArrayObject *)result);
   double *dp=(double *)vp;
   for(size_t i=0;i<n_outputs;i++) {
     y[i]=dp[i];
-    if (verbose>0) {
+    if (verbose>1) {
       std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
     }
   }
       
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "  Decref result." << std::endl;
   }
   Py_DECREF(result);
   
-  if (verbose>0) {
+  if (verbose>1) {
     std::cout << "Done in interpm_python::operator()."
               << std::endl;
   }
