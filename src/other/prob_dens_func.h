@@ -1025,7 +1025,7 @@ namespace o2scl {
 
     /** \brief Read the distribution from an input file
      */
-    virtual int read_generic(std::istream &fin, int verbose=0) {
+    virtual int read_generic(std::istream &fin) {
 
       std::string stemp;
       
@@ -1065,7 +1065,7 @@ namespace o2scl {
             }
           }
         }
-      } else {
+      } else if (stemp[0]=='c' || stemp[0]=='C') {
         covar(0,0)=o2scl::stod(stemp);
         for(size_t i=0;i<ndim;i++) {
           for(size_t j=0;j<=i;j++) {
@@ -1075,10 +1075,39 @@ namespace o2scl {
             covar(j,i)=covar(i,j);
           }
         }
+      } else {
+        norm=o2scl::stod(stemp);
+        for(size_t i=0;i<ndim;i++) {
+          for(size_t j=0;j<=i;j++) {
+            if (i>0) {
+              fin >> chol(i,j);
+            }
+            chol(j,i)=chol(i,j);
+          }
+        }
+        for(size_t i=0;i<ndim;i++) {
+          for(size_t j=0;j<=i;j++) {
+            if (i>0) {
+              fin >> covar_inv(i,j);
+            }
+            covar_inv(j,i)=covar_inv(i,j);
+          }
+        }
       }
 
       set_covar(ndim,peak,covar);
       
+      return 0;
+    }
+
+    /** \brief
+     */
+    virtual int write_generic(std::ostream &fout) {
+      fout << ndim << std::endl;
+      o2scl::vector_out(fout,peak,true);
+      fout << norm << std::endl;
+      o2scl::matrix_out(fout,ndim,ndim,chol);
+      o2scl::matrix_out(fout,ndim,ndim,covar_inv);
       return 0;
     }
     
@@ -1304,6 +1333,8 @@ namespace o2scl {
 
       if (this->verbose>0) {
         std::cout << "prob_dens_mdim_gaussian::set_covar():" << std::endl;
+        std::cout << "  peak: ";
+        vector_out(std::cout,ndim,peak,true);
         std::cout << "  covar: " << std::endl;
         matrix_out(std::cout,ndim,ndim,covar,"  ");
       }
@@ -2383,12 +2414,12 @@ namespace o2scl {
 
     /** \brief Read the Gaussian mixture from an input file
      */
-    virtual int read_generic(std::istream &fin, int verbose=0) {
-
+    virtual int read_generic(std::istream &fin) {
+      
       double data;
       std::string line;
       std::string cname;
-
+      
       size_t nd_in;
       // Read first line and into list
       fin >> nd_in;
@@ -2399,6 +2430,22 @@ namespace o2scl {
       pdmg.resize(nd_in);
       for(size_t i=0;i<nd_in;i++) {
         pdmg[i].read_generic(fin,verbose);
+      }
+      return 0;
+    }
+
+    /** \brief
+     */
+    virtual int write_generic(std::ostream &fout) {
+
+      double data;
+      std::string line;
+      std::string cname;
+
+      fout << weights.size() << std::endl;
+      o2scl::vector_out(fout,weights,true);
+      for(size_t i=0;i<weights.size();i++) {
+        pdmg[i].write_generic(fout);
       }
       return 0;
     }

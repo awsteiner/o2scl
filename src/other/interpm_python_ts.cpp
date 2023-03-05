@@ -36,7 +36,7 @@ using namespace o2scl_hdf;
 typedef boost::numeric::ublas::vector<double> ubvector;
 
 double f(double x, double y) {
-  return sin(x*10)+2.0*tan(y);
+  return (sin(x*10)+2.0*tan(y))/5.0+0.14;
 }
 
 double f2(double x, double y) {
@@ -51,7 +51,7 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // Construct the data
-  static const size_t N=50;
+  static const size_t N=100;
   ubvector x(N), y(N), dp(N), dp2(N);
 
   for(size_t i=0;i<N;i++) {
@@ -180,7 +180,9 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,tin,tout,
-                      "verbose=1,activation=relu","interpm_tf_dnn",1);
+                      ((std::string)"verbose=1,activation=relu,")+
+                      "test_size=0.15,batch_size=10,transform=none",
+                      "interpm_tf_dnn",1);
     
     std::vector<double> ex(2), ey(1);
     ex[0]=0.5;
@@ -193,7 +195,7 @@ int main(void) {
     cout << endl;
   }
   
-  if (true) {
+  if (false) {
     
     tensor<> tin, tout;
     vector<size_t> in_size={N,2}, out_size={N,2};

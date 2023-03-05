@@ -200,6 +200,7 @@ namespace o2scl_hdf {
     p.weights.resize(n);
     hf.getd_vec_copy("weights",p.weights);
 
+    p.pdmg.resize(n);
     for(size_t i=0;i<n;i++) {
       std::string pdmg_name=((std::string)"pdmg")+o2scl::szttos(i);
       hdf_input_n(hf,p.pdmg[i],pdmg_name);

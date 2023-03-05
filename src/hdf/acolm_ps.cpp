@@ -3199,6 +3199,34 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     return 0;
   }
 
+  ret=hf.find_object_by_type("prob_dens_mdim_gaussian",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first prob_dens_mdim_gaussian "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hdf_input(hf,pdmg_obj,in[1]);
+    obj_name=in[1];
+    command_add("prob_dens_mdim_gaussian");
+    type="prob_dens_mdim_gaussian";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("prob_dens_mdim_gmm",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first prob_dens_mdim_gmm "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    hdf_input(hf,pgmm_obj,in[1]);
+    obj_name=in[1];
+    command_add("prob_dens_mdim_gmm");
+    type="prob_dens_mdim_gmm";
+    return 0;
+  }
+
   ret=hf.find_object_by_type("double[]",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {

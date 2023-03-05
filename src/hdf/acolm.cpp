@@ -733,7 +733,7 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-gaussian","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gaussian),both},
-       {0,"to-gmm","",0,4,"","",
+       {0,"to-gmm","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gmm),both},
        {0,"to-pdma","",0,4,"","",

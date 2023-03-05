@@ -117,7 +117,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
       for(size_t j=0;j<col_names.size();j++) {
         vector<size_t> ix;
         ix={i,j};
-        tin.get(ix)=table_obj.get(j,i);
+        tin.get(ix)=table_obj.get(col_names[j],i);
       }
     }
     

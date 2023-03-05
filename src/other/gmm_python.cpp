@@ -571,7 +571,9 @@ int gmm_python::get_python() {
     // uses the Cholesky decomposition of the "precisions" matrix,
     // which is the inverse of the covariance matrix. We recompute the
     // Gaussians here, but there is probably a faster way.
-    pdm_gmm.pdmg[i].verbose=verbose;
+    if (verbose>1) {
+      pdm_gmm.pdmg[i].verbose=1;
+    }
     pdm_gmm.pdmg[i].set_covar(n_params,mean,covar);
 
     if (verbose>1) {

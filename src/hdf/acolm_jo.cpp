@@ -1027,6 +1027,10 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
+  } else if (type=="prob_dens_mdim_gmm") {
+
+    pgmm_obj.write_generic(*fout);
+
   } else if (type=="tensor") {
 
     tensor_out(*fout,tensor_obj,pretty);

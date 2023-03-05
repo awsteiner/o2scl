@@ -1526,6 +1526,10 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
     
     hdf_output(hf,pdmg_obj,obj_name);
 
+  } else if (type=="prob_dens_mdim_gmm") {
+    
+    hdf_output(hf,pgmm_obj,obj_name);
+
   } else if (type=="hist") {
 
     hdf_output(hf,hist_obj,obj_name);
@@ -1541,6 +1545,12 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="uniform_grid<double>") {
 
     hdf_output(hf,ug_obj,obj_name);
+    
+  } else {
+    
+    cerr << "Error: " << type << endl;
+    O2SCL_ERR("Do not know how ot output object of this type.",
+              o2scl::exc_esanity);
     
   }
 
