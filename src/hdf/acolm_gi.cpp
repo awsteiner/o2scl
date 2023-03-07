@@ -118,17 +118,17 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
   } else if (ctype=="prob_dens_mdim_gmm") {
     
     if (fname!=((std::string)"cin")) {
-      pgmm_obj.read_generic(ifs,verbose);
+      pgmm_obj.read_generic(ifs);
     } else {
-      pgmm_obj.read_generic(std::cin,verbose);
+      pgmm_obj.read_generic(std::cin);
     }
     
   } else if (ctype=="prob_dens_mdim_gaussian") {
     
     if (fname!=((std::string)"cin")) {
-      pdmg_obj.read_generic(ifs,verbose);
+      pdmg_obj.read_generic(ifs);
     } else {
-      pdmg_obj.read_generic(std::cin,verbose);
+      pdmg_obj.read_generic(std::cin);
     }
     
   } else if (ctype=="int") {

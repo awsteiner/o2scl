@@ -784,7 +784,7 @@ namespace o2scl {
 
   public:
   
-    inte_adapt_cern2() {
+    inte_multip_adapt_cern() {
       tol_rel_multip=-1.0;
       verbose=0;
       pow_tol_func=1.33;
@@ -859,15 +859,8 @@ namespace o2scl {
     */
     template<typename func_t, class fp_t, class it_t>
     int integ_err_int(it_t &it, func_t &func, fp_t a, fp_t b,
-                      fp_t &res, fp_t &err,
-                      double target_tol, double integ_tol, double func_tol) {
-
-      funct_multip fm2;
-      fm2.err_nonconv=false;
-      fm2.tol_rel=func_tol;
-
-      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
-      { return fm2(func,x); };
+                      fp_t &res, fp_t &err, double target_tol,
+                      double integ_tol, double func_tol) {
       
       // Lower end of subdivision
       fp_t xlo[nsub];
@@ -987,6 +980,14 @@ namespace o2scl {
 
     template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+      
+
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+
+      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
+      { return fm2(func,x); };
       
       int ret=integ_err_funct(func,a,b,res,err,this->tol_rel);
       

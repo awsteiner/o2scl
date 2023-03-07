@@ -167,6 +167,11 @@ int main(void) {
     covar(0,1)=-1.0;
     covar(1,0)=-1.0;
     pdmg.set_covar(2,cent,covar);
+
+    ubmatrix covar2(2,2);
+    pdmg.get_covar(covar2);
+    t.test_rel(covar2(0,0),1.0,1.0e-12,"get_covar()");
+    t.test_rel(covar2(1,1),4.0,1.0e-12,"get_covar()");
     
     // Test the gaussian PDF normalization
     {

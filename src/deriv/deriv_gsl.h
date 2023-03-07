@@ -401,6 +401,7 @@ namespace o2scl {
     template <typename func_t, class fp_t>
     int deriv_err_int(func_t &&f, fp_t x, fp_t &dfdx, fp_t &err,
                       double tol) {
+      
       // Set equal to 0 to avoid uninitialized variable warnings
       double hh=0;
       if (h<=0.0) {

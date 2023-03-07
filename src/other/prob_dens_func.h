@@ -1023,6 +1023,9 @@ namespace o2scl {
 
   public:
 
+    /// Verbosity parameter (default 0)
+    int verbose;
+    
     /** \brief Read the distribution from an input file
      */
     virtual int read_generic(std::istream &fin) {
@@ -1125,6 +1128,21 @@ namespace o2scl {
       return chol;
     }
 
+    /** \brief Get the covariance matrix
+
+        The covariance matrix is not stored. This function computes it
+        directly from the Cholesky decomposition.
+     */
+    template<class mat2_t> void get_covar(mat2_t &m) const {
+      mat_t chol2(ndim,ndim);
+      o2scl::matrix_transpose(ndim,ndim,chol,chol2);
+      o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         ndim,ndim,ndim,1.0,chol,chol2,0.0,m);
+      return;
+    }
+    
     /** \brief Get the inverse of the covariance matrix
      */
     const mat_t &get_covar_inv() const {
@@ -1152,6 +1170,7 @@ namespace o2scl {
     prob_dens_mdim_gaussian() {
       ndim=0;
       err_nonconv=true;
+      verbose=0;
     }
 
     virtual ~prob_dens_mdim_gaussian() {
@@ -1165,9 +1184,10 @@ namespace o2scl {
       chol=pdmg_loc.chol;
       covar_inv=pdmg_loc.covar_inv;
       norm=pdmg_loc.norm;
+      verbose=pdmg_loc.verbose;
     }
 
-    /** \brief Desc
+    /** \brief If true, call the error handler when convergence fails
      */
     bool err_nonconv;
     
@@ -1187,6 +1207,7 @@ namespace o2scl {
         chol=pdmg_loc.chol;
         covar_inv=pdmg_loc.covar_inv;
         norm=pdmg_loc.norm;
+        verbose=pdmg_loc.verbose;
       }
       return *this;
     }
@@ -1346,13 +1367,18 @@ namespace o2scl {
         // Perform the Cholesky decomposition of the covariance matrix
         chol=covar;
         o2scl_linalg::cholesky_decomp(ndim,chol);
+
+        // The choleksy_decomp() function, by default, stores the
+        // transpose in the upper triangular part, but the upper
+        // triangular part needs to be zero for proper sampling, so we
+        // set it to zero here.
+        matrix_make_lower(ndim,ndim,chol);
         
         // Find the inverse
         covar_inv=chol;
         o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
-        
-        // Force chol to be lower triangular and compute the square root
-        // of the determinant
+
+        // Compute the determinant of the Cholesky decomposision
         sqrt_det=1.0;
         for(size_t i=0;i<ndim;i++) {
           if (!std::isfinite(chol(i,i))) {
@@ -1361,9 +1387,6 @@ namespace o2scl {
                             o2scl::exc_einval,err_nonconv);
           }
           sqrt_det*=chol(i,i);
-          for(size_t j=0;j<ndim;j++) {
-            if (i<j) chol(i,j)=chol(j,i);
-          }
         }
         
       } else {
@@ -1567,9 +1590,6 @@ namespace o2scl {
       }
       ret*=exp(-0.5*ip);
       
-      //vtmpx=prod(covar_inv,qq);
-      //ret*=exp(-0.5*inner_prod(qq,vtmpx));
-      
       return ret;
     }
 
@@ -1592,9 +1612,6 @@ namespace o2scl {
         ip+=qq[i]*vtmpx[i];
       }
       ret+=-0.5*ip;
-      
-      //vtmpx=prod(covar_inv,qq);
-      //ret+=-0.5*inner_prod(qq,vtmpx);
       
       return ret;
     }
@@ -1655,7 +1672,7 @@ namespace o2scl {
       can be very slow depending on the size of the volume
       excluded. 
 
-      \warning The PDF is not yet properly normalized
+      \warning The PDF is not yet properly normalized.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=boost::numeric::ublas::matrix<double> >
@@ -2268,11 +2285,17 @@ namespace o2scl {
       chol=covar;
       o2scl_linalg::cholesky_decomp(ndim,chol);
       
+      // The choleksy_decomp() function, by default, stores the
+      // transpose in the upper triangular part, but the
+      // upper triangular part needs to be zero for proper
+      // sampling, so we set it to zero here.
+      matrix_make_lower(ndim,ndim,chol);
+        
       // Find the inverse
       covar_inv=chol;
       o2scl_linalg::cholesky_invert<mat_t>(ndim,covar_inv);
       
-      // Force chol to be lower triangular and compute the determinant
+      // Compute the determinant of the Cholesky decomposision
       double sqrt_det=1.0;
       for(size_t i=0;i<ndim;i++) {
         if (!std::isfinite(chol(i,i))) {
@@ -2280,9 +2303,6 @@ namespace o2scl {
                      "in prob_cond_mdim_gaussian::set().",o2scl::exc_einval);
         }
         sqrt_det*=chol(i,i);
-        for(size_t j=0;j<ndim;j++) {
-          if (i<j) chol(i,j)=0.0;
-        }
       }
     
       // Compute normalization
@@ -2392,13 +2412,18 @@ namespace o2scl {
     /// The weights (must add to 1) 
     internal_vec_t weights;
 
+    /// Verbosity parameter
+    int verbose;
+    
     prob_dens_mdim_gmm() {
+      verbose=0;
     }
     
     /// Copy constructor
     prob_dens_mdim_gmm(const prob_dens_mdim_gmm &pdmg_loc) {
       pdmg=pdmg_loc.pdmg;
       weights=pdmg_loc.weights;
+      verbose=pdmg_loc.verbose;
     }
 
     /// Copy constructor with operator=
@@ -2408,6 +2433,7 @@ namespace o2scl {
       if (this!=&pdmg_loc) {
         pdmg=pdmg_loc.pdmg;
         weights=pdmg_loc.weights;
+        verbose=pdmg_loc.verbose;
       }
       return *this;
     }
@@ -2429,12 +2455,12 @@ namespace o2scl {
       }
       pdmg.resize(nd_in);
       for(size_t i=0;i<nd_in;i++) {
-        pdmg[i].read_generic(fin,verbose);
+        pdmg[i].read_generic(fin);
       }
       return 0;
     }
 
-    /** \brief
+    /** \brief Write the Gaussian mixture to an output file
      */
     virtual int write_generic(std::ostream &fout) {
 

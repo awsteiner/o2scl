@@ -751,7 +751,7 @@ namespace o2scl {
         }
         scr_out << "Set start time to: " << mpi_start_time << std::endl;
       }
-    
+
       // --------------------------------------------------------
       // Initial point and weights for affine-invariant sampling
     
@@ -1109,7 +1109,7 @@ namespace o2scl {
 
       // The main section split into two parts, aff_inv=false and
       // aff_inv=true.
-    
+
       if (aff_inv==false) {
 
         // ---------------------------------------------------
