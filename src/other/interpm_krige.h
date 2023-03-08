@@ -293,6 +293,12 @@ namespace o2scl {
 
     /// Pointer to the covariance function
     func_vec_t *cf;
+
+    /** \brief Additional constraints to add to the fit
+     */
+    virtual int addl_const(double &ret) {
+      return 0;
+    }
     
     /** \brief Function to optimize the covariance parameters
      */
@@ -549,6 +555,11 @@ namespace o2scl {
         
       }
 
+      double qual_ac=0.0;
+      int ret_ac=addl_const(qual_ac);
+      if (ret_ac!=0) success=4;
+      ret+=qual_ac;
+      
       if (!isfinite(ret)) success=3;
       
       return ret;
