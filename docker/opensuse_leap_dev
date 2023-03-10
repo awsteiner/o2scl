@@ -1,5 +1,5 @@
 FROM opensuse/leap
-MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # The installation doesn't succeed in the o2sclpy section,
 # possibly because it can't find the dvipng package?

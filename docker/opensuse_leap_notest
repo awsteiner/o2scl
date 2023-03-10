@@ -1,5 +1,5 @@
 FROM opensuse/leap
-MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.

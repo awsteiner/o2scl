@@ -1,7 +1,8 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2022-2023, Mahamudul Hasan Anik, Satyajit Roy, and
+  Andrew W. Steiner
   
   This file is part of O2scl.
   

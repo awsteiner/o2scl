@@ -5,7 +5,7 @@
 # and tests the main branch github version of o2sclpy
 
 FROM ubuntu:latest 
-MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
 # To fix tzdata asking for a timezone during installation
@@ -68,6 +68,7 @@ RUN pip3 install .
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
+
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
 
 # --------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 # support. It runs all of the O2scl tests and examples.
 
 FROM ubuntu:latest 
-MAINTAINER Andrew W. Steiner (awsteiner@mykolab.com)
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
 # To fix tzdata asking for a timezone during installation
