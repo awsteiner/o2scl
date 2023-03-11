@@ -74,7 +74,7 @@ namespace o2scl {
   */
   template<class func_t=funct,
            class def_inte_t=inte_gauss56_cern<funct,double,
-                                              inte_gauss56_coeffs_double>,
+                                              inte_gauss56_coeffs<double>>,
            size_t nsub=100, class fp_t=double>
   class inte_adapt_cern : public inte<func_t,fp_t> {
 
@@ -318,25 +318,25 @@ namespace o2scl {
   typedef
   inte_adapt_cern<funct_ld,inte_gauss56_cern
                   <funct_ld,long double,
-                   inte_gauss56_coeffs_long_double>,100,
+                   inte_gauss56_coeffs<long double>>,100,
                   long double> inte_adapt_cern_ld;
 
   typedef
   inte_adapt_cern<funct_cdf25,inte_gauss56_cern
                   <funct_cdf25,cpp_dec_float_25,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_25>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_25>>,1000,
                    cpp_dec_float_25> inte_adapt_cern_cdf25;
   
   typedef
   inte_adapt_cern<funct_cdf35,inte_gauss56_cern
                   <funct_cdf35,cpp_dec_float_35,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_35>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_35>>,1000,
                    cpp_dec_float_35> inte_adapt_cern_cdf35;
   
   typedef
   inte_adapt_cern<funct_cdf50,inte_gauss56_cern
                   <funct_cdf50,cpp_dec_float_50,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_50>>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cdf50;
   
   typedef std::function<double(const double &)> funct_cr;
@@ -353,31 +353,31 @@ namespace o2scl {
   typedef
   inte_adapt_cern<funct_cr,inte_gauss56_cern
                   <funct_cr,double,
-                   inte_gauss56_coeffs_double>,100,
+                   inte_gauss56_coeffs<double>>,100,
                   double> inte_adapt_cern_cr;
   
   typedef
   inte_adapt_cern<funct_cr_ld,inte_gauss56_cern
                   <funct_cr_ld,long double,
-                   inte_gauss56_coeffs_long_double>,100,
+                   inte_gauss56_coeffs<long double>>,100,
                   long double> inte_adapt_cern_cr_ld;
 
   typedef
   inte_adapt_cern<funct_cr_cdf25,inte_gauss56_cern
                   <funct_cr_cdf25,cpp_dec_float_25,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_25>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_25>>,1000,
                    cpp_dec_float_25> inte_adapt_cern_cr_cdf25;
   
   typedef
   inte_adapt_cern<funct_cr_cdf35,inte_gauss56_cern
                   <funct_cr_cdf35,cpp_dec_float_35,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_35>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_35>>,1000,
                    cpp_dec_float_35> inte_adapt_cern_cr_cdf35;
   
   typedef
   inte_adapt_cern<funct_cr_cdf50,inte_gauss56_cern
                   <funct_cr_cdf50,cpp_dec_float_50,
-                   inte_gauss56_coeffs_float_50<cpp_dec_float_50>>,1000,
+                   inte_gauss56_coeffs<cpp_dec_float_50>>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
   
   class inte_adapt_cern2 {
@@ -437,19 +437,19 @@ namespace o2scl {
     /// \name Nonadaptive integration objects
     //@{
     inte_gauss56_cern<funct,double,
-                      inte_gauss56_coeffs_double> def_d;
+                      inte_gauss56_coeffs<double>> def_d;
     inte_gauss56_cern
     <funct_ld,long double,
-     inte_gauss56_coeffs_long_double> def_ld;
+     inte_gauss56_coeffs<long double>> def_ld;
     inte_gauss56_cern
     <funct_cdf25,cpp_dec_float_25,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_25>> def_25;
+     inte_gauss56_coeffs<cpp_dec_float_25>> def_25;
     inte_gauss56_cern
     <funct_cdf35,cpp_dec_float_35,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_35>> def_35;
+     inte_gauss56_coeffs<cpp_dec_float_35>> def_35;
     inte_gauss56_cern
     <funct_cdf50,cpp_dec_float_50,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_50>> def_50;
+     inte_gauss56_coeffs<cpp_dec_float_50>> def_50;
     //@}
     
     /// \name Basic usage
@@ -837,19 +837,19 @@ namespace o2scl {
     /// \name Nonadaptive integration objects
     //@{
     inte_gauss56_cern<funct,double,
-                      inte_gauss56_coeffs_double> def_d;
+                      inte_gauss56_coeffs<double>> def_d;
     inte_gauss56_cern
     <funct_ld,long double,
-     inte_gauss56_coeffs_long_double> def_ld;
+     inte_gauss56_coeffs<long_double>> def_ld;
     inte_gauss56_cern
     <funct_cdf25,cpp_dec_float_25,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_25>> def_25;
+     inte_gauss56_coeffs<cpp_dec_float<25>>> def_25;
     inte_gauss56_cern
     <funct_cdf35,cpp_dec_float_35,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_35>> def_35;
+     inte_gauss56_coeffs<cpp_dec_float<35>>> def_35;
     inte_gauss56_cern
     <funct_cdf50,cpp_dec_float_50,
-     inte_gauss56_coeffs_float_50<cpp_dec_float_50>> def_50;
+     inte_gauss56_coeffs<cpp_dec_float_50>> def_50;
     //@}
     
     /// \name Basic usage

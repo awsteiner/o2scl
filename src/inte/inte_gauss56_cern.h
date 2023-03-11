@@ -38,6 +38,32 @@ namespace o2scl {
       \ref o2scl::inte_gauss56_cern
   */
   template<class fp_t> class inte_gauss56_coeffs {
+
+  public:
+
+    /** \brief Fifth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_t x5[5];
+    
+    /** \brief Fifth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_t w5[5];
+    
+    /** \brief Sixth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_t x6[6];
+    
+    /** \brief Sixth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_t w6[6];
+
+    inte_gauss56_coeffs() {
+    }
+    
   };
 
   /** \brief Integration weights and abcissas for 
@@ -106,25 +132,25 @@ namespace o2scl {
   public:
 
     /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in long double precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     long double x5[5];
-  
+    
     /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in long double precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     long double w5[5];
-  
+    
     /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in long double precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     long double x6[6];
-  
+    
     /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in long double precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     long double w6[6];
-
+    
     inte_gauss56_coeffs() {
     
       x5[0]=0.04691007703066800360118656085030352L;
@@ -169,6 +195,186 @@ namespace o2scl {
       \endcomment
   */
   template<> class inte_gauss56_coeffs
+  <boost::multiprecision::cpp_dec_float<25>> {
+
+  public:
+
+    typedef boost::multiprecision::cpp_dec_float<25> fp_25_t;
+
+    /** \brief Fifth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_25_t x5[5];
+    
+    /** \brief Fifth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_25_t w5[5];
+    
+    /** \brief Sixth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_25_t x6[6];
+    
+    /** \brief Sixth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_25_t w6[6];
+    
+    inte_gauss56_coeffs() {
+      
+      x5[0]=fp_25_t
+	("4.69100770306680036011865608503035174371740446187346e-02");
+      w5[0]=fp_25_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      x5[1]=fp_25_t
+	("2.30765344947158454481842789649895597516356696547220e-01");
+      w5[1]=fp_25_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[2]=fp_25_t
+	("5.00000000000000000000000000000000000000000000000000e-01");
+      w5[2]=fp_25_t
+	("2.84444444444444444444444444444444444444444444444444e-01");
+      x5[3]=fp_25_t
+	("7.69234655052841545518157210350104402483643303452780e-01");
+      w5[3]=fp_25_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[4]=fp_25_t
+	("9.53089922969331996398813439149696482562825955381265e-01");
+      w5[4]=fp_25_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      
+      x6[0]=fp_25_t
+	("3.37652428984239860938492227530026954326171311438551e-02");
+      w6[0]=fp_25_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      x6[1]=fp_25_t
+	("1.69395306766867743169300202490047326496775717802415e-01");
+      w6[1]=fp_25_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[2]=fp_25_t
+	("3.80690406958401545684749139159644032290694684929989e-01");
+      w6[2]=fp_25_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[3]=fp_25_t
+	("6.19309593041598454315250860840355967709305315070011e-01");
+      w6[3]=fp_25_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[4]=fp_25_t
+	("8.30604693233132256830699797509952673503224282197585e-01");
+      w6[4]=fp_25_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[5]=fp_25_t
+	("9.66234757101576013906150777246997304567382868856145e-01");
+      w6[5]=fp_25_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      
+    }
+  
+  };
+  
+  /** \brief Integration weights and abcissas for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+
+      \note Experimental, and only included if 
+      O2SCL_LD_TYPES is defined during the library configuration.
+
+      \comment
+      Weights and abcissas originally generated using cpp_dec_float_100
+      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
+      \endcomment
+  */
+  template<> class inte_gauss56_coeffs
+  <boost::multiprecision::cpp_dec_float<35>> {
+
+  public:
+
+    typedef boost::multiprecision::cpp_dec_float<35> fp_35_t;
+
+    /** \brief Fifth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_35_t x5[5];
+    
+    /** \brief Fifth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_35_t w5[5];
+    
+    /** \brief Sixth order integration abscissas for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_35_t x6[6];
+    
+    /** \brief Sixth order integration weights for 
+	\ref o2scl::inte_gauss56_cern in double precision
+    */
+    fp_35_t w6[6];
+    
+    inte_gauss56_coeffs() {
+      
+      x5[0]=fp_35_t
+	("4.69100770306680036011865608503035174371740446187346e-02");
+      w5[0]=fp_35_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      x5[1]=fp_35_t
+	("2.30765344947158454481842789649895597516356696547220e-01");
+      w5[1]=fp_35_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[2]=fp_35_t
+	("5.00000000000000000000000000000000000000000000000000e-01");
+      w5[2]=fp_35_t
+	("2.84444444444444444444444444444444444444444444444444e-01");
+      x5[3]=fp_35_t
+	("7.69234655052841545518157210350104402483643303452780e-01");
+      w5[3]=fp_35_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[4]=fp_35_t
+	("9.53089922969331996398813439149696482562825955381265e-01");
+      w5[4]=fp_35_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      
+      x6[0]=fp_35_t
+	("3.37652428984239860938492227530026954326171311438551e-02");
+      w6[0]=fp_35_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      x6[1]=fp_35_t
+	("1.69395306766867743169300202490047326496775717802415e-01");
+      w6[1]=fp_35_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[2]=fp_35_t
+	("3.80690406958401545684749139159644032290694684929989e-01");
+      w6[2]=fp_35_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[3]=fp_35_t
+	("6.19309593041598454315250860840355967709305315070011e-01");
+      w6[3]=fp_35_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[4]=fp_35_t
+	("8.30604693233132256830699797509952673503224282197585e-01");
+      w6[4]=fp_35_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[5]=fp_35_t
+	("9.66234757101576013906150777246997304567382868856145e-01");
+      w6[5]=fp_35_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      
+    }
+  
+  };
+  
+  /** \brief Integration weights and abcissas for 
+      \ref o2scl::inte_gauss56_cern in long double precision
+
+      \note Experimental, and only included if 
+      O2SCL_LD_TYPES is defined during the library configuration.
+
+      \comment
+      Weights and abcissas originally generated using cpp_dec_float_100
+      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
+      \endcomment
+  */
+  template<> class inte_gauss56_coeffs
   <boost::multiprecision::cpp_dec_float_50> {
 
   public:
@@ -176,25 +382,25 @@ namespace o2scl {
     typedef boost::multiprecision::cpp_dec_float_50 fp_50_t;
 
     /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in 50-digit precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     fp_50_t x5[5];
-  
+    
     /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in 50-digit precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     fp_50_t w5[5];
-  
+    
     /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in 50-digit precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     fp_50_t x6[6];
-  
+    
     /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in 50-digit precision
+	\ref o2scl::inte_gauss56_cern in double precision
     */
     fp_50_t w6[6];
-
+    
     inte_gauss56_coeffs() {
       
       x5[0]=fp_50_t
