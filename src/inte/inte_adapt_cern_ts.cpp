@@ -123,8 +123,7 @@ int main(void) {
     double a=0.01, diff;
     funct tf=std::bind(testfun<double>,std::placeholders::_1,a);
     test_iac<funct,double,
-	     inte_gauss56_cern<funct,double,
-			       inte_gauss56_coeffs<double>>,100>
+	     inte_gauss56_cern<funct,double>,100>
       (t,tf,1.0e-8,"iac, double, testfun",diff,true);
     t.test_abs<double>(diff,0.0,1.0e-7,"inte_adapt_cern");
 
@@ -134,8 +133,7 @@ int main(void) {
     funct_ld tf_ld=std::bind(testfun<long double>,
                              std::placeholders::_1,a_ld);
     test_iac<funct_ld,long double,
-	     inte_gauss56_cern<funct_ld,long double,
-			       inte_gauss56_coeffs<long_double>>,1000>
+	     inte_gauss56_cern<funct_ld,long double>,1000>
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
 
@@ -147,13 +145,11 @@ int main(void) {
     funct_cdf50 tf_cdf=std::bind(testfun<cpp_dec_float_50>,
                                  std::placeholders::_1,a_cdf);
     test_iac<funct_cdf50,cpp_dec_float_50,
-	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-			       inte_gauss56_coeffs<cpp_dec_float_50>
-                               >,10000>
+	     inte_gauss56_cern<funct_cdf50,cpp_dec_float_50>,10000>
       (t,tf_cdf,1.0e-30,"iac, cpp_dec_float_50, testfun",diff_cdf);
     t.test_abs_boost<cpp_dec_float_50>(diff_cdf,0.0,1.0e-29,
 				       "inte_adapt_cern_cdf");
-
+    
 #ifdef O2SCL_MPFR
     
     cout << "inte_adapt_cern, mpfr_float_50, testfun:\n  ";
@@ -164,9 +160,7 @@ int main(void) {
     funct_mp50 tf_mpfr=std::bind(testfun<mpfr_float_50>,
                                  std::placeholders::_1,a_mpfr);
     test_iac<funct_mp50,mpfr_float_50,
-	     inte_gauss56_cern<funct_mp50,mpfr_float_50,
-			       inte_gauss56_coeffs<mpfr_float_50>
-                               >,10000>
+	     inte_gauss56_cern<funct_mp50,mpfr_float_50>,10000>
       (t,tf_mpfr,1.0e-30,"iac, mpfr_float_50, testfun",diff_mpfr);
     t.test_abs_boost<mpfr_float_50>(diff_mpfr,0.0,1.0e-29,
                                     "inte_adapt_cern_mpfr");

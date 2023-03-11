@@ -52,7 +52,7 @@ int main(void) {
   t.set_output_level(2);
 
   double a=3.0, calc, exact, diff;
-  inte_gauss56_cern<funct> cg;
+  inte_gauss56_cern<funct,double> cg;
 
   funct tf=std::bind(testfun,std::placeholders::_1,a);
 
@@ -67,8 +67,7 @@ int main(void) {
   // inte_gauss56_cern compiles and executes with the long double
   // and boost::multiprecision types
   
-  inte_gauss56_cern<funct_ld,long double,
-		    inte_gauss56_coeffs<long double>> cg_ld;
+  inte_gauss56_cern<funct_ld,long double> cg_ld;
   long double a_ld=3.0L, calc_ld, exact_ld, diff_ld;
 
   funct_ld tf_ld=std::bind(testfun_ld,std::placeholders::_1,a_ld);
@@ -79,8 +78,7 @@ int main(void) {
   diff_ld=fabsl(calc_ld-exact_ld);
   cout << calc_ld << " " << exact_ld << " " << diff_ld << endl;
   
-  inte_gauss56_cern<funct_cdf50,cpp_dec_float_50,
-		    inte_gauss56_coeffs<cpp_dec_float_50> > cg_cdf;
+  inte_gauss56_cern<funct_cdf50,cpp_dec_float_50> cg_cdf;
   cpp_dec_float_50 a_cdf=3.0L, calc_cdf, exact_cdf, diff_cdf;
   
   funct_cdf50 tf_cdf=std::bind(testfun_cdf,std::placeholders::_1,a_cdf);

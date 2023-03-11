@@ -31,13 +31,25 @@
 #include <o2scl/misc.h>
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 
 namespace o2scl {
 
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern
+  /** \brief 5,6-point Gaussian quadrature (CERNLIB)
+      
+      If \f$ I_5 \f$ is the 5-point approximation, and \f$ I_6 \f$ is the
+      6-point approximation to the integral, then integ_err() returns
+      the result \f$ \frac{1}{2}(I_5+I_6) \f$ with uncertainty
+      \f$ |I_5-I_6| \f$.
+
+      This class is based on the CERNLIB routines RGS56P and DGS56P
+      were originally documented at
+      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
+      . (3/10/2020: The CERNLIB links are apparently dead and haven't
+      been supported since 2003.)
   */
-  template<class fp_t> class inte_gauss56_coeffs {
+  template<class func_t, class fp_t>
+  class inte_gauss56_cern_base : public inte<func_t,fp_t> {
 
   public:
 
@@ -61,38 +73,76 @@ namespace o2scl {
     */
     fp_t w6[6];
 
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern_base() {
+    }
+
+    /** \brief Integrate function \c func from \c a to \c b
+        giving result \c res and error \c err
+
+        This function always returns \ref success.
+    */
+    virtual int integ_err(func_t &func, fp_t a, fp_t b,
+                          fp_t &res, fp_t &err) {
+      
+      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
+      
+      for(int i=0;i<5;i++) {
+        ytmp=func(a+rang*x5[i]);
+        e5+=w5[i]*ytmp;
+        ytmp=func(a+rang*x6[i]);
+        e6+=w6[i]*ytmp;
+      }
+      ytmp=func(a+rang*x6[5]);
+      e6+=w6[5]*ytmp;
+      res=(e6+e5)*rang/2.0;
+      fp_t diff=e5-e6;
+      err=abs(diff)*rang;
+
+      return success;
+    }
+
+    /** \brief Integrate function \c func from \c a to \c b
+        giving result \c res and error \c err
+
+        This function always returns \ref success.
+    */
+    virtual int integ_err2(func_t func, fp_t a, fp_t b,
+                           fp_t &res, fp_t &err) {
+
+      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
+
+      for(int i=0;i<5;i++) {
+        ytmp=func(a+rang*x5[i]);
+        e5+=w5[i]*ytmp;
+        ytmp=func(a+rang*x6[i]);
+        e6+=w6[i]*ytmp;
+      }
+      ytmp=func(a+rang*x6[5]);
+      e6+=w6[5]*ytmp;
+      res=(e6+e5)*rang/2.0;
+      fp_t diff=e5-e6;
+      err=abs(diff)*rang;
+
+      return success;
     }
     
   };
 
+  /** \brief Desc
+   */
+  template<class func_t, class fp_t>
+  class inte_gauss56_cern :
+    public inte_gauss56_cern_base<func_t,fp_t> {
+  };
+    
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in double precision
   */
-  template<> class inte_gauss56_coeffs<double> {
+  template<> class inte_gauss56_cern<funct,double> :
+    public inte_gauss56_cern_base<funct,double> {
   public:
     
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    double x5[5];
-    
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    double w5[5];
-    
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    double x6[6];
-    
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    double w6[6];
-
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern() {
       x5[0]=4.6910077030668004e-02;
       x5[1]=2.3076534494715846e-01;
       x5[2]=5.0000000000000000e-01;
@@ -127,31 +177,12 @@ namespace o2scl {
       \note The long double type doesn't work uniformly across systems
       and so the accuracy when using these coefficients varies.
   */
-  template<> class inte_gauss56_coeffs<long double> {
+  template<> class inte_gauss56_cern<funct_ld,long double> :
+    public inte_gauss56_cern_base<funct_ld,long double> {
 
   public:
 
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    long double x5[5];
-    
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    long double w5[5];
-    
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    long double x6[6];
-    
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    long double w6[6];
-    
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern() {
     
       x5[0]=0.04691007703066800360118656085030352L;
       x5[1]=0.23076534494715845448184278964989560L;
@@ -194,34 +225,19 @@ namespace o2scl {
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
-  template<> class inte_gauss56_coeffs
-  <boost::multiprecision::cpp_dec_float<25>> {
-
+  template<> class inte_gauss56_cern
+  <funct_cdf25,boost::multiprecision::number<
+                 boost::multiprecision::cpp_dec_float<25>>>:
+    public inte_gauss56_cern_base
+  <funct_cdf25,boost::multiprecision::number<
+                 boost::multiprecision::cpp_dec_float<25>>> {
+    
   public:
-
-    typedef boost::multiprecision::cpp_dec_float<25> fp_25_t;
-
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_25_t x5[5];
     
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_25_t w5[5];
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<25>> fp_25_t;
     
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_25_t x6[6];
-    
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_25_t w6[6];
-    
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern() {
       
       x5[0]=fp_25_t
 	("4.69100770306680036011865608503035174371740446187346e-02");
@@ -272,7 +288,7 @@ namespace o2scl {
     }
   
   };
-  
+
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in long double precision
 
@@ -284,34 +300,19 @@ namespace o2scl {
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
-  template<> class inte_gauss56_coeffs
-  <boost::multiprecision::cpp_dec_float<35>> {
-
+  template<> class inte_gauss56_cern
+  <funct_cdf35,boost::multiprecision::number<
+                 boost::multiprecision::cpp_dec_float<35>>>:
+    public inte_gauss56_cern_base
+  <funct_cdf35,boost::multiprecision::number<
+                 boost::multiprecision::cpp_dec_float<35>>> {
+    
   public:
+    
+    typedef boost::multiprecision::number<
+    boost::multiprecision::cpp_dec_float<35>> fp_35_t;
 
-    typedef boost::multiprecision::cpp_dec_float<35> fp_35_t;
-
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_35_t x5[5];
-    
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_35_t w5[5];
-    
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_35_t x6[6];
-    
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_35_t w6[6];
-    
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern() {
       
       x5[0]=fp_35_t
 	("4.69100770306680036011865608503035174371740446187346e-02");
@@ -362,7 +363,7 @@ namespace o2scl {
     }
   
   };
-  
+
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in long double precision
 
@@ -374,34 +375,16 @@ namespace o2scl {
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
-  template<> class inte_gauss56_coeffs
-  <boost::multiprecision::cpp_dec_float_50> {
+  template<> class inte_gauss56_cern
+  <funct_cdf50,boost::multiprecision::cpp_dec_float_50> : 
+    public inte_gauss56_cern_base
+  <funct_cdf50,boost::multiprecision::cpp_dec_float_50> {
 
   public:
 
     typedef boost::multiprecision::cpp_dec_float_50 fp_50_t;
 
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_50_t x5[5];
-    
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_50_t w5[5];
-    
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_50_t x6[6];
-    
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
-    */
-    fp_50_t w6[6];
-    
-    inte_gauss56_coeffs() {
+    inte_gauss56_cern() {
       
       x5[0]=fp_50_t
 	("4.69100770306680036011865608503035174371740446187346e-02");
@@ -451,89 +434,6 @@ namespace o2scl {
       
     }
   
-  };
-  
-  /** \brief 5,6-point Gaussian quadrature (CERNLIB)
-      
-      If \f$ I_5 \f$ is the 5-point approximation, and \f$ I_6 \f$ is the
-      6-point approximation to the integral, then integ_err() returns
-      the result \f$ \frac{1}{2}(I_5+I_6) \f$ with uncertainty
-      \f$ |I_5-I_6| \f$.
-
-      This class is based on the CERNLIB routines RGS56P and DGS56P
-      were originally documented at
-      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
-      . (3/10/2020: The CERNLIB links are apparently dead and haven't
-      been supported since 2003.)
-  */
-  template<class func_t=funct, class fp_t=double,
-           class weights_t=inte_gauss56_coeffs<double>>
-  class inte_gauss56_cern : public inte<func_t,fp_t> {
-
-  protected:
-
-    const fp_t *w5, *x5, *w6, *x6;
-    weights_t wgts;
-    
-  public:
-  
-    inte_gauss56_cern() {
-      w5=&(wgts.w5[0]);
-      x5=&(wgts.x5[0]);
-      w6=&(wgts.w6[0]);
-      x6=&(wgts.x6[0]);
-    }
-
-    /** \brief Integrate function \c func from \c a to \c b
-        giving result \c res and error \c err
-
-        This function always returns \ref success.
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b,
-                          fp_t &res, fp_t &err) {
-
-      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
-
-      for(int i=0;i<5;i++) {
-        ytmp=func(a+rang*x5[i]);
-        e5+=w5[i]*ytmp;
-        ytmp=func(a+rang*x6[i]);
-        e6+=w6[i]*ytmp;
-      }
-      ytmp=func(a+rang*x6[5]);
-      e6+=w6[5]*ytmp;
-      res=(e6+e5)*rang/2.0;
-      fp_t diff=e5-e6;
-      err=abs(diff)*rang;
-
-      return success;
-    }
-
-    /** \brief Integrate function \c func from \c a to \c b
-        giving result \c res and error \c err
-
-        This function always returns \ref success.
-    */
-    int integ_err2(func_t func, fp_t a, fp_t b,
-                   fp_t &res, fp_t &err) {
-
-      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
-
-      for(int i=0;i<5;i++) {
-        ytmp=func(a+rang*x5[i]);
-        e5+=w5[i]*ytmp;
-        ytmp=func(a+rang*x6[i]);
-        e6+=w6[i]*ytmp;
-      }
-      ytmp=func(a+rang*x6[5]);
-      e6+=w6[5]*ytmp;
-      res=(e6+e5)*rang/2.0;
-      fp_t diff=e5-e6;
-      err=abs(diff)*rang;
-
-      return success;
-    }
-
   };
 
 }

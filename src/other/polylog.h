@@ -599,8 +599,7 @@ namespace o2scl {
     
     typedef inte_transform<funct_cdf50,inte_adapt_cern
                            <funct_cdf50,inte_gauss56_cern
-                            <funct_cdf50,cpp_dec_float_50,
-                             inte_gauss56_coeffs<cpp_dec_float_50>>,
+                            <funct_cdf50,cpp_dec_float_50>,
                             2000,
                             cpp_dec_float_50>,cpp_dec_float_50> inte_t;
     
