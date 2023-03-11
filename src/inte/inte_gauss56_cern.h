@@ -35,10 +35,15 @@
 namespace o2scl {
 
   /** \brief Integration weights and abcissas for 
+      \ref o2scl::inte_gauss56_cern
+  */
+  template<class fp_t> class inte_gauss56_coeffs {
+  };
+
+  /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in double precision
   */
-  class inte_gauss56_coeffs_double {
-
+  template<> class inte_gauss56_coeffs<double> {
   public:
     
     /** \brief Fifth order integration abscissas for 
@@ -61,7 +66,7 @@ namespace o2scl {
     */
     double w6[6];
 
-    inte_gauss56_coeffs_double() {
+    inte_gauss56_coeffs() {
       x5[0]=4.6910077030668004e-02;
       x5[1]=2.3076534494715846e-01;
       x5[2]=5.0000000000000000e-01;
@@ -96,7 +101,7 @@ namespace o2scl {
       \note The long double type doesn't work uniformly across systems
       and so the accuracy when using these coefficients varies.
   */
-  class inte_gauss56_coeffs_long_double {
+  template<> class inte_gauss56_coeffs<long double> {
 
   public:
 
@@ -120,7 +125,7 @@ namespace o2scl {
     */
     long double w6[6];
 
-    inte_gauss56_coeffs_long_double() {
+    inte_gauss56_coeffs() {
     
       x5[0]=0.04691007703066800360118656085030352L;
       x5[1]=0.23076534494715845448184278964989560L;
@@ -149,9 +154,9 @@ namespace o2scl {
       w6[5]=0.08566224618958517252014807108636645L;
 
     }
-  
-  };
 
+  };
+    
   /** \brief Integration weights and abcissas for 
       \ref o2scl::inte_gauss56_cern in long double precision
 
@@ -163,10 +168,12 @@ namespace o2scl {
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */
-  template<class fp_50_t>
-  class inte_gauss56_coeffs_float_50 {
+  template<> class inte_gauss56_coeffs
+  <boost::multiprecision::cpp_dec_float_50> {
 
   public:
+
+    typedef boost::multiprecision::cpp_dec_float_50 fp_50_t;
 
     /** \brief Fifth order integration abscissas for 
 	\ref o2scl::inte_gauss56_cern in 50-digit precision
@@ -188,7 +195,7 @@ namespace o2scl {
     */
     fp_50_t w6[6];
 
-    inte_gauss56_coeffs_float_50() {
+    inte_gauss56_coeffs() {
       
       x5[0]=fp_50_t
 	("4.69100770306680036011865608503035174371740446187346e-02");
@@ -254,7 +261,7 @@ namespace o2scl {
       been supported since 2003.)
   */
   template<class func_t=funct, class fp_t=double,
-           class weights_t=inte_gauss56_coeffs_double>
+           class weights_t=inte_gauss56_coeffs<double>>
   class inte_gauss56_cern : public inte<func_t,fp_t> {
 
   protected:
