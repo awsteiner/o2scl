@@ -59,6 +59,7 @@ template<class fp_t> fp_t mp_test_func(fp_t x) {
   fp_t hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
 }
+
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
 typedef boost::multiprecision::number<

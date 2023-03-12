@@ -248,11 +248,15 @@ namespace o2scl {
       // Demand that the function evaluations are higher precision
       double func_tol=pow(integ_tol,pow_tol_func);
 
+      // We set the target tolerance an order of magnitude smaller
+      // than the desired tolerance to make sure we achieve the
+      // requested tolerance
       double target_tol=integ_tol/10.0;
       
       int ret;
 
-      // FIXME, explain the +3 here. 
+      // We require that there are 3 more digits in the floating point
+      // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
           std::cout << "int_kronrod_boost::integ_err(): "

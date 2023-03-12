@@ -369,6 +369,67 @@ namespace o2scl {
   inte_adapt_cern<funct_cr_cdf50,inte_gauss56_cern
                   <funct_cr_cdf50,cpp_dec_float_50>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
+
+  template<class fp_t> class inte_subdiv {
+  public:
+
+    inte_subdiv(int n) {
+      prev_subdiv=0;
+      nsub=n;
+      xlo.resize(n);
+      xhi.resize(n);
+      tval.resize(n);
+      ters.resize(n);
+    }
+
+    int nsub;
+    
+    int prev_subdiv;
+    
+    /// Lower end of subdivision
+    std::vector<fp_t> xlo;
+    
+    /// High end of subdivision
+    std::vector<fp_t> xhi;
+    
+    /// Value of integral for subdivision
+    std::vector<fp_t> tval;
+    
+    /// Squared error for subdivision
+    std::vector<fp_t> ters;
+    
+    /// Return the number of subdivisions used in the last integration
+    size_t get_nsubdivisions() {
+      return prev_subdiv;
+    }
+
+    /// Return the ith subdivision
+    int get_ith_subdivision(size_t i, fp_t &xlow, fp_t &xhigh, 
+                            fp_t &value, fp_t &errsq) {
+      if (i<prev_subdiv) {
+        xlow=xlo[i];
+        xhigh=xhi[i];
+        value=tval[i];
+        errsq=ters[i];
+      }
+      return 0;
+    }
+      
+    /// Return all of the subdivisions
+    template<class vec_t> 
+    int get_subdivisions(vec_t &xlow, vec_t &xhigh, vec_t &value, 
+                         vec_t &errsq) {
+
+      for(int i=0;i<prev_subdiv;i++) {
+        xlow[i]=xlo[i];
+        xhigh[i]=xhi[i];
+        value[i]=tval[i];
+        errsq[i]=ters[i];
+      }
+      return 0;
+    }
+    
+  };
   
   class inte_multip_adapt_cern {
 
@@ -381,17 +442,26 @@ namespace o2scl {
       err_nonconv=true;
       tol_rel=1.0e-8;
       tol_abs=0.0;
+      nsubdiv=1;
+      prev_subdiv=0;
       nsub=100;
     }
 
+    /// Previous number of subdivisions
+    int prev_subdiv;
+
+    /// Desc
     int last_iter;
 
-    int nsub;
-
+    /** \brief Desc
+     */
     void set_nsub(int n) {
       nsub=n;
       return;
     }
+
+    /// Desc
+    int nsub;
     
     /** \brief The maximum relative uncertainty for multipreicsion
 	integrals (default \f$ -1 \f$)
@@ -421,7 +491,20 @@ namespace o2scl {
         does not succeed (default true)
     */
     bool err_nonconv;
-    
+
+    /// \name Subdivisions
+    //@{
+    /** \brief Number of subdivisions 
+
+        The options are
+        - 0: Use previous binning and do not subdivide further \n
+        - 1: Automatic - adapt until tolerance is attained (default) \n
+        - n: (n>1) split first in n equal subdivisions, then adapt
+        until tolerance is obtained.
+    */
+    size_t nsubdiv;
+    //@}
+
     /// \name Basic usage
     //@{
     /** \brief Integrate function \c func from \c a to \c b
@@ -430,28 +513,42 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_err_funct(func_t &func, fp_t a, fp_t b,
                         fp_t &res, fp_t &err, double target_tol,
-                        double integ_tol) {
+                        double integ_tol, fp_t *xlo, fp_t *xhi,
+                        fp_t *tval, fp_t *ters) {
 
       inte_gauss56_cern<func_t,fp_t> it;
       
-      // Lower end of subdivision
-      fp_t xlo[nsub];
-      
-      // High end of subdivision
-      fp_t xhi[nsub];
-      
-      // Value of integral for subdivision
-      fp_t tval[nsub];
-      
-      // Squared error for subdivision
-      fp_t ters[nsub];
-      
       fp_t tvals=0.0, terss, xlob, xhib, yhib=0.0, te, root=0.0;
-      int i, nsubdivd, prev_subdiv;
+      int i, nsubdivd;
       fp_t two=2.0;
-
-      // Automatic binning
-      nsubdivd=1;
+      
+      if (nsubdiv==0) {
+        if (prev_subdiv==0) {
+          // If the previous binning was requested, but
+          // there is no previous binning stored, then
+          // just shift to automatic binning
+          nsubdivd=1;
+        } else {
+          tvals=0.0;
+          terss=0.0;
+          for(i=0;i<prev_subdiv;i++) {
+            it.integ_err(func,xlo[i],xhi[i],tval[i],te);
+            ters[i]=te*te;
+            tvals+=tval[i];
+            terss+=ters[i];
+          }
+          err=sqrt(two*terss);
+          res=tvals;
+          return 0;
+        }
+      }
+  
+      // Ensure we're not asking for too many divisions
+      if (nsub<((int)nsubdiv)) {
+        nsubdivd=nsub;
+      } else {
+        nsubdivd=nsubdiv;
+      }
 
       // Compute the initial set of intervals and integral values
       xhib=a;
@@ -538,7 +635,7 @@ namespace o2scl {
                      xhi[prev_subdiv],tval[prev_subdiv],te);
         ters[prev_subdiv]=te*te;
         prev_subdiv++;
-
+        
       }
 
       // FIXME: Should we set an error here, or does this
@@ -550,10 +647,24 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
+      
+      /// Lower end of subdivision
+      fp_t xlo[nsub];
+      
+      /// High end of subdivision
+      fp_t xhi[nsub];
+      
+      /// Value of integral for subdivision
+      fp_t tval[nsub];
+      
+      /// Squared error for subdivision
+      fp_t ters[nsub];
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -562,7 +673,8 @@ namespace o2scl {
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
       
-      integ_err_funct(fx,a,b,res,err,target_tol,integ_tol);
+      integ_err_funct(fx,a,b,res,err,target_tol,integ_tol,
+                      &xlo[0],&xhi[0],&tval[0],&ters[0]);
 
       if (verbose>1) {
         std::cout << "inte_kronrod_boost::integ_err() "
@@ -590,8 +702,21 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
+      /// Lower end of subdivision
+      fp_t xlo[nsub];
+      
+      /// High end of subdivision
+      fp_t xhi[nsub];
+      
+      /// Value of integral for subdivision
+      fp_t tval[nsub];
+      
+      /// Squared error for subdivision
+      fp_t ters[nsub];
+      
       int ret=integ_err_funct(func,a,b,res,err,
-                              this->tol_rel,this->tol_rel);
+                              this->tol_rel,this->tol_rel,
+                              &xlo[0],&xhi[0],&tval[0],&ters[0]);
       
       if (ret!=0) {
         if (this->verbose>0) {
@@ -645,11 +770,15 @@ namespace o2scl {
       // Demand that the function evaluations are higher precision
       double func_tol=pow(integ_tol,pow_tol_func);
 
-      double target_tol=integ_tol;
+      // We set the target tolerance an order of magnitude smaller
+      // than the desired tolerance to make sure we achieve the
+      // requested tolerance
+      double target_tol=integ_tol/10.0;
       
       int ret;
       
-      // FIXME, explain the +3 here. 
+      // We require that there are 3 more digits in the floating point
+      // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
           std::cout << "int_kronrod_boost::integ_err(): "
