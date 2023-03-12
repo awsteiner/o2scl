@@ -78,28 +78,37 @@ void test_iac(test_mgr &t, func_t &f, fp_t acc,
 	      std::string comment, fp_t &diff, bool output_sub=false) {
   
   cout << comment << ":\n  ";
+  fp_t zero=0;
   fp_t one=1;
   fp_t ten=10;
   fp_t hundred=100;
   fp_t a=one/hundred, calc, ei;
   fp_t exact=sin(one/(one+a))-sin(one/a);
   
-  inte_adapt_cern<func_t,def_inte_t,nsub,fp_t> iac;
-  iac.tol_rel=acc;
-  iac.tol_abs=acc;
-  iac.integ_err(f,0.0,one,calc,ei);
+  //inte_adapt_cern<func_t,def_inte_t,nsub,fp_t> iac;
+  //iac.tol_rel=acc;
+  //iac.tol_abs=acc;
+
+  inte_multip_adapt_cern imac;
+  inte_subdiv<fp_t> is(nsub);
+  imac.set_nsub(nsub);
+  imac.tol_rel=(double)acc;
+  imac.tol_abs=(double)acc;
+  
+  //iac.integ_err(f,0.0,one,calc,ei);
+  imac.integ_err_is(f,zero,one,calc,ei,is);
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << " "
        << ei << endl;
   cout << "  subdivisions: ";
-  cout << iac.get_nsubdivisions() << endl;
+  cout << is.get_nsubdivisions() << endl;
   cout << endl;
 
   if (output_sub) {
-    size_t n=iac.get_nsubdivisions();
+    size_t n=is.get_nsubdivisions();
     typedef boost::numeric::ublas::vector<fp_t> ubvector;
     ubvector xlo(n), xhi(n), val(n), err(n);
-    iac.get_subdivisions(xlo,xhi,val,err);
+    is.get_subdivisions(xlo,xhi,val,err);
     cout << "  xlo              xhi               ";
     cout << "val              err              " << endl;;
     for(size_t i=0;i<n;i+=10) {

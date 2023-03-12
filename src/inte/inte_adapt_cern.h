@@ -374,14 +374,19 @@ namespace o2scl {
   public:
 
     inte_subdiv(int n) {
+      resize(n);
+    }
+
+    void resize(int n) {
       prev_subdiv=0;
       nsub=n;
       xlo.resize(n);
       xhi.resize(n);
       tval.resize(n);
       ters.resize(n);
+      return;
     }
-
+    
     int nsub;
     
     int prev_subdiv;
@@ -443,12 +448,8 @@ namespace o2scl {
       tol_rel=1.0e-8;
       tol_abs=0.0;
       nsubdiv=1;
-      prev_subdiv=0;
       nsub=100;
     }
-
-    /// Previous number of subdivisions
-    int prev_subdiv;
 
     /// Desc
     int last_iter;
@@ -513,8 +514,7 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_err_funct(func_t &func, fp_t a, fp_t b,
                         fp_t &res, fp_t &err, double target_tol,
-                        double integ_tol, fp_t *xlo, fp_t *xhi,
-                        fp_t *tval, fp_t *ters) {
+                        double integ_tol, inte_subdiv<fp_t> &is) {
 
       inte_gauss56_cern<func_t,fp_t> it;
       
@@ -523,7 +523,7 @@ namespace o2scl {
       fp_t two=2.0;
       
       if (nsubdiv==0) {
-        if (prev_subdiv==0) {
+        if (is.prev_subdiv==0) {
           // If the previous binning was requested, but
           // there is no previous binning stored, then
           // just shift to automatic binning
@@ -531,11 +531,11 @@ namespace o2scl {
         } else {
           tvals=0.0;
           terss=0.0;
-          for(i=0;i<prev_subdiv;i++) {
-            it.integ_err(func,xlo[i],xhi[i],tval[i],te);
-            ters[i]=te*te;
-            tvals+=tval[i];
-            terss+=ters[i];
+          for(i=0;i<is.prev_subdiv;i++) {
+            it.integ_err(func,is.xlo[i],is.xhi[i],is.tval[i],te);
+            is.ters[i]=te*te;
+            tvals+=is.tval[i];
+            terss+=is.ters[i];
           }
           err=sqrt(two*terss);
           res=tvals;
@@ -554,25 +554,25 @@ namespace o2scl {
       xhib=a;
       fp_t bin=(b-a)/((fp_t)nsubdivd);
       for(i=0;i<nsubdivd;i++) {
-        xlo[i]=xhib;
-        xlob=xlo[i];
-        xhi[i]=xhib+bin;
-        if (i==nsubdivd-1) xhi[i]=b;
-        xhib=xhi[i];
-        it.integ_err(func,xlob,xhib,tval[i],te);
-        ters[i]=te*te;
+        is.xlo[i]=xhib;
+        xlob=is.xlo[i];
+        is.xhi[i]=xhib+bin;
+        if (i==nsubdivd-1) is.xhi[i]=b;
+        xhib=is.xhi[i];
+        it.integ_err(func,xlob,xhib,is.tval[i],te);
+        is.ters[i]=te*te;
       }
-      prev_subdiv=nsubdivd;
+      is.prev_subdiv=nsubdivd;
 
       for(size_t iter=1;iter<=((size_t)nsub);iter++) {
 
         // Compute the total value of the integrand
         // and the squared uncertainty
-        tvals=tval[0];
-        terss=ters[0];
-        for(i=1;i<prev_subdiv;i++) {
-          tvals+=tval[i];
-          terss+=ters[i];
+        tvals=is.tval[0];
+        terss=is.ters[0];
+        for(i=1;i<is.prev_subdiv;i++) {
+          tvals+=is.tval[i];
+          terss+=is.ters[i];
         }
           
         // Output iteration information
@@ -605,7 +605,7 @@ namespace o2scl {
         }
 
         // Test if we've run out of intervals
-        if (prev_subdiv==nsub) {
+        if (is.prev_subdiv==nsub) {
           res=tvals;
           err=root;
           this->last_iter=iter;
@@ -615,26 +615,26 @@ namespace o2scl {
         }
 
         // Find the subdivision with the largest error
-        fp_t bige=ters[0];
+        fp_t bige=is.ters[0];
         int ibig=0;
-        for(i=1;i<prev_subdiv;i++) {
-          if (ters[i]>bige) {
-            bige=ters[i];
+        for(i=1;i<is.prev_subdiv;i++) {
+          if (is.ters[i]>bige) {
+            bige=is.ters[i];
             ibig=i;
           }
         }
 
         // Subdivide that subdivision further
-        xhi[prev_subdiv]=xhi[ibig];
-        fp_t xnew=(xlo[ibig]+xhi[ibig])/two;
-        xhi[ibig]=xnew;
-        xlo[prev_subdiv]=xnew;
-        it.integ_err(func,xlo[ibig],xhi[ibig],tval[ibig],te);
-        ters[ibig]=te*te;
-        it.integ_err(func,xlo[prev_subdiv],
-                     xhi[prev_subdiv],tval[prev_subdiv],te);
-        ters[prev_subdiv]=te*te;
-        prev_subdiv++;
+        is.xhi[is.prev_subdiv]=is.xhi[ibig];
+        fp_t xnew=(is.xlo[ibig]+is.xhi[ibig])/two;
+        is.xhi[ibig]=xnew;
+        is.xlo[is.prev_subdiv]=xnew;
+        it.integ_err(func,is.xlo[ibig],is.xhi[ibig],is.tval[ibig],te);
+        is.ters[ibig]=te*te;
+        it.integ_err(func,is.xlo[is.prev_subdiv],
+                     is.xhi[is.prev_subdiv],is.tval[is.prev_subdiv],te);
+        is.ters[is.prev_subdiv]=te*te;
+        is.prev_subdiv++;
         
       }
 
@@ -653,18 +653,8 @@ namespace o2scl {
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
-      
-      /// Lower end of subdivision
-      fp_t xlo[nsub];
-      
-      /// High end of subdivision
-      fp_t xhi[nsub];
-      
-      /// Value of integral for subdivision
-      fp_t tval[nsub];
-      
-      /// Squared error for subdivision
-      fp_t ters[nsub];
+
+      inte_subdiv<fp_t> is(nsub);
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -673,8 +663,7 @@ namespace o2scl {
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
       
-      integ_err_funct(fx,a,b,res,err,target_tol,integ_tol,
-                      &xlo[0],&xhi[0],&tval[0],&ters[0]);
+      integ_err_funct(fx,a,b,res,err,target_tol,integ_tol,is);
 
       if (verbose>1) {
         std::cout << "inte_kronrod_boost::integ_err() "
@@ -700,23 +689,13 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
-    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+    int integ_err_is(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err,
+                     inte_subdiv<fp_t> &is) {
       
-      /// Lower end of subdivision
-      fp_t xlo[nsub];
-      
-      /// High end of subdivision
-      fp_t xhi[nsub];
-      
-      /// Value of integral for subdivision
-      fp_t tval[nsub];
-      
-      /// Squared error for subdivision
-      fp_t ters[nsub];
+      if (is.nsub!=nsub) is.resize(nsub);
       
       int ret=integ_err_funct(func,a,b,res,err,
-                              this->tol_rel,this->tol_rel,
-                              &xlo[0],&xhi[0],&tval[0],&ters[0]);
+                              this->tol_rel,this->tol_rel,is);
       
       if (ret!=0) {
         if (this->verbose>0) {
@@ -731,6 +710,17 @@ namespace o2scl {
                         this->err_nonconv);
       }
       return 0;
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+      
+      inte_subdiv<fp_t> is(nsub);
+
+      return integ_err_is(func,a,b,res,err,is);
     }
     
     /** \brief Integrate function \c func from \c a to \c b.
