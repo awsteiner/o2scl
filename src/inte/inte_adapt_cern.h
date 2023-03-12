@@ -370,401 +370,6 @@ namespace o2scl {
                   <funct_cr_cdf50,cpp_dec_float_50>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
   
-  class inte_adapt_cern2 {
-
-  public:
-  
-    inte_adapt_cern2() {
-      tol_rel_multip=-1.0;
-      verbose=0;
-      pow_tol_func=1.33;
-      err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=0.0;
-      nsub=100;
-    }
-
-    int last_iter;
-
-    int nsub;
-    
-    /** \brief The maximum relative uncertainty for multipreicsion
-	integrals (default \f$ -1 \f$)
-    */
-    double tol_rel_multip;
-
-    /** \brief Power for tolerance of function evaluations in
-        multiprecision integrations (default 1.33)
-    */
-    double pow_tol_func;
-
-    /** \brief The maximum relative uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
-    */
-    double tol_rel;
-
-    /** \brief The maximum absolute uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
-    */
-    double tol_abs;
-
-    /** \brief Verbosity parameter
-     */
-    int verbose;
-
-    /** \brief If true, call the error handler if the integration
-        does not succeed (default true)
-    */
-    bool err_nonconv;
-    
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
-
-    /// \name Nonadaptive integration objects
-    //@{
-    inte_gauss56_cern<funct,double> def_d;
-    inte_gauss56_cern
-    <funct_ld,long double> def_ld;
-    inte_gauss56_cern
-    <funct_cdf25,cpp_dec_float_25> def_25;
-    inte_gauss56_cern
-    <funct_cdf35,cpp_dec_float_35> def_35;
-    inte_gauss56_cern
-    <funct_cdf50,cpp_dec_float_50> def_50;
-    //@}
-    
-    /// \name Basic usage
-    //@{
-    /** \brief Integrate function \c func from \c a to \c b
-        giving result \c res and error \c err
-    */
-    template<class inte_t, typename func_t, class fp_t>
-    int integ_err_funct(inte_t &it, func_t &func, fp_t a, fp_t b,
-                        fp_t &res, fp_t &err, double integ_tol) {
-      
-      // Lower end of subdivision
-      fp_t xlo[nsub];
-      
-      // High end of subdivision
-      fp_t xhi[nsub];
-      
-      // Value of integral for subdivision
-      fp_t tval[nsub];
-      
-      // Squared error for subdivision
-      fp_t ters[nsub];
-      
-      fp_t tvals=0.0, terss, xlob, xhib, yhib=0.0, te, root=0.0;
-      int i, nsubdivd, prev_subdiv;
-      fp_t two=2.0;
-
-      // Automatic binning
-      nsubdivd=1;
-
-      // Compute the initial set of intervals and integral values
-      xhib=a;
-      fp_t bin=(b-a)/((fp_t)nsubdivd);
-      for(i=0;i<nsubdivd;i++) {
-        xlo[i]=xhib;
-        xlob=xlo[i];
-        xhi[i]=xhib+bin;
-        if (i==nsubdivd-1) xhi[i]=b;
-        xhib=xhi[i];
-        it.integ_err2(func,xlob,xhib,tval[i],te);
-        ters[i]=te*te;
-      }
-      prev_subdiv=nsubdivd;
-
-      for(size_t iter=1;iter<=nsub;iter++) {
-
-        // Compute the total value of the integrand
-        // and the squared uncertainty
-        tvals=tval[0];
-        terss=ters[0];
-        for(i=1;i<prev_subdiv;i++) {
-          tvals+=tval[i];
-          terss+=ters[i];
-        }
-          
-        // Output iteration information
-        if (this->verbose>0) {
-          std::cout << "inte_adapt_cern Iter: " << iter;
-          std::cout.setf(std::ios::showpos);
-          std::cout << " Res: " << tvals;
-          std::cout.unsetf(std::ios::showpos);
-          std::cout << " Err: " << sqrt(two*terss);
-          if (this->tol_abs>integ_tol*abs(tvals)) {
-            std::cout << " Tol: " << this->tol_abs << std::endl;
-          } else {
-            std::cout << " Tol: " << integ_tol*abs(tvals)
-                      << std::endl;
-          }
-          if (this->verbose>1) {
-            char ch;
-            std::cout << "Press a key and type enter to continue. " ;
-            std::cin >> ch;
-          }
-        }
-
-        // See if we're finished
-        root=sqrt(two*terss);
-        if (root<=this->tol_abs || root<=integ_tol*abs(tvals)) {
-          res=tvals;
-          err=root;
-          this->last_iter=iter;
-          return 0;
-        }
-
-        // Test if we've run out of intervals
-        if (prev_subdiv==nsub) {
-          res=tvals;
-          err=root;
-          this->last_iter=iter;
-          std::string s="Reached maximum number ("+itos(nsub)+
-            ") of subdivisions in inte_adapt_cern::integ_err2().";
-          O2SCL_CONV_RET(s.c_str(),exc_etable,this->err_nonconv);
-        }
-
-        // Find the subdivision with the largest error
-        fp_t bige=ters[0];
-        int ibig=0;
-        for(i=1;i<prev_subdiv;i++) {
-          if (ters[i]>bige) {
-            bige=ters[i];
-            ibig=i;
-          }
-        }
-
-        // Subdivide that subdivision further
-        xhi[prev_subdiv]=xhi[ibig];
-        fp_t xnew=(xlo[ibig]+xhi[ibig])/two;
-        xhi[ibig]=xnew;
-        xlo[prev_subdiv]=xnew;
-        it.integ_err2(func,xlo[ibig],xhi[ibig],tval[ibig],te);
-        ters[ibig]=te*te;
-        it.integ_err2(func,xlo[prev_subdiv],
-                     xhi[prev_subdiv],tval[prev_subdiv],te);
-        ters[prev_subdiv]=te*te;
-        prev_subdiv++;
-
-      }
-
-      // FIXME: Should we set an error here, or does this
-      // only happen if we happen to need exactly nsub
-      // intervals?
-      res=tvals;
-      err=root;
-      return 0;
-    }
-    //@}
-
-    template<typename func_t, class fp_t>
-    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
-      
-      int ret=integ_err_funct(func,a,b,res,err,this->tol_rel);
-      
-      if (ret!=0) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_adapt_cern2::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel: "
-                    << err << " " << this->tol_rel << " "
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_adapt_cern2::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
-      }
-      return 0;
-    }
-
-    template <class inte_t, typename func_t, class fp_t>
-    int integ_err_int(inte_t &it, func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, 
-                      double integ_tol, double func_tol) {
-      
-      funct_multip fm2;
-      fm2.err_nonconv=false;
-      fm2.tol_rel=func_tol;
-
-      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
-      { return fm2(func,x); };
-
-      integ_err_funct(it,fx,a,b,res,err,integ_tol);
-
-      if (verbose>1) {
-        std::cout << "inte_adapt_cern::integ_err() "
-                  << "tols(integ,func),err:\n  "
-                  << integ_tol << " "
-                  << func_tol << " " << err << std::endl;
-      }
-
-      if (err/abs(res)>integ_tol) {
-        return 1;
-      }
-      return 0;
-    }
-    
-    /** \brief Integrate function \c func from \c a to \c b using
-        multipreicsion, placing the result in \c res and the error in
-        \c err
-    */
-    template <typename func_t, class fp_t>
-    int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
-                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
-      
-      if (integ_tol<=0.0) {
-        if (tol_rel_multip<=0.0) {
-          integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
-        } else {
-          integ_tol=tol_rel_multip;
-        }
-      } 
-
-      if (verbose>0) {
-        std::cout << "int_adapt_cern::integ_err(): set "
-                  << "tolerance to: " << integ_tol << std::endl;
-      }
-      
-      // Demand that the function evaluations are higher precision
-      double func_tol=pow(integ_tol,pow_tol_func);
-
-      int ret;
-
-      if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
-        if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
-                    << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integration." << std::endl;
-        }
-        double a_d=static_cast<double>(a);
-        double b_d=static_cast<double>(b);
-        double res_d, err_d;
-        
-        ret=integ_err_int(def_d,func,a_d,b_d,res_d,err_d,integ_tol,func_tol);
-
-        std::cout << "H: " << ret << " " << err_d/abs(res_d) << " "
-                  << res_d << " " << err_d << " " << integ_tol << std::endl;
-        if (ret==0 && err_d/abs(res_d)<integ_tol) {
-          res=static_cast<fp_t>(res_d);
-          err=static_cast<fp_t>(err_d);
-          return 0;
-        }
-      }
-
-      if (integ_tol>pow(10.0,
-                        -std::numeric_limits<long double>::digits10+3)) {
-        if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
-                    << integ_tol << " > "
-                    << pow(10.0,
-                           -std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integration." << std::endl;
-        }
-        long double a_ld=static_cast<long double>(a);
-        long double b_ld=static_cast<long double>(b);
-        long double res_ld, err_ld;
-        
-        ret=integ_err_int(def_ld,func,a_ld,b_ld,res_ld,err_ld,
-                          integ_tol,func_tol);
-        
-        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
-          res=static_cast<fp_t>(res_ld);
-          err=static_cast<fp_t>(err_ld);
-          return 0;
-        }
-      }
-
-      if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_25>::digits10+3)) {
-        if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
-                    << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
-        }
-        cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
-        cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
-        cpp_dec_float_25 res_cdf25, err_cdf25;
-        
-        ret=integ_err_int(def_25,func,a_cdf25,b_cdf25,res_cdf25,
-                          err_cdf25,integ_tol,func_tol);
-        
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
-          return 0;
-        }
-      }
-
-      if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_35>::digits10+3)) {
-        if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
-                    << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
-        }
-        cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
-        cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
-        cpp_dec_float_35 res_cdf35, err_cdf35;
-        
-        ret=integ_err_int(def_35,func,a_cdf35,b_cdf35,res_cdf35,
-                          err_cdf35,integ_tol,func_tol);
-        
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
-          return 0;
-        }
-      }
-
-      if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_50>::digits10+3)) {
-        if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
-                    << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
-        }
-        cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
-        cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
-        cpp_dec_float_50 res_cdf50, err_cdf50;
-        
-        ret=integ_err_int(def_50,func,a_cdf50,b_cdf50,res_cdf50,
-                          err_cdf50,integ_tol,func_tol);
-        
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
-          return 0;
-        }
-      }
-
-      if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err() "
-                  << "failed after cpp_dec_float_50:\n  "
-                  << integ_tol << std::endl;
-      }
-    
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_adapt_cern::integ_err().",
-                 o2scl::exc_efailed);
-      return o2scl::exc_efailed;
-    }
-
-  };
-
-#ifdef O2SCL_NEVER_DEFINED
-  
   class inte_multip_adapt_cern {
 
   public:
@@ -782,6 +387,11 @@ namespace o2scl {
     int last_iter;
 
     int nsub;
+
+    void set_nsub(int n) {
+      nsub=n;
+      return;
+    }
     
     /** \brief The maximum relative uncertainty for multipreicsion
 	integrals (default \f$ -1 \f$)
@@ -812,35 +422,17 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
-
-    /// \name Nonadaptive integration objects
-    //@{
-    inte_gauss56_cern<funct,double> def_d;
-    inte_gauss56_cern
-    <funct_ld,long double> def_ld;
-    inte_gauss56_cern
-    <funct_cdf25,cpp_dec_float_25> def_25;
-    inte_gauss56_cern
-    <funct_cdf35,cpp_dec_float_35> def_35;
-    inte_gauss56_cern
-    <funct_cdf50,cpp_dec_float_50> def_50;
-    //@}
-    
     /// \name Basic usage
     //@{
     /** \brief Integrate function \c func from \c a to \c b
         giving result \c res and error \c err
     */
-    template<typename func_t, class fp_t, class it_t>
-    int integ_err_int(it_t &it, func_t &func, fp_t a, fp_t b,
-                      fp_t &res, fp_t &err, double target_tol,
-                      double integ_tol, double func_tol) {
+    template<typename func_t, class fp_t>
+    int integ_err_funct(func_t &func, fp_t a, fp_t b,
+                        fp_t &res, fp_t &err, double target_tol,
+                        double integ_tol) {
+
+      inte_gauss56_cern<func_t,fp_t> it;
       
       // Lower end of subdivision
       fp_t xlo[nsub];
@@ -870,12 +462,12 @@ namespace o2scl {
         xhi[i]=xhib+bin;
         if (i==nsubdivd-1) xhi[i]=b;
         xhib=xhi[i];
-        it.integ_err2(func,xlob,xhib,tval[i],te);
+        it.integ_err(func,xlob,xhib,tval[i],te);
         ters[i]=te*te;
       }
       prev_subdiv=nsubdivd;
 
-      for(size_t iter=1;iter<=nsub;iter++) {
+      for(size_t iter=1;iter<=((size_t)nsub);iter++) {
 
         // Compute the total value of the integrand
         // and the squared uncertainty
@@ -921,7 +513,7 @@ namespace o2scl {
           err=root;
           this->last_iter=iter;
           std::string s="Reached maximum number ("+itos(nsub)+
-            ") of subdivisions in inte_adapt_cern::integ_err2().";
+            ") of subdivisions in inte_adapt_cern::integ_err().";
           O2SCL_CONV_RET(s.c_str(),exc_etable,this->err_nonconv);
         }
 
@@ -940,9 +532,9 @@ namespace o2scl {
         fp_t xnew=(xlo[ibig]+xhi[ibig])/two;
         xhi[ibig]=xnew;
         xlo[prev_subdiv]=xnew;
-        it.integ_err2(func,xlo[ibig],xhi[ibig],tval[ibig],te);
+        it.integ_err(func,xlo[ibig],xhi[ibig],tval[ibig],te);
         ters[ibig]=te*te;
-        it.integ_err2(func,xlo[prev_subdiv],
+        it.integ_err(func,xlo[prev_subdiv],
                      xhi[prev_subdiv],tval[prev_subdiv],te);
         ters[prev_subdiv]=te*te;
         prev_subdiv++;
@@ -958,38 +550,10 @@ namespace o2scl {
     }
     //@}
 
-    template<typename func_t, class fp_t>
-    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
-      
-
-      funct_multip fm2;
-      fm2.err_nonconv=false;
-      fm2.tol_rel=func_tol;
-
-      std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
-      { return fm2(func,x); };
-      
-      int ret=integ_err_funct(func,a,b,res,err,this->tol_rel);
-      
-      if (ret!=0) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_adapt_cern2::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel: "
-                    << err << " " << this->tol_rel << " "
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_adapt_cern2::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
-      }
-      return 0;
-    }
-
-    template <class inte_t, typename func_t, class fp_t>
-    int integ_err_int(inte_t &it, func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, 
-                      double integ_tol, double func_tol) {
+    template <typename func_t, class fp_t>
+    int integ_err_int(func_t &&func, fp_t a, fp_t b, 
+                      fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                      double target_tol, double integ_tol, double func_tol) {
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -997,13 +561,13 @@ namespace o2scl {
 
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
-
-      integ_err_funct(it,fx,a,b,res,err,integ_tol);
+      
+      integ_err_funct(fx,a,b,res,err,target_tol,integ_tol);
 
       if (verbose>1) {
-        std::cout << "inte_adapt_cern::integ_err() "
-                  << "tols(integ,func),err:\n  "
-                  << integ_tol << " "
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
       }
 
@@ -1012,7 +576,51 @@ namespace o2scl {
       }
       return 0;
     }
+
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
+    typedef boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
+
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+      
+      int ret=integ_err_funct(func,a,b,res,err,
+                              this->tol_rel,this->tol_rel);
+      
+      if (ret!=0) {
+        if (this->verbose>0) {
+          std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,max: "
+                    << err << " " << this->tol_rel << " "
+                    << std::endl;
+        }
+        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                        this->err_nonconv);
+      }
+      return 0;
+    }
     
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ(func_t &func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_err(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte::integ(), ",
+		   "but cannot return int.",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -1028,20 +636,23 @@ namespace o2scl {
           integ_tol=tol_rel_multip;
         }
       } 
-
+      
       if (verbose>0) {
-        std::cout << "int_adapt_cern::integ_err(): set "
+        std::cout << "int_kronrod_boost::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
       // Demand that the function evaluations are higher precision
       double func_tol=pow(integ_tol,pow_tol_func);
 
+      double target_tol=integ_tol;
+      
       int ret;
-
+      
+      // FIXME, explain the +3 here. 
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -1050,21 +661,22 @@ namespace o2scl {
         double b_d=static_cast<double>(b);
         double res_d, err_d;
         
-        ret=integ_err_int(def_d,func,a_d,b_d,res_d,err_d,integ_tol,func_tol);
-
-        std::cout << "H: " << ret << " " << err_d/abs(res_d) << " "
-                  << res_d << " " << err_d << " " << integ_tol << std::endl;
+        ret=integ_err_int(func,a_d,b_d,res_d,err_d,
+                          target_tol,integ_tol,func_tol);
+        
         if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
-
+      
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -1074,20 +686,22 @@ namespace o2scl {
         long double b_ld=static_cast<long double>(b);
         long double res_ld, err_ld;
         
-        ret=integ_err_int(def_ld,func,a_ld,b_ld,res_ld,err_ld,
-                          integ_tol,func_tol);
+        ret=integ_err_int(func,a_ld,b_ld,res_ld,err_ld,
+                          target_tol,integ_tol,func_tol);
         
         if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1096,21 +710,29 @@ namespace o2scl {
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
         cpp_dec_float_25 res_cdf25, err_cdf25;
-        
-        ret=integ_err_int(def_25,func,a_cdf25,b_cdf25,res_cdf25,
-                          err_cdf25,integ_tol,func_tol);
-        
+
+        ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
+                          err_cdf25,target_tol,
+                          integ_tol,func_tol);
+
+        if (verbose>1) {
+          std::cout << "ret,res,err,tol: " << ret << " "
+                    << res_cdf25 << " " << err_cdf25 << " "
+                    << integ_tol << std::endl;
+        }
         if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1120,20 +742,23 @@ namespace o2scl {
         cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
         cpp_dec_float_35 res_cdf35, err_cdf35;
         
-        ret=integ_err_int(def_35,func,a_cdf35,b_cdf35,res_cdf35,
-                          err_cdf35,integ_tol,func_tol);
+        ret=integ_err_int(func,a_cdf35,b_cdf35,res_cdf35,
+                          err_cdf35,target_tol,
+                          integ_tol,func_tol);
         
         if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_adapt_cern::integ_err(): "
+          std::cout << "int_kronrod_boost::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1143,31 +768,32 @@ namespace o2scl {
         cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
         cpp_dec_float_50 res_cdf50, err_cdf50;
         
-        ret=integ_err_int(def_50,func,a_cdf50,b_cdf50,res_cdf50,
-                          err_cdf50,integ_tol,func_tol);
+        ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
+                          err_cdf50,target_tol,
+                          integ_tol,func_tol);
         
         if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
+        } else {
+          target_tol/=10;
         }
       }
 
       if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err() "
-                  << "failed after cpp_dec_float_50:\n  "
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "failed after cpp_dec_float_100:\n  "
                   << integ_tol << std::endl;
       }
-    
+      
       O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_adapt_cern::integ_err().",
+                 "in inte_kronrod_boost::integ_err().",
                  o2scl::exc_efailed);
       return o2scl::exc_efailed;
     }
 
   };
-#endif
-
   
 }
 

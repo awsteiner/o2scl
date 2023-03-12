@@ -54,6 +54,11 @@ template<class fp_t> fp_t sin_recip(fp_t x) {
   return sin(1/(-x+one/hundred))*pow(-x+one/hundred,-2);
 }
 
+template<class fp_t> fp_t mp_test_func(fp_t x) {
+  fp_t one=1;
+  fp_t hundred=100;
+  return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
+}
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
 typedef boost::multiprecision::number<
@@ -190,8 +195,7 @@ int main(void) {
     
     inte_transform<funct_ld,inte_adapt_cern
 		   <funct_ld,inte_gauss56_cern
-		    <funct_ld,long double,
-		     inte_gauss56_coeffs<long_double>>,100,
+		    <funct_ld,long double>,100,
 		    long double>,long double> it_iac_ld;
 
     long double exact_ld=1.0L-cos(100.0L/101.0L);
@@ -212,8 +216,7 @@ int main(void) {
     
     inte_transform<funct_cdf50,inte_adapt_cern
 		   <funct_cdf50,inte_gauss56_cern
-		    <funct_cdf50,cpp_dec_float_50,
-		     inte_gauss56_coeffs<cpp_dec_float_50>>,100,
+		    <funct_cdf50,cpp_dec_float_50>,100,
 		    cpp_dec_float_50>,cpp_dec_float_50> it_iac_cdf;
     
     cpp_dec_float_50 one=1.0;
@@ -239,8 +242,7 @@ int main(void) {
     
     inte_transform<funct_mp50,inte_adapt_cern
 		   <funct_mp50,inte_gauss56_cern
-		    <funct_mp50,mpfr_float_50,
-		     inte_gauss56_coeffs<mpfr_float_50>>,100,
+		    <funct_mp50,mpfr_float_50>,100,
 		    mpfr_float_50>,mpfr_float_50> it_iac_mp50;
     
     mpfr_float_50 one_mp50=1.0;
@@ -263,55 +265,57 @@ int main(void) {
     
   }
 
-  if (true) {
-    
-    /*
-    funct f1=sin_recip<double>;
-    funct_ld f2=sin_recip<long double>;
-    funct_cdf25 f3=sin_recip<cpp_dec_float_25>;
-    funct_cdf35 f4=sin_recip<cpp_dec_float_35>;
-    funct_cdf50 f5=sin_recip<cpp_dec_float_50>;
-    funct_cdf100 f6=sin_recip<cpp_dec_float_100>;
-    funct_multip_wrapper fmw(f1,f2,f3,f4,f5,f6);
-    funct_multip<> fm(fmw);
-
-    inte_multip_adapt_cern<funct_multip<>> imkb;
-    double a=0.0, b=1.0, res, err, exact;
-    imkb.integ_err(fm,a,b,res,err);
-    cout << res << " " << exact << endl;
-    
-    long double a_ld=0.0, b_ld=1.0, res_ld, err_ld, exact_ld;
-    imkb.integ_err(fm,a_ld,b_ld,res_ld,err_ld);
-    cout << res_ld << " " << exact_ld << endl;
-    */
-  
-  }
-
-#ifdef O2SCL_NEVER_DEFINED
-#ifdef O2SCL_OSX
   {
-    cout.precision(6);
-    
-    inte_adapt_cern2 iac2;
-    double a=0.01;
-    funct tf=std::bind(testfun<double>,std::placeholders::_1,a);
-    double res, err;
-    double exact=sin(1.0/(1.0+a))-sin(1.0/a);
-    iac2.integ_err(tf,0.0,1.0,res,err);
-    cout << res << " " << exact << " " << fabs(res-exact) << endl;
 
-    iac2.verbose=1;
-    iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
-                          0.0,1.0,res,err,1.0e-8);
-    cout << dtos(res,0) << " " << dtos(err,0) << " "
-         << abs(res-exact)/exact << endl;
-    iac2.integ_err_multip([a](auto &&t) mutable { return testfun2(t); },
-                          0.0,1.0,res,err);
-    cout << dtos(res,0) << " " << dtos(err,0) << " "
-         << abs(res-exact)/exact << endl;
+    inte_multip_adapt_cern imac;
+    
+    double ans, exact, err;
+    
+    funct tf=mp_test_func<double>;
+    
+    // Compare with the exact result
+    imac.integ_err(tf,0.0,1.0,ans,err);
+    exact=cos(100.0)-cos(1/1.01);
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel(ans,exact,1.0e-8,"imac test");
   }
-#endif
-#endif
+
+  {
+    inte_multip_adapt_cern imac;
+    
+    long double ans, exact, err;
+    
+    funct_ld tf=mp_test_func<long double>;
+    
+    // Compare with the exact result
+    imac.tol_rel=1.0e-15;
+    imac.set_nsub(1000);
+    imac.integ_err(tf,0.0L,1.0L,ans,err);
+    exact=cos(100.0L)-cos(1.0L/1.01L);
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel<long double>(ans,exact,1.0e-15,"imac test");
+  }
+
+  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+  
+  {
+    inte_multip_adapt_cern imac;
+    
+    cpp_dec_float_50 ans, exact, err;
+    
+    funct_cdf50 tf=mp_test_func<cpp_dec_float_50>;
+    
+    // Compare with the exact result
+    imac.set_nsub(20000);
+    imac.tol_rel=1.0e-31;
+    cpp_dec_float_50 zero=0;
+    cpp_dec_float_50 one=1;
+    cpp_dec_float_50 hundred=100;
+    imac.integ_err(tf,zero,one,ans,err);
+    exact=cos(hundred)-cos(hundred/(hundred+one));
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"imac test");
+  }
   
   t.report();
   return 0;

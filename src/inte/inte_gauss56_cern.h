@@ -27,6 +27,9 @@
 #define O2SCL_INTE_GAUSS56_CERN_H
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
 
 #include <o2scl/misc.h>
 #include <o2scl/inte.h>
@@ -35,41 +38,29 @@
 
 namespace o2scl {
 
-  /** \brief 5,6-point Gaussian quadrature (CERNLIB)
-      
-      If \f$ I_5 \f$ is the 5-point approximation, and \f$ I_6 \f$ is the
-      6-point approximation to the integral, then integ_err() returns
-      the result \f$ \frac{1}{2}(I_5+I_6) \f$ with uncertainty
-      \f$ |I_5-I_6| \f$.
+  /** \brief Base class for 5,6-point Gaussian quadrature (CERNLIB)      
 
-      This class is based on the CERNLIB routines RGS56P and DGS56P
-      were originally documented at
-      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
-      . (3/10/2020: The CERNLIB links are apparently dead and haven't
-      been supported since 2003.)
+      This is an internal class. End users typically want to
+      use a specialization of \ref inte_gauss56_cern .
   */
   template<class func_t, class fp_t>
   class inte_gauss56_cern_base : public inte<func_t,fp_t> {
 
   public:
 
-    /** \brief Fifth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
+    /** \brief Fifth order integration abscissas
     */
     fp_t x5[5];
     
-    /** \brief Fifth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
+    /** \brief Fifth order integration weights
     */
     fp_t w5[5];
     
-    /** \brief Sixth order integration abscissas for 
-	\ref o2scl::inte_gauss56_cern in double precision
+    /** \brief Sixth order integration abscissas
     */
     fp_t x6[6];
     
-    /** \brief Sixth order integration weights for 
-	\ref o2scl::inte_gauss56_cern in double precision
+    /** \brief Sixth order integration weights
     */
     fp_t w6[6];
 
@@ -101,43 +92,27 @@ namespace o2scl {
       return success;
     }
 
-    /** \brief Integrate function \c func from \c a to \c b
-        giving result \c res and error \c err
-
-        This function always returns \ref success.
-    */
-    virtual int integ_err2(func_t func, fp_t a, fp_t b,
-                           fp_t &res, fp_t &err) {
-
-      fp_t rang=b-a, e5=0.0, e6=0.0, ytmp;
-
-      for(int i=0;i<5;i++) {
-        ytmp=func(a+rang*x5[i]);
-        e5+=w5[i]*ytmp;
-        ytmp=func(a+rang*x6[i]);
-        e6+=w6[i]*ytmp;
-      }
-      ytmp=func(a+rang*x6[5]);
-      e6+=w6[5]*ytmp;
-      res=(e6+e5)*rang/2.0;
-      fp_t diff=e5-e6;
-      err=abs(diff)*rang;
-
-      return success;
-    }
-    
   };
 
-  /** \brief Desc
+  /** \brief 5,6-point Gaussian quadrature (CERNLIB)
+
+      If \f$ I_5 \f$ is the 5-point approximation, and \f$ I_6 \f$ is the
+      6-point approximation to the integral, then integ_err() returns
+      the result \f$ \frac{1}{2}(I_5+I_6) \f$ with uncertainty
+      \f$ |I_5-I_6| \f$.
+      
+      This class is based on the CERNLIB routines RGS56P and DGS56P
+      were originally documented at
+      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
+      . (3/10/2020: The CERNLIB links are apparently dead and haven't
+      been supported since 2003.)
    */
   template<class func_t, class fp_t>
   class inte_gauss56_cern :
     public inte_gauss56_cern_base<func_t,fp_t> {
   };
     
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern in double precision
-  */
+  // Specialization for inte_gauss56_cern in double precision
   template<> class inte_gauss56_cern<funct,double> :
     public inte_gauss56_cern_base<funct,double> {
   public:
@@ -171,12 +146,7 @@ namespace o2scl {
     }      
   };
   
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern in long double precision
-
-      \note The long double type doesn't work uniformly across systems
-      and so the accuracy when using these coefficients varies.
-  */
+  // Specialization for inte_gauss56_cern in long double precision
   template<> class inte_gauss56_cern<funct_ld,long double> :
     public inte_gauss56_cern_base<funct_ld,long double> {
 
@@ -214,17 +184,7 @@ namespace o2scl {
 
   };
     
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern in long double precision
-
-      \note Experimental, and only included if 
-      O2SCL_LD_TYPES is defined during the library configuration.
-
-      \comment
-      Weights and abcissas originally generated using cpp_dec_float_100
-      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
-      \endcomment
-  */
+  // Specialization for inte_gauss56_cern in 25-digit precision
   template<> class inte_gauss56_cern
   <funct_cdf25,boost::multiprecision::number<
                  boost::multiprecision::cpp_dec_float<25>>>:
@@ -289,17 +249,7 @@ namespace o2scl {
   
   };
 
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern in long double precision
-
-      \note Experimental, and only included if 
-      O2SCL_LD_TYPES is defined during the library configuration.
-
-      \comment
-      Weights and abcissas originally generated using cpp_dec_float_100
-      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
-      \endcomment
-  */
+  // Specialization for inte_gauss56_cern in 35-digit precision
   template<> class inte_gauss56_cern
   <funct_cdf35,boost::multiprecision::number<
                  boost::multiprecision::cpp_dec_float<35>>>:
@@ -364,17 +314,7 @@ namespace o2scl {
   
   };
 
-  /** \brief Integration weights and abcissas for 
-      \ref o2scl::inte_gauss56_cern in long double precision
-
-      \note Experimental, and only included if 
-      O2SCL_LD_TYPES is defined during the library configuration.
-
-      \comment
-      Weights and abcissas originally generated using cpp_dec_float_100
-      numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
-      \endcomment
-  */
+  // Specialization for inte_gauss56_cern in 50-digit precision
   template<> class inte_gauss56_cern
   <funct_cdf50,boost::multiprecision::cpp_dec_float_50> : 
     public inte_gauss56_cern_base
@@ -436,6 +376,71 @@ namespace o2scl {
   
   };
 
+#ifdef O2SCL_MPFR
+  
+  // Specialization for inte_gauss56_cern in 50-digit precision
+  template<> class inte_gauss56_cern
+  <funct_mp50,boost::multiprecision::mpfr_float_50>:
+    public inte_gauss56_cern_base
+  <funct_mp50,boost::multiprecision::mpfr_float_50> {
+  public:
+    
+    typedef boost::multiprecision::mpfr_float_50 fp_50_t;
+
+    inte_gauss56_cern() {
+      
+      x5[0]=fp_50_t
+	("4.69100770306680036011865608503035174371740446187346e-02");
+      w5[0]=fp_50_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      x5[1]=fp_50_t
+	("2.30765344947158454481842789649895597516356696547220e-01");
+      w5[1]=fp_50_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[2]=fp_50_t
+	("5.00000000000000000000000000000000000000000000000000e-01");
+      w5[2]=fp_50_t
+	("2.84444444444444444444444444444444444444444444444444e-01");
+      x5[3]=fp_50_t
+	("7.69234655052841545518157210350104402483643303452780e-01");
+      w5[3]=fp_50_t
+	("2.39314335249683234020645757417819096456147776671571e-01");
+      x5[4]=fp_50_t
+	("9.53089922969331996398813439149696482562825955381265e-01");
+      w5[4]=fp_50_t
+	("1.18463442528094543757132020359958681321630001106207e-01");
+      
+      x6[0]=fp_50_t
+	("3.37652428984239860938492227530026954326171311438551e-02");
+      w6[0]=fp_50_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      x6[1]=fp_50_t
+	("1.69395306766867743169300202490047326496775717802415e-01");
+      w6[1]=fp_50_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[2]=fp_50_t
+	("3.80690406958401545684749139159644032290694684929989e-01");
+      w6[2]=fp_50_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[3]=fp_50_t
+	("6.19309593041598454315250860840355967709305315070011e-01");
+      w6[3]=fp_50_t
+	("2.33956967286345523694935171994775497405827802884605e-01");
+      x6[4]=fp_50_t
+	("8.30604693233132256830699797509952673503224282197585e-01");
+      w6[4]=fp_50_t
+	("1.80380786524069303784916756918858055830760946373373e-01");
+      x6[5]=fp_50_t
+	("9.66234757101576013906150777246997304567382868856145e-01");
+      w6[5]=fp_50_t
+	("8.56622461895851725201480710863664467634112507420220e-02");
+      
+    }
+  
+  };
+
+#endif
+  
 }
 
 #endif

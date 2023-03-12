@@ -75,7 +75,7 @@ int main(void) {
     imkb.integ_err(tf,0.0,1.0,ans,err);
     exact=cos(100.0)-cos(1/1.01);
     std::cout << ans << " " << err << std::endl;
-    t.test_rel(ans,exact,1.0e-8,"qag test");
+    t.test_rel(ans,exact,1.0e-8,"imkb test");
   }
 
   {
@@ -90,7 +90,7 @@ int main(void) {
     imkb.integ_err(tf,0.0L,1.0L,ans,err);
     exact=cos(100.0L)-cos(1.0L/1.01L);
     std::cout << ans << " " << err << std::endl;
-    t.test_rel<long double>(ans,exact,1.0e-15,"qag test");
+    t.test_rel<long double>(ans,exact,1.0e-15,"imkb test");
   }
 
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
@@ -110,7 +110,7 @@ int main(void) {
     imkb.integ_err(tf,zero,one,ans,err);
     exact=cos(hundred)-cos(hundred/(hundred+one));
     std::cout << ans << " " << err << std::endl;
-    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"qag test");
+    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"imkb test");
   }
 
 #ifdef O2SCL_OSX
