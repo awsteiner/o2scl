@@ -355,7 +355,7 @@ namespace o2scl {
               evaluation.pop();
               if (next2>=0.5) evaluation.push(next);
               else evaluation.push(right);
-#ifdef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_OSX
             } else if (!str.compare("cyl_bessel_j")) {
               fp_t next=evaluation.top();
               evaluation.pop();

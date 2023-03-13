@@ -356,7 +356,7 @@ namespace o2scl {
      */
     void set_sig_figs(size_t sig_figs) {
       if (sig_fgs==0 || sig_figs>15) {
-	O2SCL_ERR2("Argument must be less than or equal to 15",
+	O2SCL_ERR2("Argument must be less than or equal to 15 ",
 		   "in format_float::set_sig_figs().",exc_einval);
       }
       sig_fgs=sig_figs;

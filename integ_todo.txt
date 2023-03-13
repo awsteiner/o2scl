@@ -4,4 +4,5 @@ take out old inte_adapt_cern in fermion_rel.h and polylog.h and
   replace with new inte_multip_adapt_cern
 rename inte_multip_adapt_cern to new inte_adapt_cern
 check to see if polylog.h classes need new integrators
-work on integration in fermion_rel
+work on integration in fermion_rel?
+retry fixing acol ninteg?
