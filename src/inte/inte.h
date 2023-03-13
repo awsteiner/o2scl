@@ -286,7 +286,8 @@ namespace o2scl {
   protected:
 
     /// The base integration object
-    inte<internal_funct,fp_t> *it;
+    def_inte_t *it;
+    //inte<internal_funct,fp_t> *it;
   
     /// Function object
     internal_funct fo_il;
@@ -317,7 +318,7 @@ namespace o2scl {
 			     fp_t &res, fp_t &err) {
       user_func=&func;
       upper_limit=b;
-      int ret=it->integ_err(fo_il,0.0,1.0,res,err);
+      int ret=it->integ_err(fo_il,0,1,res,err);
       return ret;
     }
 
@@ -336,7 +337,7 @@ namespace o2scl {
 			     fp_t &res, fp_t &err) {
       user_func=&func;
       lower_limit=a;
-      int ret=it->integ_err(fo_iu,0.0,1.0,res,err);
+      int ret=it->integ_err(fo_iu,0,1,res,err);
       return ret;
     }
 
@@ -354,7 +355,7 @@ namespace o2scl {
     */
     virtual int integ_i_err(func_t &func, fp_t &res, fp_t &err) {
       user_func=&func;
-      int ret=it->integ_err(fo_i,0.0,1.0,res,err);
+      int ret=it->integ_err(fo_i,0,1,res,err);
       return ret;
     }
 

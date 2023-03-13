@@ -191,10 +191,12 @@ int main(void) {
     
     double calc, ei, diff;
 
-    inte_transform<funct,inte_adapt_cern<>,double> it_iac;
+    //inte_transform<funct,inte_adapt_cern<>,double> it_iac;
+    inte_multip_adapt_cern imac;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip<double>,std::placeholders::_1);
-    it_iac.integ_il_err(tf2,-1.0,calc,ei);
+    //it_iac.integ_il_err(tf2,-1.0,calc,ei);
+    imac.integ_il_err(tf2,-1.0,calc,ei);
     diff=fabs(calc-exact);
     cout << calc << " " << exact << " " << diff << " " << ei << endl;
     t.test_rel<double>(calc,exact,1.0e-12,"it_iac double");
@@ -202,19 +204,26 @@ int main(void) {
   
     cout << "inte_transform with inte_adapt_cern, long double precision, "
          << "sin_recip:\n  " << endl;
-    
+
+    /*
     inte_transform<funct_ld,inte_adapt_cern
 		   <funct_ld,inte_gauss56_cern
 		    <funct_ld,long double>,100,
 		    long double>,long double> it_iac_ld;
+    */
+    //inte_transform<funct_ld,inte_multip_adapt_cern,long double> it_imac_ld;
 
     long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip<long double>,
                               std::placeholders::_1);
     long double calc_ld, ei_ld;
-    it_iac_ld.def_inte.tol_rel=1.0e-15;
-    it_iac_ld.def_inte.tol_abs=1.0e-15;
-    it_iac_ld.integ_il_err(tf2_ld,-1.0,calc_ld,ei_ld);
+    //it_iac_ld.def_inte.tol_rel=1.0e-15;
+    //it_iac_ld.def_inte.tol_abs=1.0e-15;
+    imac.tol_rel=1.0e-15;
+    imac.tol_abs=1.0e-15;
+    //it_imac_ld.def_inte.tol_abs=1.0e-15;
+    //it_iac_ld.integ_il_err(tf2_ld,-1.0L,calc_ld,ei_ld);
+    imac.integ_il_err(tf2_ld,-1.0L,calc_ld,ei_ld);
     long double diff_ld=fabs(calc_ld-exact_ld);
     cout << calc_ld << " " << exact_ld << " "
 	 << diff_ld << " " << ei_ld << endl;
@@ -223,21 +232,27 @@ int main(void) {
     
     cout << "inte_transform with inte_adapt_cern, cpp_dec_float_50 precision, "
          << "sin_recip:\n  " << endl;
-    
+
+    /*
     inte_transform<funct_cdf50,inte_adapt_cern
 		   <funct_cdf50,inte_gauss56_cern
 		    <funct_cdf50,cpp_dec_float_50>,100,
 		    cpp_dec_float_50>,cpp_dec_float_50> it_iac_cdf;
+    */
     
     cpp_dec_float_50 one=1.0;
+    cpp_dec_float_50 mone=-1.0;
     cpp_dec_float_50 hundred=100.0;
     cpp_dec_float_50 exact_cdf=one-cos(hundred/(hundred+one));
     funct_cdf50 tf2_cdf=std::bind(sin_recip<cpp_dec_float_50>,
                                   std::placeholders::_1);
     cpp_dec_float_50 calc_cdf, ei_cdf;
-    it_iac_cdf.def_inte.tol_rel=1.0e-30;
-    it_iac_cdf.def_inte.tol_abs=1.0e-30;
-    it_iac_cdf.integ_il_err(tf2_cdf,-one,calc_cdf,ei_cdf);
+    //it_iac_cdf.def_inte.tol_rel=1.0e-30;
+    //it_iac_cdf.def_inte.tol_abs=1.0e-30;
+    imac.tol_rel=1.0e-30;
+    imac.tol_abs=1.0e-30;
+    //it_iac_cdf.integ_il_err(tf2_cdf,-one,calc_cdf,ei_cdf);
+    imac.integ_il_err(tf2_cdf,mone,calc_cdf,ei_cdf);
     cpp_dec_float_50 diff_cdf=fabs(calc_cdf-exact_cdf);
     cout << calc_cdf << " " << exact_cdf << " "
 	 << diff_cdf << " " << ei_cdf << endl;
@@ -249,21 +264,27 @@ int main(void) {
     
     cout << "inte_transform with inte_adapt_cern, mpfr_float_50 precision, "
          << "sin_recip:\n  " << endl;
-    
+
+    /*
     inte_transform<funct_mp50,inte_adapt_cern
 		   <funct_mp50,inte_gauss56_cern
 		    <funct_mp50,mpfr_float_50>,100,
 		    mpfr_float_50>,mpfr_float_50> it_iac_mp50;
+    */
     
     mpfr_float_50 one_mp50=1.0;
+    mpfr_float_50 mone_mp50=-1.0;
     mpfr_float_50 hundred_mp50=100.0;
     mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/(hundred_mp50+one_mp50));
     funct_mp50 tf2_mp50=std::bind(sin_recip<mpfr_float_50>,
                                   std::placeholders::_1);
     mpfr_float_50 calc_mp50, ei_mp50;
-    it_iac_mp50.def_inte.tol_rel=1.0e-30;
-    it_iac_mp50.def_inte.tol_abs=1.0e-30;
-    it_iac_mp50.integ_il_err(tf2_mp50,-one_mp50,calc_mp50,ei_mp50);
+    //it_iac_mp50.def_inte.tol_rel=1.0e-30;
+    //it_iac_mp50.def_inte.tol_abs=1.0e-30;
+    imac.tol_rel=1.0e-30;
+    imac.tol_abs=1.0e-30;
+    //it_iac_mp50.integ_il_err(tf2_mp50,-one_mp50,calc_mp50,ei_mp50);
+    imac.integ_il_err(tf2_mp50,mone_mp50,calc_mp50,ei_mp50);
     mpfr_float_50 diff_mp50=fabs(calc_mp50-exact_mp50);
     cout << calc_mp50 << " " << exact_mp50 << " "
 	 << diff_mp50 << " " << ei_mp50 << endl;

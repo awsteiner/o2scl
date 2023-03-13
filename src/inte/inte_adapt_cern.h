@@ -647,6 +647,72 @@ namespace o2scl {
     }
     //@}
 
+    template <typename func_t, class fp_t>
+    int integ_iu_err_int(func_t &&func, fp_t a, fp_t b, 
+                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                         double target_tol, double integ_tol, double func_tol) {
+      
+      inte_subdiv<fp_t> is(nsub);
+      
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+      
+      std::function<fp_t(fp_t)> ft=[fm2,func,a](fp_t t) mutable -> fp_t
+      {
+        fp_t x=a+(1-t)/t;
+        fp_t y=fm2(func,x);
+        return y/t/t;
+      };
+      
+      integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
+      
+      if (verbose>1) {
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+      
+      if (err/abs(res)>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
+    
+    template <typename func_t, class fp_t>
+    int integ_il_err_int(func_t &&func, fp_t b, 
+                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                         double target_tol, double integ_tol, double func_tol) {
+      
+      inte_subdiv<fp_t> is(nsub);
+      
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+      
+      std::function<fp_t(fp_t)> ft=[fm2,func,b](fp_t t) mutable -> fp_t
+      {
+        fp_t x=b-(1-t)/t;
+        fp_t y=fm2(func,x);
+        return y/t/t;
+      };
+      
+      integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
+      
+      if (verbose>1) {
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
+    
     /** \brief Desc
      */
     template <typename func_t, class fp_t>
@@ -716,11 +782,147 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
+    int integ_il_err_is(func_t &func, fp_t b, fp_t &res, fp_t &err,
+                     inte_subdiv<fp_t> &is) {
+      
+      if (is.nsub!=nsub) is.resize(nsub);
+      
+      std::function<fp_t(fp_t)> ft=[func,b](fp_t t) mutable -> fp_t
+      {
+        fp_t x=b-(1-t)/t;
+        fp_t y=func(x);
+        return y/t/t;
+      };
+      
+      int ret=integ_err_funct(ft,((fp_t)0),((fp_t)1),res,err,
+                              this->tol_rel,this->tol_rel,is);
+      
+      if (ret!=0) {
+        if (this->verbose>0) {
+          std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,max: "
+                    << err << " " << this->tol_rel << " "
+                    << std::endl;
+        }
+        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                        this->err_nonconv);
+      }
+      return 0;
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_iu_err_is(func_t &func, fp_t a, fp_t &res, fp_t &err,
+                        inte_subdiv<fp_t> &is) {
+      
+      if (is.nsub!=nsub) is.resize(nsub);
+      
+      std::function<fp_t(fp_t)> ft=[func,a](fp_t t) mutable -> fp_t
+      {
+        fp_t x=a+(1-t)/t;
+        fp_t y=func(x);
+        return y/t/t;
+      };
+      
+      int ret=integ_err_funct(ft,((fp_t)0),((fp_t)1),res,err,
+                              this->tol_rel,this->tol_rel,is);
+      
+      if (ret!=0) {
+        if (this->verbose>0) {
+          std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,max: "
+                    << err << " " << this->tol_rel << " "
+                    << std::endl;
+        }
+        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                        this->err_nonconv);
+      }
+      return 0;
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_i_err_is(func_t &func, fp_t &res, fp_t &err,
+                        inte_subdiv<fp_t> &is) {
+      
+      if (is.nsub!=nsub) is.resize(nsub);
+      
+      std::function<fp_t(fp_t)> ft=[func](fp_t t) mutable -> fp_t
+      {
+        fp_t x=(1-t)/t;
+        fp_t x2=-(1-t)/t;
+        fp_t y=func(x)+func(x2);
+        return y/t/t;
+      };
+      
+      int ret=integ_err_funct(ft,((fp_t)0),((fp_t)1),res,err,
+                              this->tol_rel,this->tol_rel,is);
+      
+      if (ret!=0) {
+        if (this->verbose>0) {
+          std::cout << "Function inte_kronrod_boost::integ_err() failed."
+                    << std::endl;
+          std::cout << "Values err,tol_rel,L1norm,max: "
+                    << err << " " << this->tol_rel << " "
+                    << std::endl;
+        }
+        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
+                        "inte_kronrod_boost::integ_err().",o2scl::exc_efailed,
+                        this->err_nonconv);
+      }
+      return 0;
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
       inte_subdiv<fp_t> is(nsub);
-
+      
       return integ_err_is(func,a,b,res,err,is);
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_il_err(func_t &func, fp_t b, fp_t &res, fp_t &err) {
+      
+      inte_subdiv<fp_t> is(nsub);
+
+      return integ_il_err_is(func,b,res,err,is);
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_iu_err(func_t &func, fp_t a, fp_t &res, fp_t &err) {
+      
+      inte_subdiv<fp_t> is(nsub);
+
+      return integ_il_err_is(func,a,res,err,is);
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b and place
+        the result in \c res and the error in \c err
+    */
+    template<typename func_t, class fp_t>
+    int integ_i_err(func_t &func, fp_t &res, fp_t &err) {
+      
+      inte_subdiv<fp_t> is(nsub);
+
+      return integ_i_err_is(func,res,err,is);
     }
     
     /** \brief Integrate function \c func from \c a to \c b.

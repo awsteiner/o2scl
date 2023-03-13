@@ -40,7 +40,7 @@ namespace o2scl {
 
       \note The uncertainties reported by this class depend on those
       returned by the boost integration functions and are occasionally
-      be underestimated. 
+      underestimated. 
       
   */
   template<size_t rule=15> class inte_kronrod_boost {
