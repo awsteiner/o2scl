@@ -1321,6 +1321,11 @@ namespace o2scl {
       return list;
     }      
     //@}
+
+  private:
+
+    calc_utf8(const calc_utf8 &);
+    calc_utf8& operator=(const calc_utf8&);
     
   };
   

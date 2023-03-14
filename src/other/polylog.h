@@ -596,7 +596,10 @@ namespace o2scl {
                              fp3_t> fdi3;
 
     typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-    
+
+    fermi_dirac_integ_tl<inte_multip_adapt_cern,cpp_dec_float_50> fdi5;
+
+    /*
     typedef inte_transform<funct_cdf50,inte_adapt_cern
                            <funct_cdf50,inte_gauss56_cern
                             <funct_cdf50,cpp_dec_float_50>,
@@ -604,12 +607,13 @@ namespace o2scl {
                             cpp_dec_float_50>,cpp_dec_float_50> inte_t;
     
     fermi_dirac_integ_tl<inte_t,cpp_dec_float_50> fdi4;
+    */
     
     fermi_dirac_integ_bf() {
       fdi1.it.iiu.err_nonconv=false;
       fdi2.it.iiu.err_nonconv=false;
       fdi3.it.iiu.err_nonconv=false;
-      fdi4.iiu.err_nonconv=false;
+      //fdi4.iiu.err_nonconv=false;
       tol=1.0e-17;
       err_nonconv=true;
     }
@@ -654,10 +658,10 @@ namespace o2scl {
         //<< fdi3.it.iiu.levels << std::endl;
         cpp_dec_float_50 y2=static_cast<cpp_dec_float_50>(y);
         cpp_dec_float_50 res2,err2;
-        fdi4.iiu.def_inte.tol_rel=static_cast<cpp_dec_float_50>(tol);
-        fdi4.iiu.def_inte.tol_abs=static_cast<cpp_dec_float_50>(tol);
-        fdi4.iiu.def_inte.verbose=1;
-        int iretx=fdi4.calc_err(0.5,y2,res2,err2);
+        fdi5.iiu.tol_rel=static_cast<cpp_dec_float_50>(tol);
+        fdi5.iiu.tol_abs=static_cast<cpp_dec_float_50>(tol);
+        //fdi5.iiu.def_inte.verbose=1;
+        int iretx=fdi5.calc_err(0.5,y2,res2,err2);
         res=static_cast<fp_t>(res2);
         err=static_cast<fp_t>(err2);
         if (iretx==0 && abs(err/res)<tol) {

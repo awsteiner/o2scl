@@ -632,8 +632,7 @@ namespace o2scl {
       compiled=false;
     }
 
-    ~funct_multip_string() {
-      std::cout << "Funct_multip_string destructor." << std::endl;
+    virtual ~funct_multip_string() {
     }
     
     /** \brief Set the function to compute
@@ -823,10 +822,15 @@ namespace o2scl {
         return ret;
       }
 
-      O2SCL_ERR("Unexpected type in funct_multip_strings.",
+      O2SCL_ERR("Unexpected type in funct_multip_string.",
                 o2scl::exc_einval);
       return o2scl::exc_einval;
     }
+
+  private:
+
+    funct_multip_string(const funct_multip_string &);
+    funct_multip_string& operator=(const funct_multip_string&);
     
   };
     

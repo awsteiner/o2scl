@@ -754,7 +754,7 @@ namespace o2scl {
         integrators have a hard time with some of the degenerate
         integrals, but this cernlib version works for them.
      */
-    inte_adapt_cern_cdf25 dit25c;
+    //inte_adapt_cern_cdf25 dit25c;
     //@}
 
     /// Verbosity parameter
@@ -773,8 +773,8 @@ namespace o2scl {
       // differently, in that it allows either the tol_abs or tol_rel
       // test to be satisfied, so unless tol_abs is zero then some
       // integrals don't use the tol_rel test.
-      dit25c.tol_rel=1.0e-15;
-      dit25c.tol_abs=0.0;
+      //dit25c.tol_rel=1.0e-15;
+      //dit25c.tol_abs=0.0;
       
       nit25.err_nonconv=false;
       nit35.err_nonconv=false;
@@ -783,7 +783,7 @@ namespace o2scl {
       dit35.err_nonconv=false;
       dit50.err_nonconv=false;
       dit25b.err_nonconv=false;
-      dit25c.err_nonconv=false;
+      //dit25c.err_nonconv=false;
       
       dit25b.set_max_depth(30);
 
@@ -894,12 +894,14 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      /*
       iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      */
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -1026,12 +1028,14 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      /*
       iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      */
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -1157,12 +1161,14 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      /*
       iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      */
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);
@@ -1285,12 +1291,14 @@ namespace o2scl {
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      /*
       iret=dit25c.integ_err(mfd25,0.0,ul1,res1,err1);
       if (iret==0) {
         res=static_cast<fp_t>(res1);
         err=static_cast<fp_t>(err1);
         return iret;
       }
+      */
       iret=dit35.integ_err(mfd35,0.0,ul2,res2,err2);
       if (iret==0) {
         res=static_cast<fp_t>(res2);

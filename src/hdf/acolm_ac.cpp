@@ -854,6 +854,8 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
   ff.set_sig_figs(precision+1);
+
+  std::cout << "Here: " << sv[2] << " " << o2scl::stob(sv[2]) << std::endl;
   
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
@@ -864,6 +866,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     funct_multip_string fms;
     fms.verbose=verbose;
     fms.set_function(i1,"x");
+    funct_multip_string *fmsp=&fms;
     
     funct_multip fm2;
     fm2.verbose=verbose;
@@ -884,7 +887,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>33) {
       
       cpp_dec_float_50 d=0, err;
-      int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                                 d,d,err);
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
@@ -897,7 +900,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>23) {
       
       cpp_dec_float_35 d=0, err;
-      int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                                 d,d,err);
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
@@ -910,7 +913,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>16) {
       
       cpp_dec_float_25 d=0, err;
-      int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                                 d,d,err);
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
@@ -924,7 +927,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>13) {
       
       long double d=0, err;
-      int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                                 d,d,err);
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
@@ -937,7 +940,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     }
     
     double d=0, err;
-    int retx=fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+    int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                               d,d,err);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
@@ -975,6 +978,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return exc_efailed;
   }
 
+  std::cout << "Precision: " << precision << std::endl;
+  
   if (precision>50) {
     cerr << "Requested precision too large for the calc "
          << "command." << endl;

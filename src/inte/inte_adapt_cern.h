@@ -35,43 +35,8 @@
  
 namespace o2scl {
 
-  /** \brief Adaptive integration (CERNLIB)
-    
-      Uses a base integration object (default is \ref
-      inte_gauss56_cern) to perform adaptive integration by
-      automatically subdividing the integration interval. At each
-      step, the interval with the largest absolute uncertainty is
-      divided in half. The routine succeeds if the absolute tolerance
-      is less than \ref tol_abs or if the relative tolerance is less
-      than \ref tol_rel, i.e.
-      \f[
-      \mathrm{err}\leq\mathrm{tol\_abs}~\mathrm{or}~
-      \mathrm{err}\leq\mathrm{tol\_rel}\cdot|I|
-      \f]
-      where \f$ I \f$ is the current estimate for the integral and \f$
-      \mathrm{err} \f$ is the current estimate for the uncertainty. If
-      the number of subdivisions exceeds the template parameter \c
-      nsub, the error handler is called, since the integration may not
-      have been successful. The number of subdivisions used in the
-      last integration can be obtained from get_nsubdivisions().
-
-      The template parameter \c nsub, is the maximum number of
-      subdivisions. It is automatically set to 100 in the original
-      CERNLIB routine, and defaults to 100 here. The default base
-      integration object is of type \ref inte_gauss56_cern. This is the
-      CERNLIB default, but can be modified by calling set_inte().
-
-      This class is based on the CERNLIB routines RADAPT and
-      DADAPT which are documented at
-      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d102/top.html
-      
-      \future 
-      - Allow user to set the initial subdivisions?
-      - It might be interesting to directly compare the performance
-      of this class to \ref o2scl::inte_qag_gsl .
-      - There is a fixme entry in the code which could be resolved.
-      - Output the point where most subdividing was required?
-  */
+#ifdef O2SCL_NEVER_DEFINED
+  
   template<class func_t=funct,
            class def_inte_t=inte_gauss56_cern<funct,double>,
            size_t nsub=100, class fp_t=double>
@@ -332,7 +297,7 @@ namespace o2scl {
   typedef
   inte_adapt_cern<funct_cdf50,inte_gauss56_cern
                   <funct_cdf50,cpp_dec_float_50>,1000,
-                   cpp_dec_float_50> inte_adapt_cern_cdf50;
+                  cpp_dec_float_50> inte_adapt_cern_cdf50;
   
   typedef std::function<double(const double &)> funct_cr;
   typedef std::function<long double(const long double &)> funct_cr_ld;
@@ -369,7 +334,11 @@ namespace o2scl {
   inte_adapt_cern<funct_cr_cdf50,inte_gauss56_cern
                   <funct_cr_cdf50,cpp_dec_float_50>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
+  
+#endif
 
+  /** \brief Integration subdivision object for \ref o2scl::inte_adapt_cern
+   */
   template<class fp_t> class inte_subdiv {
   public:
 
@@ -436,6 +405,43 @@ namespace o2scl {
     
   };
   
+  /** \brief Adaptive integration (CERNLIB)
+    
+      Uses a base integration object (default is \ref
+      inte_gauss56_cern) to perform adaptive integration by
+      automatically subdividing the integration interval. At each
+      step, the interval with the largest absolute uncertainty is
+      divided in half. The routine succeeds if the absolute tolerance
+      is less than \ref tol_abs or if the relative tolerance is less
+      than \ref tol_rel, i.e.
+      \f[
+      \mathrm{err}\leq\mathrm{tol\_abs}~\mathrm{or}~
+      \mathrm{err}\leq\mathrm{tol\_rel}\cdot|I|
+      \f]
+      where \f$ I \f$ is the current estimate for the integral and \f$
+      \mathrm{err} \f$ is the current estimate for the uncertainty. If
+      the number of subdivisions exceeds the template parameter \c
+      nsub, the error handler is called, since the integration may not
+      have been successful. The number of subdivisions used in the
+      last integration can be obtained from get_nsubdivisions().
+
+      The template parameter \c nsub, is the maximum number of
+      subdivisions. It is automatically set to 100 in the original
+      CERNLIB routine, and defaults to 100 here. The default base
+      integration object is of type \ref inte_gauss56_cern. This is the
+      CERNLIB default, but can be modified by calling set_inte().
+
+      This class is based on the CERNLIB routines RADAPT and
+      DADAPT which are documented at
+      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d102/top.html
+      
+      \future 
+      - Allow user to set the initial subdivisions?
+      - It might be interesting to directly compare the performance
+      of this class to \ref o2scl::inte_qag_gsl .
+      - There is a fixme entry in the code which could be resolved.
+      - Output the point where most subdividing was required?
+  */
   class inte_multip_adapt_cern {
 
   public:

@@ -53,24 +53,27 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_OSX
+  
   funct_multip_string fms;
   fms.set_function("log(1+x)","x");
   fms.verbose=2;
   double x=1.0e-4;
   cout << dtos(fms(1.0e-4),0) << endl;
+  // We have to send a pointer to keep from using an implicit
+  // copy cnstructor
+  funct_multip_string *fmsp=&fms;
 
-#ifdef O2SCL_OSX
   {
     double val, err;
     funct_multip fm2;
-    fm2.eval_tol_err([fms](auto &&t) mutable { return fms(t); },
+    fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                      1.0e-4,val,err);
     
     cout << dtos(log1p(1.0e-4),0) << " "
          << dtos(val,0) << " " << err << endl;
   }
-#endif
+  
 #endif
   
   t.report();

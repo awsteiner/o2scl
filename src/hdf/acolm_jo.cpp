@@ -545,7 +545,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
 #ifndef O2SCL_OSX
 
-    std::cerr << "Multipreicsion for ninteg only works for OSX "
+    std::cerr << "Multiprecision for ninteg only works for OSX "
               << "at the moment." << std::endl;
     return 5;
 
@@ -554,6 +554,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     funct_multip_string fms;
     //fms.verbose=verbose;
     fms.set_function(func,var);
+    funct_multip_string *fmsp=&fms;
     
     funct_multip fm2;
     
@@ -574,8 +575,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       convert_units<cpp_dec_float_50> cu;
       function_to_fp_nothrow(in[2],lower_lim,cu);
       function_to_fp_nothrow(in[3],upper_lim,cu);
-      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
-      { return fms(t); },lower_lim,upper_lim,d,err);
+      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -591,8 +592,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       convert_units<cpp_dec_float_35> cu;
       function_to_fp_nothrow(in[2],lower_lim,cu);
       function_to_fp_nothrow(in[3],upper_lim,cu);
-      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
-      { return fms(t); }, lower_lim,upper_lim,d,err);
+      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -608,8 +609,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       convert_units<cpp_dec_float_25> cu;
       function_to_fp_nothrow(in[2],lower_lim,cu);
       function_to_fp_nothrow(in[3],upper_lim,cu);
-      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
-      { return fms(t); }, lower_lim,upper_lim,d,err);
+      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -626,8 +627,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       convert_units<long double> cu;
       function_to_fp_nothrow(in[2],lower_lim,cu);
       function_to_fp_nothrow(in[3],upper_lim,cu);
-      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
-      { return fms(t); },lower_lim,upper_lim,d,err);
+      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -644,8 +645,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       convert_units<double> cu;
       function_to_fp_nothrow(in[2],lower_lim,cu);
       function_to_fp_nothrow(in[3],upper_lim,cu);
-      int retx=imkb.integ_err_multip([fms](auto &&t) mutable
-      { return fms(t); },lower_lim,upper_lim,d,err);
+      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
