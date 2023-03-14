@@ -64,13 +64,18 @@ namespace o2scl {
       st_vars.resize(nv);
       calc.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc[i].compile(exprs[i].c_str(),&vars);
+        calc[i]=new calc_utf8<>;
+	calc[i]->compile(exprs[i].c_str(),&vars);
 	st_vars[i]=var_arr[i];
 	st_forms[i]=exprs[i];
       }
     }
       
     virtual ~mm_funct_strings() {
+      for (size_t i=0;i<calc.size();i++) {
+        delete calc[i];
+      }
+      calc.clear();
     };
       
     /** \brief Set the values of the auxilliary parameters that were
@@ -91,7 +96,7 @@ namespace o2scl {
 	vars[st_vars[i]]=x[i];
       }
       for(size_t i=0;i<nv;i++) {
-	y[i]=calc[i].eval(&vars);
+	y[i]=calc[i]->eval(&vars);
       }
       return 0;
     }
@@ -106,7 +111,8 @@ namespace o2scl {
       st_vars.resize(nv);
       calc.resize(nv);
       for (int i=0;i<nv;i++) {
-	calc[i].compile(exprs[i],&vars);
+        calc[i]=new calc_utf8<>;
+	calc[i]->compile(exprs[i],&vars);
 	st_vars[i]=var_arr[i];
 	st_forms[i]=exprs[i];
       }
@@ -119,7 +125,7 @@ namespace o2scl {
   protected:
       
     /// The function parsers
-    std::vector<calc_utf8<> > calc;
+    std::vector<calc_utf8<> *> calc;
       
     /// External variables to include in the function parsing
     std::map<std::string,double> vars;
