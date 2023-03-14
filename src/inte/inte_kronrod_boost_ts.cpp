@@ -120,6 +120,7 @@ int main(void) {
 
     funct_multip_string fms;
     fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
+    funct_multip_string *fmsp=&fms;
 
     imkb.verbose=2;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
@@ -150,7 +151,7 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 4");
     
-    imkb.integ_err_multip([fms](auto &&t) mutable { return fms(t); },
+    imkb.integ_err_multip([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip string");
