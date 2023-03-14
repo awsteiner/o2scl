@@ -441,6 +441,25 @@ class prob_dens_mdim_gaussian<>
 - parent prob_dens_mdim<std::vector<double>>
 - function make_biv
   - prob_dens_mdim_biv_gaussian<>
+#class std::vector<cprob_dens_mdim_gaussian<>>
+#- py_name vector_prob_dens_mdim_gaussian
+#- function operator[]
+#  - prob_dens_mdim_gaussian &
+#  - size_t n
+#- function resize
+#  - void
+#  - size_t n
+#- function size
+#  - size_t                        
+#- extra_py |
+#| def __len__(self):
+#|     """
+#|     Return the length of the vector
+#|
+#|     Returns: an int
+#|     """
+#|     return self.length()
+#| 
 class prob_dens_mdim_amr<>::hypercube
 - py_name hypercube
 - size_t n_dim

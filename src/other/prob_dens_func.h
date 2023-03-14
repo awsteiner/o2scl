@@ -2369,24 +2369,6 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_NEVER_DEFINED  
-  /** \brief A multidimensional normal distribution from
-      a Gaussian process
-      
-      \future The linear algebra only works with ublas and is
-      not optimized.
-  */
-  template<class vec_t=boost::numeric::ublas::vector<double>,
-           class mat_t=boost::numeric::ublas::matrix<double>,
-           class mat_col_t=boost::numeric::ublas::matrix_column<mat_t> >
-  class prob_dens_mdim_gproc :
-    public o2scl::prob_dens_mdim_gaussian<vec_t> {
-    
-  public:
-  
-  };
-#endif
-
   /** \brief A probability density distribution from a Gaussian 
       mixture model
    */
