@@ -35,8 +35,6 @@
  
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   template<class func_t=funct,
            class def_inte_t=inte_gauss56_cern<funct,double>,
            size_t nsub=100, class fp_t=double>
@@ -335,8 +333,6 @@ namespace o2scl {
                   <funct_cr_cdf50,cpp_dec_float_50>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
   
-#endif
-
   /** \brief Integration subdivision object for \ref o2scl::inte_adapt_cern
    */
   template<class fp_t> class inte_subdiv {
