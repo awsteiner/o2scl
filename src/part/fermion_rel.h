@@ -307,7 +307,7 @@ namespace o2scl {
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
 
       \note This version uses the multiprecision integrator
-      \ref inte_multip_tanh_sinh_boost which automatically
+      \ref inte_multip_double_exp_boost which automatically
       increases precision in order to achieve accuracy
    */
   template<class fp_t> class fermion_rel_integ_multip2 :
@@ -321,7 +321,7 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    inte_multip_tanh_sinh_boost<> it;
+    inte_multip_double_exp_boost it;
 
     /** \brief Desc
      */
@@ -577,7 +577,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->density_fun(u,y,eta); },
         zero,res,err,tol_rel);
       
@@ -594,7 +594,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for energy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->energy_fun(u,y,eta); },
         zero,res,err,tol_rel);
       
@@ -611,7 +611,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for entropy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->entropy_fun(u,y,eta); },
         zero,res,err,tol_rel);
       
@@ -628,7 +628,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for pressure "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err([this,y,eta](auto &&u) mutable {
+      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->pressure_fun(u,y,eta); },
         zero,res,err,tol_rel);
       
@@ -646,7 +646,7 @@ namespace o2scl {
         std::cout << "Calling degenerate integrator for density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+      it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_density_fun(k,T,y,eta,mot,false); },
         zero,ul,res,err,tol_rel);
       
@@ -664,7 +664,7 @@ namespace o2scl {
         std::cout << "Calling degenerate integrator for energy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+      it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_energy_fun(k,T,y,eta,mot); },
         zero,ul,res,err,tol_rel);
       
@@ -680,7 +680,7 @@ namespace o2scl {
         std::cout << "Calling degenerate integrator for entropy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+      it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_entropy_fun(k,T,y,eta,mot); },
         ll,ul,res,err,tol_rel);
       
@@ -698,7 +698,7 @@ namespace o2scl {
         std::cout << "Calling degenerate integrator for pressure "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_err([this,T,y,eta,mot](auto &&k) mutable {
+      it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
         return this->deg_pressure_fun(k,T,y,eta,mot,false); },
         zero,ul,res,err,tol_rel);
       

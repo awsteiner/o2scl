@@ -201,6 +201,33 @@ int main(void) {
   
   // Todo: better testing
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  if (true) {
+    fermi_dirac_integ_bf2 fdib2;
+    cpp_dec_float_50 y=2, res, err;
+    int method;
+    
+    fdib2.set_tol(1.0e-10);
+    fdib2.calc_1o2_ret_full(y,res,err,method);
+    cout << dtos(res,10) << " " << err << " " << method << endl;
+    fdib2.set_tol(1.0e-15);
+    fdib2.calc_1o2_ret_full(y,res,err,method);
+    cout << dtos(res,15) << " " << err << " " << method << endl;
+    fdib2.set_tol(1.0e-20);
+    fdib2.calc_1o2_ret_full(y,res,err,method);
+    cout << dtos(res,20) << " " << err << " " << method << endl;
+    fdib2.set_tol(1.0e-25);
+    fdib2.calc_1o2_ret_full(y,res,err,method);
+    cout << dtos(res,25) << " " << err << " " << method << endl;
+    fdib2.set_tol(1.0e-30);
+    fdib2.calc_1o2_ret_full(y,res,err,method);
+    cout << dtos(res,30) << " " << err << " " << method << endl;
+    exit(-1);
+  }
+
+#endif  
+  
   // More accurate versions for testing
   fermi_dirac_integ_direct<long double,funct_cdf35,20,
 			   cpp_dec_float_35> fd_ld_35;

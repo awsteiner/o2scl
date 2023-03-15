@@ -426,6 +426,31 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
+    template <typename func_t, class fp_t>
+    int integ_iu_err_multip(func_t &&func, fp_t a, 
+                            fp_t &res, fp_t &err, double integ_tol=-1.0) {
+      return integ_err_multip(func,a,
+                              std::numeric_limits<double>::infinity(),
+                              res,err,integ_tol);
+    }
+    
+    template <typename func_t, class fp_t>
+    int integ_il_err_multip(func_t &&func, fp_t b, 
+                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+      return integ_err_multip(func,
+                              -std::numeric_limits<double>::infinity(),
+                              b,res,err,integ_tol);
+    }
+    
+    template <typename func_t, class fp_t>
+    int integ_i_err_multip(func_t &&func, 
+                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+      return integ_err_multip(func,
+                              -std::numeric_limits<double>::infinity(),
+                              std::numeric_limits<double>::infinity(),
+                              res,err,integ_tol);
+    }
+    
   };
   
 }

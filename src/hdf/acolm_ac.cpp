@@ -853,10 +853,11 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
-  ff.set_sig_figs(precision+1);
+  // The format_float class can't handle higher precisions
+  if (precision<=14) {
+    ff.set_sig_figs(precision+1);
+  }
 
-  std::cout << "Here: " << sv[2] << " " << o2scl::stob(sv[2]) << std::endl;
-  
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
 #ifdef O2SCL_OSX
@@ -1044,7 +1045,11 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
   if (verbose>0) cout << "Result: ";
-  cout << d << " (" << ff.convert(d) << ")" << endl;
+  cout << d;
+  if (precision<=14) {
+    cout << " (" << ff.convert(d) << ")";
+  }
+  cout << endl;
   return 0;
 }
 

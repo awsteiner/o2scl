@@ -180,7 +180,7 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,tin,tout,
-                      ((std::string)"verbose=1,activation=relu,")+
+                      ((std::string)"verbose=1,")+
                       "test_size=0.15,batch_size=10,transform=none",
                       "interpm_tf_dnn",1);
     
@@ -212,8 +212,7 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
-                      tin,tout,"verbose=1,activation=relu",
-                      "interpm_tf_dnn",1);
+                      tin,tout,"verbose=1","interpm_tf_dnn",1);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;

@@ -650,9 +650,9 @@ namespace o2scl {
     //@}
 
     template <typename func_t, class fp_t>
-    int integ_iu_err_int(func_t &&func, fp_t a, fp_t b, 
-                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
-                         double target_tol, double integ_tol, double func_tol) {
+    int integ_iu_err_int(func_t &&func, fp_t a, fp_t b, fp_t &res,
+                         fp_t &err, fp_t &L1norm_loc, double target_tol, 
+                         double integ_tol, double func_tol) {
       
       inte_subdiv<fp_t> is(nsub);
       
@@ -1092,6 +1092,173 @@ namespace o2scl {
         cpp_dec_float_50 res_cdf50, err_cdf50;
         
         ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
+                          err_cdf50,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
+          res=static_cast<fp_t>(res_cdf50);
+          err=static_cast<fp_t>(err_cdf50);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (verbose>0) {
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "failed after cpp_dec_float_100:\n  "
+                  << integ_tol << std::endl;
+      }
+      
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in inte_kronrod_boost::integ_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+
+    template <typename func_t, class fp_t>
+    int integ_iu_err_multip(func_t &&func, fp_t a, 
+                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+      
+      if (integ_tol<=0.0) {
+        if (tol_rel_multip<=0.0) {
+          integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+        } else {
+          integ_tol=tol_rel_multip;
+        }
+      } 
+      
+      if (verbose>0) {
+        std::cout << "int_kronrod_boost::integ_err(): set "
+                  << "tolerance to: " << integ_tol << std::endl;
+      }
+      
+      // Demand that the function evaluations are higher precision
+      double func_tol=pow(integ_tol,pow_tol_func);
+
+      // We set the target tolerance an order of magnitude smaller
+      // than the desired tolerance to make sure we achieve the
+      // requested tolerance
+      double target_tol=integ_tol/10.0;
+      
+      int ret;
+      
+      // We require that there are 3 more digits in the floating point
+      // type than the required integration tolerance
+      if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits<double>::digits10+3)
+                    << "\n  for double integration." << std::endl;
+        }
+        double a_d=static_cast<double>(a);
+        double res_d, err_d;
+        
+        ret=integ_iu_err_int(func,a_d,res_d,err_d,
+                          target_tol,integ_tol,func_tol);
+        
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
+          res=static_cast<fp_t>(res_d);
+          err=static_cast<fp_t>(err_d);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+      
+      if (integ_tol>pow(10.0,
+                        -std::numeric_limits<long double>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,
+                           -std::numeric_limits<long double>::digits10+3)
+                    << "\n  for long double integration." << std::endl;
+        }
+        long double a_ld=static_cast<long double>(a);
+        long double res_ld, err_ld;
+        
+        ret=integ_iu_err_int(func,a_ld,res_ld,err_ld,
+                          target_tol,integ_tol,func_tol);
+        
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
+          res=static_cast<fp_t>(res_ld);
+          err=static_cast<fp_t>(err_ld);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                        <cpp_dec_float_25>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_25>::digits10+3)
+                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+        }
+        cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
+        cpp_dec_float_25 res_cdf25, err_cdf25;
+
+        ret=integ_iu_err_int(func,a_cdf25,res_cdf25,
+                          err_cdf25,target_tol,
+                          integ_tol,func_tol);
+
+        if (verbose>1) {
+          std::cout << "ret,res,err,tol: " << ret << " "
+                    << res_cdf25 << " " << err_cdf25 << " "
+                    << integ_tol << std::endl;
+        }
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
+          res=static_cast<fp_t>(res_cdf25);
+          err=static_cast<fp_t>(err_cdf25);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                        <cpp_dec_float_35>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_35>::digits10+3)
+                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+        }
+        cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
+        cpp_dec_float_35 res_cdf35, err_cdf35;
+        
+        ret=integ_iu_err_int(func,a_cdf35,res_cdf35,
+                          err_cdf35,target_tol,
+                          integ_tol,func_tol);
+        
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
+          res=static_cast<fp_t>(res_cdf35);
+          err=static_cast<fp_t>(err_cdf35);
+          return 0;
+        } else {
+          target_tol/=10;
+        }
+      }
+
+      if (integ_tol>pow(10.0,-std::numeric_limits
+                        <cpp_dec_float_50>::digits10+3)) {
+        if (verbose>0) {
+          std::cout << "int_kronrod_boost::integ_err(): "
+                    << integ_tol << " > "
+                    << pow(10.0,-std::numeric_limits
+                           <cpp_dec_float_50>::digits10+3)
+                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+        }
+        cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
+        cpp_dec_float_50 res_cdf50, err_cdf50;
+        
+        ret=integ_iu_err_int(func,a_cdf50,res_cdf50,
                           err_cdf50,target_tol,
                           integ_tol,func_tol);
         
