@@ -3529,7 +3529,7 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
       pgmm_obj(x);
       std::cout << "Here2." << pgmm_obj.pdmg[i].dim() << std::endl;
       table_obj.line_of_data(x.size(),x);
-      std::cout << "Here3." << << std::endl;
+      std::cout << "Here3." << std::endl;
     }
 
     command_del(type);
