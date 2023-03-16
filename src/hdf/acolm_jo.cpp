@@ -526,9 +526,11 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     pr.push_back("Integration variable");
     pr.push_back("Lower limit");
     pr.push_back("Upper limit");
-    pr.push_back("Multiprecision (0 or 1)");
+    pr.push_back("Multiprecision (true or false)");
     int ret=get_input(sv,pr,in,"ninteg",itive_com);
     if (ret!=0) return ret;
+
+    multiprecision=o2scl::stob(in[4]);
     
   }
 
@@ -565,16 +567,24 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     if (precision>49) {
       
-      cerr << "Requested precision too large for the calcm "
+      cerr << "Requested precision too large for the ninteg "
            << "command (maximum is 49)." << endl;
       return 2;
       
     } else if (precision>34) {
-      
+
       cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
       convert_units<cpp_dec_float_50> cu;
-      function_to_fp_nothrow(in[2],lower_lim,cu);
-      function_to_fp_nothrow(in[3],upper_lim,cu);
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_50>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_50>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
       int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
@@ -590,8 +600,16 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
       cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
       convert_units<cpp_dec_float_35> cu;
-      function_to_fp_nothrow(in[2],lower_lim,cu);
-      function_to_fp_nothrow(in[3],upper_lim,cu);
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_35>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_35>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
       int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
       { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
         
@@ -607,8 +625,16 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
       cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
       convert_units<cpp_dec_float_25> cu;
-      function_to_fp_nothrow(in[2],lower_lim,cu);
-      function_to_fp_nothrow(in[3],upper_lim,cu);
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_25>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_25>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
       int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
       { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
         
@@ -625,8 +651,16 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
       long double d=0, err, lower_lim, upper_lim;
       convert_units<long double> cu;
-      function_to_fp_nothrow(in[2],lower_lim,cu);
-      function_to_fp_nothrow(in[3],upper_lim,cu);
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<long double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<long double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
       int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
@@ -643,8 +677,16 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
       double d=0, err, lower_lim, upper_lim;
       convert_units<double> cu;
-      function_to_fp_nothrow(in[2],lower_lim,cu);
-      function_to_fp_nothrow(in[3],upper_lim,cu);
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
       int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
         
@@ -671,14 +713,20 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     double d=0, err, lower_lim, upper_lim;
     convert_units<double> cu;
-    function_to_fp_nothrow(in[2],lower_lim,cu);
-    function_to_fp_nothrow(in[3],upper_lim,cu);
+    if (in[2]=="-infty") {
+      lower_lim=-std::numeric_limits<double>::infinity();
+        } else {
+      function_to_fp_nothrow(in[2],lower_lim,cu);
+    }
+    if (in[3]=="infty") {
+      upper_lim=std::numeric_limits<double>::infinity();
+        } else {
+      function_to_fp_nothrow(in[3],upper_lim,cu);
+    }
     funct_string fs(func,var);
     funct f=std::bind(std::mem_fn<double(double) const>
                       (&funct_string::operator()),&fs,
                       std::placeholders::_1);
-    //std::cout << "lower, upper: " << lower_lim << " "
-    //<< upper_lim << std::endl;
     int retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
     if (retx!=0) {
       cerr << "Integrating " << func << " failed." << endl;

@@ -1893,8 +1893,8 @@ namespace o2scl_acol {
         used to attempt to ensure the result is accurate to within the
         requested precision.
 
-        At the moment, infinite upper or lower limits are not
-        supported.
+        Infinite upper or lower limits are supported, use "-infty"
+        or "infty", respectively.
 
         Note that the variable \c precision is used for the argument to
         the <tt>cout.precision()</tt> function, so precision of 10 is

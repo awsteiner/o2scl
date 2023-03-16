@@ -570,6 +570,8 @@ namespace o2scl {
 
          - Future: Could be interesting to write an iterator for this class.
 
+         - Future: Try character and string tensors?
+
       \endverbatim
 
   */

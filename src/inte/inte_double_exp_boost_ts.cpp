@@ -202,6 +202,24 @@ int main(void) {
     imtsb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                            a,b,val,err2);
     t.test_rel(val,exact,1.0e-15,"multip");
+
+    // Make sure infinite integrals work
+    imtsb.integ_iu_err_multip([](auto &&t) mutable { return test_func(t); },
+                              a,val,err2);
+    cout << val << endl;
+    
+    imtsb.verbose=2;
+    
+    //cout << "Here: " << endl;
+    //imtsb.integ_il_err_multip([](auto &&t) mutable { return test_func(t); },
+    //b,val,err2);
+    //cout << val << endl;
+    
+    //cout << "Here: " << endl;
+    //imtsb.integ_i_err_multip([](auto &&t) mutable { return test_func(t); },
+    //val,err2);
+    //cout << val << endl;
+    
   }
 #endif  
   
