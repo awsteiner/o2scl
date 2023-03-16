@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_const;
 
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
@@ -40,6 +41,10 @@ template<class fp_t> fp_t test_func(fp_t x) {
   fp_t one=1;
   fp_t hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
+}
+
+template<class fp_t> fp_t test_func_i(fp_t x) {
+  return exp(-x*x);
 }
 
 template<class fp_t> fp_t exact_func() {
@@ -204,21 +209,23 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip");
 
     // Make sure infinite integrals work
-    imtsb.integ_iu_err_multip([](auto &&t) mutable { return test_func(t); },
+    imtsb.integ_iu_err_multip([](auto &&t) mutable { return test_func_i(t); },
                               a,val,err2);
     cout << val << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-10,"iu multip");
+    cout << endl;
     
-    imtsb.verbose=2;
+    imtsb.integ_il_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    a,val,err2);
+    cout << val << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-10,"il multip");
+    cout << endl;
     
-    //cout << "Here: " << endl;
-    //imtsb.integ_il_err_multip([](auto &&t) mutable { return test_func(t); },
-    //b,val,err2);
-    //cout << val << endl;
-    
-    //cout << "Here: " << endl;
-    //imtsb.integ_i_err_multip([](auto &&t) mutable { return test_func(t); },
-    //val,err2);
-    //cout << val << endl;
+    imtsb.integ_i_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    val,err2);
+    cout << val << endl;
+    t.test_rel(val,root_pi,1.0e-10,"i multip");
+    cout << endl;
     
   }
 #endif  

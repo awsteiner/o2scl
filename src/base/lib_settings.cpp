@@ -464,8 +464,8 @@ std::string lib_settings_class::system_type() {
 }
 
 void lib_settings_class::config_h_report() {
-  cout << "Previous commit hash: " << O2SCL_PREV_COMMIT_HASH << endl;
-  cout << "Previous commit date: " << O2SCL_PREV_COMMIT_DATE << endl;
+  //cout << "Previous commit hash: " << O2SCL_PREV_COMMIT_HASH << endl;
+  //cout << "Previous commit date: " << O2SCL_PREV_COMMIT_DATE << endl;
   cout << "Commit branch: " << O2SCL_BRANCH << endl;
 #ifdef HAVE_ACOSH
   cout << "HAVE_ACOSH: " << HAVE_ACOSH << endl;

@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_const;
 
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
@@ -41,6 +42,10 @@ template<class fp_t> fp_t test_func(fp_t x) {
   fp_t one=1;
   fp_t hundred=100;
   return -sin(one/(x+one/hundred))/(x+one/hundred)/(x+one/hundred);
+}
+
+template<class fp_t> fp_t test_func_i(fp_t x) {
+  return exp(-x*x);
 }
 
 template<class fp_t, class fp2_t> fp_t test_func_param
@@ -66,36 +71,40 @@ int main(void) {
   inte_kronrod_boost<61> imkb;
   
   {
+    // Integrate test_func over [0,1] and compare to the exact result
+    // at double precision
     
     double ans, exact, err;
     
     funct tf=test_func<double>;
     
-    // Compare with the exact result
     imkb.integ_err(tf,0.0,1.0,ans,err);
     exact=cos(100.0)-cos(1/1.01);
     std::cout << ans << " " << err << std::endl;
-    t.test_rel(ans,exact,1.0e-8,"imkb test");
+    t.test_rel(ans,exact,1.0e-8,"imkb double");
+    cout << endl;
   }
 
   {
+    // Integrate test_func over [0,1] and compare to the exact result
+    // at long double precision
     
     long double ans, exact, err;
     
     funct_ld tf=test_func<long double>;
     
-    // Compare with the exact result
     imkb.tol_rel=1.0e-13;
     imkb.set_max_depth(15);
     imkb.integ_err(tf,0.0L,1.0L,ans,err);
     exact=cos(100.0L)-cos(1.0L/1.01L);
     std::cout << ans << " " << err << std::endl;
-    t.test_rel<long double>(ans,exact,1.0e-15,"imkb test");
+    t.test_rel<long double>(ans,exact,1.0e-15,"imkb long double");
+    cout << endl;
   }
 
-  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-  
   {
+    // Integrate test_func over [0,1] and compare to the exact result
+    // at 50-digit precision
     
     cpp_dec_float_50 ans, exact, err;
     
@@ -110,7 +119,8 @@ int main(void) {
     imkb.integ_err(tf,zero,one,ans,err);
     exact=cos(hundred)-cos(hundred/(hundred+one));
     std::cout << ans << " " << err << std::endl;
-    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"imkb test");
+    t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-45,"imkb 50-digit");
+    cout << endl;
   }
 
 #ifdef O2SCL_OSX
@@ -118,43 +128,95 @@ int main(void) {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
 
-    funct_multip_string fms;
-    fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
-    funct_multip_string *fmsp=&fms;
-
+    // Multiprecision integration
+    
     imkb.verbose=2;
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-8,"multip 1");
+    cout << endl;
     
     imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
+    cout << endl;
 
-    // A parameter with a fixed type
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> one=1;
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> hundred=100;
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> param=one/hundred;
+    // Multiprecision integration with infinite limits
+    
+    imkb.integ_iu_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                             a,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-15,"multip 3");
+    cout << endl;
+
+    imkb.integ_il_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                             a,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-15,"multip 4");
+    cout << endl;
+
+    imkb.integ_i_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                            val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi,1.0e-15,"multip 5");
+    cout << endl;
+
+    // AWS 3/16/23: These tests may work (the integrator fails without
+    // calling the error handler as requested), but I'm commenting
+    // them out because they take a very long time to run.
+    if (false) {
+      // Try a function which is difficult to integrate
+      imkb.err_nonconv=false;
+      int ret=imkb.integ_il_err_multip([](auto &&t) mutable
+      { return test_func(t); },a,val,err2);
+      cout << "ret: " << ret << endl;
+      t.test_gen(ret!=0,"fail il");
+      cout << endl;
+
+      ret=imkb.integ_i_err_multip([](auto &&t) mutable
+      { return test_func(t); },a,val,err2);
+      cout << "ret: " << ret << endl;
+      t.test_gen(ret!=0,"fail i");
+      cout << endl;
+      imkb.err_nonconv=true;
+    }
+    
+    // Multiprecision integration with a template function which has
+    // a parameter with a fixed type
+
+    cpp_dec_float_25 one=1;
+    cpp_dec_float_25 hundred=100;
+    cpp_dec_float_25 param=one/hundred;
+    
     imkb.integ_err_multip([param](auto &&t) mutable
     { return test_func_param(t,param); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip 3");
+    t.test_rel(val,exact,1.0e-15,"multip param 1");
+    cout << endl;
 
-    // A parameter specified by a template function
+    // Multiprecision integration with a template function which has
+    // a template parameter
+
     imkb.integ_err_multip([param](auto &&t) mutable
     { return test_func_param(t,param_f(t)); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip 4");
+    t.test_rel(val,exact,1.0e-15,"multip param 2");
+    cout << endl;
     
+    // Multiprecision integration with a funct_multip_string object
+
+    funct_multip_string fms;
+    fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
+    funct_multip_string *fmsp=&fms;
+
+
     imkb.integ_err_multip([fmsp](auto &&t) mutable { return (*fmsp)(t); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip string");
+    cout << endl;
   }
 #endif  
   

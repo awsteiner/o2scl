@@ -3515,17 +3515,21 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
     
     int N=o2scl::stoi(sv[1]);
 
-    std::cout << "Constructing " << N << " samples of the multivariate "
-              << "distribution." << std::endl;
+    std::cout << "Constructing " << N << " samples of the Gaussian "
+              << "mixture model." << std::endl;
 
     for(size_t j=0;j<pgmm_obj.dim();j++) {
       table_obj.new_column(((string)"c_")+o2scl::szttos(j));
     }
 
+    std::cout << "N: " << N << std::endl;
     for(int i=0;i<N;i++) {
-      ubvector x(pgmm_obj.dim());
+      ubvector x(pgmm_obj.pdmg[i].dim());
+      std::cout << "Here." << pgmm_obj.pdmg[i].dim() << std::endl;
       pgmm_obj(x);
+      std::cout << "Here2." << pgmm_obj.pdmg[i].dim() << std::endl;
       table_obj.line_of_data(x.size(),x);
+      std::cout << "Here3." << << std::endl;
     }
 
     command_del(type);

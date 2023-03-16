@@ -34,10 +34,15 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_const;
 
 template<class fp_t>
 fp_t testfun(fp_t tx, fp_t &a) {
   return -cos(1/(tx+a))/(a+tx)/(a+tx);
+}
+
+template<class fp_t> fp_t test_func_i(fp_t x) {
+  return exp(-x*x);
 }
 
 template<class fp_t>
@@ -347,7 +352,36 @@ int main(void) {
     std::cout << ans << " " << err << std::endl;
     t.test_rel_boost<cpp_dec_float_50>(ans,exact,1.0e-30,"imac test");
   }
-  
+
+  {
+    // Multiprecision integration with infinite limits
+    
+    /*
+    inte_multip_adapt_cern imac;
+    
+    double val, err2, a=0, b=1;
+    
+    imac.integ_iu_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                             a,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-15,"multip 3");
+    cout << endl;
+
+    imac.integ_il_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                             a,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi/2.0,1.0e-15,"multip 4");
+    cout << endl;
+
+    imac.integ_i_err_multip([](auto &&t) mutable { return test_func_i(t); },
+                            val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,root_pi,1.0e-15,"multip 5");
+    cout << endl;
+    */
+
+    
+  }
   t.report();
   return 0;
 }

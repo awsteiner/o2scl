@@ -35,6 +35,8 @@
  
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   template<class func_t=funct,
            class def_inte_t=inte_gauss56_cern<funct,double>,
            size_t nsub=100, class fp_t=double>
@@ -332,8 +334,11 @@ namespace o2scl {
   inte_adapt_cern<funct_cr_cdf50,inte_gauss56_cern
                   <funct_cr_cdf50,cpp_dec_float_50>,1000,
                    cpp_dec_float_50> inte_adapt_cern_cr_cdf50;
+
+#endif
   
-  /** \brief Integration subdivision object for \ref o2scl::inte_adapt_cern
+  /** \brief Integration subdivision object for \ref
+      o2scl::inte_multip_adapt_cern
    */
   template<class fp_t> class inte_subdiv {
   public:
@@ -649,9 +654,19 @@ namespace o2scl {
     }
     //@}
 
+#ifdef O2SCL_NEVER_DEFINED
+    
+    template <typename func_t, class fp_t, class fp2_t>
+    fp_t iu_func(func_t &&func, fp_t x, fp2_t a) {
+      fp_t a2=static_cast<fp_t> a;
+      fp_t xp=a2+(1-x)/x;
+      fp_t y=func(xp);
+      return y/x/x;
+    }
+    
     template <typename func_t, class fp_t>
-    int integ_iu_err_int(func_t &&func, fp_t a, fp_t b, fp_t &res,
-                         fp_t &err, fp_t &L1norm_loc, double target_tol, 
+    int integ_iu_err_int(func_t &&func, fp_t a, fp_t &res,
+                         fp_t &err, double target_tol, 
                          double integ_tol, double func_tol) {
       
       inte_subdiv<fp_t> is(nsub);
@@ -660,11 +675,9 @@ namespace o2scl {
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
       
-      std::function<fp_t(fp_t)> ft=[fm2,func,a](fp_t t) mutable -> fp_t
+      std::function<fp_t(fp_t)> ft=[fm2,func,a](auto &&t) mutable 
       {
-        fp_t x=a+(1-t)/t;
-        fp_t y=fm2(func,x);
-        return y/t/t;
+        return fm2(iu_func,iu_func(fm2,t,a);
       };
       
       integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
@@ -684,7 +697,7 @@ namespace o2scl {
     
     template <typename func_t, class fp_t>
     int integ_il_err_int(func_t &&func, fp_t b, 
-                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                         fp_t &res, fp_t &err, 
                          double target_tol, double integ_tol, double func_tol) {
       
       inte_subdiv<fp_t> is(nsub);
@@ -714,12 +727,14 @@ namespace o2scl {
       }
       return 0;
     }
-    
+
+#endif
+      
     /** \brief Desc
      */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                      fp_t &res, fp_t &err, 
                       double target_tol, double integ_tol, double func_tol) {
 
       inte_subdiv<fp_t> is(nsub);
@@ -769,7 +784,7 @@ namespace o2scl {
         if (this->verbose>0) {
           std::cout << "Function inte_kronrod_boost::integ_err() failed."
                     << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
+          std::cout << "Values err,tol_rel,max: "
                     << err << " " << this->tol_rel << " "
                     << std::endl;
         }
@@ -803,7 +818,7 @@ namespace o2scl {
         if (this->verbose>0) {
           std::cout << "Function inte_kronrod_boost::integ_err() failed."
                     << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
+          std::cout << "Values err,tol_rel,max: "
                     << err << " " << this->tol_rel << " "
                     << std::endl;
         }
@@ -837,7 +852,7 @@ namespace o2scl {
         if (this->verbose>0) {
           std::cout << "Function inte_kronrod_boost::integ_err() failed."
                     << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
+          std::cout << "Values err,tol_rel,max: "
                     << err << " " << this->tol_rel << " "
                     << std::endl;
         }
@@ -872,7 +887,7 @@ namespace o2scl {
         if (this->verbose>0) {
           std::cout << "Function inte_kronrod_boost::integ_err() failed."
                     << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
+          std::cout << "Values err,tol_rel,max: "
                     << err << " " << this->tol_rel << " "
                     << std::endl;
         }
@@ -1118,7 +1133,7 @@ namespace o2scl {
 
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
-                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+                            fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
       if (integ_tol<=0.0) {
         if (tol_rel_multip<=0.0) {
@@ -1156,7 +1171,7 @@ namespace o2scl {
         double res_d, err_d;
         
         ret=integ_iu_err_int(func,a_d,res_d,err_d,
-                          target_tol,integ_tol,func_tol);
+                             target_tol,integ_tol,func_tol);
         
         if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);

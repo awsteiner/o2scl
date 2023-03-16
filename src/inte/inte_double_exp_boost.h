@@ -454,10 +454,6 @@ namespace o2scl {
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_i_err_int(): "
                   << std::endl;
-        std::cout << "A: " << err << std::endl;
-        std::cout << "B: " << L1norm << std::endl;
-        std::cout << "C: " << this->levels << std::endl;
-        std::cout << "D: " << target_tol << std::endl;
       }
       boost::math::quadrature::sinh_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(fx,target_tol,&err,&L1norm,&this->levels);
@@ -633,8 +629,12 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Calculate the first derivative of \c func w.r.t. x and 
-	uncertainty
+    /** \brief Integrate function \c func from \c a to \c b using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
@@ -827,8 +827,12 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-        uncertainty
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
@@ -1015,8 +1019,12 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-        uncertainty
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
@@ -1203,8 +1211,12 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-        uncertainty
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+        \infty \f$ using multipreicsion, placing the result in \c res
+        and the error in \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 

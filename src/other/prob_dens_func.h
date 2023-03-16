@@ -2268,7 +2268,16 @@ namespace o2scl {
       pdg.set_seed(s);
       return;
     }
-  
+
+    /** \brief Clear the distribution
+     */
+    void clear() {
+      covar_inv.clear();
+      chol.clear();
+      ndim=0;
+      return;
+    }
+    
     /** \brief Set the covariance matrix for the distribution
      */
     void set(size_t p_ndim, mat_t &covar) {
@@ -2420,6 +2429,14 @@ namespace o2scl {
       return *this;
     }
 
+    /** \brief Clear the distribution
+     */
+    void clear() {
+      weights.clear();
+      pdmg.clear();
+      return;
+    }
+    
     /** \brief Read the Gaussian mixture from an input file
      */
     virtual int read_generic(std::istream &fin) {
@@ -2461,6 +2478,10 @@ namespace o2scl {
     /** \brief Sample the distribution
      */
     virtual void operator()(gauss_vec_t &x) const {
+      if (weights.size()==0) {
+        O2SCL_ERR2("No Gaussians specified in ",
+                  "prob_dens_mdim_gmm::operator().",o2scl::exc_einval);
+      }
       internal_vec_t partial_sums(weights.size());
       for(size_t i=0;i<weights.size();i++) {
         if (i==0) {
@@ -2485,7 +2506,8 @@ namespace o2scl {
 
     /// Return the dimensionality
     virtual size_t dim() const {
-      return weights.size();
+      if (weights.size()==0) return 0;
+      return pdmg[0].dim();
     }
 
     /** \brief Compute the normalized probability density
@@ -2501,6 +2523,10 @@ namespace o2scl {
     /** \brief The log of the normalized density
      */
     virtual double log_pdf(const gauss_vec_t &x) const {
+      if (weights.size()==0) {
+        O2SCL_ERR2("No Gaussians specified in ",
+                  "prob_dens_mdim_gmm::operator().",o2scl::exc_einval);
+      }
       return log(pdf(x));
     }
     

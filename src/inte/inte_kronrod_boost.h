@@ -227,6 +227,9 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
@@ -241,7 +244,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "int_kronrod_boost::integ_err(): set "
+        std::cout << "inte_kronrod_boost::integ_err_multip(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -259,7 +262,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -283,7 +286,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -308,7 +311,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -339,7 +342,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -365,7 +368,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -391,7 +394,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_100>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_kronrod_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
@@ -415,17 +418,24 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_kronrod_boost::integ_err() "
+        std::cout << "inte_kronrod_boost::integ_err_multip() "
                   << "failed after cpp_dec_float_100:\n  "
                   << integ_tol << std::endl;
       }
     
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_kronrod_boost::integ_err().",
-                 o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
+                      "in inte_kronrod_boost::integ_err_multip().",
+                      o2scl::exc_efailed,err_nonconv);
       return o2scl::exc_efailed;
     }
 
+    /** \brief Integrate function \c func from \c a to \f$ \infty \f$ using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
+    */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
                             fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -434,6 +444,13 @@ namespace o2scl {
                               res,err,integ_tol);
     }
     
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b using
+        multipreicsion, placing the result in \c res and the error in
+        \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
+    */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -442,6 +459,13 @@ namespace o2scl {
                               b,res,err,integ_tol);
     }
     
+    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
+        \infty \f$ using multipreicsion, placing the result in \c res
+        and the error in \c err
+
+        \warning For sufficiently difficult integrands, this
+        function may take a very long time to complete.
+    */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
