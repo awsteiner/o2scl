@@ -2604,10 +2604,9 @@ namespace o2scl_hdf {
 
       There are two additional limitations. First, in order to avoid
       confusion between arguments and functions, use parenthesis and
-      quotes, i.e. <tt>(-x*2)</tt> instead of <tt>-x*2</tt>. 
-      Also, do not use a unary minus
-      next to a binary operator, i.e. use <tt>a>(-1)</tt> instead of 
-      <tt>a>-1</tt>.
+      quotes, i.e. <tt>"(-x*2)"</tt> instead of <tt>-x*2</tt>. Also,
+      do not use a unary minus next to a binary operator, i.e. use
+      <tt>a>(-1)</tt> instead of <tt>a>-1</tt>.
 
       Operators:
 
@@ -2636,6 +2635,10 @@ namespace o2scl_hdf {
       abs(x) min(x,y) max(x,y) floor(x) ceil(x)
       sqrt1pm1(x) [√(1+x)-1]
       if(t,x,y) [If t>0.5 then x, otherwise y.]
+
+      Bessel functions (OSX only):
+      cyl_bessel_i(nu,x), cyl_bessel_j(nu,x), cyl_bessel_k(nu,x), 
+      cyl_neumann(nu,x), sph_bessel(nu,x), and sph_neumann(nu,x).
 
       Special values:
 

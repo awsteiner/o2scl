@@ -199,7 +199,12 @@ namespace o2scl {
       opp["min"]=2;
       opp["hypot"]=2;
       opp["if"]=2;
+      opp["sph_bessel"]=2;
+      opp["sph_neumann"]=2;
+      opp["cyl_bessel_i"]=2;
       opp["cyl_bessel_j"]=2;
+      opp["cyl_bessel_k"]=2;
+      opp["cyl_neumann"]=2;
       opp["sqrt1pm1"]=2;
       opp["^"]=2;
       opp["*"]=3;
@@ -356,10 +361,30 @@ namespace o2scl {
               if (next2>=0.5) evaluation.push(next);
               else evaluation.push(right);
 #ifdef O2SCL_OSX
+            } else if (!str.compare("cyl_bessel_i")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_i(next,right));
             } else if (!str.compare("cyl_bessel_j")) {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(boost::math::cyl_bessel_j(next,right));
+            } else if (!str.compare("cyl_bessel_k")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_k(next,right));
+            } else if (!str.compare("cyl_neumann")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_neumann(next,right));
+            } else if (!str.compare("sph_bessel")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::sph_bessel(next,right));
+            } else if (!str.compare("sph_neumann")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::sph_neumann(next,right));
 #endif
             } else {
               fp_t left  = evaluation.top();
@@ -720,8 +745,40 @@ namespace o2scl {
                      key[2]=='l' && key[3]=='_' && key[4]=='b' &&
                      key[5]=='e' && key[6]=='s' && key[7]=='s' &&
                      key[8]=='e' && key[9]=='l' && key[10]=='_' &&
+                     key[11]=='i') {
+            operator_stack.push("cyl_bessel_i");
+            last_token_was_op=true;
+          } else if (key.length()==12 && key[0]=='c' && key[1]=='y' &&
+                     key[2]=='l' && key[3]=='_' && key[4]=='b' &&
+                     key[5]=='e' && key[6]=='s' && key[7]=='s' &&
+                     key[8]=='e' && key[9]=='l' && key[10]=='_' &&
                      key[11]=='j') {
             operator_stack.push("cyl_bessel_j");
+            last_token_was_op=true;
+          } else if (key.length()==12 && key[0]=='c' && key[1]=='y' &&
+                     key[2]=='l' && key[3]=='_' && key[4]=='b' &&
+                     key[5]=='e' && key[6]=='s' && key[7]=='s' &&
+                     key[8]=='e' && key[9]=='l' && key[10]=='_' &&
+                     key[11]=='k') {
+            operator_stack.push("cyl_bessel_k");
+            last_token_was_op=true;
+          } else if (key.length()==11 && key[0]=='c' && key[1]=='y' &&
+                     key[2]=='l' && key[3]=='_' && key[4]=='n' &&
+                     key[5]=='e' && key[6]=='u' && key[7]=='m' &&
+                     key[8]=='a' && key[9]=='n' && key[10]=='n') {
+            operator_stack.push("cyl_neumann");
+            last_token_was_op=true;
+          } else if (key.length()==10 && key[0]=='s' && key[1]=='p' &&
+                     key[2]=='h' && key[3]=='_' && key[4]=='b' &&
+                     key[5]=='e' && key[6]=='s' && key[7]=='s' &&
+                     key[8]=='e' && key[9]=='l') {
+            operator_stack.push("sph_bessel");
+            last_token_was_op=true;
+          } else if (key.length()==11 && key[0]=='s' && key[1]=='p' &&
+                     key[2]=='h' && key[3]=='_' && key[4]=='n' &&
+                     key[5]=='e' && key[6]=='u' && key[7]=='m' &&
+                     key[8]=='a' && key[9]=='n' && key[10]=='n') {
+            operator_stack.push("sph_neumann");
             last_token_was_op=true;
           } else {
 

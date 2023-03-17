@@ -542,7 +542,8 @@ namespace o2scl_acol {
 
     /** \brief Compute the value of a constant expression.
 
-        Arguments: <tt><expr> ["1" for adaptive multiprecision]</tt>
+        Arguments: <tt><expr> ["1" or "true" for adaptive
+        multiprecision]</tt>
 
         This computes the value of the constant mathematical
         expression <expr>. Examples are <tt>calc acos(-1)</tt> or
@@ -553,9 +554,14 @@ namespace o2scl_acol {
         Values of precision up to 50 are allowed, and multiprecision
         (rather than double precision) arithmetic is used if
         necessary. For example, try <tt>acol -set precision 45 -calc
-        "acos(-1)"</tt>. If the second optional argument evaluates to
-        true, the calc command uses multiprecision to attempt to
-        ensure the result is exact to within the requested precision.
+        "acos(-1)"</tt>. When adaptive multiprecision is not used, the
+        calculations are relatively fast, but small errors due to the
+        finite precision may give incorrect results at the requested
+        precision. If the second optional argument evaluates to true,
+        the calc command uses multiprecision to attempt to ensure the
+        result is exact to within the requested precision. However,
+        this option also makes the calculation slower by at least a
+        factor of two.
         
         Constant values from the constant library (see 'acol -help
         <tt>constant</tt>') will automatically be used, so long as
@@ -620,7 +626,8 @@ namespace o2scl_acol {
     /** \brief Get or modify a physical or numerical constant.
 
         Arguments: <tt><name, pattern, "add", "del", "list", or 
-        "list-full"> [unit]</tt>
+        "list-full"> [unit] or [value unit flag source m kg s K A mol 
+        cd]</tt>
 
         If the constant has no units, like the Euler-Mascheroni
         constant, then e.g. <tt>acol -constant euler</tt> will report
@@ -645,20 +652,22 @@ namespace o2scl_acol {
 
         Search patterns are also allowed, for example <tt>acol
         -constant "satur*"</tt> returns all the constants related to
-        saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
+        Saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
         to true, then regex is used to do the pattern matching, and
         otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
-        pattern matching and unicode is not fully functional.
+        pattern matching and Unicode do not work well together.
 
-        To list all the constants in the library, use <tt>'acol
-        -constant list'</tt>. Alternatively, <tt>acol -constant
+        To list all the constants in the library, use <tt>acol
+        -constant list</tt>. Alternatively, <tt>acol -constant
         list-full</tt> gives all information for all constants,
         including all aliases, the source, and all the decompositions
         into base units.
 
-        One can delete a constant with, e.g. <tt>acol -del
+        One can delete a constant with, e.g. <tt>acol -constant del
         pi</tt> (this doesn't quite work yet for constants with
-        different values in different unit systems).
+        different values in different unit systems), but this
+        deletion only lasts for the current invocation of the acol
+        command. 
 
         To add a constant, one must specify the name of the constant,
         the value, the unit system, the unit flag, the source, and

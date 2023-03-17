@@ -1812,6 +1812,9 @@ void acol_manager::xml_replacements(std::string &s,
   string_replace(s,"</itemizedlist>","");
   string_replace(s,"</listitem>","");
   */
+
+  string_replace(s,"<formula> $ 10^{-\mathrm{precision}-1} $ </formula>",
+                 "10^{-precision-1}");
                   
   return;
 }
