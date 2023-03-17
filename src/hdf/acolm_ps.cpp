@@ -3511,6 +3511,11 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
 
+    if (pgmm_obj.weights.size()==0 && pgmm_obj.pdmg[0].dim()==0) {
+      cerr << "Empty distribution." << endl;
+      return 2;
+    }
+    
     table_obj.clear();
     
     int N=o2scl::stoi(sv[1]);
@@ -3522,14 +3527,10 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
       table_obj.new_column(((string)"c_")+o2scl::szttos(j));
     }
 
-    std::cout << "N: " << N << std::endl;
     for(int i=0;i<N;i++) {
-      ubvector x(pgmm_obj.pdmg[i].dim());
-      std::cout << "Here." << pgmm_obj.pdmg[i].dim() << std::endl;
+      ubvector x(pgmm_obj.pdmg[0].dim());
       pgmm_obj(x);
-      std::cout << "Here2." << pgmm_obj.pdmg[i].dim() << std::endl;
       table_obj.line_of_data(x.size(),x);
-      std::cout << "Here3." << std::endl;
     }
 
     command_del(type);
