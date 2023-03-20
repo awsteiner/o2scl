@@ -281,6 +281,9 @@ namespace o2scl {
     bool rescaled;
   
   public:
+
+    /// Desc
+    bool err_nonconv;
     
     /// If true, keep \f$ K^{-1} \f$ (default true)
     bool keep_matrix;
@@ -601,6 +604,7 @@ namespace o2scl {
       timing=false;
       keep_matrix=true;
       use_alt_mmin=false;
+      err_nonconv=true;
     }
 
     virtual ~interpm_krige_optim() {
