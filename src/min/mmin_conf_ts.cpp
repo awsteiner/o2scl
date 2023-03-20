@@ -129,7 +129,7 @@ int main(void) {
   mmin_conf<multi_funct,ubvector,grad_funct,
     gradient<multi_funct,ubvector>,
     gradient_gsl_new<multi_funct,ubvector> > g3;
- 
+
 // Emacs has trouble with tabification
 #ifdef O2SCL_NEVER_DEFINED
 } {

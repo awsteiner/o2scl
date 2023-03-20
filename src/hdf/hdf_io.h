@@ -2638,7 +2638,7 @@ namespace o2scl_hdf {
 
       Bessel functions (OSX only):
       cyl_bessel_i(nu,x), cyl_bessel_j(nu,x), cyl_bessel_k(nu,x), 
-      cyl_neumann(nu,x), sph_bessel(nu,x), and sph_neumann(nu,x).
+      and cyl_neumann(nu,x).
 
       Special values:
 

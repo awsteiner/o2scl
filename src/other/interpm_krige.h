@@ -46,6 +46,7 @@
 #include <o2scl/cholesky.h>
 #include <o2scl/min_brent_gsl.h>
 #include <o2scl/mmin_simp2.h>
+#include <o2scl/mmin_bfgs2.h>
 #include <o2scl/cblas.h>
 #include <o2scl/invert.h>
 
@@ -84,7 +85,7 @@ namespace o2scl {
       }
       return;
     }
-    
+
     /// The covariance function
     template<class vec_t, class vec2_t>
     double operator()(const vec_t &x1, const vec2_t &x2) {
@@ -258,7 +259,7 @@ namespace o2scl {
     std::vector<double> qual;
 
     /// Pointer to the user-specified minimizer
-    mmin_base<> *mp;
+    mmin_base<multi_funct,multi_funct,ubvector> *mp;
 
     /// The number of points
     size_t np;
@@ -289,11 +290,22 @@ namespace o2scl {
     int verbose;
     
     /// Default minimizer
-    mmin_simp2<> def_mmin;
+    mmin_simp2<multi_funct,ubvector> def_mmin;
+
+    /// Alternate minimizer
+    mmin_bfgs2<> alt_mmin;
+
+    bool use_alt_mmin;
 
     /// Pointer to the covariance function
     func_vec_t *cf;
 
+    /// Desc
+    void set_mmin(mmin_base<multi_funct,multi_funct,ubvector> &mb) {
+      mp=&mb;
+      return;
+    }
+    
     /** \brief Additional constraints to add to the fit
      */
     virtual int addl_const(double &ret) {
@@ -588,6 +600,7 @@ namespace o2scl {
       loo_npts=100;
       timing=false;
       keep_matrix=true;
+      use_alt_mmin=false;
     }
 
     virtual ~interpm_krige_optim() {
@@ -741,6 +754,7 @@ namespace o2scl {
         // Initialize to zero to prevent uninit'ed var. warnings
         double min_qual=0.0;
 
+        double max_val=0.0;
         size_t np_covar=(*cf)[iout].get_n_params();
         std::vector<double> params(np_covar), min_params(np_covar);
         
@@ -748,16 +762,47 @@ namespace o2scl {
 
           // Create the simplex
           ubmatrix sx(np_covar+1,np_covar);
-          for(size_t j=0;j<np_covar;j++) {
-            sx(0,j)=plists[iout][j][plists[iout][j].size()/2];
-          }
-          for(size_t i=0;i<np_covar;i++) {
+          ubvector sv(np_covar);
+          if (use_alt_mmin==false) {
             for(size_t j=0;j<np_covar;j++) {
-              if (i==j) {
-                sx(i+1,j)=plists[iout][j][plists[iout][j].size()-1];
-              } else {
-                sx(i+1,j)=plists[iout][j][0];
-              } 
+              sx(0,j)=plists[iout][j][plists[iout][j].size()/2];
+            }
+            for(size_t i=0;i<np_covar;i++) {
+              for(size_t j=0;j<np_covar;j++) {
+                if (i==j) {
+                  sx(i+1,j)=plists[iout][j][plists[iout][j].size()-1];
+                } else {
+                  sx(i+1,j)=plists[iout][j][0];
+                } 
+              }
+            }
+            
+            // Construct a maximum value to use if qual_fun() fails
+            bool max_val_set=false;
+            for(size_t i=0;i<np_covar+1;i++) {
+              for(size_t j=0;j<np_covar;j++) {
+                params[j]=sx(i,j);
+              }
+              (*cf)[iout].set_params(params);
+              double qtmp=qual_fun(iout,success);
+              if (success==0) {
+                if (max_val_set==false || qtmp>max_val) {
+                  max_val=qtmp;
+                  max_val_set=true;
+                }
+              }
+            }
+            if (max_val_set==false) {
+              O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
+            }
+          } else {
+            for(size_t j=0;j<np_covar;j++) {
+              sv(j)=plists[iout][j][plists[iout][j].size()/2];
+            }
+            (*cf)[iout].set_params(sv);
+            max_val=qual_fun(iout,success);
+            if (success!=0) {
+              O2SCL_ERR("Max val failed 2.",o2scl::exc_efailed);
             }
           }
 
@@ -765,40 +810,39 @@ namespace o2scl {
             std::cout << "interpm_krige_optim::set_data_internal(): "
                       << "full minimization with\n  " << np_covar
                       << " parameters." << std::endl;
-            std::cout << "  Simplex:" << std::endl;
-            matrix_out(std::cout,np_covar+1,np_covar,sx,"  ");
-          }
-          
-          // Construct a maximum value to use if qual_fun() fails
-          double max_val=0.0;
-          bool max_val_set=false;
-          for(size_t i=0;i<np_covar+1;i++) {
-            for(size_t j=0;j<np_covar;j++) {
-              params[j]=sx(i,j);
+            if (use_alt_mmin==false) {
+              std::cout << "  Simplex:" << std::endl;
+              matrix_out(std::cout,np_covar+1,np_covar,sx,"  ");
+            } else {
+              std::cout << "  Initial point:" << std::endl;
+              std::cout << "  ";
+              vector_out(std::cout,sv,true);
             }
-            (*cf)[iout].set_params(params);
-            double qtmp=qual_fun(iout,success);
-            if (success==0) {
-              if (max_val_set==false || qtmp>max_val) {
-                max_val=qtmp;
-                max_val_set=true;
-              }
-            }
-          }
-          if (max_val_set==false) {
-            O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
           }
           
           multi_funct mf=std::bind
             (std::mem_fn<double(size_t,size_t,const ubvector &,double)>
              (&class_t::min_fun),this,iout,
              std::placeholders::_1,std::placeholders::_2,max_val);
-          
-          //matrix_out(std::cout,np_covar+1,np_covar,sx);
-          def_mmin.mmin_simplex(np_covar,sx,min_qual,mf);
-          
-          for(size_t j=0;j<np_covar;j++) {
-            min_params[j]=sx(0,j);
+
+          if (use_alt_mmin==false) {
+            int mret=def_mmin.mmin_simplex(np_covar,sx,min_qual,mf);
+            for(size_t j=0;j<np_covar;j++) {
+              min_params[j]=sx(0,j);
+            }
+            if (mret!=0) {
+              O2SCL_CONV_ERR("Default minimizer failed in optim.",
+                             o2scl::exc_einval,err_nonconv);
+            }
+          } else {
+            int mret=alt_mmin.mmin(np_covar,sv,min_qual,mf);
+            for(size_t j=0;j<np_covar;j++) {
+              min_params[j]=sv[j];
+            }
+            if (mret!=0) {
+              O2SCL_CONV_ERR("Alternate minimizer failed in optim.",
+                             o2scl::exc_einval,err_nonconv);
+            }
           }
         
         } else {

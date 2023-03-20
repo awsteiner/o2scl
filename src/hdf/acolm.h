@@ -475,13 +475,17 @@ namespace o2scl_acol {
         <tt>size_t[]</tt>, then the autocorrelation coefficients of
         the current vector are computed. If the current object is of
         type <tt>table</tt>, then the user may specify either columns
-        of the table or a multiple vector specification.
+        of the table or a multiple vector specification as additional
+        arguments.
+
+        An example of <tt>autocorr</tt> with a <tt>table</tt>
+        object is <tt>acol -create table x grid:0,1000,1 -function 
+        "sin(floor(x/10)/5)+rand" z -autocorr store z -output</tt>
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
         on multiple specifications.
         \endverbatim
-
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
