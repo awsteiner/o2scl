@@ -835,7 +835,7 @@ namespace o2scl {
               min_params[j]=sx(0,j);
             }
             if (mret!=0) {
-              O2SCL_CONV_ERR("Default minimizer failed in optim.",
+              O2SCL_CONV_RET("Default minimizer failed in optim.",
                              o2scl::exc_einval,err_nonconv);
             }
           } else {
@@ -844,7 +844,7 @@ namespace o2scl {
               min_params[j]=sv[j];
             }
             if (mret!=0) {
-              O2SCL_CONV_ERR("Alternate minimizer failed in optim.",
+              O2SCL_CONV_RET("Alternate minimizer failed in optim.",
                              o2scl::exc_einval,err_nonconv);
             }
           }
