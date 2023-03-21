@@ -107,7 +107,9 @@ namespace o2scl_acol {
 #ifndef DOXYGEN_INTERNAL
 
   protected:
-    
+
+    /// \name Typedefs for multiprecision commands
+    //@{
     typedef
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100> >
     cpp_dec_float_100;
@@ -123,6 +125,7 @@ namespace o2scl_acol {
     typedef
     boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
     cpp_dec_float_25;
+    //@}
     
     /// Random number generator
     o2scl::rng<> rng;
@@ -823,7 +826,7 @@ namespace o2scl_acol {
 
         Convert a column to a new unit.
 
-        Arguments: <tt><column> <new_unit></tt>
+        Arguments: <tt><column> <new unit></tt>
 
         Convert the units of column <column> to <new unit>,
         multipliying all entries in that column by the appropriate
@@ -940,7 +943,6 @@ namespace o2scl_acol {
         See :cpp:func:`o2scl_hdf::functions()` for help
         on function specifications.
         \endverbatim
-
     */
     virtual int comm_delete_rows(std::vector<std::string> &sv, bool itive_com);
     

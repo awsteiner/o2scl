@@ -246,7 +246,7 @@ namespace o2scl_hdf {
 
     /// Set a double named \c name to value \c d
     void setd(std::string name, double d);
-    
+
     /// Set a float named \c name to value \c f
     void setf(std::string name, float f);
     
@@ -273,6 +273,97 @@ namespace o2scl_hdf {
     void sets_fixed(std::string name, std::string s);
     //@}
 
+    /// \name Generic floating point I/O
+    //@{
+    /** \brief Set a generic floating point named \c name to value \c f
+     */
+    template<class fp_t> int setfp_copy(std::string name, fp_t &f) {
+      std::string s=o2scl::dtos(f,-1);
+      sets(name,s);
+      return 0;
+    }
+    
+    /** \brief Set a generic floating point named \c name to value \c f
+     */
+    template<class vec_fp_t> int setfp_vec_copy(std::string name,
+                                                vec_fp_t &f) {
+      size_t n=f.size();
+      std::vector<std::string> vs;
+      for(size_t i=0;i<n;i++) {
+        vs.push_back(o2scl::dtos(f[i],-1));
+      }
+      sets_vec_copy(name,vs);
+      return 0;
+    }
+    
+    /** \brief Get a generic floating point named \c name
+
+        \warning No checks are made to ensure that the stored
+        precision matches the precision of the floating point which
+        is used.
+    */
+    template<class fp_t> int getfp_copy(std::string name, fp_t &f) {
+      std::string s;
+      gets(name,s);
+      f=stod(s);
+      return 0;
+    }
+
+    /** \brief Get a generic floating point named \c name
+
+        \warning No checks are made to ensure that the stored
+        precision matches the precision of the floating point which
+        is used.
+    */
+    template<class vec_fp_t> int getfp_vec_copy(std::string name,
+                                                vec_fp_t &f) {
+      std::vector<std::string> vs;
+      gets_vec_copy(name,vs);
+      f.resize(vs.size());
+      for(size_t i=0;i<vs.size();i++) {
+        f[i]=stod(vs[i]);
+      }
+      return 0;
+    }
+
+    /** \brief Get a boost multiprecision floating point named \c name
+
+        \warning No checks are made to ensure that the stored
+        precision matches the precision of the floating point which
+        is used.
+     */
+    template<size_t N> int getfp_copy(std::string name,
+                                      boost::multiprecision::number<
+                                      boost::multiprecision::cpp_dec_float<
+                                      N> > &f) {
+      std::string s;
+      gets(name,s);
+      f=f(s);
+      return 0;
+    }
+    
+    /** \brief Get a generic floating point named \c name
+
+        \warning No checks are made to ensure that the stored
+        precision matches the precision of the floating point which
+        is used.
+    */
+    template<size_t N> int getfp_vec_copy
+    (std::string name,
+     std::vector<boost::multiprecision::number<
+     boost::multiprecision::cpp_dec_float<
+     N> > > &f) {
+      
+      std::vector<std::string> vs;
+      gets_vec_copy(name,vs);
+      f.resize(vs.size());
+      for(size_t i=0;i<vs.size();i++) {
+        f=f(vs[i]);
+      }
+      return 0;
+    }
+    //@}
+    
     /// \name Group manipulation
     //@{
     /** \brief Open a group relative to the location specified in 

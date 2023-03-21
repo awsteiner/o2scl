@@ -107,6 +107,22 @@ int main(void) {
       hf.set_current_id(file_id);
       hf.close_group(group_id);
 
+      double dx=2.0;
+      boost::multiprecision::number<
+        boost::multiprecision::cpp_dec_float<35> > d35("2.0");
+      std::vector<double> dxa(2);
+      dxa[0]=3.0;
+      dxa[1]=1.0;
+      std::vector<boost::multiprecision::number<
+        boost::multiprecision::cpp_dec_float<35> > > d35a(2);
+      d35a[0]=3;
+      d35a[1]=1;
+      
+      hf.setfp_copy("d",dx);
+      hf.setfp_copy("d35",d35);
+      hf.setfp_vec_copy("da",dxa);
+      hf.setfp_vec_copy("d35a",d35a);
+    
       hf.sets("tests",s);
       hf.sets_fixed("testsb",sb);
       hf.close();
@@ -119,6 +135,14 @@ int main(void) {
       hf.sets_fixed("testsb","Texst.");
       hf.close();
 
+      dx=3.0;
+      d35=boost::multiprecision::number<
+        boost::multiprecision::cpp_dec_float<35> >("3.0");
+      dxa[0]=4.0;
+      dxa[1]=5.0;
+      d35a[0]=4;
+      d35a[1]=5;
+
       // Re-open the file, get the scalar values
     
       hf.open("hdf_file.o2",true);
@@ -127,6 +151,17 @@ int main(void) {
       hf.get_szt("testu",u2);
       hf.getf("testf",f2);
 
+      hf.getfp_copy("d",dx);
+      hf.getfp_copy("d35",d35);
+      t.test_rel(dx,2.0,1.0e-12,"test fp 1");
+      t.test_rel(static_cast<double>(d35),2.0,1.0e-12,"test fp 2");
+      hf.getfp_vec_copy("da",dxa);
+      hf.getfp_vec_copy("d35a",d35a);
+      t.test_rel(dxa[0],3.0,1.0e-12,"test fpa 1");
+      t.test_rel(dxa[1],1.0,1.0e-12,"test fpa 2");
+      t.test_rel(static_cast<double>(d35a[0]),3.0,1.0e-12,"test fpa 3");
+      t.test_rel(static_cast<double>(d35a[1]),1.0,1.0e-12,"test fpa 4");
+      
       hid_t group_id2=hf.open_group("Integers");
       hid_t file_id2=hf.get_file_id();
       hf.set_current_id(group_id2);

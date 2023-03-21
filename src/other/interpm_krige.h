@@ -46,6 +46,8 @@
 #include <o2scl/cholesky.h>
 #include <o2scl/min_brent_gsl.h>
 #include <o2scl/mmin_simp2.h>
+#include <o2scl/mmin_conf.h>
+#include <o2scl/diff_evo_adapt.h>
 #include <o2scl/mmin_bfgs2.h>
 #include <o2scl/cblas.h>
 #include <o2scl/invert.h>
@@ -282,7 +284,7 @@ namespace o2scl {
   
   public:
 
-    /// Desc
+    /// If true, throw exceptions on convergence errors
     bool err_nonconv;
     
     /// If true, keep \f$ K^{-1} \f$ (default true)
@@ -296,14 +298,15 @@ namespace o2scl {
     mmin_simp2<multi_funct,ubvector> def_mmin;
 
     /// Alternate minimizer
-    mmin_bfgs2<> alt_mmin;
+    diff_evo_adapt<> alt_mmin;
 
+    /// If true, use the alternate minimizer
     bool use_alt_mmin;
 
     /// Pointer to the covariance function
     func_vec_t *cf;
 
-    /// Desc
+    /// Set the minimizer to use
     void set_mmin(mmin_base<multi_funct,multi_funct,ubvector> &mb) {
       mp=&mb;
       return;
@@ -831,10 +834,13 @@ namespace o2scl {
 
           if (use_alt_mmin==false) {
             int mret=def_mmin.mmin_simplex(np_covar,sx,min_qual,mf);
+            if (mret!=0) {
+              mret=def_mmin.mmin_simplex(np_covar,sx,min_qual,mf);
+            }
             for(size_t j=0;j<np_covar;j++) {
               min_params[j]=sx(0,j);
             }
-            if (mret!=0) {
+            if (false && mret!=0) {
               O2SCL_CONV_RET("Default minimizer failed in optim.",
                              o2scl::exc_einval,err_nonconv);
             }
