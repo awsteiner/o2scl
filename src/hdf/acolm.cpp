@@ -237,6 +237,15 @@ void acol_manager::color_replacements(std::string &s) {
 bool acol_manager::help_found(std::string arg1, std::string arg2) {
 
   if (arg2=="") {
+
+    // Base commands from cli class
+    if (arg1=="alias" || arg1=="commands" || arg1=="get" ||
+        arg1=="help" || arg1=="license" || arg1=="no-intro" ||
+        arg1=="run" || arg1=="shell" || arg1=="set" ||
+        arg1=="warranty") {
+      return true;
+    }
+    
     for(size_t i=0;i<type_list.size();i++) {
       if (cl->string_equal_dash(arg1,type_list[i])) {
         return true;

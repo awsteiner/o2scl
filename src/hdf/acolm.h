@@ -481,9 +481,11 @@ namespace o2scl_acol {
         of the table or a multiple vector specification as additional
         arguments.
 
-        An example of <tt>autocorr</tt> with a <tt>table</tt>
-        object is <tt>acol -create table x grid:0,1000,1 -function 
-        "sin(floor(x/10)/5)+rand" z -autocorr store z -output</tt>
+        For example, using <tt>o2graph</tt> from o2sclpy: 
+
+        <tt>o2graph -create table x grid:0,4000,1 -function
+        "exp(x/400)*sin(floor(x/10)/5)+rand" z -autocorr store z -plot
+        0 -show</tt>
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
