@@ -94,7 +94,7 @@ void test_iac(test_mgr &t, func_t &f, fp_t acc,
   //iac.tol_rel=acc;
   //iac.tol_abs=acc;
 
-  inte_multip_adapt_cern imac;
+  inte_adapt_cern imac;
   inte_subdiv<fp_t> is(nsub);
   imac.set_nsub(nsub);
   imac.tol_rel=(double)acc;
@@ -197,7 +197,7 @@ int main(void) {
     double calc, ei, diff;
 
     //inte_transform<funct,inte_adapt_cern<>,double> it_iac;
-    inte_multip_adapt_cern imac;
+    inte_adapt_cern imac;
     double exact=1.0-cos(100.0/101.0);
     funct tf2=std::bind(sin_recip<double>,std::placeholders::_1);
     //it_iac.integ_il_err(tf2,-1.0,calc,ei);
@@ -216,7 +216,7 @@ int main(void) {
 		    <funct_ld,long double>,100,
 		    long double>,long double> it_iac_ld;
     */
-    //inte_transform<funct_ld,inte_multip_adapt_cern,long double> it_imac_ld;
+    //inte_transform<funct_ld,inte_adapt_cern,long double> it_imac_ld;
 
     long double exact_ld=1.0L-cos(100.0L/101.0L);
     funct_ld tf2_ld=std::bind(sin_recip<long double>,
@@ -303,7 +303,7 @@ int main(void) {
 
   {
 
-    inte_multip_adapt_cern imac;
+    inte_adapt_cern imac;
     
     double ans, exact, err;
     
@@ -317,7 +317,7 @@ int main(void) {
   }
 
   {
-    inte_multip_adapt_cern imac;
+    inte_adapt_cern imac;
     
     long double ans, exact, err;
     
@@ -335,7 +335,7 @@ int main(void) {
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
   
   {
-    inte_multip_adapt_cern imac;
+    inte_adapt_cern imac;
     
     cpp_dec_float_50 ans, exact, err;
     
@@ -357,7 +357,7 @@ int main(void) {
     // Multiprecision integration with infinite limits
     
     /*
-    inte_multip_adapt_cern imac;
+    inte_adapt_cern imac;
     
     double val, err2, a=0, b=1;
     

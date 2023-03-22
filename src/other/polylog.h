@@ -598,7 +598,7 @@ namespace o2scl {
 
     typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
-    fermi_dirac_integ_tl<inte_multip_adapt_cern,cpp_dec_float_50> fdi5;
+    fermi_dirac_integ_tl<inte_adapt_cern,cpp_dec_float_50> fdi5;
 
     fermi_dirac_integ_bf() {
       fdi1.it.iiu.err_nonconv=false;
@@ -890,7 +890,7 @@ namespace o2scl {
 
     inte_kronrod_boost<61> ikb;
     inte_multip_double_exp_boost ideb;
-    inte_multip_adapt_cern iac;
+    inte_adapt_cern iac;
     
     fermi_dirac_integ_bf2() {
       tol=1.0e-17;
