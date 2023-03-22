@@ -10,7 +10,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
 	shunting_yard.h interp_krige.h find_constants.h cursesw.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
-	funct_multip.h interp_vec.h
+	funct_multip.h interp_vec.h funct_to_fp.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -19,7 +19,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	shunting_yard.cpp tensor.cpp cursesw.cpp \
-	base_python.cpp funct.cpp
+	base_python.cpp funct.cpp funct_to_fp.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 

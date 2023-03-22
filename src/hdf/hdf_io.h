@@ -45,6 +45,7 @@
 #include <o2scl/prob_dens_mdim_amr.h>
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/exp_max.h>
+#include <o2scl/funct_to_fp.h>
 
 /** \brief The \o2 namespace for I/O with HDF
  */

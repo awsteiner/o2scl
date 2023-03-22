@@ -309,20 +309,17 @@ namespace o2scl_hdf {
       return 0;
     }
 
-    /** \brief Get a generic floating point named \c name
+    /** \brief Get a long double named \c name
 
         \warning No checks are made to ensure that the stored
         precision matches the precision of the floating point which
-        is used.
+        is used. Note that the long double type is also not 
+        platform-independent.
     */
-    template<class vec_fp_t> int getfp_vec_copy(std::string name,
-                                                vec_fp_t &f) {
-      std::vector<std::string> vs;
-      gets_vec_copy(name,vs);
-      f.resize(vs.size());
-      for(size_t i=0;i<vs.size();i++) {
-        f[i]=stod(vs[i]);
-      }
+    int getfp_copy(std::string name, long double &f) {
+      std::string s;
+      gets(name,s);
+      f=stold(s);
       return 0;
     }
 
@@ -342,6 +339,23 @@ namespace o2scl_hdf {
       return 0;
     }
     
+    /** \brief Get a generic floating point named \c name
+
+        \warning No checks are made to ensure that the stored
+        precision matches the precision of the floating point which
+        is used.
+    */
+    template<class vec_fp_t> int getfp_vec_copy(std::string name,
+                                                vec_fp_t &f) {
+      std::vector<std::string> vs;
+      gets_vec_copy(name,vs);
+      f.resize(vs.size());
+      for(size_t i=0;i<vs.size();i++) {
+        f[i]=stod(vs[i]);
+      }
+      return 0;
+    }
+
     /** \brief Get a generic floating point named \c name
 
         \warning No checks are made to ensure that the stored

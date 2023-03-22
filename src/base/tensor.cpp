@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 #include <o2scl/tensor.h>
+#include <o2scl/funct_to_fp.h>
 
 using namespace std;
 using namespace o2scl;

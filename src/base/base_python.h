@@ -35,6 +35,7 @@
 #include <o2scl/cli.h>
 #include <o2scl/funct.h>
 #include <o2scl/cursesw.h>
+#include <o2scl/funct_to_fp.h>
 
 extern "C" {
 

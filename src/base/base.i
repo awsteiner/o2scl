@@ -39,6 +39,7 @@ h_include <o2scl/interp_krige.h>
 h_include <o2scl/cli.h>
 h_include <o2scl/funct.h>
 h_include <o2scl/cursesw.h>
+h_include <o2scl/funct_to_fp.h>
 # 
 # Include statement for C++ source code
 # 

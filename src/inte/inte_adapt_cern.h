@@ -354,16 +354,6 @@ namespace o2scl {
     }
     //@}
 
-#ifdef O2SCL_NEVER_DEFINED
-    
-    template <typename func_t, class fp_t, class fp2_t>
-    fp_t iu_func(func_t &&func, fp_t x, fp2_t a) {
-      fp_t a2=static_cast<fp_t> a;
-      fp_t xp=a2+(1-x)/x;
-      fp_t y=func(xp);
-      return y/x/x;
-    }
-    
     template <typename func_t, class fp_t>
     int integ_iu_err_int(func_t &&func, fp_t a, fp_t &res,
                          fp_t &err, double target_tol, 
@@ -371,13 +361,14 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-      funct_multip fm2;
+      funct_multip_transform<fp_t> fm2;
+      fm2.lower_limit=a;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
-      
-      std::function<fp_t(fp_t)> ft=[fm2,func,a](auto &&t) mutable 
+
+      std::function<fp_t(fp_t)> ft=[fm2,func](auto &&t) mutable 
       {
-        return fm2(iu_func,iu_func(fm2,t,a);
+        return fm2.eval_iu(func,t);
       };
       
       integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
@@ -402,15 +393,14 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-      funct_multip fm2;
+      funct_multip_transform<fp_t> fm2;
+      fm2.upper_limit=b;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
-      
-      std::function<fp_t(fp_t)> ft=[fm2,func,b](fp_t t) mutable -> fp_t
+
+      std::function<fp_t(fp_t)> ft=[fm2,func](auto &&t) mutable 
       {
-        fp_t x=b-(1-t)/t;
-        fp_t y=fm2(func,x);
-        return y/t/t;
+        return fm2.eval_il(func,t);
       };
       
       integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
@@ -428,8 +418,36 @@ namespace o2scl {
       return 0;
     }
 
-#endif
+    template <typename func_t, class fp_t>
+    int integ_i_err_int(func_t &&func, fp_t &res, fp_t &err, 
+                         double target_tol, double integ_tol, double func_tol) {
       
+      inte_subdiv<fp_t> is(nsub);
+      
+      funct_multip_transform<fp_t> fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+
+      std::function<fp_t(fp_t)> ft=[fm2,func](auto &&t) mutable 
+      {
+        return fm2.eval_i(func,t);
+      };
+      
+      integ_err_funct(ft,0,1,res,err,target_tol,integ_tol,is);
+      
+      if (verbose>1) {
+        std::cout << "inte_kronrod_boost::integ_err() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << func_tol << " " << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
+
     /** \brief Desc
      */
     template <typename func_t, class fp_t>
