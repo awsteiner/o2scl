@@ -772,7 +772,10 @@ namespace o2scl {
           y_cdf25=f(x_cdf25)/t_cdf25/t_cdf25;
         } else {
           x_cdf25=(1-t_cdf25)/t_cdf25;
-          y_cdf25=(f(x_cdf25)+f(-x_cdf25))/t_cdf25/t_cdf25;
+          cpp_dec_float_25 res_p=f(x_cdf25);
+          cpp_dec_float_25 x2=-x_cdf25;
+          cpp_dec_float_25 res_m=f(x2);
+          y_cdf25=(res_p+res_m)/t_cdf25/t_cdf25;
         }
         cdf25_eval=true;
       }
@@ -838,7 +841,10 @@ namespace o2scl {
           y_cdf35=f(x_cdf35)/t_cdf35/t_cdf35;
         } else {
           x_cdf35=(1-t_cdf35)/t_cdf35;
-          y_cdf35=(f(x_cdf35)+f(-x_cdf35))/t_cdf35/t_cdf35;
+          cpp_dec_float_35 res_p=f(x_cdf35);
+          cpp_dec_float_35 x2=-x_cdf35;
+          cpp_dec_float_35 res_m=f(x2);
+          y_cdf35=(res_p+res_m)/t_cdf35/t_cdf35;
         }
         cdf35_eval=true;
       }
@@ -904,7 +910,10 @@ namespace o2scl {
           y_cdf50=f(x_cdf50)/t_cdf50/t_cdf50;
         } else {
           x_cdf50=(1-t_cdf50)/t_cdf50;
-          y_cdf50=(f(x_cdf50)+f(-x_cdf50))/t_cdf50/t_cdf50;
+          cpp_dec_float_50 res_p=f(x_cdf50);
+          cpp_dec_float_50 x2=-x_cdf50;
+          cpp_dec_float_50 res_m=f(x2);
+          y_cdf50=(res_p+res_m)/t_cdf50/t_cdf50;
         }
         cdf50_eval=true;
       }
@@ -970,7 +979,10 @@ namespace o2scl {
           y_cdf100=f(x_cdf100)/t_cdf100/t_cdf100;
         } else {
           x_cdf100=(1-t_cdf100)/t_cdf100;
-          y_cdf100=(f(x_cdf100)+f(-x_cdf100))/t_cdf100/t_cdf100;
+          cpp_dec_float_100 res_p=f(x_cdf100);
+          cpp_dec_float_100 x2=-x_cdf100;
+          cpp_dec_float_100 res_m=f(x2);
+          y_cdf100=(res_p+res_m)/t_cdf100/t_cdf100;
         }
         cdf100_eval=true;
       }

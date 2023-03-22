@@ -296,6 +296,28 @@ namespace o2scl {
     /// Desc
     size_t max_refine;
     
+    template <typename func_t, class fp_t>
+    int integ_err_funct(func_t &&func, fp_t a, fp_t b, 
+                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                        double target_tol, double integ_tol) {
+      
+      boost::math::quadrature::tanh_sinh<fp_t> it_x(max_refine);
+      res=it_x.integrate(func,a,b,target_tol,&err,&L1norm_loc,
+                         &this->levels);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_double_exp_boost::integ_err_funct() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        return 1;
+      }
+      return 0;
+    }
+    
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
 
@@ -640,6 +662,16 @@ namespace o2scl {
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
+      if (b==-std::numeric_limits<double>::infinity()) {
+        if (a==std::numeric_limits<double>::infinity()) {
+          return integ_i_err_multip(func,res,err,integ_tol);
+        } else {
+          return integ_iu_err_multip(func,a,res,err,integ_tol);
+        }
+      } else if (a==std::numeric_limits<double>::infinity()) {
+        return integ_il_err_multip(func,b,res,err,integ_tol);
+      }
+        
       if (integ_tol<=0.0) {
         if (tol_rel_multip<=0.0) {
           integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);

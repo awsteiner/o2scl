@@ -356,7 +356,6 @@ int main(void) {
   {
     // Multiprecision integration with infinite limits
     
-    /*
     inte_adapt_cern imac;
     
     double val, err2, a=0, b=1;
@@ -378,7 +377,6 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi,1.0e-15,"multip 5");
     cout << endl;
-    */
 
     
   }

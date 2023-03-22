@@ -26,6 +26,8 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/cursesw.h>
 #include <o2scl/inte_kronrod_boost.h>
+#include <o2scl/inte_double_exp_boost.h>
+#include <o2scl/inte_adapt_cern.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -500,7 +502,7 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   vector<string> in, pr;
-  bool multiprecision=false;
+  std::string kw;
   
   if (sv.size()>5) {
 
@@ -509,8 +511,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     in[1]=sv[2];
     in[2]=sv[3];
     in[3]=sv[4];
-    
-    multiprecision=o2scl::stob(sv[5]);
+    kw=sv[5];
 
   } else if (sv.size()>4) {
 
@@ -526,14 +527,25 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     pr.push_back("Integration variable");
     pr.push_back("Lower limit");
     pr.push_back("Upper limit");
-    pr.push_back("Multiprecision (true or false)");
+    pr.push_back("Additional arguments");
     int ret=get_input(sv,pr,in,"ninteg",itive_com);
     if (ret!=0) return ret;
 
-    multiprecision=o2scl::stob(in[4]);
+    kw=in[4];
     
   }
 
+  bool multiprecision=false;
+  string method="kb";
+  if (kw.length()>0) {
+    kwargs kwa(kw);
+    multiprecision=kwa.get_bool("multip",false);
+    method=kwa.get_string("method","kb");
+    if (verbose>1) {
+      cout << "Using method: " << method << endl;
+    }
+  }
+  
   if (sv.size()<5) {
     cerr << "Not enough arguments for ninteg." << endl;
     return 1;
@@ -541,7 +553,9 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   std::string func=in[0];
   std::string var=in[1];
 
-  inte_kronrod_boost<61> imkb;
+  inte_kronrod_boost<61> ikb;
+  inte_multip_double_exp_boost ideb;
+  inte_adapt_cern iac;
 
   if (multiprecision) {
     
@@ -554,7 +568,6 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 #else
 
     funct_multip_string fms;
-    //fms.verbose=verbose;
     fms.set_function(func,var);
     funct_multip_string *fmsp=&fms;
     
@@ -562,8 +575,16 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     // C++ prints out precision+1 significant figures so we add one to
     // 'precision' to construct the integration tolerance.
-    imkb.tol_rel_multip=pow(10.0,-precision-1);
-    imkb.verbose=verbose;
+    if (method=="kb") {
+      ikb.tol_rel_multip=pow(10.0,-precision-1);
+      ikb.verbose=verbose;
+    } else if (method=="deb") {
+      ideb.tol_rel_multip=pow(10.0,-precision-1);
+      ideb.verbose=verbose;
+    } else if (method=="ac") {
+      iac.tol_rel_multip=pow(10.0,-precision-1);
+      iac.verbose=verbose;
+    }
     
     if (precision>49) {
       
@@ -585,10 +606,19 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
-      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
-        
-      if (retx!=0) {
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      }
+    
+    if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
@@ -610,8 +640,17 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
-      { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      }
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -635,8 +674,17 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
-      { return (*fmsp)(t); }, lower_lim,upper_lim,d,err);
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      }
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -661,8 +709,17 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
-      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      }
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -687,8 +744,17 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      int retx=imkb.integ_err_multip([fmsp](auto &&t) mutable
-      { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err_multip([fmsp](auto &&t) mutable
+        { return (*fmsp)(t); },lower_lim,upper_lim,d,err);
+      }
         
       if (retx!=0) {
         cerr << "Integrating " << func << " failed." << endl;
@@ -715,19 +781,26 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     convert_units<double> cu;
     if (in[2]=="-infty") {
       lower_lim=-std::numeric_limits<double>::infinity();
-        } else {
+    } else {
       function_to_fp_nothrow(in[2],lower_lim,cu);
     }
     if (in[3]=="infty") {
       upper_lim=std::numeric_limits<double>::infinity();
-        } else {
+    } else {
       function_to_fp_nothrow(in[3],upper_lim,cu);
     }
     funct_string fs(func,var);
     funct f=std::bind(std::mem_fn<double(double) const>
                       (&funct_string::operator()),&fs,
                       std::placeholders::_1);
-    int retx=imkb.integ_err(f,lower_lim,upper_lim,d,err);
+    int retx;
+    if (method=="kb") {
+      retx=ikb.integ_err(f,lower_lim,upper_lim,d,err);
+    } else if (method=="deb") {
+      retx=ideb.integ_err(f,lower_lim,upper_lim,d,err);
+    } else {
+      retx=iac.integ_err(f,lower_lim,upper_lim,d,err);
+    }
     if (retx!=0) {
       cerr << "Integrating " << func << " failed." << endl;
       return 1;
@@ -737,7 +810,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     else cout.unsetf(ios::scientific);
     cout.precision(precision);
     if (verbose>0) cout << "Result: ";
-    cout << d << " +/- " << err << endl;
+    cout << d << " ± " << err << endl;
     std::string us;
     if (verbose>1) {
       us=unc_to_string(d,err,1);

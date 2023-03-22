@@ -418,6 +418,8 @@ namespace o2scl {
   /// Copy string \c s to character array \c x of length \c len
   void string_to_char_array(std::string s, char *x, int len);
 
+  /** \brief Desc
+   */
   class kwargs {
     std::map<std::string,std::string> k;
   public:
