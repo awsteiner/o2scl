@@ -897,10 +897,9 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integration." << std::endl;
+                    << " for double integration." << std::endl;
         }
         double a_d=static_cast<double>(a);
         double res_d, err_d, L1norm_d;
@@ -913,16 +912,26 @@ namespace o2scl {
           err=static_cast<fp_t>(err_d);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_d/abs(res_d) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //          target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integration." << std::endl;
+                    << " for long double integration." << std::endl;
         }
         long double a_ld=static_cast<long double>(a);
         long double res_ld, err_ld, L1norm_ld;
@@ -935,18 +944,29 @@ namespace o2scl {
           err=static_cast<fp_t>(err_ld);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_ld/abs(res_ld) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
+          std::cout << "  "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                    << " for cpp_dec_float_25 integration." << std::endl;
         }
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
@@ -960,18 +980,29 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf25);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf25/abs(res_cdf25) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
+          std::cout << "  "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                    << " for cpp_dec_float_35 integration." << std::endl;
         }
         cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
         cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
@@ -985,18 +1016,29 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf35);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf35/abs(res_cdf35) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
+          std::cout << "  "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                    << " for cpp_dec_float_50 integration." << std::endl;
         }
         cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
         cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
@@ -1010,18 +1052,29 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf50);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf50/abs(res_cdf50) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_100>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_multip_double_exp_boost::integ_iu_err(): "
+          std::cout << "  "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
-                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+                    << " for cpp_dec_float_100 integration." << std::endl;
         }
         cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
         cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
@@ -1035,7 +1088,18 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf100);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf100/abs(res_cdf100) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
@@ -1092,7 +1156,7 @@ namespace o2scl {
           std::cout << "int_multip_double_exp_boost::integ_il_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integration." << std::endl;
+                    << " for double integration." << std::endl;
         }
         double b_d=static_cast<double>(b);
         double res_d, err_d, L1norm_d;
@@ -1114,7 +1178,7 @@ namespace o2scl {
           std::cout << "int_multip_double_exp_boost::integ_il_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integration." << std::endl;
+                    << " for long double integration." << std::endl;
         }
         long double b_ld=static_cast<long double>(b);
         long double res_ld, err_ld, L1norm_ld;
@@ -1138,7 +1202,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                    << " for cpp_dec_float_25 integration." << std::endl;
         }
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
         cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
@@ -1163,7 +1227,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                    << " for cpp_dec_float_35 integration." << std::endl;
         }
         cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
         cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
@@ -1188,7 +1252,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                    << " for cpp_dec_float_50 integration." << std::endl;
         }
         cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
         cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
@@ -1213,7 +1277,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
-                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+                    << " for cpp_dec_float_100 integration." << std::endl;
         }
         cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
         cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
@@ -1284,7 +1348,7 @@ namespace o2scl {
           std::cout << "int_multip_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integration." << std::endl;
+                    << " for double integration." << std::endl;
         }
         double res_d, err_d, L1norm_d;
         
@@ -1305,7 +1369,7 @@ namespace o2scl {
           std::cout << "int_multip_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integration." << std::endl;
+                    << " for long double integration." << std::endl;
         }
         long double res_ld, err_ld, L1norm_ld;
         
@@ -1328,7 +1392,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                    << " for cpp_dec_float_25 integration." << std::endl;
         }
         cpp_dec_float_25 res_cdf25, err_cdf25, L1norm_cdf25;
         
@@ -1352,7 +1416,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                    << " for cpp_dec_float_35 integration." << std::endl;
         }
         cpp_dec_float_35 res_cdf35, err_cdf35, L1norm_cdf35;
         
@@ -1376,7 +1440,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                    << " for cpp_dec_float_50 integration." << std::endl;
         }
         cpp_dec_float_50 res_cdf50, err_cdf50, L1norm_cdf50;
         
@@ -1400,7 +1464,7 @@ namespace o2scl {
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
-                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+                    << " for cpp_dec_float_100 integration." << std::endl;
         }
         cpp_dec_float_100 res_cdf100, err_cdf100, L1norm_cdf100;
         

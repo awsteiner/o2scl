@@ -73,42 +73,42 @@ namespace o2scl {
          In fermi_dirac_integ_tl, better testing of accuracy.
 
       \endverbatim
-   */
-  template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
-
-  protected:
-  
-  /// Internal function type
-  typedef std::function<fp_t(fp_t)> func_t;
-  
-  /** \brief The Fermi-Dirac function
-   */
-  fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
-    fp_t res;
-    if (x==0.0) res=0;
-    else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
-    else res=pow(x,a)/(1.0+exp(x-mu));
-    return res;
-  }
-
-  public:
-  
-  /** \brief The integrator
-   */
-  inte_t iiu;
-  
-  /** \brief Compute the integral, storing the result in 
-      \c res and the error in \c err
   */
+  template<class inte_t, class fp_t=double> class fermi_dirac_integ_tl {
+    
+  protected:
+    
+    /// Internal function type
+    typedef std::function<fp_t(fp_t)> func_t;
+    
+    /** \brief The Fermi-Dirac function
+     */
+    fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
+      fp_t res;
+      if (x==0.0) res=0;
+      else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
+      else res=pow(x,a)/(1.0+exp(x-mu));
+      return res;
+    }
+    
+  public:
+    
+    /** \brief The integrator
+     */
+    inte_t iiu;
+    
+    /** \brief Compute the integral, storing the result in 
+        \c res and the error in \c err
+    */
     int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
-    func_t f=
-    std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-	      (&fermi_dirac_integ_tl::obj_func),
-	      this,std::placeholders::_1,a,mu);
-    int iret=iiu.integ_iu_err(f,0.0,res,err);
-    return iret;
-  }
-  
+      func_t f=
+        std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                  (&fermi_dirac_integ_tl::obj_func),
+                  this,std::placeholders::_1,a,mu);
+      int iret=iiu.integ_iu_err(f,0.0,res,err);
+      return iret;
+    }
+    
   };
 
   /** \brief Compute a Bose-Einstein integral by direct integration
@@ -131,38 +131,38 @@ namespace o2scl {
   template<class inte_t, class fp_t=double> class bose_einstein_integ_tl {
     
   protected:
-  
-  /// Internal function type
-  typedef std::function<fp_t(fp_t)> func_t;
-  
-  /** \brief The Bose-Einstein function
-   */
-  fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
-    fp_t res;
-    if (x==0.0) res=0;
-    else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
-    else res=pow(x,a)/(exp(x-mu)-1.0);
-    return res;
-  }
-
+    
+    /// Internal function type
+    typedef std::function<fp_t(fp_t)> func_t;
+    
+    /** \brief The Bose-Einstein function
+     */
+    fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
+      fp_t res;
+      if (x==0.0) res=0;
+      else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
+      else res=pow(x,a)/(exp(x-mu)-1.0);
+      return res;
+    }
+    
   public:
-  
-  /** \brief The integrator
-   */
-  inte_t iiu;
-  
-  /** \brief Compute the integral, storing the result in 
-      \c res and the error in \c err
-  */
+    
+    /** \brief The integrator
+     */
+    inte_t iiu;
+    
+    /** \brief Compute the integral, storing the result in 
+        \c res and the error in \c err
+    */
     int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
-    func_t f=
-    std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-	      (&bose_einstein_integ_tl::obj_func),
-	      this,std::placeholders::_1,a,mu);
-    int iret=iiu.integ_iu_err(f,0.0,res,err);
-    return iret;
-  }
-  
+      func_t f=
+        std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                  (&bose_einstein_integ_tl::obj_func),
+                  this,std::placeholders::_1,a,mu);
+      int iret=iiu.integ_iu_err(f,0.0,res,err);
+      return iret;
+    }
+    
   };
 
   /** \brief Compute an exponentially scaled modified Bessel function
@@ -558,315 +558,19 @@ namespace o2scl {
     }
     
   };
-  
-  /** \brief Fermi-Dirac integral by brute force
 
-      This class seems to work well, and can produce results at
-      high-precision, but has difficulty with large arguments.
+  /** \brief Fermi-Dirac integral using multiprecison
 
       \verbatim embed:rst
 
       .. todo::
-
-         - In class fermi_dirac_integ_bf: implement degenerate
+      
+         - In class fermi_dirac_multip: implement degenerate
            and nondegenerate expansions.
 
       \endverbatim
    */
-  template<class fp_t, size_t max1, size_t max2, size_t max3,
-           class fp1_t, class fp2_t, class fp3_t>
-  class fermi_dirac_integ_bf {
-    
-  protected:
-
-    /// Tolerance
-    fp_t tol;
-    
-  public:
-
-    /// Lowest precision integrator
-    fermi_dirac_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
-                             fp1_t> fdi1;
-    
-    /// Medium precision integrator
-    fermi_dirac_integ_direct<fp_t,std::function<fp2_t(fp2_t)>,max2,
-                             fp2_t> fdi2;
-    
-    /// Highest precision integrator
-    fermi_dirac_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
-                             fp3_t> fdi3;
-
-    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-
-    fermi_dirac_integ_tl<inte_adapt_cern,cpp_dec_float_50> fdi5;
-
-    fermi_dirac_integ_bf() {
-      fdi1.it.iiu.err_nonconv=false;
-      fdi2.it.iiu.err_nonconv=false;
-      fdi3.it.iiu.err_nonconv=false;
-      //fdi4.iiu.err_nonconv=false;
-      tol=1.0e-17;
-      err_nonconv=true;
-    }
-
-    /** \brief If true, then convergence failures call the error 
-        handler (default true)
-    */
-    bool err_nonconv;
-
-    /** \brief Set tolerance
-     */
-    void set_tol(const fp_t &tol_) {
-      tol=tol_;
-      return;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
-     */
-    int calc_1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(static_cast<fp1_t>(tol));
-      int ret1=fdi1.calc_1o2_ret(y,res,err);
-      if (ret1==0 && abs(err/res)<tol) {
-        method=1;
-        return 0;
-      }
-      //std::cout << "fdi1: " << fdi1.it.iiu.L1norm << " "
-      //<< fdi1.it.iiu.levels << std::endl;
-      fdi2.set_tol(static_cast<fp2_t>(tol));
-      int ret2=fdi2.calc_1o2_ret(y,res,err);
-      if (ret2==0 && abs(err/res)<tol) {
-        method=2;
-        return 0;
-      }
-      //std::cout << "fdi2: " << fdi2.it.iiu.L1norm << " "
-      //<< fdi2.it.iiu.levels << std::endl;
-      fdi3.set_tol(static_cast<fp3_t>(tol));
-      int ret3=fdi3.calc_1o2_ret(y,res,err);
-      if (ret3==0 && abs(err/res)<tol) {
-        method=3;
-      } else {
-        //std::cout << "fdi3: " << fdi3.it.iiu.L1norm << " "
-        //<< fdi3.it.iiu.levels << std::endl;
-        cpp_dec_float_50 y2=static_cast<cpp_dec_float_50>(y);
-        cpp_dec_float_50 res2,err2;
-        fdi5.iiu.tol_rel=static_cast<cpp_dec_float_50>(tol);
-        fdi5.iiu.tol_abs=static_cast<cpp_dec_float_50>(tol);
-        //fdi5.iiu.def_inte.verbose=1;
-        int iretx=fdi5.calc_err(0.5,y2,res2,err2);
-        res=static_cast<fp_t>(res2);
-        err=static_cast<fp_t>(err2);
-        if (iretx==0 && abs(err/res)<tol) {
-          method=4;
-          return 0;
-        }
-        method=0;
-      }
-      return ret3;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
-     */
-    int calc_1o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      int method;
-      int iret=calc_1o2_ret_full(y,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_1o2 failed.",o2scl::exc_efailed,
-                        err_nonconv);
-      }
-      return 0;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ 1/2 \f$
-     */
-    fp_t calc_1o2(fp_t y) {
-      fp_t res, err;
-      calc_1o2_ret(y,res,err);
-      return res;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
-     */
-    int calc_m1o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(tol);
-      int ret1=fdi1.calc_m1o2_ret(y,res,err);
-      if (ret1==0) {
-        method=1;
-        return 0;
-      }
-      fdi2.set_tol(tol);
-      int ret2=fdi2.calc_m1o2_ret(y,res,err);
-      if (ret2==0) {
-        method=2;
-        return 0;
-      }
-      fdi3.set_tol(tol);
-      int ret3=fdi3.calc_m1o2_ret(y,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
-     */
-    int calc_m1o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      int method;
-      int iret=calc_m1o2_ret_full(y,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_m1o2 failed.",o2scl::exc_efailed,
-                        err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ -1/2 \f$
-     */
-    fp_t calc_m1o2(fp_t y) {
-      fp_t res, err;
-      calc_m1o2_ret(y,res,err);
-      return res;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
-     */
-    int calc_3o2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(tol);
-      int ret1=fdi1.calc_3o2_ret(y,res,err);
-      if (ret1==0) {
-        return 0;
-      }
-      fdi2.set_tol(tol);
-      int ret2=fdi2.calc_3o2_ret(y,res,err);
-      if (ret2==0) {
-        return 0;
-      }
-      fdi3.set_tol(tol);
-      int ret3=fdi3.calc_3o2_ret(y,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
-     */
-    int calc_3o2_ret(fp_t y, fp_t &res, fp_t &err) {
-      int method;
-      int iret=calc_3o2_ret_full(y,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_3o2 failed.",o2scl::exc_efailed,
-                        err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3/2 \f$
-     */
-    fp_t calc_3o2(fp_t y) {
-      fp_t res, err;
-      calc_3o2_ret(y,res,err);
-      return res;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
-     */
-    int calc_2_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(tol);
-      int ret1=fdi1.calc_2_ret(y,res,err);
-      if (ret1==0) {
-        return 0;
-      }
-      fdi2.set_tol(tol);
-      int ret2=fdi2.calc_2_ret(y,res,err);
-      if (ret2==0) {
-        return 0;
-      }
-      fdi3.set_tol(tol);
-      int ret3=fdi3.calc_2_ret(y,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
-     */
-    int calc_2_ret(fp_t y, fp_t &res, fp_t &err) {
-      int method;
-      int iret=calc_2_ret_full(y,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_2 failed.",o2scl::exc_efailed,
-                        err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 2 \f$
-     */
-    fp_t calc_2(fp_t y) {
-      fp_t res, err;
-      calc_2_ret(y,res,err);
-      return res;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
-     */
-    int calc_3_ret_full(fp_t y, fp_t &res, fp_t &err, int &method) {
-      fdi1.set_tol(tol);
-      int ret1=fdi1.calc_3_ret(y,res,err);
-      if (ret1==0) {
-        return 0;
-      }
-      fdi2.set_tol(tol);
-      int ret2=fdi2.calc_3_ret(y,res,err);
-      if (ret2==0) {
-        return 0;
-      }
-      fdi3.set_tol(tol);
-      int ret3=fdi3.calc_3_ret(y,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
-     */
-    int calc_3_ret(fp_t y, fp_t &res, fp_t &err) {
-      int method;
-      int iret=calc_3_ret_full(y,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function calc_3 failed.",o2scl::exc_efailed,
-                        err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
-     */
-    fp_t calc_3(fp_t y) {
-      fp_t res, err;
-      calc_3_ret(y,res,err);
-      return res;
-    }
-    
-  };
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  // AWS: 3/14/23: This was supposed to be a new "brute-force"
-  // scheme which used multiprecision integrators instead of
-  // fermi_dirac_integ_direct
-  
-  class fermi_dirac_integ_bf2 {
+  class fermi_dirac_multip {
     
   protected:
     
@@ -892,7 +596,7 @@ namespace o2scl {
     inte_multip_double_exp_boost ideb;
     inte_adapt_cern iac;
     
-    fermi_dirac_integ_bf2() {
+    fermi_dirac_multip() {
       tol=1.0e-17;
       err_nonconv=true;
       ikb.err_nonconv=false;
@@ -924,9 +628,6 @@ namespace o2scl {
       fp_t half=one/two;
       fp_t zero=0;
       
-      //std::function<fp_t(fp_t)> ft=[this,half,y](fp_t x) mutable -> fp_t
-      //{ return this->obj_func(x,half,y); };
-      
       int ret1=ikb.integ_iu_err_multip([this,half,y](auto &&x) mutable 
       { return this->obj_func(x,half,y); },zero,res,err,tol);
       if (ret1==0) {
@@ -934,19 +635,19 @@ namespace o2scl {
         return 0;
       }
 
-      /*
-      int ret2=ideb.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret2=ideb.integ_iu_err_multip([this,half,y](auto &&x) mutable 
+      { return this->obj_func(x,half,y); },zero,res,err,tol);
       if (ret2==0) {
         method=2;
         return 0;
       }
       
-      int ret3=iac.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret3=iac.integ_iu_err_multip([this,half,y](auto &&x) mutable 
+      { return this->obj_func(x,half,y); },zero,res,err,tol);
       if (ret3==0) {
         method=3;
         return 0;
       }
-      */
       
       O2SCL_CONV_RET("Function calc_1o2 failed.",o2scl::exc_efailed,
                      err_nonconv);
@@ -981,22 +682,22 @@ namespace o2scl {
       fp_t mhalf=-one/two;
       fp_t zero=0;
 
-      std::function<fp_t(fp_t)> ft=[mhalf,y](fp_t x) mutable -> fp_t
-      { return obj_func(x,mhalf,y); };
-      
-      int ret1=ikb.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret1=ikb.integ_iu_err_multip([this,mhalf,y](auto &&x) mutable 
+      { return this->obj_func(x,mhalf,y); },zero,res,err,tol);
       if (ret1==0) {
         method=1;
         return 0;
       }
-      
-      int ret2=ideb.integ_iu_err_multip(ft,zero,res,err,tol);
+
+      int ret2=ideb.integ_iu_err_multip([this,mhalf,y](auto &&x) mutable 
+      { return this->obj_func(x,mhalf,y); },zero,res,err,tol);
       if (ret2==0) {
         method=2;
         return 0;
       }
       
-      int ret3=iac.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret3=iac.integ_iu_err_multip([this,mhalf,y](auto &&x) mutable 
+      { return this->obj_func(x,mhalf,y); },zero,res,err,tol);
       if (ret3==0) {
         method=3;
         return 0;
@@ -1034,22 +735,22 @@ namespace o2scl {
       fp_t three_half=-three/two;
       fp_t zero=0;
       
-      std::function<fp_t(fp_t)> ft=[three_half,y](fp_t x) mutable -> fp_t
-      { return obj_func(x,three_half,y); };
-      
-      int ret1=ikb.integ_iu_err_multip(ft,0,res,err,tol);
+      int ret1=ikb.integ_iu_err_multip([this,three_half,y](auto &&x) mutable 
+      { return this->obj_func(x,three_half,y); },zero,res,err,tol);
       if (ret1==0) {
         method=1;
         return 0;
       }
-      
-      int ret2=ideb.integ_iu_err_multip(ft,0,res,err,tol);
+
+      int ret2=ideb.integ_iu_err_multip([this,three_half,y](auto &&x) mutable 
+      { return this->obj_func(x,three_half,y); },zero,res,err,tol);
       if (ret2==0) {
         method=2;
         return 0;
       }
       
-      int ret3=iac.integ_iu_err_multip(ft,0,res,err,tol);
+      int ret3=iac.integ_iu_err_multip([this,three_half,y](auto &&x) mutable 
+      { return this->obj_func(x,three_half,y); },zero,res,err,tol);
       if (ret3==0) {
         method=3;
         return 0;
@@ -1085,22 +786,22 @@ namespace o2scl {
       fp_t two=2;
       fp_t zero=0;
       
-      std::function<fp_t(fp_t)> ft=[two,y](fp_t x) mutable -> fp_t
-      { return obj_func(x,two,y); };
-      
-      int ret1=ikb.integ_iu_err_multip(ft,0,res,err,tol);
+      int ret1=ikb.integ_iu_err_multip([this,two,y](auto &&x) mutable 
+      { return this->obj_func(x,two,y); },zero,res,err,tol);
       if (ret1==0) {
         method=1;
         return 0;
       }
-      
-      int ret2=ideb.integ_iu_err_multip(ft,0,res,err,tol);
+
+      int ret2=ideb.integ_iu_err_multip([this,two,y](auto &&x) mutable 
+      { return this->obj_func(x,two,y); },zero,res,err,tol);
       if (ret2==0) {
         method=2;
         return 0;
       }
       
-      int ret3=iac.integ_iu_err_multip(ft,0,res,err,tol);
+      int ret3=iac.integ_iu_err_multip([this,two,y](auto &&x) mutable 
+      { return this->obj_func(x,two,y); },zero,res,err,tol);
       if (ret3==0) {
         method=3;
         return 0;
@@ -1136,22 +837,22 @@ namespace o2scl {
       fp_t three=3;
       fp_t zero=0;
       
-      std::function<fp_t(fp_t)> ft=[three,y](fp_t x) mutable -> fp_t
-      { return obj_func(x,three,y); };
-      
-      int ret1=ikb.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret1=ikb.integ_iu_err_multip([this,three,y](auto &&x) mutable 
+      { return this->obj_func(x,three,y); },zero,res,err,tol);
       if (ret1==0) {
         method=1;
         return 0;
       }
-      
-      int ret2=ideb.integ_iu_err_multip(ft,zero,res,err,tol);
+
+      int ret2=ideb.integ_iu_err_multip([this,three,y](auto &&x) mutable 
+      { return this->obj_func(x,three,y); },zero,res,err,tol);
       if (ret2==0) {
         method=2;
         return 0;
       }
       
-      int ret3=iac.integ_iu_err_multip(ft,zero,res,err,tol);
+      int ret3=iac.integ_iu_err_multip([this,three,y](auto &&x) mutable 
+      { return this->obj_func(x,three,y); },zero,res,err,tol);
       if (ret3==0) {
         method=3;
         return 0;
@@ -1179,10 +880,58 @@ namespace o2scl {
       return res;
     }
     
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
+    template<class fp_t>
+    int calc_err_full(fp_t n, fp_t y, fp_t &res, fp_t &err, int &method) {
+
+      fp_t zero=0;
+      
+      int ret1=ikb.integ_iu_err_multip([this,n,y](auto &&x) mutable 
+      { return this->obj_func(x,n,y); },zero,res,err,tol);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+
+      int ret2=ideb.integ_iu_err_multip([this,n,y](auto &&x) mutable 
+      { return this->obj_func(x,n,y); },zero,res,err,tol);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      
+      int ret3=iac.integ_iu_err_multip([this,n,y](auto &&x) mutable 
+      { return this->obj_func(x,n,y); },zero,res,err,tol);
+      if (ret3==0) {
+        method=3;
+        return 0;
+      }
+      
+      O2SCL_CONV_RET("Function calc_err_full failed.",
+                     o2scl::exc_efailed,err_nonconv);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
+    template<class fp_t>
+    int calc_err(fp_t n, fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      return calc_err_full(n,y,res,err,method);
+    }
+    
+    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+     */
+    template<class fp_t>
+    fp_t calc(fp_t n, fp_t y) {
+      fp_t res, err;
+      calc_err(n,y,res,err);
+      return res;
+    }
+    
   };
 
-#endif
-  
   /** \brief Compute exponentially scaled modified Bessel function of
       the second kind by direct integration
 

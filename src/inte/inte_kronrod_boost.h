@@ -68,13 +68,18 @@ namespace o2scl {
       this->L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_kronrod_boost::integ_err() "
+        std::cout << "  inte_kronrod_boost::integ_err_funct() "
                   << "tols(target,integ),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
       }
       
       if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_kronrod_boost::integ_err_funct() failed "
+                    << "because " << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
         return 1;
       }
       
@@ -119,6 +124,11 @@ namespace o2scl {
       }
 
       if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_kronrod_boost::integ_err_int() failed "
+                    << "because " << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
         return 1;
       }
       return 0;
@@ -179,7 +189,7 @@ namespace o2scl {
     
     /** \brief Set the maximum number of interval splittings (default
         15)
-     */
+    */
     void set_max_depth(size_t md) {
       max_depth=md;
       return;
@@ -197,9 +207,9 @@ namespace o2scl {
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_kronrod_boost::integ_err() failed."
+          std::cout << "inte_kronrod_boost::integ_err() failed."
                     << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,max: "
+          std::cout << "  Values err,tol_rel,L1norm,max: "
                     << err << " " << this->tol_rel << " "
                     << L1norm << " " << max_depth
                     << std::endl;
@@ -262,10 +272,9 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
-                    << "\n  for double integration." << std::endl;
+                    << " for double integration." << std::endl;
         }
         double a_d=static_cast<double>(a);
         double b_d=static_cast<double>(b);
@@ -279,18 +288,28 @@ namespace o2scl {
           err=static_cast<fp_t>(err_d);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_d/abs(res_d) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
-                    << "\n  for long double integration." << std::endl;
+                    << " for long double integration." << std::endl;
         }
         long double a_ld=static_cast<long double>(a);
         long double b_ld=static_cast<long double>(b);
@@ -304,18 +323,28 @@ namespace o2scl {
           err=static_cast<fp_t>(err_ld);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_ld/abs(res_ld) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                    << " for cpp_dec_float_25 integration." << std::endl;
         }
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
@@ -335,18 +364,28 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf25);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf25/abs(res_cdf25) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                    << " for cpp_dec_float_35 integration." << std::endl;
         }
         cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
         cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
@@ -361,18 +400,28 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf35);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf35/abs(res_cdf35) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                    << " for cpp_dec_float_50 integration." << std::endl;
         }
         cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
         cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
@@ -387,18 +436,28 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf50);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf50/abs(res_cdf50) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_100>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_kronrod_boost::integ_err_multip(): "
-                    << integ_tol << " > "
+          std::cout << "  " << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
-                    << "\n  for cpp_dec_float_100 integration." << std::endl;
+                    << " for cpp_dec_float_100 integration." << std::endl;
         }
         cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
         cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
@@ -413,14 +472,25 @@ namespace o2scl {
           err=static_cast<fp_t>(err_cdf100);
           return 0;
         } else {
-          target_tol/=10;
+          if (verbose>0) {
+            if (ret!=0) {
+              std::cout << "  Failed. Returned non-zero value."
+                        << std::endl;
+            } else {
+              std::cout << "  Failed. Relative error "
+                        << err_cdf100/abs(res_cdf100) << " >= " << integ_tol
+                        << std::endl;
+            }
+          }
+          // AWS 3/23/23 I'm not sure why this is necessary
+          //target_tol/=10;
         }
       }
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err_multip() "
-                  << "failed after cpp_dec_float_100:\n  "
-                  << integ_tol << std::endl;
+                  << "failed after cpp_dec_float_100.\n  "
+                  << "Original tolerance: " << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
@@ -453,7 +523,7 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
-                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+                            fp_t &res, fp_t &err, double integ_tol=-1.0) {
       return integ_err_multip(func,
                               -std::numeric_limits<fp_t>::infinity(),
                               b,res,err,integ_tol);
@@ -468,7 +538,7 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
-                         fp_t &res, fp_t &err, double integ_tol=-1.0) {
+                           fp_t &res, fp_t &err, double integ_tol=-1.0) {
       return integ_err_multip(func,
                               -std::numeric_limits<fp_t>::infinity(),
                               std::numeric_limits<fp_t>::infinity(),

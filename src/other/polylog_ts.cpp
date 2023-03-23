@@ -201,10 +201,18 @@ int main(void) {
   
   // Todo: better testing
 
-#ifdef O2SCL_NEVER_DEFINED
-  
+  gen_test_number<> gn;
+  gen_test_number<long double> gn_ld;
+  gen_test_number<cpp_dec_float_35> gn_cdf35;
+  gen_test_number<cpp_dec_float_50> gn_cdf50;
+
   if (true) {
-    fermi_dirac_integ_bf2 fdib2;
+    fermi_dirac_integ_gsl fdig;
+    cout << dtos(fdig.calc_1o2(2),0) << endl;
+    fermi_dirac_multip fdib2;
+    fdib2.ikb.verbose=1;
+    fdib2.ideb.verbose=1;
+    fdib2.iac.verbose=1;
     cpp_dec_float_50 y=2, res, err;
     int method;
     
@@ -223,11 +231,29 @@ int main(void) {
     fdib2.set_tol(1.0e-30);
     fdib2.calc_1o2_ret_full(y,res,err,method);
     cout << dtos(res,30) << " " << err << " " << method << endl;
+    
+    fdib2.ikb.verbose=0;
+    fdib2.ideb.verbose=0;
+    fdib2.iac.verbose=0;
+    
+    for(size_t i=0;i<50;i++) {
+      
+      double x=gn.gen();
+      cpp_dec_float_50 x_cdf50=gn_cdf50.gen();
+      
+      double y1=fdig.calc_3(x);
+      fdib2.set_tol(1.0e-30);
+      cpp_dec_float_50 y5=fdib2.calc_3(x_cdf50);
+      cout.width(4);
+      cout << i << " ";
+      cout.setf(ios::showpos);
+      cout << x << " ";
+      cout.unsetf(ios::showpos);
+      cout << dtos(y1,0) << " " << dtos(y5,0) << endl;
+    }
     exit(-1);
   }
 
-#endif  
-  
   // More accurate versions for testing
   fermi_dirac_integ_direct<long double,funct_cdf35,20,
 			   cpp_dec_float_35> fd_ld_35;
@@ -239,18 +265,13 @@ int main(void) {
 			   cpp_dec_float_100> fd_50_100;
   fd_50_100.set_tol(1.0e-52);
 
-  fermi_dirac_integ_bf<double,30,40,50,cpp_dec_float_25,
-                       cpp_dec_float_35,cpp_dec_float_50> fdib;
-  fdib.set_tol(1.0e-17);
+  //fermi_dirac_integ_bf<double,30,40,50,cpp_dec_float_25,
+  //cpp_dec_float_35,cpp_dec_float_50> fdib;
+  //fdib.set_tol(1.0e-17);
 
   bessel_K_exp_integ_bf<double,30,40,50,cpp_dec_float_25,
                   cpp_dec_float_35,cpp_dec_float_50> bkeb;
   bkeb.set_tol(1.0e-17);
-
-  gen_test_number<> gn;
-  gen_test_number<long double> gn_ld;
-  gen_test_number<cpp_dec_float_35> gn_cdf35;
-  gen_test_number<cpp_dec_float_50> gn_cdf50;
 
   if (false) {
     
