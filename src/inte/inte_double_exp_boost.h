@@ -662,13 +662,13 @@ namespace o2scl {
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
-      if (b==-std::numeric_limits<double>::infinity()) {
-        if (a==std::numeric_limits<double>::infinity()) {
+      if (b==std::numeric_limits<double>::infinity()) {
+        if (a==-std::numeric_limits<double>::infinity()) {
           return integ_i_err_multip(func,res,err,integ_tol);
         } else {
           return integ_iu_err_multip(func,a,res,err,integ_tol);
         }
-      } else if (a==std::numeric_limits<double>::infinity()) {
+      } else if (a==-std::numeric_limits<double>::infinity()) {
         return integ_il_err_multip(func,b,res,err,integ_tol);
       }
         

@@ -583,7 +583,11 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       ideb.verbose=verbose;
     } else if (method=="ac") {
       iac.tol_rel_multip=pow(10.0,-precision-1);
-      iac.verbose=verbose;
+      if (verbose>0) {
+        iac.verbose=verbose-1;
+      } else {
+        iac.verbose=0;
+      }
     }
     
     if (precision>49) {

@@ -45,6 +45,7 @@ namespace o2scl {
       resize(n);
     }
 
+    /// Resize the object to allow at least \c n subdivisions
     void resize(int n) {
       prev_subdiv=0;
       nsub=n;
@@ -55,10 +56,10 @@ namespace o2scl {
       return;
     }
 
-    /// Desc
+    /// The number of subdivisions (set in resize())
     int nsub;
     
-    /// Desc
+    /// The previous number of subdivisions
     int prev_subdiv;
     
     /// Lower end of subdivision
@@ -158,17 +159,17 @@ namespace o2scl {
       nsub=100;
     }
 
-    /// Desc
+    /// The last number of required iterations
     int last_iter;
 
-    /** \brief Desc
+    /** \brief Set the number of subdivisions for the next integration
      */
     void set_nsub(int n) {
       nsub=n;
       return;
     }
 
-    /// Desc
+    /// The number of subdivisions for the next integration
     int nsub;
     
     /** \brief The maximum relative uncertainty for multipreicsion
@@ -461,15 +462,15 @@ namespace o2scl {
                       fp_t &res, fp_t &err, 
                       double target_tol, double integ_tol, double func_tol) {
 
-      if (b==-std::numeric_limits<double>::infinity()) {
-        if (a==std::numeric_limits<double>::infinity()) {
+      if (b==std::numeric_limits<double>::infinity()) {
+        if (a==-std::numeric_limits<double>::infinity()) {
           return integ_i_err_int(func,res,err,target_tol,integ_tol,
                                  func_tol);
         } else {
           return integ_iu_err_int(func,a,res,err,target_tol,integ_tol,
                                   func_tol);
         }
-      } else if (a==std::numeric_limits<double>::infinity()) {
+      } else if (a==-std::numeric_limits<double>::infinity()) {
         return integ_il_err_int(func,b,res,err,target_tol,integ_tol,
                                 func_tol);
       }
@@ -512,13 +513,13 @@ namespace o2scl {
     int integ_err_is(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err,
                      inte_subdiv<fp_t> &is) {
       
-      if (b==-std::numeric_limits<double>::infinity()) {
-        if (a==std::numeric_limits<double>::infinity()) {
+      if (b==std::numeric_limits<double>::infinity()) {
+        if (a==-std::numeric_limits<double>::infinity()) {
           return integ_i_err_is(func,res,err,is);
         } else {
           return integ_iu_err_is(func,a,res,err,is);
         }
-      } else if (a==std::numeric_limits<double>::infinity()) {
+      } else if (a==-std::numeric_limits<double>::infinity()) {
         return integ_il_err_is(func,b,res,err,is);
       }
       
@@ -651,13 +652,13 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
-      if (b==-std::numeric_limits<double>::infinity()) {
-        if (a==std::numeric_limits<double>::infinity()) {
+      if (b==std::numeric_limits<double>::infinity()) {
+        if (a==-std::numeric_limits<double>::infinity()) {
           return integ_i_err(func,res,err);
         } else {
           return integ_iu_err(func,a,res,err);
         }
-      } else if (a==std::numeric_limits<double>::infinity()) {
+      } else if (a==-std::numeric_limits<double>::infinity()) {
         return integ_il_err(func,b,res,err);
       }
       
@@ -720,13 +721,13 @@ namespace o2scl {
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
-      if (b==-std::numeric_limits<double>::infinity()) {
-        if (a==std::numeric_limits<double>::infinity()) {
+      if (b==std::numeric_limits<double>::infinity()) {
+        if (a==-std::numeric_limits<double>::infinity()) {
           return integ_i_err_multip(func,res,err,integ_tol);
         } else {
           return integ_iu_err_multip(func,a,res,err,integ_tol);
         }
-      } else if (a==std::numeric_limits<double>::infinity()) {
+      } else if (a==-std::numeric_limits<double>::infinity()) {
         return integ_il_err_multip(func,b,res,err,integ_tol);
       }
       
@@ -739,7 +740,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "int_kronrod_boost::integ_err(): set "
+        std::cout << "inte_adapt_cern::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -757,7 +758,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -766,6 +767,7 @@ namespace o2scl {
         double b_d=static_cast<double>(b);
         double res_d, err_d;
         
+        set_nsub(1000);
         ret=integ_err_int(func,a_d,b_d,res_d,err_d,
                           target_tol,integ_tol,func_tol);
         
@@ -781,7 +783,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -791,6 +793,7 @@ namespace o2scl {
         long double b_ld=static_cast<long double>(b);
         long double res_ld, err_ld;
         
+        set_nsub(1000);
         ret=integ_err_int(func,a_ld,b_ld,res_ld,err_ld,
                           target_tol,integ_tol,func_tol);
         
@@ -806,7 +809,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -816,6 +819,7 @@ namespace o2scl {
         cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
         cpp_dec_float_25 res_cdf25, err_cdf25;
 
+        set_nsub(10000);
         ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
                           err_cdf25,target_tol,
                           integ_tol,func_tol);
@@ -837,7 +841,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -847,6 +851,7 @@ namespace o2scl {
         cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
         cpp_dec_float_35 res_cdf35, err_cdf35;
         
+        set_nsub(10000);
         ret=integ_err_int(func,a_cdf35,b_cdf35,res_cdf35,
                           err_cdf35,target_tol,
                           integ_tol,func_tol);
@@ -863,7 +868,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -873,6 +878,7 @@ namespace o2scl {
         cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
         cpp_dec_float_50 res_cdf50, err_cdf50;
         
+        set_nsub(100000);
         ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
                           err_cdf50,target_tol,
                           integ_tol,func_tol);
@@ -911,7 +917,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "int_kronrod_boost::integ_err(): set "
+        std::cout << "inte_adapt_cern::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -929,14 +935,15 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
         }
         double a_d=static_cast<double>(a);
         double res_d, err_d;
-        
+
+        set_nsub(1000);
         ret=integ_iu_err_int(func,a_d,res_d,err_d,
                              target_tol,integ_tol,func_tol);
         
@@ -952,7 +959,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -961,6 +968,7 @@ namespace o2scl {
         long double a_ld=static_cast<long double>(a);
         long double res_ld, err_ld;
         
+        set_nsub(1000);
         ret=integ_iu_err_int(func,a_ld,res_ld,err_ld,
                              target_tol,integ_tol,func_tol);
         
@@ -976,7 +984,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -985,6 +993,7 @@ namespace o2scl {
         cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
         cpp_dec_float_25 res_cdf25, err_cdf25;
 
+        set_nsub(10000);
         ret=integ_iu_err_int(func,a_cdf25,res_cdf25,
                              err_cdf25,target_tol,
                              integ_tol,func_tol);
@@ -1006,7 +1015,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1015,6 +1024,7 @@ namespace o2scl {
         cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
         cpp_dec_float_35 res_cdf35, err_cdf35;
         
+        set_nsub(10000);
         ret=integ_iu_err_int(func,a_cdf35,res_cdf35,
                              err_cdf35,target_tol,
                              integ_tol,func_tol);
@@ -1031,7 +1041,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1040,6 +1050,7 @@ namespace o2scl {
         cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
         cpp_dec_float_50 res_cdf50, err_cdf50;
         
+        set_nsub(100000);
         ret=integ_iu_err_int(func,a_cdf50,res_cdf50,
                              err_cdf50,target_tol,
                              integ_tol,func_tol);
@@ -1078,7 +1089,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "int_kronrod_boost::integ_err(): set "
+        std::cout << "inte_adapt_cern::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -1096,7 +1107,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -1119,7 +1130,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -1143,7 +1154,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1173,7 +1184,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1198,7 +1209,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1245,7 +1256,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "int_kronrod_boost::integ_err(): set "
+        std::cout << "inte_adapt_cern::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -1263,7 +1274,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -1285,7 +1296,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -1308,7 +1319,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1337,7 +1348,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1361,7 +1372,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "int_kronrod_boost::integ_err(): "
+          std::cout << "inte_adapt_cern::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
