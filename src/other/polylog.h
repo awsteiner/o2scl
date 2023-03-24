@@ -591,7 +591,7 @@ namespace o2scl {
     inte_adapt_cern iac;
     
     fermi_dirac_multip() {
-      tol=1.0e-17;
+      tol=1.0e-16;
       err_nonconv=true;
       ikb.err_nonconv=false;
       ideb.err_nonconv=false;
@@ -955,7 +955,7 @@ namespace o2scl {
     inte_adapt_cern iac;
     
     bose_einstein_multip() {
-      tol=1.0e-17;
+      tol=1.0e-16;
       err_nonconv=true;
       ikb.err_nonconv=false;
       ideb.err_nonconv=false;
