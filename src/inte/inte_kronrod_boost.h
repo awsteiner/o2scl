@@ -29,6 +29,7 @@
 
 #include <cmath>
 
+#define BOOST_DISABLE_ASSERTS
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>

@@ -3,8 +3,9 @@ convert integ_double_exp_boost.h integrators to same interface as
 take out old inte_adapt_cern in fermion_rel.h and polylog.h and
   replace with new inte_multip_adapt_cern (removed inte_adapt_cern)
 rename inte_multip_adapt_cern to new inte_adapt_cern (done)
-check to see if polylog.h classes need new integrators
+check to see if polylog.h classes need new integrators (done, created
+  new polylog_multip)
 make a most consistent interface for the multiprecision integrators
   and code reuse via, e.g. a parent class
-work on integration in fermion_rel?
 retry fixing acol ninteg? (still doesn't work on ubuntu, fine on OSX)
+fix and test fermion_rel_integ_multip2

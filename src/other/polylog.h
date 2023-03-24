@@ -361,6 +361,14 @@ namespace o2scl {
     
   public:
 
+    /** \brief 
+        
+        (This is needed for fermion_rel)
+     */
+    void set_tol(double t) {
+      return;
+    }
+    
     /** \brief Compute \f$ K_1(x) e^x \f$
      */
     fp_t K1exp(fp_t x) {

@@ -157,7 +157,7 @@ int main(void) {
 
   fr.verify_ti=true;
   double v1=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,true,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
+    (f,fr,"../../data/o2scl/fermion_deriv_cal.o2",true,true,false,0,true);
   t.test_rel(v1,0.0,4.0e-6,"calibrate");
   cout << endl;
 
@@ -175,22 +175,20 @@ int main(void) {
   fr.fri.nit.tol_rel=1.0e-13;
   fr.density_root->tol_rel=1.0e-10;
 
+  // Check calc_mu() alone
   double v2=pcc.part_calibrate<fermion,fermion_rel>
-    (f,fr,1,"../../data/o2scl/fermion_deriv_cal.o2",false,0,true);
+    (f,fr,"../../data/o2scl/fermion_deriv_cal.o2",true,true,false,0,true);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
 
   cout << endl;
   
   fermion_ld fld;
-  fermion_rel_ld frld2;
-  fermion_rel_ld2 frld;
-  fermion_cdf25 f25;
-  fermion_rel_cdf25 fr252;
-  fermion_rel_cdf252 fr25;
+  fermion_rel_ld frld;
+  //fermion_rel_ld_multip frld2;
+  //fermion_cdf25 f25;
+  //fermion_rel_cdf25 fr252;
+  //fermion_rel_cdf252 fr25;
 
-#ifndef O2SCL_FAST_TEST
-#ifdef O2SCL_NEVER_DEFINED
-  
   cout << "----------------------------------------------------" << endl;
   cout << "Testing multiprecision" << endl;
   cout << "----------------------------------------------------" << endl;
@@ -198,18 +196,16 @@ int main(void) {
 
   // AWS 6/17/22: this doesn't quite work, it fails on calc_density()
 
+  cout << "Here10." << endl;
   frld.verify_ti=true;
-  long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld2>
-    (fld,frld,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
+  long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
+    (fld,frld,"../../data/o2scl/fermion_deriv_cal.o2",true,false,false,2,true);
   t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
 
   //fr25.verify_ti=true;
   //cpp_dec_float_25 v4=pcc.part_calibrate<fermion_cdf25,fermion_rel_cdf25>
   //(f25,fr25,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
   //t.test_rel<cpp_dec_float_25>(v3,0.0,4.0e-10,"calibrate 3");
-
-#endif
-#endif
 
 #ifdef O2SCL_NEVER_DEFINED
   
@@ -311,8 +307,9 @@ int main(void) {
       cout << dtos(f25.en,0) << endl;
     }
   }
-#endif
 
+#endif
+  
   t.report();
 
   return 0;

@@ -28,6 +28,7 @@
 
 #include <cmath>
 
+#define BOOST_DISABLE_ASSERTS
 #include <boost/math/constants/constants.hpp>
 
 /** \brief Constants

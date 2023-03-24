@@ -41,7 +41,7 @@ int main(void) {
 
   /*
   double q=pcc.part_calibrate<fermion,fermion_eff>
-    (f,fe,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
+    (f,fe,true,"../../data/o2scl/fermion_deriv_cal.o2",false,true,1,true);
   
   t.test_rel(q,0.0,0.5,"calibrate");
   */

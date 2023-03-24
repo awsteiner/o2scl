@@ -454,7 +454,11 @@ namespace o2scl_acol {
         There are three algorithms: a brute force algorithm (the
         default specified with the string "def"), the algorithm from
         "acor", and a method using FFTW ("fft"). The choice of
-        algorithm can be specified in the options argument.
+        algorithm can be specified in the options argument. Note
+        that the FFT method produces a mirror image of the 
+        autocorrelations on the RHS. The autocorrelation computation
+        from thesethree methods is relatively good, but the estimate
+        of the autocorrelation length is only approximate. 
 
         If multiple vectors are given, then there are two options.
         Option "max" (the default) means that autocorrelation

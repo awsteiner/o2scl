@@ -305,16 +305,16 @@ namespace o2scl_hdf {
     template<class fp_t> int getfp_copy(std::string name, fp_t &f) {
       std::string s;
       gets(name,s);
-      f=stod(s);
+      f=std::stod(s);
       return 0;
     }
 
     /** \brief Get a long double named \c name
 
         \warning No checks are made to ensure that the stored
-        precision matches the precision of the floating point which
-        is used. Note that the long double type is also not 
-        platform-independent.
+        precision matches the precision of the floating point which is
+        used. Note that the precision of the long double type is also
+        not platform-independent.
     */
     int getfp_copy(std::string name, long double &f) {
       std::string s;
@@ -324,6 +324,7 @@ namespace o2scl_hdf {
     }
 
     /** \brief Get a boost multiprecision floating point named \c name
+        (specialization for Boost multiprecision numbers)
 
         \warning No checks are made to ensure that the stored
         precision matches the precision of the floating point which
@@ -351,12 +352,13 @@ namespace o2scl_hdf {
       gets_vec_copy(name,vs);
       f.resize(vs.size());
       for(size_t i=0;i<vs.size();i++) {
-        f[i]=stod(vs[i]);
+        f[i]=std::stod(vs[i]);
       }
       return 0;
     }
 
     /** \brief Get a generic floating point named \c name
+        (specialization for Boost multiprecision numbers)
 
         \warning No checks are made to ensure that the stored
         precision matches the precision of the floating point which

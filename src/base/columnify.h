@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 
+#define BOOST_DISABLE_ASSERTS
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 

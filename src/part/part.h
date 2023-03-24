@@ -521,15 +521,18 @@ namespace o2scl {
 
         .. todo::
 
-           In function pair_calibrate()
+        In function pair_calibrate()
 
-           - Future: Also calibrate massless fermions?
+        - Future: Also calibrate massless fermions?
 
         \endverbatim
     */
     template<class part_t, class thermo_t>
-    fp_t part_calibrate(part_t &p, thermo_t &th, bool test_pair,
-                        std::string file, bool nr_mode=false,
+    fp_t part_calibrate(part_t &p, thermo_t &th,
+                        std::string file, 
+                        bool test_pair=true,
+                        bool test_density=true,
+                        bool nr_mode=false,
                         int verbose=0, bool external=false) {
       
       fp_t ret=0;
@@ -806,7 +809,7 @@ namespace o2scl {
 		    << ret << std::endl;
 	  std::cout << std::endl;
 	  if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
+            std::cout << "Waiting for character: " << std::flush;
 	    char ch;
 	    std::cin >> ch;
 	  }
@@ -821,221 +824,225 @@ namespace o2scl {
       // ----------------------------------------------------------------
       // Second pass, test calc_density()
 
-      // k=0,2 are with rest mass, k=1,3 are without
-      // k=0,1 are non-interacting, k=2,3 are interacting
-      for(size_t k=0;k<4;k++) {
-
-        if (verbose>1) {
-	  if (k==0) {
-	    std::cout << "Function calc_density(), include rest mass, "
-                      << "noninteracting:" << std::endl;
-	  } else if (k==1) {
-	    std::cout << "Function calc_density(), without rest mass, "
-                      << "noninteracting:" << std::endl;
-	  } else if (k==2) {
-	    std::cout << "Function calc_density(), include rest mass, "
-		      << "interacting:" << std::endl;
-	  } else {
-	    std::cout << "Function calc_density(), without rest mass, "
-		      << "interacting:" << std::endl;
-	  }
-        }
-        
-        fp_t ret_local=0.0;
-        ti_local=0;
+      if (test_density) {
       
-	// Initialize storage
-	dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
-    
-	// Temperature loop
-	for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
-      
-	  // Loop over each point in the data file
-	  for(size_t i=0;i<tab.get_nlines();i++) {
-	
-	    fp_t mot=tab.get("mot",i);
-	    fp_t psi=tab.get("psi",i);
-	    p.n=tab.get("n",i)*pow(T,3.0);
-	    exact.ed=tab.get("ed",i);
-	    exact.pr=tab.get("pr",i);
-	    exact.en=tab.get("en",i);
+        // k=0,2 are with rest mass, k=1,3 are without
+        // k=0,1 are non-interacting, k=2,3 are interacting
+        for(size_t k=0;k<4;k++) {
 
-	    set_mass_flags(p,mot,T,k);
-	    set_mass_flags(exact,mot,T,k);
-	    set_chem_pot(exact,psi,T,k,nr_mode);
-	    
-	    exact.n=p.n;
-	    if (nr_mode) {
-	      if (k%2==0) {
-		exact.ed=exact.ed*pow(T,4.0)+exact.n*p.m;
-	      } else {
-		exact.ed=exact.ed*pow(T,4.0);
-	      }
-	    } else {
-	      if (k%2==0) {
-		exact.ed*=pow(T,4.0);
-	      } else {
-		exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
-	      }
-	    }
-	    exact.pr*=pow(T,4.0);
-	    exact.en*=pow(T,3.0);
-
-	    // Give it a guess for the chemical potential
-	    if (k>=2) {
-	      p.nu=p.m;
-	    } else {
-	      p.mu=p.m;
-	    }
-            
-            count++;
-
-	    if (verbose>1) {
-	      std::cout.precision(5);
-	      if (k>=2) {
-		std::cout << "T,ms,n,psi,mot,count: " << T << " "
-			  << p.ms << " " << p.n << " "
-			  << psi << " " << mot << " " << count << std::endl;
-	      } else {
-		std::cout << "T,m,n,psi,mot,count: " << T << " "
-			  << p.m << " " << p.n << " "
-			  << psi << " " << mot << " " << count << std::endl;
-	      }
+          if (verbose>1) {
+            if (k==0) {
+              std::cout << "Function calc_density(), include rest mass, "
+                        << "noninteracting:" << std::endl;
+            } else if (k==1) {
+              std::cout << "Function calc_density(), without rest mass, "
+                        << "noninteracting:" << std::endl;
+            } else if (k==2) {
+              std::cout << "Function calc_density(), include rest mass, "
+                        << "interacting:" << std::endl;
+            } else {
+              std::cout << "Function calc_density(), without rest mass, "
+                        << "interacting:" << std::endl;
             }
-            
-	    th.calc_density(p,T);
-            if (th.verify_ti) {
-              double val;
-              if (p.pr==0.0) {
-                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
-                  abs(-p.ed+p.n*p.nu+p.en*T);
-              } else {
-                val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
-              }
-              ti_test+=val;
-              ti_count++;
-              if (ti_test>ti_local) ti_local=ti_test;
-              if (val>0.1 || !isfinite(ti_test)) {
-                std::cout << "     " << p.ed << " " << p.en << " "
-                          << p.n << " " << p.nu << std::endl;
-                O2SCL_ERR("Thermodynamic identity violated.",
-                          o2scl::exc_esanity);
-              }
-            }
-	
-	    if (k>=2) {
-	      dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
-	    } else {
-	      dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
-              if (false && dev.mu>0.1) {
-                std::cout << "p.mu,exact.mu: "
-                          << p.mu << " " << exact.mu << std::endl;
-		std::cout << "T,m,n,psi,mot,count: " << T << " "
-			  << p.m << " " << p.n << " "
-			  << psi << " " << mot << " " << count << std::endl;
-                O2SCL_ERR("Chemical potential match failed.",
-                          o2scl::exc_einval);
-              }
-	    }
-	    dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
-	    dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
-	    dev.en+=fabs((p.en-exact.en)/exact.en);
-
-	    cnt++;
-
-	    check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,mu_max,
-                                   m_max,T_max,mot_max,psi_max,ret_local);
-	    check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
-			      mot_max,psi_max,ret_local);
-            
-	    if (verbose>1) {
-	      std::cout.precision(6);
-	      if (k>=2) {
-		std::cout << "nu,ed,pr,en: " << std::endl;
-		std::cout << "comput: " << p.nu << " " << p.ed << " "
-			  << p.pr << " " << p.en << std::endl;
-		std::cout << "exact : " << exact.nu << " " << exact.ed 
-			  << " " << exact.pr << " " << exact.en << std::endl;
-	      } else {
-		std::cout << "mu,ed,pr,en: " << std::endl;
-		std::cout << "comput: " << p.mu << " " << p.ed << " "
-			  << p.pr << " " << p.en << std::endl;
-		std::cout << "exact : " << exact.mu << " " << exact.ed 
-			  << " " << exact.pr << " " << exact.en << std::endl;
-	      }
-	      std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
-			<< max.pr << " " << max.en << std::endl;
-              if (ti_count>0) {
-                std::cout << "check ti: " << ti_test/ti_count << " "
-                          << ti_local << std::endl;
-              }
-	      std::cout << "ret_local,ret: " << ret_local << " "
-			<< ret << std::endl;
-	      std::cout << std::endl;
-	      if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
-		char ch;
-		std::cin >> ch;
-	      }
-	    }
-
-	    if (ret_local>ret) {
-	      ret=ret_local;
-	    }
-	    if (ti_local>ti_max) {
-	      ti_max=ret_local;
-	    }
-    
-	    // End of loop over points in data file
-	  }
-	  // End of temperature loop
-	}
-
-	dev.mu/=cnt;
-	dev.ed/=cnt;
-	dev.pr/=cnt;
-	dev.en/=cnt;
-      
-	if (verbose>0) {
-	  if (k==0) {
-	    std::cout << "Function calc_density(), include rest mass"
-		      << std::endl;
-	  } else if (k==1) {
-	    std::cout << "Function calc_density(), without rest mass"
-		      << std::endl;
-	  } else if (k==2) {
-	    std::cout << "Function calc_density(), include rest mass, "
-		      << "interacting" << std::endl;
-	  } else {
-	    std::cout << "Function calc_density(), without rest mass, "
-		      << "interacting" << std::endl;
-	  }
-	
-	  std::cout << "Average performance: " << std::endl;
-	  std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
-		    << dev.pr << " en: " << dev.en << std::endl;
-	  std::cout << "Worst case: " << std::endl;
-	  std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
-		    << max.pr << " en: " << max.en << std::endl;
-	  std::cout << "mu: " << mu_max << " m: " << m_max
-		    << " T: " << T_max << " mot: " << mot_max
-		    << "\n\tpsi: " << psi_max << std::endl;
-          if (ti_count>0) {
-            std::cout << "check ti: " << ti_test/ti_count << " "
-                      << ti_local << std::endl;
           }
-	  std::cout << "ret_local,ret: " << ret_local << " "
-		    << ret << std::endl;
-	  std::cout << std::endl;
-	  if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
-	    char ch;
-	    std::cin >> ch;
-	  }
-	}
+        
+          fp_t ret_local=0.0;
+          ti_local=0;
+      
+          // Initialize storage
+          dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+          max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
+    
+          // Temperature loop
+          for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+      
+            // Loop over each point in the data file
+            for(size_t i=0;i<tab.get_nlines();i++) {
+	
+              fp_t mot=tab.get("mot",i);
+              fp_t psi=tab.get("psi",i);
+              p.n=tab.get("n",i)*pow(T,3.0);
+              exact.ed=tab.get("ed",i);
+              exact.pr=tab.get("pr",i);
+              exact.en=tab.get("en",i);
 
-	// End of k loop
+              set_mass_flags(p,mot,T,k);
+              set_mass_flags(exact,mot,T,k);
+              set_chem_pot(exact,psi,T,k,nr_mode);
+	    
+              exact.n=p.n;
+              if (nr_mode) {
+                if (k%2==0) {
+                  exact.ed=exact.ed*pow(T,4.0)+exact.n*p.m;
+                } else {
+                  exact.ed=exact.ed*pow(T,4.0);
+                }
+              } else {
+                if (k%2==0) {
+                  exact.ed*=pow(T,4.0);
+                } else {
+                  exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
+                }
+              }
+              exact.pr*=pow(T,4.0);
+              exact.en*=pow(T,3.0);
+
+              // Give it a guess for the chemical potential
+              if (k>=2) {
+                p.nu=p.m;
+              } else {
+                p.mu=p.m;
+              }
+            
+              count++;
+
+              if (verbose>1) {
+                std::cout.precision(5);
+                if (k>=2) {
+                  std::cout << "T,ms,n,psi,mot,count: " << T << " "
+                            << p.ms << " " << p.n << " "
+                            << psi << " " << mot << " " << count << std::endl;
+                } else {
+                  std::cout << "T,m,n,psi,mot,count: " << T << " "
+                            << p.m << " " << p.n << " "
+                            << psi << " " << mot << " " << count << std::endl;
+                }
+              }
+            
+              th.calc_density(p,T);
+              if (th.verify_ti) {
+                double val;
+                if (p.pr==0.0) {
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                    abs(-p.ed+p.n*p.nu+p.en*T);
+                } else {
+                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
+                }
+                ti_test+=val;
+                ti_count++;
+                if (ti_test>ti_local) ti_local=ti_test;
+                if (val>0.1 || !isfinite(ti_test)) {
+                  std::cout << "     " << p.ed << " " << p.en << " "
+                            << p.n << " " << p.nu << std::endl;
+                  O2SCL_ERR("Thermodynamic identity violated.",
+                            o2scl::exc_esanity);
+                }
+              }
+	
+              if (k>=2) {
+                dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
+              } else {
+                dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
+                if (false && dev.mu>0.1) {
+                  std::cout << "p.mu,exact.mu: "
+                            << p.mu << " " << exact.mu << std::endl;
+                  std::cout << "T,m,n,psi,mot,count: " << T << " "
+                            << p.m << " " << p.n << " "
+                            << psi << " " << mot << " " << count << std::endl;
+                  O2SCL_ERR("Chemical potential match failed.",
+                            o2scl::exc_einval);
+                }
+              }
+              dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
+              dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
+              dev.en+=fabs((p.en-exact.en)/exact.en);
+
+              cnt++;
+
+              check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,mu_max,
+                                     m_max,T_max,mot_max,psi_max,ret_local);
+              check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,m_max,T_max,
+                                mot_max,psi_max,ret_local);
+            
+              if (verbose>1) {
+                std::cout.precision(6);
+                if (k>=2) {
+                  std::cout << "nu,ed,pr,en: " << std::endl;
+                  std::cout << "comput: " << p.nu << " " << p.ed << " "
+                            << p.pr << " " << p.en << std::endl;
+                  std::cout << "exact : " << exact.nu << " " << exact.ed 
+                            << " " << exact.pr << " " << exact.en << std::endl;
+                } else {
+                  std::cout << "mu,ed,pr,en: " << std::endl;
+                  std::cout << "comput: " << p.mu << " " << p.ed << " "
+                            << p.pr << " " << p.en << std::endl;
+                  std::cout << "exact : " << exact.mu << " " << exact.ed 
+                            << " " << exact.pr << " " << exact.en << std::endl;
+                }
+                std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
+                          << max.pr << " " << max.en << std::endl;
+                if (ti_count>0) {
+                  std::cout << "check ti: " << ti_test/ti_count << " "
+                            << ti_local << std::endl;
+                }
+                std::cout << "ret_local,ret: " << ret_local << " "
+                          << ret << std::endl;
+                std::cout << std::endl;
+                if (verbose>2) {
+                  std::cout << "Waiting for character: " << std::flush;
+                  char ch;
+                  std::cin >> ch;
+                }
+              }
+
+              if (ret_local>ret) {
+                ret=ret_local;
+              }
+              if (ti_local>ti_max) {
+                ti_max=ret_local;
+              }
+    
+              // End of loop over points in data file
+            }
+            // End of temperature loop
+          }
+
+          dev.mu/=cnt;
+          dev.ed/=cnt;
+          dev.pr/=cnt;
+          dev.en/=cnt;
+      
+          if (verbose>0) {
+            if (k==0) {
+              std::cout << "Function calc_density(), include rest mass"
+                        << std::endl;
+            } else if (k==1) {
+              std::cout << "Function calc_density(), without rest mass"
+                        << std::endl;
+            } else if (k==2) {
+              std::cout << "Function calc_density(), include rest mass, "
+                        << "interacting" << std::endl;
+            } else {
+              std::cout << "Function calc_density(), without rest mass, "
+                        << "interacting" << std::endl;
+            }
+	
+            std::cout << "Average performance: " << std::endl;
+            std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
+                      << dev.pr << " en: " << dev.en << std::endl;
+            std::cout << "Worst case: " << std::endl;
+            std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
+                      << max.pr << " en: " << max.en << std::endl;
+            std::cout << "mu: " << mu_max << " m: " << m_max
+                      << " T: " << T_max << " mot: " << mot_max
+                      << "\n\tpsi: " << psi_max << std::endl;
+            if (ti_count>0) {
+              std::cout << "check ti: " << ti_test/ti_count << " "
+                        << ti_local << std::endl;
+            }
+            std::cout << "ret_local,ret: " << ret_local << " "
+                      << ret << std::endl;
+            std::cout << std::endl;
+            if (verbose>2) {
+              std::cout << "Waiting for character: " << std::flush;
+              char ch;
+              std::cin >> ch;
+            }
+          }
+
+          // End of k loop
+        }
+
       }
 
       if (test_pair) {
@@ -1048,7 +1055,7 @@ namespace o2scl {
 	for(size_t k=0;k<4;k++) {
 
 	  fp_t ret_local=0.0;
-        ti_local=0;
+          ti_local=0;
 
 	  // Initialize storage
 	  dev.n=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
@@ -1090,7 +1097,7 @@ namespace o2scl {
                 }
                 ti_test+=val;
                 ti_count++;
-              if (ti_test>ti_local) ti_local=ti_test;
+                if (ti_test>ti_local) ti_local=ti_test;
                 if (val>0.1 || !isfinite(ti_test)) {
                   std::cout << "     " << p.ed << " " << p.en << " "
                             << p.n << " " << p.nu << std::endl;
@@ -1142,7 +1149,7 @@ namespace o2scl {
 			  << ret << std::endl;
 		std::cout << std::endl;
 		if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
+                  std::cout << "Waiting for character: " << std::flush;
 		  char ch;
 		  std::cin >> ch;
 		}
@@ -1151,9 +1158,9 @@ namespace o2scl {
 	      if (ret_local>ret) {
 		ret=ret_local;
 	      }
-	    if (ti_local>ti_max) {
-	      ti_max=ret_local;
-	    }
+              if (ti_local>ti_max) {
+                ti_max=ret_local;
+              }
 	    
 	      // End of loop over points in data file
 	    }
@@ -1197,7 +1204,7 @@ namespace o2scl {
 		      << ret << std::endl;
 	    std::cout << std::endl;
 	    if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
+              std::cout << "Waiting for character: " << std::flush;
 	      char ch;
 	      std::cin >> ch;
 	    }
@@ -1209,200 +1216,205 @@ namespace o2scl {
 	// ----------------------------------------------------------------
 	// Fourth pass, test pair_density()
 
-	// k=0,2 are with rest mass, k=1,3 are without
-	// k=0,1 are non-interacting, k=2,3 are interacting
-	for(size_t k=0;k<4;k++) {
+        if (test_density) {
+        
+          // k=0,2 are with rest mass, k=1,3 are without
+          // k=0,1 are non-interacting, k=2,3 are interacting
+          for(size_t k=0;k<4;k++) {
 
-	  fp_t ret_local=0.0;
-        ti_local=0;
+            fp_t ret_local=0.0;
+            ti_local=0;
 	
-	  // Initialize storage
-	  dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
-	  max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
+            // Initialize storage
+            dev.mu=0.0; dev.ed=0.0; dev.pr=0.0; dev.en=0.0;
+            max.mu=0.0; max.ed=0.0; max.pr=0.0; max.en=0.0;
     
-	  // Temperature loop
-	  for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
+            // Temperature loop
+            for(fp_t T=1.0e-2;T<=1.001e2;T*=1.0e2) {
       
-	    // Loop over each point in the data file
-	    for(size_t i=0;i<tab.get_nlines();i++) {
+              // Loop over each point in the data file
+              for(size_t i=0;i<tab.get_nlines();i++) {
 	
-	      fp_t mot=tab.get("mot",i);
-	      fp_t psi=tab.get("psi",i);
-	      p.n=tab.get("pair_n",i)*pow(T,3.0);	
-	      exact.ed=tab.get("pair_ed",i);
-	      exact.pr=tab.get("pair_pr",i);
-	      exact.en=tab.get("pair_en",i);
+                fp_t mot=tab.get("mot",i);
+                fp_t psi=tab.get("psi",i);
+                p.n=tab.get("pair_n",i)*pow(T,3.0);	
+                exact.ed=tab.get("pair_ed",i);
+                exact.pr=tab.get("pair_pr",i);
+                exact.en=tab.get("pair_en",i);
 	  
-	      set_mass_flags(p,mot,T,k);
-	      set_chem_pot(exact,psi,T,k,nr_mode);
-              count++;
+                set_mass_flags(p,mot,T,k);
+                set_chem_pot(exact,psi,T,k,nr_mode);
+                count++;
 
-	      exact.n=p.n;
-	      if (k%2==0) {
-		exact.ed*=pow(T,4.0);
-	      } else {
-		exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
-	      }
-	      exact.pr*=pow(T,4.0);
-	      exact.en*=pow(T,3.0);
-
-	      // Give it a guess for the chemical potential
-	      p.mu=p.m;
-
-	      if (verbose>1) {
-		std::cout.precision(5);
-		if (k>=2) {
-		  std::cout << "T,ms,n,psi,mot,count: "
-                            << T << " " << p.ms << " " 
-			    << p.n << " " << psi << " " << mot << " "
-                            << count << std::endl;
-		} else {
-		  std::cout << "T,m,n,psi,mot,count: "
-                            << T << " " << p.m << " " 
-			    << p.n << " " << psi << " " << mot << " "
-                            << count << std::endl;
-		}
-              }
-              
-	      th.pair_density(p,T);
-              if (th.verify_ti) {
-                double val;
-                if (p.pr==0.0) {
-                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
-                    abs(-p.ed+p.n*p.nu+p.en*T);
+                exact.n=p.n;
+                if (k%2==0) {
+                  exact.ed*=pow(T,4.0);
                 } else {
-                  val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
+                  exact.ed=exact.ed*pow(T,4.0)-exact.n*p.m;
                 }
-                ti_test+=val;
-                ti_count++;
-              if (ti_test>ti_local) ti_local=ti_test;
-                if (val>0.1 || !isfinite(ti_test)) {
-                  std::cout << "     " << p.ed << " " << p.en << " "
-                            << p.n << " "
-                            << p.nu << std::endl;
-                  O2SCL_ERR("Thermodynamic identity violated.",
-                            o2scl::exc_esanity);
+                exact.pr*=pow(T,4.0);
+                exact.en*=pow(T,3.0);
+
+                // Give it a guess for the chemical potential
+                p.mu=p.m;
+
+                if (verbose>1) {
+                  std::cout.precision(5);
+                  if (k>=2) {
+                    std::cout << "T,ms,n,psi,mot,count: "
+                              << T << " " << p.ms << " " 
+                              << p.n << " " << psi << " " << mot << " "
+                              << count << std::endl;
+                  } else {
+                    std::cout << "T,m,n,psi,mot,count: "
+                              << T << " " << p.m << " " 
+                              << p.n << " " << psi << " " << mot << " "
+                              << count << std::endl;
+                  }
                 }
-              }
               
-	      if (k>=2) {
-		dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
-	      } else {
-		dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
-	      }
-	      dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
-	      dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
-	      dev.en+=fabs((p.en-exact.en)/exact.en);
-	
-	      cnt++;
-
-	      check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,
-                                     mu_max,m_max,T_max,
-				     mot_max,psi_max,ret_local);
-
-	      check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,
-                                m_max,T_max,
-				mot_max,psi_max,ret_local);
-	    
-	    
-	      if (verbose>1) {
-		std::cout.precision(6);
-		if (k>=2) {
-		  std::cout << "nu,ed,pr,en: " << std::endl;
-		  std::cout << "comput: " << p.nu << " " << p.ed << " "
-			    << p.pr << " " << p.en << std::endl;
-		  std::cout << "exact : " << exact.nu << " "
-                            << exact.ed << " " << exact.pr << " "
-                            << exact.en << std::endl;
-		} else {
-		  std::cout << "mu,ed,pr,en: " << std::endl;
-		  std::cout << "comput: " << p.mu << " " << p.ed << " "
-			    << p.pr << " " << p.en << std::endl;
-		  std::cout << "exact : " << exact.mu << " "
-                            << exact.ed << " " << exact.pr << " "
-                            << exact.en << std::endl;
-		}
-		std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
-			  << max.pr << " " << max.en << std::endl;
-                if (ti_count>0) {
-                  std::cout << "check ti: " << ti_test/ti_count
-                            << " " << ti_local << std::endl;
+                th.pair_density(p,T);
+                if (th.verify_ti) {
+                  double val;
+                  if (p.pr==0.0) {
+                    val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
+                      abs(-p.ed+p.n*p.nu+p.en*T);
+                  } else {
+                    val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/abs(p.pr);
+                  }
+                  ti_test+=val;
+                  ti_count++;
+                  if (ti_test>ti_local) ti_local=ti_test;
+                  if (val>0.1 || !isfinite(ti_test)) {
+                    std::cout << "     " << p.ed << " " << p.en << " "
+                              << p.n << " "
+                              << p.nu << std::endl;
+                    O2SCL_ERR("Thermodynamic identity violated.",
+                              o2scl::exc_esanity);
+                  }
                 }
-		std::cout << "ret_local,ret: " << ret_local << " "
-			  << ret << std::endl;
-		std::cout << std::endl;
-		if (verbose>2) {
-                std::cout << "Waiting for character: " << std::flush;
-		  char ch;
-		  std::cin >> ch;
-		}
-	      }
+              
+                if (k>=2) {
+                  dev.nu+=fabs((p.nu-exact.nu)/exact.nu);
+                } else {
+                  dev.mu+=fabs((p.mu-exact.mu)/exact.mu);
+                }
+                dev.ed+=fabs((p.ed-exact.ed)/exact.ed);
+                dev.pr+=fabs((p.pr-exact.pr)/exact.pr);
+                dev.en+=fabs((p.en-exact.en)/exact.en);
+	
+                cnt++;
 
-	      if (ret_local>ret) {
-		ret=ret_local;
-	      }
-	    if (ti_local>ti_max) {
-	      ti_max=ret_local;
-	    }
+                check_chem_pot<part_t>(p,exact,max,k,T,mot,psi,
+                                       mu_max,m_max,T_max,
+                                       mot_max,psi_max,ret_local);
 
-	      // End of loop over points in data file
-	    }
-	    // End of temperature loop
-	  }
+                check_eps<part_t>(p,exact,max,k,T,mot,psi,mu_max,
+                                  m_max,T_max,
+                                  mot_max,psi_max,ret_local);
+	    
+	    
+                if (verbose>1) {
+                  std::cout.precision(6);
+                  if (k>=2) {
+                    std::cout << "nu,ed,pr,en: " << std::endl;
+                    std::cout << "comput: " << p.nu << " " << p.ed << " "
+                              << p.pr << " " << p.en << std::endl;
+                    std::cout << "exact : " << exact.nu << " "
+                              << exact.ed << " " << exact.pr << " "
+                              << exact.en << std::endl;
+                  } else {
+                    std::cout << "mu,ed,pr,en: " << std::endl;
+                    std::cout << "comput: " << p.mu << " " << p.ed << " "
+                              << p.pr << " " << p.en << std::endl;
+                    std::cout << "exact : " << exact.mu << " "
+                              << exact.ed << " " << exact.pr << " "
+                              << exact.en << std::endl;
+                  }
+                  std::cout << "maxdev: " << max.mu << " " << max.ed << " " 
+                            << max.pr << " " << max.en << std::endl;
+                  if (ti_count>0) {
+                    std::cout << "check ti: " << ti_test/ti_count
+                              << " " << ti_local << std::endl;
+                  }
+                  std::cout << "ret_local,ret: " << ret_local << " "
+                            << ret << std::endl;
+                  std::cout << std::endl;
+                  if (verbose>2) {
+                    std::cout << "Waiting for character: " << std::flush;
+                    char ch;
+                    std::cin >> ch;
+                  }
+                }
 
-	  dev.mu/=cnt;
-	  dev.ed/=cnt;
-	  dev.pr/=cnt;
-	  dev.en/=cnt;
+                if (ret_local>ret) {
+                  ret=ret_local;
+                }
+                if (ti_local>ti_max) {
+                  ti_max=ret_local;
+                }
 
-	  if (verbose>0) {
-	    if (k==0) {
-	      std::cout << "Function pair_density(), include rest mass"
-			<< std::endl;
-	    } else if (k==1) {
-	      std::cout << "Function pair_density(), without rest mass"
-			<< std::endl;
-	    } else if (k==2) {
-	      std::cout << "Function pair_density(), include rest mass, "
-			<< "interacting" << std::endl;
-	    } else {
-	      std::cout << "Function pair_density(), without rest mass, "
-			<< "interacting" << std::endl;
-	    }
-
-	    std::cout << "Average performance: " << std::endl;
-	    std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
-		      << dev.pr << " en: " << dev.en << std::endl;
-	    std::cout << "Worst case: " << std::endl;
-	    std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
-		      << max.pr << " en: " << max.en << std::endl;
-	    std::cout << "mu: " << mu_max << " m: " << m_max
-		      << " T: " << T_max << " mot: " << mot_max
-		      << "\n\tpsi: " << psi_max << std::endl;
-            if (ti_count>0) {
-              std::cout << "check ti: " << ti_test/ti_count << " "
-                        << ti_local << std::endl;
+                // End of loop over points in data file
+              }
+              // End of temperature loop
             }
-	    std::cout << "ret_local,ret: " << ret_local << " "
-		      << ret << std::endl;
-	    std::cout << std::endl;
-	    if (verbose>2) {
+
+            dev.mu/=cnt;
+            dev.ed/=cnt;
+            dev.pr/=cnt;
+            dev.en/=cnt;
+
+            if (verbose>0) {
+              if (k==0) {
+                std::cout << "Function pair_density(), include rest mass"
+                          << std::endl;
+              } else if (k==1) {
+                std::cout << "Function pair_density(), without rest mass"
+                          << std::endl;
+              } else if (k==2) {
+                std::cout << "Function pair_density(), include rest mass, "
+                          << "interacting" << std::endl;
+              } else {
+                std::cout << "Function pair_density(), without rest mass, "
+                          << "interacting" << std::endl;
+              }
+
+              std::cout << "Average performance: " << std::endl;
+              std::cout << "mu: " << dev.mu << " ed: " << dev.ed << " pr: " 
+                        << dev.pr << " en: " << dev.en << std::endl;
+              std::cout << "Worst case: " << std::endl;
+              std::cout << "mu: " << max.mu << " ed: " << max.ed << " pr: " 
+                        << max.pr << " en: " << max.en << std::endl;
+              std::cout << "mu: " << mu_max << " m: " << m_max
+                        << " T: " << T_max << " mot: " << mot_max
+                        << "\n\tpsi: " << psi_max << std::endl;
+              if (ti_count>0) {
+                std::cout << "check ti: " << ti_test/ti_count << " "
+                          << ti_local << std::endl;
+              }
+              std::cout << "ret_local,ret: " << ret_local << " "
+                        << ret << std::endl;
+              std::cout << std::endl;
+              if (verbose>2) {
                 std::cout << "Waiting for character: " << std::flush;
-	      char ch;
-	      std::cin >> ch;
-	    }
-	  }
+                char ch;
+                std::cin >> ch;
+              }
+            }
 
-	  if (ret_local>ret) {
-	    ret=ret_local;
-	  }
-          if (ti_local>ti_max) {
-            ti_max=ret_local;
-          }
+            if (ret_local>ret) {
+              ret=ret_local;
+            }
+            if (ti_local>ti_max) {
+              ti_max=ret_local;
+            }
     
-	  // End of k loop
-	}
+            // End of k loop
+          }
 
+          // End of 'if (test_density)'
+        }
+        
 	// End of 'if (test_pair)'
       }
 

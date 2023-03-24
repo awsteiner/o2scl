@@ -43,6 +43,7 @@
 #include <initializer_list>
 #endif
 
+#define BOOST_DISABLE_ASSERTS
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_bin_float.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>

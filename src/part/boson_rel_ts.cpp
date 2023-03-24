@@ -191,7 +191,7 @@ int main(void) {
   if (0) {
     part_calibrate_class pcc;
     double v1=pcc.part_calibrate<boson,boson_rel>
-      (b,rb,0,"../../data/o2scl/boson_cal.o2",false,2,true);
+      (b,rb,0,"../../data/o2scl/boson_cal.o2",false,true,2,true);
   }
   
   t.report();

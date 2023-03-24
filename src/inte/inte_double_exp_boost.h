@@ -29,6 +29,7 @@
 
 #include <cmath>
 
+#define BOOST_DISABLE_ASSERTS
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
