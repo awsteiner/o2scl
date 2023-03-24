@@ -21,12 +21,7 @@
   -------------------------------------------------------------------
 */
 /** \file polylog.h
-    \brief File defining \ref o2scl::polylog, \ref
-    o2scl::fermi_dirac_integ_tl, \ref o2scl::fermi_dirac_integ_gsl,
-    \ref o2scl::fermi_dirac_integ_direct, \ref
-    o2scl::bose_einstein_integ_tl, \ref o2scl::bessel_K_exp_integ_tl,
-    \ref o2scl::bessel_K_exp_integ_gsl, and \ref
-    o2scl::bessel_K_exp_integ_direct .
+    \brief File defining various integrals and polylogs
 */
 #ifndef O2SCL_POLYLOG_H
 #define O2SCL_POLYLOG_H
@@ -43,7 +38,6 @@
 
 #include <o2scl/constants.h>
 #include <o2scl/err_hnd.h>
-#include <o2scl/lib_settings.h>
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/inte_kronrod_boost.h>
 #include <o2scl/inte_double_exp_boost.h>
@@ -86,8 +80,8 @@ namespace o2scl {
     fp_t obj_func(fp_t x, fp_t a, fp_t mu) {
       fp_t res;
       if (x==0.0) res=0;
-      else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
-      else res=pow(x,a)/(1.0+exp(x-mu));
+      else if (x-mu>std::numeric_limits<fp_t>::max_exponent) res=0;
+      else res=pow(x,a)/(1+exp(x-mu));
       return res;
     }
     
@@ -398,7 +392,7 @@ namespace o2scl {
   
 
   /** \brief Compute several Fermi-Dirac integrals useful for
-      non-relativistic fermions by directly integrating with a higher
+      non-relativistic fermions by integrating with a higher
       precision type
 
       This class performs direct computation of the
@@ -585,8 +579,8 @@ namespace o2scl {
       fp_t a=static_cast<fp_t>(a2);
       fp_t mu=static_cast<fp_t>(mu2);
       if (x==0.0) res=0;
-      else if (x>std::numeric_limits<fp_t>::max_exponent) res=0;
-      else res=pow(x,a)/(1.0+exp(x-mu));
+      else if (x-mu>std::numeric_limits<fp_t>::max_exponent) res=0;
+      else res=pow(x,a)/(1+exp(x-mu));
       return res;
     }
     
@@ -932,6 +926,107 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
+  class bose_einstein_multip {
+    
+  protected:
+    
+    /// Tolerance
+    double tol;
+
+    /** \brief The Fermi-Dirac function
+     */
+    template<class fp_t, class fp2_t> fp_t obj_func(fp_t x, fp2_t a2,
+                                                    fp2_t mu2) {
+      fp_t res;
+      fp_t a=static_cast<fp_t>(a2);
+      fp_t mu=static_cast<fp_t>(mu2);
+      if (x==0.0) res=0;
+      else if (x-mu>std::numeric_limits<fp_t>::max_exponent) res=0;
+      else res=pow(x,a)/(exp(x-mu)-1);
+      return res;
+    }
+    
+  public:
+
+    inte_kronrod_boost<61> ikb;
+    inte_multip_double_exp_boost ideb;
+    inte_adapt_cern iac;
+    
+    bose_einstein_multip() {
+      tol=1.0e-17;
+      err_nonconv=true;
+      ikb.err_nonconv=false;
+      ideb.err_nonconv=false;
+      iac.err_nonconv=false;
+
+      // Set up the arguments in the internal precision
+    }
+
+    /** \brief If true, then convergence failures call the error 
+        handler (default true)
+    */
+    bool err_nonconv;
+
+    /** \brief Set tolerance
+     */
+    void set_tol(const double &tol_) {
+      tol=tol_;
+      return;
+    }
+    
+    /** \brief Bose-Einstein integral
+     */
+    template<class fp_t>
+    int calc_err_full(fp_t a, fp_t y, fp_t &res, fp_t &err, int &method) {
+
+      fp_t zero=0;
+      
+      int ret1=ikb.integ_iu_err_multip([this,a,y](auto &&x) mutable 
+      { return this->obj_func(x,a,y); },zero,res,err,tol);
+      if (ret1==0) {
+        method=1;
+        return 0;
+      }
+
+      int ret2=ideb.integ_iu_err_multip([this,a,y](auto &&x) mutable 
+      { return this->obj_func(x,a,y); },zero,res,err,tol);
+      if (ret2==0) {
+        method=2;
+        return 0;
+      }
+      
+      int ret3=iac.integ_iu_err_multip([this,a,y](auto &&x) mutable 
+      { return this->obj_func(x,a,y); },zero,res,err,tol);
+      if (ret3==0) {
+        method=3;
+        return 0;
+      }
+      
+      O2SCL_CONV_RET("Function calc_err_full failed.",
+                     o2scl::exc_efailed,err_nonconv);
+      return o2scl::exc_efailed;
+    }
+
+    /** \brief Bose-Einstein integral
+     */
+    template<class fp_t>
+    int calc_err(fp_t a, fp_t y, fp_t &res, fp_t &err) {
+      int method;
+      return calc_err_full(a,y,res,err,method);
+    }
+    
+    /** \brief Bose-Einstein integral
+     */
+    template<class fp_t> fp_t calc(fp_t a, fp_t y) {
+      fp_t res, err;
+      calc_err(a,y,res,err);
+      return res;
+    }
+    
+  };
+
   /** \brief Compute exponentially scaled modified Bessel function of
       the second kind by direct integration
 
@@ -1264,7 +1359,8 @@ namespace o2scl {
     /** \brief The integrator for negative arguments
      */
     fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-      <func_t,max_refine,internal_fp_t>,internal_fp_t> it_fd;
+                         <func_t,max_refine,internal_fp_t>,
+                         internal_fp_t> it_fd;
     
     /** \brief The integrator for positive arguments
      */
@@ -1300,6 +1396,54 @@ namespace o2scl {
       // Bose-Einstein integral representation
       internal_fp_t a=s-1, mu=log(y), res, err;
       it_be.calc_err(a,mu,res,err);
+      return ((fp_t)res/boost::math::tgamma(s));
+    }
+
+  };
+
+  /** \brief Polylogarithms with multiprecision integration
+   */
+  template<class fp_t, class internal_fp_t> class polylog_multip {
+
+  protected:
+
+    /** \brief The integrator for negative arguments
+     */
+    fermi_dirac_multip fdm;
+    
+    /** \brief The integrator for positive arguments
+     */
+    bose_einstein_multip bem;
+    
+  public:
+
+    polylog_multip() {
+      fdm.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);
+      bem.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);
+    }
+    
+    /** \brief Set tolerance
+     */
+    void set_tol(fp_t tol) {
+      fdm.set_tol(tol);
+      bem.set_tol(tol);
+      return;
+    }
+    
+    /** \brief Polylogarithm function
+     */
+    fp_t calc(fp_t s, fp_t y) {
+      if (y<0.0) {
+	// Fermi-Dirac integral representation
+	internal_fp_t a=s-1, mu=log(-y), res, err;
+	fdm.calc_err(a,mu,res,err);
+	return -((fp_t)res/boost::math::tgamma(s));
+      } else if (y==0.0) {
+	return 0.0;
+      }
+      // Bose-Einstein integral representation
+      internal_fp_t a=s-1, mu=log(y), res, err;
+      bem.calc_err(a,mu,res,err);
       return ((fp_t)res/boost::math::tgamma(s));
     }
 

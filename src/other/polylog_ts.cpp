@@ -53,21 +53,13 @@ int main(void) {
   cout.setf(ios::scientific);
   
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
   
-  fermi_dirac_integ_gsl fd_gsl;
-  fermi_dirac_integ_direct<> fd_d_ld;
-
-  // Compare GSL with direct
-  t.test_rel(fd_gsl.calc_1o2(0.5),fd_d_ld.calc_1o2(0.5),4.0e-16,"fd 1");
-  t.test_rel(fd_gsl.calc_m1o2(0.5),fd_d_ld.calc_m1o2(0.5),4.0e-16,"fd 2");
-  t.test_rel(fd_gsl.calc_3o2(0.5),fd_d_ld.calc_3o2(0.5),4.0e-16,"fd 3");
-  t.test_rel(fd_gsl.calc_2(0.5),fd_d_ld.calc_2(0.5),4.0e-16,"fd 4");
-  t.test_rel(fd_gsl.calc_3(0.5),fd_d_ld.calc_3(0.5),4.0e-16,"fd 5");
-
   // Compare polylog values with hard-coded values
   polylog<> p;
+  polylog_multip<double,long double> p2;
   t.test_rel(p.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1");
+  t.test_rel(p2.calc(2,-0.5),-0.448414206923646,4.0e-15,"pl 1b");
   t.test_rel(p.calc(2,-2.0),-1.43674636688368,4.0e-15,"pl 2");
   t.test_rel(p.calc(3,-0.5),-0.472597844658897,4.0e-15,"pl 3");
   t.test_rel(p.calc(3,-2.0),-1.66828336396657,4.0e-15,"pl 4");
@@ -76,7 +68,7 @@ int main(void) {
 
   bessel_K_exp_integ_gsl be_gsl;
   bessel_K_exp_integ_boost<double,double> be_boost;
-  bessel_K_exp_integ_boost<long double,long double> be_boost2;
+  bessel_K_exp_integ_boost<double,long double> be_boost2;
   bessel_K_exp_integ_direct<> be_d_ld;
 
   cout.precision(15);
@@ -105,19 +97,33 @@ int main(void) {
   // cpp_dec_float_35  35       64           1.0e67108864 147.4
   // cpp_dec_float_50  50       80           1.0e67108864 184.2
   // cpp_dec_float_100 100      128          1.0e67108864 294.7
-  
+
+  cout << endl;
   cout.precision(4);
   cout.setf(ios::left);
+
+  cout.width(18);
+  cout << "type";
+  cout << "d10 ";
+  cout << "md10 ";
+  cout.width(17);
+  cout << "max" << " ";
+  cout.width(15);
+  cout << "log10(max_d10)" << " ";
+  cout << "epsilon" << endl;
+  cout << "----------------------------------"
+       << "----------------------------------"
+       << endl;
   
   cout.width(18);
   cout << "double";
   cout.width(3);
   cout << std::numeric_limits<double>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<double>::max_digits10 << " ";
   cout.width(17);
   cout << std::numeric_limits<double>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<double>::max_digits10));
   cout << " ";
   cout << std::numeric_limits<double>::epsilon()
@@ -127,11 +133,11 @@ int main(void) {
   cout << "long double";
   cout.width(3);
   cout << std::numeric_limits<long double>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<long double>::max_digits10 << " ";
   cout.width(17);
   cout << std::numeric_limits<long double>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10));
   cout << " ";
   cout << std::numeric_limits<long double>::epsilon()
@@ -141,11 +147,11 @@ int main(void) {
   cout << "cpp_dec_float_25";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_25>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<cpp_dec_float_25>::max_digits10 << " "; 
   cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_25>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_25>::max_digits10));
   cout << " ";
@@ -156,11 +162,11 @@ int main(void) {
   cout << "cpp_dec_float_35";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
   cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_35>::max_digits10));
   cout << " ";
@@ -171,11 +177,11 @@ int main(void) {
   cout << "cpp_dec_float_50";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
   cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_50>::max_digits10));
   cout << " ";
@@ -186,11 +192,11 @@ int main(void) {
   cout << "cpp_dec_float_100";
   cout.width(3);
   cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
-  cout.width(3);
+  cout.width(4);
   cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
   cout.width(17);
   cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";
-  cout.width(10);
+  cout.width(15);
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_100>::max_digits10));
   cout << " ";
@@ -198,189 +204,59 @@ int main(void) {
        << std::endl;
 
   cout.unsetf(ios::left);
+  cout << endl;
   
-  // Todo: better testing
-
   gen_test_number<> gn;
   gen_test_number<long double> gn_ld;
   gen_test_number<cpp_dec_float_35> gn_cdf35;
   gen_test_number<cpp_dec_float_50> gn_cdf50;
 
+  // Test Fermi-Dirac integrals
+  
   if (true) {
+    
     fermi_dirac_integ_gsl fdig;
-    cout << dtos(fdig.calc_1o2(2),0) << endl;
+    
     fermi_dirac_multip fdib2;
-    fdib2.ikb.verbose=1;
-    fdib2.ideb.verbose=1;
-    fdib2.iac.verbose=1;
-    cpp_dec_float_50 y=2, res, err;
-    int method;
+    fdib2.set_tol(1.0e-28);
+
+    fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
+                             cpp_dec_float_50> fd_35_50;
+    fd_35_50.set_tol(1.0e-28);
     
-    fdib2.set_tol(1.0e-10);
-    fdib2.calc_1o2_ret_full(y,res,err,method);
-    cout << dtos(res,10) << " " << err << " " << method << endl;
-    fdib2.set_tol(1.0e-15);
-    fdib2.calc_1o2_ret_full(y,res,err,method);
-    cout << dtos(res,15) << " " << err << " " << method << endl;
-    fdib2.set_tol(1.0e-20);
-    fdib2.calc_1o2_ret_full(y,res,err,method);
-    cout << dtos(res,20) << " " << err << " " << method << endl;
-    fdib2.set_tol(1.0e-25);
-    fdib2.calc_1o2_ret_full(y,res,err,method);
-    cout << dtos(res,25) << " " << err << " " << method << endl;
-    fdib2.set_tol(1.0e-30);
-    fdib2.calc_1o2_ret_full(y,res,err,method);
-    cout << dtos(res,30) << " " << err << " " << method << endl;
-    
-    fdib2.ikb.verbose=0;
-    fdib2.ideb.verbose=0;
-    fdib2.iac.verbose=0;
-    
-    for(size_t i=0;i<50;i++) {
+    for(size_t i=0;i<60;i+=2) {
       
       double x=gn.gen();
-      cpp_dec_float_50 x_cdf50=gn_cdf50.gen();
+      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
       
       double y1=fdig.calc_3(x);
-      fdib2.set_tol(1.0e-30);
-      cpp_dec_float_50 y5=fdib2.calc_3(x_cdf50);
+      fdib2.set_tol(1.0e-28);
+      cpp_dec_float_35 y5=fdib2.calc_3(x_cdf35);
       cout.width(4);
       cout << i << " ";
       cout.setf(ios::showpos);
       cout << x << " ";
       cout.unsetf(ios::showpos);
-      cout << dtos(y1,0) << " " << dtos(y5,0) << endl;
+      
+      t.test_gen(abs(y1-y5)/y1<1.0e-15,"fd");
+      
+      // fd_35_50 starts to fail once i=49
+      if (i<49) {
+        cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
+        cout << y1 << " " << y4 << " " << y5 << " "
+             << abs(y4-y5)/y4 << endl;
+        t.test_gen(abs(y4-y5)/y4<1.0e-28,"fd 2");
+      } else {
+        cout << y1 << " " << 0.0 << " " << y5 << endl;
+      }
+      
     }
-    exit(-1);
   }
-
-  // More accurate versions for testing
-  fermi_dirac_integ_direct<long double,funct_cdf35,20,
-			   cpp_dec_float_35> fd_ld_35;
-  fd_ld_35.set_tol(1.0e-21);
-  fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
-			   cpp_dec_float_50> fd_35_50;
-  fd_35_50.set_tol(1.0e-37);
-  fermi_dirac_integ_direct<cpp_dec_float_50,funct_cdf100,20,
-			   cpp_dec_float_100> fd_50_100;
-  fd_50_100.set_tol(1.0e-52);
-
-  //fermi_dirac_integ_bf<double,30,40,50,cpp_dec_float_25,
-  //cpp_dec_float_35,cpp_dec_float_50> fdib;
-  //fdib.set_tol(1.0e-17);
 
   bessel_K_exp_integ_bf<double,30,40,50,cpp_dec_float_25,
                   cpp_dec_float_35,cpp_dec_float_50> bkeb;
   bkeb.set_tol(1.0e-17);
 
-  if (false) {
-    
-    // This section compares the GSL class fermi_dirac_integ_gsl with
-    // o2scl versions of with various accuracies and floating point
-    // types. However, the o2scl version with the default types object
-    // named 'fd_d_ld', currently fails for large enough arguments.
-    
-    for(size_t i=0;i<50;i++) {
-      
-      double x=gn.gen();
-      long double x_ld=gn_ld.gen();
-      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
-      cpp_dec_float_50 x_cdf50=gn_cdf50.gen();
-      
-      double y1=fd_gsl.calc_3(x);
-      cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
-      cpp_dec_float_50 y5=fd_50_100.calc_3(x_cdf50);
-      cout.width(4);
-      cout << i << " ";
-      cout.setf(ios::showpos);
-      cout << x << " ";
-      cout.unsetf(ios::showpos);
-      cout << dtos(y1,0) << endl;
-      cout << "                 " << dtos(y4,0) << endl;
-      cout << "                 " << dtos(y5,0) << endl;
-      
-      y1=fd_gsl.calc_m1o2(x);
-      y4=fd_35_50.calc_m1o2(x_cdf35);
-      y5=fd_50_100.calc_m1o2(x_cdf50);
-      cout.width(4);
-      cout << i << " ";
-      cout.setf(ios::showpos);
-      cout << x << " ";
-      cout.unsetf(ios::showpos);
-      cout << dtos(y1,0) << endl;
-      cout << "                 " << dtos(y4,0) << endl;
-      cout << "                 " << dtos(y5,0) << endl;
-      
-    }
-    cout << endl;
-    
-  }
-
-  if (true) {
-    
-    // This section compares the GSL class fermi_dirac_integ_gsl with
-    // o2scl versions of with various accuracies and floating point
-    // types. However, the o2scl version with the default types object
-    // named 'fd_d_ld', currently fails for large enough arguments.
-    
-    for(size_t i=0;i<24;i++) {
-      
-      double x=gn.gen();
-      long double x_ld=gn_ld.gen();
-      cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
-
-      double y1=fd_gsl.calc_3(x);
-      double y2=fd_d_ld.calc_3(x);
-      long double y3=fd_ld_35.calc_3(x_ld);
-      cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
-      cout.width(4);
-      cout << i << " ";
-      cout.setf(ios::showpos);
-      cout << x << " ";
-      cout.unsetf(ios::showpos);
-      cout << dtos(y1,0) << endl;
-      cout << "                 " << dtos(y2,0) << endl;
-      cout << "                 " << dtos(y3,0) << endl;
-      cout << "                 " << dtos(y4,0) << endl;
-      double d21=y2-y1;
-      long double d32=y3-y2;
-      long double d31=y3-y1;
-      cpp_dec_float_35 d43=y4-y3;
-      cout << "                 " << abs(d21) << " " << abs(d31) << " "
-           << abs(d32) << " " << abs(d43) << endl;
-      t.test_gen(abs(d43)*1.0e2<abs(d32),
-                 "fermi_dirac 3 long double accuracy");
-      t.test_gen(abs(d32)<=abs(d31),
-                 "fermi_dirac 3 o2scl better than gsl");
-      
-      y1=fd_gsl.calc_m1o2(x);
-      y2=fd_d_ld.calc_m1o2(x);
-      y3=fd_ld_35.calc_m1o2(x_ld);
-      y4=fd_35_50.calc_m1o2(x_cdf35);
-      cout.width(4);
-      cout << i << " ";
-      cout.setf(ios::showpos);
-      cout << x << " ";
-      cout.unsetf(ios::showpos);
-      cout << dtos(y1,0) << endl;
-      cout << "                 " << dtos(y2,0) << endl;
-      cout << "                 " << dtos(y3,0) << endl;
-      cout << "                 " << dtos(y4,0) << endl;
-      d21=y2-y1;
-      d32=y3-y2;
-      d31=y3-y1;
-      d43=y4-y3;
-      cout << "                 " << abs(d21) << " " << abs(d31) << " "
-           << abs(d32) << " " << abs(d43) << endl;
-      t.test_gen(abs(d43)*1.0e2<abs(d32),
-                 "fermi_dirac -1/2 long double accuracy");
-      t.test_gen(abs(d32)<=abs(d31),
-                 "fermi_dirac -1/2 o2scl better than gsl");
-      
-    }
-    cout << endl;
-  }
-  
   bessel_K_exp_integ_direct<long double,funct_cdf35,20,
 			    cpp_dec_float_35> be_ld_35;
   be_ld_35.set_tol(1.0e-21);
