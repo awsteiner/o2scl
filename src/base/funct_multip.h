@@ -32,6 +32,10 @@
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 
+#include <o2scl/string_conv.h>
+#include <o2scl/calc_utf8.h>
+#include <o2scl/convert_units.h>
+
 namespace o2scl {
 
   /// One-dimensional function typedef in src/base/funct.h
