@@ -315,15 +315,15 @@ namespace o2scl {
 
   public:
 
-    /** \brief Desc
+    /** \brief Verbosity parameter
      */
     int verbose;
     
-    /** \brief Desc
+    /** \brief Default integrator
      */
     inte_multip_double_exp_boost it;
     
-    /** \brief Desc
+    /** \brief Secondary integrator
      */
     inte_adapt_cern it2;
 
@@ -463,7 +463,8 @@ namespace o2scl {
           
       if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
-		   "in fermion_rel::deg_density_fun().",exc_einval);
+		   "in fermion_rel_integ_multip::deg_density_fun().",
+                   exc_einval);
       }
       return ret;
     }
@@ -488,7 +489,7 @@ namespace o2scl {
       
       if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
-		   "in fermion_rel::deg_energy_fun().",exc_einval);
+		   "in fermion_rel_integ_multip::deg_energy_fun().",exc_einval);
       }
   
       return ret;
@@ -567,13 +568,14 @@ namespace o2scl {
 
       if (!isfinite(ret)) {
 	O2SCL_ERR2("Returned not finite result ",
-		   "in fermion_rel::deg_entropy_fun().",exc_einval);
+		   "in fermion_rel_integ_multip::deg_entropy_fun().",
+                   exc_einval);
       }
 
       return ret;
     }
     
-    /** \brief Desc
+    /** \brief Evaluate the density in the nondegenerate limit
      */
     int eval_density(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
@@ -583,25 +585,23 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      try {
-        std::cout << "Here3." << std::endl;
-        it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
-          return this->density_fun(u,y,eta); },
-          zero,res,err,tol_rel);
-        std::cout << "Here4." << std::endl;
-      } catch (...) {
-        std::cout << "Here." << std::endl;
-        it2.verbose=1;
+      int iret=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+        return this->density_fun(u,y,eta); },
+        zero,res,err,tol_rel);
+      if (iret!=0) {
         int iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->density_fun(u,y,eta); },
           zero,res,err,tol_rel);
-        std::cout << "Here2." << iret << std::endl;
-        exit(-1);
+        if (iret!=0) {
+          O2SCL_ERR2("Nondegenerate density failed ",
+                     "in fermion_rel_integ_multip::eval_density().",
+                     o2scl::exc_efailed);
+        }
       }
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Evaluate the energy density in the nondegenerate limit
      */
     int eval_energy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
@@ -611,14 +611,24 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for energy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+      int iret=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->energy_fun(u,y,eta); },
         zero,res,err,tol_rel);
+      if (iret!=0) {
+        iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+          return this->energy_fun(u,y,eta); },
+          zero,res,err,tol_rel);
+        if (iret!=0) {
+          O2SCL_ERR2("Nondegenerate energy density failed ",
+                     "in fermion_rel_integ_multip::eval_density().",
+                     o2scl::exc_efailed);
+        }
+      }
       
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Evaluate the entropy in the nondegenerate limit
      */
     int eval_entropy(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
@@ -628,14 +638,24 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for entropy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+      int iret=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->entropy_fun(u,y,eta); },
         zero,res,err,tol_rel);
+      if (iret!=0) {
+        iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+          return this->entropy_fun(u,y,eta); },
+          zero,res,err,tol_rel);
+        if (iret!=0) {
+          O2SCL_ERR2("Nondegenerate entropy failed ",
+                     "in fermion_rel_integ_multip::eval_density().",
+                     o2scl::exc_efailed);
+        }
+      }
       
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Evaluate the pressure in the nondegenerate limit
      */
     int eval_pressure(fp_t y, fp_t eta, fp_t &res, fp_t &err) {
 
@@ -649,13 +669,20 @@ namespace o2scl {
         return this->pressure_fun(u,y,eta); },
         zero,res,err,tol_rel);
       if (iret!=0) {
-        O2SCL_ERR("Non deg pressure failed.",o2scl::exc_efailed);
+        iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+          return this->pressure_fun(u,y,eta); },
+          zero,res,err,tol_rel);
+        if (iret!=0) {
+          O2SCL_ERR2("Nondegenerate pressure failed ",
+                     "in fermion_rel_integ_multip::eval_density().",
+                     o2scl::exc_efailed);
+        }
       }
       
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Evaluate the density in the nondegenerate limit
      */
     int eval_deg_density(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {
@@ -2536,11 +2563,11 @@ namespace o2scl {
 
   };
 
-  /** \brief Double-precision version of \ref o2scl::fermion_rel_tl
+  /** \brief Double precision version of \ref o2scl::fermion_rel_tl
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-  /** \brief Desc
+  /** \brief Long double precision version of \ref o2scl::fermion_rel_tl
    */
   class fermion_rel_ld : public
   fermion_rel_tl<
@@ -2550,8 +2577,7 @@ namespace o2scl {
     fermi_dirac_integ_direct<long double,funct_cdf25,25,
                              cpp_dec_float_25>,
     // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      long double,funct_cdf25,25,cpp_dec_float_25>,
+    bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
     // The fermion integrator. Note that we can't use
     // fermion_rel_integ here because it is based on the GSL
     // integrators which only work with double types
@@ -2597,9 +2623,61 @@ namespace o2scl {
       fri.it.tol_rel=1.0e-18;
       fri.it2.tol_rel=1.0e-18;
       
-      //fri.it.verbose=1;
-      fri.verbose=2;
+    }
+    
+  };
+
+  /** \brief 25-digit precision version of \ref o2scl::fermion_rel_tl
+   */
+  class fermion_rel_cdf25 : public
+  fermion_rel_tl<
+    // the fermion type
+    fermion_tl<cpp_dec_float_25>,
+    // the Fermi-Dirac integrator
+    fermi_dirac_integ_direct<
+      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+    // the Bessel-exp integrator
+    bessel_K_exp_integ_boost<cpp_dec_float_25,cpp_dec_float_35>,
+    // The fermion integrator
+    fermion_rel_integ_multip<cpp_dec_float_25>,
+    // The density solver
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The parent solver for massless fermions
+    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+    // The function type
+    funct_cdf25,
+    // The floating-point type
+    cpp_dec_float_25> {
+
+  public:
+    
+    fermion_rel_cdf25() {
+
+      // See output of polylog_ts for numeric limit information
       
+      // Tolerance for the integrator for massless fermions
+      this->fd_integ.set_tol(1.0e-23);
+
+      // Tolerance for the integrator for the nondegenerate expansion
+      this->be_integ.set_tol(1.0e-23);
+
+      // Internal function tolerances
+
+      this->exp_limit=1000000.0;
+      
+      // log(1.0e25) is 57.5
+      this->upper_limit_fac=58.0;
+      this->deg_entropy_fac=58.0;
+      this->tol_expan=1.0e-23;
+
+      // Solver tolerances
+      this->def_density_root.tol_abs=1.0e-23;
+      this->def_massless_root.tol_abs=1.0e-23;
+
+      // Integrator tolerances
+      fri.tol_rel=1.0e-23;
+      fri.it.tol_rel=1.0e-23;
+      fri.it2.tol_rel=1.0e-23;
     }
     
   };
@@ -2662,61 +2740,6 @@ namespace o2scl {
 #endif  
 #ifdef O2SCL_NEVER_DEFINED
   
-  /** \brief Desc
-  */
-  class fermion_rel_cdf25 : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<cpp_dec_float_25>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
-    // The fermion integrator
-    fermion_rel_integ_multip<cpp_dec_float_25>,
-    // The density solver
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The function type
-    funct_cdf25,
-    // The floating-point type
-    cpp_dec_float_25> {
-
-  public:
-    
-    fermion_rel_cdf25() {
-
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-25);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-25);
-
-      // Internal function tolerances
-
-      this->exp_limit=1000000.0;
-      
-      // log(1.0e25) is 57.5
-      this->upper_limit_fac=58.0;
-      this->deg_entropy_fac=58.0;
-      this->tol_expan=1.0e-24;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-25;
-      this->def_massless_root.tol_abs=1.0e-25;
-
-      // Integrator tolerances
-      fri.nit.tol_rel=1.0e-23;
-      fri.dit.tol_rel=1.0e-23;
-    }
-    
-  };
-
   /** \brief Desc
   */
   class fermion_rel_cdf252 : public

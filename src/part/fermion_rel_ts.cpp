@@ -37,13 +37,22 @@ typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
+
+  bool calibrate_ld=false;
+  bool calibrate_cdf25=false;
+  bool calibrate_new=false;
+  if (argc>=2 && std::stoi(argv[1])==1) calibrate_ld=true;
+  if (argc>=2 && std::stoi(argv[1])==2) calibrate_cdf25=true;
+  if (argc>=2 && std::stoi(argv[1])==3) calibrate_new=true;
 
   test_mgr t;
   t.set_output_level(2);
   part_calibrate_class pcc;
+  part_calibrate_class_tl<long double> pcc_ld;
+  part_calibrate_class_tl<cpp_dec_float_25> pcc_cdf25;
 
   fermion f(1.0,2.0);
   fermion f2(1.0,2.0);
@@ -179,137 +188,128 @@ int main(void) {
   double v2=pcc.part_calibrate<fermion,fermion_rel>
     (f,fr,"../../data/o2scl/fermion_deriv_cal.o2",true,true,false,0,true);
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
-
   cout << endl;
   
   fermion_ld fld;
   fermion_rel_ld frld;
   //fermion_rel_ld_multip frld2;
-  //fermion_cdf25 f25;
-  //fermion_rel_cdf25 fr252;
+  fermion_cdf25 f25;
+  fermion_rel_cdf25 fr25;
   //fermion_rel_cdf252 fr25;
 
-  cout << "----------------------------------------------------" << endl;
-  cout << "Testing multiprecision" << endl;
-  cout << "----------------------------------------------------" << endl;
-  cout << endl;
-
-  // AWS 6/17/22: this doesn't quite work, it fails on calc_density()
-
-  cout << "Here10." << endl;
-  frld.verify_ti=true;
-  long double v3=pcc.part_calibrate<fermion_ld,fermion_rel_ld>
-    (fld,frld,"../../data/o2scl/fermion_deriv_cal.o2",true,false,false,2,true);
-  t.test_rel<long double>(v3,0.0,4.0e-10,"calibrate 3");
-
-  //fr25.verify_ti=true;
-  //cpp_dec_float_25 v4=pcc.part_calibrate<fermion_cdf25,fermion_rel_cdf25>
-  //(f25,fr25,1,"../../data/o2scl/fermion_deriv_cal.o2",false,2,true);
-  //t.test_rel<cpp_dec_float_25>(v3,0.0,4.0e-10,"calibrate 3");
-
-#ifdef O2SCL_NEVER_DEFINED
-  
-  hdf_file hfx;
-  hfx.open("../../data/o2scl/fermion_deriv_cal.o2");
-  table_units<> tx;
-  hdf_input(hfx,tx);
-  hfx.close();
-  f.non_interacting=true;
-  f.inc_rest_mass=true;
-  fld.non_interacting=true;
-  fld.inc_rest_mass=true;
-  f25.non_interacting=true;
-  f25.inc_rest_mass=true;
-  double T=1;
-  long double Tld=1;
-  long double T25=1;
-  double max=0.0;
-  cpp_dec_float_25 maxld=0.0;
-  int ret;
-  for(int lmot=-3;lmot<=3;lmot++) {
-    for(int lpsi=-3;lpsi<=1;lpsi++) {
-      
-      double psi=pow(10.0,((double)lpsi));
-      double mot=pow(10.0,((double)lmot));
-      long double psi_ld=pow(10,((long double)lpsi));
-      long double mot_ld=pow(10,((long double)lmot));
-      cpp_dec_float_25 psi_25=pow(10,((cpp_dec_float_25)lpsi));
-      cpp_dec_float_25 mot_25=pow(10,((cpp_dec_float_25)lmot));
-      
-      f.g=2;
-      f.m=mot*T;
-      f.mu=psi*T+f.m;
-      ret=fr.calc_mu(f,T);
-      cout << lmot << " " << lpsi << endl;
-      fld.g=2;
-      fld.m=mot_ld*Tld;
-      fld.mu=psi_ld*Tld+fld.m;
-      frld.verbose=2;
-      cout << "long double" << endl;
-      ret=frld.calc_mu(fld,Tld);
-      f25.g=2;
-      f25.m=mot_25*T25;
-      f25.mu=psi_25*T25+f25.m;
-      fr25.verbose=2;
-      cout << "cpp_dec_float_25" << endl;
-      fr25.fri.verbose=2;
-      fr25.fri.it.verbose=2;
-      ret=fr25.calc_mu(f25,T25);
-      cout << dtos(f.n,0) << " "
-           << abs(f.n-fld.n)/abs(fld.n) << endl;
-      cout << dtos(f.ed,0) << " "
-           << abs(f.ed-fld.ed)/abs(fld.ed) << endl;
-      cout << dtos(f.pr,0) << " "
-           << abs(f.pr-fld.pr)/abs(fld.pr) << endl;
-      cout << dtos(f.en,0) << " "
-           << abs(f.en-fld.en)/abs(fld.en) << endl;
-
-      if (abs(f.n-fld.n)/abs(fld.n)>max) {
-        max=abs(f.n-fld.n)/abs(fld.n);
-      }
-      if (abs(f.ed-fld.ed)/abs(fld.ed)>max) {
-        max=abs(f.ed-fld.ed)/abs(fld.ed);
-      }
-      if (abs(f.pr-fld.pr)/abs(fld.pr)>max) {
-        max=abs(f.pr-fld.pr)/abs(fld.pr);
-      }
-      if (abs(f.en-fld.en)/abs(fld.en)>max) {
-        max=abs(f.en-fld.en)/abs(fld.en);
-      }
-      cout << "max: " << max << endl;
-      
-      cout << dtos(fld.n,0) << " "
-           << abs(fld.n-f25.n)/abs(f25.n) << endl;
-      cout << dtos(fld.ed,0) << " "
-           << abs(fld.ed-f25.ed)/abs(f25.ed) << endl;
-      cout << dtos(fld.pr,0) << " "
-           << abs(fld.pr-f25.pr)/abs(f25.pr) << endl;
-      cout << dtos(fld.en,0) << " "
-           << abs(fld.en-f25.en)/abs(f25.en) << endl;
-
-      if (abs(fld.n-f25.n)/abs(f25.n)>maxld) {
-        maxld=abs(fld.n-f25.n)/abs(f25.n);
-      }
-      if (abs(fld.ed-f25.ed)/abs(f25.ed)>maxld) {
-        maxld=abs(fld.ed-f25.ed)/abs(f25.ed);
-      }
-      if (abs(fld.pr-f25.pr)/abs(f25.pr)>maxld) {
-        maxld=abs(fld.pr-f25.pr)/abs(f25.pr);
-      }
-      if (abs(fld.en-f25.en)/abs(f25.en)>maxld) {
-        maxld=abs(fld.en-f25.en)/abs(f25.en);
-      }
-      cout << "maxld: " << maxld << endl;
-      
-      cout << dtos(f25.n,0) << endl;
-      cout << dtos(f25.ed,0) << endl;
-      cout << dtos(f25.pr,0) << endl;
-      cout << dtos(f25.en,0) << endl;
-    }
+  if (calibrate_ld || calibrate_cdf25 || calibrate_new) {
+    cout << "----------------------------------------------------" << endl;
+    cout << "Testing multiprecision" << endl;
+    cout << "----------------------------------------------------" << endl;
+    cout << endl;
   }
 
-#endif
+  if (calibrate_ld) {
+    frld.verify_ti=true;
+    long double v3=pcc_ld.part_calibrate<fermion_ld,fermion_rel_ld>
+      (fld,frld,"../../data/o2scl/fermion_deriv_cal.o2",
+       true,false,false,0,true);
+    t.test_rel<long double>(v3,0.0,2.0e-12,"calibrate 3");
+  }
+
+  if (calibrate_cdf25) {
+    fr25.verify_ti=true;
+    cpp_dec_float_25 v4=pcc_cdf25.part_calibrate<fermion_cdf25,
+                                                 fermion_rel_cdf25>
+      (f25,fr25,"../../data/o2scl/fermion_deriv_cal.o2",
+       true,false,false,0,true);
+    t.test_rel_boost<cpp_dec_float_25>(v4,0.0,8.0e-13,"calibrate 4");
+  }
   
+  if (calibrate_new) {
+  
+    f.non_interacting=true;
+    f.inc_rest_mass=true;
+    fld.non_interacting=true;
+    fld.inc_rest_mass=true;
+    f25.non_interacting=true;
+    f25.inc_rest_mass=true;
+    
+    double T=1;
+    long double Tld=1;
+    long double T25=1;
+    double max=0.0;
+    cpp_dec_float_25 maxld=0.0;
+    int ret;
+    
+    for(int lmot=-3;lmot<=3;lmot++) {
+      for(int lpsi=-3;lpsi<=1;lpsi++) {
+        
+        cout << lmot << " " << lpsi << endl;
+        
+        double psi=pow(10.0,((double)lpsi));
+        double mot=pow(10.0,((double)lmot));
+        long double psi_ld=pow(10,((long double)lpsi));
+        long double mot_ld=pow(10,((long double)lmot));
+        cpp_dec_float_25 psi_25=pow(10,((cpp_dec_float_25)lpsi));
+        cpp_dec_float_25 mot_25=pow(10,((cpp_dec_float_25)lmot));
+        
+        f.g=2;
+        f.m=mot*T;
+        f.mu=psi*T+f.m;
+        ret=fr.calc_mu(f,T);
+        t.test_gen(ret==0,"calibrate new ret 1");
+        
+        fld.g=2;
+        fld.m=mot_ld*Tld;
+        fld.mu=psi_ld*Tld+fld.m;
+        ret=frld.calc_mu(fld,Tld);
+        t.test_gen(ret==0,"calibrate new ret 2");
+        
+        f25.g=2;
+        f25.m=mot_25*T25;
+        f25.mu=psi_25*T25+f25.m;
+        ret=fr25.calc_mu(f25,T25);
+        t.test_gen(ret==0,"calibrate new ret 3");
+        
+        cout << "  " << abs(f.n-fld.n)/abs(fld.n) << " ";
+        cout << abs(f.ed-fld.ed)/abs(fld.ed) << " ";
+        cout << abs(f.pr-fld.pr)/abs(fld.pr) << " ";
+        cout << abs(f.en-fld.en)/abs(fld.en) << " ";
+        
+        if (abs(f.n-fld.n)/abs(fld.n)>max) {
+          max=abs(f.n-fld.n)/abs(fld.n);
+        }
+        if (abs(f.ed-fld.ed)/abs(fld.ed)>max) {
+          max=abs(f.ed-fld.ed)/abs(fld.ed);
+        }
+        if (abs(f.pr-fld.pr)/abs(fld.pr)>max) {
+          max=abs(f.pr-fld.pr)/abs(fld.pr);
+        }
+        if (abs(f.en-fld.en)/abs(fld.en)>max) {
+          max=abs(f.en-fld.en)/abs(fld.en);
+        }
+        cout << max << endl;
+        
+        cout << "  " << abs(fld.n-f25.n)/abs(f25.n) << " ";
+        cout << abs(fld.ed-f25.ed)/abs(f25.ed) << " ";
+        cout << abs(fld.pr-f25.pr)/abs(f25.pr) << " ";
+        cout << abs(fld.en-f25.en)/abs(f25.en) << " ";
+        
+        if (abs(fld.n-f25.n)/abs(f25.n)>maxld) {
+          maxld=abs(fld.n-f25.n)/abs(f25.n);
+        }
+        if (abs(fld.ed-f25.ed)/abs(f25.ed)>maxld) {
+          maxld=abs(fld.ed-f25.ed)/abs(f25.ed);
+        }
+        if (abs(fld.pr-f25.pr)/abs(f25.pr)>maxld) {
+          maxld=abs(fld.pr-f25.pr)/abs(f25.pr);
+        }
+        if (abs(fld.en-f25.en)/abs(f25.en)>maxld) {
+          maxld=abs(fld.en-f25.en)/abs(f25.en);
+        }
+        cout << maxld << endl;
+
+      }
+    }
+
+  }
+
   t.report();
 
   return 0;

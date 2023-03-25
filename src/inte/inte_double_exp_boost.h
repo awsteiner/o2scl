@@ -854,9 +854,9 @@ namespace o2scl {
                   << integ_tol << std::endl;
       }
     
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_multip_double_exp_boost::integ_err().",
-                 o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
+                      "in inte_multip_double_exp_boost::integ_err().",
+                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -1110,9 +1110,9 @@ namespace o2scl {
                   << integ_tol << std::endl;
       }
     
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_multip_double_exp_boost::integ_iu_err().",
-                 o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
+                      "in inte_multip_double_exp_boost::integ_iu_err().",
+                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -1302,9 +1302,9 @@ namespace o2scl {
                   << integ_tol << std::endl;
       }
     
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_multip_double_exp_boost::integ_il_err().",
-                 o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
+                      "in inte_multip_double_exp_boost::integ_il_err().",
+                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -1488,9 +1488,9 @@ namespace o2scl {
                   << integ_tol << std::endl;
       }
     
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in inte_multip_double_exp_boost::integ_i_err_multip().",
-                 o2scl::exc_efailed);
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
+                      "in inte_multip_double_exp_boost::integ_i_err_multip().",
+                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 

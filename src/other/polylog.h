@@ -1134,6 +1134,10 @@ namespace o2scl {
     
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  // AWS, 3/24/23: this should be replaced by a class
+  // similar to fermi_dirac_integ_multip
+  
   /** \brief Bessel K times exponential by brute force
    */
   template<class fp_t, size_t max1, size_t max2, size_t max3,
@@ -1315,6 +1319,8 @@ namespace o2scl {
     }
     
     };
+
+#endif
   
   /** \brief Class to compute the polylogarithm function
 

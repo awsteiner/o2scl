@@ -675,7 +675,7 @@ namespace o2scl {
 	    exact.en*=pow(T,3.0);
 	
             if (th.verify_ti) {
-              double val;
+              fp_t val;
               if (p.pr==0.0) {
                 val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
                   abs(-p.ed+p.n*p.nu+p.en*T);
@@ -911,7 +911,7 @@ namespace o2scl {
             
               th.calc_density(p,T);
               if (th.verify_ti) {
-                double val;
+                fp_t val;
                 if (p.pr==0.0) {
                   val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
                     abs(-p.ed+p.n*p.nu+p.en*T);
@@ -1088,7 +1088,7 @@ namespace o2scl {
               
 	      th.pair_mu(p,T);
               if (th.verify_ti) {
-                double val;
+                fp_t val;
                 if (p.pr==0.0) {
                   val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
                     abs(-p.ed+p.n*p.nu+p.en*T);
@@ -1132,8 +1132,6 @@ namespace o2scl {
               
 	      if (verbose>1) {
 		std::cout.precision(6);
-		std::cout << i << " " << exact.m << " " << exact.ms << " "
-			  << exact.mu << " " << exact.nu << std::endl;
 		std::cout << "n,ed,pr,en: " << std::endl;
 		std::cout << "comput: " << p.n << " " << p.ed << " "
 			  << p.pr << " " << p.en << std::endl;
@@ -1275,7 +1273,7 @@ namespace o2scl {
               
                 th.pair_density(p,T);
                 if (th.verify_ti) {
-                  double val;
+                  fp_t val;
                   if (p.pr==0.0) {
                     val=abs(p.pr+p.ed-p.n*p.nu-p.en*T)/
                       abs(-p.ed+p.n*p.nu+p.en*T);
