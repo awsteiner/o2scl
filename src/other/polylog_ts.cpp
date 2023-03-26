@@ -136,10 +136,6 @@ int main(void) {
     }
   }
 
-  bessel_K_exp_integ_bf<double,30,40,50,cpp_dec_float_25,
-                  cpp_dec_float_35,cpp_dec_float_50> bkeb;
-  bkeb.set_tol(1.0e-17);
-
   bessel_K_exp_integ_direct<long double,funct_cdf35,20,
 			    cpp_dec_float_35> be_ld_35;
   be_ld_35.set_tol(1.0e-21);
