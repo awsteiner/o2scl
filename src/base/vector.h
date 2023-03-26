@@ -1874,7 +1874,7 @@ namespace o2scl {
       the function \c abs() is defined.
   */
   template<class vec_t, class data_t>
-    size_t vector_lookup(size_t n, const vec_t &x, data_t x0) {
+  size_t vector_lookup(size_t n, const vec_t &x, data_t x0) {
     if (n==0) {
       O2SCL_ERR("Empty vector in function vector_lookup().",
 		exc_einval);

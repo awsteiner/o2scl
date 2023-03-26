@@ -1147,6 +1147,9 @@ int acol_manager::comm_index(std::vector<std::string> &sv, bool itive_com) {
     return 1;
   }
   table_obj.new_column(i1);
+  if (verbose>0) {
+    cout << "Created new column named " << i1 << "." << endl;
+  }
   for(size_t i=0;i<table_obj.get_nlines();i++) table_obj.set(i1,i,((double)i));
 
   return 0;

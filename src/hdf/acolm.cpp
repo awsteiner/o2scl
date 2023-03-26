@@ -1437,7 +1437,7 @@ int acol_manager::setup_options() {
   opts_new[6]={0,"download","",0,4,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
     both};
-  opts_new[7]={0,"filelist","",0,1,"","",
+  opts_new[7]={0,"filelist","",0,2,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
     both};
   opts_new[8]={'g',"generic","",0,2,"","",

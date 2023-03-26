@@ -361,14 +361,6 @@ namespace o2scl {
     
   public:
 
-    /** \brief 
-        
-        (This is needed for fermion_rel)
-     */
-    void set_tol(double t) {
-      return;
-    }
-    
     /** \brief Compute \f$ K_1(x) e^x \f$
      */
     fp_t K1exp(fp_t x) {
@@ -400,8 +392,8 @@ namespace o2scl {
   
 
   /** \brief Compute several Fermi-Dirac integrals useful for
-      non-relativistic fermions by integrating with a higher
-      precision type
+      non-relativistic fermions by integrating with a higher precision
+      type
 
       This class performs direct computation of the
       Fermi-Dirac integral
@@ -594,9 +586,12 @@ namespace o2scl {
     
   public:
 
+    /// \name The base integrators
+    //@{
     inte_kronrod_boost<61> ikb;
     inte_multip_double_exp_boost ideb;
     inte_adapt_cern iac;
+    //@}
     
     fermi_dirac_multip() {
       tol=1.0e-16;
@@ -934,7 +929,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Evaluate the Bose-Einstein integral using multiprecision
    */
   class bose_einstein_multip {
     
@@ -958,9 +953,12 @@ namespace o2scl {
     
   public:
 
+    /// \name The base integrators
+    //@{
     inte_kronrod_boost<61> ikb;
     inte_multip_double_exp_boost ideb;
     inte_adapt_cern iac;
+    //@}
     
     bose_einstein_multip() {
       tol=1.0e-16;
@@ -1134,194 +1132,6 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-  // AWS, 3/24/23: this should be replaced by a class
-  // similar to fermi_dirac_integ_multip
-  
-  /** \brief Bessel K times exponential by brute force
-   */
-  template<class fp_t, size_t max1, size_t max2, size_t max3,
-           class fp1_t, class fp2_t, class fp3_t>
-  class bessel_K_exp_integ_bf {
-    
-  protected:
-    
-    /// Tolerance
-    fp_t tol;
-
-  public:
-    
-    /// Lowest precision integrator
-    bessel_K_exp_integ_direct<fp_t,std::function<fp1_t(fp1_t)>,max1,
-                              fp1_t> bke1;
-    
-    /// Medium precision integrator
-    bessel_K_exp_integ_direct<fp_t,std::function<fp2_t(fp2_t)>,max2,
-                              fp2_t> bke2;
-    
-    /// Highest precision integrator
-    bessel_K_exp_integ_direct<fp_t,std::function<fp3_t(fp3_t)>,max3,
-                              fp3_t> bke3;
-
-    bessel_K_exp_integ_bf() {
-      tol=1.0e-17;
-      bke1.it.iiu.err_nonconv=false;
-      bke2.it.iiu.err_nonconv=false;
-      bke3.it.iiu.err_nonconv=false;
-      err_nonconv=true;
-    }
-
-    /** \brief If true, then convergene failures call the error 
-        handler (default true)
-    */
-    bool err_nonconv;
-
-    /** \brief Set tolerance
-     */
-    void set_tol(const fp_t &tol_) {
-      tol=tol_;
-      return;
-    }
-    
-    /** \brief Compute \f$ K_1(x) e^x \f$
-     */
-    int K1exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
-      bke1.set_tol(tol);
-      int ret1=bke1.K1exp_ret(x,res,err);
-      if (ret1==0) {
-        method=1;
-        return 0;
-      }
-      bke2.set_tol(tol);
-      int ret2=bke2.K1exp_ret(x,res,err);
-      if (ret2==0) {
-        method=2;
-        return 0;
-      }
-      bke3.set_tol(tol);
-      int ret3=bke3.K1exp_ret(x,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-    
-    /** \brief Compute \f$ K_1(x) e^x \f$
-     */
-    int K1exp_ret(fp_t x, fp_t &res, fp_t &err) {
-      int method;
-      int iret=K1exp_ret_full(2,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function K1exp failed.",o2scl::exc_efailed,
-                       err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Compute \f$ K_1(x) e^x \f$
-     */
-    fp_t K1exp(fp_t x) {
-      fp_t res, err;
-      K1exp_ret(x,res,err);
-      return res;
-    }
-
-    /** \brief Compute \f$ K_2(x) e^x \f$
-     */
-    int K2exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
-      bke1.set_tol(tol);
-      int ret1=bke1.K2exp_ret(x,res,err);
-      if (ret1==0) {
-        method=1;
-        return 0;
-      }
-      bke2.set_tol(tol);
-      int ret2=bke2.K2exp_ret(x,res,err);
-      if (ret2==0) {
-        method=2;
-        return 0;
-      }
-      bke3.set_tol(tol);
-      int ret3=bke3.K2exp_ret(x,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-    
-    /** \brief Compute \f$ K_2(x) e^x \f$
-     */
-    int K2exp_ret(fp_t x, fp_t &res, fp_t &err) {
-      int method;
-      int iret=K2exp_ret_full(2,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function K2exp failed.",o2scl::exc_efailed,
-                       err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Compute \f$ K_2(x) e^x \f$
-     */
-    fp_t K2exp(fp_t x) {
-      fp_t res, err;
-      K2exp_ret(x,res,err);
-      return res;
-    }
-
-    /** \brief Compute \f$ K_3(x) e^x \f$
-     */
-    int K3exp_ret_full(fp_t x, fp_t &res, fp_t &err, int &method) {
-      bke1.set_tol(tol);
-      int ret1=bke1.K3exp_ret(x,res,err);
-      if (ret1==0) {
-        method=1;
-        return 0;
-      }
-      bke2.set_tol(tol);
-      int ret2=bke2.K3exp_ret(x,res,err);
-      if (ret2==0) {
-        method=2;
-        return 0;
-      }
-      bke3.set_tol(tol);
-      int ret3=bke3.K3exp_ret(x,res,err);
-      if (ret3==0) {
-        method=3;
-      } else {
-        method=0;
-      }
-      return ret3;
-    }
-    
-    /** \brief Compute \f$ K_3(x) e^x \f$
-     */
-    int K3exp_ret(fp_t x, fp_t &res, fp_t &err) {
-      int method;
-      int iret=K3exp_ret_full(2,res,err,method);
-      if (iret!=0) {
-        O2SCL_CONV_RET("Function K3exp failed.",o2scl::exc_efailed,
-                       err_nonconv);
-      }
-      return iret;
-    }
-    
-    /** \brief Compute \f$ K_3(x) e^x \f$
-     */
-    fp_t K3exp(fp_t x) {
-      fp_t res, err;
-      K3exp_ret(x,res,err);
-      return res;
-    }
-    
-    };
-
-#endif
-  
   /** \brief Class to compute the polylogarithm function
 
       \note experimental

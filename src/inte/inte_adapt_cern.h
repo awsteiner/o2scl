@@ -23,8 +23,8 @@
 /** \file inte_adapt_cern.h
     \brief File defining \ref o2scl::inte_adapt_cern
 */
-#ifndef O2SCL_CERN_ADAPT_H
-#define O2SCL_CERN_ADAPT_H
+#ifndef O2SCL_INTE_ADAPT_CERN_H
+#define O2SCL_INTE_ADAPT_CERN_H
 
 #include <o2scl/misc.h>
 #include <o2scl/funct_multip.h>

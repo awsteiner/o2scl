@@ -639,7 +639,16 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
   else cout.unsetf(ios::scientific);
   cout.precision(precision);
 
+  hid_t group_id=0;
+  if (sv.size()>=3) {
+    group_id=hf.open_group(sv[2]);
+  }
+  
   hf.file_list(use_regex,verbose);
+
+  if (sv.size()>=3) {
+    hf.close_group(group_id);
+  }
   
   return 0;
 }
@@ -952,9 +961,9 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     int ret=get_input_one(sv,"Enter function of index 'i'",
 			  function,"function",itive_com);
     if (ret!=0) return ret;
-
+    
     // Parse function
-      calc_utf8<> calc;
+    calc_utf8<> calc;
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 

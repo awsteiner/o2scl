@@ -2600,8 +2600,8 @@ namespace o2scl {
       // Tolerance for the integrator for massless fermions
       this->fd_integ.set_tol(1.0e-18);
 
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-18);
+      // No tolerance needed for the boost version
+      //this->be_integ.set_tol(1.0e-18);
 
       // Internal function tolerances
 
@@ -2658,8 +2658,8 @@ namespace o2scl {
       // Tolerance for the integrator for massless fermions
       this->fd_integ.set_tol(1.0e-23);
 
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-23);
+      // No tolerance needed for the boost version
+      //this->be_integ.set_tol(1.0e-23);
 
       // Internal function tolerances
 

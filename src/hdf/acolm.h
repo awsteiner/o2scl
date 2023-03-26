@@ -1906,16 +1906,23 @@ namespace o2scl_acol {
     /** \brief Numerically integrate a user-specified function 
 
         Arguments: <tt><function> <variable> <lower limit> 
-        <upper limit> ["1" for multiprecision]</tt>
+        <upper limit> [multip=false,method=kb]</tt>
 
         This command numerically integrates <function> with respect to
-        <variable> from <lower limit> to <upper limit>. If the fifth
-        argument is either \c "1" or \c "true", then multiprecision is
-        used to attempt to ensure the result is accurate to within the
-        requested precision.
+        <variable> from <lower limit> to <upper limit>. 
 
-        Infinite upper or lower limits are supported, use "-infty"
-        or "infty", respectively.
+        The fifth argument is a set of keyword arguments. If multip is
+        set to  either \c "1" or \c "true", then multiprecision is
+        used to attempt to ensure the result is accurate to within the
+        requested precision (multiprecision only works on OSX right now
+        possibly because the Ubuntu release of boost is still behind). 
+
+        There are three methods, kb (Kronrod from boost), deb 
+        (double exponential from boost) or ac (adaptive integration
+        based on CERNLIB). 
+
+        Infinite upper or lower limits are supported (for all three
+        methods), use "-infty" or "infty", respectively.
 
         Note that the variable \c precision is used for the argument to
         the <tt>cout.precision()</tt> function, so precision of 10 is
@@ -1940,7 +1947,7 @@ namespace o2scl_acol {
         the \c ninteg command to achieve the same result:
 
         <tt>acol -set verbose 2 -set precision 30 -ninteg
-        "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" 1</tt>
+        "(-log(1-t)/t)" t 0 "(sqrt(5)-1)/2" multip=true</tt>
 
         <tt>Result (cpp_dec_float_35): 7.553956195317414693865200287561e-01
         </tt>
@@ -1960,7 +1967,8 @@ namespace o2scl_acol {
         Arguments: (No arguments.)
 
         Add a constant called 'nlines' to the table and set it equal
-        to the number of lines (rows) in the table.
+        to the number of lines (rows) in the table. The number of
+        lines is also output to the screen.
     */
     virtual int comm_nlines(std::vector<std::string> &sv, bool itive_com);
 
@@ -1969,8 +1977,8 @@ namespace o2scl_acol {
         Arguments: <tt>[file]</tt>
 
         Output the object to the screen, or if the [file] argument is
-        specified, to a file. This is the same format as can be read
-        using the <tt>generic</tt> command.
+        specified, to a file. This is (supposed to be) the same format
+        as can be read using the <tt>generic</tt> command.
     */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 

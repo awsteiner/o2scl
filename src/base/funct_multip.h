@@ -563,6 +563,11 @@ namespace o2scl {
       
   };
 
+  /** \brief A multiprecision function evaluation class with 
+      transformations useful for integrals
+
+      This class is used in \ref inte_adapt_cern .
+   */
   template<class lim_fp_t> class funct_multip_transform {
 
   protected:
@@ -606,10 +611,10 @@ namespace o2scl {
      */
     bool err_nonconv;
 
-    /// Desc
+    /// The upper limit (when finite)
     lim_fp_t upper_lim;
     
-    /// Desc
+    /// The lower limit (when finite)
     lim_fp_t lower_lim;
     
     /** \brief Evaluate the function and return the error estimate
