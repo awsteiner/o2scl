@@ -705,7 +705,6 @@ namespace o2scl {
       long double x_ld=0, y_ld=0;
       if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10)) {
         long double t_ld=static_cast<long double>(t);
-        long double x_ld;
         if (mode=='u') {
           x_ld=static_cast<long double>(lower_lim)+(1-t_ld)/t_ld;
           y_ld=f(x_ld)/t_ld/t_ld;
@@ -770,7 +769,6 @@ namespace o2scl {
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_25>::digits10)) {
         cpp_dec_float_25 t_cdf25=static_cast<cpp_dec_float_25>(t);
-        cpp_dec_float_25 x_cdf25;
         if (mode=='u') {
           x_cdf25=static_cast<cpp_dec_float_25>(lower_lim)+
             (1-t_cdf25)/t_cdf25;
@@ -839,7 +837,6 @@ namespace o2scl {
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_35>::digits10)) {
         cpp_dec_float_35 t_cdf35=static_cast<cpp_dec_float_35>(t);
-        cpp_dec_float_35 x_cdf35;
         if (mode=='u') {
           x_cdf35=static_cast<cpp_dec_float_35>(lower_lim)+
             (1-t_cdf35)/t_cdf35;
@@ -908,7 +905,6 @@ namespace o2scl {
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_50>::digits10)) {
         cpp_dec_float_50 t_cdf50=static_cast<cpp_dec_float_50>(t);
-        cpp_dec_float_50 x_cdf50;
         if (mode=='u') {
           x_cdf50=static_cast<cpp_dec_float_50>(lower_lim)+
             (1-t_cdf50)/t_cdf50;
@@ -977,7 +973,6 @@ namespace o2scl {
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <cpp_dec_float_100>::digits10)) {
         cpp_dec_float_100 t_cdf100=static_cast<cpp_dec_float_100>(t);
-        cpp_dec_float_100 x_cdf100;
         if (mode=='u') {
           x_cdf100=static_cast<cpp_dec_float_100>(lower_lim)+
             (1-t_cdf100)/t_cdf100;

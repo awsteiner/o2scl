@@ -3541,7 +3541,7 @@ comm_option_s *cli::get_option_pointer(std::string name) {
   return 0;
 }
 
-void cli::set_colors(std::string c, int verbose) {
+void cli::set_colors(std::string c, int verbose_arg) {
   terminal ter;
   colors=c;
   std::vector<std::string> vs;
@@ -3556,72 +3556,72 @@ void cli::set_colors(std::string c, int verbose) {
                 o2scl::exc_einval);
     }
     if (vs[j][0]=='c') {
-      if (verbose>0) cout << "Set command color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set command color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         command_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         command_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) {
+      if (verbose_arg>0) {
         cout << command_color << "command" << default_color << endl;
       }
     } else if (vs[j][0]=='t') {
-      if (verbose>0) cout << "Set type color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set type color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         type_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         type_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) cout << type_color << "type" << default_color << endl;
+      if (verbose_arg>0) cout << type_color << "type" << default_color << endl;
     } else if (vs[j][0]=='p') {
-      if (verbose>0) cout << "Set param color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set param color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         param_color="";
       } else {
           std::string scol=vs[j].substr(2,vs[j].length()-2);
           param_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) cout << param_color << "param" << default_color << endl;
+      if (verbose_arg>0) cout << param_color << "param" << default_color << endl;
     } else if (vs[j][0]=='h') {
-      if (verbose>0) cout << "Set help color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set help color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         help_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         help_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) cout << help_color << "help" << default_color << endl;
+      if (verbose_arg>0) cout << help_color << "help" << default_color << endl;
     } else if (vs[j][0]=='e') {
-      if (verbose>0) cout << "Set exec color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set exec color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         exec_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         exec_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) cout << exec_color << "exec" << default_color << endl;
+      if (verbose_arg>0) cout << exec_color << "exec" << default_color << endl;
     } else if (vs[j][0]=='d') {
-      if (verbose>0) cout << "Set default color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set default color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         default_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         default_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) {
+      if (verbose_arg>0) {
         cout << default_color << "default" << default_color << endl;
       }
     } else if (vs[j][0]=='u') {
-      if (verbose>0) cout << "Set url color with: " << vs[j] << endl;
+      if (verbose_arg>0) cout << "Set url color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         url_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         url_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose>0) cout << url_color << "url" << default_color << endl;
+      if (verbose_arg>0) cout << url_color << "url" << default_color << endl;
     } else {
       O2SCL_ERR("Invalid prefix in set_colors().",
                 o2scl::exc_einval);

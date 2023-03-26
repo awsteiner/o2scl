@@ -589,7 +589,7 @@ namespace o2scl {
         return this->density_fun(u,y,eta); },
         zero,res,err,tol_rel);
       if (iret!=0) {
-        int iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+        iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->density_fun(u,y,eta); },
           zero,res,err,tol_rel);
         if (iret!=0) {

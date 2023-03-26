@@ -1046,11 +1046,11 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="int[]") {
 
     if (pretty) {
-      vector<string> sv, sv_out;
+      vector<string> svx, sv_out;
       for(size_t k=0;k<intv_obj.size();k++) {
-	sv.push_back(o2scl::itos(intv_obj[k])+' ');
+	svx.push_back(o2scl::itos(intv_obj[k])+' ');
       }
-      screenify(intv_obj.size(),sv,sv_out);
+      screenify(intv_obj.size(),svx,sv_out);
       for(size_t k=0;k<sv_out.size();k++) {
 	(*fout) << sv_out[k] << endl;
       }
@@ -1061,15 +1061,15 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="double[]") {
 
     if (pretty) {
-      vector<string> sv, sv_out;
+      vector<string> svx, sv_out;
       for(size_t k=0;k<doublev_obj.size();k++) {
 	if (has_minus_sign(&doublev_obj[k])) {
-	  sv.push_back(o2scl::dtos(doublev_obj[k])+' ');
+	  svx.push_back(o2scl::dtos(doublev_obj[k])+' ');
 	} else {
-	  sv.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
+	  svx.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
 	}
       }
-      screenify(doublev_obj.size(),sv,sv_out);
+      screenify(doublev_obj.size(),svx,sv_out);
       for(size_t k=0;k<sv_out.size();k++) {
 	(*fout) << sv_out[k] << endl;
       }
@@ -1080,11 +1080,11 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="size_t[]") {
 
     if (pretty) {
-      vector<string> sv, sv_out;
+      vector<string> svx, sv_out;
       for(size_t k=0;k<size_tv_obj.size();k++) {
-	sv.push_back(o2scl::szttos(size_tv_obj[k])+' ');
+	svx.push_back(o2scl::szttos(size_tv_obj[k])+' ');
       }
-      screenify(size_tv_obj.size(),sv,sv_out);
+      screenify(size_tv_obj.size(),svx,sv_out);
       for(size_t k=0;k<sv_out.size();k++) {
 	(*fout) << sv_out[k] << endl;
       }

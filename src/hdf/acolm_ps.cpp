@@ -2718,8 +2718,8 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     } else {
       
       std::vector<double> vtemp;
-      int ret=vector_spec(in[1],vtemp,false,verbose,false);
-      if (ret!=0) {
+      int retq=vector_spec(in[1],vtemp,false,verbose,false);
+      if (retq!=0) {
 	cerr << "Interpretation of vector specification failed."
 	     << endl;
 	return 3;

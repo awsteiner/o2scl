@@ -612,23 +612,23 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       return 2;
     }
 
-    for(size_t ix=0;ix<in.size();ix++) {
+    for(size_t jx=0;jx<in.size();jx++) {
 
       // Determine vector from table column (requires copy) or
       // multiple vector specification
       
-      if (in[ix].find(':')==std::string::npos) {
-        cout << "column: " << in[ix] << endl;
+      if (in[jx].find(':')==std::string::npos) {
+        cout << "column: " << in[jx] << endl;
 
-        if (table_obj.is_column(in[ix])==false) {
-          cerr << "Could not find column named '" << in[ix] << "'." << endl;
+        if (table_obj.is_column(in[jx])==false) {
+          cerr << "Could not find column named '" << in[jx] << "'." << endl;
           return exc_efailed;
         }
 
         vector<double> v;
 	v.resize(table_obj.get_nlines());
 	for(size_t i=0;i<table_obj.get_nlines();i++) {
-	  v[i]=table_obj.get(in[ix],i);
+	  v[i]=table_obj.get(in[jx],i);
 	}
         vvd.push_back(v);
         
@@ -636,7 +636,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
         vector<vector<double> > vvd2;
         
-        int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],vvd2,verbose,false);
+        int vs_ret=o2scl_hdf::mult_vector_spec(in[jx],vvd2,verbose,false);
 	if (vs_ret!=0) {
 	  cerr << "Multiple vector specification failed." << endl;
 	  return 1;
@@ -1936,10 +1936,6 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_convert
 (std::vector<std::string> &sv, bool itive_com) {
 
-  format_float ff;
-  ff.unicode_mode();
-  ff.set_sig_figs(precision+1);
-  
   if (verbose>=2) {
     cng.verbose=verbose;
   } else {
@@ -2243,9 +2239,9 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   command_del(type);
   clear_obj();
   
-  int ret=get_input_one(sv,"Enter type of object to create",ctype,"create",
+  int retx=get_input_one(sv,"Enter type of object to create",ctype,"create",
 			itive_com);
-  if (ret!=0) return ret;
+  if (retx!=0) return retx;
 
   vector<string> sv2=sv;
   vector<string>::iterator it=sv2.begin();
@@ -2345,8 +2341,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
     if (in1.find(':')==std::string::npos) {
 
       vector<string> sv3=sv2;
-      vector<string>::iterator it=sv3.begin();
-      sv3.erase(it+1);
+      vector<string>::iterator itx=sv3.begin();
+      sv3.erase(itx+1);
       
       std::string in2;
 
@@ -2539,8 +2535,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   } else if (ctype=="tensor") {
 
     std::string i1;
-    int ret=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
-    if (ret!=0) return ret;
+    int rety=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
+    if (rety!=0) return rety;
     size_t rank=o2scl::stoszt(sv2[1]);
 
     if (sv2.size()<2+rank) {
@@ -2566,8 +2562,8 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
   } else if (ctype=="tensor_grid") {
 
     std::string i1;
-    int ret=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
-    if (ret!=0) return ret;
+    int retz=get_input_one(sv2,"Enter rank",i1,"create",itive_com);
+    if (retz!=0) return retz;
     size_t rank=o2scl::stoszt(sv2[1]);
 
     if (sv2.size()<2+rank) {

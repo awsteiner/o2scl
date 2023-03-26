@@ -899,9 +899,9 @@ namespace o2scl {
       // Create list of columns to interpolate
       std::vector<std::string> col_list;
       for(size_t i=0;i<source.get_ncolumns();i++) {
-	std::string col=source.get_column_name(i);
-	if (col!=src_index && col!=dest_index) {
-	  col_list.push_back(col);
+	std::string colx=source.get_column_name(i);
+	if (colx!=src_index && colx!=dest_index) {
+	  col_list.push_back(colx);
 	}
       }
       

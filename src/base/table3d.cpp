@@ -268,7 +268,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
       
   double data;
   std::string line;
-  std::string cname, xname="x", yname="y";
+  std::string cname, xname_loc="x", yname_loc="y";
 
   // Read first line and into object called 'onames'
   std::vector<std::string> onames, nnames;
@@ -336,8 +336,8 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
     // Presume the first row contains column names
 
     // Grid names
-    xname=onames[0];
-    yname=onames[1];
+    xname_loc=onames[0];
+    yname_loc=onames[1];
     if (verbose>0) {
       std::cout << "X grid name: " << onames[0] << endl;
       std::cout << "Y grid name: " << onames[1] << endl;
@@ -427,7 +427,7 @@ int table3d::read_gen3_list(std::istream &fin, int verbose, double eps) {
   }
       
   // Set grid from x and y vectors
-  set_xy(xname,xgrid.size(),xgrid,yname,ygrid.size(),ygrid);
+  set_xy(xname_loc,xgrid.size(),xgrid,yname_loc,ygrid.size(),ygrid);
 
   // Create new slices
   for(size_t i=0;i<nnames.size();i++) {

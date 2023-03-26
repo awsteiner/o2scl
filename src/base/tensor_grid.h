@@ -1174,14 +1174,14 @@ namespace o2scl {
     /** \brief Create from a table3d object
      */
     void from_table3d_fermi
-      (const table3d &t3d, std::string slice, size_t n_points,
+      (const table3d &t3d, std::string slice_arg, size_t n_points,
        double low=0.0, double high=0.0, double width=0.0) {
       
       if (n_points<2) {
         O2SCL_ERR("Number of points too small.",o2scl::exc_efailed);
       }
 
-      const ubmatrix &sl=t3d.get_slice(slice);
+      const ubmatrix &sl=t3d.get_slice(slice_arg);
 
       if (low>=high) {
         low=matrix_min_value<ubmatrix,double>(sl);
@@ -1212,7 +1212,7 @@ namespace o2scl {
 
       for(size_t i=0;i<gx.size();i++) {
         for(size_t j=0;j<gy.size();j++) {
-          double val=t3d.get(i,j,slice);
+          double val=t3d.get(i,j,slice_arg);
           for(size_t k=0;k<ug.get_npoints();k++) {
             double vk=ug[k];
             double v2=1.0/(1.0+exp((vk-val)/width));

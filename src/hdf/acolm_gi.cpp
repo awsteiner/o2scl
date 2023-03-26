@@ -674,10 +674,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
       "https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html"+
       default_color+"\n";
 
-    std::vector<std::string> sv;
-    o2scl::rewrap_ignore_vt100(str,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_ignore_vt100(str,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
     cout << endl;
       
@@ -706,10 +706,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
 
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -737,10 +737,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
 
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -768,10 +768,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
 
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -797,10 +797,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -828,10 +828,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
     
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -860,10 +860,10 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     }
 
     color_replacements(help);
-    std::vector<std::string> sv;
-    o2scl::rewrap_keep_endlines(help,sv,ncols_loc-1);
-    for(size_t i=0;i<sv.size();i++) {
-      cout << sv[i] << endl;
+    std::vector<std::string> svx;
+    o2scl::rewrap_keep_endlines(help,svx,ncols_loc-1);
+    for(size_t i=0;i<svx.size();i++) {
+      cout << svx[i] << endl;
     }
       
     return 0;
@@ -1061,8 +1061,6 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()<2 || (cl->is_valid_option(sv[1])==false &&
 		      cl->is_parameter(sv[1])==false)) {
     
-    terminal ter;
-
     cout << "List of additional help topics (e.g. \"acol -help [topic]\"): ";
     cout << help_color << "functions" << default_color
 	 << "," << endl;
