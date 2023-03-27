@@ -1049,8 +1049,8 @@ void nstar_rot::comp_M_J() {
   ubvector D_J(SDIV+1);               
   // rest mass density
   ubmatrix rho_0(SDIV+1,MDIV+1);
-  ubvector rho_mu_0(SDIV+1);
-  ubvector omega_mu_0(SDIV+1);
+  ubvector rho_mu_0x(SDIV+1);
+  ubvector omega_mu_0x(SDIV+1);
   double rho_equator;
   double omega_equator;                      
   ubvector d_o_e(SDIV+1);
@@ -1076,17 +1076,17 @@ void nstar_rot::comp_M_J() {
   // Kepler angular velocity
 
   for(s=1;s<=SDIV;s++) {
-    rho_mu_0[s]=rho(s,1);                     
-    omega_mu_0[s]=omega(s,1);                 
+    rho_mu_0x[s]=rho(s,1);                     
+    omega_mu_0x[s]=omega(s,1);                 
   }
 
   n_nearest=SDIV/2;
-  rho_equator=interp(s_gp,rho_mu_0,SDIV,s_e);   
+  rho_equator=interp(s_gp,rho_mu_0x,SDIV,s_e);   
 
   if (r_ratio==1.0) {
     omega_equator=0.0; 
   } else {
-    omega_equator=interp(s_gp,omega_mu_0,SDIV,s_e);
+    omega_equator=interp(s_gp,omega_mu_0x,SDIV,s_e);
   }
  
   for(s=1;s<=SDIV;s++) { 
@@ -1228,12 +1228,12 @@ void nstar_rot::comp_M_J() {
     J*=4*PI*pow(r_e,4.0);
   }
 
-  for(int s=1;s<=SDIV;s++) {
-    for(int m=1;m<=MDIV;m++) {
-      gamma_guess(s,m)=gamma(s,m);
-      rho_guess(s,m)=rho(s,m);
-      alpha_guess(s,m)=alpha(s,m);
-      omega_guess(s,m)=omega(s,m);
+  for(int isx=1;isx<=SDIV;isx++) {
+    for(int ism=1;ism<=MDIV;ism++) {
+      gamma_guess(isx,ism)=gamma(isx,ism);
+      rho_guess(isx,ism)=rho(isx,ism);
+      alpha_guess(isx,ism)=alpha(isx,ism);
+      omega_guess(isx,ism)=omega(isx,ism);
     }
   }
 
@@ -3600,8 +3600,8 @@ int nstar_rot::fix_cent_eden_grav_mass(double cent_eden, double grav_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio,eq_radius_tol_rel);
-      if (ret!=0) {
+      int retz=iterate(r_ratio,eq_radius_tol_rel);
+      if (retz!=0) {
 	diff_M=-1.0;
       } else { 
 	comp_M_J();      
@@ -3749,8 +3749,8 @@ int nstar_rot::fix_cent_eden_bar_mass(double cent_eden, double bar_mass) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio,eq_radius_tol_rel);
-      if (ret!=0) {
+      int retq=iterate(r_ratio,eq_radius_tol_rel);
+      if (retq!=0) {
 	diff_M_0=-1.0;
       } else { 
 	comp_M_J();      
@@ -3898,9 +3898,9 @@ int nstar_rot::fix_cent_eden_ang_vel(double cent_eden, double ang_vel) {
       }
       r_ratio -= dr;
 
-      int ret=iterate(r_ratio,eq_radius_tol_rel);
+      int reta=iterate(r_ratio,eq_radius_tol_rel);
 
-      if (ret!=0) {
+      if (reta!=0) {
 	diff_Omega=-1.0;
       } else { 
 	comp_omega();      
@@ -4022,9 +4022,9 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 
     make_center(e_center);
     spherical_star();
-    int ret=iterate(r_ratio,eq_radius_tol_rel);
+    int retx=iterate(r_ratio,eq_radius_tol_rel);
     double sign;
-    if (ret!=0) {
+    if (retx!=0) {
       diff_J=-1.0;
       sign=-1.0;
     } 
@@ -4051,8 +4051,8 @@ int nstar_rot::fix_cent_eden_ang_mom(double cent_eden, double ang_mom) {
 	dr/=(-2.0);
       }
       r_ratio -= dr;
-      int ret=iterate(r_ratio,eq_radius_tol_rel);
-      if (ret!=0) {
+      int rety=iterate(r_ratio,eq_radius_tol_rel);
+      if (rety!=0) {
 	diff_J=-1.0;
       } else { 
 	comp_M_J();      

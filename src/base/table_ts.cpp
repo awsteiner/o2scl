@@ -102,8 +102,8 @@ int main(void) {
 
     string cn=at5.get_column_name(0);
     vector<double> v(at5.get_maxlines());
-    for(size_t i=0;i<v.size();i++) {
-      v[i]=((double)i)+1.0;
+    for(size_t ix=0;ix<v.size();ix++) {
+      v[ix]=((double)ix)+1.0;
     }
     at5.swap_column_data("col1",v);
     t.test_rel(v[0],1.0,1.0e-12,"scd 1");
@@ -190,8 +190,8 @@ int main(void) {
 
     string cn=at5.get_column_name(0);
     boost::numeric::ublas::vector<double> v(at5.get_maxlines());
-    for(size_t i=0;i<v.size();i++) {
-      v[i]=((double)i)+1.0;
+    for(size_t iy=0;iy<v.size();iy++) {
+      v[iy]=((double)iy)+1.0;
     }
     at5.swap_column_data("col1",v);
     t.test_rel(v[0],1.0,1.0e-12,"scd 1");

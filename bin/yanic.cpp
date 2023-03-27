@@ -2863,10 +2863,10 @@ int main(int argc, char *argv[]) {
             it!=class_py_names.end();it++) {
           if (it->first==ret_temp) ret_temp=it->second;
         }
-        size_t len=ret_temp.length();
+        size_t lenx=ret_temp.length();
         // Manually remove '<>' from the return type if necessary
-        if (len>2 && ret_temp[len-2]=='<' && ret_temp[len-1]=='>') {
-          ret_temp=ret_temp.substr(0,len-2);
+        if (lenx>2 && ret_temp[lenx-2]=='<' && ret_temp[lenx-1]=='>') {
+          ret_temp=ret_temp.substr(0,lenx-2);
         }
         
         post_func_code.push_back(((string)"ret=")+ret_temp+
@@ -3569,11 +3569,11 @@ int main(int argc, char *argv[]) {
     if (ifsp.py_name!="") {
       
       // Manually remove '<>' from the typename if necessary
-      size_t len=ifsp.name.length();
+      size_t leny=ifsp.name.length();
       std::string tmps=ifsp.name;
-      if (len>2 && ifsp.name[len-2]=='<' &&
-          ifsp.name[len-1]=='>') {
-        tmps=ifsp.name.substr(0,len-2);
+      if (leny>2 && ifsp.name[leny-2]=='<' &&
+          ifsp.name[leny-1]=='>') {
+        tmps=ifsp.name.substr(0,leny-2);
       }
       
       fout2 << ".. autoclass:: o2sclpy.shared_ptr_" << tmps << endl;

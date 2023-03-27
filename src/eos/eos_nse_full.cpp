@@ -539,10 +539,10 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
 
     if (y_low*y_high<0.0) done=true;
 
-    int iter=0;
+    int iterx=0;
 
     // Use function to try to bracket a root
-    while(done==false && iter<100) {
+    while(done==false && iterx<100) {
 
       double dydx=(y_high-y_low)/(mup_high-mup_low);
       if (dydx==0.0) {
@@ -635,7 +635,7 @@ int eos_nse_full::bracket_mu_solve(double &mun_low, double &mun_high,
 	cout << y_low << " " << y_high << endl;
       }
       
-      iter++;
+      iterx++;
     }
 
     if (done==false) {

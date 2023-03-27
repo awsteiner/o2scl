@@ -200,22 +200,22 @@ namespace o2scl {
       void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
                           vec4_t &nb) {
       
-      double C=o2scl_cgs::speed_of_light;
-      double G=o2scl_cgs::gravitational_constant;
-      double KAPPA=1.0e-15*C*C/G;
-      double KSCALE=KAPPA*G/(C*C*C*C);
+      double Cx=o2scl_cgs::speed_of_light;
+      double Gx=o2scl_cgs::gravitational_constant;
+      double KAPPAx=1.0e-15*Cx*Cx/Gx;
+      double KSCALEx=KAPPAx*Gx/(Cx*Cx*Cx*Cx);
   
       n_tab=eden.size();
 
-      // Note that conv1*C*C*KSCALE is identical to conv2*KSCALE.
+      // Note that conv1*Cx*Cx*KSCALEx is identical to conv2*KSCALEx.
       
       for(int i=0;i<n_tab;i++) {
         // Convert from g/cm^3 to 1.0e15 grams/cm^3 and take the log
-        log_e_tab[i]=log10(eden[i]*C*C*KSCALE);
+        log_e_tab[i]=log10(eden[i]*Cx*Cx*KSCALEx);
         // Convert from dyne/cm^2 to 1.0e15 grams/cm^3 and take the log
-        log_p_tab[i]=log10(pres[i]*KSCALE);
+        log_p_tab[i]=log10(pres[i]*KSCALEx);
         // Convert from cm^2/s^2 to a unitless quantity and take the log
-        log_h_tab[i]=log10(enth[i]/(C*C));
+        log_h_tab[i]=log10(enth[i]/(Cx*Cx));
         // Take the log of a quantity in units of 1/cm^3
         log_n0_tab[i]=log10(nb[i]);
       }

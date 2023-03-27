@@ -131,13 +131,13 @@ int main(void) {
     // Multiprecision integration
     
     imkb.verbose=2;
-    imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
+    imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
     
-    imkb.integ_err_multip([](auto &&t) mutable { return test_func(t); },
+    imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
@@ -145,19 +145,19 @@ int main(void) {
 
     // Multiprecision integration with infinite limits
     
-    imkb.integ_iu_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imkb.integ_iu_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                              a,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 3");
     cout << endl;
 
-    imkb.integ_il_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imkb.integ_il_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                              a,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 4");
     cout << endl;
 
-    imkb.integ_i_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imkb.integ_i_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                             val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi,1.0e-15,"multip 5");
@@ -169,14 +169,14 @@ int main(void) {
     if (false) {
       // Try a function which is difficult to integrate
       imkb.err_nonconv=false;
-      int ret=imkb.integ_il_err_multip([](auto &&t) mutable
-      { return test_func(t); },a,val,err2);
+      int ret=imkb.integ_il_err_multip([](auto &&tb) mutable
+      { return test_func(tb); },a,val,err2);
       cout << "ret: " << ret << endl;
       t.test_gen(ret!=0,"fail il");
       cout << endl;
 
-      ret=imkb.integ_i_err_multip([](auto &&t) mutable
-      { return test_func(t); },a,val,err2);
+      ret=imkb.integ_i_err_multip([](auto &&tb) mutable
+      { return test_func(tb); },a,val,err2);
       cout << "ret: " << ret << endl;
       t.test_gen(ret!=0,"fail i");
       cout << endl;
@@ -190,8 +190,8 @@ int main(void) {
     cpp_dec_float_25 hundred=100;
     cpp_dec_float_25 param=one/hundred;
     
-    imkb.integ_err_multip([param](auto &&t) mutable
-    { return test_func_param(t,param); },a,b,val,err2);
+    imkb.integ_err_multip([param](auto &&tb) mutable
+    { return test_func_param(tb,param); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip param 1");
     cout << endl;
@@ -199,8 +199,8 @@ int main(void) {
     // Multiprecision integration with a template function which has
     // a template parameter
 
-    imkb.integ_err_multip([param](auto &&t) mutable
-    { return test_func_param(t,param_f(t)); },a,b,val,err2);
+    imkb.integ_err_multip([param](auto &&tb) mutable
+    { return test_func_param(tb,param_f(tb)); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip param 2");
     cout << endl;
@@ -212,7 +212,7 @@ int main(void) {
     funct_multip_string *fmsp=&fms;
 
 
-    imkb.integ_err_multip([fmsp](auto &&t) mutable { return (*fmsp)(t); },
+    imkb.integ_err_multip([fmsp](auto &&tb) mutable { return (*fmsp)(tb); },
                           a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip string");

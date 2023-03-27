@@ -41,6 +41,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+  {
   // Test a rank three tensor
   tensor_grid<> m3;
   size_t i3[3], j3[3], k3[3];
@@ -98,6 +99,7 @@ int main(void) {
 	t.test_gen(j4[2]==k,"pack/unpack 3");
       }
     }
+  }
   }
 
   // -------------------------------------------------------
@@ -313,10 +315,10 @@ int main(void) {
       for(size_t j=0;j<i3[1];j++) {
 	j3[0]=i;
 	j3[1]=j;
-	ubvector_slice v=m3u.vector_slice(2,j3);
+	ubvector_slice vx=m3u.vector_slice(2,j3);
 	for(size_t k=0;k<i3[2];k++) {
 	  j3[2]=k;
-	  t.test_rel(m3u.get(j3),v[k],1.0e-12,"vector slice 1.");
+	  t.test_rel(m3u.get(j3),vx[k],1.0e-12,"vector slice 1.");
 	}
       }
     }
@@ -324,10 +326,10 @@ int main(void) {
       for(size_t k=0;k<i3[2];k++) {
 	j3[0]=i;
 	j3[2]=k;
-	ubvector_slice v=m3u.vector_slice(1,j3);
+	ubvector_slice vx=m3u.vector_slice(1,j3);
 	for(size_t j=0;j<i3[1];j++) {
 	  j3[1]=j;
-	  t.test_rel(m3u.get(j3),v[j],1.0e-12,"vector slice 2.");
+	  t.test_rel(m3u.get(j3),vx[j],1.0e-12,"vector slice 2.");
 	}
       }
     }
@@ -335,10 +337,10 @@ int main(void) {
       for(size_t k=0;k<i3[2];k++) {
 	j3[1]=j;
 	j3[2]=k;
-	ubvector_slice v=m3u.vector_slice(0,j3);
+	ubvector_slice vx=m3u.vector_slice(0,j3);
 	for(size_t i=0;i<i3[0];i++) {
 	  j3[0]=i;
-	  t.test_rel(m3u.get(j3),v[i],1.0e-12,"vector slice 3.");
+	  t.test_rel(m3u.get(j3),vx[i],1.0e-12,"vector slice 3.");
 	}
       }
     }

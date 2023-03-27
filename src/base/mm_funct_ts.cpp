@@ -55,24 +55,24 @@ int main(void) {
     // We use the brackets to force the mm_funct_python
     // destructor to run before py_final()
     
-    ubvector x(2), y(2), y2(2);
+    ubvector xxa(2), yya(2), y2(2);
     y2[0]=2.0*o2scl_const::pi;
     y2[1]=3.0*o2scl_const::pi;
 
     cout << "Calling fun() in mm_funct_test.py:" << endl;
     mm_funct_python<ubvector> fp("mm_funct_test","fun");
-    x[0]=2.0;
-    x[1]=3.0;
-    int mfp_ret=fp(2,x,y);
-    t.test_rel_vec(2,y,y2,1.0e-12,"mm_funct_python");
+    xxa[0]=2.0;
+    xxa[1]=3.0;
+    int mfp_ret=fp(2,xxa,yya);
+    t.test_rel_vec(2,yya,y2,1.0e-12,"mm_funct_python");
     cout << endl;
 
     for(size_t j=0;j<10;j++) {
-      x[0]=sin(j);
-      x[1]=cos(j);
-      fp(2,x,y);
-      t.test_rel(y[0],x[0]*o2scl_const::pi,1.0e-10,"mm_funct_python 1");
-      t.test_rel(y[1],x[1]*o2scl_const::pi,1.0e-10,"mm_funct_python 2");
+      xxa[0]=sin(j);
+      xxa[1]=cos(j);
+      fp(2,xxa,yya);
+      t.test_rel(yya[0],xxa[0]*o2scl_const::pi,1.0e-10,"mm_funct_python 1");
+      t.test_rel(yya[1],xxa[1]*o2scl_const::pi,1.0e-10,"mm_funct_python 2");
     }
     cout << endl;
 

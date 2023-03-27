@@ -60,41 +60,41 @@ public:
     numu.init(0.0,1.0);
   }
   
-  int load_nl3(eos_had_rmf &rmf) {
+  int load_nl3(eos_had_rmf &rmf_loc) {
 
-    rmf.ms=508.194;
-    rmf.mw=782.501;
-    rmf.mr=763.0;
-    rmf.mnuc=939.0;
-    rmf.ms/=hc_mev_fm; 
-    rmf.mw/=hc_mev_fm; 
-    rmf.mr/=hc_mev_fm; 
-    rmf.mnuc/=hc_mev_fm;
+    rmf_loc.ms=508.194;
+    rmf_loc.mw=782.501;
+    rmf_loc.mr=763.0;
+    rmf_loc.mnuc=939.0;
+    rmf_loc.ms/=hc_mev_fm; 
+    rmf_loc.mw/=hc_mev_fm; 
+    rmf_loc.mr/=hc_mev_fm; 
+    rmf_loc.mnuc/=hc_mev_fm;
     
     double gs, gw, gr;
     gs=10.217;
     gw=12.868;
     gr=4.474;
-    rmf.b=-10.431;
-    rmf.c=-28.885;
-    rmf.b/=-rmf.mnuc*pow(fabs(gs),3.0);
-    rmf.c/=pow(gs,4.0);
+    rmf_loc.b=-10.431;
+    rmf_loc.c=-28.885;
+    rmf_loc.b/=-rmf_loc.mnuc*pow(fabs(gs),3.0);
+    rmf_loc.c/=pow(gs,4.0);
     gr*=2.0;
-    rmf.cs=gs/rmf.ms;
-    rmf.cw=gw/rmf.mw;
-    rmf.cr=gr/rmf.mr;
+    rmf_loc.cs=gs/rmf_loc.ms;
+    rmf_loc.cw=gw/rmf_loc.mw;
+    rmf_loc.cr=gr/rmf_loc.mr;
     
-    rmf.xi=0.0; 
-    rmf.zeta=0.0;
-    rmf.a1=0.0;
-    rmf.a2=0.0;
-    rmf.a3=0.0;
-    rmf.a4=0.0;
-    rmf.a5=0.0;
-    rmf.a6=0.0;
-    rmf.b1=0.0;
-    rmf.b2=0.0;
-    rmf.b3=0.0;
+    rmf_loc.xi=0.0; 
+    rmf_loc.zeta=0.0;
+    rmf_loc.a1=0.0;
+    rmf_loc.a2=0.0;
+    rmf_loc.a3=0.0;
+    rmf_loc.a4=0.0;
+    rmf_loc.a5=0.0;
+    rmf_loc.a6=0.0;
+    rmf_loc.b1=0.0;
+    rmf_loc.b2=0.0;
+    rmf_loc.b3=0.0;
     
     return 0;
   }
@@ -389,9 +389,9 @@ public:
 	 << "lamv=0.0, lam4=0.0" << endl << endl;
     nferm.n=re.n0/2.0;
     p.n=re.n0/2.0;
-    fermion_eff eff;
-    eff.kf_from_density(nferm);
-    eff.kf_from_density(p);
+    fermion_eff effx;
+    effx.kf_from_density(nferm);
+    effx.kf_from_density(p);
     sig=re.mnuc*(1.0-re.msom)/re.ms/re.cs;
     ome=re.n0*re.cw/re.mw;
     rho=0.0;
@@ -481,8 +481,8 @@ public:
 
     nferm.n=re.n0/2.0;
     p.n=re.n0/2.0;
-    eff.kf_from_density(nferm);
-    eff.kf_from_density(p);
+    effx.kf_from_density(nferm);
+    effx.kf_from_density(p);
     sig=re.mnuc*(1.0-re.msom)/re.ms/re.cs;
 
     // Manually msolve the cubic for omega:

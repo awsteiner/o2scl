@@ -446,17 +446,17 @@ int main(int argc, char *argv[]) {
     h.set_bin_edges(ug);
     expval_vector ev(20,1,20);
     size_t count=0;
-    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    std::shared_ptr<o2scl::table_units<> > tablex=mpc.mct.get_table();
     bool done=false;
-    for (size_t j=0;j<table->get_nlines() && done==false;j++) {
-      for(size_t k=0;k<((size_t)(table->get("mult",j)+1.0e-8));k++) {
+    for (size_t j=0;j<tablex->get_nlines() && done==false;j++) {
+      for(size_t k=0;k<((size_t)(tablex->get("mult",j)+1.0e-8));k++) {
 	if (count/(mpc.mct.max_iters*n_threads/20)>hist_ix) {
 	  ev.add(h.get_wgts());
 	  h.clear_wgts();
 	  hist_ix++;
 	}
 	if (hist_ix==20) done=true;
-	h.update(table->get("x",j));
+	h.update(tablex->get("x",j));
 	count++;
       }
     }
@@ -500,17 +500,17 @@ int main(int argc, char *argv[]) {
     h.set_bin_edges(ug);
     expval_vector ev(20,1,20);
     size_t count=0;
-    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    std::shared_ptr<o2scl::table_units<> > tabley=mpc.mct.get_table();
     bool done=false;
-    for (size_t j=0;j<table->get_nlines() && done==false;j++) {
-      for(size_t k=0;k<((size_t)(table->get("mult",j)+1.0e-8));k++) {
+    for (size_t j=0;j<tabley->get_nlines() && done==false;j++) {
+      for(size_t k=0;k<((size_t)(tabley->get("mult",j)+1.0e-8));k++) {
 	if (count/(mpc.mct.max_iters*n_threads/20)>hist_ix) {
 	  ev.add(h.get_wgts());
 	  h.clear_wgts();
 	  hist_ix++;
 	}
 	if (hist_ix==20) done=true;
-	h.update(table->get("x",j));
+	h.update(tabley->get("x",j));
 	count++;
       }
     }

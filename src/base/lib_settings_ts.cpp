@@ -67,7 +67,7 @@ int main(void) {
   {
     double val, err;
     funct_multip fm2;
-    fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
+    fm2.eval_tol_err([fmsp](auto &&tb) mutable { return (*fmsp)(tb); },
                      1.0e-4,val,err);
     
     cout << dtos(log1p(1.0e-4),0) << " "

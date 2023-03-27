@@ -332,8 +332,6 @@ int main(void) {
     t.test_rel<long double>(ans,exact,1.0e-15,"imac test");
   }
 
-  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-  
   {
     inte_adapt_cern imac;
     
@@ -360,19 +358,19 @@ int main(void) {
     
     double val, err2, a=0, b=1;
     
-    imac.integ_iu_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imac.integ_iu_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                              a,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 3");
     cout << endl;
 
-    imac.integ_il_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imac.integ_il_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                              a,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 4");
     cout << endl;
 
-    imac.integ_i_err_multip([](auto &&t) mutable { return test_func_i(t); },
+    imac.integ_i_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                             val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi,1.0e-15,"multip 5");

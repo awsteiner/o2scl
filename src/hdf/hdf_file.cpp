@@ -4373,9 +4373,9 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
         char *c=new char[dims[0]];
         
         // Read the data
-        herr_t status=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
+        herr_t statusx=H5Dread(dset,H5T_NATIVE_CHAR,H5S_ALL,H5S_ALL,
                               H5P_DEFAULT,c);
-        if (status<0) {
+        if (statusx<0) {
           O2SCL_ERR("Could not read dataspace in hdf_file::iterate_func().",
                     exc_einval);
         }
@@ -4510,11 +4510,11 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
       hid_t filetype=H5Dget_type(dset);
       size_t str_size=H5Tget_size(filetype);
       
-      hsize_t dims[3];
+      hsize_t dimsx[3];
       hid_t space=H5Dget_space(dset);
-      int ndims=H5Sget_simple_extent_dims(space,dims,0);
+      int ndimsx=H5Sget_simple_extent_dims(space,dimsx,0);
       hid_t memtype=-1;
-      if (ndims==1 && dims[0]==1) {
+      if (ndimsx==1 && dimsx[0]==1) {
 	memtype=H5Tcopy(H5T_C_S1);
       }
       if (memtype>0) {

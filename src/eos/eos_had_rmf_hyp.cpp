@@ -744,7 +744,7 @@ int eos_had_rmf_hyp::calc_e_nobeta_np_fun(size_t nv, const ubvector &ex,
   return 0;
 }
 
-int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
+int eos_had_rmf_hyp::calc_hyp_e(double n_baryon_loc, double n_charge_loc,
                                 fermion &ne, fermion &pr,
 				fermion &lam, fermion &sigp, fermion &sigz, 
 				fermion &sigm, fermion &casz, fermion &casm,
@@ -888,14 +888,14 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
 	alpha+=1.0/((double)calc_e_steps)) {
 
       if (ce_prot_matter) {
-	n_baryon=0.12*(1.0-alpha)+np*alpha;
-	n_charge=n_baryon;
+	n_baryon_loc=0.12*(1.0-alpha)+np*alpha;
+	n_charge_loc=n_baryon_loc;
       } else if (ce_neut_matter) {
-	n_baryon=0.12*(1.0-alpha)+nn*alpha;
-	n_charge=0.0;
+	n_baryon_loc=0.12*(1.0-alpha)+nn*alpha;
+	n_charge_loc=0.0;
       } else {
-	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
-	n_charge=0.08*(1.0-alpha)+np*alpha;
+	n_baryon_loc=0.16*(1.0-alpha)+(nn+np)*alpha;
+	n_charge_loc=0.08*(1.0-alpha)+np*alpha;
       }
     
       // 10/16/14: I think this was some previous debug code
@@ -937,7 +937,7 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
 
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0.0) {
-	cout << alpha << " " << n_baryon << " " << n_charge << " "
+	cout << alpha << " " << n_baryon_loc << " " << n_charge_loc << " "
 	     << x[0] << " " << x[1] << " " << x[2] << " " 
 	     << x[3] << " " << x[4] << " " << ret << endl;
       }
@@ -960,8 +960,8 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
   rho=x[4];
 
   // return neutron and proton densities to original values
-  ne.n=n_baryon-n_charge;
-  pr.n=n_charge;
+  ne.n=n_baryon_loc-n_charge_loc;
+  pr.n=n_charge_loc;
   
   if (ret!=0) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
@@ -972,7 +972,7 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon, double n_charge,
 }
 
 int eos_had_rmf_hyp::calc_temp_hyp_e
-(double n_baryon, double n_charge,
+(double n_baryon_loc, double n_charge_loc,
  fermion &ne, fermion &pr,
  fermion &lam, fermion &sigp, fermion &sigz, 
  fermion &sigm, fermion &casz, fermion &casm,
@@ -1055,14 +1055,14 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
 	alpha+=1.0/((double)calc_e_steps)) {
 
       if (ce_prot_matter) {
-	n_baryon=0.12*(1.0-alpha)+np*alpha;
-	n_charge=n_baryon;
+	n_baryon_loc=0.12*(1.0-alpha)+np*alpha;
+	n_charge_loc=n_baryon_loc;
       } else if (ce_neut_matter) {
-	n_baryon=0.12*(1.0-alpha)+nn*alpha;
-	n_charge=0.0;
+	n_baryon_loc=0.12*(1.0-alpha)+nn*alpha;
+	n_charge_loc=0.0;
       } else {
-	n_baryon=0.16*(1.0-alpha)+(nn+np)*alpha;
-	n_charge=0.08*(1.0-alpha)+np*alpha;
+	n_baryon_loc=0.16*(1.0-alpha)+(nn+np)*alpha;
+	n_charge_loc=0.08*(1.0-alpha)+np*alpha;
       }
     
       // 10/16/14: I think this was some previous debug code
@@ -1104,7 +1104,7 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
 
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0.0) {
-	cout << alpha << " " << n_baryon << " " << n_charge << " "
+	cout << alpha << " " << n_baryon_loc << " " << n_charge_loc << " "
 	     << x[0] << " " << x[1] << " " << x[2] << " " 
 	     << x[3] << " " << x[4] << " " << ret << endl;
       }
@@ -1127,8 +1127,8 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
   rho=x[4];
 
   // return neutron and proton densities to original values
-  ne.n=n_baryon-n_charge;
-  pr.n=n_charge;
+  ne.n=n_baryon_loc-n_charge_loc;
+  pr.n=n_charge_loc;
   
   if (ret!=0) {
     O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",

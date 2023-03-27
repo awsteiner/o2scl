@@ -66,7 +66,6 @@ int expb_df(const gsl_vector *x, void *params, gsl_matrix *J) {
   double *y=((struct data *)params)->y;
   double *sigma=((struct data *) params)->sigma;
 
-  size_t i;
   double a=gsl_vector_get(x,0);
   double b=gsl_vector_get(x,1);
 

@@ -643,26 +643,26 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     }
     if (type=="tensor") {
     for(size_t i=0;i<table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+      for(size_t jx=0;jx<table3d_obj.get_ny();jx++) {
 	ix[ix_x]=i;
-	ix[ix_y]=j;
-	table3d_obj.set(i,j,in[2],tensor_obj.get(ix));
+	ix[ix_y]=jx;
+	table3d_obj.set(i,jx,in[2],tensor_obj.get(ix));
       }
     }
     } else if (type=="tensor<int>") {
     for(size_t i=0;i<table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+      for(size_t jx=0;jx<table3d_obj.get_ny();jx++) {
 	ix[ix_x]=i;
-	ix[ix_y]=j;
-	table3d_obj.set(i,j,in[2],tensor_int_obj.get(ix));
+	ix[ix_y]=jx;
+	table3d_obj.set(i,jx,in[2],tensor_int_obj.get(ix));
       }
     }
     } else {
       for(size_t i=0;i<table3d_obj.get_nx();i++) {
-	for(size_t j=0;j<table3d_obj.get_ny();j++) {
+	for(size_t jx=0;jx<table3d_obj.get_ny();jx++) {
 	  ix[ix_x]=i;
-	  ix[ix_y]=j;
-	  table3d_obj.set(i,j,in[2],tensor_size_t_obj.get(ix));
+	  ix[ix_y]=jx;
+	  table3d_obj.set(i,jx,in[2],tensor_size_t_obj.get(ix));
 	}
       }
     }
@@ -921,16 +921,16 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 
       // If it's a function, automatically put in the size parameter
       if (funcs[j].find("func:")==0) {
-	std::vector<std::string> sv;
-	split_string_delim(funcs[j],sv,':');
-	if (sv.size()==1) {
+	std::vector<std::string> svx;
+	split_string_delim(funcs[j],svx,':');
+	if (svx.size()==1) {
 	  cerr << "Function specification incomplete." << endl;
 	  return 2;
-	} else if (sv.size()==2) {
-	  sv.push_back(sv[1]);
+	} else if (svx.size()==2) {
+	  svx.push_back(svx[1]);
 	}
-	sv[1]=o2scl::szttos(sz[j]);
-	funcs[j]=sv[0]+':'+sv[1]+':'+sv[2];
+	svx[1]=o2scl::szttos(sz[j]);
+	funcs[j]=svx[0]+':'+svx[1]+':'+svx[2];
 	if (verbose>1) {
 	  cout << "Added size to function specification: "
 	       << funcs[j] << endl;
@@ -1567,18 +1567,6 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   // cpp_dec_float_50  50       80           1.0e67108864 184.2
   // cpp_dec_float_100 100      128          1.0e67108864 294.7
 
-  typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
-    cpp_dec_float_25;
-  
-  typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-    cpp_dec_float_35;
-  
-  typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-  
-  typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
-
   cout.precision(4);
   cout.setf(ios::left);
 
@@ -1963,8 +1951,8 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
   
   std::string stmp;
   
-  vector<vector<std::string>> cmd_doc_strings, help_doc_strings,
-    param_doc_strings;
+  vector<vector<std::string>> cmd_doc_strings_loc, help_doc_strings_loc,
+    param_doc_strings_loc;
 
   // Create a list of the current options
   vector<string> clist=cl->get_option_list();
@@ -2104,7 +2092,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           }
           cout << endl;
         }
-        cmd_doc_strings.push_back(vs_tmp);
+        cmd_doc_strings_loc.push_back(vs_tmp);
       }
       
       // End of if (n3!=0) 
@@ -2230,7 +2218,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           }
           cout << endl;
         }
-        param_doc_strings.push_back(vs_tmp);
+        param_doc_strings_loc.push_back(vs_tmp);
       }
 
       // End of if (n3!=0)
@@ -2279,7 +2267,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
       n4.traverse(vsw);
       //cout << vsw.output.size() << endl;
       bool done=false;
-      std::string stmp;
+      std::string stmpx;
       for(size_t k=0;k<vsw.output.size() && done==false;k++) {
         if (vsw.output[k].find("End of runtime documentation.")!=
             string::npos) {
@@ -2288,20 +2276,20 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           if (vsw.output[k]!=((string)"<para>")) {
             if (vsw.output[k]==((string)"</para>")) {
               if (verbose>1) {
-                cout << "stmp before: " << stmp << endl;
+                cout << "stmp before: " << stmpx << endl;
               }
               found=true;
 
-              xml_replacements(stmp,clist);
+              xml_replacements(stmpx,clist);
               if (verbose>1) {
-                cout << "stmp after: " << stmp << endl;
+                cout << "stmp after: " << stmpx << endl;
               }
               
-              vs_tmp.push_back(stmp);
-              stmp.clear();
+              vs_tmp.push_back(stmpx);
+              stmpx.clear();
             } else {
-              if (stmp.length()==0) stmp=vsw.output[k];
-              else stmp+=' '+vsw.output[k];
+              if (stmpx.length()==0) stmpx=vsw.output[k];
+              else stmpx+=' '+vsw.output[k];
             }
           }
         }
@@ -2315,7 +2303,7 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
           }
           cout << endl;
         }
-        help_doc_strings.push_back(vs_tmp);
+        help_doc_strings_loc.push_back(vs_tmp);
         
       }
       
@@ -2325,9 +2313,9 @@ int acol_manager::comm_xml_to_o2(std::vector<std::string> &sv,
 
   hdf_file hf;
   hf.open_or_create("data/o2scl/acol_docs.o2");
-  hf.sets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings);
-  hf.sets_vec_vec_copy("help_doc_strings",help_doc_strings);
-  hf.sets_vec_vec_copy("param_doc_strings",param_doc_strings);
+  hf.sets_vec_vec_copy("cmd_doc_strings",cmd_doc_strings_loc);
+  hf.sets_vec_vec_copy("help_doc_strings",help_doc_strings_loc);
+  hf.sets_vec_vec_copy("param_doc_strings",param_doc_strings_loc);
   hf.close();
   cout << "Created file data/o2scl/acol_docs.o2." << endl;
 

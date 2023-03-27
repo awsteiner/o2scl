@@ -521,20 +521,20 @@ int main(void) {
     param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});
     param_lists.push_back({-15.0,-13.0,-11.0,-9.0});
     
-    ubvector x(40), y(40);
+    ubvector xxa(40), yya(40);
     for(size_t i=0;i<40;i++) {
-      x[i]=((double)i)*0.05;
-      double xx=x[i];
-      y[i]=xx*xx*xx*exp(-4.0*xx);
+      xxa[i]=((double)i)*0.05;
+      double xx=xxa[i];
+      yya[i]=xx*xx*xx*exp(-4.0*xx);
     }
 
     funct_string fs("x^3*exp(-4*x)","x");
-    inte_qag_gsl<funct_string> iqg;
+    inte_qag_gsl<funct_string> iqg2;
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> ikon;
     ikon.mode=1;
     ikon.verbose=2;
-    ikon.set(40,x,y,cfrn,param_lists,true);
+    ikon.set(40,xxa,yya,cfrn,param_lists,true);
 
     cout.precision(4);
     for(double xt=0.017;xt<2.0;xt+=0.017) {
@@ -543,7 +543,7 @@ int main(void) {
            << ikon.deriv(xt) << " "
            << 3.0*xt*xt*exp(-4.0*xt)-4.0*xt*xt*xt*exp(-4.0*xt) << " "
            << ikon.integ(0.0,xt) << " "
-           << iqg.integ(fs,0.0,xt) << endl;
+           << iqg2.integ(fs,0.0,xt) << endl;
     }
   }
   
