@@ -230,7 +230,7 @@ namespace o2scl {
 	}
       }
       
-      for(size_t i=0;i<dx.size();i++) dx[i]=0.0;
+      for(size_t iiq=0;iiq<dx.size();iiq++) dx[iiq]=0.0;
       
       phi=enorm(nvar,f);
       

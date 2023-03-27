@@ -122,13 +122,13 @@ int main(void) {
     t.test_rel(nst.r_ratio,0.7,1.0e-6,"correct ratio");
 
     // Create an output table
-    table3d t;
-    nst.output_table(t);
+    table3d tabx;
+    nst.output_table(tabx);
 
     // Now reinterpolate to construct a new table in cartesian
     // coordinates
     table3d t2;
-    t.set_interp_type(itp_linear);
+    tabx.set_interp_type(itp_linear);
     // Equatorial radius in km
     double rad_eq=nst.R_e/1.0e5;
     uniform_grid_end<double> coord_grid(0,rad_eq*1.1,100);
@@ -139,21 +139,21 @@ int main(void) {
 	double r=sqrt(pow(coord_grid[i],2.0)+pow(coord_grid[j],2.0));
 	double theta=atan(-coord_grid[j]/coord_grid[i])+acos(-1)/2.0;
 	if (i==0 && j==0) theta=0.0;
-	t2.set(i,j,"ed",t.interp(r/(r+rad_eq),cos(theta),"ed"));
-	t2.set(i,j,"pr",t.interp(r/(r+rad_eq),cos(theta),"pr"));
-	t2.set(i,j,"h",t.interp(r/(r+rad_eq),cos(theta),"h"));
-	t2.set(i,j,"vsq",t.interp(r/(r+rad_eq),cos(theta),"vsq"));
-	t2.set(i,j,"rho",t.interp(r/(r+rad_eq),cos(theta),"rho"));
-	t2.set(i,j,"gamma",t.interp(r/(r+rad_eq),cos(theta),"gamma"));
-	t2.set(i,j,"omega",t.interp(r/(r+rad_eq),cos(theta),"omega"));
-	t2.set(i,j,"alpha",t.interp(r/(r+rad_eq),cos(theta),"alpha"));
+	t2.set(i,j,"ed",tabx.interp(r/(r+rad_eq),cos(theta),"ed"));
+	t2.set(i,j,"pr",tabx.interp(r/(r+rad_eq),cos(theta),"pr"));
+	t2.set(i,j,"h",tabx.interp(r/(r+rad_eq),cos(theta),"h"));
+	t2.set(i,j,"vsq",tabx.interp(r/(r+rad_eq),cos(theta),"vsq"));
+	t2.set(i,j,"rho",tabx.interp(r/(r+rad_eq),cos(theta),"rho"));
+	t2.set(i,j,"gamma",tabx.interp(r/(r+rad_eq),cos(theta),"gamma"));
+	t2.set(i,j,"omega",tabx.interp(r/(r+rad_eq),cos(theta),"omega"));
+	t2.set(i,j,"alpha",tabx.interp(r/(r+rad_eq),cos(theta),"alpha"));
       }
     }
 
     // Write both tables to a file
     o2scl_hdf::hdf_file hf;
     hf.open_or_create("nstar_rot.o2");
-    o2scl_hdf::hdf_output(hf,(const table3d &)t,"nstar_rot");
+    o2scl_hdf::hdf_output(hf,(const table3d &)tabx,"nstar_rot");
     o2scl_hdf::hdf_output(hf,(const table3d &)t2,"nstar_rot2");
     hf.close();
   }

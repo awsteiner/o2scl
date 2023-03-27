@@ -739,22 +739,23 @@ namespace svd_ts {
 	    double scale=1; 
 	    double norm=0;
 
-	    /* Find the maximum absolute values of the diagonal and subdiagonal */
+	    /* Find the maximum absolute values of the diagonal and 
+               subdiagonal */
 
 	    for (i=0; i < n_block; i++) 
 	      {
 		double s_i=gsl_vector_get (&S_block.vector, i);
-		double a=fabs(s_i);
-		if (a > norm) norm=a;
-		//std::cout << "aa: " << a << std::endl;
+		double ax=fabs(s_i);
+		if (ax > norm) norm=ax;
+		//std::cout << "aa: " << ax << std::endl;
 	      }
 
 	    for (i=0; i < n_block - 1; i++) 
 	      {
 		double f_i=gsl_vector_get (&f_block.vector, i);
-		double a=fabs(f_i);
-		if (a > norm) norm=a;
-		//std::cout << "aa2: " << a << std::endl;
+		double ax=fabs(f_i);
+		if (ax > norm) norm=ax;
+		//std::cout << "aa2: " << ax << std::endl;
 	      }
 
 	    /* Temporarily scale the submatrix if necessary */

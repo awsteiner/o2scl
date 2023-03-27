@@ -389,18 +389,18 @@ int main(void) {
 	     << xedge2 << " " << yedge2 << endl;
 	if (!((xedge1 || yedge1) && (xedge2 || yedge2))) {
 
-	  for(size_t i=0;i<cs;i++) {
-	    cout << conts4[0].x[i] << " ";
-	    cout << conts4[0].y[i] << endl;
+	  for(size_t iiq=0;iiq<cs;iiq++) {
+	    cout << conts4[0].x[iiq] << " ";
+	    cout << conts4[0].y[iiq] << endl;
 	  }
 
-	  for(size_t i=0;i<cs;i++) {
-	    for(size_t j=0;j<cs;j++) {
-	      cout << i << " " << j << " "
-		   << conts4[0].x[i] << " " << conts4[0].y[i] << " "
-		   << conts4[0].x[j] << " " << conts4[0].y[j] << " "
-		   << sqrt(pow(conts4[0].x[i]-conts4[0].x[j],2.0)+
-			   pow(conts4[0].y[i]-conts4[0].y[j],2.0)) << endl;
+	  for(size_t iiq=0;iiq<cs;iiq++) {
+	    for(size_t jjq=0;jjq<cs;jjq++) {
+	      cout << iiq << " " << jjq << " "
+		   << conts4[0].x[iiq] << " " << conts4[0].y[iiq] << " "
+		   << conts4[0].x[jjq] << " " << conts4[0].y[jjq] << " "
+		   << sqrt(pow(conts4[0].x[iiq]-conts4[0].x[jjq],2.0)+
+			   pow(conts4[0].y[iiq]-conts4[0].y[jjq],2.0)) << endl;
 	    }
 	  }
 	
