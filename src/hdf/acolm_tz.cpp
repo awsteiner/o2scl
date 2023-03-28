@@ -1556,7 +1556,6 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "o2scl_string: " << o2scl_settings.o2scl_string() << endl;
   cout << "o2scl_tarname: " << o2scl_settings.o2scl_tarname() << endl;
   cout << endl;
-  cout << endl;
 
   // Typically,
   // type              digits10 max_digits10 max          log_prec

@@ -314,6 +314,12 @@ namespace o2scl {
       }
 
       if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_multip_double_exp_boost::"
+                    << "integ_err_funct() failed because "
+                    << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
         return 1;
       }
       return 0;
@@ -349,13 +355,19 @@ namespace o2scl {
       res=it_x.integrate(fx,a,b,target_tol,&err,&L1norm,&this->levels);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_err() "
+        std::cout << "inte_multip_double_exp_boost::integ_err_int() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
       }
 
       if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_multip_double_exp_boost::"
+                    << "integ_err_funct() failed because "
+                    << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
         return 1;
       }
       return 0;
