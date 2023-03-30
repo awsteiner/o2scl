@@ -2666,8 +2666,8 @@ namespace o2scl {
       this->exp_limit=1000000.0;
       
       // log(1.0e25) is 57.5
-      this->upper_limit_fac=58.0;
-      this->deg_entropy_fac=58.0;
+      this->upper_limit_fac=75.0;
+      this->deg_entropy_fac=80.0;
       this->tol_expan=1.0e-23;
 
       // Solver tolerances

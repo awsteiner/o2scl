@@ -210,7 +210,12 @@ namespace o2scl {
 
 	  if (verbose>1) {
 	    std::cout << "Executing: " << scr << std::endl;
-	  }
+            if (verbose>2) {
+              for(size_t i=0;i<scr.size();i++) {
+                cout << i << " " << scr[i] << " " << ((int)scr[i]) << endl;
+              }
+            }
+          }
 	
 	  iret=system(scr.c_str());
 	

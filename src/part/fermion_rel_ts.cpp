@@ -255,6 +255,33 @@ int main(int argc, char *argv[]) {
     f25.m/=1000;
     f25.mu=10001;
     f25.mu/=1000;
+
+    if (false) {
+      fr25.fri.tol_rel=1.0e-23;
+      fr25.fri.it.tol_rel=1.0e-23;
+      fr25.fri.it2.tol_rel=1.0e-23;
+      //fr25.fri.it.verbose=1;
+      //fr25.fri.it2.verbose=1;
+      for(size_t i=0;i<10;i++) {
+        if (true || i==0 || i==9) {
+          cout << fr25.fri.tol_rel << "\n  ";
+          fr25.calc_mu(f25,T25);
+          cout.width(32);
+          cout << dtos(f25.n,0) << " ";
+          cout.width(32);
+          cout << dtos(f25.ed,0) << " ";
+          cout.width(32);
+          cout << dtos(f25.pr,0) << " ";
+          cout.width(32);
+          cout << dtos(f25.en,0) << endl;
+          cout << endl;
+        }
+        fr25.fri.tol_rel/=10;
+        fr25.fri.it.tol_rel/=10;
+        fr25.fri.it2.tol_rel/=10;
+      }
+      exit(-1);
+    }
     
     fr.calc_mu(f,T);
     /*
