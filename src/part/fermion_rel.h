@@ -638,11 +638,11 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for entropy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      int iret=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+      int iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
         return this->entropy_fun(u,y,eta); },
         zero,res,err,tol_rel);
       if (iret!=0) {
-        iret=it2.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
+        iret=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->entropy_fun(u,y,eta); },
           zero,res,err,tol_rel);
         if (iret!=0) {
@@ -2610,8 +2610,8 @@ namespace o2scl {
       this->exp_limit=4000.0;
       
       // log(1.0e18) is 41.4
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
+      this->upper_limit_fac=52.0;
+      this->deg_entropy_fac=52.0;
       this->tol_expan=1.0e-18;
 
       // Solver tolerances
@@ -2619,9 +2619,9 @@ namespace o2scl {
       this->def_massless_root.tol_abs=1.0e-18;
 
       // Integrator tolerances
-      fri.tol_rel=1.0e-18;
-      fri.it.tol_rel=1.0e-18;
-      fri.it2.tol_rel=1.0e-18;
+      fri.tol_rel=1.0e-20;
+      fri.it.tol_rel=1.0e-20;
+      fri.it2.tol_rel=1.0e-20;
       
     }
     
@@ -2666,8 +2666,8 @@ namespace o2scl {
       this->exp_limit=1000000.0;
       
       // log(1.0e25) is 57.5
-      this->upper_limit_fac=75.0;
-      this->deg_entropy_fac=80.0;
+      this->upper_limit_fac=62.0;
+      this->deg_entropy_fac=62.0;
       this->tol_expan=1.0e-23;
 
       // Solver tolerances
@@ -2675,9 +2675,9 @@ namespace o2scl {
       this->def_massless_root.tol_abs=1.0e-23;
 
       // Integrator tolerances
-      fri.tol_rel=1.0e-23;
-      fri.it.tol_rel=1.0e-23;
-      fri.it2.tol_rel=1.0e-23;
+      fri.tol_rel=1.0e-25;
+      fri.it.tol_rel=1.0e-25;
+      fri.it2.tol_rel=1.0e-25;
     }
     
   };

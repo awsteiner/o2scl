@@ -75,7 +75,7 @@ namespace o2scl {
       // the boost integrator succeed.
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,
                        &this->levels);
-      if (err>this->tol_rel) {
+      if (err/abs(res)>this->tol_rel) {
         if (this->verbose>0) {
           std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
                     << std::endl;
@@ -183,7 +183,7 @@ namespace o2scl {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
       res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (err>this->tol_rel) {
+      if (err/abs(res)>this->tol_rel) {
         if (this->verbose>0) {
           std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
                     << std::endl;
@@ -260,7 +260,7 @@ namespace o2scl {
       // Dropping the tolerance by a factor of 10 seems to help
       // the boost integrator succeed.
       res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (err>this->tol_rel) {
+      if (err/abs(res)>this->tol_rel) {
         if (this->verbose>0) {
           std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
                     << std::endl;
@@ -401,17 +401,17 @@ namespace o2scl {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(fx,a,std::numeric_limits<double>::infinity(),
-                       target_tol,&err,&L1norm,&this->levels);
-
+                         target_tol,&err,&L1norm,&this->levels);
+      
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err() "
-                  << "tols(target,integ,func),err,L1norm:\n  "
+        std::cout << "inte_multip_double_exp_boost::integ_iu_err_int() "
+                  << "tols(target,integ,func),res,err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
-                  << func_tol << " " << err << " "
+                  << func_tol << " " << res << " " << err << " "
                   << L1norm << std::endl;
       }
-
-      if (err>integ_tol) {
+      
+      if (err/abs(res)>integ_tol) {
         return 1;
       }
       return 0;
@@ -448,14 +448,14 @@ namespace o2scl {
                        target_tol,&err,&L1norm,&this->levels);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err() "
+        std::cout << "inte_multip_double_exp_boost::integ_il_err_int() "
                   << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << " "
                   << L1norm << std::endl;
       }
 
-      if (err>integ_tol) {
+      if (err/abs(res)>integ_tol) {
         return 1;
       }
       return 0;
@@ -501,7 +501,7 @@ namespace o2scl {
                   << L1norm << std::endl;
       }
 
-      if (err>integ_tol) {
+      if (err/abs(res)>integ_tol) {
         return 1;
       }
       return 0;
@@ -893,7 +893,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err(): set "
+        std::cout << "inte_multip_double_exp_boost::integ_iu_err_multip(): set "
                   << "integ_tol to: " << integ_tol << std::endl;
       }
       
@@ -1118,13 +1118,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err() "
+        std::cout << "inte_multip_double_exp_boost::integ_iu_err_multip() "
                   << "failed after cpp_dec_float_100:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_iu_err().",
+                      "in inte_multip_double_exp_boost::integ_iu_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
@@ -1149,7 +1149,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err(): set "
+        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): set "
                   << "integ_tol to: " << integ_tol << std::endl;
       }
       
@@ -1167,7 +1167,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << " for double integration." << std::endl;
@@ -1189,7 +1189,7 @@ namespace o2scl {
 
       if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<long double>::digits10+3)
                     << " for long double integration." << std::endl;
@@ -1212,7 +1212,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1237,7 +1237,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1262,7 +1262,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1287,7 +1287,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_100>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err(): "
+          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_100>::digits10+3)
@@ -1310,13 +1310,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err() "
+        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip() "
                   << "failed after cpp_dec_float_100:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_il_err().",
+                      "in inte_multip_double_exp_boost::integ_il_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }

@@ -641,7 +641,9 @@ int acol_manager::comm_filelist(std::vector<std::string> &sv,
 
   hid_t group_id=0;
   if (sv.size()>=3) {
+    cout << "Opening group: " << sv[2] << endl;
     group_id=hf.open_group(sv[2]);
+    set_current_id(group_id);
   }
   
   hf.file_list(use_regex,verbose);

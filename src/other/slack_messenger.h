@@ -212,7 +212,8 @@ namespace o2scl {
 	    std::cout << "Executing: " << scr << std::endl;
             if (verbose>2) {
               for(size_t i=0;i<scr.size();i++) {
-                cout << i << " " << scr[i] << " " << ((int)scr[i]) << endl;
+                std::cout << i << " " << scr[i] << " " << ((int)scr[i])
+                          << std::endl;
               }
             }
           }

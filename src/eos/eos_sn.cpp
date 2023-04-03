@@ -578,20 +578,20 @@ void eos_sn_base::beta_eq_sfixed(double nB, double entr,
   // Create vectors to interpolate for the minimum free energy
   vector<double> Yevec, Fvec;
   for(size_t j=0;j<n_Ye;j++) {
-    double Ye=F.get_grid(1,j);
-    Yevec.push_back(Ye);
+    double Yex=F.get_grid(1,j);
+    Yevec.push_back(Yex);
 
     // Create vectors to find the temperature corresponding to the
     // specified entropy
     for(size_t k=0;k<n_T;k++) {
-      Svec[k]=S.interp_linear(nB,Ye,Tvec[k]);
+      Svec[k]=S.interp_linear(nB,Yex,Tvec[k]);
     }
     it.set(n_T,Svec,Tvec);
     T=it.eval(entr);
 
     // Add the free energy at this temperature for this electron 
     // fraction
-    Fvec.push_back(F.interp_linear(nB,Ye,T));
+    Fvec.push_back(F.interp_linear(nB,Yex,T));
   }
   
   // Use those vectors to get Ye
@@ -626,9 +626,9 @@ void eos_sn_base::beta_eq_Tfixed(double nB, double T, double &Ye) {
   // Create vectors to interpolate for the minimum free energy
   vector<double> Yevec, Fvec;
   for(size_t j=0;j<n_Ye;j++) {
-    double Ye=F.get_grid(1,j);
-    Yevec.push_back(Ye);
-    Fvec.push_back(F.interp_linear(nB,Ye,T));
+    double Yex=F.get_grid(1,j);
+    Yevec.push_back(Yex);
+    Fvec.push_back(F.interp_linear(nB,Yex,T));
   }
   
   // Use those vectors to get Ye
@@ -2045,8 +2045,8 @@ void eos_sn_sht::load(std::string fname, size_t mode) {
 	    // Entropy per baryon
 	    Sptr->set(i,k,j,dtemp);
 	    // Also compute energy per baryon
-	    double T=Eptr->get_grid(2,j);
-	    Eptr->set(i,k,j,Fptr->get(i,k,j)+T*Sptr->get(i,k,j));
+	    double Tx=Eptr->get_grid(2,j);
+	    Eptr->set(i,k,j,Fptr->get(i,k,j)+Tx*Sptr->get(i,k,j));
 	  } else if (ell==6) {
 	    // Neutron chemical potential
 	    mun.set(i,k,j,dtemp);

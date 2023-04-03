@@ -244,94 +244,85 @@ int main(int argc, char *argv[]) {
     cpp_dec_float_25 maxld=0.0;
     int ret;
 
-    fr.verbose=2;
-    frld.verbose=2;
-    fr25.verbose=2;
-    f.m=0.001;
-    f.mu=10.001;
-    fld.m=0.001L;
-    fld.mu=10.001L;
-    f25.m=1;
-    f25.m/=1000;
-    f25.mu=10001;
-    f25.mu/=1000;
+    if (true) {
+      
+      fr.verbose=2;
+      frld.verbose=2;
+      fr25.verbose=2;
 
-    if (false) {
-      fr25.fri.tol_rel=1.0e-23;
-      fr25.fri.it.tol_rel=1.0e-23;
-      fr25.fri.it2.tol_rel=1.0e-23;
-      //fr25.fri.it.verbose=1;
-      //fr25.fri.it2.verbose=1;
-      for(size_t i=0;i<10;i++) {
-        if (true || i==0 || i==9) {
-          cout << fr25.fri.tol_rel << "\n  ";
-          fr25.calc_mu(f25,T25);
-          cout.width(32);
-          cout << dtos(f25.n,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.ed,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.pr,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.en,0) << endl;
-          cout << endl;
-        }
-        fr25.fri.tol_rel/=10;
-        fr25.fri.it.tol_rel/=10;
-        fr25.fri.it2.tol_rel/=10;
-      }
+      int lmot=3;
+      int lpsi=-3;
+      
+      double psi=pow(10.0,((double)lpsi));
+      double mot=pow(10.0,((double)lmot));
+      long double psi_ld=pow(10,((long double)lpsi));
+      long double mot_ld=pow(10,((long double)lmot));
+      cpp_dec_float_25 psi_25=pow(10,((cpp_dec_float_25)lpsi));
+      cpp_dec_float_25 mot_25=pow(10,((cpp_dec_float_25)lmot));
+      
+      f.g=2;
+      f.m=mot*T;
+      f.mu=psi*T+f.m;
+      
+      fld.g=2;
+      fld.m=mot_ld*Tld;
+      fld.mu=psi_ld*Tld+fld.m;
+      
+      f25.g=2;
+      f25.m=mot_25*T25;
+      f25.mu=psi_25*T25+f25.m;
+      
+      fr.calc_mu(f,T);
+      frld.fri.verbose=2;
+      frld.fri.it.verbose=2;
+      frld.fri.it2.verbose=1;
+      frld.calc_mu(fld,Tld);
+      fr25.calc_mu(f25,T25);
+      
+      cout << mot << " " << psi << " mu,m: " << f.mu << " " << f.m << endl;
+      cout.setf(ios::left);
+      cout.width(32);
+      cout << dtos(f.n,0) << " ";
+      cout.width(32);
+      cout << dtos(f.ed,0) << " ";
+      cout.width(32);
+      cout << dtos(f.pr,0) << " ";
+      cout.width(32);
+      cout << dtos(f.en,0) << endl;
+      cout.width(32);
+      cout << dtos(fld.n,0) << " ";
+      cout.width(32);
+      cout << dtos(fld.ed,0) << " ";
+      cout.width(32);
+      cout << dtos(fld.pr,0) << " ";
+      cout.width(32);
+      cout << dtos(fld.en,0) << endl;
+      cout.width(32);
+      cout << dtos(f25.n,0) << " ";
+      cout.width(32);
+      cout << dtos(f25.ed,0) << " ";
+      cout.width(32);
+      cout << dtos(f25.pr,0) << " ";
+      cout.width(32);
+      cout << dtos(f25.en,0) << endl;
+      cout << endl;
+      cout.unsetf(ios::left);
+      cout << "  " << abs(f.n-fld.n)/abs(fld.n) << " ";
+      cout << abs(f.ed-fld.ed)/abs(fld.ed) << " ";
+      cout << abs(f.pr-fld.pr)/abs(fld.pr) << " ";
+      cout << abs(f.en-fld.en)/abs(fld.en) << endl;
+      cout << "  " << abs(fld.n-f25.n)/abs(f25.n) << " ";
+      cout << abs(fld.ed-f25.ed)/abs(f25.ed) << " ";
+      cout << abs(fld.pr-f25.pr)/abs(f25.pr) << " ";
+      cout << abs(fld.en-f25.en)/abs(f25.en) << endl;
+      cout << endl;
+      fr.verbose=0;
+      frld.verbose=0;
+      fr25.verbose=0;
+
       exit(-1);
+      
     }
-    
-    fr.calc_mu(f,T);
-    /*
-    frld.fri.verbose=2;
-    frld.fri.it.verbose=2;
-    frld.fri.it2.verbose=1;
-    */
-    frld.calc_mu(fld,Tld);
-    fr25.calc_mu(f25,T25);
-    
-    cout.setf(ios::left);
-    cout.width(32);
-    cout << dtos(f.n,0) << " ";
-    cout.width(32);
-    cout << dtos(f.ed,0) << " ";
-    cout.width(32);
-    cout << dtos(f.pr,0) << " ";
-    cout.width(32);
-    cout << dtos(f.en,0) << endl;
-    cout.width(32);
-    cout << dtos(fld.n,0) << " ";
-    cout.width(32);
-    cout << dtos(fld.ed,0) << " ";
-    cout.width(32);
-    cout << dtos(fld.pr,0) << " ";
-    cout.width(32);
-    cout << dtos(fld.en,0) << endl;
-    cout.width(32);
-    cout << dtos(f25.n,0) << " ";
-    cout.width(32);
-    cout << dtos(f25.ed,0) << " ";
-    cout.width(32);
-    cout << dtos(f25.pr,0) << " ";
-    cout.width(32);
-    cout << dtos(f25.en,0) << endl;
-    cout << endl;
-    cout.unsetf(ios::left);
-    cout << "  " << abs(f.n-fld.n)/abs(fld.n) << " ";
-    cout << abs(f.ed-fld.ed)/abs(fld.ed) << " ";
-    cout << abs(f.pr-fld.pr)/abs(fld.pr) << " ";
-    cout << abs(f.en-fld.en)/abs(fld.en) << endl;
-    cout << "  " << abs(fld.n-f25.n)/abs(f25.n) << " ";
-    cout << abs(fld.ed-f25.ed)/abs(f25.ed) << " ";
-    cout << abs(fld.pr-f25.pr)/abs(f25.pr) << " ";
-    cout << abs(fld.en-f25.en)/abs(f25.en) << endl;
-    cout << endl;
-    fr.verbose=0;
-    frld.verbose=0;
-    fr25.verbose=0;
-    exit(-1);
     
     for(int lmot=-3;lmot<=3;lmot++) {
       for(int lpsi=-3;lpsi<=1;lpsi++) {
@@ -404,36 +395,6 @@ int main(int argc, char *argv[]) {
 
         cout << "  " << fr.last_method << " " << frld.last_method << " "
              << fr25.last_method << endl;
-        
-        if (lmot==-3 && lpsi==1) {
-          cout.setf(ios::left);
-          cout.width(32);
-          cout << dtos(f.n,0) << " ";
-          cout.width(32);
-          cout << dtos(f.ed,0) << " ";
-          cout.width(32);
-          cout << dtos(f.pr,0) << " ";
-          cout.width(32);
-          cout << dtos(f.en,0) << endl;
-          cout.width(32);
-          cout << dtos(fld.n,0) << " ";
-          cout.width(32);
-          cout << dtos(fld.ed,0) << " ";
-          cout.width(32);
-          cout << dtos(fld.pr,0) << " ";
-          cout.width(32);
-          cout << dtos(fld.en,0) << endl;
-          cout.width(32);
-          cout << dtos(f25.n,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.ed,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.pr,0) << " ";
-          cout.width(32);
-          cout << dtos(f25.en,0) << endl;
-          cout << endl;
-          cout.unsetf(ios::left);
-        }
 
       }
     }
