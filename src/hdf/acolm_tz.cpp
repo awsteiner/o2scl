@@ -1578,8 +1578,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << "log10(max_d10)" << " ";
   cout << "epsilon" << endl;
-  cout << "----------------------------------"
-       << "----------------------------------"
+  cout << "------------------------------------"
+       << "-----------------------------------"
        << endl;
   
   cout.width(18);

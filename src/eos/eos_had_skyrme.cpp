@@ -425,7 +425,7 @@ void eos_had_skyrme::landau_neutron
 }
 
 void eos_had_skyrme::alt_params_saturation
-(double n0t, double EoA, double K, double Ms_star, double a, double L,
+(double n0t, double EoA, double K, double Ms_star, double a_loc, double L,
  double Mv_star, double CrDr0, double CrDr1, double CrnJ0, double CrnJ1) {
 
   // This quantity has units of fm
@@ -449,12 +449,12 @@ void eos_had_skyrme::alt_params_saturation
   // This quantity has units of fm^4
   double Crt1=Crt0-(1.0/Mv_star-1.0)/n0t*h2o2m;
   // This quantity has units of fm^2
-  double Crr10=(27.0*(1.0+alpha2)*a-9.0*L+5.0*tau_c*(2.0-3.0*alpha2)*
+  double Crr10=(27.0*(1.0+alpha2)*a_loc-9.0*L+5.0*tau_c*(2.0-3.0*alpha2)*
 		(Crt0+3.0*Crt1)*n0t-5.0*tau_c*(1.0+3.0*alpha2)*h2o2m)/
     (27.0*alpha2*n0t);
   // This quantity has units of fm^{3*alpha+2}, where
   // alpha is referred to as "gamma" in Kortelainen et al. (2010)
-  double Crr1D=(-27.0*a+9.0*L+5.0*(h2o2m-2.0*n0t*(Crt0+3.0*Crt1))*
+  double Crr1D=(-27.0*a_loc+9.0*L+5.0*(h2o2m-2.0*n0t*(Crt0+3.0*Crt1))*
 		tau_c)/(27.0*alpha2*pow(n0t,1.0+alpha2));
   
   alt_params_set(Crr00,Crr10,Crr0D,Crr1D,Crt0,Crt1,CrDr0,CrDr1,
