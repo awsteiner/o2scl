@@ -80,7 +80,7 @@ int main(void) {
   inte_qagi_gsl<> gi;
   inte_qagiu_gsl<> gu;
   inte_qagil_gsl<> gl;
-  inte_adapt_cern<> ca;
+  inte_adapt_cern ca;
 
   // The result and the uncertainty
   double res, err;
