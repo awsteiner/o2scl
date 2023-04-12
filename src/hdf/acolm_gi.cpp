@@ -98,139 +98,171 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       return exc_efailed;
     }
   }
+
+  istream *istr;
+  
+  //if (fname!=((std::string)"cin")) {
+  if (fname!=((std::string)"cin")) {
+    istr=&ifs;
+  } else {
+    istr=&cin;
+  }
   
   if (ctype=="table") {
     
-    if (fname!=((std::string)"cin")) {
-      table_obj.read_generic(ifs,verbose);
-    } else {
-      table_obj.read_generic(std::cin,verbose);
-    }
+    table_obj.read_generic(*istr,verbose);
 
   } else if (ctype=="table3d") {
     
-    if (fname!=((std::string)"cin")) {
-      table3d_obj.read_gen3_list(ifs,verbose);
-    } else {
-      table3d_obj.read_gen3_list(std::cin,verbose);
-    }
+    table3d_obj.read_gen3_list(*istr,verbose);
     
   } else if (ctype=="prob_dens_mdim_gmm") {
     
-    if (fname!=((std::string)"cin")) {
-      pgmm_obj.read_generic(ifs);
-    } else {
-      pgmm_obj.read_generic(std::cin);
-    }
+    pgmm_obj.read_generic(*istr);
     
   } else if (ctype=="prob_dens_mdim_gaussian") {
     
-    if (fname!=((std::string)"cin")) {
-      pdmg_obj.read_generic(ifs);
-    } else {
-      pdmg_obj.read_generic(std::cin);
-    }
+    pdmg_obj.read_generic(*istr);
     
   } else if (ctype=="int") {
 
-    if (fname!=((std::string)"cin")) {
-      ifs >> int_obj;
-    } else {
-      cin >> int_obj;
-    }
+    (*istr) >> int_obj;
     
   } else if (ctype=="char") {
 
-    if (fname!=((std::string)"cin")) {
-      ifs >> char_obj;
-    } else {
-      cin >> char_obj;
-    }
+    (*istr) >> char_obj;
     
   } else if (ctype=="double") {
 
-    if (fname!=((std::string)"cin")) {
-      ifs >> double_obj;
-    } else {
-      cin >> double_obj;
-    }
+    (*istr) >> double_obj;
     
   } else if (ctype=="size_t") {
 
-    if (fname!=((std::string)"cin")) {
-      ifs >> size_t_obj;
-    } else {
-      cin >> size_t_obj;
-    }
+    (*istr) >> size_t_obj;
     
   } else if (ctype=="string") {
 
-    if (fname!=((std::string)"cin")) {
-      getline(ifs,string_obj);
-    } else {
-      getline(cin,string_obj);
-    }
+    getline(*istr,string_obj);
     
   } else if (ctype=="int[]") {
 
-    if (fname!=((std::string)"cin")) {
-      int itmp;
-      intv_obj.clear();
-      while (ifs >> itmp) {
-	intv_obj.push_back(itmp);
-      }
-    } else {
-      int itmp;
-      intv_obj.clear();
-      while (cin >> itmp) {
-	intv_obj.push_back(itmp);
-      }
+    int itmp;
+    intv_obj.clear();
+    while ((*istr) >> itmp) {
+      intv_obj.push_back(itmp);
+    }
+    
+  } else if (ctype=="int[]-line") {
+
+    std::string row;
+    getline((*istr),string_obj);
+    int d;
+    istringstream ins(row);
+    intv_obj.clear();
+    while ((*istr) >> d) {
+      intv_obj.push_back(d);
+      return 0;
+    }
+    
+  } else if (ctype=="int[]-n") {
+
+    intv_obj.clear();
+    size_t n;
+    (*istr) >> n;
+    intv_obj.resize(n);
+    for(size_t i=0;i<n;i++) {
+      (*istr) >> intv_obj[i];
     }
     
   } else if (ctype=="double[]") {
+    
+    double dtmp;
+    doublev_obj.clear();
+    while ((*istr) >> dtmp) {
+      doublev_obj.push_back(dtmp);
+    }
+    
+  } else if (ctype=="double[]-line") {
 
-    if (fname!=((std::string)"cin")) {
-      double dtmp;
-      doublev_obj.clear();
-      while (ifs >> dtmp) {
-	doublev_obj.push_back(dtmp);
-      }
-    } else {
-      double dtmp;
-      doublev_obj.clear();
-      while (cin >> dtmp) {
-	doublev_obj.push_back(dtmp);
-      }
+    std::string row;
+    getline(*istr,string_obj);
+    double d;
+    istringstream ins(row);
+    doublev_obj.clear();
+    while ((*istr) >> d) {
+      doublev_obj.push_back(d);
+      return 0;
+    }
+    
+  } else if (ctype=="double[]-n") {
+
+    doublev_obj.clear();
+    size_t n;
+    (*istr) >> n;
+    doublev_obj.resize(n);
+    for(size_t i=0;i<n;i++) {
+      (*istr) >> doublev_obj[i];
     }
     
   } else if (ctype=="size_t[]") {
     
-    if (fname!=((std::string)"cin")) {
       size_t sttmp;
       size_tv_obj.clear();
-      while (ifs >> sttmp) {
+      while ((*istr) >> sttmp) {
 	size_tv_obj.push_back(sttmp);
       }
-    } else {
-      size_t sttmp;
-      size_tv_obj.clear();
-      while (cin >> sttmp) {
-	size_tv_obj.push_back(sttmp);
-      }
+    
+  } else if (ctype=="size_t[]-line") {
+
+    std::string row;
+    getline((*istr),string_obj);
+    size_t d;
+    istringstream ins(row);
+    size_tv_obj.clear();
+    while ((*istr) >> d) {
+      size_tv_obj.push_back(d);
+      return 0;
+    }
+    
+  } else if (ctype=="size_t[]-n") {
+
+    size_tv_obj.clear();
+    size_t n;
+    (*istr) >> n;
+    size_tv_obj.resize(n);
+    for(size_t i=0;i<n;i++) {
+      (*istr) >> size_tv_obj[i];
     }
     
   } else if (ctype=="string[]") {
 
-    if (fname!=((std::string)"cin")) {
-      std::string stmp;
-      while (getline(ifs,stmp)) {
-	stringv_obj.push_back(stmp);
-      }
-    } else {
-      std::string stmp;
-      while (getline(cin,stmp)) {
-	stringv_obj.push_back(stmp);
-      }
+    std::string stmp;
+    while (getline((*istr),stmp)) {
+      stringv_obj.push_back(stmp);
+    }
+    
+  } else if (ctype=="string[]-line") {
+
+    std::string row;
+    getline((*istr),string_obj);
+    string d;
+    istringstream ins(row);
+    stringv_obj.clear();
+    while ((*istr) >> d) {
+      stringv_obj.push_back(d);
+      return 0;
+    }
+    
+  } else if (ctype=="string[]-n") {
+
+    stringv_obj.clear();
+    size_t n;
+    string tmp;
+    getline((*istr),tmp);
+    n=o2scl::stoi(tmp);
+    stringv_obj.resize(n);
+    for(size_t i=0;i<n;i++) {
+      getline((*istr),stringv_obj[i]);
     }
     
   } else {

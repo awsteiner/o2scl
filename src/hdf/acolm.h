@@ -561,12 +561,12 @@ namespace o2scl_acol {
         This computes the value of the constant mathematical
         expression <expr>. Examples are <tt>-calc acos(-1)</tt> or
         <tt>-calc 2+1/sqrt(2.0e4)</tt>. To see which operators and
-        functions can be used, use 'acol -help <tt>functions</tt>'.
+        functions can be used, use '-help <tt>functions</tt>'.
 
         Results are given at the current value of <tt>precision</tt>.
         Values of precision up to 50 are allowed, and multiprecision
         (rather than double precision) arithmetic is used if
-        necessary. For example, try <tt>acol -set precision 45 -calc
+        necessary. For example, try <tt>-set precision 45 -calc
         "acos(-1)"</tt>. When adaptive multiprecision is not used, the
         calculations are relatively fast, but small errors due to the
         finite precision may give incorrect results at the requested
@@ -579,13 +579,13 @@ namespace o2scl_acol {
         Note that adaptive multiprecision is only available for OSX at
         the moment.
 
-        Constant values from the constant library (see e.g. 'acol -help
+        Constant values from the constant library (see e.g. '-help
         <tt>constant</tt>') will automatically be used, so long as
         they have a unique value in MKS units. However, some constant
         values are currently only stored to double precision and will
         be arbitrarily promoted to higher-precision without warning.
-        Unicode is also supported for constants, so try, e.g. <tt>acol
-        -set precision 15 -calc π</tt>.
+        Unicode is also supported for constants, so try, e.g. 
+        <tt>-set precision 15 -calc π</tt>.
 
         Note that the variable <tt>precision</tt> is used for the
         argument to the <tt>cout.precision()</tt> function, so a
@@ -621,7 +621,7 @@ namespace o2scl_acol {
 
         For example:
 
-        <tt>acol -create table x grid:0,5,1 -function "sin(x)" y -internal
+        <tt>-create table x grid:0,5,1 -function "sin(x)" y -internal
         temp.o2 -create table x grid:0,3,1 -function "cos(x)" z -cat
         temp.o2 -output</tt>
 
@@ -670,7 +670,7 @@ namespace o2scl_acol {
         cd]</tt>
 
         If the constant has no units, like the Euler-Mascheroni
-        constant, then e.g. <tt>acol -constant euler</tt> will report
+        constant, then e.g. <tt>-constant euler</tt> will report
         the value 5.772157e-1 (at the default precision which is 6).
         If the user requests a <tt>precision</tt> larger than 15
         (double precision), then the <tt>constant</tt> command fails
@@ -682,28 +682,28 @@ namespace o2scl_acol {
         unit is specified, then the <tt>constant</tt> command tries to
         find the unique value with the specified unit. The user can
         specify, <tt>mks</tt>, <tt>cgs</tt>, or the exact unit string
-        of the constant. For example, <tt>acol -constant hbar cgs</tt>
-        and <tt>acol -constant hbar g*cm^2/s</tt> both work and return
+        of the constant. For example, <tt>-constant hbar cgs</tt>
+        and <tt>-constant hbar g*cm^2/s</tt> both work and return
         the same value.
 
         Note that some constants in the library are not known to 
         full double precision and \c acol currently has no way of
         reporting this.
 
-        Search patterns are also allowed, for example <tt>acol
-        -constant "satur*"</tt> returns all the constants related to
+        Search patterns are also allowed, for example 
+        <tt>-constant "satur*"</tt> returns all the constants related to
         Saturn in both MKS and CGS units. If <tt>use_regex</tt> is set
         to true, then regex is used to do the pattern matching, and
         otherwise <tt>fnmatch()</tt> is used. Unicode is allowed, but
         pattern matching and Unicode do not work well together.
 
-        To list all the constants in the library, use <tt>acol
-        -constant list</tt>. Alternatively, <tt>acol -constant
+        To list all the constants in the library, use 
+        <tt>-constant list</tt>. Alternatively, <tt>-constant
         list-full</tt> gives all information for all constants,
         including all aliases, the source, and all the decompositions
         into base units.
 
-        One can delete a constant with, e.g. <tt>acol -constant del
+        One can delete a constant with, e.g. <tt>-constant del
         pi</tt> (this doesn't quite work yet for constants with
         different values in different unit systems), but this
         deletion only lasts for the current invocation of the acol
@@ -798,9 +798,9 @@ namespace o2scl_acol {
         The <tt>convert</tt> command handles unit conversions. To
         compute a unit conversion factor and then optionally apply
         than conversion factor to a user-specified value. use the form
-        <tt>acol -convert <old unit> <new unit> [value]</tt>.
+        <tt>-convert <old unit> <new unit> [value]</tt>.
         Conversions which presume ħ=c=kB=1 are allowed by default. For
-        example, <tt>acol -convert MeV 1/fm</tt> returns
+        example, <tt>-convert MeV 1/fm</tt> returns
         <tt>1.000000e+00 MeV = 5.067731e-03 1/fm</tt>. The conversion
         factor is output at the current value of <tt>precision</tt>,
         but is always internally stored with full double precision.
@@ -815,17 +815,17 @@ namespace o2scl_acol {
 
         The <tt>convert</tt> command attempts to handle arbitrary
         combinations of powers of SI base units to automatically
-        compute new unit conversion. For example, <tt>acol -convert
+        compute new unit conversion. For example, <tt>-convert
         "fm^10/g^30" "m^10/kg^30"</tt> reports <tt>1.000000e+00
         fm^10/g^30 = 1.000000e-60 m^10/kg^30</tt>. 
 
         Unit conversions containing constants stored in the
         <tt>constant</tt> library are also allowed. For example,
-        <tt>acol -convert "Msun^2" "g^2"</tt> gives <tt>1.000000e+00
+        <tt>-convert "Msun^2" "g^2"</tt> gives <tt>1.000000e+00
         Msun^2 = 3.953774e+66 g^2</tt>. SI units are also understood,
         and both μ and "mu" are interpreted as the "micro" prefix. For
-        example, <tt>acol -convert "μm" "pc"</tt> or <tt>acol
-        -convert "mum" "pc"</tt> both report the conversion between
+        example, <tt>-convert "μm" "pc"</tt> or 
+        <tt>-convert "mum" "pc"</tt> both report the conversion between
         micrometers and parsecs.
 
         To print the list of known units, SI prefixes, and the unit
@@ -1398,9 +1398,35 @@ namespace o2scl_acol {
         For <tt>int[]</tt>, <tt>double[]</tt>, or
         <tt>size_t[]</tt> objects, the input file is assumed to begin
         with the desired object and it is read using operator>>().
+        The array is presumed to end at the end of the file or the
+        end of the input. 
+
+        To read a numeric array stored in a single line,
+        use types <tt>int[]-line</tt>, <tt>double[]-line</tt>, or
+        <tt>size_t[]-line</tt>. The array is assumed to end when it 
+        reaches the end of the first line. 
+
+        If you want to read a column of numbers where the first number
+        is the number of entries in the vector and subsequent numbers
+        contain data (whitespace, including carriage returns is
+        ignored), then use types <tt>int[]-n</tt>,
+        <tt>double[]-n</tt>, or <tt>size_t[]-n</tt>.
 
         For <tt>string</tt> or <tt>string[]</tt> objects, the strings
-        are read using <tt>std::getline()</tt>.
+        are read using <tt>std::getline()</tt>. The strings can contain
+        whitespace, and they are presumed to end at the end of the line
+        (i.e. at the carriage return).
+
+        To read a list of strings stored in a single line,
+        use type <tt>string[]-line</tt>. The strings cannot contain
+        whitespace because the whitespace is presumed to separate 
+        individual strings. The array is assumed to end when it 
+        reaches the end of the first line. 
+
+        To read a list of strings where the first input is the number
+        of strings, then use type <tt>string[]-n</tt>. The strings can
+        contain whitespace, and they are presumed to end at the end of
+        the line (i.e. at the carriage return).
 
         For <tt>table</tt> objects, the first line of the file must
         either contain numeric data or column names separated by white
@@ -1419,6 +1445,11 @@ namespace o2scl_acol {
         lines need not be in any particular order. The columns may
         have one header line at top which specifies the names of the
         x- and y-grids and the names of each slice (in order).
+
+        Objects of type <tt>prob_dens_mdim_gaussians</tt> and
+        <tt>prob_dens_mdim_gmm</tt> read a generic format which is
+        defined in the O₂scl documentation for the read_generic()
+        function for these classes.
     */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 

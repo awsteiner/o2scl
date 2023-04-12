@@ -27,9 +27,11 @@ O₂scl objects of selected types.
 ``acol`` can only operate with one object at a time. The
 basic workflow is:
 
-- create an object from scratch or read it from an HDF5 file
+- create an object or read it from an HDF5 file
 - perform operations on that object
 - output the object to the screen or write it to an HDF5 file
+- create or read a new object
+- ...
 
 The available command list can be obtained using ``help`` or
 ``commands`` and changes depending on what type of object is currently
