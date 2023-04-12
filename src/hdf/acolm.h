@@ -493,7 +493,7 @@ namespace o2scl_acol {
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
-        on multiple specifications.
+        on multiple vector specifications.
         \endverbatim
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
@@ -559,8 +559,8 @@ namespace o2scl_acol {
         multiprecision]</tt>
 
         This computes the value of the constant mathematical
-        expression <expr>. Examples are <tt>calc acos(-1)</tt> or
-        <tt>calc 2+1/sqrt(2.0e4)</tt>. To see which operators and
+        expression <expr>. Examples are <tt>-calc acos(-1)</tt> or
+        <tt>-calc 2+1/sqrt(2.0e4)</tt>. To see which operators and
         functions can be used, use 'acol -help <tt>functions</tt>'.
 
         Results are given at the current value of <tt>precision</tt>.
@@ -575,8 +575,11 @@ namespace o2scl_acol {
         result is exact to within the requested precision. However,
         this option also makes the calculation slower by at least a
         factor of two.
-        
-        Constant values from the constant library (see 'acol -help
+
+        Note that adaptive multiprecision is only available for OSX at
+        the moment.
+
+        Constant values from the constant library (see e.g. 'acol -help
         <tt>constant</tt>') will automatically be used, so long as
         they have a unique value in MKS units. However, some constant
         values are currently only stored to double precision and will
@@ -601,8 +604,26 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> [name]</tt>
 
-        Add a second table to the end of the first, creating new
-        columns if necessary.
+        This command adds the rows in second table to the end of the
+        current table. If [name] is not provided, then the second
+        table will be first object of type <tt>table</tt> in the the
+        specified file. The resulting table will always have a number
+        of rows equal to the sum of the rows in the original two
+        tables. If the two tables have column names which are the
+        same, then the data from these two columns will be
+        concatenated even if the column ordering is different. If the
+        second table has a column not present in the current table,
+        then a new column in the current table is created. 
+
+        Columns which are present in only one of the two tables will
+        result in columns which have multiple zero entries in the new
+        resulting table.
+
+        For example:
+
+        <tt>acol -create table x grid:0,5,1 -function "sin(x)" y -internal
+        temp.o2 -create table x grid:0,3,1 -function "cos(x)" z -cat
+        temp.o2 -output</tt>
 
         For objects of type table3d:
 
@@ -610,9 +631,15 @@ namespace o2scl_acol {
 
         Arguments: <tt><file> [name]</tt>
 
-        Add all slices from the second \c table3d object which are not
-        already present in the current \c table3d object.
-
+        The <tt>cat</tt> command adds all slices from the first \c
+        table3d object in the specified file which are not already
+        present in the current \c table3d object. The x and y grids in
+        the current table3d object are unmodified. If the x and y
+        grids in the two tables are the same, then the values are
+        simply copied over. If the grids are different, then the x and
+        y grids are interpolated into the new table3d object (using
+        it's associated interpolation type) to fill the new slice in
+        the current table3d object.
     */
     virtual int comm_cat(std::vector<std::string> &sv, bool itive_com);
 
@@ -695,8 +722,8 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        Arguments: <tt><val> <slice_name> [output_filename
-        object_name]</tt>
+        Arguments: <tt><val> <slice_name> ["output file"
+        "object name"]</tt>
         
         The \c contours command constructs a set of contour lines
         using the data in slice named <slice> at the fixed value given
@@ -705,7 +732,7 @@ namespace o2scl_acol {
         which were computed become the new current object of type
         <tt>vector<contour_line></tt>. If two additional arguments are
         given, then the contour lines are stored in the file named
-        output_filename and the object is named object_name and the
+        [output file] and the object is named object_name and the
         current \c table3d object is retained. If the file does not
         exist, it is created. If no contours are found, then a message
         is output to the screen, no file I/O is performed, and the
@@ -723,8 +750,8 @@ namespace o2scl_acol {
 
         Create contour lines from a table3d slice.
 
-        Arguments: <tt>["frac" or "frac2"] <val> [output file] 
-        [output name]</tt>
+        Arguments: <tt>["frac" or "frac2"] <val> ["output file"
+        "output name"]</tt>
 
         If the optional arguments "frac" or "frac2" are not present,
         the \c contours command constructs a set of contour lines
@@ -733,12 +760,12 @@ namespace o2scl_acol {
         from memory and the contour lines which were computed become
         the new current object of type <tt>vector<contour_line></tt>
         If two additional arguments are given, then the contour lines
-        are stored in the file named output_filename, the object is
-        named \c object_name, and the current \c hist_2d object
+        are stored in the file named [output file], the object is
+        named [object name], and the current \c hist_2d object
         retained. If the file does not exist, it is created. If no
-        contours are found, then a message is output to the screen,
-        no file I/O is performed, and the
-        current table3d object is unmodified.
+        contours are found, then a message is output to the screen, no
+        file I/O is performed, and the current table3d object is
+        unmodified.
 
         If the argument "frac" is present, then the operation of the
         \c contours command is the same except that <val> is
@@ -751,7 +778,7 @@ namespace o2scl_acol {
         If the argument "frac2" is present, then the <val> is
         interpreted as a fraction of the total integral, but the
         integral is computed as the sum of w Δx Δy and thus there are
-        no guarantees that contours exist.
+        no guarantees that the requested contours exist.
 
         Countours are computed by the \ref o2scl::contours class, by
         piecing together line segments across grid lines. The best way
@@ -886,6 +913,11 @@ namespace o2scl_acol {
         Create a new <tt>table</tt> object with one column named <name>
         from a vector specification.
         
+        <tt>create table-mv <mult. string spec.> <mult. vector spec.></tt>:
+        Create a new <tt>table</tt> object with several columns with
+        names taken from the multiple string specification and 
+        data taken from the multiple vector specification.
+        
         <tt>create tensor <rank> <size 0> <size 1> ...</tt>: Create a
         <tt>tensor</tt> object with the specified rank and sizes. All
         tensor entries are initialized to zero.
@@ -911,10 +943,17 @@ namespace o2scl_acol {
         z "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
         -ytitle y -show</tt>
 
+        <tt>create vec_vec_double <mult. vector spec.></tt>: Create a
+        <tt>vec_vec_double</tt> object using the given multiple 
+        vector specification.
+        
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value
-        specifications and :cpp:func:`o2scl_hdf::functions()` for help
-        on function specifications.
+        specifications, :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications, and 
+        :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
+        on multiple vector specifications.
+
         \endverbatim
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
@@ -940,10 +979,10 @@ namespace o2scl_acol {
         Arguments: <tt><function></tt>
 
         Delete the set of rows for which a function evaluates to a
-        number greater than 0.5. For
-        example, <tt>-delete-rows if(col1+col2>10,1,0)</tt> will
-        delete all columns where the sum of the entries in col1 and
-        col2 is larger than 10. See also the \c select-rows command.
+        number greater than 0.5. For example, <tt>-delete-rows
+        if(col1+col2>10,1,0)</tt> will delete all columns where the
+        sum of the entries in col1 and col2 is larger than 10. See
+        also the \c select-rows command.
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::functions()` for help
@@ -1109,10 +1148,21 @@ namespace o2scl_acol {
         Arguments: <tt><file> <URL> [hash, \"file:\"hash_filename, or
         \"none\"] [directory]</tt>
 
-        Check if a file matches a specified hash, and if not, attempt
-        to download a fresh copy from the specified URL. If the
-        filename is "_", then the file is extracted from the end of
-        the URL.
+        First, look for the file named <file> (in directory given
+        [directory] if specified). If a hash is not specified and the
+        file exists, then return success. If a hash is specified, then
+        compare the file with the specified hash. If they match, then
+        return success. If the file doesn't exist or doesn't match
+        the specified hash, then use <tt>curl</tt> to
+        download the file. Again compare with the hash if specified.
+        If the download files or the file doesn't match the hatch,
+        then call the error handler. 
+
+        If the filename is "_", then the file is extracted from the
+        end of the URL. 
+
+        This function exits immediately if it fails, preventing the
+        user from reading a data file which is corrupted.
 
         This function uses \ref o2scl::cloud_file to handle the 
         file acquisition.
@@ -1121,12 +1171,15 @@ namespace o2scl_acol {
 
     /** \brief List objects in a HDF5 file
 
-        Arguments: <tt><file></tt>
+        Arguments: <tt><file> [group]</tt>
 
         This lists all the top-level datasets and groups in a HDF5
         file and, for those groups which are in the O₂scl format,
         gives the type and name of the object stored in that HDF5
         group.
+
+        If a group is specified, then all of the top-level datasets
+        and groups inside that specified group are listed.
     */
     virtual int comm_filelist(std::vector<std::string> &sv, bool itive_com);
 
@@ -1166,16 +1219,16 @@ namespace o2scl_acol {
 
         For objects of type table:
 
-        Find a row which maximizes a function.
+        Find a row which has a specified value or  maximizes a function.
 
         Arguments: <tt><func> or find-row <col> <val></tt>
 
         If one argument is given, then <tt>find-row</tt> finds the row
         which maximizes the value of the expression given in <func>,
-        and then output the entire row. 
-        Otherwise, <tt>find-row</tt> finds the row for which the value
-        in column named <col> is as close as possible to the value
-        <val>. See command <tt>get-row</tt> to get a row by its index.
+        and then output the entire row. Otherwise, <tt>find-row</tt>
+        finds the row for which the value in column named <col> is as
+        close as possible to the value <val>. See command
+        <tt>get-row</tt> to get a row by its index.
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::functions()` for help
@@ -1369,7 +1422,7 @@ namespace o2scl_acol {
     */
     virtual int comm_generic(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Get the grid for a \ref o2scl::tensor_grid object
+    /** \brief Get the grid 
 
         For objects of type table3d:
 
@@ -1389,14 +1442,14 @@ namespace o2scl_acol {
     */
     virtual int comm_get_grid(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Print out an entire row
+    /** \brief Get a table row by index
 
         For objects of type table:
 
-        Get a row by index.
+        Get a table row by index.
 
         Arguments: <tt><index></tt>
-
+        
         Get a row by index. The first row has index 0, and the last
         row has index n-1, where n is the total number of rows (which
         can be determined by the \c nlines or \c list commands). The
@@ -1419,7 +1472,7 @@ namespace o2scl_acol {
     */
     virtual int comm_get_unit(std::vector<std::string> &sv, bool itive_com);
     
-    /** \brief Get help
+    /** \brief Output help
 
         Arguments: <tt>[command or parameter or type or topic]</tt>
 
@@ -1533,7 +1586,10 @@ namespace o2scl_acol {
         Arguments: <tt><x> <y> <name></tt>
         
         Create a new column named <name> filled with the integral of
-        the function y(x) obtained from columns <x> and <y>.
+        the function y(x) obtained from columns <x> and <y>. The lower
+        limit of the integral is the value of the column <x> in the
+        first row and the upper limit of the integral for each
+        specified row is the value of the column <x> at that row.
     */
     virtual int comm_integ(std::vector<std::string> &sv, bool itive_com);
 

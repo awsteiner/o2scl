@@ -956,7 +956,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     
 #else
     
-    cerr << "Multiprecision only supported on OSX at the moment."
+    cerr << "Adaptive multiprecision only supported on OSX at the moment."
          << endl;
     return 5;
     
@@ -1101,19 +1101,27 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     // ---------------------------------------------------------------------
     // Copy slices over if not already present in the current table3d
 
-    const ubvector &xg=tab2.get_x_data();
-    const ubvector &yg=tab2.get_y_data();
-
+    const ubvector &xg1=table3d_obj.get_x_data();
+    const ubvector &yg1=table3d_obj.get_y_data();
+    const ubvector &xg2=tab2.get_x_data();
+    const ubvector &yg2=tab2.get_y_data();
+    bool grids_match=(vectors_equal(xg1,xg2) &&
+                      vectors_equal(yg1,yg2));
+    
     for(size_t k=0;k<tab2.get_nslices();k++) {
       std::string sl_name=tab2.get_slice_name(k);
       size_t slix;
       if (!table3d_obj.is_slice(sl_name,slix)) {
 	table3d_obj.new_slice(sl_name);
-	for(size_t i=0;i<tab2.get_nx();i++) {
-	  for(size_t j=0;j<tab2.get_ny();j++) {
-	    double x=xg[i];
-	    double y=yg[j];
-	    table3d_obj.set_val(x,y,sl_name,tab2.get(i,j,sl_name));
+	for(size_t i=0;i<table3d_obj.get_nx();i++) {
+	  for(size_t j=0;j<table3d_obj.get_ny();j++) {
+            if (grids_match) {
+              table3d_obj.set_val(i,j,sl_name,tab2.get(i,j,sl_name));
+            } else {
+              double x=xg1[i];
+              double y=yg1[j];
+              table3d_obj.set_val(i,j,sl_name,tab2.interp(x,y,sl_name));
+            }
 	  }
 	}
       }
@@ -1160,15 +1168,36 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
 
     size_t n1=table_obj.get_nlines();
     size_t n2=tab2.get_nlines();
+
+    // Make space in the new table, copying to a new memory segment if
+    // necessary.
     table_obj.set_nlines(n1+n2);
+
+    // Loop through all the column names in the second table
     for(size_t j=0;j<tab2.get_ncolumns();j++) {
+      
       std::string col_name=tab2.get_column_name(j);
+      
+      // If the current table does not have a column with that name
+      // then create the new column and set the first n1 entries to
+      // zero. 
       if (!table_obj.is_column(col_name)) {
 	table_obj.new_column(col_name);
-	for(size_t i=0;i<n1+n2;i++) table_obj.set(col_name,i,0.0);
+	for(size_t i=0;i<n1;i++) table_obj.set(col_name,i,0.0);
       }
+
+      // Copy the information from the second table to the current table
       for(size_t i=0;i<n2;i++) {
 	table_obj.set(col_name,i+n1,tab2.get(col_name,i));
+      }
+    }
+    
+    // Look for columns in the new table which did not have data in
+    // the second table and set their new entries to zero.
+    for(size_t j=0;j<table_obj.get_ncolumns();j++) {
+      std::string col_name=table_obj.get_column_name(j);
+      if (!tab2.is_column(col_name)) {
+	for(size_t i=n1;i<n1+n2;i++) table_obj.set(col_name,i,0.0);
       }
     }
 

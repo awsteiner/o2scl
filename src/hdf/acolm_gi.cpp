@@ -1547,10 +1547,14 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
 
     hdf_output(hf,ug_obj,obj_name);
     
+  } else if (type=="") {
+
+    cerr << "There is no current object, so the 'internal' command "
+         << "cannot write to a file." << endl;
+
   } else {
     
-    cerr << "Error: " << type << endl;
-    O2SCL_ERR("Do not know how ot output object of this type.",
+    O2SCL_ERR("Canno output object of this type.",
               o2scl::exc_esanity);
     
   }

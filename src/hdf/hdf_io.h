@@ -1688,7 +1688,8 @@ namespace o2scl_hdf {
       }
       if (verbose>1) {
 	std::cout << "strings_spec(): List " << list << std::endl;
-	std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+	std::cout << "  N,first,last: "
+                  << n << " " << sv[0] << " " << sv[n-1] << std::endl;
       }
       for(size_t i=0;i<n;i++) {
 	v.push_back(sv[i]);
@@ -2119,6 +2120,10 @@ namespace o2scl_hdf {
 	// First determine the number of functions
 	
 	size_t n;
+        if (verbose>1) {
+          std::cout << "mult_vector_spec(): string for size: "
+                    << sv[0] << std::endl;
+        }
 	int cret=o2scl::stoszt_nothrow(sv[0],n);
 	if (cret!=0) {
 	  if (err_on_fail) {
