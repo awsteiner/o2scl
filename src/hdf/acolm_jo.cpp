@@ -1109,7 +1109,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     for(size_t k=0;k<vvstring_obj.size();k++) {
       (*fout) << vvstring_obj[k].size() << endl;
       for(size_t kk=0;kk<vvstring_obj[k].size();kk++) {
-        (*fout) << '\"' << vvstring_obj[k][kk] << '\"' << endl;
+        (*fout) << vvstring_obj[k][kk] << endl;
       }
     }
 
@@ -1178,7 +1178,8 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     (*fout) << ug_obj.get_nbins() << " ";
     (*fout) << ug_obj.get_start() << " ";
     (*fout) << ug_obj.get_end() << " ";
-    (*fout) << ug_obj.get_width() << endl;
+    (*fout) << ug_obj.get_width() << " ";
+    (*fout) << ug_obj.is_log() << endl;
 
   } else {
 

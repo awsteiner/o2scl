@@ -1384,7 +1384,7 @@ namespace o2scl_acol {
     */
     virtual int comm_function(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Read an object generic text file
+    /** \brief Read an object from a generic text file
         
         Arguments: <tt><type> <file or "cin"></tt>
         

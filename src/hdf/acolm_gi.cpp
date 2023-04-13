@@ -116,6 +116,42 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     
     table3d_obj.read_gen3_list(*istr,verbose);
     
+  } else if (ctype=="uniform_grid<double>") {
+
+    double start, end, width;
+    size_t n_bins;
+    std::string slog;
+    (*istr) >> n_bins >> start >> end >> width >> slog;
+    bool is_log=o2scl::stob(slog);
+    if (is_log) {
+      uniform_grid_end_width<double> ug(start,end,width);
+      ug_obj=ug;
+    } else {
+      uniform_grid_log_end_width<double> ug(start,end,width);
+      ug_obj=ug;
+    }
+    
+  } else if (ctype=="hist") {
+
+    hist_obj.clear();
+    vector<double> edges, reps;
+    double dtemp;
+    bool edge_is_next=true;
+    while ((*istr) >> dtemp) {
+      if (edge_is_next) {
+        edges.push_back(dtemp);
+      } else {
+        reps.push_back(dtemp);
+      }
+      edge_is_next=!edge_is_next;
+    }
+    if (edges.size()!=reps.size()+1) {
+      cerr << "Command generic failed to read type hist." << endl;
+      return 1;
+    }
+    hist_obj.set_bin_edges(edges.size(),edges);
+    hist_obj.set_reps(reps.size(),reps);
+    
   } else if (ctype=="prob_dens_mdim_gmm") {
     
     pgmm_obj.read_generic(*istr);
@@ -159,7 +195,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     int d;
     istringstream ins(row);
     intv_obj.clear();
-    while ((*istr) >> d) {
+    while (ins >> d) {
       intv_obj.push_back(d);
       return 0;
     }
@@ -189,9 +225,79 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     double d;
     istringstream ins(row);
     doublev_obj.clear();
-    while ((*istr) >> d) {
+    while (ins >> d) {
       doublev_obj.push_back(d);
       return 0;
+    }
+    
+  } else if (ctype=="hist_2d") {
+
+    std::string row;
+    double d;
+    vector<double> x_grid, y_grid;
+    
+    getline(*istr,row);
+    istringstream ins(row);
+    while (ins >> d) {
+      x_grid.push_back(d);
+    }
+    
+    getline(*istr,row);
+    istringstream ins2(row);
+    while (ins2 >> d) {
+      y_grid.push_back(d);
+    }
+    
+    hist_2d_obj.set_bin_edges(x_grid.size(),x_grid,y_grid.size(),y_grid);
+    
+    for(size_t i=0;i<hist_2d_obj.size_x();i++) {
+      for(size_t j=0;j<hist_2d_obj.size_y();j++) {
+        (*istr) >> d;
+        hist_2d_obj.set_wgt_i(i,j,d);
+      }
+    }
+    
+  } else if (ctype=="vector<contour_line>") {
+
+    size_t n;
+    (*istr) >> n;
+    cont_obj.clear();
+    for(size_t k=0;k<n;k++) {
+      contour_line cline;
+      size_t m;
+      (*istr) >> cline.level >> m;
+      cline.x.resize(m);
+      cline.y.resize(m);
+      for(size_t i=0;i<m;k++) {
+        (*istr) >> cline.x[i] >> cline.y[i];
+      }
+      cont_obj.push_back(cline);
+    }
+
+  } else if (ctype=="vec_vec_string") {
+
+    size_t m, n;
+    (*istr) >> m;
+    vvstring_obj.resize(m);
+    for(size_t i=0;i<m;i++) {
+      (*istr) >> n;
+      vvstring_obj[i].resize(n);
+      for(size_t j=0;j<n;j++) {
+        getline((*istr),vvstring_obj[i][j]);
+      }
+    }
+    
+  } else if (ctype=="vec_vec_double") {
+
+    size_t m, n;
+    (*istr) >> m;
+    vvdouble_obj.resize(m);
+    for(size_t i=0;i<m;i++) {
+      (*istr) >> n;
+      vvdouble_obj[i].resize(n);
+      for(size_t j=0;j<n;j++) {
+        (*istr) >> vvdouble_obj[i][j];
+      }
     }
     
   } else if (ctype=="double[]-n") {
@@ -219,7 +325,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     size_t d;
     istringstream ins(row);
     size_tv_obj.clear();
-    while ((*istr) >> d) {
+    while (ins >> d) {
       size_tv_obj.push_back(d);
       return 0;
     }
@@ -248,7 +354,7 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
     string d;
     istringstream ins(row);
     stringv_obj.clear();
-    while ((*istr) >> d) {
+    while (ins >> d) {
       stringv_obj.push_back(d);
       return 0;
     }
