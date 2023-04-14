@@ -2907,13 +2907,48 @@ namespace o2scl {
     /// Clear the current table and read from a generic data file
     virtual int read_generic(std::istream &fin, int verbose=0) {
 
+      clear();
+      
       double data;
       std::string line;
       std::string cname;
 
-      // Read first line and into list
-      std::vector<std::string> onames, nnames;
+      // Read the first line
       getline(fin,line);
+      
+      // Determine if there are constants
+      std::cout << "Line 1: " << line << std::endl;
+      std::vector<std::string> vsc;
+      split_string_delim(line,vsc,' ');
+      if (vsc.size()>1 &&
+          (vsc[1]=="constants." || vsc[1]=="constant.")) {
+        size_t n_const=o2scl::stoszt(vsc[0]);
+        std::string name;
+        double val;
+        for(size_t i=0;i<n_const;i++) {
+          fin >> name >> val;
+          set_constant(name,val);
+        }
+        // Read the remaining carriage return at the end of the
+        // constant list
+        getline(fin,line);
+        // Read the next full line
+        getline(fin,line);
+      }
+
+      // Determine if the interpolation type was specified
+      std::cout << "Line 2: " << line << std::endl;
+      std::vector<std::string> vsi;
+      split_string_delim(line,vsi,' ');
+      if (vsi.size()>1 && vsi[0]=="Interpolation:") {
+        set_interp_type(o2scl::stoszt(vsi[1]));
+        // Read the next full line
+        getline(fin,line);
+      }
+      
+      // See if the next line has column names
+      std::cout << "Line 3: " << line << std::endl;
+      std::vector<std::string> onames, nnames;
       std::istringstream is(line);
       while (is >> cname) {
         onames.push_back(cname);

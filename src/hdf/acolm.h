@@ -168,7 +168,9 @@ namespace o2scl_acol {
     /// The output precision (default 6)
     int precision;
 
-    /// True if we should make the output into neat columns (default true)
+    /** \brief Output data into neat columns where possible (default
+        true)
+     */
     bool pretty;
     
     /** \brief If true, output names at the top of some objects
@@ -2065,7 +2067,8 @@ namespace o2scl_acol {
 
         Output the object to the screen, or if the [file] argument is
         specified, to a file. This is (supposed to be) the same format
-        as can be read using the <tt>generic</tt> command.
+        as can be read using the <tt>generic</tt> command (independent
+        of whether or not the pretty flag is true or false).
     */
     virtual int comm_output(std::vector<std::string> &sv, bool itive_com);
 

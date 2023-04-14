@@ -580,6 +580,12 @@ namespace o2scl {
 
     /// Set the interpolation type
     void set_interp_type(size_t interp_type);
+
+    /** \brief Get the interpolation type
+     */
+    size_t get_interp_type() const {
+      return itype;
+    }
     //@}
 
     /// \name Other functions

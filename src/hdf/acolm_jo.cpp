@@ -867,6 +867,22 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table3d") {
     
+    if (table3d_obj.get_nconsts()>0) {
+      std::string name;
+      double value;
+      if (table3d_obj.get_nconsts()==1) {
+        (*fout) << "1 constant." << endl;
+      } else {
+        (*fout) << table3d_obj.get_nconsts() << " constants." << endl;
+      }
+      for(size_t i=0;i<table3d_obj.get_nconsts();i++) {
+        table3d_obj.get_constant(i,name,value);
+        (*fout) << name << " " << value << endl;
+      }
+    }
+
+    (*fout) << "Interpolation: " << table3d_obj.get_interp_type() << endl;
+    
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
     if (nx!=0 && ny!=0) {
@@ -899,12 +915,30 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 	  }
 	  fout->unsetf(ios::showpos);
 	}
+      } else {
+        (*fout) << "No slices." << endl;
       }
     }
 
     return 0;
 
   } else if (type=="table") {
+
+    if (table_obj.get_nconsts()>0) {
+      std::string name;
+      double value;
+      if (table_obj.get_nconsts()==1) {
+        (*fout) << "1 constant." << endl;
+      } else {
+        (*fout) << table_obj.get_nconsts() << " constants." << endl;
+      }
+      for(size_t i=0;i<table_obj.get_nconsts();i++) {
+        table_obj.get_constant(i,name,value);
+        (*fout) << name << " " << value << endl;
+      }
+    }
+
+    (*fout) << "Interpolation: " << table_obj.get_interp_type() << endl;
     
     if (table_obj.get_ncolumns()>0) {
 
@@ -1014,6 +1048,17 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     }
 
   } else if (type=="hist") {
+    
+    (*fout) << "Interpolation: " << hist_obj.get_interp_type() << endl;
+    (*fout) << "Representative mode: " << hist_obj.get_rep_mode() << endl;
+    if (hist_obj.get_rep_mode()==hist_obj.rmode_user) {
+      std::vector<double> reps;
+      hist_obj.create_rep_vec(reps);
+      (*fout) << "Representatives: ";
+      vector_out(*fout,reps,true);
+    }
+    (*fout) << "Extend edges: " << hist_obj.extend_lhs << " "
+            << hist_obj.extend_rhs << endl;
     
     for(size_t k=0;k<hist_obj.size();k++) {
       (*fout) << hist_obj.get_bin_low_i(k) << " ";
@@ -1125,6 +1170,12 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="hist_2d") {
     
+    (*fout) << "Representative mode for x: "
+            << hist_2d_obj.get_x_rep_mode() << endl;
+    (*fout) << "Representative mode for y: "
+            << hist_2d_obj.get_y_rep_mode() << endl;
+    (*fout) << "Extend edges: " << hist_2d_obj.extend_lhs << " "
+            << hist_2d_obj.extend_rhs << endl;
     for(size_t k=0;k<hist_2d_obj.size_x();k++) {
       (*fout) << hist_2d_obj.get_x_low_i(k) << " ";
     }
