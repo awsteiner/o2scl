@@ -843,6 +843,48 @@ int acol_manager::comm_nlines(std::vector<std::string> &sv,
 
 int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
+  /*
+
+    Done
+    ----
+    char
+    double
+    int
+    size_t
+    
+    string: Output strings with a carriage return at the end so they
+    can include whitespace. Backslashify backslashes and carriage
+    returns. 
+    \n is carriage return
+    \\n is backslash n
+    \\\n is backslash carriage return
+    \\\\n is backslash backslash n ...
+
+    double[], int[], and size_t[]: Output without carriage returns
+    except for one at the very end. If pretty is true, output using
+    columnify to make good spacing. Don't use screenify(), because it
+    outputs them in the wrong order.
+              
+    string[]:
+
+    table
+
+    hist,
+    hist_2d
+    prob_dens_mdim_amr
+    prob_dens_mdim_gaussian,
+    prob_dens_mdim_gmm
+    table3d,
+    tensor
+    tensor<int>
+    tensor<size_t>
+    tensor_grid
+    uniform_grid<double>,
+    vec_vec_double
+    vec_vec_string
+    and vector<contour_line>.
+  */
+  
   if (type.length()==0) {
     cerr << "No object to output." << endl;
     return 3;
@@ -1086,7 +1128,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
 
   } else if (type=="string") {
 
-    (*fout) << string_obj << endl;
+    (*fout) << backslashify(string_obj) << endl;
 
   } else if (type=="int[]") {
 
@@ -1106,15 +1148,19 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="double[]") {
 
     if (pretty) {
+      // Convert to strings, adding a space at the beginning of
+      // positive floating point values
       vector<string> svx, sv_out;
       for(size_t k=0;k<doublev_obj.size();k++) {
 	if (has_minus_sign(&doublev_obj[k])) {
 	  svx.push_back(o2scl::dtos(doublev_obj[k])+' ');
 	} else {
-	  svx.push_back(" "+o2scl::dtos(doublev_obj[k])+' ');
+	  svx.push_back(' '+o2scl::dtos(doublev_obj[k])+' ');
 	}
       }
-      screenify(doublev_obj.size(),svx,sv_out);
+
+      // Use screenify_trans() and output the final result
+      screenify_trans(doublev_obj.size(),svx,sv_out);
       for(size_t k=0;k<sv_out.size();k++) {
 	(*fout) << sv_out[k] << endl;
       }
@@ -1140,13 +1186,8 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="string[]") {
     
     for(size_t k=0;k<stringv_obj.size();k++) {
-      if (stringv_obj[k].length()==0) {
-        (*fout) << "(empty string)" << endl;
-      } else {
-        (*fout) << stringv_obj[k] << endl;
-      }
+      (*fout) << backslashify(stringv_obj[k]) << endl;
     }
-    (*fout) << endl;
 
   } else if (type=="vec_vec_string") {
     
@@ -1154,7 +1195,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     for(size_t k=0;k<vvstring_obj.size();k++) {
       (*fout) << vvstring_obj[k].size() << endl;
       for(size_t kk=0;kk<vvstring_obj[k].size();kk++) {
-        (*fout) << vvstring_obj[k][kk] << endl;
+        (*fout) << backslashify(vvstring_obj[k][kk]) << endl;
       }
     }
 

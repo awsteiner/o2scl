@@ -66,6 +66,8 @@ namespace o2scl_acol {
 
          In class acol_manager:
 
+         - (Future) Fix documentation for value-grid command.
+
          - (Future) There is quite a bit of code duplication in
            comm_autocorr() between the "table" and "other" types. 
            This could be streamlined.
@@ -99,6 +101,8 @@ namespace o2scl_acol {
       
          - (Future) Allow "insert" commands to be restrictive, avoiding
            extrapolation
+
+         - (Future) For strings, allow selection of words or substrings
 
       \endverbatim
   */

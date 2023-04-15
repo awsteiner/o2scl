@@ -841,7 +841,7 @@ namespace o2scl {
 
       Given a string array \c in_cols of size \c nin, screenify()
       reformats the array into columns creating a new string array \c
-      out_cols.
+      out_rows which are formatted similar to the unix command \c ls.
       
       For example, for an array of 10 strings 
       \verbatim
@@ -866,11 +866,70 @@ namespace o2scl {
       If the value of \c max_size is less than the length of the
       longest input string (plus one for a space character), then the
       output strings may have a larger length than \c max_size.
+
+      Note that this function requires multiple passes through the
+      input string array because it has to determine the maximum
+      width ahead of time. 
   */
   template<class string_arr_t>
     void screenify(size_t nin, const string_arr_t &in_cols, 
-		   std::vector<std::string> &out_cols,
+		   std::vector<std::string> &out_rows,
 		   size_t max_size=80) {
+
+    if (nin==0) {
+      O2SCL_ERR("No strings specified in screenify().",exc_efailed);
+    }
+
+    size_t i, j, lmax, itemp;
+    std::vector<std::string> in_spaces(nin);
+
+    terminal ter;
+    
+    // Determine size of largest string
+    lmax=0;
+    for(i=0;i<nin;i++) {
+      if (lmax<ter.str_len(in_cols[i])) {
+	lmax=ter.str_len(in_cols[i]);
+      }
+    }
+
+    // Pad with spaces, ensuring at least one space is added to each
+    // string
+    for(i=0;i<nin;i++) {
+      itemp=ter.str_len(in_cols[i]);
+      in_spaces[i]=in_cols[i];
+      for(j=0;j<lmax+1-itemp;j++) {
+	in_spaces[i]+=' ';
+      }
+    }
+
+    // Determine number of rows and columns
+    size_t row, col;
+    col=max_size/(lmax+1);
+    if (col==0) col=1;
+    if (nin/col*col==nin) row=nin/col;
+    else row=nin/col+1;
+
+    // Create out_rows
+    out_rows.reserve(row);
+    for(i=0;i<row;i++) {
+      out_rows.push_back("");
+      for(j=0;j<col;j++) {
+	if (i+j*row<nin) {
+	  out_rows[i]+=in_spaces[i+j*row];
+	}
+      }
+    }
+
+    return;
+  }
+
+  /** \brief Transposed version of screenify()
+   */
+  template<class string_arr_t>
+  void screenify_trans(size_t nin, const string_arr_t &in_cols, 
+                       std::vector<std::string> &out_rows,
+                       size_t max_size=80) {
 
     if (nin==0) {
       O2SCL_ERR("No strings specified in screenify().",exc_efailed);
@@ -905,13 +964,13 @@ namespace o2scl {
     if (nin/col*col==nin) row=nin/col;
     else row=nin/col+1;
 
-    // Create out_cols
-    out_cols.reserve(row);
+    // Create out_rows
+    out_rows.reserve(row);
     for(i=0;i<row;i++) {
-      out_cols.push_back("");
+      out_rows.push_back("");
       for(j=0;j<col;j++) {
-	if (i+j*row<nin) {
-	  out_cols[i]+=in_spaces[i+j*row];
+	if (j+i*col<nin) {
+	  out_rows[i]+=in_spaces[j+i*col];
 	}
       }
     }

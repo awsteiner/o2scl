@@ -2917,7 +2917,6 @@ namespace o2scl {
       getline(fin,line);
       
       // Determine if there are constants
-      std::cout << "Line 1: " << line << std::endl;
       std::vector<std::string> vsc;
       split_string_delim(line,vsc,' ');
       if (vsc.size()>1 &&
@@ -2937,7 +2936,6 @@ namespace o2scl {
       }
 
       // Determine if the interpolation type was specified
-      std::cout << "Line 2: " << line << std::endl;
       std::vector<std::string> vsi;
       split_string_delim(line,vsi,' ');
       if (vsi.size()>1 && vsi[0]=="Interpolation:") {
@@ -2947,7 +2945,6 @@ namespace o2scl {
       }
       
       // See if the next line has column names
-      std::cout << "Line 3: " << line << std::endl;
       std::vector<std::string> onames, nnames;
       std::istringstream is(line);
       while (is >> cname) {

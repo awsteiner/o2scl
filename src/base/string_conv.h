@@ -43,9 +43,7 @@
 // For numeric_limits for dtos()
 #include <limits>
 
-// For screenify()
 #include <o2scl/misc.h>
-#include <o2scl/rng.h>
 
 namespace o2scl {
 
@@ -72,6 +70,15 @@ namespace o2scl {
   */
   std::string btos(bool b);
 
+  /** \brief Add backslashes to a string to store carriage returns in 
+      a text file
+   */
+  std::string backslashify(std::string s);
+
+  /** \brief Convert strings read in a text file to their original form
+   */
+  std::string unbackslashify(std::string s);
+  
   /** \brief Convert a floating-point number to a string 
 
       This uses a \c ostringstream object to convert the

@@ -34,6 +34,45 @@
 using namespace std;
 using namespace o2scl;
 
+std::string o2scl::backslashify(std::string s) {
+  std::string ret;
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='\\') {
+      ret+="\\\\";
+    } else if (s[i]=='\n') {
+      ret+="\\n";
+    } else {
+      ret+=s[i];
+    }
+  }
+  return ret;
+}
+
+std::string o2scl::unbackslashify(std::string s) {
+  std::string ret;
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='\\') {
+      size_t j=i+1;
+      while (s[j]=='\\' && j<s.length()) {
+        j++;
+      }
+      size_t bs_count=j-i;
+      for(size_t k=0;k<bs_count/2;k++) {
+        ret+='\\';
+      }
+      if (bs_count%2!=0 && j<s.length() && s[j]=='n') {
+        ret+='\n';
+      } else {
+        ret+=s[j];
+      }
+      i=j;
+    } else {
+      ret+=s[i];
+    }
+  }
+  return ret;
+}
+
 std::string o2scl::unc_to_string(double val, double err, int verbose) {
   if (err<0) err*=-1;
 

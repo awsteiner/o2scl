@@ -42,12 +42,19 @@ int main(void) {
 		"test_of_string4","test5","test_of_string6",
 		"test_of_string7","test_of_string8","test_of_string9",
 		"test_of_string10"};
+
   vector<string> sout;
   screenify(10,s,sout);
   for(size_t ij=0;ij<sout.size();ij++) {
     cout << sout[ij] << endl;
   }
   t.test_gen(sout.size()==3,"screenify");
+
+  vector<string> sout2;
+  screenify_trans(10,s,sout2);
+  for(size_t ij=0;ij<sout2.size();ij++) {
+    cout << sout2[ij] << endl;
+  }
 
   t.test_gen(o2scl::count_words(" This is a hard test ")==5,"count1");
   t.test_gen(o2scl::count_words("This is an easy test")==5,"count2");

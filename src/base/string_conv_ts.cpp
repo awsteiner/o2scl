@@ -56,6 +56,13 @@ int main(void) {
   t.test_gen(size_of_exponent(1.0e11)==2,"soe5");
   t.test_gen(size_of_exponent(1.0e111)==3,"soe6");
 
+  t.test_gen(unbackslashify(backslashify("\n"))=="\n","ub 1");
+  t.test_gen(unbackslashify(backslashify("\\n"))=="\\n","ub 2");
+  t.test_gen(unbackslashify(backslashify("\\\n"))=="\\\n","ub 3");
+  t.test_gen(unbackslashify(backslashify("\\\\n"))=="\\\\n","ub 4");
+  t.test_gen(unbackslashify(backslashify("\\ n"))=="\\ n","ub 5");
+  t.test_gen(unbackslashify(backslashify("\\ \n"))=="\\ \n","ub 6");
+  
   vector<string> ss;
   string stemp;
 
