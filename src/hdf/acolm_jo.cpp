@@ -852,37 +852,36 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     int
     size_t
     
-    string: Output strings with a carriage return at the end so they
-    can include whitespace. Backslashify backslashes and carriage
-    returns. 
-    \n is carriage return
-    \\n is backslash n
-    \\\n is backslash carriage return
-    \\\\n is backslash backslash n ...
+    string: Output strings with backslashify and a carriage return
 
     double[], int[], and size_t[]: Output without carriage returns
     except for one at the very end. If pretty is true, output using
-    columnify to make good spacing. Don't use screenify(), because it
-    outputs them in the wrong order.
+    the screenify_trans() function.
               
-    string[]:
+    vec_vec_double: 
 
-    table
+    string[]: Output strings with backslashify and carriage returns
 
-    hist,
-    hist_2d
-    prob_dens_mdim_amr
-    prob_dens_mdim_gaussian,
-    prob_dens_mdim_gmm
-    table3d,
-    tensor
-    tensor<int>
-    tensor<size_t>
-    tensor_grid
-    uniform_grid<double>,
-    vec_vec_double
-    vec_vec_string
-    and vector<contour_line>.
+    vec_vec_string:
+
+    table: (done)
+    table3d: (done?)
+
+    prob_dens_mdim_gaussian: (done)
+    prob_dens_mdim_gmm: (done)
+
+    hist: (done)
+    hist_2d: (done)
+
+    prob_dens_mdim_amr (todo)
+
+    tensor: (done?)
+    tensor<int>: (done?)
+    tensor<size_t>: (done?)
+    tensor_grid: (done?)
+
+    uniform_grid<double>: (done)
+    vector<contour_line>: (done?)
   */
   
   if (type.length()==0) {
@@ -1203,6 +1202,7 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     
     (*fout) << vvdouble_obj.size() << endl;
     for(size_t k=0;k<vvdouble_obj.size();k++) {
+      (*fout) << vvdouble_obj[k].size() << endl;
       for(size_t kk=0;kk<vvdouble_obj[k].size();kk++) {
         (*fout) << vvdouble_obj[k][kk] << " ";
       }
@@ -1248,6 +1248,14 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="prob_dens_mdim_gmm") {
 
     pgmm_obj.write_generic(*fout);
+
+  } else if (type=="prob_dens_mdim_gaussian") {
+
+    pdmg_obj.write_generic(*fout);
+
+  } else if (type=="prob_dens_mdim_amr") {
+
+    pdma_obj.write_generic(*fout);
 
   } else if (type=="tensor") {
 

@@ -174,7 +174,56 @@ namespace o2scl {
     /** \brief Internal random number generator
      */
     mutable o2scl::rng<> rg;
-
+    
+    /** \brief Desc
+     */
+    virtual int write_generic(std::ostream &fout) {
+      
+      fout << n_dim << " " << dim_choice << " " << mesh.size()
+           << std::endl;
+      
+      {
+        for(size_t j=0;j<low.size();j++) {
+          fout << low[j] << " ";
+          if (j%5==4) fout << std::endl;
+        }
+        if (low.size()>0 && (low.size()-1)%5!=4) {
+          fout << std::endl;
+        }
+        for(size_t j=0;j<high.size();j++) {
+          fout << high[j] << " ";
+          if (j%5==4) fout << std::endl;
+        }
+        if (high.size()>0 && (high.size()-1)%5!=4) {
+          fout << std::endl;
+        }
+        if (dim_choice==user_scale) {
+          for(size_t j=0;j<scale.size();j++) {
+            fout << scale[j] << " ";
+            if (j%5==4) fout << std::endl;
+          }
+          if (scale.size()>0 && (scale.size()-1)%5!=4) {
+            fout << std::endl;
+          }
+        }
+        for(size_t j=0;j<mesh.size();j++) {
+          fout << mesh[j].weight << " ";
+          fout << mesh[j].frac_vol << " ";
+          for(size_t k=0;k<n_dim;k++) {
+            fout << mesh[j].low[k] << " ";
+            fout << mesh[j].high[k] << " ";
+          }
+          fout << mesh[j].inside.size() << " ";
+          for(size_t k=0;k<mesh[j].inside.size();k++) {
+            fout << mesh[j].inside[k] << " ";
+          }
+          fout << std::endl;
+        }
+      }
+      
+      return 0;
+    }
+    
     /** \brief Desc
      */
     bool allow_resampling;
