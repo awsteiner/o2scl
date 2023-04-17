@@ -44,7 +44,8 @@ interpm_python::interpm_python() {
 /** \brief Specify the Python module and function
  */
 interpm_python::interpm_python(std::string module, std::string set_func,
-                               std::string eval_func, 
+                               std::string eval_func,
+                               std::string eval_unc_func,
                                size_t n_pars, size_t n_dat, size_t n_out,
                                const o2scl::tensor<> &params,
                                const o2scl::tensor<> &outputs,
@@ -61,6 +62,7 @@ interpm_python::interpm_python(std::string module, std::string set_func,
   }
   p_set_func=0;
   p_eval_func=0;
+  p_eval_unc_func=0;
   p_set_args=0;
   p_eval_args=0;
   p_instance=0;
@@ -73,7 +75,8 @@ interpm_python::interpm_python(std::string module, std::string set_func,
   n_points=0;
       
   if (module.length()>0) {
-    set_function(module,set_func,eval_func,n_pars,n_dat,n_out,
+    set_function(module,set_func,eval_func,eval_unc_func,
+                 n_pars,n_dat,n_out,
                  params,outputs,options,class_name,v);
   }
 }      
@@ -93,6 +96,12 @@ void interpm_python::free() {
       std::cout << "Decref eval_func." << std::endl;
     }
     Py_DECREF(p_eval_func);
+  }
+  if (p_eval_unc_func!=0) {
+    if (verbose>0) {
+      std::cout << "Decref eval_unc_func." << std::endl;
+    }
+    Py_DECREF(p_eval_unc_func);
   }
   if (p_set_args!=0) {
     if (verbose>0) {
@@ -133,6 +142,7 @@ void interpm_python::free() {
 
   p_set_func=0;
   p_eval_func=0;
+  p_eval_unc_func=0;
   p_eval_args=0;
   p_instance=0;
   p_class=0;
@@ -153,7 +163,8 @@ interpm_python::~interpm_python() {
 }      
   
 int interpm_python::set_function(std::string module, std::string set_func,
-                                 std::string eval_func, 
+                                 std::string eval_func,
+                                 std::string eval_unc_func,
                                  size_t n_pars, size_t n_dat, size_t n_out,
                                  const o2scl::tensor<> &params,
                                  const o2scl::tensor<> &outputs,
@@ -269,6 +280,18 @@ int interpm_python::set_function(std::string module, std::string set_func,
         
     // Load the python function
     if (verbose>0) {
+      std::cout << "  Loading python member function eval_unc: "
+                << eval_unc_func << std::endl;
+    }
+    p_eval_unc_func=PyObject_GetAttrString(p_instance,eval_unc_func.c_str());
+    if (p_eval_unc_func==0) {
+      O2SCL_ERR2("Get eval_unc function failed in ",
+                 "interpm_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+        
+    // Load the python function
+    if (verbose>0) {
       std::cout << "  Loading python member function set: "
                 << set_func << std::endl;
     }
@@ -280,6 +303,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
     }
 
   } else {
+    
     // Load the python function
     if (verbose>0) {
       std::cout << "  Loading python function set." << std::endl;
@@ -297,6 +321,17 @@ int interpm_python::set_function(std::string module, std::string set_func,
     }
     p_eval_func=PyObject_GetAttrString(p_module,eval_func.c_str());
     if (p_eval_func==0) {
+      O2SCL_ERR2("Get function failed in ",
+                 "interpm_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+
+    // Load the python function
+    if (verbose>0) {
+      std::cout << "  Loading python function eval_unc." << std::endl;
+    }
+    p_eval_unc_func=PyObject_GetAttrString(p_module,eval_unc_func.c_str());
+    if (p_eval_unc_func==0) {
       O2SCL_ERR2("Get function failed in ",
                  "interpm_python::set_function().",
                  o2scl::exc_efailed);
@@ -401,7 +436,7 @@ int interpm_python::eval(const std::vector<double> &x,
   
   //import_array();
   
-  if (p_set_func==0 || p_eval_func==0) {
+  if (p_set_func==0 || p_eval_func==0 || p_eval_unc_func==0) {
     O2SCL_ERR2("No functions found in ",
                "interpm_python::operator().",
                o2scl::exc_efailed);
@@ -445,6 +480,104 @@ int interpm_python::eval(const std::vector<double> &x,
     y[i]=dp[i];
     if (verbose>1) {
       std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+    }
+  }
+      
+  if (verbose>1) {
+    std::cout << "  Decref result." << std::endl;
+  }
+  Py_DECREF(result);
+  
+  if (verbose>1) {
+    std::cout << "Done in interpm_python::operator()."
+              << std::endl;
+  }
+
+  return 0;
+}      
+
+int interpm_python::eval_unc(const std::vector<double> &x,
+                             std::vector<double> &y,
+                             std::vector<double> &yp) const {
+
+  if (x.size()!=n_params) {
+    O2SCL_ERR("Input vector does not have correct size.",
+              o2scl::exc_einval);
+  }
+  if (y.size()!=n_outputs) {
+    O2SCL_ERR("Output vector does not have correct size.",
+              o2scl::exc_einval);
+  }
+  
+  //import_array();
+  
+  if (p_set_func==0 || p_eval_unc_func==0) {
+    O2SCL_ERR2("No functions found in ",
+               "interpm_python::operator().",
+               o2scl::exc_efailed);
+  }
+
+  npy_intp x_dims[]={(npy_intp)x.size()};
+  if (verbose>1) {
+    std::cout << "interpm_python::operator():" << std::endl;
+    std::cout << "  Array x: " << x.size() << std::endl;
+  }
+  PyObject *array_x=PyArray_SimpleNewFromData
+    (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
+      
+  int ret=PyTuple_SetItem(p_eval_args,0,array_x);
+  if (ret!=0) {
+    O2SCL_ERR2("Tuple set failed in ",
+               "mm_funct_python::operator().",o2scl::exc_efailed);
+  }
+      
+  // Call the python function
+  if (verbose>1) {
+    std::cout << "  Calling python eval_unc function." << std::endl;
+  }
+  PyObject *result=PyObject_CallObject(p_eval_unc_func,p_eval_args);
+  if (result==0) {
+    O2SCL_ERR2("Function call failed in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+
+  if (PyTuple_Check(result)==0) {
+    O2SCL_ERR2("Function call did not return a Python tuple in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+
+  PyObject *p_y, *p_yp;
+  p_y=PyTuple_GetItem(result,0);
+  p_yp=PyTuple_GetItem(result,1);
+
+  if (PyArray_Check(p_y)==0) {
+    O2SCL_ERR2("Python tuple does not contain array in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  if (PyArray_Check(p_yp)==0) {
+    O2SCL_ERR2("Python tuple does not contain array in ",
+               "interpm_python::operator().",o2scl::exc_efailed);
+  }
+  
+  if (verbose>1) {
+    std::cout << "  Obtaining output." << std::endl;
+  }
+  
+  void *vp=PyArray_DATA((PyArrayObject *)p_y);
+  double *dp=(double *)vp;
+  for(size_t i=0;i<n_outputs;i++) {
+    y[i]=dp[i];
+    if (verbose>1) {
+      std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+    }
+  }
+      
+  void *vp2=PyArray_DATA((PyArrayObject *)p_yp);
+  double *dp2=(double *)vp2;
+  for(size_t i=0;i<n_outputs;i++) {
+    yp[i]=dp2[i];
+    if (verbose>1) {
+      std::cout << "  i,yp[i]: " << i << " " << yp[i] << std::endl;
     }
   }
       

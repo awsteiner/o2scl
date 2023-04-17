@@ -105,10 +105,10 @@ int main(void) {
       tin.get(ix)=y[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,
+    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,1,
                       tin,tout,"verbose=1","interpm_sklearn_gp",1);
     
-    std::vector<double> ex(2), ey(1);
+    std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
     ex[1]=0.5;
     ip.eval(ex,ey);
@@ -116,6 +116,14 @@ int main(void) {
     cout << f(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
 
+    ex[0]=0.5;
+    ex[1]=0.5;
+    ip.eval_unc(ex,ey,eyp);
+    cout << ey[0] << endl;
+    cout << f(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
+    t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 3");
+    
     cout << endl;
   }
     
@@ -137,7 +145,7 @@ int main(void) {
       tout.get(ix)=dp2[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
+    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,2,
                       tin,tout,"verbose=1","interpm_sklearn_gp",1);
     
     std::vector<double> ex(2), ey(2);
@@ -179,7 +187,7 @@ int main(void) {
       tin.get(ix)=y[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,1,tin,tout,
+    interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,1,tin,tout,
                       ((std::string)"verbose=1,")+
                       "test_size=0.15,batch_size=10,transform=none",
                       "interpm_tf_dnn",1);
@@ -211,7 +219,7 @@ int main(void) {
       tout.get(ix)=dp2[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval",2,N,2,
+    interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,2,
                       tin,tout,"verbose=1","interpm_tf_dnn",1);
     
     std::vector<double> ex(2), ey(2);

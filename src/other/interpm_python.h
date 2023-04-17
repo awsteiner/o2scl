@@ -75,6 +75,9 @@ namespace o2scl {
     /// Python function
     PyObject *p_eval_func;
 
+    /// Python function
+    PyObject *p_eval_unc_func;
+
     /// Verbosity parameter
     int verbose;
 
@@ -94,7 +97,7 @@ namespace o2scl {
     /** \brief Specify the Python module and function
      */
     interpm_python(std::string module, std::string set_func,
-                   std::string eval_func, 
+                   std::string eval_func, std::string eval_unc_func,
                    size_t n_pars, size_t n_dat, size_t n_out,
                    const o2scl::tensor<> &params,
                    const o2scl::tensor<> &outputs,
@@ -111,7 +114,7 @@ namespace o2scl {
         cannot be virtual.
     */
     int set_function(std::string module, std::string set_func,
-                     std::string eval_func, 
+                     std::string eval_func, std::string eval_unc_func,
                      size_t n_pars, size_t n_dat, size_t n_out,
                      const o2scl::tensor<> &params,
                      const o2scl::tensor<> &outputs,
@@ -122,6 +125,12 @@ namespace o2scl {
      */
     virtual int eval(const std::vector<double> &x,
                      std::vector<double> &y) const;
+
+    /** \brief Compute the function at point \c x and return the result
+     */
+    virtual int eval_unc(const std::vector<double> &x,
+                         std::vector<double> &y,
+                         std::vector<double> &y_unc) const;
     
   private:
 
