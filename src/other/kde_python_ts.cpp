@@ -23,7 +23,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/test_mgr.h>
-#include <o2scl/gmm_python.h>
+#include <o2scl/kde_python.h>
 #include <o2scl/rng.h>
 #include <o2scl/table.h>
 #include <o2scl/hdf_file.h>
@@ -49,21 +49,14 @@ int main(void) {
   table<> tab;
   tab.line_of_names("x y");
   for(size_t i=0;i<N;i++) {
-    if (i%2==0) {
-      double x=0.7+0.1*r.random();
-      double y=0.5+0.1*r.random();
-      vector<double> line={x,y};
-      tab.line_of_data(line.size(),line);
-    } else {
-      double x=0.2+0.1*r.random();
-      double y=0.2+0.1*r.random();
-      vector<double> line={x,y};
-      tab.line_of_data(line.size(),line);
-    }
+    double x=0.7+0.1*r.random();
+    double y=0.5+0.1*r.random();
+    vector<double> line={x,y};
+    tab.line_of_data(line.size(),line);
   }
-
+  
   hdf_file hf;
-  hf.open_or_create("gmm_python_data.o2");
+  hf.open_or_create("kde_python_data.o2");
   hdf_output(hf,tab,"tab");
   hf.close();
   
@@ -82,13 +75,13 @@ int main(void) {
       tin.get(ix)=tab.get(1,j);
     }
     
-    gmm_python gp("o2sclpy","set_data_str","eval","get_data",2,N,2,
-                  tin,"verbose=2","gmm_sklearn");
-    gp.verbose=2;
-    gp.get_python();
+    kde_python kp("o2sclpy","set_data_str","eval","get_data",2,N,2,
+                  tin,"verbose=2","kde_sklearn");
+    kp.verbose=2;
+    kp.get_python();
     ubvector x(2);
     for(size_t j=0;j<20;j++) {
-      gp.get_gmm()(x);
+      kp.sample(x);
       cout << j << " ";
       cout.setf(ios::showpos);
       cout << x[0] << " " << x[1] << endl;
