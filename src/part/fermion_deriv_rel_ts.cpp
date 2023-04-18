@@ -106,6 +106,8 @@ int main(int argc, char *argv[]) {
   // Compare results with fermion_rel
   
   fermion_rel fr;
+  fr.verbose=2;
+  
   double pc_fr=pcc.part_calibrate<fermion,fermion_rel>
     (ef,fr,"../../data/o2scl/fermion_deriv_cal.o2",true,true,false,1,true);
   cout << pc_fr << endl;

@@ -287,6 +287,8 @@ namespace o2scl {
 
       last_method=0;
       verify_ti=false;
+
+      verbose=0;
     }
   
     virtual ~fermion_deriv_rel_tl() {
@@ -327,6 +329,8 @@ namespace o2scl {
     /// Integrate by parts
     static const int by_parts=2;
     //@}
+
+    int verbose;
 
     /** \brief An integer indicating the last numerical method used
 
@@ -390,6 +394,10 @@ namespace o2scl {
       if (psi<-4.0) {
 	bool acc=this->calc_mu_ndeg(f,temper,1.0e-14);
 	if (acc) {
+          if (verbose>1) {
+            std::cout << "fermion_deriv_rel::calc_mu() using nondegenerate "
+                      << "expansion." << std::endl;
+          }
 	  unc.n=f.n*1.0e-14;
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;
@@ -406,6 +414,10 @@ namespace o2scl {
       if (psi>20.0) {
 	bool acc=this->calc_mu_deg(f,temper,1.0e-14);
 	if (acc) {
+          if (verbose>1) {
+            std::cout << "fermion_deriv_rel::calc_mu() using degenerate "
+                      << "expansion." << std::endl;
+          }
 	  unc.n=f.n*1.0e-14;
 	  unc.ed=f.ed*1.0e-14;
 	  unc.pr=f.pr*1.0e-14;

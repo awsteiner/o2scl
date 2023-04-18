@@ -858,11 +858,15 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     except for one at the very end. If pretty is true, output using
     the screenify_trans() function.
               
-    vec_vec_double: 
+    vec_vec_double: Output first the number of vectors. Then,
+    for each vector, output the vector size before outputting the
+    vector elements.
 
     string[]: Output strings with backslashify and carriage returns
 
-    vec_vec_string:
+    vec_vec_string: Output first the number of string vectors. Then,
+    for each vector, output the vector size before outputting the
+    vector elements.
 
     table: (done)
     table3d: (done?)

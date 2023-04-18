@@ -300,6 +300,22 @@ int acol_manager::comm_generic(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     
+  } else if (ctype=="vvd-equal-cols") {
+
+    vvdouble_obj.clear();
+    std::string row;
+    
+    while (getline((*istr),row)) {
+      stringv_obj.push_back(row);
+      double d;
+      istringstream ins(row);
+      vector<double> vd;
+      while (ins >> d) {
+        vd.push_back(d);
+      }
+      vvdouble_obj.push_back(vd);
+    }
+    
   } else if (ctype=="double[]-n") {
 
     doublev_obj.clear();

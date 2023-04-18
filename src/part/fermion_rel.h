@@ -1189,7 +1189,7 @@ namespace o2scl {
       //nit=&def_nit;
       density_root=&def_density_root;
       
-      density_root->tol_rel=4.0e-7;
+      density_root->tol_rel=1.0e-7;
 
       tol_expan=1.0e-14;
       verify_ti=false;
@@ -1283,7 +1283,7 @@ namespace o2scl {
       fp_t y=solve_fun(nex,f,temper);
       if (verbose>1) {
 	std::cout << "fermion_rel::nu_from_n(): " 
-		  << "initial guess " << nex << std::endl;
+		  << "initial guess: " << nex*temper << std::endl;
       }
 
       if (y>1.0-1.0e-6) {
@@ -1355,6 +1355,11 @@ namespace o2scl {
 
       f.nu=nex*temper;
 
+      if (verbose>1) {
+        std::cout << "fermion_rel::nu_from_n(): Succeeded in computing "
+                  << "nu: " << f.nu << std::endl;
+      }
+      
       return success;
     }
 

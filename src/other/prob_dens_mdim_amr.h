@@ -174,8 +174,20 @@ namespace o2scl {
     /** \brief Internal random number generator
      */
     mutable o2scl::rng<> rg;
+
+#ifdef O2SCL_NEVER_DEFINED    
+    virtual int read_generic(std::istream &fin) {
+
+      clear();
+      size_t mesh_size;
+      fin >> n_dim >> dim_choice >> mesh_size;
+      mesh.resize(mesh_size);
+
+      return 0;
+    }
+#endif
     
-    /** \brief Desc
+    /** \brief Write the output to a generic output stream
      */
     virtual int write_generic(std::ostream &fout) {
       

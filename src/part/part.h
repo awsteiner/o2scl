@@ -908,7 +908,7 @@ namespace o2scl {
                             << psi << " " << mot << " " << count << std::endl;
                 }
               }
-            
+
               th.calc_density(p,T);
               if (th.verify_ti) {
                 fp_t val;
@@ -1030,7 +1030,7 @@ namespace o2scl {
               std::cout << "check ti: " << ti_test/ti_count << " "
                         << ti_local << std::endl;
             }
-            std::cout << "ret_local,ret: " << ret_local << " "
+            std::cout << "ret_local,ret x: " << ret_local << " "
                       << ret << std::endl;
             std::cout << std::endl;
             if (verbose>2) {
