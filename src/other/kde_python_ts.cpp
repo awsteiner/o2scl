@@ -42,17 +42,24 @@ int main(void) {
   cout.setf(ios::scientific);
 
   // Construct the data
-  static const size_t N=50;
+  static const size_t N=200;
 
   rng<> r;
   
   table<> tab;
   tab.line_of_names("x y");
   for(size_t i=0;i<N;i++) {
-    double x=0.7+0.1*r.random();
-    double y=0.5+0.1*r.random();
-    vector<double> line={x,y};
-    tab.line_of_data(line.size(),line);
+    if (i%2==0) {
+      double x=0.7+0.1*r.random();
+      double y=0.5+0.1*r.random();
+      vector<double> line={x,y};
+      tab.line_of_data(line.size(),line);
+    } else {
+      double x=-0.7+0.1*r.random();
+      double y=0.2+0.1*r.random();
+      vector<double> line={x,y};
+      tab.line_of_data(line.size(),line);
+    }
   }
   
   hdf_file hf;
@@ -74,14 +81,16 @@ int main(void) {
       ix={j,1};
       tin.get(ix)=tab.get(1,j);
     }
-    
-    kde_python kp("o2sclpy","set_data_str","eval","get_data",2,N,2,
-                  tin,"verbose=2","kde_sklearn");
-    kp.verbose=2;
-    kp.get_python();
+
+    uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
+    vector<double> bw_array;
+    ug.vector(bw_array);
+    kde_python<> kp("o2sclpy","set_data_str","sample","log_density",2,N,
+                    tin,bw_array,"verbose=0","kde_sklearn");
+    //kp.verbose=2;
     ubvector x(2);
-    for(size_t j=0;j<20;j++) {
-      kp.sample(x);
+    for(size_t j=0;j<200;j++) {
+      kp(x);
       cout << j << " ";
       cout.setf(ios::showpos);
       cout << x[0] << " " << x[1] << endl;

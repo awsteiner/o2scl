@@ -82,7 +82,7 @@ int main(void) {
       tin.get(ix)=tab.get(1,j);
     }
     
-    gmm_python gp("o2sclpy","set_data_str","eval","get_data",2,N,2,
+    gmm_python gp("o2sclpy","set_data_str","components","get_data",2,N,2,
                   tin,"verbose=2","gmm_sklearn");
     gp.verbose=2;
     gp.get_python();

@@ -68,9 +68,6 @@ namespace o2scl {
     PyObject *p_set_args;
 
     /// Function arguments
-    PyObject *p_sample_args;
-
-    /// Function arguments
     PyObject *p_ld_args;
 
     /// Python function
@@ -88,16 +85,13 @@ namespace o2scl {
     /// Number of points
     size_t n_points;
 
-    /// Underlying probability distribution
-    prob_dens_mdim_kde<> pdm_kde;
-    
   public:
 
     kde_python()  {
       p_set_func=0;
       p_sample_func=0;
       p_set_args=0;
-      p_sample_args=0;
+      p_ld_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -111,8 +105,9 @@ namespace o2scl {
      */
     kde_python(std::string module, std::string set_func,
                std::string sample_func, std::string ld_func,
-               size_t n_pars, size_t n_dat, 
+               size_t n_pars, size_t n_dat,
                const o2scl::tensor<> &params,
+               std::vector<double> bw_array,
                std::string options="", 
                std::string class_name="", int v=0)  {
                     
@@ -128,7 +123,7 @@ namespace o2scl {
       p_sample_func=0;
       p_ld_func=0;
       p_set_args=0;
-      p_sample_args=0;
+      p_ld_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -139,7 +134,7 @@ namespace o2scl {
 
       if (module.length()>0) {
         set_function(module,set_func,sample_func,ld_func,
-                     n_pars,n_dat,params,options,class_name,v);
+                     n_pars,n_dat,params,bw_array,options,class_name,v);
       }
     }      
 
@@ -152,7 +147,7 @@ namespace o2scl {
      */
     void free() {
       if (verbose>1) {
-        std::cout << "Starting gmm_python::free()." << std::endl;
+        std::cout << "Starting kde_python::free()." << std::endl;
       }
       if (p_set_func!=0) {
         if (verbose>1) {
@@ -178,11 +173,11 @@ namespace o2scl {
         }
         Py_DECREF(p_set_args);
       }
-      if (p_sample_args!=0) {
+      if (p_ld_args!=0) {
         if (verbose>1) {
-          std::cout << "Decref sample_args." << std::endl;
+          std::cout << "Decref ld_args." << std::endl;
         }
-        Py_DECREF(p_sample_args);
+        Py_DECREF(p_ld_args);
       }
       if (p_instance!=0) {
         if (verbose>1) {
@@ -211,7 +206,7 @@ namespace o2scl {
 
       p_set_func=0;
       p_sample_func=0;
-      p_sample_args=0;
+      p_ld_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -221,7 +216,7 @@ namespace o2scl {
       n_points=0;
       
       if (verbose>1) {
-        std::cout << "Done in gmm_python::free()." << std::endl;
+        std::cout << "Done in kde_python::free()." << std::endl;
       }
     }      
 
@@ -238,12 +233,13 @@ namespace o2scl {
                      std::string sample_func, std::string ld_func,
                      size_t n_pars, size_t n_dat, 
                      const o2scl::tensor<> &params,
+                     std::vector<double> bw_array,
                      std::string options="",
                      std::string class_name="", int v=0) {
   
-      if (params.ld_rank()!=2) {
+      if (params.get_rank()!=2) {
         O2SCL_ERR2("Invalid rank for input tensors in ",
-                   "gmm_python().",o2scl::exc_einval);
+                   "kde_python().",o2scl::exc_einval);
       }
       
       free();
@@ -251,17 +247,11 @@ namespace o2scl {
       n_params=n_pars;
       n_points=n_dat;
       
-      if (options.length()>0) {
-        options+=",n_components="+o2scl::szttos(n_comp);
-      } else {
-        options="n_components="+o2scl::szttos(n_comp);
-      }
-      
       // Get the Unicode name of the user-specified module
       if (verbose>1) {
         std::cout << "Python version: "
                   << o2scl_settings.py_version() << std::endl;
-        std::cout << "Staring gmm_python::set_function()."
+        std::cout << "Staring kde_python::set_function()."
                   << std::endl;
         std::cout << "  Getting unicode for module named "
                   << module << std::endl;
@@ -269,7 +259,7 @@ namespace o2scl {
       p_name=PyUnicode_FromString(module.c_str());
       if (p_name==0) {
         O2SCL_ERR2("Create module name failed in ",
-                   "gmm_python::set_function().",
+                   "kde_python::set_function().",
                    o2scl::exc_efailed);
       }
       
@@ -280,7 +270,7 @@ namespace o2scl {
       p_module=PyImport_Import(p_name);
       if (p_module==0) {
         O2SCL_ERR2("Load module failed in ",
-                   "gmm_python::set_function().",
+                   "kde_python::set_function().",
                    o2scl::exc_efailed);
       }
 
@@ -320,22 +310,22 @@ namespace o2scl {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
-      p_set_args=PyTuple_New(2);
+      p_set_args=PyTuple_New(3);
       if (p_set_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
-                   "gmm_python::set_function().",
+                   "kde_python::set_function().",
                    o2scl::exc_efailed);
       }
 
       // Setup the arguments to the python function
       if (verbose>1) {
-        std::cout << "  Making argument object for sample function."
+        std::cout << "  Making argument object for log_pdf function."
                   << std::endl;
       }
-      p_sample_args=PyTuple_New(1);
-      if (p_sample_args==0) {
+      p_ld_args=PyTuple_New(1);
+      if (p_ld_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
-                   "gmm_python::set_function().",
+                   "kde_python::set_function().",
                    o2scl::exc_efailed);
       }
 
@@ -349,7 +339,7 @@ namespace o2scl {
         p_sample_func=PyObject_GetAttrString(p_instance,sample_func.c_str());
         if (p_sample_func==0) {
           O2SCL_ERR2("Get sample function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
         
@@ -361,7 +351,7 @@ namespace o2scl {
         p_ld_func=PyObject_GetAttrString(p_instance,ld_func.c_str());
         if (p_ld_func==0) {
           O2SCL_ERR2("Get get function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
         
@@ -373,11 +363,12 @@ namespace o2scl {
         p_set_func=PyObject_GetAttrString(p_instance,set_func.c_str());
         if (p_set_func==0) {
           O2SCL_ERR2("Get set function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
 
       } else {
+        
         // Load the python function
         if (verbose>1) {
           std::cout << "  Loading python function set." << std::endl;
@@ -385,7 +376,7 @@ namespace o2scl {
         p_set_func=PyObject_GetAttrString(p_module,set_func.c_str());
         if (p_set_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
 
@@ -396,7 +387,7 @@ namespace o2scl {
         p_sample_func=PyObject_GetAttrString(p_module,sample_func.c_str());
         if (p_sample_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
 
@@ -407,7 +398,7 @@ namespace o2scl {
         p_ld_func=PyObject_GetAttrString(p_module,ld_func.c_str());
         if (p_ld_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "gmm_python::set_function().",
+                     "kde_python::set_function().",
                      o2scl::exc_efailed);
         }
       }
@@ -417,28 +408,44 @@ namespace o2scl {
       //void *vp=o2scl_settings.py_import_array();
       import_array();
 
-      if (params.ld_size(0)!=n_points) {
+      if (params.get_size(0)!=n_points) {
         O2SCL_ERR("Input data does not have correct number of rows.",
                   o2scl::exc_einval);
       }
-      if (params.ld_size(1)!=n_params) {
+      if (params.get_size(1)!=n_params) {
         O2SCL_ERR("Input data does not have correct number of columns.",
                   o2scl::exc_einval);
       }
+
+      // First argument to set function: the data
       
-      npy_intp params_dims[]={(npy_intp)params.ld_size(0),
-        (npy_intp)params.ld_size(1)};
+      npy_intp params_dims[]={(npy_intp)params.get_size(0),
+        (npy_intp)params.get_size(1)};
       if (verbose>1) {
-        std::cout << "gmm_python::operator():" << std::endl;
+        std::cout << "kde_python::operator():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
-        (2,params_dims,NPY_DOUBLE,(void *)(&(params.ld_data()[0])));
+        (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
          
       int ret=PyTuple_SetItem(p_set_args,0,array_in);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
       }
+      
+      // Second argument to set function: the bandwidth array
+      
+      npy_intp bw_params_dims[]={bw_array.size()};
+      PyObject *bw_array_in=PyArray_SimpleNewFromData
+        (1,bw_params_dims,NPY_DOUBLE,(void *)(&(bw_array[0])));
+      
+      int ret2=PyTuple_SetItem(p_set_args,1,bw_array_in);
+      if (ret2!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
+      // Third argument to set function: the options string
       
       if (verbose>1) {
         std::cout << "Creating python unicode for string: "
@@ -450,26 +457,27 @@ namespace o2scl {
                    "emulator_python::set().",o2scl::exc_efailed);
       }
       
-      int ret3=PyTuple_SetItem(p_set_args,1,p_options);
+      int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
       }
 
-      // Call the python function
+      // Call the python set function
+      
       if (verbose>1) {
         std::cout << "  Calling python set function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
       if (result==0) {
         O2SCL_ERR2("Function set call failed in ",
-                   "gmm_python::operator().",o2scl::exc_efailed);
+                   "kde_python::operator().",o2scl::exc_efailed);
       }
 
       if (verbose>1) {
         std::cout << p_set_func << " " << p_sample_func << " "
                   << p_ld_func << std::endl;
-        std::cout << "Done with gmm_python::set_function()."
+        std::cout << "Done with kde_python::set_function()."
                   << std::endl;
       }
       
@@ -485,6 +493,8 @@ namespace o2scl {
     /// The normalized density 
     virtual double log_pdf(const vec_t &x) const {
 
+      double dret;
+      
       if (x.size()!=n_params) {
         O2SCL_ERR("Input vector does not have correct size.",
                   o2scl::exc_einval);
@@ -492,21 +502,21 @@ namespace o2scl {
   
       //import_array();
   
-      if (p_set_func==0 || p_sample_func==0) {
+      if (p_set_func==0 || p_ld_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "gmm_python::operator().",
+                   "kde_python::operator().",
                    o2scl::exc_efailed);
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (verbose>1) {
-        std::cout << "gmm_python::operator():" << std::endl;
+        std::cout << "kde_python::operator():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
       PyObject *array_x=PyArray_SimpleNewFromData
         (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
       
-      int ret=PyTuple_SetItem(p_sample_args,0,array_x);
+      int ret=PyTuple_SetItem(p_ld_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -514,14 +524,67 @@ namespace o2scl {
       
       // Call the python function
       if (verbose>1) {
+        std::cout << "  Calling python ld function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_ld_func,p_ld_args);
+      if (result==0) {
+        O2SCL_ERR2("Function ld call failed in ",
+                   "kde_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (verbose>1) {
+        std::cout << "  Obtaining output 1." << std::endl;
+      }
+      dret=PyFloat_AsDouble(result);
+
+      if (verbose>1) {
+        std::cout << "  Decref result." << std::endl;
+      }
+      Py_DECREF(result);
+  
+      if (verbose>1) {
+        std::cout << "Done in kde_python::log_pdf()."
+                  << std::endl;
+      }
+
+      return 0;
+    }
+  
+    /// The normalized density 
+    virtual double pdf(const vec_t &x) const {
+      double val=log_pdf(x);
+      if (!std::isfinite(val)) {
+        O2SCL_ERR2("Log PDF not finite or negative in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      double val2=exp(val);
+      if (!std::isfinite(val2)) {
+        std::cout << val << " " << val2 << std::endl;
+        O2SCL_ERR2("PDF not finite in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      return val2;
+    }
+  
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+  
+      if (p_set_func==0 || p_sample_func==0) {
+        O2SCL_ERR2("No functions found in ",
+                   "gmm_python::operator().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (verbose>1) {
         std::cout << "  Calling python sample function." << std::endl;
       }
-      PyObject *result=PyObject_CallObject(p_sample_func,p_sample_args);
+      PyObject *result=PyObject_CallObject(p_sample_func,0);
       if (result==0) {
         O2SCL_ERR2("Function sample call failed in ",
                    "gmm_python::operator().",o2scl::exc_efailed);
       }
-
+      
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
                    "gmm_python::operator().",o2scl::exc_efailed);
@@ -532,44 +595,23 @@ namespace o2scl {
       }
       void *vp=PyArray_DATA((PyArrayObject *)result);
       double *dp=(double *)vp;
-      for(size_t i=0;i<1;i++) {
-        y[i]=dp[i];
-        std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
+      for(size_t i=0;i<n_params;i++) {
+        x[i]=dp[i];
+        if (verbose>1) {
+          std::cout << "  i,y[i]: " << i << " " << x[i] << std::endl;
+        }
       }
       
       if (verbose>1) {
         std::cout << "  Decref result." << std::endl;
       }
       Py_DECREF(result);
-  
+      
       if (verbose>1) {
         std::cout << "Done in gmm_python::operator()."
                   << std::endl;
       }
 
-      return 0;
-    }
-  
-    /// The log of the normalized density 
-    virtual double log_pdf(const vec_t &x) const {
-      double val=pdf(x);
-      if (!std::isfinite(val) || val<0.0) {
-        O2SCL_ERR2("PDF not finite or negative in ",
-                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
-      }
-      double val2=log(pdf(x));
-      if (!std::isfinite(val2)) {
-        std::cout << val << " " << val2 << std::endl;
-        O2SCL_ERR2("Log of PDF not finite in ",
-                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
-      }
-      return val2;
-    }
-  
-    /// Sample the distribution
-    virtual void operator()(vec_t &x) const {
-      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
-      return;
     }
     
   private:

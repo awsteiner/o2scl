@@ -27,9 +27,9 @@ using namespace o2scl;
 
 gmm_python::gmm_python() {
   p_set_func=0;
-  p_eval_func=0;
+  p_components_func=0;
   p_set_args=0;
-  p_eval_args=0;
+  p_components_args=0;
   p_instance=0;
   p_class=0;
   p_module=0;
@@ -43,7 +43,7 @@ gmm_python::gmm_python() {
 /** \brief Specify the Python module and function
  */
 gmm_python::gmm_python(std::string module, std::string set_func,
-                       std::string eval_func, std::string get_func,
+                       std::string components_func, std::string get_func,
                        size_t n_pars, size_t n_dat, size_t n_comp,
                        const o2scl::tensor<> &params,
                        std::string options, 
@@ -58,10 +58,10 @@ gmm_python::gmm_python(std::string module, std::string set_func,
     o2scl_settings.py_init();
   }
   p_set_func=0;
-  p_eval_func=0;
+  p_components_func=0;
   p_get_func=0;
   p_set_args=0;
-  p_eval_args=0;
+  p_components_args=0;
   p_instance=0;
   p_class=0;
   p_module=0;
@@ -72,7 +72,7 @@ gmm_python::gmm_python(std::string module, std::string set_func,
   n_components=0;
 
   if (module.length()>0) {
-    set_function(module,set_func,eval_func,get_func,
+    set_function(module,set_func,components_func,get_func,
                  n_pars,n_dat,n_comp,params,options,class_name,v);
   }
 }      
@@ -87,11 +87,11 @@ void gmm_python::free() {
     }
     Py_DECREF(p_set_func);
   }
-  if (p_eval_func!=0) {
+  if (p_components_func!=0) {
     if (verbose>1) {
-      std::cout << "Decref eval_func." << std::endl;
+      std::cout << "Decref components_func." << std::endl;
     }
-    Py_DECREF(p_eval_func);
+    Py_DECREF(p_components_func);
   }
   if (p_get_func!=0) {
     if (verbose>1) {
@@ -105,11 +105,11 @@ void gmm_python::free() {
     }
     Py_DECREF(p_set_args);
   }
-  if (p_eval_args!=0) {
+  if (p_components_args!=0) {
     if (verbose>1) {
-      std::cout << "Decref eval_args." << std::endl;
+      std::cout << "Decref components_args." << std::endl;
     }
-    Py_DECREF(p_eval_args);
+    Py_DECREF(p_components_args);
   }
   if (p_instance!=0) {
     if (verbose>1) {
@@ -137,8 +137,8 @@ void gmm_python::free() {
   }
 
   p_set_func=0;
-  p_eval_func=0;
-  p_eval_args=0;
+  p_components_func=0;
+  p_components_args=0;
   p_instance=0;
   p_class=0;
   p_module=0;
@@ -157,7 +157,7 @@ gmm_python::~gmm_python() {
 }      
 
 int gmm_python::set_function(std::string module, std::string set_func,
-                             std::string eval_func, std::string get_func,
+                             std::string components_func, std::string get_func,
                              size_t n_pars, size_t n_dat, size_t n_comp,
                              const o2scl::tensor<> &params,
                              std::string options,
@@ -252,11 +252,11 @@ int gmm_python::set_function(std::string module, std::string set_func,
 
   // Setup the arguments to the python function
   if (verbose>1) {
-    std::cout << "  Making argument object for eval function."
+    std::cout << "  Making argument object for components function."
               << std::endl;
   }
-  p_eval_args=PyTuple_New(1);
-  if (p_eval_args==0) {
+  p_components_args=PyTuple_New(1);
+  if (p_components_args==0) {
     O2SCL_ERR2("Create arg tuple failed in ",
                "gmm_python::set_function().",
                o2scl::exc_efailed);
@@ -266,12 +266,12 @@ int gmm_python::set_function(std::string module, std::string set_func,
 
     // Load the python function
     if (verbose>1) {
-      std::cout << "  Loading python member function eval: "
-                << eval_func<< std::endl;
+      std::cout << "  Loading python member function components: "
+                << components_func<< std::endl;
     }
-    p_eval_func=PyObject_GetAttrString(p_instance,eval_func.c_str());
-    if (p_eval_func==0) {
-      O2SCL_ERR2("Get eval function failed in ",
+    p_components_func=PyObject_GetAttrString(p_instance,components_func.c_str());
+    if (p_components_func==0) {
+      O2SCL_ERR2("Get components function failed in ",
                  "gmm_python::set_function().",
                  o2scl::exc_efailed);
     }
@@ -314,10 +314,10 @@ int gmm_python::set_function(std::string module, std::string set_func,
 
     // Load the python function
     if (verbose>1) {
-      std::cout << "  Loading python function eval." << std::endl;
+      std::cout << "  Loading python function components." << std::endl;
     }
-    p_eval_func=PyObject_GetAttrString(p_module,eval_func.c_str());
-    if (p_eval_func==0) {
+    p_components_func=PyObject_GetAttrString(p_module,components_func.c_str());
+    if (p_components_func==0) {
       O2SCL_ERR2("Get function failed in ",
                  "gmm_python::set_function().",
                  o2scl::exc_efailed);
@@ -390,7 +390,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   }
 
   if (verbose>1) {
-    std::cout << p_set_func << " " << p_eval_func << " "
+    std::cout << p_set_func << " " << p_components_func << " "
               << p_get_func << std::endl;
     std::cout << "Done with gmm_python::set_function()."
               << std::endl;
@@ -399,7 +399,7 @@ int gmm_python::set_function(std::string module, std::string set_func,
   return 0;
 }
     
-int gmm_python::eval(const std::vector<double> &x,
+int gmm_python::components(const std::vector<double> &x,
                      std::vector<double> &y) const {
 
   if (x.size()!=n_params) {
@@ -409,7 +409,7 @@ int gmm_python::eval(const std::vector<double> &x,
   
   //import_array();
   
-  if (p_set_func==0 || p_eval_func==0) {
+  if (p_set_func==0 || p_components_func==0) {
     O2SCL_ERR2("No functions found in ",
                "gmm_python::operator().",
                o2scl::exc_efailed);
@@ -423,7 +423,7 @@ int gmm_python::eval(const std::vector<double> &x,
   PyObject *array_x=PyArray_SimpleNewFromData
     (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
       
-  int ret=PyTuple_SetItem(p_eval_args,0,array_x);
+  int ret=PyTuple_SetItem(p_components_args,0,array_x);
   if (ret!=0) {
     O2SCL_ERR2("Tuple set failed in ",
                "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -431,11 +431,11 @@ int gmm_python::eval(const std::vector<double> &x,
       
   // Call the python function
   if (verbose>1) {
-    std::cout << "  Calling python eval function." << std::endl;
+    std::cout << "  Calling python components function." << std::endl;
   }
-  PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
+  PyObject *result=PyObject_CallObject(p_components_func,p_components_args);
   if (result==0) {
-    O2SCL_ERR2("Function eval call failed in ",
+    O2SCL_ERR2("Function components call failed in ",
                "gmm_python::operator().",o2scl::exc_efailed);
   }
 
@@ -471,7 +471,7 @@ int gmm_python::get_python() {
 
   import_array();
   
-  if (p_set_func==0 || p_eval_func==0 || p_get_func==0) {
+  if (p_set_func==0 || p_components_func==0 || p_get_func==0) {
     O2SCL_ERR2("No functions found in ",
                "gmm_python::operator().",
                o2scl::exc_efailed);

@@ -67,7 +67,7 @@ namespace o2scl {
     PyObject *p_set_args;
 
     /// Function arguments
-    PyObject *p_eval_args;
+    PyObject *p_components_args;
 
     /// Function arguments
     PyObject *p_get_args;
@@ -76,7 +76,7 @@ namespace o2scl {
     PyObject *p_set_func;
 
     /// Python function
-    PyObject *p_eval_func;
+    PyObject *p_components_func;
 
     /// Python function
     PyObject *p_get_func;
@@ -100,7 +100,7 @@ namespace o2scl {
     /** \brief Specify the Python module and function
      */
     gmm_python(std::string module, std::string set_func,
-               std::string eval_func, std::string get_func,
+               std::string components_func, std::string get_func,
                size_t n_pars, size_t n_dat, size_t n_comp,
                const o2scl::tensor<> &params,
                std::string options="", 
@@ -121,16 +121,17 @@ namespace o2scl {
         cannot be virtual.
     */
     int set_function(std::string module, std::string set_func,
-                     std::string eval_func, std::string get_func,
+                     std::string components_func, std::string get_func,
                      size_t n_pars, size_t n_dat, size_t n_comp,
                      const o2scl::tensor<> &params,
                      std::string options="",
                      std::string class_name="", int v=0);
     
-    /** \brief Compute the function at point \c x and return the result
-     */
-    virtual int eval(const std::vector<double> &x,
-                     std::vector<double> &y) const;
+    /** \brief At point \c x, compute the components for 
+        each Gaussian in the mixture and place the result in \c y
+    */
+    virtual int components(const std::vector<double> &x,
+                           std::vector<double> &y) const;
     
     /** \brief Compute the function at point \c x and return the result
      */
