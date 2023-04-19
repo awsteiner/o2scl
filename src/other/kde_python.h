@@ -47,7 +47,7 @@ namespace o2scl {
 
   /** \brief Multidimensional interpolation interface for python
    */
-  template<class vec_t=boost::numeric::ublas::vector<double> >
+  template<class vec_t=std::vector<double> >
   class kde_python : public prob_dens_mdim<vec_t> {
     
   protected:
@@ -547,7 +547,7 @@ namespace o2scl {
                   << std::endl;
       }
 
-      return 0;
+      return dret;
     }
   
     /// The normalized density 

@@ -88,14 +88,23 @@ int main(void) {
     kde_python<> kp("o2sclpy","set_data_str","sample","log_density",2,N,
                     tin,bw_array,"verbose=0","kde_sklearn");
     //kp.verbose=2;
-    ubvector x(2);
-    for(size_t j=0;j<200;j++) {
+    vector<double> x(2);
+    for(size_t j=0;j<10;j++) {
       kp(x);
       cout << j << " ";
       cout.setf(ios::showpos);
       cout << x[0] << " " << x[1] << endl;
       cout.unsetf(ios::showpos);
     }
+    x[0]=0.7;
+    x[1]=0.5;
+    cout << kp.log_pdf(x) << endl;
+    x[0]=0.0;
+    x[1]=0.0;
+    cout << kp.log_pdf(x) << endl;
+    x[0]=-0.7;
+    x[1]=0.2;
+    cout << kp.log_pdf(x) << endl;
     
   }
     
