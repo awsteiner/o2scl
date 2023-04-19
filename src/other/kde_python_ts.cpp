@@ -85,7 +85,7 @@ int main(void) {
     uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
     vector<double> bw_array;
     ug.vector(bw_array);
-    kde_python<> kp("o2sclpy","set_data_str","sample","log_density",2,N,
+    kde_python<> kp("o2sclpy","set_data_str","sample","log_pdf",2,N,
                     tin,bw_array,"verbose=0","kde_sklearn");
     //kp.verbose=2;
     vector<double> x(2);

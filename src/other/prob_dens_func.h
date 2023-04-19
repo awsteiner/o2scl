@@ -2531,6 +2531,71 @@ namespace o2scl {
     }
     
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+           class mat_t=const_matrix_view_table<> >
+  class prob_dens_mdim_kde : public prob_dens_mdim<vec_t> {
+
+  protected:
+
+    size_t n_dim;
+    size_t n_points;
+    mat_t *dp;
+    
+  public:
+
+    prob_dens_mdim_kde() {
+      n_dim=0;
+      n_points=0;
+    }
+
+    int set_data(mat_t &data) {
+      n_dim=data.size1();
+      n_points=data.size2();
+      dp=&data;
+      return 0;
+    }
+
+    int 
+    
+    /// Return the dimensionality
+    virtual size_t dim() const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return 0;
+    }
+  
+    /// The normalized density 
+    virtual double pdf(const vec_t &x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return 0.0;
+    }
+  
+    /// The log of the normalized density 
+    virtual double log_pdf(const vec_t &x) const {
+      double val=pdf(x);
+      if (!std::isfinite(val) || val<0.0) {
+        O2SCL_ERR2("PDF not finite or negative in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      double val2=log(pdf(x));
+      if (!std::isfinite(val2)) {
+        std::cout << val << " " << val2 << std::endl;
+        O2SCL_ERR2("Log of PDF not finite in ",
+                   "prob_dens_mdim::log_pdf().",o2scl::exc_efailed);
+      }
+      return val2;
+    }
+  
+    /// Sample the distribution
+    virtual void operator()(vec_t &x) const {
+      O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
+      return;
+    }
+
+    
+  };
+#endif
   
 }
 
