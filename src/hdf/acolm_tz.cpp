@@ -158,7 +158,10 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     }
 
     pkde_obj.verbose=verbose;
-    kwargs kw(options);
+    kwargs kw;
+    if (options!="none" && options!="None") {
+      kw.set(options);
+    }
 
     // Copy the table data to a tensor for use in kde_python
     tensor<> tin;
@@ -178,15 +181,17 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),tin,
                             empty,((string)"verbose=")+o2scl::itos(verbose),
-                            "kde_scipy");
+                            "kde_scipy",2);
     } else {
       uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
       vector<double> bw_array;
       ug.vector(bw_array);
+      cout << "Going to set_function()." << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),tin,
                             bw_array,((string)"verbose=")+o2scl::itos(verbose),
-                            "kde_sklearn");
+                            "kde_sklearn",2);
+      cout << "Done with set_function()." << endl;
     }
     
     command_del(type);

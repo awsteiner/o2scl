@@ -107,7 +107,7 @@ namespace o2scl {
                std::string sample_func, std::string ld_func,
                size_t n_pars, size_t n_dat,
                const o2scl::tensor<> &params,
-               std::vector<double> bw_array,
+               std::vector<double> array,
                std::string options="", 
                std::string class_name="", int v=0)  {
                     
@@ -134,7 +134,7 @@ namespace o2scl {
 
       if (module.length()>0) {
         set_function(module,set_func,sample_func,ld_func,
-                     n_pars,n_dat,params,bw_array,options,class_name,v);
+                     n_pars,n_dat,params,array,options,class_name,v);
       }
     }      
 
@@ -233,7 +233,7 @@ namespace o2scl {
                      std::string sample_func, std::string ld_func,
                      size_t n_pars, size_t n_dat, 
                      const o2scl::tensor<> &params,
-                     std::vector<double> bw_array,
+                     std::vector<double> array,
                      std::string options="",
                      std::string class_name="", int v=0) {
   
@@ -265,7 +265,7 @@ namespace o2scl {
       
       // Import the user-specified module
       if (verbose>1) {
-        std::cout << "  Importing module." << std::endl;
+        std::cout << "  Importing module " << module << std::endl;
       }
       p_module=PyImport_Import(p_name);
       if (p_module==0) {
@@ -435,11 +435,11 @@ namespace o2scl {
       
       // Second argument to set function: the bandwidth array
       
-      npy_intp bw_params_dims[]={(npy_intp)(bw_array.size())};
-      PyObject *bw_array_in=PyArray_SimpleNewFromData
-        (1,bw_params_dims,NPY_DOUBLE,(void *)(&(bw_array[0])));
+      npy_intp extra_params_dims[]={(npy_intp)(array.size())};
+      PyObject *extra_array_in=PyArray_SimpleNewFromData
+        (1,extra_params_dims,NPY_DOUBLE,(void *)(&(array[0])));
       
-      int ret2=PyTuple_SetItem(p_set_args,1,bw_array_in);
+      int ret2=PyTuple_SetItem(p_set_args,1,extra_array_in);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
@@ -544,6 +544,54 @@ namespace o2scl {
   
       if (verbose>1) {
         std::cout << "Done in kde_python::log_pdf()."
+                  << std::endl;
+      }
+
+      return dret;
+    }
+  
+    /// The normalized density 
+    virtual double get_bandwidth() const {
+
+      // Load the python function
+      if (verbose>1) {
+        std::cout << "  Loading python member function get_bandwidth."
+                  << std::endl;
+      }
+      PyObject *p_gb_func=PyObject_GetAttrString(p_instance,"get_bandwidth");
+      if (p_gb_func==0) {
+        O2SCL_ERR2("Get get function failed in ",
+                   "kde_python::set_function().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (verbose>1) {
+        std::cout << "  Calling python gb function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_gb_func,0);
+      if (result==0) {
+        O2SCL_ERR2("Function gb call failed in ",
+                   "kde_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (verbose>1) {
+        std::cout << "  Obtaining output 1." << std::endl;
+      }
+      double dret=PyFloat_AsDouble(result);
+
+      if (verbose>1) {
+        std::cout << "  Decref result." << std::endl;
+      }
+      Py_DECREF(result);
+  
+      if (verbose>1) {
+        std::cout << "  Decref func." << std::endl;
+      }
+      Py_DECREF(p_gb_func);
+  
+      if (verbose>1) {
+        std::cout << "Done in kde_python::get_bandwidth()."
                   << std::endl;
       }
 

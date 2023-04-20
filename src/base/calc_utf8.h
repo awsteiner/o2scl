@@ -532,9 +532,9 @@ namespace o2scl {
 
           // ----------------------------------------------------------
           // This extracts a number from the expression, handling
-          // scientific notation. The idea here is that this code will
-          // handle both commas or periods, depending on locale, but
-          // this hasn't been tested.
+          // scientific notation. Note we need to presume commas
+          // separate function arguments, so a comma radix is not
+          // supported
 
           // True if a '+' or '-' has been read
           bool plus_minus=false;
@@ -543,7 +543,6 @@ namespace o2scl {
           
           while (i+1<expr.length() &&
                  (expr[i+1]=='.' ||
-                  //expr[i+1]==',' ||
                   isdigit(expr[i+1]) || expr[i+1]=='e' ||
                   expr[i+1]=='E' || (exponent && plus_minus==false &&
                                      (expr[i+1]=='+' ||

@@ -429,14 +429,31 @@ namespace o2scl {
   /** \brief Desc
    */
   class kwargs {
+    
+    /// Store the original string variables and values
     std::map<std::string,std::string> k;
+    
   public:
-    kwargs(std::string s);
+
+    /// Create an objection from the specified string
+    kwargs(std::string s="");
+
+    /// Set the object from the specified string
     void set(std::string s);
+
+    /// Get a bool variable named \c name
     bool get_bool(std::string name, bool def=false);
+
+    /// Get an integer variable named \c name
     int get_int(std::string name, int def=0);
+
+    /// Get a size_t variable named \c name
     size_t get_size_t(std::string name, size_t def=0);
+
+    /// Get a double variable named \c name
     double get_double(std::string name, double def=0.0);
+
+    /// Get a string variable named \c name
     std::string get_string(std::string name, std::string def="");
   };
   

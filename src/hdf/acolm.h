@@ -2774,7 +2774,7 @@ namespace o2scl_acol {
         
         Construct a KDE
 
-        Arguments: <column 1> [column 2] ...
+        Arguments: <options or 'none'> <column 1> [column 2] ...
         
         This creates an object of type <tt>prob_dens_mdim_kde</tt>
         based on the given columns of data in the table.
