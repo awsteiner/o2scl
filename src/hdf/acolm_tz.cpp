@@ -140,6 +140,65 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_kde(std::vector<std::string> &sv,
+                                bool itive_com) {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Not enough arguments for to-kde." << endl;
+    }
+
+    string options=sv[1];
+    
+    vector<string> col_names;
+    cout << "X columns: " << endl;
+    for(size_t i=2;i<sv.size();i++) {
+      col_names.push_back(sv[i]);
+      cout << i-2 << ": " << sv[i] << endl;
+    }
+
+    pkde_obj.verbose=verbose;
+    kwargs kw(options);
+
+    // Copy the table data to a tensor for use in kde_python
+    tensor<> tin;
+    vector<size_t> in_size={table_obj.get_nlines(),col_names.size()};
+    tin.resize(2,in_size);
+
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      for(size_t j=0;j<col_names.size();j++) {
+        vector<size_t> ix;
+        ix={i,j};
+        tin.get(ix)=table_obj.get(col_names[j],i);
+      }
+    }
+
+    if (kw.get_string("method")=="scipy") {
+      vector<double> empty;
+      pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
+                            col_names.size(),table_obj.get_nlines(),tin,
+                            empty,((string)"verbose=")+o2scl::itos(verbose),
+                            "kde_scipy");
+    } else {
+      uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
+      vector<double> bw_array;
+      ug.vector(bw_array);
+      pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
+                            col_names.size(),table_obj.get_nlines(),tin,
+                            bw_array,((string)"verbose=")+o2scl::itos(verbose),
+                            "kde_sklearn");
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("prob_dens_mdim_kde");
+    type="prob_dens_mdim_kde";
+    
+  }
+    
+  return 0;
+}
+
 int acol_manager::comm_to_pdma(std::vector<std::string> &sv,
                                bool itive_com) {
   if (type=="table") {

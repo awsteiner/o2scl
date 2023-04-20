@@ -175,6 +175,9 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
       cout << "Gaussian " << j << " has mean ";
       vector_out(std::cout,peak,true);
     }
+  } else if (type=="prob_dens_mdim_kde") {
+    cout << "prob_dens_mdim_kde name: " << obj_name << endl;
+    cout << "Dim: " << pkde_obj.dim() << endl;
   } else if (type=="tensor_grid") {
     cout << "tensor_grid name: " << obj_name << endl;
     size_t rk=tensor_grid_obj.get_rank();

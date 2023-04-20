@@ -97,6 +97,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("prob_dens_mdim_amr");
   type_list.push_back("prob_dens_mdim_gaussian");
   type_list.push_back("prob_dens_mdim_gmm");
+  type_list.push_back("prob_dens_mdim_kde");
   type_list.push_back("vec_vec_string");
   type_list.push_back("vec_vec_double");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
@@ -122,7 +123,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
       "to-hist","to-hist-2d","to-table3d","wstats",
-      "ser-hist-t3d","to-gaussian","to-pdma","to-gmm"
+      "ser-hist-t3d","to-gaussian","to-pdma","to-gmm","to-kde"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
@@ -174,6 +175,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   {
     vector<std::string> itmp={"sample","list"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_gmm",itmp));
+  }
+  {
+    vector<std::string> itmp={"sample","list"};
+    type_comm_list.insert(std::make_pair("prob_dens_mdim_kde",itmp));
   }
   {
     vector<std::string> itmp={"list","to-table3d","slice","to-table",
@@ -614,7 +619,7 @@ void acol_manager::command_add(std::string new_type) {
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
   } else if (new_type=="table") {
-    static const size_t narr=45;
+    static const size_t narr=46;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -745,6 +750,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-gmm","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gmm),both},
+       {0,"to-kde","",-1,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_kde),both},
        {0,"to-pdma","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_pdma),both},
@@ -1064,6 +1072,25 @@ void acol_manager::command_add(std::string new_type) {
          (this,&acol_manager::comm_sample),both}
       };
     if (narr!=type_comm_list["prob_dens_mdim_gmm"].size()) {
+      O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="prob_dens_mdim_kde") {
+    
+    static const size_t narr=2;
+    comm_option_s options_arr[narr]=
+      {
+        {0,"list","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_list),both},
+        {0,"sample","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sample),both}
+      };
+    if (narr!=type_comm_list["prob_dens_mdim_kde"].size()) {
       O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
                 o2scl::exc_esanity);
     }

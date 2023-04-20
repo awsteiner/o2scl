@@ -2542,6 +2542,8 @@ namespace o2scl {
     size_t n_dim;
     size_t n_points;
     mat_t *dp;
+    prob_dens_gaussian pdg;
+    double bw;
     
   public:
 
@@ -2557,8 +2559,6 @@ namespace o2scl {
       return 0;
     }
 
-    int 
-    
     /// Return the dimensionality
     virtual size_t dim() const {
       O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);

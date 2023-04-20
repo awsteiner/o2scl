@@ -435,7 +435,7 @@ namespace o2scl {
       
       // Second argument to set function: the bandwidth array
       
-      npy_intp bw_params_dims[]={bw_array.size()};
+      npy_intp bw_params_dims[]={(npy_intp)(bw_array.size())};
       PyObject *bw_array_in=PyArray_SimpleNewFromData
         (1,bw_params_dims,NPY_DOUBLE,(void *)(&(bw_array[0])));
       

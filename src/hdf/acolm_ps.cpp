@@ -3538,6 +3538,34 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
 
+  } else if (type=="prob_dens_mdim_kde") {
+    
+    if (sv.size()<2) {
+      cerr << "Not enough arguments to sample." << endl;
+      return exc_efailed;
+    }
+
+    table_obj.clear();
+    
+    int N=o2scl::stoi(sv[1]);
+
+    std::cout << "Constructing " << N << " samples of the KDE." << std::endl;
+
+    for(size_t j=0;j<pkde_obj.dim();j++) {
+      table_obj.new_column(((string)"c_")+o2scl::szttos(j));
+    }
+
+    for(int i=0;i<N;i++) {
+      std::vector<double> x(pkde_obj.dim());
+      pkde_obj(x);
+      table_obj.line_of_data(x.size(),x);
+    }
+
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+
   }
   
   return 0;

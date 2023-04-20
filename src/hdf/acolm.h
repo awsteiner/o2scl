@@ -46,6 +46,7 @@
 #include <o2scl/tensor_grid.h>
 #include <o2scl/uniform_grid.h>
 #include <o2scl/slack_messenger.h>
+#include <o2scl/kde_python.h>
 #include <o2scl/rng.h>
 
 #ifdef O2SCL_READLINE
@@ -279,6 +280,7 @@ namespace o2scl_acol {
     o2scl::prob_dens_mdim_amr<> pdma_obj;
     o2scl::prob_dens_mdim_gaussian<> pdmg_obj;
     o2scl::prob_dens_mdim_gmm<> pgmm_obj;
+    o2scl::kde_python<> pkde_obj;
     //@}
     
     /** \brief True if we should run interactive mode after parsing
@@ -2764,6 +2766,20 @@ namespace o2scl_acol {
         based on the given columns of data in the table.
      */
     virtual int comm_to_gmm(std::vector<std::string> &sv,
+                                 bool itive_com);
+    
+    /** \brief Construct a KDE
+
+        For objects of type table:
+        
+        Construct a KDE
+
+        Arguments: <column 1> [column 2] ...
+        
+        This creates an object of type <tt>prob_dens_mdim_kde</tt>
+        based on the given columns of data in the table.
+     */
+    virtual int comm_to_kde(std::vector<std::string> &sv,
                                  bool itive_com);
     
     /** \brief Construct a AMR-based probability distribution
