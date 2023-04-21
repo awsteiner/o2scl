@@ -550,7 +550,7 @@ namespace o2scl {
       return dret;
     }
   
-    /// The normalized density 
+    /// Get the bandwidth
     virtual double get_bandwidth() const {
 
       // Load the python function
