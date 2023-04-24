@@ -1103,7 +1103,7 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief
+    /** \brief Write the Gaussian to a generic output file
      */
     virtual int write_generic(std::ostream &fout) {
       fout << ndim << std::endl;

@@ -294,7 +294,7 @@ namespace o2scl {
     
   protected:
 
-    /// Desc
+    /// Maximum refinement level
     size_t max_refine;
     
     template <typename func_t, class fp_t>
@@ -572,16 +572,15 @@ namespace o2scl {
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::integ_err() failed."
-                    << std::endl;
+          std::cout << "Function inte_multip_double_exp_boost::"
+                    << "integ_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
                     << err << " " << this->tol_rel << " "
-                    << L1norm_loc
-                    << std::endl;
+                    << L1norm_loc << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
+                        "inte_multip_double_exp_boost::integ_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -598,8 +597,8 @@ namespace o2scl {
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_double_exp_boost::integ_iu_err() failed."
-                    << std::endl;
+          std::cout << "Function inte_double_exp_boost::"
+                    << "integ_iu_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
                     << err << " " << this->tol_rel << " "
                     << L1norm_loc
@@ -625,16 +624,15 @@ namespace o2scl {
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::integ_il_err() failed."
-                    << std::endl;
+          std::cout << "Function inte_multip_double_exp_boost::"
+                    << "integ_il_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
                     << err << " " << this->tol_rel << " "
-                    << L1norm_loc
-                    << std::endl;
+                    << L1norm_loc << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_il_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
+                        "inte_multip_double_exp_boost::integ_il_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -651,16 +649,15 @@ namespace o2scl {
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::integ_i_err() failed."
-                    << std::endl;
+          std::cout << "Function inte_multip_double_exp_boost::"
+                    << "integ_i_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
                     << err << " " << this->tol_rel << " "
-                    << L1norm_loc
-                    << std::endl;
+                    << L1norm_loc << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_i_err().",o2scl::exc_efailed,
-                        this->err_nonconv);
+                        "inte_multip_double_exp_boost::integ_i_err().",
+                        o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -893,7 +890,8 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_multip(): set "
+        std::cout << "inte_multip_double_exp_boost::"
+                  << "integ_iu_err_multip(): set "
                   << "integ_tol to: " << integ_tol << std::endl;
       }
       
@@ -1123,8 +1121,8 @@ namespace o2scl {
                   << integ_tol << std::endl;
       }
     
-      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_iu_err_multip().",
+      O2SCL_CONV2_RET("Failed to compute with requested accuracy in ",
+                      "inte_multip_double_exp_boost::integ_iu_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
@@ -1149,8 +1147,8 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): set "
-                  << "integ_tol to: " << integ_tol << std::endl;
+        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+                  << "set integ_tol to: " << integ_tol << std::endl;
       }
       
       // Demand that the function evaluations are higher precision

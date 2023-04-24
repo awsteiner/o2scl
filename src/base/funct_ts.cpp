@@ -117,8 +117,8 @@ int main(void) {
   t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
 
   // A fully templated parameter defined by a function 
-  fm2.eval_tol_err([f3](auto &&t) mutable
-  { return f3.func(t,f3.param_f(t)); },1.0e-4,val,err);
+  fm2.eval_tol_err([f3](auto &&tx) mutable
+  { return f3.func(tx,f3.param_f(tx)); },1.0e-4,val,err);
   t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
   
   t.report();

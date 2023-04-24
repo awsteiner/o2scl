@@ -568,12 +568,27 @@ namespace o2scl {
           bool exponent=false;
           
           while (i+1<expr.length() &&
+
+                 // Allow a decimal
                  (expr[i+1]=='.' ||
-                  isdigit(expr[i+1]) || expr[i+1]=='e' ||
-                  expr[i+1]=='E' || (exponent && plus_minus==false &&
-                                     (expr[i+1]=='+' ||
-                                      expr[i+1]=='-')))) {
-            if (expr[i+1]=='e' || expr[i+1]=='E') exponent=true;
+
+                  // Allow any digits
+                  isdigit(expr[i+1]) ||
+
+                  // Allow lower or uppercase E
+                  expr[i+1]=='e' ||
+                  expr[i+1]=='E' ||
+
+                  // Allow a single plus or minus, but only if
+                  // immediately following a lower or uppercase E
+                  (exponent==true && plus_minus==false &&
+                   (expr[i+1]=='+' || expr[i+1]=='-')))) {
+            
+            if (expr[i+1]=='e' || expr[i+1]=='E') {
+              exponent=true;
+            } else {
+              exponent=false;
+            }
             if (expr[i+1]=='+' || expr[i+1]=='-') plus_minus=true;
             str_num=str_num+expr[i+1];
             i++;

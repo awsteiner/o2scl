@@ -456,12 +456,12 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Desc
+    /** \brief Internal version of integration function
      */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, 
-                      double target_tol, double integ_tol, double func_tol) {
+                      fp_t &res, fp_t &err, double target_tol,
+                      double integ_tol, double func_tol) {
 
       if (b==std::numeric_limits<double>::infinity()) {
         if (a==-std::numeric_limits<double>::infinity()) {

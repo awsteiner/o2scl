@@ -3262,7 +3262,7 @@ namespace o2scl {
       \endcomment
   */
   template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
-    class matrix_view_vec_vec : public matrix_view {
+  class matrix_view_vec_vec : public matrix_view {
     
   protected:
     

@@ -51,7 +51,7 @@ namespace o2scl {
 
   public:
 
-    /// Desc
+    /// Result type for operator()
     typedef unsigned long int result_type;
 
     /** \brief Initialize the random number generator with type \c gtype 

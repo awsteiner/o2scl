@@ -29,7 +29,7 @@
 #include <o2scl/find_constants.h>
 
 /** \file funct_to_fp.h
-    \brief Desc
+    \brief Functions which convert strings to floating point numbers
 */
 
 namespace o2scl {

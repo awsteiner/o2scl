@@ -44,26 +44,22 @@ int main(void) {
 
   calc_utf8<> calc;
   calc.verbose=3;
-  cout << "1." << endl;
   calc.compile("1.0e-100<2.0e-100",0);
-  cout << "2." << endl;
   double cret=calc.eval(0);
-  cout << "3." << endl;
   t.test_gen(cret==1,"calc1");
   cout << calc.RPN_to_string() << endl;
-  cout << "4." << endl;
   calc.compile("-(10)",0);
-  cout << "5." << endl;
   double cret2=calc.eval(0);
-  cout << "6." << endl;
   t.test_gen(cret2==-10.0,"calc2");
-  cout << "7." << endl;
   calc.compile("((10+1)*2+3)*2+1",0);
   cout << calc.RPN_to_string() << endl;
 
-  cout << "10." << endl;
+  // 
+  calc.compile("1e3+2e3",0);
+  cret=calc.eval(0);
+  t.test_gen(cret==3000,"calc2.1");
+  
   calc.compile("(3 && true) == true",0);
-  cout << "11." << endl;
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==true,"calc3");
   calc.compile("(3 && 0) == true",0);
@@ -72,11 +68,8 @@ int main(void) {
   calc.compile("(3 || 0) == true",0);
   cout << calc.RPN_to_string() << endl;
   t.test_gen(calc.eval(0)==true,"calc5");
-  cout << "12." << endl;
   calc.compile("(false || 0) == true",0);
-  cout << "13." << endl;
   cout << calc.RPN_to_string() << endl;
-  cout << "14." << endl;
   t.test_gen(calc.eval(0)==false,"calc6");
 
   // Test new functions

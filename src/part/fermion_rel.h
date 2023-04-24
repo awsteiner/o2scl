@@ -327,7 +327,7 @@ namespace o2scl {
      */
     inte_adapt_cern it2;
 
-    /** \brief Desc
+    /** \brief Relative tolerance for integrals
      */
     double tol_rel;
 
@@ -847,7 +847,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief Desc
+    /** \brief Evaluate the energy in the degenerate limit
      */
     int eval_deg_energy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                         fp_t ul, fp_t &res, fp_t &err) {
@@ -890,7 +890,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief Desc
+    /** \brief Evalulate the entropy in the degenerate limit
      */
     int eval_deg_entropy(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ll, fp_t ul, fp_t &res, fp_t &err) {
@@ -931,7 +931,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief Desc
+    /** \brief Evaluate the pressure in the degenerate limit
      */
     int eval_deg_pressure(fp_t T, fp_t y, fp_t eta, fp_t mot,
                          fp_t ul, fp_t &res, fp_t &err) {

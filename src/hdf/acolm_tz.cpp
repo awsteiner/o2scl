@@ -61,7 +61,7 @@ int acol_manager::comm_y_name
  */
 
 int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
-                                bool itive_com) {
+                                   bool itive_com) {
   if (type=="table") {
 
     if (sv.size()<3) {
@@ -84,6 +84,38 @@ int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
     clear_obj();
     command_add("prob_dens_mdim_gaussian");
     type="prob_dens_mdim_gaussian";
+
+    /*
+
+      This doesn't work because we need to create a 
+      matrix_view_vec_vec temporary which can't go out 
+      of scope
+      
+      } else if (type=="vec_vec_double") {
+      
+      if (sv.size()<3) {
+      cerr << "Not enough arguments for to-gaussian." << endl;
+      }
+      
+      int n_dim=sv.size()-1;
+      vector<size_t> vec_list;
+      string_to_uint_list(sv[1],vec_list);
+      cout << "X columns: ";
+      vector_out(cout,vec_list,true);
+      
+      vector<vector<double>> vvd2;
+      for(size_t i=0;i<vec_list.size();i++) {
+      vvd2.push_back(vvdouble_obj[vec_list[i]]);
+      }
+      
+      pdmg_obj.set<matrix_view_vec_vec>(vvd2.size(),vvd2[0].size(),vvd2);
+      
+      command_del(type);
+      clear_obj();
+      command_add("prob_dens_mdim_gaussian");
+      type="prob_dens_mdim_gaussian";
+
+    */
     
   }
     
@@ -141,7 +173,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_to_kde(std::vector<std::string> &sv,
-                                bool itive_com) {
+                              bool itive_com) {
   if (type=="table") {
 
     if (sv.size()<3) {
@@ -162,24 +194,23 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     if (options!="none" && options!="None") {
       kw.set(options);
     }
-
+    
     // Copy the table data to a tensor for use in kde_python
-    tensor<> tin;
     vector<size_t> in_size={table_obj.get_nlines(),col_names.size()};
-    tin.resize(2,in_size);
+    tensor_obj.resize(2,in_size);
 
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       for(size_t j=0;j<col_names.size();j++) {
         vector<size_t> ix;
         ix={i,j};
-        tin.get(ix)=table_obj.get(col_names[j],i);
+        tensor_obj.get(ix)=table_obj.get(col_names[j],i);
       }
     }
 
     if (kw.get_string("method")=="scipy") {
       vector<double> empty;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),tin,
+                            col_names.size(),table_obj.get_nlines(),tensor_obj,
                             empty,((string)"verbose=")+o2scl::itos(verbose),
                             "kde_scipy",2);
     } else {
@@ -188,7 +219,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       ug.vector(bw_array);
       cout << "Going to set_function()." << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),tin,
+                            col_names.size(),table_obj.get_nlines(),tensor_obj,
                             bw_array,((string)"verbose=")+o2scl::itos(verbose),
                             "kde_sklearn",2);
       cout << "Done with set_function()." << endl;

@@ -426,7 +426,7 @@ namespace o2scl {
   /// Copy string \c s to character array \c x of length \c len
   void string_to_char_array(std::string s, char *x, int len);
 
-  /** \brief Desc
+  /** \brief Keyword argument class
    */
   class kwargs {
     
