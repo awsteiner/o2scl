@@ -2778,7 +2778,7 @@ namespace o2scl_acol {
         
         This creates an object of type <tt>prob_dens_mdim_kde</tt>
         based on the given columns of data in the table.
-     */
+    */
     virtual int comm_to_kde(std::vector<std::string> &sv,
                                  bool itive_com);
     

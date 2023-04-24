@@ -382,8 +382,9 @@ namespace o2scl {
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
       }
-      
+
       if (err/abs(res)>integ_tol) {
+        std::cout << "Ret 1" << std::endl;
         return 1;
       }
       return 0;
@@ -946,7 +947,6 @@ namespace o2scl {
         set_nsub(1000);
         ret=integ_iu_err_int(func,a_d,res_d,err_d,
                              target_tol,integ_tol,func_tol);
-        
         if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
@@ -971,7 +971,6 @@ namespace o2scl {
         set_nsub(1000);
         ret=integ_iu_err_int(func,a_ld,res_ld,err_ld,
                              target_tol,integ_tol,func_tol);
-        
         if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
@@ -1028,7 +1027,6 @@ namespace o2scl {
         ret=integ_iu_err_int(func,a_cdf35,res_cdf35,
                              err_cdf35,target_tol,
                              integ_tol,func_tol);
-        
         if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);

@@ -413,17 +413,6 @@ void o2scl_fermion_rel_set_deg_limit(void *vptr, double v) {
   return;
 }
 
-double o2scl_fermion_rel_get_exp_limit(void *vptr) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  return ptr->exp_limit;
-}
-
-void o2scl_fermion_rel_set_exp_limit(void *vptr, double v) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  ptr->exp_limit=v;
-  return;
-}
-
 double o2scl_fermion_rel_get_upper_limit_fac(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   return ptr->upper_limit_fac;

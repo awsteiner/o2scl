@@ -168,10 +168,6 @@ double o2scl_fermion_rel_get_deg_limit(void *vptr);
 
 void o2scl_fermion_rel_set_deg_limit(void *vptr, double v);
 
-double o2scl_fermion_rel_get_exp_limit(void *vptr);
-
-void o2scl_fermion_rel_set_exp_limit(void *vptr, double v);
-
 double o2scl_fermion_rel_get_upper_limit_fac(void *vptr);
 
 void o2scl_fermion_rel_set_upper_limit_fac(void *vptr, double v);

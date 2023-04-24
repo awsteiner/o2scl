@@ -249,9 +249,12 @@ int main(int argc, char *argv[]) {
       fr.verbose=2;
       frld.verbose=2;
       fr25.verbose=2;
+      fr.verify_ti=true;
+      frld.verify_ti=true;
+      fr25.verify_ti=true;
 
       int lmot=3;
-      int lpsi=-3;
+      int lpsi=-1;
       
       double psi=pow(10.0,((double)lpsi));
       double mot=pow(10.0,((double)lmot));
@@ -273,9 +276,9 @@ int main(int argc, char *argv[]) {
       f25.mu=psi_25*T25+f25.m;
       
       fr.calc_mu(f,T);
-      frld.fri.verbose=2;
-      frld.fri.it.verbose=2;
-      frld.fri.it2.verbose=1;
+      //frld.fri.verbose=2;
+      //frld.fri.it.verbose=2;
+      //frld.fri.it2.verbose=1;
       frld.calc_mu(fld,Tld);
       fr25.calc_mu(f25,T25);
       
@@ -319,8 +322,6 @@ int main(int argc, char *argv[]) {
       fr.verbose=0;
       frld.verbose=0;
       fr25.verbose=0;
-
-      exit(-1);
       
     }
     

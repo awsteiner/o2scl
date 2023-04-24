@@ -68,6 +68,12 @@
 
 #include <boost/math/special_functions/bessel.hpp>
 #include <boost/math/special_functions/sqrt1pm1.hpp>
+#ifdef O2SCL_NEVER_DEFINED
+#include <boost/math/special_functions/hypergeometric_1F0.hpp>
+#include <boost/math/special_functions/hypergeometric_0F1.hpp>
+#include <boost/math/special_functions/hypergeometric_2F0.hpp>
+#include <boost/math/special_functions/hypergeometric_1F1.hpp>
+#endif
 
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
@@ -325,10 +331,30 @@ namespace o2scl {
               evaluation.push(erf(right));
             } else if (!str.compare("erfc")) {
               evaluation.push(erfc(right));
+#ifdef O2SCL_OSX              
             } else if (!str.compare("lgamma")) {
-              //evaluation.push(lgamma(right));
+              evaluation.push(lgamma(right));
             } else if (!str.compare("tgamma")) {
-              //evaluation.push(tgamma(right));
+              evaluation.push(tgamma(right));
+#ifdef O2SCL_NEVER_DEFINED
+            } else if (!str.compare("hg_1F0")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_1F0(next,right));
+            } else if (!str.compare("hg_0F1")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_0F1(next,right));
+            } else if (!str.compare("hg_2F0")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_2F0(next,right));
+            } else if (!str.compare("hg_1F1")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_1F1(next,right));
+#endif
+#endif
             } else if (!str.compare("sqrt1pm1")) {
               evaluation.push(boost::math::sqrt1pm1(right));
             } else if (!str.compare("atan2")) {
@@ -360,7 +386,6 @@ namespace o2scl {
               evaluation.pop();
               if (next2>=0.5) evaluation.push(next);
               else evaluation.push(right);
-              //#ifdef O2SCL_OSX
             } else if (!str.compare("cyl_bessel_i")) {
               fp_t next=evaluation.top();
               evaluation.pop();
@@ -377,6 +402,7 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(boost::math::cyl_neumann(next,right));
+              //#ifdef O2SCL_OSX
               /*
                 } else if (!str.compare("sph_bessel")) {
                 fp_t next=evaluation.top();

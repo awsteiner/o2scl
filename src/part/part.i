@@ -153,7 +153,6 @@ class fermion_rel
 - bool err_nonconv
 - double min_psi
 - double deg_limit
-- double exp_limit
 - double upper_limit_fac
 - double deg_entropy_fac
 - int verbose
