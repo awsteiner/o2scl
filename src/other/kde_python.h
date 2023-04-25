@@ -85,9 +85,20 @@ namespace o2scl {
     /// Number of points
     size_t n_points;
 
+    /// Data
+    o2scl::tensor<> data;
+    
   public:
 
     kde_python()  {
+      
+      if (o2scl_settings.py_initialized==false) {
+        if (verbose>1) {
+          std::cout << "Running py_init()." << std::endl;
+        }
+        o2scl_settings.py_init();
+      }
+      
       p_set_func=0;
       p_sample_func=0;
       p_set_args=0;
@@ -106,7 +117,7 @@ namespace o2scl {
     kde_python(std::string module, std::string set_func,
                std::string sample_func, std::string ld_func,
                size_t n_pars, size_t n_dat,
-               const o2scl::tensor<> &params,
+               o2scl::tensor<> &params,
                std::vector<double> array,
                std::string options="", 
                std::string class_name="", int v=0)  {
@@ -232,7 +243,7 @@ namespace o2scl {
     int set_function(std::string module, std::string set_func,
                      std::string sample_func, std::string ld_func,
                      size_t n_pars, size_t n_dat, 
-                     const o2scl::tensor<> &params,
+                     o2scl::tensor<> &params,
                      std::vector<double> array,
                      std::string options="",
                      std::string class_name="", int v=0) {
@@ -403,29 +414,32 @@ namespace o2scl {
         }
       }
 
+      // Swap the tensor data
+      swap(data,params);
+      
       // AWS, 2/21/23: I'm not sure why it has to be done here and not in
       // a different function, but if I don't do it here I get a seg fault.
       //void *vp=o2scl_settings.py_import_array();
       import_array();
 
-      if (params.get_size(0)!=n_points) {
+      if (data.get_size(0)!=n_points) {
         O2SCL_ERR("Input data does not have correct number of rows.",
                   o2scl::exc_einval);
       }
-      if (params.get_size(1)!=n_params) {
+      if (data.get_size(1)!=n_params) {
         O2SCL_ERR("Input data does not have correct number of columns.",
                   o2scl::exc_einval);
       }
 
       // First argument to set function: the data
       
-      npy_intp params_dims[]={(npy_intp)params.get_size(0),
-        (npy_intp)params.get_size(1)};
+      npy_intp data_dims[]={(npy_intp)data.get_size(0),
+        (npy_intp)data.get_size(1)};
       if (verbose>1) {
         std::cout << "kde_python::operator():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
-        (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
+        (2,data_dims,NPY_DOUBLE,(void *)(&(data.get_data()[0])));
          
       int ret=PyTuple_SetItem(p_set_args,0,array_in);
       if (ret!=0) {
@@ -435,9 +449,9 @@ namespace o2scl {
       
       // Second argument to set function: the bandwidth array
       
-      npy_intp extra_params_dims[]={(npy_intp)(array.size())};
+      npy_intp extra_data_dims[]={(npy_intp)(array.size())};
       PyObject *extra_array_in=PyArray_SimpleNewFromData
-        (1,extra_params_dims,NPY_DOUBLE,(void *)(&(array[0])));
+        (1,extra_data_dims,NPY_DOUBLE,(void *)(&(array[0])));
       
       int ret2=PyTuple_SetItem(p_set_args,1,extra_array_in);
       if (ret2!=0) {
@@ -475,8 +489,6 @@ namespace o2scl {
       }
 
       if (verbose>1) {
-        std::cout << p_set_func << " " << p_sample_func << " "
-                  << p_ld_func << std::endl;
         std::cout << "Done with kde_python::set_function()."
                   << std::endl;
       }

@@ -196,21 +196,22 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     }
     
     // Copy the table data to a tensor for use in kde_python
+    tensor<> ttemp;
     vector<size_t> in_size={table_obj.get_nlines(),col_names.size()};
-    tensor_obj.resize(2,in_size);
+    ttemp.resize(2,in_size);
 
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       for(size_t j=0;j<col_names.size();j++) {
         vector<size_t> ix;
         ix={i,j};
-        tensor_obj.get(ix)=table_obj.get(col_names[j],i);
+        ttemp.get(ix)=table_obj.get(col_names[j],i);
       }
     }
 
     if (kw.get_string("method")=="scipy") {
       vector<double> empty;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),tensor_obj,
+                            col_names.size(),table_obj.get_nlines(),ttemp,
                             empty,((string)"verbose=")+o2scl::itos(verbose),
                             "kde_scipy",2);
     } else {
@@ -219,7 +220,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       ug.vector(bw_array);
       cout << "Going to set_function()." << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),tensor_obj,
+                            col_names.size(),table_obj.get_nlines(),ttemp,
                             bw_array,((string)"verbose=")+o2scl::itos(verbose),
                             "kde_sklearn",2);
       cout << "Done with set_function()." << endl;

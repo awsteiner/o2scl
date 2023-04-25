@@ -68,8 +68,11 @@ int main(void) {
   hf.close();
   
 #ifdef O2SCL_PYTHON
-
+  
   if (true) {
+
+    cout << "-------------------------------------------------"
+         << endl;
     
     tensor<> tin;
     vector<size_t> in_size={N,2};
@@ -110,6 +113,9 @@ int main(void) {
     
   if (true) {
     
+    cout << "-------------------------------------------------"
+         << endl;
+    
     tensor<> tin;
     vector<size_t> in_size={N,2};
     tin.resize(2,in_size);
@@ -121,11 +127,9 @@ int main(void) {
       tin.get(ix)=tab.get(1,j);
     }
 
-    uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
-    vector<double> bw_array;
-    ug.vector(bw_array);
+    vector<double> weight_array;
     kde_python<> kp("o2sclpy","set_data_str","sample","log_pdf",2,N,
-                    tin,bw_array,"verbose=0","kde_scipy",2);
+                    tin,weight_array,"verbose=0","kde_scipy",2);
     cout << kp.get_bandwidth() << endl;
     vector<double> x(2);
     for(size_t j=0;j<10;j++) {

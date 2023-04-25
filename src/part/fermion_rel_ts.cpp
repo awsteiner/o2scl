@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
     cpp_dec_float_25 maxld=0.0;
     int ret;
 
-    if (true) {
+    if (false) {
       
       fr.verbose=2;
       frld.verbose=2;
@@ -399,6 +399,9 @@ int main(int argc, char *argv[]) {
 
       }
     }
+
+    t.test_abs(max,0.0,8.0e-13,"calibrate_new");
+    t.test_abs(static_cast<double>(maxld),0.0,1.0e-16,"calibrate_new ld");
 
   }
 

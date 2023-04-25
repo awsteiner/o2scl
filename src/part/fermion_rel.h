@@ -585,7 +585,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      if (true) {
+      if (false) {
         int ix, ix2;
         ix=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->density_fun(u,y,eta); },
@@ -642,7 +642,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for energy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      if (true) {
+      if (false) {
         int ix, ix2;
         ix=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->energy_fun(u,y,eta); },
@@ -700,7 +700,7 @@ namespace o2scl {
         std::cout << "Calling non-degenerate integrator for entropy density "
                   << "with tolerance: " << tol_rel << std::endl;
       }
-      if (true) {
+      if (false) {
         int ix, ix2;
         ix=it.integ_iu_err_multip([this,y,eta](auto &&u) mutable {
           return this->entropy_fun(u,y,eta); },
@@ -867,8 +867,6 @@ namespace o2scl {
         ix2=it2.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
           return this->deg_energy_fun(k,T,y,eta,mot); },
           zero,ul,res2,err2,tol_rel/10);
-        std::cout << res << " " << res2 << " "
-                  << res-res2 << std::endl;
         if (abs(res-res2)/abs(res)>tol_rel) {
           std::cout << ix << " " << ix2 << " " << tol_rel << std::endl;
           std::cout << o2scl::dtos(res,0) << std::endl;
@@ -908,8 +906,6 @@ namespace o2scl {
         ix2=it2.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
           return this->deg_entropy_fun(k,T,y,eta,mot); },
           ll,ul,res2,err2,tol_rel/100);
-        std::cout << res << " " << res2 << " "
-                  << res-res2 << std::endl;
         if (abs(res-res2)/abs(res)>tol_rel) {
           std::cout << ix << " " << ix2 << " " << tol_rel << std::endl;
           std::cout << o2scl::dtos(res,0) << std::endl;
@@ -951,8 +947,6 @@ namespace o2scl {
         ix2=it2.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
           return this->deg_pressure_fun(k,T,y,eta,mot,false); },
           zero,ul,res2,err2,tol_rel/10);
-        std::cout << res << " " << res2 << " "
-                  << res-res2 << std::endl;
         if (abs(res-res2)/abs(res)>tol_rel) {
           std::cout << ix << " " << ix2 << " " << tol_rel << std::endl;
           std::cout << o2scl::dtos(res,0) << std::endl;

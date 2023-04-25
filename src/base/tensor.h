@@ -759,6 +759,18 @@ namespace o2scl {
     }
     //@}
 
+    /// Desc
+    friend void swap(tensor &t1, tensor &t2) {
+
+      using std::swap;
+
+      swap(t1.rk,t2.rk);
+      swap(t1.size,t2.size);
+      swap(t1.data,t2.data);
+    
+      return;
+    }
+    
     /// \name Get functions
     //@{
     /// Get the element indexed by \c index
