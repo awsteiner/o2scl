@@ -73,6 +73,7 @@ int main(void) {
 
     cout << "-------------------------------------------------"
          << endl;
+    cout << "sklearn." << endl;
     
     tensor<> tin;
     vector<size_t> in_size={N,2};
@@ -115,6 +116,7 @@ int main(void) {
     
     cout << "-------------------------------------------------"
          << endl;
+    cout << "Scipy." << endl;
     
     tensor<> tin;
     vector<size_t> in_size={N,2};
@@ -128,6 +130,51 @@ int main(void) {
     }
 
     vector<double> weight_array;
+    kde_python<> kp("o2sclpy","set_data_str","sample","log_pdf",2,N,
+                    tin,weight_array,"verbose=0","kde_scipy",2);
+    cout << kp.get_bandwidth() << endl;
+    vector<double> x(2);
+    for(size_t j=0;j<10;j++) {
+      kp(x);
+      cout << j << " ";
+      cout.setf(ios::showpos);
+      cout << x[0] << " " << x[1] << endl;
+      cout.unsetf(ios::showpos);
+    }
+    x[0]=0.7;
+    x[1]=0.5;
+    cout << kp.log_pdf(x) << endl;
+    x[0]=0.0;
+    x[1]=0.0;
+    cout << kp.log_pdf(x) << endl;
+    x[0]=-0.7;
+    x[1]=0.2;
+    cout << kp.log_pdf(x) << endl;
+    
+  }
+    
+  if (true) {
+    
+    cout << "-------------------------------------------------"
+         << endl;
+    cout << "Scipy with weights." << endl;
+    
+    tensor<> tin;
+    vector<size_t> in_size={N,2};
+    tin.resize(2,in_size);
+    for(size_t j=0;j<N;j++) {
+      vector<size_t> ix;
+      ix={j,0};
+      tin.get(ix)=tab.get(0,j);
+      ix={j,1};
+      tin.get(ix)=tab.get(1,j);
+    }
+
+    vector<double> weight_array;
+    for(size_t j=0;j<N;j++) {
+      if (tab.get(0,j)<0.0) weight_array.push_back(3.0);
+      else weight_array.push_back(1.0);
+    }
     kde_python<> kp("o2sclpy","set_data_str","sample","log_pdf",2,N,
                     tin,weight_array,"verbose=0","kde_scipy",2);
     cout << kp.get_bandwidth() << endl;

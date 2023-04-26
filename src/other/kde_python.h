@@ -287,12 +287,13 @@ namespace o2scl {
 
       if (class_name.length()>0) {
         if (verbose>1) {
-          std::cout << "  Obtaining python class." << std::endl;
+          std::cout << "  Obtaining python class " << class_name
+                    << std::endl;
         }
         p_class=PyObject_GetAttrString(p_module,class_name.c_str());
         if (p_class==0) {
           O2SCL_ERR2("Get class failed in ",
-                     "emulator_python::set().",o2scl::exc_efailed);
+                     "kde_python::set().",o2scl::exc_efailed);
         }
         
         // Create an instance of the class
@@ -436,7 +437,7 @@ namespace o2scl {
       npy_intp data_dims[]={(npy_intp)data.get_size(0),
         (npy_intp)data.get_size(1)};
       if (verbose>1) {
-        std::cout << "kde_python::operator():" << std::endl;
+        std::cout << "kde_python::set_function():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
         (2,data_dims,NPY_DOUBLE,(void *)(&(data.get_data()[0])));
@@ -444,7 +445,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_set_args,0,array_in);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "kde_python::set_function().",o2scl::exc_efailed);
       }
       
       // Second argument to set function: the bandwidth array
@@ -456,7 +457,7 @@ namespace o2scl {
       int ret2=PyTuple_SetItem(p_set_args,1,extra_array_in);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "kde_python::set_function().",o2scl::exc_efailed);
       }
       
       // Third argument to set function: the options string
@@ -468,13 +469,13 @@ namespace o2scl {
       PyObject *p_options=PyUnicode_FromString(options.c_str());
       if (p_options==0) {
         O2SCL_ERR2("String creation failed in ",
-                   "emulator_python::set().",o2scl::exc_efailed);
+                   "kde_python::set().",o2scl::exc_efailed);
       }
       
       int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "kde_python::set_function().",o2scl::exc_efailed);
       }
 
       // Call the python set function
@@ -485,7 +486,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
       if (result==0) {
         O2SCL_ERR2("Function set call failed in ",
-                   "kde_python::operator().",o2scl::exc_efailed);
+                   "kde_python::set_function().",o2scl::exc_efailed);
       }
 
       if (verbose>1) {
@@ -512,17 +513,15 @@ namespace o2scl {
                   o2scl::exc_einval);
       }
   
-      //import_array();
-  
       if (p_set_func==0 || p_ld_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "kde_python::operator().",
+                   "kde_python::log_pdf().",
                    o2scl::exc_efailed);
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (verbose>1) {
-        std::cout << "kde_python::operator():" << std::endl;
+        std::cout << "kde_python::log_pdf():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
       PyObject *array_x=PyArray_SimpleNewFromData
@@ -531,7 +530,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_ld_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "kde_python::log_pdf().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -541,7 +540,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_ld_func,p_ld_args);
       if (result==0) {
         O2SCL_ERR2("Function ld call failed in ",
-                   "kde_python::operator().",o2scl::exc_efailed);
+                   "kde_python::log_pdf().",o2scl::exc_efailed);
       }
 
       if (verbose>1) {
@@ -584,7 +583,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_gb_func,0);
       if (result==0) {
         O2SCL_ERR2("Function gb call failed in ",
-                   "kde_python::operator().",o2scl::exc_efailed);
+                   "kde_python::get_bandwidth().",o2scl::exc_efailed);
       }
 
       if (verbose>1) {
@@ -627,17 +626,22 @@ namespace o2scl {
     }
   
     /// Sample the distribution
-    virtual void operator()(vec_t &x) const {
-  
-      if (p_set_func==0 || p_sample_func==0) {
+    void* operator2(vec_t &x) const {
+
+      import_array();
+
+      if (p_sample_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "gmm_python::operator().",
+                   "gmm_python::operator2().",
                    o2scl::exc_efailed);
       }
       
       // Call the python function
       if (verbose>1) {
         std::cout << "  Calling python sample function." << std::endl;
+        std::cout << p_sample_func << std::endl;
+        std::cout << data.get_rank() << " " << data.get_size(0) << " "
+                  << data.get_size(1) << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_sample_func,0);
       if (result==0) {
@@ -645,9 +649,11 @@ namespace o2scl {
                    "gmm_python::operator().",o2scl::exc_efailed);
       }
       
+      //std::cout << "Here " << result << " " << verbose << std::endl;
+      
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "gmm_python::operator().",o2scl::exc_efailed);
+                   "gmm_python::operator2().",o2scl::exc_efailed);
       }
       
       if (verbose>1) {
@@ -668,11 +674,18 @@ namespace o2scl {
       Py_DECREF(result);
       
       if (verbose>1) {
-        std::cout << "Done in gmm_python::operator()."
+        std::cout << "Done in gmm_python::operator2()."
                   << std::endl;
       }
 
+      return 0;
     }
+
+    virtual void operator()(vec_t &x) const {
+      void *vp=operator2(x);
+      return;
+    }
+    
     
   private:
 

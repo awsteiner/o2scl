@@ -434,8 +434,6 @@ int interpm_python::eval(const std::vector<double> &x,
               o2scl::exc_einval);
   }
   
-  //import_array();
-  
   if (p_set_func==0 || p_eval_func==0 || p_eval_unc_func==0) {
     O2SCL_ERR2("No functions found in ",
                "interpm_python::operator().",
@@ -508,8 +506,6 @@ int interpm_python::eval_unc(const std::vector<double> &x,
     O2SCL_ERR("Output vector does not have correct size.",
               o2scl::exc_einval);
   }
-  
-  //import_array();
   
   if (p_set_func==0 || p_eval_unc_func==0) {
     O2SCL_ERR2("No functions found in ",

@@ -455,6 +455,9 @@ namespace o2scl {
 
     /// Get a string variable named \c name
     std::string get_string(std::string name, std::string def="");
+
+    /// Return true if \c name is found
+    bool is_set(std::string name);
   };
   
   

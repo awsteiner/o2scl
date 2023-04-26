@@ -3555,10 +3555,16 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
       table_obj.new_column(((string)"c_")+o2scl::szttos(j));
     }
 
+    size_t n_params=pkde_obj.dim();
+    //std::cout << "dim: " << n_params << endl;
+    //std::cout << "bw: " << pkde_obj.get_bandwidth() << endl;
     for(int i=0;i<N;i++) {
-      std::vector<double> x(pkde_obj.dim());
+      //std::cout << "Iere: 1 " << i << std::endl;
+      std::vector<double> x(n_params);
       pkde_obj(x);
-      table_obj.line_of_data(x.size(),x);
+      //std::cout << "Iere: 3 " << i << std::endl;
+      table_obj.line_of_data(n_params,x);
+      //std::cout << "Iere: 2 " << i << std::endl;
     }
 
     command_del(type);

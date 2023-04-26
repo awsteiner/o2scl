@@ -183,13 +183,15 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     string options=sv[1];
     
     vector<string> col_names;
-    cout << "X columns: " << endl;
+    cout << "Columns used for KDE: " << endl;
     for(size_t i=2;i<sv.size();i++) {
       col_names.push_back(sv[i]);
       cout << i-2 << ": " << sv[i] << endl;
     }
 
-    pkde_obj.verbose=verbose;
+    int kde_verbose=verbose-1;
+    if (kde_verbose<0) kde_verbose=0;
+    pkde_obj.verbose=kde_verbose;
     kwargs kw;
     if (options!="none" && options!="None") {
       kw.set(options);
@@ -209,21 +211,31 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     }
 
     if (kw.get_string("method")=="scipy") {
-      vector<double> empty;
+      vector<double> weights;
+      if (kw.is_set("weights")) {
+        std::string wcol=kw.get_string("weights");
+        cout << "Using weights from column: " << wcol << endl;
+        for(size_t i=0;i<table_obj.get_nlines();i++) {
+          weights.push_back(table_obj.get(wcol,i));
+        }
+      }
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),ttemp,
-                            empty,((string)"verbose=")+o2scl::itos(verbose),
-                            "kde_scipy",2);
+                            weights,((string)"verbose=")+
+                            o2scl::itos(kde_verbose),
+                            "kde_scipy",kde_verbose);
     } else {
       uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
       vector<double> bw_array;
       ug.vector(bw_array);
-      cout << "Going to set_function()." << endl;
+      //cout << "Going to set_function()." << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),ttemp,
-                            bw_array,((string)"verbose=")+o2scl::itos(verbose),
-                            "kde_sklearn",2);
-      cout << "Done with set_function()." << endl;
+                            bw_array,((string)"verbose=")+
+                            o2scl::itos(kde_verbose),"kde_sklearn",
+                            kde_verbose);
+                            
+      //cout << "Done with set_function()." << endl;
     }
     
     command_del(type);

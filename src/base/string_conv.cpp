@@ -765,6 +765,12 @@ double kwargs::get_double(std::string name, double def) {
   return def;
 }
 
+bool kwargs::is_set(std::string name) {
+  std::map<std::string,std::string>::iterator it=k.find(name);
+  if (it==k.end()) return false;
+  return true;
+}
+
 std::string kwargs::get_string(std::string name, std::string def) {
   std::map<std::string,std::string>::iterator it;
   for(it=k.begin();it!=k.end();it++) {
