@@ -110,6 +110,7 @@ namespace o2scl {
       
       n_params=0;
       n_points=0;
+      verbose=0;
     }
     
     /** \brief Specify the Python module and function
@@ -257,6 +258,7 @@ namespace o2scl {
 
       n_params=n_pars;
       n_points=n_dat;
+      verbose=v;
       
       // Get the Unicode name of the user-specified module
       if (verbose>1) {
@@ -648,8 +650,6 @@ namespace o2scl {
         O2SCL_ERR2("Function sample call failed in ",
                    "gmm_python::operator().",o2scl::exc_efailed);
       }
-      
-      //std::cout << "Here " << result << " " << verbose << std::endl;
       
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",

@@ -2436,6 +2436,13 @@ namespace o2scl {
       pdmg.clear();
       return;
     }
+
+    /** \brief Return the number of Gaussians, or 0 if
+        the object is empty
+    */
+    size_t get_n_components() {
+      return pdmg.size();
+    }
     
     /** \brief Read the Gaussian mixture from an input file
      */
@@ -2533,6 +2540,7 @@ namespace o2scl {
   };
 
 #ifdef O2SCL_NEVER_DEFINED
+  
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_t=const_matrix_view_table<> >
   class prob_dens_mdim_kde : public prob_dens_mdim<vec_t> {

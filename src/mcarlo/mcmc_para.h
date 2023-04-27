@@ -1138,8 +1138,8 @@ namespace o2scl {
               while (!inner_done && !main_done) {
               
                 if (verbose>=2) {
-                  scr_out << "Iteration " << mcmc_iters[it] << " of "
-                          << max_iters << " thread " << it << " "
+                  scr_out << "Iteration: " << mcmc_iters[it] << " of "
+                          << max_iters << " thread " << it << " accept: "
                           << n_accept[it] << " " << n_reject[it]
                           << std::endl;
                 }
