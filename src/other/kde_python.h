@@ -93,7 +93,7 @@ namespace o2scl {
     kde_python()  {
       
       if (o2scl_settings.py_initialized==false) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Running py_init()." << std::endl;
         }
         o2scl_settings.py_init();
@@ -110,7 +110,6 @@ namespace o2scl {
       
       n_params=0;
       n_points=0;
-      verbose=0;
     }
     
     /** \brief Specify the Python module and function
@@ -123,10 +122,10 @@ namespace o2scl {
                std::string options="", 
                std::string class_name="", int v=0)  {
                     
-      verbose=v;
+      this->verbose=v;
       
       if (o2scl_settings.py_initialized==false) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Running py_init()." << std::endl;
         }
         o2scl_settings.py_init();
@@ -158,59 +157,59 @@ namespace o2scl {
     /** \brief Free the associated memory
      */
     void free() {
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Starting kde_python::free()." << std::endl;
       }
       if (p_set_func!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref set_func." << std::endl;
         }
         Py_DECREF(p_set_func);
       }
       if (p_sample_func!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref sample_func." << std::endl;
         }
         Py_DECREF(p_sample_func);
       }
       if (p_ld_func!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref ld_func." << std::endl;
         }
         Py_DECREF(p_ld_func);
       }
       if (p_set_args!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref set_args." << std::endl;
         }
         Py_DECREF(p_set_args);
       }
       if (p_ld_args!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref ld_args." << std::endl;
         }
         Py_DECREF(p_ld_args);
       }
       if (p_instance!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref instance." << std::endl;
         }
         Py_DECREF(p_instance);
       }
       if (p_class!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref class." << std::endl;
         }
         Py_DECREF(p_class);
       }
       if (p_module!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref module." << std::endl;
         }
         Py_DECREF(p_module);
       }
       if (p_name!=0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "Decref name." << std::endl;
         }
         Py_DECREF(p_name);
@@ -227,14 +226,10 @@ namespace o2scl {
       n_params=0;
       n_points=0;
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Done in kde_python::free()." << std::endl;
       }
     }      
-
-    
-    /// Verbosity parameter
-    int verbose;
 
     /** \brief Specify the python and the parameters
 
@@ -258,10 +253,10 @@ namespace o2scl {
 
       n_params=n_pars;
       n_points=n_dat;
-      verbose=v;
+      this->verbose=v;
       
       // Get the Unicode name of the user-specified module
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Python version: "
                   << o2scl_settings.py_version() << std::endl;
         std::cout << "Staring kde_python::set_function()."
@@ -277,7 +272,7 @@ namespace o2scl {
       }
       
       // Import the user-specified module
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Importing module " << module << std::endl;
       }
       p_module=PyImport_Import(p_name);
@@ -288,7 +283,7 @@ namespace o2scl {
       }
 
       if (class_name.length()>0) {
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Obtaining python class " << class_name
                     << std::endl;
         }
@@ -299,7 +294,7 @@ namespace o2scl {
         }
         
         // Create an instance of the class
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python class." << std::endl;
         }
         if (PyCallable_Check(p_class)==false) {
@@ -308,7 +303,7 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
         
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python class instance." << std::endl;
         }
         p_instance=PyObject_CallObject(p_class,0);
@@ -320,7 +315,7 @@ namespace o2scl {
       }
       
       // Setup the arguments to the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
@@ -332,7 +327,7 @@ namespace o2scl {
       }
 
       // Setup the arguments to the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Making argument object for log_pdf function."
                   << std::endl;
       }
@@ -346,7 +341,7 @@ namespace o2scl {
       if (class_name.length()>0) {
 
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python member function sample: "
                     << sample_func<< std::endl;
         }
@@ -358,7 +353,7 @@ namespace o2scl {
         }
         
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python member function get: "
                     << ld_func<< std::endl;
         }
@@ -370,7 +365,7 @@ namespace o2scl {
         }
         
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python member function set: "
                     << set_func << std::endl;
         }
@@ -384,7 +379,7 @@ namespace o2scl {
       } else {
         
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python function set." << std::endl;
         }
         p_set_func=PyObject_GetAttrString(p_module,set_func.c_str());
@@ -395,7 +390,7 @@ namespace o2scl {
         }
 
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python function sample." << std::endl;
         }
         p_sample_func=PyObject_GetAttrString(p_module,sample_func.c_str());
@@ -406,7 +401,7 @@ namespace o2scl {
         }
 
         // Load the python function
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Loading python function get." << std::endl;
         }
         p_ld_func=PyObject_GetAttrString(p_module,ld_func.c_str());
@@ -438,7 +433,7 @@ namespace o2scl {
       
       npy_intp data_dims[]={(npy_intp)data.get_size(0),
         (npy_intp)data.get_size(1)};
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "kde_python::set_function():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
@@ -464,7 +459,7 @@ namespace o2scl {
       
       // Third argument to set function: the options string
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Creating python unicode for string: "
                   << options.length() << " " << options << std::endl;
       }
@@ -482,7 +477,7 @@ namespace o2scl {
 
       // Call the python set function
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Calling python set function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
@@ -491,7 +486,7 @@ namespace o2scl {
                    "kde_python::set_function().",o2scl::exc_efailed);
       }
 
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Done with kde_python::set_function()."
                   << std::endl;
       }
@@ -522,7 +517,7 @@ namespace o2scl {
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "kde_python::log_pdf():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
@@ -536,7 +531,7 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Calling python ld function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_ld_func,p_ld_args);
@@ -545,17 +540,17 @@ namespace o2scl {
                    "kde_python::log_pdf().",o2scl::exc_efailed);
       }
 
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Obtaining output 1." << std::endl;
       }
       dret=PyFloat_AsDouble(result);
 
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Decref result." << std::endl;
       }
       Py_DECREF(result);
   
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Done in kde_python::log_pdf()."
                   << std::endl;
       }
@@ -567,7 +562,7 @@ namespace o2scl {
     virtual double get_bandwidth() const {
 
       // Load the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Loading python member function get_bandwidth."
                   << std::endl;
       }
@@ -579,7 +574,7 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Calling python gb function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_gb_func,0);
@@ -588,22 +583,22 @@ namespace o2scl {
                    "kde_python::get_bandwidth().",o2scl::exc_efailed);
       }
 
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Obtaining output 1." << std::endl;
       }
       double dret=PyFloat_AsDouble(result);
 
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Decref result." << std::endl;
       }
       Py_DECREF(result);
   
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Decref func." << std::endl;
       }
       Py_DECREF(p_gb_func);
   
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Done in kde_python::get_bandwidth()."
                   << std::endl;
       }
@@ -639,7 +634,7 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Calling python sample function." << std::endl;
         std::cout << p_sample_func << std::endl;
         std::cout << data.get_rank() << " " << data.get_size(0) << " "
@@ -656,24 +651,24 @@ namespace o2scl {
                    "gmm_python::operator2().",o2scl::exc_efailed);
       }
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Obtaining output 1." << std::endl;
       }
       void *vp=PyArray_DATA((PyArrayObject *)result);
       double *dp=(double *)vp;
       for(size_t i=0;i<n_params;i++) {
         x[i]=dp[i];
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  i,y[i]: " << i << " " << x[i] << std::endl;
         }
       }
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "  Decref result." << std::endl;
       }
       Py_DECREF(result);
       
-      if (verbose>1) {
+      if (this->verbose>1) {
         std::cout << "Done in gmm_python::operator2()."
                   << std::endl;
       }
