@@ -759,7 +759,7 @@ namespace o2scl {
     }
     //@}
 
-    /// Desc
+    /// Swap two tensors
     friend void swap(tensor &t1, tensor &t2) {
 
       using std::swap;
