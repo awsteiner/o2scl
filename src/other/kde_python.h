@@ -99,10 +99,11 @@ namespace o2scl {
         o2scl_settings.py_init();
       }
       
-      p_set_func=0;
+      p_ld_func=0;
       p_sample_func=0;
-      p_set_args=0;
+      p_set_func=0;
       p_ld_args=0;
+      p_set_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -130,11 +131,11 @@ namespace o2scl {
         }
         o2scl_settings.py_init();
       }
-      p_set_func=0;
-      p_sample_func=0;
       p_ld_func=0;
-      p_set_args=0;
+      p_sample_func=0;
+      p_set_func=0;
       p_ld_args=0;
+      p_set_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -160,11 +161,11 @@ namespace o2scl {
       if (this->verbose>1) {
         std::cout << "Starting kde_python::free()." << std::endl;
       }
-      if (p_set_func!=0) {
+      if (p_ld_func!=0) {
         if (this->verbose>1) {
-          std::cout << "Decref set_func." << std::endl;
+          std::cout << "Decref ld_func." << std::endl;
         }
-        Py_DECREF(p_set_func);
+        Py_DECREF(p_ld_func);
       }
       if (p_sample_func!=0) {
         if (this->verbose>1) {
@@ -172,23 +173,23 @@ namespace o2scl {
         }
         Py_DECREF(p_sample_func);
       }
-      if (p_ld_func!=0) {
+      if (p_set_func!=0) {
         if (this->verbose>1) {
-          std::cout << "Decref ld_func." << std::endl;
+          std::cout << "Decref set_func." << std::endl;
         }
-        Py_DECREF(p_ld_func);
-      }
-      if (p_set_args!=0) {
-        if (this->verbose>1) {
-          std::cout << "Decref set_args." << std::endl;
-        }
-        Py_DECREF(p_set_args);
+        Py_DECREF(p_set_func);
       }
       if (p_ld_args!=0) {
         if (this->verbose>1) {
           std::cout << "Decref ld_args." << std::endl;
         }
         Py_DECREF(p_ld_args);
+      }
+      if (p_set_args!=0) {
+        if (this->verbose>1) {
+          std::cout << "Decref set_args." << std::endl;
+        }
+        Py_DECREF(p_set_args);
       }
       if (p_instance!=0) {
         if (this->verbose>1) {
@@ -215,9 +216,11 @@ namespace o2scl {
         Py_DECREF(p_name);
       }
 
-      p_set_func=0;
+      p_ld_func=0;
       p_sample_func=0;
+      p_set_func=0;
       p_ld_args=0;
+      p_set_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -249,12 +252,17 @@ namespace o2scl {
                    "kde_python().",o2scl::exc_einval);
       }
       
-      free();
-
       n_params=n_pars;
       n_points=n_dat;
       this->verbose=v;
       
+      free();
+
+      // AWS, 2/21/23: I'm not sure why it has to be done here and not in
+      // a different function, but if I don't do it here I get a seg fault.
+      //void *vp=o2scl_settings.py_import_array();
+      import_array();
+
       // Get the Unicode name of the user-specified module
       if (this->verbose>1) {
         std::cout << "Python version: "
@@ -313,7 +321,7 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
       }
-      
+
       // Setup the arguments to the python function
       if (this->verbose>1) {
         std::cout << "  Making argument object for set function."
@@ -415,11 +423,6 @@ namespace o2scl {
       // Swap the tensor data
       swap(data,params);
       
-      // AWS, 2/21/23: I'm not sure why it has to be done here and not in
-      // a different function, but if I don't do it here I get a seg fault.
-      //void *vp=o2scl_settings.py_import_array();
-      import_array();
-
       if (data.get_size(0)!=n_points) {
         O2SCL_ERR("Input data does not have correct number of rows.",
                   o2scl::exc_einval);
@@ -629,7 +632,7 @@ namespace o2scl {
 
       if (p_sample_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "gmm_python::operator2().",
+                   "kde_python::operator2().",
                    o2scl::exc_efailed);
       }
       
@@ -643,12 +646,12 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_sample_func,0);
       if (result==0) {
         O2SCL_ERR2("Function sample call failed in ",
-                   "gmm_python::operator().",o2scl::exc_efailed);
+                   "kde_python::operator().",o2scl::exc_efailed);
       }
       
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "gmm_python::operator2().",o2scl::exc_efailed);
+                   "kde_python::operator2().",o2scl::exc_efailed);
       }
       
       if (this->verbose>1) {
@@ -669,7 +672,7 @@ namespace o2scl {
       Py_DECREF(result);
       
       if (this->verbose>1) {
-        std::cout << "Done in gmm_python::operator2()."
+        std::cout << "Done in kde_python::operator2()."
                   << std::endl;
       }
 
