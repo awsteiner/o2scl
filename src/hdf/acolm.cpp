@@ -177,7 +177,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("prob_dens_mdim_gmm",itmp));
   }
   {
-    vector<std::string> itmp={"sample","list"};
+    vector<std::string> itmp={"sample","list","to-table","to-table3d"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_kde",itmp));
   }
   {
@@ -1080,12 +1080,18 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="prob_dens_mdim_kde") {
     
-    static const size_t narr=2;
+    static const size_t narr=4;
     comm_option_s options_arr[narr]=
       {
         {0,"list","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},
+        {0,"to-table","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_table),both},
+        {0,"to-table3d","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_table3d),both},
         {0,"sample","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_sample),both}

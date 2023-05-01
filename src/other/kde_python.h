@@ -149,12 +149,13 @@ namespace o2scl {
                      n_pars,n_dat,params,array,options,class_name,v);
       }
     }      
-
-
+    
+    /** \brief Free memory associated with the KDE
+     */
     virtual ~kde_python() {
       free();
     }      
-  
+    
     /** \brief Free the associated memory
      */
     void free() {
@@ -215,7 +216,7 @@ namespace o2scl {
         }
         Py_DECREF(p_name);
       }
-
+      
       p_ld_func=0;
       p_sample_func=0;
       p_set_func=0;
@@ -233,9 +234,15 @@ namespace o2scl {
         std::cout << "Done in kde_python::free()." << std::endl;
       }
     }      
-
+    
+    /** \brief Get the data
+     */
+    const o2scl::tensor<> &get_data() {
+      return data;
+    }
+    
     /** \brief Specify the python and the parameters
-
+        
         This function is called by the constructor and thus
         cannot be virtual.
     */
@@ -247,6 +254,10 @@ namespace o2scl {
                      std::string options="",
                      std::string class_name="", int v=0) {
   
+      this->verbose=v;
+
+      free();
+      
       if (params.get_rank()!=2) {
         O2SCL_ERR2("Invalid rank for input tensors in ",
                    "kde_python().",o2scl::exc_einval);
@@ -254,9 +265,14 @@ namespace o2scl {
       
       n_params=n_pars;
       n_points=n_dat;
-      this->verbose=v;
-      
-      free();
+      if (n_pars==0) {
+        O2SCL_ERR2("Invalid number of parameters in ",
+                   "kde_python().",o2scl::exc_einval);
+      }
+      if (n_dat==0) {
+        O2SCL_ERR2("Invalid number of data points in ",
+                   "kde_python().",o2scl::exc_einval);
+      }
 
       // AWS, 2/21/23: I'm not sure why it has to be done here and not in
       // a different function, but if I don't do it here I get a seg fault.
@@ -424,10 +440,16 @@ namespace o2scl {
       swap(data,params);
       
       if (data.get_size(0)!=n_points) {
+        std::cout << "Sizes: " << data.get_size(0) << " "
+                  << data.get_size(1) << " " 
+                  << n_points << " " << n_params << std::endl;
         O2SCL_ERR("Input data does not have correct number of rows.",
                   o2scl::exc_einval);
       }
       if (data.get_size(1)!=n_params) {
+        std::cout << "Sizes: " << data.get_size(0) << " "
+                  << data.get_size(1) << " " 
+                  << n_points << " " << n_params << std::endl;
         O2SCL_ERR("Input data does not have correct number of columns.",
                   o2scl::exc_einval);
       }
@@ -625,7 +647,11 @@ namespace o2scl {
       return val2;
     }
   
-    /// Sample the distribution
+    /** \brief Sample the distribution
+        
+        This is a void * version of <tt>operator()</tt> which
+        doesn't cause problems with the import_array() macro.
+     */
     void* operator2(vec_t &x) const {
 
       import_array();
@@ -679,6 +705,7 @@ namespace o2scl {
       return 0;
     }
 
+    /// Sample the distribution
     virtual void operator()(vec_t &x) const {
       void *vp=operator2(x);
       return;

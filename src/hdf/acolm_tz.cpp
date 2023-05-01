@@ -219,6 +219,8 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
           weights.push_back(table_obj.get(wcol,i));
         }
       }
+      cout << "Herez: " << col_names.size() << " "
+           << table_obj.get_nlines() << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),ttemp,
                             weights,((string)"verbose=")+
@@ -228,14 +230,11 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
       vector<double> bw_array;
       ug.vector(bw_array);
-      //cout << "Going to set_function()." << endl;
       pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
                             col_names.size(),table_obj.get_nlines(),ttemp,
                             bw_array,((string)"verbose=")+
                             o2scl::itos(kde_verbose),"kde_sklearn",
                             kde_verbose);
-                            
-      //cout << "Done with set_function()." << endl;
     }
     
     command_del(type);
@@ -527,10 +526,86 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     command_add("table");
     type="table";
     
+  } else if (type=="prob_dens_mdim_kde") {
+    
+    if (pkde_obj.dim()!=1) {
+      cerr << "Command to-table only works on a 1-dimensional KDE" << endl;
+      return 1;
+    }
+    
+    table_obj.clear();
+    
+    const o2scl::tensor<> t=pkde_obj.get_data();
+
+    // Get x_min and x_max
+    double x_min, x_max;
+    vector<size_t> ix(1);
+    
+    vector<double> v;
+    for(size_t i=0;i<t.get_size(0);i++) {
+      ix[0]=i;
+      v.push_back(t.get(ix));
+    }
+    vector_minmax_value(v.size(),v,x_min,x_max);
+
+    // Approximate y_min and y_max
+    vector<double> x_arr(1);
+    x_arr[0]=x_min;
+    double y_min=pkde_obj.pdf(x_arr);
+    x_arr[0]=x_max;
+    double y_max=pkde_obj.pdf(x_arr);
+    double dx=(x_max-x_min)/10;
+    x_arr[0]=x_min+dx;
+    for(size_t i=0;i<10;i++) {
+      double y=pkde_obj.pdf(x_arr);
+      if (y<y_min) y_min=y;
+      if (y>y_max) y_max=y;
+      x_arr[0]+=dx;
+    }
+
+    // Determine the x and y-values at the boundaries
+    double x_left=x_min, x_right=x_max;
+    x_arr[0]=x_left;
+    double y_left=pkde_obj.pdf(x_arr);
+    x_arr[0]=x_right;
+    double y_right=pkde_obj.pdf(x_arr);
+
+    // There may be significant probability at the boundaries, so
+    // try to extend them outwards if needed to capture the
+    // full distribution
+    size_t j=0;
+    while (y_left>y_max/1.0e3 && j<10) {
+      x_left-=dx;
+      x_arr[0]=x_left;
+      y_left=pkde_obj.pdf(x_arr);
+      j++;
+    }
+    j=0;
+    while (y_right>y_max/1.0e3 && j<10) {
+      x_right+=dx;
+      x_arr[0]=x_right;
+      y_right=pkde_obj.pdf(x_arr);
+      j++;
+    }
+
+    // Now create the table based on a uniform grid
+    table_obj.line_of_names("x y");
+    
+    dx=(x_right-x_left)/200;
+    for(x_arr[0]=x_left;x_arr[0]<x_right+dx/2.0;x_arr[0]+=dx) {
+      double line[2]={x_arr[0],pkde_obj.pdf(x_arr)};
+      table_obj.line_of_data(2,line);
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+    
   } else if (type=="tensor_grid") {
     
     size_t rank=tensor_grid_obj.get_rank();
-
+    
     vector<string> in, pr;
     pr.push_back("Index to vary");
     pr.push_back("Grid name");
@@ -612,7 +687,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
         table_obj.line_of_data(line.size(),line);
       }
     }
-
+    
     command_del(type);
     clear_obj();
     command_add("table");
@@ -678,6 +753,60 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
 
     hist_2d_obj.copy_to_table3d(table3d_obj,xname,yname,wname);
     
+    command_del(type);
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+    
+  } else if (type=="prob_dens_mdim_kde") {
+    
+    if (pkde_obj.dim()!=2) {
+      cerr << "Command to-table only works on a 2-dimensional KDE" << endl;
+      return 1;
+    }
+    
+    table3d_obj.clear();
+
+    const o2scl::tensor<> t=pkde_obj.get_data();
+
+    // Get x_min and x_max for both coordinates
+    double x_min[2], x_max[2];
+    size_t N=t.get_size(0);
+    vector<size_t> ix;
+    ix[0]=0;
+    ix[1]=0;
+    x_min[0]=t.get(ix);
+    x_max[0]=t.get(ix);
+    ix[1]=1;
+    x_min[1]=t.get(ix);
+    x_max[1]=t.get(ix);
+    for(size_t i=1;i<N;i++) {
+      ix[0]=i;
+      ix[1]=0;
+      double val=t.get(ix);
+      if (val<x_min[0]) x_min[0]=val;
+      if (val>x_max[0]) x_max[0]=val;
+      ix[1]=1;
+      val=t.get(ix);
+      if (val<x_min[1]) x_min[1]=val;
+      if (val>x_max[1]) x_max[1]=val;
+    }
+
+    uniform_grid_end<double> ugx(x_min[0],x_max[0],49);
+    uniform_grid_end<double> ugy(x_min[1],x_max[1],49);
+
+    table3d_obj.set_xy("x",ugx,"y",ugy);
+    table3d_obj.new_slice("z");
+    
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        vector<double> xx(2);
+        xx[0]=table3d_obj.get_grid_x(i);
+        xx[1]=table3d_obj.get_grid_y(j);
+        table3d_obj.set(i,j,"z",pkde_obj.pdf(xx));
+      }
+    }
+
     command_del(type);
     clear_obj();
     command_add("table3d");

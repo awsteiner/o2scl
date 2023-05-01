@@ -839,14 +839,17 @@ namespace o2scl {
     
     typedef boost::numeric::ublas::vector_slice<
       boost::numeric::ublas::vector<data_t> > ubvector_slice;
+    typedef boost::numeric::ublas::vector_slice<
+      const boost::numeric::ublas::vector<data_t> > const_ubvector_slice;
     typedef boost::numeric::ublas::slice slice;
 
     /// \name Slice function
     //@{
+#ifdef O2SCL_NEVER_DEFINED
     /** \brief Fix all but one index to create a vector
 
-        This fixes all of the indices to the values given in \c index
-        except for the index number \c ix, and returns the
+        This function fixes all of the indices to the values given in
+        \c index except for the index number \c ix, and returns the
         corresponding vector, whose length is equal to the size of the
         tensor in that index. The value <tt>index[ix]</tt> is ignored.
 
@@ -886,6 +889,33 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Fix all but one index to create a vector (const version)
+
+        See documentation for \ref vector_slice().
+    */
+    template<class size_vec_t> 
+    const const_ubvector_slice
+    const_vector_slice(size_t ix, const size_vec_t &index)
+      const {
+      if (ix+1>rk) {
+        O2SCL_ERR((((std::string)"Specified index ")+szttos(ix)+
+                   " greater than or equal to rank "+szttos(rk)+
+                   " in tensor::vector_slice()").c_str(),
+                  exc_eindex);
+      }
+      size_t start;
+      if (ix==0) start=0;
+      else start=index[0];
+      for(size_t i=1;i<rk;i++) {
+        start*=size[i];
+        if (i!=ix) start+=index[i];
+      }
+      size_t stride=1;
+      for(size_t i=ix+1;i<rk;i++) stride*=size[i];
+      return const_ubvector_slice(data,slice(start,stride,size[ix]));
+    }
+#endif
+    
 #ifdef O2SCL_NEVER_DEFINED
 
     /** \brief Fix all but two indices to create a matrix

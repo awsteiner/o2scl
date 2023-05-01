@@ -2915,6 +2915,14 @@ namespace o2scl_acol {
         "rep", "low", "high", "wgt". In order, for each bin,
         each row stores the bin representative, the lower edge,
         the upper edge, and the bin weight. 
+
+        For objects of type prob_dens_mdim_kde:
+
+        Convert to a \c prob_dens_mdim_kde object to a \c table object.
+
+        Arguments: (No arguments.)
+        
+        This function creates a new table...
     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
@@ -3024,6 +3032,14 @@ namespace o2scl_acol {
         name> <y points> <slice name></tt>
 
         Select two indices and convert to a table3d object.
+
+        For objects of type prob_dens_mdim_kde:
+
+        Convert to a \c prob_dens_mdim_kde object to a \c table3d object.
+
+        Arguments: (No arguments.)
+        
+        This function creates a new table3d...
     */
     virtual int comm_to_table3d(std::vector<std::string> &sv, bool itive_com);
 

@@ -52,6 +52,15 @@ int main(void) {
   t.test_gen(arr.total_size()==3,"R1 size.");
   arr.resize(0,i1);
 
+#ifdef O2SCL_NEVER_DEFINED
+  {
+    vector<size_t> ix(1);
+    tensor<>::ubvector_slice sl=arr.vector_slice(0,ix);
+    tensor<>::const_ubvector_slice sl2=arr.const_vector_slice(0,ix);
+    exit(-1);
+  }
+#endif  
+
   // Test a rank two tensor
   tensor<> mat;
   size_t i2[2], j2[2];
