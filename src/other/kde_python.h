@@ -524,12 +524,10 @@ namespace o2scl {
     virtual size_t dim() const {
       return n_params;
     }
-  
-    /// The normalized density 
-    virtual double log_pdf(const vec_t &x) const {
 
-      double dret;
-      
+    /// The normalized density 
+    void *log_pdf_internal(const vec_t &x, double &dout) const {
+
       if (x.size()!=n_params) {
         O2SCL_ERR("Input vector does not have correct size.",
                   o2scl::exc_einval);
@@ -541,6 +539,8 @@ namespace o2scl {
                    o2scl::exc_efailed);
       }
 
+      import_array();
+      
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (this->verbose>1) {
         std::cout << "kde_python::log_pdf():" << std::endl;
@@ -548,7 +548,7 @@ namespace o2scl {
       }
       PyObject *array_x=PyArray_SimpleNewFromData
         (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
-      
+
       int ret=PyTuple_SetItem(p_ld_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
@@ -568,7 +568,7 @@ namespace o2scl {
       if (this->verbose>1) {
         std::cout << "  Obtaining output 1." << std::endl;
       }
-      dret=PyFloat_AsDouble(result);
+      dout=PyFloat_AsDouble(result);
 
       if (this->verbose>1) {
         std::cout << "  Decref result." << std::endl;
@@ -580,9 +580,16 @@ namespace o2scl {
                   << std::endl;
       }
 
-      return dret;
+      return 0;
     }
-  
+
+    /// The normalized density 
+    virtual double log_pdf(const vec_t &x) const {
+      double dout;
+      log_pdf_internal(x,dout);
+      return dout;
+    }
+    
     /// Get the bandwidth
     virtual double get_bandwidth() const {
 

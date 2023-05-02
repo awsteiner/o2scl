@@ -548,7 +548,12 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     }
     vector_minmax_value(v.size(),v,x_min,x_max);
 
+    if (verbose>2) {
+      cout << "  to-table: x_min,x_max: " << x_min << " " << x_max << endl;
+    }
+
     // Approximate y_min and y_max
+    cout << pkde_obj.dim() << endl;
     vector<double> x_arr(1);
     x_arr[0]=x_min;
     double y_min=pkde_obj.pdf(x_arr);
@@ -563,6 +568,10 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       x_arr[0]+=dx;
     }
 
+    if (verbose>2) {
+      cout << "  to-table: y_min,y_max: " << y_min << " " << y_max << endl;
+    }
+    
     // Determine the x and y-values at the boundaries
     double x_left=x_min, x_right=x_max;
     x_arr[0]=x_left;
@@ -570,6 +579,11 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     x_arr[0]=x_right;
     double y_right=pkde_obj.pdf(x_arr);
 
+    if (verbose>2) {
+      cout << "  to-table: x_left,x_right: " << x_left << " " << x_right
+           << endl;
+    }
+    
     // There may be significant probability at the boundaries, so
     // try to extend them outwards if needed to capture the
     // full distribution
@@ -578,6 +592,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       x_left-=dx;
       x_arr[0]=x_left;
       y_left=pkde_obj.pdf(x_arr);
+      std::cout << y_left << " " << j << std::endl;
       j++;
     }
     j=0;
@@ -585,9 +600,17 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
       x_right+=dx;
       x_arr[0]=x_right;
       y_right=pkde_obj.pdf(x_arr);
+      std::cout << y_right << " " << j << std::endl;
       j++;
     }
 
+    if (verbose>2) {
+      cout << "  to-table: x_left,x_right: " << x_left << " "
+           << x_right << endl;
+      cout << "  to-table: y_left,y_right: " << y_left << " "
+           << y_right << endl;
+    }
+    
     // Now create the table based on a uniform grid
     table_obj.line_of_names("x y");
     
