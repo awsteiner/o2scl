@@ -2163,12 +2163,13 @@ namespace o2scl {
       This function does not require any copying of the input or
       output arrays. The input matrix must be stored as a vector in
       row-major order. The FFTW_ESTIMATE flag is used and so little or
-      no optimization of the FFTW algorithm is done. Given an input
-      vector of size m times n, implying a matrix with size1() equal
-      to m and and size2() equal to n, the output vector is resized to
-      have size \f$ 2m(n-1) \f$ representing a matrix with size1()
-      equal to m and size2() equal to \f$ 2(n-1) \f$, stored in
-      row-major order.
+      no optimization of the FFTW algorithm is done. The variables \c
+      m and \c n should have the number of rows and columns in the
+      matrix stored in \c fft. Given an input vector of size m times
+      n, implying a matrix with size1() equal to m and and size2()
+      equal to n, the output vector is resized to have size \f$
+      2m(n-1) \f$ representing a matrix with size1() equal to m and
+      size2() equal to \f$ 2(n-1) \f$, stored in row-major order.
    */
   void matrix_backward_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &fft,

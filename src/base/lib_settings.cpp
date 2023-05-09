@@ -625,10 +625,14 @@ void *o2scl_get_o2scl_settings() {
 }
 
 std::string lib_settings_class::py_version() {
+#ifdef O2SCL_PYTHON
   ostringstream oss;
   oss << PY_MAJOR_VERSION << " "
       << PY_MINOR_VERSION << " " << PY_MICRO_VERSION << " "
       << PY_RELEASE_LEVEL << " " << PY_RELEASE_SERIAL << " "
       << PY_VERSION;
   return oss.str();
+#else
+  return "";
+#endif
 }
