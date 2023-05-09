@@ -199,6 +199,7 @@ void o2scl::matrix_backward_fft
 #ifdef O2SCL_FFTW
   
   fft.resize(m*(n-1)*2);
+  cout << "A: " << fft.size() << endl;
   
   // First, note that FFTW_ESTIMATE means that FFTW is estimating an
   // efficient plan, not that FFTW is estimating the FFT. The result
@@ -210,9 +211,12 @@ void o2scl::matrix_backward_fft
   double *fft2=(double *)(&(fft[0]));
   
   // Note that the c2r transforms don't preserve input by default
+  cout << "B: " << m << " " << (n-1)*2 << endl;
   fftw_plan plan=fftw_plan_dft_c2r_2d(m,(n-1)*2,data2,fft2,
                                       FFTW_ESTIMATE | FFTW_PRESERVE_INPUT);
+  cout << "C: " << endl;
   fftw_execute(plan);
+  cout << "D: " << endl;  
 
 #else
     

@@ -41,6 +41,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifdef O2SCL_PYTHON
+  
   // Construct the data
   static const size_t N=200;
 
@@ -66,8 +68,6 @@ int main(void) {
   hf.open_or_create("kde_python_data.o2");
   hdf_output(hf,tab,"tab");
   hf.close();
-  
-#ifdef O2SCL_PYTHON
   
   if (true) {
 

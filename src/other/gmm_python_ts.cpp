@@ -41,6 +41,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifdef O2SCL_PYTHON
+  
   // Construct the data
   static const size_t N=50;
 
@@ -67,8 +69,6 @@ int main(void) {
   hdf_output(hf,tab,"tab");
   hf.close();
   
-#ifdef O2SCL_PYTHON
-
   if (true) {
     
     tensor<> tin;

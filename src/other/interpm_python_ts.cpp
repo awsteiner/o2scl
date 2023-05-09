@@ -50,6 +50,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifdef O2SCL_PYTHON
+  
   // Construct the data
   static const size_t N=100;
   ubvector x(N), y(N), dp(N), dp2(N);
@@ -86,8 +88,6 @@ int main(void) {
     }
   }
     
-#ifdef O2SCL_PYTHON
-
   if (true) {
 
     // Sklearn Gaussian process, n_out=1
@@ -247,14 +247,14 @@ int main(void) {
     cout << endl;
   }
     
-#endif
-    
   hdf_file hf;
   hf.open_or_create("interpm_python_data.o2");
   hdf_output(hf,tab,"tab");
   hdf_output(hf,t3d,"t3d");
   hf.close();
   
+#endif
+    
   t.report();
   return 0;
 }

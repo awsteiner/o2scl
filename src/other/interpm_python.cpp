@@ -26,6 +26,8 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_PYTHON
+
 interpm_python::interpm_python() {
   p_set_func=0;
   p_eval_func=0;
@@ -590,4 +592,4 @@ int interpm_python::eval_unc(const std::vector<double> &x,
   return 0;
 }      
 
-
+#endif
