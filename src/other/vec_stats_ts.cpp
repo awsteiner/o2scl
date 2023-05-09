@@ -254,37 +254,65 @@ int main(void) {
   t.test_rel(kl1,kl2,1.0e-12,"KL div");
 
   if (true) {
-    vector<double> sines;
+    vector<double> sines, sines3;
     vector<complex<double>> sines2, fft, fft2;
 
     cout << "Data: " << endl;
-    for(double x=0.0;x<o2scl_const::pi*4.001;
-        x+=o2scl_const::pi*0.1) {
-      sines.push_back(sin(2.0*x)+sin(4.0*x));
-      complex<double> xc=sin(2.0*x)+sin(4.0*x);
+    // We choose 26 here because FFTW is better at arrays with
+    // certain sizes
+    cout.setf(ios::showpos);
+    for(double xq=0.0;xq<o2scl_const::pi*4.001;
+        xq+=o2scl_const::pi*4.0/25.0) {
+      sines.push_back(sin(2.0*xq)+sin(4.0*xq));
+      complex<double> xc=sin(2.0*xq)+sin(4.0*xq);
       cout << xc.real() << endl;
       sines2.push_back(xc);
     }
+    cout.unsetf(ios::showpos);
     cout << endl;
 
-    cout << "Real: " << endl;
+    // Test forward and backward transformations
     vector_forward_fft(sines,fft);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
       cout.width(2);
-      cout << j << " ";
+      cout << j << " " << sines[j] << " ";
       cout << fft[j].real() << " " << fft[j].imag() << endl;
     }
+    cout << endl;
+    vector_backward_fft(fft,sines3);
+    
+    for(size_t j=0;j<sines.size();j++) {
+      if (j<fft.size()) {
+        cout.width(2);
+        cout << j << " " << sines[j] << " " << fft[j].real() << " "
+             << fft[j].imag() << " "
+             << sines3[j] << " " << sines3[j]/sines[j] << endl;
+      } else {
+        cout.width(2);
+        cout << j << " " << sines[j] << " " << "             " << " "
+             << "             " << " " 
+             << sines3[j] << " " << sines3[j]/sines[j] << endl;
+      }
+      if (j>0 && j<25) {
+        t.test_rel(sines3[j]/sines[j],26.0,1.0e-6,"forward and backward");
+      } else if (j==25) {
+        t.test_rel(sines3[j]/sines[j],26.0,1.0e-2,"forward and backward");
+      }
+    }
+
     cout.unsetf(ios::showpos);
     cout << endl;
     
-    cout << "Complex: " << endl;
+    // Compare real and complex FFTs
     vector_forward_complex_fft(sines2,fft2);
+    cout << "Complex: " << sines2.size() << " " << fft2.size() << endl;
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft2.size();j++) {
       cout.width(2);
       cout << j << " ";
-      cout << fft2[j].real() << " " << fft2[j].imag() << endl;
+      cout << sines2[j].real() << " " << sines2[j].imag() << " "
+           << fft2[j].real() << " " << fft2[j].imag() << endl;
       if (j<fft.size()) {
         if (abs(fft2[j].real())>1.0e-4) {
           t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
@@ -310,16 +338,16 @@ int main(void) {
       size_t i, j;
       vvm_sines.matrix_indices(ii,i,j);
 
-      double x=sin(i*o2scl_const::pi/2)+sin(j*o2scl_const::pi/2)+
+      double xq=sin(i*o2scl_const::pi/2)+sin(j*o2scl_const::pi/2)+
         sin(i*o2scl_const::pi/4)+sin((i+j)*o2scl_const::pi/8);
-      vvm_sines(i,j)=x;
+      vvm_sines(i,j)=xq;
 
-      complex<double> xc=x;
+      complex<double> xc=xq;
       sines2.push_back(xc);
       cout.width(2);
       cout << i << " ";
       cout.width(2);
-      cout << j << " " << sin(i*o2scl_const::pi*2) << " " << x << endl;
+      cout << j << " " << sin(i*o2scl_const::pi*2) << " " << xq << endl;
     }
     cout.unsetf(ios::showpos);
     cout << endl;

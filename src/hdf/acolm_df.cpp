@@ -56,6 +56,97 @@ int acol_manager::comm_fit
 int acol_manager::comm_function
 */
 
+int acol_manager::comm_fft(std::vector<std::string> &sv, 
+                           bool itive_com) {
+
+  if (type=="table") {
+    
+    if (table_obj.get_nlines()==0) {
+      cerr << "No table to FFT." << endl;
+      return exc_efailed;
+    }
+    
+    vector<string> in, pr;
+    pr.push_back("Input column with real part");
+    pr.push_back("Input column with imaginary part");
+    pr.push_back("Output column for real part");
+    pr.push_back("Output column for imaginary part");
+    int ret=get_input(sv,pr,in,"fft",itive_com);
+    if (ret!=0) return ret;
+
+    if (!table_obj.is_column(in[2])) {
+      table_obj.new_column(in[2]);
+    }
+    if (!table_obj.is_column(in[3])) {
+      table_obj.new_column(in[3]);
+    }
+    
+    vector<complex<double>> vin(table_obj.get_nlines());
+    vector<complex<double>> vout(table_obj.get_nlines());
+    
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      vin[i].real(table_obj.get(in[0],i));
+      vin[i].imag(table_obj.get(in[1],i));
+    }
+    
+    vector_forward_complex_fft(vin,vout);
+    
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      table_obj.set(in[2],i,vout[i].real());
+      table_obj.set(in[3],i,vout[i].imag());
+    }
+
+  } else if (type=="table3d") {
+
+    if (table3d_obj.get_nx()==0 || table3d_obj.get_ny()==0) {
+      cerr << "No table3d to FFT." << endl;
+      return exc_efailed;
+    }
+    
+    vector<string> in, pr;
+    pr.push_back("Input slice with real part");
+    pr.push_back("Input slice with imaginary part");
+    pr.push_back("Output slice for real part");
+    pr.push_back("Output slice for imaginary part");
+    int ret=get_input(sv,pr,in,"fft",itive_com);
+    if (ret!=0) return ret;
+
+    size_t ix;
+    if (!table3d_obj.is_slice(in[2],ix)) {
+      table3d_obj.new_slice(in[2]);
+    }
+    if (!table3d_obj.is_slice(in[3],ix)) {
+      table3d_obj.new_slice(in[3]);
+    }
+    
+    size_t N=table3d_obj.get_nx()*table3d_obj.get_ny();
+    
+    vector<complex<double>> vin(N), vout(N);
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        vin[i*table3d_obj.get_ny()+j].real(table3d_obj.get(i,j,in[0]));
+        vin[i*table3d_obj.get_ny()+j].imag(table3d_obj.get(i,j,in[1]));
+      }
+    }
+    
+    matrix_forward_complex_fft(table3d_obj.get_nx(),
+                               table3d_obj.get_ny(),vin,vout);
+    
+    for(size_t i=0;i<table3d_obj.get_nx();i++) {
+      for(size_t j=0;j<table3d_obj.get_ny();j++) {
+        table3d_obj.set(i,j,in[2],vout[i*table3d_obj.get_ny()+j].real());
+        table3d_obj.set(i,j,in[3],vout[i*table3d_obj.get_ny()+j].imag());
+      }
+    }
+
+  } else {
+    cout << "Command 'fft' not implemented for type " << type << endl;
+    return 0;
+  }
+  
+  return 0;
+}
+  
 int acol_manager::comm_delete_col(std::vector<std::string> &sv, 
 				  bool itive_com) {
 

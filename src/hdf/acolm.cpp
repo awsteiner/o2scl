@@ -115,7 +115,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "assign","cat","convert-unit",
       "correl","delete-col",
       "delete-rows","delete-rows-tol",
-      "deriv","deriv2","value-grid",
+      "deriv","deriv2","fft",
       "find-row","fit","function",
       "get-row","get-unit","value","index",
       "insert","insert-full","integ","interp","interp-table3d",
@@ -123,14 +123,14 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
       "to-hist","to-hist-2d","to-table3d","wstats",
-      "ser-hist-t3d","to-gaussian","to-pdma","to-gmm","to-kde"
+      "ser-hist-t3d","to-gaussian","to-pdma","to-gmm","to-kde","value-grid"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("table",itmp));
   }
   {
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
-      "function","value","value-grid","get-grid",
+      "fft","function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
       "list","max","min","rename","set-data","to-hist",
       "slice","slice-hist","sum","to-hist-2d","to-table",
@@ -549,6 +549,7 @@ void acol_manager::command_add(std::string new_type) {
   // type_comm_list has the same size as the array here
   
   if (new_type=="int") {
+    
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
@@ -562,7 +563,9 @@ void acol_manager::command_add(std::string new_type) {
     }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="double") {
+    
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
@@ -576,7 +579,9 @@ void acol_manager::command_add(std::string new_type) {
     }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="char") {
+    
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
@@ -590,7 +595,9 @@ void acol_manager::command_add(std::string new_type) {
     }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="size_t") {
+    
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
@@ -604,7 +611,9 @@ void acol_manager::command_add(std::string new_type) {
     }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="string") {
+    
     static const size_t narr=1;
     comm_option_s options_arr[narr]=
       {
@@ -618,8 +627,10 @@ void acol_manager::command_add(std::string new_type) {
     }
     update_o2_docs(narr,&options_arr[0],new_type);
     cl->set_comm_option_vec(narr,options_arr);
+    
   } else if (new_type=="table") {
-    static const size_t narr=46;
+    
+    static const size_t narr=47;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -654,9 +665,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv2","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv2),both},
-       {0,"value","",0,3,"","",
+       {0,"fft","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_value),both},
+        (this,&acol_manager::comm_fft),both},
        {0,"value-grid","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_value_grid),both},
@@ -735,27 +746,30 @@ void acol_manager::command_add(std::string new_type) {
        {0,"sum","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_sum),both},
-       {0,"to-hist","",0,3,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_hist),both},
-       {0,"to-hist-2d","",0,5,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_hist_2d),both},
-       {0,"to-table3d","",0,4,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_table3d),both},
        {0,"to-gaussian","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gaussian),both},
        {0,"to-gmm","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gmm),both},
+       {0,"to-hist","",0,3,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_hist),both},
+       {0,"to-hist-2d","",0,5,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_hist_2d),both},
        {0,"to-kde","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_kde),both},
        {0,"to-pdma","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_pdma),both},
+       {0,"to-table3d","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_table3d),both},
+       {0,"value","",0,3,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_value),both},
        {0,"wstats","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_wstats),both}
@@ -771,29 +785,11 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=28;
+    static const size_t narr=29;
     comm_option_s options_arr[narr]=
-      {{0,"to-tensor-grid","",0,1,"","",
+      {{0,"cat","",0,2,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_tensor_grid),both},
-       {0,"to-table","",0,2,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_table),both},
-       {0,"to-hist","",0,2,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_hist),both},
-       {0,"to-tg-fermi","",0,5,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_to_tg_fermi),both},
-       {0,"get-grid","",0,0,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_get_grid),both},
-       {'s',"select","",-1,-1,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_select),both},
-       {0,"cat","",0,2,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_cat),both},
+         (this,&acol_manager::comm_cat),both},
        {0,"contours","",0,5,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_contours),both},
@@ -803,15 +799,15 @@ void acol_manager::command_add(std::string new_type) {
        {0,"deriv-y","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_deriv_y),both},
-       {0,"value","",0,4,"","",
+       {0,"fft","",-1,-1,"","",
         new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_value),both},
-       {0,"value-grid","",0,4,"","",
-        new comm_option_mfptr<acol_manager>
-        (this,&acol_manager::comm_value_grid),both},
+        (this,&acol_manager::comm_fft),both},
        {'f',"function","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_function),both},
+       {0,"get-grid","",0,0,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_get_grid),both},
        {0,"insert","",0,6,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_insert),both},
@@ -833,6 +829,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"rename","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_rename),both},
+       {'s',"select","",-1,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_select),both},
        {0,"set-data","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_set_data),both},
@@ -848,9 +847,27 @@ void acol_manager::command_add(std::string new_type) {
        {0,"sum","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_sum),both},
+       {0,"to-hist","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_hist),both},
        {0,"to-hist-2d","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_hist_2d),both},
+       {0,"to-table","",0,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_table),both},
+       {0,"to-tensor-grid","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_tensor_grid),both},
+       {0,"to-tg-fermi","",0,5,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_tg_fermi),both},
+       {0,"value","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_value),both},
+       {0,"value-grid","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_value_grid),both},
        {0,"x-name","",0,1,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_x_name),both},
@@ -870,21 +887,12 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=13;
     comm_option_s options_arr[narr]=
       {
-        {0,"sum","",0,0,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_sum),both},
         {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"stats","",0,0,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_stats),both},
         {0,"diag","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_diag),both},
-        {0,"value","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_value),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -900,6 +908,12 @@ void acol_manager::command_add(std::string new_type) {
         {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
+        {0,"stats","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_stats),both},
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
         {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
@@ -908,7 +922,10 @@ void acol_manager::command_add(std::string new_type) {
          (this,&acol_manager::comm_to_table3d_sum),both},
         {0,"to-tensor-grid","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_tensor_grid),both}
+         (this,&acol_manager::comm_to_tensor_grid),both},
+        {0,"value","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both}
       };
     if (narr!=type_comm_list["tensor"].size()) {
       O2SCL_ERR("Type comm list does not match for tensor",
@@ -950,21 +967,21 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=5;
     comm_option_s options_arr[narr]=
       {
-        {0,"rearrange","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_rearrange),both},
         {'l',"list","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},
-        {0,"to-table3d","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table3d),both},
         {0,"max","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_max),both},
         {0,"min","",0,0,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_min),both}
+         (this,&acol_manager::comm_min),both},
+        {0,"rearrange","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_rearrange),both},
+        {0,"to-table3d","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_table3d),both}
       };
     if (narr!=type_comm_list["tensor<size_t>"].size()) {
       O2SCL_ERR("Type comm list does not match for tensor<size_t>",
@@ -978,24 +995,12 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=18;
     comm_option_s options_arr[narr]=
       {
-        {0,"sum","",0,0,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_sum),both},
         {0,"binary","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_binary),both},
-        {0,"stats","",0,0,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_stats),both},
-        {0,"value","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_value),both},
         {0,"deriv","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"value-grid","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_value_grid),both},
         {'f',"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
@@ -1017,12 +1022,18 @@ void acol_manager::command_add(std::string new_type) {
         {0,"rearrange","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_rearrange),both},
-        {0,"slice","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_slice),both},
         {0,"set-grid","",0,2,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_set_grid),both},
+        {0,"slice","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_slice),both},
+        {0,"stats","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_stats),both},
+        {0,"sum","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sum),both},
         {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table3d),both},
@@ -1031,7 +1042,13 @@ void acol_manager::command_add(std::string new_type) {
          (this,&acol_manager::comm_to_table),both},
         {0,"to-tensor","",0,0,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_tensor),both}
+         (this,&acol_manager::comm_to_tensor),both},
+        {0,"value","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value),both},
+        {0,"value-grid","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_value_grid),both}
       };
     if (narr!=type_comm_list["tensor_grid"].size()) {
       O2SCL_ERR("Type comm list does not match for tensor_grid",
@@ -1045,12 +1062,12 @@ void acol_manager::command_add(std::string new_type) {
     static const size_t narr=2;
     comm_option_s options_arr[narr]=
       {
-        {0,"to-table3d","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table3d),both},
         {0,"sample","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_sample),both}
+         (this,&acol_manager::comm_sample),both},
+        {0,"to-table3d","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_table3d),both}
       };
     if (narr!=type_comm_list["prob_dens_mdim_amr"].size()) {
       O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
@@ -1086,15 +1103,15 @@ void acol_manager::command_add(std::string new_type) {
         {0,"list","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},
+        {0,"sample","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_sample),both},
         {0,"to-table","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},
         {0,"to-table3d","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table3d),both},
-        {0,"sample","",-1,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_sample),both}
+         (this,&acol_manager::comm_to_table3d),both}
       };
     if (narr!=type_comm_list["prob_dens_mdim_kde"].size()) {
       O2SCL_ERR("Type comm list does not match for prob_dens_mdim_amr",
@@ -1127,12 +1144,12 @@ void acol_manager::command_add(std::string new_type) {
         {0,"function","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_function),both},
-        {0,"to-table","",0,0,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_to_table),both},
         {'l',"list","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_list),both},
+        {0,"to-table","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_table),both}
       };
     if (narr!=type_comm_list["hist"].size()) {
       O2SCL_ERR("Type comm list does not match for hist",
@@ -1149,12 +1166,12 @@ void acol_manager::command_add(std::string new_type) {
         {0,"deriv","",0,0,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_deriv),both},
-        {0,"value","",0,-1,"","",
-         new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_value),both},
         {0,"find","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_find),both},
+        {0,"function","",0,1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_function),both},
         {0,"interp","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_interp),both},
@@ -1176,9 +1193,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"to-table","",0,1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_to_table),both},      
-        {0,"function","",0,1,"","",
+        {0,"value","",0,-1,"","",
          new comm_option_mfptr<acol_manager>
-         (this,&acol_manager::comm_function),both}      
+         (this,&acol_manager::comm_value),both}
       };
     if (narr!=type_comm_list["double[]"].size()) {
       O2SCL_ERR("Type comm list does not match for double[]",

@@ -69,6 +69,36 @@ void o2scl::vector_forward_fft(const std::vector<double> &data,
   return;
 }
 
+void o2scl::vector_backward_fft(const std::vector<std::complex<double>> &data,
+                               std::vector<double> &fft) {  
+  
+#ifdef O2SCL_FFTW
+  
+  fft.resize((data.size()-1)*2);
+  
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  fftw_complex *data2=(fftw_complex *)(reinterpret_cast<const
+                                       fftw_complex *>(&(data[0])));
+  double *fft2=(double *)(&(fft[0]));
+  // Note that the c2r transforms don't preserve input by default
+  fftw_plan plan=fftw_plan_dft_c2r_1d(fft.size(),data2,fft2,
+                                      FFTW_ESTIMATE | FFTW_PRESERVE_INPUT);
+  fftw_execute(plan);
+  
+#else
+  
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+  
+#endif
+  
+  return;
+}
+
 void o2scl::vector_forward_complex_fft
 (const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {
@@ -88,6 +118,37 @@ void o2scl::vector_forward_complex_fft
   fftw_complex *fft2=reinterpret_cast<fftw_complex *>(&(fft[0]));
   fftw_plan plan=fftw_plan_dft_1d(data.size(),data2,fft2,
                                       FFTW_FORWARD,FFTW_ESTIMATE);
+  fftw_execute(plan);
+  
+#else
+  
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+  
+#endif
+  
+  return;
+}
+
+void o2scl::vector_backward_complex_fft
+(const std::vector<std::complex<double>> &data,
+ std::vector<std::complex<double>> &fft) {
+  
+#ifdef O2SCL_FFTW
+  
+  fft.resize(data.size());
+  
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  std::vector<std::complex<double>> *non_const=
+    (std::vector<std::complex<double>> *)(&(data[0]));
+  fftw_complex *data2=reinterpret_cast<fftw_complex *>(non_const);
+  fftw_complex *fft2=reinterpret_cast<fftw_complex *>(&(fft[0]));
+  fftw_plan plan=fftw_plan_dft_1d(data.size(),data2,fft2,
+                                      FFTW_BACKWARD,FFTW_ESTIMATE);
   fftw_execute(plan);
   
 #else
@@ -131,6 +192,38 @@ void o2scl::matrix_forward_fft
   return;
 }
 
+void o2scl::matrix_backward_fft
+(size_t m, size_t n, const std::vector<std::complex<double>> &data,
+  std::vector<double> &fft) {
+  
+#ifdef O2SCL_FFTW
+  
+  fft.resize(m*(n-1)*2);
+  
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  fftw_complex *data2=(fftw_complex *)(reinterpret_cast<const
+                                       fftw_complex *>(&(data[0])));
+  double *fft2=(double *)(&(fft[0]));
+  
+  // Note that the c2r transforms don't preserve input by default
+  fftw_plan plan=fftw_plan_dft_c2r_2d(m,(n-1)*2,data2,fft2,
+                                      FFTW_ESTIMATE | FFTW_PRESERVE_INPUT);
+  fftw_execute(plan);
+
+#else
+    
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+    
+#endif
+
+  return;
+}
+
 void o2scl::matrix_forward_complex_fft
 (size_t m, size_t n, const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {
@@ -152,6 +245,39 @@ void o2scl::matrix_forward_complex_fft
   // The forward FFT
   fftw_plan plan=fftw_plan_dft_2d(m,n,data2,fft2,
                                   FFTW_FORWARD,FFTW_ESTIMATE);
+  fftw_execute(plan);
+
+#else
+    
+  O2SCL_ERR("FFTW support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+    
+#endif
+
+  return;
+}
+
+void o2scl::matrix_backward_complex_fft
+(size_t m, size_t n, 
+ const std::vector<std::complex<double>> &data,
+ std::vector<std::complex<double>> &fft) {  
+#ifdef O2SCL_FFTW
+  
+  fft.resize(m*n);
+    
+  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT. The result
+  // is exact. What it does mean is that the input data is not
+  // modified, so we allow the input vector to be const even though
+  // we have to cast that const-ness away.
+  std::vector<std::complex<double>> *non_const=
+    (std::vector<std::complex<double>> *)(&(data[0]));
+  fftw_complex *data2=reinterpret_cast<fftw_complex *>(non_const);
+  fftw_complex *fft2=reinterpret_cast<fftw_complex *>(&(fft[0]));
+    
+  // The forward FFT
+  fftw_plan plan=fftw_plan_dft_2d(m,n,data2,fft2,
+                                  FFTW_BACKWARD,FFTW_ESTIMATE);
   fftw_execute(plan);
 
 #else

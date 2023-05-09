@@ -1911,10 +1911,27 @@ namespace o2scl {
       output arrays. The FFTW_ESTIMATE flag is used and so little or
       no optimization of the FFTW algorithm is done. Given an 
       input vector of size n, the output vector is resized to
-      have size \f$ n/2+1 \f$ .
+      have size \f$ n/2+1 \f$ . The input vector is destroyed. 
+
+      (FFTW is best at handling sizes of the form 2a 3b 5c 7d 11e 13f,
+      where e+f is either 0 or 1, and the other exponents are
+      arbitrary. Also, it is generally beneficial for the last
+      dimension of an r2c/c2r transform to be even.)
    */
   void vector_forward_fft(const std::vector<double> &data,
                           std::vector<std::complex<double>> &fft);
+
+  /** \brief A one-dimensional FFTW wrapper for a backward FFT to
+      real data
+
+      This function does not require any copying of the input or
+      output arrays. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an 
+      input vector of size n, the output vector is resized to
+      have size \f$ (n-1)*2 \f$ . The input vector is destroyed. 
+   */
+  void vector_backward_fft(const std::vector<std::complex<double>> &data,
+                          std::vector<double> &fft);
   
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       real data
@@ -1923,7 +1940,7 @@ namespace o2scl {
       them into the FFTW format. The FFTW_ESTIMATE flag is used and so
       little or no optimization of the FFTW algorithm is done. Given
       an input vector of size n, the output vector is resized to have
-      size \f$ n/2+1 \f$ .
+      size \f$ n/2+1 \f$ . The input vector is not modified by this
    */
   template<class vec_t, class resize_vec_t>
   void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -1933,7 +1950,9 @@ namespace o2scl {
     std::vector<double> data2(data.size());
     std::vector<std::complex<double>> fft2(data2.size()/2+1);
     vector_copy(data.size(),data,data2);
-    
+
+    vector_forward_fft(data2,fft2);
+    /*
     // The forward FFT, we have to cast away const-ness for the FFTW
     // plan
     double *non_const=(double *)(&(data2[0]));
@@ -1941,6 +1960,7 @@ namespace o2scl {
     fftw_plan plan=fftw_plan_dft_r2c_1d(data.size(),non_const,fft3,
                                         FFTW_ESTIMATE);
     fftw_execute(plan);
+    */
 
     fft.resize(data.size()/2+1);
     vector_copy(fft2.size(),fft2,fft);
@@ -1956,7 +1976,61 @@ namespace o2scl {
     return;
   }
 
+  /** \brief A one-dimensional FFTW wrapper for a backward FFT to
+      real data
+
+      This function copies the input and output arrays once to convert
+      them into the FFTW format. The FFTW_ESTIMATE flag is used and so
+      little or no optimization of the FFTW algorithm is done. Given
+      an input vector of size n, the output vector is resized to have
+      size \f$ (n-1)*2 \f$ .
+   */
+  template<class vec_t, class resize_vec_t>
+  void vector_backward_fft_copy(const vec_t &data, resize_vec_t &fft) {
+    
+#ifdef O2SCL_FFTW
+
+    std::vector<std::complex<double>> data2(data.size());
+    std::vector<double> fft2((data.size()-1)*2);
+    vector_copy(data.size(),data,data2);
+
+    vector_backward_fft(data2,fft2);
+
+    fft.resize(fft2.size());
+    vector_copy(fft2.size(),fft2,fft);
+    
+    
+#else
+    
+    O2SCL_ERR("FFTW support not included in this O2scl installation.",
+              o2scl::exc_eunsup);
+    
+#endif
+
+    return;
+  }
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      The output array, \c fft, is resized before the FFT is
+      performed, so that it has the same size as the input vector. The
+      FFTW_ESTIMATE flag is used and so little or no optimization of
+      the FFTW algorithm is done.
+   */
   void vector_forward_complex_fft
+  (const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      The output array, \c fft, is resized before the FFT is
+      performed, so that it has the same size as the input vector. The
+      FFTW_ESTIMATE flag is used and so little or no optimization of
+      the FFTW algorithm is done.
+   */
+  void vector_backward_complex_fft
   (const std::vector<std::complex<double>> &data,
    std::vector<std::complex<double>> &fft);
   
@@ -2014,6 +2088,59 @@ namespace o2scl {
   }
   
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      complex data
+
+      This function copies the input and output arrays once to 
+      convert them into the FFTW format. The FFTW_ESTIMATE flag is used
+      and so little or no optimization of the FFTW algorithm is done.
+      The output vector is resized to have the same size as the 
+      input vector.
+  */
+  template<class cx_vec_t, class cx_resize_vec_t>
+  void vector_backward_complex_fft_copy
+  (const cx_vec_t &data, cx_resize_vec_t &fft) {
+    
+#ifdef O2SCL_FFTW
+
+    fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                 data.size());
+    fftw_complex *out=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
+                                                  data.size());
+    
+    for(size_t i=0;i<data.size();i++) {
+      in[i][0]=data[i].real();
+      in[i][1]=data[i].imag();
+    }
+    
+    // The backward FFT
+    fftw_plan plan=fftw_plan_dft_1d(data.size(),in,out,
+                                    FFTW_BACKWARD,FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    // Allocate the output vectors
+    
+    fft.resize(data.size());
+    
+    // Copy from the FFTW objects to the output vectors
+    for(size_t i=0;i<data.size();i++) {
+      fft[i].real(out[i][0]);
+      fft[i].imag(out[i][1]);
+    }
+
+    fftw_free(in);
+    fftw_free(out);
+
+#else
+    
+    O2SCL_ERR("FFTW support not included in this O2scl installation.",
+              o2scl::exc_eunsup);
+    
+#endif
+
+    return;
+  }
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       real data
 
       This function does not require any copying of the input or
@@ -2031,6 +2158,23 @@ namespace o2scl {
    std::vector<std::complex<double>> &fft);
   
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      real data
+
+      This function does not require any copying of the input or
+      output arrays. The input matrix must be stored as a vector in
+      row-major order. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an input
+      vector of size m times n, implying a matrix with size1() equal
+      to m and and size2() equal to n, the output vector is resized to
+      have size \f$ 2m(n-1) \f$ representing a matrix with size1()
+      equal to m and size2() equal to \f$ 2(n-1) \f$, stored in
+      row-major order.
+   */
+  void matrix_backward_fft
+  (size_t m, size_t n, const std::vector<std::complex<double>> &fft,
+   std::vector<double> &data);
+  
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       complex data
 
       This function does not require any copying of the input or
@@ -2041,6 +2185,20 @@ namespace o2scl {
       to n, the output vector is resized to have size \f$ m*n \f$.
    */
   void matrix_forward_complex_fft
+  (size_t m, size_t n, const std::vector<std::complex<double>> &data,
+   std::vector<std::complex<double>> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a backward FFT of 
+      complex data
+
+      This function does not require any copying of the input or
+      output arrays. The input matrix must be stored as a vector in
+      row-major order. The FFTW_ESTIMATE flag is used and so little or
+      no optimization of the FFTW algorithm is done. Given an input
+      implying a matrix with size1() equal to m and and size2() equal
+      to n, the output vector is resized to have size \f$ m*n \f$.
+  */
+  void matrix_backward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
    std::vector<std::complex<double>> &fft);
   

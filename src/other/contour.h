@@ -60,6 +60,8 @@ namespace o2scl {
 
     /// Create an empty line
     contour_line() {
+      // This prevents uninit'ed var. warnings
+      level=0;
     }
 
     /// Copy constructor

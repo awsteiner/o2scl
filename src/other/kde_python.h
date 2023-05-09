@@ -90,6 +90,9 @@ namespace o2scl {
     
   public:
 
+    /// Desc
+    bool array_copy;
+    
     kde_python()  {
       
       if (o2scl_settings.py_initialized==false) {
@@ -111,6 +114,7 @@ namespace o2scl {
       
       n_params=0;
       n_points=0;
+      array_copy=true;
     }
     
     /** \brief Specify the Python module and function
@@ -539,15 +543,27 @@ namespace o2scl {
                    o2scl::exc_efailed);
       }
 
+      std::vector<double> x2(x.size());
+      if (array_copy) {
+        o2scl::vector_copy(x.size(),x,x2);
+      }
+
       import_array();
-      
+
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (this->verbose>1) {
         std::cout << "kde_python::log_pdf():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
-      PyObject *array_x=PyArray_SimpleNewFromData
-        (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
+      
+      PyObject *array_x;
+      if (array_copy) {
+        array_x=PyArray_SimpleNewFromData
+          (1,x_dims,NPY_DOUBLE,(void *)(&(x2[0])));
+      } else {
+        array_x=PyArray_SimpleNewFromData
+          (1,x_dims,NPY_DOUBLE,(void *)(&(x[0])));
+      }
 
       int ret=PyTuple_SetItem(p_ld_args,0,array_x);
       if (ret!=0) {

@@ -506,6 +506,28 @@ namespace o2scl_acol {
     */
     virtual int comm_autocorr(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Perform a forward or reverse FFT
+
+        For objects of type table:
+
+        Perform an FFT on a pair of columns
+
+        Arguments: <tt><real part in> <complex part in>
+        <real part out> <complex part out> ["backward"]</tt>
+        
+        Perform an FFT.
+
+        For objects of type table3d:
+
+        Perform an FFT on a pair of slices
+
+        Arguments: <tt><real part in> <complex part in>
+        <real part out> <complex part out> ["backward"]</tt>
+        
+        Perform an FFT.
+    */
+    virtual int comm_fft(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Assign a constant
 
         For objects of type table:
@@ -519,6 +541,7 @@ namespace o2scl_acol {
         constant values are things like <tt>1.618</tt>,
         <tt>acos(-1.0)</tt> or <tt>sin(4^5)</tt>. To remove an
         assignment, call assign with a blank value.
+
     */
     virtual int comm_assign(std::vector<std::string> &sv, bool itive_com);
 
