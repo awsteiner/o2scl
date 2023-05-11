@@ -2011,7 +2011,7 @@ namespace o2scl {
       }
       interp_vec<vec_t> sic(nlines,itx->second.dat,ity->second.dat,itype);
 
-      ret=sic.interp(x0);
+      ret=sic.eval(x0);
       return ret;
     }
     

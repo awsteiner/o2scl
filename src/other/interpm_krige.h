@@ -671,6 +671,8 @@ namespace o2scl {
       if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
+        std::cout << "n_points: " << n_points << " n_in: "
+                  << n_in << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
                    "interpm_krige_new::set_data_internal().",
                    o2scl::exc_efailed);
