@@ -120,6 +120,15 @@ namespace o2scl {
                      const o2scl::tensor<> &outputs,
                      std::string options="",
                      std::string class_name="", int v=0);
+
+    void *set_function_internal(std::string module, std::string set_func,
+                                std::string eval_func,
+                                std::string eval_unc_func,
+                                size_t n_pars, size_t n_dat, size_t n_out,
+                                const o2scl::tensor<> &params,
+                                const o2scl::tensor<> &outputs,
+                                std::string options,
+                                std::string class_name, int v, int &ret);
     
     /** \brief Compute the function at point \c x and return the result
      */

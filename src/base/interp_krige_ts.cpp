@@ -309,7 +309,7 @@ int main(void) {
     cfr.noise=8.471085e-9;
     vector<vector<double>> plist2;
     plist2.push_back(plist);
-    ikon2.set_covar(cfr,plist2);
+    ikon2.set_covar_optim(cfr,plist2);
     ikon2.verbose=2;
     ikon2.set(N,x,y);
 
@@ -350,7 +350,7 @@ int main(void) {
     cfr.noise=8.471085e-9;
     vector<vector<double>> plist2;
     plist2.push_back(plist);
-    ikon2.set_covar(cfr,plist2);
+    ikon2.set_covar_optim(cfr,plist2);
     ikon2.set(N,x,y);
 
     t.set_output_level(2);
@@ -408,7 +408,7 @@ int main(void) {
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf,
                        Eigen::MatrixXd,
                        matrix_invert_det_eigen<>> ikon_eigen;
-    ikon_eigen.set_covar(cfr,plist2);
+    ikon_eigen.set_covar_optim(cfr,plist2);
     
     ikon_eigen.verbose=1;
     ikon_eigen.set(N,x,y);

@@ -1909,14 +1909,15 @@ namespace o2scl {
 
       This function does not require any copying of the input or
       output arrays. The FFTW_ESTIMATE flag is used and so little or
-      no optimization of the FFTW algorithm is done. Given an 
+      no optimization of the FFTW algorithm is performed. Given an 
       input vector of size n, the output vector is resized to
-      have size \f$ n/2+1 \f$ . The input vector is destroyed. 
+      have size \f$ n/2+1 \f$ .
 
-      (FFTW is best at handling sizes of the form 2a 3b 5c 7d 11e 13f,
-      where e+f is either 0 or 1, and the other exponents are
-      arbitrary. Also, it is generally beneficial for the last
-      dimension of an r2c/c2r transform to be even.)
+      (FFTW is best at handling sizes of the form \f$ 2^a 3^b 5^c 7^d
+      11^e 13^f \f$ where \f$ e+f \f$ is either 0 or 1, and the other
+      exponents are arbitrary. Also, it is generally beneficial for
+      the last dimension of a real to complex or complex to real
+      transform to be even.)
    */
   void vector_forward_fft(const std::vector<double> &data,
                           std::vector<std::complex<double>> &fft);
@@ -1926,9 +1927,9 @@ namespace o2scl {
 
       This function does not require any copying of the input or
       output arrays. The FFTW_ESTIMATE flag is used and so little or
-      no optimization of the FFTW algorithm is done. Given an 
-      input vector of size n, the output vector is resized to
-      have size \f$ (n-1)*2 \f$ . The input vector is destroyed. 
+      no optimization of the FFTW algorithm is performed. Given an
+      input vector of size n, the output vector is resized to have
+      size \f$ (n-1)*2 \f$ . 
    */
   void vector_backward_fft(const std::vector<std::complex<double>> &data,
                           std::vector<double> &fft);
@@ -1937,10 +1938,10 @@ namespace o2scl {
       real data
 
       This function copies the input and output arrays once to convert
-      them into the FFTW format. The FFTW_ESTIMATE flag is used and so
-      little or no optimization of the FFTW algorithm is done. Given
-      an input vector of size n, the output vector is resized to have
-      size \f$ n/2+1 \f$ . The input vector is not modified by this
+      them into and from the FFTW format. The FFTW_ESTIMATE flag is
+      used and so little or no optimization of the FFTW algorithm is
+      performed. Given an input vector of size n, the output vector is
+      resized to have size \f$ n/2+1 \f$ .
    */
   template<class vec_t, class resize_vec_t>
   void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -1952,15 +1953,6 @@ namespace o2scl {
     vector_copy(data.size(),data,data2);
 
     vector_forward_fft(data2,fft2);
-    /*
-    // The forward FFT, we have to cast away const-ness for the FFTW
-    // plan
-    double *non_const=(double *)(&(data2[0]));
-    fftw_complex *fft3=reinterpret_cast<fftw_complex *>(&(fft2[0]));
-    fftw_plan plan=fftw_plan_dft_r2c_1d(data.size(),non_const,fft3,
-                                        FFTW_ESTIMATE);
-    fftw_execute(plan);
-    */
 
     fft.resize(data.size()/2+1);
     vector_copy(fft2.size(),fft2,fft);
@@ -1980,10 +1972,10 @@ namespace o2scl {
       real data
 
       This function copies the input and output arrays once to convert
-      them into the FFTW format. The FFTW_ESTIMATE flag is used and so
-      little or no optimization of the FFTW algorithm is done. Given
-      an input vector of size n, the output vector is resized to have
-      size \f$ (n-1)*2 \f$ .
+      them into and from the FFTW format. The FFTW_ESTIMATE flag is
+      used and so little or no optimization of the FFTW algorithm is
+      performed. Given an input vector of size n, the output vector is
+      resized to have size \f$ (n-1)*2 \f$ .
    */
   template<class vec_t, class resize_vec_t>
   void vector_backward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -1998,7 +1990,6 @@ namespace o2scl {
 
     fft.resize(fft2.size());
     vector_copy(fft2.size(),fft2,fft);
-    
     
 #else
     
@@ -2016,7 +2007,7 @@ namespace o2scl {
       The output array, \c fft, is resized before the FFT is
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
-      the FFTW algorithm is done.
+      the FFTW algorithm is performed.
    */
   void vector_forward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2028,7 +2019,7 @@ namespace o2scl {
       The output array, \c fft, is resized before the FFT is
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
-      the FFTW algorithm is done.
+      the FFTW algorithm is performed.
    */
   void vector_backward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2171,7 +2162,7 @@ namespace o2scl {
       2m(n-1) \f$ representing a matrix with size1() equal to m and
       size2() equal to \f$ 2(n-1) \f$, stored in row-major order.
    */
-  void matrix_backward_fft
+  void matrix_backward_fft_copy
   (size_t m, size_t n, const std::vector<std::complex<double>> &fft,
    std::vector<double> &data);
   

@@ -231,7 +231,7 @@ namespace o2scl {
         }
 
         ikon->verbose=2;
-        ikon->set_covar(*cfrn,param_list,true);
+        ikon->set_covar_optim(*cfrn,param_list,true);
         
       } else {
         O2SCL_ERR((((std::string)"Invalid interpolation type, ")+

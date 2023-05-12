@@ -127,6 +127,14 @@ namespace o2scl {
                      std::string options="",
                      std::string class_name="", int v=0);
     
+    void *set_function_internal
+    (std::string module, std::string set_func,
+     std::string components_func, std::string get_func,
+     size_t n_pars, size_t n_dat, size_t n_comp,
+     const o2scl::tensor<> &params,
+     std::string options,
+     std::string class_name, int v, int &ret);
+      
     /** \brief At point \c x, compute the components for 
         each Gaussian in the mixture and place the result in \c y
     */
@@ -137,6 +145,8 @@ namespace o2scl {
      */
     virtual int get_python();
 
+    void *get_python_internal(int &ret);
+    
     /** \brief Get the underlying Gaussian mixture probability
         density
      */

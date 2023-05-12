@@ -172,7 +172,25 @@ int interpm_python::set_function(std::string module, std::string set_func,
                                  const o2scl::tensor<> &outputs,
                                  std::string options,
                                  std::string class_name, int v) {
+  int ret;
+  void *vp=set_function_internal(module,set_func,eval_func,eval_unc_func,
+                                 n_pars,n_dat,n_out,params,outputs,options,
+                                 class_name,v,ret);
+  return ret;
+}
       
+void *interpm_python::set_function_internal
+(std::string module, std::string set_func,
+ std::string eval_func,
+ std::string eval_unc_func,
+ size_t n_pars, size_t n_dat, size_t n_out,
+ const o2scl::tensor<> &params,
+ const o2scl::tensor<> &outputs,
+ std::string options,
+ std::string class_name, int v, int &ret) {
+
+  ret=0;
+  
   if (params.get_rank()!=2 || outputs.get_rank()!=2) {
     O2SCL_ERR2("Invalid rank for input tensors in ",
                "interpm_python::set_function().",o2scl::exc_einval);
@@ -370,8 +388,8 @@ int interpm_python::set_function(std::string module, std::string set_func,
   PyObject *array_in=PyArray_SimpleNewFromData
     (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
          
-  int ret=PyTuple_SetItem(p_set_args,0,array_in);
-  if (ret!=0) {
+  int pret=PyTuple_SetItem(p_set_args,0,array_in);
+  if (pret!=0) {
     O2SCL_ERR2("Tuple set failed in ",
                "mm_funct_python::operator().",o2scl::exc_efailed);
   }
@@ -420,7 +438,7 @@ int interpm_python::set_function(std::string module, std::string set_func,
     std::cout << "Done with interpm_python::set_function()."
               << std::endl;
   }
-      
+
   return 0;
 }
     

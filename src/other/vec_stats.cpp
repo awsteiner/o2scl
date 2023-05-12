@@ -192,33 +192,42 @@ void o2scl::matrix_forward_fft
   return;
 }
 
-void o2scl::matrix_backward_fft
+void o2scl::matrix_backward_fft_copy
 (size_t m, size_t n, const std::vector<std::complex<double>> &data,
   std::vector<double> &fft) {
   
 #ifdef O2SCL_FFTW
   
   fft.resize(m*(n-1)*2);
-  cout << "A: " << fft.size() << endl;
+
+  // AWS, 5/11/23: This transform crashes unless I make a copy of the
+  // input data, even if I use FFTW_PRESERVE_INPUT. Maybe some extra
+  // array padding is required in that case? Until I resolve that
+  // problem, this code works for now
   
-  // First, note that FFTW_ESTIMATE means that FFTW is estimating an
-  // efficient plan, not that FFTW is estimating the FFT. The result
-  // is exact. What it does mean is that the input data is not
-  // modified, so we allow the input vector to be const even though
-  // we have to cast that const-ness away.
-  fftw_complex *data2=(fftw_complex *)(reinterpret_cast<const
-                                       fftw_complex *>(&(data[0])));
+  fftw_complex *data2=(fftw_complex *)fftw_malloc(m*n*sizeof(fftw_complex));
+  for(size_t i=0;i<m*n;i++) {
+    data2[i][0]=data[i].real();
+    data2[i][1]=data[i].imag();
+  }
+
+  //fftw_complex *data2=(fftw_complex *)(reinterpret_cast<const
+  //fftw_complex *>(&(data[0])));
+  
   double *fft2=(double *)(&(fft[0]));
   
-  // Note that the c2r transforms don't preserve input by default
-  cout << "B: " << m << " " << (n-1)*2 << endl;
+  // Note that FFTW_ESTIMATE means that FFTW is estimating an
+  // efficient plan, not that FFTW is estimating the FFT.
+  
   fftw_plan plan=fftw_plan_dft_c2r_2d(m,(n-1)*2,data2,fft2,
-                                      FFTW_ESTIMATE | FFTW_PRESERVE_INPUT);
-  cout << "C: " << endl;
+                                      FFTW_ESTIMATE);
+  //| FFTW_PRESERVE_INPUT);
+  
   fftw_execute(plan);
-  cout << "D: " << endl;  
 
 #else
+
+  fftw_free(data2);
     
   O2SCL_ERR("FFTW support not included in this O2scl installation.",
             o2scl::exc_eunsup);

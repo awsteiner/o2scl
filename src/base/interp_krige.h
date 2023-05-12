@@ -1205,8 +1205,8 @@ namespace o2scl {
 
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(func_t &covar, vec_vec_t &param_lists,
-                  bool rescale=false) {
+    int set_covar_optim(func_t &covar, vec_vec_t &param_lists,
+                        bool rescale=false) {
       cf=&covar;
       plists=param_lists;
       this->rescaled=rescale;

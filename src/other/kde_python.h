@@ -257,7 +257,24 @@ namespace o2scl {
                      std::vector<double> array,
                      std::string options="",
                      std::string class_name="", int v=0) {
+      int ret;
+      void *vp=set_function_internal(module,set_func,sample_func,
+                                     ld_func,n_pars,n_dat,params,
+                                     array,ret,options,class_name,v);
+      return ret;
+    }
   
+    void *set_function_internal
+      (std::string module, std::string set_func,
+       std::string sample_func, std::string ld_func,
+       size_t n_pars, size_t n_dat, 
+       o2scl::tensor<> &params,
+       std::vector<double> array, int &ret,
+       std::string options="",
+       std::string class_name="", int v=0) {
+
+      ret=0;
+      
       this->verbose=v;
 
       free();
@@ -468,8 +485,8 @@ namespace o2scl {
       PyObject *array_in=PyArray_SimpleNewFromData
         (2,data_dims,NPY_DOUBLE,(void *)(&(data.get_data()[0])));
          
-      int ret=PyTuple_SetItem(p_set_args,0,array_in);
-      if (ret!=0) {
+      int pret=PyTuple_SetItem(p_set_args,0,array_in);
+      if (pret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "kde_python::set_function().",o2scl::exc_efailed);
       }

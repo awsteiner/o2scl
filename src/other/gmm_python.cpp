@@ -162,6 +162,22 @@ int gmm_python::set_function(std::string module, std::string set_func,
                              const o2scl::tensor<> &params,
                              std::string options,
                              std::string class_name, int v) {
+  int ret;
+  void *vp=set_function_internal(module,set_func,components_func,
+                                 get_func,n_pars,n_dat,n_comp,
+                                 params,options,class_name,v,ret);
+  return ret;
+}
+
+void *gmm_python::set_function_internal
+(std::string module, std::string set_func,
+ std::string components_func, std::string get_func,
+ size_t n_pars, size_t n_dat, size_t n_comp,
+ const o2scl::tensor<> &params,
+ std::string options,
+ std::string class_name, int v, int &ret) {
+  
+  ret=0;
   
   if (params.get_rank()!=2) {
     O2SCL_ERR2("Invalid rank for input tensors in ",
@@ -269,7 +285,8 @@ int gmm_python::set_function(std::string module, std::string set_func,
       std::cout << "  Loading python member function components: "
                 << components_func<< std::endl;
     }
-    p_components_func=PyObject_GetAttrString(p_instance,components_func.c_str());
+    p_components_func=PyObject_GetAttrString(p_instance,
+                                             components_func.c_str());
     if (p_components_func==0) {
       O2SCL_ERR2("Get components function failed in ",
                  "gmm_python::set_function().",
@@ -357,8 +374,8 @@ int gmm_python::set_function(std::string module, std::string set_func,
   PyObject *array_in=PyArray_SimpleNewFromData
     (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
          
-  int ret=PyTuple_SetItem(p_set_args,0,array_in);
-  if (ret!=0) {
+  int pret=PyTuple_SetItem(p_set_args,0,array_in);
+  if (pret!=0) {
     O2SCL_ERR2("Tuple set failed in ",
                "mm_funct_python::operator().",o2scl::exc_efailed);
   }
@@ -398,16 +415,14 @@ int gmm_python::set_function(std::string module, std::string set_func,
       
   return 0;
 }
-    
+
 int gmm_python::components(const std::vector<double> &x,
-                     std::vector<double> &y) const {
+                           std::vector<double> &y) const {
 
   if (x.size()!=n_params) {
     O2SCL_ERR("Input vector does not have correct size.",
               o2scl::exc_einval);
   }
-  
-  //import_array();
   
   if (p_set_func==0 || p_components_func==0) {
     O2SCL_ERR2("No functions found in ",
@@ -468,7 +483,15 @@ int gmm_python::components(const std::vector<double> &x,
 }      
 
 int gmm_python::get_python() {
+  int ret;
+  void *vp=get_python_internal(ret);
+  return ret;
+}
 
+void *gmm_python::get_python_internal(int &ret) {
+
+  ret=0;
+  
   import_array();
   
   if (p_set_func==0 || p_components_func==0 || p_get_func==0) {

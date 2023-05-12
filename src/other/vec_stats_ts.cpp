@@ -257,7 +257,7 @@ int main(void) {
 
   {
     vector<double> sines, sines3;
-    vector<complex<double>> sines2, fft, fft2;
+    vector<complex<double>> sines2, fft, fft2, sines4;
 
     cout << "Data: " << endl;
     // We choose 26 here because FFTW is better at arrays with
@@ -273,7 +273,7 @@ int main(void) {
     cout.unsetf(ios::showpos);
     cout << endl;
 
-    // Test forward and backward transformations
+    // Test real forward and backward transformations
     vector_forward_fft(sines,fft);
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
@@ -327,15 +327,31 @@ int main(void) {
     cout.unsetf(ios::showpos);
     cout << endl;
 
+    // Compare complex forward and backward FFTs
+    vector_backward_complex_fft(fft2,sines4);
+    cout.setf(ios::showpos);
+    for(size_t j=0;j<sines2.size();j++) {
+      cout.width(2);
+      cout << j << " ";
+      cout << sines2[j].real() << " " << sines2[j].imag() << " "
+           << sines4[j].real() << " " << sines4[j].imag() << " "
+           << sines4[j].real()/sines2[j].real() << endl;
+      if (j!=0 && j!=sines2.size()-1) {
+        t.test_rel(sines4[j].real()/sines2[j].real(),26.0,
+                   1.0e-6,"complex forward backward");
+      }
+    }
+    cout.unsetf(ios::showpos);
+    cout << endl;
   }
   
-  if (false) {
+  if (true) {
     
-    // Prepare data for 2D FFTs with a rectangular 42x44 matrix
+    // Prepare data for 2D FFTs with a rectangular matrix
     size_t n_rows=11;
     size_t n_cols=14;
     vector<double> sines(n_rows*n_cols), sines3;
-    vector<complex<double>> fft, sines2, fft2;
+    vector<complex<double>> fft, sines2, fft2, sines4;
     vector_view_matrix<vector<double>,double>
       vvm_sines(sines,n_rows*n_cols,n_rows);
   
@@ -371,18 +387,22 @@ int main(void) {
     cout.unsetf(ios::showpos);
     cout << endl;
     cout << "1." << endl;
-    matrix_backward_fft(n_rows,(n_cols)/2+1,fft,sines3);
+    matrix_backward_fft_copy(n_rows,(n_cols)/2+1,fft,sines3);
     cout << "2." << endl;
     cout.setf(ios::showpos);
     for(size_t j=0;j<fft.size();j++) {
       cout.width(2);
       cout << j << " ";
-      cout << sines[j] << " " << sines3[j] << endl;
+      cout << sines[j] << " " << sines3[j] << " "
+           << sines3[j]/sines[j] << endl;
+      if (fabs(sines[j])>1.0e-10) {
+        t.test_rel(sines3[j]/sines[j],(double)(11*14),1.0e-6,"fw and bw");
+      }
     }
     cout.unsetf(ios::showpos);
     cout << endl;
-    exit(-1);
 
+    // Compare real and complex FFTs
     cout << "Matrix complex: " << endl;
     matrix_forward_complex_fft(n_rows,n_cols,sines2,fft2);
     cout.setf(ios::showpos);
@@ -393,11 +413,11 @@ int main(void) {
     }
     cout << endl;
     vector_view_matrix<vector<complex<double>>,complex<double>>
-      vvm_fft(fft,fft.size(),4);
+      vvm_fft(fft,fft.size(),n_rows);
     vector_view_matrix<vector<complex<double>>,complex<double>>
-      vvm_fft2(fft2,fft2.size(),4);
-    for(size_t i=0;i<4;i++) {
-      for(size_t j=0;j<10;j++) {
+      vvm_fft2(fft2,fft2.size(),n_rows);
+    for(size_t i=0;i<n_rows;i++) {
+      for(size_t j=0;j<n_cols;j++) {
         cout.width(2);
         cout << i << " ";
         cout.width(2);
@@ -410,16 +430,31 @@ int main(void) {
         cout << fft2[j].real() << " " << fft2[j].imag() << endl;
         if (j<vvm_fft.size2()) {
           if (abs(fft2[j].real())>1.0e-4) {
-            t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,"fft real part");
+            t.test_rel(fft[j].real(),fft2[j].real(),1.0e-10,
+                       "fft real part");
           }
           if (abs(fft2[j].imag())>1.0e-4) {
-            t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,"fft imag part");
+            t.test_rel(fft[j].imag(),fft2[j].imag(),1.0e-10,
+                       "fft imag part");
           }
         }
       }
     }
     cout.unsetf(ios::showpos);
     cout << endl;
+
+    // Compare complex forward and backward FFTs
+    cout << "Matrix complex: " << endl;
+    matrix_backward_complex_fft(n_rows,n_cols,fft2,sines4);
+    cout.setf(ios::showpos);
+    for(size_t j=0;j<n_rows*n_cols;j++) {
+      cout.width(2);
+      cout << j << " ";
+      cout << sines2[j].real() << " " << sines2[j].imag() << " ";
+      cout << sines4[j].real() << " " << sines4[j].imag() << " "
+           << sines4[j].real()/sines2[j].real() << " "
+           << sines4[j].real()/sines2[j].real() << endl;
+    }
 
   }
     
