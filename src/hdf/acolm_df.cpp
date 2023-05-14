@@ -67,12 +67,21 @@ int acol_manager::comm_fft(std::vector<std::string> &sv,
     }
     
     vector<string> in, pr;
-    pr.push_back("Input column with real part");
-    pr.push_back("Input column with imaginary part");
-    pr.push_back("Output column for real part");
-    pr.push_back("Output column for imaginary part");
-    int ret=get_input(sv,pr,in,"fft",itive_com);
-    if (ret!=0) return ret;
+    if (sv.size()==5) {
+      in.push_back(sv[1]);
+      in.push_back(sv[2]);
+      in.push_back(sv[3]);
+      in.push_back(sv[4]);
+      in.push_back("forward");
+    } else {
+      pr.push_back("Input column with real part");
+      pr.push_back("Input column with imaginary part");
+      pr.push_back("Output column for real part");
+      pr.push_back("Output column for imaginary part");
+      pr.push_back("\"forward\" or \"backward\" FFT");
+      int ret=get_input(sv,pr,in,"fft",itive_com);
+      if (ret!=0) return ret;
+    }
 
     if (!table_obj.is_column(in[2])) {
       table_obj.new_column(in[2]);
@@ -88,8 +97,12 @@ int acol_manager::comm_fft(std::vector<std::string> &sv,
       vin[i].real(table_obj.get(in[0],i));
       vin[i].imag(table_obj.get(in[1],i));
     }
-    
-    vector_forward_complex_fft(vin,vout);
+
+    if (in[4][0]=='b' || in[4][0]=='B') {
+      vector_backward_complex_fft(vin,vout);
+    } else {
+      vector_forward_complex_fft(vin,vout);
+    }
     
     for(size_t i=0;i<table_obj.get_nlines();i++) {
       table_obj.set(in[2],i,vout[i].real());
@@ -102,14 +115,23 @@ int acol_manager::comm_fft(std::vector<std::string> &sv,
       cerr << "No table3d to FFT." << endl;
       return exc_efailed;
     }
-    
+
     vector<string> in, pr;
-    pr.push_back("Input slice with real part");
-    pr.push_back("Input slice with imaginary part");
-    pr.push_back("Output slice for real part");
-    pr.push_back("Output slice for imaginary part");
-    int ret=get_input(sv,pr,in,"fft",itive_com);
-    if (ret!=0) return ret;
+    if (sv.size()==5) {
+      in.push_back(sv[1]);
+      in.push_back(sv[2]);
+      in.push_back(sv[3]);
+      in.push_back(sv[4]);
+      in.push_back("forward");
+    } else {
+      pr.push_back("Input slice with real part");
+      pr.push_back("Input slice with imaginary part");
+      pr.push_back("Output slice for real part");
+      pr.push_back("Output slice for imaginary part");
+      pr.push_back("\"forward\" or \"backward\" FFT");
+      int ret=get_input(sv,pr,in,"fft",itive_com);
+      if (ret!=0) return ret;
+    }
 
     size_t ix;
     if (!table3d_obj.is_slice(in[2],ix)) {
@@ -128,9 +150,14 @@ int acol_manager::comm_fft(std::vector<std::string> &sv,
         vin[i*table3d_obj.get_ny()+j].imag(table3d_obj.get(i,j,in[1]));
       }
     }
-    
-    matrix_forward_complex_fft(table3d_obj.get_nx(),
-                               table3d_obj.get_ny(),vin,vout);
+
+    if (in[4][0]=='b' || in[4][0]=='B') {
+      matrix_backward_complex_fft(table3d_obj.get_nx(),
+                                  table3d_obj.get_ny(),vin,vout);      
+    } else {
+      matrix_forward_complex_fft(table3d_obj.get_nx(),
+                                 table3d_obj.get_ny(),vin,vout);
+    }
     
     for(size_t i=0;i<table3d_obj.get_nx();i++) {
       for(size_t j=0;j<table3d_obj.get_ny();j++) {
@@ -139,6 +166,7 @@ int acol_manager::comm_fft(std::vector<std::string> &sv,
       }
     }
 
+    
   } else {
     cout << "Command 'fft' not implemented for type " << type << endl;
     return 0;
