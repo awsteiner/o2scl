@@ -1,5 +1,5 @@
  /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Copyright (C) 2008-2023, Julien Garaud and Andrew W. Steiner
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #ifndef O2SCL_ODE_BV_MSHOOT_H
 #define O2SCL_ODE_BV_MSHOOT_H

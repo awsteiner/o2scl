@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Copyright (C) 2022-2023, Mahamudul Hasan Anik, Satyajit Roy, and
   Andrew W. Steiner
@@ -19,7 +19,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #ifndef O2SCL_INTERPM_PYTHON_H
 #define O2SCL_INTERPM_PYTHON_H

@@ -1,5 +1,5 @@
  /* 
-   -------------------------------------------------------------------
+   ───────────────────────────────────────────────────────────────────
    
    Copyright (C) 2010-2023, Edwin van Leeuwen and Andrew W. Steiner
    
@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License
    along with O2scl. If not, see <http://www.gnu.org/licenses/>.
   
-   -------------------------------------------------------------------
+   ───────────────────────────────────────────────────────────────────
 */
 #ifndef O2SCL_DIFF_EVO_H
 #define O2SCL_DIFF_EVO_H

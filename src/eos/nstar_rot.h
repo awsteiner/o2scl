@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   This file is part of O2scl. It has been adapted from RNS v1.1d
   written by N. Stergioulas and S. Morsink. The modifications made in
@@ -19,10 +19,10 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   Relativistic models of rapidly rotating compact stars,
   using tabulated or polytropic equations of state.
   
@@ -51,7 +51,7 @@
   (1989) 237, 355-379.
   CST : G. Cook, S. Shapiro and S. Teukolsky, Ap. J (1992) 398, 203-223.
   
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 /** \file nstar_rot.h
     \brief File defining \ref o2scl::nstar_rot

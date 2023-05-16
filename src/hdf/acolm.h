@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Copyright (C) 2006-2023, Andrew W. Steiner
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with O₂scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #ifndef O2SCL_ACOLM_H
 #define O2SCL_ACOLM_H

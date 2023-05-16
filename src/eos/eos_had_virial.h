@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Copyright (C) 2018-2023, Xingfu Du and Andrew W. Steiner
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #ifndef EOS_HAD_VIRIAL_H
 #define EOS_HAD_VIRIAL_H
