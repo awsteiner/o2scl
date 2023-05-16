@@ -131,6 +131,20 @@ AC_CHECK_LIB([readline], [add_history], [],
 ])
 
 # ------------------------------------------------------------------
+# Check for Modules library
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(modules,
+[  --enable-modules        Include module support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) modules=true ;;
+	no)  modules=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-modules) ;;
+	esac],[modules=false])
+
+AM_CONDITIONAL(O2SCL_MODULES, test x$modules = xtrue)
+
+# ------------------------------------------------------------------
 # Check for Mpfr library
 # ------------------------------------------------------------------
 
@@ -498,6 +512,7 @@ AC_CONFIG_FILES([Makefile
                  src/linalg/eigen/Makefile
 		 src/mcarlo/Makefile
                  src/min/Makefile
+                 src/modtest/Makefile
                  src/nuclei/Makefile
                  src/ode/Makefile
                  src/other/Makefile

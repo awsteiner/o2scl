@@ -427,6 +427,14 @@ bool lib_settings_class::readline_support() {
 #endif
 }
 
+bool lib_settings_class::module_support() {
+#ifdef O2SCL_MODULES
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::mpfr_support() {
 #ifdef O2SCL_MPFR
   return true;
