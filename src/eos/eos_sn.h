@@ -956,7 +956,7 @@ namespace o2scl {
     }
   
     /// Load table from filename \c fname with mode \c mode
-    virtual void load() {
+    virtual void load_compose() {
     
       //wordexp_single_file(fname);
 

@@ -506,15 +506,15 @@ namespace o2scl {
     /** \brief Compute the gap equations and the equation of state
         as a function of the chemical potentials
      */
-    virtual int calc_eq_p(quark &tu, quark &td, quark &ts,
-                          double &gap1, double &gap2, double &gap3,
-                          double &vec1, double &vec2, double &vec3,
-                          thermo &th);
+    virtual int calc_eq_p_vec(quark &tu, quark &td, quark &ts,
+                              double &gap1, double &gap2, double &gap3,
+                              double &vec1, double &vec2, double &vec3,
+                              thermo &th);
 
     /** \brief Compute the thermodynamic potential at 
         zero temperature
      */
-    virtual double f_therm_pot(double qqu, double qqd, double qqs,
+    virtual double f_therm_pot_vec(double qqu, double qqd, double qqs,
                                double msu, double msd, double mss,
                                double nuu, double nud, double nus,
                                bool vac_terms=true);
@@ -541,10 +541,10 @@ namespace o2scl {
     
     /** \brief Compute the thermodynamic potential at \f$ T>0 \f$
      */
-    virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
-                                 double msu, double msd, double mss,
-                                 double nuu, double nud, double nus,
-                                 double T, bool vac_terms=true);
+    virtual double f_therm_pot_T_vec(double qqu, double qqd, double qqs,
+                                     double msu, double msd, double mss,
+                                     double nuu, double nud, double nus,
+                                     double T, bool vac_terms=true);
     //@}
     
     /// \name The gap equations

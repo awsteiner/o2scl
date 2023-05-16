@@ -314,7 +314,7 @@ namespace o2scl {
     
     /** \brief Additional constraints to add to the fit
      */
-    virtual int addl_const(double &ret) {
+    virtual int addl_const(size_t iout, double &ret) {
       return 0;
     }
     
@@ -574,7 +574,7 @@ namespace o2scl {
       }
 
       double qual_ac=0.0;
-      int ret_ac=addl_const(qual_ac);
+      int ret_ac=addl_const(iout,qual_ac);
       if (ret_ac!=0) success=4;
       ret+=qual_ac;
       

@@ -927,10 +927,10 @@ double eos_quark_njl::f_therm_pot_T(double qqu, double qqd, double qqs,
   return -eos_thermo->pr;
 }
 
-int eos_quark_njl_vec::calc_eq_p(quark &tu, quark &td, quark &ts,
-                                 double &gap1, double &gap2, double &gap3,
-                                 double &vec1, double &vec2, double &vec3,
-                                 thermo &th) {
+int eos_quark_njl_vec::calc_eq_p_vec(quark &tu, quark &td, quark &ts,
+                                     double &gap1, double &gap2, double &gap3,
+                                     double &vec1, double &vec2, double &vec3,
+                                     thermo &th) {
 
   if (from_qq==true) {
 
@@ -1129,7 +1129,7 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
   int iret1, iret2, iret3, iret4, iret5;
   
   if (temper<=0.0) {
-    calc_eq_p(u,d,s,gap1,gap2,gap3,vec1,vec2,vec3,th);
+    calc_eq_p_vec(u,d,s,gap1,gap2,gap3,vec1,vec2,vec3,th);
     return 0;
   }
 
@@ -1333,7 +1333,8 @@ int eos_quark_njl_vec::gap_func_ms_vec(size_t nv, const ubvector &x,
 
   if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
 
-  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,vec1,vec2,vec3,*eos_thermo);
+  calc_eq_p_vec(*up,*down,*strange,gap1,gap2,gap3,
+                vec1,vec2,vec3,*eos_thermo);
 
   y[0]=gap1;
   y[1]=gap2;
@@ -1363,7 +1364,8 @@ int eos_quark_njl_vec::gap_func_qq_vec(size_t nv, const ubvector &x,
 
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
 
-  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,vec1,vec2,vec3,*eos_thermo);
+  calc_eq_p_vec(*up,*down,*strange,gap1,gap2,gap3,
+                vec1,vec2,vec3,*eos_thermo);
 
   y[0]=gap1;
   y[1]=gap2;
@@ -1448,10 +1450,10 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
   return ret;
 }
 
-double eos_quark_njl_vec::f_therm_pot(double qqu, double qqd, double qqs,
-                                      double msu, double msd, double mss,
-                                      double nuu, double nud, double nus,
-                                      bool vac_terms) {
+double eos_quark_njl_vec::f_therm_pot_vec(double qqu, double qqd, double qqs,
+                                          double msu, double msd, double mss,
+                                          double nuu, double nud, double nus,
+                                          bool vac_terms) {
   
   double g1, g2, g3, h1, h2, h3;
   
@@ -1465,7 +1467,7 @@ double eos_quark_njl_vec::f_therm_pot(double qqu, double qqd, double qqs,
   down->nu=nud;
   strange->nu=nus;
   
-  calc_eq_p(*up,*down,*strange,g1,g2,g3,h1,h2,h3,*eos_thermo);
+  calc_eq_p_vec(*up,*down,*strange,g1,g2,g3,h1,h2,h3,*eos_thermo);
   
   if (vac_terms==false) {
     double ret=-eos_thermo->pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
@@ -1477,10 +1479,10 @@ double eos_quark_njl_vec::f_therm_pot(double qqu, double qqd, double qqs,
   return -eos_thermo->pr;
 }
 
-double eos_quark_njl_vec::f_therm_pot_T(double qqu, double qqd, double qqs,
-                                        double msu, double msd, double mss,
-                                        double nuu, double nud, double nus,
-                                        double T, bool vac_terms) {
+double eos_quark_njl_vec::f_therm_pot_T_vec(double qqu, double qqd, double qqs,
+                                            double msu, double msd, double mss,
+                                            double nuu, double nud, double nus,
+                                            double T, bool vac_terms) {
   
   double g1, g2, g3, h1, h2, h3;
   
