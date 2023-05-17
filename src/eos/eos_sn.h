@@ -1,5 +1,5 @@
 /*
-  ───────────────────────────────────────────────────────────────────
+  -------------------------------------------------------------------
   
   Copyright (C) 2006-2023, Andrew W. Steiner
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  ───────────────────────────────────────────────────────────────────
+  -------------------------------------------------------------------
 */
 /** \file eos_sn.h
     \brief File defining \ref o2scl::eos_sn_base
@@ -667,7 +667,9 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /// Desc
+    /** \brief Look for EOS table for model \c model in directory
+        \c directory and download from cloud storage if not found
+     */
     virtual void load_auto(std::string model, std::string directory);
     
   };
@@ -757,7 +759,9 @@ namespace o2scl {
     /// Load table from filename \c fname with mode \c mode
     virtual void load(std::string fname, size_t mode);
 
-    /// Desc
+    /** \brief Look for EOS table for model \c model in directory
+        \c directory and download from cloud storage if not found
+     */
     virtual void load_auto(std::string model, std::string directory);
 
   };
@@ -941,12 +945,14 @@ namespace o2scl {
      */
     virtual void load(std::string fname, size_t mode=0);
 
-    /// Desc
+    /** \brief Look for EOS table for model \c model in directory
+        \c directory and download from cloud storage if not found
+     */
     virtual void load_auto(std::string model, std::string directory);
     
   };
 
-  /** \brief Dewsc
+  /** \brief EOS following the Compose format
    */
   class eos_sn_compose : public eos_sn_base {
   
@@ -956,7 +962,7 @@ namespace o2scl {
     }
   
     /// Load table from filename \c fname with mode \c mode
-    virtual void load_compose() {
+    virtual void load() {
     
       //wordexp_single_file(fname);
 
