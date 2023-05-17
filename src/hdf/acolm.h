@@ -1555,11 +1555,11 @@ namespace o2scl_acol {
 
         Arguments: <tt><source> <destination></tt>
 
-        Copy all O₂scl objects from one HDF5 file to another. This may
-        not work for HDF5 files generated outside of O₂scl. The source
-        and destination filenames may not be identical. The
-        destination file may not be the same size as the source, but
-        will contain the same information.
+        Copy all O₂scl objects from one HDF5 file to another. This
+        command may not work for HDF5 files generated outside of
+        O₂scl. The source and destination filenames may not be
+        identical. The destination file may not be the same size as
+        the source, but will contain the same information.
     */
     virtual int comm_h5_copy(std::vector<std::string> &sv, 
                              bool itive_com);
