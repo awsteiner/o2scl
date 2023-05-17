@@ -40,9 +40,7 @@
 #include <o2scl/root_cern.h>
 #include <o2scl/root_brent_gsl.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief Nuclear mass information
 
@@ -694,8 +692,6 @@ namespace o2scl {
 
   };
 
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

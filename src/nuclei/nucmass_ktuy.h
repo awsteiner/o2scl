@@ -29,9 +29,7 @@
 
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief KTUY Mass formula 
    */
@@ -125,8 +123,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

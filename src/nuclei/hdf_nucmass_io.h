@@ -49,9 +49,7 @@
 #include <o2scl/nucmass_hfb.h>
 #include <o2scl/nucmass_frdm.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl_hdf {
-  //#endif
 
   /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
       specified in a file
@@ -118,8 +116,6 @@ namespace o2scl_hdf {
   void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27, 
                    std::string filename="");
 
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

@@ -29,9 +29,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/min.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief One-dimensional minimization (CERNLIB)
 
@@ -70,14 +68,8 @@ namespace o2scl {
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d503/top.html
       \endverbatim
   */
-#ifdef DOXYGEN_NO_O2NS
-  template<class func_t=funct> class min_cern : 
-  public min_bkt_base
-#else
-    template<class func_t=funct> class min_cern :
-  public min_bkt_base<func_t> 
-#endif
-    {
+  template<class func_t=funct> class min_cern :
+    public min_bkt_base<func_t> {
       
 #ifndef DOXGYEN_INTERNAL
 
@@ -213,8 +205,6 @@ namespace o2scl {
 
     };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

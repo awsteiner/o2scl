@@ -336,8 +336,6 @@ namespace o2scl {
 
 #endif
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

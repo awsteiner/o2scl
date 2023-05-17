@@ -27,9 +27,7 @@
     \brief File defining \ref o2scl::inte_gen
 */
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Generalized multi-dimensional integration [abstract base]
  
@@ -123,9 +121,7 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

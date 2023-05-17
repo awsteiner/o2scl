@@ -56,9 +56,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/mmin_constr.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Constrained minimization by the projected gradient method (OOL)
 
@@ -286,9 +284,7 @@ namespace o2scl {
       
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

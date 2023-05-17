@@ -32,9 +32,7 @@
 #include <map>
 #include <o2scl/nucmass.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Nuclear properties from Delaroche et al. (2010)
 
@@ -161,8 +159,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

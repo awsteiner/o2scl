@@ -32,9 +32,7 @@
 #include <o2scl/mm_funct.h>
 #include <o2scl/string_conv.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /// Array of multi-dimensional functions typedef in src/min/mmin.h
   typedef std::function<int(size_t,boost::numeric::ublas::vector<double> &,
@@ -305,9 +303,7 @@ namespace o2scl {
       
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

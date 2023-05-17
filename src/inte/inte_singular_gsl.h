@@ -35,9 +35,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/inte_kronrod_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Base class for integrating a function with a 
       singularity (GSL)
@@ -787,8 +785,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

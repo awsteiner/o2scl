@@ -214,9 +214,7 @@ namespace o2scl_inte_qng_coeffs {
   };
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Non-adaptive integration from a to b (GSL)
 
@@ -515,8 +513,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

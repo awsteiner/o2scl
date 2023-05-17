@@ -58,9 +58,7 @@
 #include <o2scl/ool_constr_min.h>
 #include <gsl/gsl_math.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Constrained minimization by the "GENCAN" method (OOL)
       
@@ -963,9 +961,7 @@ namespace o2scl {
       
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

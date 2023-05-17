@@ -32,9 +32,7 @@
 #include <o2scl/mmin.h>
 #include <o2scl/cblas.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Virtual base for the mmin_bfgs2 wrapper
 
@@ -848,8 +846,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

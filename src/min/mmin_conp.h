@@ -30,9 +30,7 @@
 #include <gsl/gsl_multimin.h>
 #include <o2scl/mmin_conf.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multidimensional minimization by the Polak-Ribiere
       conjugate gradient algorithm (GSL)
@@ -187,8 +185,6 @@ namespace o2scl {
     
     };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

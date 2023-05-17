@@ -56,9 +56,7 @@
 #include <o2scl/cblas.h>
 #include <o2scl/vec_stats.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Multidimensional minimization by the Simplex method (v2) (GSL)
 
@@ -866,8 +864,6 @@ namespace o2scl {
 
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

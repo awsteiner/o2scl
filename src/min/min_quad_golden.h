@@ -53,9 +53,7 @@
 #include <gsl/gsl_min.h>
 #include <o2scl/min.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
    
   /** \brief Minimization of a function using the safeguarded step-length
       algorithm of Gill and Murray [GSL] 
@@ -473,8 +471,6 @@ namespace o2scl {
       
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

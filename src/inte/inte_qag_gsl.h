@@ -50,9 +50,7 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/smooth_func.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Adaptive numerical integration of a function (without 
       singularities) on a bounded interval (GSL)
@@ -386,8 +384,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

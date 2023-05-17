@@ -31,9 +31,7 @@
  
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Integration weights and abcissas for
       o2scl::inte_gauss_cern and \ref o2scl::inte_cauchy_cern in
@@ -370,8 +368,6 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

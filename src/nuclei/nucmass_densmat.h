@@ -40,9 +40,7 @@
     \ref o2scl::nucmass_densmat
 */
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A container for the properties of dense matter at a 
       specified baryon density, electron fraction and temperature
@@ -336,9 +334,7 @@ namespace o2scl {
 
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

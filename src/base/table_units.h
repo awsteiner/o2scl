@@ -35,8 +35,6 @@
 #include <mpi.h>
 #endif
 
-#ifndef DOXYGEN_NO_O2NS
-
 // Forward definition of the table_units class for HDF I/O
 namespace o2scl {
   template<class vec_t> class table_units;
@@ -64,8 +62,6 @@ namespace o2scl_hdf {
      o2scl::table_units<std::vector<double> > &t);
 
 }
-
-#endif
 
 namespace o2scl {
 

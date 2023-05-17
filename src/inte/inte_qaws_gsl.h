@@ -47,9 +47,7 @@
 
 #include <o2scl/inte_qawc_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 	
   /** \brief Adaptive integration with with algebraic-logarithmic
       singularities at the end-points (GSL)
@@ -618,8 +616,6 @@ namespace o2scl {
 		
   };
 	
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

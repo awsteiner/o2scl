@@ -55,9 +55,7 @@
 #include <o2scl/mmin_constr.h>
 #include <gsl/gsl_math.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Constrained minimization by the spectral projected
       gradient method (OOL)
@@ -426,9 +424,7 @@ namespace o2scl {
       
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

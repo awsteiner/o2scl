@@ -33,9 +33,7 @@
 #include <o2scl/nucmass.h>
 #include <o2scl/tensor.h>
 
-//#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-  //#endif
 
   /** \brief Duflo-Zuker mass formula from tables
 
@@ -364,8 +362,6 @@ namespace o2scl {
 
   };
 
-  //#ifndef DOXYGEN_NO_O2NS
 }
-//#endif
 
 #endif

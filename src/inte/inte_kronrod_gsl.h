@@ -426,9 +426,7 @@ namespace o2scl_inte_gk_coeffs {
   
 }
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Integration workspace for the GSL integrators
 
@@ -898,8 +896,6 @@ namespace o2scl {
     
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif

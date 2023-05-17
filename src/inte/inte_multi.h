@@ -31,9 +31,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/multi_funct.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Multi-dimensional integration over a hypercube 
       [abstract base]
@@ -153,9 +151,7 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

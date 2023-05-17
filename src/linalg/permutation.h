@@ -57,9 +57,7 @@
 
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief A class for representing permutations 
 
@@ -353,9 +351,7 @@ namespace o2scl {
   std::ostream &operator<<(std::ostream &os, const permutation &p);
   //@}
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

@@ -54,9 +54,7 @@
 #include <o2scl/mmin.h>
 #include <o2scl/vector.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
 
   /** \brief Hessian product function for \ref o2scl::mmin_constr
    */
@@ -418,9 +416,7 @@ namespace o2scl {
       
   };
   
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
 

@@ -32,9 +32,7 @@
 #include <o2scl/inte_qawo_gsl.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
-#ifndef DOXYGEN_NO_O2NS
 namespace o2scl {
-#endif
   
   /** \brief Adaptive integration for oscillatory integrals (GSL)
       
@@ -447,8 +445,6 @@ namespace o2scl {
   
   };
 
-#ifndef DOXYGEN_NO_O2NS
 }
-#endif
 
 #endif
