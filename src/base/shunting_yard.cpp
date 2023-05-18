@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Original author: Jesse Brown
   Modifications: Brandon Amos, redpois0n
@@ -20,7 +20,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 /*
   Original cpp-expresion-parser license from Brandon Amos:

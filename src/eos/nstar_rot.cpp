@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   This file is part of O2scl. It has been adapted from RNS v1.1d
   written by N. Stergioulas and S. Morsink. The modifications made in
@@ -19,7 +19,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 /*
   -------------------------------------------------------------------
