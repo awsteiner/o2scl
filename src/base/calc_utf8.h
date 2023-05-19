@@ -96,7 +96,7 @@ namespace o2scl {
 
          In class calc_utf8:
 
-         - Future: Add all boost special functions? hypot(x,y,z)?
+         - Future: Add more special functions. Add hypot(x,y,z)?
 
          - Future: There is some code duplication across the
            functions, especially with regard to conversion between UTF8
@@ -331,7 +331,6 @@ namespace o2scl {
               evaluation.push(erf(right));
             } else if (!str.compare("erfc")) {
               evaluation.push(erfc(right));
-#ifdef O2SCL_OSX              
             } else if (!str.compare("lgamma")) {
               evaluation.push(lgamma(right));
             } else if (!str.compare("tgamma")) {
@@ -353,7 +352,6 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(boost::math::hypergeometric_1F1(next,right));
-#endif
 #endif
             } else if (!str.compare("sqrt1pm1")) {
               evaluation.push(boost::math::sqrt1pm1(right));
