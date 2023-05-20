@@ -42,9 +42,7 @@ gmm_python::gmm_python() {
     
 /** \brief Specify the Python module and function
  */
-gmm_python::gmm_python(std::string module, std::string set_func,
-                       std::string components_func, std::string get_func,
-                       size_t n_pars, size_t n_dat, size_t n_comp,
+gmm_python::gmm_python(std::string module, size_t n_comp,
                        const o2scl::tensor<> &params,
                        std::string options, 
                        std::string class_name, int v) {
@@ -72,8 +70,7 @@ gmm_python::gmm_python(std::string module, std::string set_func,
   n_components=0;
 
   if (module.length()>0) {
-    set_function(module,set_func,components_func,get_func,
-                 n_pars,n_dat,n_comp,params,options,class_name,v);
+    set_function(module,n_comp,params,options,class_name,v);
   }
 }      
     
@@ -150,32 +147,31 @@ void gmm_python::free() {
   if (verbose>1) {
     std::cout << "Done in gmm_python::free()." << std::endl;
   }
+
+  set_func="set_data_str";
+  get_func="get_data";
+  components_func="components";
+  log_pdf_func="log_pdf";
 }      
     
 gmm_python::~gmm_python() {
   free();
 }      
 
-int gmm_python::set_function(std::string module, std::string set_func,
-                             std::string components_func, std::string get_func,
-                             size_t n_pars, size_t n_dat, size_t n_comp,
-                             const o2scl::tensor<> &params,
-                             std::string options,
-                             std::string class_name, int v) {
+int gmm_python::set_function(std::string module, 
+                             size_t n_comp, const o2scl::tensor<> &params,
+                             std::string options, std::string class_name, 
+                             int v) {
   int ret;
-  void *vp=set_function_internal(module,set_func,components_func,
-                                 get_func,n_pars,n_dat,n_comp,
-                                 params,options,class_name,v,ret);
+  void *vp=set_function_internal(module,n_comp,params,options,
+                                 class_name,v,ret);
+                                 
   return ret;
 }
 
 void *gmm_python::set_function_internal
-(std::string module, std::string set_func,
- std::string components_func, std::string get_func,
- size_t n_pars, size_t n_dat, size_t n_comp,
- const o2scl::tensor<> &params,
- std::string options,
- std::string class_name, int v, int &ret) {
+(std::string module, size_t n_comp, const o2scl::tensor<> &params,
+ std::string options, std::string class_name, int v, int &ret) {
   
   ret=0;
   
@@ -186,8 +182,8 @@ void *gmm_python::set_function_internal
       
   free();
 
-  n_params=n_pars;
-  n_points=n_dat;
+  n_params=params.get_size(1);
+  n_points=params.get_size(0);
   n_components=n_comp;
       
   if (options.length()>0) {
@@ -357,15 +353,6 @@ void *gmm_python::set_function_internal
   //void *vp=o2scl_settings.py_import_array();
   import_array();
 
-  if (params.get_size(0)!=n_points) {
-    O2SCL_ERR("Input data does not have correct number of rows.",
-              o2scl::exc_einval);
-  }
-  if (params.get_size(1)!=n_params) {
-    O2SCL_ERR("Input data does not have correct number of columns.",
-              o2scl::exc_einval);
-  }
-      
   npy_intp params_dims[]={(npy_intp)params.get_size(0),
     (npy_intp)params.get_size(1)};
   if (verbose>1) {

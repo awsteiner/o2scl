@@ -90,7 +90,12 @@ namespace o2scl {
     
   public:
 
-    /// Desc
+    /** \brief If true, then make a copy of the array before 
+        calling log_pdf() (default true)
+
+        \todo This should be done by a template specialization instead
+        of a bool flag
+    */
     bool array_copy;
     
     kde_python()  {
@@ -263,7 +268,9 @@ namespace o2scl {
                                      array,ret,options,class_name,v);
       return ret;
     }
-  
+
+    /** \brief Internal version of set_function()
+     */
     void *set_function_internal
       (std::string module, std::string set_func,
        std::string sample_func, std::string ld_func,

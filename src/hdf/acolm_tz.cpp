@@ -153,8 +153,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
       }
     }
     
-    gmm_python gp("o2sclpy","set_data_str","components","get_data",
-                  col_names.size(),table_obj.get_nlines(),n_gauss,tin,
+    gmm_python gp("o2sclpy",n_gauss,tin,
                   ((string)"verbose=")+o2scl::itos(verbose),
                   "gmm_sklearn",verbose);
                   

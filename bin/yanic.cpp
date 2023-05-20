@@ -317,7 +317,7 @@ public:
       if (name.length()==1) {
         last_ch=' ';
       } else {
-        name.substr(0,name.length()-1);
+        name=name.substr(0,name.length()-1);
         last_ch=name[name.length()-1];
       }
     }
