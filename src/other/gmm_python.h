@@ -34,6 +34,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/tensor.h>
 #include <o2scl/exp_max.h>
+#include <o2scl/kde_python.h>
 
 #ifdef O2SCL_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -173,91 +174,18 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-
-  /** \brief Desc
+  /** \brief Compare the accuracy of Metropolis-Hastings steps
+      with KDE and GMM emulators
    */
   int compare_methast_gmm_kde(size_t n_comp_start, size_t n_comp_end,
                               const o2scl::table<> &table,
                               std::vector<std::string> param_cols,
                               std::string lw_col,
-                              gmm_python &gp, kde_python &kp,
+                              std::vector<gmm_python> &gp, kde_python<> &kp,
+                              std::vector<double> bw_array,
                               double test_size=0.2, size_t n_tests=0,
                               int verbose=0, std::string gp_options="",
-                              std::string kp_options="") {
-
-    // Collect sizes
-    size_t n_params=param_cols.size();
-    size_t n_dat=table.get_nlines();
-    size_t n_test=n_dat*test_size;
-    size_t n_train=n_dat-n_test;
-    if (n_tests==0) {
-      n_tests=n_test*(n_test-1)/2;
-    }
-
-    // Allocate space for train and test tensor
-    o2scl::tensor<> dat_train, dat_test;
-    size_t sz[2];
-    sz[0]=n_train;
-    sz[1]=params.get_size(1);
-    dat_train.resize(2,sz);
-    sz[0]=n_test;
-    dat_test.resize(2,sz);
-
-    // Shuffle 
-    rng<> r;
-    r.clock_seed();
-    std::vector<size_t> index(params.get_size(0));
-    for(size_t i=0;i<index.size();i++) index[i]=i;
-    vector_shuffle(r,index.size(),index);
-
-    // Copy data from table to train and test tensors
-    for(size_t i=0;i<index.size();i++) {
-      size_t ix_src[2], ix[2];
-      if (i<n_train) {
-        for(size_t j=0;j<params.get_size(1);j++) {
-          ix[0]=i;
-          ix[1]=j;
-          dat_train.get(ix)=table.get(param_cols[j],i);
-        }
-      } else {
-        for(size_t j=0;j<params.get_size(1);j++) {
-          ix[0]=i-n_train;
-          ix[1]=j;
-          dat_test.get(ix)=table.get(param_cols[j],i);
-        }
-      }
-    }
-
-    // Number of models
-    size_t n_models=n_comp_end-n_comp_start+2;
-    
-    // Store the average deviation in the log likelihood for all of the
-    // GMM models and the KDE model
-    std::vector<double> avgs(nmodels);
-    
-    // Loop over the requested number of tests
-    for(size_t i=0;i<n_tests;i++) {
-      size_t j_test=r.random_int(n_test);
-      size_t j_test2=index[j_test]+n_train;
-      size_t k_test=r.random_int(n_test);
-      size_t k_test2=index[k_test]+n_train;
-      // Collect stats for each model
-      for(size_t i=0;i<n_models;i++) {
-        if (i==0) {
-          kp.set_function("o2sclpy",dat_train,kp_options,"kde_sklearn"); 
-        } else {
-          size_t n_comp=n_comp_start+i-1;
-          gp.set_function("o2sclpy",dat_train,gp_options,"gmm_sklearn");
-        }
-      }
-    }
-    
-    return 0;
-  }
-  
-#endif
-  
+                              std::string kp_options="");  
 #endif
   
 }

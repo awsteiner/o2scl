@@ -220,8 +220,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       }
       cout << "Herez: " << col_names.size() << " "
            << table_obj.get_nlines() << endl;
-      pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),ttemp,
+      pkde_obj.set_function("o2sclpy",ttemp,
                             weights,((string)"verbose=")+
                             o2scl::itos(kde_verbose),
                             "kde_scipy",kde_verbose);
@@ -229,8 +228,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
       vector<double> bw_array;
       ug.vector(bw_array);
-      pkde_obj.set_function("o2sclpy","set_data_str","sample","log_pdf",
-                            col_names.size(),table_obj.get_nlines(),ttemp,
+      pkde_obj.set_function("o2sclpy",ttemp,
                             bw_array,((string)"verbose=")+
                             o2scl::itos(kde_verbose),"kde_sklearn",
                             kde_verbose);

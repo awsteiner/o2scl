@@ -34,6 +34,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/tensor.h>
 #include <o2scl/exp_max.h>
+#include <o2scl/rng.h>
 
 #ifdef O2SCL_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -120,13 +121,22 @@ namespace o2scl {
       n_params=0;
       n_points=0;
       array_copy=true;
+
+      set_func="set_data_str";
+      sample_func="sample";
+      ld_func="log_pdf";
     }
+
+    /// Desc
+    std::string set_func;
+    /// Desc
+    std::string sample_func;
+    /// Desc
+    std::string ld_func;
     
     /** \brief Specify the Python module and function
      */
-    kde_python(std::string module, std::string set_func,
-               std::string sample_func, std::string ld_func,
-               size_t n_pars, size_t n_dat,
+    kde_python(std::string module, 
                o2scl::tensor<> &params,
                std::vector<double> array,
                std::string options="", 
@@ -154,8 +164,7 @@ namespace o2scl {
       n_points=0;
 
       if (module.length()>0) {
-        set_function(module,set_func,sample_func,ld_func,
-                     n_pars,n_dat,params,array,options,class_name,v);
+        set_function(module,params,array,options,class_name,v);
       }
     }      
     
@@ -255,16 +264,13 @@ namespace o2scl {
         This function is called by the constructor and thus
         cannot be virtual.
     */
-    int set_function(std::string module, std::string set_func,
-                     std::string sample_func, std::string ld_func,
-                     size_t n_pars, size_t n_dat, 
+    int set_function(std::string module, 
                      o2scl::tensor<> &params,
                      std::vector<double> array,
                      std::string options="",
                      std::string class_name="", int v=0) {
       int ret;
-      void *vp=set_function_internal(module,set_func,sample_func,
-                                     ld_func,n_pars,n_dat,params,
+      void *vp=set_function_internal(module,params,
                                      array,ret,options,class_name,v);
       return ret;
     }
@@ -272,13 +278,10 @@ namespace o2scl {
     /** \brief Internal version of set_function()
      */
     void *set_function_internal
-      (std::string module, std::string set_func,
-       std::string sample_func, std::string ld_func,
-       size_t n_pars, size_t n_dat, 
-       o2scl::tensor<> &params,
-       std::vector<double> array, int &ret,
-       std::string options="",
-       std::string class_name="", int v=0) {
+    (std::string module, o2scl::tensor<> &params,
+     std::vector<double> array, int &ret,
+     std::string options="",
+     std::string class_name="", int v=0) {
 
       ret=0;
       
@@ -291,13 +294,13 @@ namespace o2scl {
                    "kde_python().",o2scl::exc_einval);
       }
       
-      n_params=n_pars;
-      n_points=n_dat;
-      if (n_pars==0) {
+      n_params=params.get_size(1);
+      n_points=params.get_size(0);
+      if (n_params==0) {
         O2SCL_ERR2("Invalid number of parameters in ",
                    "kde_python().",o2scl::exc_einval);
       }
-      if (n_dat==0) {
+      if (n_points==0) {
         O2SCL_ERR2("Invalid number of data points in ",
                    "kde_python().",o2scl::exc_einval);
       }
@@ -698,7 +701,7 @@ namespace o2scl {
         
         This is a void * version of <tt>operator()</tt> which
         doesn't cause problems with the import_array() macro.
-     */
+    */
     void* operator2(vec_t &x) const {
 
       import_array();
