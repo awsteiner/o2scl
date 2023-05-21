@@ -125,6 +125,7 @@ namespace o2scl {
       set_func="set_data_str";
       sample_func="sample";
       ld_func="log_pdf";
+
     }
 
     /// Desc
@@ -162,6 +163,10 @@ namespace o2scl {
       
       n_params=0;
       n_points=0;
+
+      set_func="set_data_str";
+      sample_func="sample";
+      ld_func="log_pdf";
 
       if (module.length()>0) {
         set_function(module,params,array,options,class_name,v);
