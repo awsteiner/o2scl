@@ -483,7 +483,7 @@ int main(void) {
     
     covar_funct_rbf_noise cfrn;
     
-    iko2.set_covar(cfrn,ptemp);
+    iko2.set_covar_optim(cfrn,ptemp);
     iko2.set(N,x,y);
 
     vector<double> p={0.1,0.1,1.0e-8};

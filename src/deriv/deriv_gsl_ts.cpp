@@ -164,7 +164,7 @@ int main(void) {
   double val, err2;
   deriv_multip_gsl dmg2;
   dmg2.verbose=1;
-  dmg2.deriv_err([](auto &&t) mutable { return difficult_fun(t); },5.5,
+  dmg2.deriv_err([](auto &&tx) mutable { return difficult_fun(tx); },5.5,
                  val,err2);
   t.test_rel((long double)val,difficult_deriv<long double>(5.5L),1.0e-15L,
              "multip 1");

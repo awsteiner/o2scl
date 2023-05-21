@@ -82,7 +82,7 @@ namespace o2scl {
   
   /** \brief Make a step to a new attempted minimum
    */
-  virtual int step(vec_t &x, vec_t &sx, int nvar, size_t ithread) {
+  virtual int step_para(vec_t &x, vec_t &sx, int nvar, size_t ithread) {
     size_t nstep=this->step_vec.size();
     for(int i=0;i<nvar;i++) {
       double u=vrng[ithread].random();
@@ -214,7 +214,7 @@ namespace o2scl {
 	  
 	  for (int i=0;i<this->ntrial;++i) {
 	    
-	    step(x[it],new_x[it],nv,it);
+	    step_para(x[it],new_x[it],nv,it);
 	    
 	    new_E[it]=func[it](nv,new_x[it]);
 #ifdef O2SCL_MPI
@@ -294,7 +294,7 @@ namespace o2scl {
 #endif
 	  for(size_t it=0;it<n_threads;it++) {
 	    done_arr[it]=0;
-	    next(nv,old_x[it],old_E[it],x[it],E[it],T,nmoves,
+	    next_para(nv,old_x[it],old_E[it],x[it],E[it],T,nmoves,
 		 x0,fmin,done_arr[it]);
 	  }
 	}
@@ -396,7 +396,7 @@ namespace o2scl {
   }
 
   /// Determine how to change the minimization for the next iteration
-  virtual int next(size_t nvar, vec_t &x_old, double min_old, 
+  virtual int next_para(size_t nvar, vec_t &x_old, double min_old, 
 		   vec_t &x_new, double min_new, double &T, 
 		   size_t n_moves, vec_t &best_x, double best_E, 
 		   int &finished) {

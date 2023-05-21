@@ -105,8 +105,8 @@ int main(void) {
     
     cout << "Testing ndeg_terms():" << endl;
     cout.setf(ios::showpos);
-    
-    fermion e(0.511/197.33,2.0);
+
+    e.init(0.511/197.33,2.0);
     fermion_rel ft;
     double mux=1.0e-7;
 

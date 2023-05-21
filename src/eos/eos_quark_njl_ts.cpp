@@ -351,10 +351,10 @@ int main(void) {
   funct fderiv_u2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,
      u.nu,d.nu,s.nu,true);
-
+  
   df.h=0.01;
   der_u=df.deriv(u.qq,fderiv_u2);
   cout << "der_u: " << der_u << endl;
@@ -365,7 +365,7 @@ int main(void) {
   funct fderiv_d2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,
      u.nu,d.nu,s.nu,true);
 
@@ -379,7 +379,7 @@ int main(void) {
   funct fderiv_s2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,
      u.nu,d.nu,s.nu,true);
 
@@ -391,7 +391,7 @@ int main(void) {
   funct fderiv_u3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
      std::placeholders::_1,d.nu,s.nu,true);
     
@@ -403,7 +403,7 @@ int main(void) {
   funct fderiv_d3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
      u.nu,std::placeholders::_1,s.nu,true);
     
@@ -415,7 +415,7 @@ int main(void) {
   funct fderiv_s3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
                         double,double,double,double,bool)>
-     (&eos_quark_njl_vec::f_therm_pot),
+     (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
      u.nu,d.nu,std::placeholders::_1,true);
     

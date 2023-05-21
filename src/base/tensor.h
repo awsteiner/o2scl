@@ -845,7 +845,7 @@ namespace o2scl {
 
     /// \name Slice function
     //@{
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NEVER_DEFINED
     /** \brief Fix all but one index to create a vector
 
         This function fixes all of the indices to the values given in

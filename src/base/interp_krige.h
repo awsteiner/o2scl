@@ -1416,7 +1416,7 @@ namespace o2scl {
     */
     int set(size_t size, const vec_t &x, const vec2_t &y,
             func_t &covar, vec_vec_t &param_lists, bool rescale=false) {
-      set_covar(covar,param_lists);
+      set_covar_optim(covar,param_lists);
       this->rescaled=rescale;
       set(size,x,y);
       return 0;

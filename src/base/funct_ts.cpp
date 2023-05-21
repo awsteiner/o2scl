@@ -100,7 +100,7 @@ int main(void) {
   funct_multip fm2;
 
   // No parameters
-  fm2.eval_tol_err([f2](auto &&t) mutable { return f2.func(t); },
+  fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
                    1.0e-4,val,err);
   t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip");
 
@@ -112,8 +112,8 @@ int main(void) {
     boost::multiprecision::cpp_dec_float<25>> ten=10;
   boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
-  fm2.eval_tol_err([f3,param](auto &&t) mutable
-  { return f3.func(t,param); },1.0e-4,val,err);
+  fm2.eval_tol_err([f3,param](auto &&tx) mutable
+  { return f3.func(tx,param); },1.0e-4,val,err);
   t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
 
   // A fully templated parameter defined by a function 
