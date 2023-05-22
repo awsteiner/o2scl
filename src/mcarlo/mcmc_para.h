@@ -1853,8 +1853,9 @@ namespace o2scl {
     //@{
     /** \brief Set the proposal distribution
 
-        \note This function automatically sets \ref aff_inv
-        to false and \ref n_walk to 1.
+        \note This function automatically sets \ref aff_inv to false
+        and \ref n_walk to 1. The vector of proposal distributions needs
+        to have an element for each thread.
     */
     template<class prob_vec_t> void set_proposal(prob_vec_t &pv) {
       prop_dist.resize(pv.size());
@@ -1869,8 +1870,9 @@ namespace o2scl {
 
     /** \brief Set pointers to proposal distributions
 
-        \note This function automatically sets \ref aff_inv
-        to false and \ref n_walk to 1.
+        \note This function automatically sets \ref aff_inv to false
+        and \ref n_walk to 1. The vector of proposal distributions
+        needs to have an element for each thread.
     */
     template<class prob_ptr_vec_t> void set_proposal_ptrs(prob_ptr_vec_t &pv) {
       prop_dist.resize(pv.size());
