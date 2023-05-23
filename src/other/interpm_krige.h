@@ -608,6 +608,7 @@ namespace o2scl {
       keep_matrix=true;
       use_alt_mmin=false;
       err_nonconv=true;
+      skip_optim=false;
     }
 
     virtual ~interpm_krige_optim() {
@@ -635,6 +636,9 @@ namespace o2scl {
     
     /// If true, use the full minimizer
     bool full_min;
+
+    /// If true, skip optimization
+    bool skip_optim;
   
     /** \brief Set the covariance function and parameter lists
      */
@@ -745,6 +749,8 @@ namespace o2scl {
       this->Kinvf.resize(n_out);
       this->inv_KXX.resize(n_out);
 
+      if (skip_optim) return 0;
+      
       qual.resize(n_out);
 
       // Loop over all output functions
