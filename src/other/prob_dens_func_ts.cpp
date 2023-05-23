@@ -244,6 +244,14 @@ int main(void) {
     biv.ellipse_frac_integral(two_sigma,x0,x1,x2,x3,x4);
     cout << x0 << " " << x1 << " " << x2 << " " << x3 << " " << x4 << endl;
   }
+
+  if (true) {
+    
+    list_prob_cond_mdim<ubvector> ls;
+    prob_cond_mdim_fixed_step<ubvector> &p1=
+      ls.add<prob_cond_mdim_fixed_step<ubvector>>();
+    
+  }
   
   t.report();
 
