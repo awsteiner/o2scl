@@ -1,0 +1,522 @@
+> 
+95,100d105
+< gsl_bspline_deriv_workspace *
+< gsl_bspline_deriv_alloc(const size_t k);
+< 
+< void
+< gsl_bspline_deriv_free(gsl_bspline_deriv_workspace *w);
+< 
+105,106c110
+<                        gsl_bspline_workspace *w,
+<                        gsl_bspline_deriv_workspace *dw);
+---
+>                        gsl_bspline_workspace *w);
+114,115c118
+<                                gsl_bspline_workspace *w,
+<                                gsl_bspline_deriv_workspace *dw);
+---
+>                                gsl_bspline_workspace *w);
+diff gsl-1.16/gsl/gsl_interp.h gsl-2.0/gsl/gsl_interp.h
+80a81
+> GSL_VAR const gsl_interp_type * gsl_interp_steffen;
+Only in gsl-2.0/gsl: gsl_interp2d.h
+diff gsl-1.16/gsl/gsl_linalg.h gsl-2.0/gsl/gsl_linalg.h
+22a23
+> #include <stdlib.h>
+26a28,29
+> #include <gsl/gsl_math.h>
+> #include <gsl/gsl_inline.h>
+285a289,292
+> int gsl_linalg_QR_matQ (const gsl_matrix * QR,
+>                         const gsl_vector * tau,
+>                         gsl_matrix * A);
+> 
+590a598,646
+> INLINE_DECL void gsl_linalg_givens (const double a, const double b,
+>                                     double *c, double *s);
+> INLINE_DECL void gsl_linalg_givens_gv (gsl_vector * v, const size_t i,
+>                                        const size_t j, const double c,
+>                                        const double s);
+> 
+> #ifdef HAVE_INLINE
+> 
+> /* Generate a Givens rotation (cos,sin) which takes v=(x,y) to (|v|,0) 
+>    From Golub and Van Loan, "Matrix Computations", Section 5.1.8 */
+> INLINE_FUN
+> void
+> gsl_linalg_givens (const double a, const double b, double *c, double *s)
+> {
+>   if (b == 0)
+>     {
+>       *c = 1;
+>       *s = 0;
+>     }
+>   else if (fabs (b) > fabs (a))
+>     {
+>       double t = -a / b;
+>       double s1 = 1.0 / sqrt (1 + t * t);
+>       *s = s1;
+>       *c = s1 * t;
+>     }
+>   else
+>     {
+>       double t = -b / a;
+>       double c1 = 1.0 / sqrt (1 + t * t);
+>       *c = c1;
+>       *s = c1 * t;
+>     }
+> } /* gsl_linalg_givens() */
+> 
+> INLINE_FUN
+> void
+> gsl_linalg_givens_gv (gsl_vector * v, const size_t i, const size_t j,
+>                       const double c, const double s)
+> {
+>   /* Apply rotation to vector v' = G^T v */
+> 
+>   double vi = gsl_vector_get (v, i);
+>   double vj = gsl_vector_get (v, j);
+>   gsl_vector_set (v, i, c * vi - s * vj);
+>   gsl_vector_set (v, j, s * vi + c * vj);
+> }
+> 
+> #endif /* HAVE_INLINE */
+diff gsl-1.16/gsl/gsl_multifit.h gsl-2.0/gsl/gsl_multifit.h
+44,46c44,48
+<   size_t n; /* number of observations */
+<   size_t p; /* number of parameters */
+<   gsl_matrix * A;
+---
+>   size_t nmax;         /* maximum number of observations */
+>   size_t pmax;         /* maximum number of parameters */
+>   size_t n;            /* number of observations in current SVD decomposition */
+>   size_t p;            /* number of parameters in current SVD decomposition */
+>   gsl_matrix * A;      /* least squares matrix for SVD, n-by-p */
+52a55,57
+> 
+>   gsl_matrix * LTQR;   /* QR decomposition of L^T, p-by-p */
+>   gsl_vector * LTtau;  /* Householder scalars for QR of L^T, size p */
+57c62
+< gsl_multifit_linear_alloc (size_t n, size_t p);
+---
+> gsl_multifit_linear_alloc (const size_t n, const size_t p);
+60c65
+< gsl_multifit_linear_free (gsl_multifit_linear_workspace * work);
+---
+> gsl_multifit_linear_free (gsl_multifit_linear_workspace * w);
+72,77d76
+<                          const gsl_vector * y,
+<                          double tol,
+<                          size_t * rank,
+<                          gsl_vector * c,
+<                          gsl_matrix * cov,
+<                          double *chisq, 
+81,87c80
+< gsl_multifit_linear_usvd (const gsl_matrix * X,
+<                           const gsl_vector * y,
+<                           double tol,
+<                           size_t * rank,
+<                           gsl_vector * c,
+<                           gsl_matrix * cov,
+<                           double *chisq, 
+---
+> gsl_multifit_linear_bsvd (const gsl_matrix * X,
+90a84,189
+> gsl_multifit_linear_solve (const double lambda,
+>                            const gsl_matrix * X,
+>                            const gsl_vector * y,
+>                            gsl_vector * c,
+>                            double *rnorm,
+>                            double *snorm,
+>                            gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_applyW(const gsl_matrix * X,
+>                            const gsl_vector * w,
+>                            const gsl_vector * y,
+>                            gsl_matrix * WX,
+>                            gsl_vector * Wy,
+>                            gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_stdform1 (const gsl_vector * L,
+>                               const gsl_matrix * X,
+>                               const gsl_vector * y,
+>                               gsl_matrix * Xs,
+>                               gsl_vector * ys,
+>                               gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_wstdform1 (const gsl_vector * L,
+>                                const gsl_matrix * X,
+>                                const gsl_vector * w,
+>                                const gsl_vector * y,
+>                                gsl_matrix * Xs,
+>                                gsl_vector * ys,
+>                                gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_stdform2 (const gsl_matrix * L,
+>                               const gsl_matrix * X,
+>                               const gsl_vector * y,
+>                               gsl_matrix * Xs,
+>                               gsl_vector * ys,
+>                               gsl_matrix * M,
+>                               gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_wstdform2 (const gsl_matrix * L,
+>                                const gsl_matrix * X,
+>                                const gsl_vector * w,
+>                                const gsl_vector * y,
+>                                gsl_matrix * Xs,
+>                                gsl_vector * ys,
+>                                gsl_matrix * M,
+>                                gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_genform1 (const gsl_vector * L,
+>                               const gsl_vector * cs,
+>                               gsl_vector * c,
+>                               gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_genform2 (const gsl_matrix * L,
+>                               const gsl_matrix * X,
+>                               const gsl_vector * y,
+>                               const gsl_vector * cs,
+>                               const gsl_matrix * M,
+>                               gsl_vector * c,
+>                               gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_wgenform2 (const gsl_matrix * L,
+>                                const gsl_matrix * X,
+>                                const gsl_vector * w,
+>                                const gsl_vector * y,
+>                                const gsl_vector * cs,
+>                                const gsl_matrix * M,
+>                                gsl_vector * c,
+>                                gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_lreg (const double smin, const double smax,
+>                           gsl_vector * reg_param);
+> 
+> int
+> gsl_multifit_linear_lcurve (const gsl_vector * y,
+>                             gsl_vector * reg_param,
+>                             gsl_vector * rho, gsl_vector * eta,
+>                             gsl_multifit_linear_workspace * work);
+> 
+> int
+> gsl_multifit_linear_lcorner(const gsl_vector *rho,
+>                             const gsl_vector *eta,
+>                             size_t *idx);
+> 
+> int
+> gsl_multifit_linear_lcorner2(const gsl_vector *reg_param,
+>                              const gsl_vector *eta,
+>                              size_t *idx);
+> 
+> int
+> gsl_multifit_linear_Lk(const size_t p, const size_t k, gsl_matrix *L);
+> 
+> int
+> gsl_multifit_linear_Lsobolev(const size_t p, const size_t kmax,
+>                              const gsl_vector *alpha, gsl_matrix *L,
+>                              gsl_multifit_linear_workspace *work);
+> 
+> int
+193c292,295
+< int gsl_multifit_robust_tune(const double tune, gsl_multifit_robust_workspace *w);
+---
+> int gsl_multifit_robust_tune(const double tune,
+>                              gsl_multifit_robust_workspace *w);
+> int gsl_multifit_robust_maxiter(const size_t maxiter,
+>                                 gsl_multifit_robust_workspace *w);
+195a298,299
+> int gsl_multifit_robust_weights(const gsl_vector *r, gsl_vector *wts,
+>                                 gsl_multifit_robust_workspace *w);
+200a305,308
+> int gsl_multifit_robust_residuals(const gsl_matrix * X,
+>                                   const gsl_vector * y,
+>                                   const gsl_vector * c, gsl_vector * r,
+>                                   gsl_multifit_robust_workspace * w);
+diff gsl-1.16/gsl/gsl_multifit_nlin.h gsl-2.0/gsl/gsl_multifit_nlin.h
+27a28
+> #include <gsl/gsl_permutation.h>
+44c45,47
+< int gsl_multifit_covar (const gsl_matrix * J, double epsrel, gsl_matrix * covar);
+---
+> int gsl_multifit_covar (const gsl_matrix * J, const double epsrel, gsl_matrix * covar);
+> int gsl_multifit_covar_QRPT (gsl_matrix * r, gsl_permutation * perm,
+>                              const double epsrel, gsl_matrix * covar);
+90,91c93,94
+<                                    gsl_multifit_function * f, 
+<                                    const gsl_vector * x);
+---
+>                               gsl_multifit_function * f, 
+>                               const gsl_vector * x);
+110,112c113,117
+<   size_t n;   /* number of functions */
+<   size_t p;   /* number of independent variables */
+<   void * params;
+---
+>   size_t n;       /* number of functions */
+>   size_t p;       /* number of independent variables */
+>   void * params;  /* user parameters */
+>   size_t nevalf;  /* number of function evaluations */
+>   size_t nevaldf; /* number of Jacobian evaluations */
+117,120d121
+< #define GSL_MULTIFIT_FN_EVAL_F(F,x,y) ((*((F)->f))(x,(F)->params,(y)))
+< #define GSL_MULTIFIT_FN_EVAL_DF(F,x,dy) ((*((F)->df))(x,(F)->params,(dy)))
+< #define GSL_MULTIFIT_FN_EVAL_F_DF(F,x,y,dy) ((*((F)->fdf))(x,(F)->params,(y),(dy)))
+< 
+126,127c127,134
+<     int (*set) (void *state, gsl_multifit_function_fdf * fdf, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx);
+<     int (*iterate) (void *state, gsl_multifit_function_fdf * fdf, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx);
+---
+>     int (*set) (void *state, const gsl_vector * wts,
+>                 gsl_multifit_function_fdf * fdf, gsl_vector * x,
+>                 gsl_vector * f, gsl_vector * dx);
+>     int (*iterate) (void *state, const gsl_vector * wts,
+>                     gsl_multifit_function_fdf * fdf, gsl_vector * x,
+>                     gsl_vector * f, gsl_vector * dx);
+>     int (*gradient) (void *state, gsl_vector * g);
+>     int (*jac) (void *state, gsl_matrix * J);
+136,139c143,148
+<     gsl_vector * x;
+<     gsl_vector * f;
+<     gsl_matrix * J;
+<     gsl_vector * dx;
+---
+>     gsl_vector * x;        /* parameter values x */
+>     gsl_vector * f;        /* residual vector f(x) */
+>     gsl_vector * dx;       /* step dx */
+>     gsl_vector * g;        /* gradient J^T f */
+>     gsl_vector * sqrt_wts; /* sqrt(wts) */
+>     size_t niter;          /* number of iterations performed */
+151,152c160,165
+<                                  gsl_multifit_function_fdf * fdf,
+<                                  const gsl_vector * x);
+---
+>                             gsl_multifit_function_fdf * fdf,
+>                             const gsl_vector * x);
+> int gsl_multifit_fdfsolver_wset (gsl_multifit_fdfsolver * s, 
+>                                  gsl_multifit_function_fdf * f, 
+>                                  const gsl_vector * x,
+>                                  const gsl_vector * wts);
+157,160c170,178
+< int
+< gsl_multifit_fdfsolver_driver (gsl_multifit_fdfsolver * s,
+<                                const size_t maxiter,
+<                                const double epsabs, const double epsrel);
+---
+> int gsl_multifit_fdfsolver_driver (gsl_multifit_fdfsolver * s,
+>                                    const size_t maxiter,
+>                                    const double xtol,
+>                                    const double gtol,
+>                                    const double ftol,
+>                                    int *info);
+> 
+> int gsl_multifit_fdfsolver_jac (gsl_multifit_fdfsolver * s,
+>                                 gsl_matrix * J);
+167c185,197
+< 
+---
+> gsl_vector * gsl_multifit_fdfsolver_residual (const gsl_multifit_fdfsolver * s);
+> size_t gsl_multifit_fdfsolver_niter (const gsl_multifit_fdfsolver * s);
+> int gsl_multifit_eval_wf(gsl_multifit_function_fdf *fdf,
+>                          const gsl_vector *x, const gsl_vector *wts,
+>                          gsl_vector *y);
+> int gsl_multifit_eval_wdf(gsl_multifit_function_fdf *fdf,
+>                           const gsl_vector *x, const gsl_vector *wts,
+>                           gsl_matrix *dy);
+> 
+> int gsl_multifit_fdfsolver_test (const gsl_multifit_fdfsolver * s,
+>                                  const double xtol,
+>                                  const double gtol,
+>                                  const double ftol, int *info);
+173c203,205
+< int gsl_multifit_fdfsolver_dif_df(const gsl_vector *x, gsl_multifit_function_fdf *fdf,
+---
+> int gsl_multifit_fdfsolver_dif_df(const gsl_vector *x,
+>                                   const gsl_vector *wts,
+>                                   gsl_multifit_function_fdf *fdf,
+177a210,266
+> typedef struct
+> {
+>   size_t n;                         /* number of (original) residuals */
+>   size_t p;                         /* number of model parameters */
+>   double lambda;                    /* damping parameter */
+>   const gsl_vector *L_diag;         /* diagonal damping matrix or NULL */
+>   const gsl_matrix *L;              /* general damping matrix or NULL */
+>   gsl_vector *f;                    /* function values for finite diff J */
+>   gsl_vector *wts;                  /* weight vector for augmented system */
+>   gsl_multifit_fdfsolver * s;
+>   gsl_multifit_function_fdf *fdf;   /* user defined fdf */
+>   gsl_multifit_function_fdf fdftik; /* Tikhonov modified fdf */
+> } gsl_multifit_fdfridge;
+> 
+> gsl_multifit_fdfridge *
+> gsl_multifit_fdfridge_alloc (const gsl_multifit_fdfsolver_type * T,
+>                              const size_t n, const size_t p);
+> void gsl_multifit_fdfridge_free(gsl_multifit_fdfridge *work);
+> const char *gsl_multifit_fdfridge_name(const gsl_multifit_fdfridge * w);
+> gsl_vector *gsl_multifit_fdfridge_position (const gsl_multifit_fdfridge * w);
+> gsl_vector *gsl_multifit_fdfridge_residual (const gsl_multifit_fdfridge * w);
+> size_t gsl_multifit_fdfridge_niter (const gsl_multifit_fdfridge * w);
+> int gsl_multifit_fdfridge_set (gsl_multifit_fdfridge * w,
+>                                gsl_multifit_function_fdf * f,
+>                                const gsl_vector * x,
+>                                const double lambda);
+> int gsl_multifit_fdfridge_wset (gsl_multifit_fdfridge * w,
+>                                 gsl_multifit_function_fdf * f,
+>                                 const gsl_vector * x,
+>                                 const double lambda,
+>                                 const gsl_vector * wts);
+> int gsl_multifit_fdfridge_set2 (gsl_multifit_fdfridge * w,
+>                                 gsl_multifit_function_fdf * f,
+>                                 const gsl_vector * x,
+>                                 const gsl_vector * lambda);
+> int gsl_multifit_fdfridge_wset2 (gsl_multifit_fdfridge * w,
+>                                  gsl_multifit_function_fdf * f,
+>                                  const gsl_vector * x,
+>                                  const gsl_vector * lambda,
+>                                  const gsl_vector * wts);
+> int gsl_multifit_fdfridge_set3 (gsl_multifit_fdfridge * w,
+>                                 gsl_multifit_function_fdf * f,
+>                                 const gsl_vector * x,
+>                                 const gsl_matrix * L);
+> int gsl_multifit_fdfridge_wset3 (gsl_multifit_fdfridge * w,
+>                                  gsl_multifit_function_fdf * f,
+>                                  const gsl_vector * x,
+>                                  const gsl_matrix * L,
+>                                  const gsl_vector * wts);
+> int gsl_multifit_fdfridge_iterate (gsl_multifit_fdfridge * w);
+> int gsl_multifit_fdfridge_driver (gsl_multifit_fdfridge * w,
+>                                   const size_t maxiter,
+>                                   const double xtol,
+>                                   const double gtol,
+>                                   const double ftol,
+>                                   int *info);
+> 
+180d268
+< GSL_VAR const gsl_multifit_fdfsolver_type * gsl_multifit_fdfsolver_lmder;
+182c270,271
+< 
+---
+> GSL_VAR const gsl_multifit_fdfsolver_type * gsl_multifit_fdfsolver_lmder;
+> GSL_VAR const gsl_multifit_fdfsolver_type * gsl_multifit_fdfsolver_lmniel;
+Only in gsl-2.0/gsl: gsl_rstat.h
+diff gsl-1.16/gsl/gsl_sf_ellint.h gsl-2.0/gsl/gsl_sf_ellint.h
+84,85c84,85
+< int gsl_sf_ellint_D_e(double phi, double k, double n, gsl_mode_t mode, gsl_sf_result * result);
+< double gsl_sf_ellint_D(double phi, double k, double n, gsl_mode_t mode);
+---
+> int gsl_sf_ellint_D_e(double phi, double k, gsl_mode_t mode, gsl_sf_result * result);
+> double gsl_sf_ellint_D(double phi, double k, gsl_mode_t mode);
+diff gsl-1.16/gsl/gsl_sf_legendre.h gsl-2.0/gsl/gsl_sf_legendre.h
+311a312,371
+> /* associated legendre P_{lm} routines */
+> 
+> typedef enum
+> {
+>   GSL_SF_LEGENDRE_SCHMIDT,
+>   GSL_SF_LEGENDRE_SPHARM,
+>   GSL_SF_LEGENDRE_FULL,
+>   GSL_SF_LEGENDRE_NONE
+> } gsl_sf_legendre_t;
+> 
+> int gsl_sf_legendre_array(const gsl_sf_legendre_t norm,
+>                           const size_t lmax, const double x,
+>                           double result_array[]);
+> int gsl_sf_legendre_array_e(const gsl_sf_legendre_t norm,
+>                             const size_t lmax, const double x,
+>                             const double csphase,
+>                             double result_array[]);
+> int gsl_sf_legendre_deriv_array(const gsl_sf_legendre_t norm,
+>                                 const size_t lmax, const double x,
+>                                 double result_array[],
+>                                 double result_deriv_array[]);
+> int gsl_sf_legendre_deriv_array_e(const gsl_sf_legendre_t norm,
+>                                   const size_t lmax, const double x,
+>                                   const double csphase,
+>                                   double result_array[],
+>                                   double result_deriv_array[]);
+> int gsl_sf_legendre_deriv_alt_array(const gsl_sf_legendre_t norm,
+>                                     const size_t lmax, const double x,
+>                                     double result_array[],
+>                                     double result_deriv_array[]);
+> int gsl_sf_legendre_deriv_alt_array_e(const gsl_sf_legendre_t norm,
+>                                       const size_t lmax, const double x,
+>                                       const double csphase,
+>                                       double result_array[],
+>                                       double result_deriv_array[]);
+> int gsl_sf_legendre_deriv2_array(const gsl_sf_legendre_t norm,
+>                                  const size_t lmax, const double x,
+>                                  double result_array[],
+>                                  double result_deriv_array[],
+>                                  double result_deriv2_array[]);
+> int gsl_sf_legendre_deriv2_array_e(const gsl_sf_legendre_t norm,
+>                                    const size_t lmax, const double x,
+>                                    const double csphase,
+>                                    double result_array[],
+>                                    double result_deriv_array[],
+>                                    double result_deriv2_array[]);
+> int gsl_sf_legendre_deriv2_alt_array(const gsl_sf_legendre_t norm,
+>                                      const size_t lmax, const double x,
+>                                      double result_array[],
+>                                      double result_deriv_array[],
+>                                      double result_deriv2_array[]);
+> int gsl_sf_legendre_deriv2_alt_array_e(const gsl_sf_legendre_t norm,
+>                                        const size_t lmax, const double x,
+>                                        const double csphase,
+>                                        double result_array[],
+>                                        double result_deriv_array[],
+>                                        double result_deriv2_array[]);
+> size_t gsl_sf_legendre_array_n(const size_t lmax);
+> size_t gsl_sf_legendre_array_index(const size_t l, const size_t m);
+> size_t gsl_sf_legendre_nlm(const size_t lmax);
+diff gsl-1.16/gsl/gsl_sf_mathieu.h gsl-2.0/gsl/gsl_sf_mathieu.h
+70,71c70,73
+< int gsl_sf_mathieu_a(int order, double qq, gsl_sf_result *result);
+< int gsl_sf_mathieu_b(int order, double qq, gsl_sf_result *result);
+---
+> int gsl_sf_mathieu_a_e(int order, double qq, gsl_sf_result *result);
+> double gsl_sf_mathieu_a(int order, double qq);
+> int gsl_sf_mathieu_b_e(int order, double qq, gsl_sf_result *result);
+> double gsl_sf_mathieu_b(int order, double qq);
+83,84c85,88
+< int gsl_sf_mathieu_ce(int order, double qq, double zz, gsl_sf_result *result);
+< int gsl_sf_mathieu_se(int order, double qq, double zz, gsl_sf_result *result);
+---
+> int gsl_sf_mathieu_ce_e(int order, double qq, double zz, gsl_sf_result *result);
+> double gsl_sf_mathieu_ce(int order, double qq, double zz);
+> int gsl_sf_mathieu_se_e(int order, double qq, double zz, gsl_sf_result *result);
+> double gsl_sf_mathieu_se(int order, double qq, double zz);
+93c97
+< int gsl_sf_mathieu_Mc(int kind, int order, double qq, double zz,
+---
+> int gsl_sf_mathieu_Mc_e(int kind, int order, double qq, double zz,
+95c99,100
+< int gsl_sf_mathieu_Ms(int kind, int order, double qq, double zz,
+---
+> double gsl_sf_mathieu_Mc(int kind, int order, double qq, double zz);
+> int gsl_sf_mathieu_Ms_e(int kind, int order, double qq, double zz,
+96a102
+> double gsl_sf_mathieu_Ms(int kind, int order, double qq, double zz);
+Only in gsl-2.0/gsl: gsl_spblas.h
+Only in gsl-2.0/gsl: gsl_splinalg.h
+Only in gsl-2.0/gsl: gsl_spline2d.h
+Only in gsl-2.0/gsl: gsl_spmatrix.h
+diff gsl-1.16/gsl/gsl_version.h gsl-2.0/gsl/gsl_version.h
+18,20c18,20
+< #define GSL_VERSION "1.16"
+< #define GSL_MAJOR_VERSION 1
+< #define GSL_MINOR_VERSION 16
+---
+> #define GSL_VERSION "2.0"
+> #define GSL_MAJOR_VERSION 2
+> #define GSL_MINOR_VERSION 0

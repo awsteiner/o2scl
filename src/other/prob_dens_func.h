@@ -2384,6 +2384,54 @@ namespace o2scl {
   /** \brief Desc
    */
   template<class vec_t=boost::numeric::ublas::vector<double> >
+  class list_prob_dens_mdim {
+
+  protected:
+
+    /// Desc
+    std::vector<prob_dens_mdim<vec_t> *> list;
+    
+  public:
+
+    virtual ~list_prob_dens_mdim() {
+      free();
+    }
+
+    /// Desc
+    size_t size() {
+      return list.size();
+    }
+    
+    /// Desc
+    void free() {
+      for(size_t i=0;i<list.size();i++) {
+        delete list[i];
+      }
+      list.clear();
+    }
+    
+    /// Desc
+    virtual const prob_dens_mdim<vec_t> &operator()(size_t ix) const {
+      return (*(list[ix]));
+    }
+    
+    /// Desc
+    virtual prob_dens_mdim<vec_t> &operator()(size_t ix) {
+      return (*(list[ix]));
+    }
+    
+    /// Desc
+    template<class cond_mdim_t> cond_mdim_t &add() {
+      cond_mdim_t *ptr=new cond_mdim_t;
+      list.push_back(ptr);
+      return *ptr;
+    }
+    
+  };
+  
+  /** \brief Desc
+   */
+  template<class vec_t=boost::numeric::ublas::vector<double> >
   class list_prob_cond_mdim {
 
   protected:
@@ -2397,6 +2445,11 @@ namespace o2scl {
       free();
     }
 
+    /// Desc
+    size_t size() {
+      return list.size();
+    }
+    
     /// Desc
     void free() {
       for(size_t i=0;i<list.size();i++) {

@@ -174,18 +174,6 @@ namespace o2scl {
 
   };
 
-  /** \brief Compare the accuracy of Metropolis-Hastings steps
-      with KDE and GMM emulators
-   */
-  int compare_methast_gmm_kde(size_t n_comp_start, size_t n_comp_end,
-                              const o2scl::table<> &table,
-                              std::vector<std::string> param_cols,
-                              std::string lw_col,
-                              std::vector<gmm_python> &gp, kde_python<> &kp,
-                              std::vector<double> bw_array,
-                              double test_size=0.2, size_t n_tests=0,
-                              int verbose=0, std::string gp_options="",
-                              std::string kp_options="");  
 #endif
   
 }
