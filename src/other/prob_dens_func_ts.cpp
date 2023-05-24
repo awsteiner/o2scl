@@ -247,7 +247,7 @@ int main(void) {
 
   if (true) {
     
-    list_prob_cond_mdim<ubvector> ls;
+    vec_prob_cond_mdim<ubvector> ls;
     prob_cond_mdim_fixed_step<ubvector> &p1=
       ls.add<prob_cond_mdim_fixed_step<ubvector>>();
     
