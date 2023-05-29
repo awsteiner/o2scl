@@ -69,6 +69,7 @@ lib_settings_class::lib_settings_class() {
   //omp_num_threads=0;
 
   py_initialized=false;
+  seed=0;
 }
 
 lib_settings_class::~lib_settings_class() {
@@ -643,4 +644,22 @@ std::string lib_settings_class::py_version() {
 #else
   return "";
 #endif
+}
+
+void o2scl::rng_set_seed(rng<> &r) {
+#ifdef O2SCL_OPENMP
+#pragma omp critical (o2scl_make_rng_thread_safe)
+#endif
+  {
+    if (o2scl_settings.seed==0) {
+      o2scl_settings.seed=time(0);
+    } else if (o2scl_settings.seed+1==0) {
+      o2scl_settings.seed=1;
+    } else {
+      o2scl_settings.seed++;
+    }
+    r.set_seed(o2scl_settings.seed);
+    std::cout << "New RNG with seed: " << o2scl_settings.seed << std::endl;
+  }
+  return;
 }

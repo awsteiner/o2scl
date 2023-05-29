@@ -31,6 +31,7 @@
 
 #include <o2scl/convert_units.h>
 #include <o2scl/find_constants.h>
+#include <o2scl/rng.h>
 
 /** \brief The main \o2 namespace
     
@@ -192,6 +193,9 @@ namespace o2scl {
     }
     //@}
 
+    /// Seed for thread-safe random number generation
+    unsigned int seed;
+    
     // AWS: 2/22/21: I was originally thinking of using this to
     // control OpenMP threads, but I think for now the best is just to
     // use export OMP_NUM_THREADS to control this
@@ -212,6 +216,7 @@ namespace o2scl {
     /// Finalize the python interface
     void py_final(int verbose=0);
 
+    /// String containing python version
     std::string py_version();
     
     /// Import arrays for numpy C api
@@ -260,6 +265,8 @@ namespace o2scl {
     return cu.find_unique(name,unit);
   }
 
+  void rng_set_seed(rng<> &r);
+  
 }
 
 extern "C" {
