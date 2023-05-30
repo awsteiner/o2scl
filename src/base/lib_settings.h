@@ -33,6 +33,10 @@
 #include <o2scl/find_constants.h>
 #include <o2scl/rng.h>
 
+#ifdef O2SCL_MPI
+#include <mpi.h>
+#endif
+
 /** \brief The main \o2 namespace
     
     By default, all \o2 classes and functions which are not listed as
@@ -268,27 +272,33 @@ namespace o2scl {
   }
 
   /** \brief Set the RNG seed using an OpenMP critical block
-      and respecting MPI parallelism
 
       This function sets the random number seed for the given random
-      number generator. If O2SCL_OPENMP is defined, then the seed
-      generation is enclosed in an OpenMP critical block to ensure
-      that multiple threads do not get the same seed. If O2SCL_MPI is
-      defined, then the seed generation is modified to attempt to
-      ensure that multiple MPI tasks do not get the same seed. This
-      function uses the variable \ref lib_settings_class::seed to
-      store a global library seed.
+      number generator. If OpenMP support is included when O2scl is
+      compiled, then the seed generation is enclosed in an OpenMP
+      critical block to ensure that multiple threads do not get the
+      same seed. This function uses the variable \ref
+      lib_settings_class::seed to store a global library seed.
 
       When OpenMP is enabled, it is possible that this function could 
       create a condition where no OpenMP thread can proceed and thus
       prevent subsequent code from running as normal, however, this 
       is expected to be rare in practice.
-
-      \warning If this function is used in an OpenMP block without
-      defining O2SCL_OPENMP or O2SCL_MPI, then the same seed may be
-      used for multiple OpenMP threads or MPI tasks.
    */
-  void rng_set_seed(rng<> &r, int verbose=1);
+  void rng_set_seed(rng<> &r, int mpi_size=1, int mpi_rank=0,
+                    int verbose=1);
+
+#if defined (O2SCL_MPI) || defined (DOXYGEN)
+  /// MPI version of rng_set_seed()
+  template<class fp_t=double>
+  void rng_set_seed_mpi(rng<fp_t> &r, int verbose=1) {
+    int mpi_rank=0, mpi_size=1;
+    // Get MPI rank, etc.
+    MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
+    return rng_set_seed(r,mpi_size,mpi_rank,verbose);
+  }
+#endif
   
 }
 

@@ -564,6 +564,8 @@ namespace o2scl {
     /// The normalized density 
     void *log_pdf_internal(const vec_t &x, double &dout) const {
 
+      dout=0.0;
+      
       if (x.size()!=n_params) {
         O2SCL_ERR("Input vector does not have correct size.",
                   o2scl::exc_einval);

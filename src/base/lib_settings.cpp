@@ -43,6 +43,10 @@
 #endif
 #endif
 
+#ifdef O2SCL_OPENMP
+#include <omp.h>
+#endif
+
 using namespace std;
 using namespace o2scl;
 
@@ -646,30 +650,36 @@ std::string lib_settings_class::py_version() {
 #endif
 }
 
-void o2scl::rng_set_seed(rng<> &r, int verbose) {
+void o2scl::rng_set_seed(rng<> &r, int mpi_size, int mpi_rank,
+                         int verbose) {
 #ifdef O2SCL_OPENMP
 #pragma omp critical (o2scl_make_rng_thread_safe)
 #endif
   {
     
-    int mpi_rank=0, mpi_size=1;
-#ifdef O2SCL_MPI
-    // Get MPI rank, etc.
-    MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);
-    MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
-#endif
-    
     if (o2scl_settings.seed==0) {
+      // If the seed has never been used before, set it equal to the time
       o2scl_settings.seed=time(0);
-    } else if (o2scl_settings.seed+mpi_size==0) {
-      o2scl_settings.seed=1;
+    } else if (o2scl_settings.seed+(unsigned int)mpi_size<
+               (unsigned int)mpi_size) {
+      // If the next seed flipped around to zero, adjust accordingly
+      o2scl_settings.seed=mpi_size;
     } else {
+      // Proceed to next seed
       o2scl_settings.seed+=mpi_size;
     }
+    // Set the seed for this rank
     r.set_seed(o2scl_settings.seed+mpi_rank);
     if (verbose>0) {
-      std::cout << "New RNG with seed: " << o2scl_settings.seed << std::endl;
+      int i_thread=0;
+#ifdef O2SCL_OPENMP
+      i_thread=omp_get_thread_num();
+#endif
+      std::cout << "New RNG for thread " << i_thread << " and rank "
+                << mpi_rank << " with seed: "
+                << o2scl_settings.seed << std::endl;
     }
   }
   return;
 }
+
