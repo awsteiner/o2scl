@@ -193,7 +193,9 @@ namespace o2scl {
     }
     //@}
 
-    /// Seed for thread-safe random number generation
+    /** \brief Seed for thread-safe random number generation 
+        \ref rng_set_seed()
+     */
     unsigned int seed;
     
     // AWS: 2/22/21: I was originally thinking of using this to
@@ -265,7 +267,28 @@ namespace o2scl {
     return cu.find_unique(name,unit);
   }
 
-  void rng_set_seed(rng<> &r);
+  /** \brief Set the RNG seed using an OpenMP critical block
+      and respecting MPI parallelism
+
+      This function sets the random number seed for the given random
+      number generator. If O2SCL_OPENMP is defined, then the seed
+      generation is enclosed in an OpenMP critical block to ensure
+      that multiple threads do not get the same seed. If O2SCL_MPI is
+      defined, then the seed generation is modified to attempt to
+      ensure that multiple MPI tasks do not get the same seed. This
+      function uses the variable \ref lib_settings_class::seed to
+      store a global library seed.
+
+      When OpenMP is enabled, it is possible that this function could 
+      create a condition where no OpenMP thread can proceed and thus
+      prevent subsequent code from running as normal, however, this 
+      is expected to be rare in practice.
+
+      \warning If this function is used in an OpenMP block without
+      defining O2SCL_OPENMP or O2SCL_MPI, then the same seed may be
+      used for multiple OpenMP threads or MPI tasks.
+   */
+  void rng_set_seed(rng<> &r, int verbose=1);
   
 }
 

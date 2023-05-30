@@ -646,20 +646,30 @@ std::string lib_settings_class::py_version() {
 #endif
 }
 
-void o2scl::rng_set_seed(rng<> &r) {
+void o2scl::rng_set_seed(rng<> &r, int verbose) {
 #ifdef O2SCL_OPENMP
 #pragma omp critical (o2scl_make_rng_thread_safe)
 #endif
   {
+    
+    int mpi_rank=0, mpi_size=1;
+#ifdef O2SCL_MPI
+    // Get MPI rank, etc.
+    MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);
+    MPI_Comm_size(MPI_COMM_WORLD,&mpi_size);
+#endif
+    
     if (o2scl_settings.seed==0) {
       o2scl_settings.seed=time(0);
-    } else if (o2scl_settings.seed+1==0) {
+    } else if (o2scl_settings.seed+mpi_size==0) {
       o2scl_settings.seed=1;
     } else {
-      o2scl_settings.seed++;
+      o2scl_settings.seed+=mpi_size;
     }
-    r.set_seed(o2scl_settings.seed);
-    std::cout << "New RNG with seed: " << o2scl_settings.seed << std::endl;
+    r.set_seed(o2scl_settings.seed+mpi_rank);
+    if (verbose>0) {
+      std::cout << "New RNG with seed: " << o2scl_settings.seed << std::endl;
+    }
   }
   return;
 }
