@@ -677,7 +677,7 @@ void o2scl::rng_set_seed(rng<> &r, int mpi_size, int mpi_rank,
 #endif
       std::cout << "New RNG for thread " << i_thread << " and rank "
                 << mpi_rank << " with seed: "
-                << o2scl_settings.seed << std::endl;
+                << o2scl_settings.seed+mpi_rank << std::endl;
     }
   }
   return;
