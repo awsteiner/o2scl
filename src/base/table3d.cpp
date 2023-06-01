@@ -52,6 +52,38 @@ hist_2d table3d::to_hist_2d(std::string slice, int verbose) {
   return h;
 }
 
+hist table3d::to_hist(std::string slice, size_t n_bins, int verbose) {
+  
+  hist h;
+  
+  const ubmatrix &sl=this->get_slice(slice);
+  
+  double min=1.0, max=0.0;
+  for(size_t i=0;i<this->get_nx();i++) {
+    for(size_t j=0;j<this->get_ny();j++) {
+      if (i==0 && j==0) {
+        min=sl(i,j);
+        max=sl(i,j);
+      } else if (sl(i,j)<min) {
+        min=sl(i,j);
+      } else if (sl(i,j)>max) {
+        max=sl(i,j);
+      }
+    }
+  }
+  
+  uniform_grid<double> ug=uniform_grid_end<double>(min,max,n_bins);
+  h.set_bin_edges(ug);
+  
+  for(size_t i=0;i<this->get_nx();i++) {
+    for(size_t j=0;j<this->get_ny();j++) {
+      h.update(sl(i,j));
+    }
+  }
+  
+  return h;
+}
+
 table3d::table3d() {
   xy_set=false;
   size_set=false;

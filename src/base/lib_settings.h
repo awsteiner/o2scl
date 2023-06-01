@@ -284,7 +284,7 @@ namespace o2scl {
       create a condition where no OpenMP thread can proceed and thus
       prevent subsequent code from running as normal, however, this 
       is expected to be rare in practice.
-   */
+  */
   void rng_set_seed(rng<> &r, int mpi_size=1, int mpi_rank=0,
                     int verbose=1);
 

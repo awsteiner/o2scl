@@ -1293,6 +1293,10 @@ namespace o2scl {
      */
     hist_2d to_hist_2d(std::string slice, int verbose=1);
 
+    /** \brief Convert slice named \c slice to a \ref hist object
+     */
+    hist to_hist(std::string slice, size_t n_bins, int verbose=1);
+
 #ifdef O2SCL_NEVER_DEFINED
     
     /** \brief Desc

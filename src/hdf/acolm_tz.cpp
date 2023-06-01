@@ -344,33 +344,8 @@ int acol_manager::comm_to_hist(std::vector<std::string> &sv,
       cerr << "No slice named " << in[0] << " in table3d." << endl;
       return 11;
     }
-    
-    const ubmatrix &sl=table3d_obj.get_slice(in[0]);
-    size_t n_bins=o2scl::stoszt(in[1]);
 
-    double min=1.0, max=0.0;
-    for(size_t i=0;i<table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<table3d_obj.get_ny();j++) {
-        if (i==0 && j==0) {
-          min=sl(i,j);
-          max=sl(i,j);
-        } else if (sl(i,j)<min) {
-          min=sl(i,j);
-        } else if (sl(i,j)>max) {
-          max=sl(i,j);
-        }
-      }
-    }
-
-    hist_obj.clear();
-    uniform_grid<double> ug=uniform_grid_end<double>(min,max,n_bins);
-    hist_obj.set_bin_edges(ug);
-    
-    for(size_t i=0;i<table3d_obj.get_nx();i++) {
-      for(size_t j=0;j<table3d_obj.get_ny();j++) {
-        hist_obj.update(sl(i,j));
-      }
-    }
+    hist_obj=table3d_obj.to_hist(in[0],o2scl::stoszt(in[1]),verbose);
     
     command_del(type);
     clear_obj();
