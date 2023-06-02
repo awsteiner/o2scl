@@ -675,6 +675,10 @@ void o2scl::rng_set_seed(rng<> &r, int mpi_size, int mpi_rank,
 #ifdef O2SCL_OPENMP
       i_thread=omp_get_thread_num();
 #endif
+      // AWS, 6/1/23: I've had trouble with omp_get_thread_num() not
+      // reporting the correct thread number, possibly because this is
+      // a critical region. In any case, the random number generation
+      // still seems to work.
       std::cout << "New RNG for thread " << i_thread << " and rank "
                 << mpi_rank << " with seed: "
                 << o2scl_settings.seed+mpi_rank << std::endl;
