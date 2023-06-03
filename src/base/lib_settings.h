@@ -289,7 +289,16 @@ namespace o2scl {
                     int verbose=1);
 
 #if defined (O2SCL_MPI) || defined (DOXYGEN)
-  /// MPI version of rng_set_seed()
+  
+  /** \brief MPI version of rng_set_seed()
+      
+      \note This function requires that -DO2SCL_MPI is defined and
+      that MPI_Init() has been called previously. It is defined as a
+      template, but currently double is the only floating point type
+      supported.
+
+      This function is a MPI wrapper around \ref rng_set_seed().
+   */
   template<class fp_t=double>
   void rng_set_seed_mpi(rng<fp_t> &r, int verbose=1) {
     int mpi_rank=0, mpi_size=1;

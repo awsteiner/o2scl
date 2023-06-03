@@ -67,7 +67,7 @@ format_float::format_float() {
 
 void format_float::html_mode() {
   prefx="";
-  sgn="-";
+  sgn="&mdash;";
   suffx="";
   sci_prefx="";
   tmes=" &times; ";
