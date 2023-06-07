@@ -225,10 +225,10 @@ void o2scl::matrix_backward_fft_copy
   
   fftw_execute(plan);
 
-#else
-
   fftw_free(data2);
     
+#else
+
   O2SCL_ERR("FFTW support not included in this O2scl installation.",
             o2scl::exc_eunsup);
     
