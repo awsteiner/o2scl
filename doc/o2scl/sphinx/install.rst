@@ -35,34 +35,34 @@ libraries, but is sometimes compatible with recent older versions.
 The sections below describe several different ways of installing
 O₂scl.
 
-It is important to ensure that O₂scl is compiled with the same
-version of the HDF5 libraries that it is linked with when
-compiling code based on O₂scl. In order to help resolve these
-version conflitcts, ``acol -v`` reports the two different
-HDF5 versions so that it is easy to check that they are the same.
-This is also particularly important when python support is
-enabled, as O₂scl and h5py should also be working from the same
-HDF5 version (see more information about Python support below).
+It is important to ensure that O₂scl is compiled with the same version
+of the HDF5 libraries that it is linked with when compiling code based
+on O₂scl. In order to help resolve these version conflicts, ``acol
+-v`` reports the two different HDF5 versions so that it is easy to
+check that they are the same. This is also particularly important when
+python support is enabled, as O₂scl and h5py should also be working
+from the same HDF5 version (see more information about Python support
+below).
 
 .. _python_support:
 
 Python support
 --------------
 
-O₂scl can be compiled with python support (still experimental) by
-providing the option ``--enable-python`` when the library is
-configured. This may also require adjusting CXXFLAGS and LDFLAGS in
-order to ensure the Python headers and libraries can be found. O₂scl
-code which uses Python also assumes that numpy was installed, so the
-numpy package may need to be specified. For example, using g++ on
-MacOS may need something of the form::
+O₂scl can be compiled with python support by providing the option
+``--enable-python`` when the library is configured. This may also
+require adjusting CXXFLAGS and LDFLAGS in order to ensure the Python
+headers and libraries can be found. O₂scl code which uses Python also
+assumes that numpy was installed, so the numpy package may need to be
+specified. For example, using g++ on MacOS may need something of the
+form::
 
-  CXX="g++-12"
+  CXX="g++-13"
   CXXFLAGS="-I/usr/local/lib/python3.11/site-packages/numpy/core/include
   `python3-config --includes`" LDFLAGS="`python3-config --ldflags`"
   ./configure --enable-python
 
-Including Python support also requires the installation of \c o2sclpy
+Including Python support also requires the installation of O₂sclpy
 (for example, using \c pip) to ensure that the tests pass
 successfully. Thus, when including Python support it is best to
 install O₂scl first, install O₂sclpy second, and then test O₂scl and
@@ -78,7 +78,7 @@ more recent version of the HDF5 libraries or by forcing ``h5py`` to
 use the system HDF5 libraries. The latter can be achieved using
 something like::
 
-  HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3
+  HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 \
   install --no-binary=h5py h5py
 
 this will give a warning that ``--no-binary`` flag is deprecated, so
