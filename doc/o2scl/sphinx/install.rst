@@ -46,10 +46,9 @@ of the HDF5 libraries that it is linked with when compiling code based
 on O₂scl. In order to help resolve these version conflicts, ``acol
 -v`` reports the two different HDF5 versions so that it is easy to
 check that they are the same. This is also particularly important when
-Python support is enabled, as O₂scl and h5py should also be working
-from the same HDF5 version (see more information about Python support
-below).
 
+.. _compile_homebrew:
+  
 Compiling O₂scl on Mac OSX with Homebrew
 ----------------------------------------
 
