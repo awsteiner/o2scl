@@ -575,7 +575,9 @@ namespace o2scl {
 
       double qual_ac=0.0;
       int ret_ac=addl_const(iout,qual_ac);
-      if (ret_ac!=0) success=4;
+      if (ret_ac!=0) {
+        success=4;
+      }
       ret+=qual_ac;
       
       if (!isfinite(ret)) success=3;
