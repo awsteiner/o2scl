@@ -37,5 +37,7 @@ Todo List
      * implement find for more types and fix the problem (what is it?) for
        size_t[]
      * sync read generic and output
+     * more options for acol kde to-table, including the options to
+       change the upper and lower x limits
 
 .. todolist::
