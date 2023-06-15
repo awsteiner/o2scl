@@ -67,13 +67,13 @@ format_float::format_float() {
 
 void format_float::html_mode() {
   prefx="";
-  sgn="&mdash;";
+  sgn="&minus;";
   suffx="";
   sci_prefx="";
   tmes=" &times; ";
   exp_prefx="10<sup>";
-  exp_sgn="&mdash;";
-  sci_sgn="&mdash;";
+  exp_sgn="&minus;";
+  sci_sgn="&minus;";
   exp_suffx="</sup>";
   sci_suffx="";
   not_finte="Nan";
