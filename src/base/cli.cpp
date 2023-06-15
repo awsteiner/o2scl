@@ -695,7 +695,7 @@ int cli::process_args(std::vector<std::string> &svsv,
 		  current+=2;
 		  cout << "Assuming \"" << s << " " << s2 
 		       << "\" implies \"-set " << stmp << " " << s2
-		       << "\"" << endl;
+		       << "\"." << endl;
 		}
 	      }
 	      
