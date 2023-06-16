@@ -8,7 +8,8 @@ operations on related columns of data. It supports column operations,
 interpolation, column reference by either name or index, binary
 searching (in the case of ordered columns), and sorting. It also
 supports creating new columns with functions which operate on column
-names using the :ref:`calculator <calculator>` class. A child class,
+names using the :ref:`calc_utf8 <calc_utf8>` class (see also
+:ref:`Algebraic Function Evaluation`). A child class,
 :ref:`table_units <table_units>` is similiar except that it
 additionally allows one to specify physical units for each column and
 convert units using :ref:`convert_units <convert_units>` .

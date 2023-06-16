@@ -39,7 +39,7 @@ a wide range of vector and matrix types. See the
 can be used with Boost, Eigen, or Armadillo objects.
 
 The O₂scl library uses a standard nomenclature to distinguish a couple
-different concepts. The word "array" is always used to refer to
+different concepts. The word "array" is typically used to refer to
 C-style arrays, i.e. ``double[]``. If there are two dimensions in the
 array, it is a "two-dimensional array", i.e. ``double[][]`` . The word
 "vector" is reserved generic objects with array-like semantics.
@@ -67,37 +67,34 @@ it is important to notice that ``std::function<double
 &(size_t,size_t)>`` is also a matrix type (the ampersand is important
 unless the matrix is read-only). This means that some matrices (e.g.
 slices of tensors) can be trivially constructed from ``std::bind`` and
-``std::mem_fn``. An example of this in O₂scl_eos is how
-``o2scl::eos_sn_base::slice`` generates a matrix from a 3-D tensor.
+``std::mem_fn``. An example of this in O₂scl_eos is how the
+:cpp:class:`o2scl::eos_sn_base::slice` class generates a matrix from a
+3-D tensor.
 
 A matrix type is distinct from a "vector of vectors" or a "list of
 vectors", such as that implied by ``std::vector<std::vector<double>
 >`` because in the latter, not all of the vectors in the list need to
 have the same size. In some cases, There are places where a list of
 vectors is preferable to a matrix, and O₂scl expects that
-elements in a list of vectors can be accessed by ``operator[][]``. A
-:ref:`table <table>` object can be thought of as a list of vectors in
-this sense. The function :cpp:func:`o2scl::tensor_grid::set_grid` also
+elements in a list of vectors can be accessed by ``operator[][]``.
+The function :cpp:func:`o2scl::tensor_grid::set_grid` 
 accepts a list of vectors, and for this function, none of the vectors
-needs to have the same size. A list of vectors can also be used to
-specify a scattered list of points in a multi-dimensional space. Thus,
-a list of vectors is what is used for the argument of
-:ref:`interpm_idw <interpm_idw>`.
+needs to have the same size. 
 
 The word "tensor" is used for a generic object which has rank ``n``
 and then has ``n`` associated indices. A vector is just a \tensor of
 rank 1 and a matrix is just a \tensor of rank 2. Tensors are
-implemented in O₂scl by :ref:`tensor <tensor>`. A
-multivariate function specified on a grid can be implemented in
-O₂scl with :ref:`tensor_grid <tensor_grid>`. See more
-discussion in the tensor section below.
+implemented in O₂scl with class :ref:`tensor <tensor>`. A multivariate
+function specified on a grid can be implemented in O₂scl with
+:ref:`tensor_grid <tensor_grid>`. See more discussion in the tensor
+section below.
 
 Rows and columns vs. x and y
 ----------------------------
 
-The most common convention is that the first index
-of a matrix is the row index, i.e. to print a matrix
-to the screen one uses something like::
+The most common convention is that the first index of a matrix is the
+row index, i.e. to print a matrix to the screen one uses something
+like::
 
   for(size_t row=0;row<n_rows;row++) {
     for(size_t col=0;col<n_cols;col++) {
@@ -144,6 +141,10 @@ convention.
 
 Assignment and copying
 ----------------------
+
+O₂scl has several functions which perform various operations
+on generic vector and matrix types. These functions are listed
+in the next few sections. 
 
 - :cpp:func:`o2scl::vector_copy()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_copy_jackknife()` [``src/base/vector.h``]
@@ -350,30 +351,29 @@ For writing generic vectors to a stream, you can use the
 :cpp:func:`o2scl::vector_out()` functions, which are defined in
 ``src/base/vector.h``. Pretty matrix output is performed by the
 :cpp:func:`o2scl::matrix_out()` functions, which are defined in
-``src/base/columnify.h``. These function uses a :ref:`columnify
-<columnify>` object to format the output.
+``src/base/columnify.h``. The matrix output function uses a
+:ref:`columnify <columnify>` object to format the output.
 
 Tensors
 -------
 
-Some preliminary support is provided for tensors of arbitrary rank and
-size in the class :ref:`tensor <tensor>`. Classes :ref:`tensor1
-<tensor1>`, :ref:`tensor2 <tensor2>`, :ref:`tensor3 <tensor3>`, and
-:ref:`tensor4 <tensor4>` are rank-specific versions for 1-, 2-, 3- and
-4-rank tensors. For n-dimsional data defined on a grid,
-:ref:`tensor_grid <tensor_grid>` provides a space to define a
-hyper-cubic grid in addition to the the tensor data. This class
-:ref:`tensor_grid <tensor_grid>` also provides simple n-dimensional
-interpolation of the data defined on the specified grid. See
-:ref:`File I/O with HDF5` for functions in which provide HDF5 I/O for
-tensor objects.
+Tensors of arbitrary rank and size can be stored in the class
+:ref:`tensor <tensor>`. Classes :ref:`tensor1 <tensor1>`,
+:ref:`tensor2 <tensor2>`, :ref:`tensor3 <tensor3>`, and :ref:`tensor4
+<tensor4>` are rank-specific versions for 1-, 2-, 3- and 4-rank
+tensors. For n-dimsional data defined on a grid, :ref:`tensor_grid
+<tensor_grid>` provides a space to define a hyper-cubic grid in
+addition to the the tensor data. This class :ref:`tensor_grid
+<tensor_grid>` also provides simple n-dimensional interpolation of the
+data defined on the specified grid. See :ref:`File I/O with HDF5` for
+functions in which provide HDF5 I/O for tensor objects.
 
 
 I/O and contiguous storage
 --------------------------
 
-O₂scl uses HDF5 for file I/O, and in order to perform I/O
-of vector-like data, HDF5 works with bare pointers. In order to
+O₂scl uses HDF5 for file I/O, and in order to perform I/O of
+vector-like data, HDF5 works with bare pointers. In order to
 efficiently read and write vectors and other objects to HDF5 files, it
 is thus important to ensure that these objects are stored contiguously
 in memory. The standard template library objects, e.g. ``std::vector``
@@ -381,12 +381,14 @@ have this property as part of the recent C++ standard. The ublas
 objects, so far as I know, do not necessarily have this property. For
 this reason, :cpp:func:`o2scl_hdf::hdf_file::getd_vec()` and
 :cpp:func:`o2scl_hdf::hdf_file::setd_vec()` are efficient when working
-with ``std::vector`` objects, but otherwise require an extra copy upon
-reading from and writing to an HDF5 file. The same holds for matrix
-and tensor I/O. It is the efficiency of this I/O which motivated the
-default choice of ``std::vector`` objects as the default vector type
-in :ref:`table <table>` and :ref:`tensor <tensor>`. Also because of
-this issue, O₂scl does not currently provide HDF I/O
-functions for :ref:`tensor <tensor>` classes unless they are built
-upon ``std::vector``.
+with ``std::vector`` objects. For other vector types, one must use
+:cpp:func:`o2scl_hdf::hdf_file::getd_vec_copy()` or
+:cpp:func:`o2scl_hdf::hdf_file::setd_vec_copy()` which require an
+extra copy upon reading from and writing to an HDF5 file. The same
+holds for matrix and tensor I/O. It is the efficiency of this I/O
+which motivated the default choice of ``std::vector`` objects as the
+default vector type in :ref:`table <table>` and :ref:`tensor
+<tensor>`. Also because of this issue, O₂scl does not currently
+provide HDF I/O functions for :ref:`tensor <tensor>` classes unless
+they are built upon ``std::vector``.
 

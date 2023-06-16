@@ -8,7 +8,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	cli.h columnify.h convert_units.h string_conv.h \
 	tensor.h vector.h table3d.h cli_readline.h tensor_grid.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
-	shunting_yard.h interp_krige.h find_constants.h cursesw.h \
+	interp_krige.h find_constants.h cursesw.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
 	funct_multip.h interp_vec.h funct_to_fp.h
 
@@ -18,7 +18,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
-	shunting_yard.cpp tensor.cpp cursesw.cpp \
+	tensor.cpp cursesw.cpp \
 	base_python.cpp funct.cpp funct_to_fp.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
@@ -27,7 +27,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
 	search_vec.scr table.scr vector.scr interp_krige.scr \
 	interp.scr columnify.scr convert_units.scr \
-	string_conv.scr tensor.scr shunting_yard.scr \
+	string_conv.scr tensor.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr \
 	tensor_grid.scr constants.scr cursesw.scr auto_format.scr \
 	calc_utf8.scr
@@ -162,7 +162,7 @@ am__pkginclude_HEADERS_DIST = $(HEADER_VAR)
 CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	lib_settings_ts misc_ts mm_funct_ts constants_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
-	columnify_ts shunting_yard_ts interp_krige_ts \
+	columnify_ts interp_krige_ts \
 	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts \
 	cursesw_ts auto_format_ts calc_utf8_ts
@@ -220,7 +220,6 @@ tensor_grid_ts_LDADD = $(ADDL_TEST_LIBS)
 table_units_ts_LDADD = $(ADDL_TEST_LIBS)
 exception_ts_LDADD = $(ADDL_TEST_LIBS)
 uniform_grid_ts_LDADD = $(ADDL_TEST_LIBS)
-shunting_yard_ts_LDADD = $(ADDL_TEST_LIBS)
 
 interp_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 constants_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -247,7 +246,6 @@ tensor_grid_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 table_units_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 exception_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 uniform_grid_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
-shunting_yard_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 interp_krige.scr: interp_krige_ts$(EXEEXT) 
 	./interp_krige_ts$(EXEEXT) > interp_krige.scr
@@ -299,8 +297,6 @@ exception.scr: exception_ts$(EXEEXT)
 	./exception_ts$(EXEEXT) > exception.scr
 uniform_grid.scr: uniform_grid_ts$(EXEEXT) 
 	./uniform_grid_ts$(EXEEXT) > uniform_grid.scr
-shunting_yard.scr: shunting_yard_ts$(EXEEXT) 
-	./shunting_yard_ts$(EXEEXT) > shunting_yard.scr
 
 interp_krige_ts_SOURCES = interp_krige_ts.cpp
 constants_ts_SOURCES = constants_ts.cpp
@@ -327,7 +323,6 @@ tensor_grid_ts_SOURCES = tensor_grid_ts.cpp
 table_units_ts_SOURCES = table_units_ts.cpp
 exception_ts_SOURCES = exception_ts.cpp
 uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
-shunting_yard_ts_SOURCES = shunting_yard_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_base

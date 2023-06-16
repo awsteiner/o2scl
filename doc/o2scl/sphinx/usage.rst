@@ -51,7 +51,7 @@ default in O₂scl, the default GSL error handler is replaced
 with the O₂scl default error handler, i.e. GSL functions
 will throw C++ exceptions.
 
-Errors can be set by the user through the macros ``O2SCL_ERR`` which
+Library users can use the O₂scl handler with the macro ``O2SCL_ERR`` which
 calls the O₂scl error handler. The error handler,
 :cpp:var:`o2scl::err_hnd` is a global pointer to an object of type
 :ref:`err_hnd_type <err_hnd_type>`. There is a global default error
@@ -84,8 +84,8 @@ given in below in :ref:`GSL error codes and C++ exception types`.
 One can instruct the library to use the GSL-like O₂scl
 error handler :cpp:var:`o2scl::alt_err_hnd` by default, by defining
 the constant ``O2SCL_USE_GSL_HANDLER``. This is also useful if one
-wants to compile without C++ exceptions (which does have a small
-overhead). 
+wants to compile without C++ exceptions (e.g. to avoid the small
+overhead incurred with C++ exceptions).
 
 What is an error?
 -----------------
@@ -112,7 +112,7 @@ code provided by the user, the macros ``O2SCL_CONV`` and
 errors sometimes return ``int``, to indicate which convergence error
 was returned when the value of ``err_nonconv`` has been set to false.
 
-Of course, the standard ``try, catch`` mechanism of error
+Of course, the standard C++ ``try'' and  ``catch`` mechanism of error
 handling may also be used for finer-grained control. 
 
 Another related issue is that O₂scl often calls functions
@@ -278,12 +278,12 @@ several details about how O₂scl was compiled.
   and for code which uses O₂scl to include support for HDF5
   compression. The command ``acol -v`` reports whether or not HDF5
   compression support was enabled during compilation.
-- O2SCL_MPI - Flag to allow MPI functionality in O2scl classes
+- O2SCL_MPI - Flag to allow MPI functionality in O₂scl classes
   which contain MPI code (see also O2SCL_OPENMP). All current
   MPI functionality in O₂scl is header only, thus MPI support does 
   not need to be specified to the ``configure`` script.
 - O2SCL_NEVER_DEFINED - Used internally to comment out large 
-  sections of code. This should not be used by the end-user. 
+  sections of code. This should never be defined by the end-user. 
 - O2SCL_NO_EXCEPTIONS - If this is defined, then the error handler
   calls :cpp:func:`o2scl::err_hnd_gsl::set()` instead of throwing a
   C++ exception. Used in ``src/base/exception.cpp``. This is useful,
@@ -302,14 +302,20 @@ several details about how O₂scl was compiled.
   for compilers which do not have
   ``std::initializer_list``, ``std::to_string``,
   ``std::uniform_distribution`` and cannot run ``mcmc_para_ts``.
-- O2SCL_OPENMP - Flag to allow OpenMP functionality in O2scl
+- O2SCL_OPENMP - Flag to allow OpenMP functionality in O₂scl
   classes which contain OpenMP code (see also O2SCL_MPI). This flag
   is set during compilation if ``--enable-openmp`` is passed to
   the configure script. The end-user must also define this flag to
   enable OpenMP support in their code.
   The command ``acol -v`` reports on whether or not
   OpenMP was enabled during installation.
-- O2SCL_PYTHON - Doesn't do anything (yet).
+- O2SCL_PYTHON - Include extra classes which provide a C++
+  interface to the O₂sclpy Python module. This constant is also
+  defined automatically during installation if the ``--enable-python``
+  option is passed to the configure script. Enabling Python
+  support during installation may require additional environment
+  variables to specify the location of the Python headers and
+  libraries. 
 - O2SCL_READLINE - Internal flag to tell the makefiles if GNU
   readline support should be included in ``acol``. The end-user
   should not need to use this, as this define constant is automatically
