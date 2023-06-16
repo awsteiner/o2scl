@@ -315,7 +315,7 @@ derivatives of the pressure stored in a
 
 Particle example
 ----------------
-p
+
 .. literalinclude:: ../../../examples/ex_part.cpp
    :language: c++		    
    :start-after: sphinx-example-start
