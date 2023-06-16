@@ -50,8 +50,8 @@ when they do this (this is not the same behavior as in GSL).
 One-dimensional Gaussian process interpolation (i.e. Kriging) is also
 provided in :ref:`interp_krige <interp_krige>` for a generic
 user-specified covariance function and :ref:`interp_krige_optim
-<interp_krige_optim>` for a simple covariance function with a single
-length parameter.
+<interp_krige_optim>` which allows one to optimize the parameters to
+fit the data.
 
 The different interpolation types are defined in ``src/base/interp.h``
 
@@ -70,6 +70,10 @@ The different interpolation types are defined in ``src/base/interp.h``
 .. doxygenenumvalue:: itp_steffen
 
 .. doxygenenumvalue:: itp_nearest_neigh
+
+.. doxygenenumvalue:: itp_gp_rbf_noise_loo_cv (experimental)
+                      
+.. doxygenenumvalue:: itp_gp_rbf_noise_max_lml (experimental)
 
 Integrals are always computed assuming that if the limits are
 ordered so that if the upper limit appears earlier in the array
@@ -93,7 +97,8 @@ which contain monotonic (either increasing or decreasing) data. It is
 :ref:`search_vec <search_vec>` which is used internally by the
 interpolation classes to perform cached binary searching. These
 classes also allow one to to exhaustively search for the index of an
-element in a vector without regard to any kind of ordering, e.g. 
+element in a vector without specifying in advance if the vector is
+increasing or decreasing, e.g.
 :cpp:func:`o2scl::search_vec::ordered_lookup()`.
 
 Interpolation example
@@ -121,15 +126,14 @@ Inverse interpolation and related functions
 The equivalent to "inverse" linear interpolation, which computes all
 the abcissae which have a fixed value of the ordinate, is implemented
 in the template function :cpp:func:`o2scl::vector_find_level()`. This
-function together with \ref
-:cpp:func:`o2scl::vector_invert_enclosed_sum()` can be used to
-determine confidence limits surrounding the peak of a 1-dimensional
-data set using linear interpolation. To count level crossings in a
-function, use :cpp:func:`o2scl::vector_level_count()`. The function
-\ref :cpp:func:`o2scl::vector_integ_interp()` uses interpolation to
-compute the integral defined by a set of vectors, and the function
-:cpp:func:`o2scl::vector_region_fracint()` finds the set of regions
-which gives a fraction of the integral reported by \ref
+function together with :cpp:func:`o2scl::vector_invert_enclosed_sum()`
+can be used to determine confidence limits surrounding the peak of a
+1-dimensional data set using linear interpolation. To count level
+crossings in a function, use :cpp:func:`o2scl::vector_level_count()`.
+The function :cpp:func:`o2scl::vector_integ_interp()` uses
+interpolation to compute the integral defined by a set of vectors, and
+the function :cpp:func:`o2scl::vector_region_fracint()` finds the set
+of regions which gives a fraction of the integral reported by
 :cpp:func:`o2scl::vector_integ_interp()`.
 
 Derivatives and integrals on a fixed grid

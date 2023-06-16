@@ -67,11 +67,11 @@ int main(int argc, char *argv[]) {
  
   ff.html_mode();
   ff.set_sig_figs(5);
-  t.test_gen(ff.convert(sqrt(2.0)*1.0e-5)=="1.4142 &times; 10<sup>&mdash;5</sup>",
+  t.test_gen(ff.convert(sqrt(2.0)*1.0e-5)=="1.4142 &times; 10<sup>&minus;5</sup>",
 	     "test 17");
-  t.test_gen(ff.convert(sqrt(2.0)*1.0e-4)=="1.4142 &times; 10<sup>&mdash;4</sup>",
+  t.test_gen(ff.convert(sqrt(2.0)*1.0e-4)=="1.4142 &times; 10<sup>&minus;4</sup>",
 	     "test 18");
-  t.test_gen(ff.convert(sqrt(2.0)*1.0e-3)=="1.4142 &times; 10<sup>&mdash;3</sup>",
+  t.test_gen(ff.convert(sqrt(2.0)*1.0e-3)=="1.4142 &times; 10<sup>&minus;3</sup>",
 	     "test 19");
   t.test_gen(ff.convert(sqrt(2.0)*1.0e-2)=="0.014142",
 	     "test 20");
@@ -93,11 +93,11 @@ int main(int argc, char *argv[]) {
   ff.set_sig_figs(7);
   ff.set_pad_zeros(true);
   double num=1.414;
-  t.test_gen(ff.convert(num*1.0e-5)=="1.414000 &times; 10<sup>&mdash;5</sup>",
+  t.test_gen(ff.convert(num*1.0e-5)=="1.414000 &times; 10<sup>&minus;5</sup>",
 	     "test 28");
-  t.test_gen(ff.convert(num*1.0e-4)=="1.414000 &times; 10<sup>&mdash;4</sup>",
+  t.test_gen(ff.convert(num*1.0e-4)=="1.414000 &times; 10<sup>&minus;4</sup>",
 	     "test 29");
-  t.test_gen(ff.convert(num*1.0e-3)=="1.414000 &times; 10<sup>&mdash;3</sup>",
+  t.test_gen(ff.convert(num*1.0e-3)=="1.414000 &times; 10<sup>&minus;3</sup>",
 	     "test 30");
   t.test_gen(ff.convert(num*1.0e-2)=="0.01414000",
 	     "test 31");
@@ -118,11 +118,11 @@ int main(int argc, char *argv[]) {
 
   ff.set_sig_figs(3);
   ff.set_pad_zeros(true);
-  t.test_gen(ff.convert(num*1.0e-5)=="1.41 &times; 10<sup>&mdash;5</sup>",
+  t.test_gen(ff.convert(num*1.0e-5)=="1.41 &times; 10<sup>&minus;5</sup>",
 	     "test 39");
-  t.test_gen(ff.convert(num*1.0e-4)=="1.41 &times; 10<sup>&mdash;4</sup>",
+  t.test_gen(ff.convert(num*1.0e-4)=="1.41 &times; 10<sup>&minus;4</sup>",
 	     "test 40");
-  t.test_gen(ff.convert(num*1.0e-3)=="1.41 &times; 10<sup>&mdash;3</sup>",
+  t.test_gen(ff.convert(num*1.0e-3)=="1.41 &times; 10<sup>&minus;3</sup>",
 	     "test 41");
   t.test_gen(ff.convert(num*1.0e-2)=="0.0141",
 	     "test 42");
@@ -142,11 +142,11 @@ int main(int argc, char *argv[]) {
 	     "test 49");
 
   num=1.4;
-  t.test_gen(ff.convert(num*1.0e-5)=="1.40 &times; 10<sup>&mdash;5</sup>",
+  t.test_gen(ff.convert(num*1.0e-5)=="1.40 &times; 10<sup>&minus;5</sup>",
 	     "test 50");
-  t.test_gen(ff.convert(num*1.0e-4)=="1.40 &times; 10<sup>&mdash;4</sup>",
+  t.test_gen(ff.convert(num*1.0e-4)=="1.40 &times; 10<sup>&minus;4</sup>",
 	     "test 51");
-  t.test_gen(ff.convert(num*1.0e-3)=="1.40 &times; 10<sup>&mdash;3</sup>",
+  t.test_gen(ff.convert(num*1.0e-3)=="1.40 &times; 10<sup>&minus;3</sup>",
 	     "test 52");
   t.test_gen(ff.convert(num*1.0e-2)=="0.0140",
 	     "test 53");
