@@ -47,3 +47,5 @@ This example computes first and second derivatives of
 with both :ref:`deriv_gsl <deriv_gsl>` and :ref:`deriv_cern <deriv_cern>`.
 
 .. literalinclude:: ../../../examples/ex_deriv.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start

@@ -20,10 +20,11 @@
 
   -------------------------------------------------------------------
 */
-
 // sphinx-example-start
 /* Example: ex_part.cpp
    -------------------------------------------------------------------
+   See "License Information" section of the documentation for license
+   information.
 */
 
 #include <cmath>
