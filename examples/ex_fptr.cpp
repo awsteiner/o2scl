@@ -29,7 +29,8 @@
    member function with two parameters is passed to the root_brent_gsl
    class, which solves the equation. One of the parameters is member
    data, and the other is specified using the extra parameter argument
-   to the function.
+   to the function. See "License Information" section of the documentation 
+   for license information.
 */
 
 #include <fstream>

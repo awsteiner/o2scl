@@ -23,7 +23,8 @@
 // sphinx-example-start
 /* Example: ex_interp.cpp
    -------------------------------------------------------------------
-   A simple example for interpolation
+   A simple example for interpolation. See "License Information" 
+   section of the documentation for license information.
 */
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -101,7 +102,7 @@ int main(void) {
   //iko.def_mmin.verbose=2;
   iko.full_min=true;
   iko.mode=iko.mode_loo_cv;
-  iko.set_covar(cfrn,param_lists);
+  iko.set_covar_optim(cfrn,param_lists);
   iko.set(N,x,y);
 
   interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
@@ -109,7 +110,7 @@ int main(void) {
   //iko2.def_mmin.verbose=2;
   iko2.full_min=true;
   iko2.mode=iko2.mode_max_lml;
-  iko2.set_covar(cfrn,param_lists);
+  iko2.set_covar_optim(cfrn,param_lists);
   iko2.set(N,x,y);
   cout << endl;
 
@@ -130,15 +131,15 @@ int main(void) {
   table<> tresult;
   tresult.line_of_names("x y ylin ycsp yaki ymon ystef yiko yiko_lml"); 
   for(size_t i=0;i<=N2;i++) {
-    double x=((double)i)/((double)N2)*max;
-    double line[9]={x,f(x,y_mean,y_sd),iv_lin.eval(x),iv_csp.eval(x),
-		    iv_aki.eval(x),iv_mon.eval(x),iv_stef.eval(x),
-		    iko.eval(x),iko2.eval(x)};
+    double x9=((double)i)/((double)N2)*max;
+    double line[9]={x9,f(x9,y_mean,y_sd),iv_lin.eval(x9),iv_csp.eval(x9),
+		    iv_aki.eval(x9),iv_mon.eval(x9),iv_stef.eval(x9),
+		    iko.eval(x9),iko2.eval(x9)};
     tresult.line_of_data(9,line);
     if (i%50==0) {
       cout.setf(ios::showpos);
-      cout << x << " " << f(x,y_mean,y_sd) << " " << iko.eval(x) << " "
-	   << iko2.eval(x) << endl;
+      cout << x9 << " " << f(x9,y_mean,y_sd) << " " << iko.eval(x9) << " "
+	   << iko2.eval(x9) << endl;
       cout.unsetf(ios::showpos);
     }
   }

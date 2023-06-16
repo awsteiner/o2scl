@@ -20,7 +20,7 @@
 
   -------------------------------------------------------------------
 */
-
+// sphinx-example-start
 /* Example: ex_deriv.cpp
    -------------------------------------------------------------------
    An example to demonstrate numerical differentiation
@@ -41,8 +41,12 @@ class cl {
 public:
 
   // This is the function we'll take the derivative of
-  double function(double x) {
-    return sin(2.0*x)+0.5;
+  template<class fp_t=double>
+  fp_t function(fp_t x) {
+    // We divide integers here to keep the full precision
+    fp_t half=1;
+    half/=2;
+    return sin(2*x)+half;
   }
 };
 
@@ -53,7 +57,7 @@ int main(void) {
 
   // The class and associated function
   cl acl;
-  funct f1=std::bind(std::mem_fn<double(double)>(&cl::function),
+  funct f1=std::bind(std::mem_fn<double(double)>(&cl::function<double>),
 		       &acl,std::placeholders::_1);
   
   deriv_gsl<> gd;
@@ -78,6 +82,13 @@ int main(void) {
   double d4=cd.deriv2(1.0,f1);
   t.test_rel(d4,-4.0*sin(2.0),1.0e-8,"deriv_cern");
 
+  // Use multiprecision to compute a more accurate result
+  deriv_multip_gsl dmg;
+  double val, err;
+  dmg.deriv_err([acl](auto &&tx) mutable { return acl.function(tx); },
+                1.0,val,err);
+  t.test_rel(val,2.0*cos(2.0),1.0e-15,"deriv_multip_gsl");
+  
   t.report();
   return 0;
 }

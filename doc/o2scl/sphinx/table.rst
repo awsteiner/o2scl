@@ -21,3 +21,10 @@ one-dimensional columns.
 For higher-dimensional generalizations, the class :ref:`tensor_grid
 <tensor_grid>` provides a set of data defined on a grid in an
 arbitrary number of dimensions.
+
+Table example
+----------------
+
+.. literalinclude:: ../../../examples/ex_table.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
