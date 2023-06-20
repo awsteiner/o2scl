@@ -3,6 +3,19 @@ Equations of State for the TOV equations
 
 :ref:`O2scl <o2scl>`
 
+The TOV solver requires the EOS to be specified as an object of type
+:ref:`eos_tov <eos_tov>`. The documentation of this parent class
+contains more information. The class :ref:`eos_tov_interp
+<eos_tov_interp>` is used most frequently. It uses linear
+interpolation to interpolate a user-specified :ref:`table <table>`
+object. A faster lower-level EOS interpolation is performed by
+:ref:`eos_tov_vectors <eos_tov_vectors>`. The Buchdahl EOS is given in
+:ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is
+given in :ref:`eos_tov_polytrope <eos_tov_polytrope>`, a linear EOS is
+given in :ref:`eos_tov_linear <eos_tov_linear>`, and an EOS with a
+polynomial form for the speed of sound is given in :ref:`eos_cs2_poly
+<eos_cs2_poly>`
+
 From pressure and energy density
 --------------------------------
      

@@ -7,6 +7,10 @@ Todo List
 
    Global todo list:
 
+   - examples:
+
+     * add ex_string, ex_tensor, and ex_eos_had_rmf to the documentation
+   
    - integ/multip
 
      * replace the old inte_exp_sinh and inte_tanh_sinh integrators with

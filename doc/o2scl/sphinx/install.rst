@@ -72,11 +72,13 @@ One final complication with regard to Python support, the HDF5 version
 typically installed by Ubuntu installations lags behind the more
 recent HDF5 versions used by ``h5py``. (At time of writing, on
 2/22/23, the Ubuntu package uses 1.10.7 which was released on 9/15/20
-and h5py uses HDF5 version 1.12.2.). This can cause problems with
-mismatched HDF5 versions. This can be fixed by manually installing a
-more recent version of the HDF5 libraries or by forcing ``h5py`` to
-use the system HDF5 libraries. The latter can be achieved using
-something like::
+and h5py uses HDF5 version 1.12.2.). The version of HDF5 used by h5py
+can be obtained in Python from ``print(h5py.h5.get_libversion())``.
+This conflict between h5py and the system HDF5 libraries can cause
+problems with mismatched HDF5 versions. This can be fixed by manually
+installing a more recent version of the HDF5 libraries or by forcing
+``h5py`` to use the system HDF5 libraries. The latter can be achieved
+using something like::
 
   HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 \
   install --no-binary=h5py h5py
