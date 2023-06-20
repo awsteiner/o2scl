@@ -1063,7 +1063,8 @@ namespace o2scl_hdf {
       4. grid:<begin>,<end>,<width>,["log"] - Create a vector equal to
       a uniform grid, e.g. use 'grid:1.0,10.0,1.0' for a 10-element
       vector filled with the numbers 1 to 10. The grid arguments can
-      be values or mathematical expressions.
+      be values or mathematical expressions. Note that, in O2scl, grids
+      must have at least 2 elements.
 
       5. text:<filename>:<column index> - Read a text file and extract
       a vector of numbers from a column of the text file (starting

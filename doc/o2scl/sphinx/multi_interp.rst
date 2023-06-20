@@ -25,11 +25,11 @@ successive use of :ref:`interp_base <interp_base>` objects, implemented
 in :ref:`interp2_seq <interp2_seq>` . 
 
 If data is arranged without a grid, then :ref:`interp2_neigh
-performs nearest-neighbor interpolation. At present, the only way
-to compute :ref:`contour <contour>` lines on data which is not defined on a grid
-is to use this class or one of the multi-dimensional interpolation
-classes described below the data on a grid and then use :ref:`contour
-<contour>` afterwards.
+<interp2_neigh>` performs nearest-neighbor interpolation. At present,
+the only way to compute :ref:`contour <contour>` lines on data which
+is not defined on a grid is to use this class or one of the
+multi-dimensional interpolation classes described below the data on a
+grid and then use :ref:`contour <contour>` afterwards.
 
 .. 
   7/10/19: I removed the reference to interp2_planar because
@@ -51,6 +51,11 @@ interpolation is performed by :ref:`interpm_idw <interpm_idw>`.
 
 An experimental class for multidimensional-dimensional kriging is also 
 provided in :ref:`interpm_krige_optim <interpm_krige_optim>` .
+
+Finally, an experimental Python interface for interpolation using
+either Gaussian processes or neural networks from O₂sclpy is provided
+in :ref:`interpm_python <interpm_python>` when Python support is
+enabled.
     
 Interpolation on a rectangular grid
 -----------------------------------

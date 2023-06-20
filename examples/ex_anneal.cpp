@@ -20,11 +20,12 @@
 
   -------------------------------------------------------------------
 */
-
 // sphinx-example-start
 /* Example: ex_anneal.cpp
    -------------------------------------------------------------------
-   An example to demonstrate minimization by simulated annealing
+   An example to demonstrate minimization by simulated annealing. See 
+   "License Information" section of the documentation for license 
+   information.
 */
   
 #include <iostream>

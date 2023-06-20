@@ -33,9 +33,7 @@
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/fermion.h>
 
-#ifndef DOXYGENP
 namespace o2scl {
-#endif
   
   /** \brief Relativistic mean field theory EOS with hyperons
       
@@ -228,8 +226,6 @@ namespace o2scl {
     
   };
 
-#ifndef DOXYGENP
 }
-#endif
 
 #endif

@@ -20,11 +20,11 @@
 
   -------------------------------------------------------------------
 */
-
 // sphinx-example-start
 /* Example: ex_ode.cpp
    -------------------------------------------------------------------
-   An example to demonstrate solving differential equations
+   An example to demonstrate solving differential equations. See "License 
+   Information" section of the documentation for license information.
 */
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -40,16 +40,12 @@
 #include <o2scl/astep_gsl.h>
 #include <o2scl/ode_iv_solve.h>
 #include <o2scl/table.h>
-#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
-#endif
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
-#endif
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -455,14 +451,12 @@ int main(void) {
   // ------------------------------------------------------------
   // Output results to a file
 
-#ifdef O2SCL_HDF
   hdf_file hf;
   hf.open_or_create("ex_ode.o2");
   for(size_t i=0;i<8;i++) {
     hdf_output(hf,tab[i],((string)"table_")+itos(i));
   }
   hf.close();
-#endif
 
   // ------------------------------------------------------------
 

@@ -31,9 +31,7 @@
 #include <fstream>
 #include <cmath>
 
-#ifdef O2SCL_LD_TYPES
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
 
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>

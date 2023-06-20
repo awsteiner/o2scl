@@ -33,6 +33,8 @@ This example computes the integral
 and compares the result with the exact value, 1.3932039296.
 
 .. literalinclude:: ../../../examples/ex_mcarlo.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
 Analysis of results from numerical simulations
 ----------------------------------------------

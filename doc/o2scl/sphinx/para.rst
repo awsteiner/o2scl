@@ -54,13 +54,13 @@ in the :cpp:var:`o2scl::o2scl_settings` object of type
 MPI and O2scl
 -------------
 
-Currently, all MPI calls are in header classes, except for some
-support for parallel HDF5 which is currently being developed and not
-yet enabled. MPI functions are used in :ref:`anneal_para <anneal_para>`,
-:ref:`mcmc_para_base <mcmc_para_base>`, and :ref:`mcmc_para_table
-<mcmc_para_table>`.
+Currently, all MPI calls are in header classes. MPI functions are used
+in :ref:`anneal_para <anneal_para>`, :ref:`mcmc_para_base
+<mcmc_para_base>`, and :ref:`mcmc_para_table <mcmc_para_table>`.
+An MPI-friendly tool for seeding random number generators is
+provided in :cpp:func:`o2scl::rng_set_seed_mpi()`.
     
-You can test to see if MPI support was enabled during installation in
-the \ref o2scl::o2scl_settings object of type \ref
-o2scl::lib_settings_class or with ``acol -v``.
+.. You can test to see if MPI support was enabled during installation in
+   the \ref o2scl::o2scl_settings object of type \ref
+   o2scl::lib_settings_class or with ``acol -v``.
 

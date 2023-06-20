@@ -139,9 +139,9 @@ T^4)` is no longer a function of :math:`\psi_{\mathrm{NR}}` and
    du_{\mathrm{NR}}~\frac{\sqrt{2}~u_{\mathrm{NR}}^{3/2} \phi^{3/2}}
    { 1+\exp\left[u_{\mathrm{NR}} - \psi_{\mathrm{NR}} \right]}
 
-which is now a function of :math:`\psi_{\mathrm{NR}}` and
-:math:`\phi`alone. This is the form used to compute the energy density
-in :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` and the definition of
+which is now a function of :math:`\psi_{\mathrm{NR}}` and :math:`\phi`
+alone. This is the form used to compute the energy density in
+:ref:`fermion_nonrel_tl <fermion_nonrel_tl>` and the definition of
 :math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
 :cpp:func:`o2scl::part_calibrate_class_tl::part_calibrate()`.
 

@@ -34,7 +34,7 @@ Multi-dimensional minimizers
 ----------------------------
 
 Multi-dimensional minimization is performed by descendants of
-:ref:`mmin_base <mmin_base>` . \o2 includes a simplex minimizer (
+:ref:`mmin_base <mmin_base>` . O₂scl includes a simplex minimizer (
 :ref:`mmin_simp2 <mmin_simp2>`), traditional minimizers which use
 gradient information (:ref:`mmin_conp <mmin_conp>`, :ref:`mmin_conf
 <mmin_conf>`, and :ref:`mmin_bfgs2 <mmin_bfgs2>`), and differential
@@ -92,10 +92,10 @@ below.
 Multidimensional minimizer example
 ----------------------------------
 
-This example uses the \o2 minimizers based on GSL to minimize a
+This example uses the O₂scl minimizers based on GSL to minimize a
 rather complicated three-dimensional function which has constant
 level surfaces which look like springs oriented along the z-axis.
-This example function, originally created here for \o2, was added
+This example function, originally created here for O₂scl, was added
 later to the GSL library minimization test functions. 
 
 .. literalinclude:: ../../../examples/ex_mmin.cpp

@@ -43,11 +43,11 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_PYTHON
-
   /** \brief Multidimensional interpolation interface for python
    */
   class interpm_python {
+    
+#if defined(O2SCL_PYTHON) || defined(DOXYGEN)
     
   protected:
 
@@ -146,9 +146,9 @@ namespace o2scl {
     interpm_python(const interpm_python &);
     interpm_python& operator=(const interpm_python&);
 
-  };
-  
 #endif
+
+  };
   
 }
     

@@ -44,11 +44,11 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_PYTHON
-
   /** \brief Multidimensional interpolation interface for python
    */
   class gmm_python {
+
+#if defined(O2SCL_PYTHON) || defined(DOXYGEN)
     
   protected:
 
@@ -172,10 +172,10 @@ namespace o2scl {
     gmm_python(const gmm_python &);
     gmm_python& operator=(const gmm_python&);
 
-  };
-
 #endif
   
+  };
+
 }
     
 #endif
