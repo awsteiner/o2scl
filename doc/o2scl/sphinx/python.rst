@@ -26,6 +26,8 @@ interface to similarly named Python classes in O₂sclpy. See
 All of the plots in this documentation are created by ``o2graph``
 which is part of O₂sclpy.
 
-
+There are several global functions with extern "C" linkage used to
+communicate between python and the
+:cpp:class:`o2scl_acol::acol_manager` class defined in acolm.h. 
 
 
