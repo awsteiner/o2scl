@@ -24,7 +24,8 @@
 // sphinx-example-start
 /* Example: ex_poly.cpp
    -------------------------------------------------------------------
-   Demonstrate the solution of the Chebyshev polynomials
+   Demonstrate the solution of the Chebyshev polynomials. See "License 
+   Information" section of the documentation for license information.
 */
 
 #include <boost/numeric/ublas/vector.hpp>

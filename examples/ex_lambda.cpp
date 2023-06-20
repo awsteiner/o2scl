@@ -25,7 +25,8 @@
 /* Example: ex_lambda.cpp
    -------------------------------------------------------------------
    Demonstrate how to use standard library and lambda function objects
-   with O2scl.
+   with O2scl. See "License Information" section of the documentation 
+   for license information.
  
 */
 #include <iostream>

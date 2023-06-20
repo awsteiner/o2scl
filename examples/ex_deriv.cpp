@@ -23,7 +23,8 @@
 // sphinx-example-start
 /* Example: ex_deriv.cpp
    -------------------------------------------------------------------
-   An example to demonstrate numerical differentiation
+   An example to demonstrate numerical differentiation. See "License 
+   Information" section of the documentation for license information.
 */
 
 #include <cmath>
@@ -82,7 +83,7 @@ int main(void) {
   double d4=cd.deriv2(1.0,f1);
   t.test_rel(d4,-4.0*sin(2.0),1.0e-8,"deriv_cern");
 
-  // Use multiprecision to compute a more accurate result
+  // Use multiprecision to compute a more accurate first derivative
   deriv_multip_gsl dmg;
   double val, err;
   dmg.deriv_err([acl](auto &&tx) mutable { return acl.function(tx); },

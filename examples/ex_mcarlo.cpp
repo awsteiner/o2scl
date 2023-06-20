@@ -20,10 +20,11 @@
 
   -------------------------------------------------------------------
 */
-
+// sphinx-example-start
 /* Example: ex_mcarlo.cpp
    -------------------------------------------------------------------
-   An example to demonstrate multidimensional integration
+   An example to demonstrate multidimensional integration. See "License 
+   Information" section of the documentation for license information.
 */
 
 #include <boost/numeric/ublas/vector.hpp>

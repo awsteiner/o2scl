@@ -138,7 +138,8 @@ an extra data member for the condensate. The :cpp:class:`o2scl::quark`
 class is a descendant of the :cpp:class:`o2scl::fermion_tl` class
 which contains extra data members for the quark condensate and the
 contribution to the bag constant. Nuclei are represented by the
-:cpp:class:`o2scl::nucleus` class and documented in nuclei_section.
+:cpp:class:`o2scl::nucleus` class and documented in
+:ref:`Nuclei and Nuclear Masses`.
 
 Units
 -----
@@ -314,7 +315,7 @@ derivatives of the pressure stored in a
 
 Particle example
 ----------------
-
+p
 .. literalinclude:: ../../../examples/ex_part.cpp
    :language: c++		    
    :start-after: sphinx-example-start

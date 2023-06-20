@@ -100,12 +100,3 @@ User's Guide
 * :ref:`genindex`
 * :ref:`search`
 
-Test sphinx references
-----------------------
-
-Class reference: :ref:`table <table>` or
-:cpp:class:`o2scl::table` or :cpp:class:`table <o2scl::table>` .
-
-Function reference: :cpp:func:`o2scl::tensor_grid::set_grid`
-or :cpp:func:`tensor_grid::set_grid() <o2scl::tensor_grid::set_grid>` 
-

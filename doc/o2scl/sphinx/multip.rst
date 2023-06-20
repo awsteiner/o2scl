@@ -8,9 +8,6 @@ Some O₂scl classes support floating-point types beyond
 the ``boost::multiprecision`` types. (Though some of the boost
 multiprecision types require additional libraries, such as GMP.)
 
-Testing with multiprecision types is enabled by defining
-``O2SCL_LD_TYPES`` at the time the configure script is run.
-    
 List of classes which support multiprecision types:
 
 - Function evaluation: :ref:`funct_multip <funct_multip>`

@@ -34,6 +34,8 @@ Multi-dimensional distributions are children of :ref:`prob_dens_mdim
 - :ref:`prob_dens_mdim_gaussian <prob_dens_mdim_gaussian>`
 - :ref:`prob_dens_mdim_biv_gaussian <prob_dens_mdim_biv_gaussian>`
 - :ref:`prob_dens_mdim_amr <prob_dens_mdim_amr>`
+- :ref:`prob_dens_mdim_gmm <prob_dens_mdim_gmm>`
+- :ref:`kde_python <kde_python>`
 
 Conditional probability distributions are children of 
 :ref:`prob_cond_mdim <prob_cond_mdim>`. These classes can be used

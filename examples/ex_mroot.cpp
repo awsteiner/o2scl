@@ -24,7 +24,9 @@
 // sphinx-example-start
 /* Example: ex_mroot.cpp
    -------------------------------------------------------------------
-   Several ways to use an O2scl solver to solve a simple function
+   Several ways to use an O2scl solver to solve a simple function.
+   See "License Information" section of the documentation for 
+   license information.
 */
 
 #include <cmath>

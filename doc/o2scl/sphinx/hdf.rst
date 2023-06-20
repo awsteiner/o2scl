@@ -23,10 +23,14 @@ objects is provided directly in the :ref:`hdf_file <hdf_file>` class.
 Some classes also provide their own I/O functions named
 ``hdf_output``, ``hdf_input``, and ``hdf_input_n`` based on the
 :ref:`hdf_file <hdf_file>` class. Some of the current classes which
-provide I/O are :ref:`table <table>`, :ref:`table_units
+provide I/O are :ref:`hist <hist>`, :ref:`hist_2d <hist_2d>`,
+:ref:`kde_python <kde_python>`, :ref:`prob_dens_mdim_amr
+<prob_dens_mdim_amr>`, :ref:`prob_dens_mdim_gaussian
+<prob_dens_mdim_gaussian>`, :ref:`prob_dens_mdim_gmm
+<prob_dens_mdim_gmm>`, :ref:`table <table>`, :ref:`table_units
 <table_units>`, :ref:`table3d <table3d>`, :ref:`tensor_grid
-<tensor_grid>`, :ref:`hist <hist>`, and :ref:`hist_2d <hist_2d>`.
-    
+<tensor_grid>`, and :ref:`uniform_grid <uniform_grid>`.
+   
 O₂scl formats complicated data types for HDF I/O by combining basic
 data into groups. For that reason, one cannot use O₂scl to read or
 write HDF files where groups have the same name as a dataset in the

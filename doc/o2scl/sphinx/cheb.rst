@@ -13,11 +13,12 @@ Chebyshev approximation introduction
 ------------------------------------
 
 A class implementing the Chebyshev approximations based on GSL is
-given in :ref:`cheb_approx_tl <cheb_approx_tl>`. This class has its own copy
-constructor, so that Chebyshev approximations can be copied and
-passed as arguments to functions. Derivatives and integrals of
-:ref:`cheb_approx_tl <cheb_approx_tl>` objects are created as new \ref
-o2scl::cheb_approx_tl objects which can be easily manipulated.
+given in :ref:`cheb_approx_tl <cheb_approx_tl>`. This class has its
+own copy constructor, so that Chebyshev approximations can be copied
+and passed as arguments to functions. Derivatives and integrals of
+:ref:`cheb_approx_tl <cheb_approx_tl>` objects are created as new
+:ref:`cheb_approx_tl <cheb_approx_tl>` objects which can be easily
+manipulated.
 
 Chebyshev approximation example
 -------------------------------

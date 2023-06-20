@@ -20,12 +20,12 @@
 
   -------------------------------------------------------------------
 */
-
 // sphinx-example-start
 /* Example: ex_mmin_fix.cpp
    -------------------------------------------------------------------
    Example usage of the mmin_fix class, which fixes some of the
-   paramters for a multidimensional minimization.
+   paramters for a multidimensional minimization. See "License 
+   Information" section of the documentation for license information.
 */
 
 #include <cmath>

@@ -25,7 +25,8 @@
 /* Example: ex_mmin.cpp
    -------------------------------------------------------------------
    Example usage of the multidimensional minimizers with and without
-   gradients. 
+   gradients. See "License Information" section of the documentation 
+   for license information.
 */
 #include <fstream>
 #include <string>

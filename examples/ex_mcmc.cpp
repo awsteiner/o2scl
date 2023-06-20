@@ -23,9 +23,9 @@
 // sphinx-example-start
 /* Example: ex_mcmc.cpp
    -------------------------------------------------------------------
-
    An example which demonstrates the generation of an arbitrary
-   distribution through Markov chain Monte Carlo.
+   distribution through Markov chain Monte Carlo. See "License 
+   Information" section of the documentation for license information.
 */
 #include <o2scl/mcmc_para.h>
 #include <o2scl/vec_stats.h>

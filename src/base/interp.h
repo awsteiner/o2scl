@@ -82,9 +82,9 @@ namespace o2scl {
     itp_steffen=7,
     /// Nearest-neighbor lookup
     itp_nearest_neigh=8,
-    /// Gaussian process with leave-one out cross validation
+    /// Gaussian process with leave-one out cross validation (experimental)
     itp_gp_rbf_noise_loo_cv=9,
-    /// Gaussian process with maximum log marginal likelihood
+    /// Gaussian process with maximum log marginal likelihood (experimental)
     itp_gp_rbf_noise_max_lml=10
   };
 

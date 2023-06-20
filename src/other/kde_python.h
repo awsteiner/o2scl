@@ -44,13 +44,13 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_PYTHON
-
   /** \brief Multidimensional interpolation interface for python
    */
   template<class vec_t=std::vector<double> >
   class kde_python : public prob_dens_mdim<vec_t> {
     
+#if defined(O2SCL_PYTHON) || defined(DOXYGEN)
+
   protected:
 
     /// Python unicode object containing function name
@@ -774,9 +774,9 @@ namespace o2scl {
     kde_python(const kde_python &);
     kde_python& operator=(const kde_python&);
 
-  };
-  
 #endif
+    
+  };
   
 }
     
