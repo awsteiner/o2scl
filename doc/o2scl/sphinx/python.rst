@@ -22,8 +22,13 @@ which is part of O₂sclpy.
 
 There are several global functions with extern "C" linkage used to
 communicate between python and the
-:cpp:class:`o2scl_acol::acol_manager` class defined in acolm.h. If
-python support is enabled when installing O₂scl, then there are
-classes which provide a C++ interface to Python classes in O₂sclpy,
-including :ref:`interpm_python <interpm_python>`, :ref:`gmm_python
-<gmm_python>`, and :ref:`kde_python <kde_python>`.
+:cpp:class:`o2scl_acol::acol_manager` class defined in acolm.h.
+
+If python support is enabled when installing O₂scl, then the classes
+:ref:`interpm_python <interpm_python>`, :ref:`gmm_python
+<gmm_python>`, and :ref:`kde_python <kde_python>` provide a C++
+interface to similarly named Python classes in O₂sclpy. See
+:ref:`Python support` for more details.
+
+All of the plots in this documentation are created by ``o2graph``
+which is part of O₂sclpy.
