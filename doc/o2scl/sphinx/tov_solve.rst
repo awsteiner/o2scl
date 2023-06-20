@@ -5,23 +5,12 @@ Solution of the Tolman-Oppenheimer-Volkov Equations
      
 The class :ref:`tov_solve <tov_solve>` provides a solution to the
 Tolman-Oppenheimer-Volkov (TOV) equations given an equation of state
-(EOS), provided as an object of type :ref:`eos_tov <eos_tov>`. These
-classes are particularly useful for static neutron star structure:
-given any equation of state one can calculate the mass vs. radius
-curve and the properties of any star of a given mass.
-
-The EOS can be specified as an object of type :ref:`eos_tov
-<eos_tov>`. The documentation of this parent class contains more
-information. The class :ref:`eos_tov_interp <eos_tov_interp>` is used
-most frequently. It uses linear interpolation to interpolate a
-user-specified :ref:`table <table>` object. A faster lower-level EOS
-interpolation is performed by :ref:`eos_tov_vectors
-<eos_tov_vectors>`. The Buchdahl EOS is given in
-:ref:`eos_tov_buchdahl <eos_tov_buchdahl>`, a single polytrope EOS is
-given in :ref:`eos_tov_polytrope <eos_tov_polytrope>`, a linear
-EOS is given in :ref:`eos_tov_linear <eos_tov_linear>`, and an
-EOS with a polynomial form for the speed of sound is given
-in :ref:`eos_cs2_poly <eos_cs2_poly>`
+(EOS), provided as an object of type :ref:`eos_tov <eos_tov>` (see
+:ref:`Equations of State for the TOV equations` for more). The
+:ref:`tov_solve <tov_solve>` class is particularly useful for static
+neutron star structure: given any equation of state one can calculate
+the mass vs. radius curve and the properties of any star of a given
+mass.
 
 In units where :math:`c=1`, the most general static and 
 spherically symmetric metric is of the form
