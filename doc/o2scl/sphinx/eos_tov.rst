@@ -3,6 +3,54 @@ Equations of State for the TOV equations
 
 :ref:`O2scl <o2scl>`
 
+Background
+----------
+
+In the simplest models, neutron stars consist only of neutrons,
+protons, and electrons at :math:`T=0`. The thermodynamic identity
+is
+
+.. math::
+
+   P + \varepsilon = n_n \mu_n + n_p \mu_p + n_e \mu_e
+
+where :math:`P` is the pressure, :math:`\varepsilon` is the energy
+density, :math:`n_i` is the number density of particle :math:`i`, and
+:math:`\mu_i` is the chemical potential of particle :math:`i`.
+Presuming charge neutrality, :math:`n_p=n_e` and beta-equilibrium,
+:math:`\mu_n=\mu_p+\mu_e`, this simplifies to
+   
+.. math::
+
+   P + \varepsilon = n_B \mu_B
+
+where the baryon density is :math:`n_B \equiv n_n+n_p` and the baryon
+chemical potential is :math:`\mu_B \equiv \mu_n`. Thus, in this simple
+model, the thermodynamic properties of neutron star matter behave as
+if matter only has one component. Given the relationship between
+energy density and baryon density, one can obtain the baryon chemical
+potential and the pressure directly
+
+.. math::
+
+   \mu_B = \frac{\partial \varepsilon}{\partial n_B} \qquad \mathrm{and}
+   \qquad P = n_B^2 \frac{\partial (\varepsilon/n_B)}{\partial n_B}
+
+The speed of sound is
+
+.. math::
+
+   c_s^2 = c^2 \left( \frac{\partial P}
+   {\partial \varepsilon}\right)_{\math{comp}}
+
+where :math:`\mathrm{comp}` indicates that the derivative is to be
+performed at fixed composition (e.g. a fixed ratio between the
+neutron, proton, and electron densities). 
+     
+   
+Class infrastructure
+--------------------
+     
 The TOV solver requires the EOS to be specified as an object of type
 :ref:`eos_tov <eos_tov>`. The documentation of this parent class
 contains more information. The class :ref:`eos_tov_interp
