@@ -4,7 +4,7 @@ Object-oriented Scientific Computing Library: v0.928a1
 ======================================================
 
 O₂scl is a C++ library for object-oriented scientific computing which
-has been in active development for over 17 years. This is a beta
+has been in active development for 20 years. This is a beta
 version. Some O₂scl classes state-of-the-art and others are more
 experimental. O₂scl continues to evolve. Release versions should
 install and test successfully, and most of the classes are ready for
