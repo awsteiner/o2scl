@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2015-2022, Andrew W. Steiner
+  Copyright (C) 2015-2023, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,13 +20,16 @@
 
   -------------------------------------------------------------------
 */
+// sphinx-example-start
+/* Example: ex_eos_had_rmf.cpp
+   -------------------------------------------------------------------
+   A simple example for an RMF EOS. See "License Information" 
+   section of the documentation for license information.
+*/
 #include <o2scl/test_mgr.h>
-#include <o2scl/mroot_hybrids.h>
-#include <o2scl/deriv_gsl.h>
 #include <o2scl/eos_had_rmf.h>
-#include <o2scl/hdf_eos_io.h>
 #include <o2scl/nstar_cold.h>
-#include <o2scl/root_cern.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
@@ -74,12 +77,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  /*
-    string cmd=((string)"cp ")+o2scl_settings.get_data_dir()+
-    "/rmfdata/FSUGold.o2 temp.o2";
-    int ret=system(cmd.c_str());
-  */
-
   eos_had_rmf re;
 
   re.def_sat_mroot.def_jac.set_epsrel(1.0e-6);
@@ -101,164 +98,41 @@ int main(void) {
   re.def_mroot.def_jac.err_nonconv=false;
   
   int sret=re.saturation();
-
-  if (sret!=0) {
+  
+  if (sret!=0 || re.n0<0.08) {
     re.set_fields(0.2,0.1,0.01);
     re.def_neutron.mu=5.0;
     re.def_proton.mu=5.0;
-
-    re.err_nonconv=true;
-    re.def_sat_mroot.err_nonconv=true;
-    re.def_sat_mroot.def_jac.err_nonconv=true;
-    re.def_mroot.err_nonconv=true;
-    re.def_mroot.def_jac.err_nonconv=true;
-    
-    re.saturation();
-    
-  } else {
-    
-    re.err_nonconv=true;
-    re.def_sat_mroot.err_nonconv=true;
-    re.def_sat_mroot.def_jac.err_nonconv=true;
-    re.def_mroot.err_nonconv=true;
-    re.def_mroot.def_jac.err_nonconv=true;
-
+    sret=re.saturation();
+    if (sret!=0) {
+      O2SCL_ERR("RMF EOS failed.",o2scl::exc_efailed);
+    }
   }
+
+  // Return the convergence error flag to the default value
+  re.err_nonconv=true;
+  re.def_sat_mroot.err_nonconv=true;
+  re.def_sat_mroot.def_jac.err_nonconv=true;
+  re.def_mroot.err_nonconv=true;
+  re.def_mroot.def_jac.err_nonconv=true;
   
+  // Compute the saturation density and the symmetry energy
   cout << "FSUGold: " << re.n0 << endl;
   cout << "FSUGold: " << re.esym*hc_mev_fm << endl;
+  t.test_rel(re.n0,0.1481,4.0e-4,"FSUGold saturation density.");
+
+  // Commpute the beta-equilibrium EOS and solve the TOV equations
+  nstar_cold nc;
+  nc.set_eos(re);
+  nc.calc_eos();
+  nc.calc_nstar();
+
+  // Output gravitational mass-radius curve
   cout << endl;
-
-#ifdef O2SCL_NEVER_DEFINED
-
-  hdf_file hf;
-  hf.open_or_create("temp.o2");
-  double gs2=112.1996;
-  double gw2=204.5469;
-  double gr2=138.4701;
-  hf.setd("gs",sqrt(gs2));
-  hf.setd("gw",sqrt(gw2));
-  hf.setd("gr",sqrt(gr2)/2.0);
-  hf.seti("oakstyle",1);
-  hf.setd("zeta",0.06);
-  hf.setd("g2",-pow(gs2,3.0/2.0)*1.4203/hc_mev_fm/2.0);
-  hf.setd("g3",pow(gs2,2.0)*0.023762/6.0);
-  hf.setd("b1",0.03*gw2);
-  hf.close();
-
-  rmf_load(re,"temp.o2",true);
-  cout << re.ms << " " << re.mw << " " << re.mr << endl;
-  cout << re.cs << " " << re.cw << " " << re.cr << endl;
-  cout << re.b << " " << re.c << " " << re.mnuc << endl;
-  cout << re.zeta << " " << re.b1 << endl;
-
-  // It turns out that FSUGold needs a better initial
-  // guess than the default to get saturation right
-  re.set_fields(0.2,0.1,0.01);
-  re.saturation();
-  
-  cout << "FSUGold: " << re.n0 << endl;
-  cout << "FSUGold: " << re.esym*hc_mev_fm << endl;
-  cout << endl;
-
-  rmf_load(re,"IUFSU");
-  cout << re.ms << " " << re.mw << " " << re.mr << endl;
-  cout << re.cs << " " << re.cw << " " << re.cr << endl;
-  cout << re.b << " " << re.c << " " << re.mnuc << endl;
-  cout << re.zeta << " " << re.b1 << endl;
-  re.set_fields(0.175,0.1,0.0001);
-  re.saturation();
-  cout << "IUFSU: " << re.n0 << endl;
-  cout << "IUFSU: " << re.esym*hc_mev_fm << endl;
-  cout << endl;
-
-  hf.open_or_create("temp2.o2");
-  gs2=99.4266;
-  gw2=169.8349;
-  gr2=184.6877;
-  hf.setd("gs",sqrt(gs2));
-  hf.setd("gw",sqrt(gw2));
-  hf.setd("gr",sqrt(gr2)/2.0);
-  hf.seti("oakstyle",1);
-  hf.sets("reference",((string)"F.J. Fattoyev, C.J. Horowitz,")+
-	  "J. Piekarewicz, and G. Shen, Phys. Rev. C 82 (2010) 055803.");
-  hf.setd("zeta",0.03);
-  hf.setd("g2",-pow(gs2,3.0/2.0)*3.3808/hc_mev_fm/2.0);
-  hf.setd("g3",pow(gs2,2.0)*0.000296/6.0);
-  hf.setd("b1",0.046*gw2);
-  hf.close();
-
-  rmf_load(re,"temp2.o2",true);
-  cout << re.ms << " " << re.mw << " " << re.mr << endl;
-  cout << re.cs << " " << re.cw << " " << re.cr << endl;
-  cout << re.b << " " << re.c << " " << re.mnuc << endl;
-  cout << re.zeta << " " << re.b1 << endl;
-
-  re.set_fields(0.175,0.1,0.0001);
-  re.saturation();
-  cout << "IUFSU: " << re.n0 << endl;
-  cout << "IUFSU: " << re.esym*hc_mev_fm << endl;
-  cout << endl;
-
-  re.def_mroot.def_jac.set_epsrel(1.0e-6);
-  re.def_mroot.def_jac.set_epsmin(1.0e-15);
-  re.def_mroot.ntrial*=10;
-
-  // Test beta equilibrium at 8 MeV
-  double sigma, omega, rho;
-  double xp=0.02;
-  double nb=0.02;
-
-  re.def_neutron.m=939.0/hc_mev_fm;
-  re.def_proton.m=939.0/hc_mev_fm;
-
-  beta_temp bt(re,re.def_neutron,re.def_proton);
-  bt.barn=0.02;
-
-  funct11 bf=std::bind(std::mem_fn<double(double)>
-		       (&beta_temp::solve_fun),
-		       &bt,std::placeholders::_1);
-  root_cern<> rt;
-  rt.solve(xp,bf);
-  bt.solve_fun(xp);
-
-  re.get_fields(sigma,omega,rho);
-  cout << re.def_neutron.n+re.def_proton.n << " "
-       << re.def_proton.n/(re.def_neutron.n+re.def_proton.n) << endl;
-  cout << re.def_neutron.mu*hc_mev_fm << " "
-       << re.def_proton.mu*hc_mev_fm << endl;
-  cout << re.def_neutron.nu*hc_mev_fm << " "
-       << re.def_proton.nu*hc_mev_fm << endl;
-  cout << sigma*hc_mev_fm << " " << omega*hc_mev_fm << " "
-       << rho*hc_mev_fm << endl;
-  cout << 1.0/re.def_neutron.ms*(re.def_neutron.ed-3.0*re.def_neutron.pr)
-       << endl;
-  cout << 1.0/re.def_proton.ms*(re.def_proton.ed-3.0*re.def_proton.pr)
-       << endl;
-  cout << re.def_thermo.ed/nb*hc_mev_fm-939.0 << endl;
-  cout << endl;
-
-  // Verify from EOS
-  re.def_neutron.n=nb*(1.0-xp);
-  re.def_proton.n=nb*xp;
-  re.calc_temp_e(re.def_neutron,re.def_proton,8.0/hc_mev_fm,re.def_thermo);
-  re.get_fields(sigma,omega,rho);
-  cout << re.def_neutron.n+re.def_proton.n << " "
-       << re.def_proton.n/(re.def_neutron.n+re.def_proton.n) << endl;
-  cout << re.def_neutron.mu*hc_mev_fm << " "
-       << re.def_proton.mu*hc_mev_fm << endl;
-  cout << re.def_neutron.nu*hc_mev_fm << " "
-       << re.def_proton.nu*hc_mev_fm << endl;
-  cout << sigma*hc_mev_fm << " " << omega*hc_mev_fm << " "
-       << rho*hc_mev_fm << endl;
-  cout << 1.0/re.def_neutron.ms*(re.def_neutron.ed-3.0*re.def_neutron.pr)
-       << endl;
-  cout << 1.0/re.def_proton.ms*(re.def_proton.ed-3.0*re.def_proton.pr)
-       << endl;
-  cout << re.def_thermo.ed/nb*hc_mev_fm-939.0 << endl;
-  cout << endl;
-
-#endif
+  shared_ptr<table_units<>> tov=nc.get_tov_results();
+  for(size_t i=0;i<tov->get_nlines();i++) {
+    cout << tov->get("gm",i) << " " << tov->get("r",i) << endl;
+  }
   
   t.report();
 

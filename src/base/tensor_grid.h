@@ -2258,7 +2258,7 @@ namespace o2scl {
                     << spec_old[i].val1 << "." << std::endl;
         } else if (spec_old[i].type==index_spec::grid ||
                    spec_old[i].type==index_spec::gridw) {
-          std::cout << " is being reinterpolated based on grid\n  "
+          std::cout << " is being reinterpolated based on grid\n    "
                     << spec_old[i].val1 << " "
                     << spec_old[i].val2 << " ";
           if (spec_old[i].type==index_spec::grid) {
@@ -2271,7 +2271,7 @@ namespace o2scl {
           } else {
             std::cout << "." << std::endl;
           }
-          std::cout << "  and placed in new index " << spec_old[i].ix1
+          std::cout << "    and placed in new index " << spec_old[i].ix1
                     << "." << std::endl;
         }
       }
@@ -2291,7 +2291,7 @@ namespace o2scl {
                     << spec_new[i].ix1 << "." << std::endl;
         } else if (spec_new[i].type==index_spec::grid ||
                    spec_new[i].type==index_spec::gridw) {
-          std::cout << " was obtained from grid\n  "
+          std::cout << " was obtained from grid\n    "
                     << spec_new[i].val1 << " "
                     << spec_new[i].val2 << " ";
           if (spec_new[i].type==index_spec::grid) {
@@ -2304,7 +2304,7 @@ namespace o2scl {
           } else {
             std::cout << "." << std::endl;
           }
-          std::cout << "  originally stored in index "
+          std::cout << "    originally stored in index "
                     << spec_new[i].ix1 << "." << std::endl;
         }
       }

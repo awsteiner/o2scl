@@ -368,6 +368,12 @@ addition to the the tensor data. This class :ref:`tensor_grid
 data defined on the specified grid. See :ref:`File I/O with HDF5` for
 functions in which provide HDF5 I/O for tensor objects.
 
+Tensor example
+--------------
+
+.. literalinclude:: ../../../examples/ex_tensor.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
 
 I/O and contiguous storage
 --------------------------

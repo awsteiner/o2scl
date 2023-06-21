@@ -25,8 +25,8 @@ screen space.
 The function :cpp:func:`o2scl::function_to_double()` converts strings
 like ``"pi/3.0"`` and ``"exp(cos(-1.0e-2))"`` to double-precision
 floating point numbers using :ref:`find_constants <find_constants>`
-and :ref:`calculator <calculator>` or :ref:`calc_utf8 <calc_utf8>`. An
-alternate version which won't call the error handler is
+and :ref:`calc_utf8 <calc_utf8>`. An alternate version which won't
+call the error handler is
 :cpp:func:`o2scl::function_to_double_nothrow()`. This latter function
 is the one used by ``acol -calc``.
 
@@ -72,4 +72,12 @@ Other functions in ``src/base/string_conv.h`` are:
 - :cpp:func:`o2scl::string_to_uint_list()`
 - :cpp:func:`o2scl::parse_fortran_format()`
 - :cpp:func:`o2scl::string_to_char_array()`
+
+String example
+--------------
+
+.. literalinclude:: ../../../examples/ex_string.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
+
 

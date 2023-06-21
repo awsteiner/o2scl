@@ -84,3 +84,22 @@ Typical output:
 .. literalinclude:: ../../../examples/ex_eos_had_skyrme.scr      
    :language: none
 
+RMF EOS example
+------------------
+    
+This example computes the "FSUGold" EOS and neutron star 
+properties using :ref:`eos_had_rmf <eos_had_rmf>` from a Rmf model.
+
+Source code:
+     
+.. literalinclude:: ../../../examples/ex_eos_had_rmf.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
+
+Typical output:
+
+.. literalinclude:: ../../../examples/ex_eos_had_rmf.scr      
+   :language: none
+
+
+              

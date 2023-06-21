@@ -30,6 +30,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/format_float.h>
 #include <o2scl/misc.h>
+#include <o2scl/funct_to_fp.h>
 
 using namespace std;
 using namespace o2scl;
@@ -40,20 +41,7 @@ int main(void) {
   
   test_mgr t;
   t.set_output_level(2);
-
-  cout << "Convert several strings to numbers: " << endl;
-  std::string d1="1.0e-6";
-  std::string d2="1.0E-6";
-  std::string d3="-0.001";
-  std::string i1="1034";
-  // We have to use the full o2scl::stod() specification to 
-  // avoid confusion with std::stod()
-  t.test_rel(o2scl::stod(d1),1.0e-6,1.0e-12,"stod 1");
-  t.test_rel(o2scl::stod(d2),1.0e-6,1.0e-12,"stod 2");
-  t.test_rel(o2scl::stod(d3),-1.0e-3,1.0e-12,"stod 3");
-  t.test_gen(o2scl::stod(i1)==1034,"stod 4");
-  cout << endl;
-
+  
   format_float ff;
   ff.latex_mode();
 
@@ -72,6 +60,17 @@ int main(void) {
   cout << "\\end{tabular}" << endl;
   cout << "\\end{table}" << endl;
   cout << endl;
+
+  cout << "Function function_to_double():" << endl;
+  double x=function_to_double("cyl_bessel_i(2,pi)");
+  cout << x << endl;
+  t.test_rel(x,2.618495,1.0e-6,"BesselI(2,x)");
+
+  cout << "Function string_to_uint_list():\n  " << endl;
+  vector<size_t> ulist;
+  string_to_uint_list("1,2-4,6,10-11",ulist);
+  vector_out(cout,ulist,true);
+  t.test_gen(ulist==vector<size_t>({1,2,3,4,6,10,11}),"uint list");
 
   t.report();
   return 0;
