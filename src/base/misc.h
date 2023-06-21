@@ -107,7 +107,7 @@ namespace o2scl {
       \endverbatim
   */
   int python_cmd_string(std::string cmd, std::string &result,
-		      bool err_on_fail=true, int nmax=80);
+                        bool err_on_fail=true, int nmax=80);
   
   /** \brief Return the first line from the output of the shell
       command \c cmd up to \c nmax characters

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2015-2022, Andrew W. Steiner
+  Copyright (C) 2015-2023, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,17 +20,20 @@
 
   -------------------------------------------------------------------
 */
-#include <o2scl/tensor.h>
+// sphinx-example-start
+/* Example: ex_tensor.cpp
+   -------------------------------------------------------------------
+   A simple example for tensors. See "License Information" 
+   section of the documentation for license information.
+*/
 #include <o2scl/tensor_grid.h>
 #include <o2scl/test_mgr.h>
-#if O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
-using namespace o2scl_hdf;
-#endif
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 
 double func(double x, double y, double z) {
   return x*x*x-y+z*z;
@@ -43,12 +46,9 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  // ----------------------------------------------------------------
-  // Example of a tensor built out of std::vector objects
-
   // Create a rank three tensor
   tensor_grid<> m3;
-  size_t i3[3], j3[3], k3[3];
+  vector<size_t> i3(3), j3(3);
   i3[0]=4;
   i3[1]=3;
   i3[2]=3;
@@ -56,7 +56,6 @@ int main(void) {
   
   // Create and set grid
   std::vector<double> grid;
-  size_t j4[3];
 
   grid.push_back(1.0);
   grid.push_back(2.0);
@@ -87,7 +86,9 @@ int main(void) {
     }
   }
   
-  // Test interpolation between grid points
+  // ----------------------------------------------------------------
+  // Demonstrate linear interpolation
+  
   cout << "Interpolation: " << endl;
   
   double vals[3]={2.5,2.5,1.5};
@@ -96,7 +97,7 @@ int main(void) {
        << m3.interp_linear(vals) << endl;
   t.test_rel(func(vals[0],vals[1],vals[2]),
 	     m3.interp_linear(vals),2.0e-1,"interp linear");
-
+  
   vals[0]=3.5;
   vals[1]=2.5;
   vals[2]=1.0;
@@ -107,11 +108,8 @@ int main(void) {
 	     m3.interp_linear(vals),2.0e-1,"interp linear");
   cout << endl;
 
-#if O2SCL_HDF
-
   // ----------------------------------------------------------------
-  // Demonstrate HDF5 I/O. Note that this only works with tensors
-  // built out of std::vector<> objects.
+  // Demonstrate HDF5 I/O for tensors
 
   // Output to a file
   hdf_file hf;
@@ -122,75 +120,31 @@ int main(void) {
   // Now read from that file
   tensor_grid<> m3c;
   hf.open("ex_tensor_dat.o2");
-  hdf_input(hf,m3c,"tens_grid_test");
+  hdf_input(hf,m3c);
   hf.close();
 
-  // Test interpolation between grid points
-  cout << "Interpolation: " << endl;
-  
-  vals[0]=2.5;
-  vals[1]=2.5;
-  vals[2]=1.5;
-  cout << "Exact: " << func(vals[0],vals[1],vals[2])
-       << " interpolated: "
-       << m3c.interp_linear(vals) << endl;
-  t.test_rel(func(vals[0],vals[1],vals[2]),
-	     m3c.interp_linear(vals),2.0e-1,"interp linear");
-
-  vals[0]=3.5;
-  vals[1]=2.5;
-  vals[2]=1.0;
-  cout << "Exact: " << func(vals[0],vals[1],vals[2])
-       << " interpolated: "
-       << m3c.interp_linear(vals) << endl;
-  t.test_rel(func(vals[0],vals[1],vals[2]),
-	     m3c.interp_linear(vals),2.0e-1,"interp linear");
-  cout << endl;
-
-#endif
+  // Show that the tensor is the same
+  t.test_gen(m3==m3c,"tensor equality");
 
   // ----------------------------------------------------------------
-  // Example of a tensor built out of ublas vector objects
-  // The interpolate() function works easily with this type
+  // Demonstrate tensor rearrangement. Create a new tensor which
+  // interpolates the value 1.5 into the second index, sums over the
+  // third index, and interpolates a new grid for the first index.
+  // The result will be a rank 1 tensor with 10 entries. 
   
-  typedef boost::numeric::ublas::vector<double> ubvector;
-  typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
+  tensor_grid<> m3r=grid_rearrange_and_copy<tensor_grid<>,double>
+    (m3,{ix_grid(0,1.0,4.0,9),ix_interp(1,1.5),ix_sum(2)},2);
   
-  tensor_grid<ubvector,ubvector_size_t> m3b;
-
-  // Size and set grid
-  m3b.resize(3,i3);
-  m3b.set_grid_packed(grid);
+  t.test_gen(m3r.get_rank()==1,"rearrange 1");
+  t.test_gen(m3r.get_size(0)==10,"rearrange 2");
   
-  // Fill the tensor with data
-  for(size_t i=0;i<i3[0];i++) {
-    for(size_t j=0;j<i3[1];j++) {
-      for(size_t k=0;k<i3[2];k++) {
-	double x=m3b.get_grid(0,i);
-	double y=m3b.get_grid(1,j);
-	double z=m3b.get_grid(2,k);
-	j3[0]=i;
-	j3[1]=j;
-	j3[2]=k;
-	m3b.set(j3,func(x,y,z));
-      }
-    }
+  for(size_t i=0;i<10;i++) {
+    vector<size_t> ix={i};
+    cout << i << " " << m3r.get(ix) << " ";
+    cout << (func(1.0+((double)i)/3.0,1.5,1.0)+
+             func(1.0+((double)i)/3.0,1.5,2.0)+
+             func(1.0+((double)i)/3.0,1.5,3.0)) << endl;
   }
-
-  // Test interpolation between grid points
-  cout << "Interpolation: " << endl;
-
-  vals[0]=2.5;
-  vals[1]=2.5;
-  vals[2]=1.5;
-  cout << "Exact: " << func(vals[0],vals[1],vals[2])
-       << " linear: "
-       << m3b.interp_linear(vals)
-       << " linear(2): "
-       << m3b.interpolate(vals) << endl;
-  m3b.set_interp_type(itp_cspline);
-  cout << " cubic spline: "
-       << m3b.interpolate(vals) << endl;
   cout << endl;
   
   t.report();
