@@ -254,28 +254,27 @@ AS_IF([test "x$enable_python" == "xyes"], [
 # If enabled, check for the polylogarithm library
 # ------------------------------------------------------------------
 
-AS_IF([test "x$enable_polylogarithm" == "xyes"], [
-AC_CHECK_LIB([polylog_cpp], [log], [],
-	[echo ""
-        echo "Polylogarithm not found. "
-	echo ""
-	echo -n " The present value of LDFLAGS is: "
-	echo $LDFLAGS
-	],[])
-
-])
+dnl AS_IF([test "x$enable_polylogarithm" == "xyes"], [
+dnl AC_CHECK_LIB([polylog_cpp], [log], [],
+dnl 	[echo ""
+dnl         echo "Polylogarithm not found. "
+dnl 	echo ""
+dnl 	echo -n " The present value of LDFLAGS is: "
+dnl 	echo $LDFLAGS
+dnl 	],[])
+dnl ])
 
 # ------------------------------------------------------------------
 # Check for ncurses library
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(ncurses,
-[  --enable-ncurses        Include ncurses support @<:@default=yes@:>@],
+[  --enable-ncurses        Include ncurses support @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) ncurses=true ;;
 	no)  ncurses=false ;;
 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-ncurses) ;;
-	esac],[ncurses=true])
+	esac],[ncurses=false])
 
 AM_CONDITIONAL(O2SCL_NCURSES, test x$ncurses = xtrue)
 
