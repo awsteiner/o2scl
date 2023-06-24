@@ -87,11 +87,22 @@ libraries. The file ``INSTALL`` has some details on this procedure.
 Once the dependencies are installed you should be able to run
 ``./configure`` and then type ``make`` and ``make install``. More
 information on the ``configure`` command can also be obtained from
+<<<<<<< HEAD
 ``./configure --help``. On some systems, you may have to add
 additional flag to the ``CXXFLAGS`` environment variable manually
 before the ``./configure`` script. The documentation is included in
 the O₂scl release distribution and automatically installed by ``make
 install``.
+=======
+``./configure --help``. O₂scl assumes some C++11 support, so
+compilation may be more difficult on compilers released before
+about 2018. The ``./configure`` script attempts to determine the
+proper compiler flags for C++11 support, e.g. ``-std=gnu++11``. If
+this fails, you may have to add the proper C++11 flag to the
+``CXXFLAGS`` environment variable manually before the ``./configure``
+script. The documentation is included in the O₂scl release
+distribution and automatically installed by ``make install``.
+>>>>>>> f4d197b9 (Updating install docs.)
 
 .. note::
    If you are trying to install O₂scl with a version of
@@ -114,16 +125,26 @@ for ``libgslcblas``. If neither is present, then you may have to
 manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
 environment variables.
 
+<<<<<<< HEAD
 Compiling with the readline library is optional, but it is assumed to
 be present by default.
+=======
+Compiling with the readline and ncurses libraries is optional,
+but they are assumed to be present by default. 
+>>>>>>> f4d197b9 (Updating install docs.)
 
 After ``make install``, you may test the library with ``make check``
 or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
 passed"`` indicates that the testing was successful. You may also run
 ``make o2scl-test`` in the individual subdirectories of the src
 directory to individually test the classes and functions in that part
+<<<<<<< HEAD
 of O₂scl. After installation, running ``acol -v`` will output several
 of the installation settings.
+=======
+of O₂scl. After installation running will output several
+of the installation settings. 
+>>>>>>> f4d197b9 (Updating install docs.)
 
 .. _compile_release:
 
@@ -133,10 +154,18 @@ Compiling O₂scl from a release on Linux
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
+<<<<<<< HEAD
 ``libreadline-dev`` package), and HDF5 the ``libhdf5-dev`` package).
 You can then install O₂scl from one of the release distributions by
 using the standard GNU ``./configure`` script and then invoking
 ``make`` and ``make install`` (which often requires ``sudo``).
+=======
+``libreadline-dev`` package), ncurses (the ``libncurses-dev``
+packages), and HDF5 the ``libhdf5-dev`` package). You can then install
+O₂scl from one of the release distributions by using the standard GNU
+``./configure`` script and then invoking ``make`` and ``make install``
+(which often requires ``sudo``). 
+>>>>>>> f4d197b9 (Updating install docs.)
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
@@ -156,7 +185,11 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
+<<<<<<< HEAD
 hdf5-devel, readline-devel``, and ``boost-devel``.
+=======
+hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
+>>>>>>> f4d197b9 (Updating install docs.)
 
 Note that if your boost installation is earlier than 1.70,
 you will need to use the -DO2SCL_OLD_BOOST flag to get all of the
@@ -286,6 +319,7 @@ so Armadillo must be compiled with LAPACK support, and you may need to
 specify the location of the LAPACK libraries manually. If you are
 installing on Mac OS X with homebrew, the options ``--with-eigen`` and
 ``with-armadillo`` can be used.
+<<<<<<< HEAD
 
 Other optional libraries
 ------------------------
@@ -317,7 +351,37 @@ passed to the configure script.
 
 Module support, curses support, MFPR support, cubature support, and
 pugixml support are all experimental.
+=======
+>>>>>>> f4d197b9 (Updating install docs.)
 
+Other optional libraries
+------------------------
+
+As with the linear algebra libraries, these libraries may require
+additional ``-I`` or ``-L`` flags to be defined when O₂scl is
+installed, depending on how your particular system is configured. The
+configure script should automatically add ``-l<library name>`` to
+LDFLAGS during installation, but you will need to also add this flag
+to your codes which use O₂scl.
+
+Readline support (``-lreadline``): The command-line interface class
+:ref:`cli <cli>`, and ``acol`` (see :ref:`The acol Command Line
+Utility`) can both take advantage of readline support. If the library
+is configured with ``--disable-readline``, then the readline library
+is not used.
+
+FFTW support (``-lfftw3``): O₂scl contains a few functions which
+require FFTW support, and this can be included if ``--enable-fftw`` is
+passed to the configure script.
+
+OpenMP support (typically involves the ``-fopenmp`` compiler flag):
+O₂scl contains a few functions which use multiple threads for
+faster execution. This support can be included using the
+``-enable-openmp`` option to the configure script. On some systems,
+this will also include explicitly specifying the OpenMP libraries
+in the ``LDFLAGS`` environment variable. See more information in
+:ref:`Parallel Programming with O2scl`. 
+  
 Range-checking
 --------------
 
