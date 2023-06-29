@@ -131,9 +131,10 @@ int main(void) {
   // interpolates the value 1.5 into the second index, sums over the
   // third index, and interpolates a new grid for the first index.
   // The result will be a rank 1 tensor with 10 entries. 
-  
+
+  cout << "grid(0),interp(1),sum(2):" << endl;
   tensor_grid<> m3r=grid_rearrange_and_copy<tensor_grid<>,double>
-    (m3,{ix_grid(0,1.0,4.0,9),ix_interp(1,1.5),ix_sum(2)},2);
+    (m3,{ix_grid(0,1.0,4.0,9),ix_interp(1,1.5),ix_sum(2)});
   
   t.test_gen(m3r.get_rank()==1,"rearrange 1");
   t.test_gen(m3r.get_size(0)==10,"rearrange 2");
@@ -144,6 +145,27 @@ int main(void) {
     cout << (func(1.0+((double)i)/3.0,1.5,1.0)+
              func(1.0+((double)i)/3.0,1.5,2.0)+
              func(1.0+((double)i)/3.0,1.5,3.0)) << endl;
+    t.test_rel(m3r.get(ix),(func(1.0+((double)i)/3.0,1.5,1.0)+
+                            func(1.0+((double)i)/3.0,1.5,2.0)+
+                            func(1.0+((double)i)/3.0,1.5,3.0)),
+               3.0e-1,"tensor rearrange 1");
+  }
+  cout << endl;
+  
+  cout << "interp(1),grid(0),sum(2):" << endl;
+  tensor_grid<> m3s=grid_rearrange_and_copy<tensor_grid<>,double>
+    (m3,{ix_interp(1,1.5),ix_grid(0,1.0,4.0,9),ix_sum(2)});
+  
+  for(size_t i=0;i<10;i++) {
+    vector<size_t> ix={i};
+    cout << i << " " << m3s.get(ix) << " ";
+    cout << (func(1.0+((double)i)/3.0,1.5,1.0)+
+             func(1.0+((double)i)/3.0,1.5,2.0)+
+             func(1.0+((double)i)/3.0,1.5,3.0)) << endl;
+    t.test_rel(m3s.get(ix),(func(1.0+((double)i)/3.0,1.5,1.0)+
+                            func(1.0+((double)i)/3.0,1.5,2.0)+
+                            func(1.0+((double)i)/3.0,1.5,3.0)),
+               3.0e-1,"tensor rearrange 2");
   }
   cout << endl;
   
