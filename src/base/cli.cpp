@@ -965,8 +965,8 @@ int cli::output_param_list() {
   int ncols_loc;
   int srow, scol;
   int iret=get_screen_size_ioctl(srow,scol);
-  if (scol>10 || iret!=0) ncols_loc=scol;
-  else ncols_loc=80;
+  if (scol>10 || iret!=0) ncols_loc=80;
+  else ncols_loc=scol;
   
   // One row for each parameter and an additional row for
   // the header
@@ -1171,8 +1171,8 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
   int ncols_loc;
   int srow, scol;
   int iret=get_screen_size_ioctl(srow,scol);
-  if (scol>10 || iret!=0) ncols_loc=scol;
-  else ncols_loc=80;
+  if (scol>10 || iret!=0) ncols_loc=80;
+  else ncols_loc=scol;
   
   // If not in interactive mode and no arguments are given,
   // Just output the full command list
@@ -2196,8 +2196,8 @@ int cli::comm_option_warranty(vector<string> &sv, bool itive_com) {
   int ncols_loc;
   int srow, scol;
   int iret=get_screen_size_ioctl(srow,scol);
-  if (scol>10 || iret!=0) ncols_loc=scol;
-  else ncols_loc=80;
+  if (scol>10 || iret!=0) ncols_loc=80;
+  else ncols_loc=scol;
   
   vector<string> desc2;
   rewrap_keep_endlines(stmp,desc2,ncols_loc-2);
@@ -3424,7 +3424,8 @@ int cli::comm_option_license(vector<string> &sv, bool itive_com) {
   if (sv.size()==1) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
-    if (scol>=10 || iret!=0) ncols_loc=scol;
+    if (scol>=10 || iret!=0) ncols_loc=80;
+    else ncols_loc=scol;
   }
   
   vector<string> desc2;
