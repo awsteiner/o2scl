@@ -87,22 +87,11 @@ libraries. The file ``INSTALL`` has some details on this procedure.
 Once the dependencies are installed you should be able to run
 ``./configure`` and then type ``make`` and ``make install``. More
 information on the ``configure`` command can also be obtained from
-<<<<<<< HEAD
 ``./configure --help``. On some systems, you may have to add
 additional flag to the ``CXXFLAGS`` environment variable manually
 before the ``./configure`` script. The documentation is included in
 the O₂scl release distribution and automatically installed by ``make
 install``.
-=======
-``./configure --help``. O₂scl assumes some C++11 support, so
-compilation may be more difficult on compilers released before
-about 2018. The ``./configure`` script attempts to determine the
-proper compiler flags for C++11 support, e.g. ``-std=gnu++11``. If
-this fails, you may have to add the proper C++11 flag to the
-``CXXFLAGS`` environment variable manually before the ``./configure``
-script. The documentation is included in the O₂scl release
-distribution and automatically installed by ``make install``.
->>>>>>> f4d197b9 (Updating install docs.)
 
 .. note::
    If you are trying to install O₂scl with a version of
@@ -126,12 +115,17 @@ manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
 environment variables.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Compiling with the readline library is optional, but it is assumed to
 be present by default.
 =======
 Compiling with the readline and ncurses libraries is optional,
 but they are assumed to be present by default. 
 >>>>>>> f4d197b9 (Updating install docs.)
+=======
+Compiling with the readline library is optional, but it is assumed to
+be present by default.
+>>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 
 After ``make install``, you may test the library with ``make check``
 or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
@@ -155,10 +149,14 @@ For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 ``libreadline-dev`` package), and HDF5 the ``libhdf5-dev`` package).
 You can then install O₂scl from one of the release distributions by
 using the standard GNU ``./configure`` script and then invoking
 ``make`` and ``make install`` (which often requires ``sudo``).
+<<<<<<< HEAD
 =======
 ``libreadline-dev`` package), ncurses (the ``libncurses-dev``
 packages), and HDF5 the ``libhdf5-dev`` package). You can then install
@@ -166,6 +164,8 @@ O₂scl from one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
 (which often requires ``sudo``). 
 >>>>>>> f4d197b9 (Updating install docs.)
+=======
+>>>>>>> be7732e9 (Updating install docs, removing ncurses.)
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
@@ -186,10 +186,14 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
 <<<<<<< HEAD
+<<<<<<< HEAD
 hdf5-devel, readline-devel``, and ``boost-devel``.
 =======
 hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
 >>>>>>> f4d197b9 (Updating install docs.)
+=======
+hdf5-devel, readline-devel``, and ``boost-devel``.
+>>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 
 Note that if your boost installation is earlier than 1.70,
 you will need to use the -DO2SCL_OLD_BOOST flag to get all of the
@@ -370,10 +374,6 @@ Utility`) can both take advantage of readline support. If the library
 is configured with ``--disable-readline``, then the readline library
 is not used.
 
-FFTW support (``-lfftw3``): O₂scl contains a few functions which
-require FFTW support, and this can be included if ``--enable-fftw`` is
-passed to the configure script.
-
 OpenMP support (typically involves the ``-fopenmp`` compiler flag):
 O₂scl contains a few functions which use multiple threads for
 faster execution. This support can be included using the
@@ -382,6 +382,13 @@ this will also include explicitly specifying the OpenMP libraries
 in the ``LDFLAGS`` environment variable. See more information in
 :ref:`Parallel Programming with O2scl`. 
   
+FFTW support (``-lfftw3``): O₂scl contains a few functions which
+require FFTW support, and this can be included if ``--enable-fftw`` is
+passed to the configure script.
+
+Module support, curses support, MFPR support, cubature support, and
+pugixml support are all experimental.
+
 Range-checking
 --------------
 
