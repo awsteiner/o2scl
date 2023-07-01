@@ -1,8 +1,12 @@
 #
 # -----------------------------------------------------------------
-# This file documents the use of the 'acol' command. The command
-# 'help' provides the full help text. You can also get help on the
-# commands individually, e.g.
+# This file documents the use of the 'acol' command. We first
+# set the number of columns to 80 for documentation formatting.
+# -----------------------------------------------------------------
+set ncols 80
+# -----------------------------------------------------------------
+# The command 'help' provides the full help text. You can also get
+# help on the commands individually, e.g.
 # -----------------------------------------------------------------
 help create
 # -----------------------------------------------------------------

@@ -131,7 +131,7 @@ AC_CHECK_LIB([readline], [add_history], [],
 ])
 
 # ------------------------------------------------------------------
-# Check for Modules library
+# Check for module support
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(modules,

@@ -455,8 +455,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   if (ncols<=0) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
-    if (scol>10 || iret!=0) ncols_loc=scol;
-    else ncols_loc=80;
+    if (scol>10 || iret!=0) ncols_loc=80;
+    else ncols_loc=scol;
   } else {
     ncols_loc=ncols;
   }
