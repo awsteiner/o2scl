@@ -2310,8 +2310,7 @@ namespace o2scl {
       }
 
       // Output sum information
-      std::cout << "grid_rearrange_and_copy(): n_sums, n_sum_loop: "
-                << n_sums << " "
+      std::cout << "  n_sums, n_sum_loop: " << n_sums << " "
                 << n_sum_loop << std::endl;
         
       // End of 'if (verbose>1)'
@@ -2321,9 +2320,9 @@ namespace o2scl {
     tensor_grid<> t_new(rank_new,size_new);
     t_new.set_grid_packed(new_grid);
     if (verbose>1) {
-      std::cout << "grid_rearrange_and_copy(): new grid is: " << std::endl;
+      std::cout << "  The new grid is: " << std::endl;
       for(size_t k=0;k<rank_new;k++) {
-        std::cout << "  " << k << " (" << t_new.get_size(k) << "): ";
+        std::cout << "    " << k << " (" << t_new.get_size(k) << "): ";
         if (t_new.get_size(k)>3) {
           std::cout << t_new.get_grid(k,0) << ", ";
           std::cout << t_new.get_grid(k,1) << " ... ";
@@ -2334,8 +2333,7 @@ namespace o2scl {
         }
         std::cout << t_new.get_grid(k,t_new.get_size(k)-1) << std::endl;
       }
-      std::cout << "grid_rearrange_and_copy(): "
-                << "interpolations: number: " << n_interps
+      std::cout << "  Interpolations: number: " << n_interps
                 << " indexes: ";
       o2scl::vector_out(std::cout,ix_to_interp,true);
     }
@@ -2351,8 +2349,11 @@ namespace o2scl {
     // indices in the old vector, but ix_to_interp isn't always
     // ordered that way, so we sort ix_to_interp here. This sorting
     // is important for the call interp_linear_partial() below.
-    //o2scl::vector_sort<std::vector<size_t>,size_t>(ix_to_interp.size(),
-    //ix_to_interp);
+    // 
+    // AWS, 6/28/23, this was commented out, but is necessary for
+    // examples/ex_tensor to work, so I put it back in.
+    o2scl::vector_sort<std::vector<size_t>,size_t>(ix_to_interp.size(),
+                                                   ix_to_interp);
       
     // Loop over the new tensor object
     for(size_t i=0;i<t_new.total_size();i++) {
@@ -2501,6 +2502,15 @@ namespace o2scl {
           vector_out(std::cout,ix_new,true);
         }
         if (n_interps>0) {
+          /*
+          std::cout << "ix_to_interp: ";
+          vector_out(std::cout,ix_to_interp,true);
+          std::cout << "ix_old: ";
+          vector_out(std::cout,ix_old,true);
+          std::cout << "interp_vals: ";
+          vector_out(std::cout,interp_vals,true);
+          std::cout << std::endl;
+          */
           val+=t.interp_linear_partial(ix_to_interp,ix_old,interp_vals);
         } else {
           val+=t.get(ix_old);
@@ -2513,7 +2523,7 @@ namespace o2scl {
     }
 
     if (verbose>1) {
-      std::cout << "grid_rearrange_and_copy() done." << std::endl;
+      std::cout << "grid_rearrange_and_copy(): Done." << std::endl;
     }
     
     return t_new;
