@@ -43,12 +43,13 @@ several different ways of installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
-on O₂scl. In order to help resolve these version conflicts, ``acol
--v`` reports the two different HDF5 versions so that it is easy to
-check that they are the same. This is also particularly important when
-Python support is enabled, as O₂scl and h5py should also be working
-from the same HDF5 version (see more information about Python support
-below).
+on O₂scl. In order to help resolve these version conflicts, the
+``acol`` utility (see :ref:`The acol Command Line Utility`) reports
+the two different HDF5 versions (see ``acol -v``) so that it is easy
+to check that they are the same. This is also particularly important
+when Python support is enabled, as O₂scl and h5py should also be
+working from the same HDF5 version (see more information about Python
+support below).
 
 .. _compile_homebrew:
   
@@ -60,23 +61,22 @@ The easiest way to install on Mac OSX is with homebrew. Use::
   brew tap awsteiner/science
   brew install o2scl
 
-to install O₂scl. There are a few options for ``brew
-install``. The option ``--with-check`` performs the build-time tests
-and the option ``--with-examples`` double checks that the examples can
-also be compiled and executed. The homebrew recipe for O₂scl
-uses the Mac OS X compiler clang. Homebrew also supports the
-installation of the current version directly from the repository using
-the ``--HEAD`` option to ``brew install``. The homebrew installation
-includes the O₂scl_part and O₂scl_eos
-sub-libraries and readline support. The O₂scl homebrew
-recipes are stored at the
+to install O₂scl. There are a few options for ``brew install``. The
+option ``--with-check`` performs the build-time tests and the option
+``--with-examples`` double checks that the examples can also be
+compiled and executed. The homebrew recipe for O₂scl uses the Mac OS X
+compiler clang. Homebrew also supports the installation of the current
+version directly from the repository using the ``--HEAD`` option to
+``brew install``. The homebrew installation includes readline support.
+The O₂scl homebrew recipes are stored at the
 https://github.com/awsteiner/homebrew-science repository.
 
 By default, a homebrew installation of O₂scl uses the OSX LLVM
 compiler. However, a homebrew installation of O₂scl will also install
 ``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
-package requires ``gcc``. Python support in the homebrew package
-does not yet work yet.
+package requires ``gcc``.
+
+Python support in the homebrew package does not yet work yet.
 
 .. _compile_dist:
 
@@ -134,24 +134,10 @@ Compiling O₂scl from a release on Linux
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 ``libreadline-dev`` package), and HDF5 the ``libhdf5-dev`` package).
 You can then install O₂scl from one of the release distributions by
 using the standard GNU ``./configure`` script and then invoking
 ``make`` and ``make install`` (which often requires ``sudo``).
-<<<<<<< HEAD
-=======
-``libreadline-dev`` package), ncurses (the ``libncurses-dev``
-packages), and HDF5 the ``libhdf5-dev`` package). You can then install
-O₂scl from one of the release distributions by using the standard GNU
-``./configure`` script and then invoking ``make`` and ``make install``
-(which often requires ``sudo``). 
->>>>>>> f4d197b9 (Updating install docs.)
-=======
->>>>>>> be7732e9 (Updating install docs, removing ncurses.)
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
@@ -171,19 +157,11 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
-<<<<<<< HEAD
-<<<<<<< HEAD
 hdf5-devel, readline-devel``, and ``boost-devel``.
-=======
-hdf5-devel, ncurses-devel, readline-devel``, and ``boost-devel``.
->>>>>>> f4d197b9 (Updating install docs.)
-=======
-hdf5-devel, readline-devel``, and ``boost-devel``.
->>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 
-Note that if your boost installation is earlier than 1.70,
-you will need to use the -DO2SCL_OLD_BOOST flag to get all of the
-tests to run successfully.
+Note that if your boost installation is earlier than 1.70, you will
+need to use the -DO2SCL_OLD_BOOST flag to get all of the tests to run
+successfully.
 
 .. _compile_source:
 
@@ -199,7 +177,6 @@ something along the lines of::
 
   git clone https://github.com/awsteiner/o2scl
   cd o2scl
-  mkdir m4
   autoreconf -i
   ./configure
 
@@ -207,9 +184,9 @@ Then, you will either need to generate the documentation from doxygen
 using ``make o2scl-doc`` or use ``make blank-doc`` to create blank
 documentation. Then you can proceed using ``make`` and ``make
 install`` (which may require ``sudo`` depending on your
-configuration). For a full installation with parallelism, I
-typically also install ``libopenmpi-dev`` and then use
-``./configure --enable-openmp``
+configuration). For a full installation with parallelism, I typically
+also install ``libopenmpi-dev`` and then use ``./configure
+--enable-openmp``
 
 .. _compile_docker:
 
@@ -309,7 +286,6 @@ so Armadillo must be compiled with LAPACK support, and you may need to
 specify the location of the LAPACK libraries manually. If you are
 installing on Mac OS X with homebrew, the options ``--with-eigen`` and
 ``with-armadillo`` can be used.
-<<<<<<< HEAD
 
 Other optional libraries
 ------------------------
@@ -341,8 +317,6 @@ passed to the configure script.
 
 Module support, curses support, MFPR support, cubature support, and
 pugixml support are all experimental.
-=======
->>>>>>> f4d197b9 (Updating install docs.)
 
 Other optional libraries
 ------------------------
@@ -401,8 +375,7 @@ not have privileges to write to ``/usr/local``::
 In this example, specifying ``-I/home/asteiner/install/include`` and
 ``-L/home/asteiner/install/lib`` above ensures that the GSL libraries
 can be found. The ``--prefix=/home/asteiner/install`` argument to
-``./configure`` ensures that O₂scl is installed there as
-well.
+``./configure`` ensures that O₂scl is installed there as well.
 
 Generation of documentation
 ---------------------------
