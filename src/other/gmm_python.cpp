@@ -25,6 +25,8 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_PYTHON
+
 gmm_python::gmm_python() {
   p_set_func=0;
   p_components_func=0;
@@ -604,4 +606,4 @@ void *gmm_python::get_python_internal(int &ret) {
   return 0;
 }      
 
-
+#endif
