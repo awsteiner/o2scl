@@ -46,7 +46,7 @@ of the HDF5 libraries that it is linked with when compiling code based
 on O₂scl. In order to help resolve these version conflicts, ``acol
 -v`` reports the two different HDF5 versions so that it is easy to
 check that they are the same. This is also particularly important when
-python support is enabled, as O₂scl and h5py should also be working
+Python support is enabled, as O₂scl and h5py should also be working
 from the same HDF5 version (see more information about Python support
 below).
 
@@ -114,31 +114,16 @@ for ``libgslcblas``. If neither is present, then you may have to
 manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
 environment variables.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 Compiling with the readline library is optional, but it is assumed to
 be present by default.
-=======
-Compiling with the readline and ncurses libraries is optional,
-but they are assumed to be present by default. 
->>>>>>> f4d197b9 (Updating install docs.)
-=======
-Compiling with the readline library is optional, but it is assumed to
-be present by default.
->>>>>>> be7732e9 (Updating install docs, removing ncurses.)
 
 After ``make install``, you may test the library with ``make check``
 or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
 passed"`` indicates that the testing was successful. You may also run
 ``make o2scl-test`` in the individual subdirectories of the src
 directory to individually test the classes and functions in that part
-<<<<<<< HEAD
 of O₂scl. After installation, running ``acol -v`` will output several
 of the installation settings.
-=======
-of O₂scl. After installation running will output several
-of the installation settings. 
->>>>>>> f4d197b9 (Updating install docs.)
 
 .. _compile_release:
 
