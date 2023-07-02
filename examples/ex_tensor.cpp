@@ -139,6 +139,9 @@ int main(void) {
   t.test_gen(m3r.get_rank()==1,"rearrange 1");
   t.test_gen(m3r.get_size(0)==10,"rearrange 2");
   
+  t.test_gen(m3r.get_rank()==1,"rearrange 1");
+  t.test_gen(m3r.get_size(0)==10,"rearrange 2");
+  
   for(size_t i=0;i<10;i++) {
     vector<size_t> ix={i};
     cout << i << " " << m3r.get(ix) << " ";
