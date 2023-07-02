@@ -75,7 +75,8 @@ https://github.com/awsteiner/homebrew-science repository.
 By default, a homebrew installation of O₂scl uses the OSX LLVM
 compiler. However, a homebrew installation of O₂scl will also install
 ``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
-package requires ``gcc``. 
+package requires ``gcc``. Python support in the homebrew package
+does not yet work yet.
 
 .. _compile_dist:
 

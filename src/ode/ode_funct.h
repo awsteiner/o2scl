@@ -32,7 +32,6 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/shunting_yard.h>
 #include <o2scl/calc_utf8.h>
 
 namespace o2scl {
