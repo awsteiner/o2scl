@@ -1,4 +1,4 @@
-Nuclear structure in the Hartree approximation
+Nuclear Structure in the Hartree Approximation
 ==============================================
 
 :ref:`O2scl <o2scl>`

@@ -37,16 +37,16 @@ O₂scl is designed to be used with the most recent release version of
 all of these libraries, but is sometimes compatible with recent older
 versions. The configure script attempts to add these libraries to
 LDFLAGS during installation, but in order to compile your code with
-O₂scl, you will need to include, e.g. ``-lo2scl -lgsl -lgslcblas
--lm``. The sections below describe several different ways of
-installing O₂scl.
+O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``. The sections below describe
+several different ways of installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
 on O₂scl. In order to help resolve these version conflicts, ``acol
 -v`` reports the two different HDF5 versions so that it is easy to
 check that they are the same. This is also particularly important when
-python support is enabled, as O₂scl and h5py should also be working
+Python support is enabled, as O₂scl and h5py should also be working
 from the same HDF5 version (see more information about Python support
 below).
 
@@ -85,14 +85,11 @@ libraries. The file ``INSTALL`` has some details on this procedure.
 Once the dependencies are installed you should be able to run
 ``./configure`` and then type ``make`` and ``make install``. More
 information on the ``configure`` command can also be obtained from
-``./configure --help``. O₂scl assumes some C++11 support, so
-compilation may be more difficult on compilers released before
-about 2018. The ``./configure`` script attempts to determine the
-proper compiler flags for C++11 support, e.g. ``-std=gnu++11``. If
-this fails, you may have to add the proper C++11 flag to the
-``CXXFLAGS`` environment variable manually before the ``./configure``
-script. The documentation is included in the O₂scl release
-distribution and automatically installed by ``make install``.
+``./configure --help``. On some systems, you may have to add
+additional flag to the ``CXXFLAGS`` environment variable manually
+before the ``./configure`` script. The documentation is included in
+the O₂scl release distribution and automatically installed by ``make
+install``.
 
 .. note::
    If you are trying to install O₂scl with a version of
@@ -123,8 +120,8 @@ or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
 passed"`` indicates that the testing was successful. You may also run
 ``make o2scl-test`` in the individual subdirectories of the src
 directory to individually test the classes and functions in that part
-of O₂scl. After installation running will output several
-of the installation settings. 
+of O₂scl. After installation, running ``acol -v`` will output several
+of the installation settings.
 
 .. _compile_release:
 
@@ -214,9 +211,9 @@ O₂scl can be compiled with python support by providing the option
 ``--enable-python`` when the library is configured. This may also
 require adjusting CXXFLAGS and LDFLAGS in order to ensure the Python
 headers and libraries can be found. O₂scl code which uses Python also
-assumes that numpy was installed, so the numpy package may need to be
-specified. For example, using g++ on MacOS may need something of the
-form::
+assumes that numpy was installed, so the headers for the numpy package
+may need to be specified. For example, using g++ on MacOS may need
+something of the form::
 
   CXX="g++-13"
   CXXFLAGS="-I/usr/local/lib/python3.11/site-packages/numpy/core/include
