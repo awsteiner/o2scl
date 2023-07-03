@@ -36,10 +36,12 @@ system, but some common cases and useful information is given below).
 O₂scl is designed to be used with the most recent release version of
 all of these libraries, but is sometimes compatible with recent older
 versions. The configure script attempts to add these libraries to
-LDFLAGS during installation, but in order to compile your code with
-O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``. The sections below describe
-several different ways of installing O₂scl.
+LDFLAGS during the installation of O₂scl. In order to compile your
+code with O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``, and you may need to include
+``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl libraries.
+The sections below describe several different ways of installing
+O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
