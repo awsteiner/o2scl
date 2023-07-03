@@ -19,7 +19,7 @@ RUN apt-get -y update
 # compiler, make and gsl
 RUN apt-get -y install g++ make libgsl-dev autoconf automake libtool git
 # HDF5, ncurses, and readline
-RUN apt-get -y install libhdf5-dev libncurses-dev libreadline-dev
+RUN apt-get -y install libhdf5-devlibreadline-dev
 # Boost and Eigen
 RUN apt-get -y install libboost-all-dev
 
@@ -30,7 +30,7 @@ WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
-RUN LDFLAGS="-lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
 RUN make blank-doc
 RUN make
 RUN make install
