@@ -19,8 +19,8 @@ RUN apt-get -y update
 # compiler, make and gsl
 RUN apt-get -y install g++ make libgsl-dev autoconf automake libtool git
 # HDF5, ncurses, and readline
-RUN apt-get -y install libhdf5-devlibreadline-dev
-# Boost and Eigen
+RUN apt-get -y install libhdf5-dev libreadline-dev
+# Boost
 RUN apt-get -y install libboost-all-dev
 
 # -----------------------------------------------------------------

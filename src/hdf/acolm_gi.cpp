@@ -2062,6 +2062,7 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       
     } else if (method=="py_gp" || method=="py_dnn") {
       
+#ifdef O2SCL_PYTHON      
       tensor<> tin, tout;
       vector<size_t> in_size={table_obj.get_nlines(),2};
       vector<size_t> out_size={table_obj.get_nlines(),in.size()-6};
@@ -2105,6 +2106,10 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       clear_obj();
       command_add("table3d");
       type="table3d";
+#else
+      cerr << "Python support not included." << endl;
+      return 3;
+#endif
       
     } else {
       cerr << "Method " << method << " not understood in interp-table3d."

@@ -126,6 +126,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
                                 bool itive_com) {
   if (type=="table") {
 
+#ifdef O2SCL_PYTHON
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-gmm." << endl;
     }
@@ -165,6 +166,11 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
     clear_obj();
     command_add("prob_dens_mdim_gmm");
     type="prob_dens_mdim_gmm";
+
+#else
+      cerr << "Python support not included." << endl;
+      return 3;
+#endif
     
   }
     
@@ -175,6 +181,8 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
                               bool itive_com) {
   if (type=="table") {
 
+#ifdef O2SCL_PYTHON
+    
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-kde." << endl;
     }
@@ -238,6 +246,11 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
     clear_obj();
     command_add("prob_dens_mdim_kde");
     type="prob_dens_mdim_kde";
+
+#else
+      cerr << "Python support not included." << endl;
+      return 3;
+#endif    
     
   }
     
