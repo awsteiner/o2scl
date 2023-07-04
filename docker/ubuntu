@@ -1,4 +1,4 @@
-FROM ubuntu:latest 
+FROM ubuntu:23.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # To fix tzdata asking for a timezone during installation

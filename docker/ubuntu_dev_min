@@ -3,7 +3,7 @@
 # repository. It includes readline, OpenMP and HDF5 compression
 # support. It runs all of the O2scl tests and examples.
 
-FROM ubuntu:latest 
+FROM ubuntu:23.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
