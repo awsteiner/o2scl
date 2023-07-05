@@ -13,15 +13,11 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 ARG DEBIAN_FRONTEND=noninteractive
 
 # -----------------------------------------------------------------
-# apt packages
+# Install apt packages
 
-RUN apt-get -y update
-# compiler, make and gsl
-RUN apt-get -y install g++ make libgsl-dev autoconf automake libtool git
-# HDF5, ncurses, and readline
-RUN apt-get -y install libhdf5-dev libreadline-dev
-# Boost
-RUN apt-get -y install libboost-all-dev
+RUN apt-get -y update && \
+apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
+libhdf5-dev libreadline-dev libboost-all-dev
 
 # -----------------------------------------------------------------
 # Now install o2scl
@@ -31,16 +27,12 @@ RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
-RUN make blank-doc
-RUN make
-RUN make install
+RUN make blank-doc && make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
-RUN acol -v
-RUN acol -h
+RUN acol -v && acol -h
 WORKDIR /opt/o2scl
-RUN make o2scl-test
-RUN make o2scl-examples
+RUN make o2scl-test && make o2scl-examples
 
 
 

@@ -16,18 +16,17 @@ ARG DEBIAN_FRONTEND=noninteractive
 # -----------------------------------------------------------------
 # apt packages
 
-RUN apt-get -y update
 # compiler, make and gsl
-RUN apt-get -y install g++ make libgsl-dev autoconf automake libtool git
 # HDF5, ncurses, and readline
-RUN apt-get -y install libhdf5-dev libreadline-dev
 # Boost and Eigen
-RUN apt-get -y install libboost-all-dev libeigen3-dev
 # Armadillo and dependencies
-RUN apt-get -y install cmake libopenblas-dev liblapack-dev libarpack2-dev
-RUN apt-get -y install libsuperlu-dev libarmadillo-dev libfftw3-dev
 # We need curl to test downloading EOSs for o2sclpy
-RUN apt-get -y install curl
+
+RUN apt-get -y update && \
+apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
+libhdf5-dev libreadline-dev libboost-all-dev libeigen3-dev \
+cmake libopenblas-dev liblapack-dev libarpack2-dev \
+libsuperlu-dev libarmadillo-dev libfftw3-dev curl
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
@@ -42,16 +41,15 @@ RUN apt-get -y install python3 python3-pip python3-virtualenv
 
 WORKDIR /opt
 RUN python3 -m virtualenv o2env
-RUN . o2env/bin/activate
+RUN . /opt/o2env/bin/activate
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install --no-binary=h5py h5py==3.8.0
 RUN apt-get -y install texlive dvipng texlive-latex-extra cm-super
 # We need pillow to compare images for o2sclpy tests
 RUN pip3 install numpy==1.24.3 pytest==7.3.1 Pillow==9.5.0 \
-scipy==1.10.1 matplotlib==3.7.1 yt==4.2.0 
-RUN pip3 install scikit-learn==1.2.2 tensorflow-cpu==2.12.0 keras==2.12.0
-RUN pip3 list
+scipy==1.10.1 matplotlib==3.7.1 yt==4.2.0 \
+scikit-learn==1.2.2 tensorflow-cpu==2.12.0 keras==2.12.0 && pip3 list
 
 # -----------------------------------------------------------------
 # Install o2scl
@@ -61,20 +59,17 @@ RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
 RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.10/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
-RUN make blank-doc
-RUN make
-RUN make install
+RUN make blank-doc && make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
-RUN acol -h
-RUN acol -v
+RUN acol -h && acol -v
 
 # --------------------------------------------------------------------------
 # Install o2sclpy via pip
 
-WORKDIR /opt
+WORKDIR /opt/o2env
 RUN git clone https://github.com/awsteiner/o2sclpy
-WORKDIR /opt/o2sclpy
+WORKDIR /opt/o2env/o2sclpy
 RUN pip3 install . 
 
 # --------------------------------------------------------------------------
@@ -86,15 +81,13 @@ ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
 # O2scl testing and examples
 
 WORKDIR /opt/o2scl
-RUN make o2scl-test
-RUN make o2scl-examples
+RUN make o2scl-test && make o2scl-examples
 
 # --------------------------------------------------------------------------
 # Test o2sclpy
 
-RUN o2graph -h
-RUN o2graph -v
-WORKDIR /opt/o2sclpy
+RUN o2graph -h && o2graph -v
+WORKDIR /opt/o2env/o2sclpy
 RUN make test
 
 
