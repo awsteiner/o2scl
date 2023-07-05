@@ -10,7 +10,7 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN zypper install -y gcc-c++ make gsl-devel
-RUN zypper install -y hdf5-devel ncurses-devel readline-devel git
+RUN zypper install -y hdf5-devel readline-devel git
 RUN zypper install -y boost-devel autoconf automake libtool
 
 # Now install o2scl
@@ -25,9 +25,6 @@ RUN make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
-WORKDIR /opt/o2scl
-RUN make o2scl-test
-RUN make o2scl-examples
 
 # Python3, and o2sclpy via pip. Note that the dvipng package is named
 # differently in OpenSUSE
@@ -39,3 +36,8 @@ RUN pip3 install .
 # To ensure o2graph loads OpenMP appropriately
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/10/libgomp.so
 RUN o2graph -help
+
+WORKDIR /opt/o2scl
+RUN make o2scl-test
+RUN make o2scl-examples
+
