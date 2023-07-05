@@ -512,6 +512,8 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     type="table";
     
   } else if (type=="prob_dens_mdim_kde") {
+
+#ifdef O2SCL_PYTHON
     
     if (pkde_obj.dim()!=1) {
       cerr << "Command to-table only works on a 1-dimensional KDE" << endl;
@@ -609,6 +611,11 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     clear_obj();
     command_add("table");
     type="table";
+
+#else
+      cerr << "Python support not included." << endl;
+      return 3;
+#endif
     
   } else if (type=="tensor_grid") {
     
@@ -768,6 +775,8 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     
   } else if (type=="prob_dens_mdim_kde") {
     
+#ifdef O2SCL_PYTHON
+
     if (pkde_obj.dim()!=2) {
       cerr << "Command to-table only works on a 2-dimensional KDE" << endl;
       return 1;
@@ -819,6 +828,11 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     clear_obj();
     command_add("table3d");
     type="table3d";
+
+#else
+      cerr << "Python support not included." << endl;
+      return 3;
+#endif
     
   } else if (type=="tensor" || type=="tensor<size_t>" || type=="tensor<int>") {
 
