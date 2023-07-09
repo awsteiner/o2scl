@@ -132,7 +132,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     vector<std::string> itmp={"cat","contours","deriv-x","deriv-y",
       "fft","function","value","value-grid","get-grid",
       "insert","interp","refine","stats","select",
-      "list","max","min","rename","set-data","to-hist",
+      "list","max","min","rename","set-data","set-grid","to-hist",
       "slice","slice-hist","sum","to-hist-2d","to-table",
       "to-tensor-grid","to-tg-fermi","x-name","y-name"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
@@ -785,7 +785,7 @@ void acol_manager::command_add(std::string new_type) {
 
   } else if (new_type=="table3d") {
     
-    static const size_t narr=29;
+    static const size_t narr=30;
     comm_option_s options_arr[narr]=
       {{0,"cat","",0,2,"","",
          new comm_option_mfptr<acol_manager>
@@ -835,6 +835,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"set-data","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_set_data),both},
+       {0,"set-grid","",0,4,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_set_grid),both},
        {0,"slice","Construct a slice.",2,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_slice),both},
