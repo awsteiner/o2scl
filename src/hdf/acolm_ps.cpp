@@ -2688,13 +2688,101 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
 
 int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
 
-  if (type=="tensor_grid") {
+  if (type=="table3d") {
+
+    vector<string> pr, in;
+    pr.push_back("Index of grid to set (0 or 1 or x or y)");
+    pr.push_back("Function or vector specification defining grid");
+    int ret=get_input(sv,pr,in,"set-grid",itive_com);
+    if (ret!=0) return ret;
+    
+    vector<double> grid;
+
+    size_t k=0;
+    if (in[0].substr(0,1)=="y") {
+      k=1;
+    } else if (in[0].substr(0,1)!="x") {
+      if (o2scl::stoi(in[0])==1) {
+        k=1;
+      }
+    }
+    size_t ilast=table3d_obj.get_nx();
+    if (k==1) ilast=table3d_obj.get_ny();
+    
+    if (in[1].find(':')==std::string::npos) {
+      
+      calc_utf8<> calc;
+      std::map<std::string,double> vars;
+      for(size_t i=0;i<ilast;i++) {
+        if (i<table3d_obj.get_nx()) {
+          vars["i"]=((double)i);
+          vars["x"]=table3d_obj.get_grid_x(i);
+        } else {
+          vars["i"]=0.0;
+          vars["x"]=0.0;
+        }
+        if (i<table3d_obj.get_ny()) {
+          vars["j"]=((double)i);
+          vars["y"]=table3d_obj.get_grid_x(i);
+        } else {
+          vars["j"]=0.0;
+          vars["y"]=0.0;
+        }
+        vars["m"]=table3d_obj.get_nx();
+        vars["n"]=table3d_obj.get_ny();
+	calc.compile(in[1].c_str(),&vars);
+	double val=calc.eval(&vars);
+        if (k==0) {
+          table3d_obj.set_grid_x(i,val);
+        } else {
+          table3d_obj.set_grid_y(i,val);
+        }
+      }
+      
+    } else {
+      
+      std::vector<double> vtemp;
+      int retq=vector_spec(in[1],vtemp,false,verbose,false);
+      if (retq!=0) {
+	cerr << "Interpretation of vector specification failed."
+	     << endl;
+	return 3;
+      }
+      
+      if (k==0) {
+        
+        if (vtemp.size()<table3d_obj.get_nx()) {
+          cerr << "Vector specification results in vector "
+               << "smaller than x grid of table3d object." << endl;
+          return 2;
+        }
+        
+        for(size_t i=0;i<table3d_obj.get_nx();i++) {
+          table3d_obj.set_grid_x(i,vtemp[i]);
+        }
+
+      } else {
+
+        if (vtemp.size()<table3d_obj.get_ny()) {
+          cerr << "Vector specification results in vector "
+               << "smaller than y grid of table3d object." << endl;
+          return 2;
+        }
+        
+        for(size_t i=0;i<table3d_obj.get_ny();i++) {
+          table3d_obj.set_grid_y(i,vtemp[i]);
+        }
+        
+      }
+    }
+      
+  } else if (type=="tensor_grid") {
 
     size_t rank=tensor_grid_obj.get_rank();
     
     vector<string> pr, in;
     pr.push_back("Index of grid to set");
-    pr.push_back("Function defining grid");
+    pr.push_back("Function or vector specification defining grid");
     int ret=get_input(sv,pr,in,"set-grid",itive_com);
     if (ret!=0) return ret;
 

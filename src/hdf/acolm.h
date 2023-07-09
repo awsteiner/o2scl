@@ -78,8 +78,6 @@ namespace o2scl_acol {
 
          - (Future) Commands xindex and yindex for table3d.
 
-         - (Future) Enable set_grid() for table3d similar to tensor_grid.
-
          - (Future) Fix fit for table.
 
          - (Future) Use swap instead of copy in 'select' for table objects.
@@ -2517,6 +2515,29 @@ namespace o2scl_acol {
         'i' ranges from 0 to m-1, where 'm' is the tensor size for
         each rank and the value of 'x' is equal to the previous grid
         value.
+
+        \verbatim embed:rst
+        See :cpp:func:`o2scl_hdf::vector_spec()` for help on vector
+        specifications and :cpp:func:`o2scl_hdf::functions()` for help
+        on function specifications.
+        \endverbatim
+
+        For objects of type table3d:
+
+        Set either the x or y grid of the table3d object.
+
+        Arguments: <tt><index or 'x' or 'y'> <func. or vector spec></tt>
+
+        The first argument for the \c set-grid command specifies the
+        index or label for which grid to set. The second argument
+        specifies the grid. If it contains a ':', it is assumed to be
+        a vector specification. Otherwise, the argument is assumed to
+        be a function which specifies the grid value as a function of
+        the variables 'i', 'j', 'm', 'n', 'x', and 'y'. The value of
+        'i' ranges from 0 to 'm'-1, where 'm' is the size of the x
+        index. Similarly, the value lf 'j' ranges from 0 to 'n'-1,
+        where 'n' is the size of the y index. The variables 'x' and
+        'y' hold the x and y grid values.
 
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::vector_spec()` for help on vector
