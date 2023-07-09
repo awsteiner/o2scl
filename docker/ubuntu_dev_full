@@ -32,24 +32,20 @@ libsuperlu-dev libarmadillo-dev libfftw3-dev curl
 # Since we're enabling python extensions, we need to install python
 # before we install o2scl, so we do that now
 
-RUN apt-get -y install python3 python3-pip python3-virtualenv
-
-# --------------------------------------------------------------------------
-# Create a virtual Python environment and activate it. A virtual
-# environment isn't explicitly necessary here, this is just for
-# demonstration
+RUN apt-get -y install python3 python3-pip
 
 WORKDIR /opt
-RUN python3 -m virtualenv o2env
-RUN . /opt/o2env/bin/activate
+RUN pip3 install --break-system-packages numpy
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
-RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install --no-binary=h5py h5py==3.8.0
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install  --break-system-packages \
+  --no-binary=h5py h5py
 RUN apt-get -y install texlive dvipng texlive-latex-extra cm-super
 # We need pillow to compare images for o2sclpy tests
-RUN pip3 install numpy==1.24.3 pytest==7.3.1 Pillow==9.5.0 \
-scipy==1.10.1 matplotlib==3.7.1 yt==4.2.0 \
-scikit-learn==1.2.2 tensorflow-cpu==2.12.0 keras==2.12.0 && pip3 list
+RUN pip3 install  --break-system-packages pytest Pillow \
+scipy matplotlib yt scikit-learn tensorflow-cpu keras
+RUN pip3 freeze > requirements.txt
+RUN cat requirements.txt
 
 # -----------------------------------------------------------------
 # Install o2scl
