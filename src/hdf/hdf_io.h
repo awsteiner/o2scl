@@ -2621,35 +2621,38 @@ namespace o2scl_hdf {
 
       Power functions:
 
-      sqrt(x) cbrt(x) pow(x,y) hypot(x,y)
+      sqrt(x), cbrt(x), pow(x,y), and hypot(x,y)
 
       Exponential functions:
 
-      exp(x) log(x) log10(x) log1p(x) expm1(x)
+      exp(x), log(x), log10(x), log1p(x), and expm1(x)
 
       Trigonometric functions:
 
-      asin(x) acos(x) atan(x) sinh(x) cosh(x) tanh(x) asinh(x)
-      acosh(x) atanh(x) atan2(y,x)
+      asin(x), acos(x), atan(x), sinh(x), cosh(x), tanh(x), asinh(x),
+      acosh(x), atanh(x), and atan2(y,x)
 
       Exponential functions:
 
-      erf(x) [2/sqrt(pi) int_0^{x} exp(-t^2) dt]
-      erfc(x) [2/sqrt(pi) int_x^{infty} exp(-t^2) dt = 1-erf(x)]
+      erf(x) [2/sqrt(pi) int_0^{x} exp(-t^2) dt],
+      erfc(x) [2/sqrt(pi) int_x^{infty} exp(-t^2) dt = 1-erf(x)],
+      tgamma(x) [int t_0^{infty} t^{x-1} exp(-t) dt = (x-1)! for ints],
+      and lgamma(x) [ln |tgamma(x)|]
 
       Other functions:
 
-      abs(x) min(x,y) max(x,y) floor(x) ceil(x)
-      sqrt1pm1(x) [√(1+x)-1]
+      abs(x), min(x,y), max(x,y), floor(x), ceil(x), 
+      sqrt1pm1(x) [√(1+x)-1], and 
       if(t,x,y) [If t>0.5 then x, otherwise y.]
 
-      Bessel functions (OSX only):
-      cyl_bessel_i(nu,x), cyl_bessel_j(nu,x), cyl_bessel_k(nu,x), 
-      and cyl_neumann(nu,x).
+      Bessel functions:
+
+      cyl_bessel_i(nu,x) [i.e. Iᵥ(x)], cyl_bessel_j(nu,x) [i.e. Jᵥ(x)], 
+      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)].
 
       Special values:
 
-      false = 0, true = 1, rand = random number
+      false = 0, true = 1, rand(experimental) = random number
 
       Use <tt>acol -help function</tt> to get more information on the
       type-specific command called \c function .
