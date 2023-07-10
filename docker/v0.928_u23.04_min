@@ -1,5 +1,5 @@
 # This dockerfile performs a (nearly) minimal O2scl installation of
-# the development version directly from main branch in the current
+# the development directly from main branch in the current
 # repository. It includes readline, OpenMP and HDF5 compression
 # support. It runs all of the O2scl tests and examples.
 
