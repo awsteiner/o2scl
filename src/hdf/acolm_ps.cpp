@@ -2723,7 +2723,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
         }
         if (i<table3d_obj.get_ny()) {
           vars["j"]=((double)i);
-          vars["y"]=table3d_obj.get_grid_x(i);
+          vars["y"]=table3d_obj.get_grid_y(i);
         } else {
           vars["j"]=0.0;
           vars["y"]=0.0;
@@ -2775,7 +2775,9 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
         
       }
     }
-      
+
+    return 0;
+    
   } else if (type=="tensor_grid") {
 
     size_t rank=tensor_grid_obj.get_rank();
@@ -2828,7 +2830,8 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     return 0;
   }
 
-  cout << "Not implemented for type " << type << endl;
+  cout << "Command 'set-grid' not implemented for type " << type << endl;
+  
   return 1;
 }
 
