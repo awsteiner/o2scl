@@ -1,4 +1,4 @@
-FROM opensuse/leap
+FROM opensuse/leap:15.5
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # To fix tzdata asking for a timezone during installation
@@ -6,9 +6,8 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 # I'm not sure if this is necessary for opensuse.
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN zypper install -y gcc-c++ make gsl-devel
-RUN zypper install -y hdf5-devel ncurses-devel readline-devel
-RUN zypper install -y boost-devel curl
+RUN zypper install -y gcc-c++ make gsl-devel hdf5-devel ncurses-devel \
+readline-devel boost-devel curl tar gzip
 
 # Now install o2scl
 WORKDIR /opt
@@ -16,9 +15,7 @@ RUN curl https://github.com/awsteiner/o2scl/releases/download/v0.927/o2scl-0.927
 RUN tar xzf o2scl-0.927.tar.gz
 WORKDIR /opt/o2scl-0.927
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
-RUN make blank-doc
-RUN make
-RUN make install
+RUN make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
