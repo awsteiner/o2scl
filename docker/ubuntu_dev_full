@@ -21,13 +21,14 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Boost and Eigen
 # Armadillo and dependencies
 # We need curl to test downloading EOSs for o2sclpy
+# libcairo2-dev is required for pycairo
 
 RUN apt-get -y update && \
 apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
   libhdf5-dev libreadline-dev libboost-all-dev libeigen3-dev cmake \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip
+  cm-super python3 python3-pip libcairo2-dev
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
