@@ -357,6 +357,7 @@ emacs-clean:
 # ------------------------------------------------------------
 
 o2scl-test: $(TEST_VAR)
+	echo $(TEST_VAR) > testlist
 	../internal/tsumm$(EXEEXT)
 
 o2scl-test-rec: $(TEST_VAR)
