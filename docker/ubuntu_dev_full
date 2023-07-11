@@ -16,18 +16,16 @@ ARG DEBIAN_FRONTEND=noninteractive
 # -----------------------------------------------------------------
 # apt packages
 
-# compiler, make and gsl
-# HDF5, ncurses, and readline
-# Boost and Eigen
-# Armadillo and dependencies
-# We need curl to test downloading EOSs for o2sclpy
+# Install compiler, make, gsl, HDF5, readline, boost, eigen, armadillo
+# and dependencies, etc. We need curl to test downloading EOSs for
+# o2sclpy libcairo2-dev is required for pycairo.
 
 RUN apt-get -y update && \
 apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
   libhdf5-dev libreadline-dev libboost-all-dev libeigen3-dev cmake \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip
+  cm-super python3 python3-pip libcairo2-dev
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
@@ -37,15 +35,15 @@ WORKDIR /opt
 RUN pip3 install --break-system-packages numpy==1.24.3
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
-RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install --break-system-packages \
-  --no-binary=h5py h5py==3.9.0
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
+  --break-system-packages --no-binary=h5py h5py==3.9.0
 
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
   && pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 # We need pillow to compare images for o2sclpy tests
-# RUN pip3 install  --break-system-packages pytest Pillow \
+# RUN pip3 install --break-system-packages pytest Pillow \
 # scipy matplotlib yt scikit-learn tensorflow-cpu keras
 # RUN pip3 freeze > requirements.txt
 # RUN cat requirements.txt
@@ -57,7 +55,7 @@ WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
-RUN LDFLAGS="-larmadillo -llapack -lblas -lncurses" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.11/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
+RUN LDFLAGS="-larmadillo -llapack -lblas" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.11/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
 RUN make blank-doc && make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
@@ -66,10 +64,10 @@ RUN acol -h && acol -v
 # --------------------------------------------------------------------------
 # Install o2sclpy via pip
 
-WORKDIR /opt/o2env
+WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2sclpy
-WORKDIR /opt/o2env/o2sclpy
-RUN pip3 install . 
+WORKDIR /opt/o2sclpy
+RUN pip3 install --break-system-packages . 
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
@@ -86,8 +84,10 @@ RUN make o2scl-test && make o2scl-examples
 # Test o2sclpy
 
 RUN o2graph -h && o2graph -v
-WORKDIR /opt/o2env/o2sclpy
-RUN make test
+WORKDIR /opt/o2sclpy
+# Make test and output to screen
+RUN make testq
+
 
 
 
