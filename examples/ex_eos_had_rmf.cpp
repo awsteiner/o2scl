@@ -133,6 +133,36 @@ int main(void) {
   for(size_t i=0;i<tov->get_nlines();i++) {
     cout << tov->get("gm",i) << " " << tov->get("r",i) << endl;
   }
+
+  if (false) {
+    
+    // Compute the speed of sound along the beta-equilibrium EOS
+    shared_ptr<table_units<>> eos=nc.get_eos_results();
+    eos->deriv("ed","pr","cs2x");
+    
+    eos->add_column("cs2");
+    fermion_rel_deriv frd;
+    
+    for(size_t i=0;i<eos->get_nlines;i++) {
+      
+      double nn=eos->get("nn",i);
+      double np=eos->get("np",i);
+      double dednn, dednp, dedpp;
+      rmf.f_inv_number_suscept(nn,np,dednn,dednp,dedpp);
+      
+      // Include the electron contribution to d^2 ed / d np^2
+      nc.e.n=np;
+      fermion_deriv ed=nc.e;
+      frd.calc_density_zerot(ed);
+      dedpp+=1.0/ed.dndmu;
+      
+      double cs2=(nn*nn*dednn+2.0*nn*np*dednp+np*np*dedpp)/
+        (nn*mun+np*(mup+e.mu));
+      eos->set("cs2",i,cs2);
+      
+    }
+  
+  }
   
   t.report();
 

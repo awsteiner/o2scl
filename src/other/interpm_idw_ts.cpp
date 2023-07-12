@@ -134,14 +134,17 @@ int main(void) {
 
   cout << "Show that interpolation gets better with more points." << endl;
   for(size_t N=10;N<1000000;N*=10) {
-    // Create a random data set
+    // Create a large data set
     interpm_idw<matrix_view_vec_vec<vector<double> > > imi3;
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     for(size_t i=0;i<N;i++) {
-      x3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
-      y3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
-      z3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      double r1=sin(((double)N));
+      double r2=cos(((double)N));
+      double r3=sin(((double)(N+1)));
+      x3.push_back(0.2+(2.0*r1-1.0)/scale);
+      y3.push_back(0.2+(2.0*r2-1.0)/scale);
+      z3.push_back(0.2+(2.0*r3-1.0)/scale);
       f3.push_back(ft(x3[i],y3[i],z3[i]));
     }
 
@@ -175,9 +178,12 @@ int main(void) {
     z3.push_back(0.2);
     f3.push_back(ft(0.2,0.2,0.2));
     for(size_t i=0;i<N;i++) {
-      x3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
-      y3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
-      z3.push_back(0.2+(2.0*rg.random()-1.0)/scale);
+      double r1=sin(((double)N));
+      double r2=cos(((double)N));
+      double r3=sin(((double)(N+1)));
+      x3.push_back(0.2+(2.0*r1-1.0)/scale);
+      y3.push_back(0.2+(2.0*r2-1.0)/scale);
+      z3.push_back(0.2+(2.0*r3-1.0)/scale);
       f3.push_back(ft(x3[i+1],y3[i+1],z3[i+1]));
     }
 
