@@ -52,3 +52,7 @@ build_ubuntu_dev_full:
 build_ubuntu_dev_min:
 	sudo docker build . -f ubuntu_dev_min \
 		> ubuntu_dev_min.out 2>&1 &
+
+build_v0.928_ol15.5_min:
+	sudo docker build . -f v0.928_ol15.5_min \
+		> v0.928_ol15.5_min.out 2>&1 &
