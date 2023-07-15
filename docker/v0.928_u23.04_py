@@ -1,0 +1,96 @@
+# This dockerfile is for the full development version directly from
+# main branch in the current repo, complete with python, armadillo,
+# eigen, fftw, OpenMP, regex, and HDF5 compression support. It
+# attempts to run all of the o2scl test and examples. It also installs
+# and tests the main branch github version of o2sclpy
+
+FROM ubuntu:23.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# -----------------------------------------------------------------
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# apt packages
+
+# Install compiler, make, gsl, HDF5, readline, boost, eigen, armadillo
+# and dependencies, etc. We need curl to test downloading EOSs for
+# o2sclpy libcairo2-dev is required for pycairo.
+
+RUN apt-get -y update && \
+apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
+  libhdf5-dev libreadline-dev libboost-all-dev libeigen3-dev cmake \
+  libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
+  libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
+  cm-super python3 python3-pip libcairo2-dev
+
+# --------------------------------------------------------------------------
+# Since we're enabling python extensions, we need to install python
+# before we install o2scl, so we do that now
+
+WORKDIR /opt
+RUN pip3 install --break-system-packages numpy==1.24.3
+# Ubuntu libhdf5 is outdated relative to the version used by pip install
+# h5py, so we have to explicitly use the old Ubuntu one
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
+  --break-system-packages --no-binary=h5py h5py==3.9.0
+
+COPY u23.04_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
+  && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
+
+# We need pillow to compare images for o2sclpy tests
+# RUN pip3 install --break-system-packages pytest Pillow \
+# scipy matplotlib yt scikit-learn tensorflow-cpu keras
+# RUN pip3 freeze > u23.04_req.txt
+# RUN cat u23.04_req.txt
+
+# -----------------------------------------------------------------
+# Install o2scl
+
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN autoreconf -i
+RUN LDFLAGS="-larmadillo -llapack -lblas" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.11/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
+RUN make blank-doc && make && make install
+WORKDIR /
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -h && acol -v
+
+# --------------------------------------------------------------------------
+# Install o2sclpy via pip
+
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2sclpy
+WORKDIR /opt/o2sclpy
+RUN pip3 install --break-system-packages . 
+
+# --------------------------------------------------------------------------
+# To ensure o2graph loads OpenMP appropriately
+
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
+
+# --------------------------------------------------------------------------
+# O2scl testing and examples
+
+WORKDIR /opt/o2scl
+RUN make o2scl-test && make o2scl-examples
+
+# --------------------------------------------------------------------------
+# Test o2sclpy
+
+RUN o2graph -h && o2graph -v
+WORKDIR /opt/o2sclpy
+# Make test and output to screen
+RUN make testq
+
+
+
+
+
+
+

@@ -1,0 +1,48 @@
+# This dockerfile performs an O2scl installation from the v0.928
+# release. It includes readline, OpenMP, Armadillo, FFTW3, Eigen, and
+# HDF5 compression support. It runs all of the O2scl tests and
+# examples.
+
+FROM ubuntu:23.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# -----------------------------------------------------------------
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# Install apt packages
+
+# Base apt libraries for Ubuntu 23.04
+RUN apt-get -y update && apt-get -y install g++ make libgsl-dev autoconf \
+  automake libtool git libhdf5-dev libreadline-dev libboost-all-dev
+
+# Additional apt libraries for Ubuntu 23.04
+RUN apt-get -y install libeigen3-dev \
+  cmake libopenblas-dev liblapack-dev libarpack2-dev \
+  libsuperlu-dev libarmadillo-dev libfftw3-dev
+
+# -----------------------------------------------------------------
+# Now install o2scl
+
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN autoreconf -i
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp --enable-armadillo --enable-fftw --enatble-eigen 
+RUN make blank-doc && make && make install
+
+# -----------------------------------------------------------------
+# Make tests and examples
+
+WORKDIR /
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -v && acol -h
+WORKDIR /opt/o2scl
+RUN make o2scl-test && make o2scl-examples
+
+
+
+
