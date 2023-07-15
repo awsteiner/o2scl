@@ -3,14 +3,16 @@ Download O₂scl
 
 :ref:`O2scl <o2scl>`
 
-The current release version is 0.927. It can be obtained
+The current release version is 0.928. It can be obtained
 from
-https://github.com/awsteiner/o2scl/releases/download/v0.927/o2scl-0.927.tar.gz
+https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz
 
-You may also download O₂scl from the Github repository. To
-obtain the most recent development version (0.928a1), use, e.g.::
+You may also download O₂scl from the Github repository. e.g.::
 
   git clone https://github.com/awsteiner/o2scl.git
+
+.. To
+   obtain the most recent development version (0.928a1), use, 
 
 Please verify the release tarball before installation using ``openssl
 dgst -sha256`` and compare with the following values.
@@ -96,7 +98,7 @@ o2scl-0.924.tar.gz    a9fa7b313566fd49d60fc3e924c207e0d1eb77f324cf982f7062a0451c
 o2scl-0.925.tar.gz    0e9818db200db6fb896aae0395e6510dc2f8d97d532e903994cabc4680617385
 o2scl-0.926.tar.gz    a4d5b90b9a83ddead19f3c01bf29c7c7a3f32134a15755746552417cc4ecea37
 o2scl-0.927.tar.gz    9bdbea171c1924c1ae7e0d3dc1f80683ac2c4081eec102a884d453494c9635ad
-o2scl-0.927.tar.gz    not yet set
+o2scl-0.928.tar.gz    not yet set
 ===================== ================================================================
 
 ======== ========== ========================= ==================

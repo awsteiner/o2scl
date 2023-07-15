@@ -30,45 +30,12 @@
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/nstar_cold.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/fermion_deriv_rel.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
-
-class beta_temp {
-
-public:
-  
-  o2scl::eos_had_rmf &re;
-  o2scl::fermion &n;
-  o2scl::fermion &p;
-  
-  beta_temp(o2scl::eos_had_rmf &ret, o2scl::fermion &nt,
-	    o2scl::fermion &pt) : re(ret), n(nt), p(pt) {
-    e.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  }
-  
-  fermion e;
-  fermion_zerot fzt;
-  double barn;
-  
-  double solve_fun(double x) {
-
-    //cout << "x: " << x << " " << barn << endl;
-    p.n=x*barn;
-    n.n=barn-p.n;
-    re.calc_temp_e(n,p,8.0/hc_mev_fm,re.def_thermo);
-    
-    e.mu=n.mu-p.mu;
-    fzt.calc_mu_zerot(e);
-    //cout << "y: " << p.n-e.n << endl;
-    return p.n-e.n;
-  }
-
-};
-
 
 int main(void) {
 
@@ -134,36 +101,6 @@ int main(void) {
     cout << tov->get("gm",i) << " " << tov->get("r",i) << endl;
   }
 
-  if (false) {
-    
-    // Compute the speed of sound along the beta-equilibrium EOS
-    shared_ptr<table_units<>> eos=nc.get_eos_results();
-    eos->deriv("ed","pr","cs2x");
-    
-    eos->add_column("cs2");
-    fermion_rel_deriv frd;
-    
-    for(size_t i=0;i<eos->get_nlines;i++) {
-      
-      double nn=eos->get("nn",i);
-      double np=eos->get("np",i);
-      double dednn, dednp, dedpp;
-      rmf.f_inv_number_suscept(nn,np,dednn,dednp,dedpp);
-      
-      // Include the electron contribution to d^2 ed / d np^2
-      nc.e.n=np;
-      fermion_deriv ed=nc.e;
-      frd.calc_density_zerot(ed);
-      dedpp+=1.0/ed.dndmu;
-      
-      double cs2=(nn*nn*dednn+2.0*nn*np*dednp+np*np*dedpp)/
-        (nn*mun+np*(mup+e.mu));
-      eos->set("cs2",i,cs2);
-      
-    }
-  
-  }
-  
   t.report();
 
   return 0;

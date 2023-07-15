@@ -399,6 +399,12 @@ namespace o2scl {
     /// The default proton
     fermion prot;
 
+    /// The electron
+    fermion e;
+
+    /// The muon
+    fermion mu;
+
     /// Zero-temperature fermion thermodynamics (for the leptons)
     fermion_zerot fzt;
 
@@ -442,12 +448,6 @@ namespace o2scl {
     
     /// True if equation of state has been set
     bool eos_set;
-
-    /// The electron
-    fermion e;
-
-    /// The muon
-    fermion mu;
 
     /// A pointer to the equation of state
     eos_had_base *hep;
