@@ -12,9 +12,12 @@ hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip
 
 # Now install o2scl
 WORKDIR /opt
-RUN curl -L https://github.com/awsteiner/o2scl/releases/download/v0.927/o2scl-0.927.tar.gz --output o2scl-0.927.tar.gz
+
+RUN git clone https://github.com/awsteiner/o2scl
+# Check out the v0.927 fix commit
+RUN git checkout ed2b33fbe9d215baffcefd5000a8aac363938a65
 RUN tar xzf o2scl-0.927.tar.gz
-WORKDIR /opt/o2scl-0.927
+WORKDIR /opt/o2scl
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_PRE_1_12" ./configure
 
@@ -22,7 +25,7 @@ RUN make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
-WORKDIR /opt/o2scl-0.927
+WORKDIR /opt/o2scl
 RUN make o2scl-test && make o2scl-examples
 
 
