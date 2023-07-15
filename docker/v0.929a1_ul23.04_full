@@ -38,15 +38,15 @@ RUN pip3 install --break-system-packages numpy==1.24.3
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
   --break-system-packages --no-binary=h5py h5py==3.9.0
 
-COPY requirements.txt ./
+COPY u23.04_req.txt ./
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
-  && pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+  && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
 
 # We need pillow to compare images for o2sclpy tests
 # RUN pip3 install --break-system-packages pytest Pillow \
 # scipy matplotlib yt scikit-learn tensorflow-cpu keras
-# RUN pip3 freeze > requirements.txt
-# RUN cat requirements.txt
+# RUN pip3 freeze > u23.04_req.txt
+# RUN cat u23.04_req.txt
 
 # -----------------------------------------------------------------
 # Install o2scl

@@ -1,7 +1,6 @@
-# This dockerfile performs a (nearly) minimal O2scl installation of
-# the development directly from main branch in the current
-# repository. It includes readline, OpenMP and HDF5 compression
-# support. It runs all of the O2scl tests and examples.
+# This dockerfile performs a (nearly) minimal O2scl installation from
+# the v0.928 release. It includes readline, OpenMP and HDF5
+# compression support. It runs all of the O2scl tests and examples.
 
 FROM ubuntu:23.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
@@ -15,9 +14,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # -----------------------------------------------------------------
 # Install apt packages
 
-RUN apt-get -y update && \
-apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
-libhdf5-dev libreadline-dev libboost-all-dev
+# Base apt packages for Ubuntu 23.04
+RUN apt-get -y update && apt-get -y install g++ make libgsl-dev autoconf \
+  automake libtool git libhdf5-dev libreadline-dev libboost-all-dev
 
 # -----------------------------------------------------------------
 # Now install o2scl
@@ -28,6 +27,10 @@ WORKDIR /opt/o2scl
 RUN autoreconf -i
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
 RUN make blank-doc && make && make install
+
+# -----------------------------------------------------------------
+# Make tests and examples
+
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v && acol -h
