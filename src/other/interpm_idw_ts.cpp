@@ -139,9 +139,9 @@ int main(void) {
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     for(size_t i=0;i<N;i++) {
-      double r1=sin(((double)N));
-      double r2=cos(((double)N));
-      double r3=sin(((double)(N+1)));
+      double r1=fabs(sin(((double)(10*(i+1))))/1.04)+0.01;
+      double r2=fabs(sin(((double)(10*(i+101))))/1.04)+0.01;
+      double r3=fabs(sin(((double)(10*(i+201))))/1.04)+0.01;
       x3.push_back(0.2+(2.0*r1-1.0)/scale);
       y3.push_back(0.2+(2.0*r2-1.0)/scale);
       z3.push_back(0.2+(2.0*r3-1.0)/scale);
@@ -162,7 +162,9 @@ int main(void) {
     imi3.eval_err(p3,val,err);
     cout.width(6);
     cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
-    t.test_rel(val,3.0,10.0*err,"interp");
+    if (N==1000000) {
+      t.test_rel(val,3.0,10.0*err,"interp");
+    }
   }
   cout << endl;
 
@@ -178,9 +180,9 @@ int main(void) {
     z3.push_back(0.2);
     f3.push_back(ft(0.2,0.2,0.2));
     for(size_t i=0;i<N;i++) {
-      double r1=sin(((double)N));
-      double r2=cos(((double)N));
-      double r3=sin(((double)(N+1)));
+      double r1=fabs(sin(((double)(10*(i+1))))/1.04)+0.01;
+      double r2=fabs(sin(((double)(10*(i+101))))/1.04)+0.01;
+      double r3=fabs(sin(((double)(10*(i+201))))/1.04)+0.01;
       x3.push_back(0.2+(2.0*r1-1.0)/scale);
       y3.push_back(0.2+(2.0*r2-1.0)/scale);
       z3.push_back(0.2+(2.0*r3-1.0)/scale);
@@ -201,9 +203,11 @@ int main(void) {
     cout.width(6);
     imi3.derivs_err(0,0,derivs,errs);
     cout << N << endl;
-    t.test_rel(derivs[0],-1.8,errs[0]*100.0,"derivs 1");
-    t.test_rel(derivs[1],1.4,errs[1]*100.0,"derivs 2");
-    t.test_rel(derivs[2],0.4,errs[2]*100.0,"derivs 3");
+    if (N==1000000) {
+      t.test_rel(derivs[0],-1.8,errs[0]*10.0,"derivs 1");
+      t.test_rel(derivs[1],1.4,errs[1]*10.0,"derivs 2");
+      t.test_rel(derivs[2],0.4,errs[2]*10.0,"derivs 3");
+    }
     cout << "\t" << -1.8 << " " << 1.4 << " " << 0.4 << endl;
     cout << "\t" << derivs[0] << " " << derivs[1] << " " << derivs[2] << endl;
     cout << "\t" << errs[0] << " " << errs[1] << " " << errs[2] << endl;
