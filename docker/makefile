@@ -53,6 +53,15 @@ build_ubuntu_dev_min:
 	sudo docker build . -f ubuntu_dev_min \
 		> ubuntu_dev_min.out 2>&1 &
 
+# ----------------------------------------------
+# OpenSUSE Leap builds
+
+# Minimal
 build_v0.928_ol15.5_min:
 	sudo docker build . -f v0.928_ol15.5_min \
 		> v0.928_ol15.5_min.out 2>&1 &
+
+# With tests and examples
+build_v0.928_ol15.5:
+	sudo docker build . -f v0.928_ol15.5 \
+		> v0.928_ol15.5.out 2>&1 &
