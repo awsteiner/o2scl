@@ -7,7 +7,7 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Base apt libraries for OpenSUSE Tumbleweed
-RUN zypper install -y gcc-c++ make gsl-devel \
+RUN zypper install -y gcc-c++ make gsl-devel git autoconf automake libtool \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip
 
 # Now install o2scl
