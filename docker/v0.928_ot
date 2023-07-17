@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Base apt libraries for OpenSUSE Tumbleweed
 RUN zypper install -y gcc-c++ make gsl-devel \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip
-RUN zypper install -y git automake autoconf libtool
+RUN zypper install -y git automake autoconf libtool libquadmath0
 
 # Now install o2scl
 WORKDIR /opt
@@ -17,7 +17,7 @@ RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 
 RUN autoreconf -i
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure
+RUN LDFLAGS="-lquadmath" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure
 
 RUN make && make install
 WORKDIR /

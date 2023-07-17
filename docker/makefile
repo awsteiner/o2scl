@@ -52,7 +52,7 @@ build_v0.928_u23.04_py:
 	sudo docker build . -f v0.928_u23.04_py \
 		> v0.928_u23.04_py.out 2>&1 &
 
-build_all:
+build_u:
 	-docker build . -f v0.927_u22.04_min \
 		> v0.927_u22.04_min.out 2>&1 
 	-docker build . -f v0.927_u22.04 \
@@ -64,10 +64,11 @@ build_all:
 	-docker build . -f v0.928_u23.04_py \
 		> v0.928_u23.04_py.out 2>&1 
 
-#	-docker build . -f v0.927_ot \
-#		> v0.927_ot.out 2>&1 
-#	-docker build . -f v0.928_ot \
-#		> v0.928_ot.out 2>&1 
+build_ot:
+	-docker build . -f v0.927_ot \
+		> v0.927_ot.out 2>&1 
+	-docker build . -f v0.928_ot \
+		> v0.928_ot.out 2>&1 
 
 # ----------------------------------------------
 # Old builds
