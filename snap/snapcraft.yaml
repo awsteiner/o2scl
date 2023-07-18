@@ -1,6 +1,6 @@
 
   name: o2scl
-  version: '0.928'
+  version: '0.929a1'
   summary: Object-oriented Scientific Computing Library
   description: |
     O2scl is a C++ library for object-oriented numerical programming. 
