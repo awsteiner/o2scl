@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.928],[awsteiner0@protonmail.com])
+AC_INIT([o2scl],[0.929a1],[awsteiner0@protonmail.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -37,11 +37,11 @@ AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 # Take care of library version numbers
 # ------------------------------------------------------------------
 
-# For the time being, current and age are always "version number minus
-# 910"
-OLIB_CURRENT=18
+# For the time being, current and age are always
+# "version number minus 910"
+OLIB_CURRENT=19
 OLIB_REVISION=0
-OLIB_AGE=18
+OLIB_AGE=19
 
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
