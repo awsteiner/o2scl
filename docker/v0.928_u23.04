@@ -28,11 +28,13 @@ RUN apt-get -y install libeigen3-dev \
 # Now install o2scl
 
 WORKDIR /opt
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
-RUN autoreconf -i
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz \
+  --output o2scl-0.928.tar.gz
+RUN tar xzf o2scl-0.928.tar.gz
+WORKDIR /opt/o2scl-0.928
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp --enable-armadillo --enable-fftw --enable-eigen 
-RUN make blank-doc && make && make install
+RUN make && make install
 
 # -----------------------------------------------------------------
 # Make tests and examples
@@ -40,7 +42,7 @@ RUN make blank-doc && make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v && acol -h
-WORKDIR /opt/o2scl
+WORKDIR /opt/o2scl-0.928
 RUN make o2scl-test && make o2scl-examples
 
 
