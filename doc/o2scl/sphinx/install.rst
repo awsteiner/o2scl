@@ -270,8 +270,6 @@ where I use snap to install in my ``.bashrc``, I use::
 
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
 
-.. _compile_homebrew:
-  
 Optional linear algebra libraries
 ---------------------------------
 

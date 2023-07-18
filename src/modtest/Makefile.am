@@ -109,7 +109,7 @@ endif
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+EXTRA_DIST = 
 
 emacs-clean: 
 	-rm *~

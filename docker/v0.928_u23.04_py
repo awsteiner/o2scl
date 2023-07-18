@@ -72,7 +72,7 @@ RUN pip3 install --break-system-packages .
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
 
-ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
 
 # --------------------------------------------------------------------------
 # O2scl testing and examples
@@ -87,10 +87,4 @@ RUN o2graph -h && o2graph -v
 WORKDIR /opt/o2sclpy
 # Make test and output to screen
 RUN make testq
-
-
-
-
-
-
 
