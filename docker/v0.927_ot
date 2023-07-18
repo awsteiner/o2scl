@@ -6,12 +6,16 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 # I'm not sure if this is necessary for opensuse.
 ARG DEBIAN_FRONTEND=noninteractive
 
+# -----------------------------------------------------------------
 # Base apt libraries for OpenSUSE Tumbleweed
+
 RUN zypper install -y gcc-c++ make gsl-devel git autoconf automake libtool \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip \
 libquadmath0
 
+# -----------------------------------------------------------------
 # Now install o2scl
+
 WORKDIR /opt
 
 RUN git clone https://github.com/awsteiner/o2scl

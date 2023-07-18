@@ -6,24 +6,24 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 # I'm not sure if this is necessary for opensuse.
 ARG DEBIAN_FRONTEND=noninteractive
 
+# -----------------------------------------------------------------
 # Base apt libraries for OpenSUSE Tumbleweed
+
 RUN zypper install -y gcc-c++ make gsl-devel \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip
-RUN zypper install -y git automake autoconf libtool libquadmath0
 
 # Now install o2scl
-WORKDIR /opt
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
-
-RUN autoreconf -i
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz \
+  --output o2scl-0.928.tar.gz
+WORKDIR /opt/o2scl-0.928
 RUN LDFLAGS="-lquadmath" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure
 
 RUN make && make install
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -v
-WORKDIR /opt/o2scl
+WORKDIR /opt/o2scl-0.928
 RUN make o2scl-test && make o2scl-examples
 
 

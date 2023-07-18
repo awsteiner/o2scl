@@ -17,9 +17,10 @@ You may also download O₂scl from the Github repository. e.g.::
 Please verify the release tarball before installation using ``openssl
 dgst -sha256`` and compare with the following values.
 
-.. md5sum results
+.. MD5 sum results: This isn't in the documentation,
+   but I keep the list here up-to-date.
 
-.. ===================== ================================
+   ===================== ================================
    Release tarball       MD5 sum
    ===================== ================================
    o2scl-0.8.tar.gz      ab15fa71b8a7f4329e7dab98eaaa2898
@@ -57,7 +58,7 @@ dgst -sha256`` and compare with the following values.
    o2scl-0.925.tar.gz    17e1e979297ed3778f5a957aa500bfec
    o2scl-0.926.tar.gz    afe826ac5366810eecb7c7303a2a9f49
    o2scl-0.927.tar.gz    201cec9ccbcf11bf704a824c774e6db2
-   o2scl-0.928.tar.gz    
+   o2scl-0.928.tar.gz    16b5c2f2b1d2d3edea571a1108a11ceb
    ===================== ================================
 
 ===================== ================================================================
