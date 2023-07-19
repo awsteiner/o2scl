@@ -16,8 +16,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install apt packages
 
 # Base apt libraries for Ubuntu 23.04
-RUN apt-get -y update && apt-get -y install g++ make libgsl-dev autoconf \
-  automake libtool git libhdf5-dev libreadline-dev libboost-all-dev
+RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
+  gzip libhdf5-dev libreadline-dev libboost-all-dev
 
 # Additional apt libraries for Ubuntu 23.04
 RUN apt-get -y install libeigen3-dev \
