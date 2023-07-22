@@ -67,33 +67,31 @@ WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 # --------------------------------------------------------------------------
-<<<<<<< HEAD
-=======
 # Clear the build directory and then run acol
 
 RUN rm -rf o2scl && acol -h && acol -v
 
 # --------------------------------------------------------------------------
->>>>>>> f54194ab (Work on docker for 929 test.)
 # Install o2sclpy via pip
 
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-<<<<<<< HEAD
 RUN git checkout dev
-=======
->>>>>>> f54194ab (Work on docker for 929 test.)
 RUN pip3 install --break-system-packages . 
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
 =======
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
 >>>>>>> f54194ab (Work on docker for 929 test.)
+=======
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
+>>>>>>> dc7f973e (Updating 929a1 test docker file.)
 
 # --------------------------------------------------------------------------
 # O2scl testing and examples
@@ -103,14 +101,20 @@ RUN make o2scl-test && make o2scl-examples
 
 # --------------------------------------------------------------------------
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dc7f973e (Updating 929a1 test docker file.)
 # Clear the build directory and then run acol
 
 WORKDIR /opt
 RUN rm -rf o2scl && acol -h && acol -v
 
 # --------------------------------------------------------------------------
+<<<<<<< HEAD
 =======
 >>>>>>> f54194ab (Work on docker for 929 test.)
+=======
+>>>>>>> dc7f973e (Updating 929a1 test docker file.)
 # Test o2sclpy
 
 RUN o2graph -h && o2graph -v
