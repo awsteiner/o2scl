@@ -1930,6 +1930,70 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << std::numeric_limits<cpp_dec_float_100>::epsilon()
        << std::endl;
 
+#ifdef O2SCL_MPFR
+
+  cout.width(18);
+  cout << "mpfr_25";
+  cout.width(3);
+  cout << std::numeric_limits<mpfr_25>::digits10 << " ";
+  cout.width(4);
+  cout << std::numeric_limits<mpfr_25>::max_digits10 << " "; 
+  cout.width(17);
+  cout << std::numeric_limits<mpfr_25>::max() << " ";
+  cout.width(15);
+  cout << log(pow(10.0,
+                  std::numeric_limits<mpfr_25>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<mpfr_25>::epsilon()
+       << std::endl;
+  
+  cout.width(18);
+  cout << "mpfr_35";
+  cout.width(3);
+  cout << std::numeric_limits<mpfr_35>::digits10 << " ";
+  cout.width(4);
+  cout << std::numeric_limits<mpfr_35>::max_digits10 << " "; 
+  cout.width(17);
+  cout << std::numeric_limits<mpfr_35>::max() << " ";
+  cout.width(15);
+  cout << log(pow(10.0,
+                  std::numeric_limits<mpfr_35>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<mpfr_35>::epsilon()
+       << std::endl;
+  
+  cout.width(18);
+  cout << "mpfr_50";
+  cout.width(3);
+  cout << std::numeric_limits<mpfr_50>::digits10 << " ";
+  cout.width(4);
+  cout << std::numeric_limits<mpfr_50>::max_digits10 << " ";
+  cout.width(17);
+  cout << std::numeric_limits<mpfr_50>::max() << " ";
+  cout.width(15);
+  cout << log(pow(10.0,
+                  std::numeric_limits<mpfr_50>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<mpfr_50>::epsilon()
+       << std::endl;
+  
+  cout.width(18);
+  cout << "mpfr_100";
+  cout.width(3);
+  cout << std::numeric_limits<mpfr_100>::digits10 << " ";
+  cout.width(4);
+  cout << std::numeric_limits<mpfr_100>::max_digits10 << " ";
+  cout.width(17);
+  cout << std::numeric_limits<mpfr_100>::max() << " ";
+  cout.width(15);
+  cout << log(pow(10.0,
+                  std::numeric_limits<mpfr_100>::max_digits10));
+  cout << " ";
+  cout << std::numeric_limits<mpfr_100>::epsilon()
+       << std::endl;
+
+#endif
+  
   cout.unsetf(ios::left);
   cout << endl;
   

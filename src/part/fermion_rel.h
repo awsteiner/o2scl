@@ -52,6 +52,12 @@ namespace o2scl {
     boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
   
   /** \brief Integrands for \ref o2scl::fermion_rel_tl
+
+      This object contains the fermion integrands which can be
+      evaluated under the assumption that the internal floating point
+      type and the external floating point type are the same. This
+      class is used by \ref fermion_rel_integ and \ref
+      fermion_rel_integ_multip .
    */
   class fermion_rel_integ_base {
     
@@ -244,8 +250,6 @@ namespace o2scl {
       internal_fp_t arg1=E-y;
       
       ret=k*k*k*k/3/hypot(k/T,eta)/T/(1+exp(arg1));
-      //ret=k*k*T*log1p(exp(-arg1));
-      //ret=k*k*T*log(1+exp(-arg1));
       
       if (debug) {
         std::cout << "Z: " << k << " " << T << " " << y << " "
@@ -970,7 +974,13 @@ namespace o2scl {
   };
     
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
-   */
+
+      This class uses the GSL integrators to integrate the fermion
+      integrands specified in \ref fermion_rel_integ_base. Internally,
+      the GSL integrators are used and thus, even though this is a
+      template class, it currently only works for type double.
+      This is the default integrator for \ref fermion_rel_tl .
+  */
   template<class func_t, class fp_t> class fermion_rel_integ :
     public fermion_rel_integ_base {
 
@@ -1141,6 +1151,22 @@ namespace o2scl {
       fermion_zerot::calc_mu_zerot() and \ref
       fermion_zerot::calc_density_zerot() will be used to compute the
       result.
+
+      \hline 
+      <b>Template types:</b>
+
+      - fermion_t: the type of particle object which will be passed
+      to the methods defined by this class
+      - fd_inte_t: the integration object for massless fermions
+      - be_inte_t: the integration object for the nondegenerate limit
+      - inte_t: the generic integration object
+      - density_root_t: the solver for fixed densities
+      - root_t: the solver for massless fermions
+      - func_t: the function object type
+      - fp_t: the floating point type
+
+      Note that density_root_t and root_t are almost always the same
+      type.
 
       \hline 
       <b>Degeneracy parameter:</b>

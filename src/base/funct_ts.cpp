@@ -97,32 +97,51 @@ int main(void) {
   o2scl_settings.py_final();
   
 #endif
+  
+  {
+    fmc f2;
+    double val, err;
+    funct_multip_cdf fm2;
+    
+    // No parameters
+    fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
+                     1.0e-4,val,err);
+    t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_cdf");
+  }
+#ifdef O2SCL_MPFR
+  {
+    fmc f2;
+    double val, err;
+    funct_multip_mpfr fm2;
+    
+    // No parameters
+    fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
+                     1.0e-4,val,err);
+    t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_mpfr");
+  }
+#endif
 
-  fmc f2;
-  double val, err;
-  funct_multip fm2;
-
-  // No parameters
-  fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
-                   1.0e-4,val,err);
-  t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip");
-
-  // A parameter with a fixed type
-  fmc2 f3;
-  boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25>> one=1;
-  boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25>> ten=10;
-  boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
-  fm2.eval_tol_err([f3,param](auto &&tx) mutable
-  { return f3.func(tx,param); },1.0e-4,val,err);
-  t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
-
-  // A fully templated parameter defined by a function 
-  fm2.eval_tol_err([f3](auto &&tx) mutable
-  { return f3.func(tx,f3.param_f(tx)); },1.0e-4,val,err);
-  t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
+  {
+    // A parameter with a fixed type
+    fmc f2;
+    double val, err;
+    funct_multip fm2;
+    fmc2 f3;
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> one=1;
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> ten=10;
+    boost::multiprecision::number<
+      boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
+    fm2.eval_tol_err([f3,param](auto &&tx) mutable
+    { return f3.func(tx,param); },1.0e-4,val,err);
+    t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
+    
+    // A fully templated parameter defined by a function 
+    fm2.eval_tol_err([f3](auto &&tx) mutable
+    { return f3.func(tx,f3.param_f(tx)); },1.0e-4,val,err);
+    t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
+  }
   
   t.report();
   return 0;

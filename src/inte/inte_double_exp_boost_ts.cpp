@@ -203,7 +203,7 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_multip_double_exp_boost imtsb;
+    inte_multip_double_exp_boost<> imtsb;
     imtsb.verbose=2;
     imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2,1.0e-8);
@@ -231,6 +231,30 @@ int main(void) {
     cout << endl;
     
   }
+
+  {
+    double val, err2, a=0, b=1;
+    double exact=cos(100.0)-cos(1/1.01);
+    inte_multip_double_exp_boost<cpp_dec_float_25,
+                                 cpp_dec_float_35,cpp_dec_float_50,
+                                 cpp_dec_float_100> imtsb;
+    imtsb.verbose=0;
+    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+                           a,b,val,err2);
+    t.test_rel(val,exact,1.0e-15,"multip cpp_dec_float");
+  }
+
+  {
+    double val, err2, a=0, b=1;
+    double exact=cos(100.0)-cos(1/1.01);
+    inte_multip_double_exp_boost<mpfr_25,mpfr_35,mpfr_50,mpfr_100> imtsb;
+                                 
+    imtsb.verbose=0;
+    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+                           a,b,val,err2);
+    t.test_rel(val,exact,1.0e-15,"multip mpfr");
+  }
+
 #endif  
   
   t.report();
