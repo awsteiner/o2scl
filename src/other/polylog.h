@@ -588,7 +588,8 @@ namespace o2scl {
 
     /// \name The base integrators
     //@{
-    inte_kronrod_boost<61> ikb;
+    inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
+                       cpp_dec_float_50,cpp_dec_float_100> ikb;
     inte_multip_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}
@@ -833,7 +834,7 @@ namespace o2scl {
 
       fp_t three=3;
       fp_t zero=0;
-      
+
       int ret1=ikb.integ_iu_err_multip([this,three,y](auto &&x) mutable 
       { return this->obj_func(x,three,y); },zero,res,err,tol);
       if (ret1==0) {

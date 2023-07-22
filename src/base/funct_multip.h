@@ -27,6 +27,10 @@
     \brief Multiprecisions extension to Function object classes
 */
 
+// for typeid()
+#include <typeinfo>
+
+
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_MPFR
 #include <boost/multiprecision/mpfr.hpp>
@@ -274,7 +278,8 @@ namespace o2scl {
         // the requested tolerance, then call the error handler
         if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::max_digits10)) {
           std::cerr << "Class data member tol_rel is " << tol_rel
-                    << " but data type only stores "
+                    << " but data type " << typeid(fp_t).name()
+                    << " only stores "
                     << std::numeric_limits<fp_t>::digits10
                     << " digits." << std::endl;
           O2SCL_ERR("Cannot compute to required precision",
