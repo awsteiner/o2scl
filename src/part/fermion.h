@@ -39,6 +39,9 @@
 
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
 
 #include <o2scl/constants.h>
 #include <o2scl/funct.h>
@@ -129,6 +132,23 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<100> > >
   fermion_cdf100;
+  
+#ifdef O2SCL_MPFR
+  
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::mpfr_float_backend<25> > >
+  fermion_mpfr25;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::mpfr_float_backend<35> > >
+  fermion_mpfr35;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::mpfr_float_backend<50> > >
+  fermion_mpfr50;
+  typedef fermion_tl<boost::multiprecision::number<
+                       boost::multiprecision::mpfr_float_backend<100> > >
+  fermion_mpfr100;
+  
+#endif
   
   /** \brief Fermion properties at zero temperature
 
@@ -323,6 +343,18 @@ namespace o2scl {
            the Fermi functions for massless_calc_density() functions?
 
       \endverbatim
+
+      \hline 
+      <b>Template types:</b>
+
+      - fermion_t: the type of particle object which will be passed
+      to the methods defined by this class
+      - fd_inte_t: the integration object for massless fermions
+      - be_inte_t: the integration object for the nondegenerate limit
+      - root_t: the solver for massless fermions
+      - func_t: the function object type
+      - fp_t: the floating point type
+
   */
   template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
            class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
@@ -714,8 +746,6 @@ namespace o2scl {
     void massless_calc_density(fermion_t &f, fp_t temper) {
       fp_t x, T=temper;
 
-      //fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper)
-      
       x=f.ms+temper;
       funct mf2=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
                           (&fermion_thermo_tl<fermion_t,fd_inte_t,

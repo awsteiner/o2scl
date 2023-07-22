@@ -735,6 +735,10 @@ namespace o2scl {
         function of the chemical potentials, \f$ \partial^2 P /
         \partial \mu_i \mu_j \f$
 
+        This function works by taking derivatives of \ref calc_nn_p
+        and \ref calc_np_p using the object specified in \ref
+        set_sat_deriv().
+
         \verbatim embed:rst
         .. todo:: 
 

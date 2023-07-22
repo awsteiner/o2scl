@@ -330,6 +330,7 @@ namespace o2scl {
     static const int by_parts=2;
     //@}
 
+    /// Verbosity parameter (default 0)
     int verbose;
 
     /** \brief An integer indicating the last numerical method used
