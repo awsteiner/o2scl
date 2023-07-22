@@ -589,7 +589,7 @@ namespace o2scl {
     /// \name The base integrators
     //@{
     inte_kronrod_boost<61> ikb;
-    inte_multip_double_exp_boost ideb;
+    inte_multip_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}
     
@@ -956,7 +956,7 @@ namespace o2scl {
     /// \name The base integrators
     //@{
     inte_kronrod_boost<61> ikb;
-    inte_multip_double_exp_boost ideb;
+    inte_multip_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}
     

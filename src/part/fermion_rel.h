@@ -323,7 +323,7 @@ namespace o2scl {
     
     /** \brief Default integrator
      */
-    inte_multip_double_exp_boost it;
+    inte_multip_double_exp_boost<> it;
     
     /** \brief Secondary integrator
      */
