@@ -144,11 +144,13 @@ namespace o2scl {
       - There is a fixme entry in the code which could be resolved.
       - Output the point where most subdividing was required?
   */
-  class inte_adapt_cern {
+  template<class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
+           class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
+  class inte_adapt_cern_tl {
 
   public:
   
-    inte_adapt_cern() {
+    inte_adapt_cern_tl() {
       tol_rel_multip=-1.0;
       verbose=0;
       pow_tol_func=1.33;
@@ -285,7 +287,7 @@ namespace o2scl {
           
         // Output iteration information
         if (this->verbose>0) {
-          std::cout << "inte_adapt_cern Iter: " << iter;
+          std::cout << "inte_adapt_cern_tl Iter: " << iter;
           std::cout.setf(std::ios::showpos);
           std::cout << " Res: " << tvals;
           std::cout.unsetf(std::ios::showpos);
@@ -318,7 +320,7 @@ namespace o2scl {
           err=root;
           this->last_iter=iter;
           std::string s="Reached maximum number ("+itos(nsub)+
-            ") of subdivisions in inte_adapt_cern::integ_err().";
+            ") of subdivisions in inte_adapt_cern_tl::integ_err().";
           O2SCL_CONV_RET(s.c_str(),exc_etable,this->err_nonconv);
         }
 
@@ -741,7 +743,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err(): set "
+        std::cout << "inte_adapt_cern_tl::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -759,7 +761,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -784,7 +786,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -810,7 +812,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -842,7 +844,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -869,7 +871,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -918,7 +920,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err(): set "
+        std::cout << "inte_adapt_cern_tl::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -936,7 +938,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -959,7 +961,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -983,7 +985,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1014,7 +1016,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1039,7 +1041,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1087,7 +1089,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err(): set "
+        std::cout << "inte_adapt_cern_tl::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -1105,7 +1107,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -1128,7 +1130,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -1152,7 +1154,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1182,7 +1184,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1207,7 +1209,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1254,7 +1256,7 @@ namespace o2scl {
       } 
       
       if (verbose>0) {
-        std::cout << "inte_adapt_cern::integ_err(): set "
+        std::cout << "inte_adapt_cern_tl::integ_err(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -1272,7 +1274,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
@@ -1294,7 +1296,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,
                            -std::numeric_limits<long double>::digits10+3)
@@ -1317,7 +1319,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_25>::digits10+3)
@@ -1346,7 +1348,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_35>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_35>::digits10+3)
@@ -1370,7 +1372,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_50>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_adapt_cern::integ_err(): "
+          std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <cpp_dec_float_50>::digits10+3)
@@ -1404,6 +1406,8 @@ namespace o2scl {
     }
 
   };
+
+  typedef inte_adapt_cern_tl<> inte_adapt_cern;
   
 }
 
