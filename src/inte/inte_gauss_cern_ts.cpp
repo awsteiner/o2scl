@@ -129,13 +129,13 @@ int main(void) {
 #ifdef O2SCL_MPFR
   
   {
-    inte_gauss_cern<funct_mp50,mpfr_float_50,
+    inte_gauss_cern<funct_mpfr50,mpfr_float_50,
 		    inte_gauss_coeffs_float_50<mpfr_float_50> > cg_cdf;
     cg_cdf.tol_rel=1.0e-30;
     cg_cdf.tol_abs=1.0e-30;
     mpfr_float_50 a=3.0, calc, exact, diff;
 
-    funct_mp50 tf2=testfun2_mp;
+    funct_mpfr50 tf2=testfun2_mp;
     
     calc=cg_cdf.integ(tf2,0.0,1.0);
     exact=boost::math::constants::pi<mpfr_float_50>();
