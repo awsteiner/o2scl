@@ -53,7 +53,7 @@ build_v0.928_u23.04_py:
 		> v0.928_u23.04_py.out 2>&1 &
 
 build_v0.929a1_test:
-	sudo docker build . -rm -f v0.929a1_test \
+	sudo docker build . --rm -f v0.929a1_test \
 		> v0.929a1_test.out 2>&1 &
 
 build_u:
