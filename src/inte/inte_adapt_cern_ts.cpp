@@ -177,10 +177,10 @@ int main(void) {
     mpfr_float_50 one_mpfr=1.0, diff_mpfr;
     mpfr_float_50 hundred_mpfr=100.0;
     mpfr_float_50 a_mpfr=one_mpfr/hundred_mpfr;
-    funct_mp50 tf_mpfr=std::bind(testfun<mpfr_float_50>,
+    funct_mpfr50 tf_mpfr=std::bind(testfun<mpfr_float_50>,
                                  std::placeholders::_1,a_mpfr);
-    test_iac<funct_mp50,mpfr_float_50,
-	     inte_gauss56_cern<funct_mp50,mpfr_float_50>,10000>
+    test_iac<funct_mpfr50,mpfr_float_50,
+	     inte_gauss56_cern<funct_mpfr50,mpfr_float_50>,10000>
       (t,tf_mpfr,1.0e-30,"iac, mpfr_float_50, testfun",diff_mpfr);
     t.test_abs_boost<mpfr_float_50>(diff_mpfr,0.0,1.0e-29,
                                     "inte_adapt_cern_mpfr");
@@ -271,9 +271,9 @@ int main(void) {
          << "sin_recip:\n  " << endl;
 
     /*
-    inte_transform<funct_mp50,inte_adapt_cern
-		   <funct_mp50,inte_gauss56_cern
-		    <funct_mp50,mpfr_float_50>,100,
+    inte_transform<funct_mpfr50,inte_adapt_cern
+		   <funct_mpfr50,inte_gauss56_cern
+		    <funct_mpfr50,mpfr_float_50>,100,
 		    mpfr_float_50>,mpfr_float_50> it_iac_mp50;
     */
     
@@ -281,7 +281,7 @@ int main(void) {
     mpfr_float_50 mone_mp50=-1.0;
     mpfr_float_50 hundred_mp50=100.0;
     mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/(hundred_mp50+one_mp50));
-    funct_mp50 tf2_mp50=std::bind(sin_recip<mpfr_float_50>,
+    funct_mpfr50 tf2_mp50=std::bind(sin_recip<mpfr_float_50>,
                                   std::placeholders::_1);
     mpfr_float_50 calc_mp50, ei_mp50;
     //it_iac_mp50.def_inte.tol_rel=1.0e-30;
