@@ -27,14 +27,12 @@
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
 
-/*
 #include <o2scl/set_python.h>
 #include <o2scl/set_openmp.h>
 #include <o2scl/set_readline.h>
 #include <o2scl/set_fftw.h>
 #include <o2scl/set_mpfr.h>
 #include <o2scl/vector_special.h>
-*/
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
