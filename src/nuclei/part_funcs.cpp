@@ -371,7 +371,7 @@ int part_funcs::shen10(int Z, int N, double T_K, double &pf,
   double a=0.0;
     
   /// Backshift parameter in MeV
-  double delta;
+  double delta=0.0;
     
   /// Coefficient for large \f$ \delta \f$ in 1/MeV
   double C;

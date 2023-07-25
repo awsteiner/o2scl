@@ -32,12 +32,13 @@ using namespace o2scl;
 eos_leptons::eos_leptons() {
   include_muons=true;
   include_photons=false;
+  include_deriv=false;
   err_nonconv=false;
       
   convert_units<double> &cu=o2scl_settings.get_convert_units();
   e.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
   mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
-                         
+
   ph.init(0.0,2.0);
 
   pde_from_density=true;
@@ -320,6 +321,20 @@ int eos_leptons::pair_density_eq(double nq, double T) {
 
     mf(1,x,y);
     e.n=x[0]*nq;
+
+    if (include_deriv) {
+      fermion_deriv fd;
+      fd=e;
+      fdrel.pair_mu(fd,T);
+      ed.dndmu=fd.dndmu;
+      ed.dndT=fd.dndT;
+      ed.dsdT=fd.dsdT;
+      fd=mu;
+      fdrel.pair_mu(fd,T);
+      mud.dndmu=fd.dndmu;
+      mud.dndT=fd.dndT;
+      mud.dsdT=fd.dsdT;
+    }
         
   } else {
     if (verbose>1) {
@@ -330,6 +345,15 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     mu.n=0.0;
         
     retx=electron_density(T);
+        
+    if (include_deriv) {
+      fermion_deriv fd;
+      fd=e;
+      fdrel.pair_mu(fd,T);
+      ed.dndmu=fd.dndmu;
+      ed.dndT=fd.dndT;
+      ed.dsdT=fd.dsdT;
+    }
         
   }
       
