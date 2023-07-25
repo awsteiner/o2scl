@@ -80,6 +80,7 @@ build_v0.928_ot:
 	sudo docker build . --rm -f v0.928_ot \
 		> v0.928_ot.out 2>&1 &
 
+es for MPFR.)
 build_v0.927_u22.04:
 	sudo docker build . --rm -f v0.927_u22.04 \
 		> v0.927_u22.04.out 2>&1 &
