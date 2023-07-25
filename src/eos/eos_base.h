@@ -30,6 +30,8 @@
 #include <o2scl/fermion.h>
 #include <o2scl/boson.h>
 #include <o2scl/fermion_rel.h>
+#include <o2scl/part_deriv.h>
+#include <o2scl/fermion_deriv_rel.h>
 
 namespace o2scl {
 
@@ -79,13 +81,25 @@ namespace o2scl {
     /// Solver for \ref pair_density_eq() 
     mroot_hybrids<> mh;
     
-    /** \brief Relativistic fermion thermodyanmics
+    /** \brief Relativistic fermion thermodynamics
      */
     fermion_rel frel;
+
+    /** \brief Relativistic fermion thermodynamics with derivatives
+     */
+    fermion_deriv_rel fdrel;
     
     /** \brief Electron
      */
     fermion e;
+
+    /** \brief Electron with derivatives
+     */
+    part_deriv_press ed;
+    
+    /** \brief Muon with derivatives
+     */
+    part_deriv_press mud;
     
     /** \brief If true, use the electron density for 
         \ref pair_density_eq_fun().
@@ -112,6 +126,10 @@ namespace o2scl {
     /** \brief If true, include photons (default false)
      */
     bool include_photons;
+
+    /** \brief If true, include derivatives (default false)
+     */
+    bool include_deriv;
 
     /** \brief Thermodynamic quantities
      */
@@ -169,11 +187,19 @@ namespace o2scl {
     /** \brief Thermodynamics from the electron and muon densities
 
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
+        The electron and muon densities should be stored in the
+        \ref part::n field of \ref e and \ref mu before calling this
+        function.
+
+        If \ref include_muons is false, then muons are ignored.
 
         The current values of the electron and muon chemical
         potentials are used as initial guesses to \ref
         fermion_rel::pair_density() for both the electrons and (if
         included) muons.
+
+        The final total energy density, pressure, and entropy
+        are stored in \ref th. 
      */
     int pair_density(double T);
     
