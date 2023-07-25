@@ -20,24 +20,9 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_VECTOR_SPECIAL_H
-#define O2SCL_VECTOR_SPECIAL_H
+#ifndef O2SCL_SET_MPFR_H
+#define O2SCL_SET_MPFR_H
 
-#define O2SCL_SET_ARMA
-
-#include <armadillo>
-
-namespace o2scl_linalg {
-  
-  /// Armadillo version of \ref matrix_max()
-  double matrix_max(const arma::mat &data);
-
-  /// Armadillo version of \ref matrix_row()
-  arma::subview_row<double> matrix_row(arma::mat &M, size_t row);
-    
-  /// Armadillo version of \ref matrix_column()
-  arma::subview_col<double> matrix_column(arma::mat &M, size_t column);
-  
-}
+#define O2SCL_SET_MPFR
 
 #endif

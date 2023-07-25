@@ -26,6 +26,9 @@
 #include <armadillo>
 #include <eigen3/Eigen/Dense>
 
+#define O2SCL_SET_ARMA
+#define O2SCL_SET_EIGEN
+
 #if !defined (O2SCL_COND_FLAG) || defined (O2SCL_ARMA)
 #include <armadillo>
 namespace o2scl_linalg {

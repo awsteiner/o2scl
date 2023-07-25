@@ -27,6 +27,15 @@
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
 
+/*
+#include <o2scl/set_python.h>
+#include <o2scl/set_openmp.h>
+#include <o2scl/set_readline.h>
+#include <o2scl/set_fftw.h>
+#include <o2scl/set_mpfr.h>
+#include <o2scl/vector_special.h>
+*/
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -1802,6 +1811,27 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
+#ifdef O2SCL_SET_PYTHON
+  cout << "Set python" << endl;
+#endif
+#ifdef O2SCL_SET_READLINE
+  cout << "Set readline" << endl;
+#endif
+#ifdef O2SCL_SET_FFTW
+  cout << "Set fftw" << endl;
+#endif
+#ifdef O2SCL_SET_OPENMP
+  cout << "Set openmp" << endl;
+#endif
+#ifdef O2SCL_SET_EIGEN
+  cout << "Set eigen" << endl;
+#endif
+#ifdef O2SCL_SET_ARMA
+  cout << "Set arma" << endl;
+#endif
+#ifdef O2SCL_SET_MPFR
+  cout << "Set mpfr" << endl;
+#endif
   cout << "Documentation directory: "
        << o2scl_settings.get_doc_dir() << endl;
   cout << "Local documentation URL:\n  file://"
