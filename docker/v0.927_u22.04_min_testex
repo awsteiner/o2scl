@@ -31,6 +31,12 @@ RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" .
 RUN make && make install
 
 # -----------------------------------------------------------------
+# Make tests and examples
+
+WORKDIR /opt/o2scl-0.927
+RUN make o2scl-test && make o2scl-examples
+
+# -----------------------------------------------------------------
 # Remove build directory and run acol
 
 WORKDIR /opt
