@@ -497,8 +497,12 @@ AC_CONFIG_FILES([Makefile
                  src/base/arma/Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
+                 src/base/fftw/Makefile
+                 src/base/mpfr/Makefile
                  src/base/neither/Makefile
+                 src/base/openmp/Makefile
                  src/base/python/Makefile
+                 src/base/readline/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile

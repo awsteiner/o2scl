@@ -25,6 +25,8 @@
 
 #include <eigen3/Eigen/Dense>
 
+#define O2SCL_SET_EIGEN
+
 namespace o2scl_linalg {
   
   /// Eigen version of \ref matrix_max()
