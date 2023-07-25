@@ -1833,7 +1833,6 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
-
   cout << "Documentation directory: "
        << o2scl_settings.get_doc_dir() << endl;
   cout << "Local documentation URL:\n  file://"
