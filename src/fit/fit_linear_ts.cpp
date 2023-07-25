@@ -126,8 +126,6 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_GSL2
-
   static const size_t ndat=20;
   static const size_t npar=2;
 
@@ -485,8 +483,6 @@ int main(void) {
   }
   */
 
-#endif
-  
   tm.report();
   return 0;
 }

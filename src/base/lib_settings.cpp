@@ -43,6 +43,13 @@
 #endif
 #endif
 
+#include <o2scl/set_python.h>
+#include <o2scl/set_openmp.h>
+#include <o2scl/set_readline.h>
+#include <o2scl/set_fftw.h>
+#include <o2scl/set_mpfr.h>
+#include <o2scl/vector_special.h>
+
 #ifdef O2SCL_OPENMP
 #include <omp.h>
 #endif
@@ -377,7 +384,7 @@ void lib_settings_class::hdf5_lib_version(unsigned &maj,
 }
 
 bool lib_settings_class::armadillo_support() {
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
   return true;
 #else
   return false;
@@ -385,7 +392,7 @@ bool lib_settings_class::armadillo_support() {
 }
 
 bool lib_settings_class::eigen_support() {
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   return true;
 #else
   return false;
@@ -393,7 +400,7 @@ bool lib_settings_class::eigen_support() {
 }
 
 bool lib_settings_class::fftw_support() {
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   return true;
 #else
   return false;
@@ -409,7 +416,7 @@ bool lib_settings_class::cubature_support() {
 }
 
 bool lib_settings_class::python_support() {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   return true;
 #else
   return false;
@@ -417,7 +424,7 @@ bool lib_settings_class::python_support() {
 }
 
 bool lib_settings_class::openmp_support() {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
   return true;
 #else
   return false;
@@ -425,7 +432,7 @@ bool lib_settings_class::openmp_support() {
 }
 
 bool lib_settings_class::readline_support() {
-#ifdef O2SCL_READLINE
+#ifdef O2SCL_SET_READLINE
   return true;
 #else
   return false;
@@ -441,7 +448,7 @@ bool lib_settings_class::module_support() {
 }
 
 bool lib_settings_class::mpfr_support() {
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
   return true;
 #else
   return false;
@@ -450,14 +457,6 @@ bool lib_settings_class::mpfr_support() {
 
 bool lib_settings_class::ncurses_support() {
 #ifdef O2SCL_NCURSES
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool lib_settings_class::gsl2_support() {
-#ifdef O2SCL_GSL2
   return true;
 #else
   return false;
