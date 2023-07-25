@@ -229,8 +229,6 @@ bool o2scl_lib_settings_class_readline_support(void *vptr);
 
 bool o2scl_lib_settings_class_ncurses_support(void *vptr);
 
-bool o2scl_lib_settings_class_gsl2_support(void *vptr);
-
 bool o2scl_lib_settings_class_armadillo_support(void *vptr);
 
 bool o2scl_lib_settings_class_eigen_support(void *vptr);

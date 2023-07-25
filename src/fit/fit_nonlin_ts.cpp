@@ -145,8 +145,6 @@ int main(void) {
   cout.setf(ios::scientific);
   cout.precision(8);
 
-#ifdef O2SCL_GSL2
-  
   std::vector<double> x0_s, x1_s, x2_s;
   std::vector<double> x0_u, x1_u, x2_u;
   double chi2red_s, chi2red_u;
@@ -469,8 +467,6 @@ int main(void) {
     cout << endl;
   }
 
-#endif
-  
   tm.report();
   return 0;
 }

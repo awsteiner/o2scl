@@ -534,8 +534,6 @@ class lib_settings_class
   - bool
 - function ncurses_support
   - bool
-- function gsl2_support
-  - bool
 - function armadillo_support
   - bool
 - function eigen_support

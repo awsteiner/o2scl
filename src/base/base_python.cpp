@@ -589,12 +589,6 @@ bool o2scl_lib_settings_class_ncurses_support(void *vptr) {
   return ret;
 }
 
-bool o2scl_lib_settings_class_gsl2_support(void *vptr) {
-  lib_settings_class *ptr=(lib_settings_class *)vptr;
-  bool ret=ptr->gsl2_support();
-  return ret;
-}
-
 bool o2scl_lib_settings_class_armadillo_support(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   bool ret=ptr->armadillo_support();

@@ -126,9 +126,6 @@ namespace o2scl {
     /// Return true if \o2 was installed with ncurses support
     bool ncurses_support();
 
-    /// Return true if \o2 was installed with support for GSL V2.0+
-    bool gsl2_support();
-
     /// Return true if \o2 was installed with Armadillo support
     bool armadillo_support();
 
