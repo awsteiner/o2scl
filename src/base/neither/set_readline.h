@@ -20,21 +20,10 @@
 
   -------------------------------------------------------------------
 */
-#ifndef O2SCL_VECTOR_SPECIAL_H
-#define O2SCL_VECTOR_SPECIAL_H
+#ifndef O2SCL_SET_READLINE_H
+#define O2SCL_SET_READLINE_H
 
-#include <eigen3/Eigen/Dense>
-
-namespace o2scl_linalg {
-  
-  /// Eigen version of \ref matrix_max()
-  double matrix_max(const Eigen::MatrixXd &data);
-  
-  /// Eigen version of \ref matrix_row()
-  Eigen::MatrixXd::RowXpr matrix_row(Eigen::MatrixXd &M, size_t row);
-    
-  /// Eigen version of \ref matrix_column()
-  Eigen::MatrixXd::ColXpr matrix_column(Eigen::MatrixXd &M, size_t column);
+namespace o2scl {
      
 }
 
