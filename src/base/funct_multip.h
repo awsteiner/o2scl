@@ -619,13 +619,19 @@ namespace o2scl {
       
   };
 
+  /** \brief Desc
+   */
   typedef funct_multip_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip;
 
+  /** \brief Desc
+   */
   typedef funct_multip_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_cdf;
 
+  /** \brief Desc
+   */
   typedef funct_multip_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_mpfr;
   
@@ -1101,12 +1107,16 @@ namespace o2scl {
       return eval_tol_err('u',f,x,val,err);
     }
   
+  /** \brief Desc
+   */
     template<typename func_t, class fp_t>
     int eval_err_il(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
       return eval_tol_err('l',f,x,val,err);
     }
   
+  /** \brief Desc
+   */
     template<typename func_t, class fp_t>
     int eval_err_i(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
@@ -1125,6 +1135,8 @@ namespace o2scl {
       return val;
     }
       
+  /** \brief Desc
+   */
     template<typename func_t, class fp_t>
     fp_t eval_il(func_t &&f, const fp_t &x) const {
       fp_t val;
@@ -1135,6 +1147,8 @@ namespace o2scl {
       return val;
     }
       
+  /** \brief Desc
+   */
     template<typename func_t, class fp_t>
     fp_t eval_i(func_t &&f, const fp_t &x) const {
       fp_t val;
@@ -1151,10 +1165,14 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform=
     funct_multip_transform_tl<fp_t,o2fp_25,o2fp_35,o2fp_50,o2fp_100>;
   
+  /** \brief Desc
+   */
   template <class fp_t> using funct_multip_transform_cdf=
     funct_multip_transform_tl<double,cpp_dec_float_25,cpp_dec_float_35,
                               cpp_dec_float_50,cpp_dec_float_100>;
 
+  /** \brief Desc
+   */
   template <class fp_t> using funct_multip_transform_mpfr=
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
   
@@ -1424,13 +1442,19 @@ namespace o2scl {
     
   };
     
+  /** \brief Desc
+   */
   typedef funct_multip_string_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip_string;
 
+  /** \brief Desc
+   */
   typedef funct_multip_string_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_string_cdf;
 
+  /** \brief Desc
+   */
   typedef funct_multip_string_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_string_mpfr;
   
