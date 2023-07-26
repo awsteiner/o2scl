@@ -49,6 +49,7 @@ int main(void) {
   eo.set_thermo(th);
 
   eos_leptons elep;
+
   elep.include_muons=false;
   elep.include_deriv=true;
 
