@@ -38,26 +38,79 @@ eos_leptons::eos_leptons() {
   convert_units<double> &cu=o2scl_settings.get_convert_units();
   e.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
   mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
+  eld.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
+  muld.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
+  ecdf25.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
+  mucdf25.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
 
   ph.init(0.0,2.0);
 
   pde_from_density=true;
   verbose=0;
+  accuracy=acc_default;
 }
 
 int eos_leptons::electron_density(double T) {
-      
+
+  if (accuracy==acc_improved) {
+    cout << frel.upper_limit_fac << endl;
+    cout << frel.fri.dit.tol_abs << endl;
+    cout << frel.fri.dit.tol_rel << endl;
+    cout << frel.fri.nit.tol_abs << endl;
+    cout << frel.fri.nit.tol_rel << endl;
+    cout << frel.density_root->tol_rel << endl;
+    exit(-1);
+    frel.upper_limit_fac=40.0;
+    frel.fri.dit.tol_abs=1.0e-13;
+    frel.fri.dit.tol_rel=1.0e-13;
+    frel.fri.nit.tol_abs=1.0e-13;
+    frel.fri.nit.tol_rel=1.0e-13;
+    frel.density_root->tol_rel=1.0e-10;
+  } else {
+    /*
+    frel.upper_limit_fac=20.0;
+    frel.fri.dit.tol_abs=1.0e-8;
+    frel.fri.dit.tol_rel=1.0e-8;
+    frel.fri.nit.tol_abs=1.0e-8;
+    frel.fri.nit.tol_rel=1.0e-8;
+    frel.density_root->tol_rel=1.0e-10;
+    */
+  }
+  
   int retx;
       
   if (e.inc_rest_mass) {
+
+    // I find that the calculation without the rest mass is a bit more
+    // stable, so we use that method and add the rest mass back in
+    // after the fact.
+    
     e.inc_rest_mass=false;
     e.mu-=e.m;
     retx=frel.pair_density(e,T);
     e.inc_rest_mass=true;
     e.mu+=e.m;
     e.ed+=e.m*e.n;
+    
   } else {
-    retx=frel.pair_density(e,T);
+
+    if (accuracy==acc_ld) {
+      ecdf25.n=e.n;
+      retx=frel_cdf25.pair_density(ecdf25,T);
+      e.mu=static_cast<double>(ecdf25.mu);
+      e.ed=static_cast<double>(ecdf25.ed);
+      e.pr=static_cast<double>(ecdf25.pr);
+      e.en=static_cast<double>(ecdf25.en);
+    } else if (accuracy==acc_fp_25) {
+      eld.n=e.n;
+      retx=frel_ld.pair_density(eld,T);
+      e.mu=static_cast<double>(eld.mu);
+      e.ed=static_cast<double>(eld.ed);
+      e.pr=static_cast<double>(eld.pr);
+      e.en=static_cast<double>(eld.en);
+    } else {
+      retx=frel.pair_density(e,T);
+    }
   }
       
   // Sometimes the solver fails, but we can recover by adjusting

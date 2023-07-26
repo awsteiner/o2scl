@@ -76,8 +76,38 @@ namespace o2scl {
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
 
+    /** \brief Electron
+     */
+    fermion_ld eld;
+    
+    /** \brief Electron
+     */
+    fermion_cdf25 ecdf25;
+
+    /** \brief Muon
+     */
+    fermion_ld muld;
+    
+    /** \brief Muon
+     */
+    fermion_cdf25 mucdf25;
+
+    /** \brief Relativistic fermion thermodynamics
+     */
+    fermion_rel_ld frel_ld;
+    
+    /** \brief Relativistic fermion thermodynamics
+     */
+    fermion_rel_cdf25 frel_cdf25;
+    
+    /** \brief Relativistic fermion thermodynamics with derivatives
+     */
+    fermion_deriv_rel fdrel;
+    
   public:
     
+    eos_leptons();
+
     /// Solver for \ref pair_density_eq() 
     mroot_hybrids<> mh;
     
@@ -85,21 +115,13 @@ namespace o2scl {
      */
     fermion_rel frel;
 
-    /** \brief Relativistic fermion thermodynamics with derivatives
-     */
-    fermion_deriv_rel fdrel;
-    
     /** \brief Electron
      */
     fermion e;
 
-    /** \brief Electron with derivatives
+    /** \brief Electron derivatives
      */
     part_deriv_press ed;
-    
-    /** \brief Muon with derivatives
-     */
-    part_deriv_press mud;
     
     /** \brief If true, use the electron density for 
         \ref pair_density_eq_fun().
@@ -110,9 +132,26 @@ namespace o2scl {
      */
     fermion mu;
 
+    /** \brief Muon derivatives
+     */
+    part_deriv_press mud;
+    
     /** \brief Photon
      */
     boson ph;
+
+    /** \brief Muon derivatives
+     */
+    part_deriv_press phd;
+    
+    /// \name Accuracy control
+    //@{
+    int accuracy;
+    static const int acc_default=0;
+    static const int acc_improved=1;
+    static const int acc_ld=2;
+    static const int acc_fp_25=3;
+    //@}
     
     /** \brief If true, call the error handler if msolve()
         does not converge (default true)
@@ -135,8 +174,6 @@ namespace o2scl {
      */
     thermo th;
 
-    eos_leptons();
-
     /** \brief Thermodynamics from the electron and muon 
         chemical potentials
 
@@ -154,8 +191,10 @@ namespace o2scl {
     */
     int pair_mu_eq(double T);
 
+    /// Desc
     int verbose;
     
+    /// High accuracy
     void high_acc() {
       frel.upper_limit_fac=40.0;
       frel.fri.dit.tol_abs=1.0e-13;
@@ -170,6 +209,7 @@ namespace o2scl {
       return;
     }
 
+    /// Standard accuracy
     void standard_acc() {
       frel.upper_limit_fac=20.0;
       frel.fri.dit.tol_abs=1.0e-8;

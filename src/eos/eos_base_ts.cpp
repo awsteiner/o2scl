@@ -49,6 +49,16 @@ int main(void) {
 
   eo.set_thermo(th);
 
+  eos_leptons elep;
+
+  /*
+  elep.e.n=1.0e-8;
+  elep.electron_density(0.1);
+  elep.accuracy=elep.acc_improved;
+  elep.e.n=1.0e-8;
+  elep.electron_density(0.1);
+  */
+  
   t.report();
   return 0;
 }
