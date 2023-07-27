@@ -27,6 +27,9 @@
 #define O2SCL_CONSTANTS_H
 
 #include <cmath>
+#include <iostream>
+
+#include <o2scl/string_conv.h>
 
 #define BOOST_DISABLE_ASSERTS
 #include <boost/math/constants/constants.hpp>
@@ -131,11 +134,18 @@ namespace o2scl_const {
   template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {
     fp_t numer=662607015;
     fp_t denom=100000000;
+    fp_t frac=(numer/denom);
     if (system==o2scl_cgs) {
-      fp_t result=(numer/denom)*1.0e-27;
+      fp_t base=10;
+      fp_t exp=-27;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
       return result;
     }
-    fp_t result=(numer/denom)*1.0e-34;
+    fp_t base=10;
+    fp_t exp=-34;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
     return result;
   }
 
@@ -159,11 +169,18 @@ namespace o2scl_const {
   template<class fp_t> fp_t boltzmann_f(size_t system=o2scl_mks) {
     fp_t numer=1380649;
     fp_t denom=1000000;
+    fp_t frac=(numer/denom);
     if (system==o2scl_cgs) {
-      fp_t result=(numer/denom)*1.0e-16;
+      fp_t base=10;
+      fp_t exp=-16;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
       return result;
     }
-      fp_t result=(numer/denom)*1.0e-23;
+    fp_t base=10;
+    fp_t exp=-23;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
     return result;
   }
 
@@ -196,7 +213,11 @@ namespace o2scl_const {
   template<class fp_t> fp_t elem_charge_f() {
     fp_t numer=1602176634;
     fp_t denom=1000000000;
-    fp_t result=(numer/denom)*1.0e-19;
+    fp_t frac=(numer/denom);
+    fp_t base=10;
+    fp_t exp=-19;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
     return result;
   }
 
@@ -204,11 +225,37 @@ namespace o2scl_const {
   template<class fp_t> fp_t mass_electron_f(size_t system=o2scl_mks) {
     fp_t numer=91093837015;
     fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
     if (system==o2scl_cgs) {
-      fp_t result=(numer/denom)*1.0e-28;
+      fp_t base=10;
+      fp_t exp=-28;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
       return result;
     }
-    fp_t result=(numer/denom)*1.0e-31;
+    fp_t base=10;
+    fp_t exp=-31;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Electron mass
+  template<class fp_t> fp_t mass_muon_f(size_t system=o2scl_mks) {
+    fp_t numer=1883531627;
+    fp_t denom=1000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-25;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-28;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
     return result;
   }
 
@@ -217,7 +264,7 @@ namespace o2scl_const {
   */
   template<class fp_t> fp_t hc_mev_fm_f() {
     fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
-      elem_charge_f<fp_t>()*1.0e9;
+      elem_charge_f<fp_t>()*1e9;
     return hbarc;
   }
   

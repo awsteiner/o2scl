@@ -1265,6 +1265,28 @@ int acol_manager::comm_to_tg_fermi(std::vector<std::string> &sv,
   return 0;
 }
 
+int acol_manager::comm_to_vector(std::vector<std::string> &sv,
+				      bool itive_com) {
+
+  if (type=="uniform_grid<double>") {
+
+    ug_obj.vector(doublev_obj);
+    
+    command_del(type);
+    clear_obj();
+    command_add("double[]");
+    type="double[]";
+
+  } else {
+    
+    cerr << "Cannot use command 'to-tg-fermi' for type "
+	 << type << "." << endl;
+    return exc_efailed;
+  }
+  
+  return 0;
+}
+
 int acol_manager::comm_type(std::vector<std::string> &sv, 
 			    bool itive_com) {
   if (type.length()==0) {

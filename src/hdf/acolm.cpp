@@ -173,6 +173,10 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
     type_comm_list.insert(std::make_pair("vec_vec_string",itmp));
   }
   {
+    vector<std::string> itmp={"to-vector"};
+    type_comm_list.insert(std::make_pair("uniform_grid<double>",itmp));
+  }
+  {
     vector<std::string> itmp={"sample","list"};
     type_comm_list.insert(std::make_pair("prob_dens_mdim_gmm",itmp));
   }
@@ -1361,6 +1365,22 @@ void acol_manager::command_add(std::string new_type) {
       };
     if (narr!=type_comm_list["vec_vec_string"].size()) {
       O2SCL_ERR("Type comm list does not match for vec_vec_string",
+                o2scl::exc_esanity);
+    }
+    update_o2_docs(narr,&options_arr[0],new_type);
+    cl->set_comm_option_vec(narr,options_arr);
+    
+  } else if (new_type=="uniform_grid<double>") {
+
+    static const size_t narr=1;
+    comm_option_s options_arr[narr]=
+      {
+        {0,"to-vector","",0,0,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_to_vector),both}
+      };
+    if (narr!=type_comm_list["uniform_grid<double>"].size()) {
+      O2SCL_ERR("Type comm list does not match for uniform_grid<double>",
                 o2scl::exc_esanity);
     }
     update_o2_docs(narr,&options_arr[0],new_type);

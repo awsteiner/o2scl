@@ -36,6 +36,21 @@
 namespace o2scl {
 
   /** \brief Lepton and photon EOS
+
+      The function \ref pair_density_eq() computes the thermodynamic
+      functions of the electrons and muons in in weak equilibrium,
+      i.e. when \f$ \mu_e = \mu_{\mu} \f$. The inputs to this function
+      are the temperature and the total charge density, i.e. the sum
+      of the electron, positron, muon, and antimuon densities, There
+      are two methods to solve for weak equilibrium. The first is to
+      use the electron density as a variable, use the electron density
+      to compute the electron chemical potential, and then use the
+      muon chemical potential to compare the muon density and solve
+      the equation \f$ n_e + n_{\mu} = n_q \f$. This method is used if
+      \ref pde_from_density is true (the default). The second is to
+      use the electron chemical potential as a variable and then
+      compute the electron density from that. It is unclear which
+      method is more stable or accurate. 
    */
   class eos_leptons {
 
@@ -49,20 +64,18 @@ namespace o2scl {
     /** \brief Electron thermodynamics from the electron density
 
         \note This internal function is designed to be used when \ref
-        fermion_rel::err_nonconv is false .
-
-        \note If this function fails, it does not necessarily
-        call the error handler. This allows it to be used 
-        inside \ref pair_density_eq_fun() and is the reason 
-        why this function is protected instead of public.
+        fermion_rel::err_nonconv is false . If this function fails,
+        returns a non-zero value rather than calling the error
+        handler. This allows it to be used inside \ref
+        pair_density_eq_fun(). This is also the reason why this
+        function is protected instead of public.
         
-        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
-
-        Because this function uses fermion_rel::pair_density(), the
-        current electron chemical potential is used as an initial
+        Because this function uses \ref fermion_rel::pair_density(),
+        the current electron chemical potential is used as an initial
         guess.
-        
-     */
+
+        The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
+    */
     int electron_density(double T);
 
     /** \brief Function to solve for \ref pair_density_eq()
@@ -76,27 +89,27 @@ namespace o2scl {
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
 
-    /** \brief Electron
+    /** \brief Electron in long double precision
      */
     fermion_ld eld;
     
-    /** \brief Electron
+    /** \brief Electron in 25-digit precision
      */
     fermion_cdf25 ecdf25;
 
-    /** \brief Muon
+    /** \brief Muon in long double precision
      */
     fermion_ld muld;
     
-    /** \brief Muon
+    /** \brief Muon in 25-digit precision
      */
     fermion_cdf25 mucdf25;
 
-    /** \brief Relativistic fermion thermodynamics
+    /** \brief Relativistic fermion thermodynamics in long double precision
      */
     fermion_rel_ld frel_ld;
     
-    /** \brief Relativistic fermion thermodynamics
+    /** \brief Relativistic fermion thermodynamics in 25 digit precision
      */
     fermion_rel_cdf25 frel_cdf25;
     
@@ -104,17 +117,30 @@ namespace o2scl {
      */
     fermion_deriv_rel fdrel;
     
+    /// \name Accuracy control
+    //@{
+    int accuracy;
+    static const int acc_default=0;
+    static const int acc_improved=1;
+    static const int acc_ld=2;
+    static const int acc_fp_25=3;
+    //@}
+
+    /// Desc
+    convert_units<long double> cu_ld;
+
+    /// Desc
+    convert_units<cpp_dec_float_25> cu_cdf25;
+    
   public:
-    
+
+    /// \name Constructor
+    //@{
     eos_leptons();
+    //@}
 
-    /// Solver for \ref pair_density_eq() 
-    mroot_hybrids<> mh;
-    
-    /** \brief Relativistic fermion thermodynamics
-     */
-    fermion_rel frel;
-
+    /// \name Particle objects
+    //@{
     /** \brief Electron
      */
     fermion e;
@@ -122,11 +148,6 @@ namespace o2scl {
     /** \brief Electron derivatives
      */
     part_deriv_press ed;
-    
-    /** \brief If true, use the electron density for 
-        \ref pair_density_eq_fun().
-     */
-    bool pde_from_density;
     
     /** \brief Muon
      */
@@ -140,18 +161,21 @@ namespace o2scl {
      */
     boson ph;
 
-    /** \brief Muon derivatives
+    /** \brief Photon derivatives
      */
     part_deriv_press phd;
-    
-    /// \name Accuracy control
-    //@{
-    int accuracy;
-    static const int acc_default=0;
-    static const int acc_improved=1;
-    static const int acc_ld=2;
-    static const int acc_fp_25=3;
+
+    /** \brief Thermodynamic quantities for the full EOS
+     */
+    thermo th;
     //@}
+
+    /// \name Settings
+    //@{
+    /** \brief If true, use the electron density for 
+        \ref pair_density_eq_fun() (default true)
+     */
+    bool pde_from_density;
     
     /** \brief If true, call the error handler if msolve()
         does not converge (default true)
@@ -170,10 +194,56 @@ namespace o2scl {
      */
     bool include_deriv;
 
-    /** \brief Thermodynamic quantities
-     */
-    thermo th;
+    /// Verbosity parameter (default 0)
+    int verbose;
+    
+    /// High accuracy
+    void improved_acc() {
+      frel.upper_limit_fac=40.0;
+      frel.fri.dit.tol_abs=1.0e-13;
+      frel.fri.dit.tol_rel=1.0e-13;
+      frel.fri.nit.tol_abs=1.0e-13;
+      frel.fri.nit.tol_rel=1.0e-13;
+      frel.fri.dit.tol_abs=1.0e-13;
+      frel.fri.dit.tol_rel=1.0e-13;
+      frel.fri.nit.tol_abs=1.0e-13;
+      frel.fri.nit.tol_rel=1.0e-13;
+      frel.density_root->tol_rel=1.0e-10;
+      accuracy=acc_improved;
+      return;
+    }
 
+    /// Default accuracy
+    void default_acc() {
+      frel.upper_limit_fac=20.0;
+      frel.fri.dit.tol_abs=1.0e-8;
+      frel.fri.dit.tol_rel=1.0e-8;
+      frel.fri.nit.tol_abs=1.0e-8;
+      frel.fri.nit.tol_rel=1.0e-8;
+      frel.fri.dit.tol_abs=1.0e-8;
+      frel.fri.dit.tol_rel=1.0e-8;
+      frel.fri.nit.tol_abs=1.0e-8;
+      frel.fri.nit.tol_rel=1.0e-8;
+      frel.density_root->tol_rel=4.0e-7;
+      accuracy=acc_default;
+      return;
+    }
+
+    /// Use long double arithmetic to improve precision
+    void ld_acc() {
+      accuracy=acc_ld;
+      return;
+    }
+    
+    /// Use 25-digit precision to improve precision
+    void fp_25_acc() {
+      accuracy=acc_fp_25;
+      return;
+    }
+    //@}
+
+    /// \name Main methods
+    //@{
     /** \brief Thermodynamics from the electron and muon 
         chemical potentials
 
@@ -191,45 +261,12 @@ namespace o2scl {
     */
     int pair_mu_eq(double T);
 
-    /// Desc
-    int verbose;
-    
-    /// High accuracy
-    void high_acc() {
-      frel.upper_limit_fac=40.0;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.density_root->tol_rel=1.0e-10;
-      return;
-    }
-
-    /// Standard accuracy
-    void standard_acc() {
-      frel.upper_limit_fac=20.0;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.density_root->tol_rel=4.0e-7;
-      return;
-    }
-    
     /** \brief Thermodynamics from the electron and muon densities
 
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
-        The electron and muon densities should be stored in the
-        \ref part::n field of \ref e and \ref mu before calling this
-        function.
+        The electron and muon densities should be stored in the \ref
+        part::n field of \ref e and \ref mu (in units of \f$
+        1/\mathrm{fm}^3 \f$ before calling this function.
 
         If \ref include_muons is false, then muons are ignored.
 
@@ -264,6 +301,18 @@ namespace o2scl {
         of the electron density is also used as an initial guess.
     */
     int pair_density_eq(double nq, double T);
+    //@}
+
+    /// \name Other objects
+    //@{
+    /// Solver for \ref pair_density_eq() 
+    mroot_hybrids<> mh;
+
+    /** \brief Relativistic fermion thermodynamics
+     */
+    fermion_rel frel;
+    //@}
+
     
   };
   

@@ -1968,11 +1968,6 @@ namespace o2scl {
 
       set_natural_units(true,true,true);
       
-      // Default conversions are given here. Obviously GNU units is better
-      // at handling these things, but it's nice to have some of the easy
-      // conversions in by default rather than worrying about opening a
-      // pipe, etc.
-    
       fp_t sol_mks=o2scl_const::speed_of_light_f<fp_t>(o2scl_const::o2scl_mks);
       fp_t sol_cgs=o2scl_const::speed_of_light_f<fp_t>(o2scl_const::o2scl_cgs);
       fp_t hc=o2scl_const::hc_mev_fm_f<fp_t>();
@@ -1999,8 +1994,11 @@ namespace o2scl {
       // Joules and Kelvin
   
       insert_cache("eV","J",elem_charge);
-      insert_cache("K","J",o2scl_mks::boltzmann);
-      insert_cache("K","kg",o2scl_mks::boltzmann/pow(sol_mks,2.0));
+      insert_cache("K","J",
+                   o2scl_const::boltzmann_f<fp_t>(o2scl_const::o2scl_mks));
+      insert_cache("K","kg",
+                   o2scl_const::boltzmann_f<fp_t>(o2scl_const::o2scl_mks)/
+                   pow(sol_mks,2.0));
 
       // Energy density and pressure conversions
 

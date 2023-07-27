@@ -3187,6 +3187,19 @@ namespace o2scl_acol {
     */
     virtual int comm_to_tg_fermi(std::vector<std::string> &sv,
                                  bool itive_com);
+
+    /** \brief Convert the current object to a vector
+
+        For objects of type uniform_grid<double>:
+
+        Convert the uniform_grid<double> to a double[] object.
+
+        Arguments: (none)
+
+        Convert to a vector.
+     */
+    virtual int comm_to_vector(std::vector<std::string> &sv,
+                               bool itive_com);
     
     /** \brief Output the type of the current object
 
