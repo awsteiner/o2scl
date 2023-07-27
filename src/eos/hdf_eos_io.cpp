@@ -204,7 +204,7 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
     hf.getd("pairfn",pfn);
     sk.W0=(pfp+pfn)/4.0/o2scl_const::hc_mev_fm;
   } else {
-    hf.getd("W0hc",sk.W0);
+    hf.getd_def("W0hc",0.0,sk.W0);
     sk.W0/=o2scl_const::hc_mev_fm;
   }
 
