@@ -32,17 +32,16 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
-  eos_base eo, eo2, eo3;
-  eos_base *eo4, *eo5, *eo6;
-  test_mgr t;
-  t.set_output_level(2);
-
-  thermo th, *th2;
-  int vp;
-  string stype;
 
   cout.setf(ios::scientific);
 
+  test_mgr t;
+  t.set_output_level(2);
+
+  thermo th;
+
+  eos_base eo;
+  
   th.ed=1.0;
   th.pr=2.0;
   th.en=3.0;
@@ -50,13 +49,32 @@ int main(void) {
   eo.set_thermo(th);
 
   eos_leptons elep;
+  elep.include_muons=false;
+  elep.include_deriv=true;
+
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+  
+  elep.improved_acc();
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
 
   /*
-  elep.e.n=1.0e-8;
-  elep.electron_density(0.1);
-  elep.accuracy=elep.acc_improved;
-  elep.e.n=1.0e-8;
-  elep.electron_density(0.1);
+  elep.ld_acc();
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+
+  elep.fp_25_acc();
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
   */
   
   t.report();

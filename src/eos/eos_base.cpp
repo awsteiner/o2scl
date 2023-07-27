@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_const;
 
 eos_leptons::eos_leptons() {
   include_muons=true;
@@ -36,87 +37,65 @@ eos_leptons::eos_leptons() {
   err_nonconv=false;
       
   convert_units<double> &cu=o2scl_settings.get_convert_units();
-  e.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  mu.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
-  eld.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  muld.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
-  ecdf25.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  mucdf25.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
+  cu_ld.default_conversions();
+  cu_cdf25.default_conversions();
+  
+  e.init(cu.convert("kg","1/fm",mass_electron_f<double>()),2);
+  mu.init(cu.convert("kg","1/fm",mass_muon_f<double>()),2);
+  eld.init(cu_ld.convert("kg","1/fm",mass_electron_f<long double>()),2);
+  muld.init(cu_ld.convert("kg","1/fm",mass_muon_f<long double>()),2);
+  ecdf25.init(cu_cdf25.convert("kg","1/fm",
+                               mass_electron_f<cpp_dec_float_25>()),2);
+  mucdf25.init(cu_cdf25.convert("kg","1/fm",
+                                mass_muon_f<cpp_dec_float_25>()),2);
 
+  
   ph.init(0.0,2.0);
 
   pde_from_density=true;
   verbose=0;
   accuracy=acc_default;
+
 }
 
 int eos_leptons::electron_density(double T) {
 
-  if (accuracy==acc_improved) {
-    cout << frel.upper_limit_fac << endl;
-    cout << frel.fri.dit.tol_abs << endl;
-    cout << frel.fri.dit.tol_rel << endl;
-    cout << frel.fri.nit.tol_abs << endl;
-    cout << frel.fri.nit.tol_rel << endl;
-    cout << frel.density_root->tol_rel << endl;
-    exit(-1);
-    frel.upper_limit_fac=40.0;
-    frel.fri.dit.tol_abs=1.0e-13;
-    frel.fri.dit.tol_rel=1.0e-13;
-    frel.fri.nit.tol_abs=1.0e-13;
-    frel.fri.nit.tol_rel=1.0e-13;
-    frel.density_root->tol_rel=1.0e-10;
-  } else {
-    /*
-    frel.upper_limit_fac=20.0;
-    frel.fri.dit.tol_abs=1.0e-8;
-    frel.fri.dit.tol_rel=1.0e-8;
-    frel.fri.nit.tol_abs=1.0e-8;
-    frel.fri.nit.tol_rel=1.0e-8;
-    frel.density_root->tol_rel=1.0e-10;
-    */
-  }
-  
   int retx;
-      
-  if (e.inc_rest_mass) {
 
+  bool inc_rest_mass=false;
+  if (e.inc_rest_mass) {
+    
     // I find that the calculation without the rest mass is a bit more
     // stable, so we use that method and add the rest mass back in
     // after the fact.
-    
+    inc_rest_mass=true;
     e.inc_rest_mass=false;
     e.mu-=e.m;
-    retx=frel.pair_density(e,T);
-    e.inc_rest_mass=true;
-    e.mu+=e.m;
-    e.ed+=e.m*e.n;
-    
-  } else {
 
-    if (accuracy==acc_ld) {
-      ecdf25.n=e.n;
-      retx=frel_cdf25.pair_density(ecdf25,T);
-      e.mu=static_cast<double>(ecdf25.mu);
-      e.ed=static_cast<double>(ecdf25.ed);
-      e.pr=static_cast<double>(ecdf25.pr);
-      e.en=static_cast<double>(ecdf25.en);
-    } else if (accuracy==acc_fp_25) {
-      eld.n=e.n;
-      retx=frel_ld.pair_density(eld,T);
-      e.mu=static_cast<double>(eld.mu);
-      e.ed=static_cast<double>(eld.ed);
-      e.pr=static_cast<double>(eld.pr);
-      e.en=static_cast<double>(eld.en);
-    } else {
-      retx=frel.pair_density(e,T);
-    }
+  }
+
+  if (accuracy==acc_fp_25) {
+    ecdf25.n=e.n;
+    retx=frel_cdf25.pair_density(ecdf25,T);
+    e.mu=static_cast<double>(ecdf25.mu);
+    e.ed=static_cast<double>(ecdf25.ed);
+    e.pr=static_cast<double>(ecdf25.pr);
+    e.en=static_cast<double>(ecdf25.en);
+  } else if (accuracy==acc_ld) {
+    eld.n=e.n;
+    retx=frel_ld.pair_density(eld,T);
+    e.mu=static_cast<double>(eld.mu);
+    e.ed=static_cast<double>(eld.ed);
+    e.pr=static_cast<double>(eld.pr);
+    e.en=static_cast<double>(eld.en);
+  } else {
+    retx=frel.pair_density(e,T);
   }
       
   // Sometimes the solver fails, but we can recover by adjusting
   // the upper limit for degenerate fermions and tightening the
   // integration tolerances
-  if (retx!=0) {
+  if (retx!=0 && accuracy==acc_default) {
         
     frel.upper_limit_fac=40.0;
     frel.fri.dit.tol_rel=1.0e-10;
@@ -124,16 +103,7 @@ int eos_leptons::electron_density(double T) {
     frel.fri.nit.tol_rel=1.0e-10;
     frel.fri.nit.tol_abs=1.0e-10;
         
-    if (e.inc_rest_mass) {
-      e.inc_rest_mass=false;
-      e.mu-=e.m;
-      retx=frel.pair_density(e,T);
-      e.inc_rest_mass=true;
-      e.mu+=e.m;
-      e.ed+=e.m*e.n;
-    } else {
-      retx=frel.pair_density(e,T);
-    }
+    retx=frel.pair_density(e,T);
 
     // If it still fails, then we don't call the error handler here
     // because this function is used in pair_density_eq_fun().
@@ -145,7 +115,13 @@ int eos_leptons::electron_density(double T) {
     frel.fri.nit.tol_abs=1.0e-8;
         
   }
-      
+
+  if (inc_rest_mass) {
+    e.inc_rest_mass=true;
+    e.mu+=e.m;
+    e.ed+=e.m*e.n;
+  }
+
   return retx;
 }
 
@@ -153,25 +129,56 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
                                      ubvector &y, double T, double nq) {
 
   if (pde_from_density) {
-    
-    e.n=x[0]*nq;
-    int retx=electron_density(T);
-    if (retx!=0) return retx;
+
+    if (accuracy==acc_ld) {
+      eld.n=x[0]*nq;
+      int retx=electron_density(T);
+      if (retx!=0) return retx;
+    } else if (accuracy==acc_fp_25) {
+      ecdf25.n=x[0]*nq;
+      int retx=electron_density(T);
+      if (retx!=0) return retx;
+    } else {
+      e.n=x[0]*nq;
+      int retx=electron_density(T);
+      if (retx!=0) return retx;
+    }
     
   } else {
     
     e.mu=x[0];
 
+    bool inc_rest_mass=false;
     if (e.inc_rest_mass) {
+      inc_rest_mass=true;
       e.inc_rest_mass=false;
       e.mu-=e.m;
-      frel.pair_mu(e,T);
-      e.inc_rest_mass=true;
-      e.mu+=e.m;
-      e.ed+=e.n*e.m;
+    }
+
+    if (accuracy==acc_ld) {
+      eld.mu=e.mu;
+      frel_ld.pair_mu(eld,T);
+      e.n=eld.n;
+      e.ed=eld.ed;
+      e.pr=eld.pr;
+      e.en=eld.en;
+    } else if (accuracy==acc_fp_25) {
+      ecdf25.mu=e.mu;
+      frel_cdf25.pair_mu(ecdf25,T);
+      e.n=static_cast<double>(ecdf25.n);
+      e.ed=static_cast<double>(ecdf25.ed);
+      e.pr=static_cast<double>(ecdf25.pr);
+      e.en=static_cast<double>(ecdf25.en);
     } else {
       frel.pair_mu(e,T);
     }
+
+    if (inc_rest_mass) {
+      e.inc_rest_mass=true;
+      e.mu+=e.m;
+      e.ed+=e.n*e.m;
+    }
+    
   }
 
   if (e.inc_rest_mass) {
