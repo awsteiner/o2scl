@@ -34,7 +34,11 @@ build_v0.928_ot:
 
 build_v0.927_u22.04_min:
 	sudo docker build . --rm -f v0.927_u22.04_min \
+		-t awsteiner/o2scl:v0.927_u22.04_min \
 		> v0.927_u22.04_min.out 2>&1 &
+
+push_v0.927_u22.04_min:
+	sudo docker push awsteiner/o2scl:v0.927_u22.04_min
 
 build_v0.927_u22.04:
 	sudo docker build . --rm -f v0.927_u22.04 \
