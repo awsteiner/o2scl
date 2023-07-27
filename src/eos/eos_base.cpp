@@ -264,6 +264,15 @@ int eos_leptons::pair_density(double T) {
   th.pr=e.pr;
   th.en=e.en;
 
+  if (include_deriv) {
+    fermion_deriv fd;
+    fd=e;
+    fdrel.pair_mu(fd,T);
+    ed.dndmu=fd.dndmu;
+    ed.dndT=fd.dndT;
+    ed.dsdT=fd.dsdT;
+  }
+  
   if (include_muons) {
 
     if (mu.inc_rest_mass) {
@@ -311,7 +320,16 @@ int eos_leptons::pair_density(double T) {
       frel.fri.nit.tol_abs=1.0e-8;
           
     }
-      
+    
+    if (include_deriv) {
+      fermion_deriv fd;
+      fd=mu;
+      fdrel.pair_mu(fd,T);
+      mud.dndmu=fd.dndmu;
+      mud.dndT=fd.dndT;
+      mud.dsdT=fd.dsdT;
+    }
+    
     th.ed+=mu.ed;
     th.pr+=mu.pr;
     th.en+=mu.en;
