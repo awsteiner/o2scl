@@ -41,7 +41,6 @@ RUN acol -h && acol -v
 # Remove build directory and run acol
 
 WORKDIR /opt
-RUN rm -rf o2scl-0.927*
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -h && acol -v
 

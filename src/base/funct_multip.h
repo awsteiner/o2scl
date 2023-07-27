@@ -79,7 +79,10 @@ namespace o2scl {
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
   //#endif
+<<<<<<< HEAD
   //@}
+=======
+>>>>>>> 9c451e59 (Work on docker, eos_leptons, and mpfr.)
 
   /// \name One-dimensional function typedefs in src/base/funct_multip.h
   //@{
