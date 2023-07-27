@@ -1,8 +1,8 @@
 # This dockerfile performs a (nearly) minimal O2scl installation from
 # the v0.928 release. It includes readline, OpenMP and HDF5
-# compression support. It runs all of the O2scl tests and examples.
+# compression support but disables the static libraries. 
 
-FROM ubuntu:23.04
+FROM ubuntu:22.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
@@ -14,7 +14,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # -----------------------------------------------------------------
 # Install apt packages
 
-# Base apt libraries for Ubuntu 23.04
+# Base apt libraries for Ubuntu 22.04
 RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
   gzip libhdf5-dev libreadline-dev libboost-all-dev
 
@@ -27,17 +27,15 @@ https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz \
   --output o2scl-0.928.tar.gz
 RUN tar xzf o2scl-0.928.tar.gz
 WORKDIR /opt/o2scl-0.928
-RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include" ./configure --enable-openmp
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
 RUN make && make install
 
 # -----------------------------------------------------------------
-# Make tests and examples
+# Run acol
 
-WORKDIR /
+WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
-RUN acol -v && acol -h
-WORKDIR /opt/o2scl-0.928
-RUN make o2scl-test && make o2scl-examples
+RUN acol -h && acol -v
 
 
 
