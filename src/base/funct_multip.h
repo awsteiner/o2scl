@@ -167,17 +167,17 @@ namespace o2scl {
 
   // Choose the best floating point type depending on what is
   // available
-#ifdef O2SCL_MPFR
-  typedef mpfr_25 o2fp_25;
-  typedef mpfr_35 o2fp_35;
-  typedef mpfr_50 o2fp_50;
-  typedef mpfr_100 o2fp_100;
-#else
+  //#ifdef O2SCL_MPFR
+  //  typedef mpfr_25 o2fp_25;
+  //typedef mpfr_35 o2fp_35;
+  //typedef mpfr_50 o2fp_50;
+  //typedef mpfr_100 o2fp_100;
+  //#else
   typedef cpp_dec_float_25 o2fp_25;
   typedef cpp_dec_float_35 o2fp_35;
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
-#endif
+  //#endif
 
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision

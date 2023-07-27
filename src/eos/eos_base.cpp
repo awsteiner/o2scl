@@ -409,6 +409,8 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     if (include_deriv) {
       fermion_deriv fd;
       fd=e;
+      std::cout << "Here1: " << fd.m << " " << fd.g << " " << fd.n
+                << std::endl;
       fdrel.pair_mu(fd,T);
       ed.dndmu=fd.dndmu;
       ed.dndT=fd.dndT;
