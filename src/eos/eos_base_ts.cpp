@@ -49,7 +49,21 @@ int main(void) {
   eo.set_thermo(th);
 
   eos_leptons elep;
+  elep.include_muons=false;
+  elep.include_deriv=true;
 
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+  
+  elep.improved_acc();
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+
+<<<<<<< HEAD
   elep.include_muons=false;
   elep.include_deriv=true;
 
@@ -125,17 +139,30 @@ int main(void) {
   elep.pair_mu(0.1);
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
   cout << dtos(elep.e.n,0) << " dndmu: ";
+=======
+  /*
+  elep.ld_acc();
+  elep.e.n=1.0e-6;
+  elep.pair_density(0.1);
+  cout << dtos(elep.e.mu,0) << " ";
+>>>>>>> 1155e081 (Work on eos_leptons and improved constants for multiprecision.)
   cout << dtos(elep.ed.dndmu,0) << endl;
 
   elep.fp_25_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
+<<<<<<< HEAD
   elep.pair_mu(0.1);
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
 
   cout << endl;
+=======
+  cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+  */
+>>>>>>> 1155e081 (Work on eos_leptons and improved constants for multiprecision.)
   
   t.report();
   return 0;
