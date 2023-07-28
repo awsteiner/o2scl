@@ -21,21 +21,28 @@ docker_show:
 	- sudo docker ps --all
 	- sudo docker images --all
 
+testq:
+	sudo docker run --rm -it \
+		--env="DISPLAY" \
+		--volume="/etc/group:/etc/group:ro" \
+		--volume="/etc/passwd:/etc/passwd:ro" \
+		--volume="/etc/shadow:/etc/shadow:ro" \
+		--volume="/etc/sudoers.d:/etc/sudoers.d:ro" \
+		--volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+		awsteiner/o2scl:v0.927_u22.04_min
+
+#		--user="awsteiner" 
+
 # ----------------------------------------------
 # Standard builds
-
-build_v0.927_ot:
-	sudo docker build . --rm -f v0.927_ot \
-		> v0.927_ot.out 2>&1 &
-
-build_v0.928_ot:
-	sudo docker build . --rm -f v0.928_ot \
-		> v0.928_ot.out 2>&1 &
 
 build_v0.927_u22.04_min:
 	sudo docker build . --rm -f v0.927_u22.04_min \
 		-t awsteiner/o2scl:v0.927_u22.04_min \
 		> v0.927_u22.04_min.out 2>&1 &
+
+pull_v0.927_u22.04_min:
+	sudo docker pull awsteiner/o2scl:v0.927_u22.04_min
 
 push_v0.927_u22.04_min:
 	sudo docker push awsteiner/o2scl:v0.927_u22.04_min
@@ -44,6 +51,9 @@ build_v0.928_u22.04_min:
 	sudo docker build . --rm -f v0.928_u22.04_min \
 		-t awsteiner/o2scl:v0.928_u22.04_min \
 		> v0.928_u22.04_min.out 2>&1 &
+
+pull_v0.928_u22.04_min:
+	sudo docker pull awsteiner/o2scl:v0.928_u22.04_min
 
 push_v0.928_u22.04_min:
 	sudo docker push awsteiner/o2scl:v0.928_u22.04_min
@@ -55,6 +65,17 @@ build_v0.928_u22.04_py:
 
 push_v0.928_u22.04_py:
 	sudo docker push awsteiner/o2scl:v0.928_u22.04_py
+
+# ----------------------------------------------
+# Other builds
+
+build_v0.927_ot:
+	sudo docker build . --rm -f v0.927_ot \
+		> v0.927_ot.out 2>&1 &
+
+build_v0.928_ot:
+	sudo docker build . --rm -f v0.928_ot \
+		> v0.928_ot.out 2>&1 &
 
 build_v0.927_u22.04:
 	sudo docker build . --rm -f v0.927_u22.04 \
