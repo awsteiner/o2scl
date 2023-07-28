@@ -126,10 +126,10 @@ namespace o2scl {
     static const int acc_fp_25=3;
     //@}
 
-    /// Desc
+    /// Long double precision unit conversion object
     convert_units<long double> cu_ld;
 
-    /// Desc
+    /// 25-digit precision unit conversion object
     convert_units<cpp_dec_float_25> cu_cdf25;
     
   public:

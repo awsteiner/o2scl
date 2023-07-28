@@ -192,11 +192,13 @@ also install ``libopenmpi-dev`` and then use ``./configure
 
 .. _compile_docker:
 
-Compiling O₂scl on Docker
--------------------------
+Docker images for O₂scl
+-----------------------
 
-There are also some experimental dockerfiles which you can use to
-install O₂scl which can be found at
+There are a few docker images for recent versions of
+O₂scl up at https://hub.docker.com/r/awsteiner/o2scl . These images
+are based on the experimental docker files which are stored in
+the ``docker`` subdirectory, and can be found at 
 https://github.com/awsteiner/o2scl/tree/main/docker .
 
 ..

@@ -128,11 +128,13 @@ namespace o2scl {
 
     }
 
-    /// Desc
+    /// The name of the set function (default "set_data_str")
     std::string set_func;
-    /// Desc
+    
+    /// The name of the sample function (default "sample")
     std::string sample_func;
-    /// Desc
+    
+    /// The name of the log pdf function (default "log_pdf")
     std::string ld_func;
     
     /** \brief Specify the Python module and function
