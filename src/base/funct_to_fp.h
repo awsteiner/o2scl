@@ -37,7 +37,7 @@ namespace o2scl {
   /** \brief Convert a formula to a floating point number and 
       return an integer to indicate success or failure
       
-      This is an alternate version of \ref function_to_double()
+      This is an alternate version of \ref function_to_fp()
       which does not call the error handler and returns a non-zero
       integer when it fails.
   */
@@ -139,7 +139,7 @@ namespace o2scl {
     convert_units<fp_t> cu;
     int ret=function_to_fp_nothrow<fp_t>(s,res,cu,verbose);
     if (ret!=0) {
-      O2SCL_ERR("Function function_to_double() failed.",ret);
+      O2SCL_ERR("Function function_to_fp() failed.",ret);
     }
     return res;
   }

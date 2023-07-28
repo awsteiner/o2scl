@@ -47,6 +47,50 @@ void *o2scl_eos_base_get_def_thermo(void *vptr);
 
 void o2scl_eos_base_set_def_thermo(void *vptr, void *p_v);
 
+void *o2scl_create_eos_leptons();
+
+void o2scl_free_eos_leptons(void *vptr);
+
+void *o2scl_eos_leptons_get_th(void *vptr);
+
+void o2scl_eos_leptons_set_th(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_e(void *vptr);
+
+void o2scl_eos_leptons_set_e(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_mu(void *vptr);
+
+void o2scl_eos_leptons_set_mu(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_ph(void *vptr);
+
+void o2scl_eos_leptons_set_ph(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_ed(void *vptr);
+
+void o2scl_eos_leptons_set_ed(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_mud(void *vptr);
+
+void o2scl_eos_leptons_set_mud(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_phd(void *vptr);
+
+void o2scl_eos_leptons_set_phd(void *vptr, void *p_v);
+
+void *o2scl_eos_leptons_get_frel(void *vptr);
+
+void o2scl_eos_leptons_set_frel(void *vptr, void *p_v);
+
+int o2scl_eos_leptons_pair_mu(void *vptr, double T);
+
+int o2scl_eos_leptons_pair_mu_eq(void *vptr, double T);
+
+int o2scl_eos_leptons_pair_density(void *vptr, double T);
+
+int o2scl_eos_leptons_pair_density_eq(void *vptr, double nq, double T);
+
 double o2scl_eos_had_base_get_eoa(void *vptr);
 
 void o2scl_eos_had_base_set_eoa(void *vptr, double v);

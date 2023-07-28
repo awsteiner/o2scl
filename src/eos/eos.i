@@ -2,7 +2,7 @@
 #
 namespace o2scl
 py_class_doc |
-| Python interface for O2scl class %name%.
+| Python interface for O2scl class ``%name%``.
 | See
 | https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
 dll_name o2scl
@@ -58,13 +58,53 @@ py_header from o2sclpy.part import *
 #
 class eos_base
 - o2scl::thermo def_thermo
-# 1/17/2021 removing set_thermo and get_thermo for now, as cpppy does
+# 1/17/2021 removing set_thermo and get_thermo for now, as yanic does
 # not yet handle these kind of functions.
 # - function set_thermo
 #  - void
 #  - o2scl::thermo &th
 # - function get_thermo
 #   - const o2scl::thermo &
+#
+# ------------------------------------------------------
+# 
+# Class eos_leptons
+#
+class eos_leptons
+- o2scl::thermo th
+- o2scl::fermion e
+- o2scl::fermion mu  
+- o2scl::boson ph
+- o2scl::part_deriv_press ed  
+- o2scl::part_deriv_press mud  
+- o2scl::part_deriv_press phd
+- bool include_muons  
+- bool include_deriv
+- bool pde_from_density
+- int verbose
+- bool err_nonconv
+- function default_acc
+  - void
+- function improved_acc
+  - void
+- function ld_acc
+  - void
+- function fp_25_acc
+  - void
+- function pair_mu
+  - int
+  - double T
+- function pair_mu_eq
+  - int
+  - double T
+- function pair_density
+  - int
+  - double T
+- function pair_density_eq
+  - int
+  - double nq
+  - double T
+- o2scl::fermion_rel frel
 #
 # ------------------------------------------------------
 # 

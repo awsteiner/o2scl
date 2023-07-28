@@ -39,114 +39,12 @@
 #include <o2scl/string_conv.h>
 #include <o2scl/calc_utf8.h>
 #include <o2scl/convert_units.h>
+#include <o2scl/set_mpfr.h>
 
 namespace o2scl {
 
-  /// One-dimensional function typedef in src/base/funct.h
-  typedef std::function<long double(long double)> funct_ld;
-
-  /** \brief One-dimensional function typedef in src/base/funct.h
-   */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::cpp_dec_float<25> >
-			(boost::multiprecision::number<
-                         boost::multiprecision::cpp_dec_float<25> > )>
-  funct_cdf25;
-  
-  /** \brief One-dimensional function typedef in src/base/funct.h
-   */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::cpp_dec_float<35> >
-			(boost::multiprecision::number<
-                         boost::multiprecision::cpp_dec_float<35> > )>
-  funct_cdf35;
-  
-  /** \brief One-dimensional function typedef in src/base/funct.h
-   */
-  typedef std::function<boost::multiprecision::cpp_dec_float_50
-			(boost::multiprecision::cpp_dec_float_50)>
-  funct_cdf50;
-
-#if defined (O2SCL_MPFR) || defined (DOXYGEN)
-  
-  /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is defined only if O2SCL_MPFR is defined 
-      when O2scl is compiled.
-  */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::mpfr_float_backend<25>>
-			(boost::multiprecision::number<
-                         boost::multiprecision::mpfr_float_backend<25>>)>
-  funct_mpfr25;
-
-  /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is defined only if O2SCL_MPFR is defined 
-      when O2scl is compiled.
-  */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::mpfr_float_backend<35>>
-			(boost::multiprecision::number<
-                         boost::multiprecision::mpfr_float_backend<35>>)>
-  funct_mpfr35;
-
-  /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is defined only if O2SCL_MPFR is defined 
-      when O2scl is compiled.
-  */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::mpfr_float_backend<50>>
-			(boost::multiprecision::number<
-                         boost::multiprecision::mpfr_float_backend<50>>)>
-  funct_mpfr50;
-
-  /** \brief One-dimensional function typedef in src/base/funct.h
-      
-      This typedef is defined only if O2SCL_MPFR is defined 
-      when O2scl is compiled.
-  */
-  typedef std::function<boost::multiprecision::number<
-                          boost::multiprecision::mpfr_float_backend<100>>
-			(boost::multiprecision::number<
-                         boost::multiprecision::mpfr_float_backend<100>>)>
-  funct_mpfr100;
-
-#endif
-  
-  /** \brief One-dimensional function typedef in src/base/funct.h
-   */
-  typedef std::function<boost::multiprecision::cpp_dec_float_100
-			(boost::multiprecision::cpp_dec_float_100)>
-  funct_cdf100;
-  
-  typedef std::function<int(long double,long double &)> funct_ret_ld;
-
-  typedef std::function<int(boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<25> >,
-                            boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<25> > &)>
-  funct_ret_cdf25;
-  
-  typedef std::function<int(boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<35> >,
-                            boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<35> > &)>
-  funct_ret_cdf35;
-  
-  typedef std::function<int(boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<50> >,
-                            boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<50> > &)>
-  funct_ret_cdf50;
-  
-  typedef std::function<int(boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<100> >,
-                            boost::multiprecision::number<
-                            boost::multiprecision::cpp_dec_float<100> > &)>
-  funct_ret_cdf100;
-
+  /// \name Floating point typedefs in src/base/funct_multip.h
+  //@{
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<25>> mpfr_25;
   typedef boost::multiprecision::number<
@@ -166,7 +64,9 @@ namespace o2scl {
     boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
   // Choose the best floating point type depending on what is
-  // available
+  // available. 7/28/23: I'm currently having problems with mpfr
+  // types so they're commented out. 
+  
   //#ifdef O2SCL_MPFR
   //  typedef mpfr_25 o2fp_25;
   //typedef mpfr_35 o2fp_35;
@@ -178,7 +78,71 @@ namespace o2scl {
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
   //#endif
+  //@}
 
+  /// \name One-dimensional function typedefs in src/base/funct_multip.h
+  //@{
+  typedef std::function<long double(long double)> funct_ld;
+
+  typedef std::function<cpp_dec_float_25(cpp_dec_float_25)>
+  funct_cdf25;
+  
+  typedef std::function<cpp_dec_float_35(cpp_dec_float_35)>
+  funct_cdf35;
+  
+  typedef std::function<cpp_dec_float_50(cpp_dec_float_50)>
+  funct_cdf50;
+  
+  typedef std::function<cpp_dec_float_100(cpp_dec_float_100)>
+  funct_cdf100;
+
+  typedef std::function<int(long double,long double &)> funct_ret_ld;
+  
+  typedef std::function<int(cpp_dec_float_25,cpp_dec_float_25 &)>
+  funct_ret_cdf25;
+  
+  typedef std::function<int(cpp_dec_float_35,cpp_dec_float_35 &)>
+  funct_ret_cdf35;
+  
+  typedef std::function<int(cpp_dec_float_50,cpp_dec_float_50 &)>
+  funct_ret_cdf50;
+
+  typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
+  funct_ret_cdf100;
+  //@}
+
+#if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
+  
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is defined only if --enable-mpfr is selected when
+      when O2scl is configured.
+  */
+  typedef std::function<mpfr_25(mpfr_25)> funct_mpfr25;
+
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is defined only if --enable-mpfr is selected when
+      when O2scl is configured.
+  */
+  typedef std::function<mpfr_35(mpfr_35)> funct_mpfr35;
+
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is defined only if --enable-mpfr is selected when
+      when O2scl is configured.
+  */
+  typedef std::function<mpfr_50(mpfr_50)> funct_mpfr50;
+
+  /** \brief One-dimensional function typedef in src/base/funct.h
+      
+      This typedef is defined only if --enable-mpfr is selected when
+      when O2scl is configured.
+  */
+  typedef std::function<mpfr_100(mpfr_100)> funct_mpfr100;
+
+#endif
+  
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
 
@@ -619,21 +583,27 @@ namespace o2scl {
       
   };
 
-  /** \brief Desc
+  /** \brief The default multiprecision function object
    */
   typedef funct_multip_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip;
 
-  /** \brief Desc
-   */
+  /** \brief The multiprecision function object with \t cpp_dec_float
+      types
+  */
   typedef funct_multip_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_cdf;
 
-  /** \brief Desc
+#ifdef O2SCL_SET_MPFR
+  
+  /** \brief The multiprecision function object using \t mpfr 
+      types
    */
   typedef funct_multip_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_mpfr;
+  
+#endif
   
   /** \brief A multiprecision function evaluation class with 
       transformations useful for integrals
@@ -1098,33 +1068,39 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Evaluate the function and return the error estimate
-        with the default tolerance for the specified type
-     */
+    /** \brief Evaluate the function and uncertainty with a
+        transformed upper limit with the default tolerance for the
+        specified type
+    */
     template<typename func_t, class fp_t>
     int eval_err_iu(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
       return eval_tol_err('u',f,x,val,err);
     }
   
-  /** \brief Desc
-   */
+    /** \brief Evaluate the function and uncertainty with a
+        transformed lower limit with the default tolerance for the
+        specified type
+    */
     template<typename func_t, class fp_t>
     int eval_err_il(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
       return eval_tol_err('l',f,x,val,err);
     }
   
-  /** \brief Desc
-   */
+    /** \brief Evaluate the function and uncertainty with a
+        transformed limits with the default tolerance for the
+        specified type
+    */
     template<typename func_t, class fp_t>
     int eval_err_i(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
       return eval_tol_err('i',f,x,val,err);
     }
   
-    /** \brief Evalulate the function without an error estimate
-     */
+    /** \brief Evaluate the function with a transformed upper limit
+        with the default tolerance for the specified type
+    */
     template<typename func_t, class fp_t>
     fp_t eval_iu(func_t &&f, const fp_t &x) const {
       fp_t val;
@@ -1135,8 +1111,9 @@ namespace o2scl {
       return val;
     }
       
-  /** \brief Desc
-   */
+    /** \brief Evaluate the function with a transformed lower limit
+        with the default tolerance for the specified type
+    */
     template<typename func_t, class fp_t>
     fp_t eval_il(func_t &&f, const fp_t &x) const {
       fp_t val;
@@ -1147,8 +1124,9 @@ namespace o2scl {
       return val;
     }
       
-  /** \brief Desc
-   */
+    /** \brief Evaluate the function with a transformed limits with
+        the default tolerance for the specified type
+    */
     template<typename func_t, class fp_t>
     fp_t eval_i(func_t &&f, const fp_t &x) const {
       fp_t val;
@@ -1161,20 +1139,20 @@ namespace o2scl {
       
   };
 
-  // c++11 alias declaration
+  /// Alias declarations using default types
   template <class fp_t> using funct_multip_transform=
     funct_multip_transform_tl<fp_t,o2fp_25,o2fp_35,o2fp_50,o2fp_100>;
   
-  /** \brief Desc
-   */
+  /// Alias declarations for \t cpp_dec_float types
   template <class fp_t> using funct_multip_transform_cdf=
     funct_multip_transform_tl<double,cpp_dec_float_25,cpp_dec_float_35,
                               cpp_dec_float_50,cpp_dec_float_100>;
 
-  /** \brief Desc
-   */
+#ifdef O2SCL_SET_MPFR  
+  /// Alias declarations for \t mpfr types
   template <class fp_t> using funct_multip_transform_mpfr=
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
+#endif
   
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision
@@ -1442,23 +1420,21 @@ namespace o2scl {
     
   };
     
-  /** \brief Desc
+  /** \brief Typedef for default floating point type
    */
   typedef funct_multip_string_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip_string;
 
-  /** \brief Desc
+  /** \brief Typedef for cpp_dec_float types
    */
   typedef funct_multip_string_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_string_cdf;
 
-  /** \brief Desc
+  /** \brief Typedef for mpfr types
    */
   typedef funct_multip_string_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_string_mpfr;
-  
-
   
 }
 

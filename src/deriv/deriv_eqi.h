@@ -150,7 +150,7 @@ namespace o2scl {
       c2p=&deriv_eqi::deriv2p5;
     }
 
-    /// Stepsize (Default  \f$ 10^{-4} \f$ ).
+    /// Stepsize (Default \f$ 10^{-4} \f$ ).
     double h;
 
     /// Offset (default 0.0)

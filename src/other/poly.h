@@ -1415,7 +1415,7 @@ namespace o2scl {
 			 cx_t &x3, 
 			 cx_t &x4)=0;
 
-    /** \brief Desc
+    /** \brief Test quartics with real coefficients
      */
     size_t test_quartic_real_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
                           fp_t &m2, size_t n=9) {
@@ -1546,7 +1546,7 @@ namespace o2scl {
 			const cx_t e4, cx_t &x1, 
 			cx_t &x2, cx_t &x3, cx_t &x4)=0;
 
-    /** \brief Desc
+    /** \brief Test quartics with complex coefficients
      */
     int test_complex_coeffs(fp_t &s1, fp_t &s2, fp_t &m1,
                              fp_t &m2, size_t n=9) {
@@ -3504,7 +3504,8 @@ namespace o2scl {
 
     virtual ~quartic_real_std() {}
 
-    /** \brief Desc
+    /** \brief Solves the polynomial \f$ a_4 x^4 + b_4 x^3 + 
+        c_4 x^2 + d_4 x + e_4 = 0 \f$ 
      */
     virtual int solve_r(const fp_t a4, const fp_t b4, const fp_t c4, 
 			const fp_t d4, const fp_t e4, fp_t &x1, 
