@@ -79,10 +79,7 @@ namespace o2scl {
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
   //#endif
-<<<<<<< HEAD
   //@}
-=======
->>>>>>> 9c451e59 (Work on docker, eos_leptons, and mpfr.)
 
   /// \name One-dimensional function typedefs in src/base/funct_multip.h
   //@{
@@ -107,6 +104,23 @@ namespace o2scl {
   
   /** \brief One-dimensional Boost 100-digit function in src/base/funct_multip.h
    */
+=======
+  //@}
+
+  /// \name One-dimensional function typedefs in src/base/funct_multip.h
+  //@{
+  typedef std::function<long double(long double)> funct_ld;
+
+  typedef std::function<cpp_dec_float_25(cpp_dec_float_25)>
+  funct_cdf25;
+  
+  typedef std::function<cpp_dec_float_35(cpp_dec_float_35)>
+  funct_cdf35;
+  
+  typedef std::function<cpp_dec_float_50(cpp_dec_float_50)>
+  funct_cdf50;
+  
+>>>>>>> a3e41dcd (Updating multip docs and eos_leptons python interface.)
   typedef std::function<cpp_dec_float_100(cpp_dec_float_100)>
   funct_cdf100;
 
@@ -1175,7 +1189,7 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform_mpfr=
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
-    
+  
 }
 
 #endif
