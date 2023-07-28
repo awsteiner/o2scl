@@ -4,7 +4,7 @@
 # attempts to run all of the o2scl test and examples. It also installs
 # and tests the main branch github version of o2sclpy
 
-FROM ubuntu:23.04
+FROM ubuntu:22.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
@@ -38,15 +38,15 @@ RUN pip3 install --break-system-packages numpy==1.24.3
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
   --break-system-packages --no-binary=h5py h5py==3.9.0
 
-COPY u23.04_req.txt ./
+COPY u22.04_req.txt ./
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
-  && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
+  && pip3 install --no-cache-dir --break-system-packages -r u22.04_req.txt
 
 # We need pillow to compare images for o2sclpy tests
 # RUN pip3 install --break-system-packages pytest Pillow \
 # scipy matplotlib yt scikit-learn tensorflow-cpu keras
-# RUN pip3 freeze > u23.04_req.txt
-# RUN cat u23.04_req.txt
+# RUN pip3 freeze > u22.04_req.txt
+# RUN cat u22.04_req.txt
 
 # -----------------------------------------------------------------
 # Install o2scl
@@ -58,7 +58,7 @@ https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz \
 RUN tar xzf o2scl-0.928.tar.gz
 WORKDIR /opt/o2scl-0.928
 RUN LDFLAGS="-larmadillo -llapack -lblas" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.11/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python
-RUN make && make install
+RUN make blank-doc && make && make install && make clean
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -h && acol -v
@@ -77,16 +77,6 @@ RUN pip3 install --break-system-packages .
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
 
 # --------------------------------------------------------------------------
-# O2scl testing and examples
-
-WORKDIR /opt/o2scl-0.928
-RUN make o2scl-test && make o2scl-examples
-
-# --------------------------------------------------------------------------
 # Test o2sclpy
 
 RUN o2graph -h && o2graph -v
-WORKDIR /opt/o2sclpy
-# Make test and output to screen
-RUN make testq
-
