@@ -32,18 +32,18 @@ apt-get -y install g++ make libgsl-dev autoconf automake libtool git \
 # before we install o2scl, so we do that now
 
 WORKDIR /opt
-RUN pip3 install --break-system-packages numpy==1.24.3
+RUN pip3 install numpy==1.24.3
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
-  --break-system-packages --no-binary=h5py h5py==3.9.0
+  --no-binary=h5py h5py==3.9.0
 
 COPY u22.04_req.txt ./
-RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
-  && pip3 install --no-cache-dir --break-system-packages -r u22.04_req.txt
+RUN pip3 install --no-cache-dir --upgrade pip \
+  && pip3 install --no-cache-dir -r u22.04_req.txt
 
 # We need pillow to compare images for o2sclpy tests
-# RUN pip3 install --break-system-packages pytest Pillow \
+# RUN pip3 install pytest Pillow \
 # scipy matplotlib yt scikit-learn tensorflow-cpu keras
 # RUN pip3 freeze > u22.04_req.txt
 # RUN cat u22.04_req.txt
@@ -69,7 +69,7 @@ RUN acol -h && acol -v
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN pip3 install --break-system-packages . 
+RUN pip3 install . 
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
