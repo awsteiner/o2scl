@@ -80,6 +80,17 @@ build_v0.928_ot:
 	sudo docker build . --rm -f v0.928_ot \
 		> v0.928_ot.out 2>&1 &
 
+# ----------------------------------------------
+# Other builds
+
+build_v0.927_ot:
+	sudo docker build . --rm -f v0.927_ot \
+		> v0.927_ot.out 2>&1 &
+
+build_v0.928_ot:
+	sudo docker build . --rm -f v0.928_ot \
+		> v0.928_ot.out 2>&1 &
+
 build_v0.927_u22.04:
 	sudo docker build . --rm -f v0.927_u22.04 \
 		> v0.927_u22.04.out 2>&1 &
