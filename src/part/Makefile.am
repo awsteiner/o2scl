@@ -3,19 +3,18 @@
 # ------------------------------------------------------------
 
 PART_SRCS = boson.cpp boson_eff.cpp fermion_eff.cpp \
-	part.cpp quark.cpp \
-	fermion_deriv_rel.cpp fermion_deriv_nr.cpp \
+	part.cpp quark.cpp fermion_deriv_nr.cpp \
 	boson_rel.cpp fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp part_python.cpp
 HEADER_VAR = boson.h classical.h boson_eff.h fermion_eff.h \
 	fermion.h fermion_nonrel.h part.h quark.h fermion_rel.h \
 	part_deriv.h fermion_deriv_rel.h fermion_deriv_nr.h \
 	boson_rel.h fermion_mag_zerot.h part_pdg.h \
-	part_python.h classical_deriv.h
+	part_python.h classical_deriv.h fermion_deriv_rel2.h
 TEST_VAR = classical.scr fermion_eff.scr fermion_rel.scr boson.scr \
 	fermion.scr fermion_nonrel.scr part.scr quark.scr \
 	boson_eff.scr fermion_deriv_rel.scr fermion_deriv_nr.scr \
-	classical_deriv.scr boson_rel.scr fermion_mag_zerot.scr
+	classical_deriv.scr boson_rel.scr fermion_mag_zerot.scr \
 
 # ------------------------------------------------------------
 # Includes
