@@ -66,6 +66,14 @@ build_v0.928_u22.04_py:
 push_v0.928_u22.04_py:
 	sudo docker push awsteiner/o2scl:v0.928_u22.04_py
 
+build_v0.928_u23.04_py:
+	sudo docker build . --rm -f v0.928_u23.04_py \
+		-t awsteiner/o2scl:v0.928_u23.04_py \
+		> v0.928_u23.04_py.out 2>&1 &
+
+push_v0.928_u23.04_py:
+	sudo docker push awsteiner/o2scl:v0.928_u23.04_py
+
 # ----------------------------------------------
 # Other builds
 
