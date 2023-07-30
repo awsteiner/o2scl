@@ -140,7 +140,6 @@ int main(void) {
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
 
-  /*
   elep.fp_25_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
@@ -150,7 +149,6 @@ int main(void) {
   cout << dtos(elep.ed.dndmu,0) << endl;
 
   cout << endl;
-  */
 
   t.report();
   return 0;
