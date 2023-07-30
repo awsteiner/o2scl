@@ -4,7 +4,7 @@
 # attempts to run all of the o2scl test and examples. It also installs
 # and tests the main branch github version of o2sclpy
 
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # -----------------------------------------------------------------
@@ -38,15 +38,15 @@ RUN pip3 install numpy==1.24.3
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
   --no-binary=h5py h5py==3.9.0
 
-COPY u22.04_req.txt ./
+COPY u23.04_req.txt ./
 RUN pip3 install --no-cache-dir --upgrade pip \
-  && pip3 install --no-cache-dir -r u22.04_req.txt
+  && pip3 install --no-cache-dir -r u23.04_req.txt
 
 # We need pillow to compare images for o2sclpy tests
 # RUN pip3 install pytest Pillow \
 # scipy matplotlib yt scikit-learn tensorflow-cpu keras
-# RUN pip3 freeze > u22.04_req.txt
-# RUN cat u22.04_req.txt
+# RUN pip3 freeze > u23.04_req.txt
+# RUN cat u23.04_req.txt
 
 # -----------------------------------------------------------------
 # Install o2scl
