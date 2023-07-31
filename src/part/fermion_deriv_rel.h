@@ -89,26 +89,28 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
-      fp_t k=u*(T), E, ret;
+      internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
-	    T*fermi_function(E,nu,T,exp_limit);
+	    T*fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
 	} else {
+          internal_fp_t Emm=E-m;
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
-	    T*fermi_function(E-m,nu,T,exp_limit);
+	    T*fermi_function(Emm,nu,T,el);
 	}
       }
       return ret;
@@ -125,24 +127,25 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t k=u*(T), E, ret;
+      internal_fp_t k=u*(T), E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E,nu,T,exp_limit);
+	  ret=T*(E*E+k*k)/E*fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E-m,nu,T,exp_limit);
+	  ret=T*(E*E+k*k)/E*fermi_function(E-m,nu,T,el);
 	}
       }
       return ret;
@@ -159,28 +162,29 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t k=u*T, E, ret;
+      internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu))*
-	    fermi_function(E,nu,T,exp_limit);
+	    fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-m-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu+m))*
-	    fermi_function(E-m,nu,T,exp_limit);
+	    fermi_function(E-m,nu,T,el);
 	}
       }
       return ret;
@@ -197,24 +201,25 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t k=u*T, E, ret;
+      internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=-k*k*ms/(E)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E,nu,T,exp_limit);
+	  ret=-ms*fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E-m,nu,T,exp_limit);
+	  ret=-ms*fermi_function(E-m,nu,T,el);
 	}
       }
       ret*=T;
@@ -238,26 +243,27 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t E, ret;
+      internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
-	    fermi_function(E,nu,T,exp_limit);
+	    fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
-	    fermi_function(E-m,nu,T,exp_limit);
+	    fermi_function(E-m,nu,T,el);
 	}
       }
       return ret;
@@ -274,24 +280,25 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t E, ret;
+      internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E,nu,T,exp_limit);
+	  ret=(E*E+k*k)/E*fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E-m,nu,T,exp_limit);
+	  ret=(E*E+k*k)/E*fermi_function(E-m,nu,T,el);
 	}
       }
       return ret;
@@ -308,11 +315,12 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
-      fp_t E, ret;
+      internal_fp_t E, ret;
       E=hypot(k,ms);
       if (inc_rest_mass) {
-	fp_t ff=fermi_function(E,nu,T,exp_limit);
+	internal_fp_t ff=fermi_function(E,nu,T,el);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
@@ -320,7 +328,7 @@ namespace o2scl {
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*nu)*ff;
 	}
       } else {
-	fp_t ff=fermi_function(E-m,nu,T,exp_limit);
+	internal_fp_t ff=fermi_function(E-m,nu,T,el);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu-m,2.0)/pow(T,3.0);
 	} else {
@@ -342,24 +350,25 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
-      fp_t E, ret;
+      internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=-k*k*ms/E/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E,nu,T,exp_limit);
+	  ret=-ms*fermi_function(E,nu,T,el);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  fp_t ff=fermi_function(E,nu,T,exp_limit);
+	  internal_fp_t ff=fermi_function(E,nu,T,el);
 	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E-m,nu,T,exp_limit);
+	  ret=-ms*fermi_function(E-m,nu,T,el);
 	}
       }
       return ret;
@@ -770,13 +779,22 @@ namespace o2scl {
 	  last_method+=4;
 	}
 
-        funct density_T_fun2_f=
-	  std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t,fp_t,fp_t,bool)>
-		    (&fermion_deriv_rel_integ<fp_t>::density_T_fun2<fp_t>),
-		    this,std::placeholders::_1,f.m,f.ms,f.nu,temper,
-                    f.inc_rest_mass);
+        {
+          /*
+            template<class internal_fp_t>
+            internal_fp_t density_T_fun2(internal_fp_t u, fp_t m2, fp_t ms2,
+            fp_t nu2, fp_t T2, bool inc_rest_mass) {
+          */
+          fp_t zero=0, res=0, err=0, tol_rel=0;
+          inte_multip_double_exp_boost<> it;
+          int ix=it.integ_iu_err_multip
+            ([this,f,temper](auto &&k) mutable {
+              return this->density_T_fun2(k,f.m,f.ms,f.nu,temper,
+                                          f.inc_rest_mass); },
+              zero,res,err,tol_rel);
+        }
         
-	// The non-degenerate case
+        // The non-degenerate case
 
 	funct density_T_fun_f=
 	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>

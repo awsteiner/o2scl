@@ -68,7 +68,8 @@ namespace o2scl {
       Note that this function may return Inf or NAN if \c limit is too 
       large, depending on the machine precision.
   */
-  double fermi_function(double E, double mu, double T, double limit=40.0);
+  template<class fp_t>
+  fp_t fermi_function(fp_t E, fp_t mu, fp_t T, fp_t limit=40.0);
   
   /** \brief Calculate a Bose-Einstein distribution function safely
 
