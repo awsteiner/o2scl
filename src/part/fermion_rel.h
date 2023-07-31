@@ -46,11 +46,6 @@
 
 namespace o2scl {
 
-  typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25> > cpp_dec_float_25;
-  typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<35> > cpp_dec_float_35;
-  
   /** \brief Integrands for \ref o2scl::fermion_rel_tl
 
       This object contains the fermion integrands which can be

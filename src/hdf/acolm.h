@@ -111,42 +111,6 @@ namespace o2scl_acol {
 
   protected:
 
-    /// \name Typedefs for multiprecision commands
-    //@{
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100> >
-    cpp_dec_float_100;
-    
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50> >
-    cpp_dec_float_50;
-    
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-    cpp_dec_float_35;
-    
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
-    cpp_dec_float_25;
-
-#ifdef O2SCL_MPFR
-    
-    typedef boost::multiprecision::number<
-      boost::multiprecision::mpfr_float_backend<100> > mpfr_100;
-    
-    typedef boost::multiprecision::number<
-      boost::multiprecision::mpfr_float_backend<50> > mpfr_50;
-    
-    typedef boost::multiprecision::number<
-      boost::multiprecision::mpfr_float_backend<35> > mpfr_35;
-    
-    typedef boost::multiprecision::number<
-      boost::multiprecision::mpfr_float_backend<25> > mpfr_25;
-    
-#endif
-    
-    //@}
-    
     /// Random number generator
     o2scl::rng<> rng;
     

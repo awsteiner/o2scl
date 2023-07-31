@@ -502,13 +502,6 @@ namespace o2scl {
       return 0;
     }
 
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
-
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */

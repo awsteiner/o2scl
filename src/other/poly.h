@@ -2558,21 +2558,6 @@ namespace o2scl {
     
   protected:
     
-    /// \name Typedefs for multiprecision types
-    //@{
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
-    cpp_dec_float_25;
-  
-    typedef
-    boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
-    cpp_dec_float_35;
-  
-    typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-  
-    typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
-    //@}
-
     /// \name Solvers
     //@{
     cubic_real_coeff_cern<double,std::complex<double>> q_d;
