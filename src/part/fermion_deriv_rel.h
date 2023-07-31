@@ -84,7 +84,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
@@ -105,7 +104,6 @@ namespace o2scl {
 	  internal_fp_t ff=fermi_function(x2);
 	  ret=k*k*(E-nu)/T*ff*(1-ff);
 	} else {
-          internal_fp_t Emm=E-m;
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
 	    T*fermi_function(x2);
 	}
@@ -124,7 +122,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
@@ -160,7 +157,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
@@ -201,7 +197,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
@@ -242,7 +237,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       if (inc_rest_mass) {
@@ -281,7 +275,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       if (inc_rest_mass) {
@@ -318,7 +311,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       E=hypot(k,ms);
@@ -355,7 +347,6 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
       internal_fp_t E, ret;
       if (inc_rest_mass) {
