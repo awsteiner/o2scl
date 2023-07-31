@@ -69,7 +69,18 @@ namespace o2scl {
       large, depending on the machine precision.
   */
   template<class fp_t>
-  fp_t fermi_function(fp_t E, fp_t mu, fp_t T, fp_t limit=40.0);
+  fp_t fermi_function(fp_t E, fp_t mu, fp_t T, fp_t limit=40.0) {
+    fp_t ret, x=(E-mu)/T;
+    
+    if (x>limit) {
+      ret=0.0;
+    } else if (x<-limit) {
+      ret=1.0;
+    } else {
+      ret=1.0/(1.0+exp(x));
+    }
+    return ret;
+  }    
   
   /** \brief Calculate a Bose-Einstein distribution function safely
 

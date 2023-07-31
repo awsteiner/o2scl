@@ -193,19 +193,6 @@ std::string o2scl::binary_to_hex(std::string s) {
   return t;
 }
 
-double o2scl::fermi_function(double E, double mu, double T, double limit) {
-  double ret, x=(E-mu)/T;
-  
-  if (x>limit) {
-    ret=0.0;
-  } else if (x<-limit) {
-    ret=1.0;
-  } else {
-    ret=1.0/(1.0+exp(x));
-  }
-  return ret;
-}
-
 double o2scl::bose_function(double E, double mu, double T, double limit) {
   double ret, x=(E-mu)/T;
   
