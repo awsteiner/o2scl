@@ -2206,16 +2206,10 @@ class terminal
   - std::string
 function fermi_function
 - double
-- double E
-- double mu
-- double T
-- double limit [40.0]
+- double x
 function bose_function
 - double
-- double E
-- double mu
-- double T
-- double limit [40.0]
+- double x
 function quadratic_extremum_x<double>
 - double
 - py_name quadratic_extremum_x

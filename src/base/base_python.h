@@ -1272,9 +1272,9 @@ void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *
 
 void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
 
-double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit=40.0);
+double o2scl_fermi_function_wrapper(double x);
 
-double o2scl_bose_function_wrapper(double E, double mu, double T, double limit=40.0);
+double o2scl_bose_function_wrapper(double x);
 
 double o2scl_quadratic_extremum_x_double__wrapper(double x1, double x2, double x3, double y1, double y2, double y3);
 

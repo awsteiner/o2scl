@@ -3774,13 +3774,13 @@ void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, cha
   return func_ret;
 }
 
-double o2scl_fermi_function_wrapper(double E, double mu, double T, double limit) {
-  double func_ret=fermi_function(E,mu,T,limit);
+double o2scl_fermi_function_wrapper(double x) {
+  double func_ret=fermi_function(x);
   return func_ret;
 }
 
-double o2scl_bose_function_wrapper(double E, double mu, double T, double limit) {
-  double func_ret=bose_function(E,mu,T,limit);
+double o2scl_bose_function_wrapper(double x) {
+  double func_ret=bose_function(x);
   return func_ret;
 }
 

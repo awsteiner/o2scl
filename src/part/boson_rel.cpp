@@ -380,7 +380,7 @@ void boson_rel::calc_density(boson &b, double temper) {
 double boson_rel::deg_density_fun(double k, boson &b, double T) {
 
   double E=hypot(k,b.ms);
-  double nx=o2scl::bose_function(E,b.nu,T);
+  double nx=o2scl::bose_function((E-b.nu)/T);
   double ret=k*k*nx;
 
   if (!std::isfinite(ret)) {
@@ -399,7 +399,7 @@ double boson_rel::deg_density_fun(double k, boson &b, double T) {
 double boson_rel::deg_energy_fun(double k, boson &b, double T) {
 
   double E=hypot(k,b.ms);
-  double nx=o2scl::bose_function(E,b.nu,T);
+  double nx=o2scl::bose_function((E-b.nu)/T);
   double ret=k*k*E*nx;
   
   if (!std::isfinite(ret)) {
@@ -414,7 +414,7 @@ double boson_rel::deg_energy_fun(double k, boson &b, double T) {
 double boson_rel::deg_entropy_fun(double k, boson &b, double T) {
 
   double E=hypot(k,b.ms);
-  double nx=o2scl::bose_function(E,b.nu,T);
+  double nx=o2scl::bose_function((E-b.nu)/T);
   double ret;
   ret=-k*k*(nx*log(nx)-(1.0+nx)*log(1.0+nx));
   
