@@ -168,7 +168,7 @@ namespace o2scl {
   fermion_mpfr100;
   
 #endif
-  
+ 
   /** \brief Fermion properties at zero temperature
 
       This is a base class for the computation of fermionic statistics
