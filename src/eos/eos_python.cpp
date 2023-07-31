@@ -148,6 +148,61 @@ void o2scl_eos_leptons_set_phd(void *vptr, void *p_v) {
   return;
 }
 
+bool o2scl_eos_leptons_get_include_muons(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  return ptr->include_muons;
+}
+
+void o2scl_eos_leptons_set_include_muons(void *vptr, bool v) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->include_muons=v;
+  return;
+}
+
+bool o2scl_eos_leptons_get_include_deriv(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  return ptr->include_deriv;
+}
+
+void o2scl_eos_leptons_set_include_deriv(void *vptr, bool v) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->include_deriv=v;
+  return;
+}
+
+bool o2scl_eos_leptons_get_pde_from_density(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  return ptr->pde_from_density;
+}
+
+void o2scl_eos_leptons_set_pde_from_density(void *vptr, bool v) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->pde_from_density=v;
+  return;
+}
+
+int o2scl_eos_leptons_get_verbose(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_eos_leptons_set_verbose(void *vptr, int v) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+bool o2scl_eos_leptons_get_err_nonconv(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_eos_leptons_set_err_nonconv(void *vptr, bool v) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
 void *o2scl_eos_leptons_get_frel(void *vptr) {
   eos_leptons *ptr=(eos_leptons *)vptr;
   return (void *)(&(ptr->frel));
@@ -157,6 +212,30 @@ void o2scl_eos_leptons_set_frel(void *vptr, void *p_v) {
   eos_leptons *ptr=(eos_leptons *)vptr;
   o2scl::fermion_rel *p_tsot=(o2scl::fermion_rel *)p_v;
   ptr->frel=*(p_tsot);
+  return;
+}
+
+void o2scl_eos_leptons_default_acc(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->default_acc();
+  return;
+}
+
+void o2scl_eos_leptons_improved_acc(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->improved_acc();
+  return;
+}
+
+void o2scl_eos_leptons_ld_acc(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->ld_acc();
+  return;
+}
+
+void o2scl_eos_leptons_fp_25_acc(void *vptr) {
+  eos_leptons *ptr=(eos_leptons *)vptr;
+  ptr->fp_25_acc();
   return;
 }
 

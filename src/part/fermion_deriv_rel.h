@@ -49,15 +49,8 @@ namespace o2scl {
     fermion_deriv_rel_integ() {
       method=automatic;
       intl_method=by_parts;
-
-      exp_limit=200;
     }
     
-    /** \brief Limit of arguments of exponentials for Fermi functions 
-	(default 200.0)
-    */
-    fp_t exp_limit;
-
     /// The internal integration method
     int intl_method;
     
@@ -89,28 +82,28 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
-	    T*fermi_function(E,nu,T,el);
+	    T*fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
 	} else {
-          internal_fp_t Emm=E-m;
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
-	    T*fermi_function(Emm,nu,T,el);
+	    T*fermi_function(x2);
 	}
       }
       return ret;
@@ -127,25 +120,24 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*(T), E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E,nu,T,el);
+	  ret=T*(E*E+k*k)/E*fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E-m,nu,T,el);
+	  ret=T*(E*E+k*k)/E*fermi_function((E-m-nu)/T);
 	}
       }
       return ret;
@@ -162,29 +154,28 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu))*
-	    fermi_function(E,nu,T,el);
+	    fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-m-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu+m))*
-	    fermi_function(E-m,nu,T,el);
+	    fermi_function((E-m-nu)/T);
 	}
       }
       return ret;
@@ -201,25 +192,24 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=-k*k*ms/(E)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E,nu,T,el);
+	  ret=-ms*fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E-m,nu,T,el);
+	  ret=-ms*fermi_function((E-m-nu)/T);
 	}
       }
       ret*=T;
@@ -243,27 +233,26 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
-	    fermi_function(E,nu,T,el);
+	    fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
-	    fermi_function(E-m,nu,T,el);
+	    fermi_function((E-m-nu)/T);
 	}
       }
       return ret;
@@ -280,25 +269,24 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E,nu,T,el);
+	  ret=(E*E+k*k)/E*fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E-m,nu,T,el);
+	  ret=(E*E+k*k)/E*fermi_function((E-m-nu)/T);
 	}
       }
       return ret;
@@ -315,12 +303,11 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
 
       internal_fp_t E, ret;
       E=hypot(k,ms);
       if (inc_rest_mass) {
-	internal_fp_t ff=fermi_function(E,nu,T,el);
+	internal_fp_t ff=fermi_function((E-nu)/T);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
@@ -328,7 +315,7 @@ namespace o2scl {
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*nu)*ff;
 	}
       } else {
-	internal_fp_t ff=fermi_function(E-m,nu,T,el);
+	internal_fp_t ff=fermi_function((E-m-nu)/T);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu-m,2.0)/pow(T,3.0);
 	} else {
@@ -350,25 +337,24 @@ namespace o2scl {
       internal_fp_t ms=static_cast<internal_fp_t>(ms2);
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
-      internal_fp_t el=static_cast<internal_fp_t>(exp_limit);
       
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=-k*k*ms/E/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E,nu,T,el);
+	  ret=-ms*fermi_function((E-nu)/T);
 	}
       } else {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function(E,nu,T,el);
+	  internal_fp_t ff=fermi_function((E-nu)/T);
 	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function(E-m,nu,T,el);
+	  ret=-ms*fermi_function((E-m-nu)/T);
 	}
       }
       return ret;
@@ -1081,21 +1067,21 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*(E-f.nu)/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(f.nu)/T-k*k*(f.nu)/T/E)*
-	    T*fermi_function(E,f.nu,T,exp_limit);
+	    T*fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*(E-f.nu)/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(f.nu+f.m)/T-k*k*(f.nu+f.m)/T/E)*
-	    T*fermi_function(E-f.m,f.nu,T,exp_limit);
+	    T*fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;
@@ -1109,19 +1095,19 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E,f.nu,T,exp_limit);
+	  ret=T*(E*E+k*k)/E*fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function(E-f.m,f.nu,T,exp_limit);
+	  ret=T*(E*E+k*k)/E*fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;
@@ -1135,23 +1121,23 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-f.nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu))*
-	    fermi_function(E,f.nu,T,exp_limit);
+	    fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-f.m-f.nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu+f.m))*
-	    fermi_function(E-f.m,f.nu,T,exp_limit);
+	    fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;
@@ -1165,19 +1151,19 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=-k*k*f.ms/(E)/T*ff*(1.0-ff);
 	} else {
-	  ret=-f.ms*fermi_function(E,f.nu,T,exp_limit);
+	  ret=-f.ms*fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=-k*k*f.ms/(E+f.m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-f.ms*fermi_function(E-f.m,f.nu,T,exp_limit);
+	  ret=-f.ms*fermi_function((E-f.m-f.nu)/T);
 	}
       }
       ret*=T;
@@ -1198,21 +1184,21 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*(E-f.nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(f.nu)/T-k*k*(f.nu)/T/E)*
-	    fermi_function(E,f.nu,T,exp_limit);
+	    fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k*(E-f.nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(f.nu+f.m)/T-k*k*(f.nu+f.m)/T/E)*
-	    fermi_function(E-f.m,f.nu,T,exp_limit);
+	    fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;
@@ -1226,19 +1212,19 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E,f.nu,T,exp_limit);
+	  ret=(E*E+k*k)/E*fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function(E-f.m,f.nu,T,exp_limit);
+	  ret=(E*E+k*k)/E*fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;
@@ -1251,7 +1237,7 @@ namespace o2scl {
       fp_t E, ret;
       E=hypot(k,f.ms);
       if (f.inc_rest_mass) {
-	fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	fp_t ff=fermi_function((E-f.nu)/T);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
 	} else {
@@ -1259,7 +1245,7 @@ namespace o2scl {
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*f.nu)*ff;
 	}
       } else {
-	fp_t ff=fermi_function(E-f.m,f.nu,T,exp_limit);
+	fp_t ff=fermi_function((E-f.m-f.nu)/T);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-f.nu-f.m,2.0)/pow(T,3.0);
 	} else {
@@ -1278,19 +1264,19 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=-k*k*f.ms/E/T*ff*(1.0-ff);
 	} else {
-	  ret=-f.ms*fermi_function(E,f.nu,T,exp_limit);
+	  ret=-f.ms*fermi_function((E-f.nu)/T);
 	}
       } else {
 	E=hypot(k,f.ms);
 	if (intl_method==direct) {
 	  E-=f.m;
-	  fp_t ff=fermi_function(E,f.nu,T,exp_limit);
+	  fp_t ff=fermi_function((E-f.nu)/T);
 	  ret=-k*k*f.ms/(E+f.m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-f.ms*fermi_function(E-f.m,f.nu,T,exp_limit);
+	  ret=-f.ms*fermi_function((E-f.m-f.nu)/T);
 	}
       }
       return ret;

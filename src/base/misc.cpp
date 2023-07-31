@@ -193,25 +193,6 @@ std::string o2scl::binary_to_hex(std::string s) {
   return t;
 }
 
-double o2scl::bose_function(double E, double mu, double T, double limit) {
-  double ret, x=(E-mu)/T;
-  
-  if (x>limit) {
-    ret=0.0;
-  } else if (x<-limit) {
-    ret=-1.0;
-  } else if (fabs(x)<1.0e-3) {
-    double x2=x*x;
-    double x3=x2*x;
-    double x5=x3*x2;
-    double x7=x5*x2;
-    ret=1.0/x-0.5+x/12.0-x3/720.0+x5/30240.0-x7/1209600.0;
-  } else {
-    ret=1.0/(exp(x)-1.0);
-  }
-  return ret;
-}
-
 size_t o2scl::count_words(string str) {
   string st;
   istringstream *is=new istringstream(str.c_str());
