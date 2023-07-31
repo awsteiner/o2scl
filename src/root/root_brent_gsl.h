@@ -481,15 +481,6 @@ namespace o2scl {
     
   protected:
     
-    typedef boost::multiprecision::number<
-    boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
-    typedef boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
-
     /// \name The derivative objects for varying levels of precision
     //@{
     root_brent_gsl<func_t,double> rbg_d;

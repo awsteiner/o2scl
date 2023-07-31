@@ -127,6 +127,22 @@ public:
   
 };
 
+template<class type1_t> class b_class {
+  
+public:
+
+  /// An example of class data with a template type
+  type1_t y;
+  
+  // A const member function with a const reference parameter which
+  // operates on a const reference to a generic floating point type
+  template<class fp_t>
+  fp_t cmfncr_crparam(const fp_t &x, const fp_t &p) const {
+    return sin(x)-p+1.0-static_cast<fp_t>(y);
+  }
+  
+};
+
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
@@ -339,6 +355,22 @@ int main(void) {
     grb.solve_bkt(a,b,f);
     t.test_rel(a,asin(0.1),1.0e-12,
                "Const member function with const reference parameter");
+  }
+
+  // The same as above, but now, with a class template which has
+  // a member function template. In this case, we choose both
+  // the class and member function types at compile time. 
+  {
+    a=-0.9, b=0.9;
+    b_class<int> bc;
+    bc.y=1;
+    funct f=std::bind(std::mem_fn<double(const double &,
+                                         const double &) const>
+		      (&b_class<int>::cmfncr_crparam<double>),
+		      bc,std::placeholders::_1,std::cref(p));
+    grb.solve_bkt(a,b,f);
+    t.test_rel(a,asin(0.1),1.0e-12,
+               "Const member func. with const ref. param. (w/templates)");
   }
 
   // ─────────────────────────────────────────────────────────────────
