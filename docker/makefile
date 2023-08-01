@@ -88,6 +88,9 @@ build_v0.928_u23.04_py:
 push_v0.928_u23.04_py:
 	sudo docker push awsteiner/o2scl:v0.928_u23.04_py
 
+pull_v0.928_u23.04_py:
+	sudo docker pull awsteiner/o2scl:v0.928_u23.04_py
+
 # ----------------------------------------------
 # Other builds
 
