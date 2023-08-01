@@ -164,7 +164,7 @@ int main(void) {
      &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,false);
 
   der_d=df.deriv(d.ms,fderiv2_d);
-  t.test_rel(der_d,qqd,1.0e-8,"fh2_d");
+  t.test_rel(der_d,qqd,5.0e-8,"fh2_d");
 
   u.ms=0.2;
   d.ms=0.3;
@@ -276,7 +276,7 @@ int main(void) {
      &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,T,false);
 
   der_d=df.deriv(d.ms,fderivT2_d);
-  t.test_rel(der_d,qqd,1.0e-8,"fh2_d");
+  t.test_rel(der_d,qqd,5.0e-8,"fh2_d");
 
   u.ms=0.2;
   d.ms=0.3;

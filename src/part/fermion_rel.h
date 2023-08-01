@@ -1657,7 +1657,7 @@ namespace o2scl {
 	  unc.pr=f.pr*tol_expan;
 	  unc.en=f.en*tol_expan;
 	  last_method=4;
-          last_method_s="Nondeg. exp.";
+          last_method_s="nondeg. exp.";
 	  return 0;
 	}
       }
@@ -1675,7 +1675,7 @@ namespace o2scl {
 	  unc.pr=f.pr*tol_expan;
 	  unc.en=f.en*tol_expan;
 	  last_method=5;
-          last_method_s="Deg. exp.";
+          last_method_s="deg. exp.";
 	  return 0;
 	}
       }
@@ -1748,7 +1748,7 @@ namespace o2scl {
 	}
 	
 	last_method=6;
-        last_method_s="Nondeg. integrals";
+        last_method_s="nondeg. integrals";
 
       } else {
 
@@ -1845,13 +1845,13 @@ namespace o2scl {
           
 	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
-          last_method_s="Deg. integrals, lower limit positive";
+          last_method_s="deg. integrals, lower limit positive";
 	} else {
           fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
 
 	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
-          last_method_s="Deg. integrals, lower limit zero";
+          last_method_s="deg. integrals, lower limit zero";
 	}
         f.en*=prefac;
         unc.en*=prefac;
@@ -1985,7 +1985,7 @@ namespace o2scl {
           if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem",1);
           } else {
-            last_method_s+=" : Nondeg. exp.";
+            last_method_s+=" : nondeg. exp.";
           }
 	  return 0;
 	}
@@ -2005,7 +2005,7 @@ namespace o2scl {
             O2SCL_ERR("Last method problem in fermion_rel.",
                       o2scl::exc_esanity);
           } else {
-            last_method_s+=" : Deg. exp.";
+            last_method_s+=" : deg. exp.";
           }
 	  return 0;
 	}
@@ -2039,7 +2039,7 @@ namespace o2scl {
           O2SCL_ERR("Last method problem in fermion_rel.",
                     o2scl::exc_esanity);
         } else {
-          last_method_s+=" : Nondeg. integrals";
+          last_method_s+=" : nondeg. integrals";
         }
 
       } else {
@@ -2093,7 +2093,7 @@ namespace o2scl {
               O2SCL_ERR("Last method problem in fermion_rel.",
                         o2scl::exc_esanity);
             } else {
-              last_method_s+=" : Deg. integrals, lower limit positive";
+              last_method_s+=" : deg. integrals, lower limit positive";
             }
 	  } else {
             fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
@@ -2102,7 +2102,7 @@ namespace o2scl {
               O2SCL_ERR("Last method problem in fermion_rel.",
                         o2scl::exc_esanity);
             } else {
-              last_method_s+=" : Deg. integrals, lower limit zero";
+              last_method_s+=" : deg. integrals, lower limit zero";
             }
 	  }
           f.en*=prefac;
@@ -2151,7 +2151,7 @@ namespace o2scl {
 	  unc.en=tol_expan*f.en;
 	  unc.pr=tol_expan*f.pr;
 	  last_method=9;
-          last_method_s="Nondeg. exp.";
+          last_method_s="nondeg. exp.";
 	  return;
 	}
       }
@@ -2279,7 +2279,7 @@ namespace o2scl {
         }
         // If that worked, set last_method
 	last_method=2000;
-        last_method_s="default solver for pair density";
+        last_method_s="default solver pair density";
       }
         
       if (ret!=0) {
@@ -2327,7 +2327,7 @@ namespace o2scl {
             }
 	    nex=b_low;
 	    last_method=3000;
-            last_method_s="alternate solver for pair density";
+            last_method_s="alt. solver pair density";
 	  }
 	}
       }
