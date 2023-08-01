@@ -271,6 +271,8 @@ int eos_leptons::pair_density(double T) {
     ed.dndmu=fd.dndmu;
     ed.dndT=fd.dndT;
     ed.dsdT=fd.dsdT;
+    std::cout << "Here1: " << frel.last_method_s << " "
+              << fdrel.last_method << std::endl;
   }
   
   if (include_muons) {

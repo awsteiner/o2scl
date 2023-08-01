@@ -75,7 +75,7 @@ namespace o2scl {
         temperature for non-degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t density_T_fun2(internal_fp_t u, fp_t m2, fp_t ms2,
+    internal_fp_t density_T_fun(internal_fp_t u, fp_t m2, fp_t ms2,
                                 fp_t nu2, fp_t T2, bool inc_rest_mass) {
       
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -113,7 +113,7 @@ namespace o2scl {
         chemical potential for non-degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t density_mu_fun2(internal_fp_t u, fp_t m2, fp_t ms2,
+    internal_fp_t density_mu_fun(internal_fp_t u, fp_t m2, fp_t ms2,
                                  fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -121,23 +121,24 @@ namespace o2scl {
       internal_fp_t nu=static_cast<internal_fp_t>(nu2);
       internal_fp_t T=static_cast<internal_fp_t>(T2);
 
-      internal_fp_t k=u*(T), E, ret;
+      internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function((E-nu)/T);
+	  ret=T*(E*E+k*k)/E*fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
-	  E-=m;
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=k*k*ff*(1.0-ff);
 	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function((E-m-nu)/T);
+	  ret=T*(E*E+k*k)/E*fermi_function(x2);
 	}
       }
       return ret;
@@ -147,7 +148,7 @@ namespace o2scl {
         temperature for non-degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t entropy_T_fun2(internal_fp_t u, fp_t m2, fp_t ms2,
+    internal_fp_t entropy_T_fun(internal_fp_t u, fp_t m2, fp_t ms2,
                                 fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -158,24 +159,26 @@ namespace o2scl {
       internal_fp_t k=u*T, E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu))*
-	    fermi_function((E-nu)/T);
+	    fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
 	  ret=(E-m-nu)/E/T*
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu+m))*
-	    fermi_function((E-m-nu)/T);
+	    fermi_function(x2);
 	}
       }
       return ret;
@@ -185,7 +188,7 @@ namespace o2scl {
         effective mass for non-degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t density_ms_fun2(internal_fp_t u, fp_t m2, fp_t ms2,
+    internal_fp_t density_ms_fun(internal_fp_t u, fp_t m2, fp_t ms2,
                                  fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -215,7 +218,6 @@ namespace o2scl {
       ret*=T;
       return ret;
     }
-
     //@}
 
     /** \name The integrands, as a function of momentum, for the 
@@ -226,7 +228,7 @@ namespace o2scl {
         temperature for degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t deg_density_T_fun2(internal_fp_t k, fp_t m2, fp_t ms2,
+    internal_fp_t deg_density_T_fun(internal_fp_t k, fp_t m2, fp_t ms2,
                                 fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -237,22 +239,24 @@ namespace o2scl {
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
-	    fermi_function((E-nu)/T);
+	    fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
-	    fermi_function((E-m-nu)/T);
+	    fermi_function(x2);
 	}
       }
       return ret;
@@ -262,7 +266,7 @@ namespace o2scl {
         chemical potential for degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t deg_density_mu_fun2(internal_fp_t k, fp_t m2, fp_t ms2,
+    internal_fp_t deg_density_mu_fun(internal_fp_t k, fp_t m2, fp_t ms2,
                                 fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -273,20 +277,22 @@ namespace o2scl {
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function((E-nu)/T);
+	  ret=(E*E+k*k)/E*fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=k*k/T*ff*(1.0-ff);
 	} else {
-	  ret=(E*E+k*k)/E*fermi_function((E-m-nu)/T);
+	  ret=(E*E+k*k)/E*fermi_function(x2);
 	}
       }
       return ret;
@@ -296,7 +302,7 @@ namespace o2scl {
         temperature for degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t deg_entropy_T_fun2(internal_fp_t k, fp_t m2, fp_t ms2,
+    internal_fp_t deg_entropy_T_fun(internal_fp_t k, fp_t m2, fp_t ms2,
                                 fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -307,7 +313,8 @@ namespace o2scl {
       internal_fp_t E, ret;
       E=hypot(k,ms);
       if (inc_rest_mass) {
-	internal_fp_t ff=fermi_function((E-nu)/T);
+        internal_fp_t x=(E-nu)/T;
+	internal_fp_t ff=fermi_function(x);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
 	} else {
@@ -315,7 +322,8 @@ namespace o2scl {
 	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*nu)*ff;
 	}
       } else {
-	internal_fp_t ff=fermi_function((E-m-nu)/T);
+        internal_fp_t x2=(E-m-nu)/T;
+	internal_fp_t ff=fermi_function(x2);
 	if (intl_method==direct) {
 	  ret=k*k*ff*(1.0-ff)*pow(E-nu-m,2.0)/pow(T,3.0);
 	} else {
@@ -330,7 +338,7 @@ namespace o2scl {
         effective mass for degenerate particles
      */
     template<class internal_fp_t>
-    internal_fp_t deg_density_ms_fun2(internal_fp_t k, fp_t m2, fp_t ms2,
+    internal_fp_t deg_density_ms_fun(internal_fp_t k, fp_t m2, fp_t ms2,
                                      fp_t nu2, fp_t T2, bool inc_rest_mass) {
 
       internal_fp_t m=static_cast<internal_fp_t>(m2);
@@ -341,20 +349,22 @@ namespace o2scl {
       internal_fp_t E, ret;
       if (inc_rest_mass) {
 	E=hypot(k,ms);
+        internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x);
 	  ret=-k*k*ms/E/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function((E-nu)/T);
+	  ret=-ms*fermi_function(x);
 	}
       } else {
 	E=hypot(k,ms);
+        internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  E-=m;
-	  internal_fp_t ff=fermi_function((E-nu)/T);
+	  internal_fp_t ff=fermi_function(x2);
 	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
 	} else {
-	  ret=-ms*fermi_function((E-m-nu)/T);
+	  ret=-ms*fermi_function(x2);
 	}
       }
       return ret;
@@ -612,6 +622,7 @@ namespace o2scl {
       verify_ti=false;
 
       verbose=0;
+      multip=false;
     }
   
     virtual ~fermion_deriv_rel_tl() {
@@ -643,6 +654,9 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
+    /// If true, use multiprecision to improve the integrations
+    bool multip;
+    
     /** \brief An integer indicating the last numerical method used
 
 	The function \ref calc_mu() sets this integer to a two-digit
@@ -670,12 +684,18 @@ namespace o2scl {
 
     */
     int last_method;
+
+    /// String detailing last method used
+    std::string last_method_s;
     
     /** \brief If true, call the error handler when convergence 
 	fails (default true)
     */
     bool err_nonconv;
 
+    /// Multiprecision integrator
+    inte_multip_double_exp_boost<> it_multip;
+    
     /** \brief Calculate properties as function of chemical potential
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
@@ -717,6 +737,13 @@ namespace o2scl {
 	  unc.dsdT=f.dsdT*1.0e-14;
 	  unc.dndmu=f.dndmu*1.0e-14;
 	  last_method+=1;
+          /*
+            if (last_method_s.length()>200) {
+            O2SCL_ERR("Last method problem (1)",o2scl::exc_esanity);
+            } else {
+            last_method_s+=" : Nondeg. exp.";
+            }
+          */
 	  return 0;
 	}
       }
@@ -737,6 +764,13 @@ namespace o2scl {
 	  unc.dsdT=f.dsdT*1.0e-14;
 	  unc.dndmu=f.dndmu*1.0e-14;
 	  last_method+=2;
+          /*
+            if (last_method_s.length()>200) {
+            O2SCL_ERR("Last method problem (2)",o2scl::exc_esanity);
+            } else {
+            last_method_s+=" : Deg. exp.";
+            }
+          */
 	  return 0;
 	}
       }
@@ -747,76 +781,125 @@ namespace o2scl {
 	if (this->method==this->automatic) {
 	  this->intl_method=this->by_parts;
 	  last_method+=3;
+          /*
+            if (last_method_s.length()>200) {
+            O2SCL_ERR("Last method problem (3)",o2scl::exc_esanity);
+            } else {
+            last_method_s+=" : Nondeg. integ. (automatic)";
+            }
+          */
 	} else {
 	  this->intl_method=this->method;
 	  last_method+=4;
+          /*
+          if (last_method_s.length()>200) {
+            O2SCL_ERR("Last method problem (4)",o2scl::exc_esanity);
+          } else {
+            if (this->method==this->by_parts) {
+              last_method_s+=" : Nondeg. integ. (by parts)";
+            } else {
+              last_method_s+=" : Nondeg. integ. (direct)";
+            }
+          }
+          */
 	}
-
-        if (false) {
-          fp_t zero=0, res=0, err=0, tol_rel=0;
-          inte_multip_double_exp_boost<> it;
-          int ix=it.integ_iu_err_multip
+        
+        if (multip==true) {
+          
+          fp_t zero=0, tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
             ([this,f,temper](auto &&k) mutable {
-              return this->density_T_fun2(k,f.m,f.ms,f.nu,temper,
-                                          f.inc_rest_mass); },
-              zero,res,err,tol_rel);
+              return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                         f.inc_rest_mass); },
+              zero,f.dndT,unc.dndT,tol_rel);
+          
+        } else {
+        
+          // The non-degenerate case
+          
+          funct density_T_fun_f=[this,f,temper](double k) -> double
+          { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                        f.inc_rest_mass); };
+          /*
+            funct density_T_fun_f=
+            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,
+            fp_t>::density_T_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          iret=nit->integ_iu_err(density_T_fun_f,0.0,f.dndT,unc.dndT);
+          if (iret!=0) {
+            O2SCL_ERR2("dndT integration (ndeg) failed in ",
+                       "fermion_deriv_rel::calc_mu().",
+                       exc_efailed);
+          }
+
+        }
+        f.dndT*=prefac;
+        unc.dndT*=prefac;
+
+        if (multip==true) {
+          
+          fp_t zero=0, tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,f,temper](auto &&k) mutable {
+              return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
+                                           f.inc_rest_mass); },
+              zero,f.dndmu,unc.dndmu,tol_rel);
+          
+        } else {
+          
+          funct density_mu_fun_f=[this,f,temper](double k) -> double
+          { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
+                                         f.inc_rest_mass); };
+          /*
+            funct density_mu_fun_f=
+            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,
+            fp_t>::density_mu_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
+          if (iret!=0) {
+            O2SCL_ERR2("dndmu integration (ndeg) failed in ",
+                       "fermion_deriv_rel::calc_mu().",
+                       exc_efailed);
+          }
+
         }
         
-        // The non-degenerate case
-        
-        funct density_T_fun_f=[this,f,temper](double k) -> double
-        { return this->density_T_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-          funct density_T_fun_f=
-	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-          (&fermion_deriv_rel_tl<fermion_deriv_t,
-          fp_t>::density_T_fun),
-          this,std::placeholders::_1,std::ref(f),temper);
-        */
-        iret=nit->integ_iu_err(density_T_fun_f,0.0,f.dndT,unc.dndT);
-	if (iret!=0) {
-	  O2SCL_ERR2("dndT integration (ndeg) failed in ",
-		     "fermion_deriv_rel::calc_mu().",
-		     exc_efailed);
-	}
-	f.dndT*=prefac;
-	unc.dndT*=prefac;
-
-        funct density_mu_fun_f=[this,f,temper](double k) -> double
-        { return this->density_mu_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-          funct density_mu_fun_f=
-	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-          (&fermion_deriv_rel_tl<fermion_deriv_t,
-          fp_t>::density_mu_fun),
-          this,std::placeholders::_1,std::ref(f),temper);
-        */
-	iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
-	if (iret!=0) {
-	  O2SCL_ERR2("dndmu integration (ndeg) failed in ",
-		     "fermion_deriv_rel::calc_mu().",
-		     exc_efailed);
-	}
 	f.dndmu*=prefac;
 	unc.dndmu*=prefac;
     
-        funct entropy_T_fun_f=[this,f,temper](double k) -> double
-        { return this->entropy_T_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-	funct entropy_T_fun_f=
-	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-		    (&fermion_deriv_rel_tl<fermion_deriv_t,
-		     fp_t>::entropy_T_fun),
-		    this,std::placeholders::_1,std::ref(f),temper);
-        */
-	iret=nit->integ_iu_err(entropy_T_fun_f,0.0,f.dsdT,unc.dsdT);
-	if (iret!=0) {
-	  O2SCL_ERR2("dsdT integration (ndeg) failed in ",
-		     "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);
-	}
+        if (multip==true) {
+          
+          fp_t zero=0, tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,f,temper](auto &&k) mutable {
+              return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
+                                          f.inc_rest_mass); },
+              zero,f.dsdT,unc.dsdT,tol_rel);
+          
+        } else {
+          
+          funct entropy_T_fun_f=[this,f,temper](double k) -> double
+          { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
+                                        f.inc_rest_mass); };
+          /*
+            funct entropy_T_fun_f=
+            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,
+            fp_t>::entropy_T_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          iret=nit->integ_iu_err(entropy_T_fun_f,0.0,f.dsdT,unc.dsdT);
+          if (iret!=0) {
+            O2SCL_ERR2("dsdT integration (ndeg) failed in ",
+                       "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);
+          }
+
+        }
+        
 	f.dsdT*=prefac;
 	unc.dsdT*=prefac;
 
@@ -866,81 +949,190 @@ namespace o2scl {
 	      (f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
 	    this->intl_method=this->direct;
 	    last_method+=5;
+            /*
+            if (last_method_s.length()>200) {
+              O2SCL_ERR("Last method problem (5)",o2scl::exc_esanity);
+            } else {
+              last_method_s+=" : Deg. integ. (automatic: direct)";
+            }
+            */
 	  } else {
 	    this->intl_method=this->by_parts;
 	    last_method+=6;
+            /*
+            if (last_method_s.length()>200) {
+              O2SCL_ERR("Last method problem (6)",o2scl::exc_esanity);
+            } else {
+              last_method_s+=" : Deg. integ. (by_parts)";
+            }
+            */
 	  }
 	} else {
 	  this->intl_method=this->method;
 	  last_method+=7;
+          /*
+            if (last_method_s.length()>200) {
+            O2SCL_ERR("Last method problem (7)",o2scl::exc_esanity);
+            } else {
+            if (this->method==this->by_parts) {
+            last_method_s+=" : Deg. integ. (by_parts)";
+            } else {
+            last_method_s+=" : Deg. integ. (direct)";
+            }
+            }
+          */
 	}
+        
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
 
-        funct deg_density_mu_fun_f=[this,f,temper](double k) -> double
-        { return this->deg_density_mu_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-	funct deg_density_mu_fun_f=
-	  std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-		    (&fermion_deriv_rel_tl<fermion_deriv_t,
-		     fp_t>::deg_density_mu_fun),
-		    this,std::placeholders::_1,std::ref(f),temper);
-        */
-	if (this->intl_method==this->direct && ll>0.0) {
-	  iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
-			      f.dndmu,unc.dndmu);
-	} else {
-	  iret=dit->integ_err(deg_density_mu_fun_f,0.0,ul,
-			      f.dndmu,unc.dndmu);
-	}
-	if (iret!=0) {
-	  O2SCL_ERR2("dndmu integration (deg) failed in ",
-		     "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
-		     exc_efailed);
-	}
+          if (this->intl_method==this->direct && ll>0.0) {
+
+            fp_t zero=0;
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                zero,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          } else {
+            
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                ll,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          }
+          
+        } else {
+          
+          funct deg_density_mu_fun_f=[this,f,temper](double k) -> double
+          { return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
+                                             f.inc_rest_mass); };
+          /*
+            funct deg_density_mu_fun_f=
+            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,
+            fp_t>::deg_density_mu_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          if (this->intl_method==this->direct && ll>0.0) {
+            iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
+                                f.dndmu,unc.dndmu);
+          } else {
+            iret=dit->integ_err(deg_density_mu_fun_f,0.0,ul,
+                                f.dndmu,unc.dndmu);
+          }
+          if (iret!=0) {
+            O2SCL_ERR2("dndmu integration (deg) failed in ",
+                       "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+                       exc_efailed);
+          }
+
+        }
+        
 	f.dndmu*=prefac;
 	unc.dndmu*=prefac;
     
-        funct deg_density_T_fun_f=[this,f,temper](double k) -> double
-        { return this->deg_density_T_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-	funct deg_density_T_fun_f=std::bind
-	  (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-	   (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_density_T_fun),
-	   this,std::placeholders::_1,std::ref(f),temper);
-        */
-	if (this->intl_method==this->direct && ll>0.0) {
-	  iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,unc.dndT);
-	} else {
-	  iret=dit->integ_err(deg_density_T_fun_f,0.0,ul,f.dndT,unc.dndT);
-	}
-	if (iret!=0) {
-	  O2SCL_ERR2("dndT integration (deg) failed in ",
-		     "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
-		     exc_efailed);
-	}
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+
+          if (this->intl_method==this->direct && ll>0.0) {
+
+            fp_t zero=0;
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                zero,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          } else {
+            
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                ll,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          }
+
+        } else {
+          
+          funct deg_density_T_fun_f=[this,f,temper](double k) -> double
+          { return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                            f.inc_rest_mass); };
+          /*
+            funct deg_density_T_fun_f=std::bind
+            (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_density_T_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          if (this->intl_method==this->direct && ll>0.0) {
+            iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,unc.dndT);
+          } else {
+            iret=dit->integ_err(deg_density_T_fun_f,0.0,ul,f.dndT,unc.dndT);
+          }
+          if (iret!=0) {
+            O2SCL_ERR2("dndT integration (deg) failed in ",
+                       "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+                       exc_efailed);
+          }
+
+        }
+        
 	f.dndT*=prefac;
 	unc.dndT*=prefac;
 
-        funct deg_entropy_T_fun_f=[this,f,temper](double k) -> double
-        { return this->deg_entropy_T_fun2(k,f.m,f.ms,f.nu,temper,
-                                      f.inc_rest_mass); };
-        /*
-	funct deg_entropy_T_fun_f=std::bind
-	  (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-	   (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_entropy_T_fun),
-	   this,std::placeholders::_1,std::ref(f),temper);
-        */
-	if (this->intl_method==this->direct && ll>0.0) {
-	  iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,unc.dsdT);
-	} else {
-	  iret=dit->integ_err(deg_entropy_T_fun_f,0.0,ul,f.dsdT,unc.dsdT);
-	}
-	if (iret!=0) {
-	  O2SCL_ERR2("dsdT integration (deg) failed in ",
-		     "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
-		     exc_efailed);
-	}
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+
+          if (this->intl_method==this->direct && ll>0.0) {
+
+            fp_t zero=0;
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                zero,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          } else {
+            
+            int ix=it_multip.integ_err_multip
+              ([this,f,temper](auto &&k) mutable {
+                return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
+                                                 f.inc_rest_mass); },
+                ll,ul,f.dndmu,unc.dndmu,tol_rel);
+
+          }
+
+        } else {
+
+          funct deg_entropy_T_fun_f=[this,f,temper](double k) -> double
+          { return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
+                                            f.inc_rest_mass); };
+          /*
+            funct deg_entropy_T_fun_f=std::bind
+            (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
+            (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_entropy_T_fun),
+            this,std::placeholders::_1,std::ref(f),temper);
+          */
+          if (this->intl_method==this->direct && ll>0.0) {
+            iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,unc.dsdT);
+          } else {
+            iret=dit->integ_err(deg_entropy_T_fun_f,0.0,ul,f.dsdT,unc.dsdT);
+          }
+          if (iret!=0) {
+            O2SCL_ERR2("dsdT integration (deg) failed in ",
+                       "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+        
 	f.dsdT*=prefac;
 	unc.dsdT*=prefac;
 
@@ -952,6 +1144,7 @@ namespace o2scl {
 		   exc_efailed);
       }
       f.pr=-f.ed+temper*f.en+f.nu*f.n;
+      
       // Pressure uncertainties are not computed
       unc.pr=0.0;
 
@@ -966,12 +1159,20 @@ namespace o2scl {
   
       nu_from_n(f,temper);
       int lm=last_method;
+      std::string stmp=last_method_s;
   
       if (f.non_interacting) { f.mu=f.nu; }
 
       calc_mu(f,temper);
       last_method+=lm;
-
+      /*
+      if (last_method_s.length()>200) {
+        O2SCL_ERR("Last method problem (8)",o2scl::exc_esanity);
+      } else {
+        last_method_s=stmp+" : "+last_method_s;
+      }
+      */
+      
       return 0;
     }
 
@@ -986,8 +1187,17 @@ namespace o2scl {
 
       calc_mu(f,temper);
       int lm=last_method*100;
+      std::string stmp=last_method_s;
+      
       calc_mu(antip,temper);
       last_method+=lm;
+      /*
+      if (last_method_s.length()>200) {
+        O2SCL_ERR("Last method problem (9)",o2scl::exc_esanity);
+      } else {
+        last_method_s=stmp+" : "+last_method_s;
+      }
+      */
 
       f.n-=antip.n;
       f.pr+=antip.pr;
@@ -1017,6 +1227,13 @@ namespace o2scl {
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
       int ret=fr.nu_from_n(f,temper);
       last_method=fr.last_method*100;
+      /*
+        if (last_method_s.length()>200) {
+        O2SCL_ERR("Last method problem (10)",o2scl::exc_esanity);
+        } else {
+        last_method_s+=" : "+fr.last_method_s;
+        }
+      */
       return ret;
     }
   
@@ -1055,9 +1272,6 @@ namespace o2scl {
 
   protected:
 
-    /// The internal integration method (now in parent)
-    //int this->intl_method;
-
     /// The integrator for non-degenerate fermions
     inte<> *nit;
 
@@ -1066,235 +1280,6 @@ namespace o2scl {
 
     /// The solver for calc_density() and pair_density()
     root<> *density_root;
-
-    /** \name The integrands, as a function of \f$ u=k/T \f$, for 
-	non-degenerate integrals
-    */
-    //@{
-    /** \brief Integrand for derivative of density with respect to
-        temperature for non-degenerate particles
-     */
-    fp_t density_T_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
-      fp_t k=u*(T), E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*(E-f.nu)/T*ff*(1.0-ff);
-	} else {
-	  ret=(2.0*k*k/T+E*E/T-E*(f.nu)/T-k*k*(f.nu)/T/E)*
-	    T*fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*(E-f.nu)/T*ff*(1.0-ff);
-	} else {
-	  ret=(2.0*k*k/T+E*E/T-E*(f.nu+f.m)/T-k*k*(f.nu+f.m)/T/E)*
-	    T*fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-
-    /** \brief Integrand for derivative of density with respect to
-        chemical potential for non-degenerate particles
-     */
-    fp_t density_mu_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
-      fp_t k=u*(T), E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*ff*(1.0-ff);
-	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*ff*(1.0-ff);
-	} else {
-	  ret=T*(E*E+k*k)/E*fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-    
-    /** \brief Integrand for derivative of entropy with respect to
-        temperature for non-degenerate particles
-     */
-    fp_t entropy_T_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
-      fp_t k=u*T, E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=T*k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
-	} else {
-	  ret=(E-f.nu)/E/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu))*
-	    fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=T*k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
-	} else {
-	  ret=(E-f.m-f.nu)/E/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu+f.m))*
-	    fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-
-    /** \brief Integrand for derivative of density with respect to
-        effective mass for non-degenerate particles
-     */
-    fp_t density_ms_fun(fp_t u, fermion_deriv_t &f, fp_t T) {
-      fp_t k=u*T, E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=-k*k*f.ms/(E)/T*ff*(1.0-ff);
-	} else {
-	  ret=-f.ms*fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=-k*k*f.ms/(E+f.m)/T*ff*(1.0-ff);
-	} else {
-	  ret=-f.ms*fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      ret*=T;
-      return ret;
-    }
-
-    //@}
-
-    /** \name The integrands, as a function of momentum, for the 
-	degenerate integrals
-    */
-    //@{
-    /** \brief Integrand for derivative of density with respect to
-        temperature for degenerate particles
-     */
-    fp_t deg_density_T_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
-      fp_t E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*(E-f.nu)/T/T*ff*(1.0-ff);
-	} else {
-	  ret=(2.0*k*k/T+E*E/T-E*(f.nu)/T-k*k*(f.nu)/T/E)*
-	    fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k*(E-f.nu)/T/T*ff*(1.0-ff);
-	} else {
-	  ret=(2.0*k*k/T+E*E/T-E*(f.nu+f.m)/T-k*k*(f.nu+f.m)/T/E)*
-	    fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-
-    /** \brief Integrand for derivative of density with respect to
-        chemical potential for degenerate particles
-     */
-    fp_t deg_density_mu_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
-      fp_t E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k/T*ff*(1.0-ff);
-	} else {
-	  ret=(E*E+k*k)/E*fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=k*k/T*ff*(1.0-ff);
-	} else {
-	  ret=(E*E+k*k)/E*fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-
-    /** \brief Integrand for derivative of entropy with respect to
-        temperature for degenerate particles
-     */
-    fp_t deg_entropy_T_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
-      fp_t E, ret;
-      E=hypot(k,f.ms);
-      if (f.inc_rest_mass) {
-	fp_t ff=fermi_function((E-f.nu)/T);
-	if (this->intl_method==this->direct) {
-	  ret=k*k*ff*(1.0-ff)*pow(E-f.nu,2.0)/pow(T,3.0);
-	} else {
-	  ret=(E-f.nu)/E/T/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*f.nu)*ff;
-	}
-      } else {
-	fp_t ff=fermi_function((E-f.m-f.nu)/T);
-	if (this->intl_method==this->direct) {
-	  ret=k*k*ff*(1.0-ff)*pow(E-f.nu-f.m,2.0)/pow(T,3.0);
-	} else {
-	  ret=(E-f.m-f.nu)/E/T/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(f.nu+f.m))*ff;
-	}
-      }
-      return ret;
-    }
-
-    /** \brief Integrand for derivative of density with respect to
-        effective mass for degenerate particles
-     */
-    fp_t deg_density_ms_fun(fp_t k, fermion_deriv_t &f, fp_t T) {
-      fp_t E, ret;
-      if (f.inc_rest_mass) {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=-k*k*f.ms/E/T*ff*(1.0-ff);
-	} else {
-	  ret=-f.ms*fermi_function((E-f.nu)/T);
-	}
-      } else {
-	E=hypot(k,f.ms);
-	if (this->intl_method==this->direct) {
-	  E-=f.m;
-	  fp_t ff=fermi_function((E-f.nu)/T);
-	  ret=-k*k*f.ms/(E+f.m)/T*ff*(1.0-ff);
-	} else {
-	  ret=-f.ms*fermi_function((E-f.m-f.nu)/T);
-	}
-      }
-      return ret;
-    }
-    
-    //@}
 
   };
 
