@@ -117,7 +117,7 @@ namespace o2scl {
     }
     
   };
-  
+
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
   typedef fermion_tl<boost::multiprecision::number<
@@ -132,9 +132,9 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<100> > >
   fermion_cdf100;
-  
+
 #ifdef O2SCL_MPFR
-  
+
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<25> > >
   fermion_mpfr25;
@@ -147,7 +147,7 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<100> > >
   fermion_mpfr100;
-  
+
 #endif
   
   /** \brief Fermion properties at zero temperature

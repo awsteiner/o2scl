@@ -192,6 +192,14 @@ int main(void) {
 
   cout << ter.str_len(ter.bold()) << endl;
 
+  for(double xx=700.0;xx<720.0;xx+=1.0) {
+    cout << xx << " " << dtos(bose_function(xx),0) << endl;
+  }
+  for(double xx=-40.0;xx<-0.0;xx+=1.0) {
+    cout << xx << " " << dtos(bose_function(xx),0) << endl;
+  }
+  cout << log(numeric_limits<double>::epsilon()) << endl;
+  
   t.report();
 
   return 0;

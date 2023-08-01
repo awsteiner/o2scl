@@ -56,35 +56,54 @@ namespace o2scl {
   //@{
   /** \brief Calculate a Fermi-Dirac distribution function safely
       
-      \f$ \left[1+\exp\left(E/T-\mu/T\right)\right]^{-1} \f$ 
+      This calculates a Fermi-Dirac distribution function
+
+      \f$ \left(1+\exp x\right)^{-1} \f$ 
       
-      This calculates a Fermi-Dirac distribution function guaranteeing
-      that numbers larger than \f$ \exp(\mathrm{limit}) \f$ and
-      smaller than \f$ \exp(-\mathrm{limit}) \f$ will be avoided. The
-      default value of <tt>limit=40</tt> ensures accuracy to within 1
-      part in \f$ 10^{17} \f$ compared to the maximum of the
-      distribution (which is unity).
-      
-      Note that this function may return Inf or NAN if \c limit is too 
-      large, depending on the machine precision.
+      \note While this function tries to avoid this, this function may
+      return Inf or NAN if the argument is too large large, depending
+      on the machine precision.
   */
-  double fermi_function(double E, double mu, double T, double limit=40.0);
+  template<class fp_t>
+  fp_t fermi_function(fp_t x) {
+    fp_t ret;
+    
+    if (x>log(std::numeric_limits<fp_t>::max())) {
+      ret=0;
+    } else if (x<log(std::numeric_limits<fp_t>::epsilon())) {
+      ret=1;
+    } else {
+      ret=1/(1+exp(x));
+    }
+    return ret;
+  }    
   
   /** \brief Calculate a Bose-Einstein distribution function safely
 
-      \f$ \left[\exp\left(E/T-\mu/T\right)-1\right]^{-1} \f$ 
-
       This function computes a Bose-Einstein distribution function
-      using an expansion to ensure accurate results when 
-      \f$ (E-\mu)/T \f$ is near zero. 
 
-      \note This function may return Inf or NAN if \c limit is too 
-      large, depending on the machine precision.
+      \f$ \left(\exp x-1\right)^{-1} \f$ 
+
+      \note While this function tries to avoid this, this function may
+      return Inf or NAN if the argument is too large large, depending
+      on the machine precision.
       
       This function is used in the <tt>o2scl::boson_rel</tt> class
       in \o2p . 
   */
-  double bose_function(double E, double mu, double T, double limit=40.0);
+  template<class fp_t>
+  fp_t bose_function(fp_t x) {
+    fp_t ret;
+
+    if (x>log(std::numeric_limits<fp_t>::max())) {
+      ret=0;
+    } else if (x<log(std::numeric_limits<fp_t>::epsilon())) {
+      ret=-1;
+    } else {
+      ret=1/expm1(x);
+    }
+    return ret;
+  }
 
   /** \brief Store the first line from the output of the shell
       command \c cmd up to \c nmax characters in \c result
