@@ -686,6 +686,9 @@ namespace o2scl {
     */
     bool err_nonconv;
 
+    /// Multiprecision integrator
+    inte_multip_double_exp_boost<> it_multip;
+    
     /** \brief Calculate properties as function of chemical potential
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
@@ -992,7 +995,6 @@ namespace o2scl {
                          "fermion_deriv_rel::calc_mu().",
                          exc_efailed);
             }
-
           }
           
         } else {
