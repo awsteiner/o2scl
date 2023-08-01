@@ -829,8 +829,8 @@ double eos_quark_njl::integ_qq(double x, double temper, double mu,
 
   double en=sqrt(x*x+ms*ms);
   double ret=1.0;
-  ret-=fermi_function(en,mu,temper,limit)+
-    fermi_function(en,-mu,temper,limit);
+  ret-=fermi_function((en-mu)/temper)+
+    fermi_function((en+mu)/temper);
   ret*=-3.0*x*x/en/pi2*ms;
   ret+=1.0;
   return ret;
@@ -840,8 +840,8 @@ double eos_quark_njl::integ_density(double x, double temper, double mu,
                                     double m, double ms) {
 
   double en=sqrt(x*x+ms*ms);
-  double ret=fermi_function(en,mu,temper,limit)-
-    fermi_function(en,-mu,temper,limit);
+  double ret=fermi_function((en-mu)/temper)-
+    fermi_function((en+mu)/temper);
   ret*=3.0*x*x/pi2;
   ret+=1.0;
   return ret;
@@ -852,8 +852,8 @@ double eos_quark_njl::integ_edensity(double x, double temper, double mu,
 
   double en=sqrt(x*x+ms*ms);
   double ret=-en;
-  ret+=en*fermi_function(en,mu,temper,limit)+
-    en*fermi_function(en,-mu,temper,limit);
+  ret+=en*fermi_function((en-mu)/temper)+
+    en*fermi_function((en+mu)/temper);
   ret*=3.0/pi2*x*x;
   return ret;
 }
