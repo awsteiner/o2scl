@@ -54,13 +54,17 @@ int main(void) {
 
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
+  elep.pair_mu(0.1);
   cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.e.n,0) << " ";
   cout << dtos(elep.ed.dndmu,0) << endl;
   
   elep.improved_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
+  elep.pair_mu(0.1);
   cout << dtos(elep.e.mu,0) << " ";
+  cout << dtos(elep.e.n,0) << " ";
   cout << dtos(elep.ed.dndmu,0) << endl;
 
   elep.include_muons=false;
