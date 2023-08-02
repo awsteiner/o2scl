@@ -69,7 +69,6 @@ int main(void) {
 
   elep.ld_acc();
   elep.e.n=1.0e-6;
-  elep.frel_ld.verbose=2;
   elep.pair_density(0.1);
   elep.pair_mu(0.1);
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
