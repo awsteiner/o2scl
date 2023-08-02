@@ -1926,7 +1926,7 @@ namespace o2scl {
       }
       if (temper==0.0) {
 	last_method=40;
-        last_method_s="T=0 result from density";
+        last_method_s="T=0 result in calc_density";
 	this->calc_density_zerot(f);
 	return 0;
       }
@@ -1985,7 +1985,7 @@ namespace o2scl {
           if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem",1);
           } else {
-            last_method_s+=" : nondeg. exp.";
+            last_method_s+=" : nondeg. exp. in calc_density";
           }
 	  return 0;
 	}
@@ -2005,7 +2005,7 @@ namespace o2scl {
             O2SCL_ERR("Last method problem in fermion_rel.",
                       o2scl::exc_esanity);
           } else {
-            last_method_s+=" : deg. exp.";
+            last_method_s+=" : deg. exp. in calc_density";
           }
 	  return 0;
 	}
@@ -2039,7 +2039,7 @@ namespace o2scl {
           O2SCL_ERR("Last method problem in fermion_rel.",
                     o2scl::exc_esanity);
         } else {
-          last_method_s+=" : nondeg. integrals";
+          last_method_s+=" : nondeg. integrals in calc_density";
         }
 
       } else {
@@ -2093,7 +2093,8 @@ namespace o2scl {
               O2SCL_ERR("Last method problem in fermion_rel.",
                         o2scl::exc_esanity);
             } else {
-              last_method_s+=" : deg. integrals, lower limit positive";
+              last_method_s+=((std::string)" : deg. integrals, lower limit ")+
+                "positive in calc_density";
             }
 	  } else {
             fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
@@ -2102,7 +2103,8 @@ namespace o2scl {
               O2SCL_ERR("Last method problem in fermion_rel.",
                         o2scl::exc_esanity);
             } else {
-              last_method_s+=" : deg. integrals, lower limit zero";
+              last_method_s+=((std::string)" : deg. integrals, lower limit ")+
+                "zero in calc_density";
             }
 	  }
           f.en*=prefac;
@@ -2151,7 +2153,7 @@ namespace o2scl {
 	  unc.en=tol_expan*f.en;
 	  unc.pr=tol_expan*f.pr;
 	  last_method=9;
-          last_method_s="nondeg. exp.";
+          last_method_s="nondeg. exp. in pair_mu";
 	  return;
 	}
       }
@@ -2177,7 +2179,7 @@ namespace o2scl {
         O2SCL_ERR("Last method problem in fermion_rel.",
                   o2scl::exc_esanity);
       } else {
-        last_method_s=stmp+" : "+last_method_s;
+        last_method_s="part. "+stmp+" : antipart. "+last_method_s;
       }
 
       // Add up thermodynamic quantities
@@ -2247,7 +2249,7 @@ namespace o2scl {
         }
 	this->calc_density_zerot(f);
 	last_method=1000;
-        last_method_s="T=0 result for pair density.";
+        last_method_s="T=0 result in pair_density";
 	return success;
       }
 
@@ -2279,7 +2281,7 @@ namespace o2scl {
         }
         // If that worked, set last_method
 	last_method=2000;
-        last_method_s="default solver pair density";
+        last_method_s="default solver in pair_density";
       }
         
       if (ret!=0) {
@@ -2327,7 +2329,7 @@ namespace o2scl {
             }
 	    nex=b_low;
 	    last_method=3000;
-            last_method_s="alt. solver pair density";
+            last_method_s="alt. solver in pair_density";
 	  }
 	}
       }
@@ -2375,7 +2377,7 @@ namespace o2scl {
         O2SCL_ERR("Last method problem in fermion_rel.",
                   o2scl::exc_esanity);
       } else {
-        last_method_s+=stmp+" : "+last_method_s;
+        last_method_s="pair_density: "+stmp+" : calc_mu: "+last_method_s;
       }
 
       if (false && fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
