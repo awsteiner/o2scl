@@ -299,9 +299,35 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   if (true) {
 
     elep.include_muons=include_muons;
+    elep.include_photons=true;
     elep.e.mu=mue;
     elep.e.n=nB*Ye/2.0;
     elep.pair_density_eq(nB*Ye,TMeV/hc_mev_fm);
+
+    // AWS 8/2/23: it's confusing if this information isn't
+    // copied to the electron and muon objects, since this
+    // is the way this function used to work.
+    
+    electron.n=elep.e.n;
+    electron.mu=elep.e.mu;
+    electron.en=elep.e.en;
+    electron.pr=elep.e.pr;
+    electron.ed=elep.e.ed;
+
+    photon.n=elep.ph.n;
+    photon.mu=elep.ph.mu;
+    photon.en=elep.ph.en;
+    photon.pr=elep.ph.pr;
+    photon.ed=elep.ph.ed;
+    
+    muon.n=elep.mu.n;
+    muon.mu=elep.mu.mu;
+    muon.en=elep.mu.en;
+    muon.pr=elep.mu.pr;
+    muon.ed=elep.mu.ed;
+
+    mue=elep.e.mu;
+    
     th=elep.th;
     
   } else { 
