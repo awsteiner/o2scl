@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <o2scl/eos_base.h>
+#include <o2scl/eos_leptons.h>
 
 using namespace std;
 using namespace o2scl;

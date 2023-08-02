@@ -352,10 +352,6 @@ void *o2scl_create_fermion_deriv_rel();
 
 void o2scl_free_fermion_deriv_rel(void *vptr);
 
-double o2scl_fermion_deriv_rel_get_exp_limit(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_exp_limit(void *vptr, double v);
-
 double o2scl_fermion_deriv_rel_get_deg_limit(void *vptr);
 
 void o2scl_fermion_deriv_rel_set_deg_limit(void *vptr, double v);

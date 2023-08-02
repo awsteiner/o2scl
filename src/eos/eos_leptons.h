@@ -23,8 +23,8 @@
 /** \file eos_base.h
     \brief File defining \ref o2scl::eos_base
 */
-#ifndef O2SCL_EOS_H
-#define O2SCL_EOS_H
+#ifndef O2SCL_EOS_LEPTONS_H
+#define O2SCL_EOS_LEPTONS_H
 
 #include <o2scl/part.h>
 #include <o2scl/fermion.h>
@@ -32,6 +32,7 @@
 #include <o2scl/fermion_rel.h>
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_deriv_rel.h>
+#include <o2scl/eos_base.h>
 
 namespace o2scl {
 
