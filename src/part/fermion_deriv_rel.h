@@ -598,9 +598,6 @@ namespace o2scl {
     
   public:
 
-    /// Desc
-    bool verify_ti;
-    
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_deriv_rel_tl() {
   
@@ -657,6 +654,9 @@ namespace o2scl {
 
     /// If true, use multiprecision to improve the integrations
     bool multip;
+    
+    /// If true, verify the thermodynamic identity (default false)
+    bool verify_ti;
     
     /** \brief An integer indicating the last numerical method used
 
@@ -817,13 +817,7 @@ namespace o2scl {
           funct density_T_fun_f=[this,f,temper](double k) -> double
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
-          /*
-            funct density_T_fun_f=
-            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,
-            fp_t>::density_T_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+          
           iret=nit->integ_iu_err(density_T_fun_f,0.0,f.dndT,unc.dndT);
           if (iret!=0) {
             O2SCL_ERR2("dndT integration (ndeg) failed in ",
@@ -849,13 +843,7 @@ namespace o2scl {
           funct density_mu_fun_f=[this,f,temper](double k) -> double
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
-          /*
-            funct density_mu_fun_f=
-            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,
-            fp_t>::density_mu_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+
           iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
@@ -882,13 +870,7 @@ namespace o2scl {
           funct entropy_T_fun_f=[this,f,temper](double k) -> double
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
-          /*
-            funct entropy_T_fun_f=
-            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,
-            fp_t>::entropy_T_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+          
           iret=nit->integ_iu_err(entropy_T_fun_f,0.0,f.dsdT,unc.dsdT);
           if (iret!=0) {
             O2SCL_ERR2("dsdT integration (ndeg) failed in ",
