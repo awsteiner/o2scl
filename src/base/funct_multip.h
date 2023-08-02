@@ -30,21 +30,22 @@
 // for typeid()
 #include <typeinfo>
 
-
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
 
 #include <o2scl/string_conv.h>
 #include <o2scl/calc_utf8.h>
 #include <o2scl/convert_units.h>
 #include <o2scl/set_mpfr.h>
 
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+
 namespace o2scl {
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
+#ifdef O2SCL_SET_MPFR  
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<25>> mpfr_25;
   typedef boost::multiprecision::number<
@@ -53,6 +54,7 @@ namespace o2scl {
     boost::multiprecision::mpfr_float_backend<50>> mpfr_50;
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<100>> mpfr_100;
+#endif
 
   typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
@@ -1431,10 +1433,12 @@ namespace o2scl {
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_string_cdf;
 
+#ifdef O2SCL_SET_MPFR
   /** \brief Typedef for mpfr types
    */
   typedef funct_multip_string_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_string_mpfr;
+#endif
   
 }
 
