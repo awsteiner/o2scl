@@ -1109,7 +1109,6 @@ namespace o2scl {
                          exc_efailed);
             }
 
-
           }
 
         } else {
