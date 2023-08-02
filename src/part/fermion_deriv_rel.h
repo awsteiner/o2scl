@@ -946,38 +946,32 @@ namespace o2scl {
 	      (f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
 	    this->intl_method=this->direct;
 	    last_method+=5;
-            /*
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem (5)",o2scl::exc_esanity);
             } else {
               last_method_s+=" : Deg. integ. (automatic: direct)";
             }
-            */
 	  } else {
 	    this->intl_method=this->by_parts;
 	    last_method+=6;
-            /*
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem (6)",o2scl::exc_esanity);
             } else {
               last_method_s+=" : Deg. integ. (by_parts)";
             }
-            */
 	  }
 	} else {
 	  this->intl_method=this->method;
 	  last_method+=7;
-          /*
-            if (last_method_s.length()>200) {
+	  if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem (7)",o2scl::exc_esanity);
-            } else {
+	  } else {
             if (this->method==this->by_parts) {
-            last_method_s+=" : Deg. integ. (by_parts)";
+	      last_method_s+=" : Deg. integ. (by_parts)";
             } else {
-            last_method_s+=" : Deg. integ. (direct)";
+	      last_method_s+=" : Deg. integ. (direct)";
             }
-            }
-          */
+	  }
 	}
         
         if (multip==true) {
@@ -1004,17 +998,11 @@ namespace o2scl {
           }
           
         } else {
-          
+	  
           funct deg_density_mu_fun_f=[this,f,temper](double k) -> double
           { return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                              f.inc_rest_mass); };
-          /*
-            funct deg_density_mu_fun_f=
-            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,
-            fp_t>::deg_density_mu_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+	  
           if (this->intl_method==this->direct && ll>0.0) {
             iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
                                 f.dndmu,unc.dndmu);
@@ -1061,20 +1049,15 @@ namespace o2scl {
           funct deg_density_T_fun_f=[this,f,temper](double k) -> double
           { return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
-          /*
-            funct deg_density_T_fun_f=std::bind
-            (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_density_T_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+	  
           if (this->intl_method==this->direct && ll>0.0) {
             iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,unc.dndT);
           } else {
             iret=dit->integ_err(deg_density_T_fun_f,0.0,ul,f.dndT,unc.dndT);
           }
           if (iret!=0) {
-            O2SCL_ERR2("dndT integration (deg) failed in ",
-                       "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+            O2SCL_ERR2("dndT integration (deg) failed in fermion_",
+                       "deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
                        exc_efailed);
           }
 
@@ -1111,20 +1094,15 @@ namespace o2scl {
           funct deg_entropy_T_fun_f=[this,f,temper](double k) -> double
           { return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
-          /*
-            funct deg_entropy_T_fun_f=std::bind
-            (std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::deg_entropy_T_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+
           if (this->intl_method==this->direct && ll>0.0) {
             iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,unc.dsdT);
           } else {
             iret=dit->integ_err(deg_entropy_T_fun_f,0.0,ul,f.dsdT,unc.dsdT);
           }
           if (iret!=0) {
-            O2SCL_ERR2("dsdT integration (deg) failed in ",
-                       "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+            O2SCL_ERR2("dsdT integration (deg) failed in fermion_",
+                       "deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
                        exc_efailed);
           }
           
@@ -1162,13 +1140,11 @@ namespace o2scl {
 
       calc_mu(f,temper);
       last_method+=lm;
-      /*
       if (last_method_s.length()>200) {
         O2SCL_ERR("Last method problem (8)",o2scl::exc_esanity);
       } else {
         last_method_s=stmp+" : "+last_method_s;
       }
-      */
       
       return 0;
     }
@@ -1223,13 +1199,11 @@ namespace o2scl {
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
       int ret=fr.nu_from_n(f,temper);
       last_method=fr.last_method*100;
-      /*
-        if (last_method_s.length()>200) {
+      if (last_method_s.length()>200) {
         O2SCL_ERR("Last method problem (10)",o2scl::exc_esanity);
-        } else {
-        last_method_s+=" : "+fr.last_method_s;
-        }
-      */
+      } else {
+        last_method_s=((std::string)"base: ")+fr.last_method_s;
+      }
       return ret;
     }
   
