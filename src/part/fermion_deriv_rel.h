@@ -706,12 +706,14 @@ namespace o2scl {
       
       fr.calc_mu(f,temper);
       last_method=fr.last_method*10;
-      last_method_s=((std::string)"base: ")+fr.last_method_s+" deriv: ";
+      last_method_s=((std::string)"base: ")+fr.last_method_s+
+	" deriv: ";
   
       int iret;
 
       if (temper<=0.0) {
-	O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",exc_eunimpl);
+	O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",
+		  exc_eunimpl);
       }
 
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -849,13 +851,7 @@ namespace o2scl {
           funct density_mu_fun_f=[this,f,temper](double k) -> double
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
-          /*
-            funct density_mu_fun_f=
-            std::bind(std::mem_fn<fp_t(fp_t,fermion_deriv_t &,fp_t)>
-            (&fermion_deriv_rel_tl<fermion_deriv_t,
-            fp_t>::density_mu_fun),
-            this,std::placeholders::_1,std::ref(f),temper);
-          */
+
           iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
