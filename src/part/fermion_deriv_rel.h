@@ -619,6 +619,7 @@ namespace o2scl {
       err_nonconv=true;
 
       last_method=0;
+      last_method_s="";
       verify_ti=false;
 
       verbose=0;
@@ -700,8 +701,12 @@ namespace o2scl {
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
 
+      last_method=0;
+      last_method_s="";
+      
       fr.calc_mu(f,temper);
       last_method=fr.last_method*10;
+      last_method_s=((std::string)"base: ")+fr.last_method_s+" deriv: ";
   
       int iret;
 
@@ -737,13 +742,11 @@ namespace o2scl {
 	  unc.dsdT=f.dsdT*1.0e-14;
 	  unc.dndmu=f.dndmu*1.0e-14;
 	  last_method+=1;
-          /*
-            if (last_method_s.length()>200) {
+          if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem (1)",o2scl::exc_esanity);
-            } else {
-            last_method_s+=" : Nondeg. exp.";
-            }
-          */
+          } else {
+            last_method_s+="nondeg. exp.";
+          }
 	  return 0;
 	}
       }
@@ -764,13 +767,11 @@ namespace o2scl {
 	  unc.dsdT=f.dsdT*1.0e-14;
 	  unc.dndmu=f.dndmu*1.0e-14;
 	  last_method+=2;
-          /*
-            if (last_method_s.length()>200) {
+          if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem (2)",o2scl::exc_esanity);
-            } else {
-            last_method_s+=" : Deg. exp.";
-            }
-          */
+          } else {
+            last_method_s+="deg. exp.";
+          }
 	  return 0;
 	}
       }
@@ -781,27 +782,23 @@ namespace o2scl {
 	if (this->method==this->automatic) {
 	  this->intl_method=this->by_parts;
 	  last_method+=3;
-          /*
-            if (last_method_s.length()>200) {
+          if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem (3)",o2scl::exc_esanity);
-            } else {
-            last_method_s+=" : Nondeg. integ. (automatic)";
-            }
-          */
+          } else {
+            last_method_s+="nondeg. integ. (automatic)";
+          }
 	} else {
 	  this->intl_method=this->method;
 	  last_method+=4;
-          /*
           if (last_method_s.length()>200) {
             O2SCL_ERR("Last method problem (4)",o2scl::exc_esanity);
           } else {
             if (this->method==this->by_parts) {
-              last_method_s+=" : Nondeg. integ. (by parts)";
+              last_method_s+="nondeg. integ. (by parts)";
             } else {
-              last_method_s+=" : Nondeg. integ. (direct)";
+              last_method_s+="nondeg. integ. (direct)";
             }
           }
-          */
 	}
         
         if (multip==true) {
@@ -1191,13 +1188,12 @@ namespace o2scl {
       
       calc_mu(antip,temper);
       last_method+=lm;
-      /*
       if (last_method_s.length()>200) {
+        std::cout << "9: " << last_method_s << std::endl;
         O2SCL_ERR("Last method problem (9)",o2scl::exc_esanity);
       } else {
-        last_method_s=stmp+" : "+last_method_s;
+        last_method_s="part. "+stmp+" : antipart. "+last_method_s;
       }
-      */
 
       f.n-=antip.n;
       f.pr+=antip.pr;

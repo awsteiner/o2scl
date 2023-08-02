@@ -47,6 +47,8 @@ class fermion_summ {
   
 public:
   
+  std::map<std::string,int> lm_map;
+  
   void fermion_func(double x, double y, double T,
                     fermion_deriv &f, fermion_deriv_rel &fdr,
                     double &log10_Pt, double &phi, double &psi,
@@ -118,7 +120,15 @@ public:
     fzt.kf_from_density(f);
     kfom=f.kf/f.m;
     lm=fdr.last_method;
-  
+    
+    if (lm_map.find(fdr.last_method_s)==lm_map.end()) {
+      lm_map.insert(make_pair(fdr.last_method_s,lm));
+    } else {
+      if (lm!=lm_map.find(fdr.last_method_s)->second) {
+        exit(-1);
+      }
+    }
+    
     return;
   }
 
@@ -319,6 +329,11 @@ public:
   
     hf.close();
 
+    for (std::map<std::string,int>::iterator it=lm_map.begin();
+         it!=lm_map.end();it++) {
+      cout << it->first << " " << it->second << endl;
+    }
+    
     t.report();
 
     return;

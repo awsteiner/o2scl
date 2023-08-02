@@ -105,14 +105,6 @@ namespace o2scl {
      */
     fermion_cdf25 mucdf25;
 
-    /** \brief Relativistic fermion thermodynamics in long double precision
-     */
-    fermion_rel_ld frel_ld;
-    
-    /** \brief Relativistic fermion thermodynamics in 25 digit precision
-     */
-    fermion_rel_cdf25 frel_cdf25;
-    
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
@@ -311,8 +303,15 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics
      */
     fermion_rel frel;
-    //@}
 
+    /** \brief Relativistic fermion thermodynamics in long double precision
+     */
+    fermion_rel_ld frel_ld;
+    
+    /** \brief Relativistic fermion thermodynamics in 25 digit precision
+     */
+    fermion_rel_cdf25 frel_cdf25;
+    //@}
     
   };
   
