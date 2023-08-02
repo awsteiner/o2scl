@@ -87,11 +87,8 @@ int eos_leptons::electron_density(double T) {
     eld.n=e.n;
     eld.mu=e.mu;
     eld.inc_rest_mass=e.inc_rest_mass;
-    cout << "H1 " << eld.m << " " << eld.g << endl;
     retx=frel_ld.pair_density(eld,T);
-    cout << "H2." << eld.mu << endl;
     e.mu=static_cast<double>(eld.mu);
-    cout << "H3." << retx << " " << e.mu << " " << inc_rest_mass << endl;
     e.ed=static_cast<double>(eld.ed);
     e.pr=static_cast<double>(eld.pr);
     e.en=static_cast<double>(eld.en);
