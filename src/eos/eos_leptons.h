@@ -32,7 +32,6 @@
 #include <o2scl/fermion_rel.h>
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_deriv_rel.h>
-#include <o2scl/eos_base.h>
 
 namespace o2scl {
 
