@@ -327,7 +327,7 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
   mue=elep.e.mu;
   
   th=elep.th;
-  
+
   return;
 }
 
