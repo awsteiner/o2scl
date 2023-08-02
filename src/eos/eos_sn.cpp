@@ -305,7 +305,9 @@ void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
     elep.pair_density_eq(nB*Ye,TMeV/hc_mev_fm);
 
     // AWS 8/2/23: it's confusing if this information isn't
-    // copied to the electron ad muon objects
+    // copied to the electron and muon objects, since this
+    // is the way this function used to work.
+    
     electron.n=elep.e.n;
     electron.mu=elep.e.mu;
     electron.en=elep.e.en;
