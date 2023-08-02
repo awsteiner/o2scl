@@ -271,6 +271,11 @@ int eos_leptons::pair_density(double T) {
   if (include_deriv) {
     fermion_deriv fd;
     fd=e;
+    if (accuracy==acc_ld || accuracy==acc_fp_25) {
+      fdrel.multip=true;
+    } else {
+      fdrel.multip=false;
+    }
     fdrel.pair_mu(fd,T);
     ed.dndmu=fd.dndmu;
     ed.dndT=fd.dndT;
@@ -330,6 +335,11 @@ int eos_leptons::pair_density(double T) {
     if (include_deriv) {
       fermion_deriv fd;
       fd=mu;
+    if (accuracy==acc_ld || accuracy==acc_fp_25) {
+      fdrel.multip=true;
+    } else {
+      fdrel.multip=false;
+    }
       fdrel.pair_mu(fd,T);
       mud.dndmu=fd.dndmu;
       mud.dndT=fd.dndT;
@@ -407,7 +417,14 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     e.n=x[0]*nq;
 
     if (include_deriv) {
-      fermion_deriv fd;
+      
+    if (accuracy==acc_ld || accuracy==acc_fp_25) {
+      fdrel.multip=true;
+    } else {
+      fdrel.multip=false;
+    }
+
+    fermion_deriv fd;
       fd=e;
       fdrel.pair_mu(fd,T);
       ed.dndmu=fd.dndmu;
@@ -435,6 +452,11 @@ int eos_leptons::pair_density_eq(double nq, double T) {
       fd=e;
       std::cout << "Here1: " << fd.m << " " << fd.g << " " << fd.n
                 << std::endl;
+      if (accuracy==acc_ld || accuracy==acc_fp_25) {
+	fdrel.multip=true;
+      } else {
+	fdrel.multip=false;
+      }
       fdrel.pair_mu(fd,T);
       ed.dndmu=fd.dndmu;
       ed.dndT=fd.dndT;

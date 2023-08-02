@@ -177,7 +177,8 @@ public:
       uniform_grid_end_width<double> y_grid(-5.0,3.0,0.1/refine);
       table3d t3d;
       t3d.set_xy("x",x_grid,"y",y_grid);
-      t3d.line_of_names("log10_Pt phi psi s cv cp cs2 kfom lm dndT dndmu dsdT");
+      t3d.line_of_names("log10_Pt phi psi s cv cp cs2 kfom lm");
+      t3d.line_of_names("dndT dndmu dsdT");
     
       for(size_t i=0;i<t3d.get_nx();i++) {
         for(size_t j=0;j<t3d.get_ny();j++) {
