@@ -22,6 +22,7 @@
 */
 
 #include <o2scl/eos_base.h>
+#include <o2scl/eos_leptons.h>
 #include <o2scl/eos_had_base.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/eos_had_apr.h>

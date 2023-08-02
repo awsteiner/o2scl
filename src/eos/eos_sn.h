@@ -39,6 +39,7 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/interp2_direct.h>
 #include <o2scl/eos_base.h>
+#include <o2scl/eos_leptons.h>
 
 namespace o2scl {
 

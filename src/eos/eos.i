@@ -17,6 +17,7 @@ rst_header |
 # Include statements for C++ header file
 # 
 h_include <o2scl/eos_base.h>
+h_include <o2scl/eos_leptons.h>
 h_include <o2scl/eos_had_base.h>
 h_include <o2scl/eos_had_skyrme.h>
 h_include <o2scl/eos_had_apr.h>

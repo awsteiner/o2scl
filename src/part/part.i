@@ -334,7 +334,6 @@ class deriv_thermo_base
 class fermion_deriv_rel
 - py_class_doc |
 | Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
-- double exp_limit
 - double deg_limit
 - double upper_limit_fac
 - fermion_deriv unc
