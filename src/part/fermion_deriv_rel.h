@@ -637,6 +637,10 @@ namespace o2scl {
 
     /// Object for computing non-derivative quantities
     fermion_rel_t fr;
+<<<<<<< HEAD
+=======
+    //l<fermion_deriv_t> fr;
+>>>>>>> aaa566ef (More work on multip for fermion_deriv_rel.)
 
     /// Verbosity parameter (default 0)
     int verbose;
@@ -686,9 +690,6 @@ namespace o2scl {
     */
     bool err_nonconv;
 
-    /// Multiprecision integrator
-    inte_multip_double_exp_boost<> it_multip;
-    
     /** \brief Calculate properties as function of chemical potential
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
