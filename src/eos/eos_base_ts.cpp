@@ -52,6 +52,8 @@ int main(void) {
   elep.include_muons=false;
 
   // First, do a test with just pair_mu():
+
+  cout << "pair_mu(): " << endl;
   
   elep.e.mu=1.0;
   
@@ -79,7 +81,11 @@ int main(void) {
   cout << dtos(elep.e.en,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
 
+  cout << endl;
+
   // Now, with pair_density() and derivatives
+
+  cout << "pair_density(): " << endl;
   
   elep.include_deriv=true;
 
@@ -113,6 +119,8 @@ int main(void) {
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+
+  cout << endl;
   
   t.report();
   return 0;

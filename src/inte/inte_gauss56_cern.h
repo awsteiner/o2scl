@@ -27,7 +27,8 @@
 #define O2SCL_INTE_GAUSS56_CERN_H
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_MPFR
+#include <o2scl/set_mpfr.h>
+#ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 

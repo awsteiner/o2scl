@@ -30,7 +30,9 @@
 #include <iostream>
 #include <random>
 
-#ifdef O2SCL_OPENMP
+#include <o2scl/set_openmp.h>
+
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 #ifdef O2SCL_MPI
@@ -141,7 +143,7 @@ namespace o2scl {
       class attempts to recover from them, for example if not enough
       functions are specified for the requested number of OpenMP
       threads, or if more than one thread was requested but
-      O2SCL_OPENMP was not defined, or if a negative value for \ref
+      O2SCL_SET_OPENMP was not defined, or if a negative value for \ref
       step_fac was requested. When verbose is 1, a couple messages are
       written to \ref scr_out : a summary of the number
       of walkers, chains, and threads at the beginning of the MCMC
@@ -606,13 +608,13 @@ namespace o2scl {
       }
 
       // Set number of threads
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
       omp_set_num_threads(n_threads);
 #else
       if (n_threads>1) {
         std::cout << "mcmc_para::mcmc(): "
                   << n_threads << " threads were requested but the "
-                  << "-DO2SCL_OPENMP flag was not used during "
+                  << "-DO2SCL_SET_OPENMP flag was not used during "
                   << "compilation. Setting n_threads to 1."
                   << std::endl;
         n_threads=1;
@@ -757,11 +759,11 @@ namespace o2scl {
     
       if (aff_inv) {
       
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
         {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
@@ -942,11 +944,11 @@ namespace o2scl {
         // --------------------------------------------------------
         // Initial point evaluation when aff_inv is false.
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
         {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
@@ -1008,11 +1010,11 @@ namespace o2scl {
         // --------------------------------------------------------
         // Post-processing initial point when aff_inv is false.
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
         {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
@@ -1125,11 +1127,11 @@ namespace o2scl {
         
         while (!main_done) {
           
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
           {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
@@ -1439,11 +1441,11 @@ namespace o2scl {
           // First parallel region to make the stretch move and 
           // call the object function
           
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
           {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
@@ -1636,11 +1638,11 @@ namespace o2scl {
           // Second parallel region to accept or reject, and call
           // measurement function
       
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
           {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
@@ -1830,7 +1832,7 @@ namespace o2scl {
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
                      func_t &func, measure_t &meas, data_t data) {
     
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
       omp_set_num_threads(n_threads);
 #else
       n_threads=1;
@@ -2080,7 +2082,7 @@ namespace o2scl {
                           std::vector<double> &line, data_t &dat,
                           size_t i_walker, fill_t &fill) {
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
       size_t i_thread=omp_get_thread_num();
 #else
       size_t i_thread=0;
@@ -2656,7 +2658,7 @@ namespace o2scl {
       // Set number of threads (this is done in the child as well, but
       // we need this number to set up the vector of measure functions
       // below).
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
       omp_set_num_threads(this->n_threads);
 #else
       this->n_threads=1;
@@ -2908,7 +2910,7 @@ namespace o2scl {
         }
       }
     
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp critical (o2scl_mcmc_para_table_add_line)
 #endif
       {

@@ -25,9 +25,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/acolm.h>
-
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
+#include <o2scl/set_fftw.h>
 
 using namespace std;
 using namespace o2scl;
@@ -344,7 +344,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
     } else if (alg=="fft") {
 
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
       double mean=vector_mean(doublev_obj);
       double stddev=vector_stddev(doublev_obj);
       vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
@@ -363,7 +363,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       
     } else if (alg=="fft_len") {
 
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
       double mean=vector_mean(doublev_obj);
       double stddev=vector_stddev(doublev_obj);
       vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
@@ -683,7 +683,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       vector_acor<vector<double>>(vvd[jj].size(),vvd[jj],
                                   mean,sigma,tau);
     } else if (alg=="fft") {
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
       double mean=vector_mean(vvd[jj]);
       double stddev=vector_stddev(vvd[jj]);
       vector_autocorr_vector_fftw(vvd[jj],ac_vec[jj],mean,stddev);

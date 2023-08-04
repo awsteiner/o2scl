@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 #include <fftw3.h>
 #endif
 
@@ -221,7 +221,7 @@ int main(void) {
     cout << "ac_len: " << ac_len << endl;
     cout << endl;
 
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     mean=vector_mean(act);
     sig=vector_stddev(act);
@@ -253,7 +253,7 @@ int main(void) {
                              covar_prior(0,0),covar_post(0,0));
   t.test_rel(kl1,kl2,1.0e-12,"KL div");
 
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
   {
     vector<double> sines, sines3;

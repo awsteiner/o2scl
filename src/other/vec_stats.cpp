@@ -44,7 +44,7 @@ double o2scl::kl_div_gaussian(double mean_prior, double mean_post,
 void o2scl::vector_forward_fft(const std::vector<double> &data,
                                std::vector<std::complex<double>> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(data.size()/2+1);
   
@@ -72,7 +72,7 @@ void o2scl::vector_forward_fft(const std::vector<double> &data,
 void o2scl::vector_backward_fft(const std::vector<std::complex<double>> &data,
                                std::vector<double> &fft) {  
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize((data.size()-1)*2);
   
@@ -103,7 +103,7 @@ void o2scl::vector_forward_complex_fft
 (const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(data.size());
   
@@ -134,7 +134,7 @@ void o2scl::vector_backward_complex_fft
 (const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(data.size());
   
@@ -165,7 +165,7 @@ void o2scl::matrix_forward_fft
 (size_t m, size_t n, const std::vector<double> &data,
  std::vector<std::complex<double>> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
   fft.resize(m*(n/2+1));
     
@@ -196,7 +196,7 @@ void o2scl::matrix_backward_fft_copy
 (size_t m, size_t n, const std::vector<std::complex<double>> &data,
   std::vector<double> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(m*(n-1)*2);
 
@@ -241,7 +241,7 @@ void o2scl::matrix_forward_complex_fft
 (size_t m, size_t n, const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {
   
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(m*n);
     
@@ -274,7 +274,7 @@ void o2scl::matrix_backward_complex_fft
 (size_t m, size_t n, 
  const std::vector<std::complex<double>> &data,
  std::vector<std::complex<double>> &fft) {  
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
   
   fft.resize(m*n);
     

@@ -27,12 +27,13 @@
 #include <o2scl/funct_multip.h>
 #include <o2scl/inte_gauss_cern.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/set_mpfr.h>
 
 using namespace std;
 using namespace o2scl;
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 #endif
 
@@ -56,7 +57,7 @@ cpp_dec_float_50 testfun2_cdf(cpp_dec_float_50 tx) {
   return four*sqrt(one-tx*tx);
 }
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 mpfr_float_50 testfun2_mp(mpfr_float_50 tx) {
   mpfr_float_50 one=1;
   mpfr_float_50 four=4;
@@ -126,7 +127,7 @@ int main(void) {
     cout << calc << " " << exact << " " << diff << endl;
   }
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
   
   {
     inte_gauss_cern<funct_mpfr50,mpfr_float_50,
