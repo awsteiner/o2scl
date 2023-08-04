@@ -224,7 +224,6 @@ namespace o2scl {
       fdrel.def_dit.tol_rel=1.0e-13;
       fdrel.def_nit.tol_abs=1.0e-13;
       fdrel.def_nit.tol_rel=1.0e-13;
-      fdrel.def_density_root.tol_rel=1.0e-10;
 
       accuracy=acc_improved;
       return;
@@ -252,7 +251,6 @@ namespace o2scl {
       fdrel.def_dit.tol_rel=1.0e-8;
       fdrel.def_nit.tol_abs=1.0e-8;
       fdrel.def_nit.tol_rel=1.0e-8;
-      fdrel.def_density_root.tol_rel=4.0e-7;
 
       accuracy=acc_default;
       return;

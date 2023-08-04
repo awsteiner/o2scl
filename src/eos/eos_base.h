@@ -64,6 +64,10 @@ namespace o2scl {
     
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
+
+        This solves the function \ref solve_beta_eq_T0(). This
+        function is different from \ref nstar_cold because it is a
+        generic interface which works for non-hadronic EOSs.
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
