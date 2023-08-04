@@ -50,6 +50,7 @@ int main(void) {
 
   eos_leptons elep;
   elep.include_muons=false;
+  elep.include_deriv=true;
 
   // First, do a test with just pair_mu():
 
@@ -83,12 +84,10 @@ int main(void) {
 
   cout << endl;
 
-  // Now, with pair_density() and derivatives
+  // Now, with pair_density()
 
   cout << "pair_density(): " << endl;
   
-  elep.include_deriv=true;
-
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
   elep.pair_mu(0.1);

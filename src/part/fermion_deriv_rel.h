@@ -89,7 +89,7 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
+	  ret=k*k*(E-nu)/T*ff*(1-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
 	    T*fermi_function(x);
@@ -100,7 +100,7 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=k*k*(E-nu)/T*ff*(1.0-ff);
+	  ret=k*k*(E-nu)/T*ff*(1-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
 	    T*fermi_function(x2);
@@ -127,7 +127,7 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=k*k*ff*(1.0-ff);
+	  ret=k*k*ff*(1-ff);
 	} else {
 	  ret=T*(E*E+k*k)/E*fermi_function(x);
 	}
@@ -136,7 +136,7 @@ namespace o2scl {
         internal_fp_t x2=(E-m-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=k*k*ff*(1.0-ff);
+	  ret=k*k*ff*(1-ff);
 	} else {
 	  ret=T*(E*E+k*k)/E*fermi_function(x2);
 	}
@@ -162,10 +162,10 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
+	  ret=T*k*k*ff*(1-ff)*pow(E-nu,2.0)/pow(T,3);
 	} else {
 	  ret=(E-nu)/E/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu))*
+	    (pow(E,3)+3*E*k*k-(E*E+k*k)*(nu))*
 	    fermi_function(x);
 	}
       } else {
@@ -174,10 +174,10 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=T*k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
+	  ret=T*k*k*ff*(1-ff)*pow(E-nu,2.0)/pow(T,3);
 	} else {
 	  ret=(E-m-nu)/E/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu+m))*
+	    (pow(E,3)+3*E*k*k-(E*E+k*k)*(nu+m))*
 	    fermi_function(x2);
 	}
       }
@@ -201,7 +201,7 @@ namespace o2scl {
 	E=hypot(k,ms);
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function((E-nu)/T);
-	  ret=-k*k*ms/(E)/T*ff*(1.0-ff);
+	  ret=-k*k*ms/(E)/T*ff*(1-ff);
 	} else {
 	  ret=-ms*fermi_function((E-nu)/T);
 	}
@@ -210,7 +210,7 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function((E-nu)/T);
-	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
+	  ret=-k*k*ms/(E+m)/T*ff*(1-ff);
 	} else {
 	  ret=-ms*fermi_function((E-m-nu)/T);
 	}
@@ -242,7 +242,7 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
+	  ret=k*k*(E-nu)/T/T*ff*(1-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu)/T-k*k*(nu)/T/E)*
 	    fermi_function(x);
@@ -253,7 +253,7 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=k*k*(E-nu)/T/T*ff*(1.0-ff);
+	  ret=k*k*(E-nu)/T/T*ff*(1-ff);
 	} else {
 	  ret=(2.0*k*k/T+E*E/T-E*(nu+m)/T-k*k*(nu+m)/T/E)*
 	    fermi_function(x2);
@@ -280,7 +280,7 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=k*k/T*ff*(1.0-ff);
+	  ret=k*k/T*ff*(1-ff);
 	} else {
 	  ret=(E*E+k*k)/E*fermi_function(x);
 	}
@@ -290,7 +290,7 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=k*k/T*ff*(1.0-ff);
+	  ret=k*k/T*ff*(1-ff);
 	} else {
 	  ret=(E*E+k*k)/E*fermi_function(x2);
 	}
@@ -316,19 +316,19 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	internal_fp_t ff=fermi_function(x);
 	if (intl_method==direct) {
-	  ret=k*k*ff*(1.0-ff)*pow(E-nu,2.0)/pow(T,3.0);
+	  ret=k*k*ff*(1-ff)*pow(E-nu,2.0)/pow(T,3);
 	} else {
 	  ret=(E-nu)/E/T/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*nu)*ff;
+	    (pow(E,3)+3*E*k*k-(E*E+k*k)*nu)*ff;
 	}
       } else {
         internal_fp_t x2=(E-m-nu)/T;
 	internal_fp_t ff=fermi_function(x2);
 	if (intl_method==direct) {
-	  ret=k*k*ff*(1.0-ff)*pow(E-nu-m,2.0)/pow(T,3.0);
+	  ret=k*k*ff*(1-ff)*pow(E-nu-m,2.0)/pow(T,3);
 	} else {
 	  ret=(E-m-nu)/E/T/T*
-	    (pow(E,3.0)+3.0*E*k*k-(E*E+k*k)*(nu+m))*ff;
+	    (pow(E,3)+3*E*k*k-(E*E+k*k)*(nu+m))*ff;
 	}
       }
       return ret;
@@ -352,7 +352,7 @@ namespace o2scl {
         internal_fp_t x=(E-nu)/T;
 	if (intl_method==direct) {
 	  internal_fp_t ff=fermi_function(x);
-	  ret=-k*k*ms/E/T*ff*(1.0-ff);
+	  ret=-k*k*ms/E/T*ff*(1-ff);
 	} else {
 	  ret=-ms*fermi_function(x);
 	}
@@ -362,7 +362,7 @@ namespace o2scl {
 	if (intl_method==direct) {
 	  E-=m;
 	  internal_fp_t ff=fermi_function(x2);
-	  ret=-k*k*ms/(E+m)/T*ff*(1.0-ff);
+	  ret=-k*k*ms/(E+m)/T*ff*(1-ff);
 	} else {
 	  ret=-ms*fermi_function(x2);
 	}
@@ -592,6 +592,7 @@ namespace o2scl {
       \endverbatim
   */
   template<class fermion_deriv_t=fermion_deriv_tl<double>,
+           class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
 	   class fp_t=double>
   class fermion_deriv_rel_tl : public fermion_deriv_thermo_tl<fp_t>,
                                public fermion_deriv_rel_integ<fp_t> {
@@ -602,9 +603,8 @@ namespace o2scl {
     fermion_deriv_rel_tl() {
   
       deg_limit=2.0;
-      upper_limit_fac=20.0;
+      upper_limit_fac=20;
 
-      density_root=&def_density_root;
       nit=&def_nit;
       dit=&def_dit;
   
@@ -619,7 +619,7 @@ namespace o2scl {
 
       verbose=0;
       multip=false;
-      tol_expan=1.0e-14;
+      tol_expan=1e-14;
     }
   
     virtual ~fermion_deriv_rel_tl() {
@@ -630,7 +630,7 @@ namespace o2scl {
     */
     fp_t deg_limit;
     
-    /** \brief The limit for the Fermi functions (default 20.0)
+    /** \brief The limit for the Fermi functions (default 20)
 	
 	fermion_deriv_rel will ignore corrections smaller than about
 	\f$ \exp(-\mathrm{f{l}imit}) \f$ . 
@@ -641,7 +641,8 @@ namespace o2scl {
     fermion_deriv_t unc;
 
     /// Object for computing non-derivative quantities
-    fermion_rel_tl<fermion_deriv_t> fr;
+    fermion_rel_t fr;
+    //l<fermion_deriv_t> fr;
 
     /// Verbosity parameter (default 0)
     int verbose;
@@ -691,9 +692,6 @@ namespace o2scl {
     */
     bool err_nonconv;
 
-    /// Multiprecision integrator
-    inte_multip_double_exp_boost<> it_multip;
-    
     /** \brief Calculate properties as function of chemical potential
      */
     virtual int calc_mu(fermion_deriv_t &f, fp_t temper) {
@@ -708,14 +706,14 @@ namespace o2scl {
   
       int iret;
 
-      if (temper<=0.0) {
+      if (temper<=0) {
 	O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",
 		  exc_eunimpl);
       }
 
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
-      fp_t prefac=f.g/2.0/this->pi2;
+      fp_t prefac=f.g/2/this->pi2;
 
       // Compute the degeneracy parameter
 
@@ -726,7 +724,7 @@ namespace o2scl {
       if (psi>deg_limit) deg=true;
 
       // Try the non-degenerate expansion if psi is small enough
-      if (psi<-4.0) {
+      if (psi<-4) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
 	if (acc) {
           if (verbose>1) {
@@ -751,7 +749,7 @@ namespace o2scl {
       }
 
       // Try the degenerate expansion if psi is large enough
-      if (psi>20.0) {
+      if (psi>20) {
 	bool acc=this->calc_mu_deg(f,temper,tol_expan);
 	if (acc) {
           if (verbose>1) {
@@ -817,7 +815,7 @@ namespace o2scl {
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
-          iret=nit->integ_iu_err(density_T_fun_f,0.0,f.dndT,unc.dndT);
+          iret=nit->integ_iu_err(density_T_fun_f,0,f.dndT,unc.dndT);
           if (iret!=0) {
             O2SCL_ERR2("dndT integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -843,7 +841,7 @@ namespace o2scl {
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
 
-          iret=nit->integ_iu_err(density_mu_fun_f,0.0,f.dndmu,unc.dndmu);
+          iret=nit->integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -870,7 +868,7 @@ namespace o2scl {
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
-          iret=nit->integ_iu_err(entropy_T_fun_f,0.0,f.dsdT,unc.dsdT);
+          iret=nit->integ_iu_err(entropy_T_fun_f,0,f.dsdT,unc.dsdT);
           if (iret!=0) {
             O2SCL_ERR2("dsdT integration (ndeg) failed in ",
                        "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);
@@ -887,13 +885,13 @@ namespace o2scl {
 
 	fp_t arg;
 	if (f.inc_rest_mass) {
-	  arg=pow(upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
+	  arg=pow(upper_limit_fac*temper+f.nu,2)-f.ms*f.ms;
 	} else {
-	  arg=pow(upper_limit_fac*temper+f.nu+f.m,2.0)-f.ms*f.ms;
+	  arg=pow(upper_limit_fac*temper+f.nu+f.m,2)-f.ms*f.ms;
 	}
 	// Set to zero to avoid uninit'ed var. warnings
-	fp_t ul=0.0;
-	if (arg>0.0) {
+	fp_t ul=0;
+	if (arg>0) {
 	  ul=sqrt(arg);
 	} else {
 	  O2SCL_ERR2("Zero density in degenerate limit in fermion_deriv_rel::",
@@ -906,25 +904,25 @@ namespace o2scl {
     
 	fp_t ll;
 	if (f.inc_rest_mass) {
-	  arg=pow(-upper_limit_fac*temper+f.nu,2.0)-f.ms*f.ms;
-	  if (arg>0.0 && (f.ms-f.nu)/temper<-upper_limit_fac) {
+	  arg=pow(-upper_limit_fac*temper+f.nu,2)-f.ms*f.ms;
+	  if (arg>0 && (f.ms-f.nu)/temper<-upper_limit_fac) {
 	    ll=sqrt(arg);
 	  } else {
-	    ll=-1.0;
+	    ll=-1;
 	  }
 	} else {
-	  arg=pow(-upper_limit_fac*temper+f.nu+f.m,2.0)-f.ms*f.ms;
-	  if (arg>0.0 && (f.ms-f.nu-f.m)/temper<-upper_limit_fac) {
+	  arg=pow(-upper_limit_fac*temper+f.nu+f.m,2)-f.ms*f.ms;
+	  if (arg>0 && (f.ms-f.nu-f.m)/temper<-upper_limit_fac) {
 	    ll=sqrt(arg);
 	  } else {
-	    ll=-1.0;
+	    ll=-1;
 	  }
 	}
 
 	// Set integration method
 	if (this->method==this->automatic) {
-	  if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>1.0e3) ||
-	      (f.inc_rest_mass && (f.nu-f.ms)/temper>1.0e3)) {
+	  if ((!f.inc_rest_mass && (f.nu+f.m-f.ms)/temper>1e3) ||
+	      (f.inc_rest_mass && (f.nu-f.ms)/temper>1e3)) {
 	    this->intl_method=this->direct;
 	    last_method+=5;
             if (last_method_s.length()>200) {
@@ -959,7 +957,7 @@ namespace o2scl {
           
           fp_t tol_rel=0;
 
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
 
             int ix=it_multip.integ_err_multip
               ([this,f,temper](auto &&k) mutable {
@@ -984,11 +982,11 @@ namespace o2scl {
           { return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                              f.inc_rest_mass); };
 	  
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
             iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
                                 f.dndmu,unc.dndmu);
           } else {
-            iret=dit->integ_err(deg_density_mu_fun_f,0.0,ul,
+            iret=dit->integ_err(deg_density_mu_fun_f,0,ul,
                                 f.dndmu,unc.dndmu);
           }
           if (iret!=0) {
@@ -1006,7 +1004,7 @@ namespace o2scl {
           
           fp_t tol_rel=0;
 
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
 
             int ix=it_multip.integ_err_multip
               ([this,f,temper](auto &&k) mutable {
@@ -1031,11 +1029,11 @@ namespace o2scl {
           { return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 	  
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
             iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,
 				unc.dndT);
           } else {
-            iret=dit->integ_err(deg_density_T_fun_f,0.0,ul,f.dndT,
+            iret=dit->integ_err(deg_density_T_fun_f,0,ul,f.dndT,
 				unc.dndT);
           }
           if (iret!=0) {
@@ -1053,7 +1051,7 @@ namespace o2scl {
           
           fp_t tol_rel=0;
 
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
 
             int ix=it_multip.integ_err_multip
               ([this,f,temper](auto &&k) mutable {
@@ -1078,11 +1076,11 @@ namespace o2scl {
           { return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 
-          if (this->intl_method==this->direct && ll>0.0) {
+          if (this->intl_method==this->direct && ll>0) {
             iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,
 				unc.dsdT);
           } else {
-            iret=dit->integ_err(deg_entropy_T_fun_f,0.0,ul,f.dsdT,
+            iret=dit->integ_err(deg_entropy_T_fun_f,0,ul,f.dsdT,
 				unc.dsdT);
           }
           if (iret!=0) {
@@ -1106,7 +1104,7 @@ namespace o2scl {
       f.pr=-f.ed+temper*f.en+f.nu*f.n;
       
       // Pressure uncertainties are not computed
-      unc.pr=0.0;
+      unc.pr=0;
 
       return 0;
     }
@@ -1162,7 +1160,7 @@ namespace o2scl {
       if (f.inc_rest_mass) {
 	f.ed+=antip.ed;
       } else {
-	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
+	f.ed=f.ed+antip.ed+2*antip.n*f.m;
       }
       f.en+=antip.en;
       f.dsdT+=antip.dsdT;
@@ -1192,7 +1190,9 @@ namespace o2scl {
       }
       return ret;
     }
-  
+
+    /// \name Integration objects
+    //@{
     /** \brief Set inte objects
 	
 	The first integrator is used for non-degenerate integration
@@ -1207,21 +1207,15 @@ namespace o2scl {
       return;
     }    
     
-    /** \brief Set the solver for use in calculating the chemical
-	potential from the density */
-    void set_density_root(root<> &rp) {
-      density_root=&rp;
-      return;
-    }
-
     /// The default integrator for the non-degenerate regime
     inte_qagiu_gsl<> def_nit;
 
     /// The default integrator for the degenerate regime
     inte_qag_gsl<> def_dit;
 
-    /// The default solver for npen_density() and pair_density()
-    root_cern<> def_density_root;
+    /// Multiprecision integrator
+    inte_multip_double_exp_boost<> it_multip;
+    //@}
     
     /// Return string denoting type ("fermion_deriv_rel")
     virtual const char *type() { return "fermion_deriv_rel"; };
@@ -1233,9 +1227,6 @@ namespace o2scl {
 
     /// The integrator for degenerate fermions
     inte<> *dit;
-
-    /// The solver for calc_density() and pair_density()
-    root<> *density_root;
 
   };
 
