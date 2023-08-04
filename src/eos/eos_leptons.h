@@ -61,6 +61,8 @@ namespace o2scl {
     
   protected:
 
+    /// \name Internal functions
+    //@{
     /** \brief Electron thermodynamics from the electron density
 
         \note This internal function is designed to be used when \ref
@@ -88,7 +90,10 @@ namespace o2scl {
      */
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
+    //@}
 
+    /// Internal particle objects
+    //@{
     /** \brief Electron in long double precision
      */
     fermion_ld eld;
@@ -108,6 +113,7 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
+    //@}
     
     /// \name Accuracy control
     //@{
@@ -118,11 +124,14 @@ namespace o2scl {
     static const int acc_fp_25=3;
     //@}
 
+    /// \name Unit conversion objects
+    //@{
     /// Long double precision unit conversion object
     convert_units<long double> cu_ld;
 
     /// 25-digit precision unit conversion object
     convert_units<cpp_dec_float_25> cu_cdf25;
+    //@}
     
   public:
 
@@ -160,6 +169,10 @@ namespace o2scl {
     /** \brief Thermodynamic quantities for the full EOS
      */
     thermo th;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press thd;
     //@}
 
     /// \name Settings

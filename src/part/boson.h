@@ -42,31 +42,33 @@ namespace o2scl {
 
   /** \brief Boson class
    */
-  class boson : public part {
+  template<class fp_t=double> class boson_tl : public part_tl<fp_t> {
     
   public:
 
     /// Create a boson with mass \c mass and degeneracy \c dof 
-    boson(double mass=0.0, double dof=0.0);
+    boson_tl(fp_t mass=0.0, fp_t dof=0.0);
 
     /** \brief The condensate
 	
 	The condensate variable is provided principally for
 	user storage and is mostly ignored by \o2p classes. 
     */
-    double co;
+    fp_t co;
 
     /** \brief Calculate properties of massless bosons 
 	
 	The expressions used are exact. The chemical potentials are
 	ignored.
     */
-    virtual void massless_calc(double temper);
+    virtual void massless_calc(fp_t temper);
     
     /// Return string denoting type ("boson")
     virtual const char *type() { return "boson"; }
 
   };
+
+  typedef boson_tl<double> boson;
 
   /** \brief Compute the thermodynamic properties of a boson 
       [abstract base]

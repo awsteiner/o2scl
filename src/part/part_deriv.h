@@ -33,6 +33,7 @@
 #include <cmath>
 #include <o2scl/part.h>
 #include <o2scl/fermion.h>
+#include <o2scl/boson.h>
 #include <o2scl/fermion_rel.h>
 
 namespace o2scl {
@@ -191,6 +192,8 @@ namespace o2scl {
       this->mu=p.mu;
       this->en=p.en;
       this->nu=p.nu;
+      this->kf=p.kf;
+      this->del=p.del;
       this->dndmu=p.dndmu;
       this->dndT=p.dndT;
       this->dsdT=p.dsdT;
@@ -209,6 +212,8 @@ namespace o2scl {
       this->mu=p.mu;
       this->en=p.en;
       this->nu=p.nu;
+      this->kf=p.kf;
+      this->del=p.del;
       this->dndmu=0.0;
       this->dndT=0.0;
       this->dsdT=0.0;
@@ -228,6 +233,8 @@ namespace o2scl {
 	this->mu=p.mu;
 	this->en=p.en;
 	this->nu=p.nu;
+        this->kf=p.kf;
+        this->del=p.del;
 	this->dndmu=p.dndmu;
 	this->dndT=p.dndT;
 	this->dsdT=p.dsdT;
@@ -249,6 +256,8 @@ namespace o2scl {
 	this->mu=p.mu;
 	this->en=p.en;
 	this->nu=p.nu;
+        this->kf=p.kf;
+        this->del=p.del;
 	this->dndmu=0.0;
 	this->dndT=0.0;
 	this->dsdT=0.0;
@@ -261,6 +270,105 @@ namespace o2scl {
   };
 
   typedef fermion_deriv_tl<double> fermion_deriv;
+  
+  /** \brief A boson with derivative information
+   */
+  template<class fp_t=double>
+  class boson_deriv_tl : public boson_tl<fp_t>,
+                         public part_deriv_press_tl<fp_t> {
+    
+  public:
+
+    /// Make a particle of mass \c mass and degeneracy \c dof.
+    boson_deriv_tl(fp_t mass=0.0, fp_t dof=0.0) :
+      boson_tl<fp_t>(mass,dof) {
+    }
+    
+    /// Copy constructor
+    boson_deriv_tl(const boson_deriv_tl &p) {
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->co=p.co;
+      this->dndmu=p.dndmu;
+      this->dndT=p.dndT;
+      this->dsdT=p.dsdT;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
+    }
+
+    /// Copy constructor
+    boson_deriv_tl(const boson_tl<fp_t> &p) {
+      this->g=p.g;
+      this->m=p.m;
+      this->ms=p.ms;
+      this->n=p.n;
+      this->ed=p.ed;
+      this->pr=p.pr;
+      this->mu=p.mu;
+      this->en=p.en;
+      this->nu=p.nu;
+      this->co=p.co;
+      this->dndmu=0.0;
+      this->dndT=0.0;
+      this->dsdT=0.0;
+      this->inc_rest_mass=p.inc_rest_mass;
+      this->non_interacting=p.non_interacting;
+    }
+
+    /// Copy construction with operator=()
+    boson_deriv_tl &operator=(const boson_deriv_tl &p) {
+      if (this!=&p) {
+	this->g=p.g;
+	this->m=p.m;
+	this->ms=p.ms;
+	this->n=p.n;
+	this->ed=p.ed;
+	this->pr=p.pr;
+	this->mu=p.mu;
+	this->en=p.en;
+	this->nu=p.nu;
+        this->co=p.co;
+	this->dndmu=p.dndmu;
+	this->dndT=p.dndT;
+	this->dsdT=p.dsdT;
+	this->inc_rest_mass=p.inc_rest_mass;
+	this->non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+    
+    /// Copy construction with operator=()
+    boson_deriv_tl &operator=(const boson_tl<fp_t> &p) {
+      if (this!=&p) {
+	this->g=p.g;
+	this->m=p.m;
+	this->ms=p.ms;
+	this->n=p.n;
+	this->ed=p.ed;
+	this->pr=p.pr;
+	this->mu=p.mu;
+	this->en=p.en;
+	this->nu=p.nu;
+        this->co=p.co;
+	this->dndmu=0.0;
+	this->dndT=0.0;
+	this->dsdT=0.0;
+	this->inc_rest_mass=p.inc_rest_mass;
+	this->non_interacting=p.non_interacting;
+      }
+      return *this;
+    }
+    
+  };
+
+  typedef boson_deriv_tl<double> boson_deriv;
   
   /** \brief A part with derivative information
    */
