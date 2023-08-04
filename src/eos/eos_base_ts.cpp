@@ -50,6 +50,37 @@ int main(void) {
 
   eos_leptons elep;
   elep.include_muons=false;
+
+  // First, do a test with just pair_mu():
+  
+  elep.e.mu=1.0;
+  
+  elep.default_acc();
+  elep.pair_mu(0.1);
+  cout << "n: " << dtos(elep.e.n,0) << " en: ";
+  cout << dtos(elep.e.en,0) << " dndmu: ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+  
+  elep.improved_acc();
+  elep.pair_mu(0.1);
+  cout << "n: " << dtos(elep.e.n,0) << " en: ";
+  cout << dtos(elep.e.en,0) << " dndmu: ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+
+  elep.ld_acc();
+  elep.pair_mu(0.1);
+  cout << "n: " << dtos(elep.e.n,0) << " en: ";
+  cout << dtos(elep.e.en,0) << " dndmu: ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+
+  elep.fp_25_acc();
+  elep.pair_mu(0.1);
+  cout << "n: " << dtos(elep.e.n,0) << " en: ";
+  cout << dtos(elep.e.en,0) << " dndmu: ";
+  cout << dtos(elep.ed.dndmu,0) << endl;
+
+  // Now, with pair_density() and derivatives
+  
   elep.include_deriv=true;
 
   elep.e.n=1.0e-6;

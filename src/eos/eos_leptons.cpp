@@ -216,22 +216,68 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
 }
 
 int eos_leptons::pair_mu(double T) {
-  frel.pair_mu(e,T);
+
+  if (include_deriv) {
+    fermion_deriv fd=e;
+    if (accuracy==acc_ld || accuracy==acc_fp_25) {
+      fdrel.multip=true;
+    } else {
+      fdrel.multip=false;
+    }
+    fdrel.pair_mu(fd,T);
+    e.n=fd.n;
+    e.ed=fd.ed;
+    e.pr=fd.pr;
+    e.en=fd.en;
+    thd.dndT=fd.dndT;
+    thd.dndmu=fd.dndmu;
+    thd.dsdT=fd.dsdT;
+  } else {
+    frel.pair_mu(e,T);
+  }
   th.ed=e.ed;
   th.pr=e.pr;
   th.en=e.en;
+  
   if (include_muons) {
-    frel.pair_mu(mu,T);
+    if (include_deriv) {
+      fermion_deriv fd=mu;
+      if (accuracy==acc_ld || accuracy==acc_fp_25) {
+        fdrel.multip=true;
+      } else {
+        fdrel.multip=false;
+      }
+      fdrel.pair_mu(fd,T);
+      mu.n=fd.n;
+      mu.ed=fd.ed;
+      mu.pr=fd.pr;
+      mu.en=fd.en;
+      thd.dndT+=fd.dndT;
+      thd.dndmu+=fd.dndmu;
+      thd.dsdT+=fd.dsdT;
+    } else {
+      frel.pair_mu(mu,T);
+    }
     th.ed+=mu.ed;
     th.pr+=mu.pr;
     th.en+=mu.en;
   }
+  
   if (include_photons) {
     ph.massless_calc(T);
+    if (include_deriv) {
+      phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
+      phd.dndT=ph.g*zeta3/pi2*3.0*T*T;
+      phd.dndmu=0.0;
+      thd.dndT+=phd.dndT;
+      thd.dndmu+=phd.dndmu;
+      thd.dsdT+=phd.dsdT;
+    }
     th.ed+=ph.ed;
     th.pr+=ph.pr;
     th.en+=ph.en;
   }
+
   return 0;
 }
 
@@ -476,8 +522,29 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     th.ed+=ph.ed;
     th.pr+=ph.pr;
     th.en+=ph.en;
+    if (include_deriv) {
+      phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
+      phd.dndT=ph.g*zeta3/pi2*3.0*T*T;
+      phd.dndmu=0.0;
+    }
   }
 
+  if (include_deriv) {
+    thd.dndmu=ed.dndmu;
+    thd.dndT=ed.dndT;
+    thd.dsdT=ed.dsdT;
+    if (include_muons) {
+      thd.dndmu+=mud.dndmu;
+      thd.dndT+=mud.dndT;
+      thd.dsdT+=mud.dsdT;
+    }
+    if (include_photons) {
+      thd.dndmu+=phd.dndmu;
+      thd.dndT+=phd.dndT;
+      thd.dsdT+=phd.dsdT;
+    }
+  }
+  
   frel.err_nonconv=fr_en;
       
   return 0;

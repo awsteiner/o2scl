@@ -930,7 +930,7 @@ namespace o2scl {
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem (5)",o2scl::exc_esanity);
             } else {
-              last_method_s+=" : Deg. integ. (automatic: direct)";
+              last_method_s+="deg. integ. (automatic: direct)";
             }
 	  } else {
 	    this->intl_method=this->by_parts;
@@ -938,7 +938,7 @@ namespace o2scl {
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem (6)",o2scl::exc_esanity);
             } else {
-              last_method_s+=" : Deg. integ. (by_parts)";
+              last_method_s+="deg. integ. (by_parts)";
             }
 	  }
 	} else {
@@ -948,9 +948,9 @@ namespace o2scl {
             O2SCL_ERR("Last method problem (7)",o2scl::exc_esanity);
 	  } else {
             if (this->method==this->by_parts) {
-	      last_method_s+=" : Deg. integ. (by_parts)";
+	      last_method_s+="deg. integ. (by_parts)";
             } else {
-	      last_method_s+=" : Deg. integ. (direct)";
+	      last_method_s+="deg. integ. (direct)";
             }
 	  }
 	}
