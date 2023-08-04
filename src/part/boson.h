@@ -84,35 +84,36 @@ namespace o2scl {
   /** \brief Compute the thermodynamic properties of a boson 
       [abstract base]
    */
-  class boson_thermo {
+  template<class be_inte_t=bessel_K_exp_integ_gsl,
+           class fp_t=double> class boson_thermo_tl {
     
   public:
 
     /// Object for Bessel-exp integrals
-    bessel_K_exp_integ_gsl be_integ;
+    be_inte_t be_integ;
     
     /** \brief Compute a term in the nondegenerate expansion
      */
-    void ndeg_terms(size_t j, double tt,
-                    double xx, double m, bool inc_rest_mass,
-                    bool inc_antip, double &pterm, double &nterm,
-                    double &enterm, double &edterm) {
+    void ndeg_terms(size_t j, fp_t tt,
+                    fp_t xx, fp_t m, bool inc_rest_mass,
+                    bool inc_antip, fp_t &pterm, fp_t &nterm,
+                    fp_t &enterm, fp_t &edterm) {
       
-      double dj=((double)j);
-      double jot=dj/tt;
+      fp_t dj=((fp_t)j);
+      fp_t jot=dj/tt;
 
-      double K2j=be_integ.K2exp(jot);
-      double K1j=be_integ.K1exp(jot);
+      fp_t K2j=be_integ.K2exp(jot);
+      fp_t K1j=be_integ.K1exp(jot);
       if (inc_antip==false) {
         pterm=exp(jot*xx)/jot/jot*K2j;
         nterm=pterm*jot/m;
-        double enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
-        double enterm2=exp(jot*xx)/dj*K1j/m;
+        fp_t enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
+        fp_t enterm2=exp(jot*xx)/dj*K1j/m;
         enterm=enterm1+enterm2;
-        edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
+        edterm=(K1j*dj+3*K2j*tt)/jot/dj*exp(xx*jot);
       } else {
-        double co=cosh(jot*(xx+1));
-        double si=sinh(jot*(xx+1));
+        fp_t co=cosh(jot*(xx+1));
+        fp_t si=sinh(jot*(xx+1));
         pterm=exp(-jot)*2*co/jot/jot*K2j;
         nterm=pterm*tanh(jot*(xx+1))*jot/m;
         enterm=(-2*K2j*(xx+1)*si/dj/m+
@@ -127,13 +128,13 @@ namespace o2scl {
     /** \brief Non-degenerate expansion for bosons
         
     */
-    bool calc_mu_ndeg(boson &b, double temper, 
-                      double prec=1.0e-18, bool inc_antip=false) {
+    bool calc_mu_ndeg(boson_tl<fp_t> &b, fp_t temper, 
+                      fp_t prec=1.0e-18, bool inc_antip=false) {
       
       if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
       
       // Compute psi and tt
-      double psi, psi_num;
+      fp_t psi, psi_num;
       if (b.inc_rest_mass) {
         psi_num=b.nu-b.ms;
       } else {
@@ -144,10 +145,10 @@ namespace o2scl {
         }
       }
       psi=psi_num/temper;
-      double tt=temper/b.ms;
+      fp_t tt=temper/b.ms;
       
       // Prefactor 'd' in Johns96
-      double prefac=b.g/2.0/o2scl_const::pi2*pow(b.ms,4.0);
+      fp_t prefac=b.g/2/o2scl_const::pi2*pow(b.ms,4);
       
       // One term is always used, so only values of max_term greater than
       // 0 are useful.
@@ -157,8 +158,8 @@ namespace o2scl {
       // Return early if the last term is going to be too large.
       
       // Ratio of last term to first term in the pressure expansion
-      double rat, pterm_1, pterm_max;
-      double pterm, nterm, enterm, edterm;
+      fp_t rat, pterm_1, pterm_max;
+      fp_t pterm, nterm, enterm, edterm;
 
       ndeg_terms(1,tt,psi*tt,b.ms,b.inc_rest_mass,inc_antip,
                  pterm_1,nterm,enterm,edterm);
@@ -176,10 +177,10 @@ namespace o2scl {
       // Go through term by term and see if we obtain the requested
       // precision
 
-      double first_term=0.0;
-      b.pr=0.0;
-      b.n=0.0;
-      b.en=0.0;
+      fp_t first_term=0;
+      b.pr=0;
+      b.n=0;
+      b.en=0;
       
       for(size_t j=1;j<=max_term;j++) {
         
@@ -193,11 +194,11 @@ namespace o2scl {
         
         // If the first term is zero, then the rest of the terms
         // will be zero so just return early
-        if (first_term==0.0) {
-          b.pr=0.0;
-          b.n=0.0;
-          b.ed=0.0;
-          b.en=0.0;
+        if (first_term==0) {
+          b.pr=0;
+          b.n=0;
+          b.ed=0;
+          b.en=0;
           return true;
         }
         
@@ -221,24 +222,26 @@ namespace o2scl {
     /** \brief Calculate thermodynamic properties as function of
 	chemical potential
     */
-    virtual void calc_mu(boson &b, double temper)=0;
+    virtual void calc_mu(boson_tl<fp_t> &b, fp_t temper)=0;
 
     /** \brief Calculate thermodynamic properties as function of
 	density
     */
-    virtual void calc_density(boson &b, double temper)=0;
+    virtual void calc_density(boson_tl<fp_t> &b, fp_t temper)=0;
 
     /** \brief Calculate thermodynamic properties with antiparticles
 	as function of chemical potential
     */
-    virtual void pair_mu(boson &b, double temper)=0;
+    virtual void pair_mu(boson_tl<fp_t> &b, fp_t temper)=0;
 
     /** \brief Calculate thermodynamic properties with antiparticles
 	as function of density
     */
-    virtual void pair_density(boson &b, double temper)=0;
+    virtual void pair_density(boson_tl<fp_t> &b, fp_t temper)=0;
 
   };
+
+  typedef boson_thermo_tl<> boson_thermo;
   
 }
 
