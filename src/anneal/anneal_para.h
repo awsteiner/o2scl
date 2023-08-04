@@ -29,6 +29,7 @@
 
 #include <o2scl/anneal_gsl.h>
 #include <o2scl/vector.h>
+#include <o2scl/set_openmp.h>
 
 namespace o2scl {
   
@@ -123,7 +124,7 @@ namespace o2scl {
     }
 
     // Set number of threads
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
     omp_set_num_threads(n_threads);
 #pragma omp parallel
     {
@@ -165,11 +166,11 @@ namespace o2scl {
     // Setup initial temperature and step sizes
     this->start(nv,T);
     
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
     {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
       for(size_t it=0;it<n_threads;it++) {
@@ -199,11 +200,11 @@ namespace o2scl {
       // Count the number of moves accepted for thread 0
       size_t nmoves=0;
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
       {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
 	for(size_t it=0;it<n_threads;it++) {
@@ -285,11 +286,11 @@ namespace o2scl {
 	// integer type instead
 	std::vector<int> done_arr(n_threads);
 	
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
 	{
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
 	  for(size_t it=0;it<n_threads;it++) {
@@ -422,7 +423,7 @@ namespace o2scl {
    */
   virtual int mmin(size_t nv, vec_t &x0, double &fmin, 
 		   func_t &func) {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
     omp_set_num_threads(n_threads);
 #pragma omp parallel
     {

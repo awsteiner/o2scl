@@ -28,7 +28,8 @@
 #include <o2scl/test_mgr.h>
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_MPFR
+#include <o2scl/set_mpfr.h>
+#ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 
@@ -73,7 +74,7 @@ typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 #endif
 
@@ -170,7 +171,7 @@ int main(void) {
     t.test_abs_boost<cpp_dec_float_50>(diff_cdf,0.0,1.0e-29,
 				       "inte_adapt_cern_cdf");
     
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
     
     cout << "inte_adapt_cern, mpfr_float_50, testfun:\n  ";
     
@@ -265,7 +266,7 @@ int main(void) {
 				       "it_iac cpp_dec_float_50");
     cout << endl;
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
     
     cout << "inte_transform with inte_adapt_cern, mpfr_float_50 precision, "
          << "sin_recip:\n  " << endl;

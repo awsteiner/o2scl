@@ -37,9 +37,11 @@
 // For gsl_sf_fermi_dirac_int()
 #include <gsl/gsl_specfunc.h>
 
+#include <o2scl/set_mpfr.h>
+
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 
@@ -133,7 +135,7 @@ namespace o2scl {
                        boost::multiprecision::cpp_dec_float<100> > >
   fermion_cdf100;
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<25> > >

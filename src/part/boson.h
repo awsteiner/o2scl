@@ -47,7 +47,9 @@ namespace o2scl {
   public:
 
     /// Create a boson with mass \c mass and degeneracy \c dof 
-    boson_tl(fp_t mass=0.0, fp_t dof=0.0);
+    boson_tl(fp_t mass=0.0, fp_t dof=0.0) {
+      co=0.0;
+    }      
 
     /** \brief The condensate
 	
@@ -61,7 +63,16 @@ namespace o2scl {
 	The expressions used are exact. The chemical potentials are
 	ignored.
     */
-    virtual void massless_calc(fp_t temper);
+    virtual void massless_calc(fp_t temper) {
+
+      fp_t zeta3_loc=boost::math::constants::zeta_three<fp_t>();
+      this->n=this->g*pow(temper,3.0)*zeta3_loc/o2scl_const::pi2;
+      this->ed=this->g*o2scl_const::pi2*pow(temper,4.0)/30;
+      this->pr=this->ed/3;
+      this->en=this->g*o2scl_const::pi2*pow(temper,3.0)/45*2;
+      
+      return;
+    }      
     
     /// Return string denoting type ("boson")
     virtual const char *type() { return "boson"; }

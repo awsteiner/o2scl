@@ -34,9 +34,11 @@
 #include <sstream>
 #include <codecvt>
 
+#include <o2scl/set_mpfr.h>
+
 #define BOOST_DISABLE_ASSERTS
 #include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 

@@ -27,6 +27,8 @@
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
 
+#include <o2scl/set_mpfr.h>
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -1952,7 +1954,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << std::numeric_limits<cpp_dec_float_100>::epsilon()
        << std::endl;
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 
   cout.width(18);
   cout << "mpfr_25";

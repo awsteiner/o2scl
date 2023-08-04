@@ -25,6 +25,7 @@
 #include <o2scl/err_hnd.h>
 #include <o2scl/constants.h>
 #include <o2scl/funct_multip.h>
+#include <o2scl/set_mpfr.h>
 
 using namespace std;
 using namespace o2scl;
@@ -108,7 +109,7 @@ int main(void) {
                      1.0e-4,val,err);
     t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_cdf");
   }
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
   {
     fmc f2;
     double val, err;

@@ -41,11 +41,14 @@
 #include <o2scl/cholesky.h>
 #include <o2scl/invert.h>
 
-#ifdef O2SCL_FFTW
+#include <o2scl/set_fftw.h>
+#include <o2scl/set_openmp.h>
+
+#ifdef O2SCL_SET_FFTW
 #include <fftw3.h>
 #endif
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 
@@ -1880,7 +1883,7 @@ namespace o2scl {
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
     
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel for
 #endif
     for(size_t k=1;k<kmax;k++) {
@@ -1888,7 +1891,7 @@ namespace o2scl {
       if (verbose>0) {
         int n_threads=1;
         int i_thread=0;
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
         n_threads=omp_get_num_threads();
         i_thread=omp_get_thread_num();
 #endif
@@ -1946,7 +1949,7 @@ namespace o2scl {
   template<class vec_t, class resize_vec_t>
   void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
     
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     std::vector<double> data2(data.size());
     std::vector<std::complex<double>> fft2(data2.size()/2+1);
@@ -1980,7 +1983,7 @@ namespace o2scl {
   template<class vec_t, class resize_vec_t>
   void vector_backward_fft_copy(const vec_t &data, resize_vec_t &fft) {
     
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     std::vector<std::complex<double>> data2(data.size());
     std::vector<double> fft2((data.size()-1)*2);
@@ -2038,7 +2041,7 @@ namespace o2scl {
   void vector_forward_complex_fft_copy
   (const cx_vec_t &data, cx_resize_vec_t &fft) {
     
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
                                                  data.size());
@@ -2091,7 +2094,7 @@ namespace o2scl {
   void vector_backward_complex_fft_copy
   (const cx_vec_t &data, cx_resize_vec_t &fft) {
     
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
                                                  data.size());
@@ -2229,7 +2232,7 @@ namespace o2scl {
   (const vec_t &data, resize_vec_t &ac_vec, double mean,
    double stddev, int verbose=0) {
     
-#ifdef O2SCL_FFTW
+#ifdef O2SCL_SET_FFTW
 
     fftw_complex *in=(fftw_complex *)fftw_malloc(sizeof(fftw_complex)*
                                                  data.size());

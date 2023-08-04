@@ -23,6 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/polylog.h>
+#include <o2scl/set_mpfr.h>
 
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
@@ -42,7 +43,7 @@ typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 
 typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;

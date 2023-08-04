@@ -34,7 +34,9 @@
 #include <sstream>
 #include <map>
 
-#ifdef O2SCL_OPENMP
+#include <o2scl/set_openmp.h>
+
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 
@@ -3223,12 +3225,12 @@ namespace o2scl {
       // Resize vector if necessary (outside the parallel region)
       if (vec.size()<nlines) vec.resize(nlines);
       
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel private(i_thread)
 #endif
       {
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
         n_threads=omp_get_num_threads();
         i_thread=omp_get_thread_num();
 #endif

@@ -2,7 +2,7 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = boson.cpp boson_eff.cpp fermion_eff.cpp \
+PART_SRCS = boson_eff.cpp fermion_eff.cpp \
 	part.cpp quark.cpp fermion_deriv_nr.cpp \
 	boson_rel.cpp fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp part_python.cpp
