@@ -54,7 +54,7 @@ int main(void) {
   cout.setf(ios::scientific);
   
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
   
   // Compare polylog values with hard-coded values
   polylog<> p;
