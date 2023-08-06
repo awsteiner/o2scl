@@ -81,7 +81,7 @@ int main(void) {
     gsl_linalg_cholesky_decomp(gm1);
     cholesky_decomp(5,om1);
       
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
     
     cout << "Performing eigen test." << endl;
     Eigen::MatrixXd em1(5,5);

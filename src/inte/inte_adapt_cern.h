@@ -41,6 +41,8 @@ namespace o2scl {
   template<class fp_t> class inte_subdiv {
   public:
 
+    /** \brief Desc
+     */
     inte_subdiv(int n) {
       resize(n);
     }
@@ -357,6 +359,8 @@ namespace o2scl {
     }
     //@}
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_iu_err_int(func_t &&func, fp_t a, fp_t &res,
                          fp_t &err, double target_tol, 
@@ -392,10 +396,12 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
-    int integ_il_err_int(func_t &&func, fp_t b, 
-                         fp_t &res, fp_t &err, 
-                         double target_tol, double integ_tol, double func_tol) {
+    int integ_il_err_int(func_t &&func, fp_t b, fp_t &res, fp_t &err, 
+                         double target_tol, double integ_tol,
+                         double func_tol) {
       
       inte_subdiv<fp_t> is(nsub);
       
@@ -426,9 +432,12 @@ namespace o2scl {
       return 0;
     }
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_i_err_int(func_t &&func, fp_t &res, fp_t &err, 
-                        double target_tol, double integ_tol, double func_tol) {
+                        double target_tol, double integ_tol,
+                        double func_tol) {
       
       inte_subdiv<fp_t> is(nsub);
       
@@ -900,6 +909,8 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
                             fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -1069,6 +1080,8 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
                             fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -1236,6 +1249,8 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
+    /** \brief Desc
+     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
                            fp_t &res, fp_t &err, double integ_tol=-1.0) {

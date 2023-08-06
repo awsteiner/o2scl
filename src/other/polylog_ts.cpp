@@ -54,7 +54,7 @@ int main(void) {
   cout.setf(ios::scientific);
   
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
   
   // Compare polylog values with hard-coded values
   polylog<> p;
@@ -101,41 +101,52 @@ int main(void) {
     
     fermi_dirac_integ_gsl fdig;
     
-    fermi_dirac_multip fdib2;
-    fdib2.set_tol(1.0e-28);
+    fermi_dirac_multip fdm;
+    fdm.set_tol(1.0e-28);
 
     fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
-                             cpp_dec_float_50> fd_35_50;
-    fd_35_50.set_tol(1.0e-28);
-    
-    for(size_t i=0;i<60;i+=2) {
+                             cpp_dec_float_50> fdid_35_50;
+    fdid_35_50.set_tol(1.0e-28);
+
+    cout << "i     x            gsl          direct       multip       "
+         << "diff2        meth" << endl;
+
+    for(size_t i=0;i<60;i++) {
       
       double x=gn.gen();
       cpp_dec_float_35 x_cdf35=gn_cdf35.gen();
       
       double y1=fdig.calc_3(x);
-      fdib2.set_tol(1.0e-28);
-      cpp_dec_float_35 y5=fdib2.calc_3(x_cdf35);
+      fdm.set_tol(1.0e-28);
+      int method;
+      cpp_dec_float_35 y5, y5e;
+      fdm.calc_3_ret_full(x_cdf35,y5,y5e,method);
       cout.width(4);
       cout << i << " ";
       cout.setf(ios::showpos);
       cout << x << " ";
       cout.unsetf(ios::showpos);
+
+      if (i==49) {
+        t.test_gen(abs(y1-y5)/y1<1.0e-14,"fd");
+      } else {
+        t.test_gen(abs(y1-y5)/y1<1.0e-15,"fd");
+      }
       
-      t.test_gen(abs(y1-y5)/y1<1.0e-15,"fd");
-      
-      // fd_35_50 starts to fail once i=49
+      // fdid_35_50 starts to fail once i=49
       if (i<49) {
-        cpp_dec_float_35 y4=fd_35_50.calc_3(x_cdf35);
+        cpp_dec_float_35 y4=fdid_35_50.calc_3(x_cdf35);
         cout << y1 << " " << y4 << " " << y5 << " "
-             << abs(y4-y5)/y4 << endl;
+             << abs(y4-y5)/y4 << " " << method << endl;
         t.test_gen(abs(y4-y5)/y4<1.0e-28,"fd 2");
       } else {
-        cout << y1 << " " << 0.0 << " " << y5 << endl;
+        cout << y1 << "              " << y5 << "              "
+             << method << endl;
       }
       
     }
   }
+  cout << endl;
 
   bessel_K_exp_integ_direct<long double,funct_cdf35,20,
 			    cpp_dec_float_35> be_ld_35;

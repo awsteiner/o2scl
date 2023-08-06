@@ -48,8 +48,9 @@
 #include <o2scl/slack_messenger.h>
 #include <o2scl/kde_python.h>
 #include <o2scl/rng.h>
+#include <o2scl/set_readline.h>
 
-#ifdef O2SCL_READLINE
+#ifdef O2SCL_SET_READLINE
 #include <o2scl/cli_readline.h>
 #else
 #include <o2scl/cli.h>

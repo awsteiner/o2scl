@@ -37,7 +37,7 @@ void o2scl_linalg::QR_decomp_unpack<arma::mat,arma::mat,arma::mat>
 }
   
 #endif
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   
 // (Eigen specialization)
 template<>

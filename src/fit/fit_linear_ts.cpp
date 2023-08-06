@@ -98,7 +98,7 @@ protected:
 
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 #include <eigen3/Eigen/Dense>
 
 template<class vec_t, class mat_t>
@@ -233,7 +233,7 @@ int main(void) {
 #endif
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   {
     Eigen::VectorXd eparms(npar), eydat(ndat);

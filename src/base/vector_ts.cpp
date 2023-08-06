@@ -347,7 +347,7 @@ int main(void) {
   }
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   {
     Eigen::MatrixXd ub1(3,3);
     ub1(0,0)=0.0;

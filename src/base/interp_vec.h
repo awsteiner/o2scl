@@ -52,8 +52,9 @@
 
 #include <o2scl/interp.h>
 #include <o2scl/interp_krige.h>
+#include <o2scl/vector_special.h>
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 #include <eigen3/Eigen/Dense>
 #endif
 
@@ -185,7 +186,7 @@ namespace o2scl {
       } else if (interp_type==itp_gp_rbf_noise_loo_cv ||
                  interp_type==itp_gp_rbf_noise_max_lml) {
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
                            Eigen::MatrixXd,
                            o2scl_linalg::matrix_invert_det_eigen

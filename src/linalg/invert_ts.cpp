@@ -150,7 +150,7 @@ int main(void) {
   
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   
   Eigen::MatrixXd em1(5,5), em2(5,5), em3(5,5);
     

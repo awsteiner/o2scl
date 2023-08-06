@@ -32,7 +32,7 @@
 #ifdef O2SCL_ARMA
 #include <armadillo>
 #endif
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 #include <eigen3/Eigen/Dense>
 #endif
 
@@ -83,7 +83,7 @@ public:
 
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   double lefte(size_t ieq, double x, Eigen::MatrixXd::RowXpr &yleft) {
     return yleft[1]-1.0;
@@ -592,7 +592,7 @@ int main(void) {
 
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   // Eigen with dense matrices and QR solver with column pivoting
   {

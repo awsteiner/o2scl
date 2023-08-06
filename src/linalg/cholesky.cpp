@@ -26,7 +26,7 @@ void blank_func2() {
   return;
 }
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   
 // (Eigen specialization)
 template<>
