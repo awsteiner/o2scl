@@ -278,90 +278,95 @@ namespace o2scl {
       \future Allow user to change \c cst?
   */
   template<class func_t=funct, class fp_t=double,
-    class weights_t=inte_gauss_coeffs_double>
-    class inte_gauss_cern : public inte<func_t,fp_t> {
+           class weights_t=inte_gauss_coeffs_double>
+  class inte_gauss_cern : public inte<func_t,fp_t> {
 
   public:
-  
-  const fp_t *w, *x;
-  weights_t wgts;
+
+    /** \brief Desc
+     */
+    const fp_t *w, *x;
     
-  inte_gauss_cern() {
-    w=&(wgts.w[0]);
-    x=&(wgts.x[0]);
-  }
-
-  virtual ~inte_gauss_cern() {
-  }
-
-  /** \brief Integrate function \c func from \c a to \c b.
-   */
+    /** \brief Desc
+     */
+    weights_t wgts;
+    
+    inte_gauss_cern() {
+      w=&(wgts.w[0]);
+      x=&(wgts.x[0]);
+    }
+    
+    virtual ~inte_gauss_cern() {
+    }
+    
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
     virtual int integ_err(func_t &func, fp_t a, fp_t b, 
                           fp_t &res, fp_t &err) {
 
-    fp_t y1, y2;
-    err=0.0;
+      fp_t y1, y2;
+      err=0.0;
+      
+      size_t itx=0;
+      
+      int i;
+      bool loop=true, loop2=false;
+      static const fp_t cst=0.005;
+      fp_t h=0.0;
+      if (b==a) {
+        res=0.0;
+        return o2scl::success;
+      }
+      fp_t cnst=cst/(b-a);
+      fp_t aa=0.0, bb=a;
+      while (loop==true || loop2==true) {
+        itx++;
+        if (loop==true) {
+          aa=bb;
+          bb=b;
+        }
+        fp_t c1=(bb+aa)/2.0;
+        fp_t c2=(bb-aa)/2.0;
+        fp_t s8=0.0;
+        for(i=0;i<4;i++) {
+          fp_t u=c2*x[i];
+          y1=func(c1+u);
+          y2=func(c1-u);
+          s8+=w[i]*(y1+y2);
+        }
+        fp_t s16=0.0;
+        for(i=4;i<12;i++) {
+          fp_t u=c2*x[i];
+          y1=func(c1+u);
+          y2=func(c1-u);
+          s16+=w[i]*(y1+y2);
+        }
+        s16*=c2;
+        
+        loop=false;
+        loop2=false;
 
-    size_t itx=0;
-
-    int i;
-    bool loop=true, loop2=false;
-    static const fp_t cst=0.005;
-    fp_t h=0.0;
-    if (b==a) {
-      res=0.0;
+        fp_t tdiff=s16-c2*s8;
+        if (abs(tdiff)<this->tol_rel*
+            (1.0+abs(s16))) {
+          h+=s16;
+          if (bb!=b) loop=true;
+        } else {
+          bb=c1;
+          fp_t one=1;
+          if (one+cnst*abs(c2)!=one) {
+            loop2=true;
+          } else {
+            this->last_iter=itx;
+            O2SCL_CONV2_RET("Failed to reach required accuracy in cern_",
+                            "gauss::integ().",exc_efailed,this->err_nonconv);
+          }
+        }
+      }
+      this->last_iter=itx;
+      res=h;
       return o2scl::success;
     }
-    fp_t cnst=cst/(b-a);
-    fp_t aa=0.0, bb=a;
-    while (loop==true || loop2==true) {
-      itx++;
-      if (loop==true) {
-	aa=bb;
-	bb=b;
-      }
-      fp_t c1=(bb+aa)/2.0;
-      fp_t c2=(bb-aa)/2.0;
-      fp_t s8=0.0;
-      for(i=0;i<4;i++) {
-	fp_t u=c2*x[i];
-	y1=func(c1+u);
-	y2=func(c1-u);
-	s8+=w[i]*(y1+y2);
-      }
-      fp_t s16=0.0;
-      for(i=4;i<12;i++) {
-	fp_t u=c2*x[i];
-	y1=func(c1+u);
-	y2=func(c1-u);
-	s16+=w[i]*(y1+y2);
-      }
-      s16*=c2;
- 
-      loop=false;
-      loop2=false;
-
-      fp_t tdiff=s16-c2*s8;
-      if (abs(tdiff)<this->tol_rel*
-	  (1.0+abs(s16))) {
-	h+=s16;
-	if (bb!=b) loop=true;
-      } else {
-	bb=c1;
-	fp_t one=1;
-	if (one+cnst*abs(c2)!=one) {
-	  loop2=true;
-	} else {
-	  this->last_iter=itx;
-	  O2SCL_CONV2_RET("Failed to reach required accuracy in cern_",
-			  "gauss::integ().",exc_efailed,this->err_nonconv);
-	}
-      }
-    }
-    this->last_iter=itx;
-    res=h;
-    return o2scl::success;
-  }
 
   };
 

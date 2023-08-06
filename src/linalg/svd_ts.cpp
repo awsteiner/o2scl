@@ -990,7 +990,7 @@ int main(int argc, char *argv[]) {
 
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
       Eigen::MatrixXd em1(arr_size,arr_size);
       Eigen::MatrixXd em2(arr_size,arr_size);

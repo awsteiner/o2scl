@@ -61,6 +61,7 @@
 
 #include <o2scl/misc.h>
 #include <o2scl/uniform_grid.h>
+#include <o2scl/vector_special.h>
 
 namespace o2scl {
 
@@ -4078,7 +4079,7 @@ namespace o2scl {
 
 #endif
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
+#if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
 #include <eigen3/Eigen/Dense>
 
 namespace o2scl {

@@ -377,7 +377,7 @@ namespace o2scl {
   
   };
 
-#ifdef O2SCL_MPFR
+#ifdef O2SCL_SET_MPFR
   
   // Specialization for inte_gauss56_cern in 25-digit precision
   template<> class inte_gauss56_cern

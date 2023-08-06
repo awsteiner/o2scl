@@ -79,7 +79,7 @@ double o2scl::matrix_min(const arma::mat &data) {
 
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
 template<> Eigen::MatrixXd::RowXpr 
 o2scl::matrix_row<Eigen::MatrixXd,Eigen::MatrixXd::RowXpr>

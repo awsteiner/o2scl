@@ -642,7 +642,6 @@ namespace o2scl {
 
     /// Object for computing non-derivative quantities
     fermion_rel_t fr;
-    //l<fermion_deriv_t> fr;
 
     /// Verbosity parameter (default 0)
     int verbose;

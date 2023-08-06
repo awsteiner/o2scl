@@ -63,7 +63,7 @@ public:
     return 0;
   }
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   int mfn_Eigen(size_t nv, const Eigen::VectorXd &x, Eigen::VectorXd &y) {
     y[0]=sin(x[1]-0.2);
@@ -235,7 +235,7 @@ int main(void) {
   t.test_rel_vec(resid_test.size(),resid_test,resid_test2,1.0e-2,
 		 "GSL vs. O2scl");
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   // 8 - Using Eigen
   typedef std::function<int(size_t,const Eigen::VectorXd &,

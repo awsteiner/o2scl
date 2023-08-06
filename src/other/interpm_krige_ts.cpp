@@ -32,7 +32,7 @@
 #ifdef O2SCL_ARMA
 #include <armadillo>
 #endif
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 #include <eigen3/Eigen/Dense>
 #endif
 
@@ -580,7 +580,7 @@ int main(void) {
     cout << endl;
   }
   
-#ifdef O2SCL_EIGEN  
+#ifdef O2SCL_SET_EIGEN  
 
   {
 

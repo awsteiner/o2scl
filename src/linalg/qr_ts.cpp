@@ -81,7 +81,7 @@ int main(void) {
       t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-11,"qr decomp 1");
       t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-11,"qr decomp 2");
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
       Eigen::MatrixXd em1(5,5);
       for(size_t i=0;i<5;i++) {

@@ -179,7 +179,7 @@ int main(void) {
 
 #endif
   
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   for(size_t kk=0;kk<7;kk++) {
   

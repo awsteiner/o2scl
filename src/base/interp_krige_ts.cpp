@@ -27,11 +27,13 @@
 #include <o2scl/hdf_io.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/deriv_gsl.h>
+#include <o2scl/set_eigen.h>
+#include <o2scl/set_arma.h>
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 #endif
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 #include <eigen3/Eigen/Dense>
 #endif
 
@@ -372,7 +374,7 @@ int main(void) {
 
   }
   
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   /*
     interp_krige_optim<ubvector,ubvector,arma::mat,
@@ -391,7 +393,7 @@ int main(void) {
   
 #endif
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
 
   if (true) {
     

@@ -31,6 +31,7 @@
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>
 #include <o2scl/vector.h>
+#include <o2scl/vector_special.h>
 
 namespace o2scl_linalg {
   
@@ -58,7 +59,7 @@ namespace o2scl_linalg_bracket {
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
+#if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
 #include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   

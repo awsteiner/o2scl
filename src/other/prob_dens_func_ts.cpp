@@ -196,7 +196,7 @@ int main(void) {
     
   }
 
-#ifdef O2SCL_EIGEN
+#ifdef O2SCL_SET_EIGEN
   
   if (true) {
     

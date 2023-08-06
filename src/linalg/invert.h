@@ -45,6 +45,7 @@ namespace o2scl_linalg {
     
   public:
 
+    /// Desc
     bool err_on_fail;
 
     matrix_invert_det() {
@@ -215,7 +216,8 @@ namespace o2scl_linalg {
 }
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
-#if defined (O2SCL_ARMA) || defined (DOXYGEN)
+#if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
+
 #include <armadillo>
 namespace o2scl_linalg {
   
@@ -307,7 +309,7 @@ namespace o2scl_linalg {
 }
 #endif
 
-#if defined (O2SCL_EIGEN) || defined (DOXYGEN)
+#if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
 #include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   

@@ -113,6 +113,18 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
+
+    /** \brief Relativistic fermion thermodynamics with derivatives at
+        long double precision
+     */
+    //fermion_deriv_rel_tl<fermion_deriv_ld,fermion_rel_ld,
+    //long double> fdrel_ld;
+
+    /** \brief Relativistic fermion thermodynamics with derivatives at
+        long double precision
+     */
+    //fermion_deriv_rel_cdf25<fermion_deriv_cdf25,fermion_rel_cdf25,
+    //cpp_dec_float_25> fdrel_cdf25;
     //@}
     
     /// \name Accuracy control
