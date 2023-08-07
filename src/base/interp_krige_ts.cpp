@@ -27,8 +27,7 @@
 #include <o2scl/hdf_io.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/deriv_gsl.h>
-#include <o2scl/set_eigen.h>
-#include <o2scl/set_arma.h>
+#include <o2scl/vector_special.h>
 
 #ifdef O2SCL_SET_ARMA
 #include <armadillo>
