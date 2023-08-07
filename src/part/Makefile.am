@@ -2,9 +2,9 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = boson_eff.cpp fermion_eff.cpp \
+PART_SRCS = fermion_eff.cpp boson_eff.cpp \
 	part.cpp quark.cpp fermion_deriv_nr.cpp \
-	boson_rel.cpp fermion_mag_zerot.cpp \
+	fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp part_python.cpp
 HEADER_VAR = boson.h classical.h boson_eff.h fermion_eff.h \
 	fermion.h fermion_nonrel.h part.h quark.h fermion_rel.h \
