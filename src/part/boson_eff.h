@@ -102,6 +102,7 @@ namespace o2scl {
 	\c bosejel34cons from Johns et al. (1996).
     */
     int load_coefficients(int ctype);
+    
     /// A set of coefficients from Johns et al. (1996)
     static const int cf_bosejel21=2;
     /// A set of coefficients from Johns et al. (1996)
