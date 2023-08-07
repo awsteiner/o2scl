@@ -49,6 +49,8 @@ namespace o2scl {
     /// Create a boson with mass \c mass and degeneracy \c dof 
     boson_tl(fp_t mass=0.0, fp_t dof=0.0) {
       co=0.0;
+      this->m=mass;
+      this->g=dof;
     }      
 
     /** \brief The condensate
