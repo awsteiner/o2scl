@@ -1189,7 +1189,6 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform_mpfr=
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
-  
 }
 
 #endif
