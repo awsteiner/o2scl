@@ -63,31 +63,39 @@ int main(void) {
   cout << "n: " << dtos(elep.e.n,0) << " en: ";
   cout << dtos(elep.e.en,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  cout << "  dndT: " << dtos(elep.ed.dndT) << " dsdT: "
+       << dtos(elep.ed.dsdT) << endl;
 
   // Check temperature derivatives
   fermion et=elep.e;
   part_deriv_press edt=elep.ed;
   elep.pair_mu(0.1+1.0e-4);
-  cout << elep.ed.dndT << " " << (elep.e.n-et.n)/1.0e-4 << endl;
-  cout << elep.ed.dsdT << " " << (elep.e.en-et.en)/1.0e-4 << endl;
+  t.test_rel(elep.ed.dndT,(elep.e.n-et.n)/1.0e-4,1.0e-3,"dndT 1");
+  t.test_rel(elep.ed.dsdT,(elep.e.en-et.en)/1.0e-4,1.0e-3,"dsdT 1");
   
   elep.improved_acc();
   elep.pair_mu(0.1);
   cout << "n: " << dtos(elep.e.n,0) << " en: ";
   cout << dtos(elep.e.en,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  cout << "  dndT: " << dtos(elep.ed.dndT) << " dsdT: "
+       << dtos(elep.ed.dsdT) << endl;
 
   elep.ld_acc();
   elep.pair_mu(0.1);
   cout << "n: " << dtos(elep.e.n,0) << " en: ";
   cout << dtos(elep.e.en,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  cout << "  dndT: " << dtos(elep.ed.dndT) << " dsdT: "
+       << dtos(elep.ed.dsdT) << endl;
 
   elep.fp_25_acc();
   elep.pair_mu(0.1);
   cout << "n: " << dtos(elep.e.n,0) << " en: ";
   cout << dtos(elep.e.en,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  cout << "  dndT: " << dtos(elep.ed.dndT) << " dsdT: "
+       << dtos(elep.ed.dsdT) << endl;
 
   cout << endl;
 
