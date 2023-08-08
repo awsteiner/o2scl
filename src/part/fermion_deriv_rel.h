@@ -847,6 +847,7 @@ namespace o2scl {
                                          f.inc_rest_mass); };
 
           iret=nit->integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
+          std::cout << "nd dndmu: " << f.dndmu << std::endl;
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
