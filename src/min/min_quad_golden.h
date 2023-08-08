@@ -103,8 +103,6 @@ namespace o2scl {
   template<class func_t=funct> class min_quad_golden : 
   public min_bkt_base<func_t> {
 	
-#ifndef DOXYGEN_INTERNAL
-	
     protected:
 
     /// The function
@@ -135,8 +133,6 @@ namespace o2scl {
     
       return success;
     }
-      
-#endif
       
     public:
  

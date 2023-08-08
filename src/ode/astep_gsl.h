@@ -272,8 +272,6 @@ namespace o2scl {
     
     typedef boost::numeric::ublas::vector<double> ubvector;
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
   /// Temporary storage for yout
@@ -433,8 +431,6 @@ namespace o2scl {
     return step_status;
   }
       
-#endif
-    
   public:
       
   astep_gsl() {

@@ -106,8 +106,6 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
    
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
     /// \name Vectors for temporary storage 
@@ -156,8 +154,6 @@ namespace o2scl {
       }
     }
   
-#endif
-
   public:
       
     ode_iv_solve() {
@@ -674,8 +670,6 @@ namespace o2scl {
     class mat_row_t=solve_grid_mat_row> 
     class ode_iv_solve_grid {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
     /// The adaptive stepper
@@ -692,8 +686,6 @@ namespace o2scl {
       }
       return 0;
     }
-
-#endif
 
   public:
       

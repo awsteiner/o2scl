@@ -377,8 +377,6 @@ namespace o2scl {
     }
     //@}
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /// The number of points
@@ -392,8 +390,6 @@ namespace o2scl {
 
     /// The responsibilities
     internal_mat_t resps;
-    
-#endif
     
   };
     

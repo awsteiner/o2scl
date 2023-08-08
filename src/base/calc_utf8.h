@@ -78,6 +78,7 @@
 #include <o2scl/rng.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/string_conv.h>
+#include <o2scl/polylog.h>
 
 namespace o2scl {
 

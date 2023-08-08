@@ -233,8 +233,6 @@ namespace o2scl {
     /// If true, verify the thermodynamic identity
     bool verify_ti;
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The matrix of coefficients
@@ -254,8 +252,6 @@ namespace o2scl {
     /// The function which solves for \f$ f \f$ from \f$ \psi \f$.
     double solve_fun(double x, double psi);
     
-#endif
-
   };
 
 }

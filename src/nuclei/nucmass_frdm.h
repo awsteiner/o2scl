@@ -456,8 +456,6 @@ namespace o2scl {
     */
     int set_data(int n_mass, nucmass_mnmsk::entry *m, std::string ref);
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The reference for the original data
@@ -468,8 +466,6 @@ namespace o2scl {
     
     /// The last table index for caching
     int last;
-    
-#endif
     
   };
 

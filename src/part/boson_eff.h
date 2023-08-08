@@ -160,8 +160,6 @@ namespace o2scl {
     /// Return string denoting type ("boson_eff")
     virtual const char *type() { return "boson_eff"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
   
     /// The coefficients
@@ -192,7 +190,6 @@ namespace o2scl {
     int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
 			 boson &b, double T);
 
-#endif
   };
 
 }

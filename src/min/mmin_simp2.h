@@ -129,8 +129,6 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
 
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
 
     /// An array of n+1 vectors containing the simplex
@@ -362,8 +360,6 @@ namespace o2scl {
         protected to prevent the casual user from changing it.
     */
     bool avoid_nonzero;
-
-#endif
 
   public:
 
@@ -851,16 +847,12 @@ namespace o2scl {
     /// Return string denoting type("mmin_simp2")
     virtual const char *type() { return "mmin_simp2";}
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
     mmin_simp2<func_t,vec_t>
     (const mmin_simp2<func_t,vec_t> &);
     mmin_simp2<func_t,vec_t>& operator=
     (const mmin_simp2<func_t,vec_t>&);
-
-#endif
 
   };
   

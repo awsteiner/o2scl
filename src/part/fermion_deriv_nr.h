@@ -560,8 +560,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
   /// Solver to compute chemical potential from density
   root<> *density_root;
     
@@ -621,9 +619,6 @@ namespace o2scl {
 
     return yy;
   }
-
-
-#endif
 
   };
 

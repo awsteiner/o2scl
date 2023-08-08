@@ -102,8 +102,6 @@ namespace o2scl {
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The array containing the mass data of length n
@@ -112,8 +110,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
     
-#endif
-
   };
   
 }

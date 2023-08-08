@@ -449,8 +449,6 @@ namespace o2scl {
     static const int endpoint=3;
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// \name Edge direction
@@ -521,8 +519,6 @@ namespace o2scl {
 
     contour(const contour &);
     contour& operator=(const contour&);
-
-#endif
 
   };
   

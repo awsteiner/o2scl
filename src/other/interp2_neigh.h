@@ -203,8 +203,6 @@ namespace o2scl {
       return;
     }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The number of points
@@ -218,8 +216,6 @@ namespace o2scl {
     /// True if the data has been specified
     bool data_set;
     
-#endif
-
   };
   
 }

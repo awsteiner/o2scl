@@ -121,8 +121,6 @@ namespace o2scl {
      */
     int spinp_to_int(std::string s);
   
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// Element names
@@ -143,8 +141,6 @@ namespace o2scl {
     /// The list of elements organized by proton number
     std::string element_list[nelements];
 
-#endif
-    
   };
   
   /** \brief Nuclear mass formula base [abstract base]

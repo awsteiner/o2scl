@@ -358,14 +358,10 @@ namespace o2scl {
       return 0;
     }
       
-#ifndef DOXYGEN_INTERNAL
-
     protected:
       
     /// Internal storage for the value of \c info
     int info;
-      
-#endif
       
   };
   

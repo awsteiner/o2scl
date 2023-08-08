@@ -451,8 +451,6 @@ namespace o2scl {
 	
   }
 
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
       
   /// The present solution estimate
@@ -468,8 +466,6 @@ namespace o2scl {
   fp_t fa, fb, fc;
   //@}
       
-#endif
- 
   };
 
 #ifdef O2SCL_NEVER_DEFINED

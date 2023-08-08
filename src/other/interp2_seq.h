@@ -385,8 +385,6 @@ namespace o2scl {
       return result;
     }
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
     /// The array of interpolation objects
@@ -422,8 +420,6 @@ namespace o2scl {
       (const interp2_seq<vec_t,mat_t,mat_row_t> &);
     interp2_seq<vec_t,mat_t,mat_row_t>& operator=
       (const interp2_seq<vec_t,mat_t,mat_row_t>&);
-
-#endif
 
   };
   

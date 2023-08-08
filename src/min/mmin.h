@@ -69,8 +69,6 @@ namespace o2scl {
    */
   virtual int operator()(size_t nv, vec_t &x, vec_t &g)=0;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
   /// A pointer to the user-specified function
@@ -81,8 +79,6 @@ namespace o2scl {
   gradient(const gradient &);
   gradient& operator=(const gradient&);
   
-#endif
-
   };
 
   /** \brief Simple automatic computation of gradient by finite 
@@ -161,8 +157,6 @@ namespace o2scl {
   template<class func_t=multi_funct, class dfunc_t=func_t,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_base {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
   /// Stream for verbose output
@@ -171,8 +165,6 @@ namespace o2scl {
   /// Stream for verbose input
   std::istream *ins;
     
-#endif
-
   public:
     
   mmin_base() {

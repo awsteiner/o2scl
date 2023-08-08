@@ -193,15 +193,11 @@ namespace o2scl {
 
     protected:
 
-#ifndef DOXYGEN_INTERNAL
-
       /// The value of delta as specified by the user
       double delta;
 
       /// True if the value of delta has been set
       bool delta_set;
-
-#endif
 
     };
 

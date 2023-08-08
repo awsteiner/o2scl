@@ -71,8 +71,6 @@ namespace o2scl {
     /// Return the type, \c "nucmass_dz_table".
     virtual const char *type() { return "nucmass_dz_table"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// Table containing the data
@@ -81,8 +79,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
 
-#endif
-    
   };
 
   /** \brief The 10-parameter Duflo-Zuker mass formula
@@ -129,8 +125,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /** \name Workspace vectors used internally
@@ -178,8 +172,6 @@ namespace o2scl {
     ubmatrix_int noc;
     //@}
     
-#endif
-
   public:
     
     nucmass_dz_fit();
@@ -297,8 +289,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /** \name Workspace vectors used internally
@@ -313,8 +303,6 @@ namespace o2scl {
     ubmatrix_int noc;
     //@}
     
-#endif
-
   public:
     
     nucmass_dz_fit_33();

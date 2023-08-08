@@ -64,8 +64,6 @@ namespace o2scl {
     gradient<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_wrapper_gsl : public mmin_wrap_gsl {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
   /// Function
@@ -194,8 +192,6 @@ namespace o2scl {
     return;
   }
     
-#endif
-
   public:
 
   /// Temporary storage
@@ -287,8 +283,6 @@ namespace o2scl {
    */
   class mmin_linmin_gsl {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Minimize the interpolating quadratic
@@ -325,8 +319,6 @@ namespace o2scl {
     double interpolate(double a, double fa, double fpa, double b, 
 		       double fb, double fpb, double xmin, double xmax,
 		       int order);
-#endif
-    
   public:
 
     /** \brief The line minimization
@@ -388,8 +380,6 @@ namespace o2scl {
     gradient_gsl<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_bfgs2 : public mmin_base<func_t,dfunc_t,vec_t> {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
   
   /// \name The original variables from the GSL state structure
@@ -434,8 +424,6 @@ namespace o2scl {
 
   /// Automatic gradient object
   auto_grad_t *agrad;
-    
-#endif
     
   public:
      

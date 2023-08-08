@@ -172,8 +172,6 @@ namespace o2scl {
     /// Return string denoting type("mmin_conp")
     virtual const char *type() { return "mmin_conp";}
 
-#ifndef DOXYGEN_INTERNAL
-
     private:
 
     mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
@@ -181,8 +179,6 @@ namespace o2scl {
     mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>& operator=
     (const mmin_conp<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>&);
 
-#endif
-    
     };
 
 }
