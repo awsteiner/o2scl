@@ -36,7 +36,7 @@
 #include <o2scl/exp_max.h>
 #include <o2scl/kde_python.h>
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -48,7 +48,7 @@ namespace o2scl {
    */
   class gmm_python {
 
-#if defined(O2SCL_PYTHON) || defined(DOXYGEN)
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
     
   protected:
 
