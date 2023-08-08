@@ -72,8 +72,6 @@ namespace o2scl {
   template<class func_t=funct> class root_bkt_cern : 
     public root_bkt<func_t> {
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
       
   /** \brief Internal storage for the mode
@@ -90,8 +88,6 @@ namespace o2scl {
     if (b>=0.0) return fabs(a);
     return -fabs(a);
   }
-      
-#endif
       
   public:
       

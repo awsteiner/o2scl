@@ -222,8 +222,6 @@ namespace o2scl {
     /// The default equation solver
     gsl_mroot_hybrids<mm_funct<> > def_mroot;
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
     
     /// The solver for the initial value problem
@@ -337,8 +335,6 @@ namespace o2scl {
 
       return 0;
     }
-
-#endif
 
   };
 

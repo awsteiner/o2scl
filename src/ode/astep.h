@@ -121,15 +121,11 @@ namespace o2scl {
   /// The default stepper
   ode_rkck_gsl<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> def_step;
   
-#ifndef DOXYGEN_INTERNAL
-
   protected:
       
   /// Pointer to the stepper being used
   ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> *stepp;
     
-#endif
-
   };
 
 }

@@ -345,8 +345,6 @@ namespace o2scl {
       return;
     }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The number of points
@@ -378,8 +376,6 @@ namespace o2scl {
     
     interp2_planar<vec_t>(const interp2_planar<vec_t> &);
     interp2_planar<vec_t>& operator=(const interp2_planar<vec_t>&);
-
-#endif
 
   };
   

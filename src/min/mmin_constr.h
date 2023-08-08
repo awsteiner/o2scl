@@ -77,8 +77,6 @@ namespace o2scl {
     
     public:
     
-#ifndef DOXYGEN_INTERNAL
-
     protected:
     
     /// The current function value
@@ -238,8 +236,6 @@ namespace o2scl {
       return 0;
     }
     
-#endif
-
     public:
     
     mmin_constr() {
@@ -403,8 +399,6 @@ namespace o2scl {
     /// Return string denoting type ("mmin_constr")
     const char *type() { return "mmin_constr"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
   mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>
@@ -412,8 +406,6 @@ namespace o2scl {
   mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>& operator=
   (const mmin_constr<func_t,dfunc_t,hfunc_t,vec_t>&);
 
-#endif
-      
   };
   
 }

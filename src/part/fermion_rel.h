@@ -2413,8 +2413,6 @@ namespace o2scl {
     }
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
     /// Solve for the chemical potential given the density
     fp_t solve_fun(fp_t x, fermion_t &f, fp_t T) {
 
@@ -2851,9 +2849,6 @@ namespace o2scl {
       f.n=density_match;
       return y2;
     }
-
-    
-#endif
 
   };
 

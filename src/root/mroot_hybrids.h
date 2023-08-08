@@ -562,8 +562,6 @@ namespace o2scl {
     class jfunc_t=jac_funct > class mroot_hybrids : 
     public mroot<func_t,vec_t,jfunc_t>, mroot_hybrids_base {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
   /// Number of iterations
@@ -681,8 +679,6 @@ namespace o2scl {
     
     return success;
   }
-
-#endif
 
   public:
       
@@ -1133,16 +1129,12 @@ namespace o2scl {
     return ret;
   }
 
-#ifndef DOXYGEN_INTERNAL
-
  private:
   
   mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>
   (const mroot_hybrids<func_t,vec_t,mat_t,jfunc_t> &);
   mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>& operator=
   (const mroot_hybrids<func_t,vec_t,mat_t,jfunc_t>&);
-
-#endif
 
  };
 

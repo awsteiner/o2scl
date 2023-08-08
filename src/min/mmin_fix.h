@@ -201,8 +201,6 @@ namespace o2scl {
     return (*funcp)(unv,tmp);
   }
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
   /// The minimizer
@@ -227,8 +225,6 @@ namespace o2scl {
   
   mmin_fix_params(const mmin_fix_params &);
   mmin_fix_params& operator=(const mmin_fix_params&);
-
-#endif
 
   };
 

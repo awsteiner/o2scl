@@ -83,8 +83,6 @@ namespace o2scl {
   virtual int operator()(size_t nx, vec_t &x, size_t ny, vec_t &y, 
 			 mat_t &j)=0;
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
   /// A pointer to the user-specified function
@@ -94,8 +92,6 @@ namespace o2scl {
     
   jacobian(const jacobian &);
   jacobian& operator=(const jacobian&);
-    
-#endif
     
   };
   
@@ -141,8 +137,6 @@ namespace o2scl {
     class mat_t=boost::numeric::ublas::matrix<double> > 
     class jacobian_gsl : public jacobian<func_t,vec_t,mat_t> {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
   
   /// Function values
@@ -169,8 +163,6 @@ namespace o2scl {
 
   /// Factor to shrink stepsize by
   double shrink_fact;
-
-#endif
 
   public:
     
@@ -459,8 +451,6 @@ namespace o2scl {
     return ret;
   }
   
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
   /// Pointer to the derivative object
@@ -472,8 +462,6 @@ namespace o2scl {
     (this->func)(ejp.nx,*ejp.x,*ejp.y);
     return (*ejp.y)[ejp.yi];
   }
-
-#endif
 
   };
   

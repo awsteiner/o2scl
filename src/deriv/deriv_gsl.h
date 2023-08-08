@@ -166,8 +166,6 @@ namespace o2scl {
     /// Return string denoting type ("deriv_gsl")
     virtual const char *type() { return "deriv_gsl"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Internal template version of the derivative function
@@ -347,8 +345,6 @@ namespace o2scl {
       return 0;
     }
     
-#endif
-
   };
 
   /** \brief Evalulate a derivative to within a requested tolerance
@@ -923,7 +919,8 @@ namespace o2scl {
         // If the comparison between the 50-digit and 100-digit
         // precision results shows an accurate result, then return
         if (called_cdf50 && dfdx_cdf100!=0) {
-          err=static_cast<fp_t>(abs(dfdx_cdf100-dfdx_cdf50)/abs(dfdx_cdf100));
+          err=static_cast<fp_t>(abs(dfdx_cdf100-dfdx_cdf50)/
+                                abs(dfdx_cdf100));
           if (err<tol_loc) {
             dfdx=static_cast<fp_t>(dfdx_cdf100);
             return 0;

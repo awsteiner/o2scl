@@ -115,8 +115,6 @@ namespace o2scl {
     virtual double eval_gen(int ix, int iy, double x0, double x1, 
 		    double y0, double y1) const=0;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The number of x grid points
@@ -138,8 +136,6 @@ namespace o2scl {
     
     interp2_base<vec_t,mat_t>(const interp2_base<vec_t,mat_t> &);
     interp2_base<vec_t,mat_t>& operator=(const interp2_base<vec_t,mat_t>&);
-
-#endif
 
   };
   

@@ -29,6 +29,7 @@
 #endif
 
 #include <o2scl/funct.h>
+#include <o2scl/lib_settings.h>
 
 using namespace std;
 using namespace o2scl;

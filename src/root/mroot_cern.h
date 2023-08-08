@@ -105,14 +105,10 @@ namespace o2scl {
       class jfunc_t=jac_funct> class mroot_cern : 
       public mroot<func_t,vec_t,jfunc_t> {
 
-#ifndef DOXYGEN_INTERNAL
-      
     protected:
     
     /// Desc
     boost::numeric::ublas::matrix<double> w;
-    
-#endif
     
     public:
     
@@ -536,8 +532,6 @@ namespace o2scl {
       return 0;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
       
     /// Internal storage for the value of \c info
@@ -545,8 +539,6 @@ namespace o2scl {
       
     /// Store the number of function evaluations
     int mpt[289];
-      
-#endif
       
     };
   

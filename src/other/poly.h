@@ -2231,14 +2231,10 @@ namespace o2scl {
     /// Return a string denoting the type ("quartic_real_coeff_cern")
     const char *type() { return "quartic_real_coeff_cern"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   public:
 
     /// The object to solve for the associated cubic
     cubic_real_coeff_cern<fp_t,cx_t> cub_obj;
-
-#endif
 
   };
 
@@ -3220,8 +3216,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// Workspace for quadratic polynomials
     gsl_poly_complex_workspace *w2;
 
@@ -3236,8 +3230,6 @@ namespace o2scl {
 
     /// The size of the workspace \ref wgen
     int gen_size;
-
-#endif
 
   };
 

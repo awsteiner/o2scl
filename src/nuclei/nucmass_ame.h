@@ -268,8 +268,6 @@ namespace o2scl {
     /// Return the reference
     std::string get_reference() { return reference; }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief The array containing the mass data of length ame::n
@@ -285,8 +283,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
     
-#endif
-
   };
 
   /** \brief 
@@ -609,8 +605,6 @@ namespace o2scl {
     /// Return the reference
     std::string get_reference() { return reference; }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief The array containing the mass data of length ame::n
@@ -620,8 +614,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
     
-#endif
-
   };
   
 }

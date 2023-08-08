@@ -66,8 +66,6 @@ namespace o2scl {
     gradient_gsl<multi_funct,boost::numeric::ublas::vector<double> > > 
     class mmin_gsl_base : public mmin_base<func_t,dfunc_t,vec_t> {
     
-#ifndef DOXYGEN_INTERNAL
-    
     protected:
   
     typedef boost::numeric::ublas::vector<double> ubvector;
@@ -318,8 +316,6 @@ namespace o2scl {
       return;
     }
 
-#endif
-
     public:
 
     /// Stepsize for finite-differencing ( default \f$ 10^{-4} \f$ )
@@ -409,8 +405,6 @@ namespace o2scl {
     class mmin_conf : 
     public mmin_gsl_base<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> {
       
-#ifndef DOXYGEN_INTERNAL
-      
     protected:
     
     /// \name The original variables from the GSL state structure
@@ -449,8 +443,6 @@ namespace o2scl {
     double it_min;
     //@}
 
-#endif
-    
     public:
       
     mmin_conf() {
@@ -796,16 +788,12 @@ namespace o2scl {
     /// Return string denoting type("mmin_conf")
     virtual const char *type() { return "mmin_conf";}
 
-#ifndef DOXYGEN_INTERNAL
-
  private:
 
   mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
   (const mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> &);
   mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>& operator=
   (const mmin_conf<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>&);
-
-#endif
 
     };
 

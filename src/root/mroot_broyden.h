@@ -441,16 +441,12 @@ namespace o2scl {
       return success;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
  private:
   
   mroot_broyden<func_t,vec_t,mat_t,jfunc_t>
   (const mroot_broyden<func_t,vec_t,mat_t,jfunc_t> &);
   mroot_broyden<func_t,vec_t,mat_t,jfunc_t>& operator=
   (const mroot_broyden<func_t,vec_t,mat_t,jfunc_t>&);
-
-#endif
 
   };
 

@@ -109,8 +109,6 @@ namespace o2scl {
     /// Return number of entries
     virtual size_t get_nentries() { return n; }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The array containing the mass data of length ame::n
@@ -118,8 +116,6 @@ namespace o2scl {
     
     /// The last table index for caching
     int last;
-    
-#endif
     
   };
   

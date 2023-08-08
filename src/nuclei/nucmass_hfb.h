@@ -130,8 +130,6 @@ namespace o2scl {
     */
     int set_data(int n_mass, nucmass_hfb::entry *m, std::string ref);
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The array containing the mass data of length ame::n
@@ -139,8 +137,6 @@ namespace o2scl {
     
     /// The last table index for caching
     int last;
-    
-#endif
     
   };
 
@@ -238,8 +234,6 @@ namespace o2scl {
     */
     int set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref);
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The array containing the mass data of length ame::n
@@ -247,8 +241,6 @@ namespace o2scl {
 
     /// The last table index for caching
     int last;
-    
-#endif
     
   };
   

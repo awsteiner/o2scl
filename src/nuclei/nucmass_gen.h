@@ -69,8 +69,6 @@ namespace o2scl {
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double get_string(int Z, int N, std::string column);
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The \ref o2scl::table object containing the data
@@ -82,8 +80,6 @@ namespace o2scl {
     /// The last table index for caching
     int last;
     
-#endif
-
   };
   
 }

@@ -111,8 +111,6 @@ namespace o2scl {
       return 0;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// The function parser
@@ -136,8 +134,6 @@ namespace o2scl {
 
     ode_funct_strings(const ode_funct_strings &);
     ode_funct_strings& operator=(const ode_funct_strings&);
-
-#endif
 
   };
   
