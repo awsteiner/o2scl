@@ -61,7 +61,7 @@ namespace o2scl {
     
   protected:
 
-    /// \name Internal functions
+    /// \name Internal functions [protected]
     //@{
     /** \brief Electron thermodynamics from the electron density
 
@@ -92,7 +92,7 @@ namespace o2scl {
                             ubvector &y, double T, double nq);
     //@}
 
-    /// Internal particle objects
+    /// Internal particle objects [protected]
     //@{
     /** \brief Electron in long double precision
      */
@@ -129,10 +129,15 @@ namespace o2scl {
     
     /// \name Accuracy control
     //@{
+    /// Accuracy flag
     int accuracy;
+    /// Default accuracy
     static const int acc_default=0;
+    /// Improved accuracy
     static const int acc_improved=1;
+    /// Use long double internally
     static const int acc_ld=2;
+    /// Use 25-digit floating point numbers internally
     static const int acc_fp_25=3;
     //@}
 
