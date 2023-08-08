@@ -833,6 +833,7 @@ namespace o2scl {
               return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                            f.inc_rest_mass); },
               zero,f.dndmu,unc.dndmu,tol_rel);
+          std::cout << "nd dndmu mp: " << f.dndmu << std::endl;
           
         } else {
           
@@ -841,6 +842,7 @@ namespace o2scl {
                                          f.inc_rest_mass); };
 
           iret=nit->integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
+          std::cout << "nd dndmu: " << f.dndmu << std::endl;
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -963,6 +965,7 @@ namespace o2scl {
                 return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 ll,ul,f.dndmu,unc.dndmu,tol_rel);
+          std::cout << "n dndmu mp: " << f.dndmu << std::endl;
 
           } else {
             
@@ -972,6 +975,7 @@ namespace o2scl {
                 return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 zero,ul,f.dndmu,unc.dndmu,tol_rel);
+          std::cout << "n dndmu: " << f.dndmu << std::endl;
 
           }
           
