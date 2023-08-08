@@ -217,62 +217,106 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
 
 int eos_leptons::pair_mu(double T) {
 
+  // Electron section
+  
   if (include_deriv) {
+    
     fermion_deriv fd=e;
+    
     if (accuracy==acc_ld || accuracy==acc_fp_25) {
       fdrel.multip=true;
     } else {
       fdrel.multip=false;
     }
+    
     fdrel.pair_mu(fd,T);
+
+    // Copy results from the fermion_deriv object
     e.n=fd.n;
     e.ed=fd.ed;
     e.pr=fd.pr;
     e.en=fd.en;
+    
+    ed.dndT=fd.dndT;
+    ed.dndmu=fd.dndmu;
+    ed.dsdT=fd.dsdT;
+    
+    // Collect the total derivative quantities in the thd object, the
+    // totals for the non-derivative quantities are computed below.
     thd.dndT=fd.dndT;
     thd.dndmu=fd.dndmu;
     thd.dsdT=fd.dsdT;
+    
   } else {
+    
     frel.pair_mu(e,T);
+    
   }
+
+  // Collect the total for the non-derivative quantities
   th.ed=e.ed;
   th.pr=e.pr;
   th.en=e.en;
+
+  // Muon section
   
   if (include_muons) {
+    
     if (include_deriv) {
+      
       fermion_deriv fd=mu;
+      
       if (accuracy==acc_ld || accuracy==acc_fp_25) {
         fdrel.multip=true;
       } else {
         fdrel.multip=false;
       }
+      
       fdrel.pair_mu(fd,T);
+      
       mu.n=fd.n;
       mu.ed=fd.ed;
       mu.pr=fd.pr;
       mu.en=fd.en;
+      
+      mud.dndT=fd.dndT;
+      mud.dndmu=fd.dndmu;
+      mud.dsdT=fd.dsdT;
+      
       thd.dndT+=fd.dndT;
       thd.dndmu+=fd.dndmu;
       thd.dsdT+=fd.dsdT;
+      
     } else {
+      
       frel.pair_mu(mu,T);
+      
     }
+    
     th.ed+=mu.ed;
     th.pr+=mu.pr;
     th.en+=mu.en;
+    
   }
+
+  // Photon section
   
   if (include_photons) {
+    
     ph.massless_calc(T);
+    
     if (include_deriv) {
+      
       phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
       phd.dndT=ph.g*zeta3/pi2*3.0*T*T;
       phd.dndmu=0.0;
+      
       thd.dndT+=phd.dndT;
       thd.dndmu+=phd.dndmu;
       thd.dsdT+=phd.dsdT;
+      
     }
+    
     th.ed+=ph.ed;
     th.pr+=ph.pr;
     th.en+=ph.en;

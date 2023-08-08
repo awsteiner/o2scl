@@ -272,22 +272,25 @@ namespace o2scl {
       . (3/10/2020: The CERNLIB links are apparently dead and haven't
       been supported since 2003.)
       
-      \note Currently \o2 supports only types \c double and
-      \c long \c double for the floating point type \c fp_t .
-
       \future Allow user to change \c cst?
   */
   template<class func_t=funct, class fp_t=double,
            class weights_t=inte_gauss_coeffs_double>
   class inte_gauss_cern : public inte<func_t,fp_t> {
-
+    
+  protected:
+    
+    /** \brief Pointer to the integration weights
+     */
+    const fp_t *w;
+    
+    /** \brief Pointer to the integration abscissae
+     */
+    const fp_t *x;
+    
   public:
 
-    /** \brief Desc
-     */
-    const fp_t *w, *x;
-    
-    /** \brief Desc
+    /** \brief Weights object
      */
     weights_t wgts;
     
