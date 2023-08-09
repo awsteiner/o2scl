@@ -1230,18 +1230,20 @@ namespace o2scl {
    */
   template<class fp_t, class internal_fp_t> class polylog_multip {
 
-  protected:
+  public:
 
     /** \brief The integrator for negative arguments
+
+        This is public so it can be used in \ref calc_utf8.
      */
     fermi_dirac_multip fdm;
     
     /** \brief The integrator for positive arguments
+
+        This is public so it can be used in \ref calc_utf8.
      */
     bose_einstein_multip bem;
     
-  public:
-
     polylog_multip() {
       fdm.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);
       bem.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);

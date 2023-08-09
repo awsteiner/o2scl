@@ -33,8 +33,9 @@
 #include <gsl/gsl_math.h>
 
 #include <o2scl/err_hnd.h>
+#include <o2scl/set_python.h>
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #endif
@@ -70,7 +71,7 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   /** \brief One-dimensional function from a python function
    */
