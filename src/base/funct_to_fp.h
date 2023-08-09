@@ -37,6 +37,195 @@
 
 namespace o2scl {
 
+  /** \brief Array of multi-dimensional functions in an array of strings
+   */
+  class mm_funct_strings {
+
+  public:
+      
+    /** \brief Specify the strings
+     */
+    template<class vec_string_t=std::vector<std::string> >
+      mm_funct_strings(int nv, vec_string_t &exprs,
+			 vec_string_t &var_arr) {
+
+      st_nv=nv;
+      st_forms.resize(nv);
+      st_vars.resize(nv);
+      calc.resize(nv);
+      for (int i=0;i<nv;i++) {
+        calc[i]=new calc_utf8<>;
+	calc[i]->compile(exprs[i].c_str(),&vars);
+	st_vars[i]=var_arr[i];
+	st_forms[i]=exprs[i];
+      }
+    }
+      
+    virtual ~mm_funct_strings() {
+      for (size_t i=0;i<calc.size();i++) {
+        delete calc[i];
+      }
+      calc.clear();
+    };
+      
+    /** \brief Set the values of the auxilliary parameters that were
+	specified in 'parms' in the constructor
+    */
+    int set_parm(std::string name, double val) {
+      vars[name]=val;
+      return 0;
+    }
+      
+    /** \brief Compute \c nv functions, \c y, of \c nv variables
+	stored in \c x with parameter \c pa.
+    */
+    template<class vec_t=boost::numeric::ublas::vector<double> >
+      int operator()(size_t nv, const vec_t &x, vec_t &y) {
+
+      for(size_t i=0;i<nv;i++) {
+	vars[st_vars[i]]=x[i];
+      }
+      for(size_t i=0;i<nv;i++) {
+	y[i]=calc[i]->eval(&vars);
+      }
+      return 0;
+    }
+      
+    /// Set the functions
+    template<class vec_string_t=std::vector<std::string> >
+      void set_function(int nv, vec_string_t &exprs,
+			vec_string_t &var_arr) {
+
+      st_nv=nv;
+      st_forms.resize(nv);
+      st_vars.resize(nv);
+      calc.resize(nv);
+      for (int i=0;i<nv;i++) {
+        calc[i]=new calc_utf8<>;
+	calc[i]->compile(exprs[i],&vars);
+	st_vars[i]=var_arr[i];
+	st_forms[i]=exprs[i];
+      }
+
+      return;
+    }
+      
+#ifndef DOXYGEN_INTERNAL
+      
+  protected:
+      
+    /// The function parsers
+    std::vector<calc_utf8<> *> calc;
+      
+    /// External variables to include in the function parsing
+    std::map<std::string,double> vars;
+      
+    /// The expressions
+    std::vector<std::string> st_forms;
+      
+    /// The variables
+    std::vector<std::string> st_vars;
+      
+    /// The number of variables
+    int st_nv;
+      
+    mm_funct_strings() {};
+      
+  private:
+      
+    mm_funct_strings(const mm_funct_strings &);
+    mm_funct_strings& operator=(const mm_funct_strings&);
+      
+#endif
+      
+  };
+
+  /** \brief A multi-dimensional function from a string
+   */
+  class multi_funct_strings {
+    
+  public:
+  
+    /** \brief Specify the string and the parameters
+     */
+    template<class vec_string_t=std::vector<std::string> >
+    multi_funct_strings(std::string expr, int nv,
+                        vec_string_t &var_arr) {
+    
+      st_nv=nv;
+      st_funct=expr;
+      st_vars.resize(nv);
+      for (int i=0;i<nv;i++) {
+	calc.compile(expr.c_str(),&vars);
+	st_vars[i]=var_arr[i];
+      }
+    }
+  
+    /** \brief Specify the string and the parameters
+     */
+    template<class vec_string_t=std::vector<std::string> >
+    void set_function(std::string expr, int nv, vec_string_t &var_arr) {
+
+      st_nv=nv;
+      st_funct=expr;
+      st_vars.resize(nv);
+      for (int i=0;i<nv;i++) {
+	calc.compile(expr.c_str(),&vars);
+	st_vars[i]=var_arr[i];
+      }
+      return;
+    }
+
+    virtual ~multi_funct_strings() {
+    };
+  
+    /** \brief Set the values of the auxilliary parameters that were
+	specified in \c parms  in the constructor
+    */
+    int set_parm(std::string name, double val) {
+      vars[name]=val;
+      return 0;
+    }
+
+    /** \brief Compute a function \c y of \c nv variables stored in \c x
+	with parameter \c pa.
+    */
+    template<class vec_t=boost::numeric::ublas::vector<double> >
+    double operator()(size_t nv, const vec_t &x) {
+
+      for(size_t i=0;i<nv;i++) {
+	vars[st_vars[i]]=x[i];
+      }
+
+      return calc.eval(&vars);
+    }
+
+  protected:
+
+    /// The function parser
+    calc_utf8<> calc;
+
+    /// External variables to include in the function parsing
+    std::map<std::string,double> vars;
+
+    /// The number of variables
+    int st_nv;
+
+    /// The function string
+    std::string st_funct;
+    
+    /// The variable string
+    std::vector<std::string> st_vars;
+  
+    multi_funct_strings() {}
+  
+  private:
+
+    multi_funct_strings(const multi_funct_strings &);
+    multi_funct_strings& operator=(const multi_funct_strings&);
+
+  };
+
   /** \brief One-dimensional function from a string
       
       For example,
