@@ -35,7 +35,6 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/set_python.h>
-#include <o2scl/calc_utf8.h>
 #include <o2scl/lib_settings.h>
 
 #ifdef O2SCL_SET_PYTHON
@@ -50,92 +49,6 @@ namespace o2scl {
     double(size_t,const boost::numeric::ublas::vector<double> &)>
   multi_funct;
   
-  /** \brief A multi-dimensional function from a string
-   */
-  class multi_funct_strings {
-    
-  public:
-  
-    /** \brief Specify the string and the parameters
-     */
-    template<class vec_string_t=std::vector<std::string> >
-    multi_funct_strings(std::string expr, int nv,
-                        vec_string_t &var_arr) {
-    
-      st_nv=nv;
-      st_funct=expr;
-      st_vars.resize(nv);
-      for (int i=0;i<nv;i++) {
-	calc.compile(expr.c_str(),&vars);
-	st_vars[i]=var_arr[i];
-      }
-    }
-  
-    /** \brief Specify the string and the parameters
-     */
-    template<class vec_string_t=std::vector<std::string> >
-    void set_function(std::string expr, int nv, vec_string_t &var_arr) {
-
-      st_nv=nv;
-      st_funct=expr;
-      st_vars.resize(nv);
-      for (int i=0;i<nv;i++) {
-	calc.compile(expr.c_str(),&vars);
-	st_vars[i]=var_arr[i];
-      }
-      return;
-    }
-
-    virtual ~multi_funct_strings() {
-    };
-  
-    /** \brief Set the values of the auxilliary parameters that were
-	specified in \c parms  in the constructor
-    */
-    int set_parm(std::string name, double val) {
-      vars[name]=val;
-      return 0;
-    }
-
-    /** \brief Compute a function \c y of \c nv variables stored in \c x
-	with parameter \c pa.
-    */
-    template<class vec_t=boost::numeric::ublas::vector<double> >
-    double operator()(size_t nv, const vec_t &x) {
-
-      for(size_t i=0;i<nv;i++) {
-	vars[st_vars[i]]=x[i];
-      }
-
-      return calc.eval(&vars);
-    }
-
-  protected:
-
-    /// The function parser
-    calc_utf8<> calc;
-
-    /// External variables to include in the function parsing
-    std::map<std::string,double> vars;
-
-    /// The number of variables
-    int st_nv;
-
-    /// The function string
-    std::string st_funct;
-    
-    /// The variable string
-    std::vector<std::string> st_vars;
-  
-    multi_funct_strings() {}
-  
-  private:
-
-    multi_funct_strings(const multi_funct_strings &);
-    multi_funct_strings& operator=(const multi_funct_strings&);
-
-  };
-
 #ifdef O2SCL_SET_PYTHON
   
   /** \brief One-dimensional function from a python function

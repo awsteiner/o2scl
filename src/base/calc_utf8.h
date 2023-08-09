@@ -150,7 +150,7 @@ namespace o2scl {
     rng<> def_r;
 
     /// Object for computing Fermi-Dirac integrals
-    polylog_multip<double,double> pm;
+    polylog_multip<fp_t,fp_t> pm;
     
     /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8
      */
