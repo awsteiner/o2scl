@@ -32,9 +32,10 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/calc_utf8.h>
+#include <o2scl/set_python.h>
 #include <o2scl/lib_settings.h>
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -150,7 +151,7 @@ namespace o2scl {
       
   };
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   /** \brief One-dimensional function from a Python function
 

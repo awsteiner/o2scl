@@ -148,6 +148,9 @@ namespace o2scl {
 
     /// The default random number generator for \c rand
     rng<> def_r;
+
+    /// Object for computing Fermi-Dirac integrals
+    polylog_multip<double,double> pm;
     
     /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8
      */
@@ -213,6 +216,9 @@ namespace o2scl {
       opp["cyl_bessel_k"]=2;
       opp["cyl_neumann"]=2;
       opp["sqrt1pm1"]=2;
+      opp["fdint"]=2;
+      opp["beint"]=2;
+      opp["polylog"]=2;
       opp["^"]=2;
       opp["*"]=3;
       opp["/"]=3;
@@ -378,6 +384,18 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(hypot(right,next));
+            } else if (!str.compare("fdint")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pm.fdm.calc(next,right));
+            } else if (!str.compare("beint")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pm.bem.calc(next,right));
+            } else if (!str.compare("polylog")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pm.calc(next,right));
             } else if (!str.compare("if")) {
               fp_t next=evaluation.top();
               evaluation.pop();
@@ -775,6 +793,19 @@ namespace o2scl {
           } else if (key.length()==5 && key[0]=='h' && key[1]=='y' &&
                      key[2]=='p' && key[3]=='o' && key[4]=='t') {
             operator_stack.push("hypot");
+            last_token_was_op=true;
+          } else if (key.length()==7 && key[0]=='p' && key[1]=='o' &&
+                     key[2]=='l' && key[3]=='y' && key[4]=='l' &&
+                     key[5]=='o' && key[6]=='g') {
+            operator_stack.push("polylog");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='f' && key[1]=='d' &&
+                     key[2]=='i' && key[3]=='n' && key[4]=='t') {
+            operator_stack.push("fdint");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='b' && key[1]=='e' &&
+                     key[2]=='i' && key[3]=='n' && key[4]=='t') {
+            operator_stack.push("beint");
             last_token_was_op=true;
           } else if (key.length()==2 && key[0]=='i' && key[1]=='f') {
             operator_stack.push("if");

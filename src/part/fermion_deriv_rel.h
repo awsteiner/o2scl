@@ -805,6 +805,11 @@ namespace o2scl {
               return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); },
               zero,f.dndT,unc.dndT,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("dndT integration (ndeg, multip) failed in ",
+                       "fermion_deriv_rel::calc_mu().",
+                       exc_efailed);
+          }
           
         } else {
         
@@ -833,6 +838,11 @@ namespace o2scl {
               return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                            f.inc_rest_mass); },
               zero,f.dndmu,unc.dndmu,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("dndmu integration (ndeg, multip) failed in ",
+                       "fermion_deriv_rel::calc_mu().",
+                       exc_efailed);
+          }
           
         } else {
           
@@ -860,6 +870,11 @@ namespace o2scl {
               return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                           f.inc_rest_mass); },
               zero,f.dsdT,unc.dsdT,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("dsdT integration (ndeg, multip) failed in ",
+                       "fermion_deriv_rel::calc_mu().",
+                       exc_efailed);
+          }
           
         } else {
           
@@ -963,6 +978,11 @@ namespace o2scl {
                 return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 ll,ul,f.dndmu,unc.dndmu,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dndmu integration (deg, multip, llf) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
 
           } else {
             
@@ -972,6 +992,11 @@ namespace o2scl {
                 return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 zero,ul,f.dndmu,unc.dndmu,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dndmu integration (deg, multip, ll0) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
 
           }
           
@@ -1010,6 +1035,11 @@ namespace o2scl {
                 return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 ll,ul,f.dndT,unc.dndT,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dndT integration (deg, multip, llf) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
 
           } else {
             
@@ -1019,6 +1049,11 @@ namespace o2scl {
                 return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 zero,ul,f.dndT,unc.dndT,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dndT integration (deg, multip, ll0) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
 
           }
 
@@ -1057,6 +1092,11 @@ namespace o2scl {
                 return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 ll,ul,f.dndT,unc.dsdT,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dsdT integration (deg, multip, llf) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
 
           } else {
             
@@ -1066,6 +1106,12 @@ namespace o2scl {
                 return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                                  f.inc_rest_mass); },
                 zero,ul,f.dsdT,unc.dsdT,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("dsdT integration (deg, multip, ll0) failed in ",
+                         "fermion_deriv_rel::calc_mu().",
+                         exc_efailed);
+            }
+
 
           }
 

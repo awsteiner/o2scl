@@ -30,7 +30,9 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#ifdef O2SCL_PYTHON
+#include <o2scl/set_python.h>
+
+#ifdef O2SCL_SET_PYTHON
 #include <Python.h>
 #endif
 
@@ -308,7 +310,7 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
   /** \brief A semi-generic interface for a python emulator
    */
