@@ -1245,13 +1245,13 @@ namespace o2scl {
     bose_einstein_multip bem;
     
     polylog_multip() {
-      fdm.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);
-      bem.set_tol(std::numeric_limits<fp_t>::epsilon()/2.0);
+      fdm.set_tol(static_cast<double>(std::numeric_limits<fp_t>::epsilon()/2));
+      bem.set_tol(static_cast<double>(std::numeric_limits<fp_t>::epsilon()/2));
     }
     
     /** \brief Set tolerance
      */
-    void set_tol(fp_t tol) {
+    void set_tol(double tol) {
       fdm.set_tol(tol);
       bem.set_tol(tol);
       return;
