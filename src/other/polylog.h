@@ -149,6 +149,11 @@ namespace o2scl {
         \c res and the error in \c err
     */
     int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
+      if (a<=-1 || mu>0) {
+        O2SCL_ERR2("Outside of domain for Bose-Einstein integral in ",
+                  "bose_einstein_integ_tl::obj_func().",
+                  o2scl::exc_efailed);
+      }
       func_t f=
         std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                   (&bose_einstein_integ_tl::obj_func),
@@ -988,6 +993,12 @@ namespace o2scl {
     template<class fp_t>
     int calc_err_full(fp_t a, fp_t y, fp_t &res, fp_t &err, int &method) {
 
+      if (a<=-1 || y>0) {
+        O2SCL_ERR2("Outside of domain for Bose-Einstein integral in ",
+                  "bose_einstein_integ_tl::obj_func().",
+                  o2scl::exc_efailed);
+      }
+      
       fp_t zero=0;
       
       int ret1=ikb.integ_iu_err_multip([this,a,y](auto &&x) mutable 
@@ -1210,6 +1221,10 @@ namespace o2scl {
     /** \brief Polylogarithm function
      */
     fp_t calc(fp_t s, fp_t y) {
+      if (y>=1) {
+        O2SCL_ERR2("Outside of domain for polylog in ",
+                  "polylog::calc().",o2scl::exc_einval);
+      }
       if (y<0.0) {
 	// Fermi-Dirac integral representation
 	internal_fp_t a=s-1, mu=log(-y), res, err;
@@ -1260,6 +1275,10 @@ namespace o2scl {
     /** \brief Polylogarithm function
      */
     fp_t calc(fp_t s, fp_t y) {
+      if (y>=1) {
+        O2SCL_ERR2("Outside of domain for polylog in ",
+                  "polylog::calc().",o2scl::exc_einval);
+      }
       if (y<0.0) {
 	// Fermi-Dirac integral representation
 	internal_fp_t a=s-1, mu=log(-y), res, err;
