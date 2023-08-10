@@ -392,9 +392,20 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(pm.bem.calc(next,right));
+              if (right>=0) {
+                std::cerr << "Bose-Einstein integral not valid "
+                          << "for argument >= 0."
+                          << std::endl;
+                return 6;
+              }
             } else if (!str.compare("polylog")) {
               fp_t next=evaluation.top();
               evaluation.pop();
+              if (right>=1) {
+                std::cerr << "Polylog not valid for argument >= 1."
+                          << std::endl;
+                return 6;
+              }
               evaluation.push(pm.calc(next,right));
             } else if (!str.compare("if")) {
               fp_t next=evaluation.top();
