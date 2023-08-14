@@ -51,12 +51,12 @@ namespace o2scl {
          
       \endverbatim
   */
-  template<class be_inte_t=bessel_K_exp_integ_gsl,
-           class fp_t=double>
+  template<class be_inte_t=bessel_K_exp_integ_gsl, class fp_t=double>
   class boson_rel_tl : public boson_thermo_tl<be_inte_t,fp_t> {
 
   public:
 
+    /// Internal value of pi squared for convenience
     fp_t pi2;
     
     /// Create a boson with mass \c m and degeneracy \c g
@@ -836,8 +836,8 @@ namespace o2scl {
   
       y[0]=(b.n-density)/density;
   
-      std::cout << "H: " << x[0] << " " << y[0] << " " << b.nu << " " << b.ms
-           << std::endl;
+      std::cout << "H: " << x[0] << " " << y[0] << " " << b.nu << " "
+                << b.ms << std::endl;
       std::cout << "\t: " << b.n << " " << density << std::endl;
   
       return 0;

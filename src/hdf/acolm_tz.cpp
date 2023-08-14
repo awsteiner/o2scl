@@ -1301,6 +1301,10 @@ int acol_manager::comm_type(std::vector<std::string> &sv,
 
 int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  
   if (type=="table") {
 
     // If we have no 'value' entry and we're not in interactive mode,
@@ -1636,6 +1640,10 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 int acol_manager::comm_value_grid(std::vector<std::string> &sv,
 				  bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  cout.precision(precision);
+  
   if (type=="table") {
 
     vector<string> pr, in;
