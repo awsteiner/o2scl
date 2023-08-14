@@ -688,9 +688,16 @@ namespace o2scl {
     if (r!=0) {
       calc.set_rng(*r);
     }
-  
+
+    if (verbose>1) {
+      calc.verbose=verbose;
+    }
     int ret=calc.compile_nothrow(s2.c_str(),0);
     if (ret!=0) return ret;
+
+    if (verbose>=2) {
+      std::cout << calc.RPN_to_string() << std::endl;
+    }
 
     std::vector<std::u32string> vs=calc.get_var_list();
 
@@ -704,7 +711,7 @@ namespace o2scl {
       std::vector<typename find_constants<fp_t>::const_entry> matches;
       
       for(size_t i=0;i<vs.size();i++) {
-        
+
         std::string vsi2;
         char32_to_utf8(vs[i],vsi2);
 
@@ -747,8 +754,16 @@ namespace o2scl {
     } else {
 
       // Evaluate the expression (no variables necessary)
+      if (verbose>=3) {
+        std::cout << "In funct_to_fp(), calling calc.eval_nothrow()."
+                  << std::endl;
+      }
       int ret2=calc.eval_nothrow(0,result);
       if (ret2!=0) return ret2;
+      if (verbose>=3) {
+        std::cout << "In funct_to_fp(), done with calc.eval_nothrow()."
+                  << std::endl;
+      }
     }
   
     return 0;

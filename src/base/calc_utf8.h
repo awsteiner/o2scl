@@ -257,295 +257,16 @@ namespace o2scl {
       return true;
     }      
     
-    /** \brief Compile and evaluate the expression in \c RPN using
-	definitions in \c vars and return an integer to indicate
-	success or failure
-    */
-    int calc_RPN_nothrow(token_queue_t rpn,
-                         const std::map<std::u32string, fp_t> *vars,
-                         fp_t &result) {
-
-      // Evaluate the expression in RPN form.
-      std::stack<fp_t> evaluation;
-      while (!rpn.empty()) {
-        token_base *base=rpn.front();
-        rpn.pop();
-
-        // Operator:
-        if (base->type == token_op) {
-          token32<std::string>* strTok =
-            static_cast<token32<std::string>*>(base);
-          std::string str = strTok->val;
-          //if (evaluation.size()==0) {
-          //O2SCL_ERR("Sanity in calc_utf8.",o2scl::exc_einval);
-          //}
-          if (evaluation.size()<1) {
-            return 99;
-            //throw std::domain_error("Invalid equation.");
-          }
-          fp_t right = evaluation.top();
-          // AWS, 7/2/22: The comma is treated as an operator
-          // which does nothing
-          if (str.compare(",")) {
-            evaluation.pop();
-            if (!str.compare("sin")) {
-              evaluation.push(sin(right));
-            } else if (!str.compare("cos")) {
-              evaluation.push(cos(right));
-            } else if (!str.compare("tan")) {
-              evaluation.push(tan(right));
-            } else if (!str.compare("sqrt")) {
-              evaluation.push(sqrt(right));
-            } else if (!str.compare("cbrt")) {
-              evaluation.push(cbrt(right));
-            } else if (!str.compare("log")) {
-              evaluation.push(log(right));
-            } else if (!str.compare("log1p")) {
-              evaluation.push(log1p(right));
-            } else if (!str.compare("expm1")) {
-              evaluation.push(expm1(right));
-            } else if (!str.compare("exp")) {
-              evaluation.push(exp(right));
-              //} else if (!str.compare("exp10")) {
-              //evaluation.push(exp10(right));
-            } else if (!str.compare("abs")) {
-              evaluation.push(abs(right));
-            } else if (!str.compare("log10")) {
-              evaluation.push(log10(right));
-            } else if (!str.compare("asin")) {
-              evaluation.push(asin(right));
-            } else if (!str.compare("acos")) {
-              evaluation.push(acos(right));
-            } else if (!str.compare("atan")) {
-              evaluation.push(atan(right));
-            } else if (!str.compare("sinh")) {
-              evaluation.push(sinh(right));
-            } else if (!str.compare("cosh")) {
-              evaluation.push(cosh(right));
-            } else if (!str.compare("tanh")) {
-              evaluation.push(tanh(right));
-            } else if (!str.compare("asinh")) {
-              evaluation.push(asinh(right));
-            } else if (!str.compare("acosh")) {
-              evaluation.push(acosh(right));
-            } else if (!str.compare("atanh")) {
-              evaluation.push(atanh(right));
-            } else if (!str.compare("floor")) {
-              evaluation.push(floor(right));
-            } else if (!str.compare("ceil")) {
-              evaluation.push(ceil(right));
-            } else if (!str.compare("erf")) {
-              evaluation.push(erf(right));
-            } else if (!str.compare("erfc")) {
-              evaluation.push(erfc(right));
-            } else if (!str.compare("lgamma")) {
-              evaluation.push(lgamma(right));
-            } else if (!str.compare("tgamma")) {
-              evaluation.push(tgamma(right));
-#ifdef O2SCL_NEVER_DEFINED
-            } else if (!str.compare("hg_1F0")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::hypergeometric_1F0(next,right));
-            } else if (!str.compare("hg_0F1")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::hypergeometric_0F1(next,right));
-            } else if (!str.compare("hg_2F0")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::hypergeometric_2F0(next,right));
-            } else if (!str.compare("hg_1F1")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::hypergeometric_1F1(next,right));
-#endif
-            } else if (!str.compare("sqrt1pm1")) {
-              evaluation.push(boost::math::sqrt1pm1(right));
-            } else if (!str.compare("atan2")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(atan2(next,right));
-            } else if (!str.compare("pow")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(pow(next,right));
-            } else if (!str.compare("max")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              if (next>right) evaluation.push(next);
-              else evaluation.push(right);
-            } else if (allow_min && !str.compare("min")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              if (next<right) evaluation.push(next);
-              else evaluation.push(right);
-            } else if (!str.compare("hypot")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(hypot(right,next));
-            } else if (!str.compare("fdint")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(pm.fdm.calc(next,right));
-            } else if (!str.compare("beint")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(pm.bem.calc(next,right));
-              if (right>=0) {
-                std::cerr << "Bose-Einstein integral not valid "
-                          << "for argument >= 0."
-                          << std::endl;
-                return 6;
-              }
-            } else if (!str.compare("polylog")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              if (right>=1) {
-                std::cerr << "Polylog not valid for argument >= 1."
-                          << std::endl;
-                return 6;
-              }
-              evaluation.push(pm.calc(next,right));
-            } else if (!str.compare("if")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              fp_t next2=evaluation.top();
-              evaluation.pop();
-              if (next2>=0.5) evaluation.push(next);
-              else evaluation.push(right);
-            } else if (!str.compare("cyl_bessel_i")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::cyl_bessel_i(next,right));
-            } else if (!str.compare("cyl_bessel_j")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::cyl_bessel_j(next,right));
-            } else if (!str.compare("cyl_bessel_k")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::cyl_bessel_k(next,right));
-            } else if (!str.compare("cyl_neumann")) {
-              fp_t next=evaluation.top();
-              evaluation.pop();
-              evaluation.push(boost::math::cyl_neumann(next,right));
-              //#ifdef O2SCL_OSX
-              /*
-                } else if (!str.compare("sph_bessel")) {
-                fp_t next=evaluation.top();
-                unsigned inext=static_cast<unsigned>(next);
-                evaluation.pop();
-                evaluation.push(boost::math::sph_bessel(inext,right));
-                } else if (!str.compare("sph_neumann")) {
-                fp_t next=evaluation.top();
-                unsigned inext=static_cast<unsigned>(next);
-                evaluation.pop();
-                evaluation.push(boost::math::sph_neumann(inext,right));
-              */
-              //#endif
-            } else {
-              fp_t left  = evaluation.top();
-              evaluation.pop();
-              if (!str.compare("+")) {
-                evaluation.push(left + right);
-              } else if (!str.compare("*")) {
-                evaluation.push(left * right);
-              } else if (!str.compare("-")) {
-                evaluation.push(left - right);
-              } else if (!str.compare("/")) {
-                evaluation.push(left / right);
-              } else if (!str.compare("<<")) {
-                evaluation.push((int) left << (int) right);
-              } else if (!str.compare("^")) {
-                evaluation.push(pow(left, right));
-              } else if (!str.compare(">>")) {
-                evaluation.push((int) left >> (int) right);
-              } else if (!str.compare("%")) {
-                evaluation.push((int) left % (int) right);
-              } else if (!str.compare("<")) {
-                evaluation.push(left < right);
-              } else if (!str.compare(">")) {
-                evaluation.push(left > right);
-              } else if (!str.compare("<=")) {
-                evaluation.push(left <= right);
-              } else if (!str.compare(">=")) {
-                evaluation.push(left >= right);
-              } else if (!str.compare("==")) {
-                evaluation.push(left == right);
-              } else if (!str.compare("!=")) {
-                evaluation.push(left != right);
-              } else if (!str.compare("&&")) {
-                evaluation.push((int) left && (int) right);
-              } else if (!str.compare("||")) {
-                evaluation.push((int) left || (int) right);
-              } else {
-                //throw std::domain_error("Unknown operator: '" + str + "'.");
-                return 2;
-              }
-            }
-          }
-        } else if (base->type == token_num) {
-          // Number
-          token32<fp_t> *doubleTok = static_cast<token32<fp_t>*>(base);
-          evaluation.push(doubleTok->val);
-        } else if (base->type == token_var) {
-          // Variable
-          if (!vars) {
-            //throw std::domain_error
-            //("Detected variable, but the variable map is null.");
-            return 3;
-          }
-      
-          token32<std::u32string> *strTok=
-            static_cast<token32<std::u32string>*>(base);
-      
-          std::u32string key=strTok->val;
-          
-          if (key.length()==4 && ((char)key[0])=='r' &&
-              ((char)key[1])=='a' && ((char)key[2])=='n' &&
-              ((char)key[3])=='d') {
-            
-            fp_t rx=r->random();
-            //std::cout << "Generating random number " << rx << std::endl;
-            evaluation.push(rx);
-            
-          } else {
-        
-            typename std::map<std::u32string, fp_t>::const_iterator it=
-              vars->find(key);
-        
-            if (it == vars->end()) {
-              //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
-              //throw std::domain_error("Unable to find the variable '"
-              //+ key + "'.");
-              return 4;
-            }
-            evaluation.push(it->second);
-          }
-        } else {
-          //throw std::domain_error("Invalid token.");
-          return 5;
-        }
-      }
-      result=evaluation.top();
-      return 0;
-    }      
-    
     /** \brief Empty and free memory associated with \c rpn
         
 	\note This is called by the destructor to free the memory in
 	\ref RPN .
     */
     void cleanRPN(token_queue_t &rpn) {
-      //std::cout << "1" << std::endl;
       while (rpn.size()) {
-        //std::cout << "3 " << rpn.size() << std::endl;
         delete rpn.front();
-        //std::cout << "4" << std::endl;
         rpn.pop();
       }
-      //std::cout << "2" << std::endl;
       return;
     }
     
@@ -561,20 +282,30 @@ namespace o2scl {
       std::stack<std::string> operator_stack;
       bool last_token_was_op = true;
 
+      // AWS, 8/13/23: the calc_RPN function doesn't have any unary
+      // operators right now, and the code below doesn't parse ,-
+      // properly, so this is a temporary hack to handle that case
+      std::string stmpx;
+      std::u32string expr2=expr;
+      char32_to_utf8(expr2,stmpx);
+      string_replace(stmpx,",-",",0-");
+      utf8_to_char32(stmpx,expr2);
+      //}
+                   
       if (verbose>=2) {
         std::cout << "In toRPN_nothrow(), processing expression: ";
         std::string stmp;
-        char32_to_utf8(expr,stmp);
+        char32_to_utf8(expr2,stmp);
         std::cout << stmp << std::endl;
       }
-  
+
       // In one pass, ignore whitespace and parse the expression into RPN
       // using Dijkstra's Shunting-yard algorithm.
   
       size_t i=0;
-      while (i<expr.length()) {
+      while (i<expr2.length()) {
     
-        if (isdigit(expr[i])) {
+        if (isdigit(expr2[i])) {
       
           if (verbose>=2) {
             std::cout << "In toRPN_nothrow(), found digit at character "
@@ -582,7 +313,7 @@ namespace o2scl {
           }
       
           std::u32string str_num;
-          str_num=str_num+expr[i];
+          str_num=str_num+expr2[i];
 
           // ----------------------------------------------------------
           // This extracts a number from the expression, handling
@@ -595,30 +326,30 @@ namespace o2scl {
           // True if 'E' or 'e' has been read
           bool exponent=false;
           
-          while (i+1<expr.length() &&
+          while (i+1<expr2.length() &&
 
                  // Allow a decimal
-                 (expr[i+1]=='.' ||
+                 (expr2[i+1]=='.' ||
 
                   // Allow any digits
-                  isdigit(expr[i+1]) ||
+                  isdigit(expr2[i+1]) ||
 
                   // Allow lower or uppercase E
-                  expr[i+1]=='e' ||
-                  expr[i+1]=='E' ||
+                  expr2[i+1]=='e' ||
+                  expr2[i+1]=='E' ||
 
                   // Allow a single plus or minus, but only if
                   // immediately following a lower or uppercase E
                   (exponent==true && plus_minus==false &&
-                   (expr[i+1]=='+' || expr[i+1]=='-')))) {
+                   (expr2[i+1]=='+' || expr2[i+1]=='-')))) {
             
-            if (expr[i+1]=='e' || expr[i+1]=='E') {
+            if (expr2[i+1]=='e' || expr2[i+1]=='E') {
               exponent=true;
             } else {
               exponent=false;
             }
-            if (expr[i+1]=='+' || expr[i+1]=='-') plus_minus=true;
-            str_num=str_num+expr[i+1];
+            if (expr2[i+1]=='+' || expr2[i+1]=='-') plus_minus=true;
+            str_num=str_num+expr2[i+1];
             i++;
           }
 
@@ -644,7 +375,7 @@ namespace o2scl {
 
           last_token_was_op=false;
       
-        } else if (is_variable_char(expr[i])) {
+        } else if (is_variable_char(expr2[i])) {
 
           if (verbose>=2) {
             std::cout << "In toRPN_nothrow(), found variable at character "
@@ -652,11 +383,11 @@ namespace o2scl {
           }
       
           std::u32string key;
-          key+=expr[i];
+          key+=expr2[i];
       
-          while (i+1<expr.length() &&
-                 (is_variable_char(expr[i+1]) || isdigit(expr[i+1]))) {
-            key=key+expr[i+1];
+          while (i+1<expr2.length() &&
+                 (is_variable_char(expr2[i+1]) || isdigit(expr2[i+1]))) {
+            key=key+expr2[i+1];
             i++;
           }
         
@@ -920,11 +651,11 @@ namespace o2scl {
 
           if (verbose>=1) {
             std::cout << "In toRPN_nothrow(), operator or parenthesis: "
-                      << ((char)expr[i]) << std::endl;
+                      << ((char)expr2[i]) << std::endl;
           }
       
           // Otherwise, the variable is an operator or parenthesis.
-          switch (expr[i]) {
+          switch (expr2[i]) {
         
           case '(':
         
@@ -954,17 +685,20 @@ namespace o2scl {
               //   Push o1 on the stack.
           
               std::stringstream ss;
-              ss << ((char)expr[i]);
-              while (i+1<expr.length() && !isspace(expr[i+1]) &&
-                     !isdigit(expr[i+1]) && !is_variable_char(expr[i+1]) &&
-                     expr[i+1] != '(' && expr[i+1] != ')') {
-                ss << ((char)expr[i+1]);
+              ss << ((char)expr2[i]);
+              while (i+1<expr2.length() && !isspace(expr2[i+1]) &&
+                     !isdigit(expr2[i+1]) && !is_variable_char(expr2[i+1]) &&
+                     expr2[i+1] != '(' && expr2[i+1] != ')') {
+                ss << ((char)expr2[i+1]);
                 i++;
               }
               ss.clear();
               std::string str;
               ss >> str;
-          
+
+              // AWS: manually fix ",-" -> "-"
+              if (str==",-") str="-";
+              
               if (verbose>=1) {
                 std::cout << "In toRPN_nothrow(), processing operator: "
                           << str << std::endl;
@@ -1009,7 +743,7 @@ namespace o2scl {
         //cin >> ch;
     
         // Skip spaces if necessary
-        while (i+1<expr.length() && isspace(expr[i+1])) i++;
+        while (i+1<expr2.length() && isspace(expr2[i+1])) i++;
     
         if (verbose>=1) {
           std::cout << "In toRPN_nothrow(), "
@@ -1019,7 +753,7 @@ namespace o2scl {
         // Move to the next character
         i++;
 
-        // End of while (i<expr.length()) {
+        // End of while (i<expr2.length()) {
       }
   
       while (!operator_stack.empty()) {
@@ -1030,6 +764,287 @@ namespace o2scl {
       
       rpn_queue2=rpn_queue;
       
+      return 0;
+    }      
+    
+    /** \brief Compile and evaluate the expression in \c RPN using
+	definitions in \c vars and return an integer to indicate
+	success or failure
+    */
+    int calc_RPN_nothrow(token_queue_t rpn,
+                         const std::map<std::u32string, fp_t> *vars,
+                         fp_t &result) {
+
+      // Evaluate the expression in RPN form.
+      std::stack<fp_t> evaluation;
+      while (!rpn.empty()) {
+        token_base *base=rpn.front();
+        rpn.pop();
+
+        // Operator:
+        if (base->type == token_op) {
+          token32<std::string>* strTok =
+            static_cast<token32<std::string>*>(base);
+          std::string str = strTok->val;
+
+          if (verbose>=2) {
+            std::cout << "calc_utf8::calc_RPN_nothrow(): str: " 
+                      << str << std::endl;
+          }
+          
+          //if (evaluation.size()==0) {
+          //O2SCL_ERR("Sanity in calc_utf8.",o2scl::exc_einval);
+          //}
+          if (evaluation.size()<1) {
+            return 99;
+            //throw std::domain_error("Invalid equation.");
+          }
+          fp_t right = evaluation.top();
+          // AWS, 7/2/22: The comma is treated as an operator
+          // which does nothing
+          if (str.compare(",")) {
+            evaluation.pop();
+            if (!str.compare("sin")) {
+              evaluation.push(sin(right));
+            } else if (!str.compare("cos")) {
+              evaluation.push(cos(right));
+            } else if (!str.compare("tan")) {
+              evaluation.push(tan(right));
+            } else if (!str.compare("sqrt")) {
+              evaluation.push(sqrt(right));
+            } else if (!str.compare("cbrt")) {
+              evaluation.push(cbrt(right));
+            } else if (!str.compare("log")) {
+              evaluation.push(log(right));
+            } else if (!str.compare("log1p")) {
+              evaluation.push(log1p(right));
+            } else if (!str.compare("expm1")) {
+              evaluation.push(expm1(right));
+            } else if (!str.compare("exp")) {
+              evaluation.push(exp(right));
+              //} else if (!str.compare("exp10")) {
+              //evaluation.push(exp10(right));
+            } else if (!str.compare("abs")) {
+              evaluation.push(abs(right));
+            } else if (!str.compare("log10")) {
+              evaluation.push(log10(right));
+            } else if (!str.compare("asin")) {
+              evaluation.push(asin(right));
+            } else if (!str.compare("acos")) {
+              evaluation.push(acos(right));
+            } else if (!str.compare("atan")) {
+              evaluation.push(atan(right));
+            } else if (!str.compare("sinh")) {
+              evaluation.push(sinh(right));
+            } else if (!str.compare("cosh")) {
+              evaluation.push(cosh(right));
+            } else if (!str.compare("tanh")) {
+              evaluation.push(tanh(right));
+            } else if (!str.compare("asinh")) {
+              evaluation.push(asinh(right));
+            } else if (!str.compare("acosh")) {
+              evaluation.push(acosh(right));
+            } else if (!str.compare("atanh")) {
+              evaluation.push(atanh(right));
+            } else if (!str.compare("floor")) {
+              evaluation.push(floor(right));
+            } else if (!str.compare("ceil")) {
+              evaluation.push(ceil(right));
+            } else if (!str.compare("erf")) {
+              evaluation.push(erf(right));
+            } else if (!str.compare("erfc")) {
+              evaluation.push(erfc(right));
+            } else if (!str.compare("lgamma")) {
+              evaluation.push(lgamma(right));
+            } else if (!str.compare("tgamma")) {
+              evaluation.push(tgamma(right));
+#ifdef O2SCL_NEVER_DEFINED
+            } else if (!str.compare("hg_1F0")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_1F0(next,right));
+            } else if (!str.compare("hg_0F1")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_0F1(next,right));
+            } else if (!str.compare("hg_2F0")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_2F0(next,right));
+            } else if (!str.compare("hg_1F1")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::hypergeometric_1F1(next,right));
+#endif
+            } else if (!str.compare("sqrt1pm1")) {
+              evaluation.push(boost::math::sqrt1pm1(right));
+            } else if (!str.compare("atan2")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(atan2(next,right));
+            } else if (!str.compare("pow")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pow(next,right));
+            } else if (!str.compare("max")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              if (next>right) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (allow_min && !str.compare("min")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              if (next<right) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (!str.compare("hypot")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(hypot(right,next));
+            } else if (!str.compare("fdint")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pm.fdm.calc(next,right));
+            } else if (!str.compare("beint")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(pm.bem.calc(next,right));
+              if (right>=0) {
+                std::cerr << "Bose-Einstein integral not valid "
+                          << "for argument >= 0."
+                          << std::endl;
+                return 6;
+              }
+            } else if (!str.compare("polylog")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              if (right>=1) {
+                std::cerr << "Polylog not valid for argument >= 1."
+                          << std::endl;
+                return 6;
+              }
+              evaluation.push(pm.calc(next,right));
+            } else if (!str.compare("if")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              fp_t next2=evaluation.top();
+              evaluation.pop();
+              if (next2>=0.5) evaluation.push(next);
+              else evaluation.push(right);
+            } else if (!str.compare("cyl_bessel_i")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_i(next,right));
+            } else if (!str.compare("cyl_bessel_j")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_j(next,right));
+            } else if (!str.compare("cyl_bessel_k")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_bessel_k(next,right));
+            } else if (!str.compare("cyl_neumann")) {
+              fp_t next=evaluation.top();
+              evaluation.pop();
+              evaluation.push(boost::math::cyl_neumann(next,right));
+              //#ifdef O2SCL_OSX
+              /*
+                } else if (!str.compare("sph_bessel")) {
+                fp_t next=evaluation.top();
+                unsigned inext=static_cast<unsigned>(next);
+                evaluation.pop();
+                evaluation.push(boost::math::sph_bessel(inext,right));
+                } else if (!str.compare("sph_neumann")) {
+                fp_t next=evaluation.top();
+                unsigned inext=static_cast<unsigned>(next);
+                evaluation.pop();
+                evaluation.push(boost::math::sph_neumann(inext,right));
+              */
+              //#endif
+            } else {
+              fp_t left  = evaluation.top();
+              evaluation.pop();
+              if (!str.compare("+")) {
+                evaluation.push(left + right);
+              } else if (!str.compare("*")) {
+                evaluation.push(left * right);
+              } else if (!str.compare("-")) {
+                evaluation.push(left - right);
+              } else if (!str.compare("/")) {
+                evaluation.push(left / right);
+              } else if (!str.compare("<<")) {
+                evaluation.push((int) left << (int) right);
+              } else if (!str.compare("^")) {
+                evaluation.push(pow(left, right));
+              } else if (!str.compare(">>")) {
+                evaluation.push((int) left >> (int) right);
+              } else if (!str.compare("%")) {
+                evaluation.push((int) left % (int) right);
+              } else if (!str.compare("<")) {
+                evaluation.push(left < right);
+              } else if (!str.compare(">")) {
+                evaluation.push(left > right);
+              } else if (!str.compare("<=")) {
+                evaluation.push(left <= right);
+              } else if (!str.compare(">=")) {
+                evaluation.push(left >= right);
+              } else if (!str.compare("==")) {
+                evaluation.push(left == right);
+              } else if (!str.compare("!=")) {
+                evaluation.push(left != right);
+              } else if (!str.compare("&&")) {
+                evaluation.push((int) left && (int) right);
+              } else if (!str.compare("||")) {
+                evaluation.push((int) left || (int) right);
+              } else {
+                //throw std::domain_error("Unknown operator: '" + str + "'.");
+                return 2;
+              }
+            }
+          }
+        } else if (base->type == token_num) {
+          // Number
+          token32<fp_t> *doubleTok = static_cast<token32<fp_t>*>(base);
+          evaluation.push(doubleTok->val);
+        } else if (base->type == token_var) {
+          // Variable
+          if (!vars) {
+            //throw std::domain_error
+            //("Detected variable, but the variable map is null.");
+            return 3;
+          }
+      
+          token32<std::u32string> *strTok=
+            static_cast<token32<std::u32string>*>(base);
+      
+          std::u32string key=strTok->val;
+          
+          if (key.length()==4 && ((char)key[0])=='r' &&
+              ((char)key[1])=='a' && ((char)key[2])=='n' &&
+              ((char)key[3])=='d') {
+            
+            fp_t rx=r->random();
+            //std::cout << "Generating random number " << rx << std::endl;
+            evaluation.push(rx);
+            
+          } else {
+        
+            typename std::map<std::u32string, fp_t>::const_iterator it=
+              vars->find(key);
+        
+            if (it == vars->end()) {
+              //O2SCL_ERR("Unable to find variable.",o2scl::exc_efailed);
+              //throw std::domain_error("Unable to find the variable '"
+              //+ key + "'.");
+              return 4;
+            }
+            evaluation.push(it->second);
+          }
+        } else {
+          //throw std::domain_error("Invalid token.");
+          return 5;
+        }
+      }
+      result=evaluation.top();
       return 0;
     }      
     
@@ -1368,14 +1383,26 @@ namespace o2scl {
             it!=vars->end();it++) {
           std::u32string tmp;
           utf8_to_char32(it->first,tmp);
+          if (verbose>=2) {
+            std::cout << "calc_utf8::eval_nothrow(): setting "
+                      << it->first << " to " << it->second << std::endl;
+          }
           vars2.insert(std::make_pair(tmp,it->second));
         }
       }
   
       int ret;
       if (vars==0) {
+        if (verbose>=2) {
+          std::cout << "calc_utf8::eval_nothrow(): running "
+                    << "calc_RPH_nothrow() with no vars." << std::endl;
+        }
         ret=calc_RPN_nothrow(this->RPN,0,result);
       } else {
+        if (verbose>=2) {
+          std::cout << "calc_utf8::eval_nothrow(): running "
+                    << "calc_RPH_nothrow() with vars." << std::endl;
+        }
         ret=calc_RPN_nothrow(this->RPN,&vars2,result);
       }
   

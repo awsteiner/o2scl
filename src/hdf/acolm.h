@@ -1041,7 +1041,8 @@ namespace o2scl_acol {
         Arguments: <tt><index></tt>
 
         The <tt>deriv</tt> command differentiates the tensor object
-        with respect to one of the indices.
+        with respect to one of the indices, replacing all of the entries
+        in the tensor with the derivative. 
 
         For objects of type tensor_grid:
 
@@ -1050,7 +1051,8 @@ namespace o2scl_acol {
         Arguments: <tt><index></tt>
 
         The <tt>deriv</tt> command differentiates the tensor object
-        with respect to one of the indices.
+        with respect to one of the indices, replacing all of the entries
+        in the tensor with the derivative. 
 
         For objects of type double[]:
 
