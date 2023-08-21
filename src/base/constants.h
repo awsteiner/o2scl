@@ -207,11 +207,11 @@ namespace o2scl_const {
   (size_t system=o2scl_mks) {
     if (system==o2scl_cgs) {
       fp_t numer=667430;
-      fp_t denom=100000000;
+      fp_t denom=10000000000000;
       return numer/denom;
     }
     fp_t numer=667430;
-    fp_t denom=100000000000;
+    fp_t denom=10000000000000000;
     return numer/denom;
   }
   
@@ -431,7 +431,7 @@ namespace o2scl_const {
     fp_t frac=(numer/denom);
     if (system==o2scl_cgs) {
       fp_t base=10;
-      fp_t exp=-13;
+      fp_t exp=-9;
       fp_t powt=pow(base,exp);
       fp_t result=frac*powt;
       return result;
