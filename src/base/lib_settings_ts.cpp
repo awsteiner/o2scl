@@ -34,7 +34,7 @@ using namespace o2scl;
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
-  
+
   cout << "O2scl version: " << o2scl_settings.o2scl_version() << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
   cout << "Armadillo support: " << o2scl_settings.armadillo_support() << endl;

@@ -34,6 +34,18 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+  cout << stod(o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),0)
+       << endl;
+  cout << stod(o2scl_const::speed_of_light_f<long double>(o2scl_const::cgs),0)
+       << endl;
+  t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,
+	     o2scl_const::speed_of_light_f<double>(o2scl_const::cgs),
+             1.0e-7,"CGS speed_of_light");
+  t.test_rel(GSL_CONST_MKS_SPEED_OF_LIGHT,
+	     o2scl_const::speed_of_light_f<double>(o2scl_const::mks),
+             1.0e-7,"MKS speed_of_light");
+  exit(-1);
+  
   t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,
 	     o2scl_cgs::speed_of_light,1.0e-7,
 	     "CGS speed_of_light");

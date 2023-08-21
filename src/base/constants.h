@@ -47,6 +47,8 @@
 */
 namespace o2scl_const {
 
+  /// Unit prefixes
+  //@{
   const double yotta=1e24;
   const double zetta=1e21;
   const double exa=1e18;
@@ -63,30 +65,37 @@ namespace o2scl_const {
   const double atto=1e-18;
   const double zepto=1e-21;
   const double yocto=1e-24;
+  //@}
 
+  /// \name Unit systems
+  //@{
   /// MKS units
   static const size_t o2scl_mks=1;
   /// CGS units
   static const size_t o2scl_cgs=2;
-  
-  /** \brief Fine structure constant (CODATA 2018 value)
-   */
-  template<class fp_t> fp_t fine_structure_f() {
-    fp_t num=72973525693;
-    fp_t den=10000000000000;
-    fp_t ret=num/den;
-    return ret;
-  }
-  //const double fine_structure=7.2973525693e-3;
-  
-  /** \brief Avogadro's number (CODATA 2018 value; exact)
-   */
-  template<class fp_t> fp_t avogadro_f() {
-    fp_t ret=602214076e15;
-    return ret;
-  }
-  //const double avogadro=6.02214076e23;
+  //@}
 
+  /// \name Mathematical constants
+  //@{
+  template<class fp_t> fp_t pi_f() {
+    return boost::math::constants::pi<fp_t>();
+  }
+  template<class fp_t> fp_t pi2_f() {
+    return boost::math::constants::pi_sqr<fp_t>();
+  }
+  template<class fp_t> fp_t root_pi_f() {
+    return boost::math::constants::root_pi<fp_t>();
+  }
+  template<class fp_t> fp_t zeta2_f() {
+    return boost::math::constants::zeta_two<fp_t>();
+  }
+  template<class fp_t> fp_t zeta3_f() {
+    return boost::math::constants::zeta_three<fp_t>();
+  }
+  template<class fp_t> fp_t euler_f() {
+    return boost::math::constants::euler<fp_t>();
+  }
+  
   /// \f$ \pi \f$ 
   const double pi=boost::math::constants::pi<double>();
   /// \f$ \pi^2 \f$ 
@@ -105,29 +114,36 @@ namespace o2scl_const {
   const double zeta5=1.0369277551433699263;
   /// \f$ \zeta(7) \f$
   const double zeta7=1.0083492773819228268;
-
   /// The Euler-Mascheroni constant
   const double euler=boost::math::constants::euler<double>();
-  
-  //const double sin2_theta_weak=0.23121;
+  //@}
 
-  /// \f$ \sin^2 \theta_W \f$ (PDG 2020 value)
-  template<class fp_t> fp_t sin2_theta_weak_f() {
-    fp_t numer=23121;
-    fp_t denom=100000;
-    fp_t ret=numer/denom;
+  /// \name Physical constants
+  //@{
+  /** \brief Fine structure constant (CODATA 2018 value)
+   */
+  template<class fp_t> fp_t fine_structure_f() {
+    fp_t num=72973525693;
+    fp_t den=10000000000000;
+    fp_t ret=num/den;
     return ret;
   }
   
-  //const double gfermi_gev2=1.1663787e-5;
-  /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
-      (CODATA 2018 value)
-  */
-  template<class fp_t> fp_t gfermi_gev2_f() {
-    fp_t numer=11663787;
-    fp_t denom=1000000000000;
-    fp_t ret=numer/denom;
+  /** \brief Avogadro's number (CODATA 2018 value; exact)
+   */
+  template<class fp_t> fp_t avogadro_f() {
+    fp_t ret=602214076e15;
     return ret;
+  }
+  
+  /** \brief Speed of light */
+  template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      fp_t result=29979245800;
+      return result;
+    }
+    fp_t result=299792458;
+    return result;
   }
   
   /// Planck constant
@@ -148,24 +164,21 @@ namespace o2scl_const {
     fp_t result=frac*powt;
     return result;
   }
-
+  
   /// Reduced Planck constant
   template<class fp_t> fp_t hbar_f(size_t system=o2scl_mks) {
     return planck_f<fp_t>(system)/2/
       boost::math::constants::pi<fp_t>();
   }
-
-  /** \brief Speed of light */
-  template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
-    if (system==o2scl_cgs) {
-      fp_t result=29979245800;
-      return result;
-    }
-    fp_t result=299792458;
-    return result;
+  
+  /** \brief Reduced Planck's constant times speed of light
+      \f$ \hbar c \f$
+   */
+  template<class fp_t> fp_t hbarc_f(size_t system=o2scl_mks) {
+    return hbar_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
 
-  /** \brief Boltzmann's constant */
+  /** \brief Boltzmann's constant (CODATA 2018 value) */
   template<class fp_t> fp_t boltzmann_f(size_t system=o2scl_mks) {
     fp_t numer=1380649;
     fp_t denom=1000000;
@@ -182,13 +195,6 @@ namespace o2scl_const {
     fp_t powt=pow(base,exp);
     fp_t result=frac*powt;
     return result;
-  }
-
-  /** \brief Reduced Planck's constant times speed of light
-      \f$ \hbar c \f$
-   */
-  template<class fp_t> fp_t hbarc_f(size_t system=o2scl_mks) {
-    return hbar_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
 
   /** \brief Gravitational constant (CODATA 2018 value)
@@ -221,7 +227,124 @@ namespace o2scl_const {
     return result;
   }
 
-  /// Electron mass
+  /// Electron volt (CODATA 2018 value)
+  template<class fp_t> fp_t electron_volt_f(size_t system=o2scl_mks) {
+    fp_t numer=1602176634;
+    fp_t denom=1000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-12;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-19;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /** \brief Reduced Planck constant times speed of light 
+      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
+  */
+  template<class fp_t> fp_t hc_mev_fm_f() {
+    fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
+      elem_charge_f<fp_t>()*1e9;
+    return hbarc;
+  }
+
+  /// Stefan-Boltzmann constant in (k)g / K^4 s^3 (CODATA 2018; derived; exact)
+  template<class fp_t> fp_t stefan_boltz_cons_f(size_t system=o2scl_mks) {
+    return pi2_f<fp_t>(system)*boltzmann_f<fp_t>(system)*
+      boltzmann_f<fp_t>(system)*boltzmann_f<fp_t>(system)/60/
+      hbar_f<fp_t>(system)/hbar_f<fp_t>(system)/hbar_f<fp_t>(system)/
+      speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
+  }
+  
+  /// \f$ \hbar c \f$ in MeV fm (exact)
+  const double hc_mev_fm=hc_mev_fm_f<double>();
+
+  /// \f$ \hbar c \f$ in MeV cm (exact)
+  const double hc_mev_cm=hc_mev_fm*1.0e-13;
+
+  /// \f$ \sin^2 \theta_W \f$ (unitless; PDG 2020 value)
+  template<class fp_t> fp_t sin2_theta_weak_f() {
+    fp_t numer=23121;
+    fp_t denom=100000;
+    fp_t ret=numer/denom;
+    return ret;
+  }
+  
+  /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
+      (CODATA 2018 value)
+  */
+  template<class fp_t> fp_t gfermi_gev2_f() {
+    fp_t numer=11663787;
+    fp_t denom=1000000000000;
+    fp_t ret=numer/denom;
+    return ret;
+  }
+
+  /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
+      (CODATA 2018 value)
+  */
+  template<class fp_t> fp_t gfermi_f(size_t system=o2scl_mks) {
+    return gfermi_gev2_f<fp_t>(system)/electron_volt_f<fp_t>(system)/
+      electron_volt_f<fp_t>(system)/1e18;
+  }
+  //@}
+
+  /// \name Particle masses
+  //@{
+  /// Neutron mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_neutron_f(size_t system=o2scl_mks) {
+    fp_t numer=167492749804;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Proton mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_proton_f(size_t system=o2scl_mks) {
+    fp_t numer=167262192369;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Proton mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_proton_amu_f() {
+    fp_t numer=1007276466621;
+    fp_t denom=1000000000000;
+    fp_t frac=(numer/denom);
+    return frac;
+  }
+
+  /// Electron mass (CODATA 2018 value)
   template<class fp_t> fp_t mass_electron_f(size_t system=o2scl_mks) {
     fp_t numer=91093837015;
     fp_t denom=10000000000;
@@ -240,7 +363,7 @@ namespace o2scl_const {
     return result;
   }
 
-  /// Electron mass
+  /// Muon mass (CODATA 2018 value)
   template<class fp_t> fp_t mass_muon_f(size_t system=o2scl_mks) {
     fp_t numer=1883531627;
     fp_t denom=1000000000;
@@ -259,23 +382,232 @@ namespace o2scl_const {
     return result;
   }
 
-  /** \brief Reduced Planck constant times speed of light 
-      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
-  */
-  template<class fp_t> fp_t hc_mev_fm_f() {
-    fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
-      elem_charge_f<fp_t>()*1e9;
-    return hbarc;
+  /// Tau mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_tau_f(size_t system=o2scl_mks) {
+    fp_t numer=316754;
+    fp_t denom=100000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
   }
-  
-  /// \f$ \hbar c \f$ in MeV fm (exact)
-  const double hc_mev_fm=hc_mev_fm_f<double>();
+  //@}
 
-  /// \f$ \hbar c \f$ in MeV cm (exact)
-  const double hc_mev_cm=hc_mev_fm*1.0e-13;
+  /// \name Nuclear masses
+  //@{
+  /// Deuteron mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_deuteron_f(size_t system=o2scl_mks) {
+    fp_t numer=167492749804;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  //@}
 
-  /// Mass of proton in amu from CODATA 2018
-  const double mass_proton_amu=1.007276466621;
+  /// Bohr radius (CODATA 2018 value)
+  template<class fp_t> fp_t bohr_radius_f(size_t system=o2scl_mks) {
+    fp_t numer=529177210903;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-13;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-11;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /** \brief Thomson cross section (MKS in \f$ m^2 \f$ and 
+      CGS in \f$ cm^2 \f$ ; CODATA 2018 value)
+  */
+  template<class fp_t> fp_t thomson_csec_f(size_t system=o2scl_mks) {
+    fp_t numer=66524587321;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-25;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-29;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// \name Time measurements (s)
+  //@{
+  /// Minute
+  template<class fp_t> fp_t minute_f(size_t system=o2scl_mks) {
+    return 60;
+  }
+
+  /// Hour
+  template<class fp_t> fp_t hour_f(size_t system=o2scl_mks) {
+    return 3600;
+  }
+
+  /// Day
+  template<class fp_t> fp_t day_f(size_t system=o2scl_mks) {
+    return 24*3600;
+  }
+
+  /// Week
+  template<class fp_t> fp_t week_f(size_t system=o2scl_mks) {
+    return 168*3600;
+  }
+  //@}
+
+  /// \name Length measurements (MKS in m and CGS in cm)
+  //@{
+  /// Inch
+  template<class fp_t> fp_t inch_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=1000;
+      return numer/denom;
+    }
+    fp_t denom=100000;
+    return numer/denom;
+  }
+
+  /// Foot
+  template<class fp_t> fp_t foot_f(size_t system=o2scl_mks) {
+    fp_t numer=3048;
+    if (system==o2scl_cgs) {
+      fp_t denom=1000;
+      return numer/denom;
+    }
+    fp_t denom=100000;
+    return numer/denom;
+  }
+
+  /// Yard
+  template<class fp_t> fp_t yard_f(size_t system=o2scl_mks) {
+    fp_t numer=9144;
+    if (system==o2scl_cgs) {
+      fp_t denom=1000;
+      return numer/denom;
+    }
+    fp_t denom=100000;
+    return numer/denom;
+  }
+
+  /// Mile
+  template<class fp_t> fp_t mile_f(size_t system=o2scl_mks) {
+    fp_t numer=1609344;
+    if (system==o2scl_cgs) {
+      fp_t denom=10;
+      return numer/denom;
+    }
+    fp_t denom=1000;
+    return numer/denom;
+  }
+
+  /// Nautical mile
+  template<class fp_t> fp_t nautical_mile_f(size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      return 185200;
+    }
+    return 1852;
+  }
+
+  /// Fathom
+  template<class fp_t> fp_t fathom_f(size_t system=o2scl_mks) {
+    fp_t numer=18288;
+    if (system==o2scl_cgs) {
+      fp_t denom=100;
+      return numer/denom;
+    }
+    fp_t denom=10000;
+    return numer/denom;
+  }
+
+  /// Mil
+  template<class fp_t> fp_t mil_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=100000;
+      return numer/denom;
+    }
+    fp_t denom=10000000;
+    return numer/denom;
+  }
+
+  /// Point
+  template<class fp_t> fp_t point_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=100000;
+      return numer/denom;
+    }
+    fp_t denom=10000000;
+    return numer/denom;
+  }
+
+  /// Texpoint
+  template<class fp_t> fp_t texpoint_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=100000;
+      return numer/denom;
+    }
+    fp_t denom=10000000;
+    return numer/denom;
+  }
+
+  /// Micron
+  template<class fp_t> fp_t micron_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=100000;
+      return numer/denom;
+    }
+    fp_t denom=10000000;
+    return numer/denom;
+  }
+
+  /// Angstrom
+  template<class fp_t> fp_t angstrom_f(size_t system=o2scl_mks) {
+    fp_t numer=254;
+    if (system==o2scl_cgs) {
+      fp_t denom=100000;
+      return numer/denom;
+    }
+    fp_t denom=10000000;
+    return numer/denom;
+  }
+  //@}
+    
 }
 
 /** \brief Constants in CGS units 

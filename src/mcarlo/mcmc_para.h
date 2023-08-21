@@ -1099,7 +1099,7 @@ namespace o2scl {
       // Require keypress after initial point if verbose is
       // sufficiently large.
 
-      if (verbose>=3) {
+      if (verbose>=4) {
         std::cout << "Initial point(s) done. "
                   << "Press a key and type enter to continue. ";
         char ch;
@@ -2017,7 +2017,9 @@ namespace o2scl {
           walker_reject_rows[i]=-1;
         }
       
-        if (this->verbose>=3) {
+        if (false && this->verbose>=3) {
+          // AWS, 8/19/23: I took this out because it sends too much
+          // output to cout
           std::cout << "mcmc: Table column names and units: " << std::endl;
           for(size_t i=0;i<table->get_ncolumns();i++) {
             std::cout << table->get_column_name(i) << " "
@@ -2104,13 +2106,13 @@ namespace o2scl {
       return tempi;
     }
   
-    /** \brief For each walker, record the last row in the table which 
-        corresponds to an accept
+    /** \brief For each walker and thread, record the last row in the
+        table which corresponds to an accept
     */
     std::vector<int> walker_accept_rows;
 
-    /** \brief For each walker, record the last row in the table which 
-        corresponds to an reject
+    /** \brief For each walker and thread, record the last row in the
+        table which corresponds to an reject
     */
     std::vector<int> walker_reject_rows;
 
@@ -2171,9 +2173,13 @@ namespace o2scl {
      */
     int table_io_chunk;
 
-    /** \brief If true, store MCMC rejections in the table
+    /** \brief If true, store MCMC rejections in the table (default false)
      */
     bool store_rejects;
+
+    /** \brief If true, check rows (default true)
+     */
+    bool check_rows;
     //@}
   
     /** \brief Write MCMC tables to files
@@ -2300,6 +2306,7 @@ namespace o2scl {
       table_sequence=true;
       prev_read=false;
       table_prealloc=0;
+      check_rows=true;
     }
   
     /// \name Basic usage
@@ -2994,13 +3001,15 @@ namespace o2scl {
               }
             }
           
-            // Set the row
-            table->set_row(((size_t)next_row),line);
-          
             // Verbose output
             if (this->verbose>=2) {
-              this->scr_out << "mcmc: Setting data at row " << next_row
+              this->scr_out << "mcmc: Thread " << i_thread
+                            << " setting data at row " << next_row
                             << std::endl;
+              this->scr_out << "  func_ret: " << func_ret << " mcmc_accept: "
+                            << mcmc_accept << " walker_ix: "
+                            << walker_ix << " store_rejects: "
+                            << store_rejects << std::endl;
             }
             if (this->verbose>=3) {
               for(size_t k=0;k<line.size();k++) {
@@ -3010,7 +3019,28 @@ namespace o2scl {
                 this->scr_out << " " << line[k] << std::endl;
               }
             }
+
+            if (check_rows && fabs(line[3])>0.5 &&
+                fabs(table->get(3,((size_t)next_row)))>0.5) {
+              std::cout << "mult for line is " << line[3]
+                        << " and mult at next_row (" << next_row
+                        << ") is "
+                        << table->get(3,((size_t)next_row)) << std::endl;
+              std::cout << "  Walker and thread at next row is "
+                        << table->get(2,((size_t)next_row)) << " and "
+                        << table->get(1,((size_t)next_row)) << std::endl;
+              std::cout << "  " << table->get_nlines() << " "
+                        << table->get_maxlines() << std::endl;
+              O2SCL_ERR("Row arithmetic problem in mcmc_para_table.",
+                        o2scl::exc_esanity);
+            }
           
+            // Set the row
+            std::cout << "Setting " << next_row << " " << line[3]
+                      << " " << line.size() << " "
+                      << table->get_ncolumns() << std::endl;
+            table->set_row(((size_t)next_row),line);
+            
           }
         
           // End of 'if (mcmc_accept || store_rejects)'
@@ -3236,6 +3266,7 @@ namespace o2scl {
     o2scl::cli::parameter_bool p_aff_inv;
     o2scl::cli::parameter_bool p_table_sequence;
     o2scl::cli::parameter_bool p_store_rejects;
+    o2scl::cli::parameter_bool p_check_rows;
     o2scl::cli::parameter_bool p_couple_threads;
     o2scl::cli::parameter_double p_max_time;
     o2scl::cli::parameter_size_t p_max_iters;
@@ -3388,6 +3419,10 @@ namespace o2scl {
       p_store_rejects.help=((std::string)"If true, then store MCMC ")+
         "rejections (default false).";
       cl.par_list.insert(std::make_pair("store_rejects",&p_store_rejects));
+      
+      p_check_rows.b=&this->check_rows;
+      p_check_rows.help="If true, then check rows";
+      cl.par_list.insert(std::make_pair("check_rows",&p_check_rows));
 
       p_couple_threads.b=&this->couple_threads;
       p_couple_threads.help="help";
