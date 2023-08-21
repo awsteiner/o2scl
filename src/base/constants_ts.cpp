@@ -35,16 +35,47 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  cout << stod(o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),0)
-       << endl;
-  cout << stod(o2scl_const::speed_of_light_f<long double>(o2scl_const::cgs),0)
-       << endl;
   t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,
-	     o2scl_const::speed_of_light_f<double>(o2scl_const::cgs),
+	     o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs),
              1.0e-7,"CGS speed_of_light");
   t.test_rel(GSL_CONST_MKS_SPEED_OF_LIGHT,
-	     o2scl_const::speed_of_light_f<double>(o2scl_const::mks),
+	     o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_mks),
              1.0e-7,"MKS speed_of_light");
+  t.test_rel(GSL_CONST_CGS_GRAVITATIONAL_CONSTANT,
+	     o2scl_const::gravitational_constant_f<double>
+             (o2scl_const::o2scl_cgs),3.0e-4,
+	     "CGS gravitational_constant");
+  t.test_rel(GSL_CONST_MKS_GRAVITATIONAL_CONSTANT,
+	     o2scl_const::gravitational_constant_f<double>
+             (o2scl_const::o2scl_mks),3.0e-4,
+	     "MKS gravitational_constant");
+  t.test_rel(GSL_CONST_CGS_PLANCKS_CONSTANT_H,
+             o2scl_const::planck_f<double>(o2scl_const::o2scl_cgs),3.0e-7,
+             "CGS plancks_constant_h");
+  t.test_rel(GSL_CONST_MKS_PLANCKS_CONSTANT_H,
+             o2scl_const::planck_f<double>(o2scl_const::o2scl_mks),3.0e-7,
+             "MKS plancks_constant_h");
+  t.test_rel(GSL_CONST_CGS_PLANCKS_CONSTANT_HBAR,
+	     o2scl_const::hbar_f<double>(o2scl_const::o2scl_cgs),3.0e-7,
+	     "CGS plancks_constant_hbar");
+  t.test_rel(GSL_CONST_MKS_PLANCKS_CONSTANT_HBAR,
+	     o2scl_const::hbar_f<double>(o2scl_const::o2scl_mks),3.0e-7,
+	     "MKS plancks_constant_hbar");
+  t.test_rel(GSL_CONST_CGS_ELECTRON_VOLT,
+	     o2scl_const::electron_volt_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS electron_volt");
+  t.test_rel(GSL_CONST_MKS_ELECTRON_VOLT,
+	     o2scl_const::electron_volt_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS electron_volt");
+  t.test_rel(GSL_CONST_CGS_BOHR_RADIUS,
+	     o2scl_const::bohr_radius_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS bohr_radius");
+  t.test_rel(GSL_CONST_MKS_BOHR_RADIUS,
+	     o2scl_const::bohr_radius_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS bohr_radius");
+
+  t.report();
+  
   exit(-1);
   
   t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,
