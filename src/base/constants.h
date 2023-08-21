@@ -801,6 +801,7 @@ namespace o2scl_const {
     }
     fp_t base=10;
     fp_t exp=-6;
+
     fp_t powt=pow(base,exp);
     fp_t result=frac*powt;
     return result;
