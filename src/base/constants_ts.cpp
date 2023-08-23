@@ -73,23 +73,35 @@ int main(void) {
   t.test_rel(GSL_CONST_MKS_BOHR_RADIUS,
 	     o2scl_const::bohr_radius_f<double>(o2scl_const::o2scl_mks),
              1.0e-7,"MKS bohr_radius");
+  t.test_rel(GSL_CONST_CGS_STEFAN_BOLTZMANN_CONSTANT,
+	     o2scl_const::stefan_boltz_cons_f<double>
+             (o2scl_const::o2scl_cgs),1.0e-5,"CGS stefan_boltzmann");
+  t.test_rel(GSL_CONST_MKS_STEFAN_BOLTZMANN_CONSTANT,
+	     o2scl_const::stefan_boltz_cons_f<double>
+             (o2scl_const::o2scl_mks),1.0e-5,"MKS stefan_boltzmann");
+  t.test_rel(GSL_CONST_CGS_THOMSON_CROSS_SECTION,
+	     o2scl_const::thomson_csec_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS thomson_cross_section");
+  t.test_rel(GSL_CONST_MKS_THOMSON_CROSS_SECTION,
+	     o2scl_const::thomson_csec_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS thomson_cross_section");
+  t.test_rel(GSL_CONST_CGS_BOLTZMANN,
+	     o2scl_const::boltzmann_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-6,"CGS boltzmann");
+  t.test_rel(GSL_CONST_MKS_BOLTZMANN,
+	     o2scl_const::boltzmann_f<double>(o2scl_const::o2scl_mks),
+             4.0e-6,"MKS boltzmann");
+  t.test_rel(GSL_CONST_CGS_ASTRONOMICAL_UNIT,
+	     o2scl_const::astronomical_unit_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-10,"CGS astronomical_unit");
+  t.test_rel(GSL_CONST_MKS_ASTRONOMICAL_UNIT,
+	     o2scl_const::astronomical_unit_f<double>(o2scl_const::o2scl_mks),
+             1.0e-10,"MKS astronomical_unit");
 
   t.report();
   
   exit(-1);
   
-  t.test_rel(GSL_CONST_CGS_STEFAN_BOLTZMANN_CONSTANT,
-	     o2scl_cgs::stefan_boltzmann_constant,1.0e-5,
-	     "CGS stefan_boltzmann");
-  t.test_rel(GSL_CONST_CGS_THOMSON_CROSS_SECTION,
-	     o2scl_cgs::thomson_cross_section,4.0e-7,
-	     "CGS thomson_cross_section");
-  t.test_rel(GSL_CONST_CGS_BOLTZMANN,
-	     o2scl_cgs::boltzmann,4.0e-6,
-	     "CGS boltzmann");
-  t.test_rel(GSL_CONST_CGS_ASTRONOMICAL_UNIT,
-	     o2scl_cgs::astronomical_unit,1.0e-7,
-	     "CGS astronomical_unit");
   t.test_rel(GSL_CONST_CGS_PARSEC,
 	     o2scl_cgs::parsec,1.0e-7,
 	     "CGS parsec");
