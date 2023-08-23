@@ -257,8 +257,9 @@ namespace o2scl_const {
 
   /// Stefan-Boltzmann constant in (k)g / K^4 s^3 (CODATA 2018; derived; exact)
   template<class fp_t> fp_t stefan_boltz_cons_f(size_t system=o2scl_mks) {
-    return pi2_f<fp_t>(system)*boltzmann_f<fp_t>(system)*
-      boltzmann_f<fp_t>(system)*boltzmann_f<fp_t>(system)/60/
+    return pi2_f<fp_t>()*boltzmann_f<fp_t>(system)*
+      boltzmann_f<fp_t>(system)*boltzmann_f<fp_t>(system)*
+      boltzmann_f<fp_t>(system)/60/
       hbar_f<fp_t>(system)/hbar_f<fp_t>(system)/hbar_f<fp_t>(system)/
       speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
   }
@@ -296,6 +297,16 @@ namespace o2scl_const {
   }
   //@}
 
+  /** \brief Astronomical unit (IAU 2009 value; now exact)
+   */
+  template<class fp_t> fp_t astronomical_unit_f
+  (size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      return 14959787070000;
+    }
+    return 149597870700;
+  }
+  
   /// \name Particle masses
   //@{
   /// Neutron mass (CODATA 2018 value)
