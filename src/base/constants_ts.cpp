@@ -97,20 +97,29 @@ int main(void) {
   t.test_rel(GSL_CONST_MKS_ASTRONOMICAL_UNIT,
 	     o2scl_const::astronomical_unit_f<double>(o2scl_const::o2scl_mks),
              1.0e-10,"MKS astronomical_unit");
+  t.test_rel(GSL_CONST_MKS_PARSEC,
+	     o2scl_const::parsec_f<double>(o2scl_const::o2scl_mks),
+             1.0e-10,"MKS parsec");
+  t.test_rel(GSL_CONST_CGS_PARSEC,
+	     o2scl_const::parsec_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-10,"CGS parsec");
+  t.test_rel(GSL_CONST_CGS_GRAV_ACCEL,
+	     o2scl_const::grav_accel_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS grav_accel");
+  t.test_rel(GSL_CONST_MKS_GRAV_ACCEL,
+	     o2scl_const::grav_accel_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS grav_accel");
+  t.test_rel(GSL_CONST_CGS_SOLAR_MASS,
+	     o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_cgs),
+             5.0e-4,"CGS solar_mass");
+  t.test_rel(GSL_CONST_MKS_SOLAR_MASS,
+	     o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_mks),
+             5.0e-4,"MKS solar_mass");
 
   t.report();
   
   exit(-1);
   
-  t.test_rel(GSL_CONST_CGS_PARSEC,
-	     o2scl_cgs::parsec,1.0e-7,
-	     "CGS parsec");
-  t.test_rel(GSL_CONST_CGS_GRAV_ACCEL,
-	     o2scl_cgs::grav_accel,1.0e-7,
-	     "CGS grav_accel");
-  t.test_rel(GSL_CONST_CGS_SOLAR_MASS,
-	     o2scl_cgs::solar_mass,5.0e-4,
-	     "CGS solar_mass");
   t.test_rel(GSL_CONST_CGS_LIGHT_YEAR,
 	     o2scl_cgs::light_year,4.0e-5,
 	     "CGS light_year");

@@ -297,6 +297,8 @@ namespace o2scl_const {
   }
   //@}
 
+  /// \name Astronomical constants
+  //@{
   /** \brief Astronomical unit (IAU 2009 value; now exact)
    */
   template<class fp_t> fp_t astronomical_unit_f
@@ -306,6 +308,65 @@ namespace o2scl_const {
     }
     return 149597870700;
   }
+
+  /** \brief Parsec (derived; exact)
+   */
+  template<class fp_t> fp_t parsec_f
+  (size_t system=o2scl_mks) {
+    return astronomical_unit_f<fp_t>(system)*648000/pi_f<fp_t>();
+  }
+  
+  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
+  template<class fp_t> fp_t grav_accel_f
+  (size_t system=o2scl_mks) {
+    if (system==o2scl_cgs) {
+      fp_t numer=980665;
+      fp_t denom=1000;
+      return numer/denom;
+    }
+    fp_t numer=980665;
+    fp_t denom=100000;
+    return numer/denom;
+  }
+
+  /** \brief Solar mass times gravitational constant in cm^3 / s^2
+      (IAU 2015 value, see https://arxiv.org/abs/1510.07674)
+
+      Note that this value differs slightly in Barycentric Coordinate
+      Time and Barycentric Dynamical Time. This is the IAU's nominal
+      value.
+  */
+  template<class fp_t> fp_t solar_mass_param_f(size_t system=o2scl_mks) {
+    fp_t numer=13271244;
+    fp_t denom=10000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=26;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=20;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of the sun in g (derived)
+  template<class fp_t> fp_t solar_mass_f(size_t system=o2scl_mks) {
+    return solar_mass_param_f<fp_t>(system)/
+      gravitational_constant_f<fp_t>(system);
+  }
+
+  /// Schwarzchild radius in cm (derived)
+  template<class fp_t> fp_t schwarzchild_radius_f
+  (size_t system=o2scl_mks) {
+    return 2*solar_mass_param_f<fp_t>(system)/
+      speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
+  }
+  //@}
   
   /// \name Particle masses
   //@{
@@ -417,8 +478,84 @@ namespace o2scl_const {
   //@{
   /// Deuteron mass (CODATA 2018 value)
   template<class fp_t> fp_t mass_deuteron_f(size_t system=o2scl_mks) {
-    fp_t numer=167492749804;
-    fp_t denom=100000000000;
+    fp_t numer=33435837724;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Triton mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_triton_f(size_t system=o2scl_mks) {
+    fp_t numer=50073567446;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Helion mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_helion_f(size_t system=o2scl_mks) {
+    fp_t numer=50064127796;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Alpha mass (CODATA 2018 value)
+  template<class fp_t> fp_t mass_alpha_f(size_t system=o2scl_mks) {
+    fp_t numer=66446573357;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Deuteron mass (CODATA 2018 value)
+  template<class fp_t> fp_t unified_atomic_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=16605390666;
+    fp_t denom=10000000000;
     fp_t frac=(numer/denom);
     if (system==o2scl_cgs) {
       fp_t base=10;
