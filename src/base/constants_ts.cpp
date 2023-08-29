@@ -115,9 +115,90 @@ int main(void) {
   t.test_rel(GSL_CONST_MKS_SOLAR_MASS,
 	     o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_mks),
              5.0e-4,"MKS solar_mass");
-
+  t.test_rel(GSL_CONST_CGS_LIGHT_YEAR,
+	     o2scl_const::light_year_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-5,"CGS light_year");
+  t.test_rel(GSL_CONST_MKS_LIGHT_YEAR,
+	     o2scl_const::light_year_f<double>(o2scl_const::o2scl_mks),
+             4.0e-5,"MKS light_year");
+  t.test_rel(GSL_CONST_CGS_MASS_ELECTRON,
+	     o2scl_const::mass_electron_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS mass_electron");
+  t.test_rel(GSL_CONST_MKS_MASS_ELECTRON,
+	     o2scl_const::mass_electron_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS mass_electron");
+  t.test_rel(GSL_CONST_CGS_MASS_MUON,
+	     o2scl_const::mass_muon_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS mass_muon");
+  t.test_rel(GSL_CONST_MKS_MASS_MUON,
+	     o2scl_const::mass_muon_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS mass_muon");
+  t.test_rel(GSL_CONST_CGS_MASS_PROTON,
+	     o2scl_const::mass_proton_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS mass_proton");
+  t.test_rel(GSL_CONST_MKS_MASS_PROTON,
+	     o2scl_const::mass_proton_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS mass_proton");
+  t.test_rel(GSL_CONST_CGS_MASS_NEUTRON,
+	     o2scl_const::mass_neutron_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS mass_neutron");
+  t.test_rel(GSL_CONST_MKS_MASS_NEUTRON,
+	     o2scl_const::mass_neutron_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS mass_neutron");
+  t.test_rel(GSL_CONST_CGS_UNIFIED_ATOMIC_MASS,
+	     o2scl_const::unified_atomic_mass_f<double>
+             (o2scl_const::o2scl_cgs),4.0e-7,
+	     "CGS unified_atomic_mass");
+  t.test_rel(GSL_CONST_MKS_UNIFIED_ATOMIC_MASS,
+	     o2scl_const::unified_atomic_mass_f<double>
+             (o2scl_const::o2scl_mks),4.0e-7,
+	     "MKS unified_atomic_mass");
+  t.test_rel(GSL_CONST_CGS_RYDBERG,
+	     o2scl_const::rydberg_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-7,"CGS rydberg");
+  t.test_rel(GSL_CONST_MKS_RYDBERG,
+	     o2scl_const::rydberg_f<double>(o2scl_const::o2scl_mks),
+             4.0e-7,"MKS rydberg");
+  t.test_rel(GSL_CONST_CGS_MOLAR_GAS,
+	     o2scl_const::molar_gas_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-6,"CGS molar_gas");
+  t.test_rel(GSL_CONST_MKS_MOLAR_GAS,
+	     o2scl_const::molar_gas_f<double>(o2scl_const::o2scl_mks),
+             4.0e-6,"MKS molar_gas");
+  t.test_rel(GSL_CONST_CGS_STANDARD_GAS_VOLUME,
+	     o2scl_const::std_gas_volume_f<double>(o2scl_const::o2scl_cgs),
+             4.0e-6,"CGS standard_gas_volume");
+  t.test_rel(GSL_CONST_MKS_STANDARD_GAS_VOLUME,
+	     o2scl_const::std_gas_volume_f<double>(o2scl_const::o2scl_mks),
+             4.0e-6,"MKS standard_gas_volume");
+  t.test_rel(GSL_CONST_CGS_MINUTE,
+	     o2scl_const::minute_f<double>(o2scl_const::o2scl_cgs),1.0e-7,
+	     "CGS minute");
+  t.test_rel(GSL_CONST_MKS_MINUTE,
+	     o2scl_const::minute_f<double>(o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS minute");
+  t.test_rel(GSL_CONST_CGS_HOUR,
+	     o2scl_const::hour_f<double>(o2scl_const::o2scl_cgs),1.0e-7,
+	     "CGS hour");
+  t.test_rel(GSL_CONST_MKS_HOUR,
+	     o2scl_const::hour_f<double>(o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS hour");
+  t.test_rel(GSL_CONST_CGS_DAY,
+	     o2scl_const::day_f<double>(o2scl_const::o2scl_cgs),1.0e-7,
+	     "CGS day");
+  t.test_rel(GSL_CONST_MKS_DAY,
+	     o2scl_const::day_f<double>(o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS day");
+  t.test_rel(GSL_CONST_CGS_WEEK,
+	     o2scl_const::week_f<double>(o2scl_const::o2scl_cgs),1.0e-7,
+	     "CGS week");
+  t.test_rel(GSL_CONST_MKS_WEEK,
+	     o2scl_const::week_f<double>(o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS week");
+	     
   t.report();
-  
+
+  /*
   exit(-1);
   
   t.test_rel(GSL_CONST_CGS_SPEED_OF_LIGHT,

@@ -350,6 +350,38 @@ namespace o2scl_const {
   template<class fp_t> fp_t light_year_f(size_t system=o2scl_mks) {
     return julian_year_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
+  
+  /** \brief Sidereal year in s 
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
+  */
+  template<class fp_t> fp_t sidereal_year_f(size_t system=o2scl_mks) {
+    fp_t numer=315581498;
+    fp_t denom=10;
+    return numer/denom;
+  }
+  
+  /** \brief Tropical year in s 
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
+  */
+  template<class fp_t> fp_t tropical_year_f(size_t system=o2scl_mks) {
+    fp_t numer=315569251;
+    fp_t denom=10;
+    return numer/denom;
+  }
+  
+  /// Julian year in s (exact)
+  template<class fp_t> fp_t julian_year_f(size_t system=o2scl_mks) {
+    fp_t numer=36525;
+    fp_t numer2=86400;
+    fp_t denom=100;
+    fp_t temp=numer/denom;
+    return temp*numer2;
+  }
+
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
+  template<class fp_t> fp_t light_year_f(size_t system=o2scl_mks) {
+    return julian_year_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
+  }
   //@}
   
   /// \name Particle masses
@@ -1715,6 +1747,9 @@ namespace o2scl_const {
   const double hc_mev_fm=hc_mev_fm_f<double>();
   /// \f$ \hbar c \f$ in MeV cm (exact)
   const double hc_mev_cm=hc_mev_fm*1.0e-13;
+=======
+  const double mass_strange_MeV=93.0;
+>>>>>>> 60df0771 (Fixing test regressions and improving constants.)
   //@}
   
 }
