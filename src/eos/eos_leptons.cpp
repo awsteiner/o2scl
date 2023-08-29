@@ -308,7 +308,7 @@ int eos_leptons::pair_mu(double T) {
     if (include_deriv) {
       
       phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
-      phd.dndT=ph.g*zeta3/pi2*3.0*T*T;
+      phd.dndT=ph.g*zeta3_f<double>()/pi2*3.0*T*T;
       phd.dndmu=0.0;
       
       thd.dndT+=phd.dndT;
@@ -568,7 +568,7 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     th.en+=ph.en;
     if (include_deriv) {
       phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
-      phd.dndT=ph.g*zeta3/pi2*3.0*T*T;
+      phd.dndT=ph.g*zeta3_f<double>()/pi2*3.0*T*T;
       phd.dndmu=0.0;
     }
   }

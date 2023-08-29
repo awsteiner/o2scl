@@ -26,6 +26,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/funct_multip.h>
 #include <o2scl/set_mpfr.h>
+#include <o2scl/funct_to_fp.h>
 
 using namespace std;
 using namespace o2scl;

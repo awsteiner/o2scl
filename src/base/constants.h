@@ -102,6 +102,7 @@ namespace o2scl_const {
   const double pi2=boost::math::constants::pi_sqr<double>();
   /// \f$ \sqrt{\pi} \f$ 
   const double root_pi=boost::math::constants::root_pi<double>();
+  /*
   /// \f$ \zeta(3/2) \f$
   const double zeta32=2.6123753486854883433;
   /// \f$ \zeta(2) \f$
@@ -116,6 +117,7 @@ namespace o2scl_const {
   const double zeta7=1.0083492773819228268;
   /// The Euler-Mascheroni constant
   const double euler=boost::math::constants::euler<double>();
+  */
   //@}
 
   /// \name Physical constants
@@ -292,12 +294,12 @@ namespace o2scl_const {
       (CODATA 2018 value)
   */
   template<class fp_t> fp_t gfermi_f(size_t system=o2scl_mks) {
-    return gfermi_gev2_f<fp_t>(system)/electron_volt_f<fp_t>(system)/
+    return gfermi_gev2_f<fp_t>()/electron_volt_f<fp_t>(system)/
       electron_volt_f<fp_t>(system)/1e18;
   }
   //@}
 
-  /// \name Astronomical constants
+  /// \name Astrophysical constants
   //@{
   /** \brief Astronomical unit (IAU 2009 value; now exact)
    */
@@ -365,6 +367,38 @@ namespace o2scl_const {
   (size_t system=o2scl_mks) {
     return 2*solar_mass_param_f<fp_t>(system)/
       speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
+  }
+  
+  /** \brief Sidereal year in s 
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
+  */
+  template<class fp_t> fp_t sidereal_year_f(size_t system=o2scl_mks) {
+    fp_t numer=315581498;
+    fp_t denom=10;
+    return numer/denom;
+  }
+  
+  /** \brief Tropical year in s 
+      (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
+  */
+  template<class fp_t> fp_t tropical_year_f(size_t system=o2scl_mks) {
+    fp_t numer=315569251;
+    fp_t denom=10;
+    return numer/denom;
+  }
+  
+  /// Julian year in s (exact)
+  template<class fp_t> fp_t julian_year_f(size_t system=o2scl_mks) {
+    fp_t numer=36525;
+    fp_t numer2=86400;
+    fp_t denom=100;
+    fp_t temp=numer/denom;
+    return temp*numer2;
+  }
+
+  /// Light year in \f$ \mathrm{cm} \f$ (derived; exact)
+  template<class fp_t> fp_t light_year_f(size_t system=o2scl_mks) {
+    return julian_year_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
   //@}
   
@@ -612,6 +646,56 @@ namespace o2scl_const {
     return result;
   }
 
+  /// \name Chemical constants
+  //@{
+  /// Rydberg constant in g cm^2 / s^2 (CODATA 2018 value)
+  template<class fp_t> fp_t rydberg_f(size_t system=o2scl_mks) {
+    fp_t numer=21798723611035;
+    fp_t denom=10000000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-11;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-18;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /** \brief Molar gas constant, "R", in g cm^2 / K mol s^2 
+      (CODATA 2018; exact; derived)
+  */
+  template<class fp_t> fp_t molar_gas_f(size_t system=o2scl_mks) {
+    return avogadro_f<fp_t>()*boltzmann_f<fp_t>(system);
+  }
+
+  /** \brief Molar volume of ideal gas at standard T and P in 
+      cm^3 / mol (CODATA 2018 value)
+  */
+  template<class fp_t> fp_t std_gas_volume_f(size_t system=o2scl_mks) {
+    fp_t numer=2271095464;
+    fp_t denom=1000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=4;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-2;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  //@}
+  
   /// \name Time measurements (s)
   //@{
   /// Minute
@@ -755,7 +839,143 @@ namespace o2scl_const {
     return numer/denom;
   }
   //@}
-    
+
+  /** \name Squared electron charge
+   */
+  //@{
+  /** \brief Electron charge squared in Gaussian units (derived)
+
+      In Gaussian Units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = 4 \pi \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - 4 \pi \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{8 \pi} \int | \vec{E} |^2 d^3 x \, ,
+      \quad 
+      \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
+      \f}
+  */
+  const double e2_gaussian=o2scl_const::hc_mev_fm*
+    o2scl_const::fine_structure_f<double>();
+
+  /** \brief Electron charge sqaured in 
+      Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
+
+      In Heaviside-Lorentz units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{4 \pi r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
+      \f}
+  */      
+  const double e2_hlorentz=o2scl_const::fine_structure_f<double>()*4.0*pi;
+
+  /** \brief Electron charge squared in SI(MKS) units (derived)
+
+      In MKS units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{1}{4 \pi \varepsilon_0}\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{\varepsilon_0}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi \varepsilon_0 \hbar c}=\frac{1}{137}&
+      \f}
+
+      Note the conversion formulas
+      \f[
+      q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
+      \f]
+      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
+      Particles.
+  */      
+  const double e2_mks=elem_charge_f<double>();
+  //@}
+
+  /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
+      in Gaussian units in \f$\mathrm{fm}^{-2}\f$
+  */
+  const double ec_gauss_fm2=elem_charge_f<double>()*1.0e-34/
+    hbar_f<double>(o2scl_mks);
+
+  /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
+      \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
+
+      This is useful, e.g. in converting magnetic field squared
+      to an energy density.
+  */
+  const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
+    o2scl_const::fine_structure_f<double>();
+
+  /// \name Particle masses from PDG 2020
+  //@{
+  /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+  */
+  const double mass_lambda_MeV=1115.683;
+
+  /** \brief \f$ \Sigma^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+   */
+  const double mass_sigma_minus_MeV=1197.449;
+
+  /** \brief \f$ \Sigma^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+   */
+  const double mass_sigma_zero_MeV=1192.642;
+
+  /** \brief \f$ \Sigma^{+} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+   */
+  const double mass_sigma_plus_MeV=1189.37;
+
+  /** \brief \f$ \Xi^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+   */
+  const double mass_cascade_zero_MeV=1314.86;
+  
+  /** \brief \f$ \Xi^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR FIT")
+   */
+  const double mass_cascade_minus_MeV=1321.71;
+  
+  /** \brief Up quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
+   */
+  const double mass_up_MeV=2.16;
+  
+  /** \brief Down quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
+   */
+  const double mass_down_MeV=4.67;
+  
+  /** \brief Strange quark mass in \f$ \mathrm{MeV} \f$
+      (used value labeled "OUR EVALUATION")
+   */
+  const double mass_strange_MeV=93.0;
+  //@}
+  
 }
 
 /** \brief Constants in CGS units 
@@ -1792,146 +2012,5 @@ namespace o2scl_mks {
   //@}
 
 }
-
-// Other derived values to add to the namespace
-namespace o2scl_const {
-
-  /** \name Squared electron charge
-   */
-  //@{
-  /** \brief Electron charge squared in Gaussian units (derived)
-
-      In Gaussian Units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = 4 \pi \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - 4 \pi \rho \, ,
-      &\\&
-      F=\frac{q_1 q_2}{r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{1}{8 \pi} \int | \vec{E} |^2 d^3 x \, ,
-      \quad 
-      \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
-      \f}
-  */
-  const double e2_gaussian=o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure_f<double>();
-
-  /** \brief Electron charge sqaured in 
-      Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
-
-      In Heaviside-Lorentz units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - \rho \, ,
-      &\\&
-      F=\frac{q_1 q_2}{4 \pi r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{1}{2} \int | \vec{E} |^2 d^3 x \, ,
-      \quad
-      \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
-      \f}
-  */      
-  const double e2_hlorentz=o2scl_const::fine_structure_f<double>()*4.0*pi;
-
-  /** \brief Electron charge squared in SI(MKS) units (derived)
-
-      In MKS units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - \rho \, ,
-      &\\&
-      F=\frac{1}{4 \pi \varepsilon_0}\frac{q_1 q_2}{r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{\varepsilon_0}{2} \int | \vec{E} |^2 d^3 x \, ,
-      \quad
-      \alpha=\frac{e^2}{4 \pi \varepsilon_0 \hbar c}=\frac{1}{137}&
-      \f}
-
-      Note the conversion formulas
-      \f[
-      q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
-      \f]
-      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
-      Particles.
-  */      
-  const double e2_mks=o2scl_mks::electron_charge;
-  //@}
-
-  /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
-      in Gaussian units in \f$\mathrm{fm}^{-2}\f$
-  */
-  const double ec_gauss_fm2=o2scl_mks::electron_charge*1.0e-34/
-    o2scl_mks::plancks_constant_hbar;
-
-  /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
-      \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
-
-      This is useful, e.g. in converting magnetic field squared
-      to an energy density.
-  */
-  const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
-    o2scl_const::fine_structure_f<double>();
-
-  /// \name Particle masses from PDG 2020
-  //@{
-  /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-  */
-  const double mass_lambda_MeV=1115.683;
-
-  /** \brief \f$ \Sigma^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-   */
-  const double mass_sigma_minus_MeV=1197.449;
-
-  /** \brief \f$ \Sigma^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-   */
-  const double mass_sigma_zero_MeV=1192.642;
-
-  /** \brief \f$ \Sigma^{+} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-   */
-  const double mass_sigma_plus_MeV=1189.37;
-
-  /** \brief \f$ \Xi^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-   */
-  const double mass_cascade_zero_MeV=1314.86;
-  
-  /** \brief \f$ \Xi^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR FIT")
-   */
-  const double mass_cascade_minus_MeV=1321.71;
-  
-  /** \brief Up quark mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR EVALUATION")
-   */
-  const double mass_up_MeV=2.16;
-  
-  /** \brief Down quark mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR EVALUATION")
-   */
-  const double mass_down_MeV=4.67;
-  
-  /** \brief Strange quark mass in \f$ \mathrm{MeV} \f$
-      (used value labeled "OUR EVALUATION")
-   */
-  const double mass_strange_MeV=93.0;
-  //@}
-}
-
 
 #endif
