@@ -347,7 +347,7 @@ int main(void) {
     gsl_matrix *J=gsl_matrix_alloc(ndat,2);
 
     int status;
-    size_t i, iter=0;
+    size_t iter=0;
 
     const size_t p=2;
 

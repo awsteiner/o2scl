@@ -23,6 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/funct.h>
 #include <o2scl/inte_kronrod_boost.h>
+#include <o2scl/funct_to_fp.h>
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 

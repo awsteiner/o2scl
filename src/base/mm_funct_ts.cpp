@@ -22,6 +22,7 @@
 */
 #include <o2scl/mm_funct.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/funct_to_fp.h>
 
 using namespace std;
 using namespace o2scl;
