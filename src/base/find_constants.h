@@ -47,22 +47,27 @@ namespace o2scl {
         doesn't report the same constant multiple times.
       */
       list={{{"Schwarzchild radius","rschwarz"},
-          "m",o2scl_const::o2scl_mks,o2scl_mks::schwarzchild_radius,
+          "m",o2scl_const::o2scl_mks,
+          o2scl_const::schwarzchild_radius_f<fp_t>(),
           "derived from the IAU 2015 nominal solar mass parameter",
           1,0,0,0,0,0,0},
             {{"vacuum permittivity","vacuum electric permittivity",
                "permittivity of free space","epsilon0","ε0"},
-             "F/m",o2scl_const::o2scl_mks,o2scl_mks::vacuum_permittivity,
+             "F/m",o2scl_const::o2scl_mks,
+             o2scl_const::vacuum_permittivity_f<fp_t>(),
              "CODATA 2018",-3,-1,4,0,2,0,0},
             {{"vacuum permeability","vacuum electric permeability",
                "permeability of free space","mu0","μ0","magnetic constant"},
-             "N/A^2",o2scl_const::o2scl_mks,o2scl_mks::vacuum_permeability,
+             "N/A^2",o2scl_const::o2scl_mks,
+             o2scl_const::vacuum_permeability_f<fp_t>(),
              "CODATA 2018",1,1,-2,0,-2,0,0},
             {{"Bohr radius","rbohr"},
-             "m",o2scl_const::o2scl_mks,o2scl_mks::bohr_radius,
+             "m",o2scl_const::o2scl_mks,
+             o2scl_const::bohr_radius_f<fp_t>(),
              "CODATA 2018",1,0,0,0,0,0,0},
             {{"Thomson cross section","σThomson"},
-             "m^2",o2scl_const::o2scl_mks,o2scl_mks::thomson_cross_section,
+             "m^2",o2scl_const::o2scl_mks,
+             o2scl_const::thomson_csec_f<fp_t>(),
              "CODATA 2018",2,0,0,0,0,0,0},
             {{"classical electron radius","electron radius",
                "relectron","re"},
@@ -75,36 +80,36 @@ namespace o2scl {
              "m/K",o2scl_const::o2scl_mks,2.897771955e-3,
              "CODATA 2018",1,0,0,-1,0,0,0},
             {{"Planck length"},"m",o2scl_const::o2scl_mks,
-             sqrt(o2scl_mks::gravitational_constant*
-                  o2scl_mks::plancks_constant_hbar/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light),
+             sqrt(o2scl_const::gravitational_constant_f<fp_t>()*
+                  o2scl_const::hbar_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()),
              "derived",1,0,0,0,0,0,0},
             {{"Planck mass"},"kg",o2scl_const::o2scl_mks,
-             sqrt(o2scl_mks::plancks_constant_hbar/
-                  o2scl_mks::gravitational_constant*
-                  o2scl_mks::speed_of_light),
+             sqrt(o2scl_const::hbar_f<fp_t>()/
+                  o2scl_const::gravitational_constant_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()),
              "derived",0,1,0,0,0,0,0},
             {{"Planck time"},"s",o2scl_const::o2scl_mks,
-             sqrt(o2scl_mks::gravitational_constant*
-                  o2scl_mks::plancks_constant_hbar/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::speed_of_light),
+             sqrt(o2scl_const::gravitational_constant_f<fp_t>()*
+                  o2scl_const::hbar_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::speed_of_light_f<fp_t>()),
              "derived",0,0,1,0,0,0,0},
             {{"Planck temperature"},"K",o2scl_const::o2scl_mks,
-             sqrt(o2scl_mks::plancks_constant_hbar*
-                  o2scl_mks::speed_of_light*
-                  o2scl_mks::speed_of_light*
-                  o2scl_mks::speed_of_light*
-                  o2scl_mks::speed_of_light*
-                  o2scl_mks::speed_of_light/
-                  o2scl_mks::gravitational_constant/
-                  o2scl_mks::boltzmann/
-                  o2scl_mks::boltzmann),
+             sqrt(o2scl_const::hbar_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()*
+                  o2scl_const::speed_of_light_f<fp_t>()/
+                  o2scl_const::gravitational_constant_f<fp_t>()/
+                  o2scl_const::boltzmann_f<fp_t>()/
+                  o2scl_const::boltzmann_f<fp_t>()),
              "derived",0,0,0,1,0,0,0},
             /*
               Things to add in the future:
@@ -114,11 +119,11 @@ namespace o2scl {
              o2scl_const::o2scl_mks,o2scl_const::elem_charge_f<fp_t>(),
              "exact",0,0,1,0,1,0,0},
             {{"Bohr magneton"},"J/T",
-             o2scl_const::o2scl_mks,9.2740100783e-24,"CODATA 2018",
-             1,1,0,0,1,0,0},
+             o2scl_const::o2scl_mks,o2scl_const::bohr_magneton_f<fp_t>(),
+             "CODATA 2018",1,1,0,0,1,0,0},
             {{"nuclear magneton"},"J/T",
-             o2scl_const::o2scl_mks,5.0507837461e-27,"CODATA 2018",
-             1,1,0,0,1,0,0},
+             o2scl_const::o2scl_mks,o2scl_const::nuclear_magneton_f<fp_t>(),
+             "CODATA 2018",1,1,0,0,1,0,0},
             {{"strong coupling constant at the Z mass"},"",
              fc_none,0.1179,
              ((std::string)"https://pdg.lbl.gov/2021/reviews/")+
@@ -126,7 +131,7 @@ namespace o2scl {
              0,0,0,0,0,0,0},
             {{"Schwarzchild radius","rschwarz"},
              "cm",o2scl_const::o2scl_cgs,
-             o2scl_const::schwarzchild_radius_f<fp_t>(),
+             o2scl_const::schwarzchild_radius_f<fp_t>(o2scl_const::o2scl_cgs),
              "derived from the IAU 2015 nominal solar mass parameter",
              0,0,0,0,0,0,0},
             {{"Schwarzchild radius","rschwarz"},
@@ -151,19 +156,21 @@ namespace o2scl {
              o2scl_const::gravitational_constant_f<fp_t>
              (o2scl_const::o2scl_cgs),"CODATA 2018",0,0,0,0,0,0,0},
             {{"Boltzmann's","kb","boltzmann"},
-             "m^2/kg/s^2/K",o2scl_const::o2scl_mks,o2scl_mks::boltzmann,
+             "m^2/kg/s^2/K",o2scl_const::o2scl_mks,
+             o2scl_const::boltzmann_f<fp_t>(),
              "exact",2,-1,-2,-1,0,0,0},
             {{"Boltzmann's","kb","boltzmann"},
-             "cm^2/g/s^2/K",o2scl_const::o2scl_cgs,o2scl_cgs::boltzmann,
+             "cm^2/g/s^2/K",o2scl_const::o2scl_cgs,
+             o2scl_const::boltzmann_f<fp_t>(o2scl_const::o2scl_cgs),
              "exact",0,0,0,0,0,0,0},
             {{"Stefan-Boltzmann","sigmasb","stefanboltzmann","ssb","σsb"},
              "kg/s^3/K^4",o2scl_const::o2scl_mks,
-             o2scl_mks::stefan_boltzmann_constant,
+             o2scl_const::stefan_boltz_cons_f<fp_t>(),
              "exact; derived from k_B, c, and ħ",0,1,-3,-4,0,0,0},
             {{"Stefan-Boltzmann","sigmasb","stefanboltzmann",
                "ssb","σsb"},
              "g/s^3/K^4",o2scl_const::o2scl_cgs,
-             o2scl_cgs::stefan_boltzmann_constant,
+             o2scl_const::stefan_boltz_cons_f<fp_t>(o2scl_const::o2scl_cgs),
              "exact; derived from k_B, c, and ħ",0,0,0,0,0,0,0},
             {{"Planck","h","plancks"},
              "kg*m^2/s",o2scl_const::o2scl_mks,
@@ -259,86 +266,94 @@ namespace o2scl {
                "_tables.html on 10/27/21",
                0,1,0,0,0,0,0},
             {{"mass electron","electronmass","melectron","melec"},"kg",
-             o2scl_const::o2scl_mks,o2scl_mks::mass_electron,
+             o2scl_const::o2scl_mks,o2scl_const::mass_electron_f<fp_t>(),
              "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass electron","electronmass","melectron","melec"},"g",
-             o2scl_const::o2scl_cgs,o2scl_cgs::mass_electron,
-             "CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::o2scl_cgs,o2scl_const::mass_electron_f<fp_t>
+             (o2scl_const::o2scl_cgs),"CODATA 2018",0,0,0,0,0,0,0},
             {{"mass muon","muonmass","mmuon"},"kg",o2scl_const::o2scl_mks,
-             o2scl_mks::mass_muon,"CODATA 2018",0,1,0,0,0,0,0},
+             o2scl_const::mass_muon_f<fp_t>(),"CODATA 2018",0,1,0,0,0,0,0},
             {{"mass muon","muonmass","mmuon"},"g",o2scl_const::o2scl_cgs,
-             o2scl_cgs::mass_muon,"CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::mass_muon_f<fp_t>(o2scl_const::o2scl_cgs),
+             "CODATA 2018",0,0,0,0,0,0,0},
             {{"mass tau","taumass","mtau"},"kg",o2scl_const::o2scl_mks,
-             o2scl_mks::mass_tau,"CODATA 2018",0,1,0,0,0,0,0},
+             o2scl_const::mass_tau_f<fp_t>(),"CODATA 2018",0,1,0,0,0,0,0},
             {{"mass tau","taumass","mtau"},"g",o2scl_const::o2scl_cgs,
-             o2scl_cgs::mass_tau,"CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::mass_tau_f<fp_t>(o2scl_const::o2scl_cgs),
+             "CODATA 2018",0,0,0,0,0,0,0},
             {{"mass neutron","neutronmass","mneutron","mneut"},"kg",
-             o2scl_const::o2scl_mks,o2scl_mks::mass_neutron,
+             o2scl_const::o2scl_mks,o2scl_const::mass_neutron_f<fp_t>(),
              "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass neutron","neutronmass","mneutron","mneut"},"g",
-             o2scl_const::o2scl_cgs,o2scl_cgs::mass_neutron,
-             "CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::o2scl_cgs,o2scl_const::mass_neutron_f<fp_t>
+             (o2scl_const::o2scl_cgs),"CODATA 2018",0,0,0,0,0,0,0},
             {{"mass proton","protonmass","mproton","mprot"},"kg",
-             o2scl_const::o2scl_mks,o2scl_mks::mass_proton,
+             o2scl_const::o2scl_mks,o2scl_const::mass_proton_f<fp_t>(),
              "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass proton","protonmass","mproton","mprot"},"g",
-             o2scl_const::o2scl_cgs,o2scl_cgs::mass_proton,
-             "CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::o2scl_cgs,o2scl_const::mass_proton_f<fp_t>
+             (o2scl_const::o2scl_cgs),"CODATA 2018",0,0,0,0,0,0,0},
             {{"mass deuteron","deuteronmass","mdeuteron","mdeut"},"kg",
-             o2scl_const::o2scl_mks,o2scl_mks::mass_deuteron,
+             o2scl_const::o2scl_mks,o2scl_const::mass_deuteron_f<fp_t>(),
              "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass deuteron","deuteronmass","mdeuteron","mdeut"},"g",
-             o2scl_const::o2scl_cgs,o2scl_cgs::mass_deuteron,
-             "CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::o2scl_cgs,o2scl_const::mass_deuteron_f<fp_t>
+             (o2scl_const::o2scl_cgs),"CODATA 2018",0,0,0,0,0,0,0},
             {{"mass triton","tritonmass","mtriton"},"kg",
              o2scl_const::o2scl_mks,
-             o2scl_mks::mass_triton,"CODATA 2018",0,1,0,0,0,0,0},
+             o2scl_const::mass_triton_f<fp_t>(),
+             "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass triton","tritonmass","mtriton"},"g",
              o2scl_const::o2scl_cgs,
-             o2scl_cgs::mass_triton,"CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::mass_triton_f<fp_t>(o2scl_const::o2scl_cgs),
+             "CODATA 2018",0,0,0,0,0,0,0},
             {{"mass helion","helionmass","mhelion"},"kg",
              o2scl_const::o2scl_mks,
-             o2scl_mks::mass_helion,"CODATA 2018",0,1,0,0,0,0,0},
+             o2scl_const::mass_helion_f<fp_t>(),
+             "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass helion","helionmass","mhelion"},"g",
              o2scl_const::o2scl_cgs,
-             o2scl_cgs::mass_helion,"CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::mass_helion_f<fp_t>(o2scl_const::o2scl_cgs),
+             "CODATA 2018",0,0,0,0,0,0,0},
             {{"mass alpha","alphamass","malpha","mα"},"kg",
              o2scl_const::o2scl_mks,
-             o2scl_mks::mass_alpha,"CODATA 2018",0,1,0,0,0,0,0},
+             o2scl_const::mass_alpha_f<fp_t>(),
+             "CODATA 2018",0,1,0,0,0,0,0},
             {{"mass alpha","alphamass","malpha","mα"},"g",
              o2scl_const::o2scl_cgs,
-             o2scl_cgs::mass_alpha,"CODATA 2018",0,0,0,0,0,0,0},
+             o2scl_const::mass_alpha_f<fp_t>(o2scl_const::o2scl_cgs),
+             "CODATA 2018",0,0,0,0,0,0,0},
             {{"mass lambda","lambdamass","mlambda","mΛ"},"MeV",0,
-             o2scl_const::mass_lambda_MeV,
+             o2scl_const::mass_lambda_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass sigma minus","sigmaminusmass",
                "msigma-","mΣ-","mΣ⁻"},"MeV",0,
-             o2scl_const::mass_sigma_minus_MeV,
+             o2scl_const::mass_sigma_minus_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass sigma zero","sigmazeromass",
                "msigma0","mΣ0","mΣ⁰"},"MeV",0,
-             o2scl_const::mass_sigma_zero_MeV,
+             o2scl_const::mass_sigma_zero_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass sigma plus","sigmaplusmass",
                "msigma+","mΣ+","mΣ⁺"},"MeV",0,
-             o2scl_const::mass_sigma_plus_MeV,
+             o2scl_const::mass_sigma_plus_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass cascade zero","cascadezeromass","mcascade0","mxi0",
                "mΞ0","mΞ⁰"},
-             "MeV",0,o2scl_const::mass_cascade_zero_MeV,
+             "MeV",0,o2scl_const::mass_cascade_zero_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass cascade minus","cascademinusmass","mcascade-","mxi-",
                "mΞ-","mΞ⁻"},
-             "MeV",0,o2scl_const::mass_cascade_minus_MeV,
+             "MeV",0,o2scl_const::mass_cascade_minus_MeV_f<fp_t>(),
              "\"OUR FIT\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass up","upmass","mup"},"MeV",0,
-             o2scl_const::mass_up_MeV,
+             o2scl_const::mass_up_MeV_f<fp_t>(),
              "\"OUR EVALUATION\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass down","downmass","mdown"},"MeV",0,
-             o2scl_const::mass_down_MeV,
+             o2scl_const::mass_down_MeV_f<fp_t>(),
              "\"OUR EVALUATION\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass strange","strangemass","mstrange"},"MeV",0,
-             o2scl_const::mass_strange_MeV,
+             o2scl_const::mass_strange_MeV_f<fp_t>(),
              "\"OUR EVALUATION\" value from PDG 2020",0,0,0,0,0,0,0},
             {{"mass solar","solarmass","masssun",
                "sunmass","msun","modot","m☉"},

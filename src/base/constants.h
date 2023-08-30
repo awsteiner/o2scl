@@ -985,8 +985,7 @@ namespace o2scl_const {
   }
   //@}
 
-  /** \name Squared electron charge
-   */
+  /// \name E&M
   //@{
   /** \brief Electron charge squared in Gaussian units (derived)
 
@@ -1006,8 +1005,10 @@ namespace o2scl_const {
       \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
       \f}
   */
-  const double e2_gaussian=o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure_f<double>();
+  template<class fp_t> fp_t e2_gaussian_f() {
+    return o2scl_const::hc_mev_fm_f<fp_t>()*
+      o2scl_const::fine_structure_f<fp_t>();
+  }
 
   /** \brief Electron charge sqaured in 
       Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
@@ -1028,7 +1029,9 @@ namespace o2scl_const {
       \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
       \f}
   */      
-  const double e2_hlorentz=o2scl_const::fine_structure_f<double>()*4.0*pi;
+  template<class fp_t> fp_t e2_hlorentz_f() {
+    return o2scl_const::fine_structure_f<fp_t>()*4*pi_f<fp_t>();
+  }
 
   /** \brief Electron charge squared in SI(MKS) units (derived)
 
@@ -1055,14 +1058,19 @@ namespace o2scl_const {
       as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
       Particles.
   */      
-  const double e2_mks=elem_charge_f<double>();
-  //@}
+  template<class fp_t> fp_t elem_charge_squared_f() {
+    return elem_charge_f<fp_t>()*elem_charge_f<fp_t>();
+  }
 
   /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
       in Gaussian units in \f$\mathrm{fm}^{-2}\f$
   */
-  const double ec_gauss_fm2=elem_charge_f<double>()*1.0e-34/
-    hbar_f<double>(o2scl_mks);
+  template<class fp_t> fp_t ec_gauss_fm2_f() {
+    fp_t base=10;
+    fp_t exp=-34;
+    fp_t powt=pow(base,exp);
+    return elem_charge_f<fp_t>()*powt/hbar_f<fp_t>(o2scl_mks);
+  }
 
   /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
       \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
@@ -1070,55 +1078,92 @@ namespace o2scl_const {
       This is useful, e.g. in converting magnetic field squared
       to an energy density.
   */
-  const double gauss2_fm4=ec_gauss_fm2*ec_gauss_fm2/
-    o2scl_const::fine_structure_f<double>();
+  template<class fp_t> fp_t gauss2_fm4_f() {
+    return ec_gauss_fm2_f<fp_t>()*ec_gauss_fm2_f<fp_t>()/
+      o2scl_const::fine_structure_f<fp_t>();
+  }
+  //@}
 
   /// \name Particle masses from PDG 2020
   //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
   */
-  const double mass_lambda_MeV=1115.683;
+  template<class fp_t> fp_t mass_lambda_MeV_f() {
+    fp_t numer=1115683;
+    fp_t denom=1000;
+    return numer/denom;
+  }
 
   /** \brief \f$ \Sigma^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
    */
-  const double mass_sigma_minus_MeV=1197.449;
+  template<class fp_t> fp_t mass_sigma_minus_MeV_f() {
+    fp_t numer=1197449;
+    fp_t denom=1000;
+    return numer/denom;
+  }
 
   /** \brief \f$ \Sigma^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
    */
-  const double mass_sigma_zero_MeV=1192.642;
+  template<class fp_t> fp_t mass_sigma_zero_MeV_f() {
+    fp_t numer=1192642;
+    fp_t denom=1000;
+    return numer/denom;
+  }
 
   /** \brief \f$ \Sigma^{+} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
    */
-  const double mass_sigma_plus_MeV=1189.37;
+  template<class fp_t> fp_t mass_sigma_plus_MeV_f() {
+    fp_t numer=118937;
+    fp_t denom=100;
+    return numer/denom;
+  }
 
   /** \brief \f$ \Xi^{0} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
    */
-  const double mass_cascade_zero_MeV=1314.86;
+  template<class fp_t> fp_t mass_cascade_zero_MeV_f() {
+    fp_t numer=131486;
+    fp_t denom=100;
+    return numer/denom;
+  }
   
   /** \brief \f$ \Xi^{-} \f$ hyperon mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR FIT")
    */
-  const double mass_cascade_minus_MeV=1321.71;
+  template<class fp_t> fp_t mass_cascade_minus_MeV_f() {
+    fp_t numer=132171;
+    fp_t denom=100;
+    return numer/denom;
+  }
   
   /** \brief Up quark mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR EVALUATION")
    */
-  const double mass_up_MeV=2.16;
+  template<class fp_t> fp_t mass_up_MeV_f() {
+    fp_t numer=216;
+    fp_t denom=100;
+    return numer/denom;
+  }
   
   /** \brief Down quark mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR EVALUATION")
    */
-  const double mass_down_MeV=4.67;
+  template<class fp_t> fp_t mass_down_MeV_f() {
+    fp_t numer=467;
+    fp_t denom=100;
+    return numer/denom;
+  }
   
   /** \brief Strange quark mass in \f$ \mathrm{MeV} \f$
       (used value labeled "OUR EVALUATION")
    */
-  const double mass_strange_MeV=93.0;
+  template<class fp_t> fp_t mass_strange_MeV_f() {
+    return 93;
+  }
   //@}
   
 }
