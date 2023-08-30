@@ -195,9 +195,127 @@ int main(void) {
   t.test_rel(GSL_CONST_MKS_WEEK,
 	     o2scl_const::week_f<double>(o2scl_const::o2scl_mks),1.0e-7,
 	     "MKS week");
+  
+  t.test_rel(GSL_CONST_CGSM_ELECTRON_MAGNETIC_MOMENT,
+	     o2scl_const::electron_mag_mom_f<double>
+             (o2scl_const::o2scl_cgs),4.0e-7,
+	     "CGSM electron_magnetic_moment");
+  t.test_rel(GSL_CONST_MKS_ELECTRON_MAGNETIC_MOMENT,
+	     o2scl_const::electron_mag_mom_f<double>
+             (o2scl_const::o2scl_mks),4.0e-7,
+	     "MKS electron_magnetic_moment");
+  t.test_rel(GSL_CONST_CGSM_PROTON_MAGNETIC_MOMENT,
+	     o2scl_const::proton_mag_mom_f<double>
+             (o2scl_const::o2scl_cgs),4.0e-7,
+	     "CGSM proton_magnetic_moment");
+  t.test_rel(GSL_CONST_MKS_PROTON_MAGNETIC_MOMENT,
+	     o2scl_const::proton_mag_mom_f<double>
+             (o2scl_const::o2scl_mks),4.0e-7,
+	     "MKS proton_magnetic_moment");
+  t.test_rel(GSL_CONST_CGS_ROENTGEN,
+	     o2scl_const::roentgen_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS roentgen");
+  t.test_rel(GSL_CONST_MKS_ROENTGEN,
+	     o2scl_const::roentgen_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS roentgen");
+  t.test_rel(GSL_CONST_CGSM_BOHR_MAGNETON,
+	     o2scl_const::bohr_magneton_f<double>
+             (o2scl_const::o2scl_cgs),4.0e-7,
+	     "CGSM bohr_magneton");
+  t.test_rel(GSL_CONST_MKS_BOHR_MAGNETON,
+	     o2scl_const::bohr_magneton_f<double>
+             (o2scl_const::o2scl_mks),4.0e-7,
+	     "MKS bohr_magneton");
+  t.test_rel(GSL_CONST_CGSM_NUCLEAR_MAGNETON,
+	     o2scl_const::nuclear_magneton_f<double>
+             (o2scl_const::o2scl_cgs),4.0e-7,
+	     "CGSM nuclear_magneton");
+  t.test_rel(GSL_CONST_MKS_NUCLEAR_MAGNETON,
+	     o2scl_const::nuclear_magneton_f<double>
+             (o2scl_const::o2scl_mks),4.0e-7,
+	     "MKS nuclear_magneton");
+  t.test_rel(GSL_CONST_CGSM_FARADAY,
+	     o2scl_const::faraday_f<double>(o2scl_const::o2scl_cgs),3.0e-7,
+	     "CGSM faraday");
+  t.test_rel(GSL_CONST_MKS_FARADAY,
+	     o2scl_const::faraday_f<double>(o2scl_const::o2scl_mks),3.0e-7,
+	     "MKS faraday");
+  t.test_rel(GSL_CONST_MKS_VACUUM_PERMITTIVITY,
+	     o2scl_const::vacuum_permittivity_f<double>
+             (o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS vacuum_permittivity");
+  t.test_rel(GSL_CONST_MKS_VACUUM_PERMEABILITY,
+	     o2scl_const::vacuum_permeability_f<double>
+             (o2scl_const::o2scl_mks),1.0e-7,
+	     "MKS vacuum_permeability");
+  
+  t.test_rel(GSL_CONST_CGS_INCH,
+	     o2scl_const::inch_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS inch");
+  t.test_rel(GSL_CONST_MKS_INCH,
+	     o2scl_const::inch_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS inch");
+  t.test_rel(GSL_CONST_CGS_FOOT,
+	     o2scl_const::foot_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS foot");
+  t.test_rel(GSL_CONST_MKS_FOOT,
+	     o2scl_const::foot_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS foot");
+  t.test_rel(GSL_CONST_CGS_YARD,
+	     o2scl_const::yard_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS yard");
+  t.test_rel(GSL_CONST_MKS_YARD,
+	     o2scl_const::yard_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS yard");
+  t.test_rel(GSL_CONST_CGS_MILE,
+	     o2scl_const::mile_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS mile");
+  t.test_rel(GSL_CONST_MKS_MILE,
+	     o2scl_const::mile_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS mile");
+  t.test_rel(GSL_CONST_CGS_NAUTICAL_MILE,
+	     o2scl_const::nautical_mile_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS nautical_mile");
+  t.test_rel(GSL_CONST_MKS_NAUTICAL_MILE,
+	     o2scl_const::nautical_mile_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS nautical_mile");
+  t.test_rel(GSL_CONST_CGS_FATHOM,
+	     o2scl_const::fathom_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS fathom");
+  t.test_rel(GSL_CONST_MKS_FATHOM,
+	     o2scl_const::fathom_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS fathom");
+  t.test_rel(GSL_CONST_CGS_MIL,
+	     o2scl_const::mil_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS mil");
+  t.test_rel(GSL_CONST_MKS_MIL,
+	     o2scl_const::mil_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS mil");
+  t.test_rel(GSL_CONST_CGS_POINT,
+	     o2scl_const::point_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS point");
+  t.test_rel(GSL_CONST_MKS_POINT,
+	     o2scl_const::point_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS point");
+  t.test_rel(GSL_CONST_CGS_TEXPOINT,
+	     o2scl_const::texpoint_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS texpoint");
+  t.test_rel(GSL_CONST_MKS_TEXPOINT,
+	     o2scl_const::texpoint_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS texpoint");
+  t.test_rel(GSL_CONST_CGS_MICRON,
+	     o2scl_const::micron_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS micron");
+  t.test_rel(GSL_CONST_MKS_MICRON,
+	     o2scl_const::micron_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS micron");
+  t.test_rel(GSL_CONST_CGS_ANGSTROM,
+	     o2scl_const::angstrom_f<double>(o2scl_const::o2scl_cgs),
+             1.0e-7,"CGS angstrom");
+  t.test_rel(GSL_CONST_MKS_ANGSTROM,
+	     o2scl_const::angstrom_f<double>(o2scl_const::o2scl_mks),
+             1.0e-7,"MKS angstrom");
 	     
-  t.report();
-
   /*
   exit(-1);
   
