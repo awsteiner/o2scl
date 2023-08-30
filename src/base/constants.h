@@ -217,7 +217,7 @@ namespace o2scl_const {
     return numer/denom;
   }
   
-  /// Elementary charge
+  /// Elementary charge in C
   template<class fp_t> fp_t elem_charge_f() {
     fp_t numer=1602176634;
     fp_t denom=1000000000;
@@ -696,6 +696,151 @@ namespace o2scl_const {
   }
   //@}
   
+  /// \name Electromagnetic constants
+  //@{
+  /// Electron magnetic moment in abamp cm^2 (CODATA 2018 value)
+  //const double electron_magnetic_moment=9.2847647043e-21;
+  template<class fp_t> fp_t electron_mag_mom_f(size_t system=o2scl_mks) {
+    fp_t numer=92847647043;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-21;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Proton magnetic moment in abamp cm^2 (CODATA 2018 value)
+  //const double proton_magnetic_moment=1.41060679736e-23;
+  template<class fp_t> fp_t proton_mag_mom_f(size_t system=o2scl_mks) {
+    fp_t numer=141060679736;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-23;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-26;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Roentgen units?
+  template<class fp_t> fp_t roentgen_f(size_t system=o2scl_mks) {
+    fp_t numer=258;
+    fp_t denom=100;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-7;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-4;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Bohr magneton in abamp cm^2 (CODATA 2018 value)
+  //const double bohr_magneton=9.2740100783e-21;
+  template<class fp_t> fp_t bohr_magneton_f(size_t system=o2scl_mks) {
+    fp_t numer=92740100783;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-21;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Nuclear magneton in abamp cm^2 (CODATA 2018 value)
+  //const double nuclear_magneton=5.0507837461e-24;
+  template<class fp_t> fp_t nuclear_magneton_f(size_t system=o2scl_mks) {
+    fp_t numer=50507837461;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=-24;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-27;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Faraday constant in A s / mol (CODATA 2018 value; derived; exact)
+  template<class fp_t> fp_t faraday_f(size_t system=o2scl_mks) {
+    fp_t base=o2scl_const::avogadro_f<double>()*
+      o2scl_const::electron_volt_f<double>(system);
+    if (system==o2scl_cgs) {
+      return base/100000000;
+    }
+    return base;
+  }
+
+  /// CODATA 2018
+  template<class fp_t> fp_t vacuum_permittivity_f(size_t system=o2scl_mks) {
+    fp_t numer=88541878128;
+    fp_t denom=10000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      O2SCL_ERR("Not supported.",o2scl::exc_efailed);
+    }
+    fp_t base=10;
+    fp_t exp=-12;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /** \brief Vacuum permeability in kg m / A^2 s^2 
+   */
+  //(being redefined as of 5/20, this value is from Wikipedia)
+  template<class fp_t> fp_t vacuum_permeability_f(size_t system=o2scl_mks) {
+    fp_t numer=125663706212;
+    fp_t denom=100000000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      O2SCL_ERR("Not supported.",o2scl::exc_efailed);
+    }
+    fp_t base=10;
+    fp_t exp=-6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  //@}
+  
   /// \name Time measurements (s)
   //@{
   /// Minute
@@ -725,10 +870,10 @@ namespace o2scl_const {
   template<class fp_t> fp_t inch_f(size_t system=o2scl_mks) {
     fp_t numer=254;
     if (system==o2scl_cgs) {
-      fp_t denom=1000;
+      fp_t denom=100;
       return numer/denom;
     }
-    fp_t denom=100000;
+    fp_t denom=10000;
     return numer/denom;
   }
 
@@ -736,10 +881,10 @@ namespace o2scl_const {
   template<class fp_t> fp_t foot_f(size_t system=o2scl_mks) {
     fp_t numer=3048;
     if (system==o2scl_cgs) {
-      fp_t denom=1000;
+      fp_t denom=100;
       return numer/denom;
     }
-    fp_t denom=100000;
+    fp_t denom=10000;
     return numer/denom;
   }
 
@@ -747,10 +892,10 @@ namespace o2scl_const {
   template<class fp_t> fp_t yard_f(size_t system=o2scl_mks) {
     fp_t numer=9144;
     if (system==o2scl_cgs) {
-      fp_t denom=1000;
+      fp_t denom=100;
       return numer/denom;
     }
-    fp_t denom=100000;
+    fp_t denom=10000;
     return numer/denom;
   }
 
@@ -797,45 +942,45 @@ namespace o2scl_const {
 
   /// Point
   template<class fp_t> fp_t point_f(size_t system=o2scl_mks) {
-    fp_t numer=254;
+    fp_t numer=3175;
     if (system==o2scl_cgs) {
-      fp_t denom=100000;
+      fp_t denom=90000;
       return numer/denom;
     }
-    fp_t denom=10000000;
+    fp_t denom=9000000;
     return numer/denom;
   }
 
   /// Texpoint
   template<class fp_t> fp_t texpoint_f(size_t system=o2scl_mks) {
-    fp_t numer=254;
+    fp_t numer=351459803515;
     if (system==o2scl_cgs) {
-      fp_t denom=100000;
+      fp_t denom=10000000000000;
       return numer/denom;
     }
-    fp_t denom=10000000;
+    fp_t denom=1000000000000000;
     return numer/denom;
   }
 
   /// Micron
   template<class fp_t> fp_t micron_f(size_t system=o2scl_mks) {
-    fp_t numer=254;
+    fp_t numer=1;
     if (system==o2scl_cgs) {
-      fp_t denom=100000;
+      fp_t denom=10000;
       return numer/denom;
     }
-    fp_t denom=10000000;
+    fp_t denom=1000000;
     return numer/denom;
   }
 
   /// Angstrom
   template<class fp_t> fp_t angstrom_f(size_t system=o2scl_mks) {
-    fp_t numer=254;
+    fp_t numer=1;
     if (system==o2scl_cgs) {
-      fp_t denom=100000;
+      fp_t denom=100000000;
       return numer/denom;
     }
-    fp_t denom=10000000;
+    fp_t denom=10000000000;
     return numer/denom;
   }
   //@}
