@@ -1079,6 +1079,106 @@ namespace o2scl_const {
   }
   //@}
 
+  /// \name E&M
+  //@{
+  /** \brief Electron charge squared in Gaussian units (derived)
+
+      In Gaussian Units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = 4 \pi \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - 4 \pi \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{8 \pi} \int | \vec{E} |^2 d^3 x \, ,
+      \quad 
+      \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
+      \f}
+  */
+  template<class fp_t> fp_t e2_gaussian_f() {
+    return o2scl_const::hc_mev_fm_f<fp_t>()*
+      o2scl_const::fine_structure_f<fp_t>();
+  }
+
+  /** \brief Electron charge sqaured in 
+      Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
+
+      In Heaviside-Lorentz units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{4 \pi r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
+      \f}
+  */      
+  template<class fp_t> fp_t e2_hlorentz_f() {
+    return o2scl_const::fine_structure_f<fp_t>()*4*pi_f<fp_t>();
+  }
+
+  /** \brief Electron charge squared in SI(MKS) units (derived)
+
+      In MKS units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{1}{4 \pi \varepsilon_0}\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{\varepsilon_0}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi \varepsilon_0 \hbar c}=\frac{1}{137}&
+      \f}
+
+      Note the conversion formulas
+      \f[
+      q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
+      \f]
+      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
+      Particles.
+  */      
+  template<class fp_t> fp_t elem_charge_squared_f() {
+    return elem_charge_f<fp_t>()*elem_charge_f<fp_t>();
+  }
+
+  /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
+      in Gaussian units in \f$\mathrm{fm}^{-2}\f$
+  */
+  template<class fp_t> fp_t ec_gauss_fm2_f() {
+    fp_t base=10;
+    fp_t exp=-34;
+    fp_t powt=pow(base,exp);
+    return elem_charge_f<fp_t>()*powt/hbar_f<fp_t>(o2scl_mks);
+  }
+
+  /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
+      \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
+
+      This is useful, e.g. in converting magnetic field squared
+      to an energy density.
+  */
+  template<class fp_t> fp_t gauss2_fm4_f() {
+    return ec_gauss_fm2_f<fp_t>()*ec_gauss_fm2_f<fp_t>()/
+      o2scl_const::fine_structure_f<fp_t>();
+  }
+  //@}
+
+>>>>>>> e22ed79b (Work on constants, etc.)
   /// \name Particle masses from PDG 2020
   //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
@@ -1746,9 +1846,6 @@ namespace o2scl_const {
   const double hc_mev_fm=hc_mev_fm_f<double>();
   /// \f$ \hbar c \f$ in MeV cm (exact)
   const double hc_mev_cm=hc_mev_fm*1.0e-13;
-=======
-  const double mass_strange_MeV=93.0;
->>>>>>> 60df0771 (Fixing test regressions and improving constants.)
   //@}
   
 }
