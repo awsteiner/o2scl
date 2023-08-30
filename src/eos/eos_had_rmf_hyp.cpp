@@ -36,12 +36,12 @@ eos_had_rmf_hyp::eos_had_rmf_hyp() {
   xr=1.0;
   inc_cascade=true;
 
-  def_lambda.init(mass_lambda_MeV/hc_mev_fm,2.0);
-  def_sigma_p.init(mass_sigma_plus_MeV/hc_mev_fm,2.0);
-  def_sigma_z.init(mass_sigma_zero_MeV/hc_mev_fm,2.0);
-  def_sigma_m.init(mass_sigma_minus_MeV/hc_mev_fm,2.0);
-  def_cascade_z.init(mass_cascade_zero_MeV/hc_mev_fm,2.0);
-  def_cascade_m.init(mass_cascade_minus_MeV/hc_mev_fm,2.0);
+  def_lambda.init(mass_lambda_MeV_f<double>()/hc_mev_fm,2.0);
+  def_sigma_p.init(mass_sigma_plus_MeV_f<double>()/hc_mev_fm,2.0);
+  def_sigma_z.init(mass_sigma_zero_MeV_f<double>()/hc_mev_fm,2.0);
+  def_sigma_m.init(mass_sigma_minus_MeV_f<double>()/hc_mev_fm,2.0);
+  def_cascade_z.init(mass_cascade_zero_MeV_f<double>()/hc_mev_fm,2.0);
+  def_cascade_m.init(mass_cascade_minus_MeV_f<double>()/hc_mev_fm,2.0);
   
   lambda=&def_lambda;
   sigma_p=&def_sigma_p;
