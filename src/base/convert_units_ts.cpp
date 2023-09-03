@@ -200,7 +200,8 @@ int main(int argc, char *argv[]) {
   
   cux.verbose=1;
   int cret=cux.convert_ret("g","solarmass",1.0,d1);
-  t.test_rel(1.0/o2scl_cgs::solar_mass,d1,1.0e-6,"calc2");
+  t.test_rel(1.0/o2scl_const::solar_mass_f<double>
+             (o2scl_const::o2scl_cgs),d1,1.0e-6,"calc2");
 
   cux.err_on_fail=false;
   int iret=cux.convert_ret("α","N/K",3.0,d1);

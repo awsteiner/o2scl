@@ -44,7 +44,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  double schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+  double schwarz_km=o2scl_const::schwarzchild_radius_f<double>
+    (o2scl_const::o2scl_cgs)/1.0e5;
   
   eos_had_apr apr;
   apr.pion=1;
