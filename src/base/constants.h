@@ -1178,7 +1178,6 @@ namespace o2scl_const {
   }
   //@}
 
->>>>>>> e22ed79b (Work on constants, etc.)
   /// \name Particle masses from PDG 2020
   //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$

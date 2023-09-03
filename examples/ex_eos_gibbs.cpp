@@ -825,7 +825,7 @@ public:
 
     skyrme_load(sk,"NRAPR");
     ptr_h=&sk;
-    bag.bag_constant=200.0/hc_mev_fm;
+    bag.bag_constant=200.0/hc_mev_fm_f<double>();
     ptr_q=&bag;
 
     // Nucleon initialization
@@ -853,7 +853,7 @@ public:
     // Default quark masses
     u.init(mass_up_MeV_f<double>()/hc_mev_fm,6.0);
     d.init(0.0,6.0);
-    s.init(95.0/hc_mev_fm,6.0);
+    s.init(95.0/hc_mev_fm_f<double>(),6.0);
     u.inc_rest_mass=true;
     d.inc_rest_mass=true;
     s.inc_rest_mass=true;
@@ -993,7 +993,7 @@ public:
       x[1]=1.0;
       mh.msolve(2,x,fp_bag_constant);
       B=x[1];
-      cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "B: " << B*hc_mev_fm_f<double>() << " MeV/fm^3" << endl;
       cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
 	   << " fm^{-3}" << endl;
       cout << "Quark densities (u,d,s): " << u.n << " " << d.n << " "
@@ -1023,8 +1023,8 @@ public:
       }
       {
 	cout << "Quark energy dens. & pressure: "
-	     << qth.ed*hc_mev_fm << " MeV/fm^3, "
-	     << qth.pr*hc_mev_fm << " MeV/fm^3"
+	     << qth.ed*hc_mev_fm_f<double>() << " MeV/fm^3, "
+	     << qth.pr*hc_mev_fm_f<double>() << " MeV/fm^3"
 	     << endl;
 	//cout << "Number density of quarks: " << quark_nQ
         //<< " 1/fm^3" << endl;
@@ -1156,20 +1156,20 @@ public:
 	line.push_back(u.n);
 	line.push_back(d.n);
 	line.push_back(s.n);
-	line.push_back(e.ed*hc_mev_fm);
-	line.push_back(e.pr*hc_mev_fm);
-	line.push_back(tot.ed*hc_mev_fm);
-	line.push_back(tot.pr*hc_mev_fm);
+	line.push_back(e.ed*hc_mev_fm_f<double>());
+	line.push_back(e.pr*hc_mev_fm_f<double>());
+	line.push_back(tot.ed*hc_mev_fm_f<double>());
+	line.push_back(tot.pr*hc_mev_fm_f<double>());
 	{
-	  line.push_back(hth.ed*hc_mev_fm);
-	  line.push_back(hth.pr*hc_mev_fm);
+	  line.push_back(hth.ed*hc_mev_fm_f<double>());
+	  line.push_back(hth.pr*hc_mev_fm_f<double>());
 	}
 	{
-	  line.push_back(qth.ed*hc_mev_fm);
-	  line.push_back(qth.pr*hc_mev_fm);
+	  line.push_back(qth.ed*hc_mev_fm_f<double>());
+	  line.push_back(qth.pr*hc_mev_fm_f<double>());
 	}
-	line.push_back(n.mu*hc_mev_fm);
-	line.push_back(p.mu*hc_mev_fm);
+	line.push_back(n.mu*hc_mev_fm_f<double>());
+	line.push_back(p.mu*hc_mev_fm_f<double>());
 	line.push_back(chi);
 	tmixed.line_of_data(line.size(),line);
       }
@@ -1257,20 +1257,20 @@ public:
     } else if (sv[1]=="SPL00") {
       ptr_h=&rmf;
 
-      n.m=939.0/hc_mev_fm;
-      p.m=939.0/hc_mev_fm;
+      n.m=939.0/hc_mev_fm_f<double>();
+      p.m=939.0/hc_mev_fm_f<double>();
       
       rmf.set_n_and_p(n,p);
       
-      rmf.mnuc=939.0/hc_mev_fm;
+      rmf.mnuc=939.0/hc_mev_fm_f<double>();
       rmf.n0=0.16;
-      rmf.eoa=16.0/hc_mev_fm;
-      rmf.comp=250.0/hc_mev_fm;
+      rmf.eoa=16.0/hc_mev_fm_f<double>();
+      rmf.comp=250.0/hc_mev_fm_f<double>();
       rmf.msom=0.6;
-      rmf.esym=36.0/hc_mev_fm;
-      rmf.ms=500.0/hc_mev_fm;
-      rmf.mw=763.0/hc_mev_fm;
-      rmf.mr=770.0/hc_mev_fm;
+      rmf.esym=36.0/hc_mev_fm_f<double>();
+      rmf.ms=500.0/hc_mev_fm_f<double>();
+      rmf.mw=763.0/hc_mev_fm_f<double>();
+      rmf.mr=770.0/hc_mev_fm_f<double>();
       rmf.zeta=0.0;
       rmf.xi=0.0;
       rmf.a1=0.0;
@@ -1295,10 +1295,10 @@ public:
     } else if (sv[1]=="SPL00_hyp") {
       ptr_h=&rmf_hyp;
       rmf_hyp.n0=0.16;
-      rmf_hyp.eoa=16.0/hc_mev_fm;
-      rmf_hyp.comp=250.0/hc_mev_fm;
+      rmf_hyp.eoa=16.0/hc_mev_fm_f<double>();
+      rmf_hyp.comp=250.0/hc_mev_fm_f<double>();
       rmf_hyp.msom=0.6;
-      rmf_hyp.esym=36.0/hc_mev_fm;
+      rmf_hyp.esym=36.0/hc_mev_fm_f<double>();
       rmf_hyp.zeta=0.0;
       rmf_hyp.xi=0.0;
       rmf_hyp.a1=0.0;
@@ -1340,28 +1340,28 @@ public:
       s.non_interacting=true;
     } else if (sv[1]=="SPL00_bag") {
       ptr_q=&bag;
-      u.m=5.5/hc_mev_fm;
-      d.m=5.5/hc_mev_fm;
-      s.m=140.7/hc_mev_fm;
+      u.m=5.5/hc_mev_fm_f<double>();
+      d.m=5.5/hc_mev_fm_f<double>();
+      s.m=140.7/hc_mev_fm_f<double>();
       u.non_interacting=true;
       d.non_interacting=true;
       s.non_interacting=true;
-      bag.bag_constant=200.0/hc_mev_fm;
+      bag.bag_constant=200.0/hc_mev_fm_f<double>();
       mp_start_fix=0.0;
       cout << "Selected the bag model from SPL00." << endl;
     } else if (sv[1]=="SPL00_njl") {
       ptr_q=&njl;
-      u.m=5.5/hc_mev_fm;
-      d.m=5.5/hc_mev_fm;
-      s.m=140.7/hc_mev_fm;
+      u.m=5.5/hc_mev_fm_f<double>();
+      d.m=5.5/hc_mev_fm_f<double>();
+      s.m=140.7/hc_mev_fm_f<double>();
       u.non_interacting=false;
       d.non_interacting=false;
       s.non_interacting=false;
       njl.set_quarks(u,d,s);
-      njl.up_default_mass=5.5/hc_mev_fm;
-      njl.down_default_mass=5.5/hc_mev_fm;
-      njl.strange_default_mass=140.7/hc_mev_fm;
-      double L=602.3/hc_mev_fm;
+      njl.up_default_mass=5.5/hc_mev_fm_f<double>();
+      njl.down_default_mass=5.5/hc_mev_fm_f<double>();
+      njl.strange_default_mass=140.7/hc_mev_fm_f<double>();
+      double L=602.3/hc_mev_fm_f<double>();
       njl.set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
       mp_start_fix=0.0;
     } else if (sv[1]=="njl") {
