@@ -29,7 +29,7 @@ using namespace o2scl;
 
 tov_love::tov_love() {
   oisp=&def_ois;
-  schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+  schwarz_km=o2scl_const::schwarzchild_radius_f<double>(o2scl_const::o2scl_cgs)/1.0e5;
   eps=0.02;
   /*
     oisp->gsl_astp.con.a_dydt=1.0;
@@ -379,10 +379,10 @@ int tov_love::calc_y(double &yR, double &beta, double &k2,
 
   // First compute in Msun*km^2*s^2
   lambda_cgs=2.0/3.0*k2*pow(R,5.0)/
-    pow(o2scl_mks::speed_of_light/1.0e3,2.0)/schwarz_km;
+    pow(o2scl_const::speed_of_light_f<double>()/1.0e3,2.0)/schwarz_km;
 
   // Convert to g*cm^2*s^2
-  lambda_cgs*=o2scl_cgs::solar_mass*1.0e10;
+  lambda_cgs*=o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_cgs)*1.0e10;
 
   return 0;
 }
@@ -432,9 +432,10 @@ int tov_love::calc_H(double &yR, double &beta, double &k2,
   
   // First compute in Msun*km^2*s^2
   lambda_cgs=2.0/3.0*k2*pow(R,5.0)/
-    pow(o2scl_mks::speed_of_light/1.0e3,2.0)/schwarz_km;
+    pow(o2scl_const::speed_of_light_f<double>()/1.0e3,2.0)/schwarz_km;
   // Convert to g*cm^2*s^2
-  lambda_cgs*=o2scl_cgs::solar_mass*1.0e10;
+  lambda_cgs*=o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_cgs)*
+    1.0e10;
 
   return 0;
 }

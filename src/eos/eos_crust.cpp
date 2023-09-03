@@ -34,7 +34,7 @@ using namespace o2scl_const;
 
 eos_crust::eos_crust() {
   e.init(o2scl_settings.get_convert_units().convert
-	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	 ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
   // Put an initial guess for the electron density - Is this necessary?
   // A new initial guess is given in calc_pressure()
   e.n=0.4;

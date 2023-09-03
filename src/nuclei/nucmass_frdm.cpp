@@ -186,8 +186,10 @@ double nucmass_frdm::drip_binding_energy_d
 (double Z, double N, double npout, double nnout, double chi) {
   
   double ret=(drip_mass_excess_d(Z,N,npout,nnout,chi)+
-	      ((Z+N)*o2scl_mks::unified_atomic_mass-Z*o2scl_mks::mass_electron-
-	       N*o2scl_mks::mass_neutron-Z*o2scl_mks::mass_proton)*
+	      ((Z+N)*o2scl_const::unified_atomic_mass_f<double>()-
+               Z*o2scl_const::mass_electron_f<double>()-
+	       N*o2scl_const::mass_neutron_f<double>()-
+               Z*o2scl_const::mass_proton_f<double>())*
 	      o2scl_const::hc_mev_fm*kg_to_invfm);
   return ret;
 }

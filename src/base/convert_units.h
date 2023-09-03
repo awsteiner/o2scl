@@ -216,13 +216,13 @@ namespace o2scl {
       if (vars.find("g")!=vars.end()) {
         O2SCL_ERR("g already found in list.",o2scl::exc_esanity);
       }
-      vars.insert(std::make_pair("g",1.0e-3*k));
+      vars.insert(std::make_pair("g",k/1000));
       for(size_t i=0;i<n_prefixes;i++) {
         if (test_vars && vars.find(prefixes[i]+"g")!=vars.end()) {
           O2SCL_ERR("g already found in list.",o2scl::exc_esanity);
         }
         vars.insert(std::make_pair(prefixes[i]+"g",
-                                   prefix_facts[i]*1.0e-3*k));
+                                   prefix_facts[i]*k/1000));
       }
 
       // seconds
@@ -486,7 +486,7 @@ namespace o2scl {
       std::string both2=to+","+from;
       m3=mcache.find(both2);
       if (m3!=mcache.end()) {
-        factor=1.0/m3->second.c;
+        factor=1/m3->second.c;
         converted=val*factor;
         if (verbose>=2) {
           std::cout << "Function convert_units::convert_cache(): "
@@ -550,7 +550,7 @@ namespace o2scl {
                 std::cout << " (4)          and: " << m2->second.f << " , "
                           << m2->second.t << std::endl;
               }
-              factor=1.0/m->second.c/m2->second.c;
+              factor=1/m->second.c/m2->second.c;
               converted=val*factor;
               return 0;
             }
@@ -603,12 +603,25 @@ namespace o2scl {
         "d","c","m","mu","μ",
         "n","p","f","a","z",
         "y"};
-    
-      prefix_facts={1.0e24,1.0e21,1.0e18,1.0e15,1.0e12,
-        1.0e9,1.0e6,1.0e3,1.0e2,10.0,
-        0.1,1.0e-2,1.0e-3,1.0e-6,1.0e-6,
-        1.0e-9,1.0e-12,1.0e-15,1.0e-18,1.0e-21,
-        1.0e-24};
+
+      prefix_facts={pow((fp_t)10,(fp_t)24),
+        pow((fp_t)10,(fp_t)21),
+        pow((fp_t)10,(fp_t)18),
+        pow((fp_t)10,(fp_t)15),
+        pow((fp_t)10,(fp_t)12),
+        pow((fp_t)10,(fp_t)9),
+        1000000,1000,100,10,
+        pow((fp_t)10,(fp_t)(-1)),
+        pow((fp_t)10,(fp_t)(-2)),
+        pow((fp_t)10,(fp_t)(-3)),
+        pow((fp_t)10,(fp_t)(-6)),
+        pow((fp_t)10,(fp_t)(-6)),
+        pow((fp_t)10,(fp_t)(-9)),
+        pow((fp_t)10,(fp_t)(-12)),
+        pow((fp_t)10,(fp_t)(-15)),
+        pow((fp_t)10,(fp_t)(-18)),
+        pow((fp_t)10,(fp_t)(-21)),
+        pow((fp_t)10,(fp_t)(-24))};
 
       prefix_names={"yotta","zetta","exa","peta","tera",
         "giga","mega","kilo","hecto","deka",
@@ -620,35 +633,37 @@ namespace o2scl {
       // that, according to the SI page on Wikipedia, "newton" is left
       // lowercase even though it is named after a person.
       std::vector<der_unit> SI_=
-        {{"rad",0,0,0,0,0,0,0,1.0,"radian"},
-         {"sr",0,0,0,0,0,0,0,1.0,"steradian"},
-         {"J",2,1,-2,0,0,0,0,1.0,"joule"},
-         {"N",1,1,-2,0,0,0,0,1.0,"newton"},
-         {"Pa",-1,1,-2,0,0,0,0,1.0,"pascal"},
-         {"W",2,1,-3,0,0,0,0,1.0,"watt"},
-         {"C",0,1,0,0,1,0,0,1.0,"coulomb"},
-         {"V",2,1,-3,0,-1,0,0,1.0,"volt"},
-         {"ohm",2,1,-3,0,-2,0,0,1.0,"ohm"},
-         {"Ω",2,1,-3,0,-2,0,0,1.0,"ohm"},
-         {"S",-2,-1,3,0,2,0,0,1.0,"siemens"},
-         {"F",-2,-1,4,0,2,0,0,1.0,"farad"},
-         {"Wb",2,1,-2,0,-1,0,0,1.0,"weber"},
-         {"H",2,1,-2,0,-2,0,0,1.0,"henry"},
-         {"T",0,1,-2,0,-1,0,0,1.0,"tesla"},
-         {"Hz",0,0,-1,0,0,0,0,1.0,"hertz"},
-         {"lm",0,0,0,0,0,0,1,1.0,"lumen"},
-         {"lx",-2,0,0,0,0,0,1,1.0,"lux"},
-         {"Bq",0,0,-1,0,0,0,0,1.0,"becquerel"},
-         {"Gy",2,0,-2,0,0,0,0,1.0,"gray"},
-         {"Sv",2,0,-2,0,0,0,0,1.0,"sievert"},
-         {"kat",0,0,-1,0,0,1,0,1.0,"katal"},
+        {{"rad",0,0,0,0,0,0,0,1,"radian"},
+         {"sr",0,0,0,0,0,0,0,1,"steradian"},
+         {"J",2,1,-2,0,0,0,0,1,"joule"},
+         {"N",1,1,-2,0,0,0,0,1,"newton"},
+         {"Pa",-1,1,-2,0,0,0,0,1,"pascal"},
+         {"W",2,1,-3,0,0,0,0,1,"watt"},
+         {"C",0,1,0,0,1,0,0,1,"coulomb"},
+         {"V",2,1,-3,0,-1,0,0,1,"volt"},
+         {"ohm",2,1,-3,0,-2,0,0,1,"ohm"},
+         {"Ω",2,1,-3,0,-2,0,0,1,"ohm"},
+         {"S",-2,-1,3,0,2,0,0,1,"siemens"},
+         {"F",-2,-1,4,0,2,0,0,1,"farad"},
+         {"Wb",2,1,-2,0,-1,0,0,1,"weber"},
+         {"H",2,1,-2,0,-2,0,0,1,"henry"},
+         {"T",0,1,-2,0,-1,0,0,1,"tesla"},
+         {"Hz",0,0,-1,0,0,0,0,1,"hertz"},
+         {"lm",0,0,0,0,0,0,1,1,"lumen"},
+         {"lx",-2,0,0,0,0,0,1,1,"lux"},
+         {"Bq",0,0,-1,0,0,0,0,1,"becquerel"},
+         {"Gy",2,0,-2,0,0,0,0,1,"gray"},
+         {"Sv",2,0,-2,0,0,0,0,1,"sievert"},
+         {"kat",0,0,-1,0,0,1,0,1,"katal"},
          // liter: "l" and "L"
-         {"l",3,0,0,0,0,0,0,1.0e-3,"liter"},
-         {"L",3,0,0,0,0,0,0,1.0e-3,"liter"},
+         {"l",3,0,0,0,0,0,0,((fp_t)1)/((fp_t)1000),"liter"},
+         {"L",3,0,0,0,0,0,0,((fp_t)1)/((fp_t)1000),"liter"},
          // Daltons (atomic mass units)
-         {"Da",0,1,0,0,0,0,0,o2scl_mks::unified_atomic_mass,"dalton"},
+         {"Da",0,1,0,0,0,0,0,o2scl_const::unified_atomic_mass_f<fp_t>
+          (o2scl_const::o2scl_mks),"dalton"},
          // Electron volts
-         {"eV",2,1,-2,0,0,0,0,o2scl_mks::electron_volt,"electron volt"}};
+         {"eV",2,1,-2,0,0,0,0,o2scl_const::electron_volt_f<fp_t>
+          (o2scl_const::o2scl_mks),"electron volt"}};
       
       SI=SI_;
     
@@ -657,41 +672,62 @@ namespace o2scl {
         {
 
           // Length units
-          {"ft",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
-          {"foot",1,0,0,0,0,0,0,o2scl_mks::foot,"foot"},
-          {"in",1,0,0,0,0,0,0,o2scl_mks::inch,"inch"},
-          {"yd",1,0,0,0,0,0,0,o2scl_mks::yard,"yard"},
-          {"mi",1,0,0,0,0,0,0,o2scl_mks::mile,"mile"},
-          {"nmi",1,0,0,0,0,0,0,o2scl_mks::nautical_mile,"nautical mile"},
-          {"fathom",1,0,0,0,0,0,0,o2scl_mks::fathom,"fathom"},
-          {"angstrom",1,0,0,0,0,0,0,o2scl_mks::angstrom,"angstrom"},
-          {"mil",1,0,0,0,0,0,0,o2scl_mks::mil,"mil"},
-          {"point",1,0,0,0,0,0,0,o2scl_mks::point,"point"},
-          {"texpoint",1,0,0,0,0,0,0,o2scl_mks::texpoint,"texpoint"},
-          {"micron",1,0,0,0,0,0,0,o2scl_mks::micron,"micron"},
+          {"ft",1,0,0,0,0,0,0,o2scl_const::foot_f<fp_t>
+           (o2scl_const::o2scl_mks),"foot"},
+          {"foot",1,0,0,0,0,0,0,o2scl_const::foot_f<fp_t>
+           (o2scl_const::o2scl_mks),"foot"},
+          {"in",1,0,0,0,0,0,0,o2scl_const::inch_f<fp_t>
+           (o2scl_const::o2scl_mks),"inch"},
+          {"yd",1,0,0,0,0,0,0,o2scl_const::yard_f<fp_t>
+           (o2scl_const::o2scl_mks),"yard"},
+          {"mi",1,0,0,0,0,0,0,o2scl_const::mile_f<fp_t>
+           (o2scl_const::o2scl_mks),"mile"},
+          {"nmi",1,0,0,0,0,0,0,o2scl_const::nautical_mile_f<fp_t>
+           (o2scl_const::o2scl_mks),"nautical mile"},
+          {"fathom",1,0,0,0,0,0,0,o2scl_const::fathom_f<fp_t>
+           (o2scl_const::o2scl_mks),"fathom"},
+          {"angstrom",1,0,0,0,0,0,0,o2scl_const::angstrom_f<fp_t>
+           (o2scl_const::o2scl_mks),"angstrom"},
+          {"mil",1,0,0,0,0,0,0,o2scl_const::mil_f<fp_t>
+           (o2scl_const::o2scl_mks),"mil"},
+          {"point",1,0,0,0,0,0,0,o2scl_const::point_f<fp_t>
+           (o2scl_const::o2scl_mks),"point"},
+          {"texpoint",1,0,0,0,0,0,0,o2scl_const::texpoint_f<fp_t>
+           (o2scl_const::o2scl_mks),"texpoint"},
+          {"micron",1,0,0,0,0,0,0,o2scl_const::micron_f<fp_t>
+           (o2scl_const::o2scl_mks),"micron"},
           // AU's: "au" and "AU"
-          {"AU",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
-          {"au",1,0,0,0,0,0,0,o2scl_mks::astronomical_unit,"astronomical unit"},
+          {"AU",1,0,0,0,0,0,0,o2scl_const::astronomical_unit_f<fp_t>
+           (o2scl_const::o2scl_mks),"astronomical unit"},
+          {"au",1,0,0,0,0,0,0,o2scl_const::astronomical_unit_f<fp_t>
+           (o2scl_const::o2scl_mks),"astronomical unit"},
           // light years: "ly" and "lyr"
-          {"ly",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
-          {"lyr",1,0,0,0,0,0,0,o2scl_mks::light_year,"light year"},
+          {"ly",1,0,0,0,0,0,0,o2scl_const::light_year_f<fp_t>
+           (o2scl_const::o2scl_mks),"light year"},
+          {"lyr",1,0,0,0,0,0,0,o2scl_const::light_year_f<fp_t>
+           (o2scl_const::o2scl_mks),"light year"},
           // We add common SI-like prefixes for non-SI units
-          {"Gpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e9,"gigaparsec"},
-          {"Mpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e6,"megaparsec"},
-          {"kpc",1,0,0,0,0,0,0,o2scl_mks::parsec*1.0e3,"kiloparsec"},
-          {"pc",1,0,0,0,0,0,0,o2scl_mks::parsec,"parsec"},
-          {"fermi",1,0,0,0,0,0,0,1.0e-15,"fermi"},
+          {"Gpc",1,0,0,0,0,0,0,o2scl_const::parsec_f<fp_t>
+           (o2scl_const::o2scl_mks)*pow((fp_t)10,(fp_t)9),"gigaparsec"},
+          {"Mpc",1,0,0,0,0,0,0,o2scl_const::parsec_f<fp_t>
+           (o2scl_const::o2scl_mks)*1000000,"megaparsec"},
+          {"kpc",1,0,0,0,0,0,0,o2scl_const::parsec_f<fp_t>
+           (o2scl_const::o2scl_mks)*1000,"kiloparsec"},
+          {"pc",1,0,0,0,0,0,0,o2scl_const::parsec_f<fp_t>
+           (o2scl_const::o2scl_mks),"parsec"},
+          {"fermi",1,0,0,0,0,0,0,pow((fp_t)10,(fp_t)(-15)),"fermi"},
 
           // Area units
           // hectares, "ha" and "hectare"
-          {"hectare",2,0,0,0,0,0,0,o2scl_mks::hectare,"hectare"},
-          {"ha",2,0,0,0,0,0,0,1.0e4,"hectare"},
+          //{"hectare",2,0,0,0,0,0,0,o2scl_mks::hectare,"hectare"},
+          //{"ha",2,0,0,0,0,0,0,1.0e4,"hectare"},
           // acre
-          {"acre",2,0,0,0,0,0,0,o2scl_mks::acre,"acre"},
+          //{"acre",2,0,0,0,0,0,0,o2scl_mks::acre,"acre"},
           // barn
-          {"barn",2,0,0,0,0,0,0,o2scl_mks::barn,"barn"},
+          //{"barn",2,0,0,0,0,0,0,o2scl_mks::barn,"barn"},
      
           // Volume units
+          /*
           {"us_gallon",3,0,0,0,0,0,0,o2scl_mks::us_gallon,"gallon"},
           {"quart",3,0,0,0,0,0,0,o2scl_mks::quart,"quart"},
           {"pint",3,0,0,0,0,0,0,o2scl_mks::pint,"pint"},
@@ -701,70 +737,84 @@ namespace o2scl {
           {"ca_gallon",3,0,0,0,0,0,0,o2scl_mks::canadian_gallon,
            "canadian gallon"},
           {"uk_gallon",3,0,0,0,0,0,0,o2scl_mks::uk_gallon,"uk gallon"},
+          */
 
           // Mass units
           // Solar masses, "Msun", and "Msolar"
-          {"Msun",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
-          {"Msolar",0,1,0,0,0,0,0,o2scl_mks::solar_mass,"solar mass"},
-          {"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass,"pound"},
-          {"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
+          {"Msun",0,1,0,0,0,0,0,o2scl_const::solar_mass_f<fp_t>
+           (o2scl_const::o2scl_mks),"solar mass"},
+          {"Msolar",0,1,0,0,0,0,0,o2scl_const::solar_mass_f<fp_t>
+           (o2scl_const::o2scl_mks),"solar mass"},
+          //{"pound",0,1,0,0,0,0,0,o2scl_mks::pound_mass,"pound"},
+          //{"ounce",0,1,0,0,0,0,0,o2scl_mks::ounce_mass,"ounce"},
 
           // The offical abbreviation for tonne is "t", but then SI
           // prefixes cause confusion between between "foot" and
           // "femtotonne". For now, we use "tonne" instead of "t".
+          /*
           {"tonne",0,1,0,0,0,0,0,1.0e3,"(metric) tonne"},
           {"uk_ton",0,1,0,0,0,0,0,o2scl_mks::uk_ton,"uk ton"},
           {"troy_ounce",0,1,0,0,0,0,0,o2scl_mks::troy_ounce,"troy ounce"},
           {"carat",0,1,0,0,0,0,0,o2scl_mks::carat,"carat"},
+          */
      
           // Velocity units
-          {"knot",1,0,-1,0,0,0,0,o2scl_mks::knot,"knot"},
-          {"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>(),
-           "speed of light"},
+          //{"knot",1,0,-1,0,0,0,0,o2scl_mks::knot,"knot"},
+          {"c",1,0,-1,0,0,0,0,o2scl_const::speed_of_light_f<fp_t>
+           (o2scl_const::o2scl_mks),"speed of light"},
      
           // Energy units
-          {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie,"calorie"},
-          {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu,"btu"},
-          {"erg",2,1,-2,0,0,0,0,o2scl_mks::erg,"erg"},
+          /*
+            {"cal",2,1,-2,0,0,0,0,o2scl_mks::calorie,"calorie"},
+            {"btu",2,1,-2,0,0,0,0,o2scl_mks::btu,"btu"},
+          */
+          //{"erg",2,1,-2,0,0,0,0,o2scl_mks::erg,"erg"},
+          {"erg",2,1,-2,0,0,0,0,pow((fp_t)10,(fp_t)(-7)),"erg"},
 
           // Power units
+          /*
           {"therm",2,1,-3,0,0,0,0,o2scl_mks::therm,"therm"},
           {"horsepower",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
           {"hp",2,1,-3,0,0,0,0,o2scl_mks::horsepower,"horsepower"},
+          */
 
           // Pressure units
+          /*
           {"atm",-1,1,-2,0,0,0,0,o2scl_mks::std_atmosphere,"atmosphere"},
           {"bar",-1,1,-2,0,0,0,0,o2scl_mks::bar,"bar"},
           {"torr",-1,1,-2,0,0,0,0,o2scl_mks::torr,"torr"},
           {"psi",-1,1,-2,0,0,0,0,o2scl_mks::psi,"psi"},
+          */
 
           // Time units. Years are obtained from
           // https://pdg.lbl.gov/2021/reviews/contents_sports.html,
           // which references the 2020 Astronomical almanac.
-          {"yr",0,0,1,0,0,0,0,31556925.1,"year (tropical)"},
-          {"wk",0,0,1,0,0,0,0,o2scl_mks::week,"week"},
-          {"d",0,0,1,0,0,0,0,o2scl_mks::day,"day"},
+          {"yr",0,0,1,0,0,0,0,o2scl_const::tropical_year_f<fp_t>(),
+           "year (tropical)"},
+          {"wk",0,0,1,0,0,0,0,o2scl_const::week_f<fp_t>(),"week"},
+          {"d",0,0,1,0,0,0,0,o2scl_const::day_f<fp_t>(),"day"},
 
           // Angular units
-          {"deg",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
-          {"°",0,0,0,0,0,0,0,o2scl_const::pi/180.0,"degree"},
-          {"′",0,0,0,0,0,0,0,o2scl_const::pi/10800.0,
+          {"deg",0,0,0,0,0,0,0,o2scl_const::pi_f<fp_t>()/180,"degree"},
+          {"°",0,0,0,0,0,0,0,o2scl_const::pi_f<fp_t>()/180,"degree"},
+          {"′",0,0,0,0,0,0,0,o2scl_const::pi_f<fp_t>()/10800,
            "arcminute (fraction of a degree)"},
-          {"″",0,0,0,0,0,0,0,o2scl_const::pi/648000.0,
+          {"″",0,0,0,0,0,0,0,o2scl_const::pi_f<fp_t>()/648000,
            "arcsecond (fraction of a degree)"},
 
           // Hours, "hr", to avoid confusion with Planck's constant
-          {"hr",0,0,1,0,0,0,0,o2scl_mks::hour,"hour"},
-          {"min",0,0,1,0,0,0,0,o2scl_mks::minute,"minute"},
+          {"hr",0,0,1,0,0,0,0,o2scl_const::hour_f<fp_t>(),"hour"},
+          {"min",0,0,1,0,0,0,0,o2scl_const::minute_f<fp_t>(),"minute"},
 
           // Inverse time units
-          {"curie",0,0,-1,0,0,0,0,o2scl_mks::curie,"curie"},
+          //{"curie",0,0,-1,0,0,0,0,o2scl_mks::curie,"curie"},
      
           // Force units
-          {"dyne",1,1,-2,0,0,0,0,o2scl_mks::dyne,"dyne"},
+          //{"dyne",1,1,-2,0,0,0,0,o2scl_mks::dyne,"dyne"},
+          {"dyne",1,1,-2,0,0,0,0,pow((fp_t)10,(fp_t)(-5)),"dyne"},
      
           // Viscosity units
-          {"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise,"poise"},
+          //{"poise",-1,1,-1,0,0,0,0,o2scl_mks::poise,"poise"},
 
           // Units of heat capacity or entropy
           // Boltzmann's constant. Could be confused with kilobytes?
@@ -779,12 +829,13 @@ namespace o2scl {
      
           // Gravitational constant. We cannot use "G" because of
           // confusion with "Gauss"
-          {"GNewton",3,-1,-2,0,0,0,0,o2scl_mks::gravitational_constant,
+          {"GNewton",3,-1,-2,0,0,0,0,
+           o2scl_const::gravitational_constant_f<fp_t>(),
            "gravitational constant"},
          
           // Gauss, and note the possible confusion with the gravitational
           // constant
-          {"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
+          //{"G",0,1,-2,0,-1,0,0,o2scl_mks::gauss,"gauss"},
          
           {"NA",0,0,0,0,0,-1,0,o2scl_const::avogadro_f<fp_t>(),
            "Avogadro's number"}
@@ -853,7 +904,7 @@ namespace o2scl {
      */
     void test_unique() {
       std::map<std::string,fp_t> vars;
-      set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars,true);
+      set_vars(1,1,1,1,1,1,1,vars,true);
       return;
     }
   
@@ -1504,7 +1555,7 @@ namespace o2scl {
 
       std::map<std::string, fp_t> vars;
 
-      set_vars(1.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
+      set_vars(1,1,1,1,1,1,1,vars);
 
       if (verbose>=3) {
         std::cout << "Function convert_calc_hck, compile 1: "
@@ -1552,7 +1603,7 @@ namespace o2scl {
 
         // Determine how many powers of kB are required to match
         // powers of K
-        set_vars(1.0,1.0,1.0,2.0,1.0,1.0,1.0,vars);
+        set_vars(1,1,1,2,1,1,1,vars);
         kb_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (!boost::math::isfinite(calc.eval(&vars)) ||
             !boost::math::isfinite(calc2.eval(&vars))) {
@@ -1569,7 +1620,7 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << kb_power << ' ';
         }
-        factor_kb=pow(o2scl_mks::boltzmann,kb_power);
+        factor_kb=pow(o2scl_const::boltzmann_f<fp_t>(),kb_power);
         if (verbose>1) {
           std::cout << factor_kb << std::endl;
         }
@@ -1580,7 +1631,7 @@ namespace o2scl {
         
         // Determine how many powers of hbar are required to match
         // powers of kg
-        set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+        set_vars(1,2,1,1,1,1,1,vars);
         hbar_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
           std::cout << "hbar: " << before << ' ' << after << ' '
@@ -1591,7 +1642,7 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << hbar_power << ' ';
         }
-        factor_hbar=pow(o2scl_mks::plancks_constant_hbar,hbar_power);
+        factor_hbar=pow(o2scl_const::hbar_f<fp_t>(),hbar_power);
         if (verbose>1) {
           std::cout << factor_hbar << std::endl;
         }
@@ -1602,7 +1653,7 @@ namespace o2scl {
         
         // Determine how many powers of c are required to match
         // powers of s
-        set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+        set_vars(1,1,2,1,1,1,1,vars);
         c_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
         if (verbose>1) {
           std::cout << "c: " << before << ' ' << after << ' '
@@ -1613,7 +1664,7 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << c_power << ' ';
         }
-        factor_c=pow(o2scl_mks::speed_of_light,c_power);
+        factor_c=pow(o2scl_const::speed_of_light_f<fp_t>(),c_power);
         if (verbose>1) {
           std::cout << factor_c << std::endl;
         }
@@ -1622,7 +1673,7 @@ namespace o2scl {
 
       // Determine the number of powers of length remaining
       // and make sure it's consistent
-      set_vars(2.0,1.0,1.0,1.0,1.0,1.0,1.0,vars);
+      set_vars(2,1,1,1,1,1,1,vars);
       fp_t m_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       m_power=log(m_power)/log(two);
       if (verbose>1) {
@@ -1640,7 +1691,7 @@ namespace o2scl {
 
       // Determine the number of powers of mass remaining
       // and make sure it's consistent
-      set_vars(1.0,2.0,1.0,1.0,1.0,1.0,1.0,vars);
+      set_vars(1,2,1,1,1,1,1,vars);
       fp_t kg_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       kg_power=log(kg_power)/log(two);
       if (verbose>1) {
@@ -1655,7 +1706,7 @@ namespace o2scl {
 
       // Determine the number of powers of time remaining
       // and make sure it's consistent
-      set_vars(1.0,1.0,2.0,1.0,1.0,1.0,1.0,vars);
+      set_vars(1,1,2,1,1,1,1,vars);
       fp_t s_power=calc.eval(&vars)/calc2.eval(&vars)/before*after;
       s_power=log(s_power)/log(two);
       if (verbose>1) {
@@ -1672,13 +1723,13 @@ namespace o2scl {
       converted*=factor_kb*factor_hbar*factor_c;
 
       /*
-        set_vars(1.0,1.0,1.0,1.0,2.0,1.0,1.0,vars);
+        set_vars(1,1,1,1,2,1,1,vars);
         fp_t factor_A=calc.eval(&vars)/calc2.eval(&vars);
         
-        set_vars(1.0,1.0,1.0,1.0,1.0,2.0,1.0,vars);
+        set_vars(1,1,1,1,1,2,1,vars);
         fp_t factor_mol=calc.eval(&vars)/calc2.eval(&vars);
         
-        set_vars(1.0,1.0,1.0,1.0,1.0,1.0,2.0,vars);
+        set_vars(1,1,1,1,1,1,2,vars);
         fp_t factor_cd=calc.eval(&vars)/calc2.eval(&vars);
       */
 
@@ -1945,7 +1996,7 @@ namespace o2scl {
         std::cout.precision(6);
         std::cout << m->second.c << ' ';
         fp_t c, f;
-        int ix=convert_calc_hck(m->second.f,m->second.t,1.0,c,f);
+        int ix=convert_calc_hck(m->second.f,m->second.t,1,c,f);
         if (ix!=0) {
           O2SCL_ERR("Function test_cache_calc() failed to convert.",
                     o2scl::exc_esanity);
@@ -1974,22 +2025,22 @@ namespace o2scl {
       fp_t elem_charge=o2scl_const::elem_charge_f<fp_t>();
     
       // hbar=c=1 conversion from mass to inverse length
-      insert_cache("kg","1/fm",1.0e-15/
+      insert_cache("kg","1/fm",pow((fp_t)10,(fp_t)(-15))/
                    o2scl_const::hbar_f<fp_t>(o2scl_const::o2scl_mks)*
                    sol_mks);
   
       // Simple mass/energy conversions with c^2=1
     
-      insert_cache("kg","MeV",pow(sol_mks,2.0)/elem_charge*1.0e-6);
-      insert_cache("kg","g",1.0e3);
-      insert_cache("PeV","eV",1.0e15);
-      insert_cache("TeV","eV",1.0e12);
-      insert_cache("GeV","eV",1.0e9);
-      insert_cache("MeV","eV",1.0e6);
-      insert_cache("keV","eV",1.0e3);
-      insert_cache("meV","eV",1.0e-3);
-      insert_cache("Msun","kg",o2scl_mks::solar_mass);
-      insert_cache("erg","kg",o2scl_mks::erg/pow(sol_mks,2.0));
+      insert_cache("kg","MeV",pow(sol_mks,2)/elem_charge*1.0e-6);
+      insert_cache("kg","g",1000);
+      insert_cache("PeV","eV",pow((fp_t)10,(fp_t)(15)));
+      insert_cache("TeV","eV",pow((fp_t)10,(fp_t)(12)));
+      insert_cache("GeV","eV",pow((fp_t)10,(fp_t)(9)));
+      insert_cache("MeV","eV",1000000);
+      insert_cache("keV","eV",1000);
+      insert_cache("meV","eV",pow((fp_t)10,(fp_t)(-3)));
+      insert_cache("Msun","kg",o2scl_const::solar_mass_f<fp_t>());
+      insert_cache("erg","kg",pow((fp_t)10,(fp_t)(-7))/pow(sol_mks,2));
 
       // Joules and Kelvin
   
@@ -1998,31 +2049,38 @@ namespace o2scl {
                    o2scl_const::boltzmann_f<fp_t>(o2scl_const::o2scl_mks));
       insert_cache("K","kg",
                    o2scl_const::boltzmann_f<fp_t>(o2scl_const::o2scl_mks)/
-                   pow(sol_mks,2.0));
+                   pow(sol_mks,2));
 
       // Energy density and pressure conversions
 
-      insert_cache("atm","bar",o2scl_mks::std_atmosphere/o2scl_mks::bar);
-      insert_cache("atm","Pa",o2scl_mks::std_atmosphere);
-      insert_cache("kPa","Pa",1.0e3);
-      insert_cache("Pa","kg/m^3",1.0/sol_mks/sol_mks);
-      insert_cache("Pa","g/cm^3",10.0/sol_cgs/sol_cgs);
-      insert_cache("Pa","MeV/fm^3",1.0e-44/o2scl_cgs::electron_volt);
-      insert_cache("Pa","erg/cm^3",10.0);
-      insert_cache("g/cm^3","Msun/km^3",1.0e12/o2scl_mks::solar_mass);
-      insert_cache("erg/cm^3","Msun/km^3",1.0e12/sol_cgs/
-                   sol_cgs/o2scl_mks::solar_mass);
-      insert_cache("dyne/cm^2","Msun/km^3",1.0e12/sol_cgs/
-                   sol_cgs/o2scl_mks::solar_mass);
+      //insert_cache("atm","bar",o2scl_mks::std_atmosphere/o2scl_mks::bar);
+      //insert_cache("atm","Pa",o2scl_mks::std_atmosphere);
+      insert_cache("kPa","Pa",1000);
+      insert_cache("Pa","kg/m^3",1/sol_mks/sol_mks);
+      insert_cache("Pa","g/cm^3",10/sol_cgs/sol_cgs);
+      insert_cache("Pa","MeV/fm^3",pow((fp_t)10,(fp_t)(-44))/
+                   o2scl_const::electron_volt_f<fp_t>
+                   (o2scl_const::o2scl_cgs));
+      insert_cache("Pa","erg/cm^3",10);
+      insert_cache("g/cm^3","Msun/km^3",pow((fp_t)10,(fp_t)(12))/
+                   o2scl_const::solar_mass_f<fp_t>());
+      insert_cache("erg/cm^3","Msun/km^3",pow((fp_t)10,(fp_t)(12))/sol_cgs/
+                   sol_cgs/o2scl_const::solar_mass_f<fp_t>());
+      insert_cache("dyne/cm^2","Msun/km^3",pow((fp_t)10,(fp_t)(12))/sol_cgs/
+                   sol_cgs/o2scl_const::solar_mass_f<fp_t>());
       insert_cache("MeV/fm^3","Msun/km^3",
-                   o2scl_cgs::electron_volt/sol_cgs/
-                   sol_cgs/o2scl_mks::solar_mass*1.0e57);
+                   o2scl_const::electron_volt_f<fp_t>
+                   (o2scl_const::o2scl_cgs)/sol_cgs/
+                   sol_cgs/o2scl_const::solar_mass_f<fp_t>()*
+                   pow((fp_t)10,(fp_t)(57)));
       insert_cache("1/fm^4","Msun/km^3",hc*
-                   o2scl_cgs::electron_volt/sol_cgs/
-                   sol_cgs/o2scl_mks::solar_mass*1.0e57);
-
+                   o2scl_const::electron_volt_f<fp_t>
+                   (o2scl_const::o2scl_cgs)/sol_cgs/
+                   sol_cgs/o2scl_const::solar_mass_f<fp_t>()*
+                   pow((fp_t)10,(fp_t)(57)));
+      
       // 1/fm^4 conversions using hbar*c
-    
+      
       insert_cache("1/fm^4","MeV/fm^3",hc);
       insert_cache("MeV/fm^3","MeV^2/fm^2",hc);
       insert_cache("MeV^2/fm^2","MeV^3/fm",hc);
@@ -2035,7 +2093,7 @@ namespace o2scl {
       insert_cache("1/fm^4","MeV^3/fm",hc*hc*hc);
       insert_cache("MeV/fm^3","MeV^4",hc*hc*hc);
   
-      insert_cache("1/fm^4","MeV^4",pow(hc,4.0));
+      insert_cache("1/fm^4","MeV^4",pow(hc,4));
   
       // 1/fm^3 conversions using hbar*c
 
@@ -2046,92 +2104,106 @@ namespace o2scl {
       insert_cache("1/fm^3","MeV^2/fm",hc*hc);
       insert_cache("MeV/fm^2","MeV^3",hc*hc);
 
-      insert_cache("1/fm^3","MeV^3",pow(hc,3.0));
+      insert_cache("1/fm^3","MeV^3",pow(hc,3));
 
       // MeV*fm conversions
 
-      insert_cache("MeV*fm","MeV*cm",1.0e-13);
-      insert_cache("MeV*fm","MeV*m",1.0e-15);
-      insert_cache("MeV*fm","eV*nm",1.0);
-      insert_cache("MeV*fm","MeV*s",1.0e-15/o2scl_mks::speed_of_light);
+      insert_cache("MeV*fm","MeV*cm",pow((fp_t)10,(fp_t)(-13)));
+      insert_cache("MeV*fm","MeV*m",pow((fp_t)10,(fp_t)(-15)));
+      insert_cache("MeV*fm","eV*nm",1);
+      insert_cache("MeV*fm","MeV*s",pow((fp_t)10,(fp_t)(-15))/
+                   o2scl_const::speed_of_light_f<fp_t>());
       insert_cache("MeV*fm","erg*cm",elem_charge);
-      insert_cache("MeV*fm","erg*s",elem_charge/o2scl_cgs::speed_of_light);
-      insert_cache("MeV*fm","J*m",elem_charge/1.0e9);
-      insert_cache("MeV*fm","J*s",elem_charge/1.0e9/o2scl_mks::speed_of_light);
+      insert_cache("MeV*fm","erg*s",elem_charge/
+                   o2scl_const::speed_of_light_f<fp_t>(o2scl_const::o2scl_cgs));
+      insert_cache("MeV*fm","J*m",elem_charge/pow((fp_t)10,(fp_t)(9)));
+      insert_cache("MeV*fm","J*s",elem_charge/pow((fp_t)10,(fp_t)(9))/
+                   o2scl_const::speed_of_light_f<fp_t>());
 
       // Simple time conversions
 
       // (tropical year)
-      insert_cache("yr","s",o2scl_mks::tropical_year);
-      insert_cache("wk","s",o2scl_mks::week);
-      insert_cache("d","s",o2scl_mks::day);
-      insert_cache("hr","s",o2scl_mks::hour);
-      insert_cache("min","s",o2scl_mks::minute);
+      insert_cache("yr","s",o2scl_const::tropical_year_f<fp_t>());
+      insert_cache("wk","s",o2scl_const::week_f<fp_t>());
+      insert_cache("d","s",o2scl_const::day_f<fp_t>());
+      insert_cache("hr","s",o2scl_const::hour_f<fp_t>());
+      insert_cache("min","s",o2scl_const::minute_f<fp_t>());
 
       // Simple powers of length conversions 
 
-      insert_cache("AU","m",o2scl_mks::astronomical_unit);
-      insert_cache("pc","m",o2scl_mks::parsec);
-      insert_cache("kpc","m",o2scl_mks::parsec*1.0e3);
-      insert_cache("km","m",1.0e3);
-      insert_cache("cm","m",1.0e-2);
-      insert_cache("fm","m",1.0e-15);
-      insert_cache("mm","m",1.0e-3);
-      insert_cache("nm","m",1.0e-9);
+      insert_cache("AU","m",o2scl_const::astronomical_unit_f<fp_t>());
+      insert_cache("pc","m",o2scl_const::parsec_f<fp_t>());
+      insert_cache("kpc","m",o2scl_const::parsec_f<fp_t>()*1000);
+      insert_cache("km","m",1000);
+      insert_cache("cm","m",pow((fp_t)10,(fp_t)(-2)));
+      insert_cache("fm","m",pow((fp_t)10,(fp_t)(-15)));
+      insert_cache("mm","m",pow((fp_t)10,(fp_t)(-3)));
+      insert_cache("nm","m",pow((fp_t)10,(fp_t)(-9)));
       // This quantity is constructed from the Julian year
-      insert_cache("lyr","m",o2scl_mks::light_year);
+      insert_cache("lyr","m",o2scl_const::light_year_f<fp_t>());
   
-      insert_cache("AU^2","m^2",pow(o2scl_mks::astronomical_unit,2.0));
-      insert_cache("pc^2","m^2",pow(o2scl_mks::parsec,2.0));
-      insert_cache("kpc^2","m^2",pow(o2scl_mks::parsec*1.0e3,2.0));
-      insert_cache("km^2","m^2",1.0e6);
-      insert_cache("cm^2","m^2",1.0e-4);
-      insert_cache("fm^2","m^2",1.0e-30);
-      insert_cache("mm^2","m^2",1.0e-6);
-      insert_cache("nm^2","m^2",1.0e-18);
-      insert_cache("lyr^2","m^2",pow(o2scl_mks::light_year,2.0));
+      insert_cache("AU^2","m^2",
+                   pow(o2scl_const::astronomical_unit_f<fp_t>(),2));
+      insert_cache("pc^2","m^2",pow(o2scl_const::parsec_f<fp_t>(),2));
+      insert_cache("kpc^2","m^2",pow(o2scl_const::parsec_f<fp_t>()*1000,2));
+      insert_cache("km^2","m^2",1000000);
+      insert_cache("cm^2","m^2",pow((fp_t)10,(fp_t)(-4)));
+      insert_cache("fm^2","m^2",pow((fp_t)10,(fp_t)(-30)));
+      insert_cache("mm^2","m^2",pow((fp_t)10,(fp_t)(-6)));
+      insert_cache("nm^2","m^2",pow((fp_t)10,(fp_t)(-18)));
+      insert_cache("lyr^2","m^2",
+                   pow(o2scl_const::light_year_f<fp_t>(),2));
   
-      insert_cache("AU^3","m^3",pow(o2scl_mks::astronomical_unit,3.0));
-      insert_cache("pc^3","m^3",pow(o2scl_mks::parsec,3.0));
-      insert_cache("kpc^3","m^3",pow(o2scl_mks::parsec*1.0e3,3.0));
-      insert_cache("km^3","m^3",1.0e9);
-      insert_cache("cm^3","m^3",1.0e-6);
-      insert_cache("fm^3","m^3",1.0e-45);
-      insert_cache("mm^3","m^3",1.0e-9);
-      insert_cache("nm^3","m^3",1.0e-27);
-      insert_cache("lyr^3","m^3",pow(o2scl_mks::light_year,3.0));
+      insert_cache("AU^3","m^3",
+                   pow(o2scl_const::astronomical_unit_f<fp_t>(),3));
+      insert_cache("pc^3","m^3",pow(o2scl_const::parsec_f<fp_t>(),3));
+      insert_cache("kpc^3","m^3",
+                   pow(o2scl_const::parsec_f<fp_t>()*1.0e3,3));
+      insert_cache("km^3","m^3",pow((fp_t)10,(fp_t)(9)));
+      insert_cache("cm^3","m^3",pow((fp_t)10,(fp_t)(-6)));
+      insert_cache("fm^3","m^3",pow((fp_t)10,(fp_t)(-45)));
+      insert_cache("mm^3","m^3",pow((fp_t)10,(fp_t)(-9)));
+      insert_cache("nm^3","m^3",pow((fp_t)10,(fp_t)(-27)));
+      insert_cache("lyr^3","m^3",pow(o2scl_const::light_year_f<fp_t>(),3));
 
       // Simple inverse powers of length conversions 
 
-      insert_cache("1/m","1/AU",o2scl_mks::astronomical_unit);
-      insert_cache("1/m","1/pc",o2scl_mks::parsec);
-      insert_cache("1/m","1/kpc",o2scl_mks::parsec*1.0e3);
-      insert_cache("1/m","1/km",1.0e3);
-      insert_cache("1/m","1/cm",1.0e-2);
-      insert_cache("1/m","1/fm",1.0e-15);
-      insert_cache("1/m","1/mm",1.0e-3);
-      insert_cache("1/m","1/nm",1.0e-9);
-      insert_cache("1/m","1/lyr",o2scl_mks::light_year);
+      insert_cache("1/m","1/AU",o2scl_const::astronomical_unit_f<fp_t>());
+      insert_cache("1/m","1/pc",o2scl_const::parsec_f<fp_t>());
+      insert_cache("1/m","1/kpc",o2scl_const::parsec_f<fp_t>()*1.0e3);
+      insert_cache("1/m","1/km",1000);
+      insert_cache("1/m","1/cm",pow((fp_t)10,(fp_t)(-2)));
+      insert_cache("1/m","1/fm",pow((fp_t)10,(fp_t)(-15)));
+      insert_cache("1/m","1/mm",pow((fp_t)10,(fp_t)(-3)));
+      insert_cache("1/m","1/nm",pow((fp_t)10,(fp_t)(-9)));
+      insert_cache("1/m","1/lyr",o2scl_const::light_year_f<fp_t>());
     
-      insert_cache("1/m^2","1/AU^2",pow(o2scl_mks::astronomical_unit,2.0));
-      insert_cache("1/m^2","1/pc^2",pow(o2scl_mks::parsec,2.0));
-      insert_cache("1/m^2","1/kpc^2",pow(o2scl_mks::parsec*1.0e3,2.0));
-      insert_cache("1/m^2","1/km^2",1.0e6);
-      insert_cache("1/m^2","1/cm^2",1.0e-4);
-      insert_cache("1/m^2","1/fm^2",1.0e-30);
-      insert_cache("1/m^2","1/mm^2",1.0e-6);
-      insert_cache("1/m^2","1/nm^2",1.0e-18);
-      insert_cache("1/m^2","1/lyr^2",pow(o2scl_mks::light_year,2.0));
+      insert_cache("1/m^2","1/AU^2",
+                   pow(o2scl_const::astronomical_unit_f<fp_t>(),2));
+      insert_cache("1/m^2","1/pc^2",
+                   pow(o2scl_const::parsec_f<fp_t>(),2));
+      insert_cache("1/m^2","1/kpc^2",
+                   pow(o2scl_const::parsec_f<fp_t>()*1000,2));
+      insert_cache("1/m^2","1/km^2",1000000);
+      insert_cache("1/m^2","1/cm^2",pow((fp_t)10,(fp_t)(-4)));
+      insert_cache("1/m^2","1/fm^2",pow((fp_t)10,(fp_t)(-30)));
+      insert_cache("1/m^2","1/mm^2",pow((fp_t)10,(fp_t)(-6)));
+      insert_cache("1/m^2","1/nm^2",pow((fp_t)10,(fp_t)(-18)));
+      insert_cache("1/m^2","1/lyr^2",
+                   pow(o2scl_const::light_year_f<fp_t>(),2));
     
-      insert_cache("1/m^3","1/AU^3",pow(o2scl_mks::astronomical_unit,3.0));
-      insert_cache("1/m^3","1/pc^3",pow(o2scl_mks::parsec,3.0));
-      insert_cache("1/m^3","1/kpc^3",pow(o2scl_mks::parsec*1.0e3,3.0));
-      insert_cache("1/m^3","1/km^3",1.0e9);
-      insert_cache("1/m^3","1/cm^3",1.0e-6);
-      insert_cache("1/m^3","1/fm^3",1.0e-45);
-      insert_cache("1/m^3","1/mm^3",1.0e-9);
-      insert_cache("1/m^3","1/nm^3",1.0e-27);
-      insert_cache("1/m^3","1/lyr^3",pow(o2scl_mks::light_year,3.0));
+      insert_cache("1/m^3","1/AU^3",
+                   pow(o2scl_const::astronomical_unit_f<fp_t>(),3));
+      insert_cache("1/m^3","1/pc^3",pow(o2scl_const::parsec_f<fp_t>(),3));
+      insert_cache("1/m^3","1/kpc^3",
+                   pow(o2scl_const::parsec_f<fp_t>()*1.0e3,3));
+      insert_cache("1/m^3","1/km^3",pow((fp_t)10,(fp_t)(9)));
+      insert_cache("1/m^3","1/cm^3",pow((fp_t)10,(fp_t)(-6)));
+      insert_cache("1/m^3","1/fm^3",pow((fp_t)10,(fp_t)(-45)));
+      insert_cache("1/m^3","1/mm^3",pow((fp_t)10,(fp_t)(-9)));
+      insert_cache("1/m^3","1/nm^3",pow((fp_t)10,(fp_t)(-27)));
+      insert_cache("1/m^3","1/lyr^3",
+                   pow(o2scl_const::light_year_f<fp_t>(),3));
     
       return;
     }

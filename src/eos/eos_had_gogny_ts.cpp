@@ -42,9 +42,9 @@ int main(void) {
   t.set_output_level(1);
   
   fermion n(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   fermion p(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+	    ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
   thermo th;
     
   eos_had_gogny ge;

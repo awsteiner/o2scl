@@ -89,10 +89,10 @@ void o2scl_hdf::rmf_load(o2scl::eos_had_rmf &rmf, std::string model,
   hf.getd("mw",rmf.mw);
   hf.getd("mr",rmf.mr);
   hf.getd("mnuc",rmf.mnuc);
-  rmf.ms/=o2scl_const::hc_mev_fm; 
-  rmf.mw/=o2scl_const::hc_mev_fm; 
-  rmf.mr/=o2scl_const::hc_mev_fm; 
-  rmf.mnuc/=o2scl_const::hc_mev_fm;
+  rmf.ms/=o2scl_const::hc_mev_fm_f<double>(); 
+  rmf.mw/=o2scl_const::hc_mev_fm_f<double>(); 
+  rmf.mr/=o2scl_const::hc_mev_fm_f<double>(); 
+  rmf.mnuc/=o2scl_const::hc_mev_fm_f<double>();
   
   if (standardstyle==true) {
     hf.getd("Cs2",rmf.cs);
@@ -169,9 +169,9 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
   hf.getd("t0hc",sk.t0);
   hf.getd("t2hc",sk.t2);
   hf.getd("t3hc",sk.t3);
-  sk.t0/=o2scl_const::hc_mev_fm; 
-  sk.t2/=o2scl_const::hc_mev_fm; 
-  sk.t3/=o2scl_const::hc_mev_fm; 
+  sk.t0/=o2scl_const::hc_mev_fm_f<double>(); 
+  sk.t2/=o2scl_const::hc_mev_fm_f<double>(); 
+  sk.t3/=o2scl_const::hc_mev_fm_f<double>(); 
 
   hf.getd("x0",sk.x0);
   hf.getd("x2",sk.x2);
@@ -189,7 +189,7 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
     sk.b=0.0;
   } else {
     hf.getd_def("t1hc",0.0,sk.t1);
-    sk.t1/=o2scl_const::hc_mev_fm;
+    sk.t1/=o2scl_const::hc_mev_fm_f<double>();
     hf.getd_def("x1",0.0,sk.x1);
     hf.getd_def("a",1.0,sk.a);
     hf.getd_def("b",0.0,sk.b);
@@ -202,10 +202,10 @@ void o2scl_hdf::skyrme_load(o2scl::eos_had_skyrme &sk, std::string model,
     double pfp, pfn;
     hf.getd("pairfp",pfp);
     hf.getd("pairfn",pfn);
-    sk.W0=(pfp+pfn)/4.0/o2scl_const::hc_mev_fm;
+    sk.W0=(pfp+pfn)/4.0/o2scl_const::hc_mev_fm_f<double>();
   } else {
     hf.getd_def("W0hc",0.0,sk.W0);
-    sk.W0/=o2scl_const::hc_mev_fm;
+    sk.W0/=o2scl_const::hc_mev_fm_f<double>();
   }
 
   hf.gets_def("reference","",sk.reference);
@@ -234,10 +234,10 @@ void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   hf.getd("t1_hc",sk.t1);
   hf.getd("t2_hc",sk.t2);
   hf.getd("t3_hc",sk.t3);
-  sk.t0/=o2scl_const::hc_mev_fm; 
-  sk.t1/=o2scl_const::hc_mev_fm;
-  sk.t2/=o2scl_const::hc_mev_fm; 
-  sk.t3/=o2scl_const::hc_mev_fm; 
+  sk.t0/=o2scl_const::hc_mev_fm_f<double>(); 
+  sk.t1/=o2scl_const::hc_mev_fm_f<double>();
+  sk.t2/=o2scl_const::hc_mev_fm_f<double>(); 
+  sk.t3/=o2scl_const::hc_mev_fm_f<double>(); 
 
   hf.getd("x0",sk.x0);
   hf.getd("x1",sk.x1);
@@ -250,15 +250,15 @@ void o2scl_hdf::skyrme_load(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   hf.getd_def("b",0.0,sk.b);
   
   hf.getd_def("delta_n_hc",sk.W0);
-  sk.W0/=o2scl_const::hc_mev_fm;
+  sk.W0/=o2scl_const::hc_mev_fm_f<double>();
   //hf.getd_def("delta_p_hc",sk.W0);
-  //sk.W0/=o2scl_const::hc_mev_fm;
+  //sk.W0/=o2scl_const::hc_mev_fm_f<double>();
 
   hf.gets_def("reference","",sk.reference);
   hf.getd_def("b4_hc",0.0,sk.b4);
-  sk.b4/=o2scl_const::hc_mev_fm;
+  sk.b4/=o2scl_const::hc_mev_fm_f<double>();
   hf.getd_def("b4p_hc",0.0,sk.b4p);
-  sk.b4p/=o2scl_const::hc_mev_fm;
+  sk.b4p/=o2scl_const::hc_mev_fm_f<double>();
 
   return;
 }
@@ -293,10 +293,10 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   */
 
   // Write data
-  hf.setd("t0hc",sk.t0*o2scl_const::hc_mev_fm);
-  hf.setd("t1hc",sk.t1*o2scl_const::hc_mev_fm);
-  hf.setd("t2hc",sk.t2*o2scl_const::hc_mev_fm);
-  hf.setd("t3hc",sk.t3*o2scl_const::hc_mev_fm);
+  hf.setd("t0hc",sk.t0*o2scl_const::hc_mev_fm_f<double>());
+  hf.setd("t1hc",sk.t1*o2scl_const::hc_mev_fm_f<double>());
+  hf.setd("t2hc",sk.t2*o2scl_const::hc_mev_fm_f<double>());
+  hf.setd("t3hc",sk.t3*o2scl_const::hc_mev_fm_f<double>());
   hf.setd("x0",sk.x0);
   hf.setd("x1",sk.x1);
   hf.setd("x2",sk.x2);
@@ -304,8 +304,8 @@ void o2scl_hdf::skyrme_write(hdf_file &hf, o2scl::eos_had_skyrme &sk,
   hf.setd("a",sk.a);
   hf.setd("b",sk.b);
   hf.setd("alpha",sk.alpha);
-  hf.setd("delta_n_hc",sk.W0*o2scl_const::hc_mev_fm);
-  hf.setd("delta_p_hc",sk.W0*o2scl_const::hc_mev_fm);
+  hf.setd("delta_n_hc",sk.W0*o2scl_const::hc_mev_fm_f<double>());
+  hf.setd("delta_p_hc",sk.W0*o2scl_const::hc_mev_fm_f<double>());
   hf.setd("b4",sk.b4);
   hf.setd("b4p",sk.b4p);
   hf.setd("W0hc",0.0);
@@ -583,18 +583,42 @@ void o2scl_hdf::eos_had_strings_list() {
   return;
 }
 
+eos_quark *o2scl_hdf::eos_quark_strings(std::string eos_str) {
+  
+  // Split strings by spaces
+  vector<string> vs;
+  split_string(eos_str,vs);
+
+  if (vs[0]=="NLL_SPL00") {
+    eos_quark_njl *njl=new eos_quark_njl;
+    njl->def_up.m=5.5/hc_mev_fm_f<double>();
+    njl->def_down.m=5.5/hc_mev_fm_f<double>();
+    njl->def_strange.m=140.7/hc_mev_fm_f<double>();
+    njl->up_default_mass=5.5/hc_mev_fm_f<double>();
+    njl->down_default_mass=5.5/hc_mev_fm_f<double>();
+    njl->strange_default_mass=140.7/hc_mev_fm_f<double>();
+    double L=602.3/hc_mev_fm_f<double>();
+    njl->set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
+    return njl;
+  }
+  
+  O2SCL_ERR("Type not understood in eos_quark_strings().",exc_einval);
+  return 0;
+}
+
 eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
 
+  // Split strings by spaces
   vector<string> vs;
   split_string(eos_str,vs);
   
   if (vs[0]=="skyrme") {
     eos_had_skyrme *sk=new eos_had_skyrme;
     if (is_number(vs[1]) && vs.size()>=10) {
-      sk->t0=o2scl::stod(vs[1])/hc_mev_fm;
-      sk->t1=o2scl::stod(vs[2])/hc_mev_fm;
-      sk->t2=o2scl::stod(vs[3])/hc_mev_fm;
-      sk->t3=o2scl::stod(vs[4])/hc_mev_fm;
+      sk->t0=o2scl::stod(vs[1])/hc_mev_fm_f<double>();
+      sk->t1=o2scl::stod(vs[2])/hc_mev_fm_f<double>();
+      sk->t2=o2scl::stod(vs[3])/hc_mev_fm_f<double>();
+      sk->t3=o2scl::stod(vs[4])/hc_mev_fm_f<double>();
       sk->x0=o2scl::stod(vs[5]);
       sk->x1=o2scl::stod(vs[6]);
       sk->x2=o2scl::stod(vs[7]);
@@ -613,39 +637,39 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
   } else if (vs[0]=="pot") {
     eos_had_potential *pot=new eos_had_potential;
     if (vs[1]=="MDI0") {
-      pot->Au=-95.98/o2scl_const::hc_mev_fm;
-      pot->Al=-120.57/o2scl_const::hc_mev_fm;
-      pot->B=106.35/o2scl_const::hc_mev_fm;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Au=-95.98/o2scl_const::hc_mev_fm_f<double>();
+      pot->Al=-120.57/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
       pot->x=0.0;
       pot->form=pot->mdi_form;
     } else if (vs[1]=="MDI1") {
-      pot->Au=-187.27/o2scl_const::hc_mev_fm;
-      pot->Al=-29.28/o2scl_const::hc_mev_fm;
-      pot->B=106.35/o2scl_const::hc_mev_fm;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Au=-187.27/o2scl_const::hc_mev_fm_f<double>();
+      pot->Al=-29.28/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
       pot->x=1.0;
       pot->form=pot->mdi_form;
     } else if (vs[1]=="BGBD_das") {
-      pot->Au=-192.0/o2scl_const::hc_mev_fm;
-      pot->Al=-96.0/o2scl_const::hc_mev_fm;
-      pot->B=203.3/o2scl_const::hc_mev_fm;
-      pot->Cu=-84.53/o2scl_const::hc_mev_fm;
-      pot->Cl=-65.472/o2scl_const::hc_mev_fm;
+      pot->Au=-192.0/o2scl_const::hc_mev_fm_f<double>();
+      pot->Al=-96.0/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=203.3/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cu=-84.53/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-65.472/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=7.0/6.0;
       pot->x=1.0/15.0;
       pot->form=pot->gbd_form;
     } else if (vs[1]=="PAL11") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -653,12 +677,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=1;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL12") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -666,12 +690,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=2;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL13") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -679,12 +703,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=3;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL21") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -692,12 +716,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=1;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL22") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -705,12 +729,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=2;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL23") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -718,12 +742,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=3;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL31") {
-      pot->A=-46.65/o2scl_const::hc_mev_fm;
-      pot->B=39.54/o2scl_const::hc_mev_fm;
+      pot->A=-46.65/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=39.54/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.3;
       pot->sigma=1.663;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -731,12 +755,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=1;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL32") {
-      pot->A=-46.65/o2scl_const::hc_mev_fm;
-      pot->B=39.54/o2scl_const::hc_mev_fm;
+      pot->A=-46.65/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=39.54/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.3;
       pot->sigma=1.663;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -744,12 +768,12 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=2;
       pot->form=pot->pal_form;
     } else if (vs[1]=="PAL33") {
-      pot->A=-46.65/o2scl_const::hc_mev_fm;
-      pot->B=39.54/o2scl_const::hc_mev_fm;
+      pot->A=-46.65/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=39.54/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.3;
       pot->sigma=1.663;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.0;
       pot->x3=0.0;
       pot->z1=0.0;
@@ -757,166 +781,166 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       pot->sym_index=3;
       pot->form=pot->pal_form;
     } else if (vs[1]=="BPALb11") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=-1.361;
       pot->x3=-0.244;
-      pot->z1=-13.91/o2scl_const::hc_mev_fm;
-      pot->z2=16.69/o2scl_const::hc_mev_fm;
+      pot->z1=-13.91/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=16.69/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb12") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=-1.361;
       pot->x3=-0.244;
-      pot->z1=-13.91/o2scl_const::hc_mev_fm;
-      pot->z2=16.69/o2scl_const::hc_mev_fm;
+      pot->z1=-13.91/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=16.69/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb13") {
-      pot->A=75.94/o2scl_const::hc_mev_fm;
-      pot->B=-30.880/o2scl_const::hc_mev_fm;
+      pot->A=75.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-30.880/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.498;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=-1.903;
       pot->x3=-1.056;
-      pot->z1=-1.83/o2scl_const::hc_mev_fm;
-      pot->z2=5.09/o2scl_const::hc_mev_fm;
+      pot->z1=-1.83/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=5.09/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb21") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.086;
       pot->x3=0.561;
-      pot->z1=-18.4/o2scl_const::hc_mev_fm;
-      pot->z2=46.27/o2scl_const::hc_mev_fm;
+      pot->z1=-18.4/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=46.27/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb22") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.086;
       pot->x3=0.561;
-      pot->z1=-18.4/o2scl_const::hc_mev_fm;
-      pot->z2=46.27/o2scl_const::hc_mev_fm;
+      pot->z1=-18.4/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=46.27/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb23") {
-      pot->A=440.94/o2scl_const::hc_mev_fm;
-      pot->B=-213.41/o2scl_const::hc_mev_fm;
+      pot->A=440.94/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-213.41/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.927;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.086;
       pot->x3=0.561;
-      pot->z1=-18.4/o2scl_const::hc_mev_fm;
-      pot->z2=46.27/o2scl_const::hc_mev_fm;
+      pot->z1=-18.4/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=46.27/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="BPALb31") {
-      pot->A=-46.65/o2scl_const::hc_mev_fm;
-      pot->B=39.45/o2scl_const::hc_mev_fm;
+      pot->A=-46.65/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=39.45/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.3;
       pot->sigma=1.663;
-      pot->C1=-83.84/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-83.84/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=0.376;
       pot->x3=0.246;
-      pot->z1=-12.23/o2scl_const::hc_mev_fm;
-      pot->z2=-2.98/o2scl_const::hc_mev_fm;
+      pot->z1=-12.23/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=-2.98/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->bpal_form;
     } else if (vs[1]=="SL12") {
-      pot->A=3.706/o2scl_const::hc_mev_fm;
-      pot->B=-31.155/o2scl_const::hc_mev_fm;
+      pot->A=3.706/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=-31.155/o2scl_const::hc_mev_fm_f<double>();
       pot->Bp=0.0;
       pot->sigma=0.453;
-      pot->C1=-41.28/o2scl_const::hc_mev_fm;
-      pot->C2=23.0/o2scl_const::hc_mev_fm;
+      pot->C1=-41.28/o2scl_const::hc_mev_fm_f<double>();
+      pot->C2=23.0/o2scl_const::hc_mev_fm_f<double>();
       pot->x0=-3.548;
       pot->x3=-0.5;
-      pot->z1=-13.355/o2scl_const::hc_mev_fm;
-      pot->z2=2.789/o2scl_const::hc_mev_fm;
+      pot->z1=-13.355/o2scl_const::hc_mev_fm_f<double>();
+      pot->z2=2.789/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->sl_form;
     } else if (vs[1]=="GBD0") {
-      pot->Au=-109.85/o2scl_const::hc_mev_fm;
-      pot->Al=-191.30/o2scl_const::hc_mev_fm;
-      pot->B=205.66/o2scl_const::hc_mev_fm;
-      pot->Cu=-118.80/o2scl_const::hc_mev_fm;
-      pot->Cl=-26.26/o2scl_const::hc_mev_fm;
+      pot->Au=-109.85/o2scl_const::hc_mev_fm_f<double>();
+      pot->Al=-191.30/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=205.66/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cu=-118.80/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-26.26/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=7.0/6.0;
       pot->x=0.0;
       pot->form=pot->gbd_form;
     } else if (vs[1]=="GBD1") {
-      pot->Au=-299.69/o2scl_const::hc_mev_fm;
-      pot->Al=-1.46/o2scl_const::hc_mev_fm;
-      pot->B=205.66/o2scl_const::hc_mev_fm;
-      pot->Cu=-118.80/o2scl_const::hc_mev_fm;
-      pot->Cl=-26.26/o2scl_const::hc_mev_fm;
+      pot->Au=-299.69/o2scl_const::hc_mev_fm_f<double>();
+      pot->Al=-1.46/o2scl_const::hc_mev_fm_f<double>();
+      pot->B=205.66/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cu=-118.80/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-26.26/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=7.0/6.0;
       pot->x=1.0;
     } else if (vs[1]=="CKLxm2") {
-      pot->B=106.35/o2scl_const::hc_mev_fm;
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->mdi_form;
       pot->x=-2.0;
-      pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
+      pot->Au=-95.98/o2scl_const::hc_mev_fm_f<double>()-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-      pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
+      pot->Al=-120.75/o2scl_const::hc_mev_fm_f<double>()+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
     } else if (vs[1]=="CKLxm1") {
-      pot->B=106.35/o2scl_const::hc_mev_fm;
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->mdi_form;
       pot->x=-2.0;
-      pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
+      pot->Au=-95.98/o2scl_const::hc_mev_fm_f<double>()-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-      pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
+      pot->Al=-120.75/o2scl_const::hc_mev_fm_f<double>()+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
     } else if (vs[1]=="CKLx0") {
-      pot->B=106.35/o2scl_const::hc_mev_fm;
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->mdi_form;
       pot->x=-1.0;
-      pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
+      pot->Au=-95.98/o2scl_const::hc_mev_fm_f<double>()-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-      pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
+      pot->Al=-120.75/o2scl_const::hc_mev_fm_f<double>()+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
     } else if (vs[1]=="CKLx1") {
-      pot->B=106.35/o2scl_const::hc_mev_fm;
+      pot->B=106.35/o2scl_const::hc_mev_fm_f<double>();
       pot->sigma=4.0/3.0;
-      pot->Cu=-103.40/o2scl_const::hc_mev_fm;
-      pot->Cl=-11.70/o2scl_const::hc_mev_fm;
+      pot->Cu=-103.40/o2scl_const::hc_mev_fm_f<double>();
+      pot->Cl=-11.70/o2scl_const::hc_mev_fm_f<double>();
       pot->form=pot->mdi_form;
       pot->x=1.0;
-      pot->Au=-95.98/o2scl_const::hc_mev_fm-2.0*pot->B*
+      pot->Au=-95.98/o2scl_const::hc_mev_fm_f<double>()-2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
-      pot->Al=-120.75/o2scl_const::hc_mev_fm+2.0*pot->B*
+      pot->Al=-120.75/o2scl_const::hc_mev_fm_f<double>()+2.0*pot->B*
 	pot->x/(pot->sigma+1.0);
     }
     pot->rho0=0.16;
-    pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2*pot->rho0);
-    pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2*pot->rho0);
+    pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2_f<double>()*pot->rho0);
+    pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2_f<double>()*pot->rho0);
     return pot;
   } else if (vs[0]=="rmf") {
     eos_had_rmf *rmf=new eos_had_rmf;
@@ -926,9 +950,9 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
       rmf->cr=o2scl::stod(vs[3]);
       rmf->b=o2scl::stod(vs[4]);
       rmf->c=o2scl::stod(vs[5]);
-      rmf->ms=o2scl::stod(vs[6])/hc_mev_fm;
-      rmf->mw=o2scl::stod(vs[7])/hc_mev_fm;
-      rmf->mr=o2scl::stod(vs[8])/hc_mev_fm;
+      rmf->ms=o2scl::stod(vs[6])/hc_mev_fm_f<double>();
+      rmf->mw=o2scl::stod(vs[7])/hc_mev_fm_f<double>();
+      rmf->mr=o2scl::stod(vs[8])/hc_mev_fm_f<double>();
       rmf->zeta=o2scl::stod(vs[9]);
       rmf->xi=o2scl::stod(vs[10]);
       rmf->a1=o2scl::stod(vs[11]);

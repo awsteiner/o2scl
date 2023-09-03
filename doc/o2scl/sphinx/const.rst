@@ -8,22 +8,18 @@ Constant contents
 
 - :ref:`Constant introduction`
 - :ref:`Namespace o2scl_const`
-- :ref:`Namespace o2scl_mks`
-- :ref:`Namespace o2scl_cgs`
-- :ref:`Namespace o2scl_cgsm`
 
 Constant introduction
 ---------------------
-     
-The constants from GSL are reworked with the type ``const double`` and
-placed in namespaces called :ref:`o2scl_mks <Namespace o2scl_mks>`,
-:ref:`o2scl_cgs <Namespace o2scl_cgs>`, and :ref:`o2scl_mksa
-<Namespace o2scl_cgsm>`. The GSL MKSA constants are identical to the
-MKS constants and thus are not duplicated here. The numerical
-constants from ``gsl_num`` and some other additional constants are
-given in the namespace :ref:`o2scl_const <Namespace o2scl_const>`,
-Some of the numerical values have been updated with CODATA 2018
-values.
+
+In order to avoid confusing numerical differences when using
+multiprecision arithmetic, physical constants are template functions
+which return a value given a user-specified floating-point type.
+Physical constants are promoted to higher precision by adding 0s in
+the base-10 representation. The constants are in the namespace
+:ref:`o2scl_const <Namespace o2scl_const>`. The numerical values are
+periodically updated with CODATA, the Particle Data Book, and
+other databases.
 
 The :ref:`find_constants <find_constants>` class contains a
 simple constant database which can be searched at compiled time
@@ -40,24 +36,4 @@ Namespace o2scl_const
 
 .. doxygennamespace:: o2scl_const
 
-Namespace o2scl_mks
--------------------
-
-:ref:`Top <Physical Constants>`
-
-.. doxygennamespace:: o2scl_mks
-   
-Namespace o2scl_cgs
--------------------
-
-:ref:`Top <Physical Constants>`
-
-.. doxygennamespace:: o2scl_cgs
-   
-Namespace o2scl_cgsm
---------------------
-
-:ref:`Top <Physical Constants>`
-
-.. doxygennamespace:: o2scl_cgsm
    

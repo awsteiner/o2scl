@@ -731,9 +731,9 @@ namespace o2scl {
       out_table=t;
       // Add native constants
       out_table->add_constant("schwarz",schwarz_km);
-      out_table->add_constant("Msun",o2scl_mks::solar_mass);
+      out_table->add_constant("Msun",o2scl_const::solar_mass_f<double>());
       out_table->add_constant("pi",o2scl_const::pi);
-      out_table->add_constant("mproton",o2scl_mks::mass_proton);
+      out_table->add_constant("mproton",o2scl_const::mass_proton_f<double>());
       return;
     }
     //@}

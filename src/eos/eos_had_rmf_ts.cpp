@@ -52,9 +52,9 @@ public:
     p.init(939.0/hc_mev_fm,2.0);
 
     e.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
     mu.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+	    ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
     
     nue.init(0.0,1.0);
     numu.init(0.0,1.0);

@@ -74,7 +74,8 @@ void eos_tov::check_nb(double &avg_abs_dev, double &max_abs_dev) {
 
 eos_tov_buchdahl::eos_tov_buchdahl() {
   Pstar=3.2e-5;
-  G_km_Msun=o2scl_cgs::schwarzchild_radius/2.0e5;
+  G_km_Msun=o2scl_const::schwarzchild_radius_f<double>
+    (o2scl_const::o2scl_cgs)/2.0e5;
 }
 
 void eos_tov_buchdahl::set_baryon_density(double nb, double ed) {

@@ -227,13 +227,13 @@ int main(void) {
   t.test_rel(kt2.binding_energy(82,126)/208.0,-7.867,1.0e-3,"kt2 be");
 
   // Test the binding energy and mass excess from get_nucleus()
-  double mass_neutron=o2scl_mks::mass_neutron*
+  double mass_neutron=o2scl_const::mass_neutron_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_proton=o2scl_mks::mass_proton*
+  double mass_proton=o2scl_const::mass_proton_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_electron=o2scl_mks::mass_electron*
+  double mass_electron=o2scl_const::mass_electron_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
-  double mass_amu=o2scl_mks::unified_atomic_mass*
+  double mass_amu=o2scl_const::unified_atomic_mass_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
   for(size_t i=0;i<27;i++) {

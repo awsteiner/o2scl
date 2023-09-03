@@ -63,19 +63,20 @@ namespace o2scl {
 
     /// \name Internal functions [protected]
     //@{
-    /** \brief Electron thermodynamics from the electron density
+    /** \brief Compute electron thermodynamics from the electron 
+        density
 
-        \note This internal function is designed to be used when \ref
-        fermion_rel::err_nonconv is false . If this function fails,
-        returns a non-zero value rather than calling the error
-        handler. This allows it to be used inside \ref
-        pair_density_eq_fun(). This is also the reason why this
-        function is protected instead of public.
+        \note This internal function is designed to be used when the
+        flag \ref fermion_rel::err_nonconv for the \ref frel object is
+        set to false . If this function fails, it returns a non-zero
+        value rather than calling the error handler. This allows it to
+        be used inside \ref pair_density_eq_fun(). Thus this function
+        is protected instead of public.
         
         Because this function uses \ref fermion_rel::pair_density(),
-        the current electron chemical potential is used as an initial
-        guess.
-
+        the current electron chemical potential (from \ref e) is used
+        as an initial guess.
+        
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
     */
     int electron_density(double T);
@@ -83,16 +84,26 @@ namespace o2scl {
     /** \brief Function to solve for \ref pair_density_eq()
 
         \note This internal function presumes that include_muons is
-        true (otherwise there's nothing to solve) and that \ref
-        fermion_rel::err_nonconv is false .
+        true (otherwise there's nothing to solve) and that the \ref
+        fermion_rel::err_nonconv flag in the \ref frel object is set
+        to false .
 
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
-     */
+
+        The value \c x is used for the electron density or chemical
+        potential, depending on the value of \ref pde_from_density .
+
+        The value 
+        \f[
+        \frac{\left(n_e + n_{\mu} - n_q\right)}{|n_q|}
+        \f]
+        is stored in \c y.
+    */
     int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     //@}
 
-    /// Internal particle objects [protected]
+    /// \name Internal particle objects [protected]
     //@{
     /** \brief Electron in long double precision
      */
@@ -114,13 +125,13 @@ namespace o2scl {
      */
     fermion_deriv_rel fdrel;
 
-    /** \brief Relativistic fermion thermodynamics with derivatives at
+    /* \brief Relativistic fermion thermodynamics with derivatives at
         long double precision
      */
     //fermion_deriv_rel_tl<fermion_deriv_ld,fermion_rel_ld,
     //long double> fdrel_ld;
-
-    /** \brief Relativistic fermion thermodynamics with derivatives at
+    
+    /* \brief Relativistic fermion thermodynamics with derivatives at
         long double precision
      */
     //fermion_deriv_rel_cdf25<fermion_deriv_cdf25,fermion_rel_cdf25,
@@ -141,7 +152,7 @@ namespace o2scl {
     static const int acc_fp_25=3;
     //@}
 
-    /// \name Unit conversion objects
+    /// \name Unit conversion objects to set the lepton masses
     //@{
     /// Long double precision unit conversion object
     convert_units<long double> cu_ld;

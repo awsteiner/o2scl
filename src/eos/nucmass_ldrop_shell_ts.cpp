@@ -54,9 +54,9 @@ int main(void) {
   nucmass_ldrop_shell ld2;
 
   fermion nrn(o2scl_settings.get_convert_units().convert
-	      ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+	      ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   fermion nrp(o2scl_settings.get_convert_units().convert
-	      ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+	      ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
   
   nrn.non_interacting=false;
   nrp.non_interacting=false;

@@ -42,13 +42,13 @@ int main(void) {
   double hc=hc_mev_fm;
 
   fermion n(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   n.inc_rest_mass=false;
   fermion p(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+	    ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
   p.inc_rest_mass=false;
   fermion e(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
 
   thermo th;
   double T;

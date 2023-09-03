@@ -58,8 +58,8 @@ eos_sn_base::eos_sn_base() : cu(o2scl_settings.get_convert_units()) {
 
   photon.init(0.0,2.0);
   
-  electron.init(cu.convert("kg","1/fm",o2scl_mks::mass_electron),2.0);
-  muon.init(cu.convert("kg","1/fm",o2scl_mks::mass_muon),2.0);
+  electron.init(cu.convert("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
+  muon.init(cu.convert("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
   include_muons=false;
 
   verbose=1;
@@ -68,10 +68,10 @@ eos_sn_base::eos_sn_base() : cu(o2scl_settings.get_convert_units()) {
   with_leptons=false;
   baryons_only=false;
 
-  m_neut=o2scl_mks::mass_neutron*
+  m_neut=o2scl_const::mass_neutron_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*
     o2scl_const::hc_mev_fm;
-  m_prot=o2scl_mks::mass_proton*
+  m_prot=o2scl_const::mass_proton_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0)*
     o2scl_const::hc_mev_fm;
 }
@@ -883,8 +883,8 @@ void eos_sn_ls::load(std::string fname, size_t mode) {
 	  else if (l==11) Sint.set(i,k,j,dtemp);
 	  else if (l==12) {
 	    double dtemp2=dtemp-Eint.get_grid(1,k)*
-	      (cu.convert("kg","1/fm",o2scl_mks::mass_neutron)-
-	       cu.convert("kg","1/fm",o2scl_mks::mass_proton))*hc_mev_fm;
+	      (cu.convert("kg","1/fm",o2scl_const::mass_neutron_f<double>())-
+	       cu.convert("kg","1/fm",o2scl_const::mass_proton_f<double>()))*hc_mev_fm;
 	    Eint.set(i,k,j,dtemp2);
 	  }
 	  // filling factor
@@ -1373,7 +1373,7 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
     rho[i]=pow(10.0,rho[i]);
     // Convert from g/cm^3 to baryon density through the 
     // atomic mass unit
-    double nb=rho[i]/o2scl_cgs::unified_atomic_mass/1.0e39;
+    double nb=rho[i]/o2scl_const::unified_atomic_mass_f<double>(o2scl_const::o2scl_cgs)/1.0e39;
     grid.push_back(nb);
     nB_grid.push_back(nb);
   }
@@ -1497,16 +1497,16 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 	    // For log energy, first undo the log and add the shift
 	    double energy=-energy_shift+pow(10.0,dat.get(k,m,j));
 	    // Multiply by atomic mass unit to get erg
-	    energy*=o2scl_cgs::unified_atomic_mass;
+	    energy*=o2scl_const::unified_atomic_mass_f<double>(o2scl_const::o2scl_cgs);
 	    // Then convert to MeV
-	    energy*=1.0e-6/o2scl_cgs::electron_volt;
+	    energy*=1.0e-6/o2scl_const::electron_volt_f<double>(o2scl_const::o2scl_cgs);
 	    // Set the new value
 	    arr[indices[i]]->set(j,k,m,energy);
 	  } else if (i==13) {
 	    // For log pressure, first undo the log
 	    double press=pow(10.0,dat.get(k,m,j));
 	    // Then convert to MeV/fm^3
-	    press*=1.0e-45/o2scl_cgs::electron_volt;
+	    press*=1.0e-45/o2scl_const::electron_volt_f<double>(o2scl_const::o2scl_cgs);
 	    arr[indices[i]]->set(j,k,m,press);
 	  } else if (i==15) {
 	    // Neutron chemical potential
@@ -1516,7 +1516,7 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 	    //} else {
 	    //arr[indices[i]]->set
 	    //(j,k,m,dat.get(k,m,j)+938.0-cu.convert
-	    //("kg","MeV",o2scl_mks::mass_neutron));
+	    //("kg","MeV",o2scl_const::mass_neutron));
 	    //}
 	  } else if (i==16) {
 	    // Proton chemical potential
@@ -1525,12 +1525,12 @@ void eos_sn_oo::load(std::string fname, size_t mode) {
 	    //if (mode==ls_mode) {
 	    //arr[indices[i]]->
 	    //set(j,k,m,dat.get(k,m,j)+
-	    //cu.convert("kg","MeV",o2scl_mks::mass_neutron)-
-	    //cu.convert("kg","MeV",o2scl_mks::mass_proton));
+	    //cu.convert("kg","MeV",o2scl_const::mass_neutron)-
+	    //cu.convert("kg","MeV",o2scl_const::mass_proton));
 	    //} else {
 	    //arr[indices[i]]->set
 	    //(j,k,m,dat.get(k,m,j)+938.0-
-	    //cu.convert("kg","MeV",o2scl_mks::mass_proton));
+	    //cu.convert("kg","MeV",o2scl_const::mass_proton));
 	    //}
 	  } else {
 	    arr[indices[i]]->set(j,k,m,dat.get(k,m,j));
@@ -1863,9 +1863,9 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 	      double Fint_tmp=t.interp(1,grid[k],ell);
 	      double Ye_tmp=Fint.get_grid(1,j);
 	      double Fint_new=Fint_tmp+o2scl_const::hc_mev_fm*
-		(cu.convert("kg","1/fm",o2scl_mks::mass_proton)-Ye_tmp*
-		 cu.convert("kg","1/fm",o2scl_mks::mass_proton)-
-		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
+		(cu.convert("kg","1/fm",o2scl_const::mass_proton_f<double>())-Ye_tmp*
+		 cu.convert("kg","1/fm",o2scl_const::mass_proton_f<double>())-
+		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_const::mass_neutron_f<double>()));
 	      Fint.set(k,j,i,Fint_new);
 	    } else if (ell==5) {
 	      // The internal energy in the table is stored with respect
@@ -1873,9 +1873,9 @@ void eos_sn_stos::load(std::string fname, size_t mode) {
 	      double Eint_tmp=t.interp(1,grid[k],ell);
 	      double Ye_tmp=Eint.get_grid(1,j);
 	      double Eint_new=Eint_tmp+
-		(cu.convert("kg","MeV",o2scl_mks::unified_atomic_mass)-
-		 Ye_tmp*cu.convert("kg","MeV",o2scl_mks::mass_proton)-
-		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_mks::mass_neutron));
+		(cu.convert("kg","MeV",o2scl_const::unified_atomic_mass_f<double>())-
+		 Ye_tmp*cu.convert("kg","MeV",o2scl_const::mass_proton_f<double>())-
+		 (1.0-Ye_tmp)*cu.convert("kg","MeV",o2scl_const::mass_neutron_f<double>()));
 	      Eint.set(k,j,i,Eint_new);
 	    } else if (ell==6) {
 	      Sint.set(k,j,i,t.interp(1,grid[k],ell));
