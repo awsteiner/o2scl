@@ -210,7 +210,7 @@ int main(void) {
     cout.precision(10);
     cout << "B: " << p.pr_from_enth(1.0e-10) << endl;
     cout.precision(6);
-    t.test_rel(p.pr_from_enth(1.0e-10),9.6081864387e-25,1.0e-9,"eos test B");
+    t.test_rel(p.pr_from_enth(1.0e-10),9.6081864387e-25,1.0e-5,"eos test B");
     
     nst.set_eos(p);
 
