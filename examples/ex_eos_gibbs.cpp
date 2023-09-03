@@ -143,7 +143,7 @@ public:
   double B;
 
   /// Surface tension (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
-  double sigma;
+  double surften;
 
   /// The entropy per baryon (default 0.0)
   double sonB;
@@ -380,6 +380,57 @@ public:
     return 0;
   }
 
+  /** \brief Solve for the mixed phase (with no Coulomb or surface)
+   */
+  int f_mixed_phase_Ye(size_t nv, const ubvector &x, ubvector &y,
+                       double Ye, double &nB, double &chi) {
+    
+    n.n=x[0];
+    p.n=x[1];
+    e.mu=x[2];
+    
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[3];
+    }
+
+    ptr_h->calc_temp_e(n,p,T,hth);
+    
+    fr.pair_mu(e,T);
+    mu.mu=e.mu;
+    fr.pair_mu(mu,T);
+
+    double quark_nqch, quark_nQ;
+    u.mu=n.mu/3.0-e.mu*2.0/3.0;
+    d.mu=n.mu/3.0+e.mu/3.0;
+    s.mu=d.mu;
+    ptr_q->calc_temp_p(u,d,s,T,qth);
+    
+    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+    quark_nQ=u.n+d.n+s.n;
+      
+    chi=(e.n+mu.n-quark_nqch)/(p.n-quark_nqch);
+
+    // Update the energy density and pressure
+    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
+    tot.pr=hth.pr+e.pr;
+    if (sonB>0.0) {
+      tot.en=hth.en*chi+qth.en*(1.0-chi)+e.ed;
+    } else {
+      tot.en=0.0;
+    }
+
+    y[0]=hth.pr-qth.pr;
+    y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
+    y[2]=e.n/nB-Ye;
+
+    if (sonB>0.0) {
+      y[3]=sonB-tot.en/nB;
+    }
+    
+    return 0;
+  }
+
   /** \brief Solve for the quark phase
    */
   int f_quark_phase(size_t nv, const ubvector &x, ubvector &y,
@@ -463,6 +514,55 @@ public:
     return 0;
   }
   
+  /** \brief Solve for the beginning of the mixed phase at fixed Ye
+   */
+  int f_beg_mixed_phase_Ye(size_t nv, const ubvector &x, ubvector &y,
+                           double Ye, double &nB) {
+    
+    size_t ix=0;
+    n.n=x[ix++];
+    p.n=x[ix++];
+    e.mu=x[ix++];
+    
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[ix++];
+    }
+    leptons_in(ix,x);
+
+    ptr_h->calc_temp_e(n,p,T,hth);
+
+    // Compute total baryon density
+    nB=n.n+p.n;
+
+    nu_e.mu=n.mu-p.mu-e.mu;
+    mu.mu=e.mu-nu_e.mu+nu_mu.mu;
+
+    u.mu=n.mu/3.0-e.mu*2.0/3.0;
+    d.mu=n.mu/3.0+e.mu/3.0;
+    s.mu=d.mu;
+    ptr_q->calc_temp_p(u,d,s,T,qth);
+    
+    ix=0;
+    leptons_out(ix,y,T,nB);
+
+    y[ix++]=hth.pr-qth.pr;
+    // Ensure electric neutrality in the hadronic phase
+    y[ix++]=p.n-e.n-mu.n;
+    y[ix++]=e.n/nB-Ye;
+    if (sonB>0.0) {
+      tot.en=hth.en+e.en+mu.en;
+      if (nu_e.mu!=0.0) tot.en+=nu_e.en;
+      if (nu_mu.mu!=0.0) tot.en+=nu_mu.en;
+      y[ix++]=sonB-tot.en/nB;
+    }
+
+    //cout << "y: ";
+    //vector_out(cout,nv,y,true);
+
+    return 0;
+  }
+  
   /** \brief Solve for the end of the mixed phase
    */
   int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
@@ -501,6 +601,51 @@ public:
     y[0]=hth.pr-qth.pr;
     // Ensure electric neutrality from quarks alone
     y[1]=quark_nqch-e.n-mu.n;
+
+    return 0;
+  }
+
+  /** \brief Solve for the end of the mixed phase
+   */
+  int f_end_mixed_phase_Ye(size_t nv, const ubvector &x, ubvector &y,
+                           double &nB) {
+
+    n.n=x[0];
+    p.n=x[1];
+    e.mu=x[2];
+    
+    double T=0.0;
+    if (sonB>0.0) {
+      T=x[3];
+    }
+
+    ptr_h->calc_temp_e(n,p,T,hth);
+    
+    fr.calc_mu_zerot(e);
+    mu.mu=e.mu;
+    fr.calc_mu_zerot(mu);
+
+    double quark_nqch, quark_nQ;
+
+    u.mu=n.mu/3.0-e.mu*2.0/3.0;
+    d.mu=n.mu/3.0+e.mu/3.0;
+    s.mu=d.mu;
+    ptr_q->calc_temp_p(u,d,s,T,qth);
+    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
+    quark_nQ=u.n+d.n+s.n;
+    
+    // Update the energy density and pressure
+    tot.pr=qth.pr+e.pr;
+    tot.ed=qth.ed+e.ed;
+
+    // Compute total baryon density
+    nB=quark_nQ/3.0;
+    
+    y[0]=hth.pr-qth.pr;
+    // Ensure electric neutrality from quarks alone
+    y[1]=quark_nqch-e.n-mu.n;
+    // Fix electron fraction
+    y[2]=e.n/nB-Ye;
 
     return 0;
   }
@@ -588,12 +733,12 @@ public:
 
   /** \brief The Coulomb function
    */
-  double fcoul(double d, double chi) {
+  double fcoul(double dim, double chi) {
     double ret;
-    if (d==2.0) {
+    if (dim==2.0) {
       return 0.25*(chi-1.0-log(chi));
     }
-    ret=(2.0/(d-2.0)*(1.0-0.5*d*pow(chi,1.0-2.0/d))+chi)/(d+2.0);
+    ret=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chi,1.0-2.0/dim))+chi)/(dim+2.0);
     return ret;
   }
 
@@ -640,12 +785,12 @@ public:
     if (chi>0.5) xglen=1.0-chi;
     bool andrew_mode=true;
     if (andrew_mode) {
-      esurf=dim*xglen*sigma/r_rare;
+      esurf=dim*xglen*surften/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
 	o2scl_const::fine_structure_f<double>()*r_rare*r_rare*
         xglen*fcoul(dim,xglen);
     } else {
-      esurf=dim*chi*sigma/r_rare;
+      esurf=dim*chi*surften/r_rare;
       ecoul=2.0*pi*pow(p.n-quark_nqch,2.0)*
 	o2scl_const::fine_structure_f<double>()*r_rare*r_rare*
         chi*fcoul(dim,xglen);
@@ -660,7 +805,7 @@ public:
 
     //cout << 1.0/cbrt(4.0*pi*fabs(p.n*p.n-quark_nqch*quark_nqch)*
     //o2scl_const::fine_structure_f<double>()/
-    //		       sigma/dim*fcoul(dim,chi)) << endl;
+    //		       surften/dim*fcoul(dim,chi)) << endl;
     /*
       cout << "z: " << x[0] << " " << x[1] << " "
       << fabs(p.n*p.n-quark_nqch*quark_nqch) << " "
@@ -675,7 +820,7 @@ public:
 
     skyrme_load(sk,"NRAPR");
     ptr_h=&sk;
-    bag.bag_constant=200.0/hc_mev_fm;
+    bag.bag_constant=200.0/hc_mev_fm_f<double>();
     ptr_q=&bag;
 
     // Nucleon initialization
@@ -701,20 +846,26 @@ public:
     nu_mu.init(0.0,1.0);
 
     // Default quark masses
-    u.init(0.0,6.0);
+    u.init(mass_up_mev_fm_f<double>()/hc_mev_fm_f<double>()_f<double>(),6.0);
     d.init(0.0,6.0);
-    s.init(95.0/hc_mev_fm,6.0);
+    s.init(95.0/hc_mev_fm_f<double>(),6.0);
     u.inc_rest_mass=true;
     d.inc_rest_mass=true;
     s.inc_rest_mass=true;
 
     // Hyperon initialization
-    lam.init(mass_lambda_MeV/hc_mev_fm,2.0);
-    sigp.init(mass_sigma_plus_MeV/hc_mev_fm,2.0);
-    sigz.init(mass_sigma_zero_MeV/hc_mev_fm,2.0);
-    sigm.init(mass_sigma_minus_MeV/hc_mev_fm,2.0);
-    casz.init(mass_cascade_zero_MeV/hc_mev_fm,2.0);
-    casm.init(mass_cascade_minus_MeV/hc_mev_fm,2.0);
+    lam.init(mass_lambda_mev_fm_f<double>()/
+             hc_mev_fm_f<double>()_f<double>(),2.0);
+    sigp.init(mass_sigma_plus_mev_fm_f<double>()/
+              hc_mev_fm_f<double>()_f<double>(),2.0);
+    sigz.init(mass_sigma_zero_mev_fm_f<double>()/
+              hc_mev_fm_f<double>()_f<double>(),2.0);
+    sigm.init(mass_sigma_minus_mev_fm_f<double>()/
+              hc_mev_fm_f<double>()_f<double>(),2.0);
+    casz.init(mass_cascade_zero_mev_fm_f<double>()/
+              hc_mev_fm_f<double>()_f<double>(),2.0);
+    casm.init(mass_cascade_minus_mev_fm_f<double>()/
+              hc_mev_fm_f<double>()_f<double>(),2.0);
     lam.non_interacting=false;
     sigp.non_interacting=false;
     sigz.non_interacting=false;
@@ -737,7 +888,7 @@ public:
     double step[1]={0.01};
     mmin.set_step(1,step);
 
-    sigma=1.0/hc_mev_fm;
+    surften=1.0/hc_mev_fm_f<double>();
     
     mp_start_fix=0.0;
 
@@ -797,8 +948,9 @@ public:
 
     ubvector x(8), y(8);
     
-    cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
-	 << p.m*hc_mev_fm << " " << e.m*hc_mev_fm << " MeV" << endl;
+    cout << "Masses (n,p,e): " << n.m*hc_mev_fm_f<double>() << " "
+	 << p.m*hc_mev_fm_f<double>() << " "
+         << e.m*hc_mev_fm_f<double>() << " MeV" << endl;
     cout << endl;
 
     // -----------------------------------------------------------------
@@ -823,30 +975,30 @@ public:
       x[1]=1.0;
       mh.msolve(2,x,fp_bag_constant);
       B=x[1];
-      cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
+      cout << "B: " << B*hc_mev_fm_f<double>() << " MeV/fm^3" << endl;
       cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
 	   << " fm^{-3}" << endl;
       cout << "Quark densities (u,d,s): " << u.n << " " << d.n << " "
 	   << s.n << " fm^{-3}" << endl;
-      cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm << " "
-	   << p.mu*hc_mev_fm << " " << e.mu*hc_mev_fm << " MeV" << endl;
-      cout << "Quark chem. pots. (u,d,s): " << u.mu*hc_mev_fm << " "
-	   << d.mu*hc_mev_fm << " " << s.mu*hc_mev_fm << " fm^{-3}" << endl;
-      cout << "Electron energy density: " << e.ed*hc_mev_fm << " MeV/fm^3"
+      cout << "Chem pots. (n,p,e): " << n.mu*hc_mev_fm_f<double>() << " "
+	   << p.mu*hc_mev_fm_f<double>() << " " << e.mu*hc_mev_fm_f<double>() << " MeV" << endl;
+      cout << "Quark chem. pots. (u,d,s): " << u.mu*hc_mev_fm_f<double>() << " "
+	   << d.mu*hc_mev_fm_f<double>() << " " << s.mu*hc_mev_fm_f<double>() << " fm^{-3}" << endl;
+      cout << "Electron energy density: " << e.ed*hc_mev_fm_f<double>() << " MeV/fm^3"
 	   << endl;
-      cout << "Total pressure: " << tot.pr*hc_mev_fm << " MeV/fm^3" << endl;
-      cout << "Total energy density: " << tot.ed*hc_mev_fm
+      cout << "Total pressure: " << tot.pr*hc_mev_fm_f<double>() << " MeV/fm^3" << endl;
+      cout << "Total energy density: " << tot.ed*hc_mev_fm_f<double>()
 	   << " MeV/fm^3" << endl;
       {
-	cout << "Skyrme energy density: " << hth.ed*hc_mev_fm << " MeV/fm^3"
+	cout << "Skyrme energy density: " << hth.ed*hc_mev_fm_f<double>() << " MeV/fm^3"
 	     << endl;
-	cout << "Skyrme pressure: " << hth.pr*hc_mev_fm << " MeV/fm^3"
+	cout << "Skyrme pressure: " << hth.pr*hc_mev_fm_f<double>() << " MeV/fm^3"
 	     << endl;
       }
       {
 	cout << "Quark energy dens. & pressure: "
-	     << qth.ed*hc_mev_fm << " MeV/fm^3, "
-	     << qth.pr*hc_mev_fm << " MeV/fm^3"
+	     << qth.ed*hc_mev_fm_f<double>() << " MeV/fm^3, "
+	     << qth.pr*hc_mev_fm_f<double>() << " MeV/fm^3"
 	     << endl;
 	//cout << "Number density of quarks: " << quark_nQ << " 1/fm^3" << endl;
 	//cout << "Charge density in quark matter: " << quark_nqch
@@ -915,11 +1067,11 @@ public:
       for(nB=0.08;nB<mp_start;nB+=0.01) {
 	cout << nB << endl;
 	mh.msolve(1,x,fp_had_phase);
-	std::vector<double> line={nB,n.n,p.n,e.n,mu.n,e.ed*hc_mev_fm,
-				  hth.ed*hc_mev_fm,
-				  (hth.ed+e.ed+mu.ed)*hc_mev_fm,
-				  e.pr*hc_mev_fm,hth.pr*hc_mev_fm,
-				  (hth.pr+e.pr+mu.pr)*hc_mev_fm};
+	std::vector<double> line={nB,n.n,p.n,e.n,mu.n,e.ed*hc_mev_fm_f<double>(),
+				  hth.ed*hc_mev_fm_f<double>(),
+				  (hth.ed+e.ed+mu.ed)*hc_mev_fm_f<double>(),
+				  e.pr*hc_mev_fm_f<double>(),hth.pr*hc_mev_fm_f<double>(),
+				  (hth.pr+e.pr+mu.pr)*hc_mev_fm_f<double>()};
 	thad.line_of_data(line);
       }
       cout << endl;
@@ -937,11 +1089,11 @@ public:
       for(nB=mp_end;nB<1.5001;nB+=0.01) {
 	cout << nB << " " << u.n << " " << d.n << " " << s.n << endl;
 	mh.msolve(2,x,fp_quark_phase);
-	std::vector<double> line={nB,x[0],x[1],e.ed*hc_mev_fm,
-				  e.pr*hc_mev_fm,qth.ed*hc_mev_fm,
-				  qth.pr*hc_mev_fm,
-				  (qth.ed+e.ed+mu.ed)*hc_mev_fm,
-				  (qth.pr+e.pr+mu.pr)*hc_mev_fm};
+	std::vector<double> line={nB,x[0],x[1],e.ed*hc_mev_fm_f<double>(),
+				  e.pr*hc_mev_fm_f<double>(),qth.ed*hc_mev_fm_f<double>(),
+				  qth.pr*hc_mev_fm_f<double>(),
+				  (qth.ed+e.ed+mu.ed)*hc_mev_fm_f<double>(),
+				  (qth.pr+e.pr+mu.pr)*hc_mev_fm_f<double>()};
 	tq.line_of_data(line);
       }
       cout << endl;
@@ -975,20 +1127,20 @@ public:
 	line.push_back(u.n);
 	line.push_back(d.n);
 	line.push_back(s.n);
-	line.push_back(e.ed*hc_mev_fm);
-	line.push_back(e.pr*hc_mev_fm);
-	line.push_back(tot.ed*hc_mev_fm);
-	line.push_back(tot.pr*hc_mev_fm);
+	line.push_back(e.ed*hc_mev_fm_f<double>());
+	line.push_back(e.pr*hc_mev_fm_f<double>());
+	line.push_back(tot.ed*hc_mev_fm_f<double>());
+	line.push_back(tot.pr*hc_mev_fm_f<double>());
 	{
-	  line.push_back(hth.ed*hc_mev_fm);
-	  line.push_back(hth.pr*hc_mev_fm);
+	  line.push_back(hth.ed*hc_mev_fm_f<double>());
+	  line.push_back(hth.pr*hc_mev_fm_f<double>());
 	}
 	{
-	  line.push_back(qth.ed*hc_mev_fm);
-	  line.push_back(qth.pr*hc_mev_fm);
+	  line.push_back(qth.ed*hc_mev_fm_f<double>());
+	  line.push_back(qth.pr*hc_mev_fm_f<double>());
 	}
-	line.push_back(n.mu*hc_mev_fm);
-	line.push_back(p.mu*hc_mev_fm);
+	line.push_back(n.mu*hc_mev_fm_f<double>());
+	line.push_back(p.mu*hc_mev_fm_f<double>());
 	line.push_back(chi);
 	tmixed.line_of_data(line.size(),line);
       }
@@ -1076,20 +1228,20 @@ public:
     } else if (sv[1]=="SPL00") {
       ptr_h=&rmf;
 
-      n.m=939.0/hc_mev_fm;
-      p.m=939.0/hc_mev_fm;
+      n.m=939.0/hc_mev_fm_f<double>();
+      p.m=939.0/hc_mev_fm_f<double>();
       
       rmf.set_n_and_p(n,p);
       
-      rmf.mnuc=939.0/hc_mev_fm;
+      rmf.mnuc=939.0/hc_mev_fm_f<double>();
       rmf.n0=0.16;
-      rmf.eoa=16.0/hc_mev_fm;
-      rmf.comp=250.0/hc_mev_fm;
+      rmf.eoa=16.0/hc_mev_fm_f<double>();
+      rmf.comp=250.0/hc_mev_fm_f<double>();
       rmf.msom=0.6;
-      rmf.esym=36.0/hc_mev_fm;
-      rmf.ms=500.0/hc_mev_fm;
-      rmf.mw=763.0/hc_mev_fm;
-      rmf.mr=770.0/hc_mev_fm;
+      rmf.esym=36.0/hc_mev_fm_f<double>();
+      rmf.ms=500.0/hc_mev_fm_f<double>();
+      rmf.mw=763.0/hc_mev_fm_f<double>();
+      rmf.mr=770.0/hc_mev_fm_f<double>();
       rmf.zeta=0.0;
       rmf.xi=0.0;
       rmf.a1=0.0;
@@ -1114,10 +1266,10 @@ public:
     } else if (sv[1]=="SPL00_hyp") {
       ptr_h=&rmf_hyp;
       rmf_hyp.n0=0.16;
-      rmf_hyp.eoa=16.0/hc_mev_fm;
-      rmf_hyp.comp=250.0/hc_mev_fm;
+      rmf_hyp.eoa=16.0/hc_mev_fm_f<double>();
+      rmf_hyp.comp=250.0/hc_mev_fm_f<double>();
       rmf_hyp.msom=0.6;
-      rmf_hyp.esym=36.0/hc_mev_fm;
+      rmf_hyp.esym=36.0/hc_mev_fm_f<double>();
       rmf_hyp.zeta=0.0;
       rmf_hyp.xi=0.0;
       rmf_hyp.a1=0.0;
@@ -1159,28 +1311,28 @@ public:
       s.non_interacting=true;
     } else if (sv[1]=="SPL00_bag") {
       ptr_q=&bag;
-      u.m=5.5/hc_mev_fm;
-      d.m=5.5/hc_mev_fm;
-      s.m=140.7/hc_mev_fm;
+      u.m=5.5/hc_mev_fm_f<double>();
+      d.m=5.5/hc_mev_fm_f<double>();
+      s.m=140.7/hc_mev_fm_f<double>();
       u.non_interacting=true;
       d.non_interacting=true;
       s.non_interacting=true;
-      bag.bag_constant=200.0/hc_mev_fm;
+      bag.bag_constant=200.0/hc_mev_fm_f<double>();
       mp_start_fix=0.0;
       cout << "Selected the bag model from SPL00." << endl;
     } else if (sv[1]=="SPL00_njl") {
       ptr_q=&njl;
-      u.m=5.5/hc_mev_fm;
-      d.m=5.5/hc_mev_fm;
-      s.m=140.7/hc_mev_fm;
+      u.m=5.5/hc_mev_fm_f<double>();
+      d.m=5.5/hc_mev_fm_f<double>();
+      s.m=140.7/hc_mev_fm_f<double>();
       u.non_interacting=false;
       d.non_interacting=false;
       s.non_interacting=false;
       njl.set_quarks(u,d,s);
-      njl.up_default_mass=5.5/hc_mev_fm;
-      njl.down_default_mass=5.5/hc_mev_fm;
-      njl.strange_default_mass=140.7/hc_mev_fm;
-      double L=602.3/hc_mev_fm;
+      njl.up_default_mass=5.5/hc_mev_fm_f<double>();
+      njl.down_default_mass=5.5/hc_mev_fm_f<double>();
+      njl.strange_default_mass=140.7/hc_mev_fm_f<double>();
+      double L=602.3/hc_mev_fm_f<double>();
       njl.set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
       mp_start_fix=0.0;
     } else if (sv[1]=="njl") {

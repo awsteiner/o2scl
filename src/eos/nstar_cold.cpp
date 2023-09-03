@@ -33,16 +33,16 @@ using namespace o2scl_const;
 nstar_cold::nstar_cold() : eost(new table_units<>) {
 
   neut.init(o2scl_settings.get_convert_units().convert
-            ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+            ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   prot.init(o2scl_settings.get_convert_units().convert
-            ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+            ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
   neut.non_interacting=false;
   prot.non_interacting=false;
 
   e.init(o2scl_settings.get_convert_units().convert
-	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	 ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
   mu.init(o2scl_settings.get_convert_units().convert
-	  ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+	  ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
   
   def_tov.verbose=1;
   def_eos_tov.verbose=1;

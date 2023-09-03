@@ -47,7 +47,7 @@
 */
 namespace o2scl_const {
 
-  /// Unit prefixes
+  /// \name Unit prefixes
   //@{
   const double yotta=1e24;
   const double zetta=1e21;
@@ -77,47 +77,30 @@ namespace o2scl_const {
 
   /// \name Mathematical constants
   //@{
+  /// \f$ \pi \f$ 
   template<class fp_t> fp_t pi_f() {
     return boost::math::constants::pi<fp_t>();
   }
+  /// \f$ \pi^2 \f$ 
   template<class fp_t> fp_t pi2_f() {
     return boost::math::constants::pi_sqr<fp_t>();
   }
+  /// \f$ \sqrt{\pi} \f$ 
   template<class fp_t> fp_t root_pi_f() {
     return boost::math::constants::root_pi<fp_t>();
   }
+  /// \f$ \zeta(2) \f$ 
   template<class fp_t> fp_t zeta2_f() {
     return boost::math::constants::zeta_two<fp_t>();
   }
+  /// \f$ \zeta(3) \f$ 
   template<class fp_t> fp_t zeta3_f() {
     return boost::math::constants::zeta_three<fp_t>();
   }
+  /// The Euler-Mascheroni constant
   template<class fp_t> fp_t euler_f() {
     return boost::math::constants::euler<fp_t>();
   }
-  
-  /// \f$ \pi \f$ 
-  const double pi=boost::math::constants::pi<double>();
-  /// \f$ \pi^2 \f$ 
-  const double pi2=boost::math::constants::pi_sqr<double>();
-  /// \f$ \sqrt{\pi} \f$ 
-  const double root_pi=boost::math::constants::root_pi<double>();
-  /*
-  /// \f$ \zeta(3/2) \f$
-  const double zeta32=2.6123753486854883433;
-  /// \f$ \zeta(2) \f$
-  const double zeta2=boost::math::constants::zeta_two<double>();
-  /// \f$ \zeta(5/2) \f$
-  const double zeta52=1.3414872572509171798;
-  /// \f$ \zeta(3) \f$
-  const double zeta3=boost::math::constants::zeta_three<double>();
-  /// \f$ \zeta(5) \f$
-  const double zeta5=1.0369277551433699263;
-  /// \f$ \zeta(7) \f$
-  const double zeta7=1.0083492773819228268;
-  /// The Euler-Mascheroni constant
-  const double euler=boost::math::constants::euler<double>();
-  */
   //@}
 
   /// \name Physical constants
@@ -131,14 +114,15 @@ namespace o2scl_const {
     return ret;
   }
   
-  /** \brief Avogadro's number (CODATA 2018 value; exact)
+  /** \brief Avogadro's number (exact)
    */
   template<class fp_t> fp_t avogadro_f() {
     fp_t ret=602214076e15;
     return ret;
   }
   
-  /** \brief Speed of light */
+  /** \brief Speed of light (exact) 
+   */
   template<class fp_t> fp_t speed_of_light_f(size_t system=o2scl_mks) {
     if (system==o2scl_cgs) {
       fp_t result=29979245800;
@@ -148,7 +132,8 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Planck constant
+  /** \brief Planck constant (exact)
+   */
   template<class fp_t> fp_t planck_f(size_t system=o2scl_mks) {
     fp_t numer=662607015;
     fp_t denom=100000000;
@@ -167,20 +152,21 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Reduced Planck constant
+  /** \brief Reduced Planck constant (derived; exact)
+   */
   template<class fp_t> fp_t hbar_f(size_t system=o2scl_mks) {
     return planck_f<fp_t>(system)/2/
       boost::math::constants::pi<fp_t>();
   }
   
   /** \brief Reduced Planck's constant times speed of light
-      \f$ \hbar c \f$
+      \f$ \hbar c \f$ (derived; exact)
    */
   template<class fp_t> fp_t hbarc_f(size_t system=o2scl_mks) {
     return hbar_f<fp_t>(system)*speed_of_light_f<fp_t>(system);
   }
 
-  /** \brief Boltzmann's constant (CODATA 2018 value) */
+  /** \brief Boltzmann's constant (exact) */
   template<class fp_t> fp_t boltzmann_f(size_t system=o2scl_mks) {
     fp_t numer=1380649;
     fp_t denom=1000000;
@@ -200,11 +186,7 @@ namespace o2scl_const {
   }
 
   /** \brief Gravitational constant (CODATA 2018 value)
-      
-      Of course the gravitational constant is not known precisely, but
-      this function ensures there is no additional noise in the
-      multiprecision generalization.
-  */
+   */
   template<class fp_t> fp_t gravitational_constant_f
   (size_t system=o2scl_mks) {
     if (system==o2scl_cgs) {
@@ -217,7 +199,7 @@ namespace o2scl_const {
     return numer/denom;
   }
   
-  /// Elementary charge in C
+  /// Elementary charge in C (exact)
   template<class fp_t> fp_t elem_charge_f() {
     fp_t numer=1602176634;
     fp_t denom=1000000000;
@@ -229,7 +211,7 @@ namespace o2scl_const {
     return result;
   }
 
-  /// Electron volt (CODATA 2018 value)
+  /// Electron volt (exact)
   template<class fp_t> fp_t electron_volt_f(size_t system=o2scl_mks) {
     fp_t numer=1602176634;
     fp_t denom=1000000000;
@@ -249,7 +231,7 @@ namespace o2scl_const {
   }
 
   /** \brief Reduced Planck constant times speed of light 
-      in \f$ \mathrm{MeV}~\mathrm{fm} \f$
+      in \f$ \mathrm{MeV}~\mathrm{fm} \f$ (derived; exact)
   */
   template<class fp_t> fp_t hc_mev_fm_f() {
     fp_t hbarc=hbar_f<fp_t>()*speed_of_light_f<fp_t>()/
@@ -257,7 +239,10 @@ namespace o2scl_const {
     return hbarc;
   }
 
-  /// Stefan-Boltzmann constant in (k)g / K^4 s^3 (CODATA 2018; derived; exact)
+  /** \brief Stefan-Boltzmann constant (\f$ \mathrm{kg} / \mathrm{K}^4 
+      \mathrm{s}^3 \f$ in MKS and \f$ \mathrm{g} / \mathrm{K}^4 
+      \mathrm{s}^3 \f$ in CGS; derived; exact)
+  */
   template<class fp_t> fp_t stefan_boltz_cons_f(size_t system=o2scl_mks) {
     return pi2_f<fp_t>()*boltzmann_f<fp_t>(system)*
       boltzmann_f<fp_t>(system)*boltzmann_f<fp_t>(system)*
@@ -266,12 +251,6 @@ namespace o2scl_const {
       speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
   }
   
-  /// \f$ \hbar c \f$ in MeV fm (exact)
-  const double hc_mev_fm=hc_mev_fm_f<double>();
-
-  /// \f$ \hbar c \f$ in MeV cm (exact)
-  const double hc_mev_cm=hc_mev_fm*1.0e-13;
-
   /// \f$ \sin^2 \theta_W \f$ (unitless; PDG 2020 value)
   template<class fp_t> fp_t sin2_theta_weak_f() {
     fp_t numer=23121;
@@ -290,8 +269,10 @@ namespace o2scl_const {
     return ret;
   }
 
-  /** \brief Fermi coupling constant in \f$ \mathrm{GeV}^{-2} \f$
-      (CODATA 2018 value)
+  /** \brief Fermi coupling constant in ( \f$ \mathrm{s}^4 /
+      \mathrm{m}^4 \mathrm{kg}^2 \f$ in MKS and \f$ \mathrm{s}^4 /
+      \mathrm{cm}^4 \mathrm{g}^2 \f$ in CGS; derived from \ref
+      gfermi_gev2_f())
   */
   template<class fp_t> fp_t gfermi_f(size_t system=o2scl_mks) {
     return gfermi_gev2_f<fp_t>()/electron_volt_f<fp_t>(system)/
@@ -318,7 +299,10 @@ namespace o2scl_const {
     return astronomical_unit_f<fp_t>(system)*648000/pi_f<fp_t>();
   }
   
-  /// Acccleration due to gravity in cm / s^2 (CODATA 2018; now exact)
+  /** \brief Acccleration due to gravity ( \f$ \mathrm{m} /
+      \mathrm{s}^2 \f$ in MKS and \f$ \mathrm{cm} / \mathrm{s}^2 \f$
+      in CGS ) (CODATA 2018; now exact)
+  */
   template<class fp_t> fp_t grav_accel_f
   (size_t system=o2scl_mks) {
     if (system==o2scl_cgs) {
@@ -331,44 +315,6 @@ namespace o2scl_const {
     return numer/denom;
   }
 
-  /** \brief Solar mass times gravitational constant in cm^3 / s^2
-      (IAU 2015 value, see https://arxiv.org/abs/1510.07674)
-
-      Note that this value differs slightly in Barycentric Coordinate
-      Time and Barycentric Dynamical Time. This is the IAU's nominal
-      value.
-  */
-  template<class fp_t> fp_t solar_mass_param_f(size_t system=o2scl_mks) {
-    fp_t numer=13271244;
-    fp_t denom=10000000;
-    fp_t frac=(numer/denom);
-    if (system==o2scl_cgs) {
-      fp_t base=10;
-      fp_t exp=26;
-      fp_t powt=pow(base,exp);
-      fp_t result=frac*powt;
-      return result;
-    }
-    fp_t base=10;
-    fp_t exp=20;
-    fp_t powt=pow(base,exp);
-    fp_t result=frac*powt;
-    return result;
-  }
-
-  /// Mass of the sun in g (derived)
-  template<class fp_t> fp_t solar_mass_f(size_t system=o2scl_mks) {
-    return solar_mass_param_f<fp_t>(system)/
-      gravitational_constant_f<fp_t>(system);
-  }
-
-  /// Schwarzchild radius in cm (derived)
-  template<class fp_t> fp_t schwarzchild_radius_f
-  (size_t system=o2scl_mks) {
-    return 2*solar_mass_param_f<fp_t>(system)/
-      speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
-  }
-  
   /** \brief Sidereal year in s 
       (from https://pdg.lbl.gov/2021/reviews/contents_sports.html)
   */
@@ -442,7 +388,7 @@ namespace o2scl_const {
     return result;
   }
 
-  /// Proton mass (CODATA 2018 value)
+  /// Proton mass in AMU (CODATA 2018 value)
   template<class fp_t> fp_t mass_proton_amu_f() {
     fp_t numer=1007276466621;
     fp_t denom=1000000000000;
@@ -648,7 +594,15 @@ namespace o2scl_const {
 
   /// \name Chemical constants
   //@{
-  /// Rydberg constant in g cm^2 / s^2 (CODATA 2018 value)
+  /** \brief Rydberg constant (\f$ \mathrm{kg} \mathrm{m}^2 /
+      \mathrm{s}^2 \f$ in MKS and \f$ \mathrm{g} \mathrm{cm}^2 /
+      \mathrm{s}^2 \f$ in CGS; CODATA 2018 value)
+
+      This is referred to as the "Rydberg constant" by GSL and is
+      equal to \f$ h c R_{\infty} \f$. The value \f$ R_{\infty} \f$ is
+      the inverse Rydberg wavelength (also sometimes referred to as
+      the Rydberg constant).
+  */
   template<class fp_t> fp_t rydberg_f(size_t system=o2scl_mks) {
     fp_t numer=21798723611035;
     fp_t denom=10000000000000;
@@ -667,15 +621,18 @@ namespace o2scl_const {
     return result;
   }
 
-  /** \brief Molar gas constant, "R", in g cm^2 / K mol s^2 
-      (CODATA 2018; exact; derived)
+  /** \brief Molar gas constant, \f$ R\f$ , (\f$ \mathrm{kg}
+      \mathrm{m}^2 / \mathrm{K} \mathrm{mol} \mathrm{s}^2 \f$ in MKS
+      \f$ \mathrm{g} \mathrm{cm}^2 / \mathrm{K} \mathrm{mol}
+      \mathrm{s}^2 \f$ in CGS; derived; exact)
   */
   template<class fp_t> fp_t molar_gas_f(size_t system=o2scl_mks) {
     return avogadro_f<fp_t>()*boltzmann_f<fp_t>(system);
   }
 
-  /** \brief Molar volume of ideal gas at standard T and P in 
-      cm^3 / mol (CODATA 2018 value)
+  /** \brief Molar volume of ideal gas at standard T and P (\f$
+      \mathrm{m}/\mathrm{mol} \f$ in MKS and (\f$
+      \mathrm{cm}/\mathrm{mol} \f$ in CGS; CODATA 2018 value)
   */
   template<class fp_t> fp_t std_gas_volume_f(size_t system=o2scl_mks) {
     fp_t numer=2271095464;
@@ -698,8 +655,11 @@ namespace o2scl_const {
   
   /// \name Electromagnetic constants
   //@{
-  /// Electron magnetic moment in abamp cm^2 (CODATA 2018 value)
-  //const double electron_magnetic_moment=9.2847647043e-21;
+  /** \brief Electron magnetic moment (\f$ \mathrm{J}/\mathrm{T} \f$ 
+      in MKS; CODATA 2018 value)
+
+      \note This quantity is defined without a minus sign. 
+  */
   template<class fp_t> fp_t electron_mag_mom_f(size_t system=o2scl_mks) {
     fp_t numer=92847647043;
     fp_t denom=10000000000;
@@ -718,8 +678,9 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Proton magnetic moment in abamp cm^2 (CODATA 2018 value)
-  //const double proton_magnetic_moment=1.41060679736e-23;
+  /** \brief Proton magnetic moment (\f$ \mathrm{J}/\mathrm{T} \f$ 
+      in MKS; CODATA 2018 value)
+  */
   template<class fp_t> fp_t proton_mag_mom_f(size_t system=o2scl_mks) {
     fp_t numer=141060679736;
     fp_t denom=100000000000;
@@ -757,8 +718,9 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Bohr magneton in abamp cm^2 (CODATA 2018 value)
-  //const double bohr_magneton=9.2740100783e-21;
+  /** \brief Bohr magneton (\f$ \mathrm{J}/\mathrm{T} \f$ 
+      in MKS; CODATA 2018 value)
+  */
   template<class fp_t> fp_t bohr_magneton_f(size_t system=o2scl_mks) {
     fp_t numer=92740100783;
     fp_t denom=10000000000;
@@ -777,8 +739,9 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Nuclear magneton in abamp cm^2 (CODATA 2018 value)
-  //const double nuclear_magneton=5.0507837461e-24;
+  /** \brief Nuclear magneton (\f$ \mathrm{J}/\mathrm{T} \f$ 
+      in MKS; CODATA 2018 value)
+  */
   template<class fp_t> fp_t nuclear_magneton_f(size_t system=o2scl_mks) {
     fp_t numer=50507837461;
     fp_t denom=10000000000;
@@ -797,7 +760,7 @@ namespace o2scl_const {
     return result;
   }
   
-  /// Faraday constant in A s / mol (CODATA 2018 value; derived; exact)
+  /// Faraday constant in A s / mol (derived; exact)
   template<class fp_t> fp_t faraday_f(size_t system=o2scl_mks) {
     fp_t base=o2scl_const::avogadro_f<double>()*
       o2scl_const::electron_volt_f<double>(system);
@@ -807,7 +770,7 @@ namespace o2scl_const {
     return base;
   }
 
-  /// CODATA 2018
+  /// Vacuum permittivity in MKS units (CODATA 2018)
   template<class fp_t> fp_t vacuum_permittivity_f(size_t system=o2scl_mks) {
     fp_t numer=88541878128;
     fp_t denom=10000000000;
@@ -839,6 +802,101 @@ namespace o2scl_const {
     return result;
   }
   
+  /** \brief Electron charge squared in Gaussian units (derived)
+
+      In Gaussian Units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = 4 \pi \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - 4 \pi \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{8 \pi} \int | \vec{E} |^2 d^3 x \, ,
+      \quad 
+      \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
+      \f}
+  */
+  template<class fp_t> fp_t e2_gaussian_f() {
+    return o2scl_const::hc_mev_fm_f<fp_t>()*
+      o2scl_const::fine_structure_f<fp_t>();
+  }
+
+  /** \brief Electron charge sqaured in 
+      Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
+
+      In Heaviside-Lorentz units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{q_1 q_2}{4 \pi r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{1}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
+      \f}
+  */      
+  template<class fp_t> fp_t e2_hlorentz_f() {
+    return o2scl_const::fine_structure_f<fp_t>()*4*pi_f<fp_t>();
+  }
+
+  /** \brief Electron charge squared in SI(MKS) units (derived)
+
+      In MKS units:
+      \f{eqnarray*}
+      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
+      \quad
+      \vec{E}=-\vec{\nabla} \Phi \, ,
+      \quad
+      \nabla^2 \Phi = - \rho \, ,
+      &\\&
+      F=\frac{1}{4 \pi \varepsilon_0}\frac{q_1 q_2}{r^2} \, ,
+      \quad
+      W=\frac{1}{2} \int \rho V d^3 x
+      =\frac{\varepsilon_0}{2} \int | \vec{E} |^2 d^3 x \, ,
+      \quad
+      \alpha=\frac{e^2}{4 \pi \varepsilon_0 \hbar c}=\frac{1}{137}&
+      \f}
+
+      Note the conversion formulas
+      \f[
+      q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
+      \f]
+      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
+      Particles.
+  */      
+  template<class fp_t> fp_t elem_charge_squared_f() {
+    return elem_charge_f<fp_t>()*elem_charge_f<fp_t>();
+  }
+
+  /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
+      in Gaussian units in \f$\mathrm{fm}^{-2}\f$
+  */
+  template<class fp_t> fp_t ec_gauss_fm2_f() {
+    fp_t base=10;
+    fp_t exp=-34;
+    fp_t powt=pow(base,exp);
+    return elem_charge_f<fp_t>()*powt/hbar_f<fp_t>(o2scl_mks);
+  }
+
+  /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
+      \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
+
+      This is useful, e.g. in converting magnetic field squared
+      to an energy density.
+  */
+  template<class fp_t> fp_t gauss2_fm4_f() {
+    return ec_gauss_fm2_f<fp_t>()*ec_gauss_fm2_f<fp_t>()/
+      o2scl_const::fine_structure_f<fp_t>();
+  }
   //@}
   
   /// \name Time measurements (s)
@@ -985,105 +1043,6 @@ namespace o2scl_const {
   }
   //@}
 
-  /// \name E&M
-  //@{
-  /** \brief Electron charge squared in Gaussian units (derived)
-
-      In Gaussian Units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = 4 \pi \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - 4 \pi \rho \, ,
-      &\\&
-      F=\frac{q_1 q_2}{r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{1}{8 \pi} \int | \vec{E} |^2 d^3 x \, ,
-      \quad 
-      \alpha=\frac{e^2}{\hbar c}=\frac{1}{137}&
-      \f}
-  */
-  template<class fp_t> fp_t e2_gaussian_f() {
-    return o2scl_const::hc_mev_fm_f<fp_t>()*
-      o2scl_const::fine_structure_f<fp_t>();
-  }
-
-  /** \brief Electron charge sqaured in 
-      Heaviside-Lorentz units where \f$\hbar=c=1\f$ (derived)
-
-      In Heaviside-Lorentz units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - \rho \, ,
-      &\\&
-      F=\frac{q_1 q_2}{4 \pi r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{1}{2} \int | \vec{E} |^2 d^3 x \, ,
-      \quad
-      \alpha=\frac{e^2}{4 \pi}=\frac{1}{137}&
-      \f}
-  */      
-  template<class fp_t> fp_t e2_hlorentz_f() {
-    return o2scl_const::fine_structure_f<fp_t>()*4*pi_f<fp_t>();
-  }
-
-  /** \brief Electron charge squared in SI(MKS) units (derived)
-
-      In MKS units:
-      \f{eqnarray*}
-      &\vec{\nabla} \cdot \vec{E} = \rho \, ,
-      \quad
-      \vec{E}=-\vec{\nabla} \Phi \, ,
-      \quad
-      \nabla^2 \Phi = - \rho \, ,
-      &\\&
-      F=\frac{1}{4 \pi \varepsilon_0}\frac{q_1 q_2}{r^2} \, ,
-      \quad
-      W=\frac{1}{2} \int \rho V d^3 x
-      =\frac{\varepsilon_0}{2} \int | \vec{E} |^2 d^3 x \, ,
-      \quad
-      \alpha=\frac{e^2}{4 \pi \varepsilon_0 \hbar c}=\frac{1}{137}&
-      \f}
-
-      Note the conversion formulas
-      \f[
-      q_HL=\sqrt{4 \pi} q_G = \frac{1}{\sqrt{\varepsilon_0}} q_{SI}
-      \f]
-      as mentioned, e.g. in pg. 13 of D. Griffiths Intro to Elem. 
-      Particles.
-  */      
-  template<class fp_t> fp_t elem_charge_squared_f() {
-    return elem_charge_f<fp_t>()*elem_charge_f<fp_t>();
-  }
-
-  /** \brief 1 \f$\mathrm{Gauss}\f$ times the electron charge 
-      in Gaussian units in \f$\mathrm{fm}^{-2}\f$
-  */
-  template<class fp_t> fp_t ec_gauss_fm2_f() {
-    fp_t base=10;
-    fp_t exp=-34;
-    fp_t powt=pow(base,exp);
-    return elem_charge_f<fp_t>()*powt/hbar_f<fp_t>(o2scl_mks);
-  }
-
-  /** \brief Conversion factor from \f$ \mathrm{Gauss}^2 \f$ to
-      \f$\mathrm{fm}^{-4}\f$ in Gaussian units.
-
-      This is useful, e.g. in converting magnetic field squared
-      to an energy density.
-  */
-  template<class fp_t> fp_t gauss2_fm4_f() {
-    return ec_gauss_fm2_f<fp_t>()*ec_gauss_fm2_f<fp_t>()/
-      o2scl_const::fine_structure_f<fp_t>();
-  }
-  //@}
-
   /// \name Particle masses from PDG 2020
   //@{
   /** \brief \f$ \Lambda \f$ hyperon mass in \f$ \mathrm{MeV} \f$
@@ -1165,8 +1124,597 @@ namespace o2scl_const {
     return 93;
   }
   //@}
+
+  /// \name Solar system properties
+  //@{
+  /** \brief Solar mass times gravitational constant (\f$ \mathrm{m}^3
+      / \mathrm{s}^2 \f$ in MKS and \f$ \mathrm{cm}^3 / \mathrm{s}^2
+      \f$ in CGS; IAU 2015 value, see https://arxiv.org/abs/1510.07674)
+
+      Note that this value differs slightly in Barycentric Coordinate
+      Time and Barycentric Dynamical Time. This is the IAU's nominal
+      value.
+  */
+  template<class fp_t> fp_t solar_mass_param_f(size_t system=o2scl_mks) {
+    fp_t numer=13271244;
+    fp_t denom=10000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=26;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=20;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Mass of the sun in g (derived)
+  template<class fp_t> fp_t solar_mass_f(size_t system=o2scl_mks) {
+    return solar_mass_param_f<fp_t>(system)/
+      gravitational_constant_f<fp_t>(system);
+  }
+  
+  /// Schwarzchild radius (MKS in m and CGS in cm) (derived)
+  template<class fp_t> fp_t schwarzchild_radius_f
+  (size_t system=o2scl_mks) {
+    return 2*solar_mass_param_f<fp_t>(system)/
+      speed_of_light_f<fp_t>(system)/speed_of_light_f<fp_t>(system);
+  }
+  
+  /// Radius of the sun (MKS in m and CGS in cm) (IAU 2015 nominal value)
+  template<class fp_t> fp_t solar_radius_f(size_t system=o2scl_mks) {
+    fp_t numer=6957;
+    fp_t denom=1000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=10;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=8;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Temperature of the sun's photosphere in K (IAU 2015 nominal value)
+  template<class fp_t> fp_t solar_temperature_f(size_t system=o2scl_mks) {
+    return 5772;
+  }
+  
+  /// Luminosity of sun in erg/s (IAU 2015 nominal value)
+  template<class fp_t> fp_t solar_luminosity_f(size_t system=o2scl_mks) {
+    fp_t numer=3828;
+    fp_t denom=1000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=40;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=33;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Solar total irradiance in W/m^2 (IAU 2015 nominal value)
+  template<class fp_t> fp_t solar_irradiance_f() {
+    fp_t numer=1361;
+    return numer;
+  }
+  
+  /** \brief Earth mass times gravitational constant (\f$ \mathrm{m}^3
+      / \mathrm{s}^2 \f$ in MKS and \f$ \mathrm{cm}^3 / \mathrm{s}^2
+      \f$ in CGS; IAU 2015 nominal values)
+  */
+  template<class fp_t> fp_t earth_mass_param_f(size_t system=o2scl_mks) {
+    fp_t numer=3986004;
+    fp_t denom=1000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=20;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=14;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Mass of the earth in g (derived)
+  template<class fp_t> fp_t earth_mass_f(size_t system=o2scl_mks) {
+    return earth_mass_param_f<fp_t>(system)/
+      gravitational_constant_f<fp_t>(system);
+  }
+  
+  /// Equatorial radius of earth (MKS in m and CGS in cm) (IAU 2015 value)
+  template<class fp_t> fp_t earth_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=63781;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of earth (MKS in m and CGS in cm) (IAU 2015 value)
+  template<class fp_t> fp_t earth_radius_pol_f(size_t system=o2scl_mks) {
+    fp_t numer=63568;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /** \brief Jupter mass times gravitational constant (\f$
+      \mathrm{m}^3 / \mathrm{s}^2 \f$ in MKS and \f$ \mathrm{cm}^3 /
+      \mathrm{s}^2 \f$ in CGS; IAU 2015 nominal values)
+  */
+  template<class fp_t> fp_t jupiter_mass_param_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=12668653;
+    fp_t denom=10000000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=23;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=17;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Mass of jupiter in g (derived)
+  template<class fp_t> fp_t jupiter_mass_f(size_t system=o2scl_mks) {
+    return jupiter_mass_param_f<fp_t>(system)/
+      gravitational_constant_f<fp_t>(system);
+  }
+  
+  /// Equatorial radius of jupiter (MKS in m and CGS in cm) (IAU 2015 value)
+  template<class fp_t> fp_t jupiter_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=71492;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of jupiter (MKS in m and CGS in cm) (IAU 2015 value)
+  template<class fp_t> fp_t jupiter_radius_pol_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=66854;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Mass of mercury in g
+  template<class fp_t> fp_t mercury_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=33011;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=26;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Radius of mercury (MKS in m and CGS in cm)
+  template<class fp_t> fp_t mercury_radius_f(size_t system=o2scl_mks) {
+    fp_t numer=24397;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of venus in g
+  template<class fp_t> fp_t venus_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=78675;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=27;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Radius of venus (MKS in m and CGS in cm)
+  template<class fp_t> fp_t venus_radius_f(size_t system=o2scl_mks) {
+    fp_t numer=60518;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of mars in g
+  template<class fp_t> fp_t mars_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=64171;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=26;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Equatorial radius of mars (MKS in m and CGS in cm)
+  template<class fp_t> fp_t mars_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=33962;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of mars (MKS in m and CGS in cm)
+  template<class fp_t> fp_t mars_radius_pol_f(size_t system=o2scl_mks) {
+    fp_t numer=33762;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of saturn in g
+  template<class fp_t> fp_t saturn_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=56834;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=29;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Equatorial radius of saturn (MKS in m and CGS in cm) 
+  template<class fp_t> fp_t saturn_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=60268;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of saturn (MKS in m and CGS in cm)
+  template<class fp_t> fp_t saturn_radius_pol_f(size_t system=o2scl_mks) {
+    fp_t numer=54364;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of uranus in g
+  template<class fp_t> fp_t uranus_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=86810;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=28;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Equatorial radius of uranus (MKS in m and CGS in cm) 
+  template<class fp_t> fp_t uranus_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=25559;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of uranus (MKS in m and CGS in cm)
+  template<class fp_t> fp_t uranus_radius_pol_f(size_t system=o2scl_mks) {
+    fp_t numer=24973;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of neptune in g
+  template<class fp_t> fp_t neptune_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=102413;
+    fp_t denom=100000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=29;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Equatorial radius of neptune (MKS in m and CGS in cm) 
+  template<class fp_t> fp_t neptune_radius_eq_f
+  (size_t system=o2scl_mks) {
+    fp_t numer=24764;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Polar radius of neptune (MKS in m and CGS in cm)
+  template<class fp_t> fp_t neptune_radius_pol_f(size_t system=o2scl_mks) {
+    fp_t numer=24341;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=9;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=7;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+
+  /// Mass of pluto in g
+  template<class fp_t> fp_t pluto_mass_f(size_t system=o2scl_mks) {
+    fp_t numer=1303;
+    fp_t denom=1000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=25;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=-24;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  
+  /// Radius of pluto (MKS in m and CGS in cm) 
+  template<class fp_t> fp_t pluto_radius_f(size_t system=o2scl_mks) {
+    fp_t numer=11883;
+    fp_t denom=10000;
+    fp_t frac=(numer/denom);
+    if (system==o2scl_cgs) {
+      fp_t base=10;
+      fp_t exp=8;
+      fp_t powt=pow(base,exp);
+      fp_t result=frac*powt;
+      return result;
+    }
+    fp_t base=10;
+    fp_t exp=6;
+    fp_t powt=pow(base,exp);
+    fp_t result=frac*powt;
+    return result;
+  }
+  //@}
+
+  /// \name A few double-precision constants for convenience
+  //@{
+  /// \f$ \pi \f$ 
+  const double pi=boost::math::constants::pi<double>();
+  /// \f$ \pi^2 \f$ 
+  const double pi2=boost::math::constants::pi_sqr<double>();
+  /// \f$ \sqrt{\pi} \f$ 
+  const double root_pi=boost::math::constants::root_pi<double>();
+  /// \f$ \hbar c \f$ in MeV fm (exact)
+  const double hc_mev_fm=hc_mev_fm_f<double>();
+  /// \f$ \hbar c \f$ in MeV cm (exact)
+  const double hc_mev_cm=hc_mev_fm*1.0e-13;
+  //@}
   
 }
+
+#ifdef O2SCL_NEVER_DEFINED
 
 /** \brief Constants in CGS units 
 
@@ -2202,5 +2750,7 @@ namespace o2scl_mks {
   //@}
 
 }
+
+#endif
 
 #endif

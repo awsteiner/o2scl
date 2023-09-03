@@ -53,8 +53,8 @@ using namespace o2scl;
 eos_nstar_rot_interp::eos_nstar_rot_interp() {
   n_nearest=1;
 
-  C=o2scl_cgs::speed_of_light;
-  G=o2scl_cgs::gravitational_constant;
+  C=o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs);
+  G=o2scl_const::gravitational_constant_f<double>(o2scl_const::o2scl_cgs);
   KAPPA=1.0e-15*C*C/G;
   KSCALE=1.0e-15/C/C;
 }
@@ -456,11 +456,11 @@ nstar_rot::nstar_rot() {
   velocity_sq.resize(SDIV+1,MDIV+1);  
   da_dm.resize(SDIV+1,MDIV+1);
   
-  C=o2scl_cgs::speed_of_light;
-  G=o2scl_cgs::gravitational_constant;
-  MSUN=o2scl_cgs::solar_mass;
+  C=o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs);
+  G=o2scl_const::gravitational_constant_f<double>(o2scl_const::o2scl_cgs);
+  MSUN=o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_cgs);
   PI=o2scl_const::pi;
-  MB=o2scl_cgs::mass_neutron;
+  MB=o2scl_const::mass_neutron_f<double>(o2scl_const::o2scl_cgs);
   KAPPA=1.0e-15*C*C/G;
   KSCALE=1.0e-15/C/C;
 
@@ -500,11 +500,11 @@ void nstar_rot::constants_rns() {
 }
 
 void nstar_rot::constants_o2scl() {
-  C=o2scl_cgs::speed_of_light;
-  G=o2scl_cgs::gravitational_constant;
-  MSUN=o2scl_cgs::solar_mass;
+  C=o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs);
+  G=o2scl_const::gravitational_constant_f<double>(o2scl_const::o2scl_cgs);
+  MSUN=o2scl_const::solar_mass_f<double>(o2scl_const::o2scl_cgs);
   PI=o2scl_const::pi;
-  MB=o2scl_cgs::mass_neutron;
+  MB=o2scl_const::mass_neutron_f<double>(o2scl_const::o2scl_cgs);
   KAPPA=1.0e-15*C*C/G;
   KSCALE=1.0e-15/C/C;
   return;

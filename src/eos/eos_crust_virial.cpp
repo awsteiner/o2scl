@@ -31,9 +31,9 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 eos_crust_virial::eos_crust_virial() {
 
   alpha.init(o2scl_settings.get_convert_units().convert
-	     ("kg","1/fm",o2scl_mks::mass_alpha),1.0);
+	     ("kg","1/fm",o2scl_const::mass_alpha_f<double>()),1.0);
   deuteron.init(o2scl_settings.get_convert_units().convert
-		("kg","1/fm",o2scl_mks::mass_deuteron),1.0);
+		("kg","1/fm",o2scl_const::mass_deuteron_f<double>()),1.0);
 
   // Data from the tables in Horowitz and Schwenk (2006a). The rows
   // for T<=10 MeV are from Table 1 and Table 2 and the rows for T>10

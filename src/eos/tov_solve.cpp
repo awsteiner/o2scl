@@ -89,12 +89,13 @@ tov_solve::tov_solve() : out_table(new table_units<>) {
   min_ptr=&def_min;
 
   // Constants
-  schwarz_km=o2scl_cgs::schwarzchild_radius/1.0e5;
+  schwarz_km=o2scl_const::schwarzchild_radius_f<double>
+    (o2scl_const::o2scl_cgs)/1.0e5;
 
   out_table->add_constant("schwarz",schwarz_km);
-  out_table->add_constant("Msun",o2scl_mks::solar_mass);
+  out_table->add_constant("Msun",o2scl_const::solar_mass_f<double>());
   out_table->add_constant("pi",pi);
-  out_table->add_constant("mproton",o2scl_mks::mass_proton);
+  out_table->add_constant("mproton",o2scl_const::mass_proton_f<double>());
   
   // Stellar properties
   mass=0.0;
@@ -118,7 +119,7 @@ tov_solve::tov_solve() : out_table(new table_units<>) {
   reformat_results=true;
   
   // Mass of a proton in kg
-  baryon_mass=o2scl_mks::mass_proton;
+  baryon_mass=o2scl_const::mass_proton_f<double>();
   
   // Initialize ODE function pointer
   ofm=std::bind
@@ -282,10 +283,10 @@ int tov_solve::derivs(double r, size_t nv, const ubvector &y,
   }
   if (te->has_baryons()) {
     if (gm<0.0) {
-      dydx[ix]=fpr2*nb*baryon_mass/o2scl_mks::solar_mass*
+      dydx[ix]=fpr2*nb*baryon_mass/o2scl_const::solar_mass_f<double>()*
 	1.0e54;
     } else {
-      dydx[ix]=fpr2*nb*baryon_mass/o2scl_mks::solar_mass*
+      dydx[ix]=fpr2*nb*baryon_mass/o2scl_const::solar_mass_f<double>()*
 	1.0e54/term4;
     }
     ix++;

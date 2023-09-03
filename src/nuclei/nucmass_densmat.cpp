@@ -30,21 +30,21 @@ using namespace o2scl_hdf;
 
 dense_matter::dense_matter() {
   n.init(o2scl_settings.get_convert_units().convert
-	 ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+	 ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   p.init(o2scl_settings.get_convert_units().convert
-	 ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+	 ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
   n.inc_rest_mass=false;
   p.inc_rest_mass=false;
   n.non_interacting=false;
   p.non_interacting=false;
   
   e.init(o2scl_settings.get_convert_units().convert
-         ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+         ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
   e.inc_rest_mass=true;
   e.non_interacting=true;
 
   mu.init(o2scl_settings.get_convert_units().convert
-	  ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+	  ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
   mu.inc_rest_mass=true;
   mu.non_interacting=true;
 

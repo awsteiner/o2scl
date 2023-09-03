@@ -29,9 +29,9 @@ using namespace o2scl_const;
 nucmass_ldrop::nucmass_ldrop() {
 
   def_neutron.init(o2scl_settings.get_convert_units().convert
-		   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+		   ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
   def_proton.init(o2scl_settings.get_convert_units().convert
-		  ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+		  ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
 
   def_neutron.non_interacting=false;
   def_proton.non_interacting=false;
@@ -94,8 +94,10 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
   ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,0.0);
       
   // Convert from binding energy to mass excess
-  ret-=((N+Z)*o2scl_mks::unified_atomic_mass-Z*o2scl_mks::mass_electron-
-	N*o2scl_mks::mass_neutron-Z*o2scl_mks::mass_proton)*
+  ret-=((N+Z)*o2scl_const::unified_atomic_mass_f<double>()-
+        Z*o2scl_const::mass_electron_f<double>()-
+	N*o2scl_const::mass_neutron_f<double>()-
+        Z*o2scl_const::mass_proton_f<double>())*
     o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
   
   return ret;

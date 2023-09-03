@@ -320,13 +320,13 @@ std::string nucmass_info::tostring(size_t Z, size_t N) {
 }
 
 nucmass::nucmass() {
-  m_neut=o2scl_mks::mass_neutron*
+  m_neut=o2scl_const::mass_neutron_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
-  m_prot=o2scl_mks::mass_proton*
+  m_prot=o2scl_const::mass_proton_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
-  m_elec=o2scl_mks::mass_electron*
+  m_elec=o2scl_const::mass_electron_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
-  m_amu=o2scl_mks::unified_atomic_mass*
+  m_amu=o2scl_const::unified_atomic_mass_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
 }
 

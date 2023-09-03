@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   sf.mu=0.0;
   for (T=3.0/hc_mev_fm;T>=0.001/hc_mev_fm;T/=3.0) {
 
-    sf.init(o2scl_mks::mass_electron*
+    sf.init(o2scl_const::mass_electron_f<double>()*
 	    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0),2.0);
     sf.non_interacting=true;
     sf.n=0.2;

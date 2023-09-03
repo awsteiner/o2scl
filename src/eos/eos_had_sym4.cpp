@@ -32,7 +32,7 @@ using namespace o2scl_const;
 
 eos_had_sym4_base::eos_had_sym4_base() {
   e.init(o2scl_settings.get_convert_units().convert
-	 ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	 ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
 }
   
 int eos_had_sym4_base::calc_e_alpha(fermion &ne, fermion &pr, thermo &lth,

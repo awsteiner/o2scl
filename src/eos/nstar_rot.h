@@ -200,8 +200,8 @@ namespace o2scl {
       void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
                           vec4_t &nb) {
       
-      double Cx=o2scl_cgs::speed_of_light;
-      double Gx=o2scl_cgs::gravitational_constant;
+      double Cx=o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs);
+      double Gx=o2scl_const::gravitational_constant_f<double>(o2scl_const::o2scl_cgs);
       double KAPPAx=1.0e-15*Cx*Cx/Gx;
       double KSCALEx=KAPPAx*Gx/(Cx*Cx*Cx*Cx);
   

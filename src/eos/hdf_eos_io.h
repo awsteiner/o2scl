@@ -44,6 +44,7 @@
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/eos_had_rmf.h>
 #include <o2scl/eos_had_gogny.h>
+#include <o2scl/eos_quark_njl.h>
 
 /** \brief Additional functions to read and write EOS data to HDF5 files
  */
@@ -128,6 +129,9 @@ namespace o2scl_hdf {
 
   /** \brief Return a pointer to an eos_had_base object 
       from a string
+
+      \note The pointer is allocated with \c new and the user
+      has the responsibility of deleting it later.
   */
   o2scl::eos_had_base *eos_had_strings(std::string eos_str);
 
@@ -135,6 +139,13 @@ namespace o2scl_hdf {
   */
   void eos_had_strings_list();
 
+  /** \brief Desc
+
+      \note The pointer is allocated with \c new and the user
+      has the responsibility of deleting it later.
+  */
+  o2scl::eos_quark *eos_quark_strings(std::string eos_str);
+  
 }
 
 #endif
