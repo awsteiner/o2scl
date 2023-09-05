@@ -360,7 +360,9 @@ namespace o2scl {
           return 0;
         }
         if (y_cdf25!=0) {
-          err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+	  fp_25_t temp1=abs(y_cdf25-static_cast<fp_25_t>(y_ld));
+	  fp_25_t temp2=abs(y_cdf25);
+          err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf25);
             if (verbose>0) {
@@ -414,7 +416,9 @@ namespace o2scl {
           return 0;
         }
         if (y_cdf35!=0) {
-          err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+	  fp_35_t temp1=abs(y_cdf35-static_cast<fp_35_t>(y_cdf25));
+	  fp_35_t temp2=abs(y_cdf35);
+          err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf35);
             if (verbose>0) {
@@ -468,7 +472,9 @@ namespace o2scl {
           return 0;
         }
         if (y_cdf50!=0) {
-          err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+	  fp_50_t temp1=abs(y_cdf50-static_cast<fp_50_t>(y_cdf35));
+	  fp_50_t temp2=abs(y_cdf50);
+          err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf50);
             if (verbose>0) {
@@ -522,7 +528,9 @@ namespace o2scl {
           return 0;
         }
         if (y_cdf100!=0) {
-          err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+	  fp_100_t temp1=abs(y_cdf100-static_cast<fp_100_t>(y_cdf50));
+	  fp_100_t temp2=abs(y_cdf100);
+          err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
             val=static_cast<fp_t>(y_cdf100);
             if (verbose>0) {
