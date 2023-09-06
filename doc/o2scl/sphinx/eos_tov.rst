@@ -41,7 +41,7 @@ The speed of sound is
 .. math::
 
    c_s^2 = c^2 \left( \frac{\partial P}
-   {\partial \varepsilon}\right)_{\math{comp}}
+   {\partial \varepsilon}\right)_{\mathrm{comp}}
 
 where :math:`\mathrm{comp}` indicates that the derivative is to be
 performed at fixed composition (e.g. a fixed ratio between the
