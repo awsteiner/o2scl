@@ -1,3 +1,6 @@
+gibbst:
+	ex_eos_gibbs -quarks SPL00_njl -hadrons SPL00 -mvsr temp.o2
+
 emt:
 	o2graph -read ex_mcmc_bimodal.o2 -histplot x bins=40 -create \
 		table x "(-4)" 4.001 0.1 \

@@ -97,6 +97,9 @@ public:
   /// NJL model
   eos_quark_njl njl;
 
+  /// NJL model
+  eos_quark_njl_vec njlv;
+
   /// Bag model
   eos_quark_bag bag;
 
@@ -948,6 +951,25 @@ public:
 	 << p.m*hc_mev_fm << " "
          << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
+    
+    cout << rmf.b << endl;
+    cout << rmf.c << endl;
+    cout << rmf.cr << endl;
+    cout << rmf.ms << endl;
+    cout << rmf.zeta << endl;
+    cout << rmf.cs << endl;
+    cout << rmf.cw << endl;
+    cout << rmf.b1 << endl;
+    cout << rmf.xi << endl;
+    cout << rmf.a1 << endl;
+    cout << rmf.a2 << endl;
+    cout << rmf.a3 << endl;
+    cout << rmf.a4 << endl;
+    cout << rmf.a5 << endl;
+    cout << rmf.a6 << endl;
+    cout << rmf.b2 << endl;
+    cout << rmf.b3 << endl;
+    exit(-1);
 
     // -----------------------------------------------------------------
     // Determine bag constant
