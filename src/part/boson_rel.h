@@ -69,6 +69,7 @@ namespace o2scl {
       use_expansions=true;
       deg_limit=-0.5;
       upper_limit_fac=30.0;
+      verbose=0;
     }
     
     virtual ~boson_rel_tl() {
@@ -111,8 +112,8 @@ namespace o2scl {
       if (use_expansions) {
         bool acc=this->calc_mu_ndeg(b,temper,1.0e-14);
         if (verbose>1) {
-          std::cout << "calc_mu(): non-deg expan " << acc
-                    << std::endl;
+          std::cout << "calc_mu(): non-deg expan (bosons) " << acc
+                    << " " << verbose << std::endl;
         }
         if (acc) {
           /*

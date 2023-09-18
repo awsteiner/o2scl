@@ -1096,6 +1096,79 @@ namespace o2scl {
       return;
     }
   
+    /// Load table from filename \c fname with mode \c mode
+    virtual void save_compose(std::string fname,
+                              std::string fname2) {
+
+      alloc();
+
+      /*
+        for(size_t i=0;i<n_base+n_oth;i++) {
+        arr[i]->set_grid_packed(grid);
+        }
+      */
+      
+      std::ofstream fout(fname);
+      fout << m_neut << " ";
+      fout << m_prot << " ";
+      fout << with_leptons << std::endl;
+    
+      double dtemp, dtemp2;
+      for(size_t m=0;m<n_T;m++) {
+        for(size_t k=0;k<n_Ye;k++) {
+          for(size_t j=0;j<n_nB;j++) {
+
+            fout << m << " " << j << " " << k << " ";
+            
+            fout << P.get(j,k,m)/nB_grid[j] << " ";
+            fout << S.get(j,k,m) << " ";
+            fout << mun.get(j,k,m)/m_neut << " ";
+            fout << mup.get(j,k,m)/m_neut << " ";
+            fout << 0.0 << " ";
+
+            fout << F.get(j,k,m)/m_neut-1.0 << " ";
+            fout << E.get(j,k,m)/m_neut-1.0 << " ";
+            fout << 0 << std::endl;
+          }
+        }
+      }
+      fout.close();
+
+      fout.open("eos.compo");
+    
+      for(size_t m=0;m<n_T;m++) {
+        for(size_t k=0;k<n_Ye;k++) {
+          for(size_t j=0;j<n_nB;j++) {
+            
+            fout << m << " " << j << " " << k << " ";
+            
+            fout << 0 << " ";
+
+            // pairs (neutrons and protons)
+            fout << 2 << " ";
+            fout << 12 << " " << Xn.get(j,k,m) << " ";
+            fout << 13 << " " << Xp.get(j,k,m) << " ";
+
+            // quartets (alphas and heavy nuclei)
+            fout << 2 << " ";
+            fout << 1002002 << " " << 4 << " " << 2 << " "
+                 << Xalpha.get(j,k,m) << " ";
+            fout << 1000000+((int)A.get(j,k,m)*1000)+((int)Z.get(j,k,m))
+                  << " " << A.get(j,k,m) << " " << Z.get(j,k,m) << " "
+                  << Xnuclei.get(j,k,m) << std::endl;
+          }
+        }
+      }
+      fout.close();
+
+      if (verbose>0) {
+        std::cout << "Done in eos_sn_compose::save_compose()."
+                  << std::endl;
+      }
+    
+      return;
+    }
+  
   };
 
 }
