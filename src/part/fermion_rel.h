@@ -1648,8 +1648,8 @@ namespace o2scl {
         //std::cout << "cmn_cmu: " << f.nu << " " << temper << " "
         //<< tol_expan << " " << acc << std::endl;
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg expan " << acc
-		    << std::endl;
+	  std::cout << "calc_mu(): non-deg expan (fermion) " << acc
+                    << " " << verbose << std::endl;
 	}
 	if (acc) {
 	  unc.n=f.n*tol_expan;

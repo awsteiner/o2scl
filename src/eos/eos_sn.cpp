@@ -296,113 +296,37 @@ void eos_sn_base::set_interp_type(size_t interp_type) {
 void eos_sn_base::compute_eg_point(double nB, double Ye, double TMeV,
 				   thermo &th, double &mue) {
 
-  if (true) {
-
-    elep.include_muons=include_muons;
-    elep.include_photons=true;
-    elep.e.mu=mue;
-    elep.e.n=nB*Ye/2.0;
-    elep.pair_density_eq(nB*Ye,TMeV/hc_mev_fm);
-
-    // AWS 8/2/23: it's confusing if this information isn't
-    // copied to the electron and muon objects, since this
-    // is the way this function used to work.
-    
-    electron.n=elep.e.n;
-    electron.mu=elep.e.mu;
-    electron.en=elep.e.en;
-    electron.pr=elep.e.pr;
-    electron.ed=elep.e.ed;
-
-    photon.n=elep.ph.n;
-    photon.mu=elep.ph.mu;
-    photon.en=elep.ph.en;
-    photon.pr=elep.ph.pr;
-    photon.ed=elep.ph.ed;
-    
-    muon.n=elep.mu.n;
-    muon.mu=elep.mu.mu;
-    muon.en=elep.mu.en;
-    muon.pr=elep.mu.pr;
-    muon.ed=elep.mu.ed;
-
-    mue=elep.e.mu;
-    
-    th=elep.th;
-    
-  } else { 
-    
-    photon.massless_calc(TMeV/hc_mev_fm);
-    electron.n=nB*Ye;
-    
-    // Provide the initial guess for the electron
-    // chemical potential
-    double guess2=mue;
-    electron.mu=mue-electron.m;
-    
-    relf.err_nonconv=false;
-    
-    // For lower densities, including the electron mass makes
-    // the pair_density() solver fail, so we take out the
-    // electron mass here and add it back in later
-    electron.inc_rest_mass=false;
-    muon.inc_rest_mass=false;
-    
-    int retx=relf.pair_density(electron,TMeV/hc_mev_fm);
-    
-    // Sometimes the solver fails, but we can recover by adjusting the
-    // upper limit for degenerate electrons and tightening the electron
-    // integration tolerances
-    if (retx!=0) {
-      
-      relf.upper_limit_fac=40.0;
-      relf.fri.dit.tol_rel/=1.0e2;
-      relf.fri.dit.tol_abs/=1.0e2;
-      relf.fri.nit.tol_rel/=1.0e2;
-      relf.fri.nit.tol_abs/=1.0e2;
-      
-      int retxx=relf.pair_density(electron,TMeV/hc_mev_fm);
-      
-      relf.upper_limit_fac=20.0;
-      relf.fri.dit.tol_rel*=1.0e2;
-      relf.fri.dit.tol_abs*=1.0e2;
-      relf.fri.nit.tol_rel*=1.0e2;
-      relf.fri.nit.tol_abs*=1.0e2;
-      
-      if (retxx!=0) {
-        
-        cout << "Function fermion_rel::pair_density() failed." << endl;
-        cout << "  nB,Ye,T[MeV]: " << nB << " " << Ye << " " << TMeV << endl;
-        
-        O2SCL_ERR2("Function fermion_rel::pair_density() failed in ",
-                   "eos_sn_base::compute_eg_point().",o2scl::exc_efailed);
-      }
-    }
-    
-    if (include_muons) {
-      muon.mu=electron.mu+electron.m-muon.m;
-      relf.pair_mu(muon,TMeV/hc_mev_fm);
-    }
-    
-    th.ed=electron.ed+photon.ed+electron.n*electron.m;
-    th.pr=electron.pr+photon.pr;
-    th.en=electron.en+photon.en;
-    
-    if (include_muons) {
-      th.ed+=muon.ed+muon.n*muon.m;
-      th.en+=muon.en;
-      th.pr+=muon.pr;
-    }
-    
-    electron.mu+=electron.m;
-    muon.mu+=muon.m;
-    
-    mue=electron.mu;
-    
-    electron.inc_rest_mass=true;
-    muon.inc_rest_mass=true;
-    
-  }
+  elep.include_muons=include_muons;
+  elep.include_photons=true;
+  elep.e.mu=mue;
+  elep.e.n=nB*Ye/2.0;
+  elep.pair_density_eq(nB*Ye,TMeV/hc_mev_fm);
+  
+  // AWS 8/2/23: it's confusing if this information isn't
+  // copied to the electron and muon objects, since this
+  // is the way this function used to work.
+  
+  electron.n=elep.e.n;
+  electron.mu=elep.e.mu;
+  electron.en=elep.e.en;
+  electron.pr=elep.e.pr;
+  electron.ed=elep.e.ed;
+  
+  photon.n=elep.ph.n;
+  photon.mu=elep.ph.mu;
+  photon.en=elep.ph.en;
+  photon.pr=elep.ph.pr;
+  photon.ed=elep.ph.ed;
+  
+  muon.n=elep.mu.n;
+  muon.mu=elep.mu.mu;
+  muon.en=elep.mu.en;
+  muon.pr=elep.mu.pr;
+  muon.ed=elep.mu.ed;
+  
+  mue=elep.e.mu;
+  
+  th=elep.th;
   
   return;
 }
