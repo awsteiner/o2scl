@@ -114,6 +114,10 @@ Function typedefs
 
 .. doxygentypedef:: funct
 
+.. _funct_ret:
+
+.. doxygentypedef:: funct_ret
+
 .. _funct_ld:
 
 .. doxygentypedef:: funct_ld
