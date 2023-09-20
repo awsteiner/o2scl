@@ -185,7 +185,8 @@ namespace o2scl {
 
 #endif
 
-  /// One-dimensional function typedef in src/base/funct.h
+  /** \brief One-dimensional function typedef in src/base/funct.h
+   */
   typedef std::function<int(double,double &)> funct_ret;
 
 }

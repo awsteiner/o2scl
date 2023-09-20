@@ -17,12 +17,13 @@ Solution of one equation in one variable is accomplished by
 children of the class :ref:`root <root>`. 
 
 For one-dimensional solving, if the root is bracketed, use
-:ref:`root_bkt_cern <root_bkt_cern>` or :ref:`root_brent_gsl
-<root_brent_gsl>`. The :ref:`root_bkt_cern <root_bkt_cern>` class is
-typically faster (for the same accuracy) than :ref:`root_brent_gsl
-<root_brent_gsl>`. If a relatively fast derivative is available, use
-:ref:`root_stef <root_stef>`. If neither a bracket nor a derivative is
-available, you can use :ref:`root_cern <root_cern>`.
+:ref:`root_bkt_cern <root_bkt_cern>`, :ref:`root_brent_gsl
+<root_brent_gsl>` or :ref:`root_toms748 <root_toms748>`. The
+:ref:`root_bkt_cern <root_bkt_cern>` class is typically faster (for
+the same accuracy) than :ref:`root_brent_gsl <root_brent_gsl>`. If a
+relatively fast derivative is available, use :ref:`root_stef
+<root_stef>`. If neither a bracket nor a derivative is available, you
+can use :ref:`root_cern <root_cern>`.
 
 The :ref:`root <root>` base class provides the structure for three
 different solving methods:
@@ -57,6 +58,10 @@ either :cpp:func:`o2scl::root::solve()` or
 bracket the function given the initial guess that is provided. Of
 course, it is frequently most efficient to use the solver in the way
 it was intended.
+
+Both :ref:`root_brent_gsl <root_brent_gsl>` and :ref:`root_toms748
+<root_toms748>` support multiprecision, see :ref:`Multiprecision
+Support`.
 
 Multi-dimensional solvers
 -------------------------

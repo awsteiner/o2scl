@@ -194,7 +194,8 @@ namespace o2scl {
       } else if (info==8) {
 	return "Either tol_abs is too small or Jacobian is nearly singular.";
       } else if (info==9) {
-	return "Either tol_rel, tol_abs, or the number of vars is not positive.";
+	return ((std::string)"Either tol_rel, tol_abs, or the ")+
+          "number of vars is not positive.";
       }
     }
 

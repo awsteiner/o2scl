@@ -49,6 +49,8 @@ namespace o2scl_const {
 
   /// \name Unit prefixes
   //@{
+  const double quetta=1e30;
+  const double ronna=1e27;
   const double yotta=1e24;
   const double zetta=1e21;
   const double exa=1e18;
@@ -65,6 +67,8 @@ namespace o2scl_const {
   const double atto=1e-18;
   const double zepto=1e-21;
   const double yocto=1e-24;
+  const double ronto=1e-27;
+  const double quecto=1e-30;
   //@}
 
   /// \name Unit systems

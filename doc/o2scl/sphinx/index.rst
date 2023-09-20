@@ -73,7 +73,6 @@ User's Guide
    part
    fermion
    nuclei
-   part_multip
    hadrons
    eos_quarks
    eos_beta
@@ -86,6 +85,7 @@ User's Guide
    eos_bps
    nucleus_rmf
    sneos
+   part_multip
    yanic
    design
    dev_guide

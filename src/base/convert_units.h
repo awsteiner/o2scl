@@ -598,13 +598,15 @@ namespace o2scl {
       err_on_fail=true;
       combine_two_conv=true;
       
-      prefixes={"Y","Z","E","P","T",
+      prefixes={"Q","R","Y","Z","E","P","T",
         "G","M","k","h","da",
         "d","c","m","mu","μ",
         "n","p","f","a","z",
-        "y"};
+        "y","r","q"};
 
-      prefix_facts={pow((fp_t)10,(fp_t)24),
+      prefix_facts={pow((fp_t)10,(fp_t)30),
+        pow((fp_t)10,(fp_t)27),
+        pow((fp_t)10,(fp_t)24),
         pow((fp_t)10,(fp_t)21),
         pow((fp_t)10,(fp_t)18),
         pow((fp_t)10,(fp_t)15),
@@ -621,13 +623,14 @@ namespace o2scl {
         pow((fp_t)10,(fp_t)(-15)),
         pow((fp_t)10,(fp_t)(-18)),
         pow((fp_t)10,(fp_t)(-21)),
-        pow((fp_t)10,(fp_t)(-24))};
+        pow((fp_t)10,(fp_t)(-24)),
+        pow((fp_t)10,(fp_t)(-27)),
+        pow((fp_t)10,(fp_t)(-30))};
 
-      prefix_names={"yotta","zetta","exa","peta","tera",
-        "giga","mega","kilo","hecto","deka",
-        "deci","centi","milli","micro","micro",
-        "nano","pico","femto","atto","zepto",
-        "yocto"};
+      prefix_names={"quetta","ronna","yotta","zetta","exa","peta",
+        "tera","giga","mega","kilo","hecto","deka","deci","centi",
+        "milli","micro","micro","nano","pico","femto","atto",
+        "zepto","yocto","ronto","quecto"};
     
       // SI derived units, in order m, kg, s, K, A, mol, and cd. Note
       // that, according to the SI page on Wikipedia, "newton" is left

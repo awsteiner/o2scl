@@ -28,7 +28,11 @@ floating point numbers using :ref:`find_constants <find_constants>`
 and :ref:`calc_utf8 <calc_utf8>`. An alternate version which won't
 call the error handler is
 :cpp:func:`o2scl::function_to_double_nothrow()`. This latter function
-is the one used by ``acol -calc``.
+is the one used by ``acol -calc``. These conversions also work in
+multiprecision, see :ref:`Multiprecision Support`.
+
+A class :ref:`kwargs <kwargs>` stores a map of strings which can
+be converted to base C types similar to a Python dictionary.
 
 There are also a set of string conversion functions. They partially
 duplicate the functionality of C++ Standard Library functions like
@@ -57,21 +61,24 @@ forms and different options. These functions include:
 
 Other functions in ``src/base/string_conv.h`` are:
 
-- :cpp:func:`o2scl::size_of_exponent()`
+- :cpp:func:`o2scl::char32_to_utf8()`
 - :cpp:func:`o2scl::count_words()`
+- :cpp:func:`o2scl::find_constant()`
+- :cpp:func:`o2scl::float_expo_mant()`
 - :cpp:func:`o2scl::has_minus_sign()`
 - :cpp:func:`o2scl::is_number()`
-- :cpp:func:`o2scl::find_constant()`
-- :cpp:func:`o2scl::split_string()`
-- :cpp:func:`o2scl::split_string_delim()`
+- :cpp:func:`o2scl::parse_fortran_format()`
 - :cpp:func:`o2scl::rewrap()`
 - :cpp:func:`o2scl::rewrap_ignore_vt100()`
-- :cpp:func:`o2scl::utf8_to_char32()`
-- :cpp:func:`o2scl::char32_to_utf8()`
 - :cpp:func:`o2scl::rewrap_keep_endlines()`
-- :cpp:func:`o2scl::string_to_uint_list()`
-- :cpp:func:`o2scl::parse_fortran_format()`
+- :cpp:func:`o2scl::size_of_exponent()`
+- :cpp:func:`o2scl::split_string()`
+- :cpp:func:`o2scl::split_string_delim()`
+- :cpp:func:`o2scl::string_replace()`
 - :cpp:func:`o2scl::string_to_char_array()`
+- :cpp:func:`o2scl::string_to_uint_list()`
+- :cpp:func:`o2scl::unc_to_string()`
+- :cpp:func:`o2scl::utf8_to_char32()`
 
 String example
 --------------

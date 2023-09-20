@@ -401,7 +401,7 @@ namespace o2scl {
     bool ret=true;
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
-	if (src(i,j)!=0.0) return false;
+	if (src(i,j)!=0) return false;
       }
     }
     return ret;
@@ -415,7 +415,7 @@ namespace o2scl {
     bool ret=true;
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
-	if (src(i,j)!=0.0) return false;
+	if (src(i,j)!=0) return false;
       }
     }
     return ret;
@@ -429,7 +429,7 @@ namespace o2scl {
     size_t n=src.size2();
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
-	src(i,j)=0.0;
+	src(i,j)=0;
       }
     }
     return;
@@ -443,7 +443,7 @@ namespace o2scl {
     size_t n=src.size2();
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
-	src(i,j)=0.0;
+	src(i,j)=0;
       }
     }
     return;
@@ -457,7 +457,7 @@ namespace o2scl {
     bool ret=true;
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
-	if (src(i,j)!=0.0) return false;
+	if (src(i,j)!=0) return false;
       }
     }
     return ret;
@@ -471,7 +471,7 @@ namespace o2scl {
     bool ret=true;
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
-	if (src(i,j)!=0.0) return false;
+	if (src(i,j)!=0) return false;
       }
     }
     return ret;
@@ -484,7 +484,7 @@ namespace o2scl {
 					       mat_t &src) {
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
-	src(i,j)=0.0;
+	src(i,j)=0;
       }
     }
     return;
@@ -497,7 +497,7 @@ namespace o2scl {
 					       mat_t &src) {
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
-	src(i,j)=0.0;
+	src(i,j)=0;
       }
     }
     return;
@@ -1840,7 +1840,7 @@ namespace o2scl {
   template<class mat_t, class data_t>
     data_t matrix_sum(size_t m, size_t n, const mat_t &data) {
     
-    data_t sum=0.0;
+    data_t sum=0;
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	sum+=data(i,j);
@@ -1951,7 +1951,7 @@ namespace o2scl {
       O2SCL_ERR("Empty matrix in matrix_lookup().",
 		exc_einval);
     }
-    double dist=0.0;
+    double dist=0;
     bool found_one=false;
     for(size_t i2=0;i2<m;i2++) {
       for(size_t j2=0;j2<n;j2++) {
@@ -2300,7 +2300,7 @@ namespace o2scl {
   template<class vec_t, class data_t>
     data_t vector_sum(size_t n, const vec_t &data) {
     
-    data_t sum=0.0;
+    data_t sum=0;
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2342,7 +2342,7 @@ namespace o2scl {
       calling the error handler.
   */
   template<class vec_t, class data_t> data_t vector_sum(vec_t &data) {
-    data_t sum=0.0;
+    data_t sum=0;
     for(size_t i=0;i<data.size();i++) {
       sum+=data[i];
     }
@@ -2356,7 +2356,7 @@ namespace o2scl {
       an exception.
   */
   template<class vec_t>double vector_sum_double(size_t n, vec_t &data) {
-    double sum=0.0;
+    double sum=0;
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2370,7 +2370,7 @@ namespace o2scl {
       calling the error handler.
   */
   template<class vec_t> double vector_sum_double(vec_t &data) {
-    double sum=0.0;
+    double sum=0;
     for(size_t i=0;i<data.size();i++) {
       sum+=data[i];
     }
@@ -2386,11 +2386,11 @@ namespace o2scl {
   template<class vec_t, class data_t>
     data_t vector_norm(size_t n, const vec_t &x) {
     
-    data_t scale = 0.0;
+    data_t scale = 0;
     data_t ssq = 1.0;
     
     if (n <= 0) {
-      return 0.0;
+      return 0;
     } else if (n == 1) {
       return fabs(x[0]);
     }
@@ -2398,7 +2398,7 @@ namespace o2scl {
     for (size_t i = 0; i < n; i++) {
       const data_t xx = x[i];
 
-      if (xx != 0.0) {
+      if (xx != 0) {
 	const data_t ax = fabs(xx);
           
 	if (scale < ax) {
@@ -2430,11 +2430,11 @@ namespace o2scl {
   template<class vec_t>
     double vector_norm_double(size_t n, const vec_t &x) {
     
-    double scale = 0.0;
+    double scale = 0;
     double ssq = 1.0;
     
     if (n <= 0) {
-      return 0.0;
+      return 0;
     } else if (n == 1) {
       return fabs(x[0]);
     }
@@ -2442,7 +2442,7 @@ namespace o2scl {
     for (size_t i = 0; i < n; i++) {
       const double xx = x[i];
 
-      if (xx != 0.0) {
+      if (xx != 0) {
 	const double ax = fabs(xx);
           
 	if (scale < ax) {
@@ -3590,7 +3590,7 @@ namespace o2scl {
     for(size_t i=0;i<M;i++) {
       for(size_t j=0;j<N;j++) {
 	if (i==j) m(i,j)=1.0;
-	else m(i,j)=0.0;
+	else m(i,j)=0;
       }
     }
     return;
