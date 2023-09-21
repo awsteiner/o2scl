@@ -86,7 +86,7 @@ int funct_python::set_function(std::string module, std::string func) {
 
   // Import the user-specified module
   if (verbose>0) {
-    cout << "Importing module." << endl;
+    cout << "Importing module " << module << "." << endl;
   }
   pModule=PyImport_Import(pName);
   if (pModule==0) {
@@ -225,7 +225,7 @@ int funct_python_method::set_function(std::string module,
 
   // Import the user-specified module
   if (verbose>0) {
-    cout << "Importing module." << endl;
+    cout << "Importing module " << module << "." << endl;
   }
   pModule=PyImport_Import(pName);
   if (pModule==0) {
