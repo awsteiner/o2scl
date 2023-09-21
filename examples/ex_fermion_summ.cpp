@@ -43,7 +43,7 @@ using namespace o2scl_hdf;
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-class fermion_summ {
+template<class fp_t=double> class fermion_summ {
   
 public:
   
@@ -57,9 +57,9 @@ public:
 
     fermion_zerot_tl<double> fzt;
   
-    f.m=T/pow(10.0,y);
+    f.m=T/pow(10,y);
     double nc=f.g*f.m*f.m*f.m/2.0/pi2;
-    f.n=pow(10.0,x)*nc;
+    f.n=pow(10,x)*nc;
     fdr.calc_density(f,T);
   
     log10_Pt=log10(f.pr/nc/f.m);
@@ -84,9 +84,9 @@ public:
   
     fermion_zerot_tl<double> fzt;
   
-    f.m=T/pow(10.0,y);
+    f.m=T/pow(10,y);
     double nc=f.g*f.m*f.m*f.m/2.0/pi2;
-    f.n=pow(10.0,x)*nc;
+    f.n=pow(10,x)*nc;
   
     fdr.fr.err_nonconv=false;
     fdr.fr.def_density_root.err_nonconv=false;
