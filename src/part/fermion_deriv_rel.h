@@ -42,6 +42,8 @@
 
 namespace o2scl {
 
+  /** \brief Desc 
+   */
   template<class fp_t> class fermion_deriv_rel_integ {
 
   public:
@@ -377,13 +379,6 @@ namespace o2scl {
       \note This class only has preliminary support for
       inc_rest_mass=true (more testing should be done, particularly
       for the "pair" functions)
-
-      \note The testing of this class is apparently sensitive to 
-      the difference between gsl_hypot and std::hypot in hypot 
-      in misc.cpp. Further testing needs to be done to verify 
-      which is more accurate. This further testing will probably 
-      need to wait until the full multiprecision fermion classes
-      are done.
 
       This implements an equation of state for a relativistic fermion
       using direct integration. After subtracting the rest mass from
@@ -1279,6 +1274,14 @@ namespace o2scl {
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
+
+  /** \brief Long double version of 
+      \ref o2scl::fermion_deriv_rel_tl 
+  */
+  typedef fermion_deriv_rel_tl<fermion_deriv_tl<long double>,
+                               fermion_rel_ld,long double>
+  fermion_deriv_rel_ld;
+
   
 }
 
