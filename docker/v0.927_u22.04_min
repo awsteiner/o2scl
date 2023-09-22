@@ -37,13 +37,6 @@ WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
 RUN acol -h && acol -v
 
-# -----------------------------------------------------------------
-# Remove build directory and run acol
-
-WORKDIR /opt
-ENV LD_LIBRARY_PATH /usr/local/lib
-RUN acol -h && acol -v
-
 
 
 
