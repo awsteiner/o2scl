@@ -244,14 +244,13 @@ namespace o2scl {
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
                          fp_t &res, fp_t &err) {
-      
-      if (integ_tol<=0.0) {
-        if (tol_rel<=0.0) {
-          integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
-        } else {
-          integ_tol=tol_rel;
-        }
-      } 
+
+      fp_t integ_tol;
+      if (tol_rel<=0.0) {
+        integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
+      } else {
+        integ_tol=tol_rel;
+      }
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err_multip(): set "
