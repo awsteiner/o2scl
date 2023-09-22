@@ -120,7 +120,7 @@ namespace o2scl {
   void init(func_t &func, size_t ord, fp_t a1, fp_t b1) {
     size_t k, j;
 
-    if(a1>=b1) {
+    if (a1>=b1) {
       b=a1;
       a=b1;
     } else {
@@ -144,7 +144,7 @@ namespace o2scl {
     }
   
     for(j=0;j<=order;j++) {
-      fp_t sum=0.0;
+      fp_t sum=0;
       for(k=0;k<=order;k++) {
 	sum+=f[k]*cos(pi*j*(k+half)/((fp_t)(order+1)));
       }
@@ -176,7 +176,7 @@ namespace o2scl {
 					      size_t ord, vec_t &fval) {
     size_t k, j;
       
-    if(a>=b) {
+    if (a>=b) {
       b=a1;
       a=b1;
     } else {
@@ -195,7 +195,7 @@ namespace o2scl {
     fp_t fac=two/((fp_t)(order+1));
       
     for(j=0;j<=order;j++) {
-      fp_t sum=0.0;
+      fp_t sum=0;
       for(k=0;k<=order; k++) {
 	sum+=fval[k]*cos(pi*j*(k+half)/((fp_t)(order+1)));
       }
@@ -218,20 +218,20 @@ namespace o2scl {
     if (init_called==false) {
       O2SCL_ERR("Series not initialized in cheb_approx::eval()",
 		o2scl::exc_einval);
-      return 0.0;
+      return 0;
     }
 
     size_t i;
-    fp_t d1 = 0.0;
-    fp_t d2 = 0.0;
+    fp_t d1=0;
+    fp_t d2=0;
       
-    fp_t y = (2*x-a-b)/(b-a);
-    fp_t y2 = 2*y;
+    fp_t y=(2*x-a-b)/(b-a);
+    fp_t y2=2*y;
       
     for (i=order; i >= 1; i--) {
-      fp_t temp = d1;
-      d1 = y2*d1-d2+c[i];
-      d2 = temp;
+      fp_t temp=d1;
+      d1=y2*d1-d2+c[i];
+      d2=temp;
     }
       
     return y*d1-d2+c[0]/2;
@@ -247,20 +247,20 @@ namespace o2scl {
    */
   fp_t eval_n(size_t n, fp_t x) const {
     size_t i;
-    fp_t d1 = 0.0;
-    fp_t d2 = 0.0;
+    fp_t d1=0;
+    fp_t d2=0;
       
     size_t eval_order;
     if (n<order) eval_order=n;
     else eval_order=order;
       
-    fp_t y = (2*x-a-b)/(b-a);
-    fp_t y2 = 2*y;
+    fp_t y=(2*x-a-b)/(b-a);
+    fp_t y2=2*y;
       
-    for (i = eval_order; i >= 1; i--) {
-      fp_t temp = d1;
-      d1 = y2*d1-d2+c[i];
-      d2 = temp;
+    for (i=eval_order; i >= 1; i--) {
+      fp_t temp=d1;
+      d1=y2*d1-d2+c[i];
+      d2=temp;
     }
       
     return y*d1-d2+c[0]/2;
@@ -271,25 +271,25 @@ namespace o2scl {
   void eval_err(fp_t x, fp_t &result, fp_t &abserr) {
 
     size_t i;
-    fp_t d1 = 0.0;
-    fp_t d2 = 0.0;
+    fp_t d1=0;
+    fp_t d2=0;
       
-    fp_t y = (2*x-a-b)/(b-a);
-    fp_t y2 = 2*y;
+    fp_t y=(2*x-a-b)/(b-a);
+    fp_t y2=2*y;
       
-    fp_t absc = 0.0;
+    fp_t absc=0;
       
-    for (i = order; i >= 1; i--) {
-      fp_t temp = d1;
-      d1 = y2*d1-d2+c[i];
-      d2 = temp;
+    for (i=order; i >= 1; i--) {
+      fp_t temp=d1;
+      d1=y2*d1-d2+c[i];
+      d2=temp;
     }
       
-    result = y*d1-d2+c[0]/2;
+    result=y*d1-d2+c[0]/2;
       
     /* Estimate cumulative numerical error */
       
-    for (i = 0; i <= order; i++) {
+    for (i=0; i <= order; i++) {
       absc += abs(c[i]);
     }
       
@@ -297,7 +297,7 @@ namespace o2scl {
       
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
-    abserr = abs(c[order])+absc*dbl_eps;
+    abserr=abs(c[order])+absc*dbl_eps;
       
     return;
   }
@@ -307,36 +307,36 @@ namespace o2scl {
   */
   void eval_n_err(size_t n, fp_t x, fp_t &result, fp_t &abserr) {
     size_t i;
-    fp_t d1 = 0.0;
-    fp_t d2 = 0.0;
+    fp_t d1=0;
+    fp_t d2=0;
 
-    fp_t y = (2*x-a-b)/(b-a);
-    fp_t y2 = 2*y;
+    fp_t y=(2*x-a-b)/(b-a);
+    fp_t y2=2*y;
 
-    fp_t absc = 0.0;
+    fp_t absc=0;
 
     size_t eval_order;
     if (n<order) eval_order=n;
     else eval_order=order;
 
-    for (i = eval_order; i >= 1; i--) {
-      fp_t temp = d1;
-      d1 = y2*d1-d2+c[i];
-      d2 = temp;
+    for (i=eval_order; i >= 1; i--) {
+      fp_t temp=d1;
+      d1=y2*d1-d2+c[i];
+      d2=temp;
     }
 
-    result = y*d1-d2+c[0]/2;
+    result=y*d1-d2+c[0]/2;
 
     /* Estimate cumulative numerical error */
 
-    for (i = 0; i <= eval_order; i++) {
+    for (i=0; i <= eval_order; i++) {
       absc += abs(c[i]);
     }
 
     fp_t dbl_eps=std::numeric_limits<fp_t>::epsilon();
 
     /* Combine truncation error and numerical error */
-    abserr = abs(c[eval_order])+absc*dbl_eps;
+    abserr=abs(c[eval_order])+absc*dbl_eps;
 
     return;
   }
@@ -355,7 +355,7 @@ namespace o2scl {
     O2SCL_ERR
     ("Requested invalid coefficient in cheb_approx::get_coefficient()",
      o2scl::exc_einval);
-    return 0.0;
+    return 0;
   }
 
   /** \brief Set a coefficient
@@ -417,7 +417,7 @@ namespace o2scl {
     gc.c.resize(n);
     gc.f.resize(n);
   
-    gc.c[n-1]=0.0;
+    gc.c[n-1]=0;
       
     if (n > 1) {
 
@@ -452,7 +452,7 @@ namespace o2scl {
       
     if (n == 1) {
 
-      gc.c[0]=0.0;
+      gc.c[0]=0;
 
     } else if (n == 2) {
 

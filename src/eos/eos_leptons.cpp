@@ -42,13 +42,22 @@ eos_leptons::eos_leptons() {
   
   e.init(cu.convert("kg","1/fm",mass_electron_f<double>()),2);
   mu.init(cu.convert("kg","1/fm",mass_muon_f<double>()),2);
+  tau.init(cu.convert("kg","1/fm",mass_tau_f<double>()),2);
+
+  nu_e.init(0,2);
+  nu_mu.init(0,2);
+  nu_tau.init(0,2);
+  
   eld.init(cu_ld.convert("kg","1/fm",mass_electron_f<long double>()),2);
   muld.init(cu_ld.convert("kg","1/fm",mass_muon_f<long double>()),2);
+  tauld.init(cu_ld.convert("kg","1/fm",mass_tau_f<long double>()),2);
+  
   ecdf25.init(cu_cdf25.convert("kg","1/fm",
                                mass_electron_f<cpp_dec_float_25>()),2);
   mucdf25.init(cu_cdf25.convert("kg","1/fm",
                                 mass_muon_f<cpp_dec_float_25>()),2);
-
+  taucdf25.init(cu_cdf25.convert("kg","1/fm",
+                                 mass_tau_f<cpp_dec_float_25>()),2);
   
   ph.init(0.0,2.0);
 
@@ -214,6 +223,212 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
 
   return 0;
 }
+
+#ifdef O2SCL_NEVER_DEFINED
+
+int eos_leptons::fermion_density(fermion &f, fermion &fld,
+                                 fermion &fcdf25, double T) {
+
+  int retx;
+
+  bool inc_rest_mass=false;
+  if (f.inc_rest_mass) {
+    
+    // I find that the calculation without the rest mass is a bit more
+    // stable, so we use that method and add the rest mass back in
+    // after the fact.
+    inc_rest_mass=true;
+    f.inc_rest_mass=false;
+    f.mu-=f.m;
+
+  }
+
+  if (accuracy==acc_fp_25) {
+    fcdf25.n=f.n;
+    fcdf25.mu=f.mu;
+    fcdf25.inc_rest_mass=f.inc_rest_mass;
+    retx=frel_cdf25.pair_density(ecdf25,T);
+    f.mu=static_cast<double>(fcdf25.mu);
+    f.ed=static_cast<double>(fcdf25.ed);
+    f.pr=static_cast<double>(fcdf25.pr);
+    f.en=static_cast<double>(fcdf25.en);
+  } else if (accuracy==acc_ld) {
+    fld.n=f.n;
+    fld.mu=f.mu;
+    fld.inc_rest_mass=f.inc_rest_mass;
+    retx=frel_ld.pair_density(eld,T);
+    f.mu=static_cast<double>(fld.mu);
+    f.ed=static_cast<double>(fld.ed);
+    f.pr=static_cast<double>(fld.pr);
+    f.en=static_cast<double>(fld.en);
+  } else {
+    retx=frel.pair_density(e,T);
+  }
+      
+  // Sometimes the solver fails, but we can recover by adjusting
+  // the upper limit for degenerate fermions and tightening the
+  // integration tolerances
+  if (retx!=0 && accuracy==acc_default) {
+        
+    frel.upper_limit_fac=40.0;
+    frel.fri.dit.tol_rel=1.0e-10;
+    frel.fri.dit.tol_abs=1.0e-10;
+    frel.fri.nit.tol_rel=1.0e-10;
+    frel.fri.nit.tol_abs=1.0e-10;
+        
+    retx=frel.pair_density(e,T);
+
+    // If it still fails, then we don't call the error handler here
+    // because this function is used in pair_density_eq_fun().
+        
+    frel.upper_limit_fac=20.0;
+    frel.fri.dit.tol_rel=1.0e-8;
+    frel.fri.dit.tol_abs=1.0e-8;
+    frel.fri.nit.tol_rel=1.0e-8;
+    frel.fri.nit.tol_abs=1.0e-8;
+        
+  }
+
+  if (inc_rest_mass) {
+    f.inc_rest_mass=true;
+    f.mu+=f.m;
+    f.ed+=f.m*f.n;
+  }
+
+  return retx;
+}
+
+int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
+                                     ubvector &y, double T, double nLe,
+                                     double nLmu, double nLtau) {
+
+  if (pde_from_density) {
+
+    if (accuracy==acc_ld) {
+      eld.n=x[0]*nLe;
+      if (include_muons) {
+        muld.n=x[1]*nLmu;
+      }
+      if (include_taus) {
+        tauld.n=x[2]*nLtau;
+      }
+    } else if (accuracy==acc_fp_25) {
+      ecdf25.n=x[0]*nLe;
+      if (include_muons) {
+        mucdf25.n=x[1]*nLmu;
+      }
+      if (include_taus) {
+        taucdf25.n=x[2]*nLtau;
+      }
+    } else {
+      e.n=x[0]*nLe;
+      if (include_muons) {
+        mu.n=x[1]*nLmu;
+      }
+      if (include_taus) {
+        tau.n=x[2]*nLtau;
+      }
+    }
+
+    int retx=fermion_density(e,eld,ecdf25,T);
+    if (retx!=0) return retx;
+    if (include_muons) {
+      retx=fermion_density(mu,muld,mucdf25,T);
+      if (retx!=0) return retx;
+    }
+    if (include_taus) {
+      retx=tau_density(tau,tauld,taucdf25,T);
+      if (retx!=0) return retx;
+    }
+    
+  } else {
+    
+    e.mu=x[0];
+    if (include_muons) {
+      mu.mu=x[1];
+    }
+    if (include_taus) {
+      tau.mu=x[2];
+    }
+
+    bool inc_rest_mass=false;
+    if (e.inc_rest_mass) {
+      inc_rest_mass=true;
+      e.inc_rest_mass=false;
+      e.mu-=e.m;
+      if (include_muons) {
+        mu.inc_rest_mass=false;
+        mu.mu-=mu.m;
+      }
+      if (include_taus) {
+        tau.inc_rest_mass=false;
+        tau.mu-=tau.m;
+      }
+    }
+
+    if (accuracy==acc_ld) {
+      eld.mu=e.mu;
+      frel_ld.pair_mu(eld,T);
+      e.n=eld.n;
+      e.ed=eld.ed;
+      e.pr=eld.pr;
+      e.en=eld.en;
+    } else if (accuracy==acc_fp_25) {
+      ecdf25.mu=e.mu;
+      frel_cdf25.pair_mu(ecdf25,T);
+      e.n=static_cast<double>(ecdf25.n);
+      e.ed=static_cast<double>(ecdf25.ed);
+      e.pr=static_cast<double>(ecdf25.pr);
+      e.en=static_cast<double>(ecdf25.en);
+    } else {
+      frel.pair_mu(e,T);
+    }
+
+    if (inc_rest_mass) {
+      e.inc_rest_mass=true;
+      e.mu+=e.m;
+      e.ed+=e.n*e.m;
+    }
+    
+  }
+
+  if (e.inc_rest_mass) {
+    if (mu.inc_rest_mass) {
+      mu.mu=e.mu;
+    } else {
+      mu.mu=e.mu-mu.m;
+    }
+  } else {
+    if (mu.inc_rest_mass) {
+      mu.mu=e.mu+e.m;
+    } else {
+      mu.mu=e.mu+e.m-mu.m;
+    }
+  }
+      
+  if (mu.inc_rest_mass) {
+    mu.inc_rest_mass=false;
+    mu.mu-=mu.m;
+    frel.pair_mu(mu,T);
+    mu.inc_rest_mass=true;
+    mu.mu+=mu.m;
+    mu.ed+=mu.m*mu.n;
+  } else {
+    frel.pair_mu(mu,T);
+  }
+
+  y[0]=(e.n+nu_e.n-nLe)/fabs(nLe);
+  if (include_muons) {
+    y[0]=(mu.n+nu_mu.n-nLe)/fabs(nLe);
+  }
+  if (include_taus) {
+    y[0]=(tau.n+nu_tau.n-nLe)/fabs(nLe);
+  }
+
+  return 0;
+}
+
+#endif
 
 int eos_leptons::pair_mu(double T) {
 

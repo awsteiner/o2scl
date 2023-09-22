@@ -121,6 +121,14 @@ namespace o2scl {
      */
     fermion_cdf25 mucdf25;
 
+    /** \brief Tau in long double precision
+     */
+    fermion_ld tauld;
+    
+    /** \brief Tau in 25-digit precision
+     */
+    fermion_cdf25 taucdf25;
+
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
@@ -181,6 +189,22 @@ namespace o2scl {
     /** \brief Muon
      */
     fermion mu;
+
+    /** \brief Tau
+     */
+    fermion tau;
+
+    /** \brief Electron neutrino 
+     */
+    fermion nu_e;
+
+    /** \brief Muon neutrino 
+     */
+    fermion nu_mu;
+    
+    /** \brief Tau neutrino 
+     */
+    fermion nu_tau;
 
     /** \brief Muon derivatives
      */
