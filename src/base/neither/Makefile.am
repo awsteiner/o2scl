@@ -46,5 +46,6 @@ endif
 am__pkginclude_HEADERS_DIST = vector_special.h set_fftw.h set_mpfr.h \
 	set_openmp.h set_python.h set_readline.h
 
-pkginclude_HEADERS = $(HEADER_VAR)
+pkginclude_HEADERS = $(HEADER_VAR) $(MPFR_VAR) $(PYTHON_VAR) \
+	$(FFTW_VAR) $(OPENMP_VAR) $(READLINE_VAR)
 
