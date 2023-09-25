@@ -67,6 +67,9 @@ namespace o2scl {
                         double target_tol, double integ_tol) {
       int ret=0;
 
+      // AWS, 9/25/23, I don't think that the boost integrate()
+      // function can accept an rvalue reference, so this function
+      // must be a bit different than integ_err_int() below. 
       res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
         (f,a,b,max_depth,target_tol,&err,&L1norm_loc);
       this->L1norm=static_cast<double>(L1norm_loc);
@@ -141,19 +144,13 @@ namespace o2scl {
   public:
 
     inte_kronrod_boost() {
-      tol_rel_multip=-1.0;
       verbose=0;
       pow_tol_func=1.33;
       max_depth=15;
       err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=1.0e-8;
+      tol_rel=-1.0;
+      tol_abs=-1.0;
     }
-
-    /** \brief The maximum relative uncertainty for multipreicsion
-	integrals (default \f$ -1 \f$)
-    */
-    double tol_rel_multip;
 
     /** \brief Power for tolerance of function evaluations in
         multiprecision integrations (default 1.33)
@@ -164,12 +161,15 @@ namespace o2scl {
     double L1norm;
 
     /** \brief The maximum relative uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
+	in the value of the integral (default \f$ -1 \f$)
     */
     double tol_rel;
 
     /** \brief The maximum absolute uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
+	in the value of the integral (default \f$ -1 \f$)
+
+        \note This value is unused by this integrator, but this
+        is included for compatibility with the other integrators. 
     */
     double tol_abs;
 
@@ -195,17 +195,25 @@ namespace o2scl {
     */
     template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+
+      double tol_rel_loc;
+      if (tol_rel<=0.0) {
+        tol_rel_loc=sqrt(static_cast<double>
+                         (std::numeric_limits<fp_t>::epsilon()));
+      } else {
+        tol_rel_loc=tol_rel;
+      }
       
       fp_t L1norm_loc;
       int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
-                              this->tol_rel/10.0,this->tol_rel);
+                              tol_rel_loc/10.0,tol_rel_loc);
       
       if (ret!=0) {
         if (this->verbose>0) {
           std::cout << "inte_kronrod_boost::integ_err() failed."
                     << std::endl;
           std::cout << "  Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
+                    << err << " " << tol_rel_loc << " "
                     << L1norm << " " << max_depth
                     << std::endl;
         }
@@ -241,10 +249,10 @@ namespace o2scl {
                          fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
       if (integ_tol<=0.0) {
-        if (tol_rel_multip<=0.0) {
+        if (tol_rel<=0.0) {
           integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
         } else {
-          integ_tol=tol_rel_multip;
+          integ_tol=tol_rel;
         }
       } 
 
