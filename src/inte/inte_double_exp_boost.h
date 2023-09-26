@@ -646,7 +646,7 @@ namespace o2scl {
         double b_d=static_cast<double>(b);
         double res_d, err_d;
         
-        ret=integ_err_int(func,a_d,b_d,res_d,err_d,
+        ret=integ_err_int(func,a_d,b_d,res_d,err_d,L1norm,
                           target_tol,integ_tol,func_tol);
         
         if (ret==0 && err_d/abs(res_d)<integ_tol) {

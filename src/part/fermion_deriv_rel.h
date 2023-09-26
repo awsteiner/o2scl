@@ -1254,7 +1254,7 @@ namespace o2scl {
     inte_qag_gsl<> def_dit;
 
     /// Multiprecision integrator
-    inte_multip_double_exp_boost<> it_multip;
+    inte_double_exp_boost<> it_multip;
     //@}
     
     /// Return string denoting type ("fermion_deriv_rel")

@@ -304,7 +304,7 @@ namespace o2scl {
   /** \brief Default integrator for \ref o2scl::fermion_rel_tl
 
       \note This version uses the multiprecision integrator
-      \ref inte_multip_double_exp_boost which automatically
+      \ref inte_double_exp_boost which automatically
       increases precision in order to achieve accuracy
    */
   template<class fp_t> class fermion_rel_integ_multip :
@@ -2863,7 +2863,7 @@ namespace o2scl {
     // the fermion type
     fermion_tl<long double>,
     // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<long double,funct_cdf25,25,
+    fermi_dirac_integ_direct<long double,funct_cdf25,
                              cpp_dec_float_25>,
     // the Bessel-exp integrator
     bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
@@ -2924,7 +2924,7 @@ namespace o2scl {
     fermion_tl<cpp_dec_float_25>,
     // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
     // the Bessel-exp integrator
     bessel_K_exp_integ_boost<cpp_dec_float_25,cpp_dec_float_35>,
     // The fermion integrator
@@ -3038,10 +3038,10 @@ namespace o2scl {
     fermion_tl<cpp_dec_float_25>,
     // the Fermi-Dirac integrator
     fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
     // the Bessel-exp integrator
     bessel_K_exp_integ_direct<
-      cpp_dec_float_25,funct_cdf35,25,cpp_dec_float_35>,
+      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
     // The fermion integrator
     fermion_rel_integ_multip<cpp_dec_float_25>,
     // The density solver
