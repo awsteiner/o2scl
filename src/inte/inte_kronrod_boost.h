@@ -37,11 +37,16 @@
 
 namespace o2scl {
 
-  /** \brief Gauss-Kronrod multiprecision integration class (Boost)
+  /** \brief Gauss-Kronrod integration class with multiprecision
+      (Boost)
 
       \note The uncertainties reported by this class depend on those
       returned by the boost integration functions and are occasionally
-      underestimated. 
+      underestimated.
+
+      \note The default maximum depth may be insufficient, especially
+      for high-precision types or multiprecision integration, and can
+      be changed with \ref set_max_depth().
       
   */
   template<size_t rule=15,
@@ -51,7 +56,9 @@ namespace o2scl {
     
   protected:
     
-    /// Maximum depth
+    /// \name Internal methods and data [protected]
+    //@{
+    /// Maximum depth (default 15)
     size_t max_depth;
     
     /** \brief Internal integration wrapper of the boost function
@@ -67,9 +74,10 @@ namespace o2scl {
                         double target_tol, double integ_tol) {
       int ret=0;
 
-      // AWS, 9/25/23, I don't think that the boost integrate()
-      // function can accept an rvalue reference, so this function
-      // must be a bit different than integ_err_int() below. 
+      // AWS, 9/25/23: I don't think that the boost kronrod
+      // integrate() function can accept an rvalue reference (even
+      // though the double_exp integration function can), so this
+      // function must be a bit different than integ_err_int() below.
       res=boost::math::quadrature::gauss_kronrod<fp_t,rule>::integrate
         (f,a,b,max_depth,target_tol,&err,&L1norm_loc);
       this->L1norm=static_cast<double>(L1norm_loc);
@@ -140,6 +148,7 @@ namespace o2scl {
       }
       return 0;
     }
+    //@}
     
   public:
 
@@ -152,13 +161,12 @@ namespace o2scl {
       tol_abs=-1.0;
     }
 
+  /// \name Integration settings
+  //@{
     /** \brief Power for tolerance of function evaluations in
         multiprecision integrations (default 1.33)
     */
     double pow_tol_func;
-
-    /// L1 norm
-    double L1norm;
 
     /** \brief The maximum relative uncertainty 
 	in the value of the integral (default \f$ -1 \f$)
@@ -182,14 +190,24 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    /** \brief Set the maximum number of interval splittings (default
-        15)
+    /** \brief Set the maximum number of interval splittings
+        (default 15)
     */
     void set_max_depth(size_t md) {
       max_depth=md;
       return;
     }
-    
+  //@}
+
+  /// \name Integration output quantities
+  //@{
+    /** \brief \f$ L_1 \f$ norm from the last integration
+     */
+    double L1norm;
+  //@}
+
+  /// \name Main integration functions
+  //@{
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
@@ -231,12 +249,15 @@ namespace o2scl {
       fp_t res, interror;
       int ret=integ_err(func,a,b,res,interror);
       if (ret!=0) {
-	O2SCL_ERR2("Integration failed in inte::integ(), ",
-		   "but cannot return int.",o2scl::exc_efailed);
+	O2SCL_ERR2("Integration failed in inte_kronrod_",
+                   "boost::integ().",o2scl::exc_efailed);
       }
       return res;
     }
+  //@}
 
+  /// \name Multiprecision integration functions
+  //@{
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -502,6 +523,19 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ_multip(func_t &&func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_err_multip(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte_kronrod_",
+                   "boost::integ_multip().",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
     /** \brief Integrate function \c func from \c a to \f$ \infty \f$ using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -517,6 +551,19 @@ namespace o2scl {
                               res,err,integ_tol);
     }
     
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ_iu_multip(func_t &&func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_iu_err_multip(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte_kronrod_",
+                   "boost::integ_iu_multip().",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -532,6 +579,19 @@ namespace o2scl {
                               b,res,err,integ_tol);
     }
     
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ_il_multip(func_t &&func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_il_err_multip(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte_kronrod_",
+                   "boost::integ_il_multip().",o2scl::exc_efailed);
+      }
+      return res;
+    }
+
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
         \infty \f$ using multipreicsion, placing the result in \c res
         and the error in \c err
@@ -548,6 +608,20 @@ namespace o2scl {
                               res,err,integ_tol);
     }
     
+    /** \brief Integrate function \c func from \c a to \c b.
+     */
+    template<typename func_t, class fp_t>
+    fp_t integ_i_multip(func_t &&func, fp_t a, fp_t b) {
+      fp_t res, interror;
+      int ret=integ_i_err_multip(func,a,b,res,interror);
+      if (ret!=0) {
+	O2SCL_ERR2("Integration failed in inte_kronrod_",
+                   "boost::integ_i_multip().",o2scl::exc_efailed);
+      }
+      return res;
+    }
+  //@}
+
   };
   
 }

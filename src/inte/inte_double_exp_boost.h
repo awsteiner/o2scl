@@ -39,6 +39,7 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED  
   /** \brief Tanh-sinh integration class (Boost)
       
       This class calls the error handler if the
@@ -289,12 +290,19 @@ namespace o2scl {
     size_t levels;
 
   };
+
+#endif
   
-  /** \brief Multiprecision integration class using Boost
+  /** \brief Double exponential integration class with multiprecision
+      (Boost)
 
       \note The uncertainties reported by this class depend on those
       returned by the boost integration object and are occasionally
-      be underestimated. 
+      be underestimated.
+      
+      \note The default maximum refinement level may be insufficient,
+      especially for high-precision types or multiprecision
+      integration, and can be changed with \ref set_max_refine().
   */
   template <class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
             class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
@@ -302,9 +310,15 @@ namespace o2scl {
     
   protected:
 
+    /// \name Internal functions and data [protected]
+    //@{
     /// Maximum refinement level
     size_t max_refine;
     
+    /** \brief Internal integration wrapper of the boost function
+        which stores the L1 norm and tests if the uncertainty is
+        sufficiently small
+    */
     template <typename func_t, class fp_t>
     int integ_err_funct(func_t &&func, fp_t a, fp_t b, 
                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
@@ -345,11 +359,10 @@ namespace o2scl {
         error value is larger than \c integ_tol
         - \c func_tol is the tolerance for evaluations of the 
         integrand. This value is passed to \ref o2scl::funct_multip.
-
     */
     template <typename func_t, class fp_t>
-    int integ_err_int(func_t &&func, fp_t a, fp_t b, 
-                      fp_t &res, fp_t &err, fp_t &L1norm,
+    int integ_err_int(func_t &&func, fp_t a, fp_t b, fp_t &res,
+                      fp_t &err, fp_t &L1norm,
                       double target_tol, double integ_tol, double func_tol) {
       
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
@@ -514,6 +527,7 @@ namespace o2scl {
       }
       return 0;
     }
+    //@}
     
   public:
 
@@ -559,6 +573,13 @@ namespace o2scl {
       max_refine=15;
     }
 
+    /** \brief Set the maximum refinement level (default 15)
+    */
+    void set_max_refine(size_t mr) {
+      max_refine=mr;
+      return;
+    }
+    
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */

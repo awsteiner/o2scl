@@ -118,7 +118,7 @@ int main(void) {
       
       double y1=fdig.calc_3(x);
       fdm.set_tol(1.0e-28);
-      int method;
+      int method=0;
       cpp_dec_float_35 y5, y5e;
       fdm.calc_3_ret_full(x_cdf35,y5,y5e,method);
       cout.width(4);
