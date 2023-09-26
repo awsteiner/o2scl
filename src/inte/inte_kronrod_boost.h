@@ -47,6 +47,10 @@ namespace o2scl {
       \note The default maximum depth may be insufficient, especially
       for high-precision types or multiprecision integration, and can
       be changed with \ref set_max_depth().
+
+      \warning For sufficiently difficult integrands, the 
+      multiprecision 
+      functions may take a very long time to complete.
       
   */
   template<size_t rule=15,
@@ -152,6 +156,8 @@ namespace o2scl {
     
   public:
 
+    /// \name Constructor
+    //@{
     inte_kronrod_boost() {
       verbose=0;
       pow_tol_func=1.33;
@@ -160,9 +166,10 @@ namespace o2scl {
       tol_rel=-1.0;
       tol_abs=-1.0;
     }
-
-  /// \name Integration settings
-  //@{
+    //@}
+    
+    /// \name Integration settings
+    //@{
     /** \brief Power for tolerance of function evaluations in
         multiprecision integrations (default 1.33)
     */
@@ -175,7 +182,7 @@ namespace o2scl {
 
     /** \brief The maximum absolute uncertainty 
 	in the value of the integral (default \f$ -1 \f$)
-
+        
         \note This value is unused by this integrator, but this
         is included for compatibility with the other integrators. 
     */
@@ -197,17 +204,17 @@ namespace o2scl {
       max_depth=md;
       return;
     }
-  //@}
+    //@}
 
-  /// \name Integration output quantities
-  //@{
+    /// \name Integration output quantities
+    //@{
     /** \brief \f$ L_1 \f$ norm from the last integration
      */
     double L1norm;
-  //@}
+    //@}
 
-  /// \name Main integration functions
-  //@{
+    /// \name Main integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
@@ -254,16 +261,13 @@ namespace o2scl {
       }
       return res;
     }
-  //@}
+    //@}
 
-  /// \name Multiprecision integration functions
-  //@{
+    /// \name Multiprecision integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
@@ -539,9 +543,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \f$ \infty \f$ using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
@@ -567,9 +568,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
@@ -595,9 +593,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
         \infty \f$ using multipreicsion, placing the result in \c res
         and the error in \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
@@ -620,7 +615,7 @@ namespace o2scl {
       }
       return res;
     }
-  //@}
+    //@}
 
   };
   

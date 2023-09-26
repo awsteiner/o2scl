@@ -107,13 +107,19 @@ namespace o2scl {
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
       . (3/10/2020: The CERNLIB links are apparently dead and haven't
       been supported since 2003.)
+
+      Several specializations of this class template are provided
+      for varying levels of precision, including 
+      \ref inte_gauss56_cern<funct,double>, 
+      \ref inte_gauss56_cern<funct_ld,long double>, and ...
    */
   template<class func_t, class fp_t>
   class inte_gauss56_cern :
     public inte_gauss56_cern_base<func_t,fp_t> {
   };
     
-  // Specialization for inte_gauss56_cern in double precision
+  /** \brief Specialization for inte_gauss56_cern in double precision
+   */
   template<> class inte_gauss56_cern<funct,double> :
     public inte_gauss56_cern_base<funct,double> {
   public:
@@ -147,7 +153,8 @@ namespace o2scl {
     }      
   };
   
-  // Specialization for inte_gauss56_cern in long double precision
+  /** \brief Specialization for inte_gauss56_cern in long double precision
+   */
   template<> class inte_gauss56_cern<funct_ld,long double> :
     public inte_gauss56_cern_base<funct_ld,long double> {
 
@@ -185,7 +192,8 @@ namespace o2scl {
 
   };
     
-  // Specialization for inte_gauss56_cern in 25-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 25-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_cdf25,boost::multiprecision::number<
                  boost::multiprecision::cpp_dec_float<25>>>:
@@ -250,7 +258,8 @@ namespace o2scl {
   
   };
 
-  // Specialization for inte_gauss56_cern in 35-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 35-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_cdf35,boost::multiprecision::number<
                  boost::multiprecision::cpp_dec_float<35>>>:
@@ -315,7 +324,8 @@ namespace o2scl {
   
   };
 
-  // Specialization for inte_gauss56_cern in 50-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 50-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_cdf50,boost::multiprecision::cpp_dec_float_50> : 
     public inte_gauss56_cern_base
@@ -379,7 +389,8 @@ namespace o2scl {
 
 #ifdef O2SCL_SET_MPFR
   
-  // Specialization for inte_gauss56_cern in 25-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 25-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_mpfr25,boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<25>>>:
@@ -443,7 +454,8 @@ namespace o2scl {
   
   };
 
-  // Specialization for inte_gauss56_cern in 35-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 35-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_mpfr35,boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<35>>>:
@@ -507,7 +519,8 @@ namespace o2scl {
   
   };
 
-  // Specialization for inte_gauss56_cern in 50-digit precision
+  /** \brief Specialization for inte_gauss56_cern in 50-digit precision
+   */
   template<> class inte_gauss56_cern
   <funct_mpfr50,boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<50>>>:

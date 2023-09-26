@@ -104,8 +104,8 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_iu_err_funct(func_t &&func, fp_t a, 
-                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
-                        double target_tol, double integ_tol) {
+                           fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                           double target_tol, double integ_tol) {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(func,a,std::numeric_limits<double>::infinity(),
@@ -138,8 +138,8 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_il_err_funct(func_t &&func, fp_t b, 
-                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
-                        double target_tol, double integ_tol) {
+                           fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                           double target_tol, double integ_tol) {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(func,-std::numeric_limits<double>::infinity(),b,
@@ -259,7 +259,7 @@ namespace o2scl {
         error value is larger than \c integ_tol
         - \c func_tol is the tolerance for evaluations of the 
         integrand. This value is passed to \ref o2scl::funct_multip.
-     */
+    */
     template <typename func_t, class fp_t>
     int integ_iu_err_int(func_t &&func, fp_t a, 
                          fp_t &res, fp_t &err, fp_t &L1norm_loc,
@@ -304,7 +304,7 @@ namespace o2scl {
         error value is larger than \c integ_tol
         - \c func_tol is the tolerance for evaluations of the 
         integrand. This value is passed to \ref o2scl::funct_multip.
-     */
+    */
     template <typename func_t, class fp_t>
     int integ_il_err_int(func_t &&func, fp_t b, 
                          fp_t &res, fp_t &err, fp_t &L1norm_loc,
@@ -320,7 +320,7 @@ namespace o2scl {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(fx,-std::numeric_limits<double>::infinity(),b,
-                       target_tol,&err,&L1norm_loc,&this->levels);
+                         target_tol,&err,&L1norm_loc,&this->levels);
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
@@ -349,7 +349,7 @@ namespace o2scl {
         error value is larger than \c integ_tol
         - \c func_tol is the tolerance for evaluations of the 
         integrand. This value is passed to \ref o2scl::funct_multip.
-     */
+    */
     template <typename func_t, class fp_t>
     int integ_i_err_int(func_t &&func, fp_t &res, fp_t &err,
                         fp_t &L1norm_loc, double target_tol,
@@ -387,9 +387,27 @@ namespace o2scl {
     
   public:
 
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-    
+    /// \name Constructor
+    //@{
+    inte_double_exp_boost() {
+      verbose=0;
+      pow_tol_func=1.33;
+      err_nonconv=true;
+      tol_rel=-1.0;
+      tol_abs=-1.0;
+      max_refine=15;
+    }
+    //@}
+
+    /// \name Integration settings
+    //@{
+    /** \brief Set the maximum refinement level (default 15)
+     */
+    void set_max_refine(size_t mr) {
+      max_refine=mr;
+      return;
+    }
+
     /** \brief The maximum relative uncertainty 
 	in the value of the integral (default \f$ -1 \f$)
     */
@@ -411,35 +429,25 @@ namespace o2scl {
     /** \brief Verbosity parameter
      */
     int verbose;
-
+    
     /** \brief If true, call the error handler if the integration
         does not succeed (default true)
     */
     bool err_nonconv;
-    
-  /// \name Integration output quantities
-  //@{
+    //@}
+
+    /// \name Integration output quantities
+    //@{
     /** \brief \f$ L_1 \f$ norm from the last integration
      */
     double L1norm;
-  //@}
 
-    inte_double_exp_boost() {
-      verbose=0;
-      pow_tol_func=1.33;
-      err_nonconv=true;
-      tol_rel=-1.0;
-      tol_abs=-1.0;
-      max_refine=15;
-    }
-
-    /** \brief Set the maximum refinement level (default 15)
-    */
-    void set_max_refine(size_t mr) {
-      max_refine=mr;
-      return;
-    }
+    /// Number of refinement levels in last integral computed
+    size_t levels;
+    //@}
     
+    /// \name Integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
@@ -526,7 +534,7 @@ namespace o2scl {
       
       fp_t L1norm_loc;
       int ret=integ_il_err_funct(func,b,res,err,L1norm_loc,
-                              tol_rel_loc/10.0,tol_rel_loc);
+                                 tol_rel_loc/10.0,tol_rel_loc);
       L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
@@ -560,7 +568,7 @@ namespace o2scl {
       
       fp_t L1norm_loc;
       int ret=integ_i_err_funct(func,res,err,L1norm_loc,
-                              tol_rel_loc/10.0,tol_rel_loc);
+                                tol_rel_loc/10.0,tol_rel_loc);
       L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
@@ -577,7 +585,10 @@ namespace o2scl {
       }
       return 0;
     }
+    //@}
 
+    /// \name Multiprecision integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
@@ -1248,7 +1259,7 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
-                            fp_t &res, fp_t &err, double integ_tol=-1.0) {
+                           fp_t &res, fp_t &err, double integ_tol=-1.0) {
       
       if (integ_tol<=0.0) {
         if (tol_rel<=0.0) {
@@ -1308,7 +1319,7 @@ namespace o2scl {
         long double res_ld, err_ld, L1norm_ld;
         
         ret=integ_i_err_int(func,res_ld,err_ld,L1norm_ld,
-                             target_tol,integ_tol,func_tol);
+                            target_tol,integ_tol,func_tol);
         
         if (ret==0 && err_ld<integ_tol) {
           res=static_cast<fp_t>(res_ld);
@@ -1331,8 +1342,8 @@ namespace o2scl {
         fp_25_t res_cdf25, err_cdf25, L1norm_cdf25;
         
         ret=integ_i_err_int(func,res_cdf25,
-                             err_cdf25,L1norm_cdf25,target_tol,
-                             integ_tol,func_tol);
+                            err_cdf25,L1norm_cdf25,target_tol,
+                            integ_tol,func_tol);
         
         if (ret==0 && err_cdf25<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
@@ -1355,8 +1366,8 @@ namespace o2scl {
         fp_35_t res_cdf35, err_cdf35, L1norm_cdf35;
         
         ret=integ_i_err_int(func,res_cdf35,
-                             err_cdf35,L1norm_cdf35,target_tol,
-                             integ_tol,func_tol);
+                            err_cdf35,L1norm_cdf35,target_tol,
+                            integ_tol,func_tol);
         
         if (ret==0 && err_cdf35<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
@@ -1379,8 +1390,8 @@ namespace o2scl {
         fp_50_t res_cdf50, err_cdf50, L1norm_cdf50;
         
         ret=integ_i_err_int(func,res_cdf50,
-                             err_cdf50,L1norm_cdf50,target_tol,
-                             integ_tol,func_tol);
+                            err_cdf50,L1norm_cdf50,target_tol,
+                            integ_tol,func_tol);
         
         if (ret==0 && err_cdf50<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
@@ -1403,8 +1414,8 @@ namespace o2scl {
         fp_100_t res_cdf100, err_cdf100, L1norm_cdf100;
         
         ret=integ_i_err_int(func,res_cdf100,
-                             err_cdf100,L1norm_cdf100,target_tol,
-                             integ_tol,func_tol);
+                            err_cdf100,L1norm_cdf100,target_tol,
+                            integ_tol,func_tol);
         
         if (ret==0 && err_cdf100<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
@@ -1426,6 +1437,7 @@ namespace o2scl {
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
+    //@}
 
   };
   

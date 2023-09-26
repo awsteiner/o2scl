@@ -29,8 +29,8 @@ List of classes which support multiprecision types:
 - Mathematical expression evaluation :ref:`calc_utf8 <calc_utf8>`
 - Constant library :ref:`find_constants <find_constants>`
 - Integration: :ref:`inte_gauss56_cern <inte_gauss56_cern>`,
-  :ref:`inte_gauss_cern <inte_gauss_cern>`, :ref:`inte_adapt_cern
-  <inte_adapt_cern>`, :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
+  :ref:`inte_gauss_cern <inte_gauss_cern>`, :ref:`inte_adapt_cern_tl
+  <inte_adapt_cern_tl>`, :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
   and :ref:`inte_double_exp_boost <inte_double_exp_boost>`.
 
 Many of the vector and matrix functions in :ref:`Arrays, Vectors,
