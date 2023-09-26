@@ -66,9 +66,9 @@ int main(void) {
   t.set_output_level(2);
 
   if (true) {
-    inte_tanh_sinh_boost<funct,61> itsb;
-    inte_exp_sinh_boost<funct,61> iesb;
-    inte_sinh_sinh_boost<funct,61> issb;
+    inte_double_exp_boost<funct> itsb;
+    inte_double_exp_boost<funct> iesb;
+    inte_double_exp_boost<funct> issb;
 
     double ans, exact, err;
 
@@ -151,17 +151,18 @@ int main(void) {
     funct_cdf35 tf1_cdf35=test_func<cpp_dec_float_35>;
     funct_cdf35 tf2_cdf35=test_func_2<cpp_dec_float_35>;
 
-    inte_tanh_sinh_boost<funct_ld,61,long double> itsb_ld;
-    inte_tanh_sinh_boost<funct_cdf35,61,cpp_dec_float_35> itsb_cdf35;
-    inte_tanh_sinh_boost<funct_cdf50,61,cpp_dec_float_50> itsb_cdf;
+    inte_double_exp_boost<funct_ld,long double> itsb_ld;
+    inte_double_exp_boost<funct_cdf35,cpp_dec_float_35> itsb_cdf35;
+    inte_double_exp_boost<funct_cdf50,cpp_dec_float_50> itsb_cdf;
 
     // Finite integral, moderately difficult integrand
     cout << "tanh-sinh, finite interval, long double:" << endl;
     long double one_ld=1;
+    long double zero_ld=0;
     long double hundred_ld=100;
     long double exact_ld=exact_func<long double>();
     long double ans_ld, err_ld;
-    itsb_ld.integ_err(tf1_ld,0.0,1.0,ans_ld,err_ld);
+    itsb_ld.integ_err(tf1_ld,zero_ld,one_ld,ans_ld,err_ld);
     t.test_rel<long double>(ans_ld,exact_ld,1.0e-16,"tanh_sinh test ld");
     std::cout << ans_ld << " " << err_ld << " " << exact_ld << " "
               << itsb_ld.L1norm << std::endl;
@@ -169,12 +170,13 @@ int main(void) {
 
     // Finite integral, moderately difficult integrand
     cout << "tanh-sinh, finite interval, cpp_dec_float_35:" << endl;
+    cpp_dec_float_35 zero_cdf35=0;
     cpp_dec_float_35 one_cdf35=1;
     cpp_dec_float_35 hundred_cdf35=100;
     cpp_dec_float_35 exact_cdf35=exact_func<cpp_dec_float_35>();
     cpp_dec_float_35 ans_cdf35, err_cdf35;
     itsb_cdf35.tol_rel=1.0e-30;
-    itsb_cdf35.integ_err(tf1_cdf35,0.0,1.0,ans_cdf35,err_cdf35);
+    itsb_cdf35.integ_err(tf1_cdf35,zero_cdf35,one_cdf35,ans_cdf35,err_cdf35);
     std::cout << ans_cdf35 << " " << err_cdf35 << std::endl;
     std::cout << dtos(exact_cdf35,0) << std::endl;
     std::cout << itsb_cdf35.L1norm << std::endl;
@@ -184,12 +186,13 @@ int main(void) {
 
     // Finite integral, moderately difficult integrand
     cout << "tanh-sinh, finite interval, cpp_dec_float_50:" << endl;
+    cpp_dec_float_50 zero_cdf=0;
     cpp_dec_float_50 one_cdf=1;
     cpp_dec_float_50 hundred_cdf=100;
     cpp_dec_float_50 exact_cdf=exact_func<cpp_dec_float_50>();
     cpp_dec_float_50 ans_cdf, err_cdf;
     itsb_cdf.tol_rel=1.0e-40;
-    itsb_cdf.integ_err(tf1_cdf,0.0,1.0,ans_cdf,err_cdf);
+    itsb_cdf.integ_err(tf1_cdf,zero_cdf,one_cdf,ans_cdf,err_cdf);
     std::cout << ans_cdf << " " << err_cdf << std::endl;
     std::cout << dtos(exact_cdf,0) << std::endl;
     std::cout << itsb_cdf.L1norm << std::endl;
@@ -203,7 +206,7 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_multip_double_exp_boost<> imtsb;
+    inte_double_exp_boost<> imtsb;
     imtsb.verbose=2;
     imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2,1.0e-8);
@@ -235,7 +238,7 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_multip_double_exp_boost<cpp_dec_float_25,
+    inte_double_exp_boost<cpp_dec_float_25,
                                  cpp_dec_float_35,cpp_dec_float_50,
                                  cpp_dec_float_100> imtsb;
     imtsb.verbose=0;
@@ -247,7 +250,7 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_multip_double_exp_boost<mpfr_25,mpfr_35,mpfr_50,mpfr_100> imtsb;
+    inte_double_exp_boost<mpfr_25,mpfr_35,mpfr_50,mpfr_100> imtsb;
                                  
     imtsb.verbose=0;
     imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },

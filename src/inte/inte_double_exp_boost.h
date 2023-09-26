@@ -39,263 +39,13 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED  
-  /** \brief Tanh-sinh integration class (Boost)
-      
-      This class calls the error handler if the
-      error returned by boost is larger than \ref inte::tol_rel .
-
-      The native range of the integrator is -1 to 1, but supports
-      infinite limits on either (or both) sides.
-  */
-  template<class func_t=funct, size_t max_refine=15, class fp_t=double,
-           class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
-           class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
-  class inte_tanh_sinh_boost : public inte<func_t, fp_t> {
-    
-  protected:
-
-    /// The boost integration object
-    boost::math::quadrature::tanh_sinh<fp_t> it;
-  
-  public:
-
-    inte_tanh_sinh_boost() : it(max_refine) {
-    }
-  
-    virtual ~inte_tanh_sinh_boost() {
-    }
-
-    /// Return string denoting type ("inte_tanh_sinh_boost")
-    virtual const char *type() { return "inte_tanh_sinh_boost"; }
-    
-    /** \brief Integrate function \c func from \c a to \c b and place
-	the result in \c res and the error in \c err
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			  fp_t &res, fp_t &err) {
-      // Dropping the tolerance by a factor of 10 seems to help
-      // the boost integrator succeed.
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,
-                       &this->levels);
-      if (err/abs(res)>this->tol_rel) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_tanh_sinh_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,levels,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << this->levels << " " << max_refine
-                    << std::endl;
-        }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_tanh_sinh_boost::integ_err().",
-                        o2scl::exc_efailed,this->err_nonconv);
-      }
-      return 0;
-    }
-
-    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
-	and place the result in \c res and the error in \c err
-    */
-    virtual int integ_iu_err(func_t &func, fp_t a, 
-			     fp_t &res, fp_t &err) {
-      return integ_err(func,a,std::numeric_limits<double>::infinity(),
-		       res,err);
-    }
-    
-    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
-	and place the result in \c res and the error in \c err
-    */
-    virtual int integ_il_err(func_t &func, fp_t b, 
-			     fp_t &res, fp_t &err) {
-      return integ_err(func,-std::numeric_limits<double>::infinity(),
-		       b,res,err);
-    }
-    
-    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
-	\infty \f$ and place the result in \c res and the error in \c
-	err
-    */
-    virtual int integ_i_err(func_t &func, 
-			    fp_t &res, fp_t &err) {
-      return integ_err(func,std::numeric_limits<double>::infinity(),
-		       -std::numeric_limits<double>::infinity(),res,err);
-    }
-  
-    /** \brief Integrate function \c func from -1 to 1 and place
-	the result in \c res and the error in \c err
-    */
-    virtual int integ_moo_err(func_t &func, fp_t &res, fp_t &err) {
-      // Dropping the tolerance by a factor of 10 seems to help
-      // the boost integrator succeed.
-      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (this->verbose>0) {
-	std::cout << "Function inte_tanh_sinh_boost::integ_moo_err() failed."
-                  << std::endl;
-        std::cout << "Values err,tol_rel,L1norm,levels,max: "
-		  << err << " " << this->tol_rel << " "
-		  << L1norm << " " << levels << " " << max_refine
-                  << std::endl;
-	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_tanh_sinh_boost::integ_moo_err().",
-                        o2scl::exc_efailed,this->err_nonconv);
-      }
-      return 0;
-    }
-  
-    /// L1 norm of the last integral computed
-    fp_t L1norm;
-
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-
-  };
-  
-  /** \brief Exp-sinh integration class (Boost)
-      
-      This class calls the error handler if the
-      error returned by boost is larger than \ref inte::tol_rel .
-
-      Native range is 0 to \f$ \infty \f$, but 
-      any semi-infinite range is supported.
-  */
-  template<class func_t=funct, size_t max_refine=15, class fp_t=double,
-           class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
-           class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
-  class inte_exp_sinh_boost : public inte<func_t, fp_t> {
-    
-  protected:
-
-    /// The boost integration object
-    boost::math::quadrature::exp_sinh<fp_t> it;
-  
-  public:
-
-    inte_exp_sinh_boost() : it(max_refine) {
-    }
-  
-    virtual ~inte_exp_sinh_boost() {
-    }
-    
-    /// Return string denoting type ("inte_exp_sinh_boost")
-    virtual const char *type() { return "inte_exp_sinh_boost"; }
-    
-    /** \brief Integrate function \c func from \c a to \c b and place
-	the result in \c res and the error in \c err
-    */
-    virtual int integ_err(func_t &func, fp_t a, fp_t b, 
-			  fp_t &res, fp_t &err) {
-      // Dropping the tolerance by a factor of 10 seems to help
-      // the boost integrator succeed.
-      res=it.integrate(func,a,b,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (err/abs(res)>this->tol_rel) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_exp_sinh_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,levels,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << levels << " " << max_refine
-                    << std::endl;
-        }
-	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_exp_sinh_boost::integ_err().",
-                        o2scl::exc_efailed,this->err_nonconv);
-      }
-      return 0;
-    }
-  
-    /** \brief Integrate function \c func from \c a to \f$ \infty \f$
-	and place the result in \c res and the error in \c err
-    */
-    virtual int integ_iu_err(func_t &func, fp_t a, 
-			     fp_t &res, fp_t &err) {
-      return integ_err(func,a,std::numeric_limits<double>::infinity(),
-		       res,err);
-    }
-  
-    /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b
-	and place the result in \c res and the error in \c err
-    */
-    virtual int integ_il_err(func_t &func, fp_t b, 
-			     fp_t &res, fp_t &err) {
-      return integ_err(func,-std::numeric_limits<double>::infinity(),
-		       b,res,err);
-    }
-  
-    /// L1 norm of the last integral computed
-    fp_t L1norm;
-
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-
-  };
-  
-  /** \brief Sinh-sinh integration class (Boost)
-      
-      This class calls the error handler if the
-      error returned by boost is larger than \ref inte::tol_rel .
-
-      Only infinite limits (upper and lower) are supported.
-  */
-  template<class func_t=funct, size_t max_refine=15, class fp_t=double,
-           class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
-           class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
-  class inte_sinh_sinh_boost : public inte<func_t,fp_t> {
-    
-  protected:
-
-    /// The boost integration object
-    boost::math::quadrature::sinh_sinh<fp_t> it;
-  
-  public:
-
-    inte_sinh_sinh_boost() : it(max_refine) {
-    }
-  
-    virtual ~inte_sinh_sinh_boost() {
-    }
-    
-    /// Return string denoting type ("inte_sinh_sinh_boost")
-    virtual const char *type() { return "inte_sinh_sinh_boost"; }
-    
-    /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
-	\infty \f$ and place the result in \c res and the error in \c
-	err
-    */
-    virtual int integ_i_err(func_t &func, 
-			    fp_t &res, fp_t &err) {
-      // Dropping the tolerance by a factor of 10 seems to help
-      // the boost integrator succeed.
-      res=it.integrate(func,this->tol_rel/10.0,&err,&L1norm,&levels);
-      if (err/abs(res)>this->tol_rel) {
-        if (this->verbose>0) {
-          std::cout << "Function inte_sinh_sinh_boost::integ_err() failed."
-                    << std::endl;
-          std::cout << "Values err,tol_rel,L1norm,levels,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm << " " << levels << " " << max_refine
-                    << std::endl;
-        }
-	O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_sinh_sinh_boost::integ_err().",
-                        o2scl::exc_efailed,this->err_nonconv);
-      }
-      return 0;
-    }
-
-    /// L1 norm of the last integral computed
-    fp_t L1norm;
-
-    /// Number of refinement levels in last integral computed
-    size_t levels;
-
-  };
-
-#endif
-  
   /** \brief Double exponential integration class with multiprecision
       (Boost)
 
+      This class uses \c tanh_sinh for finite intervals, \c exp_sinh
+      for half-infinite integration limits, and \c sinh_sinh for infinite
+      integration limits.
+      
       \note The uncertainties reported by this class depend on those
       returned by the boost integration object and are occasionally
       be underestimated.
@@ -306,7 +56,7 @@ namespace o2scl {
   */
   template <class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
             class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
-  class inte_multip_double_exp_boost {
+  class inte_double_exp_boost {
     
   protected:
 
@@ -327,6 +77,7 @@ namespace o2scl {
       boost::math::quadrature::tanh_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(func,a,b,target_tol,&err,&L1norm_loc,
                          &this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_err_funct() "
@@ -339,6 +90,107 @@ namespace o2scl {
         if (verbose>0) {
           std::cout << "  inte_multip_double_exp_boost::"
                     << "integ_err_funct() failed because "
+                    << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
+        return 1;
+      }
+      return 0;
+    }
+    
+    /** \brief Internal integration wrapper of the boost function
+        which stores the L1 norm and tests if the uncertainty is
+        sufficiently small
+    */
+    template <typename func_t, class fp_t>
+    int integ_iu_err_funct(func_t &&func, fp_t a, 
+                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                        double target_tol, double integ_tol) {
+      
+      boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
+      res=it_x.integrate(func,a,std::numeric_limits<double>::infinity(),
+                         target_tol,&err,&L1norm_loc,
+                         &this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_double_exp_boost::integ_iu_err_funct() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_multip_double_exp_boost::"
+                    << "integ_iu_err_funct() failed because "
+                    << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
+        return 1;
+      }
+      return 0;
+    }
+    
+    /** \brief Internal integration wrapper of the boost function
+        which stores the L1 norm and tests if the uncertainty is
+        sufficiently small
+    */
+    template <typename func_t, class fp_t>
+    int integ_il_err_funct(func_t &&func, fp_t b, 
+                        fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                        double target_tol, double integ_tol) {
+      
+      boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
+      res=it_x.integrate(func,-std::numeric_limits<double>::infinity(),b,
+                         target_tol,&err,&L1norm_loc,
+                         &this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_double_exp_boost::integ_il_err_funct() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_multip_double_exp_boost::"
+                    << "integ_il_err_funct() failed because "
+                    << err/abs(res) << " > "
+                    << integ_tol << std::endl;
+        }
+        return 1;
+      }
+      return 0;
+    }
+    
+    /** \brief Internal integration wrapper of the boost function
+        which stores the L1 norm and tests if the uncertainty is
+        sufficiently small
+    */
+    template <typename func_t, class fp_t>
+    int integ_i_err_funct(func_t &&func, 
+                          fp_t &res, fp_t &err, fp_t &L1norm_loc,
+                          double target_tol, double integ_tol) {
+      
+      boost::math::quadrature::sinh_sinh<fp_t> it_x(max_refine);
+      res=it_x.integrate(func,target_tol,&err,&L1norm_loc,
+                         &this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
+
+      if (verbose>1) {
+        std::cout << "inte_multip_double_exp_boost::integ_i_err_funct() "
+                  << "tols(target,integ,func),err:\n  "
+                  << target_tol << " " << integ_tol << " "
+                  << err << std::endl;
+      }
+
+      if (err/abs(res)>integ_tol) {
+        if (verbose>0) {
+          std::cout << "  inte_multip_double_exp_boost::"
+                    << "integ_i_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
         }
@@ -362,7 +214,7 @@ namespace o2scl {
     */
     template <typename func_t, class fp_t>
     int integ_err_int(func_t &&func, fp_t a, fp_t b, fp_t &res,
-                      fp_t &err, fp_t &L1norm,
+                      fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
@@ -373,7 +225,8 @@ namespace o2scl {
       { return fm2(func,x); };
 
       boost::math::quadrature::tanh_sinh<fp_t> it_x(max_refine);
-      res=it_x.integrate(fx,a,b,target_tol,&err,&L1norm,&this->levels);
+      res=it_x.integrate(fx,a,b,target_tol,&err,&L1norm_loc,&this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_err_int() "
@@ -409,7 +262,7 @@ namespace o2scl {
      */
     template <typename func_t, class fp_t>
     int integ_iu_err_int(func_t &&func, fp_t a, 
-                         fp_t &res, fp_t &err, fp_t &L1norm,
+                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
                          double target_tol, double integ_tol,
                          double func_tol) {
       
@@ -422,7 +275,8 @@ namespace o2scl {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(fx,a,std::numeric_limits<double>::infinity(),
-                         target_tol,&err,&L1norm,&this->levels);
+                         target_tol,&err,&L1norm_loc,&this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_iu_err_int() "
@@ -453,7 +307,7 @@ namespace o2scl {
      */
     template <typename func_t, class fp_t>
     int integ_il_err_int(func_t &&func, fp_t b, 
-                         fp_t &res, fp_t &err, fp_t &L1norm,
+                         fp_t &res, fp_t &err, fp_t &L1norm_loc,
                          double target_tol, double integ_tol,
                          double func_tol) {
       
@@ -466,7 +320,8 @@ namespace o2scl {
       
       boost::math::quadrature::exp_sinh<fp_t> it_x(max_refine);
       res=it_x.integrate(fx,-std::numeric_limits<double>::infinity(),b,
-                       target_tol,&err,&L1norm,&this->levels);
+                       target_tol,&err,&L1norm_loc,&this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_il_err_int() "
@@ -496,9 +351,9 @@ namespace o2scl {
         integrand. This value is passed to \ref o2scl::funct_multip.
      */
     template <typename func_t, class fp_t>
-    int integ_i_err_int(func_t &&func, fp_t &res, fp_t &err, fp_t &L1norm,
-                        double target_tol, double integ_tol,
-                        double func_tol) {
+    int integ_i_err_int(func_t &&func, fp_t &res, fp_t &err,
+                        fp_t &L1norm_loc, double target_tol,
+                        double integ_tol, double func_tol) {
       
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
@@ -512,7 +367,8 @@ namespace o2scl {
                   << std::endl;
       }
       boost::math::quadrature::sinh_sinh<fp_t> it_x(max_refine);
-      res=it_x.integrate(fx,target_tol,&err,&L1norm,&this->levels);
+      res=it_x.integrate(fx,target_tol,&err,&L1norm_loc,&this->levels);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
         std::cout << "inte_multip_double_exp_boost::integ_i_err_int() "
@@ -531,21 +387,19 @@ namespace o2scl {
     
   public:
 
-    /** \brief The maximum relative uncertainty for multipreicsion
-	integrals (default \f$ -1 \f$)
-    */
-    double tol_rel_multip;
-
     /// Number of refinement levels in last integral computed
     size_t levels;
     
     /** \brief The maximum relative uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
+	in the value of the integral (default \f$ -1 \f$)
     */
     double tol_rel;
 
     /** \brief The maximum absolute uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
+	in the value of the integral (default \f$ -1 \f$)
+
+        \note This value is unused by this integrator, but this
+        is included for compatibility with the other integrators. 
     */
     double tol_abs;
 
@@ -563,13 +417,19 @@ namespace o2scl {
     */
     bool err_nonconv;
     
-    inte_multip_double_exp_boost() {
-      tol_rel_multip=-1.0;
+  /// \name Integration output quantities
+  //@{
+    /** \brief \f$ L_1 \f$ norm from the last integration
+     */
+    double L1norm;
+  //@}
+
+    inte_double_exp_boost() {
       verbose=0;
       pow_tol_func=1.33;
       err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=1.0e-8;
+      tol_rel=-1.0;
+      tol_abs=-1.0;
       max_refine=15;
     }
 
@@ -586,20 +446,29 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
+      double tol_rel_loc;
+      if (tol_rel<=0.0) {
+        tol_rel_loc=sqrt(static_cast<double>
+                         (std::numeric_limits<fp_t>::epsilon()));
+      } else {
+        tol_rel_loc=tol_rel;
+      }
+
       fp_t L1norm_loc;
       int ret=integ_err_funct(func,a,b,res,err,L1norm_loc,
-                              this->tol_rel/10.0,this->tol_rel);
+                              tol_rel_loc/10.0,tol_rel_loc);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::"
+          std::cout << "Function inte_double_exp_boost::"
                     << "integ_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm_loc << std::endl;
+                    << err << " " << tol_rel_loc << " "
+                    << L1norm << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_err().",
+                        "inte_double_exp_boost::integ_err().",
                         o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
@@ -611,17 +480,26 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_iu_err(func_t &func, fp_t a, fp_t &res, fp_t &err) {
       
+      double tol_rel_loc;
+      if (tol_rel<=0.0) {
+        tol_rel_loc=sqrt(static_cast<double>
+                         (std::numeric_limits<fp_t>::epsilon()));
+      } else {
+        tol_rel_loc=tol_rel;
+      }
+
       fp_t L1norm_loc;
       int ret=integ_iu_err_funct(func,a,res,err,L1norm_loc,
-                              this->tol_rel/10.0,this->tol_rel);
+                                 tol_rel_loc/10.0,tol_rel_loc);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
         if (this->verbose>0) {
           std::cout << "Function inte_double_exp_boost::"
                     << "integ_iu_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm_loc
+                    << err << " " << tol_rel_loc << " "
+                    << L1norm
                     << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
@@ -638,20 +516,29 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_il_err(func_t &func, fp_t b, fp_t &res, fp_t &err) {
       
+      double tol_rel_loc;
+      if (tol_rel<=0.0) {
+        tol_rel_loc=sqrt(static_cast<double>
+                         (std::numeric_limits<fp_t>::epsilon()));
+      } else {
+        tol_rel_loc=tol_rel;
+      }
+      
       fp_t L1norm_loc;
       int ret=integ_il_err_funct(func,b,res,err,L1norm_loc,
-                              this->tol_rel/10.0,this->tol_rel);
+                              tol_rel_loc/10.0,tol_rel_loc);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::"
+          std::cout << "Function inte_double_exp_boost::"
                     << "integ_il_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm_loc << std::endl;
+                    << err << " " << tol_rel_loc << " "
+                    << L1norm << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_il_err().",
+                        "inte_double_exp_boost::integ_il_err().",
                         o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
@@ -663,20 +550,29 @@ namespace o2scl {
     template<typename func_t, class fp_t>
     int integ_i_err(func_t &func, fp_t &res, fp_t &err) {
       
+      double tol_rel_loc;
+      if (tol_rel<=0.0) {
+        tol_rel_loc=sqrt(static_cast<double>
+                         (std::numeric_limits<fp_t>::epsilon()));
+      } else {
+        tol_rel_loc=tol_rel;
+      }
+      
       fp_t L1norm_loc;
       int ret=integ_i_err_funct(func,res,err,L1norm_loc,
-                              this->tol_rel/10.0,this->tol_rel);
+                              tol_rel_loc/10.0,tol_rel_loc);
+      L1norm=static_cast<double>(L1norm_loc);
       
       if (ret!=0) {
         if (this->verbose>0) {
-          std::cout << "Function inte_multip_double_exp_boost::"
+          std::cout << "Function inte_double_exp_boost::"
                     << "integ_i_err() failed." << std::endl;
           std::cout << "Values err,tol_rel,L1norm,max: "
-                    << err << " " << this->tol_rel << " "
-                    << L1norm_loc << std::endl;
+                    << err << " " << tol_rel_loc << " "
+                    << L1norm << std::endl;
         }
         O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_multip_double_exp_boost::integ_i_err().",
+                        "inte_double_exp_boost::integ_i_err().",
                         o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
@@ -704,15 +600,15 @@ namespace o2scl {
       }
         
       if (integ_tol<=0.0) {
-        if (tol_rel_multip<=0.0) {
+        if (tol_rel<=0.0) {
           integ_tol=pow(10.0,-std::numeric_limits<fp_t>::digits10);
         } else {
-          integ_tol=tol_rel_multip;
+          integ_tol=tol_rel;
         }
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_multip(): set "
+        std::cout << "inte_double_exp_boost::integ_err_multip(): set "
                   << "tolerance to: " << integ_tol << std::endl;
       }
       
@@ -730,16 +626,16 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << "\n  for double integration." << std::endl;
         }
         double a_d=static_cast<double>(a);
         double b_d=static_cast<double>(b);
-        double res_d, err_d, L1norm_d;
+        double res_d, err_d;
         
-        ret=integ_err_int(func,a_d,b_d,res_d,err_d,L1norm_d,
+        ret=integ_err_int(func,a_d,b_d,res_d,err_d,
                           target_tol,integ_tol,func_tol);
         
         if (ret==0 && err_d/abs(res_d)<integ_tol) {
@@ -751,11 +647,13 @@ namespace o2scl {
         }
       }
 
-      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+      if (integ_tol>
+          pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << pow(10.0,
+                           -std::numeric_limits<long double>::digits10+3)
                     << "\n  for long double integration." << std::endl;
         }
         long double a_ld=static_cast<long double>(a);
@@ -777,7 +675,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_25_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_25_t>::digits10+3)
@@ -803,7 +701,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_35_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_35_t>::digits10+3)
@@ -829,7 +727,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_50_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_50_t>::digits10+3)
@@ -855,7 +753,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_100_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_100_t>::digits10+3)
@@ -879,13 +777,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_multip() "
+        std::cout << "inte_double_exp_boost::integ_err_multip() "
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_err().",
+                      "in inte_double_exp_boost::integ_err().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
@@ -910,7 +808,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::"
+        std::cout << "inte_double_exp_boost::"
                   << "integ_iu_err_multip(): set "
                   << "integ_tol to: " << integ_tol << std::endl;
       }
@@ -1136,13 +1034,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_multip() "
+        std::cout << "inte_double_exp_boost::integ_iu_err_multip() "
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy in ",
-                      "inte_multip_double_exp_boost::integ_iu_err_multip().",
+                      "inte_double_exp_boost::integ_iu_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
@@ -1167,7 +1065,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+        std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                   << "set integ_tol to: " << integ_tol << std::endl;
       }
       
@@ -1185,7 +1083,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << " for double integration." << std::endl;
@@ -1205,11 +1103,13 @@ namespace o2scl {
         }
       }
 
-      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+      if (integ_tol>pow(10.0,
+                        -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << pow(10.0,
+                           -std::numeric_limits<long double>::digits10+3)
                     << " for long double integration." << std::endl;
         }
         long double b_ld=static_cast<long double>(b);
@@ -1230,7 +1130,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_25_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_25_t>::digits10+3)
@@ -1255,7 +1155,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_35_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_35_t>::digits10+3)
@@ -1280,7 +1180,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_50_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_50_t>::digits10+3)
@@ -1305,7 +1205,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_100_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_il_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_il_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_100_t>::digits10+3)
@@ -1328,13 +1228,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_multip() "
+        std::cout << "inte_double_exp_boost::integ_il_err_multip() "
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_il_err_multip().",
+                      "in inte_double_exp_boost::integ_il_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
@@ -1359,7 +1259,7 @@ namespace o2scl {
       } 
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): set "
+        std::cout << "inte_double_exp_boost::integ_i_err_multip(): set "
                   << "integ_tol to: " << integ_tol << std::endl;
       }
       
@@ -1377,7 +1277,7 @@ namespace o2scl {
       // type than the required integration tolerance
       if (integ_tol>pow(10.0,-std::numeric_limits<double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits<double>::digits10+3)
                     << " for double integration." << std::endl;
@@ -1396,11 +1296,13 @@ namespace o2scl {
         }
       }
 
-      if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
+      if (integ_tol>pow(10.0,
+                        -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
-                    << pow(10.0,-std::numeric_limits<long double>::digits10+3)
+                    << pow(10.0,
+                           -std::numeric_limits<long double>::digits10+3)
                     << " for long double integration." << std::endl;
         }
         long double res_ld, err_ld, L1norm_ld;
@@ -1420,7 +1322,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_25_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_25_t>::digits10+3)
@@ -1444,7 +1346,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_35_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_35_t>::digits10+3)
@@ -1468,7 +1370,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_50_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_50_t>::digits10+3)
@@ -1492,7 +1394,7 @@ namespace o2scl {
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_100_t>::digits10+3)) {
         if (verbose>0) {
-          std::cout << "inte_multip_double_exp_boost::integ_i_err_multip(): "
+          std::cout << "inte_double_exp_boost::integ_i_err_multip(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
                            <fp_100_t>::digits10+3)
@@ -1514,13 +1416,13 @@ namespace o2scl {
       }
 
       if (verbose>0) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_multip() "
+        std::cout << "inte_double_exp_boost::integ_i_err_multip() "
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_multip_double_exp_boost::integ_i_err_multip().",
+                      "in inte_double_exp_boost::integ_i_err_multip().",
                       o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }

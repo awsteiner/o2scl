@@ -31,9 +31,7 @@ List of classes which support multiprecision types:
 - Integration: :ref:`inte_gauss56_cern <inte_gauss56_cern>`,
   :ref:`inte_gauss_cern <inte_gauss_cern>`, :ref:`inte_adapt_cern
   <inte_adapt_cern>`, :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
-  :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`,
-  :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`, and
-  :ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>`.
+  and :ref:`inte_double_exp_boost <inte_double_exp_boost>`.
 
 Many of the vector and matrix functions in :ref:`Arrays, Vectors,
 Matrices, and Tensors` section also support multiprecision.       

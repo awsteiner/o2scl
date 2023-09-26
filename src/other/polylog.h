@@ -409,7 +409,7 @@ namespace o2scl {
       See also \ref o2scl::fermi_dirac_integ_gsl .
       The integration is handled by an object of 
       type \ref o2scl::fermi_dirac_integ_tl using an
-      integrator of type \ref o2scl::inte_exp_sinh_boost .
+      integrator of type \ref o2scl::inte_double_exp_boost .
 
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
@@ -425,7 +425,6 @@ namespace o2scl {
       \endverbatim
    */
   template <class fp_t=double, class func_t=funct_ld,
-	    size_t max_refine=30, 
 	    class internal_fp_t=long double>
   class fermi_dirac_integ_direct {
 
@@ -440,8 +439,8 @@ namespace o2scl {
 
     /** \brief The integrator
      */
-    fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-                         <func_t,max_refine,internal_fp_t>,
+    fermi_dirac_integ_tl<o2scl::inte_double_exp_boost
+                         <func_t,internal_fp_t>,
                          internal_fp_t> it;
 
     fermi_dirac_integ_direct() {
@@ -595,7 +594,7 @@ namespace o2scl {
     //@{
     inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
                        cpp_dec_float_50,cpp_dec_float_100> ikb;
-    inte_multip_double_exp_boost<> ideb;
+    inte_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}
     
@@ -962,7 +961,7 @@ namespace o2scl {
     /// \name The base integrators
     //@{
     inte_kronrod_boost<61> ikb;
-    inte_multip_double_exp_boost<> ideb;
+    inte_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}
     
@@ -1066,7 +1065,7 @@ namespace o2scl {
       With the default types, this class should give almost identical
       results to \ref o2scl::bessel_K_exp_integ_gsl .
   */
-  template <class fp_t=double, class func_t=funct_ld, size_t max_refine=15,
+  template <class fp_t=double, class func_t=funct_ld,
 	    class internal_fp_t=long double>
   class bessel_K_exp_integ_direct {
     
@@ -1074,8 +1073,8 @@ namespace o2scl {
 
     /** \brief The integrator
      */
-    bessel_K_exp_integ_tl<o2scl::inte_exp_sinh_boost
-                          <func_t,max_refine,internal_fp_t>,internal_fp_t> it;
+    bessel_K_exp_integ_tl<o2scl::inte_double_exp_boost
+                          <func_t,internal_fp_t>,internal_fp_t> it;
     
     bessel_K_exp_integ_direct() {
       it.iiu.tol_rel=1.0e-12;
@@ -1187,21 +1186,21 @@ namespace o2scl {
       A classic reference for the polylogarithm function is [Lewin81]_.
       \endverbatim
   */
-  template<class fp_t=double, class func_t=funct_ld, size_t max_refine=15,
+  template<class fp_t=double, class func_t=funct_ld, 
            class internal_fp_t=long double> class polylog {
 
   protected:
     
     /** \brief The integrator for negative arguments
      */
-    fermi_dirac_integ_tl<o2scl::inte_exp_sinh_boost
-                         <func_t,max_refine,internal_fp_t>,
+    fermi_dirac_integ_tl<o2scl::inte_double_exp_boost
+                         <func_t,internal_fp_t>,
                          internal_fp_t> it_fd;
     
     /** \brief The integrator for positive arguments
      */
-    bose_einstein_integ_tl<o2scl::inte_exp_sinh_boost
-      <func_t,max_refine,internal_fp_t>,internal_fp_t> it_be;
+    bose_einstein_integ_tl<o2scl::inte_double_exp_boost
+                           <func_t,internal_fp_t>,internal_fp_t> it_be;
     
   public:
     
