@@ -259,12 +259,16 @@ namespace o2scl {
       \f]
       will nearly always be true when no error is returned.  For
       functions with no singualarities in the interval, the accuracy
-      will usually be higher than this.
+      will usually be higher than this.      
 
       If the desired accuracy is not achieved, the integration
       functions will call the error handler and return the best guess,
       unless \ref inte::err_nonconv is false, in which case the error
       handler is not called. 
+
+      The constructor sets the value of \ref inte::tol_rel to the
+      square root of \c numeric_limits::epsilon. For double precision
+      numbers, this tolerance is usually about \f$ 10^{-8} \f$.
     
       This function is based on the CERNLIB routines GAUSS and DGAUSS
       which are documented at
@@ -272,7 +276,8 @@ namespace o2scl {
       . (3/10/2020: The CERNLIB links are apparently dead and haven't
       been supported since 2003.)
       
-      \future Allow user to change \c cst?
+      \future Allow user to change \c cst? Is the current value
+      appropriate for multiprecision types?
   */
   template<class func_t=funct, class fp_t=double,
            class weights_t=inte_gauss_coeffs_double>
@@ -297,6 +302,8 @@ namespace o2scl {
     inte_gauss_cern() {
       w=&(wgts.w[0]);
       x=&(wgts.x[0]);
+      tol_rel=sqrt(static_cast<double>
+                   (std::numeric_limits<fp_t>::epsilon()));
     }
     
     virtual ~inte_gauss_cern() {
