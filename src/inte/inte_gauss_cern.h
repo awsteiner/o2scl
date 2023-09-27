@@ -302,7 +302,7 @@ namespace o2scl {
     inte_gauss_cern() {
       w=&(wgts.w[0]);
       x=&(wgts.x[0]);
-      tol_rel=sqrt(static_cast<double>
+      this->tol_rel=sqrt(static_cast<double>
                    (std::numeric_limits<fp_t>::epsilon()));
     }
     
