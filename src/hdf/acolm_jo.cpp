@@ -555,7 +555,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   std::string var=in[1];
 
   inte_kronrod_boost<61> ikb;
-  inte_multip_double_exp_boost ideb;
+  inte_double_exp_boost ideb;
   inte_adapt_cern iac;
 
   if (multiprecision) {
