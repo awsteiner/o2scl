@@ -105,13 +105,15 @@ namespace o2scl {
       This class is based on the CERNLIB routines RGS56P and DGS56P
       were originally documented at
       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
-      . (3/10/2020: The CERNLIB links are apparently dead and haven't
-      been supported since 2003.)
+      .
 
-      Several specializations of this class template are provided
-      for varying levels of precision, including 
-      \ref inte_gauss56_cern<funct,double>, 
-      \ref inte_gauss56_cern<funct_ld,long double>, and ...
+      Several specializations of this class template are provided for
+      varying levels of precision, including \ref
+      inte_gauss56_cern<funct,double>, \ref
+      inte_gauss56_cern<funct_ld,long double>, and several others. For
+      other floating point types, the user must create their own
+      specialization which specifies the integration weights and
+      abscissae.
    */
   template<class func_t, class fp_t>
   class inte_gauss56_cern :
@@ -119,6 +121,9 @@ namespace o2scl {
   };
     
   /** \brief Specialization for inte_gauss56_cern in double precision
+      
+      Note that these coefficients have 17 digits of precision, the
+      typical value of max_digits_10 for double precision numbers.
    */
   template<> class inte_gauss56_cern<funct,double> :
     public inte_gauss56_cern_base<funct,double> {
@@ -154,6 +159,11 @@ namespace o2scl {
   };
   
   /** \brief Specialization for inte_gauss56_cern in long double precision
+
+      
+      Note that these coefficients have more than 21 digits of
+      precision, the typical value of max_digits_10 for long double
+      precision numbers.
    */
   template<> class inte_gauss56_cern<funct_ld,long double> :
     public inte_gauss56_cern_base<funct_ld,long double> {
@@ -193,6 +203,10 @@ namespace o2scl {
   };
     
   /** \brief Specialization for inte_gauss56_cern in 25-digit precision
+
+      \note The weights and abscissa have 50 digits of precision which
+      is smaller than max_digits10 for cpp_dec_float_25, so some 
+      integrals will be computed less accuracy.
    */
   template<> class inte_gauss56_cern
   <funct_cdf25,boost::multiprecision::number<
@@ -259,6 +273,10 @@ namespace o2scl {
   };
 
   /** \brief Specialization for inte_gauss56_cern in 35-digit precision
+
+      \note The weights and abscissa have 50 digits of precision which
+      is smaller than max_digits10 for cpp_dec_float_35, so some 
+      integrals will be computed less accuracy.
    */
   template<> class inte_gauss56_cern
   <funct_cdf35,boost::multiprecision::number<
@@ -325,6 +343,10 @@ namespace o2scl {
   };
 
   /** \brief Specialization for inte_gauss56_cern in 50-digit precision
+
+      \note The weights and abscissa have 50 digits of precision which
+      is smaller than max_digits10 for cpp_dec_float_50 (which is
+      typically 80), so some integrals will be computed less accuracy.
    */
   template<> class inte_gauss56_cern
   <funct_cdf50,boost::multiprecision::cpp_dec_float_50> : 
