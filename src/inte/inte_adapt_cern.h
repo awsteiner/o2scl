@@ -611,8 +611,8 @@ namespace o2scl {
       return;
     }
 
-    // The number of subdivisions for the next integration
-    // int nsub;
+    /// The number of subdivisions for the next integration
+    int nsub;
     
     /** \brief The maximum relative uncertainty for multipreicsion
 	integrals (default \f$ -1 \f$)
