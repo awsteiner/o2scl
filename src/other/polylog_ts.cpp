@@ -104,7 +104,7 @@ int main(void) {
     fermi_dirac_multip fdm;
     fdm.set_tol(1.0e-28);
 
-    fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,20,
+    fermi_dirac_integ_direct<cpp_dec_float_35,funct_cdf50,
                              cpp_dec_float_50> fdid_35_50;
     fdid_35_50.set_tol(1.0e-28);
 
@@ -148,10 +148,10 @@ int main(void) {
   }
   cout << endl;
 
-  bessel_K_exp_integ_direct<long double,funct_cdf35,20,
+  bessel_K_exp_integ_direct<long double,funct_cdf35,
 			    cpp_dec_float_35> be_ld_35;
   be_ld_35.set_tol(1.0e-21);
-  bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,20,
+  bessel_K_exp_integ_direct<cpp_dec_float_35,funct_cdf50,
                             cpp_dec_float_50> be_35_50;
   be_35_50.set_tol(1.0e-37);
   

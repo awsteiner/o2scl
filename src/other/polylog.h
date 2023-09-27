@@ -1077,7 +1077,7 @@ namespace o2scl {
                           <func_t,internal_fp_t>,internal_fp_t> it;
     
     bessel_K_exp_integ_direct() {
-      it.iiu.tol_rel=1.0e-12;
+      it.iiu.tol_rel=static_cast<internal_fp_t>(1.0e-12);
     }
 
     /** \brief Set tolerance
