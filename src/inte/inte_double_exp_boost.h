@@ -46,6 +46,19 @@ namespace o2scl {
       for half-infinite integration limits, and \c sinh_sinh for infinite
       integration limits.
       
+      If the default value of \ref tol_rel is used, then this class
+      uses the square root of \c numeric_limits::epsilon for the
+      relative tolerance. For double precision numbers, this tolerance
+      is usually about \f$ 10^{-8} \f$. If the final uncertainty
+      exceeds this value, then the error handler is called, unless
+      \ref err_nonconv is false. Internally, the boost integration
+      function is called with a tolerance which is a factor of 10
+      smaller, because this is often necessary to ensure convergence.
+
+      The multiprecision integration functions require a template
+      function input, and their default tolerance is given by 
+      \f$ 10^{-d} \f$ where \f$ d \f$ is \c numeric_limits::digits10 .
+
       \note The uncertainties reported by this class depend on those
       returned by the boost integration object and are occasionally
       be underestimated.
@@ -53,6 +66,10 @@ namespace o2scl {
       \note The default maximum refinement level may be insufficient,
       especially for high-precision types or multiprecision
       integration, and can be changed with \ref set_max_refine().
+
+      \warning For sufficiently difficult integrands, the
+      multiprecision integration functions may take a very long time
+      to complete.
   */
   template <class fp_25_t=o2fp_25, class fp_35_t=o2fp_35,
             class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
@@ -592,9 +609,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_err_multip(func_t &&func, fp_t a, fp_t b, 
@@ -802,9 +816,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \c a to \f$ \infty \f$ using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
@@ -1059,9 +1070,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \c b using
         multipreicsion, placing the result in \c res and the error in
         \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
@@ -1253,9 +1261,6 @@ namespace o2scl {
     /** \brief Integrate function \c func from \f$ -\infty \f$ to \f$
         \infty \f$ using multipreicsion, placing the result in \c res
         and the error in \c err
-
-        \warning For sufficiently difficult integrands, this
-        function may take a very long time to complete.
     */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 

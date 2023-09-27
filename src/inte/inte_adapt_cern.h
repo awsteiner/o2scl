@@ -40,8 +40,8 @@ namespace o2scl {
   */
   template<class fp_t> class inte_subdiv {
   public:
-
-    /** \brief Desc
+    
+    /** \brief Constructor
      */
     inte_subdiv(int n) {
       resize(n);
@@ -150,75 +150,9 @@ namespace o2scl {
            class fp_50_t=o2fp_50, class fp_100_t=o2fp_100>
   class inte_adapt_cern_tl {
 
-  public:
-  
-    inte_adapt_cern_tl() {
-      tol_rel_multip=-1.0;
-      verbose=0;
-      pow_tol_func=1.33;
-      err_nonconv=true;
-      tol_rel=1.0e-8;
-      tol_abs=0.0;
-      nsubdiv=1;
-      nsub=100;
-    }
+  protected:
 
-    /// The last number of required iterations
-    int last_iter;
-
-    /** \brief Set the number of subdivisions for the next integration
-     */
-    void set_nsub(int n) {
-      nsub=n;
-      return;
-    }
-
-    /// The number of subdivisions for the next integration
-    int nsub;
-    
-    /** \brief The maximum relative uncertainty for multipreicsion
-	integrals (default \f$ -1 \f$)
-    */
-    double tol_rel_multip;
-
-    /** \brief Power for tolerance of function evaluations in
-        multiprecision integrations (default 1.33)
-    */
-    double pow_tol_func;
-
-    /** \brief The maximum relative uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
-    */
-    double tol_rel;
-
-    /** \brief The maximum absolute uncertainty 
-	in the value of the integral (default \f$ 10^{-8} \f$)
-    */
-    double tol_abs;
-
-    /** \brief Verbosity parameter
-     */
-    int verbose;
-
-    /** \brief If true, call the error handler if the integration
-        does not succeed (default true)
-    */
-    bool err_nonconv;
-
-    /// \name Subdivisions
-    //@{
-    /** \brief Number of subdivisions 
-
-        The options are
-        - 0: Use previous binning and do not subdivide further \n
-        - 1: Automatic - adapt until tolerance is attained (default) \n
-        - n: (n>1) split first in n equal subdivisions, then adapt
-        until tolerance is obtained.
-    */
-    size_t nsubdiv;
-    //@}
-
-    /// \name Basic usage
+    /// \name Internal integration functions [protected]
     //@{
     /** \brief Integrate function \c func from \c a to \c b
         giving result \c res and error \c err
@@ -650,7 +584,84 @@ namespace o2scl {
       }
       return 0;
     }
+    //@}
+
+  public:
+
+    /// \name Constructor
+    //@{
+    inte_adapt_cern_tl() {
+      tol_rel_multip=-1.0;
+      verbose=0;
+      pow_tol_func=1.33;
+      err_nonconv=true;
+      tol_rel=1.0e-8;
+      tol_abs=0.0;
+      nsubdiv=1;
+      nsub=100;
+    }
+    //@}
+
+    /// \name Integration settings
+    //@{
+    /** \brief Set the number of subdivisions for the next integration
+     */
+    void set_nsub(int n) {
+      nsub=n;
+      return;
+    }
+
+    // The number of subdivisions for the next integration
+    // int nsub;
     
+    /** \brief The maximum relative uncertainty for multipreicsion
+	integrals (default \f$ -1 \f$)
+    */
+    double tol_rel_multip;
+
+    /** \brief Power for tolerance of function evaluations in
+        multiprecision integrations (default 1.33)
+    */
+    double pow_tol_func;
+
+    /** \brief The maximum relative uncertainty 
+	in the value of the integral (default \f$ 10^{-8} \f$)
+    */
+    double tol_rel;
+
+    /** \brief The maximum absolute uncertainty 
+	in the value of the integral (default \f$ 10^{-8} \f$)
+    */
+    double tol_abs;
+
+    /** \brief Verbosity parameter
+     */
+    int verbose;
+
+    /** \brief If true, call the error handler if the integration
+        does not succeed (default true)
+    */
+    bool err_nonconv;
+
+    /// The last number of required iterations
+    int last_iter;
+    //@}
+
+    /// \name Subdivisions
+    //@{
+    /** \brief Number of subdivisions 
+
+        The options are
+        - 0: Use previous binning and do not subdivide further \n
+        - 1: Automatic - adapt until tolerance is attained (default) \n
+        - n: (n>1) split first in n equal subdivisions, then adapt
+        until tolerance is obtained.
+    */
+    size_t nsubdiv;
+    //@}
+
+    /// \name Integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b and place
         the result in \c res and the error in \c err
     */
@@ -717,9 +728,12 @@ namespace o2scl {
       }
       return res;
     }
+    //@}
 
+    /// \name Multipreicison integration functions
+    //@{
     /** \brief Integrate function \c func from \c a to \c b using
-        multipreicsion, placing the result in \c res and the error in
+        multiprecision, placing the result in \c res and the error in
         \c err
     */
     template <typename func_t, class fp_t>
@@ -909,8 +923,10 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Desc
-     */
+    /** \brief Integrate function \c func from \c a to \c b using
+        multiprecision, placing the result in \c res and the error in
+        \c err
+    */
     template <typename func_t, class fp_t>
     int integ_iu_err_multip(func_t &&func, fp_t a, 
                             fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -1080,8 +1096,10 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Desc
-     */
+    /** \brief Integrate function \c func from \c a to \c b using
+        multiprecision, placing the result in \c res and the error in
+        \c err
+    */
     template <typename func_t, class fp_t>
     int integ_il_err_multip(func_t &&func, fp_t b, 
                             fp_t &res, fp_t &err, double integ_tol=-1.0) {
@@ -1249,8 +1267,10 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Desc
-     */
+    /** \brief Integrate function \c func from \c a to \c b using
+        multiprecision, placing the result in \c res and the error in
+        \c err
+    */
     template <typename func_t, class fp_t>
     int integ_i_err_multip(func_t &&func, 
                            fp_t &res, fp_t &err, double integ_tol=-1.0) {

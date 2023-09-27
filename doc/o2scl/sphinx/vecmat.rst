@@ -1,10 +1,10 @@
-Arrays, Vectors, Matrices and Tensors
-=====================================
+Arrays, Vectors, Matrices, and Tensors
+======================================
 
 :ref:`O2scl <o2scl>`
 
-Arrays, vectors, matrices and tensors contents
-----------------------------------------------
+Arrays, vectors, matrices, and tensors contents
+-----------------------------------------------
 
 - :ref:`Vector and matrix introduction`
 - :ref:`Rows and columns vs. x and y`

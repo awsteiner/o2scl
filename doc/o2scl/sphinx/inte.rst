@@ -26,32 +26,30 @@ Several classes integrate arbitrary one-dimensional functions:
 
 - Integration over a finite interval:
   
-  * :ref:`inte_adapt_cern <inte_adapt_cern>`
+  * :ref:`inte_adapt_cern_tl <inte_adapt_cern_tl>`
   * :ref:`inte_gauss_cern <inte_gauss_cern>`
   * :ref:`inte_gauss56_cern <inte_gauss56_cern>`
   * :ref:`inte_kronrod_boost <inte_kronrod_boost>`
+  * :ref:`inte_double_exp_boost <inte_double_exp_boost>`
   * :ref:`inte_qag_gsl <inte_qag_gsl>`
   * :ref:`inte_qng_gsl <inte_qng_gsl>`
     
 - Integration from :math:`a` to :math:`\infty`:
   
   * :ref:`inte_qagiu_gsl <inte_qagiu_gsl>`
-  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`
-  * :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`
+  * :ref:`inte_double_exp_boost <inte_double_exp_boost>`
   * :ref:`inte_transform <inte_transform>`
     
 - Integration from  :math:`-\infty` to :math:`b`:
   
   * :ref:`inte_qagil_gsl <inte_qagil_gsl>`
-  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`
-  * :ref:`inte_exp_sinh_boost <inte_exp_sinh_boost>`
+  * :ref:`inte_double_exp_boost <inte_double_exp_boost>`
   * :ref:`inte_transform <inte_transform>`
        
 - Integration from  :math:`-\infty` to :math:`\infty`:
   
   * :ref:`inte_qagi_gsl <inte_qagi_gsl>`,
-  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>`, 
-  * :ref:`inte_sinh_sinh_boost <inte_sinh_sinh_boost>`, and
+  * :ref:`inte_double_exp_boost <inte_double_exp_boost>`
   * :ref:`inte_transform <inte_transform>`.
        
 - Integration over a finite interval for a function with
@@ -267,8 +265,8 @@ e^{-x^2} ~dx` with :ref:`inte_qagi_gsl <inte_qagi_gsl>`, the integral
 <inte_qagiu_gsl>`, the integral :math:`\int_{-\infty}^{0} e^{-x^2}
 ~dx` with :ref:`inte_qagil_gsl <inte_qagil_gsl>`, and the integral
 :math:`\int_0^1 \left[ \sin (2 x) + \frac{1}{2} \right]~dx` with both
-:ref:`inte_qag_gsl <inte_qag_gsl>` and :ref:`inte_adapt_cern
-<inte_adapt_cern>`, and compares the computed results with the exact
+:ref:`inte_qag_gsl <inte_qag_gsl>` and :ref:`inte_adapt_cern_tl
+<inte_adapt_cern_tl>`, and compares the computed results with the exact
 results.
 
 .. literalinclude:: ../../../examples/ex_inte.cpp

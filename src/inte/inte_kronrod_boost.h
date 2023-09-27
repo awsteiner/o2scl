@@ -40,6 +40,19 @@ namespace o2scl {
   /** \brief Gauss-Kronrod integration class with multiprecision
       (Boost)
 
+      If the default value of \ref tol_rel is used, then this class
+      uses the square root of \c numeric_limits::epsilon for the
+      relative tolerance. For double precision numbers, this tolerance
+      is usually about \f$ 10^{-8} \f$. If the final uncertainty
+      exceeds this value, then the error handler is called, unless
+      \ref err_nonconv is false. Internally, the boost integration
+      function is called with a tolerance which is a factor of 10
+      smaller, because this is often necessary to ensure convergence.
+
+      The multiprecision integration functions require a template
+      function input, and their default tolerance is given by 
+      \f$ 10^{-d} \f$ where \f$ d \f$ is \c numeric_limits::digits10 .
+
       \note The uncertainties reported by this class depend on those
       returned by the boost integration functions and are occasionally
       underestimated.
