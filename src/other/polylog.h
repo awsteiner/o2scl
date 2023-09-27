@@ -461,7 +461,7 @@ namespace o2scl {
     /** \brief Set tolerance
      */
     void set_tol(const internal_fp_t &tol) {
-      it.iiu.tol_rel=tol;
+      it.iiu.tol_rel=static_cast<double>(tol);
       return;
     }
     
