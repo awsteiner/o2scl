@@ -588,6 +588,8 @@ namespace o2scl {
   */
   template<class fermion_deriv_t=fermion_deriv_tl<double>,
            class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
+           class nit_t=inte_qagiu_gsl<>,
+           class dit_t=inte_qag_gsl<>,
 	   class fp_t=double>
   class fermion_deriv_rel_tl : public fermion_deriv_thermo_tl<fp_t>,
                                public fermion_deriv_rel_integ<fp_t> {
@@ -1241,19 +1243,20 @@ namespace o2scl {
 	degenerate case, and should integrate between two finite
 	values.
     */
-    void set_inte(inte<> &unit, inte<> &udit) {
+    void set_inte(inte<std::function<fp_t(fp_t)>,fp_t> &unit,
+                  inte<std::function<fp_t(fp_t)>,fp_t> &udit) {
       nit=&unit;
       dit=&udit;
       return;
     }    
     
     /// The default integrator for the non-degenerate regime
-    inte_qagiu_gsl<> def_nit;
+    nit_t def_nit;
 
     /// The default integrator for the degenerate regime
-    inte_qag_gsl<> def_dit;
+    dit_t def_dit;
 
-    /// Multiprecision integrator
+    /// Adaptive ultiprecision integrator
     inte_double_exp_boost<> it_multip;
     //@}
     
@@ -1263,10 +1266,10 @@ namespace o2scl {
   protected:
 
     /// The integrator for non-degenerate fermions
-    inte<> *nit;
+    inte<std::function<fp_t(fp_t)>,fp_t> *nit;
 
     /// The integrator for degenerate fermions
-    inte<> *dit;
+    inte<std::function<fp_t(fp_t)>,fp_t> *dit;
 
   };
 
@@ -1282,6 +1285,13 @@ namespace o2scl {
                                fermion_rel_ld,long double>
   fermion_deriv_rel_ld;
 
+  /** \brief 25-digit version of 
+      \ref o2scl::fermion_deriv_rel_tl 
+  */
+  typedef fermion_deriv_rel_tl<fermion_deriv_tl<cpp_dec_float_25>,
+                               fermion_rel_ld,cpp_dec_float_25>
+  fermion_deriv_rel_cdf25;
+  
   
 }
 
