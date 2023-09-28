@@ -34,7 +34,8 @@ namespace o2scl {
   
   /** \brief ODE stepper base [abstract base]
    */
-  template<class vec_y_t=boost::numeric::ublas::vector<double>,
+  template<class fp_t=double,
+	   class vec_y_t=boost::numeric::ublas::vector<fp_t>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t,
     class func_t=ode_funct> class ode_step {
 
@@ -78,7 +79,7 @@ namespace o2scl {
 	vec_t can be given. All of the current \o2 implementations
 	allow \c yout=y and \c dydx_out=dydx if necessary
     */
-    virtual int step(double x, double h, size_t n, vec_y_t &y, 
+    virtual int step(fp_t x, fp_t h, size_t n, vec_y_t &y, 
 		     vec_dydx_t &dydx, vec_y_t &yout, vec_yerr_t &yerr, 
 		     vec_dydx_t &dydx_out, func_t &derivs)=0;
     
