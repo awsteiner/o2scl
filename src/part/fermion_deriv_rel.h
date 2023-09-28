@@ -669,12 +669,12 @@ namespace o2scl {
 	- 7: degenerate integrand, using user-specified 
 	value for \ref method
 
-	The function \ref nu_from_n() sets this value equal to
+	The function \ref nu_from_n_deriv() sets this value equal to
 	100 times the value reported by 
-	\ref o2scl::fermion_rel_tl::nu_from_n() .
+	\ref o2scl::fermion_rel_tl::nu_from_n_deriv() .
 
 	The function \ref calc_density() sets this value equal to the
-	value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n() plus the
+	value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n_deriv() plus the
 	value from \ref o2scl::fermion_deriv_rel_tl::calc_mu() .
 
     */
@@ -1157,7 +1157,7 @@ namespace o2scl {
   
       if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
   
-      nu_from_n(f,temper);
+      nu_from_n_deriv(f,temper);
       int lm=last_method;
       std::string stmp=last_method_s;
   
@@ -1222,7 +1222,7 @@ namespace o2scl {
     }
 
     /// Calculate effective chemical potential from density
-    virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
+    virtual int nu_from_n_deriv(fermion_deriv_t &f, fp_t temper) {
       int ret=fr.nu_from_n(f,temper);
       last_method=fr.last_method*100;
       if (last_method_s.length()>200) {
