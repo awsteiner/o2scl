@@ -477,7 +477,7 @@ namespace o2scl {
     bool err_nonconv;
   
     /// Set the stepper for the Dirac differential equation
-    void set_step(ode_step<ubvector,ubvector,ubvector,
+    void set_step(ode_step<double,ubvector,ubvector,ubvector,
       ode_funct> &step) {
       ostep=&step;
       return;
@@ -796,11 +796,11 @@ namespace o2scl {
     void field(double x, double &s, double &v, ubvector &varr);
     
     /// The default stepper
-    ode_rkck_gsl<ubvector,ubvector,ubvector,
+    ode_rkck_gsl<double,ubvector,ubvector,ubvector,
       ode_funct> def_step;
     
     /// The ODE stepper
-    ode_step<ubvector,ubvector,ubvector,
+    ode_step<double,ubvector,ubvector,ubvector,
       ode_funct> *ostep;
 
     /** \brief Integrate the Dirac equations using a simple 

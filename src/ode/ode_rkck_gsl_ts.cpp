@@ -144,7 +144,7 @@ int main(void) {
     vec3_t yerr(1);
     vec2_t dydx_out(1);
 
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,
+    ode_rkck_gsl<double,vec1_t,vec2_t,vec3_t,
       std::function<int(double,size_t,const vec1_t &,vec2_t &)> > rk;
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -173,7 +173,7 @@ int main(void) {
     typedef std::function<int(double,size_t,const vec1_t &,vec2_t &)> 
       ode_functb;
     
-    ode_rkck_gsl<vec1_t,vec2_t,vec3_t,ode_functb> rk11;
+    ode_rkck_gsl<double,vec1_t,vec2_t,vec3_t,ode_functb> rk11;
     ode_functb f11=exponx;
 
     x=1.0;
