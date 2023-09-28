@@ -60,7 +60,7 @@ namespace o2scl {
 
       \verbatim embed:rst
       There is an example for the usage of this class in
-      ``examples/ex_ode.cpp<`` documented in the
+      ``examples/ex_ode.cpp`` documented in the
       :ref:`Ordinary differential equations example`.
       \endverbatim
   */

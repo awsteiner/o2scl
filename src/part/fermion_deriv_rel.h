@@ -597,7 +597,7 @@ namespace o2scl {
     /// Create a fermion with mass \c m and degeneracy \c g
     fermion_deriv_rel_tl() {
   
-      deg_limit=2.0;
+      deg_limit=2;
       upper_limit_fac=20;
 
       nit=&def_nit;
