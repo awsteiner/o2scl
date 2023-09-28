@@ -223,7 +223,8 @@ namespace o2scl {
           
         // Output iteration information
         if (this->verbose>0) {
-          std::cout << "inte_adapt_cern_tl Iter: " << iter;
+          std::cout << "inte_adapt_cern_tl iter: " << iter;
+          std::cout << " nsub: " << nsub;
           std::cout.setf(std::ios::showpos);
           std::cout << " Res: " << tvals;
           std::cout.unsetf(std::ios::showpos);
