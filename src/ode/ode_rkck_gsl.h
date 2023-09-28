@@ -64,10 +64,11 @@ namespace o2scl {
       :ref:`Ordinary differential equations example`.
       \endverbatim
   */
-  template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct> class ode_rkck_gsl :
-    public ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> {
+  template<class fp_t=double,
+	   class vec_y_t=boost::numeric::ublas::vector<fp_t>,
+	   class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+	   class func_t=ode_funct> class ode_rkck_gsl :
+    public ode_step<fp_t,vec_y_t,vec_dydx_t,vec_yerr_t,func_t> {
     
   protected:
   
@@ -83,8 +84,8 @@ namespace o2scl {
   /** \name Storage for the coefficients
    */
   //@{
-  double ah[5], b3[2], b4[3], b5[4], b6[5], ec[7];
-  double b21, c1, c3, c4, c6;
+  fp_t ah[5], b3[2], b4[3], b5[4], b6[5], ec[7];
+  fp_t b21, c1, c3, c4, c6;
   //@}
       
   public:
@@ -92,45 +93,74 @@ namespace o2scl {
   ode_rkck_gsl() {
     this->order=5;
 
-    ah[0]=1.0/5.0;
-    ah[1]=3.0/10.0;
-    ah[2]=3.0/5.0;
-    ah[3]=1.0;
-    ah[4]=7.0/8.0;
+    fp_t num=1, den=5;
+    ah[0]=num/den;
+    num=3; den=10;
+    ah[1]=num/den;
+    num=3; den=5;
+    ah[2]=num/den;
+    ah[3]=1;
+    num=7; den=8;
+    ah[4]=num/den;
 
-    b3[0]=3.0/40.0;
-    b3[1]=9.0/40.0;
+    num=3; den=40;
+    b3[0]=num/den;
+    num=9; den=40;
+    b3[1]=num/den;
 
-    b4[0]=3.0/10.0;
-    b4[1]=-9.0/10.0;
-    b4[2]=12.0/10.0;
+    num=3; den=10;
+    b4[0]=num/den;
+    num=-9; den=10;
+    b4[1]=num/den;
+    num=12; den=10;
+    b4[2]=num/den;
+    
+    num=-11; den=54;
+    b5[0]=num/den;
+    num=5; den=2;
+    b5[1]=num/den;
+    num=-70; den=27;
+    b5[2]=num/den;
+    num=35; den=27;
+    b5[3]=num/den;
+    
+    num=1631; den=55296;
+    b6[0]=num/den;
+    num=175; den=512;
+    b6[1]=num/den;
+    num=575; den=13824;
+    b6[2]=num/den;
+    num=44275; den=110592;
+    b6[3]=num/den;
+    num=253; den=4096;
+    b6[4]=num/den;
+    
+    ec[0]=0;
+    num=37; den=378;
+    fp_t num2=2825, den2=27648;
+    ec[1]=num/den-num2/den2;
+    ec[2]=0;
+    num=250; den=621, num2=18575, den2=48384;
+    ec[3]=num/den-num2/den2;
+    num=125, den=594, num2=13525, den2=55296;
+    ec[4]=num/den-num2/den2;
+    num=-277; den=14336;
+    ec[5]=num/den;
+    num=512; den=1771; num2=1; den2=4;
+    ec[6]=num/den-num2/den2;
 
-    b5[0]=-11.0/54.0;
-    b5[1]=5.0/2.0;
-    b5[2]=-70.0/27.0;
-    b5[3]=35.0/27.0;
-
-    b6[0]=1631.0/55296.0;
-    b6[1]=175.0/512.0;
-    b6[2]=575.0/13824.0;
-    b6[3]=44275.0/110592.0;
-    b6[4]=253.0/4096.0;
-
-    ec[0]=0.0;
-    ec[1]=37.0/378.0-2825.0/27648.0;
-    ec[2]=0.0;
-    ec[3]=250.0/621.0-18575.0/48384.0;
-    ec[4]=125.0/594.0-13525.0/55296.0;
-    ec[5]=-277.0/14336.0;
-    ec[6]=512.0/1771.0-1.0/4.0;
-
-    b21=1.0/5.0;
-
-    c1=37.0/378.0;
-    c3=250.0/621.0;
-    c4=125.0/594.0;
-    c6=512.0/1771.0;
-	
+    num=1; den=5;
+    b21=num/den;
+    
+    num=37; den=378;
+    c1=num/den;
+    num=250; den=621;
+    c3=num/den;
+    num=125; den=594;
+    c4=num/den;
+    num=512; den=1771;
+    c6=num/den;
+    
     ndim=0;
   }
       
@@ -153,7 +183,7 @@ namespace o2scl {
       non-zero value which was obtained in a call to \c derivs .
       The error handler is never called.
   */
-  virtual int step(double x, double h, size_t n, vec_y_t &y, 
+  virtual int step(fp_t x, fp_t h, size_t n, vec_y_t &y, 
 		   vec_dydx_t &dydx, vec_y_t &yout, vec_yerr_t &yerr, 
 		   vec_dydx_t &dydx_out, func_t &derivs) {
 	
