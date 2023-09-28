@@ -2878,7 +2878,8 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 
   ret=hf.open(fname.c_str(),false,false);
   if (ret!=0) {
-    cerr << "Could not find file named '" << fname << "'. Wrong file name?" 
+    cerr << "Could not find file named '" << fname << "'. Maybe it is not "
+         << "an HDF5 file or you have the wrong file name?" 
 	 << endl;
     return exc_efailed;
   }

@@ -45,10 +45,10 @@ namespace o2scl {
 
 #ifdef O2SCL_NEVER_DEFINED
   
-  template<class fp_t=double,
-	   class vec_t=std::vector<fp_t>,
-	   class func_t=std::function<int(fp_t,size_t,const vec_t &,
-					  vec_t &)> > class ode_funct_boost {
+  template<class vec_t=std::vector<double>,
+	   class func_t=std::function<int(double,size_t,const vec_t &,
+					  vec_t &)>,
+           class fp_t=double> class ode_funct_boost {
     
   protected:
     
