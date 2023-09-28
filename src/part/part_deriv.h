@@ -61,6 +61,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
   typedef thermo_np_deriv_press_tl<double> thermo_np_deriv_press;
   
   /** \brief Object to store second derivatives of 
@@ -85,6 +87,8 @@ namespace o2scl {
     fp_t dmupdnp;
   };
 
+  /** \brief Desc
+   */
   typedef thermo_np_deriv_helm_tl<double> thermo_np_deriv_helm;
   
   /** \brief Particle derivatives in the pressure representation
@@ -269,10 +273,16 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
   typedef fermion_deriv_tl<double> fermion_deriv;
   
+  /** \brief Desc
+   */
   typedef fermion_deriv_tl<long double> fermion_deriv_ld;
   
+  /** \brief Desc
+   */
   typedef fermion_deriv_tl<cpp_dec_float_25> fermion_deriv_cdf25;
 
   /** \brief A boson with derivative information
@@ -372,6 +382,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
   typedef boson_deriv_tl<double> boson_deriv;
   
   /** \brief A part with derivative information
@@ -427,6 +439,8 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
   typedef part_deriv_tl<double> part_deriv;
   
   /** \brief Base quantities for thermodynamic derivatives
@@ -803,6 +817,8 @@ namespace o2scl {
     
   };
   
+  /** \brief Desc
+   */
   typedef deriv_thermo_base_tl<double> deriv_thermo_base;
   
   /** \brief Compute properties of a fermion including derivatives
@@ -826,7 +842,7 @@ namespace o2scl {
 
       \endverbatim
   */
-  template<class fp_t=double>
+  template<class fermion_deriv_t=fermion_deriv, class fp_t=double>
   class fermion_deriv_thermo_tl : public deriv_thermo_base_tl<fp_t> {
 
   protected:
@@ -835,7 +851,7 @@ namespace o2scl {
 
 	This is for access to fermion_thermo::ndeg_terms().
     */
-    fermion_rel_tl<fermion_deriv> fr;
+    fermion_rel_tl<fermion_deriv_t> fr;
 
     /// Store \f$ \pi \f$ for convenience
     fp_t pi;
@@ -855,24 +871,24 @@ namespace o2scl {
 
     /** \brief Calculate properties as function of chemical potential
      */
-    virtual int calc_mu(fermion_deriv &f, fp_t temper)=0;
+    virtual int calc_mu(fermion_deriv_t &f, fp_t temper)=0;
 
     /** \brief Calculate properties as function of density
      */
-    virtual int calc_density(fermion_deriv &f, fp_t temper)=0;
+    virtual int calc_density(fermion_deriv_t &f, fp_t temper)=0;
 
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential
     */
-    virtual int pair_mu(fermion_deriv &f, fp_t temper)=0;
+    virtual int pair_mu(fermion_deriv_t &f, fp_t temper)=0;
 
     /** \brief Calculate properties with antiparticles as function of
 	density
     */
-    virtual int pair_density(fermion_deriv &f, fp_t temper)=0;
+    virtual int pair_density(fermion_deriv_t &f, fp_t temper)=0;
 
     /// Calculate effective chemical potential from density
-    virtual int nu_from_n(fermion_deriv &f, fp_t temper)=0;
+    virtual int nu_from_n(fermion_deriv_t &f, fp_t temper)=0;
 
     /** \brief Calculate properties as a function of chemical 
 	potential using a degenerate expansion
@@ -890,7 +906,7 @@ namespace o2scl {
 
       \endverbatim
     */
-    virtual bool calc_mu_deg(fermion_deriv &f, fp_t temper,
+    virtual bool calc_mu_deg(fermion_deriv_t &f, fp_t temper,
 			     fp_t prec) {
       
       if (fr.calc_mu_deg(f,temper,prec)==false) {
@@ -968,7 +984,7 @@ namespace o2scl {
 
         \endverbatim
     */
-    virtual bool calc_mu_ndeg(fermion_deriv &f, fp_t temper,
+    virtual bool calc_mu_ndeg(fermion_deriv_t &f, fp_t temper,
 			      fp_t prec, bool inc_antip=false) {
       
       if (fr.calc_mu_ndeg(f,temper,prec,
@@ -1084,6 +1100,8 @@ namespace o2scl {
 
   };
 
+  /** \brief Desc
+   */
   typedef fermion_deriv_thermo_tl<double> fermion_deriv_thermo;
 
   /** \brief Object to organize calibration of derivative quantities
