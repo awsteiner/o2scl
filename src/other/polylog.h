@@ -99,7 +99,8 @@ namespace o2scl {
         std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                   (&fermi_dirac_integ_tl::obj_func),
                   this,std::placeholders::_1,a,mu);
-      int iret=iiu.integ_iu_err(f,0.0,res,err);
+      fp_t zero=0;
+      int iret=iiu.integ_iu_err(f,zero,res,err);
       return iret;
     }
     
@@ -158,7 +159,8 @@ namespace o2scl {
         std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
                   (&bose_einstein_integ_tl::obj_func),
                   this,std::placeholders::_1,a,mu);
-      int iret=iiu.integ_iu_err(f,0.0,res,err);
+      fp_t zero=0;
+      int iret=iiu.integ_iu_err(f,zero,res,err);
       return iret;
     }
     
@@ -223,8 +225,10 @@ namespace o2scl {
       func_t f=std::bind(std::mem_fn<fp_t(fp_t,size_t,fp_t)>
 			 (&bessel_K_exp_integ_tl::obj_func),
 			 this,std::placeholders::_1,n,z);
-      int iret=iiu.integ_iu_err(f,1.0,res,err);
-      fp_t fact=o2scl_const::root_pi*pow(z/2,n)/boost::math::tgamma(n+0.5);
+      fp_t one=1;
+      int iret=iiu.integ_iu_err(f,one,res,err);
+      fp_t fact=o2scl_const::root_pi*
+	pow(z/2,n)/boost::math::tgamma(n+0.5);
       res*=fact;
       err*=fact;
       return iret;
@@ -1077,13 +1081,13 @@ namespace o2scl {
                           <func_t,internal_fp_t>,internal_fp_t> it;
     
     bessel_K_exp_integ_direct() {
-      it.iiu.tol_rel=static_cast<internal_fp_t>(1.0e-12);
+      it.iiu.tol_rel=1.0e-12;
     }
 
     /** \brief Set tolerance
      */
     void set_tol(const fp_t &tol) {
-      it.iiu.tol_rel=tol;
+      it.iiu.tol_rel=static_cast<double>(tol);
       return;
     }
     
