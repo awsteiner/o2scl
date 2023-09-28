@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   sf.inc_rest_mass=false;
 
   fermion_deriv_rel snf;
-  fermion_deriv_rel_ld snfld;
+  //fermion_deriv_rel_ld snfld;
   fermion_eff eff;
   part_calibrate_class pcc;
   part_deriv_calibrate_class pdcc;

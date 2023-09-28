@@ -36,6 +36,7 @@
 #include <o2scl/inte.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/inte_qagiu_gsl.h>
+#include <o2scl/inte_double_exp_boost.h>
 
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_rel.h>
@@ -591,8 +592,9 @@ namespace o2scl {
            class nit_t=inte_qagiu_gsl<>,
            class dit_t=inte_qag_gsl<>,
 	   class fp_t=double>
-  class fermion_deriv_rel_tl : public fermion_deriv_thermo_tl<fp_t>,
-                               public fermion_deriv_rel_integ<fp_t> {
+  class fermion_deriv_rel_tl :
+    public fermion_deriv_thermo_tl<fermion_deriv_t,fp_t>,
+    public fermion_deriv_rel_integ<fp_t> {
     
   public:
 
@@ -602,9 +604,6 @@ namespace o2scl {
       deg_limit=2;
       upper_limit_fac=20;
 
-      nit=&def_nit;
-      dit=&def_dit;
-  
       this->method=this->automatic;
       this->intl_method=this->by_parts;
 
@@ -669,12 +668,12 @@ namespace o2scl {
 	- 7: degenerate integrand, using user-specified 
 	value for \ref method
 
-	The function \ref nu_from_n_deriv() sets this value equal to
+	The function \ref nu_from_n() sets this value equal to
 	100 times the value reported by 
-	\ref o2scl::fermion_rel_tl::nu_from_n_deriv() .
+	\ref o2scl::fermion_rel_tl::nu_from_n() .
 
 	The function \ref calc_density() sets this value equal to the
-	value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n_deriv() plus the
+	value from \ref o2scl::fermion_deriv_rel_tl::nu_from_n() plus the
 	value from \ref o2scl::fermion_deriv_rel_tl::calc_mu() .
 
     */
@@ -816,7 +815,7 @@ namespace o2scl {
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
-          iret=nit->integ_iu_err(density_T_fun_f,0,f.dndT,unc.dndT);
+          iret=nit.integ_iu_err(density_T_fun_f,0,f.dndT,unc.dndT);
           if (iret!=0) {
             O2SCL_ERR2("dndT integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -847,7 +846,7 @@ namespace o2scl {
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
 
-          iret=nit->integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
+          iret=nit.integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -879,7 +878,7 @@ namespace o2scl {
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
-          iret=nit->integ_iu_err(entropy_T_fun_f,0,f.dsdT,unc.dsdT);
+          iret=nit.integ_iu_err(entropy_T_fun_f,0,f.dsdT,unc.dsdT);
           if (iret!=0) {
             O2SCL_ERR2("dsdT integration (ndeg) failed in ",
                        "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);
@@ -1004,10 +1003,10 @@ namespace o2scl {
                                              f.inc_rest_mass); };
 	  
           if (this->intl_method==this->direct && ll>0) {
-            iret=dit->integ_err(deg_density_mu_fun_f,ll,ul,
+            iret=dit.integ_err(deg_density_mu_fun_f,ll,ul,
                                 f.dndmu,unc.dndmu);
           } else {
-            iret=dit->integ_err(deg_density_mu_fun_f,0,ul,
+            iret=dit.integ_err(deg_density_mu_fun_f,0,ul,
                                 f.dndmu,unc.dndmu);
           }
           if (iret!=0) {
@@ -1061,10 +1060,10 @@ namespace o2scl {
                                             f.inc_rest_mass); };
 	  
           if (this->intl_method==this->direct && ll>0) {
-            iret=dit->integ_err(deg_density_T_fun_f,ll,ul,f.dndT,
+            iret=dit.integ_err(deg_density_T_fun_f,ll,ul,f.dndT,
 				unc.dndT);
           } else {
-            iret=dit->integ_err(deg_density_T_fun_f,0,ul,f.dndT,
+            iret=dit.integ_err(deg_density_T_fun_f,0,ul,f.dndT,
 				unc.dndT);
           }
           if (iret!=0) {
@@ -1119,10 +1118,10 @@ namespace o2scl {
                                             f.inc_rest_mass); };
 
           if (this->intl_method==this->direct && ll>0) {
-            iret=dit->integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,
+            iret=dit.integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,
 				unc.dsdT);
           } else {
-            iret=dit->integ_err(deg_entropy_T_fun_f,0,ul,f.dsdT,
+            iret=dit.integ_err(deg_entropy_T_fun_f,0,ul,f.dsdT,
 				unc.dsdT);
           }
           if (iret!=0) {
@@ -1157,7 +1156,7 @@ namespace o2scl {
   
       if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
   
-      nu_from_n_deriv(f,temper);
+      nu_from_n(f,temper);
       int lm=last_method;
       std::string stmp=last_method_s;
   
@@ -1222,7 +1221,7 @@ namespace o2scl {
     }
 
     /// Calculate effective chemical potential from density
-    virtual int nu_from_n_deriv(fermion_deriv_t &f, fp_t temper) {
+    virtual int nu_from_n(fermion_deriv_t &f, fp_t temper) {
       int ret=fr.nu_from_n(f,temper);
       last_method=fr.last_method*100;
       if (last_method_s.length()>200) {
@@ -1251,10 +1250,10 @@ namespace o2scl {
     }    
     
     /// The default integrator for the non-degenerate regime
-    nit_t def_nit;
+    nit_t nit;
 
     /// The default integrator for the degenerate regime
-    dit_t def_dit;
+    dit_t dit;
 
     /// Adaptive ultiprecision integrator
     inte_double_exp_boost<> it_multip;
@@ -1263,14 +1262,6 @@ namespace o2scl {
     /// Return string denoting type ("fermion_deriv_rel")
     virtual const char *type() { return "fermion_deriv_rel"; };
 
-  protected:
-
-    /// The integrator for non-degenerate fermions
-    inte<std::function<fp_t(fp_t)>,fp_t> *nit;
-
-    /// The integrator for degenerate fermions
-    inte<std::function<fp_t(fp_t)>,fp_t> *dit;
-
   };
 
   /** \brief Double-precision version of 
@@ -1278,18 +1269,33 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
 
+  /*
+  template<class fermion_deriv_t=fermion_deriv_tl<double>,
+           class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
+           class nit_t=inte_qagiu_gsl<>,
+           class dit_t=inte_qag_gsl<>,
+	   class fp_t=double>
+  class fermion_deriv_rel_tl :
+   */
+  
   /** \brief Long double version of 
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<fermion_deriv_tl<long double>,
-                               fermion_rel_ld,long double>
+                               fermion_rel_ld,
+			       inte_double_exp_boost<>,
+			       inte_double_exp_boost<>,
+			       long double>
   fermion_deriv_rel_ld;
 
   /** \brief 25-digit version of 
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<fermion_deriv_tl<cpp_dec_float_25>,
-                               fermion_rel_ld,cpp_dec_float_25>
+                               fermion_rel_ld,
+			       inte_double_exp_boost<>,
+			       inte_double_exp_boost<>,
+			       cpp_dec_float_25>
   fermion_deriv_rel_cdf25;
   
   

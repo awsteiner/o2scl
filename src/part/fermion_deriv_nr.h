@@ -223,7 +223,8 @@ namespace o2scl {
   */
   template<class fermion_deriv_t=fermion_deriv_tl<double>,
 	   class fp_t=double>
-    class fermion_deriv_nr_tl : public fermion_deriv_thermo_tl<fp_t> {
+  class fermion_deriv_nr_tl :
+    public fermion_deriv_thermo_tl<fermion_deriv_t,fp_t> {
 
   public:
 

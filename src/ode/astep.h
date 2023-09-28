@@ -113,19 +113,20 @@ namespace o2scl {
       routine. If no stepper is specified, then the default
       (\ref def_step of type \ref ode_rkck_gsl) is used.
   */
-    int set_step(ode_step<double,vec_y_t,vec_dydx_t,
-		 vec_yerr_t,func_t> &step) {
+    int set_step(ode_step<vec_y_t,vec_dydx_t,
+		 vec_yerr_t,func_t,double> &step) {
     stepp=&step;
     return 0;
   }
   
     /// The default stepper
-    ode_rkck_gsl<double,vec_y_t,vec_dydx_t,vec_yerr_t,func_t> def_step;
+    ode_rkck_gsl<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,
+		 double> def_step;
   
   protected:
       
   /// Pointer to the stepper being used
-    ode_step<double,vec_y_t,vec_dydx_t,vec_yerr_t,func_t> *stepp;
+    ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,double> *stepp;
     
   };
 

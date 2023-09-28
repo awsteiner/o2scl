@@ -331,63 +331,63 @@ class deriv_thermo_base
 # 
 # Class fermion_deriv_rel
 #
-class fermion_deriv_rel
-- py_class_doc |
-| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
-- double deg_limit
-- double upper_limit_fac
-- fermion_deriv unc
-# We cannot include fr until it has a real copy constructor
-# - fermion_rel fr
-- int method
-- int last_method
-- bool err_nonconv
-- function nu_from_n
-  - int
-  - fermion_deriv &f
-  - double T
-- function calc_density
-  - int
-  - fermion_deriv &f
-  - double T
-- function pair_density
-  - int
-  - fermion_deriv &f
-  - double T
-- function calc_mu
-  - int
-  - fermion_deriv &f
-  - double T
-- function pair_mu
-  - int
-  - fermion_deriv &f
-  - double T
+# class fermion_deriv_rel
+# - py_class_doc |
+# | Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
+# - double deg_limit
+# - double upper_limit_fac
+# - fermion_deriv unc
+# # We cannot include fr until it has a real copy constructor
+# # - fermion_rel fr
+# - int method
+# - int last_method
+# - bool err_nonconv
+# - function nu_from_n
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function calc_density
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function pair_density
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function calc_mu
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function pair_mu
+#   - int
+#   - fermion_deriv &f
+#   - double T
 # 
 # Class fermion_deriv_nr
 #
-class fermion_deriv_nr
-- py_class_doc |
-| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
-- double flimit
-- fermion_deriv unc
-- function calc_density_zerot
-  - void
-  - fermion_deriv &f
-- function calc_mu_zerot
-  - void
-  - fermion_deriv &f
-- function nu_from_n
-  - int
-  - fermion_deriv &f
-  - double T
-- function calc_density
-  - int
-  - fermion_deriv &f
-  - double T
-- function calc_mu
-  - int
-  - fermion_deriv &f
-  - double T
+# class fermion_deriv_nr
+# - py_class_doc |
+# | Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
+# - double flimit
+# - fermion_deriv unc
+# - function calc_density_zerot
+#   - void
+#   - fermion_deriv &f
+# - function calc_mu_zerot
+#   - void
+#   - fermion_deriv &f
+# - function nu_from_n
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function calc_density
+#   - int
+#   - fermion_deriv &f
+#   - double T
+# - function calc_mu
+#   - int
+#   - fermion_deriv &f
+#   - double T
 # 
 # Class classical_deriv_thermo
 #
