@@ -348,66 +348,6 @@ double o2scl_deriv_thermo_base_coeff_thermal_exp(void *vptr, void *ptr_p, double
 
 double o2scl_deriv_thermo_base_squared_sound_speed(void *vptr, void *ptr_p, double T);
 
-void *o2scl_create_fermion_deriv_rel();
-
-void o2scl_free_fermion_deriv_rel(void *vptr);
-
-double o2scl_fermion_deriv_rel_get_deg_limit(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_deg_limit(void *vptr, double v);
-
-double o2scl_fermion_deriv_rel_get_upper_limit_fac(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_upper_limit_fac(void *vptr, double v);
-
-void *o2scl_fermion_deriv_rel_get_unc(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_unc(void *vptr, void *p_v);
-
-int o2scl_fermion_deriv_rel_get_method(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_method(void *vptr, int v);
-
-int o2scl_fermion_deriv_rel_get_last_method(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_last_method(void *vptr, int v);
-
-bool o2scl_fermion_deriv_rel_get_err_nonconv(void *vptr);
-
-void o2scl_fermion_deriv_rel_set_err_nonconv(void *vptr, bool v);
-
-int o2scl_fermion_deriv_rel_nu_from_n(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_rel_calc_density(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_rel_pair_density(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_rel_calc_mu(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_rel_pair_mu(void *vptr, void *ptr_f, double T);
-
-void *o2scl_create_fermion_deriv_nr();
-
-void o2scl_free_fermion_deriv_nr(void *vptr);
-
-double o2scl_fermion_deriv_nr_get_flimit(void *vptr);
-
-void o2scl_fermion_deriv_nr_set_flimit(void *vptr, double v);
-
-void *o2scl_fermion_deriv_nr_get_unc(void *vptr);
-
-void o2scl_fermion_deriv_nr_set_unc(void *vptr, void *p_v);
-
-void o2scl_fermion_deriv_nr_calc_density_zerot(void *vptr, void *ptr_f);
-
-void o2scl_fermion_deriv_nr_calc_mu_zerot(void *vptr, void *ptr_f);
-
-int o2scl_fermion_deriv_nr_nu_from_n(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_nr_calc_density(void *vptr, void *ptr_f, double T);
-
-int o2scl_fermion_deriv_nr_calc_mu(void *vptr, void *ptr_f, double T);
-
 void *o2scl_create_classical_deriv_thermo();
 
 void o2scl_free_classical_deriv_thermo(void *vptr);

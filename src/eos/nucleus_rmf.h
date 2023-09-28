@@ -477,8 +477,8 @@ namespace o2scl {
     bool err_nonconv;
   
     /// Set the stepper for the Dirac differential equation
-    void set_step(ode_step<double,ubvector,ubvector,ubvector,
-      ode_funct> &step) {
+    void set_step(ode_step<ubvector,ubvector,ubvector,
+		  ode_funct,double> &step) {
       ostep=&step;
       return;
     }
