@@ -50,8 +50,8 @@ namespace o2scl {
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct > class astep_nonadapt : 
-    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t> {
+	   class func_t=ode_funct, class fp_t=double> class astep_nonadapt : 
+    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
       
 #ifndef DOXYGEN_INTERNAL
       
@@ -98,7 +98,7 @@ namespace o2scl {
 	input \c y may still have been modified by the base stepper.
 
     */
-    virtual int astep(double &x, double xlimit, double &h, 
+    virtual int astep(fp_t &x, fp_t xlimit, fp_t &h, 
 		      size_t n, vec_y_t &y, vec_dydx_t &dydx_out,
 		      vec_yerr_t &yerr, func_t &derivs) {
 
@@ -134,7 +134,7 @@ namespace o2scl {
 	inputs \c y and \c dydx may still have been modified by the
 	base stepper.
     */
-    virtual int astep_derivs(double &x, double xlimit, double &h, 
+    virtual int astep_derivs(fp_t &x, fp_t xlimit, fp_t &h, 
 			     size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			     vec_yerr_t &yerr, func_t &derivs) {
       
@@ -169,7 +169,7 @@ namespace o2scl {
 	output parameters may still have been modified by the
 	base stepper.
     */
-    virtual int astep_full(double x, double xlimit, double &x_out, double &h, 
+    virtual int astep_full(fp_t x, fp_t xlimit, fp_t &x_out, fp_t &h, 
 			   size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			   vec_y_t &yout, vec_yerr_t &yerr, 
 			   vec_dydx_t &dydx_out, func_t &derivs) {
