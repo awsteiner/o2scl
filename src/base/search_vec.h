@@ -69,7 +69,7 @@ namespace o2scl {
       monotonic. Copy constructors are also private to prevent 
       confusing situations which arise when bit-copying pointers. 
   */
-  template<class vec_t> class search_vec {
+  template<class vec_t, class fp_t=double> class search_vec {
 
 #ifndef DOXYGEN_INTERNAL
 
@@ -132,7 +132,7 @@ namespace o2scl {
 	This function is identical to find_inc() if the data is
 	increasing, and find_dec() if the data is decreasing. 
     */
-    size_t find(const double x0) {
+    size_t find(const fp_t x0) {
 #ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
@@ -150,7 +150,7 @@ namespace o2scl {
 
     /** \brief Const version of \ref find()
      */
-    size_t find_const(const double x0, size_t &lcache) const {
+    size_t find_const(const fp_t x0, size_t &lcache) const {
 #if !O2SCL_NO_RANGE_CHECK
       if (lcache>=n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec::find().",
@@ -169,16 +169,16 @@ namespace o2scl {
 	<tt>gsl_interp_accel_find()</tt>, except that it does not
 	internally record cache hits and misses.
     */
-    size_t find_inc(const double x0) {
+    size_t find_inc(const fp_t x0) {
 #ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
       size_t cache=n/2;
 #endif
       if (x0<(*v)[cache]) {
-	cache=vector_bsearch_inc<vec_t,double>(x0,*v,0,cache);
+	cache=vector_bsearch_inc<vec_t,fp_t>(x0,*v,0,cache);
       } else if (x0>=(*v)[cache+1]) {
-	cache=vector_bsearch_inc<vec_t,double>(x0,*v,cache,n-1);
+	cache=vector_bsearch_inc<vec_t,fp_t>(x0,*v,cache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
@@ -191,11 +191,11 @@ namespace o2scl {
 
     /** \brief Const version of \ref find_inc()
      */
-    size_t find_inc_const(const double x0, size_t &lcache) const {
+    size_t find_inc_const(const fp_t x0, size_t &lcache) const {
       if (x0<(*v)[lcache]) {
-	lcache=vector_bsearch_inc<vec_t,double>(x0,*v,0,lcache);
+	lcache=vector_bsearch_inc<vec_t,fp_t>(x0,*v,0,lcache);
       } else if (x0>=(*v)[lcache+1]) {
-	lcache=vector_bsearch_inc<vec_t,double>(x0,*v,lcache,n-1);
+	lcache=vector_bsearch_inc<vec_t,fp_t>(x0,*v,lcache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
       if (lcache>=n) {
@@ -214,16 +214,16 @@ namespace o2scl {
 	not strictly monotonic, i.e. if some of the data elements are
 	equal. 
     */
-    size_t find_dec(const double x0) {
+    size_t find_dec(const fp_t x0) {
 #ifdef O2SCL_SV_CACHE
       if (cache>=n) cache=n/2;
 #else
       size_t cache=n/2;
 #endif
       if (x0>(*v)[cache]) {
-	cache=vector_bsearch_dec<vec_t,double>(x0,*v,0,cache);
+	cache=vector_bsearch_dec<vec_t,fp_t>(x0,*v,0,cache);
       } else if (x0<=(*v)[cache+1]) {
-	cache=vector_bsearch_dec<vec_t,double>(x0,*v,cache,n-1);
+	cache=vector_bsearch_dec<vec_t,fp_t>(x0,*v,cache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
       if (cache>=n) {
@@ -236,11 +236,11 @@ namespace o2scl {
     
     /** \brief Const version of \ref find_dec()
      */
-    size_t find_dec_const(const double x0, size_t &lcache) const {
+    size_t find_dec_const(const fp_t x0, size_t &lcache) const {
       if (x0>(*v)[lcache]) {
-	lcache=vector_bsearch_dec<vec_t,double>(x0,*v,0,lcache);
+	lcache=vector_bsearch_dec<vec_t,fp_t>(x0,*v,0,lcache);
       } else if (x0<=(*v)[lcache+1]) {
-	lcache=vector_bsearch_dec<vec_t,double>(x0,*v,lcache,n-1);
+	lcache=vector_bsearch_dec<vec_t,fp_t>(x0,*v,lcache,n-1);
       }
 #if !O2SCL_NO_RANGE_CHECK
       if (lcache>=n) {
@@ -268,7 +268,7 @@ namespace o2scl {
 	be possible to improve the speed by rewriting this from
 	scratch.
     */
-    size_t ordered_lookup(const double x0) const {
+    size_t ordered_lookup(const fp_t x0) const {
       if (n<1) {
 	std::string str=((std::string)"Not enough data (n=")+
 	  o2scl::szttos(n)+") in search_vec::ordered_lookup().";
@@ -309,8 +309,8 @@ namespace o2scl {
 
   private:
 
-    search_vec<vec_t>(const search_vec<vec_t> &);
-    search_vec<vec_t>& operator=(const search_vec<vec_t>&);
+    search_vec<vec_t,fp_t>(const search_vec<vec_t,fp_t> &);
+    search_vec<vec_t,fp_t>& operator=(const search_vec<vec_t,fp_t>&);
 
 #endif
 
@@ -319,7 +319,7 @@ namespace o2scl {
   /** \brief An extended search_vec which is allowed to return 
       the last element
   */
-  template<class vec_t> class search_vec_ext {
+  template<class vec_t, class fp_t=double> class search_vec_ext {
     
 #ifndef DOXYGEN_INTERNAL
 
@@ -369,7 +369,7 @@ namespace o2scl {
     /** \brief Search an increasing or decreasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find(const double x0) {
+    size_t find(const fp_t x0) {
 #if !O2SCL_NO_RANGE_CHECK
       if (this->cache>=this->n) {
 	O2SCL_ERR("Cache mis-alignment in search_vec_ext::find().",
@@ -383,12 +383,12 @@ namespace o2scl {
     /** \brief Search an increasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find_inc(const double x0) {
+    size_t find_inc(const fp_t x0) {
       if (x0<(*this->v)[this->cache]) {
-	this->cache=vector_bsearch_inc<vec_t,double>
+	this->cache=vector_bsearch_inc<vec_t,fp_t>
 	  (x0,*this->v,0,this->cache);
       } else if (this->cache<this->n-1 && x0>=(*this->v)[this->cache+1]) {
-	this->cache=vector_bsearch_inc<vec_t,double>
+	this->cache=vector_bsearch_inc<vec_t,fp_t>
 	  (x0,*this->v,this->cache,this->n);
       }
 #if !O2SCL_NO_RANGE_CHECK
@@ -403,12 +403,12 @@ namespace o2scl {
     /** \brief Search a decreasing vector for the interval
 	containing <tt>x0</tt>
     */
-    size_t find_dec(const double x0) {
+    size_t find_dec(const fp_t x0) {
       if (x0>(*this->v)[this->cache]) {
-	this->cache=vector_bsearch_dec<vec_t,double>
+	this->cache=vector_bsearch_dec<vec_t,fp_t>
 	  (x0,*this->v,0,this->cache);
       } else if (this->cache<this->n-1 && x0<=(*this->v)[this->cache+1]) {
-	this->cache=vector_bsearch_dec<vec_t,double>
+	this->cache=vector_bsearch_dec<vec_t,fp_t>
 	  (x0,*this->v,this->cache,this->n);
       }
 #if !O2SCL_NO_RANGE_CHECK
@@ -424,8 +424,8 @@ namespace o2scl {
 
   private:
 
-    search_vec_ext<vec_t>(const search_vec_ext<vec_t> &);
-    search_vec_ext<vec_t>& operator=(const search_vec_ext<vec_t>&);
+    search_vec_ext<vec_t,fp_t>(const search_vec_ext<vec_t,fp_t> &);
+    search_vec_ext<vec_t,fp_t>& operator=(const search_vec_ext<vec_t,fp_t>&);
 
 #endif
 

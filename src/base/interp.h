@@ -110,7 +110,8 @@ namespace o2scl {
       allow the user to use them.
       \endcomment
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_base {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_base {
 
 #ifndef DOXYGEN_INTERNAL
     
@@ -121,7 +122,7 @@ namespace o2scl {
         This pointer is set to zero in the constructor and should be
         non-zero only if it has been allocated with \c new.
     */
-    search_vec<const vec_t> svx;
+    search_vec<const vec_t,double> svx;
     
     /// Independent vector
     const vec_t *px;
@@ -135,15 +136,15 @@ namespace o2scl {
     /** \brief An internal function to assist in computing the 
         integral for both the cspline and Akima types
     */
-    double integ_eval(double ai, double bi, double ci, double di, double xi, 
-                      double a, double b) const {
+    fp_t integ_eval(fp_t ai, fp_t bi, fp_t ci, fp_t di, fp_t xi, 
+                      fp_t a, fp_t b) const {
       
-      double r1=a-xi;
-      double r2=b-xi;
-      double r12=r1+r2;
-      double bterm=0.5*bi*r12;
-      double cterm=ci*(r1*r1+r2*r2+r1*r2)/3.0;
-      double dterm=0.25*di*r12*(r1*r1+r2*r2);
+      fp_t r1=a-xi;
+      fp_t r2=b-xi;
+      fp_t r12=r1+r2;
+      fp_t bterm=0.5*bi*r12;
+      fp_t cterm=ci*(r1*r1+r2*r2+r1*r2)/3;
+      fp_t dterm=0.25*di*r12*(r1*r1+r2*r2);
       
       return (b-a)*(ai+bterm+cterm+dterm);
     }
@@ -170,23 +171,23 @@ namespace o2scl {
     virtual void set(size_t size, const vec_t &x, const vec2_t &y)=0;
     
     /// Give the value of the function \f$ y(x=x_0) \f$  
-    virtual double eval(double x0) const=0;
+    virtual fp_t eval(fp_t x0) const=0;
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double operator()(double x0) const {
+    virtual fp_t operator()(fp_t x0) const {
       return eval(x0);
     }
 
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const=0;
+    virtual fp_t deriv(fp_t x0) const=0;
     
     /** \brief Give the value of the second derivative 
         \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
-    virtual double deriv2(double x0) const=0;
+    virtual fp_t deriv2(fp_t x0) const=0;
     
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const=0;
+    virtual fp_t integ(fp_t a, fp_t b) const=0;
 
     /// Return the type
     virtual const char *type() const=0;
@@ -195,8 +196,10 @@ namespace o2scl {
 
   private:
 
-    interp_base<vec_t,vec2_t>(const interp_base<vec_t,vec2_t> &);
-    interp_base<vec_t,vec2_t>& operator=(const interp_base<vec_t,vec2_t>&);
+    interp_base<vec_t,vec2_t,fp_t>
+    (const interp_base<vec_t,vec2_t,fp_t> &);
+    interp_base<vec_t,vec2_t,fp_t>& operator=
+    (const interp_base<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -212,8 +215,9 @@ namespace o2scl {
       Linear interpolation requires no calls to allocate() or free()
       as there is no internal storage required.
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_linear : 
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_linear : 
+    public interp_base<vec_t,vec2_t,fp_t> {
     
   public:
     
@@ -238,32 +242,32 @@ namespace o2scl {
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
       
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double dx=x_hi-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t dx=x_hi-x_lo;
       
       return y_lo+(x0-x_lo)/dx*(y_hi-y_lo);
     }
     
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
+    virtual fp_t deriv(fp_t x0) const {
       
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
       
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double dx=x_hi-x_lo;
-      double dy=y_hi-y_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t dx=x_hi-x_lo;
+      fp_t dy=y_hi-y_lo;
 
       return dy/dx;
     }
@@ -271,12 +275,12 @@ namespace o2scl {
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
     */
-    virtual double deriv2(double x0) const {
-      return 0.0;
+    virtual fp_t deriv2(fp_t x0) const {
+      return 0;
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const {
+    virtual fp_t integ(fp_t a, fp_t b) const {
 
       size_t cache=0;
       size_t i, index_a, index_b;
@@ -284,7 +288,7 @@ namespace o2scl {
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
           ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-        double tmp=a;
+        fp_t tmp=a;
         a=b;
         b=tmp;
         flip=true;
@@ -293,21 +297,21 @@ namespace o2scl {
       index_a=this->svx.find_const(a,cache);
       index_b=this->svx.find_const(b,cache);
       
-      double result=0.0;
+      fp_t result=0;
       for(i=index_a; i<=index_b; i++) {
 
-        double x_lo=(*this->px)[i];
-        double x_hi=(*this->px)[i+1];
-        double y_lo=(*this->py)[i];
-        double y_hi=(*this->py)[i+1];
-        double dx=x_hi-x_lo;
+        fp_t x_lo=(*this->px)[i];
+        fp_t x_hi=(*this->px)[i+1];
+        fp_t y_lo=(*this->py)[i];
+        fp_t y_hi=(*this->py)[i+1];
+        fp_t dx=x_hi-x_lo;
         
-        if(dx != 0.0) {
+        if(dx != 0) {
 
           if (i == index_a || i == index_b) {
-            double x1=(i == index_a) ? a : x_lo;
-            double x2=(i == index_b) ? b : x_hi;
-            double D=(y_hi-y_lo)/dx;
+            fp_t x1=(i == index_a) ? a : x_lo;
+            fp_t x2=(i == index_b) ? b : x_hi;
+            fp_t D=(y_hi-y_lo)/dx;
             result += (x2-x1)*(y_lo+0.5*D*((x2-x_lo)+(x1-x_lo)));
           } else  {
             result += 0.5*dx*(y_lo+y_hi);
@@ -333,8 +337,8 @@ namespace o2scl {
 
   private:
 
-    interp_linear<vec_t,vec2_t>(const interp_linear<vec_t,vec2_t> &);
-    interp_linear<vec_t,vec2_t>& operator=(const interp_linear<vec_t,vec2_t>&);
+    interp_linear<vec_t,vec2_t,fp_t>(const interp_linear<vec_t,vec2_t,fp_t> &);
+    interp_linear<vec_t,vec2_t,fp_t>& operator=(const interp_linear<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -345,8 +349,9 @@ namespace o2scl {
       Nearest interpolation requires no calls to allocate() or free()
       as there is no internal storage required.
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_nearest_neigh : 
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_nearest_neigh : 
+    public interp_base<vec_t,vec2_t,fp_t> {
     
   public:
     
@@ -371,27 +376,27 @@ namespace o2scl {
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
 
       size_t index=this->svx.ordered_lookup(x0);
       return (*this->py)[index];
     }
     
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
-      return 0.0;
+    virtual fp_t deriv(fp_t x0) const {
+      return 0;
     }
 
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ (always zero)
     */
-    virtual double deriv2(double x0) const {
-      return 0.0;
+    virtual fp_t deriv2(fp_t x0) const {
+      return 0;
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const {
-      return 0.0;
+    virtual fp_t integ(fp_t a, fp_t b) const {
+      return 0;
     }
 
     /// Return the type, \c "interp_nearest_neigh".
@@ -401,10 +406,10 @@ namespace o2scl {
 
   private:
 
-    interp_nearest_neigh<vec_t,vec2_t>
-      (const interp_nearest_neigh<vec_t,vec2_t> &);
-    interp_nearest_neigh<vec_t,vec2_t>& operator=
-      (const interp_nearest_neigh<vec_t,vec2_t>&);
+    interp_nearest_neigh<vec_t,vec2_t,fp_t>
+      (const interp_nearest_neigh<vec_t,vec2_t,fp_t> &);
+    interp_nearest_neigh<vec_t,vec2_t,fp_t>& operator=
+      (const interp_nearest_neigh<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -422,12 +427,13 @@ namespace o2scl {
       effectively assumes that the second derivative is linear outside
       of the endpoints. 
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_cspline : 
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_cspline : 
+    public interp_base<vec_t,vec2_t,fp_t> {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     typedef boost::numeric::ublas::slice slice;
@@ -446,17 +452,17 @@ namespace o2scl {
     //@}
     
     /// Memory for the tridiagonalization
-    o2scl_linalg::ubvector_4_mem<double> p4m;
+    o2scl_linalg::ubvector_4_mem<fp_t> p4m;
     
     /// Compute coefficients for cubic spline interpolation
-    void coeff_calc(const ubvector &c_array, double dy, double dx, 
-                    size_t index, double &b, double &c2, double &d) const {
+    void coeff_calc(const ubvector &c_array, fp_t dy, fp_t dx, 
+                    size_t index, fp_t &b, fp_t &c2, fp_t &d) const {
       
-      double c_i=c_array[index];
-      double c_ip1=c_array[index+1];
-      b=(dy/dx)-dx*(c_ip1+2.0*c_i)/3.0;
+      fp_t c_i=c_array[index];
+      fp_t c_ip1=c_array[index+1];
+      b=(dy/dx)-dx*(c_ip1+2*c_i)/3;
       c2=c_i;
-      d=(c_ip1-c_i)/(3.0*dx);
+      d=(c_ip1-c_i)/(3*dx);
 
       return;
     }
@@ -506,19 +512,19 @@ namespace o2scl {
       size_t max_index=num_points-1;
       size_t sys_size=max_index-1;
 
-      c[0]=0.0;
-      c[max_index]=0.0;
+      c[0]=0;
+      c[max_index]=0;
 
       for (i=0; i < sys_size; i++) {
-        double h_i=xa[i+1]-xa[i];
-        double h_ip1=xa[i+2]-xa[i+1];
-        double ydiff_i=ya[i+1]-ya[i];
-        double ydiff_ip1=ya[i+2]-ya[i+1];
-        double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-        double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+        fp_t h_i=xa[i+1]-xa[i];
+        fp_t h_ip1=xa[i+2]-xa[i+1];
+        fp_t ydiff_i=ya[i+1]-ya[i];
+        fp_t ydiff_ip1=ya[i+2]-ya[i+1];
+        fp_t g_i=(h_i != 0) ? 1/h_i : 0;
+        fp_t g_ip1=(h_ip1 != 0) ? 1.0/h_ip1 : 0;
         offdiag[i]=h_ip1;
-        diag[i]=2.0*(h_ip1+h_i);
-        g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
+        diag[i]=2*(h_ip1+h_i);
+        g[i]=3*(ydiff_ip1*g_ip1-ydiff_i*g_i);
       }
 
       if (sys_size == 1) {
@@ -531,28 +537,28 @@ namespace o2scl {
       ubvector_range cp1(c,range(1,c.size()));
       o2scl_linalg::solve_tridiag_sym<ubvector,ubvector,ubvector,
 				      ubvector_range,
-				      o2scl_linalg::ubvector_4_mem<double>,
-				      ubvector,double>
+				      o2scl_linalg::ubvector_4_mem<fp_t>,
+				      ubvector,fp_t>
         (diag,offdiag,g,cp1,sys_size,p4m);
       
       return;
     }
 
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
 
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double dx=x_hi-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t dx=x_hi-x_lo;
 
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double dy=y_hi-y_lo;
-      double delx=x0-x_lo;
-      double b_i, c_i, d_i; 
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t dy=y_hi-y_lo;
+      fp_t delx=x0-x_lo;
+      fp_t b_i, c_i, d_i; 
 
       coeff_calc(c,dy,dx,index,b_i,c_i,d_i);
       
@@ -560,58 +566,58 @@ namespace o2scl {
     }
 
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
+    virtual fp_t deriv(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
   
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double dx=x_hi-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t dx=x_hi-x_lo;
 
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double dy=y_hi-y_lo;
-      double delx=x0-x_lo;
-      double b_i, c_i, d_i; 
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t dy=y_hi-y_lo;
+      fp_t delx=x0-x_lo;
+      fp_t b_i, c_i, d_i; 
 
       coeff_calc(c,dy,dx,index,b_i,c_i,d_i);
 
-      return b_i+delx*(2.0*c_i+3.0*d_i*delx);
+      return b_i+delx*(2*c_i+3*d_i*delx);
     }
 
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
-    virtual double deriv2(double x0) const {
+    virtual fp_t deriv2(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
   
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double dx=x_hi-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t dx=x_hi-x_lo;
 
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double dy=y_hi-y_lo;
-      double delx=x0-x_lo;
-      double b_i, c_i, d_i;
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t dy=y_hi-y_lo;
+      fp_t delx=x0-x_lo;
+      fp_t b_i, c_i, d_i;
 
       coeff_calc(c,dy,dx,index,b_i,c_i,d_i);
 
-      return 2.0*c_i+6.0*d_i*delx;
+      return 2*c_i+6*d_i*delx;
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const {
+    virtual fp_t integ(fp_t a, fp_t b) const {
 
       size_t i, index_a, index_b;
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
           ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-        double tmp=a;
+        fp_t tmp=a;
         a=b;
         b=tmp;
         flip=true;
@@ -621,27 +627,27 @@ namespace o2scl {
       index_a=this->svx.find_const(a,cache);
       index_b=this->svx.find_const(b,cache);
 
-      double result=0.0;
+      fp_t result=0;
   
       for(i=index_a; i<=index_b; i++) {
 
-        double x_lo=(*this->px)[i];
-        double x_hi=(*this->px)[i+1];
-        double y_lo=(*this->py)[i];
-        double y_hi=(*this->py)[i+1];
-        double dx=x_hi-x_lo;
-        double dy=y_hi-y_lo;
+        fp_t x_lo=(*this->px)[i];
+        fp_t x_hi=(*this->px)[i+1];
+        fp_t y_lo=(*this->py)[i];
+        fp_t y_hi=(*this->py)[i+1];
+        fp_t dx=x_hi-x_lo;
+        fp_t dy=y_hi-y_lo;
 
-        if(dx != 0.0) {
-          double b_i, c_i, d_i; 
+        if(dx != 0) {
+          fp_t b_i, c_i, d_i; 
           coeff_calc(c,dy,dx,i,b_i,c_i,d_i);
           if (i == index_a || i == index_b) {
-            double x1=(i == index_a) ? a : x_lo;
-            double x2=(i == index_b) ? b : x_hi;
+            fp_t x1=(i == index_a) ? a : x_lo;
+            fp_t x2=(i == index_b) ? b : x_hi;
             result += this->integ_eval(y_lo,b_i,c_i,d_i,x_lo,x1,x2);
           } else {
             result += dx*(y_lo+dx*(0.5*b_i+
-                                   dx*(c_i/3.0+0.25*d_i*dx)));
+                                   dx*(c_i/3+0.25*d_i*dx)));
           }
         } else {
           std::string str=((std::string)"Interval of length zero ")+
@@ -653,7 +659,7 @@ namespace o2scl {
 
       }
   
-      if (flip) result*=-1.0;
+      if (flip) result*=-1;
 
       return result;
     }
@@ -665,9 +671,10 @@ namespace o2scl {
 
   private:
   
-  interp_cspline<vec_t,vec2_t>(const interp_cspline<vec_t,vec2_t> &);
-  interp_cspline<vec_t,vec2_t>& operator=
-  (const interp_cspline<vec_t,vec2_t>&);
+  interp_cspline<vec_t,vec2_t,fp_t>
+  (const interp_cspline<vec_t,vec2_t,fp_t> &);
+  interp_cspline<vec_t,vec2_t,fp_t>& operator=
+  (const interp_cspline<vec_t,vec2_t,fp_t>&);
   
 #endif
 
@@ -681,23 +688,24 @@ namespace o2scl {
       O\ :sub:`2`\ scl User's guide. 
       \endverbatim
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_cspline_peri : 
-  public interp_cspline<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_cspline_peri : 
+  public interp_cspline<vec_t,vec2_t,fp_t> {
 
   protected:
     
     /// Memory for the tridiagonalization
-    o2scl_linalg::ubvector_5_mem<double> p5m;
+    o2scl_linalg::ubvector_5_mem<fp_t> p5m;
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     typedef boost::numeric::ublas::slice slice;
     typedef boost::numeric::ublas::range range;
 
-  interp_cspline_peri() : interp_cspline<vec_t,vec2_t>() {
+  interp_cspline_peri() : interp_cspline<vec_t,vec2_t,fp_t>() {
       this->min_size=2;
     }
       
@@ -744,13 +752,13 @@ namespace o2scl {
 
         // solve 2x2 system 
           
-        double h0=xa[1]-xa[0];
-        double h1=xa[2]-xa[1];
-        double h2=xa[3]-xa[2];
-        double A=2.0*(h0+h1);
-        double B=h0+h1;
-        double gx[2];
-        double det;
+        fp_t h0=xa[1]-xa[0];
+        fp_t h1=xa[2]-xa[1];
+        fp_t h2=xa[3]-xa[2];
+        fp_t A=2.0*(h0+h1);
+        fp_t B=h0+h1;
+        fp_t gx[2];
+        fp_t det;
           
         gx[0]=3.0*((ya[2]-ya[1])/h1-(ya[1]-ya[0])/h0);
         gx[1]=3.0*((ya[1]-ya[2])/h2-(ya[2]-ya[1])/h1);
@@ -765,12 +773,12 @@ namespace o2scl {
       } else {
           
         for (i=0; i < sys_size-1; i++) {
-          double h_i=xa[i+1]-xa[i];
-          double h_ip1=xa[i+2]-xa[i+1];
-          double ydiff_i=ya[i+1]-ya[i];
-          double ydiff_ip1=ya[i+2]-ya[i+1];
-          double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-          double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+          fp_t h_i=xa[i+1]-xa[i];
+          fp_t h_ip1=xa[i+2]-xa[i+1];
+          fp_t ydiff_i=ya[i+1]-ya[i];
+          fp_t ydiff_ip1=ya[i+2]-ya[i+1];
+          fp_t g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
+          fp_t g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
           this->offdiag[i]=h_ip1;
           this->diag[i]=2.0*(h_ip1+h_i);
           this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
@@ -778,12 +786,12 @@ namespace o2scl {
           
         i=sys_size-1;
         {
-          double h_i=xa[i+1]-xa[i];
-          double h_ip1=xa[1]-xa[0];
-          double ydiff_i=ya[i+1]-ya[i];
-          double ydiff_ip1=ya[1]-ya[0];
-          double g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
-          double g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
+          fp_t h_i=xa[i+1]-xa[i];
+          fp_t h_ip1=xa[1]-xa[0];
+          fp_t ydiff_i=ya[i+1]-ya[i];
+          fp_t ydiff_ip1=ya[1]-ya[0];
+          fp_t g_i=(h_i != 0.0) ? 1.0/h_i : 0.0;
+          fp_t g_ip1=(h_ip1 != 0.0) ? 1.0/h_ip1 : 0.0;
           this->offdiag[i]=h_ip1;
           this->diag[i]=2.0*(h_ip1+h_i);
           this->g[i]=3.0*(ydiff_ip1*g_ip1-ydiff_i*g_i);
@@ -792,8 +800,8 @@ namespace o2scl {
         ubvector_range cp1(this->c,range(1,this->c.size()));
         o2scl_linalg::solve_cyc_tridiag_sym
 	  <ubvector,ubvector,ubvector,ubvector_range,
-	   o2scl_linalg::ubvector_5_mem<double>,ubvector,
-	   double>
+	   o2scl_linalg::ubvector_5_mem<fp_t>,ubvector,
+	   fp_t>
           (this->diag,this->offdiag,this->g,cp1,sys_size,p5m);
         this->c[0]=this->c[max_index];
 
@@ -806,10 +814,10 @@ namespace o2scl {
 
   private:
 
-    interp_cspline_peri<vec_t,vec2_t>
-  (const interp_cspline_peri<vec_t,vec2_t> &);
-    interp_cspline_peri<vec_t,vec2_t>& operator=
-      (const interp_cspline_peri<vec_t,vec2_t>&);
+    interp_cspline_peri<vec_t,vec2_t,fp_t>
+  (const interp_cspline_peri<vec_t,vec2_t,fp_t> &);
+    interp_cspline_peri<vec_t,vec2_t,fp_t>& operator=
+      (const interp_cspline_peri<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -828,12 +836,13 @@ namespace o2scl {
       endpoints. Use \ref interp_akima_peri for perodic boundary
       conditions.
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_akima : 
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_akima : 
+    public interp_base<vec_t,vec2_t,fp_t> {
 
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     typedef boost::numeric::ublas::slice slice;
@@ -857,19 +866,19 @@ namespace o2scl {
       
       for(size_t i=0;i<this->sz-1;i++) {
         
-        double NE=fabs(umx[3+i]-umx[2+i])+fabs(umx[1+i]-umx[i]);
+        fp_t NE=fabs(umx[3+i]-umx[2+i])+fabs(umx[1+i]-umx[i]);
         
         if (NE == 0.0) {
           b[i]=umx[2+i];
           c[i]=0.0;
           d[i]=0.0;
         } else {
-          double h_i=(*this->px)[i+1]-(*this->px)[i];
-          double NE_next=fabs(umx[4+i]-umx[3+i])+
+          fp_t h_i=(*this->px)[i+1]-(*this->px)[i];
+          fp_t NE_next=fabs(umx[4+i]-umx[3+i])+
             fabs(umx[2+i]-umx[1+i]);
-          double alpha_i=fabs(umx[1+i]-umx[i])/NE;
-          double alpha_ip1;
-          double tL_ip1;
+          fp_t alpha_i=fabs(umx[1+i]-umx[i])/NE;
+          fp_t alpha_ip1;
+          fp_t tL_ip1;
           if (NE_next == 0.0) {
             tL_ip1=umx[2+i];
           } else {
@@ -939,31 +948,31 @@ namespace o2scl {
     }
           
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
       
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
   
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
-      double bb=b[index];
-      double cc=c[index];
-      double dd=d[index];
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
+      fp_t bb=b[index];
+      fp_t cc=c[index];
+      fp_t dd=d[index];
 
       return (*this->py)[index]+delx*(bb+delx*(cc+dd*delx));
     }
 
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
+    virtual fp_t deriv(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
 
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
-      double bb=b[index];
-      double cc=c[index];
-      double dd=d[index];
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
+      fp_t bb=b[index];
+      fp_t cc=c[index];
+      fp_t dd=d[index];
 
       return bb+delx*(2.0*cc+3.0*dd*delx);
     }
@@ -971,28 +980,28 @@ namespace o2scl {
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
-    virtual double deriv2(double x0) const {
+    virtual fp_t deriv2(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
   
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
-      double cc=c[index];
-      double dd=d[index];
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
+      fp_t cc=c[index];
+      fp_t dd=d[index];
 
       return 2.0*cc+6.0*dd*delx;
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double aa, double bb) const {
+    virtual fp_t integ(fp_t aa, fp_t bb) const {
 
       size_t i, index_a, index_b;
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && aa>bb) ||
           ((*this->px)[0]>(*this->px)[this->sz-1] && aa<bb)) {
-        double tmp=aa;
+        fp_t tmp=aa;
         aa=bb;
         bb=tmp;
         flip=true;
@@ -1002,27 +1011,27 @@ namespace o2scl {
       index_a=this->svx.find_const(aa,cache);
       index_b=this->svx.find_const(bb,cache);
 
-      double result=0.0;
+      fp_t result=0.0;
   
       for(i=index_a; i<=index_b; i++) {
 
-        double x_lo=(*this->px)[i];
-        double x_hi=(*this->px)[i+1];
-        double y_lo=(*this->py)[i];
-        double dx=x_hi-x_lo;
+        fp_t x_lo=(*this->px)[i];
+        fp_t x_hi=(*this->px)[i+1];
+        fp_t y_lo=(*this->py)[i];
+        fp_t dx=x_hi-x_lo;
 
         if (dx != 0.0) {
           
           if (i==index_a || i==index_b) {
-            double x1=(i==index_a) ? aa : x_lo;
-            double x2=(i==index_b) ? bb : x_hi;
+            fp_t x1=(i==index_a) ? aa : x_lo;
+            fp_t x2=(i==index_b) ? bb : x_hi;
             result += this->integ_eval(y_lo,b[i],c[i],d[i],x_lo,x1,x2);
           } else {
             result+=dx*(y_lo+dx*(0.5*b[i]+dx*(c[i]/3.0+0.25*d[i]*dx)));
           }
 
         } else {
-          double y_hi=(*this->py)[i+1];
+          fp_t y_hi=(*this->py)[i+1];
           std::string str=((std::string)"Interval of length zero ")+
             "between ("+o2scl::dtos(x_lo)+","+o2scl::dtos(y_lo)+
             ") and ("+o2scl::dtos(x_hi)+","+o2scl::dtos(y_hi)+
@@ -1043,8 +1052,8 @@ namespace o2scl {
 
   private:
 
-    interp_akima<vec_t,vec2_t>(const interp_akima<vec_t,vec2_t> &);
-    interp_akima<vec_t,vec2_t>& operator=(const interp_akima<vec_t,vec2_t>&);
+    interp_akima<vec_t,vec2_t,fp_t>(const interp_akima<vec_t,vec2_t,fp_t> &);
+    interp_akima<vec_t,vec2_t,fp_t>& operator=(const interp_akima<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -1058,12 +1067,13 @@ namespace o2scl {
       O\ :sub:`2`\ scl User's guide. 
       \endverbatim
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_akima_peri : 
-  public interp_akima<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_akima_peri : 
+  public interp_akima<vec_t,vec2_t,fp_t> {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     typedef boost::numeric::ublas::slice slice;
@@ -1071,7 +1081,7 @@ namespace o2scl {
 
   public:
     
-  interp_akima_peri() : interp_akima<vec_t,vec2_t>() {
+  interp_akima_peri() : interp_akima<vec_t,vec2_t,fp_t>() {
     }
     
     virtual ~interp_akima_peri() {
@@ -1125,9 +1135,10 @@ namespace o2scl {
 
   private:
 
-    interp_akima_peri<vec_t,vec2_t>(const interp_akima_peri<vec_t,vec2_t> &);
-    interp_akima_peri<vec_t,vec2_t>& operator=
-      (const interp_akima_peri<vec_t,vec2_t>&);
+    interp_akima_peri<vec_t,vec2_t,fp_t>
+    (const interp_akima_peri<vec_t,vec2_t,fp_t> &);
+    interp_akima_peri<vec_t,vec2_t,fp_t>& operator=
+      (const interp_akima_peri<vec_t,vec2_t,fp_t>&);
 
 #endif
 
@@ -1140,12 +1151,13 @@ namespace o2scl {
       was based on [Steffen90]_.
       \endverbatim
    */
-  template<class vec_t, class vec2_t=vec_t> class interp_steffen : 
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_steffen : 
+    public interp_base<vec_t,vec2_t,fp_t> {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     typedef boost::numeric::ublas::vector_slice<ubvector> ubvector_slice;
     typedef boost::numeric::ublas::vector_range<ubvector> ubvector_range;
     typedef boost::numeric::ublas::slice slice;
@@ -1166,7 +1178,7 @@ namespace o2scl {
     
     /** \brief Flip the sign of x if x and y have different signs
      */
-    double copysign(const double x, const double y) {
+    fp_t copysign(const fp_t x, const fp_t y) {
       if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
         return -x;
       }
@@ -1214,8 +1226,8 @@ namespace o2scl {
        * We use the "simplest possibility" method described in the paper
        * in section 2.2
        */
-      double h0=(xa[1]-xa[0]);
-      double s0=(ya[1]-ya[0]) / h0;
+      fp_t h0=(xa[1]-xa[0]);
+      fp_t s0=(ya[1]-ya[0]) / h0;
       
       y_prime[0]=s0;
       
@@ -1223,15 +1235,15 @@ namespace o2scl {
          from 1 to N-2 (0 to size-2 inclusive) */
       for (size_t i=1; i < (size-1); i++) {
         
-        double pi;
+        fp_t pi;
         
         /* equation 6 in the paper */
-        double hi=(xa[i+1]-xa[i]);
-        double him1=(xa[i]-xa[i-1]);
+        fp_t hi=(xa[i+1]-xa[i]);
+        fp_t him1=(xa[i]-xa[i-1]);
         
         /* equation 7 in the paper */
-        double si=(ya[i+1]-ya[i]) / hi;
-        double sim1=(ya[i]-ya[i-1]) / him1;
+        fp_t si=(ya[i+1]-ya[i]) / hi;
+        fp_t sim1=(ya[i]-ya[i-1]) / him1;
         
         /* equation 8 in the paper */
         pi=(sim1*hi + si*him1) / (him1 + hi);
@@ -1254,8 +1266,8 @@ namespace o2scl {
       
       /* Now we can calculate all the coefficients for the whole range. */
       for (size_t i=0; i < (size-1); i++) {
-        double hi=(xa[i+1]-xa[i]);
-        double si=(ya[i+1]-ya[i]) / hi;
+        fp_t hi=(xa[i+1]-xa[i]);
+        fp_t si=(ya[i+1]-ya[i]) / hi;
         
         /* These are from equations 2-5 in the paper. */
         a[i]=(y_prime[i] + y_prime[i+1]-2*si) / hi / hi;
@@ -1268,26 +1280,26 @@ namespace o2scl {
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
       
       /* Use Horner's scheme for efficient evaluation of polynomials. */
-      double y = d[index]+delx*(c[index]+delx*(b[index]+delx*a[index]));
+      fp_t y = d[index]+delx*(c[index]+delx*(b[index]+delx*a[index]));
       
       return y;
     }
 
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
+    virtual fp_t deriv(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
 
       return c[index]+delx*(2.0*b[index]+delx*3.0*a[index]);
     }
@@ -1295,25 +1307,25 @@ namespace o2scl {
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
-    virtual double deriv2(double x0) const {
+    virtual fp_t deriv2(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
-      double x_lo=(*this->px)[index];
-      double delx=x0-x_lo;
+      fp_t x_lo=(*this->px)[index];
+      fp_t delx=x0-x_lo;
 
       return 2.0*b[index]+delx*6.0*a[index];
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double al, double bl) const {
+    virtual fp_t integ(fp_t al, fp_t bl) const {
 
       size_t i, index_a, index_b;
   
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && al>bl) ||
           ((*this->px)[0]>(*this->px)[this->sz-1] && al<bl)) {
-        double tmp=al;
+        fp_t tmp=al;
         al=bl;
         bl=tmp;
         flip=true;
@@ -1323,20 +1335,20 @@ namespace o2scl {
       index_a=this->svx.find_const(al,cache);
       index_b=this->svx.find_const(bl,cache);
 
-      double result=0.0;
+      fp_t result=0.0;
   
       for(i=index_a; i<=index_b; i++) {
 
-        double x_lo=(*this->px)[i];
-        double x_hi=(*this->px)[i+1];
-        double y_lo=(*this->py)[i];
-        double y_hi=(*this->py)[i+1];
-        double dx=x_hi-x_lo;
+        fp_t x_lo=(*this->px)[i];
+        fp_t x_hi=(*this->px)[i+1];
+        fp_t y_lo=(*this->py)[i];
+        fp_t y_hi=(*this->py)[i+1];
+        fp_t dx=x_hi-x_lo;
 
         if(dx != 0.0) {
 
-          double x1=(i == index_a) ? al-x_lo : 0.0;
-          double x2=(i == index_b) ? bl-x_lo : x_hi-x_lo;
+          fp_t x1=(i == index_a) ? al-x_lo : 0.0;
+          fp_t x2=(i == index_b) ? bl-x_lo : x_hi-x_lo;
           result += (1.0/4.0)*a[i]*(x2*x2*x2*x2-x1*x1*x1*x1)+
             (1.0/3.0)*b[i]*(x2*x2*x2-x1*x1*x1)+
             (1.0/2.0)*c[i]*(x2*x2-x1*x1)+d[i]*(x2-x1);
@@ -1363,9 +1375,10 @@ namespace o2scl {
 
   private:
   
-  interp_steffen<vec_t,vec2_t>(const interp_steffen<vec_t,vec2_t> &);
-  interp_steffen<vec_t,vec2_t>& operator=
-  (const interp_steffen<vec_t,vec2_t>&);
+  interp_steffen<vec_t,vec2_t,fp_t>
+  (const interp_steffen<vec_t,vec2_t,fp_t> &);
+  interp_steffen<vec_t,vec2_t,fp_t>& operator=
+  (const interp_steffen<vec_t,vec2_t,fp_t>&);
   
 #endif
 
@@ -1399,12 +1412,13 @@ namespace o2scl {
 
       \future Convert into fewer loops over the data
   */
-  template<class vec_t, class vec2_t=vec_t> class interp_monotonic :
-  public interp_base<vec_t,vec2_t> {
+  template<class vec_t, class vec2_t=vec_t, class fp_t=double>
+  class interp_monotonic :
+    public interp_base<vec_t,vec2_t,fp_t> {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
     
   protected:
     
@@ -1480,9 +1494,9 @@ namespace o2scl {
 
       // Constrain m to ensure monotonicity
       for(size_t i=0;i<size-1;i++) {
-        double norm2=alpha[i]*alpha[i]+beta[i]*beta[i];
+        fp_t norm2=alpha[i]*alpha[i]+beta[i]*beta[i];
         if (norm2>9.0) {
-          double tau=3.0/sqrt(norm2);
+          fp_t tau=3.0/sqrt(norm2);
           m[i]=tau*alpha[i]*Delta[i];
           m[i+1]=tau*beta[i]*Delta[i];
         }
@@ -1492,47 +1506,47 @@ namespace o2scl {
     }
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(double x0) const {
+    virtual fp_t eval(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
       
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double h=x_hi-x_lo;
-      double t=(x0-x_lo)/h;
-      double t2=t*t, t3=t2*t;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t h=x_hi-x_lo;
+      fp_t t=(x0-x_lo)/h;
+      fp_t t2=t*t, t3=t2*t;
 
-      double h00=2.0*t3-3.0*t2+1.0;
-      double h10=t3-2.0*t2+t;
-      double h01=-2.0*t3+3.0*t2;
-      double h11=t3-t2;
-      double interp=y_lo*h00+h*m[index]*h10+y_hi*h01+h*m[index+1]*h11;
+      fp_t h00=2.0*t3-3.0*t2+1.0;
+      fp_t h10=t3-2.0*t2+t;
+      fp_t h01=-2.0*t3+3.0*t2;
+      fp_t h11=t3-t2;
+      fp_t interp=y_lo*h00+h*m[index]*h10+y_hi*h01+h*m[index+1]*h11;
       
       return interp;
     }
     
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(double x0) const {
+    virtual fp_t deriv(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
       
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double h=x_hi-x_lo;
-      double t=(x0-x_lo)/h;
-      double t2=t*t;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t h=x_hi-x_lo;
+      fp_t t=(x0-x_lo)/h;
+      fp_t t2=t*t;
 
-      double dh00=6.0*t2-6.0*t;
-      double dh10=3.0*t2-4.0*t+1.0;
-      double dh01=-6.0*t2+6.0*t;
-      double dh11=3.0*t2-2.0*t;
-      double deriv=(y_lo*dh00+h*m[index]*dh10+y_hi*dh01+
+      fp_t dh00=6.0*t2-6.0*t;
+      fp_t dh10=3.0*t2-4.0*t+1.0;
+      fp_t dh01=-6.0*t2+6.0*t;
+      fp_t dh11=3.0*t2-2.0*t;
+      fp_t deriv=(y_lo*dh00+h*m[index]*dh10+y_hi*dh01+
                     h*m[index+1]*dh11)/h;
 
       return deriv;
@@ -1541,37 +1555,37 @@ namespace o2scl {
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$
     */
-    virtual double deriv2(double x0) const {
+    virtual fp_t deriv2(fp_t x0) const {
 
       size_t cache=0;
       size_t index=this->svx.find_const(x0,cache);
       
-      double x_lo=(*this->px)[index];
-      double x_hi=(*this->px)[index+1];
-      double y_lo=(*this->py)[index];
-      double y_hi=(*this->py)[index+1];
-      double h=x_hi-x_lo;
-      double t=(x0-x_lo)/h;
+      fp_t x_lo=(*this->px)[index];
+      fp_t x_hi=(*this->px)[index+1];
+      fp_t y_lo=(*this->py)[index];
+      fp_t y_hi=(*this->py)[index+1];
+      fp_t h=x_hi-x_lo;
+      fp_t t=(x0-x_lo)/h;
 
-      double ddh00=12.0*t-6.0;
-      double ddh10=6.0*t-4.0;
-      double ddh01=-12.0*t+6.0;
-      double ddh11=6.0*t-2.0;
-      double deriv2=(y_lo*ddh00+h*m[index]*ddh10+y_hi*ddh01+
+      fp_t ddh00=12.0*t-6.0;
+      fp_t ddh10=6.0*t-4.0;
+      fp_t ddh01=-12.0*t+6.0;
+      fp_t ddh11=6.0*t-2.0;
+      fp_t deriv2=(y_lo*ddh00+h*m[index]*ddh10+y_hi*ddh01+
                      h*m[index+1]*ddh11)/h/h;
 
       return deriv2;
     }
 
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(double a, double b) const {
+    virtual fp_t integ(fp_t a, fp_t b) const {
       
       size_t i, index_a, index_b;
       
       bool flip=false;
       if (((*this->px)[0]<(*this->px)[this->sz-1] && a>b) ||
           ((*this->px)[0]>(*this->px)[this->sz-1] && a<b)) {
-        double tmp=a;
+        fp_t tmp=a;
         a=b;
         b=tmp;
         flip=true;
@@ -1581,15 +1595,15 @@ namespace o2scl {
       index_a=this->svx.find_const(a,cache);
       index_b=this->svx.find_const(b,cache);
 
-      double result=0.0;
+      fp_t result=0.0;
   
       for(i=index_a; i<=index_b; i++) {
 
-        double x_hi=(*this->px)[i+1];
-        double x_lo=(*this->px)[i];
-        double y_lo=(*this->py)[i];
-        double y_hi=(*this->py)[i+1];
-        double h=x_hi-x_lo;
+        fp_t x_hi=(*this->px)[i+1];
+        fp_t x_lo=(*this->px)[i];
+        fp_t y_lo=(*this->py)[i];
+        fp_t y_hi=(*this->py)[i+1];
+        fp_t h=x_hi-x_lo;
         
         if (h != 0.0) {
           
@@ -1600,14 +1614,14 @@ namespace o2scl {
             x_hi=b;
           }
 
-          double t=(x_hi-x_lo)/h;
-          double t2=t*t, t3=t2*t, t4=t3*t;
+          fp_t t=(x_hi-x_lo)/h;
+          fp_t t2=t*t, t3=t2*t, t4=t3*t;
           
-          double ih00=t4/2.0-t3+t;
-          double ih10=t4/4.0-2.0*t3/3.0+t2/2.0;
-          double ih01=-t4/2.0+t3;
-          double ih11=t4/4.0-t3/3.0;
-          double intres=h*(y_lo*ih00+h*m[i]*ih10+y_hi*ih01+
+          fp_t ih00=t4/2.0-t3+t;
+          fp_t ih10=t4/4.0-2.0*t3/3.0+t2/2.0;
+          fp_t ih01=-t4/2.0+t3;
+          fp_t ih11=t4/4.0-t3/3.0;
+          fp_t intres=h*(y_lo*ih00+h*m[i]*ih10+y_hi*ih01+
                            h*m[i+1]*ih11);
           result+=intres;
 
@@ -1633,9 +1647,10 @@ namespace o2scl {
 
   private:
 
-    interp_monotonic<vec_t,vec2_t>(const interp_monotonic<vec_t,vec2_t> &);
-    interp_monotonic<vec_t,vec2_t>& operator=
-      (const interp_monotonic<vec_t,vec2_t>&);
+    interp_monotonic<vec_t,vec2_t,fp_t>
+    (const interp_monotonic<vec_t,vec2_t,fp_t> &);
+    interp_monotonic<vec_t,vec2_t,fp_t>& operator=
+      (const interp_monotonic<vec_t,vec2_t,fp_t>&);
 
 #endif
 

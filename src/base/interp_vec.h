@@ -83,15 +83,15 @@ namespace o2scl {
       pointers might be better and then has copy constructors.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-           class vec2_t=vec_t> class interp_vec : 
-    public interp_base<vec_t,vec2_t> {
+           class vec2_t=vec_t, class fp_t=double> class interp_vec : 
+    public interp_base<vec_t,vec2_t,fp_t> {
       
 #ifndef DOXYGEN_INTERNAL
       
   protected:
     
     /// Base interpolation object
-    interp_base<vec_t,vec2_t> *itp;
+    interp_base<vec_t,vec2_t,fp_t> *itp;
     
     /// Interpolation type
     size_t itype;
@@ -100,7 +100,7 @@ namespace o2scl {
     covar_funct *cf;
 
     /// Parameter list for Gaussian process interpolation
-    std::vector<std::vector<double>> param_list;
+    std::vector<std::vector<fp_t>> param_list;
     
 #endif
       
@@ -210,20 +210,20 @@ namespace o2scl {
           ikon->mode=ikon->mode_max_lml;
         }
 
-        std::vector<double> diff;
+        std::vector<fp_t> diff;
         o2scl::vector_diffs(n,x,diff);
-        double min_len=vector_min_value<std::vector<double>,double>
+        fp_t min_len=vector_min_value<std::vector<fp_t>,fp_t>
           (diff.size(),diff)/10.0;
-        double max_len=vector_max_value<std::vector<double>,double>
+        fp_t max_len=vector_max_value<std::vector<fp_t>,fp_t>
           (diff.size(),diff)*10.0;
-        std::vector<double> len_list;
+        std::vector<fp_t> len_list;
         for(size_t i=0;i<10;i++) {
           len_list.push_back(min_len*pow(max_len/min_len,
-                                         ((double)i)/9.0));
+                                         ((fp_t)i)/9.0));
         }
         param_list.clear();
         param_list.push_back(len_list);
-        double min_y=vector_min_value<vec2_t,double>(n,y);
+        fp_t min_y=vector_min_value<vec2_t,fp_t>(n,y);
         if (min_y<=0.0) {
           param_list.push_back({-15,-13,-11,-9});
         } else {
@@ -250,7 +250,7 @@ namespace o2scl {
     /// \name Interpolation methods
     //@{
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double eval(const double x0) const {
+    virtual fp_t eval(const fp_t x0) const {
       if (itp==0) {
         O2SCL_ERR("No vector set in interp_vec::eval().",
                   exc_einval);
@@ -259,7 +259,7 @@ namespace o2scl {
     }                   
     
     /// Give the value of the function \f$ y(x=x_0) \f$ .
-    virtual double operator()(double x0) const {
+    virtual fp_t operator()(fp_t x0) const {
       if (itp==0) {
         O2SCL_ERR("No vector set in interp_vec::operator().",
                   exc_einval);
@@ -268,7 +268,7 @@ namespace o2scl {
     }
     
     /// Give the value of the derivative \f$ y^{\prime}(x=x_0) \f$ .
-    virtual double deriv(const double x0) const {
+    virtual fp_t deriv(const fp_t x0) const {
       if (itp==0) {
         O2SCL_ERR("No vector set in interp_vec::deriv().",
                   exc_einval);
@@ -279,7 +279,7 @@ namespace o2scl {
     /** \brief Give the value of the second derivative  
         \f$ y^{\prime \prime}(x=x_0) \f$ .
     */
-    virtual double deriv2(const double x0) const {
+    virtual fp_t deriv2(const fp_t x0) const {
       if (itp==0) {
         O2SCL_ERR("No vector set in interp_vec::deriv2().",
                   exc_einval);
@@ -288,7 +288,7 @@ namespace o2scl {
     }                   
     
     /// Give the value of the integral \f$ \int_a^{b}y(x)~dx \f$ .
-    virtual double integ(const double x1, const double x2) const {
+    virtual fp_t integ(const fp_t x1, const fp_t x2) const {
       if (itp==0) {
         O2SCL_ERR("No vector set in interp_vec::integ().",
                   exc_einval);
@@ -324,9 +324,10 @@ namespace o2scl {
 
   private:
   
-    interp_vec<vec_t,vec2_t>(const interp_vec<vec_t,vec2_t> &it);
-    interp_vec<vec_t,vec2_t> &operator=
-    (const interp_vec<vec_t,vec2_t> &it);
+    interp_vec<vec_t,vec2_t,fp_t>
+    (const interp_vec<vec_t,vec2_t,fp_t> &it);
+    interp_vec<vec_t,vec2_t,fp_t> &operator=
+    (const interp_vec<vec_t,vec2_t,fp_t> &it);
 
 #endif
   
