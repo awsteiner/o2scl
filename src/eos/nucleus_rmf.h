@@ -796,12 +796,12 @@ namespace o2scl {
     void field(double x, double &s, double &v, ubvector &varr);
     
     /// The default stepper
-    ode_rkck_gsl<double,ubvector,ubvector,ubvector,
-      ode_funct> def_step;
+    ode_rkck_gsl<ubvector,ubvector,ubvector,
+		 ode_funct,double> def_step;
     
     /// The ODE stepper
-    ode_step<double,ubvector,ubvector,ubvector,
-      ode_funct> *ostep;
+    ode_step<ubvector,ubvector,ubvector,
+	     ode_funct,double> *ostep;
 
     /** \brief Integrate the Dirac equations using a simple 
 	inline 4th order Runge-Kutta
