@@ -446,7 +446,7 @@ namespace o2scl {
     //@}
     
     /// Memory for the tridiagonalization
-    o2scl_linalg::ubvector_4_mem p4m;
+    o2scl_linalg::ubvector_4_mem<double> p4m;
     
     /// Compute coefficients for cubic spline interpolation
     void coeff_calc(const ubvector &c_array, double dy, double dx, 
@@ -530,7 +530,9 @@ namespace o2scl {
 
       ubvector_range cp1(c,range(1,c.size()));
       o2scl_linalg::solve_tridiag_sym<ubvector,ubvector,ubvector,
-        ubvector_range,o2scl_linalg::ubvector_4_mem,ubvector>
+				      ubvector_range,
+				      o2scl_linalg::ubvector_4_mem<double>,
+				      ubvector,double>
         (diag,offdiag,g,cp1,sys_size,p4m);
       
       return;
@@ -685,7 +687,7 @@ namespace o2scl {
   protected:
     
     /// Memory for the tridiagonalization
-    o2scl_linalg::ubvector_5_mem p5m;
+    o2scl_linalg::ubvector_5_mem<double> p5m;
     
   public:
     
@@ -788,8 +790,10 @@ namespace o2scl {
         }
         
         ubvector_range cp1(this->c,range(1,this->c.size()));
-        o2scl_linalg::solve_cyc_tridiag_sym<ubvector,ubvector,ubvector,
-          ubvector_range,o2scl_linalg::ubvector_5_mem,ubvector>
+        o2scl_linalg::solve_cyc_tridiag_sym
+	  <ubvector,ubvector,ubvector,ubvector_range,
+	   o2scl_linalg::ubvector_5_mem<double>,ubvector,
+	   double>
           (this->diag,this->offdiag,this->g,cp1,sys_size,p5m);
         this->c[0]=this->c[max_index];
 

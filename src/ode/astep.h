@@ -43,8 +43,8 @@ namespace o2scl {
       \ref set_step() documented below.
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct > class astep_base {
+	   class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+	   class func_t=ode_funct,class fp_t=double> class astep_base {
     
   public:
   
@@ -65,7 +65,7 @@ namespace o2scl {
       contains the derivative at the end of the step, and \c yerr
       contains the estimated error at the end of the step.
   */
-  virtual int astep(double &x, double xlimit, double &h, 
+  virtual int astep(fp_t &x, fp_t xlimit, fp_t &h, 
 		    size_t n, vec_y_t &y, vec_dydx_t &dydx_out,
 		    vec_yerr_t &yerr, func_t &derivs)=0;
 
@@ -80,7 +80,7 @@ namespace o2scl {
       derivative at the end of the step, and \c yerr contains the
       estimated error at the end of the step.
   */
-  virtual int astep_derivs(double &x, double xlimit, double &h, 
+  virtual int astep_derivs(fp_t &x, fp_t xlimit, fp_t &h, 
 			   size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			   vec_yerr_t &yerr, func_t &derivs)=0;
 
@@ -99,8 +99,8 @@ namespace o2scl {
       Unlike in \c ode_step objects, the objects \c y, \c yout, 
       \c dydx, and \c dydx_out must all be distinct.
   */
-  virtual int astep_full(double x, double xlimit, double &x_out, 
-			 double &h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
+  virtual int astep_full(fp_t x, fp_t xlimit, fp_t &x_out, 
+			 fp_t &h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			 vec_y_t &yout, vec_yerr_t &yerr, 
 			 vec_dydx_t &dydx_out, func_t &derivs)=0;
 
@@ -114,19 +114,19 @@ namespace o2scl {
       (\ref def_step of type \ref ode_rkck_gsl) is used.
   */
     int set_step(ode_step<vec_y_t,vec_dydx_t,
-		 vec_yerr_t,func_t,double> &step) {
+		 vec_yerr_t,func_t,fp_t> &step) {
     stepp=&step;
     return 0;
   }
   
     /// The default stepper
     ode_rkck_gsl<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,
-		 double> def_step;
+		 fp_t> def_step;
   
   protected:
       
   /// Pointer to the stepper being used
-    ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,double> *stepp;
+    ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> *stepp;
     
   };
 

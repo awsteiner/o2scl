@@ -52,7 +52,7 @@ namespace o2scl_linalg {
 
       This class is used in solve_tridiag_nonsym().
    */
-  class ubvector_2_mem {
+  template<class fp_t=double> class ubvector_2_mem {
   public:
     typedef boost::numeric::ublas::vector<double> ubvector;
     ubvector v1, v2;
@@ -67,7 +67,7 @@ namespace o2scl_linalg {
       This class is used in \ref solve_tridiag_sym() and 
       \ref solve_cyc_tridiag_nonsym().
   */
-  class ubvector_4_mem {
+  template<class fp_t=double> class ubvector_4_mem {
   public:
     typedef boost::numeric::ublas::vector<double> ubvector;
     ubvector v1, v2, v3, v4;
@@ -83,7 +83,7 @@ namespace o2scl_linalg {
 
       This class is used in solve_cyc_tridiag_sym().
    */
-  class ubvector_5_mem {
+  template<class fp_t=double> class ubvector_5_mem {
   public:
     typedef boost::numeric::ublas::vector<double> ubvector;
     ubvector v1, v2, v3, v4, v5;
@@ -116,9 +116,9 @@ namespace o2scl_linalg {
       \endverbatim
   */
   template<class vec_t, class vec2_t, class vec3_t, 
-    class vec4_t, class mem_t, class mem_vec_t> 
-    void solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
-			   const vec3_t &b, vec4_t &x, size_t N, mem_t &m) {
+	   class vec4_t, class mem_t, class mem_vec_t, class fp_t> 
+  void solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
+			 const vec3_t &b, vec4_t &x, size_t N, mem_t &m) {
     
     mem_vec_t &gamma=m.v1;
     mem_vec_t &alpha=m.v2;
@@ -181,7 +181,7 @@ namespace o2scl_linalg {
       \future Offer an option to avoid throwing on divide by zero?
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
-    class vec5_t, class mem_t, class mem_vec_t> 
+	   class vec5_t, class mem_t, class mem_vec_t, class fp_t> 
     void solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
 			      const vec3_t &belowdiag, const vec4_t &rhs, 
 			      vec5_t &x, size_t N, mem_t &m) {
@@ -241,7 +241,7 @@ namespace o2scl_linalg {
       \endverbatim
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
-    class mem_t, class mem_vec_t> 
+	   class mem_t, class mem_vec_t, class fp_t> 
     void solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
 			       const vec3_t &b, vec4_t &x, size_t N,
 			       mem_t &m) {
@@ -338,7 +338,7 @@ namespace o2scl_linalg {
       \future Offer an option to avoid throwing on divide by zero?
   */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t, 
-    class vec5_t, class mem_t, class mem_vec_t> 
+	   class vec5_t, class mem_t, class mem_vec_t, class fp_t> 
     void solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
 				  const vec3_t &belowdiag, const vec4_t &rhs, 
 				  vec5_t &x, size_t N, mem_t &m) {
@@ -434,59 +434,64 @@ namespace o2scl_linalg {
 
   /** \brief Solve a symmetric tridiagonal linear system 
    */
-  template<class vec_t, class vec2_t, class vec3_t, class vec4_t> 
+  template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
+	   class fp_t> 
     void solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
 			   const vec3_t &b, vec4_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
-    ubvector_4_mem v4m;
+    ubvector_4_mem<fp_t> v4m;
     v4m.resize(N);
-    solve_tridiag_sym<vec_t,vec2_t,vec3_t,vec4_t,ubvector_4_mem,
-      ubvector>(diag,offdiag,b,x,N,v4m);
+    solve_tridiag_sym<vec_t,vec2_t,vec3_t,vec4_t,ubvector_4_mem<fp_t>,
+		      ubvector,fp_t>(diag,offdiag,b,x,N,v4m);
     return;
   }
   
   /** \brief Solve an asymmetric tridiagonal linear system 
    */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
-    class vec5_t> 
+	   class vec5_t, class fp_t> 
     void solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
 			      const vec3_t &belowdiag, const vec4_t &rhs, 
 			      vec5_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
-      ubvector_2_mem v2m;
+      ubvector_2_mem<fp_t> v2m;
       v2m.resize(N);
-      solve_tridiag_nonsym<vec_t,vec2_t,vec3_t,vec4_t,vec5_t,ubvector_2_mem,
-      ubvector>(diag,abovediag,belowdiag,rhs,x,N,v2m);
+      solve_tridiag_nonsym<vec_t,vec2_t,vec3_t,vec4_t,vec5_t,
+			   ubvector_2_mem<fp_t>,ubvector,fp_t>
+	(diag,abovediag,belowdiag,rhs,x,N,v2m);
+			   
       return;
     }
   
   /** \brief Solve a symmetric cyclic tridiagonal linear system 
    */
-  template<class vec_t, class vec2_t, class vec3_t, class vec4_t> 
+  template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
+	   class fp_t> 
     void solve_cyc_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
 			       const vec3_t &b, vec4_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
-    ubvector_5_mem v5m;
+    ubvector_5_mem<fp_t> v5m;
     v5m.resize(N);
-    solve_cyc_tridiag_sym<vec_t,vec2_t,vec3_t,vec4_t,ubvector_5_mem,
-      ubvector>(diag,offdiag,b,x,N,v5m);
+    solve_cyc_tridiag_sym<vec_t,vec2_t,vec3_t,vec4_t,ubvector_5_mem<fp_t>,
+			  ubvector,fp_t>(diag,offdiag,b,x,N,v5m);
     return;
   }
   
   /** \brief Solve an asymmetric cyclic tridiagonal linear system
    */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
-    class vec5_t> 
+	   class vec5_t, class fp_t> 
     void solve_cyc_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
 				  const vec3_t &belowdiag, const vec4_t &rhs, 
 				  vec5_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
-      ubvector_4_mem v4m;
-      v4m.resize(N);
-      solve_cyc_tridiag_nonsym<vec_t,vec2_t,vec3_t,vec4_t,vec5_t,
-	ubvector_4_mem,ubvector>(diag,abovediag,belowdiag,rhs,x,N,v4m);
-      return;
-    }
+    ubvector_4_mem<fp_t> v4m;
+    v4m.resize(N);
+    solve_cyc_tridiag_nonsym<vec_t,vec2_t,vec3_t,vec4_t,vec5_t,
+			     ubvector_4_mem<fp_t>,ubvector,fp_t>
+      (diag,abovediag,belowdiag,rhs,x,N,v4m);
+    return;
+  }
   
 #ifdef DOXYGEN
 }
