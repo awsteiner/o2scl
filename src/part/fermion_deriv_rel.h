@@ -814,8 +814,9 @@ namespace o2scl {
           funct density_T_fun_f=[this,f,temper](double k) -> double
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
-          
-          iret=nit.integ_iu_err(density_T_fun_f,0,f.dndT,unc.dndT);
+
+	  fp_t zero=0;
+          iret=nit.integ_iu_err(density_T_fun_f,zero,f.dndT,unc.dndT);
           if (iret!=0) {
             O2SCL_ERR2("dndT integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -846,7 +847,8 @@ namespace o2scl {
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
 
-          iret=nit.integ_iu_err(density_mu_fun_f,0,f.dndmu,unc.dndmu);
+	  fp_t zero=0;
+          iret=nit.integ_iu_err(density_mu_fun_f,zero,f.dndmu,unc.dndmu);
           if (iret!=0) {
             O2SCL_ERR2("dndmu integration (ndeg) failed in ",
                        "fermion_deriv_rel::calc_mu().",
@@ -878,7 +880,8 @@ namespace o2scl {
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
-          iret=nit.integ_iu_err(entropy_T_fun_f,0,f.dsdT,unc.dsdT);
+	  fp_t zero=0;
+          iret=nit.integ_iu_err(entropy_T_fun_f,zero,f.dsdT,unc.dsdT);
           if (iret!=0) {
             O2SCL_ERR2("dsdT integration (ndeg) failed in ",
                        "fermion_deriv_rel_tl<fp_t>::calc_mu().",exc_efailed);
@@ -1006,7 +1009,8 @@ namespace o2scl {
             iret=dit.integ_err(deg_density_mu_fun_f,ll,ul,
                                 f.dndmu,unc.dndmu);
           } else {
-            iret=dit.integ_err(deg_density_mu_fun_f,0,ul,
+	    fp_t zero=0;
+            iret=dit.integ_err(deg_density_mu_fun_f,zero,ul,
                                 f.dndmu,unc.dndmu);
           }
           if (iret!=0) {
@@ -1063,7 +1067,8 @@ namespace o2scl {
             iret=dit.integ_err(deg_density_T_fun_f,ll,ul,f.dndT,
 				unc.dndT);
           } else {
-            iret=dit.integ_err(deg_density_T_fun_f,0,ul,f.dndT,
+	    fp_t zero=0;
+            iret=dit.integ_err(deg_density_T_fun_f,zero,ul,f.dndT,
 				unc.dndT);
           }
           if (iret!=0) {
@@ -1121,7 +1126,8 @@ namespace o2scl {
             iret=dit.integ_err(deg_entropy_T_fun_f,ll,ul,f.dsdT,
 				unc.dsdT);
           } else {
-            iret=dit.integ_err(deg_entropy_T_fun_f,0,ul,f.dsdT,
+	    fp_t zero=0;
+            iret=dit.integ_err(deg_entropy_T_fun_f,zero,ul,f.dsdT,
 				unc.dsdT);
           }
           if (iret!=0) {
@@ -1180,7 +1186,7 @@ namespace o2scl {
     virtual int pair_mu(fermion_deriv_t &f, fp_t temper) {
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
   
-      fermion_deriv antip(f.ms,f.g);
+      fermion_deriv_t antip(f.ms,f.g);
       f.anti(antip);
 
       calc_mu(f,temper);
