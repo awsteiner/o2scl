@@ -53,10 +53,10 @@ namespace o2scl {
   template<class vec_t> class table;
   // Forward definition of matrix_view_table to extend
   // friendship
-  template<class vec_t> class matrix_view_table;
+  template<class vec_t, class fp_t> class matrix_view_table;
   // Forward definition of matrix_view_table_transpose to extend
   // friendship
-  template<class vec_t> class matrix_view_table_transpose;
+  template<class vec_t, class fp_t> class matrix_view_table_transpose;
 }
 
 // Forward definition of HDF5 I/O to extend friendship in table
@@ -1801,7 +1801,7 @@ namespace o2scl {
         return exc_enotfound;
       }
 
-      search_vec<vec_t> se(nlines,it->second.dat);
+      search_vec<vec_t,double> se(nlines,it->second.dat);
       ret=se.ordered_lookup(val);
       return ret;
     }
@@ -1934,7 +1934,7 @@ namespace o2scl {
         \c sy to the specified pointer
     */
     int set_interp_obj(std::string sx, std::string sy,
-                       interp_base<vec_t> *si2) {
+                       interp_base<vec_t,vec_t,double> *si2) {
       if (intp_set==true) {
         delete si;
       } else {
@@ -3384,8 +3384,8 @@ namespace o2scl {
     // --------------------------------------------------------
     // Allow matrix_view_table and matrix_view_table_transpose access
   
-    template<typename vecf_t> friend class matrix_view_table;
-    template<typename vecf_t> friend class matrix_view_table_transpose;
+    template<typename vecf_t, typename fpf_t> friend class matrix_view_table;
+    template<typename vecf_t, typename fpf_t> friend class matrix_view_table_transpose;
 #endif
 
     // --------------------------------------------------------
@@ -3578,7 +3578,7 @@ namespace o2scl {
     size_t itype;
 
     /// Interpolation object
-    interp_base<vec_t> *si;
+    interp_base<vec_t,vec_t,double> *si;
 
     /// The last x-column interpolated
     std::string intp_colx;
@@ -3601,7 +3601,7 @@ namespace o2scl {
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
   */
-  template<class vec_t=std::vector<double> > 
+  template<class vec_t=std::vector<double>, class fp_t=double> 
   class const_matrix_view_table : public const_matrix_view {
   
   protected:
@@ -3660,7 +3660,7 @@ namespace o2scl {
     /** \brief Return a reference to the element at row \c row
         and column \c col
     */
-    const double &operator()(size_t row, size_t col) const {
+    const fp_t &operator()(size_t row, size_t col) const {
       if (row>=nlines) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " >= "+o2scl::szttos(nlines)+" in const_matrix_view_table"+
@@ -3700,7 +3700,7 @@ namespace o2scl {
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
   */
-  template<class vec_t=std::vector<double> > 
+  template<class vec_t=std::vector<double>, class fp_t=double> 
   class matrix_view_table : public matrix_view {
   
   protected:
@@ -3763,7 +3763,7 @@ namespace o2scl {
     /** \brief Return a reference to the element at row \c row
         and column \c col
     */
-    const double &operator()(size_t row, size_t col) const {
+    const fp_t &operator()(size_t row, size_t col) const {
       if (row>=nlines) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " >= "+o2scl::szttos(nlines)+" in matrix_view_table"+
@@ -3783,7 +3783,7 @@ namespace o2scl {
     /** \brief Return a reference to the element at row \c row
         and column \c col
     */
-    double &operator()(size_t row, size_t col) {
+    fp_t &operator()(size_t row, size_t col) {
       if (row>=nlines) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " >= "+o2scl::szttos(nlines)+" in matrix_view_table"+
@@ -3816,7 +3816,7 @@ namespace o2scl {
       \note This stores a pointer to the table and the user must ensure
       that the pointer is valid with the matrix view is accessed.
   */
-  template<class vec_t=std::vector<double> > 
+  template<class vec_t=std::vector<double>, class fp_t=double> 
   class matrix_view_table_transpose : public matrix_view {
   
   protected:
@@ -3875,7 +3875,7 @@ namespace o2scl {
     /** \brief Return a reference to the element at row \c row
         and column \c col
     */
-    const double &operator()(size_t row, size_t col) const {
+    const fp_t &operator()(size_t row, size_t col) const {
       if (row>=nr) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " >= "+o2scl::szttos(nr)+" in matrix_view_table_transpose"+
@@ -3895,7 +3895,7 @@ namespace o2scl {
     /** \brief Return a reference to the element at row \c row
         and column \c col
     */
-    double &operator()(size_t row, size_t col) {
+    fp_t &operator()(size_t row, size_t col) {
       if (row>=nr) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " >= "+o2scl::szttos(nr)+" in matrix_view_table_transpose"+
