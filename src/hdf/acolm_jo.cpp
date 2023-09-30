@@ -577,10 +577,10 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     // C++ prints out precision+1 significant figures so we add one to
     // 'precision' to construct the integration tolerance.
     if (method=="kb") {
-      ikb.tol_rel_multip=pow(10.0,-precision-1);
+      ikb.tol_rel=pow(10.0,-precision-1);
       ikb.verbose=verbose;
     } else if (method=="deb") {
-      ideb.tol_rel_multip=pow(10.0,-precision-1);
+      ideb.tol_rel=pow(10.0,-precision-1);
       ideb.verbose=verbose;
     } else if (method=="ac") {
       iac.tol_rel_multip=pow(10.0,-precision-1);
