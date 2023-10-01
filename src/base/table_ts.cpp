@@ -32,6 +32,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  table<vector<long double>,long double> tabtab1;
+  
   test_mgr t;
   t.set_output_level(2);
 

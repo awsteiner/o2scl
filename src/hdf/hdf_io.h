@@ -406,8 +406,8 @@ namespace o2scl_hdf {
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
-  template<class vec_t> 
-  void hdf_input_n(hdf_file &hf, o2scl::table<vec_t> &t, std::string &name) {
+  template<class vec_t, class fp_t> 
+  void hdf_input_n(hdf_file &hf, o2scl::table<vec_t,fp_t> &t, std::string &name) {
 
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
@@ -460,8 +460,8 @@ namespace o2scl_hdf {
       is no object with type \ref table, then the
       error handler is called. 
   */
-  template<class vec_t> 
-  void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name) {
+  template<class vec_t, class fp_t> 
+  void hdf_input(hdf_file &hf, o2scl::table<vec_t,fp_t> &t, std::string name) {
     hdf_input_n<vec_t>(hf,t,name);
     return;
   }
@@ -471,8 +471,8 @@ namespace o2scl_hdf {
 
   /** \brief Internal function for inputting a \ref o2scl::table object
    */
-  template<class vec_t> 
-  void hdf_input_data(hdf_file &hf, o2scl::table<vec_t> &t) {
+  template<class vec_t, class fp_t> 
+  void hdf_input_data(hdf_file &hf, o2scl::table<vec_t,fp_t> &t) {
     hid_t group=hf.get_current_id();
 
     // Clear previous data
@@ -621,11 +621,12 @@ namespace o2scl_hdf {
 
   /** \brief Internal function for inputting a \ref o2scl::table_units object
    */
-  template<class vec_t> 
+  template<class vec_t, class fp_t> 
   void hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t) {
     
     // Input base table object
-    o2scl::table<vec_t> *tbase=dynamic_cast<o2scl::table_units<vec_t> *>(&t);
+    o2scl::table<vec_t,fp_t> *tbase=
+      dynamic_cast<o2scl::table_units<vec_t> *>(&t);
     if (tbase==0) {
       O2SCL_ERR2("Cast failed in hdf_input_data",
 		 "(hdf_file &, table_units &).",o2scl::exc_efailed);

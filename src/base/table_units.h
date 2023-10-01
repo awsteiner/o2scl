@@ -76,7 +76,7 @@ namespace o2scl {
       delete_column() isn't referred to internally)
   */
   template<class vec_t=std::vector<double> > 
-    class table_units : public table<vec_t> {
+  class table_units : public table<vec_t,double> {
     
   public:
   
@@ -86,7 +86,7 @@ namespace o2scl {
     
     /** \brief Create a new table_units with space for nlines<=cmaxlines.
      */
-  table_units(int cmaxlines=0) : table<vec_t>(cmaxlines) {
+  table_units(int cmaxlines=0) : table<vec_t,double>(cmaxlines) {
       cup=&o2scl_settings.get_convert_units();
     }
     
@@ -97,7 +97,7 @@ namespace o2scl {
     /// \name Copy constructors
     //@{
     /// Copy with constructor from \ref table_units
-  table_units(const table_units &t) : table<vec_t>(t.get_nlines()) {
+  table_units(const table_units &t) : table<vec_t,double>(t.get_nlines()) {
   
       // Copy constants 
       this->constants=t.constants;
@@ -114,13 +114,13 @@ namespace o2scl {
 	std::string cname=t.get_column_name(i);
 
 	// Insert column into tree
-	typename table<vec_t>::col s;
+	typename table<vec_t,double>::col s;
 	s.dat.resize(this->nlines);
 	s.index=this->atree.size();
 	this->atree.insert(make_pair(cname,s));
 
 	// Insert in iterator index
-	typename table<vec_t>::aiter it=this->atree.find(cname);
+	typename table<vec_t,double>::aiter it=this->atree.find(cname);
 	this->alist.push_back(it);
     
 	// Insert in unit list
@@ -142,7 +142,7 @@ namespace o2scl {
     }
 
     /// Copy with constructor from \ref table
-  table_units(const table<vec_t> &t) : table<vec_t>(t.get_nlines()) {
+  table_units(const table<vec_t,double> &t) : table<vec_t,double>(t.get_nlines()) {
   
       // Copy constants 
       this->constants=t.constants;
@@ -159,13 +159,13 @@ namespace o2scl {
 	std::string cname=t.get_column_name(i);
 
 	// Insert column into tree
-	typename table<vec_t>::col s;
+	typename table<vec_t,double>::col s;
 	s.dat.resize(this->nlines);
 	s.index=this->atree.size();
 	this->atree.insert(make_pair(cname,s));
 
 	// Insert in iterator index
-	typename table<vec_t>::aiter it=this->atree.find(cname);
+	typename table<vec_t,double>::aiter it=this->atree.find(cname);
 	this->alist.push_back(it);
     
 	// Fill the data
@@ -206,13 +206,13 @@ namespace o2scl {
 	  std::string cname=t.get_column_name(i);
 
 	  // Insert column into tree
-	  typename table<vec_t>::col s;
+	  typename table<vec_t,double>::col s;
 	  s.dat.resize(this->nlines);
 	  s.index=this->atree.size();
 	  this->atree.insert(make_pair(cname,s));
 
 	  // Insert in iterator index
-	  typename table<vec_t>::aiter it=this->atree.find(cname);
+	  typename table<vec_t,double>::aiter it=this->atree.find(cname);
 	  this->alist.push_back(it);
     
 	  // Insert in unit list
@@ -240,7 +240,7 @@ namespace o2scl {
     }
 
     /// Copy with <tt>operator=</tt> from \ref table
-    table_units &operator=(const table<vec_t> &t) {
+    table_units &operator=(const table<vec_t,double> &t) {
 
       if (this!=&t) {
   
@@ -261,13 +261,13 @@ namespace o2scl {
 	  std::string cname=t.get_column_name(i);
 
 	  // Insert column into tree
-	  typename table<vec_t>::col s;
+	  typename table<vec_t,double>::col s;
 	  s.dat=new vec_t(this->nlines);
 	  s.index=this->atree.size();
 	  this->atree.insert(make_pair(cname,s));
 
 	  // Insert in iterator index
-	  typename table<vec_t>::aiter it=this->atree.find(cname);
+	  typename table<vec_t,double>::aiter it=this->atree.find(cname);
 	  this->alist.push_back(it);
     
 	  // Fill the data
@@ -338,7 +338,7 @@ namespace o2scl {
       uciter it=utree.find(scol);
       if (it==utree.end()) {
 	// Not found in unit entry, look for column of data
-	typename table<vec_t>::aciter at=this->atree.find(scol);
+	typename table<vec_t,double>::aciter at=this->atree.find(scol);
 	if (at==this->atree.end()) {
 	  O2SCL_ERR((((std::string)"Column '")+scol+
 		     "' not found in table_units::get_unit().").c_str(),
@@ -421,7 +421,7 @@ namespace o2scl {
   
       uiter it=utree.find(scol);
       if (it==utree.end()) {
-	typename table<vec_t>::aiter at=this->atree.find(scol);
+	typename table<vec_t,double>::aiter at=this->atree.find(scol);
 	if (at==this->atree.end()) {
 	  O2SCL_ERR((((std::string)"Column '")+scol+
 		     "' not found in table_units::set_unit().").c_str(),
@@ -455,7 +455,7 @@ namespace o2scl {
       if (it->second==unit) return success;
 
       // Find column of data
-      typename table<vec_t>::aiter at=this->atree.find(scol);
+      typename table<vec_t,double>::aiter at=this->atree.find(scol);
       if (at==this->atree.end()) {
 	if (err_on_fail) {
 	  O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
@@ -528,7 +528,7 @@ namespace o2scl {
     virtual void delete_column(std::string scol) {
 
       // Find the tree iterator for the element we want to erase
-      typename table<vec_t>::aiter it=this->atree.find(scol);
+      typename table<vec_t,double>::aiter it=this->atree.find(scol);
       if (it==this->atree.end()) {
 	O2SCL_ERR((((std::string)"Column '")+scol+
 		   " not found in table_units::delete_column().").c_str(),
@@ -543,7 +543,7 @@ namespace o2scl {
 
         int ix_match=it->second.index;
         
-        for(typename table<vec_t>::aiter it2=this->atree.begin();
+        for(typename table<vec_t,double>::aiter it2=this->atree.begin();
             it2!=this->atree.end();it2++) {
           if (it2->second.index>ix_match) {
             it2->second.index=it2->second.index-1;
@@ -560,7 +560,7 @@ namespace o2scl {
       } else {
         
         // Find the corresponding list iterator
-        typename table<vec_t>::aviter vit=this->alist.begin();
+        typename table<vec_t,double>::aviter vit=this->alist.begin();
         vit+=it->second.index;
         
         // Find the last element in the list and it's corresponding table
@@ -593,7 +593,7 @@ namespace o2scl {
     */
     virtual void rename_column(std::string src, std::string dest) {
       std::string unit=get_unit(src);
-      table<vec_t>::rename_column(src,dest);
+      table<vec_t,double>::rename_column(src,dest);
       set_unit(dest,unit);
       return;
     }
@@ -672,7 +672,7 @@ namespace o2scl {
       if (!this->is_column(dest)) this->new_column(dest);
 
       typedef typename std::map<std::string,
-	typename table<vec_t>::col,std::greater<std::string> >::iterator aiter2;
+	typename table<vec_t,double>::col,std::greater<std::string> >::iterator aiter2;
 
       aiter2 its=this->atree.find(src);
       if (its==this->atree.end()) {
