@@ -91,6 +91,11 @@ namespace o2scl {
                         double target_tol, double integ_tol) {
       int ret=0;
 
+      if (verbose>2) {
+        std::cout << "  inte_kronrod_boost::integ_err_funct(): "
+                  << "Calling boost::integrate." << std::endl;
+      }
+      
       // AWS, 9/25/23: I don't think that the boost kronrod
       // integrate() function can accept an rvalue reference (even
       // though the double_exp integration function can), so this
@@ -145,11 +150,16 @@ namespace o2scl {
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
 
+      if (verbose>2) {
+        std::cout << "inte_kronrod_boost::integ_err_int(): "
+                  << "Going to integ_err_funct()." << std::endl;
+      }
+      
       integ_err_funct(fx,a,b,res,err,L1norm_loc,target_tol,
                       integ_tol);
 
       if (verbose>1) {
-        std::cout << "inte_kronrod_boost::integ_err() "
+        std::cout << "inte_kronrod_boost::integ_err_int() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
@@ -320,7 +330,7 @@ namespace o2scl {
         double a_d=static_cast<double>(a);
         double b_d=static_cast<double>(b);
         double res_d, err_d, L1norm_d;
-        
+
         ret=integ_err_int(func,a_d,b_d,res_d,err_d,L1norm_d,
                           target_tol,integ_tol,func_tol);
         
@@ -378,7 +388,7 @@ namespace o2scl {
           //target_tol/=10;
         }
       }
-
+      
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <fp_25_t>::digits10+3)) {
         if (verbose>0) {
