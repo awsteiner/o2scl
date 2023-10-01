@@ -50,7 +50,7 @@
 
 namespace o2scl {
   // Forward definition of the table class for HDF5 I/O
-  template<class vec_t> class table;
+  template<class vec_t, class fp_t> class table;
   // Forward definition of matrix_view_table to extend
   // friendship
   template<class vec_t, class fp_t> class matrix_view_table;
@@ -64,15 +64,16 @@ namespace o2scl_hdf {
   // Forward definition of hdf_file for function template argument below
   class hdf_file;
   // Forward definition of HDF5 I/O functions to extend friendship
-  template<class vec_t>
-  void hdf_input(hdf_file &hf, o2scl::table<vec_t> &t, std::string name="");
+  template<class vec_t, class fp_t>
+  void hdf_input(hdf_file &hf, o2scl::table<vec_t,fp_t> &t,
+                 std::string name="");
   void hdf_output(hdf_file &hf, 
-		  o2scl::table<std::vector<double> > &t, 
+		  o2scl::table<std::vector<double>,double> &t, 
 		  std::string name);
-  template<class vec_t>
-  void hdf_input_data(hdf_file &hf, o2scl::table<vec_t> &t);
+  template<class vec_t, class fp_t>
+  void hdf_input_data(hdf_file &hf, o2scl::table<vec_t,fp_t> &t);
   void hdf_output_data(hdf_file &hf, 
-		       o2scl::table<std::vector<double> > &t);
+		       o2scl::table<std::vector<double>,double> &t);
 
 }
 
@@ -224,7 +225,8 @@ namespace o2scl {
 
       \endverbatim
   */
-  template<class vec_t=std::vector<double> > class table {
+  template<class vec_t=std::vector<double>, class fp_t=double>
+  class table {
     
   public:
   
@@ -384,12 +386,12 @@ namespace o2scl {
         This function calls the error handler if the row is beyond
         the end of the table or if the specified column is not found.
     */
-    void set(std::string scol, size_t row, double val) {
+    void set(std::string scol, size_t row, fp_t val) {
 
       if (row>=nlines) {
         std::string str=((std::string)"Row ")+o2scl::szttos(row)+
           " beyond end of table (nlines="+o2scl::szttos(nlines)+") in "+
-          "table::set(string,size_t,double).";
+          "table::set(string,size_t,fp_t).";
         O2SCL_ERR(str.c_str(),exc_einval);
         return;
       }
@@ -397,7 +399,7 @@ namespace o2scl {
       aiter it=atree.find(scol);
       if (it==atree.end()) {
         O2SCL_ERR((((std::string)"Column '")+scol+
-                   "' not found in table::set(string,size_t,double).").c_str(),
+                   "' not found in table::set(string,size_t,fp_t).").c_str(),
                   exc_enotfound);
         return;
       }
@@ -409,7 +411,7 @@ namespace o2scl {
 
 #if !O2SCL_NO_RANGE_CHECK
       if (row>=it->second.dat.size()) {
-        O2SCL_ERR("Vector size failure in table::set(string,size_t,double).",
+        O2SCL_ERR("Vector size failure in table::set(string,size_t,fp_t).",
                   exc_esanity);
       }
 #endif
@@ -421,17 +423,17 @@ namespace o2scl {
     /** \brief Set row \c row of column number \c icol to value \c val .
         \f$ {\cal O}(1) \f$
     */
-    void set(size_t icol, size_t row, double val) {
+    void set(size_t icol, size_t row, fp_t val) {
     
       if (row>=nlines) {
         O2SCL_ERR2("Specified row beyond end of table in ",
-                   "table::set(size_t,size_t,double).",exc_einval);
+                   "table::set(size_t,size_t,fp_t).",exc_einval);
         return;
       }
   
       if (icol>=atree.size()) {
         std::string err=((std::string)"Column index ")+szttos(icol)+
-          ">="+szttos(atree.size())+", in table::set(size_t,size_t,double).";
+          ">="+szttos(atree.size())+", in table::set(size_t,size_t,fp_t).";
         O2SCL_ERR(err.c_str(),exc_einval);
       }
 
@@ -446,7 +448,7 @@ namespace o2scl {
         std::string errs=((std::string)"Vector size failure, row ")+
           o2scl::szttos(row)+" >= "+
           o2scl::szttos(alist[icol]->second.dat.size())+
-          "in table::set(size_t,size_t,double).";
+          "in table::set(size_t,size_t,fp_t).";
         O2SCL_ERR(errs.c_str(),exc_esanity);
       }
 #endif
@@ -478,8 +480,8 @@ namespace o2scl {
     /** \brief Get value from row \c row of column named \c col.
         \f$ {\cal O}(\log(C)) \f$
     */
-    double get(std::string scol, size_t row) const {
-      double tmp;
+    fp_t get(std::string scol, size_t row) const {
+      fp_t tmp;
       aciter it=atree.find(scol);
       if (it==atree.end()) {
         O2SCL_ERR((((std::string)"Column '")+scol+
@@ -489,7 +491,8 @@ namespace o2scl {
       } else {
         if (row>=nlines) {
           std::string err=((std::string)"Row out of range, ")+
-            szttos(row)+">="+szttos(nlines)+", in table::get(string,size_t).";
+            szttos(row)+">="+szttos(nlines)+
+            ", in table::get(string,size_t).";
           O2SCL_ERR(err.c_str(),exc_einval);
         }
 #if !O2SCL_NO_RANGE_CHECK
@@ -506,10 +509,11 @@ namespace o2scl {
     /** \brief Get value from row \c row of column number \c icol.
         \f$ {\cal O}(1) \f$
     */
-    double get(size_t icol, size_t row) const {
+    fp_t get(size_t icol, size_t row) const {
       if (icol>=atree.size()) {
         std::string err=((std::string)"Column out of range, ")+
-          szttos(icol)+">="+szttos(atree.size())+", in table::get(size_t,size_t).";
+          szttos(icol)+">="+szttos(atree.size())+
+          ", in table::get(size_t,size_t).";
         O2SCL_ERR(err.c_str(),exc_einval);
       }
       if (row>=nlines) {
@@ -578,12 +582,12 @@ namespace o2scl {
         <tt>size()</tt> and <tt>resize()</tt> methods.
     */
     template<class resize_vec_t>
-    void get_row(std::string scol, double val, resize_vec_t &row) const {
+    void get_row(std::string scol, fp_t val, resize_vec_t &row) const {
       
       int irow=lookup(scol,val);
       if (irow==exc_enotfound) {
         O2SCL_ERR((((std::string)"Column '")+scol+"' not found in "+
-                   "table::get_row(string,double,vec_t) const.").c_str(),
+                   "table::get_row(string,fp_t,vec_t) const.").c_str(),
                   exc_enotfound);
         return;
       } 
@@ -1024,7 +1028,7 @@ namespace o2scl {
         that if the number of rows is increased afterwards, the new
         rows will have uninitialized values.
     */
-    void init_column(std::string scol, double val) {
+    void init_column(std::string scol, fp_t val) {
       /*
         if (!std::isfinite(val)) {
         O2SCL_ERR((((std::string)"Value '")+dtos(val)+
@@ -1222,8 +1226,8 @@ namespace o2scl {
       }
 
       // Find limits to avoid extrapolation if necessary
-      double min=source.min(src_index);
-      double max=source.max(src_index);
+      fp_t min=source.min(src_index);
+      fp_t max=source.max(src_index);
       if (allow_extrap==false) {
         if (!std::isfinite(min) || !std::isfinite(max)) {
           O2SCL_ERR2("Minimum or maximum of source index not finite ",
@@ -1244,7 +1248,7 @@ namespace o2scl {
       for(size_t i=0;i<col_list.size();i++) {
         if (!is_column(col_list[i])) new_column(col_list[i]);
         for(size_t j=0;j<get_nlines();j++) {
-          double val=get(dest_index,j);
+          fp_t val=get(dest_index,j);
           if (allow_extrap || (val>=min && val<=max)) {
             set(col_list[i],j,source.interp(src_index,val,col_list[i]));
           }
@@ -1263,7 +1267,7 @@ namespace o2scl {
       // Add constants
       for(size_t i=0;i<source.get_nconsts();i++) {
         std::string tnam;
-        double tval;
+        fp_t tval;
         source.get_constant(i,tnam,tval);
         add_constant(tnam,tval);
       }
@@ -1359,7 +1363,7 @@ namespace o2scl {
     /** \brief Delete the row with the entry closest to
         the value \c val in column \c scol \f$ {\cal O}(R C) \f$
     */
-    void delete_row(std::string scol, double val) {
+    void delete_row(std::string scol, fp_t val) {
       // If lookup() fails, it will throw an exception,
       // so there's no need to double-check it here
       size_t irow=lookup(scol,val);
@@ -1404,7 +1408,7 @@ namespace o2scl {
     void delete_rows_func(std::string func) {
       size_t new_nlines=0;
       for(size_t i=0;i<nlines;i++) {
-        double val=row_function(func,i);
+        fp_t val=row_function(func,i);
         if (val<0.5) {
           // If val<0.5, then the function was evaluated to false and
           // we want to keep the row, but if i==new_nlines, then
@@ -1468,7 +1472,7 @@ namespace o2scl {
 
       size_t new_lines=dest.get_nlines();
       for(size_t i=0;i<nlines;i++) {
-        double val=row_function(func,i);
+        fp_t val=row_function(func,i);
         if (val>0.5) {
           dest.set_nlines_auto(new_lines+1);
           for(size_t j=0;j<get_ncolumns();j++) {
@@ -1785,7 +1789,7 @@ namespace o2scl {
         don't have monotonic data, you can still use the
         table::lookup() function, which is more general.
     */
-    size_t ordered_lookup(std::string scol, double val) const {
+    size_t ordered_lookup(std::string scol, fp_t val) const {
       int ret;
       if (!std::isfinite(val)) {
         O2SCL_ERR((((std::string)"Value '")+dtos(val)+
@@ -1801,7 +1805,7 @@ namespace o2scl {
         return exc_enotfound;
       }
 
-      search_vec<vec_t,double> se(nlines,it->second.dat);
+      search_vec<vec_t,fp_t> se(nlines,it->second.dat);
       ret=se.ordered_lookup(val);
       return ret;
     }
@@ -1809,7 +1813,7 @@ namespace o2scl {
     /** \brief Exhaustively search column \c col for the value \c val
         \f$ {\cal O}(R \log(C)) \f$
     */
-    size_t lookup(std::string scol, double val) const {
+    size_t lookup(std::string scol, fp_t val) const {
       if (!std::isfinite(val)) {
         O2SCL_ERR((((std::string)"Value '")+dtos(val)+
                    "' not finite for column '"+
@@ -1839,7 +1843,7 @@ namespace o2scl {
       }
 
       // Beginning with that row, look for the closest value
-      double bdiff=fabs(ov[i]-val);
+      fp_t bdiff=fabs(ov[i]-val);
       for(;i<nlines;i++) {
         if (std::isfinite(ov[i]) && fabs(ov[i]-val)<bdiff) {
           row=i;
@@ -1851,7 +1855,7 @@ namespace o2scl {
     }
 
     /// Search column \c col for the value \c val and return value in \c col2
-    double lookup_val(std::string scol, double val, std::string scol2) const {
+    fp_t lookup_val(std::string scol, fp_t val, std::string scol2) const {
       int i, indx=0;
       if (!std::isfinite(val)) {
         O2SCL_ERR((((std::string)"Value '")+dtos(val)+
@@ -1871,15 +1875,15 @@ namespace o2scl {
     /** \brief Exhaustively search column \c col for the value \c val
         \f$ {\cal O}(R \log(C)) \f$
     */
-    size_t lookup(int icol, double val) const {
+    size_t lookup(int icol, fp_t val) const {
       return lookup(get_column_name(icol),val);
     }      
 
     /** \brief Exhaustively search column \c col for many occurences 
         of \c val \f$ {\cal O}(R \log(C)) \f$
     */
-    size_t mlookup(std::string scol, double val, std::vector<size_t> &results,
-                   double threshold=0.0) const {
+    size_t mlookup(std::string scol, fp_t val, std::vector<size_t> &results,
+                   fp_t threshold=0.0) const {
       size_t i;
       if (!std::isfinite(val)) {
         O2SCL_ERR((((std::string)"Value '")+dtos(val)+
@@ -1934,7 +1938,7 @@ namespace o2scl {
         \c sy to the specified pointer
     */
     int set_interp_obj(std::string sx, std::string sy,
-                       interp_base<vec_t,vec_t,double> *si2) {
+                       interp_base<vec_t,vec_t,fp_t> *si2) {
       if (intp_set==true) {
         delete si;
       } else {
@@ -1963,8 +1967,8 @@ namespace o2scl {
         but can be as bad as \f$ {\cal O}(C \log(R) \f$ if the
         relevant columns are not well ordered.
     */
-    double interp(std::string sx, double x0, std::string sy) {
-      double ret;
+    fp_t interp(std::string sx, fp_t x0, std::string sy) {
+      fp_t ret;
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
@@ -1998,8 +2002,8 @@ namespace o2scl {
         but can be as bad as \f$ {\cal O}(C \log(R) \f$ if the
         relevant columns are not well ordered.
     */
-    double interp_const(std::string sx, double x0, std::string sy) const {
-      double ret;
+    fp_t interp_const(std::string sx, fp_t x0, std::string sy) const {
+      fp_t ret;
       aciter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
@@ -2021,14 +2025,14 @@ namespace o2scl {
         \c ix into column with index \c iy 
         \f$ {\cal O}(\log(R)) \f$
     */
-    double interp(size_t ix, double x0, size_t iy) {
+    fp_t interp(size_t ix, fp_t x0, size_t iy) {
       return interp(get_column_name(ix),x0,get_column_name(iy));
     }
 
     /** \brief Interpolate value \c x0 from column with index \c ix 
         into column with index \c iy \f$ {\cal O}(\log(R)) \f$
     */
-    double interp_const(size_t ix, double x0, size_t iy) const {
+    fp_t interp_const(size_t ix, fp_t x0, size_t iy) const {
       return interp_const(get_column_name(ix),x0,get_column_name(iy));
     }
 
@@ -2074,18 +2078,18 @@ namespace o2scl {
         This function is O(log(C)*log(R)) but can be as bad as
         O(log(C)*R) if the relevant columns are not well ordered.
     */
-    double deriv(std::string sx, double x0, std::string sy) {
-      double ret;
+    fp_t deriv(std::string sx, fp_t x0, std::string sy) {
+      fp_t ret;
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
                    "' not found in table::deriv("+
-                   "string,double,string).").c_str(),
+                   "string,fp_t,string).").c_str(),
                   exc_enotfound);
         return 0.0;
       }
       if (!std::isfinite(x0)) {
-        O2SCL_ERR("x0 not finite in table::deriv(string,double,string).",
+        O2SCL_ERR("x0 not finite in table::deriv(string,fp_t,string).",
                   exc_einval);
         return exc_einval;
       }
@@ -2112,8 +2116,8 @@ namespace o2scl {
         O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
         the relevant columns are not well ordered.
     */
-    double deriv_const(std::string sx, double x0, std::string sy) const {
-      double ret;
+    fp_t deriv_const(std::string sx, fp_t x0, std::string sy) const {
+      fp_t ret;
       aciter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
@@ -2138,7 +2142,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if the relevant columns
         are not well ordered.
     */
-    double deriv(size_t ix, double x0, size_t iy) {
+    fp_t deriv(size_t ix, fp_t x0, size_t iy) {
       return deriv(get_column_name(ix),x0,get_column_name(iy));
     }
 
@@ -2149,7 +2153,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if 
         the relevant columns are not well ordered.
     */
-    double deriv_const(size_t ix, double x0, size_t iy) const {
+    fp_t deriv_const(size_t ix, fp_t x0, size_t iy) const {
       return deriv_const(get_column_name(ix),x0,get_column_name(iy));
     }
 
@@ -2196,18 +2200,18 @@ namespace o2scl {
         O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
         the relevant columns are not well ordered.
     */
-    double deriv2(std::string sx, double x0, std::string sy) {
-      double ret;
+    fp_t deriv2(std::string sx, fp_t x0, std::string sy) {
+      fp_t ret;
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
                    "' not found in table::deriv2("+
-                   "string,double,string).").c_str(),
+                   "string,fp_t,string).").c_str(),
                   exc_enotfound);
         return 0.0;
       }
       if (!std::isfinite(x0)) {
-        O2SCL_ERR("x0 not finite in table::deriv2(string,double,string).",
+        O2SCL_ERR("x0 not finite in table::deriv2(string,fp_t,string).",
                   exc_einval);
         return exc_einval;
       }
@@ -2234,8 +2238,8 @@ namespace o2scl {
         O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
         the relevant columns are not well ordered.
     */
-    double deriv2_const(std::string sx, double x0, std::string sy) const {
-      double ret;
+    fp_t deriv2_const(std::string sx, fp_t x0, std::string sy) const {
+      fp_t ret;
       aciter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
@@ -2260,7 +2264,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if 
         the relevant columns are not well ordered.
     */
-    double deriv2(size_t ix, double x0, size_t iy) {
+    fp_t deriv2(size_t ix, fp_t x0, size_t iy) {
       return deriv2(get_column_name(ix),x0,get_column_name(iy));
     }
 
@@ -2271,7 +2275,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if 
         the relevant columns are not well ordered.
     */
-    double deriv2_const(size_t ix, double x0, size_t iy) const {
+    fp_t deriv2_const(size_t ix, fp_t x0, size_t iy) const {
       return deriv2_const(get_column_name(ix),x0,get_column_name(iy));
     }
 
@@ -2282,19 +2286,19 @@ namespace o2scl {
         O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
         the relevant columns are not well ordered.
     */
-    double integ(std::string sx, double x1, double x2, std::string sy) {
-      double ret;
+    fp_t integ(std::string sx, fp_t x1, fp_t x2, std::string sy) {
+      fp_t ret;
       aiter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
                    "' not found in table::integ"+
-                   "(string,double,double,string).").c_str(),
+                   "(string,fp_t,fp_t,string).").c_str(),
                   exc_enotfound);
         return 0.0;
       }
       if (!std::isfinite(x1) || !std::isfinite(x2)) {
         std::string msg=((std::string)"Value x1=")+dtos(x1)+" or x2="+
-          dtos(x2)+" not finite in table.integ(string,double,double,string).";
+          dtos(x2)+" not finite in table.integ(string,fp_t,fp_t,string).";
         O2SCL_ERR(msg.c_str(),exc_einval);
       }
       if (intp_set==false || sx!=intp_colx || sy!=intp_coly) {
@@ -2321,9 +2325,9 @@ namespace o2scl {
         O(log(C)*log(R)) but can be as bad as O(log(C)*R) if 
         the relevant columns are not well ordered.
     */
-    double integ_const(std::string sx, double x1, double x2, 
+    fp_t integ_const(std::string sx, fp_t x1, fp_t x2, 
                        std::string sy) const {
-      double ret;
+      fp_t ret;
       aciter itx=atree.find(sx), ity=atree.find(sy);
       if (itx==atree.end() || ity==atree.end()) {
         O2SCL_ERR((((std::string)"Columns '")+sx+"' or '"+sy+
@@ -2348,7 +2352,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if 
         the relevant columns are not well ordered.
     */
-    double integ(size_t ix, double x1, double x2, size_t iy) {
+    fp_t integ(size_t ix, fp_t x1, fp_t x2, size_t iy) {
       return integ(get_column_name(ix),x1,x2,
                    get_column_name(iy));
     }
@@ -2361,7 +2365,7 @@ namespace o2scl {
         O(log(R)) but can be as bad as O(R) if 
         the relevant columns are not well ordered.
     */
-    double integ_const(size_t ix, double x1, double x2, size_t iy) const {
+    fp_t integ_const(size_t ix, fp_t x1, fp_t x2, size_t iy) const {
       return integ_const(get_column_name(ix),x1,x2,
                          get_column_name(iy));
     }
@@ -2408,8 +2412,8 @@ namespace o2scl {
     /** \brief Return column maximum. Makes no assumptions about 
         ordering, \f$ {\cal O}(R) \f$
     */
-    double max(std::string scol) const {
-      double ret=0.0;
+    fp_t max(std::string scol) const {
+      fp_t ret=0.0;
       int i;
       if (is_column(scol)==false) {
         O2SCL_ERR((((std::string)"Column '")+scol+
@@ -2439,8 +2443,8 @@ namespace o2scl {
     /** \brief Return column minimum. Makes no assumptions about 
         ordering, \f$ {\cal O}(R) \f$ 
     */
-    double min(std::string scol) const {
-      double ret=0.0;
+    fp_t min(std::string scol) const {
+      fp_t ret=0.0;
       int i;
       if (is_column(scol)==false) {
         O2SCL_ERR((((std::string)"Column '")+scol+
@@ -2479,7 +2483,7 @@ namespace o2scl {
         which is a copy of part of the original.
     */
     void subtable(std::string list, size_t top, 
-                  size_t bottom, table<vec_t> &tnew) const {
+                  size_t bottom, table<vec_t,fp_t> &tnew) const {
 
       tnew.clear_all();
       int sublines, i;
@@ -2612,7 +2616,7 @@ namespace o2scl {
       size_t ncols=get_ncolumns(), nlins=get_nlines();
 
       // Make a copy of the table
-      boost::numeric::ublas::matrix<double> data_copy(ncols,nlins);
+      boost::numeric::ublas::matrix<fp_t> data_copy(ncols,nlins);
       for(size_t i=0;i<ncols;i++) {
         for(size_t j=0;j<nlins;j++) {
           data_copy(i,j)=get(i,j);
@@ -2679,7 +2683,7 @@ namespace o2scl {
       } else {
         (*out) << constants.size() << " constants:" << std::endl;
       }
-      std::map<std::string,double>::const_iterator mit;
+      typename std::map<std::string,fp_t>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
         (*out) << mit->first << " " << mit->second << std::endl;
       }
@@ -2728,7 +2732,7 @@ namespace o2scl {
     /** \brief Add a constant, or if the constant already exists, change 
         its value
     */
-    virtual void add_constant(std::string name, double val) {
+    virtual void add_constant(std::string name, fp_t val) {
       if (constants.find(name)!=constants.end()) {
         constants.find(name)->second=val;
         return;
@@ -2747,7 +2751,7 @@ namespace o2scl {
         is not found this function just silently returns
         \ref o2scl::exc_enotfound.
     */
-    virtual int set_constant(std::string name, double val,
+    virtual int set_constant(std::string name, fp_t val,
                              bool err_on_notfound=true) {
       if (constants.find(name)!=constants.end()) {
         constants.find(name)->second=val;
@@ -2770,7 +2774,7 @@ namespace o2scl {
     }
 
     /// Get a constant
-    virtual double get_constant(std::string name) const {
+    virtual fp_t get_constant(std::string name) const {
       if (constants.find(name)==constants.end()) {
         std::string err=((std::string)"No constant with name '")+name+
           "' in table::get_constant(string).";
@@ -2785,15 +2789,16 @@ namespace o2scl {
     }
 
     /// Get a constant by index
-    virtual void get_constant(size_t ix, std::string &name, double &val) const {
+    virtual void get_constant(size_t ix, std::string &name, fp_t &val) const {
       if (ix<constants.size()) {
-        std::map<std::string,double>::const_iterator cit=constants.begin();
+        typename std::map<std::string,fp_t>::const_iterator cit=
+          constants.begin();
         for(size_t i=0;i<ix;i++) cit++;
         name=cit->first;
         val=cit->second;
         return;
       }
-      O2SCL_ERR("Index too large in table::get_constant(size_t,string,double).",
+      O2SCL_ERR("Index too large in table::get_constant(size_t,string,fp_t).",
                 exc_eindex);
       return;
     }
@@ -2825,7 +2830,7 @@ namespace o2scl {
       // A non-const reference to the data vector
       vec_t &v=alist[k]->second.dat;
     
-      o2scl::vector_roll_avg<vec_t,double>(nl,v,window);
+      o2scl::vector_roll_avg<vec_t,fp_t>(nl,v,window);
     
       return;
     }
@@ -2884,7 +2889,7 @@ namespace o2scl {
                       << i*window << std::endl;
           }
           for(size_t k=0;k<nc;k++) {
-            set(k,i,get(k,i*window)/((double)win));
+            set(k,i,get(k,i*window)/((fp_t)win));
           }
         }
 
@@ -2899,7 +2904,7 @@ namespace o2scl {
           // A non-const reference to the data vector
           vec_t &v=alist[k]->second.dat;
 	
-          o2scl::vector_roll_avg<vec_t,double>(nl,v,window);
+          o2scl::vector_roll_avg<vec_t,fp_t>(nl,v,window);
         }
       
       }
@@ -2911,7 +2916,7 @@ namespace o2scl {
 
       clear();
       
-      double data;
+      fp_t data;
       std::string line;
       std::string cname;
 
@@ -2925,7 +2930,7 @@ namespace o2scl {
           (vsc[1]=="constants." || vsc[1]=="constant.")) {
         size_t n_const=o2scl::stoszt(vsc[0]);
         std::string name;
-        double val;
+        fp_t val;
         for(size_t i=0;i<n_const;i++) {
           fin >> name >> val;
           set_constant(name,val);
@@ -3127,8 +3132,8 @@ namespace o2scl {
         }
       }
 
-      std::map<std::string,double> vars;
-      std::map<std::string,double>::const_iterator mit;
+      typename std::map<std::string,fp_t> vars;
+      typename std::map<std::string,fp_t>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
         vars[mit->first]=mit->second;
       }
@@ -3244,13 +3249,13 @@ namespace o2scl {
         calc_utf8<> calc;
         calc.set_rng(r);
 
-        std::map<std::string,double> vars;
+        std::map<std::string,fp_t> vars;
         
         if (false) {
 
           // Old version (slower)
           
-          std::map<std::string,double>::const_iterator mit;
+          typename std::map<std::string,fp_t>::const_iterator mit;
           for(mit=constants.begin();mit!=constants.end();mit++) {
             vars[mit->first]=mit->second;
           }
@@ -3285,7 +3290,7 @@ namespace o2scl {
           // of constants which are not columns, so we have to use
           // is_column() below to double check.
           
-          std::map<std::string,double>::const_iterator mit;
+          typename std::map<std::string,fp_t>::const_iterator mit;
           for(mit=constants.begin();mit!=constants.end();mit++) {
             vars[mit->first]=mit->second;
           }
@@ -3312,12 +3317,12 @@ namespace o2scl {
 
     /** \brief Compute a value by applying a function to a row
      */
-    double row_function(std::string function, size_t row) const {
+    fp_t row_function(std::string function, size_t row) const {
 
       // Parse function
       calc_utf8<> calc;
-      std::map<std::string,double> vars;
-      std::map<std::string,double>::const_iterator mit;
+      typename std::map<std::string,fp_t> vars;
+      typename std::map<std::string,fp_t>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
         vars[mit->first]=mit->second;
       }
@@ -3327,7 +3332,7 @@ namespace o2scl {
         vars[it->first]=it->second.dat[row];
       }
 
-      double dret=calc.eval(&vars);
+      fp_t dret=calc.eval(&vars);
       return dret;
     }
 
@@ -3337,20 +3342,20 @@ namespace o2scl {
 
       // Parse function
       calc_utf8<> calc;
-      std::map<std::string,double> vars;
-      std::map<std::string,double>::const_iterator mit;
+      typename std::map<std::string,fp_t> vars;
+      typename std::map<std::string,fp_t>::const_iterator mit;
       for(mit=constants.begin();mit!=constants.end();mit++) {
         vars[mit->first]=mit->second;
       }
       calc.compile(function.c_str(),&vars);
 
-      double best_val=0.0;
+      fp_t best_val=0.0;
       size_t best_row=0;
       for(size_t row=0;row<nlines-1;row++) {
         for(aciter it=atree.begin();it!=atree.end();it++) {
           vars[it->first]=it->second.dat[row];
         }
-        double dtemp=calc.eval(&vars);
+        fp_t dtemp=calc.eval(&vars);
         if (row==0) {
           best_val=dtemp;
         } else {
@@ -3372,20 +3377,22 @@ namespace o2scl {
     friend void o2scl_hdf::hdf_output
     (o2scl_hdf::hdf_file &hf, table<> &t, std::string name);
   
-    template<class vecf_t> friend void o2scl_hdf::hdf_input
-    (o2scl_hdf::hdf_file &hf, table<vecf_t> &t, std::string name);
+    template<class vecf_t, class fpf_t> friend void o2scl_hdf::hdf_input
+    (o2scl_hdf::hdf_file &hf, table<vecf_t,fpf_t> &t, std::string name);
   
     friend void o2scl_hdf::hdf_output_data
     (o2scl_hdf::hdf_file &hf, table<> &t);
   
-    template<class vecf_t> friend void o2scl_hdf::hdf_input_data
-    (o2scl_hdf::hdf_file &hf, table<vecf_t> &t);
+    template<class vecf_t, class fpf_t> friend void o2scl_hdf::hdf_input_data
+    (o2scl_hdf::hdf_file &hf, table<vecf_t,fpf_t> &t);
   
     // --------------------------------------------------------
     // Allow matrix_view_table and matrix_view_table_transpose access
   
-    template<typename vecf_t, typename fpf_t> friend class matrix_view_table;
-    template<typename vecf_t, typename fpf_t> friend class matrix_view_table_transpose;
+    template<typename vecf_t, typename fpf_t> friend class
+    matrix_view_table;
+    template<typename vecf_t, typename fpf_t> friend class
+    matrix_view_table_transpose;
 #endif
 
     // --------------------------------------------------------
@@ -3467,7 +3474,7 @@ namespace o2scl {
 
     /** \brief The list of constants 
      */
-    std::map<std::string,double> constants;
+    std::map<std::string,fp_t> constants;
 
     /** \brief Column structure for \ref table [protected]
 
@@ -3578,7 +3585,7 @@ namespace o2scl {
     size_t itype;
 
     /// Interpolation object
-    interp_base<vec_t,vec_t,double> *si;
+    interp_base<vec_t,vec_t,fp_t> *si;
 
     /// The last x-column interpolated
     std::string intp_colx;
@@ -3626,7 +3633,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    const_matrix_view_table(o2scl::table<vec_t> &t,
+    const_matrix_view_table(o2scl::table<vec_t,fp_t> &t,
                             std::vector<std::string> cols) {
       set(t,cols);
     }
@@ -3634,7 +3641,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    void set(o2scl::table<vec_t> &t,
+    void set(o2scl::table<vec_t,fp_t> &t,
              std::vector<std::string> cols) {
       nc=cols.size();
       col_ptrs.resize(nc);
@@ -3725,7 +3732,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    matrix_view_table(o2scl::table<vec_t> &t,
+    matrix_view_table(o2scl::table<vec_t,fp_t> &t,
                       std::vector<std::string> cols) {
       set(t,cols);
     }
@@ -3733,7 +3740,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    void set(o2scl::table<vec_t> &t,
+    void set(o2scl::table<vec_t,fp_t> &t,
              std::vector<std::string> cols) {
       nc=cols.size();
       if (nc==0) {
@@ -3841,7 +3848,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    matrix_view_table_transpose(o2scl::table<vec_t> &t,
+    matrix_view_table_transpose(o2scl::table<vec_t,fp_t> &t,
                                 std::vector<std::string> rows) {
       set(t,rows);
     }
@@ -3849,7 +3856,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    void set(o2scl::table<vec_t> &t,
+    void set(o2scl::table<vec_t,fp_t> &t,
              std::vector<std::string> rows) {
       nr=rows.size();
       col_ptrs.resize(nr);
@@ -4035,7 +4042,7 @@ namespace o2scl {
       ensure that the pointer is valid with the matrix view is
       accessed.
   */
-  template<class vec_t=std::vector<double> > 
+  template<class vec_t=std::vector<double>, class fp_t=double> 
   class const_matrix_view_table_transpose :
     public const_matrix_view {
   
@@ -4063,7 +4070,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of rows
     */
-    const_matrix_view_table_transpose(o2scl::table<vec_t> &t,
+    const_matrix_view_table_transpose(o2scl::table<vec_t,fp_t> &t,
                                       std::vector<std::string> rows) {
       set(t,rows);
     }
@@ -4071,7 +4078,7 @@ namespace o2scl {
     /** \brief Create a matrix view object from the specified 
         table and list of columns
     */
-    void set(o2scl::table<vec_t> &t,
+    void set(o2scl::table<vec_t,fp_t> &t,
              std::vector<std::string> rows) {
       nr=rows.size();
       col_ptrs.resize(nr);

@@ -3034,11 +3034,14 @@ namespace o2scl {
               O2SCL_ERR("Row arithmetic problem in mcmc_para_table.",
                         o2scl::exc_esanity);
             }
-          
+
+            // AWS, 9/30/23: This code was used for testing in 2023
+            // but is probably unnecessary now
+            //std::cout << "Setting " << next_row << " " << line[3]
+            //<< " " << line.size() << " "
+            //<< table->get_ncolumns() << std::endl;
+            
             // Set the row
-            std::cout << "Setting " << next_row << " " << line[3]
-                      << " " << line.size() << " "
-                      << table->get_ncolumns() << std::endl;
             table->set_row(((size_t)next_row),line);
             
           }
