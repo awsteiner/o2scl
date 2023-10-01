@@ -138,8 +138,11 @@ int main(void) {
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
     
+    cout << "H3." << endl;
+    imkb.verbose=3;
     imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2);
+    cout << "H4." << endl;
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
     cout << endl;
