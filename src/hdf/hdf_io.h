@@ -621,11 +621,11 @@ namespace o2scl_hdf {
 
   /** \brief Internal function for inputting a \ref o2scl::table_units object
    */
-  template<class vec_t, class fp_t> 
+  template<class vec_t> 
   void hdf_input_data(hdf_file &hf, o2scl::table_units<vec_t> &t) {
     
     // Input base table object
-    o2scl::table<vec_t,fp_t> *tbase=
+    o2scl::table<vec_t,double> *tbase=
       dynamic_cast<o2scl::table_units<vec_t> *>(&t);
     if (tbase==0) {
       O2SCL_ERR2("Cast failed in hdf_input_data",

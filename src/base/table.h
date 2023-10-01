@@ -3373,7 +3373,6 @@ namespace o2scl {
     // --------------------------------------------------------
     // Allow HDF5 I/O functions to access table data
   
-#ifndef DOXYGEN  
     friend void o2scl_hdf::hdf_output
     (o2scl_hdf::hdf_file &hf, table<> &t, std::string name);
   
@@ -3393,11 +3392,8 @@ namespace o2scl {
     matrix_view_table;
     template<typename vecf_t, typename fpf_t> friend class
     matrix_view_table_transpose;
-#endif
 
     // --------------------------------------------------------
-  
-#ifndef DOXYGEN_INTERNAL
   
   protected:
   
@@ -3593,8 +3589,6 @@ namespace o2scl {
     /// The last y-column interpolated
     std::string intp_coly;
     //@}
-
-#endif
 
   };
 

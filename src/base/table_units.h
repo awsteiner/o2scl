@@ -142,7 +142,8 @@ namespace o2scl {
     }
 
     /// Copy with constructor from \ref table
-  table_units(const table<vec_t,double> &t) : table<vec_t,double>(t.get_nlines()) {
+  table_units(const table<vec_t,double> &t) :
+    table<vec_t,double>(t.get_nlines()) {
   
       // Copy constants 
       this->constants=t.constants;
@@ -672,7 +673,8 @@ namespace o2scl {
       if (!this->is_column(dest)) this->new_column(dest);
 
       typedef typename std::map<std::string,
-	typename table<vec_t,double>::col,std::greater<std::string> >::iterator aiter2;
+	typename table<vec_t,double>::col,
+                                std::greater<std::string> >::iterator aiter2;
 
       aiter2 its=this->atree.find(src);
       if (its==this->atree.end()) {
