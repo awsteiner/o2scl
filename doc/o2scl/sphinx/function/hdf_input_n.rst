@@ -11,7 +11,7 @@ Function hdf_input_n (o2scl_hdf)
 
 .. doxygenfunction:: o2scl_hdf::hdf_input_n(hdf_file &hf, o2scl::prob_dens_mdim_amr< vec_t, mat_t > &p, std::string &name)
 
-.. doxygenfunction:: o2scl_hdf::hdf_input_n(hdf_file &hf, o2scl::table< vec_t > &t, std::string &name)
+.. doxygenfunction:: o2scl_hdf::hdf_input_n(hdf_file &hf, o2scl::table< vec_t, fp_t > &t, std::string &name)
 
 .. doxygenfunction:: o2scl_hdf::hdf_input_n(hdf_file &hf, o2scl::table_units< vec_t > &t, std::string &name)
 

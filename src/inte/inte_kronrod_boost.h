@@ -146,6 +146,7 @@ namespace o2scl {
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
+      fm2.verbose=fm_verbose;
 
       std::function<fp_t(fp_t)> fx=[fm2,func](fp_t x) mutable -> fp_t
       { return fm2(func,x); };
@@ -188,6 +189,7 @@ namespace o2scl {
       err_nonconv=true;
       tol_rel=-1.0;
       tol_abs=-1.0;
+      fm_verbose=0;
     }
     //@}
     
@@ -219,6 +221,11 @@ namespace o2scl {
         does not succeed (default true)
     */
     bool err_nonconv;
+
+    /** \brief Verbosity parameter for the internal
+        \ref funct_multip object
+    */
+    int fm_verbose;
     
     /** \brief Set the maximum number of interval splittings
         (default 15)

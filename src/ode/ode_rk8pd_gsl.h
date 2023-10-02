@@ -64,11 +64,11 @@ namespace o2scl {
       \endverbatim
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct>
-  class ode_rk8pd_gsl : public ode_step<double,vec_y_t,
-    vec_dydx_t,vec_yerr_t,func_t> {
-
+           class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+           class func_t=ode_funct, class fp_t=double>
+  class ode_rk8pd_gsl :
+    public ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
+    
   protected:
 
 #ifdef O2SCL_NEVER_DEFINED
