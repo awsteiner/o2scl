@@ -122,7 +122,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "list","max","min","nlines","refine","rename",
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
-      "to-hist","to-hist-2d","to-table3d","wstats",
+      "thin-mcmc","to-hist","to-hist-2d","to-table3d","wstats",
       "ser-hist-t3d","to-gaussian","to-pdma","to-gmm","to-kde","value-grid"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
@@ -634,7 +634,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="table") {
     
-    static const size_t narr=47;
+    static const size_t narr=48;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -750,6 +750,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"sum","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_sum),both},
+       {0,"thinn-mcmc","",1,2,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_thin_mcmc),both},
        {0,"to-gaussian","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_gaussian),both},
