@@ -3,7 +3,7 @@ Function hdf_output (o2scl_hdf)
 
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-.. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table< std::vector< double > > &t, std::string name)
+.. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, o2scl::table< std::vector< double >, double > &t, std::string name)
 
 .. doxygenfunction:: o2scl_hdf::hdf_output(hdf_file &hf, const o2scl::table3d &h, std::string name)
 

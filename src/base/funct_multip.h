@@ -65,8 +65,9 @@ namespace o2scl {
     boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
 
   // Choose the best floating point type depending on what is
-  // available. 7/28/23: I'm currently having problems with mpfr
-  // types so they're commented out. 
+  // available. 7/28/23: I'm currently having problems with mpfr types
+  // so they're commented out, however, in the future, this should be
+  // fixed as I think the MPFR types are faster.
   
   //#ifdef O2SCL_MPFR
   //  typedef mpfr_25 o2fp_25;
@@ -83,41 +84,61 @@ namespace o2scl {
 
   /// \name One-dimensional function typedefs in src/base/funct_multip.h
   //@{
-  /** \brief One-dimensional long double function in src/base/funct_multip.h
+  /** \brief One-dimensional long double function in 
+      src/base/funct_multip.h
    */
   typedef std::function<long double(long double)> funct_ld;
 
-  /** \brief One-dimensional Boost 25-digit function in src/base/funct_multip.h
+  /** \brief One-dimensional Boost 25-digit function in 
+      src/base/funct_multip.h
    */
   typedef std::function<cpp_dec_float_25(cpp_dec_float_25)>
   funct_cdf25;
   
-  /** \brief One-dimensional Boost 35-digit function in src/base/funct_multip.h
+  /** \brief One-dimensional Boost 35-digit function in 
+      src/base/funct_multip.h
    */
   typedef std::function<cpp_dec_float_35(cpp_dec_float_35)>
   funct_cdf35;
   
-  /** \brief One-dimensional Boost 50-digit function in src/base/funct_multip.h
+  /** \brief One-dimensional Boost 50-digit function in 
+      src/base/funct_multip.h
    */
   typedef std::function<cpp_dec_float_50(cpp_dec_float_50)>
   funct_cdf50;
   
-  /** \brief One-dimensional Boost 100-digit function in src/base/funct_multip.h
+  /** \brief One-dimensional Boost 100-digit function in 
+      src/base/funct_multip.h
    */
   typedef std::function<cpp_dec_float_100(cpp_dec_float_100)>
   funct_cdf100;
 
+  /** \brief One-dimensional long double function with integer
+      return in src/base/funct_multip.h
+   */
   typedef std::function<int(long double,long double &)> funct_ret_ld;
   
+  /** \brief One-dimensional Boost 25-digit function with integer
+      return in src/base/funct_multip.h
+   */
   typedef std::function<int(cpp_dec_float_25,cpp_dec_float_25 &)>
   funct_ret_cdf25;
   
+  /** \brief One-dimensional Boost 35-digit function with integer
+      return in src/base/funct_multip.h
+   */
   typedef std::function<int(cpp_dec_float_35,cpp_dec_float_35 &)>
   funct_ret_cdf35;
   
+  /** \brief One-dimensional Boost 50-digit function with integer
+      return in src/base/funct_multip.h
+   */
   typedef std::function<int(cpp_dec_float_50,cpp_dec_float_50 &)>
   funct_ret_cdf50;
 
+  /** \brief One-dimensional Boost 100-digit function with integer
+      return in src/base/funct_multip.h
+   */
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
   //@}

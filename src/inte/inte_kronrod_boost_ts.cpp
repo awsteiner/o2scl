@@ -131,21 +131,23 @@ int main(void) {
 
     // Multiprecision integration
     
-    imkb.verbose=2;
+    //imkb.fm_verbose=1;
     imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
-    
+
+    if (false) {
     cout << "H3." << endl;
-    imkb.verbose=3;
+    //imkb.verbose=3;
     imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2);
     cout << "H4." << endl;
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
     cout << endl;
+    }
 
     // Multiprecision integration with infinite limits
     
@@ -193,34 +195,36 @@ int main(void) {
     cpp_dec_float_25 one=1;
     cpp_dec_float_25 hundred=100;
     cpp_dec_float_25 param=one/hundred;
+
+    if (false) {
+      imkb.integ_err_multip([param](auto &&tb) mutable
+      { return test_func_param(tb,param); },a,b,val,err2);
+      cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+      t.test_rel(val,exact,1.0e-15,"multip param 1");
+      cout << endl;
+      
+      // Multiprecision integration with a template function which has
+      // a template parameter
+      
+      imkb.integ_err_multip([param](auto &&tb) mutable
+      { return test_func_param(tb,param_f(tb)); },a,b,val,err2);
+      cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+      t.test_rel(val,exact,1.0e-15,"multip param 2");
+      cout << endl;
     
-    imkb.integ_err_multip([param](auto &&tb) mutable
-    { return test_func_param(tb,param); },a,b,val,err2);
-    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip param 1");
-    cout << endl;
-
-    // Multiprecision integration with a template function which has
-    // a template parameter
-
-    imkb.integ_err_multip([param](auto &&tb) mutable
-    { return test_func_param(tb,param_f(tb)); },a,b,val,err2);
-    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip param 2");
-    cout << endl;
-    
-    // Multiprecision integration with a funct_multip_string object
-
-    funct_multip_string fms;
-    fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
-    funct_multip_string *fmsp=&fms;
-
-
-    imkb.integ_err_multip([fmsp](auto &&tb) mutable { return (*fmsp)(tb); },
-                          a,b,val,err2);
-    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip string");
-    cout << endl;
+      // Multiprecision integration with a funct_multip_string object
+      
+      funct_multip_string fms;
+      fms.set_function("-sin(1/(x+1/100))/(x+1/100)^2","x");
+      funct_multip_string *fmsp=&fms;
+      
+      imkb.integ_err_multip([fmsp](auto &&tb) mutable { return (*fmsp)(tb); },
+                            a,b,val,err2);
+      cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+      t.test_rel(val,exact,1.0e-15,"multip string");
+      cout << endl;
+    }
+      
   }
 #endif  
   

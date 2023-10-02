@@ -3,7 +3,7 @@ Function hdf_input (o2scl_hdf)
 
 :ref:`O2scl <o2scl>` : :ref:`Function List`
 
-.. doxygenfunction:: o2scl_hdf::hdf_input(hdf_file &hf, o2scl::table< vec_t > &t, std::string name)
+.. doxygenfunction:: o2scl_hdf::hdf_input(hdf_file &hf, o2scl::table< vec_t, fp_t > &t, std::string name)
 
 .. doxygenfunction:: o2scl_hdf::hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="")
 
