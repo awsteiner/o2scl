@@ -436,8 +436,8 @@ namespace o2scl_linalg {
    */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
 	   class fp_t> 
-    void solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
-			   const vec3_t &b, vec4_t &x, size_t N) {
+  void solve_tridiag_sym(const vec_t &diag, const vec2_t &offdiag, 
+                         const vec3_t &b, vec4_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
     ubvector_4_mem<fp_t> v4m;
     v4m.resize(N);
@@ -450,7 +450,7 @@ namespace o2scl_linalg {
    */
   template<class vec_t, class vec2_t, class vec3_t, class vec4_t,
 	   class vec5_t, class fp_t> 
-    void solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
+  void solve_tridiag_nonsym(const vec_t &diag, const vec2_t &abovediag, 
 			      const vec3_t &belowdiag, const vec4_t &rhs, 
 			      vec5_t &x, size_t N) {
     typedef boost::numeric::ublas::vector<double> ubvector;
