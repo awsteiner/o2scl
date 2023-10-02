@@ -62,6 +62,41 @@ int acol_manager::comm_x_name
 int acol_manager::comm_y_name
  */
 
+#ifdef O2SCL_NEVER_DEFINED
+int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
+                                 bool itive_com) {
+  if (type=="table") {
+    if (sv.size()<3) {
+      cerr << "Not enough arguments in command 'thin-mcmc'." << endl;
+      return 2;
+    }
+    std::string col=sv[0];
+    size_t window=stoszt(sv[1]);
+    size_t running_sum=0;
+    size_t count=0;
+    vector<size_t> rows;
+    for(size_t j=0;j<table_obj.get_nlines();j++) {
+      if (((size_t)table_obj->get(col,j))>0) {
+        while (count<=running_sum) {
+          rows.push_back(j);
+          count+=window;
+        }
+        running_sum+=((size_t)(table_obj->get(col,j)));
+      }
+    }
+    table_units<> t2;
+    table_obj.copy_table_rowlist(rows,t2);
+    table_obj=t2;
+  } else {
+    cerr << "Command 'thin-mcmc' not supported for objects of "
+         << "type " << type << endl;
+    return 1;
+  }
+  
+  return 0;
+}
+#endif
+
 int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
                                    bool itive_com) {
   if (type=="table") {
