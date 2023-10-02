@@ -750,7 +750,7 @@ void acol_manager::command_add(std::string new_type) {
        {0,"sum","",0,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_sum),both},
-       {0,"thinn-mcmc","",1,2,"","",
+       {0,"thin-mcmc","",1,2,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_thin_mcmc),both},
        {0,"to-gaussian","",0,4,"","",
