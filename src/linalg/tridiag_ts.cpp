@@ -74,7 +74,8 @@ int main(void) {
       ru[i]=1.0;
       su[i]=0.0;
     }
-    solve_tridiag_sym(du,odu,ru,su,arr_size);
+    solve_tridiag_sym<ubvector,ubvector,ubvector,ubvector,double>
+      (du,odu,ru,su,arr_size);
   
     for(size_t i=0;i<arr_size;i++) {
       t.test_rel(gsl_vector_get(s,i),su[i],1.0e-12,"o vs. u 5");
@@ -112,7 +113,8 @@ int main(void) {
       ru[i]=1.0;
       su[i]=0.0;
     }
-    solve_tridiag_nonsym(du,odu,odu2,ru,su,arr_size);
+    solve_tridiag_nonsym<ubvector,ubvector,ubvector,ubvector,ubvector,double>
+      (du,odu,odu2,ru,su,arr_size);
   
     for(size_t i=0;i<arr_size;i++) {
       t.test_rel(gsl_vector_get(s,i),su[i],1.0e-12,"o vs. u 6");
@@ -146,7 +148,8 @@ int main(void) {
       ru[i]=1.0;
       su[i]=0.0;
     }
-    solve_cyc_tridiag_sym(du,odu,ru,su,arr_size);
+    solve_cyc_tridiag_sym<ubvector,ubvector,ubvector,ubvector,double>
+      (du,odu,ru,su,arr_size);
   
     for(size_t i=0;i<arr_size;i++) {
       t.test_rel(gsl_vector_get(s,i),su[i],1.0e-12,"o vs. u 7");
@@ -184,7 +187,10 @@ int main(void) {
       ru[i]=1.0;
       su[i]=0.0;
     }
-    solve_cyc_tridiag_nonsym(du,odu,odu2,ru,su,arr_size);
+    solve_cyc_tridiag_nonsym<ubvector,ubvector,ubvector,ubvector,
+                             ubvector,double>
+      (du,odu,odu2,ru,su,arr_size);
+    
   
     for(size_t i=0;i<arr_size;i++) {
       t.test_rel(gsl_vector_get(s,i),su[i],1.0e-12,"o vs. u 8");
