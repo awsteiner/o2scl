@@ -62,31 +62,53 @@ int acol_manager::comm_x_name
 int acol_manager::comm_y_name
  */
 
-#ifdef O2SCL_NEVER_DEFINED
 int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
                                  bool itive_com) {
   if (type=="table") {
-    if (sv.size()<3) {
+    if (sv.size()<2) {
       cerr << "Not enough arguments in command 'thin-mcmc'." << endl;
       return 2;
     }
-    std::string col=sv[0];
     size_t window=stoszt(sv[1]);
+    std::string mult_col;
+    if (sv.size()>=3) {
+      mult_col=sv[2];
+    }
     size_t running_sum=0;
     size_t count=0;
-    vector<size_t> rows;
+    table_units<> tnew;
+
+    for(size_t i=0;i<table_obj.get_nconsts();i++) {
+      string tnam;
+      double tval;
+      table_obj.get_constant(i,tnam,tval);
+      if (verbose>2) {
+	cout << "Adding constant " << tnam << " = " << tval << endl;
+      }
+      tnew.add_constant(tnam,tval);
+    }
+    
+    for(size_t i=0;i<table_obj.get_ncolumns();i++) {
+      std::string col=table_obj.get_column_name(i);
+      std::string unit=table_obj.get_unit(col);
+      tnew.new_column(col);
+      tnew.set_unit(col,unit);
+    }
+    
     for(size_t j=0;j<table_obj.get_nlines();j++) {
-      if (((size_t)table_obj->get(col,j))>0) {
+      if (mult_col.length()==0 || ((size_t)table_obj.get(mult_col,j))>0) {
         while (count<=running_sum) {
-          rows.push_back(j);
+          tnew.copy_row(table_obj,j);
           count+=window;
         }
-        running_sum+=((size_t)(table_obj->get(col,j)));
+        if (mult_col.length()>0) {
+          running_sum+=((size_t)(table_obj.get(mult_col,j)));
+        } else {
+          running_sum++;
+        }
       }
     }
-    table_units<> t2;
-    table_obj.copy_table_rowlist(rows,t2);
-    table_obj=t2;
+    table_obj=tnew;
   } else {
     cerr << "Command 'thin-mcmc' not supported for objects of "
          << "type " << type << endl;
@@ -95,7 +117,6 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
   
   return 0;
 }
-#endif
 
 int acol_manager::comm_to_gaussian(std::vector<std::string> &sv,
                                    bool itive_com) {

@@ -2768,6 +2768,19 @@ namespace o2scl_acol {
     */
     virtual int comm_sum(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Thin MCMC output
+
+        For objects of type table:
+        
+        Thin MCMC output
+
+        Arguments: <window> [mult column]
+
+        Desc.
+     */
+    virtual int comm_thin_mcmc(std::vector<std::string> &sv,
+                                 bool itive_com);
+    
     /** \brief Construct a multivariate Gaussian distribution
 
         For objects of type table:
