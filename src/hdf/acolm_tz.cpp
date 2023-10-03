@@ -43,6 +43,7 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 /*
 int acol_manager::comm_to_gaussian
+int acol_manager::comm_to_gmm
 int acol_manager::comm_to_hist
 int acol_manager::comm_to_hist_2d
 int acol_manager::comm_to_table
@@ -70,6 +71,10 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
       return 2;
     }
     size_t window=stoszt(sv[1]);
+    if (window==0) {
+      cerr << "Zero window not allowed in 'thin-mcmc'." << endl;
+      return 3;
+    }
     std::string mult_col;
     if (sv.size()>=3) {
       mult_col=sv[2];
@@ -97,14 +102,14 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
     
     for(size_t j=0;j<table_obj.get_nlines();j++) {
       if (mult_col.length()==0 || ((size_t)table_obj.get(mult_col,j))>0) {
-        while (count<=running_sum) {
-          tnew.copy_row(table_obj,j);
-          count+=window;
-        }
         if (mult_col.length()>0) {
           running_sum+=((size_t)(table_obj.get(mult_col,j)));
         } else {
           running_sum++;
+        }
+        while (count<running_sum) {
+          tnew.copy_row(table_obj,j);
+          count+=window;
         }
       }
     }

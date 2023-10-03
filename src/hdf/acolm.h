@@ -2772,11 +2772,23 @@ namespace o2scl_acol {
 
         For objects of type table:
         
-        Thin MCMC output
+        Thin Markov chain Monte Carlo output
 
-        Arguments: <window> [mult column]
+        Arguments: <window> [mult. column]
 
-        Desc.
+        The <tt>thin-mcmc</tt> command thins the rows of the table by
+        including only one out of every <window> rows in the table.
+        The value of <window> cannot be zero. A window of 1
+        effectively makes no changes to the table (unless the optional
+        second argument is given). If a "multiplier column" is
+        specified, then non-zero and positive values are interpreted
+        as integer multipliers for each row. In this case, the table
+        is interpreted as containing multiple copies of each row,
+        where the number of copies is given in the specified column.
+        Rows with a zero or negative multiplier are ignored. A window
+        value of 1 creates a new table with <tt>[mult. column]</tt>
+        copies of each row. When the multiplier column is specified,
+        it's original value is retained in the table which results.
      */
     virtual int comm_thin_mcmc(std::vector<std::string> &sv,
                                  bool itive_com);
