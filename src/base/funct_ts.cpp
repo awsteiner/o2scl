@@ -101,17 +101,20 @@ int main(void) {
 #endif
   
   {
+    cout << "4." << endl;
     fmc f2;
     double val, err;
     funct_multip_cdf fm2;
     
     // No parameters
+    fm2.verbose=2;
     fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
                      1.0e-4,val,err);
     t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_cdf");
   }
 #ifdef O2SCL_SET_MPFR
   {
+    cout << "5." << endl;
     fmc f2;
     double val, err;
     funct_multip_mpfr fm2;
