@@ -86,59 +86,59 @@ namespace o2scl {
   //@{
   /** \brief One-dimensional long double function in 
       src/base/funct_multip.h
-   */
+  */
   typedef std::function<long double(long double)> funct_ld;
 
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h
-   */
+  */
   typedef std::function<cpp_dec_float_25(cpp_dec_float_25)>
   funct_cdf25;
   
   /** \brief One-dimensional Boost 35-digit function in 
       src/base/funct_multip.h
-   */
+  */
   typedef std::function<cpp_dec_float_35(cpp_dec_float_35)>
   funct_cdf35;
   
   /** \brief One-dimensional Boost 50-digit function in 
       src/base/funct_multip.h
-   */
+  */
   typedef std::function<cpp_dec_float_50(cpp_dec_float_50)>
   funct_cdf50;
   
   /** \brief One-dimensional Boost 100-digit function in 
       src/base/funct_multip.h
-   */
+  */
   typedef std::function<cpp_dec_float_100(cpp_dec_float_100)>
   funct_cdf100;
 
   /** \brief One-dimensional long double function with integer
       return in src/base/funct_multip.h
-   */
+  */
   typedef std::function<int(long double,long double &)> funct_ret_ld;
   
   /** \brief One-dimensional Boost 25-digit function with integer
       return in src/base/funct_multip.h
-   */
+  */
   typedef std::function<int(cpp_dec_float_25,cpp_dec_float_25 &)>
   funct_ret_cdf25;
   
   /** \brief One-dimensional Boost 35-digit function with integer
       return in src/base/funct_multip.h
-   */
+  */
   typedef std::function<int(cpp_dec_float_35,cpp_dec_float_35 &)>
   funct_ret_cdf35;
   
   /** \brief One-dimensional Boost 50-digit function with integer
       return in src/base/funct_multip.h
-   */
+  */
   typedef std::function<int(cpp_dec_float_50,cpp_dec_float_50 &)>
   funct_ret_cdf50;
 
   /** \brief One-dimensional Boost 100-digit function with integer
       return in src/base/funct_multip.h
-   */
+  */
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
   //@}
@@ -239,7 +239,7 @@ namespace o2scl {
 
     /** \brief If true, call the error handler if the function
         evaluation fails
-     */
+    */
     bool err_nonconv;
     
     /** \brief Evaluate the function and return the error estimate
@@ -343,7 +343,14 @@ namespace o2scl {
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with double and long double:\n  "
-                        << "val,err: " << val << " " << err << std::endl;
+                        << "arg,val,err: " << x << " "
+                        << val << " " << err << std::endl;
+              if (verbose>2) {
+                std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                          << "for a key: " << std::flush;
+                char ch;
+                std::cin >> ch;
+              }
             }
             return 0;
           }
@@ -366,6 +373,12 @@ namespace o2scl {
                     << "Failed first round "
                     << "(d_eval and ld_eval are both false)." << std::endl;
         }
+        if (verbose>2) {
+          std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                    << "for a key: " << std::flush;
+          char ch;
+          std::cin >> ch;
+        }
       }
     
       /// Second pass, compare long double and 25-digit precision
@@ -387,6 +400,12 @@ namespace o2scl {
             std::cout << "funct_multip_tl::eval_tol_err() "
                       << "long double and 25-digit both got zero."
                       << std::endl;
+            if (verbose>2) {
+              std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                        << "for a key: " << std::flush;
+              char ch;
+              std::cin >> ch;
+            }
           }
           return 0;
         }
@@ -399,7 +418,14 @@ namespace o2scl {
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with long double and 25-digit:\n  "
-                        << "val,err: " << val << " " << err << std::endl;
+                        << "arg,val,err: " << x << " "
+                        << val << " " << err << std::endl;
+              if (verbose>2) {
+                std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                          << "for a key: " << std::flush;
+                char ch;
+                std::cin >> ch;
+              }
             }
             return 0;
           }
@@ -422,6 +448,12 @@ namespace o2scl {
                     << "Failed second round (ld_eval and "
                     << "cdf25_eval are both false)." << std::endl;
         }
+        if (verbose>2) {
+          std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                    << "for a key: " << std::flush;
+          char ch;
+          std::cin >> ch;
+        }
       }
     
       /// Third pass, compare 25- and 35-digit precision
@@ -443,6 +475,12 @@ namespace o2scl {
             std::cout << "funct_multip_tl::eval_tol_err() "
                       << "25-digit and 35-digit both got zero."
                       << std::endl;
+            if (verbose>2) {
+              std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                        << "for a key: " << std::flush;
+              char ch;
+              std::cin >> ch;
+            }
           }
           return 0;
         }
@@ -455,7 +493,14 @@ namespace o2scl {
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 25-digit and 35-digit:\n  "
-                        << "val,err: " << val << " " << err << std::endl;
+                        << "arg,val,err: " << x << " "
+                        << val << " " << err << std::endl;
+              if (verbose>2) {
+                std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                          << "for a key: " << std::flush;
+                char ch;
+                std::cin >> ch;
+              }
             }
             return 0;
           }
@@ -477,6 +522,12 @@ namespace o2scl {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
                     << "Failed third round (cdf25_eval and "
                     << "cdf35_eval are both false)." << std::endl;
+        }
+        if (verbose>2) {
+          std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                    << "for a key: " << std::flush;
+          char ch;
+          std::cin >> ch;
         }
       }
     
@@ -511,7 +562,14 @@ namespace o2scl {
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 35-digit and 50-digit:\n  "
-                        << "val,err: " << val << " " << err << std::endl;
+                        << "arg,val,err: " << x << " "
+                        << val << " " << err << std::endl;
+              if (verbose>2) {
+                std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                          << "for a key: " << std::flush;
+                char ch;
+                std::cin >> ch;
+              }
             }
             return 0;
           }
@@ -534,6 +592,12 @@ namespace o2scl {
                     << "Failed fourth round (cdf35_eval and "
                     << "cdf50_eval are both false)." << std::endl;
         }
+        if (verbose>2) {
+          std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                    << "for a key: " << std::flush;
+          char ch;
+          std::cin >> ch;
+        }
       }
     
       /// Final pass, compare 50- and 100-digit precision
@@ -555,6 +619,12 @@ namespace o2scl {
             std::cout << "funct_multip_tl::eval_tol_err() "
                       << "50-digit and 100-digit both got zero."
                       << std::endl;
+            if (verbose>2) {
+              std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                        << "for a key: " << std::flush;
+              char ch;
+              std::cin >> ch;
+            }
           }
           return 0;
         }
@@ -567,7 +637,14 @@ namespace o2scl {
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 50-digit and 100-digit:\n  "
-                        << "val,err: " << val << " " << err << std::endl;
+                        << "arg,val,err: " << x << " "
+                        << val << " " << err << std::endl;
+              if (verbose>2) {
+                std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                          << "for a key: " << std::flush;
+                char ch;
+                std::cin >> ch;
+              }
             }
             return 0;
           }
@@ -589,6 +666,12 @@ namespace o2scl {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
                     << "Failed last round (cdf50_eval and "
                     << "cdf100_eval are both false)." << std::endl;
+          if (verbose>2) {
+            std::cout << "funct_multip_tl::eval_tol_err() waiting "
+                      << "for a key: " << std::flush;
+            char ch;
+            std::cin >> ch;
+          }
         }
       }
     
@@ -602,7 +685,7 @@ namespace o2scl {
 
     /** \brief Evaluate the function and return the error estimate
         with the default tolerance for the specified type
-     */
+    */
     template<typename func_t, class fp_t>
     int eval_err(func_t &&f, const fp_t &x,
                  fp_t &val, fp_t &err) const {
@@ -639,7 +722,7 @@ namespace o2scl {
   
   /** \brief The multiprecision function object using \t mpfr 
       types
-   */
+  */
   typedef funct_multip_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_mpfr;
   
@@ -649,7 +732,7 @@ namespace o2scl {
       transformations useful for integrals
 
       This class is used in \ref inte_adapt_cern .
-   */
+  */
   template<class lim_fp_t, class fp_25_t, class fp_35_t, class fp_50_t,
            class fp_100_t> class funct_multip_transform_tl {
 
@@ -674,7 +757,7 @@ namespace o2scl {
 
     /** \brief If true, call the error handler if the function
         evaluation fails
-     */
+    */
     bool err_nonconv;
 
     /// The upper limit (when finite)
@@ -1114,7 +1197,7 @@ namespace o2scl {
     */
     template<typename func_t, class fp_t>
     int eval_err_iu(func_t &&f, const fp_t &x,
-                 fp_t &val, fp_t &err) const {
+                    fp_t &val, fp_t &err) const {
       return eval_tol_err('u',f,x,val,err);
     }
   
@@ -1124,7 +1207,7 @@ namespace o2scl {
     */
     template<typename func_t, class fp_t>
     int eval_err_il(func_t &&f, const fp_t &x,
-                 fp_t &val, fp_t &err) const {
+                    fp_t &val, fp_t &err) const {
       return eval_tol_err('l',f,x,val,err);
     }
   
@@ -1134,7 +1217,7 @@ namespace o2scl {
     */
     template<typename func_t, class fp_t>
     int eval_err_i(func_t &&f, const fp_t &x,
-                 fp_t &val, fp_t &err) const {
+                   fp_t &val, fp_t &err) const {
       return eval_tol_err('i',f,x,val,err);
     }
   
