@@ -124,12 +124,13 @@ namespace o2scl {
       routines are available here
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t>
+           class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t,
+           class fp_t=double>
     class ode_control_gsl {
 
   public:  
 
-  typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::vector<fp_t> ubvector;
   
   protected:
   
@@ -149,13 +150,13 @@ namespace o2scl {
   //@}
   
   /// Absolute precision (default \f$ 10^{-6} \f$)
-  double eps_abs;
+  fp_t eps_abs;
   /// Relative precision (default 0)
-  double eps_rel;
+  fp_t eps_rel;
   /// Function scaling factor (default 1)
-  double a_y;
+  fp_t a_y;
   /// Derivative scaling factor (default 0)
-  double a_dydt;
+  fp_t a_dydt;
   /// Use standard or scaled algorithm (default true)
   bool standard;
 
@@ -181,23 +182,23 @@ namespace o2scl {
   }
 
   virtual int hadjust(size_t dim, unsigned int ord, const vec_y_t &y,
-		      vec_yerr_t &yerr, vec_dydx_t &yp, double &h) {
+		      vec_yerr_t &yerr, vec_dydx_t &yp, fp_t &h) {
       
-    const double S=0.9;
-    const double h_old=h;
+    const fp_t S=0.9;
+    const fp_t h_old=h;
       
-    double rmax=DBL_MIN;
+    fp_t rmax=DBL_MIN;
     size_t i;
       
     for(i=0;i<dim;i++) {
-      double D0;
+      fp_t D0;
       if (standard || scale_abs.size()==0) {
 	D0=eps_rel*(a_y*fabs(y[i])+a_dydt*fabs(h_old*yp[i]))+eps_abs;
       } else {
 	D0=eps_rel*(a_y*fabs(y[i])+a_dydt*fabs(h_old*yp[i]))+
 	  eps_abs*scale_abs[i%scale_abs.size()];
       }
-      const double r=fabs(yerr[i]) / fabs(D0);
+      const fp_t r=fabs(yerr[i]) / fabs(D0);
       rmax=GSL_MAX_DBL(r, rmax);
     }
 	
@@ -205,7 +206,7 @@ namespace o2scl {
 
       /* decrease step, no more than factor of 5, but a fraction S more
 	 than scaling suggests (for better accuracy) */
-      double r= S / pow(rmax, 1.0/ord);
+      fp_t r= S / pow(rmax, 1.0/ord);
 	  
       if (r < 0.2) {
 	r=0.2;
@@ -216,7 +217,7 @@ namespace o2scl {
     } else if (rmax < 0.5) {
 
       /* increase step, no more than factor of 5 */
-      double r=S / pow(rmax, 1.0/(ord+1.0));
+      fp_t r=S / pow(rmax, 1.0/(ord+1.0));
       if (r > 5.0) {
 	r=5.0;
       }
@@ -264,13 +265,13 @@ namespace o2scl {
       - \c vec_t - \ref boost::numeric::ublas::vector \< double \>
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct > class astep_gsl : 
-    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,double> {
+           class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+           class func_t=ode_funct, class fp_t=double> class astep_gsl : 
+    public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
     
   public:
     
-    typedef boost::numeric::ublas::vector<double> ubvector;
+    typedef boost::numeric::ublas::vector<fp_t> ubvector;
 
   protected:
     
@@ -281,7 +282,7 @@ namespace o2scl {
   vec_dydx_t dydx_int;
     
   /// The size of the last step
-  double last_step;
+  fp_t last_step;
 
   /// The number of steps
   unsigned long int count;
@@ -299,16 +300,16 @@ namespace o2scl {
       \note This function requres that \c y, \c yout, \c dydx and \c
       dydx_out are all distinct vectors. 
   */
-  int evolve_apply(double t0, double t1, double &t, double &h, size_t nvar,
+  int evolve_apply(fp_t t0, fp_t t1, fp_t &t, fp_t &h, size_t nvar,
 		   vec_y_t &y, vec_dydx_t &dydx, vec_y_t &yout, 
 		   vec_yerr_t &yerr, vec_dydx_t &dydx_out, 
 		   func_t &derivs) {
 
-    double h0=h;
+    fp_t h0=h;
     int step_status;
     bool final_step=false;
     // Remaining step size, possibly less than h
-    double dt=t1-t0; 
+    fp_t dt=t1-t0; 
     
     if ((dt < 0.0 && h0 > 0.0) || (dt > 0.0 && h0 < 0.0)) {
       std::string str="Interval direction (t1-t0="+o2scl::dtos(dt)+
@@ -346,16 +347,16 @@ namespace o2scl {
 
 	// [GSL] Stepper was unable to calculate step. Try decreasing
 	// stepsize
-	double h_old=h0;
+	fp_t h_old=h0;
 	h0*=0.5;
 
 	// [GSL] Check that an actual decrease in h0 occured and that
 	// the suggested h0 will change the independent variable
 	// will change by at least 1ulp
-	//double t_curr=GSL_COERCE_DBL(t);
-	//double t_next=GSL_COERCE_DBL(t+h0);
-	double t_curr=t;
-	double t_next=t+h0;
+	//fp_t t_curr=GSL_COERCE_DBL(t);
+	//fp_t t_next=GSL_COERCE_DBL(t+h0);
+	fp_t t_curr=t;
+	fp_t t_next=t+h0;
 	
 	if (fabs(h0) < fabs(h_old) && t_next != t_curr) {
 	  // [GSL] Step was decreased. Undo step, and try again with 
@@ -383,7 +384,7 @@ namespace o2scl {
 	}
   
 	// [GSL] Check error and attempt to adjust the step.
-	double h_old=h0;
+	fp_t h_old=h0;
 	const size_t hadjust_status=con.hadjust
 	  (nvar,this->stepp->get_order(),yout,yerr,dydx_out,h0);
       
@@ -394,10 +395,10 @@ namespace o2scl {
 	  // decrease in h0 occured) and the suggested h0 will change
 	  // the independent variable by at least 1 ulp
 
-	  //double t_curr=GSL_COERCE_DBL (*t);
-	  //double t_next=GSL_COERCE_DBL ((*t) + h0);
-	  double t_curr=t;
-	  double t_next=t+h0;
+	  //fp_t t_curr=GSL_COERCE_DBL (*t);
+	  //fp_t t_next=GSL_COERCE_DBL ((*t) + h0);
+	  fp_t t_curr=t;
+	  fp_t t_next=t+h0;
 	  
 	  if (fabs(h0) < fabs(h_old) && t_next != t_curr) {
 	    // [GSL] Step was decreased. Undo step, and try again with 
@@ -454,7 +455,7 @@ namespace o2scl {
       contains the derivative at the end of the step, and \c yerr
       contains the estimated error at the end of the step.
   */
-  virtual int astep(double &x, double xmax, double &h, 
+  virtual int astep(fp_t &x, fp_t xmax, fp_t &h, 
 		    size_t n, vec_y_t &y, vec_dydx_t &dydx_out,
 		    vec_yerr_t &yerr, func_t &derivs) {
     count=0;
@@ -504,7 +505,7 @@ namespace o2scl {
       at the end of the step, and \c yerr contains the estimated
       error at the end of the step.
   */
-  virtual int astep_derivs(double &x, double xmax, double &h, 
+  virtual int astep_derivs(fp_t &x, fp_t xmax, fp_t &h, 
 			   size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			   vec_yerr_t &yerr, func_t &derivs) {
     count=0;
@@ -560,7 +561,7 @@ namespace o2scl {
       astep_derivs() because it does not require any copying of
       vectors.
   */
-  virtual int astep_full(double x, double xmax, double &x_out, double &h, 
+  virtual int astep_full(fp_t x, fp_t xmax, fp_t &x_out, fp_t &h, 
 			 size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 			 vec_y_t &yout, vec_yerr_t &yerr, 
 			 vec_dydx_t &dydx_out, func_t &derivs) {

@@ -38,16 +38,12 @@ namespace o2scl {
     class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t,
     class func_t=ode_funct, class fp_t=double> class ode_step {
 
-#ifndef DOXGYENP
-
     protected:
     
     /** \brief The order of the ODE stepper
      */
     int order;
 
-#endif
-    
     public:
 
     ode_step() {

@@ -103,8 +103,9 @@ namespace o2scl {
       a sparse matrix solver
   */
   template<class func_t=ode_funct, class jac_func_t=ode_jac_funct, 
-    class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > class ode_bsimp_gsl {
+           class vec_t=boost::numeric::ublas::vector<double>, 
+           class mat_t=boost::numeric::ublas::matrix<double> >
+  class ode_bsimp_gsl {
 
   public:
 
