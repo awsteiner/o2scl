@@ -8,7 +8,7 @@ HEADER_VAR = astep.h astep_gsl.h astep_nonadapt.h ode_rkck_gsl.h \
 	ode_funct.h ode_step.h ode_bv_solve.h ode_iv_solve.h \
 	ode_rk8pd_gsl.h ode_it_solve.h ode_bv_multishoot.h \
 	ode_jac_funct.h ode_bsimp_gsl.h ode_rkf45_gsl.h \
-	ode_iv_table.h ode_bv_mshoot.h
+	ode_iv_table.h ode_bv_mshoot.h ode_boost.h
 
 TEST_VAR = astep_gsl.scr ode_rkck_gsl.scr astep_nonadapt.scr \
 	ode_rk8pd_gsl.scr ode_bsimp_gsl.scr \
