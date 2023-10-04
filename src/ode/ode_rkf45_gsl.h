@@ -59,12 +59,12 @@ namespace o2scl {
       \endverbatim
 
       \todo Check this because it may not give exact dydt_out.
-   */
+  */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-    class func_t=ode_funct>
-  class ode_rkf45_gsl : public ode_step<vec_y_t,
-                                        vec_dydx_t,vec_yerr_t,func_t,double> {
+           class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+           class func_t=ode_funct, class fp_t=double>
+  class ode_rkf45_gsl :
+    public ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
     
   protected:
   
@@ -80,9 +80,9 @@ namespace o2scl {
   /** \name Storage for the coefficients
    */
   //@{
-  double ah[5], b3[2], b4[3], b5[4], b6[5];
-  double c1, c3, c4, c5, c6;
-  double ec[7];
+  fp_t ah[5], b3[2], b4[3], b5[4], b6[5];
+  fp_t c1, c3, c4, c5, c6;
+  fp_t ec[7];
   //@}
   
   public:
@@ -149,7 +149,7 @@ namespace o2scl {
       non-zero value which was obtained in a call to \c derivs .
       The error handler is never called.
   */
-  virtual int step(double x, double h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
+  virtual int step(fp_t x, fp_t h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
 		   vec_y_t &yout, vec_yerr_t &yerr, vec_dydx_t &dydx_out, 
 		   func_t &derivs) {
     

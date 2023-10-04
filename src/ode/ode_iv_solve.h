@@ -117,7 +117,7 @@ namespace o2scl {
     size_t mem_size;
 
     /// The adaptive stepper
-    astep_base<vec_t,vec_t,vec_t,func_t> *astp;
+    astep_base<vec_t,vec_t,vec_t,func_t,double> *astp;
     
     /// Print out iteration information
     virtual int print_iter(double x, size_t nv, vec_t &y) {
@@ -625,7 +625,7 @@ namespace o2scl {
     /// \name The adaptive stepper
     //@{
     /// Set the adaptive stepper to use
-    int set_astep(astep_base<vec_t,vec_t,vec_t,func_t> &as) {
+    int set_astep(astep_base<vec_t,vec_t,vec_t,func_t,double> &as) {
       astp=&as;
       return 0;
     }
@@ -636,7 +636,7 @@ namespace o2scl {
     bool exit_on_fail;
 
     /// The default adaptive stepper
-    astep_gsl<vec_t,vec_t,vec_t,func_t> gsl_astp;
+    astep_gsl<vec_t,vec_t,vec_t,func_t,double> gsl_astp;
     //@}
 
     /// Return the type, \c "ode_iv_solve".
@@ -673,7 +673,7 @@ namespace o2scl {
   protected:
 
     /// The adaptive stepper
-    astep_base<mat_row_t,mat_row_t,mat_row_t,func_t> *astp;
+    astep_base<mat_row_t,mat_row_t,mat_row_t,func_t,double> *astp;
     
     /// Print out iteration information
     virtual int print_iter(double x, size_t nv, mat_row_t &y) {

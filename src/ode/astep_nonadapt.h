@@ -49,7 +49,7 @@ namespace o2scl {
       astep_base::set_step().
   */
   template<class vec_y_t=boost::numeric::ublas::vector<double>,
-    class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
+           class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
 	   class func_t=ode_funct, class fp_t=double> class astep_nonadapt : 
     public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
       
