@@ -8,10 +8,11 @@ HEADER_VAR = astep.h astep_gsl.h astep_nonadapt.h ode_rkck_gsl.h \
 	ode_funct.h ode_step.h ode_bv_solve.h ode_iv_solve.h \
 	ode_rk8pd_gsl.h ode_it_solve.h ode_bv_multishoot.h \
 	ode_jac_funct.h ode_bsimp_gsl.h ode_rkf45_gsl.h \
-	ode_iv_table.h ode_bv_mshoot.h ode_boost.h
+	ode_iv_table.h ode_bv_mshoot.h ode_boost.h \
+	astep_boost.h 
 
 TEST_VAR = astep_gsl.scr ode_rkck_gsl.scr astep_nonadapt.scr \
-	ode_rk8pd_gsl.scr ode_bsimp_gsl.scr \
+	ode_rk8pd_gsl.scr ode_bsimp_gsl.scr astep_boost.scr \
 	ode_rkf45_gsl.scr ode_iv_solve.scr ode_it_solve.scr
 
 # ode_bv_mshoot.scr ode_iv_table.scr ode_bv_solve.scr 
@@ -69,7 +70,8 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = astep_gsl_ts ode_rkck_gsl_ts astep_nonadapt_ts \
 	ode_iv_solve_ts ode_rk8pd_gsl_ts ode_it_solve_ts \
-	ode_bsimp_gsl_ts ode_rkf45_gsl_ts ode_boost_ts
+	ode_bsimp_gsl_ts ode_rkf45_gsl_ts ode_boost_ts \
+	astep_boost_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -111,6 +113,7 @@ ode_it_solve_ts_LDADD = $(ADDL_TEST_LIBS)
 #ode_bv_solve_ts_LDADD = $(ADDL_TEST_LIBS)
 ode_rk8pd_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
 ode_boost_ts_LDADD = $(ADDL_TEST_LIBS)
+astep_boost_ts_LDADD = $(ADDL_TEST_LIBS)
 
 astep_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_rkf45_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -124,6 +127,7 @@ ode_it_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 #ode_bv_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_rk8pd_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+astep_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 astep_gsl.scr: astep_gsl_ts$(EXEEXT)
 	./astep_gsl_ts$(EXEEXT) > astep_gsl.scr
@@ -149,6 +153,8 @@ ode_it_solve.scr: ode_it_solve_ts$(EXEEXT)
 #	./ode_bv_solve_ts$(EXEEXT) > ode_bv_solve.scr
 ode_boost.scr: ode_boost_ts$(EXEEXT)
 	./ode_boost_ts$(EXEEXT) > ode_boost.scr
+astep_boost.scr: astep_boost_ts$(EXEEXT)
+	./astep_boost_ts$(EXEEXT) > astep_boost.scr
 
 astep_gsl_ts_SOURCES = astep_gsl_ts.cpp
 astep_nonadapt_ts_SOURCES = astep_nonadapt_ts.cpp
@@ -162,6 +168,7 @@ ode_it_solve_ts_SOURCES = ode_it_solve_ts.cpp
 #ode_bv_solve_ts_SOURCES = ode_bv_solve_ts.cpp
 ode_rk8pd_gsl_ts_SOURCES = ode_rk8pd_gsl_ts.cpp
 ode_boost_ts_SOURCES = ode_boost_ts.cpp
+astep_boost_ts_SOURCES = astep_boost_ts.cpp
 
 # ------------------------------------------------------------
 # No library o2scl_ode
