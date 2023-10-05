@@ -20,25 +20,6 @@
 
   ───────────────────────────────────────────────────────────────────
 */
-/* ode-initval/rkck.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Gerard Jungman
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
- * 02110-1301, USA.
- */
 #ifndef O2SCL_ODE_BOOST_H
 #define O2SCL_ODE_BOOST_H
 
@@ -58,11 +39,14 @@ namespace o2scl {
   template<class step_t,
            class vec_y_t=boost::numeric::ublas::vector<double>,
 	   class vec_dydx_t=vec_y_t, class vec_yerr_t=vec_y_t, 
-           class func_t=ode_funct_boost<>, class fp_t=double> class ode_boost :
+           class func_t=ode_funct,
+           class fp_t=double> class ode_boost :
     public ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
-
+    
   protected:
 
+    /** \brief Stepper object
+     */
     step_t stepper;
     
   public:
@@ -79,12 +63,13 @@ namespace o2scl {
                      vec_dydx_t &dydx, vec_y_t &yout, vec_yerr_t &yerr, 
                      vec_dydx_t &dydx_out, func_t &derivs) {
 
-      func_t f(derivs,n);
+      ode_funct_boost<boost::numeric::ublas::vector<double>,
+                      ode_funct,double> ofb(derivs,n);
       for(size_t j=0;j<n;j++) {
         yout[j]=y[j];
       }
-      stepper.do_step(f,yout,dydx,x,h);
-      derivs(x+h,yout,dydx_out);
+      stepper.do_step(ofb,yout,dydx,x,h);
+      derivs(x+h,n,yout,dydx_out);
     
       return 0;
     }

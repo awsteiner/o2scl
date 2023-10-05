@@ -50,20 +50,16 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NEVER_DEFINED
   
   {
     double x, dx=1.0e-1, x2;
     ode_funct of=expon;
-    ode_funct_boost<ubvector,ode_funct,double> ofb(of,1);
 
     ubvector y(1), dydx(1), yout(1), yerr(1), dydx_out(1);
     ubvector y2(1), dydx2(1), yout2(1), yerr2(1), dydx_out2(1);
 
-    ode_boost<boost::numeric::odeint::runge_kutta_cash_karp54<ubvector>,
-              ubvector,ubvector,ubvector,
-              ode_funct_boost<ubvector,ode_funct,double>,
-              double> ob;
+    ode_boost<boost::numeric::odeint::runge_kutta_cash_karp54<ubvector> > ob;
     ode_rkck_gsl<> org;
 
     x=1.0;
