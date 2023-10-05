@@ -38,15 +38,21 @@ else
 O2SCL_ARMA_MVAR =
 endif
 
+if O2SCL_MPFR
+O2SCL_MPFR_MVAR = -DO2SCL_MPFR
+else
+O2SCL_MPFR_MVAR =
+endif
+
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	-DO2SCL_COND_FLAG
+	-DO2SCL_COND_FLAG $(O2SCL_MPFR_MVAR) $(O2SCL_OPENMP_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	-DO2SCL_COND_FLAG
+	-DO2SCL_COND_FLAG $(O2SCL_MPFR_MVAR) $(O2SCL_OPENMP_MVAR)
 endif
 
 # ------------------------------------------------------------
@@ -63,7 +69,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = astep_gsl_ts ode_rkck_gsl_ts astep_nonadapt_ts \
 	ode_iv_solve_ts ode_rk8pd_gsl_ts ode_it_solve_ts \
-	ode_bsimp_gsl_ts ode_rkf45_gsl_ts 
+	ode_bsimp_gsl_ts ode_rkf45_gsl_ts ode_boost_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -104,6 +110,7 @@ ode_iv_solve_ts_LDADD = $(ADDL_TEST_LIBS)
 ode_it_solve_ts_LDADD = $(ADDL_TEST_LIBS)
 #ode_bv_solve_ts_LDADD = $(ADDL_TEST_LIBS)
 ode_rk8pd_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
+ode_boost_ts_LDADD = $(ADDL_TEST_LIBS)
 
 astep_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_rkf45_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -116,6 +123,7 @@ ode_iv_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_it_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 #ode_bv_solve_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ode_rk8pd_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ode_boost_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 astep_gsl.scr: astep_gsl_ts$(EXEEXT)
 	./astep_gsl_ts$(EXEEXT) > astep_gsl.scr
@@ -139,6 +147,8 @@ ode_it_solve.scr: ode_it_solve_ts$(EXEEXT)
 	./ode_it_solve_ts$(EXEEXT) > ode_it_solve.scr
 #ode_bv_solve.scr: ode_bv_solve_ts$(EXEEXT)
 #	./ode_bv_solve_ts$(EXEEXT) > ode_bv_solve.scr
+ode_boost.scr: ode_boost_ts$(EXEEXT)
+	./ode_boost_ts$(EXEEXT) > ode_boost.scr
 
 astep_gsl_ts_SOURCES = astep_gsl_ts.cpp
 astep_nonadapt_ts_SOURCES = astep_nonadapt_ts.cpp
@@ -151,6 +161,7 @@ ode_iv_solve_ts_SOURCES = ode_iv_solve_ts.cpp
 ode_it_solve_ts_SOURCES = ode_it_solve_ts.cpp
 #ode_bv_solve_ts_SOURCES = ode_bv_solve_ts.cpp
 ode_rk8pd_gsl_ts_SOURCES = ode_rk8pd_gsl_ts.cpp
+ode_boost_ts_SOURCES = ode_boost_ts.cpp
 
 # ------------------------------------------------------------
 # No library o2scl_ode

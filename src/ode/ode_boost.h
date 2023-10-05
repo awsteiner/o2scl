@@ -35,6 +35,8 @@
 namespace o2scl {
 
   /** \brief Simple ODE stepper from boost
+
+      This class is experimental.
    */
   template<class step_t,
            class vec_y_t=boost::numeric::ublas::vector<double>,
