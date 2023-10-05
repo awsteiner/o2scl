@@ -69,7 +69,7 @@ namespace o2scl {
     
     /** \brief Boost interface calling O2scl format
      */
-    void operator()(vec_t &y, vec_t &dydt, fp_t x) {
+    void operator()(const vec_t &y, vec_t &dydt, fp_t x) {
       (*fp)(x,nv2,y,dydt);
       return;
     }
