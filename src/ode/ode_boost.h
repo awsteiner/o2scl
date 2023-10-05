@@ -36,7 +36,14 @@ namespace o2scl {
 
   /** \brief Simple ODE stepper from boost
 
-      This class is experimental.
+      This is a simple implementation of the Boost "Error Steppers"
+      into the O2scl framework. The slightly different interface
+      requires a function wrapper (\ref ode_funct_boost) and an extra
+      copy of the state vector. This works with the steppers \c
+      runge_kutta_cash_karp54, \c runge_kutta_dopri5, and \c
+      runge_kutta_fehlberg78. The Boost stepper \c
+      runge_kutta_cash_karp54 gives identical results to \ref
+      ode_rkck_gsl.
    */
   template<class step_t,
            class vec_y_t=boost::numeric::ublas::vector<double>,
@@ -67,8 +74,10 @@ namespace o2scl {
 
       ode_funct_boost<boost::numeric::ublas::vector<double>,
                       ode_funct,double> ofb(derivs,n);
-      for(size_t j=0;j<n;j++) {
-        yout[j]=y[j];
+      if (&yout!=&y) {
+        for(size_t j=0;j<n;j++) {
+          yout[j]=y[j];
+        }
       }
       stepper.do_step(ofb,yout,x,h,yerr);
       derivs(x+h,n,yout,dydx_out);

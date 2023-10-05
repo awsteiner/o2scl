@@ -48,76 +48,76 @@ namespace o2scl {
     
   public:
   
-  astep_base() {
-    stepp=&def_step;
-    verbose=0;
-  }
+    astep_base() {
+      stepp=&def_step;
+      verbose=0;
+    }
 
-  virtual ~astep_base() {}
+    virtual ~astep_base() {}
       
-  /** \brief Make an adaptive integration step of the system 
-      \c derivs 
+    /** \brief Make an adaptive integration step of the system 
+        \c derivs 
 	  
-      This attempts to take a step of size \c h from the point \c
-      x of an \c n-dimensional system \c derivs starting with \c
-      y. On exit, \c x and \c y contain the new values at the end
-      of the step, \c h contains the size of the step, \c dydx_out
-      contains the derivative at the end of the step, and \c yerr
-      contains the estimated error at the end of the step.
-  */
-  virtual int astep(fp_t &x, fp_t xlimit, fp_t &h, 
-		    size_t n, vec_y_t &y, vec_dydx_t &dydx_out,
-		    vec_yerr_t &yerr, func_t &derivs)=0;
+        This attempts to take a step of size \c h from the point \c
+        x of an \c n-dimensional system \c derivs starting with \c
+        y. On exit, \c x and \c y contain the new values at the end
+        of the step, \c h contains the size of the step, \c dydx_out
+        contains the derivative at the end of the step, and \c yerr
+        contains the estimated error at the end of the step.
+    */
+    virtual int astep(fp_t &x, fp_t xlimit, fp_t &h, 
+                      size_t n, vec_y_t &y, vec_dydx_t &dydx_out,
+                      vec_yerr_t &yerr, func_t &derivs)=0;
 
-  /** \brief Make an adaptive integration step of the system 
-      \c derivs with derivatives
+    /** \brief Make an adaptive integration step of the system 
+        \c derivs with derivatives
 	  
-      This attempts to take a step of size \c h from the point \c
-      x of an \c n-dimensional system \c derivs starting with \c y
-      and given the initial derivatives \c dydx. On exit, \c x, \c
-      y and \c dydx contain the new values at the end of the step,
-      \c h contains the size of the step, \c dydx contains the
-      derivative at the end of the step, and \c yerr contains the
-      estimated error at the end of the step.
-  */
-  virtual int astep_derivs(fp_t &x, fp_t xlimit, fp_t &h, 
-			   size_t n, vec_y_t &y, vec_dydx_t &dydx, 
-			   vec_yerr_t &yerr, func_t &derivs)=0;
+        This attempts to take a step of size \c h from the point \c
+        x of an \c n-dimensional system \c derivs starting with \c y
+        and given the initial derivatives \c dydx. On exit, \c x, \c
+        y and \c dydx contain the new values at the end of the step,
+        \c h contains the size of the step, \c dydx contains the
+        derivative at the end of the step, and \c yerr contains the
+        estimated error at the end of the step.
+    */
+    virtual int astep_derivs(fp_t &x, fp_t xlimit, fp_t &h, 
+                             size_t n, vec_y_t &y, vec_dydx_t &dydx, 
+                             vec_yerr_t &yerr, func_t &derivs)=0;
 
-  /** \brief Make an adaptive integration step of the system 
-      \c derivs with derivatives 
+    /** \brief Make an adaptive integration step of the system 
+        \c derivs with derivatives 
 
-      This function performs an adaptive integration step with the
-      \c n-dimensional system \c derivs and parameter \c pa. It
-      Begins at \c x with initial stepsize \c h, ensuring that the
-      step goes no farther than \c xlimit. At the end of the step,
-      the size of the step taken is \c h and the new value of \c x
-      is in \c x_out. Initially, the function values and
-      derivatives should be specified in \c y and \c dydx. The
-      function values, derivatives, and the error at the end of
-      the step are given in \c yout, \c yerr, and \c dydx_out.
-      Unlike in \c ode_step objects, the objects \c y, \c yout, 
-      \c dydx, and \c dydx_out must all be distinct.
-  */
-  virtual int astep_full(fp_t x, fp_t xlimit, fp_t &x_out, 
-			 fp_t &h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
-			 vec_y_t &yout, vec_yerr_t &yerr, 
-			 vec_dydx_t &dydx_out, func_t &derivs)=0;
+        This function performs an adaptive integration step with the
+        \c n-dimensional system \c derivs and parameter \c pa. It
+        Begins at \c x with initial stepsize \c h, ensuring that the
+        step goes no farther than \c xlimit. At the end of the step,
+        the size of the step taken is \c h and the new value of \c x
+        is in \c x_out. Initially, the function values and
+        derivatives should be specified in \c y and \c dydx. The
+        function values, derivatives, and the error at the end of
+        the step are given in \c yout, \c yerr, and \c dydx_out.
+        Unlike in \c ode_step objects, the objects \c y, \c yout, 
+        \c dydx, and \c dydx_out must all be distinct.
+    */
+    virtual int astep_full(fp_t x, fp_t xlimit, fp_t &x_out, 
+                           fp_t &h, size_t n, vec_y_t &y, vec_dydx_t &dydx, 
+                           vec_y_t &yout, vec_yerr_t &yerr, 
+                           vec_dydx_t &dydx_out, func_t &derivs)=0;
 
-  /// Set output level
-  int verbose;
+    /// Set output level
+    int verbose;
 
-  /** \brief Set stepper
+    /** \brief Set stepper
 
-      This sets the stepper for use in the adaptive step 
-      routine. If no stepper is specified, then the default
-      (\ref def_step of type \ref ode_rkck_gsl) is used.
-  */
+        This sets the stepper for use in the adaptive step 
+        routine. If no stepper is specified, then the default
+        (\ref def_step of type \ref ode_rkck_gsl) is used.
+    */
     int set_step(ode_step<vec_y_t,vec_dydx_t,
 		 vec_yerr_t,func_t,fp_t> &step) {
-    stepp=&step;
-    return 0;
-  }
+      stepp=&step;
+      return 0;
+    }
   
     /// The default stepper
     ode_rkck_gsl<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,
@@ -125,7 +125,7 @@ namespace o2scl {
   
   protected:
       
-  /// Pointer to the stepper being used
+    /// Pointer to the stepper being used
     ode_step<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> *stepp;
     
   };
