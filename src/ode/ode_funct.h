@@ -43,7 +43,7 @@ namespace o2scl {
 			    boost::numeric::ublas::vector<double> &)> 
     ode_funct;
 
-  /** \brief Desc
+  /** \brief Simple wrapper to translate Boost format to O2scl format
    */
   template<class vec_t=std::vector<double>,
 	   class func_t=std::function<int(double,size_t,const vec_t &,
@@ -52,25 +52,26 @@ namespace o2scl {
     
   protected:
 
-    /// Desc
+    /// Pointer to function object
     func_t *fp;
 
-    /// Desc
+    /// Number of variables
     size_t nv2;
     
   public:
 
-    /** \brief Desc
+    /** \brief Create a wrapper
      */
     ode_funct_boost(func_t &f, size_t nv) {
       fp=&f;
       nv2=nv;
     }
     
-    /** \brief Desc
+    /** \brief Boost interface calling O2scl format
      */
     void operator()(vec_t &y, vec_t &dydt, fp_t x) {
-      return (*fp)(x,nv2,y,dydt);
+      (*fp)(x,nv2,y,dydt);
+      return;
     }
     
   };
