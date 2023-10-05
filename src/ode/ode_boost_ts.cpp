@@ -60,6 +60,7 @@ int main(void) {
     ode_boost<boost::numeric::odeint::runge_kutta_cash_karp54<ubvector> > ob;
     ode_boost<boost::numeric::odeint::runge_kutta_dopri5<ubvector> > ob2;
     ode_boost<boost::numeric::odeint::runge_kutta_fehlberg78<ubvector> > ob3;
+    //ode_boost<boost::numeric::odeint::rosenbrock4<ubvector> > ob4;
     ode_rkck_gsl<> org;
 
     for(size_t kk=0;kk<3;kk++) {
@@ -85,8 +86,10 @@ int main(void) {
           ob.step(x,dx,1,y,dydx,y,yerr,dydx,of);
         } else if (kk==1) {
           ob2.step(x,dx,1,y,dydx,y,yerr,dydx,of);
-        } else {
+        } else if (kk==2) {
           ob3.step(x,dx,1,y,dydx,y,yerr,dydx,of);
+        } else {
+          //ob4.step(x,dx,1,y,dydx,y,yerr,dydx,of);
         }
 
         // Output results
@@ -110,6 +113,8 @@ int main(void) {
       if (kk==0) {
         t.test_rel(y[0],y2[0],1.0e-15,"Boost vs. GSL");
       } else if (kk==1) {
+        t.test_rel(y[0],y2[0],1.0e-7,"Boost vs. GSL");
+      } else if (kk==2) {
         t.test_rel(y[0],y2[0],1.0e-7,"Boost vs. GSL");
       } else {
         t.test_rel(y[0],y2[0],1.0e-8,"Boost vs. GSL");

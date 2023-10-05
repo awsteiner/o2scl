@@ -70,7 +70,7 @@ namespace o2scl {
       for(size_t j=0;j<n;j++) {
         yout[j]=y[j];
       }
-      stepper.do_step(ofb,yout,dydx,x,h);
+      stepper.do_step(ofb,yout,x,h,yerr);
       derivs(x+h,n,yout,dydx_out);
     
       return 0;
