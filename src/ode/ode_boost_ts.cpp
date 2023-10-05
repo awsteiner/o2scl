@@ -48,10 +48,8 @@ int main(void) {
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
-#ifndef O2SCL_NEVER_DEFINED
-  
   {
     double x, dx=1.0e-1, x2;
     ode_funct of=expon;
@@ -60,51 +58,67 @@ int main(void) {
     ubvector y2(1), dydx2(1), yout2(1), yerr2(1), dydx_out2(1);
 
     ode_boost<boost::numeric::odeint::runge_kutta_cash_karp54<ubvector> > ob;
+    ode_boost<boost::numeric::odeint::runge_kutta_dopri5<ubvector> > ob2;
+    ode_boost<boost::numeric::odeint::runge_kutta_fehlberg78<ubvector> > ob3;
     ode_rkck_gsl<> org;
 
-    x=1.0;
-    y[0]=1.0;
-    x2=1.0;
-    y2[0]=1.0;
+    for(size_t kk=0;kk<3;kk++) {
+    
+      x=1.0;
+      y[0]=1.0;
+      x2=1.0;
+      y2[0]=1.0;
 
-    cout << "x            y(calc)      y(exact)     diff         yerr"
-	 << "          y'" << endl;
-    cout << 1.0 << " " << 1.0 << " " << 1.0 << " " << 0.0 << " " << -0.0 
-	 << " " << 1.0 << endl;
+      cout << "x            y(calc)      y(exact)     diff         yerr"
+           << "          y'" << endl;
+      cout << 1.0 << " " << 1.0 << " " << 1.0 << " " << 0.0 << " " << -0.0 
+           << " " << 1.0 << endl;
 
-    // Compute initial derivative
-    expon(x,1,y,dydx);
-    expon(x2,1,y2,dydx2);
+      // Compute initial derivative
+      expon(x,1,y,dydx);
+      expon(x2,1,y2,dydx2);
 
-    for(size_t i=1;i<=40;i++) {
+      for(size_t i=1;i<=40;i++) {
 
-      // Make a step
-      ob.step(x,dx,1,y,dydx,y,yerr,dydx,of);
+        // Make a step
+        if (kk==0) {
+          ob.step(x,dx,1,y,dydx,y,yerr,dydx,of);
+        } else if (kk==1) {
+          ob2.step(x,dx,1,y,dydx,y,yerr,dydx,of);
+        } else {
+          ob3.step(x,dx,1,y,dydx,y,yerr,dydx,of);
+        }
 
-      // Output results
-      cout << x+dx << " " << y[0] << " " << exp(x+dx)/exp(1.0) << " "
-	   << fabs(y[0]-exp(x+dx)/exp(1.0)) << " " << yerr[0] << " ";
-      cout << dydx[0] << endl;
+        // Output results
+        cout << x+dx << " " << y[0] << " " << exp(x+dx)/exp(1.0) << " "
+             << fabs(y[0]-exp(x+dx)/exp(1.0)) << " " << yerr[0] << " ";
+        cout << dydx[0] << endl;
 
-      // Make a step
-      org.step(x2,dx,1,y2,dydx2,y2,yerr2,dydx2,of);
+        // Make a step
+        org.step(x2,dx,1,y2,dydx2,y2,yerr2,dydx2,of);
 
-      // Output results
-      cout << x2+dx << " " << y2[0] << " " << exp(x2+dx)/exp(1.0) << " "
-	   << fabs(y2[0]-exp(x2+dx)/exp(1.0)) << " " << yerr2[0] << " ";
-      cout << dydx2[0] << endl;
+        // Output results
+        cout << x2+dx << " " << y2[0] << " " << exp(x2+dx)/exp(1.0) << " "
+             << fabs(y2[0]-exp(x2+dx)/exp(1.0)) << " " << yerr2[0] << " ";
+        cout << dydx2[0] << endl;
 
-      x+=dx;
-      x2+=dx;
+        x+=dx;
+        x2+=dx;
 
-      exit(-1);
+      }
+
+      if (kk==0) {
+        t.test_rel(y[0],y2[0],1.0e-15,"Boost vs. GSL");
+      } else if (kk==1) {
+        t.test_rel(y[0],y2[0],1.0e-7,"Boost vs. GSL");
+      } else {
+        t.test_rel(y[0],y2[0],1.0e-8,"Boost vs. GSL");
+      }
 
     }
 
   }
   
-#endif
-
   t.report();
 
 
