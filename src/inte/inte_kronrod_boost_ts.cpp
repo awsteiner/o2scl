@@ -254,7 +254,6 @@ int main(void) {
     cout << endl;
     
 #ifdef O2SCL_OSX
-    
     // Multiprecision integration with a funct_multip_string object
       
     funct_multip_string fms;
