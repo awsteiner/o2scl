@@ -125,7 +125,6 @@ int main(void) {
     cout << endl;
   }
 
-#ifdef O2SCL_OSX
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
@@ -208,6 +207,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip param 2");
     cout << endl;
     
+#ifdef O2SCL_OSX
     // Multiprecision integration with a funct_multip_string object
       
     funct_multip_string fms;
@@ -219,9 +219,9 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip string");
     cout << endl;
+#endif  
       
   }
-#endif  
   
   t.report();
   return 0;
