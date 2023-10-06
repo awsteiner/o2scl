@@ -149,6 +149,30 @@ int main(void) {
 #endif
   
   {
+    // Integrate test_func over [0,1] and compare to the exact result
+    // at 50-digit precision
+    
+    mpfr_50 ans, exact, err;
+    
+    funct_mpfr50 tf=test_func<mpfr_50>;
+    
+    // Compare with the exact result
+    imkb.tol_rel=1.0e-30;
+    imkb.set_max_depth(25);
+    mpfr_50 zero=0;
+    mpfr_50 one=1;
+    mpfr_50 hundred=100;
+    imkb.integ_err(tf,zero,one,ans,err);
+    exact=cos(hundred)-cos(hundred/(hundred+one));
+    std::cout << ans << " " << err << std::endl;
+    t.test_rel_boost<mpfr_50>(ans,exact,1.0e-45,"imkb_mpfr 50-digit");
+    cout << endl;
+
+    // Return tol_rel to its default value
+    imkb.tol_rel=0.0;
+  }
+  
+  {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
 
@@ -189,6 +213,18 @@ int main(void) {
     cout << endl;
 #endif
 #endif
+
+    imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
+                          a,b,val,err2,1.0e-8);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-8,"multip 1 mpfr");
+    cout << endl;
+    
+    imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
+                          a,b,val,err2);
+    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+    t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
+    cout << endl;
 
     // Multiprecision integration with infinite limits
     
@@ -254,6 +290,7 @@ int main(void) {
     cout << endl;
     
 #ifdef O2SCL_OSX
+    
     // Multiprecision integration with a funct_multip_string object
       
     funct_multip_string fms;
