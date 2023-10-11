@@ -66,9 +66,8 @@ int main(void) {
   t.set_output_level(2);
 
   if (true) {
-    inte_double_exp_boost<funct> itsb;
-    inte_double_exp_boost<funct> iesb;
-    inte_double_exp_boost<funct> issb;
+    
+    inte_double_exp_boost<funct> ideb;
 
     double ans, exact, err;
 
@@ -77,70 +76,70 @@ int main(void) {
 
     // Finite integral, moderately difficult integrand
     cout << "tanh-sinh, finite interval:" << endl;
-    itsb.integ_err(tf1,0.0,1.0,ans,err);
+    ideb.integ_err(tf1,0.0,1.0,ans,err);
     exact=exact_func<double>();
     std::cout << ans << " " << err << " " << exact << " "
-              << itsb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"tanh_sinh test");
     cout << endl;
 
     // Semi-infinite domains
     cout << "tanh-sinh, infinite upper limit:" << endl;
     exact=sqrt(acos(-1))/2.0;
-    itsb.integ_err(tf2,0.0,std::numeric_limits<double>::infinity(),ans,err);
+    ideb.integ_err(tf2,0.0,std::numeric_limits<double>::infinity(),ans,err);
     t.test_rel(ans,exact,1.0e-8,"tanh_sinh test 2");
     std::cout << ans << " " << err << " " << exact << " "
-              << itsb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     cout << endl;
 
     cout << "tanh-sinh, infinite lower limit:" << endl;
-    itsb.integ_err(tf2,-std::numeric_limits<double>::infinity(),0.0,ans,err);
+    ideb.integ_err(tf2,-std::numeric_limits<double>::infinity(),0.0,ans,err);
     t.test_rel(ans,exact,1.0e-8,"tanh_sinh test 3");
     std::cout << ans << " " << err << " " << exact << " "
-              << itsb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     cout << endl;
 
     // Infinite domain
     cout << "tanh-sinh, infinite lower and upper limit:" << endl;
     exact=sqrt(acos(-1));
-    itsb.integ_err(tf2,-std::numeric_limits<double>::infinity(),
+    ideb.integ_err(tf2,-std::numeric_limits<double>::infinity(),
                    std::numeric_limits<double>::infinity(),
                    ans,err);
     t.test_rel(ans,exact,1.0e-8,"tanh_sinh test 4");
     std::cout << ans << " " << err << " " << exact << " "
-              << itsb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     cout << endl;
 
     // exp_sinh integration, native
     cout << "exp-sinh, infinite upper limit:" << endl;
-    iesb.integ_iu_err(tf2,0.0,ans,err);
+    ideb.integ_iu_err(tf2,0.0,ans,err);
     exact=sqrt(acos(-1.0))/2.0;
     std::cout << ans << " " << err << " " << exact << " "
-              << iesb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"exp_sinh test 1");
     cout << endl;
 
     cout << "exp-sinh, infinite upper limit, explicit limits:" << endl;
-    iesb.integ_err(tf2,0.0,std::numeric_limits<double>::infinity(),ans,err);
+    ideb.integ_err(tf2,0.0,std::numeric_limits<double>::infinity(),ans,err);
     exact=sqrt(acos(-1.0))/2.0;
     std::cout << ans << " " << err << " " << exact << " "
-              << iesb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"exp_sinh test 2");
     cout << endl;
   
     cout << "exp-sinh, infinite lower limit:" << endl;
-    iesb.integ_err(tf2,-std::numeric_limits<double>::infinity(),0.0,ans,err);
+    ideb.integ_err(tf2,-std::numeric_limits<double>::infinity(),0.0,ans,err);
     exact=sqrt(acos(-1.0))/2.0;
     std::cout << ans << " " << err << " " << exact << " "
-              << iesb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"exp_sinh test 3");
     cout << endl;
   
     cout << "sinh-sinh, infinite interval:" << endl;
-    issb.integ_i_err(tf2,ans,err);
+    ideb.integ_i_err(tf2,ans,err);
     exact=sqrt(acos(-1.0));
     std::cout << ans << " " << err << " " << exact << " "
-              << issb.L1norm << std::endl;
+              << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
     cout << endl;
 
@@ -151,9 +150,9 @@ int main(void) {
     funct_cdf35 tf1_cdf35=test_func<cpp_dec_float_35>;
     funct_cdf35 tf2_cdf35=test_func_2<cpp_dec_float_35>;
 
-    inte_double_exp_boost<funct_ld,long double> itsb_ld;
-    inte_double_exp_boost<funct_cdf35,cpp_dec_float_35> itsb_cdf35;
-    inte_double_exp_boost<funct_cdf50,cpp_dec_float_50> itsb_cdf;
+    inte_double_exp_boost<funct_ld,long double> ideb_ld;
+    inte_double_exp_boost<funct_cdf35,cpp_dec_float_35> ideb_cdf35;
+    inte_double_exp_boost<funct_cdf50,cpp_dec_float_50> ideb_cdf;
 
     // Finite integral, moderately difficult integrand
     cout << "tanh-sinh, finite interval, long double:" << endl;
@@ -162,10 +161,10 @@ int main(void) {
     long double hundred_ld=100;
     long double exact_ld=exact_func<long double>();
     long double ans_ld, err_ld;
-    itsb_ld.integ_err(tf1_ld,zero_ld,one_ld,ans_ld,err_ld);
+    ideb_ld.integ_err(tf1_ld,zero_ld,one_ld,ans_ld,err_ld);
     t.test_rel<long double>(ans_ld,exact_ld,1.0e-16,"tanh_sinh test ld");
     std::cout << ans_ld << " " << err_ld << " " << exact_ld << " "
-              << itsb_ld.L1norm << std::endl;
+              << ideb_ld.L1norm << std::endl;
     cout << endl;
 
     // Finite integral, moderately difficult integrand
@@ -175,11 +174,11 @@ int main(void) {
     cpp_dec_float_35 hundred_cdf35=100;
     cpp_dec_float_35 exact_cdf35=exact_func<cpp_dec_float_35>();
     cpp_dec_float_35 ans_cdf35, err_cdf35;
-    itsb_cdf35.tol_rel=1.0e-30;
-    itsb_cdf35.integ_err(tf1_cdf35,zero_cdf35,one_cdf35,ans_cdf35,err_cdf35);
+    ideb_cdf35.tol_rel=1.0e-30;
+    ideb_cdf35.integ_err(tf1_cdf35,zero_cdf35,one_cdf35,ans_cdf35,err_cdf35);
     std::cout << ans_cdf35 << " " << err_cdf35 << std::endl;
     std::cout << dtos(exact_cdf35,0) << std::endl;
-    std::cout << itsb_cdf35.L1norm << std::endl;
+    std::cout << ideb_cdf35.L1norm << std::endl;
     t.test_rel_boost<cpp_dec_float_35>(ans_cdf35,exact_cdf35,1.0e-29,
                                        "tanh_sinh test cdf35");
     cout << endl;
@@ -191,11 +190,11 @@ int main(void) {
     cpp_dec_float_50 hundred_cdf=100;
     cpp_dec_float_50 exact_cdf=exact_func<cpp_dec_float_50>();
     cpp_dec_float_50 ans_cdf, err_cdf;
-    itsb_cdf.tol_rel=1.0e-40;
-    itsb_cdf.integ_err(tf1_cdf,zero_cdf,one_cdf,ans_cdf,err_cdf);
+    ideb_cdf.tol_rel=1.0e-40;
+    ideb_cdf.integ_err(tf1_cdf,zero_cdf,one_cdf,ans_cdf,err_cdf);
     std::cout << ans_cdf << " " << err_cdf << std::endl;
     std::cout << dtos(exact_cdf,0) << std::endl;
-    std::cout << itsb_cdf.L1norm << std::endl;
+    std::cout << ideb_cdf.L1norm << std::endl;
     t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-39,
                                        "tanh_sinh test cdf");
     cout << endl;
@@ -205,28 +204,28 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_double_exp_boost<> imtsb;
-    imtsb.verbose=2;
-    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+    inte_double_exp_boost<> ideb;
+    ideb.verbose=2;
+    ideb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2,1.0e-8);
-    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+    ideb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2);
     t.test_rel(val,exact,1.0e-15,"multip");
 
     // Make sure infinite integrals work
-    imtsb.integ_iu_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
+    ideb.integ_iu_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
                               a,val,err2);
     cout << val << endl;
     t.test_rel(val,root_pi/2.0,1.0e-10,"iu multip");
     cout << endl;
     
-    imtsb.integ_il_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
+    ideb.integ_il_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
                               a,val,err2);
     cout << val << endl;
     t.test_rel(val,root_pi/2.0,1.0e-10,"il multip");
     cout << endl;
     
-    imtsb.integ_i_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
+    ideb.integ_i_err_multip([](auto &&tx) mutable { return test_func_i(tx); },
                              val,err2);
     cout << val << endl;
     t.test_rel(val,root_pi,1.0e-10,"i multip");
@@ -239,9 +238,9 @@ int main(void) {
     double exact=cos(100.0)-cos(1/1.01);
     inte_double_exp_boost<cpp_dec_float_25,
                                  cpp_dec_float_35,cpp_dec_float_50,
-                                 cpp_dec_float_100> imtsb;
-    imtsb.verbose=0;
-    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+                                 cpp_dec_float_100> ideb;
+    ideb.verbose=0;
+    ideb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2);
     t.test_rel(val,exact,1.0e-15,"multip cpp_dec_float");
   }
@@ -250,10 +249,10 @@ int main(void) {
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
-    inte_double_exp_boost<mpfr_25,mpfr_35,mpfr_50,mpfr_100> imtsb;
+    inte_double_exp_boost<mpfr_25,mpfr_35,mpfr_50,mpfr_100> ideb;
                                  
-    imtsb.verbose=0;
-    imtsb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
+    ideb.verbose=0;
+    ideb.integ_err_multip([](auto &&tx) mutable { return test_func(tx); },
                            a,b,val,err2);
     t.test_rel(val,exact,1.0e-15,"multip mpfr");
   }
