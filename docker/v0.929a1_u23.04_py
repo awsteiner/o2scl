@@ -42,6 +42,18 @@ RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
   --break-system-packages --no-binary=h5py h5py==3.9.0
 
 COPY u23.04_req.txt ./
+RUN pip3 install --break-system-packages numpy==1.24.3
+# Ubuntu libhdf5 is outdated relative to the version used by pip install
+# h5py, so we have to explicitly use the old Ubuntu one
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
+  --no-binary=h5py h5py==3.9.0
+
+COPY u23.04_req.txt ./
+RUN pip3 install --no-cache-dir --upgrade pip \
+  && pip3 install --no-cache-dir -r u23.04_req.txt
+
+# -----------------------------------------------------------------
+# Install a 10/13/23 commit of the dev branch of o2scl
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
   && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
 
@@ -50,7 +62,7 @@ RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
 
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
+WORKDIR /opt/o2sc
 RUN git checkout eee9fd83 && autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
