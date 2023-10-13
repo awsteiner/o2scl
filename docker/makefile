@@ -34,7 +34,7 @@ testq:
 #		--user="awsteiner" 
 
 # ----------------------------------------------
-# Standard builds
+# Standard build 1: v0.927_u22.04_min
 
 build_v0.927_u22.04_min:
 	sudo docker build . --rm -f v0.927_u22.04_min \
@@ -47,6 +47,9 @@ pull_v0.927_u22.04_min:
 push_v0.927_u22.04_min:
 	sudo docker push awsteiner/o2scl:v0.927_u22.04_min
 
+# ----------------------------------------------
+# Standard build 2: v0.928_u22.04_min
+
 build_v0.928_u22.04_min:
 	sudo docker build . --rm -f v0.928_u22.04_min \
 		-t awsteiner/o2scl:v0.928_u22.04_min \
@@ -58,6 +61,9 @@ pull_v0.928_u22.04_min:
 push_v0.928_u22.04_min:
 	sudo docker push awsteiner/o2scl:v0.928_u22.04_min
 
+# ----------------------------------------------
+# Standard build 3: v0.928_u23.04_py
+
 build_v0.928_u23.04_py:
 	sudo docker build . --rm -f v0.928_u23.04_py \
 		-t awsteiner/o2scl:v0.928_u23.04_py \
@@ -68,6 +74,20 @@ push_v0.928_u23.04_py:
 
 pull_v0.928_u23.04_py:
 	sudo docker pull awsteiner/o2scl:v0.928_u23.04_py
+
+# ----------------------------------------------
+# Standard build 4: v0.929a1_u23.04_py
+
+build_v0.929a1_u23.04_py:
+	sudo docker build . --rm -f v0.929a1_u23.04_py \
+		-t awsteiner/o2scl:v0.929a1_u23.04_py \
+		> v0.929a1_u23.04_py.out 2>&1 &
+
+push_v0.929a1_u23.04_py:
+	sudo docker push awsteiner/o2scl:v0.929a1_u23.04_py
+
+pull_v0.929a1_u23.04_py:
+	sudo docker pull awsteiner/o2scl:v0.929a1_u23.04_py
 
 # ----------------------------------------------
 # Other builds
@@ -87,10 +107,6 @@ build_v0.927_u22.04:
 build_v0.928_u23.04:
 	sudo docker build . --rm -f v0.928_u23.04 \
 		> v0.928_u23.04.out 2>&1 &
-
-build_v0.929a1_test:
-	sudo docker build . --rm -f v0.929a1_test \
-		> v0.929a1_test.out 2>&1 &
 
 build_u:
 	-docker build . --rm -f v0.927_u22.04_min \
