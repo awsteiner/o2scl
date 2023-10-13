@@ -92,10 +92,10 @@ pull_v0.929a1_u23.04_py:
 # ----------------------------------------------
 # Other builds
 
-build_v0.929a1_u23.04_muses:
-	sudo docker build . --rm -f v0.929a1_u23.04_muses \
-		-t awsteiner/o2scl:v0.929a1_u23.04_muses \
-		> v0.929a1_u23.04_muses.out 2>&1 &
+build_v0.929a1_muses:
+	sudo docker build . --rm -f v0.929a1_muses \
+		-t awsteiner/o2scl:v0.929a1_muses \
+		> v0.929a1_muses.out 2>&1 &
 
 build_v0.927_ot:
 	sudo docker build . --rm -f v0.927_ot \
