@@ -51,7 +51,7 @@ RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout dev && autoreconf -i
+RUN git checkout adb9702 && autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
 
