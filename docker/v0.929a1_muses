@@ -21,7 +21,7 @@ RUN apt-get -y update && apt-get \
   libhdf5-dev libreadline-dev libeigen3-dev cmake \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip libcairo2-dev
+  cm-super python3 python3-pip libcairo2-dev dbus
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
@@ -40,12 +40,12 @@ RUN pip3 install --no-cache-dir --upgrade pip \
   && pip3 install --no-cache-dir -r u23.04_req.txt
 
 # -----------------------------------------------------------------
-# Install the dev branch of o2scl
+# Install a 10/13/23 commit of the dev branch of o2scl
 
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout dev && autoreconf -i
+RUN git checkout adb9702 && autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
 
