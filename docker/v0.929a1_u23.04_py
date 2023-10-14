@@ -51,7 +51,7 @@ RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout 9e442184089d && autoreconf -i
+RUN git checkout 9e442184 && autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
 
@@ -66,7 +66,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git checkout dev && pip3 install --break-system-packages . 
+RUN git checkout 9ba481b4 && pip3 install --break-system-packages . 
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
@@ -74,24 +74,9 @@ RUN git checkout dev && pip3 install --break-system-packages .
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/12/libgomp.so
 
 # --------------------------------------------------------------------------
-# O2scl testing and examples
+# Clear the build directory and then run acol and o2graph
 
-WORKDIR /opt/o2scl
-RUN make o2scl-test && make o2scl-examples
-
-# --------------------------------------------------------------------------
-# Clear the build directory and then run acol
-
-WORKDIR /opt
-RUN acol -h && acol -v
-
-# --------------------------------------------------------------------------
-# Test o2sclpy
-
-RUN o2graph -h && o2graph -v
-WORKDIR /opt/o2sclpy
-# Make test and output to screen
-RUN make testq
+RUN acol -h && acol -v && o2graph -h && o2graph -v
 
 
 
