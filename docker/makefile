@@ -90,8 +90,9 @@ pull_v0.929a1_u23.04_py:
 	sudo docker pull awsteiner/o2scl:v0.929a1_u23.04_py
 
 test_v0.929a1_u23.04_py:
-	sudo docker run awsteiner/o2scl:v0.929a1_u23.04_py
-		"cd /opt/o2scl && make o2scl-test && make o2scl-examples"
+	sudo docker run awsteiner/o2scl:v0.929a1_u23.04_py sh -c \
+		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
+		> test_v0.929a1_u23.04_py.out 2>&1 &
 
 # ----------------------------------------------
 # Other builds
