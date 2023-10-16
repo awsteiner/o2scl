@@ -171,6 +171,7 @@ int main(void) {
     // Return tol_rel to its default value
     imkb.tol_rel=0.0;
   }
+#endif
   
   {
     double val, err2, a=0, b=1;
@@ -214,6 +215,7 @@ int main(void) {
 #endif
 #endif
 
+#ifdef O2SCL_SET_MPFR
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
@@ -225,6 +227,7 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
+#endif
 
     // Multiprecision integration with infinite limits
     
