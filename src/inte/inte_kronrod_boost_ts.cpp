@@ -64,7 +64,9 @@ int main(void) {
   t.set_output_level(2);
 
   inte_kronrod_boost<61> imkb;
+#ifdef O2SCL_SET_MPFR
   inte_kronrod_boost<61,mpfr_25,mpfr_35,mpfr_50,mpfr_100> imkb_mpfr;
+#endif
   
   {
     // Integrate test_func over [0,1] and compare to the exact result
@@ -119,6 +121,7 @@ int main(void) {
     cout << endl;
   }
 
+#ifdef O2SCL_SET_MPFR
   {
     // Integrate test_func over [0,1] and compare to the exact result
     // at 50-digit precision
@@ -142,6 +145,7 @@ int main(void) {
     // Return tol_rel to its default value
     imkb.tol_rel=0.0;
   }
+#endif
   
   {
     double val, err2, a=0, b=1;
@@ -161,6 +165,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip 2");
     cout << endl;
 
+#ifdef O2SCL_SET_MPFR
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
                           a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
@@ -172,6 +177,7 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
+#endif
 
     // Multiprecision integration with infinite limits
     
@@ -250,11 +256,13 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip string");
     cout << endl;
     
+#ifdef O2SCL_SET_MPFR
     imkb_mpfr.integ_err_multip([fmsp](auto &&tb) mutable {
       return (*fmsp)(tb); },a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip string mpfr");
     cout << endl;
+#endif
     
 #endif  
       
