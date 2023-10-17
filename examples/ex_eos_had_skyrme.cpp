@@ -187,9 +187,9 @@ public:
   ex_eos_had_skyrme() {
 
     n.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_neutron),2.0);
+	   ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
     p.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_proton),2.0);
+	   ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
     n.non_interacting=false;
     p.non_interacting=false;
     
@@ -421,7 +421,7 @@ public:
 	n.n=nb-p.n;
 	sk.calc_e(n,p,th);
 	double me=o2scl_settings.get_convert_units().convert
-	  ("kg","1/fm",o2scl_mks::mass_electron);
+	  ("kg","1/fm",o2scl_const::mass_electron_f<double>());
 	if (n.mu-p.mu-me<0.0) {
 	  nb_last=nb-0.001;
 	  nb=2.1;

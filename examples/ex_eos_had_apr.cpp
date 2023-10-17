@@ -43,7 +43,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
-using namespace o2scl_cgs;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -506,7 +505,9 @@ protected:
     ey[0]=(mun1-mun2)/1.0; 
     ey[1]=(th1.pr-th2.pr)/1.0; 
     ey[2]=u*np1-e.n;
-    if (nv>3)ey[3]= barn-u*(np1+nn1)-(1.0-u)*nn2;
+    if (nv>3) {
+      ey[3]=nb-u*(np1+nn1)-(1.0-u)*nn2;
+    }
   
     tot.pr=th1.pr+e.pr;
     hb.ed=u*th1.ed+(1.0-u)*th2.ed;
@@ -562,7 +563,9 @@ protected:
     ey[1]=(th1.pr-th2.pr)/1.0; 
     ey[2]=e.n-u*np1-(1.0-u)*np2;
     ey[3]=(mup1-mup2)/1.0;
-    if (nv>4) ey[4]=barn-u*(np1+nn1)-(1.0-u)*(nn2+np2);
+    if (nv>4) {
+      ey[4]=nb-u*(np1+nn1)-(1.0-u)*(nn2+np2);
+    }
   
     tot.pr=th1.pr+e.pr;
     hb.ed=u*th1.ed+(1.0-u)*th2.ed;
@@ -588,13 +591,13 @@ public:
     // Ensure that this works without GNU units
 
     e.init(o2scl_settings.get_convert_units().convert
-	   ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	   ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
     mu.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+	    ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
     e2.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
     mu2.init(o2scl_settings.get_convert_units().convert
-	     ("kg","1/fm",o2scl_mks::mass_muon),2.0);
+	     ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
 
     n.non_interacting=false;
     p.non_interacting=false;

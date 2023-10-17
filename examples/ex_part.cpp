@@ -52,7 +52,7 @@ int main(void) {
   classical_thermo cla;
   
   fermion e(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_mks::mass_electron),2.0);
+	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
   fermion e2(e.m,2.0);
   fermion e3(e.m,2.0);
 
