@@ -861,7 +861,7 @@ int eos_leptons_multip::electron_density(double T) {
 }
 
 int eos_leptons_multip::pair_density_eq_fun(size_t nv, const ubvector &x,
-                                     ubvector &y, double T, double nq) {
+                                            ubvector &y, double T, double nq) {
 
   if (pde_from_density) {
 
