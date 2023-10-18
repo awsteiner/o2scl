@@ -100,7 +100,7 @@ test_v0.929a1_u23.04_py:
 test2_v0.929a1_u23.04_py:
 	sudo docker run awsteiner/o2scl:v0.929a1_u23.04_py sh -c \
 		"cd /opt/o2sclpy && make testq" \
-		> test2_v0.929a1_u23.04_py.out 2>&1 &
+		>> test_v0.929a1_u23.04_py.out 2>&1 &
 
 # ----------------------------------------------
 # Other builds
