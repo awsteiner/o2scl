@@ -27,6 +27,8 @@
     \brief Multiprecisions extension to Function object classes
 */
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
 // for typeid()
 #include <typeinfo>
 
@@ -1278,5 +1280,7 @@ namespace o2scl {
 #endif
     
 }
+
+#endif
 
 #endif

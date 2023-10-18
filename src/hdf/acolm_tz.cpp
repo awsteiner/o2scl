@@ -1963,6 +1963,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << std::numeric_limits<long double>::epsilon()
        << std::endl;
   
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   cout.width(18);
   cout << "cpp_dec_float_25";
   cout.width(3);
@@ -2085,6 +2086,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << std::numeric_limits<mpfr_100>::epsilon()
        << std::endl;
 
+#endif
 #endif
   
   cout.unsetf(ios::left);

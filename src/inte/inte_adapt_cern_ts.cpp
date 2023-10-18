@@ -158,6 +158,8 @@ int main(void) {
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
     cout << "inte_adapt_cern, cpp_dec_float_50, testfun:\n  ";
     
     cpp_dec_float_50 one=1.0, diff_cdf;
@@ -376,9 +378,11 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi,1.0e-15,"multip 5");
     cout << endl;
-
     
   }
+
+#endif
+  
   t.report();
   return 0;
 }

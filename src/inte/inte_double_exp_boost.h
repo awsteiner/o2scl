@@ -35,7 +35,9 @@
 #include <boost/math/quadrature/sinh_sinh.hpp>
 
 #include <o2scl/inte.h>
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <o2scl/funct_multip.h>
+#endif
 
 namespace o2scl {
 
@@ -672,6 +674,8 @@ namespace o2scl {
         }
       }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       if (integ_tol>
           pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
@@ -806,7 +810,9 @@ namespace o2scl {
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
-    
+
+#endif
+      
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
                       "in inte_double_exp_boost::integ_err().",
                       o2scl::exc_efailed,this->err_nonconv);
@@ -879,6 +885,8 @@ namespace o2scl {
         }
       }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
           std::cout << "  " << integ_tol << " > "
@@ -1060,6 +1068,8 @@ namespace o2scl {
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
+
+#endif
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy in ",
                       "inte_double_exp_boost::integ_iu_err_multip().",
@@ -1121,6 +1131,8 @@ namespace o2scl {
           target_tol/=10;
         }
       }
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
@@ -1251,6 +1263,8 @@ namespace o2scl {
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
+
+#endif
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
                       "in inte_double_exp_boost::integ_il_err_multip().",
@@ -1311,6 +1325,8 @@ namespace o2scl {
           target_tol/=10;
         }
       }
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
@@ -1436,6 +1452,8 @@ namespace o2scl {
                   << "failed after fp_100_t:\n  "
                   << integ_tol << std::endl;
       }
+
+#endif
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
                       "in inte_double_exp_boost::integ_i_err_multip().",

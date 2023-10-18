@@ -29,14 +29,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
-typedef boost::multiprecision::number<
-  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-typedef boost::multiprecision::number<
-  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-typedef boost::multiprecision::number<
-  boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
-
 template<class fp_t> fp_t test_func(fp_t x) {
   fp_t one=1;
   fp_t hundred=100;
@@ -142,6 +134,8 @@ int main(void) {
               << ideb.L1norm << std::endl;
     t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
     cout << endl;
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 
     funct_ld tf1_ld=test_func<long double>;
     funct_ld tf2_ld=test_func_2<long double>;
@@ -258,6 +252,8 @@ int main(void) {
   }
 #endif
 
+#endif
+  
   t.report();
   return 0;
 }

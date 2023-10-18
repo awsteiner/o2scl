@@ -709,6 +709,8 @@ namespace o2scl {
 
       }
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       // ─────────────────────────────────────────────────────────────────
       
       // Determine the next stepsize by the previous optimal stepsize
@@ -939,7 +941,9 @@ namespace o2scl {
         }
 
       }
-    
+
+#endif
+      
       O2SCL_ERR2("Failed to compute with requested accuracy ",
                  "in deriv_multip_gsl::deriv_err().",
                  o2scl::exc_efailed);

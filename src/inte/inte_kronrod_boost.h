@@ -33,7 +33,9 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <o2scl/funct_multip.h>
+#endif
 
 namespace o2scl {
 
@@ -361,6 +363,8 @@ namespace o2scl {
         }
       }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
@@ -550,6 +554,8 @@ namespace o2scl {
                   << "failed after fp_100_t.\n  "
                   << "Original tolerance: " << integ_tol << std::endl;
       }
+
+#endif
     
       O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
                       "in inte_kronrod_boost::integ_err_multip().",

@@ -380,6 +380,8 @@ namespace o2scl {
 
   };
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision
 
@@ -662,6 +664,8 @@ namespace o2scl {
    */
   typedef funct_multip_string_tl<mpfr_25,mpfr_35,mpfr_50,mpfr_100>
   funct_multip_string_mpfr;
+#endif
+
 #endif
   
   /** \brief Convert a formula to a floating point number and 

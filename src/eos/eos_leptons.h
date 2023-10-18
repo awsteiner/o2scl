@@ -105,47 +105,9 @@ namespace o2scl {
 
     /// \name Internal particle objects [protected]
     //@{
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-    /** \brief Electron in long double precision
-     */
-    fermion_ld eld;
-    
-    /** \brief Electron in 25-digit precision
-     */
-    fermion_cdf25 ecdf25;
-
-    /** \brief Muon in long double precision
-     */
-    fermion_ld muld;
-    
-    /** \brief Muon in 25-digit precision
-     */
-    fermion_cdf25 mucdf25;
-
-    /** \brief Tau in long double precision
-     */
-    fermion_ld tauld;
-    
-    /** \brief Tau in 25-digit precision
-     */
-    fermion_cdf25 taucdf25;
-#endif
-    
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
-
-    /* \brief Relativistic fermion thermodynamics with derivatives at
-        long double precision
-     */
-    //fermion_deriv_rel_tl<fermion_deriv_ld,fermion_rel_ld,
-    //long double> fdrel_ld;
-    
-    /* \brief Relativistic fermion thermodynamics with derivatives at
-        long double precision
-     */
-    //fermion_deriv_rel_cdf25<fermion_deriv_cdf25,fermion_rel_cdf25,
-    //cpp_dec_float_25> fdrel_cdf25;
     //@}
     
     /// \name Accuracy control
@@ -162,17 +124,6 @@ namespace o2scl {
     static const int acc_fp_25=3;
     //@}
 
-    /// \name Unit conversion objects to set the lepton masses
-    //@{
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-    /// Long double precision unit conversion object
-    convert_units<long double> cu_ld;
-
-    /// 25-digit precision unit conversion object
-    convert_units<cpp_dec_float_25> cu_cdf25;
-#endif
-    //@}
-    
   public:
 
     /// \name Constructor
@@ -395,7 +346,58 @@ namespace o2scl {
      */
     fermion_rel frel;
 
+    //@}
+    
+  };
+  
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  class eos_leptons_multip : public eos_leptons {
+
+  protected:
+    
+    /// \name Internal particle objects [protected]
+    //@{
+    /** \brief Electron in long double precision
+     */
+    fermion_ld eld;
+    
+    /** \brief Electron in 25-digit precision
+     */
+    fermion_cdf25 ecdf25;
+
+    /** \brief Muon in long double precision
+     */
+    fermion_ld muld;
+    
+    /** \brief Muon in 25-digit precision
+     */
+    fermion_cdf25 mucdf25;
+
+    /** \brief Tau in long double precision
+     */
+    fermion_ld tauld;
+    
+    /** \brief Tau in 25-digit precision
+     */
+    fermion_cdf25 taucdf25;
+    
+    /// \name Unit conversion objects to set the lepton masses
+    //@{
+    /// Long double precision unit conversion object
+    convert_units<long double> cu_ld;
+
+    /// 25-digit precision unit conversion object
+    convert_units<cpp_dec_float_25> cu_cdf25;
+    //@}
+
+    int electron_density(double T);
+
+    int pair_density_eq_fun(size_t nv, const ubvector &x,
+                            ubvector &y, double T, double nq);
+    
+  public:
+    
     /** \brief Relativistic fermion thermodynamics in long double precision
      */
     fermion_rel_ld frel_ld;
@@ -403,11 +405,10 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics in 25 digit precision
      */
     fermion_rel_cdf25 frel_cdf25;
-#endif
-    //@}
     
   };
-  
+
+#endif  
 }
 
 #endif
