@@ -105,6 +105,7 @@ namespace o2scl {
 
     /// \name Internal particle objects [protected]
     //@{
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     /** \brief Electron in long double precision
      */
     fermion_ld eld;
@@ -128,7 +129,8 @@ namespace o2scl {
     /** \brief Tau in 25-digit precision
      */
     fermion_cdf25 taucdf25;
-
+#endif
+    
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
@@ -162,11 +164,13 @@ namespace o2scl {
 
     /// \name Unit conversion objects to set the lepton masses
     //@{
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     /// Long double precision unit conversion object
     convert_units<long double> cu_ld;
 
     /// 25-digit precision unit conversion object
     convert_units<cpp_dec_float_25> cu_cdf25;
+#endif
     //@}
     
   public:
@@ -391,6 +395,7 @@ namespace o2scl {
      */
     fermion_rel frel;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     /** \brief Relativistic fermion thermodynamics in long double precision
      */
     fermion_rel_ld frel_ld;
@@ -398,6 +403,7 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics in 25 digit precision
      */
     fermion_rel_cdf25 frel_cdf25;
+#endif
     //@}
     
   };

@@ -37,8 +37,10 @@ eos_leptons::eos_leptons() {
   err_nonconv=false;
       
   convert_units<double> &cu=o2scl_settings.get_convert_units();
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   cu_ld.default_conversions();
   cu_cdf25.default_conversions();
+#endif
   
   e.init(cu.convert("kg","1/fm",mass_electron_f<double>()),2);
   mu.init(cu.convert("kg","1/fm",mass_muon_f<double>()),2);
@@ -48,6 +50,7 @@ eos_leptons::eos_leptons() {
   nu_mu.init(0,2);
   nu_tau.init(0,2);
   
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   eld.init(cu_ld.convert("kg","1/fm",mass_electron_f<long double>()),2);
   muld.init(cu_ld.convert("kg","1/fm",mass_muon_f<long double>()),2);
   tauld.init(cu_ld.convert("kg","1/fm",mass_tau_f<long double>()),2);
@@ -58,6 +61,7 @@ eos_leptons::eos_leptons() {
                                 mass_muon_f<cpp_dec_float_25>()),2);
   taucdf25.init(cu_cdf25.convert("kg","1/fm",
                                  mass_tau_f<cpp_dec_float_25>()),2);
+#endif
   
   ph.init(0.0,2.0);
 
@@ -84,6 +88,7 @@ int eos_leptons::electron_density(double T) {
   }
 
   if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     ecdf25.n=e.n;
     ecdf25.mu=e.mu;
     ecdf25.inc_rest_mass=e.inc_rest_mass;
@@ -92,7 +97,9 @@ int eos_leptons::electron_density(double T) {
     e.ed=static_cast<double>(ecdf25.ed);
     e.pr=static_cast<double>(ecdf25.pr);
     e.en=static_cast<double>(ecdf25.en);
+#endif
   } else if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     eld.n=e.n;
     eld.mu=e.mu;
     eld.inc_rest_mass=e.inc_rest_mass;
@@ -101,6 +108,7 @@ int eos_leptons::electron_density(double T) {
     e.ed=static_cast<double>(eld.ed);
     e.pr=static_cast<double>(eld.pr);
     e.en=static_cast<double>(eld.en);
+#endif
   } else {
     retx=frel.pair_density(e,T);
   }
@@ -144,13 +152,17 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
   if (pde_from_density) {
 
     if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       eld.n=x[0]*nq;
       int retx=electron_density(T);
       if (retx!=0) return retx;
+#endif
     } else if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       ecdf25.n=x[0]*nq;
       int retx=electron_density(T);
       if (retx!=0) return retx;
+#endif
     } else {
       e.n=x[0]*nq;
       int retx=electron_density(T);
@@ -169,19 +181,23 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
     }
 
     if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       eld.mu=e.mu;
       frel_ld.pair_mu(eld,T);
       e.n=eld.n;
       e.ed=eld.ed;
       e.pr=eld.pr;
       e.en=eld.en;
+#endif
     } else if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       ecdf25.mu=e.mu;
       frel_cdf25.pair_mu(ecdf25,T);
       e.n=static_cast<double>(ecdf25.n);
       e.ed=static_cast<double>(ecdf25.ed);
       e.pr=static_cast<double>(ecdf25.pr);
       e.en=static_cast<double>(ecdf25.en);
+#endif
     } else {
       frel.pair_mu(e,T);
     }
@@ -244,6 +260,7 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
   }
 
   if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     fcdf25.n=f.n;
     fcdf25.mu=f.mu;
     fcdf25.inc_rest_mass=f.inc_rest_mass;
@@ -252,7 +269,9 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
     f.ed=static_cast<double>(fcdf25.ed);
     f.pr=static_cast<double>(fcdf25.pr);
     f.en=static_cast<double>(fcdf25.en);
+#endif
   } else if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     fld.n=f.n;
     fld.mu=f.mu;
     fld.inc_rest_mass=f.inc_rest_mass;
@@ -261,6 +280,7 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
     f.ed=static_cast<double>(fld.ed);
     f.pr=static_cast<double>(fld.pr);
     f.en=static_cast<double>(fld.en);
+#endif    
   } else {
     retx=frel.pair_density(e,T);
   }
@@ -305,6 +325,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
   if (pde_from_density) {
 
     if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       eld.n=x[0]*nLe;
       if (include_muons) {
         muld.n=x[1]*nLmu;
@@ -312,7 +333,9 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       if (include_taus) {
         tauld.n=x[2]*nLtau;
       }
+#endif
     } else if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       ecdf25.n=x[0]*nLe;
       if (include_muons) {
         mucdf25.n=x[1]*nLmu;
@@ -320,6 +343,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       if (include_taus) {
         taucdf25.n=x[2]*nLtau;
       }
+#endif
     } else {
       e.n=x[0]*nLe;
       if (include_muons) {
@@ -330,6 +354,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       }
     }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     int retx=fermion_density(e,eld,ecdf25,T);
     if (retx!=0) return retx;
     if (include_muons) {
@@ -340,6 +365,18 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       retx=tau_density(tau,tauld,taucdf25,T);
       if (retx!=0) return retx;
     }
+#else
+    int retx=fermion_density(e,e,e,T);
+    if (retx!=0) return retx;
+    if (include_muons) {
+      retx=fermion_density(mu,mu,mu,T);
+      if (retx!=0) return retx;
+    }
+    if (include_taus) {
+      retx=tau_density(tau,tau,tau,T);
+      if (retx!=0) return retx;
+    }
+#endif
     
   } else {
     
@@ -367,19 +404,23 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
     }
 
     if (accuracy==acc_ld) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       eld.mu=e.mu;
       frel_ld.pair_mu(eld,T);
       e.n=eld.n;
       e.ed=eld.ed;
       e.pr=eld.pr;
       e.en=eld.en;
+#endif
     } else if (accuracy==acc_fp_25) {
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       ecdf25.mu=e.mu;
       frel_cdf25.pair_mu(ecdf25,T);
       e.n=static_cast<double>(ecdf25.n);
       e.ed=static_cast<double>(ecdf25.ed);
       e.pr=static_cast<double>(ecdf25.pr);
       e.en=static_cast<double>(ecdf25.en);
+#endif
     } else {
       frel.pair_mu(e,T);
     }

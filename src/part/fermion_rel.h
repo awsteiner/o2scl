@@ -2856,6 +2856,8 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   /** \brief Long double precision version of \ref o2scl::fermion_rel_tl
    */
   class fermion_rel_ld : public
@@ -2972,6 +2974,8 @@ namespace o2scl {
     
   };
 
+#endif
+  
 #ifdef O2SCL_NEVER_DEFINED  
   /** \brief Desc
    */
