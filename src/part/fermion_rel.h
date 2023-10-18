@@ -31,8 +31,6 @@
 #include <fstream>
 #include <cmath>
 
-#include <boost/multiprecision/cpp_dec_float.hpp>
-
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
@@ -43,6 +41,10 @@
 #include <o2scl/polylog.h>
 #include <o2scl/inte_kronrod_boost.h>
 #include <o2scl/inte_adapt_cern.h>
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 namespace o2scl {
 

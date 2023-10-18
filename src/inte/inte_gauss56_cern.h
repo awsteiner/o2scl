@@ -26,10 +26,12 @@
 #ifndef O2SCL_INTE_GAUSS56_CERN_H
 #define O2SCL_INTE_GAUSS56_CERN_H
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <o2scl/set_mpfr.h>
 #ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
+#endif
 #endif
 
 #include <o2scl/misc.h>
@@ -202,6 +204,8 @@ namespace o2scl {
 
   };
     
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
   /** \brief Specialization for inte_gauss56_cern in 25-digit precision
 
       \note The weights and abscissa have 50 digits of precision which
@@ -606,6 +610,7 @@ namespace o2scl {
   
   };
 
+#endif
 #endif
   
 }
