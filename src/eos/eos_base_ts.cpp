@@ -48,7 +48,11 @@ int main(void) {
 
   eo.set_thermo(th);
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  eos_leptons_multip elep;
+#else
   eos_leptons elep;
+#endif
   elep.include_muons=false;
   elep.include_deriv=true;
 
@@ -105,6 +109,7 @@ int main(void) {
 
   cout << "pair_density(): " << endl;
   
+  elep.default_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
   elep.pair_mu(0.1);
@@ -121,6 +126,7 @@ int main(void) {
   cout << dtos(elep.ed.dndmu,0) << endl;
 
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   elep.ld_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
@@ -136,6 +142,7 @@ int main(void) {
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  
 #endif
   
   cout << endl;
