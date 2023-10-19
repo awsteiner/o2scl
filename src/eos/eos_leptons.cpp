@@ -815,7 +815,7 @@ int eos_leptons_multip::electron_density(double T) {
 
   int retx;
 
-  if (accuracy!=acc_fp_25 || accuracy!=acc_ld) {
+  if (accuracy!=acc_fp_25 && accuracy!=acc_ld) {
     return eos_leptons::electron_density(T);
   }
   
