@@ -55,8 +55,6 @@ eos_leptons::eos_leptons() {
 
 int eos_leptons::electron_density(double T) {
 
-  int retx;
-
   bool inc_rest_mass=false;
   if (e.inc_rest_mass) {
     
@@ -69,6 +67,8 @@ int eos_leptons::electron_density(double T) {
 
   }
 
+  int retx=1;
+  
   if (accuracy==acc_fp_25) {
     O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
   } else if (accuracy==acc_ld) {
@@ -860,7 +860,7 @@ int eos_leptons_multip::electron_density(double T) {
   return retx;
 }
 
-int eos_leptons_multi::pair_density_eq_fun(size_t nv, const ubvector &x,
+int eos_leptons_multip::pair_density_eq_fun(size_t nv, const ubvector &x,
                                      ubvector &y, double T, double nq) {
 
   if (pde_from_density) {

@@ -397,6 +397,8 @@ namespace o2scl {
                             ubvector &y, double T, double nq);
     
   public:
+
+    eos_leptons_multip();
     
     /** \brief Relativistic fermion thermodynamics in long double precision
      */

@@ -192,6 +192,8 @@ int main(int argc, char *argv[]) {
   t.test_rel(v2,0.0,4.0e-10,"calibrate 2");
   cout << endl;
   
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
   fermion_ld fld;
   fermion_rel_ld frld;
   //fermion_rel_ld_multip frld2;
@@ -405,6 +407,8 @@ int main(int argc, char *argv[]) {
 
   }
 
+#endif
+  
   t.report();
 
   return 0;
