@@ -596,8 +596,12 @@ namespace o2scl {
 
     /// \name The base integrators
     //@{
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
                        cpp_dec_float_50,cpp_dec_float_100> ikb;
+#else
+    inte_kronrod_boost<61,double,double,double,double> ikb;
+#endif
     inte_double_exp_boost<> ideb;
     inte_adapt_cern iac;
     //@}

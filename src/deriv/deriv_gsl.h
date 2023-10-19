@@ -478,6 +478,7 @@ namespace o2scl {
 		      fp_t &abserr_round, fp_t &abserr_trunc,
                       double func_tol) {
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -549,6 +550,11 @@ namespace o2scl {
       /* Rounding error (cancellations) */
       fp_t trat4=e5/hh;
       abserr_round=abs(trat4)+dy;
+
+#else
+      abserr_trunc=std::numeric_limits<fp_t>::infinity();
+      abserr_round=std::numeric_limits<fp_t>::infinity();
+#endif
       
       if (this->verbose>0) {
 	std::cout << "res: " << result << " trc: " << abserr_trunc 

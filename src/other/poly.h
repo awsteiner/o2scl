@@ -2536,6 +2536,8 @@ namespace o2scl {
 
   };
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   /** \brief Use multiprecision to automatically solve a cubic to 
       a specified level of precision
 
@@ -3021,6 +3023,8 @@ namespace o2scl {
 
     
   };
+
+#endif
 
   /** \brief Solve a general polynomial with real coefficients (GSL)
    */

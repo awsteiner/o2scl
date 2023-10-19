@@ -236,6 +236,7 @@ namespace o2scl {
                       fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -254,6 +255,10 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
           std::cout << "  inte_multip_double_exp_boost::"
@@ -285,6 +290,7 @@ namespace o2scl {
                          double target_tol, double integ_tol,
                          double func_tol) {
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -304,6 +310,10 @@ namespace o2scl {
                   << func_tol << " " << res << " " << err << " "
                   << L1norm << std::endl;
       }
+      
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
       
       if (err/abs(res)>integ_tol) {
         return 1;
@@ -330,6 +340,7 @@ namespace o2scl {
                          double target_tol, double integ_tol,
                          double func_tol) {
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -350,6 +361,10 @@ namespace o2scl {
                   << L1norm << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         return 1;
       }
@@ -374,6 +389,7 @@ namespace o2scl {
                         fp_t &L1norm_loc, double target_tol,
                         double integ_tol, double func_tol) {
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -397,6 +413,10 @@ namespace o2scl {
                   << L1norm << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         return 1;
       }
