@@ -79,7 +79,7 @@ namespace o2scl {
         
         The temperature should be in units of \f$ 1/\mathrm{fm} \f$ .
     */
-    int electron_density(double T);
+    virtual int electron_density(double T);
 
     /** \brief Function to solve for \ref pair_density_eq()
 
@@ -99,7 +99,7 @@ namespace o2scl {
         \f]
         is stored in \c y.
     */
-    int pair_density_eq_fun(size_t nv, const ubvector &x,
+    virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     //@}
 
@@ -131,6 +131,9 @@ namespace o2scl {
     eos_leptons();
     //@}
 
+    virtual ~eos_leptons() {
+    }
+    
     /// \name Particle objects
     //@{
     /** \brief Electron
@@ -391,14 +394,17 @@ namespace o2scl {
     convert_units<cpp_dec_float_25> cu_cdf25;
     //@}
 
-    int electron_density(double T);
-
-    int pair_density_eq_fun(size_t nv, const ubvector &x,
+    virtual int electron_density(double T);
+    
+    virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     
   public:
 
     eos_leptons_multip();
+    
+    virtual ~eos_leptons_multip() {
+    }
     
     /** \brief Relativistic fermion thermodynamics in long double precision
      */
