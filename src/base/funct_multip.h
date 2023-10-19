@@ -27,22 +27,25 @@
     \brief Multiprecisions extension to Function object classes
 */
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+// For o2scl::dtos()
+#include <o2scl/string_conv.h>
 
 // for typeid()
 #include <typeinfo>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
 #include <boost/multiprecision/cpp_dec_float.hpp>
-
 #include <o2scl/set_mpfr.h>
-// For o2scl::dtos()
-#include <o2scl/string_conv.h>
-
 #ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
 #endif
 
+#endif
+
 namespace o2scl {
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
@@ -84,6 +87,16 @@ namespace o2scl {
   //#endif
   //@}
 
+#else
+
+  typedef long double o2fp_25;
+  typedef long double o2fp_35;
+  typedef long double o2fp_50;
+  typedef long double o2fp_100;
+  
+  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#endif
+  
   /// \name One-dimensional function typedefs in src/base/funct_multip.h
   //@{
   /** \brief One-dimensional long double function in 
@@ -91,6 +104,8 @@ namespace o2scl {
   */
   typedef std::function<long double(long double)> funct_ld;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h
   */
@@ -143,8 +158,13 @@ namespace o2scl {
   */
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
+
+  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#endif
+  
   //@}
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
   
   /** \brief One-dimensional function typedef in src/base/funct.h
@@ -175,8 +195,13 @@ namespace o2scl {
   */
   typedef std::function<mpfr_100(mpfr_100)> funct_mpfr100;
 
+  // end of #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
+#endif
+  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #endif
   
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
 
@@ -1278,9 +1303,10 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform_mpfr=
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
-    
-}
 
+  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #endif
+  
+}
 
 #endif
