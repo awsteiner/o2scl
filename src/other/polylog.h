@@ -896,6 +896,8 @@ namespace o2scl {
     int calc_err_full(fp_t n, fp_t y, fp_t &res, fp_t &err, int &method) {
 
       fp_t zero=0;
+      res=0;
+      err=0;
       
       int ret1=ikb.integ_iu_err_multip([this,n,y](auto &&x) mutable 
       { return this->obj_func(x,n,y); },zero,res,err,tol);
@@ -1007,6 +1009,8 @@ namespace o2scl {
       }
       
       fp_t zero=0;
+      res=0;
+      err=0;
       
       int ret1=ikb.integ_iu_err_multip([this,a,y](auto &&x) mutable 
       { return this->obj_func(x,a,y); },zero,res,err,tol);
@@ -1267,8 +1271,10 @@ namespace o2scl {
     bose_einstein_multip bem;
     
     polylog_multip() {
-      fdm.set_tol(static_cast<double>(std::numeric_limits<fp_t>::epsilon()/2));
-      bem.set_tol(static_cast<double>(std::numeric_limits<fp_t>::epsilon()/2));
+      fdm.set_tol(static_cast<double>
+                  (std::numeric_limits<fp_t>::epsilon()/2));
+      bem.set_tol(static_cast<double>
+                  (std::numeric_limits<fp_t>::epsilon()/2));
     }
     
     /** \brief Set tolerance

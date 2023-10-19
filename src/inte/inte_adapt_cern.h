@@ -326,6 +326,7 @@ namespace o2scl {
       }
 
 #else
+      res=0;
       err=std::numeric_limits<fp_t>::infinity();
 #endif
       
@@ -368,6 +369,7 @@ namespace o2scl {
       }
 
 #else
+      res=0;
       err=std::numeric_limits<fp_t>::infinity();
 #endif
 
@@ -408,6 +410,7 @@ namespace o2scl {
       }
 
 #else
+      res=0;
       err=std::numeric_limits<fp_t>::infinity();
 #endif
 
@@ -457,6 +460,7 @@ namespace o2scl {
       }
 
 #else
+      res=0;
       err=std::numeric_limits<fp_t>::infinity();
 #endif
       
