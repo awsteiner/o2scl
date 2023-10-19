@@ -126,6 +126,7 @@ int main(void) {
   cout << dtos(elep.ed.dndmu,0) << endl;
 
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   elep.ld_acc();
   elep.e.n=1.0e-6;
   elep.pair_density(0.1);
@@ -141,6 +142,7 @@ int main(void) {
   cout << "mu: " << dtos(elep.e.mu,0) << " n: ";
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
+  
 #endif
   
   cout << endl;
