@@ -1283,6 +1283,8 @@ namespace o2scl {
 	   class fp_t=double>
   class fermion_deriv_rel_tl :
    */
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   /** \brief Long double version of 
       \ref o2scl::fermion_deriv_rel_tl 
@@ -1304,6 +1306,7 @@ namespace o2scl {
 			       cpp_dec_float_25>
   fermion_deriv_rel_cdf25;
   
+#endif  
   
 }
 
