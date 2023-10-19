@@ -281,9 +281,11 @@ namespace o2scl {
    */
   typedef fermion_deriv_tl<long double> fermion_deriv_ld;
   
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   /** \brief Desc
    */
   typedef fermion_deriv_tl<cpp_dec_float_25> fermion_deriv_cdf25;
+#endif
 
   /** \brief A boson with derivative information
    */

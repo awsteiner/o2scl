@@ -303,6 +303,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_transform<fp_t> fm2;
       fm2.lower_lim=a;
       fm2.err_nonconv=false;
@@ -324,6 +325,10 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         std::cout << "Ret 1" << std::endl;
         return 1;
@@ -340,6 +345,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_transform<fp_t> fm2;
       fm2.upper_lim=b;
       fm2.err_nonconv=false;
@@ -361,6 +367,10 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+
       if (err/abs(res)>integ_tol) {
         return 1;
       }
@@ -376,6 +386,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip_transform<fp_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -395,6 +406,10 @@ namespace o2scl {
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
       }
+
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
 
       if (err/abs(res)>integ_tol) {
         return 1;
@@ -424,6 +439,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -440,6 +456,10 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         return 1;
       }

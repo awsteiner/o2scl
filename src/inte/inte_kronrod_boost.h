@@ -145,6 +145,8 @@ namespace o2scl {
                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -168,6 +170,10 @@ namespace o2scl {
                   << func_tol << " " << err << std::endl;
       }
 
+#else
+      err=std::numeric_limits<fp_t>::infinity();
+#endif
+      
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
           std::cout << "  inte_kronrod_boost::integ_err_int() failed "
