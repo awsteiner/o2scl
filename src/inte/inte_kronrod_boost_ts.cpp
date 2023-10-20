@@ -146,7 +146,6 @@ int main(void) {
     // Return tol_rel to its default value
     imkb.tol_rel=0.0;
   }
-#endif
   
   {
     // Integrate test_func over [0,1] and compare to the exact result
@@ -213,9 +212,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
 #endif
-#endif
 
-#ifdef O2SCL_SET_MPFR
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
