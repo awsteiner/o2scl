@@ -42,18 +42,12 @@ RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
   --break-system-packages --no-binary=h5py h5py==3.9.0
 
 COPY u23.04_req.txt ./
-RUN pip3 install --no-cache-dir --upgrade pip \
-  && pip3 install --no-cache-dir -r u23.04_req.txt
-
-# -----------------------------------------------------------------
-# Install a 10/13/23 commit of the dev branch of o2scl
 RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
   && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
 
 # -----------------------------------------------------------------
-# Install the dev branch of o2scl
+# Install O2scl
 
-WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN git checkout d1f40c3d && autoreconf -i
@@ -68,7 +62,6 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 # --------------------------------------------------------------------------
 # Install o2sclpy via pip
 
-WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
 RUN git checkout 01d86bf6 && pip3 install --break-system-packages . 
