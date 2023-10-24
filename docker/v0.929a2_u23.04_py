@@ -50,7 +50,7 @@ RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout d1f40c3d && autoreconf -i
+RUN git checkout e34fd9ba && autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
 
