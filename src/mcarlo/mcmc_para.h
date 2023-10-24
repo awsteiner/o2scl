@@ -125,10 +125,21 @@ namespace o2scl {
       set_proposal(). To go back to the default random walk method,
       one can call the function \ref unset_proposal().
 
-      If \ref aff_inv is set to true, then affine-invariant
-      sampling is used. For affine-invariant sampling, the variable 
-      \ref step_fac represents the value of \f$ a \f$, the 
-      limits of the distribution for \f$ z \f$.
+      If \ref aff_inv is set to true, then affine-invariant sampling
+      is used. For affine-invariant sampling, the variable \ref
+      step_fac represents the value of \f$ a \f$, the limits of the
+      distribution for \f$ z \f$ (which defaults to 2). If \ref
+      aff_inv is true and an initial point fails, then \ref mcmc()
+      chooses random points inside the hypercube to attempt to find
+      enough initial points to proceed. This method of finding initial
+      points, however, is often too slow for large parameter spaces.
+
+      Affine-invariant sampling works best when the number of walkers
+      is much larger than the number of parameters. If \ref n_walk is
+      0 or 1, then this class automatically sets \ref n_walk to three
+      times the number of parameters. This class will otherwise allow
+      the user to set a smaller number of walkers than parameters
+      without notifying the user.
 
       In order to store data at each point, the user can store this
       data in any object of type \c data_t . If affine-invariant
@@ -136,6 +147,17 @@ namespace o2scl {
       class keeps twice as many copies of these data object as would
       otherwise be required, in order to avoid copying of data objects
       in the case that the steps are accepted or rejected.
+
+      Whether or not \ref aff_inv is true, there is a virtual function
+      called \ref outside_parallel() which is called during the MCMC.
+      Class descendants can replace this function with code which must
+      be run outside of an OpenMP parallel region. Note that this is
+      not implemented via, e.g. an OpenMP CRITICAL region so that no
+      loss of performance is expected. If \ref aff_inv is false, then
+      \ref outside_parallel() is called every \ref steps_in_parallel
+      MCMC steps (for each OpenMP thread). If \ref aff_inv is true,
+      then \ref outside_parallel() is called after all the walkers
+      have completed for each thread.
 
       <b>Verbose output:</b> If verbose is 0, no output is generated
       (the default). If verbose is 1, then output to <tt>cout</tt>
@@ -211,7 +233,8 @@ namespace o2scl {
     */
     std::vector<bool> switch_arr;
   
-    /** \brief Return value counters, one vector independent chain
+    /** \brief Return value counters, one vector for each independent
+        chain
      */
     std::vector<std::vector<size_t> > ret_value_counts;
   
