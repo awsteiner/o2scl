@@ -792,6 +792,8 @@ int eos_leptons::pair_density_eq(double nq, double T) {
   return 0;
 }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
 eos_leptons_multip::eos_leptons_multip() {
 
   cu_ld.default_conversions();
@@ -945,3 +947,5 @@ int eos_leptons_multip::pair_density_eq_fun(size_t nv, const ubvector &x,
 
   return 0;
 }
+
+#endif
