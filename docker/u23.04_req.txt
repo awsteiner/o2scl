@@ -88,7 +88,7 @@ typing_extensions==4.5.0
 unyt==2.9.5
 urllib3==1.26.18
 wcwidth==0.2.6
-Werkzeug==2.3.6
+Werkzeug==3.0.1
 widgetsnbextension==4.0.8
 wrapt==1.15.0
 yt==4.2.1
