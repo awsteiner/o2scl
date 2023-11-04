@@ -2103,11 +2103,9 @@ int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
               done=true;
             } else {
               if (vsw.output[k]!=((string)"<para>")) {
-                if (vsw.output[k]==((string)"</para>")) {
-                  if (verbose>1) {
-                    //cout << "stmp: " << stmp << endl;
-                  }
-                
+                if (vsw.output[k]==((string)"</para>") ||
+                    k==vsw.output.size()-1) {
+
                   xml_replacements(stmp);
                 
                   vs_tmp.push_back(stmp);
