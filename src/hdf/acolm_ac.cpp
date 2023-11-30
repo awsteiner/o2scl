@@ -178,351 +178,6 @@ int acol_manager::comm_assign(std::vector<std::string> &sv, bool itive_com) {
   return ret;
 }
 
-#ifdef O2SCL_NEVER_DEFINED
-
-int acol_manager::comm_autocorr(std::vector<std::string> &sv,
-				bool itive_com) {
-
-  if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "Table has no lines of data to compute "
-	   << "autocorrelations with." << endl;
-      return exc_efailed;
-    }
-
-    vector<string> in, pr;
-    if (sv.size()<4) {
-      pr.push_back("Enter output column for autocorrelations");
-      pr.push_back("Enter output column for 5*tau/m");
-      pr.push_back("Enter vector specification for data");
-      int ret=get_input(sv,pr,in,"autocorr",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
-    }
-
-    vector<vector<double> > ac_all;
-    size_t max_ac_size=0;
-    
-    for(size_t ix=2;ix<in.size();ix++) {
-      
-      vector<double> v, ac, ftom;
-
-      // If the argument is not a vector specification, then look
-      // for the column in the table
-      if (in[ix].find(':')==std::string::npos &&
-	  table_obj.is_column(in[ix])==false) {
-	cerr << "Could not find column named '" << in[ix] << "'." << endl;
-	return exc_efailed;
-      }
-
-      // Determine vector from table column (requires copy) or
-      // vector specification
-      if (in[ix].find(':')==std::string::npos) {
-	v.resize(table_obj.get_nlines());
-	for(size_t i=0;i<table_obj.get_nlines();i++) {
-	  v[i]=table_obj.get(in[ix],i);
-	}
-      } else {
-	int vs_ret=o2scl_hdf::vector_spec(in[ix],v,false,verbose,false);
-	if (vs_ret!=0) {
-	  cout << "Vector specification failed." << endl;
-	  return 1;
-	}
-      }
-      
-      // Compute autocorrelation length and sample size
-      vector_autocorr_vector(v,ac);
-      size_t len=vector_autocorr_tau(ac,ftom);
-      if (len>0) {
-	cout << "Autocorrelation length: " << len << " sample size: "
-	     << table_obj.get_nlines()/len << endl;
-      } else {
-	cout << "Autocorrelation length determination failed." << endl;
-      }
-
-      if (ix==2 || ac.size()>max_ac_size) {
-	max_ac_size=ac.size();
-      }
-      ac_all.push_back(ac);
-    }
-
-    if (max_ac_size==0) {
-      cerr << "Failed to find any data in 'autocorr'." << endl;
-      return 1;
-    }
-    vector<double> ac_avg(max_ac_size);
-    for(size_t i=0;i<max_ac_size;i++) {
-      size_t n=0;
-      ac_avg[i]=0.0;
-      for(size_t j=0;j<ac_all.size();j++) {
-	if (i<ac_all[j].size()) {
-	  n++;
-	  ac_avg[i]+=ac_all[j][i];
-	}
-      }
-      ac_avg[i]/=((double)n);
-    }
-    
-    // Now report autocorrelation length and sample size from
-    // averaged result
-    vector<double> ftom2;
-    
-    // Compute autocorrelation length
-    size_t len=vector_autocorr_tau(ac_avg,ftom2);
-    cout << "Averaged data, ";
-    if (len>0) {
-      cout << "autocorrelation length: " << len << endl;
-    } else {
-      cout << "autocorrelation length determination failed." << endl;
-    }
-
-    // Create new columns if necessary
-    if (!table_obj.is_column(in[0])) {
-      table_obj.new_column(in[0]);
-    }
-    if (!table_obj.is_column(in[1])) {
-      table_obj.new_column(in[1]);
-    }
-    
-    // Add autocorrelation and ftom data to table, replacing the
-    // values with zero when we reach the end of the vectors given by
-    // vector_autocorr_tau() .
-    
-    for(size_t i=0;i<table_obj.get_nlines();i++) {
-      if (i<ac_avg.size()) {
-	table_obj.set(in[0],i,ac_avg[i]);
-      } else {
-	table_obj.set(in[0],i,0.0);
-      }
-      if (i<ftom2.size()) {
-	table_obj.set(in[1],i,ftom2[i]);
-      } else {
-	table_obj.set(in[1],i,0.0);
-      }
-    }
-
-  } else if (type=="double[]") {
-
-    string alg="def";
-    if (sv.size()>=2) {
-      alg=sv[1];
-    }
-
-    vector<double> ac_vec, ftom;
-    if (alg=="def") {
-      
-      vector_autocorr_vector(doublev_obj,ac_vec);
-      size_t len=vector_autocorr_tau(ac_vec,ftom);
-      if (len>0) {
-        cout << "Autocorrelation length: " << len << " sample size: "
-             << doublev_obj.size()/len << endl;
-      } else {
-        cout << "Autocorrelation length determination failed." << endl;
-      }
-      doublev_obj=ac_vec;
-
-    } else if (alg=="len") {
-      
-      vector_autocorr_vector(doublev_obj,ac_vec);
-      size_t len=vector_autocorr_tau(ac_vec,ftom);
-      if (len>0) {
-        cout << "Autocorrelation length: " << len << " sample size: "
-             << doublev_obj.size()/len << endl;
-      } else {
-        cout << "Autocorrelation length determination failed." << endl;
-      }
-
-    } else if (alg=="acor") {
-
-      double mean, sigma, tau;
-      vector_acor<vector<double>>(doublev_obj.size(),doublev_obj,
-                                  mean,sigma,tau);
-      cout << "Autocorrelation length: " << tau << " sample size: "
-           << doublev_obj.size()/tau << endl;
-
-    } else if (alg=="fft") {
-
-#ifdef O2SCL_SET_FFTW
-      double mean=vector_mean(doublev_obj);
-      double stddev=vector_stddev(doublev_obj);
-      vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
-      size_t len=vector_autocorr_tau(ac_vec,ftom);
-      if (len>0) {
-        cout << "Autocorrelation length: " << len << " sample size: "
-             << doublev_obj.size()/len << endl;
-      } else {
-        cout << "Autocorrelation length determination failed." << endl;
-      }
-      doublev_obj=ac_vec;
-#else
-      cerr << "FFTW was not enabled in this installation."
-           << endl;
-#endif
-      
-    } else if (alg=="fft_len") {
-
-#ifdef O2SCL_SET_FFTW
-      double mean=vector_mean(doublev_obj);
-      double stddev=vector_stddev(doublev_obj);
-      vector_autocorr_vector_fftw(doublev_obj,ac_vec,mean,stddev);
-      size_t len=vector_autocorr_tau(ac_vec,ftom);
-      if (len>0) {
-        cout << "Autocorrelation length: " << len << " sample size: "
-             << doublev_obj.size()/len << endl;
-      } else {
-        cout << "Autocorrelation length determination failed." << endl;
-      }
-#else
-      cerr << "FFTW was not enabled in this installation."
-           << endl;
-#endif
-
-    } else {
-
-      cerr << "Invalid algorithm in 'autocorr' command." << endl;
-      return 1;
-      
-    }
-    
-  } else if (type=="int[]") {
-
-    vector_copy(intv_obj,doublev_obj);
-    vector<double> ac_vec, ftom;
-    vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(ac_vec,ftom);
-    if (len>0) {
-      cout << "Autocorrelation length: " << len << " sample size: "
-	   << doublev_obj.size()/len << endl;
-    } else {
-      cout << "Autocorrelation length determination failed." << endl;
-    }
-
-    command_del(type);
-    clear_obj();
-    doublev_obj=ac_vec;
-    command_add("double[]");
-    type="double[]";
-    
-  } else if (type=="size_t[]") {
-    
-    vector_copy(size_tv_obj,doublev_obj);
-    vector<double> ac_vec, ftom;
-    vector_autocorr_vector(doublev_obj,ac_vec);
-    size_t len=vector_autocorr_tau(ac_vec,ftom);
-    if (len>0) {
-      cout << "Autocorrelation length: " << len << " sample size: "
-	   << doublev_obj.size()/len << endl;
-    } else {
-      cout << "Autocorrelation length determination failed." << endl;
-    }
-
-    command_del(type);
-    clear_obj();
-    doublev_obj=ac_vec;
-    command_add("double[]");
-    type="double[]";
-    
-  } else {
-    
-    vector<string> in, pr;
-    if (sv.size()<2) {
-      pr.push_back("Enter multiple vector specification for data");
-      int ret=get_input(sv,pr,in,"autocorr",itive_com);
-      if (ret!=0) return ret;
-    } else {
-      for(size_t i=1;i<sv.size();i++) in.push_back(sv[i]);
-    }
-
-    vector<vector<double> > ac_all;
-    size_t max_ac_size=0;
-    
-    for(size_t ix=0;ix<in.size();ix++) {
-      
-      vector<vector<double> > v;
-
-      int vs_ret=o2scl_hdf::mult_vector_spec(in[ix],v,false,verbose,false);
-      if (vs_ret!=0) {
-	cout << "Vector specification failed (returned " << vs_ret << ")."
-	     << endl;
-	return 1;
-      }
-
-      for(size_t j=0;j<v.size();j++) {
-	
-	vector<double> ac, ftom;
-	
-	// Compute autocorrelation length and sample size
-	vector_autocorr_vector(v[j],ac);
-	size_t len=vector_autocorr_tau(ac,ftom);
-	if (len>0) {
-	  cout << "Autocorrelation length: " << len << " sample size: "
-	       << v[j].size()/len << endl;
-	} else {
-	  cout << "Autocorrelation length determination failed." << endl;
-	}
-	
-	if (j==0 || max_ac_size<ac.size()) {
-	  max_ac_size=ac.size();
-	}
-	
-	ac_all.push_back(ac);
-      }
-    }
-    
-    if (verbose>0) {
-      cout << "Storing autocorrelation coefficient averaged "
-	   << "over all data sets in\n  double[] object." << endl;
-    }
-    
-    if (max_ac_size==0) {
-      cerr << "Failed to find any data in 'autocorr'." << endl;
-      return 2;
-    }
-    
-    // Average over all of the autocorrelation coefficients from the
-    // specified data sets and store the result in doublev_obj .
-    doublev_obj.resize(max_ac_size);
-    for(size_t i=0;i<max_ac_size;i++) {
-      size_t n=0;
-      doublev_obj[i]=0.0;
-      for(size_t j=0;j<ac_all.size();j++) {
-	if (i<ac_all[j].size()) {
-	  n++;
-	  doublev_obj[i]+=ac_all[j][i];
-	}
-      }
-      doublev_obj[i]/=((double)n);
-    }
-
-    // Now report autocorrelation length and sample size from
-    // averaged result
-    vector<double> ftom2;
-    
-    // Compute autocorrelation length
-    size_t len=vector_autocorr_tau(doublev_obj,ftom2);
-    cout << "Averaged data, ";
-    if (len>0) {
-      cout << "autocorrelation length: " << len << endl;
-    } else {
-      cout << "autocorrelation length determination failed." << endl;
-    }
-
-    // If no current object, then set current object as double[]
-    if (type=="") {
-      command_del(type);
-      clear_obj();
-      command_add("double[]");
-      type="double[]";
-    }
-  }    
-  
-  return 0;
-}
-
-#endif
-
 int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 				bool itive_com) {
 
@@ -670,7 +325,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     }
     
     for(size_t kk=0;kk<vvd2.size();kk++) {
-      vvd.push_back(vvd[kk]);
+      vvd.push_back(vvd2[kk]);
     }
     
   }
@@ -700,6 +355,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
   }
     
   if (combine=="max") {
+    
     size_t len_max=0;
     ftom.resize(vvd.size());
     for(size_t jj=0;jj<vvd.size();jj++) {
@@ -712,6 +368,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       }
       if (len>len_max) len=len_max;
     }
+    
   } else {
 
     vector<double> ac_avg(max_ac_size);
@@ -729,6 +386,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 
     ftom.resize(1);
     size_t len=vector_autocorr_tau(ac_avg,ftom[0]);
+    cout << "J." << endl;
     if (len>0) {
       cout << "Autocorrelation length: " << len << "." << endl;
     } else {
@@ -1516,30 +1174,17 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
 }
 
 int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
+
+  // The implementation for the prob_dens_mdim_gaussian type is
+  // unfinished.
   
-  if (type!="table3d" && type!="hist_2d" && type!="prob_dens_mdim_gaussian") {
+  if (type!="table3d" && type!="hist_2d" &&
+      type!="prob_dens_mdim_gaussian") {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;
   }
   
-  /*
-    if (sv.size()>=2 && sv[1]=="frac") {
-    cout << "Fraction mode is true." << endl;
-    frac_mode=true;
-    std::vector<std::string>::iterator it=sv.begin();
-    it++;
-    sv.erase(it);
-    } else {
-    cout << "Fraction mode is false." << endl;
-    }
-    if (sv.size()<2 && itive_com) {
-    string temp=((string)"Enter \"frac\" for fractions of total sum and ")
-    +"\"abs\" for absolute scale", i1;
-    int ret=get_input_one(sv,temp,i1,"contours",itive_com);
-    if (ret!=0) return ret;
-    if (i1=="frac") frac_mode=true;
-    }
-  */
+  // Note: Input parsing is handled separately for each type below
   
   std::string svalue, file, name="contours";
   
@@ -1561,52 +1206,28 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     if (sv.size()<3) {
       // If not enough arguments were given, then prompt for them
       vector<string> pr, in;
-      //pr.push_back("Contour value or \"frac\" and contour value");
       pr.push_back("Contour value");
       pr.push_back("Slice name");
       pr.push_back("Filename (or \"none\")");
       int ret=get_input(sv,pr,in,"contours",itive_com);
       if (ret!=0) return ret;
       
-      //if (in[0].find("frac ")==0) {
-      //in[0]=in[0].substr(5,in[0].length()-5);
-      //frac_mode=true;
-      //}
-
       if (in[2]!="none") {
 	file=in[2];
 	name=cl->cli_gets("Object name (or blank for \"contours\"): ");
 	if (name.length()==0) name="contours";
       }
     } else if (sv.size()==3) {
-      //if (sv[1].find("frac ")==0) {
-      //sv[1]=sv[1].substr(5,sv[1].length()-5);
-      //frac_mode=true;
-      //}
       svalue=sv[1];
       slice=sv[2];
     } else {
-      /*
-	if (sv[1]=="frac") {
-	frac_mode=true;
-	svalue=sv[2];
-	slice=sv[3];
-	if (sv.size()>4) file=sv[4];
-	if (sv.size()>5) name=sv[5];
-	} else {
-	
-	if (sv[1].find("frac ")==0) {
-	sv[1]=sv[1].substr(5,sv[1].length()-5);
-	frac_mode=true;
-	}
-      */
       svalue=sv[1];
       slice=sv[2];
       file=sv[3];
       if (sv.size()>4) name=sv[4];
-      //}
     }
-    
+
+    // Convert the specified contour level string into a double
     ubvector levs(1);
     int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
@@ -1615,123 +1236,23 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
     }
     size_t nlev=1;
 
-    /*
-      if (frac_mode) {
-      
-      cout << "Fraction mode not implemented with table3d objects." << endl;
-      
-      cout << svalue << " " << levs[0] << endl;
-      
-      // Get references to the histogram data
-      size_t nx=table3d_obj.get_nx();
-      size_t ny=table3d_obj.get_ny();
-      const ubmatrix &m=table3d_obj.get_slice(slice);
-      const ubvector &xd=table3d_obj.get_x_data();
-      const ubvector &yd=table3d_obj.get_y_data();
+    // Compute the contours
+    table3d_obj.slice_contours(slice,1,levs,cont_obj);
 
-      // Construct bin vectors
-      ubvector xbins(nx+1);
-      if (xd[1]>xd[0]) {
-      xbins[0]=xd[0]-(xd[1]-xd[0])/2.0;
-      xbins[nx]=xd[nx-1]+(xd[nx-1]-xd[nx-2])/2.0;
-      } else {
-      xbins[0]=xd[0]+(xd[0]-xd[1])/2.0;
-      xbins[nx]=xd[nx-1]-(xd[nx-2]-xd[nx-1])/2.0;
-      }
-      for(size_t i=1;i<nx-1;i++) {
-      xbins[i]=(xd[i-1]+xd[i])/2.0;
-      }
-      ubvector ybins(ny+1);
-      if (yd[1]>yd[0]) {
-      ybins[0]=yd[0]-(yd[1]-yd[0])/2.0;
-      ybins[ny]=yd[ny-1]+(yd[ny-1]-yd[ny-2])/2.0;
-      } else {
-      ybins[0]=yd[0]+(yd[0]-yd[1])/2.0;
-      ybins[ny]=yd[ny-1]-(yd[ny-2]-yd[ny-1])/2.0;
-      }
-      for(size_t i=1;i<ny-1;i++) {
-      ybins[i]=(yd[i-1]+yd[i])/2.0;
-      }
-
-      // Compute the total integral and the target fraction
-      double min, max;
-      o2scl::matrix_minmax(m,min,max);
-      double sum=matrix_sum<ubmatrix,double>(nx,ny,m);
-      for(size_t i=0;i<nx;i++) {
-      for(size_t j=0;j<ny;j++) {
-      sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
-      }
-      }
-      double target=levs[0]*sum;
-      if (verbose>1) {
-      cout << "sum,target: " << sum << " " << target << endl;
-      }
-
-      // Setup the vectors to interpolate the target integral
-      uniform_grid_end<double> ug(min,max,100);
-      ubvector integx, integy;
-      ug.vector(integx);
-      size_t N=integx.size();
-      if (verbose>1) {
-      cout << "N integx[0] integx[1]: " << N << " "
-      << integx[0] << " " << integx[1] << endl;
-      }
-      integy.resize(N);
-
-      // Fill the interpolation vectors
-      for(size_t k=0;k<N;k++) {
-      integy[k]=0.0;
-      for(size_t i=0;i<nx;i++) {
-      for(size_t j=0;j<ny;j++) {
-      if (m(i,j)>integx[k]) {
-      integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
-      (ybins[j+1]-ybins[j]);
-      }
-      }
-      }
-      if (verbose>1) {
-      cout << k << " " << integx[k] << " " << integy[k] << endl;
-      }
-      }
-
-      // Perform the interpolation
-      bool found=false;
-      double level=0.0;
-      for(size_t k=0;k<N-1;k++) {
-      if (integy[k]>target && integy[k+1]<target) {
-      found=true;
-      level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
-      (integy[k+1]-integy[k]);
-      }
-      }
-      
-      // Return if the interpolation failed
-      if (found==false) {
-      cerr << "Failed to find a level matching requested fraction."
-      << endl;
-      return 2;
-      }
-      
-      if (verbose>1) {
-      cout << "Found: " << level << endl;
-      }
-      // Set level from interpolated value
-      levs[0]=level;
-      
-      }
-    */
-    
     if (file.length()>0) {
-      std::vector<contour_line> clines;
-      table3d_obj.slice_contours(slice,1,levs,clines);
-      if (clines.size()>0) {
+      // Write to a file
+      if (cont_obj.size()>0) {
 	hdf_file hf;
 	hf.open_or_create(file);
-	hdf_output(hf,clines,name);
+	hdf_output(hf,cont_obj,name);
 	hf.close();
+      } else {
+        cout << "File specified, but no contours found, so no file was "
+             << "written." << endl;
+        return 0;
       }
     } else {
-      table3d_obj.slice_contours(slice,1,levs,cont_obj);
+      // Store as a new object
       if (cont_obj.size()>0) {
 	command_del(type);
 	clear_obj();
@@ -1740,7 +1261,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       } else {
 	cout << "No contours found. Leaving table3d object unmodified."
 	     << endl;
-	return 1;
+	return 0;
       }
     }
     
@@ -1772,6 +1293,12 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       } else if (in[0].find("frac2 ")==0) {
 	in[0]=in[0].substr(6,in[0].length()-6);
 	frac_mode=2;
+      } else if (in[0].find("fracx ")==0) {
+	in[0]=in[0].substr(6,in[0].length()-6);
+	frac_mode=3;
+      } else if (in[0].find("fracy ")==0) {
+	in[0]=in[0].substr(6,in[0].length()-6);
+	frac_mode=4;
       }
       
       if (in[1]!="none") {
@@ -1783,9 +1310,15 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       if (sv[1].find("frac ")==0) {
 	sv[1]=sv[1].substr(5,sv[1].length()-5);
 	frac_mode=1;
-      } else if (sv[1].find("frac ")==0) {
+      } else if (sv[1].find("frac2 ")==0) {
 	sv[1]=sv[1].substr(6,sv[1].length()-6);
 	frac_mode=2;
+      } else if (sv[1].find("fracx ")==0) {
+	sv[1]=sv[1].substr(6,sv[1].length()-6);
+	frac_mode=3;
+      } else if (sv[1].find("fracy ")==0) {
+	sv[1]=sv[1].substr(6,sv[1].length()-6);
+	frac_mode=4;
       }
       svalue=sv[1];
     } else {
@@ -1799,6 +1332,16 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	if (sv.size()>3) file=sv[3];
 	if (sv.size()>4) name=sv[4];
 	frac_mode=2;
+      } else if (sv[1]=="fracx") {
+	svalue=sv[2];
+	if (sv.size()>3) file=sv[3];
+	if (sv.size()>4) name=sv[4];
+	frac_mode=3;
+      } else if (sv[1]=="fracy") {
+	svalue=sv[2];
+	if (sv.size()>3) file=sv[3];
+	if (sv.size()>4) name=sv[4];
+	frac_mode=4;
       } else {
 	if (sv[1].find("frac ")==0) {
 	  sv[1]=sv[1].substr(5,sv[1].length()-5);
@@ -1806,6 +1349,12 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 	} else if (sv[1].find("frac2 ")==0) {
 	  sv[1]=sv[1].substr(6,sv[1].length()-6);
 	  frac_mode=2;
+	} else if (sv[1].find("fracx ")==0) {
+	  sv[1]=sv[1].substr(6,sv[1].length()-6);
+	  frac_mode=3;
+	} else if (sv[1].find("fracy ")==0) {
+	  sv[1]=sv[1].substr(6,sv[1].length()-6);
+	  frac_mode=4;
 	}
 	svalue=sv[1];
 	file=sv[2];
@@ -1813,129 +1362,217 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       }
     }
 
+    // Convert the specified contour level string into a double
     ubvector levs(1);
     int retx=o2scl::function_to_double_nothrow(svalue,levs[0],0,&rng);
     if (retx!=0) {
       cerr << "Failed to convert " << svalue << " to value." << endl;
       return 1;
     }
-    size_t nlev=1;
 
-    if (frac_mode>=1) {
-
+    if (frac_mode==3) {
+      
       // Get references to the histogram data
       size_t nx=hist_2d_obj.size_x();
       size_t ny=hist_2d_obj.size_y();
-      const ubmatrix &m=hist_2d_obj.get_wgts();
-      const ubvector &xbins=hist_2d_obj.get_x_bins();
-      const ubvector &ybins=hist_2d_obj.get_y_bins();
-      
-      // Compute the total integral and the target fraction
-      double min, max;
-      o2scl::matrix_minmax(m,min,max);
-      double sum=hist_2d_obj.integ_wgts();
-      if (frac_mode==1) {
-	for(size_t i=0;i<nx;i++) {
-	  for(size_t j=0;j<ny;j++) {
-	    sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
-	  }
-	}
-      }
-      double target=levs[0]*sum;
-      if (verbose>1) {
-	cout << "sum,target: " << sum << " " << target << endl;
-      }
-      
-      // Setup the vectors to interpolate the target integral
-      uniform_grid_end<double> ug(min,max,100);
-      ubvector integx, integy;
-      ug.vector(integx);
-      size_t N=integx.size();
-      if (verbose>1) {
-	cout << "N integx[0] integx[1]: " << N << " "
-	     << integx[0] << " " << integx[1] << endl;
-      }
-      integy.resize(N);
-      
-      // Fill the interpolation vectors
-      for(size_t k=0;k<N;k++) {
-	integy[k]=0.0;
-	for(size_t i=0;i<nx;i++) {
-	  for(size_t j=0;j<ny;j++) {
-	    if (m(i,j)>integx[k]) {
-	      if (frac_mode==1) {
-		integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
-		  (ybins[j+1]-ybins[j]);
-	      } else {
-		integy[k]+=m(i,j)*(xbins[i+1]-xbins[i])*
-		  (ybins[j+1]-ybins[j]);
-	      }
-	    }
-	  }
-	}
-	if (verbose>1) {
-	  cout << k << " " << integx[k] << " " << integy[k] << endl;
-	}
-      }
-      
-      // Perform the interpolation
-      bool found=false;
-      double level=0.0;
-      for(size_t k=0;k<N-1;k++) {
-	if (integy[k]>target && integy[k+1]<target) {
-	  found=true;
-	  level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
-	    (integy[k+1]-integy[k]);
-	}
-      }
-      
-      // Return if the interpolation failed
-      if (found==false) {
-	cerr << "Failed to find a level matching requested fraction."
-	     << endl;
-	if (verbose>0) {
-	  cout << "target: " << target << endl;
-	  cout << "k x y: " << endl;
-	  for(size_t k=0;k<N;k++) {
-	    cout << k << " " << integx[k] << " " << integy[k] << endl;
-	  }
-	}
-	return 2;
-      }
-      
-      if (verbose>1) {
-	cout << "Found: " << level << endl;
-      }
-      // Set level from interpolated value
-      levs[0]=level;
-      
-    }
-    
-    contour co;
-    co.set_levels(nlev,levs);
-    
-    ubvector xreps(hist_2d_obj.size_x());
-    for (size_t i=0;i<hist_2d_obj.size_x();i++) {
-      xreps[i]=hist_2d_obj.get_x_rep_i(i);
-    }
-    ubvector yreps(hist_2d_obj.size_y());
-    for (size_t i=0;i<hist_2d_obj.size_y();i++) {
-      yreps[i]=hist_2d_obj.get_y_rep_i(i);
-    }
-    co.set_data(hist_2d_obj.size_x(),hist_2d_obj.size_y(),xreps,yreps,
-		hist_2d_obj.get_wgts());
 
+      vector<double> clow, chigh, cy;
+      for(size_t j=0;j<ny;j++) {
+        vector<double> row_x, row_y;
+        for(size_t i=0;i<nx;i++) {
+          row_x.push_back(hist_2d_obj.get_x_rep_i(i));
+          row_y.push_back(hist_2d_obj.get_wgt_i(i,j));
+        }
+        double clt, cht;
+        int vbf_ret=vector_bound_fracint(nx,row_x,row_y,
+                                         levs[0],clt,cht,0,verbose,false);
+        if (vbf_ret==0) {
+          clow.push_back(clt);
+          chigh.push_back(cht);
+          cy.push_back(hist_2d_obj.get_y_rep_i(j));
+        }
+      }
+
+      if (clow.size()==0) {
+        cout << "No regions found to compute the contours for." << endl;
+        return 2;
+      }
+
+      cont_obj.clear();
+      
+      contour_line cline;
+      cline.level=levs[0];
+      cline.x=clow;
+      cline.y=cy;
+      cont_obj.push_back(cline);
+      cline.level=levs[0];
+      cline.x=chigh;
+      cline.y=cy;
+      cont_obj.push_back(cl);
+      
+    } else if (frac_mode==4) {
+      
+      // Get references to the histogram data
+      size_t nx=hist_2d_obj.size_x();
+      size_t ny=hist_2d_obj.size_y();
+
+      vector<double> clow, chigh, cx;
+      for(size_t i=0;i<nx;i++) {
+        vector<double> col_x, col_y;
+        for(size_t j=0;j<ny;j++) {
+          col_x.push_back(hist_2d_obj.get_wgt_i(i,j));
+          col_y.push_back(hist_2d_obj.get_y_rep_i(i));
+        }
+        double clt, cht;
+        int vbf_ret=vector_bound_fracint(nx,col_x,col_y,
+                                         levs[0],clt,cht,0,verbose,false);
+        if (vbf_ret==0) {
+          clow.push_back(clt);
+          chigh.push_back(cht);
+          cx.push_back(hist_2d_obj.get_x_rep_i(i));
+        }
+      }
+
+      if (clow.size()==0) {
+        cout << "No regions found to compute the contours for." << endl;
+        return 2;
+      }
+
+      cont_obj.clear();
+      
+      contour_line cline;
+      cline.level=levs[0];
+      cline.x=cx;
+      cline.y=clow;
+      cont_obj.push_back(cline);
+      cline.level=levs[0];
+      cline.x=cx;
+      cline.y=chigh;
+      cont_obj.push_back(cl);
+      
+    } else {
+
+      if (frac_mode>=1) {
+        
+        // Compute the contour level from the fractional integral
+        
+        // Get references to the histogram data
+        size_t nx=hist_2d_obj.size_x();
+        size_t ny=hist_2d_obj.size_y();
+        const ubmatrix &m=hist_2d_obj.get_wgts();
+        const ubvector &xbins=hist_2d_obj.get_x_bins();
+        const ubvector &ybins=hist_2d_obj.get_y_bins();
+        
+        // Compute the total integral and the target fraction
+        double min, max;
+        o2scl::matrix_minmax(m,min,max);
+        double sum=hist_2d_obj.integ_wgts();
+        if (frac_mode==1) {
+          for(size_t i=0;i<nx;i++) {
+            for(size_t j=0;j<ny;j++) {
+              sum-=min*(xbins[i+1]-xbins[i])*(ybins[j+1]-ybins[j]);
+            }
+          }
+        }
+        double target=levs[0]*sum;
+        if (verbose>1) {
+          cout << "sum,target: " << sum << " " << target << endl;
+        }
+        
+        // Setup the vectors to interpolate the target integral
+        uniform_grid_end<double> ug(min,max,100);
+        ubvector integx, integy;
+        ug.vector(integx);
+        size_t N=integx.size();
+        if (verbose>1) {
+          cout << "N integx[0] integx[1]: " << N << " "
+               << integx[0] << " " << integx[1] << endl;
+        }
+        integy.resize(N);
+        
+        // Fill the interpolation vectors
+        for(size_t k=0;k<N;k++) {
+          integy[k]=0.0;
+          for(size_t i=0;i<nx;i++) {
+            for(size_t j=0;j<ny;j++) {
+              if (m(i,j)>integx[k]) {
+                if (frac_mode==1) {
+                  integy[k]+=(m(i,j)-min)*(xbins[i+1]-xbins[i])*
+                    (ybins[j+1]-ybins[j]);
+                } else {
+                  integy[k]+=m(i,j)*(xbins[i+1]-xbins[i])*
+                    (ybins[j+1]-ybins[j]);
+                }
+              }
+            }
+          }
+          if (verbose>1) {
+            cout << k << " " << integx[k] << " " << integy[k] << endl;
+          }
+        }
+        
+        // Perform the interpolation
+        bool found=false;
+        double level=0.0;
+        for(size_t k=0;k<N-1;k++) {
+          if (integy[k]>target && integy[k+1]<target) {
+            found=true;
+            level=integx[k]+(integx[k+1]-integx[k])*(target-integy[k])/
+              (integy[k+1]-integy[k]);
+          }
+        }
+        
+        // Return if the interpolation failed
+        if (found==false) {
+          cerr << "Failed to find a level matching requested fraction."
+               << endl;
+          if (verbose>0) {
+            cout << "target: " << target << endl;
+            cout << "k x y: " << endl;
+            for(size_t k=0;k<N;k++) {
+              cout << k << " " << integx[k] << " " << integy[k] << endl;
+            }
+          }
+          return 2;
+        }
+        
+        if (verbose>1) {
+          cout << "Found: " << level << endl;
+        }
+        // Set level from interpolated value
+        levs[0]=level;
+        
+        // End of the fractional integral calculation
+      }
+      
+      // Compute the contour levels
+      contour co;
+      co.set_levels(levs.size(),levs);
+      
+      ubvector xreps(hist_2d_obj.size_x());
+      for (size_t i=0;i<hist_2d_obj.size_x();i++) {
+        xreps[i]=hist_2d_obj.get_x_rep_i(i);
+      }
+      ubvector yreps(hist_2d_obj.size_y());
+      for (size_t i=0;i<hist_2d_obj.size_y();i++) {
+        yreps[i]=hist_2d_obj.get_y_rep_i(i);
+      }
+      co.set_data(hist_2d_obj.size_x(),hist_2d_obj.size_y(),xreps,yreps,
+                  hist_2d_obj.get_wgts());
+      
+      co.calc_contours(cont_obj);
+      
+    }
+
+    // Write to a file or store the contours
     if (file.length()>0) {
-      std::vector<contour_line> clines;
-      co.calc_contours(clines);
-      if (clines.size()>0) {
+      if (cont_obj.size()>0) {
 	hdf_file hf;
 	hf.open_or_create(file);
-	hdf_output(hf,clines,name);
+	hdf_output(hf,cont_obj,name);
 	hf.close();
       }
     } else {
-      co.calc_contours(cont_obj);
       if (cont_obj.size()>0) {
 	command_del(type);
 	clear_obj();

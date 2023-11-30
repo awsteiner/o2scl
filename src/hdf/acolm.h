@@ -767,7 +767,7 @@ namespace o2scl_acol {
         If the optional arguments "frac" or "frac2" are not present,
         the \c contours command constructs a set of contour lines
         using at the fixed value given in <val>. If no additional
-        arguments are given, then the \c table3d object is deleted
+        arguments are given, then the \c hist_2d object is deleted
         from memory and the contour lines which were computed become
         the new current object of type <tt>vector<contour_line></tt>
         If two additional arguments are given, then the contour lines
@@ -775,7 +775,7 @@ namespace o2scl_acol {
         named [object name], and the current \c hist_2d object
         retained. If the file does not exist, it is created. If no
         contours are found, then a message is output to the screen, no
-        file I/O is performed, and the current table3d object is
+        file I/O is performed, and the current hist_2d object is
         unmodified.
 
         If the argument "frac" is present, then the operation of the

@@ -1402,6 +1402,9 @@ namespace o2scl_hdf {
       hf.open(fname);
       std::string type;
       int find_ret;
+      // If the object name begins with an underscore,
+      // interpret it as a type and read the first object
+      // of that time
       if (obj_name[0]=='_') {
         type=obj_name.substr(1,obj_name.length()-1);
         find_ret=hf.find_object_by_type(type,obj_name);
@@ -1958,6 +1961,9 @@ namespace o2scl_hdf {
       hf.open(fname);
       std::string type;
       int find_ret;
+      // If the object name begins with an underscore,
+      // interpret it as a type and read the first object
+      // of that time
       if (obj_name[0]=='_') {
         type=obj_name.substr(1,obj_name.length()-1);
         find_ret=hf.find_object_by_type(type,obj_name);
@@ -2345,6 +2351,8 @@ namespace o2scl_hdf {
 	std::cout << "mult_vector_spec(), HDF5 file, spec: "
                   << spec << std::endl;
       }
+
+      // Count the number of colons after "hdf5:"
       std::string temp=spec.substr(5,spec.length()-5);
       size_t ncolon=temp.find(':');
       if (ncolon==std::string::npos) {
@@ -2355,6 +2363,8 @@ namespace o2scl_hdf {
 	  return 4;
 	}
       }
+
+      // Extract the filename
       std::string fname=temp.substr(0,ncolon);
       if (verbose>1) {
 	std::cout << "Filename: " << fname << std::endl;
@@ -2367,6 +2377,8 @@ namespace o2scl_hdf {
 	  return 5;
 	}
       }
+
+      // Extract the object name and any additional specifications
       std::string obj_name=temp.substr(ncolon+1,temp.length()-ncolon-1);
       std::string addl_spec;
       ncolon=obj_name.find(':');
@@ -2383,11 +2395,13 @@ namespace o2scl_hdf {
         }
 	std::cout << "Additional specification: " << addl_spec << std::endl;
       }
+
+      // Use wordexp_wrapper() to determine the filelist
       o2scl_hdf::hdf_file hf;
-      
       std::string fname_old=fname;
       std::vector<std::string> matches;
       int wret=o2scl::wordexp_wrapper(fname_old,matches);
+
       if (matches.size()==0 || wret!=0) {
 	if (err_on_fail) {
 	  O2SCL_ERR2("Function wordexp_wrapper() failed ",
@@ -2402,17 +2416,23 @@ namespace o2scl_hdf {
 	std::cout << "Wordexp() found " << nfiles << " files."
 		  << std::endl;
       }
-      
+
+      // Loop over each file
       for(size_t ifile=0;ifile<nfiles;ifile++) {
+        
 	fname=matches[ifile];
 	if (verbose>1) {
 	  std::cout << "Filename for index " << ifile << " is " << fname
 		    << std::endl;
 	}
-	
+
+        // Read object by type or name
 	hf.open(fname);
 	std::string type;
         int find_ret;
+        // If the object name begins with an underscore,
+        // interpret it as a type and read the first object
+        // of that time
         if (obj_name[0]=='_') {
           type=obj_name.substr(1,obj_name.length()-1);
           find_ret=hf.find_object_by_type(type,obj_name);
@@ -2431,7 +2451,8 @@ namespace o2scl_hdf {
           std::cout << "Object type and name: " << type << " " << obj_name
                     << std::endl;
 	}
-	
+
+        // Handle each object type separately
 	if (type=="table") {
 	  
 	  if (addl_spec.length()==0) {
@@ -2445,7 +2466,8 @@ namespace o2scl_hdf {
 
           o2scl::table_units<> t;
           o2scl_hdf::hdf_input(hf,t,obj_name);
-            
+
+          // The row:column pattern case for a table object
 	  if (addl_spec.find(':')!=std::string::npos) {
 	    if (verbose>1) {
 	      std::cout << "Found row:column pattern in mult_vector_spec()."
@@ -2462,12 +2484,38 @@ namespace o2scl_hdf {
             std::string row_list=addl_spec.substr(0,pos);
             std::string col_spec=addl_spec.substr(pos+1,
                                                   addl_spec.length()-pos-1);
-            std::cout << "row_list: " << row_list << std::endl;
-            std::cout << "col_spec: " << col_spec << std::endl;
+            if (verbose>1) {
+              std::cout << "row_list: " << row_list << std::endl;
+              std::cout << "col_spec: " << col_spec << std::endl;
+            }
 
             std::vector<size_t> uint_list;
             if (row_list!="*") {
               o2scl::string_to_uint_list(row_list,uint_list);
+              if (uint_list.size()<=0) {
+                if (err_on_fail) {
+                  O2SCL_ERR2("Could not parse row list ",
+                             "in mult_vector_spec().",o2scl::exc_einval);
+                } else {
+                  return 16;
+                }
+              } else if (verbose>1) {
+                std::cout << "rows: " << uint_list[0];
+                if (uint_list.size()>=2) {
+                  std::cout << "," << uint_list[1];
+                }
+                if (uint_list.size()>=3) {
+                  std::cout << "," << uint_list[2];
+                }
+                if (uint_list.size()==4) {
+                  std::cout << "," << uint_list[3] << std::endl;
+                } else if (uint_list.size()>4) {
+                  std::cout << ",...," << uint_list[uint_list.size()-1]
+                            << std::endl;
+                } else {
+                  std::cout << std::endl;
+                }
+              }
             }
             
             std::vector<size_t> col_ix;
@@ -2510,13 +2558,17 @@ namespace o2scl_hdf {
               for(size_t j=0;j<uint_list.size();j++) {
                 vec_t vtemp(col_ix.size());
                 for(size_t k=0;k<col_ix.size();k++) {
-                  vtemp[k]=t.get(col_ix[k],j);
+                  vtemp[k]=t.get(col_ix[k],uint_list[j]);
                 }
                 v.push_back(vtemp);
               }
             }
 
+            // End of the row:column pattern case for a table object
+            
 	  } else {
+
+            // The set of columns case for a table object
             
             if (use_regex) {
               std::regex r(addl_spec);
@@ -2524,7 +2576,7 @@ namespace o2scl_hdf {
                 if (std::regex_search(t.get_column_name(j),r)) {
                   if (verbose>1) {
                     std::cout << "Column " << t.get_column_name(j)
-                              << " matches pattern " << addl_spec
+                              << " matches regex " << addl_spec
                               << "." << std::endl;
                   }
                   vec_t vtemp(t.get_nlines());
@@ -2551,11 +2603,14 @@ namespace o2scl_hdf {
                 }
               }
             }
-            
+
+            // End of the set of columns case for a table object
           }
             
           hf.close();
-	  
+
+          // End of the table object case
+          
 	} else if (type=="double" || type=="double[]" || type=="hist" ||
 		   type=="int" || type=="int[]" || type=="size_t" ||
 		   type=="size_t[]" || type=="uniform_grid<double>") {
@@ -2582,6 +2637,7 @@ namespace o2scl_hdf {
 	  
 	}
 
+        // End of the loop over files
       }
 
     } else {
