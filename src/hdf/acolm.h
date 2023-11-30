@@ -954,9 +954,10 @@ namespace o2scl_acol {
         z "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
         -ytitle y -show</tt>
 
-        <tt>create vec_vec_double <mult. vector spec.></tt>: Create a
+        <tt>create vec_vec_double <mult. vector spec.>
+        [mult. vector spec. 2] ... </tt>: Create a
         <tt>vec_vec_double</tt> object using the given multiple 
-        vector specification.
+        vector specification(s).
         
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value

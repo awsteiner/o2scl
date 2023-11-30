@@ -230,8 +230,8 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       cout << "autocorr will report maximum autocorrelation length." << endl;
     }
   }
-  
-  vector<vector<double>> ac_vec, ftom;
+
+  // First, collect all the data into the object name vvd
   vector<vector<double>> vvd;
 
   if (type=="int[]") {
@@ -330,6 +330,13 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
   }
 
+  // In this section, compute the autocorrelation vector for
+  // each vector inside "vvd" and store it in "ac_vec".
+  // Also, compute "max_ac_size" which is the maximum size of
+  // an object in "ac_vec".
+  
+  vector<vector<double>> ac_vec;
+  
   size_t max_ac_size=0;
   ac_vec.resize(vvd.size());
   for(size_t jj=0;jj<vvd.size();jj++) {
@@ -353,10 +360,16 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       max_ac_size=ac_vec[jj].size();
     }
   }
-    
+
+  // Temporary vectors for autocorrelation length computation
+  vector<vector<double>> ftom;
+  
   if (combine=="max") {
-    
+
+    // In "max" mode, compute all the autocorrelation coefficients and
+    // just report the largest autocorrelation length
     size_t len_max=0;
+  
     ftom.resize(vvd.size());
     for(size_t jj=0;jj<vvd.size();jj++) {
       size_t len=vector_autocorr_tau(ac_vec[jj],ftom[jj]);
@@ -371,6 +384,9 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
     
   } else {
 
+    // In "avg" mode, compute all of the autocorrelation coefficients
+    // and then compute the average.
+    
     vector<double> ac_avg(max_ac_size);
     for(size_t i=0;i<max_ac_size;i++) {
       size_t n=0;
@@ -379,19 +395,31 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	if (i<ac_vec[j].size()) {
 	  n++;
 	  ac_avg[i]+=ac_vec[j][i];
+          if (i<10) {
+            cout << "i,j,ac: " << i << " " << j << " " << ac_vec[j][i]
+                 << endl;
+          }
 	}
       }
       ac_avg[i]/=((double)n);
+      if (i<10) {
+        cout << "avg: " << ac_avg[i] << endl;
+      }
     }
 
+    // Use the average to compute the autocorrelation length
+    
     ftom.resize(1);
     size_t len=vector_autocorr_tau(ac_avg,ftom[0]);
-    cout << "J." << endl;
     if (len>0) {
       cout << "Autocorrelation length: " << len << "." << endl;
     } else {
       cout << "Autocorrelation length determination failed." << endl;
     }
+
+    // Add the average to the list of autocorrelation coefficient
+    // vectors so it can be accessed by the user
+    ac_vec.push_back(ac_avg);
   }
 
   if (store) {
@@ -1408,7 +1436,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       cline.level=levs[0];
       cline.x=chigh;
       cline.y=cy;
-      cont_obj.push_back(cl);
+      cont_obj.push_back(cline);
       
     } else if (frac_mode==4) {
       
@@ -1448,7 +1476,7 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       cline.level=levs[0];
       cline.x=cx;
       cline.y=chigh;
-      cont_obj.push_back(cl);
+      cont_obj.push_back(cline);
       
     } else {
 
@@ -1961,6 +1989,16 @@ int acol_manager::comm_create(std::vector<std::string> &sv, bool itive_com) {
       type="vec_vec_double";
       command_add("vec_vec_double");
       obj_name="vec_vec_double";
+
+      for(size_t j=2;j<sv2.size();j++) {
+        vector<vector<double>> vvd2;
+        mvs_ret=mult_vector_spec(sv2[j],vvd2,false,verbose,false);
+        if (mvs_ret==0) {
+          for(size_t k=0;k<vvd2.size();k++) {
+            vvdouble_obj.push_back(vvd2[k]);
+          }
+        }
+      }
     }
     
   } else if (ctype=="char") {
