@@ -395,14 +395,14 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
 	if (i<ac_vec[j].size()) {
 	  n++;
 	  ac_avg[i]+=ac_vec[j][i];
-          if (i<10) {
+          if (verbose>2 && i<10) {
             cout << "i,j,ac: " << i << " " << j << " " << ac_vec[j][i]
                  << endl;
           }
 	}
       }
       ac_avg[i]/=((double)n);
-      if (i<10) {
+      if (verbose>2 && i<10) {
         cout << "avg: " << ac_avg[i] << endl;
       }
     }
