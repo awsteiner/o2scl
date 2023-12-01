@@ -1407,17 +1407,29 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
       vector<double> clow, chigh, cy;
       for(size_t j=0;j<ny;j++) {
         vector<double> row_x, row_y;
+        bool nonzero=false;
         for(size_t i=0;i<nx;i++) {
           row_x.push_back(hist_2d_obj.get_x_rep_i(i));
           row_y.push_back(hist_2d_obj.get_wgt_i(i,j));
+          if (hist_2d_obj.get_wgt_i(i,j)>0.0) {
+            nonzero=true;
+          }
+          if (i<10 && verbose>1) {
+            cout << i << " " << hist_2d_obj.get_wgt_i(i,j) << endl;
+          }
         }
-        double clt, cht;
-        int vbf_ret=vector_bound_fracint(nx,row_x,row_y,
-                                         levs[0],clt,cht,0,verbose,false);
-        if (vbf_ret==0) {
-          clow.push_back(clt);
-          chigh.push_back(cht);
-          cy.push_back(hist_2d_obj.get_y_rep_i(j));
+        if (nonzero) {
+          double clt, cht;
+          int vbf_ret=vector_bound_fracint(nx,row_x,row_y,
+                                           levs[0],clt,cht,0,verbose,false);
+          if (vbf_ret==0) {
+            clow.push_back(clt);
+            chigh.push_back(cht);
+            cy.push_back(hist_2d_obj.get_y_rep_i(j));
+          }
+        } else {
+          cout << "Skipping row " << j << " because it's zero."
+               << endl;
         }
       }
 
@@ -1446,18 +1458,30 @@ int acol_manager::comm_contours(std::vector<std::string> &sv, bool itive_com) {
 
       vector<double> clow, chigh, cx;
       for(size_t i=0;i<nx;i++) {
+        bool nonzero=false;
         vector<double> col_x, col_y;
         for(size_t j=0;j<ny;j++) {
           col_x.push_back(hist_2d_obj.get_wgt_i(i,j));
           col_y.push_back(hist_2d_obj.get_y_rep_i(i));
+          if (hist_2d_obj.get_wgt_i(i,j)>0.0) {
+            nonzero=true;
+          }
+          if (i<10 && verbose>1) {
+            cout << i << " " << hist_2d_obj.get_wgt_i(i,j) << endl;
+          }
         }
-        double clt, cht;
-        int vbf_ret=vector_bound_fracint(nx,col_x,col_y,
-                                         levs[0],clt,cht,0,verbose,false);
-        if (vbf_ret==0) {
-          clow.push_back(clt);
-          chigh.push_back(cht);
-          cx.push_back(hist_2d_obj.get_x_rep_i(i));
+        if (nonzero) {
+          double clt, cht;
+          int vbf_ret=vector_bound_fracint(nx,col_x,col_y,
+                                           levs[0],clt,cht,0,verbose,false);
+          if (vbf_ret==0) {
+            clow.push_back(clt);
+            chigh.push_back(cht);
+            cx.push_back(hist_2d_obj.get_x_rep_i(i));
+          }
+        } else {
+          cout << "Skipping column " << i << " because it's zero."
+               << endl;
         }
       }
 
