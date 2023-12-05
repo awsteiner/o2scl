@@ -1182,6 +1182,11 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
       // then create the new column and set the first n1 entries to
       // zero. 
       if (!table_obj.is_column(col_name)) {
+        if (verbose>0) {
+          cout << "Original table does not contain column " << col_name
+               << ", so this new column will be created and initialized to "
+               << "zero before the concatenation is performed." << endl;
+        }
 	table_obj.new_column(col_name);
 	for(size_t i=0;i<n1;i++) table_obj.set(col_name,i,0.0);
       }
@@ -1197,6 +1202,11 @@ int acol_manager::comm_cat(std::vector<std::string> &sv, bool itive_com) {
     for(size_t j=0;j<table_obj.get_ncolumns();j++) {
       std::string col_name=table_obj.get_column_name(j);
       if (!tab2.is_column(col_name)) {
+        if (verbose>0) {
+          cout << "The table to be added does not contain column "
+               << col_name << ", so the additional rows in this column "
+               << "will be set to zero." << endl;
+        }
 	for(size_t i=n1;i<n1+n2;i++) table_obj.set(col_name,i,0.0);
       }
     }
