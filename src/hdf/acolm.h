@@ -622,13 +622,16 @@ namespace o2scl_acol {
         of rows equal to the sum of the rows in the original two
         tables. If the two tables have column names which are the
         same, then the data from these two columns will be
-        concatenated even if the column ordering is different. If the
-        second table has a column not present in the current table,
-        then a new column in the current table is created. 
+        concatenated even if the column ordering is different.
 
         Columns which are present in only one of the two tables will
         result in columns which have multiple zero entries in the new
-        resulting table.
+        resulting table. In particular, if the second table has a
+        column not present in the current table, then a new column in
+        the current table is created and initialized to zero before
+        the concatenation. If the second table does not have a column
+        present in the current table, then the additional rows in that
+        column will be set to zero.
 
         For example:
 
