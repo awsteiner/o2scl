@@ -560,8 +560,8 @@ namespace o2scl {
 	    }
 	    if (sigma_r[i]<0) {
 	      O2SCL_ERR2("No points in right-half space ", 
-			     "in mcarlo_miser::miser_minteg_err().",
-			     exc_esanity);
+                         "in mcarlo_miser::miser_minteg_err().",
+                         exc_esanity);
 	    }
 	  }
 	}

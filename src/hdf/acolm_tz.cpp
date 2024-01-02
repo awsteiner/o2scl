@@ -32,6 +32,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/version.hpp>
 
 using namespace std;
 using namespace o2scl;
@@ -1867,7 +1868,9 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
 
   cout << exec_color << "O₂scl" << default_color
        << " version: " << o2scl_settings.o2scl_version() << endl;
+  cout << endl;
   cout << "Range checking: " << o2scl_settings.range_check() << endl;
+  cout << "Boost version: " << BOOST_VERSION << endl;
   if (true) {
     unsigned maj, min, rel;
     o2scl_settings.hdf5_header_version(maj,min,rel);
@@ -1893,8 +1896,9 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Module support: " << o2scl_settings.module_support() << endl;
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
-  cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
+  cout << endl;
 
+  cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;
   cout << "Documentation directory: "
        << o2scl_settings.get_doc_dir() << endl;
   cout << "Local documentation URL:\n  file://"

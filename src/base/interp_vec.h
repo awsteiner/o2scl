@@ -628,7 +628,8 @@ namespace o2scl {
     size_t n2;
     if (boundaries==1) {
       if (verbose>0) {
-        std::cout << "Fix left boundary to zero." << std::endl;
+        std::cout << "vector_invert_enclosed_sum(): "
+                  << "Fix left boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
@@ -641,7 +642,8 @@ namespace o2scl {
       n2=n+1;
     } else if (boundaries==2) {
       if (verbose>0) {
-        std::cout << "Fix right boundary to zero." << std::endl;
+        std::cout << "vector_invert_enclosed_sum(): "
+                  << "Fix right boundary to zero." << std::endl;
       }
       x2.resize(n+1);
       y2.resize(n+1);
@@ -654,7 +656,8 @@ namespace o2scl {
       n2=n+1;
     } else if (boundaries==3) {
       if (verbose>0) {
-        std::cout << "Fix both boundaries to zero." << std::endl;
+        std::cout << "vector_invert_enclosed_sum(): "
+                  << "Fix both boundaries to zero." << std::endl;
       }
       x2.resize(n+2);
       y2.resize(n+2);
@@ -669,7 +672,8 @@ namespace o2scl {
       n2=n+2;
     } else {
       if (verbose>0) {
-        std::cout << "No boundary extrapolation." << std::endl;
+        std::cout << "vector_invert_enclosed_sum(): "
+                  << "No boundary extrapolation." << std::endl;
       }
       x2.resize(n);
       y2.resize(n);
@@ -714,7 +718,8 @@ namespace o2scl {
       if ((locs.size()%2)!=0) {
         nfail++;
         if (verbose>0) {
-          std::cout << k << " " << lev_tmp << " " << 0.0 << " "
+          std::cout << "vector_invert_enclosed_sum(): "
+                    << k << " " << lev_tmp << " " << 0.0 << " "
                     << locs.size() << " (fail)" << std::endl;
         }
       } else {
@@ -728,7 +733,8 @@ namespace o2scl {
         xi.push_back(sum_temp);
         yi.push_back(lev_tmp);
         if (verbose>0) {
-          std::cout << k << " " << lev_tmp << " " << sum_temp << " "
+          std::cout << "vector_invert_enclosed_sum(): "
+                    << k << " " << lev_tmp << " " << sum_temp << " "
                     << locs.size() << " ";
           for(size_t i=0;i<locs.size();i++) {
             std::cout << locs[i] << " ";

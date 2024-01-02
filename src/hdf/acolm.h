@@ -622,13 +622,16 @@ namespace o2scl_acol {
         of rows equal to the sum of the rows in the original two
         tables. If the two tables have column names which are the
         same, then the data from these two columns will be
-        concatenated even if the column ordering is different. If the
-        second table has a column not present in the current table,
-        then a new column in the current table is created. 
+        concatenated even if the column ordering is different.
 
         Columns which are present in only one of the two tables will
         result in columns which have multiple zero entries in the new
-        resulting table.
+        resulting table. In particular, if the second table has a
+        column not present in the current table, then a new column in
+        the current table is created and initialized to zero before
+        the concatenation. If the second table does not have a column
+        present in the current table, then the additional rows in that
+        column will be set to zero.
 
         For example:
 
@@ -767,7 +770,7 @@ namespace o2scl_acol {
         If the optional arguments "frac" or "frac2" are not present,
         the \c contours command constructs a set of contour lines
         using at the fixed value given in <val>. If no additional
-        arguments are given, then the \c table3d object is deleted
+        arguments are given, then the \c hist_2d object is deleted
         from memory and the contour lines which were computed become
         the new current object of type <tt>vector<contour_line></tt>
         If two additional arguments are given, then the contour lines
@@ -775,7 +778,7 @@ namespace o2scl_acol {
         named [object name], and the current \c hist_2d object
         retained. If the file does not exist, it is created. If no
         contours are found, then a message is output to the screen, no
-        file I/O is performed, and the current table3d object is
+        file I/O is performed, and the current hist_2d object is
         unmodified.
 
         If the argument "frac" is present, then the operation of the
@@ -954,9 +957,10 @@ namespace o2scl_acol {
         z "sin(1/(x+0.01))* sin(1/(y+0.01))" -den-plot z -xtitle x
         -ytitle y -show</tt>
 
-        <tt>create vec_vec_double <mult. vector spec.></tt>: Create a
+        <tt>create vec_vec_double <mult. vector spec.>
+        [mult. vector spec. 2] ... </tt>: Create a
         <tt>vec_vec_double</tt> object using the given multiple 
-        vector specification.
+        vector specification(s).
         
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value

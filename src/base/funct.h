@@ -56,8 +56,10 @@ namespace o2scl {
   protected:
     
     /// The function wrapper
-    static double funct_wrap(double x, void *params) {
-      funct *fp=(funct *)params;
+    static double funct_wrap(double x, void *params2) {
+      // I call the argument params2 to avoid confusion with
+      // gsl_function_struct::params
+      funct *fp=(funct *)params2;
       return (*fp)(x);
     }
 

@@ -103,7 +103,7 @@ int main(void) {
   {
     cout << "4." << endl;
     fmc f2;
-    double val, err;
+    double val=0.0, err;
     funct_multip_cdf fm2;
     
     // No parameters
