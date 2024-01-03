@@ -48,10 +48,7 @@ of the HDF5 libraries that it is linked with when compiling code based
 on O₂scl. In order to help resolve these version conflicts, the
 ``acol`` utility (see :ref:`The acol Command Line Utility`) reports
 the two different HDF5 versions (see ``acol -v``) so that it is easy
-to check that they are the same. This is also particularly important
-when Python support is enabled, as O₂scl and h5py should also be
-working from the same HDF5 version (see more information about Python
-support below).
+to check that they are the same. 
 
 .. _compile_homebrew:
   
@@ -231,25 +228,6 @@ Including Python support also requires the installation of O₂sclpy
 successfully. Thus, when including Python support it is best to
 install O₂scl first, install O₂sclpy second, and then test O₂scl and
 O₂sclpy last. See also :ref:`Python Integration` for more details.
-
-One final complication with regard to Python support, the HDF5 version
-typically installed by Ubuntu installations lags behind the more
-recent HDF5 versions used by ``h5py``. (At time of writing, on
-2/22/23, the Ubuntu package uses 1.10.7 which was released on 9/15/20
-and h5py uses HDF5 version 1.12.2.). The version of HDF5 used by h5py
-can be obtained in Python from ``print(h5py.h5.get_libversion())``.
-This conflict between h5py and the system HDF5 libraries can cause
-problems with mismatched HDF5 versions. This can be fixed by manually
-installing a more recent version of the HDF5 libraries or by forcing
-``h5py`` to use the system HDF5 libraries. The latter can be achieved
-using something like::
-
-  HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 \
-  install --no-binary=h5py h5py
-
-this will give a warning that ``--no-binary`` flag is deprecated, so
-I will update these instructions as soon as I can when ``pip`` moves
-to version 23.1. 
 
 .. _compile_snap:
 
