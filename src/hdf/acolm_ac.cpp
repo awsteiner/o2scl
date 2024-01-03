@@ -570,7 +570,8 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       cerr << "Requested precision too large for the calc "
            << "command (maximum is 48)." << endl;
       return 2;
-      
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
     } else if (precision>33) {
       
       cpp_dec_float_50 d=0, err;
@@ -624,6 +625,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       cout << dtos(d,precision) << " " << endl;
       
       return 0;
+#endif
     }
     
     double d=0, err;
@@ -671,6 +673,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Requested precision too large for the calc "
          << "command." << endl;
     return 2;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
   } else if (precision>35) {
     cpp_dec_float_50 d;
     convert_units<cpp_dec_float_50> cu50;
@@ -719,6 +722,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (long double): ";
     cout << dtos(d,precision) << endl;
     return 0;
+#endif
   }
   
   double d;
@@ -1104,6 +1108,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     if (precision>50) {
       cerr << "Requested precision too large for the constant "
            << "command (the maximum is 50)." << endl;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     } else if (precision>35) {
       convert_units<cpp_dec_float_50> cu50;
       cu50.find_print(in[0],in[1],precision,false);
@@ -1116,6 +1121,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     } else if (precision>15) {
       convert_units<long double> culd;
       culd.find_print(in[0],in[1],precision,false);
+#endif
     } else {
       cu.find_print(in[0],in[1],precision,false);
     }

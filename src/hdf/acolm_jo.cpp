@@ -555,7 +555,11 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   std::string var=in[1];
 
   inte_kronrod_boost<61> ikb;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   inte_double_exp_boost ideb;
+#else
+  inte_double_exp_boost<double,double,double,double> ideb;
+#endif
   inte_adapt_cern iac;
 
   if (multiprecision) {
@@ -596,9 +600,10 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       cerr << "Requested precision too large for the ninteg "
            << "command (maximum is 49)." << endl;
       return 2;
-      
-    } else if (precision>34) {
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
+    } else if (precision>34) {
+      
       cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
       convert_units<cpp_dec_float_50> cu;
       if (in[2]=="-infty") {
@@ -736,6 +741,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       return 0;
       
     } else {
+#endif
       
       double d=0, err, lower_lim, upper_lim;
       convert_units<double> cu;
