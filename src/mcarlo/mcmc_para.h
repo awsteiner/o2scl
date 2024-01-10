@@ -1644,7 +1644,7 @@ namespace o2scl {
                 scr_out.unsetf(std::ios::showpos);
               } else if (func_ret[it]!=o2scl::success &&
                          func_ret[it]!=mcmc_skip) {
-                if (verbose>=2) {
+                if (verbose>=3) {
                   scr_out << "mcmc (" << it << "," << mpi_rank
                           << "): Function returned failure " 
                           << func_ret[it] << " at point ";
@@ -3026,13 +3026,10 @@ namespace o2scl {
           
             // Verbose output
             if (this->verbose>=2) {
-              this->scr_out << "mcmc: Thread " << i_thread
+              this->scr_out << "mcmc_para::mcmc(): Thread " << i_thread
+                            << " and walker " << walker_ix
                             << " setting data at row " << next_row
-                            << std::endl;
-              this->scr_out << "  func_ret: " << func_ret << " mcmc_accept: "
-                            << mcmc_accept << " walker_ix: "
-                            << walker_ix << " store_rejects: "
-                            << store_rejects << std::endl;
+                            << "." << std::endl;
             }
             if (this->verbose>=3) {
               for(size_t k=0;k<line.size();k++) {
@@ -3090,7 +3087,7 @@ namespace o2scl {
                      "mcmc_para_table::add_line().",o2scl::exc_efailed);
         }
         table->set("mult",walker_accept_rows[windex],mult_old+1.0);
-        if (this->verbose>=2) {
+        if (this->verbose>=3) {
           this->scr_out << "mcmc: Updating mult of row "
                         << walker_accept_rows[windex]
                         << " from " << mult_old << " to "
