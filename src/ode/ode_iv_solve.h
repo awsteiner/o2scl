@@ -94,9 +94,14 @@ namespace o2scl {
       
       The default adaptive stepper is an object of type \ref astep_gsl.
 
-      \future The form of solve_final_value() is very similar to that
-      of astep_base::astep_full(), but not quite the same. Maybe
-      these functions should be consistent with each other?
+      \verbatim embed:rst
+      .. todo:: 
+
+         Future: The form of solve_final_value() is very similar to that
+         of astep_base::astep_full(), but not quite the same. Maybe
+         these functions should be consistent with each other?
+
+      \endverbatim
   */
   template<class func_t=ode_funct, 
 	   class vec_t=boost::numeric::ublas::vector<double> > 
@@ -718,10 +723,15 @@ namespace o2scl {
 	point will be written to \c std::cout. If \ref verbose is
 	greater than one, a character will be required after each point.
 
-	\future Consider making a version of grid which gives the 
-	same answers as solve_final_value(). After each proposed step,
-	it would go back and fill in the grid points if the proposed
-	step was past the next grid point.
+        \verbatim embed:rst
+        .. todo:: 
+
+	   Future: Consider making a version of grid which gives the
+           same answers as solve_final_value(). After each proposed
+           step, it would sgo back and fill in the grid points if the
+           proposed step was past the next grid point.
+
+        \endverbatim
     */
     template<class vec_t, class mat_t>
     int solve_grid(double h, size_t n, size_t nsol, vec_t &xsol, 

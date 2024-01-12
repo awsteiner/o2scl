@@ -84,24 +84,27 @@ namespace o2scl {
 
       \hline
       
-      \todo Check implementation of <tt>hist::extend_lhs</tt>.
-      \todo More testing.
+      \verbatim embed:rst
+      .. todo:: 
 
-      \future 
-      - Add a counter which counts the number of calls to update()?
-      - Add conversions back and forth from GSL histograms
-      - Create extend_lhs too?
-      - Would be nice not to have to create a new \ref
-      o2scl::search_vec object in \ref o2scl::hist::get_bin_index()
-      (make a search_vec data member?)
-      - Consider adding the analogs of the GSL histogram
-      sampling functions (separate class?)
-      - Add a function which computes the bin sizes?
-      - Allow rebinning?
-      - Add histograms of float and integer values
-      - Allow addition and other operations for two histograms.
-      - Make the interpolation functions \c const (this is a bit
-      complicated because of \ref o2scl::hist::set_reps_auto() ).
+         - Check implementation of <tt>hist::extend_lhs</tt>.
+         - More testing.
+         - Future: Add a counter which counts the number of calls to update()?
+         - Future: Add conversions back and forth from GSL histograms
+         - Future: Create extend_lhs too?
+         - Future: Would be nice not to have to create a new \ref
+           o2scl::search_vec object in \ref o2scl::hist::get_bin_index()
+           (make a search_vec data member?)
+         - Future: Consider adding the analogs of the GSL histogram
+           sampling functions (separate class?)
+         - Future: Add a function which computes the bin sizes?
+         - Future: Allow rebinning?
+         - Future: Add histograms of float and integer values
+         - Future: Allow addition and other operations for two histograms.
+         - Future: Make the interpolation functions \c const (this is a bit
+           complicated because of \ref o2scl::hist::set_reps_auto() ).
+
+      \endverbatim
 
       \hline 
 

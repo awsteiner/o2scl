@@ -822,11 +822,16 @@ namespace o2scl {
         calculations determined from \c n_in+1 combinations of \c n_in
         points .
 
-        \todo Use the mechanism provided by <tt>n_extra</tt> above
-        to remove degenerate points. 
+        \verbatim embed:rst
+        .. todo:: 
 
-        \future This function requires an extra copy from
-        "ders" to "ders2" which could be removed.
+           - Use the mechanism provided by <tt>n_extra</tt> above
+             to remove degenerate points. 
+
+           - Future: This function requires an extra copy from
+             "ders" to "ders2" which could be removed.
+
+        \endverbatim
     */
     template<class vec3_t>
     void derivs_err(size_t func_index, size_t point_index, 

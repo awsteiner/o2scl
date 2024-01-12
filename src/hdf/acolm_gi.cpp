@@ -2062,7 +2062,8 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       
     } else if (method=="py_gp" || method=="py_dnn") {
       
-#ifdef O2SCL_PYTHON      
+#ifdef O2SCL_PYTHON
+      
       tensor<> tin, tout;
       vector<size_t> in_size={table_obj.get_nlines(),2};
       vector<size_t> out_size={table_obj.get_nlines(),in.size()-6};

@@ -79,8 +79,14 @@ namespace o2scl {
       using the set_type() function. The default is cubic splines
       with natural boundary conditions. 
 
-      \future Make version which copies vectors rather than storing
-      pointers might be better and then has copy constructors.
+      \verbatim embed:rst
+      .. todo:: 
+      
+         Future: In class interp_vec, make a version which copies
+         vectors rather than storing pointers might be better and then
+         has copy constructors.
+         
+      \endverbatim
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class vec2_t=vec_t, class fp_t=double> class interp_vec : 
@@ -186,6 +192,8 @@ namespace o2scl {
       } else if (interp_type==itp_gp_rbf_noise_loo_cv ||
                  interp_type==itp_gp_rbf_noise_max_lml) {
 
+        if (cf==0) delete cf;
+        
 #ifdef O2SCL_SET_EIGEN
         interp_krige_optim<vec_t,vec2_t,covar_funct_rbf_noise,
                            Eigen::MatrixXd,
@@ -210,6 +218,10 @@ namespace o2scl {
           ikon->mode=ikon->mode_max_lml;
         }
 
+        // Estimate the minimum and maximum correlation length using
+        // the minimum and maximum difference between subsequent data
+        // points, and dividing the minimum by 10 and multiplying the
+        // maximum by 10.
         std::vector<fp_t> diff;
         o2scl::vector_diffs(n,x,diff);
         fp_t min_len=vector_min_value<std::vector<fp_t>,fp_t>
@@ -223,10 +235,15 @@ namespace o2scl {
         }
         param_list.clear();
         param_list.push_back(len_list);
+        // If the minimum value is less than zero, then
+        // estimate the log of the noise
         fp_t min_y=vector_min_value<vec2_t,fp_t>(n,y);
         if (min_y<=0.0) {
           param_list.push_back({-15,-13,-11,-9});
         } else {
+          // Otherwise, if the data is always positive and non-zero,
+          // use the data to provide a scale, and presume the noise is
+          // smaller than the data
           param_list.push_back({log10(min_y)-15.0,log10(min_y)-13.0,
               log10(min_y)-11.0,log10(min_y)-9.0});
         }
@@ -239,6 +256,7 @@ namespace o2scl {
                    o2scl::szttos(interp_type)+", in "+
                    "interp_vec::set().").c_str(),exc_einval);
       }
+      
       itype=interp_type;
     
       itp->set(n,x,y);
@@ -935,8 +953,8 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
       
-      In function rebin_xy(): I'm not sure what the purpose of this
-      function was originally.
+         In function rebin_xy(): I'm not sure what the purpose of this
+         function was originally.
 
       \endverbatim
   */

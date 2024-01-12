@@ -52,7 +52,12 @@ namespace o2scl {
 
       This class is experimental.
 
-      \future Give functions for mean, median, mode, variance, etc?
+      \verbatim embed:rst
+      .. todo:: 
+
+         Future: Give functions for mean, median, mode, variance, etc?
+
+      \endverbatim
 
       \comment
       For now, there aren't any pure virtual functions,

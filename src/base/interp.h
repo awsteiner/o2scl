@@ -1410,7 +1410,10 @@ namespace o2scl {
       Based on [Fritsch80]_.
       \endverbatim
 
-      \future Convert into fewer loops over the data
+      \verbatim embed:rst
+      .. todo:: 
+         Future: Convert into fewer loops over the data
+      \endverbatim
   */
   template<class vec_t, class vec2_t=vec_t, class fp_t=double>
   class interp_monotonic :

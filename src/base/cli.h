@@ -211,14 +211,18 @@ namespace o2scl {
       \note In interactive mode, commands are limited to 300 characters,
       but this limit does not apply when readline is used.
 
-      \future Warn in run_interactive() when extra parameters are given.
-      \future A replace command function, there's already some code
-      in cli.cpp for this.
-      \future There's some code duplication between comm_option_run()
-      and run_interactive().
+      \verbatim embed:rst
+      .. todo:: 
+      
+         - Future: Warn in run_interactive() when extra parameters are given.
+         - Future: A replace command function, there's already some code
+           in cli.cpp for this.
+         - Future: There's some code duplication between comm_option_run()
+           and run_interactive().
+         - Future: Disallow direct access to \ref o2scl::cli::par_list in
+           order to ensure parameter names do not contain whitespace.
 
-      \future Disallow direct access to \ref o2scl::cli::par_list in
-      order to ensure parameter names do not contain whitespace.
+      \endverbatim
 
       <b>Concepts</b>
 
@@ -633,8 +637,11 @@ namespace o2scl {
     
     /** \brief The function which obtains input from the user
         
-	\future Think about whether or not this should be protected?
-	(Possibly not, as it's extensively used by acolm.cpp)
+        \verbatim embed:rst
+        .. todo:: 
+	   Future: Think about whether or not this should be protected?
+           (Possibly not, as it's extensively used by acolm.cpp)
+        \endverbatim
     */
     virtual char *cli_gets(const char *c);
     
@@ -675,8 +682,11 @@ namespace o2scl {
     
     /** \brief Process command-line arguments from a string
 
-	\future There's a typecast in this function to (char *)
-	from (const char *) which needs reworking.
+        \verbatim embed:rst
+        .. todo:: 
+	   Future: There's a typecast in this function to (char *)
+           from (const char *) which needs reworking.
+        \endverbatim
      */
     int process_args_str(std::string s, std::vector<cmd_line_arg> &ca, 
                          int debug=0, bool also_call_args=false);

@@ -61,8 +61,13 @@ namespace o2scl {
       Given an array of terms in a sum, this attempts to evaluate the
       entire sum with an estimate of the error.
 
-      \future Move the workspaces to classes?
-      \future Create an example
+      \verbatim embed:rst
+      .. todo:: 
+
+         Future: Move the workspaces to classes?
+         Future: Create an example
+
+      \endverbatim
   */
   class series_acc {
 

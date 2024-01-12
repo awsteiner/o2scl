@@ -46,15 +46,20 @@ namespace o2scl {
       \times \mathrm{nrows} \f$. The column widths and spacings of are
       computed by exhaustively examining all strings in every column.
 
-      \future Create a single column version of add_spaces().
-      \future Create a function which accepts delimited strings
-      (e.g. like csv) instead of vector<vector<string>>. 
-      \future Move the screenify() functionality from misc.h into 
-      this class?
-      \future It might be better to allow the string table
-      to be specified with iterators.
-      \future Consider a function which takes a \ref o2scl::table
-      object as input?
+      \verbatim embed:rst
+      .. todo:: 
+
+         - Future: Create a single column version of add_spaces().
+         - Future: Create a function which accepts delimited strings
+           (e.g. like csv) instead of vector<vector<string>>. 
+         - Future: Move the screenify() functionality from misc.h into 
+           this class?
+         - Future: It might be better to allow the string table
+           to be specified with iterators.
+         - Future: Consider a function which takes a \ref o2scl::table
+           object as input?
+
+      \endverbatim
   */
   class columnify {
 
@@ -569,9 +574,12 @@ namespace o2scl {
       row index and the second index is the column index. For the
       opposite convention, use \ref array_2d_trans_out().
 
-      \future If all of the matrix elements are positive integers 
-      and scientific mode is not set, then we can avoid printing
-      the extra spaces.
+      \verbatim embed:rst
+      .. todo:: 
+         Future: If all of the matrix elements are positive integers 
+         and scientific mode is not set, then we can avoid printing
+         the extra spaces.
+      \endverbatim
   */
   template<class mat_t> void array_2d_out(std::ostream &os, size_t nrows, 
 					 size_t ncols, mat_t &A) {
@@ -609,16 +617,19 @@ namespace o2scl {
       then the decimal point is assumed to be to the right of the
       last character in the string representation of the number.
 
-      \future If all of the matrix elements are positive integers 
-      and scientific mode is not set, then we can avoid printing
-      the extra spaces.
+      \verbatim embed:rst
+      .. todo:: 
+         Future: If all of the matrix elements are positive integers 
+         and scientific mode is not set, then we can avoid printing
+         the extra spaces.
+      \endverbatim
 
       This function outputs the matrix assuming the first index is the
       column index and the second index is the row index. For the
       opposite convention, use \ref array_2d_out().
   */
-  template<class mat_t> void array_2d_trans_out(std::ostream &os, size_t nrows, 
-					       size_t ncols, mat_t &A) {
+  template<class mat_t> void array_2d_trans_out
+  (std::ostream &os, size_t nrows, size_t ncols, mat_t &A) {
    
     columnify co;
     std::vector<std::string> *stab=new std::vector<std::string>[nrows];
