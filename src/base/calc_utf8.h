@@ -3,7 +3,7 @@
   
   Original author: Jesse Brown
   Modifications: Brandon Amos, redpois0n
-  Modifications for O2scl copyright (C) 2017-2023, Andrew W. Steiner
+  Modifications for O2scl copyright (C) 2017-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   

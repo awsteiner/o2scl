@@ -1,7 +1,7 @@
-/*
+ /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2022-2023, Mahamudul Hasan Anik, Satyajit Roy, and
+  Copyright (C) 2022-2024, Mahamudul Hasan Anik, Satyajit Roy, and
   Andrew W. Steiner
   
   This file is part of O2scl.

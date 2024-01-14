@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner and Jesse Farr 
+  Copyright (C) 2006-2024, Andrew W. Steiner and Jesse Farr 
   
   This file is part of O2scl.
   
