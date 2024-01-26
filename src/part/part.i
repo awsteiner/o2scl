@@ -73,7 +73,7 @@ class part
 #
 class fermion
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``%name%``,
+| Python interface for O2scl class ``%name%``,
 | which is a typedef of ``%name%_tl<double>``. See
 | https://neutronstars.utk.edu/code/o2scl-dev/part/html/class/%name%_tl.html
 | .

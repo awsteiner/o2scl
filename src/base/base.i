@@ -14,7 +14,7 @@ dll_name o2scl
 rst_header |
 | .. _base:
 |
-| Base classes from O\ :sub:`2`\ scl
+| Base classes from O2scl
 | ==================================
 |
 | :ref:`O2sclpy <o2sclpy>`
@@ -561,7 +561,7 @@ class lib_settings_class
 #
 class table<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table``,
+| Python interface for O2scl class ``table``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
 - py_name table
@@ -838,7 +838,7 @@ class table<>
 #
 class table_units<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table_units``,
+| Python interface for O2scl class ``table_units``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
 - parent table<>
@@ -872,7 +872,7 @@ shared_ptr table_units<>
 #
 class uniform_grid<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
+| Python interface for O2scl class ``uniform_grid``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
 - py_name uniform_grid
@@ -912,7 +912,7 @@ class uniform_grid<>
 #
 class uniform_grid_end<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
+| Python interface for O2scl class ``uniform_grid_end``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
@@ -926,7 +926,7 @@ class uniform_grid_end<>
 #
 class uniform_grid_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
+| Python interface for O2scl class ``uniform_grid_width``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
@@ -940,7 +940,7 @@ class uniform_grid_width<>
 #
 class uniform_grid_end_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
+| Python interface for O2scl class ``uniform_grid_end_width``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
@@ -954,7 +954,7 @@ class uniform_grid_end_width<>
 #
 class uniform_grid_log_end<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
+| Python interface for O2scl class ``uniform_grid_log_end``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
@@ -968,7 +968,7 @@ class uniform_grid_log_end<>
 #
 class uniform_grid_log_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_width``,
+| Python interface for O2scl class ``uniform_grid_log_width``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
@@ -982,7 +982,7 @@ class uniform_grid_log_width<>
 #
 class uniform_grid_log_end_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end_width``,
+| Python interface for O2scl class ``uniform_grid_log_end_width``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
@@ -1271,7 +1271,7 @@ class ix_gridw
 #
 class tensor<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
 - std_cc                             
@@ -1443,7 +1443,7 @@ function rearrange_and_copy<tensor<size_t>,size_t>
 #
 class tensor<int,std::vector<int>>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
 - std_cc                             
@@ -1586,7 +1586,7 @@ class tensor<int,std::vector<int>>
 #
 class tensor<size_t,std::vector<size_t>>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
 - std_cc                             
@@ -1722,7 +1722,7 @@ class tensor<size_t,std::vector<size_t>>
 #
 class tensor_grid<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
+| Python interface for O2scl class ``tensor_grid``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
 - parent tensor<>
@@ -1954,7 +1954,7 @@ class convert_units<>::der_unit
 #
 class convert_units<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``convert_units``,
+| Python interface for O2scl class ``convert_units``,
 | see
 | https://neutronstars.utk.edu/code/o2scl/html/class/convert_units.html .
 - py_name convert_units
