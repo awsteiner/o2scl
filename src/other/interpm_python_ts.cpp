@@ -106,7 +106,7 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,1,
-                      tin,tout,"verbose=1","interpm_sklearn_gp",1);
+                      tin,tout,"verbose=3","interpm_sklearn_gp",1);
     
     std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
