@@ -1,3 +1,29 @@
+/*
+  ───────────────────────────────────────────────────────────────────
+  
+  Copyright (C) 2012-2023, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  ───────────────────────────────────────────────────────────────────
+*/
+/** \file mcmc_para.h
+    \brief File for definition of \ref o2scl::mcmc_para_base,
+    \ref o2scl::mcmc_para_table and \ref o2scl::mcmc_para_cli
+*/
 #ifndef O2SCL_MCMC_PARA_HMC_H
 #define O2SCL_MCMC_PARA_HMC_H
 
@@ -14,6 +40,7 @@
 #endif
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/hdf_file.h>
 #include <o2scl/exception.h>
@@ -28,7 +55,141 @@ namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  
+
+  /** \brief A generic MCMC simulation class
+
+      Significant changes:
+      
+      * There is no data vector in the class, it's moved to a
+      parameter of the mcmc() function.
+
+      * New outside_parallel() function: the idea is that 
+      an emulator can be retrained in this function.
+
+      * New steps_in_parallel variable
+
+      * The best point mechanism has been reworked, there is now a
+      best point over all threads and a best point array which stores
+      the best point from each thread
+
+      * The initial point evaluation is essentially the same, 
+      but the main loop is reorganized.
+
+      * When aff_inv is false, there are three loops, a main loop,
+      a parallel loop over threads, and then an inner loop
+      of size steps_in_parallel.
+
+      * When aff_inv is true, there is a main loop and two sequential
+      parallel loops over the number of threads.
+
+      Todos:
+
+      * Figure out what to do with the message vector which is
+      commented out in both versions
+
+      * The main loop with the affine-invariant sampling could be
+      modified with a new inner loop to do many function evaluations
+      for each thread. However, I think this would demand combining
+      the two sequential parallel loops.
+
+      ---------------------------------------------------------
+
+      This class performs a Markov chain Monte Carlo simulation of a
+      user-specified function using OpenMP and/or MPI. Either the
+      Metropolis-Hastings algorithm with a user-specified proposal
+      distribution or the affine-invariant sampling method of Goodman
+      and Weare can be used.
+
+      By default, the Metropolis-Hastings algorithm is executed with a
+      simple walk, with steps in each dimension of size \f$
+      (\mathrm{high} - \mathrm{low})/\mathrm{step\_fac} \f$ with the
+      denominator specified in \ref step_fac.
+
+      The function type is a template type, \c func_t, which should
+      be of the form 
+      \code
+      int f(size_t num_of_parameters, const vec_t &parameters,
+      double &log_pdf, data_t &dat)
+      \endcode
+      which computes \c log_pdf, the natural logarithm of the function
+      value, for any point in parameter space (any point between \c
+      low and \c high ).
+
+      If the function being simulated returns \ref mcmc_skip then the
+      point is automatically rejected. After each acceptance or
+      rejection, a user-specified "measurement" function (of type \c
+      measure_t ) is called, which can be used to store the results.
+      In order to stop the simulation, either this function or the
+      probability distribution being simulated should return the value
+      \ref mcmc_done . 
+      
+      A generic proposal distribution can be specified in \ref
+      set_proposal(). To go back to the default random walk method,
+      one can call the function \ref unset_proposal().
+
+      If \ref aff_inv is set to true, then affine-invariant sampling
+      is used. For affine-invariant sampling, the variable \ref
+      step_fac represents the value of \f$ a \f$, the limits of the
+      distribution for \f$ z \f$ (which defaults to 2). If \ref
+      aff_inv is true and an initial point fails, then \ref mcmc()
+      chooses random points inside the hypercube to attempt to find
+      enough initial points to proceed. This method of finding initial
+      points, however, is often too slow for large parameter spaces.
+
+      Affine-invariant sampling works best when the number of walkers
+      is much larger than the number of parameters. If \ref n_walk is
+      0 or 1, then this class automatically sets \ref n_walk to three
+      times the number of parameters. This class will otherwise allow
+      the user to set a smaller number of walkers than parameters
+      without notifying the user.
+
+      In order to store data at each point, the user can store this
+      data in any object of type \c data_t . If affine-invariant
+      sampling is used, then each chain has it's own data object. The
+      class keeps twice as many copies of these data object as would
+      otherwise be required, in order to avoid copying of data objects
+      in the case that the steps are accepted or rejected.
+
+      Whether or not \ref aff_inv is true, there is a virtual function
+      called \ref outside_parallel() which is called during the MCMC.
+      Class descendants can replace this function with code which must
+      be run outside of an OpenMP parallel region. Note that this is
+      not implemented via, e.g. an OpenMP CRITICAL region so that no
+      loss of performance is expected. If \ref aff_inv is false, then
+      \ref outside_parallel() is called every \ref steps_in_parallel
+      MCMC steps (for each OpenMP thread). If \ref aff_inv is true,
+      then \ref outside_parallel() is called after all the walkers
+      have completed for each thread.
+
+      <b>Verbose output:</b> If verbose is 0, no output is generated
+      (the default). If verbose is 1, then output to <tt>cout</tt>
+      occurs only if the settings are somehow misconfigured and the
+      class attempts to recover from them, for example if not enough
+      functions are specified for the requested number of OpenMP
+      threads, or if more than one thread was requested but
+      O2SCL_SET_OPENMP was not defined, or if a negative value for \ref
+      step_fac was requested. When verbose is 1, a couple messages are
+      written to \ref scr_out : a summary of the number
+      of walkers, chains, and threads at the beginning of the MCMC
+      simulation, a message indicating why the MCMC simulation
+      stopped, a message when the warm up iterations are completed, a
+      message every time files are written to disk, and a message at
+      the end counting the number of acceptances and rejections.
+      If verbose is 2, then the file prefix is output to <tt>cout</tt>
+      during initialization.
+
+      \note This class is experimental.
+
+      \future There is a little code in mcmc_init() and mcmc_cleanup()
+      and I should document why that code needs to be there.
+
+      \note Currently, this class requires that the data_t 
+      has a good copy constructor. 
+
+      \future The copy constructor for the data_t type is used when
+      the user doesn't specify enough initial points for the
+      corresponding number of threads and walkers. 
+  */
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector> class mcmc_para_base {
     
@@ -312,20 +473,8 @@ namespace o2scl {
     virtual void outside_parallel() {
       return;
     }
-    
-    // Position variables
-    std::vector<double> position;
 
-    // Momentum variables
-    std::vector<double> momentum;
-
-    // Scaling parameters
-    std::vector<double> scale;
-
-    // Step size
-    std::vector<double> step_size;
-
-    // Trajectory length
+    // HMC Trajectory length
     int traj_length;
 
     /// \name Basic usage
@@ -340,7 +489,7 @@ namespace o2scl {
         The vector \c data should be of size
         <tt>2*n_walk*n_threads</tt>.
     */
-    virtual int hmc(size_t n_params, vec_t &low, vec_t &high,
+    virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
                   std::vector<func_t> &func,
                   std::vector<measure_t> &meas,
                   std::vector<data_t> &data) {
@@ -446,7 +595,7 @@ namespace o2scl {
       } // End of check initial points
 
       // ----------------------------------------------------------------
-      // Set number of threads
+      // Set number of OpenMP threads
       #ifdef O2SCL_SET_OPENMP
         omp_set_num_threads(n_threads);
       #else
@@ -458,13 +607,121 @@ namespace o2scl {
                     << std::endl;
           n_threads=1;
         }
-      #endif
+      #endif // End of setting OpenMP threads
 
       // ----------------------------------------------------------------
+      // Fix 'step_fac' if less than or equal to zero
+      if (step_fac<=0.0) {
+        if (aff_inv) {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac with aff_inv=true.\nSetting to 2.0."
+                    << std::endl;
+          step_fac=2.0;
+        } else {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac. Setting to 10.0." << std::endl;
+          step_fac=10.0;
+        }
+      } // End of fixing 'step_fac'
+
+      // ----------------------------------------------------------------
+      // Set RNGs with a different seed for each thread and rank. 
+      rg.resize(n_threads);
+      unsigned long int seed=time(0);
+      if (this->user_seed!=0) {
+        seed=this->user_seed;
+      }
+      for(size_t it=0;it<n_threads;it++) {
+        seed*=(mpi_rank*n_threads+it+1);
+        rg[it].set_seed(seed);
+      } // End of setting RNGs
+
+      // ----------------------------------------------------------------
+      // Keep track of successful and failed MH moves in each
+      // independent chain
+      n_accept.resize(n_threads);
+      n_reject.resize(n_threads);
+      for(size_t it=0;it<n_threads;it++) {
+        n_accept[it]=0;
+        n_reject[it]=0;
+      } // End of tracking successful and failed MH moves
+
+      // ----------------------------------------------------------------
+      // Warm-up flag, not to be confused with 'n_warm_up', the
+      // number of warm_up iterations.
+      warm_up=true;
+      if (n_warm_up==0) warm_up=false;
+
+      // ----------------------------------------------------------------
+      // Allocate space for storage
+      
       // Set storage of return values from each thread
       std::vector<int> func_ret(n_threads), meas_ret(n_threads);
 
+      // Set required storage size
+      size_t ssize=n_walk*n_threads;
 
+      // Allocate current point and current weight
+      current.resize(ssize);
+      std::vector<double> w_current(ssize);
+      for(size_t i=0;i<ssize;i++) {
+        current[i].resize(n_params);
+        w_current[i]=0.0;
+      }
+
+      // Allocate curr_walker
+      curr_walker.resize(n_threads);
+
+      // Allocation of ret_value_counts should be handled by the user
+      // in mcmc_init(), because this class can't determine what the
+      // possible and interesting return values are.
+      // ret_value_counts.resize(n_threads);
+
+      // Initialize data and switch arrays
+      switch_arr.resize(ssize);
+      for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
+    
+      // Next point and next weight for each thread
+      std::vector<vec_t> next(n_threads);
+      for(size_t it=0;it<n_threads;it++) {
+        next[it].resize(n_params);
+      }
+      std::vector<double> w_next(n_threads);
+
+      // Best point and best weight for each thread (only used when
+      // aff_inv=false and not used until after the initial points are
+      // computed)
+      std::vector<vec_t> best_t(n_threads);
+      for(size_t it=0;it<n_threads;it++) {
+        best_t[it].resize(n_params);
+      }
+      std::vector<double> w_best_t(n_threads);
+      
+      // Best point over all threads
+      vec_t best(n_params);
+      double w_best;
+
+      // Generally, these flags are are true for any thread if func_ret
+      // or meas_ret is equal to mcmc_done.
+      std::vector<bool> mcmc_done_flag(n_threads);
+      for(size_t it=0;it<n_threads;it++) {
+        mcmc_done_flag[it]=false;
+      }
+          
+      // Proposal weight
+      std::vector<double> q_prop(n_threads);
+
+      // ----------------------------------------------------------------
+      // Run the mcmc_init() function. 
+      int init_ret=mcmc_init();
+      if (init_ret!=0) {
+        O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
+                  o2scl::exc_einval);
+        return init_ret;
+      }
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
 
       std::vector<double> q=position;
       
