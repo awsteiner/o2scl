@@ -228,9 +228,6 @@ namespace o2scl {
     */
     std::vector<vec_t> current;
 
-    // Current momenta in HMC for each OpenMP thread
-    std::vector<vec_t> current_m;
-
     /** \brief Data switch array for each walker and each OpenMP thread
 
         This is an array of size \ref n_threads times \ref n_walk initial
@@ -361,6 +358,9 @@ namespace o2scl {
   
     /// Optionally specify step sizes for each parameter
     std::vector<double> step_vec;
+
+    /// Trajectory length for HMC (default 100)
+    size_t traj_length;
 
     /** \brief If true, couple the walkers across threads during
         affine-invariant sampling (default false)
@@ -542,10 +542,49 @@ namespace o2scl {
                    "sampling not implemented in mcmc_para::mcmc().",
                    o2scl::exc_eunimpl);
       }
+      if (step_fac<=0.0) {
+        if (aff_inv) {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac with aff_inv=true.\nSetting to 2.0."
+                    << std::endl;
+          step_fac=2.0;
+        } else {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac. Setting to 10.0." << std::endl;
+          step_fac=10.0;
+        }
+      } 
       if (hmc==true) {
         if (verbose>0) {
           std::cout << "mcmc_para::mcmc(): Hamiltonian Monte Carlo "
                     << "selected." << std::endl;
+        }
+        if (traj_length<=0) {
+          std::cout << "mcmc_para::mcmc(): Trajectory length "
+                    << "not set. Setting to 100." << std::endl;
+          traj_length=100;
+        }
+        if (step_vec.size()<n_params) {
+          std::cout << "mcmc_para::mcmc(): Not enough step sizes "
+                    << "specified for HMC. Resizing and setting all "
+                    << "to 0.1."
+                    << std::endl;
+          step_vec.resize(n_params,0.1);
+        } else {
+          for (size_t i=0; i<step_vec.size(); i++) {
+            if (step_vec[i]<=0.0) {
+              std::cout << "mcmc_para::mcmc(): Requested negative or "
+                        << "zero step size for parameter " << i << ". "
+                        << "Setting all to 0.1."
+                        << std::endl;
+              step_vec[i]=0.1;
+            }
+          }
+        }
+        if (n_walk>1) {
+          std::cout << "mcmc_para::mcmc(): HMC selected with n_walk>1. "
+                    << "Setting n_walk to 1." << std::endl;
+          n_walk=1;
         }
       }
       // End of checking inputs and settings
@@ -640,40 +679,6 @@ namespace o2scl {
           n_threads=1;
         }
       #endif // End of setting OpenMP threads
-
-      // ----------------------------------------------------------------
-      // Fix step factor if less than or equal to zero
-      if (step_fac<=0.0) {
-        if (aff_inv) {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac with aff_inv=true.\nSetting to 2.0."
-                    << std::endl;
-          step_fac=2.0;
-        } else {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac. Setting to 10.0." << std::endl;
-          step_fac=10.0;
-        }
-      } 
-      if (hmc) {
-        if (step_vec.size()<n_params) {
-          std::cout << "mcmc_para::mcmc(): Not enough step sizes "
-                    << "specified for HMC. Resizing and setting all "
-                    << "to 0.1."
-                    << std::endl;
-          step_vec.resize(n_params,0.1);
-        } else {
-          for (size_t i=0; i<step_vec.size(); i++) {
-            if (step_vec[i]<=0.0) {
-              std::cout << "mcmc_para::mcmc(): Requested negative or "
-                        << "zero step size for parameter " << i << ". "
-                        << "Setting all to 0.1."
-                        << std::endl;
-              step_vec[i]=0.1;
-            }
-          }
-        }
-      } // End of fixing step factor
 
       // ----------------------------------------------------------------
       // Set RNGs with a different seed for each thread and rank. 
@@ -1423,26 +1428,35 @@ namespace o2scl {
         // ----------------------------------------------------------------
         // Start of main loop for hmc==true (Hamiltonian Monte Carlo)
 
-        // Initialize position, momentum, and stepsize vectors, 
-        // each of dimension n_threads*n_params
-        std::vector<ubvector> pos_curr(n_threads), pos_next(n_threads); 
-        std::vector<ubvector> mom_curr(n_threads), mom_next(n_threads);
-        std::vector<ubvector> step_size(n_threads);
+        // Positions and momenta for current and next steps
+        std::vector<vec_t> pos_curr(n_threads), pos_next(n_threads); 
+        std::vector<vec_t> mom_curr(n_threads), mom_next(n_threads);
+
+        // Step sizes for each parameter
+        std::vector<vec_t> stepsize(n_threads);
+
+        // Potential and kinetic energies for current and next steps
+        std::vector<vec_t> pot_curr(n_threads), pot_next(n_threads);
+        std::vector<vec_t> kin_curr(n_threads), kin_next(n_threads);
+
+        // Gradient of the potential energy
+        std::vector<vec_t> grad_pot(n_threads);
 
         // Allocate memory for each thread
         for(size_t it=0; it<n_threads; it++) {
           pos_curr[it].resize(n_params);
-          mom_curr[it].resize(n_params);
           pos_next[it].resize(n_params);
+          mom_curr[it].resize(n_params);
           mom_next[it].resize(n_params);
-          step_size[it].resize(n_params);
+          stepsize[it].resize(n_params);
+          pot_curr[it].resize(n_params);
+          pot_next[it].resize(n_params);
+          kin_curr[it].resize(n_params);
+          kin_next[it].resize(n_params);
+          grad_pot[it].resize(n_params);
         }
 
-        // Potential and kinetic energies
-        std::vector<func_t> pot_curr, pot_next;
-        std::vector<double> kin_curr, kin_next;
-
-        // Generator random number from a standard normal distribution
+        // Generator random numbers from a standard normal distribution
         boost::random::mt19937 gen;
         boost::random::normal_distribution<double> norm_dist(0.0, 1.0);
         
@@ -1451,12 +1465,12 @@ namespace o2scl {
           for (size_t ip=0; ip<n_params; ip++) {
 
             // Get stepsizes specified by the user
-            step_size[it](ip)=step_vec[ip];
-
-            // Get current positions from current points
-            pos_curr[it](ip)=current[it][ip];
+            stepsize[it][ip]=step_vec[ip];
           }
         }
+        
+        // Get current positions from current points
+        pos_curr[it]=current[it];
 
         // Set the main HMC flag
         bool main_done=false;
@@ -1478,7 +1492,7 @@ namespace o2scl {
               bool inner_done=false;
               while (!inner_done && !main_done) {
 
-                // Print info for current step
+                // Print info for current step for HMC
                 if (verbose>=2) {
                   scr_out << "Iteration: " << mcmc_iters[it] << " of "
                           << max_iters << ", thread " << it << ", accept: "
@@ -1486,23 +1500,107 @@ namespace o2scl {
                           << std::endl;
                 }
 
-                // Set next positions and momenta for HMC
+                // Set next position and momentum
                 pos_next[it]=pos_curr[it];
                 for (size_t ip=0; ip<n_params; ip++) {
-                  mom_next[it](ip)=norm_dist(gen);
+                  mom_next[it][ip]=norm_dist(gen);
                 }
 
-                // Set current momenta
+                // Set current momentum
                 mom_curr[it]=mom_next[it];
 
-                // Get potential energies for current positions
-                pot_curr[it]=-w_current[it];
-
+                // Compute the gradient of potential energy
                 gradient_gsl deriv;
                 deriv.set_function(func[it]);
+                deriv(n_params, pos_next[it], grad_pot[it]);
+
+                // Make a half step for momentum at the beginning
+                mom_next[it]-=0.5*stepsize[it]*grad_pot[it];
                 
+                // Alternate full steps for position and momentum
+                for (size_t i=1; i<=traj_length; i++) {
+                  
+                  // Make a full step for position
+                  pos_next[it]+=stepsize[it]*mom_next[it];
 
+                  // Compute next weight for HMC
+                  func_ret[it]=o2scl::success;
 
+                  // If next point is out of bounds, reject the point
+                  // without attempting to compute the weight for HMC
+                  for (size_t ip=0; ip<n_params; ip++) {
+                    if (pos_next[it][ip]<low[ip] || 
+                        pos_next[it][ip]>high[ip]) {
+                      func_ret[it]=mcmc_skip;
+                      if (verbose>=3) {
+                        if (pos_next[it][ip]<low[ip]) {
+                          std::cout << "mcmc (" << it << ","
+                                    << mpi_rank << "): Parameter with index "
+                                    << ip << " and value " << pos_next[it][ip]
+                                    << " smaller than limit " << low[ip]
+                                    << std::endl;
+                          scr_out << "mcmc (" << it << ","
+                                  << mpi_rank << "): Parameter with index " << ip
+                                  << " and value " << pos_next[it][ip]
+                                  << " smaller than limit " << low[ip]
+                                  << std::endl;
+                        } else {
+                          std::cout << "mcmc (" << it << "," << mpi_rank
+                                    << "): Parameter with index " << ip
+                                    << " and value " << pos_next[it][ip]
+                                    << " larger than limit " << high[ip]
+                                    << std::endl;
+                          scr_out << "mcmc (" << it << "," << mpi_rank
+                                  << "): Parameter with index " << ip
+                                  << " and value " << pos_next[it][ip]
+                                  << " larger than limit " << high[ip]
+                                  << std::endl;
+                        }
+                      }
+                    }
+                  }
+
+                  // Evaluate the function, set the 'done' flag if necessary,
+                  // and update the return value array, for HMC
+                  if (func_ret[it]!=mcmc_skip) {
+                    if (switch_arr[it]==false) {
+                      func_ret[it]=func[it](n_params, pos_next[it],
+                                            w_next[it], data[it+n_threads]);
+                    } else {
+                      func_ret[it]=func[it](n_params, pos_next[it], 
+                                            w_next[it], data[it]);
+                    }
+                    if (func_ret[it]==mcmc_done) {
+                      mcmc_done_flag[it]=true;
+                    } else {
+                      if (func_ret[it]>=0 && ret_value_counts.size()>it && 
+                          func_ret[it]<((int)ret_value_counts[it].size())) {
+                        ret_value_counts[it][func_ret[it]]++;
+                      }
+                    }
+                  }
+
+                  // Get potential energy for next positions
+                  pot_next[it]=-w_next[it];
+
+                  // Compute the gradient of potential energy
+                  deriv(n_params, pos_next[it], grad_pot[it]);
+
+                  // Make a full step for the momentum, except at the end
+                  if (i!=traj_length) {
+                    mom_next[it]-=stepsize[it]*grad_pot[it];
+                  }
+                }
+
+                // Make a half step for momentum at the end
+                mom_next[it]-=0.5*stepsize[it]*grad_pot[it];
+
+                // Negate momentum at the end of trajectory
+                mom_next[it]=-mom_next[it];
+
+                // Evaluate potential energy at start and end of trajectory
+                pot_curr[it]=-w_current[it];
+                pot_next[it]=-w_next[it];
 
               }
             }
@@ -3383,6 +3481,7 @@ namespace o2scl {
     o2scl::cli::parameter_size_t p_n_walk;
     o2scl::cli::parameter_bool p_aff_inv;
     o2scl::cli::parameter_bool p_hmc;
+    o2scl::cli::parameter_size_t p_traj_length;
     o2scl::cli::parameter_bool p_table_sequence;
     o2scl::cli::parameter_bool p_store_rejects;
     o2scl::cli::parameter_bool p_check_rows;
@@ -3533,6 +3632,11 @@ namespace o2scl {
       p_hmc.help=((std::string)"If true, then use Hamiltonian Monte Carlo ")+
         "(default false).";
       cl.par_list.insert(std::make_pair("hmc",&p_hmc));
+
+      p_traj_length.b=&this->traj_length;
+      p_traj_length.help=((std::string)"Set the trajectory length for ")+
+        "Hamiltonian Monte Carlo (default 100).";
+      cl.par_list.insert(std::make_pair("traj_length",&p_traj_length));
     
       p_table_sequence.b=&this->table_sequence;
       p_table_sequence.help=((std::string)"If true, then ensure equal ")+
