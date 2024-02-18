@@ -55,6 +55,7 @@ namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
+  typedef boost::numeric::ublas::identity_matrix<double> ubidentity;
 
   /** \brief A generic MCMC simulation class
 
@@ -190,6 +191,52 @@ namespace o2scl {
       the user doesn't specify enough initial points for the
       corresponding number of threads and walkers. 
   */
+
+template<class func_t, class ubvector >
+  class gradient {
+ 
+  public:
+
+  gradient() {
+    epsrel=1.0e-6;
+    epsmin=1.0e-15;
+  }
+  
+  virtual ~gradient() {}
+
+  // Relative stepsize for finite-differencing (default: 1.0e-6)
+  double epsrel;
+
+  // Minimum stepsize (default: 1.0e-15)
+  double epsmin;
+  
+  // Set the function to compute the gradient of
+  virtual int set_function(func_t &f) {
+    func=&f;
+    return 0;
+  }
+
+  // Compute the gradient g at the point x
+  virtual int operator()(size_t nv, ubvector &x, ubvector &g) {
+    double fv1, fv2, h;
+    fv1=(*this->func)(nv,x);
+    for(size_t i=0; i<nv; i++) {
+	    h=epsrel*fabs(x[i]);
+	    if (fabs(h)<=epsmin) h=epsrel;
+	    x[i]+=h;
+	    fv2=(*this->func)(nv,x);
+	    x[i]-=h;
+	    g[i]=(fv2-fv1)/h;
+    }
+    return 0;
+  }
+  
+  protected:
+
+  // A pointer to the user-specified function
+  func_t *func;
+};
+
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector> class mcmc_para_base {
     
@@ -802,7 +849,8 @@ namespace o2scl {
                   << "Hamiltonian Monte Carlo, n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
-                  << mpi_size << std::endl;
+                  << mpi_size << ", trajectory_length="
+                  << traj_length << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
                   << "Random-walk w/uniform dist., n_params="
@@ -1428,49 +1476,39 @@ namespace o2scl {
         // ----------------------------------------------------------------
         // Start of main loop for hmc==true (Hamiltonian Monte Carlo)
 
-        // Positions and momenta for current and next steps
-        std::vector<vec_t> pos_curr(n_threads), pos_next(n_threads); 
-        std::vector<vec_t> mom_curr(n_threads), mom_next(n_threads);
-
-        // Step sizes for each parameter
-        std::vector<vec_t> stepsize(n_threads);
-
-        // Potential and kinetic energies for current and next steps
-        std::vector<vec_t> pot_curr(n_threads), pot_next(n_threads);
-        std::vector<vec_t> kin_curr(n_threads), kin_next(n_threads);
-
-        // Gradient of the potential energy
-        std::vector<vec_t> grad_pot(n_threads);
-
-        // Allocate memory for each thread
-        for(size_t it=0; it<n_threads; it++) {
-          pos_curr[it].resize(n_params);
-          pos_next[it].resize(n_params);
-          mom_curr[it].resize(n_params);
-          mom_next[it].resize(n_params);
-          stepsize[it].resize(n_params);
-          pot_curr[it].resize(n_params);
-          pot_next[it].resize(n_params);
-          kin_curr[it].resize(n_params);
-          kin_next[it].resize(n_params);
-          grad_pot[it].resize(n_params);
-        }
-
         // Generator random numbers from a standard normal distribution
         boost::random::mt19937 gen;
         boost::random::normal_distribution<double> norm_dist(0.0, 1.0);
-        
-        // Set stepsize and current position for each thread
-        for (size_t it=0; it<n_threads; it++) {
-          for (size_t ip=0; ip<n_params; ip++) {
 
-            // Get stepsizes specified by the user
-            stepsize[it][ip]=step_vec[ip];
+        // Positions and momenta for current and next points
+        ubvector pos_curr(n_params), pos_next(n_params); 
+        ubvector mom_curr(n_params), mom_next(n_params);
+
+        // Weights of current and next points for each thread
+        double wgt_curr, wgt_next;
+
+        // Potential and kinetic energies for each thread
+        double pot_curr, pot_next;
+        double kin_curr, kin_next;
+
+        // Gradient of potential energy w.r.t. position
+        ubvector grad_pot(n_params);
+
+        // Step sizes for each parameter
+        ubvector stepsize(n_params);
+        
+        // Get stepsizes for each parameter (user-specified)
+        stepsize(ip)=step_vec[ip];
+
+        // Construct the mass matrix and its inverse
+        ubmatrix mass_inv=ubidentity(n_params);
+        
+        for (size_t i=0; i<n_params; i++) {
+          double si=stepsize(i);
+          for (size_t j=0; j<n_params; j++) {
+            mass_inv(i,j)*=(si*si);
           }
         }
-        
-        // Get current positions from current points
-        pos_curr[it]=current[it];
 
         // Set the main HMC flag
         bool main_done=false;
@@ -1500,114 +1538,259 @@ namespace o2scl {
                           << std::endl;
                 }
 
-                // Set next position and momentum
-                pos_next[it]=pos_curr[it];
                 for (size_t ip=0; ip<n_params; ip++) {
-                  mom_next[it][ip]=norm_dist(gen);
+
+                  // Get current positions for this thread
+                  pos_curr(ip)=current[it][ip];
+
+                  // Set current momenta to random numbers from N(0,1)
+                  mom_curr(ip)=norm_dist(gen);
                 }
 
-                // Set current momentum
-                mom_curr[it]=mom_next[it];
+                // Rescale momenta by the stepsizes
+                mom_curr*=stepsize;
+
+                // Set next positions and momenta
+                pos_next=pos_curr;
+                mom_next=mom_curr;
 
                 // Compute the gradient of potential energy
-                gradient_gsl deriv;
-                deriv.set_function(func[it]);
-                deriv(n_params, pos_next[it], grad_pot[it]);
+                gradient grad_potential;
+                grad_potential.set_function(func[it]);
+                grad_potential(n_params, pos_next, grad_pot);
 
                 // Make a half step for momentum at the beginning
-                mom_next[it]-=0.5*stepsize[it]*grad_pot[it];
+                mom_next-=0.5*element_prod(stepsize, grad_pot);
                 
-                // Alternate full steps for position and momentum
+                // Leapfrog steps: Full steps for position and momentum
                 for (size_t i=1; i<=traj_length; i++) {
                   
                   // Make a full step for position
-                  pos_next[it]+=stepsize[it]*mom_next[it];
-
-                  // Compute next weight for HMC
-                  func_ret[it]=o2scl::success;
-
-                  // If next point is out of bounds, reject the point
-                  // without attempting to compute the weight for HMC
-                  for (size_t ip=0; ip<n_params; ip++) {
-                    if (pos_next[it][ip]<low[ip] || 
-                        pos_next[it][ip]>high[ip]) {
-                      func_ret[it]=mcmc_skip;
-                      if (verbose>=3) {
-                        if (pos_next[it][ip]<low[ip]) {
-                          std::cout << "mcmc (" << it << ","
-                                    << mpi_rank << "): Parameter with index "
-                                    << ip << " and value " << pos_next[it][ip]
-                                    << " smaller than limit " << low[ip]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << ","
-                                  << mpi_rank << "): Parameter with index " << ip
-                                  << " and value " << pos_next[it][ip]
-                                  << " smaller than limit " << low[ip]
-                                  << std::endl;
-                        } else {
-                          std::cout << "mcmc (" << it << "," << mpi_rank
-                                    << "): Parameter with index " << ip
-                                    << " and value " << pos_next[it][ip]
-                                    << " larger than limit " << high[ip]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << "," << mpi_rank
-                                  << "): Parameter with index " << ip
-                                  << " and value " << pos_next[it][ip]
-                                  << " larger than limit " << high[ip]
-                                  << std::endl;
-                        }
-                      }
-                    }
-                  }
-
-                  // Evaluate the function, set the 'done' flag if necessary,
-                  // and update the return value array, for HMC
-                  if (func_ret[it]!=mcmc_skip) {
-                    if (switch_arr[it]==false) {
-                      func_ret[it]=func[it](n_params, pos_next[it],
-                                            w_next[it], data[it+n_threads]);
-                    } else {
-                      func_ret[it]=func[it](n_params, pos_next[it], 
-                                            w_next[it], data[it]);
-                    }
-                    if (func_ret[it]==mcmc_done) {
-                      mcmc_done_flag[it]=true;
-                    } else {
-                      if (func_ret[it]>=0 && ret_value_counts.size()>it && 
-                          func_ret[it]<((int)ret_value_counts[it].size())) {
-                        ret_value_counts[it][func_ret[it]]++;
-                      }
-                    }
-                  }
-
-                  // Get potential energy for next positions
-                  pot_next[it]=-w_next[it];
+                  pos_next+=element_prod(stepsize, mom_next);
 
                   // Compute the gradient of potential energy
-                  deriv(n_params, pos_next[it], grad_pot[it]);
+                  grad_potential(n_params, pos_next, grad_pot);
 
                   // Make a full step for the momentum, except at the end
                   if (i!=traj_length) {
-                    mom_next[it]-=stepsize[it]*grad_pot[it];
+                    mom_next-=element_prod(stepsize, grad_pot);
                   }
                 }
 
                 // Make a half step for momentum at the end
-                mom_next[it]-=0.5*stepsize[it]*grad_pot[it];
+                mom_next-=0.5*element_prod(stepsize, grad_pot);
 
                 // Negate momentum at the end of trajectory
-                mom_next[it]=-mom_next[it];
+                mom_next=-mom_next;
 
-                // Evaluate potential energy at start and end of trajectory
-                pot_curr[it]=-w_current[it];
-                pot_next[it]=-w_next[it];
+                // Get current weight and evaluate potential energy
+                wgt_curr=w_current[it];
+                pot_curr=-wgt_curr;
 
-              }
-            }
-          }
-        }
+                // Compute next weight for HMC
+                func_ret[it]=o2scl::success;
+                
+                // If next point is out of bounds, reject the point
+                // without attempting to compute the weight for HMC
+                for (size_t ip=0; ip<n_params; ip++) {
+                  if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
+                    func_ret[it]=mcmc_skip;
+                    if (verbose>=3) {
+                      if (pos_next(ip)<low[ip]) {
+                        std::cout << "mcmc (" << it << ","
+                                  << mpi_rank << "): Parameter with index "
+                                  << ip << " and value " << pos_next(ip)
+                                  << " smaller than limit " << low[ip]
+                                  << std::endl;
+                        scr_out << "mcmc (" << it << ","
+                                << mpi_rank << "): Parameter with index "
+                                << ip << " and value " << pos_next(ip)
+                                << " smaller than limit " << low[ip]
+                                << std::endl;
+                      } else {
+                        std::cout << "mcmc (" << it << "," << mpi_rank
+                                  << "): Parameter with index " << ip
+                                  << " and value " << pos_next(ip)
+                                  << " larger than limit " << high[ip]
+                                  << std::endl;
+                        scr_out << "mcmc (" << it << "," << mpi_rank
+                                << "): Parameter with index " << ip
+                                << " and value " << pos_next(ip)
+                                << " larger than limit " << high[ip]
+                                << std::endl;
+                      }
+                    }
+                  } else {
 
-        // End of main loop for hmc==true
+                    // If the point is in bounds, set the next position
+                    next[it][ip]=pos_next(ip);
+                  }
+                }
+
+                // Evaluate the function, set the 'done' flag if necessary,
+                // and update the return value array, for HMC
+                if (func_ret[it]!=mcmc_skip) {
+                  if (switch_arr[it]==false) {
+                    func_ret[it]=func[it](n_params, next[it],
+                                          w_next[it], data[it+n_threads]);
+                  } else {
+                    func_ret[it]=func[it](n_params, next[it], 
+                                          w_next[it], data[it]);
+                  }
+                  if (func_ret[it]==mcmc_done) {
+                    mcmc_done_flag[it]=true;
+                  } else {
+                    if (func_ret[it]>=0 && ret_value_counts.size()>it && 
+                        func_ret[it]<((int)ret_value_counts[it].size())) {
+                      ret_value_counts[it][func_ret[it]]++;
+                    }
+                  }
+                }
+
+                // Get next weight and evaluate potential energy
+                wgt_next=w_next[it];
+                pot_next=-wgt_next;
+
+                // Evaluate kinetic energies for current and next points
+                ubvector mom_curr_t=trans(mom_curr);
+                ubvector mom_next_t=trans(mom_next);
+                kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
+                kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
+
+                // -----------------------------------------------------------
+                // Accept or reject the point and call the measurement 
+                // function for HMC
+                
+                bool accept=false;
+                if (always_accept && func_ret[it]==o2scl::success) accept=true;
+
+                if (func_ret[it]==o2scl::success) {
+                  double r=rg[it].random();
+                  if (r<exp(pot_curr+kin_curr-pot_next-kin_next)) {
+                    accept=true;
+                  }
+                }
+
+                if (accept) {
+
+                  // Point was accepted
+                  n_accept[it]++;
+
+                  // Store results from new point
+                  if (!warm_up) {
+                    if (switch_arr[it]==false) {
+                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
+                                            func_ret[it], true, data[it+n_threads]);
+                    } else {
+                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
+                                            func_ret[it], true, data[it]);
+                    }
+                  }
+
+                  // Prepare for next point
+                  current[it]=next[it];
+                  w_current[it]=w_next[it];
+                  switch_arr[it]=!(switch_arr[it]);
+
+                } else {
+
+                  // Point was rejected
+                  n_reject[it]++;
+
+                  // Repeat measurement of old point
+                  if (!warm_up) {
+                    if (switch_arr[it]==false) {
+                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
+                                            func_ret[it], false, data[it+n_threads]);
+                    } else {
+                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
+                                            func_ret[it], false, data[it]);
+                    }
+                  }
+                }
+                
+                // -----------------------------------------------------------
+                // Best point, update iteration counts, and check if done
+
+                // Collect best point
+                if (func_ret[it]==o2scl::success && w_best_t[it]>w_next[it]) {
+                  best_t[it]=next[it];
+                  w_best_t[it]=w_next[it];
+                }
+
+                // Check to see if mcmc_done was returned or if meas_ret
+                // returned an error
+                if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
+                  main_done=true;
+                }
+                if (meas_ret[it]!=mcmc_done &&
+                    meas_ret[it]!=o2scl::success) {
+                  if (err_nonconv) {
+                    O2SCL_ERR((((std::string)"Measurement function ")+
+                               "returned "+o2scl::dtos(meas_ret[it])+
+                               " in mcmc_para_base::mcmc().").c_str(),
+                              o2scl::exc_efailed);
+                  }
+                  main_done=true;
+                }
+
+                // Update iteration count and reset counters for warm up
+                // iterations if necessary
+                if (main_done==false) {
+                  scr_out << "Incrementing mcmc_iters." << std::endl;
+                  mcmc_iters[it]++;
+                  if (warm_up && mcmc_iters[it]==n_warm_up) {
+                    warm_up=false;
+                    mcmc_iters[it]=0;
+                    n_accept[it]=0;
+                    n_reject[it]=0;
+                    if (verbose>=1) {
+                      scr_out << "o2scl::mcmc_para: Thread " << it
+                              << " finished warmup." << std::endl;
+                    }
+                  }
+                }
+
+                // Stop this thread if iterations greater than max_iters
+                if (inner_done==false && warm_up==false && max_iters>0 &&
+                    mcmc_iters[it]==max_iters) {
+                  if (verbose>=1) {
+                    scr_out << "o2scl::mcmc_para: Thread " << it
+                            << " stopping because number of iterations ("
+                            << mcmc_iters[it] << ") equal to max_iters ("
+                            << max_iters << ")." << std::endl;
+                  }
+                  inner_done=true;
+                }
+
+                // If we're out of time, stop all threads
+                if (main_done==false) {
+                  #ifdef O2SCL_MPI
+                    double elapsed=MPI_Wtime()-mpi_start_time;
+                  #else
+                    double elapsed=time(0)-mpi_start_time;
+                  #endif
+                  if (max_time>0.0 && elapsed>max_time) {
+                    if (verbose>=1) {
+                      scr_out << "o2scl::mcmc_para: Thread " << it
+                              << " stopping because elapsed (" << elapsed
+                              << ") > max_time (" << max_time << ")."
+                              << std::endl;
+                    }
+                    main_done=true;
+                  }
+                }
+
+                // If we have requested a particular number of steps in
+                // parallel, then end the inner loop and continue later
+                if (steps_in_parallel>0 &&
+                    mcmc_iters[it]%steps_in_parallel==0) {
+                  inner_done=true;
+                }                
+              } // End of while loop for '!inner_done && !main_done'
+            } // End of loop over threads 
+          } // End of parallel region 
+        } // End of main loop for hmc==true
         // ----------------------------------------------------------------
 
       } else {

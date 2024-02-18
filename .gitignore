@@ -6,6 +6,9 @@ o2scl_source.tar.bz2
 auto_refresh.out
 auto_refresh.err
 
+# vscode files
+.vscode/
+
 # snap files
 *.snap
 prime
