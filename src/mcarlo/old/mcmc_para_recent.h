@@ -24,8 +24,8 @@
     \brief File for definition of \ref o2scl::mcmc_para_base,
     \ref o2scl::mcmc_para_table and \ref o2scl::mcmc_para_cli
 */
-#ifndef O2SCL_MCMC_PARA_HMC_H
-#define O2SCL_MCMC_PARA_HMC_H
+#ifndef O2SCL_MCMC_PARA_H
+#define O2SCL_MCMC_PARA_H
 
 #include <iostream>
 #include <random>
@@ -40,7 +40,6 @@
 #endif
 
 #include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
 
 #include <o2scl/hdf_file.h>
 #include <o2scl/exception.h>
@@ -49,14 +48,12 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/cli.h>
-#include <o2scl/mmin.h>
 
 namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  typedef boost::numeric::ublas::identity_matrix<double> ubidentity;
-
+  
   /** \brief A generic MCMC simulation class
 
       Significant changes:
@@ -191,56 +188,10 @@ namespace o2scl {
       the user doesn't specify enough initial points for the
       corresponding number of threads and walkers. 
   */
-
-template<class func_t, class ubvector >
-  class gradient {
- 
-  public:
-
-  gradient() {
-    epsrel=1.0e-6;
-    epsmin=1.0e-15;
-  }
-  
-  virtual ~gradient() {}
-
-  // Relative stepsize for finite-differencing (default: 1.0e-6)
-  double epsrel;
-
-  // Minimum stepsize (default: 1.0e-15)
-  double epsmin;
-  
-  // Set the function to compute the gradient of
-  virtual int set_function(func_t &f) {
-    func=&f;
-    return 0;
-  }
-
-  // Compute the gradient g at the point x
-  virtual int operator()(size_t nv, ubvector &x, ubvector &g) {
-    double fv1, fv2, h;
-    fv1=(*this->func)(nv,x);
-    for(size_t i=0; i<nv; i++) {
-	    h=epsrel*fabs(x[i]);
-	    if (fabs(h)<=epsmin) h=epsrel;
-	    x[i]+=h;
-	    fv2=(*this->func)(nv,x);
-	    x[i]-=h;
-	    g[i]=(fv2-fv1)/h;
-    }
-    return 0;
-  }
-  
-  protected:
-
-  // A pointer to the user-specified function
-  func_t *func;
-};
-
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector> class mcmc_para_base {
     
-    protected:
+  protected:
   
     /// \name MPI properties
     //@{
@@ -331,7 +282,7 @@ template<class func_t, class ubvector >
     */
     std::vector<size_t> curr_walker;
 
-    public:
+  public:
 
     /** \brief If true, call the measurement function for the
         initial point
@@ -396,18 +347,12 @@ template<class func_t, class ubvector >
 
     /// If true, use affine-invariant Monte Carlo (default false)
     bool aff_inv;
-
-    /// If true, use Hamiltonian Monte Carlo (default false)
-    bool hmc;
   
     /// Stepsize factor (default 10.0)
     double step_fac;
   
     /// Optionally specify step sizes for each parameter
     std::vector<double> step_vec;
-
-    /// Trajectory length for HMC (default 100)
-    size_t traj_length;
 
     /** \brief If true, couple the walkers across threads during
         affine-invariant sampling (default false)
@@ -472,7 +417,6 @@ template<class func_t, class ubvector >
 
       // MC step parameters
       aff_inv=false;
-      hmc=false;
       pd_mode=false;
       step_fac=10.0;
       n_walk=1;
@@ -492,11 +436,11 @@ template<class func_t, class ubvector >
       mpi_rank=0;
       mpi_start_time=0.0;
 
-      #ifdef O2SCL_MPI
-        // Get MPI rank, etc.
-        MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
-        MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_size);
-      #endif
+#ifdef O2SCL_MPI
+      // Get MPI rank, etc.
+      MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
+      MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_size);
+#endif
     
       prefix="mcmc";
       max_time=0.0;
@@ -527,7 +471,7 @@ template<class func_t, class ubvector >
     virtual void outside_parallel() {
       return;
     }
-
+    
     /// \name Basic usage
     //@{
     /** \brief Perform a MCMC simulation
@@ -541,12 +485,13 @@ template<class func_t, class ubvector >
         <tt>2*n_walk*n_threads</tt>.
     */
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
-                  std::vector<func_t> &func,
-                  std::vector<measure_t> &meas,
-                  std::vector<data_t> &data) {
-      
-      // ----------------------------------------------------------------
-      // Check inputs and settings, and fix them if necessary
+                     std::vector<func_t> &func,
+                     std::vector<measure_t> &meas,
+                     std::vector<data_t> &data) {
+
+      // Verify that the input and settings make sense and fix
+      // them if we can
+
       if (func.size()==0 || meas.size()==0) {
         O2SCL_ERR2("Size of 'func' or 'meas' array is zero in ",
                    "mcmc_para::mcmc().",o2scl::exc_einval);
@@ -567,7 +512,7 @@ template<class func_t, class ubvector >
                     << meas.size() << "." << std::endl;
         }
         n_threads=meas.size();
-      } 
+      }
       if (data.size()<2*n_walk*n_threads) {
         std::cout << "mcmc_para::mcmc() data.size(): " << data.size()
                   << " n_walk: " << n_walk << " threads: "
@@ -589,80 +534,30 @@ template<class func_t, class ubvector >
                    "sampling not implemented in mcmc_para::mcmc().",
                    o2scl::exc_eunimpl);
       }
-      if (step_fac<=0.0) {
-        if (aff_inv) {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac with aff_inv=true.\nSetting to 2.0."
-                    << std::endl;
-          step_fac=2.0;
-        } else {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac. Setting to 10.0." << std::endl;
-          step_fac=10.0;
-        }
-      } 
-      if (hmc==true) {
-        if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Hamiltonian Monte Carlo "
-                    << "selected." << std::endl;
-        }
-        if (traj_length<=0) {
-          std::cout << "mcmc_para::mcmc(): Trajectory length "
-                    << "not set. Setting to 100." << std::endl;
-          traj_length=100;
-        }
-        if (step_vec.size()<n_params) {
-          std::cout << "mcmc_para::mcmc(): Not enough step sizes "
-                    << "specified for HMC. Resizing and setting all "
-                    << "to 0.1."
-                    << std::endl;
-          step_vec.resize(n_params,0.1);
-        } else {
-          for (size_t i=0; i<step_vec.size(); i++) {
-            if (step_vec[i]<=0.0) {
-              std::cout << "mcmc_para::mcmc(): Requested negative or "
-                        << "zero step size for parameter " << i << ". "
-                        << "Setting all to 0.1."
-                        << std::endl;
-              step_vec[i]=0.1;
-            }
-          }
-        }
-        if (n_walk>1) {
-          std::cout << "mcmc_para::mcmc(): HMC selected with n_walk>1. "
-                    << "Setting n_walk to 1." << std::endl;
-          n_walk=1;
-        }
-      }
-      // End of checking inputs and settings
-      
-      // ----------------------------------------------------------------
+
       // Set start time if necessary
       if (mpi_start_time==0.0) {
-        #ifdef O2SCL_MPI
-          mpi_start_time=MPI_Wtime();
-        #else
-          mpi_start_time=time(0);
-        #endif
-      } // End of setting start time
+#ifdef O2SCL_MPI
+        mpi_start_time=MPI_Wtime();
+#else
+        mpi_start_time=time(0);
+#endif
+      }
 
-      // ----------------------------------------------------------------
-      // Check intitial points
-      
-      // If not specified, setup initial guess from midpoint
       if (initial_points.size()==0) {
+      
+        // Setup initial guess from midpoint if not specified
         initial_points.resize(1);
         initial_points[0].resize(n_params);
         for(size_t k=0;k<n_params;k++) {
           initial_points[0][k]=(low[k]+high[k])/2.0;
-        } 
-      } // End of not specified initial points
+        }
       
-      // If specified, check existence and validity of initial points
-      else {
+      } else {
+      
+        // If initial points are specified, make sure they're within
+        // the user-specified limits
         for(size_t iip=0;iip<initial_points.size();iip++) {
-          
-          // Check existence: Initial guess exists for all points
           if (initial_points[iip].size()<n_params) {
             std::cerr << "Not enough parameters." << std::endl;
             std::cerr << "On initial point " << iip << " of "
@@ -672,9 +567,7 @@ template<class func_t, class ubvector >
                       << initial_points[iip].size() << "." << std::endl;
             O2SCL_ERR2("Initial point vector not correctly sized ",
                        "in mcmc_base::mcmc().",o2scl::exc_efailed);
-          } // End of check existence
-
-          // Check validity (a): Initial points are within their limits
+          }
           for(size_t ipar=0;ipar<n_params;ipar++) {
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
@@ -700,34 +593,74 @@ template<class func_t, class ubvector >
                          ") in mcmc_base::mcmc().").c_str(),
                         o2scl::exc_einval);
             }
-          } // End of check check validity (a)
-
-          // Check validity (b): Initial points are finite
-          for (size_t ipar=0;ipar<initial_points[iip].size();ipar++) {
-            if (!std::isfinite(initial_points[iip][ipar])) {
+          }
+        }
+      
+        // Double check that the initial points are distinct and finite
+        for(size_t i=0;i<initial_points.size();i++) {
+          for(size_t k=0;k<initial_points[i].size();k++) {
+            if (!std::isfinite(initial_points[i][k])) {
               O2SCL_ERR2("Initial point not finite in ",
                          "mcmc_para::mcmc().",o2scl::exc_einval);
             }
-          } // End of check validity (b)
-        } // End of if specified initial points
-      } // End of check initial points
-
-      // ----------------------------------------------------------------
-      // Set number of OpenMP threads
-      #ifdef O2SCL_SET_OPENMP
-      omp_set_num_threads(n_threads);
-      #else
-        if (n_threads>1) {
-          std::cout << "mcmc_para::mcmc(): "
-                    << n_threads << " threads were requested but the "
-                    << "-DO2SCL_SET_OPENMP flag was not used during "
-                    << "compilation. Setting n_threads to 1."
-                    << std::endl;
-          n_threads=1;
+          }
+          // 2/14/19 - AWS: I waffle on whether or not this ought to be
+          // included, but it's too confusing and I'm having too much
+          // trouble with it right now so I'm taking it out for now.
+          if (false) {
+            for(size_t j=i+1;j<initial_points.size();j++) {
+              bool vec_equal=true;
+              for(size_t k=0;k<initial_points[i].size();k++) {
+                if (initial_points[i][k]!=initial_points[j][k]) {
+                  vec_equal=false;
+                }
+              }
+              if (vec_equal) {
+                std::cout.setf(std::ios::scientific);
+                std::cout << i << " ";
+                o2scl::vector_out(std::cout,initial_points[i],true);
+                std::cout << j << " ";
+                o2scl::vector_out(std::cout,initial_points[j],true);
+                O2SCL_ERR2("Initial points not distinct in ",
+                           "mcmc_para::mcmc().",o2scl::exc_einval);
+              }
+            }
+          }
         }
-      #endif // End of setting OpenMP threads
+      
+      }
 
-      // ----------------------------------------------------------------
+      // Set number of threads
+#ifdef O2SCL_SET_OPENMP
+      omp_set_num_threads(n_threads);
+#else
+      if (n_threads>1) {
+        std::cout << "mcmc_para::mcmc(): "
+                  << n_threads << " threads were requested but the "
+                  << "-DO2SCL_SET_OPENMP flag was not used during "
+                  << "compilation. Setting n_threads to 1."
+                  << std::endl;
+        n_threads=1;
+      }
+#endif
+
+      // Storage for return values from each thread
+      std::vector<int> func_ret(n_threads), meas_ret(n_threads);
+      
+      // Fix 'step_fac' if it's less than or equal to zero
+      if (step_fac<=0.0) {
+        if (aff_inv) {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac with aff_inv=true.\nSetting to 2.0."
+                    << std::endl;
+          step_fac=2.0;
+        } else {
+          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                    << "step_fac. Setting to 10.0." << std::endl;
+          step_fac=10.0;
+        }
+      }
+    
       // Set RNGs with a different seed for each thread and rank. 
       rg.resize(n_threads);
       unsigned long int seed=time(0);
@@ -737,9 +670,8 @@ template<class func_t, class ubvector >
       for(size_t it=0;it<n_threads;it++) {
         seed*=(mpi_rank*n_threads+it+1);
         rg[it].set_seed(seed);
-      } // End of setting RNGs
-
-      // ----------------------------------------------------------------
+      }
+    
       // Keep track of successful and failed MH moves in each
       // independent chain
       n_accept.resize(n_threads);
@@ -747,17 +679,12 @@ template<class func_t, class ubvector >
       for(size_t it=0;it<n_threads;it++) {
         n_accept[it]=0;
         n_reject[it]=0;
-      } // End of tracking successful and failed MH moves
+      }
 
-      // ----------------------------------------------------------------
       // Warm-up flag, not to be confused with 'n_warm_up', the
       // number of warm_up iterations.
       warm_up=true;
       if (n_warm_up==0) warm_up=false;
-
-      // ----------------------------------------------------------------
-      // Storage for return values from each thread
-      std::vector<int> func_ret(n_threads), meas_ret(n_threads);
 
       // Storage size required
       size_t ssize=n_walk*n_threads;
@@ -789,12 +716,6 @@ template<class func_t, class ubvector >
       }
       std::vector<double> w_next(n_threads);
 
-      // Next momenta for HMC
-      std::vector<vec_t> next_m(n_threads);
-      for(size_t it=0;it<n_threads;it++) {
-        next_m[it].resize(n_params);
-      }
-
       // Best point and best weight for each thread (only used when
       // aff_inv=false and not used until after the initial points are
       // computed)
@@ -817,9 +738,10 @@ template<class func_t, class ubvector >
           
       // Proposal weight
       std::vector<double> q_prop(n_threads);
-
-      // ----------------------------------------------------------------
+    
+      // --------------------------------------------------------------
       // Run the mcmc_init() function. 
+    
       int init_ret=mcmc_init();
       if (init_ret!=0) {
         O2SCL_ERR("Function mcmc_init() failed in mcmc_base::mcmc().",
@@ -827,9 +749,10 @@ template<class func_t, class ubvector >
         return init_ret;
       }
 
-      // ----------------------------------------------------------------
+      // --------------------------------------------------------------
       // Initial verbose output (note that scr_out isn't created until
       // the mcmc_init() function call above.
+      
       if (verbose>=1) {
         if (aff_inv) {
           scr_out << "mcmc_para_base::mcmc(): "
@@ -844,13 +767,6 @@ template<class func_t, class ubvector >
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
-        } else if (hmc==true) {
-          scr_out << "mcmc_para_base::mcmc(): "
-                  << "Hamiltonian Monte Carlo, n_params="
-                  << n_params << ", n_threads=" << n_threads << ", rank="
-                  << mpi_rank << ", n_ranks="
-                  << mpi_size << ", trajectory_length="
-                  << traj_length << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
                   << "Random-walk w/uniform dist., n_params="
@@ -861,17 +777,18 @@ template<class func_t, class ubvector >
         scr_out << "Set start time to: " << mpi_start_time << std::endl;
       }
 
-      // ----------------------------------------------------------------
+      // --------------------------------------------------------
       // Initial point and weights for affine-invariant sampling
     
-      if (aff_inv) { 
-        #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-        #endif
+      if (aff_inv) {
+      
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
 
             // Initialize each walker in turn
@@ -889,12 +806,14 @@ template<class func_t, class ubvector >
 
               // If we already have a unique guess for this
               // walker/thread, try to use that
+            
               if (sindex<initial_points.size()) {
 
                 // Copy from the initial points array
                 for(size_t ipar=0;ipar<n_params;ipar++) {
                   current[sindex][ipar]=initial_points[ip_index][ipar];
                 }
+              
                 // Compute the weight
                 func_ret[it]=func[it](n_params,current[sindex],
                                       w_current[sindex],data[sindex]);
@@ -922,8 +841,10 @@ template<class func_t, class ubvector >
                   done=true;
                 }
               }
+            
               // Otherwise, if the initial guess wasn't provided or
               // failed for some reason, try generating a new point
+            
               while (!done && !mcmc_done_flag[it]) {
 
                 // Make a perturbation from the initial point
@@ -936,11 +857,13 @@ template<class func_t, class ubvector >
                   } while (current[sindex][ipar]>high[ipar] ||
                            current[sindex][ipar]<low[ipar]);
                 }
+              
                 // Compute the weight
                 func_ret[it]=func[it](n_params,current[sindex],
                                       w_current[sindex],data[sindex]);
                 
                 // ------------------------------------------------
+              
                 // Increment iteration count
                 init_iters++;
               
@@ -986,8 +909,9 @@ template<class func_t, class ubvector >
                 }
               }
             }
-          } // End of loop over threads
-        } // End of parallel region
+          }
+        }
+        // End of parallel region
 
         // Stop early if mcmc_done was returned
         bool stop_early=false;
@@ -1035,18 +959,21 @@ template<class func_t, class ubvector >
             }
           }
         }
+
         // End of 'if (aff_inv)' for initial point evaluation
+      
       } else {
+
         // --------------------------------------------------------
         // Initial point evaluation when aff_inv is false.
 
-        #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-        #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
           
             // Note that this value is used (e.g. in
@@ -1069,15 +996,17 @@ template<class func_t, class ubvector >
               // Otherwise copy the result already computed
               func_ret[it]=func_ret[it % ip_size];
               w_current[it]=w_current[it % ip_size];
-              
               // This loop requires the data to have a valid
               // copy constructor
               for(size_t j=0;j<data.size();j++) {
                 data[it]=data[it % ip_size];
               }
             }
+
           }
-        } // End of parallel region
+
+        }
+        // End of parallel region
       
         // Check return values from initial point function evaluations
         for(size_t it=0;it<n_threads;it++) {
@@ -1104,17 +1033,17 @@ template<class func_t, class ubvector >
         // --------------------------------------------------------
         // Post-processing initial point when aff_inv is false.
 
-        #ifdef O2SCL_SET_OPENMP
-        #pragma omp parallel default(shared)
-        #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
+          
             size_t ip_size=initial_points.size();
             if (it>=ip_size) {
-
               // If no initial point was specified, copy one of
               // the other initial points
               func_ret[it]=func_ret[it % ip_size];
@@ -1122,6 +1051,7 @@ template<class func_t, class ubvector >
               w_current[it]=w_current[it % ip_size];
               data[it]=data[it % ip_size];
             }
+          
             // Update the return value count
             if (func_ret[it]>=0 && ret_value_counts.size()>it && 
                 func_ret[it]<((int)ret_value_counts[it].size())) {
@@ -1137,8 +1067,12 @@ template<class func_t, class ubvector >
             if (meas_ret[it]==mcmc_done) {
               mcmc_done_flag[it]=true;
             }
-          } // End of loop over threads
-        } // End of parallel region
+
+            // End of loop over threads
+          }
+        
+        }
+        // End of parallel region
       
         // Stop early if mcmc_done was returned from one of the
         // measurement function calls
@@ -1177,7 +1111,9 @@ template<class func_t, class ubvector >
           scr_out << " (initial)" << std::endl;
           scr_out.precision(6);
         }
-      } // End of initial point region for 'aff_inv=false'
+  
+        // End of initial point region for 'aff_inv=false'
+      }
 
       // Set meas_for_initial back to true if necessary
       meas_for_initial=true;
@@ -1194,7 +1130,6 @@ template<class func_t, class ubvector >
       }
 
       // End of initial point and weight section
-
       // --------------------------------------------------------
 
       // The main section split into two parts, aff_inv=false and
@@ -1204,6 +1139,7 @@ template<class func_t, class ubvector >
 
         // ---------------------------------------------------
         // Start of main loop over threads for aff_inv=false
+
         bool main_done=false;
 
         // Initialize the number of iterations for each thread
@@ -1211,37 +1147,45 @@ template<class func_t, class ubvector >
         for(size_t it=0;it<n_threads;it++) {
           mcmc_iters[it]=0;
         }
-        while (!main_done) { 
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+        
+        while (!main_done) {
+          
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
+
               bool inner_done=false;
               while (!inner_done && !main_done) {
+              
                 if (verbose>=2) {
                   scr_out << "Iteration: " << mcmc_iters[it] << " of "
                           << max_iters << " thread " << it << " accept: "
                           << n_accept[it] << " " << n_reject[it]
                           << std::endl;
                 }
+          
                 // ---------------------------------------------------
                 // Select next point for aff_inv=false
+          
                 if (pd_mode) {
-
+            
                   // Use proposal distribution and compute associated weight
                   q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],
-                                                            next[it]);              
+                                                            next[it]);
+              
                   if (!std::isfinite(q_prop[it])) {
                     O2SCL_ERR2("Proposal distribution not finite in ",
                                "mcmc_para_base::mcmc().",
                                o2scl::exc_efailed);
-                  }            
+                  }
+            
                 } else {
-
+            
                   // Uniform random-walk step
                   for(size_t k=0;k<n_params;k++) {
                     if (step_vec.size()>0) {
@@ -1251,10 +1195,13 @@ template<class func_t, class ubvector >
                       next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
                         (high[k]-low[k])/step_fac;
                     }
-                  }            
-                }             
+                  }
+            
+                }   
+          
                 // ---------------------------------------------------
-                // Compute next weight for aff_inv=false          
+                // Compute next weight for aff_inv=false
+          
                 func_ret[it]=o2scl::success;
 
                 // If the next point out of bounds, ensure that the point is
@@ -1289,6 +1236,7 @@ template<class func_t, class ubvector >
                     }
                   }
                 }
+
                 // Evaluate the function, set the 'done' flag if
                 // necessary, and update the return value array
                 if (func_ret[it]!=mcmc_skip) {
@@ -1308,7 +1256,8 @@ template<class func_t, class ubvector >
                       ret_value_counts[it][func_ret[it]]++;
                     }
                   }
-                }            
+                }
+            
                 // ------------------------------------------------------
                 // Accept or reject and call the measurement function for
                 // aff_inv=false
@@ -1317,9 +1266,11 @@ template<class func_t, class ubvector >
                 size_t sindex=n_walk*it+curr_walker[it];
             
                 bool accept=false;
-                if (always_accept && func_ret[it]==success) accept=true;            
+                if (always_accept && func_ret[it]==success) accept=true;
+            
                 if (func_ret[it]==o2scl::success) {
-                  double r=rg[it].random();            
+                  double r=rg[it].random();
+            
                   if (pd_mode) {
                     if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
                       accept=true;
@@ -1329,10 +1280,13 @@ template<class func_t, class ubvector >
                     if (r<exp(w_next[it]-w_current[sindex])) {
                       accept=true;
                     }
-                  } 
-                } // End of 'if (func_ret[it]==o2scl::success)'
+                  }
 
-                if (accept) {          
+                  // End of 'if (func_ret[it]==o2scl::success)'
+                }
+
+                if (accept) {
+          
                   n_accept[it]++;
           
                   // Store results from new point
@@ -1347,11 +1301,12 @@ template<class func_t, class ubvector >
                                             data[sindex]);
                     }
                   }
+
                   // Prepare for next point
                   current[sindex]=next[it];
                   w_current[sindex]=w_next[it];
-                  switch_arr[sindex]=!(switch_arr[sindex]);          
-                
+                  switch_arr[sindex]=!(switch_arr[sindex]);
+          
                 } else {
             
                   // Point was rejected
@@ -1384,7 +1339,8 @@ template<class func_t, class ubvector >
                 if (func_ret[it]==o2scl::success && w_best_t[it]>w_next[it]) {
                   best_t[it]=next[it];
                   w_best_t[it]=w_next[it];
-                }              
+                }
+              
                 // Check to see if mcmc_done was returned or if meas_ret
                 // returned an error
                 if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
@@ -1399,12 +1355,15 @@ template<class func_t, class ubvector >
                               o2scl::exc_efailed);
                   }
                   main_done=true;
-                }            
+                }
+            
                 // Update iteration count and reset counters for
                 // warm up iterations if necessary
                 if (main_done==false) {
+
                   scr_out << "Incrementing mcmc_iters." << std::endl;
-                  mcmc_iters[it]++;              
+                  mcmc_iters[it]++;
+              
                   if (warm_up && mcmc_iters[it]==n_warm_up) {
                     warm_up=false;
                     mcmc_iters[it]=0;
@@ -1413,9 +1372,11 @@ template<class func_t, class ubvector >
                     if (verbose>=1) {
                       scr_out << "o2scl::mcmc_para: Thread " << it
                               << " finished warmup." << std::endl;
-                    }               
+                    }
+                
                   }
-                }            
+                }
+            
                 // Stop this thread if iterations greater than max_iters
                 if (inner_done==false && warm_up==false && max_iters>0 &&
                     mcmc_iters[it]==max_iters) {
@@ -1426,14 +1387,15 @@ template<class func_t, class ubvector >
                             << max_iters << ")." << std::endl;
                   }
                   inner_done=true;
-                }            
+                }
+            
                 // If we're out of time, stop all threads
                 if (main_done==false) {
-                  #ifdef O2SCL_MPI
-                    double elapsed=MPI_Wtime()-mpi_start_time;
-                  #else
-                    double elapsed=time(0)-mpi_start_time;
-                  #endif
+#ifdef O2SCL_MPI
+                  double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+                  double elapsed=time(0)-mpi_start_time;
+#endif
                   if (max_time>0.0 && elapsed>max_time) {
                     if (verbose>=1) {
                       scr_out << "o2scl::mcmc_para: Thread " << it
@@ -1444,16 +1406,25 @@ template<class func_t, class ubvector >
                     main_done=true;
                   }
                 }
-                // If we have requested a particular number of steps in
-                // parallel, then end the inner loop and continue later
+
+                // If we have requested a particular number of steps
+                // in parallel, then end the inner loop and continue
+                // later
                 if (steps_in_parallel>0 &&
                     mcmc_iters[it]%steps_in_parallel==0) {
                   inner_done=true;
                 }
-              } // End of while loop for inner_done==false and main_done==false
-            } // End of loop over threads for aff_inv=false
-          } // End of parallel region for aff_inv=false
 
+                // End of while loop for inner_done==false and
+                // main_done==false
+              }
+
+              // Loop over threads for aff_inv=false
+            }
+
+            // End of parallel region for aff_inv=false
+          }
+          
           // Collect best point over all threads
           for(size_t it=0;it<n_threads;it++) {
             if (w_best_t[it]>w_best) {
@@ -1461,381 +1432,45 @@ template<class func_t, class ubvector >
               best=best_t[it];
             }
           }
+
           if (main_done==false && max_iters>0) {
             main_done=true;
             for(size_t it=0;it<n_threads;it++) {
               if (mcmc_iters[it]<max_iters) main_done=false;
             }
-          }            
+          }
+            
           // Call function outside parallel region 
           outside_parallel();
-        } // End of 'main_done' while loop for aff_inv=false  
-      
-      } else if (hmc==true) {
-
-        // ----------------------------------------------------------------
-        // Start of main loop for hmc==true (Hamiltonian Monte Carlo)
-
-        // Generator random numbers from a standard normal distribution
-        std::random_device seed;
-        std::mt19937 gen(seed());
-        std::normal_distribution<double> norm_dist(0.0, 1.0);
-
-        // Positions and momenta for current and next points
-        ubvector pos_curr(n_params), pos_next(n_params); 
-        ubvector mom_curr(n_params), mom_next(n_params);
-
-        // Weights of current and next points for each thread
-        double wgt_curr, wgt_next;
-
-        // Potential and kinetic energies for each thread
-        double pot_curr, pot_next;
-        double kin_curr, kin_next;
-
-        // Gradient of potential energy w.r.t. position
-        ubvector grad_pot(n_params);
-
-        // Step sizes for each parameter
-        ubvector stepsize(n_params);
-        
-        // Get stepsizes for each parameter (user-specified)
-        stepsize(ip)=step_vec[ip];
-
-        // Construct the mass matrix and its inverse
-        ubmatrix mass_inv=ubidentity(n_params);
-        
-        for (size_t i=0; i<n_params; i++) {
-          double si=stepsize(i);
-          for (size_t j=0; j<n_params; j++) {
-            mass_inv(i,j)*=(si*si);
-          }
-        }
-
-        // Set the main HMC flag
-        bool main_done=false;
-
-        // Initialize the number of iterations for each thread
-        std::vector<size_t> mcmc_iters(n_threads);
-        for(size_t it=0; it<n_threads; it++) {
-          mcmc_iters[it]=0;
-        }
-        while (!main_done) {
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
-          {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
-            for (size_t it=0; it<n_threads; it++) {
-              bool inner_done=false;
-              while (!inner_done && !main_done) {
-
-                // Print info for current step for HMC
-                if (verbose>=2) {
-                  scr_out << "Iteration: " << mcmc_iters[it] << " of "
-                          << max_iters << ", thread " << it << ", accept: "
-                          << n_accept[it] << ", reject " << n_reject[it]
-                          << std::endl;
-                }
-
-                for (size_t ip=0; ip<n_params; ip++) {
-
-                  // Get current positions for this thread
-                  pos_curr(ip)=current[it][ip];
-
-                  // Set current momenta to random numbers from N(0,1)
-                  mom_curr(ip)=norm_dist(gen);
-                }
-
-                // Rescale momenta by the stepsizes
-                mom_curr=element_prod(mom_curr, stepsize);
-
-                // Set next positions and momenta
-                pos_next=pos_curr;
-                mom_next=mom_curr;
-
-                // Compute the gradient of potential energy
-                gradient grad_potential;
-                grad_potential.set_function(func[it]);
-                grad_potential(n_params, pos_next, grad_pot);
-
-                // Make a half step for momentum at the beginning
-                mom_next-=0.5*element_prod(stepsize, grad_pot);
-                
-                // Leapfrog updates: Full steps for position and momentum
-                for (size_t i=1; i<=traj_length; i++) {
-                  
-                  // Make a full step for position
-                  pos_next+=element_prod(stepsize, mom_next);
-
-                  // Compute the gradient of potential energy
-                  grad_potential(n_params, pos_next, grad_pot);
-
-                  // Make a full step for the momentum, except at the end
-                  if (i!=traj_length) {
-                    mom_next-=element_prod(stepsize, grad_pot);
-                  }
-                }
-
-                // Make a half step for momentum at the end
-                mom_next-=0.5*element_prod(stepsize, grad_pot);
-
-                // Negate momentum to make the proposal symmetric
-                mom_next=-mom_next;
-
-                // Get current weight and evaluate potential energy
-                wgt_curr=w_current[it];
-                pot_curr=-wgt_curr;
-
-                // Compute next weight for HMC
-                func_ret[it]=o2scl::success;
-                
-                // If next point is out of bounds, reject the point
-                // without attempting to compute the weight for HMC
-                for (size_t ip=0; ip<n_params; ip++) {
-                  if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
-                    func_ret[it]=mcmc_skip;
-                    if (verbose>=3) {
-                      if (pos_next(ip)<low[ip]) {
-                        std::cout << "mcmc (" << it << ","
-                                  << mpi_rank << "): Parameter with index "
-                                  << ip << " and value " << pos_next(ip)
-                                  << " smaller than limit " << low[ip]
-                                  << std::endl;
-                        scr_out << "mcmc (" << it << ","
-                                << mpi_rank << "): Parameter with index "
-                                << ip << " and value " << pos_next(ip)
-                                << " smaller than limit " << low[ip]
-                                << std::endl;
-                      } else {
-                        std::cout << "mcmc (" << it << "," << mpi_rank
-                                  << "): Parameter with index " << ip
-                                  << " and value " << pos_next(ip)
-                                  << " larger than limit " << high[ip]
-                                  << std::endl;
-                        scr_out << "mcmc (" << it << "," << mpi_rank
-                                << "): Parameter with index " << ip
-                                << " and value " << pos_next(ip)
-                                << " larger than limit " << high[ip]
-                                << std::endl;
-                      }
-                    }
-                  } else {
-
-                    // If the point is in bounds, set the next position
-                    next[it][ip]=pos_next(ip);
-                  }
-                }
-
-                // Evaluate the function, set the 'done' flag if necessary,
-                // and update the return value array, for HMC
-                if (func_ret[it]!=mcmc_skip) {
-                  if (switch_arr[it]==false) {
-                    func_ret[it]=func[it](n_params, next[it],
-                                          w_next[it], data[it+n_threads]);
-                  } else {
-                    func_ret[it]=func[it](n_params, next[it], 
-                                          w_next[it], data[it]);
-                  }
-                  if (func_ret[it]==mcmc_done) {
-                    mcmc_done_flag[it]=true;
-                  } else {
-                    if (func_ret[it]>=0 && ret_value_counts.size()>it && 
-                        func_ret[it]<((int)ret_value_counts[it].size())) {
-                      ret_value_counts[it][func_ret[it]]++;
-                    }
-                  }
-                }
-
-                // Get next weight and evaluate potential energy
-                wgt_next=w_next[it];
-                pot_next=-wgt_next;
-
-                // Evaluate kinetic energies for current and next points
-                ubvector mom_curr_t=trans(mom_curr);
-                ubvector mom_next_t=trans(mom_next);
-                kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
-                kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
-
-                // -----------------------------------------------------------
-                // Accept or reject the point and call the measurement 
-                // function for HMC
-                
-                bool accept=false;
-                if (always_accept && func_ret[it]==o2scl::success) accept=true;
-
-                if (func_ret[it]==o2scl::success) {
-                  double r=rg[it].random();
-                  if (r<exp(pot_curr+kin_curr-pot_next-kin_next)) {
-                    accept=true;
-                  }
-                }
-
-                if (accept) {
-
-                  // Point was accepted
-                  n_accept[it]++;
-
-                  // Store results from new point
-                  if (!warm_up) {
-                    if (switch_arr[it]==false) {
-                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
-                                            func_ret[it], true, data[it+n_threads]);
-                    } else {
-                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
-                                            func_ret[it], true, data[it]);
-                    }
-                  }
-
-                  // Prepare for next point
-                  current[it]=next[it];
-                  w_current[it]=w_next[it];
-                  switch_arr[it]=!(switch_arr[it]);
-
-                } else {
-
-                  // Point was rejected
-                  n_reject[it]++;
-
-                  // Repeat measurement of old point
-                  if (!warm_up) {
-                    if (switch_arr[it]==false) {
-                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
-                                            func_ret[it], false, data[it+n_threads]);
-                    } else {
-                      meas_ret[it]=meas[it](next[it], w_next[it], 0,
-                                            func_ret[it], false, data[it]);
-                    }
-                  }
-                }
-                
-                // -----------------------------------------------------------
-                // Best point, update iteration counts, and check if done
-
-                // Collect best point
-                if (func_ret[it]==o2scl::success && w_best_t[it]>w_next[it]) {
-                  best_t[it]=next[it];
-                  w_best_t[it]=w_next[it];
-                }
-
-                // Check to see if mcmc_done was returned or if meas_ret
-                // returned an error
-                if (meas_ret[it]==mcmc_done || func_ret[it]==mcmc_done) {
-                  main_done=true;
-                }
-                if (meas_ret[it]!=mcmc_done &&
-                    meas_ret[it]!=o2scl::success) {
-                  if (err_nonconv) {
-                    O2SCL_ERR((((std::string)"Measurement function ")+
-                               "returned "+o2scl::dtos(meas_ret[it])+
-                               " in mcmc_para_base::mcmc().").c_str(),
-                              o2scl::exc_efailed);
-                  }
-                  main_done=true;
-                }
-
-                // Update iteration count and reset counters for warm up
-                // iterations if necessary
-                if (main_done==false) {
-                  scr_out << "Incrementing mcmc_iters." << std::endl;
-                  mcmc_iters[it]++;
-                  if (warm_up && mcmc_iters[it]==n_warm_up) {
-                    warm_up=false;
-                    mcmc_iters[it]=0;
-                    n_accept[it]=0;
-                    n_reject[it]=0;
-                    if (verbose>=1) {
-                      scr_out << "o2scl::mcmc_para: Thread " << it
-                              << " finished warmup." << std::endl;
-                    }
-                  }
-                }
-
-                // Stop this thread if iterations greater than max_iters
-                if (inner_done==false && warm_up==false && max_iters>0 &&
-                    mcmc_iters[it]==max_iters) {
-                  if (verbose>=1) {
-                    scr_out << "o2scl::mcmc_para: Thread " << it
-                            << " stopping because number of iterations ("
-                            << mcmc_iters[it] << ") equal to max_iters ("
-                            << max_iters << ")." << std::endl;
-                  }
-                  inner_done=true;
-                }
-
-                // If we're out of time, stop all threads
-                if (main_done==false) {
-                  #ifdef O2SCL_MPI
-                    double elapsed=MPI_Wtime()-mpi_start_time;
-                  #else
-                    double elapsed=time(0)-mpi_start_time;
-                  #endif
-                  if (max_time>0.0 && elapsed>max_time) {
-                    if (verbose>=1) {
-                      scr_out << "o2scl::mcmc_para: Thread " << it
-                              << " stopping because elapsed (" << elapsed
-                              << ") > max_time (" << max_time << ")."
-                              << std::endl;
-                    }
-                    main_done=true;
-                  }
-                }
-
-                // If we have requested a particular number of steps in
-                // parallel, then end the inner loop and continue later
-                if (steps_in_parallel>0 &&
-                    mcmc_iters[it]%steps_in_parallel==0) {
-                  inner_done=true;
-                }                
-              } // End of while loop for '!inner_done && !main_done'
-            } // End of loop over threads for hmc==true
-          } // End of parallel region for hmc==true
-
-          // Collect best point over all threads
-          for (size_t it=0; it<n_threads; it++) {
-            if (w_best_t[it]>w_best) {
-              w_best=w_best_t[it];
-              best=best_t[it];
-            }
-          }
-
-          // Check if we're done
-          if (main_done==false && max_iters>0) {
-            main_done=true;
-            for (size_t it=0; it<n_threads; it++) {
-              if (mcmc_iters[it]<max_iters) main_done=false;
-            }
-          }
-
-          // Call function outside parallel region
-          outside_parallel();
           
-        } // End of main loop for hmc==true
-        // ----------------------------------------------------------------
-
+          // End of 'main_done' while loop for aff_inv=false
+        }
+        
       } else {
+    
         // ---------------------------------------------------
         // Start of main loop for aff_inv=true
+
         bool main_done=false;
         size_t mcmc_iters=0;
 
         //std::vector<std::string> message(n_threads);
       
         while (!main_done) {
-          std::vector<double> smove_z(n_threads);      
-          
+
+          std::vector<double> smove_z(n_threads);
+      
           // ----------------------------------------------------------
           // First parallel region to make the stretch move and 
           // call the object function
           
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
               
               // Choose walker to move. If the threads are not coupled,
@@ -1844,7 +1479,8 @@ template<class func_t, class ubvector >
               curr_walker[it]=mcmc_iters % n_walk;
             
               // ---------------------------------------------------
-              // Select next point          
+              // Select next point
+          
               // Total number of walkers
               size_t n_tot;
               if (couple_threads) {
@@ -1852,6 +1488,7 @@ template<class func_t, class ubvector >
               } else {
                 n_tot=n_walk;
               }
+
               // Choose jth walker, between 0 and n_tot-1, making
               // sure ij != curr_walker[it]
               size_t ij;
@@ -1911,10 +1548,11 @@ template<class func_t, class ubvector >
                 o2scl::vector_out(os,next[it],true);
                 message[it]=os.str();
               */
+            
               // ---------------------------------------------------
               // Compute next weight
+      
               func_ret[it]=o2scl::success;
-              
               // If the next point out of bounds, ensure that the point is
               // rejected without attempting to evaluate the function
               for(size_t k=0;k<n_params;k++) {
@@ -1947,6 +1585,7 @@ template<class func_t, class ubvector >
                   }
                 }
               }
+
               // Evaluate the function, set the 'done' flag if
               // necessary, and update the return value array
               if (func_ret[it]!=mcmc_skip) {
@@ -1966,9 +1605,11 @@ template<class func_t, class ubvector >
                     ret_value_counts[it][func_ret[it]]++;
                   }
                 }
+
               }
-            } // End of 'for' loop over threads
-          } // End of first parallel region for aff_inv=true
+            }
+          }
+          // End of first parallel region for aff_inv=true
 
           // ---------------------------------------------------------
           // Post-function verbose output in case parameter was out of
@@ -2015,17 +1656,18 @@ template<class func_t, class ubvector >
               }
             }
           }
+
           // ----------------------------------------------------------
           // Second parallel region to accept or reject, and call
           // measurement function
       
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
 
               // Index in storage
@@ -2045,9 +1687,12 @@ template<class func_t, class ubvector >
                 if (r<ai_ratio) {
                   accept=true;
                 }
-              } // End of 'if (func_ret[it]==o2scl::success)'
 
-              if (accept) {          
+                // End of 'if (func_ret[it]==o2scl::success)'
+              }
+
+              if (accept) {
+          
                 n_accept[it]++;
           
                 // Store results from new point
@@ -2062,11 +1707,12 @@ template<class func_t, class ubvector >
                                           data[sindex]);
                   }
                 }
+
                 // Prepare for next point
                 current[sindex]=next[it];
                 w_current[sindex]=w_next[it];
                 switch_arr[sindex]=!(switch_arr[sindex]);
-
+          
               } else {
             
                 // Point was rejected
@@ -2084,9 +1730,12 @@ template<class func_t, class ubvector >
                                           data[sindex]);
                   }
                 }
+
               }
-            } // End of 'for' loop over threads
-          } // End of second parallel region for aff_inv=true
+
+            }
+          }
+          // End of second parallel region for aff_inv=true
 
           // -----------------------------------------------------------
           // Post-measurement verbose output of iteration count, weight,
@@ -2112,6 +1761,7 @@ template<class func_t, class ubvector >
               w_best=w_next[it];
             }
           }
+
           // Check to see if mcmc_done was returned or if meas_ret
           // returned an error
           for(size_t it=0;it<n_threads;it++) {
@@ -2128,10 +1778,13 @@ template<class func_t, class ubvector >
               main_done=true;
             }
           }
+
           // Update iteration count and reset counters for
           // warm up iterations if necessary
-          if (main_done==false) {        
-            mcmc_iters++;        
+          if (main_done==false) {
+        
+            mcmc_iters++;
+        
             if (warm_up && mcmc_iters==n_warm_up) {
               warm_up=false;
               mcmc_iters=0;
@@ -2141,14 +1794,17 @@ template<class func_t, class ubvector >
               }
               if (verbose>=1) {
                 scr_out << "mcmc: Finished warmup." << std::endl;
-              }          
+              }
+          
             }
           }
+
           if (verbose>=3) {
             std::cout << "Press a key and type enter to continue. ";
             char ch;
             std::cin >> ch;
           }
+
           // Stop if iterations greater than max
           if (main_done==false && warm_up==false && max_iters>0 &&
               mcmc_iters==max_iters) {
@@ -2161,14 +1817,12 @@ template<class func_t, class ubvector >
           }
       
           if (main_done==false) {
-            
             // Check to see if we're out of time
-            #ifdef O2SCL_MPI
-              double elapsed=MPI_Wtime()-mpi_start_time;
-            #else
-              double elapsed=time(0)-mpi_start_time;
-            #endif
-            
+#ifdef O2SCL_MPI
+            double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+            double elapsed=time(0)-mpi_start_time;
+#endif
             if (max_time>0.0 && elapsed>max_time) {
               if (verbose>=1) {
                 scr_out << "mcmc: Stopping because elapsed (" << elapsed
@@ -2178,16 +1832,24 @@ template<class func_t, class ubvector >
               main_done=true;
             }
           }
+
           outside_parallel();
+
           // --------------------------------------------------------------
-        } // End of main loop for aff_inv=true
-      } // End of conditional for aff_inv=true
+          // End of main loop for aff_inv=true
+        }
+
+        // End of conditional for aff_inv=true
+      }
+    
       // --------------------------------------------------------------
+    
       mcmc_cleanup();
+
       return 0;
     }
-
-      /** \brief Perform a MCMC simulation with a thread-safe function
+    
+    /** \brief Perform a MCMC simulation with a thread-safe function
         or with only one OpenMP thread
     */
     virtual int mcmc(size_t n_params, vec_t &low, vec_t &high,
@@ -2260,8 +1922,8 @@ template<class func_t, class ubvector >
       return;
     }
     //@}
-  }; // End of class mcmc_para_base
     
+  };
 
   /** \brief A generic MCMC simulation class writing data to a 
       \ref o2scl::table_units object
@@ -3625,8 +3287,6 @@ template<class func_t, class ubvector >
     o2scl::cli::parameter_size_t p_max_bad_steps;
     o2scl::cli::parameter_size_t p_n_walk;
     o2scl::cli::parameter_bool p_aff_inv;
-    o2scl::cli::parameter_bool p_hmc;
-    o2scl::cli::parameter_size_t p_traj_length;
     o2scl::cli::parameter_bool p_table_sequence;
     o2scl::cli::parameter_bool p_store_rejects;
     o2scl::cli::parameter_bool p_check_rows;
@@ -3772,16 +3432,6 @@ template<class func_t, class ubvector >
       p_aff_inv.help=((std::string)"If true, then use affine-invariant ")+
         "sampling (default false).";
       cl.par_list.insert(std::make_pair("aff_inv",&p_aff_inv));
-
-      p_hmc.b=&this->hmc;
-      p_hmc.help=((std::string)"If true, then use Hamiltonian Monte Carlo ")+
-        "(default false).";
-      cl.par_list.insert(std::make_pair("hmc",&p_hmc));
-
-      p_traj_length.b=&this->traj_length;
-      p_traj_length.help=((std::string)"Set the trajectory length for ")+
-        "Hamiltonian Monte Carlo (default 100).";
-      cl.par_list.insert(std::make_pair("traj_length",&p_traj_length));
     
       p_table_sequence.b=&this->table_sequence;
       p_table_sequence.help=((std::string)"If true, then ensure equal ")+
@@ -3804,8 +3454,9 @@ template<class func_t, class ubvector >
       return;
     }
   
-  }; // End of class mcmc_para_cli
+  };
+  
+  // End of namespace
+}
 
-} // End of namespace o2scl
-
-#endif // O2SCL_MCMC_PARA_H
+#endif
