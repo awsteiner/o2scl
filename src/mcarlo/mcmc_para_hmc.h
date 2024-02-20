@@ -1477,8 +1477,9 @@ template<class func_t, class ubvector >
         // Start of main loop for hmc==true (Hamiltonian Monte Carlo)
 
         // Generator random numbers from a standard normal distribution
-        boost::random::mt19937 gen;
-        boost::random::normal_distribution<double> norm_dist(0.0, 1.0);
+        std::random_device seed;
+        std::mt19937 gen(seed());
+        std::normal_distribution<double> norm_dist(0.0, 1.0);
 
         // Positions and momenta for current and next points
         ubvector pos_curr(n_params), pos_next(n_params); 
@@ -1548,7 +1549,7 @@ template<class func_t, class ubvector >
                 }
 
                 // Rescale momenta by the stepsizes
-                mom_curr*=stepsize;
+                mom_curr=element_prod(mom_curr, stepsize);
 
                 // Set next positions and momenta
                 pos_next=pos_curr;
@@ -1562,7 +1563,7 @@ template<class func_t, class ubvector >
                 // Make a half step for momentum at the beginning
                 mom_next-=0.5*element_prod(stepsize, grad_pot);
                 
-                // Leapfrog steps: Full steps for position and momentum
+                // Leapfrog updates: Full steps for position and momentum
                 for (size_t i=1; i<=traj_length; i++) {
                   
                   // Make a full step for position
@@ -1580,7 +1581,7 @@ template<class func_t, class ubvector >
                 // Make a half step for momentum at the end
                 mom_next-=0.5*element_prod(stepsize, grad_pot);
 
-                // Negate momentum at the end of trajectory
+                // Negate momentum to make the proposal symmetric
                 mom_next=-mom_next;
 
                 // Get current weight and evaluate potential energy
@@ -1788,8 +1789,28 @@ template<class func_t, class ubvector >
                   inner_done=true;
                 }                
               } // End of while loop for '!inner_done && !main_done'
-            } // End of loop over threads 
-          } // End of parallel region 
+            } // End of loop over threads for hmc==true
+          } // End of parallel region for hmc==true
+
+          // Collect best point over all threads
+          for (size_t it=0; it<n_threads; it++) {
+            if (w_best_t[it]>w_best) {
+              w_best=w_best_t[it];
+              best=best_t[it];
+            }
+          }
+
+          // Check if we're done
+          if (main_done==false && max_iters>0) {
+            main_done=true;
+            for (size_t it=0; it<n_threads; it++) {
+              if (mcmc_iters[it]<max_iters) main_done=false;
+            }
+          }
+
+          // Call function outside parallel region
+          outside_parallel();
+          
         } // End of main loop for hmc==true
         // ----------------------------------------------------------------
 
@@ -2161,67 +2182,8 @@ template<class func_t, class ubvector >
           // --------------------------------------------------------------
         } // End of main loop for aff_inv=true
       } // End of conditional for aff_inv=true
-    
       // --------------------------------------------------------------
       mcmc_cleanup();
-      
-      // --------------------------------------------------------
-      std::vector<double> q=position;
-      
-      std::default_random_engine gen;
-      std::normal_distribution<double> dist(0.0, 1.0);
-      
-      std::vector<double> p(q.size(), dist(gen));
-      momentum=p;
-
-      // Make a half step for momentum at the beginning
-      for (size_t i=0; i<p.size(); i++) {
-        p[i]=p[i]-0.5*step_size[i]*grad_potential(q)[i];
-      }
-
-      // Alternate full steps for position and momentum
-      for (int j=1; j<=traj_length; j++) {
-        
-        // Make a full step for the position
-        for (size_t i=0; i<q.size(); i++) {
-          q[i]=q[i]+step_size[i]*p[i];
-          
-          // Make a full step for the momentum except at the end of trajectory
-          if (j!=traj_length) {
-            p[i]=p[i]-step_size[i]*grad_potential(q)[i];
-          }
-        }
-      }
-      // Make a half step for momentum at the end
-      for (size_t i=0; i<p.size(); i++) {
-        p[i]=p[i]-0.5*step_size[i]*grad_potential(q)[i];
-      }
-
-      // Negate momentum at end of trajectory to make the proposal symmetric
-      for (size_t i=0; i<p.size(); i++) {
-        p[i]=-p[i];
-      }
-
-      // Evaluate potential and kinetic energies at start and end of trajectory
-      double u_curr=potential_en(position);
-      double u_prop=potential_en(q);
-      double k_curr=kinetic_en(momentum);
-      double k_prop=kinetic_en(p);
-
-      // Accept or reject the state at end of trajectory, returning either
-      // the position at the end of the trajectory or the initial position
-      if (dist(gen) < exp(u_curr-u_prop+k_curr-k_prop)) {
-
-        // Accept: Update current positions
-        position=q;
-        accept++;
-      }
-      else {
-
-        // Reject: Keep initial positions
-        reject++;
-      }
-
       return 0;
     }
 
