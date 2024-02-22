@@ -192,7 +192,7 @@ namespace o2scl {
            class data_t, class vec_t=ubvector> class mcmc_para_base {
     
   protected:
-  
+
     /// \name MPI properties
     //@{
     /// The MPI processor rank

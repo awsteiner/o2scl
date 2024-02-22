@@ -2234,6 +2234,12 @@ namespace o2scl_acol {
         Rename a column from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
 
+        This function currently works by creating a new column,
+        copying the data into the new column, and then deleting the
+        old column. This means that renaming a column effectively
+        moves that column to the last column in the table. This may be
+        fixed in future versions.
+
         For objects of type table3d:
 
         Rename a slice.
