@@ -191,7 +191,7 @@ namespace o2scl {
       corresponding number of threads and walkers. 
   */
 
-template<class func_t, class ubvector >
+template<class func_t, class data_t, class ubvector>
   class grad_potential {
  
   public:
@@ -217,13 +217,15 @@ template<class func_t, class ubvector >
 
   // Compute the gradient g at the point x
   void gradient(size_t nv, ubvector &x, ubvector &g) {
+    int ret;
     double fv1, fv2, h;
-    fv1=(*this->func)(nv,x);
+    data_t dat;
+    ret=(*this->func)(nv, x, fv1, dat);
     for(size_t i=0; i<nv; i++) {
 	    h=epsrel*fabs(x[i]);
 	    if (fabs(h)<=epsmin) h=epsrel;
 	    x[i]+=h;
-	    fv2=(*this->func)(nv,x);
+	    ret=(*this->func)(nv, x, fv2, dat);
 	    x[i]-=h;
 	    g[i]=(fv2-fv1)/h;
     }
@@ -405,8 +407,8 @@ template<class func_t, class ubvector >
     /// Optionally specify step sizes for each parameter
     std::vector<double> step_vec;
 
-    /// Trajectory length for HMC (default 100)
-    size_t traj_length;
+    /// Number of leapfrog steps (trajectory length) for HMC (default 100)
+    size_t n_leapfrog;
 
     /** \brief If true, couple the walkers across threads during
         affine-invariant sampling (default false)
@@ -491,11 +493,11 @@ template<class func_t, class ubvector >
       mpi_rank=0;
       mpi_start_time=0.0;
 
-      #ifdef O2SCL_MPI
-        // Get MPI rank, etc.
-        MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
-        MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_size);
-      #endif
+#ifdef O2SCL_MPI
+      // Get MPI rank, etc.
+      MPI_Comm_rank(MPI_COMM_WORLD,&this->mpi_rank);
+      MPI_Comm_size(MPI_COMM_WORLD,&this->mpi_size);
+#endif
     
       prefix="mcmc";
       max_time=0.0;
@@ -588,7 +590,7 @@ template<class func_t, class ubvector >
                    "sampling not implemented in mcmc_para::mcmc().",
                    o2scl::exc_eunimpl);
       }
-      if (step_fac<=0.0) {
+      if (hmc==false && step_fac<=0.0) {
         if (aff_inv) {
           std::cout << "mcmc_para::mcmc(): Requested negative or zero "
                     << "step_fac with aff_inv=true.\nSetting to 2.0."
@@ -605,25 +607,25 @@ template<class func_t, class ubvector >
           std::cout << "mcmc_para::mcmc(): Hamiltonian Monte Carlo "
                     << "selected." << std::endl;
         }
-        if (traj_length<=0) {
-          std::cout << "mcmc_para::mcmc(): Trajectory length "
+        if (n_leapfrog<=0) {
+          std::cout << "mcmc_para::mcmc(): Number of leapfrog steps "
                     << "not set. Setting to 100." << std::endl;
-          traj_length=100;
+          n_leapfrog=100;
         }
         if (step_vec.size()<n_params) {
           std::cout << "mcmc_para::mcmc(): Not enough step sizes "
                     << "specified for HMC. Resizing and setting all "
-                    << "to 0.1."
+                    << "to 0.01."
                     << std::endl;
-          step_vec.resize(n_params,0.1);
+          step_vec.resize(n_params, 0.01);
         } else {
           for (size_t i=0; i<step_vec.size(); i++) {
             if (step_vec[i]<=0.0) {
               std::cout << "mcmc_para::mcmc(): Requested negative or "
                         << "zero step size for parameter " << i << ". "
-                        << "Setting all to 0.1."
+                        << "Setting to 0.1."
                         << std::endl;
-              step_vec[i]=0.1;
+              step_vec[i]=0.01;
             }
           }
         }
@@ -638,11 +640,11 @@ template<class func_t, class ubvector >
       // ----------------------------------------------------------------
       // Set start time if necessary
       if (mpi_start_time==0.0) {
-        #ifdef O2SCL_MPI
-          mpi_start_time=MPI_Wtime();
-        #else
-          mpi_start_time=time(0);
-        #endif
+#ifdef O2SCL_MPI
+        mpi_start_time=MPI_Wtime();
+#else
+        mpi_start_time=time(0);
+#endif
       } // End of setting start time
 
       // ----------------------------------------------------------------
@@ -713,9 +715,9 @@ template<class func_t, class ubvector >
 
       // ----------------------------------------------------------------
       // Set number of OpenMP threads
-      #ifdef O2SCL_SET_OPENMP
+#ifdef O2SCL_SET_OPENMP
       omp_set_num_threads(n_threads);
-      #else
+#else
         if (n_threads>1) {
           std::cout << "mcmc_para::mcmc(): "
                     << n_threads << " threads were requested but the "
@@ -724,7 +726,7 @@ template<class func_t, class ubvector >
                     << std::endl;
           n_threads=1;
         }
-      #endif // End of setting OpenMP threads
+#endif // End of setting OpenMP threads
 
       // ----------------------------------------------------------------
       // Set RNGs with a different seed for each thread and rank. 
@@ -848,8 +850,8 @@ template<class func_t, class ubvector >
                   << "Hamiltonian Monte Carlo, n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
-                  << mpi_size << ", trajectory_length="
-                  << traj_length << std::endl;
+                  << mpi_size << ", n_leapfrog="
+                  << n_leapfrog << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
                   << "Random-walk w/uniform dist., n_params="
@@ -864,13 +866,13 @@ template<class func_t, class ubvector >
       // Initial point and weights for affine-invariant sampling
     
       if (aff_inv) { 
-        #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-        #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
 
             // Initialize each walker in turn
@@ -1022,6 +1024,7 @@ template<class func_t, class ubvector >
             }
           }
         }
+
         best=current[best_index];
 
         // Verbose output
@@ -1037,19 +1040,20 @@ template<class func_t, class ubvector >
               scr_out.precision(6);
             }
           }
-        }
-        // End of 'if (aff_inv)' for initial point evaluation
+        } 
+      // End of 'if (aff_inv)' for initial point evaluation
+
       } else {
         // --------------------------------------------------------
         // Initial point evaluation when aff_inv is false.
 
-        #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-        #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
           
             // Note that this value is used (e.g. in
@@ -1109,13 +1113,13 @@ template<class func_t, class ubvector >
         // --------------------------------------------------------
         // Post-processing initial point when aff_inv is false.
 
-        #ifdef O2SCL_SET_OPENMP
-        #pragma omp parallel default(shared)
-        #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
         {
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp for
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
           for(size_t it=0;it<n_threads;it++) {
             size_t ip_size=initial_points.size();
             if (it>=ip_size) {
@@ -1127,12 +1131,14 @@ template<class func_t, class ubvector >
               w_current[it]=w_current[it % ip_size];
               data[it]=data[it % ip_size];
             }
+
             // Update the return value count
             if (func_ret[it]>=0 && ret_value_counts.size()>it && 
                 func_ret[it]<((int)ret_value_counts[it].size())) {
               ret_value_counts[it][func_ret[it]]++;
             }
             if (meas_for_initial) {
+
               // Call the measurement function    
               meas_ret[it]=meas[it](current[it],w_current[it],0,
                                     func_ret[it],true,data[it]);
@@ -1206,7 +1212,7 @@ template<class func_t, class ubvector >
       // The main section split into two parts, aff_inv=false and
       // aff_inv=true.
 
-      if (aff_inv==false) {
+      if (aff_inv==false && hmc==false) {
 
         // ---------------------------------------------------
         // Start of main loop over threads for aff_inv=false
@@ -1217,14 +1223,15 @@ template<class func_t, class ubvector >
         for(size_t it=0;it<n_threads;it++) {
           mcmc_iters[it]=0;
         }
+        
         while (!main_done) { 
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
               bool inner_done=false;
               while (!inner_done && !main_done) {
@@ -1383,7 +1390,6 @@ template<class func_t, class ubvector >
                       }
                     }
                   }
-
                 }
 
                 // ---------------------------------------------------
@@ -1442,11 +1448,11 @@ template<class func_t, class ubvector >
                 
                 // If we're out of time, stop all threads
                 if (main_done==false) {
-                  #ifdef O2SCL_MPI
-                    double elapsed=MPI_Wtime()-mpi_start_time;
-                  #else
-                    double elapsed=time(0)-mpi_start_time;
-                  #endif
+#ifdef O2SCL_MPI
+                  double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+                  double elapsed=time(0)-mpi_start_time;
+#endif
                   if (max_time>0.0 && elapsed>max_time) {
                     if (verbose>=1) {
                       scr_out << "o2scl::mcmc_para: Thread " << it
@@ -1457,12 +1463,14 @@ template<class func_t, class ubvector >
                     main_done=true;
                   }
                 }
+                
                 // If we have requested a particular number of steps in
                 // parallel, then end the inner loop and continue later
                 if (steps_in_parallel>0 &&
                     mcmc_iters[it]%steps_in_parallel==0) {
                   inner_done=true;
                 }
+              
               } // End of while loop for inner_done==false and main_done==false
             } // End of loop over threads for aff_inv=false
           } // End of parallel region for aff_inv=false
@@ -1537,17 +1545,21 @@ template<class func_t, class ubvector >
         for(size_t it=0; it<n_threads; it++) {
           mcmc_iters[it]=0;
         }
+
         while (!main_done) {
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for (size_t it=0; it<n_threads; it++) {
               bool inner_done=false;
+              
               while (!inner_done && !main_done) {
+
+                std::cout << "Checkpoint: Entered inner while loop" << std::endl;
 
                 // Print info for current step for HMC
                 if (verbose>=2) {
@@ -1573,108 +1585,140 @@ template<class func_t, class ubvector >
                 pos_next=pos_curr;
                 mom_next=mom_curr;
 
+                std::cout << "Checkpoint: Before computing gradients" << std::endl;
+
                 // Compute the gradient of potential energy
-                grad_potential<func_t, ubvector> gp;
-                gp.set_function(&func[it]);
+                grad_potential<func_t, data_t, ubvector> gp;
+                gp.set_function(func[it]);
                 gp.gradient(n_params, pos_next, grad_pot);
+
+                std::cout << "Checkpoint: After computing gradients" << std::endl;
 
                 // Make a half step for momentum at the beginning
                 mom_next-=0.5*element_prod(stepsize, grad_pot);
+
+                std::cout << "Checkpoint: Before leapfrog loop" << std::endl;
                 
                 // Leapfrog updates: Full steps for position and momentum
-                for (size_t i=1; i<=traj_length; i++) {
+                for (size_t i=1; i<=n_leapfrog; i++) {
                   
                   // Make a full step for position
                   pos_next+=element_prod(stepsize, mom_next);
 
-                  // Compute the gradient of potential energy
-                  gp.gradient(n_params, pos_next, grad_pot);
+                  // Check if leapfrog update moved the point out of bounds
+                  
+                  // If next point is out of bounds, reject the point
+                  // without attempting to compute the gradient
+                  func_ret[it]=o2scl::success;
+                  for (size_t ip=0; ip<n_params; ip++) {
+                    if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
+                      func_ret[it]=mcmc_skip;
+                      scr_out << "Leapfrog update failed in thread " << it 
+                              << "at step " << i << std::endl;
+                    }
+                  }
+
+                  // If the point is in bounds, compute the gradient
+                  // of potential energy
+                  if (func_ret[it]!=mcmc_skip) {
+                    gp.gradient(n_params, pos_next, grad_pot);
+                  }
 
                   // Make a full step for the momentum, except at the end
-                  if (i!=traj_length) {
+                  if (i!=n_leapfrog) {
                     mom_next-=element_prod(stepsize, grad_pot);
                   }
                 }
 
-                // Make a half step for momentum at the end
-                mom_next-=0.5*element_prod(stepsize, grad_pot);
-
-                // Negate momentum to make the proposal symmetric
-                mom_next=-mom_next;
-
-                // Get current weight and evaluate potential energy
-                wgt_curr=w_current[it];
-                pot_curr=-wgt_curr;
-
-                // Compute next weight for HMC
-                func_ret[it]=o2scl::success;
+                std::cout << "Checkpoint: After leapfrog loop" << std::endl;
                 
-                // If next point is out of bounds, reject the point
-                // without attempting to compute the weight for HMC
-                for (size_t ip=0; ip<n_params; ip++) {
-                  if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
-                    func_ret[it]=mcmc_skip;
-                    if (verbose>=3) {
-                      if (pos_next(ip)<low[ip]) {
-                        std::cout << "mcmc (" << it << ","
+                // Continue only if the leapfrog update succeeded
+                if (func_ret[it]!=mcmc_skip) {
+                
+                  // Make a half step for momentum at the end
+                  mom_next-=0.5*element_prod(stepsize, grad_pot);
+
+                  // Negate momentum to make the proposal symmetric
+                  mom_next=-mom_next;
+
+                  // Get current weight and evaluate potential energy
+                  wgt_curr=w_current[it];
+                  pot_curr=-wgt_curr;
+
+                  // Compute next weight for HMC
+                  func_ret[it]=o2scl::success;
+
+                  // Double check that the next point is in bounds
+                  for (size_t ip=0; ip<n_params; ip++) {
+                    if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
+                      func_ret[it]=mcmc_skip;
+                      if (verbose>=3) {
+                        if (pos_next(ip)<low[ip]) {
+                          std::cout << "mcmc (" << it << ","
+                                    << mpi_rank << "): Parameter with index "
+                                    << ip << " and value " << pos_next(ip)
+                                    << " smaller than limit " << low[ip]
+                                    << std::endl;
+                          scr_out << "mcmc (" << it << ","
                                   << mpi_rank << "): Parameter with index "
                                   << ip << " and value " << pos_next(ip)
                                   << " smaller than limit " << low[ip]
                                   << std::endl;
-                        scr_out << "mcmc (" << it << ","
-                                << mpi_rank << "): Parameter with index "
-                                << ip << " and value " << pos_next(ip)
-                                << " smaller than limit " << low[ip]
-                                << std::endl;
-                      } else {
-                        std::cout << "mcmc (" << it << "," << mpi_rank
+                        } else {
+                          std::cout << "mcmc (" << it << "," << mpi_rank
+                                    << "): Parameter with index " << ip
+                                    << " and value " << pos_next(ip)
+                                    << " larger than limit " << high[ip]
+                                    << std::endl;
+                          scr_out << "mcmc (" << it << "," << mpi_rank
                                   << "): Parameter with index " << ip
                                   << " and value " << pos_next(ip)
                                   << " larger than limit " << high[ip]
                                   << std::endl;
-                        scr_out << "mcmc (" << it << "," << mpi_rank
-                                << "): Parameter with index " << ip
-                                << " and value " << pos_next(ip)
-                                << " larger than limit " << high[ip]
-                                << std::endl;
+                        }
+                      }
+                    } else {
+
+                      // If the point is in bounds, set the next position
+                      next[it][ip]=pos_next(ip);
+                    }
+                  }
+
+                  std::cout << "Checkpoint: Before function evaluation" << std::endl;
+
+                  // Compute the weight, set the 'done' flag if necessary,
+                  // and update the return value array, for HMC
+                  if (func_ret[it]!=mcmc_skip) {
+                    if (switch_arr[it]==false) {
+                      func_ret[it]=func[it](n_params, next[it],
+                                            w_next[it], data[it+n_threads]);
+                    } else {
+                      func_ret[it]=func[it](n_params, next[it], 
+                                            w_next[it], data[it]);
+                    }
+                    if (func_ret[it]==mcmc_done) {
+                      mcmc_done_flag[it]=true;
+                    } else {
+                      if (func_ret[it]>=0 && ret_value_counts.size()>it && 
+                          func_ret[it]<((int)ret_value_counts[it].size())) {
+                        ret_value_counts[it][func_ret[it]]++;
                       }
                     }
-                  } else {
-
-                    // If the point is in bounds, set the next position
-                    next[it][ip]=pos_next(ip);
                   }
-                }
 
-                // Evaluate the function, set the 'done' flag if necessary,
-                // and update the return value array, for HMC
-                if (func_ret[it]!=mcmc_skip) {
-                  if (switch_arr[it]==false) {
-                    func_ret[it]=func[it](n_params, next[it],
-                                          w_next[it], data[it+n_threads]);
-                  } else {
-                    func_ret[it]=func[it](n_params, next[it], 
-                                          w_next[it], data[it]);
-                  }
-                  if (func_ret[it]==mcmc_done) {
-                    mcmc_done_flag[it]=true;
-                  } else {
-                    if (func_ret[it]>=0 && ret_value_counts.size()>it && 
-                        func_ret[it]<((int)ret_value_counts[it].size())) {
-                      ret_value_counts[it][func_ret[it]]++;
-                    }
-                  }
-                }
+                  std::cout << "Checkpoint: After function evaluation" << std::endl;
 
-                // Get next weight and evaluate potential energy
-                wgt_next=w_next[it];
-                pot_next=-wgt_next;
+                  // Get next weight and evaluate potential energy
+                  wgt_next=w_next[it];
+                  pot_next=-wgt_next;
 
-                // Evaluate kinetic energies for current and next points
-                ubvector mom_curr_t=trans(mom_curr);
-                ubvector mom_next_t=trans(mom_next);
-                kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
-                kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
+                  // Evaluate kinetic energies for current and next points
+                  ubvector mom_curr_t=trans(mom_curr);
+                  ubvector mom_next_t=trans(mom_next);
+                  kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
+                  kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
+                
+                } // End of 'if (func_ret[it]!=mcmc_skip)' after leapfrog update
 
                 // -----------------------------------------------------------
                 // Accept or reject the point and call the measurement 
@@ -1756,7 +1800,9 @@ template<class func_t, class ubvector >
                 // Update iteration count and reset counters for warm up
                 // iterations if necessary
                 if (main_done==false) {
-                  scr_out << "Incrementing mcmc_iters." << std::endl;
+                  if (verbose>=3) {
+                    std::cout << "Incrementing mcmc_iters." << std::endl;
+                  }
                   mcmc_iters[it]++;
                   if (warm_up && mcmc_iters[it]==n_warm_up) {
                     warm_up=false;
@@ -1784,11 +1830,11 @@ template<class func_t, class ubvector >
 
                 // If we're out of time, stop all threads
                 if (main_done==false) {
-                  #ifdef O2SCL_MPI
-                    double elapsed=MPI_Wtime()-mpi_start_time;
-                  #else
-                    double elapsed=time(0)-mpi_start_time;
-                  #endif
+#ifdef O2SCL_MPI
+                  double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+                  double elapsed=time(0)-mpi_start_time;
+#endif
                   if (max_time>0.0 && elapsed>max_time) {
                     if (verbose>=1) {
                       scr_out << "o2scl::mcmc_para: Thread " << it
@@ -1806,6 +1852,7 @@ template<class func_t, class ubvector >
                     mcmc_iters[it]%steps_in_parallel==0) {
                   inner_done=true;
                 }                
+              
               } // End of while loop for '!inner_done && !main_done'
             } // End of loop over threads for hmc==true
           } // End of parallel region for hmc==true
@@ -1847,13 +1894,13 @@ template<class func_t, class ubvector >
           // First parallel region to make the stretch move and 
           // call the object function
           
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
               
               // Choose walker to move. If the threads are not coupled,
@@ -2038,13 +2085,13 @@ template<class func_t, class ubvector >
           // Second parallel region to accept or reject, and call
           // measurement function
       
-          #ifdef O2SCL_SET_OPENMP
-          #pragma omp parallel default(shared)
-          #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
           {
-            #ifdef O2SCL_SET_OPENMP
-            #pragma omp for
-            #endif
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
             for(size_t it=0;it<n_threads;it++) {
 
               // Index in storage
@@ -2187,11 +2234,11 @@ template<class func_t, class ubvector >
           if (main_done==false) {
             
             // Check to see if we're out of time
-            #ifdef O2SCL_MPI
-              double elapsed=MPI_Wtime()-mpi_start_time;
-            #else
-              double elapsed=time(0)-mpi_start_time;
-            #endif
+#ifdef O2SCL_MPI
+            double elapsed=MPI_Wtime()-mpi_start_time;
+#else
+            double elapsed=time(0)-mpi_start_time;
+#endif
             
             if (max_time>0.0 && elapsed>max_time) {
               if (verbose>=1) {
@@ -2202,12 +2249,16 @@ template<class func_t, class ubvector >
               main_done=true;
             }
           }
+          
           outside_parallel();
+          
           // --------------------------------------------------------------
         } // End of main loop for aff_inv=true
       } // End of conditional for aff_inv=true
       // --------------------------------------------------------------
+      
       mcmc_cleanup();
+      
       return 0;
     }
 
@@ -3650,7 +3701,7 @@ template<class func_t, class ubvector >
     o2scl::cli::parameter_size_t p_n_walk;
     o2scl::cli::parameter_bool p_aff_inv;
     o2scl::cli::parameter_bool p_hmc;
-    o2scl::cli::parameter_size_t p_traj_length;
+    o2scl::cli::parameter_size_t p_n_leapfrog;
     o2scl::cli::parameter_bool p_table_sequence;
     o2scl::cli::parameter_bool p_store_rejects;
     o2scl::cli::parameter_bool p_check_rows;
@@ -3802,10 +3853,10 @@ template<class func_t, class ubvector >
         "(default false).";
       cl.par_list.insert(std::make_pair("hmc",&p_hmc));
 
-      p_traj_length.s=&this->traj_length;
-      p_traj_length.help=((std::string)"Set the trajectory length for ")+
-        "Hamiltonian Monte Carlo (default 100).";
-      cl.par_list.insert(std::make_pair("traj_length",&p_traj_length));
+      p_n_leapfrog.s=&this->n_leapfrog;
+      p_n_leapfrog.help=((std::string)"Set the number of leapfrog steps ")+
+      " for Hamiltonian Monte Carlo (default 100).";
+      cl.par_list.insert(std::make_pair("n_leapfrog",&p_n_leapfrog));
     
       p_table_sequence.b=&this->table_sequence;
       p_table_sequence.help=((std::string)"If true, then ensure equal ")+
