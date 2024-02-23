@@ -216,20 +216,27 @@ template<class func_t, class data_t, class ubvector>
   }
 
   // Compute the gradient g at the point x
-  void gradient(size_t nv, ubvector &x, ubvector &g) {
-    int ret;
-    double fv1, fv2, h;
+  int gradient(size_t nv, ubvector &x, ubvector &g) {
+    int g_ret;
     data_t dat;
-    ret=(*this->func)(nv, x, fv1, dat);
+    double fv1, fv2, h;
+    
+    g_ret=(*this->func)(nv, x, fv1, dat);
+    fv1=exp(fv1);
+    if (g_ret!=o2scl::success) return g_ret;
+    
     for(size_t i=0; i<nv; i++) {
 	    h=epsrel*fabs(x[i]);
 	    if (fabs(h)<=epsmin) h=epsrel;
 	    x[i]+=h;
-	    ret=(*this->func)(nv, x, fv2, dat);
+	    g_ret=(*this->func)(nv, x, fv2, dat);
+      if (g_ret!=o2scl::success) return g_ret;
+      fv2=exp(fv2);
 	    x[i]-=h;
 	    g[i]=(fv2-fv1)/h;
     }
-    return;
+
+    return 0;
   }
   
   protected:
@@ -611,23 +618,6 @@ template<class func_t, class data_t, class ubvector>
           std::cout << "mcmc_para::mcmc(): Number of leapfrog steps "
                     << "not set. Setting to 100." << std::endl;
           n_leapfrog=100;
-        }
-        if (step_vec.size()<n_params) {
-          std::cout << "mcmc_para::mcmc(): Not enough step sizes "
-                    << "specified for HMC. Resizing and setting all "
-                    << "to 0.01."
-                    << std::endl;
-          step_vec.resize(n_params, 0.01);
-        } else {
-          for (size_t i=0; i<step_vec.size(); i++) {
-            if (step_vec[i]<=0.0) {
-              std::cout << "mcmc_para::mcmc(): Requested negative or "
-                        << "zero step size for parameter " << i << ". "
-                        << "Setting to 0.1."
-                        << std::endl;
-              step_vec[i]=0.01;
-            }
-          }
         }
         if (n_walk>1) {
           std::cout << "mcmc_para::mcmc(): HMC selected with n_walk>1. "
@@ -1500,9 +1490,10 @@ template<class func_t, class data_t, class ubvector>
         // ----------------------------------------------------------------
         // Start of main loop for hmc==true (Hamiltonian Monte Carlo)
 
-        // Generator random numbers from a standard normal distribution
-        std::random_device seed;
-        std::mt19937 gen(seed());
+        // Distributions of random numbers
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<double> unif_dist(0.1, 1.0);
         std::normal_distribution<double> norm_dist(0.0, 1.0);
 
         // Positions and momenta for current and next points
@@ -1521,21 +1512,9 @@ template<class func_t, class data_t, class ubvector>
 
         // Step sizes for each parameter
         ubvector stepsize(n_params);
-        
-        // Get stepsizes for each parameter (user-specified)
-        for (size_t ip=0; ip<n_params; ip++) {
-          stepsize(ip)=step_vec[ip];
-        }
 
         // Construct the mass matrix and its inverse
         ubmatrix mass_inv=ubidentity(n_params);
-        
-        for (size_t i=0; i<n_params; i++) {
-          double si=stepsize(i);
-          for (size_t j=0; j<n_params; j++) {
-            mass_inv(i,j)*=(si*si);
-          }
-        }
 
         // Set the main HMC flag
         bool main_done=false;
@@ -1559,17 +1538,23 @@ template<class func_t, class data_t, class ubvector>
               
               while (!inner_done && !main_done) {
 
-                std::cout << "Checkpoint: Entered inner while loop" << std::endl;
-
                 // Print info for current step for HMC
                 if (verbose>=2) {
                   scr_out << "Iteration: " << mcmc_iters[it] << " of "
-                          << max_iters << ", thread " << it << ", accept: "
-                          << n_accept[it] << ", reject " << n_reject[it]
+                          << max_iters << ", thread: " << it << ", accept: "
+                          << n_accept[it] << ", reject: " << n_reject[it]
                           << std::endl;
                 }
 
                 for (size_t ip=0; ip<n_params; ip++) {
+
+                  // Set stepsize for each parameter
+                  stepsize(ip)=0.01*(high[ip]-low[ip])*unif_dist(gen);
+
+                  for (size_t jp=0; jp<n_params; jp++) {
+                    double si=stepsize(ip);
+                    mass_inv(ip,jp)=si*si;
+                  }
 
                   // Get current positions for this thread
                   pos_curr(ip)=current[it][ip];
@@ -1585,110 +1570,114 @@ template<class func_t, class data_t, class ubvector>
                 pos_next=pos_curr;
                 mom_next=mom_curr;
 
-                std::cout << "Checkpoint: Before computing gradients" << std::endl;
-
                 // Compute the gradient of potential energy
+                int g_ret;
                 grad_potential<func_t, data_t, ubvector> gp;
                 gp.set_function(func[it]);
-                gp.gradient(n_params, pos_next, grad_pot);
-
-                std::cout << "Checkpoint: After computing gradients" << std::endl;
-
-                // Make a half step for momentum at the beginning
-                mom_next-=0.5*element_prod(stepsize, grad_pot);
-
-                std::cout << "Checkpoint: Before leapfrog loop" << std::endl;
                 
-                // Leapfrog updates: Full steps for position and momentum
-                for (size_t i=1; i<=n_leapfrog; i++) {
-                  
-                  // Make a full step for position
-                  pos_next+=element_prod(stepsize, mom_next);
-
-                  // Check if leapfrog update moved the point out of bounds
-                  
-                  // If next point is out of bounds, reject the point
-                  // without attempting to compute the gradient
-                  func_ret[it]=o2scl::success;
-                  for (size_t ip=0; ip<n_params; ip++) {
-                    if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
-                      func_ret[it]=mcmc_skip;
-                      scr_out << "Leapfrog update failed in thread " << it 
-                              << "at step " << i << std::endl;
-                    }
-                  }
-
-                  // If the point is in bounds, compute the gradient
-                  // of potential energy
-                  if (func_ret[it]!=mcmc_skip) {
-                    gp.gradient(n_params, pos_next, grad_pot);
-                  }
-
-                  // Make a full step for the momentum, except at the end
-                  if (i!=n_leapfrog) {
-                    mom_next-=element_prod(stepsize, grad_pot);
-                  }
+                g_ret=gp.gradient(n_params, pos_next, grad_pot);
+                if (g_ret!=o2scl::success) {
+                  func_ret[it]=mcmc_skip;
+                  scr_out << "mcmc (" << it << "," << mpi_rank 
+                          << "): Computing gradient failed before leapfrog update."
+                          << std::endl;
                 }
 
-                std::cout << "Checkpoint: After leapfrog loop" << std::endl;
-                
-                // Continue only if the leapfrog update succeeded
+                // Continue only if gradient computation succeeded
                 if (func_ret[it]!=mcmc_skip) {
-                
-                  // Make a half step for momentum at the end
+
+                  // Make a half step for momentum at the beginning
                   mom_next-=0.5*element_prod(stepsize, grad_pot);
 
-                  // Negate momentum to make the proposal symmetric
-                  mom_next=-mom_next;
+                  //----------------------------------------------------------------
+                  // Leapfrog updates: Full steps for position and momentum
+                  bool leapfrog_done=false;
+                  int i_leapfrog=1;
 
-                  // Get current weight and evaluate potential energy
-                  wgt_curr=w_current[it];
-                  pot_curr=-wgt_curr;
+                  while (!leapfrog_done) {
 
-                  // Compute next weight for HMC
-                  func_ret[it]=o2scl::success;
+                    // Make a full step for position
+                    pos_next+=element_prod(stepsize, mom_next);
 
-                  // Double check that the next point is in bounds
-                  for (size_t ip=0; ip<n_params; ip++) {
-                    if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
-                      func_ret[it]=mcmc_skip;
-                      if (verbose>=3) {
-                        if (pos_next(ip)<low[ip]) {
-                          std::cout << "mcmc (" << it << ","
-                                    << mpi_rank << "): Parameter with index "
-                                    << ip << " and value " << pos_next(ip)
-                                    << " smaller than limit " << low[ip]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << ","
-                                  << mpi_rank << "): Parameter with index "
-                                  << ip << " and value " << pos_next(ip)
-                                  << " smaller than limit " << low[ip]
-                                  << std::endl;
-                        } else {
-                          std::cout << "mcmc (" << it << "," << mpi_rank
-                                    << "): Parameter with index " << ip
-                                    << " and value " << pos_next(ip)
-                                    << " larger than limit " << high[ip]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << "," << mpi_rank
-                                  << "): Parameter with index " << ip
-                                  << " and value " << pos_next(ip)
-                                  << " larger than limit " << high[ip]
-                                  << std::endl;
-                        }
+                    // Check if leapfrog update moved the point out of bounds
+
+                    // If next point is out of bounds, reject the point
+                    // without attempting to compute the gradient
+                    func_ret[it]=o2scl::success;
+
+                    for (size_t ip=0; ip<n_params; ip++) {
+                      if (pos_next(ip)<low[ip] || pos_next(ip)>high[ip]) {
+                        func_ret[it]=mcmc_skip;
+                        scr_out << "mcmc (" << it << "," << mpi_rank
+                                << "): Leapfrog update moved parameter " << ip 
+                                << "out of bounds at step"
+                                << std::endl;
                       }
+                    }
+
+                    // If the point is out of bounds, set flag to skip leapfrog
+                    if (func_ret[it]==mcmc_skip) {
+                      leapfrog_done=true;
+                    }
+
+                    // If the point is in bounds, compute the gradient of
+                    // potential energy
+                    if (func_ret[it]!=mcmc_skip) {
+                      g_ret=gp.gradient(n_params, pos_next, grad_pot);
+                      
+                      // If gradient computation failed, set flag to skip leapfrog
+                      if (g_ret!=o2scl::success) {
+                        func_ret[it]=mcmc_skip;
+                        scr_out << "mcmc (" << it << "," << mpi_rank 
+                                << "): Computing gradient failed during "
+                                << "leapfrog update."
+                                << std::endl;
+                        leapfrog_done=true;
+                      }
+                    }
+
+                    // Check if leapfrog update completed
+                    if (i_leapfrog==n_leapfrog) {
+
+                      // Set the 'done' flag
+                      leapfrog_done=true;
+
                     } else {
 
-                      // If the point is in bounds, set the next position
+                      if (!leapfrog_done) {
+
+                        // Make a full step for momentum except at the end
+                        mom_next-=element_prod(stepsize, grad_pot);
+
+                        // Increment the leapfrog step counter
+                        i_leapfrog++;
+                      }
+                    }
+                  } // End of leapfrog updates
+                  //----------------------------------------------------------------
+                
+                  // Continue only if leapfrog updates succeeded
+
+                  if (func_ret[it]!=mcmc_skip) {
+                    
+                    // Make a half step for momentum at the end
+                    mom_next-=0.5*element_prod(stepsize, grad_pot);
+
+                    // Negate momentum to make the proposal symmetric
+                    mom_next=-mom_next;
+
+                    // Get current weight and evaluate potential energy
+                    wgt_curr=w_current[it];
+                    pot_curr=-wgt_curr;
+
+                    // Set the next point to compute weight
+                    // Note: Point is within bounds at this stage
+
+                    for (size_t ip=0; ip<n_params; ip++) {
                       next[it][ip]=pos_next(ip);
                     }
-                  }
 
-                  std::cout << "Checkpoint: Before function evaluation" << std::endl;
-
-                  // Compute the weight, set the 'done' flag if necessary,
-                  // and update the return value array, for HMC
-                  if (func_ret[it]!=mcmc_skip) {
+                    // Compute weight for the next point
                     if (switch_arr[it]==false) {
                       func_ret[it]=func[it](n_params, next[it],
                                             w_next[it], data[it+n_threads]);
@@ -1696,29 +1685,32 @@ template<class func_t, class data_t, class ubvector>
                       func_ret[it]=func[it](n_params, next[it], 
                                             w_next[it], data[it]);
                     }
+
+                    // Set the 'done' flag if necessary
                     if (func_ret[it]==mcmc_done) {
                       mcmc_done_flag[it]=true;
                     } else {
                       if (func_ret[it]>=0 && ret_value_counts.size()>it && 
                           func_ret[it]<((int)ret_value_counts[it].size())) {
+                        
+                        // Update the return value array
                         ret_value_counts[it][func_ret[it]]++;
                       }
                     }
-                  }
+                    
 
-                  std::cout << "Checkpoint: After function evaluation" << std::endl;
+                    // Get next weight and evaluate potential energy
+                    wgt_next=w_next[it];
+                    pot_next=-wgt_next;
 
-                  // Get next weight and evaluate potential energy
-                  wgt_next=w_next[it];
-                  pot_next=-wgt_next;
-
-                  // Evaluate kinetic energies for current and next points
-                  ubvector mom_curr_t=trans(mom_curr);
-                  ubvector mom_next_t=trans(mom_next);
-                  kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
-                  kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
-                
-                } // End of 'if (func_ret[it]!=mcmc_skip)' after leapfrog update
+                    // Evaluate kinetic energies for current and next points
+                    ubvector mom_curr_t=trans(mom_curr);
+                    ubvector mom_next_t=trans(mom_next);
+                    kin_curr=0.5*inner_prod(mom_curr, prod(mass_inv, mom_curr_t));
+                    kin_next=0.5*inner_prod(mom_next, prod(mass_inv, mom_next_t));
+                  
+                  } // End of !=mcmc_skip after leapfrog update
+                } // End of !=mcmc_skip' before leapfrog update
 
                 // -----------------------------------------------------------
                 // Accept or reject the point and call the measurement 
@@ -2257,9 +2249,30 @@ template<class func_t, class data_t, class ubvector>
       } // End of conditional for aff_inv=true
       // --------------------------------------------------------------
       
+      // Report MCMC performance
+      double elapsed=time(0)-mpi_start_time;
+      double t_accept=0.0, t_reject=0.0, t_iters=0.0;
+
+      for (size_t it=0; it<n_threads; it++) {
+        t_accept+=((double)n_accept[it]);
+        t_reject+=((double)n_reject[it]);
+        t_iters+=((double)mcmc_iters[it]);
+      }
+      
+      double acc_rate=t_accept/(t_accept+t_reject);
+      double avg_iters=t_iters/((double)n_threads);
+      
+      scr_out << "Average acceptance rate: " << acc_rate*100 
+                << " %" << std::endl;
+      scr_out << "Total time elapsed: " << elapsed 
+                << " sec" << std::endl;
+      scr_out << "Average time/iteration: " << elapsed/avg_iters
+                << " sec" << std::endl;
+
       mcmc_cleanup();
       
       return 0;
+
     }
 
       /** \brief Perform a MCMC simulation with a thread-safe function
