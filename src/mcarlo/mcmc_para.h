@@ -284,6 +284,9 @@ namespace o2scl {
 
   public:
 
+    /// If true, use new initial point code
+    bool new_ip;
+    
     /** \brief If true, call the measurement function for the
         initial point
     */
@@ -412,6 +415,8 @@ namespace o2scl {
     //@}
   
     mcmc_para_base() {
+      new_ip=false;
+      
       user_seed=0;
       n_warm_up=0;
 
@@ -967,33 +972,58 @@ namespace o2scl {
         // --------------------------------------------------------
         // Initial point evaluation when aff_inv is false.
 
+        if (new_ip) {
+          
+          size_t ip_size=initial_points.size();
+          
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
-        {
+          {
 #ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
-          for(size_t it=0;it<n_threads;it++) {
-          
-            // Note that this value is used (e.g. in
-            // mcmc_para_table::add_line() ) even if aff_inv is
-            // false, so we set it to zero here.
-            curr_walker[it]=0;
-          
-            // Copy from the initial points array into current point
-            size_t ip_size=initial_points.size();
-            for(size_t ipar=0;ipar<n_params;ipar++) {
-              current[it][ipar]=initial_points[it % ip_size][ipar];
-            }
-          
-            if (it<ip_size) {
+            for(size_t it=0;it<ip_size;it++) {
+              
+              // Note that this value is used (e.g. in
+              // mcmc_para_table::add_line() ) even if aff_inv is
+              // false, so we set it to zero here.
+              curr_walker[it]=0;
+              
+              // Copy from the initial points array into current point
+              for(size_t ipar=0;ipar<n_params;ipar++) {
+                current[it][ipar]=initial_points[it % ip_size][ipar];
+              }
+              
               // If we have a new unique initial point, then
               // perform a function evaluation
               func_ret[it]=func[it](n_params,current[it],w_current[it],
                                     data[it]);
-            } else {
-              // Otherwise copy the result already computed
+            }
+            
+          }
+          // End of parallel region
+          
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
+          {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+            for(size_t it=ip_size;it<n_threads;it++) {
+              
+              // Note that this value is used (e.g. in
+              // mcmc_para_table::add_line() ) even if aff_inv is
+              // false, so we set it to zero here.
+              curr_walker[it]=0;
+              
+              // Copy from the initial points array into current point
+              for(size_t ipar=0;ipar<n_params;ipar++) {
+                current[it][ipar]=initial_points[it % ip_size][ipar];
+              }
+              
+              // Copy the result already computed
               func_ret[it]=func_ret[it % ip_size];
               w_current[it]=w_current[it % ip_size];
               // This loop requires the data to have a valid
@@ -1001,12 +1031,56 @@ namespace o2scl {
               for(size_t j=0;j<data.size();j++) {
                 data[it]=data[it % ip_size];
               }
+              
             }
-
+            
           }
-
+          // End of parallel region
+          
+        } else {
+        
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
+          {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+            for(size_t it=0;it<n_threads;it++) {
+              
+              // Note that this value is used (e.g. in
+              // mcmc_para_table::add_line() ) even if aff_inv is
+              // false, so we set it to zero here.
+              curr_walker[it]=0;
+              
+              // Copy from the initial points array into current point
+              size_t ip_size=initial_points.size();
+              for(size_t ipar=0;ipar<n_params;ipar++) {
+                current[it][ipar]=initial_points[it % ip_size][ipar];
+              }
+              
+              if (it<ip_size) {
+                // If we have a new unique initial point, then
+                // perform a function evaluation
+                func_ret[it]=func[it](n_params,current[it],w_current[it],
+                                      data[it]);
+              } else {
+                // Otherwise copy the result already computed
+                func_ret[it]=func_ret[it % ip_size];
+                w_current[it]=w_current[it % ip_size];
+                // This loop requires the data to have a valid
+                // copy constructor
+                for(size_t j=0;j<data.size();j++) {
+                  data[it]=data[it % ip_size];
+                }
+              }
+              
+            }
+            
+          }
+          // End of parallel region
+          
         }
-        // End of parallel region
       
         // Check return values from initial point function evaluations
         for(size_t it=0;it<n_threads;it++) {
