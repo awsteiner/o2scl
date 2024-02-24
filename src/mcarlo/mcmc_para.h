@@ -53,6 +53,163 @@ namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  // Do we need one stepper for each thread? probably...
+  
+  template<class func_t, class data_t, class vec_t> mcmc_stepper_base {
+    
+  public:
+
+    rng<> rg;
+
+    mcmc_stepper_base() {
+      unsigned long int seed=time(0);
+      rg.set_seed(seed);
+    }
+
+    void step(size_t n_params,
+              func_t &f, vec_t &current, vec_t &next, double w_current,
+              double &w_next, vec_t &low,
+              vec_t &high, int &func_ret, bool &accept,
+              data_t &dat);
+
+  };
+
+  template<class func_t, class data_t, class vec_t> mcmc_stepper_mh :
+  public<func_t,data_t,vec_t> {
+    
+  public:
+
+    double step_fac;
+
+    mcmc_stepper_mh() {
+      step_fac=2.0;
+    }
+    
+    void step(size_t n_params,
+              func_t &f, vec_t &current, vec_t &next, double w_curr,
+              double &w_next, vec_t &low,
+              vec_t &high, int &func_ret, bool &accept, data_t &dat) {
+      
+      for(size_t k=0;k<n_params;k++) {
+        next[k]=current[k]+(rg[it].random()*2.0-1.0)*
+          (high[k]-low[k])/step_fac;
+      }
+
+      func_ret=success;
+      
+      for(size_t k=0;k<n_params;k++) {
+        if (next[it][k]<low[k] || next[it][k]>high[k]) {
+          func_ret=mcmc_skip;
+        }
+      }
+
+      func_ret=f(n_params,next,w_next,dat);
+
+      double r=rg.random();
+            
+      // Metropolis algorithm
+      accept=false;
+      if (r<exp(w_next-w_current)) {
+        accept=true;
+      }
+      
+      return;
+    }
+    
+  };
+
+  template<class grad_t, class func_t, class data_t,
+           class vec_t> mcmc_stepper_hmc :
+  public<func_t,data_t,vec_t> {
+    
+  public:
+
+    int traj_length;
+
+    double inv_mass;
+
+    prob_dens_gaussian pdg;
+
+    vec_t mom;
+
+    double mom_step;
+
+    grad_t g;
+    
+    mcmc_stepper_hmc() {
+      
+      unsigned long int seed=time(0);
+      rg.set_seed(seed);
+      inv_mass=0.1;
+      traj_length=20;
+      mom_step=0.18;
+    }
+
+    void step(size_t n_params,
+              func_t &f, vec_t &current, vec_t &next, double w_curr,
+              double &w_next, vec_t &low,
+              vec_t &high, int &func_ret, bool &accept, data_t &dat) {
+
+      vec_t mom, grad, mom_next;
+      
+      for(size_t k=0;k<n_params;k++) {
+        mom[k]=pdg()*mom_step;
+      }
+
+      g(n_params,current,grad);
+      
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]=mom[k]-0.5*mom_step*grad[k];
+      }
+
+      for(size_t i=0;i<traj_length;i++) {
+
+        for(size_t k=0;k<n_params;k++) {
+          next[k]=current[k]+mom_step*mom_next[k];
+        }
+        
+        func_ret=f(n_params,next,w_next,dat);
+        g(n_params,next,grad);
+
+        if (i<traj_length-1) {
+          for(size_t k=0;k<n_params;k++) {
+            mom_next[k]=mom_next[k]-mom_step*grad[k];
+          }
+
+        }
+        
+      }
+      
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]-=0.5*mom_step*grad[k];
+      }
+
+      double pot_curr=-log(0.5*w_current);
+      double pot_next=-log(0.5*w_next);
+
+      double kin_curr=0.0, kin_next=0.0;
+      for(size_t k=0;k<n_params;k++) {
+        kin_curr+=mom[k]*mass_inv*mom[k]/2.0;
+        kin_next+=mom_next[k]*mass_inv*mom_next[k]/2.0;
+      }
+        
+      double r=rg.random();
+            
+      // Metropolis algorithm
+      accept=false;
+      if (r<exp(pot_curr-pot_next+kin_curr-kin_next)) {
+        accept=true;
+      }
+
+      return;
+    }
+    
+  };
+
+#endif
   
   /** \brief A generic MCMC simulation class
 
