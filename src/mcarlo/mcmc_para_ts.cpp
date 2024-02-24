@@ -66,6 +66,11 @@ public:
   mcmc_para_table<point_funct,fill_funct,std::array<double,1>,
                       ubvector> mct;
 
+  mcmc_para_class() {
+    mct.new_ip=true;
+    mc.new_ip=true;
+  }
+  
   expval_scalar sev_x;
   
   expval_scalar sev_x2;
