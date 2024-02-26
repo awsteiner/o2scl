@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2016-2024, Andrew W. Steiner
+  Copyright (C) 2016-2023, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -61,11 +61,16 @@ public:
   int count;
   
   mcmc_para_base<point_funct,measure_funct,std::array<double,1>,
-                     ubvector> mc;
-
+                 ubvector> mc;
+  
   mcmc_para_table<point_funct,fill_funct,std::array<double,1>,
-                      ubvector> mct;
-
+                  ubvector> mct;
+  
+  mcmc_para_class() {
+    mct.new_ip=true;
+    mc.new_ip=true;
+  }
+  
   expval_scalar sev_x;
   
   expval_scalar sev_x2;
