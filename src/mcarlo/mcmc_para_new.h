@@ -54,7 +54,7 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-  // Do we need one stepper for each thread? probably...
+  // Do we need one stepper for each thread? maybe not.
 
   /** \brief Desc
    */
@@ -74,10 +74,14 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void step(size_t n_params, func_t &f, vec_t &current, vec_t &next, 
-              double w_current, double &w_next, vec_t &low,
-              vec_t &high, int &func_ret, bool &accept, data_t &dat);
-
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next, 
+                      double w_current, double &w_next, vec_t &low,
+                      vec_t &high, int &func_ret, bool &accept,
+                      data_t &dat)=0;
+    
+    virtual ~mcmc_stepper_base() {
+    }
+    
   };
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -97,11 +101,14 @@ namespace o2scl {
       step_fac=2.0;
     }
     
+    virtual ~mcmc_stepper_mh() {
+    }
+    
     /** \brief Desc
      */
-    void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
-              double w_curr, double &w_next, vec_t &low, vec_t &high, 
-              int &func_ret, bool &accept, data_t &dat) {
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+                      int &func_ret, bool &accept, data_t &dat) {
       
       for(size_t k=0;k<n_params;k++) {
         next[k]=current[k]+(rg.random()*2.0-1.0)*
@@ -172,11 +179,14 @@ namespace o2scl {
       mom_step=0.18;
     }
 
+    virtual ~mcmc_stepper_hmc() {
+    }
+    
     /** \brief Desc
      */
-    void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
-              double w_curr, double &w_next, vec_t &low, vec_t &high, 
-              int &func_ret, bool &accept, data_t &dat) {
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+                      int &func_ret, bool &accept, data_t &dat) {
 
       vec_t mom, grad, mom_next;
       
@@ -372,7 +382,8 @@ namespace o2scl {
   */
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector,
-           class stepper_t=int
+           class stepper_t=
+           mcmc_stepper_base<func_t,data_t,vec_t>
            > class mcmc_para_base {
     
   protected:
@@ -475,7 +486,7 @@ namespace o2scl {
     bool new_step;
 
     /// The stepper
-    stepper_t step;
+    stepper_t stepper;
     
     /** \brief If true, call the measurement function for the
         initial point
@@ -1417,11 +1428,21 @@ namespace o2scl {
                   if (switch_arr[sindex2]==false) {
 
                     /*
-                    step.step(n_params,func[it],current[it],
-                              next[it],w_current[sindex2],w_next[it],
-                              low,high,func_ret[it],accept_new,
-                              data[sindex2+n_walk*n_threads]);
+                      void step(size_t n_params, func_t &f, 
+                      vec_t &current, vec_t &next, 
+                      double w_current, double &w_next, vec_t &low,
+                      vec_t &high, int &func_ret, bool &accept, data_t &dat);
                     */
+                    ubvector tx;
+                    data_t d;
+                    /*
+                      stepper.step(n_params,func[it],current[it],
+                      next[it],w_current[sindex2],w_next[it],
+                      low,high,func_ret[it],accept_new,
+                      data[sindex2+n_walk*n_threads]);
+                    */
+                    stepper.step(n_params,func[it],tx,tx,
+                                 w_current[sindex2],w_next[it],
                     
                   } else {
 
@@ -2228,7 +2249,7 @@ namespace o2scl {
       to create a full post-processing function.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=int>
+           class stepper_t=mcmc_stepper_base<func_t,data_t,vec_t>>
   class mcmc_para_table :
     public mcmc_para_base<func_t,
                           std::function<int(const vec_t &,
@@ -3537,7 +3558,7 @@ namespace o2scl {
 
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=int>
+           class stepper_t=mcmc_stepper_base<func_t,data_t,vec_t>>
   class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
                                                data_t,vec_t,stepper_t> {
     
