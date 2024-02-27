@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2016-2023, Andrew W. Steiner
+  Copyright (C) 2016-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -67,8 +67,6 @@ public:
                   ubvector> mct;
   
   mcmc_para_class() {
-    mct.new_ip=false;
-    mc.new_ip=false;
   }
   
   expval_scalar sev_x;
