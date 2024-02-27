@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2024, Andrew W. Steiner
+  Copyright (C) 2012-2024, Andrew W. Steiner and Md. Mahmudul Hasan Anik
   
   This file is part of O2scl.
   
@@ -74,20 +74,21 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void check_bounds(size_t n_params, vec_t &v, vec_t &low, vec_t &high,
+    void check_bounds(size_t i_thread,
+                      size_t n_params, vec_t &v, vec_t &low, vec_t &high,
                       int &func_ret, int verbose) {
       for(size_t k=0;k<n_params;k++) {
         if (v[k]<low[k] || v[k]>high[k]) {
           func_ret=mcmc_skip;
           if (verbose>=3) {
             if (v[k]<low[k]) {
-              std::cout << "mcmc (" << it << ","
-                        << mpi_rank << "): Parameter with index "
+              std::cout << "mcmc (" << i_thread
+                        << "): Parameter with index "
                         << k << " and value " << v[k]
                         << " smaller than limit " << low[k]
                         << std::endl;
             } else {
-              std::cout << "mcmc (" << it << "," << mpi_rank
+              std::cout << "mcmc (" << i_thread 
                         << "): Parameter with index " << k
                         << " and value " << v[k]
                         << " larger than limit " << high[k]
@@ -101,7 +102,8 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next, 
+    virtual void step(size_t i_thread,
+                      size_t n_params, func_t &f, vec_t &current, vec_t &next, 
                       double w_current, double &w_next, vec_t &low,
                       vec_t &high, int &func_ret, bool &accept,
                       data_t &dat, rng<> &r, int verbose)=0;
@@ -113,8 +115,8 @@ namespace o2scl {
 
   /** \brief Desc
    */
-  template<class func_t, class data_t, class vec_t> mcmc_stepper_mh :
-  public<func_t,data_t,vec_t> {
+  template<class func_t, class data_t, class vec_t> class mcmc_stepper_mh :
+  public mcmc_stepper_base<func_t,data_t,vec_t>  {
     
   public:
 
@@ -131,28 +133,33 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+    virtual void step(size_t i_thread,
+                      size_t n_params, func_t &f, vec_t &current, vec_t &next,
                       double w_curr, double &w_next, vec_t &low, vec_t &high, 
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
       
       for(size_t k=0;k<n_params;k++) {
-        next[k]=current[k]+(rg.random()*2.0-1.0)*
+        next[k]=current[k]+(r.random()*2.0-1.0)*
           (high[k]-low[k])/step_fac;
       }
 
-      func_ret=success;
-      check_bounds(n_params,next,low,high,func_ret,verbose);
-      if (func_ret!=mcmc_skip) {
-        func_ret=f(n_params,next,w_next,dat);
-      }
-
-      double rand=r.random();
-            
-      // Metropolis algorithm
       accept=false;
-      if (rand<exp(w_next-w_current)) {
-        accept=true;
+      
+      func_ret=success;
+      this->check_bounds(i_thread,n_params,next,low,high,
+                         func_ret,verbose);
+      if (func_ret!=this->mcmc_skip) {
+        func_ret=f(n_params,next,w_next,dat);
+      } 
+
+      if (func_ret==success) {
+        double rand=r.random();
+        
+        // Metropolis algorithm
+        if (rand<exp(w_next-w_curr)) {
+          accept=true;
+        }
       }
       
       return;
@@ -208,7 +215,8 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+    virtual void step(size_t i_thread,
+                      size_t n_params, func_t &f, vec_t &current, vec_t &next,
                       double w_curr, double &w_next, vec_t &low, vec_t &high, 
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
@@ -1174,11 +1182,6 @@ namespace o2scl {
         
         size_t ip_size=initial_points.size();
         
-        if (ip_size<n_threads) {
-          O2SCL_ERR("mcmc_para, insufficient number of initial points.",
-                    o2scl::exc_einval);
-        }
-        
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1240,8 +1243,6 @@ namespace o2scl {
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
-            
-            size_t ip_size=initial_points.size();
             
             // Update the return value count
             if (func_ret[it]>=0 && ret_value_counts.size()>it && 
@@ -1372,15 +1373,24 @@ namespace o2scl {
                 if (new_step) {
                   
                   if (switch_arr[sindex]==false) {
-                    stepper.step(n_params,func[it],current[it],
+                    stepper.step(it,n_params,func[it],current[it],
                                  next[it],w_current[sindex],w_next[it],
                                  low,high,func_ret[it],accept,
-                                 data[sindex+n_walk*n_threads]);
+                                 data[sindex+n_walk*n_threads],rg[it],verbose);
                   } else {
-                    stepper.step(n_params,func[it],current[it],
+                    stepper.step(it,n_params,func[it],current[it],
                                  next[it],w_current[sindex],w_next[it],
                                  low,high,func_ret[it],accept,
-                                 data[sindex]);
+                                 data[sindex],rg[it],verbose);
+                  }
+
+                  if (func_ret[it]==mcmc_done) {
+                    mcmc_done_flag[it]=true;
+                  } else {
+                    if (func_ret[it]>=0 && ret_value_counts.size()>it && 
+                        func_ret[it]<((int)ret_value_counts[it].size())) {
+                      ret_value_counts[it][func_ret[it]]++;
+                    }
                   }
                   
                 } else {
