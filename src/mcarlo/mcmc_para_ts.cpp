@@ -67,8 +67,8 @@ public:
                   ubvector> mct;
   
   mcmc_para_class() {
-    mct.new_ip=true;
-    mc.new_ip=true;
+    mct.new_ip=false;
+    mc.new_ip=false;
   }
   
   expval_scalar sev_x;

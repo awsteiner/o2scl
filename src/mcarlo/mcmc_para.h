@@ -54,14 +54,17 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-#ifdef O2SCL_NEVER_DEFINED
+  // Do we need one stepper for each thread? maybe not.
 
-  // Do we need one stepper for each thread? probably...
-  
-  template<class func_t, class data_t, class vec_t> mcmc_stepper_base {
+  /** \brief Desc
+   */
+  template<class func_t, class data_t, class vec_t>
+  class mcmc_stepper_base {
     
   public:
 
+    /** \brief Desc
+     */
     rng<> rg;
 
     mcmc_stepper_base() {
@@ -69,39 +72,56 @@ namespace o2scl {
       rg.set_seed(seed);
     }
 
-    void step(size_t n_params,
-              func_t &f, vec_t &current, vec_t &next, double w_current,
-              double &w_next, vec_t &low,
-              vec_t &high, int &func_ret, bool &accept,
-              data_t &dat);
-
+    /** \brief Desc
+     */
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next, 
+                      double w_current, double &w_next, vec_t &low,
+                      vec_t &high, int &func_ret, bool &accept,
+                      data_t &dat) {
+      O2SCL_ERR("Parent class.",o2scl::exc_eunimpl);
+      return;
+    }
+    
+    virtual ~mcmc_stepper_base() {
+    }
+    
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  /** \brief Desc
+   */
   template<class func_t, class data_t, class vec_t> mcmc_stepper_mh :
   public<func_t,data_t,vec_t> {
     
   public:
 
+    /** \brief Desc
+     */
     double step_fac;
 
     mcmc_stepper_mh() {
       step_fac=2.0;
     }
     
-    void step(size_t n_params,
-              func_t &f, vec_t &current, vec_t &next, double w_curr,
-              double &w_next, vec_t &low,
-              vec_t &high, int &func_ret, bool &accept, data_t &dat) {
+    virtual ~mcmc_stepper_mh() {
+    }
+    
+    /** \brief Desc
+     */
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+                      int &func_ret, bool &accept, data_t &dat) {
       
       for(size_t k=0;k<n_params;k++) {
-        next[k]=current[k]+(rg[it].random()*2.0-1.0)*
+        next[k]=current[k]+(rg.random()*2.0-1.0)*
           (high[k]-low[k])/step_fac;
       }
 
       func_ret=success;
       
       for(size_t k=0;k<n_params;k++) {
-        if (next[it][k]<low[k] || next[it][k]>high[k]) {
+        if (next[k]<low[k] || next[k]>high[k]) {
           func_ret=mcmc_skip;
         }
       }
@@ -121,22 +141,36 @@ namespace o2scl {
     
   };
 
+  /** \brief Desc
+   */
   template<class grad_t, class func_t, class data_t,
            class vec_t> mcmc_stepper_hmc :
   public<func_t,data_t,vec_t> {
     
   public:
 
+    /** \brief Desc
+     */
     int traj_length;
 
+    /** \brief Desc
+     */
     double inv_mass;
 
+    /** \brief Desc
+     */
     prob_dens_gaussian pdg;
 
+    /** \brief Desc
+     */
     vec_t mom;
 
+    /** \brief Desc
+     */
     double mom_step;
 
+    /** \brief Desc
+     */
     grad_t g;
     
     mcmc_stepper_hmc() {
@@ -148,10 +182,14 @@ namespace o2scl {
       mom_step=0.18;
     }
 
-    void step(size_t n_params,
-              func_t &f, vec_t &current, vec_t &next, double w_curr,
-              double &w_next, vec_t &low,
-              vec_t &high, int &func_ret, bool &accept, data_t &dat) {
+    virtual ~mcmc_stepper_hmc() {
+    }
+    
+    /** \brief Desc
+     */
+    virtual void step(size_t n_params, func_t &f, vec_t &current, vec_t &next,
+                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+                      int &func_ret, bool &accept, data_t &dat) {
 
       vec_t mom, grad, mom_next;
       
@@ -346,10 +384,13 @@ namespace o2scl {
       corresponding number of threads and walkers. 
   */
   template<class func_t, class measure_t,
-           class data_t, class vec_t=ubvector> class mcmc_para_base {
+           class data_t, class vec_t=ubvector,
+           class stepper_t=
+           mcmc_stepper_base<func_t,data_t,vec_t>
+           > class mcmc_para_base {
     
   protected:
-  
+    
     /// \name MPI properties
     //@{
     /// The MPI processor rank
@@ -392,7 +433,7 @@ namespace o2scl {
   
     /** \brief Return value counters, one vector for each independent
         chain
-     */
+    */
     std::vector<std::vector<size_t> > ret_value_counts;
   
     /// \name Interface customization
@@ -443,6 +484,12 @@ namespace o2scl {
 
     /// If true, use new initial point code
     bool new_ip;
+
+    /// If true, use the new stepper
+    bool new_step;
+
+    /// The stepper
+    stepper_t stepper;
     
     /** \brief If true, call the measurement function for the
         initial point
@@ -570,9 +617,10 @@ namespace o2scl {
     */
     double ai_initial_step;
     //@}
-  
+    
     mcmc_para_base() {
       new_ip=false;
+      new_step=false;
       
       user_seed=0;
       n_warm_up=0;
@@ -1133,6 +1181,11 @@ namespace o2scl {
           
           size_t ip_size=initial_points.size();
           
+          if (ip_size<n_threads) {
+            O2SCL_ERR("mcmc_para, insufficient number of initial points.",
+                      o2scl::exc_einval);
+          }
+          
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1140,7 +1193,7 @@ namespace o2scl {
 #ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
-            for(size_t it=0;it<ip_size;it++) {
+            for(size_t it=0;it<n_threads;it++) {
               
               // Note that this value is used (e.g. in
               // mcmc_para_table::add_line() ) even if aff_inv is
@@ -1161,41 +1214,8 @@ namespace o2scl {
           }
           // End of parallel region
           
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-#endif
-          {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp for
-#endif
-            for(size_t it=ip_size;it<n_threads;it++) {
-              
-              // Note that this value is used (e.g. in
-              // mcmc_para_table::add_line() ) even if aff_inv is
-              // false, so we set it to zero here.
-              curr_walker[it]=0;
-              
-              // Copy from the initial points array into current point
-              for(size_t ipar=0;ipar<n_params;ipar++) {
-                current[it][ipar]=initial_points[it % ip_size][ipar];
-              }
-              
-              // Copy the result already computed
-              func_ret[it]=func_ret[it % ip_size];
-              w_current[it]=w_current[it % ip_size];
-              // This loop requires the data to have a valid
-              // copy constructor
-              for(size_t j=0;j<data.size();j++) {
-                data[it]=data[it % ip_size];
-              }
-              
-            }
-            
-          }
-          // End of parallel region
-          
         } else {
-        
+          
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1238,7 +1258,7 @@ namespace o2scl {
           // End of parallel region
           
         }
-      
+        
         // Check return values from initial point function evaluations
         for(size_t it=0;it<n_threads;it++) {
           if (func_ret[it]==mcmc_done) {
@@ -1260,10 +1280,10 @@ namespace o2scl {
             return 2;
           }
         }
-
+        
         // --------------------------------------------------------
         // Post-processing initial point when aff_inv is false.
-
+        
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
@@ -1272,7 +1292,7 @@ namespace o2scl {
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
-          
+            
             size_t ip_size=initial_points.size();
             if (it>=ip_size) {
               // If no initial point was specified, copy one of
@@ -1282,7 +1302,7 @@ namespace o2scl {
               w_current[it]=w_current[it % ip_size];
               data[it]=data[it % ip_size];
             }
-          
+            
             // Update the return value count
             if (func_ret[it]>=0 && ret_value_counts.size()>it && 
                 func_ret[it]<((int)ret_value_counts[it].size())) {
@@ -1298,13 +1318,13 @@ namespace o2scl {
             if (meas_ret[it]==mcmc_done) {
               mcmc_done_flag[it]=true;
             }
-
+            
             // End of loop over threads
           }
-        
+          
         }
         // End of parallel region
-      
+        
         // Stop early if mcmc_done was returned from one of the
         // measurement function calls
         bool stop_early=false;
@@ -1322,7 +1342,7 @@ namespace o2scl {
           mcmc_cleanup();
           return 0;
         }
-
+        
         // Set initial values for best point
         best=current[0];
         w_best=w_current[0];
@@ -1332,7 +1352,7 @@ namespace o2scl {
             w_best=w_current[it];
           }
         }
-
+        
         if (verbose>=2) {
           scr_out.precision(4);
           scr_out << "mcmc: ";
@@ -1342,37 +1362,37 @@ namespace o2scl {
           scr_out << " (initial)" << std::endl;
           scr_out.precision(6);
         }
-  
+        
         // End of initial point region for 'aff_inv=false'
       }
-
+      
       // Set meas_for_initial back to true if necessary
       meas_for_initial=true;
-
+      
       // --------------------------------------------------------
       // Require keypress after initial point if verbose is
       // sufficiently large.
-
+      
       if (verbose>=4) {
         std::cout << "Initial point(s) done. "
                   << "Press a key and type enter to continue. ";
         char ch;
         std::cin >> ch;
       }
-
+      
       // End of initial point and weight section
       // --------------------------------------------------------
-
+      
       // The main section split into two parts, aff_inv=false and
       // aff_inv=true.
-
+      
       if (aff_inv==false) {
-
+        
         // ---------------------------------------------------
         // Start of main loop over threads for aff_inv=false
-
+        
         bool main_done=false;
-
+        
         // Initialize the number of iterations for each thread
         std::vector<size_t> mcmc_iters(n_threads);
         for(size_t it=0;it<n_threads;it++) {
@@ -1389,22 +1409,39 @@ namespace o2scl {
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
-
+              
               bool inner_done=false;
               while (!inner_done && !main_done) {
-              
+                
                 if (verbose>=2) {
                   scr_out << "Iteration: " << mcmc_iters[it] << " of "
                           << max_iters << " thread " << it << " accept: "
                           << n_accept[it] << " " << n_reject[it]
                           << std::endl;
                 }
-          
+                
                 // ---------------------------------------------------
                 // Select next point for aff_inv=false
-          
-                if (pd_mode) {
-            
+                
+                if (new_step) {
+                  
+                  bool accept_new;
+                  size_t sindex2=n_walk*it+curr_walker[it];
+                  
+                  if (switch_arr[sindex2]==false) {
+                    stepper.step(n_params,func[it],current[it],
+                                 next[it],w_current[sindex2],w_next[it],
+                                 low,high,func_ret[it],accept_new,
+                                 data[sindex2+n_walk*n_threads]);
+                  } else {
+                    stepper.step(n_params,func[it],current[it],
+                                 next[it],w_current[sindex2],w_next[it],
+                                 low,high,func_ret[it],accept_new,
+                                 data[sindex2]);
+                  }
+                  
+                } else if (pd_mode) {
+                  
                   // Use proposal distribution and compute associated weight
                   q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],
                                                             next[it]);
@@ -1474,7 +1511,7 @@ namespace o2scl {
                   if (switch_arr[n_walk*it+curr_walker[it]]==false) {
                     func_ret[it]=func[it](n_params,next[it],w_next[it],
                                           data[it*n_walk+curr_walker[it]+
-                                                   n_walk*n_threads]);
+                                               n_walk*n_threads]);
                   } else {
                     func_ret[it]=func[it](n_params,next[it],w_next[it],
                                           data[it*n_walk+curr_walker[it]]);
@@ -1551,7 +1588,7 @@ namespace o2scl {
                                               curr_walker[it],
                                               func_ret[it],false,
                                               data[sindex+
-                                                       n_threads*n_walk]);
+                                                   n_threads*n_walk]);
                       } else {
                         meas_ret[it]=meas[it](next[it],w_next[it],
                                               curr_walker[it],
@@ -1823,7 +1860,7 @@ namespace o2scl {
                 if (switch_arr[n_walk*it+curr_walker[it]]==false) {
                   func_ret[it]=func[it](n_params,next[it],w_next[it],
                                         data[it*n_walk+curr_walker[it]+
-                                                 n_walk*n_threads]);
+                                             n_walk*n_threads]);
                 } else {
                   func_ret[it]=func[it](n_params,next[it],w_next[it],
                                         data[it*n_walk+curr_walker[it]]);
@@ -2196,13 +2233,14 @@ namespace o2scl {
       \future Use reorder_table() and possibly reblock()
       to create a full post-processing function.
   */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
+           class stepper_t=mcmc_stepper_base<func_t,data_t,vec_t>>
   class mcmc_para_table :
     public mcmc_para_base<func_t,
-                              std::function<int(const vec_t &,
-                                                double,size_t,
-                                                int,bool,data_t &)>,
-                              data_t,vec_t> {
+                          std::function<int(const vec_t &,
+                                            double,size_t,
+                                            int,bool,data_t &)>,
+                          data_t,vec_t,stepper_t> {
     
   protected:
   
@@ -2211,7 +2249,8 @@ namespace o2scl {
     internal_measure_t;
   
     /// Type of parent class
-    typedef mcmc_para_base<func_t,internal_measure_t,data_t,vec_t> parent_t;
+    typedef mcmc_para_base<func_t,internal_measure_t,data_t,vec_t,
+                           stepper_t> parent_t;
 
     /// Column names
     std::vector<std::string> col_names;
@@ -3503,15 +3542,17 @@ namespace o2scl {
       http://github.com/awsteiner/bamr .
 
   */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
+           class stepper_t=mcmc_stepper_base<func_t,data_t,vec_t>>
   class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
-                                               data_t,vec_t> {
+                                               data_t,vec_t,stepper_t> {
     
   protected:
   
     /** \brief The parent typedef
      */
-    typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t> parent_t;
+    typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t,
+                                   stepper_t> parent_t;
 
     /// \name Parameter objects for the 'set' command
     //@{
