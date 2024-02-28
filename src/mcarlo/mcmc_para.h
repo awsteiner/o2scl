@@ -74,9 +74,10 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    void check_bounds(size_t i_thread,
-                      size_t n_params, vec_t &v, vec_t &low, vec_t &high,
+    void check_bounds(size_t i_thread, size_t n_params,
+                      vec_t &v, vec_t &low, vec_t &high,
                       int &func_ret, int verbose) {
+      
       for(size_t k=0;k<n_params;k++) {
         if (v[k]<low[k] || v[k]>high[k]) {
           func_ret=mcmc_skip;
@@ -102,11 +103,11 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t i_thread,
-                      size_t n_params, func_t &f, vec_t &current, vec_t &next, 
-                      double w_current, double &w_next, vec_t &low,
-                      vec_t &high, int &func_ret, bool &accept,
-                      data_t &dat, rng<> &r, int verbose)=0;
+    virtual void step(size_t i_thread, size_t n_params, func_t &f,
+                      vec_t &current, vec_t &next, double w_current,
+                      double &w_next, vec_t &low, vec_t &high,
+                      int &func_ret, bool &accept, data_t &dat,
+                      rng<> &r, int verbose)=0;
     
     virtual ~mcmc_stepper_base() {
     }
@@ -133,9 +134,9 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t i_thread,
-                      size_t n_params, func_t &f, vec_t &current, vec_t &next,
-                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+    virtual void step(size_t i_thread, size_t n_params, func_t &f,
+                      vec_t &current, vec_t &next, double w_current,
+                      double &w_next, vec_t &low, vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
       
@@ -157,7 +158,7 @@ namespace o2scl {
         double rand=r.random();
         
         // Metropolis algorithm
-        if (rand<exp(w_next-w_curr)) {
+        if (rand<exp(w_next-w_current)) {
           accept=true;
         }
       }
@@ -215,9 +216,9 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    virtual void step(size_t i_thread,
-                      size_t n_params, func_t &f, vec_t &current, vec_t &next,
-                      double w_curr, double &w_next, vec_t &low, vec_t &high, 
+    virtual void step(size_t i_thread, size_t n_params, func_t &f,
+                      vec_t &current, vec_t &next, double w_current,
+                      double &w_next, vec_t &low, vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 

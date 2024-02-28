@@ -229,6 +229,8 @@ int main(int argc, char *argv[]) {
     mpc.mc.n_threads=1;
     mpc.mc.max_iters=N;
     mpc.mc.prefix="mcmc";
+    mpc.mc.new_step=true;
+    mpc.mc.stepper.step_fac=10.0;
     
     mpc.sev_x.set_blocks(20,N/20);
     mpc.sev_x2.set_blocks(20,N/20);
@@ -258,6 +260,7 @@ int main(int argc, char *argv[]) {
 
     mpc.sev_x.free();
     mpc.sev_x2.free();
+    exit(-1);
     
   }
 
