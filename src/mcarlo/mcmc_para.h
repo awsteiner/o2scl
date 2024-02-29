@@ -120,23 +120,25 @@ namespace o2scl {
     
   };
 
-  /** \brief A traditional Metropolis-Hastings stepper for MCMC
+  /** \brief A simple random-walk stepper for MCMC
    */
-  template<class func_t, class data_t, class vec_t> class mcmc_stepper_mh :
+  template<class func_t, class data_t, class vec_t>
+  class mcmc_stepper_rw :
   public mcmc_stepper_base<func_t,data_t,vec_t>  {
     
   public:
 
-    /** \brief Desc
+    /** \brief The factor controlling the step size (default is 
+        a 1-element vector containing 2.0)
      */
     vec_t step_fac;
 
-    mcmc_stepper_mh() {
+    mcmc_stepper_rw() {
       step_fac.resize(1);
       step_fac[0]=2.0;
     }
     
-    virtual ~mcmc_stepper_mh() {
+    virtual ~mcmc_stepper_rw() {
     }
     
     /** \brief Construct a step
@@ -181,6 +183,69 @@ namespace o2scl {
     
   };
 
+  /** \brief Metropolis Hastings for MCMC with a proposal distribution
+   */
+  template<class func_t, class data_t, class vec_t, class mat_t=
+           boost::numeric::ublas::matrix<double>,
+           class prop_t=o2scl::prob_cond_mdim_gaussian
+           <vec_t,mat_t>>
+  class mcmc_stepper_mh :
+    public mcmc_stepper_base<func_t,data_t,vec_t>  {
+    
+  public:
+    
+    /** \brief The proposal distribution
+    */
+    std::vector<prop_t> proposal;
+
+    mcmc_stepper_mh() {
+      proposal.resize(1);
+    }
+    
+    virtual ~mcmc_stepper_mh() {
+    }
+    
+    /** \brief Construct a step
+
+        This function constructs \c next and \c w_next, the next point
+        and log weight in parameter space. The objective function \c f
+        is then evaluated at the new point, the return value is placed
+        in \c func_ret, and the step acceptance or rejection is stored
+        in \c accept.
+     */
+    virtual void step(size_t i_thread, size_t n_params, func_t &f,
+                      vec_t &current, vec_t &next, double w_current,
+                      double &w_next, vec_t &low, vec_t &high,
+                      int &func_ret, bool &accept, data_t &dat,
+                      rng<> &r, int verbose) {
+
+      // Use proposal distribution and compute associated weight
+      double q_prop=proposal[i_thread % proposal.size()].log_metrop_hast
+        (current,next);
+      
+      accept=false;
+      
+      func_ret=success;
+      this->check_bounds(i_thread,n_params,next,low,high,
+                         func_ret,verbose);
+      if (func_ret!=this->mcmc_skip) {
+        func_ret=f(n_params,next,w_next,dat);
+      } 
+
+      if (func_ret==success) {
+        double rand=r.random();
+        
+        // Metropolis-Hastings algorithm
+        if (rand<exp(w_next-w_current+q_prop)) {
+          accept=true;
+        }
+      }
+      
+      return;
+    }
+    
+  };
+
   /** \brief Hamiltonian Monte Carlo for MCMC
    */
   template<class func_t, class data_t,
@@ -198,6 +263,11 @@ namespace o2scl {
     std::vector<grad_t> *grad_ptr;
     
   public:
+
+    /** \brief The factor controlling the step size for the fallback
+        random walk (default is a 1-element vector containing 2.0)
+     */
+    vec_t step_fac;
 
     /** \brief Trajectory length (default 20)
      */
@@ -317,86 +387,149 @@ namespace o2scl {
 
       vec_t mom, grad, mom_next;
       int grad_ret;
-      
-      for(size_t k=0;k<n_params;k++) {
-        mom[k]=pdg()*mom_step[k % mom_step.size()];
-      }
 
+      // Initialize func_ret to success
+      func_ret=success;
+      
+      // True if the first gradient evaluation failed
+      bool initial_grad_failed=false;
+      
+      // First, if specified, use the user-specified gradient function
       if (grad_ptr!=0 && grad_ptr->size()>0) {
-        grad_ret=(*grad_ptr)[i_thread](n_params,current,f,grad,dat);
+        grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
+          (n_params,current,f,grad,dat);
         if (grad_ret!=0) {
-          func_ret=grad_failed;
-          accept=false;
-          return;
+          initial_grad_failed=true;
         }
       }
-      grad_ret=grad_pot(n_params,current,f,grad,dat);
-      if (grad_ret!=0) {
-        func_ret=grad_failed;
-        accept=false;
-        return;
+      
+      // Then, additionally try the finite-differencing gradient
+      if (initial_grad_failed==false) {
+        grad_ret=grad_pot(n_params,current,f,grad,dat);
+        if (grad_ret!=0) {
+          initial_grad_failed=true;
+        }
       }
       
-      for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
-      }
-
-      for(size_t i=0;i<traj_length;i++) {
+      // If the gradient failed, then use the fallback random-walk
+      // method, which doesn't require a gradient
+      
+      if (initial_grad_failed) {
         
         for(size_t k=0;k<n_params;k++) {
-          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]=current[k]+(r.random()*2.0-1.0)*
+            (high[k]-low[k])/step_fac[k % step_fac.size()];
         }
         
-        if (grad_ptr!=0 && grad_ptr->size()>0) {
-          grad_ret=(*grad_ptr)[i_thread](n_params,next,f,grad,dat);
+        accept=false;
+        
+        this->check_bounds(i_thread,n_params,next,low,high,
+                           func_ret,verbose);
+        if (func_ret!=this->mcmc_skip) {
+          func_ret=f(n_params,next,w_next,dat);
+        } 
+        
+        if (func_ret==success) {
+          double rand=r.random();
+          
+          // Metropolis algorithm
+          if (rand<exp(w_next-w_current)) {
+            accept=true;
+          }
+        }
+        
+      } else {
+
+        // Otherwise, if the gradient succeeded, continue with the
+        // HMC method
+
+        // Initialize the momenta
+        for(size_t k=0;k<n_params;k++) {
+          mom[k]=pdg()*mom_step[k % mom_step.size()];
+        }
+
+        // Take a half step in the momenta using the gradient
+        for(size_t k=0;k<n_params;k++) {
+          mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
+        }
+        
+        for(size_t i=0;i<traj_length;i++) {
+
+          // Take a full step in coordinate space
+          for(size_t k=0;k<n_params;k++) {
+            next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
+          }
+
+          // Check that the coordinate space step has not taken us out
+          // of bounds
+          this->check_bounds(i_thread,n_params,next,low,high,
+                             func_ret,verbose);
+          if (func_ret==this->mcmc_skip) {
+            // If it is out of bounds, reject the step
+            accept=false;
+            return;
+          }
+          
+          // Try the user-specified gradient, if specified
+          if (grad_ptr!=0 && grad_ptr->size()>0) {
+            grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
+              (n_params,next,f,grad,dat);
+            if (grad_ret!=0) {
+              func_ret=grad_failed;
+              accept=false;
+              return;
+            }
+          }
+          // Try the finite-differencing gradient
+          grad_ret=grad_pot(n_params,next,f,grad,dat);
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
             return;
           }
+
+          // Perform a momentum step, unless we're at the end
+          if (i<traj_length-1) {
+            for(size_t k=0;k<n_params;k++) {
+              mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
+                grad[k];
+            }
+            
+          }
+          
         }
-        grad_ret=grad_pot(n_params,next,f,grad,dat);
-        if (grad_ret!=0) {
-          func_ret=grad_failed;
+        
+        // Perform the final half-step in momentum space
+        for(size_t k=0;k<n_params;k++) {
+          mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
+        }
+
+        // Perform the final function evaluation
+        func_ret=f(n_params,next,w_next,dat);
+        if (func_ret!=0) {
           accept=false;
           return;
         }
 
-        if (i<traj_length-1) {
-          for(size_t k=0;k<n_params;k++) {
-            mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
-              grad[k];
-          }
-
+        // Evaluate the kinetic and potential energies
+        double pot_curr=-log(0.5*w_current);
+        double pot_next=-log(0.5*w_next);
+        
+        double kin_curr=0.0, kin_next=0.0;
+        for(size_t k=0;k<n_params;k++) {
+          kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
+          kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*
+            mom_next[k]/2.0;
         }
         
-      }
-      
-      for(size_t k=0;k<n_params;k++) {
-        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
-      }
-
-      func_ret=f(n_params,next,w_next,dat);
-      if (func_ret!=0) {
-        accept=false;
-        return;
-      }
-      
-      double pot_curr=-log(0.5*w_current);
-      double pot_next=-log(0.5*w_next);
-
-      double kin_curr=0.0, kin_next=0.0;
-      for(size_t k=0;k<n_params;k++) {
-        kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
-        kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*mom_next[k]/2.0;
-      }
+        double rx=r.random();
         
-      double rx=r.random();
-      
-      // Metropolis algorithm
-      accept=false;
-      if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
-        accept=true;
+        // Metropolis algorithm
+        accept=false;
+        if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
+          accept=true;
+        }
+        
       }
 
       return;
@@ -541,7 +674,7 @@ namespace o2scl {
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector,
            class stepper_t=
-           mcmc_stepper_mh<func_t,data_t,vec_t>
+           mcmc_stepper_rw<func_t,data_t,vec_t>
            > class mcmc_para_base {
     
   protected:
@@ -2313,7 +2446,7 @@ namespace o2scl {
       to create a full post-processing function.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=mcmc_stepper_mh<func_t,data_t,vec_t>>
+           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
   class mcmc_para_table :
     public mcmc_para_base<func_t,
                           std::function<int(const vec_t &,
@@ -3622,7 +3755,7 @@ namespace o2scl {
 
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=mcmc_stepper_mh<func_t,data_t,vec_t>>
+           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
   class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
                                                data_t,vec_t,stepper_t> {
     
