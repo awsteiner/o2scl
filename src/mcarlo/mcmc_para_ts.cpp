@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
     mpc.mc.max_iters=N;
     mpc.mc.prefix="mcmc";
     mpc.mc.new_step=true;
-    mpc.mc.stepper.step_fac=10.0;
+    mpc.mc.stepper.step_fac[0]=10.0;
     
     mpc.sev_x.set_blocks(20,N/20);
     mpc.sev_x2.set_blocks(20,N/20);
@@ -260,7 +260,6 @@ int main(int argc, char *argv[]) {
 
     mpc.sev_x.free();
     mpc.sev_x2.free();
-    exit(-1);
     
   }
 
@@ -283,6 +282,7 @@ int main(int argc, char *argv[]) {
     mpc.mc.n_threads=1;
     mpc.mc.max_iters=N*10;
     mpc.mc.prefix="mcmc_ai";
+    mpc.mc.new_step=false;
     
     mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec,data_vec);
 
@@ -329,6 +329,8 @@ int main(int argc, char *argv[]) {
   mpc.mct.max_iters=N;
   mpc.mct.prefix="mcmct";
   mpc.mct.table_prealloc=N*n_threads;
+  mpc.mct.new_step=true;
+  mpc.mct.stepper.step_fac[0]=10.0;
 
   mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
@@ -382,6 +384,7 @@ int main(int argc, char *argv[]) {
   mpc.mct.max_iters=N;
   mpc.mct.prefix="mcmct_ai";
   mpc.mct.table_prealloc=N*n_threads;
+  mpc.mct.new_step=false;
 
   mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
@@ -443,6 +446,8 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_flat";
     mpc.mct.table_prealloc=N*n_threads;
+    mpc.mct.new_step=true;
+    mpc.mct.stepper.step_fac[0]=10.0;
     
     mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
@@ -497,6 +502,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_ai_flat";
     mpc.mct.table_prealloc=N*n_threads;
+    mpc.mct.new_step=false;
     
     mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
@@ -545,6 +551,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.aff_inv=true;
     mpc.mct.n_walk=10;
     mpc.mct.step_fac=-1.0;
+    mpc.mct.new_step=false;
   
     mpc.mct.max_iters=40;
     mpc.mct.prefix="mcmct_aiprev";

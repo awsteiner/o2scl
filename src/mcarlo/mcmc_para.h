@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2024, Andrew W. Steiner and Md. Mahmudul Hasan Anik
+  Copyright (C) 2012-2024, Andrew W. Steiner and Mahmudul Hasan Anik
   
   This file is part of O2scl.
   
@@ -54,7 +54,7 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-  /** \brief Desc
+  /** \brief Stepper for \ref o2scl::mcmc_para_base [pure virtual]
    */
   template<class func_t, class data_t, class vec_t>
   class mcmc_stepper_base {
@@ -72,7 +72,7 @@ namespace o2scl {
     mcmc_stepper_base() {
     }
 
-    /** \brief Desc
+    /** \brief Check that \c v is between \c low and \c high
      */
     void check_bounds(size_t i_thread, size_t n_params,
                       vec_t &v, vec_t &low, vec_t &high,
@@ -101,7 +101,13 @@ namespace o2scl {
       return;
     }
     
-    /** \brief Desc
+    /** \brief Construct a step
+
+        This function constructs \c next and \c w_next, the next point
+        and log weight in parameter space. The objective function \c f
+        is then evaluated at the new point, the return value is placed
+        in \c func_ret, and the step acceptance or rejection is stored
+        in \c accept.
      */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
                       vec_t &current, vec_t &next, double w_current,
@@ -114,7 +120,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief A traditional Metropolis-Hastings stepper for MCMC
    */
   template<class func_t, class data_t, class vec_t> class mcmc_stepper_mh :
   public mcmc_stepper_base<func_t,data_t,vec_t>  {
@@ -123,16 +129,23 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    double step_fac;
+    vec_t step_fac;
 
     mcmc_stepper_mh() {
-      step_fac=2.0;
+      step_fac.resize(1);
+      step_fac[0]=2.0;
     }
     
     virtual ~mcmc_stepper_mh() {
     }
     
-    /** \brief Desc
+    /** \brief Construct a step
+
+        This function constructs \c next and \c w_next, the next point
+        and log weight in parameter space. The objective function \c f
+        is then evaluated at the new point, the return value is placed
+        in \c func_ret, and the step acceptance or rejection is stored
+        in \c accept.
      */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
                       vec_t &current, vec_t &next, double w_current,
@@ -142,7 +155,7 @@ namespace o2scl {
       
       for(size_t k=0;k<n_params;k++) {
         next[k]=current[k]+(r.random()*2.0-1.0)*
-          (high[k]-low[k])/step_fac;
+          (high[k]-low[k])/step_fac[k % step_fac.size()];
       }
 
       accept=false;
@@ -168,53 +181,133 @@ namespace o2scl {
     
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-
-  /** \brief Desc
+  /** \brief Hamiltonian Monte Carlo for MCMC
    */
-  template<class grad_t, class func_t, class data_t,
-           class vec_t> mcmc_stepper_hmc :
-  public<func_t,data_t,vec_t> {
+  template<class func_t, class data_t,
+           class vec_t,
+           class grad_t=std::function<int(size_t,vec_t &,func_t &,
+                                          vec_t &,data_t &)>,
+           class vec_bool_t=std::vector<bool> >
+  class mcmc_stepper_hmc :
+    public mcmc_stepper_base<func_t,data_t,vec_t> {
+
+  protected:
+
+    /** \brief Pointer to user-specified gradients
+     */
+    std::vector<grad_t> *grad_ptr;
     
   public:
 
-    /** \brief Desc
+    /** \brief Trajectory length (default 20)
      */
     int traj_length;
 
-    /** \brief Desc
+    /** \brief Inverse mass (default is a one-element vector
+        containing 0.1)
      */
-    double inv_mass;
+    vec_t inv_mass;
 
-    /** \brief Desc
+    /** \brief Standard Gaussian for kinetic energy
      */
     prob_dens_gaussian pdg;
 
-    /** \brief Desc
+    /** \brief Stepsize in momentum space (default is a one-element
+        vector containing 0.2)
      */
-    vec_t mom;
+    vec_t mom_step;
 
-    /** \brief Desc
-     */
-    double mom_step;
+    /** \brief Indicate which elements of the gradient need
+        to be computed automatically (default is a one-element
+        vector containing true).
+    */
+    vec_bool_t auto_grad;
 
-    /** \brief Desc
-     */
-    grad_t g;
-    
+    /** \brief The relative stepsize for finite-differencing
+        (default \f$ 10^{-6} \f$ )
+    */
+    double epsrel;
+
+    /// The minimum stepsize (default \f$ 10^{-15} \f$)
+    double epsmin;
+
+    /// Error if gradient failed
+    static const size_t grad_failed=30;
+
     mcmc_stepper_hmc() {
-      
-      unsigned long int seed=time(0);
-      rg.set_seed(seed);
-      inv_mass=0.1;
+      inv_mass.resize(1);
+      inv_mass[0]=0.1;
       traj_length=20;
-      mom_step=0.18;
+      mom_step.resize(1);
+      mom_step[0]=0.2;
+      auto_grad.resize(1);
+      auto_grad[0]=true;
+      epsrel=1.0e-6;
+      epsmin=1.0e-15;
+      grad_ptr=0;
     }
 
     virtual ~mcmc_stepper_hmc() {
     }
+
+    /** \brief Set the vector of user-specified gradients
+     */
+    void set_gradients(std::vector<grad_t> &vg) {
+      grad_ptr=&vg;
+      return;
+    }
     
-    /** \brief Desc
+    /** \brief Automatically compute the gradient using
+        finite-differencing
+    */
+    int grad_pot(size_t n_params, vec_t &x, func_t &f, 
+                  vec_t &g, data_t &dat) {
+      
+      double fv1, fv2, h;
+
+      // If the user can compute the gradients, then we end early.
+      bool no_auto=true;
+      for(size_t i=0;i<auto_grad.size();i++) {
+        if (auto_grad[i]==true) no_auto=false;
+      }
+      if (no_auto==false) {
+        return success;
+      }
+
+      // Start with the function evaluation
+      int func_ret=f(n_params,x,fv1,dat);
+      if (func_ret!=success) {
+        return grad_failed;
+      }
+      
+      for(size_t i=0; i<n_params; i++) {
+
+        if (auto_grad[i % auto_grad.size()]==true) {
+          h=epsrel*fabs(x[i]);
+          if (fabs(h)<=epsmin) h=epsrel;
+          
+          x[i]+=h;
+          func_ret=f(n_params,x,fv2,dat);
+          if (func_ret!=success) {
+            return grad_failed;
+          }
+          x[i]-=h;
+          
+          g[i]=(fv2-fv1)/h;
+        }
+      }
+      
+      return success;
+    }
+  
+    
+    /** \brief Construct a step
+
+        This function constructs \c next and \c w_next, the next point
+        and log weight in parameter space. The objective function \c f
+        is then evaluated at the new point, the return value is placed
+        in \c func_ret, and the step acceptance or rejection is stored
+        in \c accept.
      */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
                       vec_t &current, vec_t &next, double w_current,
@@ -223,29 +316,56 @@ namespace o2scl {
                       rng<> &r, int verbose) {
 
       vec_t mom, grad, mom_next;
+      int grad_ret;
       
       for(size_t k=0;k<n_params;k++) {
-        mom[k]=pdg()*mom_step;
+        mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
 
-      g(n_params,current,grad);
+      if (grad_ptr!=0 && grad_ptr->size()>0) {
+        grad_ret=(*grad_ptr)[i_thread](n_params,current,f,grad,dat);
+        if (grad_ret!=0) {
+          func_ret=grad_failed;
+          accept=false;
+          return;
+        }
+      }
+      grad_ret=grad_pot(n_params,current,f,grad,dat);
+      if (grad_ret!=0) {
+        func_ret=grad_failed;
+        accept=false;
+        return;
+      }
       
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]-0.5*mom_step*grad[k];
+        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
       }
 
       for(size_t i=0;i<traj_length;i++) {
-
+        
         for(size_t k=0;k<n_params;k++) {
-          next[k]=current[k]+mom_step*mom_next[k];
+          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
-        func_ret=f(n_params,next,w_next,dat);
-        g(n_params,next,grad);
+        if (grad_ptr!=0 && grad_ptr->size()>0) {
+          grad_ret=(*grad_ptr)[i_thread](n_params,next,f,grad,dat);
+          if (grad_ret!=0) {
+            func_ret=grad_failed;
+            accept=false;
+            return;
+          }
+        }
+        grad_ret=grad_pot(n_params,next,f,grad,dat);
+        if (grad_ret!=0) {
+          func_ret=grad_failed;
+          accept=false;
+          return;
+        }
 
         if (i<traj_length-1) {
           for(size_t k=0;k<n_params;k++) {
-            mom_next[k]=mom_next[k]-mom_step*grad[k];
+            mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
+              grad[k];
           }
 
         }
@@ -253,23 +373,29 @@ namespace o2scl {
       }
       
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]-=0.5*mom_step*grad[k];
+        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
 
+      func_ret=f(n_params,next,w_next,dat);
+      if (func_ret!=0) {
+        accept=false;
+        return;
+      }
+      
       double pot_curr=-log(0.5*w_current);
       double pot_next=-log(0.5*w_next);
 
       double kin_curr=0.0, kin_next=0.0;
       for(size_t k=0;k<n_params;k++) {
-        kin_curr+=mom[k]*mass_inv*mom[k]/2.0;
-        kin_next+=mom_next[k]*mass_inv*mom_next[k]/2.0;
+        kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
+        kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*mom_next[k]/2.0;
       }
         
-      double r=rg.random();
-            
+      double rx=r.random();
+      
       // Metropolis algorithm
       accept=false;
-      if (r<exp(pot_curr-pot_next+kin_curr-kin_next)) {
+      if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
       }
 
@@ -277,8 +403,6 @@ namespace o2scl {
     }
     
   };
-
-#endif
   
   /** \brief A generic MCMC simulation class
 
