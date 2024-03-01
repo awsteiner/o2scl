@@ -97,6 +97,9 @@ public:
 
     dat[0]=x;
     dat[1]=y;
+
+    std::cout << "hmc_point: " << u[0] << " " << u[1] << " "
+              << log_wgt << " " << dat[0] << " " << dat[1] << std::endl;
     
     return 0;
   }
@@ -655,7 +658,7 @@ int main(int argc, char *argv[]) {
     mpc.mct2.aff_inv=false;
     mpc.mct2.verbose=3;
     mpc.mct2.n_threads=1;
-    mpc.mct2.max_iters=1;
+    mpc.mct2.max_iters=20;
     mpc.mct2.prefix="hmc";
     mpc.mct2.new_step=true;
     mpc.mct2.stepper.mom_step[0]=0.18;

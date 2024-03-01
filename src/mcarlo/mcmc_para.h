@@ -374,17 +374,27 @@ namespace o2scl {
       
       double fv1, fv2, h;
 
+      if (auto_grad.size()==0) {
+        O2SCL_ERR("Auto grad size 0.",o2scl::exc_einval);
+      }
+      
       // If the user can compute the gradients, then we end early.
       bool no_auto=true;
-      for(size_t i=0;i<auto_grad.size();i++) {
-        if (auto_grad[i]==true) no_auto=false;
+      //std::cout << "gp1: " << n_params << " " << auto_grad.size()
+      //<< std::endl;
+      for(size_t i=0;i<n_params;i++) {
+        //std::cout << "gpx: " << i % auto_grad.size() << std::endl;
+        if (auto_grad[i % auto_grad.size()]==true) no_auto=false;
+        //std::cout << "gpy: " << std::endl;
       }
-      if (no_auto==false) {
+      if (no_auto==true) {
         return success;
       }
 
       // Start with the function evaluation
+      //std::cout << "gp2." << std::endl;
       int func_ret=f(n_params,x,fv1,dat);
+      //std::cout << "gp3." << std::endl;
       if (func_ret!=success) {
         return grad_failed;
       }
@@ -396,13 +406,17 @@ namespace o2scl {
           if (fabs(h)<=epsmin) h=epsrel;
           
           x[i]+=h;
+          //std::cout << "gp4." << std::endl;
           func_ret=f(n_params,x,fv2,dat);
+          //std::cout << "gp5." << std::endl;
           if (func_ret!=success) {
             return grad_failed;
           }
           x[i]-=h;
           
+          //std::cout << "gp6." << std::endl;
           g[i]=(fv2-fv1)/h;
+          //std::cout << "gp7." << std::endl;
         }
       }
       
@@ -423,21 +437,22 @@ namespace o2scl {
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
-      vec_t mom, grad, mom_next;
+      vec_t mom(n_params), grad(n_params), mom_next(n_params);
       int grad_ret;
 
       // Initialize func_ret to success
       func_ret=success;
       
-      std::cout << "Here: " << current[0] << " " << current[1] << " "
-                << w_current << std::endl;
-      exit(-1);
+      //std::cout << "Here: " << current[0] << " " << current[1] << " "
+      //                << w_current << std::endl;
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr!=0 && grad_ptr->size()>0) {
+        //std::cout << "User spec: " << i_thread << " " << grad_ptr->size()
+        //                  << std::endl;
         grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
           (n_params,current,f,grad,dat);
         if (grad_ret!=0) {
@@ -447,11 +462,15 @@ namespace o2scl {
       
       // Then, additionally try the finite-differencing gradient
       if (initial_grad_failed==false) {
+        //std::cout << "grad_pot(): " << std::endl;
         grad_ret=grad_pot(n_params,current,f,grad,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
       }
+
+      //std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
+      //<< initial_grad_failed << std::endl;
       
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient
@@ -490,10 +509,14 @@ namespace o2scl {
           mom[k]=pdg()*mom_step[k % mom_step.size()];
         }
 
+        //std::cout << "mom1: " << mom[0] << " " << mom[1] << std::endl;
+
         // Take a half step in the momenta using the gradient
         for(size_t k=0;k<n_params;k++) {
           mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
         }
+        
+        //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1] << std::endl;
         
         for(size_t i=0;i<traj_length;i++) {
 
@@ -502,6 +525,8 @@ namespace o2scl {
             next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
           }
 
+          //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
+          
           // Check that the coordinate space step has not taken us out
           // of bounds
           this->check_bounds(i_thread,n_params,next,low,high,
@@ -530,12 +555,18 @@ namespace o2scl {
             return;
           }
 
+          //std::cout << "grad2: " << grad[0] << " " << grad[1] << " "
+          //<< initial_grad_failed << std::endl;
+          
           // Perform a momentum step, unless we're at the end
           if (i<traj_length-1) {
+            
             for(size_t k=0;k<n_params;k++) {
               mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
                 grad[k];
             }
+            
+            //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1] << std::endl;
             
           }
           
@@ -546,6 +577,8 @@ namespace o2scl {
           mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
         }
 
+        //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1] << std::endl;
+            
         // Perform the final function evaluation
         func_ret=f(n_params,next,w_next,dat);
         if (func_ret!=0) {
@@ -553,9 +586,12 @@ namespace o2scl {
           return;
         }
 
+        //std::cout << "next2: " << next[0] << " " << next[1] << " " << w_next
+        //<< std::endl;
+        
         // Evaluate the kinetic and potential energies
-        double pot_curr=-log(0.5*w_current);
-        double pot_next=-log(0.5*w_next);
+        double pot_curr=-log(0.5)+w_current;
+        double pot_next=-log(0.5)+w_next;
         
         double kin_curr=0.0, kin_next=0.0;
         for(size_t k=0;k<n_params;k++) {
@@ -568,11 +604,18 @@ namespace o2scl {
         
         // Metropolis algorithm
         accept=false;
+        std::cout << "hmc0: " << rx << " "
+                  << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
+                  << pot_curr-pot_next+kin_curr-kin_next << std::endl;
         if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
           accept=true;
         }
         
       }
+
+      std::cout << "hmc: " << next[0] << " " << next[1] << " "
+                << w_next << " " << func_ret << " " << accept << std::endl;
+      exit(-1);
 
       return;
     }
@@ -1265,7 +1308,13 @@ namespace o2scl {
       // the mcmc_init() function call above.
       
       if (verbose>=1) {
-        if (aff_inv) {
+        if (new_step) {
+          scr_out << "mcmc_para_base::mcmc(): "
+                  << "New stepper, n_params="
+                  << n_params << ", n_threads=" << n_threads << ", rank="
+                  << mpi_rank << ", n_ranks="
+                  << mpi_size << std::endl;
+        } else if (aff_inv) {
           scr_out << "mcmc_para_base::mcmc(): "
                   << "Affine-invariant step, n_params="
                   << n_params << ", n_walk=" << n_walk
