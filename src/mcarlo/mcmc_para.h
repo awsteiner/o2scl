@@ -516,7 +516,8 @@ namespace o2scl {
           mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
         }
         
-        //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1] << std::endl;
+        //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
+        //<< std::endl;
         
         for(size_t i=0;i<traj_length;i++) {
 
@@ -566,7 +567,8 @@ namespace o2scl {
                 grad[k];
             }
             
-            //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1] << std::endl;
+            //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1]
+            //<< std::endl;
             
           }
           
@@ -577,7 +579,8 @@ namespace o2scl {
           mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
         }
 
-        //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1] << std::endl;
+        //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1]
+        //<< std::endl;
             
         // Perform the final function evaluation
         func_ret=f(n_params,next,w_next,dat);
@@ -590,8 +593,8 @@ namespace o2scl {
         //<< std::endl;
         
         // Evaluate the kinetic and potential energies
-        double pot_curr=-log(0.5)+w_current;
-        double pot_next=-log(0.5)+w_next;
+        double pot_curr=-log(0.5)-w_current;
+        double pot_next=-log(0.5)-w_next;
         
         double kin_curr=0.0, kin_next=0.0;
         for(size_t k=0;k<n_params;k++) {
@@ -615,7 +618,7 @@ namespace o2scl {
 
       std::cout << "hmc: " << next[0] << " " << next[1] << " "
                 << w_next << " " << func_ret << " " << accept << std::endl;
-      exit(-1);
+      //exit(-1);
 
       return;
     }

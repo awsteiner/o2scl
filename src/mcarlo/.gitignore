@@ -1,4 +1,5 @@
 mcmc*_scr
 mcmc*_out
-
 __pycache__
+hmc_0_scr
+hmc_0_out
