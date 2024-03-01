@@ -103,10 +103,11 @@ public:
   
   int hmc_fill(const ubvector &pars, double log_weight,
                std::vector<double> &line, std::vector<double> &dat) {
-    line.push_back(dat[0]);
+    for(size_t j=0;j<dat.size();j++) {
+      line.push_back(dat[j]);
+    }
     return 0;
   }
-  
   
   mcmc_para_class() {
   }
@@ -638,8 +639,8 @@ int main(int argc, char *argv[]) {
     
     cout << "HMC with a table: " << endl;
   
-    vector<string> pnames_hmc={"x","y"};
-    vector<string> punits_hmc={"km","fm"};
+    vector<string> pnames_hmc={"x","y","d1","d2"};
+    vector<string> punits_hmc={"km","fm","cm","mm"};
     vector<vector<double>> data_vec_hmc(2);
     data_vec_hmc[0].resize(2);
     data_vec_hmc[1].resize(2);

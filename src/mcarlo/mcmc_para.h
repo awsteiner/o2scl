@@ -78,6 +78,9 @@ namespace o2scl {
       return;
     }
 
+    /// Stepper type
+    virtual const char *step_type()=0;
+    
     /** \brief Check that \c v is between \c low and \c high
      */
     void check_bounds(size_t i_thread, size_t n_params,
@@ -134,6 +137,9 @@ namespace o2scl {
     
   public:
 
+    /// Stepper type
+    virtual const char *step_type() { return "RW"; }
+    
     /** \brief The factor controlling the step size (default is 
         a 1-element vector containing 2.0)
      */
@@ -207,6 +213,9 @@ namespace o2scl {
     
   public:
     
+    /// Stepper type
+    virtual const char *step_type() { return "MH"; }
+    
     /** \brief The proposal distribution
     */
     std::vector<prop_t> proposal;
@@ -277,6 +286,11 @@ namespace o2scl {
     
   public:
 
+    /// Stepper type
+    virtual const char *step_type() {
+      return "HMC";
+    }
+    
     /** \brief The factor controlling the step size for the fallback
         random walk (default is a 1-element vector containing 2.0)
      */
@@ -341,7 +355,7 @@ namespace o2scl {
       hf.setd_vec_copy("inv_mass",inv_mass);
       hf.set_szt("traj_length",traj_length);
       hf.setd("epsrel",epsrel);
-      hf.setd("epsabs",epsabs);
+      hf.setd("epsmin",epsmin);
       return;
     }
     
@@ -395,7 +409,6 @@ namespace o2scl {
       return success;
     }
   
-    
     /** \brief Construct a step
 
         This function constructs \c next and \c w_next, the next point
@@ -415,7 +428,7 @@ namespace o2scl {
 
       // Initialize func_ret to success
       func_ret=success;
-
+      
       std::cout << "Here: " << current[0] << " " << current[1] << " "
                 << w_current << std::endl;
       exit(-1);
@@ -1387,8 +1400,10 @@ namespace o2scl {
                     }
                     if (meas_ret[it]!=mcmc_done) {
                       if (meas_for_initial) {
-                        meas_ret[it]=meas[it](current[sindex],w_current[sindex],
-                                              curr_walker[it],func_ret[it],true,
+                        meas_ret[it]=meas[it](current[sindex],
+                                              w_current[sindex],
+                                              curr_walker[it],
+                                              func_ret[it],true,
                                               data[sindex]);
                       } else {
                         meas_ret[it]=0;
@@ -1399,8 +1414,10 @@ namespace o2scl {
                     done=true;
                   } else if (init_iters>max_bad_steps) {
                     std::string err=((std::string)"In loop with thread ")+
-                      o2scl::szttos(it)+" iterations required to obtain an "+
-                      "initial point exceeded "+o2scl::szttos(max_bad_steps)+
+                      o2scl::szttos(it)+
+                      " iterations required to obtain an "+
+                      "initial point exceeded "+
+                      o2scl::szttos(max_bad_steps)+
                       " in mcmc_para_base::mcmc().";
                     O2SCL_ERR(err.c_str(),o2scl::exc_einval);
                   }
@@ -1446,7 +1463,8 @@ namespace o2scl {
         // Verbose output
         if (verbose>=2) {
           for(size_t it=0;it<n_threads;it++) {
-            for(curr_walker[it]=0;curr_walker[it]<n_walk;curr_walker[it]++) {
+            for(curr_walker[it]=0;curr_walker[it]<n_walk;
+                curr_walker[it]++) {
               size_t sindex=n_walk*it+curr_walker[it];
               scr_out.precision(4);
               scr_out << "mcmc (" << it << "," << mpi_rank << "): i_walk: ";
@@ -1663,7 +1681,8 @@ namespace o2scl {
                     stepper.step(it,n_params,func[it],current[it],
                                  next[it],w_current[sindex],w_next[it],
                                  low,high,func_ret[it],accept,
-                                 data[sindex+n_walk*n_threads],rg[it],verbose);
+                                 data[sindex+n_walk*n_threads],rg[it],
+                                 verbose);
                   } else {
                     stepper.step(it,n_params,func[it],current[it],
                                  next[it],w_current[sindex],w_next[it],
@@ -1684,7 +1703,8 @@ namespace o2scl {
 
                   if (pd_mode) {
                     
-                    // Use proposal distribution and compute associated weight
+                    // Use proposal distribution and compute
+                    // associated weight
                     q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],
                                                               next[it]);
                     
@@ -1699,10 +1719,12 @@ namespace o2scl {
                     // Uniform random-walk step
                     for(size_t k=0;k<n_params;k++) {
                       if (step_vec.size()>0) {
-                        next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
+                        next[it][k]=current[it][k]+
+                          (rg[it].random()*2.0-1.0)*
                           step_vec[k%step_vec.size()];
                       } else {
-                        next[it][k]=current[it][k]+(rg[it].random()*2.0-1.0)*
+                        next[it][k]=current[it][k]+
+                          (rg[it].random()*2.0-1.0)*
                           (high[k]-low[k])/step_fac;
                       }
                     }
@@ -1714,20 +1736,23 @@ namespace o2scl {
                   
                   func_ret[it]=o2scl::success;
                   
-                  // If the next point out of bounds, ensure that the point is
-                  // rejected without attempting to evaluate the function
+                  // If the next point out of bounds, ensure that the
+                  // point is rejected without attempting to evaluate
+                  // the function
                   for(size_t k=0;k<n_params;k++) {
                     if (next[it][k]<low[k] || next[it][k]>high[k]) {
                       func_ret[it]=mcmc_skip;
                       if (verbose>=3) {
                         if (next[it][k]<low[k]) {
                           std::cout << "mcmc (" << it << ","
-                                    << mpi_rank << "): Parameter with index "
+                                    << mpi_rank
+                                    << "): Parameter with index "
                                     << k << " and value " << next[it][k]
                                     << " smaller than limit " << low[k]
                                     << std::endl;
                           scr_out << "mcmc (" << it << ","
-                                  << mpi_rank << "): Parameter with index " << k
+                                  << mpi_rank
+                                  << "): Parameter with index " << k
                                   << " and value " << next[it][k]
                                   << " smaller than limit " << low[k]
                                   << std::endl;
@@ -1802,12 +1827,13 @@ namespace o2scl {
                   if (!warm_up) {
                     if (switch_arr[sindex]==false) {
                       meas_ret[it]=meas[it](next[it],w_next[it],
-                                            curr_walker[it],func_ret[it],true,
+                                            curr_walker[it],func_ret[it],
+                                            true,
                                             data[sindex+n_threads*n_walk]);
                     } else {
                       meas_ret[it]=meas[it](next[it],w_next[it],
-                                            curr_walker[it],func_ret[it],true,
-                                            data[sindex]);
+                                            curr_walker[it],func_ret[it],
+                                            true,data[sindex]);
                     }
                   }
 
@@ -2790,7 +2816,7 @@ namespace o2scl {
         hf.seti("table_sequence",this->table_sequence);
         hf.seti("user_seed",this->user_seed);
         hf.seti("verbose",this->verbose);
-        stepper.write_params(hf);
+        this->stepper.write_params(hf);
         file_header(hf);
         first_write=true;
       }
