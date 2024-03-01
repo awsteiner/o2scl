@@ -54,6 +54,12 @@ typedef std::function<int(const ubvector &,double,size_t,int,bool,
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::array<double,1> &)> fill_funct;
 
+typedef std::function<int(size_t,const ubvector &,double &,
+			  std::vector<double> &)> point_hmc;
+
+typedef std::function<int(const ubvector &,double,std::vector<double> &,
+			  std::vector<double> &)> fill_hmc;
+
 class mcmc_para_class {
 
 public:
@@ -65,6 +71,42 @@ public:
   
   mcmc_para_table<point_funct,fill_funct,std::array<double,1>,
                   ubvector> mct;
+  
+  mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector,
+                  mcmc_stepper_hmc<point_hmc,std::vector<double>,
+                                   ubvector>> mct2;
+
+  int hmc_point(size_t n_params, const ubvector &u, double &log_wgt,
+                std::vector<double> &dat) {
+    
+    static const double mean_x=0.0;
+    static const double mean_y=0.0;
+    static const double width_x=1.0;
+    static const double width_y=1.0;
+    static const double rho=0.0;
+    
+    double shift_x=u[0]-mean_x;
+    double shift_y=u[1]-mean_y;
+    double x=pow(shift_x/width_x,2.0);
+    double y=pow(shift_y/width_y,2.0);
+    double z=2.0*rho*shift_x*shift_y/(width_x*width_y);
+    double r=1.0-rho*rho;
+    double c=2.0*o2scl_const::pi*width_x*width_y*sqrt(r);
+
+    log_wgt=log(1.0/c*exp(-0.5*(x+y-z)/r));
+
+    dat[0]=x;
+    dat[1]=y;
+    
+    return 0;
+  }
+  
+  int hmc_fill(const ubvector &pars, double log_weight,
+               std::vector<double> &line, std::vector<double> &dat) {
+    line.push_back(dat[0]);
+    return 0;
+  }
+  
   
   mcmc_para_class() {
   }
@@ -587,6 +629,58 @@ int main(int argc, char *argv[]) {
       //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
     }
     cout << endl;
+  }
+
+  if (false) {
+    
+    // ----------------------------------------------------------------
+    // HMC with a table
+    
+    cout << "HMC with a table: " << endl;
+  
+    vector<string> pnames_hmc={"x","y"};
+    vector<string> punits_hmc={"km","fm"};
+    vector<vector<double>> data_vec_hmc(2);
+    data_vec_hmc[0].resize(2);
+    data_vec_hmc[1].resize(2);
+    ubvector low_hmc(2), high_hmc(2);
+    low_hmc[0]=-10.0;
+    low_hmc[1]=-10.0;
+    high_hmc[0]=10.0;
+    high_hmc[1]=10.0;
+    
+    mpc.mct2.set_names_units(pnames_hmc,punits_hmc);
+    
+    mpc.mct2.aff_inv=false;
+    mpc.mct2.verbose=2;
+    mpc.mct2.n_threads=1;
+    mpc.mct2.max_iters=1;
+    mpc.mct2.prefix="hmc";
+    mpc.mct2.new_step=true;
+    
+    point_hmc ph=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,double &,
+                       std::vector<double> &)>(&mcmc_para_class::hmc_point),
+       &mpc,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::placeholders::_4);
+    fill_hmc fh=std::bind
+      (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
+                       std::vector<double> &)>(&mcmc_para_class::hmc_fill),
+       &mpc,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,std::placeholders::_4);
+    
+    vector<point_hmc> hmc_point_vec(1);
+    vector<fill_hmc> hmc_fill_vec(1);
+    hmc_point_vec[0]=ph;
+    hmc_fill_vec[0]=fh;
+    
+    mpc.mct2.mcmc_fill(2,low_hmc,high_hmc,hmc_point_vec,
+                       hmc_fill_vec,data_vec_hmc);
+    
+    std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct2.get_table();
+    
+    cout << endl;
+    
   }
   
   tm.report();

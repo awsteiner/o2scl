@@ -271,7 +271,7 @@ namespace o2scl {
 
     /** \brief Trajectory length (default 20)
      */
-    int traj_length;
+    size_t traj_length;
 
     /** \brief Inverse mass (default is a one-element vector
         containing 0.1)
@@ -390,6 +390,10 @@ namespace o2scl {
 
       // Initialize func_ret to success
       func_ret=success;
+
+      std::cout << "Here: " << current[0] << " " << current[1] << " "
+                << w_current << std::endl;
+      exit(-1);
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
@@ -582,7 +586,7 @@ namespace o2scl {
       and Weare can be used.
 
       By default, the Metropolis-Hastings algorithm is executed with a
-      simple walk, with steps in each dimension of size \f$
+      simple random walk, with steps in each dimension of size \f$
       (\mathrm{high} - \mathrm{low})/\mathrm{step\_fac} \f$ with the
       denominator specified in \ref step_fac.
 
