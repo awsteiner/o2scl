@@ -72,6 +72,12 @@ namespace o2scl {
     mcmc_stepper_base() {
     }
 
+    /** \brief Write stepper parameters to the HDF5 file
+     */
+    virtual void write_params(o2scl_hdf::hdf_file &hf) {
+      return;
+    }
+
     /** \brief Check that \c v is between \c low and \c high
      */
     void check_bounds(size_t i_thread, size_t n_params,
@@ -139,6 +145,13 @@ namespace o2scl {
     }
     
     virtual ~mcmc_stepper_rw() {
+    }
+
+    /** \brief Write stepper parameters to the HDF5 file
+     */
+    virtual void write_params(o2scl_hdf::hdf_file &hf) {
+      hf.setd_vec_copy("step_fac",step_fac);
+      return;
     }
     
     /** \brief Construct a step
@@ -320,6 +333,18 @@ namespace o2scl {
     virtual ~mcmc_stepper_hmc() {
     }
 
+    /** \brief Write stepper parameters to the HDF5 file
+     */
+    virtual void write_params(o2scl_hdf::hdf_file &hf) {
+      hf.setd_vec_copy("step_fac",step_fac);
+      hf.setd_vec_copy("mom_step",mom_step);
+      hf.setd_vec_copy("inv_mass",inv_mass);
+      hf.set_szt("traj_length",traj_length);
+      hf.setd("epsrel",epsrel);
+      hf.setd("epsabs",epsabs);
+      return;
+    }
+    
     /** \brief Set the vector of user-specified gradients
      */
     void set_gradients(std::vector<grad_t> &vg) {
@@ -2760,11 +2785,12 @@ namespace o2scl {
         hf.set_szt("n_warm_up",this->n_warm_up);
         hf.seti("pd_mode",this->pd_mode);
         hf.sets("prefix",this->prefix);
-        hf.setd("step_fac",this->step_fac);
+        //hf.setd("step_fac",this->step_fac);
         hf.seti("store_rejects",this->store_rejects);
         hf.seti("table_sequence",this->table_sequence);
         hf.seti("user_seed",this->user_seed);
         hf.seti("verbose",this->verbose);
+        stepper.write_params(hf);
         file_header(hf);
         first_write=true;
       }

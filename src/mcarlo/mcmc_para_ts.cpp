@@ -631,7 +631,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
-  if (false) {
+  if (true) {
     
     // ----------------------------------------------------------------
     // HMC with a table
@@ -652,11 +652,13 @@ int main(int argc, char *argv[]) {
     mpc.mct2.set_names_units(pnames_hmc,punits_hmc);
     
     mpc.mct2.aff_inv=false;
-    mpc.mct2.verbose=2;
+    mpc.mct2.verbose=3;
     mpc.mct2.n_threads=1;
     mpc.mct2.max_iters=1;
     mpc.mct2.prefix="hmc";
     mpc.mct2.new_step=true;
+    mpc.mct2.stepper.mom_step[0]=0.18;
+    mpc.mct2.stepper.inv_mass[0]=0.1;
     
     point_hmc ph=std::bind
       (std::mem_fn<int(size_t,const ubvector &,double &,
