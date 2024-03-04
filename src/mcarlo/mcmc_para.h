@@ -283,6 +283,21 @@ namespace o2scl {
       the parameters. However, if these vectors have a smaller size,
       then the vector index is wrapped back around to the beginning
       (using the modulus operator).
+
+      The Hamiltonian is \f[
+      H(q,p) = \frac{1}{2} p^{T} M^{-1} p - 
+      \log \left[ {\cal{L}} (q) \right]
+      \f]
+      where \f$ M \f$ is the mass matrix and \f$ {\cal{L}} \f$ 
+      is the likelihood. This class presume the mass matrix
+      is diagonal and then the inverse is stored in \ref inv_mass. 
+
+      The step is then accepted with probability
+      \f[
+      \mathrm{min}\left\{ 1,\frac{\exp -H_{\mathrm{new}}}
+      {\exp -H_{\mathrm{old}}} \right\}
+      \f]
+
    */
   template<class func_t, class data_t,
            class vec_t,
@@ -655,42 +670,6 @@ namespace o2scl {
   
   /** \brief A generic MCMC simulation class
 
-      Significant changes:
-      
-      * There is no data vector in the class, it's moved to a
-      parameter of the mcmc() function.
-
-      * New outside_parallel() function: the idea is that 
-      an emulator can be retrained in this function.
-
-      * New steps_in_parallel variable
-
-      * The best point mechanism has been reworked, there is now a
-      best point over all threads and a best point array which stores
-      the best point from each thread
-
-      * The initial point evaluation is essentially the same, 
-      but the main loop is reorganized.
-
-      * When aff_inv is false, there are three loops, a main loop,
-      a parallel loop over threads, and then an inner loop
-      of size steps_in_parallel.
-
-      * When aff_inv is true, there is a main loop and two sequential
-      parallel loops over the number of threads.
-
-      Todos:
-
-      * Figure out what to do with the message vector which is
-      commented out in both versions
-
-      * The main loop with the affine-invariant sampling could be
-      modified with a new inner loop to do many function evaluations
-      for each thread. However, I think this would demand combining
-      the two sequential parallel loops.
-
-      ---------------------------------------------------------
-
       This class performs a Markov chain Monte Carlo simulation of a
       user-specified function using OpenMP and/or MPI. Either the
       Metropolis-Hastings algorithm with a user-specified proposal
@@ -716,9 +695,9 @@ namespace o2scl {
       point is automatically rejected. After each acceptance or
       rejection, a user-specified "measurement" function (of type \c
       measure_t ) is called, which can be used to store the results.
-      In order to stop the simulation, either this function or the
-      probability distribution being simulated should return the value
-      \ref mcmc_done . 
+      In either the measurement function or the probability
+      distribution function returns the value \ref mcmc_done, then the
+      MCMC stops.
       
       A generic proposal distribution can be specified in \ref
       set_proposal(). To go back to the default random walk method,
@@ -775,17 +754,22 @@ namespace o2scl {
       If verbose is 2, then the file prefix is output to <tt>cout</tt>
       during initialization.
 
-      \note This class is experimental.
+      \b Todos
+      
+      \verbatim embed:rst
+      .. todo:: 
 
-      \future There is a little code in mcmc_init() and mcmc_cleanup()
-      and I should document why that code needs to be there.
+         In class \ref mcmc_para_base:
 
-      \note Currently, this class requires that the data_t 
-      has a good copy constructor. 
+         - The main loop with the affine-invariant sampling could be
+           modified with a new inner loop to do many function
+           evaluations for each thread. However, I think this would
+           demand combining the two sequential parallel loops.
 
-      \future The copy constructor for the data_t type is used when
-      the user doesn't specify enough initial points for the
-      corresponding number of threads and walkers. 
+         - There is a little code in mcmc_init() and mcmc_cleanup()
+           and I should document why that code needs to be there.
+
+      \endverbatim
   */
   template<class func_t, class measure_t,
            class data_t, class vec_t=ubvector,
@@ -976,11 +960,12 @@ namespace o2scl {
     */
     size_t n_warm_up;
 
-    /** \brief If non-zero, use as the seed for the random number 
-        generator (default 0)
+    /** \brief If non-zero, use this number as the seed for the random
+        number generator (default 0)
 
-        The random number generator is modified so that each thread and
-        each rank has a different set of random numbers.
+        The random number generator is modified so that each OpenMP
+        thread and each MPI rank has a different set of random
+        numbers.
 
         If this value is zero, then the random number generators are
         seeded by the clock time in seconds, so that if two separate
@@ -994,8 +979,8 @@ namespace o2scl {
     /// Output control (default 0)
     int verbose;
 
-    /** \brief Maximum number of failed steps when generating initial points
-        with affine-invariant sampling (default 1000)
+    /** \brief Maximum number of failed steps when generating initial
+        points with affine-invariant sampling (default 1000)
     */
     size_t max_bad_steps;
 
@@ -1004,8 +989,9 @@ namespace o2scl {
     */
     size_t n_walk;
 
-    /** \brief If true, call the error handler if msolve() or
-        msolve_de() does not converge (default true)
+    /** \brief If true, call the error handler when either the object
+        function or the measure function does not return success
+        (default true)
     */
     bool err_nonconv;
 
@@ -1279,7 +1265,7 @@ namespace o2scl {
       // Storage size required
       size_t ssize=n_walk*n_threads;
 
-      // Allocate current point and current weight for each thread
+      // Allocate current point and current log weight for each thread
       // and walker
       current.resize(ssize);
       std::vector<double> w_current(ssize);
@@ -1300,14 +1286,15 @@ namespace o2scl {
       switch_arr.resize(ssize);
       for(size_t i=0;i<switch_arr.size();i++) switch_arr[i]=false;
     
-      // Allocate memory for next point and next weight for each thread
+      // Allocate memory for next point and next log weight for each
+      // thread
       std::vector<vec_t> next(n_threads);
       for(size_t it=0;it<n_threads;it++) {
         next[it].resize(n_params);
       }
       std::vector<double> w_next(n_threads);
 
-      // Allocate memory for best point and best weight for each
+      // Allocate memory for best point and best log weight for each
       // thread (only used when aff_inv=false and not used until after
       // the initial points are computed)
       std::vector<vec_t> best_t(n_threads);
@@ -1411,7 +1398,7 @@ namespace o2scl {
                   current[sindex][ipar]=initial_points[ip_index][ipar];
                 }
               
-                // Compute the weight
+                // Compute the log weight
                 func_ret[it]=func[it](n_params,current[sindex],
                                       w_current[sindex],data[sindex]);
 
@@ -1455,7 +1442,7 @@ namespace o2scl {
                            current[sindex][ipar]<low[ipar]);
                 }
               
-                // Compute the weight
+                // Compute the log weight
                 func_ret[it]=func[it](n_params,current[sindex],
                                       w_current[sindex],data[sindex]);
                 
@@ -1472,7 +1459,7 @@ namespace o2scl {
                   if (func_ret[it]==o2scl::success) {
                     if (verbose>=2) {
                       scr_out << "Found initial guess for thread "
-                              << it << ". func_ret,weight,params=\n  "
+                              << it << ". func_ret,log weight,params=\n  "
                               << func_ret[it] << " "
                               << w_current[sindex] << " ";
                       for(size_t iji=0;iji<n_params;iji++) {
@@ -1723,6 +1710,15 @@ namespace o2scl {
         
         // ---------------------------------------------------
         // Start of main loop over threads for aff_inv=false
+
+        /*
+         * When aff_inv is false, there are three loops, a main loop,
+         a parallel loop over threads, and then an inner loop
+         of size steps_in_parallel.
+         
+         * When aff_inv is true, there is a main loop and two sequential
+         parallel loops over the number of threads.
+        */
         
         bool main_done=false;
         
@@ -1790,7 +1786,7 @@ namespace o2scl {
                   if (pd_mode) {
                     
                     // Use proposal distribution and compute
-                    // associated weight
+                    // associated log weight
                     q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],
                                                               next[it]);
                     
@@ -1818,7 +1814,7 @@ namespace o2scl {
                   }   
                   
                   // ---------------------------------------------------
-                  // Compute next weight for aff_inv=false
+                  // Compute next log weight for aff_inv=false
                   
                   func_ret[it]=o2scl::success;
                   
@@ -2075,8 +2071,6 @@ namespace o2scl {
         bool main_done=false;
         size_t mcmc_iters=0;
 
-        //std::vector<std::string> message(n_threads);
-      
         while (!main_done) {
 
           std::vector<double> smove_z(n_threads);
@@ -2159,19 +2153,9 @@ namespace o2scl {
                   smove_z[it]*(current[n_walk*it+curr_walker[it]][i]-
                                current[n_walk*jt+ij][i]);
               }
-              /*
-                std::ostringstream os;
-                os << n_walk << " "
-                << it << " " << curr_walker[it] << " "
-                << jt << " " << ij << " "
-                << smove_z[it] << std::endl;
-                o2scl::vector_out(os,current[n_walk*it+curr_walker[it]],true);
-                o2scl::vector_out(os,next[it],true);
-                message[it]=os.str();
-              */
             
               // ---------------------------------------------------
-              // Compute next weight
+              // Compute next log weight
       
               func_ret[it]=o2scl::success;
               // If the next point out of bounds, ensure that the point is
@@ -2240,8 +2224,6 @@ namespace o2scl {
 
           if (verbose>=1) {
             for(size_t it=0;it<n_threads;it++) {
-              //std::cout << "thread: " << it << " message: "
-              //<< message[it] << std::endl;
               if (pd_mode) {
                 scr_out << "it: " << it << " q_prop[it]: "
                         << q_prop[it] << std::endl;
@@ -2359,8 +2341,8 @@ namespace o2scl {
           // End of second parallel region for aff_inv=true
 
           // -----------------------------------------------------------
-          // Post-measurement verbose output of iteration count, weight,
-          // and walker index for each thread
+          // Post-measurement verbose output of iteration count, log
+          // weight, and walker index for each thread
       
           if (verbose>=2) {
             for(size_t it=0;it<n_threads;it++) {
@@ -3249,7 +3231,7 @@ namespace o2scl {
             if (fabs(mit->first-mit2->first)<thresh) {
               if (this->verbose>0) {
                 std::cout << "mcmc_para::initial_points_file_best():\n  "
-                          << "Removing duplicate weights: "
+                          << "Removing duplicate log weights: "
                           << mit->first << " " << mit2->first << std::endl;
                 
               }
