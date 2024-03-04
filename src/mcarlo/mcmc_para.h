@@ -145,7 +145,7 @@ namespace o2scl {
     
   public:
 
-    /// Stepper type
+    /// Stepper type, "RW"
     virtual const char *step_type() { return "RW"; }
     
     /** \brief The factor controlling the step size (default is 
@@ -221,7 +221,7 @@ namespace o2scl {
     
   public:
     
-    /// Stepper type
+    /// Stepper type, "MH"
     virtual const char *step_type() { return "MH"; }
     
     /** \brief The proposal distribution
@@ -300,7 +300,7 @@ namespace o2scl {
     
   public:
 
-    /// Stepper type
+    /// Stepper type, "HMC"
     virtual const char *step_type() {
       return "HMC";
     }
@@ -923,7 +923,7 @@ namespace o2scl {
     /// \name Settings
     //@{
     /** \brief The MPI starting time (defaults to 0.0)
-
+        
         This can be set by the user before mcmc() is called, so
         that the time required for initializations before
         the MCMC starts can be counted.
@@ -1069,6 +1069,11 @@ namespace o2scl {
         a vector of size \ref n_walk times \ref n_threads . Initial
         points are used for multiple threads and/or walkers if the
         full number of initial points is not specified.
+
+        If this is empty, then the midpoint between \c low and 
+        \c high is used as the initial point for all threads and
+        walkers. All initial points must be between \c low and 
+        \c high, or the error handler will be called. 
     */
     std::vector<ubvector> initial_points;
 
@@ -1258,8 +1263,7 @@ namespace o2scl {
         rg[it].set_seed(seed);
       }
     
-      // Keep track of successful and failed MH moves in each
-      // independent chain
+      // Keep track of successful and failed MH moves in each thread
       n_accept.resize(n_threads);
       n_reject.resize(n_threads);
       for(size_t it=0;it<n_threads;it++) {
@@ -1275,7 +1279,8 @@ namespace o2scl {
       // Storage size required
       size_t ssize=n_walk*n_threads;
 
-      // Allocate current point and current weight
+      // Allocate current point and current weight for each thread
+      // and walker
       current.resize(ssize);
       std::vector<double> w_current(ssize);
       for(size_t i=0;i<ssize;i++) {
@@ -1283,7 +1288,8 @@ namespace o2scl {
         w_current[i]=0.0;
       }
 
-      // Allocate curr_walker
+      // Allocate curr_walker, the index of the current walker for each
+      // thread
       curr_walker.resize(n_threads);
 
       // Note: allocation of ret_value_counts must be handled by the
