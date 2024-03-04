@@ -82,6 +82,14 @@ namespace o2scl {
     virtual const char *step_type()=0;
     
     /** \brief Check that \c v is between \c low and \c high
+
+        This function checks that the parameters are within limits. If
+        they are not, then \c func_ret is set to \ref mcmc_skip.
+        Otherwise, \c func_ret is unchanged. If \c verbose is greater
+        than or equal to 3, then a out-of-bounds warning is printed to
+        the screen. Generally, if a point is out of bounds, this just
+        means that the MCMC algorithm will reject this point as if it
+        had a very small likelihood.
      */
     void check_bounds(size_t i_thread, size_t n_params,
                       vec_t &v, vec_t &low, vec_t &high,
@@ -269,6 +277,12 @@ namespace o2scl {
   };
 
   /** \brief Hamiltonian Monte Carlo for MCMC
+
+      The vectors \ref step_fac, \ref inv_mass, \ref mom_step, and
+      \ref auto_grad are provided to give different values for each of
+      the parameters. However, if these vectors have a smaller size,
+      then the vector index is wrapped back around to the beginning
+      (using the modulus operator).
    */
   template<class func_t, class data_t,
            class vec_t,
@@ -317,6 +331,11 @@ namespace o2scl {
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
         vector containing true).
+
+        For parameters in which this vector has an entry of \c true,
+        it is assumed that the user-specified gradient object (if
+        present) cannot compute the gradient and thus a simple
+        numerical finite-differencing gradient is required. 
     */
     vec_bool_t auto_grad;
 
@@ -360,6 +379,10 @@ namespace o2scl {
     }
     
     /** \brief Set the vector of user-specified gradients
+
+        Note that this function stores a pointer to the vector of
+        gradient objects and thus the user must ensure that this
+        object is in scope when the MCMC is performed.
      */
     void set_gradients(std::vector<grad_t> &vg) {
       grad_ptr=&vg;
@@ -473,8 +496,13 @@ namespace o2scl {
       //<< initial_grad_failed << std::endl;
       
       // If the gradient failed, then use the fallback random-walk
-      // method, which doesn't require a gradient
-      
+      // method, which doesn't require a gradient. In the future, we
+      // should probably distinguish between the automatic gradient
+      // (which isn't that great) and a user-specified gradient (which
+      // is probably very accurate). If the user-specified gradient
+      // fails, then there is probably a serious issue which should be
+      // handled separately.
+
       if (initial_grad_failed) {
         
         for(size_t k=0;k<n_params;k++) {
