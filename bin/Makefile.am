@@ -90,8 +90,11 @@ temp:
 
 if O2SCL_ENABLE_ACOL
 
+if O2SCL_PUGIXML
 bin_PROGRAMS = acol yanic ame_parse make_rst
-#xml_acol
+else
+bin_PROGRAMS = acol yanic ame_parse
+endif
 
 acol_SOURCES = acol.cpp
 
@@ -99,7 +102,9 @@ ame_parse_SOURCES = ame_parse.cpp
 
 yanic_SOURCES = yanic.cpp
 
+if O2SCL_PUGIXML
 make_rst_SOURCES = make_rst.cpp
+endif
 
 # We look first for the libraries in the distribution directory.
 # However, homebrew's superenv appears to move the libraries around,
@@ -115,8 +120,10 @@ ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
+if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
+endif
 
 else
 
@@ -136,7 +143,9 @@ if O2SCL_PYTHON
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+if O2SCL_PUGIXML
+make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB) -lpugixml
+endif
 
 else
 
@@ -144,7 +153,9 @@ else
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
-make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp
+if O2SCL_PUGIXML
+make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -lpugixml
+endif
 
 endif
 
@@ -156,7 +167,9 @@ if O2SCL_PYTHON
 acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
-make_rst_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
+if O2SCL_PUGIXML
+make_rst_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB) -lpugixml
+endif
 
 else
 
@@ -164,7 +177,9 @@ else
 acol_LDFLAGS = -L../src -L../src/hdf
 ame_parse_LDFLAGS = -L../src -L../src/hdf
 yanic_LDFLAGS = -L../src -L../src/hdf
-make_rst_LDFLAGS = -L../src -L../src/hdf
+if O2SCL_PUGIXML
+make_rst_LDFLAGS = -L../src -L../src/hdf -lpugixml
+endif
 
 endif
 
@@ -181,14 +196,18 @@ if O2SCL_PYTHON
 acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+if O2SCL_PUGIXML
+make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB) -lpugixml
+endif
 
 else
 
 acol_LDADD = -lo2scl -lgsl -lgslcblas
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas
 yanic_LDADD = -lo2scl -lgsl -lgslcblas
-make_rst_LDADD = -lo2scl -lgsl -lgslcblas
+if O2SCL_PUGIXML
+make_rst_LDADD = -lo2scl -lgsl -lgslcblas -lpugixml
+endif
 
 endif
 
