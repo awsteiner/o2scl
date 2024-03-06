@@ -286,17 +286,32 @@ namespace o2scl {
 
       The Hamiltonian is \f[
       H(q,p) = \frac{1}{2} p^{T} M^{-1} p - 
-      \log \left[ {\cal{L}} (q) \right]
+      \log {\cal{L}} (q) 
       \f]
       where \f$ M \f$ is the mass matrix and \f$ {\cal{L}} \f$ 
-      is the likelihood. This class presume the mass matrix
+      is the likelihood. (The \ref mcmc_para_base class presumes
+      flat prior distributions.) This class assumes the mass matrix
       is diagonal and then the inverse is stored in \ref inv_mass. 
 
       The step is then accepted with probability
       \f[
-      \mathrm{min}\left\{ 1,\frac{\exp -H_{\mathrm{new}}}
-      {\exp -H_{\mathrm{old}}} \right\}
+      \mathrm{min}\left\{ 1,\frac{\exp \left[-H_{\mathrm{new}}\right]}
+      {\exp \left[-H_{\mathrm{old}} \right]} \right\}
       \f]
+      Because the user-specified function, \f$ f \f$, computes 
+      \f$ \log {\cal{L}} (q) \f$,
+      the step should be accepted with 
+      probability
+      \f[
+      \mathrm{min} \left\{ 1,\exp \left[
+      - \sum_i^{N} p_{i,\mathrm{new}} ^2 \mu_i + 
+      f_{\mathrm{new}} +
+      \sum_i^{N} p_{i,\mathrm{old}} ^2 \mu_i 
+      -f_{\mathrm{old}}
+      \right] \right\}
+      \f]
+      where \f$ i \f$ is an index over \f$ N \f$ parameters
+      and \f$ \mu_i \f$ is the inverse mass for parameter \f$ i \f$. 
 
    */
   template<class func_t, class data_t,
@@ -1063,8 +1078,9 @@ namespace o2scl {
     */
     std::vector<ubvector> initial_points;
 
-    /** \brief The number of steps in parallel (default 100)
-     */
+    /** \brief The number of steps in parallel when affine invariant
+        sampling is not used (default 100)
+    */
     size_t steps_in_parallel;
 
     /** \brief Function outside parallel region
@@ -1706,20 +1722,23 @@ namespace o2scl {
       // The main section split into two parts, aff_inv=false and
       // aff_inv=true.
       
+      /*
+        
+        When aff_inv is false, there are three loops, a main loop
+        (managed by main_done), a parallel loop over threads, and then
+        an inner loop (managed by inner_done) of size
+        steps_in_parallel.
+        
+        When aff_inv is true, there is a main loop and two sequential
+        parallel loops over the number of threads.
+        
+      */
+      
       if (aff_inv==false) {
         
         // ---------------------------------------------------
         // Start of main loop over threads for aff_inv=false
 
-        /*
-         * When aff_inv is false, there are three loops, a main loop,
-         a parallel loop over threads, and then an inner loop
-         of size steps_in_parallel.
-         
-         * When aff_inv is true, there is a main loop and two sequential
-         parallel loops over the number of threads.
-        */
-        
         bool main_done=false;
         
         // Initialize the number of iterations for each thread
