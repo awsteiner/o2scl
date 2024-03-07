@@ -122,11 +122,12 @@ namespace o2scl {
   /** \brief Execute a python command and return the resulting string
       
       \verbatim
-      python_cmd_string("\"print(3+5)\"",result);
+      python_cmd_string("print(3+5)",result);
       \endverbatim
   */
   int python_cmd_string(std::string cmd, std::string &result,
-                        bool err_on_fail=true, int nmax=80);
+                        bool err_on_fail=true, int nmax=80,
+                        bool add_quotes=true);
   
   /** \brief Return the first line from the output of the shell
       command \c cmd up to \c nmax characters
