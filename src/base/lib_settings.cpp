@@ -106,6 +106,16 @@ int lib_settings_class::py_init_nothrow(int verbose) {
 }
 
 void lib_settings_class::py_init(int verbose) {
+
+  char *pe=getenv("O2SCL_PYTHON_EXE");
+  std::string python_exe;
+  if (pe) {
+    python_exe=pe;
+    // This conversion method works only for normal ASCII strings.
+    std::wstring pe2=std::wstring(python_exe.begin(),python_exe.end());
+    Py_SetProgramName(pe2.c_str());
+  }
+  
   int ret=py_init_nothrow(verbose);
   if (ret!=0) {
     O2SCL_ERR("Python initialization failed.",o2scl::exc_efailed);
