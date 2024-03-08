@@ -124,6 +124,16 @@ namespace o2scl {
       \verbatim
       python_cmd_string("print(3+5)",result);
       \endverbatim
+
+      Alternatively, the code,
+      \verbatim
+      python_cmd_string("import sys; print(sys.prefix)",prefix,true,200);
+      if (prefix[prefix.length()-1]=='\n') {
+      prefix=prefix.substr(0,prefix.length()-1);
+      }
+      \endverbatim
+      prints the current Python prefix. 
+
   */
   int python_cmd_string(std::string cmd, std::string &result,
                         bool err_on_fail=true, int nmax=80,

@@ -90,10 +90,22 @@ int funct_python::set_function(std::string module, std::string func) {
   }
   pModule=PyImport_Import(pName);
   if (pModule==0) {
-    O2SCL_ERR2("Load module failed in ",
-              "funct_python::set_function().",o2scl::exc_efailed);
+    
+    /// Get the Python path
+    std::string path;
+    python_cmd_string("import sys; print(sys.path)",path,true,800);
+    if (path[path.length()-1]=='\n') {
+      path=path.substr(0,path.length()-1);
+    }
+    std::cerr << "funct_python::set_function(): Load module "
+              << module << " failed." << std::endl;
+    std::cerr << "  python sys.path: " << path << std::endl;
+    
+    O2SCL_ERR2((((std::string)"Load module named ")+module+
+                " failed in ").c_str(),
+               "funct_python::set_function().",o2scl::exc_efailed);
   }
-
+  
   // Setup the arguments to the python function
   if (verbose>0) {
     cout << "Getting arguments for python function." << endl;

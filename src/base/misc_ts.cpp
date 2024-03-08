@@ -203,9 +203,13 @@ int main(void) {
   t.report();
 
   {
+    /// Get the 
     std::string prefix;
     python_cmd_string("import sys; print(sys.prefix)",prefix,true,200);
-    cout << "prefix: " << prefix << endl;
+    if (prefix[prefix.length()-1]=='\n') {
+      prefix=prefix.substr(0,prefix.length()-1);
+    }
+    cout << "prefix: x" << prefix << "x" << endl;
   }
   
   return 0;

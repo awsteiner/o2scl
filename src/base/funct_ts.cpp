@@ -73,7 +73,7 @@ int main(void) {
 #ifdef O2SCL_PYTHON
 
   o2scl_settings.py_init();
-  o2scl_settings.add_python_path("../../data/o2scl/python");
+  o2scl_settings.add_python_path("../../data/o2scl/python",3);
   {
     cout << "1." << endl;
     // We use the brackets to force the funct_python
