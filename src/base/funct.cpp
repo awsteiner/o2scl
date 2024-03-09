@@ -64,47 +64,13 @@ funct_python::~funct_python() {
   }
   Py_DECREF(pModule);
   if (verbose>0) {
-    cout << "Decref name." << endl;
-  }
-  Py_DECREF(pName);
-  if (verbose>0) {
     cout << "Done in funct_python destructor." << endl;
   }
 }
 
 int funct_python::set_function(std::string module, std::string func) {
-    
-  // Get the Unicode name of the user-specified module
-  if (verbose>0) {
-    cout << "Getting unicode for module name()." << endl;
-  }
-  pName=PyUnicode_FromString(module.c_str());
-  if (pName==0) {
-    O2SCL_ERR2("Create module name failed in ",
-              "funct_python::set_function().",o2scl::exc_efailed);
-  }
 
-  // Import the user-specified module
-  if (verbose>0) {
-    cout << "Importing module." << endl;
-  }
-  pModule=PyImport_Import(pName);
-  if (pModule==0) {
-    
-    /// Get the Python path
-    std::string path;
-    python_cmd_string("import sys; print(sys.path)",path,true,800);
-    if (path[path.length()-1]=='\n') {
-      path=path.substr(0,path.length()-1);
-    }
-    std::cerr << "funct_python::set_function(): Load module "
-              << module << " failed." << std::endl;
-    std::cerr << "  python sys.path: " << path << std::endl;
-    
-    O2SCL_ERR2((((std::string)"Load module named ")+module+
-                " failed in ").c_str(),
-               "funct_python::set_function().",o2scl::exc_efailed);
-  }
+  pModule=o2scl_settings.py_import_module(module,verbose);
   
   // Setup the arguments to the python function
   if (verbose>0) {
@@ -213,10 +179,6 @@ funct_python_method::~funct_python_method() {
   }
   Py_DECREF(pModule);
   if (verbose>0) {
-    cout << "Decref name." << endl;
-  }
-  Py_DECREF(pName);
-  if (verbose>0) {
     cout << "Done in funct_python_method destructor." << endl;
   }
 }
@@ -225,26 +187,8 @@ int funct_python_method::set_function(std::string module,
                                       std::string class_name,
                                       std::string func) {
     
-  // Get the Unicode name of the user-specified module
-  if (verbose>0) {
-    cout << "Getting unicode for module name()." << endl;
-  }
-  pName=PyUnicode_FromString(module.c_str());
-  if (pName==0) {
-    O2SCL_ERR2("Create module name failed in ",
-              "funct_python_method::set_function().",o2scl::exc_efailed);
-  }
-
-  // Import the user-specified module
-  if (verbose>0) {
-    cout << "Importing module." << endl;
-  }
-  pModule=PyImport_Import(pName);
-  if (pModule==0) {
-    O2SCL_ERR2("Load module failed in ",
-              "funct_python_method::set_function().",o2scl::exc_efailed);
-  }
-
+  pModule=o2scl_settings.py_import_module(module,verbose);
+  
   // Setup the arguments to the python function
   if (verbose>0) {
     cout << "Getting arguments for python function." << endl;

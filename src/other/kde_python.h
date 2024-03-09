@@ -54,8 +54,8 @@ namespace o2scl {
 
   protected:
 
-    /// Python unicode object containing function name
-    PyObject *p_name;
+    // Python unicode object containing function name
+    //PyObject *p_name;
     
     /// Python module containing function
     PyObject *p_module;
@@ -117,7 +117,7 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      p_name=0;
+      //p_name=0;
       
       n_params=0;
       n_points=0;
@@ -162,7 +162,7 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      p_name=0;
+      //p_name=0;
       
       n_params=0;
       n_points=0;
@@ -236,12 +236,14 @@ namespace o2scl {
         }
         Py_DECREF(p_module);
       }
+      /*
       if (p_name!=0) {
         if (this->verbose>1) {
           std::cout << "Decref name." << std::endl;
         }
         Py_DECREF(p_name);
       }
+      */
       
       p_ld_func=0;
       p_sample_func=0;
@@ -251,7 +253,7 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      p_name=0;
+      //p_name=0;
       
       n_params=0;
       n_points=0;
@@ -318,6 +320,9 @@ namespace o2scl {
       //void *vp=o2scl_settings.py_import_array();
       import_array();
 
+      p_module=o2scl_settings.py_import_module(module,this->verbose);
+
+      /*
       // Get the Unicode name of the user-specified module
       if (this->verbose>1) {
         std::cout << "Python version: "
@@ -344,6 +349,7 @@ namespace o2scl {
                    "kde_python::set_function().",
                    o2scl::exc_efailed);
       }
+      */
 
       if (class_name.length()>0) {
         if (this->verbose>1) {

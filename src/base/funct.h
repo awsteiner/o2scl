@@ -81,9 +81,6 @@ namespace o2scl {
 
   protected:
 
-    /// Python unicode object containing function name
-    PyObject *pName;
-    
     /// Python module containing function
     PyObject *pModule;
     
@@ -132,9 +129,6 @@ namespace o2scl {
 
   protected:
 
-    /// Python unicode object containing function name
-    PyObject *pName;
-    
     /// Python module containing function
     PyObject *pModule;
     

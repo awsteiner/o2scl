@@ -207,10 +207,20 @@ namespace o2scl {
     /// True if Python has been initialized (default false)
     bool py_initialized;
 
-    /// Initialize the python interface
+    /** \brief Initialize the python interface
+
+        This function uses the environment variable O2SCL_PYTHON_EXT
+        to set the Python name via the function Py_SetProgramName()
+        before the function Py_Initialize() is called.
+     */
     int py_init_nothrow(int verbose=0);
 
-    /// Initialize the python interface
+    /** \brief Initialize the python interface
+
+        This function uses the environment variable O2SCL_PYTHON_EXT
+        to set the Python name via the function Py_SetProgramName()
+        before the function Py_Initialize() is called.
+     */
     void py_init(int verbose=0);
     
     /// Finalize the python interface
@@ -230,6 +240,17 @@ namespace o2scl {
     
     /// Add path \c path to the python system search path
     void add_python_path(std::string path, int verbose=0);
+
+    /// Get the python path and place the path strings in \c vs.
+    void get_python_path(std::vector<std::string> &vs, int verbose=0);
+
+    /** \brief Import module named \c module
+
+        This function outputs some debugging information if the
+        module import fails. The function py_init() must be 
+        called first. 
+     */
+    PyObject *py_import_module(std::string module, int verbose=0);
     
   protected:
 

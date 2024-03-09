@@ -36,7 +36,7 @@ interpm_python::interpm_python() {
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
+  //p_name=0;
       
   n_params=0;
   n_outputs=0;
@@ -70,7 +70,7 @@ interpm_python::interpm_python(std::string module, std::string set_func,
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
+  //p_name=0;
       
   n_params=0;
   n_outputs=0;
@@ -135,12 +135,14 @@ void interpm_python::free() {
     }
     Py_DECREF(p_module);
   }
+  /*
   if (p_name!=0) {
     if (verbose>0) {
       std::cout << "Decref name." << std::endl;
     }
     Py_DECREF(p_name);
   }
+  */
 
   p_set_func=0;
   p_eval_func=0;
@@ -149,7 +151,7 @@ void interpm_python::free() {
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
+  //p_name=0;
       
   n_params=0;
   n_outputs=0;
@@ -202,6 +204,8 @@ void *interpm_python::set_function_internal
   n_points=n_dat;
   n_outputs=n_out;
       
+  p_module=o2scl_settings.py_import_module(module,this->verbose);
+  /*
   // Get the Unicode name of the user-specified module
   if (verbose>0) {
     std::cout << "Python version: "
@@ -228,6 +232,7 @@ void *interpm_python::set_function_internal
                "interpm_python::set_function().",
                o2scl::exc_efailed);
   }
+  */
 
   if (class_name.length()>0) {
     if (verbose>0) {
