@@ -27,7 +27,8 @@ using namespace o2scl;
 
 #ifdef O2SCL_PYTHON
 
-gmm_python::gmm_python() {
+// pdm_gmm;
+gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;
   p_components_func=0;
   p_set_args=0;
@@ -47,7 +48,8 @@ gmm_python::gmm_python() {
 gmm_python::gmm_python(std::string module, size_t n_comp,
                        const o2scl::tensor<> &params,
                        std::string options, 
-                       std::string class_name, int v) {
+                       std::string class_name, int v) :
+  pdm_gmm(new prob_dens_mdim_gmm<>) {
                     
   verbose=v;
 
@@ -548,20 +550,21 @@ void *gmm_python::get_python_internal(int &ret) {
   if (verbose>1) {
     std::cout << "  Obtaining output." << std::endl;
   }
+  
   double *ptr_w=(double *)PyArray_DATA((PyArrayObject *)get_w);
   double *ptr_m=(double *)PyArray_DATA((PyArrayObject *)get_m);
   double *ptr_c=(double *)PyArray_DATA((PyArrayObject *)get_c);
   double *ptr_p=(double *)PyArray_DATA((PyArrayObject *)get_p);
   double *ptr_pc=(double *)PyArray_DATA((PyArrayObject *)get_pc);
-  
-  pdm_gmm.weights.resize(n_components);
-  pdm_gmm.pdmg.resize(n_components);
+
+  pdm_gmm->weights.resize(n_components);
+  pdm_gmm->pdmg.resize(n_components);
   
   for(size_t i=0;i<n_components;i++) {
-    pdm_gmm.weights[i]=ptr_w[i];
+    pdm_gmm->weights[i]=ptr_w[i];
     if (verbose>1) {
       std::cout << "Component " << i << " with weight: "
-                << pdm_gmm.weights[i] << std::endl;
+                << pdm_gmm->weights[i] << std::endl;
     }
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -580,7 +583,7 @@ void *gmm_python::get_python_internal(int &ret) {
         }
       }
     }
-    //pdm_gmm.pdmg[i].verbose=2;
+    //pdm_gmm->pdmg[i].verbose=2;
     
     // AWS, 2/25/23: Unfortunately sklearn handles it's Gaussian
     // distributions a bit differently than O2scl. O2scl uses the
@@ -589,9 +592,9 @@ void *gmm_python::get_python_internal(int &ret) {
     // which is the inverse of the covariance matrix. We recompute the
     // Gaussians here, but there is probably a faster way.
     if (verbose>1) {
-      pdm_gmm.pdmg[i].verbose=1;
+      pdm_gmm->pdmg[i].verbose=1;
     }
-    pdm_gmm.pdmg[i].set_covar(n_params,mean,covar);
+    pdm_gmm->pdmg[i].set_covar(n_params,mean,covar);
 
     if (verbose>1) {
       cout << endl;

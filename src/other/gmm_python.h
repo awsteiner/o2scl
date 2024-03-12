@@ -92,7 +92,7 @@ namespace o2scl {
     size_t n_components;
 
     /// Underlying probability distribution
-    prob_dens_mdim_gmm<> pdm_gmm;
+    std::shared_ptr<prob_dens_mdim_gmm<>> pdm_gmm;
 
     /** \brief An internal version of \ref get_python which returns a 
         void * for the import_array() macro
@@ -163,7 +163,7 @@ namespace o2scl {
     /** \brief Get the underlying Gaussian mixture probability
         density
      */
-    const prob_dens_mdim_gmm<> &get_gmm() {
+    std::shared_ptr<prob_dens_mdim_gmm<>> get_gmm() {
       return pdm_gmm;
     }
     

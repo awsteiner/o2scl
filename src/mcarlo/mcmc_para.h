@@ -296,7 +296,7 @@ namespace o2scl {
       The step is then accepted with probability
       \f[
       \mathrm{min}\left\{ 1,\frac{\exp \left[-H_{\mathrm{new}}\right]}
-      {\exp \left[-H_{\mathrm{old}} \right]} \right\}
+     {\exp \left[-H_{\mathrm{old}} \right]} \right\}
       \f]
       Because the user-specified function, \f$ f \f$, computes 
       \f$ \log {\cal{L}} (q) \f$,
@@ -304,9 +304,9 @@ namespace o2scl {
       probability
       \f[
       \mathrm{min} \left\{ 1,\exp \left[
-      - \sum_i^{N} p_{i,\mathrm{new}} ^2 \mu_i + 
+      - \sum_i^{N} p_{i,\mathrm{new}} ^2 \mu_i/2 + 
       f_{\mathrm{new}} +
-      \sum_i^{N} p_{i,\mathrm{old}} ^2 \mu_i 
+      \sum_i^{N} p_{i,\mathrm{old}} ^2 \mu_i/2 
       -f_{\mathrm{old}}
       \right] \right\}
       \f]
@@ -421,6 +421,9 @@ namespace o2scl {
     
     /** \brief Automatically compute the gradient using
         finite-differencing
+
+        \note The potential energy is negative log f, so we
+        return the negative of the gradient of the log-likelihood. 
     */
     int grad_pot(size_t n_params, vec_t &x, func_t &f, 
                   vec_t &g, data_t &dat) {
@@ -468,7 +471,7 @@ namespace o2scl {
           x[i]-=h;
           
           //std::cout << "gp6." << std::endl;
-          g[i]=(fv2-fv1)/h;
+          g[i]=(fv1-fv2)/h;
           //std::cout << "gp7." << std::endl;
         }
       }
@@ -534,6 +537,8 @@ namespace o2scl {
       // handled separately.
 
       if (initial_grad_failed) {
+
+        std::cout << "igf: " << std::endl;
         
         for(size_t k=0;k<n_params;k++) {
           next[k]=current[k]+(r.random()*2.0-1.0)*
@@ -557,124 +562,130 @@ namespace o2scl {
           }
         }
         
-      } else {
-
-        // Otherwise, if the gradient succeeded, continue with the
-        // HMC method
-
-        // Initialize the momenta
+        return;
+        
+      }
+      
+      // Otherwise, if the gradient succeeded, continue with the
+      // HMC method
+      
+      // Initialize the momenta
+      for(size_t k=0;k<n_params;k++) {
+        mom[k]=pdg()*mom_step[k % mom_step.size()];
+      }
+      
+      //std::cout << "mom1: " << mom[0] << " " << mom[1] << std::endl;
+      
+      // Take a half step in the momenta using the gradient
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
+      }
+      
+      //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
+      //<< std::endl;
+      
+      for(size_t i=0;i<traj_length;i++) {
+        
+        // Take a full step in coordinate space
         for(size_t k=0;k<n_params;k++) {
-          mom[k]=pdg()*mom_step[k % mom_step.size()];
-        }
-
-        //std::cout << "mom1: " << mom[0] << " " << mom[1] << std::endl;
-
-        // Take a half step in the momenta using the gradient
-        for(size_t k=0;k<n_params;k++) {
-          mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
+          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
-        //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
-        //<< std::endl;
+        //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
         
-        for(size_t i=0;i<traj_length;i++) {
-
-          // Take a full step in coordinate space
-          for(size_t k=0;k<n_params;k++) {
-            next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
-          }
-
-          //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
-          
-          // Check that the coordinate space step has not taken us out
-          // of bounds
-          this->check_bounds(i_thread,n_params,next,low,high,
-                             func_ret,verbose);
-          if (func_ret==this->mcmc_skip) {
-            // If it is out of bounds, reject the step
-            accept=false;
-            return;
-          }
-          
-          // Try the user-specified gradient, if specified
-          if (grad_ptr!=0 && grad_ptr->size()>0) {
-            grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
-              (n_params,next,f,grad,dat);
-            if (grad_ret!=0) {
-              func_ret=grad_failed;
-              accept=false;
-              return;
-            }
-          }
-          // Try the finite-differencing gradient
-          grad_ret=grad_pot(n_params,next,f,grad,dat);
-          if (grad_ret!=0) {
-            func_ret=grad_failed;
-            accept=false;
-            return;
-          }
-
-          //std::cout << "grad2: " << grad[0] << " " << grad[1] << " "
-          //<< initial_grad_failed << std::endl;
-          
-          // Perform a momentum step, unless we're at the end
-          if (i<traj_length-1) {
-            
-            for(size_t k=0;k<n_params;k++) {
-              mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
-                grad[k];
-            }
-            
-            //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1]
-            //<< std::endl;
-            
-          }
-          
-        }
-        
-        // Perform the final half-step in momentum space
-        for(size_t k=0;k<n_params;k++) {
-          mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
-        }
-
-        //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1]
-        //<< std::endl;
-            
-        // Perform the final function evaluation
-        func_ret=f(n_params,next,w_next,dat);
-        if (func_ret!=0) {
+        // Check that the coordinate space step has not taken us out
+        // of bounds
+        this->check_bounds(i_thread,n_params,next,low,high,
+                           func_ret,verbose);
+        if (func_ret==this->mcmc_skip) {
+          // If it is out of bounds, reject the step
+          std::cout << "skip." << std::endl;
           accept=false;
           return;
         }
-
-        //std::cout << "next2: " << next[0] << " " << next[1] << " " << w_next
-        //<< std::endl;
         
-        // Evaluate the kinetic and potential energies
-        double pot_curr=-log(0.5)-w_current;
-        double pot_next=-log(0.5)-w_next;
-        
-        double kin_curr=0.0, kin_next=0.0;
-        for(size_t k=0;k<n_params;k++) {
-          kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
-          kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*
-            mom_next[k]/2.0;
+        // Try the user-specified gradient, if specified
+        if (grad_ptr!=0 && grad_ptr->size()>0) {
+          grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
+            (n_params,next,f,grad,dat);
+          if (grad_ret!=0) {
+            func_ret=grad_failed;
+            accept=false;
+            std::cout << "grad failed." << std::endl;
+            return;
+          }
+        }
+        // Try the finite-differencing gradient
+        grad_ret=grad_pot(n_params,next,f,grad,dat);
+        if (grad_ret!=0) {
+          func_ret=grad_failed;
+          std::cout << "grad failed 2." << std::endl;
+          accept=false;
+          return;
         }
         
-        double rx=r.random();
+        //std::cout << "grad2: " << grad[0] << " " << grad[1] << " "
+        //<< initial_grad_failed << std::endl;
         
-        // Metropolis algorithm
-        accept=false;
-        std::cout << "hmc0: " << rx << " "
-                  << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
-                  << pot_curr-pot_next+kin_curr-kin_next << std::endl;
-        if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
-          accept=true;
+        // Perform a momentum step, unless we're at the end
+        if (i<traj_length-1) {
+          
+          for(size_t k=0;k<n_params;k++) {
+            mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
+              grad[k];
+          }
+          
+          //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1]
+          //<< std::endl;
+          
         }
         
       }
-
-      std::cout << "hmc: " << next[0] << " " << next[1] << " "
+      
+      // Perform the final half-step in momentum space
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
+      }
+      
+      //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1]
+      //<< std::endl;
+      
+      // Perform the final function evaluation
+      func_ret=f(n_params,next,w_next,dat);
+      if (func_ret!=0) {
+        accept=false;
+        std::cout << "func failed." << std::endl;
+        return;
+      }
+      
+      //std::cout << "next2: " << next[0] << " " << next[1] << " " << w_next
+      //<< std::endl;
+      
+      // Evaluate the kinetic and potential energies
+      double pot_curr=-w_current;
+      double pot_next=-w_next;
+      
+      double kin_curr=0.0, kin_next=0.0;
+      for(size_t k=0;k<n_params;k++) {
+        kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
+        kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*
+          mom_next[k]/2.0;
+      }
+      
+      double rx=r.random();
+      
+      // Metropolis algorithm
+      accept=false;
+      std::cout << "hmc0: r,exp(alpha),alpha: " << rx << " "
+                << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
+                << pot_curr-pot_next+kin_curr-kin_next << " "
+                << pot_curr << " " << pot_next << " " << kin_curr << " "
+                << kin_next << std::endl;
+      if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
+        accept=true;
+      }
+      
+      std::cout << "hmc: x,y,w,f,accept: " << next[0] << " " << next[1] << " "
                 << w_next << " " << func_ret << " " << accept << std::endl;
       //exit(-1);
 

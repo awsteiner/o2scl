@@ -224,7 +224,9 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
                   
     gp.get_python();
 
-    pgmm_obj=gp.get_gmm();
+    // AWS, 3/12/24: This now uses a copy constructor, which I think
+    // is ok for now. 
+    pgmm_obj=*(gp.get_gmm());
     
     command_del(type);
     clear_obj();

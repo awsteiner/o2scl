@@ -2124,6 +2124,12 @@ namespace o2scl {
       \f$ and \f$ B \f$ are independent, i.e. \f$ P(A,B) = P(A) P(B)
       \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B \f$.
       This class handles that particular case.
+
+      \note This class stores a shared pointer of the underlying
+      probability distribution, so copies created by the copy 
+      constructor point to the same object. If this object is not
+      thread-safe, then copies of this class are also not
+      thread-safe.
       
       This class is experimental.
   */
@@ -2131,17 +2137,24 @@ namespace o2scl {
   class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
 
   protected:
-  
-    prob_dens_mdim<vec_t> &base;
+
+    std::shared_ptr<prob_dens_mdim<vec_t> > base;
+    
+    //prob_dens_mdim<vec_t> &base;
   
   public:
 
     /** \brief Create a conditional probability distribution
         based on the specified probability distribution
     */
-    prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
+    prob_cond_mdim_indep() : 
+      base(new prob_dens_mdim_gaussian<vec_t>) {
     }
-  
+    
+    prob_cond_mdim_indep(std::shared_ptr<prob_dens_mdim<vec_t>> out) : 
+      base(out) {
+    }
+    
     /// Copy constructor
     prob_cond_mdim_indep(const prob_cond_mdim_indep &pcmi) {
       base=pcmi.base;
@@ -2158,26 +2171,26 @@ namespace o2scl {
   
     /// The dimensionality
     virtual size_t dim() const {
-      return base.dim();
+      return base->dim();
     }
   
     /** \brief The conditional probability of x_A given x_B, 
         i.e. \f$ P(A|B) \f$
     */
     virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
-      return base.pdf(x_A);
+      return base->pdf(x_A);
     }
   
     /** \brief The log of the conditional probability of x_A given x_B
         i.e. \f$ \log [P(A|B)] \f$
     */
     virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-      return base.log_pdf(x_A);
+      return base->log_pdf(x_A);
     }
   
     /// Sample the distribution
     virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-      return base(x_A);
+      return (*base)(x_A);
     }
   
   };

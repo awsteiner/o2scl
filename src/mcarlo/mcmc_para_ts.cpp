@@ -76,6 +76,11 @@ public:
                   mcmc_stepper_hmc<point_hmc,std::vector<double>,
                                    ubvector>> mct2;
 
+  mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector,
+                  mcmc_stepper_mh<point_hmc,std::vector<double>,
+                                  ubvector,ubmatrix,
+                                  prob_cond_mdim_indep<>>> mct3;
+  
   int hmc_point(size_t n_params, const ubvector &u, double &log_wgt,
                 std::vector<double> &dat) {
     
@@ -98,8 +103,10 @@ public:
     dat[0]=x;
     dat[1]=y;
 
-    std::cout << "hmc_point: " << u[0] << " " << u[1] << " "
-              << log_wgt << " " << dat[0] << " " << dat[1] << std::endl;
+    if (false) {
+      std::cout << "hmc_point: " << u[0] << " " << u[1] << " "
+                << log_wgt << " " << dat[0] << " " << dat[1] << std::endl;
+    }
     
     return 0;
   }
@@ -359,121 +366,130 @@ int main(int argc, char *argv[]) {
     
   }
 
-  // ----------------------------------------------------------------
-  // Plain MCMC with a table
+  if (true) {
+    // ----------------------------------------------------------------
+    // Plain MCMC with a table
 
-  cout << "Plain MCMC with a table: " << endl;
+    cout << "Plain MCMC with a table: " << endl;
   
-  vector<string> pnames={"x","x2"};
-  vector<string> punits={"MeV","MeV^2"};
-  mpc.mct.set_names_units(pnames,punits);
+    vector<string> pnames={"x","x2"};
+    vector<string> punits={"MeV","MeV^2"};
+    mpc.mct.set_names_units(pnames,punits);
 
-  mpc.mct.aff_inv=false;
-  mpc.mct.step_fac=10.0;
-  mpc.mct.verbose=2;
-  mpc.mct.n_threads=n_threads;
-  mpc.mct.max_iters=N;
-  mpc.mct.prefix="mcmct";
-  mpc.mct.table_prealloc=N*n_threads;
-  mpc.mct.new_step=true;
-  mpc.mct.stepper.step_fac[0]=10.0;
+    mpc.mct.aff_inv=false;
+    mpc.mct.step_fac=10.0;
+    mpc.mct.verbose=2;
+    mpc.mct.n_threads=n_threads;
+    mpc.mct.max_iters=N;
+    mpc.mct.prefix="mcmct";
+    mpc.mct.table_prealloc=N*n_threads;
+    mpc.mct.new_step=true;
+    mpc.mct.stepper.step_fac[0]=10.0;
 
-  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
+    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
-  std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
   
-  mpc.sev_x.free();
-  mpc.sev_x2.free();
-  mpc.sev_x.set_blocks(40,1);
-  mpc.sev_x2.set_blocks(40,1);
-  for(size_t i=0;i<table->get_nlines();i++) {
-    for(size_t j=0;j<((size_t)(table->get("mult",i)+1.0e-8));j++) {
-      mpc.sev_x.add(table->get("x",i));
-      mpc.sev_x2.add(table->get("x2",i));
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    mpc.sev_x.set_blocks(40,1);
+    mpc.sev_x2.set_blocks(40,1);
+    for(size_t i=0;i<table->get_nlines();i++) {
+      for(size_t j=0;j<((size_t)(table->get("mult",i)+1.0e-8));j++) {
+        mpc.sev_x.add(table->get("x",i));
+        mpc.sev_x2.add(table->get("x2",i));
+      }
     }
-  }
   
-  mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
-  cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
-	      "plain table mcmc 1");
-  mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
-  cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[2],10.0*sqrt(avg_err*avg_err+err[2]*err[2]),
-	      "plain table mcmc 2");
+    mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
+    cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
+    tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
+                "plain table mcmc 1");
+    mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
+    cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
+    tm.test_rel(avg,res[2],10.0*sqrt(avg_err*avg_err+err[2]*err[2]),
+                "plain table mcmc 2");
   
-  std::vector<size_t> chain_sizes;
-  mpc.mct.get_chain_sizes(chain_sizes);
-  tm.test_gen(chain_sizes[0]==mpc.mct.n_accept[0]+1,"plain table size 0");
-  if (mpc.mct.n_threads>1) {
-    tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
-  }
-  
-  tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
-              "plain table n_iters 0");
-  if (mpc.mct.n_threads>1) {
-    tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
-		"plain table n_iters 1");
-  }
-  cout << endl;
-    
-  // ----------------------------------------------------------------
-  // Affine-invariant MCMC with a table
-  
-  cout << "Affine-invariant MCMC with a table: " << endl;
-  
-  mpc.mct.aff_inv=true;
-  mpc.mct.n_walk=10;
-  mpc.mct.step_fac=2.0;
-  mpc.mct.verbose=2;
-  mpc.mct.n_threads=n_threads;
-  mpc.mct.max_iters=N;
-  mpc.mct.prefix="mcmct_ai";
-  mpc.mct.table_prealloc=N*n_threads;
-  mpc.mct.new_step=false;
-
-  mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
-
-  // Get results
-  table=mpc.mct.get_table();
-
-  // Test results
-  mpc.sev_x.free();
-  mpc.sev_x2.free();
-  mpc.sev_x.set_blocks(40,1);
-  mpc.sev_x2.set_blocks(40,1);
-  for(size_t i=0;i<table->get_nlines();i++) {
-    for(size_t j=0;j<((size_t)(table->get("mult",i)+1.0e-8));j++) {
-      mpc.sev_x.add(table->get("x",i));
-      mpc.sev_x2.add(table->get("x2",i));
+    std::vector<size_t> chain_sizes;
+    mpc.mct.get_chain_sizes(chain_sizes);
+    tm.test_gen(chain_sizes[0]==mpc.mct.n_accept[0]+1,"plain table size 0");
+    if (mpc.mct.n_threads>1) {
+      tm.test_gen(chain_sizes[1]==mpc.mct.n_accept[1]+1,"plain table size 1");
     }
-  }
   
-  mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
-  cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
-	      "aff_inv table mcmc 1");
-  mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
-  cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
-  tm.test_rel(avg,res[2],4.0*sqrt(avg_err*avg_err+err[2]*err[2]),
-	      "aff_inv table mcmc 2");
-  
-  mpc.mct.get_chain_sizes(chain_sizes);
+    tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
+                "plain table n_iters 0");
+    if (mpc.mct.n_threads>1) {
+      tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
+                  "plain table n_iters 1");
+    }
+    cout << endl;
 
-  tm.test_gen(vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
-	      mpc.mct.n_accept[0],"accept chain 0");
-  if (n_threads>1) {
-    tm.test_gen(vector_sum_double(mpc.mct.n_walk*2,chain_sizes)-
-		vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
-		mpc.mct.n_accept[1],"accept chain 1");
   }
-  tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
-	      "aff_inv table n_iters 0");
-  if (n_threads>1) {
-    tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
-		"aff_inv table n_iters 1");
+
+  if (true) {
+  
+    // ----------------------------------------------------------------
+    // Affine-invariant MCMC with a table
+  
+    cout << "Affine-invariant MCMC with a table: " << endl;
+  
+    mpc.mct.aff_inv=true;
+    mpc.mct.n_walk=10;
+    mpc.mct.step_fac=2.0;
+    mpc.mct.verbose=2;
+    mpc.mct.n_threads=n_threads;
+    mpc.mct.max_iters=N;
+    mpc.mct.prefix="mcmct_ai";
+    mpc.mct.table_prealloc=N*n_threads;
+    mpc.mct.new_step=false;
+
+    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
+
+    // Get results
+    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
+    table=mpc.mct.get_table();
+
+    // Test results
+    mpc.sev_x.free();
+    mpc.sev_x2.free();
+    mpc.sev_x.set_blocks(40,1);
+    mpc.sev_x2.set_blocks(40,1);
+    for(size_t i=0;i<table->get_nlines();i++) {
+      for(size_t j=0;j<((size_t)(table->get("mult",i)+1.0e-8));j++) {
+        mpc.sev_x.add(table->get("x",i));
+        mpc.sev_x2.add(table->get("x2",i));
+      }
+    }
+  
+    mpc.sev_x.current_avg_stats(avg,std,avg_err,i1,i2);
+    cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
+    tm.test_rel(avg,res[1],100.0*sqrt(avg_err*avg_err+err[1]*err[1]),
+                "aff_inv table mcmc 1");
+    mpc.sev_x2.current_avg_stats(avg,std,avg_err,i1,i2);
+    cout << avg << " " << avg_err << " " << i1 << " " << i2 << endl;
+    tm.test_rel(avg,res[2],4.0*sqrt(avg_err*avg_err+err[2]*err[2]),
+                "aff_inv table mcmc 2");
+  
+    std::vector<size_t> chain_sizes;
+    mpc.mct.get_chain_sizes(chain_sizes);
+
+    tm.test_gen(vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
+                mpc.mct.n_accept[0],"accept chain 0");
+    if (n_threads>1) {
+      tm.test_gen(vector_sum_double(mpc.mct.n_walk*2,chain_sizes)-
+                  vector_sum_double(mpc.mct.n_walk,chain_sizes)-mpc.mct.n_walk==
+                  mpc.mct.n_accept[1],"accept chain 1");
+    }
+    tm.test_gen(mpc.mct.n_accept[0]+mpc.mct.n_reject[0]==mpc.mct.max_iters,
+                "aff_inv table n_iters 0");
+    if (n_threads>1) {
+      tm.test_gen(mpc.mct.n_accept[1]+mpc.mct.n_reject[1]==mpc.mct.max_iters,
+                  "aff_inv table n_iters 1");
+    }
+    cout << endl;
+
   }
-  cout << endl;
 
   if (true) {
     
@@ -613,7 +629,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
     // Get results
-    table=mpc.mct.get_table();
+    std::shared_ptr<o2scl::table_units<> > table=mpc.mct.get_table();
     std::vector<size_t> chain_sizes2;
     mpc.mct.get_chain_sizes(chain_sizes2);
 
@@ -622,12 +638,12 @@ int main(int argc, char *argv[]) {
     for(size_t it=0;it<n_threads;it++) {
       size_t sum1=0, sum2=0;
       for(size_t i=0;i<10;i++) {
-	sum1+=chain_sizes[it*10+i];
+	sum1+=chain_sizes2[it*10+i];
       }
       for(size_t i=0;i<10;i++) {
 	sum2+=chain_sizes2[it*10+i];
       }
-      cout << sum1 << " " << sum2 << " " << sum2-sum1 << " " 
+      cout << sum1 << " x " << sum2 << " " << sum2-sum1 << " " 
 	   << mpc.mct.n_accept[it] << " "
 	   << mpc.mct.n_reject[it] << endl;
       //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
@@ -635,6 +651,32 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
+  if (true) {
+    
+    // ----------------------------------------------------------------
+    // Independence MH with a KDE
+    
+    cout << "Independence MH with a KDE: " << endl;
+
+    vector<string> pnames_imh={"x","x2"};
+    vector<string> punits_imh={"MeV","MeV^2"};
+    
+    mpc.mct3.set_names_units(pnames_imh,punits_imh);
+
+    vector<vector<double>> data_vec_imh(2);
+    data_vec_imh[0].resize(2);
+    data_vec_imh[1].resize(2);
+
+    mpc.mct3.aff_inv=false;
+    mpc.mct3.verbose=3;
+    mpc.mct3.n_threads=1;
+    mpc.mct3.max_iters=200;
+    mpc.mct3.prefix="imh_kde";
+    mpc.mct3.new_step=true;
+    
+  }
+
+  
   if (true) {
     
     // ----------------------------------------------------------------
