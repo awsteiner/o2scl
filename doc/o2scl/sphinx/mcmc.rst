@@ -63,3 +63,9 @@ MCMC example
 .. literalinclude:: ../../../examples/ex_mcmc.cpp
    :language: c++		    
    :start-after: sphinx-example-start
+
+.. image:: ../../../examples/plot/ex_mcmc_plot.png
+   :width: 60%	   
+   :alt: An MCMC simulation of exp(-x*x)*(sin(x-1.4)+1.0)
+
+                 

@@ -41,7 +41,7 @@
 #include <o2scl/mmin_bfgs2.h>
 #include <o2scl/diff_evo.h>
 #include <o2scl/diff_evo_adapt.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 
 using namespace std;
 using namespace o2scl;
@@ -57,15 +57,16 @@ public:
     rg.clock_seed();
   }
 
-  // To output function evaluations to a file
+  /// To output function evaluations to a file
   ofstream fout;
 
-  // Parameter of the quadratic
+  /// Parameter of the quadratic
   double param;
-  
-  rng_gsl rg;
 
-  // Updated spring function
+  /// Random number generator
+  rng<> rg;
+
+  /// Updated spring function
   double spring_two(size_t nv, const ubvector &x) {
     double theta=atan2(x[1],x[0]);
     double r=hypot(x[0],x[1]);

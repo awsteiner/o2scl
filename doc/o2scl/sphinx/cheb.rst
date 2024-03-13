@@ -34,7 +34,8 @@ indistinguishable from the exact result on this scale.
 
 .. image:: ../../../examples/plot/ex_chebapp_plot.png
    :width: 60%	   
-   :alt: alt text
+   :alt: A plot of the exact function, sin(1/(x+0.08)), and its
+         25th and 50th order Chebyshev approximations.
 
 .. literalinclude:: ../../../examples/ex_chebapp.cpp
    :language: c++		    

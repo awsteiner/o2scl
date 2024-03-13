@@ -35,7 +35,7 @@
 #include <gsl/gsl_randist.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hist.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/expval.h>
 #include <o2scl/inte_qag_gsl.h>
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   static const size_t N=1000;
   
   // The random number generator
-  rng_gsl gr;
+  rng<> gr;
   if (argc>=2) {
     // We have to use the full o2scl::stoi() specification to 
     // avoid confusion with std::stoi()

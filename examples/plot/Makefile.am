@@ -199,6 +199,16 @@ ex_fptr_plot:
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
+ex_mcmc_plot:
+	o2graph -backend Agg -read ../ex_mcmc.o2 \
+		-hist-plot x bins=20 -create table x "grid:-5,5,0.1" \
+		-function "170*exp(-x^2)*(sin(x-1.4)+1)" y \
+		-plot x y "lw=2" -xtitle "x" -ytitle "y" \
+		-save ex_mcmc_plot_new.png
+	convert +append ex_mcmc_plot.png ex_mcmc_plot_new.png \
+		temp.png
+	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
+
 LEG_X1 = 2.0
 LEG_X2 = 2.35
 LEG_X3 = 2.45

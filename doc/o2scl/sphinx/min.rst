@@ -104,11 +104,13 @@ later to the GSL library minimization test functions.
 
 .. image:: ../../../examples/plot/ex_mmin_plot.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The trajectories in the x-z plane that several minimizers
+         take in minimizing a spring function.
 	 
 .. image:: ../../../examples/plot/ex_mmin_plot2.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The trajectories in the x-y plane that several minimizers
+         take in minimizing a spring function.
 
 Minimizer fixing variables example
 ----------------------------------

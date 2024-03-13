@@ -73,7 +73,8 @@ where :math:`J_1(0) = 0` and :math:`J_1^{\prime}(0) = 1/2`.
 
 .. image:: ../../../examples/plot/ex_ode_bessel.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The error in the integration of the Bessel function for
+         several different non-adaptive ODE steppers
 
 Note that with a Bessel function and a fixed step size, the
 Prince-Dormand stepper (even though of higher order than the
@@ -91,17 +92,20 @@ This example solves for the Airy function of the first kind,
 
 .. image:: ../../../examples/plot/ex_ode_airy.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The error in the integration of the Airy function for
+         several different non-adaptive ODE steppers
 
 Here the higher order stepper is more accurate.
 
 .. image:: ../../../examples/plot/ex_ode_bessel2.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The error in the integration of the Bessel function for
+         different adaptive ODE steppers
 
 .. image:: ../../../examples/plot/ex_ode_bessel3.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The error in the integration of the Bessel function for
+         a high-level adaptive ODE stepper
 
 Ordinary differential equations example source code
 ---------------------------------------------------
@@ -137,7 +141,8 @@ relative error on the adaptive stepper is orders of magnitude larger.
 
 .. image:: ../../../examples/plot/ex_stiff.png
    :width: 60%	   
-   :alt: alt text
+   :alt: The integration error in a stiff problem for stiff and
+         non-stiff solvers.
 
 .. literalinclude:: ../../../examples/ex_stiff.cpp
    :language: c++		    
