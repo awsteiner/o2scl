@@ -433,7 +433,7 @@ namespace o2scl {
       if (auto_grad.size()==0) {
         O2SCL_ERR("Auto grad size 0.",o2scl::exc_einval);
       }
-      
+
       // If the user can compute the gradients, then we end early.
       bool no_auto=true;
       //std::cout << "gp1: " << n_params << " " << auto_grad.size()
@@ -499,8 +499,8 @@ namespace o2scl {
       // Initialize func_ret to success
       func_ret=success;
       
-      //std::cout << "Here: " << current[0] << " " << current[1] << " "
-      //                << w_current << std::endl;
+      std::cout << "curr1: " << current[0] << " " << current[1] << " "
+                << w_current << std::endl;
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
@@ -525,8 +525,8 @@ namespace o2scl {
         }
       }
 
-      //std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
-      //<< initial_grad_failed << std::endl;
+      std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
+                << initial_grad_failed << std::endl;
       
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
@@ -574,15 +574,16 @@ namespace o2scl {
         mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
       
-      //std::cout << "mom1: " << mom[0] << " " << mom[1] << std::endl;
+      std::cout << "mom1: " << mom[0] << " " << mom[1] << " "
+                << mom_step[0] << " " << mom_step.size() << std::endl;
       
       // Take a half step in the momenta using the gradient
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
-      //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
-      //<< std::endl;
+      std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
+                << std::endl;
       
       for(size_t i=0;i<traj_length;i++) {
         
@@ -591,7 +592,8 @@ namespace o2scl {
           next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
-        //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
+        std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
+        exit(-1);
         
         // Check that the coordinate space step has not taken us out
         // of bounds

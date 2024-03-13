@@ -98,7 +98,13 @@ public:
     double z=2.0*rho*shift_x*shift_y/(width_x*width_y);
     double r=1.0-rho*rho;
     double c=2.0*o2scl_const::pi*width_x*width_y*sqrt(r);
-
+    
+    cout.precision(10);
+    cout << "bp: " << u[0] << " " << u[1] << " "
+         << z << " " << r << " " << c << " "
+         << 1.0/c*exp(-0.5*(x+y-z)/r) << std::endl;
+    cout.precision(6);
+    
     log_wgt=log(1.0/c*exp(-0.5*(x+y-z)/r));
 
     dat[0]=x;
@@ -280,7 +286,7 @@ int main(int argc, char *argv[]) {
   // ----------------------------------------------------------------
   // Plain MCMC
 
-  if (true) {
+  if (false) {
     
     cout << "Plain MCMC: " << endl;
 
@@ -326,7 +332,7 @@ int main(int argc, char *argv[]) {
   // ----------------------------------------------------------------
   // Affine-invariant MCMC
 
-  if (true) {
+  if (false) {
     cout << "Affine-invariant MCMC: " << endl;
 
     mpc.sev_x.set_blocks(40,1);
@@ -373,7 +379,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  if (true) {
+  if (false) {
     // ----------------------------------------------------------------
     // Plain MCMC with a table
 
@@ -434,7 +440,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (true) {
+  if (false) {
   
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table
@@ -498,7 +504,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (true) {
+  if (false) {
     
     // ----------------------------------------------------------------
     // Plain MCMC with a table and a flat distribution
@@ -555,7 +561,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (true) {
+  if (false) {
     
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and a flat distribution
@@ -610,7 +616,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
-  if (true) {
+  if (false) {
     
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and previously read results
@@ -662,7 +668,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef O2SCL_PYTHON
   
-  if (true) {
+  if (false) {
 
     //n_threads=1;
     
@@ -684,7 +690,7 @@ int main(int argc, char *argv[]) {
     mpc.mct3.verbose=3;
     mpc.mct3.n_threads=1;
     mpc.mct3.max_iters=200;
-    mpc.mct3.prefix="imh_kde";
+    mpc.mct3.prefix="mcmct_imh_kde";
     mpc.mct3.new_step=true;
 
     // Read the previous table
@@ -714,24 +720,18 @@ int main(int argc, char *argv[]) {
     
     vector<double> weights;
     std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-    std::cout << "4." << std::endl;
     kp->set_function("o2sclpy",tin,
                      weights,"verbose=0","kde_scipy");
     
-    std::cout << "5." << std::endl;
     mpc.mct3.stepper.proposal[0].set_base(kp);
-    std::cout << "6." << std::endl;
     
     // Read initial points from the file
-    std::cout << "7." << std::endl;
     mpc.mct3.initial_points_file_last("mcmct_0_out",1);
-    std::cout << "8." << std::endl;
     
     // Run MCMC
     mpc.mct3.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
     cout << endl;
-    exit(-1);
     
   }
   
