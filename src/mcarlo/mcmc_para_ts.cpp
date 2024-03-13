@@ -27,6 +27,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/expval.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/kde_python.h>
 
 using namespace std;
 using namespace o2scl;
@@ -46,13 +47,13 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 typedef std::function<int(size_t,const ubvector &,double &,
-			  std::array<double,1> &)> point_funct;
+			  std::vector<double> &)> point_funct;
 
 typedef std::function<int(const ubvector &,double,size_t,int,bool,
-			  std::array<double,1> &)> measure_funct;
+			  std::vector<double> &)> measure_funct;
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
-			  std::array<double,1> &)> fill_funct;
+			  std::vector<double> &)> fill_funct;
 
 typedef std::function<int(size_t,const ubvector &,double &,
 			  std::vector<double> &)> point_hmc;
@@ -66,10 +67,10 @@ public:
 
   int count;
   
-  mcmc_para_base<point_funct,measure_funct,std::array<double,1>,
+  mcmc_para_base<point_funct,measure_funct,std::vector<double>,
                  ubvector> mc;
   
-  mcmc_para_table<point_funct,fill_funct,std::array<double,1>,
+  mcmc_para_table<point_funct,fill_funct,std::vector<double>,
                   ubvector> mct;
   
   mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector,
@@ -131,14 +132,14 @@ public:
   double last_dat;
   
   int gauss(size_t nv, const ubvector &pars, double &ret,
-	    std::array<double,1> &dat) {
+	    std::vector<double> &dat) {
     dat[0]=pars[0]*pars[0];
     ret=-pars[0]*pars[0]/2.0;
     return o2scl::success;
   }
 
   int flat(size_t nv, const ubvector &pars, double &ret,
-	   std::array<double,1> &dat) {
+	   std::vector<double> &dat) {
     dat[0]=pars[0]*pars[0];
     ret=0.0;
     return o2scl::success;
@@ -157,7 +158,7 @@ public:
   }
 
   int measure(const ubvector &pars, double log_weight, size_t ix,
-	      int ret, bool new_meas, std::array<double,1> &dat) {
+	      int ret, bool new_meas, std::vector<double> &dat) {
     if (new_meas) {
       sev_x.add(pars[0]);
       sev_x2.add(dat[0]);
@@ -171,7 +172,7 @@ public:
   }
 
   int fill_func(const ubvector &pars, double log_weight,
-		std::vector<double> &line, std::array<double,1> &dat) {
+		std::vector<double> &line, std::vector<double> &dat) {
     line.push_back(dat[0]);
     return 0;
   }
@@ -183,7 +184,7 @@ int main(int argc, char *argv[]) {
   cout.setf(ios::scientific);
 
   test_mgr tm;
-  tm.set_output_level(2);
+  tm.set_output_level(1);
 
   mcmc_para_class mpc;
   
@@ -223,22 +224,22 @@ int main(int argc, char *argv[]) {
   // Set up MCMC
   point_funct gauss_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,1> &)>(&mcmc_para_class::gauss),
+		     std::vector<double> &)>(&mcmc_para_class::gauss),
      &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   point_funct flat_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,1> &)>(&mcmc_para_class::flat),
+		     std::vector<double> &)>(&mcmc_para_class::flat),
      &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   fill_funct ff=std::bind
     (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
-		     std::array<double,1> &)>(&mcmc_para_class::fill_func),
+		     std::vector<double> &)>(&mcmc_para_class::fill_func),
      &mpc,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   measure_funct mf=std::bind
     (std::mem_fn<int(const ubvector &,double,size_t,int,bool,
-		     std::array<double,1> &)>
+		     std::vector<double> &)>
      (&mcmc_para_class::measure),&mpc,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4,std::placeholders::_5,std::placeholders::_6);
@@ -253,8 +254,14 @@ int main(int argc, char *argv[]) {
   vector<measure_funct> meas_vec(n_threads);
   vector<fill_funct> fill_vec(n_threads);
 
-  // Enough for 10 walkers, 2 threads, times 2
-  vector<array<double,1> > data_vec(40);
+  // Enough memory for 10 walkers and 2 threads, times 2
+  vector<std::vector<double> > data_vec(40);
+  for(size_t j=0;j<40;j++) {
+    // We need enough space for 2 outputs because the hmc_point()
+    // function has two outputs
+    data_vec[j].resize(2);
+  }
+  
   for(size_t i=0;i<n_threads;i++) {
     gauss_vec[i]=gauss_func;
     flat_vec[i]=flat_func;
@@ -599,10 +606,11 @@ int main(int argc, char *argv[]) {
       cout << vavg[j] << endl;
       tm.test_rel(vavg[j],vavg[0],sqrt(vavg[0]+vavg[j]),"flat dist");
     }
-
+    
+    cout << endl;
   }
 
-  if (false) {
+  if (true) {
     
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and previously read results
@@ -648,15 +656,20 @@ int main(int argc, char *argv[]) {
 	   << mpc.mct.n_reject[it] << endl;
       //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
     }
+    
     cout << endl;
   }
 
+#ifdef O2SCL_PYTHON
+  
   if (true) {
+
+    //n_threads=1;
     
     // ----------------------------------------------------------------
     // Independence MH with a KDE
     
-    cout << "Independence MH with a KDE: " << endl;
+    cout << "Independence MH with a KDE:" << endl;
 
     vector<string> pnames_imh={"x","x2"};
     vector<string> punits_imh={"MeV","MeV^2"};
@@ -673,9 +686,56 @@ int main(int argc, char *argv[]) {
     mpc.mct3.max_iters=200;
     mpc.mct3.prefix="imh_kde";
     mpc.mct3.new_step=true;
+
+    // Read the previous table
+    table_units<> last;
+    hdf_file hfx;
+    hfx.open("mcmct_0_out");
+    hdf_input(hfx,last);
+    hfx.close();
+    
+    // Train the KDE with the file, creating a new KDE object for each
+    // thread, and then setting that KDE as the base distribution for
+    // the independent conditional probability. 
+    mpc.mct3.stepper.proposal.resize(1);
+    
+    // Copy the table data to a tensor for use in kde_python.
+    // We need a copy for each thread because kde_python takes
+    // over the tensor data.
+    tensor<> tin;
+    vector<size_t> in_size={last.get_nlines(),1};
+    tin.resize(2,in_size);
+    
+    for(size_t i=0;i<last.get_nlines();i++) {
+      vector<size_t> ix;
+      ix={i,0};
+      tin.get(ix)=last.get("x",i);
+    }
+    
+    vector<double> weights;
+    std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
+    std::cout << "4." << std::endl;
+    kp->set_function("o2sclpy",tin,
+                     weights,"verbose=0","kde_scipy");
+    
+    std::cout << "5." << std::endl;
+    mpc.mct3.stepper.proposal[0].set_base(kp);
+    std::cout << "6." << std::endl;
+    
+    // Read initial points from the file
+    std::cout << "7." << std::endl;
+    mpc.mct3.initial_points_file_last("mcmct_0_out",1);
+    std::cout << "8." << std::endl;
+    
+    // Run MCMC
+    mpc.mct3.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
+
+    cout << endl;
+    exit(-1);
     
   }
-
+  
+#endif
   
   if (true) {
     
@@ -701,7 +761,7 @@ int main(int argc, char *argv[]) {
     mpc.mct2.verbose=3;
     mpc.mct2.n_threads=1;
     mpc.mct2.max_iters=200;
-    mpc.mct2.prefix="hmc";
+    mpc.mct2.prefix="mcmct_hmc";
     mpc.mct2.new_step=true;
     mpc.mct2.stepper.mom_step[0]=0.18;
     mpc.mct2.stepper.inv_mass[0]=0.1;

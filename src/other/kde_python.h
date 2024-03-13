@@ -126,7 +126,6 @@ namespace o2scl {
       set_func="set_data_str";
       sample_func="sample";
       ld_func="log_pdf";
-
     }
 
     /// The name of the set function (default "set_data_str")
@@ -236,14 +235,6 @@ namespace o2scl {
         }
         Py_DECREF(p_module);
       }
-      /*
-      if (p_name!=0) {
-        if (this->verbose>1) {
-          std::cout << "Decref name." << std::endl;
-        }
-        Py_DECREF(p_name);
-      }
-      */
       
       p_ld_func=0;
       p_sample_func=0;
@@ -253,7 +244,6 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      //p_name=0;
       
       n_params=0;
       n_points=0;
@@ -300,8 +290,11 @@ namespace o2scl {
       free();
       
       if (params.get_rank()!=2) {
-        O2SCL_ERR2("Invalid rank for input tensors in ",
-                   "kde_python().",o2scl::exc_einval);
+        O2SCL_ERR((((std::string)"Invalid rank, ")+
+                   o2scl::szttos(params.get_rank())+
+                   " (should be 2), for input tensors in "+
+                   "kde_python::set_function_internal().").c_str(),
+                  o2scl::exc_einval);
       }
       
       n_params=params.get_size(1);
@@ -321,35 +314,6 @@ namespace o2scl {
       import_array();
 
       p_module=o2scl_settings.py_import_module(module,this->verbose);
-
-      /*
-      // Get the Unicode name of the user-specified module
-      if (this->verbose>1) {
-        std::cout << "Python version: "
-                  << o2scl_settings.py_version() << std::endl;
-        std::cout << "Staring kde_python::set_function()."
-                  << std::endl;
-        std::cout << "  Getting unicode for module named "
-                  << module << std::endl;
-      }
-      p_name=PyUnicode_FromString(module.c_str());
-      if (p_name==0) {
-        O2SCL_ERR2("Create module name failed in ",
-                   "kde_python::set_function().",
-                   o2scl::exc_efailed);
-      }
-      
-      // Import the user-specified module
-      if (this->verbose>1) {
-        std::cout << "  Importing module " << module << std::endl;
-      }
-      p_module=PyImport_Import(p_name);
-      if (p_module==0) {
-        O2SCL_ERR2("Load module failed in ",
-                   "kde_python::set_function().",
-                   o2scl::exc_efailed);
-      }
-      */
 
       if (class_name.length()>0) {
         if (this->verbose>1) {

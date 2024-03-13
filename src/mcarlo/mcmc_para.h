@@ -225,7 +225,7 @@ namespace o2scl {
     virtual const char *step_type() { return "MH"; }
     
     /** \brief The proposal distribution
-    */
+     */
     std::vector<prop_t> proposal;
 
     mcmc_stepper_mh() {

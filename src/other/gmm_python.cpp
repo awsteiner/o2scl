@@ -27,7 +27,6 @@ using namespace o2scl;
 
 #ifdef O2SCL_PYTHON
 
-// pdm_gmm;
 gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;
   p_components_func=0;
@@ -36,7 +35,6 @@ gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_instance=0;
   p_class=0;
   p_module=0;
-  //p_name=0;
       
   n_params=0;
   n_points=0;
@@ -199,35 +197,6 @@ void *gmm_python::set_function_internal
   }
       
   p_module=o2scl_settings.py_import_module(module,this->verbose);
-  /*
-  // Get the Unicode name of the user-specified module
-  if (verbose>1) {
-    std::cout << "Python version: "
-              << o2scl_settings.py_version() << std::endl;
-    std::cout << "Staring gmm_python::set_function()."
-              << std::endl;
-    std::cout << "  Getting unicode for module named "
-              << module << std::endl;
-  }
-  p_name=PyUnicode_FromString(module.c_str());
-  if (p_name==0) {
-    O2SCL_ERR2("Create module name failed in ",
-               "gmm_python::set_function().",
-               o2scl::exc_efailed);
-  }
-      
-  // Import the user-specified module
-  if (verbose>1) {
-    std::cout << "  Importing module." << std::endl;
-  }
-  p_module=PyImport_Import(p_name);
-  if (p_module==0) {
-    O2SCL_ERR2("Load module failed in ",
-               "gmm_python::set_function().",
-               o2scl::exc_efailed);
-  }
-  */
-
   if (class_name.length()>0) {
     if (verbose>1) {
       std::cout << "  Obtaining python class." << std::endl;

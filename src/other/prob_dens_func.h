@@ -1696,7 +1696,7 @@ namespace o2scl {
 
   public:
 
-    /** \brief Maximum number of samples
+    /** \brief Maximum number of samples (default \f$ 10^5 \f$)
      */
     size_t samp_max;
   
@@ -1996,8 +1996,9 @@ namespace o2scl {
     }
   
     /// Copy constructor with operator=
-    prob_cond_mdim_fixed_step &operator=(const prob_cond_mdim_fixed_step &pcmfs)
-    {
+    prob_cond_mdim_fixed_step &operator=
+    (const prob_cond_mdim_fixed_step &pcmfs) {
+
       // Check for self-assignment
       if (this!=&pcmfs) {
         u_step=pcmfs.u_step;
@@ -2138,19 +2139,21 @@ namespace o2scl {
 
   protected:
 
+    /// The underlying probability distribution
     std::shared_ptr<prob_dens_mdim<vec_t> > base;
     
-    //prob_dens_mdim<vec_t> &base;
-  
   public:
 
     /** \brief Create a conditional probability distribution
-        based on the specified probability distribution
+        based on a default multidimensional Gaussian
     */
     prob_cond_mdim_indep() : 
       base(new prob_dens_mdim_gaussian<vec_t>) {
     }
     
+    /** \brief Create a conditional probability distribution
+        based on the specified probability distribution
+    */
     prob_cond_mdim_indep(std::shared_ptr<prob_dens_mdim<vec_t>> out) : 
       base(out) {
     }
@@ -2167,6 +2170,12 @@ namespace o2scl {
         base=pcmi.base;
       }
       return *this;
+    }
+
+    /// Set the base probability distribution
+    void set_base(std::shared_ptr<prob_dens_mdim<vec_t>> b) {
+      base=b;
+      return;
     }
   
     /// The dimensionality
@@ -2185,13 +2194,17 @@ namespace o2scl {
         i.e. \f$ \log [P(A|B)] \f$
     */
     virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-      return base->log_pdf(x_A);
+      double r=base->log_pdf(x_A);
+      return r;
     }
   
     /// Sample the distribution
     virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-      return (*base)(x_A);
+      (*base)(x_A);
+      return;
     }
+
+    virtual const char *type() { return "prob_cons_mdim_indep"; }
   
   };
   
