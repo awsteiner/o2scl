@@ -71,16 +71,24 @@ BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
 #	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 #	bm_part.scr bm_part2.scr 
 # bm_mmin.scr
-EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
+
+EXAMPLE_BASE = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nstar_cold.scr ex_mroot.scr ex_mmin.scr ex_eos_had_apr.scr \
 	ex_inte.scr ex_deriv.scr ex_part.scr ex_ode.scr ex_anneal.scr \
 	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_eos_crust.scr \
-	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr\
+	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
 	ex_interp.scr ex_eos_gibbs.scr ex_mcmc_kde.scr \
 	ex_fermion_summ.scr ex_lambda.scr
+
+if O2SCL_PYTHON
+EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr
+else
+EXAMPLE_PRGS = $(EXAMPLE_BASE)
+endif
+
 
 # ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr ex_methast.scr
 
@@ -147,7 +155,7 @@ o2scl-examples-doc:
 # o2scl_examples target.
 # -------------------------------------------------------------
 
-EXTRA_PROGRAMS = \
+EXTRA_BASE = \
 	ex_anneal \
 	ex_chebapp \
 	ex_conmin \
@@ -172,7 +180,6 @@ EXTRA_PROGRAMS = \
 	ex_lambda \
 	ex_mcarlo \
 	ex_mcmc \
-	ex_mcmc_kde \
 	ex_mmin \
 	ex_mmin_fix \
 	ex_mroot \
@@ -193,6 +200,13 @@ EXTRA_PROGRAMS = \
 	bm_min \
 	bm_poly \
 	bm_polylog
+
+if O2SCL_PYTHON
+EXTRA_PROGRAMS = $(EXTRA_BASE) ex_mcmc_kde
+else
+EXTRA_PROGRAMS = $(EXTRA_BASE)
+endif
+
 
 if O2SCL_PYTHON
 

@@ -898,9 +898,6 @@ namespace o2scl {
 
   public:
 
-    /// If true, use the new stepper
-    bool new_step;
-
     /// The stepper
     stepper_t stepper;
     
@@ -971,9 +968,6 @@ namespace o2scl {
     /// Stepsize factor (default 10.0)
     double step_fac;
   
-    /// Optionally specify step sizes for each parameter
-    std::vector<double> step_vec;
-
     /** \brief If true, couple the walkers across threads during
         affine-invariant sampling (default false)
     */
@@ -1034,7 +1028,6 @@ namespace o2scl {
     //@}
     
     mcmc_para_base() {
-      new_step=false;
       
       user_seed=0;
       n_warm_up=0;
@@ -1361,32 +1354,34 @@ namespace o2scl {
       // the mcmc_init() function call above.
       
       if (verbose>=1) {
-        if (new_step) {
-          scr_out << "mcmc_para_base::mcmc(): "
-                  << "New stepper, n_params="
-                  << n_params << ", n_threads=" << n_threads << ", rank="
-                  << mpi_rank << ", n_ranks="
-                  << mpi_size << std::endl;
-        } else if (aff_inv) {
+        if (aff_inv) {
           scr_out << "mcmc_para_base::mcmc(): "
                   << "Affine-invariant step, n_params="
                   << n_params << ", n_walk=" << n_walk
                   << ", n_threads=" << n_threads << ",\n  rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
-        } else if (pd_mode==true) {
-          scr_out << "mcmc_para_base::mcmc(): "
-                  << "With proposal distribution, n_params="
-                  << n_params << ", n_threads=" << n_threads << ", rank="
-                  << mpi_rank << ", n_ranks="
-                  << mpi_size << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
-                  << "Random-walk w/uniform dist., n_params="
+                  << "New stepper, n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
         }
+        /*
+          scr_out << "mcmc_para_base::mcmc(): "
+          << "With proposal distribution, n_params="
+          << n_params << ", n_threads=" << n_threads << ", rank="
+          << mpi_rank << ", n_ranks="
+          << mpi_size << std::endl;
+          } else {
+          scr_out << "mcmc_para_base::mcmc(): "
+          << "Random-walk w/uniform dist., n_params="
+          << n_params << ", n_threads=" << n_threads << ", rank="
+          << mpi_rank << ", n_ranks="
+          << mpi_size << std::endl;
+          }
+        */
         scr_out << "Set start time to: " << mpi_start_time << std::endl;
       }
 
@@ -1789,150 +1784,28 @@ namespace o2scl {
                 // ---------------------------------------------------
                 // Select next point for aff_inv=false
                 
-                if (new_step) {
-                  
-                  if (switch_arr[sindex]==false) {
-                    stepper.step(it,n_params,func[it],current[it],
-                                 next[it],w_current[sindex],w_next[it],
-                                 low,high,func_ret[it],accept,
-                                 data[sindex+n_walk*n_threads],rg[it],
-                                 verbose);
-                  } else {
-                    stepper.step(it,n_params,func[it],current[it],
-                                 next[it],w_current[sindex],w_next[it],
-                                 low,high,func_ret[it],accept,
-                                 data[sindex],rg[it],verbose);
-                  }
-
-                  if (func_ret[it]==mcmc_done) {
-                    mcmc_done_flag[it]=true;
-                  } else {
-                    if (func_ret[it]>=0 && ret_value_counts.size()>it && 
-                        func_ret[it]<((int)ret_value_counts[it].size())) {
-                      ret_value_counts[it][func_ret[it]]++;
-                    }
-                  }
-                  
+                if (switch_arr[sindex]==false) {
+                  stepper.step(it,n_params,func[it],current[it],
+                               next[it],w_current[sindex],w_next[it],
+                               low,high,func_ret[it],accept,
+                               data[sindex+n_walk*n_threads],rg[it],
+                               verbose);
                 } else {
-
-                  if (pd_mode) {
-                    
-                    // Use proposal distribution and compute
-                    // associated log weight
-                    q_prop[it]=prop_dist[it]->log_metrop_hast(current[it],
-                                                              next[it]);
-                    
-                    if (!std::isfinite(q_prop[it])) {
-                      O2SCL_ERR2("Proposal distribution not finite in ",
-                                 "mcmc_para_base::mcmc().",
-                                 o2scl::exc_efailed);
-                    }
-                    
-                  } else {
-                    
-                    // Uniform random-walk step
-                    for(size_t k=0;k<n_params;k++) {
-                      if (step_vec.size()>0) {
-                        next[it][k]=current[it][k]+
-                          (rg[it].random()*2.0-1.0)*
-                          step_vec[k%step_vec.size()];
-                      } else {
-                        next[it][k]=current[it][k]+
-                          (rg[it].random()*2.0-1.0)*
-                          (high[k]-low[k])/step_fac;
-                      }
-                    }
-                    
-                  }   
-                  
-                  // ---------------------------------------------------
-                  // Compute next log weight for aff_inv=false
-                  
-                  func_ret[it]=o2scl::success;
-                  
-                  // If the next point out of bounds, ensure that the
-                  // point is rejected without attempting to evaluate
-                  // the function
-                  for(size_t k=0;k<n_params;k++) {
-                    if (next[it][k]<low[k] || next[it][k]>high[k]) {
-                      func_ret[it]=mcmc_skip;
-                      if (verbose>=3) {
-                        if (next[it][k]<low[k]) {
-                          std::cout << "mcmc (" << it << ","
-                                    << mpi_rank
-                                    << "): Parameter with index "
-                                    << k << " and value " << next[it][k]
-                                    << " smaller than limit " << low[k]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << ","
-                                  << mpi_rank
-                                  << "): Parameter with index " << k
-                                  << " and value " << next[it][k]
-                                  << " smaller than limit " << low[k]
-                                  << std::endl;
-                        } else {
-                          std::cout << "mcmc (" << it << "," << mpi_rank
-                                    << "): Parameter with index " << k
-                                    << " and value " << next[it][k]
-                                    << " larger than limit " << high[k]
-                                    << std::endl;
-                          scr_out << "mcmc (" << it << "," << mpi_rank
-                                  << "): Parameter with index " << k
-                                  << " and value " << next[it][k]
-                                  << " larger than limit " << high[k]
-                                  << std::endl;
-                        }
-                      }
-                    }
-                  }
-                  
-                  // Evaluate the function, set the 'done' flag if
-                  // necessary, and update the return value array
-                  if (func_ret[it]!=mcmc_skip) {
-                    if (switch_arr[n_walk*it+curr_walker[it]]==false) {
-                      func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                            data[it*n_walk+curr_walker[it]+
-                                                 n_walk*n_threads]);
-                    } else {
-                      func_ret[it]=func[it](n_params,next[it],w_next[it],
-                                            data[it*n_walk+curr_walker[it]]);
-                    }
-                    if (func_ret[it]==mcmc_done) {
-                      mcmc_done_flag[it]=true;
-                    } else {
-                      if (func_ret[it]>=0 && ret_value_counts.size()>it && 
-                          func_ret[it]<((int)ret_value_counts[it].size())) {
-                        ret_value_counts[it][func_ret[it]]++;
-                      }
-                    }
-                  }
-                  
-                  // ------------------------------------------------------
-                  // Accept or reject and call the measurement function for
-                  // aff_inv=false
-                  
-                  if (always_accept && func_ret[it]==success) accept=true;
-                  
-                  if (func_ret[it]==o2scl::success) {
-                    double r=rg[it].random();
-                    
-                    if (pd_mode) {
-                      if (r<exp(w_next[it]-w_current[sindex]+q_prop[it])) {
-                        accept=true;
-                      }
-                    } else {
-                      // Metropolis algorithm
-                      if (r<exp(w_next[it]-w_current[sindex])) {
-                        accept=true;
-                      }
-                    }
-
-                    // End of 'if (func_ret[it]==o2scl::success)'
-                  }
-
-                  // End of 'old_step' section
+                  stepper.step(it,n_params,func[it],current[it],
+                               next[it],w_current[sindex],w_next[it],
+                               low,high,func_ret[it],accept,
+                               data[sindex],rg[it],verbose);
                 }
-
+                
+                if (func_ret[it]==mcmc_done) {
+                  mcmc_done_flag[it]=true;
+                } else {
+                  if (func_ret[it]>=0 && ret_value_counts.size()>it && 
+                      func_ret[it]<((int)ret_value_counts[it].size())) {
+                    ret_value_counts[it][func_ret[it]]++;
+                  }
+                }
+                
                 if (accept) {
           
                   n_accept[it]++;
@@ -2911,7 +2784,6 @@ namespace o2scl {
         hf.set_szt("n_warm_up",this->n_warm_up);
         hf.seti("pd_mode",this->pd_mode);
         hf.sets("prefix",this->prefix);
-        //hf.setd("step_fac",this->step_fac);
         hf.seti("store_rejects",this->store_rejects);
         hf.seti("table_sequence",this->table_sequence);
         hf.seti("user_seed",this->user_seed);
@@ -3924,7 +3796,6 @@ namespace o2scl {
 
     /// \name Parameter objects for the 'set' command
     //@{
-    o2scl::cli::parameter_double p_step_fac;
     o2scl::cli::parameter_size_t p_n_warm_up;
     o2scl::cli::parameter_int p_user_seed;
     o2scl::cli::parameter_size_t p_max_bad_steps;
@@ -4035,7 +3906,8 @@ namespace o2scl {
         "to the '_scr' file before calling TOV solver (default true).";
         cl.par_list.insert(std::make_pair("output_meas",&p_output_meas));
       */
-    
+
+      /*
       p_step_fac.d=&this->step_fac;
       p_step_fac.help=((std::string)"MCMC step factor. The step size for ")+
         "each variable is taken as the difference between the high and low "+
@@ -4044,6 +3916,7 @@ namespace o2scl {
         "be taken, e.g. if the conditional probability is multimodal. If "+
         "this step size is smaller than 1.0, it is reset to 1.0 .";
       cl.par_list.insert(std::make_pair("step_fac",&p_step_fac));
+      */
 
       p_n_warm_up.s=&this->n_warm_up;
       p_n_warm_up.help=((std::string)"Minimum number of warm up iterations ")+

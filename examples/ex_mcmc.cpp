@@ -153,7 +153,8 @@ int main(int argc, char *argv[]) {
   mct.set_names_units(pnames,punits);
 
   // Set MCMC parameters
-  mct.step_fac=2.0;
+  mct.stepper.step_fac.resize(1);
+  mct.stepper.step_fac[0]=2.0;
   mct.max_iters=20000;
   mct.prefix="ex_mcmc";
   mct.table_prealloc=mct.max_iters/3;

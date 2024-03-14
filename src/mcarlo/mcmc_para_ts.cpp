@@ -286,7 +286,7 @@ int main(int argc, char *argv[]) {
   // ----------------------------------------------------------------
   // Plain MCMC
 
-  if (false) {
+  if (true) {
     
     cout << "Plain MCMC: " << endl;
 
@@ -295,7 +295,6 @@ int main(int argc, char *argv[]) {
     mpc.mc.n_threads=1;
     mpc.mc.max_iters=N;
     mpc.mc.prefix="mcmc";
-    mpc.mc.new_step=true;
     mpc.mc.stepper.step_fac[0]=10.0;
     
     mpc.sev_x.set_blocks(20,N/20);
@@ -332,7 +331,7 @@ int main(int argc, char *argv[]) {
   // ----------------------------------------------------------------
   // Affine-invariant MCMC
 
-  if (false) {
+  if (true) {
     cout << "Affine-invariant MCMC: " << endl;
 
     mpc.sev_x.set_blocks(40,1);
@@ -348,7 +347,6 @@ int main(int argc, char *argv[]) {
     mpc.mc.n_threads=1;
     mpc.mc.max_iters=N*10;
     mpc.mc.prefix="mcmc_ai";
-    mpc.mc.new_step=false;
     
     mpc.mc.mcmc(1,low,high,gauss_vec,meas_vec,data_vec);
 
@@ -379,7 +377,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  if (false) {
+  if (true) {
     // ----------------------------------------------------------------
     // Plain MCMC with a table
 
@@ -396,7 +394,6 @@ int main(int argc, char *argv[]) {
     mpc.mct.max_iters=N;
     mpc.mct.prefix="mcmct";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.new_step=true;
     mpc.mct.stepper.step_fac[0]=10.0;
 
     mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
@@ -440,7 +437,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (false) {
+  if (true) {
   
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table
@@ -455,7 +452,6 @@ int main(int argc, char *argv[]) {
     mpc.mct.max_iters=N;
     mpc.mct.prefix="mcmct_ai";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.new_step=false;
 
     mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
@@ -504,7 +500,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (false) {
+  if (true) {
     
     // ----------------------------------------------------------------
     // Plain MCMC with a table and a flat distribution
@@ -521,7 +517,6 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_flat";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.new_step=true;
     mpc.mct.stepper.step_fac[0]=10.0;
     
     mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
@@ -561,7 +556,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (false) {
+  if (true) {
     
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and a flat distribution
@@ -577,7 +572,6 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_ai_flat";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.new_step=false;
     
     mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
@@ -616,7 +610,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
-  if (false) {
+  if (true) {
     
     // ----------------------------------------------------------------
     // Affine-invariant MCMC with a table and previously read results
@@ -627,7 +621,6 @@ int main(int argc, char *argv[]) {
     mpc.mct.aff_inv=true;
     mpc.mct.n_walk=10;
     mpc.mct.step_fac=-1.0;
-    mpc.mct.new_step=false;
   
     mpc.mct.max_iters=40;
     mpc.mct.prefix="mcmct_aiprev";
@@ -668,7 +661,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef O2SCL_PYTHON
   
-  if (false) {
+  if (true) {
 
     //n_threads=1;
     
@@ -691,7 +684,6 @@ int main(int argc, char *argv[]) {
     mpc.mct3.n_threads=1;
     mpc.mct3.max_iters=200;
     mpc.mct3.prefix="mcmct_imh_kde";
-    mpc.mct3.new_step=true;
 
     // Read the previous table
     table_units<> last;
@@ -762,7 +754,6 @@ int main(int argc, char *argv[]) {
     mpc.mct2.n_threads=1;
     mpc.mct2.max_iters=200;
     mpc.mct2.prefix="mcmct_hmc";
-    mpc.mct2.new_step=true;
     mpc.mct2.stepper.mom_step[0]=0.18;
     mpc.mct2.stepper.inv_mass[0]=0.1;
     
