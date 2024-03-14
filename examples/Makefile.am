@@ -77,12 +77,12 @@ EXAMPLE_PRGS = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mcarlo.scr ex_string.scr ex_contour.scr ex_eos_crust.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr\
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
-	ex_nucleus_rmf.scr ex_methast.scr ex_eos_had_skyrme.scr \
+	ex_nucleus_rmf.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp.scr ex_eos_gibbs.scr \
+	ex_interp.scr ex_eos_gibbs.scr ex_mcmc_kde.scr \
 	ex_fermion_summ.scr ex_lambda.scr
 
-# ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr 
+# ex_ode_it.scr ex_eos_sn.scr ex_interp2_nogrid.scr ex_methast.scr
 
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
@@ -172,7 +172,7 @@ EXTRA_PROGRAMS = \
 	ex_lambda \
 	ex_mcarlo \
 	ex_mcmc \
-	ex_methast \
+	ex_mcmc_kde \
 	ex_mmin \
 	ex_mmin_fix \
 	ex_mroot \
@@ -265,6 +265,12 @@ ex_mcmc_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_SOURCES = ex_mcmc.cpp
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
+
+ex_mcmc_kde_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mcmc_kde_LDADD = $(ADDL_TEST_LIBS)
+ex_mcmc_kde_SOURCES = ex_mcmc_kde.cpp
+ex_mcmc_kde.scr: ex_mcmc_kde
+	./ex_mcmc_kde > ex_mcmc_kde.scr
 
 ex_interp_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_interp_LDADD = $(ADDL_TEST_LIBS)
@@ -428,11 +434,11 @@ ex_stiff_SOURCES = ex_stiff.cpp
 ex_stiff.scr: ex_stiff
 	./ex_stiff > ex_stiff.scr
 
-ex_methast_LDFLAGS = $(ADDL_TEST_LDFLGS)
-ex_methast_LDADD = $(ADDL_TEST_LIBS)
-ex_methast_SOURCES = ex_methast.cpp
-ex_methast.scr: ex_methast
-	./ex_methast > ex_methast.scr
+#ex_methast_LDFLAGS = $(ADDL_TEST_LDFLGS)
+#ex_methast_LDADD = $(ADDL_TEST_LIBS)
+#ex_methast_SOURCES = ex_methast.cpp
+#ex_methast.scr: ex_methast
+#	./ex_methast > ex_methast.scr
 
 ex_chebapp_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_chebapp_LDADD = $(ADDL_TEST_LIBS)

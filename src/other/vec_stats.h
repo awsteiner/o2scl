@@ -1874,12 +1874,13 @@ namespace o2scl {
       \f$ k_{\mathrm{max}}-1 \f$.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
-  (const vec_t &data, resize_vec_t &ac_vec, size_t kmax=0, int verbose=0) {
+  (size_t n, const vec_t &data, resize_vec_t &ac_vec,
+   size_t kmax=0, int verbose=0) {
 
     if (kmax==0) {
-      kmax=data.size()/2;
+      kmax=n/2;
     }
-    double mean=vector_mean(data);
+    double mean=vector_mean(n,data);
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
     
@@ -1887,7 +1888,7 @@ namespace o2scl {
 #pragma omp parallel for
 #endif
     for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
+      ac_vec[k]=vector_lagk_autocorr(n,data,k,mean);
       if (verbose>0) {
         int n_threads=1;
         int i_thread=0;
@@ -2308,6 +2309,10 @@ namespace o2scl {
 
       On completion, the vector \c five_tau_over_m will have
       one less element than the vector \c ac_vec .
+
+      Note that this method has limited accuracy for limited data
+      set sizes. Also, it almost never reports a zero auto-correlation,
+      even for completely uncorrelated data.
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
   (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {

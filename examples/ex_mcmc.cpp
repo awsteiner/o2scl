@@ -166,46 +166,44 @@ int main(int argc, char *argv[]) {
   cout << "n_accept, n_reject: " << mct.n_accept[0] << " "
        << mct.n_reject[0] << endl;
 
-  // Get results
+  // Get the MCMC results
   shared_ptr<table_units<> > t=mct.get_table();
 
   // Remove empty rows from table
   t->delete_rows_func("mult<0.5");
   
-  // Compute autocorrelation length and effective sample size
+  // Compute the autocorrelation length
   std::vector<double> ac, ftom;
   o2scl::vector_autocorr_vector_mult(t->get_nlines(),
 				     (*t)["x2"],(*t)["mult"],ac);
   size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
+
+  // Create a separate table of statistically independent samples
+  table_units<> indep;
+  copy_table_thin_mcmc(ac_len,*t,indep,"mult");
+  
   cout << "Autocorrelation length, effective sample size: "
-       << ac_len << " " << t->get_nlines()/ac_len << endl;
+       << ac_len << " " << indep.get_nlines() << endl;
 
-  // Create a set of fully independent samples
-  t->new_column("N");
-  for(size_t j=0;j<t->get_nlines();j++) {
-    t->set("N",j,j);
-  }
-  std::string func=((std::string)"N%")+szttos(ac_len)+">0.5";
-  t->delete_rows_func(func);
-  for(size_t j=0;j<t->get_nlines();j++) {
-    t->set("N",j,j);
-  }
-
-  // Write these samples to a file
+  // Write the data to a file
   hdf_file hf;
   hf.open_or_create("ex_mcmc.o2");
   hdf_output(hf,*t,"mcmc");
+  hdf_output(hf,indep,"indep");
   hf.close();
 
   // Use the independent samples to compute the final integral and
-  // compare to the exact result
-  double avg=vector_mean((*t)["x2"]);
-  double std=vector_stddev((*t)["x2"]);
-  tm.test_rel(avg,exact,10.0*std/sqrt(t->get_nlines()),"ex_mcmc");
+  // compare to the exact result. Note that we must specify the
+  // number of elements in the vector, indep["x2"], because the
+  // table_units object often has space at the end to add extra rows.
+  
+  double avg=vector_mean(indep.get_nlines(),indep["x2"]);
+  double std=vector_stddev(indep.get_nlines(),indep["x2"]);
+  tm.test_rel(avg,exact,10.0*std/sqrt(indep.get_nlines()),"ex_mcmc");
   cout << "avg. from MCMC, exact avg., diff., std. from MCMC, "
        << "unc. in mean times 10:\n  "
        << avg << " " << exact << " " << fabs(avg-exact) << " "
-       << std << " " << 10.0*std/sqrt(t->get_nlines()) << endl;
+       << std << " " << 10.0*std/sqrt(indep.get_nlines()) << endl;
   
   tm.report();
   

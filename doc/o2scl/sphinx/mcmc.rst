@@ -60,12 +60,43 @@ the command-line interface when using MCMC.
 MCMC example
 ------------
 
+The first example shows an MCMC of a bimodal distribution, 
+
+.. math::
+
+  f(x) = \exp ( -x^2) \left[ \sin \left( x-7/5 \right) + 1 \right]
+  
+with a naive random walk step. It uses that MCMC to compute
+the value
+
+.. math::
+
+   \left< x^2 \right> = \left( \int_{-5}^{5} x^2 f(x) \right)
+   \left( \int_{-5}^{5} f(x) \right)^{-1}
+
+and compares that value with the exact result obtained by quadrature.    
+
 .. literalinclude:: ../../../examples/ex_mcmc.cpp
    :language: c++		    
    :start-after: sphinx-example-start
 
+The image plots the posterior distribution from this first MCMC as
+well as a second MCMC using a proposal distribution generated from a
+kernel density estimation (from the :ref:`kde_python <kde_python>`
+class) of the data generated from the first MCMC. This simulation is
+about five times more efficient, and thus gives a more accurate result
+for the integral.
+                 
 .. image:: ../../../examples/plot/ex_mcmc_plot.png
    :width: 60%	   
-   :alt: An MCMC simulation of exp(-x*x)*(sin(x-1.4)+1.0)
+   :alt: MCMC simulations of exp(-x*x)*(sin(x-1.4)+1.0)
 
+Below is the code for the second MCMC, which uses O₂scl C++ interface
+to SciPy's KDE algorithm.
+         
+.. literalinclude:: ../../../examples/ex_mcmc_kde.cpp
+   :language: c++		    
+   :start-after: sphinx-example-start
+
+         
                  

@@ -82,8 +82,17 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
     }
     size_t running_sum=0;
     size_t count=0;
+
+    //void copy_table_thin_mcmc(size_t window, table_units<> &src,
+    //table_units<> &dest, std::string mult_col="",
+    //int verbose=0) {
+
     table_units<> tnew;
 
+    copy_table_thin_mcmc(window,table_obj,tnew,mult_col,verbose);
+
+    /*
+    
     for(size_t i=0;i<table_obj.get_nconsts();i++) {
       string tnam;
       double tval;
@@ -114,7 +123,11 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
         }
       }
     }
+
+    */
+
     table_obj=tnew;
+    
   } else {
     cerr << "Command 'thin-mcmc' not supported for objects of "
          << "type " << type << endl;

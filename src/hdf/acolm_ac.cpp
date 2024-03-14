@@ -354,7 +354,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       return 1;
 #endif
     } else {
-      vector_autocorr_vector(vvd[jj],ac_vec[jj]);
+      vector_autocorr_vector(vvd[jj].size(),vvd[jj],ac_vec[jj]);
     }
     if (ac_vec[jj].size()>max_ac_size) {
       max_ac_size=ac_vec[jj].size();

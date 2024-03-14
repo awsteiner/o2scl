@@ -4127,7 +4127,7 @@ namespace o2scl {
     }
     
   };
-
+  
 }
 
 namespace std {

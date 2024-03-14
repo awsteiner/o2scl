@@ -200,14 +200,24 @@ ex_fptr_plot:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_mcmc_plot:
-	o2graph -backend Agg -read ../ex_mcmc.o2 \
+	o2graph -backend Agg \
+		-set fig_dict "fig_size_x=6.0,fig_size_y=4.0" \
+		-subplots 1 2 -subadj \
+		"left=0.12,right=0.99,top=0.99,bottom=0.11,wspace=0.38" \
+		-selax 0 -read ../ex_mcmc.o2 indep \
 		-hist-plot x bins=20 -create table x "grid:-5,5,0.1" \
-		-function "170*exp(-x^2)*(sin(x-1.4)+1)" y \
+		-function "1000*exp(-x^2)*(sin(x-1.4)+1)" y \
+		-plot x y "lw=2" -xtitle "x" -ytitle "y" \
+		-selax 1 -read ../ex_mcmc_kde.o2 indep \
+		-hist-plot x bins=20 -create table x "grid:-5,5,0.1" \
+		-function "5500*exp(-x^2)*(sin(x-1.4)+1)" y \
 		-plot x y "lw=2" -xtitle "x" -ytitle "y" \
 		-save ex_mcmc_plot_new.png
-	convert +append ex_mcmc_plot.png ex_mcmc_plot_new.png \
-		temp.png
-	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
+	open ex_mcmc_plot_new.png
+
+#convert +append ex_mcmc_plot.png ex_mcmc_plot_new.png \
+#		temp.png
+#	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 LEG_X1 = 2.0
 LEG_X2 = 2.35
