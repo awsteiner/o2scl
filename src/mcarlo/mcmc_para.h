@@ -155,7 +155,7 @@ namespace o2scl {
 
     mcmc_stepper_rw() {
       step_fac.resize(1);
-      step_fac[0]=2.0;
+      step_fac[0]=10.0;
     }
     
     virtual ~mcmc_stepper_rw() {
@@ -336,7 +336,7 @@ namespace o2scl {
     }
     
     /** \brief The factor controlling the step size for the fallback
-        random walk (default is a 1-element vector containing 2.0)
+        random walk (default is a 1-element vector containing 10.0)
      */
     vec_t step_fac;
 
@@ -965,7 +965,7 @@ namespace o2scl {
     /// If true, use affine-invariant Monte Carlo (default false)
     bool aff_inv;
   
-    /// Stepsize factor (default 10.0)
+    /// Stepsize factor for affine-invariant sampling (default 2.0)
     double step_fac;
   
     /** \brief If true, couple the walkers across threads during
@@ -1035,7 +1035,7 @@ namespace o2scl {
       // MC step parameters
       aff_inv=false;
       pd_mode=false;
-      step_fac=10.0;
+      step_fac=2.0;
       n_walk=1;
       err_nonconv=true;
       verbose=1;
@@ -1158,17 +1158,11 @@ namespace o2scl {
                    o2scl::exc_eunimpl);
       }
       // Fix 'step_fac' if it's less than or equal to zero
-      if (step_fac<=0.0) {
-        if (aff_inv) {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac with aff_inv=true.\nSetting to 2.0."
-                    << std::endl;
-          step_fac=2.0;
-        } else {
-          std::cout << "mcmc_para::mcmc(): Requested negative or zero "
-                    << "step_fac. Setting to 10.0." << std::endl;
-          step_fac=10.0;
-        }
+      if (step_fac<=0.0 && aff_inv) {
+        std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+                  << "step_fac with aff_inv=true.\nSetting to 2.0."
+                  << std::endl;
+        step_fac=2.0;
       }
 
       // Set start time if necessary
