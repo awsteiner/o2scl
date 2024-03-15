@@ -1357,25 +1357,11 @@ namespace o2scl {
                   << mpi_size << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
-                  << "New stepper, n_params="
+                  << "Stepper " << stepper.step_type() << ", n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
         }
-        /*
-          scr_out << "mcmc_para_base::mcmc(): "
-          << "With proposal distribution, n_params="
-          << n_params << ", n_threads=" << n_threads << ", rank="
-          << mpi_rank << ", n_ranks="
-          << mpi_size << std::endl;
-          } else {
-          scr_out << "mcmc_para_base::mcmc(): "
-          << "Random-walk w/uniform dist., n_params="
-          << n_params << ", n_threads=" << n_threads << ", rank="
-          << mpi_rank << ", n_ranks="
-          << mpi_size << std::endl;
-          }
-        */
         scr_out << "Set start time to: " << mpi_start_time << std::endl;
       }
 
@@ -1986,7 +1972,7 @@ namespace o2scl {
 #pragma omp for
 #endif
             for(size_t it=0;it<n_threads;it++) {
-              
+
               // Choose walker to move. If the threads are not coupled,
               // then each thread maintains its own ensemble, and we
               // just loop over all of the walkers
