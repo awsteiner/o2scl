@@ -821,6 +821,76 @@ void o2scl_contour_calc_contours(void *vptr, void *ptr_clines) {
   return;
 }
 
+void *o2scl_create_prob_dens_func() {
+  prob_dens_func *ptr=new prob_dens_func;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_func(void *vptr) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_prob_dens_func_pdf(void *vptr, double x) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->pdf(x);
+  return ret;
+}
+
+double o2scl_prob_dens_func_log_pdf(void *vptr, double x) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->log_pdf(x);
+  return ret;
+}
+
+double o2scl_prob_dens_func_cdf(void *vptr, double x) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->cdf(x);
+  return ret;
+}
+
+double o2scl_prob_dens_func_invert_cdf(void *vptr, double x) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->invert_cdf(x);
+  return ret;
+}
+
+double o2scl_prob_dens_func_entropy(void *vptr) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->entropy();
+  return ret;
+}
+
+double o2scl_prob_dens_func_getitem(void *vptr) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->operator()();
+  return ret;
+}
+
+void *o2scl_create_prob_dens_gaussian() {
+  prob_dens_gaussian *ptr=new prob_dens_gaussian;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_gaussian(void *vptr) {
+  prob_dens_gaussian *ptr=(prob_dens_gaussian *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_prob_dens_gaussian_set_center(void *vptr, double cent) {
+  prob_dens_gaussian *ptr=(prob_dens_gaussian *)vptr;
+  ptr->set_center(cent);
+  return;
+}
+
+void o2scl_prob_dens_gaussian_set_sigma(void *vptr, double sigma) {
+  prob_dens_gaussian *ptr=(prob_dens_gaussian *)vptr;
+  ptr->set_sigma(sigma);
+  return;
+}
+
 void *o2scl_create_prob_dens_mdim_std_vector_double_() {
   prob_dens_mdim<std::vector<double>> *ptr=new prob_dens_mdim<std::vector<double>>;
   return ptr;

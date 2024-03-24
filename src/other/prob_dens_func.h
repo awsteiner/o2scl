@@ -69,6 +69,9 @@ namespace o2scl {
   class prob_dens_func {
     
   public:
+
+    virtual ~prob_dens_func() {
+    }
     
     /// Sample from the specified density
     virtual double operator()() const {
@@ -290,6 +293,9 @@ namespace o2scl {
   class prob_dens_frange : public prob_dens_func {
 
   public:
+
+    virtual ~prob_dens_frange() {
+    }
     
     /// Lower limit of the range
     virtual double lower_limit() const=0;
@@ -472,6 +478,11 @@ namespace o2scl {
       This class is experimental.
   */
   class prob_dens_positive : public prob_dens_func {
+
+  public:
+    
+    virtual ~prob_dens_positive() {
+    }
     
   };
 

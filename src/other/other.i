@@ -38,6 +38,11 @@ cpp_using o2scl
 #
 py_header from o2sclpy.base import *
 #
+#
+# ------------------------------------------------------
+#
+# Class slack_messenger
+# 
 class slack_messenger
 - int verbose
 - std::string url                             
@@ -63,6 +68,11 @@ class slack_messenger
   - int
   - std::string message
   - bool err_on_fail [true]  
+#
+# ------------------------------------------------------
+#
+# Class quadratic_real_coeff_gsl
+# 
 class quadratic_real_coeff_gsl
 - function solve_r
   - int
@@ -78,6 +88,11 @@ class quadratic_real_coeff_gsl
   - const double c2
   - out std::complex<double> &r1  
   - out std::complex<double> &r2
+#
+# ------------------------------------------------------
+#
+# Class quadratic_real_coeff_gsl_gsl2
+# 
 class quadratic_real_coeff_gsl2<>
 - py_name quadratic_real_coeff_gsl2                             
 - function solve_r
@@ -94,6 +109,11 @@ class quadratic_real_coeff_gsl2<>
   - const double c2
   - out std::complex<double> &r1  
   - out std::complex<double> &r2
+#
+# ------------------------------------------------------
+#
+# Class cubic_real_coeff_cern
+# 
 class cubic_real_coeff_cern<>
 - py_name cubic_real_coeff_cern                             
 - function solve_r
@@ -114,6 +134,11 @@ class cubic_real_coeff_cern<>
   - out double &r1
   - out std::complex<double> &r2  
   - out std::complex<double> &r3
+#
+# ------------------------------------------------------
+#
+# Class cubic_real_coeff_gsl
+# 
 class cubic_real_coeff_gsl
 - function solve_r
   - int
@@ -133,6 +158,11 @@ class cubic_real_coeff_gsl
   - out double &r1
   - out std::complex<double> &r2  
   - out std::complex<double> &r3
+#
+# ------------------------------------------------------
+#
+# Class quartic_real_coeff_cern
+# 
 class quartic_real_coeff_cern<>
 - py_name quartic_real_coeff_cern                             
 - function solve_r
@@ -157,6 +187,11 @@ class quartic_real_coeff_cern<>
   - out std::complex<double> &r2  
   - out std::complex<double> &r3
   - out std::complex<double> &r4
+#
+# ------------------------------------------------------
+#
+# Class fermi_dirac_integ_gsl
+# 
 class fermi_dirac_integ_gsl
 - function calc_m1o2
   - double
@@ -173,6 +208,11 @@ class fermi_dirac_integ_gsl
 - function calc_3
   - double
   - double x
+#
+# ------------------------------------------------------
+#
+# Class bessel_K_exp_integ_gsl
+# 
 class bessel_K_exp_integ_gsl
 - function K1exp
   - double
@@ -183,6 +223,7 @@ class bessel_K_exp_integ_gsl
 - function K3exp
   - double
   - double x
+#                               
 # class polylog
 # function set_tol
 # - void
@@ -191,6 +232,12 @@ class bessel_K_exp_integ_gsl
 # - double
 # - double s
 # - double y
+#
+#
+# ------------------------------------------------------
+#
+# Class hist
+# 
 class hist
 - std_cc
 #- cons init
@@ -263,6 +310,11 @@ class hist
   - std::string func
 - function clear
   - void
+#
+# ------------------------------------------------------
+#
+# Class hist_2d
+# 
 class hist_2d
 - std_cc
 - function create_x_rep_vec
@@ -360,6 +412,11 @@ class hist_2d
   - void
 - function clear_wgts
   - void
+#
+# ------------------------------------------------------
+#
+# Class contour_line
+# 
 class contour_line
 - double level
 - std::vector<double> x  
@@ -384,6 +441,11 @@ class std::vector<contour_line>
 |     """
 |     return self.length()
 | 
+#
+# ------------------------------------------------------
+#
+# Class contour
+# 
 class contour
 - int verbose
 - double lev_adjust
@@ -400,6 +462,46 @@ class contour
 - function calc_contours
   - void
   - io vector<contour_line> &clines
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_func
+# 
+class prob_dens_func
+- function pdf
+  - double
+  - double x                               
+- function log_pdf
+  - double
+  - double x                               
+- function cdf
+  - double
+  - double x                               
+- function invert_cdf
+  - double
+  - double x                               
+- function entropy
+  - double
+- function operator()
+  - double
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_gaussian
+# 
+class prob_dens_gaussian
+- parent prob_dens_func
+- function set_center
+  - void
+  - double cent
+- function set_sigma
+  - void
+  - double sigma
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_mdim
+# 
 class prob_dens_mdim<std::vector<double>>
 - py_name prob_dens_mdim
 - function pdf
@@ -416,6 +518,11 @@ class prob_dens_mdim<std::vector<double>>
 - function operator()
   - void
   - io std_vector &x
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_mdim_biv_gaussian
+# 
 class prob_dens_mdim_biv_gaussian<std::vector<double>>
 - py_name prob_dens_mdim_biv_gaussian
 - parent prob_dens_mdim<std::vector<double>>
@@ -441,6 +548,7 @@ class prob_dens_mdim_gaussian<>
 - parent prob_dens_mdim<std::vector<double>>
 - function make_biv
   - prob_dens_mdim_biv_gaussian<>
+#    
 #class std::vector<cprob_dens_mdim_gaussian<>>
 #- py_name vector_prob_dens_mdim_gaussian
 #- function operator[]
@@ -459,7 +567,13 @@ class prob_dens_mdim_gaussian<>
 #|     Returns: an int
 #|     """
 #|     return self.length()
-#| 
+#|
+#
+#
+# ------------------------------------------------------
+#
+# Class hypercube
+# 
 class prob_dens_mdim_amr<>::hypercube
 - py_name hypercube
 - size_t n_dim
@@ -468,6 +582,11 @@ class prob_dens_mdim_amr<>::hypercube
 - std::vector<size_t> inside
 - double frac_vol
 - double weight  
+#
+# ------------------------------------------------------
+#
+# Class std_vector_hypercube
+# 
 class std::vector<prob_dens_mdim_amr<>::hypercube>
 - py_name std_vector_hypercube
 - function resize
@@ -478,6 +597,11 @@ class std::vector<prob_dens_mdim_amr<>::hypercube>
 - function operator[]
   - prob_dens_mdim_amr<>::hypercube &
   - size_t n
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_mdim_amr
+# 
 class prob_dens_mdim_amr<>
 - py_name prob_dens_mdim_amr
 - parent prob_dens_mdim<std::vector<double>>

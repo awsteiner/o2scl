@@ -292,6 +292,30 @@ void o2scl_contour_set_levels(void *vptr, size_t n_levels, void *ptr_levels);
 
 void o2scl_contour_calc_contours(void *vptr, void *ptr_clines);
 
+void *o2scl_create_prob_dens_func();
+
+void o2scl_free_prob_dens_func(void *vptr);
+
+double o2scl_prob_dens_func_pdf(void *vptr, double x);
+
+double o2scl_prob_dens_func_log_pdf(void *vptr, double x);
+
+double o2scl_prob_dens_func_cdf(void *vptr, double x);
+
+double o2scl_prob_dens_func_invert_cdf(void *vptr, double x);
+
+double o2scl_prob_dens_func_entropy(void *vptr);
+
+double o2scl_prob_dens_func_getitem(void *vptr);
+
+void *o2scl_create_prob_dens_gaussian();
+
+void o2scl_free_prob_dens_gaussian(void *vptr);
+
+void o2scl_prob_dens_gaussian_set_center(void *vptr, double cent);
+
+void o2scl_prob_dens_gaussian_set_sigma(void *vptr, double sigma);
+
 void *o2scl_create_prob_dens_mdim_std_vector_double_();
 
 void o2scl_free_prob_dens_mdim_std_vector_double_(void *vptr);

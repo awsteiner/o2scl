@@ -35,6 +35,8 @@ cpp_include <o2scl/part_python.h>
 # 
 cpp_using std
 cpp_using o2scl
+#
+# ------------------------------------------------------
 # 
 # Class thermo
 #
@@ -44,6 +46,8 @@ class thermo
 - double ed
 - double pr
 - double en
+#
+# ------------------------------------------------------
 # 
 # Class part
 #
@@ -68,6 +72,8 @@ class part
 - function anti
   - void
   - part &ax
+#
+# ------------------------------------------------------
 # 
 # Class fermion
 #
@@ -81,6 +87,8 @@ class fermion
 - double kf
 - double del
   - py_name delta
+#
+# ------------------------------------------------------
 # 
 # Class quark
 #
@@ -88,6 +96,8 @@ class quark
 - parent fermion
 - double B
 - double qq
+#
+# ------------------------------------------------------
 # 
 # Class fermion_zerot
 #
@@ -109,6 +119,8 @@ class fermion_zerot
 - function calc_density_zerot
   - void
   - fermion &f
+#
+# ------------------------------------------------------
 # 
 # Class fermion_thermo
 #
@@ -143,6 +155,8 @@ class fermion_thermo abstract
   - void
   - fermion &f
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class fermion_rel
 #   
@@ -181,6 +195,8 @@ class fermion_rel
   - void
   - fermion &f
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class fermion_nonrel
 #
@@ -200,12 +216,16 @@ class fermion_nonrel
   - void
   - fermion &f
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class boson
 #
 class boson
 - parent part
 - double co
+#
+# ------------------------------------------------------
 # 
 # Class boson_rel
 #
@@ -230,6 +250,8 @@ class boson_rel
   - void
   - boson &b
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class classical_thermo
 #
@@ -244,6 +266,8 @@ class classical_thermo
   - void
   - part &p
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class thermo_np_deriv_press
 #
@@ -256,6 +280,8 @@ class thermo_np_deriv_press
 - double dnndmun
 - double dndmu_mixed
 - double dnpdmup
+#
+# ------------------------------------------------------
 # 
 # Class thermo_np_deriv_helm
 #
@@ -268,6 +294,8 @@ class thermo_np_deriv_helm
 - double dmundnn
 - double dmudn_mixed
 - double dmupdnp
+#
+# ------------------------------------------------------
 # 
 # Class part_deriv_press
 #
@@ -282,6 +310,8 @@ class part_deriv_press
   - out double &dmudn
   - out double &dmudT
   - out double &dsdT_n
+#
+# ------------------------------------------------------
 # 
 # Class part_deriv
 #
@@ -290,6 +320,8 @@ class part_deriv
 | Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent part
 - parent part_deriv_press
+#
+# ------------------------------------------------------
 # 
 # Class fermion_deriv
 #
@@ -298,6 +330,8 @@ class fermion_deriv
 | Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion
 - parent part_deriv_press
+#
+# ------------------------------------------------------
 # 
 # Class deriv_thermo_base
 #
@@ -328,6 +362,8 @@ class deriv_thermo_base
   - double
   - part_deriv &p
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class fermion_deriv_rel
 #
@@ -362,6 +398,8 @@ class deriv_thermo_base
 #   - int
 #   - fermion_deriv &f
 #   - double T
+#
+# ------------------------------------------------------
 # 
 # Class fermion_deriv_nr
 #
@@ -388,6 +426,8 @@ class deriv_thermo_base
 #   - int
 #   - fermion_deriv &f
 #   - double T
+#
+# ------------------------------------------------------
 # 
 # Class classical_deriv_thermo
 #
@@ -402,6 +442,8 @@ class classical_deriv_thermo
   - void
   - part_deriv &p
   - double T
+#
+# ------------------------------------------------------
 # 
 # Class fermion_mag_zerot
 #

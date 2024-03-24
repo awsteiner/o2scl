@@ -39,6 +39,8 @@ py_header from o2sclpy.base import *
 py_header from o2sclpy.other import *
 #
 #
+# ------------------------------------------------------
+#
 # Class hdf_file
 #
 class hdf_file
@@ -381,6 +383,8 @@ function mult_vector_spec<std::vector<double>>
 - int verbose [0]
 - bool err_on_fail [true]
 #
+# ------------------------------------------------------
+#
 # Class acol_manager
 #
 class acol_manager
@@ -441,6 +445,8 @@ class acol_manager
 #  - int argv [0]
 #  - char *argc[] [0]
 #  - bool full_process [true]
+#
+# ------------------------------------------------------
 #
 # Class cloud_file
 #
