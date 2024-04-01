@@ -1918,7 +1918,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
        << o2scl_settings.get_doc_dir() << endl;
   cout << "Local documentation URL:\n  file://"
        << o2scl_settings.get_doc_dir() << "html/index.html" << endl;
-  cout << "Online documentation URL:\n  http://neutronstars.utk.edu/code/o2scl"
+  cout << "Online documentation URL:\n  http://awsteiner.org/code/o2scl"
        << "/html/index.html" << endl;
   cout << "System type: " << o2scl_settings.system_type() << endl;
   cout << endl;
@@ -2157,33 +2157,33 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     }
     if (section=="part") {
       if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl-dev/part/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl/part/html/search.html?q="+term+" &";
       }
     } else if (section=="eos") {
       if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl-dev/eos/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl/eos/html/search.html?q="+term+" &";
       }
     } else {
       if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl-dev/html/search.html?q="+term+" &";
       } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
+        cmd+=((string)"https://awsteiner.org/code/")+
           "o2scl/html/search.html?q="+term+" &";
       }
     }
   } else if (sv[1]=="dev") {
-    cmd+="https://neutronstars.utk.edu/code/o2scl-dev/html/acol.html &";
+    cmd+="https://awsteiner.org/code/o2scl-dev/html/acol.html &";
   } else {
-    cmd+="https://neutronstars.utk.edu/code/o2scl/html/acol.html &";
+    cmd+="https://awsteiner.org/code/o2scl/html/acol.html &";
   }
   
   cout << "Using command: " << cmd << endl;

@@ -803,27 +803,27 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="For more information on some of the types:\n";
     str+=type_color+"hist"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/hist.html"+
+      "https://awsteiner.org/code/o2scl/html/class/hist.html"+
       default_color+"\n";
     str+=type_color+"hist_2d"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/hist_2d.html"+
+      "https://awsteiner.org/code/o2scl/html/class/hist_2d.html"+
       default_color+"\n";
     str+=type_color+"table"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/table.html"+
+      "https://awsteiner.org/code/o2scl/html/class/table.html"+
       default_color+"\n";
     str+=type_color+"table3d"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/table3d.html"+
+      "https://awsteiner.org/code/o2scl/html/class/table3d.html"+
       default_color+"\n";
     str+=type_color+"tensor"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html"+
+      "https://awsteiner.org/code/o2scl/html/class/tensor.html"+
       default_color+"\n";
     str+=type_color+"tensor_grid"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html"+
+      "https://awsteiner.org/code/o2scl/html/class/tensor_grid.html"+
       default_color+"\n";
 
     std::vector<std::string> svx;

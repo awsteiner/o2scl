@@ -4,7 +4,7 @@ namespace o2scl
 py_class_doc |
 | Python interface for O2scl class ``%name%``,
 | See
-| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+| https://awsteiner.org/code/o2scl/html/class/%name%.html .
 dll_name o2scl
 rst_header |
 | .. _particle:
@@ -81,7 +81,7 @@ class fermion
 - py_class_doc |
 | Python interface for O2scl class ``%name%``,
 | which is a typedef of ``%name%_tl<double>``. See
-| https://neutronstars.utk.edu/code/o2scl-dev/part/html/class/%name%_tl.html
+| https://awsteiner.org/code/o2scl-dev/part/html/class/%name%_tl.html
 | .
 - parent part
 - double kf

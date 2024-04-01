@@ -530,7 +530,7 @@ class std::complex<double>
 py_class_doc |
 | Python interface for O₂scl class ``%name%``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+| https://awsteiner.org/code/o2scl/html/class/%name%.html .
 |
 #
 # ------------------------------------------------------
@@ -585,7 +585,7 @@ class table<>
 - py_class_doc |
 | Python interface for O2scl class ``table``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
+| https://awsteiner.org/code/o2scl/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -864,7 +864,7 @@ class table_units<>
 - py_class_doc |
 | Python interface for O2scl class ``table_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
+| https://awsteiner.org/code/o2scl/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -900,7 +900,7 @@ class uniform_grid<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid.html .
 - py_name uniform_grid
 - function get_nbins
   - size_t                             
@@ -942,7 +942,7 @@ class uniform_grid_end<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - cons init
@@ -958,7 +958,7 @@ class uniform_grid_width<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - cons init
@@ -974,7 +974,7 @@ class uniform_grid_end_width<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - cons init
@@ -990,7 +990,7 @@ class uniform_grid_log_end<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_log_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - cons init
@@ -1006,7 +1006,7 @@ class uniform_grid_log_width<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_log_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
 - parent uniform_grid<>
 - cons init
@@ -1022,7 +1022,7 @@ class uniform_grid_log_end_width<>
 - py_class_doc |
 | Python interface for O2scl class ``uniform_grid_log_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
 - parent uniform_grid<>
 - cons init
@@ -1335,7 +1335,7 @@ class tensor<>
 - py_class_doc |
 | Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
 - cons create_size
@@ -1509,7 +1509,7 @@ class tensor<int,std::vector<int>>
 - py_class_doc |
 | Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor_int
 - cons create_size
@@ -1654,7 +1654,7 @@ class tensor<size_t,std::vector<size_t>>
 - py_class_doc |
 | Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor_size_t
 - cons create_size
@@ -1792,7 +1792,7 @@ class tensor_grid<>
 - py_class_doc |
 | Python interface for O2scl class ``tensor_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor_grid.html .
 - parent tensor<>
 - std_cc                             
 - py_name tensor_grid
@@ -2032,7 +2032,7 @@ class convert_units<>
 - py_class_doc |
 | Python interface for O2scl class ``convert_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/convert_units.html .
+| https://awsteiner.org/code/o2scl/html/class/convert_units.html .
 - py_name convert_units
 - extra_py |
 | def add_unit(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
