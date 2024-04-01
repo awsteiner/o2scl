@@ -367,9 +367,9 @@ the end-user, but this is not supported and requires several external
 applications not included in the distribution.
 
 The most recent release documentation is available at
-https://neutronstars.utk.edu/code/o2scl/html/index.html and the
+https://awsteiner.org/code/o2scl/html/index.html and the
 current development version documentation is available at
-https://neutronstars.utk.edu/code/o2scl-dev/html/index.html . The
+https://awsteiner.org/code/o2scl-dev/html/index.html . The
 documentation for previous releases is not on the web, but is still
 stored in the release ``.tar.gz`` file.
 
