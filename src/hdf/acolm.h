@@ -1157,6 +1157,11 @@ namespace o2scl_acol {
         moved after the installation process. In order to open the
         remote version of the documentation instead of the local copy,
         use the <tt>wdocs</tt> command instead.
+
+        Note also that, e.g. the default installation of Firefox on
+        Ubuntu is via snap, and thus Firefox does not have permission
+        to read files in /usr by default. One way of fixing this is 
+        install firefox separately from snap. 
     */
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
