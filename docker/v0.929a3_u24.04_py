@@ -27,7 +27,7 @@ RUN apt-get -y update && apt-get \
   libhdf5-dev libreadline-dev libboost-all-dev libeigen3-dev cmake \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip libcairo2-dev
+  cm-super python3 python3-pip libcairo2-dev libquadmath0
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
@@ -36,31 +36,35 @@ RUN apt-get -y update && apt-get \
 WORKDIR /opt
 # Tensorflow-cpu currently requires a particular version of numpy
 #RUN pip3 install --break-system-packages numpy==1.24.3
+
 # Ubuntu libhdf5 is outdated relative to the version used by pip install
 # h5py, so we have to explicitly use the old Ubuntu one
-#RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
-#  --break-system-packages --no-binary=h5py h5py==3.9.0
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 install \
+  --break-system-packages --no-binary=h5py h5py==3.11.0
 
-#COPY u23.04_req.txt ./
-#RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
-#  && pip3 install --no-cache-dir --break-system-packages -r u23.04_req.txt
+COPY u24.04_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
+  && pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
 
-# We need pillow to compare images for o2sclpy tests
-RUN pip3 install pytest Pillow numpy \
-scipy matplotlib yt scikit-learn tensorflow keras
-RUN pip3 freeze > u24.04_req.txt
-RUN cat u24.04_req.txt
+# This is the set of commands used to construct the original
+# requirements file
+#
+# RUN pip3 install --break-system-packages pytest Pillow numpy \
+# scipy matplotlib yt scikit-learn tensorflow keras
+# RUN pip3 freeze > u24.04_req.txt
+# RUN cat u24.04_req.txt
 
 # -----------------------------------------------------------------
 # Install O2scl
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout e34fd9ba && autoreconf -i
+#RUN git checkout e34fd9ba && autoreconf -i
+run autoreconf -i
 
 # We disable static and make blank-doc to keep the image small
 
-RUN LDFLAGS="-larmadillo -llapack -lblas" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.11/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python --disable-static
+RUN LDFLAGS="-larmadillo -llapack -lblas -lquadmath" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python --disable-static
 RUN make blank-doc && make && make install
 WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
