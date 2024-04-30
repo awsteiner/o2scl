@@ -102,12 +102,16 @@ build_v0.929a3_u24.04_py:
 	sudo docker build . --rm -f v0.929a3_u24.04_py \
 		-t awsteiner/o2scl:v0.929a3_u24.04_py \
 		> v0.929a3_u24.04_py.out 2>&1
+
+test1_v0.929a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.929a3_u24.04_py sh -c \
 		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
-		> test_v0.929a3_u24.04_py.out 2>&1
+		> test1_v0.929a3_u24.04_py.out 2>&1
+
+test2_v0.929a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.929a3_u24.04_py sh -c \
 		"cd /opt/o2sclpy && make testq" \
-		>> test_v0.929a3_u24.04_py.out 2>&1
+		>> test2_v0.929a3_u24.04_py.out 2>&1
 
 push_v0.929a3_u24.04_py:
 	sudo docker push awsteiner/o2scl:v0.929a3_u24.04_py
