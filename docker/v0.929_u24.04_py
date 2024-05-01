@@ -1,0 +1,120 @@
+# This dockerfile is for the full development version directly from
+# main branch in the current repo, complete with python, armadillo,
+# eigen, fftw, OpenMP, regex, and HDF5 compression support. It
+# attempts to run all of the o2scl test and examples. It also installs
+# and tests the main branch github version of o2sclpy
+
+FROM ubuntu:24.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# -----------------------------------------------------------------
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# apt packages
+
+# Install compiler, make, gsl, HDF5, readline, boost, eigen, armadillo
+# and dependencies, etc. We need curl to test downloading EOSs for
+# o2sclpy. The library libcairo2-dev is required for pycairo. We could
+# use "--no-install-recommends", but that causes problems and many of
+# the recommendations are good, e.g. manpages and less.
+
+RUN apt-get -y update && apt-get \
+  -y install g++ make libgsl-dev autoconf automake libtool git \
+  libreadline-dev libboost-all-dev libeigen3-dev cmake \
+  libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
+  libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
+  cm-super python3 python3-pip libcairo2-dev libquadmath0 \
+  python3-virtualenv
+
+# -----------------------------------------------------------------
+# The tensorflow package is compiled with HDF5 1.14.2, so we install
+# that instead of the Ubuntu package in order to ensure we're matching
+# HDF5 libraries.
+
+WORKDIR /opt
+RUN curl "https://www.hdfgroup.org/packages/hdf5-1142-source/#"
+RUN tar xvzf hdf5-1.14.2.tar.gz
+RUN rm hdf5-1.14.2.tar.gz
+WORKDIR /opt/hdf5-1.14.2
+RUN ./configure --prefix=/usr/local/hdf5
+make
+make install
+
+# --------------------------------------------------------------------------
+# Since we're enabling python extensions, we need to install python
+# before we install o2scl, so we do that now
+
+WORKDIR /opt
+# Tensorflow-cpu currently requires a particular version of numpy
+#RUN pip3 install --break-system-packages numpy==1.24.3
+
+# Ensure h5py uses the updated version of HDF5
+RUN HDF5_DIR=/usr/local/hdf5 pip3 install \
+  --break-system-packages --no-binary=h5py h5py==3.11.0
+
+# Create a virtual environment. This seems like a bit of overkill,
+# because docker is already a virtual environment, but it makes the
+# resulting container easier to use down the road
+
+WORKDIR /opt
+RUN MKDIR envs
+WORKDIR /opt/envs
+RUN python3 -m virtualenv py312
+RUN source /opt/envs/py312/bin/activate
+
+# Install the remaining python packages from the requirements file
+
+COPY u24.04_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
+  && pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
+
+# This is the set of commands used to construct the original
+# requirements file
+#
+# RUN pip3 install pytest Pillow numpy \
+# scipy matplotlib yt scikit-learn tensorflow keras
+# RUN pip3 freeze > u24.04_req.txt
+# RUN cat u24.04_req.txt
+
+# -----------------------------------------------------------------
+# Install O2scl
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+#RUN git checkout e34fd9ba && autoreconf -i
+run autoreconf -i
+
+# We disable static and make blank-doc to keep the image small
+
+RUN LDFLAGS="-larmadillo -llapack -lblas -lquadmath" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_REGEX -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" ./configure --enable-eigen --enable-armadillo --enable-openmp --enable-fftw --enable-python --disable-static
+RUN make blank-doc && make && make install
+WORKDIR /opt
+ENV LD_LIBRARY_PATH /usr/local/lib
+
+# --------------------------------------------------------------------------
+# Install o2sclpy via pip
+
+RUN git clone https://github.com/awsteiner/o2sclpy
+WORKDIR /opt/o2sclpy
+RUN git checkout 01d86bf6 && pip3 install --break-system-packages . 
+
+# --------------------------------------------------------------------------
+# To ensure o2graph loads OpenMP appropriately
+
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
+
+# --------------------------------------------------------------------------
+# Clear the build directory and then run acol and o2graph
+
+RUN acol -h && acol -v && o2graph -h && o2graph -v
+
+
+
+
+
+
+
