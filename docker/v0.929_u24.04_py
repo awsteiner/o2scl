@@ -28,44 +28,38 @@ RUN apt-get -y update && apt-get \
   libreadline-dev libboost-all-dev libeigen3-dev cmake \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip libcairo2-dev libquadmath0 \
-  python3-virtualenv
+  cm-super python3 python3-pip libcairo2-dev libquadmath0
 
 # -----------------------------------------------------------------
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
 # that instead of the Ubuntu package in order to ensure we're matching
-# HDF5 libraries.
+# HDF5 libraries. The HDF group doesn't provide a direct download link,
+# so I'm using a temporary download link from awsteiner.org, which
+# may have to be changed in the future. 
 
 WORKDIR /opt
-RUN curl "https://www.hdfgroup.org/packages/hdf5-1142-source/#"
+RUN curl "https://awsteiner.org/hdf5-1.14.2.tar.gz" \
+  -o hdf5-1.14.2.tar.gz
 RUN tar xvzf hdf5-1.14.2.tar.gz
 RUN rm hdf5-1.14.2.tar.gz
 WORKDIR /opt/hdf5-1.14.2
 RUN ./configure --prefix=/usr/local/hdf5
-make
-make install
+RUN make
+RUN make install
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
 # before we install o2scl, so we do that now
 
 WORKDIR /opt
-# Tensorflow-cpu currently requires a particular version of numpy
-#RUN pip3 install --break-system-packages numpy==1.24.3
+
+# We have to fix the version for the numpy installation package before
+# we install h5py (since h5py requires numpy)
+RUN pip3 install --break-system-packages numpy==1.26.4
 
 # Ensure h5py uses the updated version of HDF5
-RUN HDF5_DIR=/usr/local/hdf5 pip3 install \
-  --break-system-packages --no-binary=h5py h5py==3.11.0
-
-# Create a virtual environment. This seems like a bit of overkill,
-# because docker is already a virtual environment, but it makes the
-# resulting container easier to use down the road
-
-WORKDIR /opt
-RUN MKDIR envs
-WORKDIR /opt/envs
-RUN python3 -m virtualenv py312
-RUN source /opt/envs/py312/bin/activate
+RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
+  --no-binary=h5py h5py==3.11.0
 
 # Install the remaining python packages from the requirements file
 
@@ -103,7 +97,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
 #RUN git checkout 01d86bf6 && pip3 install --break-system-packages . 
-RUN pip3 install --editable . 
+RUN pip3 install --break-system-packages --editable . 
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
