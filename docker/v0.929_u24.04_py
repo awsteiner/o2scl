@@ -24,11 +24,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # manpages and less.
 
 RUN apt-get -y update && apt-get \
-  -y install g++ make libgsl-dev autoconf automake libtool git \
-  libreadline-dev libboost-all-dev libeigen3-dev cmake \
-  libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
-  libarmadillo-dev libfftw3-dev curl texlive dvipng texlive-latex-extra \
-  cm-super python3 python3-pip libcairo2-dev libquadmath0
+  -y install g++ make autoconf automake libtool git curl cmake \
+  python3
 
 # -----------------------------------------------------------------
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
@@ -46,6 +43,12 @@ WORKDIR /opt/hdf5-1.14.2
 RUN ./configure --prefix=/usr/local/hdf5
 RUN make
 RUN make install
+
+RUN apt-get -y update && apt-get \
+  -y install libgsl-dev libreadline-dev libboost-all-dev libeigen3-dev \
+  libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
+  libarmadillo-dev libfftw3-dev texlive dvipng texlive-latex-extra \
+  cm-super python3-pip libcairo2-dev libquadmath0
 
 # --------------------------------------------------------------------------
 # Since we're enabling python extensions, we need to install python
