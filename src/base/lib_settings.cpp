@@ -89,6 +89,9 @@ lib_settings_class::~lib_settings_class() {
 int lib_settings_class::py_init_nothrow(int verbose) {
 #ifdef O2SCL_PYTHON
 
+  /*
+    4/30/24: Removed this, as setprogramname is deprecated.
+    
   char *pe=getenv("O2SCL_PYTHON_EXE");
   std::string python_exe;
   if (pe) {
@@ -97,6 +100,7 @@ int lib_settings_class::py_init_nothrow(int verbose) {
     std::wstring pe2=std::wstring(python_exe.begin(),python_exe.end());
     Py_SetProgramName(pe2.c_str());
   }
+  */
   
   if (verbose>0) {
     cout << "Running Py_Initialize()." << endl;
