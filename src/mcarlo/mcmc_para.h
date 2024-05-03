@@ -55,6 +55,18 @@ namespace o2scl {
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
   /** \brief Stepper for \ref o2scl::mcmc_para_base [pure virtual]
+
+      The user-specified function, should have a signature
+      similar to
+      \verbatim
+      int f(size_t nv, const vec_t &x, double log_wgt,
+      data_t &dat)
+      \endverbatim
+      where \c nv is the number of parameters, \c x is the
+      vector of parameters, \c log_wgt is the log likelihood,
+      and \c dat is the output data object. A return value of
+      zero indicates success, while any return value other
+      than zero indicates failure. 
    */
   template<class func_t, class data_t, class vec_t>
   class mcmc_stepper_base {
@@ -138,6 +150,25 @@ namespace o2scl {
   };
 
   /** \brief A simple random-walk stepper for MCMC
+
+      This stepper performs a random walk. Given the
+      parameter \f$ p_i \f$, the lower limit \f$ \ell_i \f$,
+      the upper limit \f$ u_i \f$, a random number \f$ r_i \in [0,1) \f$,
+      and the "step factor" \f$ s_i \f$,
+      the new coordinate \f$ p_{\mathrm{new,i}} \f$ is
+      \f[
+      p_{\mathrm{new,i}} = p_i + \frac{(2 r_i-1)}{s_i}(u_i - \ell_i)
+      \f]
+      The value of \f$ s_i \f$ is taken from
+      \verbatim
+      step_fac[k % step_fac.size()] 
+      \endverbatim
+      Thus larger values of \ref step_fac result in smaller steps. 
+
+      If the final point in parameter space, \f$ p_{\mathrm{new}} \f$,
+      is out of bounds, then the value of \c func_ret is set to
+      \ref mcmc_stepper_base::mcmc_skip (which will lead to a
+      rejection in \ref mcmc_para or its children).
    */
   template<class func_t, class data_t, class vec_t>
   class mcmc_stepper_rw :
@@ -296,7 +327,7 @@ namespace o2scl {
       The step is then accepted with probability
       \f[
       \mathrm{min}\left\{ 1,\frac{\exp \left[-H_{\mathrm{new}}\right]}
-     {\exp \left[-H_{\mathrm{old}} \right]} \right\}
+      {\exp \left[-H_{\mathrm{old}} \right]} \right\}
       \f]
       Because the user-specified function, \f$ f \f$, computes 
       \f$ \log {\cal{L}} (q) \f$,
@@ -311,8 +342,44 @@ namespace o2scl {
       \right] \right\}
       \f]
       where \f$ i \f$ is an index over \f$ N \f$ parameters
-      and \f$ \mu_i \f$ is the inverse mass for parameter \f$ i \f$. 
+      and \f$ \mu_i \f$ is the inverse mass for parameter \f$ i \f$.
+      The momenta, \f$ p_i \f$, are defined as the gradient of the
+      potential energy \f$ U(q) \equiv - \log {\cal{L}} \f$:
+      \f[
+      p_i \equiv \frac{\partial U}{\partial q_i}
+      \f]
 
+      This class can compute the gradients automatically
+      by finite-differencing or can use a gradient function
+      specified by the user. The vector \c auto_grad controls
+      this behavior. If the value of
+      \verbatim
+      auto_grad[ i % auto_grad.size() ]
+      \endverbatim
+      is false, then it is presumed that the derivative with
+      respect to the parameter with index \c i should be
+      computed automatically by this stepper class. If it
+      is true, then it is presumed that then the value
+      will be obtained from the user-specified gradient
+      function. 
+      
+      The gradient function, if specified, should be of the
+      form
+      \verbatim
+      int grad(size_t nv, const vec_t &x, func_t &f,
+      vec_t &g, data_t &dat);
+      \endverbatim
+
+      If the initial gradient calculation fails, then the HMC cannot
+      proceed and the random walk (RW) algorithm from \ref
+      mcmc_stepper_rw is used as a fallback. If this fallback method
+      is required frequently over the course of a simulation, then
+      this may mean the combined HMC plus RW method may not be
+      sampling the target distribution. This class doesn't yet have
+      a method for tracking this.
+
+      See the class documentation for \ref mcmc_stepper_base
+      for more information.
    */
   template<class func_t, class data_t,
            class vec_t,
@@ -422,8 +489,9 @@ namespace o2scl {
     /** \brief Automatically compute the gradient using
         finite-differencing
 
-        \note The potential energy is negative log f, so we
-        return the negative of the gradient of the log-likelihood. 
+        \note The potential energy is negative log f, so this
+        function returns the negative of the gradient of the
+        log-likelihood. 
     */
     int grad_pot(size_t n_params, vec_t &x, func_t &f, 
                   vec_t &g, data_t &dat) {
