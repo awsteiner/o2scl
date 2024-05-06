@@ -554,6 +554,23 @@ namespace o2scl {
         is then evaluated at the new point, the return value is placed
         in \c func_ret, and the step acceptance or rejection is stored
         in \c accept.
+
+        The first half step is:
+        \f{eqnarray*}
+        p^{1/2} &=& p^{0} - (\epsilon)/2
+        \frac{\partial U}{\partial q}(q^{0}) \\
+        \f}
+        Then for \f$ i \in [1,N] \f$,
+        \f{eqnarray*}
+        q^{i} &=& q^{i-1} + \epsilon p^{i-1/2} \\
+        \mathrm{if~(i<N)}\quad~p^{i+1/2} &=& p^{i-1/2} - \epsilon
+        \frac{\partial U}{\partial q}(q^{i}) \\
+        \f}
+        The last half step is:
+        \f{eqnarray*}
+        p^{N} &=& p^{N-1/2} - (\epsilon)/2
+        \frac{\partial U}{\partial q}(q^{N}) \\
+        \f}
      */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
                       vec_t &current, vec_t &next, double w_current,
@@ -567,8 +584,8 @@ namespace o2scl {
       // Initialize func_ret to success
       func_ret=success;
       
-      std::cout << "curr1: " << current[0] << " " << current[1] << " "
-                << w_current << std::endl;
+      //std::cout << "curr1: " << current[0] << " " << current[1] << " "
+      //<< w_current << std::endl;
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
@@ -594,8 +611,8 @@ namespace o2scl {
         }
       }
 
-      std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
-                << initial_grad_failed << std::endl;
+      //std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
+      //<< initial_grad_failed << std::endl;
       
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
@@ -607,7 +624,7 @@ namespace o2scl {
 
       if (initial_grad_failed) {
 
-        std::cout << "igf: " << std::endl;
+        //std::cout << "igf: " << std::endl;
         
         for(size_t k=0;k<n_params;k++) {
           next[k]=current[k]+(r.random()*2.0-1.0)*
@@ -644,8 +661,8 @@ namespace o2scl {
         mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
       
-      std::cout << "mom1: " << mom[0] << " " << mom[1] << " "
-                << mom_step[0] << " " << mom_step.size() << std::endl;
+      //std::cout << "mom1: " << mom[0] << " " << mom[1] << " "
+      //<< mom_step[0] << " " << mom_step.size() << std::endl;
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
@@ -653,8 +670,8 @@ namespace o2scl {
         mom_next[k]=mom[k]+0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
-      std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
-                << std::endl;
+      //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
+      //<< std::endl;
 
       // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
@@ -665,7 +682,7 @@ namespace o2scl {
           next[k]=next[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
-        std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
+        //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
         
         // Check that the coordinate space step has not taken us out
         // of bounds
@@ -706,8 +723,7 @@ namespace o2scl {
         if (i<traj_length-1) {
           // [Neal] if (i!=L) p = p - epsilon * grad_U(q)
           for(size_t k=0;k<n_params;k++) {
-            mom_next[k]=mom_next[k]+mom_step[k % mom_step.size()]*
-              grad[k];
+            mom_next[k]+=mom_step[k % mom_step.size()]*grad[k];
           }
           
           //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1]
@@ -754,19 +770,24 @@ namespace o2scl {
       
       // Metropolis algorithm
       accept=false;
-      std::cout << "hmc0: r,exp(alpha),alpha: " << rx << " "
-                << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
-                << pot_curr-pot_next+kin_curr-kin_next << " "
-                << pot_curr << " " << pot_next << " " << kin_curr << " "
-                << kin_next << std::endl;
+      if (false) {
+        std::cout << "hmc0: r,exp(alpha),alpha: " << rx << " "
+                  << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
+                  << pot_curr-pot_next+kin_curr-kin_next << " "
+                  << pot_curr << " " << pot_next << " " << kin_curr << " "
+                  << kin_next << std::endl;
+      }
       // [Neal] if (runif(1) < exp(current_U-proposed_U+
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
       }
-      
-      std::cout << "hmc: x,y,w,f,accept: " << next[0] << " " << next[1] << " "
-                << w_next << " " << func_ret << " " << accept << std::endl;
+
+      if (false) {
+        std::cout << "hmc: x,y,w,f,accept: " << next[0] << " "
+                  << next[1] << " " << w_next << " " << func_ret << " "
+                  << accept << std::endl;
+      }
       //exit(-1);
 
       return;

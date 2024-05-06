@@ -98,12 +98,14 @@ public:
     double z=2.0*rho*shift_x*shift_y/(width_x*width_y);
     double r=1.0-rho*rho;
     double c=2.0*o2scl_const::pi*width_x*width_y*sqrt(r);
-    
+
+    /*
     cout.precision(10);
     cout << "bp: " << u[0] << " " << u[1] << " "
          << z << " " << r << " " << c << " "
          << 1.0/c*exp(-0.5*(x+y-z)/r) << std::endl;
     cout.precision(6);
+    */
     
     log_wgt=log(1.0/c*exp(-0.5*(x+y-z)/r));
 
@@ -752,7 +754,7 @@ int main(int argc, char *argv[]) {
     mpc.mct2.aff_inv=false;
     mpc.mct2.verbose=3;
     mpc.mct2.n_threads=1;
-    mpc.mct2.max_iters=200;
+    mpc.mct2.max_iters=2000;
     mpc.mct2.prefix="mcmct_hmc";
     mpc.mct2.stepper.mom_step[0]=0.18;
     mpc.mct2.stepper.inv_mass[0]=0.1;

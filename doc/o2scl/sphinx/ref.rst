@@ -84,6 +84,10 @@ Bibliography
    <https://doi.org/10.1086/309010>`_,
    Astrophys. J. **537** (2000) 351.
 
+.. [Brooks11] : 
+   `Handbook of Markov Chain Monte Carlo <https://www.worldcat.org/isbn/1420079417>`_,
+   (2011) CRC Press.
+
 .. [Broyden65] : `C. G. Broyden
    <https://doi.org/10.1090/S0025-5718-1965-0198670-6>`_,
    Math. Comp. **19** (1965) 577.
@@ -437,6 +441,10 @@ Bibliography
 .. [Muller96] : `H. Müller and B. D. Serot
    <https://doi.org/10.1016/0375-9474(96)00187-X>`_,
    Nucl. Phys. A **606** (1996) 508.
+
+.. [Neal11] : 
+   `Handbook of Markov Chain Monte Carlo <https://www.worldcat.org/isbn/1420079417>`_,
+   (2011) CRC Press, p. 113-162.
 
 .. [Negele73ns] : `J. W. Negele and D. Vautherin
    <https://doi.org/10.1016/0375-9474(73)90349-7>`_,
