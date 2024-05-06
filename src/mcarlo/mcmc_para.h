@@ -343,11 +343,6 @@ namespace o2scl {
       \f]
       where \f$ i \f$ is an index over \f$ N \f$ parameters
       and \f$ \mu_i \f$ is the inverse mass for parameter \f$ i \f$.
-      The momenta, \f$ p_i \f$, are defined as the gradient of the
-      potential energy \f$ U(q) \equiv - \log {\cal{L}} \f$:
-      \f[
-      p_i \equiv \frac{\partial U}{\partial q_i}
-      \f]
 
       This class can compute the gradients automatically
       by finite-differencing or can use a gradient function
@@ -377,6 +372,10 @@ namespace o2scl {
       this may mean the combined HMC plus RW method may not be
       sampling the target distribution. This class doesn't yet have
       a method for tracking this.
+
+      \verbatim embed:rst
+      The algorithm is taken from [Neal11]_.
+      \endverbatim
 
       See the class documentation for \ref mcmc_stepper_base
       for more information.
@@ -489,9 +488,10 @@ namespace o2scl {
     /** \brief Automatically compute the gradient using
         finite-differencing
 
-        \note The potential energy is negative log f, so this
-        function returns the negative of the gradient of the
-        log-likelihood. 
+        \note The potential energy is the negative of the
+        log-likelihood. This function returns the gradient of the
+        log-likelihood, which is the negative of the gradient of the
+        potential energy.
     */
     int grad_pot(size_t n_params, vec_t &x, func_t &f, 
                   vec_t &g, data_t &dat) {
@@ -501,7 +501,7 @@ namespace o2scl {
       if (auto_grad.size()==0) {
         O2SCL_ERR("Auto grad size 0.",o2scl::exc_einval);
       }
-
+      
       // If the user can compute the gradients, then we end early.
       bool no_auto=true;
       //std::cout << "gp1: " << n_params << " " << auto_grad.size()
@@ -539,7 +539,7 @@ namespace o2scl {
           x[i]-=h;
           
           //std::cout << "gp6." << std::endl;
-          g[i]=(fv1-fv2)/h;
+          g[i]=(fv2-fv1)/h;
           //std::cout << "gp7." << std::endl;
         }
       }
@@ -577,6 +577,7 @@ namespace o2scl {
       if (grad_ptr!=0 && grad_ptr->size()>0) {
         //std::cout << "User spec: " << i_thread << " " << grad_ptr->size()
         //                  << std::endl;
+
         grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
           (n_params,current,f,grad,dat);
         if (grad_ret!=0) {
@@ -637,7 +638,8 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
       
-      // Initialize the momenta
+      // Initialize the momenta, which we rescale by mom_step
+      // [Neal] p = rnorm(length(q),0,1)
       for(size_t k=0;k<n_params;k++) {
         mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
@@ -646,22 +648,24 @@ namespace o2scl {
                 << mom_step[0] << " " << mom_step.size() << std::endl;
       
       // Take a half step in the momenta using the gradient
+      // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]=mom[k]+0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
       std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
                 << std::endl;
-      
+
+      // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
         
         // Take a full step in coordinate space
+        // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
-          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]=next[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
         std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
-        exit(-1);
         
         // Check that the coordinate space step has not taken us out
         // of bounds
@@ -685,6 +689,7 @@ namespace o2scl {
             return;
           }
         }
+        
         // Try the finite-differencing gradient
         grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
@@ -699,9 +704,9 @@ namespace o2scl {
         
         // Perform a momentum step, unless we're at the end
         if (i<traj_length-1) {
-          
+          // [Neal] if (i!=L) p = p - epsilon * grad_U(q)
           for(size_t k=0;k<n_params;k++) {
-            mom_next[k]=mom_next[k]-mom_step[k % mom_step.size()]*
+            mom_next[k]=mom_next[k]+mom_step[k % mom_step.size()]*
               grad[k];
           }
           
@@ -713,8 +718,9 @@ namespace o2scl {
       }
       
       // Perform the final half-step in momentum space
+      // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]+=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
       //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1]
@@ -737,7 +743,9 @@ namespace o2scl {
       
       double kin_curr=0.0, kin_next=0.0;
       for(size_t k=0;k<n_params;k++) {
+        // [Neal] current_K = sum(current_pˆ2) / 2
         kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
+        // [Neal] proposed_K = sum(pˆ2) / 2
         kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*
           mom_next[k]/2.0;
       }
@@ -751,6 +759,8 @@ namespace o2scl {
                 << pot_curr-pot_next+kin_curr-kin_next << " "
                 << pot_curr << " " << pot_next << " " << kin_curr << " "
                 << kin_next << std::endl;
+      // [Neal] if (runif(1) < exp(current_U-proposed_U+
+      // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
       }
