@@ -448,7 +448,7 @@ namespace o2scl {
 
     mcmc_stepper_hmc() {
       inv_mass.resize(1);
-      inv_mass[0]=0.1;
+      inv_mass[0]=1.0;
       traj_length=20;
       mom_step.resize(1);
       mom_step[0]=0.2;
@@ -504,21 +504,15 @@ namespace o2scl {
       
       // If the user can compute the gradients, then we end early.
       bool no_auto=true;
-      //std::cout << "gp1: " << n_params << " " << auto_grad.size()
-      //<< std::endl;
       for(size_t i=0;i<n_params;i++) {
-        //std::cout << "gpx: " << i % auto_grad.size() << std::endl;
         if (auto_grad[i % auto_grad.size()]==true) no_auto=false;
-        //std::cout << "gpy: " << std::endl;
       }
       if (no_auto==true) {
         return success;
       }
 
       // Start with the function evaluation
-      //std::cout << "gp2." << std::endl;
       int func_ret=f(n_params,x,fv1,dat);
-      //std::cout << "gp3." << std::endl;
       if (func_ret!=success) {
         return grad_failed;
       }
@@ -530,17 +524,13 @@ namespace o2scl {
           if (fabs(h)<=epsmin) h=epsrel;
           
           x[i]+=h;
-          //std::cout << "gp4." << std::endl;
           func_ret=f(n_params,x,fv2,dat);
-          //std::cout << "gp5." << std::endl;
           if (func_ret!=success) {
             return grad_failed;
           }
           x[i]-=h;
           
-          //std::cout << "gp6." << std::endl;
           g[i]=(fv2-fv1)/h;
-          //std::cout << "gp7." << std::endl;
         }
       }
       
@@ -584,16 +574,11 @@ namespace o2scl {
       // Initialize func_ret to success
       func_ret=success;
       
-      //std::cout << "curr1: " << current[0] << " " << current[1] << " "
-      //<< w_current << std::endl;
-      
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr!=0 && grad_ptr->size()>0) {
-        //std::cout << "User spec: " << i_thread << " " << grad_ptr->size()
-        //                  << std::endl;
 
         grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
           (n_params,current,f,grad,dat);
@@ -604,16 +589,12 @@ namespace o2scl {
       
       // Then, additionally try the finite-differencing gradient
       if (initial_grad_failed==false) {
-        //std::cout << "grad_pot(): " << std::endl;
         grad_ret=grad_pot(n_params,current,f,grad,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
       }
 
-      //std::cout << "grad1: " << grad[0] << " " << grad[1] << " "
-      //<< initial_grad_failed << std::endl;
-      
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
       // should probably distinguish between the automatic gradient
@@ -624,8 +605,6 @@ namespace o2scl {
 
       if (initial_grad_failed) {
 
-        //std::cout << "igf: " << std::endl;
-        
         for(size_t k=0;k<n_params;k++) {
           next[k]=current[k]+(r.random()*2.0-1.0)*
             (high[k]-low[k])/step_fac[k % step_fac.size()];
@@ -658,11 +637,8 @@ namespace o2scl {
       // Initialize the momenta, which we rescale by mom_step
       // [Neal] p = rnorm(length(q),0,1)
       for(size_t k=0;k<n_params;k++) {
-        mom[k]=pdg()*mom_step[k % mom_step.size()];
+        mom[k]=pdg();
       }
-      
-      //std::cout << "mom1: " << mom[0] << " " << mom[1] << " "
-      //<< mom_step[0] << " " << mom_step.size() << std::endl;
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
@@ -670,19 +646,14 @@ namespace o2scl {
         mom_next[k]=mom[k]+0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
-      //std::cout << "mom2: " << mom_next[0] << " " << mom_next[1]
-      //<< std::endl;
-
       // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
         
         // Take a full step in coordinate space
         // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
-          next[k]=next[k]+mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]+=mom_step[k % mom_step.size()]*mom_next[k];
         }
-        
-        //std::cout << "next1: " << next[0] << " " << next[1] << std::endl;
         
         // Check that the coordinate space step has not taken us out
         // of bounds
@@ -716,18 +687,12 @@ namespace o2scl {
           return;
         }
         
-        //std::cout << "grad2: " << grad[0] << " " << grad[1] << " "
-        //<< initial_grad_failed << std::endl;
-        
         // Perform a momentum step, unless we're at the end
         if (i<traj_length-1) {
           // [Neal] if (i!=L) p = p - epsilon * grad_U(q)
           for(size_t k=0;k<n_params;k++) {
             mom_next[k]+=mom_step[k % mom_step.size()]*grad[k];
           }
-          
-          //std::cout << "mom3: " << mom_next[0] << " " << mom_next[1]
-          //<< std::endl;
           
         }
         
@@ -739,9 +704,6 @@ namespace o2scl {
         mom_next[k]+=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
-      //std::cout << "mom4: " << mom_next[0] << " " << mom_next[1]
-      //<< std::endl;
-      
       // Perform the final function evaluation
       func_ret=f(n_params,next,w_next,dat);
       if (func_ret!=0) {
@@ -749,9 +711,6 @@ namespace o2scl {
         std::cout << "func failed." << std::endl;
         return;
       }
-      
-      //std::cout << "next2: " << next[0] << " " << next[1] << " " << w_next
-      //<< std::endl;
       
       // Evaluate the kinetic and potential energies
       double pot_curr=-w_current;
@@ -788,7 +747,6 @@ namespace o2scl {
                   << next[1] << " " << w_next << " " << func_ret << " "
                   << accept << std::endl;
       }
-      //exit(-1);
 
       return;
     }

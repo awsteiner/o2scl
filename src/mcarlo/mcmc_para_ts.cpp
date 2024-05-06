@@ -756,8 +756,8 @@ int main(int argc, char *argv[]) {
     mpc.mct2.n_threads=1;
     mpc.mct2.max_iters=2000;
     mpc.mct2.prefix="mcmct_hmc";
-    mpc.mct2.stepper.mom_step[0]=0.18;
-    mpc.mct2.stepper.inv_mass[0]=0.1;
+    //mpc.mct2.stepper.mom_step[0]=0.18;
+    //mpc.mct2.stepper.inv_mass[0]=0.1;
     
     point_hmc ph=std::bind
       (std::mem_fn<int(size_t,const ubvector &,double &,
@@ -779,7 +779,11 @@ int main(int argc, char *argv[]) {
                        hmc_fill_vec,data_vec_hmc);
     
     std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct2.get_table();
-    
+
+    tm.test_rel(vector_mean(hmc_table->get_nlines(),
+                           (*hmc_table)["x"]),0.0,0.2,"hmc mean");
+    tm.test_rel(vector_stddev(hmc_table->get_nlines(),
+                           (*hmc_table)["x"]),1.0,0.2,"hmc mean");
     cout << endl;
     
   }
