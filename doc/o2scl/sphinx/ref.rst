@@ -68,6 +68,10 @@ Bibliography
    <https://doi.org/10.1086/152140>`_,
    Astrophys. J. **182** (1973) 335.
 
+.. [Goodman10] : `J. Goodman and J. Weare
+   <https://doi.org/10.2140/camcos.2010.5.65>`_,
+   Comm. Appl. Math Comp. Sci. **5** (2010) 65.
+
 .. [Bonazzola94] : `S. Bonazzola and E. Gourgoulhon
    <https://doi.org/10.1088/0264-9381/11/7/014>`_,
    Class. Quantum Grav. **11** (1994) 1775.

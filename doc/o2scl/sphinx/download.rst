@@ -3,9 +3,9 @@ Download O₂scl
 
 :ref:`O2scl <o2scl>`
 
-The current release version is 0.928. It can be obtained
+The current release version is 0.929. It can be obtained
 from
-https://github.com/awsteiner/o2scl/releases/download/v0.928/o2scl-0.928.tar.gz
+https://github.com/awsteiner/o2scl/releases/download/v0.929/o2scl-0.929.tar.gz
 
 You may also download O₂scl from the Github repository. e.g.::
 
@@ -59,6 +59,7 @@ dgst -sha256`` and compare with the following values.
    o2scl-0.926.tar.gz    afe826ac5366810eecb7c7303a2a9f49
    o2scl-0.927.tar.gz    201cec9ccbcf11bf704a824c774e6db2
    o2scl-0.928.tar.gz    16b5c2f2b1d2d3edea571a1108a11ceb
+   o2scl-0.929.tar.gz    not yet set
    ===================== ================================
 
 ===================== ================================================================
@@ -100,6 +101,7 @@ o2scl-0.925.tar.gz    0e9818db200db6fb896aae0395e6510dc2f8d97d532e903994cabc4680
 o2scl-0.926.tar.gz    a4d5b90b9a83ddead19f3c01bf29c7c7a3f32134a15755746552417cc4ecea37
 o2scl-0.927.tar.gz    9bdbea171c1924c1ae7e0d3dc1f80683ac2c4081eec102a884d453494c9635ad
 o2scl-0.928.tar.gz    55843e5aa1eb2f45b2c0e12cf18b403eccc24ce474562f60989fc07a23afc830
+o2scl-0.929.tar.gz    not yet set
 ===================== ================================================================
 
 ======== ========== ========================= ==================
@@ -140,5 +142,6 @@ Version   Date       Rev. in Sourceforge SVN   Github repo hash
 0.926     10/06/21   N/A                       b2a8b2f420629c9a34abe00fa3b3808c50521501
 0.927     07/23/22   N/A                       9061fb5c032e8ed2f80334336ca606afbe60e0d3
 0.928     07/18/23   N/A                       4dff7a3b143c2043ee5f08721d6b35a8dbbdfcab
+0.929     xx/xx/xx   N/A                       not yet set
 ======== ========== ========================= ==================
 

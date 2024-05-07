@@ -642,22 +642,6 @@ int main(int argc, char *argv[]) {
     std::vector<size_t> chain_sizes2;
     mpc.mct.get_chain_sizes(chain_sizes2);
 
-    // This testing code doesn't work yet, possibly because it is
-    // not yet written correctly
-    for(size_t it=0;it<n_threads;it++) {
-      size_t sum1=0, sum2=0;
-      for(size_t i=0;i<10;i++) {
-	sum1+=chain_sizes2[it*10+i];
-      }
-      for(size_t i=0;i<10;i++) {
-	sum2+=chain_sizes2[it*10+i];
-      }
-      cout << sum1 << " x " << sum2 << " " << sum2-sum1 << " " 
-	   << mpc.mct.n_accept[it] << " "
-	   << mpc.mct.n_reject[it] << endl;
-      //tm.test_gen(sum2-sum1==mpc.mct.n_accept[it],"Test chain size");
-    }
-    
     cout << endl;
   }
 
@@ -757,7 +741,6 @@ int main(int argc, char *argv[]) {
     mpc.mct2.max_iters=2000;
     mpc.mct2.prefix="mcmct_hmc";
     //mpc.mct2.stepper.mom_step[0]=0.18;
-    //mpc.mct2.stepper.inv_mass[0]=0.1;
     
     point_hmc ph=std::bind
       (std::mem_fn<int(size_t,const ubvector &,double &,

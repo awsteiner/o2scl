@@ -309,7 +309,7 @@ namespace o2scl {
 
   /** \brief Hamiltonian Monte Carlo for MCMC
 
-      The vectors \ref step_fac, \ref inv_mass, \ref mom_step, and
+      The vectors \ref step_fac, \ref mom_step, and
       \ref auto_grad are provided to give different values for each of
       the parameters. However, if these vectors have a smaller size,
       then the vector index is wrapped back around to the beginning
@@ -322,7 +322,7 @@ namespace o2scl {
       where \f$ M \f$ is the mass matrix and \f$ {\cal{L}} \f$ 
       is the likelihood. (The \ref mcmc_para_base class presumes
       flat prior distributions.) This class assumes the mass matrix
-      is diagonal and then the inverse is stored in \ref inv_mass. 
+      is the identity matrix.
 
       The step is then accepted with probability
       \f[
@@ -410,11 +410,6 @@ namespace o2scl {
      */
     size_t traj_length;
 
-    /** \brief Inverse mass (default is a one-element vector
-        containing 0.1)
-     */
-    vec_t inv_mass;
-
     /** \brief Standard Gaussian for kinetic energy
      */
     prob_dens_gaussian pdg;
@@ -447,8 +442,6 @@ namespace o2scl {
     static const size_t grad_failed=30;
 
     mcmc_stepper_hmc() {
-      inv_mass.resize(1);
-      inv_mass[0]=1.0;
       traj_length=20;
       mom_step.resize(1);
       mom_step[0]=0.2;
@@ -467,7 +460,6 @@ namespace o2scl {
     virtual void write_params(o2scl_hdf::hdf_file &hf) {
       hf.setd_vec_copy("step_fac",step_fac);
       hf.setd_vec_copy("mom_step",mom_step);
-      hf.setd_vec_copy("inv_mass",inv_mass);
       hf.set_szt("traj_length",traj_length);
       hf.setd("epsrel",epsrel);
       hf.setd("epsmin",epsmin);
@@ -719,10 +711,9 @@ namespace o2scl {
       double kin_curr=0.0, kin_next=0.0;
       for(size_t k=0;k<n_params;k++) {
         // [Neal] current_K = sum(current_pˆ2) / 2
-        kin_curr+=mom[k]*inv_mass[k % inv_mass.size()]*mom[k]/2.0;
+        kin_curr+=mom[k]*mom[k]/2.0;
         // [Neal] proposed_K = sum(pˆ2) / 2
-        kin_next+=mom_next[k]*inv_mass[k % inv_mass.size()]*
-          mom_next[k]/2.0;
+        kin_next+=mom_next[k]*mom_next[k]/2.0;
       }
       
       double rx=r.random();
@@ -756,15 +747,16 @@ namespace o2scl {
   /** \brief A generic MCMC simulation class
 
       This class performs a Markov chain Monte Carlo simulation of a
-      user-specified function using OpenMP and/or MPI. Either the
-      Metropolis-Hastings algorithm with a user-specified proposal
-      distribution or the affine-invariant sampling method of Goodman
-      and Weare can be used.
-
-      By default, the Metropolis-Hastings algorithm is executed with a
-      simple random walk, with steps in each dimension of size \f$
-      (\mathrm{high} - \mathrm{low})/\mathrm{step\_fac} \f$ with the
-      denominator specified in \ref step_fac.
+      user-specified function using OpenMP and/or MPI. The class works
+      with a stepper object of type \ref mcmc_stepper_base or an
+      internal implementation of an affine-invariant sampling method.
+      See also \ref mcmc_stepper_rw (the default), \ref
+      mcmc_stepper_mh, and \ref mcmc_stepper_hmc.
+      
+      \verbatim embed:rst
+      The affine-invariant sampling method follows
+      algorithm [Goodman10]_.
+      \endverbatim
 
       The function type is a template type, \c func_t, which should
       be of the form 
