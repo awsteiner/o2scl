@@ -120,6 +120,30 @@ pull_v0.929_u24.04_py:
 	sudo docker pull awsteiner/o2scl:v0.929_u24.04_py
 
 # ----------------------------------------------
+# Standard build 6: v0.929_u24.04_min
+
+build_v0.929_u24.04_min:
+	sudo docker build . --rm -f v0.929_u24.04_min \
+		-t awsteiner/o2scl:v0.929_u24.04_min \
+		> v0.929_u24.04_min.out 2>&1
+
+test1_v0.929_u24.04_min:
+	sudo docker run awsteiner/o2scl:v0.929_u24.04_min sh -c \
+		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
+		> test1_v0.929_u24.04_min.out 2>&1
+
+test2_v0.929_u24.04_min:
+	sudo docker run awsteiner/o2scl:v0.929_u24.04_min sh -c \
+		"cd /opt/o2sclmin && make testq" \
+		>> test2_v0.929_u24.04_min.out 2>&1
+
+push_v0.929_u24.04_min:
+	sudo docker push awsteiner/o2scl:v0.929_u24.04_min
+
+pull_v0.929_u24.04_min:
+	sudo docker pull awsteiner/o2scl:v0.929_u24.04_min
+
+# ----------------------------------------------
 # Other builds
 
 build_v0.929a1_muses:

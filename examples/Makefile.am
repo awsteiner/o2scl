@@ -79,14 +79,16 @@ EXAMPLE_BASE = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_mmin_fix.scr ex_nucmass_fit.scr ex_eos_had_rmf.scr \
 	ex_stiff.scr ex_chebapp.scr ex_poly.scr ex_conmin.scr \
 	ex_nucleus_rmf.scr ex_eos_had_skyrme.scr \
-	ex_nucmass.scr ex_tensor.scr ex_mcmc.scr ex_nstar_rot.scr \
-	ex_interp.scr ex_eos_gibbs.scr ex_mcmc_kde.scr \
+	ex_nucmass.scr ex_tensor.scr ex_nstar_rot.scr \
+	ex_interp.scr ex_eos_gibbs.scr \
 	ex_fermion_summ.scr ex_lambda.scr
 
+# When Python is enabled, ex_mcmc_kde needs to run after ex_mcmc,
+# since it uses the ex_mcmc results to train the KDE
 if O2SCL_PYTHON
 EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr
 else
-EXAMPLE_PRGS = $(EXAMPLE_BASE)
+EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc.scr
 endif
 
 
@@ -274,17 +276,28 @@ ex_fptr_SOURCES = ex_fptr.cpp
 ex_fptr.scr: ex_fptr
 	./ex_fptr > ex_fptr.scr
 
+# -------------------------------------------------------------------
+# When Python is enabled, ex_mcmc_kde needs to run after ex_mcmc,
+# since it uses the ex_mcmc results to train the KDE. We use the
+# ex_mcmc_kde.scr target when Python is enabled and the ex_mcmc.scr
+# target otherwise
+
 ex_mcmc_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_mcmc_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_SOURCES = ex_mcmc.cpp
-ex_mcmc.scr: ex_mcmc
-	./ex_mcmc > ex_mcmc.scr
 
 ex_mcmc_kde_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_mcmc_kde_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_kde_SOURCES = ex_mcmc_kde.cpp
-ex_mcmc_kde.scr: ex_mcmc_kde
+
+ex_mcmc.scr: ex_mcmc
+	./ex_mcmc > ex_mcmc.scr
+
+ex_mcmc_kde.scr: ex_mcmc ex_mcmc_kde
+	./ex_mcmc > ex_mcmc.scr
 	./ex_mcmc_kde > ex_mcmc_kde.scr
+
+# -------------------------------------------------------------------
 
 ex_interp_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_interp_LDADD = $(ADDL_TEST_LIBS)

@@ -157,9 +157,9 @@ int main(int argc, char *argv[]) {
   vector<string> punits={"",""};
   mct.set_names_units(pnames,punits);
 
-  // Write the preliminary data to a file
+  // Read the preliminary data from a file
   hdf_file hf;
-  hf.open_or_create("ex_mcmc.o2");
+  hf.open("ex_mcmc.o2");
   table_units<> tab_in;
   hdf_input(hf,tab_in,"indep");
   hf.close();
