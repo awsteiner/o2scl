@@ -189,7 +189,6 @@ int main(int argc, char *argv[]) {
   mct.stepper.proposal[0].set_base(kp);
   
   // Set the MCMC parameters
-  mct.new_step=true;
   mct.max_iters=20000;
   mct.prefix="ex_mcmc_kde";
   mct.n_threads=1;
