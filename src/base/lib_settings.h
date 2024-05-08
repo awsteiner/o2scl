@@ -244,13 +244,17 @@ namespace o2scl {
     /// Get the python path and place the path strings in \c vs.
     void get_python_path(std::vector<std::string> &vs, int verbose=0);
 
+#ifdef O2SCL_PYTHON
     /** \brief Import module named \c module
 
         This function outputs some debugging information if the
         module import fails. The function py_init() must be 
-        called first. 
+        called first.
+
+	This function is only defined if Python support is enabled.
      */
     PyObject *py_import_module(std::string module, int verbose=0);
+#endif
     
   protected:
 

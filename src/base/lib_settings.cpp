@@ -198,6 +198,7 @@ bool lib_settings_class::range_check() {
 #endif
 }
 
+#ifdef O2SCL_PYTHON
 PyObject *lib_settings_class::py_import_module(std::string module,
                                                int verbose) {
 
@@ -277,6 +278,7 @@ PyObject *lib_settings_class::py_import_module(std::string module,
   
   return pModule;
 }
+#endif
 
 void lib_settings_class::get_python_path(std::vector<std::string> &vs,
                                          int verbose) {
