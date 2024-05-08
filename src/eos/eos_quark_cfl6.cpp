@@ -685,7 +685,7 @@ int eos_quark_cfl6::test_derivatives(double lmom, double mu3, double mu8,
     integrands(lmom,res);
     double om2=res[0];
     up->mu-=h;
-    t.test_rel((om2-om1)/h,dmuu,1.0e-3,"dmuu");
+    t.test_abs((om2-om1)/h,dmuu,1.0e-3,"dmuu");
     
     calc_eq_temp_p(*up,*down,*strange,x1,x2,x3,x4,x5,x6,mu3,mu8,
 		   n3,n8,*eos_thermo,4.0/hc_mev_fm);
