@@ -16,7 +16,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Base apt libraries for Ubuntu 24.04
 RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
-  gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2
+  gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2 \
+  libquadmath0
 
 # -----------------------------------------------------------------
 # Now install o2scl
@@ -32,7 +33,7 @@ WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
-RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
+RUN LIBS="-lquadmath" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
 RUN make blank-doc && make && make install
 
 # -----------------------------------------------------------------
