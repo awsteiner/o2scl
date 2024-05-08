@@ -1,0 +1,45 @@
+# This dockerfile performs a (nearly) minimal O2scl installation from
+# the v0.929 release. It includes readline, OpenMP and HDF5 from the
+# Ubuntu package with compression support.
+
+FROM ubuntu:24.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# -----------------------------------------------------------------
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# Install apt packages
+
+# Base apt libraries for Ubuntu 24.04
+RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
+  gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2
+
+# -----------------------------------------------------------------
+# Now install o2scl
+
+#WORKDIR /opt
+#RUN curl -L \
+#https://github.com/awsteiner/o2scl/releases/download/v0.929/o2scl-0.929.tar.gz \
+  --output o2scl-0.929.tar.gz
+#RUN tar xzf o2scl-0.929.tar.gz
+#WORKDIR /opt/o2scl-0.929
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
+RUN make && make install
+
+# -----------------------------------------------------------------
+# Run acol
+
+WORKDIR /opt
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -h && acol -v
+
+
+
+
