@@ -33,7 +33,7 @@ WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN autoreconf -i
-RUN LIBS="-lquadmath" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP" ./configure --enable-openmp --disable-static
 RUN make blank-doc && make && make install
 
 # -----------------------------------------------------------------

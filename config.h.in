@@ -51,6 +51,9 @@
 /* Define to 1 if you have the `pugixml' library (-lpugixml). */
 #undef HAVE_LIBPUGIXML
 
+/* Define to 1 if you have the `quadmath' library (-lquadmath). */
+#undef HAVE_LIBQUADMATH
+
 /* Define to 1 if you have the `readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 

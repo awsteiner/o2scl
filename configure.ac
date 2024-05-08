@@ -102,6 +102,20 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 	],[])
 
 # ------------------------------------------------------------------
+# Check for libquadmath
+# ------------------------------------------------------------------
+
+AC_CHECK_LIB([quadmath], [isnanq], [], 
+	[echo ""
+        echo "Quadmath not found."
+        echo "O2scl requires the libquadmath."
+	echo ""
+	echo -n " The present value of LDFLAGS is: " 
+	echo $LDFLAGS
+        exit -1
+	],[])
+
+# ------------------------------------------------------------------
 # Check for Readline library
 # ------------------------------------------------------------------
 

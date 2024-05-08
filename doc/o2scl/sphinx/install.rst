@@ -21,27 +21,23 @@ Installation Contents
 - :ref:`Generation of documentation`
 - :ref:`Uninstallation`
 
-.. note::
-   7/23/22: On OSX, boost multiprecision (used by O₂scl) appears to
-   currently also include libquadmath.
-
 .. _install_general:
    
 General notes
 -------------
 
-O₂scl requires Boost, GSL, and the HDF5 libraries (the precise
-procedure for installing these libraries differs from system to
-system, but some common cases and useful information is given below).
-O₂scl is designed to be used with the most recent release version of
-all of these libraries, but is sometimes compatible with recent older
-versions. The configure script attempts to add these libraries to
-LDFLAGS during the installation of O₂scl. In order to compile your
-code with O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``, and you may need to include
-``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl libraries.
-The sections below describe several different ways of installing
-O₂scl.
+O₂scl requires Boost, GSL, libquadmath, and the HDF5 libraries (the
+precise procedure for installing these libraries differs from system
+to system, but some common cases and useful information is given
+below). O₂scl is designed to be used with the most recent release
+version of all of these libraries, but is sometimes compatible with
+recent older versions. The configure script attempts to add these
+libraries to LIBS and LDFLAGS during the installation of O₂scl. In
+order to compile your code with O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lquadmath -lm``, and you may need
+to include ``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl
+libraries. The sections below describe several different ways of
+installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
@@ -98,7 +94,7 @@ install``.
    HDF5 earlier than 1.12 you will need to compile with
    ``-DO2SCL_HDF5_PRE_1_12``.
 
-O₂scl requires the Boost (v1.74.0 or later) and the GSL libraries
+O₂scl requires the Boost (v1.80.0 or later) and the GSL libraries
 (version 2.0 or later). If the ``configure`` script cannot find Boost
 or GSL, you may have to specify their location for the associated
 header files in the ``CXXFLAGS`` variable and the associated libraries
@@ -133,10 +129,11 @@ Compiling O₂scl from a release on Linux
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
-``libreadline-dev`` package), and HDF5 the ``libhdf5-dev`` package).
-You can then install O₂scl from one of the release distributions by
-using the standard GNU ``./configure`` script and then invoking
-``make`` and ``make install`` (which often requires ``sudo``).
+``libreadline-dev`` package), HDF5 (the ``libhdf5-dev`` package), and
+quadmath (the ``libquadmath0`` package). You can then install O₂scl
+from one of the release distributions by using the standard GNU
+``./configure`` script and then invoking ``make`` and ``make install``
+(which often requires ``sudo``).
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
@@ -156,7 +153,7 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
-hdf5-devel, readline-devel``, and ``boost-devel``.
+hdf5-devel, readline-devel``, ``libquadmath0``, and ``boost-devel``.
 
 Note that if your boost installation is earlier than 1.70, you will
 need to use the -DO2SCL_OLD_BOOST flag to get all of the tests to run
@@ -197,13 +194,6 @@ O₂scl up at https://hub.docker.com/r/awsteiner/o2scl . These images
 are based on the experimental docker files which are stored in
 the ``docker`` subdirectory, and can be found at 
 https://github.com/awsteiner/o2scl/tree/main/docker .
-
-..
-   For those on
-   MacOS, I recommend the guide at
-   https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
-   to installing docker (though this may need revision as now
-   docker-machine is deprecated on homebrew).
 
 .. _python_support:
 

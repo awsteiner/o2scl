@@ -83,7 +83,7 @@ build_v0.929a2_u23.04_py:
 		-t awsteiner/o2scl:v0.929a2_u23.04_py \
 		> v0.929a2_u23.04_py.out 2>&1
 	sudo docker run awsteiner/o2scl:v0.929a2_u23.04_py sh -c \
-		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
 		> test_v0.929a2_u23.04_py.out 2>&1
 	sudo docker run awsteiner/o2scl:v0.929a2_u23.04_py sh -c \
 		"cd /opt/o2sclpy && make testq" \
@@ -105,7 +105,7 @@ build_v0.929_u24.04_py:
 
 test1_v0.929_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.929_u24.04_py sh -c \
-		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
 		> test1_v0.929_u24.04_py.out 2>&1
 
 test2_v0.929_u24.04_py:
