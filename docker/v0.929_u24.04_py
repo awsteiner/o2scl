@@ -23,11 +23,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 # o2sclpy. The library libcairo2-dev is required for pycairo. We could
 # use "--no-install-recommends" to make the image smaller, but that
 # causes problems and many of the recommendations are good, e.g.
-# manpages and less.
+# manpages and less. We need imagemagick to test the images generated
+# by O2sclpy's o2graph.
 
 RUN apt-get -y update && apt-get \
   -y install g++ make autoconf automake libtool git curl cmake \
-  python3 libz-dev libsz2
+  python3 libz-dev libsz2 imagemagick
 
 # -----------------------------------------------------------------
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
