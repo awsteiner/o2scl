@@ -84,15 +84,22 @@ RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
 # -----------------------------------------------------------------
 # Install O2scl
 
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
 #RUN git checkout e34fd9ba && autoreconf -i
-RUN autoreconf -i
+#RUN autoreconf -i
+
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.929/o2scl-0.929.tar.gz \
+  --output o2scl-0.929.tar.gz
+RUN tar xzf o2scl-0.929.tar.gz
+WORKDIR /opt/o2scl-0.929
 
 # We disable static and make blank-doc to keep the image small
 
 RUN LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static
-RUN make blank-doc && make && make install
+RUN make && make install
+
 WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
 
