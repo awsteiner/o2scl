@@ -67,6 +67,8 @@ double o2scl_std_vector_double__getitem(void *vptr, size_t n);
 
 void o2scl_std_vector_double__setitem(void *vptr, size_t i, double val);
 
+void o2scl_std_vector_double__push_back(void *vptr, double x);
+
 void *o2scl_create_std_vector_int_();
 
 void o2scl_free_std_vector_int_(void *vptr);
@@ -104,6 +106,8 @@ void o2scl_copy_std_vector_std_string_(void *vsrc, void *vdest);
 void o2scl_std_vector_std_string__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_std_string__size(void *vptr);
+
+void o2scl_std_vector_std_string__push_back(void *vptr, char *x);
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n);
 

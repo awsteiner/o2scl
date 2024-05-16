@@ -131,6 +131,9 @@ class std::vector<double>
 - function operator[]
   - double &
   - size_t n
+- function push_back
+  - void
+  - double x
 - extra_py |
 | def __len__(self):
 |     """
@@ -150,6 +153,13 @@ class std::vector<double>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
+|
+| def append(self,value):
+|     """
+|     Add an element to the end of the vector
+|     """
+|     self.push_back(value)
+|     return
 |
 | def from_list(self,lst):
 |     """
@@ -263,6 +273,9 @@ class std::vector<std::string>
   - size_t n                             
 - function size
   - size_t
+- function push_back
+  - void
+  - std::string x
 - function operator[]
   - std::string &
   - size_t n
@@ -274,6 +287,13 @@ class std::vector<std::string>
 |     Returns: a Python int
 |     """
 |     return self.size()
+|
+| def append(self,value):
+|     """
+|     Add an element to the end of the vector
+|     """
+|     self.push_back(value)
+|     return
 |
 | def set_list(self,ls):
 |     """

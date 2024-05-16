@@ -2129,17 +2129,38 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
   cmd="xdg-open ";
 #endif
 #endif
+
+  std::string stem="o2scl/html";
   
-  if (sv.size()>=3 || (sv.size()==2 && sv[1]!="dev")) {
+  std::cout << "Here0: sv.size(): " << sv.size() << std::endl;
+    
+  if (sv.size()>=3 || (sv.size()==2 && sv[1]!="dev" &&
+                       sv[1]!="o2sclpy" && sv[1]!="o2sclpy-dev")) {
+
+    //std::cout << "Here0b." << std::endl;
+    
     bool dev=false;
     string term=sv[1];
-    string section;
     
-    if (sv.size()>=3 && sv[1]==((string)"dev")) {
-      term=sv[2];
-      dev=true;
+    if (sv.size()>=3) {
+      if (sv[1]==((string)"dev")) {
+        term=sv[2];
+        dev=true;
+        stem="o2scl-dev/html";
+      } else if (sv[1]==((string)"o2sclpy")) {
+        stem="o2sclpy";
+        term=sv[2];
+      } else if (sv[1]==((string)"o2sclpy-dev")) {
+        term=sv[2];
+        stem="o2sclpy-dev";
+        dev=true;
+      }
     }
-    
+
+    //std::cout << "Here1: sv.size(): " << sv.size()
+    //<< " term: " << term << " dev: " << dev
+    //<< " stem: " << stem << std::endl;
+
     if (term.length()>40) {
       term=term.substr(0,40);
     }
@@ -2155,35 +2176,24 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
 	i=0;
       }
     }
-    if (section=="part") {
-      if (dev) {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl-dev/part/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl/part/html/search.html?q="+term+" &";
-      }
-    } else if (section=="eos") {
-      if (dev) {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl-dev/eos/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl/eos/html/search.html?q="+term+" &";
-      }
-    } else {
-      if (dev) {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl-dev/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://awsteiner.org/code/")+
-          "o2scl/html/search.html?q="+term+" &";
-      }
-    }
-  } else if (sv[1]=="dev") {
-    cmd+="https://awsteiner.org/code/o2scl-dev/html/acol.html &";
+    cmd+=((string)"https://awsteiner.org/code/")+stem+
+      "/search.html?q="+term+" &";
+    
+  } else if (sv.size()>=2 && sv[1]=="dev") {
+    cmd+=((string)"https://awsteiner.org/code/")+
+      stem+"/acol.html &";
+  } else if (sv.size()>=2 && sv[1]=="o2sclpy") {
+
+    //std::cout << "Here2." << std::endl;
+    
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2sclpy/o2graph.html &";
+  } else if (sv.size()>=2 && sv[1]=="o2sclpy-dev") {
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2sclpy/o2graph.html &";
   } else {
-    cmd+="https://awsteiner.org/code/o2scl/html/acol.html &";
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2scl/html/acol.html &";
   }
   
   cout << "Using command: " << cmd << endl;
