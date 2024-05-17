@@ -2131,14 +2131,19 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
 #endif
 
   std::string stem="o2scl/html";
+
+  if (verbose>=2) {
+    std::cout << "acol wdocs: " << std::endl;
+    std::cout << "  sv: ";
+    for(size_t j=0;j<sv.size();j++) {
+      std::cout << sv[j] << " ";
+    }
+    std::cout << endl;
+  }
   
-  std::cout << "Here0: sv.size(): " << sv.size() << std::endl;
-    
   if (sv.size()>=3 || (sv.size()==2 && sv[1]!="dev" &&
                        sv[1]!="o2sclpy" && sv[1]!="o2sclpy-dev")) {
 
-    //std::cout << "Here0b." << std::endl;
-    
     bool dev=false;
     string term=sv[1];
     
@@ -2156,10 +2161,6 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
         dev=true;
       }
     }
-
-    //std::cout << "Here1: sv.size(): " << sv.size()
-    //<< " term: " << term << " dev: " << dev
-    //<< " stem: " << stem << std::endl;
 
     if (term.length()>40) {
       term=term.substr(0,40);
@@ -2183,14 +2184,11 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     cmd+=((string)"https://awsteiner.org/code/")+
       stem+"/acol.html &";
   } else if (sv.size()>=2 && sv[1]=="o2sclpy") {
-
-    //std::cout << "Here2." << std::endl;
-    
     cmd+=((string)"https://awsteiner.org/code/")+
       "o2sclpy/o2graph.html &";
   } else if (sv.size()>=2 && sv[1]=="o2sclpy-dev") {
     cmd+=((string)"https://awsteiner.org/code/")+
-      "o2sclpy/o2graph.html &";
+      "o2sclpy-dev/o2graph.html &";
   } else {
     cmd+=((string)"https://awsteiner.org/code/")+
       "o2scl/html/acol.html &";
