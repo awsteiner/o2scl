@@ -27,6 +27,7 @@
 #include <o2scl/hist.h>
 #include <o2scl/hist_2d.h>
 #include <o2scl/contour.h>
+#include <o2scl/vec_stats.h>
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/prob_dens_mdim_amr.h>
 
@@ -421,5 +422,19 @@ void o2scl_prob_dens_mdim_amr__clear(void *vptr);
 void o2scl_prob_dens_mdim_amr__clear_mesh(void *vptr);
 
 double o2scl_prob_dens_mdim_amr__total_volume(void *vptr);
+
+double o2scl_vector_mean_std_vector_double__wrapper(size_t n, void *ptr_v);
+
+double o2scl_vector_stddev_std_vector_double__wrapper(size_t n, void *ptr_v);
+
+double o2scl_vector_lagk_autocorr_std_vector_double__wrapper(size_t n, void *ptr_v, size_t k);
+
+void o2scl_vector_autocorr_vector_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_ac);
+
+void o2scl_vector_autocorr_vector_fftw_std_vector_double_std_vector_double__wrapper(void *ptr_v, void *ptr_ac, double mean, double stddev);
+
+size_t o2scl_vector_autocorr_tau_std_vector_double_std_vector_double__wrapper(void *ptr_ac, void *ptr_ftom);
+
+void o2scl_vector_acor_std_vector_double__wrapper(size_t n, void *ptr_v, double mean, double sigma, void *ptr_tau);
 
 }

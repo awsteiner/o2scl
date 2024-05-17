@@ -22,6 +22,7 @@ h_include <o2scl/polylog.h>
 h_include <o2scl/hist.h>
 h_include <o2scl/hist_2d.h>
 h_include <o2scl/contour.h>
+h_include <o2scl/vec_stats.h>
 h_include <o2scl/prob_dens_func.h>
 h_include <o2scl/prob_dens_mdim_amr.h>
 # 
@@ -618,3 +619,50 @@ class prob_dens_mdim_amr<>
   - void
 - function total_volume
   - double
+#
+# ------------------------------------------------------
+#
+# Functions from vec_stats.h
+# 
+function vector_mean<std::vector<double>>
+- double
+- py_name vector_mean
+- size_t n  
+- io const vector<double> &v
+function vector_stddev<std::vector<double>>
+- double
+- py_name vector_stddev
+- size_t n  
+- io const vector<double> &v
+function vector_lagk_autocorr<std::vector<double>>
+- double
+- py_name vector_lagk_autocorr
+- size_t n  
+- io const vector<double> &v
+- size_t k
+function vector_autocorr_vector<std::vector<double>,std::vector<double>>
+- void
+- py_name vector_autocorr_vector
+- size_t n  
+- io const vector<double> &v
+- out vector<double> &ac
+function vector_autocorr_vector_fftw<std::vector<double>,std::vector<double>>
+- void
+- py_name vector_autocorr_vector_fftw
+- io const vector<double> &v
+- out vector<double> &ac
+- double mean
+- double stddev
+function vector_autocorr_tau<std::vector<double>,std::vector<double>>
+- size_t
+- py_name vector_autocorr_tau
+- io const vector<double> &ac
+- out vector<double> &ftom
+function vector_acor<std::vector<double>>
+- void
+- py_name vector_acor
+- size_t n  
+- io const vector<double> &v
+- double mean
+- double sigma
+- io double &tau

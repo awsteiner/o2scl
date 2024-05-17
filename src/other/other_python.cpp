@@ -1202,3 +1202,49 @@ double o2scl_prob_dens_mdim_amr__total_volume(void *vptr) {
   return ret;
 }
 
+double o2scl_vector_mean_std_vector_double__wrapper(size_t n, void *ptr_v) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  double func_ret=vector_mean<std::vector<double>>(n,*v);
+  return func_ret;
+}
+
+double o2scl_vector_stddev_std_vector_double__wrapper(size_t n, void *ptr_v) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  double func_ret=vector_stddev<std::vector<double>>(n,*v);
+  return func_ret;
+}
+
+double o2scl_vector_lagk_autocorr_std_vector_double__wrapper(size_t n, void *ptr_v, size_t k) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  double func_ret=vector_lagk_autocorr<std::vector<double>>(n,*v,k);
+  return func_ret;
+}
+
+void o2scl_vector_autocorr_vector_std_vector_double_std_vector_double__wrapper(size_t n, void *ptr_v, void *ptr_ac) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  vector<double> *ac=(vector<double> *)ptr_ac;
+  vector_autocorr_vector<std::vector<double>,std::vector<double>>(n,*v,*ac);
+  return;
+}
+
+void o2scl_vector_autocorr_vector_fftw_std_vector_double_std_vector_double__wrapper(void *ptr_v, void *ptr_ac, double mean, double stddev) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  vector<double> *ac=(vector<double> *)ptr_ac;
+  vector_autocorr_vector_fftw<std::vector<double>,std::vector<double>>(*v,*ac,mean,stddev);
+  return;
+}
+
+size_t o2scl_vector_autocorr_tau_std_vector_double_std_vector_double__wrapper(void *ptr_ac, void *ptr_ftom) {
+  vector<double> *ac=(vector<double> *)ptr_ac;
+  vector<double> *ftom=(vector<double> *)ptr_ftom;
+  size_t func_ret=vector_autocorr_tau<std::vector<double>,std::vector<double>>(*ac,*ftom);
+  return func_ret;
+}
+
+void o2scl_vector_acor_std_vector_double__wrapper(size_t n, void *ptr_v, double mean, double sigma, void *ptr_tau) {
+  vector<double> *v=(vector<double> *)ptr_v;
+  double *tau=(double *)ptr_tau;
+  vector_acor<std::vector<double>>(n,*v,mean,sigma,*tau);
+  return;
+}
+
