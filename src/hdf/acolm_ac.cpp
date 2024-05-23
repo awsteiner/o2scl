@@ -1927,7 +1927,7 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
 				table_obj[sv[2]]);
     cout << "Correlation coefficient: " << c << endl;
     
-  } else if (sv.size()>=2 && sv[1]==((string)"table3d") {
+  } else if (sv.size()>=2 && sv[1]==((string)"table3d")) {
       
     table3d_obj.clear();
     size_t n=table_obj.get_ncolumns();
@@ -1962,7 +1962,8 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
     size_t n=table_obj.get_ncolumns();
     
     for(size_t i=0;i<n;i++) {
-      cout << i << "/" << n << endl;
+      cout << "Computing correlations for column "
+           << i+1 << " of " << n << endl;
       for(size_t j=i+1;j<n;j++) {
         labels.push_back(table_obj.get_column_name(i)+", "+
                          table_obj.get_column_name(j));
@@ -1978,6 +1979,7 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
         */
       }
     }
+    cout << endl;
     
     vector<size_t> indexes(coeffs.size());
     vector_sort_index(coeffs.size(),abs_coeffs,indexes);
