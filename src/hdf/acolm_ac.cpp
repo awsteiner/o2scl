@@ -1926,9 +1926,36 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
     double c=vector_correlation(table_obj.get_nlines(),table_obj[sv[1]],
 				table_obj[sv[2]]);
     cout << "Correlation coefficient: " << c << endl;
-
+    
+  } else if (sv.size()>=2 && sv[1]==((string)"table3d") {
+      
+    table3d_obj.clear();
+    size_t n=table_obj.get_ncolumns();
+    uniform_grid_end_width<double> ug(0,n-1,1.0);
+    table3d_obj.set_xy("x",ug,"y",ug);
+    table3d_obj.new_slice("correl");
+    
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=i;j<n;j++) {
+        if (i==j) {
+          table3d_obj.set(i,j,"correl",1.0);
+        } else {
+          double c=vector_correlation(table_obj.get_nlines(),
+                                      table_obj[i],table_obj[j]);
+          if (!std::isfinite(c)) c=0.0;
+          table3d_obj.set(i,j,"correl",c);
+          table3d_obj.set(j,i,"correl",c);
+        }
+      }
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+    
   } else {
-  
+      
     vector<string> labels;
     vector<double> coeffs, abs_coeffs;
     
@@ -1937,18 +1964,18 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
     for(size_t i=0;i<n;i++) {
       cout << i << "/" << n << endl;
       for(size_t j=i+1;j<n;j++) {
-	labels.push_back(table_obj.get_column_name(i)+","+
-			 table_obj.get_column_name(j));
-	double c=vector_correlation(table_obj.get_nlines(),
-				    table_obj[i],table_obj[j]);
-	if (!std::isfinite(c)) c=0.0;
-	coeffs.push_back(c);
-	abs_coeffs.push_back(fabs(c));
-	/*
-	  cout << labels[labels.size()-1] << " " << c << endl;
-	  char ch;
-	  cin >> ch;
-	*/
+        labels.push_back(table_obj.get_column_name(i)+", "+
+                         table_obj.get_column_name(j));
+        double c=vector_correlation(table_obj.get_nlines(),
+                                    table_obj[i],table_obj[j]);
+        if (!std::isfinite(c)) c=0.0;
+        coeffs.push_back(c);
+        abs_coeffs.push_back(fabs(c));
+        /*
+          cout << labels[labels.size()-1] << " " << c << endl;
+          char ch;
+          cin >> ch;
+        */
       }
     }
     
@@ -1959,8 +1986,9 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
       size_t k=indexes[coeffs.size()-1-j];
       cout << j << " ";
       cout << labels[k] << " "
-	   << coeffs[k] << " " << abs_coeffs[k] << endl;;
+           << coeffs[k] << " " << abs_coeffs[k] << endl;;
     }
+      
   }
   
   return 0;

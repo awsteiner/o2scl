@@ -889,12 +889,17 @@ namespace o2scl_acol {
 
         Compute the correlation coefficient between two columns.
 
-        Arguments: <tt>[column 1, column 2]</tt>
+        Arguments: <tt>[column 1, column 2] or ["table3d"]</tt>
 
-        Compute the correlation coefficient between two columns, or,
-        if no arguments are given, then compute the correlation
-        coefficients between all pairs of columns. Results are output
-        to the screen.
+        If two column names are specified, then the \c correl command
+        computes the correlation coefficient between two columns and
+        outputs the result to the screen. If no arguments are given,
+        then the correlation coefficients between all pairs of columns
+        are computed and sorted by decreasing correlation magnitude.
+        Results are output to the screen. If the "table3d" argument is
+        given, then the correlation coefficients are computed between
+        all pairs of columns and these coefficients are stored in a \c
+        table3d object.
     */
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
