@@ -278,8 +278,6 @@ ALIASES                = nothing= \
                          "comment=\if o2sclneverdefined" \
                          endcomment=\endif \
                          "o2=\htmlonly O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl \endhtmlonly \latexonly O$_2$scl \endlatexonly" \
-                         "o2p=\htmlonly <a href='../part/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_part</a> \endhtmlonly \latexonly O$_2$scl\_part \endlatexonly" \
-                         "o2e=\htmlonly <a href='../eos/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_eos</a> \endhtmlonly \latexonly O$_2$scl\_eos \endlatexonly" \
                          "o2y=\htmlonly <a href='../eos/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>sclpy</a> \endhtmlonly \latexonly O$_2$sclpy \endlatexonly" \
                          "tensor=\htmlonly tensor\endhtmlonly \latexonly tensor \endlatexonly" \
                          "gradient=\htmlonly gradient\endhtmlonly \latexonly gradient \endlatexonly" \

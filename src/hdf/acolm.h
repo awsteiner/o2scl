@@ -928,6 +928,10 @@ namespace o2scl_acol {
         give a vector specification, or specify the size of the array
         and a function of the array index <tt>i</tt>.
 
+        <tt>create string[] <strings spec.></tt>
+        This user must give a string list specification. See
+        ``acol -help strings-spec`` for more information.
+
         <tt>create table <name> <vector spec.></tt>:
         Create a new <tt>table</tt> object with one column named <name>
         from a vector specification.
@@ -967,13 +971,21 @@ namespace o2scl_acol {
         <tt>vec_vec_double</tt> object using the given multiple 
         vector specification(s).
         
+        See <tt>acol -help value-spec</tt> for help on value
+        specifications, <tt>acol -help functions</tt> for help
+        on functions, <tt>acol -help mult-vector-spec</tt> for
+        help on multiple vector specifications, and
+        <tt>acol -help strings-spec</tt> for help on string
+        list specifications.
+        
+        End of runtime documentation.
+
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value
         specifications, :cpp:func:`o2scl_hdf::functions()` for help
         on function specifications, and 
         :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
         on multiple vector specifications.
-
         \endverbatim
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);

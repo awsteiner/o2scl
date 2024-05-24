@@ -78,7 +78,7 @@ namespace o2scl {
 
     /// Integer to indicate rejection
     static const int mcmc_skip=-20;
-    
+
   public:
 
     mcmc_stepper_base() {
@@ -856,6 +856,9 @@ namespace o2scl {
     
   protected:
     
+    /// Number of seconds elapsed
+    double elapsed;
+    
     /// \name MPI properties
     //@{
     /// The MPI processor rank
@@ -1077,7 +1080,8 @@ namespace o2scl {
     //@}
     
     mcmc_para_base() {
-      
+
+      elapsed=0.0;
       user_seed=0;
       n_warm_up=0;
 
@@ -1943,9 +1947,9 @@ namespace o2scl {
                 // If we're out of time, stop all threads
                 if (main_done==false) {
 #ifdef O2SCL_MPI
-                  double elapsed=MPI_Wtime()-mpi_start_time;
+                  elapsed=MPI_Wtime()-mpi_start_time;
 #else
-                  double elapsed=time(0)-mpi_start_time;
+                  elapsed=time(0)-mpi_start_time;
 #endif
                   if (max_time>0.0 && elapsed>max_time) {
                     if (verbose>=1) {
@@ -2356,9 +2360,9 @@ namespace o2scl {
           if (main_done==false) {
             // Check to see if we're out of time
 #ifdef O2SCL_MPI
-            double elapsed=MPI_Wtime()-mpi_start_time;
+            elapsed=MPI_Wtime()-mpi_start_time;
 #else
-            double elapsed=time(0)-mpi_start_time;
+            elapsed=time(0)-mpi_start_time;
 #endif
             if (max_time>0.0 && elapsed>max_time) {
               if (verbose>=1) {
@@ -2821,7 +2825,8 @@ namespace o2scl {
         file_header(hf);
         first_write=true;
       }
-    
+
+      hf.setd("elapsed",this->elapsed);
       hf.set_szt_vec("n_accept",this->n_accept);
       hf.set_szt_vec("n_reject",this->n_reject);
       if (this->ret_value_counts.size()>0) {
@@ -3419,14 +3424,14 @@ namespace o2scl {
         }
         if (updated==false && file_update_time>0.0) {
 #ifdef O2SCL_MPI
-          double elapsed=MPI_Wtime()-last_write_time;
+          this->elapsed=MPI_Wtime()-last_write_time;
 #else
-          double elapsed=time(0)-last_write_time;
+          this->elapsed=time(0)-last_write_time;
 #endif
-          if (elapsed>file_update_time) {
+          if (this->elapsed>file_update_time) {
             if (this->verbose>=1) {
               this->scr_out << "mcmc: Writing to file. elapsed: "
-                            << elapsed << " file_update_time: "
+                            << this->elapsed << " file_update_time: "
                             << file_update_time << " last_write_time: "
                             << last_write_time << std::endl;
             }

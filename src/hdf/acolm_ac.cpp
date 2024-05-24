@@ -56,43 +56,6 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_create()
 */
 
-/*
-int acol_manager::comm_ac_len(std::vector<std::string> &sv,
-                              bool itive_com) {
-
-  if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "Table has no lines of data to compute "
-	   << "autocorrelations with." << endl;
-      return exc_efailed;
-    }
-
-    vector<string> in, pr;
-    pr.push_back("Enter column name");
-    int ret=get_input(sv,pr,in,"ac_len",itive_com);
-    if (ret!=0) return ret;
-
-    size_t n=table_obj.get_nlines();
-    vector<double> vcopy(n);
-    for(size_t j=0;j<n;j++) {
-      vcopy[j]=table_obj.get(in[0],j);
-    }
-
-    double mean, sigma, tau;
-    vector_acor(n,vcopy,mean,sigma,tau,verbose);
-
-    cout << "mean, sigma, tau: " << mean << " "
-	 << sigma << " " << tau << endl;
-
-    return 0;
-  } 
-
-  cout << "ac_len does not work for type " << type << endl;
-  return 1;
-}
-*/
-
 int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
 
   if (type=="table") {
