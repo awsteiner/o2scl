@@ -78,6 +78,11 @@ namespace o2scl {
       O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
     }
+
+    /// Sample from the specified density
+    virtual double sample() const {
+      return (*this)();
+    }
     
     /// The normalized density 
     virtual double pdf(double x) const {

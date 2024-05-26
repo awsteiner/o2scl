@@ -309,6 +309,8 @@ double o2scl_prob_dens_func_entropy(void *vptr);
 
 double o2scl_prob_dens_func_getitem(void *vptr);
 
+double o2scl_prob_dens_func_sample(void *vptr);
+
 void *o2scl_create_prob_dens_gaussian();
 
 void o2scl_free_prob_dens_gaussian(void *vptr);
@@ -316,6 +318,12 @@ void o2scl_free_prob_dens_gaussian(void *vptr);
 void o2scl_prob_dens_gaussian_set_center(void *vptr, double cent);
 
 void o2scl_prob_dens_gaussian_set_sigma(void *vptr, double sigma);
+
+void *o2scl_create_prob_dens_hist();
+
+void o2scl_free_prob_dens_hist(void *vptr);
+
+void o2scl_prob_dens_hist_init(void *vptr, void *ptr_h);
 
 void *o2scl_create_prob_dens_mdim_std_vector_double_();
 

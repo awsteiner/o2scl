@@ -868,6 +868,12 @@ double o2scl_prob_dens_func_getitem(void *vptr) {
   return ret;
 }
 
+double o2scl_prob_dens_func_sample(void *vptr) {
+  prob_dens_func *ptr=(prob_dens_func *)vptr;
+  double ret=ptr->sample();
+  return ret;
+}
+
 void *o2scl_create_prob_dens_gaussian() {
   prob_dens_gaussian *ptr=new prob_dens_gaussian;
   return ptr;
@@ -888,6 +894,24 @@ void o2scl_prob_dens_gaussian_set_center(void *vptr, double cent) {
 void o2scl_prob_dens_gaussian_set_sigma(void *vptr, double sigma) {
   prob_dens_gaussian *ptr=(prob_dens_gaussian *)vptr;
   ptr->set_sigma(sigma);
+  return;
+}
+
+void *o2scl_create_prob_dens_hist() {
+  prob_dens_hist *ptr=new prob_dens_hist;
+  return ptr;
+}
+
+void o2scl_free_prob_dens_hist(void *vptr) {
+  prob_dens_hist *ptr=(prob_dens_hist *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_prob_dens_hist_init(void *vptr, void *ptr_h) {
+  prob_dens_hist *ptr=(prob_dens_hist *)vptr;
+  hist *h=(hist *)ptr_h;
+  ptr->init(*h);
   return;
 }
 

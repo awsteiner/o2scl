@@ -485,6 +485,8 @@ class prob_dens_func
   - double
 - function operator()
   - double
+- function sample
+  - double
 #
 # ------------------------------------------------------
 #
@@ -498,6 +500,16 @@ class prob_dens_gaussian
 - function set_sigma
   - void
   - double sigma
+#
+# ------------------------------------------------------
+#
+# Class prob_dens_hist
+# 
+class prob_dens_hist
+- parent prob_dens_func
+- function init
+  - void
+  - io hist &h
 #
 # ------------------------------------------------------
 #
