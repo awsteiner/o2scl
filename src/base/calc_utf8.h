@@ -149,7 +149,9 @@ namespace o2scl {
     /// The default random number generator for \c rand
     rng<> def_r;
 
-    /// Object for computing Fermi-Dirac integrals
+    /** \brief Object for computing Fermi-Dirac, Bose-Einstein, and
+        polylog integrals
+    */
     polylog_multip<fp_t,fp_t> pm;
     
     /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8

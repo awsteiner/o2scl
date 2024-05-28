@@ -239,7 +239,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip cpp_dec_float");
   }
 
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);

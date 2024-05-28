@@ -890,7 +890,7 @@ namespace o2scl {
       return res;
     }
     
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+    /** \brief Fermi-Dirac integral of any order
      */
     template<class fp_t>
     int calc_err_full(fp_t n, fp_t y, fp_t &res, fp_t &err, int &method) {
@@ -925,7 +925,7 @@ namespace o2scl {
       return o2scl::exc_efailed;
     }
 
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+    /** \brief Fermi-Dirac integral of any order
      */
     template<class fp_t>
     int calc_err(fp_t n, fp_t y, fp_t &res, fp_t &err) {
@@ -933,7 +933,7 @@ namespace o2scl {
       return calc_err_full(n,y,res,err,method);
     }
     
-    /** \brief Fermi-Dirac integral of order \f$ 3 \f$
+    /** \brief Fermi-Dirac integral of any order
      */
     template<class fp_t>
     fp_t calc(fp_t n, fp_t y) {

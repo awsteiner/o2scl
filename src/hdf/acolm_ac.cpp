@@ -509,7 +509,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
 
     std::string i1=sv[1];
     

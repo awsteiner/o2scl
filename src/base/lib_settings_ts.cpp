@@ -53,7 +53,7 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
   
   funct_multip_string fms;
   fms.set_function("log(1+x)","x");

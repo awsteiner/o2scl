@@ -184,7 +184,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
 
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
@@ -196,7 +196,7 @@ int main(void) {
 #endif
 
 #ifdef O2SCL_SET_MPFR
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
@@ -292,7 +292,7 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip param 2");
     cout << endl;
     
-#ifdef O2SCL_OSX
+#ifndef O2SCL_OSX
     
     // Multiprecision integration with a funct_multip_string object
       

@@ -564,7 +564,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   if (multiprecision) {
     
-#ifndef O2SCL_OSX
+#ifdef O2SCL_OSX
 
     std::cerr << "Multiprecision for ninteg only works for OSX "
               << "at the moment." << std::endl;
