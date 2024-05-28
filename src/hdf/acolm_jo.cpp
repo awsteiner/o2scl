@@ -564,15 +564,6 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   if (multiprecision) {
     
-    /*#ifdef O2SCL_OSX
-
-    std::cerr << "Multiprecision for ninteg only works for OSX "
-              << "at the moment." << std::endl;
-    return 5;
-
-#else
-    */
-
     funct_multip_string fms;
     fms.set_function(func,var);
     funct_multip_string *fmsp=&fms;
@@ -742,6 +733,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       return 0;
       
     } else {
+      
 #endif
       
       double d=0, err, lower_lim, upper_lim;
@@ -777,8 +769,6 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
     }
 
-    //#endif
-    
   } else {
     
     // Normal double-precision integration

@@ -509,8 +509,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
-    //#ifndef O2SCL_OSX
-
     std::string i1=sv[1];
     
     funct_multip_string fms;
@@ -604,17 +602,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result: ";
     cout << d << " (" << ff.convert(d) << ")" << endl;
     return 0;
-
-    /*
-      #else
-      
-      cerr << "Adaptive multiprecision only supported on OSX at the moment."
-      << endl;
-      return 5;
-      
-      #endif
-    */
-  
     
   }
   
