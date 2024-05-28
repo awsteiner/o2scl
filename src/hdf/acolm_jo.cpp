@@ -564,13 +564,14 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   if (multiprecision) {
     
-#ifdef O2SCL_OSX
+    /*#ifdef O2SCL_OSX
 
     std::cerr << "Multiprecision for ninteg only works for OSX "
               << "at the moment." << std::endl;
     return 5;
 
 #else
+    */
 
     funct_multip_string fms;
     fms.set_function(func,var);
@@ -776,7 +777,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
     }
 
-#endif
+    //#endif
     
   } else {
     
