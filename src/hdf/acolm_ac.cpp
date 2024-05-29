@@ -507,16 +507,16 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     ff.set_sig_figs(precision+1);
   }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
     std::string i1=sv[1];
     
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
     funct_multip_string fms;
     fms.verbose=verbose;
     fms.set_function(i1,"x");
     funct_multip_string *fmsp=&fms;
-#endif
     
     funct_multip fm2;
     fm2.verbose=verbose;
@@ -534,7 +534,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
            << "command (maximum is 48)." << endl;
       return 2;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
     } else if (precision>33) {
       
       cpp_dec_float_50 d=0, err;
@@ -588,7 +587,6 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       cout << dtos(d,precision) << " " << endl;
       
       return 0;
-#endif
     }
     
     double d=0, err;
@@ -606,6 +604,13 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     return 0;
     
   }
+
+#else
+
+  cout << "Disabling multiprecision since O2SCL_NO_BOOST_MULTIPRECISION"
+       << " was defined." << endl;
+  
+#endif
   
   std::string i1;
   if (sv.size()>1) {
