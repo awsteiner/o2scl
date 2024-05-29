@@ -25,8 +25,9 @@
 #endif
 
 #include <o2scl/xml.h>
+#include <o2scl/set_pugixml.h>
 
-#ifdef O2SCL_PUGIXML
+#ifdef O2SCL_SET_PUGIXML
     
 pugi::xml_node o2scl::doxygen_xml_get(std::string fname,
                                       std::string func_name,

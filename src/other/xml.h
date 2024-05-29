@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <o2scl/err_hnd.h>
+#include <o2scl/set_pugixml.h>
 
 #ifdef O2SCL_SET_PUGIXML
 #include "pugixml.hpp"

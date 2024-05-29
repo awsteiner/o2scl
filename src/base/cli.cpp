@@ -26,6 +26,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 #include <o2scl/cursesw.h>
+#include <o2scl/set_pugixml.h>
 
 using namespace std;
 using namespace o2scl;
@@ -1861,7 +1862,7 @@ void cli::xml_replacements(std::string &s) {
 
 int cli::comm_option_xml_to_o2(vector<string> &sv, bool itive_com) {
 
-#ifdef O2SCL_PUGIXML
+#ifdef O2SCL_SET_PUGIXML
 
   terminal ter;
   
