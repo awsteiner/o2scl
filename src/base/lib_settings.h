@@ -32,6 +32,7 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/find_constants.h>
 #include <o2scl/rng.h>
+#include <o2scl/set_python.h>
 
 #ifdef O2SCL_MPI
 #include <mpi.h>
@@ -244,7 +245,7 @@ namespace o2scl {
     /// Get the python path and place the path strings in \c vs.
     void get_python_path(std::vector<std::string> &vs, int verbose=0);
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     /** \brief Import module named \c module
 
         This function outputs some debugging information if the

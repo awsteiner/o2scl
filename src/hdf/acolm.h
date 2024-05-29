@@ -585,10 +585,7 @@ namespace o2scl_acol {
         the calc command uses multiprecision to attempt to ensure the
         result is exact to within the requested precision. However,
         this option also makes the calculation slower by at least a
-        factor of two.
-
-        Note that adaptive multiprecision is only available for OSX at
-        the moment.
+        factor of two (and sometimes much more).
 
         Constant values from the constant library (see e.g. '-help
         <tt>constant</tt>') will automatically be used, so long as

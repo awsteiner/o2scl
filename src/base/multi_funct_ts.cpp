@@ -44,7 +44,7 @@ int main(void) {
   x[1]=2.1;
   t.test_rel(x[0]*x[1]-x[0],f(2,x),1.0e-12,"multi_funct_strings");
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
   o2scl_settings.py_init();
   o2scl_settings.add_python_path("../../data/o2scl/python/");
