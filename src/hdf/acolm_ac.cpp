@@ -511,10 +511,12 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     
     std::string i1=sv[1];
     
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
     funct_multip_string fms;
     fms.verbose=verbose;
     fms.set_function(i1,"x");
     funct_multip_string *fmsp=&fms;
+#endif
     
     funct_multip fm2;
     fm2.verbose=verbose;
