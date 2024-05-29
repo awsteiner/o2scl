@@ -61,6 +61,7 @@ User's Guide
    cheb
    unitconv
    multip
+   specfunc
    conmin
    fit
    multi_interp
