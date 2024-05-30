@@ -1017,6 +1017,10 @@ namespace o2scl {
     }
     
     for(size_t j=0;j<src.get_nlines();j++) {
+      if (verbose>2) {
+	std::cout << "Completed " << j+1 << " of " << src.get_nlines()
+		  << std::endl;
+      }
       if (mult_col.length()==0 || ((size_t)src.get(mult_col,j))>0) {
         if (mult_col.length()>0) {
           running_sum+=((size_t)(src.get(mult_col,j)));
