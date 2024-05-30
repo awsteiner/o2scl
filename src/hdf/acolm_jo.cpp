@@ -562,7 +562,19 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 #endif
   inte_adapt_cern iac;
 
+#ifdef O2SCL_NO_BOOST_MULTIPRECISION
+  
   if (multiprecision) {
+    multiprecision=false;
+    cout << "Disabling multiprecision since -DO2SCL_NO_BOOST_MULTIPRECISION "
+         << "was used." << endl;
+  }
+  
+#endif
+  
+  if (multiprecision) {
+    
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     
     funct_multip_string fms;
     fms.set_function(func,var);
@@ -593,7 +605,6 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
            << "command (maximum is 49)." << endl;
       return 2;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
     } else if (precision>34) {
       
       cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
@@ -734,8 +745,6 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       
     } else {
       
-#endif
-      
       double d=0, err, lower_lim, upper_lim;
       convert_units<double> cu;
       if (in[2]=="-infty") {
@@ -768,6 +777,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       cout << dtos(d,precision) << endl;
       
     }
+    
+#endif
 
   } else {
     

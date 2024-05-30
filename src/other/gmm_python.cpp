@@ -21,11 +21,12 @@
   ───────────────────────────────────────────────────────────────────
 */
 #include <o2scl/gmm_python.h>
+#include <o2scl/set_python.h>
 
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
 gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;

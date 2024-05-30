@@ -27,7 +27,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/prev_commit.h>
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -87,19 +87,19 @@ lib_settings_class::~lib_settings_class() {
 }
 
 int lib_settings_class::py_init_nothrow(int verbose) {
-#ifdef O2SCL_PYTHON
-
+#ifdef O2SCL_SET_PYTHON
+  
   /*
     4/30/24: Removed this, as setprogramname is deprecated.
     
-  char *pe=getenv("O2SCL_PYTHON_EXE");
-  std::string python_exe;
-  if (pe) {
+    char *pe=getenv("O2SCL_PYTHON_EXE");
+    std::string python_exe;
+    if (pe) {
     python_exe=pe;
     // This conversion method works only for normal ASCII strings.
     std::wstring pe2=std::wstring(python_exe.begin(),python_exe.end());
     Py_SetProgramName(pe2.c_str());
-  }
+    }
   */
   
   if (verbose>0) {
@@ -129,7 +129,7 @@ void lib_settings_class::py_init(int verbose) {
 }
 
 std::string lib_settings_class::py_get_module_path(std::string module) {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   PyObject *p_module;
   p_module=PyImport_ImportModule("o2sclpy");
   //cout << "module: " << p_module << endl;
@@ -147,7 +147,7 @@ std::string lib_settings_class::py_get_module_path(std::string module) {
 
 void *lib_settings_class::py_import_array() {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   // AWS, 2/12/23: The import_array() function is a macro (?!) which
   // returns NULL if it fails, but then throws a python, not a C++
   // exception. This forces us to use "void *" for the return type to
@@ -167,7 +167,7 @@ void *lib_settings_class::py_import_array() {
 }
 
 int lib_settings_class::py_final_nothrow(int verbose) {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   if (verbose>0) {
     cout << "Running Py_Finalize()." << endl;
   }
@@ -198,7 +198,7 @@ bool lib_settings_class::range_check() {
 #endif
 }
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 PyObject *lib_settings_class::py_import_module(std::string module,
                                                int verbose) {
 
@@ -235,18 +235,23 @@ PyObject *lib_settings_class::py_import_module(std::string module,
 
     std::cerr << "Sometimes this error occurs because the desired module is "
               << "in a virtual\n  environment that O2scl is not using. "
+              << std::endl;
+    // 5/29/24: this section had to be removed because of the
+    // deprecation of the Python() setprogramname function (see above).
+    /*
               << "This can be fixed by setting the\n  environment variable "
-              << "O2SCL_PYTHON_EXT before calling\n  "
+              << "O2SCL_PYTHON_EXE before calling\n  "
               << "o2scl::o2scl_settings.py_init()." << std::endl;
     char *pe=getenv("O2SCL_PYTHON_EXE");
     if (pe) {
       std::string pe2=pe;
-      std::cerr << "  The value of O2SCL_PYTHON_EXT is " << pe2
+      std::cerr << "  The value of O2SCL_PYTHON_EXE is " << pe2
                 << " .\n" << std::endl;
     } else {
-      std::cerr << "  The environment value O2SCL_PYTHON_EXT is not "
+      std::cerr << "  The environment value O2SCL_PYTHON_EXE is not "
                 << "currently set.\n" << std::endl;
     }
+    */
     
     std::cerr << "Alternatively, sometimes this error occurs "
               << "because the module is not in\n  the "
@@ -283,7 +288,7 @@ PyObject *lib_settings_class::py_import_module(std::string module,
 void lib_settings_class::get_python_path(std::vector<std::string> &vs,
                                          int verbose) {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
   vs.clear();
   
@@ -384,7 +389,7 @@ void lib_settings_class::get_python_path(std::vector<std::string> &vs,
 
 void lib_settings_class::add_python_path(std::string path, int verbose) {
   
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   // Import the system module so that we can modify the search path
   // to import the module where the function is located
@@ -836,7 +841,7 @@ void *o2scl_get_o2scl_settings() {
 }
 
 std::string lib_settings_class::py_version() {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   ostringstream oss;
   oss << PY_MAJOR_VERSION << " "
       << PY_MINOR_VERSION << " " << PY_MICRO_VERSION << " "

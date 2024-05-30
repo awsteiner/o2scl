@@ -82,12 +82,8 @@ namespace o2scl {
   public:
 
     mcmc_stepper_base() {
-      verbose=0;
     }
 
-    /// Verbosity (default 0)
-    int verbose;
-    
     /** \brief Write stepper parameters to the HDF5 file
      */
     virtual void write_params(o2scl_hdf::hdf_file &hf) {
@@ -300,7 +296,7 @@ namespace o2scl {
       if (func_ret==success) {
         double rand=r.random();
 
-        if (this->verbose>=2) {
+        if (verbose>=2) {
           std::cout << "w_next,w_current,q_next,q_current: "
                     << w_next << " " << w_current << " "
                     << proposal[i_thread %

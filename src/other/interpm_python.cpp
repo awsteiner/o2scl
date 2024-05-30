@@ -26,7 +26,7 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
 interpm_python::interpm_python() {
   p_set_func=0;
