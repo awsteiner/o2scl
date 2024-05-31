@@ -2337,23 +2337,30 @@ namespace o2scl {
       Note that this method has limited accuracy for limited data
       set sizes. Also, it almost never reports a zero auto-correlation,
       even for completely uncorrelated data.
+
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
-  (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
+  (const vec_t &ac_vec, resize_vec_t &five_tau_over_M, int verbose=0) {
     five_tau_over_M.resize(0);
     size_t len=0;
     bool len_set=false;
+    double sum=0.0;
     for (size_t M=1;M<ac_vec.size();M++) {
-      double sum=0.0;
-      for(size_t s=1;s<=M;s++) {
-	sum+=ac_vec[s];
+      if (verbose>2 && M%10000==0) {
+        std::cout << "vector_autocorr_tau(): " << M << " of "
+                  << ac_vec.size() << std::endl;
       }
+      //for(size_t s=1;s<=M;s++) {
+      sum+=ac_vec[M];
+      //}
       double val=(1.0+2.0*sum)/((double)M)*5.0;
       if (len_set==false && val<=1.0) {
         // AWS, 5/6/21: I'm changing this from M to M/2 because
         // apparently there's a factor of two missing here
 	len=M/2;
 	len_set=true;
+        std::cout << "vector_autocorr_tau(): Setting length to " << len
+                  << "." << std::endl;
       }
       five_tau_over_M.push_back(val);
     }
