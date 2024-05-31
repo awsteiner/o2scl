@@ -2281,6 +2281,30 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Use FFTW to construct the autocorrelation vector
+   */
+  template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
+  (const vec_t &data, resize_vec_t &ac_vec, int verbose=0) {
+    double mean=vector_mean(data);
+    double stddev=vector_stddev(data);
+    return vector_autocorr_vector_fftw(data,ac_vec,mean,stddev,verbose);
+  }
+
+  /** \brief Use FFTW to construct the autocorrelation vector
+   */
+  template<class vec_t, class resize_vec_t> void
+  vector_autocorr_vector_fftw_mult
+  (const vec_t &data, const vec_t &mult, resize_vec_t &ac_vec, 
+   int verbose=0) {
+    std::vector<double> dnew;
+    for(size_t i=0;i<data.size();i++) {
+      for(size_t j=0;j<mult[i];j++) {
+        dnew.push_back(data[i]);
+      }
+    }
+    return vector_autocorr_vector_fftw(dnew,ac_vec,verbose);
+  }
+  
   /** \brief Use the Goodman method to compute the
       autocorrelation length
 

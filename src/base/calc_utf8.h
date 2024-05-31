@@ -949,18 +949,16 @@ namespace o2scl {
               evaluation.pop();
               evaluation.push(boost::math::cyl_neumann(next,right));
               //#ifdef O2SCL_OSX
-              /*
-                } else if (!str.compare("sph_bessel")) {
-                fp_t next=evaluation.top();
-                unsigned inext=static_cast<unsigned>(next);
-                evaluation.pop();
-                evaluation.push(boost::math::sph_bessel(inext,right));
-                } else if (!str.compare("sph_neumann")) {
-                fp_t next=evaluation.top();
-                unsigned inext=static_cast<unsigned>(next);
-                evaluation.pop();
-                evaluation.push(boost::math::sph_neumann(inext,right));
-              */
+            } else if (!str.compare("sph_bessel")) {
+              fp_t next=evaluation.top();
+              unsigned inext=static_cast<unsigned>(next);
+              evaluation.pop();
+              evaluation.push(boost::math::sph_bessel(inext,right));
+            } else if (!str.compare("sph_neumann")) {
+              fp_t next=evaluation.top();
+              unsigned inext=static_cast<unsigned>(next);
+              evaluation.pop();
+              evaluation.push(boost::math::sph_neumann(inext,right));
               //#endif
             } else {
               fp_t left  = evaluation.top();

@@ -52,11 +52,59 @@ typedef std::function<int(size_t,const ubvector &,double &,
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
 			  std::vector<double> &)> fill_funct;
+
+class mcmc_stepper_mh_record :
+  public mcmc_stepper_mh<point_funct,std::vector<double>,ubvector,
+                         ubmatrix,prob_cond_mdim_indep<>> {
+  
+  public:
+
+  std::vector<double> vw_next, vq_next;
+
+  virtual ~mcmc_stepper_mh_record() {
+  }
+  
+  virtual void step(size_t i_thread, size_t n_params, point_funct &f,
+                    ubvector &current, ubvector &next, double w_current,
+                    double &w_next, ubvector &low, ubvector &high,
+                    int &func_ret, bool &accept, std::vector<double> &dat,
+                    rng<> &r, int verbose) {
+    
+    // Use proposal distribution and compute associated weight
+    double q_prop=proposal[i_thread % proposal.size()].log_metrop_hast
+      (current,next);
+    
+    accept=false;
+    
+    func_ret=success;
+    this->check_bounds(i_thread,n_params,next,low,high,
+                       func_ret,verbose);
+    if (func_ret!=this->mcmc_skip) {
+      func_ret=f(n_params,next,w_next,dat);
+    } 
+
+    vw_next.push_back(w_next);
+    double q_next=proposal[i_thread %
+                           proposal.size()].log_pdf(current,next);
+    vq_next.push_back(q_next);
+    
+    if (func_ret==success) {
+      double rand=r.random();
+      
+      // Metropolis-Hastings algorithm
+      if (rand<exp(w_next-w_current+q_prop)) {
+        accept=true;
+      }
+    }
+    
+    return;
+  }
+  
+};
+
 /// The MCMC object
 mcmc_para_table<point_funct,fill_funct,std::vector<double>,ubvector,
-                  mcmc_stepper_mh<point_funct,std::vector<double>,
-                                  ubvector,ubmatrix,
-                                  prob_cond_mdim_indep<>>> mct;
+                mcmc_stepper_mh_record> mct;
 
 /** \brief A demonstration class for the MCMC example. This example
     could have been written with global functions, but we put them
@@ -179,9 +227,12 @@ int main(int argc, char *argv[]) {
 
   // Train the KDE
   vector<double> weights;
+  uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
+  vector<double> bw_array;
+  ug.vector(bw_array);
   std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
   kp->set_function("o2sclpy",ten_in,
-                   weights,"verbose=0","kde_scipy");
+                   bw_array,"verbose=0","kde_sklearn");
   
   // Setting the KDE as the base distribution for the independent
   // conditional probability.
@@ -225,6 +276,8 @@ int main(int argc, char *argv[]) {
   hf.open_or_create("ex_mcmc_kde.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
+  hf.setd_vec("q_next",mct.stepper.vq_next);
+  hf.setd_vec("w_next",mct.stepper.vw_next);
   hf.close();
 
   // Compute the average of the correlated samples for comparison

@@ -2699,7 +2699,10 @@ namespace o2scl_hdf {
       Bessel functions:
 
       cyl_bessel_i(nu,x) [i.e. Iᵥ(x)], cyl_bessel_j(nu,x) [i.e. Jᵥ(x)], 
-      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)].
+      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], cyl_neumann(nu,x) [i.e. Yᵥ(x)],
+      sph_bessel(nu,x) [i.e. jᵥ(x)], and sph_neumann(nu,x) [i.e. yᵥ(x)].
+      For sph_bessel and sph_neumann, the first argument must be an
+      integer (fractional parts are truncated). 
 
       Additional integrals (experimental):
 
@@ -2715,7 +2718,7 @@ namespace o2scl_hdf {
 
       Special values:
 
-      false = 0, true = 1, rand(experimental) = random number
+      false = 0, true = 1, rand (experimental) = random number
 
       Use <tt>acol -help function</tt> to get more information on the
       type-specific command called \c function .
