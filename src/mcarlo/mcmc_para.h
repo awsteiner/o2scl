@@ -787,10 +787,6 @@ namespace o2scl {
       distribution function returns the value \ref mcmc_done, then the
       MCMC stops.
       
-      A generic proposal distribution can be specified in \ref
-      set_proposal(). To go back to the default random walk method,
-      one can call the function \ref unset_proposal().
-
       If \ref aff_inv is set to true, then affine-invariant sampling
       is used. For affine-invariant sampling, the variable \ref
       step_fac represents the value of \f$ a \f$, the limits of the
@@ -1381,9 +1377,6 @@ namespace o2scl {
         mcmc_done_flag[it]=false;
       }
           
-      // Proposal weight for each thread
-      std::vector<double> q_prop(n_threads);
-    
       // --------------------------------------------------------------
       // Run the mcmc_init() function. 
     

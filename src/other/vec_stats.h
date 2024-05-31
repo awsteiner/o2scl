@@ -2281,7 +2281,8 @@ namespace o2scl {
     return;
   }
   
-  /** \brief Use FFTW to construct the autocorrelation vector
+  /** \brief Use FFTW to construct the autocorrelation vector with
+      automatic calculation of the mean
    */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
   (const vec_t &data, resize_vec_t &ac_vec, int verbose=0) {
@@ -2290,7 +2291,8 @@ namespace o2scl {
     return vector_autocorr_vector_fftw(data,ac_vec,mean,stddev,verbose);
   }
 
-  /** \brief Use FFTW to construct the autocorrelation vector
+  /** \brief Use FFTW to construct the autocorrelation vector given
+      a multiplier column
    */
   template<class vec_t, class resize_vec_t> void
   vector_autocorr_vector_fftw_mult
@@ -2350,9 +2352,7 @@ namespace o2scl {
         std::cout << "vector_autocorr_tau(): " << M << " of "
                   << ac_vec.size() << std::endl;
       }
-      //for(size_t s=1;s<=M;s++) {
       sum+=ac_vec[M];
-      //}
       double val=(1.0+2.0*sum)/((double)M)*5.0;
       if (len_set==false && val<=1.0) {
         // AWS, 5/6/21: I'm changing this from M to M/2 because

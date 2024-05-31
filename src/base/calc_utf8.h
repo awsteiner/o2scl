@@ -948,7 +948,10 @@ namespace o2scl {
               fp_t next=evaluation.top();
               evaluation.pop();
               evaluation.push(boost::math::cyl_neumann(next,right));
-              //#ifdef O2SCL_OSX
+#ifdef O2SCL_NEVER_DEFINED
+              // AWS, 5/31/24, These apparently still cause problems
+              // with calc_utf8_ts, and this appears to be a Boost
+              // issue.
             } else if (!str.compare("sph_bessel")) {
               fp_t next=evaluation.top();
               unsigned inext=static_cast<unsigned>(next);
@@ -959,7 +962,7 @@ namespace o2scl {
               unsigned inext=static_cast<unsigned>(next);
               evaluation.pop();
               evaluation.push(boost::math::sph_neumann(inext,right));
-              //#endif
+#endif
             } else {
               fp_t left  = evaluation.top();
               evaluation.pop();
