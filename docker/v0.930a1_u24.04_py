@@ -28,7 +28,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update && apt-get \
   -y install g++ make autoconf automake libtool git curl cmake \
-  python3 libz-dev libsz2 imagemagick
+  python3 libz-dev libsz2 imagemagick && apt-get clean
 
 # -----------------------------------------------------------------
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
