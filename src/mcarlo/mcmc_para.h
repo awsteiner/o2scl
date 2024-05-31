@@ -885,13 +885,6 @@ namespace o2scl {
     /// Random number generators, one for each thread
     std::vector<rng<> > rg;
   
-    /// Pointer to proposal distribution for each thread
-    std::vector<o2scl::prob_cond_mdim<vec_t> *> prop_dist;
-  
-    /** \brief If true, then use the user-specified proposal
-        distribution (default false) */
-    bool pd_mode;
-
     /// If true, we are in the warm up phase (default false)
     bool warm_up;
 
@@ -1098,7 +1091,6 @@ namespace o2scl {
 
       // MC step parameters
       aff_inv=false;
-      pd_mode=false;
       step_fac=2.0;
       n_walk=1;
       err_nonconv=true;
@@ -1215,11 +1207,6 @@ namespace o2scl {
                     << std::endl;
         }
         n_walk=3*n_params;
-      }
-      if (pd_mode && aff_inv) {
-        O2SCL_ERR2("Using a proposal distribution with affine-invariant ",
-                   "sampling not implemented in mcmc_para::mcmc().",
-                   o2scl::exc_eunimpl);
       }
       // Fix 'step_fac' if it's less than or equal to zero
       if (step_fac<=0.0 && aff_inv) {
@@ -2173,10 +2160,6 @@ namespace o2scl {
 
           if (verbose>=1) {
             for(size_t it=0;it<n_threads;it++) {
-              if (pd_mode) {
-                scr_out << "it: " << it << " q_prop[it]: "
-                        << q_prop[it] << std::endl;
-              }
               if (func_ret[it]==mcmc_done) {
                 scr_out << "mcmc (" << it << "," << mpi_rank
                         << "): Returned mcmc_done." 
@@ -2423,55 +2406,6 @@ namespace o2scl {
         vd[i]=data;
       }
       return mcmc(n_params,low,high,vf,vm,vd);
-    }
-    //@}
-
-    /// \name Proposal distribution
-    //@{
-    /** \brief Set the proposal distribution
-
-        \note This function automatically sets \ref aff_inv to false
-        and \ref n_walk to 1. The vector of proposal distributions needs
-        to have an element for each thread.
-    */
-    template<class prob_vec_t> void set_proposal(prob_vec_t &pv) {
-      prop_dist.resize(pv.size());
-      for(size_t i=0;i<pv.size();i++) {
-        prop_dist[i]=&pv[i];
-      }
-      pd_mode=true;
-      aff_inv=false;
-      n_walk=1;
-      return;
-    }
-
-    /** \brief Set pointers to proposal distributions
-
-        \note This function automatically sets \ref aff_inv to false
-        and \ref n_walk to 1. The vector of proposal distributions
-        needs to have an element for each thread.
-    */
-    template<class prob_ptr_vec_t> void set_proposal_ptrs(prob_ptr_vec_t &pv) {
-      prop_dist.resize(pv.size());
-      for(size_t i=0;i<pv.size();i++) {
-        prop_dist[i]=pv[i];
-      }
-      pd_mode=true;
-      aff_inv=false;
-      n_walk=1;
-      return;
-    }
-
-    /** \brief Go back to random-walk Metropolis with a uniform distribution
-     */
-    virtual void unset_proposal() {
-      if (pd_mode) {
-        prop_dist.clear();
-        pd_mode=false;
-      }
-      aff_inv=false;
-      n_walk=1;
-      return;
     }
     //@}
     
@@ -2826,7 +2760,6 @@ namespace o2scl {
         hf.set_szt("n_threads",this->n_threads);
         hf.set_szt("n_walk",this->n_walk);
         hf.set_szt("n_warm_up",this->n_warm_up);
-        hf.seti("pd_mode",this->pd_mode);
         hf.sets("prefix",this->prefix);
         hf.seti("store_rejects",this->store_rejects);
         hf.seti("table_sequence",this->table_sequence);
