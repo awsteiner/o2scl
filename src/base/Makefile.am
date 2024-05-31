@@ -34,7 +34,8 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 
 TEST_VAR = $(BASE_TEST_VAR)
 
-SUBDIRS = arma eigen both neither python fftw openmp readline mpfr
+SUBDIRS = arma eigen both neither python fftw openmp readline mpfr \
+	pugixml
 
 # ------------------------------------------------------------
 # Includes

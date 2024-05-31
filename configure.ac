@@ -517,6 +517,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/openmp/Makefile
                  src/base/python/Makefile
                  src/base/readline/Makefile
+                 src/base/pugixml/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile

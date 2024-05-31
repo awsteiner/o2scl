@@ -1,0 +1,36 @@
+FROM ubuntu:24.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && apt-get install -y \
+    curl \
+    git \
+    tzdata \
+    unzip \
+    openssh-client \
+    less \
+    texlive-xetex \
+    texlive-fonts-recommended \
+    texlive-plain-generic \
+    # Enable clipboard on Linux host systems
+    xclip \
+    # Added by AWS
+    python3 python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
+    useradd --no-log-init --create-home --shell /bin/bash --uid "1001" --no-user-group "np3m" && \
+    chmod g+w /etc/passwd
+
+RUN pip3 install --break-system-packages jupyterlab \
+notebook jupytext jupyter jupyter_server_ydoc \
+jupyter_server_fileid nbclassic
+
+USER np3m
+
+WORKDIR /home/np3m
+
+EXPOSE 8888
+
+# jupyter notebook -ip 0.0.0.0 --no-browser --port 8888 --allow-root
