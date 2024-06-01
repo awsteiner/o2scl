@@ -1230,6 +1230,9 @@ namespace o2scl {
     }
     
     /** \brief Polylogarithm function
+
+        \note The real polylog function is defined only for
+        \f$ y < 1 \f$ .
      */
     fp_t calc(fp_t s, fp_t y) {
       if (y>=1) {
@@ -1286,6 +1289,9 @@ namespace o2scl {
     }
     
     /** \brief Polylogarithm function
+
+        \note The real polylog function is defined only for
+        \f$ y < 1 \f$ .
      */
     fp_t calc(fp_t s, fp_t y) {
       if (y>=1) {
