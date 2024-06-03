@@ -63,6 +63,20 @@ namespace o2scl {
     virtual int calc_temp_e(quark &u, quark &d, quark &s, 
 			    double temper, thermo &th);
   
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS, double T,
+                                thermo &th) {
+      quark u(o2scl_const::mass_up_MeV_f<double>(),6.0);
+      quark d(o2scl_const::mass_down_MeV_f<double>(),6.0);
+      quark s(o2scl_const::mass_strange_MeV_f<double>(),6.0);
+      u.n=0.75*(2.0*nB+nQ);
+      d.n=0.25*(6.0*nB-3.0*nQ-4.0*nS);
+      s.n=nS;
+      return calc_temp_e(u,d,s,T,th);
+    }
+    
     /// Return string denoting type ("eos_quark")
     virtual const char *type() { return "eos_quark"; }
 

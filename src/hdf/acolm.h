@@ -3008,6 +3008,20 @@ namespace o2scl_acol {
     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Select values from a function and store in a table
+
+        For objects of type tensor_grid:
+
+        Select values from a function and store in a table
+
+        Arguments: <function>
+
+        Select tensor entries according to a user-specified function and
+        create a table for all entries which evaluate to a number
+        greater than 0.5.
+    */
+    virtual int comm_values_table(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Convert object to a \ref o2scl::table3d object
 
         For objects of type table:

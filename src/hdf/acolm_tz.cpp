@@ -1714,6 +1714,63 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
   
+int acol_manager::comm_values_table(std::vector<std::string> &sv,
+				  bool itive_com) {
+  if (type=="tensor_grid") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"Enter function",i1,"values-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    for (size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      table_obj.new_column(((string)"i")+o2scl::szttos(i));
+    }
+    table_obj.new_column("v");
+
+    cout << "func: " << i1 << endl;
+    
+    // Parse function
+    std::string function=i1;
+    calc_utf8<> calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      cout << "vt: " << i << endl;
+      
+      vector<size_t> ix;
+      tensor_grid_obj.unpack_index(i,ix);
+      for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+        vars[((string)"i")+o2scl::szttos(j)]=ix[j];
+      }
+      vars["v"]=tensor_grid_obj.get_data()[i];
+      
+      if (calc.eval(&vars)>0.5) {
+        cout << "1." << endl;
+        
+        vector<double> line;
+        for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+          line.push_back(ix[j]);
+        }
+        for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+          line.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+        }
+        line.push_back(tensor_grid_obj.get(ix));
+        table_obj.line_of_data(line.size(),line);
+        cout << "2." << endl;
+      }
+      
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+  }
+    
+  return 0;
+}
 int acol_manager::comm_value_grid(std::vector<std::string> &sv,
 				  bool itive_com) {
 

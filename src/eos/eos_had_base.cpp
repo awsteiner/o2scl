@@ -1332,8 +1332,6 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
 
 int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                              eos_leptons &elep,
-			     //fermion &e, bool include_muons,
-			     //fermion &mu, fermion_rel &frel,
 			     std::shared_ptr<table_units<> > results) {
   
   // Ensure initial guess is valid

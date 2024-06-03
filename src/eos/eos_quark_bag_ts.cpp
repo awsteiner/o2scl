@@ -34,7 +34,21 @@ using namespace o2scl_const;
 int main(void) {
   test_mgr t;
   t.set_output_level(2);
- 
+
+  eos_quark_bag ebg;
+  thermo th;
+  for(double nB=1.0e-5;nB<2.0;nB*=2.0) {
+    for(double T=0.1;T<100.1;T*=10.0) {
+      for(double nQ=1.0e-5;nB<2.0;nB*=2.0) {
+        for(double nS=0.0;nS<1.0/3.0+1.0e-4;nS+=1.0/12.0) {
+          int ret=ebg.calc_temp_f_gen(nB,nQ,nS,T,th);
+          cout << nB << " " << nQ << " " << nS << " " << T << " "
+               << th.ed << " " << ret << endl;
+        }
+      }
+    }
+  }
+
   t.report();
   return 0;
 }
