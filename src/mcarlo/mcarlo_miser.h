@@ -666,6 +666,9 @@ namespace o2scl {
     
     /** \brief Integrate function \c func from x=a to x=b.
 
+        The result of the integral is stored in \c res and the
+        error estimate in \c err.
+        
 	This function is just a wrapper to miser_minteg_err() which
 	allocates the memory if necessary, sets \c min_calls and \c
 	min_calls_per_bisection, calls \ref miser_minteg_err(), and then
