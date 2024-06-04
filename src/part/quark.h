@@ -40,12 +40,12 @@
 namespace o2scl {
 
   /** \brief Quark class
-
-  */
+      
+   */
   class quark : public fermion {
-
+    
   public:
-
+    
     /// Contribution to the bag constant
     double B;
 

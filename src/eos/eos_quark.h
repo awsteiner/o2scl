@@ -74,6 +74,9 @@ namespace o2scl {
       u.n=0.75*(2.0*nB+nQ);
       d.n=0.25*(6.0*nB-3.0*nQ-4.0*nS);
       s.n=nS;
+      u.mu=u.m;
+      d.mu=d.m;
+      s.mu=s.m;
       return calc_temp_e(u,d,s,T,th);
     }
     
