@@ -2265,108 +2265,122 @@ namespace o2scl {
 
       // We always work with mu/T instead of mu directly
       fp_t nex=f.nu/temper;
+
+      int ret=0;
       
-      func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
-			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   inte_t,density_root_t,
-			   root_t,func_t,fp_t>::pair_fun),
-			  this,std::placeholders::_1,density_match,
-                          std::ref(f),temper,false);
-
-      // Begin by trying the user-specified guess
-      bool drec=density_root->err_nonconv;
-      density_root->err_nonconv=false;
-      int ret=density_root->solve(nex,mf);
-      if (ret==0) {
-        if (verbose>0) {
-          std::cout << "Initial solver succeeded." << std::endl;
-        }
-        // If that worked, set last_method
-	last_method=2000;
-        last_method_s="default solver in pair_density";
-      }
+      if (f.n==0.0) {
         
-      if (ret!=0) {
-        
-        // If that failed, try bracketing the root
-
-	// (max doesn't work with boost::multiprecision?)
-	fp_t lg;
-	if (abs(f.nu)>f.ms) lg=abs(f.nu);
-	lg=f.ms;
-
-        if (verbose>0) {
-          std::cout << "Initial solver returned ret=" << ret
-                    << ". Trying to bracket." << std::endl;
+        if (f.inc_rest_mass) {
+          f.nu=0.0;
+        } else {
+          f.nu=-f.m;
         }
         
-        // Construct an initial guess for the bracket
-	fp_t b_high=lg/temper, b_low=-b_high;
-	fp_t yhigh=mf(b_high), ylow=mf(b_low);
-
-        // Increase the size of the interval to ensure a valid bracket
-	for(size_t j=0;j<5 && yhigh<0.0;j++) {
-	  b_high*=1.0e2;
-	  yhigh=mf(b_high);
-	}
-	for(size_t j=0;j<5 && ylow>0.0;j++) {
-	  b_low*=1.0e2;
-	  ylow=mf(b_low);
-	}
-
-        // If we were successful in constructing a valid bracket,
-        // then call the bracketing solver
-	if (yhigh>0.0 && ylow<0.0) {
-
+      } else {
+        
+        func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
+                            (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+                             inte_t,density_root_t,
+                             root_t,func_t,fp_t>::pair_fun),
+                            this,std::placeholders::_1,density_match,
+                            std::ref(f),temper,false);
+        
+        // Begin by trying the user-specified guess
+        bool drec=density_root->err_nonconv;
+        density_root->err_nonconv=false;
+        ret=density_root->solve(nex,mf);
+        if (ret==0) {
           if (verbose>0) {
-            std::cout << "Bracket succeeded, trying solver." << std::endl;
+            std::cout << "Initial solver succeeded." << std::endl;
+          }
+          // If that worked, set last_method
+          last_method=2000;
+          last_method_s="default solver in pair_density";
+        }
+        
+        if (ret!=0) {
+          
+          // If that failed, try bracketing the root
+          
+          // (max doesn't work with boost::multiprecision?)
+          fp_t lg;
+          if (abs(f.nu)>f.ms) lg=abs(f.nu);
+          lg=f.ms;
+          
+          if (verbose>0) {
+            std::cout << "Initial solver returned ret=" << ret
+                      << ". Trying to bracket." << std::endl;
           }
           
-	  ret=alt_solver.solve_bkt(b_low,b_high,mf);
-          // If it succeeded, then set nex to the new solution
-          // and set last_method
-	  if (ret==0) {
+          // Construct an initial guess for the bracket
+          fp_t b_high=lg/temper, b_low=-b_high;
+          fp_t yhigh=mf(b_high), ylow=mf(b_low);
+          
+          // Increase the size of the interval to ensure a valid bracket
+          for(size_t j=0;j<5 && yhigh<0.0;j++) {
+            b_high*=1.0e2;
+            yhigh=mf(b_high);
+          }
+          for(size_t j=0;j<5 && ylow>0.0;j++) {
+            b_low*=1.0e2;
+            ylow=mf(b_low);
+          }
+          
+          // If we were successful in constructing a valid bracket,
+          // then call the bracketing solver
+          if (yhigh>0.0 && ylow<0.0) {
+            
             if (verbose>0) {
-              std::cout << "Alternate solver succeeded." << std::endl;
+              std::cout << "Bracket succeeded, trying solver." << std::endl;
             }
-	    nex=b_low;
-	    last_method=3000;
-            last_method_s="alt. solver in pair_density";
-	  }
-	}
-      }
-
-      // Restore value of err_nonconv
-      density_root->err_nonconv=drec;
-
-      if (verbose>1) {
-        density_root->verbose=0;
-        alt_solver.verbose=0;
-      }
-        
-      if (ret!=0) {
-        
-        // Make sure we don't print out anything unless we're going
-        // to call the error handler anyway
-        if (this->err_nonconv==true) {
-          std::cout.precision(14);
-          std::cout << "Function fermion_rel::pair_density() failed.\n  "
-                    << "m,ms,n,T: " << f.m << " " << f.ms << " "
-                    << f.n << " " << temper << std::endl;
-          std::cout << "nu: " << initial_guess << std::endl;
+            
+            ret=alt_solver.solve_bkt(b_low,b_high,mf);
+            // If it succeeded, then set nex to the new solution
+            // and set last_method
+            if (ret==0) {
+              if (verbose>0) {
+                std::cout << "Alternate solver succeeded." << std::endl;
+              }
+              nex=b_low;
+              last_method=3000;
+              last_method_s="alt. solver in pair_density";
+            }
+          }
         }
         
-        // Return the density to the user-specified value
-        f.n=density_match;
-
-	O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
-			"pair_density().",exc_efailed,this->err_nonconv);
+        // Restore value of err_nonconv
+        density_root->err_nonconv=drec;
+        
+        if (verbose>1) {
+          density_root->verbose=0;
+          alt_solver.verbose=0;
+        }
+        
+        if (ret!=0) {
+          
+          // Make sure we don't print out anything unless we're going
+          // to call the error handler anyway
+          if (this->err_nonconv==true) {
+            std::cout.precision(14);
+            std::cout << "Function fermion_rel::pair_density() failed.\n  "
+                      << "m,ms,n,T: " << f.m << " " << f.ms << " "
+                      << f.n << " " << temper << std::endl;
+            std::cout << "nu: " << initial_guess << std::endl;
+          }
+          
+          // Return the density to the user-specified value
+          f.n=density_match;
+          
+          O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
+                          "pair_density().",exc_efailed,this->err_nonconv);
+        }
+        
+        // If we succeeded (i.e. if ret==0), then continue
+        
+        f.nu=nex*temper;
+        
       }
 
-      // If we succeeded (i.e. if ret==0), then continue
-      
-      f.nu=nex*temper;
-  
       if (f.non_interacting==true) { f.mu=f.nu; }
 
       // Finally, now that we have the chemical potential, use pair_mu()
@@ -2396,7 +2410,7 @@ namespace o2scl {
         std::cout << "Rel. dev.: "
                   << fabs(f.n-density_match)/fabs(density_match) << std::endl;
         nex=f.nu/temper;
-        std::cout << "mf: " << mf(nex) << std::endl;
+        //std::cout << "mf: " << mf(nex) << std::endl;
         O2SCL_ERR2("Secondary failure in ",
                    "fermion_rel::pair_density().",o2scl::exc_esanity);
       }
@@ -2842,6 +2856,10 @@ namespace o2scl {
       }
 
       if (!isfinite(y2)) {
+        std::cout << "density_match: " << density_match << " "
+                  << (density_match==0.0) << " " << nden_p << " "
+                  << nden_ap << " " << T << std::endl;
+        std::cout << f.nu << " " << T << " " << x << std::endl;
 	O2SCL_ERR("Value 'y2' not finite (9) in fermion_rel::pair_fun().",
 		  exc_einval);
       }

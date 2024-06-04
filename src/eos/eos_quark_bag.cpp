@@ -118,7 +118,7 @@ int eos_quark_bag::calc_temp_e(quark& u, quark& d, quark& s,
   u.ms=u.m;
   d.ms=d.m;
   s.ms=s.m;
-  
+
   fet.pair_density(u,temper);
   fet.pair_density(d,temper);
   fet.pair_density(s,temper);
