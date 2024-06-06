@@ -351,6 +351,7 @@ namespace o2scl {
       
 	iter++;
 	iterate(f);
+        
         fp_t tol, interval;
 	status=test_interval(x_lower,x_upper,
                              this->tol_abs,this->tol_rel,tol,interval);

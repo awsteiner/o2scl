@@ -30,6 +30,9 @@ using namespace std;
 using namespace o2scl;
 
 eos_quark::eos_quark() {
+  def_up.init(o2scl_const::mass_up_MeV_f<double>(),6.0);
+  def_down.init(o2scl_const::mass_down_MeV_f<double>(),6.0);
+  def_strange.init(o2scl_const::mass_strange_MeV_f<double>(),6.0);
 }
 
 int eos_quark::calc_p(quark &u, quark &d, quark &s, thermo &th) {

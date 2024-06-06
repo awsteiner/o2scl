@@ -37,22 +37,39 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  if (false) {
+  if (true) {
     
     eos_quark_bag ebg;
     thermo th;
+    int count=0;
+    ebg.def_up.mu=0.0;
+    ebg.def_down.mu=0.0;
+    ebg.def_strange.mu=0.0;
     for(double nB=1.0e-5;nB<2.0;nB*=2.0) {
       for(double T=0.1;T<100.1;T*=10.0) {
         for(double nS=0.0;nS<1.0/3.0+1.0e-4;nS+=1.0/12.0) {
           for(double nQ=1.0e-5;nQ<2.0;nQ*=2.0) {
-            cout << nB << " " << nQ << " " << nS << " " << T << endl;
+            if (count==360) {
+              ebg.def_down.mu=0.0;
+            }
+            cout << count << "."
+                 << nB << " " << nQ << " " << nS << " " << T << endl;
             int ret=ebg.calc_temp_f_gen(nB,nQ,nS,T,th);
             cout << "  " << th.ed << " " << ret << endl;
+            count++;
           }
           for(double nQ=-1.0e-5;nQ>-2.0;nQ*=2.0) {
+            if (count==378) {
+              ebg.def_up.mu=0.0;
+            }
+            if (count==414) {
+              ebg.def_up.mu=0.0;
+            }
+            cout << count << ",";
             cout << nB << " " << nQ << " " << nS << " " << T << endl;
             int ret=ebg.calc_temp_f_gen(nB,nQ,nS,T,th);
             cout << "  " << th.ed << " " << ret << endl;
+            count++;
           }
         }
       }

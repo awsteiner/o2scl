@@ -41,6 +41,18 @@ namespace o2scl {
 
   public:
 
+    /** \name The default quark objects
+	
+	The masses are automatically set in the constructor to
+	\c up_default_mass, \c down_default_mass, and 
+	\c strange_default_mass.c
+    */
+    //@{
+    quark def_up; 
+    quark def_down;
+    quark def_strange;
+    //@}
+    
     eos_quark();
 
     virtual ~eos_quark() {};
@@ -68,16 +80,11 @@ namespace o2scl {
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS, double T,
                                 thermo &th) {
-      quark u(o2scl_const::mass_up_MeV_f<double>(),6.0);
-      quark d(o2scl_const::mass_down_MeV_f<double>(),6.0);
-      quark s(o2scl_const::mass_strange_MeV_f<double>(),6.0);
-      u.n=0.75*(2.0*nB+nQ);
-      d.n=0.25*(6.0*nB-3.0*nQ-4.0*nS);
-      s.n=nS;
-      u.mu=u.m;
-      d.mu=d.m;
-      s.mu=s.m;
-      return calc_temp_e(u,d,s,T,th);
+      
+      def_up.n=0.75*(2.0*nB+nQ);
+      def_down.n=0.25*(6.0*nB-3.0*nQ-4.0*nS);
+      def_strange.n=nS;
+      return calc_temp_e(def_up,def_down,def_strange,T,th);
     }
     
     /// Return string denoting type ("eos_quark")

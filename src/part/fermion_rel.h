@@ -2227,12 +2227,12 @@ namespace o2scl {
     int pair_density(fermion_t &f, fp_t temper) {
       
       if (verbose>0) {
-        std::cout << "Value of verbose greater than zero in "
-                  << "fermion_rel::pair_density()." << std::endl;
-        std::cout << "Density: " << f.n << " temperature: "
+        std::cout << "fermion_rel::pair_density(): "
+                  << "Value of verbose greater than zero." << std::endl;
+        std::cout << "  density: " << f.n << " temperature: "
                   << temper << std::endl;
         if (verbose>1) {
-          std::cout << "Setting solver verbose parameters to 1."
+          std::cout << "  setting solver verbose parameters to 1."
                     << std::endl;
           density_root->verbose=1;
           alt_solver.verbose=1;
@@ -2269,7 +2269,8 @@ namespace o2scl {
       int ret=0;
       
       if (f.n==0.0) {
-        
+
+        // FIXME: figure out what to do with last_method in this section
         if (f.inc_rest_mass) {
           f.nu=0.0;
         } else {
@@ -2879,6 +2880,10 @@ namespace o2scl {
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   /** \brief Long double precision version of \ref o2scl::fermion_rel_tl
+
+      \note AWS 6/4/24: Another option I have previously explored is
+      to use fermi_dirac_multip for the Fermi-Dirac integrator, but I
+      am unsure if this is significantly better.
    */
   class fermion_rel_ld : public
   fermion_rel_tl<
@@ -2911,7 +2916,7 @@ namespace o2scl {
       // Tolerance for the integrator for massless fermions
       this->fd_integ.set_tol(1.0e-18);
       
-      // No tolerance needed for the boost version
+      // No tolerance needed for the boost integrator
       //this->be_integ.set_tol(1.0e-18);
       
       // Internal function tolerances
@@ -2990,120 +2995,6 @@ namespace o2scl {
       fri.tol_rel=1.0e-25;
       fri.it.tol_rel=1.0e-25;
       fri.it2.tol_rel=1.0e-25;
-    }
-    
-  };
-  
-#endif
-  
-#ifdef O2SCL_NEVER_DEFINED  
-  /** \brief Desc
-   */
-  class fermion_rel_ld_multip : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<long double>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_multip,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
-    // The fermion integrator
-    fermion_rel_integ_multip<long double>,
-    // The density solver
-    root_brent_gsl<funct_ld,long double>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_ld,long double>,
-    // The function type
-    funct_ld,
-    // The floating-point type
-    long double> {
-    
-  public:
-    
-    fermion_rel_ld_multip() {
-      
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-21);
-      
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-21);
-      
-      // Internal function tolerances
-      
-      // This could be as large as log(1.0e4932)=11400,
-      // but only 200 is used for double, so we try this for now.
-      this->exp_limit=4000.0;
-      
-      // log(1.0e18) is 41.4
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
-      this->tol_expan=1.0e-17;
-      
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
-      
-      // Integrator tolerances
-      fri.tol_rel=1.0e-16;
-    }
-    
-  };
-  
-#endif  
-#ifdef O2SCL_NEVER_DEFINED
-  
-  /** \brief Desc
-   */
-  class fermion_rel_cdf252 : public
-  fermion_rel_tl<
-    // the fermion type
-    fermion_tl<cpp_dec_float_25>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
-    // The fermion integrator
-    fermion_rel_integ_multip<cpp_dec_float_25>,
-    // The density solver
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The function type
-    funct_cdf25,
-    // The floating-point type
-    cpp_dec_float_25> {
-    
-  public:
-    
-    fermion_rel_cdf252() {
-      
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-25);
-      
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-25);
-      
-      // Internal function tolerances
-      
-      this->exp_limit=1000000.0;
-      
-      // log(1.0e25) is 57.5
-      this->upper_limit_fac=58.0;
-      this->deg_entropy_fac=58.0;
-      this->tol_expan=1.0e-24;
-      
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-25;
-      this->def_massless_root.tol_abs=1.0e-25;
-      
-      // Integrator tolerances
-      fri.tol_rel=1.0e-23;
     }
     
   };
