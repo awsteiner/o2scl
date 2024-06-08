@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -555,19 +555,27 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   std::string var=in[1];
 
   inte_kronrod_boost<61> ikb;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   inte_double_exp_boost ideb;
+#else
+  inte_double_exp_boost<double,double,double,double> ideb;
+#endif
   inte_adapt_cern iac;
 
+#ifdef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  if (multiprecision) {
+    multiprecision=false;
+    cout << "Disabling multiprecision since -DO2SCL_NO_BOOST_MULTIPRECISION "
+         << "was used." << endl;
+  }
+  
+#endif
+  
   if (multiprecision) {
     
-#ifndef O2SCL_OSX
-
-    std::cerr << "Multiprecision for ninteg only works for OSX "
-              << "at the moment." << std::endl;
-    return 5;
-
-#else
-
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
     funct_multip_string fms;
     fms.set_function(func,var);
     funct_multip_string *fmsp=&fms;
@@ -596,9 +604,9 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       cerr << "Requested precision too large for the ninteg "
            << "command (maximum is 49)." << endl;
       return 2;
-      
-    } else if (precision>34) {
 
+    } else if (precision>34) {
+      
       cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
       convert_units<cpp_dec_float_50> cu;
       if (in[2]=="-infty") {
@@ -769,9 +777,9 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       cout << dtos(d,precision) << endl;
       
     }
-
-#endif
     
+#endif
+
   } else {
     
     // Normal double-precision integration

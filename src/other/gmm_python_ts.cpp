@@ -1,7 +1,7 @@
-/*
+ /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2023, Andrew W. Steiner
+  Copyright (C) 2023-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -41,7 +41,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   // Construct the data
   static const size_t N=50;
@@ -81,13 +81,13 @@ int main(void) {
       ix={j,1};
       tin.get(ix)=tab.get(1,j);
     }
-    
+
     gmm_python gp("o2sclpy",2,tin,"verbose=2","gmm_sklearn");
     gp.verbose=2;
     gp.get_python();
     ubvector x(2);
     for(size_t j=0;j<20;j++) {
-      gp.get_gmm()(x);
+      (*gp.get_gmm())(x);
       cout << j << " ";
       cout.setf(ios::showpos);
       cout << x[0] << " " << x[1] << endl;

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2023, Andrew W. Steiner
+  Copyright (C) 2012-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -52,7 +52,12 @@ namespace o2scl {
 
       This class is experimental.
 
-      \future Give functions for mean, median, mode, variance, etc?
+      \verbatim embed:rst
+      .. todo:: 
+
+         Future: Give functions for mean, median, mode, variance, etc?
+
+      \endverbatim
 
       \comment
       For now, there aren't any pure virtual functions,
@@ -64,11 +69,19 @@ namespace o2scl {
   class prob_dens_func {
     
   public:
+
+    virtual ~prob_dens_func() {
+    }
     
     /// Sample from the specified density
     virtual double operator()() const {
       O2SCL_ERR("Executing blank parent function.",o2scl::exc_eunimpl);
       return 0.0;
+    }
+
+    /// Sample from the specified density
+    virtual double sample() const {
+      return (*this)();
     }
     
     /// The normalized density 
@@ -285,6 +298,9 @@ namespace o2scl {
   class prob_dens_frange : public prob_dens_func {
 
   public:
+
+    virtual ~prob_dens_frange() {
+    }
     
     /// Lower limit of the range
     virtual double lower_limit() const=0;
@@ -467,6 +483,11 @@ namespace o2scl {
       This class is experimental.
   */
   class prob_dens_positive : public prob_dens_func {
+
+  public:
+    
+    virtual ~prob_dens_positive() {
+    }
     
   };
 
@@ -1691,7 +1712,7 @@ namespace o2scl {
 
   public:
 
-    /** \brief Maximum number of samples
+    /** \brief Maximum number of samples (default \f$ 10^5 \f$)
      */
     size_t samp_max;
   
@@ -1991,8 +2012,9 @@ namespace o2scl {
     }
   
     /// Copy constructor with operator=
-    prob_cond_mdim_fixed_step &operator=(const prob_cond_mdim_fixed_step &pcmfs)
-    {
+    prob_cond_mdim_fixed_step &operator=
+    (const prob_cond_mdim_fixed_step &pcmfs) {
+
       // Check for self-assignment
       if (this!=&pcmfs) {
         u_step=pcmfs.u_step;
@@ -2119,6 +2141,12 @@ namespace o2scl {
       \f$ and \f$ B \f$ are independent, i.e. \f$ P(A,B) = P(A) P(B)
       \f$, then \f$ P(A|B) = P(A) \f$ and is independent of \f$ B \f$.
       This class handles that particular case.
+
+      \note This class stores a shared pointer of the underlying
+      probability distribution, so copies created by the copy 
+      constructor point to the same object. If this object is not
+      thread-safe, then copies of this class are also not
+      thread-safe.
       
       This class is experimental.
   */
@@ -2126,17 +2154,26 @@ namespace o2scl {
   class prob_cond_mdim_indep : public prob_cond_mdim<vec_t> {
 
   protected:
-  
-    prob_dens_mdim<vec_t> &base;
-  
+
+    /// The underlying probability distribution
+    std::shared_ptr<prob_dens_mdim<vec_t> > base;
+    
   public:
 
     /** \brief Create a conditional probability distribution
+        based on a default multidimensional Gaussian
+    */
+    prob_cond_mdim_indep() : 
+      base(new prob_dens_mdim_gaussian<vec_t>) {
+    }
+    
+    /** \brief Create a conditional probability distribution
         based on the specified probability distribution
     */
-    prob_cond_mdim_indep(prob_dens_mdim<vec_t> &out) : base(out) {
+    prob_cond_mdim_indep(std::shared_ptr<prob_dens_mdim<vec_t>> out) : 
+      base(out) {
     }
-  
+    
     /// Copy constructor
     prob_cond_mdim_indep(const prob_cond_mdim_indep &pcmi) {
       base=pcmi.base;
@@ -2150,30 +2187,40 @@ namespace o2scl {
       }
       return *this;
     }
+
+    /// Set the base probability distribution
+    void set_base(std::shared_ptr<prob_dens_mdim<vec_t>> b) {
+      base=b;
+      return;
+    }
   
     /// The dimensionality
     virtual size_t dim() const {
-      return base.dim();
+      return base->dim();
     }
   
     /** \brief The conditional probability of x_A given x_B, 
         i.e. \f$ P(A|B) \f$
     */
     virtual double pdf(const vec_t &x_B, const vec_t &x_A) const {
-      return base.pdf(x_A);
+      return base->pdf(x_A);
     }
   
     /** \brief The log of the conditional probability of x_A given x_B
         i.e. \f$ \log [P(A|B)] \f$
     */
     virtual double log_pdf(const vec_t &x_B, const vec_t &x_A) const {
-      return base.log_pdf(x_A);
+      double r=base->log_pdf(x_A);
+      return r;
     }
   
     /// Sample the distribution
     virtual void operator()(const vec_t &x_B, vec_t &x_A) const {
-      return base(x_A);
+      (*base)(x_A);
+      return;
     }
+
+    virtual const char *type() { return "prob_cons_mdim_indep"; }
   
   };
   

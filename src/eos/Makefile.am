@@ -34,7 +34,7 @@ TEST_VAR = eos_had_apr.scr eos_quark_bag.scr nstar_cold.scr \
 	eos_crust_virial.scr eos_had_gogny.scr tov_solve.scr \
 	eos_quark_cfl6.scr eos_quark_cfl.scr nucmass_ldrop_shell.scr \
 	eos_nse_full.scr nstar_rot.scr tov_love.scr \
-	eos_had_rmf_hyp.scr
+	eos_had_rmf_hyp.scr eos_leptons.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -113,7 +113,7 @@ check_PROGRAMS = eos_had_apr_ts eos_quark_bag_ts nucmass_ldrop_ts \
 	eos_had_rmf_ts eos_had_schematic_ts eos_had_skyrme_ts eos_tov_ts \
 	tov_solve_ts eos_quark_cfl6_ts eos_had_tabulated_ts eos_nse_ts \
 	eos_had_rmf_delta_ts eos_crust_ts eos_had_ddc_ts eos_quark_cfl_ts \
-	nucleus_rmf_ts eos_nse_full_ts \
+	nucleus_rmf_ts eos_nse_full_ts eos_leptons_ts \
 	nucmass_ldrop_shell_ts eos_had_gogny_ts eos_crust_virial_ts \
 	nstar_rot_ts tov_love_ts eos_cs2_poly_ts eos_had_rmf_hyp_ts
 
@@ -148,6 +148,7 @@ eos_quark_bag_ts_LDADD = $(ADDL_TEST_LIBS)
 nstar_cold_ts_LDADD = $(ADDL_TEST_LIBS)
 nucmass_ldrop_ts_LDADD = $(ADDL_TEST_LIBS)
 nucmass_ldrop_shell_ts_LDADD = $(ADDL_TEST_LIBS)
+eos_leptons_ts_LDADD = $(ADDL_TEST_LIBS)
 eos_base_ts_LDADD = $(ADDL_TEST_LIBS)
 eos_had_potential_ts_LDADD = $(ADDL_TEST_LIBS)
 eos_had_sym4_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -181,6 +182,7 @@ nstar_cold_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 nucmass_ldrop_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 nucmass_ldrop_shell_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 eos_base_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+eos_leptons_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 eos_had_potential_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 eos_had_sym4_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 eos_had_base_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -219,6 +221,8 @@ nucmass_ldrop_shell.scr: nucmass_ldrop_shell_ts$(EXEEXT)
 	./nucmass_ldrop_shell_ts$(EXEEXT) > nucmass_ldrop_shell.scr
 eos_base.scr: eos_base_ts$(EXEEXT) 
 	./eos_base_ts$(EXEEXT) > eos_base.scr
+eos_leptons.scr: eos_leptons_ts$(EXEEXT) 
+	./eos_leptons_ts$(EXEEXT) > eos_leptons.scr
 eos_had_potential.scr: eos_had_potential_ts$(EXEEXT) 
 	./eos_had_potential_ts$(EXEEXT) > eos_had_potential.scr
 eos_had_sym4.scr: eos_had_sym4_ts$(EXEEXT) 
@@ -276,6 +280,7 @@ nstar_cold_ts_SOURCES = nstar_cold_ts.cpp
 nucmass_ldrop_ts_SOURCES = nucmass_ldrop_ts.cpp
 nucmass_ldrop_shell_ts_SOURCES = nucmass_ldrop_shell_ts.cpp
 eos_base_ts_SOURCES = eos_base_ts.cpp
+eos_leptons_ts_SOURCES = eos_leptons_ts.cpp
 eos_had_potential_ts_SOURCES = eos_had_potential_ts.cpp
 eos_had_sym4_ts_SOURCES = eos_had_sym4_ts.cpp
 eos_had_base_ts_SOURCES = eos_had_base_ts.cpp

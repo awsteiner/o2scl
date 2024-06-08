@@ -1,6 +1,6 @@
 .. _o2scl:
 
-Object-oriented Scientific Computing Library: v0.929a1
+Object-oriented Scientific Computing Library: v0.930a1
 ======================================================
 
 O₂scl is a C++ library for object-oriented scientific computing which
@@ -61,6 +61,7 @@ User's Guide
    cheb
    unitconv
    multip
+   specfunc
    conmin
    fit
    multi_interp

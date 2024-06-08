@@ -34,38 +34,39 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 
 TEST_VAR = $(BASE_TEST_VAR)
 
-SUBDIRS = arma eigen both neither python fftw openmp readline mpfr
+SUBDIRS = arma eigen both neither python fftw openmp readline mpfr \
+	pugixml
 
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
 endif
 
 if O2SCL_READLINE
-O2SCL_READLINE_MVAR = -DO2SCL_READLINE
+O2SCL_READLINE_MVAR = 
 else
 O2SCL_READLINE_MVAR =
 endif
 
 if O2SCL_NCURSES
-O2SCL_NCURSES_MVAR = -DO2SCL_NCURSES
+O2SCL_NCURSES_MVAR = 
 else
 O2SCL_NCURSES_MVAR =
 endif
 
 if O2SCL_EIGEN
-O2SCL_EIGEN_MVAR = -DO2SCL_EIGEN
+O2SCL_EIGEN_MVAR = 
 else
 O2SCL_EIGEN_MVAR =
 endif
 
 if O2SCL_ARMA
-O2SCL_ARMA_MVAR = -DO2SCL_ARMA
+O2SCL_ARMA_MVAR = 
 else
 O2SCL_ARMA_MVAR =
 endif
@@ -83,31 +84,31 @@ O2SCL_OSX_MVAR =
 endif
 
 if O2SCL_FFTW
-O2SCL_FFTW_MVAR = -DO2SCL_FFTW
+O2SCL_FFTW_MVAR = 
 else 
 O2SCL_FFTW_MVAR = 
 endif
 
 if O2SCL_CUBATURE
-O2SCL_CUBATURE_MVAR = -DO2SCL_CUBATURE
+O2SCL_CUBATURE_MVAR = 
 else 
 O2SCL_CUBATURE_MVAR = 
 endif
 
 if O2SCL_MPFR
-O2SCL_MPFR_MVAR = -DO2SCL_MPFR
+O2SCL_MPFR_MVAR = 
 else 
 O2SCL_MPFR_MVAR = 
 endif
 
 if O2SCL_PYTHON
-O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON -I$(PYTHON_INCLUDE_DIR)
+O2SCL_PYTHON_MVAR = -I$(PYTHON_INCLUDE_DIR)
 else 
 O2SCL_PYTHON_MVAR = 
 endif
 
 if O2SCL_READLINE
-ADDINC = -DO2SCL_READLINE
+ADDINC = 
 else 
 ADDINC = 
 endif

@@ -1,3 +1,32 @@
+Notes for 0.929 release:
+
+Improved documentation in several places.
+
+Created example ex_mcmc_kde.cpp.
+
+Created new steppers for mcmc_para.
+
+Updated docker files for Ubuntu 24.04.
+
+Improved Python, multiprecision, MPFR support in several classes. 
+
+Updated classes and methods inte_kronrod_boost, cli::xml_to_o2(),
+eos_leptons, eos_leptons_multip, inte_double_exp_boost, ode_boost,
+fermion_deriv_rel, inte_gauss_cern, inte_adapt_cern, astep_boost,
+boson_rel, calc_utf8, funct_multip, eos_sn, lib_settings,
+fermi_function, and boson_thermo.
+
+Allowed for virtual environments in py_init()
+
+Updates to acol commands: table rename, table3d refine, table cat,
+table3d contours, table autocorr, table thin-mcmc. Updated acol
+function support. 
+
+Updated yanic.
+
+Created a new O2SCL_NO_BOOST_MULTIPRECISION ifdef for speed. 
+
+------------------------------------------------------------------------
 Notes for 0.928 release:
 
 Several improvements to documentation and examples.

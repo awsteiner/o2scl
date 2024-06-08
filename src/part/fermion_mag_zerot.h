@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,7 +35,7 @@
 #include <o2scl/root_brent_gsl.h>
 
 namespace o2scl {
-
+  
   /** \brief Thermodynamics of fermions in a magnetic field at 
       zero temperature
 
@@ -56,7 +56,7 @@ namespace o2scl {
 
       \note This only works for spin 1/2 particles at the moment,
       so the discussion below assumes this is the case.
-
+      
       \note The function calc_density_zerot_mag() 
       will fail if the density is small enough. 
 

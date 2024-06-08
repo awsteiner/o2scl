@@ -2,9 +2,9 @@
 # 
 namespace o2scl
 py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``%name%``,
+| Python interface for O2scl class ``%name%``,
 | See
-| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+| https://awsteiner.org/code/o2scl/html/class/%name%.html .
 dll_name o2scl
 rst_header |
 | .. _nuclei:
@@ -43,6 +43,8 @@ cpp_using o2scl_hdf
 # Additional python headers
 #
 py_header from o2sclpy.part import *
+#
+# ------------------------------------------------------
 # 
 # Class nucleus
 #
@@ -53,6 +55,8 @@ class nucleus
 - int A
 - double mex
 - double be
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_info
 #
@@ -82,6 +86,8 @@ class nucmass_info
 - function spinp_to_int
   - int
   - std::string s
+#
+# ------------------------------------------------------
 # 
 # Class nucmass
 #
@@ -150,6 +156,8 @@ class nucmass abstract
   - double
   - double Z
   - double N
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_table
 #
@@ -161,6 +169,8 @@ class nucmass_table abstract
   - bool
 - function get_nentries
   - size_t
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_fit_base
 #
@@ -173,6 +183,8 @@ class nucmass_fit_base abstract
 #- function guess_fun
 #  - int
 #  - ubvector &x
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_semi_empirical
 #
@@ -191,26 +203,36 @@ class nucmass_semi_empirical
   - double
   - double Z
   - double N
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_ame
 #
 class nucmass_ame
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_dz_table
 #
 class nucmass_dz_table
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_dz_fit
 #
 class nucmass_dz_fit
 - parent nucmass_fit_base
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_dz_fit_33
 #
 class nucmass_dz_fit_33
 - parent nucmass_fit_base
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_frdm
 #
@@ -242,75 +264,109 @@ class nucmass_frdm
 - double np
 - double Rn
 - double Rp
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_mnmsk
 #
 class nucmass_mnmsk
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_mnmsk_exp
 #
 class nucmass_mnmsk_exp
 - parent nucmass_mnmsk
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_gen
 #
 class nucmass_gen
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_dglg
 #
 class nucmass_dglg
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_hfb
 #
 class nucmass_hfb
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_hfb_sp
 #
 class nucmass_hfb_sp
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_ktuy
 #
 class nucmass_ktuy
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_sdnp
 #
 class nucmass_sdnp
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # Class nucmass_wlw
 #
 class nucmass_wlw
 - parent nucmass_table
+#
+# ------------------------------------------------------
 # 
 # HDF functions
+#
+# ------------------------------------------------------
 #
 function ame_load
 - void
 - nucmass_ame &ame
 - std::string name
 - bool exp_only
+#
+# ------------------------------------------------------
+#
 function ame_load_ext
 - void
 - nucmass_ame &ame
 - std::string file_name
 - std::string table_name
 - bool exp_only
+#
+# ------------------------------------------------------
+#
 function mnmsk_load
 - void
 - nucmass_mnmsk &mnmsk
 - std::string model
 - std::string filename
+#
+# ------------------------------------------------------
+#
 function hfb_load
 - void
 - nucmass_hfb &hfb
 - size_t model
 - std::string filename
+#
+# ------------------------------------------------------
+#
 function hfb_sp_load
 - void
 - nucmass_hfb_sp &hfb

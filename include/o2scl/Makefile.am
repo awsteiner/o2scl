@@ -35,6 +35,11 @@ if O2SCL_PYTHON
 else
 	test -r set_python.h || ln -s $(top_srcdir)/src/base/neither/set_python.h set_python.h
 endif
+if O2SCL_PUGIXML
+	test -r set_pugixml.h || ln -s $(top_srcdir)/src/base/pugixml/set_pugixml.h set_pugixml.h
+else
+	test -r set_pugixml.h || ln -s $(top_srcdir)/src/base/neither/set_pugixml.h set_pugixml.h
+endif
 if O2SCL_MPFR
 	test -r set_mpfr.h || ln -s $(top_srcdir)/src/base/mpfr/set_mpfr.h set_mpfr.h
 else

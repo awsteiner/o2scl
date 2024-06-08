@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -727,8 +727,6 @@ namespace o2scl {
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
-                           //fermion &e, bool include_muons,
-                           //fermion &mu, fermion_rel &frel,
                            std::shared_ptr<table_units<> > results);
 
     /** \brief Compute (numerically) the number susceptibilities as a
@@ -1122,6 +1120,16 @@ namespace o2scl {
     virtual int calc_temp_e(fermion &n, fermion &p, double T, 
                             thermo &th)=0;
 
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      def_proton.n=-nQ;
+      def_neutron.n=nB+nQ;
+      return calc_temp_e(def_neutron,def_proton,T,th);
+    }
+    
     /** \brief Equation of state as a function of the chemical potentials
      */
     virtual int calc_p(fermion &n, fermion &p, thermo &th)=0;

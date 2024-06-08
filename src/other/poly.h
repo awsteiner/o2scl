@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,8 +33,13 @@
     which takes an integer for the second argument. The sqrt()
     function, always succeeds i.e. sqrt(((complex<double>)0.0))=0.0
 
-    \future The quartics are tested only for a4=1, which should
-    probably be generalized.
+    \verbatim embed:rst
+    .. todo:: 
+
+       Future: The quartics are tested only for a4=1, which should
+       probably be generalized.
+
+    \endverbatim
 */
 
 #include <iostream>
@@ -2094,7 +2099,12 @@ namespace o2scl {
         There are a couple differences with the original routine.
         The arrays z[] and u[] are now zero-indexed.
 
-        \future Make v[] zero-indexed as well.
+        \verbatim embed:rst
+        .. todo:: 
+
+           Future: Make v[] zero-indexed as well.
+
+        \endverbatim
     */
     virtual int rrteq4(fp_t a, fp_t b, fp_t c, fp_t d, 
 		       cx_t z[], fp_t &dc, int &mt) {

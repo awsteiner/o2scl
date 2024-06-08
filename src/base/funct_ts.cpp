@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -73,7 +73,7 @@ int main(void) {
 #ifdef O2SCL_PYTHON
 
   o2scl_settings.py_init();
-  o2scl_settings.add_python_path("../../data/o2scl/python");
+  o2scl_settings.add_python_path("../../data/o2scl/python",3);
   {
     cout << "1." << endl;
     // We use the brackets to force the funct_python

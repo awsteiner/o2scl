@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -41,6 +41,18 @@ namespace o2scl {
 
   public:
 
+    /** \name The default quark objects
+	
+	The masses are automatically set in the constructor to
+	\c up_default_mass, \c down_default_mass, and 
+	\c strange_default_mass.c
+    */
+    //@{
+    quark def_up; 
+    quark def_down;
+    quark def_strange;
+    //@}
+    
     eos_quark();
 
     virtual ~eos_quark() {};
@@ -63,6 +75,18 @@ namespace o2scl {
     virtual int calc_temp_e(quark &u, quark &d, quark &s, 
 			    double temper, thermo &th);
   
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS, double T,
+                                thermo &th) {
+      
+      def_up.n=0.75*(2.0*nB+nQ);
+      def_down.n=0.25*(6.0*nB-3.0*nQ-4.0*nS);
+      def_strange.n=nS;
+      return calc_temp_e(def_up,def_down,def_strange,T,th);
+    }
+    
     /// Return string denoting type ("eos_quark")
     virtual const char *type() { return "eos_quark"; }
 

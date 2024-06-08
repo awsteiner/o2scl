@@ -19,12 +19,14 @@ List of classes which support adaptive multiprecision:
 
 - Function evaluation: :ref:`funct_multip_tl <funct_multip_tl>`
 - Numerical differentiation: :ref:`deriv_multip_gsl <deriv_multip_gsl>`
-- Root-finding: :ref:`root_multip_brent_gsl <root_multip_brent_gsl>`
 - Integration: :ref:`inte_gauss_cern <inte_gauss_cern>`,
   :ref:`inte_adapt_cern_tl <inte_adapt_cern_tl>`,
        :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
   and :ref:`inte_double_exp_boost <inte_double_exp_boost>`.
 
+..   
+   - Root-finding: :ref:`root_multip_brent_gsl <root_multip_brent_gsl>`
+  
 List of classes which support multiprecision types:
 
 - Numerical differentiation: :ref:`deriv_gsl <deriv_gsl>`

@@ -14,7 +14,7 @@ dll_name o2scl
 rst_header |
 | .. _base:
 |
-| Base classes from O\ :sub:`2`\ scl
+| Base classes from O2scl
 | ==================================
 |
 | :ref:`O2sclpy <o2sclpy>`
@@ -62,6 +62,8 @@ py_header itp_akima_peri=5
 py_header itp_monotonic=6
 py_header itp_steffen=7
 py_header itp_nearest_neigh=8
+#
+# ------------------------------------------------------
 #
 # Class string
 # 
@@ -111,6 +113,8 @@ class std::string
 |         ret=ret+self.__getitem__(i)
 |     return ret
 #
+# ------------------------------------------------------
+#
 # Class vector<double>
 #                              
 # Create a python interface to std::vector<double> for vector
@@ -127,6 +131,9 @@ class std::vector<double>
 - function operator[]
   - double &
   - size_t n
+- function push_back
+  - void
+  - double x
 - extra_py |
 | def __len__(self):
 |     """
@@ -146,6 +153,13 @@ class std::vector<double>
 |     for i in range(0,self.size()):
 |         ret[i]=self.__getitem__(i)
 |     return ret
+|
+| def append(self,value):
+|     """
+|     Add an element to the end of the vector
+|     """
+|     self.push_back(value)
+|     return
 |
 | def from_list(self,lst):
 |     """
@@ -259,6 +273,9 @@ class std::vector<std::string>
   - size_t n                             
 - function size
   - size_t
+- function push_back
+  - void
+  - std::string x
 - function operator[]
   - std::string &
   - size_t n
@@ -270,6 +287,13 @@ class std::vector<std::string>
 |     Returns: a Python int
 |     """
 |     return self.size()
+|
+| def append(self,value):
+|     """
+|     Add an element to the end of the vector
+|     """
+|     self.push_back(value)
+|     return
 |
 | def set_list(self,ls):
 |     """
@@ -288,6 +312,8 @@ class std::vector<std::string>
 |     for i in range(0,self.size()):
 |         ret.append(self[i])
 |     return ret
+#
+# ------------------------------------------------------
 #
 # Class ublas_vector
 # 
@@ -322,6 +348,8 @@ class boost::numeric::ublas::vector<double>
 |         ret[i]=self.__getitem__(i)
 |     return ret
 #
+# ------------------------------------------------------
+#
 # Class ublas_vector_int
 # 
 class boost::numeric::ublas::vector<int>
@@ -355,6 +383,8 @@ class boost::numeric::ublas::vector<int>
 |         ret[i]=self.__getitem__(i)
 |     return ret
 #
+# ------------------------------------------------------
+#
 # Class ublas_matrix
 # 
 class boost::numeric::ublas::matrix<double>
@@ -385,6 +415,8 @@ class boost::numeric::ublas::matrix<double>
 |         for j in range(0,self.size2()):
 |             ret[i,j]=self.__getitem__((i,j))
 |     return ret
+#
+# ------------------------------------------------------
 #
 # Class ublas_matrix_int
 # 
@@ -417,6 +449,8 @@ class boost::numeric::ublas::matrix<int>
 |             ret[i,j]=self.__getitem__((i,j))
 |     return ret
 #
+# ------------------------------------------------------
+#
 # Class vector<vector<double>>
 #                              
 # Create a python interface to std::vector<std::vector<double>> for
@@ -442,6 +476,8 @@ class std::vector<std::vector<double>>
 |     """
 |     return self.size()
 #
+# ------------------------------------------------------
+#
 # Class vector<vector<string>>
 #                              
 # Create a python interface to std::vector<std::vector<std::string>> for
@@ -466,6 +502,8 @@ class std::vector<std::vector<std::string>>
 |     Returns: a Python int
 |     """
 |     return self.size()
+#
+# ------------------------------------------------------
 #
 # Class complex<double>
 #                              
@@ -512,8 +550,10 @@ class std::complex<double>
 py_class_doc |
 | Python interface for O₂scl class ``%name%``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/%name%.html .
+| https://awsteiner.org/code/o2scl/html/class/%name%.html .
 |
+#
+# ------------------------------------------------------
 # 
 # Class lib_settings_class
 #
@@ -556,14 +596,16 @@ class lib_settings_class
   - void
 - function get_convert_units
   - convert_units<> &
+#
+# ------------------------------------------------------
 # 
 # Class table
 #
 class table<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table``,
+| Python interface for O2scl class ``table``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table.html .
+| https://awsteiner.org/code/o2scl/html/class/table.html .
 - py_name table
 - std_cc                             
 - function operator[]
@@ -833,14 +875,16 @@ class table<>
 |         dct[self.get_column_name(i)]=self.get(self.get_column_name(i),
 |                                               row)
 |     return dct
+#
+# ------------------------------------------------------
 # 
 # Class table_units<>
 #
 class table_units<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``table_units``,
+| Python interface for O2scl class ``table_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/table_units.html .
+| https://awsteiner.org/code/o2scl/html/class/table_units.html .
 - parent table<>
 - std_cc                             
 - py_name table_units
@@ -867,14 +911,16 @@ class table_units<>
 #
 shared_ptr table_units<>
 - py_name table_units
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid
 #
 class uniform_grid<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid``,
+| Python interface for O2scl class ``uniform_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid.html .
 - py_name uniform_grid
 - function get_nbins
   - size_t                             
@@ -907,90 +953,104 @@ class uniform_grid<>
 |     for i in range(0,self.get_npoints()):
 |         ret[i]=v[i]
 |     return ret
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_end
 #
 class uniform_grid_end<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end``,
+| Python interface for O2scl class ``uniform_grid_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_end.html .
 - py_name uniform_grid_end                             
 - parent uniform_grid<>
 - cons init
   - double start
   - double end
   - size_t n_bins                             
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_width
 #
 class uniform_grid_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_width``,
+| Python interface for O2scl class ``uniform_grid_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_width.html .
 - py_name uniform_grid_width
 - parent uniform_grid<>
 - cons init
   - double start
   - double width
   - size_t n_bins                             
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_end_width
 #
 class uniform_grid_end_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_end_width``,
+| Python interface for O2scl class ``uniform_grid_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_end_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_end_width.html .
 - py_name uniform_grid_end_width                             
 - parent uniform_grid<>
 - cons init
   - double start
   - double end
   - double width
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_log_end
 #
 class uniform_grid_log_end<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end``,
+| Python interface for O2scl class ``uniform_grid_log_end``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_end.html .
 - py_name uniform_grid_log_end
 - parent uniform_grid<>
 - cons init
   - double start
   - double end
   - size_t n_bins                             
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_log_width
 #
 class uniform_grid_log_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_width``,
+| Python interface for O2scl class ``uniform_grid_log_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_width.html .
 - py_name uniform_grid_log_width
 - parent uniform_grid<>
 - cons init
   - double start
   - double width
   - size_t n_bins                             
+#
+# ------------------------------------------------------
 # 
 # Class uniform_grid_log_end_width
 #
 class uniform_grid_log_end_width<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``uniform_grid_log_end_width``,
+| Python interface for O2scl class ``uniform_grid_log_end_width``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/uniform_grid_log_end_width.html .
+| https://awsteiner.org/code/o2scl/html/class/uniform_grid_log_end_width.html .
 - py_name uniform_grid_log_end_width
 - parent uniform_grid<>
 - cons init
   - double start
   - double end
   - double width
+#
+# ------------------------------------------------------
 # 
 # Class table3d
 #
@@ -1179,6 +1239,8 @@ class table3d
   - std::string slice
 - function summary
   - void
+#
+# ------------------------------------------------------
 # 
 # Class index_spec
 #
@@ -1190,6 +1252,8 @@ class index_spec
 - double val1
 - double val2
 - double val3
+#
+# ------------------------------------------------------
 # 
 # Class ix_index
 #
@@ -1197,6 +1261,8 @@ class ix_index
 - no_def_cons
 - cons init
   - size_t ix
+#
+# ------------------------------------------------------
 # 
 # Class ix_fixed
 #
@@ -1205,6 +1271,8 @@ class ix_fixed
 - cons init
   - size_t ix
   - size_t ix2
+#
+# ------------------------------------------------------
 # 
 # Class ix_sum
 #
@@ -1212,6 +1280,8 @@ class ix_sum
 - no_def_cons
 - cons init
   - size_t ix
+#
+# ------------------------------------------------------
 # 
 # Class ix_trace
 #
@@ -1220,6 +1290,8 @@ class ix_trace
 - cons init
   - size_t ix
   - size_t ix2
+#
+# ------------------------------------------------------
 # 
 # Class ix_reverse
 #
@@ -1227,6 +1299,8 @@ class ix_reverse
 - no_def_cons
 - cons init
   - size_t ix
+#
+# ------------------------------------------------------
 # 
 # Class ix_range
 #
@@ -1236,6 +1310,8 @@ class ix_range
   - size_t ix
   - size_t start
   - size_t end
+#
+# ------------------------------------------------------
 # 
 # Class ix_interp
 #
@@ -1244,6 +1320,8 @@ class ix_interp
 - cons init
   - size_t ix
   - double v
+#
+# ------------------------------------------------------
 # 
 # Class ix_grid
 #
@@ -1255,6 +1333,8 @@ class ix_grid
   - double end
   - size_t n_bins
   - bool log [false]
+#
+# ------------------------------------------------------
 # 
 # Class ix_gridw
 #
@@ -1266,14 +1346,16 @@ class ix_gridw
   - double end
   - double width
   - bool log [false]
+#
+# ------------------------------------------------------
 # 
 # Class tensor
 #
 class tensor<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor
 - cons create_size
@@ -1438,14 +1520,16 @@ function rearrange_and_copy<tensor<size_t>,size_t>
 - std::string spec
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
 # 
 # Class tensor_int
 #
 class tensor<int,std::vector<int>>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor_int
 - cons create_size
@@ -1581,14 +1665,16 @@ class tensor<int,std::vector<int>>
 |     svst.init_py(index)
 |     self.resize_vector(svst)
 |     return
+#
+# ------------------------------------------------------
 # 
 # Class tensor_size_t
 #
 class tensor<size_t,std::vector<size_t>>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor``,
+| Python interface for O2scl class ``tensor``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor.html .
 - std_cc                             
 - py_name tensor_size_t
 - cons create_size
@@ -1718,13 +1804,15 @@ class tensor<size_t,std::vector<size_t>>
 |     self.resize_vector(svst)
 |     return
 #
+# ------------------------------------------------------
+#
 # Class tensor_grid
 #
 class tensor_grid<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``tensor_grid``,
+| Python interface for O2scl class ``tensor_grid``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html .
+| https://awsteiner.org/code/o2scl/html/class/tensor_grid.html .
 - parent tensor<>
 - std_cc                             
 - py_name tensor_grid
@@ -1878,6 +1966,8 @@ function grid_rearrange_and_copy<tensor_grid<>,double>
 - std::string spec
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
 # 
 # Class find_constants::const_entry
 #
@@ -1895,6 +1985,8 @@ class find_constants<>::const_entry
 - int A
 - int mol
 - int cd
+#
+# ------------------------------------------------------
 # 
 # Class find_constants
 #
@@ -1910,6 +2002,8 @@ class find_constants<>
   - void
   - io std::string &name
   - int verbose [0]
+#
+# ------------------------------------------------------
 #
 # Class convert_units_der_unit  
 #
@@ -1946,6 +2040,8 @@ class convert_units<>::der_unit
 - int cd
 - double val
 - std::string name  
+#
+# ------------------------------------------------------
 #  
 # Class convert_units<>
 #
@@ -1954,9 +2050,9 @@ class convert_units<>::der_unit
 #
 class convert_units<>
 - py_class_doc |
-| Python interface for O\ :sub:`2`\ scl class ``convert_units``,
+| Python interface for O2scl class ``convert_units``,
 | see
-| https://neutronstars.utk.edu/code/o2scl/html/class/convert_units.html .
+| https://awsteiner.org/code/o2scl/html/class/convert_units.html .
 - py_name convert_units
 - extra_py |
 | def add_unit(self,label,val,name='',m=0,k=0,s=0,K=0,A=0,mol=0,cd=0):
@@ -2021,6 +2117,8 @@ class convert_units<>
 - bool err_on_fail
 - bool combine_two_conv
 #
+# ------------------------------------------------------
+#
 # Class columnify
 #
 class columnify
@@ -2036,6 +2134,8 @@ class columnify
 #     template<class mat_string_t, class vec_int_t>
 #     int add_spaces(const mat_string_t &table_in, size_t ncols, size_t nrows, 
 # 		   vec_int_t &align_spec, mat_string_t &table_out) {
+#
+# ------------------------------------------------------
 #
 # Class format_float
 #
@@ -2067,6 +2167,8 @@ class format_float
   - double x
   - bool debug [false]
 #
+# ------------------------------------------------------
+#
 # Class interp_vec
 #
 class interp_vec<std::vector<double>>
@@ -2097,6 +2199,8 @@ class interp_vec<std::vector<double>>
   - double
   - double x1
   - double x2
+#
+# ------------------------------------------------------
 #
 # Class interp_krige_optim
 #
@@ -2132,6 +2236,8 @@ class interp_krige_optim<std::vector<double>,std::vector<double>,covar_funct_rbf
   - void
   - io std::vector<double> &x
   - io std::vector<double> &y
+#
+# ------------------------------------------------------
 #
 # Functions and classes from misc.h
 #
@@ -2204,12 +2310,21 @@ class terminal
   - std::string
 - function three_byte_summ_long
   - std::string
+#
+# ------------------------------------------------------
+#  
 function fermi_function
 - double
 - double x
+#
+# ------------------------------------------------------
+#  
 function bose_function
 - double
 - double x
+#
+# ------------------------------------------------------
+#  
 function quadratic_extremum_x<double>
 - double
 - py_name quadratic_extremum_x
@@ -2219,6 +2334,9 @@ function quadratic_extremum_x<double>
 - double y1
 - double y2
 - double y3
+#
+# ------------------------------------------------------
+#  
 function quadratic_extremum_y<double>
 - double
 - py_name quadratic_extremum_y
@@ -2228,6 +2346,9 @@ function quadratic_extremum_y<double>
 - double y1
 - double y2
 - double y3
+#
+# ------------------------------------------------------
+#  
 function screenify<vector<std::string>>
 - void  
 - py_name screenify
@@ -2235,9 +2356,15 @@ function screenify<vector<std::string>>
 - io vector<std::string> &in_cols
 - out vector<std::string> &out_cols
 - size_t max_size [80]
+#
+# ------------------------------------------------------
+#  
 function file_exists
 - bool
 - std::string fname
+#
+# ------------------------------------------------------
+#  
 function RGBtoHSV
 - void
 - double r
@@ -2246,6 +2373,9 @@ function RGBtoHSV
 - out double &h
 - out double &s
 - out double &v
+#
+# ------------------------------------------------------
+#  
 function HSVtoRGB
 - void
 - double h
@@ -2254,13 +2384,22 @@ function HSVtoRGB
 - out double &r
 - out double &g
 - out double &b
+#
+# ------------------------------------------------------
+#  
 function wordexp_single_file
 - void
 - io std::string &fname  
+#
+# ------------------------------------------------------
+#  
 function wordexp_wrapper
 - void
 - std::string word
 - out std::vector<std::string> &matches
+#
+# ------------------------------------------------------
+#  
 class gen_test_number<double>
 - py_name gen_test_number
 - function reset
@@ -2271,34 +2410,48 @@ class gen_test_number<double>
 - function gen
   - double
 #
+# ------------------------------------------------------
+#
 # Functions from lib_settings.h
 #
 function function_to_double
 - double
 - std::string s
 - int verbose [0]
+#
+# ------------------------------------------------------
+#  
 function function_to_double_nothrow
 - int
 - std::string s
 - out double &result
 - int verbose [0]
+#
+# ------------------------------------------------------
+#  
 function find_constant
 - double
 - std::string name
 - std::string unit  
 #
-# Functions from string_conv.h
+# ------------------------------------------------------
 #
+# Functions from string_conv.h
+#  
 function string_to_uint_list<vector<size_t>>
 - int
 - py_name string_to_uint_list
 - io const std::string &x
 - out vector<size_t> &list
+#  
 #function string_to_char_array
 #- void
 #- std::string s
 #- char *x
 #- int len
+#
+# ------------------------------------------------------
+#
 function rewrap_keep_endlines
 - void
 - std::string str
@@ -2306,6 +2459,8 @@ function rewrap_keep_endlines
 - size_t ncol [79]
 - int verbose [0]
 - bool ignore_vt100 [True]  
+#
+# ------------------------------------------------------
 #
 # Functions from interp.h
 # 
@@ -2316,6 +2471,9 @@ function vector_level_count<std::vector<double>,std::vector<double>>
 - size_t n
 - std::vector<double> &x
 - std::vector<double> &y
+#
+# ------------------------------------------------------
+#
 function vector_deriv_interp<std::vector<double>,std::vector<double>>
 - void
 - py_name vector_deriv_interp
@@ -2323,6 +2481,9 @@ function vector_deriv_interp<std::vector<double>,std::vector<double>>
 - io std::vector<double> &v
 - out std::vector<double> &dv
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_deriv2_interp<std::vector<double>,std::vector<double>>
 - void
 - py_name vector_deriv2_interp
@@ -2330,6 +2491,9 @@ function vector_deriv2_interp<std::vector<double>,std::vector<double>>
 - io std::vector<double> &v
 - out std::vector<double> &dv
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_deriv_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
 - void
 - py_name vector_deriv_xy_interp  
@@ -2338,6 +2502,9 @@ function vector_deriv_xy_interp<std::vector<double>,std::vector<double>,std::vec
 - io std::vector<double> &vy
 - out std::vector<double> &dv
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_deriv2_xy_interp<std::vector<double>,std::vector<double>,std::vector<double>>
 - void
 - py_name vector_deriv2_xy_interp  
@@ -2346,12 +2513,18 @@ function vector_deriv2_xy_interp<std::vector<double>,std::vector<double>,std::ve
 - io std::vector<double> &vy
 - out std::vector<double> &dv
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_integ_interp<std::vector<double>>
 - double
 - py_name vector_integ_interp  
 - size_t n  
 - io std::vector<double> &vx
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_integ_xy_interp<std::vector<double>,std::vector<double>>
 - double
 - py_name vector_integ_xy_interp  
@@ -2359,6 +2532,9 @@ function vector_integ_xy_interp<std::vector<double>,std::vector<double>>
 - io std::vector<double> &vx
 - io std::vector<double> &vy
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_integ_ul_interp<std::vector<double>>
 - double
 - py_name vector_integ_ul_interp  
@@ -2366,6 +2542,9 @@ function vector_integ_ul_interp<std::vector<double>>
 - double x2
 - io std::vector<double> &v
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>
 - double
 - py_name vector_integ_ul_xy_interp  
@@ -2374,6 +2553,9 @@ function vector_integ_ul_xy_interp<std::vector<double>,std::vector<double>>
 - io std::vector<double> &vx
 - io std::vector<double> &vy
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function vector_find_level<std::vector<double>,std::vector<double>>
 - void
 - py_name vector_find_level
@@ -2382,6 +2564,9 @@ function vector_find_level<std::vector<double>,std::vector<double>>
 - io std::vector<double> &x
 - io std::vector<double> &y
 - out std::vector<double> &locs
+#
+# ------------------------------------------------------
+#
 function vector_invert_enclosed_sum<std::vector<double>,std::vector<double>>
 - void
 - py_name vector_invert_enclosed_sum
@@ -2393,6 +2578,9 @@ function vector_invert_enclosed_sum<std::vector<double>,std::vector<double>>
 - int boundaries [0]
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
+#
 function vector_region_int<std::vector<double>,std::vector<double>>
 - int
 - py_name vector_region_int  
@@ -2404,6 +2592,9 @@ function vector_region_int<std::vector<double>,std::vector<double>>
 - int boundaries [0]
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
+#
 function vector_region_fracint<std::vector<double>,std::vector<double>>
 - int
 - py_name vector_region_fracint  
@@ -2415,6 +2606,9 @@ function vector_region_fracint<std::vector<double>,std::vector<double>>
 - int boundaries [0]
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
+#
 function vector_bound_fracint<std::vector<double>,std::vector<double>>
 - int
 - py_name vector_bound_fracint  
@@ -2427,6 +2621,9 @@ function vector_bound_fracint<std::vector<double>,std::vector<double>>
 - int boundaries [0]
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
+#
 function vector_bound_int<std::vector<double>,std::vector<double>>
 - int
 - py_name vector_bound_int  
@@ -2439,6 +2636,9 @@ function vector_bound_int<std::vector<double>,std::vector<double>>
 - int boundaries [0]
 - int verbose [0]
 - bool err_on_fail [true]
+#
+# ------------------------------------------------------
+#
 function rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>>
 - void
 - py_name rebin_xy
@@ -2448,11 +2648,17 @@ function rebin_xy<std::vector<double>,std::vector<double>,std::vector<double>,st
 - out std::vector<double> &y_out
 - size_t n_pts
 - size_t interp_type
+#
+# ------------------------------------------------------
+#
 function linear_or_log_chi2<std::vector<double>,std::vector<double>>
 - double
 - py_name linear_or_log_chi2
 - io std::vector<double> &x
 - io std::vector<double> &y
+#
+# ------------------------------------------------------
+#
 function linear_or_log<std::vector<double>,std::vector<double>>
 - void
 - py_name linear_or_log_pair
@@ -2460,6 +2666,9 @@ function linear_or_log<std::vector<double>,std::vector<double>>
 - io std::vector<double> &y
 - out bool &log_x
 - out bool &log_y
+#
+# ------------------------------------------------------
+#
 function vector_refine<std::vector<double>,std::vector<double>,double>
 - void
 - py_name vector_refine
@@ -2468,11 +2677,17 @@ function vector_refine<std::vector<double>,std::vector<double>,double>
 - std::vector<double> &data
 - size_t factor
 - size_t interp_type [2]
+#
+# ------------------------------------------------------
+#
 function linear_or_log<std::vector<double>>
 - void
 - py_name linear_or_log
 - io std::vector<double> &x
 - out bool &log_x
+#
+# ------------------------------------------------------
+#
 class funct_string
 - no_def_cons
 - cons init
@@ -2485,6 +2700,9 @@ class funct_string
 - function operator()
   - double
   - double x
+#
+# ------------------------------------------------------
+#
 class comm_option_s
 - char shrt
 - std::string lng
@@ -2494,12 +2712,18 @@ class comm_option_s
 - std::string parm_desc
 - std::string help
 - int type
+#
+# ------------------------------------------------------
+#
 class cmd_line_arg
 - std::string arg
 - bool is_option
 - bool is_valid
 - std::vector<std::string> parms
 #- comm_option_s *cop
+#
+# ------------------------------------------------------
+#
 class cli
 - bool sync_verbose
 - bool gnu_intro
@@ -2530,6 +2754,8 @@ class cli
 - function option_short_desc
   - std::string
   - std::string name
+#
+# ------------------------------------------------------
 #
 # Function from cursesw.h
 #

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -71,9 +71,13 @@ namespace o2scl {
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
-			   //fermion &e, bool include_muons,
-			   //fermion &mu, fermion_rel &frel,
 			   std::shared_ptr<table_units<> > results);
+
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th);
     
   protected:
 

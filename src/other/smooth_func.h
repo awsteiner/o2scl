@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2016-2023, Andrew W. Steiner
+  Copyright (C) 2016-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /** \file smooth_func.h
-    \brief File for ..
+    \brief File for class smooth_func
 */
 #ifndef O2SCL_SMOOTH_FUNC_H
 #define O2SCL_SMOOTH_FUNC_H
@@ -46,8 +46,13 @@ namespace o2scl {
       ensure that this pointer is still valid when 
       \ref o2scl::smooth_func::operator()() is called.
       
-      \future Move memory allocation outside of \ref
-      o2scl::smooth_func::operator()() .
+      \verbatim embed:rst
+      .. todo:: 
+
+         Future: Move memory allocation outside of \ref
+         o2scl::smooth_func::operator()() .
+
+      \endverbatim
   */
   template<class vec_t, class func_t> class smooth_func {
     

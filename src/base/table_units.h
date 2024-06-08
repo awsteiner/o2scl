@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -986,6 +986,56 @@ namespace o2scl {
 #endif
 
   };
+
+  /** \brief Thin table \c src using window parameter \c window and
+      place the results in \c dest
+   */
+  template<class vec_t, class vec2_t>
+  void copy_table_thin_mcmc(size_t window, table_units<vec_t> &src,
+                            table_units<vec2_t> &dest,
+                            std::string mult_col="", int verbose=0) {
+                            
+    size_t running_sum=0;
+    size_t count=0;
+
+    for(size_t i=0;i<src.get_nconsts();i++) {
+      std::string tnam;
+      double tval;
+      src.get_constant(i,tnam,tval);
+      if (verbose>2) {
+        std::cout << "Adding constant " << tnam << " = " << tval
+                  << std::endl;
+      }
+      dest.add_constant(tnam,tval);
+    }
+    
+    for(size_t i=0;i<src.get_ncolumns();i++) {
+      std::string col=src.get_column_name(i);
+      std::string unit=src.get_unit(col);
+      dest.new_column(col);
+      dest.set_unit(col,unit);
+    }
+    
+    for(size_t j=0;j<src.get_nlines();j++) {
+      if (verbose>2) {
+	std::cout << "Completed " << j+1 << " of " << src.get_nlines()
+		  << std::endl;
+      }
+      if (mult_col.length()==0 || ((size_t)src.get(mult_col,j))>0) {
+        if (mult_col.length()>0) {
+          running_sum+=((size_t)(src.get(mult_col,j)));
+        } else {
+          running_sum++;
+        }
+        while (count<running_sum) {
+          dest.copy_row(src,j);
+          count+=window;
+        }
+      }
+    }
+
+    return;
+  }
 
 #ifdef O2SCL_MPI
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -193,27 +193,9 @@ namespace o2scl {
 
       verbose=v;
       free();
-      
-      // Get the Unicode name of the user-specified module
-      if (verbose>0) {
-        std::cout << "Getting unicode for module name()." << std::endl;
-      }
-      p_name=PyUnicode_FromString(module.c_str());
-      if (p_name==0) {
-        O2SCL_ERR2("Create module name failed in ",
-                   "mm_funct_python::set_function().",o2scl::exc_efailed);
-      }
-      
-      // Import the user-specified module
-      if (verbose>0) {
-        std::cout << "Importing module." << std::endl;
-      }
-      p_module=PyImport_Import(p_name);
-      if (p_module==0) {
-        O2SCL_ERR2("Load module failed in ",
-                   "mm_funct_python::set_function().",o2scl::exc_efailed);
-      }
 
+      p_module=o2scl_settings.py_import_module(module,verbose);
+      
       if (class_name.length()>0) {
         if (verbose>0) {
           std::cout << "Obtaining python class." << std::endl;

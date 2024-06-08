@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -189,7 +189,7 @@ int main(void) {
     cout << "Results from acor: " << mean << " " << sig << " "
          << tau << endl;
     std::vector<double> ac, ac2, ftom, ftom2;
-    o2scl::vector_autocorr_vector(act,ac,1000);
+    o2scl::vector_autocorr_vector(act.size(),act,ac,1000);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
     cout << "ac_len: " << ac_len << endl;
     t.test_abs(((double)ac_len),19.0,2.0,"vector_autocorr_tau");
@@ -215,7 +215,7 @@ int main(void) {
          << tau << endl;
     t.test_abs(tau,25.0,5.0,"acor 2");
     std::vector<double> ac, ac2, ftom, ftom2;
-    o2scl::vector_autocorr_vector(act,ac);
+    o2scl::vector_autocorr_vector(act.size(),act,ac);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
     t.test_abs(((double)ac_len),25.0,6.0,"vector_autocorr_tau 2");
     cout << "ac_len: " << ac_len << endl;

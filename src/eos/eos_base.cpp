@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -44,11 +44,16 @@ const thermo &eos_base::get_thermo() {
 
 
 int eos_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-			 //fermion &e, bool include_muons,
-			 //fermion &mu, fermion_rel &frel,
                          eos_leptons &elep,
 			 std::shared_ptr<table_units<> > results) {
   O2SCL_ERR("Function beta_eq_T0() not implemented.",
+	    o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
+}
+
+int eos_base::calc_temp_f_gen(double nB, double nQ, double nS,
+                              double T, thermo &th) {
+  O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
 	    o2scl::exc_eunimpl);
   return o2scl::exc_eunimpl;
 }

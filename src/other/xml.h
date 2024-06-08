@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2022-2023, Andrew W. Steiner
+  Copyright (C) 2022-2024, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -30,14 +30,15 @@
 #include <vector>
 
 #include <o2scl/err_hnd.h>
+#include <o2scl/set_pugixml.h>
 
-#ifdef O2SCL_PUGIXML
+#ifdef O2SCL_SET_PUGIXML
 #include "pugixml.hpp"
 #endif
 
 namespace o2scl {
 
-#ifdef O2SCL_PUGIXML
+#ifdef O2SCL_SET_PUGIXML
 
   /** \brief A base class for pugixml walkers
    */

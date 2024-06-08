@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -82,8 +82,17 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
     }
     size_t running_sum=0;
     size_t count=0;
+
+    //void copy_table_thin_mcmc(size_t window, table_units<> &src,
+    //table_units<> &dest, std::string mult_col="",
+    //int verbose=0) {
+
     table_units<> tnew;
 
+    copy_table_thin_mcmc(window,table_obj,tnew,mult_col,verbose);
+
+    /*
+    
     for(size_t i=0;i<table_obj.get_nconsts();i++) {
       string tnam;
       double tval;
@@ -114,7 +123,11 @@ int acol_manager::comm_thin_mcmc(std::vector<std::string> &sv,
         }
       }
     }
+
+    */
+
     table_obj=tnew;
+    
   } else {
     cerr << "Command 'thin-mcmc' not supported for objects of "
          << "type " << type << endl;
@@ -224,7 +237,9 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
                   
     gp.get_python();
 
-    pgmm_obj=gp.get_gmm();
+    // AWS, 3/12/24: This now uses a copy constructor, which I think
+    // is ok for now. 
+    pgmm_obj=*(gp.get_gmm());
     
     command_del(type);
     clear_obj();
@@ -1699,6 +1714,64 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
   
+int acol_manager::comm_values_table(std::vector<std::string> &sv,
+				  bool itive_com) {
+  if (type=="tensor_grid") {
+
+    std::string i1;
+    int ret=get_input_one(sv,"Enter function",i1,"values-table",itive_com);
+    if (ret!=0) return ret;
+    
+    table_obj.clear();
+    for (size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      table_obj.new_column(((string)"i")+o2scl::szttos(i));
+    }
+    for (size_t i=0;i<tensor_grid_obj.get_rank();i++) {
+      table_obj.new_column(((string)"x")+o2scl::szttos(i));
+    }
+    table_obj.new_column("v");
+
+    cout << "func: " << i1 << endl;
+    table_obj.summary(&cout);
+    
+    // Parse function
+    std::string function=i1;
+    calc_utf8<> calc;
+    std::map<std::string,double> vars;
+    calc.compile(function.c_str(),&vars);
+
+    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+      
+      vector<size_t> ix(tensor_grid_obj.get_rank());
+      tensor_grid_obj.unpack_index(i,ix);
+      for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+        vars[((string)"i")+o2scl::szttos(j)]=ix[j];
+      }
+      vars["v"]=tensor_grid_obj.get_data()[i];
+      
+      if (calc.eval(&vars)>0.5) {
+        
+        vector<double> line;
+        for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+          line.push_back(ix[j]);
+        }
+        for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+          line.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+        }
+        line.push_back(tensor_grid_obj.get(ix));
+        table_obj.line_of_data(line.size(),line);
+      }
+      
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("table");
+    type="table";
+  }
+    
+  return 0;
+}
 int acol_manager::comm_value_grid(std::vector<std::string> &sv,
 				  bool itive_com) {
 
@@ -1903,7 +1976,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
        << o2scl_settings.get_doc_dir() << endl;
   cout << "Local documentation URL:\n  file://"
        << o2scl_settings.get_doc_dir() << "html/index.html" << endl;
-  cout << "Online documentation URL:\n  http://neutronstars.utk.edu/code/o2scl"
+  cout << "Online documentation URL:\n  http://awsteiner.org/code/o2scl"
        << "/html/index.html" << endl;
   cout << "System type: " << o2scl_settings.system_type() << endl;
   cout << endl;
@@ -2114,17 +2187,39 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
   cmd="xdg-open ";
 #endif
 #endif
+
+  std::string stem="o2scl/html";
+
+  if (verbose>=2) {
+    std::cout << "acol wdocs: " << std::endl;
+    std::cout << "  sv: ";
+    for(size_t j=0;j<sv.size();j++) {
+      std::cout << sv[j] << " ";
+    }
+    std::cout << endl;
+  }
   
-  if (sv.size()>=3 || (sv.size()==2 && sv[1]!="dev")) {
+  if (sv.size()>=3 || (sv.size()==2 && sv[1]!="dev" &&
+                       sv[1]!="o2sclpy" && sv[1]!="o2sclpy-dev")) {
+
     bool dev=false;
     string term=sv[1];
-    string section;
     
-    if (sv.size()>=3 && sv[1]==((string)"dev")) {
-      term=sv[2];
-      dev=true;
+    if (sv.size()>=3) {
+      if (sv[1]==((string)"dev")) {
+        term=sv[2];
+        dev=true;
+        stem="o2scl-dev/html";
+      } else if (sv[1]==((string)"o2sclpy")) {
+        stem="o2sclpy";
+        term=sv[2];
+      } else if (sv[1]==((string)"o2sclpy-dev")) {
+        term=sv[2];
+        stem="o2sclpy-dev";
+        dev=true;
+      }
     }
-    
+
     if (term.length()>40) {
       term=term.substr(0,40);
     }
@@ -2140,35 +2235,21 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
 	i=0;
       }
     }
-    if (section=="part") {
-      if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl-dev/part/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl/part/html/search.html?q="+term+" &";
-      }
-    } else if (section=="eos") {
-      if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl-dev/eos/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl/eos/html/search.html?q="+term+" &";
-      }
-    } else {
-      if (dev) {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl-dev/html/search.html?q="+term+" &";
-      } else {
-        cmd+=((string)"https://neutronstars.utk.edu/code/")+
-          "o2scl/html/search.html?q="+term+" &";
-      }
-    }
-  } else if (sv[1]=="dev") {
-    cmd+="https://neutronstars.utk.edu/code/o2scl-dev/html/acol.html &";
+    cmd+=((string)"https://awsteiner.org/code/")+stem+
+      "/search.html?q="+term+" &";
+    
+  } else if (sv.size()>=2 && sv[1]=="dev") {
+    cmd+=((string)"https://awsteiner.org/code/")+
+      stem+"/acol.html &";
+  } else if (sv.size()>=2 && sv[1]=="o2sclpy") {
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2sclpy/o2graph.html &";
+  } else if (sv.size()>=2 && sv[1]=="o2sclpy-dev") {
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2sclpy-dev/o2graph.html &";
   } else {
-    cmd+="https://neutronstars.utk.edu/code/o2scl/html/acol.html &";
+    cmd+=((string)"https://awsteiner.org/code/")+
+      "o2scl/html/acol.html &";
   }
   
   cout << "Using command: " << cmd << endl;

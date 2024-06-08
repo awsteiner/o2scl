@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -62,11 +62,15 @@ namespace o2scl {
     class mcarlo_plain : public mcarlo<func_t,vec_t,rng_t> {
     
   public:
-  
-  virtual ~mcarlo_plain() {}
-  
-  /// Integrate function \c func from x=a to x=b.
-  virtual int minteg_err(func_t &func, size_t ndim, const vec_t &a, 
+    
+    virtual ~mcarlo_plain() {}
+    
+    /** \brief Integrate function \c func from x=a to x=b.
+
+        The result of the integral is stored in \c res and the
+        error estimate in \c err.
+    */
+    virtual int minteg_err(func_t &func, size_t ndim, const vec_t &a, 
 			 const vec_t &b, double &res, double &err) {
 
     double r;

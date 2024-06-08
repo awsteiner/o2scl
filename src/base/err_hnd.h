@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -137,8 +137,11 @@ namespace o2scl {
 
       A global object of this type is defined, \ref err_hnd .
 
-      \future There may be an issue associated with the string
-      manipulations causing errors in the error handler.
+      \verbatim embed:rst
+      .. todo:: 
+         Future: There may be an issue associated with the string
+         manipulations causing errors in the error handler.
+      \endverbatim
    */
   class err_hnd_type {
     

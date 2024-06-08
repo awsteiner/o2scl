@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -54,43 +54,6 @@ typedef boost::numeric::ublas::matrix<double> ubmatrix;
   int acol_manager::comm_correl()
   int acol_manager::comm_convert_unit()
   int acol_manager::comm_create()
-*/
-
-/*
-int acol_manager::comm_ac_len(std::vector<std::string> &sv,
-                              bool itive_com) {
-
-  if (type=="table") {
-    
-    if (table_obj.get_nlines()==0) {
-      cerr << "Table has no lines of data to compute "
-	   << "autocorrelations with." << endl;
-      return exc_efailed;
-    }
-
-    vector<string> in, pr;
-    pr.push_back("Enter column name");
-    int ret=get_input(sv,pr,in,"ac_len",itive_com);
-    if (ret!=0) return ret;
-
-    size_t n=table_obj.get_nlines();
-    vector<double> vcopy(n);
-    for(size_t j=0;j<n;j++) {
-      vcopy[j]=table_obj.get(in[0],j);
-    }
-
-    double mean, sigma, tau;
-    vector_acor(n,vcopy,mean,sigma,tau,verbose);
-
-    cout << "mean, sigma, tau: " << mean << " "
-	 << sigma << " " << tau << endl;
-
-    return 0;
-  } 
-
-  cout << "ac_len does not work for type " << type << endl;
-  return 1;
-}
 */
 
 int acol_manager::comm_add_vec(std::vector<std::string> &sv, bool itive_com) {
@@ -354,7 +317,7 @@ int acol_manager::comm_autocorr(std::vector<std::string> &sv,
       return 1;
 #endif
     } else {
-      vector_autocorr_vector(vvd[jj],ac_vec[jj]);
+      vector_autocorr_vector(vvd[jj].size(),vvd[jj],ac_vec[jj]);
     }
     if (ac_vec[jj].size()>max_ac_size) {
       max_ac_size=ac_vec[jj].size();
@@ -544,10 +507,10 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     ff.set_sig_figs(precision+1);
   }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
-#ifdef O2SCL_OSX
-
     std::string i1=sv[1];
     
     funct_multip_string fms;
@@ -570,7 +533,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
       cerr << "Requested precision too large for the calc "
            << "command (maximum is 48)." << endl;
       return 2;
-      
+
     } else if (precision>33) {
       
       cpp_dec_float_50 d=0, err;
@@ -640,16 +603,14 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cout << d << " (" << ff.convert(d) << ")" << endl;
     return 0;
     
-#else
-    
-    cerr << "Adaptive multiprecision only supported on OSX at the moment."
-         << endl;
-    return 5;
-    
-#endif
-  
-    
   }
+
+#else
+
+  cout << "Disabling multiprecision since O2SCL_NO_BOOST_MULTIPRECISION"
+       << " was defined." << endl;
+  
+#endif
   
   std::string i1;
   if (sv.size()>1) {
@@ -671,6 +632,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Requested precision too large for the calc "
          << "command." << endl;
     return 2;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
   } else if (precision>35) {
     cpp_dec_float_50 d;
     convert_units<cpp_dec_float_50> cu50;
@@ -719,6 +681,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>0) cout << "Result (long double): ";
     cout << dtos(d,precision) << endl;
     return 0;
+#endif
   }
   
   double d;
@@ -1104,6 +1067,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     if (precision>50) {
       cerr << "Requested precision too large for the constant "
            << "command (the maximum is 50)." << endl;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     } else if (precision>35) {
       convert_units<cpp_dec_float_50> cu50;
       cu50.find_print(in[0],in[1],precision,false);
@@ -1116,6 +1080,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     } else if (precision>15) {
       convert_units<long double> culd;
       culd.find_print(in[0],in[1],precision,false);
+#endif
     } else {
       cu.find_print(in[0],in[1],precision,false);
     }
@@ -1920,31 +1885,60 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
     double c=vector_correlation(table_obj.get_nlines(),table_obj[sv[1]],
 				table_obj[sv[2]]);
     cout << "Correlation coefficient: " << c << endl;
-
+    
+  } else if (sv.size()>=2 && sv[1]==((string)"table3d")) {
+      
+    table3d_obj.clear();
+    size_t n=table_obj.get_ncolumns();
+    uniform_grid_end_width<double> ug(0,n-1,1.0);
+    table3d_obj.set_xy("x",ug,"y",ug);
+    table3d_obj.new_slice("correl");
+    
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=i;j<n;j++) {
+        if (i==j) {
+          table3d_obj.set(i,j,"correl",1.0);
+        } else {
+          double c=vector_correlation(table_obj.get_nlines(),
+                                      table_obj[i],table_obj[j]);
+          if (!std::isfinite(c)) c=0.0;
+          table3d_obj.set(i,j,"correl",c);
+          table3d_obj.set(j,i,"correl",c);
+        }
+      }
+    }
+    
+    command_del(type);
+    clear_obj();
+    command_add("table3d");
+    type="table3d";
+    
   } else {
-  
+      
     vector<string> labels;
     vector<double> coeffs, abs_coeffs;
     
     size_t n=table_obj.get_ncolumns();
     
     for(size_t i=0;i<n;i++) {
-      cout << i << "/" << n << endl;
+      cout << "Computing correlations for column "
+           << i+1 << " of " << n << endl;
       for(size_t j=i+1;j<n;j++) {
-	labels.push_back(table_obj.get_column_name(i)+","+
-			 table_obj.get_column_name(j));
-	double c=vector_correlation(table_obj.get_nlines(),
-				    table_obj[i],table_obj[j]);
-	if (!std::isfinite(c)) c=0.0;
-	coeffs.push_back(c);
-	abs_coeffs.push_back(fabs(c));
-	/*
-	  cout << labels[labels.size()-1] << " " << c << endl;
-	  char ch;
-	  cin >> ch;
-	*/
+        labels.push_back(table_obj.get_column_name(i)+", "+
+                         table_obj.get_column_name(j));
+        double c=vector_correlation(table_obj.get_nlines(),
+                                    table_obj[i],table_obj[j]);
+        if (!std::isfinite(c)) c=0.0;
+        coeffs.push_back(c);
+        abs_coeffs.push_back(fabs(c));
+        /*
+          cout << labels[labels.size()-1] << " " << c << endl;
+          char ch;
+          cin >> ch;
+        */
       }
     }
+    cout << endl;
     
     vector<size_t> indexes(coeffs.size());
     vector_sort_index(coeffs.size(),abs_coeffs,indexes);
@@ -1953,8 +1947,9 @@ int acol_manager::comm_correl(std::vector<std::string> &sv, bool itive_com) {
       size_t k=indexes[coeffs.size()-1-j];
       cout << j << " ";
       cout << labels[k] << " "
-	   << coeffs[k] << " " << abs_coeffs[k] << endl;;
+           << coeffs[k] << " " << abs_coeffs[k] << endl;;
     }
+      
   }
   
   return 0;

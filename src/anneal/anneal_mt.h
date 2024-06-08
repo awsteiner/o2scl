@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -65,8 +65,14 @@ namespace o2scl {
       unless the user places I/O in the streams in the function that
       is specified.
 
-      \future There may be a good way to remove the function indirection
-      here to make this class a bit faster.
+      \verbatim embed:rst
+      .. todo:: 
+      
+         Future: In class anneal_mt, here may be a good way to remove
+         the function indirection here to make this class a bit
+         faster.
+
+      \endverbatim
   */
   template<class func_t=multi_funct,
     class vec_t=boost::numeric::ublas::vector<double>,

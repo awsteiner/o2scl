@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -118,10 +118,38 @@ int eos_quark_bag::calc_temp_e(quark& u, quark& d, quark& s,
   u.ms=u.m;
   d.ms=d.m;
   s.ms=s.m;
-  
-  fet.pair_density(u,temper);
-  fet.pair_density(d,temper);
-  fet.pair_density(s,temper);
+
+  fet.err_nonconv=false;
+  int ret1, ret2=0;
+  cout << "First: " << u.mu << endl;
+  ret1=fet.pair_density(u,temper);
+  if (ret1!=0) {
+    u.mu=0.0;
+    cout << "Second: " << u.mu << endl;
+    ret2=fet.pair_density(u,temper);
+  }
+  if (ret2!=0) {
+    O2SCL_ERR("eqb::cte up failed.",o2scl::exc_einval);
+  }
+  cout << "First: " << d.mu << endl;
+  ret1=fet.pair_density(d,temper);
+  if (ret1!=0) {
+    d.mu=0.0;
+    cout << "Second: " << d.mu << endl;
+    ret2=fet.pair_density(d,temper);
+  }
+  if (ret2!=0) {
+    O2SCL_ERR("eqb::cte down failed.",o2scl::exc_einval);
+  }
+  ret1=fet.pair_density(s,temper);
+  if (ret1!=0) {
+    s.mu=0.0;
+    ret2=fet.pair_density(s,temper);
+  }
+  if (ret2!=0) {
+    O2SCL_ERR("eqb::cte strange failed.",o2scl::exc_einval);
+  }
+  fet.err_nonconv=true;
 
   fet.kf_from_density(u);
   fet.kf_from_density(d);

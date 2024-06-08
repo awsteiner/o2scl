@@ -1,7 +1,7 @@
 """
   -------------------------------------------------------------------
   
-  Copyright (C) 2022-2023, Andrew W. Steiner
+  Copyright (C) 2022-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,6 +20,9 @@
 
   -------------------------------------------------------------------
 """
+
+# This python code is currently used by src/base/funct_ts to test the
+# C++ interface to Python functions.
 
 import numpy
 

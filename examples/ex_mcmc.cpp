@@ -1,7 +1,7 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2023, Andrew W. Steiner
+  Copyright (C) 2017-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -18,11 +18,11 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 // sphinx-example-start
 /* Example: ex_mcmc.cpp
-   -------------------------------------------------------------------
+   ───────────────────────────────────────────────────────────────────
    An example which demonstrates the generation of an arbitrary
    distribution through Markov chain Monte Carlo. See "License 
    Information" section of the documentation for license information.
@@ -31,6 +31,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/inte_qag_gsl.h>
 
 using namespace std;
 using namespace o2scl;
@@ -43,13 +44,17 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 typedef std::function<int(size_t,const ubvector &,double &,
-			  std::array<double,1> &)> point_funct;
+			  std::vector<double> &)> point_funct;
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
-			  std::array<double,1> &)> fill_funct;
+			  std::vector<double> &)> fill_funct;
 /// The MCMC object
-mcmc_para_table<point_funct,fill_funct,std::array<double,1>,ubvector> mct;
+mcmc_para_table<point_funct,fill_funct,std::vector<double>,ubvector> mct;
 
+/** \brief A demonstration class for the MCMC example. This example
+    could have been written with global functions, but we put them
+    in a class to show how it would work in that case.
+ */
 class exc {
 
 public:
@@ -62,7 +67,7 @@ public:
       computed at every point in parameter space.
   */
   int bimodal(size_t nv, const ubvector &pars, double &log_weight,
-	      std::array<double,1> &dat) {
+	      std::vector<double> &dat) {
     
     double x=pars[0];
     log_weight=log(exp(-x*x)*(sin(x-1.4)+1.0));
@@ -74,7 +79,7 @@ public:
       stored in the table
   */
   int fill_line(const ubvector &pars, double log_weight, 
-		std::vector<double> &line, std::array<double,1> &dat) {
+		std::vector<double> &line, std::vector<double> &dat) {
     line.push_back(dat[0]);
     return 0;
   }
@@ -102,22 +107,43 @@ int main(int argc, char *argv[]) {
   // Function objects for the MCMC object
   point_funct bimodal_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::array<double,1> &)>(&exc::bimodal),&e,
+		     std::vector<double> &)>(&exc::bimodal),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   fill_funct fill_func=std::bind
     (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
-		     std::array<double,1> &)>(&exc::fill_line),&e,
+		     std::vector<double> &)>(&exc::fill_line),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
 
+  // Create function object vectors
   vector<point_funct> bimodal_vec;
   bimodal_vec.push_back(bimodal_func);
   vector<fill_funct> fill_vec;
   fill_vec.push_back(fill_func);
-  vector<std::array<double,1> > data_vec(2);
 
-  cout << "----------------------------------------------------------"
+  // Create and allocate data objects
+  vector<std::vector<double> > data_vec(2);
+  data_vec[0].resize(1);
+  data_vec[1].resize(1);
+
+  // Compute exact value of <x^2>. The function format is a bit
+  // different so we use lambda expressions to construct the
+  // functions for the integrators. 
+  inte_qag_gsl<> iqg;
+  funct f=[e,data_vec](double x) mutable -> double {
+    ubvector u(1); double lw; u[0]=x; 
+    e.bimodal(1,u,lw,data_vec[0]); return exp(lw); };
+  funct fx2=[e,data_vec](double x) mutable -> double {
+    ubvector u(1); double lw; u[0]=x; 
+    e.bimodal(1,u,lw,data_vec[0]); return data_vec[0][0]*exp(lw); };
+  cout << iqg.integ(fx2,low_bimodal[0],high_bimodal[0]) << " "
+       << iqg.integ(f,low_bimodal[0],high_bimodal[0]) << endl;
+  double exact=iqg.integ(fx2,low_bimodal[0],high_bimodal[0])/
+    iqg.integ(f,low_bimodal[0],high_bimodal[0]);
+  cout << "exact: " << exact << endl;
+  
+  cout << "──────────────────────────────────────────────────────────"
        << endl;
   cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
@@ -127,7 +153,8 @@ int main(int argc, char *argv[]) {
   mct.set_names_units(pnames,punits);
 
   // Set MCMC parameters
-  mct.step_fac=2.0;
+  mct.stepper.step_fac.resize(1);
+  mct.stepper.step_fac[0]=2.0;
   mct.max_iters=20000;
   mct.prefix="ex_mcmc";
   mct.table_prealloc=mct.max_iters/3;
@@ -140,40 +167,44 @@ int main(int argc, char *argv[]) {
   cout << "n_accept, n_reject: " << mct.n_accept[0] << " "
        << mct.n_reject[0] << endl;
 
-  // Get results
+  // Get the MCMC results
   shared_ptr<table_units<> > t=mct.get_table();
 
   // Remove empty rows from table
   t->delete_rows_func("mult<0.5");
   
-  // Compute autocorrelation length and effective sample size
+  // Compute the autocorrelation length
   std::vector<double> ac, ftom;
   o2scl::vector_autocorr_vector_mult(t->get_nlines(),
 				     (*t)["x2"],(*t)["mult"],ac);
   size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-  cout << "Autocorrelation length, effective sample size: "
-       << ac_len << " " << t->get_nlines()/ac_len << endl;
 
-  // Create a set of fully independent samples
-  std::vector<double> indep;
-  size_t count=0;
-  for(size_t j=0;j<t->get_nlines();j++) {
-    for(size_t k=0;k<((size_t)(t->get("mult",j)+1.0e-8));k++) {
-      if (count==ac_len) {
-	indep.push_back(t->get("x2",j));
-	count=0;
-      }
-      count++;
-    }
-  }
+  // Create a separate table of statistically independent samples
+  table_units<> indep;
+  copy_table_thin_mcmc(ac_len,*t,indep,"mult");
+  
+  cout << "Autocorrelation length, effective sample size: "
+       << ac_len << " " << indep.get_nlines() << endl;
+
+  // Write the data to a file
+  hdf_file hf;
+  hf.open_or_create("ex_mcmc.o2");
+  hdf_output(hf,*t,"mcmc");
+  hdf_output(hf,indep,"indep");
+  hf.close();
 
   // Use the independent samples to compute the final integral and
-  // compare to the exact result
-  double avg=vector_mean(indep);
-  double std=vector_stddev(indep);
-  tm.test_rel(avg,1.32513,10.0*std/sqrt(indep.size()),"ex_mcmc");
-  cout << avg << " " << 1.32513 << " " << fabs(avg-1.32513) << " "
-       << std << " " << 10.0*std/sqrt(indep.size()) << endl;
+  // compare to the exact result. Note that we must specify the
+  // number of elements in the vector, indep["x2"], because the
+  // table_units object often has space at the end to add extra rows.
+  
+  double avg=vector_mean(indep.get_nlines(),indep["x2"]);
+  double std=vector_stddev(indep.get_nlines(),indep["x2"]);
+  tm.test_rel(avg,exact,10.0*std/sqrt(indep.get_nlines()),"ex_mcmc");
+  cout << "avg. from MCMC, exact avg., diff., std. from MCMC, "
+       << "unc. in mean times 10:\n  "
+       << avg << " " << exact << " " << fabs(avg-exact) << " "
+       << std << " " << 10.0*std/sqrt(indep.get_nlines()) << endl;
   
   tm.report();
   

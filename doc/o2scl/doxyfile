@@ -48,7 +48,7 @@ PROJECT_NAME           = "Object-oriented Scientific Computing Library"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "Version 0.929a1"
+PROJECT_NUMBER         = "Version 0.930a1"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -278,8 +278,6 @@ ALIASES                = nothing= \
                          "comment=\if o2sclneverdefined" \
                          endcomment=\endif \
                          "o2=\htmlonly O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl \endhtmlonly \latexonly O$_2$scl \endlatexonly" \
-                         "o2p=\htmlonly <a href='../part/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_part</a> \endhtmlonly \latexonly O$_2$scl\_part \endlatexonly" \
-                         "o2e=\htmlonly <a href='../eos/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>scl_eos</a> \endhtmlonly \latexonly O$_2$scl\_eos \endlatexonly" \
                          "o2y=\htmlonly <a href='../eos/html/index.html'>O<span style='position: relative; top: 0.3em; font-size: 0.8em'>2</span>sclpy</a> \endhtmlonly \latexonly O$_2$sclpy \endlatexonly" \
                          "tensor=\htmlonly tensor\endhtmlonly \latexonly tensor \endlatexonly" \
                          "gradient=\htmlonly gradient\endhtmlonly \latexonly gradient \endlatexonly" \
@@ -1440,7 +1438,7 @@ DOCSET_BUNDLE_ID       = org.doxygen.Project
 # The default value is: org.doxygen.Publisher.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_PUBLISHER_ID    = edu.utk.neutronstars
+DOCSET_PUBLISHER_ID    = org.awsteiner
 
 # The DOCSET_PUBLISHER_NAME tag identifies the documentation publisher.
 # The default value is: Publisher.

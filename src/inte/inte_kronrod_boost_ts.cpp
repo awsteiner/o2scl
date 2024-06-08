@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2019-2023, Andrew W. Steiner
+  Copyright (C) 2019-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -184,7 +184,6 @@ int main(void) {
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
 
-#ifdef O2SCL_OSX
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
@@ -193,10 +192,8 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2");
     cout << endl;
-#endif
 
 #ifdef O2SCL_SET_MPFR
-#ifdef O2SCL_OSX
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
@@ -226,7 +223,6 @@ int main(void) {
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
-#endif
 #endif
 
     // Multiprecision integration with infinite limits
@@ -292,8 +288,6 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip param 2");
     cout << endl;
     
-#ifdef O2SCL_OSX
-    
     // Multiprecision integration with a funct_multip_string object
       
     funct_multip_string fms;
@@ -314,8 +308,6 @@ int main(void) {
     cout << endl;
 #endif
     
-#endif  
-      
   }
 
 #endif

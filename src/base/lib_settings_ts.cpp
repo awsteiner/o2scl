@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -53,8 +53,6 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
-#ifdef O2SCL_OSX
-  
   funct_multip_string fms;
   fms.set_function("log(1+x)","x");
   fms.verbose=2;
@@ -73,8 +71,6 @@ int main(void) {
     cout << dtos(log1p(1.0e-4),0) << " "
          << dtos(val,0) << " " << err << endl;
   }
-  
-#endif
   
   t.report();
 

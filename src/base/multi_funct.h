@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -58,9 +58,6 @@ namespace o2scl {
     
   protected:
 
-    /// Python unicode object containing function name
-    PyObject *pName;
-    
     /// Python module containing function
     PyObject *pModule;
     
@@ -103,10 +100,6 @@ namespace o2scl {
       }
       Py_DECREF(pModule);
       if (verbose>0) {
-        std::cout << "Decref name." << std::endl;
-      }
-      Py_DECREF(pName);
-      if (verbose>0) {
         std::cout << "Done in multi_funct_python destructor." << std::endl;
       }
     }      
@@ -118,26 +111,8 @@ namespace o2scl {
     */
     int set_function(std::string module, std::string func) {
       
-      // Get the Unicode name of the user-specified module
-      if (verbose>0) {
-        std::cout << "Getting unicode for module name()." << std::endl;
-      }
-      pName=PyUnicode_FromString(module.c_str());
-      if (pName==0) {
-        O2SCL_ERR2("Create module name failed in ",
-                   "multi_funct_python::set_function().",o2scl::exc_efailed);
-      }
+      pModule=o2scl_settings.py_import_module(module,verbose);
       
-      // Import the user-specified module
-      if (verbose>0) {
-        std::cout << "Importing module." << std::endl;
-      }
-      pModule=PyImport_Import(pName);
-      if (pModule==0) {
-        O2SCL_ERR2("Load module failed in ",
-                   "multi_funct_python::set_function().",o2scl::exc_efailed);
-      }
-
       // Setup the arguments to the python function
       if (verbose>0) {
         std::cout << "Getting arguments for python function." << std::endl;

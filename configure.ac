@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.929a1],[awsteiner0@protonmail.com])
+AC_INIT([o2scl],[0.930a1],[awsteiner0@protonmail.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -39,9 +39,9 @@ AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 
 # For the time being, current and age are always
 # "version number minus 910"
-OLIB_CURRENT=19
+OLIB_CURRENT=20
 OLIB_REVISION=0
-OLIB_AGE=19
+OLIB_AGE=20
 
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
@@ -95,6 +95,20 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 	[echo ""
         echo "GSL not found."
         echo "O2scl requires the GSL library."
+	echo ""
+	echo -n " The present value of LDFLAGS is: " 
+	echo $LDFLAGS
+        exit -1
+	],[])
+
+# ------------------------------------------------------------------
+# Check for libquadmath
+# ------------------------------------------------------------------
+
+AC_CHECK_LIB([quadmath], [isnanq], [], 
+	[echo ""
+        echo "Quadmath not found."
+        echo "O2scl requires the libquadmath."
 	echo ""
 	echo -n " The present value of LDFLAGS is: " 
 	echo $LDFLAGS
@@ -503,6 +517,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/openmp/Makefile
                  src/base/python/Makefile
                  src/base/readline/Makefile
+                 src/base/pugixml/Makefile
                  src/deriv/Makefile
                  src/eos/Makefile
                  src/fit/Makefile

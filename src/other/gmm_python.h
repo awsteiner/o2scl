@@ -1,7 +1,7 @@
-/*
+ /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2023, Andrew W. Steiner
+  Copyright (C) 2023-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -52,8 +52,8 @@ namespace o2scl {
     
   protected:
 
-    /// Python unicode object containing function name
-    PyObject *p_name;
+    // Python unicode object containing function name
+    //PyObject *p_name;
     
     /// Python module containing function
     PyObject *p_module;
@@ -92,7 +92,7 @@ namespace o2scl {
     size_t n_components;
 
     /// Underlying probability distribution
-    prob_dens_mdim_gmm<> pdm_gmm;
+    std::shared_ptr<prob_dens_mdim_gmm<>> pdm_gmm;
 
     /** \brief An internal version of \ref get_python which returns a 
         void * for the import_array() macro
@@ -163,7 +163,7 @@ namespace o2scl {
     /** \brief Get the underlying Gaussian mixture probability
         density
      */
-    const prob_dens_mdim_gmm<> &get_gmm() {
+    std::shared_ptr<prob_dens_mdim_gmm<>> get_gmm() {
       return pdm_gmm;
     }
     

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -803,27 +803,27 @@ int acol_manager::comm_help(std::vector<std::string> &sv, bool itive_com) {
     str+="For more information on some of the types:\n";
     str+=type_color+"hist"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/hist.html"+
+      "https://awsteiner.org/code/o2scl/html/class/hist.html"+
       default_color+"\n";
     str+=type_color+"hist_2d"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/hist_2d.html"+
+      "https://awsteiner.org/code/o2scl/html/class/hist_2d.html"+
       default_color+"\n";
     str+=type_color+"table"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/table.html"+
+      "https://awsteiner.org/code/o2scl/html/class/table.html"+
       default_color+"\n";
     str+=type_color+"table3d"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/table3d.html"+
+      "https://awsteiner.org/code/o2scl/html/class/table3d.html"+
       default_color+"\n";
     str+=type_color+"tensor"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor.html"+
+      "https://awsteiner.org/code/o2scl/html/class/tensor.html"+
       default_color+"\n";
     str+=type_color+"tensor_grid"+default_color+
       ": "+url_color+
-      "https://neutronstars.utk.edu/code/o2scl/html/class/tensor_grid.html"+
+      "https://awsteiner.org/code/o2scl/html/class/tensor_grid.html"+
       default_color+"\n";
 
     std::vector<std::string> svx;
@@ -2062,7 +2062,8 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       
     } else if (method=="py_gp" || method=="py_dnn") {
       
-#ifdef O2SCL_PYTHON      
+#ifdef O2SCL_PYTHON
+      
       tensor<> tin, tout;
       vector<size_t> in_size={table_obj.get_nlines(),2};
       vector<size_t> out_size={table_obj.get_nlines(),in.size()-6};

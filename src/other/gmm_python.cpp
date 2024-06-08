@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,13 +21,14 @@
   ───────────────────────────────────────────────────────────────────
 */
 #include <o2scl/gmm_python.h>
+#include <o2scl/set_python.h>
 
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
-gmm_python::gmm_python() {
+gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;
   p_components_func=0;
   p_set_args=0;
@@ -35,7 +36,6 @@ gmm_python::gmm_python() {
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
       
   n_params=0;
   n_points=0;
@@ -47,7 +47,8 @@ gmm_python::gmm_python() {
 gmm_python::gmm_python(std::string module, size_t n_comp,
                        const o2scl::tensor<> &params,
                        std::string options, 
-                       std::string class_name, int v) {
+                       std::string class_name, int v) :
+  pdm_gmm(new prob_dens_mdim_gmm<>) {
                     
   verbose=v;
 
@@ -65,7 +66,7 @@ gmm_python::gmm_python(std::string module, size_t n_comp,
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
+  //p_name=0;
       
   n_params=0;
   n_points=0;
@@ -128,12 +129,14 @@ void gmm_python::free() {
     }
     Py_DECREF(p_module);
   }
+  /*
   if (p_name!=0) {
     if (verbose>1) {
       std::cout << "Decref name." << std::endl;
     }
     Py_DECREF(p_name);
   }
+  */
 
   p_set_func=0;
   p_components_func=0;
@@ -141,7 +144,7 @@ void gmm_python::free() {
   p_instance=0;
   p_class=0;
   p_module=0;
-  p_name=0;
+  //p_name=0;
       
   n_params=0;
   n_points=0;
@@ -194,33 +197,7 @@ void *gmm_python::set_function_internal
     options="n_components="+o2scl::szttos(n_comp);
   }
       
-  // Get the Unicode name of the user-specified module
-  if (verbose>1) {
-    std::cout << "Python version: "
-              << o2scl_settings.py_version() << std::endl;
-    std::cout << "Staring gmm_python::set_function()."
-              << std::endl;
-    std::cout << "  Getting unicode for module named "
-              << module << std::endl;
-  }
-  p_name=PyUnicode_FromString(module.c_str());
-  if (p_name==0) {
-    O2SCL_ERR2("Create module name failed in ",
-               "gmm_python::set_function().",
-               o2scl::exc_efailed);
-  }
-      
-  // Import the user-specified module
-  if (verbose>1) {
-    std::cout << "  Importing module." << std::endl;
-  }
-  p_module=PyImport_Import(p_name);
-  if (p_module==0) {
-    O2SCL_ERR2("Load module failed in ",
-               "gmm_python::set_function().",
-               o2scl::exc_efailed);
-  }
-
+  p_module=o2scl_settings.py_import_module(module,this->verbose);
   if (class_name.length()>0) {
     if (verbose>1) {
       std::cout << "  Obtaining python class." << std::endl;
@@ -543,20 +520,21 @@ void *gmm_python::get_python_internal(int &ret) {
   if (verbose>1) {
     std::cout << "  Obtaining output." << std::endl;
   }
+  
   double *ptr_w=(double *)PyArray_DATA((PyArrayObject *)get_w);
   double *ptr_m=(double *)PyArray_DATA((PyArrayObject *)get_m);
   double *ptr_c=(double *)PyArray_DATA((PyArrayObject *)get_c);
   double *ptr_p=(double *)PyArray_DATA((PyArrayObject *)get_p);
   double *ptr_pc=(double *)PyArray_DATA((PyArrayObject *)get_pc);
-  
-  pdm_gmm.weights.resize(n_components);
-  pdm_gmm.pdmg.resize(n_components);
+
+  pdm_gmm->weights.resize(n_components);
+  pdm_gmm->pdmg.resize(n_components);
   
   for(size_t i=0;i<n_components;i++) {
-    pdm_gmm.weights[i]=ptr_w[i];
+    pdm_gmm->weights[i]=ptr_w[i];
     if (verbose>1) {
       std::cout << "Component " << i << " with weight: "
-                << pdm_gmm.weights[i] << std::endl;
+                << pdm_gmm->weights[i] << std::endl;
     }
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -575,7 +553,7 @@ void *gmm_python::get_python_internal(int &ret) {
         }
       }
     }
-    //pdm_gmm.pdmg[i].verbose=2;
+    //pdm_gmm->pdmg[i].verbose=2;
     
     // AWS, 2/25/23: Unfortunately sklearn handles it's Gaussian
     // distributions a bit differently than O2scl. O2scl uses the
@@ -584,9 +562,9 @@ void *gmm_python::get_python_internal(int &ret) {
     // which is the inverse of the covariance matrix. We recompute the
     // Gaussians here, but there is probably a faster way.
     if (verbose>1) {
-      pdm_gmm.pdmg[i].verbose=1;
+      pdm_gmm->pdmg[i].verbose=1;
     }
-    pdm_gmm.pdmg[i].set_covar(n_params,mean,covar);
+    pdm_gmm->pdmg[i].set_covar(n_params,mean,covar);
 
     if (verbose>1) {
       cout << endl;

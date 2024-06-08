@@ -142,7 +142,7 @@ open-idoc:
 	$(BROWSER) ${docdir}/html/index.html
 
 web-doc:
-	$(BROWSER) https://neutronstars.utk.edu/code/o2scl/html/index.html
+	$(BROWSER) https://awsteiner.org/code/o2scl/html/index.html
 
 interface: empty
 	cd bin; $(MAKE) yanic

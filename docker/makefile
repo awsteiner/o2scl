@@ -83,7 +83,7 @@ build_v0.929a2_u23.04_py:
 		-t awsteiner/o2scl:v0.929a2_u23.04_py \
 		> v0.929a2_u23.04_py.out 2>&1
 	sudo docker run awsteiner/o2scl:v0.929a2_u23.04_py sh -c \
-		"cd /opt/o2scl && make o2scl-test && make o2scl-examples" \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
 		> test_v0.929a2_u23.04_py.out 2>&1
 	sudo docker run awsteiner/o2scl:v0.929a2_u23.04_py sh -c \
 		"cd /opt/o2sclpy && make testq" \
@@ -94,6 +94,87 @@ push_v0.929a2_u23.04_py:
 
 pull_v0.929a2_u23.04_py:
 	sudo docker pull awsteiner/o2scl:v0.929a2_u23.04_py
+
+# ----------------------------------------------
+# Standard build 5: v0.929_u24.04_py
+
+build_v0.929_u24.04_py:
+	sudo docker build . --rm -f v0.929_u24.04_py \
+		-t awsteiner/o2scl:v0.929_u24.04_py \
+		> v0.929_u24.04_py.out 2>&1
+
+test1_v0.929_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.929_u24.04_py sh -c \
+		"cd /opt/o2scl-0.929 && make check && make o2scl-examples" \
+		> test1_v0.929_u24.04_py.out 2>&1
+
+test2_v0.929_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.929_u24.04_py sh -c \
+		"cd /opt/o2sclpy && make testq" \
+		>> test2_v0.929_u24.04_py.out 2>&1
+
+push_v0.929_u24.04_py:
+	sudo docker push awsteiner/o2scl:v0.929_u24.04_py
+
+pull_v0.929_u24.04_py:
+	sudo docker pull awsteiner/o2scl:v0.929_u24.04_py
+
+# ----------------------------------------------
+# Standard build 6: v0.929_u24.04_min
+
+build_v0.929_u24.04_min:
+	sudo docker build . --rm -f v0.929_u24.04_min \
+		-t awsteiner/o2scl:v0.929_u24.04_min \
+		> v0.929_u24.04_min.out 2>&1
+
+test_v0.929_u24.04_min:
+	sudo docker run awsteiner/o2scl:v0.929_u24.04_min sh -c \
+		"cd /opt/o2scl-0.929 && make o2scl-test && make o2scl-examples" \
+		> test_v0.929_u24.04_min.out 2>&1
+
+push_v0.929_u24.04_min:
+	sudo docker push awsteiner/o2scl:v0.929_u24.04_min
+
+pull_v0.929_u24.04_min:
+	sudo docker pull awsteiner/o2scl:v0.929_u24.04_min
+
+# ----------------------------------------------
+# Standard build 7: v0.930a1_u24.04_py
+
+build_v0.930a1_u24.04_py:
+	sudo docker build . --rm -f v0.930a1_u24.04_py \
+		-t awsteiner/o2scl:v0.930a1_u24.04_py \
+		> v0.930a1_u24.04_py.out 2>&1
+
+test1_v0.930a1_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.930a1_u24.04_py sh -c \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
+		> test1_v0.930a1_u24.04_py.out 2>&1
+
+test2_v0.930a1_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.930a1_u24.04_py sh -c \
+		"cd /opt/o2sclpy && make testq" \
+		>> test2_v0.930a1_u24.04_py.out 2>&1
+
+push_v0.930a1_u24.04_py:
+	sudo docker push awsteiner/o2scl:v0.930a1_u24.04_py
+
+pull_v0.930a1_u24.04_py:
+	sudo docker pull awsteiner/o2scl:v0.930a1_u24.04_py
+
+all_v0.930a1_u24.04_py: build_v0.930a1_u24.04_py test1_v0.930a1_u24.04_py \
+	test2_v0.930a1_u24.04_py push_v0.930a1_u24.04_py 
+
+# ----------------------------------------------
+
+build_v0.929_ot:
+	sudo docker build . --rm -f v0.929_ot \
+		-t awsteiner/o2scl:v0.929_ot \
+		> v0.929_ot.out 2>&1
+
+all_929: test_v0.929_u24.04_min \
+	build_v0.929_u24.04_py test1_v0.929_u24.04_py \
+	test2_v0.929_u24.04_py build_v0.929_ot
 
 # ----------------------------------------------
 # Other builds

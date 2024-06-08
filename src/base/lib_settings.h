@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -32,6 +32,7 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/find_constants.h>
 #include <o2scl/rng.h>
+#include <o2scl/set_python.h>
 
 #ifdef O2SCL_MPI
 #include <mpi.h>
@@ -207,10 +208,20 @@ namespace o2scl {
     /// True if Python has been initialized (default false)
     bool py_initialized;
 
-    /// Initialize the python interface
+    /** \brief Initialize the python interface
+
+        This function uses the environment variable O2SCL_PYTHON_EXT
+        to set the Python name via the function Py_SetProgramName()
+        before the function Py_Initialize() is called.
+     */
     int py_init_nothrow(int verbose=0);
 
-    /// Initialize the python interface
+    /** \brief Initialize the python interface
+
+        This function uses the environment variable O2SCL_PYTHON_EXT
+        to set the Python name via the function Py_SetProgramName()
+        before the function Py_Initialize() is called.
+     */
     void py_init(int verbose=0);
     
     /// Finalize the python interface
@@ -230,6 +241,21 @@ namespace o2scl {
     
     /// Add path \c path to the python system search path
     void add_python_path(std::string path, int verbose=0);
+
+    /// Get the python path and place the path strings in \c vs.
+    void get_python_path(std::vector<std::string> &vs, int verbose=0);
+
+#ifdef O2SCL_SET_PYTHON
+    /** \brief Import module named \c module
+
+        This function outputs some debugging information if the
+        module import fails. The function py_init() must be 
+        called first.
+
+	This function is only defined if Python support is enabled.
+     */
+    PyObject *py_import_module(std::string module, int verbose=0);
+#endif
     
   protected:
 

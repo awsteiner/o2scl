@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2010-2023, Andrew W. Steiner
+  Copyright (C) 2010-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -100,18 +100,21 @@ namespace o2scl {
       Internally, either \ref hsize_x and \ref hsize_y should
       both be zero or both be non-zero. 
 
-      \future Create a copy_from_table3d() function.
+      \verbatim embed:rst
+      .. todo:: 
 
-      \future Write a function to create a 1-d histogram 
-      from a 2-d histogram either by selecting one bin
-      in one axis or by marginalizing over one direction.
+         - Future: Create a copy_from_table3d() function.
+         - Future: Write a function to create a 1-d histogram 
+           from a 2-d histogram either by selecting one bin
+           in one axis or by marginalizing over one direction.
+         - Future: Note that here, there is a conflict between implementing
+           operator(size_t,size_t) to give matrix indexing of the histogram
+           weights, and operator(double,double) to implement
+           two-dimensional interpolation using the weights and the
+           representatives. Currently neither is implemented, but maybe
+           both should be implemented instead?
 
-      \future Note that here, there is a conflict between implementing
-      operator(size_t,size_t) to give matrix indexing of the histogram
-      weights, and operator(double,double) to implement
-      two-dimensional interpolation using the weights and the
-      representatives. Currently neither is implemented, but maybe
-      both should be implemented instead?
+      \endverbatim
   */
   class hist_2d {
 

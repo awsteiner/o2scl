@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -2699,13 +2699,13 @@ namespace o2scl_hdf {
       Bessel functions:
 
       cyl_bessel_i(nu,x) [i.e. Iᵥ(x)], cyl_bessel_j(nu,x) [i.e. Jᵥ(x)], 
-      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)].
+      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)],
 
       Additional integrals (experimental):
 
       fdint(nu,x) [Fermi-Dirac integ., ∫_0^∞ t^nu/(exp(t-x)+1)],
       beint(nu,x) [Bose-Einstein integ. ∫_0^∞ t^nu/(exp(t-x)-1)],
-      and polylog(nu,x).
+      and polylog(nu,x) [for x<-1 only].
 
       Other functions:
 
@@ -2715,11 +2715,14 @@ namespace o2scl_hdf {
 
       Special values:
 
-      false = 0, true = 1, rand(experimental) = random number
+      false = 0, true = 1, rand (experimental) = random number
 
       Use <tt>acol -help function</tt> to get more information on the
       type-specific command called \c function .
   */
+  // sph_bessel(nu,x) [i.e. jᵥ(x)], and sph_neumann(nu,x) [i.e. yᵥ(x)].
+  // For sph_bessel and sph_neumann, the first argument must be an
+  // integer (fractional parts are truncated). 
   void functions();
 
   /** \brief Index specifications for acol

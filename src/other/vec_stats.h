@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner and Jesse Farr 
+  Copyright (C) 2006-2024, Andrew W. Steiner and Jesse Farr 
   
   This file is part of O2scl.
   
@@ -1874,12 +1874,13 @@ namespace o2scl {
       \f$ k_{\mathrm{max}}-1 \f$.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
-  (const vec_t &data, resize_vec_t &ac_vec, size_t kmax=0, int verbose=0) {
+  (size_t n, const vec_t &data, resize_vec_t &ac_vec,
+   size_t kmax=0, int verbose=0) {
 
     if (kmax==0) {
-      kmax=data.size()/2;
+      kmax=n/2;
     }
-    double mean=vector_mean(data);
+    double mean=vector_mean(n,data);
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
     
@@ -1887,7 +1888,7 @@ namespace o2scl {
 #pragma omp parallel for
 #endif
     for(size_t k=1;k<kmax;k++) {
-      ac_vec[k]=vector_lagk_autocorr(data.size(),data,k,mean);
+      ac_vec[k]=vector_lagk_autocorr(n,data,k,mean);
       if (verbose>0) {
         int n_threads=1;
         int i_thread=0;
@@ -2280,6 +2281,32 @@ namespace o2scl {
     return;
   }
   
+  /** \brief Use FFTW to construct the autocorrelation vector with
+      automatic calculation of the mean
+   */
+  template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
+  (const vec_t &data, resize_vec_t &ac_vec, int verbose=0) {
+    double mean=vector_mean(data);
+    double stddev=vector_stddev(data);
+    return vector_autocorr_vector_fftw(data,ac_vec,mean,stddev,verbose);
+  }
+
+  /** \brief Use FFTW to construct the autocorrelation vector given
+      a multiplier column
+   */
+  template<class vec_t, class resize_vec_t> void
+  vector_autocorr_vector_fftw_mult
+  (const vec_t &data, const vec_t &mult, resize_vec_t &ac_vec, 
+   int verbose=0) {
+    std::vector<double> dnew;
+    for(size_t i=0;i<data.size();i++) {
+      for(size_t j=0;j<mult[i];j++) {
+        dnew.push_back(data[i]);
+      }
+    }
+    return vector_autocorr_vector_fftw(dnew,ac_vec,verbose);
+  }
+  
   /** \brief Use the Goodman method to compute the
       autocorrelation length
 
@@ -2308,23 +2335,32 @@ namespace o2scl {
 
       On completion, the vector \c five_tau_over_m will have
       one less element than the vector \c ac_vec .
+
+      Note that this method has limited accuracy for limited data
+      set sizes. Also, it almost never reports a zero auto-correlation,
+      even for completely uncorrelated data.
+
   */
   template<class vec_t, class resize_vec_t> size_t vector_autocorr_tau
-  (const vec_t &ac_vec, resize_vec_t &five_tau_over_M) {
+  (const vec_t &ac_vec, resize_vec_t &five_tau_over_M, int verbose=0) {
     five_tau_over_M.resize(0);
     size_t len=0;
     bool len_set=false;
+    double sum=0.0;
     for (size_t M=1;M<ac_vec.size();M++) {
-      double sum=0.0;
-      for(size_t s=1;s<=M;s++) {
-	sum+=ac_vec[s];
+      if (verbose>2 && M%10000==0) {
+        std::cout << "vector_autocorr_tau(): " << M << " of "
+                  << ac_vec.size() << std::endl;
       }
+      sum+=ac_vec[M];
       double val=(1.0+2.0*sum)/((double)M)*5.0;
       if (len_set==false && val<=1.0) {
         // AWS, 5/6/21: I'm changing this from M to M/2 because
         // apparently there's a factor of two missing here
 	len=M/2;
 	len_set=true;
+        std::cout << "vector_autocorr_tau(): Setting length to " << len
+                  << "." << std::endl;
       }
       five_tau_over_M.push_back(val);
     }

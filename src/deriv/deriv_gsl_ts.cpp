@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -159,7 +159,6 @@ int main(void) {
   t.test_rel(res,difficult_deriv(5.5),1.0e-8,"simple derivative");
   cout << endl;
 
-#ifdef O2SCL_OSX
   // Automatic multiprecision derivative
   double val, err2;
   deriv_multip_gsl dmg2;
@@ -169,7 +168,6 @@ int main(void) {
   t.test_rel((long double)val,difficult_deriv<long double>(5.5L),1.0e-15L,
              "multip 1");
   t.test_abs(0.0,err2/val,1.0e-15,"multip 2");
-#endif
   
   t.report();
   return 0;

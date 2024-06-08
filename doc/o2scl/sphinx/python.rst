@@ -10,7 +10,7 @@ yt. Many O₂scl classes also have a Python interface created by
 Finally, O₂sclpy also has a few experimental Python machine learning
 classes based on ``sklearn`` and ``tensorflow`` which have C++
 interface in O₂scl. O₂sclpy is separately documented at
-https://neutronstars.utk.edu/code/o2sclpy . O₂sclpy's version numbers
+https://awsteiner.org/code/o2sclpy . O₂sclpy's version numbers
 which loosely follow O₂scl releases. The release version of the python
 package can be installed with, e.g. ``pip3 install o2sclpy`` or
 obtained from https://pypi.python.org/pypi/o2sclpy. The development

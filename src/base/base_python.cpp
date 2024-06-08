@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2023, Andrew W. Steiner
+  Copyright (C) 2020-2024, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -105,6 +105,12 @@ double o2scl_std_vector_double__getitem(void *vptr, size_t n) {
 void o2scl_std_vector_double__setitem(void *vptr, size_t i, double val) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
   (*ptr)[i]=val;
+  return;
+}
+
+void o2scl_std_vector_double__push_back(void *vptr, double x) {
+  std::vector<double> *ptr=(std::vector<double> *)vptr;
+  ptr->push_back(x);
   return;
 }
 
@@ -217,6 +223,12 @@ size_t o2scl_std_vector_std_string__size(void *vptr) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
   size_t ret=ptr->size();
   return ret;
+}
+
+void o2scl_std_vector_std_string__push_back(void *vptr, char *x) {
+  std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
+  ptr->push_back(x);
+  return;
 }
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -907,8 +907,8 @@ namespace o2scl {
 	if (arg>0) {
 	  ul=sqrt(arg);
 	} else {
-	  O2SCL_ERR2("Zero density in degenerate limit in fermion_deriv_rel::",
-		     "calc_mu(). Variable deg_limit set improperly?",
+	  O2SCL_ERR2("Zero density in degenerate limit in fermion_deriv",
+		     "_rel::calc_mu(). Variable deg_limit set improperly?",
 		     exc_efailed);
 	}
     
@@ -1261,7 +1261,7 @@ namespace o2scl {
     /// The default integrator for the degenerate regime
     dit_t dit;
 
-    /// Adaptive ultiprecision integrator
+    /// Adaptive multiprecision integrator
     inte_double_exp_boost<> it_multip;
     //@}
     

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -27,7 +27,7 @@
 #include <o2scl/lib_settings.h>
 #include <o2scl/prev_commit.h>
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -87,7 +87,21 @@ lib_settings_class::~lib_settings_class() {
 }
 
 int lib_settings_class::py_init_nothrow(int verbose) {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
+  
+  /*
+    4/30/24: Removed this, as setprogramname is deprecated.
+    
+    char *pe=getenv("O2SCL_PYTHON_EXE");
+    std::string python_exe;
+    if (pe) {
+    python_exe=pe;
+    // This conversion method works only for normal ASCII strings.
+    std::wstring pe2=std::wstring(python_exe.begin(),python_exe.end());
+    Py_SetProgramName(pe2.c_str());
+    }
+  */
+  
   if (verbose>0) {
     cout << "Running Py_Initialize()." << endl;
   }
@@ -106,6 +120,7 @@ int lib_settings_class::py_init_nothrow(int verbose) {
 }
 
 void lib_settings_class::py_init(int verbose) {
+
   int ret=py_init_nothrow(verbose);
   if (ret!=0) {
     O2SCL_ERR("Python initialization failed.",o2scl::exc_efailed);
@@ -114,7 +129,7 @@ void lib_settings_class::py_init(int verbose) {
 }
 
 std::string lib_settings_class::py_get_module_path(std::string module) {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   PyObject *p_module;
   p_module=PyImport_ImportModule("o2sclpy");
   //cout << "module: " << p_module << endl;
@@ -132,7 +147,7 @@ std::string lib_settings_class::py_get_module_path(std::string module) {
 
 void *lib_settings_class::py_import_array() {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   // AWS, 2/12/23: The import_array() function is a macro (?!) which
   // returns NULL if it fails, but then throws a python, not a C++
   // exception. This forces us to use "void *" for the return type to
@@ -152,7 +167,7 @@ void *lib_settings_class::py_import_array() {
 }
 
 int lib_settings_class::py_final_nothrow(int verbose) {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   if (verbose>0) {
     cout << "Running Py_Finalize()." << endl;
   }
@@ -183,9 +198,198 @@ bool lib_settings_class::range_check() {
 #endif
 }
 
+#ifdef O2SCL_SET_PYTHON
+PyObject *lib_settings_class::py_import_module(std::string module,
+                                               int verbose) {
+
+  PyObject *pModule, *pName;
+  
+  // Get the Unicode name of the user-specified module
+  if (verbose>0) {
+    cout << "Getting unicode for module name()." << endl;
+  }
+  pName=PyUnicode_FromString(module.c_str());
+  if (pName==0) {
+    O2SCL_ERR2("Create module name failed in ",
+              "funct_python::set_function().",o2scl::exc_efailed);
+  }
+
+  // Import the user-specified module
+  if (verbose>0) {
+    cout << "Importing module." << endl;
+  }
+  pModule=PyImport_Import(pName);
+  if (pModule==0) {
+
+    std::cerr << "───────────────────────────────────────────"
+              << "─────────────────────────────" << std::endl;
+    std::cerr << "funct_python::set_function(): Load module "
+              << module << " failed.\n" << std::endl;
+
+    if (o2scl_settings.py_initialized==false) {
+      std::cerr << "It does not appear that Python was initialized using "
+                << "the O2scl function\n  o2scl::o2scl_settings.py_init(), "
+                << "but maybe it was done "
+                << "somewhere else?\n" << std::endl;
+    }
+
+    std::cerr << "Sometimes this error occurs because the desired module is "
+              << "in a virtual\n  environment that O2scl is not using. "
+              << std::endl;
+    // 5/29/24: this section had to be removed because of the
+    // deprecation of the Python() setprogramname function (see above).
+    /*
+              << "This can be fixed by setting the\n  environment variable "
+              << "O2SCL_PYTHON_EXE before calling\n  "
+              << "o2scl::o2scl_settings.py_init()." << std::endl;
+    char *pe=getenv("O2SCL_PYTHON_EXE");
+    if (pe) {
+      std::string pe2=pe;
+      std::cerr << "  The value of O2SCL_PYTHON_EXE is " << pe2
+                << " .\n" << std::endl;
+    } else {
+      std::cerr << "  The environment value O2SCL_PYTHON_EXE is not "
+                << "currently set.\n" << std::endl;
+    }
+    */
+    
+    std::cerr << "Alternatively, sometimes this error occurs "
+              << "because the module is not in\n  the "
+              << "Python path, which is currently set to:\n  ";
+    /// Get the Python path
+    std::vector<std::string> vs;
+    o2scl_settings.get_python_path(vs,0);
+    for(size_t j=0;j<vs.size();j++) {
+      if (j==0) {
+        std::cerr << "  [" << vs[j] << "," << std::endl;
+      } else {
+        std::cerr << "   " << vs[j] << "," << std::endl;
+      }
+    }
+    std::cerr << "  ]" << std::endl;
+    std::cerr << "  You can modify the Python path using "
+              << "the function\n  o2scl::o2scl_settings.add_python_path().\n"
+              << std::endl;
+    
+    std::cerr << "───────────────────────────────────────────"
+              << "─────────────────────────────" << std::endl;
+    
+    O2SCL_ERR2((((std::string)"Load module named ")+module+
+                " failed in ").c_str(),
+               "funct_python::set_function().",o2scl::exc_efailed);
+  }
+
+  Py_DECREF(pName);
+  
+  return pModule;
+}
+#endif
+
+void lib_settings_class::get_python_path(std::vector<std::string> &vs,
+                                         int verbose) {
+
+#ifdef O2SCL_SET_PYTHON
+
+  vs.clear();
+  
+  // Import the system module so that we can modify the search path
+  // to import the module where the function is located
+  if (verbose>0) {
+    cout << "Importing sys." << endl;
+  }
+  PyObject *sys_mod=PyImport_ImportModule("sys");
+  if (sys_mod==0) {
+    O2SCL_ERR2("Import system module failed in",
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
+  }
+  
+  // Obtain the path and the number of elements 
+  if (verbose>0) {
+    cout << "Getting sys.path" << endl;
+  }
+  PyObject *sys_path=PyObject_GetAttrString(sys_mod,"path");
+  if (sys_path==0) {
+    O2SCL_ERR2("Obtain sys.path failed in",
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
+  }
+  if (verbose>0) {
+    cout << "Getting len(sys.path)" << endl;
+  }
+  Py_ssize_t path_size=PySequence_Size(sys_path);
+  if (path_size==-1) {
+    O2SCL_ERR2("Getting sys.path sequence size failed in",
+               "funct_python::set_function().",
+               o2scl::exc_efailed);
+  }
+
+  // Iterate through each element in the path, and compare with
+  // the user-specified path
+  
+  bool path_found=false;
+  
+  for(int j=0;j<path_size;j++) {
+    if (verbose>0) {
+      cout << "Getting item." << endl;
+    }
+    PyObject *item=PySequence_GetItem(sys_path,j);
+    if (item==0) {
+      O2SCL_ERR2("Getting sequence item failed in",
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting representation." << endl;
+    }
+    PyObject *item2=PyObject_Repr(item);
+    if (item2==0) {
+      O2SCL_ERR2("Getting sequence item unicode failed in",
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting string." << endl;
+    }
+    PyObject *str=PyUnicode_AsEncodedString(item2,"utf-8","Error");
+    if (str==0) {
+      O2SCL_ERR2("Getting encoded sequence item failed in",
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+    if (verbose>0) {
+      cout << "Getting C string." << endl;
+    }
+    const char *cstr=PyBytes_AS_STRING(str);
+    if (cstr==0) {
+      O2SCL_ERR2("Getting C string from sequence item failed in",
+                 "funct_python::set_function().",
+                 o2scl::exc_efailed);
+    }
+    
+    if (verbose>0) {
+      cout << "Converting " << cstr << " to std::string." << endl;
+    }
+    string cppstr=cstr;
+    
+    vs.push_back(cppstr);
+    
+    if (verbose>0) {
+      cout << "Decref() for next item" << endl;
+    }
+    Py_DECREF(str);
+    Py_DECREF(item2);
+    Py_DECREF(item);
+  }
+
+#endif
+  
+  return;
+}
+
 void lib_settings_class::add_python_path(std::string path, int verbose) {
   
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   // Import the system module so that we can modify the search path
   // to import the module where the function is located
@@ -637,7 +841,7 @@ void *o2scl_get_o2scl_settings() {
 }
 
 std::string lib_settings_class::py_version() {
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   ostringstream oss;
   oss << PY_MAJOR_VERSION << " "
       << PY_MINOR_VERSION << " " << PY_MICRO_VERSION << " "

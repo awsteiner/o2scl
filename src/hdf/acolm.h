@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O₂scl.
   
@@ -585,10 +585,7 @@ namespace o2scl_acol {
         the calc command uses multiprecision to attempt to ensure the
         result is exact to within the requested precision. However,
         this option also makes the calculation slower by at least a
-        factor of two.
-
-        Note that adaptive multiprecision is only available for OSX at
-        the moment.
+        factor of two (and sometimes much more).
 
         Constant values from the constant library (see e.g. '-help
         <tt>constant</tt>') will automatically be used, so long as
@@ -889,12 +886,17 @@ namespace o2scl_acol {
 
         Compute the correlation coefficient between two columns.
 
-        Arguments: <tt>[column 1, column 2]</tt>
+        Arguments: <tt>[column 1, column 2] or ["table3d"]</tt>
 
-        Compute the correlation coefficient between two columns, or,
-        if no arguments are given, then compute the correlation
-        coefficients between all pairs of columns. Results are output
-        to the screen.
+        If two column names are specified, then the \c correl command
+        computes the correlation coefficient between two columns and
+        outputs the result to the screen. If no arguments are given,
+        then the correlation coefficients between all pairs of columns
+        are computed and sorted by decreasing correlation magnitude.
+        Results are output to the screen. If the "table3d" argument is
+        given, then the correlation coefficients are computed between
+        all pairs of columns and these coefficients are stored in a \c
+        table3d object.
     */
     virtual int comm_correl(std::vector<std::string> &sv, bool itive_com);
 
@@ -922,6 +924,10 @@ namespace o2scl_acol {
         or [vector spec.]</tt>: For <tt>double[]</tt> the user must either
         give a vector specification, or specify the size of the array
         and a function of the array index <tt>i</tt>.
+
+        <tt>create string[] <strings spec.></tt>
+        This user must give a string list specification. See
+        ``acol -help strings-spec`` for more information.
 
         <tt>create table <name> <vector spec.></tt>:
         Create a new <tt>table</tt> object with one column named <name>
@@ -962,13 +968,21 @@ namespace o2scl_acol {
         <tt>vec_vec_double</tt> object using the given multiple 
         vector specification(s).
         
+        See <tt>acol -help value-spec</tt> for help on value
+        specifications, <tt>acol -help functions</tt> for help
+        on functions, <tt>acol -help mult-vector-spec</tt> for
+        help on multiple vector specifications, and
+        <tt>acol -help strings-spec</tt> for help on string
+        list specifications.
+        
+        End of runtime documentation.
+
         \verbatim embed:rst
         See :cpp:func:`o2scl_hdf::value_spec()` for help on value
         specifications, :cpp:func:`o2scl_hdf::functions()` for help
         on function specifications, and 
         :cpp:func:`o2scl_hdf::mult_vector_spec()` for help
         on multiple vector specifications.
-
         \endverbatim
     */
     virtual int comm_create(std::vector<std::string> &sv, bool itive_com);
@@ -1157,6 +1171,11 @@ namespace o2scl_acol {
         moved after the installation process. In order to open the
         remote version of the documentation instead of the local copy,
         use the <tt>wdocs</tt> command instead.
+
+        Note also that, e.g. the default installation of Firefox on
+        Ubuntu is via snap, and thus Firefox does not have permission
+        to read files in /usr by default. One way of fixing this is 
+        install firefox separately from snap. 
     */
     virtual int comm_docs(std::vector<std::string> &sv, bool itive_com);
 
@@ -2234,6 +2253,12 @@ namespace o2scl_acol {
         Rename a column from <old> to <new>. Note that to rename the
         entire object, you should use <tt>-set obj_name new_name</tt>.
 
+        This function currently works by creating a new column,
+        copying the data into the new column, and then deleting the
+        old column. This means that renaming a column effectively
+        moves that column to the last column in the table. This may be
+        fixed in future versions.
+
         For objects of type table3d:
 
         Rename a slice.
@@ -2982,6 +3007,20 @@ namespace o2scl_acol {
         This function creates a new table...
     */
     virtual int comm_to_table(std::vector<std::string> &sv, bool itive_com);
+
+    /** \brief Select values from a function and store in a table
+
+        For objects of type tensor_grid:
+
+        Select values from a function and store in a table
+
+        Arguments: <function>
+
+        Select tensor entries according to a user-specified function and
+        create a table for all entries which evaluate to a number
+        greater than 0.5.
+    */
+    virtual int comm_values_table(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Convert object to a \ref o2scl::table3d object
 

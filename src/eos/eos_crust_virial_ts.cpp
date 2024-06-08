@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2013-2023, Andrew W. Steiner
+  Copyright (C) 2013-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -16,7 +16,7 @@
   GNU General Public License for more details.
   
   You should have received a copy of the GNU General Public License
-  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+  along with O2scl. If not, see <ht tp://www.gnu.org/licenses/>.
 
   ───────────────────────────────────────────────────────────────────
 */

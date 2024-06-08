@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -223,6 +223,70 @@ namespace o2scl {
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
                            std::shared_ptr<table_units<> > results);
+
+#ifdef O2SCL_NEVER_DEFINED
+    
+    /** \brief Function to solve for calc_temp_f_gen()
+     */
+    virtual int solve_ctf(size_t nv, const ubvector &x, ubvector &y,
+                          double T, thermo &th, double nB, double nQ,
+                          double nS) {
+      def_lambda.n=x[0];
+      def_sigma_p.n=x[1];
+      def_sigma_z.n=x[2];
+      def_cascade_z.n=x[3];
+      def_cascade_m.n=x[4];
+
+      def_neutron.n=nB+2.0*def_cascade_m.n+3.0*def_cascade_z.n-
+        def_lambda.n-nQ-2.0*nS+2.0*def_sigma_p.n+def_sigma_z.n;
+      def_proton.n=-def_cascade_m.n-2.0*def_cascade_z.n+nQ+nS-
+        2.0*def_sigma_p.n-def_sigma_z.n;
+      def_sigma_m.n=-2.0*def_cascade_m.n-2.0*def_cascade_z.n-nS-
+        def_sigma_p.n-def_sigma_z.n;
+
+      int ret=calc_temp_hyp_e(def_neutron,def_proton,def_lambda,
+                              def_sigma_p,def_sigma_z,def_sigma_m,
+                              def_cascade_z,def_cascade_m,T,th);
+
+      double muB=def_neutron.mu;
+      double muQ=def_proton.mu-def_neutron.mu;
+      double muS=def_lambda.mu-def_neutron.mu;
+      
+      y[0]=def_sigma_p.mu-muB-muQ-muS;
+      y[1]=def_sigma_z.mu-muB-muS;
+      y[2]=def_sigma_m.mu-muB+muQ-muS;
+      y[3]=def_cascade_z.mu-muB-2.0*muS;
+      y[4]=def_cascade_m.mu-muB+muQ-2.0*muS;
+      
+      return ret;
+    }
+    
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      
+      mm_funct fmf=std::bind
+        (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+                         double,thermo &,double,double,double)>
+         (&eos_had_rmf_hyp::solve_ctf),
+         this,std::placeholders::_1,std::placeholders::_2,
+         std::placeholders::_3,T,std::ref(th),nB,nQ,nS);
+
+      ubvector x(5), y(5);
+      x[0]=def_lambda.n;
+      x[1]=def_sigma_p.n;
+      x[2]=def_sigma_z.n;
+      x[3]=def_cascade_z.n;
+      x[4]=def_cascade_m.n;
+
+      int ret=eos_mroot->msolve(5,x,fmf);
+
+      return ret;
+    }
+    
+#endif    
     
   };
 

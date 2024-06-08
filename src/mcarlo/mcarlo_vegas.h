@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -855,7 +855,11 @@ namespace o2scl {
 
     virtual ~mcarlo_vegas() {}
   
-    /// Integrate function \c func from x=a to x=b.
+    /** \brief Integrate function \c func from x=a to x=b.
+
+        The result of the integral is stored in \c res and the
+        error estimate in \c err.
+     */
     virtual int minteg_err(func_t &func, size_t ndim, const vec_t &a, 
                            const vec_t &b, double &res, double &err) {
       allocate(ndim);

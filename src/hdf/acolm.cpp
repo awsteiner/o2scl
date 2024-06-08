@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -189,7 +189,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "set-grid","max","min","rearrange",
       "get-grid","interp","value","to-tensor",
       "value-grid","function","sum","stats",
-      "binary","deriv"};
+      "binary","deriv","values-table"};
     vector_sort<vector<string>,string>(itmp.size(),itmp);
     type_comm_list.insert(std::make_pair("tensor_grid",itmp));
   }
@@ -1002,7 +1002,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="tensor_grid") {
     
-    static const size_t narr=18;
+    static const size_t narr=19;
     comm_option_s options_arr[narr]=
       {
         {0,"binary","",-1,-1,"","",
@@ -1056,6 +1056,9 @@ void acol_manager::command_add(std::string new_type) {
         {0,"value","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value),both},
+        {0,"values-table","",-1,-1,"","",
+         new comm_option_mfptr<acol_manager>
+         (this,&acol_manager::comm_values_table),both},
         {0,"value-grid","",-1,-1,"","",
          new comm_option_mfptr<acol_manager>
          (this,&acol_manager::comm_value_grid),both}

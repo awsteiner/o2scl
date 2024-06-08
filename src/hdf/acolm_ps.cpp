@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -125,19 +125,19 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="table3d") {
 
-    size_t factor;
+    int factor;
     std::string log_mode;
     
     if (sv.size()==1 || sv.size()>=3) {
       vector<string> in, pr;
       pr.push_back("Refinement factor");
-      pr.push_back("Log scaling?");
+      pr.push_back("Log mode [x,y,xy]?");
       int ret=get_input(sv,pr,in,"refine",itive_com);
       if (ret!=0) return ret;
-      factor=o2scl::stoszt(in[0]);
+      factor=((int)o2scl::function_to_double(in[0]));
       log_mode=in[1];
     } else {
-      factor=o2scl::stoszt(sv[1]);
+      factor=((int)o2scl::function_to_double(sv[1]));
     }
     
     if (verbose>1) {
@@ -145,8 +145,9 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
            << log_mode << endl;
     }
 
-    if (factor<=1) {
-      cerr << "The refinement factor must be 2 or larger." << endl;
+    if (abs(factor)<=1) {
+      cerr << "The refinement factor must be larger than 1 or "
+           << "smaller than -1." << endl;
       return 1;
     }
 
@@ -175,52 +176,89 @@ int acol_manager::comm_refine(std::vector<std::string> &sv, bool itive_com) {
     if (verbose>1) {
       cout << "factor, log_mode: " << factor << " " << log_mode << endl;
     }
-    ubvector xg=table3d_obj.get_x_data();
-    ubvector yg=table3d_obj.get_y_data();
-    bool log_x, log_y;
-    if (log_mode.length()==0 || log_mode=="auto") {
-      linear_or_log(xg,log_x);
-      if (log_x) {
-        cout << "Automatically determined that x scale is more logarithmic "
-             << "than linear." << endl;
+
+    if (factor>1) {
+      
+      ubvector xg=table3d_obj.get_x_data();
+      ubvector yg=table3d_obj.get_y_data();
+      bool log_x, log_y;
+      if (log_mode.length()==0 || log_mode=="auto") {
+        linear_or_log(xg,log_x);
+        if (log_x) {
+          cout << "Automatically determined that x scale is more logarithmic "
+               << "than linear." << endl;
+        }
+        linear_or_log(yg,log_y);
+        if (log_y) {
+          cout << "Automatically determined that y scale is more logarithmic "
+               << "than linear." << endl;
+        }
+      } else if (log_mode=="none") {
+        log_x=false;
+        log_y=false;
+      } else if (log_mode=="x") {
+        log_x=true;
+        log_y=false;
+      } else if (log_mode=="y") {
+        log_x=false;
+        log_y=true;
+      } else if (log_mode=="xy" || log_mode=="yx") {
+        log_x=true;
+        log_y=true;
+      } else {
+        cerr << "Could not interpret log mode." << endl;
+        return 2;
       }
-      linear_or_log(yg,log_y);
-      if (log_y) {
-        cout << "Automatically determined that y scale is more logarithmic "
-             << "than linear." << endl;
-      }
-    } else if (log_mode=="none") {
-      log_x=false;
-      log_y=false;
-    } else if (log_mode=="x") {
-      log_x=true;
-      log_y=false;
-    } else if (log_mode=="y") {
-      log_x=false;
-      log_y=true;
-    } else if (log_mode=="xy" || log_mode=="yx") {
-      log_x=true;
-      log_y=true;
-    } else {
-      cerr << "Could not interpret log mode." << endl;
-      return 2;
-    }
-    vector_refine_inplace(xg,factor,log_x);
-    vector_refine_inplace(yg,factor,log_y);
-    t3d_new.set_xy(table3d_obj.get_x_name(),xg.size(),xg,
-                   table3d_obj.get_y_name(),yg.size(),yg);
-    
-    // Copy over column names and units
-    for(size_t j=0;j<table3d_obj.get_nslices();j++) {
-      t3d_new.new_slice(table3d_obj.get_slice_name(j));
-      for(size_t ix=0;ix<t3d_new.get_nx();ix++) {
-        for(size_t iy=0;iy<t3d_new.get_ny();iy++) {
-          t3d_new.set(ix,iy,table3d_obj.get_slice_name(j),
-                      table3d_obj.interp(t3d_new.get_grid_x(ix),
-                                         t3d_new.get_grid_y(iy),
-                                         table3d_obj.get_slice_name(j)));
+      vector_refine_inplace(xg,factor,log_x);
+      vector_refine_inplace(yg,factor,log_y);
+      
+      t3d_new.set_xy(table3d_obj.get_x_name(),xg.size(),xg,
+                     table3d_obj.get_y_name(),yg.size(),yg);
+      
+      // Copy over column names and units
+      for(size_t j=0;j<table3d_obj.get_nslices();j++) {
+        t3d_new.new_slice(table3d_obj.get_slice_name(j));
+        for(size_t ix=0;ix<t3d_new.get_nx();ix++) {
+          if (verbose>2) {
+            cout << ix+1 << "/" << t3d_new.get_nx() << endl;
+          }
+          for(size_t iy=0;iy<t3d_new.get_ny();iy++) {
+            t3d_new.set(ix,iy,table3d_obj.get_slice_name(j),
+                        table3d_obj.interp(t3d_new.get_grid_x(ix),
+                                           t3d_new.get_grid_y(iy),
+                                           table3d_obj.get_slice_name(j)));
+          }
         }
       }
+      
+    } else {
+
+      std::vector<double> xg_new, yg_new;
+      for(size_t i=0;i<table3d_obj.get_nx();i+=abs(factor)) {
+        xg_new.push_back(table3d_obj.get_grid_x(i));
+        if (verbose>2) {
+          cout << i << " " << table3d_obj.get_grid_x(i) << endl;
+        }
+      }
+      for(size_t j=0;j<table3d_obj.get_ny();j+=abs(factor)) {
+        yg_new.push_back(table3d_obj.get_grid_y(j));
+        if (verbose>2) {
+          cout << j << " " << table3d_obj.get_grid_y(j) << endl;
+        }
+      }
+
+      t3d_new.set_xy(table3d_obj.get_x_name(),xg_new.size(),xg_new,
+                     table3d_obj.get_y_name(),yg_new.size(),yg_new);
+      
+      for(size_t k=0;k<table3d_obj.get_nslices();k++) {
+        t3d_new.new_slice(table3d_obj.get_slice_name(k));
+        for(size_t i=0, i2=0;i<table3d_obj.get_nx();i+=abs(factor),i2++) {
+          for(size_t j=0, j2=0;j<table3d_obj.get_ny();j+=abs(factor),j2++) {
+            t3d_new.set(i2,j2,k,table3d_obj.get(i,j,k));
+          }
+        }
+      }
+            
     }
     
     table3d_obj=t3d_new;

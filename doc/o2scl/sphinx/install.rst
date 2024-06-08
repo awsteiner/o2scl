@@ -21,37 +21,30 @@ Installation Contents
 - :ref:`Generation of documentation`
 - :ref:`Uninstallation`
 
-.. note::
-   7/23/22: On OSX, boost multiprecision (used by O₂scl) appears to
-   currently also include libquadmath.
-
 .. _install_general:
    
 General notes
 -------------
 
-O₂scl requires Boost, GSL, and the HDF5 libraries (the precise
-procedure for installing these libraries differs from system to
-system, but some common cases and useful information is given below).
-O₂scl is designed to be used with the most recent release version of
-all of these libraries, but is sometimes compatible with recent older
-versions. The configure script attempts to add these libraries to
-LDFLAGS during the installation of O₂scl. In order to compile your
-code with O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``, and you may need to include
-``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl libraries.
-The sections below describe several different ways of installing
-O₂scl.
+O₂scl requires Boost, GSL, libquadmath, and the HDF5 libraries (the
+precise procedure for installing these libraries differs from system
+to system, but some common cases and useful information is given
+below). O₂scl is designed to be used with the most recent release
+version of all of these libraries, but is sometimes compatible with
+recent older versions. The configure script attempts to add these
+libraries to LIBS and LDFLAGS during the installation of O₂scl. In
+order to compile your code with O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lquadmath -lm``, and you may need
+to include ``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl
+libraries. The sections below describe several different ways of
+installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
 on O₂scl. In order to help resolve these version conflicts, the
 ``acol`` utility (see :ref:`The acol Command Line Utility`) reports
 the two different HDF5 versions (see ``acol -v``) so that it is easy
-to check that they are the same. This is also particularly important
-when Python support is enabled, as O₂scl and h5py should also be
-working from the same HDF5 version (see more information about Python
-support below).
+to check that they are the same. 
 
 .. _compile_homebrew:
   
@@ -101,7 +94,7 @@ install``.
    HDF5 earlier than 1.12 you will need to compile with
    ``-DO2SCL_HDF5_PRE_1_12``.
 
-O₂scl requires the Boost (v1.74.0 or later) and the GSL libraries
+O₂scl requires the Boost (v1.80.0 or later) and the GSL libraries
 (version 2.0 or later). If the ``configure`` script cannot find Boost
 or GSL, you may have to specify their location for the associated
 header files in the ``CXXFLAGS`` variable and the associated libraries
@@ -136,10 +129,11 @@ Compiling O₂scl from a release on Linux
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
-``libreadline-dev`` package), and HDF5 the ``libhdf5-dev`` package).
-You can then install O₂scl from one of the release distributions by
-using the standard GNU ``./configure`` script and then invoking
-``make`` and ``make install`` (which often requires ``sudo``).
+``libreadline-dev`` package), HDF5 (the ``libhdf5-dev`` package), and
+quadmath (the ``libquadmath0`` package). You can then install O₂scl
+from one of the release distributions by using the standard GNU
+``./configure`` script and then invoking ``make`` and ``make install``
+(which often requires ``sudo``).
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
@@ -159,7 +153,7 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
-hdf5-devel, readline-devel``, and ``boost-devel``.
+hdf5-devel, readline-devel``, ``libquadmath0``, and ``boost-devel``.
 
 Note that if your boost installation is earlier than 1.70, you will
 need to use the -DO2SCL_OLD_BOOST flag to get all of the tests to run
@@ -201,13 +195,6 @@ are based on the experimental docker files which are stored in
 the ``docker`` subdirectory, and can be found at 
 https://github.com/awsteiner/o2scl/tree/main/docker .
 
-..
-   For those on
-   MacOS, I recommend the guide at
-   https://medium.com/crowdbotics/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3
-   to installing docker (though this may need revision as now
-   docker-machine is deprecated on homebrew).
-
 .. _python_support:
 
 Python support
@@ -231,25 +218,6 @@ Including Python support also requires the installation of O₂sclpy
 successfully. Thus, when including Python support it is best to
 install O₂scl first, install O₂sclpy second, and then test O₂scl and
 O₂sclpy last. See also :ref:`Python Integration` for more details.
-
-One final complication with regard to Python support, the HDF5 version
-typically installed by Ubuntu installations lags behind the more
-recent HDF5 versions used by ``h5py``. (At time of writing, on
-2/22/23, the Ubuntu package uses 1.10.7 which was released on 9/15/20
-and h5py uses HDF5 version 1.12.2.). The version of HDF5 used by h5py
-can be obtained in Python from ``print(h5py.h5.get_libversion())``.
-This conflict between h5py and the system HDF5 libraries can cause
-problems with mismatched HDF5 versions. This can be fixed by manually
-installing a more recent version of the HDF5 libraries or by forcing
-``h5py`` to use the system HDF5 libraries. The latter can be achieved
-using something like::
-
-  HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial pip3 \
-  install --no-binary=h5py h5py
-
-this will give a warning that ``--no-binary`` flag is deprecated, so
-I will update these instructions as soon as I can when ``pip`` moves
-to version 23.1. 
 
 .. _compile_snap:
 
@@ -389,9 +357,9 @@ the end-user, but this is not supported and requires several external
 applications not included in the distribution.
 
 The most recent release documentation is available at
-https://neutronstars.utk.edu/code/o2scl/html/index.html and the
+https://awsteiner.org/code/o2scl/html/index.html and the
 current development version documentation is available at
-https://neutronstars.utk.edu/code/o2scl-dev/html/index.html . The
+https://awsteiner.org/code/o2scl-dev/html/index.html . The
 documentation for previous releases is not on the web, but is still
 stored in the release ``.tar.gz`` file.
 

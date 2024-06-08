@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -380,18 +380,6 @@ namespace o2scl {
 	gap_func_ms_T(), gap_func_qq_T(), and B0_func().
     */
     int set_quarks(quark &u, quark &d, quark &s);
-
-    /** \name The default quark objects
-	
-	The masses are automatically set in the constructor to
-	\c up_default_mass, \c down_default_mass, and 
-	\c strange_default_mass.c
-    */
-    //@{
-    quark def_up; 
-    quark def_down;
-    quark def_strange;
-    //@}
 
     /// Return string denoting type ("eos_quark_njl")
     virtual const char *type() { return "eos_quark_njl"; }

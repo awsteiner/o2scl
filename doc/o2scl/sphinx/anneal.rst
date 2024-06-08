@@ -27,7 +27,7 @@ This example minimizes the function
    f(x,y) = J_0(x-2) J_0(y+3)
 
 over :math:`(x,y)` where :math:`J_0(x)` is the Bessel function
-given in \c gsl_sf_bessel_J0. The initial guess at :math:`(9,9)`
+given in ``gsl_sf_bessel_J0``. The initial guess at :math:`(9,9)`
 is far away from the global minimum. 
 
 The plot below plots the function above, the initial guess, and
@@ -35,7 +35,8 @@ the minimum obtained by the example program.
 
 .. image:: ../../../examples/plot/ex_anneal_plot.png
    :width: 60%	   
-   :alt: alt text
+   :alt: A density and contour plot of the product of Bessel
+         functions, the initial point, and the global minimum.
 
 .. literalinclude:: ../../../examples/ex_anneal.cpp
    :language: c++		    

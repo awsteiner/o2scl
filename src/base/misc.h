@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -122,11 +122,22 @@ namespace o2scl {
   /** \brief Execute a python command and return the resulting string
       
       \verbatim
-      python_cmd_string("\"print(3+5)\"",result);
+      python_cmd_string("print(3+5)",result);
       \endverbatim
+
+      Alternatively, the code,
+      \verbatim
+      python_cmd_string("import sys; print(sys.prefix)",prefix,true,200);
+      if (prefix[prefix.length()-1]=='\n') {
+      prefix=prefix.substr(0,prefix.length()-1);
+      }
+      \endverbatim
+      prints the current Python prefix. 
+
   */
   int python_cmd_string(std::string cmd, std::string &result,
-                        bool err_on_fail=true, int nmax=80);
+                        bool err_on_fail=true, int nmax=80,
+                        bool add_quotes=true);
   
   /** \brief Return the first line from the output of the shell
       command \c cmd up to \c nmax characters

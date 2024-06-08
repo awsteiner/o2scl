@@ -1,0 +1,122 @@
+# This dockerfile is for a full development version directly from
+# main branch in the current repo, complete with python, eigen, fftw,
+# OpenMP, and HDF5 compression support. It attempts to run all
+# of the o2scl test and examples. It also installs and tests the main
+# branch github version of o2sclpy. This version does not have
+# armadillo support, because of the confusion with HDF5 versions (this
+# may be fixable in the future).
+
+FROM ubuntu:24.04
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# -----------------------------------------------------------------
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# apt packages
+
+# Install compiler, make, gsl, readline, boost, eigen, and
+# dependencies, etc. We need curl to test downloading EOSs for
+# o2sclpy. The library libcairo2-dev is required for pycairo. We could
+# use "--no-install-recommends" to make the image smaller, but that
+# causes problems and many of the recommendations are good, e.g.
+# manpages and less. We need imagemagick to test the images generated
+# by O2sclpy's o2graph.
+
+RUN apt-get -y update && apt-get \
+  -y install g++ make autoconf automake libtool git curl cmake \
+  python3 libz-dev libsz2 imagemagick && apt-get clean
+
+# -----------------------------------------------------------------
+# The tensorflow package is compiled with HDF5 1.14.2, so we install
+# that instead of the Ubuntu package in order to ensure we're matching
+# HDF5 libraries. The HDF group doesn't provide a direct download link,
+# so I'm using a temporary download link from awsteiner.org, which
+# may have to be changed in the future. 
+
+WORKDIR /opt
+RUN curl "https://awsteiner.org/hdf5-1.14.2.tar.gz" \
+  -o hdf5-1.14.2.tar.gz
+RUN tar xvzf hdf5-1.14.2.tar.gz
+RUN rm hdf5-1.14.2.tar.gz
+WORKDIR /opt/hdf5-1.14.2
+RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
+RUN make
+RUN make install
+
+RUN apt-get -y update && apt-get \
+  -y install libgsl-dev libreadline-dev libboost-all-dev libeigen3-dev \
+  libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
+  libfftw3-dev texlive dvipng texlive-latex-extra \
+  cm-super python3-pip libcairo2-dev libquadmath0 zlib1g-dev
+
+# --------------------------------------------------------------------------
+# Since we're enabling python extensions, we need to install python
+# before we install o2scl, so we do that now
+
+WORKDIR /opt
+
+# We have to fix the version for the numpy installation package before
+# we install h5py (since h5py requires numpy)
+RUN pip3 install --break-system-packages numpy==1.26.4
+
+# Ensure h5py uses the updated version of HDF5
+RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
+  --no-binary=h5py h5py==3.11.0
+
+# Install the remaining python packages from the requirements file
+
+COPY u24.04_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
+  && pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
+
+# This is the set of commands used to construct the original
+# requirements file
+#
+# RUN pip3 install pytest Pillow numpy \
+# scipy matplotlib yt scikit-learn tensorflow keras
+# RUN pip3 freeze > u24.04_req.txt
+# RUN cat u24.04_req.txt
+
+# -----------------------------------------------------------------
+# Install O2scl
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git checkout 7523e1d0 && autoreconf -i
+
+# We disable static and make blank-doc to keep the image small
+
+RUN LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static
+RUN make blank-doc && make && make install
+
+WORKDIR /opt
+ENV LD_LIBRARY_PATH /usr/local/lib
+
+# --------------------------------------------------------------------------
+# Install o2sclpy via pip. I like the editable flag for easier modifications
+# down the road
+
+RUN git clone https://github.com/awsteiner/o2sclpy
+WORKDIR /opt/o2sclpy
+RUN git checkout 0f41aa3a && pip3 install --break-system-packages . 
+
+# --------------------------------------------------------------------------
+# To ensure o2graph loads OpenMP appropriately
+
+ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
+
+# --------------------------------------------------------------------------
+# Clear the build directory and then run acol and o2graph
+
+RUN acol -h && acol -v && o2graph -h && o2graph -v
+
+
+
+
+
+
+

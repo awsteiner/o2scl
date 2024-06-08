@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -106,7 +106,7 @@ int main(void) {
     }
     
     interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,1,
-                      tin,tout,"verbose=1","interpm_sklearn_gp",1);
+                      tin,tout,"verbose=3","interpm_sklearn_gp",1);
     
     std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
@@ -186,11 +186,13 @@ int main(void) {
       ix={j,1};
       tin.get(ix)=y[j];
     }
-    
+
+    // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
+    // progress bars which cause problems in docker terminals
     interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,1,tin,tout,
-                      ((std::string)"verbose=1,")+
+                      ((std::string)"verbose=0,")+
                       "test_size=0.15,batch_size=10,transform=none",
-                      "interpm_tf_dnn",1);
+                      "interpm_tf_dnn",0);
     
     std::vector<double> ex(2), ey(1);
     ex[0]=0.5;
@@ -219,8 +221,10 @@ int main(void) {
       tout.get(ix)=dp2[j];
     }
     
+    // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
+    // progress bars which cause problems in docker terminals
     interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,2,
-                      tin,tout,"verbose=1","interpm_tf_dnn",1);
+                      tin,tout,"verbose=0","interpm_tf_dnn",0);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;

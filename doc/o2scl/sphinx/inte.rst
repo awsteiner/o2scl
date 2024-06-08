@@ -57,7 +57,7 @@ Several classes integrate arbitrary one-dimensional functions:
 
   * :ref:`inte_qags_gsl <inte_qags_gsl>` 
   * :ref:`inte_qaws_gsl <inte_qaws_gsl>`
-  * :ref:`inte_tanh_sinh_boost <inte_tanh_sinh_boost>` can handle 
+  * :ref:`inte_double_exp_boost <inte_double_exp_boost>` can handle 
     singularities at either endpoint.
     
 - Cauchy principal value integration over a finite interval:

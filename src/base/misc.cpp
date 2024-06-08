@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -107,11 +107,17 @@ int o2scl::pipe_cmd_string(std::string cmd, std::string &result,
 }
 
 int o2scl::python_cmd_string(std::string cmd, std::string &result,
-			     bool err_on_fail, int nmax) {
+			     bool err_on_fail, int nmax, bool add_quotes) {
   
 #ifdef HAVE_POPEN
 
-  std::string pycmd="python -c "+cmd;
+  std::string pycmd;
+  if (add_quotes) {
+    pycmd="python -c \""+cmd+"\"";
+  } else {
+    pycmd="python -c "+cmd;
+  }
+  
   FILE *ps_pipe=popen(pycmd.c_str(),"r");
   if (!ps_pipe) {
     if (err_on_fail) {

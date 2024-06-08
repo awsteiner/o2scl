@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2023, Andrew W. Steiner
+  Copyright (C) 2006-2024, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -642,7 +642,7 @@ int main(int argc, char *argv[]) {
     hf.sets_fixed("comment",
                   ((string)"HDF5 version of Atomic Mass Evaluation. ")+
                   "data created for O2scl. "
-                  "See https://neutronstars.utk.edu/code/o2scl for details.");
+                  "See https://awsteiner.org/code/o2scl for details.");
 
     herr_t status;
     
