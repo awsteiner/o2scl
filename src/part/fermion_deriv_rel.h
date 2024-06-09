@@ -1275,15 +1275,6 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
 
-  /*
-  template<class fermion_deriv_t=fermion_deriv_tl<double>,
-           class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
-           class nit_t=inte_qagiu_gsl<>,
-           class dit_t=inte_qag_gsl<>,
-	   class fp_t=double>
-  class fermion_deriv_rel_tl :
-   */
-
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   /** \brief Long double version of 

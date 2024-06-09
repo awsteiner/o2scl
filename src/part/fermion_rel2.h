@@ -345,13 +345,9 @@ namespace o2scl {
       - fd_inte_t: the integration object for massless fermions
       - be_inte_t: the integration object for the nondegenerate limit
       - inte_t: the generic integration object
-      - density_root_t: the solver for fixed densities
-      - root_t: the solver for massless fermions
+      - root_t: the solver for fixed densities and for massless fermions
       - func_t: the function object type
       - fp_t: the floating point type
-
-      Note that density_root_t and root_t are almost always the same
-      type.
 
       \hline 
       <b>Degeneracy parameter:</b>
@@ -521,6 +517,8 @@ namespace o2scl {
   template<class fermion_t=fermion_tl<double>,
 	   class fd_inte_t=class o2scl::fermi_dirac_integ_gsl,
 	   class be_inte_t=o2scl::bessel_K_exp_integ_gsl,
+           class nit_t=inte_qagiu_gsl<>,
+           class dit_t=inte_qag_gsl<>,
 	   class root_t=root_cern<>, class func_t=funct,
 	   class fp_t=double>
   class fermion_rel2_tl :
@@ -580,7 +578,7 @@ namespace o2scl {
     fermion_t unc;
 
     /// Create a fermion with mass \c m and degeneracy \c g
-    fermion_rel_tl() {
+    fermion_rel2_tl() {
       
       deg_limit=2.0;
       
@@ -594,8 +592,6 @@ namespace o2scl {
       last_method=0;
       last_method_s="";
 
-      dit=&def_dit;
-      nit=&def_nit;
       density_root=&def_density_root;
       
       density_root->tol_rel=1.0e-7;
@@ -610,14 +606,14 @@ namespace o2scl {
       alt_solver.test_form=2;
     }
 
-    virtual ~fermion_rel_tl() {
+    virtual ~fermion_rel2_tl() {
     }
 
     /// The solver for calc_density()
     root<func_t,func_t,fp_t> *density_root;
 
     /// The default solver for the chemical potential given the density
-    density_root_t def_density_root;
+    root_t def_density_root;
     
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
@@ -738,9 +734,8 @@ namespace o2scl {
 
       // Perform full solution
       func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
-			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   inte_t,density_root_t,
-			   root_t,func_t,fp_t>::solve_fun),
+			  (&fermion_rel2_tl<fermion_t,fd_inte_t,be_inte_t,
+			   nit_t,dit_t,root_t,func_t,fp_t>::solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
       // The default o2scl::root object is of type root_cern,
@@ -1084,7 +1079,7 @@ namespace o2scl {
 
         .. todo::
 
-        In function fermion_rel_tl::calc_density()
+        In function fermion_rel2_tl::calc_density()
 
         - Future: There is still quite a bit of code duplication
         between this function and \ref calc_mu() .
@@ -1443,113 +1438,125 @@ namespace o2scl {
   
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
 
-      // Store the initial guess for the chemical potential
-      fp_t initial_guess=f.nu;
+      if (f.n==0.0) {
 
-      // We always work with mu/T instead of mu directly
-      fp_t nex=f.nu/temper;
-      
-      func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
-			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   inte_t,density_root_t,
-			   root_t,func_t,fp_t>::pair_fun),
-			  this,std::placeholders::_1,density_match,
-                          std::ref(f),temper,false);
-
-      // Begin by trying the user-specified guess
-      bool drec=density_root->err_nonconv;
-      density_root->err_nonconv=false;
-      int ret=density_root->solve(nex,mf);
-      if (ret==0) {
-        if (verbose>0) {
-          std::cout << "Initial solver succeeded." << std::endl;
-        }
-        // If that worked, set last_method
-	last_method=2000;
-        last_method_s="default solver in pair_density";
-      }
-        
-      if (ret!=0) {
-        
-        // If that failed, try bracketing the root
-
-	// (max doesn't work with boost::multiprecision?)
-	fp_t lg;
-	if (abs(f.nu)>f.ms) lg=abs(f.nu);
-	lg=f.ms;
-
-        if (verbose>0) {
-          std::cout << "Initial solver returned ret=" << ret
-                    << ". Trying to bracket." << std::endl;
+        // FIXME: figure out what to do with last_method in this section
+        if (f.inc_rest_mass) {
+          f.nu=0.0;
+        } else {
+          f.nu=-f.m;
         }
         
-        // Construct an initial guess for the bracket
-	fp_t b_high=lg/temper, b_low=-b_high;
-	fp_t yhigh=mf(b_high), ylow=mf(b_low);
-
-        // Increase the size of the interval to ensure a valid bracket
-	for(size_t j=0;j<5 && yhigh<0.0;j++) {
-	  b_high*=1.0e2;
-	  yhigh=mf(b_high);
-	}
-	for(size_t j=0;j<5 && ylow>0.0;j++) {
-	  b_low*=1.0e2;
-	  ylow=mf(b_low);
-	}
-
-        // If we were successful in constructing a valid bracket,
-        // then call the bracketing solver
-	if (yhigh>0.0 && ylow<0.0) {
-
+      } else {
+        
+        // Store the initial guess for the chemical potential
+        fp_t initial_guess=f.nu;
+        
+        // We always work with mu/T instead of mu directly
+        fp_t nex=f.nu/temper;
+        
+        func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fermion_t &,fp_t,bool)>
+                            (&fermion_rel2_tl<fermion_t,fd_inte_t,be_inte_t,
+                             nit_t,dit_t,root_t,func_t,fp_t>::pair_fun),
+                            this,std::placeholders::_1,density_match,
+                            std::ref(f),temper,false);
+        
+        // Begin by trying the user-specified guess
+        bool drec=density_root->err_nonconv;
+        density_root->err_nonconv=false;
+        int ret=density_root->solve(nex,mf);
+        if (ret==0) {
           if (verbose>0) {
-            std::cout << "Bracket succeeded, trying solver." << std::endl;
+            std::cout << "Initial solver succeeded." << std::endl;
+          }
+          // If that worked, set last_method
+          last_method=2000;
+          last_method_s="default solver in pair_density";
+        }
+        
+        if (ret!=0) {
+          
+          // If that failed, try bracketing the root
+          
+          // (max doesn't work with boost::multiprecision?)
+          fp_t lg;
+          if (abs(f.nu)>f.ms) lg=abs(f.nu);
+          lg=f.ms;
+          
+          if (verbose>0) {
+            std::cout << "Initial solver returned ret=" << ret
+                      << ". Trying to bracket." << std::endl;
           }
           
-	  ret=alt_solver.solve_bkt(b_low,b_high,mf);
-          // If it succeeded, then set nex to the new solution
-          // and set last_method
-	  if (ret==0) {
+          // Construct an initial guess for the bracket
+          fp_t b_high=lg/temper, b_low=-b_high;
+          fp_t yhigh=mf(b_high), ylow=mf(b_low);
+          
+          // Increase the size of the interval to ensure a valid bracket
+          for(size_t j=0;j<5 && yhigh<0.0;j++) {
+            b_high*=1.0e2;
+            yhigh=mf(b_high);
+          }
+          for(size_t j=0;j<5 && ylow>0.0;j++) {
+            b_low*=1.0e2;
+            ylow=mf(b_low);
+          }
+          
+          // If we were successful in constructing a valid bracket,
+          // then call the bracketing solver
+          if (yhigh>0.0 && ylow<0.0) {
+            
             if (verbose>0) {
-              std::cout << "Alternate solver succeeded." << std::endl;
+              std::cout << "Bracket succeeded, trying solver." << std::endl;
             }
-	    nex=b_low;
-	    last_method=3000;
-            last_method_s="alt. solver in pair_density";
-	  }
-	}
-      }
-
-      // Restore value of err_nonconv
-      density_root->err_nonconv=drec;
-
-      if (verbose>1) {
-        density_root->verbose=0;
-        alt_solver.verbose=0;
-      }
-        
-      if (ret!=0) {
-        
-        // Make sure we don't print out anything unless we're going
-        // to call the error handler anyway
-        if (this->err_nonconv==true) {
-          std::cout.precision(14);
-          std::cout << "Function fermion_rel::pair_density() failed.\n  "
-                    << "m,ms,n,T: " << f.m << " " << f.ms << " "
-                    << f.n << " " << temper << std::endl;
-          std::cout << "nu: " << initial_guess << std::endl;
+            
+            ret=alt_solver.solve_bkt(b_low,b_high,mf);
+            // If it succeeded, then set nex to the new solution
+            // and set last_method
+            if (ret==0) {
+              if (verbose>0) {
+                std::cout << "Alternate solver succeeded." << std::endl;
+              }
+              nex=b_low;
+              last_method=3000;
+              last_method_s="alt. solver in pair_density";
+            }
+          }
         }
         
-        // Return the density to the user-specified value
-        f.n=density_match;
-
-	O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
-			"pair_density().",exc_efailed,this->err_nonconv);
+        // Restore value of err_nonconv
+        density_root->err_nonconv=drec;
+        
+        if (verbose>1) {
+          density_root->verbose=0;
+          alt_solver.verbose=0;
+        }
+        
+        if (ret!=0) {
+          
+          // Make sure we don't print out anything unless we're going
+          // to call the error handler anyway
+          if (this->err_nonconv==true) {
+            std::cout.precision(14);
+            std::cout << "Function fermion_rel::pair_density() failed.\n  "
+                      << "m,ms,n,T: " << f.m << " " << f.ms << " "
+                      << f.n << " " << temper << std::endl;
+            std::cout << "nu: " << initial_guess << std::endl;
+          }
+          
+          // Return the density to the user-specified value
+          f.n=density_match;
+          
+          O2SCL_CONV2_RET("Density solver failed in fermion_rel::",
+                          "pair_density().",exc_efailed,this->err_nonconv);
+        }
+        
+        // If we succeeded (i.e. if ret==0), then continue
+        
       }
-
-      // If we succeeded (i.e. if ret==0), then continue
       
       f.nu=nex*temper;
-  
+        
       if (f.non_interacting==true) { f.mu=f.nu; }
 
       // Finally, now that we have the chemical potential, use pair_mu()
@@ -1715,7 +1722,7 @@ namespace o2scl {
 
         .. todo::
 
-        In function fermion_rel_tl::calc_density()
+        In function fermion_rel2_tl::calc_density()
 
         - Future: Particles and antiparticles have different
         degeneracy factors, so we separately use the expansions one
@@ -2037,14 +2044,14 @@ namespace o2scl {
 
   };
 
-  /** \brief Double precision version of \ref o2scl::fermion_rel_tl
+  /** \brief Double precision version of \ref o2scl::fermion_rel2_tl
   */
-  typedef fermion_rel_tl<> fermion_rel;
+  typedef fermion_rel2_tl<> fermion_rel;
 
-  /** \brief Long double precision version of \ref o2scl::fermion_rel_tl
+  /** \brief Long double precision version of \ref o2scl::fermion_rel2_tl
    */
-  class fermion_rel_ld : public
-  fermion_rel_tl<
+  class fermion_rel2_ld : public
+  fermion_rel2_tl<
     // the fermion type
     fermion_tl<long double>,
     // the Fermi-Dirac integrator
@@ -2067,7 +2074,7 @@ namespace o2scl {
 
   public:
     
-    fermion_rel_ld() {
+    fermion_rel2_ld() {
 
       // The goal here is to get results to within 1 part in 10^18
       
@@ -2101,10 +2108,10 @@ namespace o2scl {
     
   };
 
-  /** \brief 25-digit precision version of \ref o2scl::fermion_rel_tl
+  /** \brief 25-digit precision version of \ref o2scl::fermion_rel2_tl
    */
-  class fermion_rel_cdf25 : public
-  fermion_rel_tl<
+  class fermion_rel2_cdf25 : public
+  fermion_rel2_tl<
     // the fermion type
     fermion_tl<cpp_dec_float_25>,
     // the Fermi-Dirac integrator
@@ -2125,7 +2132,7 @@ namespace o2scl {
 
   public:
     
-    fermion_rel_cdf25() {
+    fermion_rel2_cdf25() {
 
       // See output of polylog_ts for numeric limit information
       
@@ -2160,8 +2167,8 @@ namespace o2scl {
 #ifdef O2SCL_NEVER_DEFINED  
   /** \brief Desc
    */
-  class fermion_rel_ld_multip : public
-  fermion_rel_tl<
+  class fermion_rel2_ld_multip : public
+  fermion_rel2_tl<
     // the fermion type
     fermion_tl<long double>,
     // the Fermi-Dirac integrator
@@ -2169,7 +2176,7 @@ namespace o2scl {
     // the Bessel-exp integrator
     bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
     // The fermion integrator
-    fermion_rel_integ_multip<long double>,
+    fermion_rel2_integ_multip<long double>,
     // The density solver
     root_brent_gsl<funct_ld,long double>,
     // The parent solver for massless fermions
@@ -2181,7 +2188,7 @@ namespace o2scl {
 
   public:
     
-    fermion_rel_ld_multip() {
+    fermion_rel2_ld_multip() {
 
       // See output of polylog_ts for numeric limit information
       
@@ -2217,8 +2224,8 @@ namespace o2scl {
   
   /** \brief Desc
   */
-  class fermion_rel_cdf252 : public
-  fermion_rel_tl<
+  class fermion_rel2_cdf252 : public
+  fermion_rel2_tl<
     // the fermion type
     fermion_tl<cpp_dec_float_25>,
     // the Fermi-Dirac integrator
@@ -2228,7 +2235,7 @@ namespace o2scl {
     bessel_K_exp_integ_direct<
       cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
     // The fermion integrator
-    fermion_rel_integ_multip<cpp_dec_float_25>,
+    fermion_rel2_integ_multip<cpp_dec_float_25>,
     // The density solver
     root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
     // The parent solver for massless fermions
@@ -2240,7 +2247,7 @@ namespace o2scl {
 
   public:
     
-    fermion_rel_cdf252() {
+    fermion_rel2_cdf252() {
 
       // See output of polylog_ts for numeric limit information
       

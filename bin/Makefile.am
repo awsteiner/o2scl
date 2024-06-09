@@ -91,9 +91,9 @@ temp:
 if O2SCL_ENABLE_ACOL
 
 if O2SCL_PUGIXML
-bin_PROGRAMS = acol yanic ame_parse make_rst
+bin_PROGRAMS = acol yanic ame_parse make_rst nucleus
 else
-bin_PROGRAMS = acol yanic ame_parse
+bin_PROGRAMS = acol yanic ame_parse nucleus
 endif
 
 acol_SOURCES = acol.cpp
@@ -101,6 +101,8 @@ acol_SOURCES = acol.cpp
 ame_parse_SOURCES = ame_parse.cpp
 
 yanic_SOURCES = yanic.cpp
+
+nucleus_SOURCES = nucleus.cpp
 
 if O2SCL_PUGIXML
 make_rst_SOURCES = make_rst.cpp
@@ -119,6 +121,8 @@ acol_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 ame_parse_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 yanic_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
+	-Wl,/snap/o2scl/current/lib
+nucleus_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
 	-Wl,/snap/o2scl/current/lib
 if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -L${pkglibdir} -Wl,-rpath \
@@ -143,6 +147,7 @@ if O2SCL_PYTHON
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+nucleus_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
 if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB) -lpugixml
 endif
@@ -153,6 +158,7 @@ else
 acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
 ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
 yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+nucleus_LDFLAGS = -L../src -L../src/hdf -fopenmp
 if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -lpugixml
 endif
@@ -167,6 +173,7 @@ if O2SCL_PYTHON
 acol_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 ame_parse_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 yanic_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
+nucleus_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB)
 if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -l$(PYTHON_LIB) -lpugixml
 endif
@@ -177,6 +184,7 @@ else
 acol_LDFLAGS = -L../src -L../src/hdf
 ame_parse_LDFLAGS = -L../src -L../src/hdf
 yanic_LDFLAGS = -L../src -L../src/hdf
+nucleus_LDFLAGS = -L../src -L../src/hdf
 if O2SCL_PUGIXML
 make_rst_LDFLAGS = -L../src -L../src/hdf -lpugixml
 endif
@@ -196,6 +204,7 @@ if O2SCL_PYTHON
 acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+nucleus_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
 if O2SCL_PUGIXML
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB) -lpugixml
 endif
@@ -205,6 +214,7 @@ else
 acol_LDADD = -lo2scl -lgsl -lgslcblas
 ame_parse_LDADD = -lo2scl -lgsl -lgslcblas
 yanic_LDADD = -lo2scl -lgsl -lgslcblas
+nucleus_LDADD = -lo2scl -lgsl -lgslcblas
 if O2SCL_PUGIXML
 make_rst_LDADD = -lo2scl -lgsl -lgslcblas -lpugixml
 endif

@@ -2159,6 +2159,7 @@ int main(int argc, char *argv[]) {
   fout << "import ctypes" << endl;
   fout << "from abc import abstractmethod" << endl;
   fout << "from o2sclpy.utils import force_bytes" << endl;
+  fout << "import o2sclpy.doc_data" << endl;
   if (import_numpy) {
     fout << "import numpy" << endl;
   }
@@ -2253,7 +2254,8 @@ int main(int argc, char *argv[]) {
     fout << "        \"\"\"" << endl;
     fout << endl;
     fout << "        if pointer==0:" << endl;
-    fout << "            f=link." << dll_name << "." << ifc.ns
+    fout << "            f=o2sclpy.doc_data.top_linker."
+         << dll_name << "." << ifc.ns
          << "_create_" << underscoreify(ifc.name) << endl;
     fout << "            f.restype=ctypes.c_void_p" << endl;
     fout << "            f.argtypes=[]" << endl;
@@ -2261,7 +2263,7 @@ int main(int argc, char *argv[]) {
     fout << "        else:" << endl;
     fout << "            self._ptr=pointer" << endl;
     fout << "            self._owner=False" << endl;
-    fout << "        self._link=link" << endl;
+    fout << "        self._link=o2sclpy.doc_data.top_linker" << endl;
     fout << "        return" << endl;
     fout << endl;
     
@@ -3071,7 +3073,7 @@ int main(int argc, char *argv[]) {
       fout << endl;
 
       // The C wrapper function from the DLL
-      fout << "        f=link." << dll_name << "." << ifc.ns << "_"
+      fout << "        f=o2sclpy.doc_data.top_linker." << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_" << iff.name << endl;
 
       // Output the constructor return type
@@ -3158,7 +3160,7 @@ int main(int argc, char *argv[]) {
     }
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        self._link=link" << endl;
+    fout << "        self._link=o2sclpy.doc_data.top_linker" << endl;
     fout << "        if shared_ptr==0:" << endl;
     fout << "            f2=self._link." << dll_name << "." << ifsp.ns
          << "_create_shared_ptr_" << underscoreify(ifsp.name) << endl;
@@ -3319,10 +3321,10 @@ int main(int argc, char *argv[]) {
     // Ctypes interface for function
     
     if (iff.overloaded) {
-      fout << "    func=link." << dll_name << "." << iff.ns << "_"
+      fout << "    func=o2sclpy.doc_data.top_linker." << dll_name << "." << iff.ns << "_"
            << iff.py_name << "_wrapper" << endl;
     } else {
-      fout << "    func=link." << dll_name << "." << iff.ns << "_"
+      fout << "    func=o2sclpy.doc_data.top_linker." << dll_name << "." << iff.ns << "_"
            << underscoreify(iff.name) << "_wrapper" << endl;
     }
     if (iff.ret.name!="void") {

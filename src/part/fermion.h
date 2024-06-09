@@ -580,6 +580,39 @@ namespace o2scl {
       // We failed to add enough terms, so return false
       return false;
     }
+
+    /** \brief Compute the net density including antiparticles in
+        the nondegenerate approximation
+     */
+    bool pair_den_ndeg(fermion_t &f, fp_t temper, fp_t prec=1.0e-18) {
+
+      if (f.non_interacting==true) { f.ms=f.m; }
+
+      fp_t term=f.g*pow(f.ms,3)*temper/o2scl_const::pi2*
+        boost::math::cyl_bessel_k(2,f.ms/temper);
+      fp_t nu=temper*asinh(f.n/term);
+
+      // Perform a simple Taylor-series like error analysis
+      fp_t dnu_dn=1.0/term/sqrt(1.0+f.n*f.n/term/term);
+      fp_t unc=dnu_dn*std::numeric_limits<fp_t>::epsilon();
+      
+      // If the precision is insufficient, return false
+      if (fabs(unc/nu)>=prec) {
+        return false;
+      }
+
+      if (f.inc_rest_mass) {
+        f.nu=nu;
+      } else {
+        f.nu=nu-f.m;
+      }
+
+      if (f.non_interacting) {
+        f.mu=f.nu;
+      }
+      
+      return true;
+    }
     
     /** \brief Degenerate expansion for fermions
         
