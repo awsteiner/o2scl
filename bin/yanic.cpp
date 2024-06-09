@@ -2238,7 +2238,7 @@ int main(int argc, char *argv[]) {
     if (ifc.is_abstract || ifc.def_cons==false) {
       fout << "    @abstractmethod" << endl;
     }
-    fout << "    def __init__(self,link,pointer=0):" << endl;
+    fout << "    def __init__(self,pointer=0):" << endl;
     fout << "        \"\"\"" << endl;
     fout << "        Init function for class ";
     if (ifc.py_name!="") {
@@ -2307,7 +2307,7 @@ int main(int argc, char *argv[]) {
     
     fout << "        \"\"\"" << endl;
     fout << endl;
-    fout << "        new_obj=type(self)(self._link,self._ptr)" << endl;
+    fout << "        new_obj=type(self)(self._ptr)" << endl;
     fout << "        return new_obj" << endl;
     fout << endl;
 
@@ -2333,7 +2333,7 @@ int main(int argc, char *argv[]) {
       fout << "        \"\"\"" << endl;
       fout << endl;
       // Create the new object
-      fout << "        new_obj=type(self)(self._link)" << endl;
+      fout << "        new_obj=type(self)()" << endl;
       fout << "        f2=self._link." << dll_name << "." << ifc.ns
            << "_copy_" << underscoreify(ifc.name) << endl;
       fout << "        f2.argtypes=[ctypes.c_void_p,ctypes.c_void_p]"
@@ -2390,7 +2390,7 @@ int main(int argc, char *argv[]) {
           tmps=ifv.ift.name.substr(0,len-2);
         }
         fout << "        sp=shared_ptr_"+tmps+
-          "(self._link)" << endl;
+          "()" << endl;
         
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -2417,7 +2417,7 @@ int main(int argc, char *argv[]) {
         fout << "        func.restype=ctypes.c_void_p" << endl;
         
         fout << "        func.argtypes=[ctypes.c_void_p]" << endl;
-        fout << "        s=std_string(self._link)" << endl;
+        fout << "        s=std_string()" << endl;
         fout << "        s._ptr=func(self._ptr)" << endl;
         fout << "        return s.to_bytes()" << endl;
         
@@ -2454,7 +2454,7 @@ int main(int argc, char *argv[]) {
           if (type_temp.substr(0,7)==(string)"o2scl::") {
             type_temp=type_temp.substr(7,type_temp.length()-7);
           }
-          fout << "        obj=" << type_temp << "(self._link,ptr)"
+          fout << "        obj=" << type_temp << "(ptr)"
                << endl;
           fout << "        return obj" << endl;
         } else {
@@ -2817,21 +2817,21 @@ int main(int argc, char *argv[]) {
                  iff.ret.prefix.find("std::shared_ptr")!=std::string::npos) {
 
         function_start="sp=shared_ptr_"+reformat_ret_type+
-          "(self._link,func(self._ptr)";
+          "(func(self._ptr)";
         function_end=")";
         
       } else if (iff.ret.name=="std::string" || iff.ret.name=="string") {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("strt=std_string(self._link,ret)");
+        post_func_code.push_back("strt=std_string(ret)");
         post_func_code.push_back("strt._owner=True");
         
       } else if (iff.ret.name=="std::vector<std::string>") {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("vstrt=std_vector_string(self._link,ret)");
+        post_func_code.push_back("vstrt=std_vector_string(ret)");
         // AWS, 9/1/22: I commented this out because I think, in
         // analogy to the contour_line case below, this owner flag
         // should be false.
@@ -2841,14 +2841,14 @@ int main(int argc, char *argv[]) {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("vcl=contour_line(self._link,ret)");
+        post_func_code.push_back("vcl=contour_line(ret)");
         //post_func_code.push_back("vcl._owner=True");
         
       } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("hc=hypercube(self._link,ret)");
+        post_func_code.push_back("hc=hypercube(ret)");
         
       } else if (iff.ret.name=="void") {
         function_start="func(self._ptr";
@@ -2872,7 +2872,7 @@ int main(int argc, char *argv[]) {
         }
         
         post_func_code.push_back(((string)"ret=")+ret_temp+
-                                 "(self._link,ret2)");
+                                 "(ret2)");
         post_func_code.push_back("ret.owner=True");
       }
 
@@ -2938,7 +2938,7 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.suffix=="&" && iff.name!="operator[]" &&
                  iff.name!="operator()") {
         fout << "        ret2=" 
-             << underscoreify(reformat_ret_type) << "(self._link,ret)"
+             << underscoreify(reformat_ret_type) << "(ret)"
              << endl;
         fout << "        return ret2";
         if (addl_ret.length()>0) fout << "," << addl_ret << endl;
@@ -2990,7 +2990,7 @@ int main(int argc, char *argv[]) {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"
                << endl;
-          fout << "        s=std_string(self._link)" << endl;
+          fout << "        s=std_string()" << endl;
           fout << "        s.init_bytes(value)" << endl;
           fout << "        func(self._ptr,i,s._ptr)" << endl;
         } else if (iff.ret.name=="std::vector<std::string>") {
@@ -3005,7 +3005,7 @@ int main(int argc, char *argv[]) {
                << endl;
           fout << "        func(self._ptr,i,value._ptr)" << endl;
         } else if (iff.ret.name=="std::vector<double>") {
-          fout << "        sv=std_vector(self._link)" << endl;
+          fout << "        sv=std_vector()" << endl;
           fout << "        sv.resize(len(value))" << endl;
           fout << "        for j in range(0,len(value)):" << endl;
           fout << "            sv[j]=value[j]" << endl;
@@ -3206,9 +3206,9 @@ int main(int argc, char *argv[]) {
     
     // Function header
     if (iff.overloaded || iff.py_name.length()>0) {
-      fout << "def " << iff.py_name << "(link,";
+      fout << "def " << iff.py_name << "(";
     } else {
-      fout << "def " << iff.name << "(link,";
+      fout << "def " << iff.name << "(";
     }
     for(size_t k=0;k<iff.args.size();k++) {
       fout << iff.args[k].name;
@@ -3409,11 +3409,11 @@ int main(int argc, char *argv[]) {
     if (iff.ret.name=="tensor<>" ||
         iff.ret.name=="tensor<int>" ||
         iff.ret.name=="tensor<size_t>") {
-      fout << "    ten=tensor(link,ret)" << endl;
+      fout << "    ten=tensor(ret)" << endl;
       fout << "    ten._owner=True" << endl;
       fout << "    return ten" << endl;
     } else if (iff.ret.name=="tensor_grid<>") {
-      fout << "    ten=tensor_grid(link,ret)" << endl;
+      fout << "    ten=tensor_grid(ret)" << endl;
       fout << "    ten._owner=True" << endl;
       fout << "    return ten" << endl;
     } else {
@@ -3621,9 +3621,9 @@ int main(int argc, char *argv[]) {
     // Now construct the 'autofunction' command
     
     if (iff.overloaded || iff.py_name.length()>0) {
-      fout2 << ".. autofunction:: o2sclpy." << iff.py_name << "(link,";
+      fout2 << ".. autofunction:: o2sclpy." << iff.py_name << "(";
     } else {
-      fout2 << ".. autofunction:: o2sclpy." << iff.name << "(link,";
+      fout2 << ".. autofunction:: o2sclpy." << iff.name << "(";
     }      
     for(size_t k=0;k<iff.args.size();k++) {
       fout2 << iff.args[k].name;
