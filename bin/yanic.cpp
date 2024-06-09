@@ -3053,7 +3053,7 @@ int main(int argc, char *argv[]) {
       fout << "    @classmethod" << endl;
 
       // The function header
-      fout << "    def " << iff.name << "(cls,link,";
+      fout << "    def " << iff.name << "(cls,";
       for(size_t k=0;k<iff.args.size();k++) {
         fout << iff.args[k].name;
         if (k!=iff.args.size()-1) {
@@ -3096,7 +3096,7 @@ int main(int argc, char *argv[]) {
       fout << "]" << endl;
 
       // Output the constructor function call
-      fout << "        return cls(link,f(";
+      fout << "        return cls(f(";
       // Arguments 
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.suffix=="&") {
@@ -3149,7 +3149,7 @@ int main(int argc, char *argv[]) {
     fout << endl;
     
     // Define __init__() function
-    fout << "    def __init__(self,link,shared_ptr=0):" << endl;
+    fout << "    def __init__(self,shared_ptr=0):" << endl;
     fout << "        \"\"\"" << endl;
     if (ifsp.py_name!="") {
       fout << "        Init function for shared_ptr_"
