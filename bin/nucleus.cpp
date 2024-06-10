@@ -70,6 +70,34 @@ nucleus_class::nucleus_class() {
   sdnp1.load("sdnp03");
   sdnp2.load("sd_skp_04");
   sdnp3.load("sd_sly4_04");
+  
+  ddme2.load_be(o2scl::o2scl_settings.get_data_dir()+
+                "/nucmass/frib_mex/ddme2.o2","E",1.0,true);
+  ddmed.load_be(o2scl::o2scl_settings.get_data_dir()+
+                "/nucmass/frib_mex/ddmed.o2","E",1.0,true);
+  ddpc1.load_be(o2scl::o2scl_settings.get_data_dir()+
+                "/nucmass/frib_mex/ddpc1.o2","E",1.0,true);
+  nl3s.load_be(o2scl::o2scl_settings.get_data_dir()+
+                "/nucmass/frib_mex/nl3s.o2","E",1.0,true);
+  sly4.load_be(o2scl::o2scl_settings.get_data_dir()+
+               "/nucmass/frib_mex/sly4_all.o2",
+               "Binding_Energy__MeV_",1.0,true);
+  skms.load_be(o2scl::o2scl_settings.get_data_dir()+
+               "/nucmass/frib_mex/skms_all.o2",
+               "Binding_Energy__MeV_",1.0,true);
+  skp.load_be(o2scl::o2scl_settings.get_data_dir()+
+              "/nucmass/frib_mex/skp_all.o2",
+              "Binding_Energy__MeV_",1.0,true);
+  sv_min.load_be(o2scl::o2scl_settings.get_data_dir()+
+                 "/nucmass/frib_mex/sv_min_all.o2",
+                 "Binding_Energy__MeV_",1.0,true);
+  unedf0.load_be(o2scl::o2scl_settings.get_data_dir()+
+                 "/nucmass/frib_mex/unedf0_all.o2",
+                 "Binding_Energy__MeV_",1.0,true);
+  unedf1.load_be(o2scl::o2scl_settings.get_data_dir()+
+                 "/nucmass/frib_mex/unedf1_all.o2",
+                 "Binding_Energy__MeV_",1.0,true);
+  
   std::cout << "Done reading nuclear mass tables." << std::endl;
 
   nmd={&ame95rmd,&ame95exp,&ame03round,&ame03,
@@ -83,16 +111,16 @@ nucleus_class::nucleus_class() {
        
   n_tables=nmd.size();
 
-  table_names={"AME (1995) rmd.","AME (1995) exp.",
-	       "AME (2003) round.","AME (2003)",
-	       "AME (2012)","AME (2016)","AME (2020) exp.",
-               "AME (2020) round.",
-	       "MNMSK (1995)","KTUY (2004)","KTUY (2005)",
+  table_names={"AME rmd 95","AME 95 exp",
+	       "AME rnd 03","AME 03",
+	       "AME 12","AME 16","AME exp 20",
+               "AME rnd 20",
+	       "MNMSK 95","KTUY 04","KTUY 05",
 	       "HFB2","HFB8","HFB14","HFB14_v0",
 	       "HFB17","HFB21","HFB22","HFB23",
 	       "HFB24","HFB25","HFB26","HFB27",
-	       "WLW1 (2005)","WLW2 (2005)","WLW3 (2005)",
-	       "SDNP1 (2005)","SDNP2 (2005)","SDNP3 (2005)",
+	       "WLW1 05","WLW2 05","WLW3 05",
+	       "SDNP1 05","SDNP2 05","SDNP3 05",
 	       "DZ (1995)","DDME2","DDMED","DDPC1","NL3S",
                "SLy4","SKM*","SkP","SV-min","UNEDF0","UNEDF1"};
 
@@ -117,9 +145,15 @@ int nucleus_class::get(std::vector<std::string> &sv, bool itive_com) {
        << " name=" << nmi.Ztoname(Z) << endl;
   cout << endl;
 
-  size_t left_column=18;
+  size_t left_column=14;
     
-  cout.width(left_column+2);
+  cout.width(left_column+1);
+  cout << "Model ";
+  cout.width(10);
+  cout << "mass ex. MeV ";
+  cout.width(10);
+  cout << "BE/A MeV " << "  ";
+  cout.width(left_column+1);
   cout << "Model  ";
   cout.width(10);
   cout << "mass ex. MeV ";
@@ -129,13 +163,23 @@ int nucleus_class::get(std::vector<std::string> &sv, bool itive_com) {
     
   nucleus nuc;
 
-  for(size_t i=0;i<n_tables;i++) {
+  cout.precision(4);
+  for(size_t i=0;i<n_tables;i+=2) {
     if (nmd[i]->is_included(Z,N)) {
       int ret=nmd[i]->get_nucleus(Z,N,nuc);
       cout.width(left_column);
-      cout << table_names[i] << ": "
+      cout << table_names[i] << " "
 	   << nuc.mex*o2scl_const::hc_mev_fm << " "
-	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << endl;
+	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << "  ";
+    }
+    if (i<n_tables) {
+      if (nmd[i+1]->is_included(Z,N)) {
+        int ret=nmd[i+1]->get_nucleus(Z,N,nuc);
+        cout.width(left_column);
+        cout << table_names[i+1] << " "
+             << nuc.mex*o2scl_const::hc_mev_fm << " "
+             << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << endl;
+      }
     }
   }
   cout << endl;
@@ -144,11 +188,12 @@ int nucleus_class::get(std::vector<std::string> &sv, bool itive_com) {
     if (nmfd[i]->is_included(Z,N)) {
       int ret=nmfd[i]->get_nucleus(Z,N,nuc);
       cout.width(left_column);
-      cout << fit_names[i] << ": "
+      cout << fit_names[i] << " "
 	   << nuc.mex*o2scl_const::hc_mev_fm << " "
 	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << endl;
     }
   }
+  cout.precision(6);
     
   return 0;
 }

@@ -278,8 +278,6 @@ class nucleus_class {
   //@{
   /// Verbosity parameter
   o2scl::cli::parameter_int p_verbose;
-  /// Parameter controlling integration of the KL divergence
-  o2scl::cli::parameter_bool p_use_int_kl_div;
   //@}
 
   /// Table list
@@ -293,9 +291,6 @@ class nucleus_class {
 
   /// List of fits
   std::vector<std::string> fit_names;
-
-  /// Default false
-  bool use_int_kl_div;
 
   /// Mass of the neutron
   double m_neut;
