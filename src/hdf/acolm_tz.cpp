@@ -1715,9 +1715,9 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 }
   
 int acol_manager::comm_values_table(std::vector<std::string> &sv,
-				  bool itive_com) {
+                                    bool itive_com) {
   if (type=="tensor_grid") {
-
+    
     std::string i1;
     int ret=get_input_one(sv,"Enter function",i1,"values-table",itive_com);
     if (ret!=0) return ret;
@@ -1730,9 +1730,6 @@ int acol_manager::comm_values_table(std::vector<std::string> &sv,
       table_obj.new_column(((string)"x")+o2scl::szttos(i));
     }
     table_obj.new_column("v");
-
-    cout << "func: " << i1 << endl;
-    table_obj.summary(&cout);
     
     // Parse function
     std::string function=i1;
