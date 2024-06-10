@@ -2248,7 +2248,6 @@ int main(int argc, char *argv[]) {
     }
     fout << endl;
     fout << "        | Parameters:" << endl;
-    fout << "        | *link* :class:`linker` object" << endl;
     fout << "        | *pointer* ``ctypes.c_void_p`` pointer" << endl;
     fout << endl;
     fout << "        \"\"\"" << endl;
@@ -3073,7 +3072,8 @@ int main(int argc, char *argv[]) {
       fout << endl;
 
       // The C wrapper function from the DLL
-      fout << "        f=o2sclpy.doc_data.top_linker." << dll_name << "." << ifc.ns << "_"
+      fout << "        f=o2sclpy.doc_data.top_linker."
+           << dll_name << "." << ifc.ns << "_"
            << underscoreify(ifc.name) << "_" << iff.name << endl;
 
       // Output the constructor return type
@@ -3233,7 +3233,6 @@ int main(int argc, char *argv[]) {
     fout << "    \"\"\"" << endl;
     
     fout << "        | Parameters:" << endl;
-    fout << "        | *link* :class:`linker` object" << endl;
     for(size_t k=0;k<iff.args.size();k++) {
       if (iff.args[k].ift.is_ctype()) {
         fout << "        | *" << iff.args[k].name
@@ -3321,10 +3320,12 @@ int main(int argc, char *argv[]) {
     // Ctypes interface for function
     
     if (iff.overloaded) {
-      fout << "    func=o2sclpy.doc_data.top_linker." << dll_name << "." << iff.ns << "_"
+      fout << "    func=o2sclpy.doc_data.top_linker."
+           << dll_name << "." << iff.ns << "_"
            << iff.py_name << "_wrapper" << endl;
     } else {
-      fout << "    func=o2sclpy.doc_data.top_linker." << dll_name << "." << iff.ns << "_"
+      fout << "    func=o2sclpy.doc_data.top_linker."
+           << dll_name << "." << iff.ns << "_"
            << underscoreify(iff.name) << "_wrapper" << endl;
     }
     if (iff.ret.name!="void") {
