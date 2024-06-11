@@ -122,8 +122,8 @@ namespace o2scl {
       These would be useful for EOS classes which run in to 
       trouble for negative densities.
   */
-  template<class func_t=funct, class fp_t=double> class deriv_gsl : 
-    public deriv_base<func_t,fp_t> {
+  template<class func_t=funct, class fp_t=double>
+  class deriv_gsl : public deriv_base<func_t,fp_t> {
     
   public:
   
@@ -131,6 +131,7 @@ namespace o2scl {
       h=0.0;
       h_opt=0.0;
       func_max=-1.0;
+      pow_tol_func=1.33;
     }
 
     virtual ~deriv_gsl() {}
@@ -156,6 +157,12 @@ namespace o2scl {
     */
     fp_t h_opt;
   
+    /** \brief Power for tolerance of function evaluations
+        with adaptive multiprecision
+        (default 1.33)
+    */
+    double pow_tol_func;
+
     /** \brief Calculate the first derivative of \c func  w.r.t. x and 
 	uncertainty
     */
@@ -163,11 +170,542 @@ namespace o2scl {
       return deriv_tlate<func_t>(x,func,dfdx,err);
     }
 
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
+    template<typename func2_t, class fp2_t>
+    int deriv_err_multip(func2_t &&f, fp2_t x, fp2_t &dfdx, fp2_t &err,
+                         double tol_loc=-1.0) {
+      
+      if (tol_loc<=0.0) {
+        tol_loc=pow(10.0,-std::numeric_limits<fp2_t>::digits10);
+      } 
+      
+      if (this->verbose>0) {
+        std::cout << "deriv_multi_gsl::deriv_err(): set "
+                  << "tolerance to: " << tol_loc << std::endl;
+      }
+      
+      // Demand that the function evaluations are higher precision
+      double func_tol=pow(tol_loc,pow_tol_func);
+
+      // ─────────────────────────────────────────────────────────────────
+      // Double precision derivative evaluation
+      
+      bool called_d=false;
+      double dfdx_d, err_d;
+
+      // Begin with a double precision derivative, but only
+      // if double precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits<double>::digits10)) {
+
+        deriv_err_int_multip(f,static_cast<double>(x),dfdx_d,err_d,func_tol);
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "double h_opt is: " << h_opt << std::endl;
+        }
+        
+        called_d=true;
+        
+        // If the result is sufficiently accurate, then return
+        if (err_d/abs(dfdx_d)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_d);
+          err=static_cast<fp2_t>(err_d);
+          return 0;
+        }
+
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after double:\n  "
+                    << dtos(dfdx_d,0) << " "
+                    << dtos(err_d,0) << " "
+                    << tol_loc << std::endl;
+        }
+        
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // Long double precision derivative evaluation
+      
+      bool called_ld=false;
+      long double dfdx_ld, err_ld;
+      
+      // Attempt to evaluate at long double precision, but only if 
+      // long double precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits<long double>::digits10)) {
+        
+        deriv_err_int_multip(f,static_cast<long double>(x),dfdx_ld,
+                             err_ld,func_tol);
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "long double h_opt is: " << h_opt << std::endl;
+        }
+        
+        called_ld=true;
+        
+        // If the result is sufficiently accurate, then return
+        if (err_ld/abs(dfdx_ld)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_ld);
+          err=static_cast<fp2_t>(err_ld);
+          return 0;
+        }
+
+        // If the comparison between the double and long double
+        // precision results shows an accurate result, then return
+        if (called_d && dfdx_ld!=0) {
+          err=static_cast<fp2_t>(abs(dfdx_ld-dfdx_d)/abs(dfdx_ld));
+          if (err<tol_loc) {
+            dfdx=static_cast<fp2_t>(dfdx_ld);
+            return 0;
+          }
+        }
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after long double:\n  "
+                    << dtos(dfdx_d,0) << " "
+                    << dtos(dfdx_ld,0) << " "
+                    << dtos(err_d,0) << " "
+                    << dtos(err_ld,0) << " "
+                    << dtos(err,0) << " " 
+                    << tol_loc << std::endl;
+        }
+
+      }
+      
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
+      // ─────────────────────────────────────────────────────────────────
+      
+      // Determine the next stepsize by the previous optimal stepsize
+      h=h_opt/10;
+      
+      // ─────────────────────────────────────────────────────────────────
+      // 25-digit precision derivative evaluation
+      
+      bool called_cdf25=false;
+      cpp_dec_float_25 dfdx_cdf25, err_cdf25;
+
+      // Attempt to evaluate at 25-digit precision, but only if
+      // 25-digit precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits
+                       <cpp_dec_float_25>::digits10)) {
+        
+        deriv_err_int_multip(f,static_cast<cpp_dec_float_25>(x),
+                             dfdx_cdf25,err_cdf25,func_tol);
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_25]\n "
+                    << "h_opt,dfdx,err: "
+                    << h_opt << " " << dfdx_cdf25 << " "
+                    << err_cdf25 << std::endl;
+        }
+        
+        called_cdf25=true;
+        
+        // If the result is sufficiently accurate, then return
+        if (err_cdf25/abs(dfdx_cdf25)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_cdf25);
+          err=static_cast<fp2_t>(err_cdf25);
+          return 0;
+        }
+
+        // If the comparison between the long double and 25-digit
+        // precision results shows an accurate result, then return
+        if (called_ld && dfdx_cdf25!=0) {
+          err=static_cast<fp2_t>(abs(dfdx_cdf25-dfdx_ld)/abs(dfdx_cdf25));
+          if (err<tol_loc) {
+            dfdx=static_cast<fp2_t>(dfdx_cdf25);
+            return 0;
+          }
+        }
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after cpp_dec_25:\n  "
+                    << dtos(dfdx_ld,0) << " "
+                    << dtos(dfdx_cdf25,0) << " "
+                    << dtos(err_ld,0) << " "
+                    << dtos(err_cdf25,0) << " "
+                    << dtos(err,0) << " " 
+                    << tol_loc << std::endl;
+        }
+        
+      }
+    
+      // ─────────────────────────────────────────────────────────────────
+
+      // Determine the next stepsize by the previous optimal stepsize
+      h=h_opt/100;
+
+      // ─────────────────────────────────────────────────────────────────
+      // 35-digit precision derivative evaluation
+
+      bool called_cdf35=false;
+      cpp_dec_float_35 dfdx_cdf35, err_cdf35;
+
+      // Attempt to evaluate at 35-digit precision, but only if
+      // 35-digit precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits
+                       <cpp_dec_float_35>::digits10)) {
+        
+        deriv_err_int_multip(f,static_cast<cpp_dec_float_35>(x),
+                             dfdx_cdf35,err_cdf35,func_tol);
+        
+        called_cdf35=true;
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_35]\n "
+                    << "h_opt,dfdx,err: "
+                    << h_opt << " " << dfdx_cdf35 << " "
+                    << err_cdf35 << std::endl;
+        }
+        
+        // If the result is sufficiently accurate, then return
+        if (err_cdf35/abs(dfdx_cdf35)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_cdf35);
+          err=static_cast<fp2_t>(err_cdf35);
+          return 0;
+        }
+
+        // If the comparison between the 25-digit and 35-digit
+        // precision results shows an accurate result, then return
+        if (called_cdf25 && dfdx_cdf35!=0) {
+          err=static_cast<fp2_t>(abs(dfdx_cdf35-dfdx_cdf25)/abs(dfdx_cdf35));
+          if (err<tol_loc) {
+            dfdx=static_cast<fp2_t>(dfdx_cdf35);
+            return 0;
+          }
+        }
+        
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after cpp_dec_float_35:\n  "
+                    << dtos(dfdx_cdf25,0) << " "
+                    << dtos(dfdx_cdf35,0) << " "
+                    << dtos(err_cdf25,0) << " "
+                    << dtos(err_cdf35,0) << " "
+                    << dtos(err,0) << " " 
+                    << tol_loc << std::endl;
+        }
+
+      }
+    
+      // ─────────────────────────────────────────────────────────────────
+
+      // Determine the next stepsize by the previous optimal stepsize
+      h=h_opt/1e4;
+      
+      // ─────────────────────────────────────────────────────────────────
+      // 50-digit precision derivative evaluation
+      
+      bool called_cdf50=false;
+      cpp_dec_float_50 dfdx_cdf50, err_cdf50;
+      
+      // Attempt to evaluate at 50-digit precision, but only if
+      // 50-digit precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits
+                       <cpp_dec_float_50>::digits10)) {
+        
+        deriv_err_int_multip(f,static_cast<cpp_dec_float_50>(x),
+                             dfdx_cdf50,err_cdf50,func_tol);
+      
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "cpp_dec_float_50 h_opt is: "
+                    << h_opt << std::endl;
+        }
+
+        called_cdf50=true;
+        
+        // If the result is sufficiently accurate, then return
+        if (err_cdf50/abs(dfdx_cdf50)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_cdf50);
+          err=static_cast<fp2_t>(err_cdf50);
+          return 0;
+        }
+
+        // If the comparison between the 35-digit and 50-digit
+        // precision results shows an accurate result, then return
+        if (called_cdf35 && dfdx_cdf50!=0) {
+          err=static_cast<fp2_t>(abs(dfdx_cdf50-dfdx_cdf35)/abs(dfdx_cdf50));
+          if (err<tol_loc) {
+            dfdx=static_cast<fp2_t>(dfdx_cdf50);
+            return 0;
+          }
+        }
+      
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after cpp_dec_float_50:\n  "
+                    << dtos(dfdx_cdf35,0) << " "
+                    << dtos(dfdx_cdf50,0) << " "
+                    << dtos(err_cdf35,0) << " "
+                    << dtos(err_cdf50,0) << " "
+                    << dtos(err,0) << " " 
+                    << tol_loc << std::endl;
+        }
+
+      }
+      
+      // ─────────────────────────────────────────────────────────────────
+
+      // Determine the next stepsize by the previous optimal stepsize
+      h=h_opt/1e8;
+      
+      // ─────────────────────────────────────────────────────────────────
+      // 100-digit precision derivative evaluation
+      
+      bool called_cdf100=false;
+      cpp_dec_float_100 dfdx_cdf100, err_cdf100;
+      
+      // Attempt to evaluate at 100-digit precision, but only if
+      // 100-digit precision is enough for the function evaluations
+      if (func_tol>pow(10.0,-std::numeric_limits
+                       <cpp_dec_float_100>::digits10)) {
+        
+        deriv_err_int_multip(f,static_cast<cpp_dec_float_100>(x),
+                             dfdx_cdf100,err_cdf100,func_tol);
+      
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "cpp_dec_float_100 h_opt is: "
+                    << h_opt << std::endl;
+        }
+
+        called_cdf100=true;
+        
+        // If the result is sufficiently accurate, then return
+        if (err_cdf100/abs(dfdx_cdf100)<tol_loc) {
+          dfdx=static_cast<fp2_t>(dfdx_cdf100);
+          err=static_cast<fp2_t>(err_cdf100);
+          return 0;
+        }
+
+        // If the comparison between the 50-digit and 100-digit
+        // precision results shows an accurate result, then return
+        if (called_cdf50 && dfdx_cdf100!=0) {
+          err=static_cast<fp2_t>(abs(dfdx_cdf100-dfdx_cdf50)/
+                                abs(dfdx_cdf100));
+          if (err<tol_loc) {
+            dfdx=static_cast<fp2_t>(dfdx_cdf100);
+            return 0;
+          }
+        }
+      
+        if (this->verbose>0) {
+          std::cout << "deriv_multi_gsl::deriv_err() "
+                    << "failed after cpp_dec_float_100:\n  "
+                    << dtos(dfdx_cdf50,0) << " "
+                    << dtos(dfdx_cdf100,0) << " "
+                    << dtos(err_cdf50,0) << " "
+                    << dtos(err_cdf100,0) << " "
+                    << dtos(err,0) << " " 
+                    << tol_loc << std::endl;
+        }
+
+      }
+
+#endif
+      
+      O2SCL_ERR2("Failed to compute with requested accuracy ",
+                 "in deriv_multip_gsl::deriv_err().",
+                 o2scl::exc_efailed);
+      return o2scl::exc_efailed;
+    }
+    
     /// Return string denoting type ("deriv_gsl")
     virtual const char *type() { return "deriv_gsl"; }
 
   protected:
 
+    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
+	uncertainty
+    */
+    template <typename func2_t, class fp2_t>
+    int deriv_err_int_multip(func2_t &&f, fp2_t x, fp2_t &dfdx, fp2_t &err,
+                      double tol) {
+      
+      // Set equal to 0 to avoid uninitialized variable warnings
+      double hh=0;
+      if (h<=0.0) {
+	if (x==0.0) hh=1.0e-4;
+	else hh=static_cast<double>(abs(x))*1.0e-4;
+      } else {
+	hh=h;
+      }
+
+      fp2_t r_0, round, trunc, error;
+      // Ensure all floating-point constants are initialized by
+      // integers
+      fp2_t one=1, two=2, three=3, ten=10;
+      
+      size_t it_count=0;
+      bool fail=true;
+      while (fail && it_count<20) {
+      
+	fail=false;
+      
+	int cret=central_deriv_multip(f,x,hh,r_0,round,trunc,tol);
+	if (cret!=0) fail=true;
+
+	error=round+trunc;
+      
+	if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
+	  fp2_t r_opt, round_opt, trunc_opt, error_opt;
+	
+	  /* Compute an optimised stepsize to minimize the total error,
+	     using the scaling of the truncation error (O(h^2)) and
+	     rounding error (O(1/h)). */
+	
+	  h_opt=hh*static_cast<double>(pow(round/(two*trunc),one/three));
+	  cret=central_deriv_multip(f,x,h_opt,r_opt,round_opt,trunc_opt,tol);
+	  if (cret!=0) fail=true;
+	  error_opt=round_opt+trunc_opt;
+	
+	  /* Check that the new error is smaller, and that the new derivative
+	     is consistent with the error bounds of the original estimate. */
+
+	  fp2_t tdiff=r_opt-r_0;
+	  if (fail==false && error_opt < error &&
+	      abs(tdiff) < two*two*error) {
+	    r_0=r_opt;
+	    error=error_opt;
+	  }
+	}
+
+	it_count++;
+	if (fail==true) {
+	  hh/=static_cast<double>(ten);
+	  if (this->verbose>0) {
+	    std::cout << "deriv_gsl::deriv_tlate out of range. "
+		      << "Decreasing step." << std::endl;
+	  }
+	}
+      }
+
+      if (fail==true || it_count>=20) {
+        /*
+          if (this->err_nonconv) {
+	  O2SCL_ERR2("Failed to find finite derivative in ",
+          "deriv_gsl::deriv_tlate<>.",o2scl::exc_efailed);
+          }
+        */
+	return o2scl::exc_efailed;
+      }
+      
+      dfdx=r_0;
+      err=error;
+      
+      return 0;
+    }
+
+    /** \brief Compute derivative using 5-point rule
+	
+	Compute the derivative using the 5-point rule (x-h, x-h/2, x,
+	x+h/2, x+h) and the error using the difference between the
+	5-point and the 3-point rule (x-h,x,x+h). Note that the
+	central point is not used for either.
+
+        The value \c func_tol is the error tolerance for the
+        function evaluations.
+    */
+    template <typename func2_t, class fp2_t>
+    int central_deriv_multip(func2_t &&func, fp2_t x, double hh, fp2_t &result, 
+		      fp2_t &abserr_round, fp2_t &abserr_trunc,
+                      double func_tol) {
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      funct_multip fm2;
+      fm2.err_nonconv=false;
+      fm2.tol_rel=func_tol;
+      
+      fp2_t fm1, fp1, fmh, fph;
+    
+      // Ensure all floating-point constants are initialized by
+      // integers
+      fp2_t two=2, three=3, four=4, one=1;
+
+      fp2_t eps=std::numeric_limits<fp2_t>::epsilon();
+
+      fp2_t err;
+      
+      fp2_t xph=x+hh;
+      fp2_t xmh=x-hh;
+
+      int fm2_ret1=fm2.eval_tol_err(func,xmh,fm1,err);
+      if (fm2_ret1!=0) return 1;
+      int fm2_ret2=fm2.eval_tol_err(func,xph,fp1,err);
+      if (fm2_ret2!=0) return 2;
+      
+      fp2_t xmh2=x-hh/two;
+      fp2_t xph2=x+hh/two;
+      
+      int fm2_ret3=fm2.eval_tol_err(func,xmh2,fmh,err);
+      if (fm2_ret3!=0) return 3;
+      int fm2_ret4=fm2.eval_tol_err(func,xph2,fph,err);
+      if (fm2_ret4!=0) return 4;
+      
+      if (this->verbose>0) {
+	std::cout << "deriv_gsl: " << std::endl;
+	std::cout << "step: " << hh << std::endl;
+	std::cout << "abscissas: " << x-hh/two << " " << x-hh << " " 
+		  << x+hh/two << " " << x+hh << std::endl;
+	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
+		  << fp1 << std::endl;
+      }
+      
+      if (!isfinite(fm1) || !isfinite(fp1) ||
+	  !isfinite(fmh) || !isfinite(fph)) {
+        return 5;
+      }
+
+      fp2_t r3=(fp1-fm1)/two;
+      fp2_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
+      
+      fp2_t e3=(abs(fp1)+abs(fm1))*eps;
+      fp2_t e5=two*(abs(fph)+abs(fmh))*eps+e3;
+      
+      /* The next term is due to finite precision in x+h=O (eps*x) */
+      fp2_t trat0=x/hh;
+      fp2_t trat1=r3/hh;
+      fp2_t trat2=r5/hh;
+      fp2_t dy=std::max(abs(trat1),abs(trat2))*
+	abs(trat0)*eps;
+      
+      /* The truncation error in the r5 approximation itself is O(h^4).
+	 However, for safety, we estimate the error from r5-r3, which is
+	 O(h^2).  By scaling h we will minimise this estimated error, not
+	 the actual truncation error in r5. 
+      */
+      
+      result=r5/hh;
+      /* Estimated truncation error O(h^2) */
+      fp2_t tdiff2=r5-r3;
+      fp2_t trat3=tdiff2/hh;
+      abserr_trunc=abs(trat3);
+      /* Rounding error (cancellations) */
+      fp2_t trat4=e5/hh;
+      abserr_round=abs(trat4)+dy;
+
+#else
+      abserr_trunc=std::numeric_limits<fp2_t>::infinity();
+      abserr_round=std::numeric_limits<fp2_t>::infinity();
+#endif
+      
+      if (this->verbose>0) {
+	std::cout << "res: " << result << " trc: " << abserr_trunc 
+		  << " rnd: " << abserr_round << std::endl;
+	if (this->verbose>1) {
+	  char ch;
+	  std::cin >> ch;
+	}
+      }
+      
+      return 0;
+    }
+    
     /** \brief Internal template version of the derivative function
      */
     template<class func2_t> int deriv_tlate(fp_t x, func2_t &func, 
@@ -378,586 +916,6 @@ namespace o2scl {
 
       \endverbatim
   */
-  class deriv_multip_gsl {
-    
-  protected:
-    
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-	uncertainty
-    */
-    template <typename func_t, class fp_t>
-    int deriv_err_int(func_t &&f, fp_t x, fp_t &dfdx, fp_t &err,
-                      double tol) {
-      
-      // Set equal to 0 to avoid uninitialized variable warnings
-      double hh=0;
-      if (h<=0.0) {
-	if (x==0.0) hh=1.0e-4;
-	else hh=static_cast<double>(abs(x))*1.0e-4;
-      } else {
-	hh=h;
-      }
-
-      fp_t r_0, round, trunc, error;
-      // Ensure all floating-point constants are initialized by
-      // integers
-      fp_t one=1, two=2, three=3, ten=10;
-      
-      size_t it_count=0;
-      bool fail=true;
-      while (fail && it_count<20) {
-      
-	fail=false;
-      
-	int cret=central_deriv(f,x,hh,r_0,round,trunc,tol);
-	if (cret!=0) fail=true;
-
-	error=round+trunc;
-      
-	if (fail==false && round < trunc && (round > 0 && trunc > 0)) {
-	  fp_t r_opt, round_opt, trunc_opt, error_opt;
-	
-	  /* Compute an optimised stepsize to minimize the total error,
-	     using the scaling of the truncation error (O(h^2)) and
-	     rounding error (O(1/h)). */
-	
-	  h_opt=hh*static_cast<double>(pow(round/(two*trunc),one/three));
-	  cret=central_deriv(f,x,h_opt,r_opt,round_opt,trunc_opt,tol);
-	  if (cret!=0) fail=true;
-	  error_opt=round_opt+trunc_opt;
-	
-	  /* Check that the new error is smaller, and that the new derivative
-	     is consistent with the error bounds of the original estimate. */
-
-	  fp_t tdiff=r_opt-r_0;
-	  if (fail==false && error_opt < error &&
-	      abs(tdiff) < two*two*error) {
-	    r_0=r_opt;
-	    error=error_opt;
-	  }
-	}
-
-	it_count++;
-	if (fail==true) {
-	  hh/=static_cast<double>(ten);
-	  if (this->verbose>0) {
-	    std::cout << "deriv_gsl::deriv_tlate out of range. "
-		      << "Decreasing step." << std::endl;
-	  }
-	}
-      }
-
-      if (fail==true || it_count>=20) {
-        /*
-          if (this->err_nonconv) {
-	  O2SCL_ERR2("Failed to find finite derivative in ",
-          "deriv_gsl::deriv_tlate<>.",o2scl::exc_efailed);
-          }
-        */
-	return o2scl::exc_efailed;
-      }
-      
-      dfdx=r_0;
-      err=error;
-      
-      return 0;
-    }
-
-    /** \brief Compute derivative using 5-point rule
-	
-	Compute the derivative using the 5-point rule (x-h, x-h/2, x,
-	x+h/2, x+h) and the error using the difference between the
-	5-point and the 3-point rule (x-h,x,x+h). Note that the
-	central point is not used for either.
-
-        The value \c func_tol is the error tolerance for the
-        function evaluations.
-    */
-    template <typename func_t, class fp_t>
-    int central_deriv(func_t &&func, fp_t x, double hh, fp_t &result, 
-		      fp_t &abserr_round, fp_t &abserr_trunc,
-                      double func_tol) {
-
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-      funct_multip fm2;
-      fm2.err_nonconv=false;
-      fm2.tol_rel=func_tol;
-      
-      fp_t fm1, fp1, fmh, fph;
-    
-      // Ensure all floating-point constants are initialized by
-      // integers
-      fp_t two=2, three=3, four=4, one=1;
-
-      fp_t eps=std::numeric_limits<fp_t>::epsilon();
-
-      fp_t err;
-      
-      fp_t xph=x+hh;
-      fp_t xmh=x-hh;
-
-      int fm2_ret1=fm2.eval_tol_err(func,xmh,fm1,err);
-      if (fm2_ret1!=0) return 1;
-      int fm2_ret2=fm2.eval_tol_err(func,xph,fp1,err);
-      if (fm2_ret2!=0) return 2;
-      
-      fp_t xmh2=x-hh/two;
-      fp_t xph2=x+hh/two;
-      
-      int fm2_ret3=fm2.eval_tol_err(func,xmh2,fmh,err);
-      if (fm2_ret3!=0) return 3;
-      int fm2_ret4=fm2.eval_tol_err(func,xph2,fph,err);
-      if (fm2_ret4!=0) return 4;
-      
-      if (this->verbose>0) {
-	std::cout << "deriv_gsl: " << std::endl;
-	std::cout << "step: " << hh << std::endl;
-	std::cout << "abscissas: " << x-hh/two << " " << x-hh << " " 
-		  << x+hh/two << " " << x+hh << std::endl;
-	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
-		  << fp1 << std::endl;
-      }
-      
-      if (!isfinite(fm1) || !isfinite(fp1) ||
-	  !isfinite(fmh) || !isfinite(fph)) {
-        return 5;
-      }
-
-      fp_t r3=(fp1-fm1)/two;
-      fp_t r5=(four/three)*(fph-fmh)-(one/three)*r3;
-      
-      fp_t e3=(abs(fp1)+abs(fm1))*eps;
-      fp_t e5=two*(abs(fph)+abs(fmh))*eps+e3;
-      
-      /* The next term is due to finite precision in x+h=O (eps*x) */
-      fp_t trat0=x/hh;
-      fp_t trat1=r3/hh;
-      fp_t trat2=r5/hh;
-      fp_t dy=std::max(abs(trat1),abs(trat2))*
-	abs(trat0)*eps;
-      
-      /* The truncation error in the r5 approximation itself is O(h^4).
-	 However, for safety, we estimate the error from r5-r3, which is
-	 O(h^2).  By scaling h we will minimise this estimated error, not
-	 the actual truncation error in r5. 
-      */
-      
-      result=r5/hh;
-      /* Estimated truncation error O(h^2) */
-      fp_t tdiff2=r5-r3;
-      fp_t trat3=tdiff2/hh;
-      abserr_trunc=abs(trat3);
-      /* Rounding error (cancellations) */
-      fp_t trat4=e5/hh;
-      abserr_round=abs(trat4)+dy;
-
-#else
-      abserr_trunc=std::numeric_limits<fp_t>::infinity();
-      abserr_round=std::numeric_limits<fp_t>::infinity();
-#endif
-      
-      if (this->verbose>0) {
-	std::cout << "res: " << result << " trc: " << abserr_trunc 
-		  << " rnd: " << abserr_round << std::endl;
-	if (this->verbose>1) {
-	  char ch;
-	  std::cin >> ch;
-	}
-      }
-      
-      return 0;
-    }
-    
-  public:
-
-    /** \brief Initial stepsize 
-	
-	This should be specified before a call to deriv() or
-	deriv_err(). If it is less than or equal to zero, then \f$ x
-	10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
-	will be used.
-    */
-    double h;
-
-    /** \brief The last value of the optimized stepsize
-
-	This is initialized to zero in the constructor and set by
-	deriv_err() to the most recent value of the optimized stepsize.
-    */
-    double h_opt;
-  
-    /** \brief Relative tolerance
-     */
-    double tol_rel;
-
-    /** \brief Power for tolerance of function evaluations 
-        (default 1.33)
-    */
-    double pow_tol_func;
-
-    /** \brief Verbosity parameter
-     */
-    int verbose;
-
-    deriv_multip_gsl() {
-      tol_rel=-1.0;
-      verbose=0;
-      pow_tol_func=1.33;
-      h=0.0;
-      h_opt=0.0;
-    }
-
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-	uncertainty
-    */
-    template<typename func_t, class fp_t>
-    int deriv_err(func_t &&f, fp_t x, fp_t &dfdx, fp_t &err,
-                  double tol_loc=-1.0) {
-      
-      if (tol_loc<=0.0) {
-        if (tol_rel<=0.0) {
-          tol_loc=pow(10.0,-std::numeric_limits<fp_t>::digits10);
-        } else {
-          tol_loc=tol_rel;
-        }
-      } 
-      
-      if (verbose>0) {
-        std::cout << "deriv_multi_gsl::deriv_err(): set "
-                  << "tolerance to: " << tol_loc << std::endl;
-      }
-      
-      // Demand that the function evaluations are higher precision
-      double func_tol=pow(tol_loc,pow_tol_func);
-
-      // ─────────────────────────────────────────────────────────────────
-      // Double precision derivative evaluation
-      
-      bool called_d=false;
-      double dfdx_d, err_d;
-
-      // Begin with a double precision derivative, but only
-      // if double precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits<double>::digits10)) {
-
-        deriv_err_int(f,static_cast<double>(x),dfdx_d,err_d,func_tol);
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "double h_opt is: " << h_opt << std::endl;
-        }
-        
-        called_d=true;
-        
-        // If the result is sufficiently accurate, then return
-        if (err_d/abs(dfdx_d)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_d);
-          err=static_cast<fp_t>(err_d);
-          return 0;
-        }
-
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after double:\n  "
-                    << dtos(dfdx_d,0) << " "
-                    << dtos(err_d,0) << " "
-                    << tol_loc << std::endl;
-        }
-        
-      }
-
-      // ─────────────────────────────────────────────────────────────────
-      // Long double precision derivative evaluation
-      
-      bool called_ld=false;
-      long double dfdx_ld, err_ld;
-      
-      // Attempt to evaluate at long double precision, but only if 
-      // long double precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits<long double>::digits10)) {
-        
-        deriv_err_int(f,static_cast<long double>(x),dfdx_ld,
-                      err_ld,func_tol);
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "long double h_opt is: " << h_opt << std::endl;
-        }
-        
-        called_ld=true;
-        
-        // If the result is sufficiently accurate, then return
-        if (err_ld/abs(dfdx_ld)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_ld);
-          err=static_cast<fp_t>(err_ld);
-          return 0;
-        }
-
-        // If the comparison between the double and long double
-        // precision results shows an accurate result, then return
-        if (called_d && dfdx_ld!=0) {
-          err=static_cast<fp_t>(abs(dfdx_ld-dfdx_d)/abs(dfdx_ld));
-          if (err<tol_loc) {
-            dfdx=static_cast<fp_t>(dfdx_ld);
-            return 0;
-          }
-        }
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after long double:\n  "
-                    << dtos(dfdx_d,0) << " "
-                    << dtos(dfdx_ld,0) << " "
-                    << dtos(err_d,0) << " "
-                    << dtos(err_ld,0) << " "
-                    << dtos(err,0) << " " 
-                    << tol_loc << std::endl;
-        }
-
-      }
-      
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-      
-      // ─────────────────────────────────────────────────────────────────
-      
-      // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/10;
-      
-      // ─────────────────────────────────────────────────────────────────
-      // 25-digit precision derivative evaluation
-      
-      bool called_cdf25=false;
-      cpp_dec_float_25 dfdx_cdf25, err_cdf25;
-
-      // Attempt to evaluate at 25-digit precision, but only if
-      // 25-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_25>::digits10)) {
-        
-        deriv_err_int(f,static_cast<cpp_dec_float_25>(x),
-                      dfdx_cdf25,err_cdf25,func_tol);
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_25]\n "
-                    << "h_opt,dfdx,err: "
-                    << h_opt << " " << dfdx_cdf25 << " "
-                    << err_cdf25 << std::endl;
-        }
-        
-        called_cdf25=true;
-        
-        // If the result is sufficiently accurate, then return
-        if (err_cdf25/abs(dfdx_cdf25)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
-          return 0;
-        }
-
-        // If the comparison between the long double and 25-digit
-        // precision results shows an accurate result, then return
-        if (called_ld && dfdx_cdf25!=0) {
-          err=static_cast<fp_t>(abs(dfdx_cdf25-dfdx_ld)/abs(dfdx_cdf25));
-          if (err<tol_loc) {
-            dfdx=static_cast<fp_t>(dfdx_cdf25);
-            return 0;
-          }
-        }
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after cpp_dec_25:\n  "
-                    << dtos(dfdx_ld,0) << " "
-                    << dtos(dfdx_cdf25,0) << " "
-                    << dtos(err_ld,0) << " "
-                    << dtos(err_cdf25,0) << " "
-                    << dtos(err,0) << " " 
-                    << tol_loc << std::endl;
-        }
-        
-      }
-    
-      // ─────────────────────────────────────────────────────────────────
-
-      // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/100;
-
-      // ─────────────────────────────────────────────────────────────────
-      // 35-digit precision derivative evaluation
-
-      bool called_cdf35=false;
-      cpp_dec_float_35 dfdx_cdf35, err_cdf35;
-
-      // Attempt to evaluate at 35-digit precision, but only if
-      // 35-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_35>::digits10)) {
-        
-        deriv_err_int(f,static_cast<cpp_dec_float_35>(x),
-                      dfdx_cdf35,err_cdf35,func_tol);
-        
-        called_cdf35=true;
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_35]\n "
-                    << "h_opt,dfdx,err: "
-                    << h_opt << " " << dfdx_cdf35 << " "
-                    << err_cdf35 << std::endl;
-        }
-        
-        // If the result is sufficiently accurate, then return
-        if (err_cdf35/abs(dfdx_cdf35)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
-          return 0;
-        }
-
-        // If the comparison between the 25-digit and 35-digit
-        // precision results shows an accurate result, then return
-        if (called_cdf25 && dfdx_cdf35!=0) {
-          err=static_cast<fp_t>(abs(dfdx_cdf35-dfdx_cdf25)/abs(dfdx_cdf35));
-          if (err<tol_loc) {
-            dfdx=static_cast<fp_t>(dfdx_cdf35);
-            return 0;
-          }
-        }
-        
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after cpp_dec_float_35:\n  "
-                    << dtos(dfdx_cdf25,0) << " "
-                    << dtos(dfdx_cdf35,0) << " "
-                    << dtos(err_cdf25,0) << " "
-                    << dtos(err_cdf35,0) << " "
-                    << dtos(err,0) << " " 
-                    << tol_loc << std::endl;
-        }
-
-      }
-    
-      // ─────────────────────────────────────────────────────────────────
-
-      // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/1e4;
-      
-      // ─────────────────────────────────────────────────────────────────
-      // 50-digit precision derivative evaluation
-      
-      bool called_cdf50=false;
-      cpp_dec_float_50 dfdx_cdf50, err_cdf50;
-      
-      // Attempt to evaluate at 50-digit precision, but only if
-      // 50-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_50>::digits10)) {
-        
-        deriv_err_int(f,static_cast<cpp_dec_float_50>(x),
-                      dfdx_cdf50,err_cdf50,func_tol);
-      
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_50 h_opt is: "
-                    << h_opt << std::endl;
-        }
-
-        called_cdf50=true;
-        
-        // If the result is sufficiently accurate, then return
-        if (err_cdf50/abs(dfdx_cdf50)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
-          return 0;
-        }
-
-        // If the comparison between the 35-digit and 50-digit
-        // precision results shows an accurate result, then return
-        if (called_cdf35 && dfdx_cdf50!=0) {
-          err=static_cast<fp_t>(abs(dfdx_cdf50-dfdx_cdf35)/abs(dfdx_cdf50));
-          if (err<tol_loc) {
-            dfdx=static_cast<fp_t>(dfdx_cdf50);
-            return 0;
-          }
-        }
-      
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after cpp_dec_float_50:\n  "
-                    << dtos(dfdx_cdf35,0) << " "
-                    << dtos(dfdx_cdf50,0) << " "
-                    << dtos(err_cdf35,0) << " "
-                    << dtos(err_cdf50,0) << " "
-                    << dtos(err,0) << " " 
-                    << tol_loc << std::endl;
-        }
-
-      }
-      
-      // ─────────────────────────────────────────────────────────────────
-
-      // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/1e8;
-      
-      // ─────────────────────────────────────────────────────────────────
-      // 100-digit precision derivative evaluation
-      
-      bool called_cdf100=false;
-      cpp_dec_float_100 dfdx_cdf100, err_cdf100;
-      
-      // Attempt to evaluate at 100-digit precision, but only if
-      // 100-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_100>::digits10)) {
-        
-        deriv_err_int(f,static_cast<cpp_dec_float_100>(x),
-                      dfdx_cdf100,err_cdf100,func_tol);
-      
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_100 h_opt is: "
-                    << h_opt << std::endl;
-        }
-
-        called_cdf100=true;
-        
-        // If the result is sufficiently accurate, then return
-        if (err_cdf100/abs(dfdx_cdf100)<tol_loc) {
-          dfdx=static_cast<fp_t>(dfdx_cdf100);
-          err=static_cast<fp_t>(err_cdf100);
-          return 0;
-        }
-
-        // If the comparison between the 50-digit and 100-digit
-        // precision results shows an accurate result, then return
-        if (called_cdf50 && dfdx_cdf100!=0) {
-          err=static_cast<fp_t>(abs(dfdx_cdf100-dfdx_cdf50)/
-                                abs(dfdx_cdf100));
-          if (err<tol_loc) {
-            dfdx=static_cast<fp_t>(dfdx_cdf100);
-            return 0;
-          }
-        }
-      
-        if (verbose>0) {
-          std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "failed after cpp_dec_float_100:\n  "
-                    << dtos(dfdx_cdf50,0) << " "
-                    << dtos(dfdx_cdf100,0) << " "
-                    << dtos(err_cdf50,0) << " "
-                    << dtos(err_cdf100,0) << " "
-                    << dtos(err,0) << " " 
-                    << tol_loc << std::endl;
-        }
-
-      }
-
-#endif
-      
-      O2SCL_ERR2("Failed to compute with requested accuracy ",
-                 "in deriv_multip_gsl::deriv_err().",
-                 o2scl::exc_efailed);
-      return o2scl::exc_efailed;
-    }
-
-  };
-
 }
 
 #endif
