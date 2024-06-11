@@ -558,6 +558,11 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
+    /** \brief If true, use multiprecision to improve the integrations
+        (default false)
+    */
+    bool multip;
+    
     /// If true, use expansions for extreme conditions (default true)
     bool use_expansions;
 
@@ -570,6 +575,15 @@ namespace o2scl {
     /// Value for verifying the thermodynamic identity
     fp_t therm_ident;
 
+    /// The default integrator for the non-degenerate regime
+    nit_t nit;
+
+    /// The default integrator for the degenerate regime
+    dit_t dit;
+
+    /// Adaptive multiprecision integrator
+    inte_double_exp_boost<> it_multip;
+    
     /// Alternate solver
     o2scl::root_brent_gsl<func_t,fp_t> alt_solver;
     //@}
@@ -604,6 +618,8 @@ namespace o2scl {
       // AWS, 6/24/21: This appears to give better results than
       // either test_form=0 or test_form=1.
       alt_solver.test_form=2;
+
+      multip=false;
     }
 
     virtual ~fermion_rel2_tl() {
@@ -860,7 +876,9 @@ namespace o2scl {
 	}
       }
 
-      if (!deg) {
+      int iret;
+        
+      if (deg==false) {
 
 	// If the temperature is large enough, perform the full integral
 
@@ -881,7 +899,33 @@ namespace o2scl {
 		    << std::endl;
 	}
 
-        fri.eval_density(y,eta,f.n,unc.n);
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->density_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta](double k) -> double
+          { return this->density_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("n integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+
         f.n*=prefac;
         unc.n*=prefac;
 
@@ -892,7 +936,33 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fri.eval_energy(y,eta,f.ed,unc.ed);
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->energy_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta](double k) -> double
+          { return this->energy_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("e integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+
         f.ed*=prefac*temper;
         unc.ed*=prefac*temper;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
@@ -904,11 +974,38 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fri.eval_entropy(y,eta,f.en,unc.en);
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->entropy_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta](double k) -> double
+          { return this->entropy_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("s integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+
         f.en*=prefac;
         unc.en*=prefac;
 
         if (verify_ti) {
+          
           // Compute the pressure
 
           if (verbose>1) {
@@ -916,7 +1013,32 @@ namespace o2scl {
                       << std::endl;
           }
           
-          int iret=fri.eval_pressure(y,eta,f.pr,unc.pr);
+          if (multip==true) {
+            
+            fp_t tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta](auto &&k) mutable {
+                return this->pressure_fun(k,y,eta); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("p integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta](double k) -> double
+            { return this->pressure_fun(k,y,eta); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("p integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
           
           f.pr*=prefac*temper;
           unc.pr*=prefac*temper;
@@ -979,7 +1101,33 @@ namespace o2scl {
                     << ul << " " << upper_limit_fac << std::endl;
 	}
 
-        fri.eval_deg_density(temper,y,eta,mot,ul,f.n,unc.n);
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta,mot,ul](auto &&k) mutable {
+              return this->deg_density_fun(k,y,eta,mot,ul); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+          { return this->deg_density_fun(k,y,eta,mot,ul); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("n integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+        
         f.n*=prefac;
         unc.n*=prefac;
 
@@ -990,7 +1138,34 @@ namespace o2scl {
 		    << std::endl;
 	}
 	
-        fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
+        if (multip==true) {
+          
+          fp_t tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta,mot,ul](auto &&k) mutable {
+              return this->deg_energy_fun(k,y,eta,mot,ul); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+          { return this->deg_energy_fun(k,y,eta,mot,ul); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("e integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+        
+        //fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
         f.ed*=prefac;
         unc.ed*=prefac;
 
@@ -1021,18 +1196,79 @@ namespace o2scl {
 	}
 	
 	if (ll>0.0) {
-          fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
+
+          if (multip==true) {
+            
+            fp_t tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_entropy_fun(k,y,eta,mot,ul); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+            { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("s integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
           
 	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
           last_method_s="deg. integrals, lower limit positive";
+          
 	} else {
-          fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
+          
+          if (multip==true) {
+            
+            fp_t tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_entropy_fun(k,y,eta,mot,ul); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            // The non-degenerate case
+            
+            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+            { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("s integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
 
 	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
           last_method_s="deg. integrals, lower limit zero";
+          
 	}
+        
         f.en*=prefac;
         unc.en*=prefac;
 
@@ -1044,7 +1280,37 @@ namespace o2scl {
                       << std::endl;
           }
 
-          fri.eval_deg_pressure(temper,y,eta,mot,ul,f.pr,unc.pr);
+          if (multip==true) {
+            
+            fp_t tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_pressure_fun(k,y,eta,mot,ul); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("p integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            // The non-degenerate case
+            
+            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+            { return this->deg_pressure_fun(k,y,eta,mot,ul); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("p integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_deg_pressure(temper,y,eta,mot,ul,f.pr,unc.pr);
+          
           f.pr*=prefac;
           unc.pr*=prefac;
         }
@@ -1056,9 +1322,9 @@ namespace o2scl {
 	
 	
       }
-
+      
       // Compute the pressure using the thermodynamic identity
-
+      
       if (verify_ti==false) {
         f.pr=-f.ed+temper*f.en+f.nu*f.n;
         unc.pr=sqrt(unc.ed*unc.ed+temper*unc.en*temper*unc.en+

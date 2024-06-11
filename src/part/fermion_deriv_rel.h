@@ -642,7 +642,9 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
-    /// If true, use multiprecision to improve the integrations
+    /** \brief If true, use multiprecision to improve the integrations
+        (default false)
+    */
     bool multip;
     
     /// If true, verify the thermodynamic identity (default false)
