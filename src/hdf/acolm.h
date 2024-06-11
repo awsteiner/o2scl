@@ -2026,6 +2026,21 @@ namespace o2scl_acol {
     */
     virtual int comm_min(std::vector<std::string> &sv, bool itive_com);
 
+    /** \brief Numerically differentiate a user-specified function 
+
+        Arguments: <tt><function of 'x'> <value>
+        [multip=false]</tt>
+
+        This command numerically differentiates <function> with respect to
+        x at <value>.
+
+        The third argument is a set of optional keyword arguments. If
+        multip is set to either \c "1" or \c "true", then
+        multiprecision is used to attempt to ensure the result is
+        accurate to within the requested precision.
+    */
+    virtual int comm_nderiv(std::vector<std::string> &sv, bool itive_com);
+
     /** \brief Numerically integrate a user-specified function 
 
         Arguments: <tt><function> <variable> <lower limit> 
@@ -2037,8 +2052,7 @@ namespace o2scl_acol {
         The fifth argument is a set of keyword arguments. If multip is
         set to  either \c "1" or \c "true", then multiprecision is
         used to attempt to ensure the result is accurate to within the
-        requested precision (multiprecision only works on OSX right now
-        possibly because the Ubuntu release of boost is still behind). 
+        requested precision.
 
         There are three methods, kb (Kronrod from boost), deb 
         (double exponential from boost) or ac (adaptive integration

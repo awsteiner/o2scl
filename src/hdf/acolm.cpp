@@ -1484,7 +1484,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=22;
+  static const int narr=23;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1536,6 +1536,9 @@ int acol_manager::setup_options() {
     cl_param};
   opts_new[13]={'i',"internal","",0,1,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
+    both};
+  opts_new[22]={0,"nderiv","",0,5,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nderiv),
     both};
   opts_new[14]={0,"ninteg","",0,5,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ninteg),

@@ -2157,8 +2157,8 @@ namespace o2scl {
             
             double tol_rel=0;
             int ix=it_multip.integ_iu_err_multip
-              ([this,y,eta,mot,ul](auto &&k) mutable {
-                return this->deg_density_fun(k,y,eta,mot,ul); },
+              ([this,T,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_density_fun(k,T,y,eta,mot,ul); },
                 zero,f.n,unc.n,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("n integration (ndeg, multip) failed in ",
@@ -2168,8 +2168,8 @@ namespace o2scl {
             
           } else {
             
-            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-            { return this->deg_density_fun(k,y,eta,mot,ul); };
+            funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
+            { return this->deg_density_fun(k,T,y,eta,mot,ul); };
             
             iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
             if (iret!=0) {
@@ -2397,8 +2397,8 @@ namespace o2scl {
               
               double tol_rel=0;
               int ix=it_multip.integ_iu_err_multip
-                ([this,y,eta,mot,ul](auto &&k) mutable {
-                  return this->deg_density_fun(k,y,eta,mot,ul); },
+                ([this,T,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_density_fun(k,T,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
                 O2SCL_ERR2("n integration (ndeg, multip) failed in ",
@@ -2408,8 +2408,8 @@ namespace o2scl {
               
             } else {
               
-              funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-              { return this->deg_density_fun(k,y,eta,mot,ul); };
+              funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
+              { return this->deg_density_fun(k,T,y,eta,mot,ul); };
               
               iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
               if (iret!=0) {
@@ -2578,8 +2578,8 @@ namespace o2scl {
               
               double tol_rel=0;
               int ix=it_multip.integ_iu_err_multip
-                ([this,y,eta,mot,ul](auto &&k) mutable {
-                  return this->deg_density_fun(k,y,eta,mot,ul); },
+                ([this,T,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_density_fun(k,T,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
                 O2SCL_ERR2("n integration (ndeg, multip) failed in ",
@@ -2589,8 +2589,8 @@ namespace o2scl {
               
             } else {
               
-              funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-              { return this->deg_density_fun(k,y,eta,mot,ul); };
+              funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
+              { return this->deg_density_fun(k,T,y,eta,mot,ul); };
               
               iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
               if (iret!=0) {

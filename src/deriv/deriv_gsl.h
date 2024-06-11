@@ -113,6 +113,18 @@ namespace o2scl {
       applications of the formula for the first derivative. No
       uncertainty for these derivatives is provided.
       
+      The multiprecision version uses \ref funct_multip to ensure the
+      function evaluations are sufficiently accurate and then ensures
+      that the derivative evaluation is below the requested relative
+      tolerance. If the relative tolerance is not specified, then \f$
+      10^{-d} \f$ is used where \f$ d \f$ is the value reported by
+      <tt>numeric_limits::digits10</tt> for the input floating point
+      type.
+
+      \note Derivatives near zero can be particularly troublesome,
+      even for simple functions, since this class only uses relative
+      tolerances.
+
       \verbatim embed:rst
       An example demonstrating the usage of this class is 
       given in the :ref:`Differentiation example`.
@@ -136,12 +148,15 @@ namespace o2scl {
 
     virtual ~deriv_gsl() {}
     
-    /** \brief Initial stepsize 
+    /** \brief Initial stepsize
 	
 	This should be specified before a call to deriv() or
 	deriv_err(). If it is less than or equal to zero, then \f$ x
 	10^{-4} \f$ will used, or if \c x is zero, then \f$ 10^{-4} \f$
 	will be used.
+
+        This quantity is not currently used for the adaptive
+        multiprecision derivatives.
     */
     fp_t h;
 
@@ -154,12 +169,14 @@ namespace o2scl {
 
 	This is initialized to zero in the constructor and set by
 	deriv_err() to the most recent value of the optimized stepsize.
+
+        This optimal stepsize is not modified for the adaptive
+        multiprecision derivatives.
     */
     fp_t h_opt;
   
     /** \brief Power for tolerance of function evaluations
-        with adaptive multiprecision
-        (default 1.33)
+        with adaptive multiprecision (default 1.33)
     */
     double pow_tol_func;
 
@@ -170,11 +187,11 @@ namespace o2scl {
       return deriv_tlate<func_t>(x,func,dfdx,err);
     }
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-	uncertainty
+    /** \brief Calculate the first derivative of \c func w.r.t. x and 
+	uncertainty (adaptive multiprecision)
     */
     template<typename func2_t, class fp2_t>
-    int deriv_err_multip(func2_t &&f, fp2_t x, fp2_t &dfdx, fp2_t &err,
+    int deriv_err_multip(fp2_t x, func2_t &&f, fp2_t &dfdx, fp2_t &err,
                          double tol_loc=-1.0) {
       
       if (tol_loc<=0.0) {
@@ -194,15 +211,17 @@ namespace o2scl {
       
       bool called_d=false;
       double dfdx_d, err_d;
+      double hh=0.0;
 
       // Begin with a double precision derivative, but only
       // if double precision is enough for the function evaluations
       if (tol_loc>pow(10.0,-std::numeric_limits<double>::digits10)) {
 
-        deriv_err_int_multip(f,static_cast<double>(x),dfdx_d,err_d,func_tol);
+        deriv_err_int_multip(f,static_cast<double>(x),dfdx_d,err_d,
+                             func_tol,hh);
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "double h_opt is: " << h_opt << std::endl;
+                    << "double hh is: " << hh << std::endl;
         }
         
         called_d=true;
@@ -235,11 +254,11 @@ namespace o2scl {
       if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<long double>(x),dfdx_ld,
-                             err_ld,func_tol);
+                             err_ld,func_tol,hh);
         
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "long double h_opt is: " << h_opt << std::endl;
+                    << "long double hh is: " << hh << std::endl;
         }
         
         called_ld=true;
@@ -279,7 +298,7 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
       
       // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/10;
+      hh/=10.0;
       
       // ─────────────────────────────────────────────────────────────────
       // 25-digit precision derivative evaluation
@@ -293,12 +312,12 @@ namespace o2scl {
                        <cpp_dec_float_25>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_25>(x),
-                             dfdx_cdf25,err_cdf25,func_tol);
+                             dfdx_cdf25,err_cdf25,func_tol,hh);
         
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_25]\n "
-                    << "h_opt,dfdx,err: "
-                    << h_opt << " " << dfdx_cdf25 << " "
+                    << "hh,dfdx,err: "
+                    << hh << " " << dfdx_cdf25 << " "
                     << err_cdf25 << std::endl;
         }
         
@@ -337,7 +356,7 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
 
       // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/100;
+      hh/=100.0;
 
       // ─────────────────────────────────────────────────────────────────
       // 35-digit precision derivative evaluation
@@ -351,14 +370,14 @@ namespace o2scl {
                        <cpp_dec_float_35>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_35>(x),
-                             dfdx_cdf35,err_cdf35,func_tol);
+                             dfdx_cdf35,err_cdf35,func_tol,hh);
         
         called_cdf35=true;
         
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() [cpp_dec_float_35]\n "
-                    << "h_opt,dfdx,err: "
-                    << h_opt << " " << dfdx_cdf35 << " "
+                    << "hh,dfdx,err: "
+                    << hh << " " << dfdx_cdf35 << " "
                     << err_cdf35 << std::endl;
         }
         
@@ -395,7 +414,7 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
 
       // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/1e4;
+      hh/=1.0e4;
       
       // ─────────────────────────────────────────────────────────────────
       // 50-digit precision derivative evaluation
@@ -409,12 +428,12 @@ namespace o2scl {
                        <cpp_dec_float_50>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_50>(x),
-                             dfdx_cdf50,err_cdf50,func_tol);
+                             dfdx_cdf50,err_cdf50,func_tol,hh);
       
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_50 h_opt is: "
-                    << h_opt << std::endl;
+                    << "cpp_dec_float_50 hh is: "
+                    << hh << std::endl;
         }
 
         called_cdf50=true;
@@ -452,7 +471,7 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
 
       // Determine the next stepsize by the previous optimal stepsize
-      h=h_opt/1e8;
+      hh/=1.0e8;
       
       // ─────────────────────────────────────────────────────────────────
       // 100-digit precision derivative evaluation
@@ -466,12 +485,12 @@ namespace o2scl {
                        <cpp_dec_float_100>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_100>(x),
-                             dfdx_cdf100,err_cdf100,func_tol);
+                             dfdx_cdf100,err_cdf100,func_tol,hh);
       
         if (this->verbose>0) {
           std::cout << "deriv_multi_gsl::deriv_err() "
-                    << "cpp_dec_float_100 h_opt is: "
-                    << h_opt << std::endl;
+                    << "cpp_dec_float_100 hh is: "
+                    << hh << std::endl;
         }
 
         called_cdf100=true;
@@ -520,20 +539,20 @@ namespace o2scl {
 
   protected:
 
-    /** \brief Calculate the first derivative of \c func  w.r.t. x and 
-	uncertainty
+    /** \brief Calculate the derivative of \c f w.r.t. \c x
+        (internal multiprecision version)
+        
+        The error estimate is placed in \c err, the desired
+        tolerance should be specified in \c tol and the
+        initial step size in \c hh.
     */
     template <typename func2_t, class fp2_t>
     int deriv_err_int_multip(func2_t &&f, fp2_t x, fp2_t &dfdx, fp2_t &err,
-                      double tol) {
+                             double tol, double hh=0.0) {
       
-      // Set equal to 0 to avoid uninitialized variable warnings
-      double hh=0;
-      if (h<=0.0) {
+      if (hh<=0.0) {
 	if (x==0.0) hh=1.0e-4;
 	else hh=static_cast<double>(abs(x))*1.0e-4;
-      } else {
-	hh=h;
       }
 
       fp2_t r_0, round, trunc, error;
@@ -559,8 +578,9 @@ namespace o2scl {
 	     using the scaling of the truncation error (O(h^2)) and
 	     rounding error (O(1/h)). */
 	
-	  h_opt=hh*static_cast<double>(pow(round/(two*trunc),one/three));
-	  cret=central_deriv_multip(f,x,h_opt,r_opt,round_opt,trunc_opt,tol);
+	  double hh_opt=hh*static_cast<double>
+            (pow(round/(two*trunc),one/three));
+	  cret=central_deriv_multip(f,x,hh_opt,r_opt,round_opt,trunc_opt,tol);
 	  if (cret!=0) fail=true;
 	  error_opt=round_opt+trunc_opt;
 	
@@ -597,17 +617,19 @@ namespace o2scl {
       
       dfdx=r_0;
       err=error;
+      hh=h_opt;
       
       return 0;
     }
 
-    /** \brief Compute derivative using 5-point rule
+    /** \brief Compute derivative using 5-point rule (multiprecision
+        version)
 	
 	Compute the derivative using the 5-point rule (x-h, x-h/2, x,
 	x+h/2, x+h) and the error using the difference between the
 	5-point and the 3-point rule (x-h,x,x+h). Note that the
 	central point is not used for either.
-
+        
         The value \c func_tol is the error tolerance for the
         function evaluations.
     */
@@ -649,12 +671,12 @@ namespace o2scl {
       if (fm2_ret4!=0) return 4;
       
       if (this->verbose>0) {
-	std::cout << "deriv_gsl: " << std::endl;
-	std::cout << "step: " << hh << std::endl;
-	std::cout << "abscissas: " << x-hh/two << " " << x-hh << " " 
+	std::cout << "deriv_gsl::central_deriv_multip(): " << std::endl;
+	std::cout << "  step: " << hh << std::endl;
+	std::cout << "  abscissas: " << x-hh/two << " " << x-hh << " " 
 		  << x+hh/two << " " << x+hh << std::endl;
-	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
-		  << fp1 << std::endl;
+	std::cout << "  ordinates: " << fm1 << " " << fmh << " "
+                  << fph << " " << fp1 << std::endl;
       }
       
       if (!isfinite(fm1) || !isfinite(fp1) ||
@@ -707,7 +729,8 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief Internal template version of the derivative function
+    /** \brief Calculate the derivative of \c func w.r.t. \c x
+        (internal version)
      */
     template<class func2_t> int deriv_tlate(fp_t x, func2_t &func, 
 					    fp_t &dfdx, fp_t &err) {
@@ -799,9 +822,6 @@ namespace o2scl {
 	x+h/2, x+h) and the error using the difference between the
 	5-point and the 3-point rule (x-h,x,x+h). Note that the
 	central point is not used for either.
-
-	This must be a class template because it is used by
-	both deriv_err() and deriv_err_int().
     */
     template<class func2_t> 
     int central_deriv(fp_t x, fp_t hh, fp_t &result, 
@@ -827,11 +847,11 @@ namespace o2scl {
       fph=func(xph2);
 
       if (this->verbose>0) {
-	std::cout << "deriv_gsl: " << std::endl;
-	std::cout << "step: " << hh << std::endl;
-	std::cout << "abscissas: " << x-hh/two << " " << x-hh << " " 
+	std::cout << "deriv_gsl::central_deriv(): " << std::endl;
+	std::cout << "  step: " << hh << std::endl;
+	std::cout << "  abscissas: " << x-hh/two << " " << x-hh << " " 
 		  << x+hh/two << " " << x+hh << std::endl;
-	std::cout << "ordinates: " << fm1 << " " << fmh << " " << fph << " " 
+	std::cout << "  ordinates: " << fm1 << " " << fmh << " " << fph << " " 
 		  << fp1 << std::endl;
       }
       
@@ -886,37 +906,6 @@ namespace o2scl {
     
   };
 
-  /** \brief Evalulate a derivative to within a requested tolerance
-      using multiprecision if necessary
-
-      Experimental.
-
-      This class uses \ref funct_multip to ensure the function
-      evaluations are sufficiently accurate and then ensures that the
-      derivative evaluation is below the requested relative tolerance.
-      If the relative tolerance is not specified, then \f$ 10^{-d} \f$
-      is used where \f$ d \f$ is the value reported by
-      <tt>numeric_limits::digits10</tt> for the input floating point
-      type.
-
-      \note Derivatives near zero can be particularly troublesome,
-      even for simple functions, since this class only uses relative
-      tolerances.
-
-      \verbatim embed:rst
-      .. todo:: 
-
-         In class deriv_multip_gsl:
-
-         - More carefully optimize pow_tol_func and the 
-           stepsize guesses.
-         - Allow the user to specify the value of 'h' 
-           for the individual derivative objects.
-         - Allow the user to determine how many function evaluations
-           or precision required for the last derivative.
-
-      \endverbatim
-  */
 }
 
 #endif
