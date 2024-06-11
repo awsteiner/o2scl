@@ -2709,9 +2709,9 @@ namespace o2scl_hdf {
 
       Other functions:
 
-      abs(x), min(x,y), max(x,y), floor(x), ceil(x), 
-      sqrt1pm1(x) [√(1+x)-1], and 
-      if(t,x,y) [If t>0.5 then x, otherwise y.]
+      abs(x), ceil(x), floor(x), if(t,x,y) [If t>0.5 then x,
+      otherwise y.], isfinite(x), isinf(x), isnan(x),
+      max(x,y), min(x,y), and sqrt1pm1(x) [√(1+x)-1].
 
       Special values:
 

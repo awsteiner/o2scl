@@ -158,6 +158,10 @@ namespace o2scl {
     bool show_exp_sgn;
     /// The decimal point (default <tt>'.'</tt>)
     std::string dpt;
+    /// String for infinite value
+    std::string inf;
+    /// String for "not a number" values
+    std::string nan;
     //@}
 
     bool alt_exp_digits;

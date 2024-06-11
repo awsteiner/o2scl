@@ -180,11 +180,11 @@ int main(int argc, char *argv[]) {
   // These seem to improve the accuracy. It's not clear that more
   // stringent tolerances will improve results.
   fr.upper_limit_fac=40.0;
-  fr.fri.dit.tol_abs=1.0e-13;
-  fr.fri.dit.tol_rel=1.0e-13;
-  fr.fri.nit.tol_abs=1.0e-13;
-  fr.fri.nit.tol_rel=1.0e-13;
-  fr.density_root->tol_rel=1.0e-10;
+  fr.dit.tol_abs=1.0e-13;
+  fr.dit.tol_rel=1.0e-13;
+  fr.nit.tol_abs=1.0e-13;
+  fr.nit.tol_rel=1.0e-13;
+  fr.density_root.tol_rel=1.0e-10;
 
   // Check calc_mu() alone
   double v2=pcc.part_calibrate<fermion,fermion_rel2>

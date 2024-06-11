@@ -575,6 +575,21 @@ namespace o2scl {
     /// Value for verifying the thermodynamic identity
     fp_t therm_ident;
 
+    /** \brief Set inte objects
+	
+	The first integrator is used for non-degenerate integration
+	and should integrate from 0 to \f$ \infty \f$ (like \ref
+	o2scl::inte_qagiu_gsl). The second integrator is for the
+	degenerate case, and should integrate between two finite
+	values.
+    */
+    void set_inte(inte<std::function<fp_t(fp_t)>,fp_t> &unit,
+                  inte<std::function<fp_t(fp_t)>,fp_t> &udit) {
+      nit=&unit;
+      dit=&udit;
+      return;
+    }    
+    
     /// The default integrator for the non-degenerate regime
     nit_t nit;
 
@@ -605,10 +620,10 @@ namespace o2scl {
       verbose=0;
       last_method=0;
       last_method_s="";
-
-      density_root=&def_density_root;
       
-      density_root->tol_rel=1.0e-7;
+      //density_root=&def_density_root;
+      
+      density_root.tol_rel=1.0e-7;
 
       tol_expan=1.0e-14;
       verify_ti=false;
@@ -625,11 +640,11 @@ namespace o2scl {
     virtual ~fermion_rel2_tl() {
     }
 
-    /// The solver for calc_density()
-    root<func_t,func_t,fp_t> *density_root;
+    // The solver for calc_density()
+    //root<func_t,func_t,fp_t> *density_root;
 
-    /// The default solver for the chemical potential given the density
-    root_t def_density_root;
+    // The default solver for the chemical potential given the density
+    root_t density_root;
     
     /// Return string denoting type ("fermion_rel")
     virtual const char *type() { return "fermion_rel"; }
@@ -759,9 +774,9 @@ namespace o2scl {
       // Below, we switch to a root_brent_gsl object in the case
       // that the default solver fails.
   
-      bool drec=density_root->err_nonconv;
-      density_root->err_nonconv=false;
-      int ret=density_root->solve(nex,mf);
+      bool drec=density_root.err_nonconv;
+      density_root.err_nonconv=false;
+      int ret=density_root.solve(nex,mf);
       last_method=1;
       last_method_s="default solver";
 
@@ -776,7 +791,7 @@ namespace o2scl {
 			this->err_nonconv);
       }
 
-      density_root->err_nonconv=drec;
+      density_root.err_nonconv=drec;
 
       f.nu=nex*temper;
 
@@ -901,7 +916,7 @@ namespace o2scl {
 
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->density_fun(k,y,eta); },
@@ -938,7 +953,7 @@ namespace o2scl {
 	
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->energy_fun(k,y,eta); },
@@ -976,7 +991,7 @@ namespace o2scl {
 	
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->entropy_fun(k,y,eta); },
@@ -1015,7 +1030,7 @@ namespace o2scl {
           
           if (multip==true) {
             
-            fp_t tol_rel=0;
+            double tol_rel=0;
             int ix=it_multip.integ_iu_err_multip
               ([this,y,eta](auto &&k) mutable {
                 return this->pressure_fun(k,y,eta); },
@@ -1100,13 +1115,13 @@ namespace o2scl {
 	  std::cout << "calc_mu(): deg number density, ul, ulf: "
                     << ul << " " << upper_limit_fac << std::endl;
 	}
-
+        
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
-            ([this,y,eta,mot,ul](auto &&k) mutable {
-              return this->deg_density_fun(k,y,eta,mot,ul); },
+            ([this,temper,y,eta,mot](auto &&k) mutable {
+              return this->deg_density_fun(k,temper,y,eta,mot,false); },
               zero,f.n,unc.n,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("n integration (ndeg, multip) failed in ",
@@ -1116,8 +1131,8 @@ namespace o2scl {
           
         } else {
           
-          funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-          { return this->deg_density_fun(k,y,eta,mot,ul); };
+          funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
+          { return this->deg_density_fun(k,temper,y,eta,mot,false); };
           
           iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
           if (iret!=0) {
@@ -1140,7 +1155,7 @@ namespace o2scl {
 	
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta,mot,ul](auto &&k) mutable {
               return this->deg_energy_fun(k,y,eta,mot,ul); },
@@ -1199,7 +1214,7 @@ namespace o2scl {
 
           if (multip==true) {
             
-            fp_t tol_rel=0;
+            double tol_rel=0;
             int ix=it_multip.integ_iu_err_multip
               ([this,y,eta,mot,ul](auto &&k) mutable {
                 return this->deg_entropy_fun(k,y,eta,mot,ul); },
@@ -1234,7 +1249,7 @@ namespace o2scl {
           
           if (multip==true) {
             
-            fp_t tol_rel=0;
+            double tol_rel=0;
             int ix=it_multip.integ_iu_err_multip
               ([this,y,eta,mot,ul](auto &&k) mutable {
                 return this->deg_entropy_fun(k,y,eta,mot,ul); },
@@ -1281,11 +1296,11 @@ namespace o2scl {
           }
 
           if (multip==true) {
-            
-            fp_t tol_rel=0;
+
+            double tol_rel=0;
             int ix=it_multip.integ_iu_err_multip
-              ([this,y,eta,mot,ul](auto &&k) mutable {
-                return this->deg_pressure_fun(k,y,eta,mot,ul); },
+              ([this,temper,y,eta,mot](auto &&k) mutable {
+                return this->deg_pressure_fun(k,temper,y,eta,mot,false); },
                 zero,f.n,unc.n,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("p integration (ndeg, multip) failed in ",
@@ -1297,8 +1312,8 @@ namespace o2scl {
             
             // The non-degenerate case
             
-            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-            { return this->deg_pressure_fun(k,y,eta,mot,ul); };
+            funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
+            { return this->deg_pressure_fun(k,temper,y,eta,mot,false); };
             
             iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
             if (iret!=0) {
@@ -1402,6 +1417,9 @@ namespace o2scl {
 
       if (f.non_interacting) { f.mu=f.nu; }
 
+      fp_t zero=0;
+      int iret;
+      
       // -----------------------------------------------------------------
       // Now use the chemical potential to compute the energy density,
       // pressure, and entropy
@@ -1468,15 +1486,70 @@ namespace o2scl {
         eta=f.ms/temper;
 
         fp_t prefac=f.g*pow(temper,4.0)/2.0/this->pi2;
+
+        if (multip==true) {
+          
+          double tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->energy_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta](double k) -> double
+          { return this->energy_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("e integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
         
-        fri.eval_energy(y,eta,f.ed,unc.ed);
+        //fri.eval_energy(y,eta,f.ed,unc.ed);
+        
         f.ed*=prefac;
         unc.ed*=prefac;
 	if (!f.inc_rest_mass) f.ed-=f.n*f.m;
         
         prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
 
-        fri.eval_entropy(y,eta,f.en,unc.en);
+        if (multip==true) {
+          
+          double tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->entropy_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct s_fun_f=[this,y,eta](double k) -> double
+          { return this->entropy_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(s_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("s integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+
+        //fri.eval_entropy(y,eta,f.en,unc.en);
         f.en*=prefac;
         unc.en*=prefac;
         
@@ -1528,12 +1601,68 @@ namespace o2scl {
 	  }
 
           fp_t prefac=f.g/2.0/this->pi2;
-          fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
+
+          if (multip==true) {
+            
+            double tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_energy_fun(k,y,eta,mot,ul); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+            { return this->deg_energy_fun(k,y,eta,mot,ul); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("e integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
           f.ed*=prefac;
           unc.ed*=prefac;
           
 	  if (ll>0.0) {
-            fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
+
+            if (multip==true) {
+              
+              double tol_rel=0;
+              int ix=it_multip.integ_iu_err_multip
+                ([this,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_entropy_fun(k,y,eta,mot,ul); },
+                  zero,f.n,unc.n,tol_rel);
+              if (ix!=0) {
+                O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            } else {
+              
+              funct s_fun_f=[this,y,eta,mot,ul](double k) -> double
+              { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+              
+              iret=nit.integ_iu_err(s_fun_f,zero,f.n,unc.n);
+              if (iret!=0) {
+                O2SCL_ERR2("s integration (ndeg) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            }
+            
+            //fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
 	    last_method+=4;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -1543,7 +1672,35 @@ namespace o2scl {
                 "positive in calc_density";
             }
 	  } else {
-            fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
+            
+            if (multip==true) {
+              
+              double tol_rel=0;
+              int ix=it_multip.integ_iu_err_multip
+                ([this,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_entropy_fun(k,y,eta,mot,ul); },
+                  zero,f.n,unc.n,tol_rel);
+              if (ix!=0) {
+                O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            } else {
+              
+              funct s_fun_f=[this,y,eta,mot,ul](double k) -> double
+              { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+              
+              iret=nit.integ_iu_err(s_fun_f,zero,f.n,unc.n);
+              if (iret!=0) {
+                O2SCL_ERR2("s integration (ndeg) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            }
+            
+            //fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
 	    last_method+=5;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -1678,7 +1835,7 @@ namespace o2scl {
         if (verbose>1) {
           std::cout << "Setting solver verbose parameters to 1."
                     << std::endl;
-          density_root->verbose=1;
+          density_root.verbose=1;
           alt_solver.verbose=1;
         }
       }
@@ -1728,9 +1885,9 @@ namespace o2scl {
                             std::ref(f),temper,false);
         
         // Begin by trying the user-specified guess
-        bool drec=density_root->err_nonconv;
-        density_root->err_nonconv=false;
-        int ret=density_root->solve(nex,mf);
+        bool drec=density_root.err_nonconv;
+        density_root.err_nonconv=false;
+        int ret=density_root.solve(nex,mf);
         if (ret==0) {
           if (verbose>0) {
             std::cout << "Initial solver succeeded." << std::endl;
@@ -1791,10 +1948,10 @@ namespace o2scl {
         }
         
         // Restore value of err_nonconv
-        density_root->err_nonconv=drec;
+        density_root.err_nonconv=drec;
         
         if (verbose>1) {
-          density_root->verbose=0;
+          density_root.verbose=0;
           alt_solver.verbose=0;
         }
         
@@ -1819,42 +1976,43 @@ namespace o2scl {
         
         // If we succeeded (i.e. if ret==0), then continue
         
-      }
-      
-      f.nu=nex*temper;
+        f.nu=nex*temper;
         
-      if (f.non_interacting==true) { f.mu=f.nu; }
-
-      // Finally, now that we have the chemical potential, use pair_mu()
-      // to evaluate the energy density, pressure, and entropy
-      int lm=last_method;
-      std::string stmp=last_method_s;
-      pair_mu(f,temper);
-      last_method+=lm;
-      if (last_method_s.length()>200) {
-        O2SCL_ERR("Last method problem in fermion_rel.",
-                  o2scl::exc_esanity);
-      } else {
-        last_method_s="pair_density: "+stmp+" : calc_mu: "+last_method_s;
-      }
-
-      if (false && fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
-        std::cout << "last_method, ret: "
-                  << last_method << " " << ret << std::endl;
-        std::cout << "density_root tolerances: "
-                  << density_root->tol_rel << " " << density_root->tol_abs
-                  << std::endl;
-        std::cout << "rbg tolerances: " << alt_solver.tol_rel << " "
-                  << alt_solver.tol_abs
-                  << std::endl;
-        std::cout << "T,n,density_match: " << temper << " " << f.n << " "
-                  << density_match << std::endl;
-        std::cout << "Rel. dev.: "
-                  << fabs(f.n-density_match)/fabs(density_match) << std::endl;
-        nex=f.nu/temper;
-        std::cout << "mf: " << mf(nex) << std::endl;
-        O2SCL_ERR2("Secondary failure in ",
-                   "fermion_rel::pair_density().",o2scl::exc_esanity);
+        if (f.non_interacting==true) { f.mu=f.nu; }
+        
+        // Finally, now that we have the chemical potential, use pair_mu()
+        // to evaluate the energy density, pressure, and entropy
+        int lm=last_method;
+        std::string stmp=last_method_s;
+        pair_mu(f,temper);
+        last_method+=lm;
+        if (last_method_s.length()>200) {
+          O2SCL_ERR("Last method problem in fermion_rel.",
+                    o2scl::exc_esanity);
+        } else {
+          last_method_s="pair_density: "+stmp+" : calc_mu: "+last_method_s;
+        }
+        
+        if (false && fabs(f.n-density_match)/fabs(density_match)>1.0e-5) {
+          std::cout << "last_method, ret: "
+                    << last_method << " " << ret << std::endl;
+          std::cout << "density_root tolerances: "
+                    << density_root.tol_rel << " " << density_root.tol_abs
+                    << std::endl;
+          std::cout << "rbg tolerances: " << alt_solver.tol_rel << " "
+                    << alt_solver.tol_abs
+                    << std::endl;
+          std::cout << "T,n,density_match: " << temper << " " << f.n << " "
+                    << density_match << std::endl;
+          std::cout << "Rel. dev.: "
+                    << fabs(f.n-density_match)/fabs(density_match)
+                    << std::endl;
+          nex=f.nu/temper;
+          std::cout << "mf: " << mf(nex) << std::endl;
+          O2SCL_ERR2("Secondary failure in ",
+                     "fermion_rel::pair_density().",o2scl::exc_esanity);
+        }
+        
       }
       
       // Return the density to the user-specified value
@@ -1878,6 +2036,9 @@ namespace o2scl {
       // warnings, so I'm setting nden to a large value to
       // make sure that they're not causing problems.
       fp_t nden=1.0e99, yy;
+      
+      fp_t zero=0;
+      int iret;
       
       f.nu=T*x;
 
@@ -1935,7 +2096,34 @@ namespace o2scl {
 
         fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2;
         
-        fri.eval_density(y,eta,nden,unc.n);
+        if (multip==true) {
+          
+          double tol_rel=0;
+          int ix=it_multip.integ_iu_err_multip
+            ([this,y,eta](auto &&k) mutable {
+              return this->density_fun(k,y,eta); },
+              zero,f.n,unc.n,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        } else {
+          
+          funct n_fun_f=[this,y,eta](double k) -> double
+          { return this->density_fun(k,y,eta); };
+          
+          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          if (iret!=0) {
+            O2SCL_ERR2("n integration (ndeg) failed in ",
+                       "fermion_rel2::calc_mu().",
+                       exc_efailed);
+          }
+          
+        }
+
+        //fri.eval_density(y,eta,nden,unc.n);
         nden*=prefac;
         unc.n*=prefac;
         
@@ -1965,7 +2153,34 @@ namespace o2scl {
 
           ul=sqrt(arg);
       
-          fri.eval_deg_density(T,y,eta,mot,ul,nden,unc.n);
+          if (multip==true) {
+            
+            double tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta,mot,ul](auto &&k) mutable {
+                return this->deg_density_fun(k,y,eta,mot,ul); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+            { return this->deg_density_fun(k,y,eta,mot,ul); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("n integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_deg_density(T,y,eta,mot,ul,nden,unc.n);
           nden*=f.g/2.0/this->pi2;
           unc.n*=f.g/2.0/this->pi2;
           
@@ -2006,7 +2221,9 @@ namespace o2scl {
       // warnings, so I'm setting these to a large value to
       // make sure that they're not causing problems.
       fp_t nden_p=1.0e99, nden_ap=1.0e99;
-
+      fp_t zero=0;
+      int iret;
+      
       // -----------------------------------------------------------------
 
       f.nu=T*x;
@@ -2111,9 +2328,37 @@ namespace o2scl {
 
           //bool save=fri.nit.err_nonconv;
           //fri.nit.err_nonconv=false;
-          int reti1=fri.eval_density(y,eta,nden_p,unc2);
+
+          if (multip==true) {
+            
+            double tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta](auto &&k) mutable {
+                return this->density_fun(k,y,eta); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta](double k) -> double
+            { return this->density_fun(k,y,eta); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("n integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //int reti1=fri.eval_density(y,eta,nden_p,unc2);
           //fri.nit.err_nonconv=save;
-          if (reti1!=0) return 1;
+          //if (reti1!=0) return 1;
           nden_p*=prefac;
         
 	  if (!isfinite(nden_p)) {
@@ -2147,9 +2392,38 @@ namespace o2scl {
 
             //bool save=fri.dit.err_nonconv;
             //fri.dit.err_nonconv=false;
-            int reti2=fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
+            
+            if (multip==true) {
+              
+              double tol_rel=0;
+              int ix=it_multip.integ_iu_err_multip
+                ([this,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_density_fun(k,y,eta,mot,ul); },
+                  zero,f.n,unc.n,tol_rel);
+              if (ix!=0) {
+                O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            } else {
+              
+              funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+              { return this->deg_density_fun(k,y,eta,mot,ul); };
+              
+              iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+              if (iret!=0) {
+                O2SCL_ERR2("n integration (ndeg) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            }
+          
+            //int reti2=fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
             //fri.dit.err_nonconv=save;
-            if (reti2!=0) return 2;
+            //if (reti2!=0) return 2;
+            
             nden_p*=f.g/2.0/this->pi2;
             
 	  } else {
@@ -2239,7 +2513,34 @@ namespace o2scl {
           
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
           
-          fri.eval_density(y,eta,nden_ap,unc2);
+          if (multip==true) {
+            
+            double tol_rel=0;
+            int ix=it_multip.integ_iu_err_multip
+              ([this,y,eta](auto &&k) mutable {
+                return this->density_fun(k,y,eta); },
+                zero,f.n,unc.n,tol_rel);
+            if (ix!=0) {
+              O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          } else {
+            
+            funct n_fun_f=[this,y,eta](double k) -> double
+            { return this->density_fun(k,y,eta); };
+            
+            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            if (iret!=0) {
+              O2SCL_ERR2("n integration (ndeg) failed in ",
+                         "fermion_rel2::calc_mu().",
+                         exc_efailed);
+            }
+            
+          }
+          
+          //fri.eval_density(y,eta,nden_ap,unc2);
           nden_ap*=prefac;
         
 	  if (!isfinite(nden_ap)) {
@@ -2269,11 +2570,40 @@ namespace o2scl {
 	  }
       
 	  fp_t ul, unc2=0;
+          
 	  if (arg>0.0) {
 	    ul=sqrt(arg);
-            fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc2);
+            
+            if (multip==true) {
+              
+              double tol_rel=0;
+              int ix=it_multip.integ_iu_err_multip
+                ([this,y,eta,mot,ul](auto &&k) mutable {
+                  return this->deg_density_fun(k,y,eta,mot,ul); },
+                  zero,f.n,unc.n,tol_rel);
+              if (ix!=0) {
+                O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            } else {
+              
+              funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
+              { return this->deg_density_fun(k,y,eta,mot,ul); };
+              
+              iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+              if (iret!=0) {
+                O2SCL_ERR2("n integration (ndeg) failed in ",
+                           "fermion_rel2::calc_mu().",
+                           exc_efailed);
+              }
+              
+            }
+            
+            //fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc2);
             nden_ap*=f.g/2.0/this->pi2;
-
+            
 	  } else {
 	    nden_ap=0.0;
 	  }
@@ -2312,237 +2642,44 @@ namespace o2scl {
 
   /** \brief Double precision version of \ref o2scl::fermion_rel2_tl
   */
-  typedef fermion_rel2_tl<> fermion_rel;
+  typedef fermion_rel2_tl<> fermion_rel2;
 
-  /** \brief Long double precision version of \ref o2scl::fermion_rel2_tl
-   */
-  class fermion_rel2_ld : public
-  fermion_rel2_tl<
-    // the fermion type
-    fermion_tl<long double>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<long double,funct_cdf25,
-                             cpp_dec_float_25>,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
-    // The fermion integrator. Note that we can't use
-    // fermion_rel_integ here because it is based on the GSL
-    // integrators which only work with double types
-    fermion_rel_integ_multip<long double>,
-    // The density solver
-    root_brent_gsl<funct_ld,long double>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_ld,long double>,
-    // The function type
-    funct_ld,
-    // The floating-point type
-    long double> {
-
-  public:
-    
-    fermion_rel2_ld() {
-
-      // The goal here is to get results to within 1 part in 10^18
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-18);
-
-      // No tolerance needed for the boost version
-      //this->be_integ.set_tol(1.0e-18);
-
-      // Internal function tolerances
-
-      // This could be as large as log(1.0e4932)=11400,
-      // but only 200 is used for double, so we try this for now.
-      fri.exp_limit=11400.0;
-      
-      // log(1.0e18) is 41.4
-      this->upper_limit_fac=52.0;
-      this->deg_entropy_fac=52.0;
-      this->tol_expan=1.0e-18;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
-
-      // Integrator tolerances
-      fri.tol_rel=1.0e-20;
-      fri.it.tol_rel=1.0e-20;
-      fri.it2.tol_rel=1.0e-20;
-      
-    }
-    
-  };
-
-  /** \brief 25-digit precision version of \ref o2scl::fermion_rel2_tl
-   */
-  class fermion_rel2_cdf25 : public
-  fermion_rel2_tl<
-    // the fermion type
-    fermion_tl<cpp_dec_float_25>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_boost<cpp_dec_float_25,cpp_dec_float_35>,
-    // The fermion integrator
-    fermion_rel_integ_multip<cpp_dec_float_25>,
-    // The density solver
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The function type
-    funct_cdf25,
-    // The floating-point type
-    cpp_dec_float_25> {
-
-  public:
-    
-    fermion_rel2_cdf25() {
-
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-23);
-
-      // No tolerance needed for the boost version
-      //this->be_integ.set_tol(1.0e-23);
-
-      // Internal function tolerances
-
-      //this->exp_limit=1000000.0;
-      fri.exp_limit=6.7e7;
-      
-      // log(1.0e25) is 57.5
-      this->upper_limit_fac=62.0;
-      this->deg_entropy_fac=62.0;
-      this->tol_expan=1.0e-23;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-23;
-      this->def_massless_root.tol_abs=1.0e-23;
-
-      // Integrator tolerances
-      fri.tol_rel=1.0e-25;
-      fri.it.tol_rel=1.0e-25;
-      fri.it2.tol_rel=1.0e-25;
-    }
-    
-  };
-
-#ifdef O2SCL_NEVER_DEFINED  
-  /** \brief Desc
-   */
-  class fermion_rel2_ld_multip : public
-  fermion_rel2_tl<
-    // the fermion type
-    fermion_tl<long double>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_multip,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_boost<long double,cpp_dec_float_25>,
-    // The fermion integrator
-    fermion_rel2_integ_multip<long double>,
-    // The density solver
-    root_brent_gsl<funct_ld,long double>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_ld,long double>,
-    // The function type
-    funct_ld,
-    // The floating-point type
-    long double> {
-
-  public:
-    
-    fermion_rel2_ld_multip() {
-
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-21);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-21);
-
-      // Internal function tolerances
-
-      // This could be as large as log(1.0e4932)=11400,
-      // but only 200 is used for double, so we try this for now.
-      this->exp_limit=4000.0;
-      
-      // log(1.0e18) is 41.4
-      this->upper_limit_fac=42.0;
-      this->deg_entropy_fac=42.0;
-      this->tol_expan=1.0e-17;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-18;
-      this->def_massless_root.tol_abs=1.0e-18;
-
-      // Integrator tolerances
-      fri.tol_rel=1.0e-16;
-    }
-    
-  };
-
-#endif  
-#ifdef O2SCL_NEVER_DEFINED
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
-  /** \brief Desc
+  /** \brief Long double version of 
+      \ref o2scl::fermion_rel2_tl 
   */
-  class fermion_rel2_cdf252 : public
-  fermion_rel2_tl<
-    // the fermion type
-    fermion_tl<cpp_dec_float_25>,
-    // the Fermi-Dirac integrator
-    fermi_dirac_integ_direct<
-      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
-    // the Bessel-exp integrator
-    bessel_K_exp_integ_direct<
-      cpp_dec_float_25,funct_cdf35,cpp_dec_float_35>,
-    // The fermion integrator
-    fermion_rel2_integ_multip<cpp_dec_float_25>,
-    // The density solver
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The parent solver for massless fermions
-    root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-    // The function type
-    funct_cdf25,
-    // The floating-point type
-    cpp_dec_float_25> {
+  typedef fermion_rel2_tl<fermion_tl<long double>,
+                          fermi_dirac_integ_direct<long double,funct_cdf25,
+                                                   cpp_dec_float_25>,
+                          bessel_K_exp_integ_boost<long double,
+                                                   cpp_dec_float_25>,
+                          inte_double_exp_boost<>,
+                          inte_double_exp_boost<>,
+                          root_brent_gsl<funct_ld,long double>,
+                          funct_ld,
+                          long double>
+  fermion_rel2_ld;
+  
+  /** \brief 25-digit version of 
+      \ref o2scl::fermion_rel2_tl 
+  */
+  typedef fermion_rel2_tl<fermion_tl<cpp_dec_float_25>,
+                          fermi_dirac_integ_direct<
+                            cpp_dec_float_25,funct_cdf35,
+                            cpp_dec_float_35>,
+                          bessel_K_exp_integ_boost<cpp_dec_float_25,
+                                                   cpp_dec_float_35>,
+                          inte_double_exp_boost<>,
+                          inte_double_exp_boost<>,
+                          root_brent_gsl<funct_ld,cpp_dec_float_25>,
+                          funct_cdf25,
+                          cpp_dec_float_25>
+  fermion_rel2_cdf25;
+  
+#endif  
 
-  public:
-    
-    fermion_rel2_cdf252() {
 
-      // See output of polylog_ts for numeric limit information
-      
-      // Tolerance for the integrator for massless fermions
-      this->fd_integ.set_tol(1.0e-25);
-
-      // Tolerance for the integrator for the nondegenerate expansion
-      this->be_integ.set_tol(1.0e-25);
-
-      // Internal function tolerances
-
-      this->exp_limit=1000000.0;
-      
-      // log(1.0e25) is 57.5
-      this->upper_limit_fac=58.0;
-      this->deg_entropy_fac=58.0;
-      this->tol_expan=1.0e-24;
-
-      // Solver tolerances
-      this->def_density_root.tol_abs=1.0e-25;
-      this->def_massless_root.tol_abs=1.0e-25;
-
-      // Integrator tolerances
-      fri.tol_rel=1.0e-23;
-    }
-    
-  };
-
-#endif
   
 }
 
