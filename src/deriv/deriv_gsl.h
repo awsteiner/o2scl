@@ -197,7 +197,7 @@ namespace o2scl {
 
       // Begin with a double precision derivative, but only
       // if double precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits<double>::digits10)) {
+      if (tol_loc>pow(10.0,-std::numeric_limits<double>::digits10)) {
 
         deriv_err_int_multip(f,static_cast<double>(x),dfdx_d,err_d,func_tol);
         if (this->verbose>0) {
@@ -232,7 +232,7 @@ namespace o2scl {
       
       // Attempt to evaluate at long double precision, but only if 
       // long double precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits<long double>::digits10)) {
+      if (tol_loc>pow(10.0,-std::numeric_limits<long double>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<long double>(x),dfdx_ld,
                              err_ld,func_tol);
@@ -289,7 +289,7 @@ namespace o2scl {
 
       // Attempt to evaluate at 25-digit precision, but only if
       // 25-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
+      if (tol_loc>pow(10.0,-std::numeric_limits
                        <cpp_dec_float_25>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_25>(x),
@@ -347,7 +347,7 @@ namespace o2scl {
 
       // Attempt to evaluate at 35-digit precision, but only if
       // 35-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
+      if (tol_loc>pow(10.0,-std::numeric_limits
                        <cpp_dec_float_35>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_35>(x),
@@ -405,7 +405,7 @@ namespace o2scl {
       
       // Attempt to evaluate at 50-digit precision, but only if
       // 50-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
+      if (tol_loc>pow(10.0,-std::numeric_limits
                        <cpp_dec_float_50>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_50>(x),
@@ -462,7 +462,7 @@ namespace o2scl {
       
       // Attempt to evaluate at 100-digit precision, but only if
       // 100-digit precision is enough for the function evaluations
-      if (func_tol>pow(10.0,-std::numeric_limits
+      if (tol_loc>pow(10.0,-std::numeric_limits
                        <cpp_dec_float_100>::digits10)) {
         
         deriv_err_int_multip(f,static_cast<cpp_dec_float_100>(x),
@@ -612,11 +612,12 @@ namespace o2scl {
         function evaluations.
     */
     template <typename func2_t, class fp2_t>
-    int central_deriv_multip(func2_t &&func, fp2_t x, double hh, fp2_t &result, 
-		      fp2_t &abserr_round, fp2_t &abserr_trunc,
-                      double func_tol) {
+    int central_deriv_multip(func2_t &&func, fp2_t x, double hh,
+                             fp2_t &result, fp2_t &abserr_round,
+                             fp2_t &abserr_trunc, double func_tol) {
 
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;

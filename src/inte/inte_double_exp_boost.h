@@ -99,7 +99,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -107,7 +107,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -133,7 +133,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_iu_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -141,7 +141,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_iu_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -167,7 +167,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_il_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -175,7 +175,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_il_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -200,7 +200,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_i_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -208,7 +208,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_i_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -249,7 +249,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_int() "
+        std::cout << "inte_double_exp_boost::integ_err_int() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
@@ -262,7 +262,7 @@ namespace o2scl {
       
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -305,7 +305,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_int() "
+        std::cout << "inte_double_exp_boost::integ_iu_err_int() "
                   << "tols(target,integ,func),res,err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << res << " " << err << " "
@@ -356,7 +356,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_int() "
+        std::cout << "inte_double_exp_boost::integ_il_err_int() "
                   << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << " "
@@ -401,7 +401,7 @@ namespace o2scl {
       { return fm2(func,x); };
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_int(): "
+        std::cout << "inte_double_exp_boost::integ_i_err_int(): "
                   << std::endl;
       }
       boost::math::quadrature::sinh_sinh<fp_t> it_x(max_refine);
@@ -409,7 +409,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_int() "
+        std::cout << "inte_double_exp_boost::integ_i_err_int() "
                   << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << " "

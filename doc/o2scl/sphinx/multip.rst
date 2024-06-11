@@ -18,14 +18,12 @@ the compilation time and the associated memory requirements.
 List of classes which support adaptive multiprecision:
 
 - Function evaluation: :ref:`funct_multip_tl <funct_multip_tl>`
-- Numerical differentiation: :ref:`deriv_multip_gsl <deriv_multip_gsl>`
-- Integration: :ref:`inte_gauss_cern <inte_gauss_cern>`,
-  :ref:`inte_adapt_cern_tl <inte_adapt_cern_tl>`,
-       :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
-  and :ref:`inte_double_exp_boost <inte_double_exp_boost>`.
-
-..   
-   - Root-finding: :ref:`root_multip_brent_gsl <root_multip_brent_gsl>`
+- Numerical differentiation: :ref:`deriv_gsl <deriv_gsl>`
+- Root-finding: :ref:`root_brent_gsl <root_brent_gsl>`
+- Integration: :ref:`inte_kronrod_boost <inte_kronrod_boost>`,
+  :ref:`inte_double_exp_boost <inte_double_exp_boost>`.
+  :ref:`inte_gauss_cern <inte_gauss_cern>`, and
+  :ref:`inte_adapt_cern_tl <inte_adapt_cern_tl>`.
   
 List of classes which support multiprecision types:
 
@@ -33,8 +31,8 @@ List of classes which support multiprecision types:
 - Function approximation: :ref:`cheb_approx_tl <cheb_approx_tl>`
 - Root-finding: :ref:`root_brent_gsl <root_brent_gsl>` and
   :ref:`root_toms748 <root_toms748>`
-- String to and from floating-point conversions: :cpp:func:`o2scl::dtos()`,
-  :cpp:func:`o2scl::function_to_fp()`, and 
+- String to and from floating-point conversions:
+  :cpp:func:`o2scl::dtos()`, :cpp:func:`o2scl::function_to_fp()`, and 
   :cpp:func:`o2scl::function_to_fp_nothrow()`.
 - Polynomial solving:
   :ref:`quadratic_real_coeff_gsl2<quadratic_real_coeff_gsl2>`,
