@@ -1088,7 +1088,7 @@ namespace o2scl {
                             fp_t>::deg_entropy_fun<fp_t>),
                            this,std::placeholders::_1,T,y,eta,mot);
       fp_t zero=0;
-      int iret=dit.integ_err(mfd,0,ul,res,err);
+      int iret=dit.integ_err(mfd,ll,ul,res,err);
       if (iret!=0 && err_nonconv) {
         O2SCL_ERR2("Degnerate entropy integration failed in ",
                    "fermion_rel_integ::eval_density().",
@@ -1844,12 +1844,17 @@ namespace o2scl {
         
 	if (ll>0.0) {
           fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
-          
+          /*
+          std::cout << "fr  ll>0, f.en " << temper << " "
+                      << y << " " << eta << " " << mot << " "
+                    << dtos(f.en,-1) << std::endl;
+          */
 	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
           last_method_s="deg. integrals, lower limit positive";
 	} else {
           fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
+          //std::cout << "fr  ll<0, f.en " << dtos(f.en,-1) << std::endl;
           
 	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
@@ -2535,6 +2540,11 @@ namespace o2scl {
         }
         
         yy=(f.n-nden)/f.n;
+      }
+      
+      if (this->verbose>=2) {
+        std::cout << "1 " << psi << " " << deg << " "
+                  << x << " " << yy << std::endl;
       }
       
       return yy;

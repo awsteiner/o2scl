@@ -218,6 +218,9 @@ build_ot:
 	-docker build . --rm -f v0.928_ot \
 		> v0.928_ot.out 2>&1 
 
+build_ct:
+	-docker build . --rm all -f cuda_test
+
 # ----------------------------------------------
 # Old builds
 
