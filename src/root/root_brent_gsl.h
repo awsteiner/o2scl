@@ -154,11 +154,13 @@ namespace o2scl {
       return o2scl::gsl_continue;
     }
 
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$
+        returning \f$ x_1 \f$ (internal multiprecision version)
+     */
     template<typename func2_t, class fp2_t>
     int solve_bkt_int_multip(fp2_t &x1, fp2_t x2, func2_t &f,
                              double root_tol, double func_tol) {
                              
-
       fp2_t storage[11];
       
       fp2_t &lroot=storage[0];
@@ -290,6 +292,9 @@ namespace o2scl {
     /// Return the type, \c "root_brent_gsl".
     virtual const char *type() { return "root_brent_gsl"; }
 
+    /** \brief Power for tolerance of function evaluations
+        with adaptive multiprecision (default 1.33)
+    */
     double pow_tol_func;
     
     /** \brief Perform an iteration
@@ -417,6 +422,8 @@ namespace o2scl {
       return o2scl::success;
     }
     
+    /** \brief Perform an iteration (adaptive multiprecision version)
+    */
     template<typename func2_t, class fp2_t>
     int iterate_multip(func2_t &f, double func_tol, fp2_t storage[11]) {
       
@@ -557,7 +564,9 @@ namespace o2scl {
       return o2scl::success;
     }
       
-    /// Solve \c func in region \f$ x_1<x<x_2 \f$ returning \f$ x_1 \f$.
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$ returning
+        \f$ x_1 \f$.
+     */
     virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &f) {
 	
       int status, iter=0;
@@ -665,6 +674,9 @@ namespace o2scl {
       return o2scl::success;
     }
 
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$ returning
+        \f$ x_1 \f$ (adaptive multiprecision version)
+     */
     template<typename func2_t, class fp2_t>
     int solve_bkt_multip(fp2_t &x1, fp2_t x2, func2_t &&f, fp2_t &err,
                          double tol_loc=-1.0) {
@@ -1015,8 +1027,7 @@ namespace o2scl {
     }
 
     /** \brief Set the information for the solver
-
-        This function currently always returns \ref success.
+        (adaptive multiprecision version)
     */
     template<typename func2_t, class fp2_t>
     int set_multip(func2_t &ff, fp2_t lower, fp2_t upper,

@@ -856,8 +856,6 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
-        //std::cout << "cmn_cmu: " << f.nu << " " << temper << " "
-        //<< tol_expan << " " << acc << std::endl;
 	if (verbose>1) {
 	  std::cout << "calc_mu(): non-deg expan (fermion) " << acc
                     << " " << verbose << std::endl;
@@ -909,13 +907,13 @@ namespace o2scl {
 
 	// Compute the number density
     
-	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg number density:"
-		    << std::endl;
-	}
-
         if (multip==true) {
           
+          if (verbose>1) {
+            std::cout << "calc_mu(): non-deg number density (multip):"
+                      << std::endl;
+          }
+
           double tol_rel=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
@@ -929,6 +927,11 @@ namespace o2scl {
           
         } else {
           
+          if (verbose>1) {
+            std::cout << "calc_mu(): non-deg number density:"
+                      << std::endl;
+          }
+
           funct n_fun_f=[this,y,eta](double k) -> double
           { return this->density_fun(k,y,eta); };
           
@@ -941,6 +944,7 @@ namespace o2scl {
           
         }
 
+        std::cout << "x: " << f.n << " " << prefac << std::endl;
         f.n*=prefac;
         unc.n*=prefac;
 
@@ -957,7 +961,7 @@ namespace o2scl {
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->energy_fun(k,y,eta); },
-              zero,f.n,unc.n,tol_rel);
+              zero,f.ed,unc.ed,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("e integration (ndeg, multip) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -969,7 +973,7 @@ namespace o2scl {
           funct n_fun_f=[this,y,eta](double k) -> double
           { return this->energy_fun(k,y,eta); };
           
-          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          iret=nit.integ_iu_err(n_fun_f,zero,f.ed,unc.ed);
           if (iret!=0) {
             O2SCL_ERR2("e integration (ndeg) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -995,7 +999,7 @@ namespace o2scl {
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->entropy_fun(k,y,eta); },
-              zero,f.n,unc.n,tol_rel);
+              zero,f.en,unc.en,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("s integration (ndeg, multip) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -1007,7 +1011,7 @@ namespace o2scl {
           funct n_fun_f=[this,y,eta](double k) -> double
           { return this->entropy_fun(k,y,eta); };
           
-          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          iret=nit.integ_iu_err(n_fun_f,zero,f.en,unc.en);
           if (iret!=0) {
             O2SCL_ERR2("s integration (ndeg) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -1034,7 +1038,7 @@ namespace o2scl {
             int ix=it_multip.integ_iu_err_multip
               ([this,y,eta](auto &&k) mutable {
                 return this->pressure_fun(k,y,eta); },
-                zero,f.n,unc.n,tol_rel);
+                zero,f.pr,unc.pr,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("p integration (ndeg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1046,7 +1050,7 @@ namespace o2scl {
             funct n_fun_f=[this,y,eta](double k) -> double
             { return this->pressure_fun(k,y,eta); };
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            iret=nit.integ_iu_err(n_fun_f,zero,f.pr,unc.pr);
             if (iret!=0) {
               O2SCL_ERR2("p integration (ndeg) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1119,12 +1123,12 @@ namespace o2scl {
         if (multip==true) {
           
           double tol_rel=0;
-          int ix=it_multip.integ_iu_err_multip
+          int ix=it_multip.integ_err_multip
             ([this,temper,y,eta,mot](auto &&k) mutable {
               return this->deg_density_fun(k,temper,y,eta,mot,false); },
               zero,f.n,unc.n,tol_rel);
           if (ix!=0) {
-            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+            O2SCL_ERR2("n integration (deg, multip) failed in ",
                        "fermion_rel2::calc_mu().",
                        exc_efailed);
           }
@@ -1134,9 +1138,9 @@ namespace o2scl {
           funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
           { return this->deg_density_fun(k,temper,y,eta,mot,false); };
           
-          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          iret=dit.integ_err(n_fun_f,zero,f.n,unc.n);
           if (iret!=0) {
-            O2SCL_ERR2("n integration (ndeg) failed in ",
+            O2SCL_ERR2("n integration (deg) failed in ",
                        "fermion_rel2::calc_mu().",
                        exc_efailed);
           }
@@ -1145,6 +1149,7 @@ namespace o2scl {
         
         f.n*=prefac;
         unc.n*=prefac;
+        std::cout << "f.n: " << f.n << std::endl;
 
 	// Compute the energy density
 
@@ -1156,10 +1161,10 @@ namespace o2scl {
         if (multip==true) {
           
           double tol_rel=0;
-          int ix=it_multip.integ_iu_err_multip
-            ([this,y,eta,mot,ul](auto &&k) mutable {
-              return this->deg_energy_fun(k,y,eta,mot,ul); },
-              zero,f.n,unc.n,tol_rel);
+          int ix=it_multip.integ_err_multip
+            ([this,temper,y,eta,mot](auto &&k) mutable {
+              return this->deg_energy_fun(k,temper,y,eta,mot); },
+              zero,f.ed,unc.ed,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("e integration (ndeg, multip) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -1168,21 +1173,21 @@ namespace o2scl {
           
         } else {
           
-          funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-          { return this->deg_energy_fun(k,y,eta,mot,ul); };
+          funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
+          { return this->deg_energy_fun(k,temper,y,eta,mot); };
           
-          iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+          iret=dit.integ_err(n_fun_f,zero,f.ed,unc.ed);
           if (iret!=0) {
-            O2SCL_ERR2("e integration (ndeg) failed in ",
+            O2SCL_ERR2("e integration (deg) failed in ",
                        "fermion_rel2::calc_mu().",
                        exc_efailed);
           }
           
         }
         
-        //fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
         f.ed*=prefac;
         unc.ed*=prefac;
+        std::cout << "f.ed: " << f.ed << std::endl;
 
 	// Compute the lower limit for the entropy integration
 
@@ -1205,20 +1210,20 @@ namespace o2scl {
 
 	// Compute the entropy
 
-	if (verbose>1) {
-	  std::cout << "calc_mu(): deg entropy."
-		    << std::endl;
-	}
-	
 	if (ll>0.0) {
 
           if (multip==true) {
             
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg entropy (ll>0,multip):"
+                        << std::endl;
+            }
+
             double tol_rel=0;
-            int ix=it_multip.integ_iu_err_multip
-              ([this,y,eta,mot,ul](auto &&k) mutable {
-                return this->deg_entropy_fun(k,y,eta,mot,ul); },
-                zero,f.n,unc.n,tol_rel);
+            int ix=it_multip.integ_err_multip
+              ([this,temper,y,eta,mot](auto &&k) mutable {
+                return this->deg_entropy_fun(k,temper,y,eta,mot); },
+                ll,ul,f.en,unc.en,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("s integration (ndeg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1227,10 +1232,15 @@ namespace o2scl {
             
           } else {
             
-            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-            { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg entropy (ll>0):"
+                        << std::endl;
+            }
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
+            { return this->deg_entropy_fun(k,temper,y,eta,mot); };
+            
+            iret=dit.integ_err(n_fun_f,ll,ul,f.en,unc.en);
             if (iret!=0) {
               O2SCL_ERR2("s integration (ndeg) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1239,9 +1249,6 @@ namespace o2scl {
             
           }
           
-          //fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
-          
-	  //f.en=dit->integ(mfs,ll,ul);
 	  last_method=7;
           last_method_s="deg. integrals, lower limit positive";
           
@@ -1249,11 +1256,16 @@ namespace o2scl {
           
           if (multip==true) {
             
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg entropy (ll<0,multip):"
+                        << std::endl;
+            }
+            
             double tol_rel=0;
-            int ix=it_multip.integ_iu_err_multip
-              ([this,y,eta,mot,ul](auto &&k) mutable {
-                return this->deg_entropy_fun(k,y,eta,mot,ul); },
-                zero,f.n,unc.n,tol_rel);
+            int ix=it_multip.integ_err_multip
+              ([this,temper,y,eta,mot](auto &&k) mutable {
+                return this->deg_entropy_fun(k,temper,y,eta,mot); },
+                zero,ul,f.en,unc.en,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("s integration (ndeg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1262,12 +1274,15 @@ namespace o2scl {
             
           } else {
             
-            // The non-degenerate case
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg entropy (ll<0):"
+                        << std::endl;
+            }
             
-            funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
-            { return this->deg_entropy_fun(k,y,eta,mot,ul); };
+            funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
+            { return this->deg_entropy_fun(k,temper,y,eta,mot); };
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            iret=dit.integ_err(n_fun_f,zero,ul,f.en,unc.en);
             if (iret!=0) {
               O2SCL_ERR2("s integration (ndeg) failed in ",
                          "fermion_rel2::calc_mu().",
@@ -1276,9 +1291,6 @@ namespace o2scl {
             
           }
           
-          //fri.eval_deg_entropy(temper,y,eta,mot,0,ul,f.en,unc.en);
-
-	  //f.en=dit->integ(mfs,0.0,ul);
 	  last_method=8;
           last_method_s="deg. integrals, lower limit zero";
           
@@ -1290,34 +1302,37 @@ namespace o2scl {
         if (verify_ti) {
           // Compute the pressure
           
-          if (verbose>1) {
-            std::cout << "calc_mu(): deg pressure."
-                      << std::endl;
-          }
-
           if (multip==true) {
 
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg pressure (multip):"
+                        << std::endl;
+            }
+
             double tol_rel=0;
-            int ix=it_multip.integ_iu_err_multip
+            int ix=it_multip.integ_err_multip
               ([this,temper,y,eta,mot](auto &&k) mutable {
                 return this->deg_pressure_fun(k,temper,y,eta,mot,false); },
-                zero,f.n,unc.n,tol_rel);
+                zero,f.pr,unc.pr,tol_rel);
             if (ix!=0) {
-              O2SCL_ERR2("p integration (ndeg, multip) failed in ",
+              O2SCL_ERR2("p integration (deg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
             
           } else {
             
-            // The non-degenerate case
-            
+            if (verbose>1) {
+              std::cout << "calc_mu(): deg pressure:"
+                        << std::endl;
+            }
+
             funct n_fun_f=[this,temper,y,eta,mot](double k) -> double
             { return this->deg_pressure_fun(k,temper,y,eta,mot,false); };
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            iret=dit.integ_err(n_fun_f,zero,f.pr,unc.pr);
             if (iret!=0) {
-              O2SCL_ERR2("p integration (ndeg) failed in ",
+              O2SCL_ERR2("p integration (deg) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
@@ -1605,12 +1620,12 @@ namespace o2scl {
           if (multip==true) {
             
             double tol_rel=0;
-            int ix=it_multip.integ_iu_err_multip
+            int ix=it_multip.integ_err_multip
               ([this,y,eta,mot,ul](auto &&k) mutable {
                 return this->deg_energy_fun(k,y,eta,mot,ul); },
                 zero,f.n,unc.n,tol_rel);
             if (ix!=0) {
-              O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+              O2SCL_ERR2("e integration (deg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
@@ -1620,9 +1635,9 @@ namespace o2scl {
             funct n_fun_f=[this,y,eta,mot,ul](double k) -> double
             { return this->deg_energy_fun(k,y,eta,mot,ul); };
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            iret=dit.integ_err(n_fun_f,zero,f.n,unc.n);
             if (iret!=0) {
-              O2SCL_ERR2("e integration (ndeg) failed in ",
+              O2SCL_ERR2("e integration (deg) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
@@ -1638,12 +1653,12 @@ namespace o2scl {
             if (multip==true) {
               
               double tol_rel=0;
-              int ix=it_multip.integ_iu_err_multip
+              int ix=it_multip.integ_err_multip
                 ([this,y,eta,mot,ul](auto &&k) mutable {
                   return this->deg_entropy_fun(k,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
-                O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                O2SCL_ERR2("s integration (deg, multip) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -1653,9 +1668,9 @@ namespace o2scl {
               funct s_fun_f=[this,y,eta,mot,ul](double k) -> double
               { return this->deg_entropy_fun(k,y,eta,mot,ul); };
               
-              iret=nit.integ_iu_err(s_fun_f,zero,f.n,unc.n);
+              iret=dit.integ_err(s_fun_f,zero,f.n,unc.n);
               if (iret!=0) {
-                O2SCL_ERR2("s integration (ndeg) failed in ",
+                O2SCL_ERR2("s integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -1676,12 +1691,12 @@ namespace o2scl {
             if (multip==true) {
               
               double tol_rel=0;
-              int ix=it_multip.integ_iu_err_multip
+              int ix=it_multip.integ_err_multip
                 ([this,y,eta,mot,ul](auto &&k) mutable {
                   return this->deg_entropy_fun(k,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
-                O2SCL_ERR2("s integration (ndeg, multip) failed in ",
+                O2SCL_ERR2("s integration (deg, multip) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -1691,9 +1706,9 @@ namespace o2scl {
               funct s_fun_f=[this,y,eta,mot,ul](double k) -> double
               { return this->deg_entropy_fun(k,y,eta,mot,ul); };
               
-              iret=nit.integ_iu_err(s_fun_f,zero,f.n,unc.n);
+              iret=dit.integ_err(s_fun_f,zero,f.n,unc.n);
               if (iret!=0) {
-                O2SCL_ERR2("s integration (ndeg) failed in ",
+                O2SCL_ERR2("s integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -2156,12 +2171,12 @@ namespace o2scl {
           if (multip==true) {
             
             double tol_rel=0;
-            int ix=it_multip.integ_iu_err_multip
+            int ix=it_multip.integ_err_multip
               ([this,T,y,eta,mot,ul](auto &&k) mutable {
                 return this->deg_density_fun(k,T,y,eta,mot,ul); },
                 zero,f.n,unc.n,tol_rel);
             if (ix!=0) {
-              O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+              O2SCL_ERR2("n integration (deg, multip) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
@@ -2171,9 +2186,9 @@ namespace o2scl {
             funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
             { return this->deg_density_fun(k,T,y,eta,mot,ul); };
             
-            iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+            iret=dit.integ_err(n_fun_f,zero,f.n,unc.n);
             if (iret!=0) {
-              O2SCL_ERR2("n integration (ndeg) failed in ",
+              O2SCL_ERR2("n integration (deg) failed in ",
                          "fermion_rel2::calc_mu().",
                          exc_efailed);
             }
@@ -2396,12 +2411,12 @@ namespace o2scl {
             if (multip==true) {
               
               double tol_rel=0;
-              int ix=it_multip.integ_iu_err_multip
+              int ix=it_multip.integ_err_multip
                 ([this,T,y,eta,mot,ul](auto &&k) mutable {
                   return this->deg_density_fun(k,T,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
-                O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                O2SCL_ERR2("n integration (deg, multip) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -2411,9 +2426,9 @@ namespace o2scl {
               funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
               { return this->deg_density_fun(k,T,y,eta,mot,ul); };
               
-              iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+              iret=dit.integ_err(n_fun_f,zero,f.n,unc.n);
               if (iret!=0) {
-                O2SCL_ERR2("n integration (ndeg) failed in ",
+                O2SCL_ERR2("n integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -2577,12 +2592,12 @@ namespace o2scl {
             if (multip==true) {
               
               double tol_rel=0;
-              int ix=it_multip.integ_iu_err_multip
+              int ix=it_multip.integ_err_multip
                 ([this,T,y,eta,mot,ul](auto &&k) mutable {
                   return this->deg_density_fun(k,T,y,eta,mot,ul); },
                   zero,f.n,unc.n,tol_rel);
               if (ix!=0) {
-                O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                O2SCL_ERR2("n integration (deg, multip) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -2592,9 +2607,9 @@ namespace o2scl {
               funct n_fun_f=[this,T,y,eta,mot,ul](double k) -> double
               { return this->deg_density_fun(k,T,y,eta,mot,ul); };
               
-              iret=nit.integ_iu_err(n_fun_f,zero,f.n,unc.n);
+              iret=dit.integ_err(n_fun_f,zero,f.n,unc.n);
               if (iret!=0) {
-                O2SCL_ERR2("n integration (ndeg) failed in ",
+                O2SCL_ERR2("n integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
                            exc_efailed);
               }
@@ -2678,8 +2693,6 @@ namespace o2scl {
   fermion_rel2_cdf25;
   
 #endif  
-
-
   
 }
 

@@ -48,11 +48,19 @@ int main(int argc, char *argv[]) {
     f.m=m;
     for(double T=1.0e-2;T<1.01e2;T*=10.0) {
       for(double mu=1.0e-2;mu<1.01e2;mu*=10.0) {
+        fr2.verbose=2;
         f.mu=mu;
         fr.calc_mu(f,T);
-        cout << f.n << " " << f.en << " ";
+        cout << m << " " << T << " " << mu << endl;
+        cout << "  " << f.n << " " << f.ed << " " << f.en << endl;
+        double n1=f.n;
+        double en1=f.en;
         fr2.calc_mu(f,T);
-        cout << f.n << " " << f.en << endl;
+        cout << "  " << f.n << " " << f.ed << " " << f.en << endl;
+        if (fabs(f.n-n1)/f.n>1.0e-6 ||
+            fabs(f.en-en1)/f.en>1.0e-6) {
+          exit(-1);
+        }
       }
     }
   }
