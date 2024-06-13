@@ -238,6 +238,7 @@ namespace o2scl {
       \endcode
       will print out the area of circles having radii between 1 and 2.
   */
+  template<class fp_t=double>
   class funct_string {
     
   public:
@@ -266,7 +267,7 @@ namespace o2scl {
     /** \brief Set the values of the auxilliary parameters that were
 	specified in \c parms in the constructor
     */
-    int set_parm(std::string name, double val) {
+    int set_parm(std::string name, fp_t val) {
       if (name==st_var) {
 	O2SCL_ERR2("A parameter cannot have the same name as ",
 		   "the variable in funct_string::set_parm().",
@@ -278,7 +279,7 @@ namespace o2scl {
     
     /** \brief Compute the function at point \c x and return the result
      */
-    virtual double operator()(double x) const {
+    virtual fp_t operator()(fp_t x) const {
       vars[st_var]=x;
       return calc.eval(&vars);
     }
@@ -286,10 +287,10 @@ namespace o2scl {
   protected:
 
     /// The object for evaluating strings
-    mutable o2scl::calc_utf8<> calc;
+    mutable o2scl::calc_utf8<fp_t> calc;
 
     /// Parameter map
-    mutable std::map<std::string,double> vars;
+    mutable std::map<std::string,fp_t> vars;
     
     /// The expr
     std::string st_form;

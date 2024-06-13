@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   fermion_rel_ld frld;
   fermion_rel_cdf25 fr25;
 
-  int first_test=322;
+  int first_test=0;
   
   fermion_rel2 fr2;
   //fermion_rel2_ld fr2ld;
@@ -642,7 +642,7 @@ int main(int argc, char *argv[]) {
           cout << f.n << " ";
           cout.unsetf(ios::showpos);
         
-          if (count==322) {
+          if (false && count==322) {
             fr.verbose=2;
             fr2.verbose=2;
           }

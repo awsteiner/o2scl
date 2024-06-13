@@ -2688,7 +2688,8 @@ function linear_or_log<std::vector<double>>
 #
 # ------------------------------------------------------
 #
-class funct_string
+class funct_string<double>
+- py_name funct_string
 - no_def_cons
 - cons init
   - std::string expr

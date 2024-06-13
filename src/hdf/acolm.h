@@ -575,17 +575,19 @@ namespace o2scl_acol {
         functions can be used, use '-help <tt>functions</tt>'.
 
         Results are given at the current value of <tt>precision</tt>.
-        Values of precision up to 50 are allowed, and multiprecision
-        (rather than double precision) arithmetic is used if
-        necessary. For example, try <tt>-set precision 45 -calc
-        "acos(-1)"</tt>. When adaptive multiprecision is not used, the
-        calculations are relatively fast, but small errors due to the
-        finite precision may give incorrect results at the requested
-        precision. If the second optional argument evaluates to true,
-        the calc command uses multiprecision to attempt to ensure the
-        result is exact to within the requested precision. However,
-        this option also makes the calculation slower by at least a
-        factor of two (and sometimes much more).
+        Multiprecision (rather than double precision) arithmetic is
+        used if necessary. For example, try <tt>-set precision 45
+        -calc "acos(-1)"</tt>. When adaptive multiprecision is not
+        used, the calculations are relatively fast, but small errors
+        due to the finite precision may give incorrect results at the
+        requested precision. If the second optional argument evaluates
+        to true, the calc command uses multiprecision to attempt to
+        ensure the result is exact to within the requested precision.
+        However, this option also makes the calculation slower by at
+        least a factor of two (and sometimes much more). Adaptive
+        multiprecision will fail, for particularly difficult functions
+        at high precision. The maximum value of precision is 100 when
+        adaptive multiprecision is not used, and 48 when it is.
 
         Constant values from the constant library (see e.g. '-help
         <tt>constant</tt>') will automatically be used, so long as
@@ -597,10 +599,13 @@ namespace o2scl_acol {
 
         Note that the variable <tt>precision</tt> is used for the
         argument to the <tt>cout.precision()</tt> function, so a
-        precision of 10 is actually 11 significant figures. 
-        When adaptive multiprecision is enabled, the
-        value is computed to within a relative tolerance of \f$
-        10^{-\mathrm{precision}-1} \f$.
+        precision of 10 is actually 11 significant figures. When
+        adaptive multiprecision is enabled, the value is computed to
+        within a relative tolerance of \f$ 10^{-\mathrm{precision}-1}
+        \f$. AWS, 6/13/24: I have not yet found the adaptive precision
+        algorithm to give any incorrect results, but it is not
+        impossible. Please let me know if you find any cases where it
+        gives incorrect answers.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
@@ -2036,8 +2041,15 @@ namespace o2scl_acol {
 
         The third argument is a set of optional keyword arguments. If
         multip is set to either \c "1" or \c "true", then
-        multiprecision is used to attempt to ensure the result is
+        adaptive multiprecision is used to attempt to ensure the result is
         accurate to within the requested precision.
+
+        AWS, 6/13/24: While the adaptive precision algorithm is very
+        good, but there may be cases with where the last couple digits
+        are wrong and this error remains undetected. Please let me
+        know if you find cases like this so that I can improve the
+        algorithm.
+        
     */
     virtual int comm_nderiv(std::vector<std::string> &sv, bool itive_com);
 
@@ -2050,9 +2062,9 @@ namespace o2scl_acol {
         <variable> from <lower limit> to <upper limit>. 
 
         The fifth argument is a set of keyword arguments. If multip is
-        set to  either \c "1" or \c "true", then multiprecision is
-        used to attempt to ensure the result is accurate to within the
-        requested precision.
+        set to either \c "1" or \c "true", then adaptive
+        multiprecision is used to attempt to ensure the result is
+        accurate to within the requested precision.
 
         There are three methods, kb (Kronrod from boost), deb 
         (double exponential from boost) or ac (adaptive integration
@@ -2092,6 +2104,13 @@ namespace o2scl_acol {
         The <tt>ninteg</tt> command computes this same value using
         numerical integration (and obtains the same result), using
         42-digit precision internally to evaluate the integrand.
+
+        AWS, 6/13/24: While the adaptive precision algorithm is very
+        good, but there may be cases with where the last couple digits
+        are wrong and this error remains undetected, especially with
+        integrands which are discontinuous (or nearly so). Please let
+        me know if you find cases like this so that I can improve the
+        algorithm.
     */
     virtual int comm_ninteg(std::vector<std::string> &sv, bool itive_com);
 

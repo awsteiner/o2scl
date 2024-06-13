@@ -915,12 +915,15 @@ namespace o2scl {
           std::cout << "Error deg entropy." << std::endl;
           exit(-1);
         }
-      }
-      int iret=it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
-        return this->deg_entropy_fun(k,T,y,eta,mot); },
-        ll,ul,res,err,tol_rel);
-      if (iret!=0) {
-        O2SCL_ERR("Deg entropy failed.",o2scl::exc_efailed);
+        res=res2;
+        err=err2;
+      } else {
+        int iret=it.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
+          return this->deg_entropy_fun(k,T,y,eta,mot); },
+          ll,ul,res,err,tol_rel);
+        if (iret!=0) {
+          O2SCL_ERR("Deg entropy failed.",o2scl::exc_efailed);
+        }
       }
       
       return 0;

@@ -1158,13 +1158,13 @@ void o2scl_gen_test_number_double__set_radix(void *vptr, double r);
 
 double o2scl_gen_test_number_double__gen(void *vptr);
 
-void o2scl_free_funct_string(void *vptr);
+void o2scl_free_funct_string_double_(void *vptr);
 
-int o2scl_funct_string_set_parm(void *vptr, char *name, double val);
+int o2scl_funct_string_double__set_parm(void *vptr, char *name, double val);
 
-double o2scl_funct_string_getitem(void *vptr, double x);
+double o2scl_funct_string_double__getitem(void *vptr, double x);
 
-void *o2scl_funct_string_init(char *expr, char *var);
+void *o2scl_funct_string_double__init(char *expr, char *var);
 
 void *o2scl_create_comm_option_s();
 

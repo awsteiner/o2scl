@@ -628,11 +628,23 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
   std::cout << "Precision: " << precision << std::endl;
   
-  if (precision>50) {
+  if (precision>100) {
     cerr << "Requested precision too large for the calc "
          << "command." << endl;
     return 2;
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION      
+  } else if (precision>50) {
+    cpp_dec_float_100 d;
+    convert_units<cpp_dec_float_100> cu100;
+    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_100>
+      (i1,d,cu100,verbose);
+    if (retx!=0) {
+      cerr << "Converting " << i1 << " to value failed." << endl;
+      return 1;
+    }
+    if (verbose>0) cout << "Result (cpp_dec_float_100): ";
+    cout << dtos(d,precision) << endl;
+    return 0;
   } else if (precision>35) {
     cpp_dec_float_50 d;
     convert_units<cpp_dec_float_50> cu50;

@@ -659,18 +659,39 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     // Normal double-precision differentiation
 
     if (precision>16) {
-      std::cerr << "Warning: multiprecision is required to numerically "
-                << "differentiate to the\n requested precision."
-                << std::endl;
+
+      long double d, dfdx, err;
+      convert_units<long double> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<long double> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<long double(long double) const>
+                        (&funct_string<long double>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,long double> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << stod(dfdx,precision+1) << " ± " << stod(err,precision+1) << endl;
+      
+      //std::cerr << "Warning: multiprecision is required to numerically "
+      //<< "differentiate to the\n requested precision."
+      //<< std::endl;
     }
     
     double d, dfdx, err;
     convert_units<double> cu;
     function_to_fp_nothrow(val,d,cu);
 
-    funct_string fs(func,"x");
+    funct_string<> fs(func,"x");
     funct f=std::bind(std::mem_fn<double(double) const>
-                      (&funct_string::operator()),&fs,
+                      (&funct_string<>::operator()),&fs,
                       std::placeholders::_1);
 
     int retx=dg.deriv_err(d,f,dfdx,err);
@@ -1001,9 +1022,9 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     } else {
       function_to_fp_nothrow(in[3],upper_lim,cu);
     }
-    funct_string fs(func,var);
+    funct_string<> fs(func,var);
     funct f=std::bind(std::mem_fn<double(double) const>
-                      (&funct_string::operator()),&fs,
+                      (&funct_string<>::operator()),&fs,
                       std::placeholders::_1);
     int retx;
     if (method=="kb") {
