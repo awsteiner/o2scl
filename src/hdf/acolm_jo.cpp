@@ -658,7 +658,102 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision differentiation
 
-    if (precision>16) {
+    if (precision>50) {
+
+      cpp_dec_float_100 d, dfdx, err;
+      convert_units<cpp_dec_float_100> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_100> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_100
+                           (cpp_dec_float_100) const>
+                        (&funct_string<cpp_dec_float_100>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,cpp_dec_float_100> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      
+    } else if (precision>35) {
+
+      cpp_dec_float_50 d, dfdx, err;
+      convert_units<cpp_dec_float_50> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_50> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50) const>
+                        (&funct_string<cpp_dec_float_50>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,cpp_dec_float_50> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      
+    } else if (precision>25) {
+
+      cpp_dec_float_35 d, dfdx, err;
+      convert_units<cpp_dec_float_35> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_35> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_35
+                           (cpp_dec_float_35) const>
+                        (&funct_string<cpp_dec_float_35>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,cpp_dec_float_35> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      
+    } else if (precision>18) {
+
+      cpp_dec_float_25 d, dfdx, err;
+      convert_units<cpp_dec_float_25> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_25> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_25
+                           (cpp_dec_float_25) const>
+                        (&funct_string<cpp_dec_float_25>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,cpp_dec_float_25> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      
+    } else if (precision>15) {
 
       long double d, dfdx, err;
       convert_units<long double> cu;
@@ -681,9 +776,6 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       cout << dtos(dfdx,precision+1) << " ± "
            << dtos(err,precision+1) << endl;
       
-      //std::cerr << "Warning: multiprecision is required to numerically "
-      //<< "differentiate to the\n requested precision."
-      //<< std::endl;
     }
     
     double d, dfdx, err;

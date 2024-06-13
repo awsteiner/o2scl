@@ -59,8 +59,8 @@ int main(int argc, char *argv[]) {
   int first_test=0;
   
   fermion_rel2 fr2;
-  //fermion_rel2_ld fr2ld;
-  //fermion_rel2_cdf25 fr225;
+  fermion_rel2_ld fr2ld;
+  fermion_rel2_cdf25 fr225;
 
   // An exhaustive comparison of the two algorithms at
   // various levels of precision

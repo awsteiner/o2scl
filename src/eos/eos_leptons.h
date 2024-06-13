@@ -30,6 +30,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/boson.h>
 #include <o2scl/fermion_rel.h>
+#include <o2scl/fermion_rel2.h>
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_deriv_rel.h>
 
@@ -215,15 +216,15 @@ namespace o2scl {
     /// High accuracy
     void improved_acc() {
       frel.upper_limit_fac=40.0;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.density_root->tol_rel=1.0e-10;
+      frel.dit.tol_abs=1.0e-13;
+      frel.dit.tol_rel=1.0e-13;
+      frel.nit.tol_abs=1.0e-13;
+      frel.nit.tol_rel=1.0e-13;
+      frel.dit.tol_abs=1.0e-13;
+      frel.dit.tol_rel=1.0e-13;
+      frel.nit.tol_abs=1.0e-13;
+      frel.nit.tol_rel=1.0e-13;
+      frel.density_root.tol_rel=1.0e-10;
 
       fdrel.upper_limit_fac=40.0;
       fdrel.dit.tol_abs=1.0e-13;
@@ -242,15 +243,15 @@ namespace o2scl {
     /// Default accuracy
     void default_acc() {
       frel.upper_limit_fac=20.0;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.density_root->tol_rel=4.0e-7;
+      frel.dit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.dit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.density_root.tol_rel=4.0e-7;
 
       fdrel.upper_limit_fac=20.0;
       fdrel.dit.tol_abs=1.0e-8;
@@ -347,7 +348,7 @@ namespace o2scl {
 
     /** \brief Relativistic fermion thermodynamics
      */
-    fermion_rel frel;
+    fermion_rel2 frel;
 
     //@}
     
@@ -408,11 +409,11 @@ namespace o2scl {
     
     /** \brief Relativistic fermion thermodynamics in long double precision
      */
-    fermion_rel_ld frel_ld;
+    fermion_rel2_ld frel_ld;
     
     /** \brief Relativistic fermion thermodynamics in 25 digit precision
      */
-    fermion_rel_cdf25 frel_cdf25;
+    fermion_rel2_cdf25 frel_cdf25;
     
   };
 
