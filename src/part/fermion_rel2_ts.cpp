@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   fermion_rel_ld frld;
   fermion_rel_cdf25 fr25;
 
-  int first_test=264;
+  int first_test=322;
   
   fermion_rel2 fr2;
   //fermion_rel2_ld fr2ld;
@@ -634,243 +634,260 @@ int main(int argc, char *argv[]) {
         
         cout.width(4);
         cout << count << " ";
-        cout << f.m << " " << T << " ";
-        cout.setf(ios::showpos);
-        cout << f.n << " ";
-        cout.unsetf(ios::showpos);
-        
-        if (count==264) {
-          fr.verbose=2;
-          fr2.verbose=2;
-        }
-        
-        f.mu=f.m;
-        fr.calc_density(f,T);
-        fld.mu=fld.m;
-        frld.calc_density(fld,Tld);
-        f25.mu=f25.m;
-        fr25.calc_density(f25,T25);
-        
-        int idmu, iden, ildmu, ilden;
-        if (f.mu==fld.mu) {
-          idmu=17;
-        } else {
-          idmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
-        }
-        if (f.en==fld.en) {
-          iden=17;
-        } else {
-          iden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-        }
-        if (fld.mu==static_cast<long double>(f25.mu)) {
-          ildmu=21;
-        } else {
-          ildmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
-                              fabs(static_cast<long double>(f25.mu)))));
-        }
-        if (fld.en==static_cast<long double>(f25.en)) {
-          ilden=21;
-        } else {
-          ilden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                              fabs(static_cast<long double>(f25.en)))));
-        }
-        if (idmu<=0) {
-          cout << "Problem in idmu 1: " << endl;
-          cout << dtos(f.mu,-1) << " "
-               << dtos(fld.mu,-1) << " " << idmu << endl;
-          exit(-1);
-        }
-        if (iden<=0) {
-          cout << "Problem in iden 1: " << endl;
-          cout << dtos(f.en,-1) << " "
-               << dtos(fld.en,-1) << " " << iden << endl;
-          exit(-1);
-        }
-        if (ildmu<=0) {
-          cout << "Problem in ildmu 1: " << endl;
-          cout << dtos(fld.mu,-1) << " "
-               << dtos(f25.mu,-1) << " " << ildmu << endl;
-          cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
-          cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
-            fabs(static_cast<long double>(f25.mu)) << endl;
-          exit(-1);
-        }
-        if (ilden<=0) {
-          cout << "Problem in ilden 1: " << endl;
-          cout << dtos(fld.en,-1) << " "
-               << dtos(f25.en,-1) << " " << ilden << endl;
-          cout << fabs(fld.en-static_cast<long double>(f25.en)) << endl;
-          cout << fabs(fld.en-static_cast<long double>(f25.en))/
-            fabs(static_cast<long double>(f25.en)) << endl;
-          exit(-1);
-        }
-        
-        cout.width(2);
-        cout << idmu << " ";
-        cout.width(2);
-        cout << iden << " ";
-        cout.width(2);
-        cout << ildmu << " ";
-        cout.width(2);
-        cout << ilden << " ";
-        
-        double mu1=f.mu;
-        double en1=f.en;
-        long double mu1ld=fld.mu;
-        long double en1ld=fld.en;
-        cpp_dec_float_25 mu125=f25.mu;
-        cpp_dec_float_25 en125=f25.en;
-        
-        f.mu=f.m;
-        fr2.calc_density(f,T);
 
-        int jdmu, jden;
-        if (f.mu==mu1) {
-          jdmu=17;
-        } else {
-          jdmu=((int)(-log10(fabs(f.mu-mu1)/fabs(mu1))));
-        }
-        if (f.en==en1) {
-          jden=17;
-        } else {
-          jden=((int)(-log10(fabs(f.en-en1)/fabs(en1))));
-        }
-
-        cout.width(2);
-        cout << jdmu << " ";
-        cout.width(2);
-        cout << jden << " calc_density()." << endl;
+        if (count>=first_test) {
         
-        if (jdmu<=0) {
-          cout << "Problem in jdmu 1: " << endl;
-          cout << dtos(f.mu,-1) << " "
-               << dtos(mu1,-1) << " " << jdmu << endl;
-          cout << fabs(f.mu-mu1)/fabs(mu1) << endl;
-          cout << f.mu << " " << mu1 << endl;
-          exit(-1);
-        }
-        if (jden<=0) {
-          cout << "Problem in jden 1: " << endl;
-          cout << dtos(f.en,-1) << " "
-               << dtos(en1,-1) << " " << jden << endl;
-          cout << fabs(f.en-en1)/fabs(en1) << endl;
-          cout << dtos(f.en,-1) << endl;
-          cout << dtos(en1,-1) << endl;
-          exit(-1);
+          cout << f.m << " " << T << " ";
+          cout.setf(ios::showpos);
+          cout << f.n << " ";
+          cout.unsetf(ios::showpos);
+        
+          if (count==322) {
+            fr.verbose=2;
+            fr2.verbose=2;
+          }
+        
+          f.mu=f.m;
+          fr.calc_density(f,T);
+          fld.mu=fld.m;
+          frld.calc_density(fld,Tld);
+          f25.mu=f25.m;
+          fr25.calc_density(f25,T25);
+        
+          int idmu, iden, ildmu, ilden;
+          if (f.mu==fld.mu) {
+            idmu=17;
+          } else {
+            idmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
+          }
+          if (f.en==fld.en) {
+            iden=17;
+          } else {
+            iden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
+          }
+          if (fld.mu==static_cast<long double>(f25.mu)) {
+            ildmu=21;
+          } else {
+            ildmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
+                                fabs(static_cast<long double>(f25.mu)))));
+          }
+          if (fld.en==static_cast<long double>(f25.en)) {
+            ilden=21;
+          } else {
+            ilden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
+                                fabs(static_cast<long double>(f25.en)))));
+          }
+          if (idmu<=0) {
+            cout << "Problem in idmu 1: " << endl;
+            cout << dtos(f.mu,-1) << " "
+                 << dtos(fld.mu,-1) << " " << idmu << endl;
+            exit(-1);
+          }
+          if (iden<=0) {
+            cout << "Problem in iden 1: " << endl;
+            cout << dtos(f.en,-1) << " "
+                 << dtos(fld.en,-1) << " " << iden << endl;
+            exit(-1);
+          }
+          if (ildmu<=0) {
+            cout << "Problem in ildmu 1: " << endl;
+            cout << dtos(fld.mu,-1) << " "
+                 << dtos(f25.mu,-1) << " " << ildmu << endl;
+            cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
+            cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
+              fabs(static_cast<long double>(f25.mu)) << endl;
+            exit(-1);
+          }
+          if (ilden<=0) {
+            cout << "Problem in ilden 1: " << endl;
+            cout << dtos(fld.en,-1) << " "
+                 << dtos(f25.en,-1) << " " << ilden << endl;
+            cout << fabs(fld.en-static_cast<long double>(f25.en)) << endl;
+            cout << fabs(fld.en-static_cast<long double>(f25.en))/
+              fabs(static_cast<long double>(f25.en)) << endl;
+            exit(-1);
+          }
+        
+          cout.width(2);
+          cout << idmu << " ";
+          cout.width(2);
+          cout << iden << " ";
+          cout.width(2);
+          cout << ildmu << " ";
+          cout.width(2);
+          cout << ilden << " ";
+        
+          double mu1=f.mu;
+          double en1=f.en;
+          long double mu1ld=fld.mu;
+          long double en1ld=fld.en;
+          cpp_dec_float_25 mu125=f25.mu;
+          cpp_dec_float_25 en125=f25.en;
+        
+          f.mu=f.m;
+          fr2.calc_density(f,T);
+
+          int jdmu, jden;
+          if (f.mu==mu1) {
+            jdmu=17;
+          } else {
+            jdmu=((int)(-log10(fabs(f.mu-mu1)/fabs(mu1))));
+          }
+          if (f.en==en1) {
+            jden=17;
+          } else {
+            jden=((int)(-log10(fabs(f.en-en1)/fabs(en1))));
+          }
+
+          cout.width(2);
+          cout << jdmu << " ";
+          cout.width(2);
+          cout << jden << " calc_density()." << endl;
+        
+          if (jdmu<=0) {
+            cout << "Problem in jdmu 1: " << endl;
+            cout << dtos(f.mu,-1) << " "
+                 << dtos(mu1,-1) << " " << jdmu << endl;
+            cout << fabs(f.mu-mu1)/fabs(mu1) << endl;
+            cout << f.mu << " " << mu1 << endl;
+            exit(-1);
+          }
+          if (jden<=0) {
+            cout << "Problem in jden 1: " << endl;
+            cout << dtos(f.en,-1) << " "
+                 << dtos(en1,-1) << " " << jden << endl;
+            cout << fabs(f.en-en1)/fabs(en1) << endl;
+            cout << dtos(f.en,-1) << endl;
+            cout << dtos(en1,-1) << endl;
+            exit(-1);
+          }
+
+        } else {
+
+          cout << endl;
         }
         
         count++;
         
         cout.width(4);
         cout << count << " ";
-        cout << f.m << " " << T << " ";
-        cout.setf(ios::showpos);
-        cout << f.n << " ";
-        cout.unsetf(ios::showpos);
+
+        if (count>=first_test) {
+            
+          cout << f.m << " " << T << " ";
+          cout.setf(ios::showpos);
+          cout << f.n << " ";
+          cout.unsetf(ios::showpos);
         
-        if (false && count==259) {
-          fr.verbose=2;
-          fr2.verbose=2;
-        }
+          if (false && count==259) {
+            fr.verbose=2;
+            fr2.verbose=2;
+          }
         
-        f.mu=f.m;
-        fr.pair_density(f,T);
-        fld.mu=fld.m;
-        frld.pair_density(fld,Tld);
-        f25.mu=f25.m;
-        fr25.pair_density(f25,T25);
+          f.mu=f.m;
+          fr.pair_density(f,T);
+          fld.mu=fld.m;
+          frld.pair_density(fld,Tld);
+          f25.mu=f25.m;
+          fr25.pair_density(f25,T25);
         
-        int kdmu, kden, kldmu, klden;
-        if (f.mu==0) {
-          kdmu=99;
-        } else if (f.mu==fld.mu) {
-          kdmu=17;
+          int kdmu, kden, kldmu, klden;
+          if (f.mu==0) {
+            kdmu=99;
+          } else if (f.mu==fld.mu) {
+            kdmu=17;
+          } else {
+            kdmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
+          }
+          if (f.en==0) {
+            kden=99;
+          } else if (f.en==fld.en) {
+            kden=17;
+          } else {
+            kden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
+          }
+          if (fld.mu==static_cast<long double>(f25.mu)) {
+            kldmu=21;
+          } else {
+            kldmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
+                                fabs(static_cast<long double>(f25.mu)))));
+          }
+          if (fld.en==static_cast<long double>(f25.en)) {
+            klden=21;
+          } else {
+            klden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
+                                fabs(static_cast<long double>(f25.en)))));
+          }
+          if (kdmu<=0) {
+            cout << "Problem in kdmu 1: " << endl;
+            cout << dtos(f.mu,-1) << " "
+                 << dtos(fld.mu,-1) << " " << kdmu << endl;
+            cout << f.mu << " " << fld.mu << endl;
+            exit(-1);
+          }
+          if (kldmu<=0) {
+            cout << "Problem in kldmu 1: " << endl;
+            cout << dtos(fld.mu,-1) << " "
+                 << dtos(f25.mu,-1) << " " << kldmu << endl;
+            cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
+            cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
+              fabs(static_cast<long double>(f25.mu)) << endl;
+            exit(-1);
+          }
+        
+          cout.width(2);
+          cout << kdmu << " ";
+          cout.width(2);
+          cout << kden << " ";
+          cout.width(2);
+          cout << kldmu << " ";
+          cout.width(2);
+          cout << klden << " ";
+        
+          double mu1=f.mu;
+          double en1=f.en;
+          long double mu1ld=fld.mu;
+          long double en1ld=fld.en;
+          cpp_dec_float_25 mu125=f25.mu;
+          cpp_dec_float_25 en125=f25.en;
+        
+          f.mu=f.m;
+          fr2.pair_density(f,T);
+        
+          int ldmu, lden;
+          if (f.mu==mu1) {
+            ldmu=17;
+          } else {
+            ldmu=((int)(-log10(fabs(f.mu-mu1)/fabs(mu1))));
+          }
+          if (f.en==en1) {
+            lden=17;
+          } else {
+            lden=((int)(-log10(fabs(f.en-en1)/fabs(en1))));
+          }
+        
+          cout.width(2);
+          cout << ldmu << " ";
+          cout.width(2);
+          cout << lden << " pair_density()." << endl;
+        
+          if (ldmu<=0) {
+            cout << "Problem in ldmu 1: " << endl;
+            cout << dtos(f.mu,-1) << " "
+                 << dtos(mu1,-1) << " " << ldmu << endl;
+            exit(-1);
+          }
+          if (lden<=0) {
+            cout << "Problem in lden 1: " << endl;
+            cout << dtos(f.en,-1) << " "
+                 << dtos(en1,-1) << " " << lden << endl;
+            exit(-1);
+          }
+
         } else {
-          kdmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
-        }
-        if (f.en==0) {
-          kden=99;
-        } else if (f.en==fld.en) {
-          kden=17;
-        } else {
-          kden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-        }
-        if (fld.mu==static_cast<long double>(f25.mu)) {
-          kldmu=21;
-        } else {
-          kldmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
-                              fabs(static_cast<long double>(f25.mu)))));
-        }
-        if (fld.en==static_cast<long double>(f25.en)) {
-          klden=21;
-        } else {
-          klden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                              fabs(static_cast<long double>(f25.en)))));
-        }
-        if (kdmu<=0) {
-          cout << "Problem in kdmu 1: " << endl;
-          cout << dtos(f.mu,-1) << " "
-               << dtos(fld.mu,-1) << " " << kdmu << endl;
-          cout << f.mu << " " << fld.mu << endl;
-          exit(-1);
-        }
-        if (kldmu<=0) {
-          cout << "Problem in kldmu 1: " << endl;
-          cout << dtos(fld.mu,-1) << " "
-               << dtos(f25.mu,-1) << " " << kldmu << endl;
-          cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
-          cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
-            fabs(static_cast<long double>(f25.mu)) << endl;
-          exit(-1);
-        }
-        
-        cout.width(2);
-        cout << kdmu << " ";
-        cout.width(2);
-        cout << kden << " ";
-        cout.width(2);
-        cout << kldmu << " ";
-        cout.width(2);
-        cout << klden << " ";
-        
-        mu1=f.mu;
-        en1=f.en;
-        mu1ld=fld.mu;
-        en1ld=fld.en;
-        mu125=f25.mu;
-        en125=f25.en;
-        
-        f.mu=f.m;
-        fr2.pair_density(f,T);
-        
-        int ldmu, lden;
-        if (f.mu==mu1) {
-          ldmu=17;
-        } else {
-          ldmu=((int)(-log10(fabs(f.mu-mu1)/fabs(mu1))));
-        }
-        if (f.en==en1) {
-          lden=17;
-        } else {
-          lden=((int)(-log10(fabs(f.en-en1)/fabs(en1))));
-        }
-        
-        cout.width(2);
-        cout << ldmu << " ";
-        cout.width(2);
-        cout << lden << " pair_density()." << endl;
-        
-        if (ldmu<=0) {
-          cout << "Problem in ldmu 1: " << endl;
-          cout << dtos(f.mu,-1) << " "
-               << dtos(mu1,-1) << " " << ldmu << endl;
-          exit(-1);
-        }
-        if (lden<=0) {
-          cout << "Problem in lden 1: " << endl;
-          cout << dtos(f.en,-1) << " "
-               << dtos(en1,-1) << " " << lden << endl;
-          exit(-1);
+
+          cout << endl;
+
         }
           
         count++;

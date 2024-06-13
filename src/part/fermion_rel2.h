@@ -796,8 +796,10 @@ namespace o2scl {
       f.nu=nex*temper;
 
       if (verbose>1) {
+        std::cout.precision(12);
         std::cout << "fermion_rel2::nu_from_n(): Succeeded in computing "
                   << "nu: " << f.nu << std::endl;
+        std::cout.precision(6);
       }
       
       return success;
@@ -1557,6 +1559,9 @@ namespace o2scl {
           { return this->entropy_fun(k,y,eta); };
           
           iret=nit.integ_iu_err(s_fun_f,zero,f.en,unc.en);
+          if (verbose>1) {
+            std::cout << "entropy, ndeg: " << f.en << std::endl;
+          }
           if (iret!=0) {
             O2SCL_ERR2("s integration (ndeg) failed in ",
                        "fermion_rel2::calc_mu().",
@@ -1565,7 +1570,6 @@ namespace o2scl {
           
         }
 
-        //fri.eval_entropy(y,eta,f.en,unc.en);
         f.en*=prefac;
         unc.en*=prefac;
         
@@ -1655,9 +1659,9 @@ namespace o2scl {
               
               double tol_rel=0;
               int ix=it_multip.integ_err_multip
-                ([this,y,eta,mot](auto &&k) mutable {
-                  return this->deg_entropy_fun(k,y,eta,mot,false); },
-                  zero,f.en,unc.en,tol_rel);
+                ([this,temper,y,eta,mot](auto &&k) mutable {
+                  return this->deg_entropy_fun(k,temper,y,eta,mot); },
+                  ll,ul,f.en,unc.en,tol_rel);
               if (ix!=0) {
                 O2SCL_ERR2("s integration (deg, multip) failed in ",
                            "fermion_rel2::calc_mu().",
@@ -1666,10 +1670,13 @@ namespace o2scl {
               
             } else {
               
-              funct s_fun_f=[this,y,eta,mot](double k) -> double
-              { return this->deg_entropy_fun(k,y,eta,mot,false); };
+              funct s_fun_f=[this,temper,y,eta,mot](double k) -> double
+              { return this->deg_entropy_fun(k,temper,y,eta,mot); };
               
               iret=dit.integ_err(s_fun_f,ll,ul,f.en,unc.en);
+              if (verbose>1) {
+                std::cout << "entropy, deg, ll>0: " << f.en << std::endl;
+              }
               if (iret!=0) {
                 O2SCL_ERR2("s integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
@@ -1678,7 +1685,6 @@ namespace o2scl {
               
             }
             
-            //fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
 	    last_method+=4;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -1694,8 +1700,8 @@ namespace o2scl {
               
               double tol_rel=0;
               int ix=it_multip.integ_err_multip
-                ([this,y,eta,mot](auto &&k) mutable {
-                  return this->deg_entropy_fun(k,y,eta,mot,false); },
+                ([this,temper,y,eta,mot](auto &&k) mutable {
+                  return this->deg_entropy_fun(k,temper,y,eta,mot); },
                   zero,ul,f.en,unc.en,tol_rel);
               if (ix!=0) {
                 O2SCL_ERR2("s integration (deg, multip) failed in ",
@@ -1705,10 +1711,13 @@ namespace o2scl {
               
             } else {
               
-              funct s_fun_f=[this,y,eta,mot](double k) -> double
-              { return this->deg_entropy_fun(k,y,eta,mot,false); };
+              funct s_fun_f=[this,temper,y,eta,mot](double k) -> double
+              { return this->deg_entropy_fun(k,temper,y,eta,mot); };
               
               iret=dit.integ_err(s_fun_f,zero,ul,f.en,unc.en);
+              if (verbose>1) {
+                std::cout << "entropy, deg, ll<0: " << f.en << std::endl;
+              }
               if (iret!=0) {
                 O2SCL_ERR2("s integration (deg) failed in ",
                            "fermion_rel2::calc_mu().",
@@ -2209,8 +2218,10 @@ namespace o2scl {
       }
 
       if (this->verbose>=2) {
+        std::cout.precision(12);
         std::cout << "2 " << psi << " " << deg << " "
                   << x << " " << yy << std::endl;
+        std::cout.precision(6);
       }
       
       return yy;

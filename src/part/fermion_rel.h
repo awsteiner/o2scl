@@ -866,7 +866,7 @@ namespace o2scl {
         ix2=it2.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
           return this->deg_energy_fun(k,T,y,eta,mot); },
           zero,ul,res2,err2,tol_rel/10);
-        if (abs(res-res2)/abs(res)>tol_rel) {
+        if (false && abs(res-res2)/abs(res)>tol_rel) {
           std::cout << ix << " " << ix2 << " " << tol_rel << std::endl;
           std::cout << o2scl::dtos(res,0) << std::endl;
           std::cout << o2scl::dtos(res2,0) << std::endl;
@@ -905,7 +905,7 @@ namespace o2scl {
         ix2=it2.integ_err_multip([this,T,y,eta,mot](auto &&k) mutable {
           return this->deg_entropy_fun(k,T,y,eta,mot); },
           ll,ul,res2,err2,tol_rel/100);
-        if (abs(res-res2)/abs(res)>tol_rel) {
+        if (false && abs(res-res2)/abs(res)>tol_rel) {
           std::cout << ix << " " << ix2 << " " << tol_rel << std::endl;
           std::cout << o2scl::dtos(res,0) << std::endl;
           std::cout << o2scl::dtos(res2,0) << std::endl;
@@ -1587,8 +1587,10 @@ namespace o2scl {
       f.nu=nex*temper;
       
       if (verbose>1) {
+        std::cout.precision(12);
         std::cout << "fermion_rel::nu_from_n(): Succeeded in computing "
                   << "nu: " << f.nu << std::endl;
+        std::cout.precision(6);
       }
       
       return success;
@@ -2038,6 +2040,9 @@ namespace o2scl {
         prefac=f.g*pow(temper,3.0)/2.0/this->pi2;
         
         fri.eval_entropy(y,eta,f.en,unc.en);
+        if (verbose>1) {
+          std::cout << "entropy, ndeg: " << f.en << std::endl;
+        }
         f.en*=prefac;
         unc.en*=prefac;
         
@@ -2095,6 +2100,9 @@ namespace o2scl {
           
 	  if (ll>0.0) {
             fri.eval_deg_entropy(temper,y,eta,mot,ll,ul,f.en,unc.en);
+            if (verbose>1) {
+              std::cout << "entropy, deg, ll>0: " << f.en << std::endl;
+            }
 	    last_method+=4;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -2105,6 +2113,9 @@ namespace o2scl {
             }
 	  } else {
             fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
+            if (verbose>1) {
+              std::cout << "entropy, deg, ll<0: " << f.en << std::endl;
+            }
 	    last_method+=5;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -2543,8 +2554,10 @@ namespace o2scl {
       }
       
       if (this->verbose>=2) {
+        std::cout.precision(12);
         std::cout << "1 " << psi << " " << deg << " "
                   << x << " " << yy << std::endl;
+        std::cout.precision(6);
       }
       
       return yy;
