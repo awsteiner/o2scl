@@ -678,7 +678,8 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       }
       
       if (verbose>0) cout << "Result: ";
-      cout << stod(dfdx,precision+1) << " ± " << stod(err,precision+1) << endl;
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
       
       //std::cerr << "Warning: multiprecision is required to numerically "
       //<< "differentiate to the\n requested precision."
