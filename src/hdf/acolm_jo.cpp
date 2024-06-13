@@ -526,7 +526,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     int ret=get_input(sv,pr,in,"nderiv",itive_com);
     if (ret!=0) return ret;
 
-    kw=in[3];
+    kw=in[2];
     
   }
 
@@ -584,7 +584,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (cpp_dec_float_50): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else if (precision>24) {
@@ -600,7 +600,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (cpp_dec_float_35): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else if (precision>17) {
@@ -616,7 +616,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (cpp_dec_float_25): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else if (precision>14) {
@@ -632,7 +632,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (long double): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else {
@@ -648,7 +648,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         return 1;
       }
       if (verbose>0) cout << "Result (double): ";
-      cout << dtos(d,precision) << endl;
+      cout << dtos(dfdx,precision) << endl;
       
     }
     
@@ -685,12 +685,12 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     cout.precision(precision);
     
     if (verbose>0) cout << "Result: ";
-    cout << d << " ± " << err << endl;
+    cout << dfdx << " ± " << err << endl;
     std::string us;
     if (verbose>1) {
-      us=unc_to_string(d,err,1);
+      us=unc_to_string(dfdx,err,1);
     } else {
-      us=unc_to_string(d,err);
+      us=unc_to_string(dfdx,err);
     }
     cout << us << endl;
 

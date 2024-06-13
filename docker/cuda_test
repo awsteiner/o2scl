@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM awsteiner/o2scl:v0.929_u24.04_min
 MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -7,7 +7,7 @@ RUN apt-get -y update && apt-get \
   -y install g++ make autoconf automake libtool git curl cmake \
   python3 libz-dev libsz2 imagemagick wget
 
-# from the instructions at https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network
+from the instructions at https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_network
 
 RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 
@@ -16,8 +16,4 @@ RUN dpkg -i cuda-keyring_1.1-1_all.deb
 RUN apt-get update
 
 RUN apt-get -y install cuda-toolkit-12-5
-
-RUN apt-get install -y nvidia-driver-555-open
-
-RUN apt-get install -y cuda-drivers-555
 
