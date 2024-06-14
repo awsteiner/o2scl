@@ -23,6 +23,7 @@
 
 #include <o2scl/part.h>
 #include <o2scl/fermion_rel.h>
+#include <o2scl/fermion_rel2.h>
 #include <o2scl/fermion_nonrel.h>
 #include <o2scl/fermion_deriv_nr.h>
 #include <o2scl/fermion_deriv_rel.h>
@@ -209,6 +210,64 @@ int o2scl_fermion_rel_pair_density(void *vptr, void *ptr_f, double T);
 void o2scl_fermion_rel_calc_mu(void *vptr, void *ptr_f, double T);
 
 void o2scl_fermion_rel_pair_mu(void *vptr, void *ptr_f, double T);
+
+void *o2scl_create_fermion_rel2();
+
+void o2scl_free_fermion_rel2(void *vptr);
+
+bool o2scl_fermion_rel2_get_err_nonconv(void *vptr);
+
+void o2scl_fermion_rel2_set_err_nonconv(void *vptr, bool v);
+
+double o2scl_fermion_rel2_get_min_psi(void *vptr);
+
+void o2scl_fermion_rel2_set_min_psi(void *vptr, double v);
+
+double o2scl_fermion_rel2_get_deg_limit(void *vptr);
+
+void o2scl_fermion_rel2_set_deg_limit(void *vptr, double v);
+
+double o2scl_fermion_rel2_get_upper_limit_fac(void *vptr);
+
+void o2scl_fermion_rel2_set_upper_limit_fac(void *vptr, double v);
+
+int o2scl_fermion_rel2_get_verbose(void *vptr);
+
+void o2scl_fermion_rel2_set_verbose(void *vptr, int v);
+
+bool o2scl_fermion_rel2_get_multip(void *vptr);
+
+void o2scl_fermion_rel2_set_multip(void *vptr, bool v);
+
+bool o2scl_fermion_rel2_get_use_expansions(void *vptr);
+
+void o2scl_fermion_rel2_set_use_expansions(void *vptr, bool v);
+
+double o2scl_fermion_rel2_get_tol_expan(void *vptr);
+
+void o2scl_fermion_rel2_set_tol_expan(void *vptr, double v);
+
+bool o2scl_fermion_rel2_get_verify_ti(void *vptr);
+
+void o2scl_fermion_rel2_set_verify_ti(void *vptr, bool v);
+
+double o2scl_fermion_rel2_get_therm_ident(void *vptr);
+
+void o2scl_fermion_rel2_set_therm_ident(void *vptr, double v);
+
+void *o2scl_fermion_rel2_get_unc(void *vptr);
+
+void o2scl_fermion_rel2_set_unc(void *vptr, void *p_v);
+
+int o2scl_fermion_rel2_nu_from_n(void *vptr, void *ptr_f, double T);
+
+int o2scl_fermion_rel2_calc_density(void *vptr, void *ptr_f, double T);
+
+int o2scl_fermion_rel2_pair_density(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel2_calc_mu(void *vptr, void *ptr_f, double T);
+
+void o2scl_fermion_rel2_pair_mu(void *vptr, void *ptr_f, double T);
 
 void *o2scl_create_fermion_nonrel();
 

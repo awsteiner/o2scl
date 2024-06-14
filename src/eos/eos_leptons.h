@@ -355,7 +355,13 @@ namespace o2scl {
   };
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
-  
+
+  /** \brief Multiprecision version of \ref eos_leptons
+
+      This class provides the additional functionality on top of \ref
+      eos_leptons to compute the lepton and photon EOS with
+      multiprecision.
+   */
   class eos_leptons_multip : public eos_leptons {
 
   protected:
@@ -395,8 +401,13 @@ namespace o2scl {
     convert_units<cpp_dec_float_25> cu_cdf25;
     //@}
 
+    /** \brief Compute electron thermodynamics from the electron 
+        density
+    */
     virtual int electron_density(double T);
     
+    /** \brief Function to solve for \ref pair_density_eq()
+     */
     virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     

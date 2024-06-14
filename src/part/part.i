@@ -18,6 +18,7 @@ rst_header |
 # 
 h_include <o2scl/part.h>
 h_include <o2scl/fermion_rel.h>
+h_include <o2scl/fermion_rel2.h>
 h_include <o2scl/fermion_nonrel.h>
 h_include <o2scl/fermion_deriv_nr.h>
 h_include <o2scl/fermion_deriv_rel.h>
@@ -170,6 +171,46 @@ class fermion_rel
 - double upper_limit_fac
 - double deg_entropy_fac
 - int verbose
+- bool use_expansions
+- double tol_expan
+- bool verify_ti
+- double therm_ident
+- fermion unc
+- function nu_from_n
+  - int
+  - fermion &f
+  - double T
+- function calc_density
+  - int
+  - fermion &f
+  - double T
+- function pair_density
+  - int
+  - fermion &f
+  - double T
+- function calc_mu
+  - void
+  - fermion &f
+  - double T
+- function pair_mu
+  - void
+  - fermion &f
+  - double T
+#
+# ------------------------------------------------------
+# 
+# Class fermion_rel2
+#   
+class fermion_rel2
+- py_class_doc |
+| Python interface for class :ref:`%name% <o2scl:%name%_tl>`.
+- parent fermion_thermo
+- bool err_nonconv
+- double min_psi
+- double deg_limit
+- double upper_limit_fac
+- int verbose
+- bool multip
 - bool use_expansions
 - double tol_expan
 - bool verify_ti

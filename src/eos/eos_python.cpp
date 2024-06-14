@@ -210,7 +210,7 @@ void *o2scl_eos_leptons_get_frel(void *vptr) {
 
 void o2scl_eos_leptons_set_frel(void *vptr, void *p_v) {
   eos_leptons *ptr=(eos_leptons *)vptr;
-  o2scl::fermion_rel *p_tsot=(o2scl::fermion_rel *)p_v;
+  o2scl::fermion_rel2 *p_tsot=(o2scl::fermion_rel2 *)p_v;
   ptr->frel=*(p_tsot);
   return;
 }

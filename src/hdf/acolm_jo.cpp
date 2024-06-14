@@ -665,12 +665,13 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       function_to_fp_nothrow(val,d,cu);
       
       funct_string<cpp_dec_float_100> fs(func,"x");
-      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_100
-                           (cpp_dec_float_100) const>
-                        (&funct_string<cpp_dec_float_100>::operator()),&fs,
-                        std::placeholders::_1);
+      funct_cdf100 f=std::bind(std::mem_fn<cpp_dec_float_100
+                               (cpp_dec_float_100) const>
+                               (&funct_string<cpp_dec_float_100>::operator()
+                                ),&fs,
+                               std::placeholders::_1);
       
-      deriv_gsl<funct_ld,cpp_dec_float_100> dgld;
+      deriv_gsl<funct_cdf100,cpp_dec_float_100> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -689,11 +690,12 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       function_to_fp_nothrow(val,d,cu);
       
       funct_string<cpp_dec_float_50> fs(func,"x");
-      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50) const>
+      funct_cdf50 f=std::bind(std::mem_fn<cpp_dec_float_50
+                           (cpp_dec_float_50) const>
                         (&funct_string<cpp_dec_float_50>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_ld,cpp_dec_float_50> dgld;
+      deriv_gsl<funct_cdf50,cpp_dec_float_50> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -712,12 +714,12 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       function_to_fp_nothrow(val,d,cu);
       
       funct_string<cpp_dec_float_35> fs(func,"x");
-      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_35
+      funct_cdf35 f=std::bind(std::mem_fn<cpp_dec_float_35
                            (cpp_dec_float_35) const>
                         (&funct_string<cpp_dec_float_35>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_ld,cpp_dec_float_35> dgld;
+      deriv_gsl<funct_cdf35,cpp_dec_float_35> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -736,12 +738,12 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       function_to_fp_nothrow(val,d,cu);
       
       funct_string<cpp_dec_float_25> fs(func,"x");
-      funct_ld f=std::bind(std::mem_fn<cpp_dec_float_25
+      funct_cdf25 f=std::bind(std::mem_fn<cpp_dec_float_25
                            (cpp_dec_float_25) const>
                         (&funct_string<cpp_dec_float_25>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_ld,cpp_dec_float_25> dgld;
+      deriv_gsl<funct_cdf25,cpp_dec_float_25> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {

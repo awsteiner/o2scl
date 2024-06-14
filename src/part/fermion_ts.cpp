@@ -244,6 +244,17 @@ int main(void) {
                 << enterm << " " << edterm << std::endl;
     }
   }
+
+  if (false) {
+    // Test pair_den_ndeg()
+    e.mu=1.0e-14;
+    fermion_rel ft;
+    double Tx=1.0;
+    ft.pair_mu(e,Tx);
+    cout << "e.n: " << e.n << endl;
+    ft.pair_den_ndeg(e,Tx);
+    ft.calc_mu_ndeg(e,Tx,1.0e-18,true,1);
+  }
   
   t.report();
 

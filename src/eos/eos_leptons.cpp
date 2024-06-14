@@ -83,10 +83,10 @@ int eos_leptons::electron_density(double T) {
   if (retx!=0 && accuracy==acc_default) {
         
     frel.upper_limit_fac=40.0;
-    frel.fri.dit.tol_rel=1.0e-10;
-    frel.fri.dit.tol_abs=1.0e-10;
-    frel.fri.nit.tol_rel=1.0e-10;
-    frel.fri.nit.tol_abs=1.0e-10;
+    frel.dit.tol_rel=1.0e-10;
+    frel.dit.tol_abs=1.0e-10;
+    frel.nit.tol_rel=1.0e-10;
+    frel.nit.tol_abs=1.0e-10;
         
     retx=frel.pair_density(e,T);
 
@@ -94,10 +94,10 @@ int eos_leptons::electron_density(double T) {
     // because this function is used in pair_density_eq_fun().
         
     frel.upper_limit_fac=20.0;
-    frel.fri.dit.tol_rel=1.0e-8;
-    frel.fri.dit.tol_abs=1.0e-8;
-    frel.fri.nit.tol_rel=1.0e-8;
-    frel.fri.nit.tol_abs=1.0e-8;
+    frel.dit.tol_rel=1.0e-8;
+    frel.dit.tol_abs=1.0e-8;
+    frel.nit.tol_rel=1.0e-8;
+    frel.nit.tol_abs=1.0e-8;
         
   }
 
@@ -233,10 +233,10 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
   if (retx!=0 && accuracy==acc_default) {
         
     frel.upper_limit_fac=40.0;
-    frel.fri.dit.tol_rel=1.0e-10;
-    frel.fri.dit.tol_abs=1.0e-10;
-    frel.fri.nit.tol_rel=1.0e-10;
-    frel.fri.nit.tol_abs=1.0e-10;
+    frel.dit.tol_rel=1.0e-10;
+    frel.dit.tol_abs=1.0e-10;
+    frel.nit.tol_rel=1.0e-10;
+    frel.nit.tol_abs=1.0e-10;
         
     retx=frel.pair_density(e,T);
 
@@ -244,10 +244,10 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
     // because this function is used in pair_density_eq_fun().
         
     frel.upper_limit_fac=20.0;
-    frel.fri.dit.tol_rel=1.0e-8;
-    frel.fri.dit.tol_abs=1.0e-8;
-    frel.fri.nit.tol_rel=1.0e-8;
-    frel.fri.nit.tol_abs=1.0e-8;
+    frel.dit.tol_rel=1.0e-8;
+    frel.dit.tol_abs=1.0e-8;
+    frel.nit.tol_rel=1.0e-8;
+    frel.nit.tol_abs=1.0e-8;
         
   }
 
@@ -589,10 +589,10 @@ int eos_leptons::pair_density(double T) {
     if (retx!=0) {
           
       frel.upper_limit_fac=40.0;
-      frel.fri.dit.tol_rel=1.0e-10;
-      frel.fri.dit.tol_abs=1.0e-10;
-      frel.fri.nit.tol_rel=1.0e-10;
-      frel.fri.nit.tol_abs=1.0e-10;
+      frel.dit.tol_rel=1.0e-10;
+      frel.dit.tol_abs=1.0e-10;
+      frel.nit.tol_rel=1.0e-10;
+      frel.nit.tol_abs=1.0e-10;
           
       if (mu.inc_rest_mass) {
         mu.inc_rest_mass=false;
@@ -611,10 +611,10 @@ int eos_leptons::pair_density(double T) {
       }
         
       frel.upper_limit_fac=20.0;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.dit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
           
     }
     

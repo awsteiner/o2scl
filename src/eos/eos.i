@@ -105,7 +105,7 @@ class eos_leptons
   - int
   - double nq
   - double T
-- o2scl::fermion_rel frel
+- o2scl::fermion_rel2 frel
 #
 # ------------------------------------------------------
 # 

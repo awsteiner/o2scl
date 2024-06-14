@@ -544,16 +544,8 @@ namespace o2scl {
     */
     fp_t deg_limit;
     
-    /* \brief The limit for exponentials to ensure integrals are finite 
-	(default 200.0)
-    */
-    //fp_t exp_limit;
-
     /// The factor for the degenerate upper limits (default 20.0)
     fp_t upper_limit_fac;
-
-    /// A factor for the degenerate entropy integration (default 30.0)
-    fp_t deg_entropy_fac;
 
     /// Verbosity parameter (default 0)
     int verbose;
@@ -611,9 +603,7 @@ namespace o2scl {
       
       deg_limit=2.0;
       
-      //exp_limit=200.0;
       upper_limit_fac=20.0;
-      deg_entropy_fac=30.0;
       min_psi=-4.0;
       err_nonconv=true;
       use_expansions=true;
