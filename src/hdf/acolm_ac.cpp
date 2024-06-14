@@ -527,7 +527,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     // actually 7 significant figures are output, so we need a two
     // digit buffer thus, e.g., anything over 33 digit precision
     // requires 35-digit floats.
-  
+    
     if (precision>48) {
       
       cerr << "Requested precision too large for the calc "
@@ -537,8 +537,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>33) {
       
       cpp_dec_float_50 d=0, err;
-      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
-                                d,d,err);
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },d,d,err);
+        
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
@@ -550,8 +551,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>23) {
       
       cpp_dec_float_35 d=0, err;
-      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
-                                d,d,err);
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },d,d,err);
+        
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
@@ -563,8 +565,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>16) {
       
       cpp_dec_float_25 d=0, err;
-      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
-                                d,d,err);
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },d,d,err);
+        
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
@@ -577,8 +580,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     } else if (precision>13) {
       
       long double d=0, err;
-      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
-                                d,d,err);
+      int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },d,d,err);
+        
       if (retx!=0) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
@@ -590,8 +594,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     }
     
     double d=0, err;
-    int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable { return (*fmsp)(t); },
-                              d,d,err);
+    int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
+    { return (*fmsp)(t); },d,d,err);
+      
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
@@ -632,7 +637,9 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     cerr << "Requested precision too large for the calc "
          << "command." << endl;
     return 2;
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION      
+    
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
   } else if (precision>50) {
     cpp_dec_float_100 d;
     convert_units<cpp_dec_float_100> cu100;

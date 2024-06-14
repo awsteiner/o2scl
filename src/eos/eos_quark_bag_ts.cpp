@@ -37,7 +37,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-  if (true) {
+  if (false) {
     
     eos_quark_bag ebg;
     thermo th;

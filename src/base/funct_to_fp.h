@@ -384,14 +384,12 @@ namespace o2scl {
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
 
   /** \brief Evaluate a one-dimensional function from a string
-      at multiprecision
-
-      \note Experimental.
+      at multiprecision using the internal constant library
 
       \warning This class only supports a limited number of data
-      types, including double, long double, and cpp_dec_float types
-      with 25, 35, 50, or 100 digits. It is designed to be used with
-      the \ref funct_multip class.
+      types, including double, long double, and cpp_dec_float or mpfr
+      types with 25, 35, 50, or 100 digits. It is designed to be used
+      with the \ref funct_multip class.
    */
   template<class fp_25_t, class fp_35_t, class fp_50_t, class fp_100_t>
   class funct_multip_string_tl {
@@ -580,7 +578,7 @@ namespace o2scl {
       }
 
       // AWS, 7/1/22: This is a hack to determine the type so we can
-      // get the right convert_units object.
+      // get the right calc_utf8 object.
       
       int d10=std::numeric_limits<fp_t>::digits10;
       if (verbose>1) {

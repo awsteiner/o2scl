@@ -593,9 +593,10 @@ namespace o2scl_acol {
         <tt>constant</tt>') will automatically be used, so long as
         they have a unique value in MKS units. However, some constant
         values are currently only stored to double precision and will
-        be arbitrarily promoted to higher-precision without warning.
-        Unicode is also supported for constants, so try, e.g. 
-        <tt>-set precision 15 -calc π</tt>.
+        be arbitrarily promoted to higher-precision (by adding zeros
+        in the decimal representation) without warning. Unicode is
+        also supported for constants, so try, e.g. <tt>-set precision
+        15 -calc π</tt>.
 
         Note that the variable <tt>precision</tt> is used for the
         argument to the <tt>cout.precision()</tt> function, so a
@@ -606,6 +607,12 @@ namespace o2scl_acol {
         algorithm to give any incorrect results, but it is not
         impossible. Please let me know if you find any cases where it
         gives incorrect answers.
+
+        End of runtime documentation.
+
+        This function uses \ref funct_multip and \ref funct_multip_string
+        for adaptive multiprecision and \ref function_to_double()
+        or \ref function_to_fp_nothrow() otherwise.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
@@ -2033,23 +2040,28 @@ namespace o2scl_acol {
 
     /** \brief Numerically differentiate a user-specified function 
 
-        Arguments: <tt><function of 'x'> <value>
-        [multip=false]</tt>
+        Arguments: <tt><function of 'x'> <value> [multip=false]</tt>
 
         This command numerically differentiates <function> with respect to
-        x at <value>.
+        x at the value specified in <value>.
 
         The third argument is a set of optional keyword arguments. If
         multip is set to either \c "1" or \c "true", then
         adaptive multiprecision is used to attempt to ensure the result is
         accurate to within the requested precision.
 
+        When adaptive multiprecision is not used, the current value
+        of the precision variable is used to determine the floating-point
+        type used to compute the derivative. An error estimate is
+        provided, but it is sometimes an underestimate. When adaptive
+        multiprecision is used, the \c nderiv command uses multiprecision
+        to ensure the error is smaller than 10^(-precision-1).
+
         AWS, 6/13/24: While the adaptive precision algorithm is very
         good, but there may be cases with where the last couple digits
         are wrong and this error remains undetected. Please let me
         know if you find cases like this so that I can improve the
         algorithm.
-        
     */
     virtual int comm_nderiv(std::vector<std::string> &sv, bool itive_com);
 

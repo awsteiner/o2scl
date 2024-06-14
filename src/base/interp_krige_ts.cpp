@@ -529,8 +529,8 @@ int main(void) {
       yya[i]=xx*xx*xx*exp(-4.0*xx);
     }
 
-    funct_string fs("x^3*exp(-4*x)","x");
-    inte_qag_gsl<funct_string> iqg2;
+    funct_string<> fs("x^3*exp(-4*x)","x");
+    inte_qag_gsl<funct_string<>> iqg2;
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> ikon;
     ikon.mode=1;

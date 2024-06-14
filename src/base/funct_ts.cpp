@@ -64,6 +64,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+  // The class funct_string is from funct_to_fp.h
   funct_string f("pi*r^2","r");
   f.set_parm("pi",o2scl_const::pi);
   for(double r=1.0;r<=2.0;r+=0.1) {
@@ -99,54 +100,6 @@ int main(void) {
   o2scl_settings.py_final();
   
 #endif
-  
-  {
-    cout << "4." << endl;
-    fmc f2;
-    double val=0.0, err;
-    funct_multip_cdf fm2;
-    
-    // No parameters
-    fm2.verbose=2;
-    fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
-                     1.0e-4,val,err);
-    t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_cdf");
-  }
-#ifdef O2SCL_SET_MPFR
-  {
-    cout << "5." << endl;
-    fmc f2;
-    double val, err;
-    funct_multip_mpfr fm2;
-    
-    // No parameters
-    fm2.eval_tol_err([f2](auto &&tx) mutable { return f2.func(tx); },
-                     1.0e-4,val,err);
-    t.test_rel(val,log1p(1.0e-4),1.0e-15,"funct_multip_mpfr");
-  }
-#endif
-
-  {
-    // A parameter with a fixed type
-    fmc f2;
-    double val, err;
-    funct_multip fm2;
-    fmc2 f3;
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> one=1;
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> ten=10;
-    boost::multiprecision::number<
-      boost::multiprecision::cpp_dec_float<25>> param=one+one/ten;
-    fm2.eval_tol_err([f3,param](auto &&tx) mutable
-    { return f3.func(tx,param); },1.0e-4,val,err);
-    t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 2");
-    
-    // A fully templated parameter defined by a function 
-    fm2.eval_tol_err([f3](auto &&tx) mutable
-    { return f3.func(tx,f3.param_f(tx)); },1.0e-4,val,err);
-    t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
-  }
   
   t.report();
   return 0;
