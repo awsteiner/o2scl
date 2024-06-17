@@ -103,8 +103,7 @@ class mcmc_stepper_mh_record :
 };
 
 /// The MCMC object
-mcmc_para_table<point_funct,fill_funct,std::vector<double>,ubvector,
-                mcmc_stepper_mh_record> mct;
+mcmc_para_table<point_funct,fill_funct,std::vector<double>,ubvector> mct;
 
 /** \brief A demonstration class for the MCMC example. This example
     could have been written with global functions, but we put them
@@ -236,8 +235,11 @@ int main(int argc, char *argv[]) {
   
   // Setting the KDE as the base distribution for the independent
   // conditional probability.
-  mct.stepper.proposal.resize(1);
-  mct.stepper.proposal[0].set_base(kp);
+  shared_ptr<mcmc_stepper_mh_record> local_stepper
+    (new mcmc_stepper_mh_record);
+  mct.stepper=local_stepper;
+  local_stepper->proposal.resize(1);
+  local_stepper->proposal[0].set_base(kp);
   
   // Set the MCMC parameters
   mct.max_iters=20000;
@@ -276,8 +278,8 @@ int main(int argc, char *argv[]) {
   hf.open_or_create("ex_mcmc_kde.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
-  hf.setd_vec("q_next",mct.stepper.vq_next);
-  hf.setd_vec("w_next",mct.stepper.vw_next);
+  hf.setd_vec("q_next",local_stepper->vq_next);
+  hf.setd_vec("w_next",local_stepper->vw_next);
   hf.close();
 
   // Compute the average of the correlated samples for comparison

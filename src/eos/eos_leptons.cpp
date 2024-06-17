@@ -225,11 +225,15 @@ int eos_leptons2::electron_density(double T) {
   int retx=1;
   
   if (accuracy==acc_fp_25) {
-    O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
+    O2SCL_ERR("The eos_leptons2 object doesn't support multiprecision.",
+              o2scl::exc_eunimpl);
   } else if (accuracy==acc_ld) {
-    O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
+    O2SCL_ERR("The eos_leptons2 object doesn't support multiprecision.",
+              o2scl::exc_eunimpl);
   } else {
+    std::cout << "e" << std::endl;
     retx=frel.pair_density(e,T);
+    std::cout << "f" << std::endl;
   }
       
   // Sometimes the solver fails, but we can recover by adjusting
@@ -276,7 +280,9 @@ int eos_leptons2::pair_density_eq_fun(size_t nv, const ubvector &x,
       O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
     } else {
       e.n=x[0]*nq;
+      std::cout << "a" << std::endl;
       int retx=electron_density(T);
+      std::cout << "b" << std::endl;
       if (retx!=0) return retx;
     }
     
@@ -296,7 +302,9 @@ int eos_leptons2::pair_density_eq_fun(size_t nv, const ubvector &x,
     } else if (accuracy==acc_fp_25) {
       O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
     } else {
+      std::cout << "c" << std::endl;
       frel.pair_mu(e,T);
+      std::cout << "d" << std::endl;
     }
 
     if (inc_rest_mass) {
@@ -984,7 +992,7 @@ int eos_leptons2::pair_mu(double T) {
     thd.dsdT=fd.dsdT;
     
   } else {
-    
+
     frel.pair_mu(e,T);
     
   }
@@ -997,6 +1005,8 @@ int eos_leptons2::pair_mu(double T) {
   // Muon section
   
   if (include_muons) {
+
+    mu.mu=e.mu;
     
     if (include_deriv) {
       

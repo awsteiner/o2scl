@@ -1330,7 +1330,8 @@ namespace o2scl {
                         << std::endl;
             }
 
-            std::function<fp_t(fp_t)> n_fun_f=[this,temper,y,eta,mot](fp_t k) -> fp_t
+            std::function<fp_t(fp_t)> n_fun_f=[this,temper,y,eta,mot]
+              (fp_t k) -> fp_t
             { return this->deg_pressure_fun(k,temper,y,eta,mot,false); };
             
             iret=dit.integ_err(n_fun_f,zero,ul,f.pr,unc.pr);

@@ -951,6 +951,7 @@ namespace o2scl {
     /// The stepper
     std::shared_ptr<mcmc_stepper_base<func_t,data_t,vec_t>> stepper;
     
+    /// The default stepper
     std::shared_ptr<mcmc_stepper_rw<func_t,data_t,vec_t>> def_stepper;
     
     /** \brief If true, call the measurement function for the
@@ -1117,10 +1118,13 @@ namespace o2scl {
       meas_for_initial=true;
       couple_threads=false;
       steps_in_parallel=100;
-      
+
+      // Initialize the shared pointers by creating a new one
+      // and setting the member objects from the local object
       std::shared_ptr<mcmc_stepper_rw<func_t,data_t,vec_t>> stepper2
         (new mcmc_stepper_rw<func_t,data_t,vec_t>);
-      stepper=stepper2;
+      def_stepper=stepper2;
+      stepper=def_stepper;
     }
     
     /// Number of OpenMP threads

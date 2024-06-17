@@ -422,6 +422,8 @@ namespace o2scl {
   
       return o2scl::success;
     }
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     
     /** \brief Perform an iteration (adaptive multiprecision version)
     */
@@ -564,6 +566,8 @@ namespace o2scl {
   
       return o2scl::success;
     }
+
+#endif
       
     /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$ returning
         \f$ x_1 \f$.
@@ -1027,6 +1031,8 @@ namespace o2scl {
 	
     }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
     /** \brief Set the information for the solver
         (adaptive multiprecision version)
     */
@@ -1089,6 +1095,8 @@ namespace o2scl {
       return o2scl::success;
 	
     }
+
+#endif
 
   protected:
       

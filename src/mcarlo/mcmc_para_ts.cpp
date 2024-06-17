@@ -279,6 +279,8 @@ int main(int argc, char *argv[]) {
   double avg, std, avg_err;
   size_t i1, i2;
 
+  mpc.mc.def_stepper->step_fac.resize(1);
+  
   // ----------------------------------------------------------------
   // Plain MCMC
 

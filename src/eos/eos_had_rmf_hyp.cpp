@@ -1574,10 +1574,17 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   y[3]=f2;
   y[4]=f3;
 
+  /*
+  std::cout << elep.include_muons << " " << proton->n << " "
+            << elep.e.n << " " << elep.mu.n << std::endl;
+  std::cout << elep.e.mu << " " << elep.mu.mu << " " << elep.mu.m
+            << std::endl;
   std::cout << "x: " << x[0] << " " << x[1] << " " << x[2] << " "
             << x[3] << " " << x[4] << std::endl;
   std::cout << "y: " << y[0] << " " << y[1] << " " << y[2] << " "
             << y[3] << " " << y[4] << std::endl;
+  std::cout << std::endl;
+  */
   
   return 0;
 }
