@@ -856,10 +856,8 @@ namespace o2scl {
       \endverbatim
   */
   template<class func_t, class measure_t,
-           class data_t, class vec_t=ubvector,
-           class stepper_t=
-           mcmc_stepper_rw<func_t,data_t,vec_t>
-           > class mcmc_para_base {
+           class data_t, class vec_t=ubvector>
+  class mcmc_para_base {
     
   protected:
     
@@ -951,7 +949,9 @@ namespace o2scl {
   public:
 
     /// The stepper
-    stepper_t stepper;
+    std::shared_ptr<mcmc_stepper_base<func_t,data_t,vec_t>> stepper;
+    
+    std::shared_ptr<mcmc_stepper_rw<func_t,data_t,vec_t>> def_stepper;
     
     /** \brief If true, call the measurement function for the
         initial point
@@ -1117,8 +1117,12 @@ namespace o2scl {
       meas_for_initial=true;
       couple_threads=false;
       steps_in_parallel=100;
+      
+      std::shared_ptr<mcmc_stepper_rw<func_t,data_t,vec_t>> stepper2
+        (new mcmc_stepper_rw<func_t,data_t,vec_t>);
+      stepper=stepper2;
     }
-
+    
     /// Number of OpenMP threads
     size_t n_threads;
   
@@ -1401,7 +1405,7 @@ namespace o2scl {
                   << mpi_size << std::endl;
         } else {
           scr_out << "mcmc_para_base::mcmc(): "
-                  << "Stepper " << stepper.step_type() << ", n_params="
+                  << "Stepper " << stepper->step_type() << ", n_params="
                   << n_params << ", n_threads=" << n_threads << ", rank="
                   << mpi_rank << ", n_ranks="
                   << mpi_size << std::endl;
@@ -1809,13 +1813,13 @@ namespace o2scl {
                 // Select next point for aff_inv=false
                 
                 if (switch_arr[sindex]==false) {
-                  stepper.step(it,n_params,func[it],current[it],
+                  stepper->step(it,n_params,func[it],current[it],
                                next[it],w_current[sindex],w_next[it],
                                low,high,func_ret[it],accept,
                                data[sindex+n_walk*n_threads],rg[it],
                                verbose);
                 } else {
-                  stepper.step(it,n_params,func[it],current[it],
+                  stepper->step(it,n_params,func[it],current[it],
                                next[it],w_current[sindex],w_next[it],
                                low,high,func_ret[it],accept,
                                data[sindex],rg[it],verbose);
@@ -2451,7 +2455,7 @@ namespace o2scl {
                           std::function<int(const vec_t &,
                                             double,size_t,
                                             int,bool,data_t &)>,
-                          data_t,vec_t,stepper_t> {
+                          data_t,vec_t> {
     
   protected:
   
@@ -2460,8 +2464,8 @@ namespace o2scl {
     internal_measure_t;
   
     /// Type of parent class
-    typedef mcmc_para_base<func_t,internal_measure_t,data_t,vec_t,
-                           stepper_t> parent_t;
+    typedef mcmc_para_base<func_t,internal_measure_t,
+                           data_t,vec_t> parent_t;
 
     /// Column names
     std::vector<std::string> col_names;
@@ -2758,7 +2762,7 @@ namespace o2scl {
         hf.seti("table_sequence",this->table_sequence);
         hf.seti("user_seed",this->user_seed);
         hf.seti("verbose",this->verbose);
-        this->stepper.write_params(hf);
+        this->stepper->write_params(hf);
         file_header(hf);
         first_write=true;
       }

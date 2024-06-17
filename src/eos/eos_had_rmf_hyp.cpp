@@ -1509,7 +1509,10 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
   }
       
   for(size_t i=0;i<nB_grid.size();i++) {
+
     nB_temp=nB_grid[i];
+    
+    std::cout << "nB: " << nB_temp << std::endl;
 
     beta_mroot.msolve(5,guess,fmf);
 	
@@ -1570,6 +1573,11 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   y[2]=f1;
   y[3]=f2;
   y[4]=f3;
+
+  std::cout << "x: " << x[0] << " " << x[1] << " " << x[2] << " "
+            << x[3] << " " << x[4] << std::endl;
+  std::cout << "y: " << y[0] << " " << y[1] << " " << y[2] << " "
+            << y[3] << " " << y[4] << std::endl;
   
   return 0;
 }
