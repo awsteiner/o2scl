@@ -30,6 +30,8 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+#ifdef O2SCL_NEVER_DEFINED
+
 eos_leptons::eos_leptons() {
   include_muons=true;
   include_photons=false;
@@ -50,7 +52,6 @@ eos_leptons::eos_leptons() {
   pde_from_density=true;
   verbose=0;
   accuracy=acc_default;
-
 }
 
 int eos_leptons::electron_density(double T) {
@@ -181,6 +182,8 @@ int eos_leptons::pair_density_eq_fun(size_t nv, const ubvector &x,
 
   return 0;
 }
+
+#endif
 
 eos_leptons2::eos_leptons2() {
   include_muons=true;
@@ -565,6 +568,8 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
 
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+
 int eos_leptons::pair_mu(double T) {
 
   // Electron section
@@ -944,6 +949,8 @@ int eos_leptons::pair_density_eq(double nq, double T) {
   return 0;
 }
 
+#endif
+
 int eos_leptons2::pair_mu(double T) {
 
   // Electron section
@@ -1017,7 +1024,7 @@ int eos_leptons2::pair_mu(double T) {
       thd.dsdT+=fd.dsdT;
       
     } else {
-      
+
       frel.pair_mu(mu,T);
       
     }
@@ -1341,7 +1348,6 @@ eos_leptons_multip::eos_leptons_multip() {
   taucdf25.init(cu_cdf25.convert("kg","1/fm",
                                  mass_tau_f<cpp_dec_float_25>()),2);
   
-  
 }
 
 int eos_leptons_multip::electron_density(double T) {
@@ -1349,7 +1355,7 @@ int eos_leptons_multip::electron_density(double T) {
   int retx;
 
   if (accuracy!=acc_fp_25 && accuracy!=acc_ld) {
-    return eos_leptons::electron_density(T);
+    return eos_leptons2::electron_density(T);
   }
   
   bool inc_rest_mass=false;

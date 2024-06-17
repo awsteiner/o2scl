@@ -98,7 +98,7 @@ namespace o2scl {
     */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
-                                 eos_leptons &elep);
+                                 eos_leptons2 &elep);
 
   public:
 
@@ -221,7 +221,7 @@ namespace o2scl {
         zero temperature
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                           eos_leptons &elep,
+                           eos_leptons2 &elep,
                            std::shared_ptr<table_units<> > results);
 
 #ifdef O2SCL_NEVER_DEFINED

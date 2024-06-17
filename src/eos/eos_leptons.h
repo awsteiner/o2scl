@@ -36,6 +36,8 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Lepton and photon EOS
 
       The function \ref pair_density_eq() computes the thermodynamic
@@ -349,11 +351,29 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics
      */
     fermion_rel frel;
-
     //@}
     
   };
+
+#endif
   
+  /** \brief Lepton and photon EOS
+
+      The function \ref pair_density_eq() computes the thermodynamic
+      functions of the electrons and muons in in weak equilibrium,
+      i.e. when \f$ \mu_e = \mu_{\mu} \f$. The inputs to this function
+      are the temperature and the total charge density, i.e. the sum
+      of the electron, positron, muon, and antimuon densities, There
+      are two methods to solve for weak equilibrium. The first is to
+      use the electron density as a variable, use the electron density
+      to compute the electron chemical potential, and then use the
+      muon chemical potential to compare the muon density and solve
+      the equation \f$ n_e + n_{\mu} = n_q \f$. This method is used if
+      \ref pde_from_density is true (the default). The second is to
+      use the electron chemical potential as a variable and then
+      compute the electron density from that. It is unclear which
+      method is more stable or accurate. 
+   */
   class eos_leptons2 {
 
   public:
@@ -663,7 +683,7 @@ namespace o2scl {
       eos_leptons to compute the lepton and photon EOS with
       multiprecision.
    */
-  class eos_leptons_multip : public eos_leptons {
+  class eos_leptons_multip : public eos_leptons2 {
 
   protected:
     

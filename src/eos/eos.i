@@ -71,7 +71,7 @@ class eos_base
 # 
 # Class eos_leptons
 #
-class eos_leptons
+class eos_leptons2
 - o2scl::thermo th
 - o2scl::fermion e
 - o2scl::fermion mu  

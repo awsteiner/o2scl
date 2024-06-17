@@ -111,7 +111,7 @@ namespace o2scl {
     //@}
 
     /// EOS of leptons and photons
-    eos_leptons elep;
+    eos_leptons2 elep;
     
     /// \name Data
     //@{

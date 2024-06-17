@@ -52,6 +52,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/root.h>
 
 namespace o2scl {

@@ -2040,10 +2040,10 @@ namespace o2scl_acol {
 
     /** \brief Numerically differentiate a user-specified function 
 
-        Arguments: <tt><function of 'x'> <value> [multip=false]</tt>
-
+        Arguments: <tt><function of 'x'> <val> [multip=false]</tt>
+        
         This command numerically differentiates <function> with respect to
-        x at the value specified in <value>.
+        x at the value specified in <val>.
 
         The third argument is a set of optional keyword arguments. If
         multip is set to either \c "1" or \c "true", then
@@ -2066,10 +2066,10 @@ namespace o2scl_acol {
     virtual int comm_nderiv(std::vector<std::string> &sv, bool itive_com);
 
     /** \brief Numerically integrate a user-specified function 
-
+        
         Arguments: <tt><function> <variable> <lower limit> 
         <upper limit> [multip=false,method=kb]</tt>
-
+        
         This command numerically integrates <function> with respect to
         <variable> from <lower limit> to <upper limit>. 
 

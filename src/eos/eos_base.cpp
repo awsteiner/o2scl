@@ -44,7 +44,7 @@ const thermo &eos_base::get_thermo() {
 
 
 int eos_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                         eos_leptons &elep,
+                         eos_leptons2 &elep,
 			 std::shared_ptr<table_units<> > results) {
   O2SCL_ERR("Function beta_eq_T0() not implemented.",
 	    o2scl::exc_eunimpl);
