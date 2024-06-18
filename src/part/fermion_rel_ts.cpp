@@ -25,20 +25,39 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/eos_sn.h>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
+template<class fp_t, class fp2_t>
+int count_digits_same(fp_t &one, fp2_t &two, std::string msg="") {
+  fp_t numer=one-static_cast<fp_t>(two);
+  if (numer==0) return std::numeric_limits<fp_t>::max_digits10;
+  int ret=((int)(-log10(fabs(numer)/fabs(static_cast<fp_t>(two)))));
+  if (ret<-1000) return 99;
+  if (ret<=0) {
+    cout << "Problem: " << msg << endl;
+    cout << dtos(one,-1) << " " << dtos(two,-1) << endl;
+    cout << dtos(numer,-1) << " " << ret << endl;
+    exit(-1);
+  }
+  return ret;
+}
+
 int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
 
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   if (argc==1) {
     t.report();
     return 0;
@@ -54,6 +73,9 @@ int main(int argc, char *argv[]) {
   fermion_rel fr;
   fermion_rel_ld frld;
   fermion_rel_cdf25 fr25;
+  fr.verify_ti=true;
+  frld.verify_ti=true;
+  fr25.verify_ti=true;
 
   int first_test=0;
   
@@ -64,7 +86,7 @@ int main(int argc, char *argv[]) {
   int count=0;
 
   cout << " cnt m          T           mu/n       "
-       << "d-ld  ld-25 1 vs. 2" << endl;
+       << "d-ld  ld-25 ti verify" << endl;
   for(int im=-2;im<=1;im++) {
     
     f.m=im;
@@ -101,11 +123,11 @@ int main(int argc, char *argv[]) {
           cout.setf(ios::showpos);
           cout << f.mu << " ";
           cout.unsetf(ios::showpos);
-          
+
           fr.calc_mu(f,T);
           frld.calc_mu(fld,Tld);
           fr25.calc_mu(f25,T25);
-
+          
           if (true) {
 
             // Test with inc_rest_mass=false
@@ -113,7 +135,7 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             f2.mu-=f2.m;
             fr.calc_mu(f2,T);
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
+            t.test_rel(f.ed,f2.ed+f2.m*f2.n,1.0e-11,"irm false ed");
             t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
 
             // Test with non_interacting=false
@@ -132,70 +154,20 @@ int main(int argc, char *argv[]) {
             f4.non_interacting=false;
             f4.nu-=f4.m;
             fr.calc_mu(f4,T);
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en");
 
-            cout << "1" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "1" << endl;
+              exit(-1);
+            }
           }
           
           int idn, iden, ildn, ilden;
-          if (f.n==0) {
-            idn=99;
-          } else if (f.n==fld.n) {
-            idn=17;
-          } else {
-            idn=((int)(-log10(fabs(f.n-fld.n)/fabs(fld.n))));
-          }
-          if (f.en==0) {
-            iden=99;
-          } else if (f.en==fld.en) {
-            iden=17;
-          } else {
-            iden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.n==static_cast<long double>(f25.n)) {
-            ildn=21;
-          } else {
-            ildn=((int)(-log10(fabs(fld.n-static_cast<long double>(f25.n))/
-                               fabs(static_cast<long double>(f25.n)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            ilden=21;
-          } else {
-            ilden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (idn<=0) {
-            cout << "Problem in idn+ 1: " << endl;
-            cout << dtos(f.n,-1) << " "
-                 << dtos(fld.n,-1) << " " << idn << endl;
-            exit(-1);
-          }
-          if (iden<=0) {
-            cout << "Problem in iden+ 1: " << endl;
-            cout << dtos(f.en,-1) << " "
-                 << dtos(fld.en,-1) << " " << iden << endl;
-            exit(-1);
-          }
-          if (ildn<=0) {
-            cout << "Problem in ildn+ 1: " << endl;
-            cout << dtos(fld.n,-1) << " "
-                 << dtos(f25.n,-1) << " " << ildn << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n)) << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n))/
-              fabs(static_cast<long double>(f25.n)) << endl;
-            exit(-1);
-          }
-          if (ilden<=0) {
-            cout << "Problem in ilden+ 1: " << endl;
-            cout << dtos(fld.en,-1) << " "
-                 << dtos(f25.en,-1) << " " << ilden << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en)) << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en))/
-              fabs(static_cast<long double>(f25.en)) << endl;
-            exit(-1);
-          }
+          idn=count_digits_same(f.n,fld.n,"idn+ 1");
+          iden=count_digits_same(f.en,fld.en,"iden+ 1");
+          ildn=count_digits_same(fld.n,f25.n,"ildn+ 1");
+          ilden=count_digits_same(fld.en,f25.en,"ilden+ 1");
           
           cout.width(2);
           cout << idn << " ";
@@ -204,7 +176,20 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << ildn << " ";
           cout.width(2);
-          cout << ilden << endl;
+          cout << ilden << " ";
+
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
           
         } else {
           
@@ -235,8 +220,8 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             f2.mu-=f2.m;
             fr.pair_mu(f2,T);
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
-            t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-11,"irm false ed 2");
+            t.test_rel(f.en,f2.en,1.0e-14,"irm false en 2");
 
             // Test with non_interacting=false
             fermion f3=f;
@@ -245,8 +230,8 @@ int main(int argc, char *argv[]) {
             f3.ms=f3.m;
             f3.m*=sqrt(2.0);
             fr.pair_mu(f3,T);
-            t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+            t.test_rel(f.n,f3.n,1.0e-14,"ni false n 2");
+            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 2");
 
             // Test with both equal to false
             fermion f4=f3;
@@ -254,56 +239,20 @@ int main(int argc, char *argv[]) {
             f4.non_interacting=false;
             f4.nu-=f4.m;
             fr.pair_mu(f4,T);
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed 2");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en 2");
             
-            cout << "2" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "2" << endl;
+              exit(-1);
+            }
           }
           
           int kdn, kden, kldn, klden;
-          if (f.n==0) {
-            kdn=99;
-          } else if (f.n==fld.n) {
-            kdn=17;
-          } else {
-            kdn=((int)(-log10(fabs(f.n-fld.n)/fabs(fld.n))));
-          }
-          if (f.en==0) {
-            kden=99;
-          } else if (f.en==fld.en) {
-            kden=17;
-          } else {
-            kden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.n==static_cast<long double>(f25.n)) {
-            kldn=21;
-          } else {
-            kldn=((int)(-log10(fabs(fld.n-static_cast<long double>(f25.n))/
-                               fabs(static_cast<long double>(f25.n)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            klden=21;
-          } else {
-            klden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (kdn<=0) {
-            cout << "Problem in kdn+ 1: " << endl;
-            cout << dtos(f.n,-1) << " "
-                 << dtos(fld.n,-1) << " " << kdn << endl;
-            cout << f.n << " " << fld.n << endl;
-            exit(-1);
-          }
-          if (kldn<=0) {
-            cout << "Problem in kldn+ 1: " << endl;
-            cout << dtos(fld.n,-1) << " "
-                 << dtos(f25.n,-1) << " " << kldn << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n)) << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n))/
-              fabs(static_cast<long double>(f25.n)) << endl;
-            exit(-1);
-          }
+          kdn=count_digits_same(f.n,fld.n,"kdn+ 1");
+          kden=count_digits_same(f.en,fld.en,"kden+ 1");
+          kldn=count_digits_same(fld.n,f25.n,"kldn+ 1");
+          klden=count_digits_same(fld.en,f25.en,"klden+ 1");
         
           cout.width(2);
           cout << kdn << " ";
@@ -312,8 +261,21 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << kldn << " ";
           cout.width(2);
-          cout << klden << endl;
+          cout << klden << " ";
         
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
+          
         } else {
           cout << endl;
         }
@@ -352,8 +314,8 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             f2.mu-=f2.m;
             fr.calc_mu(f2,T);
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
-            t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-11,"irm false ed 3");
+            t.test_rel(f.en,f2.en,1.0e-14,"irm false en 3");
 
             // Test with non_interacting=false
             fermion f3=f;
@@ -362,8 +324,8 @@ int main(int argc, char *argv[]) {
             f3.ms=f3.m;
             f3.m*=sqrt(2.0);
             fr.calc_mu(f3,T);
-            t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+            t.test_rel(f.n,f3.n,1.0e-14,"ni false n 3");
+            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 3");
 
             // Test with both equal to false
             fermion f4=f3;
@@ -371,72 +333,20 @@ int main(int argc, char *argv[]) {
             f4.non_interacting=false;
             f4.nu-=f4.m;
             fr.calc_mu(f4,T);
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed 3");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en 3");
             
-            cout << "3" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "3" << endl;
+              exit(-1);
+            }
           }
           
           int idn, iden, ildn, ilden;
-          if (f.n==0) {
-            idn=99;
-          } else if (f.n==fld.n) {
-            idn=17;
-          } else {
-            idn=((int)(-log10(fabs(f.n-fld.n)/fabs(fld.n))));
-          }
-          if (f.en==0) {
-            iden=99;
-          } else if (f.en==fld.en) {
-            iden=17;
-          } else {
-            iden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.n==static_cast<long double>(f25.n)) {
-            ildn=21;
-          } else {
-            ildn=((int)(-log10(fabs(fld.n-static_cast<long double>(f25.n))/
-                               fabs(static_cast<long double>(f25.n)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            ilden=21;
-          } else {
-            ilden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (idn<=0) {
-            cout << "Problem in idn- 1: " << endl;
-            cout << dtos(f.n,-1) << " "
-                 << dtos(fld.n,-1) << " " << idn << endl;
-            cout << f.n << " " << fld.n << endl;
-            cout << (f.n==0) << endl;
-            exit(-1);
-          }
-          if (iden<=0) {
-            cout << "Problem in iden- 1: " << endl;
-            cout << dtos(f.en,-1) << " "
-                 << dtos(fld.en,-1) << " " << iden << endl;
-            exit(-1);
-          }
-          if (ildn<=0) {
-            cout << "Problem in ildn- 1: " << endl;
-            cout << dtos(fld.n,-1) << " "
-                 << dtos(f25.n,-1) << " " << ildn << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n)) << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n))/
-              fabs(static_cast<long double>(f25.n)) << endl;
-            exit(-1);
-          }
-          if (ilden<=0) {
-            cout << "Problem in ilden- 1: " << endl;
-            cout << dtos(fld.en,-1) << " "
-                 << dtos(f25.en,-1) << " " << ilden << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en)) << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en))/
-              fabs(static_cast<long double>(f25.en)) << endl;
-            exit(-1);
-          }
+          idn=count_digits_same(f.n,fld.n,"idn- 1");
+          iden=count_digits_same(f.en,fld.en,"iden- 1");
+          ildn=count_digits_same(fld.n,f25.n,"ilnd- 1");
+          ilden=count_digits_same(fld.en,f25.en,"ilden- 1");
         
           cout.width(2);
           cout << idn << " ";
@@ -445,8 +355,21 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << ildn << " ";
           cout.width(2);
-          cout << ilden << endl;
+          cout << ilden << " ";
         
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
+          
         } else {
           cout << endl;
         }
@@ -474,8 +397,8 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             f2.mu-=f2.m;
             fr.pair_mu(f2,T);
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
-            t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-11,"irm false ed 4");
+            t.test_rel(f.en,f2.en,1.0e-13,"irm false en 4");
 
             // Test with non_interacting=false
             fermion f3=f;
@@ -484,8 +407,8 @@ int main(int argc, char *argv[]) {
             f3.ms=f3.m;
             f3.m*=sqrt(2.0);
             fr.pair_mu(f3,T);
-            t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+            t.test_rel(f.n,f3.n,1.0e-14,"ni false n 4");
+            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 4");
 
             // Test with both equal to false
             fermion f4=f3;
@@ -493,56 +416,20 @@ int main(int argc, char *argv[]) {
             f4.non_interacting=false;
             f4.nu-=f4.m;
             fr.pair_mu(f4,T);
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed 4");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en 4");
             
-            cout << "4" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "4" << endl;
+              exit(-1);
+            }
           }
           
           int kdn, kden, kldn, klden;
-          if (f.n==0) {
-            kdn=99;
-          } else if (f.n==fld.n) {
-            kdn=17;
-          } else {
-            kdn=((int)(-log10(fabs(f.n-fld.n)/fabs(fld.n))));
-          }
-          if (f.en==0) {
-            kden=99;
-          } else if (f.en==fld.en) {
-            kden=17;
-          } else {
-            kden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.n==static_cast<long double>(f25.n)) {
-            kldn=21;
-          } else {
-            kldn=((int)(-log10(fabs(fld.n-static_cast<long double>(f25.n))/
-                               fabs(static_cast<long double>(f25.n)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            klden=21;
-          } else {
-            klden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (kdn<=0) {
-            cout << "Problem in kdn- 1: " << endl;
-            cout << dtos(f.n,-1) << " "
-                 << dtos(fld.n,-1) << " " << kdn << endl;
-            cout << f.n << " " << fld.n << endl;
-            exit(-1);
-          }
-          if (kldn<=0) {
-            cout << "Problem in kldn- 1: " << endl;
-            cout << dtos(fld.n,-1) << " "
-                 << dtos(f25.n,-1) << " " << kldn << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n)) << endl;
-            cout << fabs(fld.n-static_cast<long double>(f25.n))/
-              fabs(static_cast<long double>(f25.n)) << endl;
-            exit(-1);
-          }
+          kdn=count_digits_same(f.n,fld.n,"kdn- 1");
+          kden=count_digits_same(f.en,fld.en,"kden- 1");
+          kldn=count_digits_same(fld.n,f25.n,"kldn- 1");
+          klden=count_digits_same(fld.en,f25.en,"klden- 1");
         
           cout.width(2);
           cout << kdn << " ";
@@ -551,8 +438,21 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << kldn << " ";
           cout.width(2);
-          cout << klden << endl;
+          cout << klden << " ";
         
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
+          
         } else {
           cout << endl;
         }
@@ -617,86 +517,41 @@ int main(int argc, char *argv[]) {
             fermion f2=f;
             f2.inc_rest_mass=false;
             fr.calc_density(f2,T);
-            t.test_rel(f.mu-f.m,f2.mu,1.0e-14,"irm false mu");
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
-            t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+            t.test_rel(f.mu-f.m,f2.mu,1.0e-12,"irm false mu 5");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-13,"irm false ed 5");
+            t.test_rel(f.en,f2.en,1.0e-13,"irm false en 5");
 
             // Test with non_interacting=false
             fermion f3=f;
             f3.non_interacting=false;
             f3.ms=f3.m;
+            f3.nu=f3.mu;
             f3.m*=sqrt(2.0);
             fr.calc_density(f3,T);
-            t.test_rel(f.mu-f.m,f3.mu,1.0e-14,"ni false mu");
-            t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+            t.test_rel(f.mu,f3.nu,1.0e-14,"ni false mu 5");
+            t.test_rel(f.n,f3.n,1.0e-14,"ni false n 5");
+            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 5");
 
             // Test with both equal to false
             fermion f4=f3;
             f4.inc_rest_mass=false;
             f4.non_interacting=false;
             fr.calc_density(f4,T);
-            t.test_rel(f3.n-f3.m,f4.mu,1.0e-14,"both false mu");
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-14,"both false mu 5");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-12,"both false ed 5");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en 5");
 
-            cout << "5" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "5" << endl;
+              exit(-1);
+            }
           }
           
           int idmu, iden, ildmu, ilden;
-          if (f.mu==fld.mu) {
-            idmu=17;
-          } else {
-            idmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
-          }
-          if (f.en==fld.en) {
-            iden=17;
-          } else {
-            iden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.mu==static_cast<long double>(f25.mu)) {
-            ildmu=21;
-          } else {
-            ildmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
-                                fabs(static_cast<long double>(f25.mu)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            ilden=21;
-          } else {
-            ilden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (idmu<=0) {
-            cout << "Problem in idmu 1: " << endl;
-            cout << dtos(f.mu,-1) << " "
-                 << dtos(fld.mu,-1) << " " << idmu << endl;
-            exit(-1);
-          }
-          if (iden<=0) {
-            cout << "Problem in iden 1: " << endl;
-            cout << dtos(f.en,-1) << " "
-                 << dtos(fld.en,-1) << " " << iden << endl;
-            exit(-1);
-          }
-          if (ildmu<=0) {
-            cout << "Problem in ildmu 1: " << endl;
-            cout << dtos(fld.mu,-1) << " "
-                 << dtos(f25.mu,-1) << " " << ildmu << endl;
-            cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
-            cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
-              fabs(static_cast<long double>(f25.mu)) << endl;
-            exit(-1);
-          }
-          if (ilden<=0) {
-            cout << "Problem in ilden 1: " << endl;
-            cout << dtos(fld.en,-1) << " "
-                 << dtos(f25.en,-1) << " " << ilden << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en)) << endl;
-            cout << fabs(fld.en-static_cast<long double>(f25.en))/
-              fabs(static_cast<long double>(f25.en)) << endl;
-            exit(-1);
-          }
+          idmu=count_digits_same(f.mu,fld.mu,"idmu 1");
+          iden=count_digits_same(f.en,fld.en,"iden 1");
+          ildmu=count_digits_same(fld.mu,f25.mu,"ildmu 1");
+          ilden=count_digits_same(fld.en,f25.en,"ilden 1");
         
           cout.width(2);
           cout << idmu << " ";
@@ -705,8 +560,21 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << ildmu << " ";
           cout.width(2);
-          cout << ilden << endl;
+          cout << ilden << " ";
         
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
+          
         } else {
 
           cout << endl;
@@ -741,76 +609,41 @@ int main(int argc, char *argv[]) {
             fermion f2=f;
             f2.inc_rest_mass=false;
             fr.pair_density(f2,T);
-            t.test_rel(f.mu-f.m,f2.mu,1.0e-14,"irm false mu");
-            t.test_rel(f.ed,f2.ed,1.0e-14,"irm false ed");
-            t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+            t.test_rel(f.mu-f.m,f2.mu,1.0e-10,"irm false mu 6");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-10,"irm false ed 6");
+            t.test_rel(f.en,f2.en,1.0e-13,"irm false en 6");
 
             // Test with non_interacting=false
             fermion f3=f;
             f3.non_interacting=false;
             f3.ms=f3.m;
+            f3.nu=f3.mu;
             f3.m*=sqrt(2.0);
             fr.pair_density(f3,T);
-            t.test_rel(f.mu-f.m,f3.mu,1.0e-14,"ni false mu");
-            t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+            t.test_rel(f.mu,f3.nu,1.0e-11,"ni false mu 6");
+            t.test_rel(f.n,f3.n,1.0e-14,"ni false n 6");
+            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 6");
 
             // Test with both equal to false
             fermion f4=f3;
             f4.inc_rest_mass=false;
             f4.non_interacting=false;
             fr.pair_density(f4,T);
-            t.test_rel(f3.n-f3.m,f4.mu,1.0e-14,"both false mu");
-            t.test_rel(f3.n,f4.ed,1.0e-14,"both false ed");
-            t.test_rel(f3.en,f4.en,1.0e-14,"both false en");
+            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-13,"both false mu 6");
+            t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-9,"both false ed 6");
+            t.test_rel(f3.en,f4.en,1.0e-13,"both false en 6");
 
-            cout << "6" << endl;
-            exit(-1);
+            if (t.get_success()==false) {
+              cout << "6" << endl;
+              exit(-1);
+            }
           }
           
           int kdmu, kden, kldmu, klden;
-          if (f.mu==0) {
-            kdmu=99;
-          } else if (f.mu==fld.mu) {
-            kdmu=17;
-          } else {
-            kdmu=((int)(-log10(fabs(f.mu-fld.mu)/fabs(fld.mu))));
-          }
-          if (f.en==0) {
-            kden=99;
-          } else if (f.en==fld.en) {
-            kden=17;
-          } else {
-            kden=((int)(-log10(fabs(f.en-fld.en)/fabs(fld.en))));
-          }
-          if (fld.mu==static_cast<long double>(f25.mu)) {
-            kldmu=21;
-          } else {
-            kldmu=((int)(-log10(fabs(fld.mu-static_cast<long double>(f25.mu))/
-                                fabs(static_cast<long double>(f25.mu)))));
-          }
-          if (fld.en==static_cast<long double>(f25.en)) {
-            klden=21;
-          } else {
-            klden=((int)(-log10(fabs(fld.en-static_cast<long double>(f25.en))/
-                                fabs(static_cast<long double>(f25.en)))));
-          }
-          if (kdmu<=0) {
-            cout << "Problem in kdmu 1: " << endl;
-            cout << dtos(f.mu,-1) << " "
-                 << dtos(fld.mu,-1) << " " << kdmu << endl;
-            cout << f.mu << " " << fld.mu << endl;
-            exit(-1);
-          }
-          if (kldmu<=0) {
-            cout << "Problem in kldmu 1: " << endl;
-            cout << dtos(fld.mu,-1) << " "
-                 << dtos(f25.mu,-1) << " " << kldmu << endl;
-            cout << fabs(fld.mu-static_cast<long double>(f25.mu)) << endl;
-            cout << fabs(fld.mu-static_cast<long double>(f25.mu))/
-              fabs(static_cast<long double>(f25.mu)) << endl;
-            exit(-1);
-          }
+          kdmu=count_digits_same(f.mu,fld.mu,"kdmu 1");
+          kden=count_digits_same(f.en,fld.en,"kden 1");
+          kldmu=count_digits_same(fld.mu,f25.mu,"kldmu 1");
+          klden=count_digits_same(fld.en,f25.en,"klden 1");
         
           cout.width(2);
           cout << kdmu << " ";
@@ -819,8 +652,21 @@ int main(int argc, char *argv[]) {
           cout.width(2);
           cout << kldmu << " ";
           cout.width(2);
-          cout << klden << endl;
+          cout << klden << " ";
         
+          double pr2=-f.ed+f.n*f.mu+T*f.en;
+          int x=count_digits_same(f.pr,pr2);
+          cout.width(2);
+          cout << x << " ";
+          long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+          int xld=count_digits_same(fld.pr,pr2ld);
+          cout.width(2);
+          cout << xld << " ";
+          cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+          int x25=count_digits_same(f25.pr,pr225);
+          cout.width(2);
+          cout << x25 << endl;
+          
         } else {
 
           cout << endl;
@@ -832,6 +678,8 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+
+#endif
   
   t.report();
 
