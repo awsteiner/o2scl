@@ -55,7 +55,7 @@ pytest==8.2.0
 python-dateutil==2.9.0.post0
 requests==2.32.0
 rich==13.7.1
-scikit-learn==1.4.2
+scikit-learn==1.5.0
 scipy==1.13.0
 setuptools==68.1.2
 six==1.16.0
