@@ -28,6 +28,7 @@
 */
 
 #include <cmath>
+#include <typeinfo>
 
 #define BOOST_DISABLE_ASSERTS
 #include <boost/math/quadrature/tanh_sinh.hpp>
@@ -553,10 +554,12 @@ namespace o2scl {
                     << L1norm
                     << std::endl;
         }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_double_exp_boost::integ_iu_err().",
-                        o2scl::exc_efailed,
-                        this->err_nonconv);
+        std::string errs="Failed to achieve tolerance "+
+          o2scl::dtos(tol_rel_loc)+" in ";
+        errs+="inte_double_exp_boost::integ_iu_err() for function type ";
+        errs+=((std::string)(typeid(func_t).name()))+" and fp type "+
+          ((std::string)(typeid(fp_t).name()))+".";
+        O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }

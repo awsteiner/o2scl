@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
     t.report();
     return 0;
   }
+
+  std::string arg=argv[1];
   
   fermion f;
   fermion_ld fld;
@@ -82,8 +84,65 @@ int main(int argc, char *argv[]) {
   // An exhaustive comparison of the two algorithms at
   // various levels of precision
 
+  if (arg=="2") {
+    fr.multip=true;
+    frld.multip=true;
+    fr25.multip=true;
+  }
+
+  if (arg=="1") {
+    fr.dit.tol_abs=1.0e-13;
+    fr.dit.tol_rel=1.0e-13;
+    fr.nit.tol_abs=1.0e-13;
+    fr.nit.tol_rel=1.0e-13;
+    fr.density_root.tol_rel=1.0e-10;
+    
+    frld.dit.tol_abs=1.0e-15;
+    frld.dit.tol_rel=1.0e-15;
+    frld.nit.tol_abs=1.0e-15;
+    frld.nit.tol_rel=1.0e-15;
+    frld.density_root.tol_rel=1.0e-10;
+    
+    fr25.dit.tol_abs=1.0e-18;
+    fr25.dit.tol_rel=1.0e-18;
+    fr25.nit.tol_abs=1.0e-18;
+    fr25.nit.tol_rel=1.0e-18;
+    fr25.density_root.tol_rel=1.0e-10;
+  }
+  
+  if (arg=="3") {
+    fr.dit.tol_abs=1.0e-13;
+    fr.dit.tol_rel=1.0e-13;
+    fr.nit.tol_abs=1.0e-13;
+    fr.nit.tol_rel=1.0e-13;
+    fr.density_root.tol_rel=1.0e-10;
+    
+    frld.dit.tol_abs=1.0e-18;
+    frld.dit.tol_rel=1.0e-18;
+    frld.nit.tol_abs=1.0e-18;
+    frld.nit.tol_rel=1.0e-18;
+    frld.density_root.tol_rel=1.0e-18;
+    frld.def_massless_root.tol_rel=1.0e-18;
+    frld.upper_limit_fac=52.0;
+    frld.deg_entropy_fac=52.0;
+    frld.tol_expan=1.0e-18;
+    frld.exp_limit=11400.0;
+    
+    fr25.dit.tol_abs=1.0e-25;
+    fr25.dit.tol_rel=1.0e-25;
+    fr25.nit.tol_abs=1.0e-25;
+    fr25.nit.tol_rel=1.0e-25;
+    fr25.density_root.tol_rel=1.0e-23;
+    fr25.def_massless_root.tol_rel=1.0e-23;
+    fr25.upper_limit_fac=62.0;
+    fr25.deg_entropy_fac=62.0;
+    fr25.tol_expan=1.0e-123;
+    fr25.exp_limit=6.7e7;
+  }
+  
   cout.precision(4);
-  int count=0;
+  int count=0, cmu_n=0, cmu_en=0, cmu_ld_n=0, cmu_ld_en=0;
+  int cmu_ti=0, cmu_ld_ti=0, cmu_25_ti=0;
 
   cout << " cnt m          T           mu/n       "
        << "d-ld  ld-25 ti verify" << endl;
@@ -165,9 +224,13 @@ int main(int argc, char *argv[]) {
           
           int idn, iden, ildn, ilden;
           idn=count_digits_same(f.n,fld.n,"idn+ 1");
+          cmu_n+=idn;
           iden=count_digits_same(f.en,fld.en,"iden+ 1");
+          cmu_en+=iden;
           ildn=count_digits_same(fld.n,f25.n,"ildn+ 1");
+          cmu_ld_n+=ildn;
           ilden=count_digits_same(fld.en,f25.en,"ilden+ 1");
+          cmu_ld_en+=ilden;
           
           cout.width(2);
           cout << idn << " ";
@@ -180,14 +243,17 @@ int main(int argc, char *argv[]) {
 
           double pr2=-f.ed+f.n*f.mu+T*f.en;
           int x=count_digits_same(f.pr,pr2);
+          cmu_ti+=x;
           cout.width(2);
           cout << x << " ";
           long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
           int xld=count_digits_same(fld.pr,pr2ld);
+          cmu_ld_ti+=xld;
           cout.width(2);
           cout << xld << " ";
           cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
           int x25=count_digits_same(f25.pr,pr225);
+          cmu_25_ti+=x25;
           cout.width(2);
           cout << x25 << endl;
           
@@ -196,7 +262,7 @@ int main(int argc, char *argv[]) {
           cout << endl;
           
         }
-        
+
         count++;
         
         cout.width(4);
@@ -344,9 +410,13 @@ int main(int argc, char *argv[]) {
           
           int idn, iden, ildn, ilden;
           idn=count_digits_same(f.n,fld.n,"idn- 1");
+          cmu_n+=idn;
           iden=count_digits_same(f.en,fld.en,"iden- 1");
+          cmu_en+=iden;
           ildn=count_digits_same(fld.n,f25.n,"ilnd- 1");
+          cmu_ld_n+=ildn;
           ilden=count_digits_same(fld.en,f25.en,"ilden- 1");
+          cmu_ld_en+=ilden;
         
           cout.width(2);
           cout << idn << " ";
@@ -359,14 +429,17 @@ int main(int argc, char *argv[]) {
         
           double pr2=-f.ed+f.n*f.mu+T*f.en;
           int x=count_digits_same(f.pr,pr2);
+          cmu_ti+=x;
           cout.width(2);
           cout << x << " ";
           long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
           int xld=count_digits_same(fld.pr,pr2ld);
+          cmu_ld_ti+=xld;
           cout.width(2);
           cout << xld << " ";
           cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
           int x25=count_digits_same(f25.pr,pr225);
+          cmu_25_ti+=x25;
           cout.width(2);
           cout << x25 << endl;
           
@@ -680,6 +753,14 @@ int main(int argc, char *argv[]) {
   }
 
 #endif
+
+  cout << "calc_mu density (double <-> long double): " << cmu_n << endl;
+  cout << "calc_mu entropy (double <-> long double): " << cmu_en << endl;
+  cout << "calc_mu density (long double <-> cdf_25): " << cmu_ld_n << endl;
+  cout << "calc_mu entropy (long double <-> cdf_25): " << cmu_ld_en << endl;
+  cout << "calc_mu ti: " << cmu_ti << endl;
+  cout << "calc_mu long double ti: " << cmu_ld_ti << endl;
+  cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << endl;
   
   t.report();
 

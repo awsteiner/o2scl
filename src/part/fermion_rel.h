@@ -478,7 +478,7 @@ namespace o2scl {
       using \code fermion_rel rf(1.0,2.0); rf.upper_limit_fac=40.0;
       rf.dit->tol_abs=1.0e-13; rf.dit->tol_rel=1.0e-13;
       rf.nit->tol_abs=1.0e-13; rf.nit->tol_rel=1.0e-13;
-      rf.density_root->tol_rel=1.0e-10; \endcode which decreases the
+      rf.density_root.tol_rel=1.0e-10; \endcode which decreases the
       both the relative and absolute tolerances for both the
       degenerate and non-degenerate integrators and improves the
       accuracy of the solver which determines the chemical potential
@@ -523,7 +523,7 @@ namespace o2scl {
 	   class fp_t=double>
   class fermion_rel_tl :
     public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
-			     func_t,fp_t>, fermion_rel_integ<fp_t> {
+			     func_t,fp_t>, public fermion_rel_integ<fp_t> {
     
   public:
     
@@ -611,8 +611,6 @@ namespace o2scl {
       last_method=0;
       last_method_s="";
       
-      //density_root=&def_density_root;
-      
       density_root.tol_rel=1.0e-7;
 
       tol_expan=1.0e-14;
@@ -629,9 +627,6 @@ namespace o2scl {
 
     virtual ~fermion_rel_tl() {
     }
-
-    // The solver for calc_density()
-    //root<func_t,func_t,fp_t> *density_root;
 
     // The default solver for the chemical potential given the density
     root_t density_root;
