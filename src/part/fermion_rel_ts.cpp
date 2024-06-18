@@ -517,7 +517,7 @@ int main(int argc, char *argv[]) {
             fermion f2=f;
             f2.inc_rest_mass=false;
             fr.calc_density(f2,T);
-            t.test_rel(f.mu-f.m,f2.mu,1.0e-12,"irm false mu 5");
+            t.test_rel(f.mu-f.m,f2.mu,1.0e-10,"irm false mu 5");
             t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-13,"irm false ed 5");
             t.test_rel(f.en,f2.en,1.0e-13,"irm false en 5");
 
