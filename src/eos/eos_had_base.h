@@ -726,7 +726,7 @@ namespace o2scl {
         generic interface which works for non-hadronic EOSs.
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                           eos_leptons2 &elep,
+                           eos_leptons &elep,
                            std::shared_ptr<table_units<> > results);
 
     /** \brief Compute (numerically) the number susceptibilities as a
@@ -991,9 +991,7 @@ namespace o2scl {
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
-                                 eos_leptons2 &elep);
-    //fermion &e, bool include_muons,
-    //fermion &mu, fermion_rel &frel);
+                                 eos_leptons &elep);
     //@}
     
     /// \name Numerical methods [protected]

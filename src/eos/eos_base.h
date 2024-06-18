@@ -70,7 +70,7 @@ namespace o2scl {
         generic interface which works for non-hadronic EOSs.
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                           eos_leptons2 &elep,
+                           eos_leptons &elep,
 			   std::shared_ptr<table_units<> > results);
 
     /** \brief Equation of state as a function of baryon, charge,

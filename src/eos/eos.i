@@ -71,7 +71,7 @@ class eos_base
 # 
 # Class eos_leptons
 #
-class eos_leptons2
+class eos_leptons
 - o2scl::thermo th
 - o2scl::fermion e
 - o2scl::fermion mu  
@@ -105,7 +105,7 @@ class eos_leptons2
   - int
   - double nq
   - double T
-- o2scl::fermion_rel2 frel
+- o2scl::fermion_rel frel
 #
 # ------------------------------------------------------
 # 

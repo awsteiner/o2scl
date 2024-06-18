@@ -1331,7 +1331,7 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
 }
 
 int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
-                             eos_leptons2 &elep,
+                             eos_leptons &elep,
 			     std::shared_ptr<table_units<> > results) {
   
   // Ensure initial guess is valid
@@ -1346,7 +1346,7 @@ int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
     
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &, ubvector &, 
-                       const double &, eos_leptons2 &)>
+                       const double &, eos_leptons &)>
        (&eos_had_base::solve_beta_eq_T0),
        this,std::placeholders::_1,std::placeholders::_2,
        std::placeholders::_3,std::cref(nB_grid[i]),std::ref(elep));
@@ -1375,19 +1375,16 @@ int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
 
 int eos_had_base::solve_beta_eq_T0(size_t nv, const ubvector &x,
 				   ubvector &y, const double &nB,
-                                   eos_leptons2 &elep) {
+                                   eos_leptons &elep) {
   
   if (x[0]<0.0) return 1;
   double n_charge=x[0];
   proton->n=n_charge;
   neutron->n=nB-n_charge;
   if (neutron->n<0.0) return 2;
-  //std::cout << "calc_e 1" << std::endl;
   this->calc_e(*neutron,*proton,*eos_thermo);
-  //std::cout << "calc_e 2" << std::endl;
   elep.e.mu=neutron->mu-proton->mu;
   elep.pair_mu(0.0);
-  //std::cout << "calc_e 3" << std::endl;
   y[0]=n_charge-elep.e.n;
   if (elep.include_muons) {
     y[0]=n_charge-elep.e.n-elep.mu.n;
