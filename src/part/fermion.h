@@ -558,7 +558,9 @@ namespace o2scl {
         
         ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);
-        std::cout << j << " " << nterm << std::endl;
+        if (verbose>0) {
+          std::cout << j << " " << nterm << std::endl;
+        }
         
         if (j==1) first_term=pterm;
         f.pr+=pterm;
