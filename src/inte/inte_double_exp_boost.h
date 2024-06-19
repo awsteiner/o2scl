@@ -23,7 +23,7 @@
 #ifndef O2SCL_INTE_DOUBLE_EXP_BOOST_H
 #define O2SCL_INTE_DOUBLE_EXP_BOOST_H
 
-/** \file inte_tanh_sinh_boost.h
+/** \file inte_double_exp_boost.h
     \brief File defining \ref o2scl::inte_tanh_sinh_boost
 */
 
@@ -839,10 +839,12 @@ namespace o2scl {
       }
 
 #endif
+
+      std::string errs="Failed to compute with requested accuracy. ";
+      errs+=" Value of tol_rel is "+o2scl::dtos(integ_tol)+
+        ". in inte_double_exp_boost::integ_err().";
+      O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       
-      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_double_exp_boost::integ_err().",
-                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -1097,10 +1099,14 @@ namespace o2scl {
       }
 
 #endif
-    
-      O2SCL_CONV2_RET("Failed to compute with requested accuracy in ",
-                      "inte_double_exp_boost::integ_iu_err_multip().",
-                      o2scl::exc_efailed,this->err_nonconv);
+      
+      std::string errs="Failed to achieve tolerance "+
+        o2scl::dtos(integ_tol)+" in ";
+      errs+="inte_double_exp_boost::integ_iu_err_multip() ";
+      errs+="for function type ";
+      errs+=((std::string)(typeid(func_t).name()))+" and fp type "+
+        ((std::string)(typeid(fp_t).name()))+".";
+      O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 

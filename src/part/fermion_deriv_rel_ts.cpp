@@ -21,7 +21,6 @@
   ───────────────────────────────────────────────────────────────────
 */
 #include <o2scl/fermion_deriv_rel.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/fermion_rel.h>
 #include <o2scl/test_mgr.h>
 // For access to global convert_units object

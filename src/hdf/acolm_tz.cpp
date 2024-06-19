@@ -2020,8 +2020,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<double>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<double>::epsilon() << " "
+       << typeid(double).name() << std::endl;
   
   cout.width(18);
   cout << "long double";
@@ -2034,8 +2034,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<long double>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<long double>::epsilon() << " "
+       << typeid(long double).name() << std::endl;
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   cout.width(18);
@@ -2050,8 +2050,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_25>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_25>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_25).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_35";
@@ -2065,8 +2065,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_35>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_35>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_35).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_50";
@@ -2080,8 +2080,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_50>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_50>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_50).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_100";
@@ -2095,8 +2095,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_100>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_100>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_100).name()) << std::endl;
 
 #ifdef O2SCL_SET_MPFR
 
@@ -2112,8 +2112,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_25>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_25>::epsilon() << " "
+       << ((std::string)typeid(mpfr_25).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_35";
@@ -2127,8 +2127,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_35>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_35>::epsilon() << " "
+       << ((std::string)typeid(mpfr_35).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_50";
@@ -2142,8 +2142,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_50>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_50>::epsilon() << " "
+       << ((std::string)typeid(mpfr_50).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_100";
@@ -2157,8 +2157,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_100>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_100>::epsilon() << " "
+       << ((std::string)typeid(mpfr_100).name()) << std::endl;
 
 #endif
 #endif

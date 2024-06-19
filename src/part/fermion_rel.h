@@ -907,9 +907,12 @@ namespace o2scl {
               return this->density_fun(k,y,eta); },
               zero,f.n,unc.n,tol_rel);
           if (ix!=0) {
-            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
-                       "fermion_rel::calc_mu().",
-                       exc_efailed);
+            std::string errs="Density integration (ndeg, multip) failed ";
+            errs+="in fermion_rel::calc_mu() for fp type ";
+            errs+=((std::string)typeid(fp_t).name())+" with ";
+            errs+=o2scl::itos(std::numeric_limits<fp_t>::digits10);
+            errs+=" digits.";
+            O2SCL_ERR(errs.c_str(),exc_efailed);
           }
           
         } else {
@@ -1112,11 +1115,11 @@ namespace o2scl {
         
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_err_multip
             ([this,temper,y,eta,mot](auto &&k) mutable {
               return this->deg_density_fun(k,temper,y,eta,mot,false); },
-              zero,f.n,unc.n,tol_rel);
+              zero,ul,f.n,unc.n,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("n integration (deg, multip) failed in ",
                        "fermion_rel::calc_mu().",
@@ -1150,11 +1153,11 @@ namespace o2scl {
 	
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
           int ix=it_multip.integ_err_multip
             ([this,temper,y,eta,mot](auto &&k) mutable {
               return this->deg_energy_fun(k,temper,y,eta,mot); },
-              zero,f.ed,unc.ed,tol_rel);
+              zero,ul,f.ed,unc.ed,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("e integration (ndeg, multip) failed in ",
                        "fermion_rel::calc_mu().",
@@ -1175,10 +1178,16 @@ namespace o2scl {
           }
           
         }
-        
+
         f.ed*=prefac;
         unc.ed*=prefac;
 
+        if (false) {
+          std::cout << "deg ed: " << temper << " " << y << " "
+                    << eta << " " << mot << " " << dtos(f.ed,-1) << " "
+                    << dtos(f.n,-1) << std::endl;
+        }
+        
 	// Compute the lower limit for the entropy integration
 
 	fp_t ll;
@@ -1307,11 +1316,11 @@ namespace o2scl {
                         << std::endl;
             }
 
-            fp_t tol_rel=0;
+            double tol_rel=0;
             int ix=it_multip.integ_err_multip
               ([this,temper,y,eta,mot](auto &&k) mutable {
                 return this->deg_pressure_fun(k,temper,y,eta,mot,false); },
-                zero,f.pr,unc.pr,tol_rel);
+                zero,ul,f.pr,unc.pr,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("p integration (deg, multip) failed in ",
                          "fermion_rel::calc_mu().",
@@ -1760,7 +1769,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
 	chemical potential
     */
-    void pair_mu(fermion_t &f, fp_t temper) {
+    int pair_mu(fermion_t &f, fp_t temper) {
 
       last_method=0;
       last_method_s="";
@@ -1780,7 +1789,7 @@ namespace o2scl {
 	  unc.pr=tol_expan*f.pr;
 	  last_method=9;
           last_method_s="nondeg. exp. in pair_mu";
-	  return;
+	  return 0;
 	}
       }
 
@@ -1829,7 +1838,7 @@ namespace o2scl {
       unc.pr=hypot(unc.pr,unc_pr);
       unc.en=hypot(unc.ed,unc_en);
 
-      return;
+      return 0;
     }
 
     /** \brief Calculate thermodynamic properties with antiparticles

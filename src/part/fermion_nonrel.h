@@ -66,7 +66,6 @@ namespace o2scl {
       parts. See, e.g. [Callen85]_ pg. 403 or [Landau80]_.
       \endverbatim
 
-      
       The functions \ref pair_density() and \ref pair_mu() have not 
       been implemented and just call the error handler.
       
@@ -303,10 +302,10 @@ namespace o2scl {
   /** \brief Compute thermodynamics with antiparticles at fixed
       chemical potential (unimplemented)
    */
-  virtual void pair_mu(fermion_t &f, fp_t temper) {
+  virtual int pair_mu(fermion_t &f, fp_t temper) {
     O2SCL_ERR2("Function fermion_nonrel::pair_mu() not ",
 	       "implemented.",exc_eunimpl);
-    return;
+    return 0;
   }
 
   /** \brief Compute thermodynamics with antiparticles at fixed

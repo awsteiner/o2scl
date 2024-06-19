@@ -36,7 +36,6 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/eos_base.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/part.h>
 #include <o2scl/lib_settings.h>
 

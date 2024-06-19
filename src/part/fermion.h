@@ -772,7 +772,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
         chemical potential
     */
-    virtual void pair_mu(fermion_t &f, fp_t temper)=0;
+    virtual int pair_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
         density
