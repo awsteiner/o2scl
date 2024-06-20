@@ -43,7 +43,7 @@ public:
 
   fermion nferm, p, e, mu, nue, numu;
   eos_had_rmf rmf;
-  fermion_eff eff;
+  fermion_rel rel;
   thermo thx;
   double nb;
 
@@ -112,10 +112,10 @@ public:
     numu.mu=mu.mu-e.mu+nue.mu;
   
     rmf.calc_eq_p(nferm,p,sig,ome,rho,f1,f2,f3,thx);
-    eff.calc_mu_zerot(e);
-    eff.calc_mu_zerot(mu);
-    eff.calc_mu_zerot(nue);
-    eff.calc_mu_zerot(numu);
+    rel.calc_mu_zerot(e);
+    rel.calc_mu_zerot(mu);
+    rel.calc_mu_zerot(nue);
+    rel.calc_mu_zerot(numu);
     
     y[0]=p.n-e.n-mu.n;
     y[1]=nferm.n+p.n-nb;
@@ -260,7 +260,8 @@ public:
     cout << "NL3: " << endl;
     cout << "  Saturation density: " << re.n0 << endl;
     t.test_rel(re.n0,0.148,1.0e-2,"sat density");
-    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m
+         << endl;
     t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
     cout << "  Zero pressure: " << th.pr << endl;
     t.test_rel(th.pr,0.0,1.0e-8,"zero press");
@@ -389,9 +390,9 @@ public:
 	 << "lamv=0.0, lam4=0.0" << endl << endl;
     nferm.n=re.n0/2.0;
     p.n=re.n0/2.0;
-    fermion_eff effx;
-    effx.kf_from_density(nferm);
-    effx.kf_from_density(p);
+    fermion_rel relx;
+    relx.kf_from_density(nferm);
+    relx.kf_from_density(p);
     sig=re.mnuc*(1.0-re.msom)/re.ms/re.cs;
     ome=re.n0*re.cw/re.mw;
     rho=0.0;
@@ -412,7 +413,8 @@ public:
     t.test_abs(th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-10,
 	       "thermo ident.");
     cout << "  Saturation density: " << barn << " " << re.n0 << endl;
-    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Effective mass: " << re.msom << " "
+         << nferm.ms/nferm.m << endl;
     cout << "  Zero pressure: " << th.pr << endl;
     cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
 	 << (th.ed/barn-re.mnuc)*hc_mev_fm << endl;
@@ -473,7 +475,8 @@ public:
     t.test_rel(re.eoa*hc_mev_fm,(th.ed/barn-re.mnuc)*hc_mev_fm,
 	       5.0e-4,"eoa");
     cout << "  Saturation density: " << barn << " " << re.n0 << endl;
-    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m << endl;
+    cout << "  Effective mass: " << re.msom << " "
+         << nferm.ms/nferm.m << endl;
     cout << "  Zero pressure: " << th.pr << endl;
     cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
 	 << (th.ed/barn-re.mnuc)*hc_mev_fm << endl;
@@ -481,8 +484,8 @@ public:
 
     nferm.n=re.n0/2.0;
     p.n=re.n0/2.0;
-    effx.kf_from_density(nferm);
-    effx.kf_from_density(p);
+    relx.kf_from_density(nferm);
+    relx.kf_from_density(p);
     sig=re.mnuc*(1.0-re.msom)/re.ms/re.cs;
 
     // Manually msolve the cubic for omega:

@@ -34,18 +34,6 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-template<class fp_t, class fp2_t>
-int count_digits_same(const fp_t &one, const fp2_t &two) {
-  fp_t numer=one-static_cast<fp_t>(two);
-  fp_t denom=(one+static_cast<fp_t>(two))/2;
-  if (numer==0 && denom!=0) {
-    return std::numeric_limits<fp_t>::max_digits10;
-  }
-  int ret=((int)(-log10(abs(numer)/abs(denom))));
-  if (ret<-1) ret=-1;
-  return ret;
-}
-
 int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);

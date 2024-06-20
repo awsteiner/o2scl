@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner
+  Copyright (C) 2017-2024, Andrew W. Steiner and Josue Bautista
   
   This file is part of O2scl.
   
@@ -133,7 +133,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Covariance function: 1D RBF with a noise term
+  /** \brief Covariance function: RBF with a noise term
 
       \note There's no point making a base class, since there
       aren't really any virtual functions. The covariance functions
@@ -206,6 +206,168 @@ namespace o2scl {
       }
       return exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix])/
         len[iy]/len[iy]*(x1[iy]-x2[iy]);
+    }
+    
+  };
+
+  /** \brief Covariance function: RBF with varying correlation length and
+      a noise term
+
+      \note There's no point making a base class, since there
+      aren't really any virtual functions. The covariance functions
+      have to be templates, to handle multiple vector types, so 
+      no virtual functions are allowed.
+   */
+  class mcovar_funct_quad_correl {
+    
+  public:
+
+    /// Length parameters
+    std::vector<double> len;
+
+    /// Slope parameters
+    std::vector<double> slope;
+    
+    /// Position parameters
+    std::vector<double> pos;
+    
+    /// Noise parameter
+    double log10_noise;
+    
+    /// Get the number of parameters
+    size_t get_n_params() {
+      return len.size()*3+1;
+    }
+    
+    /// Set the parameters
+    template<class vec_t>
+    void set_params(vec_t &p) {
+      for(size_t j=0;j<len.size();j++) {
+        len[j]=p[j];
+      }
+      for(size_t j=len.size();j<len.size()*2;j++) {
+        slope[j-len.size()]=p[j];
+      }
+      for(size_t j=len.size()*2;j<len.size()*3;j++) {
+        pos[j-len.size()*2]=p[j];
+      }
+      log10_noise=p[len.size()*3];
+      return;
+    }
+    
+    /** \brief The covariance function
+
+        The covariance function is
+        \f[
+        K_{ij} = \prod_k \exp \left[
+        \frac{ - \left(x_{ik} - x_{jk}\right)^2}
+        {2 d_k^2} \right] 
+        \f]
+        where
+        \f[
+        d_k^2 \equiv \left[\ell_k^2 + m_k^2 \left( x_{ik} + x_{jk} -
+        n_k\right)^2\right] \, .
+        \f]
+        The values of \f$ \ell_k \f$ are stored in \ref len, the
+        values of \f$ m_k \f$ are stored in \ref slope, and the values
+        of \f$ n_k \f$ are stored in \ref pos.
+     */
+    template<class vec_t, class vec2_t>
+    double operator()(const vec_t &x1, const vec2_t &x2) {
+      double sum=0.0;
+      bool equal=true;
+      for(size_t j=0;j<len.size();j++) {
+        double ell=len[j];
+        double m=slope[j];
+        double n=pos[j];
+        if (x1[j]!=x2[j]) equal=false;
+        double den2=ell*ell+m*m*pow((x1[j]+x2[j])-n*n,2);
+        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/den2/2.0;
+      }
+      if (equal) return exp(sum)+pow(10.0,log10_noise);
+      return exp(sum);
+    }
+
+    /** \brief The derivative of the covariance function with
+        respect to one element of the first argument
+
+        This function computes
+        \f[
+        \frac{\partial K_{ij}}{\partial x_{ik}} = \frac{K_{ij} z_k}{d_k^4} \, .
+        \f]
+        where
+        \f[
+        z_k \equiv \left[m_k^2 \left( n_k - 2 x_{jk}
+        \right) \left( x_{ik} + x_{jk} - n_k\right) - \ell_k^2\right]
+        \left( x_{ik} - x_{jk} \right)
+        \f]
+    */
+    template<class vec_t, class vec2_t>
+    double deriv(vec_t &x1, vec2_t &x2, size_t ix) {
+      double ell=len[ix];
+      double m=slope[ix];
+      double n=pos[ix];
+      double K=operator()(x1,x2), deriv;
+      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n*n,2);
+      double zix=(m*m*(n-x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
+      deriv=K*zix/d2ix/d2ix;
+        
+      return deriv;
+    }
+
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+
+        This function computes
+        \f[
+        \frac{\partial^2 K_{ij}}{\partial x_{ik} \partial x_{im}} \, .
+        \f]
+        If \f$ k \neq m \f$, then
+        \f[
+        \frac{\partial^2 K_{ij}}{\partial x_{ik} \partial x_{im}}
+        = \frac{K_{ij} z_k z_m}{d_k^4 d_m^4} \, .
+        \f]
+        Otherwise
+        \f[
+        \frac{\partial^2 K_{ij}}{\partial x_{ik}^2} =
+        \frac{K_{ij}}{d_k^4}
+        \left[
+        \frac{z_k^2}{d_k^4} + \frac{\partial z_k}{\partial x_{ik}}
+        - \frac{4 z_k m_k^2}{d_k^2} \left( x_{ik} + x_{jk} - n_k \right)
+        \right]
+        \f]
+        where
+        \f[
+        \frac{\partial z_k}{\partial x_{ik}} =
+        m_k^2 \left( n_k - 2 x_{jk} \right) \left( x_{ik} - x_{jk} \right)
+        - \left[ \ell_k^2 - m_k^2 \left( n_k - 2 x_{jk} \right)
+        \left( x_{ik} + x_{jk} - n_k\right) \right]
+        \f]
+    */
+    template<class vec_t, class vec2_t>
+    double deriv2(vec_t &x1, vec2_t &x2, size_t ix,
+                  size_t iy) {
+      double ellx=len[ix];
+      double mx=slope[ix];
+      double nx=pos[ix];
+      double elly=len[iy];
+      double my=slope[iy];
+      double ny=pos[iy];
+      double sum=0.0;
+      double K=operator()(x1,x2), deriv2;
+      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n*n,2);
+      double zix=(m*m*(n-x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
+      if (ix!=iy) {
+        double d2iy=ell*ell+m*m*pow((x1[iy]+x2[iy])-n*n,2);
+        double ziy=(m*m*(n-x2[iy])*(x1[iy]+x2[iy]-n)-ell*ell)*(x1[iy]-x2[iy]);
+        deriv2=K*zix*ziy/d2ix/d2iy;
+      } else {
+        double dzkdxik=mx*mx*(nx-2.0*x2[ix])*(x1[ix]-x2[ix])-
+          (ellx*ellx+mx*mx*(nx-2.0*x2[ix])*(nx-x1[ix]-x2[ix]));
+        deriv2=K/d2x/d2x*(zix*zix/d2x/d2x+dzkdxik-2.0*zix/d2x*mx*mx*2.0*
+                          (x1[ix]+x2[ix]-nx));
+      }
+      return deriv2;
     }
     
   };

@@ -53,9 +53,6 @@ namespace o2scl {
 
   /** \brief Masses from the Atomic Mass Evaluation 
       
-      \note This class requires data stored in an HDF file and
-      thus requires HDF support for normal usage.
-
       \verbatim embed:rst
       This class provides an interface to the atomic mass table using
       data from [Audi95]_, [Audi03]_, [Audi12]_, [Wang12]_,
