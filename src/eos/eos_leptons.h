@@ -219,17 +219,9 @@ namespace o2scl {
       frel.dit.tol_rel=1.0e-13;
       frel.nit.tol_abs=1.0e-13;
       frel.nit.tol_rel=1.0e-13;
-      frel.dit.tol_abs=1.0e-13;
-      frel.dit.tol_rel=1.0e-13;
-      frel.nit.tol_abs=1.0e-13;
-      frel.nit.tol_rel=1.0e-13;
       frel.density_root.tol_rel=1.0e-10;
 
       fdrel.upper_limit_fac=40.0;
-      fdrel.dit.tol_abs=1.0e-13;
-      fdrel.dit.tol_rel=1.0e-13;
-      fdrel.nit.tol_abs=1.0e-13;
-      fdrel.nit.tol_rel=1.0e-13;
       fdrel.dit.tol_abs=1.0e-13;
       fdrel.dit.tol_rel=1.0e-13;
       fdrel.nit.tol_abs=1.0e-13;

@@ -43,7 +43,8 @@
 
 namespace o2scl {
 
-  /** \brief Desc 
+  /** \brief Class defining integrands of derivatives for
+      relativistic fermions
    */
   template<class fp_t> class fermion_deriv_rel_integ {
 

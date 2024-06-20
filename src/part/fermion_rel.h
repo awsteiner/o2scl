@@ -46,14 +46,9 @@
 
 namespace o2scl {
 
+  /** \brief Class defining integrands for relativistic fermions
+   */
   template<class fp_t> class fermion_rel_integ {
-    
-  protected:
-
-    /** \brief If true, call the error handler if the integration
-        does not succeed
-    */
-    bool err_nonconv;
     
   public:
     
@@ -67,6 +62,11 @@ namespace o2scl {
     */
     double exp_limit;
 
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+    
     fermion_rel_integ() {
       exp_limit=200.0;
       deg_entropy_fac=30.0;
@@ -529,11 +529,6 @@ namespace o2scl {
     
     /// \name Numerical parameters
     //@{
-    /** \brief If true, call the error handler when convergence 
-	fails (default true)
-    */
-    bool err_nonconv;
-    
     /** \brief The smallest value of \f$ (\mu-m)/T \f$ for which 
 	integration is used (default -4.0)
     */
@@ -564,9 +559,6 @@ namespace o2scl {
     /// If true, verify the thermodynamic identity (default false)
     bool verify_ti;
     
-    /// Value for verifying the thermodynamic identity
-    fp_t therm_ident;
-
     /** \brief Set inte objects
 	
 	The first integrator is used for non-degenerate integration
@@ -605,7 +597,6 @@ namespace o2scl {
       
       upper_limit_fac=20.0;
       min_psi=-4.0;
-      err_nonconv=true;
       use_expansions=true;
       verbose=0;
       last_method=0;
@@ -615,7 +606,6 @@ namespace o2scl {
 
       tol_expan=1.0e-14;
       verify_ti=false;
-      therm_ident=0.0;
 
       alt_solver.err_nonconv=false;
       // AWS, 6/24/21: This appears to give better results than
@@ -1005,9 +995,12 @@ namespace o2scl {
           
           iret=nit.integ_iu_err(n_fun_f,zero,f.en,unc.en);
           if (iret!=0) {
-            O2SCL_ERR2("s integration (ndeg) failed in ",
-                       "fermion_rel::calc_mu().",
-                       exc_efailed);
+            std::string errs="Entropy integration (ndeg) failed ";
+            errs+="in fermion_rel::calc_mu() for fp type ";
+            errs+=((std::string)typeid(fp_t).name())+" with ";
+            errs+=o2scl::itos(std::numeric_limits<fp_t>::digits10);
+            errs+=" digits.";
+            O2SCL_ERR(errs.c_str(),exc_efailed);
           }
           
         }

@@ -894,7 +894,7 @@ namespace o2scl {
         ret=integ_iu_err_int(func,a_d,res_d,err_d,L1norm_d,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -928,7 +928,7 @@ namespace o2scl {
         ret=integ_iu_err_int(func,a_ld,res_ld,err_ld,L1norm_ld,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -964,7 +964,7 @@ namespace o2scl {
                              err_cdf25,L1norm_cdf25,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -1000,7 +1000,7 @@ namespace o2scl {
                              err_cdf35,L1norm_cdf35,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1036,7 +1036,7 @@ namespace o2scl {
                              err_cdf50,L1norm_cdf50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1072,7 +1072,7 @@ namespace o2scl {
                              err_cdf100,L1norm_cdf100,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
@@ -1156,7 +1156,7 @@ namespace o2scl {
         ret=integ_il_err_int(func,b_d,res_d,err_d,L1norm_d,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -1182,7 +1182,7 @@ namespace o2scl {
         ret=integ_il_err_int(func,b_ld,res_ld,err_ld,L1norm_ld,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -1207,7 +1207,7 @@ namespace o2scl {
                              err_cdf25,L1norm_cdf25,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -1232,7 +1232,7 @@ namespace o2scl {
                              err_cdf35,L1norm_cdf35,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1257,7 +1257,7 @@ namespace o2scl {
                              err_cdf50,L1norm_cdf50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1282,7 +1282,7 @@ namespace o2scl {
                              err_cdf100,L1norm_cdf100,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
@@ -1350,7 +1350,7 @@ namespace o2scl {
         ret=integ_i_err_int(func,res_d,err_d,L1norm_d,
                             target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -1375,7 +1375,7 @@ namespace o2scl {
         ret=integ_i_err_int(func,res_ld,err_ld,L1norm_ld,
                             target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -1399,7 +1399,7 @@ namespace o2scl {
                             err_cdf25,L1norm_cdf25,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -1423,7 +1423,7 @@ namespace o2scl {
                             err_cdf35,L1norm_cdf35,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1447,7 +1447,7 @@ namespace o2scl {
                             err_cdf50,L1norm_cdf50,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1471,7 +1471,7 @@ namespace o2scl {
                             err_cdf100,L1norm_cdf100,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
