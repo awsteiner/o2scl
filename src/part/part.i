@@ -172,7 +172,6 @@ class fermion_rel
 - bool use_expansions
 - double tol_expan
 - bool verify_ti
-- double therm_ident
 - fermion unc
 - function nu_from_n
   - int

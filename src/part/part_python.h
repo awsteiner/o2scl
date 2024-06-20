@@ -188,10 +188,6 @@ bool o2scl_fermion_rel_get_verify_ti(void *vptr);
 
 void o2scl_fermion_rel_set_verify_ti(void *vptr, bool v);
 
-double o2scl_fermion_rel_get_therm_ident(void *vptr);
-
-void o2scl_fermion_rel_set_therm_ident(void *vptr, double v);
-
 void *o2scl_fermion_rel_get_unc(void *vptr);
 
 void o2scl_fermion_rel_set_unc(void *vptr, void *p_v);

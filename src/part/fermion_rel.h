@@ -187,6 +187,18 @@ namespace o2scl {
       ret=arg3*sqrt(arg1)*(term1+term2);
   
       if (!isfinite(ret)) {
+        /*
+        std::cout << "y2: " << dtos(y2,-1) << std::endl;
+        std::cout << "eta2: " << dtos(eta2,-1) << std::endl;
+        std::cout << "arg1: " << dtos(arg1,-1) << std::endl;
+        std::cout << "arg2: " << dtos(arg2,-1) << std::endl;
+        std::cout << "arg3: " << dtos(arg3,-1) << std::endl;
+        std::cout << "arg4: " << dtos(arg4,-1) << std::endl;
+        std::cout << "arg5: " << dtos(arg5,-1) << std::endl;
+        std::cout << "arg6: " << dtos(arg6,-1) << std::endl;
+        std::cout << "term1: " << dtos(term1,-1) << std::endl;
+        std::cout << "term2: " << dtos(term2,-1) << std::endl;
+        */
 	return 0.0;
       }
 

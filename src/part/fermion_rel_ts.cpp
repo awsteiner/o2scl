@@ -42,17 +42,7 @@ int count_digits_same(const fp_t &one, const fp2_t &two) {
     return std::numeric_limits<fp_t>::max_digits10;
   }
   int ret=((int)(-log10(abs(numer)/abs(denom))));
-  if (ret<-1) {
-    std::cout << "cds: " << dtos(one,-1) << " "
-              << dtos(two,-1) << std::endl;
-  }
-  return ret;
-}
-
-template<class fp_t, class fp2_t>
-int count_digits_same2(const fp_t &one, const fp2_t &two, std::string msg="") {
-  int ret=count_digits_same(one,two);
-  if (ret<-1) return -1;
+  if (ret<-1) ret=-1;
   return ret;
 }
 
@@ -65,12 +55,10 @@ int main(int argc, char *argv[]) {
 
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
-  if (argc==1) {
-    t.report();
-    return 0;
+  std::string arg;
+  if (argc>=2) {
+    arg=argv[1];
   }
-
-  std::string arg=argv[1];
   
   fermion f;
   fermion_ld fld;
@@ -86,7 +74,7 @@ int main(int argc, char *argv[]) {
   fr.verify_ti=true;
   frld.verify_ti=true;
   fr25.verify_ti=true;
-  
+
   fr.err_nonconv=false;
   fr.nit.err_nonconv=false;
   fr.dit.err_nonconv=false;
@@ -109,8 +97,10 @@ int main(int argc, char *argv[]) {
 
   if (arg=="1") {
 
+    // This is supposed to test higher-accuracy settings,
+    // but currently fails for nondegenerate entropy integration
+    
     first_test=51;
-    fr.nit.verbose=2;
     
     fr.dit.tol_abs=1.0e-13;
     fr.dit.tol_rel=1.0e-13;
@@ -135,6 +125,10 @@ int main(int argc, char *argv[]) {
   }
   
   if (arg=="2") {
+
+    // I think this runs without throwing any exceptions,
+    // but it needs some work, especially to ensure the
+    // thermodynamic identity is satisfied. 
     
     fr.multip=true;
     frld.multip=true;
@@ -283,14 +277,14 @@ int main(int argc, char *argv[]) {
           
           int idn=-2, iden=-2, ildn=-2, ilden=-2;
           if (ret==0 && retld==0) {
-            idn=count_digits_same2(f.n,fld.n,"idn+ 1");
-            iden=count_digits_same2(f.en,fld.en,"iden+ 1");
+            idn=count_digits_same(f.n,fld.n);
+            iden=count_digits_same(f.en,fld.en);
           }
           cmu_n+=idn;
           cmu_en+=iden;
           if (retld==0 && ret25==0) {
-            ildn=count_digits_same2(fld.n,f25.n,"ildn+ 1");
-            ilden=count_digits_same2(fld.en,f25.en,"ilden+ 1");
+            ildn=count_digits_same(fld.n,f25.n);
+            ilden=count_digits_same(fld.en,f25.en);
           }
           cmu_ld_en+=ilden;
           cmu_ld_n+=ildn;
@@ -308,7 +302,7 @@ int main(int argc, char *argv[]) {
           
           if (ret==0) {
             double pr2=-f.ed+f.n*f.mu+T*f.en;
-            x=count_digits_same2(f.pr,pr2);
+            x=count_digits_same(f.pr,pr2);
           }
           cmu_ti+=x;
           cout.width(2);
@@ -316,7 +310,7 @@ int main(int argc, char *argv[]) {
           
           if (retld==0) {
             long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-            xld=count_digits_same2(fld.pr,pr2ld);
+            xld=count_digits_same(fld.pr,pr2ld);
           }
           cmu_ld_ti+=xld;
           cout.width(2);
@@ -324,7 +318,7 @@ int main(int argc, char *argv[]) {
 
           if (ret25==0) {
             cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-            x25=count_digits_same2(f25.pr,pr225);
+            x25=count_digits_same(f25.pr,pr225);
           }
           cmu_25_ti+=x25;
           cout.width(2);
@@ -389,14 +383,14 @@ int main(int argc, char *argv[]) {
           
           int kdn=-2, kden=-2, kldn=-2, klden=-2;
           if (ret==0 && retld==0) {
-            kdn=count_digits_same2(f.n,fld.n,"kdn+ 1");
-            kden=count_digits_same2(f.en,fld.en,"kden+ 1");
+            kdn=count_digits_same(f.n,fld.n);
+            kden=count_digits_same(f.en,fld.en);
           }
           pmu_n+=kdn;
           pmu_en+=kden;
           if (retld==0 && ret25==0) {
-            kldn=count_digits_same2(fld.n,f25.n,"kldn+ 1");
-            klden=count_digits_same2(fld.en,f25.en,"klden+ 1");
+            kldn=count_digits_same(fld.n,f25.n);
+            klden=count_digits_same(fld.en,f25.en);
           }
           pmu_ld_n+=kldn;
           pmu_ld_en+=klden;
@@ -413,7 +407,7 @@ int main(int argc, char *argv[]) {
           int x=-2, xld=-2, x25=-2;
           if (ret==0) {
             double pr2=-f.ed+f.n*f.mu+T*f.en;
-            x=count_digits_same2(f.pr,pr2);
+            x=count_digits_same(f.pr,pr2);
           }
           pmu_ti+=x;
           cout.width(2);
@@ -421,7 +415,7 @@ int main(int argc, char *argv[]) {
 
           if (retld==0) {
             long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-            xld=count_digits_same2(fld.pr,pr2ld);
+            xld=count_digits_same(fld.pr,pr2ld);
           }
           pmu_ld_ti+=x;
           cout.width(2);
@@ -429,7 +423,7 @@ int main(int argc, char *argv[]) {
 
           if (ret25==0) {
             cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-            x25=count_digits_same2(f25.pr,pr225);
+            x25=count_digits_same(f25.pr,pr225);
           }
           pmu_25_ti+=x;
           cout.width(2);
@@ -503,12 +497,12 @@ int main(int argc, char *argv[]) {
           
           int idn=-2, iden=-2, ildn=-2, ilden=-2;
           if (ret==0 && retld==0) {
-            idn=count_digits_same2(f.n,fld.n,"idn- 1");
-            iden=count_digits_same2(f.en,fld.en,"iden- 1");
+            idn=count_digits_same(f.n,fld.n);
+            iden=count_digits_same(f.en,fld.en);
           }
           if (retld==0 && ret25==0) {
-            ildn=count_digits_same2(fld.n,f25.n,"ilnd- 1");
-            ilden=count_digits_same2(fld.en,f25.en,"ilden- 1");
+            ildn=count_digits_same(fld.n,f25.n);
+            ilden=count_digits_same(fld.en,f25.en);
           }
           cmu_n+=idn;
           cmu_en+=iden;
@@ -525,17 +519,17 @@ int main(int argc, char *argv[]) {
           cout << ilden << " ";
         
           double pr2=-f.ed+f.n*f.mu+T*f.en;
-          int x=count_digits_same2(f.pr,pr2);
+          int x=count_digits_same(f.pr,pr2);
           cmu_ti+=x;
           cout.width(2);
           cout << x << " ";
           long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-          int xld=count_digits_same2(fld.pr,pr2ld);
+          int xld=count_digits_same(fld.pr,pr2ld);
           cmu_ld_ti+=xld;
           cout.width(2);
           cout << xld << " ";
           cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-          int x25=count_digits_same2(f25.pr,pr225);
+          int x25=count_digits_same(f25.pr,pr225);
           cmu_25_ti+=x25;
           cout.width(2);
           cout << x25 << " cmu" << endl;
@@ -597,14 +591,14 @@ int main(int argc, char *argv[]) {
           
           int kdn=-2, kden=-2, kldn=-2, klden=-2;
           if (ret==0 && retld==0) {
-            kdn=count_digits_same2(f.n,fld.n,"kdn- 1");
-            kden=count_digits_same2(f.en,fld.en,"kden- 1");
+            kdn=count_digits_same(f.n,fld.n);
+            kden=count_digits_same(f.en,fld.en);
           }
           pmu_n+=kdn;
           pmu_en+=kden;
           if (retld==0 && ret25==0) {
-            kldn=count_digits_same2(fld.n,f25.n,"kldn- 1");
-            klden=count_digits_same2(fld.en,f25.en,"klden- 1");
+            kldn=count_digits_same(fld.n,f25.n);
+            klden=count_digits_same(fld.en,f25.en);
           }
           pmu_ld_n+=kldn;
           pmu_ld_en+=klden;
@@ -621,21 +615,21 @@ int main(int argc, char *argv[]) {
           int x=-2, xld=-2, x25=-2;
           if (ret==0) {
             double pr2=-f.ed+f.n*f.mu+T*f.en;
-            x=count_digits_same2(f.pr,pr2);
+            x=count_digits_same(f.pr,pr2);
           }
           pmu_ti+=x;
           cout.width(2);
           cout << x << " ";
           if (retld==0) {
             long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-            xld=count_digits_same2(fld.pr,pr2ld);
+            xld=count_digits_same(fld.pr,pr2ld);
           }
           pmu_ld_ti+=xld;
           cout.width(2);
           cout << xld << " ";
           if (ret25==0) {
             cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-            x25=count_digits_same2(f25.pr,pr225);
+            x25=count_digits_same(f25.pr,pr225);
           }
           pmu_25_ti+=x25;
           cout.width(2);
@@ -737,14 +731,14 @@ int main(int argc, char *argv[]) {
           
           int idmu=-2, iden=-2, ildmu=-2, ilden=-2;
           if (ret==0 && retld==0) {
-            idmu=count_digits_same2(f.mu,fld.mu,"idmu 1");
-            iden=count_digits_same2(f.en,fld.en,"iden 1");
+            idmu=count_digits_same(f.mu,fld.mu);
+            iden=count_digits_same(f.en,fld.en);
           }
           cd_mu+=idmu;
           cd_en+=iden;
           if (retld==0 && ret25==0) {
-            ildmu=count_digits_same2(fld.mu,f25.mu,"ildmu 1");
-            ilden=count_digits_same2(fld.en,f25.en,"ilden 1");
+            ildmu=count_digits_same(fld.mu,f25.mu);
+            ilden=count_digits_same(fld.en,f25.en);
           }
           cd_ld_mu+=ildmu;
           cd_ld_en+=ilden;
@@ -761,21 +755,21 @@ int main(int argc, char *argv[]) {
           int x=-2, xld=-2, x25=-2;
           if (ret==0) {
             double pr2=-f.ed+f.n*f.mu+T*f.en;
-            x=count_digits_same2(f.pr,pr2);
+            x=count_digits_same(f.pr,pr2);
           }
           cd_ti+=x;
           cout.width(2);
           cout << x << " ";
           if (retld==0) {
             long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-            xld=count_digits_same2(fld.pr,pr2ld);
+            xld=count_digits_same(fld.pr,pr2ld);
           }
           cd_ld_ti+=x;
           cout.width(2);
           cout << xld << " ";
           if (ret25==0) {
             cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-            x25=count_digits_same2(f25.pr,pr225);
+            x25=count_digits_same(f25.pr,pr225);
           }
           cd_25_ti+=x;
           cout.width(2);
@@ -847,14 +841,14 @@ int main(int argc, char *argv[]) {
           
           int kdmu=-2, kden=-2, kldmu=-2, klden=-2;
           if (ret==0 && retld==0) {
-            kdmu=count_digits_same2(f.mu,fld.mu,"kdmu 1");
-            kden=count_digits_same2(f.en,fld.en,"kden 1");
+            kdmu=count_digits_same(f.mu,fld.mu);
+            kden=count_digits_same(f.en,fld.en);
           }
           pd_mu+=kdmu;
           pd_en+=kden;
           if (retld==0 && ret25==0) {
-            kldmu=count_digits_same2(fld.mu,f25.mu,"kldmu 1");
-            klden=count_digits_same2(fld.en,f25.en,"klden 1");
+            kldmu=count_digits_same(fld.mu,f25.mu);
+            klden=count_digits_same(fld.en,f25.en);
           }
           pd_ld_mu+=kldmu;
           pd_ld_en+=klden;
@@ -871,21 +865,21 @@ int main(int argc, char *argv[]) {
           int x=-2, xld=-2, x25=-2;
           if (ret==0) {
             double pr2=-f.ed+f.n*f.mu+T*f.en;
-            x=count_digits_same2(f.pr,pr2);
+            x=count_digits_same(f.pr,pr2);
           }
           pd_ti+=x;
           cout.width(2);
           cout << x << " ";
           if (retld==0) {
             long double pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
-            xld=count_digits_same2(fld.pr,pr2ld);
+            xld=count_digits_same(fld.pr,pr2ld);
           }
           pd_ld_ti+=xld;
           cout.width(2);
           cout << xld << " ";
           if (ret25==0) {
             cpp_dec_float_25 pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
-            x25=count_digits_same2(f25.pr,pr225);
+            x25=count_digits_same(f25.pr,pr225);
           }
           pd_25_ti+=x25;
           cout.width(2);
@@ -907,54 +901,82 @@ int main(int argc, char *argv[]) {
 
   cout << "calc_mu density (double <-> long double): "
        << cmu_n << endl;
+  if (argc<2) t.test_gen(cmu_n>=1564,"cmu_n");
   cout << "calc_mu entropy (double <-> long double): "
        << cmu_en << endl;
+  if (argc<2) t.test_gen(cmu_en>=1544,"cmu_en");
   cout << "calc_mu density (long double <-> cdf_25): "
        << cmu_ld_n << endl;
+  if (argc<2) t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
   cout << "calc_mu entropy (long double <-> cdf_25): "
        << cmu_ld_en << endl;
+  if (argc<2) t.test_gen(cmu_ld_en>=2180,"cmu_ld_en");
   cout << "calc_mu ti: " << cmu_ti << endl;
+  if (argc<2) t.test_gen(cmu_ti>=1432,"cmu_ti");
   cout << "calc_mu long double ti: " << cmu_ld_ti << endl;
+  if (argc<2) t.test_gen(cmu_ld_ti>=1906,"cmu_ld_ti");
   cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << endl;
+  if (argc<2) t.test_gen(cmu_25_ti>=2597,"cmu_25_ti");
   cout << endl;
   
   cout << "pair_mu density (double <-> long double): "
        << pmu_n << endl;
+  if (argc<2) t.test_gen(pmu_n>=1618,"pmu_n");
   cout << "pair_mu entropy (double <-> long double): "
        << pmu_en << endl;
+  if (argc<2) t.test_gen(pmu_en>=1604,"pmu_en");
   cout << "pair_mu density (long double <-> cdf_25): "
        << pmu_ld_n << endl;
+  if (argc<2) t.test_gen(pmu_ld_n>=2336,"pmu_ld_n");
   cout << "pair_mu entropy (long double <-> cdf_25): "
        << pmu_ld_en << endl;
+  if (argc<2) t.test_gen(pmu_ld_en>=2220,"pmu_ld_en");
   cout << "pair_mu ti: " << pmu_ti << endl;
+  if (argc<2) t.test_gen(pmu_ti>=1408,"pmu_ti");
   cout << "pair_mu long double ti: " << pmu_ld_ti << endl;
+  if (argc<2) t.test_gen(pmu_ld_ti>=1642,"pmu_ld_ti");
   cout << "pair_mu cpp_dec_float_25 ti: " << pmu_25_ti << endl;
+  if (argc<2) t.test_gen(pmu_25_ti>=1947,"pmu_25_ti");
   cout << endl;
   
   cout << "calc_density density (double <-> long double): "
        << cd_mu << endl;
+  if (argc<2) t.test_gen(cd_mu>=891,"cd_mu");
   cout << "calc_density entropy (double <-> long double): "
        << cd_en << endl;
+  if (argc<2) t.test_gen(cd_en>=837,"cd_en");
   cout << "calc_density density (long double <-> cdf_25): "
        << cd_ld_mu << endl;
+  if (argc<2) t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
   cout << "calc_density entropy (long double <-> cdf_25): "
        << cd_ld_en << endl;
+  if (argc<2) t.test_gen(cd_ld_en>=1133,"cd_ld_en");
   cout << "calc_density ti: " << cd_ti << endl;
+  if (argc<2) t.test_gen(cd_ti>=971,"cd_ti");
   cout << "calc_density long double ti: " << cd_ld_ti << endl;
+  if (argc<2) t.test_gen(cd_ld_ti>=971,"cd_ld_ti");
   cout << "calc_density cpp_dec_float_25 ti: " << cd_25_ti << endl;
+  if (argc<2) t.test_gen(cd_25_ti>=971,"cd_25_ti");
   cout << endl;
   
   cout << "pair_density density (double <-> long double): "
        << pd_mu << endl;
+  if (argc<2) t.test_gen(pd_mu>=868,"pd_mu");
   cout << "pair_density entropy (double <-> long double): "
        << pd_en << endl;
+  if (argc<2) t.test_gen(pd_en>=814,"pd_en");
   cout << "pair_density density (long double <-> cdf_25): "
        << pd_ld_mu << endl;
+  if (argc<2) t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
   cout << "pair_density entropy (long double <-> cdf_25): "
        << pd_ld_en << endl;
+  if (argc<2) t.test_gen(pd_ld_en>=1108,"pd_ld_en");
   cout << "pair_density ti: " << pd_ti << endl;
+  if (argc<2) t.test_gen(pd_ti>=694,"pd_ti");
   cout << "pair_density long double ti: " << pd_ld_ti << endl;
+  if (argc<2) t.test_gen(pd_ld_ti>=817,"pd_ld_ti");
   cout << "pair_density cpp_dec_float_25 ti: " << pd_25_ti << endl;
+  if (argc<2) t.test_gen(pd_25_ti>=1025,"pd_25_ti");
   cout << endl;
   
   t.report();

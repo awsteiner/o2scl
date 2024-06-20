@@ -468,17 +468,6 @@ void o2scl_fermion_rel_set_verify_ti(void *vptr, bool v) {
   return;
 }
 
-double o2scl_fermion_rel_get_therm_ident(void *vptr) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  return ptr->therm_ident;
-}
-
-void o2scl_fermion_rel_set_therm_ident(void *vptr, double v) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  ptr->therm_ident=v;
-  return;
-}
-
 void *o2scl_fermion_rel_get_unc(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   return (void *)(&(ptr->unc));
