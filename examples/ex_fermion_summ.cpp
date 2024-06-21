@@ -89,7 +89,7 @@ public:
     f.n=pow(10,x)*nc;
   
     fdr.fr.err_nonconv=false;
-    fdr.fr.def_density_root.err_nonconv=false;
+    fdr.fr.density_root.err_nonconv=false;
   
     int retx=fdr.pair_density(f,T);
 
@@ -108,7 +108,7 @@ public:
       }
     }
     fdr.fr.err_nonconv=true;
-    fdr.fr.def_density_root.err_nonconv=true;
+    fdr.fr.density_root.err_nonconv=true;
   
     log10_Pt=log10(f.pr/nc/f.m);
     phi=f.mu/T;

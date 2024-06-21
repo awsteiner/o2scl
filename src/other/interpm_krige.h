@@ -355,17 +355,19 @@ namespace o2scl {
       double ny=pos[iy];
       double sum=0.0;
       double K=operator()(x1,x2), deriv2;
-      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n*n,2);
-      double zix=(m*m*(n-x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
+      double d2ix=ellx*ellx+mx*mx*pow((x1[ix]+x2[ix])-nx*nx,2);
+      double zix=(mx*mx*(nx-x2[ix])*(x1[ix]+x2[ix]-nx)-ellx*ellx)*
+        (x1[ix]-x2[ix]);
       if (ix!=iy) {
-        double d2iy=ell*ell+m*m*pow((x1[iy]+x2[iy])-n*n,2);
-        double ziy=(m*m*(n-x2[iy])*(x1[iy]+x2[iy]-n)-ell*ell)*(x1[iy]-x2[iy]);
+        double d2iy=elly*elly+my*my*pow((x1[iy]+x2[iy])-ny*ny,2);
+        double ziy=(my*my*(ny-x2[iy])*(x1[iy]+x2[iy]-ny)-elly*elly)*
+          (x1[iy]-x2[iy]);
         deriv2=K*zix*ziy/d2ix/d2iy;
       } else {
         double dzkdxik=mx*mx*(nx-2.0*x2[ix])*(x1[ix]-x2[ix])-
           (ellx*ellx+mx*mx*(nx-2.0*x2[ix])*(nx-x1[ix]-x2[ix]));
-        deriv2=K/d2x/d2x*(zix*zix/d2x/d2x+dzkdxik-2.0*zix/d2x*mx*mx*2.0*
-                          (x1[ix]+x2[ix]-nx));
+        deriv2=K/d2ix/d2ix*(zix*zix/d2ix/d2ix+dzkdxik-
+                            2.0*zix/d2ix*mx*mx*2.0*(x1[ix]+x2[ix]-nx));
       }
       return deriv2;
     }
