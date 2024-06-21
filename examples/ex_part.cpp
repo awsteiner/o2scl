@@ -30,7 +30,6 @@
 #include <cmath>
 #include <o2scl/test_mgr.h>
 #include <o2scl/constants.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/fermion_rel.h>
 #include <o2scl/classical.h>
 #include <o2scl/lib_settings.h>
@@ -43,66 +42,47 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  // Compare the method from fermion_rel to the more approximate
-  // scheme used in fermion_eff. We work in units of inverse Fermis,
-  // so that energy density is fm^{-4}. We also use a classical
-  // particle, to compare to the nondegenerate approximation.
-  fermion_eff eff;
+  // We work in units of inverse Fermis, so that energy density is
+  // fm^{-4}. We also use a classical particle, to compare to the
+  // nondegenerate approximation.
   fermion_rel relf;
   classical_thermo cla;
   
-  fermion e(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
-  fermion e2(e.m,2.0);
-  fermion e3(e.m,2.0);
-
+  fermion e2(o2scl_settings.get_convert_units().convert
+             ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
+  fermion e3(e2.m,2.0);
+  
   // We provide an initial guess to the chemical potential. This
   // is not a great guess for nondegenerate matter, but O2scl
   // aims to be successful even with bad guesses.
-  e.mu=e.m;
   e2.mu=e2.m;
   e3.mu=e3.m;
 
   // Compute the pressure at a density of 0.0001 fm^{-3} and a
   // temperature of 10 MeV. At these temperatures, the electrons are
   // non-degenerate, and Boltzmann statistics nearly applies.
-  e.n=0.0001;
-  eff.calc_density(e,10.0/hc_mev_fm);
   e2.n=0.0001;
   relf.calc_density(e2,10.0/hc_mev_fm);
   e3.n=0.0001;
   cla.calc_density(e3,10.0/hc_mev_fm);
 
-  cout << e.pr << " " << e2.pr << " " << e3.pr << " "
-       << e.n*10.0/hc_mev_fm << endl;
+  cout << e2.pr << " " << e3.pr << endl;
 
   // Test
-  t.test_rel(e.pr,e2.pr,1.0e-2,"EFF vs. exact");
   t.test_rel(e2.pr,e3.pr,4.0e-1,"classical vs. exact");
-  t.test_rel(e.n*10.0/hc_mev_fm,e3.pr,1.0e-1,"classical vs. ideal gas law");
 
   // Compute the pressure at a density of 0.1 fm^{-3} and a
   // temperature of 1 MeV. At these temperatures, the electrons are
   // strongly degenerate
-  e.n=0.0001;
-  eff.calc_density(e,10.0/hc_mev_fm);
   e2.n=0.0001;
   relf.calc_density(e2,10.0/hc_mev_fm);
-  cout << e.pr << " " << e2.pr << endl;
-
-  // Test
-  t.test_rel(e.pr,e2.pr,1.0e-2,"EFF vs. exact");
+  cout << e2.pr << endl;
 
   // Now add the contribution to the pressure from positrons using the
   // implementation of part::pair_density()
-  e.n=0.0001;
-  eff.pair_density(e,10.0/hc_mev_fm);
   e2.n=0.0001;
   relf.pair_density(e2,10.0/hc_mev_fm);
-  cout << e.pr << " " << e2.pr << endl;
-
-  // Test
-  t.test_rel(e.pr,e2.pr,1.0e-2,"EFF vs. exact");
+  cout << e2.pr << endl;
 
   t.report();
   return 0;
