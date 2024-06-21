@@ -503,10 +503,6 @@ namespace o2scl {
       
          In class fermion_rel_tl:
       
-         - Future: I had to remove the shared_ptr stuff because the
-           default algorithm types don't support multiprecision, but it
-           might be nice to restore the shared_ptr mechanism somehow.
-           
          - Future: The expressions which appear in in the integrand
            functions density_fun(), etc. could likely be improved,
            especially in the case where \ref o2scl::part::inc_rest_mass
@@ -521,9 +517,6 @@ namespace o2scl {
            integration, but the value in the code at the moment (stored
            in <tt>ll</tt>) makes bm_part2.cpp worse.
            
-         - Future: The function pair_mu() should set the antiparticle
-           integrators as done in fermion_deriv_rel.
-         
       \endverbatim
   */
   template<class fermion_t=fermion_tl<double>,
@@ -1130,7 +1123,7 @@ namespace o2scl {
                        "fermion_rel::calc_mu().",
                        exc_efailed);
           }
-          
+
         } else {
           
           std::function<fp_t(fp_t)> n_fun_f=
@@ -1149,6 +1142,11 @@ namespace o2scl {
         f.n*=prefac;
         unc.n*=prefac;
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg number density, n, unc.n: "
+                    << dtos(f.n,-1) << " " << dtos(unc.n,-1) << std::endl;
+	}
+          
 	// Compute the energy density
 
 	if (verbose>1) {
@@ -1164,7 +1162,7 @@ namespace o2scl {
               return this->deg_energy_fun(k,temper,y,eta,mot); },
               zero,ul,f.ed,unc.ed,tol_rel);
           if (ix!=0) {
-            O2SCL_ERR2("e integration (ndeg, multip) failed in ",
+            O2SCL_ERR2("e integration (deg, multip) failed in ",
                        "fermion_rel::calc_mu().",
                        exc_efailed);
           }
@@ -1187,12 +1185,11 @@ namespace o2scl {
         f.ed*=prefac;
         unc.ed*=prefac;
 
-        if (false) {
-          std::cout << "deg ed: " << temper << " " << y << " "
-                    << eta << " " << mot << " " << dtos(f.ed,-1) << " "
-                    << dtos(f.n,-1) << std::endl;
-        }
-        
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg energy density, ed, unc.ed: "
+                    << dtos(f.ed,-1) << " " << dtos(unc.ed,-1) << std::endl;
+	}
+          
 	// Compute the lower limit for the entropy integration
 
 	fp_t ll;
@@ -1311,6 +1308,12 @@ namespace o2scl {
         f.en*=prefac;
         unc.en*=prefac;
 
+	if (verbose>1) {
+	  std::cout << "calc_mu(): deg entropy density, en, unc.en: "
+                    << dtos(f.en,-1) << " " << dtos(unc.en,-1)
+                    << std::endl;
+	}
+          
         if (verify_ti) {
           // Compute the pressure
           
@@ -1352,10 +1355,15 @@ namespace o2scl {
             
           }
           
-          //fri.eval_deg_pressure(temper,y,eta,mot,ul,f.pr,unc.pr);
-          
           f.pr*=prefac;
           unc.pr*=prefac;
+
+          if (verbose>1) {
+            std::cout << "calc_mu(): deg pressure, pr, unc.pr: "
+                      << dtos(f.pr,-1) << " " << dtos(unc.pr,-1)
+                      << std::endl;
+          }
+          
         }
 
 	if (verbose>1) {
@@ -1658,7 +1666,6 @@ namespace o2scl {
             
           }
           
-          //fri.eval_deg_energy(temper,y,eta,mot,ul,f.ed,unc.ed);
           f.ed*=prefac;
           unc.ed*=prefac;
           
@@ -1737,7 +1744,6 @@ namespace o2scl {
               
             }
             
-            //fri.eval_deg_entropy(temper,y,eta,mot,0.0,ul,f.en,unc.en);
 	    last_method+=5;
             if (last_method_s.length()>200) {
               O2SCL_ERR("Last method problem in fermion_rel.",
@@ -2371,7 +2377,6 @@ namespace o2scl {
           fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2, unc2=0;
 
           //bool save=fri.nit.err_nonconv;
-          //fri.nit.err_nonconv=false;
 
           if (multip==true) {
             
@@ -2400,7 +2405,6 @@ namespace o2scl {
             
           }
           
-          //int reti1=fri.eval_density(y,eta,nden_p,unc2);
           //fri.nit.err_nonconv=save;
           //if (reti1!=0) return 1;
           nden_p*=prefac;
@@ -2465,7 +2469,6 @@ namespace o2scl {
               
             }
           
-            //int reti2=fri.eval_deg_density(T,y,eta,mot,ul,nden_p,unc2);
             //fri.dit.err_nonconv=save;
             //if (reti2!=0) return 2;
             
@@ -2585,7 +2588,6 @@ namespace o2scl {
             
           }
           
-          //fri.eval_density(y,eta,nden_ap,unc2);
           nden_ap*=prefac;
         
 	  if (!isfinite(nden_ap)) {
@@ -2647,7 +2649,6 @@ namespace o2scl {
               
             }
             
-            //fri.eval_deg_density(T,y,eta,mot,ul,nden_ap,unc2);
             nden_ap*=f.g/2.0/this->pi2;
             
 	  } else {
@@ -2670,7 +2671,6 @@ namespace o2scl {
 	y2=fabs(nden_p-nden_ap)/fabs(nden_p);
       } else {
         y2=(nden_p-nden_ap-density_match)/fabs(density_match);
-	//y2=(nden_p-nden_ap)/density_match-1.0;
       }
 
       if (!isfinite(y2)) {

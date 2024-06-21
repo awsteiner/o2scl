@@ -162,8 +162,7 @@ in the classical limit.
 
 At finite temperature, there are different classes corresponding to
 different approaches to computing the integrals over the distribution
-functions. The approximation scheme from [Johns96]_ is used in
-:cpp:class:`o2scl::boson_eff` and :cpp:class:`o2scl::fermion_eff`. An
+functions. An
 exact method employing direct integration of the distribution
 functions is used in :cpp:class:`o2scl::boson_rel` and
 :cpp:class:`o2scl::fermion_rel_tl`, but these are necessarily quite a
@@ -171,13 +170,11 @@ bit slower. All of these classes use expansions to give ensure
 comparably accurate results in the degenerate and non-degenerate
 limits.
 
-The class :cpp:class:`o2scl::fermion_eff` usually works to within about 1
-part in :math:`10^4`, but can be as bad as 1 part in :math:`10^2`
-in some more extreme cases. The default settings for 
-:cpp:class:`o2scl::fermion_rel_tl` give an accuracy of at least 1 part in
-:math:`10^6` (and frequently better than this). For 
-:cpp:class:`o2scl::fermion_rel_tl`, the accuracy can be improved to 1 part in
-:math:`10^{10}` by decreasing the integration tolerances.
+The default settings for :cpp:class:`o2scl::fermion_rel_tl` give an
+accuracy of at least 1 part in :math:`10^6` (and frequently better
+than this). For :cpp:class:`o2scl::fermion_rel_tl`, the accuracy can
+be improved to 1 part in :math:`10^{10}` by decreasing the integration
+tolerances.
 
 See :ref:`Fermion Details` for more discussion on the fermion integrals.
 
@@ -222,7 +219,7 @@ degenerate and nondegenerate expansions to evaluate
 both the base thermodynamic quantities and the three 
 derivatives from :cpp:class:`o2scl::part_deriv_press_tl` .
 
-The function :cpp:func:`o2scl::part_deriv_tl::deriv_f()` computes
+The function :cpp:func:`o2scl::part_deriv_press_tl::deriv_f()` computes
 the derivatives which are second derivatives of the
 free energy from the three computed above.
 
@@ -315,7 +312,7 @@ derivatives of the pressure stored in a
 
 Particle example
 ----------------
-p
+
 .. literalinclude:: ../../../examples/ex_part.cpp
    :language: c++		    
    :start-after: sphinx-example-start

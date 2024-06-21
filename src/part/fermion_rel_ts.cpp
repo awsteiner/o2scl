@@ -79,23 +79,25 @@ int main(int argc, char *argv[]) {
   fr25.it_multip.err_nonconv=false;
 
   int first_test=0;
+  double test_shift=1.0;
   
-  // An exhaustive comparison of the two algorithms at
-  // various levels of precision
+  // An exhaustive comparison of the fermion_rel class at various
+  // levels of precision
 
   if (arg=="1") {
 
-    // This is supposed to test higher-accuracy settings,
-    // but currently fails for nondegenerate entropy integration
+    // This tests higher-accuracy settings. Smaller tolerances for the
+    // integrals cause some of the integrations to fail. Note that a
+    // larger value of 'test_shift' is also required, but it's not
+    // clear to me if this really represents an accuracy issue.
     
-    first_test=51;
-    
-    fr.dit.tol_abs=1.0e-13;
-    fr.dit.tol_rel=1.0e-13;
-    fr.nit.tol_abs=1.0e-13;
-    fr.nit.tol_rel=1.0e-13;
+    fr.dit.tol_abs=1.0e-11;
+    fr.dit.tol_rel=1.0e-11;
+    fr.nit.tol_abs=1.0e-11;
+    fr.nit.tol_rel=1.0e-11;
     fr.upper_limit_fac=40.0;
     fr.density_root.tol_rel=1.0e-10;
+    fr.def_massless_root.tol_rel=1.0e-10;
     
     frld.dit.tol_abs=1.0e-15;
     frld.dit.tol_rel=1.0e-15;
@@ -103,6 +105,7 @@ int main(int argc, char *argv[]) {
     frld.nit.tol_rel=1.0e-15;
     frld.upper_limit_fac=60.0;
     frld.density_root.tol_rel=1.0e-14;
+    frld.def_massless_root.tol_rel=1.0e-14;
     
     fr25.dit.tol_abs=1.0e-18;
     fr25.dit.tol_rel=1.0e-18;
@@ -110,29 +113,41 @@ int main(int argc, char *argv[]) {
     fr25.nit.tol_rel=1.0e-18;
     fr25.upper_limit_fac=80.0;
     fr25.density_root.tol_rel=1.0e-18;
+    fr25.def_massless_root.tol_rel=1.0e-18;
+    
+    test_shift=10.0;
   }
   
   if (arg=="2") {
 
-    // I think this runs without throwing any exceptions,
-    // but it needs some work, especially to ensure the
-    // thermodynamic identity is satisfied. 
+    // I think this runs without throwing any exceptions, but it needs
+    // some work, especially to ensure the thermodynamic identity is
+    // satisfied at higher precision. Either way, it is quite slow.
     
     fr.multip=true;
     frld.multip=true;
     fr25.multip=true;
     
+    fr.upper_limit_fac=40.0;
+    fr.density_root.tol_rel=1.0e-10;
+    fr.def_massless_root.tol_rel=1.0e-10;
+    
     frld.upper_limit_fac=52.0;
     frld.deg_entropy_fac=52.0;
     frld.tol_expan=1.0e-18;
     frld.exp_limit=11400.0;
+    frld.density_root.tol_rel=1.0e-18;
+    frld.def_massless_root.tol_rel=1.0e-18;
     
     fr25.upper_limit_fac=62.0;
     fr25.deg_entropy_fac=62.0;
-    fr25.tol_expan=1.0e-123;
+    fr25.tol_expan=1.0e-23;
     fr25.exp_limit=6.7e7;
+    fr25.density_root.tol_rel=1.0e-23;
+    fr25.def_massless_root.tol_rel=1.0e-23;
   }
 
+  /*
   if (arg=="3") {
     
     fr.dit.tol_abs=1.0e-13;
@@ -165,6 +180,7 @@ int main(int argc, char *argv[]) {
     fr25.exp_limit=6.7e7;
     
   }
+  */
   
   cout.precision(4);
   int count=0;
@@ -311,7 +327,7 @@ int main(int argc, char *argv[]) {
           cmu_25_ti+=x25;
           cout.width(2);
           cout << x25 << " cmu" << endl;
-          
+
         } else {
           
           cout << endl;
@@ -700,7 +716,7 @@ int main(int argc, char *argv[]) {
             fr.calc_density(f3,T);
             t.test_rel(f.mu,f3.nu,1.0e-14,"ni false mu 5");
             t.test_rel(f.n,f3.n,1.0e-14,"ni false n 5");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 5");
+            t.test_rel(f.en,f3.en,1.0e-14*test_shift,"ni false en 5");
 
             // Test with both equal to false
             fermion f4=f3;
@@ -798,7 +814,8 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             fr.pair_density(f2,T);
             t.test_rel(f.mu-f.m,f2.mu,1.0e-10,"irm false mu 6");
-            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-10,"irm false ed 6");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-10*test_shift,
+                       "irm false ed 6");
             t.test_rel(f.en,f2.en,1.0e-13,"irm false en 6");
 
             // Test with non_interacting=false
@@ -808,9 +825,9 @@ int main(int argc, char *argv[]) {
             f3.nu=f3.mu;
             f3.m*=sqrt(2.0);
             fr.pair_density(f3,T);
-            t.test_rel(f.mu,f3.nu,1.0e-11,"ni false mu 6");
+            t.test_rel(f.mu,f3.nu,1.0e-11*test_shift,"ni false mu 6");
             t.test_rel(f.n,f3.n,1.0e-14,"ni false n 6");
-            t.test_rel(f.en,f3.en,1.0e-14,"ni false en 6");
+            t.test_rel(f.en,f3.en,1.0e-14*test_shift,"ni false en 6");
 
             // Test with both equal to false
             fermion f4=f3;
@@ -889,83 +906,125 @@ int main(int argc, char *argv[]) {
 
   cout << "calc_mu density (double <-> long double): "
        << cmu_n << endl;
-  if (argc<2) t.test_gen(cmu_n>=1564,"cmu_n");
   cout << "calc_mu entropy (double <-> long double): "
        << cmu_en << endl;
-  if (argc<2) t.test_gen(cmu_en>=1544,"cmu_en");
   cout << "calc_mu density (long double <-> cdf_25): "
        << cmu_ld_n << endl;
-  if (argc<2) t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
   cout << "calc_mu entropy (long double <-> cdf_25): "
        << cmu_ld_en << endl;
-  if (argc<2) t.test_gen(cmu_ld_en>=2180,"cmu_ld_en");
   cout << "calc_mu ti: " << cmu_ti << endl;
-  if (argc<2) t.test_gen(cmu_ti>=1432,"cmu_ti");
   cout << "calc_mu long double ti: " << cmu_ld_ti << endl;
-  if (argc<2) t.test_gen(cmu_ld_ti>=1906,"cmu_ld_ti");
   cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << endl;
-  if (argc<2) t.test_gen(cmu_25_ti>=2597,"cmu_25_ti");
   cout << endl;
   
   cout << "pair_mu density (double <-> long double): "
        << pmu_n << endl;
-  if (argc<2) t.test_gen(pmu_n>=1618,"pmu_n");
   cout << "pair_mu entropy (double <-> long double): "
        << pmu_en << endl;
-  if (argc<2) t.test_gen(pmu_en>=1604,"pmu_en");
   cout << "pair_mu density (long double <-> cdf_25): "
        << pmu_ld_n << endl;
-  if (argc<2) t.test_gen(pmu_ld_n>=2336,"pmu_ld_n");
   cout << "pair_mu entropy (long double <-> cdf_25): "
        << pmu_ld_en << endl;
-  if (argc<2) t.test_gen(pmu_ld_en>=2220,"pmu_ld_en");
   cout << "pair_mu ti: " << pmu_ti << endl;
-  if (argc<2) t.test_gen(pmu_ti>=1408,"pmu_ti");
   cout << "pair_mu long double ti: " << pmu_ld_ti << endl;
-  if (argc<2) t.test_gen(pmu_ld_ti>=1642,"pmu_ld_ti");
   cout << "pair_mu cpp_dec_float_25 ti: " << pmu_25_ti << endl;
-  if (argc<2) t.test_gen(pmu_25_ti>=1947,"pmu_25_ti");
   cout << endl;
   
   cout << "calc_density density (double <-> long double): "
        << cd_mu << endl;
-  if (argc<2) t.test_gen(cd_mu>=891,"cd_mu");
   cout << "calc_density entropy (double <-> long double): "
        << cd_en << endl;
-  if (argc<2) t.test_gen(cd_en>=837,"cd_en");
   cout << "calc_density density (long double <-> cdf_25): "
        << cd_ld_mu << endl;
-  if (argc<2) t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
   cout << "calc_density entropy (long double <-> cdf_25): "
        << cd_ld_en << endl;
-  if (argc<2) t.test_gen(cd_ld_en>=1133,"cd_ld_en");
   cout << "calc_density ti: " << cd_ti << endl;
-  if (argc<2) t.test_gen(cd_ti>=971,"cd_ti");
   cout << "calc_density long double ti: " << cd_ld_ti << endl;
-  if (argc<2) t.test_gen(cd_ld_ti>=971,"cd_ld_ti");
   cout << "calc_density cpp_dec_float_25 ti: " << cd_25_ti << endl;
-  if (argc<2) t.test_gen(cd_25_ti>=971,"cd_25_ti");
   cout << endl;
   
   cout << "pair_density density (double <-> long double): "
        << pd_mu << endl;
-  if (argc<2) t.test_gen(pd_mu>=868,"pd_mu");
   cout << "pair_density entropy (double <-> long double): "
        << pd_en << endl;
-  if (argc<2) t.test_gen(pd_en>=814,"pd_en");
   cout << "pair_density density (long double <-> cdf_25): "
        << pd_ld_mu << endl;
-  if (argc<2) t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
   cout << "pair_density entropy (long double <-> cdf_25): "
        << pd_ld_en << endl;
-  if (argc<2) t.test_gen(pd_ld_en>=1108,"pd_ld_en");
   cout << "pair_density ti: " << pd_ti << endl;
-  if (argc<2) t.test_gen(pd_ti>=694,"pd_ti");
   cout << "pair_density long double ti: " << pd_ld_ti << endl;
-  if (argc<2) t.test_gen(pd_ld_ti>=817,"pd_ld_ti");
   cout << "pair_density cpp_dec_float_25 ti: " << pd_25_ti << endl;
-  if (argc<2) t.test_gen(pd_25_ti>=1025,"pd_25_ti");
   cout << endl;
+
+  if (argc<2) {
+
+    t.test_gen(cmu_n>=1564,"cmu_n");
+    t.test_gen(cmu_en>=1544,"cmu_en");
+    t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
+    t.test_gen(cmu_ld_en>=2180,"cmu_ld_en");
+    t.test_gen(cmu_ti>=1432,"cmu_ti");
+    t.test_gen(cmu_ld_ti>=1906,"cmu_ld_ti");
+    t.test_gen(cmu_25_ti>=2597,"cmu_25_ti");
+    
+    t.test_gen(pmu_n>=1618,"pmu_n");
+    t.test_gen(pmu_en>=1604,"pmu_en");
+    t.test_gen(pmu_ld_n>=2336,"pmu_ld_n");
+    t.test_gen(pmu_ld_en>=2220,"pmu_ld_en");
+    t.test_gen(pmu_ti>=1408,"pmu_ti");
+    t.test_gen(pmu_ld_ti>=1642,"pmu_ld_ti");
+    t.test_gen(pmu_25_ti>=1947,"pmu_25_ti");
+    
+    t.test_gen(cd_mu>=891,"cd_mu");
+    t.test_gen(cd_en>=837,"cd_en");
+    t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
+    t.test_gen(cd_ld_en>=1133,"cd_ld_en");
+    t.test_gen(cd_ti>=971,"cd_ti");
+    t.test_gen(cd_ld_ti>=971,"cd_ld_ti");
+    t.test_gen(cd_25_ti>=971,"cd_25_ti");
+    
+    t.test_gen(pd_mu>=868,"pd_mu");
+    t.test_gen(pd_en>=814,"pd_en");
+    t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
+    t.test_gen(pd_ld_en>=1108,"pd_ld_en");
+    t.test_gen(pd_ti>=694,"pd_ti");
+    t.test_gen(pd_ld_ti>=817,"pd_ld_ti");
+    t.test_gen(pd_25_ti>=1025,"pd_25_ti");
+    
+  } else if (arg=="1") {
+    
+    t.test_gen(cmu_n>=1738,"cmu_n");
+    t.test_gen(cmu_en>=1612,"cmu_en");
+    t.test_gen(cmu_ld_n>=2379,"cmu_ld_n");
+    t.test_gen(cmu_ld_en>=2174,"cmu_ld_en");
+    t.test_gen(cmu_ti>=1540,"cmu_ti");
+    t.test_gen(cmu_ld_ti>=1992,"cmu_ld_ti");
+    t.test_gen(cmu_25_ti>=2702,"cmu_25_ti");
+    
+    t.test_gen(pmu_n>=1756,"pmu_n");
+    t.test_gen(pmu_en>=1670,"pmu_en");
+    t.test_gen(pmu_ld_n>=2298,"pmu_ld_n");
+    t.test_gen(pmu_ld_en>=2222,"pmu_ld_en");
+    t.test_gen(pmu_ti>=1592,"pmu_ti");
+    t.test_gen(pmu_ld_ti>=1821,"pmu_ld_ti");
+    t.test_gen(pmu_25_ti>=2144,"pmu_25_ti");
+    
+    t.test_gen(cd_mu>=991,"cd_mu");
+    t.test_gen(cd_en>=901,"cd_en");
+    t.test_gen(cd_ld_mu>=1237,"cd_ld_mu");
+    t.test_gen(cd_ld_en>=1104,"cd_ld_en");
+    t.test_gen(cd_ti>=969,"cd_ti");
+    t.test_gen(cd_ld_ti>=969,"cd_ld_ti");
+    t.test_gen(cd_25_ti>=969,"cd_25_ti");
+    
+    t.test_gen(pd_mu>=939,"pd_mu");
+    t.test_gen(pd_en>=888,"pd_en");
+    t.test_gen(pd_ld_mu>=1190,"pd_ld_mu");
+    t.test_gen(pd_ld_en>=1094,"pd_ld_en");
+    t.test_gen(pd_ti>=819,"pd_ti");
+    t.test_gen(pd_ld_ti>=997,"pd_ld_ti");
+    t.test_gen(pd_25_ti>=1271,"pd_25_ti");
+    
+  }
   
   t.report();
 

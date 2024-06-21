@@ -36,268 +36,116 @@ int main(int argc, char *argv[]) {
   
   test_mgr t;
   t.set_output_level(1);
+
+  if (true) {
   
-  fermion_deriv sf(5.0,2.0);
-  fermion_deriv sf2(5.0,2.0);
-  fermion ef(5.0,2.0);
-  double T;
+    fermion_deriv fd(5.0,2.0);
+    double T;
 
-  sf.inc_rest_mass=false;
+    fd.inc_rest_mass=false;
 
-  fermion_deriv_rel snf;
-  //fermion_deriv_rel_ld snfld;
-  part_calibrate_class pcc;
-  part_deriv_calibrate_class pdcc;
+    fermion_deriv_rel fdr;
+
+    // -----------------------------------------------------------------
+    // Test the specific heat of degenerate fermions (As a reminder,
+    // note that the degenerate specific heat differs for relativistic
+    // and non-relativistic particles by a factor of two. Below is the
+    // case for relativistic particles.) The code below demonstrates
+    // that the computation of the specific heat (and that of the
+    // entropy and the pressure) fails for sufficiently low temperatures,
+    // i.e. in the extremely degenerate case. [12/20/09 - This now
+    // works better]
+
+    fdr.method=fermion_deriv_rel::automatic;
+
+    cout << "Test degenerate specific heat:\n" << endl;
+    cout << "err T(MeV)     pr           en           "
+         << "C            C(deg appx)  C(next term)" << endl;
+    fd.mu=0.0;
+    for (T=3.0/hc_mev_fm;T>=0.001/hc_mev_fm;T/=3.0) {
+
+      fd.init(o2scl_const::mass_electron_f<double>()*
+              o2scl_settings.get_convert_units().convert("kg","1/fm",1.0),2.0);
+      fd.non_interacting=true;
+      fd.n=0.2;
+      fdr.calc_density(fd,T);
+      fd.kf=cbrt(6.0*pi2/fd.g*fd.n);
+      cout << T*hc_mev_fm << " " << fd.pr << " " << fd.en << " "
+           << T/fd.n*(fd.dsdT-fd.dndT*fd.dndT/fd.dndmu) << " "
+           << o2scl_const::pi*o2scl_const::pi*T/fd.mu << " " 
+           << pow(o2scl_const::pi/fd.kf,2.0)*T*fd.mu-
+        pow(o2scl_const::pi*T/fd.kf,3.0)*o2scl_const::pi/15.0*
+        (5.0*pow(fd.m,4.0)+4.0*fd.m*fd.m*fd.mu*fd.mu+14.0*pow(fd.mu,4.0)) 
+           << endl;
+    
+      t.test_rel(T/fd.n*(fd.dsdT-fd.dndT*fd.dndT/fd.dndmu),
+                 o2scl_const::pi*o2scl_const::pi*T/fd.mu,1.0e-2,"sh1");
+      t.test_rel(T/fd.n*(fd.dsdT-fd.dndT*fd.dndT/fd.dndmu),
+                 fd.en/fd.n,1.0e-3,"sh2");
+    
+      // Compare with direct differentiation
+      fdr.calc_density(fd,T);
+      double en1=fd.en;
+      double h=1.0e-4;
+      fdr.calc_density(fd,T+h);
+      double en2=fd.en;
+      if (true || T>0.1/hc_mev_fm) {
+        cout << "\t" << (en2-en1)/h*T/fd.n << endl;
+        t.test_rel(T/fd.n*(fd.dsdT-fd.dndT*fd.dndT/fd.dndmu),
+                   (en2-en1)/h*T/fd.n,1.0e-2,"sh3");
+      }
+    }
+    cout << endl;
+
+  }
 
   // -----------------------------------------------------------------
-  // Test the specific heat of degenerate fermions (As a reminder,
-  // note that the degenerate specific heat differs for relativistic
-  // and non-relativistic particles by a factor of two. Below is the
-  // case for relativistic particles.) The code below demonstrates
-  // that the computation of the specific heat (and that of the
-  // entropy and the pressure) fails for sufficiently low temperatures,
-  // i.e. in the extremely degenerate case. [12/20/09 - This now
-  // works better]
 
-  snf.method=fermion_deriv_rel::automatic;
-
-  cout << "Test degenerate specific heat:\n" << endl;
-  cout << "err T(MeV)     pr           en           "
-       << "C            C(deg appx)  C(next term)" << endl;
-  sf.mu=0.0;
-  for (T=3.0/hc_mev_fm;T>=0.001/hc_mev_fm;T/=3.0) {
-
-    sf.init(o2scl_const::mass_electron_f<double>()*
-	    o2scl_settings.get_convert_units().convert("kg","1/fm",1.0),2.0);
-    sf.non_interacting=true;
-    sf.n=0.2;
-    snf.calc_density(sf,T);
-    sf.kf=cbrt(6.0*pi2/sf.g*sf.n);
-    cout << T*hc_mev_fm << " " << sf.pr << " " << sf.en << " "
-	 << T/sf.n*(sf.dsdT-sf.dndT*sf.dndT/sf.dndmu) << " "
-	 << o2scl_const::pi*o2scl_const::pi*T/sf.mu << " " 
-	 << pow(o2scl_const::pi/sf.kf,2.0)*T*sf.mu-
-      pow(o2scl_const::pi*T/sf.kf,3.0)*o2scl_const::pi/15.0*
-      (5.0*pow(sf.m,4.0)+4.0*sf.m*sf.m*sf.mu*sf.mu+14.0*pow(sf.mu,4.0)) 
-	 << endl;
+  if (true) {
+  
+    fermion_deriv fd;
+    fermion_deriv_rel fdr;
     
-    t.test_rel(T/sf.n*(sf.dsdT-sf.dndT*sf.dndT/sf.dndmu),
-	       o2scl_const::pi*o2scl_const::pi*T/sf.mu,1.0e-2,"sh1");
-    t.test_rel(T/sf.n*(sf.dsdT-sf.dndT*sf.dndT/sf.dndmu),
-	       sf.en/sf.n,1.0e-3,"sh2");
+    fd.inc_rest_mass=true;
+    fd.non_interacting=true;
+  
+    for(int im=-2;im<=1;im++) {
     
-    // Compare with direct differentiation
-    snf.calc_density(sf,T);
-    double en1=sf.en;
-    double h=1.0e-4;
-    snf.calc_density(sf,T+h);
-    double en2=sf.en;
-    if (true || T>0.1/hc_mev_fm) {
-      cout << "\t" << (en2-en1)/h*T/sf.n << endl;
-      t.test_rel(T/sf.n*(sf.dsdT-sf.dndT*sf.dndT/sf.dndmu),
-		 (en2-en1)/h*T/sf.n,1.0e-2,"sh3");
+      fd.m=im;
+      fd.m=pow(10,fd.m);
+    
+      for(int iT=-2;iT<=1;iT++) {
+      
+        double T=iT;
+        T=pow(10,T);
+      
+        for(int imu=-2;imu<=1;imu++) {
+        
+          fd.mu=imu;
+          fd.mu=pow(10,fd.mu);
+        
+          cout.width(2);
+          cout << im << " ";
+          cout.width(2);
+          cout << iT << " ";
+          cout.width(2);
+          cout << imu << " ";
+
+          fdr.method=fermion_deriv_rel::direct;
+          fdr.calc_mu(fd,T);
+          double dndmu1=fd.dndmu;
+          double dndT1=fd.dndT;
+          double dsdT1=fd.dsdT;
+          fdr.method=fermion_deriv_rel::by_parts;
+          fdr.calc_mu(fd,T);
+          cout << dndmu1 << " " << fd.dndmu << " ";
+          cout << count_digits_same(dndmu1,fd.dndmu) << " ";
+          cout << count_digits_same(dndT1,fd.dndT) << " ";
+          cout << count_digits_same(dsdT1,fd.dsdT) << endl;
+
+        }
+      }
     }
-  }
-  cout << endl;
-
-  fermion_deriv sfx(1.0,2.0);
-
-  // Compare results with fermion_rel
-  
-  fermion_rel fr;
-  fr.verbose=2;
-  
-  double pc_fr=pcc.part_calibrate<fermion,fermion_rel>
-    (ef,fr,"../../data/o2scl/fermion_deriv_cal.o2",true,true,false,1,true);
-  cout << pc_fr << endl;
-  
-  cout << "----------------------------------------------------" << endl;
-  cout << "Function deriv_calibrate() method=direct." << endl;
-  cout << "----------------------------------------------------" << endl;
-  cout << endl;
-
-  snf.method=fermion_deriv_rel::direct;
-  
-  double pc_fdr_dir=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,"../../data/o2scl/fermion_deriv_cal.o2",true,true,
-     false,1,true);
-  t.test_rel(pc_fr,pc_fdr_dir,1.0e-6,"nonderiv vs. deriv direct");
-  cout << pc_fdr_dir << endl;
-  cout << endl;
-  
-  if (true) {
-    double dc_dir=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-    t.test_rel(dc_dir,0.0,8.0e-6,"deriv_calibrate direct");
-    cout << dc_dir << endl;
-  }
-
-  cout << "----------------------------------------------------" << endl;
-  cout << "Function deriv_calibrate() method=by_parts." << endl;
-  cout << "----------------------------------------------------" << endl;
-  cout << endl;
-
-  snf.method=fermion_deriv_rel::by_parts;
-  
-  double pc_fdr_byp=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,"../../data/o2scl/fermion_deriv_cal.o2",
-     true,true,false,1,true);
-  t.test_rel(pc_fr,pc_fdr_byp,1.0e-6,"nonderiv vs. deriv by_parts");
-  cout << pc_fdr_byp << endl;
-  cout << endl;
-
-  if (true) {
-    double dc_byp=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-    t.test_rel(dc_byp,0.0,1.0e-6,"deriv_calibrate by parts");
-    cout << dc_byp << endl;
-    cout << endl;
-  }
-
-  cout << "----------------------------------------------------" << endl;
-  cout << "Function deriv_calibrate() method=automatic." << endl;
-  cout << "----------------------------------------------------" << endl;
-  cout << endl;
-
-  snf.method=fermion_deriv_rel::automatic;
-  
-  double pc_fdr_auto=pcc.part_calibrate<fermion_deriv,fermion_deriv_rel>
-    (sfx,snf,"../../data/o2scl/fermion_deriv_cal.o2",
-     true,true,false,1,true);
-  t.test_rel(pc_fr,pc_fdr_auto,1.0e-6,"nonderiv vs. deriv automatic");
-  cout << pc_fdr_auto << endl;
-  cout << endl;
-
-  if (true) {
-    double dc_auto=pdcc.part_deriv_calibrate<fermion_deriv,fermion_deriv_rel>
-      (sfx,snf,true,"../../data/o2scl/fermion_deriv_cal.o2",false,1,true);
-    t.test_rel(dc_auto,0.0,1.0e-6,"deriv_calibrate auto");
-    cout << dc_auto << endl;
-    cout << endl;
-  }
-
-  cout << "------------------------------------------------------" << endl;
-  {
-
-    cout << "dndm test" << endl;
-    snf.method=fermion_deriv_rel::direct;
-    double d1, d2, eps=1.0e-4;
-    double dndmu, dndT, dsdT, dndm;
-
-    sf.inc_rest_mass=false;
-    sf.non_interacting=true;
-
-    T=1.0;
-    sf.m=5.0;
-    sf.ms=5.0;
-    sf.mu=1.0*T-sf.m+sf.ms;
-
-    sf.mu=1.0*T-sf.m+sf.ms+eps;
-    snf.calc_mu(sf,T);
-    d1=sf.n;
-    sf.mu=1.0*T-sf.m+sf.ms;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndmu=(d1-d2)/eps;
-
-    snf.calc_mu(sf,T+eps);
-    d1=sf.n;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndT=(d1-d2)/eps;
-
-    snf.calc_mu(sf,T+eps);
-    d1=sf.en;
-    snf.calc_mu(sf,T);
-    d2=sf.en;
-    dsdT=(d1-d2)/eps;
-
-    sf.non_interacting=false;
-    sf.nu=sf.mu;
-    sf.ms=5.0+eps;
-    snf.calc_mu(sf,T);
-    d1=sf.n;
-
-    sf.ms=5.0;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndm=(d1-d2)/eps;
-    sf.non_interacting=true;
-
-    snf.calc_mu(sf,T);
-    cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
-    cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
-	 << snf.unc.dsdT << endl;
-    cout << "nu: " << dndmu << " " << dndT << " " << dsdT << endl;
-    double dndm2=3.0*sf.n/sf.m-(sf.dndT+sf.mu/T*sf.dndmu)*T/sf.m-sf.dndmu;
-    cout << dndm2 << endl;
-    cout << endl;
-
-  }
-
-  {
-
-    cout << "dndm test" << endl;
-    snf.method=fermion_deriv_rel::direct;
-    double d1, d2, eps=1.0e-4;
-    double dndmu, dndT, dsdT, dndm;
-
-    sf.inc_rest_mass=true;
-    sf.non_interacting=true;
-
-    T=1.0;
-    sf.m=5.0;
-    sf.ms=5.0;
-    sf.mu=1.0*T;
-
-    sf.mu=1.0*T+eps;
-    snf.calc_mu(sf,T);
-    d1=sf.n;
-    sf.mu=1.0*T;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndmu=(d1-d2)/eps;
-
-    snf.calc_mu(sf,T+eps);
-    d1=sf.n;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndT=(d1-d2)/eps;
-
-    snf.calc_mu(sf,T+eps);
-    d1=sf.en;
-    snf.calc_mu(sf,T);
-    d2=sf.en;
-    dsdT=(d1-d2)/eps;
-
-    sf.non_interacting=false;
-    sf.nu=sf.mu;
-    sf.ms=5.0+eps;
-    snf.calc_mu(sf,T);
-    d1=sf.n;
-    
-    sf.ms=5.0;
-    snf.calc_mu(sf,T);
-    d2=sf.n;
-    dndm=(d1-d2)/eps;
-    sf.non_interacting=true;
-
-    snf.calc_mu(sf,T);
-    cout << "sf: " << sf.dndmu << " " << sf.dndT << " " << sf.dsdT << endl;
-    cout << "un: " << snf.unc.dndmu << " " << snf.unc.dndT << " " 
-	 << snf.unc.dsdT << endl;
-    cout << "nu: " << dndmu << " " << dndT << " " << dsdT << " "
-	 << dndm << endl;
-    double dndm2=3.0*sf.n/sf.ms-(sf.dndT*T/sf.ms+sf.nu/sf.ms*sf.dndmu);
-    cout << dndm2 << endl;
-    cout << endl;
-
-    // Test the relation between specific heats
-    double cp=snf.heat_cap_ppart_const_press(sf,T);
-    double cv=snf.heat_cap_ppart_const_vol(sf,T);
-    double alpha=snf.coeff_thermal_exp(sf,T);
-    double beta=snf.compress_const_tptr(sf,T);
-    t.test_rel(cp-cv,alpha*alpha/sf.n*T/beta,1.0e-10,"cp-cv");
 
   }
 

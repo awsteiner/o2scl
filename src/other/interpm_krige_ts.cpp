@@ -121,6 +121,62 @@ int main(void) {
   typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
   typedef o2scl::matrix_view_table_transpose<> mat_y_t;
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+
+  if (true) {
+    mcovar_funct_quad_correl m;
+    m.len.resize(3);
+    m.pos.resize(3);
+    m.slope.resize(3);
+    m.len[0]=1.0;
+    m.len[1]=1.1;
+    m.len[2]=1.3;
+    m.pos[0]=1.7;
+    m.pos[1]=1.9;
+    m.pos[2]=2.3;
+    m.slope[0]=2.9;
+    m.slope[1]=3.1;
+    m.slope[2]=3.7;
+    m.log10_noise=-15;
+
+    ubvector x(3), y(3);
+    x[0]=4.1;
+    x[1]=4.3;
+    x[2]=5.3;
+    y[0]=5.9;
+    y[1]=6.1;
+    y[2]=6.7;
+
+    double m0=m(x,y);
+    x[0]+=1.0e-4;
+    double m1=m(x,y);
+    x[0]-=1.0e-4;
+    double d01=m.deriv(x,y,0);
+    cout << d01 << " " << (m1-m0)/1.0e-4 << endl;
+    
+    x[1]+=1.0e-4;
+    double m2=m(x,y);
+    x[1]-=1.0e-4;
+    double d02=m.deriv(x,y,1);
+    cout << d02 << " " << (m2-m0)/1.0e-4 << endl;
+    
+    x[2]+=1.0e-4;
+    double m3=m(x,y);
+    x[2]-=1.0e-4;
+    double d03=m.deriv(x,y,2);
+    cout << d03 << " " << (m3-m0)/1.0e-4 << endl;
+    exit(-1);
+
+    x[0]+=1.0e-4;
+    x[1]+=1.0e-4;
+    double m4=m(x,y);
+    x[0]-=1.0e-4;
+    x[1]-=1.0e-4;
+    double td0=m.deriv2(x,y,0,1);
+    cout << td0 << " " << ((m4-m2)-(m1-m0))/2.0/1.0e-4 << endl;
+    
+    
+    
+  }
   
   if (true) {
 
