@@ -52,9 +52,9 @@ int main(int argc, char *argv[]) {
     // and non-relativistic particles by a factor of two. Below is the
     // case for relativistic particles.) The code below demonstrates
     // that the computation of the specific heat (and that of the
-    // entropy and the pressure) fails for sufficiently low temperatures,
-    // i.e. in the extremely degenerate case. [12/20/09 - This now
-    // works better]
+    // entropy and the pressure) fails for sufficiently low
+    // temperatures, i.e. in the extremely degenerate case. [AWS,
+    // 12/20/09 - This now works better.]
 
     fdr.method=fermion_deriv_rel::automatic;
 
@@ -106,6 +106,7 @@ int main(int argc, char *argv[]) {
     fermion_deriv fd;
     fermion_deriv_rel fdr;
     
+    fd.g=2.0;
     fd.inc_rest_mass=true;
     fd.non_interacting=true;
   
@@ -139,10 +140,39 @@ int main(int argc, char *argv[]) {
           fdr.method=fermion_deriv_rel::by_parts;
           fdr.calc_mu(fd,T);
           cout << dndmu1 << " " << fd.dndmu << " ";
+          cout.width(2);
           cout << count_digits_same(dndmu1,fd.dndmu) << " ";
+          cout.width(2);
           cout << count_digits_same(dndT1,fd.dndT) << " ";
-          cout << count_digits_same(dsdT1,fd.dsdT) << endl;
+          cout.width(2);
+          cout << count_digits_same(dsdT1,fd.dsdT) << " ";
 
+          if (false) {
+            
+            fdr.multip=true;
+            
+            fdr.method=fermion_deriv_rel::direct;
+            fdr.calc_mu(fd,T);
+            dndmu1=fd.dndmu;
+            dndT1=fd.dndT;
+            dsdT1=fd.dsdT;
+            fdr.method=fermion_deriv_rel::by_parts;
+            fdr.calc_mu(fd,T);
+            cout << dndmu1 << " " << fd.dndmu << " ";
+            cout.width(2);
+            cout << count_digits_same(dndmu1,fd.dndmu) << " ";
+            cout.width(2);
+            cout << count_digits_same(dndT1,fd.dndT) << " ";
+            cout.width(2);
+            cout << count_digits_same(dsdT1,fd.dsdT) << endl;
+            
+          } else {
+            
+            cout << endl;
+            
+          }
+
+          fdr.multip=false;
         }
       }
     }

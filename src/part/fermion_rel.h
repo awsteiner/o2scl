@@ -2695,16 +2695,18 @@ namespace o2scl {
   /** \brief Long double version of 
       \ref o2scl::fermion_rel_tl 
   */
-  class fermion_rel_ld : public fermion_rel_tl<fermion_tl<long double>,
-                          fermi_dirac_integ_direct<long double,funct_cdf25,
-                                                   cpp_dec_float_25>,
-                          bessel_K_exp_integ_boost<long double,
-                                                   cpp_dec_float_25>,
-                          inte_double_exp_boost<>,
-                          inte_double_exp_boost<>,
-                          root_brent_gsl<funct_ld,long double>,
-                          funct_ld,
-                                               long double> {
+  class fermion_rel_ld : public
+  fermion_rel_tl<
+    fermion_tl<long double>,
+    fermi_dirac_integ_direct<long double,funct_cdf25,
+                             cpp_dec_float_25>,
+    bessel_K_exp_integ_boost<long double,
+                             cpp_dec_float_25>,
+    inte_double_exp_boost<>,
+    inte_double_exp_boost<>,
+    root_brent_gsl<funct_ld,long double>,
+    funct_ld,
+    long double> {
     
   };
   
@@ -2723,7 +2725,6 @@ namespace o2scl {
                  root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
                  funct_cdf25,
                  cpp_dec_float_25> {
-    
   };
   
 #endif  
