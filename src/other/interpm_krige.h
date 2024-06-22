@@ -281,7 +281,7 @@ namespace o2scl {
         double m=slope[j];
         double n=pos[j];
         if (x1[j]!=x2[j]) equal=false;
-        double den2=ell*ell+m*m*pow((x1[j]+x2[j])-n*n,2);
+        double den2=ell*ell+m*m*pow((x1[j]+x2[j])-n,2);
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/den2/2.0;
       }
       if (equal) return exp(sum)+pow(10.0,log10_noise);
@@ -308,8 +308,8 @@ namespace o2scl {
       double m=slope[ix];
       double n=pos[ix];
       double K=operator()(x1,x2), deriv;
-      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n*n,2);
-      double zix=(m*m*(n-x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
+      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n,2);
+      double zix=(m*m*(n-2.0*x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
       deriv=K*zix/d2ix/d2ix;
         
       return deriv;
@@ -355,12 +355,12 @@ namespace o2scl {
       double ny=pos[iy];
       double sum=0.0;
       double K=operator()(x1,x2), deriv2;
-      double d2ix=ellx*ellx+mx*mx*pow((x1[ix]+x2[ix])-nx*nx,2);
-      double zix=(mx*mx*(nx-x2[ix])*(x1[ix]+x2[ix]-nx)-ellx*ellx)*
+      double d2ix=ellx*ellx+mx*mx*pow((x1[ix]+x2[ix])-nx,2);
+      double zix=(mx*mx*(nx-2.0*x2[ix])*(x1[ix]+x2[ix]-nx)-ellx*ellx)*
         (x1[ix]-x2[ix]);
       if (ix!=iy) {
-        double d2iy=elly*elly+my*my*pow((x1[iy]+x2[iy])-ny*ny,2);
-        double ziy=(my*my*(ny-x2[iy])*(x1[iy]+x2[iy]-ny)-elly*elly)*
+        double d2iy=elly*elly+my*my*pow((x1[iy]+x2[iy])-ny,2);
+        double ziy=(my*my*(ny-2.0*x2[iy])*(x1[iy]+x2[iy]-ny)-elly*elly)*
           (x1[iy]-x2[iy]);
         deriv2=K*zix*ziy/d2ix/d2iy;
       } else {
