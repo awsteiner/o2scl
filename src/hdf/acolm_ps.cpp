@@ -2664,6 +2664,7 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   // ---------------------------------------------------------------------
 
   calc_utf8<> calc;
+  calc.set_rng(rng);
   calc.compile(i1.c_str(),0);
   vector<std::u32string> cols32=calc.get_var_list();
   vector<std::string> cols(cols32.size());
@@ -2750,6 +2751,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     if (in[1].find(':')==std::string::npos) {
       
       calc_utf8<> calc;
+      calc.set_rng(rng);
       std::map<std::string,double> vars;
       for(size_t i=0;i<ilast;i++) {
         if (i<table3d_obj.get_nx()) {
@@ -2833,6 +2835,7 @@ int acol_manager::comm_set_grid(std::vector<std::string> &sv, bool itive_com) {
     if (in[1].find(':')==std::string::npos) {
       
       calc_utf8<> calc;
+      calc.set_rng(rng);
       std::map<std::string,double> vars;
       for(size_t i=0;i<tensor_grid_obj.get_size(k);i++) {
 	vars["i"]=((double)i);

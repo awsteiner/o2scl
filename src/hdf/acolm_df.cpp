@@ -1087,6 +1087,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     
     // Parse function
     calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1104,7 +1105,8 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
 
     // Parse function
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1122,7 +1124,8 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
 
     // Parse function
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1156,6 +1159,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     // Parse function(s)
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
+    calc.set_rng(rng);
+    rng<> r;
+    rng_set_seed(r);
+    calc_cond.set_rng(r);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);
@@ -1198,6 +1205,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     // Parse function(s)
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
+    calc.set_rng(rng);
+    rng<> r;
+    rng_set_seed(r);
+    calc_cond.set_rng(r);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);

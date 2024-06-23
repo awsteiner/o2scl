@@ -1734,6 +1734,7 @@ int acol_manager::comm_values_table(std::vector<std::string> &sv,
     // Parse function
     std::string function=i1;
     calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 

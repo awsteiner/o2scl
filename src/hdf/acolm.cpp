@@ -219,7 +219,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
 
   // Ensure the RNGs for different types are somewhat uncorrelated
-  rng.clock_seed();
+  rng_set_seed(rng);
   rng_ld.set_seed(rng.get_seed()*2);
 
   terminal ter;

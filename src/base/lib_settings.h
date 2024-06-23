@@ -196,7 +196,7 @@ namespace o2scl {
     //@}
 
     /** \brief Seed for thread-safe random number generation 
-        \ref rng_set_seed()
+        (see \ref rng_set_seed() and \ref rng_set_seed_mpi())
      */
     unsigned int seed;
     
@@ -233,7 +233,7 @@ namespace o2scl {
     /// String containing python version
     std::string py_version();
     
-    /// Import arrays for numpy C api
+    /// Import arrays for numpy C API
     void *py_import_array();
     
     /// Get the path for the Python module named \c module

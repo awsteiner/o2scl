@@ -3243,8 +3243,6 @@ namespace o2scl {
         // and ensure a different seed for each thread
         rng<> r;
         rng_set_seed(r);
-        //unsigned int seed=time(0);
-        //r.set_seed(seed*(i_thread+1));
 
         // Parse function, separate calculator for each thread
         calc_utf8<> calc;
@@ -3252,64 +3250,42 @@ namespace o2scl {
 
         std::map<std::string,fp_t> vars;
         
-        if (false) {
-
-          // Old version (slower)
-          
-          typename std::map<std::string,fp_t>::const_iterator mit;
-          for(mit=constants.begin();mit!=constants.end();mit++) {
-            vars[mit->first]=mit->second;
-          }
-          calc.compile(function.c_str(),&vars);
-
-          // Create column from function
-          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-            for(aciter it=atree.begin();it!=atree.end();it++) {
-              vars[it->first]=it->second.dat[j];
-            }
-            vec[j]=calc.eval(&vars);
-          }
-          
-        } else {
-
-          // New (hopefully faster) version which uses
-          // calc_utf8::get_var_list() to obtain a list of variables
-          // needed to compute the user-specified function.
-          
-          calc.compile(function.c_str(),0);
-
-          // Get the variable list as a list of u32string
-          std::vector<std::u32string> cols32=calc.get_var_list();
-
-          // Convert it to a list of utf8 strings
-          std::vector<std::string> cols(cols32.size());
-          for(size_t ij=0;ij<cols32.size();ij++) {
-            char32_to_utf8(cols32[ij],cols[ij]);
-          }
-
-          // At this point, the vector \c cols may contain the names
-          // of constants which are not columns, so we have to use
-          // is_column() below to double check.
-          
-          typename std::map<std::string,fp_t>::const_iterator mit;
-          for(mit=constants.begin();mit!=constants.end();mit++) {
-            vars[mit->first]=mit->second;
-          }
-
-          // Create column from function
-          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-            for(size_t k=0;k<cols.size();k++) {
-              // Skip entries that are constants because they're
-              // already taken care of above.
-              if (this->is_column(cols[k])) {
-                vars[cols[k]]=this->get(cols[k],j);
-              }
-            }
-            vec[j]=calc.eval(&vars);
-          }
-          
+        // New (hopefully faster) version which uses
+        // calc_utf8::get_var_list() to obtain a list of variables
+        // needed to compute the user-specified function.
+        
+        calc.compile(function.c_str(),0);
+        
+        // Get the variable list as a list of u32string
+        std::vector<std::u32string> cols32=calc.get_var_list();
+        
+        // Convert it to a list of utf8 strings
+        std::vector<std::string> cols(cols32.size());
+        for(size_t ij=0;ij<cols32.size();ij++) {
+          char32_to_utf8(cols32[ij],cols[ij]);
         }
-      
+        
+        // At this point, the vector \c cols may contain the names
+        // of constants which are not columns, so we have to use
+        // is_column() below to double check.
+        
+        typename std::map<std::string,fp_t>::const_iterator mit;
+        for(mit=constants.begin();mit!=constants.end();mit++) {
+          vars[mit->first]=mit->second;
+        }
+        
+        // Create column from function
+        for(int j=i_thread;j<((int)nlines);j+=n_threads) {
+          for(size_t k=0;k<cols.size();k++) {
+            // Skip entries that are constants because they're
+            // already taken care of above.
+            if (this->is_column(cols[k])) {
+              vars[cols[k]]=this->get(cols[k],j);
+            }
+          }
+          vec[j]=calc.eval(&vars);
+        }
+        
         // End of parallel region
       }
 
