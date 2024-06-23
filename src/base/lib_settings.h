@@ -310,7 +310,7 @@ namespace o2scl {
   */
   void rng_set_seed(rng<> &r, int mpi_size=1, int mpi_rank=0,
                     int verbose=1);
-
+  
 #if defined (O2SCL_MPI) || defined (DOXYGEN)
   
   /** \brief MPI version of rng_set_seed()

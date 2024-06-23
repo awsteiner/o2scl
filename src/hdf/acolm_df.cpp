@@ -1065,8 +1065,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
     
     // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+    if (in[0].size()>=3 && ((in[0][0]=='\'' &&
+                             in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' &&
+                             in[0][in[0].size()-1]=='\"'))) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
 

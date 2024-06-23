@@ -3242,8 +3242,9 @@ namespace o2scl {
         // Create a new random number generator for each thread,
         // and ensure a different seed for each thread
         rng<> r;
-        unsigned int seed=time(0);
-        r.set_seed(seed*(i_thread+1));
+        rng_set_seed(r);
+        //unsigned int seed=time(0);
+        //r.set_seed(seed*(i_thread+1));
 
         // Parse function, separate calculator for each thread
         calc_utf8<> calc;

@@ -54,6 +54,47 @@
 
 namespace o2scl {
 
+  typedef boost::numeric::ublas::vector<double> ubvector;
+
+  /** \brief Desc
+
+      It is expected that the covariance function is symmetric
+      with respect to its arguments. The derivative is then
+      antisymmetric. 
+   */
+  template<class vec_t, class vec2_t> class mcovar_base {
+    
+  public:
+    
+    /// Get the number of parameters
+    virtual size_t get_n_params()=0;
+    
+    /// Set the parameters
+    virtual void set_params(const ubvector &p)=0;
+
+    /// The covariance function
+    virtual double operator()(const vec_t &x1, const vec2_t &x2)=0;
+    
+    /// The covariance function
+    virtual double covar(const vec_t &x1, const vec_t &x2)=0;
+    
+    /// The covariance function
+    virtual double covar2(const vec2_t &x1, const vec2_t &x2)=0;
+    
+    /** \brief The derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv(const vec_t &x1, const vec2_t &x2,
+                         size_t ix)=0;
+    
+    /** \brief The second derivative of the covariance function with
+        respect to the first argument
+    */
+    virtual double deriv2(const vec_t &x1, const vec2_t &x2,
+                          size_t ix, size_t iy)=0;
+    
+  };
+  
   /** \brief Covariance function: 1D RBF with a noise term
 
       \note There's no point making a base class, since there
@@ -61,7 +102,8 @@ namespace o2scl {
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
    */
-  class mcovar_funct_rbf {
+  template<class vec_t, class vec2_t>
+  class mcovar_funct_rbf : public mcovar_base<vec_t,vec2_t> {
     
   public:
 
@@ -81,16 +123,16 @@ namespace o2scl {
     }
     
     /// Set the parameters
-    template<class vec_t> void set_params(vec_t &p) {
+    void set_params(const vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
       }
       return;
     }
 
-    /// The covariance function
-    template<class vec_t, class vec2_t>
-    double operator()(const vec_t &x1, const vec2_t &x2) {
+    /// The covariance function template
+    template<class vec3_t, class vec4_t>
+    double covar_tl(const vec3_t &x1, const vec4_t &x2){
       double sum=0.0;
       bool equal=true;
       for(size_t j=0;j<len.size();j++) {
@@ -100,12 +142,26 @@ namespace o2scl {
       if (equal) return exp(sum)+noise;
       return exp(sum);
     }
+    
+    /// The covariance function
+    virtual double operator()(const vec_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
+
+    /// The covariance function
+    virtual double covar(const vec_t &x1, const vec_t &x2){
+      return covar_tl(x1,x2);
+    }
+
+    /// The covariance function
+    virtual double covar2(const vec2_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
 
     /** \brief The derivative of the covariance function with
         respect to the first argument
     */
-    template<class vec_t, class vec2_t>
-    double deriv(vec_t &x1, vec2_t &x2, size_t ix) {
+    virtual double deriv(const vec_t &x1, const vec2_t &x2, size_t ix){
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
@@ -116,9 +172,8 @@ namespace o2scl {
     /** \brief The second derivative of the covariance function with
         respect to the first argument
     */
-    template<class vec_t, class vec2_t>
-    double deriv2(vec_t &x1, vec2_t &x2, size_t ix,
-                  size_t iy) {
+    virtual double deriv2(const vec_t &x1, const vec2_t &x2, size_t ix,
+                          size_t iy){
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
@@ -140,7 +195,8 @@ namespace o2scl {
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
    */
-  class mcovar_funct_rbf_noise {
+  template<class vec_t, class vec2_t>
+  class mcovar_funct_rbf_noise : public mcovar_base<vec_t,vec2_t> {
     
   public:
 
@@ -156,8 +212,7 @@ namespace o2scl {
     }
     
     /// Set the parameters
-    template<class vec_t>
-    void set_params(vec_t &p) {
+    void set_params(const vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
       }
@@ -166,8 +221,8 @@ namespace o2scl {
     }
     
     /// The covariance function
-    template<class vec_t, class vec2_t>
-    double operator()(const vec_t &x1, const vec2_t &x2) {
+    template<class vec3_t, class vec4_t>
+    double covar_tl(const vec3_t &x1, const vec4_t &x2){
       double sum=0.0;
       bool equal=true;
       for(size_t j=0;j<len.size();j++) {
@@ -178,11 +233,25 @@ namespace o2scl {
       return exp(sum);
     }
 
+    /// The covariance function
+    virtual double operator()(const vec_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
+    /// The covariance function
+    virtual double covar(const vec_t &x1, const vec_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
+    /// The covariance function
+    virtual double covar2(const vec2_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
     /** \brief The derivative of the covariance function with
         respect to the first argument
     */
-    template<class vec_t, class vec2_t>
-    double deriv(vec_t &x1, vec2_t &x2, size_t ix) {
+    virtual double deriv(const vec_t &x1, const vec2_t &x2, size_t ix){
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
@@ -193,9 +262,8 @@ namespace o2scl {
     /** \brief The second derivative of the covariance function with
         respect to the first argument
     */
-    template<class vec_t, class vec2_t>
-    double deriv2(vec_t &x1, vec2_t &x2, size_t ix,
-                  size_t iy) {
+    virtual double deriv2(const vec_t &x1, const vec2_t &x2, size_t ix,
+                          size_t iy){
       double sum=0.0;
       for(size_t j=0;j<len.size();j++) {
         sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
@@ -217,11 +285,12 @@ namespace o2scl {
       aren't really any virtual functions. The covariance functions
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
-   */
-  class mcovar_funct_quad_correl {
+  */
+  template<class vec_t, class vec2_t>
+  class mcovar_funct_quad_correl : public mcovar_base<vec_t,vec2_t> {
     
   public:
-
+    
     /// Length parameters
     std::vector<double> len;
 
@@ -240,8 +309,7 @@ namespace o2scl {
     }
     
     /// Set the parameters
-    template<class vec_t>
-    void set_params(vec_t &p) {
+    void set_params(const vec_t &p) {
       for(size_t j=0;j<len.size();j++) {
         len[j]=p[j];
       }
@@ -272,8 +340,8 @@ namespace o2scl {
         values of \f$ m_k \f$ are stored in \ref slope, and the values
         of \f$ n_k \f$ are stored in \ref pos.
      */
-    template<class vec_t, class vec2_t>
-    double operator()(const vec_t &x1, const vec2_t &x2) {
+    template<class vec3_t, class vec4_t>
+    double covar_tl(const vec3_t &x1, const vec4_t &x2){
       double sum=0.0;
       bool equal=true;
       for(size_t j=0;j<len.size();j++) {
@@ -288,6 +356,32 @@ namespace o2scl {
       return exp(sum);
     }
 
+    virtual double operator()(const vec_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
+    virtual double covar(const vec_t &x1, const vec_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
+    virtual double covar2(const vec2_t &x1, const vec2_t &x2){
+      return covar_tl(x1,x2);
+    }
+    
+    template<class vec3_t, class vec4_t>
+    double deriv_tl(const vec3_t &x1, const vec4_t &x2, size_t ix){
+      double ell=len[ix];
+      double m=slope[ix];
+      double n=pos[ix];
+      double K=covar_tl(x1,x2), deriv;
+      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n,2);
+      double zix=(m*m*(n-2.0*x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*
+        (x1[ix]-x2[ix]);
+      deriv=K*zix/d2ix/d2ix;
+        
+      return deriv;
+    }
+    
     /** \brief The derivative of the covariance function with
         respect to one element of the first argument
 
@@ -302,19 +396,10 @@ namespace o2scl {
         \left( x_{ik} - x_{jk} \right)
         \f]
     */
-    template<class vec_t, class vec2_t>
-    double deriv(vec_t &x1, vec2_t &x2, size_t ix) {
-      double ell=len[ix];
-      double m=slope[ix];
-      double n=pos[ix];
-      double K=operator()(x1,x2), deriv;
-      double d2ix=ell*ell+m*m*pow((x1[ix]+x2[ix])-n,2);
-      double zix=(m*m*(n-2.0*x2[ix])*(x1[ix]+x2[ix]-n)-ell*ell)*(x1[ix]-x2[ix]);
-      deriv=K*zix/d2ix/d2ix;
-        
-      return deriv;
+    virtual double deriv(const vec_t &x1, const vec2_t &x2, size_t ix){
+      return deriv_tl(x1,x2,ix);
     }
-
+    
     /** \brief The second derivative of the covariance function with
         respect to the first argument
 
@@ -344,9 +429,9 @@ namespace o2scl {
         \left( x_{ik} + x_{jk} - n_k\right) \right]
         \f]
     */
-    template<class vec_t, class vec2_t>
-    double deriv2(vec_t &x1, vec2_t &x2, size_t ix,
-                  size_t iy) {
+    template<class vec3_t, class vec4_t>
+    double deriv2_tl(const vec3_t &x1, const vec4_t &x2, size_t ix,
+                     size_t iy){
       double ellx=len[ix];
       double mx=slope[ix];
       double nx=pos[ix];
@@ -354,7 +439,7 @@ namespace o2scl {
       double my=slope[iy];
       double ny=pos[iy];
       double sum=0.0;
-      double K=operator()(x1,x2), deriv2;
+      double K=covar_tl(x1,x2), deriv2;
       double d2ix=ellx*ellx+mx*mx*pow((x1[ix]+x2[ix])-nx,2);
       double zix=(mx*mx*(nx-2.0*x2[ix])*(x1[ix]+x2[ix]-nx)-ellx*ellx)*
         (x1[ix]-x2[ix]);
@@ -372,6 +457,11 @@ namespace o2scl {
       return deriv2;
     }
     
+    virtual double deriv2(const vec_t &x1, const vec2_t &x2, size_t ix,
+                          size_t iy) {
+      return deriv2_tl(x1,x2,ix,iy);
+    }
+    
   };
 
   /** \brief Multi-dimensional interpolation using an 
@@ -382,8 +472,7 @@ namespace o2scl {
       section of the User's guide. 
       \endverbatim
   */
-  template<class func_vec_t,
-           class vec_t=boost::numeric::ublas::vector<double>,
+  template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_x_t=o2scl::matrix_view_table<>,
            class mat_x_row_t=const matrix_row_gen<o2scl::matrix_view_table<>>, 
            class mat_y_t=o2scl::matrix_view_table_transpose<>,
@@ -398,11 +487,10 @@ namespace o2scl {
 
   public:
 
-    typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef interpm_krige_optim<func_vec_t,vec_t,mat_x_t,mat_x_row_t, 
-                                    mat_y_t,mat_y_row_t,mat_inv_kxx_t,
-                                    mat_inv_t,vec3_t> class_t;
+    typedef interpm_krige_optim<vec_t,mat_x_t,mat_x_row_t, 
+                                mat_y_t,mat_y_row_t,mat_inv_kxx_t,
+                                mat_inv_t,vec3_t> class_t;
     
   protected:
 
@@ -468,7 +556,7 @@ namespace o2scl {
     bool use_alt_mmin;
 
     /// Pointer to the covariance function
-    func_vec_t *cf;
+    std::vector<std::shared_ptr<mcovar_base<vec_t,mat_x_row_t>>> cf;
 
     /// Set the minimizer to use
     void set_mmin(mmin_base<multi_funct,multi_funct,ubvector> &mb) {
@@ -522,7 +610,7 @@ namespace o2scl {
               if (irow2>icol2) {
                 inv_KXX2(irow,icol)=inv_KXX2(icol,irow);
               } else {
-                inv_KXX2(irow,icol)=(*cf)[iout](xrow,xcol);
+                inv_KXX2(irow,icol)=cf[iout]->covar2(xrow,xcol);
               }
             }
           }
@@ -548,7 +636,7 @@ namespace o2scl {
             size_t i2=i;
             if (i>=k) i2++;        
             mat_x_row_t xi2(this->x,i2);
-            kxx0[i]=(*cf)[iout](xi2,xk);
+            kxx0[i]=cf[iout]->covar2(xk,xi2);
             ypred+=kxx0[i]*Kinvf2[i];
           }
 
@@ -571,7 +659,7 @@ namespace o2scl {
             if (irow>icol) {
               this->inv_KXX[iout](irow,icol)=this->inv_KXX[iout](icol,irow);
             } else {
-              this->inv_KXX[iout](irow,icol)=(*cf)[iout](xrow,xcol);
+              this->inv_KXX[iout](irow,icol)=cf[iout]->covar2(xrow,xcol);
             }
           }
         }
@@ -664,7 +752,7 @@ namespace o2scl {
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=(*cf)[iout](xrow,xcol);
+              KXX(irow,icol)=cf[iout]->covar2(xrow,xcol);
             }
           }
         }
@@ -752,7 +840,7 @@ namespace o2scl {
     /** \brief Minimization function for the covariance parameters
      */
     double min_fun(size_t iout, size_t n, const ubvector &v, double max_val) {
-      (*cf)[iout].set_params(v);
+      cf[iout]->set_params(v);
       int success;
       double ret=qual_fun(iout,success);
       if (success!=0) {
@@ -808,8 +896,10 @@ namespace o2scl {
   
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(func_vec_t &covar, vec3_t &param_lists) {
-      cf=&covar;
+    int set_covar(std::vector<std::shared_ptr<mcovar_base<vec_t,
+                  mat_x_row_t>>> covar,
+                  vec3_t &param_lists) {
+      cf=covar;
       plists=param_lists;
       return 0;
     }
@@ -936,8 +1026,8 @@ namespace o2scl {
         double min_qual=0.0;
 
         double max_val=0.0;
-        size_t np_covar=(*cf)[iout].get_n_params();
-        std::vector<double> params(np_covar), min_params(np_covar);
+        size_t np_covar=cf[iout]->get_n_params();
+        vec_t params(np_covar), min_params(np_covar);
         
         if (full_min) {
 
@@ -964,7 +1054,7 @@ namespace o2scl {
               for(size_t j=0;j<np_covar;j++) {
                 params[j]=sx(i,j);
               }
-              (*cf)[iout].set_params(params);
+              cf[iout]->set_params(params);
               double qtmp=qual_fun(iout,success);
               if (success==0) {
                 if (max_val_set==false || qtmp>max_val) {
@@ -980,7 +1070,7 @@ namespace o2scl {
             for(size_t j=0;j<np_covar;j++) {
               sv(j)=plists[iout][j][plists[iout][j].size()/2];
             }
-            (*cf)[iout].set_params(sv);
+            cf[iout]->set_params(sv);
             max_val=qual_fun(iout,success);
             if (success!=0) {
               O2SCL_ERR("Max val failed 2.",o2scl::exc_efailed);
@@ -1054,7 +1144,7 @@ namespace o2scl {
             for(size_t i=0;i<np_covar;i++) {
               params[i]=plists[iout][i][index_list[i]];
             }
-            (*cf)[iout].set_params(params);
+            cf[iout]->set_params(params);
             
             qual[iout]=qual_fun(iout,success);
             
@@ -1099,7 +1189,7 @@ namespace o2scl {
           std::cout.width(2);
           std::cout << "   " << min_qual << std::endl;
         }
-        (*cf)[iout].set_params(min_params);
+        cf[iout]->set_params(min_params);
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(iout,success);
@@ -1140,7 +1230,7 @@ namespace o2scl {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          double covar_val=(*cf)[iout](xrow,x0);
+          double covar_val=(*cf[iout])(x0,xrow);
           y0[iout]+=covar_val*Kinvf[iout][ipoints];
         }
         if (rescaled) {
@@ -1170,13 +1260,13 @@ namespace o2scl {
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
         
-        double kx0x0=(*cf)[iout](x0,x0);
+        double kx0x0=(*cf[iout])(x0,x0);
         
         vec_t kxx0(np), prod(np);
         
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          kxx0[ipoints]=(*cf)[iout](xrow,x0);
+          kxx0[ipoints]=(*cf[iout])(xrow,x0);
         }
         
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
@@ -1203,8 +1293,8 @@ namespace o2scl {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<this->np;ipoints++) {
           mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=(*cf)[iout].deriv(xrow,x0,ix);
-          y0[iout]-=covar_val*this->Kinvf[iout][ipoints];
+          double covar_val=(*cf[iout]).deriv(x0,xrow,ix);
+          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {
           y0[iout]*=this->std_y[iout];
@@ -1225,7 +1315,7 @@ namespace o2scl {
         y0[iout]=0.0;
         for(size_t ipoints=0;ipoints<this->np;ipoints++) {
           mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=(*cf)[iout].deriv2(xrow,x0,ix,iy);
+          double covar_val=(*cf[iout]).deriv2(x0,xrow,ix,iy);
           y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
         }
         if (this->rescaled) {
