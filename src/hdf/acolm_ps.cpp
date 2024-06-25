@@ -2350,12 +2350,14 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
     // ---------------------------------------------------------------------
     // Create new table3d and copy grid over
     // ---------------------------------------------------------------------
-
+    
     table3d *new_table3d=new table3d;
     size_t nx, ny;
     table3d_obj.get_size(nx,ny);
-    new_table3d->set_xy(table3d_obj.get_x_name(),nx,table3d_obj.get_x_data(),
-			table3d_obj.get_y_name(),ny,table3d_obj.get_y_data());
+    new_table3d->set_xy(table3d_obj.get_x_name(),nx,
+                        table3d_obj.get_x_data(),
+			table3d_obj.get_y_name(),ny,
+                        table3d_obj.get_y_data());
 	
     // ---------------------------------------------------------------------
     // Copy constants from old to new table3d
@@ -2579,7 +2581,8 @@ int acol_manager::comm_select(std::vector<std::string> &sv, bool itive_com) {
 
               // Fill it with the new data
               ubvector vec(table_obj.get_nlines());
-              table_obj.function_vector(table_obj.get_column_name(j),vec,false);
+              table_obj.function_vector(table_obj.get_column_name(j),
+                                        vec,false);
               new_table.copy_to_column(vec,table_obj.get_column_name(j));
             }
           }
@@ -2701,11 +2704,11 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
       new_table.set_nlines_auto(new_lines+1);
 
       // Trivially parallize the assignment over all columns
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
 #endif
       {
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
 	for(int j=0;j<((int)table_obj.get_ncolumns());j++) {

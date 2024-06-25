@@ -50,7 +50,7 @@
 #include <o2scl/set_mpfr.h>
 #include <o2scl/vector_special.h>
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 
@@ -857,33 +857,39 @@ void o2scl::rng_set_seed(rng<> &r, int mpi_size, int mpi_rank,
                          int verbose) {
 
   int i_thread=0;
-#ifdef O2SCL_OPENMP
+  
+#ifdef O2SCL_SET_OPENMP
   i_thread=omp_get_thread_num();
 #endif
   
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #pragma omp critical (o2scl_make_rng_thread_safe)
 #endif
   {
+    int shift=1;
+    if (mpi_size>0) {
+      // This works as long as there are not more than 1e6 threads
+      shift+=1000001*mpi_rank;
+    }
     
     if (o2scl_settings.seed==0) {
       // If the seed has never been used before, set it equal to the time
       o2scl_settings.seed=time(0);
-    } else if (o2scl_settings.seed+(unsigned int)mpi_size<
+    } else if (o2scl_settings.seed+(unsigned int)shift<
                (unsigned int)mpi_size) {
       // If the next seed flipped around to zero, adjust accordingly
-      o2scl_settings.seed=mpi_size;
+      o2scl_settings.seed=shift;
     } else {
       // Proceed to next seed
-      o2scl_settings.seed+=mpi_size;
+      o2scl_settings.seed+=shift;
     }
-    // Set the seed for this rank
-    r.set_seed(o2scl_settings.seed+mpi_rank);
     if (verbose>0) {
       std::cout << "New RNG for thread " << i_thread << " and rank "
                 << mpi_rank << " with seed: "
-                << o2scl_settings.seed+mpi_rank << std::endl;
+                << o2scl_settings.seed << std::endl;
     }
+    // Set the seed for this rank
+    r.set_seed(o2scl_settings.seed);
   }
   return;
 }

@@ -152,18 +152,21 @@ int main(void) {
     x[0]-=1.0e-4;
     double d01=m.deriv_tl(x,y,0);
     cout << d01 << " " << (m1-m0)/1.0e-4 << endl;
+    t.test_rel(d01,(m1-m0)/1.0e-4,1.0e-4,"quad_correl 1");
     
     x[1]+=1.0e-4;
     double m2=m.covar(x,y);
     x[1]-=1.0e-4;
     double d02=m.deriv_tl(x,y,1);
     cout << d02 << " " << (m2-m0)/1.0e-4 << endl;
+    t.test_rel(d02,(m2-m0)/1.0e-4,1.0e-4,"quad_correl 2");
     
     x[2]+=1.0e-4;
     double m3=m.covar(x,y);
     x[2]-=1.0e-4;
     double d03=m.deriv_tl(x,y,2);
     cout << d03 << " " << (m3-m0)/1.0e-4 << endl;
+    t.test_rel(d03,(m3-m0)/1.0e-4,1.0e-4,"quad_correl 3");
 
     x[0]+=1.0e-4;
     x[1]+=1.0e-4;
@@ -172,8 +175,8 @@ int main(void) {
     x[1]-=1.0e-4;
     double td0=m.deriv2_tl(x,y,0,1);
     cout << td0 << " " << ((m4-m2)-(m1-m0))/2.0/1.0e-4 << endl;
-    
-    
+    //t.test_rel(td0,((m4-m2)-(m1-m0))/2.0/1.0e-4,1.0e-4,
+    //"quad_correl deriv");
     
   }
   
@@ -550,9 +553,14 @@ int main(void) {
       ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
                                   mat_x_row_t>);
     vmfrn[0]=mfrn;
+    cout << "x1." << endl;
+    mfrn->len.resize(2);
+    cout << "x2." << endl;
     
     iko.set_covar(vmfrn,param_lists);
+    cout << "x2b." << endl;
     iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4);
+    cout << "x3." << endl;
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
     
@@ -561,22 +569,29 @@ int main(void) {
     iko2.set_covar_optim(cfrn,ptemp);
     iko2.set(N,x,y);
 
+    cout << "x4." << endl;
     ubvector p;
     p.resize(3);
     p[0]=0.1;
     p[1]=0.1;
     p[2]=1.0e-8;
+    cout << "x5." << endl;
     mfrn->set_params(p);
+    cout << "x6." << endl;
     cfrn.set_params(p);
+    cout << "x7." << endl;
 
     int success;
 
     t.set_output_level(2);
     iko2.mode=iko2.mode_loo_cv;
     iko.mode=iko.mode_loo_cv;
+    iko.verbose=3;
+    iko2.verbose=3;
     t.test_rel(iko.qual_fun(0,success),
                iko2.qual_fun(success),1.0e-10,
-               "optim, compare multid and 1d, unscaled, loo_cv.");
+               "optim, compare 1d and multid, unscaled, loo_cv.");
+    exit(-1);
 
     iko2.mode=iko2.mode_max_lml;
     iko.mode=iko.mode_max_lml;

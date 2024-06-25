@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
      std::placeholders::_4,std::placeholders::_5,std::placeholders::_6);
 
   size_t n_threads=1;
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
   n_threads=2;
 #endif
 
@@ -641,7 +641,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   if (true) {
 

@@ -50,7 +50,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   // Construct the data
   static const size_t N=100;

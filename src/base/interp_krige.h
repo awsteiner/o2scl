@@ -1045,6 +1045,10 @@ namespace o2scl {
               inv_KXX2(irow,icol)=(*cf)((*this->px)[irow],
                                         (*this->px)[icol]);
             }
+            if (verbose>2) {
+              std::cout << "1 " << irow << " " << icol << " "
+                        << inv_KXX2(irow,icol) << std::endl;
+            }
           }
         }
         
@@ -1074,14 +1078,24 @@ namespace o2scl {
           } else {
             yact=(*this->py)[ii];
           }
+          if (verbose>2) {
+            std::cout << "2 " << this->rescaled << " "
+                      << yact << std::endl;
+          }
           
           // Compute sigma and ypred from Eq. 5.12
           double sigma2=1.0/inv_KXX2(ii,ii);
           double ypred=yact-Kinvf2[ii]*sigma2;
+          if (verbose>2) {
+            std::cout << "3 " << sigma2 << " " << ypred << std::endl;
+          }
           
           // Then use Eq. 5.10
           qual+=pow(yact-ypred,2.0)/sigma2/2.0;
           qual+=0.5*log(sigma2);
+          if (verbose>2) {
+            std::cout << "4 " << qual << std::endl;
+          }
         }
           
         if (verbose>2) {

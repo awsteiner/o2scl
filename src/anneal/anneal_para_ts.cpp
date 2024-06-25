@@ -30,8 +30,9 @@
 #include <o2scl/funct.h>
 #include <o2scl/anneal_para.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/set_openmp.h>
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 

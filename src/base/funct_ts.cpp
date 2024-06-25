@@ -27,6 +27,7 @@
 #include <o2scl/funct_multip.h>
 #include <o2scl/set_mpfr.h>
 #include <o2scl/funct_to_fp.h>
+#include <o2scl/set_python.h>
 
 using namespace std;
 using namespace o2scl;
@@ -71,7 +72,7 @@ int main(void) {
     t.test_rel(f(r),o2scl_const::pi*r*r,1.0e-12,"funct_string");
   }
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
   o2scl_settings.py_init();
   o2scl_settings.add_python_path("../../data/o2scl/python",3);

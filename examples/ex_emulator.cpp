@@ -24,6 +24,7 @@
 
 #include <o2scl/test_mgr.h>
 #include <o2scl/emulator.h>
+#include <o2scl/set_python.h>
 #include <o2scl/hdf_io.h>
 
 #ifdef O2SCL_ARMA
@@ -67,7 +68,7 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
     if (true) {
     

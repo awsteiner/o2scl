@@ -23,13 +23,14 @@
 #ifndef O2SCL_ANNEAL_PARA_H
 #define O2SCL_ANNEAL_PARA_H
 
-#ifdef O2SCL_OPENMP
+#include <o2scl/set_openmp.h>
+
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 
 #include <o2scl/anneal_gsl.h>
 #include <o2scl/vector.h>
-#include <o2scl/set_openmp.h>
 
 namespace o2scl {
   

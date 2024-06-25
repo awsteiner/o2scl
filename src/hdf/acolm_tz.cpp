@@ -26,7 +26,7 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
-
+#include <o2scl/set_python.h>
 #include <o2scl/set_mpfr.h>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -203,7 +203,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
                                 bool itive_com) {
   if (type=="table") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-gmm." << endl;
     }
@@ -260,7 +260,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
                               bool itive_com) {
   if (type=="table") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-kde." << endl;
@@ -592,7 +592,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="prob_dens_mdim_kde") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     
     if (pkde_obj.dim()!=1) {
       cerr << "Command to-table only works on a 1-dimensional KDE" << endl;
@@ -854,7 +854,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     
   } else if (type=="prob_dens_mdim_kde") {
     
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
     if (pkde_obj.dim()!=2) {
       cerr << "Command to-table only works on a 2-dimensional KDE" << endl;

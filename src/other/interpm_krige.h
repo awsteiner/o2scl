@@ -220,7 +220,7 @@ namespace o2scl {
       return;
     }
     
-    /// The covariance function
+    /// The covariance function template
     template<class vec3_t, class vec4_t>
     double covar_tl(const vec3_t &x1, const vec4_t &x2){
       double sum=0.0;
@@ -278,13 +278,28 @@ namespace o2scl {
     
   };
 
-  /** \brief Covariance function: RBF with varying correlation length and
-      a noise term
+  /** \brief Covariance function: RBF with varying correlation length
+      and a noise term
 
       \note There's no point making a base class, since there
       aren't really any virtual functions. The covariance functions
       have to be templates, to handle multiple vector types, so 
       no virtual functions are allowed.
+      
+      The covariance function is
+      \f[
+      K_{ij} = \prod_k \exp \left[
+      \frac{ - \left(x_{ik} - x_{jk}\right)^2}
+      {2 d_k^2} \right] 
+      \f]
+      where
+      \f[
+      d_k^2 \equiv \left[\ell_k^2 + m_k^2 \left( x_{ik} + x_{jk} -
+      n_k\right)^2\right] \, .
+      \f]
+      The values of \f$ \ell_k \f$ are stored in \ref len, the
+      values of \f$ m_k \f$ are stored in \ref slope, and the values
+      of \f$ n_k \f$ are stored in \ref pos.
   */
   template<class vec_t, class vec2_t>
   class mcovar_funct_quad_correl : public mcovar_base<vec_t,vec2_t> {
@@ -322,24 +337,8 @@ namespace o2scl {
       log10_noise=p[len.size()*3];
       return;
     }
-    
-    /** \brief The covariance function
 
-        The covariance function is
-        \f[
-        K_{ij} = \prod_k \exp \left[
-        \frac{ - \left(x_{ik} - x_{jk}\right)^2}
-        {2 d_k^2} \right] 
-        \f]
-        where
-        \f[
-        d_k^2 \equiv \left[\ell_k^2 + m_k^2 \left( x_{ik} + x_{jk} -
-        n_k\right)^2\right] \, .
-        \f]
-        The values of \f$ \ell_k \f$ are stored in \ref len, the
-        values of \f$ m_k \f$ are stored in \ref slope, and the values
-        of \f$ n_k \f$ are stored in \ref pos.
-     */
+    /// The covariance function template
     template<class vec3_t, class vec4_t>
     double covar_tl(const vec3_t &x1, const vec4_t &x2){
       double sum=0.0;
@@ -356,18 +355,39 @@ namespace o2scl {
       return exp(sum);
     }
 
+    /** \brief The covariance function
+     */
     virtual double operator()(const vec_t &x1, const vec2_t &x2){
       return covar_tl(x1,x2);
     }
     
+    /** \brief The covariance function
+     */
     virtual double covar(const vec_t &x1, const vec_t &x2){
       return covar_tl(x1,x2);
     }
     
+    /** \brief The covariance function
+     */
     virtual double covar2(const vec2_t &x1, const vec2_t &x2){
       return covar_tl(x1,x2);
     }
-    
+
+    /** \brief The template for the derivative of the
+        covariance function
+
+        This function computes
+        \f[
+        \frac{\partial K_{ij}}{\partial x_{ik}} =
+        \frac{K_{ij} z_k}{d_k^4} \, .
+        \f]
+        where
+        \f[
+        z_k \equiv \left[m_k^2 \left( n_k - 2 x_{jk}
+        \right) \left( x_{ik} + x_{jk} - n_k\right) - \ell_k^2\right]
+        \left( x_{ik} - x_{jk} \right)
+        \f]
+    */
     template<class vec3_t, class vec4_t>
     double deriv_tl(const vec3_t &x1, const vec4_t &x2, size_t ix){
       double ell=len[ix];
@@ -385,23 +405,14 @@ namespace o2scl {
     /** \brief The derivative of the covariance function with
         respect to one element of the first argument
 
-        This function computes
-        \f[
-        \frac{\partial K_{ij}}{\partial x_{ik}} = \frac{K_{ij} z_k}{d_k^4} \, .
-        \f]
-        where
-        \f[
-        z_k \equiv \left[m_k^2 \left( n_k - 2 x_{jk}
-        \right) \left( x_{ik} + x_{jk} - n_k\right) - \ell_k^2\right]
-        \left( x_{ik} - x_{jk} \right)
-        \f]
+        See \ref deriv_tl().
     */
     virtual double deriv(const vec_t &x1, const vec2_t &x2, size_t ix){
       return deriv_tl(x1,x2,ix);
     }
     
-    /** \brief The second derivative of the covariance function with
-        respect to the first argument
+    /** \brief Template for the second derivative of the covariance
+        function with respect to the first argument
 
         This function computes
         \f[
@@ -457,6 +468,11 @@ namespace o2scl {
       return deriv2;
     }
     
+    /** \brief The second derivative of the covariance
+        function with respect to the first argument
+        
+        See \ref deriv2_tl().
+    */
     virtual double deriv2(const vec_t &x1, const vec2_t &x2, size_t ix,
                           size_t iy) {
       return deriv2_tl(x1,x2,ix,iy);
@@ -487,7 +503,10 @@ namespace o2scl {
 
   public:
 
+    /// Internal matrix type for the Nelder-Mead simplex
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
+    
+    /// Typedef for this type
     typedef interpm_krige_optim<vec_t,mat_x_t,mat_x_row_t, 
                                 mat_y_t,mat_y_row_t,mat_inv_kxx_t,
                                 mat_inv_t,vec3_t> class_t;
@@ -656,10 +675,14 @@ namespace o2scl {
           mat_x_row_t xrow(this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
             mat_x_row_t xcol(this->x,icol);
-            if (irow>icol) {
+            if (irow<icol) {
               this->inv_KXX[iout](irow,icol)=this->inv_KXX[iout](icol,irow);
             } else {
               this->inv_KXX[iout](irow,icol)=cf[iout]->covar2(xrow,xcol);
+            }
+            if (verbose>2) {
+              std::cout << "5 " << irow << " " << icol << " "
+                        << this->inv_KXX[iout](irow,icol) << std::endl;
             }
           }
         }
@@ -717,13 +740,27 @@ namespace o2scl {
           
           double yact=yiout[ii];
           
+          if (verbose>2) {
+            std::cout << "6 " << this->rescaled << " "
+                      << yact << std::endl;
+          }
+          
           // Compute sigma and ypred from Eq. 5.12
           double sigma2=1.0/this->inv_KXX[iout](ii,ii);
           double ypred=yact-this->Kinvf[iout][ii]*sigma2;
           
+          if (verbose>2) {
+            std::cout << "7 " << sigma2 << " " << ypred << std::endl;
+          }
+          
           // Then use Eq. 5.10
           ret+=pow(yact-ypred,2.0)/sigma2/2.0;
           ret+=0.5*log(sigma2);
+
+          if (verbose>2) {
+            std::cout << "8 " << ret << std::endl;
+          }
+          
         }
 
         if (timing) {

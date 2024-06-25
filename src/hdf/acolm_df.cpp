@@ -22,6 +22,7 @@
 */
 #include "acolm.h"
 
+#include <o2scl/rng.h>
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 
@@ -1160,7 +1161,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
     calc.set_rng(rng);
-    rng<> r;
+    o2scl::rng<> r;
     rng_set_seed(r);
     calc_cond.set_rng(r);
     std::map<std::string,double> vars;
@@ -1206,7 +1207,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
     calc.set_rng(rng);
-    rng<> r;
+    o2scl::rng<> r;
     rng_set_seed(r);
     calc_cond.set_rng(r);
     std::map<std::string,double> vars;

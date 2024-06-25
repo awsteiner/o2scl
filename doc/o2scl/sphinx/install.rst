@@ -7,13 +7,11 @@ Installation Contents
 ---------------------
 
 - :ref:`General notes <install_general>`
-- :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
 - :ref:`Compiling O₂scl from a release distribution <compile_dist>`
 - :ref:`Compiling O₂scl from a release on Linux <compile_release>`
 - :ref:`Compiling O₂scl from the source code <compile_source>`
 - :ref:`Compiling O₂scl on Docker <compile_docker>`
 - :ref:`Python support <python_support>`  
-- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
 - :ref:`Optional linear algebra libraries`
 - :ref:`Other optional libraries`  
 - :ref:`Range-checking`
@@ -46,32 +44,35 @@ on O₂scl. In order to help resolve these version conflicts, the
 the two different HDF5 versions (see ``acol -v``) so that it is easy
 to check that they are the same. 
 
-.. _compile_homebrew:
+..
+  x 
+  x- :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
+  x.. _compile_homebrew:
+    
+  Compiling O₂scl on Mac OSX with Homebrew
+  ----------------------------------------
   
-Compiling O₂scl on Mac OSX with Homebrew
-----------------------------------------
-
-The easiest way to install on Mac OSX is with homebrew. Use::
-
-  brew tap awsteiner/science
-  brew install o2scl
-
-to install O₂scl. There are a few options for ``brew install``. The
-option ``--with-check`` performs the build-time tests and the option
-``--with-examples`` double checks that the examples can also be
-compiled and executed. The homebrew recipe for O₂scl uses the Mac OS X
-compiler clang. Homebrew also supports the installation of the current
-version directly from the repository using the ``--HEAD`` option to
-``brew install``. The homebrew installation includes readline support.
-The O₂scl homebrew recipes are stored at the
-https://github.com/awsteiner/homebrew-science repository.
-
-By default, a homebrew installation of O₂scl uses the OSX LLVM
-compiler. However, a homebrew installation of O₂scl will also install
-``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
-package requires ``gcc``.
-
-Python support in the homebrew package does not yet work yet.
+  The easiest way to install on Mac OSX is with homebrew. Use::
+  
+    brew tap awsteiner/science
+    brew install o2scl
+  
+  to install O₂scl. There are a few options for ``brew install``. The
+  option ``--with-check`` performs the build-time tests and the option
+  ``--with-examples`` double checks that the examples can also be
+  compiled and executed. The homebrew recipe for O₂scl uses the Mac OS X
+  compiler clang. Homebrew also supports the installation of the current
+  version directly from the repository using the ``--HEAD`` option to
+  ``brew install``. The homebrew installation includes readline support.
+  The O₂scl homebrew recipes are stored at the
+  xhttps://github.com/awsteiner/homebrew-science repository.
+  
+  By default, a homebrew installation of O₂scl uses the OSX LLVM
+  compiler. However, a homebrew installation of O₂scl will also install
+  ``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
+  package requires ``gcc``.
+  
+  Python support in the homebrew package does not yet work yet.
 
 .. _compile_dist:
 
@@ -219,25 +220,27 @@ successfully. Thus, when including Python support it is best to
 install O₂scl first, install O₂sclpy second, and then test O₂scl and
 O₂sclpy last. See also :ref:`Python Integration` for more details.
 
-.. _compile_snap:
+.. 
+  x .. _compile_snap:
+  x- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
 
-Compiling O₂scl on Ubuntu with Snap
------------------------------------
-
-.. note:: AWS, 6/23/23: The snap package needs some work and I have
-          not had the time to fix it yet.
-
-The easiest way to install on Ubuntu is with snap (see
-https://snapcraft.io/o2scl). Use::
-
-  sudo snap install (--edge or --beta) --devmode o2scl
-
-The snap installation includes readline support and uses the GSL CBLAS.
-
-Using the command-line utility ``acol`` may require you to set the
-environment variable ``LD_LIBRARY_PATH``. For example, on machines
-where I use snap to install in my ``.bashrc``, I use::
-
+  Compiling O₂scl on Ubuntu with Snap
+  -----------------------------------
+  
+  .. note:: AWS, 6/23/23: The snap package needs some work and I have
+            not had the time to fix it yet.
+  
+  The easiest way to install on Ubuntu is with snap (see
+  https://snapcraft.io/o2scl). Use::
+  
+    sudo snap install (--edge or --beta) --devmode o2scl
+  
+  The snap installation includes readline support and uses the GSL CBLAS.
+  
+  Using the command-line utility ``acol`` may require you to set the
+  environment variable ``LD_LIBRARY_PATH``. For example, on machines
+  where I use snap to install in my ``.bashrc``, I use::
+  
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
 
 Optional linear algebra libraries
@@ -350,8 +353,8 @@ can be found. The ``--prefix=/home/asteiner/install`` argument to
 Generation of documentation
 ---------------------------
 
-The O₂scl documentation is generated with ``doxygen``,
-``sphinx``, ``breathe``, and ``alabaster`` and packaged in with every
+The O₂scl documentation is generated with ``doxygen``, ``sphinx``,
+``breathe``, ``alabaster``, and ``pugixml`` and packaged in with every
 release file. In principle, the documentation can be regenerated by
 the end-user, but this is not supported and requires several external
 applications not included in the distribution.

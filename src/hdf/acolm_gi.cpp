@@ -31,6 +31,7 @@
 #include <o2scl/interpm_idw.h>
 #include <o2scl/interpm_python.h>
 #include <o2scl/interpm_krige.h>
+#include <o2scl/set_python.h>
 
 using namespace std;
 using namespace o2scl;
@@ -2005,18 +2006,28 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       cout << "  Column list for y: ";
       vector_out(cout,col_list_y,true);
 
-      vector<mcovar_funct_rbf_noise> mfrn(col_list_y.size());
-      for(size_t i=0;i<col_list_y.size();i++) {
-        mfrn[i].len.resize(2);
-      }
+      typedef const matrix_row_gen<o2scl::matrix_view_table<>> mat_x_row_t;
+      
+      vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+      vmfrn.resize(col_list_y.size());
       
       matrix_view_table<> mvt_x(table_obj,col_list_x);
       matrix_view_table_transpose<> mvt_y(table_obj,col_list_y);
       
-      interpm_krige_optim<vector<mcovar_funct_rbf_noise>> iko;
+      interpm_krige_optim<> iko;
 
       vector<vector<vector<double>>> param_lists;
-
+      
+      for(size_t kk=0;kk<col_list_y.size();kk++) {
+        std::shared_ptr<mcovar_funct_rbf_noise<
+          ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
+                                      mat_x_row_t>);
+        vmfrn[kk]=mfrn;
+        for(size_t i=0;i<col_list_y.size();i++) {
+          mfrn->len.resize(2);
+        }
+      }
+      
       for(size_t i=0;i<col_list_y.size();i++) {
         std::vector<std::vector<double>> ptemp;
         
@@ -2038,16 +2049,17 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       
       iko.full_min=true;
       iko.def_mmin.verbose=1;
-      iko.set_covar(mfrn,param_lists);
+      iko.set_covar(vmfrn,param_lists);
       
       iko.set_data(2,col_list_y.size(),table_obj.get_nlines(),
                    mvt_x,mvt_y);
       
       for(size_t i=0;i<table3d_obj.get_nx();i++) {
         for(size_t j=0;j<table3d_obj.get_ny();j++) {
-          vector<double> px={table3d_obj.get_grid_x(i),
-            table3d_obj.get_grid_y(j)};
-          vector<double> py(in.size()-6);
+          ubvector px(2);
+          px[0]=table3d_obj.get_grid_x(i);
+          px[1]=table3d_obj.get_grid_y(j);
+          ubvector py(in.size()-6);
           iko.eval(px,py);
           for(size_t k=6;k<in.size();k++) {
             table3d_obj.set(i,j,k-6,py[k-6]);
@@ -2062,7 +2074,7 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       
     } else if (method=="py_gp" || method=="py_dnn") {
       
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
       
       tensor<> tin, tout;
       vector<size_t> in_size={table_obj.get_nlines(),2};
