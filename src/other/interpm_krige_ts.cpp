@@ -123,7 +123,10 @@ int main(void) {
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
 
   if (true) {
+
+    // Test the quad_correl covariance function
     mcovar_funct_quad_correl<ubvector,mat_x_row_t> m;
+    
     m.len.resize(3);
     m.pos.resize(3);
     m.slope.resize(3);
@@ -152,31 +155,33 @@ int main(void) {
     x[0]-=1.0e-4;
     double d01=m.deriv_tl(x,y,0);
     cout << d01 << " " << (m1-m0)/1.0e-4 << endl;
-    t.test_rel(d01,(m1-m0)/1.0e-4,1.0e-4,"quad_correl 1");
+    t.test_rel(d01,(m1-m0)/1.0e-4,1.0e-4,"quad_correl deriv 1");
     
     x[1]+=1.0e-4;
     double m2=m.covar(x,y);
     x[1]-=1.0e-4;
     double d02=m.deriv_tl(x,y,1);
     cout << d02 << " " << (m2-m0)/1.0e-4 << endl;
-    t.test_rel(d02,(m2-m0)/1.0e-4,1.0e-4,"quad_correl 2");
+    t.test_rel(d02,(m2-m0)/1.0e-4,1.0e-4,"quad_correl deriv 2");
     
     x[2]+=1.0e-4;
     double m3=m.covar(x,y);
     x[2]-=1.0e-4;
     double d03=m.deriv_tl(x,y,2);
     cout << d03 << " " << (m3-m0)/1.0e-4 << endl;
-    t.test_rel(d03,(m3-m0)/1.0e-4,1.0e-4,"quad_correl 3");
+    t.test_rel(d03,(m3-m0)/1.0e-4,1.0e-4,"quad_correl deriv 3");
 
-    x[0]+=1.0e-4;
-    x[1]+=1.0e-4;
-    double m4=m.covar(x,y);
-    x[0]-=1.0e-4;
-    x[1]-=1.0e-4;
     double td0=m.deriv2_tl(x,y,0,1);
-    cout << td0 << " " << ((m4-m2)-(m1-m0))/2.0/1.0e-4 << endl;
-    //t.test_rel(td0,((m4-m2)-(m1-m0))/2.0/1.0e-4,1.0e-4,
-    //"quad_correl deriv");
+    cout << td0 << " " << 1.1759e-5 << endl;
+    // Computed using mathematica
+    t.test_rel(td0,1.1759e-5,1.0e-4,
+               "quad_correl mixed second deriv");
+    
+    double td1=m.deriv2_tl(x,y,2,2);
+    // Computed using mathematica
+    cout << td1 << " " << -1.26167e-3 << endl;
+    t.test_rel(td1,-1.26167e-3,1.0e-4,
+               "quad_correl second deriv");
     
   }
   

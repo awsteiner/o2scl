@@ -442,7 +442,7 @@ namespace o2scl {
     */
     template<class vec3_t, class vec4_t>
     double deriv2_tl(const vec3_t &x1, const vec4_t &x2, size_t ix,
-                     size_t iy){
+                     size_t iy) {
       double ellx=len[ix];
       double mx=slope[ix];
       double nx=pos[ix];
@@ -458,7 +458,7 @@ namespace o2scl {
         double d2iy=elly*elly+my*my*pow((x1[iy]+x2[iy])-ny,2);
         double ziy=(my*my*(ny-2.0*x2[iy])*(x1[iy]+x2[iy]-ny)-elly*elly)*
           (x1[iy]-x2[iy]);
-        deriv2=K*zix*ziy/d2ix/d2iy;
+        deriv2=K*zix*ziy/d2ix/d2ix/d2iy/d2iy;
       } else {
         double dzkdxik=mx*mx*(nx-2.0*x2[ix])*(x1[ix]-x2[ix])-
           (ellx*ellx+mx*mx*(nx-2.0*x2[ix])*(nx-x1[ix]-x2[ix]));
