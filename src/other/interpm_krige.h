@@ -680,10 +680,10 @@ namespace o2scl {
             } else {
               this->inv_KXX[iout](irow,icol)=cf[iout]->covar2(xrow,xcol);
             }
-            if (verbose>2) {
-              std::cout << "5 " << irow << " " << icol << " "
-                        << this->inv_KXX[iout](irow,icol) << std::endl;
-            }
+            //if (verbose>2) {
+            //std::cout << "5 " << irow << " " << icol << " "
+            //<< this->inv_KXX[iout](irow,icol) << std::endl;
+            //}
           }
         }
 
@@ -740,26 +740,26 @@ namespace o2scl {
           
           double yact=yiout[ii];
           
-          if (verbose>2) {
-            std::cout << "6 " << this->rescaled << " "
-                      << yact << std::endl;
-          }
+          //if (verbose>2) {
+          //std::cout << "6 " << this->rescaled << " "
+          //<< yact << std::endl;
+          //}
           
           // Compute sigma and ypred from Eq. 5.12
           double sigma2=1.0/this->inv_KXX[iout](ii,ii);
           double ypred=yact-this->Kinvf[iout][ii]*sigma2;
           
-          if (verbose>2) {
-            std::cout << "7 " << sigma2 << " " << ypred << std::endl;
-          }
+          //if (verbose>2) {
+          //std::cout << "7 " << sigma2 << " " << ypred << std::endl;
+          //}
           
           // Then use Eq. 5.10
           ret+=pow(yact-ypred,2.0)/sigma2/2.0;
           ret+=0.5*log(sigma2);
 
-          if (verbose>2) {
-            std::cout << "8 " << ret << std::endl;
-          }
+          //if (verbose>2) {
+          //std::cout << "8 " << ret << std::endl;
+          //}
           
         }
 
