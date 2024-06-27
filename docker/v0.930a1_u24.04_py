@@ -70,8 +70,7 @@ RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
 # Install the remaining python packages from the requirements file
 
 COPY u24.04_req.txt ./
-RUN pip3 install --no-cache-dir --break-system-packages --upgrade pip \
-  && pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
 
 # This is the set of commands used to construct the original
 # requirements file

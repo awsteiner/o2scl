@@ -187,11 +187,11 @@ namespace o2scl {
     
     /// The internal interpolation object
     interpm_krige_optim
-    <std::vector<mcovar_funct_rbf_noise>,ubvector,mat_x_t,
-     mat_x_row_t,mat_y_t,mat_y_row_t,mat_t,mat_inv_t> iko;
+    <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_row_t,mat_t,
+     mat_inv_t> iko;
 
     /// The covariance functions
-    std::vector<mcovar_funct_rbf_noise> mfrn;
+    std::vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> mfrn;
     
     /** \brief Create an emulator
      */
@@ -216,8 +216,6 @@ namespace o2scl {
       }
 
       iko.full_min=true;
-      
-      mfrn.resize(n_out);
       
       ix=ix_log_wgt;
 
@@ -257,8 +255,14 @@ namespace o2scl {
         std::vector<double> len_list={min/10.0,max*10.0};
         ptemp.push_back(len_list);
       }
-
+      
+      mfrn.resize(n_out);
+      
       for(size_t iout=0;iout<n_out;iout++) {
+
+        std::shared_ptr<mcovar_funct_rbf_noise<ubvector,mat_x_row_t>> temp
+          (new mcovar_funct_rbf_noise<ubvector,mat_x_row_t>);
+        mfrn[iout]=temp;
         
         mat_y_row_t yiout(mvt_y,iout);
         double min=vector_min_value<mat_y_row_t,double>
@@ -279,13 +283,13 @@ namespace o2scl {
           vector_out(std::cout,l10_list,true);
         }
         
-        mfrn[iout].len.resize(np);
+        temp->len.resize(np);
         
         std::vector<std::vector<double>> ptemp2=ptemp;
         
         ptemp2.push_back(l10_list);
         param_lists.push_back(ptemp2);
-        
+
       }
 
       iko.set_covar(mfrn,param_lists);

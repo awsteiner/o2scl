@@ -99,7 +99,7 @@ int main(void) {
     }
   
     if (true) {
-    
+
       table<> tab;
       generate_table(tab);
 

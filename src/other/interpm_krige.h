@@ -1254,8 +1254,8 @@ namespace o2scl {
     /** \brief Given input vector \c x
         store the result of the interpolation in \c y
     */
-    template<class vec2_t, class vec4_t>
-    void eval(const vec2_t &x0, vec4_t &y0) {
+    template<class vec4_t>
+    void eval(const vec_t &x0, vec4_t &y0) {
 
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
@@ -1282,8 +1282,8 @@ namespace o2scl {
     /** \brief Return the interpolation uncertainty from the 
         Gaussian process
     */
-    template<class vec2_t, class vec4_t>
-    void sigma(const vec2_t &x0, vec4_t &dy0) {
+    template<class vec4_t>
+    void sigma(const vec_t &x0, vec4_t &dy0) {
 
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_krige::sigma_covar().",
@@ -1297,13 +1297,13 @@ namespace o2scl {
       // Evaluate the interpolated result
       for(size_t iout=0;iout<nd_out;iout++) {
         
-        double kx0x0=(*cf[iout])(x0,x0);
+        double kx0x0=cf[iout]->covar(x0,x0);
         
         vec_t kxx0(np), prod(np);
         
         for(size_t ipoints=0;ipoints<np;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
-          kxx0[ipoints]=(*cf[iout])(xrow,x0);
+          kxx0[ipoints]=(*cf[iout])(x0,xrow);
         }
         
         o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
