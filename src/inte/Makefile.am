@@ -24,7 +24,7 @@ TEST_VAR = inte_adapt_cern.scr inte_cauchy_cern.scr inte_gauss_cern.scr \
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
 endif

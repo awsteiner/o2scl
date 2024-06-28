@@ -19,7 +19,7 @@ HEADER_VARS = mcarlo_miser.h mcarlo_plain.h mcarlo_vegas.h mcarlo.h \
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
 endif
@@ -80,7 +80,7 @@ if O2SCL_PYTHON
 ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
@@ -91,7 +91,7 @@ else
 ADDL_TEST_LIBS = ../libo2scl.la
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = -DO2SCL_OPENMP
+ADDL_TEST_FLGS = 
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = 

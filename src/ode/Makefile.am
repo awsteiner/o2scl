@@ -22,7 +22,7 @@ TEST_VAR = astep_gsl.scr ode_rkck_gsl.scr astep_nonadapt.scr \
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
 endif

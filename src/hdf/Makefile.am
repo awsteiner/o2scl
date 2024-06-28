@@ -15,7 +15,7 @@ TEST_VAR = hdf_file.scr hdf_io.scr
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
 endif
