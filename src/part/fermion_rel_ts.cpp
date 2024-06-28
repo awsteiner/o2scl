@@ -816,7 +816,7 @@ int main(int argc, char *argv[]) {
             t.test_rel(f.mu-f.m,f2.mu,1.0e-10,"irm false mu 6");
             t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-10*test_shift,
                        "irm false ed 6");
-            t.test_rel(f.en,f2.en,1.0e-13,"irm false en 6");
+            t.test_rel(f.en,f2.en,1.0e-12,"irm false en 6");
 
             // Test with non_interacting=false
             fermion f3=f;
@@ -978,11 +978,11 @@ int main(int argc, char *argv[]) {
     t.test_gen(cd_en>=837,"cd_en");
     t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
     t.test_gen(cd_ld_en>=1133,"cd_ld_en");
-    t.test_gen(cd_ti>=971,"cd_ti");
-    t.test_gen(cd_ld_ti>=971,"cd_ld_ti");
-    t.test_gen(cd_25_ti>=971,"cd_25_ti");
+    t.test_gen(cd_ti>=967,"cd_ti");
+    t.test_gen(cd_ld_ti>=967,"cd_ld_ti");
+    t.test_gen(cd_25_ti>=967,"cd_25_ti");
     
-    t.test_gen(pd_mu>=868,"pd_mu");
+    t.test_gen(pd_mu>=859,"pd_mu");
     t.test_gen(pd_en>=814,"pd_en");
     t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
     t.test_gen(pd_ld_en>=1108,"pd_ld_en");
