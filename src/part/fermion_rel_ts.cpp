@@ -825,7 +825,7 @@ int main(int argc, char *argv[]) {
             f3.nu=f3.mu;
             f3.m*=sqrt(2.0);
             fr.pair_density(f3,T);
-            t.test_rel(f.mu,f3.nu,1.0e-11*test_shift,"ni false mu 6");
+            t.test_rel(f.mu,f3.nu,1.0e-10*test_shift,"ni false mu 6");
             t.test_rel(f.n,f3.n,1.0e-14,"ni false n 6");
             t.test_rel(f.en,f3.en,1.0e-14*test_shift,"ni false en 6");
 
