@@ -160,7 +160,7 @@ inte_qaws_gsl.scr: inte_qaws_gsl_ts$(EXEEXT)
 inte_gauss56_cern.scr: inte_gauss56_cern_ts$(EXEEXT) 
 	./inte_gauss56_cern_ts$(EXEEXT) > inte_gauss56_cern.scr
 inte_kronrod_boost.scr: inte_kronrod_boost_ts$(EXEEXT) 
-	./inte_kronrod_boost_ts$(EXEEXT) > inte_kronrod_boost.scr
+	./inte_kronrod_boost_ts$(EXEEXT) | tee inte_kronrod_boost.scr
 inte_double_exp_boost.scr: inte_double_exp_boost_ts$(EXEEXT) 
 	./inte_double_exp_boost_ts$(EXEEXT) > inte_double_exp_boost.scr
 

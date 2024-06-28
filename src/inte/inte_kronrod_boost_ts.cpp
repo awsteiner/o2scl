@@ -67,6 +67,10 @@ int main(void) {
 #ifdef O2SCL_SET_MPFR
   inte_kronrod_boost<61,mpfr_25,mpfr_35,mpfr_50,mpfr_100> imkb_mpfr;
 #endif
+
+  // AWS, 6/28/24: I've been having some problems with timing, so
+  // this is to check that
+  system("date");
   
   {
     // Integrate test_func over [0,1] and compare to the exact result
@@ -313,6 +317,11 @@ int main(void) {
 #endif
   
   t.report();
+  
+  // AWS, 6/28/24: I've been having some problems with timing, so
+  // this is to check that
+  system("date");
+  
   return 0;
 }
 
