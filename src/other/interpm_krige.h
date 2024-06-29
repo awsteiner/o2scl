@@ -183,12 +183,6 @@ namespace o2scl {
 
   /** \brief Multidimensional covariance function using radial basis
       functions with quadratic correlation length and a noise term
-  */
-
-      \note There's no point making a base class, since there
-      aren't really any virtual functions. The covariance functions
-      have to be templates, to handle multiple vector types, so 
-      no virtual functions are allowed.
       
       The covariance function is
       \f[
@@ -439,12 +433,6 @@ namespace o2scl {
     /// Pointer to the user-specified minimizer
     mmin_base<multi_funct,multi_funct,ubvector> *mp;
 
-    /// The number of points
-    size_t np;
-    /// The number of dimensions of the inputs
-    size_t nd_in;
-    /// The number of dimensions of the outputs
-    size_t nd_out;
     /// The data
     mat_x_t x;
     /// The data
@@ -455,12 +443,15 @@ namespace o2scl {
     ubvector mean_y;
     /// The output standard deviations
     ubvector std_y;
-    /// True if the data needs to be rescaled
-    bool rescaled;
   
   public:
 
-    /// If true, throw exceptions on convergence errors
+    /** \brief If true, then the data will be automatically rescaled
+        (default true)
+    */
+    bool rescale;
+    
+    /// If true, throw exceptions on convergence errors (default true)
     bool err_nonconv;
     
     /// If true, keep \f$ K^{-1} \f$ (default true)
@@ -646,7 +637,7 @@ namespace o2scl {
           double yact=yiout[ii];
           
           //if (verbose>2) {
-          //std::cout << "6 " << this->rescaled << " "
+          //std::cout << "6 " << this->rescale << " "
           //<< yact << std::endl;
           //}
           
@@ -806,6 +797,7 @@ namespace o2scl {
       use_alt_mmin=false;
       err_nonconv=true;
       skip_optim=false;
+      rescale=true;
     }
 
     virtual ~interpm_krige_optim() {
@@ -847,14 +839,131 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Initialize interpolation routine
-     */
-    int set_data_internal
-    (size_t n_in, size_t n_out, size_t n_points,
-     mat_x_t &user_x, mat_y_t &user_y, 
-     bool rescale=false, bool err_on_fail=true) {
+    /** \brief Evaluate the interpolation at point \c x,
+        returning \c y
+    */
+    virtual int eval(const vec_t &xp, vec_t &yp) const {
+      return eval_tl(xp,yp);
+    }
 
-      if (n_points<2) {
+    /** \brief Given input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec4_t>
+    int eval_tl(const vec_t &x0, vec4_t &y0) const {
+
+      if (data_set==false) {
+        O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
+                  exc_einval);
+      }
+
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->n_outputs;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->n_points;ipoints++) {
+          mat_x_row_t xrow(x,ipoints);
+          double covar_val=(*cf[iout])(x0,xrow);
+          y0[iout]+=covar_val*Kinvf[iout][ipoints];
+        }
+        if (rescale) {
+          y0[iout]*=std_y[iout];
+          y0[iout]+=mean_y[iout];
+        }
+      }
+      
+      return 0;
+    }
+
+    /** \brief Return the interpolation uncertainty from the 
+        Gaussian process
+    */
+    template<class vec4_t>
+    void sigma(const vec_t &x0, vec4_t &dy0) {
+
+      if (data_set==false) {
+        O2SCL_ERR("Data not set in interpm_krige::sigma_covar().",
+                  exc_einval);
+      }
+      if (!keep_matrix) {
+        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
+                   "interpm_krige::sigma_covar().",o2scl::exc_einval);
+      }
+      
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->n_outputs;iout++) {
+        
+        double kx0x0=cf[iout]->covar(x0,x0);
+        
+        vec_t kxx0(this->n_points), prod(this->n_points);
+        
+        for(size_t ipoints=0;ipoints<this->n_points;ipoints++) {
+          mat_x_row_t xrow(x,ipoints);
+          kxx0[ipoints]=(*cf[iout])(x0,xrow);
+        }
+        
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                           o2scl_cblas::o2cblas_NoTrans,
+                           this->n_points,this->n_points,1.0,inv_KXX[iout],kxx0,0.0,prod);
+        dy0[iout]=kx0x0-o2scl_cblas::ddot(this->n_points,kxx0,prod);
+        
+        if (rescale) {
+          dy0[iout]*=std_y[iout];
+        }
+      }
+
+      return;
+    }
+    
+    /** \brief Given input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec4_t>
+    void deriv(const vec2_t &x0, vec4_t &y0, size_t ix) {
+
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->n_outputs;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->n_points;ipoints++) {
+          mat_x_row_t xrow(this->x,ipoints);
+          double covar_val=(*cf[iout]).deriv(x0,xrow,ix);
+          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
+        }
+        if (this->rescale) {
+          y0[iout]*=this->std_y[iout];
+        }
+      }
+
+      return;
+    }
+
+    /** \brief Given input vector \c x
+        store the result of the interpolation in \c y
+    */
+    template<class vec2_t, class vec4_t>
+    void deriv2(const vec2_t &x0, vec4_t &y0, size_t ix, size_t iy) {
+
+      // Evaluate the interpolated result
+      for(size_t iout=0;iout<this->n_outputs;iout++) {
+        y0[iout]=0.0;
+        for(size_t ipoints=0;ipoints<this->n_points;ipoints++) {
+          mat_x_row_t xrow(this->x,ipoints);
+          double covar_val=(*cf[iout]).deriv2(x0,xrow,ix,iy);
+          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
+        }
+        if (this->rescale) {
+          y0[iout]*=this->std_y[iout];
+        }
+      }
+
+      return;
+    }
+
+    /** \brief Initialize the data for the interpolation
+    */
+    virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
+                         mat_x_t &user_x, mat_y_t &user_y) {
+                       
+      if (n_pts<2) {
         O2SCL_ERR2("Must provide at least two points in ",
                    "interpm_krige_optim::set_data_internal()",
                    exc_efailed);
@@ -871,17 +980,17 @@ namespace o2scl {
       }
    
       // Check that the data is properly sized
-      if (user_x.size1()!=n_points || user_x.size2()!=n_in) {
+      if (user_x.size1()!=n_pts || user_x.size2()!=n_in) {
         std::cout << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
-        std::cout << "n_points: " << n_points << " n_in: "
+        std::cout << "n_points: " << this->n_points << " n_in: "
                   << n_in << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
                    "interpm_krige_new::set_data_internal().",
                    o2scl::exc_efailed);
       }
     
-      if (user_y.size2()!=n_points || user_y.size1()!=n_out) {
+      if (user_y.size2()!=n_pts || user_y.size1()!=n_out) {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
@@ -890,10 +999,10 @@ namespace o2scl {
       }
 
       // Set parent data members
-      this->np=n_points;
-      this->nd_in=n_in;
-      this->nd_out=n_out;
-      this->rescaled=rescale;
+      this->n_points=n_pts;
+      this->n_params=n_in;
+      this->n_outputs=n_out;
+      this->rescale=rescale;
       this->data_set=true;
       
       time_t t1=0, t2=0, t3=0, t4=0, t5=0;
@@ -911,9 +1020,9 @@ namespace o2scl {
       
       if (verbose>0) {
         std::cout << "interpm_krige_optim::set_data_internal(): "
-                  << "Using " << n_points
+                  << "Using " << this->n_points
                   << " points with\n " << n_in << " input variables and "
-                  << this->nd_out << " output variables." << std::endl;
+                  << this->n_outputs << " output variables." << std::endl;
       }
 
       if (rescale==true) {
@@ -921,20 +1030,20 @@ namespace o2scl {
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
           mat_y_row_t vec(this->y,j);
-          this->mean_y[j]=vector_mean(n_points,vec);
-          this->std_y[j]=vector_stddev(n_points,vec);
+          this->mean_y[j]=vector_mean(this->n_points,vec);
+          this->std_y[j]=vector_stddev(this->n_points,vec);
           if (verbose>1) {
             std::cout << "Mean,stddev of y " << j << " of "
                       << n_out << " is " << this->mean_y[j] << " "
                       << this->std_y[j] << std::endl;
           }
-          for(size_t i=0;i<n_points;i++) {
+          for(size_t i=0;i<this->n_points;i++) {
             this->y(j,i)=(this->y(j,i)-this->mean_y[j])/this->std_y[j];
           }
         }
         if (verbose>1) {
           std::cout << "interpm_krige_optim::set_data_internal(): "
-                    << "data rescaled." << std::endl;
+                    << "data rescale." << std::endl;
         }
       }
 
@@ -1155,129 +1264,6 @@ namespace o2scl {
       }
 
       return 0;
-    }
-
-    /** \brief Given input vector \c x
-        store the result of the interpolation in \c y
-    */
-    template<class vec4_t>
-    void eval(const vec_t &x0, vec4_t &y0) {
-
-      if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige::eval_covar().",
-                  exc_einval);
-      }
-
-      // Evaluate the interpolated result
-      for(size_t iout=0;iout<nd_out;iout++) {
-        y0[iout]=0.0;
-        for(size_t ipoints=0;ipoints<np;ipoints++) {
-          mat_x_row_t xrow(x,ipoints);
-          double covar_val=(*cf[iout])(x0,xrow);
-          y0[iout]+=covar_val*Kinvf[iout][ipoints];
-        }
-        if (rescaled) {
-          y0[iout]*=std_y[iout];
-          y0[iout]+=mean_y[iout];
-        }
-      }
-      
-      return;
-    }
-
-    /** \brief Return the interpolation uncertainty from the 
-        Gaussian process
-    */
-    template<class vec4_t>
-    void sigma(const vec_t &x0, vec4_t &dy0) {
-
-      if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_krige::sigma_covar().",
-                  exc_einval);
-      }
-      if (!keep_matrix) {
-        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
-                   "interpm_krige::sigma_covar().",o2scl::exc_einval);
-      }
-      
-      // Evaluate the interpolated result
-      for(size_t iout=0;iout<nd_out;iout++) {
-        
-        double kx0x0=cf[iout]->covar(x0,x0);
-        
-        vec_t kxx0(np), prod(np);
-        
-        for(size_t ipoints=0;ipoints<np;ipoints++) {
-          mat_x_row_t xrow(x,ipoints);
-          kxx0[ipoints]=(*cf[iout])(x0,xrow);
-        }
-        
-        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                           o2scl_cblas::o2cblas_NoTrans,
-                           np,np,1.0,inv_KXX[iout],kxx0,0.0,prod);
-        dy0[iout]=kx0x0-o2scl_cblas::ddot(np,kxx0,prod);
-        
-        if (rescaled) {
-          dy0[iout]*=std_y[iout];
-        }
-      }
-
-      return;
-    }
-    
-    /** \brief Given input vector \c x
-        store the result of the interpolation in \c y
-    */
-    template<class vec2_t, class vec4_t>
-    void deriv(const vec2_t &x0, vec4_t &y0, size_t ix) {
-
-      // Evaluate the interpolated result
-      for(size_t iout=0;iout<this->nd_out;iout++) {
-        y0[iout]=0.0;
-        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
-          mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=(*cf[iout]).deriv(x0,xrow,ix);
-          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
-        }
-        if (this->rescaled) {
-          y0[iout]*=this->std_y[iout];
-        }
-      }
-
-      return;
-    }
-
-    /** \brief Given input vector \c x
-        store the result of the interpolation in \c y
-    */
-    template<class vec2_t, class vec4_t>
-    void deriv2(const vec2_t &x0, vec4_t &y0, size_t ix, size_t iy) {
-
-      // Evaluate the interpolated result
-      for(size_t iout=0;iout<this->nd_out;iout++) {
-        y0[iout]=0.0;
-        for(size_t ipoints=0;ipoints<this->np;ipoints++) {
-          mat_x_row_t xrow(this->x,ipoints);
-          double covar_val=(*cf[iout]).deriv2(x0,xrow,ix,iy);
-          y0[iout]+=covar_val*this->Kinvf[iout][ipoints];
-        }
-        if (this->rescaled) {
-          y0[iout]*=this->std_y[iout];
-        }
-      }
-
-      return;
-    }
-
-    /** \brief Initialize the data for the interpolation
-    */
-    int set_data(size_t n_in, size_t n_out, size_t n_points,
-                 mat_x_t &user_x, mat_y_t &user_y, 
-                 bool rescale=false, bool err_on_fail=true) {
-      
-      return set_data_internal
-        (n_in,n_out,n_points,user_x,
-         user_y,rescale,err_on_fail);
     }
 
   };

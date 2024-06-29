@@ -47,19 +47,53 @@ namespace o2scl {
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_x_t=o2scl::matrix_view_table<>,
-    class mat_y_t=o2scl::matrix_view_table_transpose<> >
-    class interpm_base {
-      
+           class mat_y_t=o2scl::matrix_view_table_transpose<> >
+  class interpm_base {
+    
   public:
-  
-  /** \brief Desc
-   */
-  int set_data(size_t n_in, size_t n_out, size_t n_points,
-               mat_x_t &user_x, mat_y_t &user_y, 
-               bool rescale=false, bool err_on_fail=true)=0;
-  
-    };
+    
+    /// If true, throw exceptions on convergence errors
+    bool err_nonconv;
+    
+    /** \brief Verbosity parameter (default 0)
+     */
+    int verbose;
+    
+    /// Number of parameters
+    size_t n_params;
+    
+    /// Number of outputs
+    size_t n_outputs;
+    
+    /// Number of points
+    size_t n_points;
+    
+    interpm_base() {
+      verbose=0;
+      n_params=0;
+      n_outputs=0;
+      n_points=0;
+    }
+
+    /** \brief Set the data to be interpolated
+     */
+    virtual int set_data(size_t n_in, size_t n_out, size_t n_points,
+                         mat_x_t &user_x, mat_y_t &user_y)=0;
+
+    /** \brief Evaluate the interpolation at point \c x,
+        returning \c y
+    */
+    virtual int eval(const vec_t &x, vec_t &y) const=0;
+    
+    /** \brief Evaluate the interpolation at point \c x,
+        returning \c y and the uncertainties in \c y_unc
+    */
+    virtual int eval_unc(const vec_t &x, vec_t &y, vec_t &y_unc) const {
+      return eval(x,y);
+    }
+    
+  };
   
 }
 
-  
+#endif

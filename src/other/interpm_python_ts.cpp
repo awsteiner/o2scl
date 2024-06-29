@@ -105,20 +105,21 @@ int main(void) {
       tin.get(ix)=y[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,1,
-                      tin,tout,"verbose=3","interpm_sklearn_gp",1);
+    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
+                      "interpm_sklearn_gp","verbose=3",1);
+    ip.set_data(2,N,1,tin,tout);
     
     std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
     ex[1]=0.5;
-    ip.eval(ex,ey);
+    ip.eval_std_vec(ex,ey);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
 
     ex[0]=0.5;
     ex[1]=0.5;
-    ip.eval_unc(ex,ey,eyp);
+    ip.eval_unc_std_vec(ex,ey,eyp);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
@@ -145,13 +146,14 @@ int main(void) {
       tout.get(ix)=dp2[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",2,N,2,
-                      tin,tout,"verbose=1","interpm_sklearn_gp",1);
+    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
+                      "interpm_sklearn_gp","verbose=1",1);
+    ip.set_data(2,N,2,tin,tout);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;
     ex[1]=0.5;
-    ip.eval(ex,ey);
+    ip.eval_std_vec(ex,ey);
     cout << ey[0] << " " << ey[1] << endl;
     cout << f(0.5,0.5) << " " << f2(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
@@ -161,7 +163,7 @@ int main(void) {
       for(size_t j=0;j<100;j++) {
         ex[0]=t3d.get_grid_x(i);
         ex[1]=t3d.get_grid_y(j);
-        ip.eval(ex,ey);
+        ip.eval_std_vec(ex,ey);
         t3d.set(i,j,"gp",ey[0]);
         t3d.set(i,j,"gp2",ey[1]);
       }
@@ -189,15 +191,17 @@ int main(void) {
 
     // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
     // progress bars which cause problems in docker terminals
-    interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,1,tin,tout,
+    
+    interpm_python ip("o2sclpy","set_data_str","eval","eval",
+                      "interpm_tf_dnn",
                       ((std::string)"verbose=0,")+
-                      "test_size=0.15,batch_size=10,transform=none",
-                      "interpm_tf_dnn",0);
+                      "test_size=0.15,batch_size=10,transform=none",0);
+    ip.set_data(2,N,1,tin,tout);
     
     std::vector<double> ex(2), ey(1);
     ex[0]=0.5;
     ex[1]=0.5;
-    ip.eval(ex,ey);
+    ip.eval_std_vec(ex,ey);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
     t.test_rel(ey[0],f(0.5,0.5),20.0,"tf_dnn 1");
@@ -223,13 +227,14 @@ int main(void) {
     
     // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
     // progress bars which cause problems in docker terminals
-    interpm_python ip("o2sclpy","set_data_str","eval","eval",2,N,2,
-                      tin,tout,"verbose=0","interpm_tf_dnn",0);
+    interpm_python ip("o2sclpy","set_data_str","eval","eval",
+                      "interpm_tf_dnn","verbose=0",0);
+    ip.set_data(2,N,2,tin,tout);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;
     ex[1]=0.5;
-    ip.eval(ex,ey);
+    ip.eval_std_vec(ex,ey);
     cout << ey[0] << " " << ey[1] << endl;
     cout << f(0.5,0.5) << " " << f2(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),20.0,"tf_dnn 2");
@@ -241,7 +246,7 @@ int main(void) {
         for(size_t j=0;j<100;j++) {
           ex[0]=t3d.get_grid_x(i);
           ex[1]=t3d.get_grid_y(j);
-          ip.eval(ex,ey);
+          ip.eval_std_vec(ex,ey);
           t3d.set(i,j,"dnn",ey[0]);
           t3d.set(i,j,"dnn2",ey[1]);
         }

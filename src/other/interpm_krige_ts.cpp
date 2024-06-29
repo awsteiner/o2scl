@@ -117,8 +117,8 @@ int main(void) {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
-  typedef o2scl::matrix_view_table<> mat_x_t;
-  typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
+  typedef o2scl::const_matrix_view_table<> mat_x_t;
+  typedef const const_matrix_row_gen<mat_x_t> mat_x_row_t;
   typedef o2scl::matrix_view_table_transpose<> mat_y_t;
   typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
 
@@ -205,7 +205,7 @@ int main(void) {
     table<> tab3;
     generate_table(tab3);
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
@@ -224,6 +224,7 @@ int main(void) {
     
     iko.set_covar(vmfrn,param_lists);
 
+    iko.rescale=false;
     iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
@@ -271,7 +272,7 @@ int main(void) {
     hdf_output(hf,tab3,"tab");
     hf.close();
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
@@ -288,7 +289,8 @@ int main(void) {
     param_lists.push_back(ptemp);
     
     iko.set_covar(vmfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
+    iko.rescale=true;
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
     for(size_t j=0;j<20;j++) {
@@ -362,7 +364,7 @@ int main(void) {
     hdf_output(hf,tab3,"tab");
     hf.close();
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
@@ -379,7 +381,8 @@ int main(void) {
     param_lists.push_back(ptemp);
     
     iko.set_covar(vmfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
+    iko.rescale=true;
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
         
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
@@ -451,7 +454,7 @@ int main(void) {
     hdf_output(hf,tab3,"tab");
     hf.close();
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
@@ -467,7 +470,8 @@ int main(void) {
     param_lists.push_back(ptemp);
     
     iko.set_covar(vmfrn,param_lists);
-    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
+    iko.rescale=true;
+    iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
     for(size_t j=0;j<20;j++) {
@@ -545,7 +549,7 @@ int main(void) {
     vector<vector<vector<double>>> param_lists;
     param_lists.push_back(ptemp);
     
-    matrix_view_table<> mvt_x4(tab4,{"x"});
+    const_matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
     
     interpm_krige_optim
@@ -562,6 +566,7 @@ int main(void) {
     
     iko.set_covar(vmfrn,param_lists);
     iko.verbose=2;
+    iko.rescale=false;
     iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4);
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
@@ -630,7 +635,7 @@ int main(void) {
     vector<vector<vector<double>>> param_lists;
     param_lists.push_back(ptemp);
 
-    matrix_view_table<> mvt_x4(tab4,{"x"});
+    const_matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
     
     interpm_krige_optim
@@ -646,7 +651,8 @@ int main(void) {
     mfrn->len.resize(1);
 
     iko.set_covar(vmfrn,param_lists);
-    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4,true);
+    iko.rescale=true;
+    iko.set_data(1,1,tab4.get_nlines(),mvt_x4,mvt_y4);
     
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> iko2;
     
@@ -705,7 +711,7 @@ int main(void) {
     table<> tab3;
     generate_table(tab3);
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
@@ -723,7 +729,8 @@ int main(void) {
     param_lists.push_back(ptemp);
     
     iko_eigen.set_covar(vmfrn,param_lists);
-    iko_eigen.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3,true);
+    iko_eigen.rescale=true;
+    iko_eigen.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
     for(size_t j=0;j<20;j++) {
@@ -770,6 +777,7 @@ int main(void) {
     
     iko_arma.verbose=1;
     iko_arma.nlen=50;
+    iko.rescale=false;
     iko_arma.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     
     for(size_t j=0;j<20;j++) {
