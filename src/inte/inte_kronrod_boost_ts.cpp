@@ -69,7 +69,8 @@ int main(void) {
 #endif
 
   // AWS, 6/28/24: I've been having some problems with timing, so
-  // this is to check that
+  // we check that here
+  cout << "1" << endl;
   system("date");
   
   {
@@ -180,6 +181,11 @@ int main(void) {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "2" << endl;
+    system("date");
+  
     // Multiprecision integration
     
     imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
@@ -188,6 +194,11 @@ int main(void) {
     t.test_rel(val,exact,1.0e-8,"multip 1");
     cout << endl;
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "3" << endl;
+    system("date");
+  
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
@@ -197,38 +208,63 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip 2");
     cout << endl;
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "4" << endl;
+    system("date");
+  
 #ifdef O2SCL_SET_MPFR
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
-                          a,b,val,err2,1.0e-8);
+                               a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-8,"multip 1 mpfr");
     cout << endl;
     
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "5" << endl;
+    system("date");
+  
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
-                          a,b,val,err2);
+                               a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "6" << endl;
+    system("date");
+  
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
-                          a,b,val,err2,1.0e-8);
+                               a,b,val,err2,1.0e-8);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-8,"multip 1 mpfr");
     cout << endl;
     
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "7" << endl;
+    system("date");
+  
     imkb_mpfr.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
-                          a,b,val,err2);
+                               a,b,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,exact,1.0e-15,"multip 2 mpfr");
     cout << endl;
 #endif
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "8" << endl;
+    system("date");
+  
     // Multiprecision integration with infinite limits
     
     imkb.integ_iu_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
@@ -237,11 +273,21 @@ int main(void) {
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 3");
     cout << endl;
 
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "9" << endl;
+    system("date");
+  
     imkb.integ_il_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                              a,val,err2);
     cout << dtos(val,0) << " " << dtos(err2,0) << endl;
     t.test_rel(val,root_pi/2.0,1.0e-15,"multip 4");
     cout << endl;
+
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "10" << endl;
+    system("date");
 
     imkb.integ_i_err_multip([](auto &&tb) mutable { return test_func_i(tb); },
                             val,err2);
@@ -269,6 +315,11 @@ int main(void) {
       imkb.err_nonconv=true;
     }
     
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "11" << endl;
+    system("date");
+
     // Multiprecision integration with a template function which has
     // a parameter with a fixed type
 
@@ -283,6 +334,11 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip param 1");
     cout << endl;
       
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "12" << endl;
+    system("date");
+
     // Multiprecision integration with a template function which has
     // a template parameter
       
@@ -292,6 +348,11 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip param 2");
     cout << endl;
     
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "13" << endl;
+    system("date");
+
     // Multiprecision integration with a funct_multip_string object
       
     funct_multip_string fms;
@@ -304,6 +365,11 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip string");
     cout << endl;
     
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "14" << endl;
+    system("date");
+
 #ifdef O2SCL_SET_MPFR
     imkb_mpfr.integ_err_multip([fmsp](auto &&tb) mutable {
       return (*fmsp)(tb); },a,b,val,err2);
@@ -311,16 +377,17 @@ int main(void) {
     t.test_rel(val,exact,1.0e-15,"multip string mpfr");
     cout << endl;
 #endif
+
+    // AWS, 6/28/24: I've been having some problems with timing, so
+    // we check that here
+    cout << "15" << endl;
+    system("date");
     
   }
 
 #endif
   
   t.report();
-  
-  // AWS, 6/28/24: I've been having some problems with timing, so
-  // this is to check that
-  system("date");
   
   return 0;
 }
