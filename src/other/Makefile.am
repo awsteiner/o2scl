@@ -6,7 +6,7 @@ OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp other_python.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp xml.cpp \
 	hist_2d.cpp prob_dens_func.cpp vec_stats.cpp \
-	interpm_python.cpp gmm_python.cpp
+	gmm_python.cpp
 
 HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	series_acc.h interp2_planar.h poly.h polylog.h \
@@ -15,7 +15,7 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
 	slack_messenger.h xml.h exp_max.h interpm_python.h \
-	gmm_python.h kde_python.h
+	gmm_python.h kde_python.h interpm_base.h
 
 TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \

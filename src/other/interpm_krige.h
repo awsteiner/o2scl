@@ -38,7 +38,7 @@
 
 #include <gsl/gsl_combination.h>
 
-#include <o2scl/err_hnd.h>
+#include <o2scl/interpm_base.h>
 #include <o2scl/vector.h>
 #include <o2scl/vec_stats.h>
 #include <o2scl/linear_solver.h>
@@ -56,7 +56,7 @@ namespace o2scl {
 
   typedef boost::numeric::ublas::vector<double> ubvector;
 
-  /** \brief Desc
+  /** \brief Multidimensional covariance function base
 
       It is expected that the covariance function is symmetric
       with respect to its arguments. The derivative is then
@@ -95,106 +95,9 @@ namespace o2scl {
     
   };
   
-  /** \brief Covariance function: 1D RBF with a noise term
-
-      \note There's no point making a base class, since there
-      aren't really any virtual functions. The covariance functions
-      have to be templates, to handle multiple vector types, so 
-      no virtual functions are allowed.
-   */
-  template<class vec_t, class vec2_t>
-  class mcovar_funct_rbf : public mcovar_base<vec_t,vec2_t> {
-    
-  public:
-
-    /// Length parameters
-    std::vector<double> len;
-    
-    /// Noise parameter
-    double noise;
-
-    mcovar_funct_rbf() {
-      noise=0.0;
-    }
-    
-    /// Get the number of parameters
-    size_t get_n_params() {
-      return len.size();
-    }
-    
-    /// Set the parameters
-    void set_params(const vec_t &p) {
-      for(size_t j=0;j<len.size();j++) {
-        len[j]=p[j];
-      }
-      return;
-    }
-
-    /// The covariance function template
-    template<class vec3_t, class vec4_t>
-    double covar_tl(const vec3_t &x1, const vec4_t &x2){
-      double sum=0.0;
-      bool equal=true;
-      for(size_t j=0;j<len.size();j++) {
-        if (x1[j]!=x2[j]) equal=false;
-        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
-      }
-      if (equal) return exp(sum)+noise;
-      return exp(sum);
-    }
-    
-    /// The covariance function
-    virtual double operator()(const vec_t &x1, const vec2_t &x2){
-      return covar_tl(x1,x2);
-    }
-
-    /// The covariance function
-    virtual double covar(const vec_t &x1, const vec_t &x2){
-      return covar_tl(x1,x2);
-    }
-
-    /// The covariance function
-    virtual double covar2(const vec2_t &x1, const vec2_t &x2){
-      return covar_tl(x1,x2);
-    }
-
-    /** \brief The derivative of the covariance function with
-        respect to the first argument
-    */
-    virtual double deriv(const vec_t &x1, const vec2_t &x2, size_t ix){
-      double sum=0.0;
-      for(size_t j=0;j<len.size();j++) {
-        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
-      }
-      return -exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix]);
-    }
-    
-    /** \brief The second derivative of the covariance function with
-        respect to the first argument
-    */
-    virtual double deriv2(const vec_t &x1, const vec2_t &x2, size_t ix,
-                          size_t iy){
-      double sum=0.0;
-      for(size_t j=0;j<len.size();j++) {
-        sum+=-(x1[j]-x2[j])*(x1[j]-x2[j])/len[j]/len[j]/2.0;
-      }
-      if (ix==iy) {
-        return exp(sum)/len[ix]/len[ix]/len[ix]/len[ix]*
-          ((x1[ix]-x2[ix])*(x1[ix]-x2[ix])-len[ix]*len[ix]);
-      }
-      return exp(sum)/len[ix]/len[ix]*(x1[ix]-x2[ix])/
-        len[iy]/len[iy]*(x1[iy]-x2[iy]);
-    }
-    
-  };
-
-  /** \brief Covariance function: RBF with a noise term
-
-      \note There's no point making a base class, since there
-      aren't really any virtual functions. The covariance functions
-      have to be templates, to handle multiple vector types, so 
-      no virtual functions are allowed.
-   */
+  /** \brief Multidimensional covariance function using radial
+      basis functions and a noise term
+  */
   template<class vec_t, class vec2_t>
   class mcovar_funct_rbf_noise : public mcovar_base<vec_t,vec2_t> {
     
@@ -278,8 +181,9 @@ namespace o2scl {
     
   };
 
-  /** \brief Covariance function: RBF with varying correlation length
-      and a noise term
+  /** \brief Multidimensional covariance function using radial basis
+      functions with quadratic correlation length and a noise term
+  */
 
       \note There's no point making a base class, since there
       aren't really any virtual functions. The covariance functions
@@ -480,8 +384,8 @@ namespace o2scl {
     
   };
 
-  /** \brief Multi-dimensional interpolation using an 
-      optimized covariance function
+  /** \brief Multi-dimensional interpolation using Kriging (a.k.a.
+      Gaussian process interpolation)
 
       \verbatim embed:rst
       See also the :ref:`Higher-dimensional Interpolation` 
@@ -499,7 +403,8 @@ namespace o2scl {
            o2scl_linalg::matrix_invert_det_cholesky<
              boost::numeric::ublas::matrix<double>>,
            class vec3_t=std::vector<std::vector<std::vector<double>>> >
-  class interpm_krige_optim {
+  class interpm_krige_optim :
+    public interpm_base<vec_t,mat_x_t,mat_y_t> {
 
   public:
 
@@ -876,7 +781,8 @@ namespace o2scl {
 
     /** \brief Minimization function for the covariance parameters
      */
-    double min_fun(size_t iout, size_t n, const ubvector &v, double max_val) {
+    double min_fun(size_t iout, size_t n, const ubvector &v,
+                   double max_val) {
       cf[iout]->set_params(v);
       int success;
       double ret=qual_fun(iout,success);
