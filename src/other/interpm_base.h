@@ -41,23 +41,14 @@
 
 namespace o2scl {
 
-  typedef boost::numeric::ublas::vector<double> ubvector;
-
-  /** \brief Desc
+  /** \brief Base class for multidimensional interpolation
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_x_t=o2scl::matrix_view_table<>,
-           class mat_y_t=o2scl::matrix_view_table_transpose<> >
+           class mat_y_t=o2scl::matrix_view_table<> >
   class interpm_base {
-    
-  public:
-    
-    /// If true, throw exceptions on convergence errors
-    bool err_nonconv;
-    
-    /** \brief Verbosity parameter (default 0)
-     */
-    int verbose;
+
+  protected:
     
     /// Number of parameters
     size_t n_params;
@@ -68,16 +59,26 @@ namespace o2scl {
     /// Number of points
     size_t n_points;
     
+  public:
+    
+    /// If true, throw exceptions on convergence errors (default true)
+    bool err_nonconv;
+    
+    /** \brief Verbosity parameter (default 0)
+     */
+    int verbose;
+    
     interpm_base() {
       verbose=0;
       n_params=0;
       n_outputs=0;
       n_points=0;
+      err_nonconv=true;
     }
 
     /** \brief Set the data to be interpolated
      */
-    virtual int set_data(size_t n_in, size_t n_out, size_t n_points,
+    virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y)=0;
 
     /** \brief Evaluate the interpolation at point \c x,
@@ -89,6 +90,9 @@ namespace o2scl {
         returning \c y and the uncertainties in \c y_unc
     */
     virtual int eval_unc(const vec_t &x, vec_t &y, vec_t &y_unc) const {
+      for(size_t j=0;j<n_outputs;j++) {
+        y_unc[j]=0.0;
+      }
       return eval(x,y);
     }
     

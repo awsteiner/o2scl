@@ -2008,12 +2008,13 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       cout << "  Column list for y: ";
       vector_out(cout,col_list_y,true);
 
-      typedef const matrix_row_gen<o2scl::matrix_view_table<>> mat_x_row_t;
+      typedef const const_matrix_row_gen<o2scl::const_matrix_view_table<>>
+        mat_x_row_t;
       
       vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
       vmfrn.resize(col_list_y.size());
       
-      matrix_view_table<> mvt_x(table_obj,col_list_x);
+      const_matrix_view_table<> mvt_x(table_obj,col_list_x);
       matrix_view_table_transpose<> mvt_y(table_obj,col_list_y);
       
       interpm_krige_optim<> iko;

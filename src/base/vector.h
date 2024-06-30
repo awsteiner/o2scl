@@ -3362,6 +3362,106 @@ namespace o2scl {
     
   };
 
+  template<class vec1_t, class vec2_t=std::vector<vec1_t> > 
+  class matrix_view_vec_vec_trans : public matrix_view {
+    
+  protected:
+    
+    /// Pointer to the object
+    vec2_t *vvp;
+    
+  public:
+    
+    /** \brief Swap method
+     */
+    friend void swap(matrix_view_vec_vec_trans &t1,
+                     matrix_view_vec_vec_trans &t2) {
+      /// Just swap the pointer
+      std::swap(t1.vvp,t2.vvp);
+      return;
+    }
+    
+    matrix_view_vec_vec_trans() {
+      vvp=0;
+    }
+    
+    /** \brief Create a matrix view object from the specified 
+        vector of vectors
+    */
+    matrix_view_vec_vec_trans(vec2_t &vv) {
+      for(size_t j=1;j<vv.size();j++) {
+        if (vv[j].size()<vv[0].size()) {
+          O2SCL_ERR2("A vector does not have sufficient elements to form a ",
+                     "matrix in matrix_view_vec_vec::matrix_view_vec_vec().",
+                     o2scl::exc_einval);
+        }
+      }
+      vvp=&vv;
+    }
+    
+    /** \brief Return the number of rows
+     */
+    size_t size1() const {
+      if (vvp==0) return 0;
+      if (vvp->size()==0) return 0;
+      return (*vvp)[0].size();
+    }
+    
+    /** \brief Return the number of columns
+     */
+    size_t size2() const {
+      if (vvp==0) return 0;
+      return vvp->size();
+    }
+    
+    /** \brief Return a reference to the element at row \c row
+        and column \c col
+    */
+    const double &operator()(size_t row, size_t col) const {
+      if (vvp==0) {
+        O2SCL_ERR2("Object empty in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (col>=vvp->size()) {
+        O2SCL_ERR2("Col exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (row>=(*vvp)[col].size()) {
+        O2SCL_ERR2("Column exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      return (*vvp)[col][row];
+    }
+    
+    /** \brief Return a reference to the element at row \c row
+        and column \c col
+    */
+    double &operator()(size_t row, size_t col) {
+      if (vvp==0) {
+        O2SCL_ERR2("Object empty in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (col>=vvp->size()) {
+        O2SCL_ERR2("Col exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      if (row>=(*vvp)[col].size()) {
+        std::cout << col << " " << row << " "
+                  << (*vvp)[col].size() << std::endl;
+        O2SCL_ERR2("Column exceeds max in ",
+                   "matrix_view_vec_vec::operator().",
+                   o2scl::exc_einval);
+      }
+      return (*vvp)[col][row];
+    }
+    
+  };
+
   /** \brief Construct a column of a matrix
 
       This class template works with combinations of ublas

@@ -387,8 +387,9 @@ namespace o2scl {
       \endverbatim
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-           class mat_x_t=o2scl::matrix_view_table<>,
-           class mat_x_row_t=const matrix_row_gen<o2scl::matrix_view_table<>>, 
+           class mat_x_t=o2scl::const_matrix_view_table<>,
+           class mat_x_row_t=const const_matrix_row_gen
+           <o2scl::const_matrix_view_table<>>, 
            class mat_y_t=o2scl::matrix_view_table_transpose<>,
            class mat_y_row_t=const matrix_row_gen<
              o2scl::matrix_view_table_transpose<>>,
