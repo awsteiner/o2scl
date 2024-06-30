@@ -108,7 +108,8 @@ int main(void) {
   ubvector point(2);
   point[0]=0.4;
   point[1]=0.5;
-  imi.eval_one_unc_tl(point,val,err);
+  double extrap;
+  imi.eval_one_unc_tl(point,val,err,extrap);
   cout << imi.eval_one_tl(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.4,0.5) << " ";
   t.test_rel(imi.eval_one_tl(point),i2n.eval(0.4,0.5),8.0e-2,
@@ -118,8 +119,8 @@ int main(void) {
   cout << "Test the extrapolation factor." << endl;
   for(point[0]=0.5;point[0]<20.0;point[0]*=2.0) {
     point[1]=point[0];
-    imi.eval_one_unc_tl(point,val,err);
-    cout << point[0] << " " << imi.extrap[0] << endl;
+    imi.eval_one_unc_tl(point,val,err,extrap);
+    cout << point[0] << " " << extrap << endl;
   }
   cout << endl;
   
@@ -127,10 +128,11 @@ int main(void) {
        << endl;
   point[0]=0.03;
   point[1]=1.0;
-  imi.eval_one_unc_tl(point,val,err);
+  imi.eval_one_unc_tl(point,val,err,extrap);
   cout << imi.eval_one_tl(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.03,1.0) << " ";
-  t.test_rel(imi.eval_one_tl(point),i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
+  t.test_rel(imi.eval_one_tl(point),
+             i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
   cout << endl;
 
   cout << "Show that interpolation gets better with more points." << endl;
@@ -164,7 +166,7 @@ int main(void) {
     matrix_view_vec_vec<vector<double> > mv3b_x(dat3_x);
     matrix_view_vec_vec<vector<double> > mv3b_y(dat3_y);
     imi3.set_data(3,1,N,mv3b_x,mv3b_y);
-    imi3.eval_one_unc_tl(p3,val,err);
+    imi3.eval_one_unc_tl(p3,val,err,extrap);
     cout.width(6);
     cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
     if (N==1000000) {
