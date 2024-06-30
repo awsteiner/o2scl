@@ -403,7 +403,7 @@ namespace o2scl {
 
     /** \brief Pointer to user-specified gradients
      */
-    std::vector<grad_t> *grad_ptr;
+    std::vector<grad_t> grad_ptr;
     
   public:
 
@@ -460,7 +460,6 @@ namespace o2scl {
       auto_grad[0]=true;
       epsrel=1.0e-6;
       epsmin=1.0e-15;
-      grad_ptr=0;
     }
 
     virtual ~mcmc_stepper_hmc() {
@@ -484,7 +483,10 @@ namespace o2scl {
         object is in scope when the MCMC is performed.
      */
     void set_gradients(std::vector<grad_t> &vg) {
-      grad_ptr=&vg;
+      grad_ptr.resize(vg.size());
+      for(size_t i=0;i<vg.size();i++) {
+        grad_ptr[i]=vg[i];
+      }
       return;
     }
     
@@ -581,10 +583,8 @@ namespace o2scl {
       bool initial_grad_failed=false;
       
       // First, if specified, use the user-specified gradient function
-      if (grad_ptr!=0 && grad_ptr->size()>0) {
-
-        grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
-          (n_params,current,f,grad,dat);
+      if (grad_ptr.size()>0) {
+        grad_ret=grad_ptr[i_thread](n_params,current,f,grad,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
@@ -670,9 +670,8 @@ namespace o2scl {
         }
         
         // Try the user-specified gradient, if specified
-        if (grad_ptr!=0 && grad_ptr->size()>0) {
-          grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
-            (n_params,next,f,grad,dat);
+        if ( grad_ptr.size()>0) {
+          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
