@@ -63,11 +63,13 @@ int main(void) {
   }
 
   // Reformat data into std::vector objects
-  std::vector<ubvector> dat(3);
-  dat[0]=x;
-  dat[1]=y;
-  dat[2]=dp;
-  matrix_view_vec_vec<ubvector> mv3(dat);
+  std::vector<ubvector> dat_x(2);
+  dat_x[0]=x;
+  dat_x[1]=y;
+  std::vector<ubvector> dat_y(1);
+  dat_y[2]=dp;
+  matrix_view_vec_vec<ubvector> mv3_x(dat_x);
+  matrix_view_vec_vec<ubvector> mv3_y(dat_y);
 
   // Try a table representation
   table<> tab;
@@ -83,18 +85,21 @@ int main(void) {
   for(size_t i=0;i<8;i++) {
     tab.set("z",i,1.0-pow(x[i]-0.5,2.0)-pow(y[i]-0.5,2.0));
   }
-  const_matrix_view_table_transpose<> cmvt(tab,{"x","y","z"});
+  const_matrix_view_table_transpose<> cmvt_x(tab,{"x","y"});
+  const_matrix_view_table_transpose<> cmvt_y(tab,{"z"});
 
   // Specify the data in the interpolation objects
   interp2_neigh<ubvector> i2n;
-  interp2_planar<ubvector> i2p;
-  interpm_idw<matrix_view_vec_vec<ubvector> > imi;
-  interpm_idw<const_matrix_view_table_transpose<> > imi2;
+  interpm_idw<ubvector,
+              matrix_view_vec_vec<ubvector>,
+              matrix_view_vec_vec<ubvector>> imi;
+  interpm_idw<ubvector,
+              const_matrix_view_table_transpose<>,
+              const_matrix_view_table_transpose<>> imi2;
 
   i2n.set_data(8,x,y,dp);
-  i2p.set_data(8,x,y,dp);
-  imi.set_data(2,1,8,mv3);
-  imi2.set_data(2,1,8,cmvt);
+  imi.set_data(2,1,8,mv3_x,mv3_y);
+  imi2.set_data(2,1,8,cmvt_x,cmvt_y);
 
   // Temporary storage
   double val, err;
@@ -103,19 +108,17 @@ int main(void) {
   ubvector point(2);
   point[0]=0.4;
   point[1]=0.5;
-  imi.eval_err(point,val,err);
-  cout << imi.eval(point) << " " << val << " " << err << " ";
+  imi.eval_one_unc_tl(point,val,err);
+  cout << imi.eval_one_tl(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.4,0.5) << " ";
-  cout << i2p.eval(0.4,0.5) << endl;
-  t.test_rel(imi.eval(point),i2n.eval(0.4,0.5),8.0e-2,"imi vs. i2n 1");
-  t.test_rel(imi.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi vs. i2p 1");
-  t.test_rel(imi2.eval(point),i2p.eval(0.4,0.5),4.0e-2,"imi2 vs. i2p 1");
+  t.test_rel(imi.eval_one_tl(point),i2n.eval(0.4,0.5),8.0e-2,
+             "imi vs. i2n 1");
   cout << endl;
 
   cout << "Test the extrapolation factor." << endl;
   for(point[0]=0.5;point[0]<20.0;point[0]*=2.0) {
     point[1]=point[0];
-    imi.eval_err(point,val,err);
+    imi.eval_one_unc_tl(point,val,err);
     cout << point[0] << " " << imi.extrap[0] << endl;
   }
   cout << endl;
@@ -124,18 +127,18 @@ int main(void) {
        << endl;
   point[0]=0.03;
   point[1]=1.0;
-  imi.eval_err(point,val,err);
-  cout << imi.eval(point) << " " << val << " " << err << " ";
+  imi.eval_one_unc_tl(point,val,err);
+  cout << imi.eval_one_tl(point) << " " << val << " " << err << " ";
   cout << i2n.eval(0.03,1.0) << " ";
-  cout << i2p.eval(0.03,1.0) << endl;
-  t.test_rel(imi.eval(point),i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
-  t.test_rel(imi.eval(point),i2p.eval(0.03,1.0),1.0e-2,"imi vs. i2p 2");
+  t.test_rel(imi.eval_one_tl(point),i2n.eval(0.03,1.0),4.0e-2,"imi vs. i2n 2");
   cout << endl;
 
   cout << "Show that interpolation gets better with more points." << endl;
   for(size_t N=10;N<1000000;N*=10) {
     // Create a large data set
-    interpm_idw<matrix_view_vec_vec<vector<double> > > imi3;
+    interpm_idw<ubvector, matrix_view_vec_vec<vector<double> >,
+                matrix_view_vec_vec<vector<double> > > imi3;
+    
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     for(size_t i=0;i<N;i++) {
@@ -149,17 +152,19 @@ int main(void) {
     }
 
     std::vector<double> p3={0.2,0.2,0.2};
-    std::vector<std::vector<double> > dat3(4);
+    std::vector<std::vector<double> > dat3_x(3);
+    std::vector<std::vector<double> > dat3_y(1);
     std::vector<double> derivs(3), errs(3);
     double f;
-    dat3[0]=x3;
-    dat3[1]=y3;
-    dat3[2]=z3;
-    dat3[3]=f3;
+    dat3_x[0]=x3;
+    dat3_x[1]=y3;
+    dat3_x[2]=z3;
+    dat3_y[0]=f3;
     //imi3.verbose=1;
-    matrix_view_vec_vec<vector<double> > mv3b(dat3);
-    imi3.set_data(3,1,N,mv3b);
-    imi3.eval_err(p3,val,err);
+    matrix_view_vec_vec<vector<double> > mv3b_x(dat3_x);
+    matrix_view_vec_vec<vector<double> > mv3b_y(dat3_y);
+    imi3.set_data(3,1,N,mv3b_x,mv3b_y);
+    imi3.eval_one_unc_tl(p3,val,err);
     cout.width(6);
     cout << N << " " << val << " " << err << " " << fabs(val-3.0) << endl;
     if (N==1000000) {
@@ -172,7 +177,8 @@ int main(void) {
        << endl;
   for(size_t N=10;N<1000000;N*=10) {
     // Create a random data set
-    interpm_idw<matrix_view_vec_vec<vector<double> > > imi3;
+    interpm_idw<ubvector, matrix_view_vec_vec<vector<double> > ,
+                matrix_view_vec_vec<vector<double> > > imi3;
     std::vector<double> x3, y3, z3, f3;
     double scale=10.0;
     x3.push_back(0.2);
@@ -190,16 +196,18 @@ int main(void) {
     }
 
     std::vector<double> p3={0.2,0.2,0.2};
-    std::vector<std::vector<double> > dat3(4);
+    std::vector<std::vector<double> > dat3_x(3);
+    std::vector<std::vector<double> > dat3_y(1);
     std::vector<double> derivs(3), errs(3);
     double f;
-    dat3[0]=x3;
-    dat3[1]=y3;
-    dat3[2]=z3;
-    dat3[3]=f3;
+    dat3_x[0]=x3;
+    dat3_x[1]=y3;
+    dat3_x[2]=z3;
+    dat3_y[0]=f3;
     imi3.verbose=2;
-    matrix_view_vec_vec<vector<double> > mv3b(dat3);
-    imi3.set_data(3,1,N,mv3b);
+    matrix_view_vec_vec<vector<double> > mv3b_x(dat3_x);
+    matrix_view_vec_vec<vector<double> > mv3b_y(dat3_y);
+    imi3.set_data(3,1,N,mv3b_x,mv3b_y);
     cout.width(6);
     imi3.derivs_err(0,0,derivs,errs);
     cout << N << endl;

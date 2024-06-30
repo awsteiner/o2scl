@@ -9,7 +9,7 @@ OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	gmm_python.cpp
 
 HEADER_VAR = contour.h cheb_approx.h other_python.h \
-	series_acc.h interp2_planar.h poly.h polylog.h \
+	series_acc.h poly.h polylog.h \
 	interp2_direct.h interp2_eqi.h pinside.h \
 	vec_stats.h smooth_gsl.h hist.h smooth_func.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
@@ -17,7 +17,7 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	slack_messenger.h xml.h exp_max.h interpm_python.h \
 	gmm_python.h kde_python.h interpm_base.h
 
-TEST_VAR = series_acc.scr interp2_planar.scr contour.scr \
+TEST_VAR = series_acc.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
 	hist.scr hist_2d.scr prob_dens_func.scr interp2_direct.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
@@ -78,7 +78,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = series_acc_ts interp2_planar_ts \
+check_PROGRAMS = series_acc_ts \
 	contour_ts poly_ts polylog_ts pinside_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
@@ -116,7 +116,6 @@ endif
 smooth_gsl_ts_LDADD = $(ADDL_TEST_LIBS)
 exp_max_ts_LDADD = $(ADDL_TEST_LIBS)
 series_acc_ts_LDADD = $(ADDL_TEST_LIBS)
-interp2_planar_ts_LDADD = $(ADDL_TEST_LIBS)
 interp2_neigh_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_idw_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_python_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -141,7 +140,6 @@ xml_ts_LDADD = $(ADDL_TEST_LIBS)
 smooth_gsl_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 exp_max_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 series_acc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
-interp2_planar_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interp2_neigh_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_idw_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -169,8 +167,6 @@ exp_max.scr: exp_max_ts$(EXEEXT)
 	./exp_max_ts$(EXEEXT) > exp_max.scr
 series_acc.scr: series_acc_ts$(EXEEXT) 
 	./series_acc_ts$(EXEEXT) > series_acc.scr
-interp2_planar.scr: interp2_planar_ts$(EXEEXT) 
-	./interp2_planar_ts$(EXEEXT) > interp2_planar.scr
 interp2_neigh.scr: interp2_neigh_ts$(EXEEXT) 
 	./interp2_neigh_ts$(EXEEXT) > interp2_neigh.scr
 interpm_idw.scr: interpm_idw_ts$(EXEEXT) 
@@ -224,7 +220,6 @@ gmm_python_ts_SOURCES = gmm_python_ts.cpp
 kde_python_ts_SOURCES = kde_python_ts.cpp
 smooth_func_ts_SOURCES = smooth_func_ts.cpp
 interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
-interp2_planar_ts_SOURCES = interp2_planar_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
 prob_dens_mdim_amr_ts_SOURCES = prob_dens_mdim_amr_ts.cpp
 interp2_direct_ts_SOURCES = interp2_direct_ts.cpp

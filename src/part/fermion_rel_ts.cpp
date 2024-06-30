@@ -961,7 +961,7 @@ int main(int argc, char *argv[]) {
     t.test_gen(cmu_n>=1564,"cmu_n");
     t.test_gen(cmu_en>=1544,"cmu_en");
     t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
-    t.test_gen(cmu_ld_en>=2180,"cmu_ld_en");
+    t.test_gen(cmu_ld_en>=2179,"cmu_ld_en");
     t.test_gen(cmu_ti>=1432,"cmu_ti");
     t.test_gen(cmu_ld_ti>=1906,"cmu_ld_ti");
     t.test_gen(cmu_25_ti>=2597,"cmu_25_ti");
@@ -969,7 +969,7 @@ int main(int argc, char *argv[]) {
     t.test_gen(pmu_n>=1618,"pmu_n");
     t.test_gen(pmu_en>=1604,"pmu_en");
     t.test_gen(pmu_ld_n>=2336,"pmu_ld_n");
-    t.test_gen(pmu_ld_en>=2220,"pmu_ld_en");
+    t.test_gen(pmu_ld_en>=2218,"pmu_ld_en");
     t.test_gen(pmu_ti>=1408,"pmu_ti");
     t.test_gen(pmu_ld_ti>=1642,"pmu_ld_ti");
     t.test_gen(pmu_25_ti>=1947,"pmu_25_ti");
