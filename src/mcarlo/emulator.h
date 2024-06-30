@@ -104,7 +104,10 @@ namespace o2scl {
   protected:
     
     /// The view of the user-specified table
-    const_matrix_view_table_transpose<> cmvtt;
+    const_matrix_view_table<> cmvt_x;
+    
+    /// The view of the user-specified table
+    matrix_view_table<> cmvt_y;
     
     /// Index of the "log weight" in the MCMC data vector
     size_t ix;
@@ -112,7 +115,9 @@ namespace o2scl {
   public:
     
     /// The internal interpolation object
-    o2scl::interpm_idw<o2scl::const_matrix_view_table_transpose<>> ii;
+    o2scl::interpm_idw<boost::numeric::ublas::vector<double>,
+                       o2scl::const_matrix_view_table<>,
+                       o2scl::matrix_view_table<>> ii;
     
     /** \brief Create an emulator
      */
@@ -129,14 +134,16 @@ namespace o2scl {
         output quantities (including the log weight column), in order.
      */
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
-             table<> &t, std::vector<std::string> list) {
-      if (ix_log_wgt>list.size()-np) {
+             table<> &t, std::vector<std::string> &list_in,
+             std::vector<std::string> &list_out) {
+      if (ix_log_wgt>=list_out.size()) {
         O2SCL_ERR2("Index of log_wgt is too large in ",
                    "emulator_interpm_idw_table::set().",o2scl::exc_einval);
       }
-      cmvtt.set(t,list);
+      cmvt_x.set(t,list_in);
+      cmvt_y.set(t,list_out);
       ix=ix_log_wgt;
-      ii.set_data(np,n_out,t.get_nlines(),cmvtt);
+      ii.set_data(np,n_out,t.get_nlines(),cmvt_x,cmvt_y);
       return;
     }
     
@@ -146,7 +153,7 @@ namespace o2scl {
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
                  double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
       
-      ii.eval_err<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
+      ii.eval_unc_tl<vec_t,vec2_t,vec2_t>(p,dat,dat_unc);
       log_wgt=dat[ix];
       log_wgt_unc=dat_unc[ix];
       return 0;
@@ -174,11 +181,11 @@ namespace o2scl {
     
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
-    typedef o2scl::matrix_view_table<> mat_x_t;
-    typedef const matrix_row_gen<mat_x_t> mat_x_row_t;
-    typedef const matrix_column_gen<mat_x_t> mat_x_col_t;
-    typedef o2scl::matrix_view_table_transpose<> mat_y_t;
-    typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+    typedef o2scl::const_matrix_view_table<> mat_x_t;
+    typedef const const_matrix_row_gen<mat_x_t> mat_x_row_t;
+    typedef const const_matrix_column_gen<mat_x_t> mat_x_col_t;
+    typedef o2scl::matrix_view_table<> mat_y_t;
+    typedef const matrix_column_gen<mat_y_t> mat_y_row_t;
     
     /// Index of the "log weight" in the MCMC data vector
     size_t ix;
@@ -208,9 +215,10 @@ namespace o2scl {
         output quantities (including the log weight column), in order.
     */
     void set(size_t np, size_t n_out, size_t ix_log_wgt,
-             table<> &t, std::vector<std::string> list) {
+             table<> &t, std::vector<std::string> &list_x,
+             std::vector<std::string> &list_y) {
 
-      if (ix_log_wgt>list.size()-np) {
+      if (ix_log_wgt>=list_y.size()) {
         O2SCL_ERR2("Index of log_wgt is too large in ",
                    "emulator_interpm_idw_table::set().",o2scl::exc_einval);
       }
@@ -221,19 +229,11 @@ namespace o2scl {
 
       std::vector<std::vector<std::vector<double>>> param_lists;
 
-      std::vector<std::string> col_list_x;
-      std::vector<std::string> col_list_y;
-
-      for(size_t j=0;j<list.size();j++) {
-        if (j<np) col_list_x.push_back(list[j]);
-        else col_list_y.push_back(list[j]);
-      }
-        
-      matrix_view_table<> mvt_x;
-      matrix_view_table_transpose<> mvt_y;
+      const_matrix_view_table<> mvt_x;
+      matrix_view_table<> mvt_y;
       
-      mvt_x.set(t,col_list_x);
-      mvt_y.set(t,col_list_y);
+      mvt_x.set(t,list_x);
+      mvt_y.set(t,list_y);
       
       std::vector<std::vector<double>> ptemp;
       
@@ -294,7 +294,8 @@ namespace o2scl {
 
       iko.set_covar(mfrn,param_lists);
       iko.mode=iko.mode_loo_cv_bf;
-      iko.set_data(np,n_out,t.get_nlines(),mvt_x,mvt_y,true);
+      iko.rescale=true;
+      iko.set_data(np,n_out,t.get_nlines(),mvt_x,mvt_y);
 
       return;
     }
@@ -303,8 +304,8 @@ namespace o2scl {
         \c log_wgt and \c dat and their uncertainties
      */
     virtual int eval_unc(size_t n, const vec_t &p, double &log_wgt,
-                         double &log_wgt_unc, vec2_t &dat, vec2_t &dat_unc) {
-      
+                         double &log_wgt_unc, vec2_t &dat,
+                         vec2_t &dat_unc) {
       iko.eval(p,dat);
       iko.sigma(p,dat_unc);
       log_wgt=dat[ix];

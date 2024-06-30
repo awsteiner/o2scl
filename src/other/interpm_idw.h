@@ -377,7 +377,7 @@ namespace o2scl {
     (const vec2_t &x, double &val, double &err, double &extrap) {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+        O2SCL_ERR("Data not set in interpm_idw::eval_one_unc_tl().",
                   exc_einval);
       }
 
@@ -394,7 +394,7 @@ namespace o2scl {
         (dists,points+1+n_extra,index);
 
       if (this->verbose>1) {
-        std::cout << "interpm_idw::eval_err(): n_extra is " << n_extra
+        std::cout << "interpm_idw::eval_one_unc_tl(): n_extra is " << n_extra
                   << std::endl;
       }
       
@@ -616,12 +616,12 @@ namespace o2scl {
                           std::vector<double> &extrap) const {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+        O2SCL_ERR("Data not set in interpm_idw::eval_unc_tl_index().",
                   exc_einval);
       }
       
       if (this->verbose>1) {
-        std::cout << "interpm_idw::eval_err_index(): n_extra: " << n_extra
+        std::cout << "interpm_idw::eval_unc_tl_index(): n_extra: " << n_extra
                   << std::endl;
       }
 
@@ -652,7 +652,7 @@ namespace o2scl {
       }
 
       if (this->verbose>2) {
-        std::cout << "interpm_idw::eval_err_index(): "
+        std::cout << "interpm_idw::eval_unc_tl_index(): "
                   << "n_points,n_params,n_outputs: "
                   << this->n_points << " " << this->n_params << " "
                   << this->n_outputs
@@ -838,9 +838,10 @@ namespace o2scl {
         with uncertainties
     */
     template<class vec2_t, class vec3_t, class vec4_t>
-    int eval_unc_tl(const vec2_t &x, vec3_t &val, vec4_t &err) {
+    int eval_unc_tl(const vec2_t &x, vec3_t &val, vec4_t &err) const {
       std::vector<size_t> index;
-      return eval_unc_tl_index(x,val,err,index);
+      std::vector<double> extrap;
+      return eval_unc_tl_index(x,val,err,index,extrap);
     }
     //@}
 
