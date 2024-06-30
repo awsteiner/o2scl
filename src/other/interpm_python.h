@@ -231,8 +231,8 @@ namespace o2scl {
     */
     int set_functions(std::string s_module, std::string set_func,
                       std::string eval_func, std::string eval_unc_func,
-                      std::string options="",
-                      std::string class_name="", int v=0) {
+                      std::string class_name="", std::string options="",
+                      int v=0) {
       
       c_set_func=set_func;
       c_eval_func=eval_func;
@@ -266,15 +266,15 @@ namespace o2scl {
           tout.get(ix)=user_y(j,k);
         }
       }
-      
-      return 0;
+
+      return set_data_tensor(n_in,n_out,n_pts,tin,tout);
     }
 
     /** \brief Set the data to be interpolated (tensor form)
      */
-    int set_data(size_t n_in, size_t n_out, size_t n_pts,
-                 const o2scl::tensor<> &params,
-                 const o2scl::tensor<> &outputs) {
+    int set_data_tensor(size_t n_in, size_t n_out, size_t n_pts,
+                        const o2scl::tensor<> &params,
+                        const o2scl::tensor<> &outputs) {
       int ret;
       set_data_internal(n_in,n_out,n_pts,params,outputs,ret);
       return ret;
@@ -309,7 +309,8 @@ namespace o2scl {
       
       if (c_class_name.length()>0) {
         if (this->verbose>0) {
-          std::cout << "  Obtaining python class." << std::endl;
+          std::cout << "  Obtaining python class name "
+                    << c_class_name << "." << std::endl;
         }
         p_class=PyObject_GetAttrString(p_module,c_class_name.c_str());
         if (p_class==0) {
