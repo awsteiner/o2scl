@@ -119,8 +119,8 @@ int main(void) {
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
   typedef o2scl::const_matrix_view_table<> mat_x_t;
   typedef const const_matrix_row_gen<mat_x_t> mat_x_row_t;
-  typedef o2scl::matrix_view_table_transpose<> mat_y_t;
-  typedef const matrix_row_gen<mat_y_t> mat_y_row_t;
+  typedef o2scl::matrix_view_table<> mat_y_t;
+  typedef const matrix_column_gen<mat_y_t> mat_y_col_t;
 
   if (true) {
 
@@ -199,14 +199,14 @@ int main(void) {
     mfrn->len.resize(2);
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
+      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
     iko.mode=iko.mode_loo_cv;
 
     table<> tab3;
     generate_table(tab3);
     
     const_matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
@@ -261,7 +261,7 @@ int main(void) {
     mfrn->len.resize(2);
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
+      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
     iko.mode=iko.mode_max_lml;
 
     table<> tab3;
@@ -273,7 +273,7 @@ int main(void) {
     hf.close();
     
     const_matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
@@ -352,7 +352,7 @@ int main(void) {
     mfrn->len.resize(2);
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
+      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
     iko.mode=iko.mode_max_lml;
     iko.full_min=true;
 
@@ -365,7 +365,7 @@ int main(void) {
     hf.close();
     
     const_matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
@@ -443,7 +443,7 @@ int main(void) {
     mfrn->len.resize(2);
     
     interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_row_t,ubmatrix> iko;
+      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
     iko.mode=iko.mode_loo_cv_bf;
 
     table<> tab3;
@@ -455,7 +455,7 @@ int main(void) {
     hf.close();
     
     const_matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
@@ -550,11 +550,11 @@ int main(void) {
     param_lists.push_back(ptemp);
     
     const_matrix_view_table<> mvt_x4(tab4,{"x"});
-    matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
+    matrix_view_table<> mvt_y4(tab4,{"y"});
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix> iko;
+       mat_y_t,mat_y_col_t,ubmatrix> iko;
     
     vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
     vmfrn.resize(1);
@@ -636,11 +636,11 @@ int main(void) {
     param_lists.push_back(ptemp);
 
     const_matrix_view_table<> mvt_x4(tab4,{"x"});
-    matrix_view_table_transpose<> mvt_y4(tab4,{"y"});
+    matrix_view_table<> mvt_y4(tab4,{"y"});
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,ubmatrix> iko;
+       mat_y_t,mat_y_col_t,ubmatrix> iko;
     
     vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
     vmfrn.resize(1);
@@ -703,7 +703,7 @@ int main(void) {
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,Eigen::MatrixXd,
+       mat_y_t,mat_y_col_t,Eigen::MatrixXd,
        matrix_invert_det_eigen<> > iko_eigen;
     
     iko_eigen.mode=iko_eigen.mode_max_lml;
@@ -712,7 +712,7 @@ int main(void) {
     generate_table(tab3);
     
     const_matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
@@ -763,14 +763,14 @@ int main(void) {
     
     interpm_krige_optim
       <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_row_t,arma::mat,
+       mat_y_t,mat_y_col_t,arma::mat,
        matrix_invert_det_sympd_arma<> > iko_arma;
 
     table<> tab3;
     generate_table(tab3);
     
     matrix_view_table<> mvt_x3(tab3,col_list_x);
-    matrix_view_table_transpose<> mvt_y3(tab3,col_list_y);
+    matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);

@@ -390,8 +390,8 @@ namespace o2scl {
            class mat_x_t=o2scl::const_matrix_view_table<>,
            class mat_x_row_t=const const_matrix_row_gen
            <o2scl::const_matrix_view_table<>>, 
-           class mat_y_t=o2scl::matrix_view_table_transpose<>,
-           class mat_y_row_t=const matrix_row_gen<
+           class mat_y_t=o2scl::matrix_view_table<>,
+           class mat_y_col_t=const matrix_row_gen<
              o2scl::matrix_view_table_transpose<>>,
            class mat_inv_kxx_t=boost::numeric::ublas::matrix<double>,
            class mat_inv_t=
@@ -408,7 +408,7 @@ namespace o2scl {
     
     /// Typedef for this type
     typedef interpm_krige_optim<vec_t,mat_x_t,mat_x_row_t, 
-                                mat_y_t,mat_y_row_t,mat_inv_kxx_t,
+                                mat_y_t,mat_y_col_t,mat_inv_kxx_t,
                                 mat_inv_t,vec3_t> class_t;
     
   protected:
@@ -491,7 +491,7 @@ namespace o2scl {
     virtual double qual_fun(size_t iout, int &success) {
       
       // Select the row of the data matrix
-      mat_y_row_t yiout2(this->y,iout);
+      mat_y_col_t yiout2(this->y,iout);
       
       double ret=0.0;
     
@@ -631,7 +631,7 @@ namespace o2scl {
         ret=0.0;
         
         // Select the row of the data matrix
-        mat_y_row_t yiout(this->y,iout);
+        mat_y_col_t yiout(this->y,iout);
         
         for(size_t ii=0;ii<size;ii++) {
           
@@ -991,7 +991,7 @@ namespace o2scl {
                    o2scl::exc_efailed);
       }
     
-      if (user_y.size2()!=n_pts || user_y.size1()!=n_out) {
+      if (user_y.size1()!=n_pts || user_y.size2()!=n_out) {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
@@ -1030,7 +1030,7 @@ namespace o2scl {
         this->mean_y.resize(n_out);
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
-          mat_y_row_t vec(this->y,j);
+          mat_y_col_t vec(this->y,j);
           this->mean_y[j]=vector_mean(this->n_points,vec);
           this->std_y[j]=vector_stddev(this->n_points,vec);
           if (verbose>1) {
@@ -1039,7 +1039,7 @@ namespace o2scl {
                       << this->std_y[j] << std::endl;
           }
           for(size_t i=0;i<this->n_points;i++) {
-            this->y(j,i)=(this->y(j,i)-this->mean_y[j])/this->std_y[j];
+            this->y(i,j)=(this->y(i,j)-this->mean_y[j])/this->std_y[j];
           }
         }
         if (verbose>1) {

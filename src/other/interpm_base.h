@@ -77,7 +77,18 @@ namespace o2scl {
     }
 
     /** \brief Set the data to be interpolated
-     */
+
+        The variable \c user_x should be arranged so that parameters
+        are indexed by the columns and data points are points are
+        indexed by the rows. The variable \c user_y should be arranged
+        so that output quantities are indexed by the columns and
+        points are indexed by the rows. Children are allowed (but not
+        required) to use \c swap to take over management of the input
+        data. None of the values \c n_in, \c n_out, or \c n_pts are
+        allowed to be zero. The matrix \c user_x should have \c n_pts
+        rows and \c n_in columns, while the matrix \c user_y should
+        have \c n_pts rows and \c n_out columns.
+    */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y)=0;
 
