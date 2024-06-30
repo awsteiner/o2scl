@@ -49,12 +49,12 @@ namespace o2scl {
   /** \brief Multi-dimensional interpolation by inverse distance
       weighting
 
+      This class performs interpolation on a multi-dimensional data
+      set specified as a series of points using the inverse
+      distance-weighted average of nearby points. 
+
       This class is experimental, particularly the evaluation of
       derivatives.
-
-      This class performs interpolation on a multi-dimensional data
-      set specified as a series of scattered points using the inverse
-      distance-weighted average of nearby points. 
 
       The function \ref set_data() takes as input: the number of input
       dimensions, the number of output functions, the number of points
@@ -131,7 +131,9 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    
+
+    /// \name Constructor and destructor
+    //@{
     interpm_idw() {
       data_set=false;
       scales.resize(1);
@@ -143,6 +145,12 @@ namespace o2scl {
       rescale=true;
     }
 
+    virtual ~interpm_idw() {
+    }
+    //@}
+
+    /// \name Interpolation settings
+    //@{
     /** \brief Exponent in computing distance (default 2.0)
      */
     double dist_expo;
@@ -161,6 +169,7 @@ namespace o2scl {
         (default true)
     */
     bool rescale;
+    //@}
     
     /// \name Get and set functions
     //@{
@@ -199,11 +208,10 @@ namespace o2scl {
     
     /** \brief Initialize the data for the interpolation
 
-        The object \c vecs should be a matrix with a
-        first index of size <tt>n_in+n_out</tt> and a second 
-        index of size <tt>n_points</tt>. It may have be
-        any type which allows the use of <tt>operator(,)</tt>
-        and <tt>std::swap</tt>.
+        The object \c dat_x should be a matrix with a first index of
+        size <tt>n_in</tt> and a second index of size <tt>n_pts</tt>.
+        The object \c dat_y should be a matrix with a first index of
+        size <tt>n_out</tt> and a second index of size <tt>n_pts</tt>.
     */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &dat_x, mat_y_t &dat_y) {
@@ -235,6 +243,10 @@ namespace o2scl {
     }
 
     /** \brief Get the data used for interpolation
+
+        This function swaps the data back to the user and thus
+        prevents future interpolation until one of the \ref
+        set_data() functions are called again.
      */
     void get_data(size_t &n_in, size_t &n_out, size_t &n_pts,
                   mat_x_t &dat_x, mat_y_t &dat_y) {
@@ -271,10 +283,10 @@ namespace o2scl {
     /** \brief Initialize the data for the interpolation
         for only one output function
 
-        The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
-        of vectors (all of size <tt>n_pts</tt>). It may be
-        any type which allows the use of <tt>std::swap</tt> for
-        each vector in the list. 
+        The object \c dat_x should be a matrix with a first index of
+        size <tt>n_in</tt> and a second index of size <tt>n_pts</tt>.
+        The object \c dat_y should be a matrix with a first index of
+        size <tt>1</tt> and a second index of size <tt>n_pts</tt>.
     */
     void set_data(size_t n_in, size_t n_pts,
                   mat_x_t &dat_x, mat_y_t &dat_y) {
@@ -710,7 +722,7 @@ namespace o2scl {
 	    std::cout << "n_extra,min_dist,k,n_outputs,val[k]: "
 		      << n_extra << " " << min_dist << " " << k << " "
 		      << this->n_outputs << " " << val[k] << std::endl;
-	    O2SCL_ERR("Infinite value in interpm_idw() 1.",
+	    O2SCL_ERR("Infinite value in interpm_idw::eval_unc_tl_index() 1.",
 		      o2scl::exc_efailed);
 	  }
           err[k]=0.0;

@@ -2015,7 +2015,7 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       vmfrn.resize(col_list_y.size());
       
       const_matrix_view_table<> mvt_x(table_obj,col_list_x);
-      matrix_view_table_transpose<> mvt_y(table_obj,col_list_y);
+      matrix_view_table<> mvt_y(table_obj,col_list_y);
       
       interpm_krige_optim<> iko;
 
