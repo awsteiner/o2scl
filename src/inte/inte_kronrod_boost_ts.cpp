@@ -202,11 +202,15 @@ int main(void) {
     // AWS, 10/17/23, this doesn't work on the docker images, possibly
     // because boost was installed without quadmath or mpfr, but I'm not
     // sure, so I'm just commenting them out for now
-    imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
-                          a,b,val,err2);
-    cout << dtos(val,0) << " " << dtos(err2,0) << endl;
-    t.test_rel(val,exact,1.0e-15,"multip 2");
-    cout << endl;
+    // AWS, 6/30/24, this code now works on docker images, but takes an
+    // hour to run, thus I'm commenting it out again.
+    if (false) {
+      imkb.integ_err_multip([](auto &&tb) mutable { return test_func(tb); },
+                            a,b,val,err2);
+      cout << dtos(val,0) << " " << dtos(err2,0) << endl;
+      t.test_rel(val,exact,1.0e-15,"multip 2");
+      cout << endl;
+    }
 
     // AWS, 6/28/24: I've been having some problems with timing, so
     // we check that here
