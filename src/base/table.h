@@ -1405,10 +1405,13 @@ namespace o2scl {
         If no rows match the delete condition, this function silently
         performs no changes to the table.
     */
-    void delete_rows_func(std::string func) {
+    void delete_rows_func(std::string func, int loc_verbose=0) {
       size_t new_nlines=0;
       for(size_t i=0;i<nlines;i++) {
         fp_t val=row_function(func,i);
+        if (loc_verbose>1) {
+          std::cout << i << " " << func << " " << val << std::endl;
+        }
         if (val<0.5) {
           // If val<0.5, then the function was evaluated to false and
           // we want to keep the row, but if i==new_nlines, then

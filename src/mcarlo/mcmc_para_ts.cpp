@@ -784,7 +784,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  if (false) {
+  if (true) {
     
     mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
                   ubvector> mpe;
@@ -796,7 +796,7 @@ int main(int argc, char *argv[]) {
     mpe.aff_inv=false;
     mpe.verbose=2;
     mpe.n_threads=1;
-    mpe.max_iters=N;
+    mpe.max_iters=N/5;
     mpe.prefix="mpe";
     mpe.def_stepper->step_fac[0]=10.0;
 

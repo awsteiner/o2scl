@@ -3952,7 +3952,9 @@ namespace o2scl {
   
   };
 
-  /** \brief Desc
+  /** \brief MCMC wiht an emulator
+
+      \note OpenMP threading probably doesn't work yet.
    */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
            class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
@@ -3974,6 +3976,9 @@ namespace o2scl {
     /// Table containing training data for the emulator
     o2scl::table_units<> emu_table;
 
+    /// Table containing initial emulator training file
+    o2scl::table_units<> emu_init;
+
     /// The number of rows in the original training data file
     size_t n_rows_emu_init;
 
@@ -3987,6 +3992,27 @@ namespace o2scl {
     
     /// File containing the training data for the emulator
     std::string emu_file;
+
+    /// Maximum size of training table
+    size_t max_train_size;
+
+    /// Number of iterations before retraining
+    size_t n_retrain;
+
+    /// Sum at last retraining
+    size_t last_retrain_sum;
+
+    /// \name Constructor and destructor
+    //@{
+    mcmc_para_emu() {
+      max_train_size=1000;
+      n_retrain=1000;
+      last_retrain_sum=0;
+    }
+
+    virtual ~mcmc_para_emu() {
+    }
+    //@}
     
     /** \brief List of shared pointers to the interpolators
      */
@@ -4009,14 +4035,31 @@ namespace o2scl {
 
       size_t sum=vector_sum<std::vector<size_t>,size_t>
         (this->n_accept.size(),this->n_accept);
+
+      std::cout << "Here: " << n_retrain << " " << sum << " "
+                << last_retrain_sum << " " 
+                << this->table->get_nlines() << " " << this->n_threads
+                << " " << this->n_walk << std::endl;
       
-      if (sum%100==0 && this->table->get_nlines()>
-          this->n_threads*this->n_walk) {
+      if (n_retrain>0 && sum>last_retrain_sum+n_retrain &&
+          this->table->get_nlines()>this->n_threads*this->n_walk) {
+
+        last_retrain_sum=sum;
+        std::cout << "Here2." << std::endl;
         
-        // Reconstruct emu_table with results from shared pointer table
+        // Reconstruct emu_table from emu_init and the result table
         emu_table.set_nlines(this->table->get_nlines()-
                              this->n_threads*this->n_walk+n_rows_emu_init);
-          
+
+        // Fill in the rows from emu_init
+        for(size_t j=0;j<n_rows_emu_init;j++) {
+          for(size_t k=0;k<n_params_child;k++) {
+            emu_table.set(k,j,emu_init.get(this->col_names[k],j));
+          }
+          emu_table.set("log_wgt",j,emu_init.get("log_wgt",j));
+        }
+
+        // Fill in the rows from the result table
         for(size_t j=n_rows_emu_init;j<emu_table.get_nlines();j++) {
           for(size_t k=0;k<n_params_child;k++) {
             emu_table.set(k,j,this->table->get(this->col_names[k],
@@ -4030,6 +4073,19 @@ namespace o2scl {
                                          n_rows_emu_init));;
         }
 
+        if (emu_table.get_nlines()>max_train_size) {
+          emu_table.new_column("N");
+          for(size_t k=0;k<emu_table.get_nlines();k++) {
+            emu_table.set("N",k,k);
+          }
+          size_t factor=emu_table.get_nlines()/max_train_size;
+          if (factor<2) factor=2;
+          std::string func=((std::string)"N%")+
+            o2scl::szttos(factor)+">0.5";
+          emu_table.delete_rows_func(func);
+          emu_table.delete_column("N");
+        }
+        
         emu_train();         
         
       }
@@ -4076,8 +4132,6 @@ namespace o2scl {
             std::vector<std::string> pnames;
             for(size_t j=0;j<n_params_child;j++) {
               pnames.push_back(this->col_names[j]);
-              std::cout << "pnames: " << this->col_names[j]
-                        << std::endl;
             }
             const_matrix_view_table<> cmvt_x(emu_table,pnames);
             matrix_view_table<> mvt_y(emu_table,{"log_wgt"});
@@ -4125,22 +4179,30 @@ namespace o2scl {
 #endif
 
       // Read the data into a temporary file before reorganizing it
-      table_units<> emu_temp;
       o2scl_hdf::hdf_file hf;
       hf.open(emu_file);
       std::string tname;
-      hdf_input(hf,emu_temp,tname);
+      hdf_input(hf,emu_init,tname);
       hf.close();
 
-      // Delete empty rows
-      emu_temp.new_column("N");
-      for(size_t k=0;k<emu_temp.get_nlines();k++) {
-        emu_temp.set("N",k,k);
+      // Add the index column
+      emu_init.new_column("N");
+      for(size_t k=0;k<emu_init.get_nlines();k++) {
+        emu_init.set("N",k,k);
       }
-      emu_temp.delete_rows_func("mult<0.5 || N%340>0.5");
+      
+      // Delete empty rows
+      emu_init.delete_rows_func("mult<0.5");
 
+      if (emu_init.get_nlines()>max_train_size) {
+        size_t factor=emu_init.get_nlines()/max_train_size;
+        if (factor<2) factor=2;
+        emu_init.delete_rows_func(((std::string)"N%")+
+                                  o2scl::szttos(factor)+">0.5");
+      }
+      
       // Store the initial number of table rows
-      n_rows_emu_init=emu_temp.get_nlines();
+      n_rows_emu_init=emu_init.get_nlines();
       std::cout << "n_rows_emu_init: " << n_rows_emu_init << std::endl;
 
       // Reorganize the file into an emulator table
@@ -4155,17 +4217,9 @@ namespace o2scl {
       emu_table.set_nlines(n_rows_emu_init);
       for(size_t j=0;j<n_rows_emu_init;j++) {
         for(size_t k=0;k<n_params_local;k++) {
-          emu_table.set(k,j,emu_temp.get(this->col_names[k],j));
-          if (j%100==0) {
-            std::cout << "Setting " << j << " " << k << " "
-                      << emu_temp.get(this->col_names[k],j) << std::endl;
-          }
+          emu_table.set(k,j,emu_init.get(this->col_names[k],j));
         }
-        emu_table.set("log_wgt",j,emu_temp.get("log_wgt",j));
-        if (j%100==0) {
-          std::cout << "Setting " << j << " " 
-                    << emu_temp.get("log_wgt",j) << std::endl;
-        }
+        emu_table.set("log_wgt",j,emu_init.get("log_wgt",j));
       }
       
 #ifdef O2SCL_MPI
