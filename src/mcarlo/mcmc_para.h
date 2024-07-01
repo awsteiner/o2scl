@@ -599,7 +599,7 @@ namespace o2scl {
         }
       }
 
-      std::cout << std::scientific << std::setprecision(2);
+      std::cout << std::scientific << std::setprecision(10);
       for (size_t k=0;k<n_params;k++) {
         if (initial_grad_failed==false) {
           std::cout << "grad[" << k << "]=" << grad[k] 
@@ -676,7 +676,7 @@ namespace o2scl {
                            func_ret,verbose);
         if (func_ret==this->mcmc_skip) {
           // If it is out of bounds, reject the step
-          std::cout << "skip." << std::endl;
+          std::cout << "Rejected: Step in coordinate space is out of bounds." << std::endl;
           accept=false;
           return;
         }
@@ -686,8 +686,8 @@ namespace o2scl {
           grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
           if (grad_ret!=0) {
             func_ret=grad_failed;
+            std::cout << "User-specified gradient computation failed." << std::endl;
             accept=false;
-            std::cout << "grad failed." << std::endl;
             return;
           }
         }
@@ -696,7 +696,7 @@ namespace o2scl {
         grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           func_ret=grad_failed;
-          std::cout << "grad failed 2." << std::endl;
+          std::cout << "Finite-difference gradient computation failed." << std::endl;
           accept=false;
           return;
         }
