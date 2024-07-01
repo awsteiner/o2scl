@@ -2453,8 +2453,7 @@ namespace o2scl {
       \future Use reorder_table() and possibly reblock()
       to create a full post-processing function.
   */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_table :
     public mcmc_para_base<func_t,
                           std::function<int(const vec_t &,
@@ -3762,17 +3761,15 @@ namespace o2scl {
       http://github.com/awsteiner/bamr .
 
   */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_cli : public mcmc_para_table<func_t,fill_t,
-                                               data_t,vec_t,stepper_t> {
+                                               data_t,vec_t> {
     
   protected:
   
     /** \brief The parent typedef
      */
-    typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t,
-                                   stepper_t> parent_t;
+    typedef o2scl::mcmc_para_table<func_t,fill_t,data_t,vec_t> parent_t;
 
     /// \name Parameter objects for the 'set' command
     //@{
@@ -3956,11 +3953,10 @@ namespace o2scl {
 
       \note OpenMP threading probably doesn't work yet.
    */
-  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
-           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_emu : public mcmc_para_cli<
     std::function<int(size_t,const vec_t &,double &,data_t &)>,fill_t,
-    data_t,vec_t,stepper_t> {
+    data_t,vec_t> {
 
   public:
     
@@ -3969,7 +3965,7 @@ namespace o2scl {
 
     typedef mcmc_para_cli<
       std::function<int(size_t,const vec_t &,double &,data_t &)>,fill_t,
-      data_t,vec_t,stepper_t> parent_t;
+      data_t,vec_t> parent_t;
     
   protected:
     
@@ -4121,8 +4117,7 @@ namespace o2scl {
           }
         }
       }
-      return mcmc_para_table<func_t,fill_t,data_t,vec_t,
-                             stepper_t>::add_line
+      return mcmc_para_table<func_t,fill_t,data_t,vec_t>::add_line
         (pars,log_weight,walker_ix,func_ret,mcmc_accept,dat,
          i_thread,fill);
       
