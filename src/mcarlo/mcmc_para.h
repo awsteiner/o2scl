@@ -508,13 +508,13 @@ namespace o2scl {
       }
       
       // If the user can compute the gradients, then we end early.
-      bool no_auto=true;
+      /*bool no_auto=true;
       for(size_t i=0;i<n_params;i++) {
         if (auto_grad[i % auto_grad.size()]==true) no_auto=false;
       }
       if (no_auto==true) {
         return success;
-      }
+      }*/
 
       // Start with the function evaluation
       int func_ret=f(n_params,x,fv1,dat);
@@ -524,7 +524,7 @@ namespace o2scl {
       
       for(size_t i=0; i<n_params; i++) {
 
-        if (auto_grad[i % auto_grad.size()]==true) {
+        if (auto_grad[i % auto_grad.size()]==false) {
           h=epsrel*fabs(x[i]);
           if (fabs(h)<=epsmin) h=epsrel;
           
@@ -535,7 +535,7 @@ namespace o2scl {
           }
           x[i]-=h;
           
-          g[i]=(fv2-fv1)/h;
+          g[i]=(exp(fv2)-exp(fv1))/h;
         }
       }
       
@@ -575,6 +575,7 @@ namespace o2scl {
 
       vec_t mom(n_params), grad(n_params), mom_next(n_params);
       int grad_ret;
+      vec_t grad_fd(n_params);
 
       // Initialize func_ret to success
       func_ret=success;
@@ -592,11 +593,22 @@ namespace o2scl {
       
       // Then, additionally try the finite-differencing gradient
       if (initial_grad_failed==false) {
-        grad_ret=grad_pot(n_params,current,f,grad,dat);
+        grad_ret=grad_pot(n_params,current,f,grad_fd,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
       }
+
+      std::cout << std::scientific << std::setprecision(2);
+      for (size_t k=0;k<n_params;k++) {
+        if (initial_grad_failed==false) {
+          std::cout << "grad[" << k << "]=" << grad[k] 
+               << ", \t grad_fd[" << k << "]=" << grad_fd[k];
+        if (grad[k]==grad_fd[k]) std::cout << "\t -> match!" << std::endl;
+        else std::cout << std::endl;
+        }
+      }
+      std::cout << std::scientific << std::setprecision(6);
 
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
