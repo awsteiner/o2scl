@@ -27,6 +27,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/expval.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/interpm_krige.h>
 #include <o2scl/kde_python.h>
 
 using namespace std;
@@ -780,6 +781,56 @@ int main(int argc, char *argv[]) {
     tm.test_rel(vector_stddev(hmc_table->get_nlines(),
                            (*hmc_table)["x"]),1.0,0.2,"hmc mean");
     cout << endl;
+    
+  }
+
+  if (false) {
+    
+    mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
+                  ubvector> mpe;
+
+    vector<string> pnames={"x","x2"};
+    vector<string> punits={"MeV","MeV^2"};
+    mpe.set_names_units(pnames,punits);
+
+    mpe.aff_inv=false;
+    mpe.verbose=2;
+    mpe.n_threads=1;
+    mpe.max_iters=N;
+    mpe.prefix="mpe";
+    mpe.def_stepper->step_fac[0]=10.0;
+
+    // Set up the shared pointer to the interpolation object
+    std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
+    mpe.emu.resize(1);
+    mpe.emu[0]=iko;
+
+    typedef const const_matrix_row_gen
+      <o2scl::const_matrix_view_table<>> mat_x_row_t;
+    
+    // Setup the multidimensional covariance object
+    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<mcovar_funct_rbf_noise<
+      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
+                                  mat_x_row_t>);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(1);
+    
+    iko->verbose=2;
+    vector<double> len_list={0.01,0.03,0.1};
+    vector<d`ouble> l10_list={-15,-13,-11,-9};
+    vector<vector<double>> ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+    
+    iko->set_covar(vmfrn,param_lists);
+    
+    mpe.emu_file="mcmct_0_out";
+    
+    mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
   }
   

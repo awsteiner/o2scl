@@ -577,7 +577,7 @@ namespace o2scl {
         }
 
       } else if (mode==mode_loo_cv) {
-        
+
         // Construct the KXX matrix
         this->inv_KXX[iout].resize(size,size);
         for(size_t irow=0;irow<size;irow++) {
@@ -859,17 +859,17 @@ namespace o2scl {
                        
       if (n_pts<2) {
         O2SCL_ERR2("Must provide at least two points in ",
-                   "interpm_krige_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data()",
                    exc_efailed);
       }
       if (n_in<1) {
         O2SCL_ERR2("Must provide at least one input column in ",
-                   "interpm_krige_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data()",
                    exc_efailed);
       }
       if (n_out<1) {
         O2SCL_ERR2("Must provide at least one output column in ",
-                   "interpm_krige_optim::set_data_internal()",
+                   "interpm_krige_optim::set_data()",
                    exc_efailed);
       }
    
@@ -880,7 +880,7 @@ namespace o2scl {
         std::cout << "n_points: " << this->n_points << " n_in: "
                   << n_in << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
-                   "interpm_krige_new::set_data_internal().",
+                   "interpm_krige_new::set_data().",
                    o2scl::exc_efailed);
       }
     
@@ -888,7 +888,7 @@ namespace o2scl {
         std::cout << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
-                   "interpm_krige_new::set_data_internal().",
+                   "interpm_krige_new::set_data().",
                    o2scl::exc_efailed);
       }
 
@@ -913,7 +913,7 @@ namespace o2scl {
       }
       
       if (this->verbose>0) {
-        std::cout << "interpm_krige_optim::set_data_internal(): "
+        std::cout << "interpm_krige_optim::set_data(): "
                   << "Using " << this->n_points
                   << " points with\n " << n_in << " input variables and "
                   << this->n_outputs << " output variables." << std::endl;
@@ -936,7 +936,7 @@ namespace o2scl {
           }
         }
         if (this->verbose>1) {
-          std::cout << "interpm_krige_optim::set_data_internal(): "
+          std::cout << "interpm_krige_optim::set_data(): "
                     << "data rescale." << std::endl;
         }
       }
@@ -959,7 +959,7 @@ namespace o2scl {
       for(size_t iout=0;iout<n_out;iout++) {
         
         if (this->verbose>0) {
-          std::cout << "interpm_krige_optim::set_data_internal(): "
+          std::cout << "interpm_krige_optim::set_data(): "
                     << "Output " << iout+1 << " of " << n_out
                     << std::endl;
         }
@@ -977,10 +977,22 @@ namespace o2scl {
         
         if (full_min) {
 
+          if (this->verbose>0) {
+            std::cout << "interpm_krige_optim::set_data(): "
+                      << "Full minimization." << std::endl;
+          }
+          
           // Create the simplex
           ubmatrix sx(np_covar+1,np_covar);
           ubvector sv(np_covar);
+          
           if (use_alt_mmin==false) {
+            
+            if (this->verbose>0) {
+              std::cout << "interpm_krige_optim::set_data(): "
+                        << "Creating simplex." << std::endl;
+            }
+            
             for(size_t j=0;j<np_covar;j++) {
               sx(0,j)=plists[iout][j][plists[iout][j].size()/2];
             }
@@ -1012,7 +1024,9 @@ namespace o2scl {
             if (max_val_set==false) {
               O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
             }
+            
           } else {
+            
             for(size_t j=0;j<np_covar;j++) {
               sv(j)=plists[iout][j][plists[iout][j].size()/2];
             }
@@ -1021,10 +1035,11 @@ namespace o2scl {
             if (success!=0) {
               O2SCL_ERR("Max val failed 2.",o2scl::exc_efailed);
             }
+            
           }
 
           if (this->verbose>0) {
-            std::cout << "interpm_krige_optim::set_data_internal(): "
+            std::cout << "interpm_krige_optim::set_data(): "
                       << "full minimization with\n  " << np_covar
                       << " parameters." << std::endl;
             if (use_alt_mmin==false) {
@@ -1074,7 +1089,7 @@ namespace o2scl {
           bool min_set=false, done=false;
           
           if (this->verbose>1) {
-            std::cout << "interpm_krige_optim::set_data_internal() : "
+            std::cout << "interpm_krige_optim::set_data() : "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
             for(size_t jk=0;jk<plists[iout].size();jk++) {
