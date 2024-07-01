@@ -25,7 +25,6 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/interpm_idw.h>
 #include <o2scl/interp2_neigh.h>
-#include <o2scl/interp2_planar.h>
 #include <o2scl/rng.h>
 #include <o2scl/table.h>
 

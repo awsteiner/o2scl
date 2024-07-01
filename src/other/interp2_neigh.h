@@ -63,8 +63,6 @@ namespace o2scl {
       \note This class operates by performing a \f$ {\cal O}(N) \f$
       brute-force search to find the closest points. 
 
-      \future Make a parent class for this and \ref o2scl::interp2_planar.
-
       \future Maybe interpm_idw subsumes this functionality and 
       makes this class obsolete? Or is this specialization
       particularly efficient?
@@ -122,7 +120,7 @@ namespace o2scl {
       }
 
       if (dx<=0.0 || dy<=0.0) {
-	O2SCL_ERR("No scale in interp2_planar::set_data().",exc_einval);
+	O2SCL_ERR("No scale in interp2_neigh::set_data().",exc_einval);
       }
 
       return;
@@ -164,7 +162,7 @@ namespace o2scl {
       return eval(x,y);
     }
 
-    /** \brief Perform the planar interpolation using the first two
+    /** \brief Perform the interpolation using the first two
 	elements of \c v as input
     */
     template<class vec2_t> double operator()(vec2_t &v) const {
@@ -181,7 +179,7 @@ namespace o2scl {
 		    size_t &i1, double &x1, double &y1) const {
       
       if (data_set==false) {
-	O2SCL_ERR("Data not set in interp_planar::eval_points().",
+	O2SCL_ERR("Data not set in interp2_neigh::eval_point().",
 		  exc_einval);
       }
 
