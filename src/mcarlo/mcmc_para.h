@@ -4002,12 +4002,16 @@ namespace o2scl {
     /// Sum at last retraining
     size_t last_retrain_sum;
 
+    /// If true, show the emulator accuracy
+    int show_emu;
+    
     /// \name Constructor and destructor
     //@{
     mcmc_para_emu() {
       max_train_size=1000;
       n_retrain=1000;
       last_retrain_sum=0;
+      show_emu=0;
     }
 
     virtual ~mcmc_para_emu() {
@@ -4103,9 +4107,19 @@ namespace o2scl {
                          size_t walker_ix, int func_ret,
                          bool mcmc_accept, data_t &dat,
                          size_t i_thread, fill_t &fill) {
-      
+
+      double log_wgt_orig=log_weight;
       if (mcmc_accept==true) {
         ((*func_ptr)[i_thread])(pars.size(),pars,log_weight,dat);
+        if (show_emu>0) {
+          std::cout << "mcmc_para_emu::add_line(), show_emu="
+                    << show_emu << ": pars[0],emu,exact: " << pars[0] << " "
+                    << log_wgt_orig << " " << log_weight << std::endl;
+          if (show_emu>1) {
+            char ch;
+            std::cin >> ch;
+          }
+        }
       }
       return mcmc_para_table<func_t,fill_t,data_t,vec_t,
                              stepper_t>::add_line
@@ -4137,10 +4151,8 @@ namespace o2scl {
             const_matrix_view_table<> cmvt_x(emu_table,pnames);
             matrix_view_table<> mvt_y(emu_table,{"log_wgt"});
             
-            std::cout << "Calling set_data for it: " << it << std::endl;
             emu[it]->set_data(n_params_child,1,emu_table.get_nlines(),
                               cmvt_x,mvt_y);
-            std::cout << "Done calling set_data for it: " << it << std::endl;
           }
         }
         // End of parallel region

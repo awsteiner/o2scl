@@ -784,7 +784,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  if (true) {
+  if (argc>=2) {
     
     mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
                   ubvector> mpe;
@@ -798,6 +798,7 @@ int main(int argc, char *argv[]) {
     mpe.n_threads=1;
     mpe.max_iters=N/5;
     mpe.prefix="mpe";
+    mpe.show_emu=1;
     mpe.def_stepper->step_fac[0]=10.0;
 
     // Set up the shared pointer to the interpolation object
@@ -818,8 +819,9 @@ int main(int argc, char *argv[]) {
     mfrn->len.resize(1);
     
     iko->verbose=2;
-    vector<double> len_list={0.01,0.03,0.1};
-    vector<double> l10_list={-15,-13,-11,-9};
+    iko->def_mmin.verbose=1;
+    vector<double> len_list={0.1,0.3,1.0,3.0};
+    vector<double> l10_list={-15,-13,-11};
     vector<vector<double>> ptemp;
     ptemp.push_back(len_list);
     ptemp.push_back(l10_list);
