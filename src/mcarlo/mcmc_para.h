@@ -4036,7 +4036,8 @@ namespace o2scl {
       size_t sum=vector_sum<std::vector<size_t>,size_t>
         (this->n_accept.size(),this->n_accept);
 
-      std::cout << "Here: " << n_retrain << " " << sum << " "
+      std::cout << "Function outside_parallel(): "
+                << n_retrain << " " << sum << " "
                 << last_retrain_sum << " " 
                 << this->table->get_nlines() << " " << this->n_threads
                 << " " << this->n_walk << std::endl;
@@ -4045,7 +4046,7 @@ namespace o2scl {
           this->table->get_nlines()>this->n_threads*this->n_walk) {
 
         last_retrain_sum=sum;
-        std::cout << "Here2." << std::endl;
+        std::cout << "Retraining." << std::endl;
         
         // Reconstruct emu_table from emu_init and the result table
         emu_table.set_nlines(this->table->get_nlines()-
