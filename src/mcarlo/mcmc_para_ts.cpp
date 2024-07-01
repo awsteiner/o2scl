@@ -819,7 +819,7 @@ int main(int argc, char *argv[]) {
     
     iko->verbose=2;
     vector<double> len_list={0.01,0.03,0.1};
-    vector<d`ouble> l10_list={-15,-13,-11,-9};
+    vector<double> l10_list={-15,-13,-11,-9};
     vector<vector<double>> ptemp;
     ptemp.push_back(len_list);
     ptemp.push_back(l10_list);
