@@ -2099,13 +2099,13 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
       if (method=="py_gp") {
         ip.set_functions("o2sclpy","set_data_str","eval","eval_unc",
                          "interpm_sklearn_gp","verbose=2",2);
-        ip.set_data(2,table_obj.get_nlines(),in.size()-6,
-                    tin,tout);
+        ip.set_data_tensor(2,table_obj.get_nlines(),in.size()-6,
+                           tin,tout);
       } else {
         ip.set_functions("o2sclpy","set_data_str","eval","eval",
                         "interpm_tf_dnn","verbose=2",2);
-        ip.set_data(2,table_obj.get_nlines(),in.size()-6,
-                    tin,tout);
+        ip.set_data_tensor(2,table_obj.get_nlines(),in.size()-6,
+                           tin,tout);
       }
         
       for(size_t i=0;i<table3d_obj.get_nx();i++) {
