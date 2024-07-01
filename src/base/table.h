@@ -3426,7 +3426,8 @@ namespace o2scl {
     }
 
     /// Make sure a name is unique
-    void make_unique_name(std::string &colx, std::vector<std::string> &cnames) {
+    void make_unique_name(std::string &colx,
+                          std::vector<std::string> &cnames) {
       bool done;
 
       do {

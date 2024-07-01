@@ -3950,6 +3950,195 @@ namespace o2scl {
     }
   
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  template<class func_t, class fill_t, class data_t, class vec_t=ubvector,
+           class stepper_t=mcmc_stepper_rw<func_t,data_t,vec_t>>
+  class mcmc_para_emu : public mcmc_para_cli<
+    std::function<int(size_t,const vec_t &,double &,data_t &)>,fill_t,
+    data_t,vec_t,stepper_t> {
+
+  public:
+    
+    typedef std::function<int(size_t,const vec_t &,double &,data_t &)>
+    internal_point_t;
+
+    /// Desc
+    std::string emu_file;
+
+    /// Desc
+    o2scl::table_units<> emu_table;
+
+    /// Desc
+    size_t n_rows_emu_init;
+
+    /// Desc
+    std::vector<func_t> *func_ptr;
+    
+    /// Desc
+    std::vector<shared_ptr<interpm_base<ubvector,
+                                        o2scl::const_matrix_view_table<>,
+                                        o2scl::matrix_view_table<>>>> emu;
+
+    /// Desc
+    int point_wrapper(size_t it, size_t np, const vec_t &p, double &log_wgt,
+                      data_t &dat) {
+      ubvector out(1);
+      emu[it]->eval(p,out);
+      log_wgt=out[0];
+      return 0;
+    }
+
+    /// Desc
+    size_t n_params_child;
+    
+    /// Desc
+    virtual void outside_parallel() {
+
+      size_t sum=vector_sum(n_accept.size(),n_accept);
+      if (sum%100==0 && table->get_nlines()>n_threads*n_walk) {
+
+        // Reconstruct emu_table with results from shared pointer table
+        emu_table.set_nlines(table->get_nlines()-
+                             n_threads*n_walk+n_rows_emu_init);
+          
+        for(size_t j=n_rows_emu_init;j<emu_table.get_nlines();j++) {
+          for(size_t k=0;k<n_params_child;k++) {
+            emu_table.set(k,j,table->get(col_names[k],j+n_threads*n_walk-
+                                         n_rows_emu_init));;
+          }
+          emu_table.set("log_wgt",j,table->get("log_wgt",j+n_threads*n_walk-
+                                               n_rows_emu_init));;
+        }
+
+        emu_train();         
+        
+      }
+      
+      return;
+    }
+    
+    /// Desc
+    virtual int add_line(const vec_t &pars, double log_weight,
+                         size_t walker_ix, int func_ret,
+                         bool mcmc_accept, data_t &dat,
+                         size_t i_thread, fill_t &fill) {
+      
+      if (mcmc_accept==true) {
+        (*func_ptr)(pars.size(),pars,log_weight,dat);
+      }
+      return mcmc_para_table<func_t,fill_t,data_t,vec_t,
+                             stepper_t>::add_line(pars,log_weight,walker_ix,
+                                                  func_ret,mcmc_accept,dat,
+                                                  i_thread,fill);
+      return 0;
+    }
+
+    void emu_train() {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
+      {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+        for(size_t it=0;it<this->n_threads && it<emu.size();it++) {
+          
+          std::vector<std::string> pnames;
+          for(size_t j=0;j<n_params_local;j++) {
+            pnames.push_back(col_names[j]);
+          }
+          const_matrix_view_table<> cmvt_x(emu_table,pnames);
+          matrix_view_table<> mvt_y(emu_table,"log_wgt");
+          
+          emu.set_data(n_params_local,1,emu_table.get_nlines(),
+                       cmvt_x,mvt_y);
+        }
+        // End of parallel region
+      }
+
+      return;
+    }
+    
+    /// Desc
+    int mcmc_emu(size_t n_params_local, 
+                 vec_t &low, vec_t &high,
+                 std::vector<func_t> &func,
+                 std::vector<fill_t> &fill,
+                 std::vector<data_t> &data) {
+
+      n_params_child=n_params_local;
+      
+      // Set number of threads (this is done in the child as well, but
+      // we need this number to set up the vector of measure functions
+      // below).
+#ifdef O2SCL_SET_OPENMP
+      omp_set_num_threads(this->n_threads);
+#else
+      this->n_threads=1;
+#endif
+
+#ifdef O2SCL_MPI
+      // Ensure that multiple threads aren't reading from the
+      // filesystem at the same time
+      int tag=0, buffer=0;
+      if (this->mpi_size>1 && this->mpi_rank>0) {
+        MPI_Recv(&buffer,1,MPI_INT,this->mpi_rank-1,
+                 tag,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+      }
+#endif
+
+      table_units<> emu_temp;
+      o2scl_hdf::hdf_file hf;
+      hf.open(emu_file);
+      std::string tname;
+      hdf_input(hf,emu_temp,tname);
+      hf.close();
+      n_rows_emu_init=emu_temp.get_nlines();
+
+      // Recast the file into an emulator table
+      for(size_t k=0;k<n_params_local;k++) {
+        emu_table.new_column(col_names[k]);
+      }
+      emu_table.new_column("log_wgt");
+      for(size_t j=0;j<n_rows_emu_init;j++) {
+        for(size_t k=0;k<n_params_local;k++) {
+          emu_table.set(k,j,emu_temp.get(col_names[k],j));
+        }
+        emu_table.set("log_wgt",j,emu_temp.get("log_wgt",j));
+      }
+      
+#ifdef O2SCL_MPI
+      if (this->mpi_size>1 && this->mpi_rank<this->mpi_size-1) {
+        MPI_Send(&buffer,1,MPI_INT,this->mpi_rank+1,
+                 tag,MPI_COMM_WORLD);
+      }
+#endif
+
+      emu_train();
+      
+      // Setup the pointer to the user-specified function vector
+      func_ptr=&func;
+      
+      // Setup the vector of point wrappers
+      std::vector<internal_point_t> point_ptr(this->n_threads);
+      for(size_t it=0;it<this->n_threads;it++) {
+        point_ptr[it]=std::bind
+          (std::mem_fn<int(size_t,size_t,const vec_t &,double &,
+                           data_t &)>
+           (&mcmc_para_emu::point_wrapper),this,it,std::placeholders::_1,
+           std::placeholders::_2,std::placeholders::_3,
+           std::placeholders::_4);
+      }
+      
+      return parent_t::mcmc_fill(n_params_local,low,high,point_ptr,
+                                 fill,data);
+    }
+    
+  };
+
+#endif
   
   // End of namespace
 }
