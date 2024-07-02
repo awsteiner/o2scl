@@ -766,7 +766,7 @@ namespace o2scl {
         This function implements Eq. 2.19 of R&W
     */
     template<class vec_t>
-      prob_dens_mdim_gaussian gen_mdim_dist(vec_t &v) const {
+      prob_dens_mdim_gaussian<vec_t,ubmatrix> gen_mdim_dist(vec_t &v) const {
       
       if (!keep_matrix) {
         O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
@@ -802,28 +802,43 @@ namespace o2scl {
 
       /*
         [sz,sz] * [sz]
-      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
-                         o2scl_cblas::o2cblas_NoTrans,
-                         this->sz,this->sz,1.0,inv_KXX,kxx0,0.0,prod);
-      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+        o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+        o2scl_cblas::o2cblas_NoTrans,
+        this->sz,this->sz,1.0,inv_KXX,kxx0,0.0,prod);
+        sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+        
+        template<class mat_t> void o2scl_cblas::dgemm(const enum
+        o2cblas_order Order, const enum o2cblas_transpose TransA, const
+        enum o2cblas_transpose TransB, const size_t M, const size_t N,
+        const size_t K, const double alpha, const mat_t &A, const mat_t
+        &B, const double beta, mat_t &C)
+        
+        Compute  y = alpha op(A) op(B) + beta C
       */
       // [sz,sz] * [sz,v] = [sv,v]
       o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
                          o2scl_cblas::o2cblas_NoTrans,
-                         this->sz,this->sz,v.size(),1.0,inv_KXX,kxx0,0.0,prod);
-      // [v,sz] * [sz,v] = [v,v]
-      o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
                          o2scl_cblas::o2cblas_NoTrans,
-                         v.size(),this->sz,v.size(),-1.0,kxx0,prod,0.0,sigma);
-      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+                         this->sz,v.size(),this->sz,1,
+                         inv_KXX,kxx0,0.0,prod);
+      // [v,sz] * [sz,v] = [v,v]
+      sigma=kx0x0;
+      o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_Trans,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         v.size(),v.size(),this->sz,-1,
+                         kxx0,prod,1,sigma);
 
       if (rescaled) {
-        sigma*=std_y;
+        for(size_t i=0;i<v.size();i++) {
+          for(size_t j=0;j<v.size();j++) {
+            sigma(i,j)*=std_y;
+            if (sigma(i,j)<0.0) sigma(i,j)=0.0;
+          }
+        }
       }
 
-      if (sigma<0.0) sigma=0.0;
-      
-      return prob_dens_gaussian(cent,sigma);
+      return prob_dens_mdim_gaussian(v.size(),cent,sigma);
     }
 
 #endif

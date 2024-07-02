@@ -195,7 +195,7 @@ int main(void) {
     interpm_python ip("o2sclpy","set_data_str","eval","eval",
                       "interpm_tf_dnn",
                       ((std::string)"verbose=0,")+
-                      "test_size=0.15,batch_size=10,transform=none",0);
+                      "test_size=0.15,batch_size=10",0);
     ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2), ey(1);
