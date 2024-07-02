@@ -250,7 +250,7 @@ namespace o2scl {
      */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y) {
-      
+
       tensor<> tin, tout;
       std::vector<size_t> in_size={n_pts,n_in}, out_size={n_pts,n_out};
       tin.resize(2,in_size);
@@ -287,7 +287,7 @@ namespace o2scl {
         \note This function returns a void pointer to be
         compatible with the Python import_array() macro. 
      */
-    void *set_data_internal(size_t n_pars, size_t n_dat, size_t n_out,
+    void *set_data_internal(size_t n_pars, size_t n_out, size_t n_dat, 
                             const o2scl::tensor<> &params,
                             const o2scl::tensor<> &outputs,
                             int &ret) {
@@ -704,7 +704,7 @@ namespace o2scl {
       std::vector<double> x2(this->n_params), y2(this->n_outputs);
       vector_copy(this->n_params,x,x2);
       int ret=eval_std_vec(x2,y2);
-      vector_copy(this->n_params,y2,y);
+      vector_copy(this->n_outputs,y2,y);
       return ret;
     }
     
@@ -717,8 +717,8 @@ namespace o2scl {
       std::vector<double> y_unc2(this->n_outputs);
       vector_copy(this->n_params,x,x2);
       int ret=eval_unc_std_vec(x2,y2,y_unc2);
-      vector_copy(this->n_params,y2,y);
-      vector_copy(this->n_params,y_unc2,y_unc);
+      vector_copy(this->n_outputs,y2,y);
+      vector_copy(this->n_outputs,y_unc2,y_unc);
       return ret;
     }
     
