@@ -603,6 +603,8 @@ namespace o2scl {
         an alternate covariance function
 
         \note This function only works if the data is not rescaled.
+        If the data is rescaled, then this function will call
+        the error handler. 
     */
     template<class covar_func2_t>
       double eval_covar(double x0, covar_func2_t &user_f) const {
@@ -755,6 +757,76 @@ namespace o2scl {
       
       return prob_dens_gaussian(cent,sigma);
     }
+
+#ifdef O2SCL_NEVER_DEFINED
+    
+    /** \brief Generate a probability distribution for the interpolation
+        at a specified point
+
+        This function implements Eq. 2.19 of R&W
+    */
+    template<class vec_t>
+      prob_dens_mdim_gaussian gen_mdim_dist(vec_t &v) const {
+      
+      if (!keep_matrix) {
+        O2SCL_ERR2("Matrix information missing (keep_matrix==false) in ",
+                   "interp_krige::gen_dist().",o2scl::exc_einval);
+      }
+      
+      ubvector cent(v.size());
+      ubmatrix kxx0(this->sz,v.size());
+      ubmatrix prod(this->sz,v.size());
+      ubmatrix kx0x0(v.size(),v.size());
+      ubmatrix sigma(v.size(),v.size());
+      //ubvector kxx0(this->sz), prod(this->sz);
+      //double kx0x0=(*f)(x0,x0);
+
+      for(size_t i=0;i<v.size();i++) {
+        for(size_t j=0;j<v.size();j++) {
+          if (i>j) {
+            kx0x0(i,j)=kx0x0(j,i);
+          } else {
+            kx0x0(i,j)=(*f)(v[i],v[j]);
+          }
+        }
+      }
+      for(size_t j=0;j<v.size();j++) {
+        for(size_t i=0;i<this->sz;i++) {
+          kxx0(i,j)=(*f)((*this->px)[i],v[j]);
+        }
+        cent[j]=kxx0(i,j)*Kinvf[i];
+        if (rescaled) {
+          cent[j]=cent[j]*std_y+mean_y;
+        }
+      }
+
+      /*
+        [sz,sz] * [sz]
+      o2scl_cblas::dgemv(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         this->sz,this->sz,1.0,inv_KXX,kxx0,0.0,prod);
+      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+      */
+      // [sz,sz] * [sz,v] = [sv,v]
+      o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         this->sz,this->sz,v.size(),1.0,inv_KXX,kxx0,0.0,prod);
+      // [v,sz] * [sz,v] = [v,v]
+      o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                         o2scl_cblas::o2cblas_NoTrans,
+                         v.size(),this->sz,v.size(),-1.0,kxx0,prod,0.0,sigma);
+      sigma=kx0x0-o2scl_cblas::ddot(this->sz,kxx0,prod);
+
+      if (rescaled) {
+        sigma*=std_y;
+      }
+
+      if (sigma<0.0) sigma=0.0;
+      
+      return prob_dens_gaussian(cent,sigma);
+    }
+
+#endif
     
     /** \brief Sample the probability distribution for the interpolation
         at a specified point

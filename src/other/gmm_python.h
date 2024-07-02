@@ -52,9 +52,6 @@ namespace o2scl {
     
   protected:
 
-    // Python unicode object containing function name
-    //PyObject *p_name;
-    
     /// Python module containing function
     PyObject *p_module;
     
@@ -162,7 +159,7 @@ namespace o2scl {
 
     /** \brief Get the underlying Gaussian mixture probability
         density
-     */
+    */
     std::shared_ptr<prob_dens_mdim_gmm<>> get_gmm() {
       return pdm_gmm;
     }

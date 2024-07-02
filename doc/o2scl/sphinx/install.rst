@@ -191,8 +191,8 @@ Docker images for O₂scl
 -----------------------
 
 There are a few docker images for recent versions of
-O₂scl up at https://hub.docker.com/r/awsteiner/o2scl . These images
-are based on the experimental docker files which are stored in
+O₂scl available at https://hub.docker.com/r/awsteiner/o2scl . These images
+are based on the docker files which are stored in
 the ``docker`` subdirectory, and can be found at 
 https://github.com/awsteiner/o2scl/tree/main/docker .
 
@@ -256,40 +256,12 @@ require additional ``-I`` or ``-L`` flags to be defined when O₂scl is
 installed, depending on how your particular system is configured. For
 example, O₂scl classes which use Armadillo use matrix decompositions
 so Armadillo must be compiled with LAPACK support, and you may need to
-specify the location of the LAPACK libraries manually. If you are
-installing on Mac OS X with homebrew, the options ``--with-eigen`` and
-``with-armadillo`` can be used.
+specify the location of the LAPACK libraries manually.
 
-Other optional libraries
-------------------------
-
-As with the linear algebra libraries, these libraries may require
-additional ``-I`` or ``-L`` flags to be defined when O₂scl is
-installed, depending on how your particular system is configured. The
-configure script should automatically add ``-l<library name>`` to
-LDFLAGS during installation, but you will need to also add this flag
-to your codes which use O₂scl.
-
-Readline support (``-lreadline``): The command-line interface class
-:ref:`cli <cli>`, and ``acol`` (see :ref:`The acol Command Line
-Utility`) can both take advantage of readline support. If the library
-is configured with ``--disable-readline``, then the readline library
-is not used.
-
-OpenMP support (typically involves the ``-fopenmp`` compiler flag):
-O₂scl contains a few functions which use multiple threads for
-faster execution. This support can be included using the
-``-enable-openmp`` option to the configure script. On some systems,
-this will also include explicitly specifying the OpenMP libraries
-in the ``LDFLAGS`` environment variable. See more information in
-:ref:`Parallel Programming with O2scl`. 
-  
-FFTW support (``-lfftw3``): O₂scl contains a few functions which
-require FFTW support, and this can be included if ``--enable-fftw`` is
-passed to the configure script.
-
-Module support, curses support, MFPR support, cubature support, and
-pugixml support are all experimental.
+..
+  If you are
+  installing on Mac OS X with homebrew, the options ``--with-eigen`` and
+  ``with-armadillo`` can be used.
 
 Other optional libraries
 ------------------------
