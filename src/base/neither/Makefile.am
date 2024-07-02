@@ -27,6 +27,12 @@ else
 PYTHON_VAR = set_python.h
 endif
 
+if O2SCL_PUGIXML
+PUGIXML_VAR = 
+else
+PUGIXML_VAR = set_pugixml.h
+endif
+
 if O2SCL_OPENMP
 OPENMP_VAR = 
 else
@@ -44,8 +50,8 @@ endif
 # ------------------------------------------------------------
 
 am__pkginclude_HEADERS_DIST = vector_special.h set_fftw.h set_mpfr.h \
-	set_openmp.h set_python.h set_readline.h
+	set_openmp.h set_python.h set_readline.h set_pugixml.h
 
 pkginclude_HEADERS = $(HEADER_VAR) $(MPFR_VAR) $(PYTHON_VAR) \
-	$(FFTW_VAR) $(OPENMP_VAR) $(READLINE_VAR)
+	$(FFTW_VAR) $(OPENMP_VAR) $(READLINE_VAR) $(PUGIXML_VAR)
 

@@ -107,7 +107,7 @@ int main(void) {
 
     interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
                       "interpm_sklearn_gp","verbose=3",1);
-    ip.set_data_tensor(2,N,1,tin,tout);
+    ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
@@ -148,7 +148,7 @@ int main(void) {
     
     interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
                       "interpm_sklearn_gp","verbose=1",1);
-    ip.set_data_tensor(2,N,2,tin,tout);
+    ip.set_data_tensor(2,2,N,tin,tout);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;
@@ -196,7 +196,7 @@ int main(void) {
                       "interpm_tf_dnn",
                       ((std::string)"verbose=0,")+
                       "test_size=0.15,batch_size=10,transform=none",0);
-    ip.set_data_tensor(2,N,1,tin,tout);
+    ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2), ey(1);
     ex[0]=0.5;
@@ -229,7 +229,7 @@ int main(void) {
     // progress bars which cause problems in docker terminals
     interpm_python ip("o2sclpy","set_data_str","eval","eval",
                       "interpm_tf_dnn","verbose=0",0);
-    ip.set_data_tensor(2,N,2,tin,tout);
+    ip.set_data_tensor(2,2,N,tin,tout);
     
     std::vector<double> ex(2), ey(2);
     ex[0]=0.5;
