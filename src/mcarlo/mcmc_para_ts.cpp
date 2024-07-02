@@ -831,6 +831,8 @@ int main(int argc, char *argv[]) {
     iko->set_covar(vmfrn,param_lists);
     
     mpe.emu_file="mcmct_0_out";
+
+    //mpe.test_emu=true;
     
     mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     

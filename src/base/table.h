@@ -1463,12 +1463,16 @@ namespace o2scl {
         the end of the table.
     */
     template<class vec2_t>
-    void copy_rows(std::string func, table<vec2_t> &dest) {
+    void copy_rows(std::string func, table<vec2_t> &dest,
+                   int loc_verbose=0) {
 
       // Set up columns
       for(size_t i=0;i<get_ncolumns();i++) {
         std::string cname=get_column_name(i);
         if (dest.is_column(cname)==false) {
+          if (loc_verbose>0) {
+            std::cout << "Creating new column " << cname << std::endl;
+          }
           dest.new_column(cname);
         }
       }
@@ -1476,6 +1480,9 @@ namespace o2scl {
       size_t new_lines=dest.get_nlines();
       for(size_t i=0;i<nlines;i++) {
         fp_t val=row_function(func,i);
+        if (loc_verbose>0) {
+          std::cout << "i,val: " << i << " " << val << std::endl;
+        }
         if (val>0.5) {
           dest.set_nlines_auto(new_lines+1);
           for(size_t j=0;j<get_ncolumns();j++) {
