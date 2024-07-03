@@ -746,7 +746,7 @@ int main(int argc, char *argv[]) {
       (new mcmc_stepper_hmc<
        point_hmc,std::vector<double>,ubvector>);
     mpc.mct_hmc.stepper=new_stepper;
-      
+
     mpc.mct_hmc.set_names_units(pnames_hmc,punits_hmc);
     
     mpc.mct_hmc.aff_inv=false;

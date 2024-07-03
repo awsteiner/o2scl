@@ -4032,7 +4032,7 @@ namespace o2scl {
                                  o2scl::matrix_view_table<>>>> emu;
 
     /// Wrapper to the point function which uses the emulator
-    int point_wrapper(size_t it, size_t np, const vec_t &p,
+    virtual int point_wrapper(size_t it, size_t np, const vec_t &p,
                       double &log_wgt, data_t &dat) {
 
       if (n_retrain>0) {
@@ -4128,23 +4128,25 @@ namespace o2scl {
       if (n_retrain>0) {
         double log_wgt_orig=log_weight;
         if (mcmc_accept==true) {
-          ((*func_ptr)[i_thread])(pars.size(),pars,log_weight,dat);
+          func_ret=((*func_ptr)[i_thread])(pars.size(),pars,log_weight,dat);
           if (show_emu>0) {
             std::cout << "mcmc_para_emu::add_line(), show_emu="
                       << show_emu << ": pars[0],emu,exact: " << pars[0] << " "
-                      << log_wgt_orig << " " << log_weight << std::endl;
+                      << log_wgt_orig << " " << log_weight << " "
+                      << func_ret << std::endl;
             if (show_emu>1) {
               char ch;
               std::cin >> ch;
             }
           }
+          if (func_ret!=0) mcmc_accept=false;
         }
+        
       }
+      
       return mcmc_para_table<func_t,fill_t,data_t,vec_t>::add_line
         (pars,log_weight,walker_ix,func_ret,mcmc_accept,dat,
          i_thread,fill);
-      
-      return 0;
     }
 
     /** \brief Train the emulator
