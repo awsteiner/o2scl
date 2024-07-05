@@ -41,12 +41,13 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-#include <o2scl/hdf_file.h>
 #include <o2scl/exception.h>
-#include <o2scl/prob_dens_func.h>
-#include <o2scl/vector.h>
 #include <o2scl/multi_funct.h>
 #include <o2scl/vec_stats.h>
+#include <o2scl/vector.h>
+#include <o2scl/prob_dens_func.h>
+#include <o2scl/hdf_file.h>
+#include <o2scl/hdf_io.h>
 #include <o2scl/cli.h>
 #include <o2scl/interpm_base.h>
 
@@ -4008,7 +4009,7 @@ namespace o2scl {
     /** \brief If true, test the emulator with 10 percent of the data
         (default false)
     */
-    bool test_emu;
+    std::string test_emu_file;
     
     /// \name Constructor and destructor
     //@{
@@ -4017,7 +4018,7 @@ namespace o2scl {
       n_retrain=1000;
       last_retrain_sum=0;
       show_emu=0;
-      test_emu=false;
+      test_emu_file="";
     }
 
     virtual ~mcmc_para_emu() {
@@ -4240,6 +4241,7 @@ namespace o2scl {
         n_rows_emu_init=emu_init.get_nlines();
         std::cout << "n_rows_emu_init: " << n_rows_emu_init << std::endl;
 
+        // --------------------------------------------------------
         // Reorganize the file into an emulator table
 
         // Setup emulator table columns
@@ -4256,9 +4258,14 @@ namespace o2scl {
           }
           emu_table.set("log_wgt",j,emu_init.get("log_wgt",j));
         }
-      
+
+        // Create test table and file if requested
+        
         table_units<> emu_test_tab;
-        if (test_emu) {
+        if (test_emu_file!="") {
+
+          // Select 10 percent of the emu_table rows for the
+          // test table
           emu_table.new_column("N");
             for(size_t k=0;k<emu_table.get_nlines();k++) {
               emu_table.set("N",k,k);
@@ -4266,11 +4273,18 @@ namespace o2scl {
           size_t n_move=emu_table.get_nlines()/10;
           std::string funcx=((std::string)"N>")+
             o2scl::szttos(emu_table.get_nlines()-n_move);
+
+          // Copy the rows from emu_table to the test table
           emu_table.copy_rows(((std::string)"N>")+
                               o2scl::szttos(emu_table.get_nlines()-n_move),
                               emu_test_tab);
+
+          // Remove the rows from emu_table
           emu_table.set_nlines(emu_table.get_nlines()-n_move);
+
+          // Delete the temporary column from emu_table
           emu_table.delete_column("N");
+          
         }
         
 #ifdef O2SCL_MPI
@@ -4280,10 +4294,17 @@ namespace o2scl {
         }
 #endif
 
+        // --------------------------------------------------------
+        
         // Train the emulator
         emu_train();
 
-        if (test_emu) {
+        if (test_emu_file!="") {
+
+          emu_test_tab.new_column("log_wgt_emu");
+          
+          // Emulate each row, and place the result in column
+          // log_wgt_emu
           double qual=0.0;
           for(size_t i=0;i<emu_test_tab.get_nlines();i++) {
             ubvector x(n_params_local), y(1);
@@ -4291,10 +4312,18 @@ namespace o2scl {
               x[j]=emu_test_tab.get(j,i);
             }
             emu[0]->eval(x,y);
+            emu_test_tab.set("log_wgt_emu",i,y[0]);
+
+            // Update the quality factor
             qual+=fabs(y[0]-emu_test_tab.get("log_wgt",i));
           }
-          std::cout << "qual: " << qual << std::endl;
-          exit(-1);
+          std::cout << "mcmc_para_emu(): Emulator quality factor: "
+                    << qual << std::endl;
+
+          o2scl_hdf::hdf_file hf_emu;
+          hf_emu.open_or_create(test_emu_file);
+          o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
+          hf_emu.close();
         }
 
         // End of 'if (n_retrain>0)'

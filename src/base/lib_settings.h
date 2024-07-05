@@ -315,7 +315,7 @@ namespace o2scl {
       happen more rarely.
   */
   void rng_set_seed(rng<> &r, int mpi_size=1, int mpi_rank=0,
-                    int verbose=1);
+                    int verbose=0);
   
 #if defined (O2SCL_MPI) || defined (DOXYGEN)
   

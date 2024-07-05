@@ -784,7 +784,7 @@ int main(int argc, char *argv[]) {
     
   }
 
-  if (argc>=2) {
+  if (true) {
     
     mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
                   ubvector> mpe;
@@ -832,7 +832,7 @@ int main(int argc, char *argv[]) {
     
     mpe.emu_file="mcmct_0_out";
 
-    //mpe.test_emu=true;
+    mpe.test_emu_file="mcmc_test_emu.o2";
     
     mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
