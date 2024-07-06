@@ -39,7 +39,6 @@ int main(void) {
   
   cout.setf(ios::scientific);
 
-#ifndef O2SCL_FAST_TEST
   double res;
   nucmass_semi_empirical sem;
   nucmass_fit mf;
@@ -120,8 +119,6 @@ int main(void) {
   cout << "covariance matrix2: " << endl;
   matrix_out(cout,covar);
   
-  
-#endif
   
   t.report();
   return 0;

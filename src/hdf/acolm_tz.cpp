@@ -2208,14 +2208,28 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
         term=sv[2];
         dev=true;
         stem="o2scl-dev/html";
+        if (verbose>=2) {
+          cout << "Detected dev." << endl;
+        }
       } else if (sv[1]==((string)"o2sclpy")) {
         stem="o2sclpy";
         term=sv[2];
+        if (verbose>=2) {
+          cout << "Detected o2sclpy." << endl;
+        }
       } else if (sv[1]==((string)"o2sclpy-dev")) {
         term=sv[2];
         stem="o2sclpy-dev";
         dev=true;
+        if (verbose>=2) {
+          cout << "Detected o2sclpy-dev." << endl;
+        }
       }
+    }
+
+    if (verbose>=2) {
+      std::cout << "term,stem,dev: " << term << " "
+                << stem << " " << dev << std::endl;
     }
 
     if (term.length()>40) {
@@ -2238,7 +2252,7 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (sv.size()>=2 && sv[1]=="dev") {
     cmd+=((string)"https://awsteiner.org/code/")+
-      stem+"/acol.html &";
+      "o2scl-dev/html/acol.html &";
   } else if (sv.size()>=2 && sv[1]=="o2sclpy") {
     cmd+=((string)"https://awsteiner.org/code/")+
       "o2sclpy/o2graph.html &";
