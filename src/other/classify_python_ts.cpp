@@ -89,7 +89,7 @@ int main(void) {
     
   if (true) {
 
-    // Sklearn Gaussian process, n_out=1
+    // Sklearn MLPC, n_out=1
     
     tensor<> tin;
     tensor<int> tout;
@@ -105,7 +105,7 @@ int main(void) {
       tin.get(ix)=y[j];
     }
 
-    classify_python ip("o2sclpy","set_data_str","eval","eval_unc",
+    classify_python ip("o2sclpy","set_data_str","eval",
                       "classify_sklearn_mlpc","verbose=3",1);
     ip.set_data_tensor(2,1,N,tin,tout);
     
@@ -115,15 +115,7 @@ int main(void) {
     ip.eval_std_vec(ex,ey);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
-
-    ex[0]=0.5;
-    ex[1]=0.5;
-    ip.eval_unc_std_vec(ex,ey,eyp);
-    cout << ey[0] << endl;
-    cout << f(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
-    t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 3");
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn mlpc 1");
     
     cout << endl;
   }

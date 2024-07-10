@@ -3523,9 +3523,9 @@ int cli::read_docs() {
     }
     
   } else {
-    O2SCL_ERR2((((std::string)"File ")+doc_o2_file+
-                " does not exist in ",
-                "cli::read_docs().").c_str(),o2scl::exc_efilenotfound);
+    O2SCL_ERR((((std::string)"File ")+doc_o2_file+
+               " does not exist in "+
+               "cli::read_docs().").c_str(),o2scl::exc_efilenotfound);
   }
 
   return 0;
