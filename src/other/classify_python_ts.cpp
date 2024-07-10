@@ -34,13 +34,13 @@ using namespace o2scl_hdf;
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 
-double f(double x, double y) {
-  return 100*((sin(x*10)+2.0*tan(y))/5.0+0.14);
+int f(double x, double y) {
+  return 3*((sin(x*10)+2.0*tan(y))/5.0+0.14);
 }
 
-double f2(double x, double y) {
-  double fv=f(x,y);
-  return 2.0-fv*fv/70.0+fv;
+int f2(double x, double y) {
+  int fv=f(x,y);
+  return 2-2*fv*fv+fv+2.0*x;
 }
 
 int main(void) {
@@ -117,7 +117,16 @@ int main(void) {
       ip.eval_std_vec(ex,ey);
       cout << ey[0] << endl;
       cout << f(ex[0],ey[0]) << endl;
-      //t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn mlpc 1");
+      t.test_gen(abs(ey[0]-f(ex[0],ey[0]))<=1,"sklearn mlpc 1");
+    }
+
+    for(size_t i=0;i<N;i++) {
+      for(size_t j=0;j<N;j++) {
+        ex[0]=t3d.get_grid_x(i);
+        ex[1]=t3d.get_grid_y(j);
+        ip.eval_std_vec(ex,ey);
+        t3d.set(i,j,"mlpc",ey[0]);
+      }
     }
     
     cout << endl;
