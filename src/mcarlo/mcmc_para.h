@@ -54,6 +54,7 @@
 namespace o2scl {
   
   typedef boost::numeric::ublas::vector<double> ubvector;
+  typedef boost::numeric::ublas::vector<int> ubvector_int;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
   /** \brief Stepper for \ref o2scl::mcmc_para_base [pure virtual]
@@ -3976,6 +3977,12 @@ namespace o2scl {
     /// Table containing initial emulator training file
     o2scl::table_units<> emu_init;
 
+    /// Table containing training data for the classifier
+    o2scl::table_units<> emuc_table;
+
+    /// Table containing initial classifier training file
+    o2scl::table_units<> emuc_init;
+
     /// The number of rows in the original training data file
     size_t n_rows_emu_init;
 
@@ -3993,6 +4000,9 @@ namespace o2scl {
     /// File containing the training data for the emulator
     std::string emu_file;
 
+    /// File containing the training data for the classifier
+    std::string emuc_file;
+
     /// Maximum size of training table (default 1000)
     size_t max_train_size;
 
@@ -4003,14 +4013,13 @@ namespace o2scl {
      */
     size_t n_retrain;
 
-    /// If true, show the emulator accuracy (default 0)
+    /// If true, use a classifier (default false)
+    bool use_classifier;
+    
+    /** \brief If true, show the emulator accuracy (default 0)
+     */
     int show_emu;
 
-    /** \brief If true, test the emulator with 10 percent of the data
-        (default false)
-    */
-    std::string test_emu_file;
-    
     /// \name Constructor and destructor
     //@{
     mcmc_para_emu() {
@@ -4018,25 +4027,38 @@ namespace o2scl {
       n_retrain=1000;
       last_retrain_sum=0;
       show_emu=0;
-      test_emu_file="";
     }
 
     virtual ~mcmc_para_emu() {
     }
     //@}
     
-    /** \brief List of shared pointers to the interpolators
+    /** \brief List of shared pointers to the interpolators, one
+        for each OpenMP thread
      */
     std::vector<std::shared_ptr<interpm_base
                                 <ubvector,
                                  o2scl::const_matrix_view_table<>,
                                  o2scl::matrix_view_table<>>>> emu;
 
+    /** \brief List of shared pointers to the classifiers, one
+        for each OpenMP thread
+     */
+    std::vector<std::shared_ptr<classify_python
+                                <ubvector,
+                                 o2scl::const_matrix_view_table<>,
+                                 o2scl::matrix_view_table<>>>> emuc;
+    
     /// Wrapper to the point function which uses the emulator
     virtual int point_wrapper(size_t it, size_t np, const vec_t &p,
                       double &log_wgt, data_t &dat) {
 
       if (n_retrain>0) {
+        if (use_classifier) {
+          ubvector_int outc(1);
+          emuc[it]->eval(p,outc);
+          if (outc[0]>0) return outc[0];
+        }
         ubvector out(1);
         emu[it]->eval(p,out);
         log_wgt=out[0];
@@ -4130,12 +4152,12 @@ namespace o2scl {
         double log_wgt_orig=log_weight;
         if (mcmc_accept==true) {
           func_ret=((*func_ptr)[i_thread])(pars.size(),pars,log_weight,dat);
-          if (show_emu>0) {
+          if (show_emu>1) {
             std::cout << "mcmc_para_emu::add_line(), show_emu="
                       << show_emu << ": pars[0],emu,exact: " << pars[0] << " "
                       << log_wgt_orig << " " << log_weight << " "
                       << func_ret << std::endl;
-            if (show_emu>1) {
+            if (show_emu>2) {
               char ch;
               std::cin >> ch;
             }
@@ -4221,6 +4243,13 @@ namespace o2scl {
         hdf_input(hf,emu_init,tname);
         hf.close();
 
+        if (use_classifier) {
+          hf.open(emuc_file);
+          std::string tname;
+          hdf_input(hf,emuc_init,tname);
+          hf.close();
+        }
+
         // Add the index column
         emu_init.new_column("N");
         for(size_t k=0;k<emu_init.get_nlines();k++) {
@@ -4262,7 +4291,7 @@ namespace o2scl {
         // Create test table and file if requested
         
         table_units<> emu_test_tab;
-        if (test_emu_file!="") {
+        if (show_emu>0) {
 
           // Select 10 percent of the emu_table rows for the
           // test table
@@ -4299,7 +4328,7 @@ namespace o2scl {
         // Train the emulator
         emu_train();
 
-        if (test_emu_file!="") {
+        if (show_emu>0) {
 
           emu_test_tab.new_column("log_wgt_emu");
           
@@ -4321,6 +4350,7 @@ namespace o2scl {
                     << qual << std::endl;
 
           o2scl_hdf::hdf_file hf_emu;
+          std::string test_emu_file=((std::string)"prefix")+"_te.o2";
           hf_emu.open_or_create(test_emu_file);
           o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
           hf_emu.close();

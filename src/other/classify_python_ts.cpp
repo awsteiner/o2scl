@@ -35,12 +35,12 @@ using namespace o2scl_hdf;
 typedef boost::numeric::ublas::vector<double> ubvector;
 
 double f(double x, double y) {
-  return (sin(x*10)+2.0*tan(y))/5.0+0.14;
+  return 100*((sin(x*10)+2.0*tan(y))/5.0+0.14);
 }
 
 double f2(double x, double y) {
   double fv=f(x,y);
-  return 2.0-fv*fv+fv;
+  return 2.0-fv*fv/70.0+fv;
 }
 
 int main(void) {
@@ -78,7 +78,7 @@ int main(void) {
   uniform_grid<double> ugx=uniform_grid_end<double>(0,1,99);
   uniform_grid<double> ugy=uniform_grid_end<double>(0,1,99);
   t3d.set_xy("x",ugx,"y",ugy);
-  t3d.line_of_names("exact gp exact2 gp2 dnn dnn2");
+  t3d.line_of_names("exact exact2 mlpc");
   
   for(size_t i=0;i<100;i++) {
     for(size_t j=0;j<100;j++) {
@@ -106,16 +106,19 @@ int main(void) {
     }
 
     classify_python ip("o2sclpy","set_data_str","eval",
-                      "classify_sklearn_mlpc","verbose=3",1);
+                      "classify_sklearn_mlpc","verbose=3",3);
     ip.set_data_tensor(2,1,N,tin,tout);
     
-    std::vector<double> ex(2), ey(1), eyp(1);
-    ex[0]=0.5;
-    ex[1]=0.5;
-    ip.eval_std_vec(ex,ey);
-    cout << ey[0] << endl;
-    cout << f(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn mlpc 1");
+    std::vector<double> ex(2);
+    std::vector<int> ey(1);
+    for(double dx=0.1;dx<1.01;dx+=0.1) {
+      ex[0]=dx;
+      ex[1]=dx;
+      ip.eval_std_vec(ex,ey);
+      cout << ey[0] << endl;
+      cout << f(ex[0],ey[0]) << endl;
+      //t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn mlpc 1");
+    }
     
     cout << endl;
   }

@@ -35,7 +35,6 @@
 #include <o2scl/vector.h>
 #include <o2scl/tensor.h>
 #include <o2scl/set_python.h>
-#include <o2scl/classify_base.h>
 
 #ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -50,10 +49,29 @@ namespace o2scl {
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class mat_x_t=o2scl::matrix_view_table<>,
            class mat_y_t=o2scl::matrix_view_table_transpose<> >
-  class classify_python :
-    public classify_base<vec_t,mat_x_t,mat_y_t> {
+  class classify_python {
     
 #if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
+  protected:
+    
+    /// Number of parameters
+    size_t n_params;
+    
+    /// Number of outputs
+    size_t n_outputs;
+    
+    /// Number of points
+    size_t n_points;
+    
+  public:
+    
+    /// If true, throw exceptions on convergence errors (default true)
+    bool err_nonconv;
+    
+    /** \brief Verbosity parameter (default 0)
+     */
+    int verbose;
     
   protected:
 
@@ -110,6 +128,12 @@ namespace o2scl {
       c_class_name="";
       c_module="";
       c_options="";
+      
+      verbose=0;
+      n_params=0;
+      n_outputs=0;
+      n_points=0;
+      err_nonconv=true;
     }
     
     /** \brief Specify the Python module and function
@@ -118,6 +142,12 @@ namespace o2scl {
                    std::string eval_func, 
                    std::string class_name="", std::string options="",
                    int v=0) {
+      
+      verbose=0;
+      n_params=0;
+      n_outputs=0;
+      n_points=0;
+      err_nonconv=true;
       
       if (o2scl_settings.py_initialized==false) {
         if (this->verbose>0) {
