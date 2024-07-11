@@ -234,8 +234,8 @@ namespace o2scl_cblas {
 
   /// \name Level-2 BLAS functions
   //@{
-  /** \brief Compute \f$ y=\alpha \left[\mathrm{op}(A)\right] x+
-      \beta y \f$.
+  /** \brief Compute \f$ Y=\alpha \left[\mathrm{op}(A)\right] X +
+      \beta Y \f$.
 
       If \c M or \c N is zero, or if \c alpha is zero and \c beta is
       one, this function performs no calculations and returns without
@@ -589,7 +589,7 @@ namespace o2scl_cblas {
 
   /// \name Level-3 BLAS functions
   //@{
-  /** \brief Compute \f$ y=\alpha \mathrm{op}(A) \mathrm{op}(B) +
+  /** \brief Compute \f$ C=\alpha \mathrm{op}(A) \mathrm{op}(B) +
       \beta C \f$
       
       When both \c TransA and \c TransB are \c NoTrans, this function

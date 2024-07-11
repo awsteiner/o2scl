@@ -110,7 +110,7 @@ code provided by the user, the macros ``O2SCL_CONV`` and
 errors sometimes return ``int``, to indicate which convergence error
 was returned when the value of ``err_nonconv`` has been set to false.
 
-Of course, the standard C++ ``try'' and  ``catch`` mechanism of error
+Of course, the standard C++ ``try`` and  ``catch`` mechanism of error
 handling may also be used for finer-grained control. 
 
 Another related issue is that O₂scl often calls functions
@@ -199,9 +199,9 @@ of ensuring that input objects do not go out of scope before they are
 utilized by objects which require them. This is actually no different
 than the requirements on the user imposed by GSL, for example.
 
-Member functions which store pointers to user-specified objects
-should warn that they are doing so in the documentation for the
-class.
+Member functions which store pointers to user-specified objects should
+warn that they are doing so in the documentation for the class. (AWS:
+If they do not, then this is a bug and you should let me know.)
 
 For example, say that a user wants to solve several equations using a
 :ref:`mroot_hybrids <mroot_hybrids>` object and use the functions
@@ -230,13 +230,9 @@ Define constants
 ----------------
 
 Various define constants used in O₂scl are listed below. Note
-that, if ``acol`` is installed, ``acol -v`` reports
-several details about how O₂scl was compiled.
+that after O₂scl is installed, ``acol -v`` will report
+some details about how O₂scl was compiled.
 
-- O2SCL_ARMA - Flag for Armadillo support. The end-user will
-  also need to define this for code based on O₂scl functions which
-  use Armadillo routines. The command ``acol -v`` reports
-  whether or not Armadillo support was enabled during compilation.
 - O2SCL_CBLAS_NAMESPACE - This flag is internally used by some of the
   headers in the ``src/linalg`` directory to select between
   ``o2scl_cblas`` and ``o2scl_cblas_bracket``. The end-user should not
@@ -255,23 +251,6 @@ several details about how O₂scl was compiled.
   installation, this is accessible through the global object named
   :ref:`o2scl_settings <o2scl_settings>` and the command ``acol -v``.
   In a typical installation, the end-user should not need to use this.
-- O2SCL_EIGEN - Flag for Eigen support. The end-user will also need to
-  define this for code based on O₂scl functions which use
-  Eigen routines. The command ``acol -v`` reports whether or not Eigen
-  support was enabled during compilation.
-- O2SCL_ENABLE_ACOL - Internal flag to tell the makefiles if
-  ``acol`` is to be compiled. This is set by default unless the
-  configure script is specified with ``--disable-acol``.
-- O2SCL_FAST_TEST - Internal flag to speed up testing so that
-  travis-ci.org builds don't time out. This constant is 
-  defined by the ``--with-fast-test`` option in homebrew.
-- O2SCL_GSL2 - Flag to allow functionality from later GSL versions in
-  :ref:`fit_linear <fit_linear>` and :ref:`fit_nonlin <fit_nonlin>` .
-  This flag is set during compilation if ``--enable-gsl2`` is passed
-  to the configure script. The command ``acol -v`` reports on whether
-  or not GSL V2.0+ support was enabled during installation.
-- O2SCL_HDF - Internal flag to tell the makefiles if HDF5 support
-  is to be included. The end-user should not need to use this.
 - O2SCL_HDF5_COMP - Define this flag when O₂scl is compiled
   and for code which uses O₂scl to include support for HDF5
   compression. The command ``acol -v`` reports whether or not HDF5
@@ -300,28 +279,14 @@ several details about how O₂scl was compiled.
   for compilers which do not have
   ``std::initializer_list``, ``std::to_string``,
   ``std::uniform_distribution`` and cannot run ``mcmc_para_ts``.
-- O2SCL_OPENMP - Flag to allow OpenMP functionality in O₂scl
-  classes which contain OpenMP code (see also O2SCL_MPI). This flag
-  is set during compilation if ``--enable-openmp`` is passed to
-  the configure script. The end-user must also define this flag to
-  enable OpenMP support in their code.
-  The command ``acol -v`` reports on whether or not
-  OpenMP was enabled during installation.
-- O2SCL_PYTHON - Include extra classes which provide a C++
-  interface to the O₂sclpy Python module. This constant is also
-  defined automatically during installation if the ``--enable-python``
-  option is passed to the configure script. Enabling Python
-  support during installation may require additional environment
-  variables to specify the location of the Python headers and
-  libraries. 
-- O2SCL_READLINE - Internal flag to tell the makefiles if GNU
-  readline support should be included in ``acol``. The end-user
-  should not need to use this, as this define constant is automatically
-  defined by the ./configure script unless the --disable-readline
-  argument is given.
 - O2SCL_PLAIN_HDF5_HEADER - If true, assume HDF5 include statements 
   should be of the form ``#include <hdf5.h>`` independent
   of the automatically determined operating system type.
+- O2SCL_SET_* flags - These flags indicate support for external
+  libraries. The header files o2scl/set_*.h automatically define
+  these constants if O₂scl was compiled with the associated
+  external libraries (i.e. using a ``--enable-*`` flag to
+  the ``configure`` script). 
 - O2SCL_SNAP - If true, then make some modifications to enable
   compiling O₂scl with snap.
 - O2SCL_UBUNTU_PKG - If true, don't use current date and time macros
@@ -336,9 +301,13 @@ several details about how O₂scl was compiled.
 Error handler objects
 ---------------------
 
-.. doxygenvariable:: o2scl::err_hnd
+These objects are defined in ``src/base/err_hnd.h``:
 
-.. doxygenvariable:: o2scl::def_err_hnd
+.. doxygenvariable:: o2scl::err_hnd
 
 .. doxygenvariable:: o2scl::alt_err_hnd
 		     
+This object is defined in ``src/base/exception.h``:
+
+.. doxygenvariable:: o2scl::def_err_hnd
+

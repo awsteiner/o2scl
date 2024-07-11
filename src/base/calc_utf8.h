@@ -221,6 +221,9 @@ namespace o2scl {
       opp["fdint"]=2;
       opp["beint"]=2;
       opp["polylog"]=2;
+      opp["isfinite"]=2;
+      opp["isinf"]=2;
+      opp["isnan"]=2;
       opp["^"]=2;
       opp["*"]=3;
       opp["/"]=3;
@@ -543,6 +546,19 @@ namespace o2scl {
                      key[5]=='o' && key[6]=='g') {
             operator_stack.push("polylog");
             last_token_was_op=true;
+          } else if (key.length()==8 && key[0]=='i' && key[1]=='s' &&
+                     key[2]=='f' && key[3]=='i' && key[4]=='n' &&
+                     key[5]=='i' && key[6]=='t' && key[7]=='e') {
+            operator_stack.push("isfinite");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='i' && key[1]=='s' &&
+                     key[2]=='i' && key[3]=='n' && key[4]=='f') {
+            operator_stack.push("isinf");
+            last_token_was_op=true;
+          } else if (key.length()==5 && key[0]=='i' && key[1]=='s' &&
+                     key[2]=='n' && key[3]=='a' && key[4]=='n') {
+            operator_stack.push("isnan");
+            last_token_was_op=true;
           } else if (key.length()==5 && key[0]=='f' && key[1]=='d' &&
                      key[2]=='i' && key[3]=='n' && key[4]=='t') {
             operator_stack.push("fdint");
@@ -852,6 +868,12 @@ namespace o2scl {
               evaluation.push(floor(right));
             } else if (!str.compare("ceil")) {
               evaluation.push(ceil(right));
+            } else if (!str.compare("isfinite")) {
+              evaluation.push(boost::math::isfinite(right));
+            } else if (!str.compare("isinf")) {
+              evaluation.push(boost::math::isinf(right));
+            } else if (!str.compare("isnan")) {
+              evaluation.push(boost::math::isnan(right));
             } else if (!str.compare("erf")) {
               evaluation.push(erf(right));
             } else if (!str.compare("erfc")) {

@@ -70,9 +70,11 @@ int eos_leptons::electron_density(double T) {
   int retx=1;
   
   if (accuracy==acc_fp_25) {
-    O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
+    O2SCL_ERR("The eos_leptons object doesn't support multiprecision.",
+              o2scl::exc_eunimpl);
   } else if (accuracy==acc_ld) {
-    O2SCL_ERR("This object doesn't do multip.",o2scl::exc_einval);
+    O2SCL_ERR("The eos_leptons object doesn't support multiprecision.",
+              o2scl::exc_eunimpl);
   } else {
     retx=frel.pair_density(e,T);
   }
@@ -83,10 +85,10 @@ int eos_leptons::electron_density(double T) {
   if (retx!=0 && accuracy==acc_default) {
         
     frel.upper_limit_fac=40.0;
-    frel.fri.dit.tol_rel=1.0e-10;
-    frel.fri.dit.tol_abs=1.0e-10;
-    frel.fri.nit.tol_rel=1.0e-10;
-    frel.fri.nit.tol_abs=1.0e-10;
+    frel.dit.tol_rel=1.0e-10;
+    frel.dit.tol_abs=1.0e-10;
+    frel.nit.tol_rel=1.0e-10;
+    frel.nit.tol_abs=1.0e-10;
         
     retx=frel.pair_density(e,T);
 
@@ -94,10 +96,10 @@ int eos_leptons::electron_density(double T) {
     // because this function is used in pair_density_eq_fun().
         
     frel.upper_limit_fac=20.0;
-    frel.fri.dit.tol_rel=1.0e-8;
-    frel.fri.dit.tol_abs=1.0e-8;
-    frel.fri.nit.tol_rel=1.0e-8;
-    frel.fri.nit.tol_abs=1.0e-8;
+    frel.dit.tol_rel=1.0e-8;
+    frel.dit.tol_abs=1.0e-8;
+    frel.nit.tol_rel=1.0e-8;
+    frel.nit.tol_abs=1.0e-8;
         
   }
 
@@ -233,10 +235,10 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
   if (retx!=0 && accuracy==acc_default) {
         
     frel.upper_limit_fac=40.0;
-    frel.fri.dit.tol_rel=1.0e-10;
-    frel.fri.dit.tol_abs=1.0e-10;
-    frel.fri.nit.tol_rel=1.0e-10;
-    frel.fri.nit.tol_abs=1.0e-10;
+    frel.dit.tol_rel=1.0e-10;
+    frel.dit.tol_abs=1.0e-10;
+    frel.nit.tol_rel=1.0e-10;
+    frel.nit.tol_abs=1.0e-10;
         
     retx=frel.pair_density(e,T);
 
@@ -244,10 +246,10 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
     // because this function is used in pair_density_eq_fun().
         
     frel.upper_limit_fac=20.0;
-    frel.fri.dit.tol_rel=1.0e-8;
-    frel.fri.dit.tol_abs=1.0e-8;
-    frel.fri.nit.tol_rel=1.0e-8;
-    frel.fri.nit.tol_abs=1.0e-8;
+    frel.dit.tol_rel=1.0e-8;
+    frel.dit.tol_abs=1.0e-8;
+    frel.nit.tol_rel=1.0e-8;
+    frel.nit.tol_abs=1.0e-8;
         
   }
 
@@ -446,7 +448,7 @@ int eos_leptons::pair_mu(double T) {
     thd.dsdT=fd.dsdT;
     
   } else {
-    
+
     frel.pair_mu(e,T);
     
   }
@@ -459,6 +461,8 @@ int eos_leptons::pair_mu(double T) {
   // Muon section
   
   if (include_muons) {
+
+    mu.mu=e.mu;
     
     if (include_deriv) {
       
@@ -486,7 +490,7 @@ int eos_leptons::pair_mu(double T) {
       thd.dsdT+=fd.dsdT;
       
     } else {
-      
+
       frel.pair_mu(mu,T);
       
     }
@@ -589,10 +593,10 @@ int eos_leptons::pair_density(double T) {
     if (retx!=0) {
           
       frel.upper_limit_fac=40.0;
-      frel.fri.dit.tol_rel=1.0e-10;
-      frel.fri.dit.tol_abs=1.0e-10;
-      frel.fri.nit.tol_rel=1.0e-10;
-      frel.fri.nit.tol_abs=1.0e-10;
+      frel.dit.tol_rel=1.0e-10;
+      frel.dit.tol_abs=1.0e-10;
+      frel.nit.tol_rel=1.0e-10;
+      frel.nit.tol_abs=1.0e-10;
           
       if (mu.inc_rest_mass) {
         mu.inc_rest_mass=false;
@@ -611,10 +615,10 @@ int eos_leptons::pair_density(double T) {
       }
         
       frel.upper_limit_fac=20.0;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.dit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
           
     }
     
@@ -809,7 +813,6 @@ eos_leptons_multip::eos_leptons_multip() {
                                 mass_muon_f<cpp_dec_float_25>()),2);
   taucdf25.init(cu_cdf25.convert("kg","1/fm",
                                  mass_tau_f<cpp_dec_float_25>()),2);
-  
   
 }
 

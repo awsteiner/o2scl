@@ -24,7 +24,9 @@
 #include <config.h>
 #endif
 
-#ifdef O2SCL_PYTHON
+#include <o2scl/set_python.h>
+
+#ifdef O2SCL_SET_PYTHON
 #include <Python.h>
 #endif
 
@@ -34,7 +36,7 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
 funct_python::funct_python(std::string module, std::string func,
                            int v) {

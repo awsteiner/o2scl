@@ -36,7 +36,9 @@ O₂scl uses ``std::vector``, Boost uBLAS vector and matrix objects:
 templates. Many O₂scl routines are templates which are compatible with
 a wide range of vector and matrix types. See the
 :ref:`Multi-dimensional solver example` which shows how an O₂scl class
-can be used with Boost, Eigen, or Armadillo objects.
+can be used with `Boost <https://boost.org>`_, `Eigen
+<https://eigen.tuxfamily.org>`_, or `Armadillo
+<https://arma.sourceforge.net>`_ objects.
 
 The O₂scl library uses a standard nomenclature to distinguish a couple
 different concepts. The word "array" is typically used to refer to
@@ -50,7 +52,7 @@ like ``DefaultConstructible``. O₂scl classes which operate on vector
 types are designed to be as flexible as possible, so that they can be
 used with almost any vector type. Eventually, all O₂scl classes with
 template vector and matrix types should specify exactly which concepts
-are required to be satisified, but this is still in progress.
+are required to be satisified.
 
 The word "matrix" is reserved for the a generic object which has
 matrix-like semantics and can be accessed using ``operator(,)``. C++
@@ -74,7 +76,7 @@ slices of tensors) can be trivially constructed from ``std::bind`` and
 A matrix type is distinct from a "vector of vectors" or a "list of
 vectors", such as that implied by ``std::vector<std::vector<double>
 >`` because in the latter, not all of the vectors in the list need to
-have the same size. In some cases, There are places where a list of
+have the same size. In some cases, there are places where a list of
 vectors is preferable to a matrix, and O₂scl expects that
 elements in a list of vectors can be accessed by ``operator[][]``.
 The function :cpp:func:`o2scl::tensor_grid::set_grid` 
@@ -230,8 +232,8 @@ Vector rearrangement functions
 ------------------------------
 
 - :cpp:func:`o2scl::vector_grid()` [``src/base/vector.h``]
-- :cpp:func:`o2scl::vector_linear_or_log_chi2()` [``src/base/interp.h``]
-- :cpp:func:`o2scl::vector_linear_or_log()` [``src/base/interp.h``]
+- :cpp:func:`o2scl::vector_linear_or_log_chi2()` [``src/base/interp_vec.h``]
+- :cpp:func:`o2scl::vector_linear_or_log()` [``src/base/interp_vec.h``]
 - :cpp:func:`o2scl::vector_range()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_range_copy()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_rebin_xy()` [``src/base/interp.h``]
@@ -239,11 +241,11 @@ Vector rearrangement functions
 - :cpp:func:`o2scl::vector_reverse_double()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_rotate()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_sort()` [``src/base/vector.h``] This
-  function is typically only useful for types which cannot be
-  sorted with ``std::sort()``.
+  function is not optimized for speed and is thus useful only for
+  types which cannot be sorted with ``std::sort()``.
 - :cpp:func:`o2scl::vector_sort_double()` [``src/base/vector.h``] This
-  function is typically only useful for types which cannot be
-  sorted with ``std::sort()``.
+  function is not optimized for speed and is thus useful only for
+  types which cannot be sorted with ``std::sort()``.
 - :cpp:func:`o2scl::vector_spec()` [``src/hdf/hdf_io.h``]
 - :cpp:func:`o2scl::vector_sum()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_sum_double()` [``src/base/vector.h``]

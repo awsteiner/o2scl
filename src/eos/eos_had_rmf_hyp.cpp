@@ -1026,7 +1026,7 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
     int rt=calc_e_solve_fun(nv,x,y);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
-		      "eos_had_rmf_hyp::calc_e().",exc_efailed,
+		      "eos_had_rmf_hyp::calc_temp_hyp_e().",exc_efailed,
 		      this->err_nonconv);
     }
     
@@ -1116,7 +1116,8 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
     
     int rt2=calc_e_solve_fun(5,x,y);
     if (rt2!=0) {
-      O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
+      O2SCL_CONV2_RET("Final solution failed in ",
+                     "eos_had_rmf_hyp::calc_temp_hyp_e().",
 		     exc_efailed,this->err_nonconv);
     }
     
@@ -1131,7 +1132,7 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
   pr.n=n_charge_loc;
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_temp_hyp_e",
 		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
   }
 
@@ -1209,7 +1210,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
     x[5]=0.001;
     
     if (verbose>0) {
-      cout << "Solving in eos_had_rmf_hyp::calc_e()." << endl;
+      cout << "Solving in eos_had_rmf_hyp::calc_hyp_e_nobeta()." << endl;
       cout << "alpha      n_B        n_ch       mu_n       "
 	   << "mu_p       sigma       omega      rho         ret" << endl;
       cout.precision(4);
@@ -1260,7 +1261,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
       if (rt!=0) {
 	string s=((string)"Initial guess failed at (nn=")+
 	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
-	  "eos_had_rmf_hyp::calc_e().";
+	  "eos_had_rmf_hyp::calc_hyp_e_nobeta().";
 	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
       }
 
@@ -1278,8 +1279,9 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
     
     int rt2=calc_e_nobeta_fun(6,x,y,nB,Ye,Ys);
     if (rt2!=0) {
-      O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
-		     exc_efailed,this->err_nonconv);
+      O2SCL_CONV2_RET("Final solution failed in ",
+                      "eos_had_rmf_hyp::calc_hyp_e_nobeta().",
+                      exc_efailed,this->err_nonconv);
     }
     
   }
@@ -1289,7 +1291,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
   rho=x[5];
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_hyp_e_nobeta",
 		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
   }
 
@@ -1370,7 +1372,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
     x[5]=0.001;
     
     if (verbose>0) {
-      cout << "Solving in eos_had_rmf_hyp::calc_e()." << endl;
+      cout << "Solving in eos_had_rmf_hyp::calc_hyp_e_nobeta_np()." << endl;
       cout << "alpha      n_B        n_ch       mu_n       "
 	   << "mu_p       sigma       omega      rho         ret" << endl;
       cout.precision(4);
@@ -1421,7 +1423,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
       if (rt!=0) {
 	string s=((string)"Initial guess failed at (nn=")+
 	  dtos(neutron->n)+" and np="+dtos(proton->n)+") in "+
-	  "eos_had_rmf_hyp::calc_e().";
+	  "eos_had_rmf_hyp::calc_hyp_e_nobeta_np().";
 	O2SCL_CONV_RET(s.c_str(),exc_efailed,this->err_nonconv);
       }
 
@@ -1439,8 +1441,9 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
     
     int rt2=calc_e_nobeta_np_fun(6,x,y,nn,np,Ys);
     if (rt2!=0) {
-      O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
-		     exc_efailed,this->err_nonconv);
+      O2SCL_CONV2_RET("Final solution failed in ",
+                      "eos_had_rmf_hyp::calc_hyp_e_nobeta_np().",
+                      exc_efailed,this->err_nonconv);
     }
     
   }
@@ -1450,7 +1453,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
   rho=x[5];
   
   if (ret!=0) {
-    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_e",
+    O2SCL_CONV2_RET("Solver failed in eos_had_rmf_hyp::calc_hyp_e_nobeta_np",
 		    "(fermion,fermion,thermo).",exc_efailed,this->err_nonconv);
   }
 
@@ -1470,8 +1473,6 @@ void eos_had_rmf_hyp::set_hyp(fermion &lam, fermion &sigp, fermion &sigz,
 
 int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                                 eos_leptons &elep,
-				//fermion &e, bool include_muons,
-				//fermion &mu, fermion_rel &frel,
 				std::shared_ptr<table_units<> > results) {
   
   guess[0]=0.01;
@@ -1488,7 +1489,6 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
      (&eos_had_rmf_hyp::solve_beta_eq_T0),
      this,std::placeholders::_1,std::placeholders::_2,
      std::placeholders::_3,std::cref(nB_temp),std::ref(elep));
-  //include_muons,std::ref(mu),std::ref(frel));
       
   results->clear();
   results->line_of_names(((std::string)"ed pr nb ne nmu nn np nlam ")+
@@ -1509,7 +1509,10 @@ int eos_had_rmf_hyp::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
   }
       
   for(size_t i=0;i<nB_grid.size();i++) {
+
     nB_temp=nB_grid[i];
+    
+    std::cout << "nB: " << nB_temp << std::endl;
 
     beta_mroot.msolve(5,guess,fmf);
 	
@@ -1570,6 +1573,18 @@ int eos_had_rmf_hyp::solve_beta_eq_T0(size_t nv, const ubvector &x,
   y[2]=f1;
   y[3]=f2;
   y[4]=f3;
+
+  /*
+  std::cout << elep.include_muons << " " << proton->n << " "
+            << elep.e.n << " " << elep.mu.n << std::endl;
+  std::cout << elep.e.mu << " " << elep.mu.mu << " " << elep.mu.m
+            << std::endl;
+  std::cout << "x: " << x[0] << " " << x[1] << " " << x[2] << " "
+            << x[3] << " " << x[4] << std::endl;
+  std::cout << "y: " << y[0] << " " << y[1] << " " << y[2] << " "
+            << y[3] << " " << y[4] << std::endl;
+  std::cout << std::endl;
+  */
   
   return 0;
 }

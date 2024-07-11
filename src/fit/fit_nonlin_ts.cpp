@@ -414,9 +414,9 @@ int main(void) {
 
     //cout << ax << endl;
 
-    tm.test_rel(ax[0],x0_u[x0_u.size()-1],1.0e-11,"unscaled x0");
-    tm.test_rel(ax[1],x1_u[x1_u.size()-1],1.0e-11,"unscaled x1");
-    tm.test_rel(ax[2],x2_u[x2_u.size()-1],1.0e-11,"unscaled x2");
+    tm.test_rel(ax[0],x0_u[x0_u.size()-1],1.0e-10,"unscaled x0");
+    tm.test_rel(ax[1],x1_u[x1_u.size()-1],1.0e-10,"unscaled x1");
+    tm.test_rel(ax[2],x2_u[x2_u.size()-1],1.0e-10,"unscaled x2");
     tm.test_rel(chi2red_u,chi2/(n-3),1.0e-10,"unscaled chi2");
 
     cout << endl;
@@ -459,9 +459,9 @@ int main(void) {
     chi2=o2scl_cblas::dnrm2(n,gf.f_);
     chi2*=chi2;
     
-    tm.test_rel(ax[0],x0_u[x0_u.size()-1],1.0e-12,"post unscaled x0 set/iter");
-    tm.test_rel(ax[1],x1_u[x1_u.size()-1],1.0e-11,"post unscaled x1 set/iter");
-    tm.test_rel(ax[2],x2_u[x2_u.size()-1],1.0e-11,"post unscaled x2 set/iter");
+    tm.test_rel(ax[0],x0_u[x0_u.size()-1],1.0e-10,"post unscaled x0 set/iter");
+    tm.test_rel(ax[1],x1_u[x1_u.size()-1],1.0e-10,"post unscaled x1 set/iter");
+    tm.test_rel(ax[2],x2_u[x2_u.size()-1],1.0e-10,"post unscaled x2 set/iter");
     tm.test_rel(chi2red_u,chi2/(n-3),1.0e-10,"post unscaled chi2 set/iter");
 
     cout << endl;

@@ -172,10 +172,6 @@ double o2scl_fermion_rel_get_upper_limit_fac(void *vptr);
 
 void o2scl_fermion_rel_set_upper_limit_fac(void *vptr, double v);
 
-double o2scl_fermion_rel_get_deg_entropy_fac(void *vptr);
-
-void o2scl_fermion_rel_set_deg_entropy_fac(void *vptr, double v);
-
 int o2scl_fermion_rel_get_verbose(void *vptr);
 
 void o2scl_fermion_rel_set_verbose(void *vptr, int v);
@@ -191,10 +187,6 @@ void o2scl_fermion_rel_set_tol_expan(void *vptr, double v);
 bool o2scl_fermion_rel_get_verify_ti(void *vptr);
 
 void o2scl_fermion_rel_set_verify_ti(void *vptr, bool v);
-
-double o2scl_fermion_rel_get_therm_ident(void *vptr);
-
-void o2scl_fermion_rel_set_therm_ident(void *vptr, double v);
 
 void *o2scl_fermion_rel_get_unc(void *vptr);
 

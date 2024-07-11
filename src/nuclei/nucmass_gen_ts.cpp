@@ -42,7 +42,7 @@ int main(void) {
 
   o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2",
 			  "ame12.o2");
-
+  
   string fnames[10]={"../../data/o2scl/nucmass/frib_mex/ddme2.o2",
 		    "../../data/o2scl/nucmass/frib_mex/ddmed.o2",
 		    "../../data/o2scl/nucmass/frib_mex/ddpc1.o2",

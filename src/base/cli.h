@@ -588,7 +588,8 @@ namespace o2scl {
 
 	if (option_list[k].lng.length()<2) {
 	  std::string str=((std::string)"Long option '")+option_list[k].lng+
-	    "' does not have at "+
+	    "', index "+o2scl::szttos(k)+" of "+
+            o2scl::szttos(list_size)+", does not have at "+
 	    "least two characters in cli::set_comm_option().";
 	  O2SCL_ERR(str.c_str(),exc_efailed);
 	}

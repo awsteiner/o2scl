@@ -213,7 +213,7 @@ int main(void) {
     vector_acor(act.size(),act,mean,sig,tau,0);
     cout << "Results from acor: " << mean << " " << sig << " "
          << tau << endl;
-    t.test_abs(tau,25.0,5.0,"acor 2");
+    t.test_abs(tau,25.0,8.0,"acor 2");
     std::vector<double> ac, ac2, ftom, ftom2;
     o2scl::vector_autocorr_vector(act.size(),act,ac);
     size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);

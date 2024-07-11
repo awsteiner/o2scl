@@ -27,7 +27,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
 	search_vec.scr table.scr vector.scr interp_krige.scr \
 	interp.scr columnify.scr convert_units.scr \
-	string_conv.scr tensor.scr \
+	string_conv.scr tensor.scr funct_multip.scr \
 	format_float.scr table_units.scr exception.scr uniform_grid.scr \
 	tensor_grid.scr constants.scr cursesw.scr auto_format.scr \
 	calc_utf8.scr
@@ -47,30 +47,6 @@ else
 O2SCL_OPENMP_MVAR =
 endif
 
-if O2SCL_READLINE
-O2SCL_READLINE_MVAR = 
-else
-O2SCL_READLINE_MVAR =
-endif
-
-if O2SCL_NCURSES
-O2SCL_NCURSES_MVAR = 
-else
-O2SCL_NCURSES_MVAR =
-endif
-
-if O2SCL_EIGEN
-O2SCL_EIGEN_MVAR = 
-else
-O2SCL_EIGEN_MVAR =
-endif
-
-if O2SCL_ARMA
-O2SCL_ARMA_MVAR = 
-else
-O2SCL_ARMA_MVAR =
-endif
-
 if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
 else 
@@ -83,34 +59,10 @@ else
 O2SCL_OSX_MVAR = 
 endif
 
-if O2SCL_FFTW
-O2SCL_FFTW_MVAR = 
-else 
-O2SCL_FFTW_MVAR = 
-endif
-
-if O2SCL_CUBATURE
-O2SCL_CUBATURE_MVAR = 
-else 
-O2SCL_CUBATURE_MVAR = 
-endif
-
-if O2SCL_MPFR
-O2SCL_MPFR_MVAR = 
-else 
-O2SCL_MPFR_MVAR = 
-endif
-
 if O2SCL_PYTHON
 O2SCL_PYTHON_MVAR = -I$(PYTHON_INCLUDE_DIR)
 else 
 O2SCL_PYTHON_MVAR = 
-endif
-
-if O2SCL_READLINE
-ADDINC = 
-else 
-ADDINC = 
 endif
 
 if O2SCL_MODULES
@@ -129,19 +81,15 @@ if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"/snap/o2scl/current/share/doc/o2scl/\" \
-	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG $(ADDINC) \
-	$(O2SCL_OSX_MVAR) $(O2SCL_FFTW_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_MPFR_MVAR) $(O2SCL_PYTHON_MVAR) $(O2SCL_CUBATURE_MVAR) \
+	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
+	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
 	$(O2SCL_PUGIXML_MVAR) 
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"${docdir}/\" \
-	$(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) $(O2SCL_ARMA_MVAR) \
-	$(O2SCL_GSL2_MVAR) -DO2SCL_COND_FLAG $(ADDINC) \
-	$(O2SCL_OSX_MVAR) $(O2SCL_FFTW_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_MPFR_MVAR) $(O2SCL_PYTHON_MVAR) $(O2SCL_CUBATURE_MVAR) \
+	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
+	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
 	$(O2SCL_PUGIXML_MVAR) 
 endif
 
@@ -161,7 +109,7 @@ am__pkginclude_HEADERS_DIST = $(HEADER_VAR)
 CPVAR = err_hnd_ts funct_ts convert_units_ts \
 	lib_settings_ts misc_ts mm_funct_ts constants_ts \
 	multi_funct_ts search_vec_ts table_ts interp_ts \
-	columnify_ts interp_krige_ts \
+	columnify_ts interp_krige_ts funct_multip_ts \
 	string_conv_ts tensor_ts tensor_grid_ts vector_ts table3d_ts \
 	format_float_ts table_units_ts exception_ts uniform_grid_ts \
 	cursesw_ts auto_format_ts calc_utf8_ts
@@ -175,7 +123,7 @@ if O2SCL_PYTHON
 ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
@@ -186,7 +134,7 @@ else
 ADDL_TEST_LIBS = ../libo2scl.la
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = -DO2SCL_OPENMP
+ADDL_TEST_FLGS =
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = 
@@ -199,6 +147,7 @@ constants_ts_LDADD = $(ADDL_TEST_LIBS)
 err_hnd_ts_LDADD = $(ADDL_TEST_LIBS)
 convert_units_ts_LDADD = $(ADDL_TEST_LIBS)
 funct_ts_LDADD = $(ADDL_TEST_LIBS)
+funct_multip_ts_LDADD = $(ADDL_TEST_LIBS)
 format_float_ts_LDADD = $(ADDL_TEST_LIBS)
 lib_settings_ts_LDADD = $(ADDL_TEST_LIBS)
 misc_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -225,6 +174,7 @@ constants_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 err_hnd_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 convert_units_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 funct_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+funct_multip_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 format_float_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 lib_settings_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 misc_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -256,6 +206,8 @@ convert_units.scr: convert_units_ts$(EXEEXT)
 	./convert_units_ts$(EXEEXT) > convert_units.scr
 funct.scr: funct_ts$(EXEEXT) 
 	./funct_ts$(EXEEXT) > funct.scr
+funct_multip.scr: funct_multip_ts$(EXEEXT) 
+	./funct_multip_ts$(EXEEXT) > funct_multip.scr
 format_float.scr: format_float_ts$(EXEEXT) 
 	./format_float_ts$(EXEEXT) > format_float.scr
 lib_settings.scr: lib_settings_ts$(EXEEXT) 
@@ -302,6 +254,7 @@ constants_ts_SOURCES = constants_ts.cpp
 err_hnd_ts_SOURCES = err_hnd_ts.cpp
 convert_units_ts_SOURCES = convert_units_ts.cpp
 funct_ts_SOURCES = funct_ts.cpp
+funct_multip_ts_SOURCES = funct_multip_ts.cpp
 format_float_ts_SOURCES = format_float_ts.cpp
 lib_settings_ts_SOURCES = lib_settings_ts.cpp
 misc_ts_SOURCES = misc_ts.cpp

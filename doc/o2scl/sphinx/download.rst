@@ -7,7 +7,8 @@ The current release version is 0.929. It can be obtained
 from
 https://github.com/awsteiner/o2scl/releases/download/v0.929/o2scl-0.929.tar.gz
 
-You may also download O₂scl from the Github repository. e.g.::
+You may also download O₂scl from the Github repository
+at https://github.com/awsteiner/o2scl , e.g.::
 
   git clone https://github.com/awsteiner/o2scl.git
 

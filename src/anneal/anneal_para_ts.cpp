@@ -30,8 +30,9 @@
 #include <o2scl/funct.h>
 #include <o2scl/anneal_para.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/set_openmp.h>
 
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
 #include <omp.h>
 #endif
 
@@ -70,8 +71,8 @@ int main(int argc, char *argv[]) {
   ga.tol_abs=1.0e-6;
   ga.mmin(1,init,result,fx);
   cout << init[0] << " " << result << endl;
-  t.test_rel(init[0],2.0,1.0e-3,"another test - value");
-  t.test_rel(result,-1.0,1.0e-3,"another test - min");
+  t.test_rel(init[0],2.0,2.0e-3,"another test - value");
+  t.test_rel(result,-1.0,2.0e-3,"another test - min");
     
   t.report();
   

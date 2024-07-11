@@ -69,7 +69,8 @@ int main(void) {
   
   if (true) {
     
-    vector<string> col_list={"x","y","z","d"};
+    vector<string> col_list={"x","y"};
+    vector<string> col_listb={"z","d"};
 
     if (true) {
     
@@ -77,7 +78,7 @@ int main(void) {
       generate_table(tab);
 
       emulator_interpm_idw_table<> em1;
-      em1.set(2,2,0,tab,col_list);
+      em1.set(2,2,0,tab,col_list,col_listb);
     
       for(size_t j=0;j<20;j++) {
       
@@ -99,15 +100,16 @@ int main(void) {
     }
   
     if (true) {
-    
+
       table<> tab;
       generate_table(tab);
 
-      vector<string> col_list2={"x","y","z"};
+      vector<string> col_list2={"x","y"};
+      vector<string> col_list2b={"z"};
       
       emulator_interpm_krige_table<> em2;
       em2.iko.verbose=1;
-      em2.set(2,1,0,tab,col_list2);
+      em2.set(2,1,0,tab,col_list2,col_list2b);
     
       for(size_t j=0;j<20;j++) {
       

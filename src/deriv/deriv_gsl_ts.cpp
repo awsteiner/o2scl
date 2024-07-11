@@ -161,10 +161,11 @@ int main(void) {
 
   // Automatic multiprecision derivative
   double val, err2;
-  deriv_multip_gsl dmg2;
+  deriv_gsl dmg2;
   dmg2.verbose=1;
-  dmg2.deriv_err([](auto &&tx) mutable { return difficult_fun(tx); },5.5,
-                 val,err2);
+  dmg2.deriv_err_multip(5.5,[](auto &&tx) mutable
+  { return difficult_fun(tx); },
+    val,err2);
   t.test_rel((long double)val,difficult_deriv<long double>(5.5L),1.0e-15L,
              "multip 1");
   t.test_abs(0.0,err2/val,1.0e-15,"multip 2");

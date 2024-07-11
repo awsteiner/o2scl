@@ -3419,26 +3419,26 @@ double o2scl_gen_test_number_double__gen(void *vptr) {
   return ret;
 }
 
-void o2scl_free_funct_string(void *vptr) {
-  funct_string *ptr=(funct_string *)vptr;
+void o2scl_free_funct_string_double_(void *vptr) {
+  funct_string<double> *ptr=(funct_string<double> *)vptr;
   delete ptr;
   return;
 }
 
-int o2scl_funct_string_set_parm(void *vptr, char *name, double val) {
-  funct_string *ptr=(funct_string *)vptr;
+int o2scl_funct_string_double__set_parm(void *vptr, char *name, double val) {
+  funct_string<double> *ptr=(funct_string<double> *)vptr;
   int ret=ptr->set_parm(name,val);
   return ret;
 }
 
-double o2scl_funct_string_getitem(void *vptr, double x) {
-  funct_string *ptr=(funct_string *)vptr;
+double o2scl_funct_string_double__getitem(void *vptr, double x) {
+  funct_string<double> *ptr=(funct_string<double> *)vptr;
   double ret=ptr->operator()(x);
   return ret;
 }
 
-void *o2scl_funct_string_init(char *expr, char *var) {
-  funct_string *ptr=new funct_string(expr,var);
+void *o2scl_funct_string_double__init(char *expr, char *var) {
+  funct_string<double> *ptr=new funct_string<double>(expr,var);
   return ptr;
 }
 

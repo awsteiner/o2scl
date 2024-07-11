@@ -40,55 +40,31 @@ public:
 };
 
 int main(void) {
-  cl acl;
-  double a, b;
-  int i;
-  int vp=0;
-  size_t tmp;
-  int N=1;
-  int t1=0, t2=0, t3=0, t4=0;
+  
   test_mgr t;
-
   t.set_output_level(2);
   
+  cl acl;
+  double a, b;
+  
   typedef double (*gfnt)(double);
+  
+  // 1 - Non-templated access through a funct object 
+  funct fmf=std::bind(std::mem_fn<double(double)>
+                      (&cl::mfn),&acl,std::placeholders::_1);
+  root_cern<> cr1;
+  
+  a=1.0e-5;
+  cr1.solve(a,fmf);
+  t.test_rel(a,0.2,1.0e-6,"1");
+  
+  // 4 - Templated access through a global function pointer
+  root_cern<gfnt> cr4;
+  gfnt gfnv=&gfn;
+  a=1.0;
+  cr4.solve(a,gfnv);
 
-  for(int kk=0;kk<1;kk++) {
-    
-    // 1 - Non-templated access through a funct object 
-    funct fmf=std::bind(std::mem_fn<double(double)>
-			  (&cl::mfn),&acl,std::placeholders::_1);
-    root_cern<> cr1;
-
-    tmp=clock();
-    for(int j=0;j<N;j++) {
-      for(int k=0;k<N;k++) {
-	a=1.0e-5;
-	cr1.solve(a,fmf);
-      }
-    }
-    t1+=(clock()-tmp)/10000;
-    cout << (clock()-tmp)/10000 << " " << a << endl;
-    t.test_rel(a,0.2,1.0e-6,"1");
-    
-    // 4 - Templated access through a global function pointer
-    root_cern<gfnt> cr4;
-    gfnt gfnv=&gfn;
-    tmp=clock();
-    for(int j=0;j<N;j++) {
-      for(int k=0;k<N;k++) {
-	a=1.0;
-	cr4.solve(a,gfnv);
-      }
-    }
-    t4+=(clock()-tmp)/10000;
-    cout << (clock()-tmp)/10000 << " " << a << endl;
-    t.test_rel(a,0.2,1.0e-6,"4");
-    cout << endl;
-  }
-
-  cout << t1 << endl;
-  cout << t4 << endl;
+  t.test_rel(a,0.2,1.0e-6,"4");
 
   t.report();
   return 0;

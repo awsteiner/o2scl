@@ -42,18 +42,19 @@
 #include <o2scl/columnify.h>
 #include <o2scl/table.h>
 #include <o2scl/tensor.h>
+#include <o2scl/interpm_base.h>
 
 namespace o2scl {
 
   /** \brief Multi-dimensional interpolation by inverse distance
       weighting
 
+      This class performs interpolation on a multi-dimensional data
+      set specified as a series of points using the inverse
+      distance-weighted average of nearby points. 
+
       This class is experimental, particularly the evaluation of
       derivatives.
-
-      This class performs interpolation on a multi-dimensional data
-      set specified as a series of scattered points using the inverse
-      distance-weighted average of nearby points. 
 
       The function \ref set_data() takes as input: the number of input
       dimensions, the number of output functions, the number of points
@@ -117,8 +118,11 @@ namespace o2scl {
          
       \endverbatim
   */
-  template<class mat_t=const_matrix_view_table<> >
-  class interpm_idw {
+  template<class vec_t=boost::numeric::ublas::vector<double>,
+           class mat_x_t=o2scl::const_matrix_view_table<>,
+           class mat_y_t=o2scl::const_matrix_view_table<> >
+  class interpm_idw :
+    public interpm_base<vec_t,mat_x_t,mat_y_t> {
     
   protected:
 
@@ -127,30 +131,30 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
     typedef boost::numeric::ublas::matrix<double> ubmatrix;
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
-    
+
+    /// \name Constructor and destructor
+    //@{
     interpm_idw() {
       data_set=false;
       scales.resize(1);
       scales[0]=1.0;
       points=3;
-      verbose=0;
       n_extra=0;
       min_dist=1.0e-6;
       dist_expo=2.0;
+      rescale=true;
     }
 
-    /** \brief Extrapolation factor (computed in eval_err() )
-     */
-    std::vector<double> extrap;
-    
+    virtual ~interpm_idw() {
+    }
+    //@}
+
+    /// \name Interpolation settings
+    //@{
     /** \brief Exponent in computing distance (default 2.0)
      */
     double dist_expo;
   
-    /** \brief Verbosity parameter (default 0)
-     */
-    int verbose;
-
     /** \brief The number of extra nearest neighbors
         to include to avoid degeneracies (default 0)
     */
@@ -161,6 +165,12 @@ namespace o2scl {
     */
     double min_dist;
 
+    /** \brief If true, then the data will be automatically rescaled
+        (default true)
+    */
+    bool rescale;
+    //@}
+    
     /// \name Get and set functions
     //@{
     /** \brief Set the number of closest points to use
@@ -198,17 +208,16 @@ namespace o2scl {
     
     /** \brief Initialize the data for the interpolation
 
-        The object \c vecs should be a matrix with a
-        first index of size <tt>n_in+n_out</tt> and a second 
-        index of size <tt>n_points</tt>. It may have be
-        any type which allows the use of <tt>operator(,)</tt>
-        and <tt>std::swap</tt>.
+        The object \c dat_x should be a matrix with a first index of
+        size <tt>n_in</tt> and a second index of size <tt>n_pts</tt>.
+        The object \c dat_y should be a matrix with a first index of
+        size <tt>n_out</tt> and a second index of size <tt>n_pts</tt>.
     */
-    void set_data(size_t n_in, size_t n_out, size_t n_points,
-                  mat_t &dat, bool auto_scale_flag=true) {
+    virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
+                         mat_x_t &dat_x, mat_y_t &dat_y) {
     
-      if (n_points<points) {
-        O2SCL_ERR2("Not enough points provided in ",
+      if (n_pts<points) {
+        O2SCL_ERR2("Not enough pts provided in ",
                    "interpm_idw::set_data()",exc_efailed);
       }
       if (n_in<1) {
@@ -219,31 +228,35 @@ namespace o2scl {
         O2SCL_ERR2("Must provide at least one output column in ",
                    "interpm_idw::set_data()",exc_efailed);
       }
-      np=n_points;
-      nd_in=n_in;
-      nd_out=n_out;
-      std::swap(data,dat);
+      this->n_points=n_pts;
+      this->n_params=n_in;
+      this->n_outputs=n_out;
+      std::swap(data_x,dat_x);
+      std::swap(data_y,dat_y);
       data_set=true;
 
-      if (auto_scale_flag) {
+      if (rescale) {
         auto_scale();
       }
 
-      extrap.resize(n_out);
-
-      return;
+      return 0;
     }
 
     /** \brief Get the data used for interpolation
+
+        This function swaps the data back to the user and thus
+        prevents future interpolation until one of the \ref
+        set_data() functions are called again.
      */
-    void get_data(size_t &n_in, size_t &n_out, size_t &n_points,
-                  mat_t &dat) {
-      n_points=np;
-      n_in=nd_in;
-      n_out=nd_out;
-      std::swap(data,dat);
+    void get_data(size_t &n_in, size_t &n_out, size_t &n_pts,
+                  mat_x_t &dat_x, mat_y_t &dat_y) {
+      n_pts=this->n_points;
+      n_in=this->n_params;
+      n_out=this->n_outputs;
+      std::swap(data_x,dat_x);
+      std::swap(data_y,dat_y);
       data_set=false;
-      n_points=0;
+      n_pts=0;
       n_in=0;
       n_out=0;
       return;
@@ -253,11 +266,11 @@ namespace o2scl {
         data
     */
     void auto_scale() {
-      scales.resize(nd_in);
-      for(size_t i=0;i<nd_in;i++) {
-        double min=data(i,0), max=min;
-        for(size_t j=1;j<np;j++) {
-          double val=data(i,j);
+      scales.resize(this->n_params);
+      for(size_t i=0;i<this->n_params;i++) {
+        double min=data_x(0,i), max=min;
+        for(size_t j=1;j<this->n_points;j++) {
+          double val=data_x(j,i);
           if (val>max) max=val;
           if (val<min) min=val;
         }
@@ -270,14 +283,14 @@ namespace o2scl {
     /** \brief Initialize the data for the interpolation
         for only one output function
 
-        The object \c vecs should be a vector (of size <tt>n_in+1</tt>)
-        of vectors (all of size <tt>n_points</tt>). It may be
-        any type which allows the use of <tt>std::swap</tt> for
-        each vector in the list. 
+        The object \c dat_x should be a matrix with a first index of
+        size <tt>n_in</tt> and a second index of size <tt>n_pts</tt>.
+        The object \c dat_y should be a matrix with a first index of
+        size <tt>1</tt> and a second index of size <tt>n_pts</tt>.
     */
-    void set_data(size_t n_in, size_t n_points,
-                  mat_t &dat, bool auto_scale=true) {
-      set_data(n_in,1,n_points,dat,auto_scale);
+    void set_data(size_t n_in, size_t n_pts,
+                  mat_x_t &dat_x, mat_y_t &dat_y) {
+      set_data(n_in,1,n_pts,dat_x,dat_y);
       return;
     }
     //@}
@@ -292,7 +305,7 @@ namespace o2scl {
 
     /** \brief Perform the interpolation over the first function
      */
-    template<class vec2_t> double eval(const vec2_t &x) const {
+    template<class vec2_t> double eval_one_tl(const vec2_t &x) const {
     
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_idw::eval().",
@@ -300,8 +313,8 @@ namespace o2scl {
       }
     
       // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
+      std::vector<double> dists(this->n_points);
+      for(size_t i=0;i<this->n_points;i++) {
         dists[i]=dist(i,x);
       }
 
@@ -331,7 +344,7 @@ namespace o2scl {
       
       // Check if the closest distance is zero
       if (dists[index[0]]<=0.0) {
-        return data(nd_in,index[0]);
+        return data_y(index[0],0);
       }
 
       // Compute normalization
@@ -343,7 +356,7 @@ namespace o2scl {
       // Compute the inverse-distance weighted average
       double ret=0.0;
       for(size_t i=0;i<points;i++) {
-        ret+=data(nd_in,index[i])/dists[index[i]];
+        ret+=data_y(index[i],0)/dists[index[i]];
       }
       ret/=norm;
 
@@ -351,20 +364,26 @@ namespace o2scl {
       return ret;
     }
     
+    /** \brief Desc
+     */
+    virtual int eval(const vec_t &x, vec_t &y) const {
+      return eval_tl(x,y);
+    }
+    
     /** \brief Perform the interpolation over the first function
         with uncertainty
     */
-    template<class vec2_t> void eval_err(const vec2_t &x, double &val,
-                                         double &err) {
+    template<class vec2_t> void eval_one_unc_tl
+    (const vec2_t &x, double &val, double &err, double &extrap) {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+        O2SCL_ERR("Data not set in interpm_idw::eval_one_unc_tl().",
                   exc_einval);
       }
-      
+
       // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
+      std::vector<double> dists(this->n_points);
+      for(size_t i=0;i<this->n_points;i++) {
         dists[i]=dist(i,x);
       }
 
@@ -374,10 +393,11 @@ namespace o2scl {
                                    std::vector<size_t> >
         (dists,points+1+n_extra,index);
 
-      if (verbose>1) {
-        std::cout << "interpm_idw::eval_err(): n_extra is " << n_extra
+      if (this->verbose>1) {
+        std::cout << "interpm_idw::eval_one_unc_tl(): n_extra is " << n_extra
                   << std::endl;
       }
+      
       if (n_extra>0) {
         // Remove degenerate points to ensure accurate interpolation
         bool found=true;
@@ -390,7 +410,7 @@ namespace o2scl {
               if (index.size()>points+1 && dist_jk<min_dist) {
                 found=true;
                 index.erase(index.begin()+j);
-                if (verbose>1) {
+                if (this->verbose>1) {
                   std::cout << "  Found degenerate point." << std::endl;
                 }
               }
@@ -402,12 +422,12 @@ namespace o2scl {
       if (dists[index[0]]<=0.0) {
 
         // If the closest distance is zero, just set the value
-        if (verbose>1) {
+        if (this->verbose>1) {
           std::cout << "  Closest distance is zero." << std::endl;
         }
-        val=data(nd_in,index[0]);
+        val=data_y(index[0],0);
         err=0.0;
-        extrap[0]=0.0;
+        extrap=0.0;
         return;
 
       } else {
@@ -439,7 +459,7 @@ namespace o2scl {
           vals[j]=0.0;
           for(size_t i=0;i<points+1;i++) {
             if (i!=j) {
-              vals[j]+=data(nd_in,index[i])/dists[index[i]];
+              vals[j]+=data_y(index[i],0)/dists[index[i]];
             }
           }
 
@@ -454,9 +474,9 @@ namespace o2scl {
 	    (dists_bw);
           double min_to=vector_min_value<std::vector<double>,double>
 	    (dists_to);
-          extrap[0]=min_to/max_bw;
+          extrap=min_to/max_bw;
         } else {
-          extrap[0]=0.0;
+          extrap=0.0;
         }
         
       }
@@ -468,24 +488,24 @@ namespace o2scl {
         at point \c x, storing the result in \c y
     */
     template<class vec2_t, class vec3_t>
-    void eval(const vec2_t &x, vec3_t &y) const {
+    int eval_tl(const vec2_t &x, vec3_t &y) const {
       
       if (data_set==false) {
         O2SCL_ERR("Data not set in interpm_idw::eval().",
                   exc_einval);
       }
 
-      if (verbose>0) {
+      if (this->verbose>0) {
         std::cout << "interpm_idw: input: ";
-        for(size_t k=0;k<nd_in;k++) {
+        for(size_t k=0;k<this->n_params;k++) {
           std::cout << x[k] << " ";
         }
         std::cout << std::endl;
       }
       
       // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
+      std::vector<double> dists(this->n_points);
+      for(size_t i=0;i<this->n_points;i++) {
         dists[i]=dist(i,x);
       }
 
@@ -494,11 +514,11 @@ namespace o2scl {
       o2scl::vector_smallest_index<std::vector<double>,double,
                                    std::vector<size_t> >
         (dists,points,index);
-      if (verbose>0) {
+      if (this->verbose>0) {
         for(size_t i=0;i<points;i++) {
           std::cout << "interpm_idw: closest point: ";
-          for(size_t k=0;k<nd_in;k++) {
-            std::cout << data(k,index[i]) << " ";
+          for(size_t k=0;k<this->n_params;k++) {
+            std::cout << data_x(index[i],k) << " ";
           }
           std::cout << std::endl;
         }
@@ -525,17 +545,17 @@ namespace o2scl {
       // Check if the closest distance is zero, if so, just
       // return the value
       if (dists[index[0]]<=0.0) {
-        for(size_t i=0;i<nd_out;i++) {
-          y[i]=data(nd_in+i,index[0]);
+        for(size_t i=0;i<this->n_outputs;i++) {
+          y[i]=data_y(index[0],i);
         }
-        if (verbose>0) {
+        if (this->verbose>0) {
           std::cout << "interpm_idw: distance zero. "
                     << "Returning values at index: " << index[0]
 		    << std::endl;
           std::cout << "\t";
-          o2scl::vector_out(std::cout,nd_out,y,true);
+          o2scl::vector_out(std::cout,this->n_outputs,y,true);
         }
-        return;
+        return 0;
       }
 
       // Compute normalization
@@ -543,37 +563,45 @@ namespace o2scl {
       for(size_t i=0;i<points;i++) {
         norm+=1.0/dists[index[i]];
       }
-      if (verbose>0) {
+      if (this->verbose>0) {
         std::cout << "interpm_idw: norm is " << norm << std::endl;
       }
 
       // Compute the inverse-distance weighted averages
-      for(size_t j=0;j<nd_out;j++) {
+      for(size_t j=0;j<this->n_outputs;j++) {
         y[j]=0.0;
         for(size_t i=0;i<points;i++) {
-          if (j==0 && verbose>0) {
+          if (j==0 && this->verbose>0) {
             std::cout << "interpm_idw: Point: ";
-            for(size_t k=0;k<nd_in;k++) {
-              std::cout << data(k,index[i]) << " ";
+            for(size_t k=0;k<this->n_params;k++) {
+              std::cout << data_x(index[i],k) << " ";
             }
             std::cout << std::endl;
           }
-          y[j]+=data(nd_in+j,index[i])/dists[index[i]];
-          if (verbose>0) {
+          y[j]+=data_y(index[i],j)/dists[index[i]];
+          if (this->verbose>0) {
             std::cout << "interpm_idw: j,points,value,1/dist: "
                       << j << " " << i << " "
-                      << data(nd_in+j,index[i]) << " "
+                      << data_y(index[i],j) << " "
                       << 1.0/dists[index[i]] << std::endl;
           }
         }
         y[j]/=norm;
-        if (verbose>0) {
+        if (this->verbose>0) {
           std::cout << "interpm_idw: y[" << j << "]: " << y[j]
                     << std::endl;
         }
       }
 
-      return;
+      return 0;
+    }
+
+    /** \brief Desc
+     */
+    virtual int eval_unc(const vec_t &x, vec_t &y, vec_t &y_unc) const {
+      std::vector<size_t> ix;
+      std::vector<double> extrap;
+      return eval_unc_tl_index(x,y,y_unc,ix,extrap);
     }
     
     /** \brief Perform the interpolation over all the functions
@@ -583,35 +611,38 @@ namespace o2scl {
         n_points+1+n_extra.
     */
     template<class vec2_t, class vec3_t, class vec4_t>
-    void eval_err_index(const vec2_t &x, vec3_t &val, vec4_t &err,
-                        std::vector<size_t> &index) {
+    int eval_unc_tl_index(const vec2_t &x, vec3_t &val, vec4_t &err,
+                          std::vector<size_t> &index,
+                          std::vector<double> &extrap) const {
       
       if (data_set==false) {
-        O2SCL_ERR("Data not set in interpm_idw::eval_err().",
+        O2SCL_ERR("Data not set in interpm_idw::eval_unc_tl_index().",
                   exc_einval);
       }
       
-      if (verbose>1) {
-        std::cout << "interpm_idw::eval_err_index(): n_extra: " << n_extra
+      if (this->verbose>1) {
+        std::cout << "interpm_idw::eval_unc_tl_index(): n_extra: " << n_extra
                   << std::endl;
       }
 
-      if (verbose>2) {
+      if (this->verbose>2) {
 	std::cout << "x: ";
 	o2scl::vector_out(std::cout,x,true);
       }
+
+      extrap.resize(this->n_outputs);
       
       // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
+      std::vector<double> dists(this->n_points);
+      for(size_t i=0;i<this->n_points;i++) {
         dists[i]=dist(i,x);
 	if (!std::isfinite(dists[i])) {
 	  std::cout << "i,dists[i]: " << i << " " << dists[i] << std::endl;
 	  std::cout << "x: ";
 	  vector_out(std::cout,x,true);
 	  std::cout << "data: ";
-	  for(size_t jj=0;jj<nd_in;jj++) {
-	    std::cout << data(jj,i) << " ";
+	  for(size_t jj=0;jj<this->n_params;jj++) {
+	    std::cout << data_x(i,jj) << " ";
 	  }
 	  std::cout << std::endl;
 	  std::cout << "scales: ";
@@ -621,8 +652,10 @@ namespace o2scl {
       }
 
       if (this->verbose>2) {
-        std::cout << "interpm_idw::eval_err_index(): np,nd_in,nd_out: "
-                  << np << " " << nd_in << " " << nd_out
+        std::cout << "interpm_idw::eval_unc_tl_index(): "
+                  << "n_points,n_params,n_outputs: "
+                  << this->n_points << " " << this->n_params << " "
+                  << this->n_outputs
                   << std::endl;
       }
 
@@ -657,7 +690,7 @@ namespace o2scl {
               double dist_jk=dist(j,k);
               if (index.size()>points+1 && dist_jk<min_dist) {
                 found=true;
-                if (verbose>2) {
+                if (this->verbose>2) {
                   std::cout << "Erasing: " << j << std::endl;
                 }
                 index.erase(index.begin()+j);
@@ -667,14 +700,14 @@ namespace o2scl {
         }
       }
 
-      if (verbose>2) {
+      if (this->verbose>2) {
 	std::cout << "Closest: ";
-	for(size_t j=0;j<nd_in+nd_out;j++) {
-	  std::cout << data(j,index[0]) << " ";
+	for(size_t j=0;j<this->n_params;j++) {
+	  std::cout << data_x(index[0],j) << " ";
 	}
 	std::cout << std::endl;
-	for(size_t j=0;j<nd_out;j++) {
-	  std::cout << data(j+nd_in,index[0]) << " ";
+	for(size_t j=0;j<this->n_outputs;j++) {
+	  std::cout << data_y(index[0],j) << " ";
 	}
 	std::cout << std::endl;
       }
@@ -683,26 +716,26 @@ namespace o2scl {
 
         // If the closest distance is zero, just set the values and
         // errors
-        for(size_t k=0;k<nd_out;k++) {
-          val[k]=data(nd_in+k,index[0]);
+        for(size_t k=0;k<this->n_outputs;k++) {
+          val[k]=data_y(index[0],k);
 	  if (!std::isfinite(val[k])) {
-	    std::cout << "n_extra,min_dist,k,nd_out,val[k]: "
+	    std::cout << "n_extra,min_dist,k,n_outputs,val[k]: "
 		      << n_extra << " " << min_dist << " " << k << " "
-		      << nd_out << " " << val[k] << std::endl;
-	    O2SCL_ERR("Infinite value in interpm_idw() 1.",
+		      << this->n_outputs << " " << val[k] << std::endl;
+	    O2SCL_ERR("Infinite value in interpm_idw::eval_unc_tl_index() 1.",
 		      o2scl::exc_efailed);
 	  }
           err[k]=0.0;
           extrap[k]=0.0;
         }
-        return;
+        return 0;
 
       } else {
       
-        for(size_t k=0;k<nd_out;k++) {
+        for(size_t k=0;k<this->n_outputs;k++) {
 
-          if (verbose>2) {
-            std::cout << "  Output quantity " << k << " of " << nd_out
+          if (this->verbose>2) {
+            std::cout << "  Output quantity " << k << " of " << this->n_outputs
                       << std::endl;
           }
         
@@ -717,7 +750,7 @@ namespace o2scl {
           // average. Use the standard deviation for the uncertainty.
           for(size_t j=0;j<points+1;j++) {
 
-            if (verbose>2) {
+            if (this->verbose>2) {
               std::cout << "  Point " << j << " of " << points+1
                         << std::endl;
             }
@@ -735,7 +768,7 @@ namespace o2scl {
               }
             }
 
-            if (verbose>2) {
+            if (this->verbose>2) {
               std::cout << "  Norm: " << norm << std::endl;
             }
 	    
@@ -743,10 +776,10 @@ namespace o2scl {
             vals[j]=0.0;
             for(size_t i=0;i<points+1;i++) {
               if (i!=j) {
-                vals[j]+=data(nd_in+k,index[i])/dists[index[i]];
-                if (verbose>2) {
+                vals[j]+=data_y(index[i],k)/dists[index[i]];
+                if (this->verbose>2) {
                   std::cout << "value, 1.0/dist: "
-                            << data(nd_in+k,index[i]) << " "
+                            << data_y(index[i],k) << " "
                             << 1.0/dists[index[i]]
                             << std::endl;
                 }
@@ -755,9 +788,9 @@ namespace o2scl {
 
             vals[j]/=norm;
 	    if (!std::isfinite(vals[j])) {
-	      std::cout << "j,n_extra,min_dist,nd_out,norm,vals[j]: "
+	      std::cout << "j,n_extra,min_dist,n_outputs,norm,vals[j]: "
 			<< j << " " << n_extra << " " << min_dist
-			<< " " << nd_out << " " << norm << " "
+			<< " " << this->n_outputs << " " << norm << " "
 			<< vals[j] << std::endl;
 	      o2scl::vector_out(std::cout,dists,true);
 	      O2SCL_ERR("Infinite value in interpm_idw 2.",
@@ -773,7 +806,7 @@ namespace o2scl {
 	  
           err[k]=o2scl::vector_stddev(vals);
 
-	  if (verbose>2) {
+	  if (this->verbose>2) {
 	    std::cout << "  Value, error: " << val[k] << " "
 		      << err[k] << std::endl;
 	  }
@@ -788,7 +821,7 @@ namespace o2scl {
             extrap[k]=0.0;
           }
 
-          if (verbose>2) {
+          if (this->verbose>2) {
             std::cout << "Final value, err: " << val[k] << " "
                       << err[k] << std::endl;
           }
@@ -798,16 +831,17 @@ namespace o2scl {
 
       }
 
-      return;
+      return 0;
     }
     
     /** \brief Perform the interpolation over all the functions
         with uncertainties
     */
     template<class vec2_t, class vec3_t, class vec4_t>
-    void eval_err(const vec2_t &x, vec3_t &val, vec4_t &err) {
+    int eval_unc_tl(const vec2_t &x, vec3_t &val, vec4_t &err) const {
       std::vector<size_t> index;
-      return eval_err_index(x,val,err,index);
+      std::vector<double> extrap;
+      return eval_unc_tl_index(x,val,err,index,extrap);
     }
     //@}
 
@@ -843,33 +877,33 @@ namespace o2scl {
       }
       
       // Set x equal to the specified point
-      ubvector x(nd_in);
-      for(size_t i=0;i<nd_in;i++) {
-        x[i]=data(i,point_index);
+      ubvector x(this->n_params);
+      for(size_t i=0;i<this->n_params;i++) {
+        x[i]=data_x(point_index,i);
       }
       // Set f equal to the value of the function at the specified point
-      double f=data(nd_in+func_index,point_index);
+      double f=data_y(point_index,func_index);
 
       // The linear solver
       o2scl_linalg::linear_solver_HH<> lshh;
     
       // Compute distances
-      std::vector<double> dists(np);
-      for(size_t i=0;i<np;i++) {
+      std::vector<double> dists(this->n_points);
+      for(size_t i=0;i<this->n_points;i++) {
         dists[i]=dist(i,x);
       }
   
       // Find closest (but not identical) points
 
       std::vector<size_t> index;
-      size_t max_smallest=(nd_in+2)*2;
-      if (max_smallest>np) max_smallest=np;
-      if (max_smallest<nd_in+1) {
+      size_t max_smallest=(this->n_params+2)*2;
+      if (max_smallest>this->n_points) max_smallest=this->n_points;
+      if (max_smallest<this->n_params+1) {
         O2SCL_ERR("Couldn't find enough nearby points.",
                   o2scl::exc_einval);
       }
 
-      if (verbose>0) {
+      if (this->verbose>0) {
         std::cout << "max_smallest: " << max_smallest << std::endl;
       }
       
@@ -877,7 +911,7 @@ namespace o2scl {
                                    std::vector<size_t> >
         (dists,max_smallest,index);
 
-      if (verbose>0) {
+      if (this->verbose>0) {
         for(size_t i=0;i<index.size();i++) {
           std::cout << "index[" << i << "] = " << index[i] << " "
                     << dists[index[i]] << std::endl;
@@ -888,15 +922,15 @@ namespace o2scl {
       for(size_t i=0;i<max_smallest;i++) {
         if (dists[index[i]]>0.0) {
           index2.push_back(index[i]);
-          if (index2.size()==nd_in+1) i=max_smallest;
+          if (index2.size()==this->n_params+1) i=max_smallest;
         }
       }
-      if (index2.size()<nd_in+1) {
+      if (index2.size()<this->n_params+1) {
         O2SCL_ERR("Couldn't find enough nearby points (2).",
                   o2scl::exc_einval);
       }
 
-      if (verbose>0) {
+      if (this->verbose>0) {
         for(size_t i=0;i<index2.size();i++) {
           std::cout << "index2[" << i << "] = " << index2[i] << " "
                     << dists[index2[i]] << std::endl;
@@ -904,50 +938,50 @@ namespace o2scl {
       }
       
       // Unit vector storage
-      std::vector<ubvector> units(nd_in+1);
+      std::vector<ubvector> units(this->n_params+1);
       // Difference vector norms
-      std::vector<double> diff_norms(nd_in+1);
+      std::vector<double> diff_norms(this->n_params+1);
       // Storage for the derivative estimates
-      std::vector<ubvector> ders(nd_in+1);
+      std::vector<ubvector> ders(this->n_params+1);
       // Matrix of unit vectors
-      ubmatrix m(nd_in,nd_in);
+      ubmatrix m(this->n_params,this->n_params);
       // Vector of function value differences
-      ubvector v(nd_in);
+      ubvector v(this->n_params);
       // Rearranged derivative object
-      std::vector<ubvector> ders2(nd_in);
+      std::vector<ubvector> ders2(this->n_params);
       
-      for(size_t i=0;i<nd_in+1;i++) {
+      for(size_t i=0;i<this->n_params+1;i++) {
 
         // Assign unit vector elements
-        units[i].resize(nd_in);
-        for(size_t j=0;j<nd_in;j++) {
-          units[i][j]=data(j,index2[i])-x[j];
+        units[i].resize(this->n_params);
+        for(size_t j=0;j<this->n_params;j++) {
+          units[i][j]=data_x(index2[i],j)-x[j];
         }
 
         // Normalize the unit vectors
         diff_norms[i]=o2scl::vector_norm<ubvector,double>(units[i]);
-        for(size_t j=0;j<nd_in;j++) {
+        for(size_t j=0;j<this->n_params;j++) {
           units[i][j]/=diff_norms[i];
         }
 
       }
 
       // Verbose output of the closest points and their norms
-      if (verbose>0) {
+      if (this->verbose>0) {
         std::cout << "Point:     ";
-        for(size_t i=0;i<nd_in;i++) {
+        for(size_t i=0;i<this->n_params;i++) {
           std::cout << x[i] << " ";
         }
         std::cout << f << std::endl;
-        for(size_t j=0;j<nd_in+1;j++) {
+        for(size_t j=0;j<this->n_params+1;j++) {
           std::cout << "Closest: " << j << " " << index2[j] << " ";
-          for(size_t i=0;i<nd_in;i++) {
-            std::cout << data(i,index2[j]) << " ";
+          for(size_t i=0;i<this->n_params;i++) {
+            std::cout << data_x(index2[j],i) << " ";
           }
-          std::cout << data(nd_in+func_index,index2[j]) << " "
+          std::cout << data_y(index2[j],func_index) << " "
                     << diff_norms[j] << std::endl;
         }
-        for(size_t j=0;j<nd_in+1;j++) {
+        for(size_t j=0;j<this->n_params+1;j++) {
           std::cout << "diff_norm: " << j << " " << diff_norms[j]
                     << std::endl;
         }
@@ -955,34 +989,34 @@ namespace o2scl {
       }
     
       // Go through each set of points
-      for(size_t i=0;i<nd_in+1;i++) {
+      for(size_t i=0;i<this->n_params+1;i++) {
 
-        ders[i].resize(nd_in);
+        ders[i].resize(this->n_params);
 
         // Construct the matrix and vector for the solver
         size_t jj=0;
-        for(size_t j=0;j<nd_in+1;j++) {
+        for(size_t j=0;j<this->n_params+1;j++) {
           if (j!=i) {
-            for(size_t k=0;k<nd_in;k++) {
+            for(size_t k=0;k<this->n_params;k++) {
               m(jj,k)=units[j][k];
             }
-            v[jj]=(data(nd_in+func_index,index2[j])-f)/diff_norms[j];
+            v[jj]=(data_y(index2[j],func_index)-f)/diff_norms[j];
             jj++;
           }
         }
 
         // Solve to compute the derivatives
-        if (verbose>0) {
+        if (this->verbose>0) {
           std::cout << "m:" << std::endl;
-          o2scl::matrix_out(std::cout,nd_in,nd_in,m);
+          o2scl::matrix_out(std::cout,this->n_params,this->n_params,m);
           std::cout << "v:" << std::endl;
-          o2scl::vector_out(std::cout,nd_in,v,true);
+          o2scl::vector_out(std::cout,this->n_params,v,true);
         }
-        lshh.solve(nd_in,m,v,ders[i]);
-        if (verbose>0) {
+        lshh.solve(this->n_params,m,v,ders[i]);
+        if (this->verbose>0) {
           std::cout << "Derivs:  " << i << " ";
           std::cout.setf(std::ios::showpos);
-          for(size_t j=0;j<nd_in;j++) {
+          for(size_t j=0;j<this->n_params;j++) {
             std::cout << ders[i][j] << " ";
           }
           std::cout.unsetf(std::ios::showpos);
@@ -992,11 +1026,11 @@ namespace o2scl {
         // Go to next derivative estimate
       }
       
-      for(size_t i=0;i<nd_in;i++) {
+      for(size_t i=0;i<this->n_params;i++) {
 
         // Rearrange derivatives
-        ders2[i].resize(nd_in+1);
-        for(size_t j=0;j<nd_in+1;j++) {
+        ders2[i].resize(this->n_params+1);
+        for(size_t j=0;j<this->n_params+1;j++) {
           ders2[i][j]=ders[j][i];
         }
 
@@ -1011,14 +1045,10 @@ namespace o2scl {
     
   protected:
     
-    /// The number of points
-    size_t np;
-    /// The number of dimensions of the inputs
-    size_t nd_in;
-    /// The number of dimensions of the outputs
-    size_t nd_out;
-    /// The copy of the data
-    mat_t data;
+    /// The copy of the x data 
+    mat_x_t data_x;
+    /// The copy of the y data
+    mat_y_t data_y;
     /// True if the data has been specified
     bool data_set;
     /// Number of points to include in each interpolation (default 3)
@@ -1036,8 +1066,8 @@ namespace o2scl {
                                        const vec2_t &x) const {
       double ret=0.0;
       size_t nscales=scales.size();
-      for(size_t i=0;i<nd_in;i++) {
-        ret+=pow((x[i]-data(i,index))/scales[i%nscales],dist_expo);
+      for(size_t i=0;i<this->n_params;i++) {
+        ret+=pow((x[i]-data_x(index,i))/scales[i%nscales],dist_expo);
       }
       return sqrt(ret);
     }
@@ -1048,8 +1078,8 @@ namespace o2scl {
     double dist(size_t j, size_t k) const {
       double ret=0.0;
       size_t nscales=scales.size();
-      for(size_t i=0;i<nd_in;i++) {
-        ret+=pow((data(i,j)-data(i,k))/scales[i%nscales],dist_expo);
+      for(size_t i=0;i<this->n_params;i++) {
+        ret+=pow((data_x(j,i)-data_x(k,i))/scales[i%nscales],dist_expo);
       }
       return sqrt(ret);
     }

@@ -26,7 +26,7 @@
 #include <o2scl/vector_derint.h>
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
-
+#include <o2scl/set_python.h>
 #include <o2scl/set_mpfr.h>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -203,7 +203,7 @@ int acol_manager::comm_to_gmm(std::vector<std::string> &sv,
                                 bool itive_com) {
   if (type=="table") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-gmm." << endl;
     }
@@ -260,7 +260,7 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
                               bool itive_com) {
   if (type=="table") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     
     if (sv.size()<3) {
       cerr << "Not enough arguments for to-kde." << endl;
@@ -592,7 +592,7 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="prob_dens_mdim_kde") {
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
     
     if (pkde_obj.dim()!=1) {
       cerr << "Command to-table only works on a 1-dimensional KDE" << endl;
@@ -854,7 +854,7 @@ int acol_manager::comm_to_table3d(std::vector<std::string> &sv,
     
   } else if (type=="prob_dens_mdim_kde") {
     
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
 
     if (pkde_obj.dim()!=2) {
       cerr << "Command to-table only works on a 2-dimensional KDE" << endl;
@@ -1715,9 +1715,9 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 }
   
 int acol_manager::comm_values_table(std::vector<std::string> &sv,
-				  bool itive_com) {
+                                    bool itive_com) {
   if (type=="tensor_grid") {
-
+    
     std::string i1;
     int ret=get_input_one(sv,"Enter function",i1,"values-table",itive_com);
     if (ret!=0) return ret;
@@ -1730,13 +1730,11 @@ int acol_manager::comm_values_table(std::vector<std::string> &sv,
       table_obj.new_column(((string)"x")+o2scl::szttos(i));
     }
     table_obj.new_column("v");
-
-    cout << "func: " << i1 << endl;
-    table_obj.summary(&cout);
     
     // Parse function
     std::string function=i1;
     calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -2023,8 +2021,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<double>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<double>::epsilon() << " "
+       << typeid(double).name() << std::endl;
   
   cout.width(18);
   cout << "long double";
@@ -2037,8 +2035,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<long double>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<long double>::epsilon() << " "
+       << typeid(long double).name() << std::endl;
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   cout.width(18);
@@ -2053,8 +2051,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_25>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_25>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_25).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_35";
@@ -2068,8 +2066,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_35>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_35>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_35).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_50";
@@ -2083,8 +2081,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_50>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_50>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_50).name()) << std::endl;
   
   cout.width(18);
   cout << "cpp_dec_float_100";
@@ -2098,8 +2096,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_100>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_100>::epsilon() << " "
+       << ((std::string)typeid(cpp_dec_float_100).name()) << std::endl;
 
 #ifdef O2SCL_SET_MPFR
 
@@ -2115,8 +2113,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_25>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_25>::epsilon() << " "
+       << ((std::string)typeid(mpfr_25).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_35";
@@ -2130,8 +2128,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_35>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_35>::epsilon() << " "
+       << ((std::string)typeid(mpfr_35).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_50";
@@ -2145,8 +2143,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_50>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_50>::epsilon() << " "
+       << ((std::string)typeid(mpfr_50).name()) << std::endl;
   
   cout.width(18);
   cout << "mpfr_100";
@@ -2160,8 +2158,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_100>::epsilon()
-       << std::endl;
+  cout << std::numeric_limits<mpfr_100>::epsilon() << " "
+       << ((std::string)typeid(mpfr_100).name()) << std::endl;
 
 #endif
 #endif
@@ -2210,14 +2208,28 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
         term=sv[2];
         dev=true;
         stem="o2scl-dev/html";
+        if (verbose>=2) {
+          cout << "Detected dev." << endl;
+        }
       } else if (sv[1]==((string)"o2sclpy")) {
         stem="o2sclpy";
         term=sv[2];
+        if (verbose>=2) {
+          cout << "Detected o2sclpy." << endl;
+        }
       } else if (sv[1]==((string)"o2sclpy-dev")) {
         term=sv[2];
         stem="o2sclpy-dev";
         dev=true;
+        if (verbose>=2) {
+          cout << "Detected o2sclpy-dev." << endl;
+        }
       }
+    }
+
+    if (verbose>=2) {
+      std::cout << "term,stem,dev: " << term << " "
+                << stem << " " << dev << std::endl;
     }
 
     if (term.length()>40) {
@@ -2240,7 +2252,7 @@ int acol_manager::comm_wdocs(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (sv.size()>=2 && sv[1]=="dev") {
     cmd+=((string)"https://awsteiner.org/code/")+
-      stem+"/acol.html &";
+      "o2scl-dev/html/acol.html &";
   } else if (sv.size()>=2 && sv[1]=="o2sclpy") {
     cmd+=((string)"https://awsteiner.org/code/")+
       "o2sclpy/o2graph.html &";

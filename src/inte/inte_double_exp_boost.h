@@ -23,11 +23,12 @@
 #ifndef O2SCL_INTE_DOUBLE_EXP_BOOST_H
 #define O2SCL_INTE_DOUBLE_EXP_BOOST_H
 
-/** \file inte_tanh_sinh_boost.h
+/** \file inte_double_exp_boost.h
     \brief File defining \ref o2scl::inte_tanh_sinh_boost
 */
 
 #include <cmath>
+#include <typeinfo>
 
 #define BOOST_DISABLE_ASSERTS
 #include <boost/math/quadrature/tanh_sinh.hpp>
@@ -99,7 +100,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -107,7 +108,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -133,7 +134,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_iu_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -141,7 +142,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_iu_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -167,7 +168,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_il_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -175,7 +176,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_il_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -200,7 +201,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_funct() "
+        std::cout << "inte_double_exp_boost::integ_i_err_funct() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << err << std::endl;
@@ -208,7 +209,7 @@ namespace o2scl {
 
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_i_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -249,7 +250,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_err_int() "
+        std::cout << "inte_double_exp_boost::integ_err_int() "
                   << "tols(target,integ,func),err:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << std::endl;
@@ -262,7 +263,7 @@ namespace o2scl {
       
       if (err/abs(res)>integ_tol) {
         if (verbose>0) {
-          std::cout << "  inte_multip_double_exp_boost::"
+          std::cout << "  inte_double_exp_boost::"
                     << "integ_err_funct() failed because "
                     << err/abs(res) << " > "
                     << integ_tol << std::endl;
@@ -305,7 +306,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_iu_err_int() "
+        std::cout << "inte_double_exp_boost::integ_iu_err_int() "
                   << "tols(target,integ,func),res,err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << res << " " << err << " "
@@ -356,7 +357,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
 
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_il_err_int() "
+        std::cout << "inte_double_exp_boost::integ_il_err_int() "
                   << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << " "
@@ -401,7 +402,7 @@ namespace o2scl {
       { return fm2(func,x); };
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_int(): "
+        std::cout << "inte_double_exp_boost::integ_i_err_int(): "
                   << std::endl;
       }
       boost::math::quadrature::sinh_sinh<fp_t> it_x(max_refine);
@@ -409,7 +410,7 @@ namespace o2scl {
       L1norm=static_cast<double>(L1norm_loc);
       
       if (verbose>1) {
-        std::cout << "inte_multip_double_exp_boost::integ_i_err_int() "
+        std::cout << "inte_double_exp_boost::integ_i_err_int() "
                   << "tols(target,integ,func),err,L1norm:\n  "
                   << target_tol << " " << integ_tol << " "
                   << func_tol << " " << err << " "
@@ -553,10 +554,12 @@ namespace o2scl {
                     << L1norm
                     << std::endl;
         }
-        O2SCL_CONV2_RET("Failed to achieve tolerance in ",
-                        "inte_double_exp_boost::integ_iu_err().",
-                        o2scl::exc_efailed,
-                        this->err_nonconv);
+        std::string errs="Failed to achieve tolerance "+
+          o2scl::dtos(tol_rel_loc)+" in ";
+        errs+="inte_double_exp_boost::integ_iu_err() for function type ";
+        errs+=((std::string)(typeid(func_t).name()))+" and fp type "+
+          ((std::string)(typeid(fp_t).name()))+".";
+        O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       }
       return 0;
     }
@@ -836,10 +839,12 @@ namespace o2scl {
       }
 
 #endif
+
+      std::string errs="Failed to compute with requested accuracy. ";
+      errs+=" Value of tol_rel is "+o2scl::dtos(integ_tol)+
+        ". in inte_double_exp_boost::integ_err().";
+      O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       
-      O2SCL_CONV2_RET("Failed to compute with requested accuracy ",
-                      "in inte_double_exp_boost::integ_err().",
-                      o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -889,7 +894,7 @@ namespace o2scl {
         ret=integ_iu_err_int(func,a_d,res_d,err_d,L1norm_d,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -923,7 +928,7 @@ namespace o2scl {
         ret=integ_iu_err_int(func,a_ld,res_ld,err_ld,L1norm_ld,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -959,7 +964,7 @@ namespace o2scl {
                              err_cdf25,L1norm_cdf25,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -995,7 +1000,7 @@ namespace o2scl {
                              err_cdf35,L1norm_cdf35,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1031,7 +1036,7 @@ namespace o2scl {
                              err_cdf50,L1norm_cdf50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1067,7 +1072,7 @@ namespace o2scl {
                              err_cdf100,L1norm_cdf100,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
@@ -1094,10 +1099,14 @@ namespace o2scl {
       }
 
 #endif
-    
-      O2SCL_CONV2_RET("Failed to compute with requested accuracy in ",
-                      "inte_double_exp_boost::integ_iu_err_multip().",
-                      o2scl::exc_efailed,this->err_nonconv);
+      
+      std::string errs="Failed to achieve tolerance "+
+        o2scl::dtos(integ_tol)+" in ";
+      errs+="inte_double_exp_boost::integ_iu_err_multip() ";
+      errs+="for function type ";
+      errs+=((std::string)(typeid(func_t).name()))+" and fp type "+
+        ((std::string)(typeid(fp_t).name()))+".";
+      O2SCL_CONV_RET(errs.c_str(),o2scl::exc_efailed,this->err_nonconv);
       return o2scl::exc_efailed;
     }
 
@@ -1147,7 +1156,7 @@ namespace o2scl {
         ret=integ_il_err_int(func,b_d,res_d,err_d,L1norm_d,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -1173,7 +1182,7 @@ namespace o2scl {
         ret=integ_il_err_int(func,b_ld,res_ld,err_ld,L1norm_ld,
                              target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -1198,7 +1207,7 @@ namespace o2scl {
                              err_cdf25,L1norm_cdf25,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -1223,7 +1232,7 @@ namespace o2scl {
                              err_cdf35,L1norm_cdf35,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1248,7 +1257,7 @@ namespace o2scl {
                              err_cdf50,L1norm_cdf50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1273,7 +1282,7 @@ namespace o2scl {
                              err_cdf100,L1norm_cdf100,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;
@@ -1341,7 +1350,7 @@ namespace o2scl {
         ret=integ_i_err_int(func,res_d,err_d,L1norm_d,
                             target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_d<integ_tol) {
+        if (ret==0 && err_d/abs(res_d)<integ_tol) {
           res=static_cast<fp_t>(res_d);
           err=static_cast<fp_t>(err_d);
           return 0;
@@ -1366,7 +1375,7 @@ namespace o2scl {
         ret=integ_i_err_int(func,res_ld,err_ld,L1norm_ld,
                             target_tol,integ_tol,func_tol);
         
-        if (ret==0 && err_ld<integ_tol) {
+        if (ret==0 && err_ld/abs(res_ld)<integ_tol) {
           res=static_cast<fp_t>(res_ld);
           err=static_cast<fp_t>(err_ld);
           return 0;
@@ -1390,7 +1399,7 @@ namespace o2scl {
                             err_cdf25,L1norm_cdf25,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf25<integ_tol) {
+        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
           res=static_cast<fp_t>(res_cdf25);
           err=static_cast<fp_t>(err_cdf25);
           return 0;
@@ -1414,7 +1423,7 @@ namespace o2scl {
                             err_cdf35,L1norm_cdf35,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35<integ_tol) {
+        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
           res=static_cast<fp_t>(res_cdf35);
           err=static_cast<fp_t>(err_cdf35);
           return 0;
@@ -1438,7 +1447,7 @@ namespace o2scl {
                             err_cdf50,L1norm_cdf50,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50<integ_tol) {
+        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
           res=static_cast<fp_t>(res_cdf50);
           err=static_cast<fp_t>(err_cdf50);
           return 0;
@@ -1462,7 +1471,7 @@ namespace o2scl {
                             err_cdf100,L1norm_cdf100,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100<integ_tol) {
+        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
           res=static_cast<fp_t>(res_cdf100);
           err=static_cast<fp_t>(err_cdf100);
           return 0;

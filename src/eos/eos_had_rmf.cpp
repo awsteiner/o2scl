@@ -62,8 +62,6 @@ eos_had_rmf::eos_had_rmf() {
   calc_e_relative=true;
   calc_e_steps=20;
 
-  // Are these necessary?
-
   // AWS, 4/7/22: These settings have been moved from eos_had_rmf_ts
   // and are now the default, because they appear to improve results.
   // One problem was that the rho field is zero in nuclear matter and
@@ -469,11 +467,13 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
     x[4]=-0.001;
 
     if (verbose>0) {
-      cout << "Solving in eos_had_rmf::calc_e()." << endl;
-      cout << "alpha      n_B        n_ch       mu_n       "
+      cout << "Solving in eos_had_rmf::calc_e(): Steps: "
+           << calc_e_steps << endl;
+      cout << "i  alpha      n_B        n_ch       mu_n       "
 	   << "mu_p       sigma       omega      rho         ret" << endl;
     }
 
+    int cnt=0;
     for(double alpha=0.0;alpha<=1.0+1.0e-10;
 	alpha+=1.0/((double)calc_e_steps)) {
 
@@ -529,11 +529,18 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0) {
 	cout.precision(4);
-	cout << alpha << " " << n_baryon << " " << n_charge << " "
+        cout.width(2);
+	cout << cnt << " ";
+        cout << alpha << " " << n_baryon << " " << n_charge << " "
 	     << x[0] << " " << x[1] << " " << x[2] << " " 
-	     << x[3] << " " << x[4] << " " << ret << endl;
+	     << x[3] << " ";
+        cout.setf(ios::showpos);
+        cout << x[4] << " ";
+        cout.unsetf(ios::showpos);
+        cout << ret << endl;
 	cout.precision(6);
       }
+      cnt++;
     }
     if (verbose>0) {
       cout << endl;

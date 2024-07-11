@@ -7,13 +7,11 @@ Installation Contents
 ---------------------
 
 - :ref:`General notes <install_general>`
-- :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
 - :ref:`Compiling O₂scl from a release distribution <compile_dist>`
 - :ref:`Compiling O₂scl from a release on Linux <compile_release>`
 - :ref:`Compiling O₂scl from the source code <compile_source>`
 - :ref:`Compiling O₂scl on Docker <compile_docker>`
 - :ref:`Python support <python_support>`  
-- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
 - :ref:`Optional linear algebra libraries`
 - :ref:`Other optional libraries`  
 - :ref:`Range-checking`
@@ -46,32 +44,35 @@ on O₂scl. In order to help resolve these version conflicts, the
 the two different HDF5 versions (see ``acol -v``) so that it is easy
 to check that they are the same. 
 
-.. _compile_homebrew:
+..
+  x 
+  x- :ref:`Compiling O₂scl on Mac OSX with Homebrew <compile_homebrew>`
+  x.. _compile_homebrew:
+    
+  Compiling O₂scl on Mac OSX with Homebrew
+  ----------------------------------------
   
-Compiling O₂scl on Mac OSX with Homebrew
-----------------------------------------
-
-The easiest way to install on Mac OSX is with homebrew. Use::
-
-  brew tap awsteiner/science
-  brew install o2scl
-
-to install O₂scl. There are a few options for ``brew install``. The
-option ``--with-check`` performs the build-time tests and the option
-``--with-examples`` double checks that the examples can also be
-compiled and executed. The homebrew recipe for O₂scl uses the Mac OS X
-compiler clang. Homebrew also supports the installation of the current
-version directly from the repository using the ``--HEAD`` option to
-``brew install``. The homebrew installation includes readline support.
-The O₂scl homebrew recipes are stored at the
-https://github.com/awsteiner/homebrew-science repository.
-
-By default, a homebrew installation of O₂scl uses the OSX LLVM
-compiler. However, a homebrew installation of O₂scl will also install
-``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
-package requires ``gcc``.
-
-Python support in the homebrew package does not yet work yet.
+  The easiest way to install on Mac OSX is with homebrew. Use::
+  
+    brew tap awsteiner/science
+    brew install o2scl
+  
+  to install O₂scl. There are a few options for ``brew install``. The
+  option ``--with-check`` performs the build-time tests and the option
+  ``--with-examples`` double checks that the examples can also be
+  compiled and executed. The homebrew recipe for O₂scl uses the Mac OS X
+  compiler clang. Homebrew also supports the installation of the current
+  version directly from the repository using the ``--HEAD`` option to
+  ``brew install``. The homebrew installation includes readline support.
+  The O₂scl homebrew recipes are stored at the
+  xhttps://github.com/awsteiner/homebrew-science repository.
+  
+  By default, a homebrew installation of O₂scl uses the OSX LLVM
+  compiler. However, a homebrew installation of O₂scl will also install
+  ``gcc`` because O₂scl requires ``hdf5``, and the homebrew ``hdf5``
+  package requires ``gcc``.
+  
+  Python support in the homebrew package does not yet work yet.
 
 .. _compile_dist:
 
@@ -189,11 +190,11 @@ also install ``libopenmpi-dev`` and then use ``./configure
 Docker images for O₂scl
 -----------------------
 
-There are a few docker images for recent versions of
-O₂scl up at https://hub.docker.com/r/awsteiner/o2scl . These images
-are based on the experimental docker files which are stored in
-the ``docker`` subdirectory, and can be found at 
-https://github.com/awsteiner/o2scl/tree/main/docker .
+There are a few docker images for recent versions of O₂scl available
+at https://hub.docker.com/r/awsteiner/o2scl . These images are based
+on the docker files which are stored in the ``docker`` subdirectory,
+and can be found at
+https://github.com/awsteiner/o2scl/tree/main/docker . 
 
 .. _python_support:
 
@@ -219,25 +220,31 @@ successfully. Thus, when including Python support it is best to
 install O₂scl first, install O₂sclpy second, and then test O₂scl and
 O₂sclpy last. See also :ref:`Python Integration` for more details.
 
-.. _compile_snap:
+Some of the docker images available at
+https://hub.docker.com/r/awsteiner/o2scl include an installation of
+O₂sclpy and O₂scl with Python support. 
 
-Compiling O₂scl on Ubuntu with Snap
------------------------------------
+.. 
+  x .. _compile_snap:
+  x- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
 
-.. note:: AWS, 6/23/23: The snap package needs some work and I have
-          not had the time to fix it yet.
-
-The easiest way to install on Ubuntu is with snap (see
-https://snapcraft.io/o2scl). Use::
-
-  sudo snap install (--edge or --beta) --devmode o2scl
-
-The snap installation includes readline support and uses the GSL CBLAS.
-
-Using the command-line utility ``acol`` may require you to set the
-environment variable ``LD_LIBRARY_PATH``. For example, on machines
-where I use snap to install in my ``.bashrc``, I use::
-
+  Compiling O₂scl on Ubuntu with Snap
+  -----------------------------------
+  
+  .. note:: AWS, 6/23/23: The snap package needs some work and I have
+            not had the time to fix it yet.
+  
+  The easiest way to install on Ubuntu is with snap (see
+  https://snapcraft.io/o2scl). Use::
+  
+    sudo snap install (--edge or --beta) --devmode o2scl
+  
+  The snap installation includes readline support and uses the GSL CBLAS.
+  
+  Using the command-line utility ``acol`` may require you to set the
+  environment variable ``LD_LIBRARY_PATH``. For example, on machines
+  where I use snap to install in my ``.bashrc``, I use::
+  
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
 
 Optional linear algebra libraries
@@ -253,40 +260,12 @@ require additional ``-I`` or ``-L`` flags to be defined when O₂scl is
 installed, depending on how your particular system is configured. For
 example, O₂scl classes which use Armadillo use matrix decompositions
 so Armadillo must be compiled with LAPACK support, and you may need to
-specify the location of the LAPACK libraries manually. If you are
-installing on Mac OS X with homebrew, the options ``--with-eigen`` and
-``with-armadillo`` can be used.
+specify the location of the LAPACK libraries manually.
 
-Other optional libraries
-------------------------
-
-As with the linear algebra libraries, these libraries may require
-additional ``-I`` or ``-L`` flags to be defined when O₂scl is
-installed, depending on how your particular system is configured. The
-configure script should automatically add ``-l<library name>`` to
-LDFLAGS during installation, but you will need to also add this flag
-to your codes which use O₂scl.
-
-Readline support (``-lreadline``): The command-line interface class
-:ref:`cli <cli>`, and ``acol`` (see :ref:`The acol Command Line
-Utility`) can both take advantage of readline support. If the library
-is configured with ``--disable-readline``, then the readline library
-is not used.
-
-OpenMP support (typically involves the ``-fopenmp`` compiler flag):
-O₂scl contains a few functions which use multiple threads for
-faster execution. This support can be included using the
-``-enable-openmp`` option to the configure script. On some systems,
-this will also include explicitly specifying the OpenMP libraries
-in the ``LDFLAGS`` environment variable. See more information in
-:ref:`Parallel Programming with O2scl`. 
-  
-FFTW support (``-lfftw3``): O₂scl contains a few functions which
-require FFTW support, and this can be included if ``--enable-fftw`` is
-passed to the configure script.
-
-Module support, curses support, MFPR support, cubature support, and
-pugixml support are all experimental.
+..
+  If you are
+  installing on Mac OS X with homebrew, the options ``--with-eigen`` and
+  ``with-armadillo`` can be used.
 
 Other optional libraries
 ------------------------
@@ -350,10 +329,9 @@ can be found. The ``--prefix=/home/asteiner/install`` argument to
 Generation of documentation
 ---------------------------
 
-The O₂scl documentation is generated with ``doxygen``,
-``sphinx``, ``breathe``, and ``alabaster`` and packaged in with every
-release file. In principle, the documentation can be regenerated by
-the end-user, but this is not supported and requires several external
+The O₂scl documentation is included in every release tarball.
+It can also be generated by the user, but requires ``doxygen``, ``sphinx``,
+``breathe``, ``alabaster``, ``pugixml`` and other external
 applications not included in the distribution.
 
 The most recent release documentation is available at

@@ -1008,6 +1008,36 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Count the number of digits which two floating point numbers
+      share
+
+      This function returns the number of digits which two
+      floating point numbers share, even if they have different
+      types. This function uses \c static_cast to convert the
+      second number to the first type.
+
+      If the two numbers are equal and at least one of the two numbers
+      is non-zero, then this function returns
+      <tt>std::numeric_limits<fp_t>::max_digits10</tt>. If both
+      numbers are zero, then this function may return \c nan. This
+      function may also fail if the numbers specified are nearly as
+      small as the smallest representable number of the given type, in
+      which case it returns -1. Thus this function returns either
+      \c nan, or a number between -1 and
+      <tt>std::numeric_limits<fp_t>::max_digits10</tt>.
+   */
+  template<class fp_t, class fp2_t>
+  int count_digits_same(const fp_t &one, const fp2_t &two) {
+    fp_t numer=one-static_cast<fp_t>(two);
+    fp_t denom=(one+static_cast<fp_t>(two))/2;
+    if (numer==0 && denom!=0) {
+      return std::numeric_limits<fp_t>::max_digits10;
+    }
+    int ret=((int)(-log10(abs(numer)/abs(denom))));
+    if (ret<-1) ret=-1;
+    return ret;
+  }
+  
 }
 
 #endif

@@ -34,7 +34,6 @@
 #include <o2scl/constants.h>
 #include <o2scl/eos_had_base.h>
 #include <o2scl/eos_had_rmf.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
 namespace o2scl {

@@ -48,7 +48,7 @@ PROJECT_NAME           = "Object-oriented Scientific Computing Library"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "Version 0.930a1"
+PROJECT_NUMBER         = "Version 0.930a2"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -932,7 +932,8 @@ INPUT                  = . \
                          ../../src/part \
                          ../../src/nuclei \
                          ../../examples/ex_eos_had_apr.cpp \
-                         ../../examples/ex_eos_had_skyrme.cpp
+                         ../../examples/ex_eos_had_skyrme.cpp \
+                         ../../bin
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

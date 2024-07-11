@@ -49,7 +49,9 @@ namespace o2scl {
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
-#ifdef O2SCL_SET_MPFR  
+  
+#ifdef O2SCL_SET_MPFR
+  
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<25>> mpfr_25;
   typedef boost::multiprecision::number<
@@ -58,6 +60,7 @@ namespace o2scl {
     boost::multiprecision::mpfr_float_backend<50>> mpfr_50;
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<100>> mpfr_100;
+  
 #endif
 
   typedef boost::multiprecision::number<
@@ -75,7 +78,7 @@ namespace o2scl {
   // fixed as I think the MPFR types are faster.
   
   //#ifdef O2SCL_SET_MPFR
-  //  typedef mpfr_25 o2fp_25;
+  //typedef mpfr_25 o2fp_25;
   //typedef mpfr_35 o2fp_35;
   //typedef mpfr_50 o2fp_50;
   //typedef mpfr_100 o2fp_100;
@@ -95,6 +98,7 @@ namespace o2scl {
   typedef long double o2fp_100;
   
   // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
 #endif
   
   /// \name One-dimensional function typedefs in src/base/funct_multip.h
@@ -205,8 +209,6 @@ namespace o2scl {
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
 
-      \note Experimental.
-
       The function must be specified as a template, i.e. it must be of
       the form <tt>template<class fp_t> fp_t function(fp_t x)</tt>.
       
@@ -215,11 +217,9 @@ namespace o2scl {
       <tt>numeric_limits<fp_t>::digits10</tt>. This choice ensures
       that most exact or nearly exact functions will require only two
       function evaluations, one at \c double and one at \c long \c
-      double precision. However, only simple functions can be
-      evaluated to within this accuracy without more precise inputs.
-      Preferably, the user should choose this tolerance carefully. If
-      the tolerance is sufficiently small, no low-precision function
-      evaluations will be performed.
+      double precision. Preferably, the user should choose this
+      tolerance carefully. If the tolerance is sufficiently small, no
+      low-precision function evaluations will be performed.
 
       This class will fail to evalate a function with the requested
       precision if:
@@ -233,14 +233,14 @@ namespace o2scl {
 
       If \ref verbose is 0, no output will be generated. If it is 1,
       then the tolerance and result will be output. If it is 2, then
-      more diagnostics will be output.
+      more diagnostics will be output. If it is 3 or larger, then
+      a keypress will be required for additional function evaluations.
 
       \note The algorithm attempts not to be wasteful, but is not
       necessarily optimized for speed. One way to improve it would be
       to more intelligently choose the number of digits used in the
       boost multiprecision numbers based on the tolerance which was
-      specified. Another way to improve this class would be to use
-      other multiprecision types beyond boost.
+      specified. 
   */
   template<class fp_25_t, class fp_35_t, class fp_50_t, class fp_100_t>
   class funct_multip_tl {
@@ -286,6 +286,7 @@ namespace o2scl {
       // Tolerance choice and verification logic
       
       if (tol_loc<=0.0 && tol_rel<=0.0) {
+        
         // Add one to the value returned by digits10 to get a
         // reasonable precision goal for the user-specified type.
         // This choice means that most exact or nearly exact functions
@@ -296,7 +297,9 @@ namespace o2scl {
                     << "Set tolerance from data type to: "
                     << tol_loc << std::endl;
         }
+        
       } else if (tol_loc<=0.0) {
+        
         // If the data type is not sufficiently accurate to hold
         // the requested tolerance, then call the error handler
         if (tol_rel<pow(10.0,-std::numeric_limits<fp_t>::max_digits10)) {
@@ -315,7 +318,9 @@ namespace o2scl {
                     << "Set tolerance from value of tol_rel to: "
                     << tol_loc << std::endl;
         }
+        
       } else {
+        
         // If the data type is not sufficiently accurate to hold
         // the requested tolerance, then call the error handler
         if (tol_loc<pow(10.0,-std::numeric_limits<fp_t>::max_digits10)) {
@@ -331,6 +336,7 @@ namespace o2scl {
                     << tol_loc << std::endl;
         }
         // Use the value of tol_loc
+        
       }
 
       /// First pass, compare double and long double

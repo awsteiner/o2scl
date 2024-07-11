@@ -36,12 +36,13 @@ namespace o2scl {
   /** \brief One-dimensional version of cern_mroot
       
       This one-dimensional root-finding routine, based on \ref
-      o2scl::mroot_cern, is probably slower than the more typical 1-d
-      routines, but also tends to converge for a larger class of
-      functions than \ref o2scl::root_bkt_cern, \ref
-      o2scl::root_brent_gsl, or \ref o2scl::root_stef. It has been
-      modified from \ref o2scl::mroot_cern and slightly optimized, but
-      has the same basic behavior.
+      o2scl::mroot_cern. Previous testing has suggested that it is
+      probably slower than the more typical 1-D solvers, but also
+      tends to converge for a larger class of functions than \ref
+      o2scl::root_bkt_cern, \ref o2scl::root_brent_gsl, or \ref
+      o2scl::root_stef. It has been modified from \ref
+      o2scl::mroot_cern and slightly optimized, but has the same basic
+      behavior.
 
       If \f$ x_i \f$ denotes the current iteration, and \f$
       x^{\prime}_i \f$ denotes the previous iteration, then the
@@ -78,13 +79,17 @@ namespace o2scl {
 
       \endverbatim
   */
-  template<class func_t=funct> class root_cern : public root<func_t> {
+  template<class func_t=funct, class fp_t=double> class root_cern :
+    public root<func_t,func_t,fp_t> {
     
     public:
     
     root_cern() {
       info=0;
-      eps=0.1490116119384766e-07;
+      // The original value in the CERNLIB code was:
+      // eps=0.1490116119384766e-07;
+      // This is an approximately equivalent replacement.
+      eps=sqrt(std::numeric_limits<fp_t>::epsilon());
       scale=10.0;
       maxf=0;
     }
@@ -126,12 +131,13 @@ namespace o2scl {
 
     /** \brief The original scale parameter from CERNLIB (default 10.0)
      */
-    double scale;
+    fp_t scale;
     
-    /** \brief The smallest floating point number
-	(default \f$ \sim 1.49012 \times 10^{-8} \f$)
+    /** \brief The square root of epsilon
 
-	The original prescription from CERNLIB for \c eps is
+	The constructor sets this value to
+        <tt>sqrt(std::numeric_limits<fp_t>::epsilon())</tt>.
+        The original prescription from CERNLIB for \c eps is
 	given below:
 	\verbatim
 	#if !defined(CERNLIB_DOUBLE)
@@ -148,26 +154,14 @@ namespace o2scl {
 	#endif
         \endverbatim
 
-        \verbatim embed:rst
-        
-        .. todo::
-        
-           class root_cern
-        
-           Future:
-        
-           - This number should probably default to one of the
-             GSL tolerances.
-        
-        \endverbatim
     */
-    double eps;
+    fp_t eps;
     
     /// Solve \c func using \c x as an initial guess, returning \c x.
-    virtual int solve(double &ux, func_t &func) {
+    virtual int solve(fp_t &ux, func_t &func) {
       
       int it=0;
-      double fky;
+      fp_t fky;
 
       int lmaxf;
       if (maxf<=0) lmaxf=200;
@@ -183,7 +177,7 @@ namespace o2scl {
       }
   
       int iflag=0, numf=0, nfcall=0, nier6=-1, nier7=-1, nier8=0;
-      double fnorm=0.0, difit=0.0, xnorm=0.0;
+      fp_t fnorm=0.0, difit=0.0, xnorm=0.0;
       bool set=false;
 	
       if (xnorm<fabs(ux)) {
@@ -191,23 +185,23 @@ namespace o2scl {
 	set=true;
       }
 
-      double delta=scale*xnorm;
+      fp_t delta=scale*xnorm;
       if (set==false) delta=scale;
 	
-      double wmat, farr, w0arr, w1arr, w2arr;
+      fp_t wmat, farr, w0arr, w1arr, w2arr;
 	
       bool solve_done=false;
       while (solve_done==false) {
     
 	int nsing=1;
-	double fnorm1=fnorm;
-	double difit1=difit;
+	fp_t fnorm1=fnorm;
+	fp_t difit1=difit;
 	fnorm=0.0;
     
 	// Compute step H for the divided difference which approximates
 	// the K-th row of the Jacobian matrix
 	
-	double h=eps*xnorm;
+	fp_t h=eps*xnorm;
 	if (h==0.0) h=eps;
 
 	wmat=h;
@@ -230,7 +224,7 @@ namespace o2scl {
 	    
 	farr=func(w2arr);
 	    
-	double fkz=farr;
+	fp_t fkz=farr;
 	nfcall++;
 	numf=nfcall;
 	w0arr=fkz-fky;
@@ -240,12 +234,12 @@ namespace o2scl {
 	// Compute the Householder transformation to reduce the K-th row
 	// of the Jacobian matrix to a multiple of the K-th unit vector
 
-	double eta=0.0;
+	fp_t eta=0.0;
 	if (eta<fabs(w0arr)) eta=fabs(w0arr);
 	
 	if (eta!=0.0) {
 	  nsing--;
-	  double sknorm=0.0;
+	  fp_t sknorm=0.0;
 	      
 	  w0arr/=eta;
 	  sknorm+=w0arr*w0arr;
@@ -258,13 +252,13 @@ namespace o2scl {
 
 	  w2arr=0.0;
 	  w2arr+=w0arr*wmat;
-	  double temp=w0arr/(sknorm*w0arr);
+	  fp_t temp=w0arr/(sknorm*w0arr);
 	  wmat-=temp*w2arr;
 
 	  // Compute the subiterate
 
 	  w0arr=sknorm*eta;
-	  double temp2=fky/w0arr;
+	  fp_t temp2=fky/w0arr;
 	  if (h*fabs(temp2)>delta) 
 	    temp2=(temp2>=0.0) ? fabs(delta/h) : -fabs(delta/h);
 	  w1arr+=temp2*wmat;

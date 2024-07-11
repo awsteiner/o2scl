@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
   cout.setf(ios::scientific);
   test_mgr t;
-  t.set_output_level(1);
+  t.set_output_level(2);
 
   eos_had_rmf_hyp re;
 
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 
     //cout.precision(10);
     eos_leptons elep;
-    elep.include_muons=true;
+    elep.include_muons=false;
     re.beta_eq_T0(nB_grid,guess,elep,eos_table);
     /*
     for(size_t j=0;j<eos_table->get_nlines();j+=10) {

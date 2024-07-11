@@ -1,14 +1,14 @@
-Fermion Details
-===============
+Fermion Thermodynamics
+======================
 
 :ref:`O2scl <o2scl>`
 
-Fermion details contents
-------------------------
+Fermion thermodynamics contents
+-------------------------------
 
 - :ref:`Interacting and non-interacting fermions`
 - :ref:`Relativistic versus non-relativistic fermions`
-- :ref:`Upper limits`
+- :ref:`Integration limits for degenerate fermions`
 - :ref:`Integrands`
 - :ref:`Non-degenerate integrands`
 - :ref:`Distribution function derivatives`
@@ -33,8 +33,10 @@ be ``true``, and the fermionic distribution function is
    f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu)/T}}
 
 Then the energy density will also include the rest mass energy
-density, :math:`n m`. When :math:`\nu` does not include the rest mass,
-the fermionic distribution function is
+density, :math:`n m`. Note that, even when the particle is
+interacting, the rest mass is *not* equal to :math:`n m^{*}`. When
+:math:`\nu` does not include the rest mass, the fermionic distribution
+function is
    
 .. math::
 
@@ -50,7 +52,7 @@ Relativistic versus non-relativistic fermions
 ---------------------------------------------
 
 There are a few distinctions between how relativistic and
-nonrelativistic fermions are handled in :ref:`o2scl <o2scl>`
+nonrelativistic fermions are handled in :ref:`O2scl <o2scl>`
 which are worth noting. For an interacting relativistic fermion, the
 effective mass, :math:`m^{*}`, and the effective chemical potential,
 :math:`\nu` are defined so that the energy density is
@@ -113,9 +115,8 @@ Taking the nonrelativsitic limit of the relativistic energy density
 shows that :math:`\nu_{\mathrm{R}} - m^{*} = \bar{\nu}_{\mathrm{NR}}`.
 Thus the class :ref:`fermion_nonrel_tl <fermion_nonrel_tl>` uses the
 value stored in :cpp:var:`o2scl::part_tl::nu` slightly differently
-than does :ref:`fermion_rel_tl <fermion_rel_tl>` and :ref:`fermion_eff
-<fermion_eff>` . The Fermi momentum is also handled slightly
-differently, :math:`k_{F,\mathrm{R}} \equiv
+than does :ref:`fermion_rel_tl <fermion_rel_tl>` . The Fermi momentum
+is also handled slightly differently, :math:`k_{F,\mathrm{R}} \equiv
 \sqrt{\nu_{\mathrm{R}}^2-m^{* 2}}` and :math:`k_{F,\mathrm{NR}} \equiv
 \sqrt{2 \bar{\nu}_{\mathrm{NR}} m^{*}}`.
 
@@ -145,8 +146,8 @@ alone. This is the form used to compute the energy density in
 :math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
 :cpp:func:`o2scl::part_calibrate_class_tl::part_calibrate()`.
 
-Upper limits
-------------
+Integration limits for degenerate fermions
+------------------------------------------
 
 The fermionic integrands vanish when the argument of
 the exponential becomes large compared to a positive

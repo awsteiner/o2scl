@@ -43,7 +43,8 @@
 
 namespace o2scl {
 
-  /** \brief Desc 
+  /** \brief Class defining integrands of derivatives for
+      relativistic fermions
    */
   template<class fp_t> class fermion_deriv_rel_integ {
 
@@ -642,7 +643,9 @@ namespace o2scl {
     /// Verbosity parameter (default 0)
     int verbose;
 
-    /// If true, use multiprecision to improve the integrations
+    /** \brief If true, use multiprecision to improve the integrations
+        (default false)
+    */
     bool multip;
     
     /// If true, verify the thermodynamic identity (default false)
@@ -1274,15 +1277,6 @@ namespace o2scl {
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
-
-  /*
-  template<class fermion_deriv_t=fermion_deriv_tl<double>,
-           class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
-           class nit_t=inte_qagiu_gsl<>,
-           class dit_t=inte_qag_gsl<>,
-	   class fp_t=double>
-  class fermion_deriv_rel_tl :
-   */
 
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   

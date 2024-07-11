@@ -215,21 +215,13 @@ namespace o2scl {
     /// High accuracy
     void improved_acc() {
       frel.upper_limit_fac=40.0;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.fri.dit.tol_abs=1.0e-13;
-      frel.fri.dit.tol_rel=1.0e-13;
-      frel.fri.nit.tol_abs=1.0e-13;
-      frel.fri.nit.tol_rel=1.0e-13;
-      frel.density_root->tol_rel=1.0e-10;
+      frel.dit.tol_abs=1.0e-13;
+      frel.dit.tol_rel=1.0e-13;
+      frel.nit.tol_abs=1.0e-13;
+      frel.nit.tol_rel=1.0e-13;
+      frel.density_root.tol_rel=1.0e-10;
 
       fdrel.upper_limit_fac=40.0;
-      fdrel.dit.tol_abs=1.0e-13;
-      fdrel.dit.tol_rel=1.0e-13;
-      fdrel.nit.tol_abs=1.0e-13;
-      fdrel.nit.tol_rel=1.0e-13;
       fdrel.dit.tol_abs=1.0e-13;
       fdrel.dit.tol_rel=1.0e-13;
       fdrel.nit.tol_abs=1.0e-13;
@@ -242,15 +234,15 @@ namespace o2scl {
     /// Default accuracy
     void default_acc() {
       frel.upper_limit_fac=20.0;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.fri.dit.tol_abs=1.0e-8;
-      frel.fri.dit.tol_rel=1.0e-8;
-      frel.fri.nit.tol_abs=1.0e-8;
-      frel.fri.nit.tol_rel=1.0e-8;
-      frel.density_root->tol_rel=4.0e-7;
+      frel.dit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.dit.tol_abs=1.0e-8;
+      frel.dit.tol_rel=1.0e-8;
+      frel.nit.tol_abs=1.0e-8;
+      frel.nit.tol_rel=1.0e-8;
+      frel.density_root.tol_rel=4.0e-7;
 
       fdrel.upper_limit_fac=20.0;
       fdrel.dit.tol_abs=1.0e-8;
@@ -354,7 +346,13 @@ namespace o2scl {
   };
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
-  
+
+  /** \brief Multiprecision version of \ref eos_leptons
+
+      This class provides the additional functionality on top of \ref
+      eos_leptons to compute the lepton and photon EOS with
+      multiprecision.
+   */
   class eos_leptons_multip : public eos_leptons {
 
   protected:
@@ -394,8 +392,13 @@ namespace o2scl {
     convert_units<cpp_dec_float_25> cu_cdf25;
     //@}
 
+    /** \brief Compute electron thermodynamics from the electron 
+        density
+    */
     virtual int electron_density(double T);
     
+    /** \brief Function to solve for \ref pair_density_eq()
+     */
     virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     

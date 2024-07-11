@@ -27,6 +27,7 @@
 #include <o2scl/multi_funct.h>
 #include <o2scl/expval.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/interpm_krige.h>
 #include <o2scl/kde_python.h>
 
 using namespace std;
@@ -73,14 +74,8 @@ public:
   mcmc_para_table<point_funct,fill_funct,std::vector<double>,
                   ubvector> mct;
   
-  mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector,
-                  mcmc_stepper_hmc<point_hmc,std::vector<double>,
-                                   ubvector>> mct2;
-
-  mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector,
-                  mcmc_stepper_mh<point_hmc,std::vector<double>,
-                                  ubvector,ubmatrix,
-                                  prob_cond_mdim_indep<>>> mct3;
+  mcmc_para_table<point_hmc,fill_hmc,std::vector<double>,ubvector>
+  mct_hmc;
   
   int hmc_point(size_t n_params, const ubvector &u, double &log_wgt,
                 std::vector<double> &dat) {
@@ -253,7 +248,7 @@ int main(int argc, char *argv[]) {
      std::placeholders::_4,std::placeholders::_5,std::placeholders::_6);
 
   size_t n_threads=1;
-#ifdef O2SCL_OPENMP
+#ifdef O2SCL_SET_OPENMP
   n_threads=2;
 #endif
 
@@ -285,6 +280,8 @@ int main(int argc, char *argv[]) {
   double avg, std, avg_err;
   size_t i1, i2;
 
+  mpc.mc.def_stepper->step_fac.resize(1);
+  
   // ----------------------------------------------------------------
   // Plain MCMC
 
@@ -297,7 +294,7 @@ int main(int argc, char *argv[]) {
     mpc.mc.n_threads=1;
     mpc.mc.max_iters=N;
     mpc.mc.prefix="mcmc";
-    mpc.mc.stepper.step_fac[0]=10.0;
+    mpc.mc.def_stepper->step_fac[0]=10.0;
     
     mpc.sev_x.set_blocks(20,N/20);
     mpc.sev_x2.set_blocks(20,N/20);
@@ -396,7 +393,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.max_iters=N;
     mpc.mct.prefix="mcmct";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.stepper.step_fac[0]=10.0;
+    mpc.mct.def_stepper->step_fac[0]=10.0;
 
     mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
@@ -519,7 +516,7 @@ int main(int argc, char *argv[]) {
     mpc.mct.n_threads=n_threads;
     mpc.mct.prefix="mcmct_flat";
     mpc.mct.table_prealloc=N*n_threads;
-    mpc.mct.stepper.step_fac[0]=10.0;
+    mpc.mct.def_stepper->step_fac[0]=10.0;
     
     mpc.mct.mcmc_fill(1,low,high,flat_vec,fill_vec,data_vec);
 
@@ -645,7 +642,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
   }
 
-#ifdef O2SCL_PYTHON
+#ifdef O2SCL_SET_PYTHON
   
   if (true) {
 
@@ -659,17 +656,22 @@ int main(int argc, char *argv[]) {
     vector<string> pnames_imh={"x","x2"};
     vector<string> punits_imh={"MeV","MeV^2"};
     
-    mpc.mct3.set_names_units(pnames_imh,punits_imh);
+    mpc.mct.stepper=shared_ptr<mcmc_stepper_base<point_hmc,
+                               std::vector<double>,ubvector>>
+      (new mcmc_stepper_mh<point_hmc,std::vector<double>,
+       ubvector,ubmatrix,
+       prob_cond_mdim_indep<>>);
+    mpc.mct.set_names_units(pnames_imh,punits_imh);
 
     vector<vector<double>> data_vec_imh(2);
     data_vec_imh[0].resize(2);
     data_vec_imh[1].resize(2);
 
-    mpc.mct3.aff_inv=false;
-    mpc.mct3.verbose=3;
-    mpc.mct3.n_threads=1;
-    mpc.mct3.max_iters=200;
-    mpc.mct3.prefix="mcmct_imh_kde";
+    mpc.mct.aff_inv=false;
+    mpc.mct.verbose=3;
+    mpc.mct.n_threads=1;
+    mpc.mct.max_iters=200;
+    mpc.mct.prefix="mcmct_imh_kde";
 
     // Read the previous table
     table_units<> last;
@@ -681,7 +683,12 @@ int main(int argc, char *argv[]) {
     // Train the KDE with the file, creating a new KDE object for each
     // thread, and then setting that KDE as the base distribution for
     // the independent conditional probability. 
-    mpc.mct3.stepper.proposal.resize(1);
+    std::shared_ptr<mcmc_stepper_mh<point_hmc,std::vector<double>,
+       ubvector,ubmatrix,prob_cond_mdim_indep<>>> new_stepper
+      (new mcmc_stepper_mh<point_hmc,std::vector<double>,
+       ubvector,ubmatrix,prob_cond_mdim_indep<>>);
+    mpc.mct.stepper=new_stepper;
+    new_stepper->proposal.resize(1);
     
     // Copy the table data to a tensor for use in kde_python.
     // We need a copy for each thread because kde_python takes
@@ -701,13 +708,13 @@ int main(int argc, char *argv[]) {
     kp->set_function("o2sclpy",tin,
                      weights,"verbose=0","kde_scipy");
     
-    mpc.mct3.stepper.proposal[0].set_base(kp);
+    new_stepper->proposal[0].set_base(kp);
     
     // Read initial points from the file
-    mpc.mct3.initial_points_file_last("mcmct_0_out",1);
+    mpc.mct.initial_points_file_last("mcmct_0_out",1);
     
     // Run MCMC
-    mpc.mct3.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
+    mpc.mct.mcmc_fill(1,low,high,gauss_vec,fill_vec,data_vec);
 
     cout << endl;
     
@@ -732,15 +739,21 @@ int main(int argc, char *argv[]) {
     low_hmc[1]=-10.0;
     high_hmc[0]=10.0;
     high_hmc[1]=10.0;
+
+    std::shared_ptr<
+      mcmc_stepper_hmc<
+      point_hmc,std::vector<double>,ubvector>> new_stepper
+      (new mcmc_stepper_hmc<
+       point_hmc,std::vector<double>,ubvector>);
+    mpc.mct_hmc.stepper=new_stepper;
+
+    mpc.mct_hmc.set_names_units(pnames_hmc,punits_hmc);
     
-    mpc.mct2.set_names_units(pnames_hmc,punits_hmc);
-    
-    mpc.mct2.aff_inv=false;
-    mpc.mct2.verbose=3;
-    mpc.mct2.n_threads=1;
-    mpc.mct2.max_iters=2000;
-    mpc.mct2.prefix="mcmct_hmc";
-    //mpc.mct2.stepper.mom_step[0]=0.18;
+    mpc.mct_hmc.aff_inv=false;
+    mpc.mct_hmc.verbose=3;
+    mpc.mct_hmc.n_threads=1;
+    mpc.mct_hmc.max_iters=2000;
+    mpc.mct_hmc.prefix="mcmct_hmc";
     
     point_hmc ph=std::bind
       (std::mem_fn<int(size_t,const ubvector &,double &,
@@ -758,16 +771,68 @@ int main(int argc, char *argv[]) {
     hmc_point_vec[0]=ph;
     hmc_fill_vec[0]=fh;
     
-    mpc.mct2.mcmc_fill(2,low_hmc,high_hmc,hmc_point_vec,
+    mpc.mct_hmc.mcmc_fill(2,low_hmc,high_hmc,hmc_point_vec,
                        hmc_fill_vec,data_vec_hmc);
     
-    std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct2.get_table();
+    std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct_hmc.get_table();
 
     tm.test_rel(vector_mean(hmc_table->get_nlines(),
                            (*hmc_table)["x"]),0.0,0.2,"hmc mean");
     tm.test_rel(vector_stddev(hmc_table->get_nlines(),
                            (*hmc_table)["x"]),1.0,0.2,"hmc mean");
     cout << endl;
+    
+  }
+
+  if (true) {
+    
+    mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
+                  ubvector> mpe;
+
+    vector<string> pnames={"x","x2"};
+    vector<string> punits={"MeV","MeV^2"};
+    mpe.set_names_units(pnames,punits);
+
+    mpe.aff_inv=false;
+    mpe.verbose=2;
+    mpe.n_threads=1;
+    mpe.max_iters=N/5;
+    mpe.prefix="mpe";
+    mpe.show_emu=1;
+    mpe.def_stepper->step_fac[0]=10.0;
+
+    // Set up the shared pointer to the interpolation object
+    std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
+    mpe.emu.resize(1);
+    mpe.emu[0]=iko;
+
+    typedef const const_matrix_row_gen
+      <o2scl::const_matrix_view_table<>> mat_x_row_t;
+    
+    // Setup the multidimensional covariance object
+    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<mcovar_funct_rbf_noise<
+      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
+                                  mat_x_row_t>);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(1);
+    
+    iko->verbose=2;
+    iko->def_mmin.verbose=1;
+    vector<double> len_list={0.1,0.3,1.0,3.0};
+    vector<double> l10_list={-15,-13,-11};
+    vector<vector<double>> ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+    
+    iko->set_covar(vmfrn,param_lists);
+    
+    mpe.emu_file="mcmct_0_out";
+
+    mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
   }
   

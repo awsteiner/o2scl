@@ -461,7 +461,8 @@ namespace o2scl {
         \endcomment
     */
     bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
-                      fp_t prec=1.0e-18, bool inc_antip=false) {
+                      fp_t prec=1.0e-18, bool inc_antip=false,
+                      int verbose=0) {
       
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
@@ -491,11 +492,16 @@ namespace o2scl {
       
       // Maximum argument for exponential
       // fp_t log_dbl_max=709.78;
-      
+
       // Return zero if psi+1/t is too small.
       // log(std::numeric_limits<double>::min()) is the log
       // of the smallest representable number, about -700,
       fp_t limit=log(std::numeric_limits<fp_t>::min());
+
+      if (verbose>0) {
+        std::cout << "psi+1/t,limit: "
+                  << psi+1.0/tt << " " << limit << std::endl;
+      }
       
       if (psi+1.0/tt<limit) {
         f.n=0.0;
@@ -516,7 +522,6 @@ namespace o2scl {
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
         rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);
-        //std::cout << "rat: " << rat << std::endl;
       } else {
         if (f.inc_rest_mass) {
           rat=exp(-jot1)*2.0*cosh(dj1*f.nu/temper)/jot1/jot1*
@@ -530,9 +535,14 @@ namespace o2scl {
             be_integ.K2exp(jot2);
         }
       }
-      
+
       // If the ratio between the last term and the first term is 
       // not small enough, return false
+      if (verbose>0) {
+        std::cout << "rat,prec: " << rat << " " << prec
+                  << std::endl;
+      }
+      
       if (isfinite(rat) && rat>prec) {
         return false;
       }
@@ -548,6 +558,9 @@ namespace o2scl {
         
         ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);
+        if (verbose>0) {
+          std::cout << j << " " << nterm << std::endl;
+        }
         
         if (j==1) first_term=pterm;
         f.pr+=pterm;
@@ -579,6 +592,51 @@ namespace o2scl {
       
       // We failed to add enough terms, so return false
       return false;
+    }
+
+    /** \brief Compute the net density including antiparticles in
+        the nondegenerate approximation
+
+        This function is experimental.
+     */
+    bool pair_den_ndeg(fermion_t &f, fp_t temper, fp_t prec=1.0e-18) {
+
+      if (f.non_interacting==true) { f.ms=f.m; }
+
+      fp_t term=f.g*pow(f.ms,3)*temper/o2scl_const::pi2*
+        boost::math::cyl_bessel_k(2,f.ms/temper);
+      fp_t nu=temper*asinh(f.n/term);
+      std::cout << "T,nu: " << temper << " " << nu << std::endl;
+      double n1=f.n;
+      double nu1=nu;
+      double n2=f.n*(1.0+1.0e-4);
+      fp_t nu2=temper*asinh(n2/term);
+      std::cout << "deriv1: " << (nu2-nu1)/(n2-n1) << std::endl;
+
+      // Perform a simple Taylor-series like error analysis
+      fp_t dnu_dn=temper/term/sqrt(1.0+f.n*f.n/term/term);
+      std::cout << "deriv2: " << dnu_dn << std::endl;
+
+      fp_t unc=dnu_dn*std::numeric_limits<fp_t>::epsilon();
+      std::cout << "unc: " << unc << std::endl;
+      std::cout << "unc/nu: " << unc/nu << std::endl;
+      
+      // If the precision is insufficient, return false
+      if (fabs(unc/nu)>=prec) {
+        return false;
+      }
+
+      if (f.inc_rest_mass) {
+        f.nu=nu;
+      } else {
+        f.nu=nu-f.m;
+      }
+
+      if (f.non_interacting) {
+        f.mu=f.nu;
+      }
+      
+      return true;
     }
     
     /** \brief Degenerate expansion for fermions
@@ -714,7 +772,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
         chemical potential
     */
-    virtual void pair_mu(fermion_t &f, fp_t temper)=0;
+    virtual int pair_mu(fermion_t &f, fp_t temper)=0;
     
     /** \brief Calculate properties with antiparticles as function of
         density

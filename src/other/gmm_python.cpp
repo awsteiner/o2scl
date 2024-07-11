@@ -66,7 +66,6 @@ gmm_python::gmm_python(std::string module, size_t n_comp,
   p_instance=0;
   p_class=0;
   p_module=0;
-  //p_name=0;
       
   n_params=0;
   n_points=0;
@@ -129,14 +128,6 @@ void gmm_python::free() {
     }
     Py_DECREF(p_module);
   }
-  /*
-  if (p_name!=0) {
-    if (verbose>1) {
-      std::cout << "Decref name." << std::endl;
-    }
-    Py_DECREF(p_name);
-  }
-  */
 
   p_set_func=0;
   p_components_func=0;
@@ -144,7 +135,6 @@ void gmm_python::free() {
   p_instance=0;
   p_class=0;
   p_module=0;
-  //p_name=0;
       
   n_params=0;
   n_points=0;

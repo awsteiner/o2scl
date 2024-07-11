@@ -424,17 +424,6 @@ void o2scl_fermion_rel_set_upper_limit_fac(void *vptr, double v) {
   return;
 }
 
-double o2scl_fermion_rel_get_deg_entropy_fac(void *vptr) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  return ptr->deg_entropy_fac;
-}
-
-void o2scl_fermion_rel_set_deg_entropy_fac(void *vptr, double v) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  ptr->deg_entropy_fac=v;
-  return;
-}
-
 int o2scl_fermion_rel_get_verbose(void *vptr) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   return ptr->verbose;
@@ -476,17 +465,6 @@ bool o2scl_fermion_rel_get_verify_ti(void *vptr) {
 void o2scl_fermion_rel_set_verify_ti(void *vptr, bool v) {
   fermion_rel *ptr=(fermion_rel *)vptr;
   ptr->verify_ti=v;
-  return;
-}
-
-double o2scl_fermion_rel_get_therm_ident(void *vptr) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  return ptr->therm_ident;
-}
-
-void o2scl_fermion_rel_set_therm_ident(void *vptr, double v) {
-  fermion_rel *ptr=(fermion_rel *)vptr;
-  ptr->therm_ident=v;
   return;
 }
 

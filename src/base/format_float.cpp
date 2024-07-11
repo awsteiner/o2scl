@@ -43,7 +43,8 @@ format_float::format_float() {
   sci_sgn="-";
   exp_suffx="}";
   sci_suffx="";
-  not_finte="Nan";
+  inf="inf";
+  nan="nan";
   zeros="0";
   ex_mn=-2;
   ex_mx=3;
@@ -76,7 +77,7 @@ void format_float::html_mode() {
   sci_sgn="&minus;";
   exp_suffx="</sup>";
   sci_suffx="";
-  not_finte="Nan";
+  nan="nan";
   zeros="0";
   exp_dgs=0;
   show_exp_sgn=false;
@@ -95,7 +96,7 @@ void format_float::unicode_mode() {
   sci_sgn="-";
   exp_suffx="";
   sci_suffx="";
-  not_finte="Nan";
+  nan="nan";
   zeros="0";
   exp_dgs=0;
   show_exp_sgn=false;
@@ -114,7 +115,7 @@ void format_float::latex_mode() {
   exp_sgn="-";
   exp_suffx="}$";
   sci_suffx="";
-  not_finte="Nan";
+  nan="nan";
   zeros="0";
   exp_dgs=0;
   show_exp_sgn=false;
@@ -133,7 +134,7 @@ void format_float::c_mode() {
   sci_sgn="-";
   exp_suffx="";
   sci_suffx="";
-  not_finte="NaN";
+  nan="NaN";
   zeros="0";
   ex_mn=-4;
   ex_mx=5;
@@ -172,7 +173,8 @@ int format_float::remove_zeros_dpt(string &s) {
 string format_float::convert(double x, bool debug) {
 
   // Handle special cases
-  if (!std::isfinite(x)) return not_finte;
+  if (std::isinf(x)) return inf;
+  if (std::isnan(x)) return nan;
   if (x==0.0) return zeros;
 
   if (debug) cout.setf(ios::scientific);

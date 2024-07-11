@@ -219,7 +219,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   }
 
   // Ensure the RNGs for different types are somewhat uncorrelated
-  rng.clock_seed();
+  rng_set_seed(rng);
   rng_ld.set_seed(rng.get_seed()*2);
 
   terminal ter;
@@ -1484,7 +1484,7 @@ int acol_manager::setup_options() {
   const int cl_param=cli::comm_option_cl_param;
   const int both=cli::comm_option_both;
 
-  static const int narr=22;
+  static const int narr=23;
 
   string type_list_str;
   for(size_t i=0;i<type_list.size()-1;i++) {
@@ -1537,6 +1537,9 @@ int acol_manager::setup_options() {
   opts_new[13]={'i',"internal","",0,1,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
     both};
+  opts_new[22]={0,"nderiv","",0,5,"","",
+    new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_nderiv),
+    both};
   opts_new[14]={0,"ninteg","",0,5,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ninteg),
     both};
@@ -1561,79 +1564,6 @@ int acol_manager::setup_options() {
   opts_new[21]={0,"xml-to-o2","",0,0,"","",
     new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
     both};
-
-    /*
-  // Options, sorted by long name. We allow 0 parameters in many of these
-  // options so they can be requested from the user in interactive mode. 
-  comm_option_s options_arr[narr]=
-    {{0,"autocorr","",0,-1,"","",
-       new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_autocorr),
-       both},
-     {0,"calc","",0,2,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_calc),
-      both},
-     {0,"clear","",0,0,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_clear),
-      both},
-     {'c',"create","",0,-1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_create),
-      both},
-     {0,"docs","",0,1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_docs),
-      both},
-     {0,"wdocs","",0,2,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_wdocs),
-      both},
-     {0,"download","",0,4,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_download),
-      both},
-     {0,"filelist","",0,1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_filelist),
-      both},
-     {'g',"generic","",0,2,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_generic),
-      both},
-     {0,"convert","",0,9,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_convert),
-      both},
-     {0,"h5-copy","",-1,-1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_h5_copy),
-      both},
-     {0,"constant","",0,-1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_constant),
-      both},
-     {'q',"interactive","",0,0,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_interactive),
-      cl_param},
-     {'i',"internal","",0,1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_internal),
-      both},
-     {0,"ninteg","",0,5,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_ninteg),
-      both},
-     {'o',"output","",0,1,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_output),
-      both},
-     {'P',"preview","",0,2,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_preview),
-      both},
-     {'r',"read","",0,2,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_read),
-      both},
-     {0,"slack","",0,6,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_slack),
-      both},
-     {0,"type","",0,0,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_type),
-      both},
-     {'v',"version","",0,0,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_version),
-      both},
-     {0,"xml-to-o2","",0,0,"","",
-      new comm_option_mfptr<acol_manager>(this,&acol_manager::comm_xml_to_o2),
-      both}
-    };
-    */
 
   cl->remove_comm_option("xml-to-o2");
 

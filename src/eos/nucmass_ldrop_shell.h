@@ -35,7 +35,6 @@
 #include <o2scl/eos_had_base.h>
 #include <o2scl/eos_had_apr.h>
 #include <o2scl/eos_had_rmf.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/mmin_conp.h>
 #include <o2scl/mmin_simp2.h>
 #include <o2scl/nucmass_ldrop.h>

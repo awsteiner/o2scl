@@ -196,7 +196,7 @@ namespace o2scl {
     //@}
 
     /** \brief Seed for thread-safe random number generation 
-        \ref rng_set_seed()
+        (see \ref rng_set_seed() and \ref rng_set_seed_mpi())
      */
     unsigned int seed;
     
@@ -210,7 +210,7 @@ namespace o2scl {
 
     /** \brief Initialize the python interface
 
-        This function uses the environment variable O2SCL_PYTHON_EXT
+        This function uses the environment variable O2SCL_PYTHON_EXE
         to set the Python name via the function Py_SetProgramName()
         before the function Py_Initialize() is called.
      */
@@ -218,7 +218,7 @@ namespace o2scl {
 
     /** \brief Initialize the python interface
 
-        This function uses the environment variable O2SCL_PYTHON_EXT
+        This function uses the environment variable O2SCL_PYTHON_EXE
         to set the Python name via the function Py_SetProgramName()
         before the function Py_Initialize() is called.
      */
@@ -233,7 +233,7 @@ namespace o2scl {
     /// String containing python version
     std::string py_version();
     
-    /// Import arrays for numpy C api
+    /// Import arrays for numpy C API
     void *py_import_array();
     
     /// Get the path for the Python module named \c module
@@ -307,10 +307,16 @@ namespace o2scl {
       create a condition where no OpenMP thread can proceed and thus
       prevent subsequent code from running as normal, however, this 
       is expected to be rare in practice.
+
+      \note This function currently uses the number 1000001 as a
+      number to separate MPI ranks, an algorithm which can be foiled
+      if one selects more than 1000000 random numbers for each MPI
+      rank. In practice this should be rare, as seed selection should
+      happen more rarely.
   */
   void rng_set_seed(rng<> &r, int mpi_size=1, int mpi_rank=0,
-                    int verbose=1);
-
+                    int verbose=0);
+  
 #if defined (O2SCL_MPI) || defined (DOXYGEN)
   
   /** \brief MPI version of rng_set_seed()
@@ -321,9 +327,15 @@ namespace o2scl {
       supported.
 
       This function is a MPI wrapper around \ref rng_set_seed().
-   */
+
+      \note This function currently uses the number 1000001 as a
+      number to separate MPI ranks, an algorithm which can be foiled
+      if one selects more than 1000000 random numbers for each MPI
+      rank. In practice this should be rare, as seed selection should
+      happen more rarely.
+  */
   template<class fp_t=double>
-  void rng_set_seed_mpi(rng<fp_t> &r, int verbose=1) {
+  void rng_set_seed_mpi(rng<fp_t> &r, int verbose=0) {
     int mpi_rank=0, mpi_size=1;
     // Get MPI rank, etc.
     MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);

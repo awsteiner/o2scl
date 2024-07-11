@@ -500,6 +500,328 @@ int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
+
+  vector<string> in, pr;
+  std::string kw;
+  
+  if (sv.size()>3) {
+    
+    in.resize(4);
+    in[0]=sv[1];
+    in[1]=sv[2];
+    kw=sv[3];
+
+  } else if (sv.size()>2) {
+
+    in.resize(2);
+    in[0]=sv[1];
+    in[1]=sv[2];
+    
+  } else {
+    
+    pr.push_back("Function of 'x'");
+    pr.push_back("Value");
+    pr.push_back("Additional arguments");
+    int ret=get_input(sv,pr,in,"nderiv",itive_com);
+    if (ret!=0) return ret;
+
+    kw=in[2];
+    
+  }
+
+  bool multiprecision=false;
+  if (kw=="1" || kw[0]=='t' || kw[0]=='T') {
+    multiprecision=true;
+  } else if (kw.length()>0) {
+    kwargs kwa(kw);
+    multiprecision=kwa.get_bool("multip",false);
+  }
+  
+  if (sv.size()<=2) {
+    cerr << "Not enough arguments for ninteg." << endl;
+    return 1;
+  }
+  std::string func=in[0];
+  std::string val=in[1];
+
+  deriv_gsl<> dg;
+
+#ifdef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  if (multiprecision) {
+    multiprecision=false;
+    cout << "Disabling multiprecision since -DO2SCL_NO_BOOST_MULTIPRECISION "
+         << "was used." << endl;
+  }
+  
+#endif
+  
+  if (multiprecision) {
+    
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
+    funct_multip_string fms;
+    fms.set_function(func,"x");
+    funct_multip_string *fmsp=&fms;
+    
+    funct_multip fm2;
+    
+    if (precision>49) {
+      
+      cerr << "Requested precision too large for the ninteg "
+           << "command (maximum is 49)." << endl;
+      return 2;
+
+    } else if (precision>34) {
+      
+      cpp_dec_float_50 d, dfdx, err;
+      convert_units<cpp_dec_float_50> cu;
+      function_to_fp_nothrow(val,d,cu);
+      int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
+    
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+      cout << dtos(dfdx,precision) << endl;
+      return 0;
+      
+    } else if (precision>24) {
+      
+      cpp_dec_float_35 d, dfdx, err;
+      convert_units<cpp_dec_float_35> cu;
+      function_to_fp_nothrow(val,d,cu);
+      int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
+    
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+      cout << dtos(dfdx,precision) << endl;
+      return 0;
+      
+    } else if (precision>17) {
+      
+      cpp_dec_float_25 d, dfdx, err;
+      convert_units<cpp_dec_float_25> cu;
+      function_to_fp_nothrow(val,d,cu);
+      int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
+    
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+      cout << dtos(dfdx,precision) << endl;
+      return 0;
+      
+    } else if (precision>14) {
+      
+      long double d, dfdx, err;
+      convert_units<long double> cu;
+      function_to_fp_nothrow(val,d,cu);
+      int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
+    
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (long double): ";
+      cout << dtos(dfdx,precision) << endl;
+      return 0;
+      
+    } else {
+      
+      double d, dfdx, err;
+      convert_units<double> cu;
+      function_to_fp_nothrow(val,d,cu);
+      int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
+      { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
+    
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      if (verbose>0) cout << "Result (double): ";
+      cout << dtos(dfdx,precision) << endl;
+      
+    }
+    
+#endif
+
+  } else {
+    
+    // Normal double-precision differentiation
+
+    if (precision>50) {
+
+      cpp_dec_float_100 d, dfdx, err;
+      convert_units<cpp_dec_float_100> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_100> fs(func,"x");
+      funct_cdf100 f=std::bind(std::mem_fn<cpp_dec_float_100
+                               (cpp_dec_float_100) const>
+                               (&funct_string<cpp_dec_float_100>::operator()
+                                ),&fs,
+                               std::placeholders::_1);
+      
+      deriv_gsl<funct_cdf100,cpp_dec_float_100> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      return 0;
+      
+    } else if (precision>35) {
+
+      cpp_dec_float_50 d, dfdx, err;
+      convert_units<cpp_dec_float_50> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_50> fs(func,"x");
+      funct_cdf50 f=std::bind(std::mem_fn<cpp_dec_float_50
+                           (cpp_dec_float_50) const>
+                        (&funct_string<cpp_dec_float_50>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_cdf50,cpp_dec_float_50> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      return 0;
+      
+    } else if (precision>25) {
+
+      cpp_dec_float_35 d, dfdx, err;
+      convert_units<cpp_dec_float_35> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_35> fs(func,"x");
+      funct_cdf35 f=std::bind(std::mem_fn<cpp_dec_float_35
+                           (cpp_dec_float_35) const>
+                        (&funct_string<cpp_dec_float_35>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_cdf35,cpp_dec_float_35> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      return 0;
+      
+    } else if (precision>18) {
+
+      cpp_dec_float_25 d, dfdx, err;
+      convert_units<cpp_dec_float_25> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<cpp_dec_float_25> fs(func,"x");
+      funct_cdf25 f=std::bind(std::mem_fn<cpp_dec_float_25
+                           (cpp_dec_float_25) const>
+                        (&funct_string<cpp_dec_float_25>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_cdf25,cpp_dec_float_25> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      return 0;
+      
+    } else if (precision>15) {
+
+      long double d, dfdx, err;
+      convert_units<long double> cu;
+      function_to_fp_nothrow(val,d,cu);
+      
+      funct_string<long double> fs(func,"x");
+      funct_ld f=std::bind(std::mem_fn<long double(long double) const>
+                        (&funct_string<long double>::operator()),&fs,
+                        std::placeholders::_1);
+      
+      deriv_gsl<funct_ld,long double> dgld;
+      int retx=dgld.deriv_err(d,f,dfdx,err);
+      
+      if (retx!=0) {
+        cerr << "Differentiating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << dtos(dfdx,precision+1) << " ± "
+           << dtos(err,precision+1) << endl;
+      return 0;
+      
+    }
+    
+    double d, dfdx, err;
+    convert_units<double> cu;
+    function_to_fp_nothrow(val,d,cu);
+
+    funct_string<> fs(func,"x");
+    funct f=std::bind(std::mem_fn<double(double) const>
+                      (&funct_string<>::operator()),&fs,
+                      std::placeholders::_1);
+
+    int retx=dg.deriv_err(d,f,dfdx,err);
+    
+    if (retx!=0) {
+      cerr << "Differentiating " << func << " failed." << endl;
+      return 1;
+    }
+    
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(precision);
+    
+    if (verbose>0) cout << "Result: ";
+    cout << dfdx << " ± " << err << endl;
+    std::string us;
+    if (verbose>1) {
+      us=unc_to_string(dfdx,err,1);
+    } else {
+      us=unc_to_string(dfdx,err);
+    }
+    cout << us << endl;
+
+  }
+
+  return 0;
+}
+
 int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   vector<string> in, pr;
@@ -784,10 +1106,162 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision integration
 
-    if (precision>16) {
-      std::cerr << "Warning: multiprecision is required to numerically "
+    if (precision>50) {
+      
+      std::cerr << "Command 'ninteg' is unable to numerically "
                 << "integrate to the\n requested precision."
                 << std::endl;
+    
+    } else if (precision>35) {
+      
+      cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_50> cu;
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_50>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_50>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
+      funct_string<cpp_dec_float_50> fs(func,var);
+      funct_cdf50 f=std::bind(std::mem_fn<cpp_dec_float_50
+                              (cpp_dec_float_50) const>
+                              (&funct_string<cpp_dec_float_50>::operator()),
+                              &fs,std::placeholders::_1);
+                              
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err(f,lower_lim,upper_lim,d,err);
+      }
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << o2scl::dtos(d,precision+1) << " ± "
+           << o2scl::dtos(err,precision+1) << endl;
+      return 0;
+    
+    } else if (precision>25) {
+      
+      cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_35> cu;
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_35>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_35>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
+      funct_string<cpp_dec_float_35> fs(func,var);
+      funct_cdf35 f=std::bind(std::mem_fn<cpp_dec_float_35
+                              (cpp_dec_float_35) const>
+                           (&funct_string<cpp_dec_float_35>::operator()),
+                              &fs,std::placeholders::_1);
+                              
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err(f,lower_lim,upper_lim,d,err);
+      }
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << o2scl::dtos(d,precision+1) << " ± "
+           << o2scl::dtos(err,precision+1) << endl;
+      return 0;
+    
+    } else if (precision>18) {
+      
+      cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
+      convert_units<cpp_dec_float_25> cu;
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<cpp_dec_float_25>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<cpp_dec_float_25>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
+      funct_string<cpp_dec_float_25> fs(func,var);
+      funct_cdf25 f=std::bind(std::mem_fn<cpp_dec_float_25
+                              (cpp_dec_float_25) const>
+                           (&funct_string<cpp_dec_float_25>::operator()),
+                              &fs,std::placeholders::_1);
+                              
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err(f,lower_lim,upper_lim,d,err);
+      }
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << o2scl::dtos(d,precision+1) << " ± "
+           << o2scl::dtos(err,precision+1) << endl;
+      return 0;
+    
+    } else if (precision>15) {
+      
+      long double d=0, err, lower_lim, upper_lim;
+      convert_units<long double> cu;
+      if (in[2]=="-infty") {
+        lower_lim=-std::numeric_limits<long double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[2],lower_lim,cu);
+      }
+      if (in[3]=="infty") {
+        upper_lim=std::numeric_limits<long double>::infinity();
+      } else {
+        function_to_fp_nothrow(in[3],upper_lim,cu);
+      }
+      funct_string<long double> fs(func,var);
+      funct_ld f=std::bind(std::mem_fn<long double(long double) const>
+                           (&funct_string<long double>::operator()),&fs,
+                           std::placeholders::_1);
+      int retx;
+      if (method=="kb") {
+        retx=ikb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else if (method=="deb") {
+        retx=ideb.integ_err(f,lower_lim,upper_lim,d,err);
+      } else {
+        retx=iac.integ_err(f,lower_lim,upper_lim,d,err);
+      }
+      if (retx!=0) {
+        cerr << "Integrating " << func << " failed." << endl;
+        return 1;
+      }
+      
+      if (verbose>0) cout << "Result: ";
+      cout << o2scl::dtos(d,precision+1) << " ± "
+           << o2scl::dtos(err,precision+1) << endl;
+      return 0;
+    
     }
     
     double d=0, err, lower_lim, upper_lim;
@@ -802,9 +1276,9 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     } else {
       function_to_fp_nothrow(in[3],upper_lim,cu);
     }
-    funct_string fs(func,var);
+    funct_string<> fs(func,var);
     funct f=std::bind(std::mem_fn<double(double) const>
-                      (&funct_string::operator()),&fs,
+                      (&funct_string<>::operator()),&fs,
                       std::placeholders::_1);
     int retx;
     if (method=="kb") {

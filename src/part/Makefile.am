@@ -2,40 +2,28 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = fermion_eff.cpp boson_eff.cpp \
+PART_SRCS = boson_eff.cpp \
 	part.cpp quark.cpp fermion_deriv_nr.cpp \
 	fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp part_python.cpp
-HEADER_VAR = boson.h classical.h boson_eff.h fermion_eff.h \
+HEADER_VAR = boson.h classical.h boson_eff.h \
 	fermion.h fermion_nonrel.h part.h quark.h fermion_rel.h \
 	part_deriv.h fermion_deriv_rel.h fermion_deriv_nr.h \
 	boson_rel.h fermion_mag_zerot.h part_pdg.h \
 	part_python.h classical_deriv.h
-TEST_VAR = classical.scr fermion_eff.scr fermion_rel.scr boson.scr \
+TEST_VAR = classical.scr fermion_rel.scr boson.scr \
 	fermion.scr fermion_nonrel.scr part.scr quark.scr \
 	boson_eff.scr fermion_deriv_rel.scr fermion_deriv_nr.scr \
-	classical_deriv.scr boson_rel.scr fermion_mag_zerot.scr
+	classical_deriv.scr boson_rel.scr fermion_mag_zerot.scr 
 
 # ------------------------------------------------------------
 # Includes
 # ------------------------------------------------------------
 
 if O2SCL_OPENMP
-O2SCL_OPENMP_MVAR = -DO2SCL_OPENMP -fopenmp
+O2SCL_OPENMP_MVAR = -fopenmp
 else
 O2SCL_OPENMP_MVAR =
-endif
-
-if O2SCL_EIGEN
-O2SCL_EIGEN_MVAR = -DO2SCL_EIGEN
-else
-O2SCL_EIGEN_MVAR =
-endif
-
-if O2SCL_ARMA
-O2SCL_ARMA_MVAR = -DO2SCL_ARMA
-else
-O2SCL_ARMA_MVAR =
 endif
 
 if O2SCL_LINUX
@@ -50,14 +38,8 @@ else
 O2SCL_OSX_MVAR = 
 endif
 
-if O2SCL_MPFR
-O2SCL_MPFR_MVAR = -DO2SCL_MPFR
-else 
-O2SCL_MPFR_MVAR = 
-endif
-
 if O2SCL_PYTHON
-O2SCL_PYTHON_MVAR = -DO2SCL_PYTHON -I$(PYTHON_INCLUDE_DIR)
+O2SCL_PYTHON_MVAR = -I$(PYTHON_INCLUDE_DIR)
 else 
 O2SCL_PYTHON_MVAR = 
 endif
@@ -65,13 +47,11 @@ endif
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
-	$(ADDINC) $(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) \
-	$(O2SCL_ARMA_MVAR) -DO2SCL_COND_FLAG $(O2SCL_MPFR_MVAR) \
+	$(ADDINC) $(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
-	$(ADDINC) $(O2SCL_OPENMP_MVAR) $(O2SCL_EIGEN_MVAR) \
-	$(O2SCL_ARMA_MVAR) -DO2SCL_COND_FLAG $(O2SCL_MPFR_MVAR) \
+	$(ADDINC) $(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR)
 endif
 
@@ -87,7 +67,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 # libtool testing targets
 # ------------------------------------------------------------
 
-check_PROGRAMS = classical_ts fermion_eff_ts fermion_rel_ts \
+check_PROGRAMS = classical_ts fermion_rel_ts \
 	boson_ts fermion_ts fermion_nonrel_ts \
 	part_ts quark_ts fermion_deriv_rel_ts fermion_mag_zerot_ts \
 	classical_deriv_ts fermion_deriv_nr_ts boson_rel_ts boson_eff_ts
@@ -99,7 +79,7 @@ if O2SCL_PYTHON
 ADDL_TEST_LIBS = ../libo2scl.la -l$(PYTHON_LIB)
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) -DO2SCL_OPENMP
+ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR) 
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = $(PYTHON_INCLUDE_DIR)
@@ -110,7 +90,7 @@ else
 ADDL_TEST_LIBS = ../libo2scl.la
 if O2SCL_OPENMP
 ADDL_TEST_LDFLGS = -fopenmp 
-ADDL_TEST_FLGS = -DO2SCL_OPENMP
+ADDL_TEST_FLGS = 
 else
 ADDL_TEST_LDFLGS = 
 ADDL_TEST_FLGS = 
@@ -119,7 +99,6 @@ endif
 endif
 
 classical_ts_LDADD = $(ADDL_TEST_LIBS)
-fermion_eff_ts_LDADD = $(ADDL_TEST_LIBS)
 fermion_rel_ts_LDADD = $(ADDL_TEST_LIBS)
 boson_ts_LDADD = $(ADDL_TEST_LIBS)
 fermion_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -134,7 +113,6 @@ boson_eff_ts_LDADD = $(ADDL_TEST_LIBS)
 fermion_mag_zerot_ts_LDADD = $(ADDL_TEST_LIBS)
 
 classical_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
-fermion_eff_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 fermion_rel_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 boson_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 fermion_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -150,8 +128,6 @@ fermion_mag_zerot_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 classical.scr: classical_ts$(EXEEXT) 
 	./classical_ts$(EXEEXT) > classical.scr
-fermion_eff.scr: fermion_eff_ts$(EXEEXT) 
-	./fermion_eff_ts$(EXEEXT) > fermion_eff.scr
 fermion_rel.scr: fermion_rel_ts$(EXEEXT) 
 	./fermion_rel_ts$(EXEEXT) > fermion_rel.scr
 boson.scr: boson_ts$(EXEEXT) 
@@ -178,7 +154,6 @@ fermion_mag_zerot.scr: fermion_mag_zerot_ts$(EXEEXT)
 	./fermion_mag_zerot_ts$(EXEEXT) > fermion_mag_zerot.scr
 
 classical_ts_SOURCES = classical_ts.cpp
-fermion_eff_ts_SOURCES = fermion_eff_ts.cpp
 fermion_rel_ts_SOURCES = fermion_rel_ts.cpp
 boson_ts_SOURCES = boson_ts.cpp
 fermion_ts_SOURCES = fermion_ts.cpp

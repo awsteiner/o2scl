@@ -166,6 +166,33 @@ all_v0.930a1_u24.04_py: build_v0.930a1_u24.04_py test1_v0.930a1_u24.04_py \
 	test2_v0.930a1_u24.04_py push_v0.930a1_u24.04_py 
 
 # ----------------------------------------------
+# Standard build 8: v0.930a2_u24.04_py
+
+build_v0.930a2_u24.04_py:
+	sudo docker build . --rm -f v0.930a2_u24.04_py \
+		-t awsteiner/o2scl:v0.930a2_u24.04_py \
+		> v0.930a2_u24.04_py.out 2>&1
+
+test1_v0.930a2_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.930a2_u24.04_py sh -c \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
+		> test1_v0.930a2_u24.04_py.out 2>&1
+
+test2_v0.930a2_u24.04_py:
+	sudo docker run awsteiner/o2scl:v0.930a2_u24.04_py sh -c \
+		"cd /opt/o2sclpy && make testq" \
+		>> test2_v0.930a2_u24.04_py.out 2>&1
+
+push_v0.930a2_u24.04_py:
+	sudo docker push awsteiner/o2scl:v0.930a2_u24.04_py
+
+pull_v0.930a2_u24.04_py:
+	sudo docker pull awsteiner/o2scl:v0.930a2_u24.04_py
+
+all_v0.930a2_u24.04_py: build_v0.930a2_u24.04_py test1_v0.930a2_u24.04_py \
+	test2_v0.930a2_u24.04_py push_v0.930a2_u24.04_py 
+
+# ----------------------------------------------
 
 build_v0.929_ot:
 	sudo docker build . --rm -f v0.929_ot \
@@ -217,6 +244,9 @@ build_ot:
 		> v0.927_ot.out 2>&1 
 	-docker build . --rm -f v0.928_ot \
 		> v0.928_ot.out 2>&1 
+
+build_ct:
+	-docker build . --rm all -f cuda_test
 
 # ----------------------------------------------
 # Old builds

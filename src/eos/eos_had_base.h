@@ -36,7 +36,6 @@
 #include <o2scl/mroot_hybrids.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/eos_base.h>
-#include <o2scl/fermion_eff.h>
 #include <o2scl/part.h>
 #include <o2scl/lib_settings.h>
 
@@ -992,8 +991,6 @@ namespace o2scl {
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
                                  eos_leptons &elep);
-    //fermion &e, bool include_muons,
-    //fermion &mu, fermion_rel &frel);
     //@}
     
     /// \name Numerical methods [protected]

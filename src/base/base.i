@@ -859,7 +859,7 @@ class table<>
 |     data to the table
 |     """
 |     # Create a std_vector object and copy the data over
-|     vec=std_vector(self._link)
+|     vec=std_vector()
 |     vec.resize(len(v))
 |     for i in range(0,len(v)):
 |         vec[i]=v[i]
@@ -947,7 +947,7 @@ class uniform_grid<>
 |
 |     Returns: a one-dimensional ``numpy`` array
 |     """
-|     v=std_vector(self._link)
+|     v=std_vector()
 |     self.vector(v)
 |     ret=numpy.zeros((self.get_npoints()))
 |     for i in range(0,self.get_npoints()):
@@ -1461,7 +1461,7 @@ class tensor<>
 |     data to the table
 |     """
 |     # Create a std_vector object and copy the data over
-|     vec=std_vector_size_t(self._link)
+|     vec=std_vector_size_t()
 |     vec.resize(len(v))
 |     for i in range(0,len(v)):
 |         vec[i]=v[i]
@@ -1473,7 +1473,7 @@ class tensor<>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
 |     data to the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.set_vector(svst,val)
 |     return
@@ -1483,7 +1483,7 @@ class tensor<>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
 |     data from the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     return self.get_vector(svst)
 |
@@ -1492,7 +1492,7 @@ class tensor<>
 |     Copy ``index`` to an :class:`std_vector_size_t` object 
 |     and resize
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.resize_vector(len(svst),svst)
 |     return
@@ -1630,7 +1630,7 @@ class tensor<int,std::vector<int>>
 |     data to the table
 |     """
 |     # Create a std_vector object and copy the data over
-|     vec=std_vector_size_t(self._link)
+|     vec=std_vector_size_t()
 |     vec.resize(len(v))
 |     for i in range(0,len(v)):
 |         vec[i]=v[i]
@@ -1642,7 +1642,7 @@ class tensor<int,std::vector<int>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
 |     data to the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.set_vector(svst,val)
 |     return
@@ -1652,7 +1652,7 @@ class tensor<int,std::vector<int>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
 |     data from the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     return self.get_vector(svst)
 |
@@ -1661,7 +1661,7 @@ class tensor<int,std::vector<int>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object 
 |     and resize
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.resize_vector(svst)
 |     return
@@ -1768,7 +1768,7 @@ class tensor<size_t,std::vector<size_t>>
 |     data to the table
 |     """
 |     # Create a std_vector object and copy the data over
-|     vec=std_vector_size_t(self._link)
+|     vec=std_vector_size_t()
 |     vec.resize(len(v))
 |     for i in range(0,len(v)):
 |         vec[i]=v[i]
@@ -1780,7 +1780,7 @@ class tensor<size_t,std::vector<size_t>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and add the 
 |     data to the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.set_vector(svst,val)
 |     return
@@ -1790,7 +1790,7 @@ class tensor<size_t,std::vector<size_t>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object and get the 
 |     data from the table
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     return self.get_vector(svst)
 |
@@ -1799,7 +1799,7 @@ class tensor<size_t,std::vector<size_t>>
 |     Copy ``index`` to an :class:`std_vector_size_t` object 
 |     and resize
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.resize_vector(svst)
 |     return
@@ -1952,7 +1952,7 @@ class tensor_grid<>
 |     Copy ``index`` to an :class:`std_vector_size_t` object 
 |     and resize
 |     """
-|     svst=std_vector_size_t(self._link)
+|     svst=std_vector_size_t()
 |     svst.init_py(index)
 |     self.resize_vector(len(svst),svst)
 |     return
@@ -2015,11 +2015,11 @@ class convert_units<>::der_unit
 |     Set the properties of a derived unit
 |     FIXME: better docs here
 |     """
-|     label2=std_string(self._link)
+|     label2=std_string()
 |     label2.init_bytes(force_bytes(label))
 |     self.set_label(label2)
 |     self.val=val
-|     name2=std_string(self._link)
+|     name2=std_string()
 |     name2.init_bytes(force_bytes(name))
 |     self.set_name(name2)
 |     self.m=m
@@ -2059,7 +2059,7 @@ class convert_units<>
 |     """
 |     Add a unit
 |     """
-|     du=convert_units_der_unit(self._link)
+|     du=convert_units_der_unit()
 |     du.set(label,val,name,m,k,s,K,A,mol,cd)
 |     self.add_unit_internal(du)
 |     return
@@ -2688,7 +2688,8 @@ function linear_or_log<std::vector<double>>
 #
 # ------------------------------------------------------
 #
-class funct_string
+class funct_string<double>
+- py_name funct_string
 - no_def_cons
 - cons init
   - std::string expr

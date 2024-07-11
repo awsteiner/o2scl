@@ -22,6 +22,7 @@
 */
 #include "acolm.h"
 
+#include <o2scl/rng.h>
 #include <o2scl/cloud_file.h>
 #include <o2scl/vector_derint.h>
 
@@ -1065,8 +1066,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
     
     // Remove single or double quotes just in case
-    if (in[0].size()>=3 && ((in[0][0]=='\'' && in[0][in[0].size()-1]=='\'') ||
-			    (in[0][0]=='\"' && in[0][in[0].size()-1]=='\"'))) {
+    if (in[0].size()>=3 && ((in[0][0]=='\'' &&
+                             in[0][in[0].size()-1]=='\'') ||
+			    (in[0][0]=='\"' &&
+                             in[0][in[0].size()-1]=='\"'))) {
       in[0]=in[0].substr(1,in[0].size()-2);
     }
 
@@ -1085,6 +1088,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     
     // Parse function
     calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1102,7 +1106,8 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
 
     // Parse function
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1120,7 +1125,8 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     if (ret!=0) return ret;
 
     // Parse function
-      calc_utf8<> calc;
+    calc_utf8<> calc;
+    calc.set_rng(rng);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
 
@@ -1154,6 +1160,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     // Parse function(s)
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
+    calc.set_rng(rng);
+    o2scl::rng<> r;
+    rng_set_seed(r);
+    calc_cond.set_rng(r);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);
@@ -1196,6 +1206,10 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
     // Parse function(s)
     calc_utf8<> calc;
     calc_utf8<> calc_cond;
+    calc.set_rng(rng);
+    o2scl::rng<> r;
+    rng_set_seed(r);
+    calc_cond.set_rng(r);
     std::map<std::string,double> vars;
     calc.compile(function.c_str(),&vars);
     calc_cond.compile(cond_func.c_str(),&vars);

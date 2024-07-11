@@ -1405,10 +1405,13 @@ namespace o2scl {
         If no rows match the delete condition, this function silently
         performs no changes to the table.
     */
-    void delete_rows_func(std::string func) {
+    void delete_rows_func(std::string func, int loc_verbose=0) {
       size_t new_nlines=0;
       for(size_t i=0;i<nlines;i++) {
         fp_t val=row_function(func,i);
+        if (loc_verbose>1) {
+          std::cout << i << " " << func << " " << val << std::endl;
+        }
         if (val<0.5) {
           // If val<0.5, then the function was evaluated to false and
           // we want to keep the row, but if i==new_nlines, then
@@ -1460,12 +1463,16 @@ namespace o2scl {
         the end of the table.
     */
     template<class vec2_t>
-    void copy_rows(std::string func, table<vec2_t> &dest) {
+    void copy_rows(std::string func, table<vec2_t> &dest,
+                   int loc_verbose=0) {
 
       // Set up columns
       for(size_t i=0;i<get_ncolumns();i++) {
         std::string cname=get_column_name(i);
         if (dest.is_column(cname)==false) {
+          if (loc_verbose>0) {
+            std::cout << "Creating new column " << cname << std::endl;
+          }
           dest.new_column(cname);
         }
       }
@@ -1473,6 +1480,9 @@ namespace o2scl {
       size_t new_lines=dest.get_nlines();
       for(size_t i=0;i<nlines;i++) {
         fp_t val=row_function(func,i);
+        if (loc_verbose>0) {
+          std::cout << "i,val: " << i << " " << val << std::endl;
+        }
         if (val>0.5) {
           dest.set_nlines_auto(new_lines+1);
           for(size_t j=0;j<get_ncolumns();j++) {
@@ -3242,8 +3252,7 @@ namespace o2scl {
         // Create a new random number generator for each thread,
         // and ensure a different seed for each thread
         rng<> r;
-        unsigned int seed=time(0);
-        r.set_seed(seed*(i_thread+1));
+        rng_set_seed(r);
 
         // Parse function, separate calculator for each thread
         calc_utf8<> calc;
@@ -3251,64 +3260,42 @@ namespace o2scl {
 
         std::map<std::string,fp_t> vars;
         
-        if (false) {
-
-          // Old version (slower)
-          
-          typename std::map<std::string,fp_t>::const_iterator mit;
-          for(mit=constants.begin();mit!=constants.end();mit++) {
-            vars[mit->first]=mit->second;
-          }
-          calc.compile(function.c_str(),&vars);
-
-          // Create column from function
-          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-            for(aciter it=atree.begin();it!=atree.end();it++) {
-              vars[it->first]=it->second.dat[j];
-            }
-            vec[j]=calc.eval(&vars);
-          }
-          
-        } else {
-
-          // New (hopefully faster) version which uses
-          // calc_utf8::get_var_list() to obtain a list of variables
-          // needed to compute the user-specified function.
-          
-          calc.compile(function.c_str(),0);
-
-          // Get the variable list as a list of u32string
-          std::vector<std::u32string> cols32=calc.get_var_list();
-
-          // Convert it to a list of utf8 strings
-          std::vector<std::string> cols(cols32.size());
-          for(size_t ij=0;ij<cols32.size();ij++) {
-            char32_to_utf8(cols32[ij],cols[ij]);
-          }
-
-          // At this point, the vector \c cols may contain the names
-          // of constants which are not columns, so we have to use
-          // is_column() below to double check.
-          
-          typename std::map<std::string,fp_t>::const_iterator mit;
-          for(mit=constants.begin();mit!=constants.end();mit++) {
-            vars[mit->first]=mit->second;
-          }
-
-          // Create column from function
-          for(int j=i_thread;j<((int)nlines);j+=n_threads) {
-            for(size_t k=0;k<cols.size();k++) {
-              // Skip entries that are constants because they're
-              // already taken care of above.
-              if (this->is_column(cols[k])) {
-                vars[cols[k]]=this->get(cols[k],j);
-              }
-            }
-            vec[j]=calc.eval(&vars);
-          }
-          
+        // New (hopefully faster) version which uses
+        // calc_utf8::get_var_list() to obtain a list of variables
+        // needed to compute the user-specified function.
+        
+        calc.compile(function.c_str(),0);
+        
+        // Get the variable list as a list of u32string
+        std::vector<std::u32string> cols32=calc.get_var_list();
+        
+        // Convert it to a list of utf8 strings
+        std::vector<std::string> cols(cols32.size());
+        for(size_t ij=0;ij<cols32.size();ij++) {
+          char32_to_utf8(cols32[ij],cols[ij]);
         }
-      
+        
+        // At this point, the vector \c cols may contain the names
+        // of constants which are not columns, so we have to use
+        // is_column() below to double check.
+        
+        typename std::map<std::string,fp_t>::const_iterator mit;
+        for(mit=constants.begin();mit!=constants.end();mit++) {
+          vars[mit->first]=mit->second;
+        }
+        
+        // Create column from function
+        for(int j=i_thread;j<((int)nlines);j+=n_threads) {
+          for(size_t k=0;k<cols.size();k++) {
+            // Skip entries that are constants because they're
+            // already taken care of above.
+            if (this->is_column(cols[k])) {
+              vars[cols[k]]=this->get(cols[k],j);
+            }
+          }
+          vec[j]=calc.eval(&vars);
+        }
+        
         // End of parallel region
       }
 
@@ -3449,7 +3436,8 @@ namespace o2scl {
     }
 
     /// Make sure a name is unique
-    void make_unique_name(std::string &colx, std::vector<std::string> &cnames) {
+    void make_unique_name(std::string &colx,
+                          std::vector<std::string> &cnames) {
       bool done;
 
       do {
