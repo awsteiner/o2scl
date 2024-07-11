@@ -45,7 +45,7 @@ int f2(double x, double y) {
 
 int main(void) {
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(1);
 
   cout.setf(ios::scientific);
 
@@ -106,18 +106,22 @@ int main(void) {
     }
 
     classify_python ip("o2sclpy","set_data_str","eval",
-                      "classify_sklearn_mlpc","verbose=3",3);
+                      "classify_sklearn_mlpc",
+                       ((std::string)"hlayers=[100,100],activation=")+
+                       "relu,verbose=1,max_iter=2000",1);
     ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2);
     std::vector<int> ey(1);
+    cout << "x y z_exact z_intp" << endl;
     for(double dx=0.1;dx<1.01;dx+=0.1) {
       ex[0]=dx;
       ex[1]=dx;
       ip.eval_std_vec(ex,ey);
+      cout << ex[0] << " " << ex[1] << " ";
+      cout << f(ex[0],ex[1]) << " ";
       cout << ey[0] << endl;
-      cout << f(ex[0],ey[0]) << endl;
-      t.test_gen(abs(ey[0]-f(ex[0],ey[0]))<=1,"sklearn mlpc 1");
+      t.test_gen(abs(ey[0]-f(ex[0],ex[1]))<=1,"sklearn mlpc 1");
     }
 
     for(size_t i=0;i<N;i++) {
