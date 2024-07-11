@@ -105,10 +105,10 @@ int main(void) {
       tin.get(ix)=y[j];
     }
 
-    classify_python ip("o2sclpy","set_data_str","eval",
-                      "classify_sklearn_mlpc",
-                       ((std::string)"hlayers=[100,100],activation=")+
-                       "relu,verbose=1,max_iter=2000",1);
+    classify_python<> ip("o2sclpy","set_data_str","eval",
+                         "classify_sklearn_mlpc",
+                         ((std::string)"hlayers=[100,100],activation=")+
+                         "relu,verbose=1,max_iter=2000",1);
     ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2);

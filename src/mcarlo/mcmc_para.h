@@ -50,6 +50,7 @@
 #include <o2scl/hdf_io.h>
 #include <o2scl/cli.h>
 #include <o2scl/interpm_base.h>
+#include <o2scl/classify_python.h>
 
 namespace o2scl {
   
@@ -4003,13 +4004,13 @@ namespace o2scl {
     /// File containing the training data for the classifier
     std::string emuc_file;
 
-    /// Maximum size of training table (default 1000)
+    /// Maximum size of training tables (default 1000)
     size_t max_train_size;
 
     /** \brief Number of iterations before retraining (default 1000)
 
-        A value of 0 skips the emulator completely and runs only
-        the user-specified function.
+        A value of 0 skips the emulator and classifer completely and
+        runs only the user-specified function.
      */
     size_t n_retrain;
 
@@ -4027,6 +4028,7 @@ namespace o2scl {
       n_retrain=1000;
       last_retrain_sum=0;
       show_emu=0;
+      use_classifier=false;
     }
 
     virtual ~mcmc_para_emu() {
@@ -4045,7 +4047,7 @@ namespace o2scl {
         for each OpenMP thread
      */
     std::vector<std::shared_ptr<classify_python
-                                <ubvector,
+                                <ubvector,ubvector_int,
                                  o2scl::const_matrix_view_table<>,
                                  o2scl::matrix_view_table<>>>> emuc;
     
@@ -4057,7 +4059,7 @@ namespace o2scl {
         if (use_classifier) {
           ubvector_int outc(1);
           emuc[it]->eval(p,outc);
-          if (outc[0]>0) return outc[0];
+          if (outc[0]<=0) return 1;
         }
         ubvector out(1);
         emu[it]->eval(p,out);
@@ -4204,6 +4206,42 @@ namespace o2scl {
       return;
     }
     
+    /** \brief Train the classifier
+     */
+    void emuc_train() {
+
+      if (emuc_table.is_column("classify")==false) {
+        emuc_table.function_column("mult>0","classify");
+      }
+      
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+#endif
+      {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+        for(size_t it=0;it<this->n_threads;it++) {
+
+          if (it<emuc.size()) {
+            
+            std::vector<std::string> pnames;
+            for(size_t j=0;j<n_params_child;j++) {
+              pnames.push_back(this->col_names[j]);
+            }
+            const_matrix_view_table<> cmvt_x(emuc_table,pnames);
+            matrix_view_table<> mvt_y(emuc_table,{"classify"});
+            
+            emu[it]->set_data(n_params_child,1,emuc_table.get_nlines(),
+                              cmvt_x,mvt_y);
+          }
+        }
+        // End of parallel region
+      }
+
+      return;
+    }
+    
     /** \brief The new MCMC function
      */
     int mcmc_emu(size_t n_params_local, 
@@ -4245,7 +4283,6 @@ namespace o2scl {
 
         if (use_classifier) {
           hf.open(emuc_file);
-          std::string tname;
           hdf_input(hf,emuc_init,tname);
           hf.close();
         }
@@ -4264,6 +4301,19 @@ namespace o2scl {
           if (factor<2) factor=2;
           emu_init.delete_rows_func(((std::string)"N%")+
                                     o2scl::szttos(factor)+">0.5");
+        }
+
+        if (use_classifier) {
+          
+          // Add the index column
+          emuc_init.new_column("N");
+          for(size_t k=0;k<emu_init.get_nlines();k++) {
+            emuc_init.set("N",k,k);
+          }
+          
+          // Delete empty rows
+          emuc_init.delete_rows_func("mult<0.5");
+
         }
 
         // Store the initial number of table rows
@@ -4290,7 +4340,7 @@ namespace o2scl {
 
         // Create test table and file if requested
         
-        table_units<> emu_test_tab;
+        table_units<> emu_test_tab, emuc_test_tab;
         if (show_emu>0) {
 
           // Select 10 percent of the emu_table rows for the
@@ -4313,6 +4363,30 @@ namespace o2scl {
 
           // Delete the temporary column from emu_table
           emu_table.delete_column("N");
+
+          if (use_classifier) {
+            
+            // Select 10 percent of the emuc_table rows for the
+            // test table
+            emuc_table.new_column("N");
+            for(size_t k=0;k<emuc_table.get_nlines();k++) {
+              emuc_table.set("N",k,k);
+            }
+            n_move=emuc_table.get_nlines()/10;
+            funcx=((std::string)"N>")+
+              o2scl::szttos(emuc_table.get_nlines()-n_move);
+            
+            // Copy the rows from emuc_table to the test table
+            emuc_table.copy_rows(((std::string)"N>")+
+                                o2scl::szttos(emuc_table.get_nlines()-n_move),
+                                emuc_test_tab);
+            
+            // Remove the rows from emuc_table
+            emuc_table.set_nlines(emuc_table.get_nlines()-n_move);
+            
+            // Delete the temporary column from emuc_table
+            emuc_table.delete_column("N");
+          }
           
         }
         
@@ -4350,10 +4424,43 @@ namespace o2scl {
                     << qual << std::endl;
 
           o2scl_hdf::hdf_file hf_emu;
-          std::string test_emu_file=((std::string)"prefix")+"_te.o2";
+          std::string test_emu_file=this->prefix+"_"+
+            o2scl::itos(this->mpi_rank)+"_te.o2";
           hf_emu.open_or_create(test_emu_file);
           o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
           hf_emu.close();
+
+          if (use_classifier) {
+
+            emuc_test_tab.new_column("classify_emu");
+            
+            // Emulate each row, and place the result in column
+            // log_wgt_emu
+            qual=0.0;
+            for(size_t i=0;i<emuc_test_tab.get_nlines();i++) {
+              ubvector x(n_params_local);
+              ubvector_int y(1);
+              for(size_t j=0;j<n_params_local;j++) {
+                x[j]=emuc_test_tab.get(j,i);
+              }
+              emuc[0]->eval(x,y);
+              emuc_test_tab.set("classify_emu",i,y[0]);
+              
+              // Update the quality factor
+              qual+=fabs(y[0]-emuc_test_tab.get("classify",i));
+            }
+            std::cout << "mcmc_para_emuc(): Classifier quality factor: "
+                      << qual << std::endl;
+            
+            o2scl_hdf::hdf_file hf_emuc;
+            std::string test_emuc_file=this->prefix+"_"+
+              o2scl::itos(this->mpi_rank)+"_tec.o2";
+            hf_emuc.open_or_create(test_emuc_file);
+            o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
+            hf_emuc.close();
+
+          }
+          
         }
 
         // End of 'if (n_retrain>0)'

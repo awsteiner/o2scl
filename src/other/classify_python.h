@@ -47,6 +47,7 @@ namespace o2scl {
   /** \brief Multidimensional interpolation interface for python
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
+           class vec_int_t=boost::numeric::ublas::vector<int>,
            class mat_x_t=o2scl::matrix_view_table<>,
            class mat_y_t=o2scl::matrix_view_table_transpose<> >
   class classify_python {
@@ -590,7 +591,7 @@ namespace o2scl {
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y
     */
-    virtual int eval(const vec_t &x, vec_t &y) const {
+    virtual int eval(const vec_t &x, vec_int_t &y) const {
       std::vector<double> x2(this->n_params);
       std::vector<int> y2(this->n_outputs);
       vector_copy(this->n_params,x,x2);

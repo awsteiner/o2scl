@@ -832,8 +832,6 @@ int main(int argc, char *argv[]) {
     
     mpe.emu_file="mcmct_0_out";
 
-    mpe.test_emu_file="mcmc_test_emu.o2";
-    
     mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
   }
