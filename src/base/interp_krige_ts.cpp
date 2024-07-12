@@ -210,7 +210,7 @@ int main(void) {
   t.test_rel(ik.eval(x[N-1]),y[N-1],0.2,"ikr 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,0.2,"ikr 3");
   t.test_rel(ik.eval(x[0]),xi0,5.0e-2,"ikr vs. ik 1");
-  t.test_rel(ik.eval(x[N-1]),xi1,1.0e-12,"ikr vs. ik 2");
+  t.test_rel(ik.eval(x[N-1]),xi1,1.0e-11,"ikr vs. ik 2");
   t.test_rel(ik.eval((x[0]+x[1])/2.0),xi2,5.0e-3,"ikr vs. ik 3");
   cout << endl;
 

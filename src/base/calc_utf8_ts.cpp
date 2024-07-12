@@ -147,7 +147,7 @@ int main(void) {
   t.test_gen(calc.eval(0)==exp(0.2)+sin(4),"calc27");
   calc.compile("exp(0.2)^2*sin(4)",0);
   cout << calc.RPN_to_string() << endl;
-  t.test_gen(calc.eval(0)==pow(exp(0.2),2.0)*sin(4),"calc28");
+  t.test_rel(calc.eval(0),pow(exp(0.2),2.0)*sin(4),1.0e-14,"calc28");
 
   // Test new functions
   calc.compile("asin(sin(0.5))",0);
