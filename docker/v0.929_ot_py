@@ -1,0 +1,50 @@
+FROM opensuse/tumbleweed
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+# I'm not sure if this is necessary for opensuse.
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# Base apt libraries for OpenSUSE Tumbleweed
+
+RUN zypper install -y gcc-c++ make gsl-devel libquadmath0 \
+hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip awk \
+autoconf automake libtool git fftw3-devel armadillo-devel eigen3-devel \
+python3
+
+# ?
+
+WORKDIR /usr/lib64
+RUN ln -s libquadmath.so.0 libquadmath.so
+
+# Python
+
+RUN pip3 install --break-system-packages numpy==1.26.4
+RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
+  --no-binary=h5py h5py==3.11.0
+COPY u24.04_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
+
+# Now install o2scl
+
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git fetch && git pull && git checkout a99392d28 && autoreconf -i
+  
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" \
+./configure --enable-eigen --enable-armadillo --enable-fftw \
+--enable-openmp --enable-ncurses --enable-python
+
+RUN make blank-doc && make && make install
+WORKDIR /
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -v
+
+
+
+
+
+
