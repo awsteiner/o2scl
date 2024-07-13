@@ -23,7 +23,7 @@ RUN ln -s libquadmath.so.0 libquadmath.so
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout a99392d28 && autoreconf -i
+RUN git fetch && git pull && git checkout 4ebf37707a2 && autoreconf -i
   
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST" ./configure 
 
