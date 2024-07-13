@@ -11,31 +11,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN zypper install -y gcc-c++ make gsl-devel libquadmath0 \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip awk \
-autoconf automake libtool git fftw3-devel armadillo-devel eigen3-devel \
-python3 python3-pip texlive dbus-1 cairo-devel pkg-config python3-devel \
-cmake gobject-introspection-devel
+autoconf automake libtool git fftw3-devel armadillo-devel eigen3-devel
 
 # ?
 
 WORKDIR /usr/lib64
 RUN ln -s libquadmath.so.0 libquadmath.so
-
-# Python
-
-WORKDIR /opt
-
-RUN pip3 install --break-system-packages numpy==1.26.4
-RUN pip3 install --break-system-packages h5py==3.11.0
-COPY ot_req.txt ./
-RUN pip3 install --no-cache-dir --break-system-packages -r ot_req.txt
-
-# --------------------------------------------------------------------------
-# Install o2sclpy via pip. I like the editable flag for easier modifications
-# down the road
-
-RUN git clone https://github.com/awsteiner/o2sclpy
-WORKDIR /opt/o2sclpy
-RUN pip3 install --break-system-packages --editable . 
 
 # Now install o2scl
 
@@ -46,22 +27,14 @@ RUN git fetch && git pull && git checkout 4ebf37707a2 && autoreconf -i
   
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" \
 ./configure --enable-eigen --enable-armadillo --enable-fftw \
---enable-openmp --enable-ncurses --enable-python
+--enable-openmp --enable-ncurses
 
 RUN make blank-doc && make && make install
 
-WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 # --------------------------------------------------------------------------
-# To ensure o2graph loads OpenMP appropriately
-
-ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
-
-# --------------------------------------------------------------------------
 # Clear the build directory and then run acol and o2graph
-
-RUN acol -h && acol -v && o2graph -h && o2graph -v
 
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib
