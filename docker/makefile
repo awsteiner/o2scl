@@ -214,6 +214,27 @@ pull_v0.929_ot_min:
 all_v0.929_ot_min: build_v0.929_ot_min test_v0.929_ot_min
 
 # ----------------------------------------------
+# Standard build 9: v0.929_ot_plus
+
+build_v0.929_ot_plus:
+	sudo docker build . --rm -f v0.929_ot_plus \
+		-t awsteiner/o2scl:v0.929_ot_plus \
+		> v0.929_ot_plus.out 2>&1
+
+test_v0.929_ot_plus:
+	sudo docker run awsteiner/o2scl:v0.929_ot_plus sh -c \
+		"cd /opt/o2scl && make check && make o2scl-examples" \
+		> test_v0.929_ot_plus.out 2>&1
+
+push_v0.929_ot_plus:
+	sudo docker push awsteiner/o2scl:v0.929_ot_plus
+
+pull_v0.929_ot_plus:
+	sudo docker pull awsteiner/o2scl:v0.929_ot_plus
+
+all_v0.929_ot_plus: build_v0.929_ot_plus test_v0.929_ot_plus
+
+# ----------------------------------------------
 # Standard build 9: v0.929_ot_py
 
 build_v0.929_ot_py:
