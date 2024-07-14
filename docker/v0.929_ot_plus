@@ -3,7 +3,8 @@ MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
 
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
-# I'm not sure if this is necessary for opensuse.
+# I'm not sure if this is necessary for OpenSUSE.
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 # -----------------------------------------------------------------
@@ -13,28 +14,27 @@ RUN zypper install -y gcc-c++ make gsl-devel libquadmath0 \
 hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip awk \
 autoconf automake libtool git fftw3-devel armadillo-devel eigen3-devel
 
-# ?
+# -----------------------------------------------------------------
+# AWS, 7/13/24: The libquadmath0 package doesn't install the .so link,
+# so we do this manually
 
 WORKDIR /usr/lib64
 RUN ln -s libquadmath.so.0 libquadmath.so
 
+# -----------------------------------------------------------------
 # Now install o2scl
 
 WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout 4ebf37707a2 && autoreconf -i
-  
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" \
 ./configure --enable-eigen --enable-armadillo --enable-fftw \
 --enable-openmp --enable-ncurses
-
 RUN make blank-doc && make && make install
 
-ENV LD_LIBRARY_PATH /usr/local/lib
-
-# --------------------------------------------------------------------------
-# Clear the build directory and then run acol and o2graph
+# -----------------------------------------------------------------
+# Check that 'acol -v' works
 
 WORKDIR /
 ENV LD_LIBRARY_PATH /usr/local/lib

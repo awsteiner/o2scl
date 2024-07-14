@@ -190,7 +190,7 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(pugixml,
-[  --enable-pugixml        Include pugixml support @<:@default=no@:>@],
+[  --enable-pugixml        Pugixml support (dev only) @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) pugixml=true ;;
 	no)  pugixml=false ;;

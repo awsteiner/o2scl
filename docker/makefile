@@ -214,7 +214,7 @@ pull_v0.929_ot_min:
 all_v0.929_ot_min: build_v0.929_ot_min test_v0.929_ot_min
 
 # ----------------------------------------------
-# Standard build 9: v0.929_ot_plus
+# Standard build 10: v0.929_ot_plus
 
 build_v0.929_ot_plus:
 	sudo docker build . --rm -f v0.929_ot_plus \
@@ -235,7 +235,7 @@ pull_v0.929_ot_plus:
 all_v0.929_ot_plus: build_v0.929_ot_plus test_v0.929_ot_plus
 
 # ----------------------------------------------
-# Standard build 9: v0.929_ot_py
+# Standard build 11: v0.929_ot_py
 
 build_v0.929_ot_py:
 	sudo docker build . --rm -f v0.929_ot_py \
