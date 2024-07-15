@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: deps
-      run: apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
+      run: sudo apt-get -y install g++ make libgsl-dev curl tar \
            gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2 \
            libquadmath0
     - name: reconf
