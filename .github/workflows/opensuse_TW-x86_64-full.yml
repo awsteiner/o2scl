@@ -1,0 +1,53 @@
+---
+name: openSUSE TW x86_64 Full Tests
+
+on:
+  push:
+    branches: [ "main", "ci" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  fulltests-opensuse-tumbleweed-x86_64:
+
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/tumbleweed
+
+    steps:
+    - name: Cache action
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/work/_temp/_github_home/.ccache
+        # Necessary to cache the ccache data on every run
+        key: cache-oSTW-x86_64-full-test-nopy-${{ github.run_id }}
+        restore-keys: |
+          cache-oSTW-x86_64-full-test-nopy
+        save-always: true
+
+    - name: Install necessary packages
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libboost_headers-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Set up autotools scripts
+      run:
+        ./autogen.sh
+
+    - name: Run configure
+      run: |
+        export CC='ccache gcc'
+        export CXX='ccache g++'
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER"
+        export LDFLAGS+="-lgomp"
+        export CCACHE_DIR=~/.ccache
+        ./configure --build=x86_64-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
+
+    - name: make
+      run: |
+        make VERBOSE=1 sinstall -j4 -O
+        make VERBOSE=1 -C data install-data
+
+    - name: make check
+      run: make VERBOSE=1 o2scl-test -j4 -O -k
