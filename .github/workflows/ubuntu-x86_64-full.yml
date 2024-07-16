@@ -3,7 +3,7 @@ name: Ubuntu amd64 Full Tests
 
 on:
   push:
-    branches: [ "main", "ci" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
