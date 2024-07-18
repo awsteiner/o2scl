@@ -646,7 +646,7 @@ namespace o2scl {
       int jr=1+r.random_int(n_params);
       for (int j=0; j<jr; j++) {
         size_t kr=r.random_int(n_params);
-        mom_step[kr]=1.0e-4*(high[kr]-low[kr])
+        mom_step[kr]=1.0e-5*(high[kr]-low[kr])
                      *(r.random()*2.0-1.0)/((double)traj_length);
       }
       
