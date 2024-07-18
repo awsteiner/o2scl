@@ -1,0 +1,58 @@
+---
+name: Ubuntu 24.04 x86_64 minimal install
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests-u24.04-x86_64-min:
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Cache action
+      uses: actions/cache@v4
+      with:
+        path: ~/.ccache
+        # Necessary to cache the ccache data on every run
+        key: cache-ubuntu-x86_64-min-${{ github.run_id }}
+        restore-keys: |
+          cache-ubuntu-x86_64-min
+        save-always: true
+
+    - name: Install and cache apt packages
+      run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
+
+    - name: Set up autotools
+      run:
+        ./autogen.sh
+
+    - name: Configure
+      run: |
+        export CC='ccache gcc'
+        export CXX='ccache g++'
+        export CCACHE_DIR=~/.ccache
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -I/usr/include"
+        mkdir -p ${PWD}/build
+        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static
+
+    - name: Build and install
+      run: |
+        make VERBOSE=1 blank-doc -j4 -O
+        make VERBOSE=1 -j4 -O
+        make VERBOSE=1 install -j4 -O
+
+    - name: Try acol
+      run: |
+        export LD_LIBRAY_PATH+=:${PWD}/build
+        acol -v
+
+    - name: Check
+      run: |
+        make VERBOSE=1 check -j4 -O
