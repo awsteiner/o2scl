@@ -539,7 +539,7 @@ namespace o2scl {
           }
           x[i]-=h;
           
-          g[i]=(fv2-fv1)/h;
+          g[i]=(exp(fv2)-exp(fv1))/h;
         }
       }
       
@@ -640,17 +640,26 @@ namespace o2scl {
       
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
+
+      // Set step size to take a random step along a random direction
+      mom_step.clear();
+      int jr=1+r.random_int(n_params);
+      for (int j=0; j<jr; j++) {
+        size_t kr=r.random_int(n_params);
+        mom_step[kr]=1.0e-4*(high[kr]-low[kr])
+                     *(r.random()*2.0-1.0)/((double)traj_length);
+      }
       
       // Initialize the momenta, which we rescale by mom_step
       // [Neal] p = rnorm(length(q),0,1)
       for(size_t k=0;k<n_params;k++) {
-        mom[k]=pdg();
+        mom[k]=abs(pdg());
       }
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]+0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
       // [Neal] for (i in 1:L)
@@ -659,7 +668,7 @@ namespace o2scl {
         // Take a full step in coordinate space
         // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
-          next[k]+=mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
         }
         
         // Check that the coordinate space step has not taken us out
@@ -700,7 +709,7 @@ namespace o2scl {
         if (i<traj_length-1) {
           // [Neal] if (i!=L) p = p - epsilon * grad_U(q)
           for(size_t k=0;k<n_params;k++) {
-            mom_next[k]+=mom_step[k % mom_step.size()]*grad[k];
+            mom_next[k]-=mom_step[k % mom_step.size()]*grad[k];
           }
           
         }
@@ -710,14 +719,20 @@ namespace o2scl {
       // Perform the final half-step in momentum space
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]+=0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
+      }
+
+      // Negate momentum to make the proposal symmetric
+      // [Neal] p = -p
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]=-mom_next[k];
       }
       
       // Perform the final function evaluation
       func_ret=f(n_params,next,w_next,dat);
       if (func_ret!=0) {
         accept=false;
-        std::cout << "func failed." << std::endl;
+        std::cout << "Function evaluation failed." << std::endl;
         return;
       }
       
@@ -728,9 +743,9 @@ namespace o2scl {
       double kin_curr=0.0, kin_next=0.0;
       for(size_t k=0;k<n_params;k++) {
         // [Neal] current_K = sum(current_pˆ2) / 2
-        kin_curr+=mom[k]*mom[k]/2.0;
+        kin_curr+=0.5*mom[k]*mom[k];
         // [Neal] proposed_K = sum(pˆ2) / 2
-        kin_next+=mom_next[k]*mom_next[k]/2.0;
+        kin_next+=0.5*mom_next[k]*mom_next[k];
       }
       
       double rx=r.random();
@@ -1921,7 +1936,9 @@ namespace o2scl {
                 // warm up iterations if necessary
                 if (main_done==false) {
 
-                  scr_out << "Incrementing mcmc_iters." << std::endl;
+                  if (verbose>=3) {
+                    scr_out << "Incrementing mcmc_iters." << std::endl;
+                  }
                   mcmc_iters[it]++;
               
                   if (warm_up && mcmc_iters[it]==n_warm_up) {
@@ -2002,6 +2019,30 @@ namespace o2scl {
             
           // Call function outside parallel region 
           outside_parallel();
+
+          // Report MCMC performance
+#ifdef O2SCL_MPI
+            elapsed=MPI_Wtime()-mpi_start_time;
+#else
+            elapsed=time(0)-mpi_start_time;
+#endif
+          double t_accept=0.0, t_reject=0.0, t_iters=0.0;
+
+          for (size_t it=0; it<n_threads; it++) {
+            t_accept+=((double)n_accept[it]);
+            t_reject+=((double)n_reject[it]);
+            t_iters+=((double)mcmc_iters[it]);
+          }
+
+          double acc_rate=t_accept/(t_accept+t_reject);
+          double avg_iters=t_iters/((double)n_threads);
+
+          scr_out << "Average acceptance rate: " << acc_rate*100 
+                    << " %" << std::endl;
+          scr_out << "Total time elapsed: " << elapsed 
+                    << " sec" << std::endl;
+          scr_out << "Average time per iteration: " << elapsed/avg_iters
+                    << " sec" << std::endl;
           
           // End of 'main_done' while loop for aff_inv=false
         }
@@ -3584,7 +3625,7 @@ namespace o2scl {
                      "mcmc_para_table::add_line().",o2scl::exc_efailed);
         }
         table->set("mult",walker_accept_rows[windex],mult_old+1.0);
-        if (this->verbose>=2) {
+        if (this->verbose>=3) {
           this->scr_out << "mcmc: Updating mult of row "
                         << walker_accept_rows[windex]
                         << " from " << mult_old << " to "
