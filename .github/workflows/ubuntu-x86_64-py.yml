@@ -47,6 +47,10 @@ jobs:
       run: |
         pip install  --break-system-packages -r docker/u24.04_req.txt
 
+    - name: Find numpy
+      run:
+        find . -name numpy
+
     - name: Set up autotools scripts
       run:
         ./autogen.sh
