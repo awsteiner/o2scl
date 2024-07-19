@@ -735,7 +735,7 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c2_ld,"cubic_rc_gsl2_ld",
      1.0,1.0e-17,1.0e-17,1.0e-16,1.0e-15,43);
-#ifndef O2SCL_FAST_TEST
+#ifndef O2SCL_OPENSUSE
   test_cubic_real_coeff<long double,std::complex<long double>,
                         cubic_real_coeff_multip>
     (&c5,"cubic_rc_mp_ld",
