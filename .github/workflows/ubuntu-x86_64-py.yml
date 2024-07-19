@@ -44,7 +44,7 @@ jobs:
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
-        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include"
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include"
         mkdir -p ${PWD}/build
         ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-python
 

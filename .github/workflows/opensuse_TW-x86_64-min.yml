@@ -26,7 +26,7 @@ jobs:
         save-always: true
 
     - name: Install necessary packages
-      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libboost_headers-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel boost-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
 
     - name: Git checkout
       uses: actions/checkout@v4
