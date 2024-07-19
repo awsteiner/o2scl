@@ -10,7 +10,7 @@ on:
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  tests-u2404-x86_64-min:
+  test-u2404-x86_64-min:
 
     runs-on: ubuntu-24.04
 
@@ -53,7 +53,7 @@ jobs:
     - name: Try acol
       run: |
         export LD_LIBRAY_PATH+=:${PWD}/build
-        acol -v
+        ${PWD}/build/bin/acol -v
 
     - name: Check
       run: |

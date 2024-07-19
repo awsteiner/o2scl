@@ -50,4 +50,4 @@ jobs:
         make VERBOSE=1 -C data install-data
 
     - name: make check
-      run: make VERBOSE=1 o2scl-test -j4 -O -k
+      run: make VERBOSE=1 o2scl-test -j4 -O

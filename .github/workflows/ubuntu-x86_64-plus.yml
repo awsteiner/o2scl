@@ -1,5 +1,5 @@
 ---
-name: Ubuntu amd64 Full Tests
+name: Ubuntu 24.04 x86_64 plus install
 
 on:
   push:
@@ -8,9 +8,11 @@ on:
     branches: [ "main" ]
 
 jobs:
-  fulltests-ubuntu-x86_64:
 
-    runs-on: ubuntu-latest
+  # Note that identifiers are not allowed to contain "."'s. 
+  test-u2404-x86_64-plus:
+
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Git checkout
@@ -21,16 +23,12 @@ jobs:
       with:
         path: ~/.ccache
         # Necessary to cache the ccache data on every run
-        key: cache-ubuntu-x86_64-full-test-nopy-${{ github.run_id }}
+        key: cache-ubuntu-x86_64-plus-${{ github.run_id }}
         restore-keys: |
-          cache-ubuntu-x86_64-full-test-nopy
+          cache-ubuntu-x86_64-plus
         save-always: true
 
-    - name: Install apt packages
-      # uses: awalsh128/cache-apt-pkgs-action@latest
-      # with:
-        # packages: ccache curl g++ gzip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar
-        # version: 1.0
+    - name: Install and cache apt packages
       run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar
 
     - name: Set up autotools scripts
@@ -44,14 +42,19 @@ jobs:
         export CCACHE_DIR=~/.ccache
         export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include"
         mkdir -p ${PWD}/build
-        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --disable-python
+        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp
 
     - name: Build and install
       run: |
-        make VERBOSE=1 sinstall -j4 -O
-        make VERBOSE=1 -C data install-data
+        make VERBOSE=1 blank-doc -j4 -O
+        make VERBOSE=1 -j4 -O
+        make VERBOSE=1 install -j4 -O
+
+    - name: Try acol
+      run: |
+        export LD_LIBRAY_PATH+=:${PWD}/build
+        ${PWD}/build/bin/acol -v
 
     - name: Check
       run: |
-        export LD_LIBRAY_PATH+=:${PWD}/build
-        make VERBOSE=1 o2scl-test -j4 -O -k
+        make VERBOSE=1 check -j4 -O

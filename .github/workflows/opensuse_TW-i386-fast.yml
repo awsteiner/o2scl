@@ -27,7 +27,7 @@ jobs:
     #       cache-oSTW-i386-fast-test-nopy
 
     - name: Install necessary packages
-      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libboost_headers-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses) pkgconfig(boost)"
 
     - name: Git checkout
       uses: actions/checkout@v1
@@ -51,4 +51,4 @@ jobs:
         make VERBOSE=1 -C data install-data
 
     - name: make check
-      run: make VERBOSE=1 o2scl-test -j4 -O -k
+      run: make VERBOSE=1 o2scl-test -j4 -O

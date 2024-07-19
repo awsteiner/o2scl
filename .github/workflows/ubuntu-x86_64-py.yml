@@ -1,0 +1,77 @@
+---
+name: Ubuntu 24.04 x86_64 Python install
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  # Note that identifiers are not allowed to contain "."'s. 
+  test-u2404-x86_64-py:
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Cache action
+      uses: actions/cache@v4
+      with:
+        path: ~/.ccache
+        # Necessary to cache the ccache data on every run
+        key: cache-ubuntu-x86_64-py-${{ github.run_id }}
+        restore-keys: |
+          cache-ubuntu-x86_64-py
+        save-always: true
+
+    - name: Install and cache apt packages
+      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake python3 libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super python3-pip libcairo2-dev libquadmath0 zlib1g-dev python3-h5py
+
+    - name: Install python packages
+      run:
+        pip install  --break-system-packages -r docker/u24.04_req.txt
+
+    - name: Set up autotools scripts
+      run:
+        ./autogen.sh
+
+    - name: Configure
+      run: |
+        export CC='ccache gcc'
+        export CXX='ccache g++'
+        export CCACHE_DIR=~/.ccache
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include"
+        mkdir -p ${PWD}/build
+        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-python
+
+    - name: Install o2sclpy
+      run: |
+        git clone https://github.com/awsteiner/o2sclpy
+        cd o2sclpy && pip3 install --break-system-packages . --editable
+
+    - name: Build and install o2scl
+      run: |
+        make VERBOSE=1 blank-doc -j4 -O
+        make VERBOSE=1 -j4 -O
+        make VERBOSE=1 install -j4 -O
+
+    - name: Try acol
+      run: |
+        export LD_LIBRAY_PATH+=:${PWD}/build
+        ${PWD}/build/bin/acol -v
+
+    - name: Check o2scl
+      run: |
+        export LD_LIBRAY_PATH+=:${PWD}/build
+        make VERBOSE=1 o2scl-test -j4 -O -k
+
+    - name: Test o2sclpy and run o2graph
+      run: |
+        export O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
+        export LD_LIBRAY_PATH+=:${PWD}/build
+        cd o2sclpy && pytest -s -v
+        o2graph -v
