@@ -69,7 +69,7 @@ int main(void) {
 
   test_mgr t;
   t.set_output_level(2);
-  
+
   double n0, eoa2;
   eos_had_skyrme sk;
 

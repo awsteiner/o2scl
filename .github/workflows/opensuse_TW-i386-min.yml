@@ -1,0 +1,48 @@
+---
+name: openSUSE TW i386 minimal install
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests-opensuse-tumbleweed-i386:
+
+    runs-on: ubuntu-22.04
+    container:
+      image: opensuse/tumbleweed
+      options: --platform "linux/386"
+
+    steps:
+
+    # (Cache actions do not work for 32-bit containers on 64-bit runners.)
+
+    - name: Install necessary packages
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+
+    - name: Git checkout
+      uses: actions/checkout@v1
+
+    - name: Set up autotools scripts
+      run:
+        ./autogen.sh
+
+    - name: Run configure
+      run: |
+        export CC='ccache gcc'
+        export CXX='ccache g++'
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE"
+        export LDFLAGS+="-lgomp"
+        export CCACHE_DIR=~/.ccache
+        ./configure --build=i386-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
+
+    - name: make
+      run: |
+        make VERBOSE=1 sinstall -j4 -O
+        make VERBOSE=1 -C data install-data
+
+    - name: make check
+      #run: make VERBOSE=1 o2scl-test -j4 -O
+      run: make VERBOSE=1 o2scl-test -O
