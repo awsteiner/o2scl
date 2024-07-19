@@ -51,7 +51,7 @@ jobs:
     - name: Install o2sclpy
       run: |
         git clone https://github.com/awsteiner/o2sclpy
-        cd o2sclpy && pip3 install --break-system-packages . --editable
+        cd o2sclpy && pip3 install --break-system-packages --editable .
 
     - name: Build and install o2scl
       run: |

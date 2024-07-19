@@ -1,5 +1,5 @@
 ---
-name: openSUSE TW i386 Fast Tests
+name: openSUSE TW i386 minimal install
 
 on:
   push:
@@ -16,18 +16,11 @@ jobs:
       options: --platform "linux/386"
 
     steps:
-    # Cache actions do not work for 32 containers on 64-bit runners
-    # - name: Cache action
-    #   uses: actions/cache@v1
-    #   with:
-    #     path: /home/runner/work/_temp/_github_home/.ccache
-    #     # Necessary to cache the ccache data on every run
-    #     key: cache-oSTW-i386-fast-test-nopy-${{ github.run_id }}
-    #     restore-keys: |
-    #       cache-oSTW-i386-fast-test-nopy
+
+    # (Cache actions do not work for 32-bit containers on 64-bit runners.)
 
     - name: Install necessary packages
-      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses) pkgconfig(boost)"
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
 
     - name: Git checkout
       uses: actions/checkout@v1
