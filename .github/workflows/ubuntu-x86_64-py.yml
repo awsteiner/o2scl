@@ -28,11 +28,21 @@ jobs:
           cache-ubuntu-x86_64-py
         save-always: true
 
-    - name: Install and cache apt packages
-      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake python3 libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super python3-pip libcairo2-dev libquadmath0 zlib1g-dev python3-h5py
+    # I'm having trouble with numpy, apparently libboost-all-dev installs
+    # it's own version and then we can't find the numpy headers, we install
+    # it first, then the rest of the apt packages
+    - name: Install apt packages
+      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip
 
     - name: Install python packages
-      run:
+      run: |
+        pip install  --break-system-packages numpy==1.26.4 h5py
+
+    - name: Install apt packages 2
+      run: sudo apt-get -y install libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
+
+    - name: Install python packages 2
+      run: |
         pip install  --break-system-packages -r docker/u24.04_req.txt
 
     - name: Set up autotools scripts

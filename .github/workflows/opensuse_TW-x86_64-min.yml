@@ -39,7 +39,7 @@ jobs:
       run: |
         export CC='ccache gcc'
         export CXX='ccache g++'
-        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST"
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE"
         export LDFLAGS+="-lgomp"
         export CCACHE_DIR=~/.ccache
         ./configure --build=x86_64-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python

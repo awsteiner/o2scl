@@ -70,8 +70,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_FAST_TEST
-  
   double n0, eoa2;
   eos_had_skyrme sk;
 
@@ -551,8 +549,6 @@ int main(void) {
   t.test_rel(tnfd.dmudn_mixed,(dmupdnn2-dmupdnn1)/eps,
 	     1.0e-4,"second deriv, dmupdnn");
 
-#endif
-  
   t.report();
 
   return 0;
