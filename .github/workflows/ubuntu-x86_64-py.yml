@@ -49,7 +49,7 @@ jobs:
 
     - name: Find numpy
       run:
-        find . -name numpy
+        find /usr -name numpy
 
     - name: Set up autotools scripts
       run:
