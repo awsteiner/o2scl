@@ -580,6 +580,8 @@ int main(void) {
   cout.setf(ios::left | ios::scientific);
   cout.precision(4);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   // Generic polynomial solvers
   poly_real_coeff_gsl<> p3;
   
@@ -735,14 +737,15 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c2_ld,"cubic_rc_gsl2_ld",
      1.0,1.0e-17,1.0e-17,1.0e-16,1.0e-15,43);
+#ifndef O2SCL_OPENSUSE
   test_cubic_real_coeff<long double,std::complex<long double>,
                         cubic_real_coeff_multip>
     (&c5,"cubic_rc_mp_ld",
      1.0,1.0e-19,1.0e-17,1.0e-16,1.0e-15,9);
+#endif
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
      1.0,1.0e-13,1.0e-13,1.0e-9,1.0e-9,11910);
-#ifndef O2SCL_OLD_BOOST
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (&c1_cdf50,"cubic_rc_cern_50",
      1.0,1.0e-47,1.0e-46,1.0e-43,1.0e-43,9);
@@ -752,7 +755,6 @@ int main(void) {
   test_cubic_real_coeff_boost<cpp_bin_float_50,cpp_complex_50>
     (&c3_cdf50,"cubic_c_std_50",
      1.0,1.0e-44,1.0e-44,1.0e-40,1.0e-40,12516);
-#endif
   cout << endl;
 
   cout << "Cubics with real coefficients and complex roots -\n"
@@ -923,6 +925,8 @@ int main(void) {
      1.0e-48,1.0e-48,1.0e-44,1.0e-44);
 #endif
   cout << endl;
+
+#endif
   
   tst.report();
 

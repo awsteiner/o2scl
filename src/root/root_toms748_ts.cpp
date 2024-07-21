@@ -48,6 +48,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   double a, b;
   funct f=gfn;
 
@@ -74,6 +76,8 @@ int main(void) {
   b_cdf=1.0;
   rt_cdf.solve_bkt(a_cdf,b_cdf,f_cdf);
   t.test_rel_boost<cpp_dec_float_50>(a_cdf,0.2,1.0e-6,"1");
+
+#endif
   
   t.report();
   return 0;
