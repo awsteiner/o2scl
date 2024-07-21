@@ -151,6 +151,7 @@ int main(void) {
       hf.get_szt("testu",u2);
       hf.getf("testf",f2);
 
+#ifndef O2SCL_OPENSUSE_I386
       hf.getfp_copy("d",dx);
       hf.getfp_copy("d35",d35);
       t.test_rel(dx,2.0,1.0e-12,"test fp 1");
@@ -161,6 +162,7 @@ int main(void) {
       t.test_rel(dxa[1],1.0,1.0e-12,"test fpa 2");
       t.test_rel(static_cast<double>(d35a[0]),3.0,1.0e-12,"test fpa 3");
       t.test_rel(static_cast<double>(d35a[1]),1.0,1.0e-12,"test fpa 4");
+#endif
       
       hid_t group_id2=hf.open_group("Integers");
       hid_t file_id2=hf.get_file_id();

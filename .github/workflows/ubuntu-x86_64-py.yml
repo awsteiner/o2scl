@@ -28,28 +28,21 @@ jobs:
           cache-ubuntu-x86_64-py
         save-always: true
 
-    # I'm having trouble with numpy, apparently libboost-all-dev installs
-    # it's own version and then we can't find the numpy headers, we install
-    # it first, then the rest of the apt packages. However, this could have
-    # been simply because I had the numpy include directory wrong, so it
-    # could be that this two-step process is unnecessary. 
     - name: Install apt packages
-      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip
+      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
     - name: Install python packages
       run: |
         pip install  --break-system-packages numpy==1.26.4 h5py
-
-    - name: Install apt packages 2
-      run: sudo apt-get -y install libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
-
-    - name: Install python packages 2
-      run: |
         pip install  --break-system-packages -r docker/u24.04_req.txt
 
     - name: Find numpy
-      run:
+      run: |
         find /usr -name numpy
+        find /usr -name arrayobject.h
+        ls /usr/include/boost/python/numpy
+        ls /usr/include/boost/python/numpy/core
+        ls /usr/include/boost/python/numpy/core/include
 
     - name: Set up autotools scripts
       run:
@@ -60,7 +53,7 @@ jobs:
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
-        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include -I/usr/lib/python3.12/dist-packages/numpy/core/include"
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include -I/usr/include/boost/python/numpy/core/include"
         mkdir -p ${PWD}/build
         ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-python
 
