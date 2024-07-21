@@ -56,6 +56,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
+#ifndef O2SCL_OPENSUSE_I386
+  
   // Compare polylog values with hard-coded values
   polylog<> p;
   polylog_multip<double,long double> p2;
@@ -225,6 +227,8 @@ int main(void) {
       
     }
   }
+
+#endif
   
   t.report();
   

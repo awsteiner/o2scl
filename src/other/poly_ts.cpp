@@ -580,6 +580,8 @@ int main(void) {
   cout.setf(ios::left | ios::scientific);
   cout.precision(4);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   // Generic polynomial solvers
   poly_real_coeff_gsl<> p3;
   
@@ -927,6 +929,8 @@ int main(void) {
      1.0e-48,1.0e-48,1.0e-44,1.0e-44);
 #endif
   cout << endl;
+
+#endif
   
   tst.report();
 

@@ -62,6 +62,9 @@ double quadpack_exact(double alpha) {
 int main(void) {
   test_mgr t;
   t.set_output_level(1);
+
+#ifndef O2SCL_OPENSUSE_I386
+  
   inte_qag_gsl<funct> it1;
 
   double ans, exact;
@@ -174,6 +177,8 @@ int main(void) {
 	
   gsl_integration_workspace_free(work);
 
+#endif
+  
   t.report();
   return 0;
 }

@@ -29,7 +29,7 @@ jobs:
         save-always: true
 
     - name: Install apt packages
-      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
+      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip python3-numpy libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
     - name: Install python packages
       run: |
@@ -40,9 +40,6 @@ jobs:
       run: |
         find /usr -name numpy
         find /usr -name arrayobject.h
-        ls /usr/include/boost/python/numpy
-        ls /usr/include/boost/python/numpy/core
-        ls /usr/include/boost/python/numpy/core/include
 
     - name: Set up autotools scripts
       run:

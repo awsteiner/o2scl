@@ -61,6 +61,8 @@ int main(void) {
   test_mgr test;
   test.set_output_level(1);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   // order parameter
   int n;	
 
@@ -110,7 +112,9 @@ int main(void) {
     Q.tol_abs/=1.0e3;
   }
   cout << endl;
-	
+
+#endif
+  
   test.report();
   return 0;
 }

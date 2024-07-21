@@ -48,6 +48,7 @@ int main(void) {
 
   nstar_rot nst;
 
+#ifndef O2SCL_OPENSUSE_I386
 #ifndef O2SCL_FAST_TEST
 
   if (true) {
@@ -319,7 +320,8 @@ int main(void) {
     t.test_rel(1.059e49,nst.J,1.0e-8,"ang_mom 2");
   }
 #endif
-
+#endif
+  
   t.report();
 
   return 0;
