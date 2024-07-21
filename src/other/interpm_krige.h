@@ -501,7 +501,7 @@ namespace o2scl {
     /** \brief Function to optimize the covariance parameters
      */
     virtual double qual_fun(size_t iout, int &success) {
-      
+
       // Select the row of the data matrix
       mat_y_col_t yiout2(this->y,iout);
       
@@ -542,7 +542,7 @@ namespace o2scl {
               }
             }
           }
-
+          
           // Construct the inverse of KXX
           this->mi.invert_inplace(size-1,inv_KXX2);
           
@@ -694,11 +694,11 @@ namespace o2scl {
         for(size_t irow=0;irow<size;irow++) {
           mat_x_row_t xrow(this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
-            mat_x_row_t xcol(this->x,icol);
+            mat_x_row_t xrow2(this->x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=cf[iout]->covar2(xrow,xcol);
+              KXX(irow,icol)=cf[iout]->covar2(xrow,xrow2);
             }
           }
         }
@@ -729,12 +729,16 @@ namespace o2scl {
         }
 	
         lndet=log(lndet);
+        if (!std::isfinite(lndet)) {
+          success=5;
+          return 1.0e99;
+        }
 	
         if (this->verbose>2) {
           std::cout << "Done performing matrix inversion with size "
                     << size << std::endl;
         }
-        
+
         if (timing) {
           t2=time(0);          
           std::cout << "Matrix inversion took "
