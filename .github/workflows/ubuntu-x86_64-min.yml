@@ -21,6 +21,8 @@ jobs:
     - name: Download release
       run: |
            curl https://github.com/awsteiner/o2scl/releases/download/v0.929.2/o2scl-0.929.2.tar.gz
+           tar xvzf o2scl-0.929.2.tar.gz
+           mv o2scl-0.929/* .
 
     - name: Cache action
       uses: actions/cache@v4
