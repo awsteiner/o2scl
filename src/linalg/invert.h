@@ -99,7 +99,9 @@ namespace o2scl_linalg {
     
   public:
 
-    /// Invert matrix \c A, returning the inverse in \c A_inv
+    /** \brief Invert matrix \c A, destroying \c A and
+        returning the inverse in \c A_inv
+    */
     virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
@@ -313,12 +315,11 @@ namespace o2scl_linalg {
 #include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   
-  /** \brief Eigen inverse using QR decomposition with 
-      column pivoting
+  /** \brief Eigen generic inverse and determinant
 
-      This class is only defined if Eigen support was enabled during
-      installation.
-
+      AWS, 7/21/24: I believe this uses Eigen's PartialPivLU method
+      except for smaller matrices where it uses faster explicit
+      calculations.
   */
   template<class eigen_mat_t=Eigen::MatrixXd> class matrix_invert_det_eigen : 
     public matrix_invert_det<eigen_mat_t> {
@@ -351,6 +352,95 @@ namespace o2scl_linalg {
     /// Inver matrix \c A in place
     virtual int invert_inplace(size_t n, eigen_mat_t &A) {
       A=A.inverse();
+      return 0;
+    }
+    
+  };
+
+  /** \brief Desc
+   */
+  template<class eigen_mat_t, class eigen_decomp_t>
+  class matrix_invert_det_eigen_decomp : 
+    public matrix_invert_det<eigen_mat_t> {
+
+  protected:
+
+    /// Pointer to see if matrix changes
+    eigen_mat_t *Aptr;
+
+    /// The decomposition object
+    std::shared_ptr<eigen_decomp_t> decomp_sp;
+    
+  public:
+
+    matrix_invert_det_eigen_decomp() {
+      Aptr=0;
+    }
+    
+    /// Perform the decomposition
+    void decomp(eigen_mat_t &A) {
+      Aptr=&A;
+      std::shared_ptr<eigen_decomp_t> decomp_loc=
+        new std::shared_ptr<eigen_decomp_t>(A);
+      decomp_sp=decomp_loc;
+      return;
+    }
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert_dest(size_t n, eigen_mat_t &A, eigen_mat_t &A_inv) {
+      if (&A!=Aptr) {
+        Aptr=&A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A));
+        decomp_sp=decomp_loc;
+      }
+      A_inv=decomp_sp->inverse();
+      return 0;
+    }
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
+      eigen_mat_t A2=A;
+      invert_dest(n,A2,A_inv);
+      return 0;
+    }
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const eigen_mat_t &A,
+                           eigen_mat_t &A_inv, double &A_det) {
+      if (&A!=Aptr) {
+        eigen_mat_t A2=A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A2));
+        Aptr=0;
+        decomp_sp=decomp_loc;
+      }
+      A_inv=decomp_sp->inverse();
+      A_det=decomp_sp->determinant();
+      return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const eigen_mat_t &A) {
+      if (&A!=Aptr) {
+        eigen_mat_t A2=A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A2));
+        Aptr=0;
+        decomp_sp=decomp_loc;
+      }
+      return decomp_sp->determinant();
+    }
+    
+    /// Inver matrix \c A in place
+    virtual int invert_inplace(size_t n, eigen_mat_t &A) {
+      if (&A!=Aptr) {
+        Aptr=&A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A));
+        decomp_sp=decomp_loc;
+      }
+      A=decomp_sp->inverse();
       return 0;
     }
     
