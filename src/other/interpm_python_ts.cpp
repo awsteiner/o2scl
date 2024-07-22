@@ -129,6 +129,50 @@ int main(void) {
   }
     
   if (true) {
+
+    // Sklearn Gaussian process, n_out=1, different kernel
+    
+    tensor<> tin, tout;
+    vector<size_t> in_size={N,2}, out_size={N,1};
+    tin.resize(2,in_size);
+    tout.resize(2,out_size);
+    for(size_t j=0;j<N;j++) {
+      vector<size_t> ix;
+      ix={j,0};
+      tin.get(ix)=x[j];
+      tout.get(ix)=dp[j];
+      ix={j,1};
+      tin.get(ix)=y[j];
+    }
+    
+    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
+                      "interpm_sklearn_gp",
+                      ((std::string)"verbose=3,kernel=ConstantKernel")+
+                      "(1.0,constant_value_bounds=\"fixed\")*"+
+                      "RBF(1.0,length_scale_bounds=\"fixed\")",
+                      1);
+    ip.set_data_tensor(2,1,N,tin,tout);
+    
+    std::vector<double> ex(2), ey(1), eyp(1);
+    ex[0]=0.5;
+    ex[1]=0.5;
+    ip.eval_std_vec(ex,ey);
+    cout << ey[0] << endl;
+    cout << f(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
+
+    ex[0]=0.5;
+    ex[1]=0.5;
+    ip.eval_unc_std_vec(ex,ey,eyp);
+    cout << ey[0] << endl;
+    cout << f(0.5,0.5) << endl;
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
+    t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 3");
+    
+    cout << endl;
+  }
+    
+  if (true) {
     
     // Sklearn Gaussian process, n_out=2
     

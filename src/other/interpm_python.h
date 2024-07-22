@@ -128,13 +128,6 @@ namespace o2scl {
                    std::string class_name="", std::string options="",
                    int v=0) {
       
-      if (o2scl_settings.py_initialized==false) {
-        if (this->verbose>0) {
-          std::cout << "Running py_init()." << std::endl;
-        }
-        o2scl_settings.py_init();
-      }
-      
       p_set_func=0;
       p_eval_func=0;
       p_eval_unc_func=0;
@@ -291,6 +284,13 @@ namespace o2scl {
                             const o2scl::tensor<> &params,
                             const o2scl::tensor<> &outputs,
                             int &ret) {
+      
+      if (o2scl_settings.py_initialized==false) {
+        if (this->verbose>0) {
+          std::cout << "Running py_init()." << std::endl;
+        }
+        o2scl_settings.py_init();
+      }
       
       ret=0;
       
