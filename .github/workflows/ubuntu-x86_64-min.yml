@@ -19,8 +19,11 @@ jobs:
 #      uses: actions/checkout@v4
 
     - name: Download release
-      run: |
-           curl https://github.com/awsteiner/o2scl/releases/download/v0.929.2/o2scl-0.929.2.tar.gz
+      uses: robinraju/release-downloader@v1
+      with:
+          repository: 'awsteiner/o2scl'
+              tag: 'v0.929.2'
+              tarBall: true
            tar xvzf o2scl-0.929.2.tar.gz
            mv o2scl-0.929/* .
 
