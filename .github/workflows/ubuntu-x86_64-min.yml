@@ -15,8 +15,12 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - name: Git checkout
-      uses: actions/checkout@v4
+#    - name: Git checkout
+#      uses: actions/checkout@v4
+
+    - name: Download release
+      run: |
+           curl https://github.com/awsteiner/o2scl/releases/download/v0.929.2/o2scl-0.929.2.tar.gz
 
     - name: Cache action
       uses: actions/cache@v4
