@@ -49,6 +49,8 @@ jobs:
 
     - name: Configure
       run: |
+        cd ${GITHUB_WORKSPACE}
+        ls 
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
