@@ -19,6 +19,17 @@ jobs:
 #    - name: Git checkout
 #      uses: actions/checkout@v4
 
+    - name: Download release
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: 'awsteiner/o2scl'
+        tag: 'v0.929.2'
+        fileName: 'o2scl-0.929.2.tar.gz'
+
+    - name: untar release
+      run: |
+           tar xvzf o2scl-0.929.2.tar.gz && cd o2scl-0.929
+
     - name: Cache action
       uses: actions/cache@v4
       with:
@@ -31,17 +42,6 @@ jobs:
 
     - name: Install and cache apt packages
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
-
-    - name: Download release
-      uses: robinraju/release-downloader@v1
-      with:
-        repository: 'awsteiner/o2scl'
-        tag: 'v0.929.2'
-        fileName: 'o2scl-0.929.2.tar.gz'
-
-    - name: untar release
-      run: |
-           tar xvzf o2scl-0.929.2.tar.gz && cd o2scl-0.929
 
 #    - name: Set up autotools
 #      run:
@@ -59,6 +59,7 @@ jobs:
 
     - name: Build and install
       run: |
+        cd ${GITHUB_WORKSPACE}/o2scl-0.929
         make VERBOSE=1 blank-doc -j4 -O
         make VERBOSE=1 -j4 -O
         make VERBOSE=1 install -j4 -O
@@ -70,4 +71,5 @@ jobs:
 
     - name: Check
       run: |
+        cd ${GITHUB_WORKSPACE}/o2scl-0.929
         make VERBOSE=1 check -j4 -O
