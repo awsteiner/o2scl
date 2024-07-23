@@ -27,7 +27,7 @@ jobs:
 
     - name: untar release
       run: |
-           ls && cd o2scl && tar xvzf o2scl-0.929.2.tar.gz && cd o2scl-0.929
+           tar xvzf o2scl-0.929.2.tar.gz && ls && cd o2scl-0.929 && ls
 
     - name: Cache action
       uses: actions/cache@v4
