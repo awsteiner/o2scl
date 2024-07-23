@@ -49,8 +49,7 @@ jobs:
 
     - name: Configure
       run: |
-        cd ${GITHUB_WORKSPACE}
-        ls 
+        cd ${GITHUB_WORKSPACE}/o2scl-0.929
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
