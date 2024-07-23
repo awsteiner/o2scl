@@ -28,7 +28,7 @@ jobs:
 
     - name: untar release
       run: |
-           tar xvzf o2scl-0.929.2.tar.gz && cd o2scl-0.929
+           tar xvzf o2scl-0.929.2.tar.gz && mv o2scl-0.929/* . && rmdir o2scl-0.929
 
     - name: Cache action
       uses: actions/cache@v4
@@ -49,7 +49,7 @@ jobs:
 
     - name: Configure
       run: |
-        cd ${GITHUB_WORKSPACE}/o2scl-0.929
+        cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
@@ -59,7 +59,7 @@ jobs:
 
     - name: Build and install
       run: |
-        cd ${GITHUB_WORKSPACE}/o2scl-0.929
+        cd ${GITHUB_WORKSPACE}
         make VERBOSE=1 blank-doc -j4 -O
         make VERBOSE=1 -j4 -O
         make VERBOSE=1 install -j4 -O
@@ -71,5 +71,5 @@ jobs:
 
     - name: Check
       run: |
-        cd ${GITHUB_WORKSPACE}/o2scl-0.929
+        cd ${GITHUB_WORKSPACE}
         make VERBOSE=1 check -j4 -O
