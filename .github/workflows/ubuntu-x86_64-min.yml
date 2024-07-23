@@ -23,7 +23,7 @@ jobs:
       with:
         repository: 'awsteiner/o2scl'
         tag: 'v0.929.2'
-        file: 'o2scl-0.929.2.tar.gz'
+        fileName: 'o2scl-0.929.2.tar.gz'
 
     - name: untar release
       run: |
