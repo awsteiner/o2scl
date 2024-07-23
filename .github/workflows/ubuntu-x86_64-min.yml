@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+    
 #    - name: Git checkout
 #      uses: actions/checkout@v4
 
@@ -42,9 +43,9 @@ jobs:
       run: |
            tar xvzf o2scl-0.929.2.tar.gz && cd o2scl-0.929
 
-    - name: Set up autotools
-      run:
-        ./autogen.sh
+#    - name: Set up autotools
+#      run:
+#        ./autogen.sh
 
     - name: Configure
       run: |
