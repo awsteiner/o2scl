@@ -21,9 +21,9 @@ jobs:
     - name: Download release
       uses: robinraju/release-downloader@v1
       with:
-          repository: 'awsteiner/o2scl'
-              tag: 'v0.929.2'
-              tarBall: true
+        repository: 'awsteiner/o2scl'
+        tag: 'v0.929.2'
+        tarBall: true
 
     - name: untar release
       run: |
