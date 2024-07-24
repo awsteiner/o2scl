@@ -582,25 +582,39 @@ namespace o2scl {
 
       // Initialize func_ret to success
       func_ret=success;
+
+      // Initialize the next point
+      // [Neal] q = current_q
+      for(size_t k=0;k<n_params;k++) {
+        next[k]=current[k];
+      }
+      
+      // Initialize the momenta
+      // [Neal] p = rnorm(length(q),0,1)
+      // [Neal] current_p = p
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]=abs(pdg());
+        mom[k]=mom_next[k];
+      }
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr.size()>0) {
-        grad_ret=grad_ptr[i_thread](n_params,current,f,grad,dat);
+        grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
       }
       
       // Then, additionally try the finite-differencing gradient
-      if (initial_grad_failed==false) {
-        grad_ret=grad_pot(n_params,current,f,grad,dat);
+      /*if (initial_grad_failed==false) {
+        grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
-      }
+      }*/
 
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
@@ -641,30 +655,16 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
 
-      // Initialize the momentum step size
+      // Set step size to take a random step in a random direction
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
-      for (size_t i=0; i<n_params; i++) {
-        mom_step[i]=0.0;
-      }
-
-      // Set step size to take a random step along a random direction
-      int jr=1+r.random_int(n_params);
-      for (int j=0; j<jr; j++) {
-        size_t kr=r.random_int(n_params);
-        mom_step[kr]=1.0e-4*(high[kr]-low[kr])
-                     *(r.random()*2.0-1.0)/((double)traj_length);
-      }
-      
-      // Initialize the momenta, which we rescale by mom_step
-      // [Neal] p = rnorm(length(q),0,1)
-      for(size_t k=0;k<n_params;k++) {
-        mom[k]=abs(pdg());
-      }
+      mom_step.clear();
+      size_t kr=r.random_int(n_params);
+      mom_step[kr]=(high[kr]-low[kr])*(r.random()*2.0-1.0)/grad[kr];
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]-0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
       
       // [Neal] for (i in 1:L)
@@ -673,7 +673,7 @@ namespace o2scl {
         // Take a full step in coordinate space
         // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
-          next[k]=current[k]+mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]+=mom_step[k % mom_step.size()]*mom_next[k];
         }
         
         // Check that the coordinate space step has not taken us out
@@ -701,14 +701,14 @@ namespace o2scl {
         }
         
         // Try the finite-differencing gradient
-        grad_ret=grad_pot(n_params,next,f,grad,dat);
+        /*grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           func_ret=grad_failed;
           std::cout << "Finite-difference gradient computation " 
                     << "failed." << std::endl;
           accept=false;
           return;
-        }
+        }*/
         
         // Perform a momentum step, unless we're at the end
         if (i<traj_length-1) {
@@ -716,7 +716,6 @@ namespace o2scl {
           for(size_t k=0;k<n_params;k++) {
             mom_next[k]-=mom_step[k % mom_step.size()]*grad[k];
           }
-          
         }
         
       }
@@ -725,6 +724,9 @@ namespace o2scl {
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
+        std::cout << "mom_next[" << k << "]=" << mom_next[k]
+                  << ", mom_step[" << k << "]=" << mom_step[k]
+                  << ", grad[" << k << "]=" << grad[k] << std::endl;
       }
 
       // Negate momentum to make the proposal symmetric
