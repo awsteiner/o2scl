@@ -3,9 +3,9 @@ name: Ubuntu 24.04 x86_64 minimal install
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
@@ -42,7 +42,7 @@ jobs:
           cache-ubuntu-x86_64-min
         save-always: true
 
-    - name: Install and cache apt packages
+    - name: Install dependencies
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
 
 # For when we're not using a release

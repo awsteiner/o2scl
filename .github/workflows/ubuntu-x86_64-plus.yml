@@ -3,9 +3,9 @@ name: Ubuntu 24.04 x86_64 plus install
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
