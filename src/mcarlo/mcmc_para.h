@@ -641,12 +641,17 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
 
+      // Initialize the momentum step size
+      if (mom_step.size()!=n_params) mom_step.resize(n_params);
+      for (size_t i=0; i<n_params; i++) {
+        mom_step[i]=0.0;
+      }
+
       // Set step size to take a random step along a random direction
-      mom_step.clear();
       int jr=1+r.random_int(n_params);
       for (int j=0; j<jr; j++) {
         size_t kr=r.random_int(n_params);
-        mom_step[kr]=1.0e-5*(high[kr]-low[kr])
+        mom_step[kr]=1.0e-4*(high[kr]-low[kr])
                      *(r.random()*2.0-1.0)/((double)traj_length);
       }
       
@@ -747,7 +752,9 @@ namespace o2scl {
         // [Neal] proposed_K = sum(pˆ2) / 2
         kin_next+=0.5*mom_next[k]*mom_next[k];
       }
-      
+      std::cout << "K_curr=" << kin_curr << ", K_next=" << kin_next
+                << ", U_curr=" << pot_curr << ", U_next=" << pot_next
+                << std::endl;
       double rx=r.random();
       
       // Metropolis algorithm
@@ -761,6 +768,8 @@ namespace o2scl {
       }
       // [Neal] if (runif(1) < exp(current_U-proposed_U+
       // current_K-proposed_K))
+      std::cout << "rx=" << rx << ", exp(U_curr-U_next+K_curr-K_next)="
+                << exp(pot_curr-pot_next+kin_curr-kin_next) << std::endl;
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
       }
@@ -2227,7 +2236,7 @@ namespace o2scl {
                 scr_out.unsetf(std::ios::showpos);
               } else if (func_ret[it]!=o2scl::success &&
                          func_ret[it]!=mcmc_skip) {
-                if (verbose>=2) {
+                if (verbose>=3) {
                   scr_out << "mcmc (" << it << "," << mpi_rank
                           << "): Function returned failure " 
                           << func_ret[it] << " at point ";
@@ -3564,12 +3573,12 @@ namespace o2scl {
               this->scr_out << "mcmc: Thread " << i_thread
                             << " setting data at row " << next_row
                             << std::endl;
+            }
+            if (this->verbose>=3) {
               this->scr_out << "  func_ret: " << func_ret << " mcmc_accept: "
                             << mcmc_accept << " walker_ix: "
                             << walker_ix << " store_rejects: "
                             << store_rejects << std::endl;
-            }
-            if (this->verbose>=3) {
               for(size_t k=0;k<line.size();k++) {
                 this->scr_out << k << ". ";
                 this->scr_out << table->get_column_name(k) << " ";
