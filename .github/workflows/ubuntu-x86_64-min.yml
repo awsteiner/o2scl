@@ -28,7 +28,9 @@ jobs:
 
     - name: untar release
       run: |
-           tar xvzf o2scl-0.929.2.tar.gz && mv o2scl-0.929/* . && rmdir o2scl-0.929
+           tar xvzf o2scl-0.929.2.tar.gz
+           mv o2scl-0.929/* .
+           rmdir o2scl-0.929
 
     - name: Cache action
       uses: actions/cache@v4
@@ -43,6 +45,7 @@ jobs:
     - name: Install and cache apt packages
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
 
+# For when we're not using a release
 #    - name: Set up autotools
 #      run:
 #        ./autogen.sh
