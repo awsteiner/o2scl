@@ -10,7 +10,7 @@ on:
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  test-u2404-x86_64-plus:
+  ubuntu-x86_64-plus:
 
     runs-on: ubuntu-24.04
 

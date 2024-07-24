@@ -8,8 +8,8 @@ on:
     branches: [ "main", "rc" ]
 
 jobs:
-  tests-opensuse-tumbleweed-i386:
-
+  opensuse-TW-i386-min:
+  
     runs-on: ubuntu-22.04
     container:
       image: opensuse/tumbleweed
@@ -17,30 +17,33 @@ jobs:
 
     steps:
 
-#    - name: Git checkout
-#      uses: actions/checkout@v1
+    - name: Git checkout
+      uses: actions/checkout@v1
 
-    - name: Download release
-      uses: robinraju/release-downloader@v1
-      with:
-        repository: 'awsteiner/o2scl'
-        tag: 'v0.929.2'
-        fileName: 'o2scl-0.929.2.tar.gz'
+# AWS, 7/24/24: the release download doesn't work for this case,
+# I'm not sure why yet.
+# 
+#    - name: Download release
+#      uses: robinraju/release-downloader@v1
+#      with:
+#        repository: 'awsteiner/o2scl'
+#        tag: 'v0.929.2'
+#        fileName: 'o2scl-0.929.2.tar.gz'
 
-    - name: Extract release and reorganize
-      run: |
-           tar xvzf o2scl-0.929.2.tar.gz
-           mv o2scl-0.929/* .
-           rmdir o2scl-0.929
+#    - name: Extract release and reorganize
+#      run: |
+#           tar xvzf o2scl-0.929.2.tar.gz
+#           mv o2scl-0.929/* .
+#           rmdir o2scl-0.929
 
     # (Cache actions do not work for 32-bit containers on 64-bit runners.)
 
     - name: Install dependencies
       run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
 
-#    - name: Set up autotools scripts
-#      run:
-#        ./autogen.sh
+    - name: Set up autotools scripts
+      run:
+        ./autogen.sh
 
     - name: Configure
       run: |
