@@ -3,9 +3,9 @@ name: openSUSE TW x86_64 minimal install
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "rc" ]
 
 jobs:
   tests-opensuse-tumbleweed-x86_64:
@@ -15,6 +15,23 @@ jobs:
       image: opensuse/tumbleweed
 
     steps:
+    
+#    - name: Git checkout
+#      uses: actions/checkout@v4
+
+    - name: Download release
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: 'awsteiner/o2scl'
+        tag: 'v0.929.2'
+        fileName: 'o2scl-0.929.2.tar.gz'
+
+    - name: Extract release and reorganize
+      run: |
+           tar xvzf o2scl-0.929.2.tar.gz
+           mv o2scl-0.929/* .
+           rmdir o2scl-0.929
+
     - name: Cache action
       uses: actions/cache@v4
       with:
@@ -25,18 +42,16 @@ jobs:
           cache-oSTW-x86_64-fast-test-nopy
         save-always: true
 
-    - name: Install necessary packages
+    - name: Install dependencies
       run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel boost-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
 
-    - name: Git checkout
-      uses: actions/checkout@v4
+#    - name: Set up autotools
+#      run:
+#        ./autogen.sh
 
-    - name: Set up autotools scripts
-      run:
-        ./autogen.sh
-
-    - name: Run configure
+    - name: Configure
       run: |
+        cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE"
@@ -44,10 +59,13 @@ jobs:
         export CCACHE_DIR=~/.ccache
         ./configure --build=x86_64-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
 
-    - name: make
+    - name: Install
       run: |
+        cd ${GITHUB_WORKSPACE}
         make VERBOSE=1 sinstall -j4 -O
         make VERBOSE=1 -C data install-data
 
-    - name: make check
-      run: make VERBOSE=1 o2scl-test -j4 -O -k
+    - name: Check
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        make VERBOSE=1 o2scl-test -j4 -O -k
