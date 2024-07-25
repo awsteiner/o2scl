@@ -657,9 +657,9 @@ namespace o2scl {
 
       // Set step size to take a random step in a random direction
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
-      mom_step.clear();
-      size_t kr=r.random_int(n_params);
-      mom_step[kr]=(high[kr]-low[kr])*(r.random()*2.0-1.0)/grad[kr];
+      for (size_t k=0;k<n_params;k++) {
+        mom_step[k]=1.0e-12*(high[k]-low[k])*(r.random()*2.0-1.0);
+      }
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
@@ -724,10 +724,15 @@ namespace o2scl {
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
-        std::cout << "mom_next[" << k << "]=" << mom_next[k]
-                  << ", mom_step[" << k << "]=" << mom_step[k]
+      }
+
+      std::cout << std::scientific << std::setprecision(1);
+      for (size_t k=0;k<n_params;k++) {
+        std::cout << "p_next[" << k << "]=" << mom_next[k]
+                  << ", step[" << k << "]=" << mom_step[k]
                   << ", grad[" << k << "]=" << grad[k] << std::endl;
       }
+      std::cout << std::scientific << std::setprecision(6);
 
       // Negate momentum to make the proposal symmetric
       // [Neal] p = -p
