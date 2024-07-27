@@ -1745,6 +1745,10 @@ int acol_manager::comm_values_table(std::vector<std::string> &sv,
       for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
         vars[((string)"i")+o2scl::szttos(j)]=ix[j];
       }
+      for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+        vars[((string)"x")+o2scl::szttos(j)]=
+          tensor_grid_obj.get_grid(j,ix[j]);
+      }
       vars["v"]=tensor_grid_obj.get_data()[i];
       
       if (calc.eval(&vars)>0.5) {

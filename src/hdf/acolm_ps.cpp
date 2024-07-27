@@ -2930,6 +2930,19 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
 
   if (in[1].length()!=0) {
 
+    bool in_group=false;
+    hid_t group_id;
+    if (in[1].find_last_of('/')!=std::string::npos) {
+      in_group=true;
+      size_t loc=in[1].find_last_of('/');
+      std::string group=in[1].substr(0,loc);
+      in[1]=in[1].substr(loc+1);
+      std::cout << "Opening group: " << group
+                << " and looking for object " << in[1] << std::endl;
+      group_id=hf.open_group(group);
+      hf.set_current_id(group_id);
+    }
+    
     if (verbose>1) {
       cout << "Command read looking for object with name " << in[1] << endl;
     }
@@ -2943,9 +2956,10 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     if (ip.found==false) {
       cerr << "Could not find object named " << in[1]
 	   << " in file " << fname << endl;
+      if (in_group) hf.close_group(group_id);
       return 1;
     }
-    
+
     if (verbose>1) {
       cout << "Command read found object with type " << ip.type << endl;
     }
@@ -2959,6 +2973,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       interp_type=table_obj.get_interp_type();
       command_add("table");
       type="table";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="table3d") {
       if (verbose>2) {
@@ -2969,6 +2984,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       interp_type=table3d_obj.get_interp_type();
       command_add("table3d");
       type="table3d";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="tensor_grid") {
       if (verbose>2) {
@@ -2978,6 +2994,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("tensor_grid");
       type="tensor_grid";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="prob_dens_mdim_amr") {
       if (verbose>2) {
@@ -2987,6 +3004,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("prob_dens_mdim_amr");
       type="prob_dens_mdim_amr";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="prob_dens_mdim_gaussian") {
       if (verbose>2) {
@@ -2996,6 +3014,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("prob_dens_mdim_gaussian");
       type="prob_dens_mdim_gaussian";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="prob_dens_mdim_gmm") {
       if (verbose>2) {
@@ -3005,6 +3024,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("prob_dens_mdim_gmm");
       type="prob_dens_mdim_gmm";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type.substr(0,10)==((string)"double[][]").substr(0,10)) {
       if (verbose>2) {
@@ -3014,6 +3034,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("tensor");
       type="tensor";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type.substr(0,10)==((string)"int[][]").substr(0,10)) {
       if (verbose>2) {
@@ -3023,6 +3044,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("tensor<int>");
       type="tensor<int>";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type.substr(0,10)==((string)"size_t[][]").substr(0,10)) {
       if (verbose>2) {
@@ -3032,6 +3054,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("tensor<size_t>");
       type="tensor<size_t>";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="hist") {
       if (verbose>2) {
@@ -3041,6 +3064,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("hist");
       type="hist";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="hist_2d") {
       if (verbose>2) {
@@ -3050,6 +3074,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("hist_2d");
       type="hist_2d";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="vector<contour_line>") {
       if (verbose>2) {
@@ -3059,6 +3084,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("vector<contour_line>");
       type="vector<contour_line>";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="uniform_grid<double>") {
       if (verbose>2) {
@@ -3068,6 +3094,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("uniform_grid<double>");
       type="uniform_grid<double>";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="string[]") {
       if (verbose>2) {
@@ -3077,6 +3104,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("string[]");
       type="string[]";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="vec_vec_string") {
       if (verbose>2) {
@@ -3086,6 +3114,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("vec_vec_string");
       type="vec_vec_string";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="vec_vec_double") {
       if (verbose>2) {
@@ -3095,6 +3124,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("vec_vec_double");
       type="vec_vec_double";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="int") {
       if (verbose>2) {
@@ -3104,6 +3134,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("int");
       type="int";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="char") {
       if (verbose>2) {
@@ -3113,6 +3144,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("char");
       type="char";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="string") {
       if (verbose>2) {
@@ -3122,6 +3154,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("string");
       type="string";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="char[fixed]") {
       if (true || verbose>2) {
@@ -3131,6 +3164,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("string");
       type="string";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="double") {
       if (verbose>2) {
@@ -3140,6 +3174,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("double");
       type="double";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="size_t") {
       if (verbose>2) {
@@ -3149,6 +3184,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("size_t");
       type="size_t";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="int[]") {
       if (verbose>2) {
@@ -3158,6 +3194,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("int[]");
       type="int[]";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="double[]") {
       if (verbose>2) {
@@ -3167,6 +3204,7 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("double[]");
       type="double[]";
+      if (in_group) hf.close_group(group_id);
       return 0;
     } else if (ip.type=="size_t[]") {
       if (verbose>2) {
@@ -3176,13 +3214,15 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       obj_name=in[1];
       command_add("size_t[]");
       type="size_t[]";
+      if (in_group) hf.close_group(group_id);
       return 0;
     }
 
     cerr << "Found object with name " << in[1]
 	 << " in file " << fname << " but type " << ip.type
 	 << " is not readable." << endl;
-    return 2;
+    if (in_group) hf.close_group(group_id);
+    return 2;    
   }
 
   ret=hf.find_object_by_type("table",in[1],use_regex,verbose);
