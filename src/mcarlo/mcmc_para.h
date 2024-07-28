@@ -655,10 +655,16 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
 
-      // Set step size to take a random step in a random direction
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
+      
+      /* Set step sizes to small positive (for momenta to have the 
+      correct signs, dictated by the gradients) numbers, scaled by 
+      the absolute gradients (to keep momenta close to unity), and 
+      the trajectory length (so that (q',p') is not too far away 
+      from (q,p) after the leapfrog updates) */
       for (size_t k=0;k<n_params;k++) {
-        mom_step[k]=1.0e-12*(high[k]-low[k])*(r.random()*2.0-1.0);
+        mom_step[k]=1.0e-2*(high[k]-low[k])*r.random()
+                    /abs(grad[k])/((double)traj_length);
       }
       
       // Take a half step in the momenta using the gradient
@@ -669,8 +675,13 @@ namespace o2scl {
       
       // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
+        if (traj_length>1) {
+          std::cout << "i_leapfrog=" << i << std::endl;
+        }
         
         // Take a full step in coordinate space
+        // Note: whether q'=q+dq or q'=q-dq is determined by the
+        // signs of the momenta, not the signs of the step sizes
         // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
           next[k]+=mom_step[k % mom_step.size()]*mom_next[k];
@@ -728,9 +739,11 @@ namespace o2scl {
 
       std::cout << std::scientific << std::setprecision(1);
       for (size_t k=0;k<n_params;k++) {
-        std::cout << "p_next[" << k << "]=" << mom_next[k]
+        std::cout << "p_nxt[" << k << "]=" << mom_next[k]
                   << ", step[" << k << "]=" << mom_step[k]
-                  << ", grad[" << k << "]=" << grad[k] << std::endl;
+                  << ", grad[" << k << "]=" << grad[k]  
+                  << ", disp[" << k << "]=" << abs(next[k]-current[k]) 
+                  << std::endl;
       }
       std::cout << std::scientific << std::setprecision(6);
 
@@ -2053,12 +2066,14 @@ namespace o2scl {
           double acc_rate=t_accept/(t_accept+t_reject);
           double avg_iters=t_iters/((double)n_threads);
 
-          scr_out << "Average acceptance rate: " << acc_rate*100 
-                    << " %" << std::endl;
-          scr_out << "Total time elapsed: " << elapsed 
-                    << " sec" << std::endl;
-          scr_out << "Average time per iteration: " << elapsed/avg_iters
-                    << " sec" << std::endl;
+          scr_out << std::fixed << std::setprecision(2) << std::endl;
+          scr_out << "Avg accept rate : " << acc_rate*100 
+                  << " %" << std::endl;
+          scr_out << "Time elapsed    : " << elapsed 
+                  << " sec" << std::endl;
+          scr_out << "Avg time/iter   : " << elapsed/avg_iters
+                  << " sec" << std::endl;
+          scr_out << std::scientific << std::setprecision(6) << std::endl;
           
           // End of 'main_done' while loop for aff_inv=false
         }
@@ -3641,7 +3656,7 @@ namespace o2scl {
                      "mcmc_para_table::add_line().",o2scl::exc_efailed);
         }
         table->set("mult",walker_accept_rows[windex],mult_old+1.0);
-        if (this->verbose>=3) {
+        if (this->verbose>=2) {
           this->scr_out << "mcmc: Updating mult of row "
                         << walker_accept_rows[windex]
                         << " from " << mult_old << " to "
