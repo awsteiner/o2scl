@@ -421,7 +421,12 @@ namespace o2scl {
      */
     vec_t step_fac;
 
-    /** \brief Trajectory length (default 20)
+    /** \brief Trajectory length (default 20). Requires optimization
+        together with mom_step.
+        
+        This should be large enough to find uncorrelated points 
+        nearby without crossing multiple local minima in a single 
+        HMC step.
      */
     size_t traj_length;
 
@@ -430,7 +435,11 @@ namespace o2scl {
     prob_dens_gaussian pdg;
 
     /** \brief Stepsize in momentum space (default is a one-element
-        vector containing 0.2)
+        vector containing 0.2). Requires optimization together with 
+        traj_length.
+
+        This value should be tuned to explore the parameter space 
+        in a reasonable time without getting stuck in local mimima.
      */
     vec_t mom_step;
 
@@ -596,6 +605,11 @@ namespace o2scl {
         mom_next[k]=abs(pdg());
         mom[k]=mom_next[k];
       }
+
+      /* Note: The initial momentum p at the current point q for this
+      step is always in U(0,1), i.e. we never remember the final
+      momentum at q from the last step. We are only interested in how
+      p evolves locally in this step. */
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
@@ -656,15 +670,15 @@ namespace o2scl {
       // HMC method
 
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
+
+      /* Note: Step sizes should be small positive (for momenta to 
+      have the correct signs, dictated by the gradients) numbers, 
+      scaled by the (initial) absolute gradients (to keep momenta 
+      close to unity). */
       
-      /* Set step sizes to small positive (for momenta to have the 
-      correct signs, dictated by the gradients) numbers, scaled by 
-      the absolute gradients (to keep momenta close to unity), and 
-      the trajectory length (so that (q',p') is not too far away 
-      from (q,p) after the leapfrog updates) */
+      // Scale the step sizes
       for (size_t k=0;k<n_params;k++) {
-        mom_step[k]=1.0e-2*(high[k]-low[k])*r.random()
-                    /abs(grad[k])/((double)traj_length);
+        mom_step[k]=1.0e-6*(high[k]-low[k])*r.random();
       }
       
       // Take a half step in the momenta using the gradient
@@ -672,7 +686,12 @@ namespace o2scl {
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
+
+      /* Note: whether p'=p+dp or p'=p-dp is determined by the 
+      signs of the graidents, not the signs of the step sizes, 
+      i.e. lower p' for going uphill and higher for downhill. */
       
+      // Begin leapfrog updates
       // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
         if (traj_length>1) {
@@ -729,13 +748,15 @@ namespace o2scl {
           }
         }
         
-      }
+      } // End of leapfrog updates
       
       // Perform the final half-step in momentum space
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
+
+      /* Note: This is the final momentum at the final point q'. */
 
       std::cout << std::scientific << std::setprecision(1);
       for (size_t k=0;k<n_params;k++) {
