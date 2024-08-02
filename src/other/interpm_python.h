@@ -82,6 +82,9 @@ namespace o2scl {
     /// Python evaluation with uncertainties function
     PyObject *p_eval_unc_func;
 
+    /// Python evaluation with uncertainties function
+    PyObject *p_eval_list_func;
+
     /// Name of Python module 
     std::string c_module;
 
@@ -100,45 +103,36 @@ namespace o2scl {
     /// Python options
     std::string c_options;
     
+    /// Loss string
+    std::string c_ext_loss;
+    
   public:
 
-    interpm_python() {
-      
-      p_set_func=0;
-      p_eval_func=0;
-      p_eval_unc_func=0;
-      p_set_args=0;
-      p_eval_args=0;
-      p_instance=0;
-      p_class=0;
-      p_module=0;
-      
-      c_set_func="";
-      c_eval_func="";
-      c_class_name="";
-      c_module="";
-      c_eval_unc_func="";
-      c_options="";
-    }
-    
     /** \brief Specify the Python module and function
      */
-    interpm_python(std::string module, std::string set_func,
-                   std::string eval_func, std::string eval_unc_func,
-                   std::string class_name="", std::string options="",
-                   int v=0) {
+    interpm_python(std::string class_name="",
+                   std::string options="",
+                   int cpp_verbose=0
+                   std::string module_name="o2sclpy",
+                   std::string set_func="set_data_str",
+                   std::string eval_func="eval",
+                   std::string eval_unc_func="eval_unc",
+                   std::string eval_list_func="eval_list",
+                   std::string ext_loss_str="") {
       
       p_set_func=0;
       p_eval_func=0;
       p_eval_unc_func=0;
+      p_eval_list_func=0;
       p_set_args=0;
       p_eval_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
       
-      set_functions(module,set_func,eval_func,eval_unc_func,
-                    class_name,options,v);
+      set_functions(class_name,options,cpp_verbose,
+                    module_name,set_func,eval_func,eval_unc_func,
+                    eval_list_func,ext_loss_str);
     }
 
     /** \brief Free memory associated with the Python objects and the
@@ -167,6 +161,12 @@ namespace o2scl {
           std::cout << "Decref eval_unc_func." << std::endl;
         }
         Py_DECREF(p_eval_unc_func);
+      }
+      if (p_eval_list_func!=0) {
+        if (this->verbose>0) {
+          std::cout << "Decref eval_list_func." << std::endl;
+        }
+        Py_DECREF(p_eval_list_func);
       }
       if (p_set_args!=0) {
         if (this->verbose>0) {
@@ -202,6 +202,7 @@ namespace o2scl {
       p_set_func=0;
       p_eval_func=0;
       p_eval_unc_func=0;
+      p_eval_list_func=0;
       p_eval_args=0;
       p_instance=0;
       p_class=0;
@@ -222,10 +223,15 @@ namespace o2scl {
   
     /** \brief Specify the python module, class, functions, and options
     */
-    int set_functions(std::string s_module, std::string set_func,
-                      std::string eval_func, std::string eval_unc_func,
-                      std::string class_name="", std::string options="",
-                      int v=0) {
+    int set_functions(std::string class_name="",
+                      std::string options="",
+                      int cpp_verbose=0,
+                      std::string s_module="o2sclpy",
+                      std::string set_func="set_data_str",
+                      std::string eval_func="eval",
+                      std::string eval_unc_func="eval_unc",
+                      std::string eval_list_func="eval_list",
+                      std::string ext_loss_str="") {
       
       c_set_func=set_func;
       c_eval_func=eval_func;
@@ -233,6 +239,7 @@ namespace o2scl {
       c_module=s_module;
       c_eval_unc_func=eval_unc_func;
       c_options=options;
+      e_ext_loss=ext_loss_str;
       
       this->verbose=v;
       
@@ -344,7 +351,7 @@ namespace o2scl {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
-      p_set_args=PyTuple_New(3);
+      p_set_args=PyTuple_New(4);
       if (p_set_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
                    "interpm_python::set_function().",
@@ -365,7 +372,7 @@ namespace o2scl {
 
       if (c_class_name.length()>0) {
 
-        // Load the python function
+        // Load the eval python function
         if (this->verbose>0) {
           std::cout << "  Loading python member function eval: "
                     << c_eval_func << std::endl;
@@ -377,7 +384,20 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
         
-        // Load the python function
+        // Load the eval_list python function
+        if (this->verbose>0) {
+          std::cout << "  Loading python member function eval_list: "
+                    << c_eval_list_func << std::endl;
+        }
+        p_eval_list_func=PyObject_GetAttrString(p_instance,
+                                               c_eval_list_func.c_str());
+        if (p_eval_list_func==0) {
+          O2SCL_ERR2("Get eval_list function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+        
+        // Load the eval_unc python function
         if (this->verbose>0) {
           std::cout << "  Loading python member function eval_unc: "
                     << c_eval_unc_func << std::endl;
@@ -390,7 +410,7 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
         
-        // Load the python function
+        // Load the set python function
         if (this->verbose>0) {
           std::cout << "  Loading python member function set: "
                     << c_set_func << std::endl;
@@ -404,7 +424,7 @@ namespace o2scl {
 
       } else {
     
-        // Load the python function
+        // Load the set python function
         if (this->verbose>0) {
           std::cout << "  Loading python function set." << std::endl;
         }
@@ -415,7 +435,7 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
 
-        // Load the python function
+        // Load the eval python function
         if (this->verbose>0) {
           std::cout << "  Loading python function eval." << std::endl;
         }
@@ -426,13 +446,25 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
 
-        // Load the python function
+        // Load the eval_unc python function
         if (this->verbose>0) {
           std::cout << "  Loading python function eval_unc." << std::endl;
         }
         p_eval_unc_func=PyObject_GetAttrString(p_module,
                                                c_eval_unc_func.c_str());
         if (p_eval_unc_func==0) {
+          O2SCL_ERR2("Get function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+
+        // Load the eval_list python function
+        if (this->verbose>0) {
+          std::cout << "  Loading python function eval_list." << std::endl;
+        }
+        p_eval_list_func=PyObject_GetAttrString(p_module,
+                                               c_eval_list_func.c_str());
+        if (p_eval_list_func==0) {
           O2SCL_ERR2("Get function failed in ",
                      "interpm_python::set_function().",
                      o2scl::exc_efailed);
@@ -471,8 +503,8 @@ namespace o2scl {
          
       int pret=PyTuple_SetItem(p_set_args,0,array_in);
       if (pret!=0) {
-        O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+        O2SCL_ERR2("Tuple set array in failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
       }
       
       npy_intp outputs_dims[]={(npy_intp)outputs.get_size(0),
@@ -485,24 +517,40 @@ namespace o2scl {
       
       int ret2=PyTuple_SetItem(p_set_args,1,array_out);
       if (ret2!=0) {
-        O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+        O2SCL_ERR2("Tuple set array out failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
       }
 
       if (this->verbose>0) {
-        std::cout << "Creating python unicode for string: "
+        std::cout << "Creating python unicode for options string: "
                   << c_options.length() << " " << c_options << std::endl;
       }
       PyObject *p_options=PyUnicode_FromString(c_options.c_str());
       if (p_options==0) {
         O2SCL_ERR2("String creation failed in ",
-                   "emulator_python::set().",o2scl::exc_efailed);
+                   "interpm_python::set().",o2scl::exc_efailed);
       }
       
       int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
-        O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+        O2SCL_ERR2("Tuple set options failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (this->verbose>0) {
+        std::cout << "Creating python unicode for ext_loss_string: "
+                  << c_ext_loss.length() << " " << c_ext_loss << std::endl;
+      }
+      PyObject *p_ext_loss=PyUnicode_FromString(c_ext_loss.c_str());
+      if (p_ext_loss==0) {
+        O2SCL_ERR2("String creation for ext_loss_failed in ",
+                   "interpm_python::set().",o2scl::exc_efailed);
+      }
+      
+      int ret4=PyTuple_SetItem(p_set_args,3,p_ext_loss);
+      if (ret4!=0) {
+        O2SCL_ERR2("Tuple set ext loss failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
       }
 
       // Call the python function
@@ -556,7 +604,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_eval_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::operator().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -631,7 +679,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_eval_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::operator().",o2scl::exc_efailed);
       }
       
       // Call the python function

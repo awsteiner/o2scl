@@ -105,8 +105,8 @@ int main(void) {
       tin.get(ix)=y[j];
     }
 
-    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
-                      "interpm_sklearn_gp","verbose=3",1);
+    interpm_python ip("interpm_sklearn_gp","verbose=3",1);
+                      
     ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2), ey(1), eyp(1);
@@ -145,8 +145,7 @@ int main(void) {
       tin.get(ix)=y[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
-                      "interpm_sklearn_gp",
+    interpm_python ip("interpm_sklearn_gp",
                       ((std::string)"verbose=3,kernel=ConstantKernel")+
                       "(1.0,constant_value_bounds=\"fixed\")*"+
                       "RBF(1.0,length_scale_bounds=\"fixed\")",
@@ -190,8 +189,8 @@ int main(void) {
       tout.get(ix)=dp2[j];
     }
     
-    interpm_python ip("o2sclpy","set_data_str","eval","eval_unc",
-                      "interpm_sklearn_gp","verbose=1",1);
+    interpm_python ip("interpm_sklearn_gp","verbose=1",1);
+                      
     ip.set_data_tensor(2,2,N,tin,tout);
     
     std::vector<double> ex(2), ey(2);
@@ -236,8 +235,7 @@ int main(void) {
     // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
     // progress bars which cause problems in docker terminals
     
-    interpm_python ip("o2sclpy","set_data_str","eval","eval",
-                      "interpm_tf_dnn",
+    interpm_python ip("interpm_tf_dnn",
                       ((std::string)"verbose=0,")+
                       "test_size=0.15,batch_size=10",0);
     ip.set_data_tensor(2,1,N,tin,tout);
@@ -271,8 +269,8 @@ int main(void) {
     
     // AWS, 5/8/24: I had to set verbose=0 because of the tensorflow
     // progress bars which cause problems in docker terminals
-    interpm_python ip("o2sclpy","set_data_str","eval","eval",
-                      "interpm_tf_dnn","verbose=0",0);
+    interpm_python ip("interpm_tf_dnn","verbose=0",0);
+                      
     ip.set_data_tensor(2,2,N,tin,tout);
     
     std::vector<double> ex(2), ey(2);
