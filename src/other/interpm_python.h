@@ -97,6 +97,9 @@ namespace o2scl {
     /// Name of Python evaluation with uncertainties function
     std::string c_eval_unc_func;
 
+    /// Name of Python list evaluation function
+    std::string c_eval_list_func;
+
     /// Python class name
     std::string c_class_name;
     
@@ -112,7 +115,7 @@ namespace o2scl {
      */
     interpm_python(std::string class_name="",
                    std::string options="",
-                   int cpp_verbose=0
+                   int cpp_verbose=0,
                    std::string module_name="o2sclpy",
                    std::string set_func="set_data_str",
                    std::string eval_func="eval",
@@ -238,10 +241,11 @@ namespace o2scl {
       c_class_name=class_name;
       c_module=s_module;
       c_eval_unc_func=eval_unc_func;
+      c_eval_list_func=eval_list_func;
       c_options=options;
-      e_ext_loss=ext_loss_str;
+      c_ext_loss=ext_loss_str;
       
-      this->verbose=v;
+      this->verbose=cpp_verbose;
       
       return 0;
     }
@@ -405,8 +409,10 @@ namespace o2scl {
         p_eval_unc_func=PyObject_GetAttrString(p_instance,
                                                c_eval_unc_func.c_str());
         if (p_eval_unc_func==0) {
-          O2SCL_ERR2("Get eval_unc function failed in ",
-                     "interpm_python::set_function().",
+          O2SCL_ERR((((std::string)"Get eval_unc function ")+
+                     c_eval_unc_func+" for class "+c_class_name+
+                     " failed in "+
+                     "interpm_python::set_function().").c_str(),
                      o2scl::exc_efailed);
         }
         
