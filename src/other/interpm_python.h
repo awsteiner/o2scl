@@ -106,9 +106,6 @@ namespace o2scl {
     /// Python options
     std::string c_options;
     
-    /// Loss string
-    std::string c_ext_loss;
-    
   public:
 
     /** \brief Specify the Python module and function
@@ -120,8 +117,7 @@ namespace o2scl {
                    std::string set_func="set_data_str",
                    std::string eval_func="eval",
                    std::string eval_unc_func="eval_unc",
-                   std::string eval_list_func="eval_list",
-                   std::string ext_loss_str="") {
+                   std::string eval_list_func="eval_list") {
       
       p_set_func=0;
       p_eval_func=0;
@@ -135,7 +131,7 @@ namespace o2scl {
       
       set_functions(class_name,options,cpp_verbose,
                     module_name,set_func,eval_func,eval_unc_func,
-                    eval_list_func,ext_loss_str);
+                    eval_list_func);
     }
 
     /** \brief Free memory associated with the Python objects and the
@@ -233,8 +229,7 @@ namespace o2scl {
                       std::string set_func="set_data_str",
                       std::string eval_func="eval",
                       std::string eval_unc_func="eval_unc",
-                      std::string eval_list_func="eval_list",
-                      std::string ext_loss_str="") {
+                      std::string eval_list_func="eval_list") {
       
       c_set_func=set_func;
       c_eval_func=eval_func;
@@ -243,7 +238,6 @@ namespace o2scl {
       c_eval_unc_func=eval_unc_func;
       c_eval_list_func=eval_list_func;
       c_options=options;
-      c_ext_loss=ext_loss_str;
       
       this->verbose=cpp_verbose;
       
@@ -355,7 +349,7 @@ namespace o2scl {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
-      p_set_args=PyTuple_New(4);
+      p_set_args=PyTuple_New(3);
       if (p_set_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
                    "interpm_python::set_function().",
@@ -540,22 +534,6 @@ namespace o2scl {
       int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set options failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
-      }
-
-      if (this->verbose>0) {
-        std::cout << "Creating python unicode for ext_loss_string: "
-                  << c_ext_loss.length() << " " << c_ext_loss << std::endl;
-      }
-      PyObject *p_ext_loss=PyUnicode_FromString(c_ext_loss.c_str());
-      if (p_ext_loss==0) {
-        O2SCL_ERR2("String creation for ext_loss_failed in ",
-                   "interpm_python::set().",o2scl::exc_efailed);
-      }
-      
-      int ret4=PyTuple_SetItem(p_set_args,3,p_ext_loss);
-      if (ret4!=0) {
-        O2SCL_ERR2("Tuple set ext loss failed in ",
                    "interpm_python::operator().",o2scl::exc_efailed);
       }
 
