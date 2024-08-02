@@ -1882,8 +1882,8 @@ namespace o2scl {
       return 0;
     }
     size_t row=0, i=0;
-    while(!std::isfinite(x[i]) && i<n-1) i++;
-    if (i==n-1) {
+    while(!std::isfinite(x[i]) && i<n) i++;
+    if (i==n) {
       O2SCL_ERR2("Entire vector not finite in ",
 		 "function vector_lookup()",exc_einval);
       return 0;

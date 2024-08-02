@@ -612,26 +612,7 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
   vector<string> vs;
   split_string(eos_str,vs);
   
-  if (vs[0]=="skyrme") {
-    eos_had_skyrme *sk=new eos_had_skyrme;
-    if (is_number(vs[1]) && vs.size()>=10) {
-      sk->t0=o2scl::stod(vs[1])/hc_mev_fm_f<double>();
-      sk->t1=o2scl::stod(vs[2])/hc_mev_fm_f<double>();
-      sk->t2=o2scl::stod(vs[3])/hc_mev_fm_f<double>();
-      sk->t3=o2scl::stod(vs[4])/hc_mev_fm_f<double>();
-      sk->x0=o2scl::stod(vs[5]);
-      sk->x1=o2scl::stod(vs[6]);
-      sk->x2=o2scl::stod(vs[7]);
-      sk->x3=o2scl::stod(vs[8]);
-      sk->alpha=o2scl::stod(vs[9]);
-    } else {
-      skyrme_load(*sk,vs[1]);
-    }
-    return sk;
-  } else if (vs[0]=="apr") {
-    eos_had_apr *apr=new eos_had_apr;
-    return apr;
-  } else if (vs[0]=="gogny") {
+  if (vs[0]=="gogny" || vs[0]=="Gogny") {
     eos_had_gogny *gogny=new eos_had_gogny;
     return gogny;
   } else if (vs[0]=="pot") {
@@ -942,7 +923,36 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
     pot->Lambda=1.5*cbrt(1.5*o2scl_const::pi2_f<double>()*pot->rho0);
     pot->Lambda2=3.0*cbrt(1.5*o2scl_const::pi2_f<double>()*pot->rho0);
     return pot;
-  } else if (vs[0]=="rmf") {
+  }
+  return eos_had_temp_strings(eos_str);
+}
+
+eos_had_temp_base *o2scl_hdf::eos_had_temp_strings(std::string eos_str) {
+
+  // Split strings by spaces
+  vector<string> vs;
+  split_string(eos_str,vs);
+  
+  if (vs[0]=="skyrme" || vs[0]=="Skyrme") {
+    eos_had_skyrme *sk=new eos_had_skyrme;
+    if (is_number(vs[1]) && vs.size()>=10) {
+      sk->t0=o2scl::stod(vs[1])/hc_mev_fm_f<double>();
+      sk->t1=o2scl::stod(vs[2])/hc_mev_fm_f<double>();
+      sk->t2=o2scl::stod(vs[3])/hc_mev_fm_f<double>();
+      sk->t3=o2scl::stod(vs[4])/hc_mev_fm_f<double>();
+      sk->x0=o2scl::stod(vs[5]);
+      sk->x1=o2scl::stod(vs[6]);
+      sk->x2=o2scl::stod(vs[7]);
+      sk->x3=o2scl::stod(vs[8]);
+      sk->alpha=o2scl::stod(vs[9]);
+    } else {
+      skyrme_load(*sk,vs[1]);
+    }
+    return sk;
+  } else if (vs[0]=="apr" || vs[0]=="APR") {
+    eos_had_apr *apr=new eos_had_apr;
+    return apr;
+  } else if (vs[0]=="rmf" || vs[0]=="RMF") {
     eos_had_rmf *rmf=new eos_had_rmf;
     if (is_number(vs[1]) && vs.size()>=20) {
       rmf->cs=o2scl::stod(vs[1]);
@@ -969,6 +979,6 @@ eos_had_base *o2scl_hdf::eos_had_strings(std::string eos_str) {
     }
     return rmf;
   }
-  O2SCL_ERR("Type not understood in eos_had_strings().",exc_einval);
+  O2SCL_ERR("Type not understood in eos_had_temp_strings().",exc_einval);
   return 0;
 }

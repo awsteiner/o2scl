@@ -135,6 +135,14 @@ namespace o2scl_hdf {
   */
   o2scl::eos_had_base *eos_had_strings(std::string eos_str);
 
+  /** \brief Return a pointer to an eos_had_base object 
+      from a string
+
+      \note The pointer is allocated with \c new and the user
+      has the responsibility of deleting it later.
+  */
+  o2scl::eos_had_temp_base *eos_had_temp_strings(std::string eos_str);
+
   /** \brief List EOSs understood by \ref eos_had_strings() .
   */
   void eos_had_strings_list();
