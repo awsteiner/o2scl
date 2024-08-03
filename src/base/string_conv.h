@@ -460,6 +460,10 @@ namespace o2scl {
 
     /// Return true if \c name is found
     bool is_set(std::string name);
+
+    /// Output a summary to the screen
+    void summary(std::ostream &out) const;
+
   };
   
   

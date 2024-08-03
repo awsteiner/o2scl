@@ -441,7 +441,7 @@ int main(void) {
     // as ix_index(4)
     tx2=grid_rearrange_and_copy<tensor_grid<>,double>
       (tx,{ix_interp(1,3.0),ix_gridw(4,10.0,15.0,1.0),
-        ix_fixed(3,2),ix_sum(0),ix_sum(2)},3);
+           ix_fixed(3,2),ix_sum(0),ix_sum(2)},3);
     cout << tx2.get_size(0) << " " << tx2.get_rank() << endl;
     for(size_t k=0;k<tx2.get_size(0);k++) {
       cout << tx2.get_grid(0,k) << " ";

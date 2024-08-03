@@ -777,3 +777,11 @@ std::string kwargs::get_string(std::string name, std::string def) {
   }
   return def;
 }
+
+void kwargs::summary(std::ostream &out) const {
+  std::map<std::string,std::string>::const_iterator it;
+  for (it=k.begin();it!=k.end();it++) {
+    out << it->first << " " << it->second << endl;
+  }
+  return true;
+}

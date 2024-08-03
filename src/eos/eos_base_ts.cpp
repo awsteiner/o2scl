@@ -38,15 +38,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  thermo th;
-
   eos_base eo;
-  
-  th.ed=1.0;
-  th.pr=2.0;
-  th.en=3.0;
-
-  eo.set_thermo(th);
   
   t.report();
   return 0;

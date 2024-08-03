@@ -745,13 +745,65 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
 	   << "New columns are: " << in[1] << " and " << in[2] << endl;
     }
 
+    // Begin creating the new table
     table_obj.clear();
     table_obj.new_column(in[1]);
     table_obj.new_column(in[2]);
-    for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
-      values[ix]=tensor_grid_obj.get_grid(ix,i);
-      double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
-      table_obj.line_of_data(2,line);
+
+    // Count the number of dimensions with size 1
+    size_t one_dims=0;
+    for(size_t i=0;i<rank;i++) {
+      if (tensor_grid_obj.get_size(i)==1) {
+        one_dims++;
+      }
+    }
+
+    // If one of the dimensions has a size of 1, then we cannot
+    // interpolate with tensor_grid::interp_linear(), so we have to
+    // use a two-step procedure with grid_rearrange_and_copy()
+    // instead.
+    if (one_dims>0) {
+
+      // First use grid_rearrange_and_copy() if necessary to reduce to
+      // a tensor where all indices but ix have size 1.
+      if (one_dims<rank-1) {
+        vector<o2scl::index_spec> vis;
+        for(size_t j=0;j<rank;j++) {
+          if (j==ix) {
+            vis.push_back(ix_index(j));
+          } else if (tensor_grid_obj.get_size(j)==1) {
+            vis.push_back(ix_fixed(j,0));
+          } else {
+            vis.push_back(ix_interp(j,values[j]));
+          }
+        }
+        tensor_grid_obj=grid_rearrange_and_copy<tensor_grid<>,double>
+          (tensor_grid_obj,vis);
+      }
+
+      // Begin constructing the index vector
+      vector<size_t> index(rank);
+      for(size_t j=0;j<rank;j++) {
+        if (j!=ix) index[j]=0;
+      }
+
+      // Perform the tensor_grid lookup to create the table
+      for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+        index[ix]=i;
+        double line[2]={tensor_grid_obj.get_grid(ix,i),
+                        tensor_grid_obj.get(index)};
+        table_obj.line_of_data(2,line);
+      }
+      
+    } else {
+      
+      // Otherwise, just interpolate using interp_linear()
+      for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+        values[ix]=tensor_grid_obj.get_grid(ix,i);
+        double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
+        table_obj.line_of_data(2,line);
+      }
+      
     }
 
     command_del(type);
