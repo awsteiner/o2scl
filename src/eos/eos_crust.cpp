@@ -114,16 +114,15 @@ double eos_crust::energy(double barn, int Z, int A) {
   return ed;
 }
 
-int eos_crust::calc_pressure(thermo &th, double &barn, int &minz, 
+int eos_crust::calc_pressure(double &barn, int &minz, 
 			     int &mina) {
   double gb, mingb=10.0, MAZ, epsL, ne=0.0;
   int ret;
 
-  set_thermo(th);
   mingb=10.0;
 
   // Provide an initial guess for gibbs() which solves eq274().
-  e.n=th.pr/10.0;
+  e.n=this->def_thermo.pr/10.0;
   
   for(int A=50;A<140;A++) {
     for(int Z=26;Z<50;Z++) {
@@ -151,18 +150,16 @@ int eos_crust::calc_pressure(thermo &th, double &barn, int &minz,
   MAZ=mass_formula(minz,mina);
   
   // Eq. 2.7.1
-  th.ed=barn/mina*MAZ+e.ed+epsL;
-  th.en=0.0;
+  this->def_thermo.ed=barn/mina*MAZ+e.ed+epsL;
+  this->def_thermo.en=0.0;
 
   return 0;
 }
 
-int eos_crust::calc_density(double barn, thermo &th, int &Z, int &A) {
+int eos_crust::calc_density(double barn, int &Z, int &A) {
   double ed, mined=10.0;
   int mina=0, minz=0;
   
-  set_thermo(th);
-
   mined=10.0;
 
   for(A=50;A<140;A++) {
@@ -187,18 +184,16 @@ int eos_crust::calc_density(double barn, thermo &th, int &Z, int &A) {
   ed=energy(barn,Z,A);
   
   // Eq. 2.7.1
-  th.ed=barn/A*mass_formula(Z,A)+e.ed+lattice_energy(Z);
-  th.pr=e.pr+lattice_energy(Z)/3.0;
-  th.en=0.0;
+  this->def_thermo.ed=barn/A*mass_formula(Z,A)+e.ed+lattice_energy(Z);
+  this->def_thermo.pr=e.pr+lattice_energy(Z)/3.0;
+  this->def_thermo.en=0.0;
 
   return 0;
 }
 
-int eos_crust::calc_density_fixedA(double barn, thermo &th, int &Z, int A) {
+int eos_crust::calc_density_fixedA(double barn, int &Z, int A) {
   double ed, mined=10.0;
   int mina=0, minz=0;
-
-  set_thermo(th);
 
   mined=10.0;
 
@@ -222,9 +217,9 @@ int eos_crust::calc_density_fixedA(double barn, thermo &th, int &Z, int A) {
   ed=energy(barn,Z,A);
   
   // Eq. 2.7.1
-  th.ed=barn/A*mass_formula(Z,A)+e.ed+lattice_energy(Z);
-  th.pr=e.pr+lattice_energy(Z)/3.0;
-  th.en=0.0;
+  this->def_thermo.ed=barn/A*mass_formula(Z,A)+e.ed+lattice_energy(Z);
+  this->def_thermo.pr=e.pr+lattice_energy(Z)/3.0;
+  this->def_thermo.en=0.0;
 
   return 0;
 }

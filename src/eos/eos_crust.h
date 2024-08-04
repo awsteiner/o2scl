@@ -102,7 +102,7 @@ namespace o2scl {
 	number \c A.  The pressure and energy density are returned 
 	in \c th in \f$\mathrm{fm}^{-4}\f$.
     */
-    virtual int calc_density(double barn, thermo &th, int &Z, int &A);
+    virtual int calc_density(double barn, int &Z, int &A);
 
     /** \brief Calculate the equation of state as a function of
 	the pressure
@@ -113,7 +113,7 @@ namespace o2scl {
 	density \c barn in \f$\mathrm{fm}^{-3}\f$. The energy density
 	is also returned in \f$\mathrm{fm}^{-4}\f$ in \c th.
     */
-    virtual int calc_pressure(thermo &th, double &barn, int &Z, int &A);
+    virtual int calc_pressure(double &barn, int &Z, int &A);
 
     /** \brief The electron lattice energy */
     virtual double lattice_energy(int Z);
@@ -143,7 +143,7 @@ namespace o2scl {
     }
 
     /// Compute the ground state assuming a fixed atomic number
-    int calc_density_fixedA(double barn, thermo &th, int &Z, int A);
+    int calc_density_fixedA(double barn, int &Z, int A);
     
     /** \brief The electron thermodynamics
 	
