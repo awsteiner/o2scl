@@ -783,5 +783,5 @@ void kwargs::summary(std::ostream &out) const {
   for (it=k.begin();it!=k.end();it++) {
     out << it->first << " " << it->second << endl;
   }
-  return true;
+  return;
 }
