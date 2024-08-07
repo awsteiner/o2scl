@@ -421,12 +421,7 @@ namespace o2scl {
      */
     vec_t step_fac;
 
-    /** \brief Trajectory length (default 20). Requires optimization
-        together with mom_step.
-        
-        This should be large enough to find uncorrelated points 
-        nearby without crossing multiple local minima in a single 
-        HMC step.
+    /** \brief Trajectory length (default 20).
      */
     size_t traj_length;
 
@@ -435,11 +430,7 @@ namespace o2scl {
     prob_dens_gaussian pdg;
 
     /** \brief Stepsize in momentum space (default is a one-element
-        vector containing 0.2). Requires optimization together with 
-        traj_length.
-
-        This value should be tuned to explore the parameter space 
-        in a reasonable time without getting stuck in local mimima.
+        vector containing 0.2). 
      */
     vec_t mom_step;
 
@@ -670,15 +661,10 @@ namespace o2scl {
       // HMC method
 
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
-
-      /* Note: Step sizes should be small positive (for momenta to 
-      have the correct signs, dictated by the gradients) numbers, 
-      scaled by the (initial) absolute gradients (to keep momenta 
-      close to unity). */
       
       // Scale the step sizes
       for (size_t k=0;k<n_params;k++) {
-        mom_step[k]=1.0e-6*(high[k]-low[k])*r.random();
+        mom_step[k]=1.0e-8*(high[k]-low[k])*r.random();
       }
       
       // Take a half step in the momenta using the gradient
@@ -758,7 +744,7 @@ namespace o2scl {
 
       /* Note: This is the final momentum at the final point q'. */
 
-      std::cout << std::scientific << std::setprecision(1);
+      /*std::cout << std::scientific << std::setprecision(1);
       for (size_t k=0;k<n_params;k++) {
         std::cout << "p_nxt[" << k << "]=" << mom_next[k]
                   << ", step[" << k << "]=" << mom_step[k]
@@ -766,7 +752,7 @@ namespace o2scl {
                   << ", disp[" << k << "]=" << abs(next[k]-current[k]) 
                   << std::endl;
       }
-      std::cout << std::scientific << std::setprecision(6);
+      std::cout << std::scientific << std::setprecision(6);*/
 
       // Negate momentum to make the proposal symmetric
       // [Neal] p = -p
