@@ -728,15 +728,16 @@ int eos_leptons::pair_density_eq(double nq, double T) {
     }
         
   } else {
+    
     if (verbose>1) {
-      std::cout << "pair_density_eq() just electrons." << std::endl;
+      std::cout << "eos_leptons::pair_density_eq(): No muons."
+                << std::endl;
     }
-        
-    e.n=nq;
     mu.n=0.0;
-        
+    
+    e.n=nq;
     retx=electron_density(T);
-        
+    
     if (include_deriv) {
       fermion_deriv fd;
       fd=e;
@@ -820,20 +821,21 @@ int eos_leptons_multip::electron_density(double T) {
 
   int retx;
 
+  // If we're just using double precision, then use the parent
+  // function
   if (accuracy!=acc_fp_25 && accuracy!=acc_ld) {
     return eos_leptons::electron_density(T);
   }
   
+  // I find that the calculation without the rest mass is a bit more
+  // stable, so we use that method and add the rest mass back in
+  // later if necessary.
   bool inc_rest_mass=false;
   if (e.inc_rest_mass) {
     
-    // I find that the calculation without the rest mass is a bit more
-    // stable, so we use that method and add the rest mass back in
-    // after the fact.
     inc_rest_mass=true;
     e.inc_rest_mass=false;
     e.mu-=e.m;
-
   }
 
   if (accuracy==acc_fp_25) {
@@ -858,11 +860,175 @@ int eos_leptons_multip::electron_density(double T) {
       
   if (inc_rest_mass) {
     e.inc_rest_mass=true;
+    eld.inc_rest_mass=true;
+    ecdf25.inc_rest_mass=true;
     e.mu+=e.m;
     e.ed+=e.m*e.n;
   }
 
   return retx;
+}
+
+int eos_leptons_multip::pair_density_eq(double nq, double T) {
+      
+  bool fr_en=frel.err_nonconv;
+  frel.err_nonconv=false;
+
+  int retx;
+  if (include_muons) {
+    if (verbose>1) {
+      std::cout << "pair_density_eq() with muons, pde_from_density="
+                << pde_from_density << std::endl;
+    }
+
+    ubvector x(1), y(1);
+    if (pde_from_density) {
+      x[0]=e.n/nq;
+    } else {
+      x[0]=e.mu;
+    }
+
+    mm_funct mf=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,double)>
+       (&eos_leptons_multip::pair_density_eq_fun),
+       this,std::placeholders::_1,std::placeholders::_2,
+       std::placeholders::_3,T,nq);
+    mh.err_nonconv=false;
+    mh.def_jac.err_nonconv=false;
+    mh.tol_rel=1.0e-6;
+    size_t maxj=10;
+    if (verbose>1) {
+      cout << "Initial guess: " << x[0] << endl;
+    }
+    int mret=mh.msolve(1,x,mf);
+    for(size_t j=0;j<maxj && mret!=0;j++) {
+      if (verbose>1) {
+        cout << "Attempt " << j+2 << " with guess " << x[0]
+             << " and tolerance: " << mh.tol_rel << std::endl;
+      }
+      mret=mh.msolve(1,x,mf);
+      mh.tol_rel*=pow(10.0,1.0/2.0);
+    }
+    if (mret!=0) {
+      std::cout << "nq,T,T_MeV: " << nq << " " << T << " "
+                << T*o2scl_const::hc_mev_fm << std::endl;
+      O2SCL_ERR2("Failed to compute muons in ",
+                 "eos_leptons::pair_density_eq()",o2scl::exc_einval);
+    }
+    if (verbose>1) {
+      cout << "Solution: " << x[0] << endl;
+    }
+
+    mf(1,x,y);
+    e.n=x[0]*nq;
+
+    if (include_deriv) {
+      
+    if (accuracy==acc_ld || accuracy==acc_fp_25) {
+      fdrel.multip=true;
+    } else {
+      fdrel.multip=false;
+    }
+
+    fermion_deriv fd;
+      fd=e;
+      fdrel.pair_mu(fd,T);
+      ed.dndmu=fd.dndmu;
+      ed.dndT=fd.dndT;
+      ed.dsdT=fd.dsdT;
+      fd=mu;
+      fdrel.pair_mu(fd,T);
+      mud.dndmu=fd.dndmu;
+      mud.dndT=fd.dndT;
+      mud.dsdT=fd.dsdT;
+    }
+        
+  } else {
+    
+    if (verbose>1) {
+      std::cout << "eos_leptons::pair_density_eq(): No muons."
+                << std::endl;
+    }
+    mu.n=0.0;
+    
+    if (accuracy==acc_ld) {
+      long double Tld=static_cast<long double>(T);
+      this->eld.n=static_cast<long double>(nq);
+      retx=particle_density_tl(this->eld,frel_ld,Tld);
+      e.ed=static_cast<double>(eld.ed);
+      e.pr=static_cast<double>(eld.pr);
+      e.en=static_cast<double>(eld.en);
+      e.mu=static_cast<double>(eld.mu);
+    } else if (accuracy==acc_fp_25) {
+      cpp_dec_float_25 T25=static_cast<cpp_dec_float_25>(T);
+      this->ecdf25.n=static_cast<cpp_dec_float_25>(nq);
+      retx=particle_density_tl(this->ecdf25,frel_cdf25,T25);
+      e.ed=static_cast<double>(ecdf25.ed);
+      e.pr=static_cast<double>(ecdf25.pr);
+      e.en=static_cast<double>(ecdf25.en);
+      e.mu=static_cast<double>(ecdf25.mu);
+    } else {
+      e.n=nq;
+      retx=electron_density(T);
+    }
+    
+    if (include_deriv) {
+      fermion_deriv fd;
+      fd=e;
+      if (accuracy==acc_ld || accuracy==acc_fp_25) {
+	fdrel.multip=true;
+      } else {
+	fdrel.multip=false;
+      }
+      fdrel.pair_mu(fd,T);
+      ed.dndmu=fd.dndmu;
+      ed.dndT=fd.dndT;
+      ed.dsdT=fd.dsdT;
+    }
+        
+  }
+      
+  th.ed=e.ed;
+  th.pr=e.pr;
+  th.en=e.en;
+
+  if (include_muons) {
+    th.ed+=mu.ed;
+    th.pr+=mu.pr;
+    th.en+=mu.en;
+  }
+      
+  if (include_photons) {
+    ph.massless_calc(T);
+    th.ed+=ph.ed;
+    th.pr+=ph.pr;
+    th.en+=ph.en;
+    if (include_deriv) {
+      phd.dsdT=ph.g*pi2*3.0*T*T/22.5;
+      phd.dndT=ph.g*zeta3_f<double>()/pi2*3.0*T*T;
+      phd.dndmu=0.0;
+    }
+  }
+
+  if (include_deriv) {
+    thd.dndmu=ed.dndmu;
+    thd.dndT=ed.dndT;
+    thd.dsdT=ed.dsdT;
+    if (include_muons) {
+      thd.dndmu+=mud.dndmu;
+      thd.dndT+=mud.dndT;
+      thd.dsdT+=mud.dsdT;
+    }
+    if (include_photons) {
+      thd.dndmu+=phd.dndmu;
+      thd.dndT+=phd.dndT;
+      thd.dsdT+=phd.dsdT;
+    }
+  }
+  
+  frel.err_nonconv=fr_en;
+      
+  return 0;
 }
 
 int eos_leptons_multip::pair_density_eq_fun(size_t nv, const ubvector &x,

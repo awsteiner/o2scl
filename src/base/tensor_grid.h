@@ -291,6 +291,17 @@ namespace o2scl {
       itype=t.itype;
     }
     
+    /** \brief Copy using <tt>operator()</tt>
+     */
+    tensor_grid<vec_t,vec_size_t>
+      (const tensor<vec_t,vec_size_t> &t) {
+      this->rk=t.rk;
+      this->data=t.data;
+      this->size=t.size;
+      grid_set=false;
+      itype=itp_linear;
+    }
+    
     /** \brief Copy using <tt>operator=()</tt>
      */
     tensor_grid<vec_t,vec_size_t> &operator=
@@ -302,6 +313,20 @@ namespace o2scl {
         grid=t.grid;
         grid_set=t.grid_set;
         itype=t.itype;
+      }
+      return *this;
+    }
+
+    /** \brief Copy using <tt>operator=()</tt>
+     */
+    tensor_grid<vec_t,vec_size_t> &operator=
+      (const tensor<vec_t,vec_size_t> &t) {
+      if (this!=&t) {
+        this->rk=t.rk;
+        this->data=t.data;
+        this->size=t.size;
+        grid_set=false;
+        itype=itp_linear;
       }
       return *this;
     }

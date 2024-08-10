@@ -169,7 +169,7 @@ namespace o2scl {
       
       info=0;
   
-      if (this->tol_rel<=0.0 || this->tol_abs<=0.0) {
+      if (this->tol_rel<=0 || this->tol_abs<=0) {
 	info=9;
 	std::string str="Invalid value of tol_rel ("+dtos(this->tol_rel)+
 	  ") or tol_abs ("+dtos(this->tol_abs)+") in root_cern::solve().";
@@ -177,11 +177,11 @@ namespace o2scl {
       }
   
       int iflag=0, numf=0, nfcall=0, nier6=-1, nier7=-1, nier8=0;
-      fp_t fnorm=0.0, difit=0.0, xnorm=0.0;
+      fp_t fnorm=0, difit=0, xnorm=0;
       bool set=false;
 	
-      if (xnorm<fabs(ux)) {
-	xnorm=fabs(ux);
+      if (xnorm<abs(ux)) {
+	xnorm=abs(ux);
 	set=true;
       }
 
@@ -196,13 +196,13 @@ namespace o2scl {
 	int nsing=1;
 	fp_t fnorm1=fnorm;
 	fp_t difit1=difit;
-	fnorm=0.0;
+	fnorm=0;
     
 	// Compute step H for the divided difference which approximates
 	// the K-th row of the Jacobian matrix
 	
 	fp_t h=eps*xnorm;
-	if (h==0.0) h=eps;
+	if (h==0) h=eps;
 
 	wmat=h;
 	w1arr=ux;
@@ -216,7 +216,7 @@ namespace o2scl {
 	fky=farr;
 	nfcall++;
 	numf=nfcall;
-	if (fnorm<fabs(fky)) fnorm=fabs(fky);
+	if (fnorm<abs(fky)) fnorm=abs(fky);
       
 	// Compute the K-th row of the Jacobian matrix
 
@@ -234,23 +234,23 @@ namespace o2scl {
 	// Compute the Householder transformation to reduce the K-th row
 	// of the Jacobian matrix to a multiple of the K-th unit vector
 
-	fp_t eta=0.0;
-	if (eta<fabs(w0arr)) eta=fabs(w0arr);
+	fp_t eta=0;
+	if (eta<abs(w0arr)) eta=abs(w0arr);
 	
-	if (eta!=0.0) {
+	if (eta!=0) {
 	  nsing--;
-	  fp_t sknorm=0.0;
+	  fp_t sknorm=0;
 	      
 	  w0arr/=eta;
 	  sknorm+=w0arr*w0arr;
 
 	  sknorm=sqrt(sknorm);
-	  if (w0arr<0.0) sknorm=-sknorm;
+	  if (w0arr<0) sknorm=-sknorm;
 	  w0arr+=sknorm;
 	  
 	  // Apply the transformation
 
-	  w2arr=0.0;
+	  w2arr=0;
 	  w2arr+=w0arr*wmat;
 	  fp_t temp=w0arr/(sknorm*w0arr);
 	  wmat-=temp*w2arr;
@@ -259,18 +259,21 @@ namespace o2scl {
 
 	  w0arr=sknorm*eta;
 	  fp_t temp2=fky/w0arr;
-	  if (h*fabs(temp2)>delta) 
-	    temp2=(temp2>=0.0) ? fabs(delta/h) : -fabs(delta/h);
+	  if (h*abs(temp2)>delta) {
+            fp_t arg1=abs(delta/h);
+            fp_t arg2=-abs(delta/h);
+	    temp2=(temp2>=0) ? arg1 : arg2;
+          }
 	  w1arr+=temp2*wmat;
 	}
 
 	// Compute the norms of the iterate and correction vector
 
-	xnorm=0.0;
-	difit=0.0;
+	xnorm=0;
+	difit=0;
 	  
-	if (xnorm<fabs(w1arr)) xnorm=fabs(w1arr);
-	if (difit<fabs(ux-w1arr)) difit=fabs(ux-w1arr);
+	if (xnorm<abs(w1arr)) xnorm=abs(w1arr);
+	if (difit<abs(ux-w1arr)) difit=abs(ux-w1arr);
 	ux=w1arr;
 	  
 	// Update the bound on the correction vector
@@ -300,7 +303,7 @@ namespace o2scl {
 	if (difit<=this->tol_abs*xnorm && lcv) info=2;
 	if (fnorm<=this->tol_rel && info==2) info=3;
 	if (info!=0) {
-	  if (!std::isfinite(ux)) {
+	  if (!boost::math::isfinite(ux)) {
 	    O2SCL_CONV2_RET("Solver converged to non-finite value ",
 			    "in root_cern::solve().",exc_erange,
 			    this->err_nonconv);
@@ -344,7 +347,7 @@ namespace o2scl {
 	  
       }
       
-      if (!std::isfinite(ux)) {
+      if (!boost::math::isfinite(ux)) {
 	O2SCL_CONV2_RET("Solver converged to non-finite value ",
 			"in root_cern::solve() (2).",exc_erange,
 			this->err_nonconv);
