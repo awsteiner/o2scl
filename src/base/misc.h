@@ -88,8 +88,7 @@ namespace o2scl {
       return Inf or NAN if the argument is too large large, depending
       on the machine precision.
       
-      This function is used in the <tt>o2scl::boson_rel</tt> class
-      in \o2p . 
+      This function is used in \ref boson_rel_tl.
   */
   template<class fp_t>
   fp_t bose_function(fp_t x) {

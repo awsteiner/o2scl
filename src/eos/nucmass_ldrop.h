@@ -40,7 +40,7 @@ namespace o2scl {
 
   /** \brief Simple liquid drop mass formula
       
-      Includes bulk \part plus surface and Coulomb (no pairing)
+      Includes bulk part plus surface and Coulomb (no pairing)
       without neutron skin and without any isospin contribution
       to the surface energy. 
 

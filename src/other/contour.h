@@ -404,7 +404,7 @@ namespace o2scl {
 
            Future: There is probably a better way than returning
            pointers to the internal data.
-      \endverbatim
+        \endverbatim
     */
     void get_data(size_t &sizex, size_t &sizey, ubvector *&x_fun, 
 		  ubvector *&y_fun, ubmatrix *&udata) {

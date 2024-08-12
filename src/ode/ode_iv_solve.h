@@ -728,7 +728,7 @@ namespace o2scl {
 
 	   Future: Consider making a version of grid which gives the
            same answers as solve_final_value(). After each proposed
-           step, it would sgo back and fill in the grid points if the
+           step, it would go back and fill in the grid points if the
            proposed step was past the next grid point.
 
         \endverbatim

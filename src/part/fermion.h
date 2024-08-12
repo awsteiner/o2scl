@@ -316,8 +316,8 @@ namespace o2scl {
 
       This is an abstract base for the computation of
       finite-temperature fermionic statistics. Different children
-      (e.g. \ref fermion_eff and \ref fermion_rel_tl) use different
-      techniques to computing the momentum integrations.
+      (e.g. \ref fermion_rel_tl) use different techniques to computing
+      the momentum integrations.
 
       Because massless fermions at finite temperature are much
       simpler, there are separate member functions included in this
@@ -832,14 +832,12 @@ namespace o2scl {
         \f]
         and the pressure is \f$ P = \varepsilon/3 \f$.
         When the chemical potential is finite, we have
-        \f{
-        \begin{eqnarray}
+        \f{eqnarray*}
         n &=& \frac{g \mu^3}{6 \pi^2} \left[ 1 + 
         \left( \frac{\pi T}{\mu} \right)^2 \right]
         \varepsilon &=& \frac{g \mu^4}{8 \pi^2} \left[ 1 + 
         2 \left( \frac{\pi T}{\mu} \right)^2 +
         \frac{7}{15} \left( \frac{\pi T}{\mu} \right)^4 \right]
-        \end{eqnarray}
         \f}
         and the pressure is \f$ P = \varepsilon/3 \f$.
     */
@@ -918,7 +916,7 @@ namespace o2scl {
         \frac{32}{729} \left(\frac{1}{\alpha}\right)^{5/2}
         \f]
 
-        This approach works to within about 1 \part in \f$ 10^{12} \f$,
+        This approach works to within about 1 part in \f$ 10^{12} \f$,
         and is tested in <tt>fermion_ts.cpp</tt>.
         
         \verbatim embed:rst

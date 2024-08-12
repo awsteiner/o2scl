@@ -764,7 +764,7 @@ namespace o2scl {
   /** \brief A multiprecision function evaluation class with 
       transformations useful for integrals
 
-      This class is used in \ref inte_adapt_cern .
+      This class is used in \ref inte_adapt_cern_tl .
   */
   template<class lim_fp_t, class fp_25_t, class fp_35_t, class fp_50_t,
            class fp_100_t> class funct_multip_transform_tl {

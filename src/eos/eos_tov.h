@@ -44,7 +44,7 @@ namespace o2scl {
   /** \brief A EOS base class for the TOV solver
 
       The class \ref o2scl::tov_solve uses only the functions \ref
-      baryons_only() and \ref ed_nb_from_pr(). Thus the function \ref
+      has_baryons() and \ref ed_nb_from_pr(). Thus the function \ref
       ed_nb_from_pr() must work with pressure and energy density in
       units of \f$ \mathrm{M}_\odot/\mathrm{km}^3\f$ and baryon
       density in units of \f$ 1/\mathrm{fm}^3 \f$. This requirement

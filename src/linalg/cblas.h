@@ -41,12 +41,12 @@
 
     Some functionality which would otherwise appear here is 
     already given in \ref vector.h. 
-    - The equivalent of <tt>dcopy()</tt> is given in \ref vector_copy()
-    except that the ordering is reversed (in \ref vector_copy() the
+    - The equivalent of <tt>dcopy()</tt> is given in \ref o2scl::vector_copy()
+    except that the ordering is reversed (in \ref o2scl::vector_copy() the
     source preceeds the destination in the function argument list). 
-    - The equivalent of <tt>dswap()</tt> is given in \ref vector_swap().
+    - The equivalent of <tt>dswap()</tt> is given in \ref o2scl::vector_swap().
     - The equivalent of <tt>idamax()</tt> is given in 
-    \ref vector_max_index().
+    \ref o2scl::vector_max_index().
     
     <b>Level-2 BLAS functions</b>
 

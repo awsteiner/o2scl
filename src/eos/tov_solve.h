@@ -230,7 +230,7 @@ namespace o2scl {
 
       The present code, as demonstrated in the tests, gives the
       correct central pressure and energy density of the analytical
-      solution by Buchdahl to within less than 1 \part in \f$ 10^8 \f$.
+      solution by Buchdahl to within less than 1 part in \f$ 10^8 \f$.
 
       <b>Rotation</b>
 

@@ -152,7 +152,7 @@ namespace o2scl {
       This is abstract base class for the nuclear mass formulas. Some
       mass formulas are undefined for sufficiently exotic nuclei. You
       can use the function is_included() to find if a particular
-      \nucleus is included or not in a particular mass formula.
+      nucleus is included or not in a particular mass formula.
 
       The quantities below are returned in units of MeV. The functions
       include a version which takes Z and N as integers and a version
@@ -395,13 +395,8 @@ namespace o2scl {
       Nuclear mass formulas which are descendants of this class
       can be fit to experiment using \ref nucmass_fit.
 
-      Within \o2p, this class has only two children,
-      \ref nucmass_frdm and \ref nucmass_semi_empirical. There
-      is also a child <tt>nucmass_ldrop</tt> in \o2e.
-      \comment
-      (Note that nucmass_ldrop is in o2scl_eos so currently
-      can't be referenced)
-      \endcomment
+      This class has children, \ref nucmass_frdm, \ref
+      nucmass_semi_empirical, and \ref nucmass_ldrop.
   */
   class nucmass_fit_base : public nucmass {
     

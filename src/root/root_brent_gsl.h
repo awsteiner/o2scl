@@ -75,17 +75,17 @@ namespace o2scl {
 
       .. todo::
 
-      class root_brent_gsl
+         class root_brent_gsl
 
-      Future:
+         Future:
 
-      - There is some duplication in the variables \c x_lower, 
-      \c x_upper, \c a, and \c b, which could be removed. Some
-      better variable names would also be helpful.
-      - Create a meaningful enum list for \ref
-      o2scl::root_brent_gsl::test_form.
-      - There is code duplication between the test_interval here
-      and in root_toms748.
+         - There is some duplication in the variables \c x_lower, 
+         \c x_upper, \c a, and \c b, which could be removed. Some
+         better variable names would also be helpful.
+         - Create a meaningful enum list for \ref
+         o2scl::root_brent_gsl::test_form.
+         - There is code duplication between the test_interval here
+         and in root_toms748.
 
       \endverbatim
 

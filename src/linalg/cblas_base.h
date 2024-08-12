@@ -1089,7 +1089,7 @@ namespace o2scl_cblas {
   /** \brief Compute \f$ y=\alpha x+y \f$ beginning with index \c ie 
       and ending with index \c N-1
       
-      This function is used in \ref householder_hv().
+      This function is used in \ref o2scl_linalg::householder_hv().
 
       If \c alpha is identical with zero or <tt>N==ie</tt>, this
       function will perform no calculations and return without calling

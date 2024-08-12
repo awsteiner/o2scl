@@ -172,7 +172,7 @@ namespace o2scl {
       If the final point in parameter space, \f$ p_{\mathrm{new}} \f$,
       is out of bounds, then the value of \c func_ret is set to
       \ref mcmc_stepper_base::mcmc_skip (which will lead to a
-      rejection in \ref mcmc_para or its children).
+      rejection in \ref mcmc_para_base or its children).
   */
   template<class func_t, class data_t, class vec_t>
   class mcmc_stepper_rw :
@@ -847,15 +847,15 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-      In class \ref mcmc_para_base:
+         In class \ref mcmc_para_base:
 
-      - The main loop with the affine-invariant sampling could be
-      modified with a new inner loop to do many function
-      evaluations for each thread. However, I think this would
-      demand combining the two sequential parallel loops.
+         - The main loop with the affine-invariant sampling could be
+         modified with a new inner loop to do many function
+         evaluations for each thread. However, I think this would
+         demand combining the two sequential parallel loops.
 
-      - There is a little code in mcmc_init() and mcmc_cleanup()
-      and I should document why that code needs to be there.
+         - There is a little code in mcmc_init() and mcmc_cleanup()
+         and I should document why that code needs to be there.
 
       \endverbatim
   */

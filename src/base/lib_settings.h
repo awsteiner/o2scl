@@ -280,7 +280,7 @@ namespace o2scl {
 
       This global object is used by \o2 classes to store the global
       constant database, the global unit conversion database, and the
-      directory for \o2p and \o2e data files. It may also be used by
+      directory for \o2 data files. It may also be used by
       the end-user to probe details of the \o2 installation.
   */
   extern lib_settings_class o2scl_settings;

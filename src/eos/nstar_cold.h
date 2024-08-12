@@ -56,7 +56,7 @@ namespace o2scl {
       of the User's Guide.
 
       The neutron, proton, electron and muon are given masses
-      according to their values in \ref o2scl_mks
+      according to their values in the <tt>o2scl_mks</tt> namespace
       after a conversion to units of \f$ 1/\mathrm{fm} \f$. The
       default neutron and proton objects have their values
       of <tt>inc_rest_mass</tt> set to true. The user can change

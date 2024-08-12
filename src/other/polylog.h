@@ -331,10 +331,10 @@ namespace o2scl {
 
       This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
 
-      \note This class is used in \o2p in
-      <tt>o2scl::fermion_thermo_tl</tt>,
-      <tt>o2scl::fermion_nonrel_tl</tt>, and
-      <tt>o2scl::fermion_rel_tl</tt>
+      \note This class is used in 
+      \ref o2scl::fermion_thermo_tl,
+      \ref o2scl::fermion_nonrel_tl, and
+      \ref o2scl::fermion_rel_tl.
    */
   class bessel_K_exp_integ_gsl {
     

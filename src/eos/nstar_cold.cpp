@@ -393,7 +393,8 @@ int nstar_cold::calc_eos(double np_0) {
   
   for(size_t i=0;i<eost->get_nlines();i++) {
     // Compute Urca threshold
-    double stmp=(eost->get("kfn",i)+eost->get("kfp",i)+eost->get("kfe",i))/2.0;
+    double stmp=(eost->get("kfn",i)+eost->get("kfp",i)+
+                 eost->get("kfe",i))/2.0;
     eost->set("s",i,stmp);
     double utmp=(stmp*(stmp-eost->get("kfn",i))*(stmp-eost->get("kfp",i))*
 		 (stmp-eost->get("kfe",i)));

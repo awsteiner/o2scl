@@ -906,7 +906,7 @@ namespace o2scl {
            o2scl::fermion_thermo_tl::calc_mu_deg() . which could be
            avoided.
 
-      \endverbatim
+        \endverbatim
     */
     virtual bool calc_mu_deg(fermion_deriv_t &f, fp_t temper,
 			     fp_t prec) {

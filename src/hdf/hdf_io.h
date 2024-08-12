@@ -55,12 +55,12 @@ namespace o2scl_hdf {
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_gaussian,
+      the first object of type \ref o2scl::prob_dens_mdim_gaussian,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_gaussian, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_gaussian, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_gaussian, then the
+      is no object with type \ref o2scl::prob_dens_mdim_gaussian, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
@@ -107,12 +107,12 @@ namespace o2scl_hdf {
       hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_gaussian,
+      the first object of type \ref o2scl::prob_dens_mdim_gaussian,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_gaussian, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_gaussian, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_gaussian, then the
+      is no object with type \ref o2scl::prob_dens_mdim_gaussian, then the
       error handler is called.
   */
   template<class vec_t, class mat_t> 
@@ -168,12 +168,12 @@ namespace o2scl_hdf {
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_gmm,
+      the first object of type \ref o2scl::prob_dens_mdim_gmm,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_gmm, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_gmm, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_gmm, then the
+      is no object with type \ref o2scl::prob_dens_mdim_gmm, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
@@ -220,12 +220,12 @@ namespace o2scl_hdf {
       hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_gmm,
+      the first object of type \ref o2scl::prob_dens_mdim_gmm,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_gmm, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_gmm, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_gmm, then the
+      is no object with type \ref o2scl::prob_dens_mdim_gmm, then the
       error handler is called.
   */
   template<class mat_t, class vecp_t> 
@@ -278,12 +278,12 @@ namespace o2scl_hdf {
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_amr,
+      the first object of type \ref o2scl::prob_dens_mdim_amr,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_amr, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_amr, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_amr, then the
+      is no object with type \ref o2scl::prob_dens_mdim_amr, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
@@ -331,12 +331,12 @@ namespace o2scl_hdf {
       hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref prob_dens_mdim_amr,
+      the first object of type \ref o2scl::prob_dens_mdim_amr,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref prob_dens_mdim_amr, then
+      specified name is not of type \ref o2scl::prob_dens_mdim_amr, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref prob_dens_mdim_amr, then the
+      is no object with type \ref o2scl::prob_dens_mdim_amr, then the
       error handler is called. 
   */
   template<class vec_t, class mat_t> 
@@ -397,12 +397,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::table object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table,
+      the first object of type \ref o2scl::table,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref table, then
+      specified name is not of type \ref o2scl::table, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref table, then the
+      is no object with type \ref o2scl::table, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
@@ -452,12 +452,12 @@ namespace o2scl_hdf {
       appears there instead of here.
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table,
+      the first object of type \ref o2scl::table,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref table, then
+      specified name is not of type \ref o2scl::table, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref table, then the
+      is no object with type \ref o2scl::table, then the
       error handler is called. 
   */
   template<class vec_t, class fp_t> 
@@ -553,10 +553,10 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::table_units object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table_units, otherwise, it reads
+      the first object of type \ref o2scl::table_units, otherwise, it reads
       the object of the specified name. If \c name is specified and no
       object is found, or if the object with the specified name is not
-      of type \ref table_units, then the error handler is called. If
+      of type \ref o2scl::table_units, then the error handler is called. If
       \c name is unspecified and there is no object with type \ref
       table_units, then the error handler is called. Upon exit, \c
       name contains the name of the object which was read.
@@ -601,10 +601,10 @@ namespace o2scl_hdf {
       appears there instead of here.
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table_units, otherwise, it reads
+      the first object of type \ref o2scl::table_units, otherwise, it reads
       the object of the specified name. If \c name is specified and no
       object is found, or if the object with the specified name is not
-      of type \ref table_units, then the error handler is called. If
+      of type \ref o2scl::table_units, then the error handler is called. If
       \c name is unspecified and there is no object with type \ref
       table_units, then the error handler is called.
   */
@@ -656,12 +656,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref hist,
+      the first object of type \ref o2scl::hist,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref hist, then
+      specified name is not of type \ref o2scl::hist, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref hist, then the
+      is no object with type \ref o2scl::hist, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -670,12 +670,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::hist object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref hist,
+      the first object of type \ref o2scl::hist,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref hist, then
+      specified name is not of type \ref o2scl::hist, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref hist, then the
+      is no object with type \ref o2scl::hist, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::hist &h, std::string name="");
@@ -687,12 +687,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref hist_2d,
+      the first object of type \ref o2scl::hist_2d,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref hist_2d, then
+      specified name is not of type \ref o2scl::hist_2d, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref hist_2d, then the
+      is no object with type \ref o2scl::hist_2d, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -701,12 +701,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::hist_2d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref hist_2d,
+      the first object of type \ref o2scl::hist_2d,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref hist_2d, then
+      specified name is not of type \ref o2scl::hist_2d, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref hist_2d, then the
+      is no object with type \ref o2scl::hist_2d, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::hist_2d &h, std::string name="");
@@ -718,12 +718,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table3d,
+      the first object of type \ref o2scl::table3d,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref table3d, then
+      specified name is not of type \ref o2scl::table3d, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref table3d, then the
+      is no object with type \ref o2scl::table3d, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -732,12 +732,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::table3d object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref table3d,
+      the first object of type \ref o2scl::table3d,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref table3d, then
+      specified name is not of type \ref o2scl::table3d, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref table3d, then the
+      is no object with type \ref o2scl::table3d, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::table3d &h, std::string name="");
@@ -751,12 +751,12 @@ namespace o2scl_hdf {
       hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_scalar,
+      the first object of type \ref o2scl::expval_scalar,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_scalar, then
+      specified name is not of type \ref o2scl::expval_scalar, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_scalar, then the
+      is no object with type \ref o2scl::expval_scalar, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -766,12 +766,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::expval_scalar object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_scalar,
+      the first object of type \ref o2scl::expval_scalar,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_scalar, then
+      specified name is not of type \ref o2scl::expval_scalar, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_scalar, then the
+      is no object with type \ref o2scl::expval_scalar, then the
       error handler is called.
    */
   void hdf_input(hdf_file &hf, o2scl::expval_scalar &h,
@@ -785,12 +785,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_vector,
+      the first object of type \ref o2scl::expval_vector,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_vector, then
+      specified name is not of type \ref o2scl::expval_vector, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_vector, then the
+      is no object with type \ref o2scl::expval_vector, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -799,12 +799,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::expval_vector object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_vector,
+      the first object of type \ref o2scl::expval_vector,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_vector, then
+      specified name is not of type \ref o2scl::expval_vector, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_vector, then the
+      is no object with type \ref o2scl::expval_vector, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::expval_vector &h, std::string name="");
@@ -817,12 +817,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_matrix,
+      the first object of type \ref o2scl::expval_matrix,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_matrix, then
+      specified name is not of type \ref o2scl::expval_matrix, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_matrix, then the
+      is no object with type \ref o2scl::expval_matrix, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -831,12 +831,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::expval_matrix object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref expval_matrix,
+      the first object of type \ref o2scl::expval_matrix,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref expval_matrix, then
+      specified name is not of type \ref o2scl::expval_matrix, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref expval_matrix, then the
+      is no object with type \ref o2scl::expval_matrix, then the
       error handler is called.
    */
   void hdf_input(hdf_file &hf, o2scl::expval_matrix &h, std::string name="");
@@ -849,12 +849,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref uniform_grid,
+      the first object of type \ref o2scl::uniform_grid,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref uniform_grid, then
+      specified name is not of type \ref o2scl::uniform_grid, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref uniform_grid, then the
+      is no object with type \ref o2scl::uniform_grid, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -864,12 +864,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::uniform_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref uniform_grid,
+      the first object of type \ref o2scl::uniform_grid,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref uniform_grid, then
+      specified name is not of type \ref o2scl::uniform_grid, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref uniform_grid, then the
+      is no object with type \ref o2scl::uniform_grid, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::uniform_grid<double> &h, 
@@ -885,12 +885,12 @@ namespace o2scl_hdf {
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref contour_line,
+      the first object of type \ref o2scl::contour_line,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref contour_line, then
+      specified name is not of type \ref o2scl::contour_line, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref contour_line, then the
+      is no object with type \ref o2scl::contour_line, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -901,12 +901,12 @@ namespace o2scl_hdf {
       \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref contour_line,
+      the first object of type \ref o2scl::contour_line,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref contour_line, then
+      specified name is not of type \ref o2scl::contour_line, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref contour_line, then the
+      is no object with type \ref o2scl::contour_line, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, std::vector<o2scl::contour_line> &cl, 
@@ -922,12 +922,12 @@ namespace o2scl_hdf {
       a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref edge_crossings,
+      the first object of type \ref o2scl::edge_crossings,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref edge_crossings, then
+      specified name is not of type \ref o2scl::edge_crossings, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref edge_crossings, then the
+      is no object with type \ref o2scl::edge_crossings, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
   */
@@ -938,12 +938,12 @@ namespace o2scl_hdf {
       a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref edge_crossings,
+      the first object of type \ref o2scl::edge_crossings,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref edge_crossings, then
+      specified name is not of type \ref o2scl::edge_crossings, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref edge_crossings, then the
+      is no object with type \ref o2scl::edge_crossings, then the
       error handler is called.
    */
   void hdf_input(hdf_file &hf, std::vector<o2scl::edge_crossings> &ec, 
@@ -957,12 +957,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref tensor_grid,
+      the first object of type \ref o2scl::tensor_grid,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref tensor_grid, then
+      specified name is not of type \ref o2scl::tensor_grid, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref tensor_grid, then the
+      is no object with type \ref o2scl::tensor_grid, then the
       error handler is called. Upon exit, \c name contains the name
       of the object which was read.
    */
@@ -972,12 +972,12 @@ namespace o2scl_hdf {
   /** \brief Input a \ref o2scl::tensor_grid object from a \ref hdf_file
 
       If \c name has a non-zero length, then this function first reads
-      the first object of type \ref tensor_grid,
+      the first object of type \ref o2scl::tensor_grid,
       otherwise, it reads the object of the specified name. If \c name
       is specified and no object is found, or if the object with the
-      specified name is not of type \ref tensor_grid, then
+      specified name is not of type \ref o2scl::tensor_grid, then
       the error handler is called. If \c name is unspecified and there
-      is no object with type \ref tensor_grid, then the
+      is no object with type \ref o2scl::tensor_grid, then the
       error handler is called. 
    */
   void hdf_input(hdf_file &hf, o2scl::tensor_grid<std::vector<double>,
@@ -2064,9 +2064,7 @@ namespace o2scl_hdf {
 
       \warning Experimental.
 
-      Used in \ref o2scl_acol_mult_vectors_to_conts() which
-      is used in \c o2graph \c plotv . Used in acol create
-      table-mv.
+      Used in acol create table-mv.
 
       \future When hdf5 is a single vector spec, it has to
       close the file so that vector_spec() can open it again.

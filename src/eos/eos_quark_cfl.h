@@ -114,7 +114,7 @@ namespace o2scl {
       \beta^{\prime} \gamma} q_{j^{\prime} \beta^{\prime}}\right) \right] \,, 
       \f]
       
-      where \f$ \mu \f$ is the \quark number chemical potential.  
+      where \f$ \mu \f$ is the quark number chemical potential.  
       couplings \f$ G_S \f$, \f$ G_D \f$, and \f$ G_{DIQ} \f$
       ultra-violet three-momentum cutoff, \f$ \Lambda \f$
       
@@ -126,7 +126,7 @@ namespace o2scl {
       where \f$ i \f$ runs over all nine (three colors times three
       flavors) quarks. We assume that the condensates are independent
       of color and 
-      that the \quark chemical potentials
+      that the quark chemical potentials
       are of the form
       \f$ \mu_Q=\mu_{\mathrm{Flavor(Q)}}+\mu_{\mathrm{Color(Q)}} \f$
       with

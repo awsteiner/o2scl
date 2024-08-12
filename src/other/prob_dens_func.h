@@ -925,7 +925,7 @@ namespace o2scl {
         \f]
         is equal to the value given in \c integral, then this 
         function returns the value
-        \[f
+        \f[
         \frac{1}{2 \pi} \exp \left( - \frac{a^2}{2} \right) \, .
         \f]
     */
@@ -1017,8 +1017,8 @@ namespace o2scl {
       \note Note that, for example, a LU decomposition does not work
       for this class because a Cholesky decomposition (or a spectral
       decomposition) is required for sampling. For this reason, we
-      cannot use a generic \ref o2scl::matrix_invert_det object.
-      However, we still could use Cholesky decompositions from
+      cannot use a generic \ref o2scl_linalg::matrix_invert_det
+      object. However, we still could use Cholesky decompositions from
       armadillo or Eigen.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,

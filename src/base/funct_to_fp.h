@@ -775,7 +775,7 @@ namespace o2scl {
   /** \brief Convert a formula to a double 
       
       This function removes all quotes and apostrophes from the string
-      and then uses \ref o2scl::calculator to convert strings like
+      and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
       \ref lib_settings_class::get_find_constants() to interpret
@@ -795,7 +795,7 @@ namespace o2scl {
   /** \brief Convert a formula to a double 
       
       This function removes all quotes and apostrophes from the string
-      and then uses \ref o2scl::calculator to convert strings like
+      and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
       \ref lib_settings_class::get_find_constants() to interpret
@@ -807,7 +807,7 @@ namespace o2scl {
   /** \brief Convert a formula to a double 
       
       This function removes all quotes and apostrophes from the string
-      and then uses \ref o2scl::calculator to convert strings like
+      and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
       \ref lib_settings_class::get_find_constants() to interpret
