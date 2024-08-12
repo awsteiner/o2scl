@@ -877,7 +877,8 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
   int retx;
   if (include_muons) {
     if (verbose>1) {
-      std::cout << "pair_density_eq() with muons, pde_from_density="
+      std::cout << "eos_leptons_multip::pair_density_eq(): "
+                << "with muons, pde_from_density="
                 << pde_from_density << std::endl;
     }
 
@@ -946,22 +947,32 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
   } else {
     
     if (verbose>1) {
-      std::cout << "eos_leptons::pair_density_eq(): No muons."
+      std::cout << "eos_leptons::pair_density_eq_multip(): No muons."
                 << std::endl;
     }
     mu.n=0.0;
     
     if (accuracy==acc_ld) {
+      if (verbose>1) {
+        std::cout << "eos_leptons::pair_density_eq_multip(): "
+                  << "Accuracy long double " << nq << std::endl;
+      }
       long double Tld=static_cast<long double>(T);
       this->eld.n=static_cast<long double>(nq);
+      this->eld.mu=static_cast<long double>(e.mu);
       retx=particle_density_tl(this->eld,frel_ld,Tld);
       e.ed=static_cast<double>(eld.ed);
       e.pr=static_cast<double>(eld.pr);
       e.en=static_cast<double>(eld.en);
       e.mu=static_cast<double>(eld.mu);
     } else if (accuracy==acc_fp_25) {
+      if (verbose>1) {
+        std::cout << "eos_leptons::pair_density_eq_multip(): "
+                  << "Accuracy cpp_dec_float_25." << std::endl;
+      }
       cpp_dec_float_25 T25=static_cast<cpp_dec_float_25>(T);
       this->ecdf25.n=static_cast<cpp_dec_float_25>(nq);
+      this->ecdf25.mu=static_cast<cpp_dec_float_25>(e.mu);
       retx=particle_density_tl(this->ecdf25,frel_cdf25,T25);
       e.ed=static_cast<double>(ecdf25.ed);
       e.pr=static_cast<double>(ecdf25.pr);
@@ -971,8 +982,16 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
       e.n=nq;
       retx=electron_density(T);
     }
+    if (verbose>1) {
+      std::cout << "eos_leptons::pair_density_eq_multip(): "
+                << "Return value " << retx << std::endl;
+    }
     
     if (include_deriv) {
+      if (verbose>1) {
+        std::cout << "eos_leptons::pair_density_eq_multip(): "
+                  << "Including derivatives." << std::endl;
+      }
       fermion_deriv fd;
       fd=e;
       if (accuracy==acc_ld || accuracy==acc_fp_25) {

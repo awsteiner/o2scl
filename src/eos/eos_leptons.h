@@ -357,32 +357,6 @@ namespace o2scl {
 
   protected:
     
-    /// \name Internal particle objects [protected]
-    //@{
-    /** \brief Electron in long double precision
-     */
-    fermion_ld eld;
-    
-    /** \brief Electron in 25-digit precision
-     */
-    fermion_cdf25 ecdf25;
-
-    /** \brief Muon in long double precision
-     */
-    fermion_ld muld;
-    
-    /** \brief Muon in 25-digit precision
-     */
-    fermion_cdf25 mucdf25;
-
-    /** \brief Tau in long double precision
-     */
-    fermion_ld tauld;
-    
-    /** \brief Tau in 25-digit precision
-     */
-    fermion_cdf25 taucdf25;
-    
     /// \name Unit conversion objects to set the lepton masses
     //@{
     /// Long double precision unit conversion object
@@ -502,6 +476,30 @@ namespace o2scl {
     
     virtual ~eos_leptons_multip() {
     }
+    
+    /** \brief Electron in long double precision
+     */
+    fermion_ld eld;
+    
+    /** \brief Electron in 25-digit precision
+     */
+    fermion_cdf25 ecdf25;
+
+    /** \brief Muon in long double precision
+     */
+    fermion_ld muld;
+    
+    /** \brief Muon in 25-digit precision
+     */
+    fermion_cdf25 mucdf25;
+
+    /** \brief Tau in long double precision
+     */
+    fermion_ld tauld;
+    
+    /** \brief Tau in 25-digit precision
+     */
+    fermion_cdf25 taucdf25;
     
     /** \brief Thermodynamics from the charge density in 
         weak equilibrium
