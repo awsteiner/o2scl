@@ -56,7 +56,7 @@ namespace o2scl {
     /** \brief The condensate
 	
 	The condensate variable is provided principally for
-	user storage and is mostly ignored by \o2p classes. 
+	user storage and is provided mostly for the user
     */
     fp_t co;
 

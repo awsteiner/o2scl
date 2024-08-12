@@ -255,8 +255,8 @@ namespace o2scl {
       argument is too large. In this class, the value <tt>inf</tt>
       is returned in those cases instead. 
 
-      This class is used in \o2p in <tt>o2scl::fermion_thermo_tl</tt>,
-      <tt>o2scl::fermion_tl</tt> and <tt>o2scl::fermion_nonrel_tl</tt>
+      This class is used in \ref o2scl::fermion_thermo_tl,
+      \ref o2scl::fermion_tl and \ref o2scl::fermion_nonrel_tl
       to compute the Fermi-Dirac integrals for non-relativistic
       fermions.
    */
