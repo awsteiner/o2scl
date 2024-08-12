@@ -1264,14 +1264,15 @@ namespace o2scl_hdf {
       std::string type;
       /// Verbose parameter
       int verbose;
-      /** \brief Iteration mode, either \ref ip_filelist, \ref
-          ip_name_from_type, \ref ip_type_from_name or \ref
-          ip_type_from_pattern
+      /** \brief Iteration mode, either \ref hdf_file::ip_filelist,
+          \ref hdf_file::ip_name_from_type, \ref
+          hdf_file::ip_type_from_name or \ref
+          hdf_file::ip_type_from_pattern
        */
       int mode;
       /// If true, then use regex to match names
       bool use_regex;
-      /// The list of names, used by \ref list_objects_of_type()
+      /// The list of names, used by \ref hdf_file::list_objects_by_type()
       std::vector<std::string> name_list;
     } iterate_parms;
 
@@ -1287,10 +1288,15 @@ namespace o2scl_hdf {
 
     /// \name Mode values for \ref iterate_parms
     //@{
+    /// Used for <tt>acol -filelist</tt>
     static const int ip_filelist=1;
+    /// Get name of HDF5 object from type
     static const int ip_name_from_type=2;
+    /// Get type of HDF5 object with name 
     static const int ip_type_from_name=3;
+    /// Get types of HDF5 object from names matching pattern
     static const int ip_type_from_pattern=4;
+    /// Get list of names given type
     static const int ip_name_list_from_type=5;
     //@}
 

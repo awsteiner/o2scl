@@ -24,7 +24,7 @@
 #define O2SCL_BOSON_H
 
 /** \file boson.h
-    \brief File defining \ref o2scl::boson
+    \brief File defining \ref o2scl::boson_tl
 */
 
 #include <string>

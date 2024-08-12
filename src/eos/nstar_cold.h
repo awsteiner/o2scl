@@ -75,7 +75,7 @@ namespace o2scl {
       The baryon density range is specified by \ref nb_start, \ref nb_end
       and \ref dnb. Given the value of \f$ f \f$ defined by
       \f[
-      f = \frac{\mathrm{nb\_start} - \mathrm{nb\_end}}/{\mathrm{dnb}}
+      f = \frac{\mathrm{nb\_start} - \mathrm{nb\_end}}{\mathrm{dnb}}
       \f]
       if \f$ f<1 \f$ or \f$ f>10^8 \f$, then the error handler is 
       called.
@@ -296,14 +296,14 @@ namespace o2scl {
     double acausal_ed;
 
     /** \brief The last valid baryon density in the EOS 
-        (in \f$ \mathrm^{-3} \f$; default 2.0)
+        (in \f$ \mathrm{fm}^{-3} \f$; default 2.0)
 
         This value is computed by \ref calc_eos() .
      */
     double nb_last;
 
     /** \brief The minimum last valid baryon density in the EOS
-        (in \f$ \mathrm^{-3} \f$; default 0.48)
+        (in \f$ \mathrm{fm}^{-3} \f$; default 0.48)
 
         The function \ref calc_eos() requires that the EOS must
         be computable up to at least this density.

@@ -24,7 +24,7 @@
 #define O2SCL_BOSON_REL_H
 
 /** \file boson_rel.h
-    \brief File defining \ref o2scl::boson_rel
+    \brief File defining \ref o2scl::boson_rel_tl
 */
 
 #include <string>
@@ -47,7 +47,7 @@ namespace o2scl {
 
       .. todo:: 
 
-      - In class boson_rel: Testing not completely finished.
+         - In class boson_rel: Testing not completely finished.
          
       \endverbatim
   */

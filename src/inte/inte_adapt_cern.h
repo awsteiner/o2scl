@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /** \file inte_adapt_cern.h
-    \brief File defining \ref o2scl::inte_adapt_cern
+    \brief File defining \ref o2scl::inte_adapt_cern_tl
 */
 #ifndef O2SCL_INTE_ADAPT_CERN_H
 #define O2SCL_INTE_ADAPT_CERN_H
@@ -36,7 +36,7 @@
 namespace o2scl {
 
   /** \brief Integration subdivision object for \ref
-      o2scl::inte_adapt_cern
+      o2scl::inte_adapt_cern_tl
   */
   template<class fp_t> class inte_subdiv {
   public:

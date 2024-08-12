@@ -854,11 +854,11 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
-    /** \brief Calculate coefficients for \gradient \part of Hamiltonian
+    /** \brief Calculate coefficients for \gradient part of Hamiltonian
 
         \note This is still somewhat experimental.
 
-        We want the \gradient \part of the Hamiltonian in the form
+        We want the \gradient part of the Hamiltonian in the form
         \f[
         {\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
         \sum_{j=n,p} Q_{ij}

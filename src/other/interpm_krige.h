@@ -24,8 +24,7 @@
 #define O2SCL_INTERPM_KRIGE_H
 
 /** \file interpm_krige.h
-    \brief File defining \ref o2scl::interpm_krige,
-    \ref o2scl::interpm_krige_optim and \ref o2scl::interpm_krige_optim
+    \brief File defining \ref o2scl::interpm_krige_optim
 */
 
 #include <iostream>

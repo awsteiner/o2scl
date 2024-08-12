@@ -367,8 +367,6 @@ namespace o2scl_acol {
     void command_del(std::string ltype);
     
     /** \brief Get the verbose parameter
-        
-        This function is used in \ref o2scl_acol_mult_vectors_to_conts() .
     */
     int get_verbose() {
       return verbose;
@@ -610,9 +608,10 @@ namespace o2scl_acol {
 
         End of runtime documentation.
 
-        This function uses \ref funct_multip and \ref funct_multip_string
-        for adaptive multiprecision and \ref function_to_double()
-        or \ref function_to_fp_nothrow() otherwise.
+        This function uses \ref o2scl::funct_multip_tl and \ref
+        o2scl::funct_multip_string_tl for adaptive multiprecision and \ref
+        o2scl::function_to_double() or \ref
+        o2scl::function_to_fp_nothrow() otherwise.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
@@ -761,7 +760,7 @@ namespace o2scl_acol {
         is output to the screen, no file I/O is performed, and the
         current \c table3d object is unmodified.
 
-        Countours are computed by the \ref o2scl::contours class, by
+        Countours are computed by the \ref o2scl::contour class, by
         piecing together line segments across grid lines. The best way
         to obtain more accurate contours is to compute them using data
         with a smaller grid spacing. The \c refine command can be used
@@ -803,7 +802,7 @@ namespace o2scl_acol {
         integral is computed as the sum of w Δx Δy and thus there are
         no guarantees that the requested contours exist.
 
-        Countours are computed by the \ref o2scl::contours class, by
+        Countours are computed by the \ref o2scl::contour class, by
         piecing together line segments across grid lines. The best way
         to obtain more accurate contours is to compute them using data
         with a smaller grid spacing. The \c refine command can be used
@@ -1212,7 +1211,7 @@ namespace o2scl_acol {
         This function exits immediately if it fails, preventing the
         user from reading a data file which is corrupted.
 
-        This function uses \ref o2scl::cloud_file to handle the 
+        This function uses \ref o2scl_hdf::cloud_file to handle the 
         file acquisition.
     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);

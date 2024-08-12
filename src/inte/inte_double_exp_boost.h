@@ -24,7 +24,7 @@
 #define O2SCL_INTE_DOUBLE_EXP_BOOST_H
 
 /** \file inte_double_exp_boost.h
-    \brief File defining \ref o2scl::inte_tanh_sinh_boost
+    \brief File defining \ref o2scl::inte_double_exp_boost
 */
 
 #include <cmath>

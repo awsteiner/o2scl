@@ -241,7 +241,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief If true, allow resampling in \ref operator() (default true)
+    /** \brief If true, allow resampling (default true)
      */
     bool allow_resampling;
     

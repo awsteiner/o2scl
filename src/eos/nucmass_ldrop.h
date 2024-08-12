@@ -208,13 +208,13 @@ namespace o2scl {
     /// Proton radius
     double Rp;
 
-    /// Bulk \part of energy
+    /// Bulk part of energy
     double bulk;
 
-    /// Surface \part of energy
+    /// Surface part of energy
     double surf;
 
-    /// Coulomb \part of energy
+    /// Coulomb part of energy
     double coul;
     //@}
 
@@ -504,7 +504,7 @@ namespace o2scl {
     */
     double Tchalf;
     
-    /** \brief Return the free binding energy of a \nucleus in a many-body 
+    /** \brief Return the free binding energy of a nucleus in a many-body 
         environment
     */
     virtual double drip_binding_energy_d(double Z, double N,
@@ -549,7 +549,7 @@ namespace o2scl {
     /// Most recently computed pairing energy per baryon
     double pair;
 
-    /** \brief Return the free binding energy of a \nucleus in a many-body 
+    /** \brief Return the free binding energy of a nucleus in a many-body 
         environment
     */
     virtual double drip_binding_energy_d

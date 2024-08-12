@@ -56,7 +56,7 @@ namespace o2scl {
     /// If true, include shell effects (default true)
     bool inc_shell;
 
-    /** \brief Return the free binding energy of a \nucleus in a many-body 
+    /** \brief Return the free binding energy of a nucleus in a many-body 
 	environment
     */
     virtual double drip_binding_energy_d

@@ -213,7 +213,8 @@ namespace o2scl {
 
       \verbatim embed:rst
       .. todo:: 
-      
+
+         In class cli:
          - Future: Warn in run_interactive() when extra parameters are given.
          - Future: A replace command function, there's already some code
            in cli.cpp for this.
@@ -639,7 +640,8 @@ namespace o2scl {
     /** \brief The function which obtains input from the user
         
         \verbatim embed:rst
-        .. todo:: 
+        .. todo::
+        
 	   Future: Think about whether or not this should be protected?
            (Possibly not, as it's extensively used by acolm.cpp)
         \endverbatim
@@ -684,7 +686,8 @@ namespace o2scl {
     /** \brief Process command-line arguments from a string
 
         \verbatim embed:rst
-        .. todo:: 
+        .. todo::
+        
 	   Future: There's a typecast in this function to (char *)
            from (const char *) which needs reworking.
         \endverbatim

@@ -744,8 +744,8 @@ namespace o2scl {
   typedef funct_multip_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip;
 
-  /** \brief The multiprecision function object with \t cpp_dec_float
-      types
+  /** \brief The multiprecision function object with <tt>cpp_dec_float
+      </tt> types
   */
   typedef funct_multip_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
@@ -1299,7 +1299,7 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform=
     funct_multip_transform_tl<fp_t,o2fp_25,o2fp_35,o2fp_50,o2fp_100>;
   
-  /// Alias declarations for \t cpp_dec_float types
+  /// Alias declarations for <tt>cpp_dec_float</tt> types
   template <class fp_t> using funct_multip_transform_cdf=
     funct_multip_transform_tl<double,cpp_dec_float_25,cpp_dec_float_35,
                               cpp_dec_float_50,cpp_dec_float_100>;

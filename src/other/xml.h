@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /** \file xml.h
-    \brief File defining \ref o2scl::xml
+    \brief File describing pugixml interface
 */
 #ifndef O2SCL_XML_H
 #define O2SCL_XML_H
