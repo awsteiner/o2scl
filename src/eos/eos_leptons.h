@@ -388,8 +388,24 @@ namespace o2scl {
         pa.inc_rest_mass=false;
         pa.mu-=pa.m;
       }
-      
+
+      if (verbose>1) {
+        std::cout << "eos_leptons_multip::particle_density_tl(): "
+                  << "n : ";
+        std::cout.setf(std::ios::showpos);
+        std::cout << dtos(pa.n,0) << std::endl;
+        std::cout.unsetf(std::ios::showpos);
+        pt.verbose=3;
+      }
       retx=pt.pair_density(pa,T);
+      if (verbose>1) {
+        std::cout << "eos_leptons_multip::particle_density_tl(): "
+                  << "mu: ";
+        std::cout.setf(std::ios::showpos);
+        std::cout << dtos(pa.mu,0) << std::endl;
+        std::cout.unsetf(std::ios::showpos);
+        pt.verbose=0;
+      }
       
       if (inc_rest_mass) {
         pa.inc_rest_mass=true;

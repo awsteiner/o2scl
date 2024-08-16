@@ -873,7 +873,7 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
       
   bool fr_en=frel.err_nonconv;
   frel.err_nonconv=false;
-
+  
   int retx;
   if (include_muons) {
     if (verbose>1) {
@@ -881,14 +881,14 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
                 << "with muons, pde_from_density="
                 << pde_from_density << std::endl;
     }
-
+    
     ubvector x(1), y(1);
     if (pde_from_density) {
       x[0]=e.n/nq;
     } else {
       x[0]=e.mu;
     }
-
+    
     mm_funct mf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,double)>
        (&eos_leptons_multip::pair_density_eq_fun),
@@ -919,19 +919,19 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
     if (verbose>1) {
       cout << "Solution: " << x[0] << endl;
     }
-
+    
     mf(1,x,y);
     e.n=x[0]*nq;
-
+    
     if (include_deriv) {
       
-    if (accuracy==acc_ld || accuracy==acc_fp_25) {
-      fdrel.multip=true;
-    } else {
-      fdrel.multip=false;
-    }
-
-    fermion_deriv fd;
+      if (accuracy==acc_ld || accuracy==acc_fp_25) {
+        fdrel.multip=true;
+      } else {
+        fdrel.multip=false;
+      }
+      
+      fermion_deriv fd;
       fd=e;
       fdrel.pair_mu(fd,T);
       ed.dndmu=fd.dndmu;
@@ -943,18 +943,18 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
       mud.dndT=fd.dndT;
       mud.dsdT=fd.dsdT;
     }
-        
+    
   } else {
     
     if (verbose>1) {
-      std::cout << "eos_leptons::pair_density_eq_multip(): No muons."
+      std::cout << "eos_leptons_multip::pair_density_eq(): No muons."
                 << std::endl;
     }
     mu.n=0.0;
     
     if (accuracy==acc_ld) {
       if (verbose>1) {
-        std::cout << "eos_leptons::pair_density_eq_multip(): "
+        std::cout << "eos_leptons_multip::pair_density_eq(): "
                   << "Accuracy long double " << nq << std::endl;
       }
       long double Tld=static_cast<long double>(T);
@@ -967,7 +967,7 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
       e.mu=static_cast<double>(eld.mu);
     } else if (accuracy==acc_fp_25) {
       if (verbose>1) {
-        std::cout << "eos_leptons::pair_density_eq_multip(): "
+        std::cout << "eos_leptons_multip::pair_density_eq(): "
                   << "Accuracy cpp_dec_float_25." << std::endl;
       }
       cpp_dec_float_25 T25=static_cast<cpp_dec_float_25>(T);
@@ -983,13 +983,13 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
       retx=electron_density(T);
     }
     if (verbose>1) {
-      std::cout << "eos_leptons::pair_density_eq_multip(): "
+      std::cout << "eos_leptons_multip::pair_density_eq(): "
                 << "Return value " << retx << std::endl;
     }
     
     if (include_deriv) {
       if (verbose>1) {
-        std::cout << "eos_leptons::pair_density_eq_multip(): "
+        std::cout << "eos_leptons_multip::pair_density_eq(): "
                   << "Including derivatives." << std::endl;
       }
       fermion_deriv fd;

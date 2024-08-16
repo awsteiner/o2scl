@@ -110,8 +110,9 @@ namespace o2scl {
 	
     char ch;
 	
-    std::cout << comment << " Iteration: " << iter << std::endl;
-    std::cout << "x,y,val,lim: ";
+    std::cout << "root::print_iter(): "
+              << comment << " Iteration: " << iter << std::endl;
+    std::cout << "  x,y,val,lim: ";
     if (x<0) std::cout << x << " ";
     else std::cout << " " << x << " ";
     if (y<0) std::cout << y << " ";
@@ -121,7 +122,7 @@ namespace o2scl {
     if (limit<0) std::cout << limit << std::endl;
     else std::cout << " " << limit << std::endl;
     if (verbose>1) {
-      std::cout << "Press a key and type enter to continue. ";
+      std::cout << "  Press a key and type enter to continue. ";
       std::cin >> ch;
     }
  
@@ -250,7 +251,8 @@ namespace o2scl {
       fx2=func(x2);
       df=(fx2-fx)/bstep_int;
       if (this->verbose>0) {
-	std::cout << "P1: x,x2,fx,fx2,df: " << x << " " << x2 << " "
+	std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
+                  << x << " " << x2 << " "
 		  << fx << " " << fx2 << " " << df << std::endl;
       }
 
@@ -267,7 +269,8 @@ namespace o2scl {
 	fx2=func(x2);
 	df=(fx2-fx)/step_phase1;
 	if (this->verbose>1) {
-	  std::cout << "P1: x,x2,fx,fx2,df: " << x << " " << x2 << " "
+	  std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
+                    << x << " " << x2 << " "
 		    << fx << " " << fx2 << " " << df << std::endl;
 	}
 	j++;
@@ -299,7 +302,8 @@ namespace o2scl {
       x2=x-step_phase2*fx/df;
       fx2=func(x2);
       if (this->verbose>0) {
-	std::cout << "P2: x,x2,fx,fx2: " << x << " " << x2 << " "
+	std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
+                  << x << " " << x2 << " "
 		  << fx << " " << fx2 << std::endl;
       }
 
@@ -311,7 +315,8 @@ namespace o2scl {
 	fx2=func(x2);
 	k++;
 	if (this->verbose>0) {
-	  std::cout << "P2: x,x2,fx,fx2: " << x << " " << x2 << " "
+	  std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
+                    << x << " " << x2 << " "
 		    << fx << " " << fx2 << std::endl;
 	}
       }

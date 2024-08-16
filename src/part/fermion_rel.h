@@ -790,7 +790,7 @@ namespace o2scl {
     int calc_mu(fermion_t &f, fp_t temper) {
 
       if (verbose>1) {
-	std::cout << "calc_mu(): start."
+	std::cout << "fermion_rel::calc_mu(): start."
 		  << std::endl;
       }
       
@@ -831,7 +831,7 @@ namespace o2scl {
       if (psi<deg_limit) deg=false;
       
       if (verbose>1) {
-	std::cout << "calc_mu(): psi,deg,deg_limit: " << psi << " "
+	std::cout << "fermion_rel::calc_mu(): psi,deg,deg_limit: " << psi << " "
 		  << deg << " " << deg_limit << std::endl;
       }
       
@@ -839,7 +839,7 @@ namespace o2scl {
       if (use_expansions && psi<min_psi) {
 	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg expan (fermion) " << acc
+	  std::cout << "fermion_rel::calc_mu(): non-deg expan (fermion) " << acc
                     << " " << verbose << std::endl;
 	}
 	if (acc) {
@@ -857,7 +857,7 @@ namespace o2scl {
       if (use_expansions && psi>20.0) {
 	bool acc=this->calc_mu_deg(f,temper,tol_expan);
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg expan " << acc
+	  std::cout << "fermion_rel::calc_mu(): deg expan " << acc
 		    << std::endl;
 	}
 	if (acc) {
@@ -892,7 +892,7 @@ namespace o2scl {
         if (multip==true) {
           
           if (verbose>1) {
-            std::cout << "calc_mu(): non-deg number density (multip):"
+            std::cout << "fermion_rel::calc_mu(): non-deg number density (multip):"
                       << std::endl;
           }
           
@@ -913,7 +913,7 @@ namespace o2scl {
         } else {
           
           if (verbose>1) {
-            std::cout << "calc_mu(): non-deg number density:"
+            std::cout << "fermion_rel::calc_mu(): non-deg number density:"
                       << std::endl;
           }
           
@@ -936,7 +936,7 @@ namespace o2scl {
 	// Compute the energy density
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg energy density:"
+	  std::cout << "fermion_rel::calc_mu(): non-deg energy density:"
 		    << std::endl;
 	}
 	
@@ -975,7 +975,7 @@ namespace o2scl {
 	// Compute the entropy
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg entropy:"
+	  std::cout << "fermion_rel::calc_mu(): non-deg entropy:"
 		    << std::endl;
 	}
 	
@@ -1018,7 +1018,7 @@ namespace o2scl {
           // Compute the pressure
 
           if (verbose>1) {
-            std::cout << "calc_mu(): non-deg pressure:"
+            std::cout << "fermion_rel::calc_mu(): non-deg pressure:"
                       << std::endl;
           }
           
@@ -1055,7 +1055,7 @@ namespace o2scl {
         }
         
 	if (verbose>1) {
-	  std::cout << "calc_mu(): non-deg integrals done."
+	  std::cout << "fermion_rel::calc_mu(): non-deg integrals done."
 		    << std::endl;
 	}
 	
@@ -1107,7 +1107,7 @@ namespace o2scl {
 	// Compute the number density
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg number density, ul, ulf: "
+	  std::cout << "fermion_rel::calc_mu(): deg number density, ul, ulf: "
                     << ul << " " << upper_limit_fac << std::endl;
 	}
         
@@ -1143,14 +1143,14 @@ namespace o2scl {
         unc.n*=prefac;
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg number density, n, unc.n: "
+	  std::cout << "fermion_rel::calc_mu(): deg number density, n, unc.n: "
                     << dtos(f.n,-1) << " " << dtos(unc.n,-1) << std::endl;
 	}
           
 	// Compute the energy density
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg energy density."
+	  std::cout << "fermion_rel::calc_mu(): deg energy density."
 		    << std::endl;
 	}
 	
@@ -1186,7 +1186,7 @@ namespace o2scl {
         unc.ed*=prefac;
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg energy density, ed, unc.ed: "
+	  std::cout << "fermion_rel::calc_mu(): deg energy density, ed, unc.ed: "
                     << dtos(f.ed,-1) << " " << dtos(unc.ed,-1) << std::endl;
 	}
           
@@ -1216,7 +1216,7 @@ namespace o2scl {
           if (multip==true) {
             
             if (verbose>1) {
-              std::cout << "calc_mu(): deg entropy (ll>0,multip):"
+              std::cout << "fermion_rel::calc_mu(): deg entropy (ll>0,multip):"
                         << std::endl;
             }
 
@@ -1234,7 +1234,7 @@ namespace o2scl {
           } else {
             
             if (verbose>1) {
-              std::cout << "calc_mu(): deg entropy (ll>0):"
+              std::cout << "fermion_rel::calc_mu(): deg entropy (ll>0):"
                         << std::endl;
             }
             
@@ -1264,7 +1264,7 @@ namespace o2scl {
           if (multip==true) {
             
             if (verbose>1) {
-              std::cout << "calc_mu(): deg entropy (ll<0,multip):"
+              std::cout << "fermion_rel::calc_mu(): deg entropy (ll<0,multip):"
                         << std::endl;
             }
             
@@ -1282,7 +1282,7 @@ namespace o2scl {
           } else {
             
             if (verbose>1) {
-              std::cout << "calc_mu(): deg entropy (ll<0):"
+              std::cout << "fermion_rel::calc_mu(): deg entropy (ll<0):"
                         << std::endl;
             }
             
@@ -1309,7 +1309,7 @@ namespace o2scl {
         unc.en*=prefac;
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg entropy density, en, unc.en: "
+	  std::cout << "fermion_rel::calc_mu(): deg entropy density, en, unc.en: "
                     << dtos(f.en,-1) << " " << dtos(unc.en,-1)
                     << std::endl;
 	}
@@ -1320,7 +1320,7 @@ namespace o2scl {
           if (multip==true) {
 
             if (verbose>1) {
-              std::cout << "calc_mu(): deg pressure (multip):"
+              std::cout << "fermion_rel::calc_mu(): deg pressure (multip):"
                         << std::endl;
             }
 
@@ -1338,7 +1338,7 @@ namespace o2scl {
           } else {
             
             if (verbose>1) {
-              std::cout << "calc_mu(): deg pressure:"
+              std::cout << "fermion_rel::calc_mu(): deg pressure:"
                         << std::endl;
             }
 
@@ -1359,7 +1359,7 @@ namespace o2scl {
           unc.pr*=prefac;
 
           if (verbose>1) {
-            std::cout << "calc_mu(): deg pressure, pr, unc.pr: "
+            std::cout << "fermion_rel::calc_mu(): deg pressure, pr, unc.pr: "
                       << dtos(f.pr,-1) << " " << dtos(unc.pr,-1)
                       << std::endl;
           }
@@ -1367,7 +1367,7 @@ namespace o2scl {
         }
 
 	if (verbose>1) {
-	  std::cout << "calc_mu(): deg integrals done."
+	  std::cout << "fermion_rel::calc_mu(): deg integrals done."
 		    << std::endl;
 	}
 	
@@ -1835,7 +1835,7 @@ namespace o2scl {
 	f.ed=f.ed+antip.ed+2.0*antip.n*f.m;
       }
       if (verbose>0) {
-        std::cout << "pair_mu(), particles, antiparticles, total: "
+        std::cout << "fermion_rel::pair_mu(), part n, antipart n, total n: "
                   << f.n << " " << antip.n << " "
                   << f.n-antip.n << std::endl;
       }
@@ -1871,12 +1871,15 @@ namespace o2scl {
     int pair_density(fermion_t &f, fp_t temper) {
       
       if (verbose>0) {
-        std::cout << "Value of verbose greater than zero in "
-                  << "fermion_rel::pair_density()." << std::endl;
-        std::cout << "Density: " << f.n << " temperature: "
+        std::cout << "fermion_rel::pair_density(): "
+                  << "Value of verbose (" << verbose
+                  << ") greater than zero." << std::endl;
+        std::cout << "fermion_rel::pair_density(): "
+                  << "density: " << f.n << " temperature: "
                   << temper << std::endl;
         if (verbose>1) {
-          std::cout << "Setting solver verbose parameters to 1."
+          std::cout << "fermion_rel::pair_density(): "
+                    << "Setting solver verbose parameters to 1."
                     << std::endl;
           density_root.verbose=1;
           alt_solver.verbose=1;
@@ -1890,7 +1893,8 @@ namespace o2scl {
 
       if (temper<=0.0) {
         if (verbose>0) {
-          std::cout << "Value of T<=0, so using zero temperature code."
+          std::cout << "fermion_rel::pair_density(): "
+                    << "Value of T<=0, so using zero temperature code."
                     << std::endl;
         }
 	this->calc_density_zerot(f);
@@ -1934,7 +1938,8 @@ namespace o2scl {
         int ret=density_root.solve(nex,mf);
         if (ret==0) {
           if (verbose>0) {
-            std::cout << "Initial solver succeeded." << std::endl;
+            std::cout << "fermion_rel::pair_density(): "
+                      << "Initial solver succeeded." << std::endl;
           }
           // If that worked, set last_method
           last_method=2000;
@@ -1951,7 +1956,8 @@ namespace o2scl {
           lg=f.ms;
           
           if (verbose>0) {
-            std::cout << "Initial solver returned ret=" << ret
+            std::cout << "fermion_rel::pair_density(): "
+                      << "Initial solver returned ret=" << ret
                       << ". Trying to bracket." << std::endl;
           }
           
@@ -1974,7 +1980,8 @@ namespace o2scl {
           if (yhigh>0.0 && ylow<0.0) {
             
             if (verbose>0) {
-              std::cout << "Bracket succeeded, trying solver." << std::endl;
+              std::cout << "fermion_rel::pair_density(): "
+                        << "Bracket succeeded, trying solver." << std::endl;
             }
             
             ret=alt_solver.solve_bkt(b_low,b_high,mf);
@@ -1982,7 +1989,8 @@ namespace o2scl {
             // and set last_method
             if (ret==0) {
               if (verbose>0) {
-                std::cout << "Alternate solver succeeded." << std::endl;
+                std::cout << "fermion_rel::pair_density(): "
+                          << "Alternate solver succeeded." << std::endl;
               }
               nex=b_low;
               last_method=3000;
@@ -2005,7 +2013,7 @@ namespace o2scl {
           // to call the error handler anyway
           if (this->err_nonconv==true) {
             std::cout.precision(14);
-            std::cout << "Function fermion_rel::pair_density() failed.\n  "
+            std::cout << "fermion_rel::pair_density(): Failed. "
                       << "m,ms,n,T: " << f.m << " " << f.ms << " "
                       << f.n << " " << temper << std::endl;
             std::cout << "nu: " << initial_guess << std::endl;
@@ -2266,6 +2274,11 @@ namespace o2scl {
     fp_t pair_fun(fp_t x, fp_t density_match, fermion_t &f, fp_t T,
                   bool log_mode) {
 
+      if (verbose>=3) {
+        std::cout << "fermion_rel::pair_fun(): x: "
+                  << x << std::endl;
+      }
+      
       // Number density of particles and antiparticles
       // AWS, 2/28/22: I'm getting some uninitialized variable
       // warnings, so I'm setting these to a large value to
@@ -2283,7 +2296,13 @@ namespace o2scl {
 
       // Sometimes the exp() call above causes an overflow, so
       // we avoid extreme values
-      if (!isfinite(f.nu)) return 3;
+      if (!isfinite(f.nu)) {
+        if (verbose>=3) {
+          std::cout << "fermion_rel::pair_fun(): Variable nu not finite."
+                    << std::endl;
+        }
+        return 3;
+      }
 
       if (f.non_interacting) f.mu=f.nu;
 
@@ -2305,8 +2324,8 @@ namespace o2scl {
             y1=(f.n-density_match)/fabs(density_match);
           }
 	  if (!isfinite(y1)) {
-	    O2SCL_ERR("Value 'y1' not finite (10) in fermion_rel::pair_fun().",
-		      exc_einval);
+	    O2SCL_ERR2("Value 'y1' not finite (10) in",
+                       "fermion_rel::pair_fun().",exc_einval);
 	  }
 	  // Make sure to restore the value of f.n to it's original value,
 	  // nn_match
@@ -2409,6 +2428,11 @@ namespace o2scl {
           //if (reti1!=0) return 1;
           nden_p*=prefac;
         
+          if (verbose>=3) {
+            std::cout << "fermion_rel::pair_fun(): nden_p, ndeg: "
+                      << dtos(nden_p,0) << std::endl;
+          }
+          
 	  if (!isfinite(nden_p)) {
 	    O2SCL_ERR2("Value 'nden_p' not finite (3) in",
 		       "fermion_rel::pair_fun().",exc_einval);
@@ -2473,6 +2497,11 @@ namespace o2scl {
             //if (reti2!=0) return 2;
             
             nden_p*=f.g/2.0/this->pi2;
+            
+            if (verbose>=3) {
+              std::cout << "fermion_rel::pair_fun(): nden_p, deg: "
+                        << dtos(nden_p,0) << std::endl;
+            }
             
 	  } else {
 	    nden_p=0.0;
@@ -2590,6 +2619,11 @@ namespace o2scl {
           
           nden_ap*=prefac;
         
+          if (verbose>=3) {
+            std::cout << "fermion_rel::pair_fun(): nden_ap, ndeg: "
+                      << dtos(nden_ap,0) << std::endl;
+          }
+            
 	  if (!isfinite(nden_ap)) {
 	    O2SCL_ERR2("Value 'nden_ap' not finite (7) in",
 		       "fermion_rel::pair_fun().",
@@ -2651,6 +2685,11 @@ namespace o2scl {
             
             nden_ap*=f.g/2.0/this->pi2;
             
+            if (verbose>=3) {
+              std::cout << "fermion_rel::pair_fun(): nden_ap, deg: "
+                        << dtos(nden_ap,0) << std::endl;
+            }
+            
 	  } else {
 	    nden_ap=0.0;
 	  }
@@ -2672,7 +2711,7 @@ namespace o2scl {
       } else {
         y2=(nden_p-nden_ap-density_match)/fabs(density_match);
       }
-
+      
       if (!isfinite(y2)) {
 	O2SCL_ERR("Value 'y2' not finite (9) in fermion_rel::pair_fun().",
 		  exc_einval);
@@ -2681,6 +2720,12 @@ namespace o2scl {
       // Make sure to restore the value of f.n to it's original value,
       // density_match
       f.n=density_match;
+
+      if (verbose>=3) {
+        std::cout << "fermion_rel::pair_fun(): x,y: "
+                  << dtos(x,0) << " " << dtos(y2,0) << std::endl;
+      }
+      
       return y2;
     }
 
