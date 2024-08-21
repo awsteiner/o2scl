@@ -664,7 +664,7 @@ namespace o2scl {
       
       // Scale the step sizes
       for (size_t k=0;k<n_params;k++) {
-        mom_step[k]=1.0e-6*(high[k]-low[k])*r.random();
+        mom_step[k]=1.0e-6*(high[k]-low[k]);
       }
       
       // Take a half step in the momenta using the gradient
@@ -744,15 +744,15 @@ namespace o2scl {
 
       /* Note: This is the final momentum at the final point q'. */
 
-      std::cout << std::scientific << std::setprecision(4);
+      std::cout << std::scientific << std::setprecision(2);
       for (size_t k=0;k<n_params;k++) {
         std::cout << "curr[" << k << "]=" << current[k] 
-                  << " next=" << next[k]
-                  << " p_cur=" << mom[k]
-                  << " p_nxt=" << mom_next[k]
-                  << " step=" << mom_step[k]
-                  << " grad=" << grad[k]  
-                  << " disp=" << abs(next[k]-current[k]) 
+                  // << " next=" << next[k]
+                  // << " p_cur=" << mom[k]
+                  << ", p_nxt=" << mom_next[k]
+                  << ", step=" << mom_step[k]
+                  << ", grad=" << grad[k]  
+                  << ", disp=" << abs(next[k]-current[k]) 
                   << std::endl;
       }
       std::cout << std::scientific << std::setprecision(6);
