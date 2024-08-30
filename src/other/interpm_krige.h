@@ -708,7 +708,7 @@ namespace o2scl {
         }
 
         // Perform the matrix inversion and compute the determinant
-
+        
         double lndet;
 	
         if (timing) {
@@ -728,7 +728,10 @@ namespace o2scl {
         }
 	
         lndet=log(lndet);
-        if (!std::isfinite(lndet)) {
+
+        // The determinant is only required if we're marginalizing the
+        // maximum likelihood.
+        if (mode!=mode_final && !std::isfinite(lndet)) {
           success=5;
           return 1.0e99;
         }
@@ -923,6 +926,10 @@ namespace o2scl {
       }
 
       if (rescale==true) {
+        if (this->verbose>1) {
+          std::cout << "interpm_krige_optim::set_data(): "
+                    << "Rescaling data:" << std::endl;
+        }
         this->mean_y.resize(n_out);
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
@@ -930,17 +937,13 @@ namespace o2scl {
           this->mean_y[j]=vector_mean(this->n_points,vec);
           this->std_y[j]=vector_stddev(this->n_points,vec);
           if (this->verbose>1) {
-            std::cout << "Mean,stddev of y " << j << " of "
-                      << n_out << " is " << this->mean_y[j] << " "
-                      << this->std_y[j] << std::endl;
+            std::cout << "  Mean, std. dev. of output " << j << " of "
+                      << n_out << " is " << this->mean_y[j] << " and "
+                      << this->std_y[j] << " ." << std::endl;
           }
           for(size_t i=0;i<this->n_points;i++) {
             this->y(i,j)=(this->y(i,j)-this->mean_y[j])/this->std_y[j];
           }
-        }
-        if (this->verbose>1) {
-          std::cout << "interpm_krige_optim::set_data(): "
-                    << "data rescale." << std::endl;
         }
       }
 
@@ -1085,21 +1088,23 @@ namespace o2scl {
         
         } else {
           
-          if (this->verbose>1) {
-            std::cout << "qual fail min_qual" << std::endl;
-          }
-          
           bool min_set=false, done=false;
           
           if (this->verbose>1) {
-            std::cout << "interpm_krige_optim::set_data() : "
+            std::cout << "interpm_krige_optim::set_data(): "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
             for(size_t jk=0;jk<plists[iout].size();jk++) {
-              std::cout << jk << " ";
+              std::cout << "  " << jk << " ";
               o2scl::vector_out(std::cout,plists[iout][jk],true);
             }
           }
+
+          if (this->verbose>1) {
+            std::cout << "interpm_krige_optim::set_data(): "
+                      << "indexes params qual fail min_qual" << std::endl;
+          }
+          
           std::vector<size_t> index_list(np_covar);
           vector_set_all(np_covar,index_list,0);
           
@@ -1119,7 +1124,7 @@ namespace o2scl {
             }
             
             if (this->verbose>1) {
-              std::cout << "interpm_krige_optim: ";
+              std::cout << "interpm_krige_optim::set_data(): ";
               o2scl::vector_out(std::cout,index_list);
               std::cout << " ";
               o2scl::vector_out(std::cout,params);
@@ -1149,20 +1154,27 @@ namespace o2scl {
         }
         
         if (this->verbose>1) {
-          std::cout << "interpm_krige_optim: ";
-          std::cout.width(2);
-          std::cout << "   " << min_qual << std::endl;
+          std::cout << "interpm_krige_optim::set_data(): ";
+          std::cout << "Minimum: " << min_qual << std::endl;
         }
+
+        std::cout << "Mode final: " << std::endl;
         cf[iout]->set_params(min_params);
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(iout,success);
+        if (success!=0) {
+          std::cout << "Success: " << success << std::endl;
+          O2SCL_ERR2("Final calculation of Kinvf failed in ",
+                     "interpm_krige_optim::set_data().",
+                     o2scl::exc_efailed);
+        }
         mode=mode_temp;
+        std::cout << "Mode final done: " << std::endl;
 	
         if (this->verbose>0) {
-          std::cout << "interpm_krige_optim::set_data_"
-                    << "internal(),\n  "
-                    << "optimal parameters: ";
+          std::cout << "interpm_krige_optim::set_data():\n  "
+                    << "Optimal parameters: ";
           o2scl::vector_out(std::cout,min_params,true);
         }
         
@@ -1173,6 +1185,7 @@ namespace o2scl {
         }
         
         // End of loop over iout
+        std::cout << "Going to next iout." << std::endl;
       }
 
       return 0;
@@ -1211,6 +1224,7 @@ namespace o2scl {
         for(size_t ipoints=0;ipoints<this->n_points;ipoints++) {
           mat_x_row_t xrow(x,ipoints);
           double covar_val=(*cf[iout])(x0,xrow);
+          std::cout << Kinvf[0].size() << " " << ipoints << std::endl;
           y0[iout]+=covar_val*Kinvf[iout][ipoints];
         }
         if (rescale) {

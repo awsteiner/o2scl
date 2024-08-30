@@ -471,6 +471,7 @@ int main(void) {
     
     iko.set_covar(vmfrn,param_lists);
     iko.rescale=true;
+    iko.verbose=2;
     iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
@@ -478,8 +479,9 @@ int main(void) {
       ubvector point(2), out(1);
       point[0]=gtn_x3.gen();
       point[1]=gtn_x3.gen();
-      
+
       if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        
         iko.eval(point,out);
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
