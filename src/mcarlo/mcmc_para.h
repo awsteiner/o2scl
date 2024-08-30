@@ -4021,6 +4021,16 @@ namespace o2scl {
      */
     int show_emu;
 
+#ifdef O2SCL_NEVER_DEFINED
+    static const size_t ignore_emu=0;
+    static const size_t use_emu=1;
+    static const size_t best_emu=2;
+    static const size_t ignore_class=0;
+    static const size_t use_class=10;
+    static const size_t best_class=20;
+    vector<size_t> active;
+#endif
+    
     /// \name Constructor and destructor
     //@{
     mcmc_para_emu() {
@@ -4053,7 +4063,7 @@ namespace o2scl {
     
     /// Wrapper to the point function which uses the emulator
     virtual int point_wrapper(size_t it, size_t np, const vec_t &p,
-                      double &log_wgt, data_t &dat) {
+                              double &log_wgt, data_t &dat) {
 
       if (n_retrain>0) {
         if (use_classifier) {
