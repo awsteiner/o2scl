@@ -28,7 +28,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 #endif
 #ifdef O2SCL_SET_EIGEN

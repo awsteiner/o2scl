@@ -29,7 +29,7 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_ieee_utils.h>
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 #endif
 #ifdef O2SCL_SET_EIGEN
@@ -66,7 +66,7 @@ public:
     return y[0];
   }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   double lefta(size_t ieq, double x, arma::rowvec &yleft) {
     return yleft[1]-1.0;
@@ -466,7 +466,7 @@ int main(void) {
 
 #ifdef O2SCL_NEVER_DEFINED
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   // Armadillo with dense matrices
   {

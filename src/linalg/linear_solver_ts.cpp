@@ -148,7 +148,7 @@ int main(void) {
     t.test_rel_vec(5,gv1,gv3,1.0e-10,"linear_solver_HH");
   }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   arma::mat am1(5,5), am2(5,5);
   arma::vec av1(5), av2(5), av3(5);

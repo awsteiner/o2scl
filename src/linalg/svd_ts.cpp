@@ -959,7 +959,7 @@ int main(int argc, char *argv[]) {
       t.test_rel_vec(arr_size-1,ov2,gsl_vector_wrap(gv2),1.0e-12,"v2");
       t.test_rel_vec(arr_size,ov4,gsl_vector_wrap(gv4),1.0e-12,"v4 (solve)");
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
       arma::mat am1(arr_size,arr_size);
       arma::mat am2(arr_size,arr_size);

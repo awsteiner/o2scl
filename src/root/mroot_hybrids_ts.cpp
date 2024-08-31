@@ -82,7 +82,7 @@ public:
 
 #endif
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   int mfn_arma(size_t nv, const arma::rowvec &x, arma::rowvec &y) {
     y[0]=sin(x[1]-0.2);
@@ -269,7 +269,7 @@ int main(void) {
 
 #endif
   
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
   
   // 9 - Using Armadillo
 

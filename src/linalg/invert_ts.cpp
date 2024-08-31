@@ -120,7 +120,7 @@ int main(void) {
   t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,gm2,gm5,1.0e-12,
                                            "LU vs. Cholesky");
   
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
   
     arma::mat am1(5,5), am2(5,5), am3(5,5);
 

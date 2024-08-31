@@ -26,7 +26,7 @@ void blank_func3() {
   return;
 }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
   
 // (Armadillo specialization)
 template<>
