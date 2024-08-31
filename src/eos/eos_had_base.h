@@ -833,7 +833,7 @@ namespace o2scl {
     */
     mroot_hybrids<> def_sat_mroot;
 
-    /** \brief The defaut neutron
+    /** \brief The default neutron
 
         By default this has a spin degeneracy of 2 and a mass of \ref
         o2scl_mks::mass_neutron converted to \f$ \mathrm{fm}^{-1} \f$. 
@@ -842,7 +842,7 @@ namespace o2scl {
     */
     fermion def_neutron;
 
-    /** \brief The defaut proton
+    /** \brief The default proton
 
         By default this has a spin degeneracy of 2 and a mass of \ref
         o2scl_mks::mass_proton converted to \f$ \mathrm{fm}^{-1} \f$. 

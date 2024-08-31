@@ -453,6 +453,79 @@ namespace o2scl {
     /// Destructor
     virtual ~eos_had_skyrme() {};
 
+    /// Copy constructor
+    eos_had_skyrme(const eos_had_skyrme &f) {
+      this->def_thermo=f.def_thermo;
+      this->eoa=f.eoa;
+      this->n0=f.n0;
+      this->comp=f.comp;
+      this->esym=f.esym;
+      this->msom=f.msom;
+      this->kprime=f.kprime;
+      this->err_nonconv=f.err_nonconv;
+      this->t0=f.t0;
+      this->t1=f.t1;
+      this->t2=f.t2;
+      this->t3=f.t3;
+      this->x0=f.x0;
+      this->x1=f.x1;
+      this->x2=f.x2;
+      this->x3=f.x3;
+      this->alpha=f.alpha;
+      this->a=f.a;
+      this->b=f.b;
+      this->W0=f.W0;
+      this->b4=f.b4;
+      this->b4p=f.b4p;
+      this->reference=f.reference;
+      this->parent_method=f.parent_method;
+      //this->nrf=f.nrf;
+      //this->nrfd=f.nrfd;
+      this->def_fet=f.def_fet;
+      this->def_deriv=f.def_deriv;
+      this->def_deriv2=f.def_deriv2;
+      this->def_neutron=f.def_neutron;
+      this->def_proton=f.def_proton;
+    }
+    
+    /// Copy construction with operator=()
+    eos_had_skyrme &operator=(const eos_had_skyrme &f) {
+      if (this!=&f) {
+        this->def_thermo=f.def_thermo;
+        this->eoa=f.eoa;
+        this->n0=f.n0;
+        this->comp=f.comp;
+        this->esym=f.esym;
+        this->msom=f.msom;
+        this->kprime=f.kprime;
+        this->err_nonconv=f.err_nonconv;
+        this->t0=f.t0;
+        this->t1=f.t1;
+        this->t2=f.t2;
+        this->t3=f.t3;
+        this->x0=f.x0;
+        this->x1=f.x1;
+        this->x2=f.x2;
+        this->x3=f.x3;
+        this->alpha=f.alpha;
+        this->a=f.a;
+        this->b=f.b;
+        this->W0=f.W0;
+        this->b4=f.b4;
+        this->b4p=f.b4p;
+        this->reference=f.reference;
+        this->parent_method=f.parent_method;
+        //this->nrf=f.nrf;
+        //this->nrfd=f.nrfd;
+        this->def_fet=f.def_fet;
+        this->def_deriv=f.def_deriv;
+        this->def_deriv2=f.def_deriv2;
+        this->def_neutron=f.def_neutron;
+        this->def_proton=f.def_proton;
+       }
+      return *this;
+    }
+    
     /** \brief Equation of state as a function of densities
         at finite temperature
     */

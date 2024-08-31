@@ -76,7 +76,9 @@ namespace o2scl {
 
     } dpars;
     
-    /// Avoids infinite loops in case the user calls the base class version
+    /** \brief Avoids infinite loops in case the user calls the base
+        class version
+    */
     bool from_deriv;
 
     typedef std::function<fp_t(fp_t)> internal_func_t;
@@ -93,6 +95,21 @@ namespace o2scl {
 
     virtual ~deriv_base() {}
 
+    /// Copy constructor
+    deriv_base(const deriv_base &f) {
+      this->verbose=f.verbose;
+      this->err_nonconv=f.err_nonconv;
+    }
+    
+    /// Copy construction with operator=()
+    deriv_base &operator=(const deriv_base &f) {
+      if (this!=&f) {
+        this->verbose=f.verbose;
+        this->err_nonconv=f.err_nonconv;
+      }
+      return *this;
+    }
+    
     /// If true, call the error handler if the routine does not "converge"
     bool err_nonconv;
 

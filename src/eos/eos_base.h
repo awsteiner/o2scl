@@ -75,6 +75,19 @@ namespace o2scl {
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
                                 double T, thermo &th)=0;
+
+    /// Copy constructor
+    eos_base(const eos_base &f) {
+      this->def_thermo=f.def_thermo;
+    }
+    
+    /// Copy construction with operator=()
+    eos_base &operator=(const eos_base &f) {
+      if (this!=&f) {
+        this->def_thermo=f.def_thermo;
+      }
+      return *this;
+    }
     
   protected:
 

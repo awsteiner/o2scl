@@ -394,6 +394,111 @@ namespace o2scl {
 
     eos_had_rmf();
 
+    /// Destructor
+    virtual ~eos_had_rmf() {
+    }
+
+    /// Copy constructor
+    eos_had_rmf(const eos_had_rmf &f) {
+      this->def_thermo=f.def_thermo;
+      this->eoa=f.eoa;
+      this->n0=f.n0;
+      this->comp=f.comp;
+      this->esym=f.esym;
+      this->msom=f.msom;
+      this->kprime=f.kprime;
+      this->err_nonconv=f.err_nonconv;
+      
+      this->calc_e_steps=f.calc_e_steps;
+      this->calc_e_relative=f.calc_e_relative;
+      this->zm_mode=f.zm_mode;
+      this->verbose=f.verbose;
+      this->mnuc=f.mnuc;
+      this->ms=f.ms;
+      this->mw=f.mw;
+      this->mr=f.mr;
+      this->cs=f.cs;
+      this->cw=f.cw;
+      this->cr=f.cr;
+      this->b=f.b;
+      this->c=f.c;
+      this->zeta=f.zeta;
+      this->xi=f.xi;
+      this->a1=f.a1;
+      this->a2=f.a2;
+      this->a3=f.a3;
+      this->a4=f.a4;
+      this->a5=f.a5;
+      this->a6=f.a6;
+      this->b1=f.b1;
+      this->b2=f.b2;
+      this->b3=f.b3;
+      this->sigma=f.sigma;
+      this->omega=f.omega;
+      this->rho=f.rho;
+      this->guess_set=f.guess_set;
+      
+      //this->nrf=f.nrf;
+      //this->nrfd=f.nrfd;
+      this->def_fet=f.def_fet;
+      this->def_deriv=f.def_deriv;
+      this->def_deriv2=f.def_deriv2;
+      this->def_neutron=f.def_neutron;
+      this->def_proton=f.def_proton;
+    }
+    
+    /// Copy construction with operator=()
+    eos_had_rmf &operator=(const eos_had_rmf &f) {
+      if (this!=&f) {
+        this->def_thermo=f.def_thermo;
+        this->eoa=f.eoa;
+        this->n0=f.n0;
+        this->comp=f.comp;
+        this->esym=f.esym;
+        this->msom=f.msom;
+        this->kprime=f.kprime;
+        this->err_nonconv=f.err_nonconv;
+        
+        this->calc_e_steps=f.calc_e_steps;
+        this->calc_e_relative=f.calc_e_relative;
+        this->zm_mode=f.zm_mode;
+        this->verbose=f.verbose;
+        this->mnuc=f.mnuc;
+        this->ms=f.ms;
+        this->mw=f.mw;
+        this->mr=f.mr;
+        this->cs=f.cs;
+        this->cw=f.cw;
+        this->cr=f.cr;
+        this->b=f.b;
+        this->c=f.c;
+        this->zeta=f.zeta;
+        this->xi=f.xi;
+        this->a1=f.a1;
+        this->a2=f.a2;
+        this->a3=f.a3;
+        this->a4=f.a4;
+        this->a5=f.a5;
+        this->a6=f.a6;
+        this->b1=f.b1;
+        this->b2=f.b2;
+        this->b3=f.b3;
+        this->sigma=f.sigma;
+        this->omega=f.omega;
+        this->rho=f.rho;
+        this->guess_set=f.guess_set;
+        
+        //this->nrf=f.nrf;
+        //this->nrfd=f.nrfd;
+        this->def_fet=f.def_fet;
+        this->def_deriv=f.def_deriv;
+        this->def_deriv2=f.def_deriv2;
+        this->def_neutron=f.def_neutron;
+        this->def_proton=f.def_proton;
+       }
+      return *this;
+    }
+    
     /* \brief Load parameters for model named 'model'
         
         Presently accepted values from file rmfdata/model_list:

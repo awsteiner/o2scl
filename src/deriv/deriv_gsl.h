@@ -148,6 +148,29 @@ namespace o2scl {
 
     virtual ~deriv_gsl() {}
     
+    /// Copy constructor
+    deriv_gsl(const deriv_gsl &f) {
+      this->verbose=f.verbose;
+      this->err_nonconv=f.err_nonconv;
+      this->h=f.h;
+      this->h_opt=f.h_opt;
+      this->func_max=f.func_max;
+      this->pow_tol_func=f.pow_tol_func;
+    }
+    
+    /// Copy construction with operator=()
+    deriv_gsl &operator=(const deriv_gsl &f) {
+      if (this!=&f) {
+        this->verbose=f.verbose;
+        this->err_nonconv=f.err_nonconv;
+        this->h=f.h;
+        this->h_opt=f.h_opt;
+        this->func_max=f.func_max;
+        this->pow_tol_func=f.pow_tol_func;
+      }
+      return *this;
+    }
+    
     /** \brief Initial stepsize
 	
 	This should be specified before a call to deriv() or

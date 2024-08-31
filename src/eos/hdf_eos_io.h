@@ -147,6 +147,10 @@ namespace o2scl_hdf {
   */
   void eos_had_strings_list();
 
+  /** \brief List EOSs understood by \ref eos_had_temp_strings() .
+  */
+  void eos_had_temp_strings_list();
+
   /** \brief Desc
 
       \note The pointer is allocated with \c new and the user
