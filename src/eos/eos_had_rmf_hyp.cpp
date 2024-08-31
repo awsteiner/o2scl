@@ -550,7 +550,7 @@ void eos_had_rmf_hyp::calc_xw(double lam_be) {
 }
 
 int eos_had_rmf_hyp::calc_e_solve_fun(size_t nv, const ubvector &ex, 
-				      ubvector &ey) {
+				      ubvector &ey, thermo &th) {
   
   double f1,f2,f3,sig,ome,lrho;
 
@@ -837,10 +837,10 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon_loc, double n_charge_loc,
   }
   
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
      (&eos_had_rmf_hyp::calc_e_solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,lth);
 
   if (guess_set) {
     
@@ -856,7 +856,7 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon_loc, double n_charge_loc,
     
     ret=eos_mroot->msolve(nv,x,fmf);
     
-    int rt=calc_e_solve_fun(nv,x,y);
+    int rt=calc_e_solve_fun(nv,x,y,lth);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
 		      "eos_had_rmf_hyp::calc_e().",exc_efailed,
@@ -906,14 +906,14 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon_loc, double n_charge_loc,
 
       // If the chemical potentials are too small, shift them by
       // a little more than required to get positive densities. 
-      int rt=calc_e_solve_fun(5,x,y);
+      int rt=calc_e_solve_fun(5,x,y,lth);
       if (!ce_prot_matter && neutron->nu<neutron->ms) {
 	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	rt=calc_e_solve_fun(5,x,y,lth);
       }
       if (!ce_neut_matter && proton->nu<proton->ms) {
 	proton->mu+=(proton->ms-proton->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	rt=calc_e_solve_fun(5,x,y,lth);
       }
 
       // The initial point has n_n = n_p and thus rho=0, and the
@@ -947,7 +947,7 @@ int eos_had_rmf_hyp::calc_hyp_e(double n_baryon_loc, double n_charge_loc,
       cout << endl;
     }
     
-    int rt2=calc_e_solve_fun(5,x,y);
+    int rt2=calc_e_solve_fun(5,x,y,lth);
     if (rt2!=0) {
       O2SCL_CONV_RET("Final solution failed in eos_had_rmf_hyp::calc_e().",
 		     exc_efailed,this->err_nonconv);
@@ -1023,7 +1023,7 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
     
     ret=eos_mroot->msolve(nv,x,fmf);
     
-    int rt=calc_e_solve_fun(nv,x,y);
+    int rt=calc_e_solve_fun(nv,x,y,lth);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
 		      "eos_had_rmf_hyp::calc_temp_hyp_e().",exc_efailed,
@@ -1073,14 +1073,14 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
 
       // If the chemical potentials are too small, shift them by
       // a little more than required to get positive densities. 
-      int rt=calc_e_solve_fun(5,x,y);
+      int rt=calc_e_solve_fun(5,x,y,lth);
       if (!ce_prot_matter && neutron->nu<neutron->ms) {
 	neutron->mu+=(neutron->ms-neutron->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	rt=calc_e_solve_fun(5,x,y,lth);
       }
       if (!ce_neut_matter && proton->nu<proton->ms) {
 	proton->mu+=(proton->ms-proton->mu)*1.01;
-	rt=calc_e_solve_fun(5,x,y);
+	rt=calc_e_solve_fun(5,x,y,lth);
       }
 
       // The initial point has n_n = n_p and thus rho=0, and the
@@ -1114,7 +1114,7 @@ int eos_had_rmf_hyp::calc_temp_hyp_e
       cout << endl;
     }
     
-    int rt2=calc_e_solve_fun(5,x,y);
+    int rt2=calc_e_solve_fun(5,x,y,lth);
     if (rt2!=0) {
       O2SCL_CONV2_RET("Final solution failed in ",
                      "eos_had_rmf_hyp::calc_temp_hyp_e().",
@@ -1190,7 +1190,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta
     
     ret=eos_mroot->msolve(nv,x,fmf);
     
-    int rt=calc_e_solve_fun(nv,x,y);
+    int rt=calc_e_solve_fun(nv,x,y,lth);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
 		      "eos_had_rmf_hyp::calc_hyp_e_nobeta().",exc_efailed,
@@ -1352,7 +1352,7 @@ int eos_had_rmf_hyp::calc_hyp_e_nobeta_np
     
     ret=eos_mroot->msolve(nv,x,fmf);
     
-    int rt=calc_e_solve_fun(nv,x,y);
+    int rt=calc_e_solve_fun(nv,x,y,lth);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
 		      "eos_had_rmf_hyp::calc_hyp_e_nobeta_np().",exc_efailed,

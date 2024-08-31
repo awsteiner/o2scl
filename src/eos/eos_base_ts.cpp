@@ -38,8 +38,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  eos_base eo;
-  
   t.report();
   return 0;
 }

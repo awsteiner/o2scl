@@ -57,7 +57,7 @@ py_header from o2sclpy.part import *
 # 
 # Class eos_base
 #
-class eos_base
+class eos_base abstract
 - o2scl::thermo def_thermo
 # 1/17/2021 removing set_thermo and get_thermo for now, as yanic does
 # not yet handle these kind of functions.
@@ -368,7 +368,7 @@ class eos_had_rmf
 # 
 # Class eos_quark
 #
-class eos_quark
+class eos_quark abstract
 - parent eos_base
 # 
 # Class eos_quark_bag

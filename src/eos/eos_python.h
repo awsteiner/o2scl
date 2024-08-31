@@ -40,10 +40,6 @@
 
 extern "C" {
 
-void *o2scl_create_eos_base();
-
-void o2scl_free_eos_base(void *vptr);
-
 void *o2scl_eos_base_get_def_thermo(void *vptr);
 
 void o2scl_eos_base_set_def_thermo(void *vptr, void *p_v);
@@ -413,10 +409,6 @@ void o2scl_eos_had_rmf_set_b3(void *vptr, double v);
 int o2scl_eos_had_rmf_get_fields(void *vptr, double *sig, double *ome, double *rho);
 
 int o2scl_eos_had_rmf_set_fields(void *vptr, double *sig, double *ome, double *rho);
-
-void *o2scl_create_eos_quark();
-
-void o2scl_free_eos_quark(void *vptr);
 
 void *o2scl_create_eos_quark_bag();
 

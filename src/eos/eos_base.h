@@ -36,7 +36,7 @@
 
 namespace o2scl {
 
-  /** \brief Equation of state base class
+  /** \brief Equation of state base class [abstract virtual base]
     
       A base class for an equation of state
   */
@@ -50,9 +50,6 @@ namespace o2scl {
 
     /// Set class thermo object
     virtual void set_thermo(thermo &th);
-
-    /// Get class thermo object
-    virtual const thermo &get_thermo();
 
     /// The default thermo object
     thermo def_thermo;
@@ -71,13 +68,13 @@ namespace o2scl {
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
-			   std::shared_ptr<table_units<> > results);
+			   std::shared_ptr<table_units<> > results)=0;
 
     /** \brief Equation of state as a function of baryon, charge,
         and strangeness density at finite temperature
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
-                                double T, thermo &th);
+                                double T, thermo &th)=0;
     
   protected:
 

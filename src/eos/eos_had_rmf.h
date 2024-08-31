@@ -576,7 +576,7 @@ namespace o2scl {
         and <tt>y[2]</tt> contain the field equations and are zero
         when the field equations have been solved.
     */
-    int field_eqs(size_t nv, const ubvector &x, ubvector &y);
+    int field_eqs(size_t nv, const ubvector &x, ubvector &y, o2scl::thermo &th);
 
     /** \brief A function for solving the field equations at finite 
         temperature
@@ -587,7 +587,8 @@ namespace o2scl {
         and <tt>y[2]</tt> contain the field equations and are zero
         when the field equations have been solved.
     */
-    int field_eqsT(size_t nv, const ubvector &x, ubvector &y);
+    int field_eqsT(size_t nv, const ubvector &x, ubvector &y,
+                   o2scl::thermo &th);
 
     /** \brief Set a guess for the fields for the next call to calc_e(), 
         calc_p(), or saturation()
@@ -825,15 +826,15 @@ namespace o2scl {
     
     /// Compute matter at zero pressure (for saturation())
     virtual int zero_pressure(size_t nv, const ubvector &ex, 
-                              ubvector &ey);
+                              ubvector &ey, o2scl::thermo &th);
 
     /// The function for calc_e()
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-                                 ubvector &ey);
+                                 ubvector &ey, o2scl::thermo &th);
 
     /// The function for calc_temp_e()
     virtual int calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
-                                      ubvector &ey);
+                                      ubvector &ey, o2scl::thermo &th);
 
     /** \brief Calculate the \c cr coupling given \c sig and \c ome 
         at the density 'nb'.

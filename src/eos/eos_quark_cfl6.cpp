@@ -686,15 +686,16 @@ int eos_quark_cfl6::test_derivatives(double lmom, double mu3, double mu8,
     double om2=res[0];
     up->mu-=h;
     t.test_abs((om2-om1)/h,dmuu,1.0e-3,"dmuu");
-    
+
+    thermo th;
     calc_eq_temp_p(*up,*down,*strange,x1,x2,x3,x4,x5,x6,mu3,mu8,
-		   n3,n8,*eos_thermo,4.0/hc_mev_fm);
-    double pr1=eos_thermo->pr;
+		   n3,n8,th,4.0/hc_mev_fm);
+    double pr1=th.pr;
     double nu=up->n;
     up->mu+=h;
     calc_eq_temp_p(*up,*down,*strange,x1,x2,x3,x4,x5,x6,mu3,mu8,
-		   n3,n8,*eos_thermo,4.0/hc_mev_fm);
-    double pr2=eos_thermo->pr;
+		   n3,n8,th,4.0/hc_mev_fm);
+    double pr2=th.pr;
     up->mu-=h;
     t.test_rel((pr2-pr1)/h,nu,1.0e-5,"nup");
   }
@@ -703,13 +704,13 @@ int eos_quark_cfl6::test_derivatives(double lmom, double mu3, double mu8,
 }
 
 int eos_quark_cfl6::eigenvalues6(double lmom, double mu3, 
-			    double mu8, double egv[36],
-			    double dedmuu[36], double dedmud[36],
-			    double dedmus[36], double dedqqu[36], 
-			    double dedqqd[36], double dedqqs[36],
-			    double dedu[36], double dedd[36],
-			    double deds[36], double dedmu3[36],
-			    double dedmu8[36]) {
+                                 double mu8, double egv[36],
+                                 double dedmuu[36], double dedmud[36],
+                                 double dedmus[36], double dedqqu[36], 
+                                 double dedqqd[36], double dedqqs[36],
+                                 double dedu[36], double dedd[36],
+                                 double deds[36], double dedmu3[36],
+                                 double dedmu8[36]) {
   
   int k;
   const double mu=up->ms, md=down->ms, ms=strange->ms;

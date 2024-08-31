@@ -88,6 +88,13 @@ namespace o2scl {
     
   public:
 
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     eos_had_tabulated() {
       table_alloc=false;
       one_table=false;

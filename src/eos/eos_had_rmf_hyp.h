@@ -82,7 +82,7 @@ namespace o2scl {
 
     /// The function for calc_e()
     virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-                         ubvector &ey);
+                                 ubvector &ey, o2scl::thermo &th);
 
     /// The function for calc_e_hyp_nobeta()
     int calc_e_nobeta_fun(size_t nv, const ubvector &ex, 

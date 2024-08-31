@@ -30,17 +30,6 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_hdf;
 
-void *o2scl_create_eos_base() {
-  eos_base *ptr=new eos_base;
-  return ptr;
-}
-
-void o2scl_free_eos_base(void *vptr) {
-  eos_base *ptr=(eos_base *)vptr;
-  delete ptr;
-  return;
-}
-
 void *o2scl_eos_base_get_def_thermo(void *vptr) {
   eos_base *ptr=(eos_base *)vptr;
   return (void *)(&(ptr->def_thermo));
@@ -1106,17 +1095,6 @@ int o2scl_eos_had_rmf_set_fields(void *vptr, double *sig, double *ome, double *r
   eos_had_rmf *ptr=(eos_had_rmf *)vptr;
   int ret=ptr->set_fields(*sig,*ome,*rho);
   return ret;
-}
-
-void *o2scl_create_eos_quark() {
-  eos_quark *ptr=new eos_quark;
-  return ptr;
-}
-
-void o2scl_free_eos_quark(void *vptr) {
-  eos_quark *ptr=(eos_quark *)vptr;
-  delete ptr;
-  return;
 }
 
 void *o2scl_create_eos_quark_bag() {

@@ -51,8 +51,20 @@ namespace o2scl {
 
     virtual ~eos_quark_bag() {};
 
+    /** \brief Desc
+     */
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           eos_leptons &elep,
+			   std::shared_ptr<table_units<> > results) {
+      return 1;
+    }
+    
+    /** \brief Desc
+     */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &th);
 
+    /** \brief Desc
+     */
     virtual int calc_e(quark &u, quark &d, quark &s, thermo &th);
 
     /** \brief Calculate equation of state as a function of 

@@ -197,27 +197,28 @@ int eos_had_rmf::check_derivs
   deriv_gsl<> dg;
   double feq1, feq2, feq3;
 
+  thermo th;
   funct f1=std::bind
     (std::mem_fn<int(fermion &,fermion &,double,
 		     double,double,double &, double &, double &,
 		     thermo &)>
      (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
      std::placeholders::_1,ome,lrho,std::ref(feq1),std::ref(feq2),
-     std::ref(feq3),std::ref(*eos_thermo));
+     std::ref(feq3),std::ref(th));
   funct f2=std::bind
     (std::mem_fn<int(fermion &,fermion &,double,
 		     double,double,double &, double &, double &,
 		     thermo &)>
      (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
      sig,std::placeholders::_1,lrho,std::ref(feq1),std::ref(feq2),
-     std::ref(feq3),std::ref(*eos_thermo));
+     std::ref(feq3),std::ref(th));
   funct f3=std::bind
     (std::mem_fn<int(fermion &,fermion &,double,
 		     double,double,double &, double &, double &,
 		     thermo &)>
      (&eos_had_rmf::calc_eq_p),this,std::ref(ne),std::ref(pr),
      sig,ome,std::placeholders::_1,std::ref(feq1),std::ref(feq2),
-     std::ref(feq3),std::ref(*eos_thermo));
+     std::ref(feq3),std::ref(th));
 
   double err;
   dg.deriv_err(sig,f1,dPds,err);
@@ -227,7 +228,8 @@ int eos_had_rmf::check_derivs
   return 0;
 }
 
-int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
+int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y,
+                           thermo &th) {
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
   // that this function will produce gibberish if the 
@@ -242,7 +244,7 @@ int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
 #endif
 
   calc_eq_p(*neutron,*proton,x[0],x[1],x[2],y[0],y[1],y[2],
-	    *eos_thermo);
+	    th);
 
   if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
       !std::isfinite(y[2])) {
@@ -251,7 +253,8 @@ int eos_had_rmf::field_eqs(size_t nv, const ubvector &x, ubvector &y) {
   return 0;
 }
 
-int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
+int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y,
+                            thermo &th) {
 #if !O2SCL_NO_RANGE_CHECK
   // This may not be strictly necessary, because it should be clear
   // that this function will produce gibberish if the 
@@ -275,7 +278,7 @@ int eos_had_rmf::field_eqsT(size_t nv, const ubvector &x, ubvector &y) {
   if (neutron->ms<0.0 || proton->ms<0.0) return exc_ebadfunc;
 
   calc_eq_temp_p(*neutron,*proton,fe_temp,x[0],x[1],x[2],y[0],y[1],y[2],
-		 *eos_thermo);
+		 th);
 
   if (!std::isfinite(y[0]) || !std::isfinite(y[1]) ||
       !std::isfinite(y[2])) {
@@ -292,7 +295,6 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
   ne.non_interacting=false;
   pr.non_interacting=false;
 
-  set_thermo(lth);
   set_n_and_p(ne,pr);
   
   if (guess_set) {
@@ -307,10 +309,10 @@ int eos_had_rmf::calc_p(fermion &ne, fermion &pr, thermo &lth) {
   }
   
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
      (&eos_had_rmf::field_eqs),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(lth));
 
   eos_mroot->verbose=2;
   ret=eos_mroot->msolve(3,x,fmf);
@@ -345,7 +347,6 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
   ne.non_interacting=false;
   pr.non_interacting=false;
 
-  set_thermo(lth);
   set_n_and_p(ne,pr);
   fe_temp=T;
   
@@ -361,10 +362,10 @@ int eos_had_rmf::calc_temp_p(fermion &ne, fermion &pr, const double T,
   }
   
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &th)>
      (&eos_had_rmf::field_eqsT),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(lth));
 
   ret=eos_mroot->msolve(3,x,fmf);
   
@@ -393,7 +394,6 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   ne.non_interacting=false;
   pr.non_interacting=false;
 
-  set_thermo(lth);
   set_n_and_p(ne,pr);
 
   // If zero-density, then just return rest mass energy
@@ -427,10 +427,10 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
   n_charge=pr.n;
   
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &th)>
      (&eos_had_rmf::calc_e_solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(lth));
 
   if (guess_set) {
     
@@ -446,7 +446,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 
     ret=eos_mroot->msolve(5,x,fmf);
 
-    int rt=calc_e_solve_fun(5,x,y);
+    int rt=calc_e_solve_fun(5,x,y,lth);
     if (rt!=0) {
       O2SCL_CONV2_RET("Final solution failed (user guess) in ",
 		      "eos_had_rmf::calc_e().",exc_efailed,this->err_nonconv);
@@ -490,13 +490,13 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 
       // If the chemical potentials are too small, shift them to
       // get positive densities
-      int rt=calc_e_solve_fun(5,x,y);
+      int rt=calc_e_solve_fun(5,x,y,lth);
       
       if (!ce_prot_matter && neutron->nu<neutron->ms) {
 	for(size_t j=0;j<5 && !ce_prot_matter && neutron->nu<neutron->ms;
 	    j++) {
 	  x[0]+=0.1;
-	  rt=calc_e_solve_fun(5,x,y);
+	  rt=calc_e_solve_fun(5,x,y,lth);
 	}
       }
       
@@ -504,7 +504,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 	for(size_t j=0;j<5 && !ce_neut_matter && proton->nu<proton->ms;
 	    j++) {
 	  x[1]+=0.1;
-	  rt=calc_e_solve_fun(5,x,y);
+	  rt=calc_e_solve_fun(5,x,y,lth);
 	}
       }
 
@@ -546,7 +546,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
       cout << endl;
     }
     
-    int rt2=calc_e_solve_fun(5,x,y);
+    int rt2=calc_e_solve_fun(5,x,y,lth);
     if (rt2!=0) {
       O2SCL_CONV_RET("Final solution failed in eos_had_rmf::calc_e().",
 		     exc_efailed,this->err_nonconv);
@@ -582,7 +582,6 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   ne.non_interacting=false;
   pr.non_interacting=false;
 
-  set_thermo(lth);
   set_n_and_p(ne,pr);
 
   // If zero density, then just return rest mass energy
@@ -606,10 +605,10 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   n_charge=pr.n;
   
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
      (&eos_had_rmf::calc_temp_e_solve_fun),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,std::ref(lth));
 
   int ret=1;
 
@@ -638,7 +637,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
       cout << " Return value: " << ret << endl;
     }
     eos_mroot->err_nonconv=ent;
-    calc_temp_e_solve_fun(5,x,y);
+    calc_temp_e_solve_fun(5,x,y,lth);
     
   } 
 
@@ -713,7 +712,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
       cout.precision(6);
       cout << endl;
     }
-    calc_temp_e_solve_fun(5,x,y);
+    calc_temp_e_solve_fun(5,x,y,lth);
     if (verbose>0) {
       cout.setf(ios::scientific);
       cout << "x: ";
@@ -985,7 +984,8 @@ int eos_had_rmf::fix_saturation2(double gcs, double gcw,
   return 0;
 }
 
-int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb, double gc) {
+int eos_had_rmf::fix_saturation(double gcs, double gcw, double gb,
+                                double gc) {
   int nvar, test;
   ubvector x(4);
   double power,kf,kf2,kf3,efs;
@@ -1062,10 +1062,10 @@ int eos_had_rmf::saturation() {
   int test;
 
   mm_funct fmf=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+    (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &th)>
      (&eos_had_rmf::zero_pressure),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3);
+     std::placeholders::_3,this->def_thermo);
 
   if (guess_set) {
     x[0]=neutron->mu;
@@ -1087,11 +1087,11 @@ int eos_had_rmf::saturation() {
   int it=0;
   if (x[0]<0.0) x[0]=0.0;
   if (x[1]<0.0) x[1]=0.0;
-  zero_pressure(5,x,y);
+  zero_pressure(5,x,y,this->def_thermo);
   while (it<max_it && (neutron->n<=0.0 || proton->n<=0.0)) {
     x[0]+=neutron->m*0.05;
     x[1]+=proton->m*0.05;
-    zero_pressure(5,x,y);
+    zero_pressure(5,x,y,this->def_thermo);
     it++;
     if (verbose>0) {
       cout << "eos_had_rmf::saturation() fixing density: " << it 
@@ -1112,6 +1112,7 @@ int eos_had_rmf::saturation() {
   }
 
   test=sat_mroot->msolve(5,x,fmf);
+  zero_pressure(5,x,y,this->def_thermo);
   
   sigma=x[2];
   omega=x[3];
@@ -1129,7 +1130,7 @@ int eos_had_rmf::saturation() {
   
   n0=neutron->n+proton->n;
   msom=neutron->ms/neutron->m;
-  eoa=(eos_thermo->ed/n0-(neutron->m+proton->m)/2.0);
+  eoa=(this->def_thermo.ed/n0-(neutron->m+proton->m)/2.0);
   
   comp=eos_had_base::fcomp(n0);
   kprime=eos_had_base::fkprime(n0);
@@ -1144,7 +1145,7 @@ int eos_had_rmf::saturation() {
 }
 
 int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex, 
-				  ubvector &ey) {
+				  ubvector &ey,thermo &th) {
 
   double f1,f2,f3,sig,ome,lrho;
   
@@ -1154,7 +1155,7 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
   ome=ex[3];
   lrho=ex[4];
   
-  calc_eq_p(*neutron,*proton,sig,ome,lrho,f1,f2,f3,*eos_thermo);
+  calc_eq_p(*neutron,*proton,sig,ome,lrho,f1,f2,f3,th);
   
   // 11/5/08 - We don't want to call the error handler here, because
   // sometimes the solver may accidentally find a region where 
@@ -1197,7 +1198,7 @@ int eos_had_rmf::calc_e_solve_fun(size_t nv, const ubvector &ex,
 }
 
 int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
-				       ubvector &ey) {
+				       ubvector &ey, thermo &th) {
   double f1,f2,f3,sig,ome,lrho;
 
   neutron->mu=ex[0];
@@ -1237,7 +1238,7 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
   }
 
   calc_eq_temp_p(*neutron,*proton,
-		 ce_temp,sig,ome,lrho,f1,f2,f3,*eos_thermo);
+		 ce_temp,sig,ome,lrho,f1,f2,f3,th);
 
   if (calc_e_relative) {
     ey[0]=(proton->n+neutron->n-n_baryon)/n_baryon;
@@ -1267,7 +1268,7 @@ int eos_had_rmf::calc_temp_e_solve_fun(size_t nv, const ubvector &ex,
 }
 
 int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex, 
-			       ubvector &ey) {
+			       ubvector &ey, thermo &th) {
 
   double f1,f2,f3,sig,ome,lrho;
   fermion *n=neutron, *p=proton;
@@ -1285,9 +1286,9 @@ int eos_had_rmf::zero_pressure(size_t nv, const ubvector &ex,
     }
   }
   
-  calc_eq_p(*n,*p,sig,ome,lrho,f1,f2,f3,*eos_thermo);
+  calc_eq_p(*n,*p,sig,ome,lrho,f1,f2,f3,th);
 
-  ey[0]=eos_thermo->pr;
+  ey[0]=th.pr;
   ey[1]=p->n/(n->n+p->n)-0.5;
   ey[2]=f1;
   ey[3]=f2;

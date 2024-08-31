@@ -52,7 +52,7 @@ public:
     p.init(939.0/hc_mev_fm,2.0);
 
     e.init(o2scl_settings.get_convert_units().convert
-	    ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
+           ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
     mu.init(o2scl_settings.get_convert_units().convert
 	    ("kg","1/fm",o2scl_const::mass_muon_f<double>()),2.0);
     
@@ -157,7 +157,6 @@ public:
     nferm.non_interacting=false;
     p.non_interacting=false;
     double sig, ome, rho, f1, f2, f3, barn;
-    thermo th;
 
     /*
       This was an attempt to use check_den(), but it fails
@@ -191,7 +190,8 @@ public:
     for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx/2.0;
       p.n=nbx/2.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx8;
+      int ret=re.calc_e(nferm,p,thx8);
       t.test_gen(ret==0,"NL3 nuclear matter ret. val.");
       t.test_rel(nferm.n,nbx/2.0,1.0e-6,"NL3 nuclear matter n.n");
       t.test_rel(p.n,nbx/2.0,1.0e-6,"NL3 nuclear matter p.n");
@@ -201,7 +201,8 @@ public:
     for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx;
       p.n=0.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx2;
+      int ret=re.calc_e(nferm,p,thx2);
       t.test_gen(ret==0,"NL3 neutron matter ret. val.");
       t.test_rel(nferm.n,nbx,1.0e-6,"NL3 neutron matter n.n");
       t.test_rel(p.n,0.0,1.0e-6,"NL3 neutron matter p.n");
@@ -211,7 +212,8 @@ public:
     for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx*0.75;
       p.n=nbx/4.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx3;
+      int ret=re.calc_e(nferm,p,thx3);
       t.test_gen(ret==0,"NL3 neutron-rich matter ret. val.");
       t.test_rel(nferm.n,nbx*0.75,1.0e-6,"NL3 neutron-rich matter n.n");
       t.test_rel(p.n,nbx/4.0,1.0e-6,"NL3 neutron-rich matter p.n");
@@ -223,7 +225,8 @@ public:
     for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx/2.0;
       p.n=nbx/2.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx4;
+      int ret=re.calc_e(nferm,p,thx4);
       t.test_gen(ret==0,"RAPR nuclear matter ret. val.");
       t.test_rel(nferm.n,nbx/2.0,1.0e-6,"RAPR nuclear matter n.n");
       t.test_rel(p.n,nbx/2.0,1.0e-6,"RAPR nuclear matter p.n");
@@ -233,7 +236,8 @@ public:
     for(double nbx=1.0e-8;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx;
       p.n=0.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx5;
+      int ret=re.calc_e(nferm,p,thx5);
       t.test_gen(ret==0,"RAPR neutron matter ret. val.");
       t.test_rel(nferm.n,nbx,1.0e-6,"RAPR neutron matter n.n");
       t.test_rel(p.n,0.0,1.0e-6,"RAPR neutron matter p.n");
@@ -243,7 +247,8 @@ public:
     for(double nbx=1.0e-4;nbx<=1.29;nbx*=2.0) {
       nferm.n=nbx*0.75;
       p.n=nbx/4.0;
-      int ret=re.calc_e(nferm,p,th);
+      thermo thx6;
+      int ret=re.calc_e(nferm,p,thx6);
       t.test_gen(ret==0,"RAPR neutron-rich matter ret. val.");
       t.test_rel(nferm.n,nbx*0.75,1.0e-6,"RAPR neutron-rich matter n.n");
       t.test_rel(p.n,nbx/4.0,1.0e-6,"RAPR neutron-rich matter p.n");
@@ -253,28 +258,29 @@ public:
 
     load_nl3(re);
     re.set_n_and_p(nferm,p);
-    re.set_thermo(th);
     nferm.mu=4.8;
     p.mu=4.8;
     re.saturation();
-    cout << "NL3: " << endl;
-    cout << "  Saturation density: " << re.n0 << endl;
-    t.test_rel(re.n0,0.148,1.0e-2,"sat density");
-    cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m
-         << endl;
-    t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
-    cout << "  Zero pressure: " << th.pr << endl;
-    t.test_rel(th.pr,0.0,1.0e-8,"zero press");
-    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
-	 << (th.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
-    t.test_rel(re.eoa,th.ed/re.n0-re.mnuc,1.0e-6,"eoa");
-    cout << "  Thermodynamic identity: " 
-	 << th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
-    t.test_rel(th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-9,"TI");
-    cout << endl;
+    {
+      thermo &th3=re.def_thermo;
+      cout << "NL3: " << endl;
+      cout << "  Saturation density: " << re.n0 << endl;
+      t.test_rel(re.n0,0.148,1.0e-2,"sat density");
+      cout << "  Effective mass: " << re.msom << " " << nferm.ms/nferm.m
+           << endl;
+      t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
+      cout << "  Zero pressure: " << th3.pr << endl;
+      t.test_rel(th3.pr,0.0,1.0e-8,"zero press");
+      cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+           << (th3.ed/re.n0-re.mnuc)*hc_mev_fm << endl;
+      t.test_rel(re.eoa,th3.ed/re.n0-re.mnuc,1.0e-6,"eoa");
+      cout << "  Thermodynamic identity: " 
+           << th3.ed+th3.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
+      t.test_rel(th3.ed+th3.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-9,"TI");
+      cout << endl;
+    }
   
     re.set_n_and_p(nferm,p);
-    re.set_thermo(th);
 
     // Test calc_e()
     re.saturation();
@@ -282,9 +288,12 @@ public:
     p.n=re.n0/2.0;
     nferm.mu=nferm.m*1.1;
     p.mu=p.m*1.1;
-    re.calc_e(nferm,p,th);
-    t.test_rel((th.ed/(nferm.n+p.n)-nferm.m)*hc_mev_fm,re.eoa*hc_mev_fm,
-	       1.0e-5,"calc_e");
+    {
+      thermo &thx7=re.def_thermo;
+      re.calc_e(nferm,p,thx7);
+      t.test_rel((thx7.ed/(nferm.n+p.n)-nferm.m)*hc_mev_fm,re.eoa*hc_mev_fm,
+                 1.0e-5,"calc_e");
+    }
   
     cout << "1. Testing fix_saturation()\n" << endl;
     cout << "  From PRL 86, 5647 - NL3" << endl;
@@ -399,30 +408,34 @@ public:
     nferm.mu=sqrt(nferm.kf*nferm.kf+re.mnuc*re.mnuc*re.msom*re.msom)+
       re.mw*re.cw*ome;
     p.mu=sqrt(p.kf*p.kf+re.mnuc*re.mnuc*re.msom*re.msom)+re.mw*re.cw*ome;
-    re.calc_eq_p(nferm,p,sig,ome,rho,f1,f2,f3,th);
-    barn=nferm.n+p.n;
-  
-    t.test_rel(barn,re.n0,1.0e-6,"sat. den.");
-    t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
-    t.test_abs(th.pr,0.0,1.0e-4,"pressure 0");
-    t.test_rel(re.eoa*hc_mev_fm,(th.ed/barn-re.mnuc)*hc_mev_fm,
-	       5.0e-4,"eoa");
-    t.test_abs(f1,0.0,1.0e-3,"sigma field");
-    t.test_abs(f2,0.0,1.0e-10,"omega field");
-    t.test_abs(f3,0.0,1.0e-10,"rho field");
-    t.test_abs(th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-10,
-	       "thermo ident.");
-    cout << "  Saturation density: " << barn << " " << re.n0 << endl;
-    cout << "  Effective mass: " << re.msom << " "
-         << nferm.ms/nferm.m << endl;
-    cout << "  Zero pressure: " << th.pr << endl;
-    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
-	 << (th.ed/barn-re.mnuc)*hc_mev_fm << endl;
-    cout << "  Field equations: " << f1 << " " << f2 << " " << f3 << endl;
-    cout << "  Thermodynamic identity: " 
-	 << th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
-    cout << endl;
 
+    if (true) {
+      thermo &th4=re.def_thermo;
+      re.calc_eq_p(nferm,p,sig,ome,rho,f1,f2,f3,th4);
+      barn=nferm.n+p.n;
+
+      t.test_rel(barn,re.n0,1.0e-6,"sat. den.");
+      t.test_rel(re.msom,nferm.ms/nferm.m,1.0e-6,"msom");
+      t.test_abs(th4.pr,0.0,1.0e-4,"pressure 0");
+      t.test_rel(re.eoa*hc_mev_fm,(th4.ed/barn-re.mnuc)*hc_mev_fm,
+                 5.0e-4,"eoa");
+      t.test_abs(f1,0.0,1.0e-3,"sigma field");
+      t.test_abs(f2,0.0,1.0e-10,"omega field");
+      t.test_abs(f3,0.0,1.0e-10,"rho field");
+      t.test_abs(th4.ed+th4.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-10,
+                 "thermo ident.");
+      cout << "  Saturation density: " << barn << " " << re.n0 << endl;
+      cout << "  Effective mass: " << re.msom << " "
+           << nferm.ms/nferm.m << endl;
+      cout << "  Zero pressure: " << th4.pr << endl;
+      cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+           << (th4.ed/barn-re.mnuc)*hc_mev_fm << endl;
+      cout << "  Field equations: " << f1 << " " << f2 << " " << f3 << endl;
+      cout << "  Thermodynamic identity: " 
+           << th4.ed+th4.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
+      cout << endl;
+    }
+    
     re.saturation();
 
     t.test_rel(re.n0,0.16,1.0e-4,"sat n0");
@@ -468,19 +481,22 @@ public:
     re.zeta=0.02;
     re.xi=1.0;
     re.fix_saturation();
-  
-    t.test_rel(barn,re.n0,1.0e-6,"sat. den.");
-    t.test_rel(re.msom,nferm.ms/nferm.m,5.0e-6,"msom");
-    t.test_abs(th.pr,0.0,1.0e-5,"pressure 0");
-    t.test_rel(re.eoa*hc_mev_fm,(th.ed/barn-re.mnuc)*hc_mev_fm,
-	       5.0e-4,"eoa");
-    cout << "  Saturation density: " << barn << " " << re.n0 << endl;
-    cout << "  Effective mass: " << re.msom << " "
-         << nferm.ms/nferm.m << endl;
-    cout << "  Zero pressure: " << th.pr << endl;
-    cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
-	 << (th.ed/barn-re.mnuc)*hc_mev_fm << endl;
-    cout << endl;
+
+    if (true) {
+      thermo &th5=re.def_thermo;
+      t.test_rel(barn,re.n0,1.0e-6,"sat. den.");
+      t.test_rel(re.msom,nferm.ms/nferm.m,5.0e-6,"msom");
+      t.test_abs(th5.pr,0.0,1.0e-5,"pressure 0");
+      t.test_rel(re.eoa*hc_mev_fm,(th5.ed/barn-re.mnuc)*hc_mev_fm,
+                 5.0e-4,"eoa");
+      cout << "  Saturation density: " << barn << " " << re.n0 << endl;
+      cout << "  Effective mass: " << re.msom << " "
+           << nferm.ms/nferm.m << endl;
+      cout << "  Zero pressure: " << th5.pr << endl;
+      cout << "  Energy per baryon: " << re.eoa*hc_mev_fm << " " 
+           << (th5.ed/barn-re.mnuc)*hc_mev_fm << endl;
+      cout << endl;
+    }
 
     nferm.n=re.n0/2.0;
     p.n=re.n0/2.0;
@@ -506,15 +522,18 @@ public:
     p.mu=sqrt(p.kf*p.kf+re.mnuc*re.mnuc*re.msom*re.msom)+re.mw*re.cw*ome;
 
     barn=nferm.n+p.n;
-    re.calc_eq_p(nferm,p,sig,ome,rho,f1,f2,f3,th);
-    t.test_abs(th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-10,"ti");
-    t.test_abs(f1,0.0,1.0e-5,"sigma field");
-    t.test_abs(f2,0.0,1.0e-10,"omega field");
-    t.test_abs(f3,0.0,1.0e-10,"rho field");
-    cout << "  Thermodynamic identity: " 
-	 << th.ed+th.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
-    cout << "  Field equations: " << f1 << " " << f2 << " " << f3 << endl;
-    cout << endl;
+    if (true) {
+      thermo &th6=re.def_thermo;
+      re.calc_eq_p(nferm,p,sig,ome,rho,f1,f2,f3,th6);
+      t.test_abs(th6.ed+th6.pr-nferm.n*nferm.mu-p.n*p.mu,0.0,1.0e-10,"ti");
+      t.test_abs(f1,0.0,1.0e-5,"sigma field");
+      t.test_abs(f2,0.0,1.0e-10,"omega field");
+      t.test_abs(f3,0.0,1.0e-10,"rho field");
+      cout << "  Thermodynamic identity: " 
+           << th6.ed+th6.pr-nferm.n*nferm.mu-p.n*p.mu << endl;
+      cout << "  Field equations: " << f1 << " " << f2 << " " << f3 << endl;
+      cout << endl;
+    }
 
     rmf.set_fields(0.1,0.07,-0.001);
     re.saturation();

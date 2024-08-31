@@ -48,6 +48,21 @@ namespace o2scl {
     
   public:
 
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           eos_leptons &elep,
+			   std::shared_ptr<table_units<> > results) {
+      O2SCL_ERR("Function beta_eq_T0() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /// The original EOS data 
     table3d t3d;
     

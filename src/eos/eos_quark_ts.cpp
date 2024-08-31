@@ -31,8 +31,6 @@ using namespace std;
 using namespace o2scl;
 
 int main(void) {
-  eos_quark qe, *qe2;
-  int vp;
   test_mgr t;
   t.set_output_level(2);
 

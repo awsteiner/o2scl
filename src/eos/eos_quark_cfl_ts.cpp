@@ -65,15 +65,12 @@ int main(void) {
     nd.tol_abs/=100.0;
   
     nj.set_quarks(u,d,s);
-    nj.set_thermo(th);
     nj.set_parameters();
 
     njt.set_quarks(u2,d2,s2);
-    njt.set_thermo(th2);
     njt.set_parameters();
 
     cfl.set_quarks(u3,d3,s3);
-    cfl.set_thermo(th3);
     cfl.set_parameters_cfl();
     
     inte_qng_gsl<funct> ngnew;
@@ -81,20 +78,20 @@ int main(void) {
     cfl.set_inte(ngnew);
 
     mm_funct fqq=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &nj,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3);
+       std::placeholders::_3,th);
     mm_funct fqq2=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &njt,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3);
+       std::placeholders::_3,th);
     mm_funct fqq3=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &cfl,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3);
+       std::placeholders::_3,th);
 
     //mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gap_func_qq);
     //mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gap_func_qq);
@@ -128,7 +125,7 @@ int main(void) {
     ax[1]=d.ms;
     ax[2]=s.ms;
     nj.from_qq=false;
-    nj.gap_func_ms(3,ax,ay);
+    nj.gap_func_ms(3,ax,ay,th);
     t.test_rel(ay[0],0.0,5.0e-9,"zero T ungapped gap eqn 1");
     t.test_rel(ay[1],0.0,5.0e-9,"zero T ungapped gap eqn 2");
     t.test_rel(ay[2],0.0,1.0e-6,"zero T ungapped gap eqn 3");
@@ -392,7 +389,6 @@ int main(void) {
     quark d2(cfl2.down_default_mass,6.0);
     quark s2(cfl2.strange_default_mass,6.0);
     cfl2.set_quarks(u2,d2,s2);
-    cfl2.set_thermo(th2);
 
     // Run test functions
   
