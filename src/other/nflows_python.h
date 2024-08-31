@@ -1,7 +1,7 @@
  /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2023-2024, Andrew W. Steiner
+  Copyright (C) 2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,11 +20,11 @@
 
   ───────────────────────────────────────────────────────────────────
 */
-#ifndef O2SCL_KDE_PYTHON_H
-#define O2SCL_KDE_PYTHON_H
+#ifndef O2SCL_NFLOWS_PYTHON_H
+#define O2SCL_NFLOWS_PYTHON_H
 
-/** \file kde_python.h
-    \brief File defining \ref o2scl::kde_python
+/** \file nflows_python.h
+    \brief File defining \ref o2scl::nflows_python
 */
 
 #include <iostream>
@@ -33,7 +33,6 @@
 
 #include <o2scl/err_hnd.h>
 #include <o2scl/tensor.h>
-#include <o2scl/exp_max.h>
 #include <o2scl/rng.h>
 #include <o2scl/set_python.h>
 
@@ -48,7 +47,7 @@ namespace o2scl {
   /** \brief Multidimensional interpolation interface for python
    */
   template<class vec_t=std::vector<double> >
-  class kde_python : public prob_dens_mdim<vec_t> {
+  class nflows_python : public prob_dens_mdim<vec_t> {
     
 #if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
 
@@ -97,11 +96,12 @@ namespace o2scl {
     */
     bool array_copy;
     
-    kde_python()  {
+    nflows_python()  {
       
       if (o2scl_settings.py_initialized==false) {
         if (this->verbose>1) {
-          std::cout << "Running py_init()." << std::endl;
+          std::cout << "nflows_python::nflows_python(): "
+                    << "Running py_init()." << std::endl;
         }
         o2scl_settings.py_init();
       }
@@ -135,12 +135,11 @@ namespace o2scl {
     
     /** \brief Specify the Python module and function
      */
-    kde_python(std::string module, 
-               o2scl::tensor<> &params,
-               std::vector<double> array,
-               std::string options="", 
-               std::string class_name="", int v=0)  {
-                    
+    nflows_python(std::string module, 
+                  o2scl::tensor<> &params,
+                  std::string options="", 
+                  std::string class_name="", int v=0)  {
+      
       this->verbose=v;
       
       if (o2scl_settings.py_initialized==false) {
@@ -166,13 +165,13 @@ namespace o2scl {
       ld_func="log_pdf";
 
       if (module.length()>0) {
-        set_function(module,params,array,options,class_name,v);
+        set_function(module,params,options,class_name,v);
       }
     }      
     
-    /** \brief Free memory associated with the KDE
+    /** \brief Free memory associated with the NFLOWS
      */
-    virtual ~kde_python() {
+    virtual ~nflows_python() {
       free();
     }      
     
@@ -180,7 +179,7 @@ namespace o2scl {
      */
     void free() {
       if (this->verbose>1) {
-        std::cout << "Starting kde_python::free()." << std::endl;
+        std::cout << "Starting nflows_python::free()." << std::endl;
       }
       if (p_ld_func!=0) {
         if (this->verbose>1) {
@@ -244,7 +243,7 @@ namespace o2scl {
       n_points=0;
       
       if (this->verbose>1) {
-        std::cout << "Done in kde_python::free()." << std::endl;
+        std::cout << "Done in nflows_python::free()." << std::endl;
       }
     }      
     
@@ -259,22 +258,20 @@ namespace o2scl {
         This function is called by the constructor and thus
         cannot be virtual.
     */
-    int set_function(std::string module, 
+    int set_function(std::string mod_str, 
                      o2scl::tensor<> &params,
-                     std::vector<double> array,
                      std::string options="",
                      std::string class_name="", int v=0) {
       int ret;
-      void *vp=set_function_internal(module,params,
-                                     array,ret,options,class_name,v);
+      void *vp=set_function_internal(mod_str,params,
+                                     ret,options,class_name,v);
       return ret;
     }
 
     /** \brief Internal version of set_function()
      */
     void *set_function_internal
-    (std::string module, o2scl::tensor<> &params,
-     std::vector<double> array, int &ret,
+    (std::string module, o2scl::tensor<> &params, int &ret,
      std::string options="",
      std::string class_name="", int v=0) {
 
@@ -288,7 +285,7 @@ namespace o2scl {
         O2SCL_ERR((((std::string)"Invalid rank, ")+
                    o2scl::szttos(params.get_rank())+
                    " (should be 2), for input tensors in "+
-                   "kde_python::set_function_internal().").c_str(),
+                   "nflows_python::set_function_internal().").c_str(),
                   o2scl::exc_einval);
       }
       
@@ -296,11 +293,11 @@ namespace o2scl {
       n_points=params.get_size(0);
       if (n_params==0) {
         O2SCL_ERR2("Invalid number of parameters in ",
-                   "kde_python().",o2scl::exc_einval);
+                   "nflows_python().",o2scl::exc_einval);
       }
       if (n_points==0) {
         O2SCL_ERR2("Invalid number of data points in ",
-                   "kde_python().",o2scl::exc_einval);
+                   "nflows_python().",o2scl::exc_einval);
       }
 
       // AWS, 2/21/23: I'm not sure why it has to be done here and not in
@@ -318,7 +315,7 @@ namespace o2scl {
         p_class=PyObject_GetAttrString(p_module,class_name.c_str());
         if (p_class==0) {
           O2SCL_ERR2("Get class failed in ",
-                     "kde_python::set().",o2scl::exc_efailed);
+                     "nflows_python::set().",o2scl::exc_efailed);
         }
         
         // Create an instance of the class
@@ -347,10 +344,10 @@ namespace o2scl {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
-      p_set_args=PyTuple_New(3);
+      p_set_args=PyTuple_New(2);
       if (p_set_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
-                   "kde_python::set_function().",
+                   "nflows_python::set_function().",
                    o2scl::exc_efailed);
       }
 
@@ -362,7 +359,7 @@ namespace o2scl {
       p_ld_args=PyTuple_New(1);
       if (p_ld_args==0) {
         O2SCL_ERR2("Create arg tuple failed in ",
-                   "kde_python::set_function().",
+                   "nflows_python::set_function().",
                    o2scl::exc_efailed);
       }
 
@@ -376,7 +373,7 @@ namespace o2scl {
         p_sample_func=PyObject_GetAttrString(p_instance,sample_func.c_str());
         if (p_sample_func==0) {
           O2SCL_ERR2("Get sample function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
         
@@ -388,7 +385,7 @@ namespace o2scl {
         p_ld_func=PyObject_GetAttrString(p_instance,ld_func.c_str());
         if (p_ld_func==0) {
           O2SCL_ERR2("Get get function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
         
@@ -400,7 +397,7 @@ namespace o2scl {
         p_set_func=PyObject_GetAttrString(p_instance,set_func.c_str());
         if (p_set_func==0) {
           O2SCL_ERR2("Get set function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
 
@@ -413,7 +410,7 @@ namespace o2scl {
         p_set_func=PyObject_GetAttrString(p_module,set_func.c_str());
         if (p_set_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
 
@@ -424,7 +421,7 @@ namespace o2scl {
         p_sample_func=PyObject_GetAttrString(p_module,sample_func.c_str());
         if (p_sample_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
 
@@ -435,7 +432,7 @@ namespace o2scl {
         p_ld_func=PyObject_GetAttrString(p_module,ld_func.c_str());
         if (p_ld_func==0) {
           O2SCL_ERR2("Get function failed in ",
-                     "kde_python::set_function().",
+                     "nflows_python::set_function().",
                      o2scl::exc_efailed);
         }
       }
@@ -463,7 +460,7 @@ namespace o2scl {
       npy_intp data_dims[]={(npy_intp)data.get_size(0),
         (npy_intp)data.get_size(1)};
       if (this->verbose>1) {
-        std::cout << "kde_python::set_function():" << std::endl;
+        std::cout << "nflows_python::set_function():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
         (2,data_dims,NPY_DOUBLE,(void *)(&(data.get_data()[0])));
@@ -471,22 +468,10 @@ namespace o2scl {
       int pret=PyTuple_SetItem(p_set_args,0,array_in);
       if (pret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "kde_python::set_function().",o2scl::exc_efailed);
+                   "nflows_python::set_function().",o2scl::exc_efailed);
       }
       
-      // Second argument to set function: the bandwidth array
-      
-      npy_intp extra_data_dims[]={(npy_intp)(array.size())};
-      PyObject *extra_array_in=PyArray_SimpleNewFromData
-        (1,extra_data_dims,NPY_DOUBLE,(void *)(&(array[0])));
-      
-      int ret2=PyTuple_SetItem(p_set_args,1,extra_array_in);
-      if (ret2!=0) {
-        O2SCL_ERR2("Tuple set failed in ",
-                   "kde_python::set_function().",o2scl::exc_efailed);
-      }
-      
-      // Third argument to set function: the options string
+      // Second argument to set function: the options string
       
       if (this->verbose>1) {
         std::cout << "Creating python unicode for string: "
@@ -495,13 +480,13 @@ namespace o2scl {
       PyObject *p_options=PyUnicode_FromString(options.c_str());
       if (p_options==0) {
         O2SCL_ERR2("String creation failed in ",
-                   "kde_python::set().",o2scl::exc_efailed);
+                   "nflows_python::set().",o2scl::exc_efailed);
       }
       
-      int ret3=PyTuple_SetItem(p_set_args,2,p_options);
+      int ret3=PyTuple_SetItem(p_set_args,1,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "kde_python::set_function().",o2scl::exc_efailed);
+                   "nflows_python::set_function().",o2scl::exc_efailed);
       }
 
       // Call the python set function
@@ -512,11 +497,11 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
       if (result==0) {
         O2SCL_ERR2("Function set call failed in ",
-                   "kde_python::set_function().",o2scl::exc_efailed);
+                   "nflows_python::set_function().",o2scl::exc_efailed);
       }
 
       if (this->verbose>1) {
-        std::cout << "Done with kde_python::set_function()."
+        std::cout << "Done with nflows_python::set_function()."
                   << std::endl;
       }
       
@@ -541,7 +526,7 @@ namespace o2scl {
   
       if (p_set_func==0 || p_ld_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "kde_python::log_pdf().",
+                   "nflows_python::log_pdf().",
                    o2scl::exc_efailed);
       }
 
@@ -554,7 +539,7 @@ namespace o2scl {
 
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (this->verbose>1) {
-        std::cout << "kde_python::log_pdf():" << std::endl;
+        std::cout << "nflows_python::log_pdf():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
       
@@ -570,7 +555,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_ld_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "kde_python::log_pdf().",o2scl::exc_efailed);
+                   "nflows_python::log_pdf().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -580,7 +565,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_ld_func,p_ld_args);
       if (result==0) {
         O2SCL_ERR2("Function ld call failed in ",
-                   "kde_python::log_pdf().",o2scl::exc_efailed);
+                   "nflows_python::log_pdf().",o2scl::exc_efailed);
       }
 
       if (this->verbose>1) {
@@ -594,7 +579,7 @@ namespace o2scl {
       Py_DECREF(result);
   
       if (this->verbose>1) {
-        std::cout << "Done in kde_python::log_pdf()."
+        std::cout << "Done in nflows_python::log_pdf()."
                   << std::endl;
       }
 
@@ -608,54 +593,6 @@ namespace o2scl {
       return dout;
     }
     
-    /// Get the bandwidth
-    virtual double get_bandwidth() const {
-
-      // Load the python function
-      if (this->verbose>1) {
-        std::cout << "  Loading python member function get_bandwidth."
-                  << std::endl;
-      }
-      PyObject *p_gb_func=PyObject_GetAttrString(p_instance,"get_bandwidth");
-      if (p_gb_func==0) {
-        O2SCL_ERR2("Get get function failed in ",
-                   "kde_python::set_function().",
-                   o2scl::exc_efailed);
-      }
-      
-      // Call the python function
-      if (this->verbose>1) {
-        std::cout << "  Calling python gb function." << std::endl;
-      }
-      PyObject *result=PyObject_CallObject(p_gb_func,0);
-      if (result==0) {
-        O2SCL_ERR2("Function gb call failed in ",
-                   "kde_python::get_bandwidth().",o2scl::exc_efailed);
-      }
-
-      if (this->verbose>1) {
-        std::cout << "  Obtaining output 1." << std::endl;
-      }
-      double dret=PyFloat_AsDouble(result);
-
-      if (this->verbose>1) {
-        std::cout << "  Decref result." << std::endl;
-      }
-      Py_DECREF(result);
-  
-      if (this->verbose>1) {
-        std::cout << "  Decref func." << std::endl;
-      }
-      Py_DECREF(p_gb_func);
-  
-      if (this->verbose>1) {
-        std::cout << "Done in kde_python::get_bandwidth()."
-                  << std::endl;
-      }
-
-      return dret;
-    }
-  
     /// The normalized density 
     virtual double pdf(const vec_t &x) const {
       double val=log_pdf(x);
@@ -677,13 +614,13 @@ namespace o2scl {
         This is a void * version of <tt>operator()</tt> which
         doesn't cause problems with the import_array() macro.
     */
-    void* operator2(vec_t &x) const {
+    void* operator_internal(vec_t &x) const {
 
       import_array();
 
       if (p_sample_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "kde_python::operator2().",
+                   "nflows_python::operator_internal().",
                    o2scl::exc_efailed);
       }
       
@@ -697,12 +634,12 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_sample_func,0);
       if (result==0) {
         O2SCL_ERR2("Function sample call failed in ",
-                   "kde_python::operator().",o2scl::exc_efailed);
+                   "nflows_python::operator().",o2scl::exc_efailed);
       }
       
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "kde_python::operator2().",o2scl::exc_efailed);
+                   "nflows_python::operator_internal().",o2scl::exc_efailed);
       }
       
       if (this->verbose>1) {
@@ -723,7 +660,7 @@ namespace o2scl {
       Py_DECREF(result);
       
       if (this->verbose>1) {
-        std::cout << "Done in kde_python::operator2()."
+        std::cout << "Done in nflows_python::operator_internal()."
                   << std::endl;
       }
 
@@ -732,15 +669,15 @@ namespace o2scl {
 
     /// Sample the distribution
     virtual void operator()(vec_t &x) const {
-      void *vp=operator2(x);
+      void *vp=operator_internal(x);
       return;
     }
     
     
   private:
 
-    kde_python(const kde_python &);
-    kde_python& operator=(const kde_python&);
+    nflows_python(const nflows_python &);
+    nflows_python& operator=(const nflows_python&);
 
 #endif
     
