@@ -86,8 +86,8 @@ int main(void) {
       tin.get(ix)=tab.get(1,j);
     }
 
-    nflows_python<> nfp("o2sclpy",tin,"max_iter=200,verbose=2",
-                        "nflows_nsf",2);
+    nflows_python<> nfp("o2sclpy",tin,"max_iter=200,verbose=0",
+                        "nflows_nsf",0);
     cout << endl;
 
     // Try sampling

@@ -4148,7 +4148,7 @@ namespace o2scl {
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-#if defined (O2SCL_ARMA) || defined (DOXYGEN)
+#if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl {
 
