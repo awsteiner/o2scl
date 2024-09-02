@@ -177,6 +177,8 @@ namespace o2scl {
       \f[
       \tilde{S}(n_B,T) = F(n_B,\delta=1,T)-F(n_B,\delta=0,T) \, .
       \f]
+      See \ref eos_had_temp_base::fesym_T() and
+      \ref eos_had_temp_base::fsyment_T() .
       
       The symmetry energy slope parameter \f$ L \f$, can be defined
       by 
@@ -323,9 +325,7 @@ namespace o2scl {
       \future Replace fmsom() with f_effm_scalar(). This has to wait
       until f_effm_scalar() has a sensible definition when mn is
       not equal to mp
-      \future Could write a function to compute the "symmetry free energy"
-      or the "symmetry entropy"
-      \future Compute the speed of sound or the number susceptibilities?
+      
       \future A lot of the numerical derivatives here might possibly
       request negative number densities for the nucleons, which 
       may cause exceptions, espescially at very low densities. 
@@ -337,14 +337,19 @@ namespace o2scl {
 
   public:
 
-    eos_had_base();
-
-    virtual ~eos_had_base() {};
-
     /** \brief The uBlas vector type
      */
     typedef boost::numeric::ublas::vector<double> ubvector;
-    
+
+    /// \name Constructor and destructor
+    //@{
+    eos_had_base();
+
+    virtual ~eos_had_base() {};
+    //@}
+
+    /// \name Nuclear matter properties
+    //@{
     /** \brief Binding energy (without the rest mass) in 
         \f$ \mathrm{fm}^{-1} \f$
     */
@@ -364,11 +369,15 @@ namespace o2scl {
 
     /// Skewness in \f$ \mathrm{fm}^{-1} \f$
     double kprime;
-    
+    //@}
+
+    /// \name Other settings
+    //@{
     /** \brief If true, call the error handler if msolve() or
         msolve_de() does not converge (default true)
     */
     bool err_nonconv;
+    //@}
 
     /// \name Equation of state
     //@{
@@ -589,16 +598,22 @@ namespace o2scl {
         
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+        
+        This function is used in \ref f_inv_number_suscept() .
     */
     double calc_mun_e(double nn, double np);
 
     /** \brief Compute the energy density as a function of the nucleon
         densities
+
+        This function is used in \ref check_mu().
     */
     double calc_ed(double nn, double np);
 
     /** \brief Compute the pressure as a function of the nucleon
         chemical potentials
+
+        This function is used in \ref check_den().
     */
     double calc_pr(double nn, double np);
 
@@ -607,6 +622,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref f_inv_number_suscept() .
     */
     double calc_mup_e(double nn, double np);
 
@@ -615,6 +632,8 @@ namespace o2scl {
         
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref f_number_suscept() .
     */
     double calc_nn_p(double mun, double mup);
 
@@ -623,6 +642,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+        
+        This function is used in \ref f_number_suscept() .
     */
     double calc_np_p(double mun, double mup);
 
@@ -631,6 +652,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref fesym() and \ref fesym_err() .
     */
     double calc_dmu_delta(double delta, double nb);
     
@@ -639,16 +662,24 @@ namespace o2scl {
 
         This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
         and \ref calc_e() .
+
+        This function is used in \ref fesym_slope() .
     */
     double calc_musum_delta(double delta, double nb);
 
     /** \brief Compute the pressure as a function of baryon density
         at fixed isospin asymmetry
 
-        Used by fcomp().
+        This function is used in fcomp() and fcomp_err() .
     */
     double calc_pressure_nb(double nb, double delta=0.0);
-    
+
+    /** \brief Compute the pressure as a function of baryon density
+        at fixed isospin asymmetry
+
+        This is a wrapper to \ref calc_pressure_nb() which is
+        used by \ref fn0() .
+    */
     int calc_pressure_nb_mroot(size_t nv, const ubvector &x,
                                ubvector &y, double delta);
     
@@ -661,6 +692,8 @@ namespace o2scl {
     double calc_edensity_nb(double nb, double delta=0.0);
 
     /** \brief Compute derivatives at constant proton fraction
+
+        This function is currently used in \ref nstar_cold().
      */
     void const_pf_derivs(double nb, double pf, 
                          double &dednb_pf, double &dPdnb_pf);
@@ -668,17 +701,15 @@ namespace o2scl {
     /** \brief Calculate pressure / baryon density squared in nuclear
         matter as a function of baryon density at fixed isospin asymmetry
         
-        Used by fkprime().
-
         This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
         and \ref calc_e() .
+
+        This function is used by fkprime() .
     */
     double calc_press_over_den2(double nb, double delta=0.0);
 
     /** \brief Calculate energy density as a function of the
         isospin asymmetry at fixed baryon density
-
-        Used by fesym().
 
         This function calls \ref eos_had_base::calc_e() with the
         internally stored neutron and proton objects.
@@ -736,6 +767,9 @@ namespace o2scl {
         and \ref calc_np_p using the object specified in \ref
         set_sat_deriv().
 
+        See the finite-temperature generalization of this
+        function in \ref eos_had_temp_base::f_number_suscept_T() .
+
         \verbatim embed:rst
         .. todo:: 
 
@@ -750,6 +784,9 @@ namespace o2scl {
         susceptibilities as a function of the densities, \f$
         \partial^2 \varepsilon / \partial n_i n_j \f$
 
+        See the finite-temperature generalization of this
+        function in \ref eos_had_temp_base::f_inv_number_suscept_T() .
+        
         \verbatim embed:rst
         .. todo:: 
 
@@ -758,7 +795,7 @@ namespace o2scl {
 
         \endverbatim
     */
-    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+    virtual void f_inv_number_suscept(double nn, double np, double &dednn, 
                                       double &dednp, double &dedpp);
     //@}
 
@@ -962,7 +999,10 @@ namespace o2scl {
                    double &nn_err, double &np_err);
     //@}
 
-    /// Beta-equilibrium solver
+    /** \brief Beta-equilibrium solver
+
+        This is used by \ref beta_eq_T0() .
+     */
     mroot_hybrids<> beta_mroot;
     
 #ifndef DOXYGEN_INTERNAL
@@ -1122,8 +1162,8 @@ namespace o2scl {
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
                                 double T, thermo &th) {
-      def_proton.n=-nQ;
-      def_neutron.n=nB+nQ;
+      def_proton.n=nQ;
+      def_neutron.n=nB-nQ;
       return calc_temp_e(def_neutron,def_proton,T,th);
     }
     

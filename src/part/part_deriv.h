@@ -61,7 +61,7 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref thermo_np_deriv_press_tl .
    */
   typedef thermo_np_deriv_press_tl<double> thermo_np_deriv_press;
   
@@ -87,7 +87,7 @@ namespace o2scl {
     fp_t dmupdnp;
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref thermo_np_deriv_helm_tl .
    */
   typedef thermo_np_deriv_helm_tl<double> thermo_np_deriv_helm;
   
@@ -836,7 +836,7 @@ namespace o2scl {
 
          - Include explicit zero-temperature calculation, maybe
            by making this a child of fermion_zerot or by making a 
-           new fermion_deriv_zerot? 
+           new fermion_deriv_zerot? (This is done, see dndmu_zerot())
 
          - There is also a closed form for the derivatives
            of massless fermions with pairs at finite temperature
@@ -892,6 +892,19 @@ namespace o2scl {
     /// Calculate effective chemical potential from density
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper)=0;
 
+    /** \brief Compute \( dn/d\nu \) at \( T=0 \) presuming
+        the Fermi momentum and chemical potential have already
+        been computed
+     */
+    void calc_deriv_zerot(fermion_deriv_t &f) {
+      
+      double dkfdn=2.0*pi2/f.g/f.kf/f.kf;
+      double dnudkf=f.kf/f.nu;
+      
+      f.dndmu=1.0/(dnudkf*dkfdn);
+      return;
+    }
+    
     /** \brief Calculate properties as a function of chemical 
 	potential using a degenerate expansion
 
