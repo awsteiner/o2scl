@@ -705,8 +705,9 @@ namespace o2scl {
       int iret;
 
       if (temper<=0) {
-	O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",
-		  exc_eunimpl);
+        fr.calc_mu_zerot(f);
+        this->calc_deriv_zerot(f);
+        return 0;
       }
 
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -1164,7 +1165,13 @@ namespace o2scl {
     virtual int calc_density(fermion_deriv_t &f, fp_t temper) {
   
       if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
-  
+
+      if (temper<=0) {
+        fr.calc_density_zerot(f);
+        this->calc_deriv_zerot(f);
+        return 0;
+      }
+      
       nu_from_n(f,temper);
       int lm=last_method;
       std::string stmp=last_method_s;

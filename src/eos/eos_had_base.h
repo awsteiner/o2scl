@@ -795,7 +795,7 @@ namespace o2scl {
 
         \endverbatim
     */
-    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+    virtual void f_inv_number_suscept(double nn, double np, double &dednn, 
                                       double &dednp, double &dedpp);
     //@}
 
