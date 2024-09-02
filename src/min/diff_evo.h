@@ -44,18 +44,21 @@ namespace o2scl {
       non continuous problems, since it does not require the gradient
       of the function to be minimized.
       
-      The method starts by initializing a the population of 
-      points in the parameter space. The user can specify
-      a function which creates the initial population using
-      \ref set_init_function() . Alternatively, by default this
-      class chooses random points near the initial point 
-      with a default step size of 0.01 in every direction. 
-      The step size can be changed using \ref set_step() .
+      The method starts by initializing a the population of points in
+      the parameter space. The user can specify a function which
+      creates the initial population using \ref set_init_function() .
+      Alternatively, by default this class chooses random points near
+      the initial point with a default step size of 0.01 in every
+      direction. The step size can be changed using \ref set_step() .
       
       After the initial population is created the algorithm will
       repeat until a solution is found or the maximum number of
       iterations is reached. 
 
+      The maximum total number of function calls is \ref ntrial plus
+      one times the population size, which defaults to 10 times the
+      number of dimensions.
+      
       \verbatim embed:rst
       Based on [Storn97]_.
       \endverbatim
@@ -87,8 +90,8 @@ namespace o2scl {
 	Should be at least 4. Typically between \f$ 5 d \f$ and \f$ 10
 	d \f$ where \f$ d \f$ is the dimensionality of the problem.
 	  
-	If this is 0 (the default), then it is set by mmin to be 
-	equal to \f$ 10 d \f$ .
+	If this is 0 (the default), then 
+	\f$ 10 d \f$ is used. 
     */
     size_t pop_size;
 
@@ -112,11 +115,11 @@ namespace o2scl {
 
     diff_evo() {
       this->ntrial=1000;
-      f = 0.75;
-      cr = 0.8;
-      rand_init_funct = 0;
-      pop_size = 0;
-      nconv = 25;
+      f=0.75;
+      cr=0.8;
+      rand_init_funct=0;
+      pop_size=0;
+      nconv=25;
       step.resize(1);
       step[0]=1.0e-2;
     }
@@ -139,7 +142,7 @@ namespace o2scl {
 	valid when the minimization is run.
     */
     virtual void set_init_function(init_funct_t &function) {
-      rand_init_funct = &function;
+      rand_init_funct=&function;
     }
 
     /** \brief Calculate the minimum \c fmin of \c func w.r.t the 
@@ -167,48 +170,51 @@ namespace o2scl {
     virtual int mmin(size_t nvar, vec_t &x0, double &fmin, func_t &func) {
 
       // Keep track of number of generation without better solutions
-      size_t nconverged = 0;
+      size_t nconverged=0;
 
+      size_t pop_size_loc;
       if (pop_size==0) {
 	// Automatically select pop_size based on on dimensionality.
-	pop_size = 10*nvar;
+	pop_size_loc=10*nvar;
+      } else {
+        pop_size_loc=pop_size;
       }
 
-      initialize_population( nvar, x0 );
+      initialize_population(nvar,x0,pop_size_loc);
       
-      fmins.resize(pop_size);
+      fmins.resize(pop_size_loc);
 
       // Set initial fmin
-      for (size_t x = 0; x < pop_size; ++x) {
+      for (size_t x=0; x < pop_size_loc; ++x) {
 	vec_t agent_x;
 	agent_x.resize(nvar);
-	for (size_t i = 0; i < nvar; ++i) {
-	  agent_x[i] = population[x*nvar+i];
+	for (size_t i=0; i < nvar; ++i) {
+	  agent_x[i]=population[x*nvar+i];
 	}
-	double fmin_x = 0;
+	double fmin_x=0;
 	fmin_x=func(nvar,agent_x);
 	fmins[x]=fmin_x;
 	if (x==0) {
-	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i) {
-	    x0[i] = agent_x[i];
+	  fmin=fmin_x;
+	  for (size_t i=0; i<nvar; ++i) {
+	    x0[i]=agent_x[i];
 	  }
 	} else if (fmin_x<fmin) {
-	  fmin = fmin_x;
-	  for (size_t i = 0; i<nvar; ++i) {
-	    x0[i] = agent_x[i];
+	  fmin=fmin_x;
+	  for (size_t i=0; i<nvar; ++i) {
+	    x0[i]=agent_x[i];
 	  }
 	}
       }
 
-      int gen = 0;
+      int gen=0;
       while (gen < this->ntrial && nconverged <= nconv) {
 	     
 	++nconverged;
 	++gen;
 
 	// For each agent x in the population do: 
-	for (size_t x = 0; x < pop_size; ++x) {
+	for (size_t x=0; x < pop_size_loc; ++x) {
 
 	  std::vector<int> others;
 
@@ -217,55 +223,55 @@ namespace o2scl {
 	  vec_t agent_x, agent_y;
 	  agent_x.resize(nvar);
 	  agent_y.resize(nvar);
-	  for (size_t i = 0; i < nvar; ++i) {
-	    agent_x[i] = population[x*nvar+i];
-	    agent_y[i] = population[x*nvar+i];
+	  for (size_t i=0; i < nvar; ++i) {
+	    agent_x[i]=population[x*nvar+i];
+	    agent_y[i]=population[x*nvar+i];
 	  }
                             
 	  // Pick three agents a, b, and c from the population at 
 	  // random, they must be distinct from each other as well as
 	  // from agent x
-	  others = pick_unique_agents( 3, x );
+	  others=pick_unique_agents(3,x ,pop_size_loc);
 
 	  // Pick a random index R in {1, ..., n}, where the highest 
 	  // possible value n is the dimensionality of the problem 
 	  // to be optimized.
-	  size_t r = floor(gr.random()*nvar);
+	  size_t r=floor(gr.random()*nvar);
 
-	  for (size_t i = 0; i < nvar; ++i) {
+	  for (size_t i=0; i < nvar; ++i) {
 	    // Pick ri~U(0,1) uniformly from the open range (0,1)
-	    double ri = gr.random();
-	    // If (i=R) or (ri<CR) let yi = ai + F(bi - ci), otherwise 
-	    // let yi = xi
+	    double ri=gr.random();
+	    // If (i=R) or (ri<CR) let yi=ai + F(bi - ci), otherwise 
+	    // let yi=xi
 	    if (i == r || ri < cr) {
-	      agent_y[i] = population[others[0]*nvar+i] + 
+	      agent_y[i]=population[others[0]*nvar+i] + 
 		f*(population[others[1]*nvar+i]-
 		   population[others[2]*nvar+i]);
 	    }
 	  }
 	  // If (f(y) < f(x)) then replace the agent in the population 
-	  // with the improved candidate solution, that is, set x = y 
+	  // with the improved candidate solution, that is, set x=y 
 	  // in the population
 	  double fmin_y;
                             
 	  fmin_y=func(nvar,agent_y);
 	  if (fmin_y<fmins[x]) {
-	    for (size_t i = 0; i < nvar; ++i) {
-	      population[x*nvar+i] = agent_y[i];
-	      fmins[x] = fmin_y;
+	    for (size_t i=0; i < nvar; ++i) {
+	      population[x*nvar+i]=agent_y[i];
+	      fmins[x]=fmin_y;
 	    }
 	    if (fmin_y<fmin) {
-	      fmin = fmin_y;
-	      for (size_t i = 0; i<nvar; ++i) {  
-		x0[i] = agent_y[i];
+	      fmin=fmin_y;
+	      for (size_t i=0; i<nvar; ++i) {  
+		x0[i]=agent_y[i];
 	      }
-	      nconverged = 0;
+	      nconverged=0;
 	    }
 	  }
 
 	}
 	if (this->verbose > 0) {
-	  this->print_iter( nvar, fmin, gen, x0 );
+	  this->print_iter(nvar,fmin,gen,x0 ,pop_size_loc);
 	}
       }
 
@@ -291,8 +297,9 @@ namespace o2scl {
 	each iteration waits for a character.
 	\endcomment
     */
-    virtual void print_iter( size_t nvar, double fmin, 
-			     int iter, vec_t &best_fit ) {
+    virtual void print_iter(size_t nvar, double fmin, 
+                            int iter, vec_t &best_fit,
+                            size_t pop_size_loc) {
       std::cout << "Generation " << iter << std::endl;
       std::cout << "Fmin: " << fmin << std::endl;
       std::cout << "Parameters: ";
@@ -301,9 +308,9 @@ namespace o2scl {
       }
       std::cout << std::endl;
       std::cout << "Population: " << std::endl;
-      for (size_t i=0; i<pop_size; ++i ) {
+      for (size_t i=0; i<pop_size_loc; ++i) {
 	std::cout << i << ": ";
-	for (size_t j = 0; j<nvar; ++j ) {
+	for (size_t j=0; j<nvar; ++j) {
 	  std::cout << population[i*nvar+j] << " ";
 	}
 	std::cout << "fmin: " << fmins[i] << std::endl;
@@ -351,21 +358,22 @@ namespace o2scl {
     
     /** \brief Initialize a population of random agents
      */
-    virtual int initialize_population( size_t nvar, vec_t &x0 ) {
-      population.resize(nvar*pop_size);
+    virtual int initialize_population(size_t nvar, vec_t &x0,
+                                       size_t pop_size_loc) {
+      population.resize(nvar*pop_size_loc);
       if (rand_init_funct==0) {
-	for(size_t i=0;i<pop_size;i++) {
+	for(size_t i=0;i<pop_size_loc;i++) {
 	  for(size_t j=0;j<nvar;j++) {
 	    double stepj=step[j%step.size()];
 	    population[i*nvar+j]=x0[j]-stepj/2.0+stepj*gr.random();
 	  }
 	}
       } else {
-	for (size_t i = 0; i < pop_size; ++i) {
+	for (size_t i=0; i < pop_size_loc; ++i) {
 	  vec_t y(nvar);
-	  (*rand_init_funct)( nvar, x0, y );
-	  for (size_t j = 0; j < nvar; ++j) {
-	    population[ i*nvar+j ] = y[j];
+	  (*rand_init_funct)(nvar,x0,y);
+	  for (size_t j=0; j < nvar; ++j) {
+	    population[ i*nvar+j ]=y[j];
 	    
 	  }
 	}
@@ -383,24 +391,25 @@ namespace o2scl {
 	implementation we should use here. Or is it in the
 	\ref o2scl::permutation class?
     */
-    virtual std::vector<int> pick_unique_agents(int nr, size_t x) {
+    virtual std::vector<int> pick_unique_agents(int nr, size_t x,
+                                                size_t pop_size_loc) {
       std::vector<int> ids;
       std::vector<int> agents;
       // Fill array with ids
-      for (size_t i=0; i<pop_size-1; ++i){
+      for (size_t i=0; i<pop_size_loc-1; ++i){
 	if (i<x) {
-	  ids.push_back( i );
+	  ids.push_back(i);
 	} else {
-	  ids.push_back( i+1 );
+	  ids.push_back(i+1);
 	}
       }
       // Shuffle according to Fisher-Yates
       for (size_t i=ids.size()-1; i>ids.size()-nr-1; --i) {
-	int j = round(gr.random()*i);
-	std::swap( ids[i], ids[j] );
+	int j=round(gr.random()*i);
+	std::swap(ids[i],ids[j]);
       }
       for (size_t i=ids.size()-1; i>ids.size()-nr-1; --i) {
-	agents.push_back( ids[i] );
+	agents.push_back(ids[i]);
       }
       return agents;
     }
