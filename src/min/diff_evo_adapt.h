@@ -40,7 +40,7 @@ namespace o2scl {
        
       This class minimizes a function using differential evolution.
       This method is a genetic algorithm and as such works well for
-      non continuous problems, since it does not require the gradient
+      discontinuous problems, since it does not require the gradient
       of the function to be minimized.
 
       This is an adaptive version of \ref diff_evo as described in
