@@ -723,8 +723,8 @@ void kwargs::set(std::string s) {
       std::vector<std::string> vs2;
       split_string_delim(vs[i],vs2,'=');
       if (vs2.size()!=2) {
-        O2SCL_ERR("Could not interpret in kwargs.",
-                  o2scl::exc_einval);
+        O2SCL_ERR((((std::string)"Could not interpret string \"")+
+		   s+"\" in kwargs.").c_str(),o2scl::exc_einval);
       }
       k.insert(std::make_pair(vs2[0],vs2[1]));
     }
