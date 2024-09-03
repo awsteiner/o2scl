@@ -222,6 +222,15 @@ namespace o2scl {
           (high[k]-low[k])/step_fac[k % step_fac.size()];
       }
 
+      std::cout.precision(2);
+      for (size_t k=0;k<n_params;k++) {
+        std::cout << "curr[" << k << "]=" << current[k] 
+                  << ", next=" << next[k]
+                  << ", disp=" << abs(next[k]-current[k]) 
+                  << std::endl;
+      }
+      std::cout.precision(6);
+
       accept=false;
       
       func_ret=success;
@@ -659,12 +668,10 @@ namespace o2scl {
       
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
-
-      if (mom_step.size()!=n_params) mom_step.resize(n_params);
       
-      // Scale the step sizes
+      // Randomize the step sizes
       for (size_t k=0; k<n_params; k++) {
-        mom_step[k]=1.0e-3*(high[k]-low[k])*r.random();
+        mom_step[k]*=r.random();
       }
       
       // Take a half step in the momenta using the gradient
