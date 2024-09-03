@@ -663,8 +663,8 @@ namespace o2scl {
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
       
       // Scale the step sizes
-      for (size_t k=0;k<n_params;k++) {
-        mom_step[k]=1.0e-6*(high[k]-low[k]);
+      for (size_t k=0; k<n_params; k++) {
+        mom_step[k]=1.0e-3*(high[k]-low[k])*r.random();
       }
       
       // Take a half step in the momenta using the gradient
