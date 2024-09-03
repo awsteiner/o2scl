@@ -36,9 +36,43 @@ int main(int argc, char *argv[]) {
   
   test_mgr t;
   t.set_output_level(1);
-
-  if (true) {
   
+  if (true) {
+    // Testing dndmu
+    
+    fermion_deriv fd(5.0,2.0);
+    fermion_deriv_rel fdr;
+    
+    fd.inc_rest_mass=false;
+    
+    fd.n=0.5;
+    fdr.calc_density(fd,0);
+    double mu1=fd.mu;
+    fd.n=0.5+1.0e-4;
+    fdr.calc_density(fd,0);
+    double mu2=fd.mu;
+    fd.n=0.5;
+    fdr.calc_density(fd,0);
+    fdr.calc_deriv_zerot(fd);
+    t.test_rel(1.0e-4/(mu2-mu1),fd.dndmu,1.0e-4,"dndmu at zerot.");
+    
+    fd.inc_rest_mass=true;
+    
+    fd.n=0.5;
+    fdr.calc_density(fd,0);
+    mu1=fd.mu;
+    fd.n=0.5+1.0e-4;
+    fdr.calc_density(fd,0);
+    mu2=fd.mu;
+    fd.n=0.5;
+    fdr.calc_density(fd,0);
+    fdr.calc_deriv_zerot(fd);
+    t.test_rel(1.0e-4/(mu2-mu1),fd.dndmu,1.0e-4,"dndmu at zerot.");
+
+  }
+  
+  if (true) {
+    
     fermion_deriv fd(5.0,2.0);
     double T;
 

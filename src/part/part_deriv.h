@@ -897,9 +897,14 @@ namespace o2scl {
         been computed
      */
     void calc_deriv_zerot(fermion_deriv_t &f) {
-      
+
       double dkfdn=2.0*pi2/f.g/f.kf/f.kf;
-      double dnudkf=f.kf/f.nu;
+      double dnudkf;
+      if (f.inc_rest_mass) {
+        dnudkf=f.kf/f.nu;
+      } else {
+        dnudkf=f.kf/(f.nu+f.m);
+      }
       
       f.dndmu=1.0/(dnudkf*dkfdn);
       return;
