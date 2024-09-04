@@ -442,6 +442,7 @@ namespace o2scl {
         vector containing 0.2). 
      */
     vec_t mom_step;
+    vec_t hmc_step;
 
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
@@ -668,10 +669,12 @@ namespace o2scl {
       
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
+
+      mom_step.resize(n_params);
       
       // Randomize the step sizes
       for (size_t k=0; k<n_params; k++) {
-        mom_step[k]*=r.random();
+        mom_step[k]=hmc_step[k]*r.random();
       }
       
       // Take a half step in the momenta using the gradient
