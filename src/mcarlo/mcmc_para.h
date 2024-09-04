@@ -756,14 +756,14 @@ namespace o2scl {
 
       std::cout << std::scientific << std::setprecision(2);
       for (size_t k=0;k<n_params;k++) {
-        std::cout << "curr[" << k << "]=" << current[k] 
-                  // << " next=" << next[k]
-                  // << " p_cur=" << mom[k]
-                  << ", p_nxt=" << mom_next[k]
-                  << ", step=" << mom_step[k]
-                  << ", grad=" << grad[k]  
-                  << ", disp=" << abs(next[k]-current[k]) 
-                  << std::endl;
+        std::cout << "p'[ " << k << "]=" << mom_next[k]
+                  << ",\t e=" << mom_step[k]
+                  << ",\t g=" << grad[k]  
+                  << ",\t dq=" << abs(next[k]-current[k]);
+        if (abs(mom_step[k]*grad[k])>=1.0) {
+          std::cout << "\t large: i=" << k << std::endl;
+        } 
+        else std::cout << std::endl;
       }
       std::cout << std::scientific << std::setprecision(6);
 
