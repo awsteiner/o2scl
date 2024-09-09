@@ -17,9 +17,19 @@ docker_clean:
 	-sudo docker rmi \
 	`sudo docker images --all | grep -i -v container | awk '{print $$3}'`
 
+docker_clear_cache:
+	-sudo docker 
+
 docker_show:
 	- sudo docker ps --all
 	- sudo docker images --all
+	- sudo docker system df
+
+docker_clean2:
+	- sudo docker image prune -a
+	- sudo docker stop $(docker ps -q)
+	- sudo docker container prune
+	- sudo docker buildx prune -f
 	- sudo docker system df
 
 testq:
