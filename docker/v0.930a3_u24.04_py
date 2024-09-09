@@ -1,5 +1,4 @@
-FROM ubuntu:24.04
-#AS working
+FROM ubuntu:24.04 AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version with python, eigen, \
 armadillo, fftw, OpenMP, and HDF5 compression support."
@@ -31,12 +30,12 @@ RUN apt-get -y update && apt-get \
 # may have to be changed in the future. 
 
 WORKDIR /opt
-RUN curl "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_2/hdf5-1_14_2.tar.gz" \
-  -L -o hdf5-1.14.2.tar.gz
-#FROM working
+RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_2/hdf5-1_14_2.tar.gz" \
+  -o hdf5-1.14.2.tar.gz
 RUN tar xvzf hdf5-1.14.2.tar.gz
 RUN rm hdf5-1.14.2.tar.gz
 WORKDIR /opt/hdf5-1.14.2
+FROM working
 RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
 RUN make
 RUN make install
