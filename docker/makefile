@@ -268,7 +268,8 @@ build_v0.930a3_u24.04_py:
 	sudo docker buildx build . \
 		-f v0.930a3_u24.04_py \
 		-t awsteiner/o2scl:v0.930a3_u24.04_py 
-#--target working \
+#--no-cache \
+# --target working \
 #> v0.930a3_u24.04_py.out 2>&1
 
 test1_v0.930a3_u24.04_py:

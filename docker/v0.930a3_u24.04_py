@@ -34,8 +34,8 @@ RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_2/hdf5
   -o hdf5-1.14.2.tar.gz
 RUN tar xvzf hdf5-1.14.2.tar.gz
 RUN rm hdf5-1.14.2.tar.gz
-WORKDIR /opt/hdf5-1.14.2
-FROM working
+WORKDIR /opt/hdfsrc
+#FROM working
 RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
 RUN make
 RUN make install

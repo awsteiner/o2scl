@@ -32,7 +32,6 @@
 #include <o2scl/constants.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/table.h>
-#include <o2scl/boson_eff.h>
 #include <o2scl/fermion_rel.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/convert_units.h>
