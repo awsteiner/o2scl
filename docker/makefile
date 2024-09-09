@@ -20,6 +20,7 @@ docker_clean:
 docker_show:
 	- sudo docker ps --all
 	- sudo docker images --all
+	- sudo docker system df
 
 testq:
 	sudo docker run --rm -it \
@@ -264,9 +265,11 @@ all_v0.929_ot_py: build_v0.929_ot_py test_v0.929_ot_py
 # Standard build 12: v0.930a3_u24.04_py
 
 build_v0.930a3_u24.04_py:
-	sudo docker build . --rm -f v0.930a3_u24.04_py \
-		-t awsteiner/o2scl:v0.930a3_u24.04_py \
-		> v0.930a3_u24.04_py.out 2>&1
+	sudo docker buildx build . \
+		-f v0.930a3_u24.04_py \
+		-t awsteiner/o2scl:v0.930a3_u24.04_py 
+#--target working \
+#> v0.930a3_u24.04_py.out 2>&1
 
 test1_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
