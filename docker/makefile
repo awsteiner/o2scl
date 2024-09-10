@@ -25,9 +25,21 @@ docker_show:
 	- sudo docker images --all
 	- sudo docker system df
 
+docker_make_cache:
+	sudo docker create -v /mnt/ccache:/ccache --name ccache debian
+
+docker_mount_cache:
+	sudo docker run -e CCACHE_DIR=/ccache --volumes-from ccache -it debian
+
+DOCKER_PS_Q = $(shell sudo docker ps -q)
+
+docker_stop:
+	echo $(DOCKER_PS_Q)
+	- sudo docker stop $(DOCKER_PS_Q)
+
 docker_clean2:
 	- sudo docker image prune -a
-	- sudo docker stop $(docker ps -q)
+	- sudo docker stop $(sudo docker ps -q)
 	- sudo docker container prune
 	- sudo docker buildx prune -f
 	- sudo docker system df
@@ -276,11 +288,13 @@ all_v0.929_ot_py: build_v0.929_ot_py test_v0.929_ot_py
 
 build_v0.930a3_u24.04_py:
 	sudo docker buildx build . \
+		--target working \
 		-f v0.930a3_u24.04_py \
-		-t awsteiner/o2scl:v0.930a3_u24.04_py 
-#--no-cache \
-# --target working \
+		-t awsteiner/o2scl:v0.930a3_u24.04_py
+
+#		--no-cache \
 #> v0.930a3_u24.04_py.out 2>&1
+
 
 test1_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
