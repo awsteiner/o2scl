@@ -284,8 +284,10 @@ build_v0.930a3_u24.04_py:
 
 test1_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
-		"cd /opt/o2scl && make check && make o2scl-examples" \
-		> test1_v0.930a3_u24.04_py.out 2>&1
+		"cd /opt/o2scl && make check && make o2scl-examples"
+
+#\
+#		> test1_v0.930a3_u24.04_py.out 2>&1
 
 test2_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \

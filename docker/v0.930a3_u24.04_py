@@ -53,7 +53,7 @@ RUN apt-get -y update && apt-get \
 # libcairo2-dev
 
 # ───────────────────────────────────────────────────────────────────
-# Install required Python packages
+# Install Python packages
 
 WORKDIR /opt
 
@@ -68,13 +68,13 @@ RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
 # Install the remaining python packages from the requirements file
 
 COPY u24.04_req.txt ./
-RUN pip3 install --no-cache-dir --break-system-packages -r u24.04_req.txt
+RUN pip3 install --break-system-packages -r u24.04_req.txt
 
 # This is the set of commands used to construct the original
 # requirements file
 #
 # RUN pip3 install --break-system-packages pytest Pillow tensorflow torch 
-# numpy scipy matplotlib yt scikit-learn keras
+# numpy scipy matplotlib yt scikit-learn keras normflows
 # RUN pip3 freeze > u24.04_req.txt
 # RUN cat u24.04_req.txt
 
@@ -94,8 +94,7 @@ WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 # ───────────────────────────────────────────────────────────────────
-# Install o2sclpy via pip. I like the editable flag for easier
-# modifications down the road
+# Install o2sclpy via pip
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
