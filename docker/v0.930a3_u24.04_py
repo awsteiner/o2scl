@@ -13,14 +13,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install apt packages, first pass
 
 # Install dependencies. We need curl to test downloading EOSs for
-# o2sclpy. The library libcairo2-dev is required for pycairo. We could
-# use "--no-install-recommends" to make the image smaller, but that
-# causes problems and many of the recommendations are good, e.g.
-# manpages and less. We no longer need need imagemagick.
+# o2sclpy. We could use "--no-install-recommends" to
+# make the image smaller, but that causes problems and many of the
+# recommendations are good, e.g. manpages and less.
 
 RUN apt-get -y update && apt-get \
   -y install g++ make autoconf automake libtool git curl cmake \
-  python3 libz-dev libsz2 && apt-get clean 
+  python3 libz-dev libsz2 imagemagick && apt-get clean 
 
 # ───────────────────────────────────────────────────────────────────
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
@@ -34,6 +33,7 @@ RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_2/hdf5
   -o hdf5-1.14.2.tar.gz
 RUN tar xvzf hdf5-1.14.2.tar.gz
 RUN rm hdf5-1.14.2.tar.gz
+# The github release has a non-traditional directory name
 WORKDIR /opt/hdfsrc
 #FROM working
 RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
@@ -42,15 +42,16 @@ RUN make install
 
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages, second pass
+#
+# The library libcairo2-dev is required for pycairo which in
+# turn is required by imagemagick (which is required by o2sclpy's
+# latex_to_png() function). 
 
 RUN apt-get -y update && apt-get \
   -y install libgsl-dev libreadline-dev libboost-all-dev libeigen3-dev \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libfftw3-dev texlive dvipng texlive-latex-extra libarmadillo-dev \
-  cm-super python3-pip libquadmath0 zlib1g-dev
-
-# I think this was only needed for imagemagick
-# libcairo2-dev
+  cm-super python3-pip libcairo2-dev libquadmath0 zlib1g-dev
 
 # ───────────────────────────────────────────────────────────────────
 # Install Python packages
@@ -67,8 +68,8 @@ RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
   --no-binary=h5py h5py==3.11.0
 
 # Install the remaining python packages from the requirements file.
-# The normflows package includes nvidia, and pipdeptree includes
-# a dependency on pip, so those are installed separately.
+# The normflows package includes extra nvidia packages, and pipdeptree
+# includes a dependency on pip, so those are installed separately.
 
 COPY u24.04_req.txt ./
 RUN pip3 install --break-system-packages -r u24.04_req.txt
@@ -93,7 +94,7 @@ RUN pip3 install --break-system-packages torch==2.4.1 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout d4fbefb8 && autoreconf -i
+RUN git checkout 144a4d5f && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -108,7 +109,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git checkout a9f1f9f && pip3 install --break-system-packages . 
+RUN git checkout b78f1c2b && pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately

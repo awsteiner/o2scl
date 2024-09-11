@@ -289,23 +289,20 @@ build_v0.930a3_u24.04_py:
 	sudo docker buildx build . \
 		--target working \
 		-f v0.930a3_u24.04_py \
-		-t awsteiner/o2scl:v0.930a3_u24.04_py
+		-t awsteiner/o2scl:v0.930a3_u24.04_py \
+		> v0.930a3_u24.04_py.out 2>&1
 
 #		--no-cache \
-#> v0.930a3_u24.04_py.out 2>&1
-
 
 test1_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
-	"cd /opt/o2scl && make -j 6 check && make -j 6 o2scl-examples"
-
-#\
-#		> test1_v0.930a3_u24.04_py.out 2>&1
+	"cd /opt/o2scl && make -check && make o2scl-examples" \
+		> test1_v0.930a3_u24.04_py.out 2>&1
 
 test2_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
 		"cd /opt/o2sclpy && make testq" \
-		>> test2_v0.930a3_u24.04_py.out 2>&1
+		> test2_v0.930a3_u24.04_py.out 2>&1
 
 push_v0.930a3_u24.04_py:
 	sudo docker push awsteiner/o2scl:v0.930a3_u24.04_py
