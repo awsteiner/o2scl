@@ -52,8 +52,6 @@ int main(void) {
   cout.setf(ios::scientific);
 
   eos_crust be;
-  // Energy, pressure, etc.
-  thermo th;
   // Proton and mass numbers
   int Z, A;
 
@@ -85,10 +83,13 @@ int main(void) {
   cout << "eden         pres         barn         A    Z   ";
   cout << "ed_err        pr_err" << endl;
 
+  // Energy, pressure, etc.
+  thermo &th=be.def_thermo;
+  
   for(double pr=8.9e-4/hc_mev_fm;pr>=2.12e-10/hc_mev_fm;pr/=2.0) {
 
     th.pr=pr;
-    be.calc_pressure(th,barn,Z,A);
+    be.calc_pressure(barn,Z,A);
 
     // Output energy and pressure in MeV/fm^3
     cout << th.ed*hc_mev_fm << " " << th.pr*hc_mev_fm
@@ -124,7 +125,7 @@ int main(void) {
 
   for(barn=4.19e-4;barn>=6.39e-9;barn/=2.0) {
 
-    be.calc_density(barn,th,Z,A);
+    be.calc_density(barn,Z,A);
     
     ed_bps=cu.convert("g/cm^3","MeV/fm^3",
 		      bps.interp("nb",barn*1.0e39,"rho"));

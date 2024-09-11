@@ -152,6 +152,17 @@ namespace o2scl {
     */
     fermion e;
 
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           eos_leptons &elep,
+			   std::shared_ptr<table_units<> > results) {
+      return 20;
+    }
+    
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      return 20;
+    }
+    
   protected:
 
 #ifndef DOXYGEN_INTERNAL
