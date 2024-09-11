@@ -34,7 +34,6 @@ docker_mount_cache:
 DOCKER_PS_Q = $(shell sudo docker ps -q)
 
 docker_stop:
-	echo $(DOCKER_PS_Q)
 	- sudo docker stop $(DOCKER_PS_Q)
 
 docker_clean2:
@@ -298,7 +297,7 @@ build_v0.930a3_u24.04_py:
 
 test1_v0.930a3_u24.04_py:
 	sudo docker run awsteiner/o2scl:v0.930a3_u24.04_py sh -c \
-		"cd /opt/o2scl && make check && make o2scl-examples"
+	"cd /opt/o2scl && make -j 6 check && make -j 6 o2scl-examples"
 
 #\
 #		> test1_v0.930a3_u24.04_py.out 2>&1

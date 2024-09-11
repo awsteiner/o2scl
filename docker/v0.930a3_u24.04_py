@@ -116,8 +116,9 @@ RUN git checkout a9f1f9f && pip3 install --break-system-packages .
 ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
 
 # ───────────────────────────────────────────────────────────────────
-# Clear the build directory and then run acol and o2graph
+# Run acol and o2graph
 
+WORKDIR /
 RUN acol -h && acol -v && o2graph -h && o2graph -v
 
 

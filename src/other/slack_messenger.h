@@ -171,12 +171,14 @@ namespace o2scl {
       if (url.length()>0) {
 
 	if (channel.length()==0) {
-	  O2SCL_ERR2("No slack channel specified in ",
-		     "slack_messenger::send().",o2scl::exc_einval);
+          O2SCL_CONV2_RET("No slack channel specified in ",
+                          "slack_messenger::send().",o2scl::exc_einval,
+                          err_on_fail);
 	}
 	if (username.length()==0) {
-	  O2SCL_ERR2("No slack username specified in ",
-		     "slack_messenger::send().",o2scl::exc_einval);
+	  O2SCL_CONV2_RET("No slack username specified in ",
+                          "slack_messenger::send().",o2scl::exc_einval,
+                          err_on_fail);
 	}
 
 	double time_now=time_last_message;
@@ -184,9 +186,9 @@ namespace o2scl {
 #ifdef O2SCL_MPI
 	  time_now=MPI_Wtime();
 #else
-	  O2SCL_ERR2("Value mpi_time is true but O2SCL_MPI not defined ",
-		     "in slack_message::slack_message().",
-		    o2scl::exc_einval);
+	  O2SCL_CONV2_RET("Value mpi_time is true but O2SCL_MPI not defined ",
+                          "in slack_message::slack_message().",
+                          o2scl::exc_einval,err_on_fail);
 #endif
 	} else {
 	  time_now=time(0);
@@ -221,8 +223,9 @@ namespace o2scl {
 	  iret=system(scr.c_str());
 	
 	  if (iret!=0 && err_on_fail) {
-	    O2SCL_ERR2("System command failed in ",
-		       "slack_messenger::send().",o2scl::exc_efailed);
+	    O2SCL_CONV2_RET("System command failed in ",
+                            "slack_messenger::send().",o2scl::exc_efailed,
+                            err_on_fail);
 	  }
 	
 	  time_last_message=time_now;
@@ -230,8 +233,9 @@ namespace o2scl {
 	}
       
       } else {
-	O2SCL_ERR2("No slack URL specified in ",
-		   "slack_messenger::send().",o2scl::exc_einval);
+	O2SCL_CONV2_RET("No slack URL specified in ",
+                        "slack_messenger::send().",o2scl::exc_einval,
+                        err_on_fail);
       }
     
       return iret;
