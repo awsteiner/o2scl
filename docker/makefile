@@ -286,12 +286,13 @@ all_v0.929_ot_py: build_v0.929_ot_py test_v0.929_ot_py
 # Standard build 12: v0.930a3_u24.04_py
 
 build_v0.930a3_u24.04_py:
-	sudo docker buildx build . \
-		--target working \
+	sudo docker build . \
 		-f v0.930a3_u24.04_py \
 		-t awsteiner/o2scl:v0.930a3_u24.04_py \
 		> v0.930a3_u24.04_py.out 2>&1
 
+#	sudo docker buildx build . \
+#		--target working \
 #		--no-cache \
 
 test1_v0.930a3_u24.04_py:

@@ -71,8 +71,8 @@ RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
 # The normflows package includes extra nvidia packages, and pipdeptree
 # includes a dependency on pip, so those are installed separately.
 
-COPY u24.04_req.txt ./
-RUN pip3 install --break-system-packages -r u24.04_req.txt
+COPY v0.930a3_u24.04_req.txt ./
+RUN pip3 install --break-system-packages -r v0.930a3_u24.04_req.txt
 RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
 RUN pip3 install --break-system-packages torch==2.4.1 \
   --index-url https://download.pytorch.org/whl/cpu
@@ -86,15 +86,15 @@ RUN pip3 install --break-system-packages torch==2.4.1 \
 # RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
 # RUN pip3 install --break-system-packages torch==2.4.1 \
 #   --index-url https://download.pytorch.org/whl/cpu
-# RUN pip3 freeze > u24.04_req.txt
-# RUN cat u24.04_req.txt
+# RUN pip3 freeze > v0.930a3_u24.04_req.txt
+# RUN cat v0.930a3_u24.04_req.txt
 
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout 144a4d5f && autoreconf -i
+RUN git checkout 4a38e825 && autoreconf -i
 
 # We disable static to keep the image small
 
