@@ -671,10 +671,13 @@ namespace o2scl {
       // HMC method
 
       mom_step.resize(n_params);
+      mom_step.clear();
       
       // Randomize the step sizes
-      for (size_t k=0; k<n_params; k++) {
-        mom_step[k]=hmc_step[k]*r.random();
+      int jr=r.random_int(n_params);
+      for (size_t k=0; k<jr; k++) {
+        int kr=r.random_int(n_params);
+        mom_step[kr]=hmc_step[kr]*r.random();
       }
       
       // Take a half step in the momenta using the gradient
@@ -756,15 +759,14 @@ namespace o2scl {
 
       std::cout << std::scientific << std::setprecision(2);
       for (size_t k=0;k<n_params;k++) {
-        /*std::cout << "i=" << k << "\t e=" << mom_step[k]
+        std::cout << "i=" << k << "\t e=" << mom_step[k]
                   << "\t g=" << grad[k]
                   << "\t eg=" << mom_step[k]*grad[k]
                   << "\t p'=" << mom_next[k]
-                  << "\t dq=" << abs(next[k]-current[k]);*/
+                  << "\t dq=" << abs(next[k]-current[k]);
         if (abs(mom_step[k]*grad[k])>=1.0) {
-          std::cout << "i=" << k << std::endl;
-        }
-        //else std::cout << std::endl;
+          std::cout << "\t large: i=" << k << std::endl;
+        } else std::cout << std::endl;
       }
       std::cout << std::scientific << std::setprecision(6);
 
@@ -3677,7 +3679,7 @@ namespace o2scl {
                      "mcmc_para_table::add_line().",o2scl::exc_efailed);
         }
         table->set("mult",walker_accept_rows[windex],mult_old+1.0);
-        if (this->verbose>=2) {
+        if (this->verbose>=3) {
           this->scr_out << "mcmc: Updating mult of row "
                         << walker_accept_rows[windex]
                         << " from " << mult_old << " to "
