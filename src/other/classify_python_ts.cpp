@@ -78,7 +78,7 @@ int main(void) {
   uniform_grid<double> ugx=uniform_grid_end<double>(0,1,99);
   uniform_grid<double> ugy=uniform_grid_end<double>(0,1,99);
   t3d.set_xy("x",ugx,"y",ugy);
-  t3d.line_of_names("exact exact2 mlpc");
+  t3d.line_of_names("exact exact2 mlpc dtc");
   
   for(size_t i=0;i<100;i++) {
     for(size_t j=0;j<100;j++) {
@@ -105,11 +105,10 @@ int main(void) {
       tin.get(ix)=y[j];
     }
 
-    classify_python<> ip("o2sclpy","set_data_str","eval",
-                         "classify_sklearn_mlpc",
-                         ((std::string)"hlayers=[100,100],activation=")+
-                         "relu,verbose=1,max_iter=2000",1);
-    ip.set_data_tensor(2,1,N,tin,tout);
+    classify_python<> cp("classify_sklearn_dtc",
+                         ((std::string)"verbose=2"),2);
+                         
+    cp.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2);
     std::vector<int> ey(1);
@@ -117,7 +116,55 @@ int main(void) {
     for(double dx=0.1;dx<1.01;dx+=0.1) {
       ex[0]=dx;
       ex[1]=dx;
-      ip.eval_std_vec(ex,ey);
+      cp.eval_std_vec(ex,ey);
+      cout << ex[0] << " " << ex[1] << " ";
+      cout << f(ex[0],ex[1]) << " ";
+      cout << ey[0] << endl;
+      t.test_gen(abs(ey[0]-f(ex[0],ex[1]))<=1,"sklearn dtc 1");
+    }
+
+    for(size_t i=0;i<N;i++) {
+      for(size_t j=0;j<N;j++) {
+        ex[0]=t3d.get_grid_x(i);
+        ex[1]=t3d.get_grid_y(j);
+        cp.eval_std_vec(ex,ey);
+        t3d.set(i,j,"dtc",ey[0]);
+      }
+    }
+    
+    cout << endl;
+  }
+    
+  if (true) {
+
+    // Sklearn MLPC, n_out=1
+    
+    tensor<> tin;
+    tensor<int> tout;
+    vector<size_t> in_size={N,2}, out_size={N,1};
+    tin.resize(2,in_size);
+    tout.resize(2,out_size);
+    for(size_t j=0;j<N;j++) {
+      vector<size_t> ix;
+      ix={j,0};
+      tin.get(ix)=x[j];
+      tout.get(ix)=(int)dp[j];
+      ix={j,1};
+      tin.get(ix)=y[j];
+    }
+
+    classify_python<> cp("classify_sklearn_mlpc",
+                         ((std::string)"hlayers=[100,100],activation=")+
+                         "relu,verbose=1,max_iter=2000",1);
+    cp.set_data_tensor(2,1,N,tin,tout);
+    
+    std::vector<double> ex(2);
+    std::vector<int> ey(1);
+    cout << "x y z_exact z_intp" << endl;
+    for(double dx=0.1;dx<1.01;dx+=0.1) {
+      ex[0]=dx;
+      ex[1]=dx;
+      cp.eval_std_vec(ex,ey);
       cout << ex[0] << " " << ex[1] << " ";
       cout << f(ex[0],ex[1]) << " ";
       cout << ey[0] << endl;
@@ -128,7 +175,7 @@ int main(void) {
       for(size_t j=0;j<N;j++) {
         ex[0]=t3d.get_grid_x(i);
         ex[1]=t3d.get_grid_y(j);
-        ip.eval_std_vec(ex,ey);
+        cp.eval_std_vec(ex,ey);
         t3d.set(i,j,"mlpc",ey[0]);
       }
     }

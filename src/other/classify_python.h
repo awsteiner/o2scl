@@ -139,10 +139,10 @@ namespace o2scl {
     
     /** \brief Specify the Python module and function
      */
-    classify_python(std::string module, std::string set_func,
-                   std::string eval_func, 
-                   std::string class_name="", std::string options="",
-                   int v=0) {
+    classify_python(std::string class_name="", std::string options="",
+                    int v=0, std::string module_name="o2sclpy",
+                    std::string set_func="set_data_str",
+                    std::string eval_func="eval") {
       
       verbose=0;
       n_params=0;
@@ -165,7 +165,7 @@ namespace o2scl {
       p_class=0;
       p_module=0;
       
-      set_functions(module,set_func,eval_func,class_name,options,v);
+      set_functions(class_name,options,v,module_name,set_func,eval_func);
     }
 
     /** \brief Free memory associated with the Python objects and the
@@ -242,10 +242,10 @@ namespace o2scl {
   
     /** \brief Specify the python module, class, functions, and options
     */
-    int set_functions(std::string s_module, std::string set_func,
-                      std::string eval_func, 
-                      std::string class_name="", std::string options="",
-                      int v=0) {
+    int set_functions(std::string class_name="", std::string options="",
+                      int v=0, std::string s_module="o2sclpy",
+                      std::string set_func="set_data_str",
+                      std::string eval_func="eval") {
       
       c_set_func=set_func;
       c_eval_func=eval_func;
