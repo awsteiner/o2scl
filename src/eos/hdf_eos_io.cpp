@@ -1168,13 +1168,15 @@ eos_had_temp_base *o2scl_hdf::eos_had_temp_strings(std::string eos_str) {
   vector<string> vs;
   split_string(eos_str,vs);
 
+  //std::cout << "eos_str: " << eos_str << " " << vs.size() << std::endl;
+
   rng<> r;
   int ret;
   double dtmp;
   
   if (vs[0]=="skyrme" || vs[0]=="Skyrme") {
     eos_had_skyrme *sk=new eos_had_skyrme;
-    if (is_number(vs[1]) && vs.size()>=10) {
+    if (vs.size()>=10) {
       ret=function_to_double_nothrow(vs[1],sk->t0,0,&r);
       if (ret!=0) return 0;
       sk->t0/=hc_mev_fm_f<double>();
@@ -1198,6 +1200,21 @@ eos_had_temp_base *o2scl_hdf::eos_had_temp_strings(std::string eos_str) {
       if (ret!=0) return 0;
       ret=function_to_double_nothrow(vs[9],sk->alpha,0,&r);
       if (ret!=0) return 0;
+
+      /*
+        std::cout << "t0,t1,t2,t3: " << sk->t0 << " ";
+        std::cout << sk->t1 << " ";
+        std::cout << sk->t2 << " ";
+        std::cout << sk->t3 << std::endl;
+        std::cout << "x0,x1,x2,x3: " << sk->x0 << " ";
+        std::cout << sk->x1 << " ";
+        std::cout << sk->x2 << " ";
+        std::cout << sk->x3 << std::endl;
+        std::cout << "alpha: " << sk->alpha << std::endl;;
+      */
+
+      sk->b=1.0;
+      sk->a=0.0;
       
     } else {
       skyrme_load(*sk,vs[1]);
