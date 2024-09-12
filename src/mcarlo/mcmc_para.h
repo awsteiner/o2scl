@@ -4025,9 +4025,11 @@ namespace o2scl {
     static const size_t ignore_emu=0;
     static const size_t use_emu=1;
     static const size_t best_emu=2;
+    static const size_t compare_emu_exit=3;
     static const size_t ignore_class=0;
     static const size_t use_class=10;
     static const size_t best_class=20;
+    static const size_t compare_class_exit=30;
     vector<size_t> active;
 #endif
     
@@ -4142,6 +4144,9 @@ namespace o2scl {
           }
         
           emu_train();         
+          if (use_classifier) {
+            emuc_train();
+          }
         
         }
 
@@ -4187,17 +4192,29 @@ namespace o2scl {
     /** \brief Train the emulator
      */
     void emu_train() {
+
+      size_t kmax=emu.size()/this->n_threads;
+
+      double verify=((double)emu.size())/((double)this->n_threads)-
+        ((double)kmax);
+      if (fabs(verify)>1.0e-10) {
+        std::cout << "verify: " << kmax << " " << verify << std::endl;
+        O2SCL_ERR2("Number of threads does not evenly divide ",
+                  "emulator size.",o2scl::exc_efailed);
+      }
       
+      for(size_t k=0;k<kmax;k++) {
+        
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
-      {
+        {
 #ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
-        for(size_t it=0;it<this->n_threads;it++) {
+          for(size_t it=0;it<this->n_threads;it++) {
 
-          if (it<emu.size()) {
+            size_t ix=k*this->n_threads+it;
             
             std::vector<std::string> pnames;
             for(size_t j=0;j<n_params_child;j++) {
@@ -4206,11 +4223,15 @@ namespace o2scl {
             const_matrix_view_table<> cmvt_x(emu_table,pnames);
             matrix_view_table<> mvt_y(emu_table,{"log_wgt"});
             
-            emu[it]->set_data(n_params_child,1,emu_table.get_nlines(),
+            emu[ix]->set_data(n_params_child,1,emu_table.get_nlines(),
                               cmvt_x,mvt_y);
+            
           }
+          
+          // End of parallel region
         }
-        // End of parallel region
+        
+        // End of loop over 'k'
       }
 
       return;
@@ -4224,16 +4245,28 @@ namespace o2scl {
         emuc_table.function_column("mult>0","classify");
       }
       
+      size_t kmax=emuc.size()/this->n_threads;
+      
+      double verify=((double)emuc.size())/((double)this->n_threads)-
+        ((double)kmax);
+      if (fabs(verify)>1.0e-10) {
+        std::cout << "verify: " << kmax << " " << verify << std::endl;
+        O2SCL_ERR2("Number of threads does not evenly divide ",
+                   "emulator size.",o2scl::exc_efailed);
+      }
+      
+      for(size_t k=0;k<kmax;k++) {
+        
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
 #endif
-      {
+        {
 #ifdef O2SCL_SET_OPENMP
 #pragma omp for
 #endif
-        for(size_t it=0;it<this->n_threads;it++) {
-
-          if (it<emuc.size()) {
+          for(size_t it=0;it<this->n_threads;it++) {
+            
+            size_t ix=k*this->n_threads+it;
             
             std::vector<std::string> pnames;
             for(size_t j=0;j<n_params_child;j++) {
@@ -4242,11 +4275,14 @@ namespace o2scl {
             const_matrix_view_table<> cmvt_x(emuc_table,pnames);
             matrix_view_table<> mvt_y(emuc_table,{"classify"});
             
-            emu[it]->set_data(n_params_child,1,emuc_table.get_nlines(),
-                              cmvt_x,mvt_y);
+            emuc[ix]->set_data(n_params_child,1,emuc_table.get_nlines(),
+                               cmvt_x,mvt_y);
           }
+          
+          // End of parallel region
         }
-        // End of parallel region
+        
+        // End of loop over k
       }
 
       return;
@@ -4416,58 +4452,72 @@ namespace o2scl {
 
           emu_test_tab.new_column("log_wgt_emu");
           
-          // Emulate each row, and place the result in column
-          // log_wgt_emu
-          double qual=0.0;
-          for(size_t i=0;i<emu_test_tab.get_nlines();i++) {
-            ubvector x(n_params_local), y(1);
-            for(size_t j=0;j<n_params_local;j++) {
-              x[j]=emu_test_tab.get(j,i);
-            }
-            emu[0]->eval(x,y);
-            emu_test_tab.set("log_wgt_emu",i,y[0]);
-
-            // Update the quality factor
-            qual+=fabs(y[0]-emu_test_tab.get("log_wgt",i));
-          }
-          std::cout << "mcmc_para_emu(): Emulator quality factor: "
-                    << qual << std::endl;
-
-          o2scl_hdf::hdf_file hf_emu;
-          std::string test_emu_file=this->prefix+"_"+
-            o2scl::itos(this->mpi_rank)+"_te.o2";
-          hf_emu.open_or_create(test_emu_file);
-          o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
-          hf_emu.close();
-
-          if (use_classifier) {
-
-            emuc_test_tab.new_column("classify_emu");
+          for(size_t ie=0;ie<emu.size();ie++) {
             
             // Emulate each row, and place the result in column
             // log_wgt_emu
-            qual=0.0;
-            for(size_t i=0;i<emuc_test_tab.get_nlines();i++) {
-              ubvector x(n_params_local);
-              ubvector_int y(1);
+            double qual=0.0;
+            for(size_t i=0;i<emu_test_tab.get_nlines();i++) {
+              ubvector x(n_params_local), y(1);
               for(size_t j=0;j<n_params_local;j++) {
-                x[j]=emuc_test_tab.get(j,i);
+                x[j]=emu_test_tab.get(j,i);
               }
-              emuc[0]->eval(x,y);
-              emuc_test_tab.set("classify_emu",i,y[0]);
+              emu[ie]->eval(x,y);
+              emu_test_tab.set("log_wgt_emu",i,y[0]);
               
               // Update the quality factor
-              qual+=fabs(y[0]-emuc_test_tab.get("classify",i));
+              qual+=fabs(y[0]-emu_test_tab.get("log_wgt",i));
             }
-            std::cout << "mcmc_para_emuc(): Classifier quality factor: "
+            std::cout << "mcmc_para_emu(): Emulator quality factor: "
                       << qual << std::endl;
             
-            o2scl_hdf::hdf_file hf_emuc;
-            std::string test_emuc_file=this->prefix+"_"+
-              o2scl::itos(this->mpi_rank)+"_tec.o2";
-            hf_emuc.open_or_create(test_emuc_file);
-            o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
-            hf_emuc.close();
+            o2scl_hdf::hdf_file hf_emu;
+            std::string test_emu_file=this->prefix+"_"+
+              o2scl::itos(this->mpi_rank)+"_"+
+              o2scl::szttos(ie)+"_te.o2";
+            hf_emu.open_or_create(test_emu_file);
+            o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
+            hf_emu.close();
+            
+          }
+
+          if (use_classifier) {
+
+            // Train the classifier
+            emuc_train();
+            
+            emuc_test_tab.new_column("classify_emu");
+            
+            for(size_t iec=0;iec<emuc.size();iec++) {
+              
+              // Emulate each row, and place the result in column
+              // log_wgt_emu
+              double qualc=0.0;
+              
+              for(size_t i=0;i<emuc_test_tab.get_nlines();i++) {
+                ubvector x(n_params_local);
+                ubvector_int y(1);
+                for(size_t j=0;j<n_params_local;j++) {
+                  x[j]=emuc_test_tab.get(j,i);
+                }
+                emuc[iec]->eval(x,y);
+                emuc_test_tab.set("classify_emu",i,y[0]);
+                
+                // Update the quality factor
+                qualc+=fabs(y[0]-emuc_test_tab.get("classify",i));
+              }
+              std::cout << "mcmc_para_emuc(): Classifier quality factor: "
+                        << qualc << std::endl;
+              
+              o2scl_hdf::hdf_file hf_emuc;
+              std::string test_emuc_file=this->prefix+"_"+
+                o2scl::itos(this->mpi_rank)+"_"+
+                o2scl::szttos(iec)+"_tec.o2";
+              hf_emuc.open_or_create(test_emuc_file);
+              o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
+              hf_emuc.close();
+
+            }
 
           }
           
