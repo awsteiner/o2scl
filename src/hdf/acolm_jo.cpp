@@ -878,7 +878,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
   inte_kronrod_boost<61> ikb;
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
-  inte_double_exp_boost ideb;
+  inte_double_exp_boost<> ideb;
 #else
   inte_double_exp_boost<double,double,double,double> ideb;
 #endif
