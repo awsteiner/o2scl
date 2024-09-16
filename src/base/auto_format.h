@@ -35,11 +35,14 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 namespace o2scl_auto_format {
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   typedef
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
   cpp_dec_float_35;
@@ -53,6 +56,7 @@ namespace o2scl_auto_format {
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
+#endif
 
   /** \brief Automatically format output
 
@@ -153,6 +157,7 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, long double d);
     
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_35 &d);
      
@@ -161,7 +166,8 @@ namespace o2scl_auto_format {
      
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_100 &d);
-     
+#endif
+    
     template<class data_t>
     friend auto_format &operator<<
     (auto_format &at,

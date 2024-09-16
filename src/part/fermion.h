@@ -39,10 +39,12 @@
 
 #include <o2scl/set_mpfr.h>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
+#endif
 #endif
 
 #include <o2scl/constants.h>
@@ -122,6 +124,7 @@ namespace o2scl {
 
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<25> > >
   fermion_cdf25;
@@ -134,9 +137,11 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<100> > >
   fermion_cdf100;
+#endif
 
 #ifdef O2SCL_SET_MPFR
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<25> > >
   fermion_mpfr25;
@@ -149,6 +154,7 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<100> > >
   fermion_mpfr100;
+#endif
 
 #endif
   

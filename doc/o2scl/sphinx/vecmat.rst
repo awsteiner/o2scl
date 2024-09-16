@@ -91,6 +91,16 @@ function specified on a grid can be implemented in O₂scl with
 :ref:`tensor_grid <tensor_grid>`. See more discussion in the tensor
 section below.
 
+Vector and matrix output
+------------------------
+
+For writing generic vectors to a stream, you can use the
+:cpp:func:`o2scl::vector_out()` functions, which are defined in
+``src/base/vector.h``. Pretty matrix output is performed by the
+:cpp:func:`o2scl::matrix_out()` functions, which are defined in
+``src/base/columnify.h``. The matrix output function uses a
+:ref:`columnify <columnify>` object to format the output.
+
 Rows and columns vs. x and y
 ----------------------------
 
@@ -199,11 +209,13 @@ Vector properties
 
 - :cpp:func:`o2scl::vector_diffs()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vectors_equal()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::vectors_equal_reorder()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vectors_equal_tol()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_finite()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_monotonic()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_is_strictly_montonic()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_largest()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::vector_missing()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_norm()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_norm_double()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_smallest()` [``src/base/vector.h``]
@@ -253,6 +265,14 @@ Vector rearrangement functions
 - :cpp:func:`o2scl::vector_swap_double()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_to_bins()` [``src/base/vector.h``]
 
+Vector-like objects
+-------------------
+
+- :cpp:class:`o2scl::vector_index_vector` [``src/base/vector.h``]
+- :cpp:class:`o2scl::vector_index_vector_size` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_row_gen` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_row_gen_ctor` [``src/base/vector.h``]
+  
 Statistics functions
 --------------------
 
@@ -346,16 +366,13 @@ Matrix rearrangement functions
 - :cpp:func:`o2scl::matrix_out()`
 - :cpp:func:`o2scl::matrix_trans_out()`
 
-Vector and matrix output
-------------------------
+Matrix-like objects
+-------------------
 
-For writing generic vectors to a stream, you can use the
-:cpp:func:`o2scl::vector_out()` functions, which are defined in
-``src/base/vector.h``. Pretty matrix output is performed by the
-:cpp:func:`o2scl::matrix_out()` functions, which are defined in
-``src/base/columnify.h``. The matrix output function uses a
-:ref:`columnify <columnify>` object to format the output.
-
+- :cpp:class:`o2scl::matrix_row` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view_transpose` [``src/base/vector.h``]
+ac- :cpp:class:`o2scl::vector_view_matrix` [``src/base/vector.h``]
+  
 Tensors
 -------
 

@@ -208,7 +208,7 @@ namespace o2scl {
   //@{
   /** \brief Simple vector copy
 
-      Copy \c src to \c dest, resizing \c dest if it is too small
+      Copy \c src to \c dest, resizing \c dest only if it is too small
       to hold <tt>src.size()</tt> elements.
 
       This function will work for any classes \c vec_t and
@@ -261,7 +261,8 @@ namespace o2scl {
 
   /** \brief Simple matrix copy
       
-      Copy \c src to \c dest, resizing \c dest if it is too small.
+      Copy \c src to \c dest, resizing \c dest only if either
+      of the two dimensions are too small.
       
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
@@ -306,8 +307,8 @@ namespace o2scl {
   //@{
   /** \brief Simple transpose
       
-      Copy the transpose of \c src to \c dest, resizing \c dest if it
-      is too small.
+      Copy the transpose of \c src to \c dest, resizing \c dest only
+      if one of the two dimensions are too small.
       
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
@@ -510,7 +511,7 @@ namespace o2scl {
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time. 
-  */
+*/
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(size_t N, vec_t &v1, vec2_t &v2) {
     data_t temp;
@@ -542,10 +543,10 @@ namespace o2scl {
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
 
-      \note It is almost always better to use <tt>std::swap</tt>
-      than this function, which is provided only in cases where
-      one knows one is going to be forced to use a vector type
-      without a properly defined <tt>std::swap</tt> method.
+      \note It is almost always better to use <tt>std::swap</tt> than
+      this function, which is provided only in cases where one is
+      forced to use a vector type without a properly defined
+      <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(vec_t &v1, vec2_t &v2) {

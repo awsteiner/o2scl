@@ -569,6 +569,7 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
   return at;
 }
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 auto_format &o2scl_auto_format::operator<<(auto_format &at,
 					   const cpp_dec_float_35 &d) {
   string stmp;
@@ -592,6 +593,7 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
   at.add_string(stmp);
   return at;
 }
+#endif
 
 auto_format &o2scl_auto_format::operator<<(auto_format &at, float f) {
   string stmp;

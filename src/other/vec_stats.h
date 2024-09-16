@@ -359,6 +359,7 @@ namespace o2scl {
     }
     return sum/n;
   }
+
   //@}
 
   /// \name Vector absolute deviation, skewness, etc. in src/other/vec_stats.h
