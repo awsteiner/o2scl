@@ -7,6 +7,7 @@ Arrays, vectors, matrices, and tensors contents
 -----------------------------------------------
 
 - :ref:`Vector and matrix introduction`
+- :ref:`Vector and matrix output`
 - :ref:`Rows and columns vs. x and y`
 - :ref:`Assignment and copying`
 - :ref:`Differentiation and integration`
@@ -15,6 +16,7 @@ Arrays, vectors, matrices, and tensors contents
 - :ref:`Vector properties`
 - :ref:`Maximum and minimum functions`
 - :ref:`Vector rearrangement functions`
+- :ref:`Vector-like objects`
 - :ref:`Statistics functions`
 - :ref:`Statistics with weighted vectors`
 - :ref:`Matrix assignment and copying`
@@ -22,6 +24,7 @@ Arrays, vectors, matrices, and tensors contents
 - :ref:`Matrix maximum and minimum functions`
 - :ref:`Matrix searching`
 - :ref:`Matrix rearrangement functions`
+- :ref:`Matrix-like objects`
 - :ref:`Tensors`
 - :ref:`I/O and contiguous storage`
 
@@ -218,6 +221,7 @@ Vector properties
 - :cpp:func:`o2scl::vector_missing()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_norm()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_norm_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::vector_out()`
 - :cpp:func:`o2scl::vector_smallest()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_smallest_index()` [``src/base/vector.h``]
 
@@ -263,29 +267,50 @@ Vector rearrangement functions
 - :cpp:func:`o2scl::vector_sum_double()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_swap()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_swap_double()` [``src/base/vector.h``]
-- :cpp:func:`o2scl::vector_to_bins()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::vector_to_bins()` [``src/base/vec_stats.h``]
 
 Vector-like objects
 -------------------
 
-- :cpp:class:`o2scl::vector_index_vector` [``src/base/vector.h``]
-- :cpp:class:`o2scl::vector_index_vector_size` [``src/base/vector.h``]
+- :cpp:class:`o2scl::const_matrix_column_gen` [``src/base/vector.h``]
+- :cpp:class:`o2scl::const_matrix_row_gen` [``src/base/vector.h``]
+- :cpp:class:`o2scl::const_vector_range_gen` [``src/base/vector.h``]
+- :cpp:class:`o2scl::gsl_vector_wrap` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_column_gen` [``src/base/vector.h``]
 - :cpp:class:`o2scl::matrix_row_gen` [``src/base/vector.h``]
 - :cpp:class:`o2scl::matrix_row_gen_ctor` [``src/base/vector.h``]
+- :cpp:class:`o2scl::vector_index_vector` [``src/base/vector.h``]
+- :cpp:class:`o2scl::vector_index_vector_size` [``src/base/vector.h``]
+- :cpp:class:`o2scl::vector_range_gen` [``src/base/vector.h``]
   
 Statistics functions
 --------------------
 
+- :cpp:func:`o2scl::kl_div_gaussian()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::matrix_backward_complex_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::matrix_backward_fft_copy()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::matrix_forward_complex_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::matrix_forward_fft_copy()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_absdev()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_acor()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_autocorr_tau()` [``src/other/vec_stats.h``]
-- :cpp:func:`o2scl::vector_autocorr_tau_vector()` [``src/other/vec_stats.h``]
-- :cpp:func:`o2scl::vector_autocorr_tau_vector_mult()`
+- :cpp:func:`o2scl::vector_autocorr_vector()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_autocorr_vector_mult()`
   [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_autocorr_vector_fftw()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_autocorr_vector_fftw_mult()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_backward_complex_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_backward_complex_fft_copy()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_backward_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_backward_fft_copy()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_bin_size_freedman()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_bin_size_scott()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_correlation()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_covariance()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_forward_complex_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_forward_complex_fft_copy()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_forward_fft()` [``src/other/vec_stats.h``]
+- :cpp:func:`o2scl::vector_forward_fft_copy()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_kurtosis()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_lag1_autocorr()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_lagk_autocorr()` [``src/other/vec_stats.h``]
@@ -317,61 +342,65 @@ Statistics with weighted vectors
 Matrix assignment and copying
 -----------------------------
 
-- :cpp:func:`o2scl::matrix_copy()`
-- :cpp:func:`o2scl::matrix_set_all()`
-- :cpp:func:`o2scl::matrix_set_identity()`
+- :cpp:func:`o2scl::matrix_copy()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_set_all()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_set_identity()` [``src/base/vector.h``]
 
 Matrix properties
 -----------------
 
-- :cpp:func:`o2scl::matrix_is_finite()`
-- :cpp:func:`o2scl::matrix_is_lower()`
-- :cpp:func:`o2scl::matrix_is_upper()`
-- :cpp:func:`o2scl::matrix_make_lower()`
-- :cpp:func:`o2scl::matrix_make_upper()`
-- :cpp:func:`o2scl::matrix_sum()`
+- :cpp:func:`o2scl::matrix_is_lower()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_is_upper()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_make_lower()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_make_upper()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_out()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_sum()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_trans_out()` [``src/base/vector.h``]
   
 Matrix maximum and minimum functions
 ------------------------------------
 
-- :cpp:func:`o2scl::matrix_max()`
-- :cpp:func:`o2scl::matrix_max_index()`
-- :cpp:func:`o2scl::matrix_max_value()`
-- :cpp:func:`o2scl::matrix_max_value_double()`
-- :cpp:func:`o2scl::matrix_min()`
-- :cpp:func:`o2scl::matrix_min_index()`
-- :cpp:func:`o2scl::matrix_min_value()`
-- :cpp:func:`o2scl::matrix_min_value_double()`
-- :cpp:func:`o2scl::matrix_minmax()`
-- :cpp:func:`o2scl::matrix_minmax_index()`
+- :cpp:func:`o2scl::matrix_max()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_max_index()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_max_value()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_max_value_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_min()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_min_index()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_min_value()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_min_value_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_minmax()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_minmax_index()` [``src/base/vector.h``]
 
 Matrix searching
 ----------------
 
-- :cpp:func:`o2scl::matrix_lookup()`
+- :cpp:func:`o2scl::matrix_lookup()` [``src/base/vector.h``]
   
 Matrix rearrangement functions
 ------------------------------
 
 - :cpp:func:`o2scl::matrix_column()` [``src/base/vector.h``]
-- :cpp:func:`o2scl::matrix_row()`
-- :cpp:func:`o2scl::matrix_swap()`
-- :cpp:func:`o2scl::matrix_swap_cols()`
-- :cpp:func:`o2scl::matrix_swap_cols_double()`
-- :cpp:func:`o2scl::matrix_swap_double()`
-- :cpp:func:`o2scl::matrix_swap_rows()`
-- :cpp:func:`o2scl::matrix_swap_rows_double()`
-- :cpp:func:`o2scl::matrix_transpose()`
-
-- :cpp:func:`o2scl::matrix_out()`
-- :cpp:func:`o2scl::matrix_trans_out()`
+- :cpp:func:`o2scl::matrix_row()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap_cols()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap_cols_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap_rows()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_swap_rows_double()` [``src/base/vector.h``]
+- :cpp:func:`o2scl::matrix_transpose()` [``src/base/vector.h``]
 
 Matrix-like objects
 -------------------
 
-- :cpp:class:`o2scl::matrix_row` [``src/base/vector.h``]
+- :cpp:class:`o2scl::const_matrix_view` [``src/base/vector.h``]
+- :cpp:class:`o2scl::gsl_matrix_wrap` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view_omit_row` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view_omit_column` [``src/base/vector.h``]
 - :cpp:class:`o2scl::matrix_view_transpose` [``src/base/vector.h``]
-ac- :cpp:class:`o2scl::vector_view_matrix` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view_vec_vec` [``src/base/vector.h``]
+- :cpp:class:`o2scl::matrix_view_vec_vec_trans` [``src/base/vector.h``]
+- :cpp:class:`o2scl::vector_view_matrix` [``src/base/vector.h``]
   
 Tensors
 -------

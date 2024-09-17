@@ -1923,6 +1923,9 @@ namespace o2scl {
       exponents are arbitrary. Also, it is generally beneficial for
       the last dimension of a real to complex or complex to real
       transform to be even.)
+
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_forward_fft(const std::vector<double> &data,
                           std::vector<std::complex<double>> &fft);
@@ -1935,7 +1938,10 @@ namespace o2scl {
       no optimization of the FFTW algorithm is performed. Given an
       input vector of size n, the output vector is resized to have
       size \f$ (n-1)*2 \f$ . 
-   */
+
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
+  */
   void vector_backward_fft(const std::vector<std::complex<double>> &data,
                           std::vector<double> &fft);
   

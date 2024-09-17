@@ -70,7 +70,10 @@ namespace o2scl {
   /** \brief A simple convenience wrapper for GSL vector objects
 
       \warning This uses typecasts on externally allocated GSL 
-      pointers and is not safe or fully const-correct. 
+      pointers and is not safe or fully const-correct.
+
+      9/16/24: This class is currently used in fit_linear_ts.cpp
+      and several of the linalg testing codes.
   */
   class gsl_vector_wrap {
     /// A pointer to the data
@@ -97,6 +100,9 @@ namespace o2scl {
 
       \warning This uses typecasts on externally allocated GSL 
       pointers and is not safe or fully const-correct. 
+
+      9/16/24: This class is currently used in fit_linear_ts.cpp
+      and several of the linalg testing codes.
   */
   class gsl_matrix_wrap {
   protected:
@@ -163,7 +169,7 @@ namespace o2scl {
   
   /** \brief Return true if the first \c n elements of 
       two vectors are equal within a specified tolerance
-   */
+  */
   template<class vec_t, class vec2_t> 
     bool vectors_equal_tol(size_t n, const vec_t &v1, const vec2_t &v2,
 			   double tol=1.0e-14) {
@@ -2658,6 +2664,9 @@ namespace o2scl {
       This object just returns the index whenever an object in the
       vector is requested, i.e. <tt>operator[](i)</tt> always returns
       \c i.
+
+      9/16/24: This function is used in \ref acol_manager::comm_create
+      to create \ref o2scl::table objects.
    */
   template<class data_t> class vector_index_vector {
   public:
@@ -2803,7 +2812,10 @@ namespace o2scl {
   }
 
   /** \brief View a vector as a matrix
-  */
+
+      9/16/24: This class is used in ``vec_stats_ts.cpp`` to
+      test the 2D FFTs.
+   */
   template<class vec_t, class data_t=double> class vector_view_matrix {
 
   protected:
