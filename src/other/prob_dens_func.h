@@ -273,8 +273,10 @@ namespace o2scl {
 		   "invert_cdf().",exc_einval);
       }
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_gaussian::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       return gsl_cdf_gaussian_Pinv(in_cdf,sigma_)+cent_;
     }
@@ -458,8 +460,10 @@ namespace o2scl {
 		   "invert_cdf().",exc_einval);
       }
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_uniform::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       if (in_cdf==1.0) return ul;
       if (in_cdf==0.0) return ll;
@@ -631,8 +635,10 @@ namespace o2scl {
     /// The inverse cumulative distribution function
     virtual double invert_cdf(double in_cdf) const {
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_lognormal::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       return gsl_cdf_lognormal_Pinv(in_cdf,mu_,sigma_);
     }

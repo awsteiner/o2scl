@@ -290,7 +290,6 @@ Statistics functions
 - :cpp:func:`o2scl::matrix_backward_complex_fft()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::matrix_backward_fft_copy()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::matrix_forward_complex_fft()` [``src/other/vec_stats.h``]
-- :cpp:func:`o2scl::matrix_forward_fft_copy()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_absdev()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_acor()` [``src/other/vec_stats.h``]
 - :cpp:func:`o2scl::vector_autocorr_tau()` [``src/other/vec_stats.h``]

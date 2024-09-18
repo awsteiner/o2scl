@@ -1953,6 +1953,9 @@ namespace o2scl {
       used and so little or no optimization of the FFTW algorithm is
       performed. Given an input vector of size n, the output vector is
       resized to have size \f$ n/2+1 \f$ .
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t>
   void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -1987,6 +1990,9 @@ namespace o2scl {
       used and so little or no optimization of the FFTW algorithm is
       performed. Given an input vector of size n, the output vector is
       resized to have size \f$ (n-1)*2 \f$ .
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t>
   void vector_backward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -2019,6 +2025,9 @@ namespace o2scl {
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
       the FFTW algorithm is performed.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_forward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2031,6 +2040,9 @@ namespace o2scl {
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
       the FFTW algorithm is performed.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_backward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2044,6 +2056,9 @@ namespace o2scl {
       and so little or no optimization of the FFTW algorithm is done.
       The output vector is resized to have the same size as the 
       input vector.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class cx_vec_t, class cx_resize_vec_t>
   void vector_forward_complex_fft_copy
@@ -2097,6 +2112,9 @@ namespace o2scl {
       and so little or no optimization of the FFTW algorithm is done.
       The output vector is resized to have the same size as the 
       input vector.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class cx_vec_t, class cx_resize_vec_t>
   void vector_backward_complex_fft_copy
@@ -2154,6 +2172,9 @@ namespace o2scl {
       have size \f$ m(n/2+1) \f$ representing a matrix with size1()
       equal to m and size2() equal to \f$ (n/2+1) \f$, stored in
       row-major order.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_forward_fft
   (size_t m, size_t n, const std::vector<double> &data,
@@ -2172,6 +2193,9 @@ namespace o2scl {
       equal to n, the output vector is resized to have size \f$
       2m(n-1) \f$ representing a matrix with size1() equal to m and
       size2() equal to \f$ 2(n-1) \f$, stored in row-major order.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_backward_fft_copy
   (size_t m, size_t n, const std::vector<std::complex<double>> &fft,
@@ -2186,6 +2210,9 @@ namespace o2scl {
       no optimization of the FFTW algorithm is done. Given an input
       implying a matrix with size1() equal to m and and size2() equal
       to n, the output vector is resized to have size \f$ m*n \f$.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_forward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
@@ -2200,6 +2227,9 @@ namespace o2scl {
       no optimization of the FFTW algorithm is done. Given an input
       implying a matrix with size1() equal to m and and size2() equal
       to n, the output vector is resized to have size \f$ m*n \f$.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   void matrix_backward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
@@ -2235,6 +2265,9 @@ namespace o2scl {
       FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
       OTHER DEALINGS IN THE SOFTWARE.
       \endverbatim
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
   (const vec_t &data, resize_vec_t &ac_vec, double mean,
@@ -2290,6 +2323,9 @@ namespace o2scl {
   
   /** \brief Use FFTW to construct the autocorrelation vector with
       automatic calculation of the mean
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
   (const vec_t &data, resize_vec_t &ac_vec, int verbose=0) {
@@ -2300,6 +2336,9 @@ namespace o2scl {
 
   /** \brief Use FFTW to construct the autocorrelation vector given
       a multiplier column
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t> void
   vector_autocorr_vector_fftw_mult
