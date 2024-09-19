@@ -11,6 +11,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	interp_krige.h find_constants.h cursesw.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
 	funct_multip.h interp_vec.h funct_to_fp.h
+#nvt.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -20,6 +21,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	tensor.cpp cursesw.cpp \
 	base_python.cpp funct.cpp funct_to_fp.cpp
+#nvt.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)
 
@@ -65,16 +67,16 @@ else
 O2SCL_PYTHON_MVAR = 
 endif
 
-if O2SCL_MODULES
-O2SCL_MODULES_MVAR = -DO2SCL_MODULES -fmodules-ts
-else 
-O2SCL_MODULES_MVAR = 
-endif
-
 if O2SCL_PUGIXML
 O2SCL_PUGIXML_MVAR = -DO2SCL_PUGIXML
 else 
 O2SCL_PUGIXML_MVAR = 
+endif
+
+if O2SCL_CUDA
+O2SCL_CUDA_MVAR = -DO2SCL_CUDA
+else 
+O2SCL_CUDA_MVAR = 
 endif
 
 if O2SCL_SNAP
@@ -83,14 +85,14 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DOC_DIR=\"/snap/o2scl/current/share/doc/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR) 
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"${docdir}/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR) 
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR)
 endif
 
 
@@ -279,6 +281,15 @@ uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
 # ------------------------------------------------------------
 # Library o2scl_base
 # ------------------------------------------------------------
+
+# nvt.o:
+# 	nvcc -c nvt.cpp
+
+# .libs/nvt.o:
+# 	nvcc -o .libs/nvt.o -c nvt.cpp
+
+# nvt.lo:
+# 	$(LIBTOOL) --tag=CXX --mode=compile nvcc -c nvt.cpp
 
 noinst_LTLIBRARIES = libo2scl_base.la
 

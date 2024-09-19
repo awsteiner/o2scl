@@ -643,8 +643,8 @@ bool lib_settings_class::readline_support() {
 #endif
 }
 
-bool lib_settings_class::module_support() {
-#ifdef O2SCL_MODULES
+bool lib_settings_class::cuda_support() {
+#ifdef O2SCL_CUDA
   return true;
 #else
   return false;

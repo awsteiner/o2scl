@@ -2020,7 +2020,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Cubature support: " << o2scl_settings.cubature_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
-  cout << "Module support: " << o2scl_settings.module_support() << endl;
+  cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << endl;

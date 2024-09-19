@@ -13,7 +13,7 @@ help:
 # needs to be created first for 'make check'. 
 
 SUBDIRS = internal anneal base deriv fit inte mcarlo \
-	min modtest ode other root linalg part nuclei eos hdf
+	min ode other root linalg part nuclei eos hdf
 
 LIBLIST = libo2scl.la
 

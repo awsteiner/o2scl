@@ -118,8 +118,8 @@ namespace o2scl {
     /// Return true if \o2 was installed with readline support
     bool readline_support();
 
-    /// Return true if \o2 was installed with module support
-    bool module_support();
+    /// Return true if \o2 was installed with cuda support
+    bool cuda_support();
 
     /// Return true if \o2 was installed with mpfr support
     bool mpfr_support();
