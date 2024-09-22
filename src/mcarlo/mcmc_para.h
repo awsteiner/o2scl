@@ -4131,7 +4131,9 @@ namespace o2scl {
           }
 
           if (emu_table.get_nlines()>max_train_size) {
-            emu_table.new_column("N");
+            if (!emu_table.is_column("N")) {
+              emu_table.new_column("N");
+            }
             for(size_t k=0;k<emu_table.get_nlines();k++) {
               emu_table.set("N",k,k);
             }
@@ -4334,7 +4336,9 @@ namespace o2scl {
         }
 
         // Add the index column
-        emu_init.new_column("N");
+        if (!emu_init.is_column("N")) {
+          emu_init.new_column("N");
+        }
         for(size_t k=0;k<emu_init.get_nlines();k++) {
           emu_init.set("N",k,k);
         }
@@ -4352,7 +4356,9 @@ namespace o2scl {
         if (use_classifier) {
           
           // Add the index column
-          emuc_init.new_column("N");
+          if (!emu_init.is_column("N")) {
+            emuc_init.new_column("N");
+          }
           for(size_t k=0;k<emu_init.get_nlines();k++) {
             emuc_init.set("N",k,k);
           }
@@ -4391,10 +4397,12 @@ namespace o2scl {
 
           // Select 10 percent of the emu_table rows for the
           // test table
-          emu_table.new_column("N");
-            for(size_t k=0;k<emu_table.get_nlines();k++) {
-              emu_table.set("N",k,k);
-            }
+          if (!emu_table.is_column("N")) {
+            emu_table.new_column("N");
+          }
+          for(size_t k=0;k<emu_table.get_nlines();k++) {
+            emu_table.set("N",k,k);
+          }
           size_t n_move=emu_table.get_nlines()/10;
           std::string funcx=((std::string)"N>")+
             o2scl::szttos(emu_table.get_nlines()-n_move);
@@ -4414,7 +4422,9 @@ namespace o2scl {
             
             // Select 10 percent of the emuc_table rows for the
             // test table
-            emuc_table.new_column("N");
+            if (!emu_table.is_column("N")) {
+              emuc_table.new_column("N");
+            }
             for(size_t k=0;k<emuc_table.get_nlines();k++) {
               emuc_table.set("N",k,k);
             }
@@ -4478,6 +4488,8 @@ namespace o2scl {
             hf_emu.open_or_create(test_emu_file);
             o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
             hf_emu.close();
+
+            std::cout << "H1: " << use_classifier << std::endl;
             
           }
 
