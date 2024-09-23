@@ -443,12 +443,8 @@ namespace o2scl {
      */
     vec_t mom_step;
     vec_t hmc_step;
-    vec_t s_grad;
-    vec_t s_grad2;
 
-    bool init_grad=true;
-    bool use_stored=false;
-    bool debug_hmc=false;
+    bool debug_hmc=true;
 
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
@@ -623,29 +619,9 @@ namespace o2scl {
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr.size()>0) {
-        if (init_grad==true) {
-          s_grad.resize(n_params);
-          s_grad2.resize(n_params);
-          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
-          if (grad_ret!=0) {
-            initial_grad_failed=true;
-          } else {
-            for (size_t k=0; k<n_params; k++) {
-              s_grad[k]=grad[k];
-            }
-            init_grad=false;
-          }
-        }
-        if (use_stored==true) { // Last point was rejected
-          for (size_t k=0; k<n_params; k++) {
-            grad[k]=s_grad[k];
-          }
-          use_stored=false;
-        } else { // Last point was accepted
-          for (size_t k=0; k<n_params; k++) {
-            grad[k]=s_grad2[k];
-            s_grad[k]=s_grad2[k];
-          }
+        grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
+        if (grad_ret!=0) {
+          initial_grad_failed=true;
         }
       }
       
@@ -688,7 +664,7 @@ namespace o2scl {
             accept=true;
           }
         }
-        
+        std::cout << "HMC: Done RW" << std::endl;
         return;
         
       }
@@ -696,14 +672,13 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
 
-      mom_step.resize(n_params);
-      mom_step.clear();
+      if (mom_step.size()!=n_params) mom_step.resize(n_params);
       
       // Randomize the step sizes
-      int jr=r.random_int(n_params);
-      for (size_t k=0; k<jr; k++) {
-        int kr=r.random_int(n_params);
-        mom_step[kr]=hmc_step[kr]*r.random();
+      // int jr=r.random_int(n_params);
+      for (size_t k=0; k<n_params; k++) {
+        // int kr=r.random_int(n_params);
+        mom_step[k]=hmc_step[k]*r.random();
       }
       
       // Take a half step in the momenta using the gradient
@@ -781,10 +756,6 @@ namespace o2scl {
         mom_next[k]-=0.5*mom_step[k % mom_step.size()]*grad[k];
       }
 
-      for (size_t k=0;k<n_params;k++) {
-        s_grad2[k]=grad[k];
-      }
-
       /* Note: This is the final momentum at the final point q'. */
 
       if (debug_hmc) {
@@ -816,9 +787,9 @@ namespace o2scl {
         return;
       }
 
-      std::cout.precision(17);
+      /*std::cout.precision(17);
       std::cout << "Final eval: w_next=" << w_next << std::endl;
-      std::cout.precision(6);
+      std::cout.precision(6);*/
       
       // Evaluate the kinetic and potential energies
       double pot_curr=-w_current;
@@ -834,9 +805,6 @@ namespace o2scl {
         kin_next+=0.5*mom_next[k]*mom_next[k];
       }
 
-      std::cout << "K_curr=" << kin_curr << ", K_next=" << kin_next << std::endl;
-      std::cout << "U_curr=" << pot_curr << ", U_next=" << pot_next << std::endl;
-
       double rx=r.random();
       
       // Metropolis algorithm
@@ -846,12 +814,27 @@ namespace o2scl {
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
+        std::cout << "Accepted: w'=" << w_next << std::endl;
+        if (kin_next<kin_curr) {
+          std::cout << "K'<K";
+        } else {
+          std::cout << "K'>K";
+        }
+        if (pot_next<pot_curr) {
+          std::cout << ", U'<U" << std::endl;
+        } else {
+          std::cout << ", U'>U" << std::endl;
+        }
       } else {
-        use_stored=true;
+        std::cout << "Rejected: w=" << w_current << std::endl;
       }
-
-      std::cout << "rx=" << rx << ", exp(E_curr-E_next)="
-                << exp(pot_curr-pot_next+kin_curr-kin_next) << std::endl;
+      
+      if (debug_hmc) {
+        std::cout << "K=" << kin_curr << ", K'=" << kin_next << std::endl;
+        std::cout << "U=" << pot_curr << ", U'=" << pot_next << std::endl;
+        std::cout << "rx=" << rx << ", exp(E-E')="
+                  << exp(pot_curr-pot_next+kin_curr-kin_next) << std::endl;
+      }
 
       if (false) {
         std::cout << "hmc: x,y,w,f,accept: " << next[0] << " "
@@ -1748,9 +1731,9 @@ namespace o2scl {
             // perform a function evaluation
             func_ret[it]=func[it](n_params,current[it],w_current[it],
                                   data[it]);
-            std::cout.precision(17);
+            /*std::cout.precision(17);
             std::cout << "Init eval: w_current=" << w_current[it] << std::endl;
-            std::cout.precision(6);
+            std::cout.precision(6);*/
           }
           
         }
