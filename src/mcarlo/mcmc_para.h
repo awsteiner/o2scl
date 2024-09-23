@@ -2172,7 +2172,7 @@ namespace o2scl {
                               << " smaller than limit " << low[k]
                               << std::endl;
                     } else {
-                      std::cout << "mcmc_para_base::mcmc(): "
+                      std::cout << "mcmc_para_base::mcmc(): ";
                       std::cout << "Thread " << it << " rank "
                                 << mpi_rank << ": Parameter with index "
                                 << k << " and value " << next[it][k]
@@ -4168,6 +4168,8 @@ namespace o2scl {
           (this->n_accept.size(),this->n_accept);
         
         std::cout << "mcmc_para_table::outside_parallel(): "
+                  << "n_retrain, sum, last_retrain_sum, "
+                  << "table lines, n_threads, n_walk: "
                   << n_retrain << " " << sum << " "
                   << last_retrain_sum << " " 
                   << this->table->get_nlines() << " " << this->n_threads
@@ -4246,10 +4248,11 @@ namespace o2scl {
       if (n_retrain>0) {
         double log_wgt_orig=log_weight;
         if (mcmc_accept==true) {
-          func_ret=((*func_ptr)[i_thread])(pars.size(),pars,log_weight,dat);
+          func_ret=((*func_ptr)[i_thread])(pars.size(),pars,
+                                           log_weight,dat);
           if (show_emu>1) {
             std::cout << "mcmc_para_emu::add_line(), show_emu="
-                      << show_emu << ": pars[0],emu,exact: "
+                      << show_emu << ", pars[0], emu, exact, ret: "
                       << pars[0] << " " << log_wgt_orig << " "
                       << log_weight << " " << func_ret << std::endl;
             if (show_emu>2) {
@@ -4335,10 +4338,6 @@ namespace o2scl {
         emuc_table.summary(&std::cout);
       }
       
-      if (emuc_table.is_column("classify")==false) {
-        emuc_table.function_column("mult>0","classify");
-      }
-      
       size_t kmax=emuc.size()/this->n_threads;
       
       double verify=((double)emuc.size())/((double)this->n_threads)-
@@ -4367,7 +4366,7 @@ namespace o2scl {
               pnames.push_back(this->col_names[j]);
             }
             const_matrix_view_table<> cmvt_x(emuc_table,pnames);
-            matrix_view_table<> mvt_y(emuc_table,{"classify"});
+            matrix_view_table<> mvt_y(emuc_table,{"class"});
             
             emuc[ix]->set_data(n_params_child,1,emuc_table.get_nlines(),
                                cmvt_x,mvt_y);
@@ -4434,16 +4433,12 @@ namespace o2scl {
         std::string tname;
         hdf_input(hf,emu_init,tname);
         hf.close();
-        std::cout << "J1: Read " << emu_file << std::endl;
-        emu_init.summary(&std::cout);
 
         // Read the classifier data
         if (use_classifier) {
           hf.open(emuc_file);
           hdf_input(hf,emuc_init,tname);
           hf.close();
-          std::cout << "J2: Read " << emuc_file << std::endl;
-          emuc_init.summary(&std::cout);
         }
 
 #ifdef O2SCL_MPI
@@ -4456,6 +4451,14 @@ namespace o2scl {
         // ──────────────────────────────────────────────────────────────
         // Processing the emulator data file into "emu_init"
         
+        // Delete empty rows
+        emu_init.delete_rows_func("mult<0.5");
+
+        if (emu_init.get_nlines()==0) {
+          O2SCL_ERR2("Emulator table empty after deleting lines ",
+                     "in mcmc_para_emu::mcmc_emu().",o2scl::exc_einval);
+        }
+
         // Add the index column 
         if (!emu_init.is_column("N")) {
           emu_init.new_column("N");
@@ -4464,14 +4467,6 @@ namespace o2scl {
           emu_init.set("N",k,k);
         }
       
-        // Delete empty rows
-        emu_init.delete_rows_func("mult<0.5");
-
-        if (emu_init.get_nlines()==0) {
-          O2SCL_ERR2("Emulator table empty after deleting lines ",
-                     "in mcmc_para_emu::mcmc_emu()..",o2scl::exc_einval);
-        }
-
         // Thin the data if we have more data than "max_train_size"
         if (emu_init.get_nlines()>max_train_size) {
           size_t factor=emu_init.get_nlines()/max_train_size;
@@ -4494,14 +4489,6 @@ namespace o2scl {
         
         if (use_classifier) {
           
-          // Add the index column
-          if (!emuc_init.is_column("N")) {
-            emuc_init.new_column("N");
-          }
-          for(size_t k=0;k<emuc_init.get_nlines();k++) {
-            emuc_init.set("N",k,k);
-          }
-          
           // Delete empty rows (but keep rejections)
           emuc_init.delete_rows_func("abs(mult)<0.5");
 
@@ -4512,19 +4499,34 @@ namespace o2scl {
                          o2scl::exc_einval);
             }
           }
-        }
-
-        // Thin the data if we have more data than "max_train_size"
-        if (emuc_init.get_nlines()>max_train_size) {
-          size_t factor=emuc_init.get_nlines()/max_train_size;
-          if (factor<2) factor=2;
-          emuc_init.delete_rows_func(((std::string)"N%")+
-                                    o2scl::szttos(factor)+">0.5");
-          if (emuc_init.get_nlines()==0) {
-            O2SCL_ERR2("Classifier table empty after max_train_size ",
-                       "limit in mcmc_para_emu::mcmc_emu().",
-                       o2scl::exc_esanity);
+          
+          // Create the "class" column if not already present. By
+          // default, this is 1 for mult>0.5 and 0 otherwise.
+          if (emuc_init.is_column("class")==false) {
+            emuc_init.function_column("mult>0.5","class");
           }
+      
+          // Add the index column
+          if (!emuc_init.is_column("N")) {
+            emuc_init.new_column("N");
+          }
+          for(size_t k=0;k<emuc_init.get_nlines();k++) {
+            emuc_init.set("N",k,k);
+          }
+          
+          // Thin the data if we have more data than "max_train_size"
+          if (emuc_init.get_nlines()>max_train_size) {
+            size_t factor=emuc_init.get_nlines()/max_train_size;
+            if (factor<2) factor=2;
+            emuc_init.delete_rows_func(((std::string)"N%")+
+                                       o2scl::szttos(factor)+">0.5");
+            if (emuc_init.get_nlines()==0) {
+              O2SCL_ERR2("Classifier table empty after max_train_size ",
+                         "limit in mcmc_para_emu::mcmc_emu().",
+                         o2scl::exc_esanity);
+            }
+          }
+            
         }
 
         // Store the initial number of table rows
@@ -4560,6 +4562,7 @@ namespace o2scl {
           }
           emuc_table.new_column("log_wgt");
           emuc_table.new_column("mult");
+          emuc_table.new_column("class");
           
           // Allocate and fill rows
           emuc_table.set_nlines(n_rows_emuc_init);
@@ -4569,6 +4572,7 @@ namespace o2scl {
             }
             emuc_table.set("log_wgt",j,emuc_init.get("log_wgt",j));
             emuc_table.set("mult",j,emuc_init.get("mult",j));
+            emuc_table.set("class",j,emuc_init.get("class",j));
           }
         
         }
@@ -4651,7 +4655,8 @@ namespace o2scl {
 
           if (this->verbose>1) {
             std::cout << "mcmc_para_emu::mcmc_emu(): "
-                      << "Logging emulator."
+                      << "Testing emulator at "
+                      << emu_test_tab.get_nlines() << " points."
                       << std::endl;
           }
           
@@ -4706,7 +4711,7 @@ namespace o2scl {
             }
           
             
-            emuc_test_tab.new_column("classify_emu");
+            emuc_test_tab.new_column("class_emu");
 
             for(size_t iec=0;iec<emuc.size();iec++) {
               
@@ -4721,10 +4726,10 @@ namespace o2scl {
                   x[j]=emuc_test_tab.get(j,i);
                 }
                 emuc[iec]->eval(x,y);
-                emuc_test_tab.set("classify_emu",i,y[0]);
+                emuc_test_tab.set("class_emu",i,y[0]);
                 
                 // Update the quality factor
-                qualc+=fabs(y[0]-emuc_test_tab.get("classify",i));
+                qualc+=fabs(y[0]-emuc_test_tab.get("class",i));
               }
               std::cout << "mcmc_para_emuc(): Classifier quality factor: "
                         << qualc << std::endl;
@@ -4732,7 +4737,7 @@ namespace o2scl {
               o2scl_hdf::hdf_file hf_emuc;
               std::string test_emuc_file=this->prefix+"_"+
                 o2scl::itos(this->mpi_rank)+"_"+
-                o2scl::szttos(iec)+"_tec.o2";
+                o2scl::szttos(iec)+"_tc.o2";
               hf_emuc.open_or_create(test_emuc_file);
               o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
               hf_emuc.close();
