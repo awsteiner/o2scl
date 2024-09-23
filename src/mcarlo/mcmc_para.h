@@ -1320,7 +1320,7 @@ namespace o2scl {
             }
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
-              std::cout << "mcmc_para_base::mcmc(): "
+              std::cout << "mcmc_para_base::mcmc(): ";
               std::cout << "Parameters for point " << iip+1 << " of "
                         << initial_points.size() << "." << std::endl;
               for(size_t iki=0;iki<n_params;iki++) {
@@ -1807,7 +1807,7 @@ namespace o2scl {
       // sufficiently large.
       
       if (verbose>=4) {
-        std::cout << "mcmc_para_base::mcmc(): "
+        std::cout << "mcmc_para_base::mcmc(): ";
         std::cout << "Initial point(s) done. "
                   << "Press a key and type enter to continue. ";
         char ch;
@@ -2160,7 +2160,7 @@ namespace o2scl {
                   func_ret[it]=mcmc_skip;
                   if (verbose>=3) {
                     if (next[it][k]<low[k]) {
-                      std::cout << "mcmc_para_base::mcmc(): "
+                      std::cout << "mcmc_para_base::mcmc(): ";
                       std::cout << "Thread " << it << " rank "
                                 << mpi_rank << ": Parameter with index "
                                 << k << " and value " << next[it][k]
@@ -2396,7 +2396,7 @@ namespace o2scl {
           }
 
           if (verbose>=3) {
-            std::cout << "mcmc_para_base::mcmc(): "
+            std::cout << "mcmc_para_base::mcmc(): ";
             std::cout << "Press a key and type enter to continue. ";
             char ch;
             std::cin >> ch;
@@ -2592,7 +2592,7 @@ namespace o2scl {
         if (false && this->verbose>=3) {
           // AWS, 8/19/23: I took this out because it sends too much
           // output to cout
-          std::cout << "mcmc_para_base::mcmc(): "
+          std::cout << "mcmc_para_base::mcmc(): ";
           std::cout << "Table column names and units: " << std::endl;
           for(size_t i=0;i<table->get_ncolumns();i++) {
             std::cout << "  " << table->get_column_name(i) << " "
@@ -2943,7 +2943,7 @@ namespace o2scl {
       size_t n_points=this->n_walk*this->n_threads;
 
       if (this->verbose>0) {
-        std::cout << "mcmc_para_base::mcmc(): "
+        std::cout << "mcmc_para_base::mcmc(): ";
         std::cout << "Initial points: Finding last " << n_points
                   << " points from file named "
                   << fname << " ." << std::endl;
@@ -2965,7 +2965,7 @@ namespace o2scl {
 
               found=true;
             
-              std::cout << "mcmc_para_base::initial_point_file_last(): "
+              std::cout << "mcmc_para_base::initial_point_file_last(): ";
               std::cout << "\n\tit: "
                         << it << " rank: " << this->mpi_rank
                         << " iw: " << iw << " row: "
@@ -2985,7 +2985,7 @@ namespace o2scl {
           // the file
           if (found==false && tip.get_nlines()>this->n_walk*
               this->n_threads) {
-            std::cout << "mcmc_para_base::initial_point_file_last(): "
+            std::cout << "mcmc_para_base::initial_point_file_last(): ";
             std::cout << "Could not find guess for rank " << this->mpi_rank
                       << " thread " << it
                       << " and walker " << iw
@@ -3000,7 +3000,7 @@ namespace o2scl {
           }
         
           if (found==false) {
-            std::cout << "mcmc_para_base::initial_point_file_last(): "
+            std::cout << "mcmc_para_base::initial_point_file_last(): ";
             std::cout << "No initial guess found for rank "
                       << this->mpi_rank
                       << " thread " << it << " and walker " << iw
@@ -3058,7 +3058,7 @@ namespace o2scl {
       size_t n_points=this->n_walk*this->n_threads;
 
       if (this->verbose>0) {
-        std::cout << "mcmc_para_base::initial_point_file_dist(): "
+        std::cout << "mcmc_para_base::initial_point_file_dist(): ";
         std::cout << "Initial points: Finding last " << n_points
                   << " points from file named "
                   << fname << " ." << std::endl;
@@ -3152,7 +3152,7 @@ namespace o2scl {
       size_t n_points=this->n_walk*this->n_threads;
 
       if (this->verbose>0) {
-        std::cout << "mcmc_para_base::initial_point_file_best(): "
+        std::cout << "mcmc_para_base::initial_point_file_best(): ";
         std::cout << "Initial points: Finding best " << n_points
                   << " unique points from file named "
                   << fname << " using threshold " << thresh
@@ -3210,7 +3210,7 @@ namespace o2scl {
       for(size_t k=0;k<n_points;k++) {
         int row=mit->second;
         if (this->verbose>0) {
-          std::cout << "mcmc_para_base::initial_point_file_best(): "
+          std::cout << "mcmc_para_base::initial_point_file_best(): ";
           std::cout << "Initial point " << k << " at row "
                     << row << " has log_weight= "
                     << tip.get("log_wgt",row) << std::endl;
