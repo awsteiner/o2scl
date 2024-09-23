@@ -116,14 +116,14 @@ namespace o2scl {
           func_ret=mcmc_skip;
           if (verbose>=3) {
             if (v[k]<low[k]) {
-              std::cout << "mcmc (" << i_thread
-                        << "): Parameter with index "
+              std::cout << "mcmc_stepper_base::check_bounds(): ("
+                        << i_thread << "): Parameter with index "
                         << k << " and value " << v[k]
                         << " smaller than limit " << low[k]
                         << std::endl;
             } else {
-              std::cout << "mcmc (" << i_thread 
-                        << "): Parameter with index " << k
+              std::cout << "mcmc_stepper_base::check_bounds(): ("
+                        << i_thread << "): Parameter with index " << k
                         << " and value " << v[k]
                         << " larger than limit " << high[k]
                         << std::endl;
@@ -153,6 +153,54 @@ namespace o2scl {
     
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  template<class func_t, class data_t, class vec_t>
+  class mcmc_stepper_split :
+    public mcmc_stepper_base<func_t,data_t,vec_t> {
+    
+  protected:
+
+    std::vector<std::shared_ptr<mcmc_stepper_base<func_t,data_t,
+                                                  vec_t>>> step_list;
+    
+    std::vector<std::size_t> index_list;
+    
+    std::vector<std::size_t> length_list;
+    
+  public:
+    
+    /** \brief Desc
+     */
+    virtual void step(size_t i_thread, size_t n_params, func_t &f,
+                      vec_t &current, vec_t &next, double w_current,
+                      double &w_next, vec_t &low, vec_t &high,
+                      int &func_ret, bool &accept, data_t &dat,
+                      rng<> &r, int verbose) {
+      if (index_list.size()!=n_params) {
+        O2SCL_ERR("Index list does not match parameter number ",
+                  "in mcmc_stepper_split()::step().",
+                  o2scl::exc_einval);
+      }
+      for(size_t i=0;i<step_list.size();i++) {
+        vec_t curr2(length_list[i]), next2(length_list[i]);
+        size_t k=0;
+        for(size_t j=0;j<n_params;j++) {
+          if (index_list[j]==i) {
+            curr2[k]=current[j];
+            k++;
+          }
+        }
+        //step_list[i].step(i_thread,length_list[i],
+        //f,curr2,next2,w_current,w_next,low
+      }
+      
+      return 0;
+    }
+  };
+  
+#endif
+  
   /** \brief A simple random-walk stepper for MCMC
 
       This stepper performs a random walk. Given the
@@ -301,7 +349,8 @@ namespace o2scl {
         double rand=r.random();
 
         if (verbose>=2) {
-          std::cout << "w_next,w_current,q_next,q_current: "
+          std::cout << "mcmc_stepper_mh::step(): "
+                    << "w_next,w_current,q_next,q_current: "
                     << w_next << " " << w_current << " "
                     << proposal[i_thread %
                                 proposal.size()].log_pdf(current,next)
@@ -668,7 +717,7 @@ namespace o2scl {
                            func_ret,verbose);
         if (func_ret==this->mcmc_skip) {
           // If it is out of bounds, reject the step
-          std::cout << "skip." << std::endl;
+          std::cout << "mcmc_stepper_hmc::step(): skip." << std::endl;
           accept=false;
           return;
         }
@@ -680,7 +729,7 @@ namespace o2scl {
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
-            std::cout << "grad failed." << std::endl;
+            std::cout << "mcmc_stepper_hmc::step(): grad failed." << std::endl;
             return;
           }
         }
@@ -689,7 +738,7 @@ namespace o2scl {
         grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           func_ret=grad_failed;
-          std::cout << "grad failed 2." << std::endl;
+          std::cout << "mcmc_stepper_hmc::step(): grad failed 2." << std::endl;
           accept=false;
           return;
         }
@@ -715,7 +764,7 @@ namespace o2scl {
       func_ret=f(n_params,next,w_next,dat);
       if (func_ret!=0) {
         accept=false;
-        std::cout << "func failed." << std::endl;
+        std::cout << "mcmc_stepper_hmc::step(): func failed." << std::endl;
         return;
       }
       
@@ -736,7 +785,8 @@ namespace o2scl {
       // Metropolis algorithm
       accept=false;
       if (false) {
-        std::cout << "hmc0: r,exp(alpha),alpha: " << rx << " "
+        std::cout << "mcmc_stepper_hmc::step(): "
+                  << "r,exp(alpha),alpha: " << rx << " "
                   << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
                   << pot_curr-pot_next+kin_curr-kin_next << " "
                   << pot_curr << " " << pot_next << " " << kin_curr << " "
@@ -749,7 +799,8 @@ namespace o2scl {
       }
 
       if (false) {
-        std::cout << "hmc: x,y,w,f,accept: " << next[0] << " "
+        std::cout << "mcmc_stepper_hmc::step(): "
+                  << "x,y,w,f,accept: " << next[0] << " "
                   << next[1] << " " << w_next << " " << func_ret << " "
                   << accept << std::endl;
       }
@@ -913,7 +964,8 @@ namespace o2scl {
     virtual int mcmc_init() {
 
       if (verbose>1) {
-        std::cout << "Prefix is: " << prefix << std::endl;
+        std::cout << "mcmc_para_base::mcmc_init(): "
+                  << "Prefix is: " << prefix << std::endl;
       }
 
       if (verbose>0) {
@@ -1181,11 +1233,11 @@ namespace o2scl {
 
       if (func.size()==0 || meas.size()==0) {
         O2SCL_ERR2("Size of 'func' or 'meas' array is zero in ",
-                   "mcmc_para::mcmc().",o2scl::exc_einval);
+                   "mcmc_para_base::mcmc().",o2scl::exc_einval);
       }
       if (func.size()<n_threads) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Not enough functions for "
+          std::cout << "mcmc_para_base::mcmc(): Not enough functions for "
                     << n_threads << " threads. Setting n_threads to "
                     << func.size() << "." << std::endl;
         }
@@ -1193,7 +1245,7 @@ namespace o2scl {
       }
       if (meas.size()<n_threads) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Not enough measurement "
+          std::cout << "mcmc_para_base::mcmc(): Not enough measurement "
                     << "objects for "
                     << n_threads << " threads. Setting n_threads to "
                     << meas.size() << "." << std::endl;
@@ -1201,15 +1253,15 @@ namespace o2scl {
         n_threads=meas.size();
       }
       if (data.size()<2*n_walk*n_threads) {
-        std::cout << "mcmc_para::mcmc() data.size(): " << data.size()
+        std::cout << "mcmc_para_base::mcmc() data.size(): " << data.size()
                   << " n_walk: " << n_walk << " threads: "
                   << n_threads << std::endl;
         O2SCL_ERR2("Not enough data objects for walkers and threads in ",
-                   "mcmc_para::mcmc()",o2scl::exc_einval);
+                   "mcmc_para_base::mcmc()",o2scl::exc_einval);
       }
       if (aff_inv==true && n_walk<=1) {
         if (verbose>0) {
-          std::cout << "mcmc_para::mcmc(): Affine-invariant "
+          std::cout << "mcmc_para_base::mcmc(): Affine-invariant "
                     << "sampling selected "
                     << "but n_walk is <= 1.\n  Setting n_walk to 3 * n_params."
                     << std::endl;
@@ -1218,7 +1270,7 @@ namespace o2scl {
       }
       // Fix 'step_fac' if it's less than or equal to zero
       if (step_fac<=0.0 && aff_inv) {
-        std::cout << "mcmc_para::mcmc(): Requested negative or zero "
+        std::cout << "mcmc_para_base::mcmc(): Requested negative or zero "
                   << "step_fac with aff_inv=true.\nSetting to 2.0."
                   << std::endl;
         step_fac=2.0;
@@ -1264,7 +1316,7 @@ namespace o2scl {
           for(size_t ipar=0;ipar<n_params;ipar++) {
             if (!std::isfinite(initial_points[iip][ipar])) {
               O2SCL_ERR2("Initial point not finite in ",
-                         "mcmc_para::mcmc().",o2scl::exc_einval);
+                         "mcmc_para_base::mcmc().",o2scl::exc_einval);
             }
             if (initial_points[iip][ipar]<low[ipar] ||
                 initial_points[iip][ipar]>high[ipar]) {
@@ -1301,7 +1353,7 @@ namespace o2scl {
       omp_set_num_threads(n_threads);
 #else
       if (n_threads>1) {
-        std::cout << "mcmc_para::mcmc(): "
+        std::cout << "mcmc_para_base::mcmc(): "
                   << n_threads << " threads were requested but the "
                   << "-DO2SCL_SET_OPENMP flag was not used during "
                   << "compilation. Setting n_threads to 1."
@@ -3116,7 +3168,7 @@ namespace o2scl {
           if (mit2!=m.end()) {
             if (fabs(mit->first-mit2->first)<thresh) {
               if (this->verbose>0) {
-                std::cout << "mcmc_para::initial_points_file_best():\n  "
+                std::cout << "mcmc_para_base::initial_points_file_best():\n  "
                           << "Removing duplicate log weights: "
                           << mit->first << " " << mit2->first << std::endl;
                 
@@ -3134,7 +3186,7 @@ namespace o2scl {
 	std::cerr << "m.size() is " << m.size() << " and n_points is "
 		  << n_points << std::endl;
         O2SCL_ERR2("Could not find enough points in file in ",
-                   "mcmc_para::initial_points_file_best().",
+                   "mcmc_para_base::initial_points_file_best().",
                    o2scl::exc_efailed);
       }
 
@@ -3987,6 +4039,9 @@ namespace o2scl {
     /// The number of rows in the original training data file
     size_t n_rows_emu_init;
 
+    /// The number of rows in the original training data file
+    size_t n_rows_emuc_init;
+
     /// Pointer to the user-specified function array
     std::vector<func_t> *func_ptr;
     
@@ -4195,6 +4250,11 @@ namespace o2scl {
      */
     void emu_train() {
 
+      if (this->verbose>1) {
+        std::cout << "mcmc_para_emu::emu_train(): Starting."
+                  << std::endl;
+      }
+      
       size_t kmax=emu.size()/this->n_threads;
 
       double verify=((double)emu.size())/((double)this->n_threads)-
@@ -4236,6 +4296,11 @@ namespace o2scl {
         // End of loop over 'k'
       }
 
+      if (this->verbose>1) {
+        std::cout << "mcmc_para_emu::emu_train(): Done."
+                  << std::endl;
+      }
+      
       return;
     }
     
@@ -4243,6 +4308,12 @@ namespace o2scl {
      */
     void emuc_train() {
 
+      if (this->verbose>1) {
+        std::cout << "mcmc_para_emu::emuc_train(): Starting."
+                  << std::endl;
+        emuc_table.summary(&std::cout);
+      }
+      
       if (emuc_table.is_column("classify")==false) {
         emuc_table.function_column("mult>0","classify");
       }
@@ -4287,18 +4358,32 @@ namespace o2scl {
         // End of loop over k
       }
 
+      if (this->verbose>1) {
+        std::cout << "mcmc_para_emu::emuc_train(): Done."
+                  << std::endl;
+      }
+      
       return;
     }
     
     /** \brief The new MCMC function
      */
-    int mcmc_emu(size_t n_params_local, 
-                 vec_t &low, vec_t &high,
-                 std::vector<func_t> &func,
-                 std::vector<fill_t> &fill,
+    int mcmc_emu(size_t n_params_local, vec_t &low, vec_t &high,
+                 std::vector<func_t> &func, std::vector<fill_t> &fill,
                  std::vector<data_t> &data) {
-
+      
       if (n_retrain>0) {
+        
+        if (emu.size()==0) {
+          std::cerr << "mcmc_para_emu()::mcmc_emu(): Requested retrained "
+                   << "but no emulator was specified." << std::endl;
+          return 1;
+        }
+        if (this->use_classifier && emuc.size()==0) {
+          std::cerr << "mcmc_para_emu()::mcmc_emu(): Requested classifier "
+                   << "but no classifier was specified." << std::endl;
+          return 2;
+        }
         
         // Store the number of parameters for later
         n_params_child=n_params_local;
@@ -4328,11 +4413,15 @@ namespace o2scl {
         std::string tname;
         hdf_input(hf,emu_init,tname);
         hf.close();
+        std::cout << "J1: Read " << emu_file << std::endl;
+        emu_init.summary(&std::cout);
 
         if (use_classifier) {
           hf.open(emuc_file);
           hdf_input(hf,emuc_init,tname);
           hf.close();
+          std::cout << "J2: Read " << emuc_file << std::endl;
+          emuc_init.summary(&std::cout);
         }
 
         // Add the index column
@@ -4346,31 +4435,48 @@ namespace o2scl {
         // Delete empty rows
         emu_init.delete_rows_func("mult<0.5");
 
+        if (emu_init.get_nlines()==0) {
+          O2SCL_ERR2("Emulator table has no lines after deleting lines ",
+                    "with zero or negative muliplier.",o2scl::exc_einval);
+        }
+
         if (emu_init.get_nlines()>max_train_size) {
           size_t factor=emu_init.get_nlines()/max_train_size;
           if (factor<2) factor=2;
           emu_init.delete_rows_func(((std::string)"N%")+
                                     o2scl::szttos(factor)+">0.5");
-        }
-
-        if (use_classifier) {
-          
-          // Add the index column
-          if (!emu_init.is_column("N")) {
-            emuc_init.new_column("N");
+          if (emu_init.get_nlines()==0) {
+            O2SCL_ERR2("Emulator table has no lines after deleting lines ",
+                      "to reach max_train_size.",o2scl::exc_einval);
           }
-          for(size_t k=0;k<emu_init.get_nlines();k++) {
-            emuc_init.set("N",k,k);
-          }
-          
-          // Delete empty rows
-          emuc_init.delete_rows_func("mult<0.5");
-
         }
 
         // Store the initial number of table rows
         n_rows_emu_init=emu_init.get_nlines();
         std::cout << "n_rows_emu_init: " << n_rows_emu_init << std::endl;
+
+        if (use_classifier) {
+          
+          // Add the index column
+          if (!emuc_init.is_column("N")) {
+            emuc_init.new_column("N");
+          }
+          for(size_t k=0;k<emuc_init.get_nlines();k++) {
+            emuc_init.set("N",k,k);
+          }
+          
+          // Delete empty rows
+          emuc_init.delete_rows_func("abs(mult)<0.5");
+
+          if (emuc_init.get_nlines()==0) {
+            O2SCL_ERR2("Classifier table has no lines after deleting lines ",
+                      "with zero or negative muliplier.",o2scl::exc_einval);
+          }
+        }
+
+        // Store the initial number of table rows
+        n_rows_emuc_init=emuc_init.get_nlines();
+        std::cout << "n_rows_emuc_init: " << n_rows_emuc_init << std::endl;
 
         // --------------------------------------------------------
         // Reorganize the file into an emulator table
@@ -4422,7 +4528,7 @@ namespace o2scl {
             
             // Select 10 percent of the emuc_table rows for the
             // test table
-            if (!emu_table.is_column("N")) {
+            if (!emuc_table.is_column("N")) {
               emuc_table.new_column("N");
             }
             for(size_t k=0;k<emuc_table.get_nlines();k++) {
@@ -4436,9 +4542,14 @@ namespace o2scl {
             emuc_table.copy_rows(((std::string)"N>")+
                                 o2scl::szttos(emuc_table.get_nlines()-n_move),
                                 emuc_test_tab);
-            
+
             // Remove the rows from emuc_table
             emuc_table.set_nlines(emuc_table.get_nlines()-n_move);
+            
+            if (emuc_table.get_nlines()==0) {
+              O2SCL_ERR2("Classifier table has no lines after rearranging",
+                         ".",o2scl::exc_einval);
+            }
             
             // Delete the temporary column from emuc_table
             emuc_table.delete_column("N");
@@ -4460,6 +4571,12 @@ namespace o2scl {
 
         if (show_emu>0) {
 
+          if (this->verbose>1) {
+            std::cout << "mcmc_para_emu::mcmc_emu(): "
+                      << "Logging emulator."
+                      << std::endl;
+          }
+          
           emu_test_tab.new_column("log_wgt_emu");
           
           for(size_t ie=0;ie<emu.size();ie++) {
@@ -4478,7 +4595,8 @@ namespace o2scl {
               // Update the quality factor
               qual+=fabs(y[0]-emu_test_tab.get("log_wgt",i));
             }
-            std::cout << "mcmc_para_emu(): Emulator quality factor: "
+            std::cout << "mcmc_para_emu()::mcmc_emu(): "
+                      << "Emulator quality factor: "
                       << qual << std::endl;
             
             o2scl_hdf::hdf_file hf_emu;
@@ -4488,18 +4606,27 @@ namespace o2scl {
             hf_emu.open_or_create(test_emu_file);
             o2scl_hdf::hdf_output(hf_emu,emu_test_tab,"test_emu");
             hf_emu.close();
-
-            std::cout << "H1: " << use_classifier << std::endl;
             
           }
 
-          if (use_classifier) {
+        }
 
-            // Train the classifier
-            emuc_train();
+        if (use_classifier) {
+          
+          // Train the classifier
+          emuc_train();
+
+          if (show_emu>0) {
+
+            if (this->verbose>1) {
+              std::cout << "mcmc_para_emu::mcmc_emu(): "
+                        << "Logging classifier. " << emuc.size()
+                        << std::endl;
+            }
+          
             
             emuc_test_tab.new_column("classify_emu");
-            
+
             for(size_t iec=0;iec<emuc.size();iec++) {
               
               // Emulate each row, and place the result in column
@@ -4528,9 +4655,9 @@ namespace o2scl {
               hf_emuc.open_or_create(test_emuc_file);
               o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
               hf_emuc.close();
-
+              
             }
-
+            
           }
           
         }
