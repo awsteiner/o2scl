@@ -407,7 +407,7 @@ namespace o2scl {
   template<class func_t, class data_t,
            class vec_t,
            class grad_t=std::function<int(size_t,vec_t &,func_t &,
-                                          vec_t &,data_t &)>,
+                                          vec_t &,data_t &,bool &)>,
            class vec_bool_t=std::vector<bool> >
   class mcmc_stepper_hmc :
     public mcmc_stepper_base<func_t,data_t,vec_t> {
@@ -444,6 +444,7 @@ namespace o2scl {
     vec_t mom_step;
     vec_t hmc_step;
 
+    bool rw_step=false;
     bool debug_hmc=true;
 
     /** \brief Indicate which elements of the gradient need
@@ -619,7 +620,7 @@ namespace o2scl {
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr.size()>0) {
-        grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
+        grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,rw_step);
         if (grad_ret!=0) {
           initial_grad_failed=true;
         }
@@ -675,10 +676,10 @@ namespace o2scl {
       if (mom_step.size()!=n_params) mom_step.resize(n_params);
       
       // Randomize the step sizes
-      // int jr=r.random_int(n_params);
-      for (size_t k=0; k<n_params; k++) {
-        // int kr=r.random_int(n_params);
-        mom_step[k]=hmc_step[k]*r.random();
+      int jr=r.random_int(n_params);
+      for (size_t k=0; k<jr; k++) {
+        int kr=r.random_int(n_params);
+        mom_step[kr]=hmc_step[kr]*r.random();
       }
       
       // Take a half step in the momenta using the gradient
@@ -720,7 +721,7 @@ namespace o2scl {
         
         // Try the user-specified gradient, if specified
         if (grad_ptr.size()>0) {
-          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
+          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,rw_step);
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
@@ -814,25 +815,15 @@ namespace o2scl {
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
-        std::cout << "Accepted: w'=" << w_next << std::endl;
-        if (kin_next<kin_curr) {
-          std::cout << "K'<K";
-        } else {
-          std::cout << "K'>K";
-        }
-        if (pot_next<pot_curr) {
-          std::cout << ", U'<U" << std::endl;
-        } else {
-          std::cout << ", U'>U" << std::endl;
-        }
-      } else {
-        std::cout << "Rejected: w=" << w_current << std::endl;
+        rw_step=true;
+        /*std::cout << w_next << "\t" << pot_next << "\t" << kin_next
+                  << "\t" << pot_next+kin_next << std::endl;*/
       }
       
       if (debug_hmc) {
-        std::cout << "K=" << kin_curr << ", K'=" << kin_next << std::endl;
-        std::cout << "U=" << pot_curr << ", U'=" << pot_next << std::endl;
-        std::cout << "rx=" << rx << ", exp(E-E')="
+        std::cout << "K_curr=" << kin_curr << ", K_next=" << kin_next << std::endl;
+        std::cout << "U_curr=" << pot_curr << ", U_next=" << pot_next << std::endl;
+        std::cout << "rx=" << rx << ", exp(H_curr-H_next)="
                   << exp(pot_curr-pot_next+kin_curr-kin_next) << std::endl;
       }
 
