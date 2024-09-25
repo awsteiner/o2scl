@@ -3154,8 +3154,8 @@ namespace o2scl {
       if (this->verbose>0) {
         std::cout << "mcmc_para_base::initial_point_file_best():\n";
         if (n_points==1) {
-          std::cout << "  Initial points: Finding best 
-                    << " point from file named "
+          std::cout << "  Initial points: Finding best "
+                    << "point from file named "
                     << fname << " using offset " << offset
                     << "." << std::endl;
         } else {
@@ -4158,7 +4158,7 @@ namespace o2scl {
           ubvector_int outc(1);
           emuc[it]->eval(p,outc);
           if (outc[0]<=0) {
-            n_class_fail++;
+            n_class_reject++;
             return 1;
           }
         }
@@ -4182,7 +4182,7 @@ namespace o2scl {
         if (this->verbose>=2) {
           std::cout << "mcmc_para_table::outside_parallel(): ";
           std::cout << "Emulated: " << n_total_emu
-                    << " classifier rejected: " << n_class_fail << " "
+                    << " classifier rejected: " << n_class_reject << " "
                     << " exact evaluations: " << n_exact << std::endl;
         }
         
@@ -4513,7 +4513,7 @@ namespace o2scl {
         // Store the initial number of emulator table rows
         n_rows_emu_init=emu_init.get_nlines();
         std::cout << "mcmc_para_emu::mcmc_emu(): "
-                  << n_rows_emu_init: " << n_rows_emu_init << std::endl;
+                  << "n_rows_emu_init: " << n_rows_emu_init << std::endl;
           
         // ──────────────────────────────────────────────────────────────
         // Processing the classifier data file into "emuc_init"
@@ -4774,7 +4774,7 @@ namespace o2scl {
               hf_emuc.open_or_create(test_emuc_file);
               o2scl_hdf::hdf_output(hf_emuc,emuc_test_tab,"test_emuc");
               hf_emuc.close();
-              
+
             }
             
           }
