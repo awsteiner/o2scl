@@ -114,7 +114,7 @@ namespace o2scl {
       for(size_t k=0;k<n_params;k++) {
         if (v[k]<low[k] || v[k]>high[k]) {
           func_ret=mcmc_skip;
-          if (verbose>=3) {
+          if (verbose>=2) {
             if (v[k]<low[k]) {
               std::cout << "mcmc (" << i_thread
                         << "): Parameter with index "
@@ -441,11 +441,28 @@ namespace o2scl {
     /** \brief Stepsize in momentum space (default is a one-element
         vector containing 0.2). 
      */
-    vec_t mom_step;
     vec_t hmc_step;
 
-    bool rw_step=false;
-    bool debug_hmc=true;
+    /** \brief Store current gradients to avoid recomputing when
+        the last HMC step is rejected.
+     */
+    vec_t grad_curr;
+
+    /** \brief If true, then discontinuities in the point function
+        must be fixed before a HMC step to keep gradients finite
+        (default: false).
+     */
+    bool fix_discont=false;
+
+    /** \brief If true, print out additional debugging information
+        (default: false).
+     */
+    bool debug_hmc=false;
+
+    /** \brief If true, initialize the stored gradients at the
+        current point (default: true).
+     */
+    bool init_step=true;
 
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
@@ -471,8 +488,8 @@ namespace o2scl {
 
     mcmc_stepper_hmc() {
       traj_length=20;
-      mom_step.resize(1);
-      mom_step[0]=0.2;
+      hmc_step.resize(1);
+      hmc_step[0]=0.2;
       auto_grad.resize(1);
       auto_grad[0]=true;
       epsrel=1.0e-6;
@@ -486,7 +503,7 @@ namespace o2scl {
      */
     virtual void write_params(o2scl_hdf::hdf_file &hf) {
       hf.setd_vec_copy("step_fac",step_fac);
-      hf.setd_vec_copy("mom_step",mom_step);
+      hf.setd_vec_copy("hmc_step",hmc_step);
       hf.set_szt("traj_length",traj_length);
       hf.setd("epsrel",epsrel);
       hf.setd("epsmin",epsmin);
@@ -590,7 +607,8 @@ namespace o2scl {
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
-      vec_t mom(n_params), grad(n_params), mom_next(n_params);
+      vec_t mom(n_params), mom_next(n_params);
+      vec_t grad(n_params), mom_step(n_params);
       int grad_ret;
 
       // Initialize func_ret to success
@@ -606,7 +624,7 @@ namespace o2scl {
       // [Neal] p = rnorm(length(q),0,1)
       // [Neal] current_p = p
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=abs(pdg());
+        mom_next[k]=pdg();
         mom[k]=mom_next[k];
       }
 
@@ -620,9 +638,28 @@ namespace o2scl {
       
       // First, if specified, use the user-specified gradient function
       if (grad_ptr.size()>0) {
-        grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,rw_step);
-        if (grad_ret!=0) {
-          initial_grad_failed=true;
+        if (init_step==true) {
+          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,
+                                      dat,fix_discont);
+          if (grad_ret!=0) initial_grad_failed=true;
+          grad_curr.resize(n_params);
+          for (size_t k=0;k<n_params;k++) {
+            grad_curr[k]=grad[k];
+          }
+          init_step=false;
+        } else {
+          if (fix_discont==true) {
+            grad_ret=grad_ptr[i_thread](n_params,next,f,grad,
+                                        dat,fix_discont);
+            if (grad_ret!=0) initial_grad_failed=true;
+            for (size_t k=0;k<n_params;k++) {
+              grad_curr[k]=grad[k];
+            }
+          } else {
+            for (size_t k=0;k<n_params;k++) {
+              grad[k]=grad_curr[k];
+            }
+          }
         }
       }
       
@@ -665,18 +702,17 @@ namespace o2scl {
             accept=true;
           }
         }
-        std::cout << "HMC: Done RW" << std::endl;
+
         return;
         
       }
       
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
+      mom_step.clear();
 
-      if (mom_step.size()!=n_params) mom_step.resize(n_params);
-      
       // Randomize the step sizes
-      int jr=r.random_int(n_params);
+      int jr=1+r.random_int(n_params-1);
       for (size_t k=0; k<jr; k++) {
         int kr=r.random_int(n_params);
         mom_step[kr]=hmc_step[kr]*r.random();
@@ -721,7 +757,7 @@ namespace o2scl {
         
         // Try the user-specified gradient, if specified
         if (grad_ptr.size()>0) {
-          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,rw_step);
+          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,fix_discont);
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
@@ -774,6 +810,14 @@ namespace o2scl {
         std::cout.precision(6);
       }
 
+
+      // Negate momentum to make the proposal symmetric
+      // [Neal] p = -p
+      for(size_t k=0;k<n_params;k++) {
+        mom_next[k]=-mom_next[k];
+      }
+      
+      
       // Negate momentum to make the proposal symmetric
       // [Neal] p = -p
       for(size_t k=0;k<n_params;k++) {
@@ -815,25 +859,24 @@ namespace o2scl {
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
-        rw_step=true;
-        /*std::cout << w_next << "\t" << pot_next << "\t" << kin_next
-                  << "\t" << pot_next+kin_next << std::endl;*/
+        fix_discont=true;
+        std::cout << "Accepted: log_wgt=" << w_next << std::endl;
+      } else {
+        std::cout << "Rejected: log_wgt=" << w_current << std::endl;
       }
       
       if (debug_hmc) {
-        std::cout << "K_curr=" << kin_curr << ", K_next=" << kin_next << std::endl;
-        std::cout << "U_curr=" << pot_curr << ", U_next=" << pot_next << std::endl;
+        std::cout << "K_curr=" << kin_curr << ", K_next=" 
+                  << kin_next << std::endl;
+        std::cout << "U_curr=" << pot_curr << ", U_next=" 
+                  << pot_next << std::endl;
         std::cout << "rx=" << rx << ", exp(H_curr-H_next)="
-                  << exp(pot_curr-pot_next+kin_curr-kin_next) << std::endl;
-      }
-
-      if (false) {
-        std::cout << "hmc: x,y,w,f,accept: " << next[0] << " "
-                  << next[1] << " " << w_next << " " << func_ret << " "
-                  << accept << std::endl;
+                  << exp(pot_curr-pot_next+kin_curr-kin_next) 
+                  << std::endl;
       }
 
       return;
+    
     }
     
   };
