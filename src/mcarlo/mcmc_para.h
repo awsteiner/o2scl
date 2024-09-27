@@ -4079,6 +4079,7 @@ namespace o2scl {
     size_t last_retrain_sum;
 
     size_t n_total_emu;
+    size_t n_total_class;
     size_t n_class_reject;
     size_t n_exact;
     
@@ -4156,6 +4157,7 @@ namespace o2scl {
       if (n_retrain>0) {
         if (use_classifier) {
           ubvector_int outc(1);
+          n_total_class++;
           emuc[it]->eval(p,outc);
           if (outc[0]<=0) {
             n_class_reject++;
@@ -4181,7 +4183,8 @@ namespace o2scl {
 
         if (this->verbose>=2) {
           std::cout << "mcmc_para_table::outside_parallel(): ";
-          std::cout << "Emulated: " << n_total_emu
+          std::cout << "Rank: " << this->mpi_rank
+                    << " emulated: " << n_total_emu
                     << " classifier rejected: " << n_class_reject << " "
                     << " exact evaluations: " << n_exact << std::endl;
         }
@@ -4419,6 +4422,7 @@ namespace o2scl {
                  std::vector<data_t> &data) {
 
       n_total_emu=0;
+      n_total_class=0;
       n_class_reject=0;
       n_exact=0;
       
