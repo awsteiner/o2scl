@@ -114,7 +114,7 @@ namespace o2scl {
       for(size_t k=0;k<n_params;k++) {
         if (v[k]<low[k] || v[k]>high[k]) {
           func_ret=mcmc_skip;
-          if (verbose>=2) {
+          if (verbose>=3) {
             if (v[k]<low[k]) {
               std::cout << "mcmc (" << i_thread
                         << "): Parameter with index "
@@ -861,8 +861,6 @@ namespace o2scl {
         accept=true;
         fix_discont=true;
         std::cout << "Accepted: log_wgt=" << w_next << std::endl;
-      } else {
-        std::cout << "Rejected: log_wgt=" << w_current << std::endl;
       }
       
       if (debug_hmc) {
