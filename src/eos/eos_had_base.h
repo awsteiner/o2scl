@@ -322,6 +322,36 @@ namespace o2scl {
       \left(\eta -1\right)\right]
       \f]
 
+      To define the single particle potential for nucleon \f$ i \f$,
+      one writes the nucleon distribution function as a function
+      of the momentum, \f$ p \f$,
+      \f[
+      f(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}} +
+      U_i(p)-\mu_i \right)/T \right] }
+      \f]
+      where \f$ \mu_i \f$ is the chemical potential. The
+      distribution function as computed by, e.g. the
+      \ref o2scl::fermion_rel_tl class is 
+      \f[
+      f(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}}-
+      \nu_i \right)/T \right] }
+      \f]
+      In the case when the single particle potential is
+      momentum independent, and 
+      comparing these two expressions, the single particle
+      potential for nucleon \f$ i \f$ is
+      \f[
+      U_i - \mu_i = - \nu_i 
+      \f]
+      thus 
+      \f[
+      U_i = \mu_i - \nu_i \, .
+      \f]
+      This definition works for nonrelativistic fermions as well. 
+      Thus this momentum-independent single-particle potential
+      can be computed for equations of state like \ref o2scl::eos_had_skyrme
+      and \ref o2scl::eos_had_rmf .
+      
       \future Replace fmsom() with f_effm_scalar(). This has to wait
       until f_effm_scalar() has a sensible definition when mn is
       not equal to mp

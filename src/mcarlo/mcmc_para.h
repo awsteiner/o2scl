@@ -4319,6 +4319,13 @@ namespace o2scl {
                   "emulator size.",o2scl::exc_efailed);
       }
       
+      double emu_time;
+#ifdef O2SCL_MPI
+      emu_time=MPI_Wtime();
+#else
+      emu_time=time(0);
+#endif
+      
       for(size_t k=0;k<kmax;k++) {
         
 #ifdef O2SCL_SET_OPENMP
@@ -4350,9 +4357,15 @@ namespace o2scl {
         // End of loop over 'k'
       }
 
+#ifdef O2SCL_MPI
+      emu_time=MPI_Wtime()-emu_time;
+#else
+      emu_time=time(0)-emu_time;
+#endif
+      
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emu_train(): Done."
-                  << std::endl;
+        std::cout << "mcmc_para_emu::emu_train(): Done. Time: "
+                  << emu_time << std::endl;
       }
       
       return;
@@ -4376,6 +4389,13 @@ namespace o2scl {
         O2SCL_ERR2("Number of threads does not evenly divide ",
                    "emulator size.",o2scl::exc_efailed);
       }
+
+      double emuc_time;
+#ifdef O2SCL_MPI
+      emuc_time=MPI_Wtime();
+#else
+      emuc_time=time(0);
+#endif
       
       for(size_t k=0;k<kmax;k++) {
         
@@ -4407,9 +4427,15 @@ namespace o2scl {
         // End of loop over k
       }
 
+#ifdef O2SCL_MPI
+      emuc_time=MPI_Wtime()-emuc_time;
+#else
+      emuc_time=time(0)-emuc_time;
+#endif
+      
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emuc_train(): Done."
-                  << std::endl;
+        std::cout << "mcmc_para_emu::emuc_train(): Done. Time: "
+                  << emuc_time << std::endl;
       }
       
       return;
