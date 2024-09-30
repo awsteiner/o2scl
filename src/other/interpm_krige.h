@@ -934,9 +934,9 @@ namespace o2scl {
           this->std_y[j]=vector_stddev(this->n_points,vec);
           if (this->verbose>1) {
             std::cout << "interpm_krige_optim::set_data(): ";
-            std::cout << "  Mean, std. dev. of output " << j << " of "
-                      << n_out << " is " << this->mean_y[j] << " and "
-                      << this->std_y[j] << " ." << std::endl;
+            std::cout << "Mean, std. dev. of output " << j << " of "
+                      << n_out << " is\n  " << this->mean_y[j] << " and "
+                      << this->std_y[j] << "." << std::endl;
           }
           for(size_t i=0;i<this->n_points;i++) {
             this->y(i,j)=(this->y(i,j)-this->mean_y[j])/this->std_y[j];

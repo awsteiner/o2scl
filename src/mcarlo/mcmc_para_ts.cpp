@@ -786,6 +786,8 @@ int main(int argc, char *argv[]) {
 
   if (true) {
     
+    cout << "Test mcmc_para_emu: " << endl;
+    
     mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
                   ubvector> mpe;
 
@@ -800,7 +802,7 @@ int main(int argc, char *argv[]) {
     mpe.prefix="mpe";
     mpe.show_emu=1;
     mpe.def_stepper->step_fac[0]=10.0;
-
+    
     // Set up the shared pointer to the interpolation object
     std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
     mpe.emu.resize(1);

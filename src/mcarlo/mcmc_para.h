@@ -1271,7 +1271,7 @@ namespace o2scl {
       // Fix 'step_fac' if it's less than or equal to zero
       if (step_fac<=0.0 && aff_inv) {
         std::cout << "mcmc_para_base::mcmc(): Requested negative or zero "
-                  << "step_fac with aff_inv=true.\nSetting to 2.0."
+                  << "step_fac with aff_inv=true.\n  Setting to 2.0."
                   << std::endl;
         step_fac=2.0;
       }
@@ -2945,7 +2945,7 @@ namespace o2scl {
       if (this->verbose>0) {
         std::cout << "mcmc_para_base::mcmc(): ";
         std::cout << "Initial points: Finding last " << n_points
-                  << " points from file named "
+                  << " points from file\n  named "
                   << fname << " ." << std::endl;
       }
     
@@ -2989,7 +2989,7 @@ namespace o2scl {
             std::cout << "Could not find guess for rank " << this->mpi_rank
                       << "\n  thread " << it
                       << " and walker " << iw
-                      << ".\n  Trying to find a point at the end of "
+                      << ". Trying to find a point at the end of\n  "
                       << "the file to use." << std::endl;
             int row=tip.get_nlines()-this->n_walk*this->n_threads+windex;
             this->initial_points[windex].resize(n_param_loc);
