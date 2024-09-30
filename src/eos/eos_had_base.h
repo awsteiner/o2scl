@@ -336,10 +336,13 @@ namespace o2scl {
       f(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}}-
       \nu_i \right)/T \right] }
       \f]
-      In the case when the single particle potential is
-      momentum independent, and 
-      comparing these two expressions, the single particle
-      potential for nucleon \f$ i \f$ is
+      and this gives a number density of
+      \f[
+      n = \frac{g}{2 \pi^2} \int p^2 f(p)~dp \, .
+      \f]
+      In the case when the single particle potential is momentum
+      independent, and comparing these two distribution functions, the
+      single particle potential for nucleon \f$ i \f$ is
       \f[
       U_i - \mu_i = - \nu_i 
       \f]
@@ -348,13 +351,23 @@ namespace o2scl {
       U_i = \mu_i - \nu_i \, .
       \f]
       This definition works for nonrelativistic fermions as well. 
-      Thus this momentum-independent single-particle potential
+      Thus, this momentum-independent single-particle potential
       can be computed for equations of state like \ref o2scl::eos_had_skyrme
-      and \ref o2scl::eos_had_rmf .
+      and \ref o2scl::eos_had_rmf . At a given density and temperature,
+      the chemical potential of the noninteracting Fermi gas
+      is the solution to 
+      \f[
+      n = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{2}}-
+      \mu_i \right)/T \right] }
+      \f]
+      thus the chemical potential of the noninteracting Fermi gas
+      provides an approximation for the quantity \f$ \nu \f$, in the
+      limit that \f$ m^{*} \righarrow m \f$. This approximation could
+      be used in \ref o2scl::eos_had_virial to compute \f$ \nu \f$
       
       \future Replace fmsom() with f_effm_scalar(). This has to wait
       until f_effm_scalar() has a sensible definition when mn is
-      not equal to mp
+      not equal to mp.
       
       \future A lot of the numerical derivatives here might possibly
       request negative number densities for the nucleons, which 
