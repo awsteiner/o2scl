@@ -39,7 +39,7 @@ namespace o2scl {
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
-  /** \brief Desc
+  /** \brief Virial EOS with spin (experimental)
    */
   class eos_had_virial_spin {
     
@@ -143,6 +143,9 @@ namespace o2scl {
   
     /// Storage for the four roots
     std::complex<double> res[4];
+
+    /// Classical thermodynamics for \f$ \nu_n \f$ and \f$ \nu_p \f$
+    classical_thermo cl;
 
   public:
 
@@ -251,6 +254,24 @@ namespace o2scl {
       return;
     }
 
+    /** \brief Compute \f$ \nu_n \f$ and \f$ \nu_p \f$
+
+        \note This function ignores the value of
+        \ref fermion_tl::non_interacting and just sets the
+        effective mass in \ref part_tl::ms equal to the
+        bare mass \ref part_tl::m .
+     */
+    virtual void calc_nun_nup(fermion &n, fermion &p,
+                              double T) {
+
+      n.ms=n.m;
+      p.ms=p.m;
+      cl.calc_density(n,T);
+      cl.calc_density(p,T);
+      
+      return;
+    }
+    
     /** \brief Compute the derivatives given the densities and the
         fugacities (i.e. after a call to \ref solve_fugacity())
     */
