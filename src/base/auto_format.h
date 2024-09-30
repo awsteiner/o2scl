@@ -48,11 +48,13 @@ namespace o2scl_auto_format {
   cpp_dec_float_35;
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
   typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+#endif
   
   // Declarations for friendship
   class auto_format;
   auto_format &operator<<(auto_format &at, double d);
   auto_format &operator<<(auto_format &at, long double d);
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
