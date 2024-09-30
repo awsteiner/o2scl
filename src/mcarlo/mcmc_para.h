@@ -108,7 +108,7 @@ namespace o2scl {
         had a very small likelihood.
     */
     void check_bounds(size_t i_thread, size_t n_params,
-                      vec_t &v, vec_t &low, vec_t &high,
+                      vec_t &v, const vec_t &low, const vec_t &high,
                       int &func_ret, int verbose) {
       
       for(size_t k=0;k<n_params;k++) {
@@ -143,8 +143,8 @@ namespace o2scl {
         in \c accept.
     */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
-                      vec_t &current, vec_t &next, double w_current,
-                      double &w_next, vec_t &low, vec_t &high,
+                      const vec_t &current, vec_t &next, double w_current,
+                      double &w_next, const vec_t &low, const vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose)=0;
     
@@ -156,7 +156,7 @@ namespace o2scl {
 #ifdef O2SCL_NEVER_DEFINED
   
   template<class func_t, class data_t, class vec_t>
-  class mcmc_stepper_split :
+  class mcmc_stepper_multistep :
     public mcmc_stepper_base<func_t,data_t,vec_t> {
     
   protected:
@@ -164,35 +164,27 @@ namespace o2scl {
     std::vector<std::shared_ptr<mcmc_stepper_base<func_t,data_t,
                                                   vec_t>>> step_list;
     
-    std::vector<std::size_t> index_list;
-    
-    std::vector<std::size_t> length_list;
-    
   public:
     
     /** \brief Desc
      */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
-                      vec_t &current, vec_t &next, double w_current,
-                      double &w_next, vec_t &low, vec_t &high,
+                      const vec_t &current, vec_t &next, double w_current,
+                      double &w_next, const vec_t &low, const vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
-      if (index_list.size()!=n_params) {
-        O2SCL_ERR("Index list does not match parameter number ",
-                  "in mcmc_stepper_split()::step().",
-                  o2scl::exc_einval);
-      }
+
+      w_current=0.0;
+      bool accept_all=true;
       for(size_t i=0;i<step_list.size();i++) {
-        vec_t curr2(length_list[i]), next2(length_list[i]);
-        size_t k=0;
-        for(size_t j=0;j<n_params;j++) {
-          if (index_list[j]==i) {
-            curr2[k]=current[j];
-            k++;
-          }
-        }
-        //step_list[i].step(i_thread,length_list[i],
-        //f,curr2,next2,w_current,w_next,low
+
+        double w_this;
+        step_list[i].step(i_thread,n_params,f,current,next,
+                          w_current,w_this,low,high,func_ret,
+                          accept,dat,r,verbose);
+        w_current+=w_this;
+        if (accept==false) accept_all=false;
+        
       }
       
       return 0;
@@ -260,8 +252,8 @@ namespace o2scl {
         in \c accept.
     */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
-                      vec_t &current, vec_t &next, double w_current,
-                      double &w_next, vec_t &low, vec_t &high,
+                      const vec_t &current, vec_t &next, double w_current,
+                      double &w_next, const vec_t &low, const vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
       
@@ -327,8 +319,8 @@ namespace o2scl {
         in \c accept.
     */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
-                      vec_t &current, vec_t &next, double w_current,
-                      double &w_next, vec_t &low, vec_t &high,
+                      const vec_t &current, vec_t &next, double w_current,
+                      double &w_next, const vec_t &low, const vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
@@ -446,7 +438,7 @@ namespace o2scl {
   */
   template<class func_t, class data_t,
            class vec_t,
-           class grad_t=std::function<int(size_t,vec_t &,func_t &,
+           class grad_t=std::function<int(size_t,const vec_t &,func_t &,
                                           vec_t &,data_t &)>,
            class vec_bool_t=std::vector<bool> >
   class mcmc_stepper_hmc :
@@ -478,11 +470,14 @@ namespace o2scl {
      */
     prob_dens_gaussian pdg;
 
-    /** \brief Stepsize in momentum space (default is a one-element
-        vector containing 0.2)
+    /** \brief Initial distribution in momentum space
+        (default is a one-element vector containing 1.0)
     */
     vec_t mom_step;
 
+    /// Scale for gradient (default 0.2)
+    double epsilon;
+    
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
         vector containing true).
@@ -508,12 +503,13 @@ namespace o2scl {
     mcmc_stepper_hmc() {
       traj_length=20;
       mom_step.resize(1);
-      mom_step[0]=0.2;
+      mom_step[0]=1.0;
       auto_grad.resize(1);
       auto_grad[0]=true;
       epsrel=1.0e-6;
       epsmin=1.0e-15;
       grad_ptr=0;
+      epsilon=0.2;
     }
 
     virtual ~mcmc_stepper_hmc() {
@@ -527,6 +523,7 @@ namespace o2scl {
       hf.set_szt("traj_length",traj_length);
       hf.setd("epsrel",epsrel);
       hf.setd("epsmin",epsmin);
+      hf.setd("epsilon",epsilon);
       return;
     }
     
@@ -549,7 +546,7 @@ namespace o2scl {
         log-likelihood, which is the negative of the gradient of the
         potential energy.
     */
-    int grad_pot(size_t n_params, vec_t &x, func_t &f, 
+    int grad_pot(size_t n_params, const vec_t &x, func_t &f, 
                  vec_t &g, data_t &dat) {
       
       double fv1, fv2, h;
@@ -575,16 +572,19 @@ namespace o2scl {
       
       for(size_t i=0; i<n_params; i++) {
 
+        // We need a copy because x is const
+        vec_t x2=x;
+        
         if (auto_grad[i % auto_grad.size()]==true) {
-          h=epsrel*fabs(x[i]);
+          h=epsrel*fabs(x2[i]);
           if (fabs(h)<=epsmin) h=epsrel;
           
-          x[i]+=h;
-          func_ret=f(n_params,x,fv2,dat);
+          x2[i]+=h;
+          func_ret=f(n_params,x2,fv2,dat);
           if (func_ret!=success) {
             return grad_failed;
           }
-          x[i]-=h;
+          x2[i]-=h;
           
           g[i]=(fv2-fv1)/h;
         }
@@ -619,8 +619,8 @@ namespace o2scl {
         \f}
     */
     virtual void step(size_t i_thread, size_t n_params, func_t &f,
-                      vec_t &current, vec_t &next, double w_current,
-                      double &w_next, vec_t &low, vec_t &high,
+                      const vec_t &current, vec_t &next, double w_current,
+                      double &w_next, const vec_t &low, const vec_t &high,
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
@@ -693,13 +693,13 @@ namespace o2scl {
       // Initialize the momenta, which we rescale by mom_step
       // [Neal] p = rnorm(length(q),0,1)
       for(size_t k=0;k<n_params;k++) {
-        mom[k]=pdg();
+        mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=mom[k]+0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]=mom[k]+0.5*epsilon*grad[k];
       }
       
       // [Neal] for (i in 1:L)
@@ -708,7 +708,7 @@ namespace o2scl {
         // Take a full step in coordinate space
         // [Neal] q = q + epsilon * p
         for(size_t k=0;k<n_params;k++) {
-          next[k]+=mom_step[k % mom_step.size()]*mom_next[k];
+          next[k]+=epsilon*mom_next[k];
         }
         
         // Check that the coordinate space step has not taken us out
@@ -747,7 +747,7 @@ namespace o2scl {
         if (i<traj_length-1) {
           // [Neal] if (i!=L) p = p - epsilon * grad_U(q)
           for(size_t k=0;k<n_params;k++) {
-            mom_next[k]+=mom_step[k % mom_step.size()]*grad[k];
+            mom_next[k]+=epsilon*grad[k];
           }
           
         }
@@ -757,7 +757,7 @@ namespace o2scl {
       // Perform the final half-step in momentum space
       // [Neal] p = p - epsilon * grad_U(q) / 2
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]+=0.5*mom_step[k % mom_step.size()]*grad[k];
+        mom_next[k]+=0.5*epsilon*grad[k];
       }
       
       // Perform the final function evaluation
@@ -963,18 +963,17 @@ namespace o2scl {
      */
     virtual int mcmc_init() {
 
-      if (verbose>1) {
-        std::cout << "mcmc_para_base::mcmc_init(): "
-                  << "Prefix is: " << prefix << std::endl;
-      }
-
       if (verbose>0) {
         // Open main output file for this rank
         scr_out.open((prefix+"_"+
                       o2scl::itos(mpi_rank)+"_scr").c_str());
         scr_out.setf(std::ios::scientific);
+        if (verbose>1) {
+          scr_out << "mcmc_para_base::mcmc_init(): "
+                  << "Prefix is: " << prefix << std::endl;
+        }
       }
-    
+
       // End of mcmc_init()
       return 0;
     }
@@ -1229,7 +1228,8 @@ namespace o2scl {
                      std::vector<data_t> &data) {
 
       // Verify that the input and settings make sense and fix
-      // them if we can.
+      // them if we can. Note that we can't use "scr_out" here
+      // because mcmc_init() has not yet been called. 
 
       if (func.size()==0 || meas.size()==0) {
         O2SCL_ERR2("Size of 'func' or 'meas' array is zero in ",
@@ -2395,7 +2395,7 @@ namespace o2scl {
             }
           }
 
-          if (verbose>=3) {
+          if (verbose>=4) {
             std::cout << "mcmc_para_base::mcmc(): ";
             std::cout << "Press a key and type enter to continue. ";
             char ch;
@@ -3567,18 +3567,18 @@ namespace o2scl {
             // First, double check that the table has the right
             // number of columns
             if (line.size()!=table->get_ncolumns()) {
-              std::cout << "mcmc_para_table::add_line(): ";
-              std::cout << "line: " << line.size() << " columns: "
+              std::cerr << "mcmc_para_table::add_line(): ";
+              std::cerr << "line: " << line.size() << " columns: "
                         << table->get_ncolumns() << std::endl;
               for(size_t k=0;k<table->get_ncolumns() || k<line.size();k++) {
-                std::cout << k << ". ";
+                std::cerr << k << ". ";
                 if (k<table->get_ncolumns()) {
-                  std::cout << table->get_column_name(k) << " ";
-                  std::cout << table->get_unit(table->get_column_name(k))
+                  std::cerr << table->get_column_name(k) << " ";
+                  std::cerr << table->get_unit(table->get_column_name(k))
                             << " ";
                 }
-                if (k<line.size()) std::cout << line[k] << " ";
-                std::cout << std::endl;
+                if (k<line.size()) std::cerr << line[k] << " ";
+                std::cerr << std::endl;
               }
               O2SCL_ERR2("Table misalignment in ",
                          "mcmc_para_table::add_line().",
@@ -3613,15 +3613,15 @@ namespace o2scl {
 
             if (check_rows && fabs(line[3])>0.5 &&
                 fabs(table->get(3,((size_t)next_row)))>0.5) {
-              std::cout << "mcmc_para_table::add_line(): ";
-              std::cout << "mult for line is " << line[3]
+              std::cerr << "mcmc_para_table::add_line(): ";
+              std::cerr << "mult for line is " << line[3]
                         << " and mult at next_row (" << next_row
                         << ") is "
                         << table->get(3,((size_t)next_row)) << std::endl;
-              std::cout << "  Walker and thread at next row is "
+              std::cerr << "  Walker and thread at next row is "
                         << table->get(2,((size_t)next_row)) << " and "
                         << table->get(1,((size_t)next_row)) << std::endl;
-              std::cout << "  " << table->get_nlines() << " "
+              std::cerr << "  " << table->get_nlines() << " "
                         << table->get_maxlines() << std::endl;
               O2SCL_ERR("Row arithmetic problem in mcmc_para_table.",
                         o2scl::exc_esanity);
@@ -4182,10 +4182,10 @@ namespace o2scl {
       if (n_retrain>0) {
 
         if (this->verbose>=2) {
-          std::cout << "mcmc_para_table::outside_parallel(): ";
-          std::cout << "Rank: " << this->mpi_rank
+          (this->scr_out) << "mcmc_para_table::outside_parallel(): ";
+          (this->scr_out) << "Rank: " << this->mpi_rank
                     << " emulated: " << n_total_emu
-                    << " classifier rejected: " << n_class_reject << " "
+                    << " classifier rejected: " << n_class_reject 
                     << " exact evaluations: " << n_exact << std::endl;
         }
         
@@ -4193,7 +4193,7 @@ namespace o2scl {
           (this->n_accept.size(),this->n_accept);
         
         if (this->verbose>=3) {
-          std::cout << "mcmc_para_table::outside_parallel(): "
+          (this->scr_out) << "mcmc_para_table::outside_parallel(): "
                     << "n_retrain, sum, last_retrain_sum, "
                     << "table lines, n_threads, n_walk: "
                     << n_retrain << " " << sum << " "
@@ -4207,8 +4207,8 @@ namespace o2scl {
 
           last_retrain_sum=sum;
           if (this->verbose>=2) {
-            std::cout << "mcmc_para_table::outside_parallel(): ";
-            std::cout << "Retraining." << std::endl;
+            (this->scr_out) << "mcmc_para_table::outside_parallel(): ";
+            (this->scr_out) << "Retraining." << std::endl;
           }
         
           // Reconstruct emu_table from emu_init and the result table
@@ -4281,7 +4281,7 @@ namespace o2scl {
           func_ret=((*func_ptr)[i_thread])(pars.size(),pars,
                                            log_weight,dat);
           if (show_emu>1) {
-            std::cout << "mcmc_para_emu::add_line(): show_emu="
+            (this->scr_out) << "mcmc_para_emu::add_line(): show_emu="
                       << show_emu << ", pars[0], emu, exact, ret: "
                       << pars[0] << " " << log_wgt_orig << " "
                       << log_weight << " " << func_ret << std::endl;
@@ -4305,7 +4305,7 @@ namespace o2scl {
     void emu_train() {
 
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emu_train(): Starting."
+        (this->scr_out) << "mcmc_para_emu::emu_train(): Starting."
                   << std::endl;
       }
       
@@ -4314,7 +4314,7 @@ namespace o2scl {
       double verify=((double)emu.size())/((double)this->n_threads)-
         ((double)kmax);
       if (fabs(verify)>1.0e-10) {
-        std::cout << "verify: " << kmax << " " << verify << std::endl;
+        (this->scr_out) << "verify: " << kmax << " " << verify << std::endl;
         O2SCL_ERR2("Number of threads does not evenly divide ",
                   "emulator size.",o2scl::exc_efailed);
       }
@@ -4364,7 +4364,7 @@ namespace o2scl {
 #endif
       
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emu_train(): Done. Time: "
+        (this->scr_out) << "mcmc_para_emu::emu_train(): Done. Time: "
                   << emu_time << std::endl;
       }
       
@@ -4376,7 +4376,7 @@ namespace o2scl {
     void emuc_train() {
 
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emuc_train(): Starting."
+        (this->scr_out) << "mcmc_para_emu::emuc_train(): Starting."
                   << std::endl;
       }
       
@@ -4385,7 +4385,7 @@ namespace o2scl {
       double verify=((double)emuc.size())/((double)this->n_threads)-
         ((double)kmax);
       if (fabs(verify)>1.0e-10) {
-        std::cout << "verify: " << kmax << " " << verify << std::endl;
+        (this->scr_out) << "verify: " << kmax << " " << verify << std::endl;
         O2SCL_ERR2("Number of threads does not evenly divide ",
                    "emulator size.",o2scl::exc_efailed);
       }
@@ -4434,7 +4434,7 @@ namespace o2scl {
 #endif
       
       if (this->verbose>1) {
-        std::cout << "mcmc_para_emu::emuc_train(): Done. Time: "
+        (this->scr_out) << "mcmc_para_emu::emuc_train(): Done. Time: "
                   << emuc_time << std::endl;
       }
       
@@ -4542,7 +4542,7 @@ namespace o2scl {
 
         // Store the initial number of emulator table rows
         n_rows_emu_init=emu_init.get_nlines();
-        std::cout << "mcmc_para_emu::mcmc_emu(): "
+        (this->scr_out) << "mcmc_para_emu::mcmc_emu(): "
                   << "n_rows_emu_init: " << n_rows_emu_init << std::endl;
           
         // ──────────────────────────────────────────────────────────────
@@ -4592,8 +4592,8 @@ namespace o2scl {
 
         // Store the initial number of table rows
         n_rows_emuc_init=emuc_init.get_nlines();
-        std::cout << "mcmc_para_emu::mcmc_emu(): ";
-        std::cout << "n_rows_emuc_init: " << n_rows_emuc_init << std::endl;
+        (this->scr_out) << "mcmc_para_emu::mcmc_emu(): ";
+        (this->scr_out) << "n_rows_emuc_init: " << n_rows_emuc_init << std::endl;
 
         // ──────────────────────────────────────────────────────────────
         // Reorganize the initial tables into a second copy which
@@ -4716,7 +4716,7 @@ namespace o2scl {
         if (show_emu>0) {
 
           if (this->verbose>1) {
-            std::cout << "mcmc_para_emu::mcmc_emu(): "
+            (this->scr_out) << "mcmc_para_emu::mcmc_emu(): "
                       << "Testing emulator at "
                       << emu_test_tab.get_nlines() << " points."
                       << std::endl;
@@ -4740,7 +4740,7 @@ namespace o2scl {
               // Update the quality factor
               qual+=fabs(y[0]-emu_test_tab.get("log_wgt",i));
             }
-            std::cout << "mcmc_para_emu::mcmc_emu(): "
+            (this->scr_out) << "mcmc_para_emu::mcmc_emu(): "
                       << "Emulator quality factor: "
                       << qual << std::endl;
             
@@ -4767,7 +4767,7 @@ namespace o2scl {
           if (show_emu>0) {
 
             if (this->verbose>1) {
-              std::cout << "mcmc_para_emu::mcmc_emu(): "
+              (this->scr_out) << "mcmc_para_emu::mcmc_emu(): "
                         << "Logging classifier. " << emuc.size()
                         << std::endl;
             }
@@ -4793,9 +4793,9 @@ namespace o2scl {
                 // Update the quality factor
                 qualc+=fabs(y[0]-emuc_test_tab.get("class",i));
               }
-              std::cout << "mcmc_para_emu::mcmc_emu(): "
-                        << "Classifier quality factor: "
-                        << qualc << std::endl;
+              (this->scr_out) << "mcmc_para_emu::mcmc_emu(): "
+                      << "Classifier quality factor: "
+                      << qualc << std::endl;
               
               o2scl_hdf::hdf_file hf_emuc;
               std::string test_emuc_file=this->prefix+"_"+

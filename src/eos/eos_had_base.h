@@ -50,6 +50,8 @@ namespace o2scl {
       powers of \f$ \mathrm{fm}^{-4} \f$ , except where otherwise
       specified. 
 
+      \b Expansion \b in \b density \b and \b asymmetry
+      
       Denote the number density of neutrons as \f$ n_n \f$, the number
       density of protons as \f$ n_p \f$, the total baryon density \f$
       n_B = n_n + n_p \f$, the asymmetry \f$ \delta \equiv
@@ -90,6 +92,8 @@ namespace o2scl {
       some of this documentation is based.
       \endverbatim
 
+      \b Incompressibility
+      
       The compression modulus is usually defined by \f$ \chi = -1/V
       (dV/dP) = 1/n (dP/dn)^{-1} \f$ . In nuclear physics it has
       become common to use the incompressibility (or bulk) modulus
@@ -123,6 +127,8 @@ namespace o2scl {
       between :math:`K` and :math:`\tilde{K}`.
       \endverbatim
 
+      \b Symmetry \b energy
+      
       The symmetry energy, \f$ S(n_B,\delta), \f$ can be defined as
       \f[
       S(n_B,\delta) \equiv \frac{1}{2 n_B}\frac{\partial^2 \varepsilon}
@@ -180,6 +186,8 @@ namespace o2scl {
       See \ref eos_had_temp_base::fesym_T() and
       \ref eos_had_temp_base::fsyment_T() .
       
+      \b Symmetry \b energy \b slope \b parameter
+      
       The symmetry energy slope parameter \f$ L \f$, can be defined
       by 
       \f[
@@ -214,6 +222,8 @@ namespace o2scl {
       \left(\mu_n + \mu_p\right) - 3 S(n_B,\delta) \, .
       \f}
 
+      \b Skewness \b and \b other \b higher \b derivatives
+      
       The third derivative with respect to the baryon density is
       sometimes called the skewness. Here, we define
       \f[
@@ -267,6 +277,8 @@ namespace o2scl {
       which is equal to \f$ K_{\mathrm{sym}} + 6 L \f$ to lowest order
       in \f$ \delta \f$ at \f$ n_B = n_0 \f$.
 
+      \b Quartic \b symmetry \b energy
+      
       The quartic symmetry energy \f$ S_4(n_B,\delta) \f$ can be defined as
       \f[
       S_4(n_B,\delta) \equiv \frac{1}{24 n_B}\frac{\partial^4 \varepsilon}
@@ -322,23 +334,25 @@ namespace o2scl {
       \left(\eta -1\right)\right]
       \f]
 
+      \b Single \b particle \b potential \b energy
+      
       To define the single particle potential for nucleon \f$ i \f$,
       one writes the nucleon distribution function as a function
       of the momentum, \f$ p \f$,
       \f[
-      f(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}} +
+      f_i(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}} +
       U_i(p)-\mu_i \right)/T \right] }
       \f]
       where \f$ \mu_i \f$ is the chemical potential. The
       distribution function as computed by, e.g. the
       \ref o2scl::fermion_rel_tl class is 
       \f[
-      f(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}}-
+      f_i(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}}-
       \nu_i \right)/T \right] }
       \f]
       and this gives a number density of
       \f[
-      n = \frac{g}{2 \pi^2} \int p^2 f(p)~dp \, .
+      n_i = \frac{g_i}{2 \pi^2} \int p^2 f_i(p)~dp \, .
       \f]
       In the case when the single particle potential is momentum
       independent, and comparing these two distribution functions, the
@@ -357,24 +371,29 @@ namespace o2scl {
       the chemical potential of the noninteracting Fermi gas
       is the solution to 
       \f[
-      n = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{2}}-
-      \mu_i \right)/T \right] }
+      n_i = \frac{g_i}{2 \pi^2} \int p^2 \frac{1}
+      {1+ \exp\left[ \left(\sqrt{p^2+m_i^{2}}-
+      \mu_i \right)/T \right] }~dp
       \f]
       thus the chemical potential of the noninteracting Fermi gas
       provides an approximation for the quantity \f$ \nu \f$, in the
-      limit that \f$ m^{*} \righarrow m \f$. This approximation could
+      limit that \f$ m^{*} \rightarrow m \f$. This approximation could
       be used in \ref o2scl::eos_had_virial to compute \f$ \nu \f$
-      
-      \future Replace fmsom() with f_effm_scalar(). This has to wait
-      until f_effm_scalar() has a sensible definition when mn is
-      not equal to mp.
-      
-      \future A lot of the numerical derivatives here might possibly
-      request negative number densities for the nucleons, which 
-      may cause exceptions, espescially at very low densities. 
-      Since the default EOS objects are GSL derivatives, one can
-      get around these issues by setting the GSL derivative object
-      step size, but this is a temporary solution.
+
+      \verbatim embed:rst
+      .. todo:: 
+
+         In \ref o2scl::eos_had_base:
+         - (Future) Replace fmsom() with f_effm_scalar(). This has to wait
+           until f_effm_scalar() has a sensible definition when mn is
+           not equal to mp.
+         - (Future) A lot of the numerical derivatives here might possibly
+           request negative number densities for the nucleons, which 
+           may cause exceptions, espescially at very low densities. 
+           Since the default EOS objects are GSL derivatives, one can
+           get around these issues by setting the GSL derivative object
+           step size, but this is a temporary solution.
+      \endverbatim
   */
   class eos_had_base : public eos_base {
 
@@ -416,8 +435,8 @@ namespace o2scl {
 
     /// \name Other settings
     //@{
-    /** \brief If true, call the error handler if msolve() or
-        msolve_de() does not converge (default true)
+    /** \brief If true, call the error handler if one of the
+        EOS functions does not converge (default true)
     */
     bool err_nonconv;
     //@}
