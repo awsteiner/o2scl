@@ -253,6 +253,7 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
@@ -264,7 +265,8 @@ namespace o2scl_auto_format {
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
-
+#endif
+  
   /** \brief Output a single-precision number
    */
   auto_format &operator<<(auto_format &at, float f);
