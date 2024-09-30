@@ -342,7 +342,7 @@ namespace o2scl {
 
         if (verbose>=3) {
           std::cout << "mcmc_stepper_mh::step(): "
-                    << "w_next,w_current,q_next,q_current: "
+                    << "w_next,w_current,q_next,q_current:\n  "
                     << w_next << " " << w_current << " "
                     << proposal[i_thread %
                                 proposal.size()].log_pdf(current,next)
@@ -2966,7 +2966,7 @@ namespace o2scl {
               found=true;
             
               std::cout << "mcmc_para_base::initial_point_file_last(): ";
-              std::cout << "\n\tit: "
+              std::cout << "\n  it: "
                         << it << " rank: " << this->mpi_rank
                         << " iw: " << iw << " row: "
                         << row << " log_wgt: " << tip.get("log_wgt",row)
@@ -2987,9 +2987,9 @@ namespace o2scl {
               this->n_threads) {
             std::cout << "mcmc_para_base::initial_point_file_last(): ";
             std::cout << "Could not find guess for rank " << this->mpi_rank
-                      << " thread " << it
+                      << "\n  thread " << it
                       << " and walker " << iw
-                      << ". Trying to find a point at the end of "
+                      << ".\n  Trying to find a point at the end of "
                       << "the file to use." << std::endl;
             int row=tip.get_nlines()-this->n_walk*this->n_threads+windex;
             this->initial_points[windex].resize(n_param_loc);
