@@ -109,7 +109,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git checkout f57c93417f && pip3 install --break-system-packages . 
+RUN git checkout 7b29beab96 && pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately
