@@ -426,7 +426,7 @@ namespace o2scl {
     /// Saturation density in \f$ \mathrm{fm}^{-3} \f$
     double n0;
 
-    /// Effective mass (neutron)
+    /// (Neutron) effective mass divided by bare mass
     double msom;
 
     /// Skewness in \f$ \mathrm{fm}^{-1} \f$
@@ -563,13 +563,13 @@ namespace o2scl {
 
     /** \brief Calculate reduced neutron effective mass using calc_e()
 
-        Neutron effective mass (as stored in <tt>part::ms</tt>)
-        divided by vacuum mass (as stored in <tt>part::m</tt>) in
-        nuclear matter at saturation density. Note that this simply
-        uses the value of n.ms from calc_e(), so that this effective
-        mass could be either the Landau or Dirac mass depending on the
-        context. Note that this may not be equal to the reduced proton
-        effective mass.
+        This function computes the neutron effective mass (as stored
+        in <tt>part::ms</tt>) divided by vacuum mass (as stored in
+        <tt>part::m</tt>) in nuclear matter at saturation density.
+        Note that this simply uses the calc_e() function, so that this
+        effective mass could be either the Landau or Dirac mass
+        depending on the context. Note that this may not be equal to
+        the reduced proton effective mass.
     */
     virtual double fmsom(double nb, double delta=0.0);
 
@@ -821,13 +821,15 @@ namespace o2scl {
                            eos_leptons &elep,
                            std::shared_ptr<table_units<> > results);
 
-    /** \brief Compute (numerically) the number susceptibilities as a
+    /** \brief Compute the number susceptibilities as a
         function of the chemical potentials, \f$ \partial^2 P /
         \partial \mu_i \mu_j \f$
 
         This function works by taking derivatives of \ref calc_nn_p
         and \ref calc_np_p using the object specified in \ref
-        set_sat_deriv().
+        set_sat_deriv(). The base class method performs the
+        calculation numerically, but can be overloaded by exact
+        calculations in child classes.
 
         See the finite-temperature generalization of this
         function in \ref eos_had_temp_base::f_number_suscept_T() .
@@ -842,12 +844,15 @@ namespace o2scl {
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
                                   double &dPdnp, double &dPdpp);
 
-    /** \brief Compute (numerically) the 'inverse' number
+    /** \brief Compute the 'inverse' number
         susceptibilities as a function of the densities, \f$
         \partial^2 \varepsilon / \partial n_i n_j \f$
 
         See the finite-temperature generalization of this
         function in \ref eos_had_temp_base::f_inv_number_suscept_T() .
+        The base class method performs the
+        calculation numerically, but can be overloaded by exact
+        calculations in child classes.
         
         \verbatim embed:rst
         .. todo:: 
