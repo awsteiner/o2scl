@@ -94,7 +94,7 @@ RUN pip3 install --break-system-packages torch==2.4.1 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git checkout b790603b9a && autoreconf -i
+RUN git fetch && git pull && git checkout d50d188e5 && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -109,7 +109,8 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git checkout 7b29beab96 && pip3 install --break-system-packages . 
+RUN git fetch && git pull && \
+  git checkout 7b29beab96 && pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately
