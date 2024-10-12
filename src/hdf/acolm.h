@@ -1165,7 +1165,7 @@ namespace o2scl_acol {
     */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Open local HTML docs for O₂scl documentation.
+    /** \brief Open local O₂scl HTML documentation.
 
         Arguments: <tt>[section, class, or function]</tt>
 
@@ -3484,10 +3484,11 @@ namespace o2scl_acol {
      */
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Open remote HTML docs for acol or an O₂scl topic.
+    /** \brief Open remote HTML O₂scl or O₂sclpy docs
 
-        Arguments: <tt>["dev"] [search_term], [topic] or [section
-        search_term]</tt>
+        Arguments: <tt>[search_term], ["dev"] [search_term],
+        ["o2sclpy"] [search_term],
+        ["o2sclpy-dev"] [search_term]</tt>
         
         If no arguments are given, this command opens up the remote
         HTML documentation for acol in the default web browser using
@@ -3501,9 +3502,13 @@ namespace o2scl_acol {
         <tt>-wdocs \"Simulated annealing\"</tt>
 
         If the optional argument "dev" is given, then the development
-        rather than release documentation is used. In order to open
-        the local version of the documentation instead of the remote
-        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
+        rather than release documentation is used. If the optional
+        argument "o2sclpy" or "o2sclpy-dev" are given, then the
+        O₂sclpy documentation is used.
+
+        In order to open the local version of the documentation
+        instead of the remote copy, use <tt>docs</tt> instead of
+        <tt>wdocs</tt>.
     */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 
