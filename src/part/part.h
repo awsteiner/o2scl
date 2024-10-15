@@ -97,11 +97,18 @@ namespace o2scl {
    */
   typedef thermo_tl<double> thermo;
 
+  /** \brief Long double-precision thermodynamics object
+   */
   typedef thermo_tl<long double> thermo_ld;
+  
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  /** \brief 25-digit precision thermodynamics object
+   */
   typedef thermo_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<25> > >
   thermo_cdf25;
+  
 #endif
   
   /** \brief Addition operator

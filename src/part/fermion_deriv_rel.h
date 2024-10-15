@@ -594,7 +594,8 @@ namespace o2scl {
            class dit_t=inte_qag_gsl<>,
 	   class fp_t=double>
   class fermion_deriv_rel_tl :
-    public fermion_deriv_thermo_tl<fermion_deriv_t,fp_t>,
+    public fermion_deriv_thermo_tl<fermion_deriv_t,
+                                   fermion_rel_t,fp_t>,
     public fermion_deriv_rel_integ<fp_t> {
     
   public:
@@ -815,7 +816,7 @@ namespace o2scl {
         
           // The non-degenerate case
           
-          funct density_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> density_T_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
 
@@ -847,7 +848,7 @@ namespace o2scl {
           
         } else {
           
-          funct density_mu_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> density_mu_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
 
@@ -880,7 +881,7 @@ namespace o2scl {
           
         } else {
           
-          funct entropy_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> entropy_T_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
@@ -1005,7 +1006,7 @@ namespace o2scl {
           
         } else {
 	  
-          funct deg_density_mu_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_density_mu_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                              f.inc_rest_mass); };
 	  
@@ -1063,7 +1064,7 @@ namespace o2scl {
 
         } else {
           
-          funct deg_density_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_density_T_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 	  
@@ -1122,7 +1123,7 @@ namespace o2scl {
 
         } else {
 
-          funct deg_entropy_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_entropy_T_fun_f=[this,f,temper](fp_t k) -> fp_t
           { return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 
@@ -1297,11 +1298,11 @@ namespace o2scl {
 			       long double>
   fermion_deriv_rel_ld;
 
-  /** \brief 25-digit version of 
+/** \brief 25-digit version of 
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<fermion_deriv_tl<cpp_dec_float_25>,
-                               fermion_rel_ld,
+                               fermion_rel_cdf25,
 			       inte_double_exp_boost<>,
 			       inte_double_exp_boost<>,
 			       cpp_dec_float_25>

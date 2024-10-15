@@ -213,6 +213,8 @@ int main(int argc, char *argv[]) {
 
   }
 
+  fermion_deriv_rel_ld fdrl;
+  
   t.report();
 
   return 0;

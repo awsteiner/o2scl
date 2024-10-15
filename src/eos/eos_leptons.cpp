@@ -1141,7 +1141,6 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
     eld.n=x*nq;
     
     if (include_deriv) {
-      /*
       if (accuracy==acc_fp_25) {
         fdrel_cdf25.multip=true;
       } else {
@@ -1159,7 +1158,6 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
       mud_ld.dndmu=fd.dndmu;
       mud_ld.dndT=fd.dndT;
       mud_ld.dsdT=fd.dsdT;
-      */
     }
     
   } else {
@@ -1199,7 +1197,6 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
       }
       fermion_deriv_ld fd;
       fd=eld;
-      /*
       if (accuracy==acc_fp_25) {
 	fdrel_cdf25.multip=true;
       } else {
@@ -1209,7 +1206,6 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
       ed_ld.dndmu=fd.dndmu;
       ed_ld.dndT=fd.dndT;
       ed_ld.dsdT=fd.dsdT;
-      */
 
     }
         

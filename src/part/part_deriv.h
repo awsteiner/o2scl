@@ -854,7 +854,9 @@ namespace o2scl {
 
       \endverbatim
   */
-  template<class fermion_deriv_t=fermion_deriv, class fp_t=double>
+  template<class fermion_deriv_t=fermion_deriv,
+           class fermion_rel_t=fermion_rel_tl<fermion_deriv_t>,
+           class fp_t=double>
   class fermion_deriv_thermo_tl : public deriv_thermo_base_tl<fp_t> {
 
   protected:
@@ -863,7 +865,7 @@ namespace o2scl {
 
 	This is for access to fermion_thermo::ndeg_terms().
     */
-    fermion_rel_tl<fermion_deriv_t> fr;
+    fermion_rel_t fr;
 
     /// Store \f$ \pi \f$ for convenience
     fp_t pi;

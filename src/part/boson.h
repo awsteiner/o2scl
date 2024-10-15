@@ -91,9 +91,9 @@ namespace o2scl {
 
   typedef boson_tl<double> boson;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-  
   typedef boson_tl<long double> boson_ld;
+  
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   typedef boson_tl<boost::multiprecision::number<
                      boost::multiprecision::cpp_dec_float<25> > > boson_cdf25;

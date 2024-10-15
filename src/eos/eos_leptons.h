@@ -405,8 +405,15 @@ namespace o2scl {
      */
     part_deriv_press_cdf25 thd_cdf25;
     
-    //fermion_deriv_rel_ld fdrel_ld;
-    //fermion_deriv_rel_cdf25 fdrel_cdf25;
+    /** \brief Relativistic fermion thermodynamics with derivatives
+        (long double)
+     */
+    fermion_deriv_rel_ld fdrel_ld;
+    
+    /** \brief Relativistic fermion thermodynamics with derivatives
+        (25-digit version)
+     */
+    fermion_deriv_rel_cdf25 fdrel_cdf25;
     
     /// \name Unit conversion objects to set the lepton masses
     //@{

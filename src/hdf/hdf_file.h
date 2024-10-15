@@ -979,6 +979,16 @@ namespace o2scl_hdf {
       return ret;
     }
 		 
+    /** \brief Get a tensor of strings from an HDF file
+
+	This version requires a full copy of the tensor from the
+	HDF5 file into the \ref o2scl::tensor_base object.
+    */
+    int gets_ten_copy(std::string name, 
+                      o2scl::tensor_base<std::string,
+                      std::vector<std::string>,
+                      std::vector<size_t>> &t);
+    
     /** \brief Write a tensor of double-precision numbers to an HDF file
 
 	You may overwrite a tensor already present in the
@@ -1008,6 +1018,13 @@ namespace o2scl_hdf {
     int set_szt_ten(std::string name, 
 		    const o2scl::tensor<size_t,std::vector<size_t>,
 		    std::vector<size_t> > &t);
+
+    /** \brief Write a tensor of strings to an HDF file
+    */
+    int sets_ten_copy(std::string name,
+                      const o2scl::tensor_base<std::string,
+                      std::vector<std::string>,
+                      std::vector<size_t>> &t);
 
     /** \brief Write a tensor of double-precision numbers to an HDF file
 

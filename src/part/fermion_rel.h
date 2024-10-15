@@ -892,7 +892,8 @@ namespace o2scl {
         if (multip==true) {
           
           if (verbose>1) {
-            std::cout << "fermion_rel::calc_mu(): non-deg number density (multip):"
+            std::cout << "fermion_rel::calc_mu(): "
+                      << "non-deg number density (multip):"
                       << std::endl;
           }
           

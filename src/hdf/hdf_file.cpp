@@ -2431,11 +2431,9 @@ int hdf_file::sets_vec_copy(std::string name,
   return 0;
 }
 
-#ifdef O2SCL_NEVER_DEFINED
-
 int hdf_file::gets_ten_copy(std::string name, 
                             tensor_base<std::string,
-                            std::vector<std::string,
+                            std::vector<std::string>,
                             std::vector<size_t>> &t) {
 		  
   int nc, nw;
@@ -2490,7 +2488,7 @@ int hdf_file::gets_ten_copy(std::string name,
 
 int hdf_file::sets_ten_copy(std::string name,
                             const tensor_base<std::string,
-                            std::vector<std::string,
+                            std::vector<std::string>,
                             std::vector<size_t>> &t) {
 
   if (write_access==false) {
@@ -2548,8 +2546,6 @@ int hdf_file::sets_ten_copy(std::string name,
 
   return 0;
 }
-
-#endif
 
 int hdf_file::gets_vec_vec_copy
 (std::string name, std::vector<std::vector<std::string>> &s) {
