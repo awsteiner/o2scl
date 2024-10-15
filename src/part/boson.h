@@ -38,6 +38,14 @@
 
 #include <o2scl/part.h>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
+
 namespace o2scl {
 
   /** \brief Boson class
@@ -82,6 +90,15 @@ namespace o2scl {
   };
 
   typedef boson_tl<double> boson;
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  typedef boson_tl<long double> boson_ld;
+  
+  typedef boson_tl<boost::multiprecision::number<
+                     boost::multiprecision::cpp_dec_float<25> > > boson_cdf25;
+  
+#endif
 
   /** \brief Compute the thermodynamic properties of a boson 
       [abstract base]

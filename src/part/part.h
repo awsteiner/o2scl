@@ -26,6 +26,15 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
+
 #include <o2scl/constants.h>
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
@@ -88,6 +97,13 @@ namespace o2scl {
    */
   typedef thermo_tl<double> thermo;
 
+  typedef thermo_tl<long double> thermo_ld;
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  typedef thermo_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<25> > >
+  thermo_cdf25;
+#endif
+  
   /** \brief Addition operator
    */
   extern thermo operator+(const thermo &left, const thermo &right);

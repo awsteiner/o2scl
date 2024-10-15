@@ -108,6 +108,8 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
+    //fermion_deriv_rel_ld fdrel_ld;
+    //fermion_deriv_rel_cdf25 fdrel_cdf25;
     //@}
     
     /// \name Accuracy control
@@ -144,6 +146,14 @@ namespace o2scl {
      */
     part_deriv_press ed;
     
+    /** \brief Electron derivatives
+     */
+    part_deriv_press_ld ed_ld;
+    
+    /** \brief Electron derivatives
+     */
+    part_deriv_press_cdf25 ed_cdf25;
+    
     /** \brief Muon
      */
     fermion mu;
@@ -168,21 +178,57 @@ namespace o2scl {
      */
     part_deriv_press mud;
     
+    /** \brief Muon derivatives
+     */
+    part_deriv_press_ld mud_ld;
+    
+    /** \brief Muon derivatives
+     */
+    part_deriv_press_cdf25 mud_cdf25;
+    
     /** \brief Photon
      */
     boson ph;
+
+    /** \brief Photon (long double)
+     */
+    boson_ld ph_ld;
+    
+    /** \brief Photon (25-digit version)
+     */
+    boson_cdf25 ph_cdf25;
 
     /** \brief Photon derivatives
      */
     part_deriv_press phd;
 
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_ld phd_ld;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_cdf25 phd_cdf25;
+
     /** \brief Thermodynamic quantities for the full EOS
      */
     thermo th;
 
+    /** \brief Thermodynamic quantities for the full EOS (long double)
+     */
+    thermo_ld th_ld;
+
     /** \brief Photon derivatives
      */
     part_deriv_press thd;
+    
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_ld thd_ld;
+    
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_cdf25 thd_cdf25;
     //@}
 
     /// \name Settings
@@ -355,6 +401,10 @@ namespace o2scl {
    */
   class eos_leptons_multip : public eos_leptons {
 
+  public:
+
+    typedef boost::numeric::ublas::vector<long double> ubvector_ld;
+    
   protected:
     
     /// \name Unit conversion objects to set the lepton masses
@@ -370,6 +420,11 @@ namespace o2scl {
         density
     */
     virtual int electron_density(double T);
+    
+    /** \brief Compute electron thermodynamics from the electron 
+        density (long double version)
+    */
+    virtual int electron_density_ld(long double T);
 
     /** \brief Compute particle thermodynamics from the density
      */
@@ -486,6 +541,11 @@ namespace o2scl {
     virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
                             ubvector &y, double T, double nq);
     
+    /** \brief Function to solve for \ref pair_density_eq_ld()
+     */
+    virtual long double pair_density_eq_ld_fun
+    (long double x, long double T, long double nq);
+    
   public:
 
     eos_leptons_multip();
@@ -538,6 +598,8 @@ namespace o2scl {
         of the electron density is also used as an initial guess.
     */
     virtual int pair_density_eq(double nq, double T);
+
+    virtual int pair_density_eq_ld(long double nq, long double T);
     
     /** \brief Relativistic fermion thermodynamics in long double precision
      */

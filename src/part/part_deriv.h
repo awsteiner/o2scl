@@ -171,6 +171,16 @@ namespace o2scl {
   /** \brief Double-precision version of \ref o2scl::part_deriv_press_tl 
    */
   typedef part_deriv_press_tl<double> part_deriv_press;
+
+  typedef part_deriv_press_tl<long double> part_deriv_press_ld;
+  
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  typedef part_deriv_press_tl<boost::multiprecision::number<
+                                boost::multiprecision::cpp_dec_float<25> > >
+  part_deriv_press_cdf25;
+  
+#endif
   
   /** \brief A fermion with derivative information
    */
@@ -273,16 +283,16 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref fermion_deriv_tl
    */
   typedef fermion_deriv_tl<double> fermion_deriv;
   
-  /** \brief Desc
+  /** \brief Long double-precision version of \ref fermion_deriv_tl
    */
   typedef fermion_deriv_tl<long double> fermion_deriv_ld;
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
-  /** \brief Desc
+  /** \brief 25-digit floating point version of \ref fermion_deriv_tl
    */
   typedef fermion_deriv_tl<cpp_dec_float_25> fermion_deriv_cdf25;
 #endif

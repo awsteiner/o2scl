@@ -39,14 +39,6 @@
 
 #include <o2scl/set_mpfr.h>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
-#include <boost/multiprecision/number.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_SET_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
-#endif
-
 #include <o2scl/constants.h>
 #include <o2scl/funct.h>
 #include <o2scl/root.h>
