@@ -108,8 +108,6 @@ namespace o2scl {
     /** \brief Relativistic fermion thermodynamics with derivatives
      */
     fermion_deriv_rel fdrel;
-    //fermion_deriv_rel_ld fdrel_ld;
-    //fermion_deriv_rel_cdf25 fdrel_cdf25;
     //@}
     
     /// \name Accuracy control
@@ -145,15 +143,7 @@ namespace o2scl {
     /** \brief Electron derivatives
      */
     part_deriv_press ed;
-    
-    /** \brief Electron derivatives
-     */
-    part_deriv_press_ld ed_ld;
-    
-    /** \brief Electron derivatives
-     */
-    part_deriv_press_cdf25 ed_cdf25;
-    
+
     /** \brief Muon
      */
     fermion mu;
@@ -178,57 +168,21 @@ namespace o2scl {
      */
     part_deriv_press mud;
     
-    /** \brief Muon derivatives
-     */
-    part_deriv_press_ld mud_ld;
-    
-    /** \brief Muon derivatives
-     */
-    part_deriv_press_cdf25 mud_cdf25;
-    
     /** \brief Photon
      */
     boson ph;
-
-    /** \brief Photon (long double)
-     */
-    boson_ld ph_ld;
-    
-    /** \brief Photon (25-digit version)
-     */
-    boson_cdf25 ph_cdf25;
 
     /** \brief Photon derivatives
      */
     part_deriv_press phd;
 
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_ld phd_ld;
-
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_cdf25 phd_cdf25;
-
     /** \brief Thermodynamic quantities for the full EOS
      */
     thermo th;
 
-    /** \brief Thermodynamic quantities for the full EOS (long double)
-     */
-    thermo_ld th_ld;
-
     /** \brief Photon derivatives
      */
     part_deriv_press thd;
-    
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_ld thd_ld;
-    
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_cdf25 thd_cdf25;
     //@}
 
     /// \name Settings
@@ -406,6 +360,53 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<long double> ubvector_ld;
     
   protected:
+    
+    /** \brief Photon (long double)
+     */
+    boson_ld ph_ld;
+    
+    /** \brief Photon (25-digit version)
+     */
+    boson_cdf25 ph_cdf25;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_ld phd_ld;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_cdf25 phd_cdf25;
+
+    /** \brief Muon derivatives
+     */
+    part_deriv_press_ld mud_ld;
+    
+    /** \brief Muon derivatives
+     */
+    part_deriv_press_cdf25 mud_cdf25;
+    
+    /** \brief Electron derivatives
+     */
+    part_deriv_press_ld ed_ld;
+    
+    /** \brief Electron derivatives
+     */
+    part_deriv_press_cdf25 ed_cdf25;
+    
+    /** \brief Thermodynamic quantities for the full EOS (long double)
+     */
+    thermo_ld th_ld;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_ld thd_ld;
+    
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_cdf25 thd_cdf25;
+    
+    //fermion_deriv_rel_ld fdrel_ld;
+    //fermion_deriv_rel_cdf25 fdrel_cdf25;
     
     /// \name Unit conversion objects to set the lepton masses
     //@{

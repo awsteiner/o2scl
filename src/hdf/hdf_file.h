@@ -999,7 +999,7 @@ namespace o2scl_hdf {
 		 const o2scl::tensor<int,std::vector<int>,
 		 std::vector<size_t> > &t);
 
-    /** \brief Write a tensor of integers to an HDF file
+    /** \brief Write a tensor of size_t values to an HDF file
 
 	You may overwrite a tensor already present in the
 	HDF file only if it has the same rank. This version

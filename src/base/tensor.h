@@ -576,7 +576,7 @@ namespace o2scl {
 
   */
   template<class data_t=double, class vec_t=std::vector<data_t>, 
-           class vec_size_t=std::vector<size_t> > class tensor {
+           class vec_size_t=std::vector<size_t> > class tensor_base {
 
   public:
   
@@ -598,7 +598,7 @@ namespace o2scl {
   public:
 
     /// Create an empty tensor with zero rank
-    tensor() {
+    tensor_base() {
       rk=0;
     }
 
@@ -610,7 +610,7 @@ namespace o2scl {
         empty tensor, and will allocate no memory.
     */
     template<class size_vec_t> 
-    tensor(size_t rank, const size_vec_t &dim) {
+    tensor_base(size_t rank, const size_vec_t &dim) {
       if (rank==0) {
         rk=0;
       } else {
@@ -634,7 +634,7 @@ namespace o2scl {
       }
     }
 
-    virtual ~tensor() {
+    virtual ~tensor_base() {
     }
 
     /// \name Method to check for valid object
@@ -663,7 +663,8 @@ namespace o2scl {
         }
         if (tot!=data.size()) {
           O2SCL_ERR2("Product of size vector entries does not match data ",
-                     "vector size in tensor::is_valid().",o2scl::exc_esanity);
+                     "vector size in tensor::is_valid().",
+                     o2scl::exc_esanity);
         }
       }
     
@@ -675,8 +676,8 @@ namespace o2scl {
     //@{
     /** \brief Copy using <tt>operator()</tt>
      */
-    tensor<data_t,vec_t,vec_size_t>
-    (const tensor<data_t,vec_t,vec_size_t> &t) {
+    tensor_base<data_t,vec_t,vec_size_t>
+    (const tensor_base<data_t,vec_t,vec_size_t> &t) {
       rk=t.rk;
       data=t.data;
       size=t.size;
@@ -684,8 +685,8 @@ namespace o2scl {
 
     /** \brief Copy using <tt>operator=()</tt>
      */
-    tensor<data_t,vec_t,vec_size_t> &operator=
-    (const tensor<data_t,vec_t,vec_size_t> &t) {
+    tensor_base<data_t,vec_t,vec_size_t> &operator=
+    (const tensor_base<data_t,vec_t,vec_size_t> &t) {
       if (this!=&t) {
         rk=t.rk;
         data=t.data;
@@ -760,7 +761,7 @@ namespace o2scl {
     //@}
 
     /// Swap two tensors
-    friend void swap(tensor &t1, tensor &t2) {
+    friend void swap(tensor_base &t1, tensor_base &t2) {
 
       using std::swap;
 
@@ -778,7 +779,7 @@ namespace o2scl {
 #if O2SCL_NO_RANGE_CHECK
 #else
       if (rk==0) {
-        O2SCL_ERR("Empty tensor in tensor::get().",exc_einval);
+        O2SCL_ERR("Empty tensor in tensor_base::get().",exc_einval);
       }
       if (index[0]>=size[0]) {
         O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
@@ -1139,18 +1140,49 @@ namespace o2scl {
       unpack_index(ix_max,index_max);
       return;
     }
+    //@}
+  
+  };
+
+  /** \brief Tensor class with arbitrary dimensions (floating-point
+      extension)
+  */
+  template<class data_t=double, class vec_t=std::vector<data_t>, 
+           class vec_size_t=std::vector<size_t> > class tensor :
+    public tensor_base<data_t,vec_t,vec_size_t> {
+
+  public:
+
+    typedef tensor_base<data_t,vec_t,vec_size_t> parent_t;
+    
+    /// Create an empty tensor with zero rank
+    tensor() : parent_t() {
+    }
+
+    /** \brief Create a tensor of rank \c rank with sizes given in \c dim
+	
+        The parameter \c dim must be a pointer to a vector of sizes with
+        length \c rank. If the user requests any of the sizes to be
+        zero, this constructor will call the error handler, create an
+        empty tensor, and will allocate no memory.
+    */
+    template<class size_vec_t> 
+    tensor(size_t rank, const size_vec_t &dim) : parent_t(rank,dim) {
+    }
+
+    virtual ~tensor() {
+    }
 
     /** \brief Return the sum over every element in the tensor
      */
     double total_sum() const { 
-      if (rk==0) return 0.0;
+      if (this->rk==0) return 0.0;
       double tot=0.0;
-      for(size_t i=0;i<data.size();i++) {
-        tot+=data[i];
+      for(size_t i=0;i<this->data.size();i++) {
+        tot+=this->data[i];
       }
       return tot;
     }
-    //@}
   
     /// \name Slicing and converting to table3d objects
     //@{
@@ -1174,11 +1206,11 @@ namespace o2scl {
       
         // If there's no grid, then create a grid in the table3d
         // object which just enumerates the indices
-        std::vector<double> grid_x(size[ix_x]), grid_y(size[ix_y]);
-        for(size_t i=0;i<size[ix_x];i++) {
+        std::vector<double> grid_x(this->size[ix_x]), grid_y(this->size[ix_y]);
+        for(size_t i=0;i<this->size[ix_x];i++) {
           grid_x[i]=((double)i);
         }
-        for(size_t i=0;i<size[ix_y];i++) {
+        for(size_t i=0;i<this->size[ix_y];i++) {
           grid_y[i]=((double)i);
         }
         tab.set_xy("x",grid_x.size(),grid_x,
@@ -1227,8 +1259,8 @@ namespace o2scl {
       }
 
       size_t nx, ny;
-      nx=get_size(ix_x);
-      ny=get_size(ix_y);
+      nx=this->get_size(ix_x);
+      ny=this->get_size(ix_y);
 
       // Set the table3d grid using the indexes
       tab.clear();
@@ -1262,8 +1294,8 @@ namespace o2scl {
                       table3d &tab, std::string x_name="x",
                       std::string y_name="y",
                       std::string slice_name="z") const {
-      std::vector<size_t> ix(rk);
-      for(size_t i=0;i<rk;i++) ix[i]=0;
+      std::vector<size_t> ix(this->rk);
+      for(size_t i=0;i<this->rk;i++) ix[i]=0;
       copy_table3d(ix_x,ix_y,ix,tab,x_name,y_name,slice_name);
       return;
     }

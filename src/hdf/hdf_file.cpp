@@ -2431,6 +2431,126 @@ int hdf_file::sets_vec_copy(std::string name,
   return 0;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
+
+int hdf_file::gets_ten_copy(std::string name, 
+                            tensor_base<std::string,
+                            std::vector<std::string,
+                            std::vector<size_t>> &t) {
+		  
+  int nc, nw;
+
+  // Open the group
+  hid_t top=get_current_id();
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  string o2t;
+  gets_fixed("o2scl_type",o2t);
+  if (o2t!="tensor_string") {
+    set_current_id(top);
+    O2SCL_ERR2("The specified name does not refer to data which ",
+	       "can be read by O2scl in hdf_file::gets_vec().",
+	       exc_efailed);
+  }
+
+  // Get number of words
+  int rank;
+  geti("rank",rank);
+
+  vector<size_t> size;
+  get_szt_arr("size",size);
+
+  t.resize(rank,size);
+
+  tensor<size_t> lens;
+  get_szt_arr("lengths",lens);
+  std::string s;
+  gets("data",s);
+
+  const std::vector<std::string> &sdat=t.get_data();
+  const std::vector<size_t> &ldat=tlens.get_data();
+  
+  size_t ctr=0;
+  for(size_t i=0;i<t.total_size();i++) {
+    sdat[i]="";
+    for(size_t j=0;j<ldat[i];j++) {
+      sdat[i]+=s[ctr];
+      ctr++;
+    }
+  }
+
+  close_group(group);
+
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::sets_ten_copy(std::string name,
+                            const tensor_base<std::string,
+                            std::vector<std::string,
+                            std::vector<size_t>> &t) {
+
+  if (write_access==false) {
+    O2SCL_ERR2("File not opened with write access ",
+	       "in hdf_file::sets_ten().",exc_efailed);
+  }
+
+  // Create the group
+  hid_t top=current;
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  sets_fixed("o2scl_type","tensor_string");
+
+  seti("rank",t.get_rank());
+
+  if (t.get_rank>0) {
+    
+    const std::vector<size_t> &s=t.get_size_arr();
+    set_szt_arr("size",s);
+
+    tensor<size_t> tlens;
+    tlens.resize(t.get_rank(),s);
+    const std::vector<std::string> &sdat=t.get_data();
+    const std::vector<size_t> &ldat=tlens.get_data();
+    size_t nchars=0;
+    for(size_t i=0;i<sdat.size();i++) {
+      ldat[i]=sdat[i].length();
+      chars+=ldat[i];
+    }
+    set_szt_ten("lengths",tlens);
+    
+    char *cp=new char[nchars];
+    
+    size_t ctr=0;
+    for(size_t i=0;i<sdat.size();i++) {
+      for(size_t j=0;j<sdat[i].length();j++) {
+        cp[ctr]=sdat[i][j];
+        ctr++;
+      }
+    }
+    
+    setc_arr("data",ctr,cp);
+    
+    delete[] cp;
+    
+  }
+  
+
+  // Close the group
+  close_group(group);
+  
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+#endif
+
 int hdf_file::gets_vec_vec_copy
 (std::string name, std::vector<std::vector<std::string>> &s) {
   

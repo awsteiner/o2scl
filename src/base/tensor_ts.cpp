@@ -39,6 +39,10 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+  // Try instantiating a string tensor
+  tensor_base<std::string,std::vector<std::string>,
+              std::vector<size_t>> tenstr;
+  
   // Test a rank one tensor
   tensor<> arr;
   size_t i1[1], j1[1];
