@@ -89,12 +89,15 @@ namespace o2scl {
 
   };
 
+  /// Boson type for double-precision values
   typedef boson_tl<double> boson;
 
+  /// Boson type for long double-precision values
   typedef boson_tl<long double> boson_ld;
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
+  /// Boson type for 25-digit floating points
   typedef boson_tl<boost::multiprecision::number<
                      boost::multiprecision::cpp_dec_float<25> > > boson_cdf25;
   
@@ -112,6 +115,9 @@ namespace o2scl {
     be_inte_t be_integ;
     
     /** \brief Compute a term in the nondegenerate expansion
+
+        This function uses \ref be_integ to perform the Bessel
+        integrals.
      */
     void ndeg_terms(size_t j, fp_t tt,
                     fp_t xx, fp_t m, bool inc_rest_mass,

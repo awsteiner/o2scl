@@ -396,11 +396,12 @@ namespace o2scl {
       ubvector x(1);
       x[0]=b.nu/temper;
 
-      mm_funct mf=std::bind(std::mem_fn<int(size_t nv, const ubvector &,
-                                            ubvector &,fp_t,boson &,fp_t)>
-                            (&boson_rel_tl<be_inte_t,fp_t>::pair_density_fun),
-                            this,std::placeholders::_1,std::placeholders::_2,
-                            std::placeholders::_3,b.n,std::ref(b),temper);
+      mm_funct mf=std::bind
+        (std::mem_fn<int(size_t nv, const ubvector &,
+                         ubvector &,fp_t,boson &,fp_t)>
+         (&boson_rel_tl<be_inte_t,fp_t>::pair_density_fun),
+         this,std::placeholders::_1,std::placeholders::_2,
+         std::placeholders::_3,b.n,std::ref(b),temper);
       bool ec=density_mroot->err_nonconv;
       density_mroot->err_nonconv=false;
       int ret1=density_mroot->msolve(1,x,mf);
@@ -501,7 +502,7 @@ namespace o2scl {
 
     /// The default solver for calc_density().
     mroot_hybrids<> def_density_mroot;
-
+    
     /// Default nondegenerate integrator
     inte_qagiu_gsl<> def_nit;
 
@@ -848,6 +849,20 @@ namespace o2scl {
 
   typedef boson_rel_tl<> boson_rel;
 
+  typedef boson_rel_tl
+  <bessel_K_exp_integ_boost<long double,
+                            cpp_dec_float_25>,
+   long double> boson_rel_ld;
+  
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  typedef boson_rel_tl
+  <bessel_K_exp_integ_boost<cpp_dec_float_25,
+                            cpp_dec_float_35>,
+   cpp_dec_float_25> boson_rel_cdf25;
+  
+#endif
+  
 }
 
 #endif

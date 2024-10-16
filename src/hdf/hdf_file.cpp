@@ -2436,13 +2436,12 @@ int hdf_file::gets_ten_copy(std::string name,
                             std::vector<std::string>,
                             std::vector<size_t>> &t) {
 		  
-  int nc, nw;
-
   // Open the group
   hid_t top=get_current_id();
   hid_t group=open_group(name);
   set_current_id(group);
-  
+
+  // Obtain the type and verify that it's "tensor_string"
   string o2t;
   gets_fixed("o2scl_type",o2t);
   if (o2t!="tensor_string") {
@@ -2452,23 +2451,30 @@ int hdf_file::gets_ten_copy(std::string name,
 	       exc_efailed);
   }
 
-  // Get number of words
+  // Get rank
   int rank;
   geti("rank",rank);
 
+  // Get sizes
   vector<size_t> size;
   get_szt_arr("size",size);
 
+  // Resize
   t.resize(rank,size);
 
+  // Read length tensor
   tensor<size_t> lens;
   get_szt_arr("lengths",lens);
+
+  // Read character array as a string object
   std::string s;
   gets("data",s);
 
+  // Set references for data objects
   const std::vector<std::string> &sdat=t.get_data();
   const std::vector<size_t> &ldat=tlens.get_data();
-  
+
+  // Set strings from character array
   size_t ctr=0;
   for(size_t i=0;i<t.total_size();i++) {
     sdat[i]="";
@@ -2478,6 +2484,7 @@ int hdf_file::gets_ten_copy(std::string name,
     }
   }
 
+  // Close the associated group
   close_group(group);
 
   // Return file location
@@ -2510,19 +2517,28 @@ int hdf_file::sets_ten_copy(std::string name,
     const std::vector<size_t> &s=t.get_size_arr();
     set_szt_arr("size",s);
 
+    // Create a tensor to store string lengths
     tensor<size_t> tlens;
     tlens.resize(t.get_rank(),s);
+
+    // Obtain data references
     const std::vector<std::string> &sdat=t.get_data();
     const std::vector<size_t> &ldat=tlens.get_data();
+
+    // Count total number of characters and set string length tensor
     size_t nchars=0;
     for(size_t i=0;i<sdat.size();i++) {
       ldat[i]=sdat[i].length();
       chars+=ldat[i];
     }
+
+    // Store string length tensor
     set_szt_ten("lengths",tlens);
-    
+
+    // Allocate space for all characters
     char *cp=new char[nchars];
-    
+
+    // Fill array with characters
     size_t ctr=0;
     for(size_t i=0;i<sdat.size();i++) {
       for(size_t j=0;j<sdat[i].length();j++) {
@@ -2530,9 +2546,11 @@ int hdf_file::sets_ten_copy(std::string name,
         ctr++;
       }
     }
-    
+
+    // Store character array
     setc_arr("data",ctr,cp);
-    
+
+    // Free memory associated with character array
     delete[] cp;
     
   }

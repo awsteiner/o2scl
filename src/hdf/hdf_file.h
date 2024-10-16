@@ -980,7 +980,7 @@ namespace o2scl_hdf {
     }
 		 
     /** \brief Get a tensor of strings from an HDF file
-
+        
 	This version requires a full copy of the tensor from the
 	HDF5 file into the \ref o2scl::tensor_base object.
     */
@@ -1020,6 +1020,10 @@ namespace o2scl_hdf {
 		    std::vector<size_t> > &t);
 
     /** \brief Write a tensor of strings to an HDF file
+
+        This stores all of the tensor strings in a monolithic
+        character array. The string lengths are saved in a size_t
+        tensor object.
     */
     int sets_ten_copy(std::string name,
                       const o2scl::tensor_base<std::string,

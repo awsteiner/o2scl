@@ -36,6 +36,8 @@ int main(void) {
   t.set_output_level(1);
   
   fermion_nonrel fnr;
+  fermion_nonrel_ld fnr_ld;
+  fermion_nonrel_cdf25 fnr_cdf25;
   fermion f(1.0,2.0);
 
   part_calibrate_class pcc;

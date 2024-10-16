@@ -1021,6 +1021,9 @@ namespace o2scl {
     virtual const char *type() { return "fermion_thermo"; }
 
     /** \brief Compute a term in the nondegenerate expansion
+
+        This function uses \ref be_integ to perform the Bessel
+        integrals.
      */
     void ndeg_terms(size_t j, fp_t tt,
                     fp_t xx, fp_t m, bool inc_rest_mass,
