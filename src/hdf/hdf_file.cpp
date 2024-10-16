@@ -2457,14 +2457,14 @@ int hdf_file::gets_ten_copy(std::string name,
 
   // Get sizes
   vector<size_t> size;
-  get_szt_arr("size",size);
+  get_szt_vec("size",size);
 
   // Resize
   t.resize(rank,size);
 
   // Read length tensor
-  tensor<size_t> lens;
-  get_szt_arr("lengths",lens);
+  tensor<size_t> tlens;
+  get_szt_ten("lengths",tlens);
 
   // Read character array as a string object
   std::string s;
@@ -2477,9 +2477,12 @@ int hdf_file::gets_ten_copy(std::string name,
   // Set strings from character array
   size_t ctr=0;
   for(size_t i=0;i<t.total_size();i++) {
-    sdat[i]="";
+    vector<size_t> ix(rank);
+    t.unpack_index(i,ix);
+    std::string &sr=t.get(ix);
+    sr.clear();
     for(size_t j=0;j<ldat[i];j++) {
-      sdat[i]+=s[ctr];
+      sr+=s[ctr];
       ctr++;
     }
   }
@@ -2512,10 +2515,10 @@ int hdf_file::sets_ten_copy(std::string name,
 
   seti("rank",t.get_rank());
 
-  if (t.get_rank>0) {
+  if (t.get_rank()>0) {
     
     const std::vector<size_t> &s=t.get_size_arr();
-    set_szt_arr("size",s);
+    set_szt_vec("size",s);
 
     // Create a tensor to store string lengths
     tensor<size_t> tlens;
@@ -2528,8 +2531,10 @@ int hdf_file::sets_ten_copy(std::string name,
     // Count total number of characters and set string length tensor
     size_t nchars=0;
     for(size_t i=0;i<sdat.size();i++) {
-      ldat[i]=sdat[i].length();
-      chars+=ldat[i];
+      vector<size_t> ix(t.get_rank());
+      tlens.unpack_index(i,ix);
+      tlens.get(ix)=sdat[i].length();
+      nchars+=sdat[i].length();
     }
 
     // Store string length tensor
