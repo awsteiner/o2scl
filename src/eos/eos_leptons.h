@@ -397,6 +397,10 @@ namespace o2scl {
      */
     thermo_ld th_ld;
 
+    /** \brief Thermodynamic quantities for the full EOS (long double)
+     */
+    thermo_cdf25 th_cdf25;
+
     /** \brief Photon derivatives
      */
     part_deriv_press_ld thd_ld;
@@ -434,6 +438,8 @@ namespace o2scl {
     */
     virtual int electron_density_ld(long double T);
 
+    virtual int electron_density_cdf25(cpp_dec_float_25 T);
+    
     /** \brief Compute particle thermodynamics from the density
      */
     template <class part_t, class part_thermo_t, class fp_t>
@@ -553,6 +559,11 @@ namespace o2scl {
      */
     virtual long double pair_density_eq_ld_fun
     (long double x, long double T, long double nq);
+
+    /** \brief Function to solve for \ref pair_density_eq_cdf25()
+     */
+    virtual cpp_dec_float_25 pair_density_eq_cdf25_fun
+    (cpp_dec_float_25 x, cpp_dec_float_25 T, cpp_dec_float_25 nq);
     
   public:
 
@@ -608,7 +619,10 @@ namespace o2scl {
     virtual int pair_density_eq(double nq, double T);
 
     virtual int pair_density_eq_ld(long double nq, long double T);
-    
+
+    virtual int pair_density_eq_cdf25(cpp_dec_float_25 nq,
+                                      cpp_dec_float_25 T);
+
     /** \brief Relativistic fermion thermodynamics in long double precision
      */
     fermion_rel_ld frel_ld;
@@ -621,7 +635,7 @@ namespace o2scl {
     //@{
     root_cern<funct,double> rc;
     root_cern<funct_ld,long double> rc_ld;
-    root_cern<funct_cdf25,cpp_dec_float_25> rc_25;
+    root_cern<funct_cdf25,cpp_dec_float_25> rc_cdf25;
     //@}
     
   };
