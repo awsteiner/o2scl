@@ -1157,9 +1157,9 @@ namespace o2scl {
 
       }
   
-      if (!std::isfinite(f.en)) {
-	O2SCL_ERR2("Entropy not finite in ",
-		   "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+      if (!isfinite(f.en)) {
+	O2SCL_ERR2("Entropy not finite in fermion_deriv_rel_tl",
+		   "<fermion_deriv_t,fp_t>::calc_mu().",
 		   exc_efailed);
       }
       f.pr=-f.ed+temper*f.en+f.nu*f.n;

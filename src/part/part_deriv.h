@@ -172,10 +172,16 @@ namespace o2scl {
    */
   typedef part_deriv_press_tl<double> part_deriv_press;
 
+  /** \brief Long double-precision version of \ref
+      o2scl::part_deriv_press_tl
+   */
   typedef part_deriv_press_tl<long double> part_deriv_press_ld;
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
+  /** \brief 25-digit precision version of \ref
+      o2scl::part_deriv_press_tl
+   */
   typedef part_deriv_press_tl<boost::multiprecision::number<
                                 boost::multiprecision::cpp_dec_float<25> > >
   part_deriv_press_cdf25;
@@ -394,10 +400,20 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref boson_deriv_tl
    */
   typedef boson_deriv_tl<double> boson_deriv;
   
+  /** \brief Long double-precision version of \ref boson_deriv_tl
+   */
+  typedef boson_deriv_tl<long double> boson_deriv_ld;
+  
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  /** \brief 25-digit floating point version of \ref boson_deriv_tl
+   */
+  typedef boson_deriv_tl<cpp_dec_float_25> boson_deriv_cdf25;
+#endif
+
   /** \brief A part with derivative information
    */
   template<class fp_t=double>
@@ -451,10 +467,20 @@ namespace o2scl {
     
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref part_deriv_tl
    */
   typedef part_deriv_tl<double> part_deriv;
   
+  /** \brief Long double-precision version of \ref part_deriv_tl
+   */
+  typedef part_deriv_tl<long double> part_deriv_ld;
+  
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  /** \brief 25-digit floating point version of \ref part_deriv_tl
+   */
+  typedef part_deriv_tl<cpp_dec_float_25> part_deriv_cdf25;
+#endif
+
   /** \brief Base quantities for thermodynamic derivatives
 
       The quantities \f$ c_P \f$ computed by 
@@ -900,7 +926,7 @@ namespace o2scl {
 	density
     */
     virtual int pair_density(fermion_deriv_t &f, fp_t temper)=0;
-
+    
     /// Calculate effective chemical potential from density
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper)=0;
 
@@ -910,8 +936,8 @@ namespace o2scl {
      */
     void calc_deriv_zerot(fermion_deriv_t &f) {
 
-      double dkfdn=2.0*pi2/f.g/f.kf/f.kf;
-      double dnudkf;
+      fp_t dkfdn=2.0*pi2/f.g/f.kf/f.kf;
+      fp_t dnudkf;
       if (f.inc_rest_mass) {
         dnudkf=f.kf/f.nu;
       } else {
@@ -1132,7 +1158,7 @@ namespace o2scl {
 
   };
 
-  /** \brief Desc
+  /** \brief Double-precision version of \ref fermion_deriv_thermo_tl
    */
   typedef fermion_deriv_thermo_tl<double> fermion_deriv_thermo;
 

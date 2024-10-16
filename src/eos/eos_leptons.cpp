@@ -1154,7 +1154,7 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
       ed_ld.dndT=fd.dndT;
       ed_ld.dsdT=fd.dsdT;
       fd=muld;
-      fdrel.pair_mu(fd,T);
+      fdrel_ld.pair_mu(fd,T);
       mud_ld.dndmu=fd.dndmu;
       mud_ld.dndT=fd.dndT;
       mud_ld.dsdT=fd.dsdT;

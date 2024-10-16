@@ -222,9 +222,9 @@ namespace o2scl {
       \f]
   */
   template<class fermion_deriv_t=fermion_deriv_tl<double>,
-	   class fp_t=double>
+           class fp_t=double>
   class fermion_deriv_nr_tl :
-    public fermion_deriv_thermo_tl<fermion_deriv_t,fp_t> {
+    public fermion_deriv_thermo_tl<fermion_deriv_t,fermion_rel,fp_t> {
 
   public:
 
@@ -431,8 +431,6 @@ namespace o2scl {
     return 0;
   }
     
-    
-    
 #ifdef O2SCL_NEVER_DEFINED
     // AWS, 12/29/2020, commenting this out since they are NR and pair
     // functions are not written for fermion_nonrel either
@@ -461,7 +459,6 @@ namespace o2scl {
   
     return 0;
   }
-
 
   /** \brief Calculate properties with antiparticles as function of
       density
@@ -544,7 +541,6 @@ namespace o2scl {
 
     return 0;
   }
-
 
   /** \brief Set the solver for use in calculating the chemical
       potential from the density */

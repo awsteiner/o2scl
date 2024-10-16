@@ -468,8 +468,13 @@ namespace o2scl {
 
   };
 
+  /** \brief Double precision version of \ref o2scl::fermion_nonrel_tl
+  */
   typedef fermion_nonrel_tl<> fermion_nonrel;
 
+  /** \brief Long double version of 
+      \ref o2scl::fermion_nonrel_tl 
+  */
   typedef fermion_nonrel_tl
   <fermion_tl<long double>,
    fermi_dirac_integ_direct<long double,funct_cdf25,
@@ -481,6 +486,9 @@ namespace o2scl {
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
+  /** \brief 25-digit version of 
+      \ref o2scl::fermion_nonrel_tl 
+  */
   typedef fermion_nonrel_tl
   <fermion_tl<cpp_dec_float_25>,
    fermi_dirac_integ_direct<cpp_dec_float_25,funct_cdf25,
@@ -491,18 +499,6 @@ namespace o2scl {
    funct_cdf25,cpp_dec_float_25> fermion_nonrel_cdf25;
 
 #endif
-  
-  /*
-    template<class fermion_t=fermion_tl<double>,
-    class fd_inte_t=fermi_dirac_integ_gsl,
-    class be_inte_t=bessel_K_exp_integ_gsl,
-    class root_t=root_cern<>,
-    class func_t=funct, class fp_t=double>
-    class fermion_nonrel_tl :
-    public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
-    func_t,fp_t> {
-  */
-  
 
 }
 
