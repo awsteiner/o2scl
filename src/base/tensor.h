@@ -1303,6 +1303,10 @@ namespace o2scl {
     
   };
 
+  /// Tensor string type
+  typedef tensor_base<std::string,std::vector<std::string>,
+                      std::vector<size_t>> tensor_string;
+  
   /** Given a set of index specifications specified in a list of 
       strings, reformat them into a list of \ref o2scl::index_spec
       objects

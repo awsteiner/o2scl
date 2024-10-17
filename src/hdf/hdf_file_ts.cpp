@@ -67,6 +67,42 @@ int main(void) {
     hf.close();
     cout << endl;
   }
+
+  if (true) {
+    
+    cout << "Tensor string" << endl;
+    tensor_string ts;
+    vector<size_t> sz={2,2};
+    ts.resize(2,sz);
+    sz={0,0};
+    ts.get(sz)="string 1a";
+    sz={0,1};
+    ts.get(sz)="string 2bb";
+    sz={1,0};
+    ts.get(sz)="string 3ccc";
+    sz={1,1};
+    ts.get(sz)="string 4dddd";
+
+    hdf_file hf;
+    hf.open_or_create("hdf_file_tenstr.o2");
+    hf.sets_ten_copy("ts",ts);
+    hf.close();
+
+    ts.clear();
+
+    hf.open("hdf_file_tenstr.o2");
+    hf.gets_ten_copy("ts",ts);
+    sz={0,0};
+    t.test_gen(ts.get(sz)=="string 1a","tensor string 1");
+    sz={0,1};
+    t.test_gen(ts.get(sz)=="string 2bb","tensor string 2");
+    sz={1,0};
+    t.test_gen(ts.get(sz)=="string 3ccc","tensor string 3");
+    sz={1,1};
+    t.test_gen(ts.get(sz)=="string 4dddd","tensor string 4");
+    hf.close();
+    cout << endl;
+  }
   
   // Uncompressed section
   {

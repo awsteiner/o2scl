@@ -885,14 +885,17 @@ int eos_leptons_multip::electron_density_ld(long double T) {
   }
 
   if (accuracy==acc_fp_25) {
+    // If 25-digit accuracy is requested, copy info to the
+    // 25-digit objects, perform the computation, and then
+    // copy the results back.
     ecdf25.n=eld.n;
     ecdf25.mu=eld.mu;
     ecdf25.inc_rest_mass=eld.inc_rest_mass;
     retx=frel_cdf25.pair_density(ecdf25,T);
-    eld.mu=static_cast<double>(ecdf25.mu);
-    eld.ed=static_cast<double>(ecdf25.ed);
-    eld.pr=static_cast<double>(ecdf25.pr);
-    eld.en=static_cast<double>(ecdf25.en);
+    eld.mu=static_cast<long double>(ecdf25.mu);
+    eld.ed=static_cast<long double>(ecdf25.ed);
+    eld.pr=static_cast<long double>(ecdf25.pr);
+    eld.en=static_cast<long double>(ecdf25.en);
   } else {
     retx=frel_ld.pair_density(eld,T);
   }
@@ -916,7 +919,6 @@ int eos_leptons_multip::electron_density_cdf25(cpp_dec_float_25 T) {
   // later if necessary.
   bool inc_rest_mass=false;
   if (ecdf25.inc_rest_mass) {
-    
     inc_rest_mass=true;
     ecdf25.inc_rest_mass=false;
     ecdf25.mu-=ecdf25.m;
@@ -1170,7 +1172,6 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
       } else {
         fdrel_ld.multip=true;
       }
-      
       fermion_deriv_ld fd;
       fd=eld;
       fdrel_ld.pair_mu(fd,T);

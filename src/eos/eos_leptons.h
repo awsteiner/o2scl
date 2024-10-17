@@ -369,49 +369,33 @@ namespace o2scl {
      */
     boson_cdf25 ph_cdf25;
 
-    /** \brief Photon derivatives
+    /** \brief Photon derivatives (long double version)
      */
     part_deriv_press_ld phd_ld;
 
-    /** \brief Photon derivatives
+    /** \brief Photon derivatives (25-digit version)
      */
     part_deriv_press_cdf25 phd_cdf25;
 
-    /** \brief Muon derivatives
+    /** \brief Muon derivatives (long double version)
      */
     part_deriv_press_ld mud_ld;
     
-    /** \brief Muon derivatives
+    /** \brief Muon derivatives (25-digit version)
      */
     part_deriv_press_cdf25 mud_cdf25;
     
-    /** \brief Electron derivatives
+    /** \brief Electron derivatives (long double version)
      */
     part_deriv_press_ld ed_ld;
     
-    /** \brief Electron derivatives
+    /** \brief Electron derivatives (25-digit version)
      */
     part_deriv_press_cdf25 ed_cdf25;
     
-    /** \brief Thermodynamic quantities for the full EOS (long double)
-     */
-    thermo_ld th_ld;
-
-    /** \brief Thermodynamic quantities for the full EOS (long double)
-     */
-    thermo_cdf25 th_cdf25;
-
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_ld thd_ld;
-    
-    /** \brief Photon derivatives
-     */
-    part_deriv_press_cdf25 thd_cdf25;
-    
     /** \brief Relativistic fermion thermodynamics with derivatives
         (long double)
-     */
+    */
     fermion_deriv_rel_ld fdrel_ld;
     
     /** \brief Relativistic fermion thermodynamics with derivatives
@@ -438,6 +422,9 @@ namespace o2scl {
     */
     virtual int electron_density_ld(long double T);
 
+    /** \brief Compute electron thermodynamics from the electron 
+        density (25-digit version)
+    */
     virtual int electron_density_cdf25(cpp_dec_float_25 T);
     
     /** \brief Compute particle thermodynamics from the density
@@ -596,6 +583,22 @@ namespace o2scl {
      */
     fermion_cdf25 taucdf25;
     
+    /** \brief Thermodynamic quantities for the full EOS (long double)
+     */
+    thermo_ld th_ld;
+
+    /** \brief Thermodynamic quantities for the full EOS (25-digit)
+     */
+    thermo_cdf25 th_cdf25;
+
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_ld thd_ld;
+    
+    /** \brief Photon derivatives
+     */
+    part_deriv_press_cdf25 thd_cdf25;
+    
     /** \brief Thermodynamics from the charge density in 
         weak equilibrium
 
@@ -618,8 +621,14 @@ namespace o2scl {
     */
     virtual int pair_density_eq(double nq, double T);
 
+    /** \brief Thermodynamics from the charge density in 
+        weak equilibrium (long double version)
+    */
     virtual int pair_density_eq_ld(long double nq, long double T);
 
+    /** \brief Thermodynamics from the charge density in 
+        weak equilibrium (25-digit version)
+    */
     virtual int pair_density_eq_cdf25(cpp_dec_float_25 nq,
                                       cpp_dec_float_25 T);
 
