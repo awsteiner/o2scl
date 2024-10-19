@@ -45,6 +45,7 @@ eos_leptons::eos_leptons() {
   nu_e.init(0,2);
   nu_mu.init(0,2);
   nu_tau.init(0,2);
+  
   ph.init(0.0,2.0);
 
   pde_from_density=true;
@@ -708,13 +709,13 @@ int eos_leptons::pair_density_eq(double nq, double T) {
 
     if (include_deriv) {
       
-    if (accuracy==acc_ld || accuracy==acc_fp_25) {
-      fdrel.multip=true;
-    } else {
-      fdrel.multip=false;
-    }
-
-    fermion_deriv fd;
+      if (accuracy==acc_ld || accuracy==acc_fp_25) {
+        fdrel.multip=true;
+      } else {
+        fdrel.multip=false;
+      }
+      
+      fermion_deriv fd;
       fd=e;
       fdrel.pair_mu(fd,T);
       ed.dndmu=fd.dndmu;
@@ -725,8 +726,9 @@ int eos_leptons::pair_density_eq(double nq, double T) {
       mud.dndmu=fd.dndmu;
       mud.dndT=fd.dndT;
       mud.dsdT=fd.dsdT;
+      
     }
-        
+    
   } else {
     
     if (verbose>1) {
@@ -814,6 +816,9 @@ eos_leptons_multip::eos_leptons_multip() {
                                 mass_muon_f<cpp_dec_float_25>()),2);
   taucdf25.init(cu_cdf25.convert("kg","1/fm",
                                  mass_tau_f<cpp_dec_float_25>()),2);
+
+  ph_ld.init(0,2);
+  ph_cdf25.init(0,2);
   
 }
 

@@ -201,11 +201,13 @@ int main(int argc, char *argv[]) {
   // Sums of pair_density() accuracy via. thermodynamic identity
   int pd_ti=0, pd_ld_ti=0, pd_25_ti=0;
 
-  //part_cal_new<> pcn;
-  //pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
-  //0,0,0,0,0,0,0);
-  //exit(-1);
-  
+  part_cal_new<> pcn;
+  pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+                   1564,1544,2393,2176,1432,1906,2597);
+  pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+                   1618,1604,2336,2218,1408,1642,1947);
+  exit(-1);
+
   cout << " cnt m          T           mu/n       "
        << "d-ld  ld-25 ti verify" << endl;
   for(int im=-2;im<=1;im++) {

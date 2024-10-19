@@ -497,7 +497,7 @@ namespace o2scl {
       fp_t limit=log(std::numeric_limits<fp_t>::min());
 
       if (verbose>0) {
-        std::cout << "psi+1/t,limit: "
+        std::cout << "fermion_thermo_tl::calc_mu_ndeg(): psi+1/t,limit: "
                   << psi+1.0/tt << " " << limit << std::endl;
       }
       
@@ -537,7 +537,8 @@ namespace o2scl {
       // If the ratio between the last term and the first term is 
       // not small enough, return false
       if (verbose>0) {
-        std::cout << "rat,prec: " << rat << " " << prec
+        std::cout << "fermion_thermo_tl::calc_mu_ndeg(): rat,prec: "
+                  << rat << " " << prec
                   << std::endl;
       }
       
@@ -556,9 +557,6 @@ namespace o2scl {
         
         ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);
-        if (verbose>0) {
-          std::cout << j << " " << nterm << std::endl;
-        }
         
         if (j==1) first_term=pterm;
         f.pr+=pterm;
@@ -575,6 +573,15 @@ namespace o2scl {
           return true;
         }
         
+        if (verbose>0) {
+          std::cout << "  " << j << " ";
+          std::cout.setf(std::ios::showpos);
+          std::cout << nterm << " ";
+          std::cout.unsetf(std::ios::showpos);
+          std::cout << fabs(pterm) << " "
+                    << prec*fabs(first_term) << std::endl;
+        }
+        
         // Stop if the last term is sufficiently small compared to
         // the first term
         if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
@@ -582,6 +589,10 @@ namespace o2scl {
           f.n*=prefac;
           f.en*=prefac;
           f.ed=-f.pr+f.nu*f.n+temper*f.en;
+          if (verbose>0) {
+            std::cout << "fermion_thermo_tl::calc_mu_ndeg(): pr, en: "
+                      << f.pr << " " << f.en << std::endl;
+          }
           return true;
         }
         
@@ -1005,7 +1016,7 @@ namespace o2scl {
     //@}
     
     /** \brief Set the solver for use in massless_calc_density() */ 
-    void set_massless_root(root<funct,funct,fp_t> &rp) {
+    void set_massless_root(root_t &rp) {
       massless_root=&rp;
       return;
     }
@@ -1073,7 +1084,7 @@ namespace o2scl {
   protected:
     
     /// A pointer to the solver for massless fermions
-    root<func_t,func_t,fp_t> *massless_root;
+    root_t *massless_root;
     
     /// Solve for the chemical potential for massless fermions
     fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper) {

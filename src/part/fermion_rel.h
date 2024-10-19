@@ -837,10 +837,11 @@ namespace o2scl {
       
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	bool acc=this->calc_mu_ndeg(f,temper,tol_expan);
+	bool acc=this->calc_mu_ndeg(f,temper,tol_expan,false,verbose);
 	if (verbose>1) {
-	  std::cout << "fermion_rel::calc_mu(): non-deg expan (fermion) " << acc
-                    << " " << verbose << std::endl;
+	  std::cout << "fermion_rel::calc_mu(): Non-deg expansion, "
+                    << "acc, verbose: "
+                    << acc << " " << verbose << std::endl;
 	}
 	if (acc) {
 	  unc.n=f.n*tol_expan;
@@ -1827,6 +1828,11 @@ namespace o2scl {
                   o2scl::exc_esanity);
       } else {
         last_method_s="part. "+stmp+" : antipart. "+last_method_s;
+      }
+      if (verbose>0) {
+        std::cout << "fermion_rel::pair_mu(): test "
+                  << f.ed << " " << f.en << " "
+                  << antip.ed << " " << antip.en << std::endl;
       }
 
       // Add up thermodynamic quantities

@@ -41,6 +41,112 @@
 
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  /** \brief Class defining integrands for relativistic bosons
+   */
+  template<class fp_t> class boson_rel_integ {
+    
+  public:
+    
+    /** \brief A factor for the degenerate entropy integration
+        (default 30.0)
+    */
+    double deg_entropy_fac;
+
+    /** \brief The limit for exponentials to ensure integrals are finite 
+	(default 200.0)
+    */
+    double exp_limit;
+
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+    
+    boson_rel_integ() {
+      exp_limit=300.0;
+      deg_entropy_fac=30.0;
+      err_nonconv=true;
+    }      
+    
+    /// The integrand for the density for non-degenerate bosons
+    template<class internal_fp_t>
+    internal_fp_t density_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      fp_t ret;
+      if (y>exp_limit && eta+u>exp_limit) {
+        if (eta+u-y>exp_limit) {
+          ret=0;
+        } else {
+          ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1);
+        }
+      } else {
+        ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+      }
+
+      if (!std::isfinite(ret)) {
+        std::cout << "4: " << u << " " << y << " " << eta << " " 
+             << b.ms << " " << b.nu << " " << T << std::endl;
+        exit(-1);
+      }
+
+      return ret;
+    }
+
+    /// Non-degenerate energy integral
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+
+      fp_t ret;
+      if (y-u>exp_limit && eta-u>exp_limit) {
+        if (eta+u+y>exp_limit) {
+          ret=0;
+        } else {
+          ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1);
+        }
+      } else {
+        ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+      }
+  
+      if (!std::isfinite(ret)) {
+        std::cout << "5: " << u << " " << b.ms << " " << b.nu
+                  << " " << T << std::endl;
+        exit(-1);
+      }
+
+      return ret;
+    }
+
+    /// Non-degenerate entropy integral
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+
+      fp_t arg1=u*u+2*eta*u;
+      fp_t arg2=eta+u-y;
+      fp_t arg3=eta+u;
+
+      fp_t fb=1/(-1+exp(arg2));
+      fp_t ret=arg3*sqrt(arg1)*((1+fb)*log(1+fb)-fb*log(fb));
+
+      if (!std::isfinite(ret)) {
+        return 0;
+      }
+    
+    
+  };
+  
+#endif
+    
   /** \brief Equation of state for a relativistic boson
       
       \verbatim embed:rst

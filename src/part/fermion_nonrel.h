@@ -213,7 +213,7 @@ namespace o2scl {
       
       }
 
-      if (!std::isfinite(f.nu) || !std::isfinite(f.n)) {
+      if (!isfinite(f.nu) || !isfinite(f.n)) {
         O2SCL_ERR2("Chemical potential or density in ",
                    "fermion_nonrel::calc_mu().",exc_efailed);
       }
@@ -363,18 +363,18 @@ namespace o2scl {
           ylow=mf(blow);
         }
         if ((yhigh<0.0 && ylow>0.0) || (yhigh>0.0 && ylow<0.0)) {
-          o2scl::root_brent_gsl<> rbg;
+          o2scl::root_brent_gsl<func_t,fp_t> rbg;
           rbg.err_nonconv=false;
           ret=rbg.solve_bkt(blow,bhigh,mf);
           if (ret==0) nex=blow;
         }
       }
-  
+      
       if (ret!=0) {
 
         // If it failed, try to get a guess from classical_thermo particle
     
-        classical_thermo cl;
+        classical_thermo_tl<fp_t> cl;
         cl.calc_density(f,temper);
         if (f.inc_rest_mass) {
           nex=-(f.nu-f.m)/temper;
@@ -412,7 +412,7 @@ namespace o2scl {
     /** \brief Set the solver for use in calculating the chemical
         potential from the density 
     */
-    void set_density_root(root<> &rp) {
+    void set_density_root(root_t &rp) {
       density_root=&rp;
       return;
     }
@@ -444,7 +444,7 @@ namespace o2scl {
       // as this helps the solver find the right root.
 
       if (-x<std::numeric_limits<fp_t>::min_exponent10/0.4343 ||
-          !std::isfinite(x)) {
+          !isfinite(x)) {
         nden=0.0;
       } else {
         nden=this->fd_integ.calc_1o2(-x);
@@ -459,7 +459,7 @@ namespace o2scl {
   protected:
 
     /// Solver to compute chemical potential from density
-    root<> *density_root;
+    root_t *density_root;
     
   private:
 
@@ -495,7 +495,7 @@ namespace o2scl {
                             cpp_dec_float_25>,
    bessel_K_exp_integ_boost<cpp_dec_float_25,
                             cpp_dec_float_25>,
-   root_brent_gsl<funct_ld,cpp_dec_float_25>,
+   root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
    funct_cdf25,cpp_dec_float_25> fermion_nonrel_cdf25;
 
 #endif
