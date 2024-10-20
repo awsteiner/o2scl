@@ -58,9 +58,9 @@ namespace o2scl {
   
   root() {
     ntrial=100;
-    tol_rel=1.0e-8;
+    tol_rel=sqrt(std::numeric_limits<fp_t>::epsilon);
     verbose=0;
-    tol_abs=1.0e-12;
+    tol_abs=sqrt(std::numeric_limits<fp_t>::epsilon*tol_rel);
     last_ntrial=0;
     err_nonconv=true;
   }

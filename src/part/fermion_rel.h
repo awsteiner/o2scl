@@ -2758,6 +2758,12 @@ namespace o2scl {
     funct_ld,
     long double> {
     
+  public:
+    
+    fermion_rel_ld() {
+      density_root.test_form=2;
+    }
+    
   };
   
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
@@ -2777,6 +2783,13 @@ namespace o2scl {
                  root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
                  funct_cdf25,
                  cpp_dec_float_25> {
+
+  public:
+    
+    fermion_rel_cdf25() {
+      density_root.test_form=2;
+    }
+    
   };
   
 #endif  

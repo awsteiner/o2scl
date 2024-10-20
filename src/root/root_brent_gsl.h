@@ -203,8 +203,8 @@ namespace o2scl {
             // This additional temporary seems to be required
             // for boost::multiprecision types
             fp2_t x_diff=lx_upper-lx_lower;
-            //this->print_iter(lroot,y,iter,interval,tol,
-            //"root_brent_gsl (test_interval)");
+            this->print_iter(lroot,y,iter,interval,tol,
+                             "root_brent_gsl (test_interval)");
           }
         }
 	
@@ -223,8 +223,8 @@ namespace o2scl {
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
-            //this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
-            //"root_brent_gsl (relative deviation)");
+            this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
+                             "root_brent_gsl (relative deviation)");
           }
         }
 
@@ -248,8 +248,8 @@ namespace o2scl {
             fp2_t y=f(lroot);
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
-              //this->print_iter(root,y,iter,abs(y),this->tol_rel,
-              //"root_brent_gsl (relative deviation 2)");
+              this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
+                               "root_brent_gsl (relative deviation 2)");
             }
           } else {
             if (this->verbose>0) {
@@ -261,8 +261,8 @@ namespace o2scl {
                         << "lower,root,upper: "
                         << lx_lower << " " << lroot << " "
                         << lx_upper << std::endl;
-              //this->print_iter(root,y,iter,interval,tol,
-              //"root_brent_gsl (test_interval 2)");
+              this->print_iter(lroot,y,iter,interval,tol,
+                               "root_brent_gsl (test_interval 2)");
             }
           }
         }
