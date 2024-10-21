@@ -42,7 +42,7 @@ int main(void) {
   t.test_rel(b3.m,1.0,1.0e-6,"mass inheritance");
 
   boson_rel rb;
-  boson_rel_ld rbld;
+  //boson_rel_ld rbld;
 
   b.non_interacting=true;
   b3.non_interacting=true;
