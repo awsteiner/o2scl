@@ -183,7 +183,7 @@ namespace o2scl {
     
     /** \brief Calculate properties as function of chemical potential
      */
-    virtual void calc_mu(boson &b, fp_t temper) {
+    virtual void calc_mu(boson_tl<fp_t> &b, fp_t temper) {
 
       if (temper<=0) {
         O2SCL_ERR2("Temperature less than or equal to zero in ",
@@ -261,13 +261,13 @@ namespace o2scl {
           return;
         }
 
-        funct fd=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fd=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_density_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
-        funct fe=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fe=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_energy_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
-        funct fs=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fs=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_entropy_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
 
@@ -392,7 +392,7 @@ namespace o2scl {
     
     /** \brief Calculate properties as function of density
      */
-    virtual void calc_density(boson &b, fp_t temper) {
+    virtual void calc_density(boson_tl<fp_t> &b, fp_t temper) {
 
       if (temper<=0) {
         O2SCL_ERR2("Temperature less than or equal to zero in ",
@@ -475,7 +475,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
         chemical potential
     */
-    virtual void pair_mu(boson &b, fp_t temper) {
+    virtual void pair_mu(boson_tl<fp_t> &b, fp_t temper) {
   
       if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
       calc_mu(b,temper);
@@ -495,7 +495,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
 	density
     */
-    virtual void pair_density(boson &b, fp_t temper) {
+    virtual void pair_density(boson_tl<fp_t> &b, fp_t temper) {
   
       if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
@@ -768,7 +768,7 @@ namespace o2scl {
 
       
     /// Degenerate density integral
-    fp_t deg_density_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_density_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -789,7 +789,7 @@ namespace o2scl {
     }
     
     /// Degenerate energy density integral
-    fp_t deg_energy_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_energy_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -806,7 +806,7 @@ namespace o2scl {
     }
       
     /// Degenerate entropy integral
-    fp_t deg_entropy_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_entropy_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -837,7 +837,7 @@ namespace o2scl {
 
     /// Solve for the density in calc_density()
     int solve_fun(size_t nv, const ubvector &x, ubvector &y,
-                  fp_t density, boson &b, fp_t T) {
+                  fp_t density, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t nden;
   
@@ -933,7 +933,7 @@ namespace o2scl {
       
     /// Solve for the density in pair_density()
     int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
-                         fp_t density, boson &b, fp_t T) {
+                         fp_t density, boson_tl<fp_t> &b, fp_t T) {
 
       b.nu=x[0]*T;
       if (b.non_interacting) {

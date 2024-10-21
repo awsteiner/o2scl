@@ -42,12 +42,12 @@ namespace o2scl {
         
       .. todo::
         
-         class root
+      class root
 
-         Future:
+      Future:
 
-         - Maybe consider allowing the user to specify
-           the stream to which 'verbose' information is sent.
+      - Maybe consider allowing the user to specify
+      the stream to which 'verbose' information is sent.
            
       \endverbatim
   */
@@ -56,96 +56,97 @@ namespace o2scl {
     
   public:
   
-  root() {
-    ntrial=100;
-    tol_rel=sqrt(std::numeric_limits<fp_t>::epsilon);
-    verbose=0;
-    tol_abs=sqrt(std::numeric_limits<fp_t>::epsilon*tol_rel);
-    last_ntrial=0;
-    err_nonconv=true;
-  }
-
-  virtual ~root() {}
-
-  /** \brief The maximum value of the functions for success 
-      (default \f$ 10^{-8} \f$ )
-  */
-  fp_t tol_rel;
-      
-  /** \brief The minimum allowable stepsize 
-      (default \f$ 10^{-12} \f$ )
-  */
-  fp_t tol_abs;
-    
-  /// Output control (default 0)
-  int verbose;
-    
-  /// Maximum number of iterations (default 100)
-  int ntrial;
-
-  /** \brief If true, call the error handler if the solver does 
-      not converge (default true)
-  */
-  bool err_nonconv;
-    
-  /// The number of iterations used in the most recent solve
-  int last_ntrial;
-
-  /// Return the type, \c "root".
-  virtual const char *type() { return "root"; }
-
-  /** \brief Print out iteration information.
-         
-      Depending on the value of the variable verbose, this prints
-      out the iteration information. If verbose=0, then no
-      information is printed, while if verbose>1, then after each
-      iteration, the present values of \c x and \c y are
-      output to std::cout along with the iteration number. If
-      verbose>=2 then each iteration waits for a character before
-      continuing.
-  */
-  virtual int print_iter(fp_t x, fp_t y, int iter, fp_t value=0.0,
-			 fp_t limit=0.0, std::string comment="") {
-    if (verbose<=0) return success;
-	
-    char ch;
-	
-    std::cout << "root::print_iter(): "
-              << comment << " Iteration: " << iter << std::endl;
-    std::cout << "  x,y,val,lim: ";
-    if (x<0) std::cout << x << " ";
-    else std::cout << " " << x << " ";
-    if (y<0) std::cout << y << " ";
-    else std::cout << " " << y << " ";
-    if (value<0) std::cout << value << " ";
-    else std::cout << " " << value << " ";
-    if (limit<0) std::cout << limit << std::endl;
-    else std::cout << " " << limit << std::endl;
-    if (verbose>1) {
-      std::cout << "  Press a key and type enter to continue. ";
-      std::cin >> ch;
+    root() {
+      ntrial=100;
+      tol_rel=sqrt(std::numeric_limits<fp_t>::epsilon());
+      verbose=0;
+      tol_abs=sqrt(std::numeric_limits<fp_t>::epsilon()*tol_rel);
+      last_ntrial=0;
+      err_nonconv=true;
     }
- 
-    return success;
-  }
+
+    virtual ~root() {}
+
+    /** \brief The maximum value of the functions for success 
+        (default \f$ 10^{-8} \f$ )
+    */
+    fp_t tol_rel;
+      
+    /** \brief The minimum allowable stepsize 
+        (default \f$ 10^{-12} \f$ )
+    */
+    fp_t tol_abs;
     
-  /** \brief Solve \c func using \c x as an initial guess
-  */
-  virtual int solve(fp_t &x, func_t &func)=0;
+    /// Output control (default 0)
+    int verbose;
+    
+    /// Maximum number of iterations (default 100)
+    int ntrial;
 
-  /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
-      returning \f$ x_1 \f$ .
-  */
-  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
-    return solve(x1,func);
-  }
+    /** \brief If true, call the error handler if the solver does 
+        not converge (default true)
+    */
+    bool err_nonconv;
+    
+    /// The number of iterations used in the most recent solve
+    int last_ntrial;
 
-  /** \brief Solve \c func using \c x as an initial
-      guess using derivatives \c df.
-  */
-  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
-    return solve(x,func);
-  }
+    /// Return the type, \c "root".
+    virtual const char *type() { return "root"; }
+
+    /** \brief Print out iteration information.
+         
+        Depending on the value of the variable verbose, this prints
+        out the iteration information. If verbose=0, then no
+        information is printed, while if verbose>1, then after each
+        iteration, the present values of \c x and \c y are
+        output to std::cout along with the iteration number. If
+        verbose>=2 then each iteration waits for a character before
+        continuing.
+    */
+    template<class fp2_t>
+    int print_iter(fp2_t x, fp2_t y, int iter, fp2_t value=0.0,
+                           fp2_t limit=0.0, std::string comment="") {
+      if (verbose<=0) return success;
+      
+      char ch;
+      
+      std::cout << "root::print_iter(): "
+                << comment << " Iteration: " << iter << std::endl;
+      std::cout << "  x,y,val,lim: ";
+      if (x<0) std::cout << x << " ";
+      else std::cout << " " << x << " ";
+      if (y<0) std::cout << y << " ";
+      else std::cout << " " << y << " ";
+      if (value<0) std::cout << value << " ";
+      else std::cout << " " << value << " ";
+      if (limit<0) std::cout << limit << std::endl;
+      else std::cout << " " << limit << std::endl;
+      if (verbose>1) {
+        std::cout << "  Press a key and type enter to continue. ";
+        std::cin >> ch;
+      }
+ 
+      return success;
+    }
+    
+    /** \brief Solve \c func using \c x as an initial guess
+     */
+    virtual int solve(fp_t &x, func_t &func)=0;
+
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
+        returning \f$ x_1 \f$ .
+    */
+    virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
+      return solve(x1,func);
+    }
+
+    /** \brief Solve \c func using \c x as an initial
+        guess using derivatives \c df.
+    */
+    virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
+      return solve(x,func);
+    }
 
   };
 
@@ -161,246 +162,246 @@ namespace o2scl {
 
   public:
 
-  root_bkt() {
-    bracket_step=0.0;
-    bracket_min=0.0;
-    bracket_iters=20;
-  }
-      
-  virtual ~root_bkt() {}
-
-  /** \brief The relative stepsize for automatic bracketing 
-      (default value is zero)
-
-      If this is less than or equal to zero, then 
-      \f$ 10^{-4} \f$, will be used.
-  */
-  fp_t bracket_step;
-
-  /** \brief The minimum stepsize for automatic bracketing
-      (default zero)
-  */
-  fp_t bracket_min;
-
-  /// The number of iterations in attempt to bracket root (default 10)
-  size_t bracket_iters;
- 
-  /// Return the type, \c "root_bkt".
-  virtual const char *type() { return "root_bkt"; }
-
-  /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
-      returning \f$ x_1 \f$ .
-  */
-  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func)=0; 
-    
-  /** \brief Solve \c func using \c x as an initial guess
-
-      This has been updated to automatically bracket functions
-      which are undefined away from the initial guess, but there
-      are still various ways in which the bracketing algorithm
-      can fail.
-
-      \verbatim embed:rst      
-
-      .. todo::
-        
-         class root
-
-         Future: Return early if the bracketing procedure finds a root
-         early?
-
-      \endverbatim
-
-   */
-  virtual int solve(fp_t &x, func_t &func) {
-
-    // Internal version of bracket step
-    fp_t bstep_int;
-
-    // Set value of bstep_int
-    if (bracket_step<=0.0) {
-      bstep_int=x*1.0e-4;
-      if (bstep_int<0.0) bstep_int=-bstep_int;
-      if (bstep_int<bracket_min) bstep_int=bracket_min;
-      if (bstep_int<=0.0) bstep_int=1.0e-4;
-    } else {
-      bstep_int=x*bracket_step;
-      if (bstep_int<0.0) bstep_int=-bstep_int;
-      if (bstep_int<bracket_min) bstep_int=bracket_min;
-      if (bstep_int<=0.0) bstep_int=bracket_step;
+    root_bkt() {
+      bracket_step=0.0;
+      bracket_min=0.0;
+      bracket_iters=20;
     }
-    
-    fp_t x2=0.0, df, fx, fx2;
-    size_t i=0;
-    bool done=false;
-
-    // Use function to try to bracket a root
-    while(done==false && i<bracket_iters) {
-
-      // -----------------------------------------------------------
-      // Phase 1: Find a step which gives a finite function value and
-      // a non-zero derivative
-
-      fx=func(x);
-      if (!isfinite(fx)) {
-	O2SCL_ERR2("First function value not finite in ",
-		   "root_bkt::solve().",exc_ebadfunc);
-      }
-
-      x2=x+bstep_int;
-      fx2=func(x2);
-      df=(fx2-fx)/bstep_int;
-      if (this->verbose>0) {
-	std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
-                  << x << " " << x2 << " "
-		  << fx << " " << fx2 << " " << df << std::endl;
-      }
-
-      // If the stepsize made the function not finite or the
-      // derivative zero, adjust accordingly
-      size_t j=0;
-      fp_t two=2;
-      fp_t step_phase1=bstep_int;
-      while ((!isfinite(fx2) || df==0.0) && j<bracket_iters*2) {
-	// Alternate between flipping the sign and making it smaller
-	if (j%2==0) step_phase1=-step_phase1;
-	else step_phase1/=two;
-	x2=x+step_phase1;
-	fx2=func(x2);
-	df=(fx2-fx)/step_phase1;
-	if (this->verbose>1) {
-	  std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
-                    << x << " " << x2 << " "
-		    << fx << " " << fx2 << " " << df << std::endl;
-	}
-	j++;
-      }
-
-      // If we failed to compute the derivative
-      if (df==0.0) {
-	O2SCL_CONV_RET("Failed to bracket (df==0) in root_bkt::solve().",
-		       o2scl::exc_emaxiter,this->err_nonconv);
-      }
-      if (!isfinite(fx2)) {
-	O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 1) in ",
-			"root_bkt::solve().",
-			o2scl::exc_emaxiter,this->err_nonconv);
-      }
-
-      // Output the current iteration information
-      if (this->verbose>0) {
-	std::cout << "root_bkt::solve(): Iteration " << i << " of "
-		  << bracket_iters << "." << std::endl;
-	std::cout << "\tx1: " << x << " f(x1): " << fx << std::endl;
-	std::cout << "\tx2: " << x2 << " f(x2): " << fx2 << std::endl;
-      }
-
-      // -----------------------------------------------------------
-      // Phase 2: Create a new value which may provide a bracket
       
-      fp_t step_phase2=two;
-      x2=x-step_phase2*fx/df;
-      fx2=func(x2);
-      if (this->verbose>0) {
-	std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
-                  << x << " " << x2 << " "
-		  << fx << " " << fx2 << std::endl;
-      }
+    virtual ~root_bkt() {}
 
-      // Adjust if the function value is not finite
-      size_t k=0;
-      while (!isfinite(fx2) && k<bracket_iters) {
-	step_phase2/=two;
-	x2=x-step_phase2*fx/df;
-	fx2=func(x2);
-	k++;
-	if (this->verbose>0) {
-	  std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
+    /** \brief The relative stepsize for automatic bracketing 
+        (default value is zero)
+
+        If this is less than or equal to zero, then 
+        \f$ 10^{-4} \f$, will be used.
+    */
+    fp_t bracket_step;
+
+    /** \brief The minimum stepsize for automatic bracketing
+        (default zero)
+    */
+    fp_t bracket_min;
+
+    /// The number of iterations in attempt to bracket root (default 10)
+    size_t bracket_iters;
+ 
+    /// Return the type, \c "root_bkt".
+    virtual const char *type() { return "root_bkt"; }
+
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
+        returning \f$ x_1 \f$ .
+    */
+    virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func)=0; 
+    
+    /** \brief Solve \c func using \c x as an initial guess
+
+        This has been updated to automatically bracket functions
+        which are undefined away from the initial guess, but there
+        are still various ways in which the bracketing algorithm
+        can fail.
+
+        \verbatim embed:rst      
+
+        .. todo::
+        
+        class root
+
+        Future: Return early if the bracketing procedure finds a root
+        early?
+
+        \endverbatim
+
+    */
+    virtual int solve(fp_t &x, func_t &func) {
+
+      // Internal version of bracket step
+      fp_t bstep_int;
+
+      // Set value of bstep_int
+      if (bracket_step<=0.0) {
+        bstep_int=x*1.0e-4;
+        if (bstep_int<0.0) bstep_int=-bstep_int;
+        if (bstep_int<bracket_min) bstep_int=bracket_min;
+        if (bstep_int<=0.0) bstep_int=1.0e-4;
+      } else {
+        bstep_int=x*bracket_step;
+        if (bstep_int<0.0) bstep_int=-bstep_int;
+        if (bstep_int<bracket_min) bstep_int=bracket_min;
+        if (bstep_int<=0.0) bstep_int=bracket_step;
+      }
+    
+      fp_t x2=0.0, df, fx, fx2;
+      size_t i=0;
+      bool done=false;
+
+      // Use function to try to bracket a root
+      while(done==false && i<bracket_iters) {
+
+        // -----------------------------------------------------------
+        // Phase 1: Find a step which gives a finite function value and
+        // a non-zero derivative
+
+        fx=func(x);
+        if (!isfinite(fx)) {
+          O2SCL_ERR2("First function value not finite in ",
+                     "root_bkt::solve().",exc_ebadfunc);
+        }
+
+        x2=x+bstep_int;
+        fx2=func(x2);
+        df=(fx2-fx)/bstep_int;
+        if (this->verbose>0) {
+          std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
                     << x << " " << x2 << " "
-		    << fx << " " << fx2 << std::endl;
-	}
+                    << fx << " " << fx2 << " " << df << std::endl;
+        }
+
+        // If the stepsize made the function not finite or the
+        // derivative zero, adjust accordingly
+        size_t j=0;
+        fp_t two=2;
+        fp_t step_phase1=bstep_int;
+        while ((!isfinite(fx2) || df==0.0) && j<bracket_iters*2) {
+          // Alternate between flipping the sign and making it smaller
+          if (j%2==0) step_phase1=-step_phase1;
+          else step_phase1/=two;
+          x2=x+step_phase1;
+          fx2=func(x2);
+          df=(fx2-fx)/step_phase1;
+          if (this->verbose>1) {
+            std::cout << "root_bkt::solve(): Phase 1: x,x2,fx,fx2,df: "
+                      << x << " " << x2 << " "
+                      << fx << " " << fx2 << " " << df << std::endl;
+          }
+          j++;
+        }
+
+        // If we failed to compute the derivative
+        if (df==0.0) {
+          O2SCL_CONV_RET("Failed to bracket (df==0) in root_bkt::solve().",
+                         o2scl::exc_emaxiter,this->err_nonconv);
+        }
+        if (!isfinite(fx2)) {
+          O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 1) in ",
+                          "root_bkt::solve().",
+                          o2scl::exc_emaxiter,this->err_nonconv);
+        }
+
+        // Output the current iteration information
+        if (this->verbose>0) {
+          std::cout << "root_bkt::solve(): Iteration " << i << " of "
+                    << bracket_iters << "." << std::endl;
+          std::cout << "\tx1: " << x << " f(x1): " << fx << std::endl;
+          std::cout << "\tx2: " << x2 << " f(x2): " << fx2 << std::endl;
+        }
+
+        // -----------------------------------------------------------
+        // Phase 2: Create a new value which may provide a bracket
+      
+        fp_t step_phase2=two;
+        x2=x-step_phase2*fx/df;
+        fx2=func(x2);
+        if (this->verbose>0) {
+          std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
+                    << x << " " << x2 << " "
+                    << fx << " " << fx2 << std::endl;
+        }
+
+        // Adjust if the function value is not finite
+        size_t k=0;
+        while (!isfinite(fx2) && k<bracket_iters) {
+          step_phase2/=two;
+          x2=x-step_phase2*fx/df;
+          fx2=func(x2);
+          k++;
+          if (this->verbose>0) {
+            std::cout << "root_bkt::solve(): Phase 2: x,x2,fx,fx2: "
+                      << x << " " << x2 << " "
+                      << fx << " " << fx2 << std::endl;
+          }
+        }
+
+        // Throw if we failed
+        if (!isfinite(fx2)) {
+          O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 2) in ",
+                          "root_bkt::solve().",
+                          o2scl::exc_emaxiter,this->err_nonconv);
+        }
+
+        // Continue verbose output
+        if (this->verbose>0) {
+          std::cout << "\tx2: " << x2 << " f(x2): " << fx2 << std::endl;
+          if (this->verbose>1) {
+            std::cout << "Press a key and type enter to continue. ";
+            char ch;
+            std::cin >> ch;
+          }
+        }
+
+        // -----------------------------------------------------------
+        // See if we're done
+      
+        if (fx*fx2<0.0) {
+          done=true;
+        } else {
+          // The step didn't cause a sign flip. Update 'x' to move
+          // closer to the purported root. 
+          x=(x2+x)/two;
+        }
+
+        // Continue for the next bracketing iteration
+        i++;
       }
 
       // Throw if we failed
-      if (!isfinite(fx2)) {
-	O2SCL_CONV2_RET("Failed to bracket (f2 not finite, phase 2) in ",
-			"root_bkt::solve().",
-			o2scl::exc_emaxiter,this->err_nonconv);
+      if (done==false) {
+        O2SCL_CONV_RET("Failed to bracket (iters>max) in root_bkt::solve().",
+                       o2scl::exc_emaxiter,this->err_nonconv);
       }
 
-      // Continue verbose output
+      // Go to the bracketing solver
       if (this->verbose>0) {
-	std::cout << "\tx2: " << x2 << " f(x2): " << fx2 << std::endl;
-	if (this->verbose>1) {
-	  std::cout << "Press a key and type enter to continue. ";
-	  char ch;
-	  std::cin >> ch;
-	}
+        std::cout << "root_bkt::solve(): Going to solve_bkt()." 
+                  << std::endl;
       }
-
-      // -----------------------------------------------------------
-      // See if we're done
-      
-      if (fx*fx2<0.0) {
-	done=true;
-      } else {
-	// The step didn't cause a sign flip. Update 'x' to move
-	// closer to the purported root. 
-	x=(x2+x)/two;
-      }
-
-      // Continue for the next bracketing iteration
-      i++;
+      return solve_bkt(x,x2,func);
     }
 
-    // Throw if we failed
-    if (done==false) {
-      O2SCL_CONV_RET("Failed to bracket (iters>max) in root_bkt::solve().",
-		     o2scl::exc_emaxiter,this->err_nonconv);
-    }
+    /** \brief Solve \c func using \c x as an initial
+        guess using derivatives \c df.
+    */
+    virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
 
-    // Go to the bracketing solver
-    if (this->verbose>0) {
-      std::cout << "root_bkt::solve(): Going to solve_bkt()." 
-		<< std::endl;
-    }
-    return solve_bkt(x,x2,func);
-  }
-
-  /** \brief Solve \c func using \c x as an initial
-      guess using derivatives \c df.
-  */
-  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df) {
-
-    fp_t x2=0, dx, fx, fx2, two=2;
-    int i=0;
-    bool done=false;
+      fp_t x2=0, dx, fx, fx2, two=2;
+      int i=0;
+      bool done=false;
 	
-    // Use derivative information to try to bracket a root
-    while(done==false && i<10) {
+      // Use derivative information to try to bracket a root
+      while(done==false && i<10) {
 	  
-      fx=func(x);
-      dx=df(x);
+        fx=func(x);
+        dx=df(x);
 	  
-      x2=x-two*fx/dx;
+        x2=x-two*fx/dx;
 	  
-      fx2=func(x2);
+        fx2=func(x2);
 	    
-      if (fx*fx2<0.0) {
-	done=true;
-      } else {
-	x=(x2+x)/two;
+        if (fx*fx2<0.0) {
+          done=true;
+        } else {
+          x=(x2+x)/two;
+        }
+        i++;
       }
-      i++;
-    }
 	
-    if (done==false) {
-      O2SCL_CONV_RET("Failed to bracket function in root_bkt::solve_de().",
-		     o2scl::exc_emaxiter,this->err_nonconv);
-    }
+      if (done==false) {
+        O2SCL_CONV_RET("Failed to bracket function in root_bkt::solve_de().",
+                       o2scl::exc_emaxiter,this->err_nonconv);
+      }
     
-    return solve_bkt(x,x2,func);
-  }
+      return solve_bkt(x,x2,func);
+    }
   
   };
 
@@ -413,10 +414,10 @@ namespace o2scl {
 
       .. todo::
         
-         class root
+      class root
 
-         Future: Implement the functions solve() and solve_bkt() 
-         for derivative solvers.
+      Future: Implement the functions solve() and solve_bkt() 
+      for derivative solvers.
 
       \endverbatim
   */
@@ -425,33 +426,33 @@ namespace o2scl {
     
   public:
   
-  root_de() {
-  }
+    root_de() {
+    }
   
-  virtual ~root_de() {}
+    virtual ~root_de() {}
   
-  /// Return the type, \c "root_de".
-  virtual const char *type() { return "root_de"; }
+    /// Return the type, \c "root_de".
+    virtual const char *type() { return "root_de"; }
 
-  /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
-      returning \f$ x_1 \f$ .
-  */
-  virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
-    O2SCL_ERR("Function solve_bkt() not implemented.",exc_eunimpl);
-    return 0;
-  }
+    /** \brief Solve \c func in region \f$ x_1<x<x_2 \f$  
+        returning \f$ x_1 \f$ .
+    */
+    virtual int solve_bkt(fp_t &x1, fp_t x2, func_t &func) {
+      O2SCL_ERR("Function solve_bkt() not implemented.",exc_eunimpl);
+      return 0;
+    }
 
-  /** \brief Solve \c func using \c x as an initial guess
-  */
-  virtual int solve(fp_t &x, func_t &func) {
-    O2SCL_ERR("Function solve() not implemented.",exc_eunimpl);
-    return 0;
-  }
+    /** \brief Solve \c func using \c x as an initial guess
+     */
+    virtual int solve(fp_t &x, func_t &func) {
+      O2SCL_ERR("Function solve() not implemented.",exc_eunimpl);
+      return 0;
+    }
 
-  /** \brief Solve \c func using \c x as an initial
-      guess using derivatives \c df.
-  */
-  virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df)=0;
+    /** \brief Solve \c func using \c x as an initial
+        guess using derivatives \c df.
+    */
+    virtual int solve_de(fp_t &x, func_t &func, dfunc_t &df)=0;
 
   };
   

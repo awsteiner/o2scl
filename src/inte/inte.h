@@ -51,9 +51,9 @@ namespace o2scl {
   public:
   
     inte() {
-      tol_rel=1.0e-8;
-      tol_abs=1.0e-8;
+      tol_rel=sqrt(std::numeric_limits<fp_t>::epsilon());
       verbose=0;
+      tol_abs=sqrt(std::numeric_limits<fp_t>::epsilon()*tol_rel);
       interror=0.0;
       err_nonconv=true;
     }

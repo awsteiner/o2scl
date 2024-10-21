@@ -223,7 +223,9 @@ namespace o2scl {
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
-            this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
+            fp2_t ay=abs(y);
+            this->print_iter(lroot,y,iter,ay,
+                             static_cast<fp2_t>(this->tol_rel),
                              "root_brent_gsl (relative deviation)");
           }
         }
@@ -248,7 +250,9 @@ namespace o2scl {
             fp2_t y=f(lroot);
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
-              this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
+              fp2_t ay=abs(y);
+              this->print_iter(lroot,y,iter,ay,
+                               static_cast<fp2_t>(this->tol_rel),
                                "root_brent_gsl (relative deviation 2)");
             }
           } else {
@@ -261,7 +265,9 @@ namespace o2scl {
                         << "lower,root,upper: "
                         << lx_lower << " " << lroot << " "
                         << lx_upper << std::endl;
-              this->print_iter(lroot,y,iter,interval,tol,
+              fp2_t ay=abs(y);
+              this->print_iter(lroot,y,iter,ay,
+                               static_cast<fp2_t>(this->tol_rel),
                                "root_brent_gsl (test_interval 2)");
             }
           }
@@ -621,7 +627,9 @@ namespace o2scl {
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
-            this->print_iter(groot,y,iter,abs(y),this->tol_rel,
+            fp_t ay=abs(y);
+            this->print_iter(groot,y,iter,ay,
+                             static_cast<fp_t>(this->tol_rel),
                              "root_brent_gsl (relative deviation)");
           }
         }
@@ -645,7 +653,9 @@ namespace o2scl {
             fp_t y=f(groot);
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
-              this->print_iter(groot,y,iter,abs(y),this->tol_rel,
+              fp_t ay=abs(y);
+              this->print_iter(groot,y,iter,ay,
+                               static_cast<fp_t>(this->tol_rel),
                                "root_brent_gsl (relative deviation 2)");
             }
           } else {
