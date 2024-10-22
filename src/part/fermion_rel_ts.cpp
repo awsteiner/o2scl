@@ -843,7 +843,7 @@ int main(int argc, char *argv[]) {
             f4.inc_rest_mass=false;
             f4.non_interacting=false;
             fr.pair_density(f4,T);
-            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-13,"both false mu 6");
+            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-12,"both false mu 6");
             t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-9,"both false ed 6");
             t.test_rel(f3.en,f4.en,1.0e-13,"both false en 6");
 

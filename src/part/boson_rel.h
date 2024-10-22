@@ -41,8 +41,6 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   /** \brief Class defining integrands for relativistic bosons
    */
   template<class fp_t> class boson_rel_integ {
@@ -88,12 +86,6 @@ namespace o2scl {
         ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
       }
 
-      if (!std::isfinite(ret)) {
-        std::cout << "4: " << u << " " << y << " " << eta << " " 
-             << b.ms << " " << b.nu << " " << T << std::endl;
-        exit(-1);
-      }
-
       return ret;
     }
 
@@ -115,12 +107,6 @@ namespace o2scl {
         ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
       }
   
-      if (!std::isfinite(ret)) {
-        std::cout << "5: " << u << " " << b.ms << " " << b.nu
-                  << " " << T << std::endl;
-        exit(-1);
-      }
-
       return ret;
     }
 
@@ -145,6 +131,28 @@ namespace o2scl {
       return ret;
     }
 
+    /// The integrand for the pressure for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=sqrt(arg1);
+      internal_fp_t arg3=eta+u;
+      ret=term1*arg3*log1p(exp(y-arg3));
+      
+      if (!isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// Degenerate density integral
     template<class internal_fp_t>
     internal_fp_t deg_density_fun(internal_fp_t k, fp_t T2,
                                   fp_t y2, fp_t eta2,
@@ -168,23 +176,76 @@ namespace o2scl {
       return ret;
     }
     
-
+    /// Degenerate energy integral
     template<class internal_fp_t>
     internal_fp_t deg_energy_fun(internal_fp_t k, fp_t T2,
                                   fp_t y2, fp_t eta2,
                                   fp_t mot2, bool debug) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t ret;
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*E*T/(exp(arg1)-1);
+      
+      if (!isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
     }
 
+    /// Degenerate entropy integral
     template<class internal_fp_t>
     internal_fp_t deg_entropy_fun(internal_fp_t k, fp_t T2,
                                   fp_t y2, fp_t eta2,
                                   fp_t mot2, bool debug) {
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t ret;
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+
+      // If the argument to the exponential is really small, then the
+      // value of the integrand is just zero
+      if (arg1<-exp_limit) {
+	ret=0.0;
+	// Otherwise, if the argument to the exponential is still small,
+	// then addition of 1 makes us lose precision, so we use an
+	// alternative:
+      } else if (arg1<-deg_entropy_fac) {
+	ret=-k*k*(-1+arg1)*exp(arg1);
+      } else {
+	internal_fp_t nx=(1+exp(arg1));
+        nx=1/nx;
+        internal_fp_t arg2=1-nx;
+        internal_fp_t t1=nx*log(nx);
+        internal_fp_t t2=arg2*log(arg2);
+        internal_fp_t t3=t1+t2;
+        ret=-k*k*t3;
+	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
+      }
+
+      if (!isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_entropy_fun().",exc_einval);
+      }
+
+      return ret;
     }
     
     
   };
-  
-#endif
     
   /** \brief Equation of state for a relativistic boson
       
