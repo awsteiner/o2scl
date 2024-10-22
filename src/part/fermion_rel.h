@@ -761,7 +761,8 @@ namespace o2scl {
       if (ret!=0) {
     
 	if (verbose>1) {
-	  std::cout << "nu_from_n(): density_root failed x="
+	  std::cout << "nu_from_n(): density_root (type "
+                    << density_root.type() << ") failed x="
 		    << nex << " ." << std::endl;
 	}
 	O2SCL_CONV2_RET("Density solver failed in ",
@@ -1944,7 +1945,8 @@ namespace o2scl {
         if (ret==0) {
           if (verbose>0) {
             std::cout << "fermion_rel::pair_density(): "
-                      << "Initial solver succeeded." << std::endl;
+                      << "Initial solver (type "
+                      << density_root.type() << ") succeeded." << std::endl;
           }
           // If that worked, set last_method
           last_method=2000;
@@ -2752,14 +2754,14 @@ namespace o2scl {
                              cpp_dec_float_25>,
     inte_double_exp_boost<>,
     inte_double_exp_boost<>,
-    root_brent_gsl<funct_ld,long double>,
+    root_cern<funct_ld,long double>,
     funct_ld,
     long double> {
     
   public:
     
     fermion_rel_ld() {
-      density_root.test_form=2;
+      //density_root.test_form=2;
     }
     
   };
@@ -2778,14 +2780,14 @@ namespace o2scl {
                                           cpp_dec_float_35>,
                  inte_double_exp_boost<>,
                  inte_double_exp_boost<>,
-                 root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
+                 root_cern<funct_cdf25,cpp_dec_float_25>,
                  funct_cdf25,
                  cpp_dec_float_25> {
 
   public:
     
     fermion_rel_cdf25() {
-      density_root.test_form=2;
+      //density_root.test_form=2;
     }
     
   };

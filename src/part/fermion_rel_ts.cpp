@@ -967,6 +967,7 @@ int main(int argc, char *argv[]) {
 
   if (argc<2) {
 
+    // Normal case, used in 'make o2scl-test'
     t.test_gen(cmu_n>=1543,"cmu_n");
     t.test_gen(cmu_en>=1544,"cmu_en");
     t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
@@ -985,22 +986,23 @@ int main(int argc, char *argv[]) {
     
     t.test_gen(cd_mu>=891,"cd_mu");
     t.test_gen(cd_en>=837,"cd_en");
-    t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
-    t.test_gen(cd_ld_en>=1133,"cd_ld_en");
+    t.test_gen(cd_ld_mu>=1253,"cd_ld_mu");
+    t.test_gen(cd_ld_en>=1117,"cd_ld_en");
     t.test_gen(cd_ti>=967,"cd_ti");
     t.test_gen(cd_ld_ti>=967,"cd_ld_ti");
     t.test_gen(cd_25_ti>=967,"cd_25_ti");
     
     t.test_gen(pd_mu>=850,"pd_mu");
     t.test_gen(pd_en>=814,"pd_en");
-    t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
-    t.test_gen(pd_ld_en>=1108,"pd_ld_en");
+    t.test_gen(pd_ld_mu>=1190,"pd_ld_mu");
+    t.test_gen(pd_ld_en>=1101,"pd_ld_en");
     t.test_gen(pd_ti>=676,"pd_ti");
     t.test_gen(pd_ld_ti>=817,"pd_ld_ti");
     t.test_gen(pd_25_ti>=1025,"pd_25_ti");
     
   } else if (arg=="1") {
     
+    // Improved accuracy case
     t.test_gen(cmu_n>=1738,"cmu_n");
     t.test_gen(cmu_en>=1612,"cmu_en");
     t.test_gen(cmu_ld_n>=2379,"cmu_ld_n");

@@ -306,7 +306,8 @@ namespace o2scl {
         psi=(b.nu+(b.m-b.ms))/temper;
         if (b.nu+b.m>b.ms) {
           std::cout.precision(12);
-          std::cout << "Here: " << b.nu << " " << b.m << " " << b.ms << " "
+          std::cout << "boson_rel_tl::calc_mu(): nu,m,ms,ms/m: "
+                    << b.nu << " " << b.m << " " << b.ms << " "
                     << b.ms/b.m << std::endl;
           O2SCL_ERR2("Chemical potential must be smaller than mass in ",
                      "boson_rel_tl<be_inte_t,fp_t>::calc_mu().",
