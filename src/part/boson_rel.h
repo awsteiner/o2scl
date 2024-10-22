@@ -126,7 +126,7 @@ namespace o2scl {
 
     /// Non-degenerate entropy integral
     template<class internal_fp_t>
-    internal_fp_t energy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+    internal_fp_t entropy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
 
       internal_fp_t y=static_cast<internal_fp_t>(y2);
       internal_fp_t eta=static_cast<internal_fp_t>(eta2);
@@ -141,6 +141,45 @@ namespace o2scl {
       if (!std::isfinite(ret)) {
         return 0;
       }
+      
+      return ret;
+    }
+
+    template<class internal_fp_t>
+    internal_fp_t deg_density_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      ret=k*k/(exp(arg1)-1);
+
+      if (!isfinite(ret)) {
+        return 0;
+      }
+  
+      return ret;
+    }
+    
+
+    template<class internal_fp_t>
+    internal_fp_t deg_energy_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+    }
+
+    template<class internal_fp_t>
+    internal_fp_t deg_entropy_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+    }
     
     
   };

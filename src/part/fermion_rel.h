@@ -607,8 +607,6 @@ namespace o2scl {
       last_method=0;
       last_method_s="";
       
-      density_root.tol_rel=1.0e-7;
-
       tol_expan=1.0e-14;
       verify_ti=false;
 
