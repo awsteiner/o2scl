@@ -190,7 +190,7 @@ namespace o2scl {
 
     mcmc_stepper_rw() {
       step_fac.resize(1);
-      step_fac[0]=10.0;
+      step_fac[0]=100.0;
     }
     
     virtual ~mcmc_stepper_rw() {
@@ -221,15 +221,6 @@ namespace o2scl {
         next[k]=current[k]+(r.random()*2.0-1.0)*
           (high[k]-low[k])/step_fac[k % step_fac.size()];
       }
-
-      std::cout.precision(2);
-      for (size_t k=0;k<n_params;k++) {
-        std::cout << "curr[" << k << "]=" << current[k] 
-                  << ", next=" << next[k]
-                  << ", disp=" << abs(next[k]-current[k]) 
-                  << std::endl;
-      }
-      std::cout.precision(6);
 
       accept=false;
       
