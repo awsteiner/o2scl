@@ -54,6 +54,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/funct_multip.h>
 #include <o2scl/root.h>
+#include <o2scl/table.h>
 
 namespace o2scl {
   
@@ -220,6 +221,12 @@ namespace o2scl {
 
           fp2_t y=f(lroot);
 
+          if (store_funcs) {
+            std::vector<fp_t> line={static_cast<fp_t>(lroot),
+                                    static_cast<fp_t>(y)};
+            tab.line_of_data(line);
+          }
+            
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
@@ -248,6 +255,13 @@ namespace o2scl {
         
           if (status==o2scl::success) {
             fp2_t y=f(lroot);
+            
+            if (store_funcs) {
+              std::vector<fp_t> line={static_cast<fp_t>(lroot),
+                                      static_cast<fp_t>(y)};
+              tab.line_of_data(line);
+            }
+            
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
               fp2_t ay=abs(y);
@@ -256,8 +270,11 @@ namespace o2scl {
                                "root_brent_gsl (relative deviation 2)");
             }
           } else {
+            
             if (this->verbose>0) {
+              
               fp2_t y=f(lroot);
+              
               // This additional temporary seems to be required
               // for boost::multiprecision types
               fp2_t x_diff=lx_upper-lx_lower;
@@ -295,6 +312,7 @@ namespace o2scl {
     root_brent_gsl() {
       test_form=0;
       pow_tol_func=1.33;
+      store_funcs=false;
     }
     
     /// Return the type, \c "root_brent_gsl".
@@ -304,7 +322,13 @@ namespace o2scl {
         with adaptive multiprecision (default 1.33)
     */
     double pow_tol_func;
+
+    /// If true, store function evaluations
+    bool store_funcs;
     
+    /// For storing function evaluations
+    o2scl::table<std::vector<fp_t>,fp_t> tab;
+
     /** \brief Perform an iteration
 
         This function currently always returns \ref success.
@@ -410,6 +434,11 @@ namespace o2scl {
       }
 	
       gfb=f(gb);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={gb,gfb};
+        tab.line_of_data(line);
+      }
   
       // Update the best estimate of the root and bounds on each
       // iteration
@@ -624,6 +653,11 @@ namespace o2scl {
 
           fp_t y=f(groot);
 
+          if (store_funcs) {
+            std::vector<fp_t> line={groot,y};
+            tab.line_of_data(line);
+          }
+          
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
@@ -651,6 +685,12 @@ namespace o2scl {
         
           if (status==o2scl::success) {
             fp_t y=f(groot);
+            
+            if (store_funcs) {
+              std::vector<fp_t> line={groot,y};
+              tab.line_of_data(line);
+            }
+            
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
               fp_t ay=abs(y);
@@ -661,6 +701,7 @@ namespace o2scl {
           } else {
             if (this->verbose>0) {
               fp_t y=f(groot);
+              
               // This additional temporary seems to be required
               // for boost::multiprecision types
               fp_t x_diff=gx_upper-gx_lower;
@@ -1003,6 +1044,11 @@ namespace o2scl {
         This function currently always returns \ref success.
     */
     int set(func_t &ff, fp_t lower, fp_t upper) {
+
+      if (store_funcs) {
+        tab.clear();
+        tab.line_of_names("x y");
+      }
       
       if (lower > upper) {
         fp_t tmp=lower;
@@ -1019,6 +1065,13 @@ namespace o2scl {
     
       f_lower=ff(gx_lower);
       f_upper=ff(gx_upper);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={gx_lower,f_lower};
+        tab.line_of_data(line);
+        line={gx_upper,f_upper};
+        tab.line_of_data(line);
+      }
 	
       ga=gx_lower;
       gfa=f_lower;
@@ -1064,6 +1117,11 @@ namespace o2scl {
       fp2_t &lfb=storage[9];
       fp2_t &lfc=storage[10];
 
+      if (store_funcs) {
+        tab.clear();
+        tab.line_of_names("x y");
+      }
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -1084,6 +1142,15 @@ namespace o2scl {
       fp2_t err;
       int fm_ret1=fm2.eval_tol_err(ff,lx_lower,f_lower,err);
       int fm_ret2=fm2.eval_tol_err(ff,lx_upper,f_upper,err);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={static_cast<fp_t>(lx_lower),
+                                static_cast<fp_t>(f_lower)};
+        tab.line_of_data(line);
+        line={static_cast<fp_t>(lx_upper),
+              static_cast<fp_t>(f_upper)};
+        tab.line_of_data(line);
+      }
       
       la=lx_lower;
       lfa=f_lower;

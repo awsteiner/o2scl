@@ -729,7 +729,8 @@ namespace o2scl {
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
-            std::cout << "mcmc_stepper_hmc::step(): grad failed." << std::endl;
+            std::cout << "mcmc_stepper_hmc::step(): grad failed."
+                      << std::endl;
             return;
           }
         }

@@ -32,14 +32,28 @@ double gfn(double x) {
   return sin(x-0.2);
 }
 
+double gfn2(double x) {
+  return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
+}
+
+double gfn3(double x) {
+  return tanh(100.0*(x-0.2));
+}
+
 class cl {
 public:
   double mfn(double x) {
-    return sin(x-0.2);
+    return gfn(x);
   }
 };
 
+template<class fp_t> fp_t cbrt_fun(fp_t x) {
+  return x*x*x-5;
+}
+
 int main(void) {
+
+  cout.setf(ios::scientific);
   
   test_mgr t;
   t.set_output_level(2);
@@ -66,6 +80,19 @@ int main(void) {
 
   t.test_rel(a,0.2,1.0e-6,"4");
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  cout << "Using adaptive multiprecision with a simple function and a\n"
+       << "  lambda expression:" << endl;
+  double am=1.0, valm, errm;
+  cr1.verbose=1;
+  int amret=cr1.solve_multip(am,[](auto &&tx) mutable
+  { return cbrt_fun(tx); },errm);
+  cout << dtos(am,0) << " " << dtos(cbrt(5.0),0) << endl;
+  t.test_rel(am,cbrt(5.0),2.0e-15,"multiprecision");
+  
+#endif
+  
   t.report();
   return 0;
 }

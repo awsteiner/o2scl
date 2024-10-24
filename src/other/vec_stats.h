@@ -1104,7 +1104,7 @@ namespace o2scl {
     }
     
     // First, create a new vector with the rolling averages
-    std::vector<double> avgs(n);
+    std::vector<data_t> avgs(n);
     for(size_t i=0;i<n;i++) {
       size_t cnt=0;
       avgs[i]=0.0;
@@ -1115,7 +1115,7 @@ namespace o2scl {
 	  cnt++;
 	}
       }
-      avgs[i]/=((double)cnt);
+      avgs[i]/=((data_t)cnt);
     }
     
     // Second, copy the new vector on top of the old one

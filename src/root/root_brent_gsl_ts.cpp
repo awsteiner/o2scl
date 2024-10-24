@@ -25,7 +25,9 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 using namespace std;
 using namespace o2scl;
@@ -41,7 +43,7 @@ double gfn2(double x) {
 class cl {
 public:
   double mfn(double x) {
-    return atan((x-0.2)*4)*(1.0+sin((x-0.2)*50.0)/1.1);
+    return gfn(x);
   }
 };
 
@@ -60,27 +62,27 @@ template<class fp_t> fp_t cbrt_fun(fp_t x) {
 
 class cl_ld {
 
-  public:
+public:
 
   long double mfn(long double x) {
     long double one=1;
     long double five=5;
     long double ten=10;
     return atan((x-one/five)*4)*(one+sin((x-one/five)*five*ten)/
-    (one+one/ten));
+                                 (one+one/ten));
   }
 };
 
 class cl_cdf {
 
-  public:
+public:
 
   cpp_dec_float_50 mfn(cpp_dec_float_50 x) {
     cpp_dec_float_50 one=1;
     cpp_dec_float_50 five=5;
     cpp_dec_float_50 ten=10;
     return atan((x-one/five)*4)*(one+sin((x-one/five)*five*ten)/
-    (one+one/ten));
+                                 (one+one/ten));
   }
 };
 
@@ -101,8 +103,12 @@ int main(void) {
 
   for(size_t k=0;k<2;k++) {
 
-    // GSL 
     {
+      if (k==0) {
+        cout << "Using GSL with the first function:" << endl;
+      } else {
+        cout << "Using GSL with the second function:" << endl;
+      }
       int status;
       int iter=0, max_iter=100;
 
@@ -110,7 +116,7 @@ int main(void) {
       b=1.0;
     
       const gsl_root_fsolver_type *T=gsl_root_fsolver_brent;
-      gsl_root_fsolver *s=gsl_root_fsolver_alloc (T);
+      gsl_root_fsolver *s=gsl_root_fsolver_alloc(T);
       
       if (k==0) gsl_root_fsolver_set(s,&fg1,a,b);
       else gsl_root_fsolver_set(s,&fg2,a,b);
@@ -136,8 +142,18 @@ int main(void) {
 	cout << r << " " << gfn2(r) << endl;
       }
       t.test_rel(r,0.2,1.0e-10,"1");
+      cout << endl;
+      
     }
 
+    if (k==0) {
+      cout << "Using O2scl set() and iterate() with the first function:"
+           << endl;
+    } else {
+      cout << "Using O2scl set() and iterate() with the second function:"
+           << endl;
+    }
+    
     // Using set() and iterate() with a function pointer
     typedef double (*gfnt)(double);
     root_brent_gsl<gfnt> grb1;
@@ -165,42 +181,67 @@ int main(void) {
       cout << r << " " << gfn2(r) << endl;
     }
     t.test_rel(grb1.get_root(),0.2,1.0e-10,"1");
+    cout << endl;
 
   }
 
-  // Using a funct object and the solve_bkt() interface
+  cout << "Using O2scl, a member function, and the simplified interface,\n"
+       << "  with the first function:" << endl;
   funct fmf=std::bind(std::mem_fn<double(double)>
-			(&cl::mfn),&acl,std::placeholders::_1);
+                      (&cl::mfn),&acl,std::placeholders::_1);
   root_brent_gsl<> grb2;
   a=-1.0;
   b=1.0;
+  grb2.store_funcs=true;
   grb2.solve_bkt(a,b,fmf);
+  grb2.store_funcs=false;
   t.test_rel(a,0.2,1.0e-10,"1");
   cout << a << " " << gfn(a) << endl;
+  cout << endl;
 
+  cout << "x                      y" << endl;
+  for(size_t j=0;j<grb2.tab.get_nlines();j++) {
+    cout << dtos(grb2.tab.get("x",j),0) << " ";
+    cout << dtos(grb2.tab.get("y",j),0) << endl;
+  }
+  cout << endl;
+
+  cout << "Now using long double precision:" << endl;
   cl_ld acl_ld;
   funct_ld fmf_ld=std::bind(std::mem_fn<long double(long double)>
-			(&cl_ld::mfn),&acl_ld,std::placeholders::_1);
+                            (&cl_ld::mfn),&acl_ld,std::placeholders::_1);
   root_brent_gsl<funct_ld,long double> grb2_ld;
   long double a_ld=-1, b_ld=1;
   grb2_ld.solve_bkt(a_ld,b_ld,fmf_ld);
-  cout << a_ld << endl;
+  cout << dtos(a_ld,0) << " " << dtos(acl_ld.mfn(a_ld),0) << endl;
+  t.test_rel<long double>(10*a_ld,2,
+                          static_cast<long double>(grb2_ld.tol_rel),
+                          "long double 1");
+  cout << endl;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  cout << "Now using 50-digit precision:" << endl;
   cl_cdf acl_cdf;
   funct_cdf50 fmf_cdf=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50)>
-			(&cl_cdf::mfn),&acl_cdf,std::placeholders::_1);
+                                (&cl_cdf::mfn),&acl_cdf,std::placeholders::_1);
   root_brent_gsl<funct_cdf50,cpp_dec_float_50> grb2_cdf;
   cpp_dec_float_50 a_cdf=-1, b_cdf=1;
   grb2_cdf.solve_bkt(a_cdf,b_cdf,fmf_cdf);
-  cout << a_cdf << endl;
-
-  cout << "Here." << endl;
+  cout << dtos(a_cdf,0) << " " << dtos(acl_cdf.mfn(a_cdf),0) << endl;
+  t.test_rel_boost<cpp_dec_float_50>(10*a_cdf,2,
+                          static_cast<cpp_dec_float_50>(grb2_cdf.tol_rel),
+                          "50-digit 1");
+  cout << endl;
+  
+  cout << "Using adaptive multiprecision with a simple function and a\n"
+       << "  lambda expression:" << endl;
   double am=1.0, bm=5.0, valm, errm;
   grb2.verbose=1;
   int amret=grb2.solve_bkt_multip(am,bm,[](auto &&tx) mutable
   { return cbrt_fun(tx); },errm);
-  cout << "am: " << dtos(am,0) << " " << amret << endl;
-  cout << "am: " << dtos(cbrt(5.0),0) << " " << cbrt(5.0)-am << endl;
+  cout << dtos(am,0) << " " << dtos(cbrt(5.0),0) << endl;
+  t.test_rel(am,cbrt(5.0),2.0e-15,"multiprecision");
+#endif
   
   t.report();
   return 0;
