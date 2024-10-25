@@ -69,8 +69,9 @@ namespace o2scl {
       \endverbatim
   */
   template<class func_t=mm_funct, 
-    class vec_t=boost::numeric::ublas::vector<double>,
-    class jfunc_t=jac_funct > class mroot {
+           class vec_t=boost::numeric::ublas::vector<double>,
+           class jfunc_t=jac_funct,
+           class fp_t=double> class mroot {
       
     public:
     
@@ -86,10 +87,10 @@ namespace o2scl {
     virtual ~mroot() {}
   
     /// The maximum value of the functions for success (default 1.0e-8)
-    double tol_rel;
+    fp_t tol_rel;
     
     /// The minimum allowable stepsize (default 1.0e-12)
-    double tol_abs;
+    fp_t tol_abs;
     
     /// Output control (default 0)
     int verbose;
@@ -138,7 +139,7 @@ namespace o2scl {
     */
     template<class vec2_t, class vec3_t>
     int print_iter(size_t n, const vec2_t &x, const vec3_t &y, 
-		   int iter, double value=0.0, double limit=0.0,
+		   int iter, fp_t value=0, fp_t limit=0,
 		   std::string comment="") 
     {
       if (verbose<=0) return o2scl::success;

@@ -81,41 +81,44 @@ namespace o2scl {
 
       .. todo::
 
-         In class mroot_cern:
+      In class mroot_cern:
          
-         Future:
+      Future:
 
-         - Modify this so it handles functions which return
-           non-zero values.
-         - Move some of the memory allocation out of msolve()
-         - Give the user access to the number of function
-           calls
-         - Rename nier6, nier7, and nier8 to something sensible.
-         - It may be that the \o2 native Householder transformations
-           should be used here instead of the inline version given here.
+      - Modify this so it handles functions which return
+      non-zero values.
+      - Move some of the memory allocation out of msolve()
+      - Give the user access to the number of function
+      calls
+      - Rename nier6, nier7, and nier8 to something sensible.
+      - It may be that the \o2 native Householder transformations
+      should be used here instead of the inline version given here.
 
-       Based on the CERNLIB routines RSNLEQ and DSNLEQ, which was 
-       based on [More79]_ and [More80]_ and is documented at
-       http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
+      Based on the CERNLIB routines RSNLEQ and DSNLEQ, which was 
+      based on [More79]_ and [More80]_ and is documented at
+      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/c201/top.html
 
       \endverbatim
   */
-    template<class func_t=mm_funct,
-      class vec_t=boost::numeric::ublas::vector<double>, 
-      class jfunc_t=jac_funct> class mroot_cern : 
-      public mroot<func_t,vec_t,jfunc_t> {
-
-    protected:
+  template<class func_t=mm_funct,
+           class vec_t=boost::numeric::ublas::vector<double>, 
+           class jfunc_t=jac_funct, class fp_t=double> class mroot_cern : 
+    public mroot<func_t,vec_t,jfunc_t,fp_t> {
+      
+  protected:
     
     /// Desc
-    boost::numeric::ublas::matrix<double> w;
+    boost::numeric::ublas::matrix<fp_t> w;
     
-    public:
+  public:
     
     mroot_cern() {
       info=0;
-      eps=0.1490116119384766e-07;
-      scale=10.0;
+      // The original value in the CERNLIB code was:
+      // eps=0.1490116119384766e-07;
+      // This is an approximately equivalent replacement.
+      eps=sqrt(std::numeric_limits<fp_t>::epsilon());
+      scale=10;
       maxf=0;
 	
       int tmp_mpt[289]=
@@ -212,7 +215,7 @@ namespace o2scl {
 
     /** \brief The original scale parameter from CERNLIB (default 10.0)
      */
-    double scale;
+    fp_t scale;
     
     /** \brief The smallest floating point number
 	(default \f$ \sim 1.49012 \times 10^{-8} \f$ )
@@ -234,13 +237,13 @@ namespace o2scl {
 	#endif
 	\endverbatim
     */
-    double eps;
+    fp_t eps;
     
     /// Solve \c func using \c x as an initial guess, returning \c x.
     virtual int msolve(size_t nvar, vec_t &x, func_t &func) {
 
       int mopt=0, i, j, k, it=0;
-      double fky;
+      fp_t fky;
 
       int lmaxf;
       if (maxf<=0) lmaxf=50*(nvar+3);
@@ -248,7 +251,7 @@ namespace o2scl {
   
       info=0;
   
-      if (nvar<=0 || this->tol_rel<=0.0 || this->tol_abs<=0.0) {
+      if (nvar<=0 || this->tol_rel<=0 || this->tol_abs<=0) {
 	info=9;
 	std::string str="Invalid value of tol_rel ("+dtos(this->tol_rel)+
 	  "), tol_abs ("+dtos(this->tol_abs)+"), or nvar ("+itos(nvar)+
@@ -261,9 +264,9 @@ namespace o2scl {
       if (nvar<=288) mopt=mpt[nvar-1];
       else {
 	bool done=false;
-	double h=0.0;
+	fp_t h=0;
 	for(i=49;i<=((int)nvar) && done==false;i++) {
-	  double temp=log(((double)i)+1.0)/((double)(nvar+2*i+1));
+	  fp_t temp=log(((fp_t)i)+1)/((fp_t)(nvar+2*i+1));
 	  if (temp<h) {
 	    mopt=i-1;
 	    done=true;
@@ -273,7 +276,7 @@ namespace o2scl {
       }
   
       int iflag=0, numf=0, nfcall=0, nier6=-1, nier7=-1, nier8=0;
-      double fnorm=0.0, difit=0.0, xnorm=0.0;
+      fp_t fnorm=0, difit=0, xnorm=0;
       bool set=false;
 
       for(i=0;i<((int)nvar);i++) {
@@ -282,7 +285,7 @@ namespace o2scl {
 	  set=true;
 	}
       }
-      double delta=scale*xnorm;
+      fp_t delta=scale*xnorm;
       if (set==false) delta=scale;
 
       w.resize(nvar,nvar);
@@ -294,18 +297,18 @@ namespace o2scl {
 	bool bskip=false;
     
 	int nsing=nvar;
-	double fnorm1=fnorm;
-	double difit1=difit;
-	fnorm=0.0;
+	fp_t fnorm1=fnorm;
+	fp_t difit1=difit;
+	fnorm=0;
     
 	// Compute step H for the divided difference which approximates
 	// the K-th row of the Jacobian matrix
     
-	double h=eps*xnorm;
-	if (h==0.0) h=eps;
+	fp_t h=eps*xnorm;
+	if (h==0) h=eps;
 	for(j=0;j<((int)nvar);j++) {
 	  for(i=0;i<((int)nvar);i++) {
-	    w(j,i)=0.0;
+	    w(j,i)=0;
 	  }
 	  w(j,j)=h;
 	  w1[j]=x[j];
@@ -320,7 +323,7 @@ namespace o2scl {
 	    
 	  fky=f[k];
 	  nfcall++;
-	  numf=(int)(((double)nfcall)/((double)nvar));
+	  numf=(int)(((fp_t)nfcall)/((fp_t)nvar));
 	  if (fnorm<fabs(fky)) fnorm=fabs(fky);
       
 	  // Compute the K-th row of the Jacobian matrix
@@ -332,9 +335,9 @@ namespace o2scl {
 
 	    func(iflag,w2,f);
 
-	    double fkz=f[k];
+	    fp_t fkz=f[k];
 	    nfcall++;
-	    numf=(int)(((double)nfcall)/((double)nvar));
+	    numf=(int)(((fp_t)nfcall)/((fp_t)nvar));
 	    w0[j]=fkz-fky;
 	  }
 
@@ -343,24 +346,24 @@ namespace o2scl {
 	  // Compute the Householder transformation to reduce the K-th row
 	  // of the Jacobian matrix to a multiple of the K-th unit vector
 
-	  double eta=0.0;
+	  fp_t eta=0;
 	  for(i=k;i<((int)nvar);i++) if (eta<fabs(w0[i])) eta=fabs(w0[i]);
 	
-	  if (eta!=0.0) {
+	  if (eta!=0) {
 	    nsing--;
-	    double sknorm=0.0;
+	    fp_t sknorm=0;
 	    for(i=k;i<((int)nvar);i++) {
 	      w0[i]/=eta;
 	      sknorm+=w0[i]*w0[i];
 	    }
 	    sknorm=sqrt(sknorm);
-	    if (w0[k]<0.0) sknorm=-sknorm;
+	    if (w0[k]<0) sknorm=-sknorm;
 	    w0[k]+=sknorm;
 	  
 	    // Apply the transformation
 
 	    for(i=0;i<((int)nvar);i++) {
-	      w2[i]=0.0;
+	      w2[i]=0;
 	    }
 	    for(j=k;j<((int)nvar);j++) {
 	      for(i=0;i<((int)nvar);i++) {
@@ -368,7 +371,7 @@ namespace o2scl {
 	      }
 	    }
 	    for(j=k;j<((int)nvar);j++) {
-	      double temp=w0[j]/(sknorm*w0[k]);
+	      fp_t temp=w0[j]/(sknorm*w0[k]);
 	      for(i=0;i<((int)nvar);i++) {
 		w(j,i)-=temp*w2[i];
 	      }
@@ -377,9 +380,9 @@ namespace o2scl {
 	    // Compute the subiterate
 
 	    w0[k]=sknorm*eta;
-	    double temp2=fky/w0[k];
+	    fp_t temp2=fky/w0[k];
 	    if (h*fabs(temp2)>delta) 
-	      temp2=(temp2>=0.0) ? fabs(delta/h) : -fabs(delta/h);
+	      temp2=(temp2>=0) ? fabs(delta/h) : -fabs(delta/h);
 	    for(i=0;i<((int)nvar);i++) {
 	      w1[i]+=temp2*w(k,i);
 	    }
@@ -388,8 +391,8 @@ namespace o2scl {
 
 	// Compute the norms of the iterate and correction vector
 
-	xnorm=0.0;
-	difit=0.0;
+	xnorm=0;
+	difit=0;
 	for(i=0;i<((int)nvar);i++) {
 	  if (xnorm<fabs(w1[i])) xnorm=fabs(w1[i]);
 	  if (difit<fabs(x[i]-w1[i])) difit=fabs(x[i]-w1[i]);
@@ -458,10 +461,11 @@ namespace o2scl {
 
 	if (info!=0) {
 	  O2SCL_ERR("Unspecified error in mroot_cern::msolve().",
-			exc_efailed);
+                    exc_efailed);
 	}
 
-	if (!((!lcv) || difit>0.05*xnorm)) {
+        fp_t twenty=20;
+	if (!((!lcv) || difit>xnorm/twenty)) {
 	  // 8/20/08: Could this just be rewritten? 
 	  // if (lcv && difit<=0.05*xnorm)
       
@@ -469,7 +473,7 @@ namespace o2scl {
 
 	  for(int m=2;m<=mopt && bskip==false;m++) {
 	    fnorm1=fnorm;
-	    fnorm=0.0;
+	    fnorm=0;
 	    for(k=0;k<((int)nvar) && bskip==false;k++) {
 	      iflag=k;
 
@@ -477,7 +481,7 @@ namespace o2scl {
 	  
 	      fky=f[k];
 	      nfcall++;
-	      numf=(int)(((double)nfcall)/((double)nvar));
+	      numf=(int)(((fp_t)nfcall)/((fp_t)nvar));
 
 	      if (fnorm<fabs(fky)) fnorm=fabs(fky);
 	
@@ -490,7 +494,7 @@ namespace o2scl {
 	      } 
 
 	      if (!bskip) {
-		double temp3=fky/w0[k];
+		fp_t temp3=fky/w0[k];
 	    
 		for(i=0;i<((int)nvar);i++) {
 		  w1[i]+=temp3*w(k,i);
@@ -502,8 +506,8 @@ namespace o2scl {
 
 	      // Compute the norms of the iterate and correction vector
 
-	      xnorm=0.0;
-	      difit=0.0;
+	      xnorm=0;
+	      difit=0;
 
 	      for(i=0;i<((int)nvar);i++) {
 		if (xnorm<fabs(w1[i])) xnorm=fabs(w1[i]);
@@ -533,7 +537,7 @@ namespace o2scl {
       return 0;
     }
 
-    protected:
+  protected:
       
     /// Internal storage for the value of \c info
     int info;
@@ -541,8 +545,12 @@ namespace o2scl {
     /// Store the number of function evaluations
     int mpt[289];
       
-    };
-  
+  };
+
+  /// Long double solver
+  typedef mroot_cern<mm_funct_ld,
+                     boost::numeric::ublas::vector<long double>,
+                     jac_funct_ld,long double> mroot_cern_ld;
 
 }
 

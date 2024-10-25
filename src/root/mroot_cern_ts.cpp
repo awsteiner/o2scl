@@ -27,11 +27,18 @@
 #include <o2scl/mroot_cern.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::vector<long double> ubvector_ld;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
 int gfn(size_t nv, const ubvector &x, ubvector &y) {
   y[0]=sin(x[1]-0.2);
   y[1]=sin(x[0]-0.25);
+  return 0;
+}
+
+int gfn_ld(size_t nv, const ubvector_ld &x, ubvector_ld &y) {
+  y[0]=sin(x[1]-0.2L);
+  y[1]=sin(x[0]-0.25L);
   return 0;
 }
 
@@ -113,6 +120,26 @@ int main(void) {
 	x[0]=0.5;
 	x[1]=0.5;
 	cr4.msolve(2,x,gfnv);
+      }
+    }
+    t4+=(clock()-tmp)/10000;
+    cout << (clock()-tmp)/10000 << " " << x[0] << " " << x[1] << endl;
+    t.test_rel(x[0],0.25,1.0e-6,"5a");
+    t.test_rel(x[1],0.2,1.0e-6,"5b");
+
+    // 5 - Templated access through a global function pointer
+    typedef int (*gfnt_ld)(size_t, const ubvector_ld &, ubvector_ld &);
+    mroot_cern<gfnt_ld,ubvector_ld,jac_funct_ld,long double> cr5;
+    gfnt_ld gfnv_ld=&gfn_ld;
+    tmp=clock();
+    ubvector_ld x_ld(2);
+    for(int j=0;j<N;j++) {
+      for(int k=0;k<N;k++) {
+	x_ld[0]=2;
+        x_ld[0]=1/x_ld[0];
+	x_ld[1]=2;
+        x_ld[1]=1/x_ld[1];
+	cr5.msolve(2,x_ld,gfnv_ld);
       }
     }
     t4+=(clock()-tmp)/10000;

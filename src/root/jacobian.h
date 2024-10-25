@@ -41,6 +41,40 @@ namespace o2scl {
 	size_t,boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::matrix<double> &) > jac_funct;
 
+  /// Jacobian function (not necessarily square) in src/root/jacobian.h
+  typedef std::function<
+    int(size_t,boost::numeric::ublas::vector<long double> &,
+	size_t,boost::numeric::ublas::vector<long double> &,
+	boost::numeric::ublas::matrix<long double> &) > jac_funct_ld;
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+
+  typedef std::function<
+    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_25> &,
+	size_t,boost::numeric::ublas::vector<cpp_dec_float_25> &,
+	boost::numeric::ublas::matrix<cpp_dec_float_25> &) >
+  jac_funct_cdf25;
+  
+  typedef std::function<
+    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_35> &,
+	size_t,boost::numeric::ublas::vector<cpp_dec_float_35> &,
+	boost::numeric::ublas::matrix<cpp_dec_float_35> &) >
+  jac_funct_cdf35;
+  
+  typedef std::function<
+    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_50> &,
+	size_t,boost::numeric::ublas::vector<cpp_dec_float_50> &,
+	boost::numeric::ublas::matrix<cpp_dec_float_50> &) >
+  jac_funct_cdf50;
+  
+  typedef std::function<
+    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_100> &,
+	size_t,boost::numeric::ublas::vector<cpp_dec_float_100> &,
+	boost::numeric::ublas::matrix<cpp_dec_float_100> &) >
+  jac_funct_cdf100;
+  
+#endif
+  
   /** \brief Base for providing a numerical jacobian [abstract base]
       
       This is provides a Jacobian which is numerically determined

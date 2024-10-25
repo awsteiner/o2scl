@@ -34,6 +34,7 @@
 #include <o2scl/calc_utf8.h>
 #include <o2scl/set_python.h>
 #include <o2scl/lib_settings.h>
+#include <o2scl/funct_multip.h>
 
 #ifdef O2SCL_SET_PYTHON
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -48,6 +49,37 @@ namespace o2scl {
     int(size_t,const boost::numeric::ublas::vector<double> &,
 	boost::numeric::ublas::vector<double> &) > mm_funct;
 
+  /** \brief Array of multi-dimensional long double
+      functions typedef in src/base/mm_funct.h
+  */
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<long double> &,
+	boost::numeric::ublas::vector<long double> &) > mm_funct_ld;
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_25> &,
+	boost::numeric::ublas::vector<cpp_dec_float_25> &) >
+  mm_funct_cdf25;
+  
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_35> &,
+	boost::numeric::ublas::vector<cpp_dec_float_35> &) >
+  mm_funct_cdf35;
+
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_50> &,
+	boost::numeric::ublas::vector<cpp_dec_float_50> &) >
+  mm_funct_cdf50;
+
+  typedef std::function<
+    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_100> &,
+	boost::numeric::ublas::vector<cpp_dec_float_100> &) >
+  mm_funct_cdf100;
+  
+#endif
+  
 #ifdef O2SCL_SET_PYTHON
   
   /** \brief One-dimensional function from a Python function
