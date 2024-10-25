@@ -141,6 +141,9 @@ namespace o2scl {
   //@{
   /** \brief Return true if the first \c n elements of 
       two vectors are equal
+
+      This function uses the <tt>!=</tt> operator. If you want to
+      compare within a finite tolerance, use \ref vectors_equal_tol().
    */
   template<class vec_t, class vec2_t> 
     bool vectors_equal(size_t n, const vec_t &v1, const vec2_t &v2) {
@@ -154,7 +157,10 @@ namespace o2scl {
   
   /** \brief Return true if two vectors are equal (tests size 
       and elements)
-   */
+
+      This function uses the <tt>!=</tt> operator. If you want to
+      compare within a finite tolerance, use \ref vectors_equal_tol().
+  */
   template<class vec_t, class vec2_t> 
     bool vectors_equal(const vec_t &v1, const vec2_t &v2) {
 
@@ -549,10 +555,9 @@ namespace o2scl {
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
 
-      \note It is almost always better to use <tt>std::swap</tt> than
-      this function, which is provided only in cases where one is
-      forced to use a vector type without a properly defined
-      <tt>std::swap</tt> method.
+      \note It is better to use <tt>std::swap</tt> than this function.
+      This function is provided for use in cases where one is using
+      vector types which do not provide a <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(vec_t &v1, vec2_t &v2) {
@@ -599,10 +604,9 @@ namespace o2scl {
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
 
-      \note It is almost always better to use <tt>std::swap</tt>
-      than this function, which is provided only in cases where
-      one knows one is going to be forced to use a vector type
-      without a properly defined <tt>std::swap</tt> method.
+      \note It is better to use <tt>std::swap</tt> than this function.
+      This function is provided for use in cases where one is using
+      vector types which do not provide a <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t>
     void vector_swap_double(vec_t &v1, vec2_t &v2) {
@@ -659,7 +663,7 @@ namespace o2scl {
       This function swaps the elements of \c m1 and \c m2, one element
       at a time.
   */
-  template<class mat_t, class mat2_t, class data_t> 
+  template<class mat_t, class mat2_t> 
     void matrix_swap_double(size_t M, size_t N, mat_t &m1, mat2_t &m2) {
     return matrix_swap<mat_t,mat2_t,double>(M,N,m1,m2);
   }
