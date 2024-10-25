@@ -668,7 +668,7 @@ int main(int argc, char *argv[]) {
     data_vec_imh[1].resize(2);
 
     mpc.mct.aff_inv=false;
-    mpc.mct.verbose=3;
+    mpc.mct.verbose=2;
     mpc.mct.n_threads=1;
     mpc.mct.max_iters=200;
     mpc.mct.prefix="mcmct_imh_kde";
@@ -745,6 +745,8 @@ int main(int argc, char *argv[]) {
       point_hmc,std::vector<double>,ubvector>> new_stepper
       (new mcmc_stepper_hmc<
        point_hmc,std::vector<double>,ubvector>);
+    // Perform the allocation for the gradient cache
+    new_stepper->allocate(2,1);
     mpc.mct_hmc.stepper=new_stepper;
 
     mpc.mct_hmc.set_names_units(pnames_hmc,punits_hmc);

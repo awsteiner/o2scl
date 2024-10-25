@@ -500,6 +500,12 @@ namespace o2scl {
     /// Error if gradient failed
     static const size_t grad_failed=30;
 
+    /// Cache for parameters
+    ubmatrix param_cache;
+
+    /// Cache for gradients
+    ubmatrix grad_cache;
+    
     mcmc_stepper_hmc() {
       traj_length=20;
       mom_step.resize(1);
@@ -515,6 +521,14 @@ namespace o2scl {
     virtual ~mcmc_stepper_hmc() {
     }
 
+    /** \brief Allocate cache
+     */
+    void allocate(size_t n_params, size_t n_threads) {
+      param_cache.resize(n_threads,n_params);
+      grad_cache.resize(n_threads,n_params);
+      return;
+    }
+    
     /** \brief Write stepper parameters to the HDF5 file
      */
     virtual void write_params(o2scl_hdf::hdf_file &hf) {
@@ -589,7 +603,7 @@ namespace o2scl {
           g[i]=(fv2-fv1)/h;
         }
       }
-      
+
       return success;
     }
   
@@ -635,25 +649,63 @@ namespace o2scl {
       
       // True if the first gradient evaluation failed
       bool initial_grad_failed=false;
-      
-      // First, if specified, use the user-specified gradient function
-      if (grad_ptr!=0 && grad_ptr->size()>0) {
 
-        grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
-          (n_params,current,f,grad,dat);
-        if (grad_ret!=0) {
-          initial_grad_failed=true;
+      // Look in the cache first
+      bool found_in_cache=false;
+      if (i_thread<param_cache.size1() &&
+          i_thread<grad_cache.size1() &&
+          n_params<=param_cache.size2() &&
+          n_params<=grad_cache.size2()) {
+
+        // Select the row for this thread
+        typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
+        ubmatrix_row prow(param_cache,i_thread);
+        ubmatrix_row grow(grad_cache,i_thread);
+
+        // If we match the cache, just copy the gradient over
+        if (o2scl::vectors_equal(current,prow)) {
+          found_in_cache=true;
+          o2scl::vector_copy(grow,grad);
         }
       }
-      
-      // Then, additionally try the finite-differencing gradient
-      if (initial_grad_failed==false) {
-        grad_ret=grad_pot(n_params,current,f,grad,dat);
-        if (grad_ret!=0) {
-          initial_grad_failed=true;
-        }
-      }
 
+      if (found_in_cache==false) {
+        
+        // First, if specified, use the user-specified gradient function
+        if (grad_ptr!=0 && grad_ptr->size()>0) {
+          
+          grad_ret=(*grad_ptr)[i_thread & grad_ptr->size()]
+            (n_params,current,f,grad,dat);
+          if (grad_ret!=0) {
+            initial_grad_failed=true;
+          }
+        }
+        
+        // Then, additionally try the finite-differencing gradient
+        if (initial_grad_failed==false) {
+          grad_ret=grad_pot(n_params,current,f,grad,dat);
+          if (grad_ret!=0) {
+            initial_grad_failed=true;
+          }
+        }
+        
+        if (i_thread<param_cache.size1() &&
+            i_thread<grad_cache.size1() &&
+            n_params<=param_cache.size2() &&
+            n_params<=grad_cache.size2()) {
+          
+          // Select the row for this thread
+          typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
+          ubmatrix_row prow(param_cache,i_thread);
+          ubmatrix_row grow(grad_cache,i_thread);
+          
+          // Store the current gradient in the cache
+          o2scl::vector_copy(n_params,current,prow);
+          o2scl::vector_copy(n_params,grad,grow);
+        }
+        
+      }
+      
       // If the gradient failed, then use the fallback random-walk
       // method, which doesn't require a gradient. In the future, we
       // should probably distinguish between the automatic gradient
