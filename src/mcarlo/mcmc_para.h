@@ -624,6 +624,9 @@ namespace o2scl {
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
+      // Here, the vector 'grad' stores the gradient of the log
+      // likelihood, which is minus the gradient of the potential
+      // energy
       vec_t mom(n_params), grad(n_params), mom_next(n_params);
       int grad_ret;
 
@@ -690,14 +693,29 @@ namespace o2scl {
       // Otherwise, if the gradient succeeded, continue with the
       // HMC method
       
-      // Initialize the momenta, which we rescale by mom_step
+      // The mapping between Neal's article and these local variables
+      // is as follows: Neal's current_p is stored in 'mom', p is
+      // stored in 'mom_next', current_q is stored in 'current', and q
+      // is stored in 'next'.
+
+      // [Neal] q = current_q
+      for(size_t k=0;k<n_params;k++) {
+        next[k]=current[k];
+      }
+
+      // Initialize the momenta, which we rescale by mom_step. This
+      // rescaling is the slight difference from Neal's algorithm. 
       // [Neal] p = rnorm(length(q),0,1)
+      // [Neal] current_p = p
       for(size_t k=0;k<n_params;k++) {
         mom[k]=pdg()*mom_step[k % mom_step.size()];
       }
       
       // Take a half step in the momenta using the gradient
       // [Neal] p = p - epsilon * grad_U(q) / 2
+      // Note the opposite sign because 'grad' is the gradient
+      // of the log-likelihood, not the gradient of the potential
+      // energy. 
       for(size_t k=0;k<n_params;k++) {
         mom_next[k]=mom[k]+0.5*epsilon*grad[k];
       }
