@@ -1328,6 +1328,29 @@ namespace o2scl {
     //@}
 
   };
+
+  /// An Eigen specialization for \ref interpm_krige_optim
+  typedef interpm_krige_optim
+  <class vec_t=boost::numeric::ublas::vector<double>,
+   class mat_x_t=o2scl::const_matrix_view_table<>,
+   class mat_x_row_t=const const_matrix_row_gen
+   <o2scl::const_matrix_view_table<>>, 
+   class mat_y_t=o2scl::matrix_view_table<>,
+   class mat_y_col_t=const matrix_column_gen<
+     o2scl::matrix_view_table<>>,
+   Eigen::MatrixXd,matrix_invert_det_eigen<> > interpm_krige_optim_eigen;
+  
+  /// An Armadillo specialization for \ref interpm_krige_optim
+  typedef interpm_krige_optim
+  <class vec_t=boost::numeric::ublas::vector<double>,
+   class mat_x_t=o2scl::const_matrix_view_table<>,
+   class mat_x_row_t=const const_matrix_row_gen
+   <o2scl::const_matrix_view_table<>>, 
+   class mat_y_t=o2scl::matrix_view_table<>,
+   class mat_y_col_t=const matrix_column_gen<
+     o2scl::matrix_view_table<>>,
+   arma::mat,
+   matrix_invert_det_sympd_arma<> > interpm_krige_optim_arma;
   
 }
     

@@ -2278,7 +2278,7 @@ namespace o2scl {
       an exception.
 
       The corresponding tests for matrix functions are
-      in clbas_base.h .
+      in ``cblas_base.h`` .
   */
   template<class vec_t>
     bool vector_is_finite(size_t n, vec_t &data) {
@@ -2294,7 +2294,7 @@ namespace o2scl {
       an exception.
 
       The corresponding tests for matrix functions are
-      in clbas_base.h .
+      in ``cblas_base.h`` .
   */
   template<class vec_t> bool vector_is_finite(vec_t &data) {
     return vector_is_finite(data.size(),data);

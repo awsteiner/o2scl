@@ -117,6 +117,7 @@ namespace o2scl_cblas {
     return r;
   }
 
+  /// Double-precision specialization of \ref asum()
   template<class vec_t>
   double dasum(const size_t N, const vec_t &X) {
     return asum<vec_t,double>(N,X);

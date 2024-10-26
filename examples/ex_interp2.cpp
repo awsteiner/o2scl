@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_interp2.cpp
    -------------------------------------------------------------------
    A simple example for two-dimensional interpolation using

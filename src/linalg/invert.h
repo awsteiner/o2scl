@@ -45,7 +45,7 @@ namespace o2scl_linalg {
     
   public:
 
-    /// Desc
+    /// If true, call the error handler on failure (default true)
     bool err_on_fail;
 
     matrix_invert_det() {
@@ -357,7 +357,11 @@ namespace o2scl_linalg {
     
   };
 
-  /** \brief Desc
+  /** \brief Eigen generic inverse and determinant using a
+      user-specified decomposition
+      
+      AWS, 10/26/24: Currently, only Eigen's PartialPivLU
+      and FullPivLU methods are supported.
    */
   template<class eigen_mat_t, class eigen_decomp_t>
   class matrix_invert_det_eigen_decomp : 
