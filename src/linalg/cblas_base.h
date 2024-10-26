@@ -85,7 +85,7 @@ namespace o2scl_cblas {
   bool matrix_is_finite(size_t m, size_t n, mat_t &data) {
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
-	if (!std::isfinite(O2SCL_IX2(data,i,j))) return false;
+	if (!isfinite(O2SCL_IX2(data,i,j))) return false;
       }
     }
     return true;
@@ -108,26 +108,32 @@ namespace o2scl_cblas {
       If \c alpha is zero, this function returns and performs
       no computations. 
   */
-  template<class vec_t> double dasum(const size_t N, const vec_t &X) {
-    double r=0.0;
+  template<class vec_t, class fp_t>
+  fp_t asum(const size_t N, const vec_t &X) {
+    fp_t r=0;
     for(size_t i=0;i<N;i++) {
-      r+=fabs(X[i]);
+      r+=abs(X[i]);
     }
     return r;
   }
 
+  template<class vec_t>
+  double dasum(const size_t N, const vec_t &X) {
+    return asum<vec_t,double>(N,X);
+  }
+  
   /** \brief Compute \f$ y= \alpha x+y \f$
 
       If \c alpha is zero, this function returns and performs
       no computations. 
   */
-  template<class vec_t, class vec2_t>
-  void daxpy(const double alpha, const size_t N, const vec_t &X, 
-	     vec2_t &Y) {
+  template<class vec_t, class vec2_t, class fp_t>
+  void axpy(const fp_t alpha, const size_t N, const vec_t &X, 
+            vec2_t &Y) {
     
     size_t i;
     
-    if (alpha == 0.0) {
+    if (alpha == 0) {
       return;
     }
     
@@ -144,12 +150,20 @@ namespace o2scl_cblas {
       O2SCL_IX(Y,i+3)+=alpha*O2SCL_IX(X,i+3);
     }
   }
+
+  /// Double-precision version of \ref axpy()
+  template<class vec_t, class vec2_t>
+  void daxpy(const double alpha, const size_t N, const vec_t &X, 
+             vec2_t &Y) {
+    axpy<vec_t,vec2_t,double>(alpha,N,X,Y);
+    return;
+  }
   
   /// Compute \f$ r=x \cdot y \f$
-  template<class vec_t, class vec2_t> 
-  double ddot(const size_t N, const vec_t &X, const vec2_t &Y) {
+  template<class vec_t, class vec2_t, class fp_t=double> 
+  fp_t dot(const size_t N, const vec_t &X, const vec2_t &Y) {
 
-    double r=0.0;
+    fp_t r=0;
     size_t i;
 
     const size_t m=N % 4;
@@ -167,6 +181,12 @@ namespace o2scl_cblas {
 
     return r;
   }
+
+  /// Double-precision version of \ref dot()
+  template<class vec_t, class vec2_t> 
+  double ddot(const size_t N, const vec_t &X, const vec2_t &Y) {
+    return dot<vec_t,vec2_t,double>(N,X,Y);
+  }
   
   /** \brief Compute the norm of the vector \c X
       
@@ -175,28 +195,25 @@ namespace o2scl_cblas {
       
       If \c N is less than or equal to zero, this function returns
       zero without calling the error handler.
-
-      This function works only with vectors which hold \c double. For
-      the norm of a general floating point vector, see \ref
-      vector_norm().
   */
-  template<class vec_t> double dnrm2(const size_t N, const vec_t &X) {
+  template<class vec_t, class fp_t=double>
+  fp_t nrm2(const size_t N, const vec_t &X) {
     
-    double scale=0.0;
-    double ssq=1.0;
+    fp_t scale=0;
+    fp_t ssq=1;
     size_t i;
     
     if (N == 0) {
       return 0;
     } else if (N == 1) {
-      return fabs(O2SCL_IX(X,0));
+      return abs(O2SCL_IX(X,0));
     }
     
     for (i=0;i<N;i++) {
-      const double x=O2SCL_IX(X,i);
+      const fp_t x=O2SCL_IX(X,i);
       
-      if (x != 0.0) {
-	const double ax=fabs(x);
+      if (x != 0) {
+	const fp_t ax=abs(x);
 	
 	if (scale<ax) {
 	  ssq=1.0+ssq*(scale/ax)*(scale/ax);
@@ -211,10 +228,16 @@ namespace o2scl_cblas {
     return scale*sqrt(ssq);
   }
 
+  /// Double-precision version of \ref nrm2()
+  template<class vec_t>
+  double dnrm2(const size_t N, const vec_t &X) {
+    return nrm2<vec_t,double>(N,X);
+  }
+  
   /** \brief Compute \f$ x=\alpha x \f$
    */
-  template<class vec_t> 
-  void dscal(const double alpha, const size_t N, vec_t &X) {
+  template<class vec_t, class fp_t=double> 
+  void scal(const fp_t alpha, const size_t N, vec_t &X) {
 
     size_t i;
     const size_t m=N % 4;
@@ -230,6 +253,13 @@ namespace o2scl_cblas {
       O2SCL_IX(X,i+3)*=alpha;
     }
   }
+  
+  /** \brief Double-precision version of \ref scal()
+   */
+  template<class vec_t> 
+  void dscal(const double alpha, const size_t N, vec_t &X) {
+    return scal<vec_t>(alpha,N,X);
+  }
   //@}
 
   /// \name Level-2 BLAS functions
@@ -241,11 +271,11 @@ namespace o2scl_cblas {
       one, this function performs no calculations and returns without
       calling the error handler.
   */
-  template<class mat_t, class vec_t, class vec2_t>
-  void dgemv(const enum o2cblas_order order, 
-	     const enum o2cblas_transpose TransA, const size_t M, 
-	     const size_t N, const double alpha, const mat_t &A,
-	     const vec_t &X, const double beta, vec2_t &Y) {
+  template<class mat_t, class vec_t, class vec2_t, class fp_t=double>
+  void gemv(const enum o2cblas_order order, 
+            const enum o2cblas_transpose TransA, const size_t M, 
+            const size_t N, const fp_t alpha, const mat_t &A,
+            const vec_t &X, const fp_t beta, vec2_t &Y) {
     
     size_t i, j;
     size_t lenX, lenY;
@@ -257,7 +287,7 @@ namespace o2scl_cblas {
       return;
     }
 
-    if (alpha == 0.0 && beta == 1.0) {
+    if (alpha == 0  && beta == 1 ) {
       return;
     }
 
@@ -270,13 +300,13 @@ namespace o2scl_cblas {
     }
 
     /* form  y := beta*y */
-    if (beta == 0.0) {
+    if (beta == 0 ) {
       size_t iy=0;
       for (i=0;i<lenY;i++) {
-	O2SCL_IX(Y,iy)=0.0;
+	O2SCL_IX(Y,iy)=0 ;
 	iy++;
       }
-    } else if (beta != 1.0) {
+    } else if (beta != 1 ) {
       size_t iy=0;
       for (i=0;i<lenY;i++) {
 	O2SCL_IX(Y,iy) *= beta;
@@ -284,7 +314,7 @@ namespace o2scl_cblas {
       }
     }
 
-    if (alpha == 0.0) {
+    if (alpha == 0 ) {
       return;
     }
 
@@ -294,7 +324,7 @@ namespace o2scl_cblas {
       /* form  y := alpha*A*x+y */
       size_t iy=0;
       for (i=0;i<lenY;i++) {
-	double temp=0.0;
+	fp_t temp=0 ;
 	size_t ix=0;
 	for (j=0;j<lenX;j++) {
 	  temp+=O2SCL_IX(X,ix)*O2SCL_IX2(A,i,j);
@@ -310,8 +340,8 @@ namespace o2scl_cblas {
       /* form  y := alpha*A'*x+y */
       size_t ix=0;
       for (j=0;j<lenX;j++) {
-	const double temp=alpha*O2SCL_IX(X,ix);
-	if (temp != 0.0) {
+	const fp_t temp=alpha*O2SCL_IX(X,ix);
+	if (temp != 0 ) {
 	  size_t iy=0;
 	  for (i=0;i<lenY;i++) {
 	    O2SCL_IX(Y,iy)+=temp*O2SCL_IX2(A,j,i);
@@ -326,17 +356,27 @@ namespace o2scl_cblas {
     }
     return;
   }
-  
+
+  /// Double-precision version of \ref gemv()
+  template<class mat_t, class vec_t, class vec2_t>
+  void dgemv(const enum o2cblas_order order, 
+	     const enum o2cblas_transpose TransA, const size_t M, 
+	     const size_t N, const double alpha, const mat_t &A,
+	     const vec_t &X, const double beta, vec2_t &Y) {
+    return gemv<mat_t,vec_t,vec2_t,double>
+      (order,TransA,M,N,alpha,A,X,beta,Y);
+  }
+    
   /** \brief Compute \f$ x=\mathrm{op} (A)^{-1} x \f$
       
       If \c N is zero, this function does nothing and returns zero.
   */
-  template<class mat_t, class vec_t> 
-  void dtrsv(const enum o2cblas_order order, 
-	     const enum o2cblas_uplo Uplo,
-	     const enum o2cblas_transpose TransA, 
-	     const enum o2cblas_diag Diag,
-	     const size_t M, const size_t N, const mat_t &A, vec_t &X) {
+  template<class mat_t, class vec_t, class fp_t> 
+  void trsv(const enum o2cblas_order order, 
+            const enum o2cblas_uplo Uplo,
+            const enum o2cblas_transpose TransA, 
+            const enum o2cblas_diag Diag,
+            const size_t M, const size_t N, const mat_t &A, vec_t &X) {
 
     const int nonunit=(Diag == o2cblas_NonUnit);
     int ix, jx;
@@ -365,10 +405,10 @@ namespace o2scl_cblas {
       ix--;
 
       for (i=(int)(N-1);i>0 && i--;) {
-	double tmp=O2SCL_IX(X,ix);
+	fp_t tmp=O2SCL_IX(X,ix);
 	jx=ix +1;
 	for (j=i+1;j<((int)N);j++) {
-	  const double Aij=O2SCL_IX2(A,i,j);
+	  const fp_t Aij=O2SCL_IX2(A,i,j);
 	  tmp-=Aij*O2SCL_IX(X,jx);
 	  jx++;
 	}
@@ -392,10 +432,10 @@ namespace o2scl_cblas {
       }
       ix++;
       for (i=1;i<((int)N);i++) {
-	double tmp=O2SCL_IX(X,ix);
+	fp_t tmp=O2SCL_IX(X,ix);
 	jx=0;
 	for (j=0;j<i;j++) {
-	  const double Aij=O2SCL_IX2(A,i,j);
+	  const fp_t Aij=O2SCL_IX2(A,i,j);
 	  tmp-=Aij*O2SCL_IX(X,jx);
 	  jx++;
 	}
@@ -421,10 +461,10 @@ namespace o2scl_cblas {
       }
       ix++;
       for (i=1;i<((int)N);i++) {
-	double tmp=O2SCL_IX(X,ix);
+	fp_t tmp=O2SCL_IX(X,ix);
 	jx=0;
 	for (j=0;j<i;j++) {
-	  const double Aji=O2SCL_IX2(A,j,i);
+	  const fp_t Aji=O2SCL_IX2(A,j,i);
 	  tmp-=Aji*O2SCL_IX(X,jx);
 	  jx++;
 	}
@@ -450,10 +490,10 @@ namespace o2scl_cblas {
       }
       ix--;
       for (i=(int)(N-1);i>0 && i--;) {
-	double tmp=O2SCL_IX(X,ix);
+	fp_t tmp=O2SCL_IX(X,ix);
 	jx=ix+1;
 	for (j=i+1;j<((int)N);j++) {
-	  const double Aji=O2SCL_IX2(A,j,i);
+	  const fp_t Aji=O2SCL_IX2(A,j,i);
 	  tmp-=Aji*O2SCL_IX(X,jx);
 	  jx++;
 	}
@@ -470,15 +510,26 @@ namespace o2scl_cblas {
     }
     return;
   }
+
+  /// Double-precision version of \ref trsv()
+  template<class mat_t, class vec_t> 
+  void dtrsv(const enum o2cblas_order order, 
+	     const enum o2cblas_uplo Uplo,
+	     const enum o2cblas_transpose TransA, 
+	     const enum o2cblas_diag Diag,
+	     const size_t M, const size_t N, const mat_t &A, vec_t &X) {
+    return trsv<mat_t,vec_t,double>(order,Uplo,TransA,Diag,M,N,
+                                    A,X);
+  }
   
   /** \brief Compute \f$ x=op(A) x \f$ for the triangular matrix \c A
    */
-  template<class mat_t, class vec_t>
-  void dtrmv(const enum o2cblas_order Order, 
-	     const enum o2cblas_uplo Uplo,
-	     const enum o2cblas_transpose TransA,
-	     const enum o2cblas_diag Diag, const size_t N,
-	     const mat_t &A, vec_t &x) {
+  template<class mat_t, class vec_t, class fp_t>
+  void trmv(const enum o2cblas_order Order, 
+            const enum o2cblas_uplo Uplo,
+            const enum o2cblas_transpose TransA,
+            const enum o2cblas_diag Diag, const size_t N,
+            const mat_t &A, vec_t &x) {
 
     int i, j;
 
@@ -493,7 +544,7 @@ namespace o2scl_cblas {
       /* form  x := A*x */
 
       for (i=0;i<N;i++) {
-	double temp=0.0;
+	fp_t temp=0 ;
 	const size_t j_min=i+1;
 	const size_t j_max=N;
 	size_t jx=j_min;
@@ -517,7 +568,7 @@ namespace o2scl_cblas {
       // since we already handled the N=0 case above
       size_t ix=N-1;
       for (i=N;i>0 && i--;) {
-	double temp=0.0;
+	fp_t temp=0 ;
 	const size_t j_min=0;
 	const size_t j_max=i;
 	size_t jx=j_min;
@@ -541,7 +592,7 @@ namespace o2scl_cblas {
       /* form  x := A'*x */
       size_t ix=N-1;
       for (i=N;i>0 && i--;) {
-	double temp=0.0;
+	fp_t temp=0 ;
 	const size_t j_min=0;
 	const size_t j_max=i;
 	size_t jx=j_min;
@@ -563,7 +614,7 @@ namespace o2scl_cblas {
 		Uplo == o2cblas_Upper)) { 
 
       for (i=0;i<N;i++) {
-	double temp=0.0;
+	fp_t temp=0 ;
 	const size_t j_min=i+1;
 	const size_t j_max=N;
 	size_t jx=i+1;
@@ -585,6 +636,17 @@ namespace o2scl_cblas {
 
     return;
   }
+
+  /// Double-precision version of \ref trmv()
+  template<class mat_t, class vec_t>
+  void dtrmv(const enum o2cblas_order Order, 
+	     const enum o2cblas_uplo Uplo,
+	     const enum o2cblas_transpose TransA,
+	     const enum o2cblas_diag Diag, const size_t N,
+	     const mat_t &A, vec_t &x) {
+    return trmv<mat_t,vec_t,double>(Order,Uplo,TransA,
+                                    Diag,N,A,x);
+  }
   //@}
 
   /// \name Level-3 BLAS functions
@@ -600,18 +662,18 @@ namespace o2scl_cblas {
       This function works for all values of \c Order, \c TransA, and
       \c TransB.
   */
-  template<class mat_t>
-  void dgemm(const enum o2cblas_order Order, 
-	     const enum o2cblas_transpose TransA,
-	     const enum o2cblas_transpose TransB, const size_t M, 
-	     const size_t N, const size_t K, const double alpha, 
-	     const mat_t &A, const mat_t &B, const double beta, mat_t &C) {
+  template<class mat_t, class fp_t>
+  void gemm(const enum o2cblas_order Order, 
+            const enum o2cblas_transpose TransA,
+            const enum o2cblas_transpose TransB, const size_t M, 
+            const size_t N, const size_t K, const fp_t alpha, 
+            const mat_t &A, const mat_t &B, const fp_t beta, mat_t &C) {
     
     size_t i, j, k;
     size_t n1, n2;
     int TransF, TransG;
 
-    if (alpha == 0.0 && beta == 1.0) {
+    if (alpha == 0  && beta == 1 ) {
       return;
     }
 
@@ -629,13 +691,13 @@ namespace o2scl_cblas {
       n2=N;
 
       /* form  y := beta*y */
-      if (beta == 0.0) {
+      if (beta == 0 ) {
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    O2SCL_IX2(C,i,j)=0.0;
+	    O2SCL_IX2(C,i,j)=0 ;
 	  }
 	}
-      } else if (beta != 1.0) {
+      } else if (beta != 1 ) {
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
 	    O2SCL_IX2(C,i,j)*=beta;
@@ -643,7 +705,7 @@ namespace o2scl_cblas {
 	}
       }
 
-      if (alpha == 0.0) {
+      if (alpha == 0 ) {
 	return;
       }
 
@@ -656,8 +718,8 @@ namespace o2scl_cblas {
 
 	for (k=0;k<K;k++) {
 	  for (i=0;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(A,i,k);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(A,i,k);
+	    if (temp != 0 ) {
 	      for (j=0;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
 	      }
@@ -671,7 +733,7 @@ namespace o2scl_cblas {
 
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=0;k<K;k++) {
 	      temp+=O2SCL_IX2(A,i,k)*O2SCL_IX2(B,j,k);
 	    }
@@ -683,8 +745,8 @@ namespace o2scl_cblas {
 
 	for (k=0;k<K;k++) {
 	  for (i=0;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(A,k,i);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(A,k,i);
+	    if (temp != 0 ) {
 	      for (j=0;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
 	      }
@@ -696,7 +758,7 @@ namespace o2scl_cblas {
 	
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=0;k<K;k++) {
 	      temp+=O2SCL_IX2(A,k,i)*O2SCL_IX2(B,j,k);
 	    }
@@ -716,13 +778,13 @@ namespace o2scl_cblas {
       n2=M;
 
       /* form  y := beta*y */
-      if (beta == 0.0) {
+      if (beta == 0 ) {
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    O2SCL_IX2(C,i,j)=0.0;
+	    O2SCL_IX2(C,i,j)=0 ;
 	  }
 	}
-      } else if (beta != 1.0) {
+      } else if (beta != 1 ) {
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
 	    O2SCL_IX2(C,i,j)*=beta;
@@ -730,7 +792,7 @@ namespace o2scl_cblas {
 	}
       }
 
-      if (alpha == 0.0) {
+      if (alpha == 0 ) {
 	return;
       }
 
@@ -743,8 +805,8 @@ namespace o2scl_cblas {
 
 	for (k=0;k<K;k++) {
 	  for (i=0;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(B,i,k);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(B,i,k);
+	    if (temp != 0 ) {
 	      for (j=0;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
 	      }
@@ -758,7 +820,7 @@ namespace o2scl_cblas {
 
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=0;k<K;k++) {
 	      temp+=O2SCL_IX2(B,i,k)*O2SCL_IX2(A,j,k);
 	    }
@@ -770,8 +832,8 @@ namespace o2scl_cblas {
 
 	for (k=0;k<K;k++) {
 	  for (i=0;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(B,k,i);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(B,k,i);
+	    if (temp != 0 ) {
 	      for (j=0;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
 	      }
@@ -783,7 +845,7 @@ namespace o2scl_cblas {
 
 	for (i=0;i<n1;i++) {
 	  for (j=0;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=0;k<K;k++) {
 	      temp+=O2SCL_IX2(B,k,i)*O2SCL_IX2(A,j,k);
 	    }
@@ -799,6 +861,17 @@ namespace o2scl_cblas {
     return;
   }
 
+  /// Double-precision version of \ref gemm()
+  template<class mat_t>
+  void dgemm(const enum o2cblas_order Order, 
+            const enum o2cblas_transpose TransA,
+            const enum o2cblas_transpose TransB, const size_t M, 
+            const size_t N, const size_t K, const double alpha, 
+            const mat_t &A, const mat_t &B, const double beta, mat_t &C) {
+    return gemm<mat_t,double>(Order,TransA,TransB,M,
+                              N,K,alpha,A,B,beta,C);
+  }
+  
   /** \brief Compute \f$ B=\alpha \mathrm{op}[\mathrm{inv}(A)] B
       \f$ where $A$ is triangular
       
@@ -811,14 +884,14 @@ namespace o2scl_cblas {
       first M rows and M columns of A. If Side is Right, then this
       function operates on the first N rows and N columns of A.
   */
-  template<class mat_t>
-  void dtrsm(const enum o2cblas_order Order,
-	     const enum o2cblas_side Side, 
-	     const enum o2cblas_uplo Uplo, 
-	     const enum o2cblas_transpose TransA,
-	     const enum o2cblas_diag Diag, 
-	     const size_t M, const size_t N,
-	     const double alpha, const mat_t &A, mat_t &B) {
+  template<class mat_t, class fp_t>
+  void trsm(const enum o2cblas_order Order,
+            const enum o2cblas_side Side, 
+            const enum o2cblas_uplo Uplo, 
+            const enum o2cblas_transpose TransA,
+            const enum o2cblas_diag Diag, 
+            const size_t M, const size_t N,
+            const double alpha, const mat_t &A, mat_t &B) {
     
     size_t i, j, k;
     size_t n1, n2;
@@ -845,7 +918,7 @@ namespace o2scl_cblas {
       
       /* form  B := alpha * inv(TriU(A)) *B */
       
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j)*=alpha;
@@ -855,14 +928,14 @@ namespace o2scl_cblas {
       
       for (i = n1; i > 0 && i--;) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j)/=Aii;
 	  }
 	}
 	
 	for (k = 0; k < i; k++) {
-	  const double Aki = O2SCL_IX2(A,k,i);
+	  const fp_t Aki = O2SCL_IX2(A,k,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,k,j)-=Aki*O2SCL_IX2(B,i,j);
 	  }
@@ -874,7 +947,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * inv(TriU(A))' *B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -884,14 +957,14 @@ namespace o2scl_cblas {
 
       for (i = 0; i < n1; i++) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = i + 1; k < n1; k++) {
-	  const double Aik = O2SCL_IX2(A,i,k);
+	  const fp_t Aik = O2SCL_IX2(A,i,k);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
 	  }
@@ -903,7 +976,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * inv(TriL(A))*B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -913,14 +986,14 @@ namespace o2scl_cblas {
 
       for (i = 0; i < n1; i++) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = i + 1; k < n1; k++) {
-	  const double Aki = O2SCL_IX2(A,k,i);
+	  const fp_t Aki = O2SCL_IX2(A,k,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aki * O2SCL_IX2(B,i,j);
 	  }
@@ -933,7 +1006,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * TriL(A)' *B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -943,14 +1016,14 @@ namespace o2scl_cblas {
 
       for (i = n1; i > 0 && i--;) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = 0; k < i; k++) {
-	  const double Aik = O2SCL_IX2(A,i,k);
+	  const fp_t Aik = O2SCL_IX2(A,i,k);
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
 	  }
@@ -962,7 +1035,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriU(A)) */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -973,12 +1046,12 @@ namespace o2scl_cblas {
       for (i = 0; i < n1; i++) {
 	for (j = 0; j < n2; j++) {
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = j + 1; k < n2; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
 	    }
@@ -991,7 +1064,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriU(A))' */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -1003,12 +1076,12 @@ namespace o2scl_cblas {
 	for (j = n2; j > 0 && j--;) {
 
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = 0; k < j; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
 	    }
@@ -1021,7 +1094,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriL(A)) */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -1033,12 +1106,12 @@ namespace o2scl_cblas {
 	for (j = n2; j > 0 && j--;) {
 
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = 0; k < j; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
 	    }
@@ -1052,7 +1125,7 @@ namespace o2scl_cblas {
       /* form  B := alpha * B * inv(TriL(A))' */
 
       
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = 0; i < n1; i++) {
 	  for (j = 0; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -1063,12 +1136,12 @@ namespace o2scl_cblas {
       for (i = 0; i < n1; i++) {
 	for (j = 0; j < n2; j++) {
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = j + 1; k < n2; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
 	    }
@@ -1081,6 +1154,19 @@ namespace o2scl_cblas {
     }
     
     return;
+  }
+
+  /// Double-precision version of \ref trsm()
+  template<class mat_t>
+  void dtrsm(const enum o2cblas_order Order,
+	     const enum o2cblas_side Side, 
+	     const enum o2cblas_uplo Uplo, 
+	     const enum o2cblas_transpose TransA,
+	     const enum o2cblas_diag Diag, 
+	     const size_t M, const size_t N,
+	     const double alpha, const mat_t &A, mat_t &B) {
+    return trsm<mat_t,double>(Order,Side,Uplo,TransA,
+                              Diag,M,N,alpha,A,B);
   }
   //@}
   
@@ -1099,13 +1185,13 @@ namespace o2scl_cblas {
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
       defined.
   */
-  template<class vec_t, class vec2_t> 
-  void daxpy_subvec(const double alpha, const size_t N, const vec_t &X,
+  template<class vec_t, class vec2_t, class fp_t> 
+  void axpy_subvec(const fp_t alpha, const size_t N, const vec_t &X,
 		    vec2_t &Y, const size_t ie) {
     
     size_t i;
 
-    if (alpha == 0.0) return;
+    if (alpha == 0 ) return;
 #if O2SCL_NO_RANGE_CHECK
 #else
     if (ie+1>N) {
@@ -1127,6 +1213,14 @@ namespace o2scl_cblas {
     }
   }
 
+  /// Double-precision version of \ref axpy_subvec()
+  template<class vec_t, class vec2_t> 
+  void daxpy_subvec(const double alpha, const size_t N, const vec_t &X,
+		    vec2_t &Y, const size_t ie) {
+    axpy_subvec<vec_t,vec2_t,double>(alpha,N,X,Y,ie);
+    return;
+  }
+  
   /** \brief Compute \f$ r=x \cdot y \f$ beginning with index \c ie and
       ending with index \c N-1
       
@@ -1136,10 +1230,10 @@ namespace o2scl_cblas {
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
       defined.
   */
-  template<class vec_t, class vec2_t> 
-  double ddot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
-		     const size_t ie) {
-    double r=0.0;
+  template<class vec_t, class vec2_t, class fp_t> 
+  fp_t dot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
+                  const size_t ie) {
+    fp_t r=0 ;
     size_t i;
 
 #if O2SCL_NO_RANGE_CHECK
@@ -1165,6 +1259,13 @@ namespace o2scl_cblas {
     return r;
   }
 
+  /// Double-precision version of \ref dot_subvec()
+  template<class vec_t, class vec2_t> 
+  double ddot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
+                   const size_t ie) {
+    return dot_subvec<vec_t,vec2_t>(N,X,Y,ie);
+  }
+  
   /** \brief Compute the norm of the vector \c X beginning with 
       index \c ie and ending with index \c N-1
       
@@ -1177,11 +1278,11 @@ namespace o2scl_cblas {
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
       defined. 
   */
-  template<class vec_t> 
-  double dnrm2_subvec(const size_t N, const vec_t &X, const size_t ie) {
+  template<class vec_t, class fp_t> 
+  fp_t nrm2_subvec(const size_t N, const vec_t &X, const size_t ie) {
     
-    double scale=0.0;
-    double ssq=1.0;
+    fp_t scale=0 ;
+    fp_t ssq=1 ;
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1191,17 +1292,17 @@ namespace o2scl_cblas {
 #endif
 
     if (ie+1==N) {
-      return fabs(O2SCL_IX(X,ie));
+      return abs(O2SCL_IX(X,ie));
     }
     
     for (size_t i=ie;i<N;i++) {
-      const double x=O2SCL_IX(X,i);
+      const fp_t x=O2SCL_IX(X,i);
       
-      if (x != 0.0) {
-	const double ax=fabs(x);
+      if (x != 0 ) {
+	const fp_t ax=abs(x);
 	
 	if (scale<ax) {
-	  ssq=1.0+ssq*(scale/ax)*(scale/ax);
+	  ssq=1 +ssq*(scale/ax)*(scale/ax);
 	  scale=ax;
 	} else {
 	  ssq+=(ax/scale)*(ax/scale);
@@ -1213,6 +1314,12 @@ namespace o2scl_cblas {
     return scale*sqrt(ssq);
   }
 
+  /// Double-precision version of \ref nrm2_subvec()
+  template<class vec_t> 
+  double dnrm2_subvec(const size_t N, const vec_t &X, const size_t ie) {
+    return nrm2_subvec<vec_t,double>(N,X,ie);
+  }
+  
   /** \brief Compute \f$ x=\alpha x \f$ beginning with index \c ie and
       ending with index \c N-1
       
@@ -1222,8 +1329,8 @@ namespace o2scl_cblas {
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
       defined. 
   */
-  template<class vec_t> 
-  void dscal_subvec(const double alpha, const size_t N, vec_t &X,
+  template<class vec_t, class fp_t> 
+  void scal_subvec(const fp_t alpha, const size_t N, vec_t &X,
 		    const size_t ie) {
 
 #if O2SCL_NO_RANGE_CHECK
@@ -1247,6 +1354,13 @@ namespace o2scl_cblas {
       O2SCL_IX(X,i+3)*=alpha;
     }
   }
+
+  /// Double-precision version of \ref scal_subvec()
+  template<class vec_t> 
+  void dscal_subvec(const double alpha, const size_t N, vec_t &X,
+		    const size_t ie) {
+    return scal_subvec<vec_t,double>(alpha,N,X,ie);
+  }
   //@}
 
   /// \name Helper Level-1 BLAS functions - Subcolums of a matrix
@@ -1261,8 +1375,8 @@ namespace o2scl_cblas {
       
       Used in householder_hv_sub().
   */
-  template<class mat_t, class vec_t> 
-  void daxpy_subcol(const double alpha, const size_t M, const mat_t &X,
+  template<class mat_t, class vec_t, class fp_t> 
+  void axpy_subcol(const fp_t alpha, const size_t M, const mat_t &X,
 		    const size_t ir, const size_t ic, vec_t &y) {
     
 #if O2SCL_NO_RANGE_CHECK
@@ -1272,7 +1386,7 @@ namespace o2scl_cblas {
     }
 #endif
 
-    if (alpha == 0.0) {
+    if (alpha == 0 ) {
       return;
     }
 
@@ -1293,6 +1407,13 @@ namespace o2scl_cblas {
     return;
   }
 
+  /// Double-precision version of \ref axpy_subcol()
+  template<class mat_t, class vec_t> 
+  void daxpy_subcol(const double alpha, const size_t M, const mat_t &X,
+		    const size_t ir, const size_t ic, vec_t &y) {
+    return axpy_subcol<mat_t,vec_t,double>(alpha,M,X,ir,ic,y);
+  }
+  
   /** \brief Compute \f$ r=x \cdot y \f$ for a subcolumn of a matrix
       
       Given the matrix \c X, define the vector \c x as the column with
@@ -1303,9 +1424,10 @@ namespace o2scl_cblas {
       
       Used in householder_hv_sub().
   */
-  template<class mat_t, class vec_t> 
-  double ddot_subcol(const size_t M, const mat_t &X, const size_t ir, 
-		     const size_t ic, const vec_t &y) {
+  template<class mat_t, class vec_t, class fp_t> 
+  fp_t dot_subcol(const size_t M, const mat_t &X, const size_t ir, 
+                   const size_t ic, const vec_t &y) {
+    
 #if O2SCL_NO_RANGE_CHECK
 #else
     if (ir+1>M) {
@@ -1313,7 +1435,7 @@ namespace o2scl_cblas {
     }
 #endif
 
-    double r=0.0;
+    fp_t r=0 ;
     size_t i;
     const size_t m=(M-ir) % 4;
     
@@ -1331,6 +1453,13 @@ namespace o2scl_cblas {
     return r;
   }
 
+  /// Double-precision version of \ref dot_subcol()
+  template<class mat_t, class vec_t> 
+  double ddot_subcol(const size_t M, const mat_t &X, const size_t ir, 
+                   const size_t ic, const vec_t &y) {
+    return dot_subcol<mat_t,vec_t,double>(M,X,ir,ic,y);
+  }
+  
   /** \brief Compute the norm of a subcolumn of a matrix
       
       Given the matrix \c A, define the vector \c x as the column with
@@ -1346,12 +1475,12 @@ namespace o2scl_cblas {
       \note The suffix "2" on the function name indicates that
       this computes the "2-norm", not that the norm is squared.
   */
-  template<class mat_t> 
-  double dnrm2_subcol(const mat_t &A, const size_t ir, const size_t ic,
-		      const size_t M) {
+  template<class mat_t, class fp_t> 
+  fp_t nrm2_subcol(const mat_t &A, const size_t ir, const size_t ic,
+                    const size_t M) {
     
-    double scale=0.0;
-    double ssq=1.0;
+    fp_t scale=0 ;
+    fp_t ssq=1 ;
     size_t i;
     
 #if O2SCL_NO_RANGE_CHECK
@@ -1363,17 +1492,17 @@ namespace o2scl_cblas {
 
     // Handle the one-element vector case separately
     if (ir+1 == M) {
-      return fabs(O2SCL_IX2(A,ir,ic));
+      return abs(O2SCL_IX2(A,ir,ic));
     }
     
     for (i=ir;i<M;i++) {
-      const double x=O2SCL_IX2(A,i,ic);
+      const fp_t x=O2SCL_IX2(A,i,ic);
       
-      if (x != 0.0) {
-	const double ax=fabs(x);
+      if (x != 0 ) {
+	const fp_t ax=abs(x);
 	
 	if (scale<ax) {
-	  ssq=1.0+ssq*(scale/ax)*(scale/ax);
+	  ssq=1 +ssq*(scale/ax)*(scale/ax);
 	  scale=ax;
 	} else {
 	  ssq+=(ax/scale)*(ax/scale);
@@ -1385,6 +1514,13 @@ namespace o2scl_cblas {
     return scale*sqrt(ssq);
   }
 
+  /// Double-precision version of \ref nrm2_subcol()
+  template<class mat_t> 
+  double dnrm2_subcol(const mat_t &A, const size_t ir, const size_t ic,
+                    const size_t M) {
+    return nrm2_subcol<mat_t,double>(A,ir,ic,M);
+  }
+  
   /** \brief Compute \f$ x=\alpha x \f$ for a subcolumn of a matrix
 
       Given the matrix \c A, define the vector \c x as the column with
@@ -1395,9 +1531,9 @@ namespace o2scl_cblas {
       
       Used in householder_transform_subcol().
   */
-  template<class mat_t> 
-  void dscal_subcol(mat_t &A, const size_t ir, const size_t ic,
-		    const size_t M, const double alpha) {
+  template<class mat_t, class fp_t> 
+  void scal_subcol(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t M, const fp_t alpha) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1423,6 +1559,13 @@ namespace o2scl_cblas {
     return;
   }
 
+  /// Double-precision version of \ref scal_subcol()
+  template<class mat_t> 
+  void dscal_subcol(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t M, const double alpha) {
+    return scal_subcol<mat_t,double>(A,ir,ic,M,alpha);
+  }
+  
   /** \brief Compute \f$ x=\alpha x \f$ for a subcolumn of a matrix
 
       Given the matrix \c A, define the vector \c x as the column with
@@ -1433,9 +1576,9 @@ namespace o2scl_cblas {
       
       Used in householder_transform_subcol().
   */
-  template<class mat_t> 
-  double dasum_subcol(mat_t &A, const size_t ir, const size_t ic,
-		      const size_t M) {
+  template<class mat_t, class fp_t> 
+  fp_t asum_subcol(mat_t &A, const size_t ir, const size_t ic,
+                    const size_t M) {
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1445,21 +1588,28 @@ namespace o2scl_cblas {
 #endif
 
     size_t i;
-    double r=0.0;
+    fp_t r=0 ;
     const size_t m=(M-ir) % 4;
     
     for (i=ir;i<m+ir;i++) {
-      r+=fabs(O2SCL_IX2(A,i,ic));
+      r+=abs(O2SCL_IX2(A,i,ic));
     }
     
     for (;i+3<M;i+=4) {
-      r+=fabs(O2SCL_IX2(A,i,ic));
-      r+=fabs(O2SCL_IX2(A,i+1,ic));
-      r+=fabs(O2SCL_IX2(A,i+2,ic));
-      r+=fabs(O2SCL_IX2(A,i+3,ic));
+      r+=abs(O2SCL_IX2(A,i,ic));
+      r+=abs(O2SCL_IX2(A,i+1,ic));
+      r+=abs(O2SCL_IX2(A,i+2,ic));
+      r+=abs(O2SCL_IX2(A,i+3,ic));
     }
 
     return r;
+  }
+
+  /// Double-precision version of \ref asum_subcol()
+  template<class mat_t> 
+  double dasum_subcol(mat_t &A, const size_t ir, const size_t ic,
+                    const size_t M) {
+    return asum_subcol<mat_t,double>(A,ir,ic,M);
   }
   //@}
 
@@ -1479,9 +1629,9 @@ namespace o2scl_cblas {
 
       Used in householder_hv_sub().
   */
-  template<class mat_t, class vec_t> 
-  void daxpy_subrow(const double alpha, const size_t N, const mat_t &X,
-		    const size_t ir, const size_t ic, vec_t &Y) {
+  template<class mat_t, class vec_t, class fp_t> 
+  void axpy_subrow(const fp_t alpha, const size_t N, const mat_t &X,
+                   const size_t ir, const size_t ic, vec_t &Y) {
     
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1490,7 +1640,7 @@ namespace o2scl_cblas {
     }
 #endif
 
-    if (alpha == 0.0) {
+    if (alpha == 0 ) {
       return;
     }
 
@@ -1511,6 +1661,13 @@ namespace o2scl_cblas {
     return;
   }
 
+  /// Double-precision version of \ref axpy_subrow()
+  template<class mat_t, class vec_t> 
+  void daxpy_subrow(const double alpha, const size_t N, const mat_t &X,
+		    const size_t ir, const size_t ic, vec_t &Y) {
+    return axpy_subrow<mat_t,vec_t,double>(alpha,N,X,ir,ic,Y);
+  }
+  
   /** \brief Compute \f$ r=x \cdot y \f$ for a subrow of a matrix
       
       Given the matrix \c X, define the vector \c x as the row with
@@ -1525,9 +1682,9 @@ namespace o2scl_cblas {
 
       Used in householder_hv_sub().
   */
-  template<class mat_t, class vec_t> 
-  double ddot_subrow(const size_t N, const mat_t &X, const size_t ir, 
-		     const size_t ic, const vec_t &Y) {
+  template<class mat_t, class vec_t, class fp_t> 
+  fp_t dot_subrow(const size_t N, const mat_t &X, const size_t ir, 
+                   const size_t ic, const vec_t &Y) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1536,7 +1693,7 @@ namespace o2scl_cblas {
     }
 #endif
 
-    double r=0.0;
+    fp_t r=0 ;
     size_t i;
     const size_t m=(N-ic) % 4;
     
@@ -1554,6 +1711,13 @@ namespace o2scl_cblas {
     return r;
   }
 
+  /// Double-precision version of \ref dot_subrow()
+  template<class mat_t, class vec_t> 
+  double ddot_subrow(const size_t N, const mat_t &X, const size_t ir, 
+                   const size_t ic, const vec_t &Y) {
+    return dot_subrow<mat_t,vec_t,double>(N,X,ir,ic,Y);
+  }
+  
   /** \brief Compute the norm of a subrow of a matrix
       
       Given the matrix \c X, define the vector \c x as the row with
@@ -1564,26 +1728,26 @@ namespace o2scl_cblas {
       \note The suffix "2" on the function name indicates that this
       computes the "2-norm", not that the norm is squared.
   */
-  template<class mat_t> 
-  double dnrm2_subrow(const mat_t &M, const size_t ir, const size_t ic,
-		      const size_t N) {
+  template<class mat_t, class fp_t> 
+  fp_t nrm2_subrow(const mat_t &M, const size_t ir, const size_t ic,
+                    const size_t N) {
     
-    double scale=0.0;
-    double ssq=1.0;
+    fp_t scale=0 ;
+    fp_t ssq=1 ;
     size_t i;
     
     if (ic+1==N) {
-      return fabs(O2SCL_IX2(M,ir,ic));
+      return abs(O2SCL_IX2(M,ir,ic));
     }
     
     for (i=ic;i<N;i++) {
-      const double x=O2SCL_IX2(M,ir,i);
+      const fp_t x=O2SCL_IX2(M,ir,i);
       
-      if (x != 0.0) {
-	const double ax=fabs(x);
+      if (x != 0 ) {
+	const fp_t ax=abs(x);
 	
 	if (scale<ax) {
-	  ssq=1.0+ssq*(scale/ax)*(scale/ax);
+	  ssq=1 +ssq*(scale/ax)*(scale/ax);
 	  scale=ax;
 	} else {
 	  ssq+=(ax/scale)*(ax/scale);
@@ -1595,6 +1759,13 @@ namespace o2scl_cblas {
     return scale*sqrt(ssq);
   }
 
+  /// Double-precision version of \ref nrm2_subrow()
+  template<class mat_t> 
+  double dnrm2_subrow(const mat_t &M, const size_t ir, const size_t ic,
+                      const size_t N) {
+    return nrm2_subrow<mat_t,double>(M,ir,ic,N);
+  }
+  
   /** \brief Compute \f$ x=\alpha x \f$ for a subrow of a matrix
 
       Given the matrix \c A, define the vector \c x as the row with
@@ -1607,9 +1778,9 @@ namespace o2scl_cblas {
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
       defined. 
   */
-  template<class mat_t> 
-  void dscal_subrow(mat_t &A, const size_t ir, const size_t ic,
-		    const size_t N, const double alpha) {
+  template<class mat_t, class fp_t> 
+  void scal_subrow(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t N, const fp_t alpha) {
 
 #if O2SCL_NO_RANGE_CHECK
 #else
@@ -1634,6 +1805,13 @@ namespace o2scl_cblas {
     
     return;
   }
+
+  /// Double-precision version of \ref scal_subrow()
+  template<class mat_t> 
+  void dscal_subrow(mat_t &A, const size_t ir, const size_t ic,
+		    const size_t N, const double alpha) {
+    return scal_subrow<mat_t,double>(A,ir,ic,N,alpha);
+  }
   //@}
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -1657,9 +1835,9 @@ namespace o2scl_cblas {
   void dgemm_submat(const enum o2cblas_order Order, 
 		    const enum o2cblas_transpose TransA,
 		    const enum o2cblas_transpose TransB, const size_t M, 
-		    const size_t N, const size_t K, const double alpha, 
+		    const size_t N, const size_t K, const fp_t alpha, 
 		    const mat_t &A, const mat_t &B,
-		    const double beta, mat_t &C, size_t rstarta,
+		    const fp_t beta, mat_t &C, size_t rstarta,
 		    size_t cstarta, size_t rstartb, size_t cstartb,
 		    size_t rstartc, size_t cstartc) {
     
@@ -1667,7 +1845,7 @@ namespace o2scl_cblas {
     size_t n1, n2;
     int TransF, TransG;
 
-    if (alpha == 0.0 && beta == 1.0) {
+    if (alpha == 0  && beta == 1 ) {
       return;
     }
 
@@ -1685,13 +1863,13 @@ namespace o2scl_cblas {
       n2=N;
 
       /* form  y := beta*y */
-      if (beta == 0.0) {
+      if (beta == 0 ) {
 	for (i=rstartc;i<n1;i++) {
 	  for (j=cstartc;j<n2;j++) {
-	    O2SCL_IX2(C,i,j)=0.0;
+	    O2SCL_IX2(C,i,j)=0 ;
 	  }
 	}
-      } else if (beta != 1.0) {
+      } else if (beta != 1 ) {
 	for (i=rstartc;i<n1;i++) {
 	  for (j=cstartc;j<n2;j++) {
 	    O2SCL_IX2(C,i,j)*=beta;
@@ -1699,7 +1877,7 @@ namespace o2scl_cblas {
 	}
       }
 
-      if (alpha == 0.0) {
+      if (alpha == 0 ) {
 	return;
       }
 
@@ -1712,8 +1890,8 @@ namespace o2scl_cblas {
 
 	for (k=cstarta;k<K;k++) {
 	  for (i=rstarta;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(A,i,k);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(A,i,k);
+	    if (temp != 0 ) {
 	      for (j=rstartc;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
 	      }
@@ -1727,7 +1905,7 @@ namespace o2scl_cblas {
 
 	for (i=mstart;i<n1;i++) {
 	  for (j=nstart;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=kstart;k<K;k++) {
 	      temp+=O2SCL_IX2(A,i,k)*O2SCL_IX2(B,j,k);
 	    }
@@ -1739,8 +1917,8 @@ namespace o2scl_cblas {
 
 	for (k=kstart;k<K;k++) {
 	  for (i=mstart;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(A,k,i);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(A,k,i);
+	    if (temp != 0 ) {
 	      for (j=nstart;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(B,k,j);
 	      }
@@ -1752,7 +1930,7 @@ namespace o2scl_cblas {
 	
 	for (i=mstart;i<n1;i++) {
 	  for (j=nstart;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=kstart;k<K;k++) {
 	      temp+=O2SCL_IX2(A,k,i)*O2SCL_IX2(B,j,k);
 	    }
@@ -1773,13 +1951,13 @@ namespace o2scl_cblas {
       n2=M;
 
       /* form  y := beta*y */
-      if (beta == 0.0) {
+      if (beta == 0 ) {
 	for (i=nstart;i<n1;i++) {
 	  for (j=mstart;j<n2;j++) {
-	    O2SCL_IX2(C,i,j)=0.0;
+	    O2SCL_IX2(C,i,j)=0 ;
 	  }
 	}
-      } else if (beta != 1.0) {
+      } else if (beta != 1 ) {
 	for (i=nstart;i<n1;i++) {
 	  for (j=mstart;j<n2;j++) {
 	    O2SCL_IX2(C,i,j)*=beta;
@@ -1787,7 +1965,7 @@ namespace o2scl_cblas {
 	}
       }
 
-      if (alpha == 0.0) {
+      if (alpha == 0 ) {
 	return;
       }
 
@@ -1800,8 +1978,8 @@ namespace o2scl_cblas {
 
 	for (k=kstart;k<K;k++) {
 	  for (i=nstart;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(B,i,k);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(B,i,k);
+	    if (temp != 0 ) {
 	      for (j=mstart;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
 	      }
@@ -1815,7 +1993,7 @@ namespace o2scl_cblas {
 
 	for (i=nstart;i<n1;i++) {
 	  for (j=mstart;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=kstart;k<K;k++) {
 	      temp+=O2SCL_IX2(B,i,k)*O2SCL_IX2(A,j,k);
 	    }
@@ -1827,8 +2005,8 @@ namespace o2scl_cblas {
 
 	for (k=kstart;k<K;k++) {
 	  for (i=nstart;i<n1;i++) {
-	    const double temp=alpha*O2SCL_IX2(B,k,i);
-	    if (temp != 0.0) {
+	    const fp_t temp=alpha*O2SCL_IX2(B,k,i);
+	    if (temp != 0 ) {
 	      for (j=mstart;j<n2;j++) {
 		O2SCL_IX2(C,i,j)+=temp*O2SCL_IX2(A,k,j);
 	      }
@@ -1840,7 +2018,7 @@ namespace o2scl_cblas {
 
 	for (i=nstart;i<n1;i++) {
 	  for (j=mstart;j<n2;j++) {
-	    double temp=0.0;
+	    fp_t temp=0 ;
 	    for (k=kstart;k<K;k++) {
 	      temp+=O2SCL_IX2(B,k,i)*O2SCL_IX2(A,j,k);
 	    }
@@ -1870,7 +2048,7 @@ namespace o2scl_cblas {
 		    const enum o2cblas_uplo Uplo, 
 		    const enum o2cblas_transpose TransA,
 		    const enum o2cblas_diag Diag, 
-		    const size_t M, const size_t N, const double alpha, 
+		    const size_t M, const size_t N, const fp_t alpha, 
 		    const mat_t &A, mat_t &B, size_t mstart, size_t nstart) {
     
     size_t i, j, k;
@@ -1903,7 +2081,7 @@ namespace o2scl_cblas {
       
       /* form  B := alpha * inv(TriU(A)) *B */
       
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j)*=alpha;
@@ -1913,14 +2091,14 @@ namespace o2scl_cblas {
       
       for (i = n1; i > istart && i--;) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j)/=Aii;
 	  }
 	}
 	
 	for (k = 0; k < i; k++) {
-	  const double Aki = O2SCL_IX2(A,k,i);
+	  const fp_t Aki = O2SCL_IX2(A,k,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,k,j)-=Aki*O2SCL_IX2(B,i,j);
 	  }
@@ -1932,7 +2110,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * inv(TriU(A))' *B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -1942,14 +2120,14 @@ namespace o2scl_cblas {
 
       for (i = istart; i < n1; i++) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = i + 1; k < n1; k++) {
-	  const double Aik = O2SCL_IX2(A,i,k);
+	  const fp_t Aik = O2SCL_IX2(A,i,k);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
 	  }
@@ -1961,7 +2139,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * inv(TriL(A))*B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -1971,14 +2149,14 @@ namespace o2scl_cblas {
 
       for (i = istart; i < n1; i++) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = i + 1; k < n1; k++) {
-	  const double Aki = O2SCL_IX2(A,k,i);
+	  const fp_t Aki = O2SCL_IX2(A,k,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aki * O2SCL_IX2(B,i,j);
 	  }
@@ -1991,7 +2169,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * TriL(A)' *B */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -2001,14 +2179,14 @@ namespace o2scl_cblas {
 
       for (i = n1; i > istart && i--;) {
 	if (nonunit) {
-	  double Aii = O2SCL_IX2(A,i,i);
+	  fp_t Aii = O2SCL_IX2(A,i,i);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) /= Aii;
 	  }
 	}
 
 	for (k = 0; k < i; k++) {
-	  const double Aik = O2SCL_IX2(A,i,k);
+	  const fp_t Aik = O2SCL_IX2(A,i,k);
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,k,j) -= Aik * O2SCL_IX2(B,i,j);
 	  }
@@ -2020,7 +2198,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriU(A)) */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -2031,12 +2209,12 @@ namespace o2scl_cblas {
       for (i = istart; i < n1; i++) {
 	for (j = jstart; j < n2; j++) {
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = j + 1; k < n2; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
 	    }
@@ -2049,7 +2227,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriU(A))' */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -2061,12 +2239,12 @@ namespace o2scl_cblas {
 	for (j = n2; j > jstart && j--;) {
 
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = 0; k < j; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
 	    }
@@ -2079,7 +2257,7 @@ namespace o2scl_cblas {
 
       /* form  B := alpha * B * inv(TriL(A)) */
 
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -2091,12 +2269,12 @@ namespace o2scl_cblas {
 	for (j = n2; j > jstart && j--;) {
 
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = 0; k < j; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,j,k) * Bij;
 	    }
@@ -2110,7 +2288,7 @@ namespace o2scl_cblas {
       /* form  B := alpha * B * inv(TriL(A))' */
 
       
-      if (alpha != 1.0) {
+      if (alpha != 1 ) {
 	for (i = istart; i < n1; i++) {
 	  for (j = jstart; j < n2; j++) {
 	    O2SCL_IX2(B,i,j) *= alpha;
@@ -2121,12 +2299,12 @@ namespace o2scl_cblas {
       for (i = istart; i < n1; i++) {
 	for (j = jstart; j < n2; j++) {
 	  if (nonunit) {
-	    double Ajj = O2SCL_IX2(A,j,j);
+	    fp_t Ajj = O2SCL_IX2(A,j,j);
 	    O2SCL_IX2(B,i,j) /= Ajj;
 	  }
 
 	  {
-	    double Bij = O2SCL_IX2(B,i,j);
+	    fp_t Bij = O2SCL_IX2(B,i,j);
 	    for (k = j + 1; k < n2; k++) {
 	      O2SCL_IX2(B,i,k) -= O2SCL_IX2(A,k,j) * Bij;
 	    }
