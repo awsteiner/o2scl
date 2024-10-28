@@ -94,7 +94,7 @@ namespace o2scl_linalg {
    */
   template <class mat_t=boost::numeric::ublas::matrix<double>,
             class mat_col_t=boost::numeric::ublas::matrix_column<
-              boost::numeric::ublas::matrix<double> > >
+              boost::numeric::ublas::matrix<double> > > 
   class matrix_invert_det_LU : public matrix_invert_det<mat_t> {
     
   public:
@@ -105,7 +105,7 @@ namespace o2scl_linalg {
     virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A,p,sig);
+      LU_decomp<mat_t,double>(n,A,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
@@ -128,7 +128,7 @@ namespace o2scl_linalg {
       mat_t A2=A;
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A2,p,sig);
+      LU_decomp<mat_t,double>(n,A2,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
@@ -144,7 +144,7 @@ namespace o2scl_linalg {
       mat_t A2=A;
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A2,p,sig);
+      LU_decomp<mat_t,double>(n,A2,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);

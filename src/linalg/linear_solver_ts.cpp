@@ -62,7 +62,7 @@ int main(void) {
 	gm2(i,j)=1.0/(i+j+1);
       }
     }
-
+    
     /*
       cout << "A: " << endl;
       cout << gm1 << endl;
@@ -72,7 +72,7 @@ int main(void) {
 
     // -------------------------------------------------
 
-    linear_solver_LU<ubvector,ubmatrix> lus;
+    linear_solver_LU<ubvector,ubmatrix,double> lus;
     lus.solve(5,gm1,gv1,gv2);
 
     //cout << "x: " << endl;

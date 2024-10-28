@@ -119,6 +119,28 @@ int main(void) {
                                            "Cholesky inverse");
   t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,gm2,gm5,1.0e-12,
                                            "LU vs. Cholesky");
+
+  cout << "Test LU inverse with multiprecision (unfinished):" << endl;
+  {
+
+    cout << "Class matrix_invert_det_LU:" << endl;
+
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
+    ubmatrix um(5,5), umi(5,5);
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+	um(i,j)=1.0/(i+j+1);
+      }
+    }
+    
+    matrix_invert_det_LU<> mi;
+    mi.invert(5,um,umi);
+
+    matrix_out(cout,5,5,umi);
+    cout << endl;
+  }
+  
   
 #ifdef O2SCL_SET_ARMA
   

@@ -1264,7 +1264,7 @@ namespace o2scl_cblas {
   template<class vec_t, class vec2_t> 
   double ddot_subvec(const size_t N, const vec_t &X, const vec2_t &Y,
                    const size_t ie) {
-    return dot_subvec<vec_t,vec2_t>(N,X,Y,ie);
+    return dot_subvec<vec_t,vec2_t,double>(N,X,Y,ie);
   }
   
   /** \brief Compute the norm of the vector \c X beginning with 

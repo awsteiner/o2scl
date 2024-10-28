@@ -79,7 +79,7 @@ int main(void) {
       }
 
       gsl_linalg_LU_decomp(gm1,gp1,&sig);
-      LU_decomp(5,om1,op1,sig);
+      LU_decomp<ubmatrix,double>(5,om1,op1,sig);
 
       matrix_out(cout,5,5,om1);
       cout << endl;
@@ -140,8 +140,8 @@ int main(void) {
       // -------------------------------------------------
       // O2scl version of solve and refine
 
-      LU_decomp(5,om1,op1,sig);
-      LU_solve(5,om1,op1,ov1,ov2);
+      LU_decomp<ubmatrix,double>(5,om1,op1,sig);
+      LU_solve<ubmatrix,ubvector,ubvector>(5,om1,op1,ov1,ov2);
 
       dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,om2,ov1,0.0,ov3);
       t.test_rel_vec(5,ov2,ov3,1.0e-10,"solve 2 (paren)");
@@ -170,7 +170,7 @@ int main(void) {
       gsl_linalg_LU_decomp(gm1,gp1,&sig);
       gsl_linalg_LU_invert(gm1,gp1,gm2);
 
-      LU_decomp(5,om1,op1,sig);
+      LU_decomp<ubmatrix,double>(5,om1,op1,sig);
       LU_invert<ubmatrix,ubmatrix,ubmatrix_column>(5,om1,op1,om2);
       
       t.test_rel_nonzero_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-7,1.0e-14,

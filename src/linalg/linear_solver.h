@@ -46,39 +46,47 @@ namespace o2scl_linalg {
       :ref:`Linear Algebra` section of the User's Guide.
       \endverbatim
 
+      \comment
+      AWS, 10/28/24, actually this might be a good idea because
+      it also has an analytic inverse and it can demonstrate
+      multiprecision.
+      
       \future The test code uses a Hilbert matrix, which is known
       to be ill-conditioned, especially for the larger sizes. This
       should probably be changed.
+      \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
-    class linear_solver {
-
+           class mat_t=boost::numeric::ublas::matrix<double>> 
+  class linear_solver {
+    
   public:
-
-  virtual ~linear_solver() {}
-
-  /// Solve square linear system \f$ A x = b \f$ of size \c n
-  virtual void solve(size_t n, mat_t &a, vec_t &b, vec_t &x)=0;
+    
+    virtual ~linear_solver() {}
+    
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
+    virtual void solve(size_t n, mat_t &a, vec_t &b, vec_t &x)=0;
+    
   };
 
   /** \brief Generic linear solver using LU decomposition
    */
   template <class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
+            class mat_t=boost::numeric::ublas::matrix<double>,
+            class fp_t=double> 
     class linear_solver_LU : public linear_solver<vec_t, mat_t> {
     
   public:
     
   /// Solve square linear system \f$ A x = b \f$ of size \c n
-  virtual void solve(size_t n, mat_t &A, 
-		    vec_t &b, vec_t &x) {
-    int sig;
-    o2scl::permutation p(n);
-    LU_decomp(n,A,p,sig);
-    LU_solve(n,A,p,b,x);
-    return;
-  };
+    virtual void solve(size_t n, mat_t &A, 
+                       vec_t &b, vec_t &x) {
+      int sig;
+      o2scl::permutation p(n);
+      LU_decomp<mat_t,fp_t>(n,A,p,sig);
+      LU_solve<mat_t,vec_t,vec_t>(n,A,p,b,x);
+      return;
+    };
     
   virtual ~linear_solver_LU() {}
     
@@ -87,16 +95,17 @@ namespace o2scl_linalg {
   /** \brief Generic linear solver using QR decomposition
    */
   template <class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
+            class mat_t=boost::numeric::ublas::matrix<double>,
+            class fp_t=double> 
     class linear_solver_QR : public linear_solver<vec_t, mat_t> {
     
   public:
     
   /// Solve square linear system \f$ A x = b \f$ of size \c n
   virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
-    boost::numeric::ublas::vector<double> tau(n);
-    QR_decomp(n,n,A,tau);
-    QR_solve(n,A,tau,b,x);
+    boost::numeric::ublas::vector<fp_t> tau(n);
+    QR_decomp<mat_t,vec_t,fp_t>(n,n,A,tau);
+    QR_solve<mat_t,vec_t,vec_t,vec_t,fp_t>(n,A,tau,b,x);
     return;
   };
     
