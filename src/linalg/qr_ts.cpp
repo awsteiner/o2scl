@@ -77,7 +77,7 @@ int main(void) {
       }
 
       gsl_linalg_QR_decomp(gm1,gv1);
-      QR_decomp(5,5,om1,ov1);
+      QR_decomp<ubmatrix,ubvector,double>(5,5,om1,ov1);
       t.test_rel_mat(5,5,om1,gsl_matrix_wrap(gm1),1.0e-11,"qr decomp 1");
       t.test_rel_vec(5,ov1,gsl_vector_wrap(gv1),1.0e-11,"qr decomp 2");
 
@@ -113,7 +113,7 @@ int main(void) {
       // Test QTvec
 
       gsl_linalg_QR_QTvec(gm1,gv1,gv2);
-      QR_QTvec(5,5,om1,ov1,ov2);
+      QR_QTvec<ubmatrix,ubvector,ubvector,double>(5,5,om1,ov1,ov2);
       t.test_rel_vec(5,ov2,gsl_vector_wrap(gv2),1.0e-11,"qr qtvec 1");
 
       // Test solve
@@ -134,8 +134,9 @@ int main(void) {
       gsl_linalg_QR_decomp(gm1,gv2);
       gsl_linalg_QR_solve(gm1,gv2,gv1,gv3);
 
-      QR_decomp(5,5,om1,ov2);
-      QR_solve(5,om1,ov2,ov1,ov3);
+      QR_decomp<ubmatrix,ubvector,double>(5,5,om1,ov2);
+      QR_solve<ubmatrix,ubvector,ubvector,
+               ubvector,double>(5,om1,ov2,ov1,ov3);
 
       t.test_rel_vec(5,ov3,gsl_vector_wrap(gv3),1.0e-11,"qr solve 1");
 
@@ -159,8 +160,9 @@ int main(void) {
       gsl_linalg_QR_decomp(gm1,gv2);
       gsl_linalg_QR_unpack(gm1,gv2,gm2,gm3);
 
-      QR_decomp(5,5,om1,ov2);
-      QR_unpack(5,5,om1,ov2,om2,om3);
+      QR_decomp<ubmatrix,ubvector,double>(5,5,om1,ov2);
+      QR_unpack<ubmatrix,ubmatrix,ubmatrix,ubvector,double>
+        (5,5,om1,ov2,om2,om3);
 
       t.test_rel_mat(5,5,om2,gsl_matrix_wrap(gm2),1.0e-11,"qr decomp 5");
       t.test_rel_mat(5,5,om3,gsl_matrix_wrap(gm3),1.0e-11,"qr decomp 6");

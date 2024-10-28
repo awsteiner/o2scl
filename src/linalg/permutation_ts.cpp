@@ -63,7 +63,7 @@ int main(void) {
   a[3]=8.0;
   a[4]=5.0;
 
-  p.apply(a);
+  p.apply<ubvector,double>(a);
 
   // Apply inverse permutation
 
@@ -73,7 +73,7 @@ int main(void) {
   a[3]=8.0;
   a[4]=5.0;
 
-  p.apply_inverse(a);
+  p.apply_inverse<ubvector,double>(a);
   permutation ip=p.inverse();
 
   c[0]=3.0;
@@ -82,7 +82,7 @@ int main(void) {
   c[3]=8.0;
   c[4]=5.0;
 
-  ip.apply(c);
+  ip.apply<ubvector,double>(c);
   t.test_rel_vec(5,a,c,1.0e-10,"inverse permutation");
 
   t.report();

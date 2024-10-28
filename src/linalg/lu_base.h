@@ -54,7 +54,7 @@ namespace o2scl_linalg {
     int diagonal_has_zero(const size_t N, mat_t &A) {
     
     for(size_t i=0;i<N;i++) {
-      if (O2SCL_IX2(A,i,i)==0.0) return 1;
+      if (O2SCL_IX2(A,i,i)==0 ) return 1;
     }
     return 0;
   }
@@ -82,7 +82,7 @@ namespace o2scl_linalg {
       as done in GSL. (7/16/09 - I've tried this, and it doesn't
       seem to improve the speed significantly.)
   */
-  template<class mat_t>
+  template<class mat_t, class fp_t>
     int LU_decomp(const size_t N, mat_t &A, o2scl::permutation &p, 
 		  int &signum) {
     
@@ -94,11 +94,11 @@ namespace o2scl_linalg {
     for (j = 0; j < N - 1; j++) {
     
       /* Find maximum in the j-th column */
-      double ajj, max = fabs(O2SCL_IX2(A,j,j));
+      fp_t ajj, max = fabs(O2SCL_IX2(A,j,j));
       size_t i_pivot = j;
       
       for (i = j + 1; i < N; i++) {
-	double aij = fabs (O2SCL_IX2(A,i,j));
+	fp_t aij = fabs (O2SCL_IX2(A,i,j));
       
 	if (aij > max) {
 	  max = aij;
@@ -109,7 +109,7 @@ namespace o2scl_linalg {
       if (i_pivot != j) {
 
 	// Swap rows j and i_pivot
-	double temp;
+	fp_t temp;
 	for (k=0;k<N;k++) {
 	  temp=O2SCL_IX2(A,j,k);
 	  O2SCL_IX2(A,j,k)=O2SCL_IX2(A,i_pivot,k);
@@ -121,13 +121,13 @@ namespace o2scl_linalg {
     
       ajj = O2SCL_IX2(A,j,j);
       
-      if (ajj != 0.0) {
+      if (ajj != 0 ) {
 	for (i = j + 1; i < N; i++) {
-	  double aij = O2SCL_IX2(A,i,j) / ajj;
+	  fp_t aij = O2SCL_IX2(A,i,j) / ajj;
 	  O2SCL_IX2(A,i,j)=aij;
 	  for (k = j + 1; k < N; k++) {
-	    double aik = O2SCL_IX2(A,i,k);
-	    double ajk = O2SCL_IX2(A,j,k);
+	    fp_t aik = O2SCL_IX2(A,i,k);
+	    fp_t ajk = O2SCL_IX2(A,j,k);
 	    O2SCL_IX2(A,i,k)=aik - aij * ajk;
 	  }
 	}
@@ -241,7 +241,7 @@ namespace o2scl_linalg {
     }
 
     /* Apply permutation to RHS */
-    p.apply(x);
+    p.apply<vec_t,double>(x);
   
     /* Solve for c using forward-substitution, L c = P b */
     o2scl_cblas::dtrsv(o2scl_cblas::o2cblas_RowMajor,

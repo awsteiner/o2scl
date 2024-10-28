@@ -130,7 +130,7 @@ namespace o2scl {
       }
     }
   
-    perm2.apply_inverse(x);
+    perm2.apply_inverse<vec_t,double>(x);
     return;
   }
 
@@ -1245,7 +1245,9 @@ namespace o2scl {
     for(size_t i=0;i<ndata;i++) {
       qtf[i]=f[i];
     }
-    o2scl_linalg::QR_QTvec(ndata,nparm,r,tau,qtf);
+
+    o2scl_linalg::QR_QTvec<mat_t,vec_t,vec_t,double>
+      (ndata,nparm,r,tau,qtf);
     
     // [GSL] Compute norm of scaled gradient 
 

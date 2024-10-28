@@ -285,7 +285,7 @@ namespace o2scl {
     }
     
     /// Apply the permutation to a vector
-    template<class vec_t> int apply(vec_t &v) const {
+    template<class vec_t, class fp_t> int apply(vec_t &v) const {
       size_t i, k, pk;
       for(i=0;i<size_;i++) {
 	k=data[i];
@@ -296,9 +296,9 @@ namespace o2scl {
 	if (pk==i) continue;
 	// Shuffle the elements of the cycle
 	{
-	  double t=v[i];
+	  fp_t t=v[i];
 	  while (pk!=i) {
-	    double r1=v[pk];
+	    fp_t r1=v[pk];
 	    v[k]=r1;
 	    k=pk;
 	    pk=data[k];
@@ -310,7 +310,8 @@ namespace o2scl {
     }
 
     /// Apply the inverse permutation to a vector
-    template<class vec_t> int apply_inverse(vec_t &v) const {
+    template<class vec_t, class fp_t> int apply_inverse(vec_t &v)
+      const {
       size_t i, k, pk;
       for(i=0;i<size_;i++) {
 	k=data[i];
@@ -321,9 +322,9 @@ namespace o2scl {
 	if (pk==i) continue;
 	// Shuffle the elements of the cycle
 	{
-	  double t=v[k];
+	  fp_t t=v[k];
 	  while (pk!=i) {
-	    double r1=v[pk];
+	    fp_t r1=v[pk];
 	    v[pk]=t;
 	    t=r1;
 	    k=pk;

@@ -30,7 +30,7 @@ void blank_func3() {
   
 // (Armadillo specialization)
 template<>
-void o2scl_linalg::QR_decomp_unpack<arma::mat,arma::mat,arma::mat>
+void o2scl_linalg::QR_decomp_unpack<arma::mat,arma::mat,arma::mat,double>
 (const size_t M, const size_t N,arma::mat &A, arma::mat &Q, arma::mat &R) {
   arma::qr_econ(Q,R,A);
   return;
@@ -42,7 +42,7 @@ void o2scl_linalg::QR_decomp_unpack<arma::mat,arma::mat,arma::mat>
 // (Eigen specialization)
 template<>
 void o2scl_linalg::QR_decomp_unpack<Eigen::MatrixXd,Eigen::MatrixXd,
-				    Eigen::MatrixXd>
+				    Eigen::MatrixXd,double>
 (const size_t M, const size_t N, Eigen::MatrixXd &A, 
  Eigen::MatrixXd &Q, Eigen::MatrixXd &R) {
  
