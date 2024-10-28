@@ -32,6 +32,7 @@
 #include <cmath>
 #include <ctime>
 
+#include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/operation.hpp>
 
@@ -1329,6 +1330,10 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS, 10/28/24, These don't work yet I'm not sure why...
+  
   /// An Eigen specialization for \ref interpm_krige_optim
   typedef interpm_krige_optim
   <class vec_t=boost::numeric::ublas::vector<double>,
@@ -1337,8 +1342,8 @@ namespace o2scl {
    <o2scl::const_matrix_view_table<>>, 
    class mat_y_t=o2scl::matrix_view_table<>,
    class mat_y_col_t=const matrix_column_gen<
-     o2scl::matrix_view_table<>>,
-   Eigen::MatrixXd,matrix_invert_det_eigen<> > interpm_krige_optim_eigen;
+     o2scl::matrix_view_table<>>,Eigen::MatrixXd,
+   o2scl_linalg::matrix_invert_det_eigen<> > interpm_krige_optim_eigen;
   
   /// An Armadillo specialization for \ref interpm_krige_optim
   typedef interpm_krige_optim
@@ -1348,9 +1353,10 @@ namespace o2scl {
    <o2scl::const_matrix_view_table<>>, 
    class mat_y_t=o2scl::matrix_view_table<>,
    class mat_y_col_t=const matrix_column_gen<
-     o2scl::matrix_view_table<>>,
-   arma::mat,
-   matrix_invert_det_sympd_arma<> > interpm_krige_optim_arma;
+     o2scl::matrix_view_table<>>,arma::mat,
+   o2scl_linalg::matrix_invert_det_sympd_arma<> > interpm_krige_optim_arma;
+
+#endif
   
 }
     
