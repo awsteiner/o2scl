@@ -36,6 +36,8 @@
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
+typedef boost::numeric::ublas::vector<long double> ubvector_ld;
+typedef boost::numeric::ublas::matrix<long double> ubmatrix_ld;
 
 using namespace std;
 using namespace o2scl;
@@ -120,7 +122,7 @@ int main(void) {
   t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,gm2,gm5,1.0e-12,
                                            "LU vs. Cholesky");
 
-  cout << "Test LU inverse with multiprecision (unfinished):" << endl;
+  cout << "Test LU inverse with multiprecision:" << endl;
   {
 
     cout << "Class matrix_invert_det_LU:" << endl;
@@ -138,6 +140,32 @@ int main(void) {
     mi.invert(5,um,umi);
 
     matrix_out(cout,5,5,umi);
+    cout << dtos(umi(1,0),0) << endl;
+    cout << dtos(umi(2,1),0) << endl;
+    cout << endl;
+  }
+  {
+
+    cout << "Class matrix_invert_det_LU (long double):" << endl;
+
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
+    ubmatrix_ld um(5,5), umi(5,5);
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+	um(i,j)=1.0L/(i+j+1);
+      }
+    }
+    
+    matrix_invert_det_LU<boost::numeric::ublas::matrix<long double>,
+                         boost::numeric::ublas::matrix_column<
+                           boost::numeric::ublas::matrix<long double> >,
+                         long double> mi;
+    mi.invert(5,um,umi);
+
+    matrix_out(cout,5,5,umi);
+    cout << dtos(umi(1,0),0) << endl;
+    cout << dtos(umi(2,1),0) << endl;
     cout << endl;
   }
   
