@@ -61,42 +61,41 @@ WORKDIR /opt
 # We have to fix the version for the numpy installation package before
 # we install h5py (since h5py requires numpy). We cannot use later
 # versions of numpy because of restrictions from tensorflow. 
-RUN pip3 install --break-system-packages numpy==1.26.4
+RUN pip3 install --break-system-packages numpy==2.0.1
 
 # Ensure h5py uses the updated version of HDF5
 RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
-  --no-binary=h5py h5py==3.11.0
+  --no-binary=h5py h5py==3.12.1
 
 # Install the remaining python packages from the requirements file.
 # The normflows package includes extra nvidia packages, and pipdeptree
 # includes a dependency on pip, so those are installed separately.
 
-#COPY v0.930a4_u24.04_req.txt ./
-#RUN pip3 install --break-system-packages -r v0.930a4_u24.04_req.txt
-#RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
-#RUN pip3 install --break-system-packages torch==2.4.1 \
-#  --index-url https://download.pytorch.org/whl/cpu
+COPY v0.930a5_u24.04_req.txt ./
+RUN pip3 install --break-system-packages -r v0.930a5_u24.04_req.txt
+RUN pip3 install --break-system-packages torch==2.4.1 \
+  --index-url https://download.pytorch.org/whl/cpu
 
 # This is the set of commands used to construct the original
 # requirements file
 #
-RUN pip3 install --break-system-packages pytest Pillow tensorflow-cpu \
-  numpy scipy matplotlib yt scikit-learn keras
-FROM working
-RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
+#RUN pip3 install --break-system-packages pytest Pillow tensorflow-cpu \
+#  numpy scipy matplotlib yt scikit-learn keras
+#FROM working
+#RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
 # This avoids all of the GPU libraries we don't need
-RUN pip3 install --break-system-packages torch==2.5.1 \
-  --index-url https://download.pytorch.org/whl/cpu
-RUN pip3 freeze > v0.930a4_u24.04_req.txt
-RUN cat v0.930a4_u24.04_req.txt
-RUN XXX
+#RUN pip3 install --break-system-packages torch==2.5.1 \
+#  --index-url https://download.pytorch.org/whl/cpu
+#RUN pip3 freeze > v0.930a5_u24.04_req.txt
+#RUN cat v0.930a5_u24.04_req.txt
+#RUN XXX
 
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout d50d188e5 && autoreconf -i
+RUN git fetch && git pull && git checkout 76b46684be404 && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -112,7 +111,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
 RUN git fetch && git pull && \
-  git checkout 7b29beab96 && pip3 install --break-system-packages . 
+  git checkout 9f105bdd5f01 pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately
