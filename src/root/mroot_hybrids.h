@@ -930,7 +930,7 @@ namespace o2scl {
           }
         }
       
-        o2scl_linalg::QR_decomp_unpack<ubmatrix,ubmatrix,ubmatrix,double>
+        o2scl_linalg::QR_decomp_unpack<mat_t,mat_t,mat_t,double>
           (dim,dim,this->J,this->q,this->r);
 
         return success;
@@ -943,7 +943,7 @@ namespace o2scl {
 
       /* Rank-1 update of the jacobian Q'R'=Q(R+w v^T) */
     
-      o2scl_linalg::QR_update<ubmatrix,ubmatrix,ubvector,
+      o2scl_linalg::QR_update<mat_t,mat_t,ubvector,
         ubvector,double>(dim,dim,q,r,w,v);
 
       /* No progress as measured by jacobian evaluations */
@@ -1110,7 +1110,7 @@ namespace o2scl {
       delta=compute_delta(dim,diag,x);
   
       /* Factorize J into QR decomposition */
-      o2scl_linalg::QR_decomp_unpack<ubmatrix,ubmatrix,ubmatrix,double>
+      o2scl_linalg::QR_decomp_unpack<mat_t,mat_t,mat_t,double>
         (dim,dim,this->J,this->q,this->r);
       set_called=true;
       jac_given=false;
