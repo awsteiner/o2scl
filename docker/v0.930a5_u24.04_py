@@ -93,12 +93,12 @@ RUN pip3 install --break-system-packages torch==2.4.1 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout 76b46684be404 && autoreconf -i
+RUN git fetch && git pull && git checkout dea4181636c1 && autoreconf -i
 
 # We disable static to keep the image small
 
 RUN LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static
-RUN make blank-doc && make && make install && make distclean
+RUN make blank-doc && make && make install 
 
 WORKDIR /opt
 ENV LD_LIBRARY_PATH /usr/local/lib
@@ -109,7 +109,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
 RUN git fetch && git pull && \
-  git checkout 9f105bdd5f01 pip3 install --break-system-packages . 
+  git checkout 8ebcd4a9eda && pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately
@@ -121,6 +121,15 @@ ENV O2SCL_ADDL_LIBS /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
 
 WORKDIR /
 RUN acol -h && acol -v && o2graph -h && o2graph -v
+
+# ───────────────────────────────────────────────────────────────────
+# Run tests
+
+WORKDIR /opt/o2scl
+RUN make check && make o2scl-examples
+WORKDIR /opt/o2sclpy
+RUN make testq
+
 
 
 

@@ -44,11 +44,9 @@ normflows==1.7.3
 numpy==1.26.4
 opt_einsum==3.4.0
 optree==0.13.0
-packaging==24.0
 parso==0.8.4
 pexpect==4.9.0
 pillow==11.0.0
-pipdeptree==2.23.4
 pluggy==1.5.0
 prompt_toolkit==3.0.48
 protobuf==5.28.3
