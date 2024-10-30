@@ -24,9 +24,7 @@ RUN apt-get -y update && apt-get \
 # ───────────────────────────────────────────────────────────────────
 # The tensorflow package is compiled with HDF5 1.14.2, so we install
 # that instead of the Ubuntu package in order to ensure we're matching
-# HDF5 libraries. The HDF group doesn't provide a direct download link,
-# so I'm using a temporary download link from awsteiner.org, which
-# may have to be changed in the future. 
+# HDF5 libraries. 
 
 WORKDIR /opt
 RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_2/hdf5-1_14_2.tar.gz" \
