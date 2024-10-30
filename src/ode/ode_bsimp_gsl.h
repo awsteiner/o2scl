@@ -328,7 +328,7 @@ namespace o2scl {
       
     o2scl::permutation p_vec(dim);
 
-    o2scl_linalg::LU_decomp(dim,a_mat,p_vec,signum);
+    o2scl_linalg::LU_decomp<ubmatrix,double>(dim,a_mat,p_vec,signum);
 
     /* Compute weighting factors */
     compute_weights(y,weight,dim);
@@ -339,7 +339,8 @@ namespace o2scl {
       y_temp[i]=h*(yp_loc[i]+h*dfdt_loc[i]);
     }
 
-    o2scl_linalg::LU_solve(dim,a_mat,p_vec,y_temp,delta_temp);
+    o2scl_linalg::LU_solve<ubmatrix,vec_t,vec_t>
+      (dim,a_mat,p_vec,y_temp,delta_temp);
       
     sum=0.0;
     for (i=0;i<dim;i++) {
