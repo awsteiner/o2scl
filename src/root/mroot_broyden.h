@@ -219,8 +219,8 @@ namespace o2scl {
       
       ajac->set_function(func);
       (*ajac)(nvar,x,nvar,f,lu);
-      
-      o2scl_linalg::LU_decomp<>(nvar,lu,perm,signum);
+
+      o2scl_linalg::LU_decomp<ubmatrix,double>(nvar,lu,perm,signum);
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
       (nvar,lu,perm,H);
       
@@ -305,7 +305,7 @@ namespace o2scl {
 	    }
 	  }
 	  
-	  o2scl_linalg::LU_decomp(nvar,lu,perm,signum);
+	  o2scl_linalg::LU_decomp<ubmatrix,double>(nvar,lu,perm,signum);
 	  o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
 	    (nvar,lu,perm,H);
 	  o2scl_linalg::LU_solve(nvar,lu,perm,f,p);
