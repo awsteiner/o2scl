@@ -272,7 +272,7 @@ namespace o2scl {
       }
       
       if (this->verbose>0) {
-	this->print_iter(nv,x0,fmin,iter,T,"anneal_gsl");
+	this->print_iter(nv,x0,fmin,iter,T,"anneal_para");
 	iter++;
 	if (this->verbose>1) {
 	  char ch;
