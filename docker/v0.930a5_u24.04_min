@@ -1,0 +1,49 @@
+FROM ubuntu:24.04 AS working
+LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
+LABEL description="A (nearly) minimal O2scl installation. \
+It includes readline, OpenMP and HDF5 from the \
+Ubuntu package with compression support."
+
+# ───────────────────────────────────────────────────────────────────
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# ───────────────────────────────────────────────────────────────────
+# Install apt packages
+
+# Base apt libraries for Ubuntu 24.04
+RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
+  gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2 \
+  libquadmath0
+
+# ───────────────────────────────────────────────────────────────────
+# Now install o2scl
+
+WORKDIR /opt
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git fetch && git pull && git checkout 119689090d && autoreconf -i
+
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP" \
+  ./configure --enable-openmp --disable-static
+RUN make && make install
+
+# ───────────────────────────────────────────────────────────────────
+# Run acol
+
+WORKDIR /opt
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN acol -h && acol -v
+
+# ───────────────────────────────────────────────────────────────────
+# Run tests
+
+WORKDIR /opt/o2scl
+RUN make check && make o2scl-examples && make distclean
+
+
+
+

@@ -379,6 +379,38 @@ all_v0.930a5_u24.04_py: build_v0.930a5_u24.04_py \
 	test2_v0.930a5_u24.04_py push_v0.930a5_u24.04_py 
 
 # ----------------------------------------------
+# Standard build 14: v0.930a5_u24.04_min
+
+build_v0.930a5_u24.04_min:
+	sudo docker build . \
+		-f v0.930a5_u24.04_min \
+		-t awsteiner/o2scl:v0.930a5_u24.04_min \
+		> v0.930a5_u24.04_min.out 2>&1
+
+#	sudo docker buildx build . \
+#		--target working \
+#		--no-cache \
+
+#test1_v0.930a5_u24.04_min:
+#	sudo docker run awsteiner/o2scl:v0.930a5_u24.04_min sh -c \
+#	"cd /opt/o2scl && make check && make o2scl-examples" \
+#		> test1_v0.930a5_u24.04_min.out 2>&1
+
+test2_v0.930a5_u24.04_min:
+	sudo docker run awsteiner/o2scl:v0.930a5_u24.04_min sh -c \
+		"cd /opt/o2sclpy && make testq" \
+		> test2_v0.930a5_u24.04_min.out 2>&1
+
+push_v0.930a5_u24.04_min:
+	sudo docker push awsteiner/o2scl:v0.930a5_u24.04_min
+
+pull_v0.930a5_u24.04_min:
+	sudo docker pull awsteiner/o2scl:v0.930a5_u24.04_min
+
+all_v0.930a5_u24.04_min: build_v0.930a5_u24.04_min \
+	test2_v0.930a5_u24.04_min push_v0.930a5_u24.04_min 
+
+# ----------------------------------------------
 # Other builds
 
 build_v0.929a1_muses:
