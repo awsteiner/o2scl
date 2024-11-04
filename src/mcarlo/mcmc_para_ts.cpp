@@ -785,7 +785,12 @@ int main(int argc, char *argv[]) {
     cout << endl;
     
   }
+  
+#ifdef O2SCL_SET_PYTHON
 
+  // AWS, 11/3/24, There is currently no classifier without python
+  // support.
+  
   if (true) {
     
     cout << "Test mcmc_para_emu: " << endl;
@@ -839,6 +844,8 @@ int main(int argc, char *argv[]) {
     mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
   }
+
+#endif
   
   tm.report();
   
