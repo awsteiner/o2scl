@@ -4104,13 +4104,16 @@ namespace o2scl {
 
   /** \brief MCMC with an emulator
 
-      \note OpenMP threading probably doesn't work yet.
+      \note OpenMP threading probably doesn't work yet. This class
+      requires Python support.
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_emu : public mcmc_para_cli<
     std::function<int(size_t,const vec_t &,double &,data_t &)>,fill_t,
     data_t,vec_t> {
 
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
   public:
     
     typedef std::function<int(size_t,const vec_t &,double &,data_t &)>
@@ -4664,7 +4667,8 @@ namespace o2scl {
         // Store the initial number of table rows
         n_rows_emuc_init=emuc_init.get_nlines();
         (this->scr_out) << "mcmc_para_emu::mcmc_emu(): ";
-        (this->scr_out) << "n_rows_emuc_init: " << n_rows_emuc_init << std::endl;
+        (this->scr_out) << "n_rows_emuc_init: " << n_rows_emuc_init
+			<< std::endl;
 
         // ──────────────────────────────────────────────────────────────
         // Reorganize the initial tables into a second copy which
@@ -4902,6 +4906,8 @@ namespace o2scl {
       return parent_t::mcmc_fill(n_params_local,low,high,point_ptr,
                                  fill,data);
     }
+
+#endif
     
   };
 

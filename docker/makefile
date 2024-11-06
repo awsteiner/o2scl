@@ -381,6 +381,9 @@ all_v0.930a5_u24.04_py: build_v0.930a5_u24.04_py \
 # ----------------------------------------------
 # Standard build 14: v0.930a5_u24.04_min
 
+#		--target working \
+#		--no-cache \
+
 build_v0.930a5_u24.04_min:
 	sudo docker build . \
 		-f v0.930a5_u24.04_min \
