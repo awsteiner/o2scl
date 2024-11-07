@@ -263,11 +263,11 @@ namespace o2scl {
 #ifndef O2SCL_NO_BOOST_MULTIPRECISION
   template <class fp1_t=double,
             class fp2_t=long double,
-            class fp3_t=long double> class part_cal_new
+            class fp3_t=cpp_dec_float_25> class part_cal_new
 #else
   template <class fp1_t=double,
             class fp2_t=long double,
-            class fp3_t=cpp_dec_float_25> class part_cal_new
+            class fp3_t=long double> class part_cal_new
 #endif
     {
     

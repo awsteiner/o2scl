@@ -472,6 +472,8 @@ namespace o2scl {
   */
   typedef fermion_nonrel_tl<> fermion_nonrel;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   /** \brief Long double version of 
       \ref o2scl::fermion_nonrel_tl 
   */
@@ -483,8 +485,6 @@ namespace o2scl {
                             cpp_dec_float_25>,
    root_brent_gsl<funct_ld,long double>,
    funct_ld,long double> fermion_nonrel_ld;
-  
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   /** \brief 25-digit version of 
       \ref o2scl::fermion_nonrel_tl 

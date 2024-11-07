@@ -29,7 +29,7 @@ namespace o2scl_linalg {
   
   // (Armadillo specialization)
   template<>
-    void QR_decomp_unpack<arma::mat,arma::mat,arma::mat>
+  void QR_decomp_unpack<arma::mat,arma::mat,arma::mat,double>
     (const size_t M, const size_t N, arma::mat &A, arma::mat &Q, 
      arma::mat &R);
 
@@ -42,7 +42,8 @@ namespace o2scl_linalg {
   
   // (Eigen specialization)
   template<>
-    void QR_decomp_unpack<Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd>
+    void QR_decomp_unpack<Eigen::MatrixXd,Eigen::MatrixXd,
+                          Eigen::MatrixXd,double>
     (const size_t M, const size_t N, Eigen::MatrixXd &A, 
      Eigen::MatrixXd &Q, Eigen::MatrixXd &R);
      

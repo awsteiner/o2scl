@@ -1058,6 +1058,8 @@ namespace o2scl {
   */
   typedef boson_rel_tl<> boson_rel;
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
   /** \brief Long double version of 
       \ref o2scl::boson_rel_tl 
   */
@@ -1065,8 +1067,6 @@ namespace o2scl {
   <bessel_K_exp_integ_boost<long double,
                             cpp_dec_float_25>,
    long double> boson_rel_ld;
-  
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   
   /** \brief 25-digit version of 
       \ref o2scl::boson_rel_tl 

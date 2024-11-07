@@ -176,6 +176,9 @@ namespace o2scl {
     int solve_int_multip(fp2_t &ux, func2_t &func,
                          double root_tol, double func_tol) {
       
+
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -374,7 +377,8 @@ namespace o2scl {
 	}
 	if (nier7==3) {
 	  info=7;
-	  O2SCL_CONV_RET("Iterations diverging in root_cern::solve_int_multip().",
+	  O2SCL_CONV2_RET("Iterations diverging in ",
+                          "root_cern::solve_int_multip().",
 			 exc_erunaway,this->err_nonconv);
 	}
 	if (nier8==4) {
@@ -395,6 +399,8 @@ namespace o2scl {
 			"in root_cern::solve_int_multip() (2).",exc_erange,
 			this->err_nonconv);
       }
+#endif
+      
       return 0;
     }
     
