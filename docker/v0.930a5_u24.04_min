@@ -25,7 +25,7 @@ WORKDIR /opt
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout 71985a4e8 && autoreconf -i
+RUN git fetch && git pull && git checkout d2204557501 && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12" \
   ./configure --enable-openmp --disable-static
