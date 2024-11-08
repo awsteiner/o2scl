@@ -46,6 +46,8 @@
 
 namespace o2scl {
 
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
   /** \brief Multidimensional interpolation interface for python
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
@@ -53,8 +55,6 @@ namespace o2scl {
            class mat_y_t=o2scl::matrix_view_table_transpose<> >
   class interpm_python :
     public interpm_base<vec_t,mat_x_t,mat_y_t> {
-    
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
     
   protected:
 
@@ -106,12 +106,8 @@ namespace o2scl {
     /// Python options
     std::string c_options;
     
-#endif
-    
   public:
 
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
-    
     /** \brief Specify the Python module and function
      */
     interpm_python(std::string class_name="",
@@ -248,15 +244,11 @@ namespace o2scl {
       return 0;
     }
     
-#endif
-    
     /** \brief Set the data to be interpolated
      */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y) {
 
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
-      
       tensor<> tin, tout;
       std::vector<size_t> in_size={n_pts,n_in}, out_size={n_pts,n_out};
       tin.resize(2,in_size);
@@ -274,17 +266,8 @@ namespace o2scl {
       }
 
       return set_data_tensor(n_in,n_out,n_pts,tin,tout);
-
-#else
-
-      return 0;
-      
-#endif
-      
     }
 
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
-    
     /** \brief Set the data to be interpolated (tensor form)
      */
     int set_data_tensor(size_t n_in, size_t n_out, size_t n_pts,
@@ -746,8 +729,6 @@ namespace o2scl {
       return 0;
     }
     
-#endif
-    
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y
     */
@@ -755,19 +736,13 @@ namespace o2scl {
 
       int ret;
       
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
-      
       std::vector<double> x2(this->n_params), y2(this->n_outputs);
       vector_copy(this->n_params,x,x2);
       ret=eval_std_vec(x2,y2);
       vector_copy(this->n_outputs,y2,y);
 
-#endif
-      
       return ret;
     }
-    
-#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
     
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y and the uncertainties in \c y_unc
@@ -782,8 +757,6 @@ namespace o2scl {
       vector_copy(this->n_outputs,y_unc2,y_unc);
       return ret;
     }
-    
-#endif
     
   private:
 
