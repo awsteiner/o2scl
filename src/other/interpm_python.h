@@ -767,6 +767,8 @@ namespace o2scl {
       return ret;
     }
     
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y and the uncertainties in \c y_unc
     */
@@ -780,6 +782,8 @@ namespace o2scl {
       vector_copy(this->n_outputs,y_unc2,y_unc);
       return ret;
     }
+    
+#endif
     
   private:
 
