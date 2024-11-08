@@ -106,8 +106,12 @@ namespace o2scl {
     /// Python options
     std::string c_options;
     
+#endif
+    
   public:
 
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
     /** \brief Specify the Python module and function
      */
     interpm_python(std::string class_name="",
@@ -244,11 +248,15 @@ namespace o2scl {
       return 0;
     }
     
+#endif
+    
     /** \brief Set the data to be interpolated
      */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y) {
 
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+      
       tensor<> tin, tout;
       std::vector<size_t> in_size={n_pts,n_in}, out_size={n_pts,n_out};
       tin.resize(2,in_size);
@@ -266,8 +274,17 @@ namespace o2scl {
       }
 
       return set_data_tensor(n_in,n_out,n_pts,tin,tout);
+
+#else
+
+      return 0;
+      
+#endif
+      
     }
 
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+    
     /** \brief Set the data to be interpolated (tensor form)
      */
     int set_data_tensor(size_t n_in, size_t n_out, size_t n_pts,
@@ -729,14 +746,24 @@ namespace o2scl {
       return 0;
     }
     
+#endif
+    
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y
     */
     virtual int eval(const vec_t &x, vec_t &y) const {
+
+      int ret;
+      
+#if defined(O2SCL_SET_PYTHON) || defined(DOXYGEN)
+      
       std::vector<double> x2(this->n_params), y2(this->n_outputs);
       vector_copy(this->n_params,x,x2);
-      int ret=eval_std_vec(x2,y2);
+      ret=eval_std_vec(x2,y2);
       vector_copy(this->n_outputs,y2,y);
+
+#endif
+      
       return ret;
     }
     
@@ -759,7 +786,6 @@ namespace o2scl {
     interpm_python(const interpm_python &);
     interpm_python& operator=(const interpm_python&);
 
-#endif
 
   };
   
