@@ -765,6 +765,8 @@ namespace o2scl {
 
 
   };
+
+#endif
   
 }
     
