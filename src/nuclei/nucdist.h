@@ -31,20 +31,7 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
 
-//#ifdef DOXYGEN
-/* \brief Placeholder namespace for global functions in \o2p 
-
-   This namespace is created to help doxygen understand 
-   functions in \o2p that are in the \c o2scl namespace.
-   Functions documented here should be called using, for example,
-   \verbatim
-   o2scl::nucdist_set(dist,nm);
-   \endverbatim
-*/
-//namespace o2scl_part {
-//#else
 namespace o2scl {
-  //#endif
 
   /** \brief Set a distribution of nuclei from a mass formula
       and a function string
@@ -62,10 +49,6 @@ namespace o2scl {
                    std::string expr="1", int maxA=400,
                    bool include_neutron=false);
 
-  //#ifdef DOXYGEN
-  //}
-  //#else
 }
-//#endif
 
 #endif

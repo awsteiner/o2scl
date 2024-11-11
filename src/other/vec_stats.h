@@ -2840,6 +2840,88 @@ namespace o2scl {
   double kl_div_gaussian(double mean_prior, double mean_post,
                          double covar_prior, double covar_post);
   
+  /** \brief Compute the Gelman-Rubin statistic for a set of
+      vectors
+      
+      This function requires at least two vectors and all of the
+      vectors provided must have a length at least greater than two.
+      
+      An old recommendation by Gelman (2004) was that convergence is
+      indicated by R<1.1, subsequent works found but tighter
+      constraints may be required.
+      
+      Gelman (2004) is Gelman, A., Carlin, J. B., Stern, H. S., and
+      Rubin, D. B. (2004). Bayesian Data Analysis. Chapman & Hall/CRC,
+      Boca Raton, FL,.
+      
+      https://arxiv.org/pdf/1812.09384 may provide an interesting
+      alternative. 
+  */
+  template<class vec_t, class fp_t> fp_t mult_vector_gelman_rubin
+  (std::vector<vec_t> &v, int verbose=0) {
+    
+    size_t n=v.size();
+    if (n<2) {
+      O2SCL_ERR2("Must provide at least two vectors in ",
+                "mult_vector_gelman_rubin().",o2scl::exc_einval);
+    }
+    
+    // Determine the maximum vector length which is less than or
+    // equal to all of the vector lengths
+    size_t Lmax=v[0].size();
+    if (verbose>1) {
+      std::cout << "size 0: " << Lmax << std::endl;
+    }
+    for(size_t i=1;i<n;i++) {
+      if (v[i].size()<Lmax) Lmax=v[i].size();
+      if (verbose>1) {
+        std::cout << "size " << i << ": " << v[i].size() << " "
+                  << Lmax << std::endl;
+      }
+    }
+    if (Lmax<1) {
+      O2SCL_ERR2("All vectors must have at least two elements in ",
+                "mult_vector_gelman_rubin().",o2scl::exc_einval);
+    }
+    
+    // Double-precision version of Lmax 
+    fp_t L=((fp_t)Lmax);
+    
+    // Compute means and variances
+    std::vector<fp_t> means(n), vars(n);
+    if (verbose>1) {
+      std::cout << "i mean var" << std::endl;
+    }
+    for(size_t i=0;i<n;i++) {
+      means[i]=vector_mean<vec_t>(Lmax,v[i]);
+      vars[i]=vector_variance<vec_t>(Lmax,v[i],means[i]);
+      if (verbose>1) {
+        std::cout << i << " " << means[i] << " " << vars[i] << std::endl;
+      }
+    }
+    
+    // Finally, construct the GR statistic
+    fp_t mean_mean=vector_mean(n,means);
+    if (verbose>1) {
+      std::cout << "mean_mean: " << dtos(mean_mean,0) << std::endl;
+    }
+    fp_t B=0;
+    if (verbose>1) {
+      std::cout << "i B" << std::endl;
+    }
+    for(size_t i=0;i<n;i++) {
+      B+=pow(means[i]-mean_mean,2);
+      if (verbose>1) {
+        std::cout << i << " " << dtos(B,0) << std::endl;
+      }
+    }
+    B*=L/((fp_t)(n-1));
+    fp_t W=vector_mean(n,vars);
+    fp_t R=((L-1)/L*W+B/L)/W;
+    
+    return R;
+  }
+  
 }
 
 #endif

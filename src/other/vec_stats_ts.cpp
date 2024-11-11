@@ -459,6 +459,21 @@ int main(void) {
   }
     
 #endif    
+
+  if (true) {
+    vector<double> x1, x4;
+    rng<> r;
+    r.clock_seed();
+    for(size_t i=0;i<100;i++) {
+      x1.push_back(2.0+r.random());
+      x4.push_back(1.0/((double)(i+1))+2.0+r.random());
+    }
+    vector<vector<double>> xall;
+    xall.push_back(x1);
+    xall.push_back(x4);
+    double gr=mult_vector_gelman_rubin<vector<double>,double>(xall);
+    t.test_rel(gr,1.0,1.0,"gelman rubin");
+  }
   
   t.report();
   
