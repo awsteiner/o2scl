@@ -733,7 +733,7 @@ namespace o2scl {
         returning \c y
     */
     virtual int eval(const vec_t &x, vec_t &y) const {
-      import_array();
+      //import_array();
       std::vector<double> x2(this->n_params), y2(this->n_outputs);
       vector_copy(this->n_params,x,x2);
       int ret=eval_std_vec(x2,y2);
