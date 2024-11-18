@@ -660,6 +660,8 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision differentiation
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
     if (precision>50) {
 
       cpp_dec_float_100 d, dfdx, err;
@@ -787,6 +789,8 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       
     }
     
+#endif
+      
     double d, dfdx, err;
     convert_units<double> cu;
     function_to_fp_nothrow(val,d,cu);
@@ -1106,6 +1110,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision integration
 
+#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+    
     if (precision>50) {
       
       std::cerr << "Command 'ninteg' is unable to numerically "
@@ -1263,6 +1269,8 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
       return 0;
     
     }
+    
+#endif
     
     double d=0, err, lower_lim, upper_lim;
     convert_units<double> cu;
