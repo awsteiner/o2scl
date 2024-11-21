@@ -81,14 +81,14 @@ EXAMPLE_BASE = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nucleus_rmf.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_nstar_rot.scr \
 	ex_interp.scr ex_eos_gibbs.scr \
-	ex_fermion_summ.scr ex_lambda.scr
+	ex_fermion_summ.scr ex_lambda.scr ex_mcmc.scr
 
 # When Python is enabled, ex_mcmc_kde needs to run after ex_mcmc,
 # since it uses the ex_mcmc results to train the KDE
 if O2SCL_PYTHON
-EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr
+EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr ex_mcmc_nn.scr
 else
-EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc.scr
+EXAMPLE_PRGS = $(EXAMPLE_BASE) 
 endif
 
 
@@ -204,7 +204,7 @@ EXTRA_BASE = \
 	bm_polylog
 
 if O2SCL_PYTHON
-EXTRA_PROGRAMS = $(EXTRA_BASE) ex_mcmc_kde
+EXTRA_PROGRAMS = $(EXTRA_BASE) ex_mcmc_kde ex_mcmc_nn
 else
 EXTRA_PROGRAMS = $(EXTRA_BASE)
 endif
@@ -290,12 +290,20 @@ ex_mcmc_kde_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_mcmc_kde_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_kde_SOURCES = ex_mcmc_kde.cpp
 
+ex_mcmc_nn_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mcmc_nn_LDADD = $(ADDL_TEST_LIBS)
+ex_mcmc_nn_SOURCES = ex_mcmc_nn.cpp
+
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
 
-ex_mcmc_kde.scr: ex_mcmc ex_mcmc_kde
+ex_mcmc_kde.scr: ex_mcmc.scr ex_mcmc_kde
 	./ex_mcmc > ex_mcmc.scr
 	./ex_mcmc_kde > ex_mcmc_kde.scr
+
+ex_mcmc_nn.scr: ex_mcmc.scr ex_mcmc_nn
+	./ex_mcmc > ex_mcmc.scr
+	./ex_mcmc_nn > ex_mcmc_nn.scr
 
 # -------------------------------------------------------------------
 

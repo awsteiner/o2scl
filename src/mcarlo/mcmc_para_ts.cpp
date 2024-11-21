@@ -774,7 +774,7 @@ int main(int argc, char *argv[]) {
     hmc_fill_vec[0]=fh;
     
     mpc.mct_hmc.mcmc_fill(2,low_hmc,high_hmc,hmc_point_vec,
-                       hmc_fill_vec,data_vec_hmc);
+                          hmc_fill_vec,data_vec_hmc);
     
     std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct_hmc.get_table();
 

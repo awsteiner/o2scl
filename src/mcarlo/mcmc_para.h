@@ -566,7 +566,8 @@ namespace o2scl {
       double fv1, fv2, h;
 
       if (auto_grad.size()==0) {
-        O2SCL_ERR("Auto grad size 0.",o2scl::exc_einval);
+        O2SCL_ERR2("Auto grad size 0 in ",
+                  "mcmc_stepper_hmc::grad_pot().",o2scl::exc_einval);
       }
       
       // If the user can compute the gradients, then we end early.
@@ -584,7 +585,7 @@ namespace o2scl {
         return grad_failed;
       }
       
-      for(size_t i=0; i<n_params; i++) {
+      for(size_t i=0;i<n_params;i++) {
 
         // We need a copy because x is const
         vec_t x2=x;
@@ -787,7 +788,8 @@ namespace o2scl {
                            func_ret,verbose);
         if (func_ret==this->mcmc_skip) {
           // If it is out of bounds, reject the step
-          std::cout << "mcmc_stepper_hmc::step(): skip." << std::endl;
+          std::cout << "mcmc_stepper_hmc::step(): Skipping step "
+                    << "because we are out of bounds." << std::endl;
           accept=false;
           return;
         }
@@ -799,7 +801,8 @@ namespace o2scl {
           if (grad_ret!=0) {
             func_ret=grad_failed;
             accept=false;
-            std::cout << "mcmc_stepper_hmc::step(): grad failed."
+            std::cout << "mcmc_stepper_hmc::step(): "
+                      << "User-specified gradient failed."
                       << std::endl;
             return;
           }
@@ -809,7 +812,9 @@ namespace o2scl {
         grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
           func_ret=grad_failed;
-          std::cout << "mcmc_stepper_hmc::step(): grad failed 2." << std::endl;
+          std::cout << "mcmc_stepper_hmc::step(): "
+                    << "Finite-differencing gradient failed."
+                    << std::endl;
           accept=false;
           return;
         }
@@ -835,10 +840,11 @@ namespace o2scl {
       func_ret=f(n_params,next,w_next,dat);
       if (func_ret!=0) {
         accept=false;
-        std::cout << "mcmc_stepper_hmc::step(): func failed." << std::endl;
+        std::cout << "mcmc_stepper_hmc::step(): "
+                  << "Final function evaluation failed." << std::endl;
         return;
       }
-      
+
       // Evaluate the kinetic and potential energies
       double pot_curr=-w_current;
       double pot_next=-w_next;
@@ -1805,7 +1811,7 @@ namespace o2scl {
 #pragma omp for
 #endif
           for(size_t it=0;it<n_threads;it++) {
-            
+
             // Update the return value count
             if (func_ret[it]>=0 && ret_value_counts.size()>it && 
                 func_ret[it]<((int)ret_value_counts[it].size())) {
@@ -2821,6 +2827,11 @@ namespace o2scl {
      */
     bool store_rejects;
 
+    /** \brief If true, store function evaluations which have positive
+        return values
+     */
+    bool store_pos_rets
+    
     /** \brief If true, check rows (default true)
      */
     bool check_rows;
@@ -2895,6 +2906,7 @@ namespace o2scl {
         hf.set_szt("n_warm_up",this->n_warm_up);
         hf.sets("prefix",this->prefix);
         hf.seti("store_rejects",this->store_rejects);
+        hf.seti("store_pos_rets",this->store_pos_rets);
         hf.seti("table_sequence",this->table_sequence);
         hf.seti("user_seed",this->user_seed);
         hf.seti("verbose",this->verbose);
@@ -2947,6 +2959,7 @@ namespace o2scl {
       file_update_time=0.0;
       last_write_iters=0;
       store_rejects=false;
+      store_pos_rets=false;
       table_sequence=true;
       prev_read=false;
       table_prealloc=0;
@@ -3610,7 +3623,8 @@ namespace o2scl {
         }
       
         // If needed, add the line to the next row
-        if (func_ret==0 && (mcmc_accept || store_rejects)) {
+        if ((func_ret==0 || (store_pos_rets && func_ret>0)) &&
+            (mcmc_accept || store_rejects)) {
         
           if (next_row>=((int)(table->get_nlines()))) {
             O2SCL_ERR("Not enough space in table.",o2scl::exc_esanity);
@@ -3619,10 +3633,15 @@ namespace o2scl {
           std::vector<double> line;
           int fret=fill_line(pars,log_weight,line,dat,walker_ix,fill);
         
-          // For rejections, set the multiplier to -1.0 (it was set to
-          // 1.0 in the fill_line() call above)
-          if (store_rejects && mcmc_accept==false) {
-            line[3]=-1.0;
+          // For rejections, set the multiplier to be negative.
+          // Use -1.0 for MCMC rejections and -2.0 for other
+          // rejections.
+          if (mcmc_accept==false) {
+            if (func_ret==0) {
+              line[3]=-1.0;
+            } else {
+              line[3]=-2.0;
+            }
           }
         
           if (fret!=o2scl::success) {
@@ -4907,6 +4926,23 @@ namespace o2scl {
                                  fill,data);
     }
 
+    /** \brief Desc
+     */
+    virtual int mcmc_fill(size_t n_params_local, 
+                          vec_t &low, vec_t &high,
+                          std::vector<func_t> &func,
+                          std::vector<fill_t> &fill,
+                          std::vector<data_t> &data) {
+      if (n_retrain>0) {
+        O2SCL_ERR("Retraining requested but no emulator specified",
+                  o2scl::exc_einval);
+      }
+      // Set func_ptr to zero so add_line() knows it's not available
+      func_ptr=0;
+      return parent_t::mcmc_fill(n_params_local,low,high,func,
+                                 fill,data);
+    }
+    
 #endif
     
   };

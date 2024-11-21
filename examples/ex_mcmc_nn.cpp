@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner
+  Copyright (C) 2024, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,13 +21,9 @@
   ───────────────────────────────────────────────────────────────────
 */
 // sphinx-example-start
-/* Example: ex_mcmc_kde.cpp
+/* Example: ex_mcmc_nn.cpp
    ───────────────────────────────────────────────────────────────────
-   An example which demonstrates the generation of an arbitrary
-   distribution through Markov chain Monte Carlo using a conditional
-   probability distribution built using a KDE applied to previous
-   data. See "License Information" section of the documentation for
-   license information.
+   An example which demonstrates ..
 */
 #include <o2scl/mcmc_para.h>
 #include <o2scl/vec_stats.h>
@@ -47,14 +43,16 @@ typedef boost::numeric::ublas::vector<double> ubvector;
 
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
 
+typedef ubvector data_t;
+
 typedef std::function<int(size_t,const ubvector &,double &,
-			  std::vector<double> &)> point_funct;
+			  data_t &)> point_funct;
 
 typedef std::function<int(const ubvector &,double,std::vector<double> &,
-			  std::vector<double> &)> fill_funct;
+			  data_t &)> fill_funct;
 
 class mcmc_stepper_mh_record :
-  public mcmc_stepper_mh<point_funct,std::vector<double>,ubvector,
+  public mcmc_stepper_mh<point_funct,data_t,ubvector,
                          ubmatrix,prob_cond_mdim_indep<>> {
   
   public:
@@ -65,9 +63,10 @@ class mcmc_stepper_mh_record :
   }
   
   virtual void step(size_t i_thread, size_t n_params, point_funct &f,
-                    const ubvector &current, ubvector &next, double w_current,
-                    double &w_next, const ubvector &low, const ubvector &high,
-                    int &func_ret, bool &accept, std::vector<double> &dat,
+                    const ubvector &current, ubvector &next,
+                    double w_current, double &w_next,
+                    const ubvector &low, const ubvector &high,
+                    int &func_ret, bool &accept, data_t &dat,
                     rng<> &r, int verbose) {
     
     // Use proposal distribution and compute associated weight
@@ -103,7 +102,7 @@ class mcmc_stepper_mh_record :
 };
 
 /// The MCMC object
-mcmc_para_table<point_funct,fill_funct,std::vector<double>,ubvector> mct;
+mcmc_para_emu<point_funct,fill_funct,data_t,ubvector> mct;
 
 /** \brief A demonstration class for the MCMC example. This example
     could have been written with global functions, but we put them
@@ -113,19 +112,38 @@ class exc {
 
 public:
   
-  /** \brief A one-dimensional bimodal distribution
+  /** \brief A two-dimesional probability distribution
 
       Here, the variable 'log_weight' stores the natural logarithm of
       the objective function based on the parameters stored in \c pars.
       The object 'dat' stores any auxillary quantities which can be
       computed at every point in parameter space.
   */
-  int bimodal(size_t nv, const ubvector &pars, double &log_weight,
-	      std::vector<double> &dat) {
+  int test_func(size_t nv, const ubvector &pars, double &log_weight,
+                data_t &dat) {
     
     double x=pars[0];
-    log_weight=log(exp(-x*x)*(sin(x-1.4)+1.0));
-    dat[0]=x*x;
+    double y=pars[1];
+
+    /*
+      plot with:
+      o2graph -set fig_dict "dpi=250" -create table3d \
+      x grid:0,3,0.02 y grid:0,4,0.02 z \
+      "if(10*(x-1)*(x-1.5)*(x-0.5)>y-2,-(x-1)^2-(y-2)^2,0)" \
+      -den-plot z -show
+    */
+    
+    // Add a complicated nonlinear constraint
+    double cubic=10.0*(x-1.0)*(x-1.5)*(x-0.5);
+    if (cubic<y-2.0) return 1;
+    
+    // A simple two-dimensional Gaussian
+    log_weight=-pow(x-1.0,2.0)-pow(y-2.0,2.0);
+    
+    dat[0]=cubic;
+    // The constraint for the classifier
+    dat[1]=1.0;
+    
     return 0;
   }
 
@@ -133,8 +151,9 @@ public:
       stored in the table
   */
   int fill_line(const ubvector &pars, double log_weight, 
-		std::vector<double> &line, std::vector<double> &dat) {
+		std::vector<double> &line, data_t &dat) {
     line.push_back(dat[0]);
+    line.push_back(dat[1]);
     return 0;
   }
 
@@ -154,101 +173,117 @@ int main(int argc, char *argv[]) {
 
   // Parameter limits and initial points
 
-  ubvector low_bimodal(1), high_bimodal(1);
-  low_bimodal[0]=-5.0;
-  high_bimodal[0]=5.0;
+  ubvector low_tf(2), high_tf(2);
+  low_tf[0]=-5.0;
+  high_tf[0]=10.0;
+  low_tf[1]=-5.0;
+  high_tf[1]=10.0;
 
   // Function objects for the MCMC object
-  point_funct bimodal_func=std::bind
+  point_funct tf_func=std::bind
     (std::mem_fn<int(size_t,const ubvector &,double &,
-		     std::vector<double> &)>(&exc::bimodal),&e,
+		     data_t &)>(&exc::test_func),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
   fill_funct fill_func=std::bind
     (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
-		     std::vector<double> &)>(&exc::fill_line),&e,
+		     data_t &)>(&exc::fill_line),&e,
      std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
      std::placeholders::_4);
 
   // Create function object vectors
-  vector<point_funct> bimodal_vec;
-  bimodal_vec.push_back(bimodal_func);
+  vector<point_funct> tf_vec;
+  tf_vec.push_back(tf_func);
   vector<fill_funct> fill_vec;
   fill_vec.push_back(fill_func);
 
   // Create and allocate data objects
-  vector<std::vector<double> > data_vec(2);
-  data_vec[0].resize(1);
-  data_vec[1].resize(1);
+  vector<data_t> data_vec(2);
+  data_vec.resize(2);
+  data_vec[0].resize(2);
+  data_vec[1].resize(2);
 
-  // Compute exact value of <x^2>. The function format is a bit
-  // different so we use lambda expressions to construct the
-  // functions for the integrators. 
-  inte_qag_gsl<> iqg;
-  funct f=[e,data_vec](double x) mutable -> double {
-    ubvector u(1); double lw; u[0]=x; 
-    e.bimodal(1,u,lw,data_vec[0]); return exp(lw); };
-  funct fx2=[e,data_vec](double x) mutable -> double {
-    ubvector u(1); double lw; u[0]=x; 
-    e.bimodal(1,u,lw,data_vec[0]); return data_vec[0][0]*exp(lw); };
-  double exact=iqg.integ(fx2,low_bimodal[0],high_bimodal[0])/
-    iqg.integ(f,low_bimodal[0],high_bimodal[0]);
-  cout << "exact: " << exact << endl;
-  
   cout << "──────────────────────────────────────────────────────────"
        << endl;
-  cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
   // Set parameter names and units
-  vector<string> pnames={"x","x2"};
-  vector<string> punits={"",""};
+  vector<string> pnames={"x","y","cubic","const"};
+  vector<string> punits={"","","",""};
   mct.set_names_units(pnames,punits);
 
-  // Read the preliminary data from a file
-  hdf_file hf;
-  hf.open("ex_mcmc.o2");
-  table_units<> tab_in;
-  hdf_input(hf,tab_in,"indep");
-  hf.close();
+  // Run an initial HMC simulation
   
-  // Copy the table data to a tensor for use in kde_python.
-  // We need a copy for each thread because kde_python takes
-  // over the tensor data.
-  tensor<> ten_in;
-  vector<size_t> in_size={tab_in.get_nlines(),1};
+  shared_ptr<mcmc_stepper_hmc<point_funct,data_t,ubvector>> hmc_stepper
+    (new mcmc_stepper_hmc<point_funct,data_t,ubvector>);
+  mct.stepper=hmc_stepper;
+  hmc_stepper->mom_step.resize(1);
+  hmc_stepper->mom_step[0]=0.5;
+  hmc_stepper->epsilon=0.01;
+
+  mct.store_pos_rets=true;
+  mct.store_rejects=true;
+  mct.n_retrain=0;
+  mct.verbose=3;
+  mct.n_threads=1;
+  mct.max_iters=500;
+  mct.prefix="ex_mcmc_nn1";
+
+  // Run MCMC
+  mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  // Copy the table data to a tensor for use in the proposal
+  // distribution
+  tensor<> ten_in, ten_out;
+  vector<size_t> in_size={mct.table->get_nlines(),2};
+  ten_in.resize(2,in_size);
+  vector<size_t> class_size={mct.table->get_nlines(),1};
   ten_in.resize(2,in_size);
   
-  for(size_t i=0;i<tab_in.get_nlines();i++) {
+  for(size_t i=0;i<mct.table->get_nlines();i++) {
     vector<size_t> ix;
     ix={i,0};
-    ten_in.get(ix)=tab_in.get("x",i);
+    ten_in.get(ix)=mct.table->get("x",i);
+    ix={i,1};
+    ten_in.get(ix)=mct.table->get("y",i);
   }
 
-  // Train the KDE
-  vector<double> weights;
-  uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
-  vector<double> bw_array;
-  ug.vector(bw_array);
-  std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-  kp->set_function("o2sclpy",ten_in,
-                   bw_array,"verbose=0","kde_sklearn");
+  // Train the normalizing flows probability distribution
+  std::shared_ptr<nflows_python<>> np(new nflows_python<>);
+  np->set_function("o2sclpy",ten_in,"max_iter=200,verbose=0",
+                   "nflows_nsf",0);
+
+  // Set up the classifier
+  std::shared_ptr<classify_python
+                  <ubvector,ubvector_int,
+                   o2scl::const_matrix_view_table<>,
+                   o2scl::matrix_view_table<>>> cp
+    (new classify_python
+     <ubvector,ubvector_int,
+     o2scl::const_matrix_view_table<>,
+     o2scl::matrix_view_table<>>);
+  cp->set_functions("classify_sklearn_mlpc",
+                    ((std::string)"hlayers=[100,100],activation=")+
+                    "relu,verbose=1,max_iter=2000",1);
+  cp.set_data_tensor(2,1,N,tin,tout);
   
-  // Setting the KDE as the base distribution for the independent
-  // conditional probability.
-  shared_ptr<mcmc_stepper_mh_record> local_stepper
-    (new mcmc_stepper_mh_record);
-  mct.stepper=local_stepper;
-  local_stepper->proposal.resize(1);
-  local_stepper->proposal[0].set_base(kp);
+  // Use independence Metropolis-Hastings
+  mct.stepper=shared_ptr<mcmc_stepper_base<point_funct,data_t,ubvector>>
+    (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+     prob_cond_mdim_indep<>>);
+  mct.stepper->proposal.resize(1);
+  mct.stepper->proposal[0].set_base(np);
   
   // Set the MCMC parameters
+  mct.use_classifier=true;
   mct.max_iters=20000;
-  mct.prefix="ex_mcmc_kde";
+  mct.prefix="ex_mcmc_nn2";
   mct.n_threads=1;
   mct.verbose=3;
   
   // Perform MCMC
-  mct.mcmc_fill(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec,
+  mct.mcmc_fill(1,low_tf,high_tf,tf_vec,fill_vec,
                 data_vec);
 
   // Output acceptance and rejection rate
@@ -262,7 +297,7 @@ int main(int argc, char *argv[]) {
   t->delete_rows_func("mult<0.5");
 
   // Compute the autocorrelation length
-  std::vector<double> ac, ftom;
+  ubvector ac, ftom;
   o2scl::vector_autocorr_vector_mult(t->get_nlines(),
                                      (*t)["x2"],(*t)["mult"],ac);
   size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
@@ -301,6 +336,8 @@ int main(int argc, char *argv[]) {
   tm.test_rel(avg,exact,10.0*std/sqrt(indep.get_nlines()),"ex_mcmc");
   
   tm.report();
+
+#endif
   
   return 0;
 }
