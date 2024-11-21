@@ -31,7 +31,9 @@
 #include <o2scl/hdf_io.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/set_openmp.h>
-#include <o2scl/kde_python.h>
+#include <o2scl/nflows_python.h>
+#include <o2scl/interpm_python.h>
+#include <o2scl/classify_python.h>
 
 using namespace std;
 using namespace o2scl;
@@ -135,7 +137,6 @@ public:
     
     // Add a complicated nonlinear constraint
     double cubic=10.0*(x-1.0)*(x-1.5)*(x-0.5);
-    if (cubic<y-2.0) return 1;
     
     // A simple two-dimensional Gaussian
     log_weight=-pow(x-1.0,2.0)-pow(y-2.0,2.0);
@@ -143,6 +144,10 @@ public:
     dat[0]=cubic;
     // The constraint for the classifier
     dat[1]=1.0;
+
+    if (cubic<y-2.0) {
+      return 1;
+    }
     
     return 0;
   }
@@ -218,7 +223,7 @@ int main(int argc, char *argv[]) {
   mct.stepper=hmc_stepper;
   hmc_stepper->mom_step.resize(1);
   hmc_stepper->mom_step[0]=0.5;
-  hmc_stepper->epsilon=0.01;
+  hmc_stepper->epsilon=0.02;
 
   mct.store_pos_rets=true;
   mct.store_rejects=true;
@@ -231,22 +236,20 @@ int main(int argc, char *argv[]) {
   // Run MCMC
   mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   // Copy the table data to a tensor for use in the proposal
   // distribution
-  tensor<> ten_in, ten_out;
-  vector<size_t> in_size={mct.table->get_nlines(),2};
+  tensor<> ten_in;
+  vector<size_t> in_size={mct.get_table()->get_nlines(),2};
   ten_in.resize(2,in_size);
-  vector<size_t> class_size={mct.table->get_nlines(),1};
+  vector<size_t> class_size={mct.get_table()->get_nlines(),1};
   ten_in.resize(2,in_size);
   
-  for(size_t i=0;i<mct.table->get_nlines();i++) {
+  for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
     vector<size_t> ix;
     ix={i,0};
-    ten_in.get(ix)=mct.table->get("x",i);
+    ten_in.get(ix)=mct.get_table()->get("x",i);
     ix={i,1};
-    ten_in.get(ix)=mct.table->get("y",i);
+    ten_in.get(ix)=mct.get_table()->get("y",i);
   }
 
   // Train the normalizing flows probability distribution
@@ -266,7 +269,13 @@ int main(int argc, char *argv[]) {
   cp->set_functions("classify_sklearn_mlpc",
                     ((std::string)"hlayers=[100,100],activation=")+
                     "relu,verbose=1,max_iter=2000",1);
-  cp.set_data_tensor(2,1,N,tin,tout);
+  
+  o2scl::const_matrix_view_table<> cp_in(*(mct.get_table()),{"x","y"});
+  o2scl::matrix_view_table<>> cp_out(*(mct.get_table()),{"const"});
+  
+  cp.set_data(2,1,mct.get_table()->get_nlines(),cp_in,cp_out);
+  
+#ifdef O2SCL_NEVER_DEFINED
   
   // Use independence Metropolis-Hastings
   mct.stepper=shared_ptr<mcmc_stepper_base<point_funct,data_t,ubvector>>

@@ -114,29 +114,6 @@ namespace o2scl {
     
   public:
 
-    classify_python() {
-      
-      p_set_func=0;
-      p_eval_func=0;
-      p_set_args=0;
-      p_eval_args=0;
-      p_instance=0;
-      p_class=0;
-      p_module=0;
-      
-      c_set_func="";
-      c_eval_func="";
-      c_class_name="";
-      c_module="";
-      c_options="";
-      
-      verbose=0;
-      n_params=0;
-      n_outputs=0;
-      n_points=0;
-      err_nonconv=true;
-    }
-    
     /** \brief Specify the Python module and function
      */
     classify_python(std::string class_name="", std::string options="",

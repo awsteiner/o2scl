@@ -861,20 +861,21 @@ namespace o2scl {
       
       // Metropolis algorithm
       accept=false;
-      if (false) {
-        std::cout << "mcmc_stepper_hmc::step(): "
-                  << "r,exp(alpha),alpha: " << rx << " "
-                  << exp(pot_curr-pot_next+kin_curr-kin_next) << " "
-                  << pot_curr-pot_next+kin_curr-kin_next << " "
-                  << pot_curr << " " << pot_next << " " << kin_curr << " "
-                  << kin_next << std::endl;
-      }
+      
       // [Neal] if (runif(1) < exp(current_U-proposed_U+
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
       }
 
+      if (true) {
+        std::cout << "mcmc_stepper_hmc::step(): "
+                  << pot_curr << " " << pot_next << " "
+                  << kin_curr << " " << kin_next << " "
+                  << pot_curr-pot_next+kin_curr-kin_next << " "
+                  << accept << std::endl;
+      }
+      
       if (false) {
         std::cout << "mcmc_stepper_hmc::step(): "
                   << "x,y,w,f,accept: " << next[0] << " "
@@ -2830,7 +2831,7 @@ namespace o2scl {
     /** \brief If true, store function evaluations which have positive
         return values
      */
-    bool store_pos_rets
+    bool store_pos_rets;
     
     /** \brief If true, check rows (default true)
      */
