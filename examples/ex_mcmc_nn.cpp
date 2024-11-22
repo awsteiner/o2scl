@@ -260,7 +260,7 @@ int main(int argc, char *argv[]) {
 
   // Train the normalizing flows probability distribution
   cout << "Training the proposal distribution." << endl;
-  std::shared_ptr<nflows_python<>> np(new nflows_python<>);
+  std::shared_ptr<nflows_python<ubvector>> np(new nflows_python<ubvector>);
   np->set_function("o2sclpy",ten_in,"max_iter=200,verbose=1",
                    "nflows_nsf",1);
   cout << "Done training the proposal distribution.\n" << endl;
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
   table<> tprop;
   tprop.line_of_names("x y");
   for(size_t i=0;i<200;i++) {
-    vector<double> p(2);
+    ubvector p(2);
     (*np)(p);
     tprop.line_of_data(2,p);
   }
@@ -357,78 +357,37 @@ int main(int argc, char *argv[]) {
   hf.close();
   exit(-1);
   
-#ifdef O2SCL_NEVER_DEFINED
-  
-  // Use independence Metropolis-Hastings
-  mct.stepper=shared_ptr<mcmc_stepper_base<point_funct,data_t,ubvector>>
+  // Use independence Metropolis-Hastings and use the normalizing
+  // flows object for the proposal distribution
+  std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+                                  prob_cond_mdim_indep<>>> indep_stepper
     (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
      prob_cond_mdim_indep<>>);
-  mct.stepper->proposal.resize(1);
-  mct.stepper->proposal[0].set_base(np);
+  mct.stepper=indep_stepper;
+  indep_stepper->proposal.resize(1);
+  indep_stepper->proposal[0].set_base(np);
   
   // Set the MCMC parameters
   mct.use_classifier=true;
-  mct.max_iters=20000;
-  mct.prefix="ex_mcmc_nn2";
+  mct.n_retrain=100;
+  mct.max_iters=20;
+  mct.prefix="ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
-  
-  // Perform MCMC
-  mct.mcmc_fill(1,low_tf,high_tf,tf_vec,fill_vec,
-                data_vec);
+  mct.show_emu=1;
 
-  // Output acceptance and rejection rate
-  cout << "n_accept, n_reject: " << mct.n_accept[0] << " "
-       << mct.n_reject[0] << endl;
+  // Set one of the neural networks as the emulator
+  mct.emu.resize(1);
+  mct.emu[0]=ip;
 
-  // Get results
-  shared_ptr<table_units<> > t=mct.get_table();
+  // Set one of the neural networks as the classifier
+  mct.emuc.resize(1);
+  mct.emuc[0]=cp;
+  
+  // Set up the file for ?
+  mct.emu_file="mcmc_nn1_0_out";
 
-  // Remove empty rows from table.
-  t->delete_rows_func("mult<0.5");
-
-  // Compute the autocorrelation length
-  ubvector ac, ftom;
-  o2scl::vector_autocorr_vector_mult(t->get_nlines(),
-                                     (*t)["x2"],(*t)["mult"],ac);
-  size_t ac_len=o2scl::vector_autocorr_tau(ac,ftom);
-  
-  // Create a separate table of statistically independent samples
-  table_units<> indep;
-  copy_table_thin_mcmc(ac_len,*t,indep,"mult");
-  
-  cout << "Autocorrelation length, effective sample size: "
-       << ac_len << " " << indep.get_nlines() << endl;
-  
-  // Write these samples to a file
-  hf.open_or_create("ex_mcmc_kde.o2");
-  hdf_output(hf,*t,"mcmc");
-  hdf_output(hf,indep,"indep");
-  hf.setd_vec("q_next",local_stepper->vq_next);
-  hf.setd_vec("w_next",local_stepper->vw_next);
-  hf.close();
-
-  // Compute the average of the correlated samples for comparison
-  double avg2=vector_mean(t->get_nlines(),(*t)["x2"]);
-  cout << "Average of correlated samples: " << avg2 << endl;
-  
-  // Use the independent samples to compute the final integral and
-  // compare to the exact result. Note that we must specify the
-  // number of elements in the vector, indep["x2"], because the
-  // table_units object often has space at the end to add extra rows.
-  
-  double avg=vector_mean(indep.get_nlines(),indep["x2"]);
-  double std=vector_stddev(indep.get_nlines(),indep["x2"]);
-  cout << "Average and std. dev. of uncorrelated samples: "
-       << avg << " " << std << endl;
-  cout << "Absolute difference: " << fabs(avg-exact) << endl;
-  cout << "Uncertainty in the average: "
-       << std/sqrt(indep.get_nlines()) << endl;
-  tm.test_rel(avg,exact,10.0*std/sqrt(indep.get_nlines()),"ex_mcmc");
-  
-  tm.report();
-
-#endif
+  mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   
   return 0;
 }
