@@ -332,7 +332,7 @@ int main(int argc, char *argv[]) {
      o2scl::matrix_view_table<>>);
   ip->set_functions("interpm_tf_dnn",
                     ((std::string)"hlayers=[100,100],activations=")+
-                    "['relu','relu'],verbose=1,epochs=2000",1);
+                    "[relu,relu],verbose=1,epochs=200",1);
   
   o2scl::const_matrix_view_table<> ip_in(*(mct.get_table()),{"x","y"});
   o2scl::matrix_view_table<> ip_out(*(mct.get_table()),{"log_wgt"});

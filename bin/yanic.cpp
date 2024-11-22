@@ -1169,7 +1169,7 @@ int main(int argc, char *argv[]) {
   // Close file
   fin.close();
 
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Post-process to handle function overloading
 
   // For each class, manually examine each pair of member functions to
@@ -1235,7 +1235,7 @@ int main(int argc, char *argv[]) {
   }
   
   // End of interface file parsing code
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create C++ header/source
 
   for(size_t kk=0;kk<2;kk++) {
@@ -2143,7 +2143,7 @@ int main(int argc, char *argv[]) {
 
   }
   
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create python source code
 
   ofstream fout;
@@ -3432,7 +3432,7 @@ int main(int argc, char *argv[]) {
 
   fout.close();
 
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create rst file for python documentation
 
   ofstream fout2;
