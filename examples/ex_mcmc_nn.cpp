@@ -146,6 +146,7 @@ public:
     dat[1]=1.0;
 
     if (cubic<y-2.0) {
+      dat[1]=0.0;
       return 1;
     }
     
@@ -235,6 +236,7 @@ int main(int argc, char *argv[]) {
 
   // Run MCMC
   mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
+  cout << endl;
 
   // Copy the table data to a tensor for use in the proposal
   // distribution
@@ -245,19 +247,39 @@ int main(int argc, char *argv[]) {
   ten_in.resize(2,in_size);
   
   for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
-    vector<size_t> ix;
-    ix={i,0};
-    ten_in.get(ix)=mct.get_table()->get("x",i);
-    ix={i,1};
-    ten_in.get(ix)=mct.get_table()->get("y",i);
+    // Only select lines which have mult greater than 0.5
+    // for training the proposal distribution.
+    if (mct.get_table()->get("mult",i)>0.5) {
+      vector<size_t> ix;
+      ix={i,0};
+      ten_in.get(ix)=mct.get_table()->get("x",i);
+      ix={i,1};
+      ten_in.get(ix)=mct.get_table()->get("y",i);
+    }
   }
 
   // Train the normalizing flows probability distribution
+  cout << "Training the proposal distribution." << endl;
   std::shared_ptr<nflows_python<>> np(new nflows_python<>);
-  np->set_function("o2sclpy",ten_in,"max_iter=200,verbose=0",
-                   "nflows_nsf",0);
+  np->set_function("o2sclpy",ten_in,"max_iter=200,verbose=1",
+                   "nflows_nsf",1);
+  cout << "Done training the proposal distribution.\n" << endl;
+
+  // Sample the proposal distribution and store to a file
+  table<> tprop;
+  tprop.line_of_names("x y");
+  for(size_t i=0;i<200;i++) {
+    vector<double> p(2);
+    (*np)(p);
+    tprop.line_of_data(2,p);
+  }
+  hdf_file hf;
+  hf.open_or_create("ex_mcmc_nn2.o2");
+  hdf_output(hf,tprop,"tprop");
+  hf.close();
 
   // Set up the classifier
+  cout << "Training the classifier." << endl;
   std::shared_ptr<classify_python
                   <ubvector,ubvector_int,
                    o2scl::const_matrix_view_table<>,
@@ -268,12 +290,72 @@ int main(int argc, char *argv[]) {
      o2scl::matrix_view_table<>>);
   cp->set_functions("classify_sklearn_mlpc",
                     ((std::string)"hlayers=[100,100],activation=")+
-                    "relu,verbose=1,max_iter=2000",1);
+                    "relu,verbose=1,max_iter=2000,"+
+                    "n_iter_no_change=40,tol=1.0e-5",1);
   
   o2scl::const_matrix_view_table<> cp_in(*(mct.get_table()),{"x","y"});
-  o2scl::matrix_view_table<>> cp_out(*(mct.get_table()),{"const"});
+  o2scl::matrix_view_table<> cp_out(*(mct.get_table()),{"const"});
   
-  cp.set_data(2,1,mct.get_table()->get_nlines(),cp_in,cp_out);
+  cp->set_data(2,1,mct.get_table()->get_nlines(),cp_in,cp_out);
+  cout << "Done training the classifier.\n" << endl;
+
+  // Test the classifier by giving it random points
+  table<> tclass;
+  rng<> r;
+  tclass.line_of_names("x y c");
+  for(size_t i=0;i<200;i++) {
+    vector<double> in(2);
+    vector<int> out(1);
+    in[0]=r.random()*3.0;
+    in[1]=r.random()*4.0;
+    cp->eval_std_vec(in,out);
+    vector<double> line={in[0],in[1],(double)out[0]};
+    tclass.line_of_data(3,line);
+  }
+  hf.open("ex_mcmc_nn2.o2",true);
+  hdf_output(hf,tclass,"tclass");
+  hf.close();
+  
+  // Before we train the emulator, remove the points which don't satisfy
+  // the constraint
+  mct.get_table()->delete_rows_func("const<0.5");
+  
+  // Set up the emulator
+  cout << "Training the emulator." << endl;
+  std::shared_ptr<interpm_python
+                  <ubvector,
+                   o2scl::const_matrix_view_table<>,
+                   o2scl::matrix_view_table<>>> ip
+    (new interpm_python
+     <ubvector,
+     o2scl::const_matrix_view_table<>,
+     o2scl::matrix_view_table<>>);
+  ip->set_functions("interpm_tf_dnn",
+                    ((std::string)"hlayers=[100,100],activations=")+
+                    "['relu','relu'],verbose=1,epochs=2000",1);
+  
+  o2scl::const_matrix_view_table<> ip_in(*(mct.get_table()),{"x","y"});
+  o2scl::matrix_view_table<> ip_out(*(mct.get_table()),{"log_wgt"});
+  
+  ip->set_data(2,1,mct.get_table()->get_nlines(),ip_in,ip_out);
+  cout << "Done training the emulator\n." << endl;
+  
+  // Test the emulator by giving it random points
+  table<> temu;
+  temu.line_of_names("x y lw");
+  for(size_t i=0;i<200;i++) {
+    vector<double> in(2);
+    vector<double> out(1);
+    in[0]=r.random()*3.0;
+    in[1]=r.random()*4.0;
+    ip->eval_std_vec(in,out);
+    vector<double> line={in[0],in[1],out[0]};
+    temu.line_of_data(3,line);
+  }
+  hf.open("ex_mcmc_nn2.o2",true);
+  hdf_output(hf,temu,"temu");
+  hf.close();
+  exit(-1);
   
 #ifdef O2SCL_NEVER_DEFINED
   
