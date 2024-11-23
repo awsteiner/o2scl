@@ -97,9 +97,17 @@ class std::string
 |     | Parameters:
 |     | *s*: a Python bytes string
 |     """
-|     self.resize(len(s))
-|     for i in range(0,len(s)):
-|         self.__setitem__(i,s[i])
+|
+|     print('init_bytes(): converting s,len(s):',s,len(s))
+|     print('init_bytes(): string pointer:',self._ptr)
+|     f=self._link.o2scl.o2scl_char_p_to_string
+|     f.argtypes=[ctypes.c_int,ctypes.POINTER(ctypes.c_char),ctypes.c_void_p]
+|     f(ctypes.c_int(len(s)),ctypes.c_char_p(s),self._ptr)
+|     
+|     #self.resize(len(s))
+|     #for i in range(0,len(s)):
+|     #    self.__setitem__(i,s[i])
+| 
 |     return
 |
 | def to_bytes(self):
@@ -108,10 +116,23 @@ class std::string
 |
 |     Returns: a Python bytes string
 |     """
-|     ret=b''
-|     for i in range(0,self.length()):
-|         ret=ret+self.__getitem__(i)
-|     return ret
+|
+|     n=ctypes.c_int(self.length())
+|     print('to_bytes(): ',n)
+|     b=ctypes.create_string_buffer(self.length())
+|     f=self._link.o2scl.o2scl_string_to_char_p
+|     f.argtypes=[ctypes.c_void_p,
+|                 ctypes.POINTER(ctypes.c_int),
+|                 ctypes.POINTER(ctypes.c_char)]
+|     f(self._ptr,ctypes.byref(n),b)
+|     print('to_bytes(): result',b,ctypes.string_at(b))
+|     
+|     #ret=b''
+|     #for i in range(0,self.length()):
+|     #    ret=ret+self.__getitem__(i)
+|     #return ret
+| 
+|     return ctypes.string_at(b)
 #
 # ------------------------------------------------------
 #

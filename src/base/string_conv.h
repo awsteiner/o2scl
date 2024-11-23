@@ -465,9 +465,24 @@ namespace o2scl {
     void summary(std::ostream &out) const;
 
   };
-  
-  
+
 }
 
+extern "C" {
+  
+  /** \brief Copy characters from a pointer to a C++ string
+      
+      This function is used for the Python interface.
+  */
+  void o2scl_char_p_to_string(int n, char *p, void *strp);
+  
+  /** \brief Copy characters from C++ string to a pointer
+
+      This function is used for the Python interface.
+   */
+  void o2scl_string_to_char_p(void *strp, int *n, char *p);
+
+}
+  
 #endif
 

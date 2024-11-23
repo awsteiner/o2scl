@@ -785,3 +785,26 @@ void kwargs::summary(std::ostream &out) const {
   }
   return;
 }
+
+void o2scl_char_p_to_string(int n, char *p, void *strp) {
+  std::string &s=*((std::string *)strp);
+  std::cout << "cp2s: n, char *, void * " << n << " "
+            << p << " " << strp << std::endl;
+  s.resize(n);
+  for(int i=0;i<n;i++) {
+    s[i]=p[i];
+  }
+  return;
+}
+  
+void o2scl_string_to_char_p(void *strp, int *n, char *p) {
+  std::string &s=*((std::string *)strp);
+  std::cout << "s2cp: void *, int *, char * " << strp << " "
+            << n << " " << p << std::endl;
+  std::cout << "s2cp: *n " << *n << std::endl;
+  *n=s.length();
+  for(int i=0;i<(*n);i++) {
+    p[i]=s[i];
+  }
+  return;
+}
