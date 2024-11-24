@@ -2521,7 +2521,7 @@ int main(int argc, char *argv[]) {
           fout << "        func(self._ptr,value._s_ptr)" << endl;
         } else if (ifv.ift.name=="std::string") {
           fout << "        s_=o2sclpy.std_string()" << endl;
-          fout << "        s_.init_bytes(value)" << endl;
+          fout << "        s_.init_bytes(force_bytes(value))" << endl;
           fout << "        func(self._ptr,s_._ptr)" << endl;
         } else {
           fout << "        func(self._ptr,value._ptr)" << endl;
@@ -2728,7 +2728,8 @@ int main(int argc, char *argv[]) {
           fout << "        s_" << iff.args[k].name
                << "=o2sclpy.std_string()" << endl;
           fout << "        s_" << iff.args[k].name
-               << ".init_bytes(" << iff.args[k].name << ")" << endl;
+               << ".init_bytes(force_bytes(" << iff.args[k].name
+               << "))" << endl;
         }
       }
 
@@ -3332,9 +3333,12 @@ int main(int argc, char *argv[]) {
           //fout << "    " << iff.args[k].name
           //<< "._ptr=ctypes.c_void_p()" << endl;
         } else {
-          fout << "    " << iff.args[k].name
-               << "_=ctypes.c_char_p(force_bytes("
-               << iff.args[k].name << "))" << endl;
+          fout << "    " << "s_" << iff.args[k].name
+               << "=o2sclpy.std_string()" << endl;
+          fout << "    s_" << iff.args[k].name
+               << ".init_bytes(force_bytes("
+               << iff.args[k].name << "))"
+               << endl;
         }
       }
     }
@@ -3352,7 +3356,7 @@ int main(int argc, char *argv[]) {
     }
     if (iff.ret.name!="void") {
       if (iff.ret.name=="std::string") {
-        fout << "    func.restype=ctypes.c_char_p" << endl;
+        fout << "    func.restype=ctypes.c_void_p" << endl;
       } else {
 
         if (iff.ret.is_ctype()) {
@@ -3388,7 +3392,7 @@ int main(int argc, char *argv[]) {
         fout << "ctypes.c_void_p";
         //}
       } else if (iff.args[k].ift.name=="std::string") {
-        fout << "ctypes.c_char_p";
+        fout << "ctypes.c_void_p";
       } else {
         fout << "ctypes.c_" << iff.args[k].ift.name;
       }
@@ -3412,7 +3416,7 @@ int main(int argc, char *argv[]) {
         fout << iff.args[k].name << "._ptr";
         //}
       } else if (iff.args[k].ift.name=="std::string") {
-        fout << iff.args[k].name << "_";
+        fout << "s_" << iff.args[k].name << "._ptr";
       } else {
         fout << iff.args[k].name;
       }
