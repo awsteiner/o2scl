@@ -170,7 +170,7 @@ public:
     the type itself, \c prefix is used to store prefixes like "const"
     or "static" and \c suffix is used to store suffixes like "*", or
     "&".
- */
+*/
 class if_type : public if_base {
   
 public:
@@ -209,7 +209,7 @@ public:
   
   /** \brief Parse a vector string object as a type with a prefix,
       a suffix, and a name
-   */
+  */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
 
     if (start>=end) {
@@ -393,7 +393,7 @@ public:
     The name of the variable is stored in \c name, the type is
     stored in \c type, and a default value (if present) is 
     stored in \c value.
- */
+*/
 class if_var : public if_base {
   
 public:
@@ -411,7 +411,7 @@ public:
 
       Note that this does not set the python name because that 
       is specified on a different line in the interface file.
-   */
+  */
   void parse(vector<string> &vs) {
 
     if (vs.size()==0) {
@@ -1464,6 +1464,7 @@ int main(int argc, char *argv[]) {
             }
           }
         } else {
+          
           // AWS, 9/12/21: We have to skip tov_solve types because
           // they have no copy constructor. This is a temporary hack
           // which we need for now. Just using "const tov_solve
@@ -1471,40 +1472,42 @@ int main(int argc, char *argv[]) {
           // because that doesn't allow the user to change the
           // properties of the tov_solve object.
           if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
-          // Set function for other types
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.name
-               << "(void *vptr, void *p_v)";
-          if (header) {
-            fout << ";" << endl;
-          } else {
-            fout << " {" << endl;
-            fout << "  " << ifc.name << " *ptr=(" << ifc.name
-                 << " *)vptr;" << endl;
-            if (ifv.ift.is_shared_ptr()) {
-              // Shared pointers
-              fout << "  std::shared_ptr<" << ifv.ift.name
-                   << " > *p_tssp=(std::shared_ptr<"
-                   << ifv.ift.name << " > *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
-            } else if (ifv.ift.is_pointer()) {
-              // Other types
-              fout << "  " << ifv.ift.name << " *p_tsptr=("
-                   << ifv.ift.name << " *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=p_tsptr;" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
+            
+            // Set function for other types
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.name
+                 << "(void *vptr, void *p_v)";
+            
+            if (header) {
+              fout << ";" << endl;
             } else {
-              // Other types
-              fout << "  " << ifv.ift.name << " *p_tsot=("
-                   << ifv.ift.name << " *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=*(p_tsot);" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
+              fout << " {" << endl;
+              fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                   << " *)vptr;" << endl;
+              if (ifv.ift.is_shared_ptr()) {
+                // Shared pointers
+                fout << "  std::shared_ptr<" << ifv.ift.name
+                     << " > *p_tssp=(std::shared_ptr<"
+                     << ifv.ift.name << " > *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              } else if (ifv.ift.is_pointer()) {
+                // Other types
+                fout << "  " << ifv.ift.name << " *p_tsptr=("
+                     << ifv.ift.name << " *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=p_tsptr;" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              } else {
+                // Other types
+                fout << "  " << ifv.ift.name << " *p_tsot=("
+                     << ifv.ift.name << " *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=*(p_tsot);" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              }
             }
-          }
           }
         }
         fout << endl;
@@ -2406,8 +2409,7 @@ int main(int argc, char *argv[]) {
 
         fout << "    def get_" << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Get object of type :class:`"
-             << ifv.ift.name << "`" << endl;
+        fout << "        Get byte array object." << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -2487,13 +2489,19 @@ int main(int argc, char *argv[]) {
           fout << endl;
           
         }
-        
+
+        // See above for the explanation of why the TOV classes
+        // need a special case. 
       } else if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
         
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Set object of type :class:`"
-             << ifv.ift.name << "`" << endl;
+        if (ifv.ift.name=="std::string") {
+          fout << "        Set object from byte array" << endl;
+        } else {
+          fout << "        Set object of type :class:`"
+               << ifv.ift.name << "`" << endl;
+        }
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
@@ -2502,6 +2510,10 @@ int main(int argc, char *argv[]) {
         if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
             ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
           fout << "        func(self._ptr,value._s_ptr)" << endl;
+        } else if (ifv.ift.name=="std::string") {
+          fout << "        s_=o2sclpy.std_string()" << endl;
+          fout << "        s_.init_bytes(value)" << endl;
+          fout << "        func(self._ptr,s_._ptr)" << endl;
         } else {
           fout << "        func(self._ptr,value._ptr)" << endl;
         }
@@ -2628,8 +2640,8 @@ int main(int argc, char *argv[]) {
           return_docs=iff.ret.name+" object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
-             iff.ret.name!="std::vector<double>") ||
-            iff.ret.suffix!="&") {
+                    iff.ret.name!="std::vector<double>") ||
+                   iff.ret.suffix!="&") {
           return_docs="";
           restype_string="ctypes.c_"+iff.ret.name;
         } else if (iff.ret.suffix=="&") {
