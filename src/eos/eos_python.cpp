@@ -2285,15 +2285,17 @@ void *o2scl_nucleus_rmf_get_chden(void *vptr) {
   return ret;
 }
 
-void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external, int verbose) {
+void o2scl_skyrme_load_wrapper(void *ptr_sk, void *ptr_model, bool external, int verbose) {
   eos_had_skyrme *sk=(eos_had_skyrme *)ptr_sk;
-  skyrme_load(*sk,model,external,verbose);
+  std::string *model=(std::string *)ptr_model;
+  skyrme_load(*sk,*model,external,verbose);
   return;
 }
 
-void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external) {
+void o2scl_rmf_load_wrapper(void *ptr_rmf, void *ptr_model, bool external) {
   eos_had_rmf *rmf=(eos_had_rmf *)ptr_rmf;
-  rmf_load(*rmf,model,external);
+  std::string *model=(std::string *)ptr_model;
+  rmf_load(*rmf,*model,external);
   return;
 }
 

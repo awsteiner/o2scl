@@ -325,50 +325,50 @@ int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, void *ptr_file, voi
 
 int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, void *ptr_file, void *ptr_url, void *ptr_hash, void *ptr_dir);
 
-void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_table_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_output_table_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_input_table_units_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_table_units_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_output_table_units_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_input_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_input_table3d_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_table3d_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_output_table3d_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_output_table3d_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_input_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_input_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_output_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_output_uniform_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_input_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_input_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, char *name);
+void o2scl_hdf_hdf_output_tensor_grid_wrapper(void *ptr_hf, void *ptr_t, void *ptr_name);
 
-void o2scl_hdf_hdf_input_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name);
+void o2scl_hdf_hdf_input_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, void *ptr_name);
 
 void o2scl_hdf_hdf_input_n_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, void *ptr_name);
 
-void o2scl_hdf_hdf_output_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, char *name);
+void o2scl_hdf_hdf_output_vector_contour_line_wrapper(void *ptr_hf, void *ptr_v, void *ptr_name);
 
-int o2scl_hdf_value_spec_wrapper(char *spec, void *ptr_d, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_value_spec_wrapper(void *ptr_spec, void *ptr_d, int verbose=0, bool err_on_fail=true);
 
-int o2scl_hdf_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_vector_spec_std_vector_double__wrapper(void *ptr_spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
 
-int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(char *spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_strings_spec_std_vector_std_string__wrapper(void *ptr_spec, void *ptr_v, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_hdf_vector_spec_wrapper(char *spec);
+void *o2scl_hdf_vector_spec_wrapper(void *ptr_spec);
 
-int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(char *spec, void *ptr_v, bool use_regex=false, int verbose=0, bool err_on_fail=true);
+int o2scl_hdf_mult_vector_spec_std_vector_double__wrapper(void *ptr_spec, void *ptr_v, bool use_regex=false, int verbose=0, bool err_on_fail=true);
 
 }

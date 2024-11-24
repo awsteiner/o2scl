@@ -827,8 +827,8 @@ void *o2scl_nucleus_rmf_get_profiles(void *vptr);
 
 void *o2scl_nucleus_rmf_get_chden(void *vptr);
 
-void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external=false, int verbose=0);
+void o2scl_skyrme_load_wrapper(void *ptr_sk, void *ptr_model, bool external=false, int verbose=0);
 
-void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external=false);
+void o2scl_rmf_load_wrapper(void *ptr_rmf, void *ptr_model, bool external=false);
 
 }

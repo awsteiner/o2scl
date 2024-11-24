@@ -329,14 +329,14 @@ void *o2scl_create_nucmass_wlw();
 
 void o2scl_free_nucmass_wlw(void *vptr);
 
-void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only);
+void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only);
 
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, char *file_name, char *table_name, bool exp_only);
+void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only);
 
-void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, char *model, char *filename);
+void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename);
 
-void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, char *filename);
+void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
-void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, char *filename);
+void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
 }

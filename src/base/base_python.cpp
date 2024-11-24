@@ -234,9 +234,8 @@ void o2scl_std_vector_std_string__push_back(void *vptr, void *ptr_x) {
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
-  std::string *sptr=new std::string;
-  *sptr=ptr->operator[](n);
-  return sptr;
+  std::string ret=ptr->operator[](n);
+  return &ret; //x operator[]
 }
 
 void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, std::string *val) {
@@ -562,7 +561,7 @@ void *o2scl_lib_settings_class_get_data_dir(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_data_dir();
-  return sptr;
+  return sptr; //y get_data_dir
 }
 
 int o2scl_lib_settings_class_set_data_dir(void *vptr, void *ptr_dir) {
@@ -576,7 +575,7 @@ void *o2scl_lib_settings_class_get_doc_dir(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_doc_dir();
-  return sptr;
+  return sptr; //y get_doc_dir
 }
 
 int o2scl_lib_settings_class_set_doc_dir(void *vptr, void *ptr_dir) {
@@ -632,7 +631,7 @@ void *o2scl_lib_settings_class_system_type(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->system_type();
-  return sptr;
+  return sptr; //y system_type
 }
 
 bool o2scl_lib_settings_class_range_check(void *vptr) {
@@ -645,21 +644,21 @@ void *o2scl_lib_settings_class_time_compiled(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->time_compiled();
-  return sptr;
+  return sptr; //y time_compiled
 }
 
 void *o2scl_lib_settings_class_date_compiled(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->date_compiled();
-  return sptr;
+  return sptr; //y date_compiled
 }
 
 void *o2scl_lib_settings_class_o2scl_version(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->o2scl_version();
-  return sptr;
+  return sptr; //y o2scl_version
 }
 
 void o2scl_lib_settings_class_config_h_report(void *vptr) {
@@ -767,7 +766,7 @@ void *o2scl_table__get_column_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_column_name(icol);
-  return sptr;
+  return sptr; //y get_column_name
 }
 
 void o2scl_table__rename_column(void *vptr, void *ptr_src, void *ptr_dest) {
@@ -789,7 +788,7 @@ void *o2scl_table__get_sorted_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_sorted_name(icol);
-  return sptr;
+  return sptr; //y get_sorted_name
 }
 
 void o2scl_table__init_column(void *vptr, void *ptr_scol, double val) {
@@ -1160,7 +1159,7 @@ void *o2scl_table_units__get_unit(void *vptr, void *ptr_col) {
   std::string *col=(std::string *)ptr_col;
   std::string *sptr=new std::string;
   *sptr=ptr->get_unit(*col);
-  return sptr;
+  return sptr; //y get_unit
 }
 
 void o2scl_table_units__line_of_units(void *vptr, void *ptr_unit_line) {
@@ -1452,14 +1451,14 @@ void *o2scl_table3d_get_x_name(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_x_name();
-  return sptr;
+  return sptr; //y get_x_name
 }
 
 void *o2scl_table3d_get_y_name(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_y_name();
-  return sptr;
+  return sptr; //y get_y_name
 }
 
 void o2scl_table3d_set_x_name(void *vptr, void *ptr_name) {
@@ -1516,7 +1515,7 @@ void *o2scl_table3d_get_slice_name(void *vptr, size_t i) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_slice_name(i);
-  return sptr;
+  return sptr; //y get_slice_name
 }
 
 void o2scl_table3d_new_slice(void *vptr, void *ptr_slice) {
@@ -3176,7 +3175,7 @@ void *o2scl_format_float_convert(void *vptr, double x, bool debug) {
   format_float *ptr=(format_float *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->convert(x,debug);
-  return sptr;
+  return sptr; //y convert
 }
 
 void *o2scl_create_interp_vec_std_vector_double_() {
@@ -3353,175 +3352,175 @@ void *o2scl_terminal_hrule(void *vptr, size_t n) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->hrule(n);
-  return sptr;
+  return sptr; //y hrule
 }
 
 void *o2scl_terminal_cyan_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->cyan_fg();
-  return sptr;
+  return sptr; //y cyan_fg
 }
 
 void *o2scl_terminal_magenta_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->magenta_fg();
-  return sptr;
+  return sptr; //y magenta_fg
 }
 
 void *o2scl_terminal_yellow_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->yellow_fg();
-  return sptr;
+  return sptr; //y yellow_fg
 }
 
 void *o2scl_terminal_red_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->red_fg();
-  return sptr;
+  return sptr; //y red_fg
 }
 
 void *o2scl_terminal_green_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->green_fg();
-  return sptr;
+  return sptr; //y green_fg
 }
 
 void *o2scl_terminal_blue_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->blue_fg();
-  return sptr;
+  return sptr; //y blue_fg
 }
 
 void *o2scl_terminal_cyan_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->cyan_bg();
-  return sptr;
+  return sptr; //y cyan_bg
 }
 
 void *o2scl_terminal_magenta_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->magenta_bg();
-  return sptr;
+  return sptr; //y magenta_bg
 }
 
 void *o2scl_terminal_yellow_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->yellow_bg();
-  return sptr;
+  return sptr; //y yellow_bg
 }
 
 void *o2scl_terminal_red_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->red_bg();
-  return sptr;
+  return sptr; //y red_bg
 }
 
 void *o2scl_terminal_green_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->green_bg();
-  return sptr;
+  return sptr; //y green_bg
 }
 
 void *o2scl_terminal_blue_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->blue_bg();
-  return sptr;
+  return sptr; //y blue_bg
 }
 
 void *o2scl_terminal_default_fgbg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->default_fgbg();
-  return sptr;
+  return sptr; //y default_fgbg
 }
 
 void *o2scl_terminal_bold(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->bold();
-  return sptr;
+  return sptr; //y bold
 }
 
 void *o2scl_terminal_eight_bit_fg(void *vptr, short col) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_fg(col);
-  return sptr;
+  return sptr; //y eight_bit_fg
 }
 
 void *o2scl_terminal_eight_bit_bg(void *vptr, short col) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_bg(col);
-  return sptr;
+  return sptr; //y eight_bit_bg
 }
 
 void *o2scl_terminal_lowint(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->lowint();
-  return sptr;
+  return sptr; //y lowint
 }
 
 void *o2scl_terminal_underline(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->underline();
-  return sptr;
+  return sptr; //y underline
 }
 
 void *o2scl_terminal_reverse(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->reverse();
-  return sptr;
+  return sptr; //y reverse
 }
 
 void *o2scl_terminal_alt_font(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->alt_font();
-  return sptr;
+  return sptr; //y alt_font
 }
 
 void *o2scl_terminal_normal_font(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->normal_font();
-  return sptr;
+  return sptr; //y normal_font
 }
 
 void *o2scl_terminal_eight_bit_summ(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_summ();
-  return sptr;
+  return sptr; //y eight_bit_summ
 }
 
 void *o2scl_terminal_three_byte_summ(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->three_byte_summ();
-  return sptr;
+  return sptr; //y three_byte_summ
 }
 
 void *o2scl_terminal_three_byte_summ_long(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->three_byte_summ_long();
-  return sptr;
+  return sptr; //y three_byte_summ_long
 }
 
 void *o2scl_create_gen_test_number_double_() {
@@ -3868,7 +3867,7 @@ void *o2scl_cli_parameter_desc(void *vptr, void *ptr_name) {
   std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
   *sptr=ptr->parameter_desc(*name);
-  return sptr;
+  return sptr; //y parameter_desc
 }
 
 void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name) {
@@ -3876,7 +3875,7 @@ void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name) {
   std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
   *sptr=ptr->option_short_desc(*name);
-  return sptr;
+  return sptr; //y option_short_desc
 }
 
 void *o2scl_create_shared_ptr_table_units_() {
@@ -3895,31 +3894,35 @@ void *o2scl_shared_ptr_table_units__ptr(void *vp) {
   return ref;
 }
 
-void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, void *ptr_spec, int verbose, bool err_on_fail) {
   tensor<> *t=(tensor<> *)ptr_t;
+  std::string *spec=(std::string *)ptr_spec;
   tensor<> *func_ret=new tensor<>;
-  *func_ret=rearrange_and_copy<tensor<>,double>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<>,double>(*t,*spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, void *ptr_spec, int verbose, bool err_on_fail) {
   tensor<int> *t=(tensor<int> *)ptr_t;
+  std::string *spec=(std::string *)ptr_spec;
   tensor<int> *func_ret=new tensor<int>;
-  *func_ret=rearrange_and_copy<tensor<int>,int>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<int>,int>(*t,*spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, void *ptr_spec, int verbose, bool err_on_fail) {
   tensor<size_t> *t=(tensor<size_t> *)ptr_t;
+  std::string *spec=(std::string *)ptr_spec;
   tensor<size_t> *func_ret=new tensor<size_t>;
-  *func_ret=rearrange_and_copy<tensor<size_t>,size_t>(*t,spec,verbose,err_on_fail);
+  *func_ret=rearrange_and_copy<tensor<size_t>,size_t>(*t,*spec,verbose,err_on_fail);
   return func_ret;
 }
 
-void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose, bool err_on_fail) {
+void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, void *ptr_spec, int verbose, bool err_on_fail) {
   tensor_grid<> *t=(tensor_grid<> *)ptr_t;
+  std::string *spec=(std::string *)ptr_spec;
   tensor_grid<> *func_ret=new tensor_grid<>;
-  *func_ret=grid_rearrange_and_copy<tensor_grid<>,double>(*t,spec,verbose,err_on_fail);
+  *func_ret=grid_rearrange_and_copy<tensor_grid<>,double>(*t,*spec,verbose,err_on_fail);
   return func_ret;
 }
 
@@ -3950,8 +3953,9 @@ void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, v
   return;
 }
 
-bool o2scl_file_exists_wrapper(char *fname) {
-  bool func_ret=file_exists(fname);
+bool o2scl_file_exists_wrapper(void *ptr_fname) {
+  std::string *fname=(std::string *)ptr_fname;
+  bool func_ret=file_exists(*fname);
   return func_ret;
 }
 
@@ -3977,25 +3981,30 @@ void o2scl_wordexp_single_file_wrapper(void *ptr_fname) {
   return;
 }
 
-void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches) {
+void o2scl_wordexp_wrapper_wrapper(void *ptr_word, void *ptr_matches) {
+  std::string *word=(std::string *)ptr_word;
   std::vector<std::string> *matches=(std::vector<std::string> *)ptr_matches;
-  wordexp_wrapper(word,*matches);
+  wordexp_wrapper(*word,*matches);
   return;
 }
 
-double o2scl_function_to_double_wrapper(char *s, int verbose) {
-  double func_ret=function_to_double(s,verbose);
+double o2scl_function_to_double_wrapper(void *ptr_s, int verbose) {
+  std::string *s=(std::string *)ptr_s;
+  double func_ret=function_to_double(*s,verbose);
   return func_ret;
 }
 
-int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose) {
+int o2scl_function_to_double_nothrow_wrapper(void *ptr_s, void *ptr_result, int verbose) {
+  std::string *s=(std::string *)ptr_s;
   double *result=(double *)ptr_result;
-  int func_ret=function_to_double_nothrow(s,*result,verbose);
+  int func_ret=function_to_double_nothrow(*s,*result,verbose);
   return func_ret;
 }
 
-double o2scl_find_constant_wrapper(char *name, char *unit) {
-  double func_ret=find_constant(name,unit);
+double o2scl_find_constant_wrapper(void *ptr_name, void *ptr_unit) {
+  std::string *name=(std::string *)ptr_name;
+  std::string *unit=(std::string *)ptr_unit;
+  double func_ret=find_constant(*name,*unit);
   return func_ret;
 }
 
@@ -4006,9 +4015,10 @@ int o2scl_string_to_uint_list_vector_size_t__wrapper(void *ptr_x, void *ptr_list
   return func_ret;
 }
 
-void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol, int verbose, bool ignore_vt100) {
+void o2scl_rewrap_keep_endlines_wrapper(void *ptr_str, void *ptr_sv, size_t ncol, int verbose, bool ignore_vt100) {
+  std::string *str=(std::string *)ptr_str;
   std::vector<std::string> *sv=(std::vector<std::string> *)ptr_sv;
-  rewrap_keep_endlines(str,*sv,ncol,verbose,ignore_vt100);
+  rewrap_keep_endlines(*str,*sv,ncol,verbose,ignore_vt100);
   return;
 }
 

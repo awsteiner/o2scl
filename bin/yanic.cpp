@@ -1651,10 +1651,7 @@ int main(int argc, char *argv[]) {
             // In case it's const, we have to explicitly typecast
             fout << "  const std::vector<double> &r=ptr->" << iff.name << "(";
           } else if (iff.name=="operator[]" || iff.name=="operator()") {
-            if (iff.ret.name=="std::string") {
-              fout << "  std::string *sptr=new std::string;" << endl;
-              fout << "  *sptr=ptr->" << iff.name << "(";
-            } else if (iff.ret.name=="std::vector<std::string>") {
+            if (iff.ret.name=="std::vector<std::string>") {
               fout << "  std::vector<std::string> *vsptr="
                    << "new std::vector<std::string>;" << endl;
               fout << "  *vsptr=ptr->" << iff.name << "(";
@@ -1751,7 +1748,11 @@ int main(int argc, char *argv[]) {
           } else {
             
             if (iff.ret.name=="std::string") {
-              fout << "  return sptr;" << endl;
+              if (iff.name=="operator[]") {
+                fout << "  return &ret; //x " << iff.name << endl;
+              } else {
+                fout << "  return sptr; //y " << iff.name << endl;
+              }
             } else if (iff.ret.name=="std::vector<std::string>") {
               if (iff.ret.is_reference()) {
                 fout << "  return vsptr;" << endl;
@@ -2027,7 +2028,7 @@ int main(int argc, char *argv[]) {
         
         if (iff.args[k].ift.suffix=="") {
           if (iff.args[k].ift.name=="std::string") {
-            fout << "char *" << iff.args[k].name;
+            fout << "void *ptr_" << iff.args[k].name;
           } else {
             fout << iff.args[k].ift.name << " " << iff.args[k].name;
           }
@@ -2071,7 +2072,8 @@ int main(int argc, char *argv[]) {
 
         // Pointer assignments for arguments
         for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="&") {
+          if (iff.args[k].ift.suffix=="&" ||
+              iff.args[k].ift.name=="std::string") {
             //if (iff.args[k].ift.name=="std::string") {
             //fout << "  std::string *"
             //<< iff.args[k].name
@@ -2094,7 +2096,9 @@ int main(int argc, char *argv[]) {
           vector<std::string> addl_code;
 
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
@@ -2109,8 +2113,8 @@ int main(int argc, char *argv[]) {
           }
           fout << ");" << endl;
           
-          for(size_t k=0;k<addl_code.size();k++) {
-            fout << "  " << addl_code[k] << endl;
+          for(size_t k2=0;k2<addl_code.size();k2++) {
+            fout << "  " << addl_code[k2] << endl;
           }
 
           fout << "  return;" << endl;
@@ -2126,7 +2130,9 @@ int main(int argc, char *argv[]) {
           }
 
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;

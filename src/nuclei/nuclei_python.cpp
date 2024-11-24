@@ -122,28 +122,28 @@ void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoel(Z);
-  return sptr;
+  return sptr; //y Ztoel
 }
 
 void *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoname(Z);
-  return sptr;
+  return sptr; //y Ztoname
 }
 
 void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->tostring(Z,N);
-  return sptr;
+  return sptr; //y tostring
 }
 
 void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->int_to_spinp(g);
-  return sptr;
+  return sptr; //y int_to_spinp
 }
 
 int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s) {
@@ -854,33 +854,40 @@ void o2scl_free_nucmass_wlw(void *vptr) {
   return;
 }
 
-void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only) {
+void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only) {
   nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  ame_load(*ame,name,exp_only);
+  std::string *name=(std::string *)ptr_name;
+  ame_load(*ame,*name,exp_only);
   return;
 }
 
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, char *file_name, char *table_name, bool exp_only) {
+void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only) {
   nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  ame_load_ext(*ame,file_name,table_name,exp_only);
+  std::string *file_name=(std::string *)ptr_file_name;
+  std::string *table_name=(std::string *)ptr_table_name;
+  ame_load_ext(*ame,*file_name,*table_name,exp_only);
   return;
 }
 
-void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, char *model, char *filename) {
+void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename) {
   nucmass_mnmsk *mnmsk=(nucmass_mnmsk *)ptr_mnmsk;
-  mnmsk_load(*mnmsk,model,filename);
+  std::string *model=(std::string *)ptr_model;
+  std::string *filename=(std::string *)ptr_filename;
+  mnmsk_load(*mnmsk,*model,*filename);
   return;
 }
 
-void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, char *filename) {
+void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) {
   nucmass_hfb *hfb=(nucmass_hfb *)ptr_hfb;
-  hfb_load(*hfb,model,filename);
+  std::string *filename=(std::string *)ptr_filename;
+  hfb_load(*hfb,model,*filename);
   return;
 }
 
-void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, char *filename) {
+void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) {
   nucmass_hfb_sp *hfb=(nucmass_hfb_sp *)ptr_hfb;
-  hfb_sp_load(*hfb,model,filename);
+  std::string *filename=(std::string *)ptr_filename;
+  hfb_sp_load(*hfb,model,*filename);
   return;
 }
 

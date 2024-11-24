@@ -1770,7 +1770,7 @@ namespace o2scl {
   */
   template<class tensor_t, class data_t>
   tensor_t rearrange_and_copy(const tensor_t &t, std::string spec,
-                               int verbose=0, bool err_on_fail=true) {
+                              int verbose=0, bool err_on_fail=true) {
     
     std::vector<std::string> sv2;
     index_spec_preprocess(spec,sv2);

@@ -1268,13 +1268,13 @@ void o2scl_free_shared_ptr_table_units_(void *vptr);
 
 void *o2scl_shared_ptr_table_units__ptr(void *vp);
 
-void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
 double o2scl_fermi_function_wrapper(double x);
 
@@ -1286,7 +1286,7 @@ double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x
 
 void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size=80);
 
-bool o2scl_file_exists_wrapper(char *fname);
+bool o2scl_file_exists_wrapper(void *ptr_fname);
 
 void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr_s, void *ptr_v);
 
@@ -1294,17 +1294,17 @@ void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr
 
 void o2scl_wordexp_single_file_wrapper(void *ptr_fname);
 
-void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
+void o2scl_wordexp_wrapper_wrapper(void *ptr_word, void *ptr_matches);
 
-double o2scl_function_to_double_wrapper(char *s, int verbose=0);
+double o2scl_function_to_double_wrapper(void *ptr_s, int verbose=0);
 
-int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose=0);
+int o2scl_function_to_double_nothrow_wrapper(void *ptr_s, void *ptr_result, int verbose=0);
 
-double o2scl_find_constant_wrapper(char *name, char *unit);
+double o2scl_find_constant_wrapper(void *ptr_name, void *ptr_unit);
 
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *ptr_x, void *ptr_list);
 
-void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
+void o2scl_rewrap_keep_endlines_wrapper(void *ptr_str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
 
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
 
