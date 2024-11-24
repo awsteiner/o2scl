@@ -43,91 +43,91 @@ void o2scl_hdf_hdf_file_set_min_compr_size(void *vptr, size_t v);
 
 bool o2scl_hdf_hdf_file_has_write_access(void *vptr);
 
-void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access=false, bool err_on_fail=true);
+void o2scl_hdf_hdf_file_open(void *vptr, void *ptr_fname, bool write_access=false, bool err_on_fail=true);
 
-void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname);
+void o2scl_hdf_hdf_file_open_or_create(void *vptr, void *ptr_fname);
 
 void o2scl_hdf_hdf_file_close(void *vptr);
 
-int o2scl_hdf_hdf_file_getc(void *vptr, char *name, char *c);
+int o2scl_hdf_hdf_file_getc(void *vptr, void *ptr_name, char *c);
 
-int o2scl_hdf_hdf_file_getd(void *vptr, char *name, double *d);
+int o2scl_hdf_hdf_file_getd(void *vptr, void *ptr_name, double *d);
 
-int o2scl_hdf_hdf_file_geti(void *vptr, char *name, int *i);
+int o2scl_hdf_hdf_file_geti(void *vptr, void *ptr_name, int *i);
 
-int o2scl_hdf_hdf_file_get_szt(void *vptr, char *name, size_t *u);
+int o2scl_hdf_hdf_file_get_szt(void *vptr, void *ptr_name, size_t *u);
 
-int o2scl_hdf_hdf_file_gets(void *vptr, char *name, void *ptr_s);
+int o2scl_hdf_hdf_file_gets(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_gets_var(void *vptr, char *name, void *ptr_s);
+int o2scl_hdf_hdf_file_gets_var(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_gets_fixed(void *vptr, char *name, void *ptr_s);
+int o2scl_hdf_hdf_file_gets_fixed(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, char *name, char *deft, void *ptr_s);
+int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, void *ptr_name, void *ptr_deft, void *ptr_s);
 
-void o2scl_hdf_hdf_file_setc(void *vptr, char *name, char c);
+void o2scl_hdf_hdf_file_setc(void *vptr, void *ptr_name, char c);
 
-void o2scl_hdf_hdf_file_setd(void *vptr, char *name, double d);
+void o2scl_hdf_hdf_file_setd(void *vptr, void *ptr_name, double d);
 
-void o2scl_hdf_hdf_file_seti(void *vptr, char *name, int i);
+void o2scl_hdf_hdf_file_seti(void *vptr, void *ptr_name, int i);
 
-void o2scl_hdf_hdf_file_set_szt(void *vptr, char *name, size_t u);
+void o2scl_hdf_hdf_file_set_szt(void *vptr, void *ptr_name, size_t u);
 
-void o2scl_hdf_hdf_file_sets(void *vptr, char *name, char *s);
+void o2scl_hdf_hdf_file_sets(void *vptr, void *ptr_name, void *ptr_s);
 
-void o2scl_hdf_hdf_file_sets_fixed(void *vptr, char *name, char *s);
+void o2scl_hdf_hdf_file_sets_fixed(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_getd_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_getd_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_geti_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_geti_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_get_szt_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_get_szt_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_gets_vec_copy(void *vptr, char *name, void *ptr_s);
+int o2scl_hdf_hdf_file_gets_vec_copy(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_setd_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_setd_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_seti_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_seti_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, char *name, void *ptr_v);
+int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, void *ptr_name, void *ptr_v);
 
-int o2scl_hdf_hdf_file_sets_vec_copy(void *vptr, char *name, void *ptr_s);
+int o2scl_hdf_hdf_file_sets_vec_copy(void *vptr, void *ptr_name, void *ptr_s);
 
-int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m);
+int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, void *ptr_name, void *ptr_m);
 
-int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, char *name, void *ptr_m);
+int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, void *ptr_name, void *ptr_m);
 
-int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m);
+int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, void *ptr_name, void *ptr_m);
 
-int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, char *name, void *ptr_m);
+int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, void *ptr_name, void *ptr_m);
 
-int o2scl_hdf_hdf_file_getd_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_getd_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_geti_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_geti_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_get_szt_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_get_szt_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_setd_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_setd_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_seti_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_seti_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, char *name, void *ptr_t);
+int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, void *ptr_name, void *ptr_t);
 
-int o2scl_hdf_hdf_file_getc_def(void *vptr, char *name, char deft, char *c);
+int o2scl_hdf_hdf_file_getc_def(void *vptr, void *ptr_name, char deft, char *c);
 
-int o2scl_hdf_hdf_file_getd_def(void *vptr, char *name, double deft, double *d);
+int o2scl_hdf_hdf_file_getd_def(void *vptr, void *ptr_name, double deft, double *d);
 
-int o2scl_hdf_hdf_file_geti_def(void *vptr, char *name, int deft, int *i);
+int o2scl_hdf_hdf_file_geti_def(void *vptr, void *ptr_name, int deft, int *i);
 
-int o2scl_hdf_hdf_file_get_szt_def(void *vptr, char *name, size_t deft, size_t *u);
+int o2scl_hdf_hdf_file_get_szt_def(void *vptr, void *ptr_name, size_t deft, size_t *u);
 
-int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s);
+int o2scl_hdf_hdf_file_gets_def(void *vptr, void *ptr_name, void *ptr_deft, void *ptr_s);
 
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_type, void *ptr_name, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_type, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_type, bool use_regex=false, int verbose=0);
 
 void o2scl_hdf_hdf_file_file_list(void *vptr, int verbose);
 
@@ -281,7 +281,7 @@ void *o2scl_hdf_acol_manager_get_color_spec(void *vptr);
 
 void o2scl_hdf_acol_manager_set_color_spec(void *vptr, void *p_v);
 
-bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2);
+bool o2scl_hdf_acol_manager_help_found(void *vptr, void *ptr_arg1, void *ptr_arg2);
 
 int o2scl_hdf_acol_manager_run_empty(void *vptr);
 
@@ -289,9 +289,9 @@ int o2scl_hdf_acol_manager_validate_interp_type(void *vptr);
 
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
 
-void o2scl_hdf_acol_manager_command_add(void *vptr, char *new_type);
+void o2scl_hdf_acol_manager_command_add(void *vptr, void *ptr_new_type);
 
-void o2scl_hdf_acol_manager_command_del(void *vptr, char *ltype);
+void o2scl_hdf_acol_manager_command_del(void *vptr, void *ptr_ltype);
 
 void *o2scl_hdf_create_cloud_file();
 
@@ -317,13 +317,13 @@ bool o2scl_hdf_cloud_file_get_allow_curl(void *vptr);
 
 void o2scl_hdf_cloud_file_set_allow_curl(void *vptr, bool v);
 
-int o2scl_hdf_cloud_file_get_file(void *vptr, char *file, char *url, char *dir);
+int o2scl_hdf_cloud_file_get_file(void *vptr, void *ptr_file, void *ptr_url, void *ptr_dir);
 
-int o2scl_hdf_cloud_file_get_file_hash(void *vptr, char *file, char *url, char *hash, char *dir);
+int o2scl_hdf_cloud_file_get_file_hash(void *vptr, void *ptr_file, void *ptr_url, void *ptr_hash, void *ptr_dir);
 
-int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, char *file, char *url, char *dir);
+int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, void *ptr_file, void *ptr_url, void *ptr_dir);
 
-int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, char *file, char *url, char *hash, char *dir);
+int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, void *ptr_file, void *ptr_url, void *ptr_hash, void *ptr_dir);
 
 void o2scl_hdf_hdf_input_table_wrapper(void *ptr_hf, void *ptr_t, char *name);
 

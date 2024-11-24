@@ -65,9 +65,9 @@ void *o2scl_create_nucmass_info();
 
 void o2scl_free_nucmass_info(void *vptr);
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A);
+int o2scl_nucmass_info_parse_elstring(void *vptr, void *ptr_ela, int *Z, int *N, int *A);
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
+int o2scl_nucmass_info_eltoZ(void *vptr, void *ptr_el);
 
 void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z);
 
@@ -77,7 +77,7 @@ void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N);
 
 void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g);
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s);
+int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s);
 
 double o2scl_nucmass_get_m_prot(void *vptr);
 

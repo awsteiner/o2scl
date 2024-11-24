@@ -1433,9 +1433,11 @@ int main(int argc, char *argv[]) {
             //<< ifv.ift.name << " *)p_v;" << endl;
             //fout << "  *(p_tgot)=ptr->" << ifv.name << ";" << endl;
             if (ifv.ift.is_pointer()) {
-              fout << "  return (void *)((ptr->" << ifv.name << "));" << endl;
+              fout << "  return (void *)((ptr->" << ifv.name << "));"
+                   << endl;
             } else {
-              fout << "  return (void *)(&(ptr->" << ifv.name << "));" << endl;
+              fout << "  return (void *)(&(ptr->" << ifv.name << "));"
+                   << endl;
             }
             fout << "}" << endl;
           }
@@ -1568,7 +1570,7 @@ int main(int argc, char *argv[]) {
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="") {
             if (iff.args[k].ift.name=="std::string") {
-              fout << "char *" << iff.args[k].name;
+              fout << "void *ptr_" << iff.args[k].name;
             } else {
               fout << iff.args[k].ift.name << " " << iff.args[k].name;
             }
@@ -1582,8 +1584,8 @@ int main(int argc, char *argv[]) {
           }
           // Output default value if we're in the header file
           if (header) {
-            // String arguments are converted to char *'s, so
-            // they don't need a default value
+            // FIXME, Check this, AWS, 11/23/24
+            // String arguments don't need a default value
             if (iff.args[k].ift.name!="std::string") {
               if (iff.args[k].value.length()>0) {
                 if (iff.args[k].value=="True") {
@@ -1616,7 +1618,9 @@ int main(int argc, char *argv[]) {
           // If the argument is a reference and not a standard C type,
           // then we'll need to convert from a void *
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="&" && !iff.args[k].ift.is_ctype()) {
+            if ((iff.args[k].ift.name=="std::string" ||
+                 iff.args[k].ift.suffix=="&") &&
+                !iff.args[k].ift.is_ctype()) {
               std::string type_temp=iff.args[k].ift.name;
               if (type_temp=="std_vector") {
                 type_temp="std::vector<double>";
@@ -1710,7 +1714,9 @@ int main(int argc, char *argv[]) {
           }
           
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
@@ -1719,6 +1725,9 @@ int main(int argc, char *argv[]) {
               fout << ",";
             }
           }
+
+          // FIXME, AWS, 11/23/24, remove explicit refs to contour_line,
+          // etc.
           if (iff.name=="operator[]" &&
               (iff.ret.name=="contour_line" ||
                iff.ret.name=="prob_dens_mdim_amr<>::hypercube")) {
@@ -2601,7 +2610,7 @@ int main(int argc, char *argv[]) {
           if (iff.args[k].value.length()>0) {
             fout << " =" << iff.args[k].value;
           }
-          fout << ": string" << endl;
+          fout << ": byte array" << endl;
         }
       }
 
@@ -2716,9 +2725,10 @@ int main(int argc, char *argv[]) {
       // Perform necessary conversions
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.name=="std::string") {
-          fout << "        " << iff.args[k].name
-               << "_=ctypes.c_char_p(force_bytes("
-               << iff.args[k].name << "))" << endl;
+          fout << "        s_" << iff.args[k].name
+               << "=o2sclpy.std_string()" << endl;
+          fout << "        s_" << iff.args[k].name
+               << ".init_bytes(" << iff.args[k].name << ")" << endl;
         }
       }
 
@@ -2792,7 +2802,7 @@ int main(int argc, char *argv[]) {
             fout << ",ctypes.c_void_p";
           }
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << ",ctypes.c_char_p";
+          fout << ",ctypes.c_void_p";
         } else {
           fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
@@ -2907,7 +2917,7 @@ int main(int argc, char *argv[]) {
             fout << "," << iff.args[k].name << "._ptr";
           }
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << "," << iff.args[k].name << "_";
+          fout << ",s_" << iff.args[k].name << "._ptr";
         } else {
           fout << "," << iff.args[k].name;
         }

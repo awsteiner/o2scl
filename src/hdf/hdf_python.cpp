@@ -67,15 +67,17 @@ bool o2scl_hdf_hdf_file_has_write_access(void *vptr) {
   return ret;
 }
 
-void o2scl_hdf_hdf_file_open(void *vptr, char *fname, bool write_access, bool err_on_fail) {
+void o2scl_hdf_hdf_file_open(void *vptr, void *ptr_fname, bool write_access, bool err_on_fail) {
   hdf_file *ptr=(hdf_file *)vptr;
-  ptr->open(fname,write_access,err_on_fail);
+  std::string *fname=(std::string *)ptr_fname;
+  ptr->open(*fname,write_access,err_on_fail);
   return;
 }
 
-void o2scl_hdf_hdf_file_open_or_create(void *vptr, char *fname) {
+void o2scl_hdf_hdf_file_open_or_create(void *vptr, void *ptr_fname) {
   hdf_file *ptr=(hdf_file *)vptr;
-  ptr->open_or_create(fname);
+  std::string *fname=(std::string *)ptr_fname;
+  ptr->open_or_create(*fname);
   return;
 }
 
@@ -85,269 +87,313 @@ void o2scl_hdf_hdf_file_close(void *vptr) {
   return;
 }
 
-int o2scl_hdf_hdf_file_getc(void *vptr, char *name, char *c) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->getc(name,*c);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_getd(void *vptr, char *name, double *d) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->getd(name,*d);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_geti(void *vptr, char *name, int *i) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->geti(name,*i);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_get_szt(void *vptr, char *name, size_t *u) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->get_szt(name,*u);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets(void *vptr, char *name, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::string *s=(std::string *)ptr_s;
-  int ret=ptr->gets(name,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets_var(void *vptr, char *name, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::string *s=(std::string *)ptr_s;
-  int ret=ptr->gets_var(name,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets_fixed(void *vptr, char *name, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::string *s=(std::string *)ptr_s;
-  int ret=ptr->gets_fixed(name,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, char *name, char *deft, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::string *s=(std::string *)ptr_s;
-  int ret=ptr->gets_def_fixed(name,deft,*s);
-  return ret;
-}
-
-void o2scl_hdf_hdf_file_setc(void *vptr, char *name, char c) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->setc(name,c);
-  return;
-}
-
-void o2scl_hdf_hdf_file_setd(void *vptr, char *name, double d) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->setd(name,d);
-  return;
-}
-
-void o2scl_hdf_hdf_file_seti(void *vptr, char *name, int i) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->seti(name,i);
-  return;
-}
-
-void o2scl_hdf_hdf_file_set_szt(void *vptr, char *name, size_t u) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->set_szt(name,u);
-  return;
-}
-
-void o2scl_hdf_hdf_file_sets(void *vptr, char *name, char *s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->sets(name,s);
-  return;
-}
-
-void o2scl_hdf_hdf_file_sets_fixed(void *vptr, char *name, char *s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  ptr->sets_fixed(name,s);
-  return;
-}
-
-int o2scl_hdf_hdf_file_getd_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<double> *v=(std::vector<double> *)ptr_v;
-  int ret=ptr->getd_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_geti_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<int> *v=(std::vector<int> *)ptr_v;
-  int ret=ptr->geti_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_get_szt_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<size_t> *v=(std::vector<size_t> *)ptr_v;
-  int ret=ptr->get_szt_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets_vec_copy(void *vptr, char *name, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
-  int ret=ptr->gets_vec_copy(name,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_setd_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<double> *v=(std::vector<double> *)ptr_v;
-  int ret=ptr->setd_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_seti_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<int> *v=(std::vector<int> *)ptr_v;
-  int ret=ptr->seti_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, char *name, void *ptr_v) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<size_t> *v=(std::vector<size_t> *)ptr_v;
-  int ret=ptr->set_szt_vec(name,*v);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_sets_vec_copy(void *vptr, char *name, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
-  int ret=ptr->sets_vec_copy(name,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, char *name, void *ptr_m) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
-  int ret=ptr->getd_mat_copy(name,*m);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, char *name, void *ptr_m) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
-  int ret=ptr->geti_mat_copy(name,*m);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, char *name, void *ptr_m) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
-  int ret=ptr->setd_mat_copy(name,*m);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, char *name, void *ptr_m) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
-  int ret=ptr->seti_mat_copy(name,*m);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_getd_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<> *t=(tensor<> *)ptr_t;
-  int ret=ptr->getd_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_geti_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<int> *t=(tensor<int> *)ptr_t;
-  int ret=ptr->geti_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_get_szt_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<size_t> *t=(tensor<size_t> *)ptr_t;
-  int ret=ptr->get_szt_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_setd_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<> *t=(tensor<> *)ptr_t;
-  int ret=ptr->setd_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_seti_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<int> *t=(tensor<int> *)ptr_t;
-  int ret=ptr->seti_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, char *name, void *ptr_t) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  tensor<size_t> *t=(tensor<size_t> *)ptr_t;
-  int ret=ptr->set_szt_ten(name,*t);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_getc_def(void *vptr, char *name, char deft, char *c) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->getc_def(name,deft,*c);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_getd_def(void *vptr, char *name, double deft, double *d) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->getd_def(name,deft,*d);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_geti_def(void *vptr, char *name, int deft, int *i) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->geti_def(name,deft,*i);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_get_szt_def(void *vptr, char *name, size_t deft, size_t *u) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  int ret=ptr->get_szt_def(name,deft,*u);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_gets_def(void *vptr, char *name, char *deft, void *ptr_s) {
-  hdf_file *ptr=(hdf_file *)vptr;
-  std::string *s=(std::string *)ptr_s;
-  int ret=ptr->gets_def(name,deft,*s);
-  return ret;
-}
-
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, char *type, void *ptr_name, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_getc(void *vptr, void *ptr_name, char *c) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *name=(std::string *)ptr_name;
-  int ret=ptr->find_object_by_type(type,*name,use_regex,verbose);
+  int ret=ptr->getc(*name,*c);
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, char *name, void *ptr_type, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_getd(void *vptr, void *ptr_name, double *d) {
   hdf_file *ptr=(hdf_file *)vptr;
-  std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_name(name,*type,use_regex,verbose);
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->getd(*name,*d);
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, char *pattern, void *ptr_type, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_geti(void *vptr, void *ptr_name, int *i) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->geti(*name,*i);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_get_szt(void *vptr, void *ptr_name, size_t *u) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->get_szt(*name,*u);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets(*name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_var(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_var(*name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_fixed(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_fixed(*name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_def_fixed(void *vptr, void *ptr_name, void *ptr_deft, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *deft=(std::string *)ptr_deft;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_def_fixed(*name,*deft,*s);
+  return ret;
+}
+
+void o2scl_hdf_hdf_file_setc(void *vptr, void *ptr_name, char c) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->setc(*name,c);
+  return;
+}
+
+void o2scl_hdf_hdf_file_setd(void *vptr, void *ptr_name, double d) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->setd(*name,d);
+  return;
+}
+
+void o2scl_hdf_hdf_file_seti(void *vptr, void *ptr_name, int i) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->seti(*name,i);
+  return;
+}
+
+void o2scl_hdf_hdf_file_set_szt(void *vptr, void *ptr_name, size_t u) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->set_szt(*name,u);
+  return;
+}
+
+void o2scl_hdf_hdf_file_sets(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *s=(std::string *)ptr_s;
+  ptr->sets(*name,*s);
+  return;
+}
+
+void o2scl_hdf_hdf_file_sets_fixed(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *s=(std::string *)ptr_s;
+  ptr->sets_fixed(*name,*s);
+  return;
+}
+
+int o2scl_hdf_hdf_file_getd_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  int ret=ptr->getd_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_geti_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<int> *v=(std::vector<int> *)ptr_v;
+  int ret=ptr->geti_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_get_szt_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<size_t> *v=(std::vector<size_t> *)ptr_v;
+  int ret=ptr->get_szt_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_vec_copy(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
+  int ret=ptr->gets_vec_copy(*name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_setd_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<double> *v=(std::vector<double> *)ptr_v;
+  int ret=ptr->setd_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_seti_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<int> *v=(std::vector<int> *)ptr_v;
+  int ret=ptr->seti_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_set_szt_vec(void *vptr, void *ptr_name, void *ptr_v) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<size_t> *v=(std::vector<size_t> *)ptr_v;
+  int ret=ptr->set_szt_vec(*name,*v);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_sets_vec_copy(void *vptr, void *ptr_name, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::vector<std::string> *s=(std::vector<std::string> *)ptr_s;
+  int ret=ptr->sets_vec_copy(*name,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getd_mat_copy(void *vptr, void *ptr_name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
+  int ret=ptr->getd_mat_copy(*name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_geti_mat_copy(void *vptr, void *ptr_name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
+  int ret=ptr->geti_mat_copy(*name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_setd_mat_copy(void *vptr, void *ptr_name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  boost::numeric::ublas::matrix<double> *m=(boost::numeric::ublas::matrix<double> *)ptr_m;
+  int ret=ptr->setd_mat_copy(*name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_seti_mat_copy(void *vptr, void *ptr_name, void *ptr_m) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  boost::numeric::ublas::matrix<int> *m=(boost::numeric::ublas::matrix<int> *)ptr_m;
+  int ret=ptr->seti_mat_copy(*name,*m);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getd_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<> *t=(tensor<> *)ptr_t;
+  int ret=ptr->getd_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_geti_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<int> *t=(tensor<int> *)ptr_t;
+  int ret=ptr->geti_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_get_szt_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<size_t> *t=(tensor<size_t> *)ptr_t;
+  int ret=ptr->get_szt_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_setd_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<> *t=(tensor<> *)ptr_t;
+  int ret=ptr->setd_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_seti_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<int> *t=(tensor<int> *)ptr_t;
+  int ret=ptr->seti_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_set_szt_ten(void *vptr, void *ptr_name, void *ptr_t) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  tensor<size_t> *t=(tensor<size_t> *)ptr_t;
+  int ret=ptr->set_szt_ten(*name,*t);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getc_def(void *vptr, void *ptr_name, char deft, char *c) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->getc_def(*name,deft,*c);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_getd_def(void *vptr, void *ptr_name, double deft, double *d) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->getd_def(*name,deft,*d);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_geti_def(void *vptr, void *ptr_name, int deft, int *i) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->geti_def(*name,deft,*i);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_get_szt_def(void *vptr, void *ptr_name, size_t deft, size_t *u) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->get_szt_def(*name,deft,*u);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_gets_def(void *vptr, void *ptr_name, void *ptr_deft, void *ptr_s) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *deft=(std::string *)ptr_deft;
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->gets_def(*name,*deft,*s);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_type, void *ptr_name, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_pattern(pattern,*type,use_regex,verbose);
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->find_object_by_type(*type,*name,use_regex,verbose);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_type, bool use_regex, int verbose) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *type=(std::string *)ptr_type;
+  int ret=ptr->find_object_by_name(*name,*type,use_regex,verbose);
+  return ret;
+}
+
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_type, bool use_regex, int verbose) {
+  hdf_file *ptr=(hdf_file *)vptr;
+  std::string *pattern=(std::string *)ptr_pattern;
+  std::string *type=(std::string *)ptr_type;
+  int ret=ptr->find_object_by_pattern(*pattern,*type,use_regex,verbose);
   return ret;
 }
 
@@ -826,9 +872,11 @@ void o2scl_hdf_acol_manager_set_color_spec(void *vptr, void *p_v) {
   return;
 }
 
-bool o2scl_hdf_acol_manager_help_found(void *vptr, char *arg1, char *arg2) {
+bool o2scl_hdf_acol_manager_help_found(void *vptr, void *ptr_arg1, void *ptr_arg2) {
   acol_manager *ptr=(acol_manager *)vptr;
-  bool ret=ptr->help_found(arg1,arg2);
+  std::string *arg1=(std::string *)ptr_arg1;
+  std::string *arg2=(std::string *)ptr_arg2;
+  bool ret=ptr->help_found(*arg1,*arg2);
   return ret;
 }
 
@@ -851,15 +899,17 @@ void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args) {
   return;
 }
 
-void o2scl_hdf_acol_manager_command_add(void *vptr, char *new_type) {
+void o2scl_hdf_acol_manager_command_add(void *vptr, void *ptr_new_type) {
   acol_manager *ptr=(acol_manager *)vptr;
-  ptr->command_add(new_type);
+  std::string *new_type=(std::string *)ptr_new_type;
+  ptr->command_add(*new_type);
   return;
 }
 
-void o2scl_hdf_acol_manager_command_del(void *vptr, char *ltype) {
+void o2scl_hdf_acol_manager_command_del(void *vptr, void *ptr_ltype) {
   acol_manager *ptr=(acol_manager *)vptr;
-  ptr->command_del(ltype);
+  std::string *ltype=(std::string *)ptr_ltype;
+  ptr->command_del(*ltype);
   return;
 }
 
@@ -929,29 +979,43 @@ void o2scl_hdf_cloud_file_set_allow_curl(void *vptr, bool v) {
   return;
 }
 
-int o2scl_hdf_cloud_file_get_file(void *vptr, char *file, char *url, char *dir) {
+int o2scl_hdf_cloud_file_get_file(void *vptr, void *ptr_file, void *ptr_url, void *ptr_dir) {
   cloud_file *ptr=(cloud_file *)vptr;
-  int ret=ptr->get_file(file,url,dir);
+  std::string *file=(std::string *)ptr_file;
+  std::string *url=(std::string *)ptr_url;
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->get_file(*file,*url,*dir);
   return ret;
 }
 
-int o2scl_hdf_cloud_file_get_file_hash(void *vptr, char *file, char *url, char *hash, char *dir) {
+int o2scl_hdf_cloud_file_get_file_hash(void *vptr, void *ptr_file, void *ptr_url, void *ptr_hash, void *ptr_dir) {
   cloud_file *ptr=(cloud_file *)vptr;
-  int ret=ptr->get_file_hash(file,url,hash,dir);
+  std::string *file=(std::string *)ptr_file;
+  std::string *url=(std::string *)ptr_url;
+  std::string *hash=(std::string *)ptr_hash;
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->get_file_hash(*file,*url,*hash,*dir);
   return ret;
 }
 
-int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, char *file, char *url, char *dir) {
+int o2scl_hdf_cloud_file_hdf5_open(void *vptr, void *ptr_hf, void *ptr_file, void *ptr_url, void *ptr_dir) {
   cloud_file *ptr=(cloud_file *)vptr;
   hdf_file *hf=(hdf_file *)ptr_hf;
-  int ret=ptr->hdf5_open(*hf,file,url,dir);
+  std::string *file=(std::string *)ptr_file;
+  std::string *url=(std::string *)ptr_url;
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->hdf5_open(*hf,*file,*url,*dir);
   return ret;
 }
 
-int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, char *file, char *url, char *hash, char *dir) {
+int o2scl_hdf_cloud_file_hdf5_open_hash(void *vptr, void *ptr_hf, void *ptr_file, void *ptr_url, void *ptr_hash, void *ptr_dir) {
   cloud_file *ptr=(cloud_file *)vptr;
   hdf_file *hf=(hdf_file *)ptr_hf;
-  int ret=ptr->hdf5_open_hash(*hf,file,url,hash,dir);
+  std::string *file=(std::string *)ptr_file;
+  std::string *url=(std::string *)ptr_url;
+  std::string *hash=(std::string *)ptr_hash;
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->hdf5_open_hash(*hf,*file,*url,*hash,*dir);
   return ret;
 }
 

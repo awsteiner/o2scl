@@ -61,13 +61,13 @@ double o2scl_slack_messenger_get_min_time_between(void *vptr);
 
 void o2scl_slack_messenger_set_min_time_between(void *vptr, double v);
 
-bool o2scl_slack_messenger_set_url_from_env(void *vptr, char *env_var);
+bool o2scl_slack_messenger_set_url_from_env(void *vptr, void *ptr_env_var);
 
-bool o2scl_slack_messenger_set_channel_from_env(void *vptr, char *env_var);
+bool o2scl_slack_messenger_set_channel_from_env(void *vptr, void *ptr_env_var);
 
-bool o2scl_slack_messenger_set_username_from_env(void *vptr, char *env_var);
+bool o2scl_slack_messenger_set_username_from_env(void *vptr, void *ptr_env_var);
 
-int o2scl_slack_messenger_send(void *vptr, char *message, bool err_on_fail=true);
+int o2scl_slack_messenger_send(void *vptr, void *ptr_message, bool err_on_fail=true);
 
 void *o2scl_slack_messenger_init(char *p_channel, char *p_username, char *p_url, bool p_mpi_time);
 
@@ -155,9 +155,9 @@ void *o2scl_hist_get_wgts(void *vptr);
 
 void *o2scl_hist_get_bins(void *vptr);
 
-void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins);
+void o2scl_hist_from_table(void *vptr, void *ptr_t, void *ptr_colx, size_t n_bins);
 
-void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins);
+void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, size_t n_bins);
 
 size_t o2scl_hist_size(void *vptr);
 
@@ -181,7 +181,7 @@ const double o2scl_hist_getitem(void *vptr, size_t i);
 
 size_t o2scl_hist_get_bin_index(void *vptr, double x);
 
-int o2scl_hist_function(void *vptr, char *func);
+int o2scl_hist_function(void *vptr, void *ptr_func);
 
 void o2scl_hist_clear(void *vptr);
 
@@ -203,9 +203,9 @@ void o2scl_hist_2d_create_x_rep_vec(void *vptr, void *ptr_v);
 
 void o2scl_hist_2d_create_y_rep_vec(void *vptr, void *ptr_v);
 
-void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins_x, size_t n_bins_y);
+void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, size_t n_bins_x, size_t n_bins_y);
 
-void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, char *colx, char *coly, char *colz, size_t n_bins_x, size_t n_bins_y);
+void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, void *ptr_colz, size_t n_bins_x, size_t n_bins_y);
 
 size_t o2scl_hist_2d_size_x(void *vptr);
 

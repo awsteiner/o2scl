@@ -1416,10 +1416,13 @@ void o2scl_eos_tov_interp_set_full_vecnb(void *vptr, void *p_v) {
   return;
 }
 
-void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb) {
+void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, void *ptr_s_cole, void *ptr_s_colp, void *ptr_s_colnb) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
   table_units<> *eos=(table_units<> *)ptr_eos;
-  ptr->read_table(*eos,s_cole,s_colp,s_colnb);
+  std::string *s_cole=(std::string *)ptr_s_cole;
+  std::string *s_colp=(std::string *)ptr_s_colp;
+  std::string *s_colnb=(std::string *)ptr_s_colnb;
+  ptr->read_table(*eos,*s_cole,*s_colp,*s_colnb);
   return;
 }
 
@@ -1435,27 +1438,31 @@ void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr) {
   return;
 }
 
-void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external) {
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, void *ptr_model, bool external) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
-  ptr->s12_low_dens_eos(model,external);
+  std::string *model=(std::string *)ptr_model;
+  ptr->s12_low_dens_eos(*model,external);
   return;
 }
 
-void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external) {
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, void *ptr_model, bool external) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
-  ptr->gcp10_low_dens_eos(model,external);
+  std::string *model=(std::string *)ptr_model;
+  ptr->gcp10_low_dens_eos(*model,external);
   return;
 }
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external) {
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, void *ptr_model, bool external) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
-  ptr->ngl13_low_dens_eos(L,model,external);
+  std::string *model=(std::string *)ptr_model;
+  ptr->ngl13_low_dens_eos(L,*model,external);
   return;
 }
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname) {
+void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, void *ptr_fname) {
   eos_tov_interp *ptr=(eos_tov_interp *)vptr;
-  ptr->ngl13_low_dens_eos2(S,L,nt,fname);
+  std::string *fname=(std::string *)ptr_fname;
+  ptr->ngl13_low_dens_eos2(S,L,nt,*fname);
   return;
 }
 

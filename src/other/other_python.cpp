@@ -115,27 +115,31 @@ void o2scl_slack_messenger_set_min_time_between(void *vptr, double v) {
   return;
 }
 
-bool o2scl_slack_messenger_set_url_from_env(void *vptr, char *env_var) {
+bool o2scl_slack_messenger_set_url_from_env(void *vptr, void *ptr_env_var) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  bool ret=ptr->set_url_from_env(env_var);
+  std::string *env_var=(std::string *)ptr_env_var;
+  bool ret=ptr->set_url_from_env(*env_var);
   return ret;
 }
 
-bool o2scl_slack_messenger_set_channel_from_env(void *vptr, char *env_var) {
+bool o2scl_slack_messenger_set_channel_from_env(void *vptr, void *ptr_env_var) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  bool ret=ptr->set_channel_from_env(env_var);
+  std::string *env_var=(std::string *)ptr_env_var;
+  bool ret=ptr->set_channel_from_env(*env_var);
   return ret;
 }
 
-bool o2scl_slack_messenger_set_username_from_env(void *vptr, char *env_var) {
+bool o2scl_slack_messenger_set_username_from_env(void *vptr, void *ptr_env_var) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  bool ret=ptr->set_username_from_env(env_var);
+  std::string *env_var=(std::string *)ptr_env_var;
+  bool ret=ptr->set_username_from_env(*env_var);
   return ret;
 }
 
-int o2scl_slack_messenger_send(void *vptr, char *message, bool err_on_fail) {
+int o2scl_slack_messenger_send(void *vptr, void *ptr_message, bool err_on_fail) {
   slack_messenger *ptr=(slack_messenger *)vptr;
-  int ret=ptr->send(message,err_on_fail);
+  std::string *message=(std::string *)ptr_message;
+  int ret=ptr->send(*message,err_on_fail);
   return ret;
 }
 
@@ -399,17 +403,20 @@ void *o2scl_hist_get_bins(void *vptr) {
   return (void *)ret;
 }
 
-void o2scl_hist_from_table(void *vptr, void *ptr_t, char *colx, size_t n_bins) {
+void o2scl_hist_from_table(void *vptr, void *ptr_t, void *ptr_colx, size_t n_bins) {
   hist *ptr=(hist *)vptr;
   table<> *t=(table<> *)ptr_t;
-  ptr->from_table(*t,colx,n_bins);
+  std::string *colx=(std::string *)ptr_colx;
+  ptr->from_table(*t,*colx,n_bins);
   return;
 }
 
-void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins) {
+void o2scl_hist_from_table_twocol(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, size_t n_bins) {
   hist *ptr=(hist *)vptr;
   table<> *t=(table<> *)ptr_t;
-  ptr->from_table(*t,colx,coly,n_bins);
+  std::string *colx=(std::string *)ptr_colx;
+  std::string *coly=(std::string *)ptr_coly;
+  ptr->from_table(*t,*colx,*coly,n_bins);
   return;
 }
 
@@ -481,9 +488,10 @@ size_t o2scl_hist_get_bin_index(void *vptr, double x) {
   return ret;
 }
 
-int o2scl_hist_function(void *vptr, char *func) {
+int o2scl_hist_function(void *vptr, void *ptr_func) {
   hist *ptr=(hist *)vptr;
-  int ret=ptr->function(func);
+  std::string *func=(std::string *)ptr_func;
+  int ret=ptr->function(*func);
   return ret;
 }
 
@@ -546,17 +554,22 @@ void o2scl_hist_2d_create_y_rep_vec(void *vptr, void *ptr_v) {
   return;
 }
 
-void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, char *colx, char *coly, size_t n_bins_x, size_t n_bins_y) {
+void o2scl_hist_2d_from_table(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, size_t n_bins_x, size_t n_bins_y) {
   hist_2d *ptr=(hist_2d *)vptr;
   table<> *t=(table<> *)ptr_t;
-  ptr->from_table(*t,colx,coly,n_bins_x,n_bins_y);
+  std::string *colx=(std::string *)ptr_colx;
+  std::string *coly=(std::string *)ptr_coly;
+  ptr->from_table(*t,*colx,*coly,n_bins_x,n_bins_y);
   return;
 }
 
-void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, char *colx, char *coly, char *colz, size_t n_bins_x, size_t n_bins_y) {
+void o2scl_hist_2d_from_table_wgt(void *vptr, void *ptr_t, void *ptr_colx, void *ptr_coly, void *ptr_colz, size_t n_bins_x, size_t n_bins_y) {
   hist_2d *ptr=(hist_2d *)vptr;
   table<> *t=(table<> *)ptr_t;
-  ptr->from_table(*t,colx,coly,colz,n_bins_x,n_bins_y);
+  std::string *colx=(std::string *)ptr_colx;
+  std::string *coly=(std::string *)ptr_coly;
+  std::string *colz=(std::string *)ptr_colz;
+  ptr->from_table(*t,*colx,*coly,*colz,n_bins_x,n_bins_y);
   return;
 }
 

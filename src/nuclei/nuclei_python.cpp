@@ -104,15 +104,17 @@ void o2scl_free_nucmass_info(void *vptr) {
   return;
 }
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A) {
+int o2scl_nucmass_info_parse_elstring(void *vptr, void *ptr_ela, int *Z, int *N, int *A) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->parse_elstring(ela,*Z,*N,*A);
+  std::string *ela=(std::string *)ptr_ela;
+  int ret=ptr->parse_elstring(*ela,*Z,*N,*A);
   return ret;
 }
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el) {
+int o2scl_nucmass_info_eltoZ(void *vptr, void *ptr_el) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->eltoZ(el);
+  std::string *el=(std::string *)ptr_el;
+  int ret=ptr->eltoZ(*el);
   return ret;
 }
 
@@ -144,9 +146,10 @@ void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   return sptr;
 }
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s) {
+int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->spinp_to_int(s);
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->spinp_to_int(*s);
   return ret;
 }
 

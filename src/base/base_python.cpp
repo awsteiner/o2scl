@@ -225,9 +225,10 @@ size_t o2scl_std_vector_std_string__size(void *vptr) {
   return ret;
 }
 
-void o2scl_std_vector_std_string__push_back(void *vptr, char *x) {
+void o2scl_std_vector_std_string__push_back(void *vptr, void *ptr_x) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
-  ptr->push_back(x);
+  std::string *x=(std::string *)ptr_x;
+  ptr->push_back(*x);
   return;
 }
 
@@ -564,9 +565,10 @@ void *o2scl_lib_settings_class_get_data_dir(void *vptr) {
   return sptr;
 }
 
-int o2scl_lib_settings_class_set_data_dir(void *vptr, char *dir) {
+int o2scl_lib_settings_class_set_data_dir(void *vptr, void *ptr_dir) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-  int ret=ptr->set_data_dir(dir);
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->set_data_dir(*dir);
   return ret;
 }
 
@@ -577,9 +579,10 @@ void *o2scl_lib_settings_class_get_doc_dir(void *vptr) {
   return sptr;
 }
 
-int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir) {
+int o2scl_lib_settings_class_set_doc_dir(void *vptr, void *ptr_dir) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
-  int ret=ptr->set_doc_dir(dir);
+  std::string *dir=(std::string *)ptr_dir;
+  int ret=ptr->set_doc_dir(*dir);
   return ret;
 }
 
@@ -688,23 +691,26 @@ void o2scl_copy_table_(void *vsrc, void *vdest) {
   *dest=*src;
 }
 
-void o2scl_table__getitem(void *vptr, char *col, double **dptr, int *n_) {
+void o2scl_table__getitem(void *vptr, void *ptr_col, double **dptr, int *n_) {
   table<> *ptr=(table<> *)vptr;
-  const std::vector<double> &r=ptr->operator[](col);
+  std::string *col=(std::string *)ptr_col;
+  const std::vector<double> &r=ptr->operator[](*col);
   *dptr=(double *)(&(r[0]));
   *n_=r.size();
   return;
 }
 
-void o2scl_table__set(void *vptr, char *col, size_t row, double val) {
+void o2scl_table__set(void *vptr, void *ptr_col, size_t row, double val) {
   table<> *ptr=(table<> *)vptr;
-  ptr->set(col,row,val);
+  std::string *col=(std::string *)ptr_col;
+  ptr->set(*col,row,val);
   return;
 }
 
-double o2scl_table__get(void *vptr, char *col, size_t row) {
+double o2scl_table__get(void *vptr, void *ptr_col, size_t row) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->get(col,row);
+  std::string *col=(std::string *)ptr_col;
+  double ret=ptr->get(*col,row);
   return ret;
 }
 
@@ -750,9 +756,10 @@ void o2scl_table__inc_maxlines(void *vptr, size_t llines) {
   return;
 }
 
-void o2scl_table__new_column(void *vptr, char *col) {
+void o2scl_table__new_column(void *vptr, void *ptr_col) {
   table<> *ptr=(table<> *)vptr;
-  ptr->new_column(col);
+  std::string *col=(std::string *)ptr_col;
+  ptr->new_column(*col);
   return;
 }
 
@@ -763,15 +770,18 @@ void *o2scl_table__get_column_name(void *vptr, size_t icol) {
   return sptr;
 }
 
-void o2scl_table__rename_column(void *vptr, char *src, char *dest) {
+void o2scl_table__rename_column(void *vptr, void *ptr_src, void *ptr_dest) {
   table<> *ptr=(table<> *)vptr;
-  ptr->rename_column(src,dest);
+  std::string *src=(std::string *)ptr_src;
+  std::string *dest=(std::string *)ptr_dest;
+  ptr->rename_column(*src,*dest);
   return;
 }
 
-void o2scl_table__delete_column(void *vptr, char *col) {
+void o2scl_table__delete_column(void *vptr, void *ptr_col) {
   table<> *ptr=(table<> *)vptr;
-  ptr->delete_column(col);
+  std::string *col=(std::string *)ptr_col;
+  ptr->delete_column(*col);
   return;
 }
 
@@ -782,41 +792,52 @@ void *o2scl_table__get_sorted_name(void *vptr, size_t icol) {
   return sptr;
 }
 
-void o2scl_table__init_column(void *vptr, char *scol, double val) {
+void o2scl_table__init_column(void *vptr, void *ptr_scol, double val) {
   table<> *ptr=(table<> *)vptr;
-  ptr->init_column(scol,val);
+  std::string *scol=(std::string *)ptr_scol;
+  ptr->init_column(*scol,val);
   return;
 }
 
-bool o2scl_table__is_column(void *vptr, char *scol) {
+bool o2scl_table__is_column(void *vptr, void *ptr_scol) {
   table<> *ptr=(table<> *)vptr;
-  bool ret=ptr->is_column(scol);
+  std::string *scol=(std::string *)ptr_scol;
+  bool ret=ptr->is_column(*scol);
   return ret;
 }
 
-size_t o2scl_table__lookup_column(void *vptr, char *scol) {
+size_t o2scl_table__lookup_column(void *vptr, void *ptr_scol) {
   table<> *ptr=(table<> *)vptr;
-  size_t ret=ptr->lookup_column(scol);
+  std::string *scol=(std::string *)ptr_scol;
+  size_t ret=ptr->lookup_column(*scol);
   return ret;
 }
 
-void o2scl_table__copy_column(void *vptr, char *src, char *dest) {
+void o2scl_table__copy_column(void *vptr, void *ptr_src, void *ptr_dest) {
   table<> *ptr=(table<> *)vptr;
-  ptr->copy_column(src,dest);
+  std::string *src=(std::string *)ptr_src;
+  std::string *dest=(std::string *)ptr_dest;
+  ptr->copy_column(*src,*dest);
   return;
 }
 
-void o2scl_table__add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col) {
+void o2scl_table__add_col_from_table(void *vptr, void *ptr_source, void *ptr_src_index, void *ptr_src_col, void *ptr_dest_index, void *ptr_dest_col) {
   table<> *ptr=(table<> *)vptr;
   table<> *source=(table<> *)ptr_source;
-  ptr->add_col_from_table(*source,src_index,src_col,dest_index,dest_col);
+  std::string *src_index=(std::string *)ptr_src_index;
+  std::string *src_col=(std::string *)ptr_src_col;
+  std::string *dest_index=(std::string *)ptr_dest_index;
+  std::string *dest_col=(std::string *)ptr_dest_col;
+  ptr->add_col_from_table(*source,*src_index,*src_col,*dest_index,*dest_col);
   return;
 }
 
-void o2scl_table__insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index) {
+void o2scl_table__insert_table(void *vptr, void *ptr_source, void *ptr_src_index, bool allow_extrap, void *ptr_dest_index) {
   table<> *ptr=(table<> *)vptr;
   table<> *source=(table<> *)ptr_source;
-  ptr->insert_table(*source,src_index,allow_extrap,dest_index);
+  std::string *src_index=(std::string *)ptr_src_index;
+  std::string *dest_index=(std::string *)ptr_dest_index;
+  ptr->insert_table(*source,*src_index,allow_extrap,*dest_index);
   return;
 }
 
@@ -839,15 +860,17 @@ void o2scl_table__copy_row(void *vptr, size_t src, size_t dest) {
   return;
 }
 
-void o2scl_table__delete_row(void *vptr, char *scol, double val) {
+void o2scl_table__delete_row(void *vptr, void *ptr_scol, double val) {
   table<> *ptr=(table<> *)vptr;
-  ptr->delete_row(scol,val);
+  std::string *scol=(std::string *)ptr_scol;
+  ptr->delete_row(*scol,val);
   return;
 }
 
-void o2scl_table__delete_rows_func(void *vptr, char *func) {
+void o2scl_table__delete_rows_func(void *vptr, void *ptr_func) {
   table<> *ptr=(table<> *)vptr;
-  ptr->delete_rows_func(func);
+  std::string *func=(std::string *)ptr_func;
+  ptr->delete_rows_func(*func);
   return;
 }
 
@@ -857,9 +880,10 @@ void o2scl_table__delete_rows_ends(void *vptr, size_t row_start, size_t row_end)
   return;
 }
 
-void o2scl_table__line_of_names(void *vptr, char *names) {
+void o2scl_table__line_of_names(void *vptr, void *ptr_names) {
   table<> *ptr=(table<> *)vptr;
-  ptr->line_of_names(names);
+  std::string *names=(std::string *)ptr_names;
+  ptr->line_of_names(*names);
   return;
 }
 
@@ -877,21 +901,25 @@ void o2scl_table__insert_row(void *vptr, size_t nv, void *ptr_data, size_t row) 
   return;
 }
 
-size_t o2scl_table__ordered_lookup(void *vptr, char *scol, double val) {
+size_t o2scl_table__ordered_lookup(void *vptr, void *ptr_scol, double val) {
   table<> *ptr=(table<> *)vptr;
-  size_t ret=ptr->ordered_lookup(scol,val);
+  std::string *scol=(std::string *)ptr_scol;
+  size_t ret=ptr->ordered_lookup(*scol,val);
   return ret;
 }
 
-size_t o2scl_table__lookup(void *vptr, char *scol, double val) {
+size_t o2scl_table__lookup(void *vptr, void *ptr_scol, double val) {
   table<> *ptr=(table<> *)vptr;
-  size_t ret=ptr->lookup(scol,val);
+  std::string *scol=(std::string *)ptr_scol;
+  size_t ret=ptr->lookup(*scol,val);
   return ret;
 }
 
-size_t o2scl_table__lookup_val(void *vptr, char *scol, double val, char *scol2) {
+size_t o2scl_table__lookup_val(void *vptr, void *ptr_scol, double val, void *ptr_scol2) {
   table<> *ptr=(table<> *)vptr;
-  size_t ret=ptr->lookup_val(scol,val,scol2);
+  std::string *scol=(std::string *)ptr_scol;
+  std::string *scol2=(std::string *)ptr_scol2;
+  size_t ret=ptr->lookup_val(*scol,val,*scol2);
   return ret;
 }
 
@@ -907,9 +935,11 @@ size_t o2scl_table__get_interp_type(void *vptr) {
   return ret;
 }
 
-double o2scl_table__interp(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__interp(void *vptr, void *ptr_sx, double x0, void *ptr_sy) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->interp(sx,x0,sy);
+  std::string *sx=(std::string *)ptr_sx;
+  std::string *sy=(std::string *)ptr_sy;
+  double ret=ptr->interp(*sx,x0,*sy);
   return ret;
 }
 
@@ -919,15 +949,20 @@ double o2scl_table__interp_index(void *vptr, size_t ix, double x0, size_t iy) {
   return ret;
 }
 
-void o2scl_table__deriv_col(void *vptr, char *x, char *y, char *yp) {
+void o2scl_table__deriv_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yp) {
   table<> *ptr=(table<> *)vptr;
-  ptr->deriv(x,y,yp);
+  std::string *x=(std::string *)ptr_x;
+  std::string *y=(std::string *)ptr_y;
+  std::string *yp=(std::string *)ptr_yp;
+  ptr->deriv(*x,*y,*yp);
   return;
 }
 
-double o2scl_table__deriv(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__deriv(void *vptr, void *ptr_sx, double x0, void *ptr_sy) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->deriv(sx,x0,sy);
+  std::string *sx=(std::string *)ptr_sx;
+  std::string *sy=(std::string *)ptr_sy;
+  double ret=ptr->deriv(*sx,x0,*sy);
   return ret;
 }
 
@@ -937,15 +972,20 @@ double o2scl_table__deriv_index(void *vptr, size_t ix, double x0, size_t iy) {
   return ret;
 }
 
-void o2scl_table__deriv2_col(void *vptr, char *x, char *y, char *yp) {
+void o2scl_table__deriv2_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yp) {
   table<> *ptr=(table<> *)vptr;
-  ptr->deriv2(x,y,yp);
+  std::string *x=(std::string *)ptr_x;
+  std::string *y=(std::string *)ptr_y;
+  std::string *yp=(std::string *)ptr_yp;
+  ptr->deriv2(*x,*y,*yp);
   return;
 }
 
-double o2scl_table__deriv2(void *vptr, char *sx, double x0, char *sy) {
+double o2scl_table__deriv2(void *vptr, void *ptr_sx, double x0, void *ptr_sy) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->deriv2(sx,x0,sy);
+  std::string *sx=(std::string *)ptr_sx;
+  std::string *sy=(std::string *)ptr_sy;
+  double ret=ptr->deriv2(*sx,x0,*sy);
   return ret;
 }
 
@@ -955,9 +995,11 @@ double o2scl_table__deriv2_index(void *vptr, size_t ix, double x0, size_t iy) {
   return ret;
 }
 
-double o2scl_table__integ(void *vptr, char *sx, double x1, double x2, char *sy) {
+double o2scl_table__integ(void *vptr, void *ptr_sx, double x1, double x2, void *ptr_sy) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->integ(sx,x1,x2,sy);
+  std::string *sx=(std::string *)ptr_sx;
+  std::string *sy=(std::string *)ptr_sy;
+  double ret=ptr->integ(*sx,x1,x2,*sy);
   return ret;
 }
 
@@ -967,21 +1009,26 @@ double o2scl_table__integ_index(void *vptr, size_t ix, double x1, double x2, siz
   return ret;
 }
 
-void o2scl_table__integ_col(void *vptr, char *x, char *y, char *yi) {
+void o2scl_table__integ_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yi) {
   table<> *ptr=(table<> *)vptr;
-  ptr->integ(x,y,yi);
+  std::string *x=(std::string *)ptr_x;
+  std::string *y=(std::string *)ptr_y;
+  std::string *yi=(std::string *)ptr_yi;
+  ptr->integ(*x,*y,*yi);
   return;
 }
 
-double o2scl_table__max(void *vptr, char *max) {
+double o2scl_table__max(void *vptr, void *ptr_max) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->max(max);
+  std::string *max=(std::string *)ptr_max;
+  double ret=ptr->max(*max);
   return ret;
 }
 
-double o2scl_table__min(void *vptr, char *min) {
+double o2scl_table__min(void *vptr, void *ptr_min) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->min(min);
+  std::string *min=(std::string *)ptr_min;
+  double ret=ptr->min(*min);
   return ret;
 }
 
@@ -1015,21 +1062,24 @@ void o2scl_table__clear_constants(void *vptr) {
   return;
 }
 
-void o2scl_table__sort_table(void *vptr, char *scol) {
+void o2scl_table__sort_table(void *vptr, void *ptr_scol) {
   table<> *ptr=(table<> *)vptr;
-  ptr->sort_table(scol);
+  std::string *scol=(std::string *)ptr_scol;
+  ptr->sort_table(*scol);
   return;
 }
 
-void o2scl_table__sort_column(void *vptr, char *scol) {
+void o2scl_table__sort_column(void *vptr, void *ptr_scol) {
   table<> *ptr=(table<> *)vptr;
-  ptr->sort_column(scol);
+  std::string *scol=(std::string *)ptr_scol;
+  ptr->sort_column(*scol);
   return;
 }
 
-void o2scl_table__average_col_roll(void *vptr, char *col_name, size_t window) {
+void o2scl_table__average_col_roll(void *vptr, void *ptr_col_name, size_t window) {
   table<> *ptr=(table<> *)vptr;
-  ptr->average_col_roll(col_name,window);
+  std::string *col_name=(std::string *)ptr_col_name;
+  ptr->average_col_roll(*col_name,window);
   return;
 }
 
@@ -1045,27 +1095,32 @@ void o2scl_table__is_valid(void *vptr) {
   return;
 }
 
-void o2scl_table__functions_columns(void *vptr, char *list) {
+void o2scl_table__functions_columns(void *vptr, void *ptr_list) {
   table<> *ptr=(table<> *)vptr;
-  ptr->functions_columns(list);
+  std::string *list=(std::string *)ptr_list;
+  ptr->functions_columns(*list);
   return;
 }
 
-void o2scl_table__function_column(void *vptr, char *function, char *scol) {
+void o2scl_table__function_column(void *vptr, void *ptr_function, void *ptr_scol) {
   table<> *ptr=(table<> *)vptr;
-  ptr->function_column(function,scol);
+  std::string *function=(std::string *)ptr_function;
+  std::string *scol=(std::string *)ptr_scol;
+  ptr->function_column(*function,*scol);
   return;
 }
 
-double o2scl_table__row_function(void *vptr, char *scol, size_t row) {
+double o2scl_table__row_function(void *vptr, void *ptr_scol, size_t row) {
   table<> *ptr=(table<> *)vptr;
-  double ret=ptr->row_function(scol,row);
+  std::string *scol=(std::string *)ptr_scol;
+  double ret=ptr->row_function(*scol,row);
   return ret;
 }
 
-size_t o2scl_table__function_find_row(void *vptr, char *function) {
+size_t o2scl_table__function_find_row(void *vptr, void *ptr_function) {
   table<> *ptr=(table<> *)vptr;
-  size_t ret=ptr->function_find_row(function);
+  std::string *function=(std::string *)ptr_function;
+  size_t ret=ptr->function_find_row(*function);
   return ret;
 }
 
@@ -1092,34 +1147,41 @@ void o2scl_copy_table_units_(void *vsrc, void *vdest) {
   *dest=*src;
 }
 
-void o2scl_table_units__set_unit(void *vptr, char *col, char *unit) {
+void o2scl_table_units__set_unit(void *vptr, void *ptr_col, void *ptr_unit) {
   table_units<> *ptr=(table_units<> *)vptr;
-  ptr->set_unit(col,unit);
+  std::string *col=(std::string *)ptr_col;
+  std::string *unit=(std::string *)ptr_unit;
+  ptr->set_unit(*col,*unit);
   return;
 }
 
-void *o2scl_table_units__get_unit(void *vptr, char *col) {
+void *o2scl_table_units__get_unit(void *vptr, void *ptr_col) {
   table_units<> *ptr=(table_units<> *)vptr;
+  std::string *col=(std::string *)ptr_col;
   std::string *sptr=new std::string;
-  *sptr=ptr->get_unit(col);
+  *sptr=ptr->get_unit(*col);
   return sptr;
 }
 
-void o2scl_table_units__line_of_units(void *vptr, char *unit_line) {
+void o2scl_table_units__line_of_units(void *vptr, void *ptr_unit_line) {
   table_units<> *ptr=(table_units<> *)vptr;
-  ptr->line_of_units(unit_line);
+  std::string *unit_line=(std::string *)ptr_unit_line;
+  ptr->line_of_units(*unit_line);
   return;
 }
 
-void o2scl_table_units__remove_unit(void *vptr, char *col) {
+void o2scl_table_units__remove_unit(void *vptr, void *ptr_col) {
   table_units<> *ptr=(table_units<> *)vptr;
-  ptr->remove_unit(col);
+  std::string *col=(std::string *)ptr_col;
+  ptr->remove_unit(*col);
   return;
 }
 
-int o2scl_table_units__convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail) {
+int o2scl_table_units__convert_to_unit(void *vptr, void *ptr_col, void *ptr_unit, bool err_on_fail) {
   table_units<> *ptr=(table_units<> *)vptr;
-  int ret=ptr->convert_to_unit(col,unit,err_on_fail);
+  std::string *col=(std::string *)ptr_col;
+  std::string *unit=(std::string *)ptr_unit;
+  int ret=ptr->convert_to_unit(*col,*unit,err_on_fail);
   return ret;
 }
 
@@ -1302,31 +1364,37 @@ void o2scl_table3d_set_size(void *vptr, size_t nx, size_t ny) {
   return;
 }
 
-void o2scl_table3d_set_xy(void *vptr, char *x_name, size_t nx, void *ptr_x, char *y_name, size_t ny, void *ptr_y) {
+void o2scl_table3d_set_xy(void *vptr, void *ptr_x_name, size_t nx, void *ptr_x, void *ptr_y_name, size_t ny, void *ptr_y) {
   table3d *ptr=(table3d *)vptr;
+  std::string *x_name=(std::string *)ptr_x_name;
   std::vector<double> *x=(std::vector<double> *)ptr_x;
+  std::string *y_name=(std::string *)ptr_y_name;
   std::vector<double> *y=(std::vector<double> *)ptr_y;
-  ptr->set_xy(x_name,nx,*x,y_name,ny,*y);
+  ptr->set_xy(*x_name,nx,*x,*y_name,ny,*y);
   return;
 }
 
-void o2scl_table3d_set_xy_grid(void *vptr, char *x_name, void *ptr_x_grid, char *y_name, void *ptr_y_grid) {
+void o2scl_table3d_set_xy_grid(void *vptr, void *ptr_x_name, void *ptr_x_grid, void *ptr_y_name, void *ptr_y_grid) {
   table3d *ptr=(table3d *)vptr;
+  std::string *x_name=(std::string *)ptr_x_name;
   uniform_grid<double> *x_grid=(uniform_grid<double> *)ptr_x_grid;
+  std::string *y_name=(std::string *)ptr_y_name;
   uniform_grid<double> *y_grid=(uniform_grid<double> *)ptr_y_grid;
-  ptr->set_xy(x_name,*x_grid,y_name,*y_grid);
+  ptr->set_xy(*x_name,*x_grid,*y_name,*y_grid);
   return;
 }
 
-void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val) {
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, void *ptr_name, double val) {
   table3d *ptr=(table3d *)vptr;
-  ptr->set(ix,iy,name,val);
+  std::string *name=(std::string *)ptr_name;
+  ptr->set(ix,iy,*name,val);
   return;
 }
 
-double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name) {
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->get(ix,iy,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->get(ix,iy,*name);
   return ret;
 }
 
@@ -1342,15 +1410,17 @@ void o2scl_table3d_set_i(void *vptr, size_t ix, size_t iy, size_t iz, double val
   return;
 }
 
-void o2scl_table3d_set_val(void *vptr, double x, double y, char *name, double val) {
+void o2scl_table3d_set_val(void *vptr, double x, double y, void *ptr_name, double val) {
   table3d *ptr=(table3d *)vptr;
-  ptr->set_val(x,y,name,val);
+  std::string *name=(std::string *)ptr_name;
+  ptr->set_val(x,y,*name,val);
   return;
 }
 
-double o2scl_table3d_get_val(void *vptr, double x, double y, char *name) {
+double o2scl_table3d_get_val(void *vptr, double x, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->get_val(x,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->get_val(x,y,*name);
   return ret;
 }
 
@@ -1392,15 +1462,17 @@ void *o2scl_table3d_get_y_name(void *vptr) {
   return sptr;
 }
 
-void o2scl_table3d_set_x_name(void *vptr, char *name) {
+void o2scl_table3d_set_x_name(void *vptr, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  ptr->set_x_name(name);
+  std::string *name=(std::string *)ptr_name;
+  ptr->set_x_name(*name);
   return;
 }
 
-void o2scl_table3d_set_y_name(void *vptr, char *name) {
+void o2scl_table3d_set_y_name(void *vptr, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  ptr->set_y_name(name);
+  std::string *name=(std::string *)ptr_name;
+  ptr->set_y_name(*name);
   return;
 }
 
@@ -1447,51 +1519,61 @@ void *o2scl_table3d_get_slice_name(void *vptr, size_t i) {
   return sptr;
 }
 
-void o2scl_table3d_new_slice(void *vptr, char *slice) {
+void o2scl_table3d_new_slice(void *vptr, void *ptr_slice) {
   table3d *ptr=(table3d *)vptr;
-  ptr->new_slice(slice);
+  std::string *slice=(std::string *)ptr_slice;
+  ptr->new_slice(*slice);
   return;
 }
 
-void o2scl_table3d_set_slice_all(void *vptr, char *name, double val) {
+void o2scl_table3d_set_slice_all(void *vptr, void *ptr_name, double val) {
   table3d *ptr=(table3d *)vptr;
-  ptr->set_slice_all(name,val);
+  std::string *name=(std::string *)ptr_name;
+  ptr->set_slice_all(*name,val);
   return;
 }
 
-size_t o2scl_table3d_lookup_slice(void *vptr, char *name) {
+size_t o2scl_table3d_lookup_slice(void *vptr, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  size_t ret=ptr->lookup_slice(name);
+  std::string *name=(std::string *)ptr_name;
+  size_t ret=ptr->lookup_slice(*name);
   return ret;
 }
 
-bool o2scl_table3d_is_slice(void *vptr, char *name, size_t *ix) {
+bool o2scl_table3d_is_slice(void *vptr, void *ptr_name, size_t *ix) {
   table3d *ptr=(table3d *)vptr;
-  bool ret=ptr->is_slice(name,*ix);
+  std::string *name=(std::string *)ptr_name;
+  bool ret=ptr->is_slice(*name,*ix);
   return ret;
 }
 
-void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2) {
+void o2scl_table3d_rename_slice(void *vptr, void *ptr_name1, void *ptr_name2) {
   table3d *ptr=(table3d *)vptr;
-  ptr->rename_slice(name1,name2);
+  std::string *name1=(std::string *)ptr_name1;
+  std::string *name2=(std::string *)ptr_name2;
+  ptr->rename_slice(*name1,*name2);
   return;
 }
 
-void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2) {
+void o2scl_table3d_copy_slice(void *vptr, void *ptr_name1, void *ptr_name2) {
   table3d *ptr=(table3d *)vptr;
-  ptr->copy_slice(name1,name2);
+  std::string *name1=(std::string *)ptr_name1;
+  std::string *name2=(std::string *)ptr_name2;
+  ptr->copy_slice(*name1,*name2);
   return;
 }
 
-void *o2scl_table3d_get_slice(void *vptr, char *slice) {
+void *o2scl_table3d_get_slice(void *vptr, void *ptr_slice) {
   table3d *ptr=(table3d *)vptr;
-  boost::numeric::ublas::matrix<double> *ret=&ptr->get_slice(slice);
+  std::string *slice=(std::string *)ptr_slice;
+  boost::numeric::ublas::matrix<double> *ret=&ptr->get_slice(*slice);
   return ret;
 }
 
-void *o2scl_table3d_get_slice_i(void *vptr, char *slice) {
+void *o2scl_table3d_get_slice_i(void *vptr, void *ptr_slice) {
   table3d *ptr=(table3d *)vptr;
-  boost::numeric::ublas::matrix<double> *ret=&ptr->get_slice(slice);
+  std::string *slice=(std::string *)ptr_slice;
+  boost::numeric::ublas::matrix<double> *ret=&ptr->get_slice(*slice);
   return ret;
 }
 
@@ -1507,39 +1589,45 @@ void o2scl_table3d_lookup_y(void *vptr, double val, size_t iy) {
   return;
 }
 
-double o2scl_table3d_interp(void *vptr, double x, double y, char *name) {
+double o2scl_table3d_interp(void *vptr, double x, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->interp(x,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->interp(x,y,*name);
   return ret;
 }
 
-double o2scl_table3d_deriv_x(void *vptr, double x, double y, char *name) {
+double o2scl_table3d_deriv_x(void *vptr, double x, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->deriv_x(x,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->deriv_x(x,y,*name);
   return ret;
 }
 
-double o2scl_table3d_deriv_y(void *vptr, double x, double y, char *name) {
+double o2scl_table3d_deriv_y(void *vptr, double x, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->deriv_y(x,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->deriv_y(x,y,*name);
   return ret;
 }
 
-double o2scl_table3d_deriv_xy(void *vptr, double x, double y, char *name) {
+double o2scl_table3d_deriv_xy(void *vptr, double x, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->deriv_xy(x,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->deriv_xy(x,y,*name);
   return ret;
 }
 
-double o2scl_table3d_integ_x(void *vptr, double x1, double x2, double y, char *name) {
+double o2scl_table3d_integ_x(void *vptr, double x1, double x2, double y, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->integ_x(x1,x2,y,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->integ_x(x1,x2,y,*name);
   return ret;
 }
 
-double o2scl_table3d_integ_y(void *vptr, double x, double y1, double y2, char *name) {
+double o2scl_table3d_integ_y(void *vptr, double x, double y1, double y2, void *ptr_name) {
   table3d *ptr=(table3d *)vptr;
-  double ret=ptr->integ_y(x,y1,y2,name);
+  std::string *name=(std::string *)ptr_name;
+  double ret=ptr->integ_y(x,y1,y2,*name);
   return ret;
 }
 
@@ -1555,16 +1643,19 @@ void o2scl_table3d_clear(void *vptr) {
   return;
 }
 
-int o2scl_table3d_function_matrix(void *vptr, char *function, void *ptr_mat, bool throw_on_err) {
+int o2scl_table3d_function_matrix(void *vptr, void *ptr_function, void *ptr_mat, bool throw_on_err) {
   table3d *ptr=(table3d *)vptr;
+  std::string *function=(std::string *)ptr_function;
   boost::numeric::ublas::matrix<double> *mat=(boost::numeric::ublas::matrix<double> *)ptr_mat;
-  int ret=ptr->function_matrix(function,*mat,throw_on_err);
+  int ret=ptr->function_matrix(*function,*mat,throw_on_err);
   return ret;
 }
 
-void o2scl_table3d_function_slice(void *vptr, char *function, char *slice) {
+void o2scl_table3d_function_slice(void *vptr, void *ptr_function, void *ptr_slice) {
   table3d *ptr=(table3d *)vptr;
-  ptr->function_slice(function,slice);
+  std::string *function=(std::string *)ptr_function;
+  std::string *slice=(std::string *)ptr_slice;
+  ptr->function_slice(*function,*slice);
   return;
 }
 
@@ -1938,17 +2029,23 @@ double o2scl_tensor__total_sum(void *vptr) {
   return ret;
 }
 
-void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<> *ptr=(tensor<> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_sum(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
-void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<> *ptr=(tensor<> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
@@ -2120,17 +2217,23 @@ int o2scl_tensor_int_std_vector_int__total_sum(void *vptr) {
   return ret;
 }
 
-void o2scl_tensor_int_std_vector_int__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor_int_std_vector_int__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_sum(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
-void o2scl_tensor_int_std_vector_int__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor_int_std_vector_int__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<int,std::vector<int>> *ptr=(tensor<int,std::vector<int>> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
@@ -2288,17 +2391,23 @@ size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr) {
   return ret;
 }
 
-void o2scl_tensor_size_t_std_vector_size_t__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_sum(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_sum(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
-void o2scl_tensor_size_t_std_vector_size_t__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor<size_t,std::vector<size_t>> *ptr=(tensor<size_t,std::vector<size_t>> *)vptr;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d(ix_x,ix_y,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d(ix_x,ix_y,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
@@ -2385,9 +2494,10 @@ void o2scl_tensor_grid__set_grid_i_vec(void *vptr, size_t i, void *ptr_grid) {
   return;
 }
 
-void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, char *func) {
+void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, void *ptr_func) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
-  ptr->set_grid_i_func(ix,func);
+  std::string *func=(std::string *)ptr_func;
+  ptr->set_grid_i_func(ix,*func);
   return;
 }
 
@@ -2426,43 +2536,52 @@ void *o2scl_tensor_grid__copy_slice_interp(void *vptr, void *ptr_ifix, void *ptr
   return ret;
 }
 
-void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *z_name) {
+void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_z_name) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_align(ix_x,ix_y,*index,*tab,z_name);
+  std::string *z_name=(std::string *)ptr_z_name;
+  ptr->copy_table3d_align(ix_x,ix_y,*index,*tab,*z_name);
   return;
 }
 
-void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *x_name, char *y_name, char *z_name) {
+void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_z_name) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   vector<size_t> *index=(vector<size_t> *)ptr_index;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_align_setxy(ix_x,ix_y,*index,*tab,x_name,y_name,z_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *z_name=(std::string *)ptr_z_name;
+  ptr->copy_table3d_align_setxy(ix_x,ix_y,*index,*tab,*x_name,*y_name,*z_name);
   return;
 }
 
-void o2scl_tensor_grid__copy_table3d_interp(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *slice_name) {
+void o2scl_tensor_grid__copy_table3d_interp(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_slice_name) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   std::vector<size_t> *index=(std::vector<size_t> *)ptr_index;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_interp(ix_x,ix_y,*index,*tab,slice_name);
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_interp(ix_x,ix_y,*index,*tab,*slice_name);
   return;
 }
 
-void o2scl_tensor_grid__copy_table3d_interp_values(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *slice_name, int verbose) {
+void o2scl_tensor_grid__copy_table3d_interp_values(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, void *ptr_slice_name, int verbose) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   std::vector<double> *values=(std::vector<double> *)ptr_values;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_interp_values(ix_x,ix_y,*values,*tab,slice_name,verbose);
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_interp_values(ix_x,ix_y,*values,*tab,*slice_name,verbose);
   return;
 }
 
-void o2scl_tensor_grid__copy_table3d_interp_values_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *x_name, char *y_name, char *slice_name) {
+void o2scl_tensor_grid__copy_table3d_interp_values_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   std::vector<double> *values=(std::vector<double> *)ptr_values;
   table3d *tab=(table3d *)ptr_tab;
-  ptr->copy_table3d_interp_values_setxy(ix_x,ix_y,*values,*tab,x_name,y_name,slice_name);
+  std::string *x_name=(std::string *)ptr_x_name;
+  std::string *y_name=(std::string *)ptr_y_name;
+  std::string *slice_name=(std::string *)ptr_slice_name;
+  ptr->copy_table3d_interp_values_setxy(ix_x,ix_y,*values,*tab,*x_name,*y_name,*slice_name);
   return;
 }
 
@@ -2494,10 +2613,11 @@ double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v) {
   return ret;
 }
 
-void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slice, size_t n_points, double low, double high, double width) {
+void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, void *ptr_slice, size_t n_points, double low, double high, double width) {
   tensor_grid<> *ptr=(tensor_grid<> *)vptr;
   table3d *t3d=(table3d *)ptr_t3d;
-  ptr->from_table3d_fermi(*t3d,slice,n_points,low,high,width);
+  std::string *slice=(std::string *)ptr_slice;
+  ptr->from_table3d_fermi(*t3d,*slice,n_points,low,high,width);
   return;
 }
 
@@ -2853,15 +2973,19 @@ void o2scl_convert_units__set_combine_two_conv(void *vptr, bool v) {
   return;
 }
 
-double o2scl_convert_units__convert(void *vptr, char *frm, char *to, double val) {
+double o2scl_convert_units__convert(void *vptr, void *ptr_frm, void *ptr_to, double val) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  double ret=ptr->convert(frm,to,val);
+  std::string *frm=(std::string *)ptr_frm;
+  std::string *to=(std::string *)ptr_to;
+  double ret=ptr->convert(*frm,*to,val);
   return ret;
 }
 
-int o2scl_convert_units__convert_ret(void *vptr, char *frm, char *to, double val, double converted) {
+int o2scl_convert_units__convert_ret(void *vptr, void *ptr_frm, void *ptr_to, double val, double converted) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  int ret=ptr->convert_ret(frm,to,val,converted);
+  std::string *frm=(std::string *)ptr_frm;
+  std::string *to=(std::string *)ptr_to;
+  int ret=ptr->convert_ret(*frm,*to,val,converted);
   return ret;
 }
 
@@ -2885,15 +3009,19 @@ void o2scl_convert_units__set_natural_units(void *vptr, bool c_is_one, bool hbar
   return;
 }
 
-int o2scl_convert_units__is_in_cache(void *vptr, char *frm, char *to) {
+int o2scl_convert_units__is_in_cache(void *vptr, void *ptr_frm, void *ptr_to) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  int ret=ptr->is_in_cache(frm,to);
+  std::string *frm=(std::string *)ptr_frm;
+  std::string *to=(std::string *)ptr_to;
+  int ret=ptr->is_in_cache(*frm,*to);
   return ret;
 }
 
-int o2scl_convert_units__remove_cache(void *vptr, char *frm, char *to) {
+int o2scl_convert_units__remove_cache(void *vptr, void *ptr_frm, void *ptr_to) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  int ret=ptr->remove_cache(frm,to);
+  std::string *frm=(std::string *)ptr_frm;
+  std::string *to=(std::string *)ptr_to;
+  int ret=ptr->remove_cache(*frm,*to);
   return ret;
 }
 
@@ -2921,15 +3049,19 @@ void o2scl_convert_units__print_units_cout(void *vptr) {
   return;
 }
 
-void o2scl_convert_units__find_print(void *vptr, char *name, char *unit, size_t prec, bool use_regex) {
+void o2scl_convert_units__find_print(void *vptr, void *ptr_name, void *ptr_unit, size_t prec, bool use_regex) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  ptr->find_print(name,unit,prec,use_regex);
+  std::string *name=(std::string *)ptr_name;
+  std::string *unit=(std::string *)ptr_unit;
+  ptr->find_print(*name,*unit,prec,use_regex);
   return;
 }
 
-double o2scl_convert_units__find_unique(void *vptr, char *name, char *unit, bool use_regex) {
+double o2scl_convert_units__find_unique(void *vptr, void *ptr_name, void *ptr_unit, bool use_regex) {
   convert_units<> *ptr=(convert_units<> *)vptr;
-  double ret=ptr->find_unique(name,unit,use_regex);
+  std::string *name=(std::string *)ptr_name;
+  std::string *unit=(std::string *)ptr_unit;
+  double ret=ptr->find_unique(*name,*unit,use_regex);
   return ret;
 }
 
@@ -3009,9 +3141,10 @@ void o2scl_format_float_set_pad_zeros(void *vptr, bool pad) {
   return;
 }
 
-void o2scl_format_float_set_dec_point(void *vptr, char *dec_point) {
+void o2scl_format_float_set_dec_point(void *vptr, void *ptr_dec_point) {
   format_float *ptr=(format_float *)vptr;
-  ptr->set_dec_point(dec_point);
+  std::string *dec_point=(std::string *)ptr_dec_point;
+  ptr->set_dec_point(*dec_point);
   return;
 }
 
@@ -3209,9 +3342,10 @@ bool o2scl_terminal_is_redirected(void *vptr) {
   return ret;
 }
 
-size_t o2scl_terminal_str_len(void *vptr, char *str) {
+size_t o2scl_terminal_str_len(void *vptr, void *ptr_str) {
   terminal *ptr=(terminal *)vptr;
-  size_t ret=ptr->str_len(str);
+  std::string *str=(std::string *)ptr_str;
+  size_t ret=ptr->str_len(*str);
   return ret;
 }
 
@@ -3425,9 +3559,10 @@ void o2scl_free_funct_string_double_(void *vptr) {
   return;
 }
 
-int o2scl_funct_string_double__set_parm(void *vptr, char *name, double val) {
+int o2scl_funct_string_double__set_parm(void *vptr, void *ptr_name, double val) {
   funct_string<double> *ptr=(funct_string<double> *)vptr;
-  int ret=ptr->set_parm(name,val);
+  std::string *name=(std::string *)ptr_name;
+  int ret=ptr->set_parm(*name,val);
   return ret;
 }
 
@@ -3728,17 +3863,19 @@ void *o2scl_cli_get_option_list(void *vptr) {
   return ret;
 }
 
-void *o2scl_cli_parameter_desc(void *vptr, char *name) {
+void *o2scl_cli_parameter_desc(void *vptr, void *ptr_name) {
   cli *ptr=(cli *)vptr;
+  std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
-  *sptr=ptr->parameter_desc(name);
+  *sptr=ptr->parameter_desc(*name);
   return sptr;
 }
 
-void *o2scl_cli_option_short_desc(void *vptr, char *name) {
+void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name) {
   cli *ptr=(cli *)vptr;
+  std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
-  *sptr=ptr->option_short_desc(name);
+  *sptr=ptr->option_short_desc(*name);
   return sptr;
 }
 

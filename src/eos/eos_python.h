@@ -522,19 +522,19 @@ void *o2scl_eos_tov_interp_get_full_vecnb(void *vptr);
 
 void o2scl_eos_tov_interp_set_full_vecnb(void *vptr, void *p_v);
 
-void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
+void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, void *ptr_s_cole, void *ptr_s_colp, void *ptr_s_colnb);
 
 void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
 
 void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
 
-void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external=false);
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external=false);
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external=false);
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
+void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, void *ptr_fname);
 
 void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
 
