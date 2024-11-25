@@ -1663,7 +1663,7 @@ int main(int argc, char *argv[]) {
               fout << "  ptr->" << iff.name << "(";
             } else {
               fout << "  " << iff.ret.name
-                   << " ret=ptr->" << iff.name << "(";
+                   << " &ret=ptr->" << iff.name << "(";
             }
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";

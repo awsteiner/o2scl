@@ -39,20 +39,6 @@
 
 extern "C" {
 
-void *o2scl_create_std_string();
-
-void o2scl_free_std_string(void *vptr);
-
-void o2scl_copy_std_string(void *vsrc, void *vdest);
-
-size_t o2scl_std_string_length(void *vptr);
-
-char o2scl_std_string_getitem(void *vptr, size_t n);
-
-void o2scl_std_string_setitem(void *vptr, size_t i, char val);
-
-void o2scl_std_string_resize(void *vptr, size_t n);
-
 void *o2scl_create_std_vector_double_();
 
 void o2scl_free_std_vector_double_(void *vptr);

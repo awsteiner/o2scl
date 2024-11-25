@@ -478,7 +478,7 @@ void o2scl_hist_set_wgt(void *vptr, double x, double val) {
 
 const double o2scl_hist_getitem(void *vptr, size_t i) {
   hist *ptr=(hist *)vptr;
-  double ret=ptr->operator[](i);
+  double &ret=ptr->operator[](i);
   return ret;
 }
 
@@ -877,7 +877,7 @@ double o2scl_prob_dens_func_entropy(void *vptr) {
 
 double o2scl_prob_dens_func_getitem(void *vptr) {
   prob_dens_func *ptr=(prob_dens_func *)vptr;
-  double ret=ptr->operator()();
+  double &ret=ptr->operator()();
   return ret;
 }
 

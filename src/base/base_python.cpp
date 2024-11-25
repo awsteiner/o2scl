@@ -26,47 +26,6 @@
 using namespace std;
 using namespace o2scl;
 
-void *o2scl_create_std_string() {
-  std::string *ptr=new std::string;
-  return ptr;
-}
-
-void o2scl_free_std_string(void *vptr) {
-  std::string *ptr=(std::string *)vptr;
-  delete ptr;
-  return;
-}
-
-void o2scl_copy_std_string(void *vsrc, void *vdest) {
-  std::string *src=(std::string *)vsrc;
-  std::string *dest=(std::string *)vdest;
-  *dest=*src;
-}
-
-size_t o2scl_std_string_length(void *vptr) {
-  std::string *ptr=(std::string *)vptr;
-  size_t ret=ptr->length();
-  return ret;
-}
-
-char o2scl_std_string_getitem(void *vptr, size_t n) {
-  std::string *ptr=(std::string *)vptr;
-  char ret=ptr->operator[](n);
-  return ret;
-}
-
-void o2scl_std_string_setitem(void *vptr, size_t i, char val) {
-  std::string *ptr=(std::string *)vptr;
-  (*ptr)[i]=val;
-  return;
-}
-
-void o2scl_std_string_resize(void *vptr, size_t n) {
-  std::string *ptr=(std::string *)vptr;
-  ptr->resize(n);
-  return;
-}
-
 void *o2scl_create_std_vector_double_() {
   std::vector<double> *ptr=new std::vector<double>;
   return ptr;
@@ -98,7 +57,7 @@ size_t o2scl_std_vector_double__size(void *vptr) {
 
 double o2scl_std_vector_double__getitem(void *vptr, size_t n) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
-  double ret=ptr->operator[](n);
+  double &ret=ptr->operator[](n);
   return ret;
 }
 
@@ -145,7 +104,7 @@ size_t o2scl_std_vector_int__size(void *vptr) {
 
 int o2scl_std_vector_int__getitem(void *vptr, size_t n) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
-  int ret=ptr->operator[](n);
+  int &ret=ptr->operator[](n);
   return ret;
 }
 
@@ -186,7 +145,7 @@ size_t o2scl_std_vector_size_t__size(void *vptr) {
 
 size_t o2scl_std_vector_size_t__getitem(void *vptr, size_t n) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
-  size_t ret=ptr->operator[](n);
+  size_t &ret=ptr->operator[](n);
   return ret;
 }
 
@@ -234,7 +193,7 @@ void o2scl_std_vector_std_string__push_back(void *vptr, void *ptr_x) {
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
-  std::string ret=ptr->operator[](n);
+  std::string &ret=ptr->operator[](n);
   return &ret; //x operator[]
 }
 
@@ -275,7 +234,7 @@ void o2scl_boost_numeric_ublas_vector_double__resize(void *vptr, size_t n) {
 
 double o2scl_boost_numeric_ublas_vector_double__getitem(void *vptr, size_t i) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
-  double ret=ptr->operator[](i);
+  double &ret=ptr->operator[](i);
   return ret;
 }
 
@@ -316,7 +275,7 @@ void o2scl_boost_numeric_ublas_vector_int__resize(void *vptr, size_t n) {
 
 int o2scl_boost_numeric_ublas_vector_int__getitem(void *vptr, size_t i) {
   boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
-  int ret=ptr->operator[](i);
+  int &ret=ptr->operator[](i);
   return ret;
 }
 
@@ -363,7 +322,7 @@ void o2scl_boost_numeric_ublas_matrix_double__resize(void *vptr, size_t m, size_
 
 double o2scl_boost_numeric_ublas_matrix_double__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
-  double ret=ptr->operator()(m,n);
+  double &ret=ptr->operator()(m,n);
   return ret;
 }
 
@@ -410,7 +369,7 @@ void o2scl_boost_numeric_ublas_matrix_int__resize(void *vptr, size_t m, size_t n
 
 int o2scl_boost_numeric_ublas_matrix_int__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
-  int ret=ptr->operator()(m,n);
+  int &ret=ptr->operator()(m,n);
   return ret;
 }
 
@@ -1233,7 +1192,7 @@ double o2scl_uniform_grid__get_width(void *vptr) {
 
 double o2scl_uniform_grid__getitem(void *vptr, size_t n) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-  double ret=ptr->operator[](n);
+  double &ret=ptr->operator[](n);
   return ret;
 }
 
@@ -3567,7 +3526,7 @@ int o2scl_funct_string_double__set_parm(void *vptr, void *ptr_name, double val) 
 
 double o2scl_funct_string_double__getitem(void *vptr, double x) {
   funct_string<double> *ptr=(funct_string<double> *)vptr;
-  double ret=ptr->operator()(x);
+  double &ret=ptr->operator()(x);
   return ret;
 }
 

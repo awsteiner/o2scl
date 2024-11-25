@@ -10,7 +10,8 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	format_float.h table_units.h exception.h uniform_grid.h \
 	interp_krige.h find_constants.h cursesw.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
-	funct_multip.h interp_vec.h funct_to_fp.h
+	funct_multip.h interp_vec.h funct_to_fp.h \
+	string_python.h
 #nvt.h
 
 HEADER_VAR = $(BASE_HEADER_VAR)
@@ -19,7 +20,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
-	tensor.cpp cursesw.cpp \
+	tensor.cpp cursesw.cpp string_python.cpp \
 	base_python.cpp funct.cpp funct_to_fp.cpp
 #nvt.cpp
 
@@ -303,6 +304,9 @@ interface: empty
 	../../bin/yanic base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
 		~/wcs/o2sclpy/doc/base ../../bin/yanic_header.txt \
 		| tee base_python.yanic.out
+	../../bin/yanic string.i string_python ~/wcs/o2sclpy/o2sclpy/string \
+		~/wcs/o2sclpy/doc/string ../../bin/yanic_header.txt \
+		| tee string_python.yanic.out
 
 empty:
 
