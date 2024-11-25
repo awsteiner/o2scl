@@ -707,14 +707,14 @@ int main(int argc, char *argv[]) {
       next_line(fin,line,vs,done);
       
     } else if (vs[0]=="py_header") {
+
+      std::string pyh;
       
       if (vs.size()<2) {
-        cerr << "No argument for py_header." << endl;
-        exit(-1);
-      }
-      std::string pyh=vs[1];
-      for(size_t j=2;j<vs.size();j++) {
-        pyh+=" "+vs[j];
+        pyh="";
+      } else {
+        pyh=line.substr(10,line.length()-10);
+        cout << "py_header, line: " << pyh << endl;
       }
       py_headers.push_back(pyh);
       
@@ -2527,7 +2527,7 @@ int main(int argc, char *argv[]) {
           fout << "        func(self._ptr,value._s_ptr)" << endl;
         } else if (ifv.ift.name=="std::string") {
           fout << "        s_=o2sclpy.std_string()" << endl;
-          fout << "        s_.init_bytes(force_bytes(value))" << endl;
+          fout << "        s_.init_bytes(force_bytes_string(value))" << endl;
           fout << "        func(self._ptr,s_._ptr)" << endl;
         } else {
           fout << "        func(self._ptr,value._ptr)" << endl;
@@ -2734,7 +2734,7 @@ int main(int argc, char *argv[]) {
           fout << "        s_" << iff.args[k].name
                << "=o2sclpy.std_string()" << endl;
           fout << "        s_" << iff.args[k].name
-               << ".init_bytes(force_bytes(" << iff.args[k].name
+               << ".init_bytes(force_bytes_string(" << iff.args[k].name
                << "))" << endl;
         }
       }
@@ -3342,7 +3342,7 @@ int main(int argc, char *argv[]) {
           fout << "    " << "s_" << iff.args[k].name
                << "=o2sclpy.std_string()" << endl;
           fout << "    s_" << iff.args[k].name
-               << ".init_bytes(force_bytes("
+               << ".init_bytes(force_bytes_string("
                << iff.args[k].name << "))"
                << endl;
         }

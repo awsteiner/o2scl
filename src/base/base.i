@@ -52,6 +52,7 @@ cpp_using o2scl
 # Additional python headers
 #
 py_header from o2sclpy.string import *
+py_header 
 #
 # The interpolation types
 py_header itp_linear=1
@@ -62,6 +63,20 @@ py_header itp_akima_peri=5
 py_header itp_monotonic=6
 py_header itp_steffen=7
 py_header itp_nearest_neigh=8
+py_header 
+py_header def force_bytes_string(obj):
+py_header     """
+py_header     This function returns the bytes object corresponding to ``obj``
+py_header     in case it is a string using UTF-8. 
+py_header     """
+py_header     if isinstance(obj,o2sclpy.base.std_string):
+py_header         obj2=obj.to_bytes()
+py_header     else:
+py_header         obj2=obj
+py_header     if (isinstance(obj2,numpy.bytes_)==False and
+py_header         isinstance(obj2,bytes)==False):
+py_header         return bytes(obj2,'utf-8')
+py_header     return obj2
 #
 # ------------------------------------------------------
 #
