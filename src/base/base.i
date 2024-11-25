@@ -69,14 +69,12 @@ py_header     """
 py_header     This function returns the bytes object corresponding to ``obj``
 py_header     in case it is a string using UTF-8. 
 py_header     """
+py_header     if (isinstance(obj,numpy.bytes_)==True or
+py_header         isinstance(obj,bytes)==True):
+py_header         return obj
 py_header     if isinstance(obj,o2sclpy.base.std_string):
-py_header         obj2=obj.to_bytes()
-py_header     else:
-py_header         obj2=obj
-py_header     if (isinstance(obj2,numpy.bytes_)==False and
-py_header         isinstance(obj2,bytes)==False):
-py_header         return bytes(obj2,'utf-8')
-py_header     return obj2
+py_header         return obj.to_bytes()
+py_header     return bytes(obj,'utf-8')
 #
 # ------------------------------------------------------
 #
