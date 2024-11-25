@@ -1391,6 +1391,9 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
+            fout << "  // The ownership of the string pointer is "
+                 << "passed to the Python class\n  // and the memory "
+                 << "is freed later." << endl;
             fout << "  std::string *sptr=new std::string;" << endl;
             fout << "  *sptr=ptr->" << ifv.name << ";" << endl;
             fout << "  return sptr;" << endl;
@@ -1661,9 +1664,13 @@ int main(int argc, char *argv[]) {
                    << " *ret=&(ptr->" << iff.name << "(";
             } else if (iff.ret.name=="void") {
               fout << "  ptr->" << iff.name << "(";
+            } else if (iff.ret.name=="std::string") {
+              fout << "  " << iff.ret.name << " *sptr=new "
+                   << iff.ret.name << ";" << endl;
+              fout << "  /* tag 3 */ *sptr=ptr->" << iff.name << "(";
             } else {
-              fout << "  " << iff.ret.name
-                   << " &ret=ptr->" << iff.name << "(";
+              fout << "  /* tag 4 */ " << iff.ret.name
+                   << " ret=ptr->" << iff.name << "(";
             }
           } else if (iff.ret.name=="void") {
             fout << "  ptr->" << iff.name << "(";
@@ -1749,9 +1756,9 @@ int main(int argc, char *argv[]) {
             
             if (iff.ret.name=="std::string") {
               if (iff.name=="operator[]") {
-                fout << "  return &ret; //x " << iff.name << endl;
+                fout << "  return sptr; // tag 1 " << iff.name << endl;
               } else {
-                fout << "  return sptr; //y " << iff.name << endl;
+                fout << "  return sptr; // tag 2 " << iff.name << endl;
               }
             } else if (iff.ret.name=="std::vector<std::string>") {
               if (iff.ret.is_reference()) {

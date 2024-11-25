@@ -423,6 +423,8 @@ void o2scl_hdf_free_acol_manager(void *vptr) {
 
 void *o2scl_hdf_acol_manager_get_env_var_name(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->env_var_name;
   return sptr;
@@ -460,6 +462,8 @@ void o2scl_hdf_acol_manager_set_verbose(void *vptr, int v) {
 
 void *o2scl_hdf_acol_manager_get_def_args(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->def_args;
   return sptr;
@@ -474,6 +478,8 @@ void o2scl_hdf_acol_manager_set_def_args(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_type(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->type;
   return sptr;
@@ -580,6 +586,8 @@ void o2scl_hdf_acol_manager_set_size_t_obj(void *vptr, size_t v) {
 
 void *o2scl_hdf_acol_manager_get_string_obj(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->string_obj;
   return sptr;
@@ -762,6 +770,8 @@ void o2scl_hdf_acol_manager_set_pdmg_obj(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_command_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->command_color;
   return sptr;
@@ -776,6 +786,8 @@ void o2scl_hdf_acol_manager_set_command_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_type_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->type_color;
   return sptr;
@@ -790,6 +802,8 @@ void o2scl_hdf_acol_manager_set_type_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_param_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->param_color;
   return sptr;
@@ -804,6 +818,8 @@ void o2scl_hdf_acol_manager_set_param_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_help_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->help_color;
   return sptr;
@@ -818,6 +834,8 @@ void o2scl_hdf_acol_manager_set_help_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_exec_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->exec_color;
   return sptr;
@@ -832,6 +850,8 @@ void o2scl_hdf_acol_manager_set_exec_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_url_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->url_color;
   return sptr;
@@ -846,6 +866,8 @@ void o2scl_hdf_acol_manager_set_url_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_default_color(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->default_color;
   return sptr;
@@ -860,6 +882,8 @@ void o2scl_hdf_acol_manager_set_default_color(void *vptr, void *p_v) {
 
 void *o2scl_hdf_acol_manager_get_color_spec(void *vptr) {
   acol_manager *ptr=(acol_manager *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->color_spec;
   return sptr;

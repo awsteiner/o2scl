@@ -57,7 +57,7 @@ size_t o2scl_std_vector_double__size(void *vptr) {
 
 double o2scl_std_vector_double__getitem(void *vptr, size_t n) {
   std::vector<double> *ptr=(std::vector<double> *)vptr;
-  double &ret=ptr->operator[](n);
+  /* tag 4 */ double ret=ptr->operator[](n);
   return ret;
 }
 
@@ -104,7 +104,7 @@ size_t o2scl_std_vector_int__size(void *vptr) {
 
 int o2scl_std_vector_int__getitem(void *vptr, size_t n) {
   std::vector<int> *ptr=(std::vector<int> *)vptr;
-  int &ret=ptr->operator[](n);
+  /* tag 4 */ int ret=ptr->operator[](n);
   return ret;
 }
 
@@ -145,7 +145,7 @@ size_t o2scl_std_vector_size_t__size(void *vptr) {
 
 size_t o2scl_std_vector_size_t__getitem(void *vptr, size_t n) {
   std::vector<size_t> *ptr=(std::vector<size_t> *)vptr;
-  size_t &ret=ptr->operator[](n);
+  /* tag 4 */ size_t ret=ptr->operator[](n);
   return ret;
 }
 
@@ -193,8 +193,9 @@ void o2scl_std_vector_std_string__push_back(void *vptr, void *ptr_x) {
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n) {
   std::vector<std::string> *ptr=(std::vector<std::string> *)vptr;
-  std::string &ret=ptr->operator[](n);
-  return &ret; //x operator[]
+  std::string *sptr=new std::string;
+  /* tag 3 */ *sptr=ptr->operator[](n);
+  return sptr; // tag 1 operator[]
 }
 
 void o2scl_std_vector_std_string__setitem(void *vptr, size_t i, std::string *val) {
@@ -234,7 +235,7 @@ void o2scl_boost_numeric_ublas_vector_double__resize(void *vptr, size_t n) {
 
 double o2scl_boost_numeric_ublas_vector_double__getitem(void *vptr, size_t i) {
   boost::numeric::ublas::vector<double> *ptr=(boost::numeric::ublas::vector<double> *)vptr;
-  double &ret=ptr->operator[](i);
+  /* tag 4 */ double ret=ptr->operator[](i);
   return ret;
 }
 
@@ -275,7 +276,7 @@ void o2scl_boost_numeric_ublas_vector_int__resize(void *vptr, size_t n) {
 
 int o2scl_boost_numeric_ublas_vector_int__getitem(void *vptr, size_t i) {
   boost::numeric::ublas::vector<int> *ptr=(boost::numeric::ublas::vector<int> *)vptr;
-  int &ret=ptr->operator[](i);
+  /* tag 4 */ int ret=ptr->operator[](i);
   return ret;
 }
 
@@ -322,7 +323,7 @@ void o2scl_boost_numeric_ublas_matrix_double__resize(void *vptr, size_t m, size_
 
 double o2scl_boost_numeric_ublas_matrix_double__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<double> *ptr=(boost::numeric::ublas::matrix<double> *)vptr;
-  double &ret=ptr->operator()(m,n);
+  /* tag 4 */ double ret=ptr->operator()(m,n);
   return ret;
 }
 
@@ -369,7 +370,7 @@ void o2scl_boost_numeric_ublas_matrix_int__resize(void *vptr, size_t m, size_t n
 
 int o2scl_boost_numeric_ublas_matrix_int__getitem(void *vptr, size_t m, size_t n) {
   boost::numeric::ublas::matrix<int> *ptr=(boost::numeric::ublas::matrix<int> *)vptr;
-  int &ret=ptr->operator()(m,n);
+  /* tag 4 */ int ret=ptr->operator()(m,n);
   return ret;
 }
 
@@ -520,7 +521,7 @@ void *o2scl_lib_settings_class_get_data_dir(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_data_dir();
-  return sptr; //y get_data_dir
+  return sptr; // tag 2 get_data_dir
 }
 
 int o2scl_lib_settings_class_set_data_dir(void *vptr, void *ptr_dir) {
@@ -534,7 +535,7 @@ void *o2scl_lib_settings_class_get_doc_dir(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_doc_dir();
-  return sptr; //y get_doc_dir
+  return sptr; // tag 2 get_doc_dir
 }
 
 int o2scl_lib_settings_class_set_doc_dir(void *vptr, void *ptr_dir) {
@@ -590,7 +591,7 @@ void *o2scl_lib_settings_class_system_type(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->system_type();
-  return sptr; //y system_type
+  return sptr; // tag 2 system_type
 }
 
 bool o2scl_lib_settings_class_range_check(void *vptr) {
@@ -603,21 +604,21 @@ void *o2scl_lib_settings_class_time_compiled(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->time_compiled();
-  return sptr; //y time_compiled
+  return sptr; // tag 2 time_compiled
 }
 
 void *o2scl_lib_settings_class_date_compiled(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->date_compiled();
-  return sptr; //y date_compiled
+  return sptr; // tag 2 date_compiled
 }
 
 void *o2scl_lib_settings_class_o2scl_version(void *vptr) {
   lib_settings_class *ptr=(lib_settings_class *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->o2scl_version();
-  return sptr; //y o2scl_version
+  return sptr; // tag 2 o2scl_version
 }
 
 void o2scl_lib_settings_class_config_h_report(void *vptr) {
@@ -725,7 +726,7 @@ void *o2scl_table__get_column_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_column_name(icol);
-  return sptr; //y get_column_name
+  return sptr; // tag 2 get_column_name
 }
 
 void o2scl_table__rename_column(void *vptr, void *ptr_src, void *ptr_dest) {
@@ -747,7 +748,7 @@ void *o2scl_table__get_sorted_name(void *vptr, size_t icol) {
   table<> *ptr=(table<> *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_sorted_name(icol);
-  return sptr; //y get_sorted_name
+  return sptr; // tag 2 get_sorted_name
 }
 
 void o2scl_table__init_column(void *vptr, void *ptr_scol, double val) {
@@ -1118,7 +1119,7 @@ void *o2scl_table_units__get_unit(void *vptr, void *ptr_col) {
   std::string *col=(std::string *)ptr_col;
   std::string *sptr=new std::string;
   *sptr=ptr->get_unit(*col);
-  return sptr; //y get_unit
+  return sptr; // tag 2 get_unit
 }
 
 void o2scl_table_units__line_of_units(void *vptr, void *ptr_unit_line) {
@@ -1192,7 +1193,7 @@ double o2scl_uniform_grid__get_width(void *vptr) {
 
 double o2scl_uniform_grid__getitem(void *vptr, size_t n) {
   uniform_grid<> *ptr=(uniform_grid<> *)vptr;
-  double &ret=ptr->operator[](n);
+  /* tag 4 */ double ret=ptr->operator[](n);
   return ret;
 }
 
@@ -1410,14 +1411,14 @@ void *o2scl_table3d_get_x_name(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_x_name();
-  return sptr; //y get_x_name
+  return sptr; // tag 2 get_x_name
 }
 
 void *o2scl_table3d_get_y_name(void *vptr) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_y_name();
-  return sptr; //y get_y_name
+  return sptr; // tag 2 get_y_name
 }
 
 void o2scl_table3d_set_x_name(void *vptr, void *ptr_name) {
@@ -1474,7 +1475,7 @@ void *o2scl_table3d_get_slice_name(void *vptr, size_t i) {
   table3d *ptr=(table3d *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->get_slice_name(i);
-  return sptr; //y get_slice_name
+  return sptr; // tag 2 get_slice_name
 }
 
 void o2scl_table3d_new_slice(void *vptr, void *ptr_slice) {
@@ -2604,6 +2605,8 @@ void o2scl_find_constants_const_entry_set_names(void *vptr, void *p_v) {
 
 void *o2scl_find_constants_const_entry_get_unit(void *vptr) {
   find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->unit;
   return sptr;
@@ -2640,6 +2643,8 @@ void o2scl_find_constants_const_entry_set_val(void *vptr, double v) {
 
 void *o2scl_find_constants_const_entry_get_source(void *vptr) {
   find_constants<>::const_entry *ptr=(find_constants<>::const_entry *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->source;
   return sptr;
@@ -2773,6 +2778,8 @@ void o2scl_free_convert_units_der_unit(void *vptr) {
 
 void *o2scl_convert_units_der_unit_get_label(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->label;
   return sptr;
@@ -2875,6 +2882,8 @@ void o2scl_convert_units_der_unit_set_val(void *vptr, double v) {
 
 void *o2scl_convert_units_der_unit_get_name(void *vptr) {
   convert_units<>::der_unit *ptr=(convert_units<>::der_unit *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->name;
   return sptr;
@@ -3134,7 +3143,7 @@ void *o2scl_format_float_convert(void *vptr, double x, bool debug) {
   format_float *ptr=(format_float *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->convert(x,debug);
-  return sptr; //y convert
+  return sptr; // tag 2 convert
 }
 
 void *o2scl_create_interp_vec_std_vector_double_() {
@@ -3311,175 +3320,175 @@ void *o2scl_terminal_hrule(void *vptr, size_t n) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->hrule(n);
-  return sptr; //y hrule
+  return sptr; // tag 2 hrule
 }
 
 void *o2scl_terminal_cyan_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->cyan_fg();
-  return sptr; //y cyan_fg
+  return sptr; // tag 2 cyan_fg
 }
 
 void *o2scl_terminal_magenta_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->magenta_fg();
-  return sptr; //y magenta_fg
+  return sptr; // tag 2 magenta_fg
 }
 
 void *o2scl_terminal_yellow_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->yellow_fg();
-  return sptr; //y yellow_fg
+  return sptr; // tag 2 yellow_fg
 }
 
 void *o2scl_terminal_red_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->red_fg();
-  return sptr; //y red_fg
+  return sptr; // tag 2 red_fg
 }
 
 void *o2scl_terminal_green_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->green_fg();
-  return sptr; //y green_fg
+  return sptr; // tag 2 green_fg
 }
 
 void *o2scl_terminal_blue_fg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->blue_fg();
-  return sptr; //y blue_fg
+  return sptr; // tag 2 blue_fg
 }
 
 void *o2scl_terminal_cyan_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->cyan_bg();
-  return sptr; //y cyan_bg
+  return sptr; // tag 2 cyan_bg
 }
 
 void *o2scl_terminal_magenta_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->magenta_bg();
-  return sptr; //y magenta_bg
+  return sptr; // tag 2 magenta_bg
 }
 
 void *o2scl_terminal_yellow_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->yellow_bg();
-  return sptr; //y yellow_bg
+  return sptr; // tag 2 yellow_bg
 }
 
 void *o2scl_terminal_red_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->red_bg();
-  return sptr; //y red_bg
+  return sptr; // tag 2 red_bg
 }
 
 void *o2scl_terminal_green_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->green_bg();
-  return sptr; //y green_bg
+  return sptr; // tag 2 green_bg
 }
 
 void *o2scl_terminal_blue_bg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->blue_bg();
-  return sptr; //y blue_bg
+  return sptr; // tag 2 blue_bg
 }
 
 void *o2scl_terminal_default_fgbg(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->default_fgbg();
-  return sptr; //y default_fgbg
+  return sptr; // tag 2 default_fgbg
 }
 
 void *o2scl_terminal_bold(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->bold();
-  return sptr; //y bold
+  return sptr; // tag 2 bold
 }
 
 void *o2scl_terminal_eight_bit_fg(void *vptr, short col) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_fg(col);
-  return sptr; //y eight_bit_fg
+  return sptr; // tag 2 eight_bit_fg
 }
 
 void *o2scl_terminal_eight_bit_bg(void *vptr, short col) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_bg(col);
-  return sptr; //y eight_bit_bg
+  return sptr; // tag 2 eight_bit_bg
 }
 
 void *o2scl_terminal_lowint(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->lowint();
-  return sptr; //y lowint
+  return sptr; // tag 2 lowint
 }
 
 void *o2scl_terminal_underline(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->underline();
-  return sptr; //y underline
+  return sptr; // tag 2 underline
 }
 
 void *o2scl_terminal_reverse(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->reverse();
-  return sptr; //y reverse
+  return sptr; // tag 2 reverse
 }
 
 void *o2scl_terminal_alt_font(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->alt_font();
-  return sptr; //y alt_font
+  return sptr; // tag 2 alt_font
 }
 
 void *o2scl_terminal_normal_font(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->normal_font();
-  return sptr; //y normal_font
+  return sptr; // tag 2 normal_font
 }
 
 void *o2scl_terminal_eight_bit_summ(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->eight_bit_summ();
-  return sptr; //y eight_bit_summ
+  return sptr; // tag 2 eight_bit_summ
 }
 
 void *o2scl_terminal_three_byte_summ(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->three_byte_summ();
-  return sptr; //y three_byte_summ
+  return sptr; // tag 2 three_byte_summ
 }
 
 void *o2scl_terminal_three_byte_summ_long(void *vptr) {
   terminal *ptr=(terminal *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->three_byte_summ_long();
-  return sptr; //y three_byte_summ_long
+  return sptr; // tag 2 three_byte_summ_long
 }
 
 void *o2scl_create_gen_test_number_double_() {
@@ -3526,7 +3535,7 @@ int o2scl_funct_string_double__set_parm(void *vptr, void *ptr_name, double val) 
 
 double o2scl_funct_string_double__getitem(void *vptr, double x) {
   funct_string<double> *ptr=(funct_string<double> *)vptr;
-  double &ret=ptr->operator()(x);
+  /* tag 4 */ double ret=ptr->operator()(x);
   return ret;
 }
 
@@ -3559,6 +3568,8 @@ void o2scl_comm_option_s_set_shrt(void *vptr, char v) {
 
 void *o2scl_comm_option_s_get_lng(void *vptr) {
   comm_option_s *ptr=(comm_option_s *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->lng;
   return sptr;
@@ -3573,6 +3584,8 @@ void o2scl_comm_option_s_set_lng(void *vptr, void *p_v) {
 
 void *o2scl_comm_option_s_get_desc(void *vptr) {
   comm_option_s *ptr=(comm_option_s *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->desc;
   return sptr;
@@ -3609,6 +3622,8 @@ void o2scl_comm_option_s_set_max_parms(void *vptr, int v) {
 
 void *o2scl_comm_option_s_get_parm_desc(void *vptr) {
   comm_option_s *ptr=(comm_option_s *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->parm_desc;
   return sptr;
@@ -3623,6 +3638,8 @@ void o2scl_comm_option_s_set_parm_desc(void *vptr, void *p_v) {
 
 void *o2scl_comm_option_s_get_help(void *vptr) {
   comm_option_s *ptr=(comm_option_s *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->help;
   return sptr;
@@ -3659,6 +3676,8 @@ void o2scl_free_cmd_line_arg(void *vptr) {
 
 void *o2scl_cmd_line_arg_get_arg(void *vptr) {
   cmd_line_arg *ptr=(cmd_line_arg *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->arg;
   return sptr;
@@ -3740,6 +3759,8 @@ void o2scl_cli_set_gnu_intro(void *vptr, bool v) {
 
 void *o2scl_cli_get_desc(void *vptr) {
   cli *ptr=(cli *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->desc;
   return sptr;
@@ -3754,6 +3775,8 @@ void o2scl_cli_set_desc(void *vptr, void *p_v) {
 
 void *o2scl_cli_get_cmd_name(void *vptr) {
   cli *ptr=(cli *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->cmd_name;
   return sptr;
@@ -3768,6 +3791,8 @@ void o2scl_cli_set_cmd_name(void *vptr, void *p_v) {
 
 void *o2scl_cli_get_addl_help_cmd(void *vptr) {
   cli *ptr=(cli *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->addl_help_cmd;
   return sptr;
@@ -3782,6 +3807,8 @@ void o2scl_cli_set_addl_help_cmd(void *vptr, void *p_v) {
 
 void *o2scl_cli_get_addl_help_cli(void *vptr) {
   cli *ptr=(cli *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->addl_help_cli;
   return sptr;
@@ -3826,7 +3853,7 @@ void *o2scl_cli_parameter_desc(void *vptr, void *ptr_name) {
   std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
   *sptr=ptr->parameter_desc(*name);
-  return sptr; //y parameter_desc
+  return sptr; // tag 2 parameter_desc
 }
 
 void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name) {
@@ -3834,7 +3861,7 @@ void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name) {
   std::string *name=(std::string *)ptr_name;
   std::string *sptr=new std::string;
   *sptr=ptr->option_short_desc(*name);
-  return sptr; //y option_short_desc
+  return sptr; // tag 2 option_short_desc
 }
 
 void *o2scl_create_shared_ptr_table_units_() {

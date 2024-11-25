@@ -122,28 +122,28 @@ void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoel(Z);
-  return sptr; //y Ztoel
+  return sptr; // tag 2 Ztoel
 }
 
 void *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoname(Z);
-  return sptr; //y Ztoname
+  return sptr; // tag 2 Ztoname
 }
 
 void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->tostring(Z,N);
-  return sptr; //y tostring
+  return sptr; // tag 2 tostring
 }
 
 void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->int_to_spinp(g);
-  return sptr; //y int_to_spinp
+  return sptr; // tag 2 int_to_spinp
 }
 
 int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s) {
@@ -301,6 +301,8 @@ void o2scl_nucmass_table_set_n(void *vptr, size_t v) {
 
 void *o2scl_nucmass_table_get_reference(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->reference;
   return sptr;

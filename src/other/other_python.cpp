@@ -50,6 +50,8 @@ void o2scl_slack_messenger_set_verbose(void *vptr, int v) {
 
 void *o2scl_slack_messenger_get_url(void *vptr) {
   slack_messenger *ptr=(slack_messenger *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->url;
   return sptr;
@@ -64,6 +66,8 @@ void o2scl_slack_messenger_set_url(void *vptr, void *p_v) {
 
 void *o2scl_slack_messenger_get_channel(void *vptr) {
   slack_messenger *ptr=(slack_messenger *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->channel;
   return sptr;
@@ -78,6 +82,8 @@ void o2scl_slack_messenger_set_channel(void *vptr, void *p_v) {
 
 void *o2scl_slack_messenger_get_icon(void *vptr) {
   slack_messenger *ptr=(slack_messenger *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->icon;
   return sptr;
@@ -92,6 +98,8 @@ void o2scl_slack_messenger_set_icon(void *vptr, void *p_v) {
 
 void *o2scl_slack_messenger_get_username(void *vptr) {
   slack_messenger *ptr=(slack_messenger *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->username;
   return sptr;
@@ -478,7 +486,7 @@ void o2scl_hist_set_wgt(void *vptr, double x, double val) {
 
 const double o2scl_hist_getitem(void *vptr, size_t i) {
   hist *ptr=(hist *)vptr;
-  double &ret=ptr->operator[](i);
+  /* tag 4 */ double ret=ptr->operator[](i);
   return ret;
 }
 
@@ -877,7 +885,7 @@ double o2scl_prob_dens_func_entropy(void *vptr) {
 
 double o2scl_prob_dens_func_getitem(void *vptr) {
   prob_dens_func *ptr=(prob_dens_func *)vptr;
-  double &ret=ptr->operator()();
+  /* tag 4 */ double ret=ptr->operator()();
   return ret;
 }
 

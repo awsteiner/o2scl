@@ -753,6 +753,8 @@ void o2scl_eos_had_skyrme_set_parent_method(void *vptr, bool v) {
 
 void *o2scl_eos_had_skyrme_get_reference(void *vptr) {
   eos_had_skyrme *ptr=(eos_had_skyrme *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->reference;
   return sptr;

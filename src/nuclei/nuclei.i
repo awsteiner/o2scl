@@ -42,6 +42,7 @@ cpp_using o2scl_hdf
 #
 # Additional python headers
 #
+py_header from o2sclpy.base import *
 py_header from o2sclpy.part import *
 #
 # ------------------------------------------------------
