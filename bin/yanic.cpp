@@ -2859,7 +2859,7 @@ int main(int argc, char *argv[]) {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("strt=std_string(ret)");
+        post_func_code.push_back("strt=std_string(ret) # tag 5");
         post_func_code.push_back("strt._owner=True");
         
       } else if (iff.ret.name=="std::vector<std::string>") {
