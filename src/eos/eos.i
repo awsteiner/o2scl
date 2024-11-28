@@ -512,6 +512,7 @@ class eos_tov_interp
 # Class tov_solve
 #
 class tov_solve
+- no_cc  
 - size_t buffer_size
 - size_t max_table_size
 - double mass

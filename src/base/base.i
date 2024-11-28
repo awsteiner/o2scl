@@ -55,6 +55,7 @@ py_header from o2sclpy.string import *
 py_header 
 #
 # The interpolation types
+#
 py_header itp_linear=1
 py_header itp_cspline=2
 py_header itp_cspline_peri=3
@@ -64,6 +65,9 @@ py_header itp_monotonic=6
 py_header itp_steffen=7
 py_header itp_nearest_neigh=8
 py_header 
+#
+# Define the force_bytes_string function
+#
 py_header def force_bytes_string(obj):
 py_header     """
 py_header     This function returns the bytes object corresponding to ``obj``

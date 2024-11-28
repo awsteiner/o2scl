@@ -506,6 +506,9 @@ public:
   /// If true, the standard copy constructors are included
   bool std_cc;
 
+  /// If true, then the copy constructors are not available
+  bool no_cc;
+
   /// If true, then the default constructor is included (default true)
   bool def_cons;
   
@@ -531,6 +534,7 @@ public:
     is_abstract=false;
     std_cc=false;
     def_cons=true;
+    no_cc=false;
   }
   
 };
@@ -988,6 +992,17 @@ int main(int argc, char *argv[]) {
           ifc.std_cc=true;
           cout << "  Class " << ifc.name << " has the standard "
                << "copy constructors." << endl;
+          
+          next_line(fin,line,vs,done);
+          if (done) class_done=true;
+          
+        } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="no_cc") {
+
+          // No copy constructor flag
+
+          ifc.no_cc=true;
+          cout << "  Class " << ifc.name << "'s "
+               << "copy constructors are not available." << endl;
           
           next_line(fin,line,vs,done);
           if (done) class_done=true;
@@ -2742,7 +2757,7 @@ int main(int argc, char *argv[]) {
                << "=o2sclpy.std_string()" << endl;
           fout << "        s_" << iff.args[k].name
                << ".init_bytes(force_bytes_string(" << iff.args[k].name
-               << "))" << endl;
+               << ")) # tag 6" << endl;
         }
       }
 

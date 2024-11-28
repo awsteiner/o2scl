@@ -788,14 +788,12 @@ void kwargs::summary(std::ostream &out) const {
 
 void o2scl_char_p_to_string(int n, char *p, void *strp) {
   std::string &s=*((std::string *)strp);
-  //std::cout << "cp2s: n, char *, void * " << n << " "
-  //<< p << " " << strp << std::endl;
 
   // AWS, 11/23/24: In principle we could just use the std::string
   // constructor which takes a 'char *' as an input. However, this
   // function is used for Python bytearrays, which may constain null
   // characters in the middle, rather than null-terminated C strings.
-  // Thus, we have to do a loop. 
+  // Thus, we have to loop over all of the characters.
 
   s.resize(n);
   for(int i=0;i<n;i++) {
@@ -806,19 +804,15 @@ void o2scl_char_p_to_string(int n, char *p, void *strp) {
   
 void o2scl_string_to_char_p(void *strp, int *n, char *p) {
   std::string &s=*((std::string *)strp);
-  //std::cout << "s2cp: void *, int *, char * " << strp << " "
-  //<< n << " " << p << std::endl;
-  //std::cout << "s2cp: *n " << *n << std::endl;
 
   // AWS, 11/23/24: Ideally we would like to just use
   // std::string.c_ptr() to send the character pointer back to Python,
-  // and thus avoid an additional copy, but (i) I haven't found a way
-  // to do that and (ii) it's a bit dangerous to do this because it
-  // casts constness away from the (const char *) which is returned by
-  // the c_str() function.
+  // and thus avoid the additional copy, but (i) I haven't found a way
+  // to do that and (ii) it's dangerous to do this because it casts
+  // constness away from the (const char *) which is returned by the
+  // c_str() function.
   
   *n=s.length();
-  //*p=s.c_str();
   for(int i=0;i<(*n);i++) {
     p[i]=s[i];
   }

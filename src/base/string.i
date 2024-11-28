@@ -107,4 +107,6 @@ class std::string
 |                 ctypes.POINTER(ctypes.c_char)]
 |     f(self._ptr,ctypes.byref(n),b)
 | 
-|     return b.value
+|     # It's important to use 'raw' here rather than 'value' which
+|     # interprets it as a null terminated string
+|     return b.raw
