@@ -744,6 +744,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   }
 
   if (true) {
+    
     // Determine if this is a fixed-length string, and if so, use
     // gets_fixed() instead.
     hid_t filetype=H5Dget_type(dset);

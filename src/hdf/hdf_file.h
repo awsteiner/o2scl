@@ -235,7 +235,8 @@ namespace o2scl_hdf {
     /// Get an unsigned integer named \c name
     int get_szt(std::string name, size_t &u);
 
-    /** \brief Get a string named \c name
+    /** \brief Get a (either variable or fixed-length)
+        string named \c name
 
 	\note Strings are stored as character arrays and thus
 	retrieving a string from a file requires loading the

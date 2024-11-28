@@ -214,22 +214,23 @@ class hdf_file
   - std::string name
   - std::string deft
   - out std::string &s
+# Note we rename "type" to "otype", since type is a python keyword
 - function find_object_by_type
   - int
-  - std::string type
+  - std::string otype
   - out std::string &name
   - bool use_regex [false]                             
   - int verbose [0]
 - function find_object_by_name
   - int
   - std::string name
-  - out std::string &type
+  - out std::string &otype
   - bool use_regex [false]                             
   - int verbose [0]
 - function find_object_by_pattern
   - int
   - std::string pattern
-  - out std::string &type
+  - out std::string &otype
   - bool use_regex [false]                             
   - int verbose [0]
 - function file_list

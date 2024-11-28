@@ -2753,11 +2753,16 @@ int main(int argc, char *argv[]) {
       // Perform necessary conversions
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.name=="std::string") {
-          fout << "        s_" << iff.args[k].name
-               << "=o2sclpy.std_string()" << endl;
-          fout << "        s_" << iff.args[k].name
-               << ".init_bytes(force_bytes_string(" << iff.args[k].name
-               << ")) # tag 6" << endl;
+          if (iff.args[k].ift.is_out()) {
+            fout << "        # tag 6" << endl;
+          } else {
+            fout << "        s_" << iff.args[k].name
+                 << "=o2sclpy.std_string()" << endl;
+            fout << "        s_" << iff.args[k].name
+                 << ".init_bytes(force_bytes_string(" << iff.args[k].name
+                 << "))" << endl;
+            fout << "        # tag 7" << endl;
+          }
         }
       }
 
