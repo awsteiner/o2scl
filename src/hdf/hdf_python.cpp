@@ -373,27 +373,27 @@ int o2scl_hdf_hdf_file_gets_def(void *vptr, void *ptr_name, void *ptr_deft, void
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_type, void *ptr_name, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_otype, void *ptr_name, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
-  std::string *type=(std::string *)ptr_type;
+  std::string *otype=(std::string *)ptr_otype;
   std::string *name=(std::string *)ptr_name;
-  int ret=ptr->find_object_by_type(*type,*name,use_regex,verbose);
+  int ret=ptr->find_object_by_type(*otype,*name,use_regex,verbose);
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_type, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_otype, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *name=(std::string *)ptr_name;
-  std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_name(*name,*type,use_regex,verbose);
+  std::string *otype=(std::string *)ptr_otype;
+  int ret=ptr->find_object_by_name(*name,*otype,use_regex,verbose);
   return ret;
 }
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_type, bool use_regex, int verbose) {
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_otype, bool use_regex, int verbose) {
   hdf_file *ptr=(hdf_file *)vptr;
   std::string *pattern=(std::string *)ptr_pattern;
-  std::string *type=(std::string *)ptr_type;
-  int ret=ptr->find_object_by_pattern(*pattern,*type,use_regex,verbose);
+  std::string *otype=(std::string *)ptr_otype;
+  int ret=ptr->find_object_by_pattern(*pattern,*otype,use_regex,verbose);
   return ret;
 }
 

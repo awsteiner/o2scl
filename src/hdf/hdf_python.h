@@ -123,11 +123,11 @@ int o2scl_hdf_hdf_file_get_szt_def(void *vptr, void *ptr_name, size_t deft, size
 
 int o2scl_hdf_hdf_file_gets_def(void *vptr, void *ptr_name, void *ptr_deft, void *ptr_s);
 
-int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_type, void *ptr_name, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_type(void *vptr, void *ptr_otype, void *ptr_name, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_type, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_name(void *vptr, void *ptr_name, void *ptr_otype, bool use_regex=false, int verbose=0);
 
-int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_type, bool use_regex=false, int verbose=0);
+int o2scl_hdf_hdf_file_find_object_by_pattern(void *vptr, void *ptr_pattern, void *ptr_otype, bool use_regex=false, int verbose=0);
 
 void o2scl_hdf_hdf_file_file_list(void *vptr, int verbose);
 
