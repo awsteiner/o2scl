@@ -107,6 +107,8 @@ int main(void) {
 
     classify_python<> cp("classify_sklearn_dtc",
                          ((std::string)"verbose=2"),2);
+    classify_python<> cp2("classify_sklearn_dtc",
+                          ((std::string)"verbose=2"),2);
                          
     cp.set_data_tensor(2,1,N,tin,tout);
     
@@ -121,6 +123,16 @@ int main(void) {
       cout << f(ex[0],ex[1]) << " ";
       cout << ey[0] << endl;
       t.test_gen(abs(ey[0]-f(ex[0],ex[1]))<=1,"sklearn dtc 1");
+      if (true && dx<0.1001) {
+        // Test save and load
+        cp.save("classify_python_save.o2","cp");
+        cp2.load("classify_python_save.o2","cp");
+        cp2.eval_std_vec(ex,ey);
+        cout << ex[0] << " " << ex[1] << " ";
+        cout << f(ex[0],ex[1]) << " ";
+        cout << ey[0] << endl;
+        t.test_gen(abs(ey[0]-f(ex[0],ex[1]))<=1,"sklearn dtc 1b");
+      }
     }
 
     for(size_t i=0;i<N;i++) {
