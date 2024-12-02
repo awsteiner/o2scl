@@ -722,9 +722,6 @@ namespace o2scl {
       // Begin leapfrog updates
       // [Neal] for (i in 1:L)
       for(size_t i=0;i<traj_length;i++) {
-        if (traj_length>1) {
-          std::cout << "i_leapfrog=" << i << std::endl;
-        }
         
         // Take a full step in coordinate space
         // Note: whether q'=q+dq or q'=q-dq is determined by the
