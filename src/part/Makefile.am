@@ -2,7 +2,7 @@
 # Basic variables
 # ------------------------------------------------------------
 
-PART_SRCS = part.cpp quark.cpp fermion_deriv_nr.cpp \
+PART_SRCS = part.cpp fermion_deriv_nr.cpp \
 	fermion_mag_zerot.cpp \
 	part_deriv.cpp part_pdg.cpp part_python.cpp
 HEADER_VAR = boson.h classical.h \

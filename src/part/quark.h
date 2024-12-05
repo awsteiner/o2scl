@@ -40,25 +40,29 @@
 namespace o2scl {
 
   /** \brief Quark class
-      
    */
-  class quark : public fermion {
+  template<class fp_t=double> class quark_tl : public fermion_tl<fp_t> {
     
   public:
     
     /// Contribution to the bag constant
-    double B;
-
+    fp_t B;
+    
     /// Quark condensate
-    double qq;
-
+    fp_t qq;
+    
     /// Create a boson with mass \c m and degeneracy \c g 
-    quark(double m=0.0, double g=0.0);
+    quark_tl(fp_t mass=0, fp_t dof=0) : fermion_tl<double>(mass,dof) {
+      qq=0;
+      B=0;      
+    }
     
     /// Return string denoting type ("quark")
     virtual const char *type() { return "quark"; }
 
   };
+
+  typedef quark_tl<double> quark;
 
 }
 
