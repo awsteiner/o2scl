@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner and Josue Bautista
+  Copyright (C) 2017-2025, Andrew W. Steiner and Josue Bautista
   
   This file is part of O2scl.
   

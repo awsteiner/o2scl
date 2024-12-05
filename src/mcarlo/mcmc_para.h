@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2024, Andrew W. Steiner and Mahmudul Hasan Anik
+  Copyright (C) 2012-2025, Andrew W. Steiner and Mahmudul Hasan Anik
   
   This file is part of O2scl.
   
