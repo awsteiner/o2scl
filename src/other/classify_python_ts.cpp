@@ -89,7 +89,7 @@ int main(void) {
     
   if (true) {
 
-    // Sklearn MLPC, n_out=1
+    // Sklearn DTC, n_out=1
     
     tensor<> tin;
     tensor<int> tout;

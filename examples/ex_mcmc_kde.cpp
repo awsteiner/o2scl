@@ -200,9 +200,11 @@ int main(int argc, char *argv[]) {
   cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
   // Set parameter names and units
-  vector<string> pnames={"x","x2"};
-  vector<string> punits={"",""};
-  mct.set_names_units(pnames,punits);
+  vector<string> pnames={"x"};
+  vector<string> punits={""};
+  vector<string> dnames={"x2"};
+  vector<string> dunits={""};
+  mct.set_names_units(pnames,punits,dnames,dunits);
 
   // Read the preliminary data from a file
   hdf_file hf;

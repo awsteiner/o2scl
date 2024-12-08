@@ -198,7 +198,8 @@ namespace o2scl {
     
       double a=pow(b_n,3)*2.0/b_pn/b_pn-2.0*b_n;
       double b=-1+b_n*b_n*2.0/b_pn/b_pn-b_n/b_pn;
-      double c=b_n/(2.0*b_pn*b_pn)-0.5/b_pn-nnt+npt-b_n*b_n*npt*2.0/b_pn/b_pn;
+      double c=b_n/(2.0*b_pn*b_pn)-0.5/b_pn-nnt+
+        npt-b_n*b_n*npt*2.0/b_pn/b_pn;
       double d=-b_n*npt/b_pn/b_pn+npt/2.0/b_pn;
       double e=b_n*npt*npt/2.0/b_pn/b_pn;
     
@@ -248,6 +249,7 @@ namespace o2scl {
                   << lam_n << " " << lam_p << "\n\t"
                   << "nnt,npt,zp_list.size(): " << nnt << " " << npt << " "
                   << zp_list.size() << std::endl;
+        std::cout << "\tb_n, b_pn: " << b_n << " " << b_pn << std::endl;
         O2SCL_ERR2("Unexpected root multiplicity in ",
                    "eos_had_virial::solve_fugacity().",o2scl::exc_einval);
       }

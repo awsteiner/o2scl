@@ -32,6 +32,8 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/set_openmp.h>
 #include <o2scl/nflows_python.h>
+#include <o2scl/kde_python.h>
+#include <o2scl/gmm_python.h>
 #include <o2scl/interpm_python.h>
 #include <o2scl/classify_python.h>
 
@@ -213,9 +215,11 @@ int main(int argc, char *argv[]) {
        << endl;
     
   // Set parameter names and units
-  vector<string> pnames={"x","y","cubic","const"};
-  vector<string> punits={"","","",""};
-  mct.set_names_units(pnames,punits);
+  vector<string> pnames={"x","y"};
+  vector<string> punits={"",""};
+  vector<string> dnames={"cubic","class"};
+  vector<string> dunits={"",""};
+  mct.set_names_units(pnames,punits,dnames,dunits);
 
   // Run an initial HMC simulation
   
@@ -240,11 +244,11 @@ int main(int argc, char *argv[]) {
 
   // Copy the table data to a tensor for use in the proposal
   // distribution
-  tensor<> ten_in;
+  tensor<> ten_in, ten_in_copy;
   vector<size_t> in_size={mct.get_table()->get_nlines(),2};
   ten_in.resize(2,in_size);
-  vector<size_t> class_size={mct.get_table()->get_nlines(),1};
-  ten_in.resize(2,in_size);
+  //vector<size_t> class_size={mct.get_table()->get_nlines(),1};
+  //ten_in.resize(2,in_size);
   
   for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
     // Only select lines which have mult greater than 0.5
@@ -258,52 +262,149 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // Train the normalizing flows probability distribution
-  cout << "Training the proposal distribution." << endl;
-  std::shared_ptr<nflows_python<ubvector>> np(new nflows_python<ubvector>);
-  np->set_function("o2sclpy",ten_in,"max_iter=200,verbose=1",
+  // Try three different kinds of proposal distributions
+  
+  cout << "Training the proposal distributions." << endl;
+  
+  ten_in_copy=ten_in;
+  std::shared_ptr<nflows_python<ubvector>> nflows
+    (new nflows_python<ubvector>);
+  nflows->set_function("o2sclpy",ten_in_copy,"max_iter=200,verbose=1",
                    "nflows_nsf",1);
-  cout << "Done training the proposal distribution.\n" << endl;
+  cout << "Done training the nflows proposal distribution.\n" << endl;
+
+  ten_in_copy=ten_in;
+  std::shared_ptr<kde_python<ubvector>> kde
+    (new kde_python<ubvector>);
+  uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
+  vector<double> bw_array;
+  ug.vector(bw_array);
+  kde->set_function("o2sclpy",ten_in_copy,
+                    bw_array,"verbose=0","kde_sklearn",0);
+  cout << "Done training the KDE proposal distribution.\n" << endl;
+  
+  ten_in_copy=ten_in;
+  std::shared_ptr<gmm_python> gmm(new gmm_python);
+  gmm->set_function("o2sclpy",4,ten_in_copy,"verbose=0","gmm_sklearn");
+  cout << "Done training the GMM proposal distribution.\n" << endl;
+
+  // We test the proposal distributions by simulating MH steps
+
+  std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+                                  prob_cond_mdim_indep<>>> indep_stepper[3];
+  for(size_t k=0;k<3;k++) {
+    std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+                                    prob_cond_mdim_indep<>>> snew
+      (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+       prob_cond_mdim_indep<>>);
+    indep_stepper[k]=snew;
+  }
+  
+  indep_stepper[0]->proposal.resize(1);
+  indep_stepper[0]->proposal[0].set_base(nflows);
+  indep_stepper[1]->proposal.resize(1);
+  indep_stepper[1]->proposal[0].set_base(kde);
+  gmm->get_python();
+  std::shared_ptr<prob_dens_mdim_gmm<>> pdmg=gmm->get_gmm();
+  indep_stepper[2]->proposal.resize(1);
+  indep_stepper[2]->proposal[0].set_base(pdmg);
+
+  // Sample the initial point from all three proposal distributions
+  ubvector p[3], q[3];
+  for(size_t k=0;k<3;k++) {
+    p[k].resize(2);
+    q[k].resize(2);
+  }
+  (*nflows)(p[0]);
+  (*kde)(p[1]);
+  (*pdmg)(p[2]);
+
+  // Compute the average deviation in the log_wgt for MH
+  // steps
+  vector<double> qual(3);
+  static const size_t N_test=200;
+  for(size_t i=0;i<N_test;i++) {
+    (*nflows)(q[0]);
+    (*kde)(q[1]);
+    (*pdmg)(q[2]);
+    for(size_t k=0;k<3;k++) {
+      double q_prop=(indep_stepper[k])->proposal[0].log_metrop_hast
+        (p[k],q[k]);
+      
+      double lw_p, lw_q;
+      e.test_func(2,p[k],lw_p,data_vec[0]);
+      e.test_func(2,q[k],lw_q,data_vec[0]);
+      
+      qual[k]+=fabs(lw_q-lw_p+q_prop);
+    }
+  }
+  for(size_t k=0;k<3;k++) qual[k]/=N_test;
+  std::cout << "Quality of proposal distributions: "
+            << qual[0] << " " << qual[1] << " "
+            << qual[2] << std::endl;
+
+  // Select best proposal distribution
+  if (qual[1]<qual[2] && qual[1]<qual[0]) {
+    cout << "Selecting KDE." << endl;
+    std::swap(indep_stepper[0],indep_stepper[1]);
+  } else if (qual[2]<qual[0] && qual[2]<qual[1]) {
+    cout << "Selecting GMM." << endl;
+    std::swap(indep_stepper[0],indep_stepper[2]);
+  } else {
+    cout << "Selecting nflows." << endl;
+  }
 
   // Sample the proposal distribution and store to a file
+  /*
   table<> tprop;
   tprop.line_of_names("x y");
-  for(size_t i=0;i<200;i++) {
     ubvector p(2);
-    (*np)(p);
+    (*nflows)(p);
     tprop.line_of_data(2,p);
   }
   hdf_file hf;
   hf.open_or_create("ex_mcmc_nn2.o2");
   hdf_output(hf,tprop,"tprop");
   hf.close();
-
-  // Set up the classifier
-  cout << "Training the classifier." << endl;
-  std::shared_ptr<classify_python
-                  <ubvector,ubvector_int,
-                   o2scl::const_matrix_view_table<>,
-                   o2scl::matrix_view_table<>>> cp
-    (new classify_python
-     <ubvector,ubvector_int,
-     o2scl::const_matrix_view_table<>,
-     o2scl::matrix_view_table<>>);
-  cp->set_functions("classify_sklearn_mlpc",
-                    ((std::string)"hlayers=[100,100],activation=")+
-                    "relu,verbose=1,max_iter=2000,"+
-                    "n_iter_no_change=40,tol=1.0e-5",1);
+  */
   
-  o2scl::const_matrix_view_table<> cp_in(*(mct.get_table()),{"x","y"});
-  o2scl::matrix_view_table<> cp_out(*(mct.get_table()),{"const"});
-  
-  cp->set_data(2,1,mct.get_table()->get_nlines(),cp_in,cp_out);
-  cout << "Done training the classifier.\n" << endl;
+  // Set up classifiers
+  //std::shared_ptr<classify_python
+  //<ubvector,ubvector_int,
+  //o2scl::const_matrix_view_table<>,
+  //o2scl::matrix_view_table<>>> cp[3];
+  for(size_t k=0;k<3;k++) {
+    std::shared_ptr<classify_python
+                    <ubvector,ubvector_int,
+                     o2scl::const_matrix_view_table<>,
+                     o2scl::matrix_view_table<>>> cpnew
+      (new classify_python
+       <ubvector,ubvector_int,
+       o2scl::const_matrix_view_table<>,
+       o2scl::matrix_view_table<>>);
+    mct.cl_list.push_back(cpnew);
+  }
+  mct.cl_list[0]->set_functions("classify_sklearn_dtc","verbose=1",1);
+  mct.cl_list[1]->set_functions
+    ("classify_sklearn_mlpc",
+     ((std::string)"hlayers=[100,100],activation=")+
+     "relu,verbose=1,max_iter=2000,"+
+     "n_iter_no_change=40,tol=1.0e-5",1);
+  mct.cl_list[2]->set_functions("classify_sklearn_gnb","verbose=1",1);
 
-  // Test the classifier by giving it random points
-  table<> tclass;
-  rng<> r;
-  tclass.line_of_names("x y c");
-  for(size_t i=0;i<200;i++) {
+  /*
+    cout << "Training the classifier." << endl;
+    o2scl::const_matrix_view_table<> cp_in(*(mct.get_table()),{"x","y"});
+    o2scl::matrix_view_table<> cp_out(*(mct.get_table()),{"class"});
+    
+    cp->set_data(2,1,mct.get_table()->get_nlines(),cp_in,cp_out);
+    cout << "Done training the classifier.\n" << endl;
+    
+    // Test the classifier by giving it random points
+    table<> tclass;
+    rng<> r;
+    tclass.line_of_names("x y c");
+    for(size_t i=0;i<200;i++) {
     vector<double> in(2);
     vector<int> out(1);
     in[0]=r.random()*3.0;
@@ -311,29 +412,38 @@ int main(int argc, char *argv[]) {
     cp->eval_std_vec(in,out);
     vector<double> line={in[0],in[1],(double)out[0]};
     tclass.line_of_data(3,line);
-  }
-  hf.open("ex_mcmc_nn2.o2",true);
-  hdf_output(hf,tclass,"tclass");
-  hf.close();
+    }
+  */
+  /*
+    hf.open("ex_mcmc_nn2.o2",true);
+    hdf_output(hf,tclass,"tclass");
+    hf.close();
+  */
   
   // Before we train the emulator, remove the points which don't satisfy
   // the constraint
-  mct.get_table()->delete_rows_func("const<0.5");
+  //mct.get_table()->delete_rows_func("class<0.5");
   
   // Set up the emulator
+  for(size_t k=0;k<3;k++) {
+    std::shared_ptr<interpm_python
+                    <ubvector,
+                     o2scl::const_matrix_view_table<>,
+                     o2scl::matrix_view_table<>>> ipnew
+      (new interpm_python
+       <ubvector,
+       o2scl::const_matrix_view_table<>,
+       o2scl::matrix_view_table<>>);
+    if (k==0) {
+      ipnew->set_functions("interpm_tf_dnn",
+                           ((std::string)"hlayers=[100,100],activations=")+
+                           "[relu,relu],verbose=1,epochs=200",1);
+    }
+    mct.emu.push_back(ipnew);
+  }
+
+  /*
   cout << "Training the emulator." << endl;
-  std::shared_ptr<interpm_python
-                  <ubvector,
-                   o2scl::const_matrix_view_table<>,
-                   o2scl::matrix_view_table<>>> ip
-    (new interpm_python
-     <ubvector,
-     o2scl::const_matrix_view_table<>,
-     o2scl::matrix_view_table<>>);
-  ip->set_functions("interpm_tf_dnn",
-                    ((std::string)"hlayers=[100,100],activations=")+
-                    "[relu,relu],verbose=1,epochs=200",1);
-  
   o2scl::const_matrix_view_table<> ip_in(*(mct.get_table()),{"x","y"});
   o2scl::matrix_view_table<> ip_out(*(mct.get_table()),{"log_wgt"});
   
@@ -352,37 +462,34 @@ int main(int argc, char *argv[]) {
     vector<double> line={in[0],in[1],out[0]};
     temu.line_of_data(3,line);
   }
+  */
+  /*
   hf.open("ex_mcmc_nn2.o2",true);
   hdf_output(hf,temu,"temu");
   hf.close();
   exit(-1);
+  */
   
   // Use independence Metropolis-Hastings and use the normalizing
   // flows object for the proposal distribution
-  std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-                                  prob_cond_mdim_indep<>>> indep_stepper
-    (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-     prob_cond_mdim_indep<>>);
-  mct.stepper=indep_stepper;
-  indep_stepper->proposal.resize(1);
-  indep_stepper->proposal[0].set_base(np);
+
+  //std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+  //prob_cond_mdim_indep<>>> indep_stepper
+  //(new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+  //prob_cond_mdim_indep<>>);
+  mct.stepper=indep_stepper[0];
+  //indep_stepper->proposal.resize(1);
+  //indep_stepper->proposal[0].set_base(nflows);
   
   // Set the MCMC parameters
+  mct.use_emulator=true;
   mct.use_classifier=true;
-  mct.n_retrain=100;
+  mct.n_retrain=0;
   mct.max_iters=20;
   mct.prefix="ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
   mct.show_emu=1;
-
-  // Set one of the neural networks as the emulator
-  mct.emu.resize(1);
-  mct.emu[0]=ip;
-
-  // Set one of the neural networks as the classifier
-  mct.emuc.resize(1);
-  mct.emuc[0]=cp;
   
   // Set up the file for ?
   mct.emu_file="mcmc_nn1_0_out";
