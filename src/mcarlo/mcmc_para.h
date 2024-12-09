@@ -971,26 +971,24 @@ namespace o2scl {
       If verbose is 2, then the file prefix is output to <tt>cout</tt>
       during initialization.
 
-      \b Todos
-      
       \verbatim embed:rst
+      
       .. todo:: 
 
-      In class \ref mcmc_para_base:
+         In class \ref mcmc_para_base:
 
-      - The main loop with the affine-invariant sampling could be
-      modified with a new inner loop to do many function
-      evaluations for each thread. However, I think this would
-      demand combining the two sequential parallel loops.
+         - The main loop with the affine-invariant sampling could be
+           modified with a new inner loop to do many function
+           evaluations for each thread. However, I think this would
+           demand combining the two sequential parallel loops.
 
-      - There is a little code in mcmc_init() and mcmc_cleanup()
-      and I should document why that code needs to be there.
+         - There is a little code in mcmc_init() and mcmc_cleanup()
+           and I should document why that code needs to be there.
 
       \endverbatim
   */
-  template<class func_t, class measure_t,
-           class data_t, class vec_t=ubvector>
-  class mcmc_para_base {
+  template<class func_t, class measure_t, class data_t, 
+           class vec_t=ubvector> class mcmc_para_base {
     
   protected:
     
