@@ -85,7 +85,7 @@ int main(void) {
   dat.deriv("x","sx","cx2");
 
   hdf_file hf;
-  hf.open_or_create("ex_table.o2");
+  hf.open_or_create("data/ex_table.o2");
   hdf_output(hf,dat,"table");
   hf.close();
   

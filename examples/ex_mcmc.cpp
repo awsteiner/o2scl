@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 
   // Write the data to a file
   hdf_file hf;
-  hf.open_or_create("ex_mcmc.o2");
+  hf.open_or_create("data/ex_mcmc.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
   hf.close();

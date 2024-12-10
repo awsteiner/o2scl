@@ -122,7 +122,7 @@ void make_plot_data() {
     }
   }
   hdf_file hf;
-  hf.open_or_create("ex_anneal_plot.o2");
+  hf.open_or_create("data/ex_anneal_plot.o2");
   hdf_output(hf,(const table3d &)t3d,"ex_anneal");
   hf.close();
   return;

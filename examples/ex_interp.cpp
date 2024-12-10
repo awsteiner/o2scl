@@ -145,7 +145,7 @@ int main(void) {
   }
 
   hdf_file hf;
-  hf.open_or_create("ex_interp.o2");
+  hf.open_or_create("data/ex_interp.o2");
   hdf_output(hf,tdata,"tdata");
   hdf_output(hf,tresult,"tresult");
   hf.close();

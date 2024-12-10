@@ -129,7 +129,7 @@ namespace o2scl {
       p_class=0;
       p_module=0;
       
-      set_functions(class_name,options,cpp_verbose,
+      set_function(class_name,options,cpp_verbose,
                     module_name,set_func,eval_func,eval_unc_func,
                     eval_list_func);
     }
@@ -222,7 +222,7 @@ namespace o2scl {
   
     /** \brief Specify the python module, class, functions, and options
     */
-    int set_functions(std::string class_name="",
+    int set_function(std::string class_name="",
                       std::string options="",
                       int cpp_verbose=0,
                       std::string s_module="o2sclpy",

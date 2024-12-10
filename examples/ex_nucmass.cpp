@@ -150,7 +150,7 @@ int main(void) {
   // Output the table to a file
 
   hdf_file hf;
-  hf.open_or_create("ex_nucmass_table.o2");
+  hf.open_or_create("data/ex_nucmass_table.o2");
   hdf_output(hf,tu,"nuclear_masses");
   hf.close();
  

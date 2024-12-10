@@ -634,7 +634,7 @@ public:
     output_files=true;
     
     string file_prefix_old=file_prefix;
-    file_prefix="ex_eos_had_skyrme_";
+    file_prefix="data/ex_eos_had_skyrme_";
 
     // Just summarize SLy4
     vector<string> args;

@@ -614,7 +614,7 @@ public:
     t.set_output_level(1);
 
     // Output directory
-    std::string prefix="ex_eos_had_apr_";
+    std::string prefix="data/ex_eos_had_apr_";
     cout << "Set output prefix to '" << prefix << "' ." << endl;
     cout << endl;
 

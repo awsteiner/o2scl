@@ -151,7 +151,7 @@ int file_out(string prefix, ubvector &x, ubvector &y,
 	     ubmatrix &data, vector<contour_line> &conts) {
   
   hdf_file hf;
-  hf.open_or_create("ex_contour.o2");
+  hf.open_or_create("data/ex_contour.o2");
   hf.setd_vec_copy(prefix+"_x",x);
   hf.setd_vec_copy(prefix+"_y",y);
   hf.setd_mat_copy(prefix+"_data",data);

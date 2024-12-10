@@ -452,7 +452,7 @@ int main(void) {
   // Output results to a file
 
   hdf_file hf;
-  hf.open_or_create("ex_ode.o2");
+  hf.open_or_create("data/ex_ode.o2");
   for(size_t i=0;i<8;i++) {
     hdf_output(hf,tab[i],((string)"table_")+itos(i));
   }

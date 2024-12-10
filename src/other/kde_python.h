@@ -78,6 +78,11 @@ namespace o2scl {
     /// Python function
     PyObject *p_ld_func;
 
+    /** \brief String representing options to be passed to the Python
+        set_data() function
+    */
+    std::string c_options;
+    
     /// Number of parameters
     size_t n_params;
     
@@ -86,7 +91,7 @@ namespace o2scl {
 
     /// Data
     o2scl::tensor<> data;
-    
+
   public:
 
     /** \brief If true, then make a copy of the array before 
@@ -135,20 +140,10 @@ namespace o2scl {
     
     /** \brief Specify the Python module and function
      */
-    kde_python(std::string module, 
-               o2scl::tensor<> &params,
-               std::vector<double> array,
+    kde_python(std::string mod_str, 
                std::string options="", 
                std::string class_name="", int v=0)  {
-                    
-      this->verbose=v;
-      
-      if (o2scl_settings.py_initialized==false) {
-        if (this->verbose>1) {
-          std::cout << "Running py_init()." << std::endl;
-        }
-        o2scl_settings.py_init();
-      }
+
       p_ld_func=0;
       p_sample_func=0;
       p_set_func=0;
@@ -164,9 +159,9 @@ namespace o2scl {
       set_func="set_data_str";
       sample_func="sample";
       ld_func="log_pdf";
-
-      if (module.length()>0) {
-        set_function(module,params,array,options,class_name,v);
+      
+      if (mod_str.length()>0) {
+        set_function(mod_str,options,class_name,v);
       }
     }      
     
@@ -239,7 +234,8 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      
+
+      data.clear();
       n_params=0;
       n_points=0;
       
@@ -259,56 +255,17 @@ namespace o2scl {
         This function is called by the constructor and thus
         cannot be virtual.
     */
-    int set_function(std::string module, 
-                     o2scl::tensor<> &params,
-                     std::vector<double> array,
+    int set_function(std::string mod_str, 
                      std::string options="",
                      std::string class_name="", int v=0) {
+
       int ret;
-      void *vp=set_function_internal(module,params,
-                                     array,ret,options,class_name,v);
-      return ret;
-    }
 
-    /** \brief Internal version of set_function()
-     */
-    void *set_function_internal
-    (std::string module, o2scl::tensor<> &params,
-     std::vector<double> array, int &ret,
-     std::string options="",
-     std::string class_name="", int v=0) {
-
-      ret=0;
-      
       this->verbose=v;
 
       free();
-      
-      if (params.get_rank()!=2) {
-        O2SCL_ERR((((std::string)"Invalid rank, ")+
-                   o2scl::szttos(params.get_rank())+
-                   " (should be 2), for input tensors in "+
-                   "kde_python::set_function_internal().").c_str(),
-                  o2scl::exc_einval);
-      }
-      
-      n_params=params.get_size(1);
-      n_points=params.get_size(0);
-      if (n_params==0) {
-        O2SCL_ERR2("Invalid number of parameters in ",
-                   "kde_python().",o2scl::exc_einval);
-      }
-      if (n_points==0) {
-        O2SCL_ERR2("Invalid number of data points in ",
-                   "kde_python().",o2scl::exc_einval);
-      }
 
-      // AWS, 2/21/23: I'm not sure why it has to be done here and not in
-      // a different function, but if I don't do it here I get a seg fault.
-      //void *vp=o2scl_settings.py_import_array();
-      import_array();
-
-      p_module=o2scl_settings.py_import_module(module,this->verbose);
+      p_module=o2scl_settings.py_import_module(mod_str,this->verbose);
 
       if (class_name.length()>0) {
         if (this->verbose>1) {
@@ -440,6 +397,57 @@ namespace o2scl {
         }
       }
 
+      c_options=options;
+
+      return ret;
+    }
+
+    /** \brief Specify the python and the parameters
+        
+        This function is called by the constructor and thus
+        cannot be virtual.
+    */
+    int set_data(o2scl::tensor<> &params,
+                 std::vector<double> array) {
+      int ret;
+      set_data_internal(params,array,ret);
+      return ret;
+    }
+
+    /** \brief The internal set data function
+        
+        \note This function returns a void pointer to be
+        compatible with the Python import_array() macro. 
+    */
+    void *set_data_internal(o2scl::tensor<> &params,
+                            std::vector<double> array, int &ret) {
+      
+      ret=0;
+      
+      if (params.get_rank()!=2) {
+        O2SCL_ERR((((std::string)"Invalid rank, ")+
+                   o2scl::szttos(params.get_rank())+
+                   " (should be 2), for input tensors in "+
+                   "kde_python::set_function_internal().").c_str(),
+                  o2scl::exc_einval);
+      }
+      
+      n_params=params.get_size(1);
+      n_points=params.get_size(0);
+      if (n_params==0) {
+        O2SCL_ERR2("Invalid number of parameters in ",
+                   "kde_python().",o2scl::exc_einval);
+      }
+      if (n_points==0) {
+        O2SCL_ERR2("Invalid number of data points in ",
+                   "kde_python().",o2scl::exc_einval);
+      }
+
+      // AWS, 2/21/23: I'm not sure why it has to be done here and not in
+      // a different function, but if I don't do it here I get a seg fault.
+      //void *vp=o2scl_settings.py_import_array();
+      import_array();
+
       // Swap the tensor data
       swap(data,params);
       
@@ -490,9 +498,9 @@ namespace o2scl {
       
       if (this->verbose>1) {
         std::cout << "Creating python unicode for string: "
-                  << options.length() << " " << options << std::endl;
+                  << c_options.length() << " " << c_options << std::endl;
       }
-      PyObject *p_options=PyUnicode_FromString(options.c_str());
+      PyObject *p_options=PyUnicode_FromString(c_options.c_str());
       if (p_options==0) {
         O2SCL_ERR2("String creation failed in ",
                    "kde_python::set().",o2scl::exc_efailed);
@@ -522,7 +530,6 @@ namespace o2scl {
       
       return 0;
     }
-
     
     /// Return the dimensionality
     virtual size_t dim() const {

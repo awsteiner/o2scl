@@ -156,7 +156,7 @@ int main(void) {
   table_units<> tab;
   hdf_file hf;
   string name;
-  hf.open("ex_eos_had_apr_nstar.o2");
+  hf.open("data/ex_eos_had_apr_nstar.o2");
   hdf_input(hf,tab,name);
   hf.close();
   
@@ -297,7 +297,7 @@ int main(void) {
   }
   cout << endl;
 
-  hf.open_or_create("ex_crust_comp.o2");
+  hf.open_or_create("data/ex_crust_comp.o2");
   hdf_output(hf,crust_comp,"crust_comp");
   hf.close();
 

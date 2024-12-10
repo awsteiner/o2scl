@@ -110,8 +110,8 @@ int main(int argc, char *argv[]) {
   // Output the results to a file
   hdf_file hf;
   hdf_file hf2;
-  hf.open_or_create("ex_nucleus_rmf_prof.o2");
-  hf2.open_or_create("ex_nucleus_rmf_chden.o2");
+  hf.open_or_create("data/ex_nucleus_rmf_prof.o2");
+  hf2.open_or_create("data/ex_nucleus_rmf_chden.o2");
   std::shared_ptr<table_units<> > charge_dens=rn.get_chden();
   hdf_output(hf,*profiles,"profiles");
   hdf_output(hf2,*charge_dens,"charge_densities");

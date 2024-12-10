@@ -90,8 +90,8 @@ int main(void) {
     uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
     vector<double> bw_array;
     ug.vector(bw_array);
-    kde_python<> kp("o2sclpy",
-                    tin,bw_array,"verbose=0","kde_sklearn",2);
+    kde_python<> kp("o2sclpy","verbose=0","kde_sklearn",2);
+    kp.set_data(tin,bw_array);
     cout << kp.get_bandwidth() << endl;
     vector<double> x(2);
     for(size_t j=0;j<10;j++) {
@@ -131,8 +131,8 @@ int main(void) {
     }
 
     vector<double> weight_array;
-    kde_python<> kp("o2sclpy",
-                    tin,weight_array,"verbose=0","kde_scipy",2);
+    kde_python<> kp("o2sclpy","verbose=0","kde_scipy",2);
+    kp.set_data(tin,weight_array);
     cout << kp.get_bandwidth() << endl;
     vector<double> x(2);
     for(size_t j=0;j<10;j++) {
@@ -176,8 +176,8 @@ int main(void) {
       if (tab.get(0,j)<0.0) weight_array.push_back(3.0);
       else weight_array.push_back(1.0);
     }
-    kde_python<> kp("o2sclpy",
-                    tin,weight_array,"verbose=0","kde_scipy",2);
+    kde_python<> kp("o2sclpy","verbose=0","kde_scipy",2);
+    kp.set_data(tin,weight_array);
     cout << kp.get_bandwidth() << endl;
     vector<double> x(2);
     for(size_t j=0;j<10;j++) {

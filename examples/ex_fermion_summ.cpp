@@ -145,7 +145,7 @@ public:
     double T=1.0;
 
     hdf_file hf;
-    hf.open_or_create("ex_fermion_summ.o2");
+    hf.open_or_create("data/ex_fermion_summ.o2");
 
     double refine=1.0;
 

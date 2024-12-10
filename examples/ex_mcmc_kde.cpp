@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 
   // Read the preliminary data from a file
   hdf_file hf;
-  hf.open("ex_mcmc.o2");
+  hf.open("data/ex_mcmc.o2");
   table_units<> tab_in;
   hdf_input(hf,tab_in,"indep");
   hf.close();
@@ -232,8 +232,8 @@ int main(int argc, char *argv[]) {
   vector<double> bw_array;
   ug.vector(bw_array);
   std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-  kp->set_function("o2sclpy",ten_in,
-                   bw_array,"verbose=0","kde_sklearn");
+  kp->set_function("o2sclpy","verbose=0","kde_sklearn");
+  kp->set_data(ten_in,bw_array);
   
   // Setting the KDE as the base distribution for the independent
   // conditional probability.
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
        << ac_len << " " << indep.get_nlines() << endl;
   
   // Write these samples to a file
-  hf.open_or_create("ex_mcmc_kde.o2");
+  hf.open_or_create("data/ex_mcmc_kde.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
   hf.setd_vec("q_next",local_stepper->vq_next);
