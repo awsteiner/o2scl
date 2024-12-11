@@ -45,7 +45,8 @@ nucleus_class::nucleus_class() {
   o2scl_hdf::ame_load(ame20exp,"20");
   o2scl_hdf::ame_load(ame20round,"20round");
     
-  o2scl_hdf::mnmsk_load(m95);
+  o2scl_hdf::mnmsk_load(m95,"mnmsk97");
+  o2scl_hdf::mnmsk_load(m16,"msis16");
     
   o2scl_hdf::hfb_load(hfb2,2);
   o2scl_hdf::hfb_load(hfb8,8);
@@ -101,7 +102,7 @@ nucleus_class::nucleus_class() {
   std::cout << "Done reading nuclear mass tables." << std::endl;
 
   nmd={&ame95rmd,&ame95exp,&ame03round,&ame03,
-       &ame12,&ame16,&ame20exp,&ame20round,&m95,&kt,
+       &ame12,&ame16,&ame20exp,&ame20round,&m95,&m16,&kt,
        &kt2,&hfb2,&hfb8,&hfb14,&hfb14_v0,
        &hfb17,&hfb21,&hfb22,&hfb23,
        &hfb24,&hfb25,&hfb26,&hfb27,
@@ -115,7 +116,7 @@ nucleus_class::nucleus_class() {
 	       "AME rnd 03","AME 03",
 	       "AME 12","AME 16","AME exp 20",
                "AME rnd 20",
-	       "MNMSK 95","KTUY 04","KTUY 05",
+	       "MNMSK 95","MSIS 16","KTUY 04","KTUY 05",
 	       "HFB2","HFB8","HFB14","HFB14_v0",
 	       "HFB17","HFB21","HFB22","HFB23",
 	       "HFB24","HFB25","HFB26","HFB27",
@@ -349,26 +350,30 @@ void nucleus_class::setup_cli(o2scl::cli &cl) {
   
   static const int nopt=5;
   o2scl::comm_option_s options[nopt]={
-    {0,"ZN","Get by Z and N.",
-     2,2,"","",new o2scl::comm_option_mfptr<nucleus_class>
+    {0,"ZN","Information for a nucleus given Z and N.",
+     2,2,"<Z> <N>",((std::string)"The 'ZN' command outputs ")+
+     "the binding energy for a specified nucleus for all "+
+     "tables and models.",new o2scl::comm_option_mfptr<nucleus_class>
      (this,&nucleus_class::get),o2scl::cli::comm_option_both},
-    {0,"tables","",
-     0,0,"","",new o2scl::comm_option_mfptr<nucleus_class>
+    {0,"tables","List available tables and number of nuclei",
+     0,0,"",((std::string)"The 'tables' command lists all ")+
+     "available tables (both experimental and theoretical).",
+     new o2scl::comm_option_mfptr<nucleus_class>
      (this,&nucleus_class::tables),o2scl::cli::comm_option_both},
-    {0,"fits","",
+    {0,"fits","Fit theoretical mass models to experiment",
      0,0,"","",new o2scl::comm_option_mfptr<nucleus_class>
      (this,&nucleus_class::fits),o2scl::cli::comm_option_both},
-    {0,"cdist","Create a common distribution of nuclei",
+    {0,"cdist","Create a distribution of nuclei common to several tables",
      0,0,"","",new o2scl::comm_option_mfptr<nucleus_class>
      (this,&nucleus_class::cdist),o2scl::cli::comm_option_both},
-    {0,"refs","",
+    {0,"refs","List the references for all of the tables and models",
      0,0,"","",new o2scl::comm_option_mfptr<nucleus_class>
      (this,&nucleus_class::refs),o2scl::cli::comm_option_both}
   };
   cl.set_comm_option_vec(nopt,options);
     
   p_verbose.i=&verbose;
-  p_verbose.help="Verbose parameter (default 1)";
+  p_verbose.help="Verbosity parameter (default 1)";
   cl.par_list.insert(make_pair("verbose",&p_verbose));
 
   return;
