@@ -3,7 +3,7 @@ ndatafmdir=$(datadir)/o2scl/nucmass/frib_mex
 dist_ndatafm_DATA = ddme2.o2 skms_all.o2 sly4_all.o2 unedf0_all.o2 \
 	ddmed.o2 skms_even.o2 sly4_even.o2 unedf0_even.o2 \
 	ddpc1.o2 skp_all.o2 sv-min_even.o2 unedf1_all.o2 \
-	nl3s.o2 skp_even.o2 sv_min_all.o2 unedf1_even.o2
+	nl3s.o2 skp_even.o2 sv-min_all.o2 unedf1_even.o2
 
 # skms_all.o2: empty
 # 	cat SKMS_all_nuclei-new.dat | awk '{print $$2 " " $$3 " " $$4 " " $$5 " " $$6 " " $$7 " " $$8 " " $$9 " " $$10}' > /tmp/temp

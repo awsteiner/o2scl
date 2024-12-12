@@ -45,6 +45,27 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   
   std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
+    if (fname=="ddme2" || fname=="ddmed" || fname=="ddpc1") {
+      this->reference=((std::string)"S. E. Agbemava et al., ")+
+        "Phys. Rev. C 89, 054320 (2014); A. V. Afanasjev et al., "+
+        "Phys. Rev. C 91, 014324 (2015); A. V. Afanasjev and S. E. "+
+        "Agbemava, Phys. Rev. C 93, 054310 (2016).";
+    } else if (fname=="skms_all" || fname=="skms_even") {
+      reference="Bartel et al., Nucl. Phys. A 386, 79 (1982)";
+    } else if (fname=="skp_all" || fname=="skp_even") {
+      reference="Dobaczewski et al., Nucl. Phys. A 422, 103 (1984).";
+    } else if (fname=="sly4_all" || fname=="sly4_even") {
+      reference="Chabanat et al., Nucl. Phys. A 635, 231 (1998).";
+    } else if (fname=="sv-min_all" || fname=="sv-min_even") {
+      reference="Klupfel et al., Phys. Rev. C 79, 034310 (2009).";
+    } else if (fname=="unedf0_all" || fname=="unedf0_even") {
+      reference="Kortelainen et al., Phys. Rev. C 82, 024313 (2010).";
+    } else if (fname=="unedf1_all" || fname=="unedf1_even") {
+      reference="Kortelainen et al., Phys. Rev. C 85, 024304 (2012).";
+    }
+    if (fname.substr(fname.length()-3,3)!=".o2") {
+      fname=fname+".o2";
+    }
     fname=dir+"/nucmass/frib_mex/"+fname;
   }
   

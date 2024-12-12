@@ -458,9 +458,6 @@ namespace o2scl {
 
   protected:
     
-    /// The reference for the original data
-    std::string reference;
-    
     /// The array containing the mass data of length ame::n
     nucmass_mnmsk::entry *mass;
     

@@ -131,9 +131,6 @@ namespace o2scl {
     /// The number of entries (about 3000).
     size_t n;
     
-    /// The reference for the original data
-    std::string reference;
-    
     /// The array containing the mass data of length n
     entry *mass;
 

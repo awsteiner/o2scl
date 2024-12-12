@@ -325,7 +325,8 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
       m[j].Qalpha=1.0e99;
       m[j].Talpha=1.0e99;
     }
-    string reference="Moller, et al. (2016)";
+    string reference=((std::string)"Möller, Sierk, Ichikawa, and ")+
+      "Sagawa, At. Data and Nucl. Data Tables 109 (2016), 1.";
     mnmsk.set_data(nr,m,reference);
   }
 

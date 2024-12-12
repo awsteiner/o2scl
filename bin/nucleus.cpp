@@ -72,32 +72,16 @@ nucleus_class::nucleus_class() {
   sdnp2.load("sd_skp_04");
   sdnp3.load("sd_sly4_04");
   
-  ddme2.load_be(o2scl::o2scl_settings.get_data_dir()+
-                "/nucmass/frib_mex/ddme2.o2","E",1.0,true);
-  ddmed.load_be(o2scl::o2scl_settings.get_data_dir()+
-                "/nucmass/frib_mex/ddmed.o2","E",1.0,true);
-  ddpc1.load_be(o2scl::o2scl_settings.get_data_dir()+
-                "/nucmass/frib_mex/ddpc1.o2","E",1.0,true);
-  nl3s.load_be(o2scl::o2scl_settings.get_data_dir()+
-                "/nucmass/frib_mex/nl3s.o2","E",1.0,true);
-  sly4.load_be(o2scl::o2scl_settings.get_data_dir()+
-               "/nucmass/frib_mex/sly4_all.o2",
-               "Binding_Energy__MeV_",1.0,true);
-  skms.load_be(o2scl::o2scl_settings.get_data_dir()+
-               "/nucmass/frib_mex/skms_all.o2",
-               "Binding_Energy__MeV_",1.0,true);
-  skp.load_be(o2scl::o2scl_settings.get_data_dir()+
-              "/nucmass/frib_mex/skp_all.o2",
-              "Binding_Energy__MeV_",1.0,true);
-  sv_min.load_be(o2scl::o2scl_settings.get_data_dir()+
-                 "/nucmass/frib_mex/sv_min_all.o2",
-                 "Binding_Energy__MeV_",1.0,true);
-  unedf0.load_be(o2scl::o2scl_settings.get_data_dir()+
-                 "/nucmass/frib_mex/unedf0_all.o2",
-                 "Binding_Energy__MeV_",1.0,true);
-  unedf1.load_be(o2scl::o2scl_settings.get_data_dir()+
-                 "/nucmass/frib_mex/unedf1_all.o2",
-                 "Binding_Energy__MeV_",1.0,true);
+  ddme2.load_be("ddme2","E",1.0);
+  ddmed.load_be("ddmed","E",1.0);
+  ddpc1.load_be("ddpc1","E",1.0);
+  nl3s.load_be("nl3s","E",1.0);
+  sly4.load_be("sly4_all","Binding_Energy__MeV_",1.0);
+  skms.load_be("skms_all","Binding_Energy__MeV_",1.0);
+  skp.load_be("skp_all","Binding_Energy__MeV_",1.0);
+  sv_min.load_be("sv_min_all","Binding_Energy__MeV_",1.0);
+  unedf0.load_be("unedf0_all","Binding_Energy__MeV_",1.0);
+  unedf1.load_be("unedf1_all","Binding_Energy__MeV_",1.0);
   
   std::cout << "Done reading nuclear mass tables." << std::endl;
 
@@ -223,6 +207,7 @@ int nucleus_class::refs(std::vector<std::string> &sv, bool itive_com) {
     cout.width(left_column);
     cout << table_names[i] << ": " << nmd[i]->reference << endl;
   }
+  cout << m95.reference << " " << m16.reference << endl;
     
   return 0;
 }
