@@ -178,7 +178,7 @@ namespace o2scl {
       <b>References</b>
 
       \verbatim embed:rst
-      This class was created for [Steiner00]_. 
+      This class was created for [Steiner00qp]_. 
       See also [Bernard88]_, [Hatsuda94]_,
       [Buballa99]_, and [Alaverdyan21]_.
 

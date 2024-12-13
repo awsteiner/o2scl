@@ -199,6 +199,7 @@ int main(void) {
   nse.def_mmin.tol_rel/=1.0e4;
   nse.def_mmin.tol_abs/=1.0e4;
 
+  nse.def_mmin.verbose=2;
   ret=nse.calc_density_by_min(dm);
   t.test_gen(ret==0,"ret 4");
 

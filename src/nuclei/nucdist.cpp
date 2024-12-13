@@ -66,3 +66,46 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
   return;
 }
 
+void o2scl::nucdist_pair_set(vector<nucleus> &dist, nucmass &nm,
+                             nucmass &nm2, std::string expr, int maxA,
+                             bool include_neutron) {
+  
+  nucleus n;
+
+  if (dist.size()>0) dist.clear();
+
+  /// The function parser
+  calc_utf8<> calc;
+  std::map<std::string,double> vars;
+  calc.compile(expr.c_str(),&vars);
+  
+  size_t dist_size=0;
+  
+  // Now fill the vector with the nuclei
+  size_t ix=0;
+  for(int A=1;A<=maxA;A++) {
+    for(int Z=0;Z<=A;Z++) {
+      if (A==1 && Z==0) {
+	if (include_neutron && nm.is_included(0,1) &&
+            nm2.is_included(0,1)) {
+	  dist.push_back(n);
+	  nm.get_nucleus(Z,A-Z,dist[ix]);
+	  ix++;
+	}
+      } else {
+	vars["Z"]=Z;
+	vars["A"]=A;
+	vars["N"]=A-Z;
+	if (nm.is_included(Z,A-Z) && nm2.is_included(Z,A-Z) &&
+            calc.eval(&vars)>0.5) {
+	  dist.push_back(n);
+	  nm.get_nucleus(Z,A-Z,dist[ix]);
+	  ix++;
+	}
+      }
+    }
+  }
+
+  return;
+}
+

@@ -442,7 +442,7 @@ namespace o2scl {
       <b>References</b>
 
       \verbatim embed:rst
-      Designed in [Steiner08]_ and [Souza09]_ based in part
+      Designed in [Steiner08]_ and [Souza09co]_ based in part
       on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
 

@@ -800,7 +800,7 @@ namespace o2scl {
       thermodynamic identity.
 
       \verbatim embed:rst
-      See also [Shen11]_.
+      See also [Shen11ne]_.
       \endverbatim
 
       \warning The NL3 model is probably ruled out by nuclear mass

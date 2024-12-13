@@ -40,14 +40,23 @@ namespace o2scl {
       <tt>std::vector</tt> object. The function \c expr, a function of
       \c Z and \c N, determines which nuclei will be added to the
       distribution.
-
-      \note This function is actually in the \c o2scl namespace.
-      Unfortunately doxygen has difficulty extending namespaces
-      in separate doxyfile instances. 
   */
   void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
                    std::string expr="1", int maxA=400,
                    bool include_neutron=false);
+
+  /** \brief Set a distribution of nuclei from two sets of nuclear
+      masses and a function string
+
+      Given two nuclear mass formulas given in \c nm, and \c nm2, this
+      adds allo nuclei from \c nm which also appear in \c nm2 to a
+      <tt>std::vector</tt> of nuclei. The function \c expr, a function
+      of \c Z, \c N, and \c A, is also used to determine which nuclei
+      will be added to the distribution.
+  */
+  void nucdist_pair_set(std::vector<nucleus> &dist, nucmass &nm,
+                        nucmass &nm2, std::string expr="1", int maxA=400,
+                        bool include_neutron=false);
 
 }
 

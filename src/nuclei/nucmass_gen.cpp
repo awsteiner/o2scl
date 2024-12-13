@@ -45,7 +45,7 @@ int nucmass_gen::load_be(std::string fname, std::string be_col,
   
   std::string dir=o2scl::o2scl_settings.get_data_dir();
   if (!external) {
-    if (fname=="ddme2" || fname=="ddmed" || fname=="ddpc1") {
+    if (fname=="ddme2" || fname=="ddmed" || fname=="ddpc1" || fname=="nl3s") {
       this->reference=((std::string)"S. E. Agbemava et al., ")+
         "Phys. Rev. C 89, 054320 (2014); A. V. Afanasjev et al., "+
         "Phys. Rev. C 91, 014324 (2015); A. V. Afanasjev and S. E. "+

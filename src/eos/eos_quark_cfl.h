@@ -202,7 +202,7 @@ namespace o2scl {
       <b>References:</b>
 
       \verbatim embed:rst
-      Created for [Steiner02]_.
+      Created for [Steiner02cs]_.
       \endverbatim
   */
   class eos_quark_cfl : public eos_quark_njl {

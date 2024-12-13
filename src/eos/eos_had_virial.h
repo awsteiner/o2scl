@@ -178,8 +178,8 @@ namespace o2scl {
                                 double b_n, double b_pn,
                                 double &zn, double &zp) {
 
-      double npt=pow(lam_n,3)/2.0*np;
-      double nnt=pow(lam_p,3)/2.0*nn;
+      double npt=pow(lam_p,3)/2.0*np;
+      double nnt=pow(lam_n,3)/2.0*nn;
 
       // At high densities or very low densities, just use the
       // non-interacting result

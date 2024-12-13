@@ -907,7 +907,7 @@ namespace o2scl {
     /** \brief Crust EOS from Shen et al. (2011)
 
         \verbatim embed:rst
-        From [Shen11b]_.
+        From [Shen11as]_.
         \endverbatim
      */
     void sho11_low_dens_eos();

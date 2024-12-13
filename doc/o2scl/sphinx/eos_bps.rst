@@ -15,7 +15,7 @@ This example computes the outer crust EOS from the
 :ref:`eos_crust <eos_crust>` class and then compares it with the numerical
 values from the original paper in [Baym71tg]_ as stored in the
 file ``examples/ex_bps_input.txt``. Then it computes several
-crusts from [Shen11b]_, [Steiner12]_, and [Newton13]_.
+crusts from [Shen11as]_, [Steiner12]_, and [Newton13]_.
     
 .. literalinclude:: ../../../examples/ex_eos_crust.cpp
    :language: c++		    

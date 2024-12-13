@@ -22,9 +22,8 @@
 */
 #include <iostream>
 #include <string>
-#include <o2scl/cli.h>
-//#include <vector>
 
+#include <o2scl/cli.h>
 #include <o2scl/nucmass.h>
 #include <o2scl/nucmass_hfb.h>
 #include <o2scl/nucmass_ame.h>
@@ -37,13 +36,14 @@
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/nucmass_gen.h>
 #include <o2scl/nucmass_ldrop_shell.h>
+#include <o2scl/nucmass_ldrop_ext.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/fermion.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 /** \brief Desc
  */
-class nucleus_class {
+class nucleus_bin {
   
  protected:
 
@@ -161,6 +161,14 @@ class nucleus_class {
 
   /** \brief Desc
    */
+  o2scl::nucmass_wlw wlw4;
+
+  /** \brief Desc
+   */
+  o2scl::nucmass_wlw wlw5;
+
+  /** \brief Desc
+   */
   o2scl::nucmass_sdnp sdnp1;
 
   /** \brief Desc
@@ -256,6 +264,10 @@ class nucleus_class {
   /** \brief Desc
    */
   o2scl::nucmass_ldrop_shell ldrop_shell;
+
+  /** \brief Desc
+   */
+  o2scl::nucmass_ldrop_ext ldrop_ext;
   //@}
 
   /** \brief Desc
@@ -310,9 +322,9 @@ class nucleus_class {
   
 public:
   
-  nucleus_class();
+  nucleus_bin();
   
-  virtual ~nucleus_class() {
+  virtual ~nucleus_bin() {
   }
 
   /** \brief Desc
@@ -346,6 +358,10 @@ public:
   /** \brief Desc
    */
   int fits(std::vector<std::string> &sv, bool itive_com);
+
+  /** \brief Desc
+   */
+  int compare(std::vector<std::string> &sv, bool itive_com);
 
   /** \brief Desc
    */

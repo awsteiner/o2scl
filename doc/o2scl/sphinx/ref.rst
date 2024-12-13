@@ -68,10 +68,6 @@ Bibliography
    <https://doi.org/10.1086/152140>`_,
    Astrophys. J. **182** (1973) 335.
 
-.. [Goodman10] : `J. Goodman and J. Weare
-   <https://doi.org/10.2140/camcos.2010.5.65>`_,
-   Comm. Appl. Math Comp. Sci. **5** (2010) 65.
-
 .. [Bonazzola94] : `S. Bonazzola and E. Gourgoulhon
    <https://doi.org/10.1088/0264-9381/11/7/014>`_,
    Class. Quantum Grav. **11** (1994) 1775.
@@ -250,6 +246,10 @@ Bibliography
 .. [Golub96] : G. H. Golub and C. F. Van Loan,
    `Matrix Computations (3rd ed) <https://www.worldcat.org/isbn/9780801854149>`_,
    (1996) Johns Hopkins University Press.
+
+.. [Goodman10] : `J. Goodman and J. Weare
+   <https://doi.org/10.2140/camcos.2010.5.65>`_,
+   Comm. Appl. Math. and Comp. Sci. **5** (2010) 65.
 
 .. [Goriely02] : `S. Goriely, M. Samyn, P.-H. Heenen, J. M. Pearson, and F. Tondeur
    <https://doi.org/10.1103/PhysRevC.66.024326>`_,
@@ -436,17 +436,17 @@ Bibliography
 
 .. [More79] : `M. Moré J. and Cosnard
    <https://doi.org/10.1145/355815.355820>`_,
-   ACM Trans. Math. Software **5** (1979) 64.
+   ACM Trans. Math. Soft. **5** (1979) 64.
 
 .. [More80] : `J. Moré and M. Cosnard
    <https://doi.org/10.1145/355887.355898>`_,
-   ACM Trans. Math. Software **6** (1980) 240.
+   ACM Trans. Math. Soft. **6** (1980) 240.
 
 .. [Muller96] : `H. Müller and B. D. Serot
    <https://doi.org/10.1016/0375-9474(96)00187-X>`_,
    Nucl. Phys. A **606** (1996) 508.
 
-.. [Neal11] : 
+.. [Neal11] : R. Neal, MCMC Using Hamiltonian Dynamics
    `Handbook of Markov Chain Monte Carlo <https://www.worldcat.org/isbn/1420079417>`_,
    (2011) CRC Press, p. 113-162.
 
@@ -455,7 +455,7 @@ Bibliography
    Nucl. Phys. A **207** (1973) 298.
 
 .. [Nelder65] : J. A. Nelder and R. Mead,
-   Computer Journal **7** (1965) 308.
+   Comput. J. **7** (1965) 308.
 
 .. [Newton13] : `W. G. Newton, M. Gearheart, and B.-A. Li
    <https://doi.org/10.1088/0067-0049/204/1/9>`_,
@@ -514,13 +514,13 @@ Bibliography
    Phys. Rep. **280** (1997) 1.
 
 .. [Press90] : W. H. F., G. R. Press,
-   Computers in Physics **4** (1990) 190.
+   Comput. Phys. **4** (1990) 190.
 
 .. [Prince81] : `P. J. Prince and J. R. Dormand
    <https://doi.org/10.1016/0771-050X(81)90010-3>`_,
    J. Comp. Appl. Math. **7** (1981) 67.
 
-.. [Ravenhall83] : `D. G. Ravenhall, C. J. Pethick, and J. R. Wilson
+.. [Ravenhall83] : `D.~G. Ravenhall, C.~J. Pethick, and J.~R. Wilson
    <https://doi.org/10.1103/PhysRevLett.50.2066>`_,
    Phys. Rev. Lett. **50** (1983) 2066.
 
@@ -552,15 +552,15 @@ Bibliography
    <https://doi.org/10.1103/PhysRevC.82.015806>`_,
    Phys. Rev. C **82** (2010) 015806.
 
-.. [Shen10b] : `G. Shen, C. J. Horowitz, and S. Teige
+.. [Shen10eo] : `G. Shen, C. J. Horowitz, and S. Teige
    <https://doi.org/10.1103/PhysRevC.82.045802>`_,
    Phys. Rev. C **82** (2010) 045802.
 
-.. [Shen11] : `G. Shen, C. J. Horowitz, and S. Teige
+.. [Shen11ne] : `G. Shen, C. J. Horowitz, and S. Teige
    <https://doi.org/10.1103/PhysRevC.83.035802>`_,
    Phys. Rev. C **83** (2011) 035802.
 
-.. [Shen11b] : `G. Shen, C. J. Horowitz, and E. O'Connor
+.. [Shen11as] : `G. Shen, C. J. Horowitz, and E. O'Connor
    <https://doi.org/10.1103/PhysRevC.83.065808>`_,
    Phys. Rev. C **83** (2011) 065808.
 
@@ -572,11 +572,11 @@ Bibliography
    <https://doi.org/10.1143/PTP.100.1013>`_,
    Prog. Theor. Phys. **100** (1998) 1013.
 
-.. [Skyrme59] : `T. H. R. Skyrme
+.. [Skyrme59te] : `T. H. R. Skyrme
    <https://doi.org/10.1016/0029-5582(58)90345-6>`_,
    Nucl. Phys. **9** (1959) 615.
 
-.. [Souza09] : `S. R. Souza, A. W. Steiner, W. G. Lynch, R. Donangelo, and M. A. Famiano
+.. [Souza09co] : `S. R. Souza, A. W. Steiner, W. G. Lynch, R. Donangelo, and M. A. Famiano
    <https://doi.org/10.1088/0004-637X/707/2/1495>`_,
    Astrophys. J. **707** (2009) 1495.
 
@@ -584,15 +584,15 @@ Bibliography
    <https://adsabs.harvard.edu/abs/1990A&A...239..443S>`_,
    Astron. Astrophys. **239** (1990) 443.
 
-.. [Steiner00] : `A. W. Steiner, M. Prakash, and J. M. Lattimer
+.. [Steiner00qp] : `A. W. Steiner, M. Prakash, and J. M. Lattimer
    <https://doi.org/10.1016/S0370-2693(00)00780-2>`_,
    Phys. Lett. B **486** (2000) 239.
 
-.. [Steiner02] : `A. W. Steiner, S. Reddy, and M. Prakash
+.. [Steiner02cs] : `A. W. Steiner, S. Reddy, and M. Prakash
    <https://doi.org/10.1103/PhysRevD.66.094007>`_,
    Phys. Rev. D **66** (2002) 094007.
 
-.. [Steiner05] : `A. W. Steiner
+.. [Steiner05ct] : `A. W. Steiner
    <https://doi.org/10.1103/PhysRevD.72.054024>`_,
    Phys. Rev. D **72** (2005) 054024.
 

@@ -14,7 +14,7 @@ HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h \
 	nucmass_dglg.h nucmass_wlw.h nucmass_sdnp.h \
 	nucmass_densmat.h nucmass_gen.h nuclei_python.h \
-	part_funcs.h
+	part_funcs.h nucleus_bin.h
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \

@@ -43,7 +43,7 @@ namespace o2scl {
 
       \verbatim embed:rst
       Equation of state of nucleonic matter based on 
-      the Skryme interaction from [Skyrme59]_.
+      the Skryme interaction from [Skyrme59te]_.
       \endverbatim
 
       \b Hamiltonian
@@ -124,7 +124,7 @@ namespace o2scl {
 
       \verbatim embed:rst
       The values :math:`a=0, b=1` give the standard definition of the
-      Skyrme Hamiltonian [Skyrme59]_, while :math:`a=1, b=0`
+      Skyrme Hamiltonian [Skyrme59te]_, while :math:`a=1, b=0`
       contains the modifications suggested by [Onsi94]_.
       \endverbatim
 
