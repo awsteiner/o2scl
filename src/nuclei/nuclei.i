@@ -331,6 +331,33 @@ class nucmass_wlw
 - parent nucmass_table
 #
 # ------------------------------------------------------
+# 
+# Class nucmass_fit
+#
+class nucmass_fit
+- int fit_method
+- static const int rms_mass_excess
+- static const int rms_binding_energy
+- static const int chi_squared_me
+- static const int chi_squared_be
+- bool even_even
+- int minZ
+- int minN
+- function fit
+  - void
+  - io nucmass_fit_base &n
+  - out double &res
+- function eval
+  - void
+  - io nucmass &n
+  - out double &res
+- function fit_covar
+  - void
+  - io nucmass_fit_base &n
+  - out double &chi2
+  - out ubmatrix &covar
+#
+# ------------------------------------------------------
 #
 # Class vector<nucleus>
 #                              

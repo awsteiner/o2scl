@@ -856,6 +856,107 @@ void o2scl_free_nucmass_wlw(void *vptr) {
   return;
 }
 
+void *o2scl_create_nucmass_fit() {
+  nucmass_fit *ptr=new nucmass_fit;
+  return ptr;
+}
+
+void o2scl_free_nucmass_fit(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_nucmass_fit_get_fit_method(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->fit_method;
+}
+
+void o2scl_nucmass_fit_set_fit_method(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->fit_method=v;
+  return;
+}
+
+int o2scl_nucmass_fit_get_rms_mass_excess(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->rms_mass_excess;
+}
+
+
+int o2scl_nucmass_fit_get_rms_binding_energy(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->rms_binding_energy;
+}
+
+
+int o2scl_nucmass_fit_get_chi_squared_me(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->chi_squared_me;
+}
+
+
+int o2scl_nucmass_fit_get_chi_squared_be(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->chi_squared_be;
+}
+
+
+bool o2scl_nucmass_fit_get_even_even(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->even_even;
+}
+
+void o2scl_nucmass_fit_set_even_even(void *vptr, bool v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->even_even=v;
+  return;
+}
+
+int o2scl_nucmass_fit_get_minZ(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->minZ;
+}
+
+void o2scl_nucmass_fit_set_minZ(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->minZ=v;
+  return;
+}
+
+int o2scl_nucmass_fit_get_minN(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->minN;
+}
+
+void o2scl_nucmass_fit_set_minN(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->minN=v;
+  return;
+}
+
+void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass_fit_base *n=(nucmass_fit_base *)ptr_n;
+  ptr->fit(*n,*res);
+  return;
+}
+
+void o2scl_nucmass_fit_eval(void *vptr, void *ptr_n, double *res) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass *n=(nucmass *)ptr_n;
+  ptr->eval(*n,*res);
+  return;
+}
+
+void o2scl_nucmass_fit_fit_covar(void *vptr, void *ptr_n, double *chi2, void *ptr_covar) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass_fit_base *n=(nucmass_fit_base *)ptr_n;
+  ubmatrix *covar=(ubmatrix *)ptr_covar;
+  ptr->fit_covar(*n,*chi2,*covar);
+  return;
+}
+
 void *o2scl_create_std_vector_nucleus_() {
   std::vector<nucleus> *ptr=new std::vector<nucleus>;
   return ptr;

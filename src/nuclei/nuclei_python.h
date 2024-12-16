@@ -330,6 +330,44 @@ void *o2scl_create_nucmass_wlw();
 
 void o2scl_free_nucmass_wlw(void *vptr);
 
+void *o2scl_create_nucmass_fit();
+
+void o2scl_free_nucmass_fit(void *vptr);
+
+int o2scl_nucmass_fit_get_fit_method(void *vptr);
+
+void o2scl_nucmass_fit_set_fit_method(void *vptr, int v);
+
+int o2scl_nucmass_fit_get_rms_mass_excess(void *vptr);
+
+
+int o2scl_nucmass_fit_get_rms_binding_energy(void *vptr);
+
+
+int o2scl_nucmass_fit_get_chi_squared_me(void *vptr);
+
+
+int o2scl_nucmass_fit_get_chi_squared_be(void *vptr);
+
+
+bool o2scl_nucmass_fit_get_even_even(void *vptr);
+
+void o2scl_nucmass_fit_set_even_even(void *vptr, bool v);
+
+int o2scl_nucmass_fit_get_minZ(void *vptr);
+
+void o2scl_nucmass_fit_set_minZ(void *vptr, int v);
+
+int o2scl_nucmass_fit_get_minN(void *vptr);
+
+void o2scl_nucmass_fit_set_minN(void *vptr, int v);
+
+void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res);
+
+void o2scl_nucmass_fit_eval(void *vptr, void *ptr_n, double *res);
+
+void o2scl_nucmass_fit_fit_covar(void *vptr, void *ptr_n, double *chi2, void *ptr_covar);
+
 void *o2scl_create_std_vector_nucleus_();
 
 void o2scl_free_std_vector_nucleus_(void *vptr);
