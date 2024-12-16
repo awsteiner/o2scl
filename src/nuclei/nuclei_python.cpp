@@ -856,6 +856,49 @@ void o2scl_free_nucmass_wlw(void *vptr) {
   return;
 }
 
+void *o2scl_create_std_vector_nucleus_() {
+  std::vector<nucleus> *ptr=new std::vector<nucleus>;
+  return ptr;
+}
+
+void o2scl_free_std_vector_nucleus_(void *vptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_std_vector_nucleus_(void *vsrc, void *vdest) {
+  std::vector<nucleus> *src=(std::vector<nucleus> *)vsrc;
+  std::vector<nucleus> *dest=(std::vector<nucleus> *)vdest;
+  *dest=*src;
+  return; // tab 8
+}
+
+void o2scl_std_vector_nucleus__resize(void *vptr, size_t n) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_std_vector_nucleus__size(void *vptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  nucleus *ret=&(ptr->operator[](n));
+  return ret;
+}
+
+void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  nucleus *valptr2=(nucleus *)valptr;
+  (*ptr)[i]=*valptr2;
+  return;
+}
+
 void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only) {
   nucmass_ame *ame=(nucmass_ame *)ptr_ame;
   std::string *name=(std::string *)ptr_name;
@@ -890,6 +933,23 @@ void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) 
   nucmass_hfb_sp *hfb=(nucmass_hfb_sp *)ptr_hfb;
   std::string *filename=(std::string *)ptr_filename;
   hfb_sp_load(*hfb,model,*filename);
+  return;
+}
+
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA, bool include_neutron) {
+  vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
+  nucmass *nm=(nucmass *)ptr_nm;
+  std::string *expr=(std::string *)ptr_expr;
+  nucdist_set(*dist,*nm,*expr,maxA,include_neutron);
+  return;
+}
+
+void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA, bool include_neutron) {
+  vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
+  nucmass *nm=(nucmass *)ptr_nm;
+  nucmass *nm2=(nucmass *)ptr_nm2;
+  std::string *expr=(std::string *)ptr_expr;
+  nucdist_pair_set(*dist,*nm,*nm2,*expr,maxA,include_neutron);
   return;
 }
 

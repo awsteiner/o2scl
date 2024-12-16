@@ -368,6 +368,7 @@ void o2scl_copy_hist(void *vsrc, void *vdest) {
   hist *src=(hist *)vsrc;
   hist *dest=(hist *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 bool o2scl_hist_get_extend_rhs(void *vptr) {
@@ -524,6 +525,7 @@ void o2scl_copy_hist_2d(void *vsrc, void *vdest) {
   hist_2d *src=(hist_2d *)vsrc;
   hist_2d *dest=(hist_2d *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 bool o2scl_hist_2d_get_extend_rhs(void *vptr) {
@@ -702,6 +704,7 @@ void o2scl_copy_contour_line(void *vsrc, void *vdest) {
   contour_line *src=(contour_line *)vsrc;
   contour_line *dest=(contour_line *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 double o2scl_contour_line_get_level(void *vptr) {

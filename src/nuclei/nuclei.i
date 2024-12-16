@@ -28,6 +28,7 @@ h_include <o2scl/nucmass_hfb.h>
 h_include <o2scl/nucmass_ktuy.h>
 h_include <o2scl/nucmass_fit.h>
 h_include <o2scl/nucmass_gen.h>
+h_include <o2scl/nucdist.h>
 h_include <o2scl/hdf_nucmass_io.h>
 # 
 # Include statement for C++ source code
@@ -330,6 +331,30 @@ class nucmass_wlw
 - parent nucmass_table
 #
 # ------------------------------------------------------
+#
+# Class vector<nucleus>
+#                              
+class std::vector<nucleus>
+- py_name std_vector_nucleus
+- std_cc                             
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - nucleus &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: a Python int
+|     """
+|     return self.size()
+#
+# ------------------------------------------------------
 # 
 # HDF functions
 #
@@ -373,4 +398,25 @@ function hfb_sp_load
 - nucmass_hfb_sp &hfb
 - size_t model
 - std::string filename
+#
+# ------------------------------------------------------
+#
+function nucdist_set
+- void
+- vector<nucleus> &dist
+- nucmass &nm
+- std::string expr ["1"]  
+- int maxA [400]
+- bool include_neutron [false]
+#
+# ------------------------------------------------------
+#
+function nucdist_pair_set
+- void
+- vector<nucleus> &dist
+- nucmass &nm
+- nucmass &nm2
+- std::string expr ["1"]  
+- int maxA [400]
+- bool include_neutron [false]
 

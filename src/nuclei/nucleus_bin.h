@@ -46,264 +46,84 @@
 class nucleus_bin {
   
  protected:
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_info nmi;
-
-  /// \name Experimental nuclear mass tables
-  //@{
-  /** \brief Desc
-   */
-  o2scl::nucmass_ame ame16;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_ame ame20exp;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_ame ame20round;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_ame ame95rmd;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen ddme2;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen ddmed;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen ddpc1;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen nl3s;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen sly4;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen skms;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen skp;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen sv_min;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen unedf0;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen unedf1;
   
-  /** \brief Desc
-   */
+  /// \name Atomic mass evaluations
+  //@{
+  o2scl::nucmass_ame ame16;
+  o2scl::nucmass_ame ame20exp;
+  o2scl::nucmass_ame ame20round;
+  o2scl::nucmass_ame ame95rmd;
   o2scl::nucmass_ame ame03round;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ame ame03;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ame ame95exp;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ame ame12;
   //@}
 
-  /// \name Theoretical nuclear mass tables
+  /// \name Nuclear mass tables from FRIB Mass Explorer
   //@{
-  /// Number of tables (set in constructor)
-  size_t n_tables;
-  
-  /** \brief Desc
-   */
+  o2scl::nucmass_gen ddme2;
+  o2scl::nucmass_gen ddmed;
+  o2scl::nucmass_gen ddpc1;
+  o2scl::nucmass_gen nl3s;
+  o2scl::nucmass_gen sly4;
+  o2scl::nucmass_gen skms;
+  o2scl::nucmass_gen skp;
+  o2scl::nucmass_gen sv_min;
+  o2scl::nucmass_gen unedf0;
+  o2scl::nucmass_gen unedf1;
+  //@}
+
+  /// \name Other theoretical nuclear mass tables
+  //@{
   o2scl::nucmass_mnmsk m95;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_mnmsk m16;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ktuy kt;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ktuy kt2;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_wlw wlw1;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_wlw wlw2;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_wlw wlw3;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_wlw wlw4;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_wlw wlw5;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_sdnp sdnp1;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_sdnp sdnp2;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_sdnp sdnp3;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb hfb2;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb hfb8;
-
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb hfb14;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb hfb14_v0;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb17;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb21;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb22;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb23;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb24;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb25;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb26;
-  
-  /** \brief Desc
-   */
-  o2scl::nucmass_hfb_sp hfb27;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_dz_table dz;
+  //@}
 
-  /** \brief Desc
-   */
-  o2scl::nucmass_gen ng[10];
+  /// \name HFB mass tables from the Brussels group
+  //@{
+  o2scl::nucmass_hfb hfb2;
+  o2scl::nucmass_hfb hfb8;
+  o2scl::nucmass_hfb hfb14;
+  o2scl::nucmass_hfb hfb14_v0;
+  o2scl::nucmass_hfb_sp hfb17;
+  o2scl::nucmass_hfb_sp hfb21;
+  o2scl::nucmass_hfb_sp hfb22;
+  o2scl::nucmass_hfb_sp hfb23;
+  o2scl::nucmass_hfb_sp hfb24;
+  o2scl::nucmass_hfb_sp hfb25;
+  o2scl::nucmass_hfb_sp hfb26;
+  o2scl::nucmass_hfb_sp hfb27;
   //@}
 
   /// \name Nuclear mass fits
   //@{
-  /// Number of fits (set in constructor)
-  size_t n_fits;
-  
-  /** \brief Desc
-   */
   o2scl::nucmass_semi_empirical se;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_frdm frdm;
-  
-  /** \brief Desc
-   */
   o2scl::nucmass_dz_fit dzf;
-  
-  /** \brief Desc
-   */
   o2scl::nucmass_dz_fit_33 dzf33;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_frdm_shell frdm_shell;
-  
-  /** \brief Desc
-   */
   o2scl::nucmass_ldrop_shell ldrop_shell;
-
-  /** \brief Desc
-   */
   o2scl::nucmass_ldrop_ext ldrop_ext;
   //@}
 
-  /** \brief Desc
-   */
+  /// \name Other objects
+  //@{
   o2scl::eos_had_skyrme sk;
-
-  /** \brief Desc
-   */
-  o2scl::fermion nrn, nrp;
-  
-  /** \brief Desc
-   */
+  o2scl::fermion nrn;
+  o2scl::fermion nrp;
   o2scl::nucmass_fit fitter;
   
-  /** \brief Verbosity parameter (default 1)
-   */
-  int verbose;
-
-  /// \name Parameter objects
-  //@{
-  /// Verbosity parameter
-  o2scl::cli::parameter_int p_verbose;
-  //@}
-
-  /// Table list
-  std::vector<o2scl::nucmass_table *> nmd;
-
-  /// Table list
-  std::vector<o2scl::nucmass_fit_base *> nmfd;
-
-  /// List
-  std::vector<std::string> table_names;
-
-  /// List of fits
-  std::vector<std::string> fit_names;
-
   /// Mass of the neutron
   double m_neut;
 
@@ -316,9 +136,45 @@ class nucleus_bin {
   /// Atomic mass unit
   double m_amu;
 
-  /// Desc
-  int drip_lines(std::vector<int> &v_Z, std::vector<int> &v_Npd,
-                 std::vector<int> &v_Nnd, int file_index=-1);
+  /** \brief Verbosity parameter (default 1)
+   */
+  int verbose;
+  //@}
+  
+  /// \name Other nuclear mass objects
+  //@}
+  /** \brief Information object to look up element name given Z
+   */
+  o2scl::nucmass_info nmi;
+
+  /// Number of tables (theory and experiment; set in constructor)
+  size_t n_tables;
+  
+  /// Number of fits (set in constructor)
+  size_t n_fits;
+
+  /// List of pointers to tables
+  std::vector<o2scl::nucmass_table *> nmd;
+
+  /// List of pointers to fits
+  std::vector<o2scl::nucmass_fit_base *> nmfd;
+
+  /// List of table names
+  std::vector<std::string> table_names;
+
+  /// List of fit names
+  std::vector<std::string> fit_names;
+  //@}
+  
+  /// \name Parameter objects
+  //@{
+  /// Verbosity parameter
+  o2scl::cli::parameter_int p_verbose;
+  //@}
+
+  // Compute the drip lines
+  //int drip_lines(std::vector<int> &v_Z, std::vector<int> &v_Npd,
+  //std::vector<int> &v_Nnd, int file_index=-1);
   
 public:
   
@@ -343,7 +199,7 @@ public:
    */
   std::vector<o2scl::nucleus> moller_dist;
 
-  /** \brief Desc
+  /** \brief Get a nucleus by Z and N
    */
   int get(std::vector<std::string> &sv, bool itive_com);
   
@@ -351,19 +207,19 @@ public:
    */
   int isotope(std::vector<std::string> &sv, bool itive_com);
   
-  /** \brief Desc
+  /** \brief Output all table names and number of nuclei
    */
   int tables(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Improve the fits using an optimizer
    */
   int fits(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Compare the quality of the fits and tables to experiment
    */
   int compare(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Output table and fit references
    */
   int refs(std::vector<std::string> &sv, bool itive_com);
 
@@ -383,7 +239,7 @@ public:
    */
   int drip_lines_esym(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Setup the command-line interface
    */
   virtual void setup_cli(o2scl::cli &cl);
   

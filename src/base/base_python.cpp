@@ -41,6 +41,7 @@ void o2scl_copy_std_vector_double_(void *vsrc, void *vdest) {
   std::vector<double> *src=(std::vector<double> *)vsrc;
   std::vector<double> *dest=(std::vector<double> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_double__resize(void *vptr, size_t n) {
@@ -88,6 +89,7 @@ void o2scl_copy_std_vector_int_(void *vsrc, void *vdest) {
   std::vector<int> *src=(std::vector<int> *)vsrc;
   std::vector<int> *dest=(std::vector<int> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_int__resize(void *vptr, size_t n) {
@@ -129,6 +131,7 @@ void o2scl_copy_std_vector_size_t_(void *vsrc, void *vdest) {
   std::vector<size_t> *src=(std::vector<size_t> *)vsrc;
   std::vector<size_t> *dest=(std::vector<size_t> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_size_t__resize(void *vptr, size_t n) {
@@ -170,6 +173,7 @@ void o2scl_copy_std_vector_std_string_(void *vsrc, void *vdest) {
   std::vector<std::string> *src=(std::vector<std::string> *)vsrc;
   std::vector<std::string> *dest=(std::vector<std::string> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_std_string__resize(void *vptr, size_t n) {
@@ -219,6 +223,7 @@ void o2scl_copy_boost_numeric_ublas_vector_double_(void *vsrc, void *vdest) {
   boost::numeric::ublas::vector<double> *src=(boost::numeric::ublas::vector<double> *)vsrc;
   boost::numeric::ublas::vector<double> *dest=(boost::numeric::ublas::vector<double> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 size_t o2scl_boost_numeric_ublas_vector_double__size(void *vptr) {
@@ -260,6 +265,7 @@ void o2scl_copy_boost_numeric_ublas_vector_int_(void *vsrc, void *vdest) {
   boost::numeric::ublas::vector<int> *src=(boost::numeric::ublas::vector<int> *)vsrc;
   boost::numeric::ublas::vector<int> *dest=(boost::numeric::ublas::vector<int> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 size_t o2scl_boost_numeric_ublas_vector_int__size(void *vptr) {
@@ -301,6 +307,7 @@ void o2scl_copy_boost_numeric_ublas_matrix_double_(void *vsrc, void *vdest) {
   boost::numeric::ublas::matrix<double> *src=(boost::numeric::ublas::matrix<double> *)vsrc;
   boost::numeric::ublas::matrix<double> *dest=(boost::numeric::ublas::matrix<double> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 size_t o2scl_boost_numeric_ublas_matrix_double__size1(void *vptr) {
@@ -348,6 +355,7 @@ void o2scl_copy_boost_numeric_ublas_matrix_int_(void *vsrc, void *vdest) {
   boost::numeric::ublas::matrix<int> *src=(boost::numeric::ublas::matrix<int> *)vsrc;
   boost::numeric::ublas::matrix<int> *dest=(boost::numeric::ublas::matrix<int> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 size_t o2scl_boost_numeric_ublas_matrix_int__size1(void *vptr) {
@@ -395,6 +403,7 @@ void o2scl_copy_std_vector_std_vector_double_(void *vsrc, void *vdest) {
   std::vector<std::vector<double>> *src=(std::vector<std::vector<double>> *)vsrc;
   std::vector<std::vector<double>> *dest=(std::vector<std::vector<double>> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_std_vector_double__resize(void *vptr, size_t n) {
@@ -439,6 +448,7 @@ void o2scl_copy_std_vector_std_vector_std_string_(void *vsrc, void *vdest) {
   std::vector<std::vector<std::string>> *src=(std::vector<std::vector<std::string>> *)vsrc;
   std::vector<std::vector<std::string>> *dest=(std::vector<std::vector<std::string>> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_std_vector_std_vector_std_string__resize(void *vptr, size_t n) {
@@ -648,6 +658,7 @@ void o2scl_copy_table_(void *vsrc, void *vdest) {
   table<> *src=(table<> *)vsrc;
   table<> *dest=(table<> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_table__getitem(void *vptr, void *ptr_col, double **dptr, int *n_) {
@@ -1104,6 +1115,7 @@ void o2scl_copy_table_units_(void *vsrc, void *vdest) {
   table_units<> *src=(table_units<> *)vsrc;
   table_units<> *dest=(table_units<> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_table_units__set_unit(void *vptr, void *ptr_col, void *ptr_unit) {
@@ -1315,6 +1327,7 @@ void o2scl_copy_table3d(void *vsrc, void *vdest) {
   table3d *src=(table3d *)vsrc;
   table3d *dest=(table3d *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_table3d_set_size(void *vptr, size_t nx, size_t ny) {
@@ -1826,6 +1839,7 @@ void o2scl_copy_tensor_(void *vsrc, void *vdest) {
   tensor<> *src=(tensor<> *)vsrc;
   tensor<> *dest=(tensor<> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_tensor__is_valid(void *vptr) {
@@ -2029,6 +2043,7 @@ void o2scl_copy_tensor_int_std_vector_int_(void *vsrc, void *vdest) {
   tensor<int,std::vector<int>> *src=(tensor<int,std::vector<int>> *)vsrc;
   tensor<int,std::vector<int>> *dest=(tensor<int,std::vector<int>> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_tensor_int_std_vector_int__is_valid(void *vptr) {
@@ -2217,6 +2232,7 @@ void o2scl_copy_tensor_size_t_std_vector_size_t_(void *vsrc, void *vdest) {
   tensor<size_t,std::vector<size_t>> *src=(tensor<size_t,std::vector<size_t>> *)vsrc;
   tensor<size_t,std::vector<size_t>> *dest=(tensor<size_t,std::vector<size_t>> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_tensor_size_t_std_vector_size_t__is_valid(void *vptr) {
@@ -2391,6 +2407,7 @@ void o2scl_copy_tensor_grid_(void *vsrc, void *vdest) {
   tensor_grid<> *src=(tensor_grid<> *)vsrc;
   tensor_grid<> *dest=(tensor_grid<> *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 void o2scl_tensor_grid__is_valid(void *vptr) {

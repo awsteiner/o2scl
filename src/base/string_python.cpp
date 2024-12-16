@@ -41,6 +41,7 @@ void o2scl_copy_std_string(void *vsrc, void *vdest) {
   std::string *src=(std::string *)vsrc;
   std::string *dest=(std::string *)vdest;
   *dest=*src;
+  return; // tab 8
 }
 
 size_t o2scl_std_string_length(void *vptr) {

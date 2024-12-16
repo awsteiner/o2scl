@@ -33,6 +33,7 @@
 #include <o2scl/nucmass_ktuy.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/nucmass_gen.h>
+#include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 extern "C" {
@@ -329,6 +330,20 @@ void *o2scl_create_nucmass_wlw();
 
 void o2scl_free_nucmass_wlw(void *vptr);
 
+void *o2scl_create_std_vector_nucleus_();
+
+void o2scl_free_std_vector_nucleus_(void *vptr);
+
+void o2scl_copy_std_vector_nucleus_(void *vsrc, void *vdest);
+
+void o2scl_std_vector_nucleus__resize(void *vptr, size_t n);
+
+size_t o2scl_std_vector_nucleus__size(void *vptr);
+
+void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n);
+
+void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr);
+
 void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only);
 
 void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only);
@@ -338,5 +353,9 @@ void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filena
 void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
 void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
+
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false);
+
+void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA=400, bool include_neutron=false);
 
 }
