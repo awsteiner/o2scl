@@ -142,6 +142,10 @@ size_t o2scl_nucmass_fit_base_get_nfit(void *vptr);
 
 void o2scl_nucmass_fit_base_set_nfit(void *vptr, size_t v);
 
+int o2scl_nucmass_fit_base_fit_fun(void *vptr, size_t nv, void *ptr_x);
+
+int o2scl_nucmass_fit_base_guess_fun(void *vptr, size_t nv, void *ptr_x);
+
 void *o2scl_create_nucmass_semi_empirical();
 
 void o2scl_free_nucmass_semi_empirical(void *vptr);

@@ -338,6 +338,20 @@ void o2scl_nucmass_fit_base_set_nfit(void *vptr, size_t v) {
   return;
 }
 
+int o2scl_nucmass_fit_base_fit_fun(void *vptr, size_t nv, void *ptr_x) {
+  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
+  boost::numeric::ublas::vector<double> *x=(boost::numeric::ublas::vector<double> *)ptr_x;
+  int ret=ptr->fit_fun(nv,*x);
+  return ret;
+}
+
+int o2scl_nucmass_fit_base_guess_fun(void *vptr, size_t nv, void *ptr_x) {
+  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
+  boost::numeric::ublas::vector<double> *x=(boost::numeric::ublas::vector<double> *)ptr_x;
+  int ret=ptr->guess_fun(nv,*x);
+  return ret;
+}
+
 void *o2scl_create_nucmass_semi_empirical() {
   nucmass_semi_empirical *ptr=new nucmass_semi_empirical;
   return ptr;

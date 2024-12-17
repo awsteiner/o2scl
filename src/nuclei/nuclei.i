@@ -179,12 +179,14 @@ class nucmass_table abstract
 class nucmass_fit_base abstract
 - parent nucmass
 - size_t nfit
-#- function fit_fun
-#  - int
-#  - const ubvector &x
-#- function guess_fun
-#  - int
-#  - ubvector &x
+- function fit_fun
+  - int
+  - size_t nv
+  - const io boost::numeric::ublas::vector<double> &x
+- function guess_fun
+  - int
+  - size_t nv
+  - out boost::numeric::ublas::vector<double> &x
 #
 # ------------------------------------------------------
 # 
