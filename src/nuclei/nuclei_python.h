@@ -386,9 +386,9 @@ void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n);
 
 void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr);
 
-void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only);
+void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only=false);
 
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only);
+void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only=false);
 
 void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename);
 

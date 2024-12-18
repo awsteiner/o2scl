@@ -73,6 +73,9 @@ namespace o2scl_hdf {
 
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
+
+      If the filename is unspecified, then the default O2scl
+      data file is loaded.
    */
   void mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model="",
                   std::string filename="");

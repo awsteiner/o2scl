@@ -392,8 +392,8 @@ class std::vector<nucleus>
 function ame_load
 - void
 - nucmass_ame &ame
-- std::string name
-- bool exp_only
+- std::string name ["20"]
+- bool exp_only [False]
 #
 # ------------------------------------------------------
 #
@@ -402,21 +402,23 @@ function ame_load_ext
 - nucmass_ame &ame
 - std::string file_name
 - std::string table_name
-- bool exp_only
+- bool exp_only [False]
 #
 # ------------------------------------------------------
 #
 function mnmsk_load
 - void
 - nucmass_mnmsk &mnmsk
-- std::string model
-- std::string filename
+- std::string model [""]
+- std::string filename [""]
 #
 # ------------------------------------------------------
 #
 function hfb_load
 - void
 - nucmass_hfb &hfb
+# We can't specify the default parameter for model because
+# we cannot specify a default parameter for string objects.
 - size_t model
 - std::string filename
 #
@@ -425,6 +427,8 @@ function hfb_load
 function hfb_sp_load
 - void
 - nucmass_hfb_sp &hfb
+# We can't specify the default parameter for model because
+# we cannot specify a default parameter for string objects.
 - size_t model
 - std::string filename
 #
