@@ -7,7 +7,7 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	nucmass_dz.cpp nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp \
 	nucmass_densmat.cpp nucmass_gen.cpp nuclei_python.cpp \
-	part_funcs.cpp
+	part_funcs.cpp nucleus_bin.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h \
@@ -20,7 +20,6 @@ TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
 	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr nucmass_ame.scr \
 	part_funcs.scr
-
 
 # ------------------------------------------------------------
 # Includes
