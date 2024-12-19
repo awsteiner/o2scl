@@ -30,6 +30,7 @@ h_include <o2scl/nucmass_fit.h>
 h_include <o2scl/nucmass_gen.h>
 h_include <o2scl/nucdist.h>
 h_include <o2scl/hdf_nucmass_io.h>
+h_include <o2scl/nucleus_bin.h>
 # 
 # Include statement for C++ source code
 # 
@@ -382,6 +383,55 @@ class std::vector<nucleus>
 |     Returns: a Python int
 |     """
 |     return self.size()
+#
+# ------------------------------------------------------
+#
+# Class nucleus_bin
+#                              
+class nucleus_bin
+- nucmass_ame ame16
+- nucmass_ame ame20exp
+- nucmass_ame ame20round
+- nucmass_ame ame95rmd
+- nucmass_ame ame03round
+- nucmass_ame ame03
+- nucmass_ame ame95exp
+- nucmass_ame ame12
+- nucmass_gen ddme2 
+- nucmass_gen ddmed 
+- nucmass_gen ddpc1 
+- nucmass_gen nl3s 
+- nucmass_gen sly4 
+- nucmass_gen skms 
+- nucmass_gen skp 
+- nucmass_gen sv_min 
+- nucmass_gen unedf0 
+- nucmass_gen unedf1 
+- nucmass_mnmsk m95 
+- nucmass_mnmsk m16 
+- nucmass_ktuy kt 
+- nucmass_ktuy kt2 
+- nucmass_wlw wlw1 
+- nucmass_wlw wlw2 
+- nucmass_wlw wlw3 
+- nucmass_wlw wlw4 
+- nucmass_wlw wlw5 
+- nucmass_sdnp sdnp1 
+- nucmass_sdnp sdnp2 
+- nucmass_sdnp sdnp3 
+- nucmass_dz_table dz 
+- nucmass_hfb hfb2 
+- nucmass_hfb hfb8 
+- nucmass_hfb hfb14 
+- nucmass_hfb hfb14_v0 
+- nucmass_hfb_sp hfb17 
+- nucmass_hfb_sp hfb21 
+- nucmass_hfb_sp hfb22 
+- nucmass_hfb_sp hfb23 
+- nucmass_hfb_sp hfb24 
+- nucmass_hfb_sp hfb25 
+- nucmass_hfb_sp hfb26 
+- nucmass_hfb_sp hfb27 
 #
 # ------------------------------------------------------
 # 

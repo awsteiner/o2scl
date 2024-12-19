@@ -45,7 +45,7 @@
  */
 class nucleus_bin {
   
- protected:
+public:
   
   /// \name Atomic mass evaluations
   //@{
@@ -141,6 +141,8 @@ class nucleus_bin {
   int verbose;
   //@}
   
+protected:
+  
   /// \name Other nuclear mass objects
   //@}
   /** \brief Information object to look up element name given Z
@@ -152,7 +154,7 @@ class nucleus_bin {
   
   /// Number of fits (set in constructor)
   size_t n_fits;
-
+  
   /// List of pointers to tables
   std::vector<o2scl::nucmass_table *> nmd;
 

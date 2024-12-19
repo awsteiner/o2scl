@@ -35,6 +35,7 @@
 #include <o2scl/nucmass_gen.h>
 #include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/nucleus_bin.h>
 
 extern "C" {
 
@@ -385,6 +386,182 @@ size_t o2scl_std_vector_nucleus__size(void *vptr);
 void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n);
 
 void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr);
+
+void *o2scl_create_nucleus_bin();
+
+void o2scl_free_nucleus_bin(void *vptr);
+
+void *o2scl_nucleus_bin_get_ame16(void *vptr);
+
+void o2scl_nucleus_bin_set_ame16(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame20exp(void *vptr);
+
+void o2scl_nucleus_bin_set_ame20exp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame20round(void *vptr);
+
+void o2scl_nucleus_bin_set_ame20round(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame95rmd(void *vptr);
+
+void o2scl_nucleus_bin_set_ame95rmd(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame03round(void *vptr);
+
+void o2scl_nucleus_bin_set_ame03round(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame03(void *vptr);
+
+void o2scl_nucleus_bin_set_ame03(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame95exp(void *vptr);
+
+void o2scl_nucleus_bin_set_ame95exp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame12(void *vptr);
+
+void o2scl_nucleus_bin_set_ame12(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddme2(void *vptr);
+
+void o2scl_nucleus_bin_set_ddme2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddmed(void *vptr);
+
+void o2scl_nucleus_bin_set_ddmed(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddpc1(void *vptr);
+
+void o2scl_nucleus_bin_set_ddpc1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_nl3s(void *vptr);
+
+void o2scl_nucleus_bin_set_nl3s(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sly4(void *vptr);
+
+void o2scl_nucleus_bin_set_sly4(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_skms(void *vptr);
+
+void o2scl_nucleus_bin_set_skms(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_skp(void *vptr);
+
+void o2scl_nucleus_bin_set_skp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sv_min(void *vptr);
+
+void o2scl_nucleus_bin_set_sv_min(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_unedf0(void *vptr);
+
+void o2scl_nucleus_bin_set_unedf0(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_unedf1(void *vptr);
+
+void o2scl_nucleus_bin_set_unedf1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_m95(void *vptr);
+
+void o2scl_nucleus_bin_set_m95(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_m16(void *vptr);
+
+void o2scl_nucleus_bin_set_m16(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_kt(void *vptr);
+
+void o2scl_nucleus_bin_set_kt(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_kt2(void *vptr);
+
+void o2scl_nucleus_bin_set_kt2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw1(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw2(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw3(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw3(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw4(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw4(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw5(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw5(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp1(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp2(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp3(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp3(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_dz(void *vptr);
+
+void o2scl_nucleus_bin_set_dz(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb2(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb8(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb8(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb14(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb14(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb14_v0(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb14_v0(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb17(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb17(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb21(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb21(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb22(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb22(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb23(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb23(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb24(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb24(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb25(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb25(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb26(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb26(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb27(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb27(void *vptr, void *p_v);
 
 void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only=false);
 
