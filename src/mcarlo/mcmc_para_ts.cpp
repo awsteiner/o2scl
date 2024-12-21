@@ -710,8 +710,8 @@ int main(int argc, char *argv[]) {
     
     vector<double> weights;
     std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-    kp->set_function("o2sclpy",tin,
-                     weights,"verbose=0","kde_scipy");
+    kp->set_function("o2sclpy","verbose=0","kde_scipy");
+    kp->set_data(tin,weights);
     
     new_stepper->proposal[0].set_base(kp);
     

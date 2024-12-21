@@ -83,7 +83,7 @@ int main(void) {
     apr.calc_temp_e(nrn,nrp,1.0e-3,th);
     double fdrip=th.ed-1.0e-3*th.en-nrn.n*nrn.m;
 
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,1.0e-3)/hc_mev_fm;
+    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,3.0,1.0e-3)/hc_mev_fm;
     cout << "be: " << be << endl;
     Rn=tst.Rn;
     Rws=Rn/cbrt(chi);
@@ -95,7 +95,7 @@ int main(void) {
     cout << t1 << " " << t2 << " " << f1 << endl;
     
     tst.rel_vacuum=false;
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,1.0e-3)/hc_mev_fm;
+    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,3.0,1.0e-3)/hc_mev_fm;
     Rn=tst.Rn;
     Rws=Rn/cbrt(chi);
     nN=3.0/4.0/pi/pow(Rws,3.0);
@@ -393,11 +393,12 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0.0,0.0)/208.0 << endl;
+       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0.0,
+                                    3.0,0.0)/208.0 << endl;
   cout << endl;
 
   cout << "ldf,drip,dim=3: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,0.0)/208.0 
+       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,3.0,0.0)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 
@@ -405,7 +406,7 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip,dim,T=0.01: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,0.01)/208.0 
+       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,3.0,0.01)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 
