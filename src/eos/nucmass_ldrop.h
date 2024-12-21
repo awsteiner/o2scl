@@ -46,7 +46,7 @@ namespace o2scl {
 
       The NL4 EOS is loaded by default.
       
-      \warning This class sets part::inc_rest_mass to true 
+      \note This class sets part::inc_rest_mass to true 
       for the particle objects specified in set_n_and_p().
 
       \hline
@@ -61,7 +61,7 @@ namespace o2scl {
       n_L = n_0 + n_1 \delta^2
       \f]
       and then we can compute \f$ n_{p} = (1 - \delta)/2 n_L \f$ and
-      \f$ n_{n} = (1 + \delta)/2 n_L \f$ .
+      \f$ n_{n} = (1 + \delta)/2 n_L \f$ . 
 
       Note that \f$ \delta = I \f$ implies no neutron skin. A neutron
       skin occurs when \f$ \delta < I \f$, and \f$ \delta = 0 \f$
@@ -92,7 +92,7 @@ namespace o2scl {
 
       <b>Surface energy contribution</b>
 
-      The surface energy density is (Ravenhall et al. (1983))
+      The surface energy density is
       \f[
       \varepsilon = \frac{\chi d \sigma}{R}
       \f]
@@ -123,7 +123,7 @@ namespace o2scl {
 
       <b>Coulomb energy contribution</b>
 
-      The Coulomb energy density (Ravenhall et al. (1983)) is
+      The Coulomb energy density is
       \f[
       \varepsilon_{\mathrm{Coul}} = \frac{4 \pi}{5} n_p^2 e^2 R_p^2
       \f]
@@ -149,24 +149,13 @@ namespace o2scl {
       E_{\mathrm{Coul}}/A = 0.76~\mathrm{MeV}~Z^2 A^{-4/3}
       \f]
 
-      \verbatim embed:rst
-      .. todo:: 
-
-         - In class nucmass_ldrop, 12/4/14: This doesn't gracefully
-           handle negative values of n0 and n1 as then the neutron and
-           proton densities become negative. This needs to be
-           addressed. For now, there is a fix at line 246 in
-           nucmass_ldrop.cpp .
-
-      \endverbatim
-
       \hline
 
       <b>References</b>
 
       \verbatim embed:rst
-      Designed for [Steiner08]_ based on [Lattimer85]_ and
-      [Lattimer91]_.
+      This class is based on  [Steiner08]_, which was originally
+      based on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
 
       \hline
@@ -244,7 +233,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
-                                         double chi, double T);
+                                         double chi, double dim, double T);
 
     /// \name EOS and particle parameters
     //@{
@@ -311,7 +300,7 @@ namespace o2scl {
       - decrease in the Coulomb energy from external protons
 
       \note The input parameter T should be given in units of inverse
-      Fermis -- this is a bit unusual since the binding energy is
+      Fermis. This is a bit unusual since the binding energy is
       returned in MeV, but we keep it for now.
 
       <b>Bulk energy</b>
@@ -340,13 +329,15 @@ namespace o2scl {
       \f[
       E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
       \frac{\hbar c}{n_{L} }
-      \left[\varepsilon(n_n,0) - n_n m_n \right]~\mathrm{for}~N>Z
+      \left[\varepsilon(n_n,0) - n_n m_n \right]
+      \quad\mathrm{for}\quad N>Z
       \f]
       and
       \f[
       E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
       \frac{\hbar c}{n_{L} }
-      \left[\varepsilon(0,n_p) - n_p m_p \right]~\mathrm{for}~Z>N
+      \left[\varepsilon(0,n_p) - n_p m_p \right]
+      \quad\mathrm{for}\quad Z>N
       \f]
 
       <b>Surface energy</b>
@@ -361,25 +352,67 @@ namespace o2scl {
       \f]
       where \f$ \sigma_{\delta} \f$ is unitless and stored in \ref ss.
 
-      If \ref full_surface is true, then the surface energy is modified
-      by a cubic dependence for the medium and contains finite temperature
-      corrections.
+      If \ref full_surface is true, then the following
+      temperature- and isospin-dependent surface energy is used.
+      Taking
+      \f$ x \equiv n_p /(n_n+n_p) \f$, 
+      \f[
+      \sigma(x,T) = \sigma \frac{16+b}{x^{-3}+b+(1-x)^{-3}}
+      \left[\frac{1-T^2/T_c(x)^2}{1+a(x) T^2/T_c(x)^2}\right]^{p}
+      \f]
+      where
+      \f[
+      a(x) = a_0 + a_2 y^2 + a_4 y^4 \, ,
+      \f]
+      \f[
+      T_c(x) = T_c(x=1/2) \left( 1-c y^2 - d y^4\right)^{1/2}
+      \f]
+      and \f$ y=1/2-x \f$\. The value \f$ p \f$ is stored in \ref pp and
+      the value \f$ T_c(x=1/2) \f$ is stored in \ref Tchalf.
+      Currently, the values of \f$ c=3.313 \f$ and \f$ d=7.362 \f$ are
+      fixed and cannot be changed. The value of \f$ b \f$ is
+      determined from
+      \f[
+      b=-16+96 \frac{\sigma}{\sigma_{\delta}}
+      \f]
+      which is chosen to ensure that the surface energy
+      is identical to the expression used when \ref full_surface
+      is false for small values of \f$ \delta \f$.
 
+      \verbatim embed:rst
+      This surface energy comes from [Steiner08]_, which was
+      originally based on the expression in [Lattimer85]_.
+      \endverbatim
+      
       <b>Coulomb energy</b>
 
-      The Coulomb energy density (see also Ravenhall et al. (1983)) is
+      First, we define the volume fraction occupied by
+      protons, \f$ \chi_p \f$ which is
       \f[
-      \varepsilon = 2 \pi e^2 R_p^2 n_p^2 f_d(\chi_p)
+      \chi_p = \chi \left(\frac{R_p}{R_n}\right)^3
       \f]
-      where the function \f$ f_d(\chi) \f$ is 
+      when \f$ R_n>R_p \f$ and \f$ \chi_p = \chi \f$ otherwise.
+      The Coulomb energy density is
+      \f[
+      \varepsilon = 2 \pi e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
+      \f]
+      where the function \f$ f_d(\chi_p) \f$ is 
       \f[
       f_d(\chi_p) = \frac{1}{(d+2)}
       \left[ \frac{2}{(d-2)} \left( 1 - \frac{d}{2} 
       \chi_p^{(1-2/d)} \right) + \chi_p \right]
       \f]
+      When \f$ d=3 \f$, \f$ f_3(\chi_p) \f$ reduces to
+      \f[
+      \frac{1}{5} \left[ 2 - 3 \chi_p^{1/3} + \chi_p \right]
+      \f]
+      and the limit \f$ \chi_p \rightarrow 0 \f$ gives the expression
+      used in \ref nucmass_ldrop.
 
-      This class takes \f$ d=3 \f$ .
-
+      \verbatim embed:rst
+      See [Ravenhall83]_ and [Steiner12]_.
+      \endverbatim
+      
       <b>Todos and Future</b>
 
       \verbatim embed:rst
@@ -387,33 +420,15 @@ namespace o2scl {
 
          In class nucmass_ldrop_skin: 
 
-         - This is based on LPRL, but it's a little different in
-           Lattimer and Swesty. I should document what the difference
-           is.
-         - The testing could be updated.
-
+         - (future) Add translational energy?
+         - (future) Remove excluded volume correction and compute nuclear
+           mass relative to the gas rather than relative to the vacuum.
+         - (future) In principle, Tc should be self-consistently determined
+           from the EOS.
+         - (future) Does this work if the nucleus is "inside-out"?
+         
       \endverbatim
       
-      \future Add translational energy?
-
-      \future Remove excluded volume correction and compute nuclear
-      mass relative to the gas rather than relative to the vacuum.
-
-      \future In principle, Tc should be self-consistently determined
-      from the EOS.
-
-      \future Does this work if the nucleus is "inside-out"?
-
-      \comment
-      \todo The choice of nn and np from n0 and n1 is very closely
-      related to FRDM (\ref Moller95). We should document this here.
-      
-      I've taken this out, because it appears to me that Moller '95
-      actually set this term (n1 = -3 L/K) to zero.
-      \endcomment
-
-      \comment
-
       \hline
 
       Excluded volume and \ref rel_vacuum:
@@ -509,7 +524,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout,
-                                         double chi, double T);
+                                         double chi, double dim, double T);
   };
 
   /** \brief Liquid drop model with pairing
@@ -554,7 +569,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d
       (double Z, double N, double npout, double nnout,
-       double chi, double T);
+       double chi, double dim, double T);
 
   };
 

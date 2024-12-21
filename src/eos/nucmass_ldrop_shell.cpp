@@ -32,10 +32,11 @@ nucmass_ldrop_shell::nucmass_ldrop_shell() {
 }
 
 double nucmass_ldrop_shell::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+(double Z, double N, double npout, double nnout, double chi,
+ double dim, double T) {
  
   double ret=nucmass_ldrop_pair::drip_binding_energy_d
-    (Z,N,npout,nnout,chi,T);
+    (Z,N,npout,nnout,chi,dim,T);
 
   if (inc_shell==false) return ret;
 

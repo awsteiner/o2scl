@@ -32,6 +32,8 @@ h_include <o2scl/nstar_cold.h>
 h_include <o2scl/tov_love.h>
 h_include <o2scl/eos_tov.h>
 h_include <o2scl/nucleus_rmf.h>
+h_include <o2scl/nucmass_ldrop.h>
+h_include <o2scl/nucmass_ldrop_shell.h>
 h_include <o2scl/nucleus_bin.h>
 # 
 # Include statement for C++ source code
@@ -653,6 +655,79 @@ class nucleus_rmf
 #- function set_eos
 #  - int
 #  - io eos_had_rmf &r
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop
+#                              
+class nucmass_ldrop
+- parent nucmass_fit_base
+- double n1
+- double n0
+- double surften
+- double coul_coeff
+- double nn
+- double np
+- double Rn
+- double Rp
+- double surf
+- double bulk
+- double coul
+- bool large_vals_unphys
+- function mass_excess_d
+  - double
+  - double Z
+  - double N
+- function mass_excess
+  - double
+  - int Z
+  - int N
+- function drip_binding_energy_d
+  - double
+  - double Z
+  - double N
+  - double npout
+  - double nnout
+  - double chi
+  - double dim
+  - double T
+- eos_had_rmf def_had_eos
+- fermion def_neutron
+- fermion def_proton
+- thermo th
+- function set_n_and_p
+  - void
+  - io fermion &un
+  - io fermion &up
+- function set_eos_had_temp_base
+  - int
+  - io eos_had_temp_base &uhe
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop_skin
+#                              
+class nucmass_ldrop_skin
+- parent nucmass_ldrop
+- bool full_surface
+- bool new_skin_mode
+- double doi
+- double ss
+- double pp
+- double a0
+- double a2
+- double a4
+- bool rel_vacuum
+- double Tchalf
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop_pair
+#                              
+class nucmass_ldrop_pair
+- parent nucmass_ldrop_skin
+- double Epair
+- double pair
 #
 # ------------------------------------------------------
 #

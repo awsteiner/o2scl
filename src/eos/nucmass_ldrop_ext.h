@@ -129,8 +129,8 @@ namespace o2scl {
     double dshell_dnn;
     //@}
 
-    /// Dimensionality of the nucleus (default 3)
-    double dim;
+    // Dimensionality of the nucleus (default 3)
+    //double dim;
 
     /// \name Derivatives wrt density of quasi-free protons
     //@{
@@ -154,9 +154,9 @@ namespace o2scl {
 	and thermodynamics from the EOS
     */
     int run_test(double Z, double N, double npout, double nnout, 
-		 double chi, double T, o2scl::test_mgr &t);
+		 double chi, double dim, double T, o2scl::test_mgr &t);
 
-    /// Compute the shell energy for nucleus Z and N
+    /// Compute the shell energy for nucleus Z and N with derivatives
     virtual double shell_energy_new(double Z, double N, double pfact, 
                                     double nfact, double T, double dpfact, 
                                     double dnfact, double dndc, double dpdc,
@@ -164,7 +164,8 @@ namespace o2scl {
 
     /// Return the binding energy of the nucleus
     double drip_binding_energy_full_d(double Z, double N, double npout, 
-				      double nnout, double chi, double T);
+				      double nnout, double chi,
+                                      double dim, double T);
     
     /** \brief Compute the binding energy of a nucleus
 	embedded in an electron gas

@@ -26,7 +26,6 @@ using namespace o2scl_const;
 using namespace o2scl_hdf;
 
 nucmass_ldrop_ext::nucmass_ldrop_ext() {
-  dim=3.0;
   use_ame=true;
   use_moller=true;
   extra_corr=true;
@@ -44,21 +43,21 @@ int nucmass_ldrop_ext::test_derivatives() {
   use_moller=false;
 
   // First basic test
-  run_test(80,124,0.01,0.01,0.02,0.01,t);
+  run_test(80.0,124.0,0.01,0.01,0.02,3.0,0.01,t);
 
   // Test with AME
   use_ame=true;
   use_moller=false;
   extra_corr=true;
-  run_test(80,124,0.01,0.01,0.02,0.01,t);
-  run_test(2,2,0.01,0.01,0.02,0.01,t);
-  run_test(1,0,0.01,0.01,0.02,0.01,t);
-  run_test(0,1,0.01,0.01,0.02,0.01,t);
+  run_test(80,124,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(2,2,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(1,0,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(0,1,0.01,0.01,0.02,3.0,0.01,t);
   extra_corr=false;
-  run_test(80,124,0.01,0.01,0.02,0.01,t);
-  run_test(2,2,0.01,0.01,0.02,0.01,t);
-  run_test(1,0,0.01,0.01,0.02,0.01,t);
-  run_test(0,1,0.01,0.01,0.02,0.01,t);
+  run_test(80,124,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(2,2,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(1,0,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(0,1,0.01,0.01,0.02,3.0,0.01,t);
   extra_corr=true;
   use_ame=false;
   use_moller=false;
@@ -67,21 +66,21 @@ int nucmass_ldrop_ext::test_derivatives() {
   use_ame=false;
   use_moller=true;
   extra_corr=true;
-  run_test(80,124,0.01,0.01,0.02,0.01,t);
+  run_test(80,124,0.01,0.01,0.02,3.0,0.01,t);
   extra_corr=false;
-  run_test(80,124,0.01,0.01,0.02,0.01,t);
+  run_test(80,124,0.01,0.01,0.02,3.0,0.01,t);
   extra_corr=true;
   use_ame=false;
   use_moller=false;
 
   // Test for chi -> 0
-  run_test(80,124,0.01,0.01,2.0e-4,0.01,t);
+  run_test(80,124,0.01,0.01,2.0e-4,3.0,0.01,t);
 
   // Other misc. tests
-  run_test(20,20,0.01,0.01,0.02,0.01,t);
-  run_test(124,80,0.01,0.01,0.02,0.01,t);
-  run_test(80,124,0.0,0.0,0.02,0.0,t);
-  run_test(80,124,0.0,0.04,0.1,0.1,t);
+  run_test(20,20,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(124,80,0.01,0.01,0.02,3.0,0.01,t);
+  run_test(80.0,124.0,0.0,0.0,0.02,3.0,0.0,t);
+  run_test(80.0,124.0,0.0,0.04,0.1,3.0,0.1,t);
 
   if (!t.report()) {
     exit(-1);
@@ -91,8 +90,8 @@ int nucmass_ldrop_ext::test_derivatives() {
 }
 
 int nucmass_ldrop_ext::run_test(double Z, double N, double npout,
-                                double nnout, double chi, double T,
-                                test_mgr &t) {
+                                double nnout, double chi, double dim,
+                                double T, test_mgr &t) {
   double d1, d2, d3, d4, d5, d6, d7, d8, d9, d10;
 
   // Derivative object
@@ -106,7 +105,7 @@ int nucmass_ldrop_ext::run_test(double Z, double N, double npout,
   cout << "Running test with Z,N,np,nn,chi,T: " << Z << " " << N << endl;
   cout << "\t" << npout << " " << nnout << " " << chi << " " << T << endl;
 
-  double be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,T);
+  double be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,dim,T);
   d1=dbulk_dchi;
   d2=dcoul_dchi;
   d3=dexc_dnn;
@@ -430,7 +429,8 @@ double nucmass_ldrop_ext::shell_energy_new(double Z, double N,
 }
 
 double nucmass_ldrop_ext::drip_binding_energy_full_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+(double Z, double N, double npout, double nnout, double chi,
+ double dim, double T) {
 
   if (chi<0.0) {
     O2SCL_ERR2("Variable 'chi' is less than zero in ",
@@ -463,7 +463,7 @@ double nucmass_ldrop_ext::drip_binding_energy_full_d
   if (ext_mass) {
 
     // Use frdm_mass to determine densities and radii
-    frdm.drip_binding_energy_d(Z,N,npout,nnout,chi);
+    frdm.drip_binding_energy_d(Z,N,npout,nnout,chi,dim);
     np=frdm.np;
     nn=frdm.nn;
     nL=np+nn;
@@ -885,9 +885,10 @@ double nucmass_ldrop_ext::drip_binding_energy_full_d
   return ret;
 }
 
-double nucmass_ldrop_ext::nucleus_be(int Z, int N, double npout, double nnout, 
-                                     double T, double ne, double &Rws, double &chi) {
-    
+double nucmass_ldrop_ext::nucleus_be
+(int Z, int N, double npout, double nnout, 
+ double T, double ne, double &Rws, double &chi) {
+  
   if (!finite(nnout)) {
     cout << "Z,N,npout,nnout,T,ne: ";
     cout << Z << " " << N << " " << npout << "\n\t" << nnout << " "
@@ -908,7 +909,8 @@ double nucmass_ldrop_ext::nucleus_be(int Z, int N, double npout, double nnout,
   if (iterate) {
       
     // Compute the binding energy with an infinite cell size
-    double be_last=drip_binding_energy_full_d(Z,N,npout,nnout,0.0,T)/
+    double dim=3.0;
+    double be_last=drip_binding_energy_full_d(Z,N,npout,nnout,0.0,dim,T)/
       hc_mev_fm;
 
     for(size_t i=0;i<30 && (i==0 || fabs((be_last-be)/be)>1.0e-10);i++) {
@@ -923,7 +925,7 @@ double nucmass_ldrop_ext::nucleus_be(int Z, int N, double npout, double nnout,
 	
       // Now, recompute the binding energy (in fm^-1) with the new
       // WS cell size
-      be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,T)/hc_mev_fm;
+      be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,dim,T)/hc_mev_fm;
 	
     }
 
@@ -944,7 +946,8 @@ double nucmass_ldrop_ext::nucleus_be(int Z, int N, double npout, double nnout,
       ldrop_solve_chi fsp(this,Z,N,npout,nnout,T,ne);
       
       // Get a good guess for chi
-      drip_binding_energy_full_d(Z,N,npout,nnout,0.0,T);
+      double dim=3.0;
+      drip_binding_energy_full_d(Z,N,npout,nnout,0.0,dim,T);
       Rws=cbrt((3.0*Z/4.0/pi-Rp*Rp*Rp*npout)/(ne-npout));
       chi=pow(Rn/Rws,3.0);
 	
@@ -976,7 +979,8 @@ double nucmass_ldrop_ext::nucleus_be(int Z, int N, double npout, double nnout,
     }
     
     // Compute final binding energy
-    be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,T)/hc_mev_fm;
+    double dim=3.0;
+    be=drip_binding_energy_full_d(Z,N,npout,nnout,chi,dim,T)/hc_mev_fm;
     
     // Compute the WS cell size
     Rws=cbrt((3.0*Z/4.0/pi-Rp*Rp*Rp*npout)/(ne-npout));
@@ -998,7 +1002,7 @@ double nucmass_ldrop_ext::nucleus_be_pasta
     
   double be_min=1.0e100, dim_min=0.0;
     
-  for(dim=3.0;dim>=0.9999;dim-=0.5) {
+  for(double dim=3.0;dim>=0.9999;dim-=0.5) {
     double be=nucleus_be(Z,N,npout,nnout,T,ne,Rws,chi);
     if (be<be_min) {
       be_min=be;
@@ -1011,14 +1015,15 @@ double nucmass_ldrop_ext::nucleus_be_pasta
 	      o2scl::exc_efailed);
   }
     
-  dim=dim_min;
+  //dim=dim_min;
   be_min=nucleus_be(Z,N,npout,nnout,T,ne,Rws,chi);
 
   return be_min;
 }
   
 nucmass_ldrop_ext::ldrop_solve_chi::ldrop_solve_chi
-(nucmass_ldrop_ext *tp, int Z, int N, double np, double nn, double T, double ne) {
+(nucmass_ldrop_ext *tp, int Z, int N, double np, double nn,
+ double T, double ne) {
   tptr=tp;
   Z_=Z;
   N_=N;
@@ -1031,7 +1036,7 @@ nucmass_ldrop_ext::ldrop_solve_chi::ldrop_solve_chi
 double nucmass_ldrop_ext::ldrop_solve_chi::operator()(double chi) const {
   
   // Compute the nucleus
-  double x=tptr->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi,T_)/
+  double x=tptr->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi,3.0,T_)/
     o2scl_const::hc_mev_fm;
   
   // Compute the WS cell size
@@ -1071,24 +1076,24 @@ double nucmass_ldrop_ext::ldrop_be_deriv::operator()(double x) {
     T_=x;
   }
   if (ix_==0) {
-    return ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    return ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
   } else if (ix_==1) {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->bulk;
   } else if (ix_==2) {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->surf;
   } else if (ix_==3) {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->coul;
   } else if (ix_==4) {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->pair;
   } else if (ix_==5) {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->shell;
   } else {
-    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,T_);
+    ldp->drip_binding_energy_full_d(Z_,N_,np_,nn_,chi_,3.0,T_);
     return ldp->exc;
   }
 }

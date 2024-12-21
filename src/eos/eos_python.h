@@ -37,6 +37,8 @@
 #include <o2scl/tov_love.h>
 #include <o2scl/eos_tov.h>
 #include <o2scl/nucleus_rmf.h>
+#include <o2scl/nucmass_ldrop.h>
+#include <o2scl/nucmass_ldrop_shell.h>
 #include <o2scl/nucleus_bin.h>
 
 extern "C" {
@@ -827,6 +829,140 @@ int o2scl_nucleus_rmf_run_nucleus(void *vptr, int nucleus_Z, int nucleus_N, int 
 void *o2scl_nucleus_rmf_get_profiles(void *vptr);
 
 void *o2scl_nucleus_rmf_get_chden(void *vptr);
+
+void *o2scl_create_nucmass_ldrop();
+
+void o2scl_free_nucmass_ldrop(void *vptr);
+
+double o2scl_nucmass_ldrop_get_n1(void *vptr);
+
+void o2scl_nucmass_ldrop_set_n1(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_n0(void *vptr);
+
+void o2scl_nucmass_ldrop_set_n0(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_surften(void *vptr);
+
+void o2scl_nucmass_ldrop_set_surften(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_coul_coeff(void *vptr);
+
+void o2scl_nucmass_ldrop_set_coul_coeff(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_nn(void *vptr);
+
+void o2scl_nucmass_ldrop_set_nn(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_np(void *vptr);
+
+void o2scl_nucmass_ldrop_set_np(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_Rn(void *vptr);
+
+void o2scl_nucmass_ldrop_set_Rn(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_Rp(void *vptr);
+
+void o2scl_nucmass_ldrop_set_Rp(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_surf(void *vptr);
+
+void o2scl_nucmass_ldrop_set_surf(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_bulk(void *vptr);
+
+void o2scl_nucmass_ldrop_set_bulk(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_coul(void *vptr);
+
+void o2scl_nucmass_ldrop_set_coul(void *vptr, double v);
+
+bool o2scl_nucmass_ldrop_get_large_vals_unphys(void *vptr);
+
+void o2scl_nucmass_ldrop_set_large_vals_unphys(void *vptr, bool v);
+
+void *o2scl_nucmass_ldrop_get_def_had_eos(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_had_eos(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_def_neutron(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_neutron(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_def_proton(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_proton(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_th(void *vptr);
+
+void o2scl_nucmass_ldrop_set_th(void *vptr, void *p_v);
+
+double o2scl_nucmass_ldrop_mass_excess_d(void *vptr, double Z, double N);
+
+double o2scl_nucmass_ldrop_mass_excess(void *vptr, int Z, int N);
+
+double o2scl_nucmass_ldrop_drip_binding_energy_d(void *vptr, double Z, double N, double npout, double nnout, double chi, double dim, double T);
+
+void o2scl_nucmass_ldrop_set_n_and_p(void *vptr, void *ptr_un, void *ptr_up);
+
+int o2scl_nucmass_ldrop_set_eos_had_temp_base(void *vptr, void *ptr_uhe);
+
+void *o2scl_create_nucmass_ldrop_skin();
+
+void o2scl_free_nucmass_ldrop_skin(void *vptr);
+
+bool o2scl_nucmass_ldrop_skin_get_full_surface(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_full_surface(void *vptr, bool v);
+
+bool o2scl_nucmass_ldrop_skin_get_new_skin_mode(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_new_skin_mode(void *vptr, bool v);
+
+double o2scl_nucmass_ldrop_skin_get_doi(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_doi(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_ss(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_ss(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_pp(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_pp(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a0(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a0(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a2(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a2(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a4(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a4(void *vptr, double v);
+
+bool o2scl_nucmass_ldrop_skin_get_rel_vacuum(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_rel_vacuum(void *vptr, bool v);
+
+double o2scl_nucmass_ldrop_skin_get_Tchalf(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_Tchalf(void *vptr, double v);
+
+void *o2scl_create_nucmass_ldrop_pair();
+
+void o2scl_free_nucmass_ldrop_pair(void *vptr);
+
+double o2scl_nucmass_ldrop_pair_get_Epair(void *vptr);
+
+void o2scl_nucmass_ldrop_pair_set_Epair(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_pair_get_pair(void *vptr);
+
+void o2scl_nucmass_ldrop_pair_set_pair(void *vptr, double v);
 
 void *o2scl_create_nucleus_bin();
 

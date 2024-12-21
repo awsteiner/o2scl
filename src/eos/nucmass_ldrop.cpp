@@ -91,7 +91,7 @@ nucmass_ldrop::nucmass_ldrop() {
 double nucmass_ldrop::mass_excess_d(double Z, double N) {
   double ret=0.0;
   
-  ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,0.0);
+  ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,3.0,0.0);
       
   // Convert from binding energy to mass excess
   ret-=((N+Z)*o2scl_const::unified_atomic_mass_f<double>()-
@@ -105,7 +105,8 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
 }
 
 double nucmass_ldrop::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+(double Z, double N, double npout, double nnout, double chi,
+ double dim, double T) {
 
   double ret=0.0, A=Z+N, nL;
       
@@ -118,10 +119,12 @@ double nucmass_ldrop::drip_binding_energy_d
   nL=n0+n1*delta*delta;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
-  if (nn>0.20 || np>0.20) {
+  if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large 1 (n0,n1,nn,np): "
-              << n0 << " " << n1 << " "
+    std::cout << "In nucmass_ldrop::drip_binding_energy_d(): "
+              << "either nn or np is negative or "
+              << "  larger than 0.20." << endl;
+    std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     O2SCL_ERR2("Densities too large in ",
                "nucmass_ldrop::drip_binding_energy_d().",
@@ -136,21 +139,22 @@ double nucmass_ldrop::drip_binding_energy_d
   n->n=nn;
   p->n=np;
 
-  // In principle, these next two lines shouldn't be needed
-  // but they're here for now just in case
+  // We provide an initial guess for the chemical potentials to
+  // ensure the mass is deterministic
   n->mu=n->m;
   p->mu=p->m;
 
   int err=heos->calc_e(*n,*p,th);
   if (err!=0) {
     O2SCL_ERR2("Hadronic EOS failed in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::drip_binding_energy_d().",
+               exc_efailed);
   }
   bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
   ret+=bulk;
 
   // Determine surface energy per baryon
-  surf=surften*cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+  surf=surften*cbrt(36.0*o2scl_const::pi*nL/A)/nL;
   ret+=surf;
       
   // Add Coulomb energy per baryon
@@ -216,7 +220,8 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_skin::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+(double Z, double N, double npout, double nnout, double chi, double dim,
+ double T) {
   
   int err;
   double ret=0.0, A=Z+N, nL;
@@ -233,12 +238,13 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   delta=I*doi;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
-  if (nn>0.20 || np>0.20) {
+  if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large 2 (n0,n1,nn,np):\n  "
-              << n0 << " " << n1 << " "
+    std::cout << "In nucmass_ldrop_skin::drip_binding_energy_d(): "
+              << "either nn or np is negative or "
+              << "  larger than 0.20." << endl;
+    std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
-    std::cout << "nL,delta,I: " << nL << " " << delta << " " << I << endl;
     O2SCL_ERR2("Densities too large in ",
                "nucmass_ldrop::drip_binding_energy_d().",
                o2scl::exc_efailed);
@@ -246,7 +252,8 @@ double nucmass_ldrop_skin::drip_binding_energy_d
 
   if (!std::isfinite(nn) || !std::isfinite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::drip_binding_energy_d().",
+               exc_efailed);
     return 0.0;
   }
 
@@ -263,12 +270,12 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     // bulk energy once, given nn and np
     n->n=nn;
     p->n=np;
+
+    // We provide an initial guess for the chemical potentials to
+    // ensure the mass is deterministic
     n->mu=n->m;
     p->mu=p->m;
     
-    if (n->n<0.0) n->n=1.0e-3;
-    if (p->n<0.0) p->n=1.0e-3;
-
     if (T<=0.0) {
       err=heos->calc_e(*n,*p,th);
       bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
@@ -407,7 +414,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     double y2=y*y, y4=y2*y2;
     double a=a0+a2*y2+a4*y4;
     double arg=1.0-3.313*y2-7.362*y4;
-    double Tc=Tchalf*sqrt(1.0-3.313*y2-7.362*y4);
+    double Tc=Tchalf*sqrt(arg);
 	
     if (T<Tc) {
       bfun*=pow((1.0-T*T/Tc/Tc)/(1.0+a*T*T/Tc/Tc),pp);
@@ -435,11 +442,12 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     chip=chi;
   }
 
-  // This mass formula only works for d=3, but the full
-  // formula is given here for reference
-  double dim=3.0;
-  double fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/
-    (dim+2.0);
+  double fdu;
+  if (dim==2.0) {
+    fdu=chi/4.0-log(chi)/4.0-0.25;
+  } else {
+    fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/(dim+2.0);
+  }
   coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
     o2scl_const::fine_structure_f<double>()*
     Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
@@ -474,7 +482,8 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_pair::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+(double Z, double N, double npout, double nnout, double chi,
+ double dim, double T) {
   
   double A=(Z+N);
   
@@ -482,5 +491,5 @@ double nucmass_ldrop_pair::drip_binding_energy_d
     2.0/pow(A,1.5);
   
   return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
-    (Z,N,npout,nnout,chi,T);
+    (Z,N,npout,nnout,chi,dim,T);
 }

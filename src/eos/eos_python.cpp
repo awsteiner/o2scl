@@ -2287,6 +2287,384 @@ void *o2scl_nucleus_rmf_get_chden(void *vptr) {
   return ret;
 }
 
+void *o2scl_create_nucmass_ldrop() {
+  nucmass_ldrop *ptr=new nucmass_ldrop;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ldrop(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_n1(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->n1;
+}
+
+void o2scl_nucmass_ldrop_set_n1(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->n1=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_n0(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->n0;
+}
+
+void o2scl_nucmass_ldrop_set_n0(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->n0=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_surften(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->surften;
+}
+
+void o2scl_nucmass_ldrop_set_surften(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->surften=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_coul_coeff(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->coul_coeff;
+}
+
+void o2scl_nucmass_ldrop_set_coul_coeff(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->coul_coeff=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_nn(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->nn;
+}
+
+void o2scl_nucmass_ldrop_set_nn(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->nn=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_np(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->np;
+}
+
+void o2scl_nucmass_ldrop_set_np(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->np=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_Rn(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->Rn;
+}
+
+void o2scl_nucmass_ldrop_set_Rn(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->Rn=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_Rp(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->Rp;
+}
+
+void o2scl_nucmass_ldrop_set_Rp(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->Rp=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_surf(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->surf;
+}
+
+void o2scl_nucmass_ldrop_set_surf(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->surf=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_bulk(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->bulk;
+}
+
+void o2scl_nucmass_ldrop_set_bulk(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->bulk=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_get_coul(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->coul;
+}
+
+void o2scl_nucmass_ldrop_set_coul(void *vptr, double v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->coul=v;
+  return;
+}
+
+bool o2scl_nucmass_ldrop_get_large_vals_unphys(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return ptr->large_vals_unphys;
+}
+
+void o2scl_nucmass_ldrop_set_large_vals_unphys(void *vptr, bool v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  ptr->large_vals_unphys=v;
+  return;
+}
+
+void *o2scl_nucmass_ldrop_get_def_had_eos(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return (void *)(&(ptr->def_had_eos));
+}
+
+void o2scl_nucmass_ldrop_set_def_had_eos(void *vptr, void *p_v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  eos_had_rmf *p_tsot=(eos_had_rmf *)p_v;
+  ptr->def_had_eos=*(p_tsot);
+  return;
+}
+
+void *o2scl_nucmass_ldrop_get_def_neutron(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return (void *)(&(ptr->def_neutron));
+}
+
+void o2scl_nucmass_ldrop_set_def_neutron(void *vptr, void *p_v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  fermion *p_tsot=(fermion *)p_v;
+  ptr->def_neutron=*(p_tsot);
+  return;
+}
+
+void *o2scl_nucmass_ldrop_get_def_proton(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return (void *)(&(ptr->def_proton));
+}
+
+void o2scl_nucmass_ldrop_set_def_proton(void *vptr, void *p_v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  fermion *p_tsot=(fermion *)p_v;
+  ptr->def_proton=*(p_tsot);
+  return;
+}
+
+void *o2scl_nucmass_ldrop_get_th(void *vptr) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  return (void *)(&(ptr->th));
+}
+
+void o2scl_nucmass_ldrop_set_th(void *vptr, void *p_v) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  thermo *p_tsot=(thermo *)p_v;
+  ptr->th=*(p_tsot);
+  return;
+}
+
+double o2scl_nucmass_ldrop_mass_excess_d(void *vptr, double Z, double N) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  double ret=ptr->mass_excess_d(Z,N);
+  return ret;
+}
+
+double o2scl_nucmass_ldrop_mass_excess(void *vptr, int Z, int N) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  double ret=ptr->mass_excess(Z,N);
+  return ret;
+}
+
+double o2scl_nucmass_ldrop_drip_binding_energy_d(void *vptr, double Z, double N, double npout, double nnout, double chi, double dim, double T) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  double ret=ptr->drip_binding_energy_d(Z,N,npout,nnout,chi,dim,T);
+  return ret;
+}
+
+void o2scl_nucmass_ldrop_set_n_and_p(void *vptr, void *ptr_un, void *ptr_up) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  fermion *un=(fermion *)ptr_un;
+  fermion *up=(fermion *)ptr_up;
+  ptr->set_n_and_p(*un,*up);
+  return;
+}
+
+int o2scl_nucmass_ldrop_set_eos_had_temp_base(void *vptr, void *ptr_uhe) {
+  nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
+  eos_had_temp_base *uhe=(eos_had_temp_base *)ptr_uhe;
+  int ret=ptr->set_eos_had_temp_base(*uhe);
+  return ret;
+}
+
+void *o2scl_create_nucmass_ldrop_skin() {
+  nucmass_ldrop_skin *ptr=new nucmass_ldrop_skin;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ldrop_skin(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  delete ptr;
+  return;
+}
+
+bool o2scl_nucmass_ldrop_skin_get_full_surface(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->full_surface;
+}
+
+void o2scl_nucmass_ldrop_skin_set_full_surface(void *vptr, bool v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->full_surface=v;
+  return;
+}
+
+bool o2scl_nucmass_ldrop_skin_get_new_skin_mode(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->new_skin_mode;
+}
+
+void o2scl_nucmass_ldrop_skin_set_new_skin_mode(void *vptr, bool v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->new_skin_mode=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_doi(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->doi;
+}
+
+void o2scl_nucmass_ldrop_skin_set_doi(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->doi=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_ss(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->ss;
+}
+
+void o2scl_nucmass_ldrop_skin_set_ss(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->ss=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_pp(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->pp;
+}
+
+void o2scl_nucmass_ldrop_skin_set_pp(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->pp=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_a0(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->a0;
+}
+
+void o2scl_nucmass_ldrop_skin_set_a0(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->a0=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_a2(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->a2;
+}
+
+void o2scl_nucmass_ldrop_skin_set_a2(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->a2=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_a4(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->a4;
+}
+
+void o2scl_nucmass_ldrop_skin_set_a4(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->a4=v;
+  return;
+}
+
+bool o2scl_nucmass_ldrop_skin_get_rel_vacuum(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->rel_vacuum;
+}
+
+void o2scl_nucmass_ldrop_skin_set_rel_vacuum(void *vptr, bool v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->rel_vacuum=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_skin_get_Tchalf(void *vptr) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  return ptr->Tchalf;
+}
+
+void o2scl_nucmass_ldrop_skin_set_Tchalf(void *vptr, double v) {
+  nucmass_ldrop_skin *ptr=(nucmass_ldrop_skin *)vptr;
+  ptr->Tchalf=v;
+  return;
+}
+
+void *o2scl_create_nucmass_ldrop_pair() {
+  nucmass_ldrop_pair *ptr=new nucmass_ldrop_pair;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ldrop_pair(void *vptr) {
+  nucmass_ldrop_pair *ptr=(nucmass_ldrop_pair *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_nucmass_ldrop_pair_get_Epair(void *vptr) {
+  nucmass_ldrop_pair *ptr=(nucmass_ldrop_pair *)vptr;
+  return ptr->Epair;
+}
+
+void o2scl_nucmass_ldrop_pair_set_Epair(void *vptr, double v) {
+  nucmass_ldrop_pair *ptr=(nucmass_ldrop_pair *)vptr;
+  ptr->Epair=v;
+  return;
+}
+
+double o2scl_nucmass_ldrop_pair_get_pair(void *vptr) {
+  nucmass_ldrop_pair *ptr=(nucmass_ldrop_pair *)vptr;
+  return ptr->pair;
+}
+
+void o2scl_nucmass_ldrop_pair_set_pair(void *vptr, double v) {
+  nucmass_ldrop_pair *ptr=(nucmass_ldrop_pair *)vptr;
+  ptr->pair=v;
+  return;
+}
+
 void *o2scl_create_nucleus_bin() {
   nucleus_bin *ptr=new nucleus_bin;
   return ptr;
