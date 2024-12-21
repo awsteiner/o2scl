@@ -86,7 +86,7 @@ namespace o2scl {
       the most recent call to set_eos_had_temp_base() ). The bulk
       energy per baryon is
       \f[
-      E_{\mathrm{bulk}}/A = \frac{\hbar c}{n_{L} }
+      E_{\mathrm{bulk}}/A = \frac{1}{n_{L} }
       \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right]
       \f]
 
@@ -94,20 +94,19 @@ namespace o2scl {
 
       The surface energy density is
       \f[
-      \varepsilon = \frac{\chi d \sigma}{R}
+      \varepsilon_{\mathrm{surf}} = \frac{3 \sigma}{R}
       \f]
-      where \f$ \sigma \f$ is the surface tension. The factor \f$ \chi
-      \f$ is typically taken care of by the caller, so we ignore it
-      for now. To compute the surface energy per baryon, we divide by
+      where \f$ \sigma \f$ is the surface tension.
+      To compute the surface energy per baryon, we divide by
       the baryon density, \f$ n_n + n_p \f$. We can rewrite this
       \f[
-      E_{\mathrm{surf}} = \frac{3 \sigma}{n_n + n_p} 
+      E_{\mathrm{surf}}/A = \frac{3 \sigma}{n_n + n_p} 
       \left[ \frac{3 A}{ 4 (n_n+n_p) \pi}
       \right]^{-1/3}
       \f]
       or
       \f[
-      E_{\mathrm{surf}} = \frac{\sigma}{n_L}
+      E_{\mathrm{surf}}/A = \frac{\sigma}{n_L}
       \left(\frac{36 \pi n_L}{A} \right)^{1/3}
       \f]
       where the surface tension \f$ \sigma \f$ (in MeV) is given in 
@@ -229,7 +228,7 @@ namespace o2scl {
     /** \brief Given \c Z and \c N, return the binding energy in MeV
 
         This function is currently independent of \c npout, \c nnout,
-        and \c chi.
+        \c dim, and \c chi.
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
@@ -300,8 +299,8 @@ namespace o2scl {
       - decrease in the Coulomb energy from external protons
 
       \note The input parameter T should be given in units of inverse
-      Fermis. This is a bit unusual since the binding energy is
-      returned in MeV, but we keep it for now.
+      Fermis. This is a bit confusing, since the binding energy is
+      returned in MeV.
 
       <b>Bulk energy</b>
 
@@ -322,20 +321,20 @@ namespace o2scl {
       The core contribution to the bulk energy is 
       \f[
       E_{\mathrm{core}}/A = \left(\frac{A_{\mathrm{core}}}{A}\right)
-      \frac{\hbar c}{n_{L} }
+      \frac{1}{n_{L} }
       \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right]
       \f]
       then the skin contribution is 
       \f[
       E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
-      \frac{\hbar c}{n_{L} }
+      \frac{1}{n_{L} }
       \left[\varepsilon(n_n,0) - n_n m_n \right]
       \quad\mathrm{for}\quad N>Z
       \f]
       and
       \f[
       E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
-      \frac{\hbar c}{n_{L} }
+      \frac{1}{n_{L} }
       \left[\varepsilon(0,n_p) - n_p m_p \right]
       \quad\mathrm{for}\quad Z>N
       \f]
@@ -346,7 +345,7 @@ namespace o2scl {
       just that from \ref nucmass_ldrop , with an extra factor
       for the surface symmetry energy
       \f[
-      E_{\mathrm{surf}} = \frac{\sigma}{n_L}
+      E_{\mathrm{surf}} = \frac{\sigma d \chi}{3 n_L}
       \left(\frac{36 \pi n_L}{A} \right)^{1/3} 
       \left( 1- \sigma_{\delta} \delta^2 \right)
       \f]
@@ -357,7 +356,8 @@ namespace o2scl {
       Taking
       \f$ x \equiv n_p /(n_n+n_p) \f$, 
       \f[
-      \sigma(x,T) = \sigma \frac{16+b}{x^{-3}+b+(1-x)^{-3}}
+      \sigma(x,T) = \left( \frac{\sigma d \chi}{3} \right)
+      \frac{16+b}{x^{-3}+b+(1-x)^{-3}}
       \left[\frac{1-T^2/T_c(x)^2}{1+a(x) T^2/T_c(x)^2}\right]^{p}
       \f]
       where
@@ -394,7 +394,8 @@ namespace o2scl {
       when \f$ R_n>R_p \f$ and \f$ \chi_p = \chi \f$ otherwise.
       The Coulomb energy density is
       \f[
-      \varepsilon = 2 \pi e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
+      \varepsilon = 2 \pi \chi_p
+      e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
       where the function \f$ f_d(\chi_p) \f$ is 
       \f[
