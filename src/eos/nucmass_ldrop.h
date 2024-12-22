@@ -33,24 +33,39 @@
 #include <o2scl/nucmass.h>
 #include <o2scl/constants.h>
 #include <o2scl/eos_had_base.h>
-#include <o2scl/eos_had_rmf.h>
+#include <o2scl/eos_had_skyrme.h>
 #include <o2scl/inte_qagiu_gsl.h>
 
 namespace o2scl {
 
   /** \brief Simple liquid drop mass formula
       
-      Includes bulk part plus surface and Coulomb (no pairing)
-      without neutron skin and without any isospin contribution
-      to the surface energy. 
+      This class includes bulk, surface and Coulomb contributions to
+      the energy. There is no pairing, no neutron skin, and no isospin
+      contribution to the surface energy.
 
-      The NL4 EOS is loaded by default.
+      \verbatim embed:rst
+      The NRAPR equation of state from [Steiner05b]_ is used
+      for the bulk energy by default.
+      \endverbatim
       
-      \note This class sets part::inc_rest_mass to true 
+      \note This class sets part::inc_rest_mass to true b
       for the particle objects specified in set_n_and_p().
 
-      \hline
+      \note The input parameter T should be given in units of inverse
+      Fermis. This is a bit confusing, since the binding energy is
+      returned in MeV.
+      
+      <b>Definition of </b> \f$ \chi \f$ <b> and </b> \f$ n_L \f$
 
+      The variable \f$ \chi \f$ is defined as the fractional volume
+      occupied by and \f$ n_L \f$ is the density of nucleons inside
+      the nucleus. If \f$ V \f$ is the total volume of the nucleus
+      plus the surrounding Wigner-Seitz cell, then we have
+      \f[
+      A = V n_L \chi
+      \f]
+      
       <b>Central densities</b>
 
       Given a saturation density, \f$ n_0 \f$ and a transition
@@ -60,22 +75,21 @@ namespace o2scl {
       \f[
       n_L = n_0 + n_1 \delta^2
       \f]
-      and then we can compute \f$ n_{p} = (1 - \delta)/2 n_L \f$ and
-      \f$ n_{n} = (1 + \delta)/2 n_L \f$ . 
+      and then we can compute \f$ n_{p} = n_L (1 - \delta)/2 \f$ and
+      \f$ n_{n} = n_L (1 + \delta)/2 \f$ . 
 
       Note that \f$ \delta = I \f$ implies no neutron skin. A neutron
       skin occurs when \f$ \delta < I \f$, and \f$ \delta = 0 \f$
       implies a "maximum skin size" which is occurs when no extra
       neutrons are in center and all extra neutrons are located in the
-      skin, i.e. \f$ N_{\mathrm{skin}} = N-Z \f$.
+      skin, i.e. \f$ N_{\mathrm{skin}} = N-Z \f$. See also \ref
+      nucmass_ldrop_skin .
 
       <b>Nuclear radii</b>
 
-      The neutron and proton radii are determined from the 
-      central densities with
+      The nuclear radius is determined by
       \f{eqnarray*}
-      R_n &=& \left( \frac{3 N}{4 \pi n_n} \right)^{1/3} \nonumber \\
-      R_n &=& \left( \frac{3 Z}{4 \pi n_p} \right)^{1/3} 
+      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3}
       \f}
 
       <b>Bulk energy contribution</b>
@@ -94,11 +108,11 @@ namespace o2scl {
 
       The surface energy density is
       \f[
-      \varepsilon_{\mathrm{surf}} = \frac{3 \sigma}{R}
+      \varepsilon_{\mathrm{surf}} = \frac{3 \sigma \chi}{R}
       \f]
       where \f$ \sigma \f$ is the surface tension.
-      To compute the surface energy per baryon, we divide by
-      the baryon density, \f$ n_n + n_p \f$. We can rewrite this
+      To compute the surface energy per baryon, using
+      \f$ A = V n_L \chi \f$, we find
       \f[
       E_{\mathrm{surf}}/A = \frac{3 \sigma}{n_n + n_p} 
       \left[ \frac{3 A}{ 4 (n_n+n_p) \pi}
@@ -109,12 +123,14 @@ namespace o2scl {
       E_{\mathrm{surf}}/A = \frac{\sigma}{n_L}
       \left(\frac{36 \pi n_L}{A} \right)^{1/3}
       \f]
-      where the surface tension \f$ \sigma \f$ (in MeV) is given in 
-      \ref surften. 
+      where the surface tension \f$ \sigma \f$ (in \f$
+      \mathrm{MeV}/\mathrm{fm}^2 \f$) is given in \ref surften.
 
-      Taking a typical value, \f$ \sigma =1.1~\mathrm{MeV} \f$ and 
-      \f$ n_L = 0.16~\mathrm{fm}^{-3} \f$, gives the standard result,
-      \f$ E_{\mathrm{surf}}/A = 18~\mathrm{MeV}~A^{-1/3} \f$. 
+      Taking a typical value, \f$ \sigma
+      =1.1~\mathrm{MeV}/\mathrm{fm}^2 \f$ and \f$ n_L =
+      0.16~\mathrm{fm}^{-3} \f$, gives the standard result, \f$
+      E_{\mathrm{surf}}/A = 18~\mathrm{MeV}~A^{-1/3} \f$ (see \ref
+      nucmass_semi_empirical::Ss in \ref nucmass_semi_empirical).
 
       \verbatim embed:rst
       See also [Ravenhall83]_.
@@ -124,18 +140,17 @@ namespace o2scl {
 
       The Coulomb energy density is
       \f[
-      \varepsilon_{\mathrm{Coul}} = \frac{4 \pi}{5} n_p^2 e^2 R_p^2
+      \varepsilon_{\mathrm{Coul}} = \frac{4 \pi}{5} \chi n_p^2 e^2 R^2
       \f]
       The energy per baryon is
       \f[
-      E_{\mathrm{Coul}}/A = \frac{4 \pi}{5 n_L} n_p^2 e^2 R_p^2 
+      E_{\mathrm{Coul}}/A = \frac{4 \pi}{5 n_L} n_p^2 e^2 R^2 
       \f]
       This is the expression used in the code, except for a prefactor
       \ref coul_coeff which is a fit parameter and should be close to
       unity.
 
-      Assuming \f$ R_p = R \f$
-      and \f$ Z = \frac{4 \pi}{3} R^3 n_p \f$
+      Using \f$ Z = \frac{4 \pi}{3} R^3 n_p \f$
       and \f$ R = \left[ 3 A / (4 \pi n_L) \right]^{1/3} \f$
       gives
       \f[
@@ -148,34 +163,33 @@ namespace o2scl {
       E_{\mathrm{Coul}}/A = 0.76~\mathrm{MeV}~Z^2 A^{-4/3}
       \f]
 
-      \hline
-
+      \note This class ignores the values specified in the variables
+      \c npout, \c nnout, \c dim, and \c chi.
+      
       <b>References</b>
 
       \verbatim embed:rst
       This class is based on  [Steiner08]_, which was originally
       based on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
-
-      \hline
   */
   class nucmass_ldrop : public nucmass_fit_base {
 
   public:
     
-    nucmass_ldrop();
-
     /// \name Input parameters
     //@{ 
     /// Density asymmetry (default 0)
     double n1;
     
-    /** \brief Saturation density ( The default is \f$ 0.16
-        \mathrm{fm}^{-3} \f$)
+    /** \brief Saturation density ( The default is \f$
+        0.16~\mathrm{fm}^{-3} \f$)
     */
     double n0;
     
-    /// Surface tension in MeV (default 1.1 MeV)
+    /** \brief Surface tension in \f$ \mathrm{MeV}/\mathrm{fm}^2 \f$
+        (default 1.1 \f$ \mathrm{MeV}/\mathrm{fm}^2 \f$)
+    */
     double surften;
     
     /// Coulomb coefficient (default 1.0)
@@ -184,33 +198,41 @@ namespace o2scl {
 
     /// \name Output quantities
     //@{ 
-    /// Internal average neutron density
+    /// Internal average neutron density in \f$ \mathrm{fm}^{-3} \f$
     double nn;
     
-    /// Internal average proton density
+    /// Internal average proton density in \f$ \mathrm{fm}^{-3} \f$
     double np;
 
-    /// Neutron radius
+    /// Neutron radius (in \f$ \mathrm{fm} \f$ )
     double Rn;
 
-    /// Proton radius
+    /// Proton radius (in \f$ \mathrm{fm} \f$ )
     double Rp;
 
-    /// Bulk part of energy
+    /// Bulk energy per baryon in \f$ \mathrm{MeV} \f$
     double bulk;
 
-    /// Surface part of energy
+    /// Surface energy per baryon in \f$ \mathrm{MeV} \f$
     double surf;
 
-    /// Coulomb part of energy
+    /// Coulomb energy per baryon in \f$ \mathrm{MeV} \f$
     double coul;
     //@}
 
+    /// \name Other settings
+    //@{
     /** \brief If true, then return large mass excesses when
         unphysical parameters are selected (default false)
     */
     bool large_vals_unphys;
-    
+    //@}
+
+    /// \name Main functions
+    //@{
+    /// Default constructor
+    nucmass_ldrop();
+
     /** \brief Given \c Z and \c N, return the mass excess in MeV
  
         \comment
@@ -225,14 +247,16 @@ namespace o2scl {
       return mass_excess_d(Z,N);
     }
 
-    /** \brief Given \c Z and \c N, return the binding energy in MeV
+    /** \brief Given \c Z and \c N, return the binding energy of
+        the nucleus in MeV
 
-        This function is currently independent of \c npout, \c nnout,
-        \c dim, and \c chi.
+        In this class, this function is currently independent of \c
+        npout, \c nnout, \c dim, and \c chi.
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
                                          double chi, double dim, double T);
+    //@}
 
     /// \name EOS and particle parameters
     //@{
@@ -243,7 +267,7 @@ namespace o2scl {
     }
 
     /// The default hadronic EOS
-    eos_had_rmf def_had_eos;
+    eos_had_skyrme def_had_eos;
 
     /// Change neutron and proton objects
     void set_n_and_p(fermion &un, fermion &up) {
@@ -271,13 +295,10 @@ namespace o2scl {
     /// Return the type, \c "nucmass_ldrop".
     virtual const char *type() { return "nucmass_ldrop"; }
       
-    /// Energy and pressure
-    thermo th;
-
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
+    /// Energy and pressure
+    thermo th;
     /// Pointer to neutron 
     fermion *n;
     /// Pointer to proton
@@ -285,8 +306,6 @@ namespace o2scl {
     /// The base EOS for bulk matter
     eos_had_temp_base *heos;
 
-#endif
-    
   };
 
   /** \brief More advanced liquid drop model
@@ -301,7 +320,15 @@ namespace o2scl {
       \note The input parameter T should be given in units of inverse
       Fermis. This is a bit confusing, since the binding energy is
       returned in MeV.
-
+      
+      <b>Nuclear radii</b>
+      
+      The nuclear radii are determined by
+      \f{eqnarray*}
+      R_n &=& \left( \frac{3 N}{4 \pi n_n} \right)^{1/3} \nonumber \\
+      R_p &=& \left( \frac{3 Z}{4 \pi n_p} \right)^{1/3} 
+      \f}
+     
       <b>Bulk energy</b>
 
       The central densities and radii, \f$ n_n, n_p, R_n, R_p \f$
@@ -341,11 +368,11 @@ namespace o2scl {
 
       <b>Surface energy</b>
 
-      If \ref full_surface is false, then the surface energy is 
-      just that from \ref nucmass_ldrop , with an extra factor
-      for the surface symmetry energy
+      If \ref full_surface is false, then the surface energy per
+      baryon is just that from \ref nucmass_ldrop, with an extra
+      factor for the surface symmetry energy
       \f[
-      E_{\mathrm{surf}} = \frac{\sigma d \chi}{3 n_L}
+      E_{\mathrm{surf}}/A = \frac{\sigma d \chi}{3 n_L}
       \left(\frac{36 \pi n_L}{A} \right)^{1/3} 
       \left( 1- \sigma_{\delta} \delta^2 \right)
       \f]
@@ -357,7 +384,7 @@ namespace o2scl {
       \f$ x \equiv n_p /(n_n+n_p) \f$, 
       \f[
       \sigma(x,T) = \left( \frac{\sigma d \chi}{3} \right)
-      \frac{16+b}{x^{-3}+b+(1-x)^{-3}}
+      \left[ \frac{16+b}{x^{-3}+b+(1-x)^{-3}} \right]
       \left[\frac{1-T^2/T_c(x)^2}{1+a(x) T^2/T_c(x)^2}\right]^{p}
       \f]
       where
@@ -373,7 +400,7 @@ namespace o2scl {
       fixed and cannot be changed. The value of \f$ b \f$ is
       determined from
       \f[
-      b=-16+96 \frac{\sigma}{\sigma_{\delta}}
+      b=-16+\frac{96}{\sigma_{\delta}}
       \f]
       which is chosen to ensure that the surface energy
       is identical to the expression used when \ref full_surface
@@ -394,7 +421,7 @@ namespace o2scl {
       when \f$ R_n>R_p \f$ and \f$ \chi_p = \chi \f$ otherwise.
       The Coulomb energy density is
       \f[
-      \varepsilon = 2 \pi \chi_p
+      \varepsilon_{\mathrm{Coul}} = 2 \pi \chi_p
       e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
       where the function \f$ f_d(\chi_p) \f$ is 
@@ -408,7 +435,30 @@ namespace o2scl {
       \frac{1}{5} \left[ 2 - 3 \chi_p^{1/3} + \chi_p \right]
       \f]
       and the limit \f$ \chi_p \rightarrow 0 \f$ gives the expression
-      used in \ref nucmass_ldrop.
+      used in \ref nucmass_ldrop. The second term in square
+      brackets gives the so-called "lattice" contribution
+      \f[
+      \varepsilon_{\mathrm{L}} =
+      -\frac{6 \pi e^2}{5} \chi_p^{4/3}
+      e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 
+      \f]
+      Taking \f$ n_{p,\mathrm{out}}=0 \f$ and using
+      \f[
+      R_p \Rightarrow \left( \frac{3 Z}{4 \pi n_p}\right)^{1/3}
+      \f]
+      we get
+      \f[
+      \varepsilon_{\mathrm{L}} =
+      -\left(\frac{6 \cdot 3^{2/3} \pi^{1/3}}
+      {5 \cdot 4^{2/3}}\right) e^2 Z^{2/3}
+      \left(\chi_p n_p\right)^{4/3}
+      \f]
+      and noting that charge equality implies \f$ \chi_p n_p = n_e \f$, gives
+      \f[
+      \varepsilon_{\mathrm{L}} =
+      -1.4508 Z^{2/3} e^2 n_e^{4/3}
+      \f]
+      which is approximately equal to the expression used in \ref eos_crust .
 
       \verbatim embed:rst
       See [Ravenhall83]_ and [Steiner12]_.
@@ -430,8 +480,6 @@ namespace o2scl {
          
       \endverbatim
       
-      \hline
-
       Excluded volume and \ref rel_vacuum:
 
       Typically in a single-nucleus EOS with a neutron drip 
@@ -453,16 +501,12 @@ namespace o2scl {
 
       \endcomment
 
-      \hline
-
       <b>References</b>
 
       \verbatim embed:rst
       Designed in [Steiner08]_ and [Souza09co]_ based in part
       on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
-
-      \hline
   */
   class nucmass_ldrop_skin : public nucmass_ldrop {
     
@@ -492,7 +536,7 @@ namespace o2scl {
     /// Ratio of \f$ \delta/I \f$ (default 0.8).
     double doi;
 
-    /// Surface symmetry energy (default 0.5)
+    /// Surface symmetry energy coefficient (default 0.5)
     double ss;
 
     /// \name Input parameters for temperature dependence
@@ -515,8 +559,8 @@ namespace o2scl {
     */
     bool rel_vacuum;
 
-    /** \brief The critical temperature of isospin-symmetric matter in 
-        \f$ fm^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
+    /** \brief The critical temperature of isospin-symmetric matter in
+        \f$ \mathrm{fm}^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
     */
     double Tchalf;
     

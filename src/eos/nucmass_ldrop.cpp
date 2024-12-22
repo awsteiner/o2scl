@@ -41,40 +41,8 @@ nucmass_ldrop::nucmass_ldrop() {
   p=&def_proton;
   heos=&def_had_eos;
 
-  // Load NL4 EOS
-  def_had_eos.ms=508.194;
-  def_had_eos.mw=782.501;
-  def_had_eos.mr=763.0;
-  def_had_eos.mnuc=939.0;
-  def_had_eos.ms/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mw/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mr/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mnuc/=o2scl_const::hc_mev_fm;
-	
-  double gs, gw, gr;
-  gs=10.217;
-  gw=12.868;
-  gr=4.474;
-  def_had_eos.b=-10.431;
-  def_had_eos.c=-28.885;
-  def_had_eos.b/=-def_had_eos.mnuc*pow(fabs(gs),3.0);
-  def_had_eos.c/=pow(gs,4.0);
-  gr*=2.0;
-  def_had_eos.cs=gs/def_had_eos.ms;
-  def_had_eos.cw=gw/def_had_eos.mw;
-  def_had_eos.cr=gr/def_had_eos.mr;
-	
-  def_had_eos.xi=0.0; 
-  def_had_eos.zeta=0.0;
-  def_had_eos.a1=0.0;
-  def_had_eos.a2=0.0;
-  def_had_eos.a3=0.0;
-  def_had_eos.a4=0.0;
-  def_had_eos.a5=0.0;
-  def_had_eos.a6=0.0;
-  def_had_eos.b1=0.0;
-  def_had_eos.b2=0.0;
-  def_had_eos.b3=0.0;
+  // Load NRAPR EOS
+  skyrme_load(def_had_eos,"NRAPR");
 
   n1=0.0;
   n0=0.16;
@@ -132,8 +100,8 @@ double nucmass_ldrop::drip_binding_energy_d
   }
 
   // Determine radii
-  Rn=cbrt(3.0*N/4.0/o2scl_const::pi/nn);
-  Rp=cbrt(3.0*Z/4.0/o2scl_const::pi/np);
+  Rn=cbrt(3.0*A/4.0/o2scl_const::pi/nL);
+  Rp=Rn;
       
   // Compute bulk energy per baryon
   n->n=nn;
@@ -407,8 +375,8 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     double omx=1.0-x;
     double omx3=omx*omx*omx;
     double bcoeff;
-    if (ss==0.0) bcoeff=-16.0+96.0*surften/0.5;
-    else bcoeff=-16.0+96.0*surften/ss;
+    if (ss==0.0) bcoeff=-16.0+96.0/0.5;
+    else bcoeff=-16.0+96.0/ss;
     double bfun=(16.0+bcoeff)/(1.0/x3+bcoeff+1.0/omx3);
     double y=0.5-x;
     double y2=y*y, y4=y2*y2;
