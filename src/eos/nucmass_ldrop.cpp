@@ -194,6 +194,23 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   int err;
   double ret=0.0, A=Z+N, nL;
 
+  if (chi<0.0 || chi>1.0) {
+    O2SCL_ERR2("Chi less than zero or greater than one in ",
+               "nucmass_ldrop_skin::drip_binding_energy_d().",
+               o2scl::exc_einval);
+  }
+  if (dim<0.0 || dim>3.0) {
+    O2SCL_ERR2("Dimensionality less than zero or greater than three in ",
+               "nucmass_ldrop_skin::drip_binding_energy_d().",
+               o2scl::exc_einval);
+  }
+  if (full_surface==true && ss==0.0) {
+    O2SCL_ERR2("Surface symmetry cannot be zero when full_surface is true ",
+               "innucmass_ldrop_skin::drip_binding_energy_d().",
+               o2scl::exc_einval);
+  }
+               
+  
   // Force inc_rest_mass to true
   n->inc_rest_mass=true;
   p->inc_rest_mass=true;
@@ -227,9 +244,15 @@ double nucmass_ldrop_skin::drip_binding_energy_d
 
   // Determine radii
 
+  double R=cbrt(3.0*A/4.0/o2scl_const::pi/nL);
   Rn=cbrt(3.0*N/nn/4.0/o2scl_const::pi);
   Rp=cbrt(3.0*Z/np/4.0/o2scl_const::pi);
-	
+
+  // We need the Wigner-Seitz radius to compute the proton volume
+  // fraction for the Coulomb energy
+  double Rws=R/cbrt(chi);
+  double chip=pow(Rp/Rws,3.0);
+
   // Bulk part of the free energy per baryon
 
   if (!new_skin_mode) {
@@ -374,9 +397,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     double x3=x*x*x;
     double omx=1.0-x;
     double omx3=omx*omx*omx;
-    double bcoeff;
-    if (ss==0.0) bcoeff=-16.0+96.0/0.5;
-    else bcoeff=-16.0+96.0/ss;
+    double bcoeff=-16.0+96.0/ss;
     double bfun=(16.0+bcoeff)/(1.0/x3+bcoeff+1.0/omx3);
     double y=0.5-x;
     double y2=y*y, y4=y2*y2;
@@ -403,13 +424,6 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       
   // Add Coulomb energy per baryon
 
-  double chip;
-  if (Rn>Rp) {
-    chip=chi*pow(Rp/Rn,3.0);
-  } else {
-    chip=chi;
-  }
-
   double fdu;
   if (dim==2.0) {
     fdu=chi/4.0-log(chi)/4.0-0.25;
@@ -418,7 +432,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   }
   coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
     o2scl_const::fine_structure_f<double>()*
-    Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
+    Rp*Rp*pow(fabs(np-npout),2.0)*Z/A/np*fdu;
   ret+=coul;
   
   // Convert to total binding energy

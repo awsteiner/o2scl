@@ -49,12 +49,12 @@ namespace o2scl {
       for the bulk energy by default.
       \endverbatim
       
-      \note This class sets part::inc_rest_mass to true b
-      for the particle objects specified in set_n_and_p().
+      \note This class sets part::inc_rest_mass to true for the
+      particle objects specified in set_n_and_p().
 
-      \note The input parameter T should be given in units of inverse
-      Fermis. This is a bit confusing, since the binding energy is
-      returned in MeV.
+      \note The input parameter T (for the temperature) should be
+      given in units of inverse femtometers. This is a bit confusing,
+      since the binding energy is returned in MeV.
       
       <b>Definition of </b> \f$ \chi \f$ <b> and </b> \f$ n_L \f$
 
@@ -85,7 +85,7 @@ namespace o2scl {
       skin, i.e. \f$ N_{\mathrm{skin}} = N-Z \f$. See also \ref
       nucmass_ldrop_skin .
 
-      <b>Nuclear radii</b>
+      <b>Nuclear radius</b>
 
       The nuclear radius is determined by
       \f{eqnarray*}
@@ -140,19 +140,20 @@ namespace o2scl {
 
       The Coulomb energy density is
       \f[
-      \varepsilon_{\mathrm{Coul}} = \frac{4 \pi}{5} \chi n_p^2 e^2 R^2
+      \varepsilon_{\mathrm{Coul}} = {\cal{C}}
+      \frac{4 \pi}{5} \chi n_p^2 e^2 R^2
       \f]
+      where the extra coefficient \f$ {\cal{C}} \f$ is stored
+      in \ref coul_coeff and defaults to a value of 1.
       The energy per baryon is
       \f[
-      E_{\mathrm{Coul}}/A = \frac{4 \pi}{5 n_L} n_p^2 e^2 R^2 
+      E_{\mathrm{Coul}}/A = {\cal{C}} \frac{4 \pi}{5 n_L} n_p^2 e^2 R^2 
       \f]
-      This is the expression used in the code, except for a prefactor
-      \ref coul_coeff which is a fit parameter and should be close to
-      unity.
+      This is the expression used in the code.
 
-      Using \f$ Z = \frac{4 \pi}{3} R^3 n_p \f$
-      and \f$ R = \left[ 3 A / (4 \pi n_L) \right]^{1/3} \f$
-      gives
+      Taking \f$ {\cal{C}} =1 \f$ and using \f$ Z = \frac{4 \pi}{3}
+      R^3 n_p \f$ and \f$ R = \left[ 3 A / (4 \pi n_L) \right]^{1/3}
+      \f$ gives
       \f[
       E_{\mathrm{Coul}}/A = \frac{6^{2/3}}{5} 
        \pi^{1/3} e^2 n_L^{1/3} \frac{Z^2}{A^{4/3}} 
@@ -256,6 +257,9 @@ namespace o2scl {
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
                                          double chi, double dim, double T);
+
+    /// Return the type, \c "nucmass_ldrop".
+    virtual const char *type() { return "nucmass_ldrop"; }
     //@}
 
     /// \name EOS and particle parameters
@@ -292,11 +296,10 @@ namespace o2scl {
     virtual int guess_fun(size_t nv, ubvector &x);
     //@}
     
-    /// Return the type, \c "nucmass_ldrop".
-    virtual const char *type() { return "nucmass_ldrop"; }
-      
   protected:
-    
+
+    /// \name Base objects [protected]
+    //@{
     /// Energy and pressure
     thermo th;
     /// Pointer to neutron 
@@ -305,6 +308,7 @@ namespace o2scl {
     fermion *p;
     /// The base EOS for bulk matter
     eos_had_temp_base *heos;
+    //@}
 
   };
 
@@ -323,19 +327,18 @@ namespace o2scl {
       
       <b>Nuclear radii</b>
       
-      The nuclear radii are determined by
+      The nuclear, neutron and proton radii are determined by
       \f{eqnarray*}
+      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3} \nonumber \\
       R_n &=& \left( \frac{3 N}{4 \pi n_n} \right)^{1/3} \nonumber \\
       R_p &=& \left( \frac{3 Z}{4 \pi n_p} \right)^{1/3} 
       \f}
+      where the densities \f$ n_L, n_n \f$ and \f$ n_p \f$ are
+      determined in the same way as in \ref nucmass_ldrop,
+      except that now \f$ \delta \equiv I \zeta \f$, where
+      \f$ \zeta \f$ is stored in \ref doi .
      
       <b>Bulk energy</b>
-
-      The central densities and radii, \f$ n_n, n_p, R_n, R_p \f$
-      are all determined in the same way as \ref nucmass_ldrop, 
-      except that now \f$ \delta \equiv I \zeta \f$, where
-      \f$ \zeta \f$ is stored in \ref doi . Note that this
-      means \f$ N > Z~\mathrm{iff}~R_n>R_p \f$. 
 
       If \ref new_skin_mode is false, then the bulk energy is 
       also computed as in \ref nucmass_ldrop. Otherwise, the
@@ -416,9 +419,12 @@ namespace o2scl {
       First, we define the volume fraction occupied by
       protons, \f$ \chi_p \f$ which is
       \f[
-      \chi_p = \chi \left(\frac{R_p}{R_n}\right)^3
+      \chi_p = \left(\frac{R_p}{R_{\mathrm{WS}}}\right)^3
       \f]
-      when \f$ R_n>R_p \f$ and \f$ \chi_p = \chi \f$ otherwise.
+      where \f$ R_{\mathrm{WS}} \f$ is determined from
+      \f[
+      \chi = \left(\frac{R}{R_{\mathrm{WS}}}\right)^3
+      \f]
       The Coulomb energy density is
       \f[
       \varepsilon_{\mathrm{Coul}} = 2 \pi \chi_p
@@ -428,15 +434,26 @@ namespace o2scl {
       \f[
       f_d(\chi_p) = \frac{1}{(d+2)}
       \left[ \frac{2}{(d-2)} \left( 1 - \frac{d}{2} 
-      \chi_p^{(1-2/d)} \right) + \chi_p \right]
+      \chi_p^{(1-2/d)} \right) + \chi_p \right] \, .
+      \f]
+      To get the energy per baryon, we use the relation
+      \f[
+      Z = V n_p \chi_p
+      \f]
+      Thus
+      \f[
+      E_{\mathrm{Coul}}/A = 2 \pi \left(\frac{Z}{A n_p}\right)
+      e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
       When \f$ d=3 \f$, \f$ f_3(\chi_p) \f$ reduces to
       \f[
-      \frac{1}{5} \left[ 2 - 3 \chi_p^{1/3} + \chi_p \right]
+      \frac{1}{5} \left[ 2 - 3 \chi_p^{1/3} + \chi_p \right] \, .
       \f]
-      and the limit \f$ \chi_p \rightarrow 0 \f$ gives the expression
-      used in \ref nucmass_ldrop. The second term in square
-      brackets gives the so-called "lattice" contribution
+      Then, using the approximations \f$ Z/(A n_p) = n_L \f$ and \f$
+      \chi_p = \chi \f$ and the limit \f$ \chi_p \rightarrow 0 \f$
+      gives the expression used in \ref nucmass_ldrop. The second term
+      in square brackets above gives the Wigner-Seitz approximation to
+      the so-called "lattice" contribution
       \f[
       \varepsilon_{\mathrm{L}} =
       -\frac{6 \pi e^2}{5} \chi_p^{4/3}
@@ -476,7 +493,7 @@ namespace o2scl {
            mass relative to the gas rather than relative to the vacuum.
          - (future) In principle, Tc should be self-consistently determined
            from the EOS.
-         - (future) Does this work if the nucleus is "inside-out"?
+         - (future) Does this class work if the nucleus is "inside-out"?
          
       \endverbatim
       
@@ -512,16 +529,36 @@ namespace o2scl {
     
   public:
 
+    /// \name Basic usage
+    //@{
+    /// Default constructor
     nucmass_ldrop_skin();
 
+    /** \brief Return the free binding energy of a nucleus in a many-body 
+        environment
+    */
+    virtual double drip_binding_energy_d(double Z, double N,
+                                         double npout, double nnout,
+                                         double chi, double dim, double T);
     /// Return the type, \c "nucmass_ldrop_skin".
     virtual const char *type() { return "nucmass_ldrop_skin"; }
+    //@}
 
+    /// \name Fitting functions
+    //@{
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
     virtual int guess_fun(size_t nv, ubvector &x);
+    //@}
+
+    /// \name Settings
+    //@{
+    /** \brief If true, define the nuclear mass relative to the vacuum
+        (default true)
+    */
+    bool rel_vacuum;
 
     /** \brief If true, properly fix the surface for the pure neutron
         matter limit (default true)
@@ -532,12 +569,16 @@ namespace o2scl {
         (default false)
     */
     bool new_skin_mode;
+    //@}
 
+    /// \name Surface parameters
+    //@{
     /// Ratio of \f$ \delta/I \f$ (default 0.8).
     double doi;
 
     /// Surface symmetry energy coefficient (default 0.5)
     double ss;
+    //@}
 
     /// \name Input parameters for temperature dependence
     //@{ 
@@ -552,24 +593,13 @@ namespace o2scl {
 
     /// Coefficient (default -1.1)
     double a4;
-    //@}
     
-    /** \brief If true, define the nuclear mass relative to the vacuum
-        (default true)
-    */
-    bool rel_vacuum;
-
     /** \brief The critical temperature of isospin-symmetric matter in
         \f$ \mathrm{fm}^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
     */
     double Tchalf;
+    //@}
     
-    /** \brief Return the free binding energy of a nucleus in a many-body 
-        environment
-    */
-    virtual double drip_binding_energy_d(double Z, double N,
-                                         double npout, double nnout,
-                                         double chi, double dim, double T);
   };
 
   /** \brief Liquid drop model with pairing
