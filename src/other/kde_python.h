@@ -264,7 +264,6 @@ namespace o2scl {
       this->verbose=v;
 
       free();
-
       p_module=o2scl_settings.py_import_module(mod_str,this->verbose);
 
       if (class_name.length()>0) {

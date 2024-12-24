@@ -202,6 +202,10 @@ bool lib_settings_class::range_check() {
 PyObject *lib_settings_class::py_import_module(std::string module,
                                                int verbose) {
 
+  if (o2scl_settings.py_initialized==false) {
+    py_init(verbose);
+  }
+    
   PyObject *pModule, *pName;
   
   // Get the Unicode name of the user-specified module
