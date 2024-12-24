@@ -108,7 +108,7 @@ int main(void) {
   cout << ld.n1 << " " << ld.n0 << " " << ld.surften << " " 
        << ld.coul_coeff << " " << ld.doi << "\n "
        << ld.ss << " " << ld.Epair << endl;
-  
+
   mf.fit(ld,qual);
   mf.eval(ld,qual);
   cout << "Parameters after: ";
@@ -157,7 +157,7 @@ int main(void) {
     cout << "Quality: " << qual << endl;
 
   }
-  t.test_rel(qual,1.1643,2.0e-2,"nucmass_ldrop_shell qual");
+  t.test_rel(qual,1.131,2.0e-2,"nucmass_ldrop_shell qual");
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;

@@ -692,7 +692,7 @@ class nucmass_ldrop
   - double chi
   - double dim
   - double T
-- eos_had_rmf def_had_eos
+- eos_had_skyrme def_had_eos
 - fermion def_neutron
 - fermion def_proton
 - thermo th

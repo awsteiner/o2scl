@@ -2437,7 +2437,7 @@ void *o2scl_nucmass_ldrop_get_def_had_eos(void *vptr) {
 
 void o2scl_nucmass_ldrop_set_def_had_eos(void *vptr, void *p_v) {
   nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
-  eos_had_rmf *p_tsot=(eos_had_rmf *)p_v;
+  eos_had_skyrme *p_tsot=(eos_had_skyrme *)p_v;
   ptr->def_had_eos=*(p_tsot);
   return;
 }

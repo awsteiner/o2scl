@@ -285,6 +285,9 @@ namespace o2scl {
 
     /// Default proton
     fermion def_proton;
+
+    /// Energy and pressure
+    thermo th;
     //@}
 
     /// \name Fitting functions
@@ -300,8 +303,6 @@ namespace o2scl {
 
     /// \name Base objects [protected]
     //@{
-    /// Energy and pressure
-    thermo th;
     /// Pointer to neutron 
     fermion *n;
     /// Pointer to proton
@@ -436,20 +437,23 @@ namespace o2scl {
       \left[ \frac{2}{(d-2)} \left( 1 - \frac{d}{2} 
       \chi_p^{(1-2/d)} \right) + \chi_p \right] \, .
       \f]
-      To get the energy per baryon, we use the relation
+
+      AWS, 12/23/24: The fit to nuclear data seems to be better
+      if we use 
       \f[
-      Z = V n_p \chi_p
+      \varepsilon_{\mathrm{Coul}} = 2 \pi \chi
+      e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
-      Thus
+      instead. Thus
       \f[
-      E_{\mathrm{Coul}}/A = 2 \pi \left(\frac{Z}{A n_p}\right)
+      E_{\mathrm{Coul}}/A = 2 \pi \left(\frac{1}{nL}\right)
       e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
       When \f$ d=3 \f$, \f$ f_3(\chi_p) \f$ reduces to
       \f[
       \frac{1}{5} \left[ 2 - 3 \chi_p^{1/3} + \chi_p \right] \, .
       \f]
-      Then, using the approximations \f$ Z/(A n_p) = n_L \f$ and \f$
+      Then, using the approximation \f$
       \chi_p = \chi \f$ and the limit \f$ \chi_p \rightarrow 0 \f$
       gives the expression used in \ref nucmass_ldrop. The second term
       in square brackets above gives the Wigner-Seitz approximation to
@@ -470,7 +474,8 @@ namespace o2scl {
       {5 \cdot 4^{2/3}}\right) e^2 Z^{2/3}
       \left(\chi_p n_p\right)^{4/3}
       \f]
-      and noting that charge equality implies \f$ \chi_p n_p = n_e \f$, gives
+      and noting that charge equality implies \f$ \chi_p n_p = n_e \f$,
+      gives
       \f[
       \varepsilon_{\mathrm{L}} =
       -1.4508 Z^{2/3} e^2 n_e^{4/3}

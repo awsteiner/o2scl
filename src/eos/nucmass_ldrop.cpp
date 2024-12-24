@@ -21,9 +21,11 @@
   ───────────────────────────────────────────────────────────────────
 */
 #include <o2scl/nucmass_ldrop.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 using namespace o2scl_const;
 
 nucmass_ldrop::nucmass_ldrop() {
@@ -426,13 +428,26 @@ double nucmass_ldrop_skin::drip_binding_energy_d
 
   double fdu;
   if (dim==2.0) {
-    fdu=chi/4.0-log(chi)/4.0-0.25;
+    fdu=chip/4.0-log(chip)/4.0-0.25;
   } else {
     fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/(dim+2.0);
   }
-  coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure_f<double>()*
-    Rp*Rp*pow(fabs(np-npout),2.0)*Z/A/np*fdu;
+
+  // AWS, 12/23/24: It seems to me the correct thing to do is to multiply
+  // the energy density by chip, which corresponds to the first
+  // energy per baryon with a factor of Z/A/np, rather than multiplying
+  // the energy density by chi, which corresponds to multiplying the
+  // energy per baryon by 1/nL, but the latter actually fits the
+  // nuclear data better, as currently testing in nucmass_ldrop_shell_ts .
+  if (false) {
+    coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+      o2scl_const::fine_structure_f<double>()*
+      Rp*Rp*pow(fabs(np-npout),2.0)*Z/A/np*fdu;
+  } else {
+    coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+      o2scl_const::fine_structure_f<double>()*
+      Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
+  }
   ret+=coul;
   
   // Convert to total binding energy
