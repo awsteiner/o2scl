@@ -213,7 +213,10 @@ namespace o2scl {
         This function uses the environment variable O2SCL_PYTHON_EXE
         to set the Python name via the function Py_SetProgramName()
         before the function Py_Initialize() is called.
-     */
+
+	If Python has already been initialized and \ref py_initialized
+	is true, then this function does nothing.
+    */
     int py_init_nothrow(int verbose=0);
 
     /** \brief Initialize the python interface

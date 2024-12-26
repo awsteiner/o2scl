@@ -101,6 +101,10 @@ int lib_settings_class::py_init_nothrow(int verbose) {
     Py_SetProgramName(pe2.c_str());
     }
   */
+
+  if (py_initialized) {
+    return 0;
+  }
   
   if (verbose>0) {
     cout << "Running Py_Initialize()." << endl;
