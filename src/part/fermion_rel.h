@@ -31,7 +31,7 @@
 #include <fstream>
 #include <cmath>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -2744,7 +2744,7 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief Long double version of 
       \ref o2scl::fermion_rel_tl 

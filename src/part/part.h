@@ -27,7 +27,7 @@
 #include <iostream>
 #include <cmath>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_SET_MPFR
@@ -102,7 +102,7 @@ namespace o2scl {
    */
   typedef thermo_tl<long double> thermo_ld;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief 25-digit precision thermodynamics object
    */
@@ -260,7 +260,7 @@ namespace o2scl {
   /** \brief Calibrate particle classes by comparing double to
       multiprecision
   */
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   template <class fp1_t=double,
             class fp2_t=long double,
             class fp3_t=cpp_dec_float_25> class part_cal_new

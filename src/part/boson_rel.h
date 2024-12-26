@@ -1058,7 +1058,7 @@ namespace o2scl {
   */
   typedef boson_rel_tl<> boson_rel;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief Long double version of 
       \ref o2scl::boson_rel_tl 

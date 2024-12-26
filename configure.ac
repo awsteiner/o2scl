@@ -413,6 +413,20 @@ AC_ARG_ENABLE(acol,
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 
 # ------------------------------------------------------------------
+# Enable or disable support for multiprecision
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(multip,
+[  --enable-multip           Add multiprecision support @<:@default=no@:>@],
+   [case "${enableval}" in
+   yes) multip=true ;;
+   no)  multip=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-multip) ;;
+   esac],[multip=false])
+
+AM_CONDITIONAL(O2SCL_MULTIP, test x$multip = xtrue)
+
+# ------------------------------------------------------------------
 # Enable or disable snap configurations
 # ------------------------------------------------------------------
 

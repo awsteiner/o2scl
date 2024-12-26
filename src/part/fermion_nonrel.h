@@ -472,7 +472,7 @@ namespace o2scl {
   */
   typedef fermion_nonrel_tl<> fermion_nonrel;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief Long double version of 
       \ref o2scl::fermion_nonrel_tl 

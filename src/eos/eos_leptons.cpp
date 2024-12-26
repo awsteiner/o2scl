@@ -205,7 +205,7 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
   }
 
   if (accuracy==acc_fp_25) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     fcdf25.n=f.n;
     fcdf25.mu=f.mu;
     fcdf25.inc_rest_mass=f.inc_rest_mass;
@@ -216,7 +216,7 @@ int eos_leptons::fermion_density(fermion &f, fermion &fld,
     f.en=static_cast<double>(fcdf25.en);
 #endif
   } else if (accuracy==acc_ld) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     fld.n=f.n;
     fld.mu=f.mu;
     fld.inc_rest_mass=f.inc_rest_mass;
@@ -270,7 +270,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
   if (pde_from_density) {
 
     if (accuracy==acc_ld) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       eld.n=x[0]*nLe;
       if (include_muons) {
         muld.n=x[1]*nLmu;
@@ -280,7 +280,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       }
 #endif
     } else if (accuracy==acc_fp_25) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       ecdf25.n=x[0]*nLe;
       if (include_muons) {
         mucdf25.n=x[1]*nLmu;
@@ -299,7 +299,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       }
     }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     int retx=fermion_density(e,eld,ecdf25,T);
     if (retx!=0) return retx;
     if (include_muons) {
@@ -349,7 +349,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
     }
 
     if (accuracy==acc_ld) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       eld.mu=e.mu;
       frel_ld.pair_mu(eld,T);
       e.n=eld.n;
@@ -358,7 +358,7 @@ int eos_leptons::pair_density_nL_fun(size_t nv, const ubvector &x,
       e.en=eld.en;
 #endif
     } else if (accuracy==acc_fp_25) {
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       ecdf25.mu=e.mu;
       frel_cdf25.pair_mu(ecdf25,T);
       e.n=static_cast<double>(ecdf25.n);
@@ -799,7 +799,7 @@ int eos_leptons::pair_density_eq(double nq, double T) {
   return 0;
 }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
 eos_leptons_multip::eos_leptons_multip() {
 

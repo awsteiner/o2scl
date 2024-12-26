@@ -2019,6 +2019,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "FFTW support: " << o2scl_settings.fftw_support() << endl;
   cout << "Cubature support: " << o2scl_settings.cubature_support() << endl;
+  cout << "Multiprecision support: "
+       << o2scl_settings.multiprecision_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
   cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
@@ -2093,7 +2095,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << " ";
   cout << std::numeric_limits<long double>::epsilon() << endl;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   cout.width(18);
   cout << "cpp_dec_float_25";
   cout.width(3);

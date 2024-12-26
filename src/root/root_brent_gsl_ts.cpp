@@ -25,7 +25,7 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/test_mgr.h>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -219,7 +219,7 @@ int main(void) {
                           "long double 1");
   cout << endl;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   cout << "Now using 50-digit precision:" << endl;
   cl_cdf acl_cdf;
   funct_cdf50 fmf_cdf=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50)>

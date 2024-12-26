@@ -177,7 +177,7 @@ namespace o2scl {
                          double root_tol, double func_tol) {
       
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -502,7 +502,7 @@ namespace o2scl {
                   << std::endl;
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       // ─────────────────────────────────────────────────────────────────
       // 25-digit precision derivative evaluation

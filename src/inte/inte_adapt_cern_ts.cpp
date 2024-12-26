@@ -158,7 +158,7 @@ int main(void) {
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
     cout << "inte_adapt_cern, cpp_dec_float_50, testfun:\n  ";
     

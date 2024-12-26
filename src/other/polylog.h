@@ -596,7 +596,7 @@ namespace o2scl {
 
     /// \name The base integrators
     //@{
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
                        cpp_dec_float_50,cpp_dec_float_100> ikb;
 #else

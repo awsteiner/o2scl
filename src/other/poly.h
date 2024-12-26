@@ -2546,7 +2546,7 @@ namespace o2scl {
 
   };
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief Use multiprecision to automatically solve a cubic to 
       a specified level of precision

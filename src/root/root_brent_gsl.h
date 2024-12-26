@@ -459,7 +459,7 @@ namespace o2scl {
       return o2scl::success;
     }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     
     /** \brief Perform an iteration (adaptive multiprecision version)
     */
@@ -830,7 +830,7 @@ namespace o2scl {
                   << std::endl;
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       // ─────────────────────────────────────────────────────────────────
       // 25-digit precision derivative evaluation
@@ -1096,7 +1096,7 @@ namespace o2scl {
 	
     }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     
     /** \brief Set the information for the solver
         (adaptive multiprecision version)

@@ -116,7 +116,7 @@ namespace o2scl {
 
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<25> > >
   fermion_cdf25;
@@ -133,7 +133,7 @@ namespace o2scl {
 
 #ifdef O2SCL_SET_MPFR
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<25> > >
   fermion_mpfr25;

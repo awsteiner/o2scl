@@ -381,7 +381,7 @@ namespace o2scl {
 
   };
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision using the internal constant library

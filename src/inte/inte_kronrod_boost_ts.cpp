@@ -105,7 +105,7 @@ int main(void) {
     cout << endl;
   }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   {
     // Integrate test_func over [0,1] and compare to the exact result
     // at 50-digit precision

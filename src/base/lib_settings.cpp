@@ -627,6 +627,14 @@ bool lib_settings_class::cubature_support() {
 #endif
 }
 
+bool lib_settings_class::multiprecision_support() {
+#ifdef O2SCL_MULTIP
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::python_support() {
 #ifdef O2SCL_SET_PYTHON
   return true;

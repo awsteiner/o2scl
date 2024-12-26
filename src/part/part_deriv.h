@@ -177,7 +177,7 @@ namespace o2scl {
    */
   typedef part_deriv_press_tl<long double> part_deriv_press_ld;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief 25-digit precision version of \ref
       o2scl::part_deriv_press_tl
@@ -297,7 +297,7 @@ namespace o2scl {
    */
   typedef fermion_deriv_tl<long double> fermion_deriv_ld;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   /** \brief 25-digit floating point version of \ref fermion_deriv_tl
    */
   typedef fermion_deriv_tl<cpp_dec_float_25> fermion_deriv_cdf25;
@@ -408,7 +408,7 @@ namespace o2scl {
    */
   typedef boson_deriv_tl<long double> boson_deriv_ld;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   /** \brief 25-digit floating point version of \ref boson_deriv_tl
    */
   typedef boson_deriv_tl<cpp_dec_float_25> boson_deriv_cdf25;
@@ -475,7 +475,7 @@ namespace o2scl {
    */
   typedef part_deriv_tl<long double> part_deriv_ld;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   /** \brief 25-digit floating point version of \ref part_deriv_tl
    */
   typedef part_deriv_tl<cpp_dec_float_25> part_deriv_cdf25;

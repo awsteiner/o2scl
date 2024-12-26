@@ -345,7 +345,7 @@ namespace o2scl {
     
   };
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /** \brief Multiprecision version of \ref eos_leptons
 

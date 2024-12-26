@@ -56,7 +56,7 @@ namespace o2scl {
     int(size_t,const boost::numeric::ublas::vector<long double> &,
 	boost::numeric::ublas::vector<long double> &) > mm_funct_ld;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_25> &,

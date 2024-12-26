@@ -33,7 +33,7 @@
 // for typeid()
 #include <typeinfo>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <o2scl/set_mpfr.h>
@@ -45,7 +45,7 @@
 
 namespace o2scl {
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
@@ -97,7 +97,7 @@ namespace o2scl {
   typedef long double o2fp_50;
   typedef long double o2fp_100;
   
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
   
 #endif
   
@@ -108,7 +108,7 @@ namespace o2scl {
   */
   typedef std::function<long double(long double)> funct_ld;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h
@@ -163,12 +163,12 @@ namespace o2scl {
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
 
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
 #endif
   
   //@}
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
   
   /** \brief One-dimensional function typedef in src/base/funct.h
@@ -201,10 +201,10 @@ namespace o2scl {
 
   // end of #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
 #endif
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
 #endif
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
@@ -1310,7 +1310,7 @@ namespace o2scl {
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
 
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
 #endif
   
 }
