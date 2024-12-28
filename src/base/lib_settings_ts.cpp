@@ -53,6 +53,7 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
+#ifdef O2SCL_MULTIP
   funct_multip_string fms;
   fms.set_function("log(1+x)","x");
   fms.verbose=2;
@@ -71,6 +72,7 @@ int main(void) {
     cout << dtos(log1p(1.0e-4),0) << " "
          << dtos(val,0) << " " << err << endl;
   }
+#endif
   
   t.report();
 
