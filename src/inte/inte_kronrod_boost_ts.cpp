@@ -63,6 +63,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifdef O2SCL_MULTIP
+  
   inte_kronrod_boost<61> imkb;
 #ifdef O2SCL_SET_MPFR
   inte_kronrod_boost<61,mpfr_25,mpfr_35,mpfr_50,mpfr_100> imkb_mpfr;
@@ -105,7 +107,6 @@ int main(void) {
     cout << endl;
   }
 
-#ifdef O2SCL_MULTIP
   {
     // Integrate test_func over [0,1] and compare to the exact result
     // at 50-digit precision

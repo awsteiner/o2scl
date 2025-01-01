@@ -192,9 +192,12 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-39,
                                        "tanh_sinh test cdf");
     cout << endl;
-
+    
+#endif
   }
 
+#ifdef O2SCL_MULTIP
+  
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);
