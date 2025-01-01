@@ -66,7 +66,8 @@ int main(void) {
   
   test_mgr t;
   t.set_output_level(2);
-  
+
+#ifdef O2SCL_MULTIP  
   {
     cout << "0." << endl;
     fmc f2;
@@ -128,6 +129,7 @@ int main(void) {
     { return f3.func(tx,f3.param_f(tx)); },1.0e-4,val,err);
     t.test_rel(val,log1p(0.1001),1.0e-15,"funct_multip 3");
   }
+#endif
   
   t.report();
   return 0;
