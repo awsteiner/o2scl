@@ -189,6 +189,7 @@ int main(void) {
                                     "inte_adapt_cern_mpfr");
 
 #endif
+#endif
     
   }
 
@@ -213,6 +214,8 @@ int main(void) {
     cout << "inte_transform with inte_adapt_cern, long double precision, "
          << "sin_recip:\n  " << endl;
 
+#ifdef O2SCL_MULTIP
+    
     /*
     inte_transform<funct_ld,inte_adapt_cern
 		   <funct_ld,inte_gauss56_cern
@@ -283,7 +286,8 @@ int main(void) {
     mpfr_float_50 one_mp50=1.0;
     mpfr_float_50 mone_mp50=-1.0;
     mpfr_float_50 hundred_mp50=100.0;
-    mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/(hundred_mp50+one_mp50));
+    mpfr_float_50 exact_mp50=one_mp50-cos(hundred_mp50/
+					  (hundred_mp50+one_mp50));
     funct_mpfr50 tf2_mp50=std::bind(sin_recip<mpfr_float_50>,
                                   std::placeholders::_1);
     mpfr_float_50 calc_mp50, ei_mp50;
@@ -300,6 +304,7 @@ int main(void) {
 				       "it_iac mpfr_float_50");
     cout << endl;
 
+#endif
 #endif
     
   }
@@ -319,6 +324,8 @@ int main(void) {
     t.test_rel(ans,exact,1.0e-8,"imac test");
   }
 
+#ifdef O2SCL_MULTIP
+  
   {
     inte_adapt_cern imac;
     
