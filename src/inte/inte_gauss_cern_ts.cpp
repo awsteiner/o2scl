@@ -94,6 +94,7 @@ int main(void) {
     cout << calc << " " << exact << " " << diff << endl;
   }
 
+#ifdef O2SCL_MULTIP  
   {
     inte_gauss_cern<funct_ld,long double,
 		    inte_gauss_coeffs_long_double> cg_ld;
@@ -146,6 +147,7 @@ int main(void) {
     cout << calc << " " << exact << " " << diff << endl;
   }
   
+#endif
 #endif
   
   t.report();

@@ -62,6 +62,8 @@ int main(void) {
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << endl;
 
+#ifdef O2SCL_MULTIP
+  
   // Moving to long double here doesn't really improve the accuracy
   // for this particular function, but it verifies that
   // inte_gauss56_cern compiles and executes with the long double
@@ -89,6 +91,7 @@ int main(void) {
 				     "inte_gauss56_cern ls");
   diff_cdf=fabs(calc_cdf-exact_cdf);
   cout << calc_cdf << " " << exact_cdf << " " << diff_cdf << endl;
+#endif
   
   t.report();
   return 0;
