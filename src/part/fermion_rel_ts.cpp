@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
   
+#ifdef O2SCL_MULTIP
+  
   std::string arg;
   if (argc>=2) {
     arg=argv[1];
@@ -66,8 +68,6 @@ int main(int argc, char *argv[]) {
   frld.dit.err_nonconv=false;
   frld.it_multip.err_nonconv=false;
   
-#ifdef O2SCL_MULTIP
-  
   fermion_cdf25 f25;
   f25.g=2;
   
@@ -77,8 +77,6 @@ int main(int argc, char *argv[]) {
   fr25.nit.err_nonconv=false;
   fr25.dit.err_nonconv=false;
   fr25.it_multip.err_nonconv=false;
-
-#endif
 
   int first_test=0;
   double test_shift=1.0;
@@ -109,8 +107,6 @@ int main(int argc, char *argv[]) {
     frld.density_root.tol_rel=1.0e-14;
     frld.def_massless_root.tol_rel=1.0e-14;
     
-#ifdef O2SCL_MULTIP
-    
     fr25.dit.tol_abs=1.0e-18;
     fr25.dit.tol_rel=1.0e-18;
     fr25.nit.tol_abs=1.0e-18;
@@ -119,8 +115,6 @@ int main(int argc, char *argv[]) {
     fr25.density_root.tol_rel=1.0e-18;
     fr25.def_massless_root.tol_rel=1.0e-18;
 
-#endif
-    
     test_shift=10.0;
   }
   
@@ -144,8 +138,6 @@ int main(int argc, char *argv[]) {
     frld.density_root.tol_rel=1.0e-18;
     frld.def_massless_root.tol_rel=1.0e-18;
     
-#ifdef O2SCL_MULTIP
-    
     fr25.multip=true;
     fr25.upper_limit_fac=62.0;
     fr25.deg_entropy_fac=62.0;
@@ -153,8 +145,6 @@ int main(int argc, char *argv[]) {
     fr25.exp_limit=6.7e7;
     fr25.density_root.tol_rel=1.0e-23;
     fr25.def_massless_root.tol_rel=1.0e-23;
-    
-#endif
     
   }
 
@@ -196,13 +186,8 @@ int main(int argc, char *argv[]) {
   int count=0;
   
   part_cal_new<> pcn;
-#ifdef O2SCL_MULTIP
   pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
                    1543,1544,2393,2176,1400,1906,2597);
-#else
-  pcn.test_calc_mu(f,fld,fld,fr,frld,frld,t,count,first_test,
-                   1543,1544,2393,2176,1400,1906,2597);
-#endif
   //pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
   //1618,1604,2336,2218,1408,1642,1947);
   //exit(-1);
@@ -1052,6 +1037,7 @@ int main(int argc, char *argv[]) {
     
   }
 
+#endif
 #endif
   
   t.report();
