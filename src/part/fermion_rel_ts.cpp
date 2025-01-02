@@ -40,8 +40,6 @@ int main(int argc, char *argv[]) {
 
   test_mgr t;
   t.set_output_level(1);
-
-#ifdef O2SCL_MULTIP
   
   std::string arg;
   if (argc>=2) {
@@ -49,24 +47,27 @@ int main(int argc, char *argv[]) {
   }
   
   fermion f;
-  fermion_ld fld;
-  fermion_cdf25 f25;
   f.g=2;
-  fld.g=2;
-  f25.g=2;
-  
-  fermion_rel fr;
-  fermion_rel_ld frld;
-  fermion_rel_cdf25 fr25;
-  
-  fr.verify_ti=true;
-  frld.verify_ti=true;
-  fr25.verify_ti=true;
 
+  fermion_rel fr;
+  fr.verify_ti=true;
   fr.err_nonconv=false;
   fr.nit.err_nonconv=false;
   fr.dit.err_nonconv=false;
   fr.it_multip.err_nonconv=false;
+  
+#ifdef O2SCL_MULTIP
+  
+  fermion_ld fld;
+  fermion_cdf25 f25;
+  fld.g=2;
+  f25.g=2;
+  
+  fermion_rel_ld frld;
+  fermion_rel_cdf25 fr25;
+  
+  frld.verify_ti=true;
+  fr25.verify_ti=true;
 
   frld.err_nonconv=false;
   frld.nit.err_nonconv=false;
@@ -77,6 +78,8 @@ int main(int argc, char *argv[]) {
   fr25.nit.err_nonconv=false;
   fr25.dit.err_nonconv=false;
   fr25.it_multip.err_nonconv=false;
+
+#endif
 
   int first_test=0;
   double test_shift=1.0;
@@ -99,6 +102,8 @@ int main(int argc, char *argv[]) {
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
     
+#ifdef O2SCL_MULTIP
+    
     frld.dit.tol_abs=1.0e-15;
     frld.dit.tol_rel=1.0e-15;
     frld.nit.tol_abs=1.0e-15;
@@ -114,6 +119,8 @@ int main(int argc, char *argv[]) {
     fr25.upper_limit_fac=80.0;
     fr25.density_root.tol_rel=1.0e-18;
     fr25.def_massless_root.tol_rel=1.0e-18;
+
+#endif
     
     test_shift=10.0;
   }
@@ -125,13 +132,14 @@ int main(int argc, char *argv[]) {
     // satisfied at higher precision. Either way, it is quite slow.
     
     fr.multip=true;
-    frld.multip=true;
-    fr25.multip=true;
     
     fr.upper_limit_fac=40.0;
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
     
+#ifdef O2SCL_MULTIP
+    
+    frld.multip=true;
     frld.upper_limit_fac=52.0;
     frld.deg_entropy_fac=52.0;
     frld.tol_expan=1.0e-18;
@@ -139,12 +147,16 @@ int main(int argc, char *argv[]) {
     frld.density_root.tol_rel=1.0e-18;
     frld.def_massless_root.tol_rel=1.0e-18;
     
+    fr25.multip=true;
     fr25.upper_limit_fac=62.0;
     fr25.deg_entropy_fac=62.0;
     fr25.tol_expan=1.0e-23;
     fr25.exp_limit=6.7e7;
     fr25.density_root.tol_rel=1.0e-23;
     fr25.def_massless_root.tol_rel=1.0e-23;
+    
+#endif
+    
   }
 
   /*
