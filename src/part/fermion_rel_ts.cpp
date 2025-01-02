@@ -56,24 +56,23 @@ int main(int argc, char *argv[]) {
   fr.dit.err_nonconv=false;
   fr.it_multip.err_nonconv=false;
   
-#ifdef O2SCL_MULTIP
-  
   fermion_ld fld;
-  fermion_cdf25 f25;
   fld.g=2;
-  f25.g=2;
   
   fermion_rel_ld frld;
-  fermion_rel_cdf25 fr25;
-  
   frld.verify_ti=true;
-  fr25.verify_ti=true;
-
   frld.err_nonconv=false;
   frld.nit.err_nonconv=false;
   frld.dit.err_nonconv=false;
   frld.it_multip.err_nonconv=false;
   
+#ifdef O2SCL_MULTIP
+  
+  fermion_cdf25 f25;
+  f25.g=2;
+  
+  fermion_rel_cdf25 fr25;
+  fr25.verify_ti=true;
   fr25.err_nonconv=false;
   fr25.nit.err_nonconv=false;
   fr25.dit.err_nonconv=false;
@@ -102,8 +101,6 @@ int main(int argc, char *argv[]) {
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
     
-#ifdef O2SCL_MULTIP
-    
     frld.dit.tol_abs=1.0e-15;
     frld.dit.tol_rel=1.0e-15;
     frld.nit.tol_abs=1.0e-15;
@@ -111,6 +108,8 @@ int main(int argc, char *argv[]) {
     frld.upper_limit_fac=60.0;
     frld.density_root.tol_rel=1.0e-14;
     frld.def_massless_root.tol_rel=1.0e-14;
+    
+#ifdef O2SCL_MULTIP
     
     fr25.dit.tol_abs=1.0e-18;
     fr25.dit.tol_rel=1.0e-18;
@@ -137,8 +136,6 @@ int main(int argc, char *argv[]) {
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
     
-#ifdef O2SCL_MULTIP
-    
     frld.multip=true;
     frld.upper_limit_fac=52.0;
     frld.deg_entropy_fac=52.0;
@@ -146,6 +143,8 @@ int main(int argc, char *argv[]) {
     frld.exp_limit=11400.0;
     frld.density_root.tol_rel=1.0e-18;
     frld.def_massless_root.tol_rel=1.0e-18;
+    
+#ifdef O2SCL_MULTIP
     
     fr25.multip=true;
     fr25.upper_limit_fac=62.0;
@@ -194,8 +193,23 @@ int main(int argc, char *argv[]) {
   }
   */
   
-  cout.precision(4);
   int count=0;
+  
+  part_cal_new<> pcn;
+#ifdef O2SCL_MULTIP
+  pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+                   1543,1544,2393,2176,1400,1906,2597);
+#else
+  pcn.test_calc_mu(f,fld,fld,fr,frld,frld,t,count,first_test,
+                   1543,1544,2393,2176,1400,1906,2597);
+#endif
+  //pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+  //1618,1604,2336,2218,1408,1642,1947);
+  //exit(-1);
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  cout.precision(4);
   // Sums of calc_mu() comparisons between fp types
   int cmu_n=0, cmu_en=0, cmu_ld_n=0, cmu_ld_en=0;
   // Sums of calc_mu() accuracy via. thermodynamic identity
@@ -212,15 +226,6 @@ int main(int argc, char *argv[]) {
   int pd_mu=0, pd_en=0, pd_ld_mu=0, pd_ld_en=0;
   // Sums of pair_density() accuracy via. thermodynamic identity
   int pd_ti=0, pd_ld_ti=0, pd_25_ti=0;
-
-  part_cal_new<> pcn;
-  if (false) {
-    pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
-                     1564,1544,2393,2176,1432,1906,2597);
-  }
-  //pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
-  //1618,1604,2336,2218,1408,1642,1947);
-  //exit(-1);
 
   cout << " cnt m          T           mu/n       "
        << "d-ld  ld-25 ti verify" << endl;
@@ -923,8 +928,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-#endif
-
   cout << "calc_mu density (double <-> long double): "
        << cmu_n << endl;
   cout << "calc_mu entropy (double <-> long double): "
@@ -1048,6 +1051,8 @@ int main(int argc, char *argv[]) {
     t.test_gen(pd_25_ti>=1271,"pd_25_ti");
     
   }
+
+#endif
   
   t.report();
 
