@@ -31,6 +31,7 @@ using namespace o2scl;
 gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;
   p_components_func=0;
+  p_get_func=0;
   p_set_args=0;
   p_components_args=0;
   p_instance=0;

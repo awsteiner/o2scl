@@ -153,8 +153,10 @@ namespace o2scl {
       p_instance=0;
       p_class=0;
       p_module=0;
-      
-      set_function(class_name,options,v,module_name,set_func,eval_func);
+
+      if (class_name.length()>0) {
+        set_function(class_name,options,v,module_name,set_func,eval_func);
+      }
     }
 
     /** \brief Free memory associated with the Python objects and the
@@ -394,15 +396,17 @@ namespace o2scl {
     
         // Load the python set function
         if (this->verbose>0) {
-          std::cout << "  Loading python function set." << std::endl;
+          std::cout << "  Loading python function " << c_set_func
+                    << "." << std::endl;
         }
         p_set_func=PyObject_GetAttrString(p_module,c_set_func.c_str());
         if (p_set_func==0) {
-          O2SCL_ERR2("Get function failed in ",
-                     "classify_python::set_function().",
-                     o2scl::exc_efailed);
+          O2SCL_ERR((((std::string)"Get function ")+
+                     c_set_func+" failed in "+
+                     "classify_python::set_function().").c_str(),
+                    o2scl::exc_efailed);
         }
-
+        
         // Load the python eval function
         if (this->verbose>0) {
           std::cout << "  Loading python function eval." << std::endl;

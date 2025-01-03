@@ -180,8 +180,10 @@ int main(int argc, char *argv[]) {
   test_mgr tm;
   tm.set_output_level(1);
 
-  // Parameter limits and initial points
-
+  // ─────────────────────────────────────────────────────────────────
+  // Initial setup
+  
+  // Parameter limits
   ubvector low_tf(2), high_tf(2);
   low_tf[0]=-5.0;
   high_tf[0]=10.0;
@@ -212,9 +214,6 @@ int main(int argc, char *argv[]) {
   data_vec[0].resize(2);
   data_vec[1].resize(2);
 
-  cout << "──────────────────────────────────────────────────────────"
-       << endl;
-    
   // Set parameter names and units
   vector<string> pnames={"x","y"};
   vector<string> punits={"",""};
@@ -222,8 +221,7 @@ int main(int argc, char *argv[]) {
   vector<string> dunits={"",""};
   mct.set_names_units(pnames,punits,dnames,dunits);
 
-  // Run an initial HMC simulation
-  
+  // Set up HMC stepper
   shared_ptr<mcmc_stepper_hmc<point_funct,data_t,ubvector>> hmc_stepper
     (new mcmc_stepper_hmc<point_funct,data_t,ubvector>);
   mct.stepper=hmc_stepper;
@@ -231,6 +229,7 @@ int main(int argc, char *argv[]) {
   hmc_stepper->mom_step[0]=0.5;
   hmc_stepper->epsilon=0.02;
 
+  /// MCMC parameters
   mct.store_pos_rets=true;
   mct.store_rejects=true;
   mct.n_retrain=0;
@@ -239,17 +238,24 @@ int main(int argc, char *argv[]) {
   mct.max_iters=500;
   mct.prefix="ex_mcmc_nn1";
 
-  // Run MCMC
+  cout << "──────────────────────────────────────────────────────────"
+       << endl;
+    
+  // ─────────────────────────────────────────────────────────────────
+  // Create an initial guess using HMC
+  
   mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   cout << endl;
 
-  // Copy the table data to a tensor for use in the proposal
-  // distribution
+  // ─────────────────────────────────────────────────────────────────
+  // Proposal distributions
+  
+  cout << "Training the proposal distributions." << endl;
+  
+  // Copy the table data to a tensor
   tensor<> ten_in, ten_in_copy;
   vector<size_t> in_size={mct.get_table()->get_nlines(),2};
   ten_in.resize(2,in_size);
-  //vector<size_t> class_size={mct.get_table()->get_nlines(),1};
-  //ten_in.resize(2,in_size);
   
   for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
     // Only select lines which have mult greater than 0.5
@@ -264,9 +270,8 @@ int main(int argc, char *argv[]) {
   }
 
   // Try three different kinds of proposal distributions
-  
-  cout << "Training the proposal distributions." << endl;
-  
+
+  // Normalizing flows
   ten_in_copy=ten_in;
   std::shared_ptr<nflows_python<ubvector>> nflows
     (new nflows_python<ubvector>);
@@ -274,6 +279,7 @@ int main(int argc, char *argv[]) {
                    "nflows_nsf",1);
   cout << "Done training the nflows proposal distribution.\n" << endl;
 
+  // KDE
   ten_in_copy=ten_in;
   std::shared_ptr<kde_python<ubvector>> kde
     (new kde_python<ubvector>);
@@ -284,13 +290,16 @@ int main(int argc, char *argv[]) {
   kde->set_data(ten_in_copy,bw_array);
                 
   cout << "Done training the KDE proposal distribution.\n" << endl;
-  
+
+  // GMM
   ten_in_copy=ten_in;
   std::shared_ptr<gmm_python> gmm(new gmm_python);
-  gmm->set_function("o2sclpy",4,ten_in_copy,"verbose=0","gmm_sklearn");
+  gmm->set_function("o2sclpy",4,ten_in_copy,"verbose=0","gmm_sklearn",0);
+  gmm->get_python();
+  std::shared_ptr<prob_dens_mdim_gmm<>> pdmg=gmm->get_gmm();
   cout << "Done training the GMM proposal distribution.\n" << endl;
 
-  // We test the proposal distributions by simulating MH steps
+  // Setup an array of shared pointers to the proposal distributions
 
   std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
                                   prob_cond_mdim_indep<>>> indep_stepper[3];
@@ -306,12 +315,14 @@ int main(int argc, char *argv[]) {
   indep_stepper[0]->proposal[0].set_base(nflows);
   indep_stepper[1]->proposal.resize(1);
   indep_stepper[1]->proposal[0].set_base(kde);
-  gmm->get_python();
-  std::shared_ptr<prob_dens_mdim_gmm<>> pdmg=gmm->get_gmm();
   indep_stepper[2]->proposal.resize(1);
   indep_stepper[2]->proposal[0].set_base(pdmg);
 
-  // Sample the initial point from all three proposal distributions
+  // ─────────────────────────────────────────────────────────────────
+  // Test each proposal distribution using several MH steps.
+
+  // First, sample the initial point from all three proposal
+  // distributions.
   ubvector p[3], q[3];
   for(size_t k=0;k<3;k++) {
     p[k].resize(2);
@@ -321,13 +332,13 @@ int main(int argc, char *argv[]) {
   (*kde)(p[1]);
   (*pdmg)(p[2]);
 
-  // Compute the average deviation in the log_wgt for MH
-  // steps
+  // Setup the testing tables
   table<> tprop[3];
   for(size_t k=0;k<3;k++) {
     tprop[k].line_of_names("px py qx qy lwp lwq q_prop qual");
   }
   
+  // Compute the average deviation in the log_wgt for MH steps
   vector<double> qual(3);
   static const size_t N_test=200;
   for(size_t i=0;i<N_test;i++) {
@@ -354,11 +365,11 @@ int main(int argc, char *argv[]) {
     
   }
   for(size_t k=0;k<3;k++) qual[k]/=N_test;
-  std::cout << "Quality of proposal distributions: "
-            << qual[0] << " " << qual[1] << " "
+  std::cout << "Quality of proposal distributions: nflows: "
+            << qual[0] << " KDE: " << qual[1] << " GMM: "
             << qual[2] << std::endl;
 
-  // Select best proposal distribution
+  // Select best proposal distribution and put it in index 0
   if (qual[1]<qual[2] && qual[1]<qual[0]) {
     cout << "Selecting KDE." << endl;
     std::swap(indep_stepper[0],indep_stepper[1]);
@@ -376,6 +387,9 @@ int main(int argc, char *argv[]) {
   hdf_output(hf,tprop[1],"prop_KDE");
   hdf_output(hf,tprop[2],"prop_GMM");
   hf.close();
+  
+  // ─────────────────────────────────────────────────────────────────
+  // Setup the three classifiers
   
   for(size_t k=0;k<3;k++) {
     std::shared_ptr<classify_python
@@ -396,9 +410,8 @@ int main(int argc, char *argv[]) {
      "n_iter_no_change=40,tol=1.0e-5",1);
   mct.cl_list[2]->set_function("classify_sklearn_gnb","verbose=1",1);
 
-  // Before we train the emulator, remove the points which don't satisfy
-  // the constraint
-  //mct.get_table()->delete_rows_func("class<0.5");
+  // ─────────────────────────────────────────────────────────────────
+  // Setup the three emulators
   
   // Set up the emulator
   std::shared_ptr<interpm_python
@@ -453,46 +466,12 @@ int main(int argc, char *argv[]) {
   
   mct.emu.push_back(iko);
 
-  /*
-  cout << "Training the emulator." << endl;
-  o2scl::const_matrix_view_table<> ip_in(*(mct.get_table()),{"x","y"});
-  o2scl::matrix_view_table<> ip_out(*(mct.get_table()),{"log_wgt"});
   
-  ip->set_data(2,1,mct.get_table()->get_nlines(),ip_in,ip_out);
-  cout << "Done training the emulator\n." << endl;
-  
-  // Test the emulator by giving it random points
-  table<> temu;
-  temu.line_of_names("x y lw");
-  for(size_t i=0;i<200;i++) {
-    vector<double> in(2);
-    vector<double> out(1);
-    in[0]=r.random()*3.0;
-    in[1]=r.random()*4.0;
-    ip->eval_std_vec(in,out);
-    vector<double> line={in[0],in[1],out[0]};
-    temu.line_of_data(3,line);
-  }
-  */
-  /*
-  hf.open("ex_mcmc_nn2.o2",true);
-  hdf_output(hf,temu,"temu");
-  hf.close();
-  exit(-1);
-  */
-  
-  // Use independence Metropolis-Hastings and use the normalizing
-  // flows object for the proposal distribution
-
-  //std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-  //prob_cond_mdim_indep<>>> indep_stepper
-  //(new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-  //prob_cond_mdim_indep<>>);
-  mct.stepper=indep_stepper[0];
-  //indep_stepper->proposal.resize(1);
-  //indep_stepper->proposal[0].set_base(nflows);
+  // ─────────────────────────────────────────────────────────────────
+  // Run the final MCMC
   
   // Set the MCMC parameters
+  mct.stepper=indep_stepper[0];
   mct.use_emulator=true;
   mct.use_classifier=true;
   mct.n_retrain=0;
@@ -502,11 +481,10 @@ int main(int argc, char *argv[]) {
   mct.verbose=3;
   mct.show_emu=1;
   
-  // Set up the file for the emulator input
-  mct.emu_file="mcmc_nn1_0_out";
-
-  // Set up the file for the classifier input
-  mct.class_file="mcmc_nn1_0_out";
+  // Set up the file for the emulator and classifier input. In this
+  // example, they're the same, but they need not be.
+  mct.emu_file="ex_mcmc_nn1_0_out";
+  mct.class_file="ex_mcmc_nn1_0_out";
 
   mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   

@@ -4161,7 +4161,7 @@ namespace o2scl {
       consideration of autocorrelations.
       
       \note OpenMP threading probably doesn't work yet. This class
-      requires Python support.
+      currently requires Python support (for the classifier).
   */
   template<class func_t, class fill_t, class data_t, class vec_t=ubvector>
   class mcmc_para_emu : public mcmc_para_cli<
@@ -4779,6 +4779,8 @@ namespace o2scl {
         (this->scr_out) << "mcmc_para_emu::emu_train(): Done."
                         << std::endl;
       }
+      cout << "Exiting at the end of emu_train()." << endl;
+      exit(-1);
       
       return;
     }
@@ -5073,6 +5075,7 @@ namespace o2scl {
         }
         emu_table.new_column("log_wgt");
 
+        // Setup emulator test columns
         emu_test.clear();
         for(size_t k=0;k<n_params_local;k++) {
           emu_test.new_column(this->param_names[k]);
@@ -5141,11 +5144,11 @@ namespace o2scl {
                     o2scl::exc_einval);
         }
         
-        // We keep the same rationale as the emulator for row
-        // deletion.
+        // In the classifier case, we want to keep columns with
+        // mult=-2, but we remove columns with smaller values of mult.
         
         if (class_base.is_column("mult")) {
-          class_base.delete_rows_func("abs(mult)<0.5 || mult+2<0.5");
+          class_base.delete_rows_func("abs(mult)<0.5 || mult+3<0.5");
         }
         
         if (class_base.get_nlines()==0) {
