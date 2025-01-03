@@ -34,6 +34,8 @@ int main(void) {
 
   test_mgr t;
   t.set_output_level(1);
+
+#ifdef O2SCL_MULTIP
   
   fermion_nonrel fnr;
   fermion_nonrel_ld fnr_ld;
@@ -54,6 +56,8 @@ int main(void) {
   double v1=pcc.part_calibrate<fermion,fermion_nonrel>
     (f,fnr,"../../data/o2scl/fermion_nr_cal.o2",false,true,true,1,true);
   t.test_abs(v1,0.0,1.0e-12,"calibrate");
+
+#endif
   
   t.set_output_level(2);
   t.report();

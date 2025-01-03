@@ -83,12 +83,14 @@ int main(void) {
   double d4=cd.deriv2(1.0,f1);
   t.test_rel(d4,-4.0*sin(2.0),1.0e-8,"deriv_cern");
 
+#ifdef O2SCL_MULTIP  
   // Use adaptive multiprecision to compute a more accurate first derivative
   deriv_gsl dmg;
   double val, err;
   dmg.deriv_err_multip(1.0,[acl](auto &&tx) mutable
   { return acl.function(tx); },val,err);
   t.test_rel(val,2.0*cos(2.0),1.0e-15,"deriv_multip_gsl");
+#endif
   
   t.report();
   return 0;

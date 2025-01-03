@@ -36,6 +36,8 @@ int main(int argc, char *argv[]) {
   
   test_mgr t;
   t.set_output_level(1);
+
+#ifdef O2SCL_MULTIP
   
   if (true) {
     // Testing dndmu
@@ -214,6 +216,8 @@ int main(int argc, char *argv[]) {
   }
 
   fermion_deriv_rel_ld fdrl;
+
+#endif
   
   t.report();
 
