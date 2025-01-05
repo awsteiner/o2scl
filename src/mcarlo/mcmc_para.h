@@ -1039,7 +1039,7 @@ namespace o2scl {
      */
     virtual int mcmc_init() {
 
-      if (verbose>0) {
+      if (verbose>0 && scr_out.is_open()==false) {
         // Open main output file for this rank
         scr_out.open((prefix+"_"+
                       o2scl::itos(mpi_rank)+"_scr").c_str());
@@ -1063,8 +1063,8 @@ namespace o2scl {
                   << "): accept=" << n_accept[it]
                   << " reject=" << n_reject[it] << std::endl;
         }
-        scr_out.close();
       }
+      scr_out.close();
       return;
     }
     //@}
@@ -4247,8 +4247,17 @@ namespace o2scl {
     /// File containing the training data for the classifier
     std::string class_file;
 
-    /// Maximum size of training tables (default 1000)
-    size_t max_train_size;
+    /// File containing the training data for the emulator
+    std::string emu_tname;
+
+    /// File containing the training data for the classifier
+    std::string class_tname;
+
+    /// Maximum size of emulator training tables (default 1000)
+    size_t max_emu_size;
+
+    /// Maximum size of classifier training tables (default 1000)
+    size_t max_class_size;
 
     /** \brief Number of iterations before retraining (default 0)
 
@@ -4291,7 +4300,8 @@ namespace o2scl {
     /// \name Constructor and destructor
     //@{
     mcmc_para_emu() {
-      max_train_size=1000;
+      max_emu_size=1000;
+      max_class_size=1000;
       n_retrain=0;
       next_retrain_sum=0;
       show_emu=0;
@@ -4438,14 +4448,14 @@ namespace o2scl {
                                            n_rows_emu_base));;
           }
 
-          if (emu_table.get_nlines()>max_train_size) {
+          if (emu_table.get_nlines()>max_emu_size) {
             if (!emu_table.is_column("N")) {
               emu_table.new_column("N");
             }
             for(size_t k=0;k<emu_table.get_nlines();k++) {
               emu_table.set("N",k,k);
             }
-            size_t factor=emu_table.get_nlines()/max_train_size;
+            size_t factor=emu_table.get_nlines()/max_emu_size;
             if (factor<2) factor=2;
             std::string func=((std::string)"N%")+
               o2scl::szttos(factor)+">0.5";
@@ -4459,14 +4469,35 @@ namespace o2scl {
           if (use_classifier) {
             class_train();
           }
-        
+
         }
 
       }
       
       return;
     }
-    
+
+    /** \brief Initial write to HDF5 file 
+     */
+    virtual void file_header(o2scl_hdf::hdf_file &hf) {
+      if (emu_table.get_nlines()>0) {
+        hdf_output(hf,emu_table,"emu_table");
+      }
+      if (emu_test.get_nlines()>0) {
+        hdf_output(hf,emu_test,"emu_test");
+      }
+      if (class_table.get_nlines()>0) {            
+        hdf_output(hf,class_table,"class_table");
+      }
+      if (class_test.get_nlines()>0) {
+        hdf_output(hf,class_test,"class_test");
+      }
+      mcmc_para_cli<
+        std::function<int(size_t,const vec_t &,double &,data_t &)>,fill_t,
+        data_t,vec_t>::file_header(hf);
+      return;
+    }
+        
     /** \brief The function to add a line to the table
 
         This function computes the full likelihood in case of
@@ -4506,12 +4537,12 @@ namespace o2scl {
     /** \brief Train the emulator
      */
     void emu_train() {
-
+      
       if (this->verbose>1) {
         (this->scr_out) << "mcmc_para_emu::emu_train(): Starting."
                         << std::endl;
       }
-
+      
       // ──────────────────────────────────────────────────────────────
       // Update emu_base from any recently obtained data
       
@@ -4524,16 +4555,15 @@ namespace o2scl {
       
       // ──────────────────────────────────────────────────────────────
       // Update emu_train and emu_test
-
+      
       // Compute the number of new rows to emu_train, and determine
       // if we have to thin the data. If so, we have to basically
       // rebuild emu_train from scratch. Otherwise, we can just
       // append new rows to the end of the current emu_train table.
       
-      // We randomly assign rows to either the training or
-      // testing table. This means that the max_train_size
-      // limit isn't precisely respected, but it should be
-      // close enough.
+      // We randomly assign rows to either the training or testing
+      // table. This means that the max_emu_size limit isn't
+      // precisely respected, but it should be close enough.
       
       size_t new_rows_train=((size_t)
                              (((double)(emu_base.get_nlines()-
@@ -4546,18 +4576,36 @@ namespace o2scl {
       size_t new_rows=new_rows_train+new_rows_test;
       
       bool needs_thinning=false;
-      if (max_train_size>0 &&
-          emu_table.get_nlines()+new_rows_train>max_train_size) {
+      if (max_emu_size>0 &&
+          emu_table.get_nlines()+new_rows_train>max_emu_size) {
         needs_thinning=true;
       }
-
+      
+      if (this->verbose>1) {
+        if (needs_thinning) {
+          (this->scr_out) << "mcmc_para_emu::emu_train(): Input emulator "
+                          << "table needs thinning." << std::endl;
+        } else {
+          (this->scr_out) << "mcmc_para_emu::emu_train(): Input emulator "
+                          << "table does not need thinning." << std::endl;
+        }
+        (this->scr_out) << "mcmc_para_emu::emu_train():\n  "
+                        << "new_rows_train,new_rows_test,new_rows,"
+                        << "emu_base lines,\n  max_emu_size: "
+                        << new_rows_train << " "
+                        << new_rows_test << " "
+                        << new_rows << " "
+                        << emu_base.get_nlines() << " "
+                        << max_emu_size << std::endl;
+      }
+      
       if (needs_thinning) {
-
+        
         emu_test.clear_data();
         emu_table.clear_data();
-
+        
         size_t j=0;
-        size_t imax=((size_t)(((double)max_train_size)/(1.0-test_size)));
+        size_t imax=((size_t)(((double)max_emu_size)/(1.0-test_size)));
         for(size_t i=0;i<imax;i++) {
           
           std::vector<double> line;
@@ -4627,6 +4675,13 @@ namespace o2scl {
         }
       }
       
+      if (this->verbose>1) {
+        (this->scr_out) << "mcmc_para_emu::emu_train(): emu_base lines: "
+                        << emu_base.get_nlines() << "\n  emu_table lines: "
+                        << emu_table.get_nlines() << " emu_test lines: "
+                        << emu_test.get_nlines() << std::endl;
+      }
+      
       // ──────────────────────────────────────────────────────────────
       // Train the emulators
       
@@ -4635,18 +4690,13 @@ namespace o2scl {
       double verify=((double)emu.size())/((double)this->n_threads)-
         ((double)kmax);
       if (fabs(verify)>1.0e-10) {
-        (this->scr_out) << "verify: " << kmax << " " << verify << std::endl;
+        (this->scr_out) << "mcmc_para_emu::emu_train(): "
+                        << "verify: " << kmax << " " << verify << std::endl;
         O2SCL_ERR2("Number of threads does not evenly divide ",
                    "emulator size.",o2scl::exc_efailed);
       }
       
-      double emu_time;
-#ifdef O2SCL_MPI
-      emu_time=MPI_Wtime();
-#else
-      emu_time=time(0);
-#endif
-      
+      std::vector<double> emu_time(emu.size());
       for(size_t k=0;k<kmax;k++) {
         
 #ifdef O2SCL_SET_OPENMP
@@ -4664,8 +4714,30 @@ namespace o2scl {
                                              this->param_names);
             matrix_view_table<> mvt_y(emu_table,{"log_wgt"});
             
+            if (this->verbose>1) {
+              (this->scr_out) << "mcmc_para_emu::emu_train(): "
+                              << "Training emulator with index "
+                              << ix << std::endl;
+            }
+            
+#ifdef O2SCL_MPI
+            emu_time[ix]=MPI_Wtime();
+#else
+            emu_time[ix]=time(0);
+#endif
+            
             emu[ix]->set_data(n_params_child,1,emu_table.get_nlines(),
                               cmvt_x,mvt_y);
+            
+#ifdef O2SCL_MPI
+            emu_time[ix]=MPI_Wtime()-emu_time[ix];
+#else
+            emu_time[ix]=time(0)-emu_time[ix];
+#endif      
+            if (this->verbose>1) {
+              (this->scr_out) << "mcmc_para_emu::emu_train(): Time: "
+                              << emu_time[ix] << std::endl;
+            }
             
           }
           
@@ -4673,17 +4745,6 @@ namespace o2scl {
         }
         
         // End of loop over 'k'
-      }
-      
-#ifdef O2SCL_MPI
-      emu_time=MPI_Wtime()-emu_time;
-#else
-      emu_time=time(0)-emu_time;
-#endif
-      
-      if (this->verbose>1) {
-        (this->scr_out) << "mcmc_para_emu::emu_train(): Done. Time: "
-                        << emu_time << std::endl;
       }
       
       // ──────────────────────────────────────────────────────────────
@@ -4725,12 +4786,14 @@ namespace o2scl {
                 emu[ix]->eval(x,y);
                 
                 // Update the quality factor
+                emu_test.set("log_wgt_emu",i,y[0]);
                 qual[k]+=fabs(y[0]-emu_test.get("log_wgt",i));
               }
               (this->scr_out) << "mcmc_para_emu::emu_train(): "
-                              << "Emulator training thread: "
-                              << it << " index: " << ix
-                              << "quality: " << qual[k] << std::endl;
+                              << "Testing emulator.\n  rank: "
+                              << this->mpi_rank << " thread: " << it
+                              << " index: " << ix
+                              << " quality: " << qual[k] << std::endl;
               
               // End of loop over 'k'
             }
@@ -4765,22 +4828,10 @@ namespace o2scl {
         // End of 'if (test_size>0)'
       }
       
-      // ──────────────────────────────────────────────────────────────
-      // Store the initial number of emulator table rows
-      
-      /*
-        n_rows_emu_base=emu_base.get_nlines();
-        (this->scr_out) << "mcmc_para_emu::emu_train(): "
-        << "n_rows_emu_base: " << n_rows_emu_base
-        << std::endl;
-      */
-      
       if (this->verbose>1) {
         (this->scr_out) << "mcmc_para_emu::emu_train(): Done."
                         << std::endl;
       }
-      cout << "Exiting at the end of emu_train()." << endl;
-      exit(-1);
       
       return;
     }
@@ -4789,123 +4840,175 @@ namespace o2scl {
      */
     void class_train() {
 
-#ifdef O2SCL_NEVER_DEFINED
-      
       if (this->verbose>1) {
         (this->scr_out) << "mcmc_para_emu::class_train(): Starting."
                         << std::endl;
       }
       
-      // Thin the data if we have more data than "max_train_size"
-      if (class_base.get_nlines()>max_train_size) {
-        size_t factor=class_base.get_nlines()/max_train_size;
+      // Thin the data if we have more data than "max_class_size"
+      if (class_base.get_nlines()>max_class_size) {
+        size_t factor=class_base.get_nlines()/max_class_size;
         if (factor<2) factor=2;
         class_base.delete_rows_func(((std::string)"N%")+
                                     o2scl::szttos(factor)+">0.5");
         if (class_base.get_nlines()==0) {
-          O2SCL_ERR2("Classifier table empty after max_train_size ",
+          O2SCL_ERR2("Classifier table empty after max_class_size ",
                      "limit in mcmc_para_emu::class_train().",
                      o2scl::exc_esanity);
         }
       }
       
-      if (show_emu>0) {
-        
-        if (this->verbose>1) {
-          (this->scr_out) << "mcmc_para_emu::class_train(): "
-                          << "Logging classifier. " << cl_list.size()
-                          << std::endl;
-        }
-        
-        
-        class_test.new_column("class_emu");
-        
-        for(size_t iec=0;iec<cl_list.size();iec++) {
-          
-          // Emulate each row, and place the result in column
-          // log_wgt_emu
-          double qualc=0.0;
-          
-          for(size_t i=0;i<class_test.get_nlines();i++) {
-            ubvector x(n_params_local);
-            ubvector_int y(1);
-            for(size_t j=0;j<n_params_local;j++) {
-              x[j]=class_test.get(j,i);
-            }
-            cl_list[iec]->eval(x,y);
-            class_test.set("class_emu",i,y[0]);
-            
-            // Update the quality factor
-            qualc+=fabs(y[0]-class_test.get("class",i));
-          }
-          (this->scr_out) << "mcmc_para_emu::class_train(): "
-                          << "Classifier quality factor: "
-                          << qualc << std::endl;
-          
-          o2scl_hdf::hdf_file hf_cl_list;
-          std::string test_class_file=this->prefix+"_"+
-            o2scl::itos(this->mpi_rank)+"_"+
-            o2scl::szttos(iec)+"_tc.o2";
-          hf_cl_list.open_or_create(test_class_file);
-          o2scl_hdf::hdf_output(hf_cl_list,class_test_tab,"test_cl_list");
-          hf_cl_list.close();
-          
-        }
-        
-      }
-    
-      // End of 'if (n_retrain>0)'
-    }
-
-    {
+      // ──────────────────────────────────────────────────────────────
+      // Update class_train and class_test
       
-      if (use_classifier) {
-        
-        // Select 10 percent of the class_table rows for the
-        // test table
-        if (!class_table.is_column("N")) {
-          class_table.new_column("N");
-        }
-        for(size_t k=0;k<class_table.get_nlines();k++) {
-          class_table.set("N",k,k);
-        }
-        n_move=class_table.get_nlines()/10;
-        funcx=((std::string)"N>")+
-          o2scl::szttos(class_table.get_nlines()-n_move);
-        
-        // Copy the rows from class_table to the test table
-        class_table.copy_rows(((std::string)"N>")+
-                              o2scl::szttos(class_table.get_nlines()-n_move),
-                              class_test_tab);
-        
-        // Remove the rows from class_table
-        class_table.set_nlines(class_table.get_nlines()-n_move);
-        
-        if (class_table.get_nlines()==0) {
-          O2SCL_ERR2("Classifier table has no lines after rearranging",
-                     ".",o2scl::exc_einval);
-        }
-        
-        // Delete the temporary column from class_table
-        class_table.delete_column("N");
+      // Compute the number of new rows to class_train, and determine
+      // if we have to thin the data. If so, we have to basically
+      // rebuild class_train from scratch. Otherwise, we can just
+      // append new rows to the end of the current class_train table.
+      
+      // We randomly assign rows to either the training or testing
+      // table. This means that the max_class_size limit isn't
+      // precisely respected, but it should be close enough.
+      
+      size_t new_rows_train=((size_t)
+                             (((double)(class_base.get_nlines()-
+                                        next_retrain_row_class))*
+                              (1.0-test_size)));
+      size_t new_rows_test=((size_t)
+                            (((double)(class_base.get_nlines()-
+                                       next_retrain_row_class))*
+                             test_size));
+      size_t new_rows=new_rows_train+new_rows_test;
+      
+      bool needs_thinning=false;
+      if (max_class_size>0 &&
+          class_table.get_nlines()+new_rows_train>max_class_size) {
+        needs_thinning=true;
       }
+      
+      if (this->verbose>1) {
+        if (needs_thinning) {
+          (this->scr_out) << "mcmc_para_emu::class_train(): Input classifier "
+                          << "table needs thinning." << std::endl;
+        } else {
+          (this->scr_out) << "mcmc_para_emu::class_train(): Input classifier "
+                          << "table does not need thinning." << std::endl;
+        }
+        (this->scr_out) << "mcmc_para_emu::class_train():\n  "
+                        << "new_rows_train,new_rows_test,new_rows,"
+                        << "class_base lines,\n  max_class_size: "
+                        << new_rows_train << " "
+                        << new_rows_test << " "
+                        << new_rows << " "
+                        << class_base.get_nlines() << " "
+                        << max_class_size << std::endl;
+      }
+      
+      if (needs_thinning) {
+        
+        class_test.clear_data();
+        class_table.clear_data();
+        
+        size_t j=0;
+        size_t imax=((size_t)(((double)max_class_size)/(1.0-test_size)));
+        for(size_t i=0;i<imax;i++) {
+          
+          std::vector<double> line;
+          for(size_t k=0;k<n_params_child;k++) {
+            line.push_back(class_base.get(this->param_names[k],j));
+          }
+          line.push_back(class_base.get("log_wgt",j));
+          line.push_back(class_base.get("class",j));
+          line.push_back(class_base.get("class_cl",j));
+
+          if (line.size()!=class_test.get_ncolumns() ||
+              line.size()!=class_table.get_ncolumns()) {
+            O2SCL_ERR2("Line size and number of columns ",
+                       "don't match.",o2scl::exc_esanity);
+          }
+          
+          if (this->rg[0].random()<test_size) {
+            
+            // Add to testing table
+            class_test.line_of_data(line.size(),line);
+            
+          } else {
+            
+            // Add to training table
+            class_table.line_of_data(line.size(),line);
+            
+          }
+            
+          double factor=class_base.get_nlines()/((double)imax);
+          if ((factor-1.0)>0) {
+            size_t dj=(size_t)(factor-1.0);
+            j+=dj;
+          }
+          
+          j++;
+        }
+
+      } else {
+        
+        size_t j=next_retrain_row_class;
+        size_t n_tests=0;
+        for(size_t i=0;i<new_rows;i++) {
+          
+          if (j<class_base.get_nlines()) {
+            
+            std::vector<double> line;
+            for(size_t k=0;k<n_params_child;k++) {
+              line.push_back(class_base.get(this->param_names[k],j));
+            }
+            line.push_back(class_base.get("log_wgt",j));
+            line.push_back(class_base.get("class",j));
+            
+            if (this->rg[0].random()<test_size && n_tests<new_rows_test) {
+              
+              // Add to testing table
+              n_tests++;
+              class_test.line_of_data(line.size(),line);
+              
+            } else {
+              
+              // Add to training table
+              class_table.line_of_data(line.size(),line);
+              
+            }
+
+            next_retrain_row_class++;
+            j++;
+          }
+          
+        }
+        
+      }
+      
+      if (this->verbose>1) {
+        (this->scr_out) << "mcmc_para_emu::class_train(): "
+                        << "class_base lines: "
+                        << class_base.get_nlines()
+                        << "\n  class_table lines: "
+                        << class_table.get_nlines()
+                        << " class_test lines: "
+                        << class_test.get_nlines() << std::endl;
+      }
+      
+      // ──────────────────────────────────────────────────────────────
+      // Train the classifiers
+      
       size_t kmax=cl_list.size()/this->n_threads;
       
       double verify=((double)cl_list.size())/((double)this->n_threads)-
         ((double)kmax);
       if (fabs(verify)>1.0e-10) {
-        (this->scr_out) << "verify: " << kmax << " " << verify << std::endl;
+        (this->scr_out) << "mcmc_para_emu::class_train(): "
+                        << "verify: " << kmax << " " << verify << std::endl;
         O2SCL_ERR2("Number of threads does not evenly divide ",
-                   "emulator size.",o2scl::exc_efailed);
+                   "classifier size.",o2scl::exc_efailed);
       }
       
-      double class_time;
-#ifdef O2SCL_MPI
-      class_time=MPI_Wtime();
-#else
-      class_time=time(0);
-#endif
-      
+      std::vector<double> class_time(cl_list.size());
       for(size_t k=0;k<kmax;k++) {
         
 #ifdef O2SCL_SET_OPENMP
@@ -4919,35 +5022,131 @@ namespace o2scl {
             
             size_t ix=k*this->n_threads+it;
             
-            std::vector<std::string> pnames;
-            for(size_t j=0;j<n_params_child;j++) {
-              pnames.push_back(this->param_names[j]);
-            }
-            const_matrix_view_table<> cmvt_x(class_table,pnames);
+            const_matrix_view_table<> cmvt_x(class_table,
+                                             this->param_names);
             matrix_view_table<> mvt_y(class_table,{"class"});
             
+            if (this->verbose>1) {
+              (this->scr_out) << "mcmc_para_emu::class_train(): "
+                              << "Training classifier with index "
+                              << ix << std::endl;
+            }
+            
+#ifdef O2SCL_MPI
+            class_time[ix]=MPI_Wtime();
+#else
+            class_time[ix]=time(0);
+#endif
+            
             cl_list[ix]->set_data(n_params_child,1,class_table.get_nlines(),
-                                  cmvt_x,mvt_y);
+                              cmvt_x,mvt_y);
+            
+#ifdef O2SCL_MPI
+            class_time[ix]=MPI_Wtime()-class_time[ix];
+#else
+            class_time[ix]=time(0)-class_time[ix];
+#endif      
+            if (this->verbose>1) {
+              (this->scr_out) << "mcmc_para_emu::class_train(): Time: "
+                              << class_time[ix] << std::endl;
+            }
+            
           }
           
           // End of parallel region
         }
         
-        // End of loop over k
+        // End of loop over 'k'
       }
       
-#ifdef O2SCL_MPI
-      class_time=MPI_Wtime()-class_time;
-#else
-      class_time=time(0)-class_time;
+      // ──────────────────────────────────────────────────────────────
+      // Test the classifiers, if requested by the user
+      
+      if (test_size>0.0) {
+        
+        if (this->verbose>1) {
+          (this->scr_out) << "mcmc_para_emu::class_train(): "
+                          << "Testing classifier at "
+                          << class_test.get_nlines() << " points."
+                          << std::endl;
+        }
+        
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
 #endif
+        {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+          for(size_t it=0;it<this->n_threads;it++) {
+
+            std::vector<double> qual(kmax);
+            
+            for(size_t k=0;k<kmax;k++) {
+              
+              size_t ix=k*this->n_threads+it;
+              
+              // Emulate each row, and place the result in column
+              // log_wgt_emu
+              qual[k]=0.0;
+              
+              for(size_t i=0;i<class_test.get_nlines();i++) {
+                ubvector x(n_params_child);
+                ubvector_int y(1);
+                for(size_t j=0;j<n_params_child;j++) {
+                  x[j]=class_test.get(j,i);
+                }
+                cl_list[ix]->eval(x,y);
+                
+                // Update the quality factor
+                class_test.set("class_cl",i,y[0]);
+                qual[k]+=fabs(((double)y[0])-class_test.get("class",i));
+              }
+              (this->scr_out) << "mcmc_para_emu::class_train(): "
+                              << "Testing classifier.\n  rank: "
+                              << this->mpi_rank << " thread: " << it
+                              << " index: " << ix
+                              << " quality: " << qual[k] << std::endl;
+              
+              // End of loop over 'k'
+            }
+
+            // Find best classifier and swap it into the active classifier
+            // location if necessary
+            size_t k_best=vector_min_index<std::vector<double>,double>
+              (kmax,qual);
+            if (k_best!=0) {
+              (this->scr_out) << "mcmc_para_emu::class_train(): "
+                              << "Swapping classifiers "
+                              << k_best*this->n_threads+it << " and "
+                              << it << std::endl;
+              std::swap(cl_list[k_best*this->n_threads+it],cl_list[it]);
+            }
+            
+            /*
+              o2scl_hdf::hdf_file hf_emu;
+              std::string test_class_file=this->prefix+"_"+
+              o2scl::itos(this->mpi_rank)+"_"+
+              o2scl::szttos(ie)+"_te.o2";
+              hf_emu.open_or_create(test_class_file);
+              o2scl_hdf::hdf_output(hf_emu,class_test_tab,"test_emu");
+              hf_emu.close();
+            */
+            
+          }
+          
+          // End of parallel region
+        }
+
+        // End of 'if (test_size>0)'
+      }
       
       if (this->verbose>1) {
-        (this->scr_out) << "mcmc_para_emu::class_train(): Done. Time: "
-                        << class_time << std::endl;
+        (this->scr_out) << "mcmc_para_emu::class_train(): Done."
+                        << std::endl;
       }
-
-#endif
+      
+      std::cout << "Function class_train() done." << std::endl;
       
       return;
     }
@@ -4978,10 +5177,22 @@ namespace o2scl {
         seed*=(this->mpi_rank*this->n_threads+it+1);
         this->rg[it].set_seed(seed);
       }
-    
+
+      // Open the output files early for the emulator training
+      if (this->verbose>0) {
+        // Open main output file for this rank
+        this->scr_out.open((this->prefix+"_"+
+                            o2scl::itos(this->mpi_rank)+"_scr").c_str());
+        this->scr_out.setf(std::ios::scientific);
+        if (this->verbose>1) {
+          this->scr_out << "mcmc_para_base::mcmc_init(): "
+                        << "Prefix is: " << this->prefix << std::endl;
+        }
+      }
+
       o2scl_hdf::hdf_file hf;
       std::string tname;
-      
+
       if (use_emulator) {
         
         if (emu.size()==0) {
@@ -5011,7 +5222,7 @@ namespace o2scl {
         
         // Read the emulator data
         hf.open(emu_file);
-        hdf_input(hf,emu_base,tname);
+        hdf_input_n(hf,emu_base,emu_tname);
         hf.close();
 
 #ifdef O2SCL_MPI
@@ -5081,6 +5292,7 @@ namespace o2scl {
           emu_test.new_column(this->param_names[k]);
         }
         emu_test.new_column("log_wgt");
+        emu_test.new_column("log_wgt_emu");
       
         // Train the emulator
         
@@ -5111,7 +5323,7 @@ namespace o2scl {
 #endif
         // Read the classifier data
         hf.open(class_file);
-        hdf_input(hf,class_base,tname);
+        hdf_input(hf,class_base,class_tname);
         hf.close();
 
 #ifdef O2SCL_MPI
@@ -5166,12 +5378,21 @@ namespace o2scl {
         }
         
         // Setup classifier table columns
+        class_table.clear();
         for(size_t k=0;k<n_params_local;k++) {
           class_table.new_column(this->param_names[k]);
         }
         class_table.new_column("log_wgt");
-        class_table.new_column("mult");
         class_table.new_column("class");
+      
+        // Setup classifier test columns
+        class_test.clear();
+        for(size_t k=0;k<n_params_local;k++) {
+          class_test.new_column(this->param_names[k]);
+        }
+        class_test.new_column("log_wgt");
+        class_test.new_column("class");
+        class_test.new_column("class_cl");
       
         // Train the classifier
         class_train();
@@ -5179,42 +5400,6 @@ namespace o2scl {
         // End of 'if (use_classifier)'
       }
 
-      /*
-      // Store the initial number of table rows
-      n_rows_class_base=class_base.get_nlines();
-      (this->scr_out) << "mcmc_para_emu::mcmc_emu(): ";
-      (this->scr_out) << "n_rows_class_base: " << n_rows_class_base
-      << std::endl;
-      */
-      
-      // ──────────────────────────────────────────────────────────────
-      // Reorganize the initial tables into a second copy which
-      // keeps only the parameter and log_wgt columns. This allows
-      // us to keep a smaller version of the tables which is easier
-      // to process for future retraining.
-
-      /*
-      // Allocate and fill rows
-      emu_table.set_nlines(n_rows_emu_base);
-      for(size_t j=0;j<n_rows_emu_base;j++) {
-      for(size_t k=0;k<n_params_local;k++) {
-      emu_table.set(k,j,emu_base.get(this->param_names[k],j));
-      }
-      emu_table.set("log_wgt",j,emu_base.get("log_wgt",j));
-      }
-      
-      // Allocate and fill rows
-      class_table.set_nlines(n_rows_class_base);
-      for(size_t j=0;j<n_rows_class_base;j++) {
-      for(size_t k=0;k<n_params_local;k++) {
-      class_table.set(k,j,class_base.get(this->param_names[k],j));
-      }
-      class_table.set("log_wgt",j,class_base.get("log_wgt",j));
-      class_table.set("mult",j,class_base.get("mult",j));
-      class_table.set("class",j,class_base.get("class",j));
-      }
-      */
-      
       // Setup the pointer to the user-specified function vector
       func_ptr=&func;
       

@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
   
   mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   cout << endl;
-
+  
   // ─────────────────────────────────────────────────────────────────
   // Proposal distributions
   
@@ -413,7 +413,7 @@ int main(int argc, char *argv[]) {
   // ─────────────────────────────────────────────────────────────────
   // Setup the three emulators
   
-  // Set up the emulator
+  // TensorFlow neural network
   std::shared_ptr<interpm_python
                   <ubvector,
                    o2scl::const_matrix_view_table<>,
@@ -426,6 +426,8 @@ int main(int argc, char *argv[]) {
                      ((std::string)"hlayers=[100,100],activations=")+
                      "[relu,relu],verbose=1,epochs=200",1);
   mct.emu.push_back(emu0);
+
+  // Scikit-learn neural network
   std::shared_ptr<interpm_python
                   <ubvector,
                    o2scl::const_matrix_view_table<>,
@@ -438,12 +440,13 @@ int main(int argc, char *argv[]) {
                            ((std::string)"hlayers=[100,100],activation=")+
                            "relu,verbose=1,max_iter=400",1);
   mct.emu.push_back(emu1);
-  
+
+  // Gaussian process
   std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
   typedef const const_matrix_row_gen
     <o2scl::const_matrix_view_table<>> mat_x_row_t;
   
-  // Setup the multidimensional covariance object
+  // Setup the covariance object
   vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
   vmfrn.resize(1);
   std::shared_ptr<mcovar_funct_rbf_noise<
@@ -452,6 +455,7 @@ int main(int argc, char *argv[]) {
   vmfrn[0]=mfrn;
   mfrn->len.resize(1);
 
+  // Parameters for the Gaussian process optimization
   iko->verbose=2;
   iko->def_mmin.verbose=1;
   vector<double> len_list={0.1,0.3,1.0,3.0};
@@ -463,9 +467,9 @@ int main(int argc, char *argv[]) {
   param_lists.push_back(ptemp);
   
   iko->set_covar(vmfrn,param_lists);
-  
-  mct.emu.push_back(iko);
 
+  // Send the GP emulator to the MCMC object
+  mct.emu.push_back(iko);
   
   // ─────────────────────────────────────────────────────────────────
   // Run the final MCMC
@@ -475,17 +479,21 @@ int main(int argc, char *argv[]) {
   mct.use_emulator=true;
   mct.use_classifier=true;
   mct.n_retrain=0;
-  mct.max_iters=20;
+  mct.max_iters=1000;
   mct.prefix="ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
   mct.show_emu=1;
+  mct.test_size=0.1;
   
   // Set up the file for the emulator and classifier input. In this
   // example, they're the same, but they need not be.
   mct.emu_file="ex_mcmc_nn1_0_out";
+  mct.emu_tname="markov_chain_0";
   mct.class_file="ex_mcmc_nn1_0_out";
+  mct.class_tname="markov_chain_0";
 
+  cout << "Calling mcmc_emu()" << endl;
   mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   
   return 0;

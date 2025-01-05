@@ -407,7 +407,8 @@ namespace o2scl_hdf {
       of the object which was read.
   */
   template<class vec_t, class fp_t> 
-  void hdf_input_n(hdf_file &hf, o2scl::table<vec_t,fp_t> &t, std::string &name) {
+  void hdf_input_n(hdf_file &hf, o2scl::table<vec_t,fp_t> &t,
+                   std::string &name) {
 
     // If no name specified, find name of first group of specified type
     if (name.length()==0) {
