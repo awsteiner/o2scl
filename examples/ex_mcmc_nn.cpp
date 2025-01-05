@@ -402,13 +402,13 @@ int main(int argc, char *argv[]) {
        o2scl::matrix_view_table<>>);
     mct.cl_list.push_back(cpnew);
   }
-  mct.cl_list[0]->set_function("classify_sklearn_dtc","verbose=1",1);
+  mct.cl_list[0]->set_function("classify_sklearn_dtc","verbose=1",0);
   mct.cl_list[1]->set_function
     ("classify_sklearn_mlpc",
      ((std::string)"hlayers=[100,100],activation=")+
      "relu,verbose=1,max_iter=2000,"+
-     "n_iter_no_change=40,tol=1.0e-5",1);
-  mct.cl_list[2]->set_function("classify_sklearn_gnb","verbose=1",1);
+     "n_iter_no_change=40,tol=1.0e-5",0);
+  mct.cl_list[2]->set_function("classify_sklearn_gnb","verbose=1",0);
 
   // ─────────────────────────────────────────────────────────────────
   // Setup the three emulators
@@ -424,7 +424,7 @@ int main(int argc, char *argv[]) {
        o2scl::matrix_view_table<>>);
   emu0->set_function("interpm_tf_dnn",
                      ((std::string)"hlayers=[100,100],activations=")+
-                     "[relu,relu],verbose=1,epochs=200",1);
+                     "[relu,relu],verbose=1,epochs=200",0);
   mct.emu.push_back(emu0);
 
   // Scikit-learn neural network
@@ -438,7 +438,7 @@ int main(int argc, char *argv[]) {
        o2scl::matrix_view_table<>>);
   emu1->set_function("interpm_sklearn_mlpr",
                            ((std::string)"hlayers=[100,100],activation=")+
-                           "relu,verbose=1,max_iter=400",1);
+                           "relu,verbose=1,max_iter=400",0);
   mct.emu.push_back(emu1);
 
   // Gaussian process
@@ -479,7 +479,7 @@ int main(int argc, char *argv[]) {
   mct.use_emulator=true;
   mct.use_classifier=true;
   mct.n_retrain=0;
-  mct.max_iters=1000;
+  mct.max_iters=200;
   mct.prefix="ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
@@ -495,6 +495,8 @@ int main(int argc, char *argv[]) {
 
   cout << "Calling mcmc_emu()" << endl;
   mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
+
+  tm.report();
   
   return 0;
 }
