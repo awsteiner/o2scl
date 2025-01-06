@@ -4608,22 +4608,33 @@ namespace o2scl {
         size_t imax=((size_t)(((double)max_emu_size)/(1.0-test_size)));
         for(size_t i=0;i<imax;i++) {
           
-          std::vector<double> line;
+          std::vector<double> line, line2;
           for(size_t k=0;k<n_params_child;k++) {
             line.push_back(emu_base.get(this->param_names[k],j));
           }
           line.push_back(emu_base.get("log_wgt",j));
-
-          if (line.size()!=emu_test.get_ncolumns() ||
-              line.size()!=emu_table.get_ncolumns()) {
-            O2SCL_ERR2("Line size and number of columns ",
-                       "don't match.",o2scl::exc_esanity);
+          line2=line;
+          line2.push_back(0.0);
+          
+          if (line.size()!=emu_table.get_ncolumns()) {
+            std::string err=((std::string)"Line size ")+
+              o2scl::szttos(line.size())+
+              " does not match number of columns in emu_test "+
+              o2scl::szttos(emu_table.get_ncolumns())+".";
+            O2SCL_ERR(err.c_str(),o2scl::exc_esanity);
+          }
+          if (line2.size()!=emu_test.get_ncolumns()) {
+            std::string err=((std::string)"Line size ")+
+              o2scl::szttos(line2.size())+
+              " does not match number of columns in emu_test "+
+              o2scl::szttos(emu_test.get_ncolumns())+".";
+            O2SCL_ERR(err.c_str(),o2scl::exc_esanity);
           }
           
           if (this->rg[0].random()<test_size) {
             
             // Add to testing table
-            emu_test.line_of_data(line.size(),line);
+            emu_test.line_of_data(line2.size(),line2);
             
           } else {
             
