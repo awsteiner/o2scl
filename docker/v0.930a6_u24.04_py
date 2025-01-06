@@ -33,7 +33,6 @@ RUN tar xvzf hdf5-1.14.2.tar.gz
 RUN rm hdf5-1.14.2.tar.gz
 # The github release has a non-traditional directory name
 WORKDIR /opt/hdfsrc
-#FROM working
 RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
 RUN make
 RUN make install
@@ -81,7 +80,6 @@ RUN pip3 install --break-system-packages torch==2.5.1 \
 #
 #RUN pip3 install --break-system-packages pytest Pillow tensorflow-cpu \
 #  numpy scipy matplotlib yt scikit-learn keras
-#FROM working
 #RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
 # This avoids all of the GPU libraries we don't need
 #RUN pip3 install --break-system-packages torch==2.5.1 \
@@ -95,7 +93,7 @@ RUN pip3 install --break-system-packages torch==2.5.1 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout ed1e5a7e0b && autoreconf -i
+RUN git fetch && git pull && git checkout 3b1950fe537 && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -128,6 +126,7 @@ RUN acol -h && acol -v && o2graph -h && o2graph -v
 # Run tests
 
 WORKDIR /opt/o2scl
+#FROM working
 RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy
 RUN make testq
