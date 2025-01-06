@@ -41,6 +41,8 @@ gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   n_params=0;
   n_points=0;
   n_components=0;
+
+  verbose=0;
 }
     
 /** \brief Specify the Python module and function
@@ -170,6 +172,8 @@ void *gmm_python::set_function_internal
  std::string options, std::string class_name, int v, int &ret) {
   
   ret=0;
+
+  verbose=v;
   
   if (params.get_rank()!=2) {
     O2SCL_ERR2("Invalid rank for input tensors in ",
