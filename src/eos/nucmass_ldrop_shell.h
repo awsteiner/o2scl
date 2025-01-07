@@ -59,7 +59,7 @@ namespace o2scl {
     /** \brief Return the free binding energy of a nucleus in a many-body 
 	environment
     */
-    virtual double drip_binding_energy_d
+    virtual double binding_energy_densmat
       (double Z, double N, double npout, double nnout,
        double neout, double dim, double T);
 

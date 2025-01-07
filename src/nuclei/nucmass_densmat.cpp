@@ -459,16 +459,20 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
   return;
 }
 
-void nucmass_densmat::binding_energy_densmat
+double nucmass_densmat::binding_energy_densmat
 (double Z, double N, double npout, double nnout, 
- double nneg, double T, double &E) {
+ double nneg, double T, double dim) {
+  double E;
   double dEdnn;
   double dEdnp;
   double dEdnneg;
   double dEdT;
-  return binding_energy_densmat_derivs
+  binding_energy_densmat_derivs
     (Z,N,nnout,npout,nneg,T,E,dEdnp,dEdnn,dEdnneg,dEdT);
+  return E;
 }
+
+#ifdef O2SCL_NEVER_DEFINED
 
 void nucmass_densmat::binding_energy_densmat_derivs
 (double Z, double N, double npout, double nnout, 
@@ -557,3 +561,5 @@ void nucmass_densmat::binding_energy_densmat_derivs
 
   return;
 }
+
+#endif

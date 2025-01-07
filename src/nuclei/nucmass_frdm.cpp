@@ -182,21 +182,23 @@ int nucmass_frdm::guess_fun(size_t nv, ubvector &x) {
 
 }
 
-double nucmass_frdm::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double neout, double dim) {
+double nucmass_frdm::binding_energy_densmat
+(double Z, double N, double npout, double nnout, double neout, double dim,
+ double T) {
   
-  double ret=(drip_mass_excess_d(Z,N,npout,nnout,neout,dim)+
+  double ret=(mass_excess_densmat(Z,N,npout,nnout,neout,dim,T)+
 	      ((Z+N)*o2scl_const::unified_atomic_mass_f<double>()-
                Z*o2scl_const::mass_electron_f<double>()-
 	       N*o2scl_const::mass_neutron_f<double>()-
                Z*o2scl_const::mass_proton_f<double>())*
-	      o2scl_const::hc_mev_fm*kg_to_invfm);
+              o2scl_const::hc_mev_fm*kg_to_invfm);
   return ret;
 }
 
-double nucmass_frdm::drip_mass_excess_d(double Z, double N,
-					double np_out, double nn_out,
-					double neout, double dim) {
+double nucmass_frdm::mass_excess_densmat(double Z, double N,
+                                         double np_out, double nn_out,
+                                         double ne_out, double dim,
+                                         double T) {
   double ret;
       
   double dN=N;

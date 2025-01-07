@@ -683,7 +683,7 @@ class nucmass_ldrop
   - double
   - int Z
   - int N
-- function drip_binding_energy_d
+- function binding_energy_densmat
   - double
   - double Z
   - double N

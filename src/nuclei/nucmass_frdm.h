@@ -31,7 +31,7 @@
 #include <cmath>
 
 #include <o2scl/nucleus.h>
-#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_densmat.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/constants.h>
 
@@ -102,7 +102,6 @@ namespace o2scl {
          In class nucmass_frdm:
 
          - Fix pairing energy and double vs. int
-         - Document drip_binding_energy(), etc.
          - Decide on number of fit parameters (10 or 12?) or
            let the user decide
          - Document the protected variables
@@ -113,7 +112,7 @@ namespace o2scl {
 
       \future Add microscopic part.
   */
-  class nucmass_frdm : public nucmass_fit_base {
+  class nucmass_frdm : public nucmass_densmat {
 
   public:
 
@@ -196,9 +195,10 @@ namespace o2scl {
 
     /** \brief Return the binding energy in MeV
      */
-    virtual double drip_binding_energy_d(double Z, double N,
-                                         double npout, double nnout,
-                                         double neout, double dim);
+    virtual double binding_energy_densmat(double Z, double N,
+                                          double npout=0.0, double nnout=0.0,
+                                          double neout=0.0, double dim=3.0,
+                                          double T=0.0);
 
     /** \brief Given \c Z and \c N, return the mass excess in MeV
         in a many-body environment
@@ -209,10 +209,20 @@ namespace o2scl {
         moment. It's not currently used by \ref
         drip_binding_energy_d().
     */
-    virtual double drip_mass_excess_d(double Z, double N,
-                                      double np_out, double nn_out,
-                                      double ne_out, double dim);
+    virtual double mass_excess_densmat(double Z, double N,
+                                       double np_out=0.0, double nn_out=0.0,
+                                       double ne_out=0.0, double dim=3.0,
+                                       double T=0.0);
 
+    /** \brief Desc
+     */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT) {
+      return;
+    }
+    
   protected:
 
     /// Conversion from kg to inverse fm

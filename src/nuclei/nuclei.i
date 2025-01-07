@@ -238,10 +238,17 @@ class nucmass_dz_fit_33
 #
 # ------------------------------------------------------
 # 
+# Class nucmass_densmat
+#
+class nucmass_densmat abstract
+- parent nucmass_fit_base
+#
+# ------------------------------------------------------
+# 
 # Class nucmass_frdm
 #
 class nucmass_frdm
-- parent nucmass_fit_base
+- parent nucmass_densmat
 - double a1
 - double J
 - double K

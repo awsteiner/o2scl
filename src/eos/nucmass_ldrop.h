@@ -174,7 +174,7 @@ namespace o2scl {
       based on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
   */
-  class nucmass_ldrop : public nucmass_fit_base {
+  class nucmass_ldrop : public nucmass_densmat {
 
   public:
     
@@ -254,10 +254,10 @@ namespace o2scl {
         In this class, this function is currently independent of \c
         npout, \c nnout, \c dim, and \c chi.
     */
-    virtual double drip_binding_energy_d(double Z, double N,
-                                         double npout, double nnout, 
-                                         double ne, double dim,
-                                         double T);
+    virtual double binding_energy_densmat(double Z, double N,
+                                          double npout=0.0, double nnout=0.0, 
+                                          double ne=0.0, double dim=3.0,
+                                          double T=0.0);
 
     /// Return the type, \c "nucmass_ldrop".
     virtual const char *type() { return "nucmass_ldrop"; }
@@ -534,9 +534,10 @@ namespace o2scl {
     /** \brief Return the free binding energy of a nucleus in a many-body 
         environment
     */
-    virtual double drip_binding_energy_d(double Z, double N,
-                                         double npout, double nnout,
-                                         double ne, double dim, double T);
+    virtual double binding_energy_densmat(double Z, double N,
+                                          double npout=0.0, double nnout=0.0, 
+                                          double ne=0.0, double dim=3.0,
+                                          double T=0.0);
     
     /// Return the type, \c "nucmass_ldrop_skin".
     virtual const char *type() { return "nucmass_ldrop_skin"; }
@@ -640,9 +641,10 @@ namespace o2scl {
     /** \brief Return the free binding energy of a nucleus in a many-body 
         environment
     */
-    virtual double drip_binding_energy_d
-      (double Z, double N, double npout, double nnout,
-       double ne, double dim, double T);
+    virtual double binding_energy_densmat(double Z, double N,
+                                          double npout=0.0, double nnout=0.0, 
+                                          double ne=0.0, double dim=3.0,
+                                          double T=0.0);
 
   };
 

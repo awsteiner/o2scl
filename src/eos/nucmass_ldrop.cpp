@@ -61,7 +61,7 @@ nucmass_ldrop::nucmass_ldrop() {
 double nucmass_ldrop::mass_excess_d(double Z, double N) {
   double ret=0.0;
   
-  ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,3.0,0.0);
+  ret=binding_energy_densmat(Z,N);
       
   // Convert from binding energy to mass excess
   ret-=((N+Z)*o2scl_const::unified_atomic_mass_f<double>()-
@@ -74,12 +74,12 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
       
 }
 
-double nucmass_ldrop::drip_binding_energy_d
+double nucmass_ldrop::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double ne,
  double dim, double T) {
-
+  
   double ret=0.0, A=Z+N, nL;
-      
+  
   // Force inc_rest_mass to true
   n->inc_rest_mass=true;
   p->inc_rest_mass=true;
@@ -91,13 +91,13 @@ double nucmass_ldrop::drip_binding_energy_d
   nn=nL*(1.0+delta)/2.0;
   if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "In nucmass_ldrop::drip_binding_energy_d(): "
+    std::cout << "In nucmass_ldrop::binding_energy_densmat(): "
               << "either nn or np is negative or "
               << "  larger than 0.20." << endl;
     std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     O2SCL_ERR2("Densities too large in ",
-               "nucmass_ldrop::drip_binding_energy_d().",
+               "nucmass_ldrop::binding_energy_densmat().",
                o2scl::exc_efailed);
   }
 
@@ -117,7 +117,7 @@ double nucmass_ldrop::drip_binding_energy_d
   int err=heos->calc_e(*n,*p,th);
   if (err!=0) {
     O2SCL_ERR2("Hadronic EOS failed in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",
+	       "nucmass_ldrop::binding_energy_densmat().",
                exc_efailed);
   }
   bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
@@ -189,7 +189,7 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double nucmass_ldrop_skin::drip_binding_energy_d
+double nucmass_ldrop_skin::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double ne, double dim,
  double T) {
   
@@ -199,18 +199,18 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   /*
   if (chi<0.0 || chi>1.0) {
     O2SCL_ERR2("Chi less than zero or greater than one in ",
-               "nucmass_ldrop_skin::drip_binding_energy_d().",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
                o2scl::exc_einval);
   }
   */
   if (dim<0.0 || dim>3.0) {
     O2SCL_ERR2("Dimensionality less than zero or greater than three in ",
-               "nucmass_ldrop_skin::drip_binding_energy_d().",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
                o2scl::exc_einval);
   }
   if (full_surface==true && ss==0.0) {
     O2SCL_ERR2("Surface symmetry cannot be zero when full_surface is true ",
-               "innucmass_ldrop_skin::drip_binding_energy_d().",
+               "innucmass_ldrop_skin::binding_energy_densmat().",
                o2scl::exc_einval);
   }
                
@@ -229,19 +229,19 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   nn=nL*(1.0+delta)/2.0;
   if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "In nucmass_ldrop_skin::drip_binding_energy_d(): "
+    std::cout << "In nucmass_ldrop_skin::binding_energy_densmat(): "
               << "either nn or np is negative or "
               << "  larger than 0.20." << endl;
     std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     O2SCL_ERR2("Densities too large in ",
-               "nucmass_ldrop::drip_binding_energy_d().",
+               "nucmass_ldrop::binding_energy_densmat().",
                o2scl::exc_efailed);
   }
 
   if (!std::isfinite(nn) || !std::isfinite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",
+	       "nucmass_ldrop::binding_energy_densmat().",
                exc_efailed);
     return 0.0;
   }
@@ -282,7 +282,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::binding_energy_densmat().",
 		 exc_efailed);
     }
     ret+=bulk;
@@ -322,7 +322,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::binding_energy_densmat().",
 		 exc_efailed);
     }
 
@@ -344,7 +344,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::binding_energy_densmat().",
 		   exc_efailed);
       }
 
@@ -365,7 +365,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::binding_energy_densmat().",
 		   exc_efailed);
       }
     }
@@ -484,7 +484,7 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double nucmass_ldrop_pair::drip_binding_energy_d
+double nucmass_ldrop_pair::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double ne,
  double dim, double T) {
   
@@ -493,6 +493,6 @@ double nucmass_ldrop_pair::drip_binding_energy_d
   pair=-Epair*(cos(Z*o2scl_const::pi)+cos(N*o2scl_const::pi))/
     2.0/pow(A,1.5);
   
-  return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
+  return A*pair+nucmass_ldrop_skin::binding_energy_densmat
     (Z,N,npout,nnout,ne,dim,T);
 }

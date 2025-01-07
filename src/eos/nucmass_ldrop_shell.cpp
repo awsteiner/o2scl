@@ -31,11 +31,11 @@ nucmass_ldrop_shell::nucmass_ldrop_shell() {
   inc_shell=true;
 }
 
-double nucmass_ldrop_shell::drip_binding_energy_d
+double nucmass_ldrop_shell::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double neout,
  double dim, double T) {
  
-  double ret=nucmass_ldrop_pair::drip_binding_energy_d
+  double ret=nucmass_ldrop_pair::binding_energy_densmat
     (Z,N,npout,nnout,neout,dim,T);
 
   if (inc_shell==false) return ret;

@@ -30,10 +30,7 @@
 #include <o2scl/fermion_deriv_rel.h>
 #include <o2scl/boson_rel.h>
 
-#include <o2scl/nucmass_frdm.h>
-#include <o2scl/nucmass_ame.h>
-#include <o2scl/nucdist.h>
-#include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/nucmass.h>
 
 /** \file nucmass_densmat.h
     \brief File defining \ref o2scl::dense_matter and
@@ -278,7 +275,7 @@ namespace o2scl {
       to just <tt>binding_energy()</tt>.
       
   */
-  class nucmass_densmat {
+  class nucmass_densmat : public nucmass_fit_base {
 
   protected:
     
@@ -323,14 +320,13 @@ namespace o2scl {
     virtual void binding_energy_densmat_derivs
     (double Z, double N, double npout, double nnout, 
      double nneg, double T, double &E, double &dEdnp, double &dEdnn,
-     double &dEdnneg, double &dEdT);
+     double &dEdnneg, double &dEdT)=0;
     
     /** \brief Compute the binding energy of a nucleus in dense matter
-	without the derivatives
     */
-    virtual void binding_energy_densmat
-    (double Z, double N, double npout, double nnout, 
-     double nneg, double T, double &E);
+    virtual double binding_energy_densmat
+    (double Z, double N, double npout=0.0, double nnout=0.0, 
+     double nneg=0.0, double dim=3.0, double T=0.0);
 
   };
 
