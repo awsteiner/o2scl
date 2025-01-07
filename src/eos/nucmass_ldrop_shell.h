@@ -61,7 +61,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d
       (double Z, double N, double npout, double nnout,
-       double chi, double dim, double T);
+       double neout, double dim, double T);
 
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);

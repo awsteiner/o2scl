@@ -198,7 +198,7 @@ namespace o2scl {
      */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout,
-                                         double chi, double dim);
+                                         double neout, double dim);
 
     /** \brief Given \c Z and \c N, return the mass excess in MeV
         in a many-body environment
@@ -211,7 +211,7 @@ namespace o2scl {
     */
     virtual double drip_mass_excess_d(double Z, double N,
                                       double np_out, double nn_out,
-                                      double chi, double dim);
+                                      double ne_out, double dim);
 
   protected:
 

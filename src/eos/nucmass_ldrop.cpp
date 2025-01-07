@@ -75,7 +75,7 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
 }
 
 double nucmass_ldrop::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi,
+(double Z, double N, double npout, double nnout, double neout,
  double dim, double T) {
 
   double ret=0.0, A=Z+N, nL;
@@ -190,17 +190,19 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_skin::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double dim,
+(double Z, double N, double npout, double nnout, double neout, double dim,
  double T) {
   
   int err;
   double ret=0.0, A=Z+N, nL;
 
+  /*
   if (chi<0.0 || chi>1.0) {
     O2SCL_ERR2("Chi less than zero or greater than one in ",
                "nucmass_ldrop_skin::drip_binding_energy_d().",
                o2scl::exc_einval);
   }
+  */
   if (dim<0.0 || dim>3.0) {
     O2SCL_ERR2("Dimensionality less than zero or greater than three in ",
                "nucmass_ldrop_skin::drip_binding_energy_d().",
@@ -250,10 +252,12 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   Rn=cbrt(3.0*N/nn/4.0/o2scl_const::pi);
   Rp=cbrt(3.0*Z/np/4.0/o2scl_const::pi);
 
-  // We need the Wigner-Seitz radius to compute the proton volume
-  // fraction for the Coulomb energy
-  double Rws=R/cbrt(chi);
-  double chip=pow(Rp/Rws,3.0);
+  // Use charge neutrality to compute chi_p
+  double chip=(neout-npout)/(np-npout);
+
+  // Then compute R_WS and chi
+  double Rws=Rp/cbrt(chip);
+  double chi=pow(R/Rws,3.0);
 
   // Bulk part of the free energy per baryon
 
@@ -479,7 +483,7 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_pair::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi,
+(double Z, double N, double npout, double nnout, double neout,
  double dim, double T) {
   
   double A=(Z+N);
@@ -488,5 +492,5 @@ double nucmass_ldrop_pair::drip_binding_energy_d
     2.0/pow(A,1.5);
   
   return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
-    (Z,N,npout,nnout,chi,dim,T);
+    (Z,N,npout,nnout,neout,dim,T);
 }

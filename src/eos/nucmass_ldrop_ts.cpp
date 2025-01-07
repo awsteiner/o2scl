@@ -65,52 +65,6 @@ int main(void) {
 
   cout << "-------------------------------------------------\n" << endl;
 
-#ifdef O2SCL_NEVER_DEFINED
-  if (false) {
-    nucmass_ldrop_skin tst;
-    tst.new_skin_mode=true;
-    tst.set_eos_had_temp_base(apr);
-    tst.set_n_and_p(nrn,nrp);
-    tst.n0=0.17;
-    tst.n1=-0.05;
-    double be;
-    
-    double chi=1.0e-2, Rn, Rws, nN, t1, t2, f1, f2;
-    
-    thermo th;
-    nrn.n=1.0e-3;
-    nrp.n=0.0;
-    apr.calc_temp_e(nrn,nrp,1.0e-3,th);
-    double fdrip=th.ed-1.0e-3*th.en-nrn.n*nrn.m;
-
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,3.0,1.0e-3)/hc_mev_fm;
-    cout << "be: " << be << endl;
-    Rn=tst.Rn;
-    Rws=Rn/cbrt(chi);
-    nN=3.0/4.0/pi/pow(Rws,3.0);
-    cout << nN << " " << Rws << endl;
-    t1=be*nN;
-    t2=(1.0-chi)*fdrip;
-    f1=t1+t2;
-    cout << t1 << " " << t2 << " " << f1 << endl;
-    
-    tst.rel_vacuum=false;
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,3.0,1.0e-3)/hc_mev_fm;
-    Rn=tst.Rn;
-    Rws=Rn/cbrt(chi);
-    nN=3.0/4.0/pi/pow(Rws,3.0);
-    t1=be*nN;
-    t2=fdrip;
-    f2=t1+t2;
-    cout << t1 << " " << t2 << " " << f2 << endl;
-    cout << f1-f2 << endl;
-
-    exit(-1);
-  }
-#endif
-
-  cout << "-------------------------------------------------\n" << endl;
-
   cout << "Lead from AME: " << endl;
   cout <<  "Mass excess:\t\t " <<au.mass_excess(82,126) << endl;
   cout <<  "Binding energy:\t\t " <<au.binding_energy(82,126)/208.0 << endl;

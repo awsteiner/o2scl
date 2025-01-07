@@ -256,7 +256,8 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
-                                         double chi, double dim, double T);
+                                         double neout, double dim,
+                                         double T);
 
     /// Return the type, \c "nucmass_ldrop".
     virtual const char *type() { return "nucmass_ldrop"; }
@@ -326,7 +327,7 @@ namespace o2scl {
       Fermis. This is a bit confusing, since the binding energy is
       returned in MeV.
       
-      <b>Nuclear radii</b>
+      <b>Nuclear radii and volume fractions</b>
       
       The nuclear, neutron and proton radii are determined by
       \f{eqnarray*}
@@ -338,6 +339,27 @@ namespace o2scl {
       determined in the same way as in \ref nucmass_ldrop,
       except that now \f$ \delta \equiv I \zeta \f$, where
       \f$ \zeta \f$ is stored in \ref doi .
+
+      The volume fraction occupied by
+      protons, \f$ \chi_p \f$ is
+      \f[
+      \chi_p = \left(\frac{R_p}{R_{\mathrm{WS}}}\right)^3
+      \f]
+      and similarly for neutrons. We also define \f$ \chi \f$ as
+      \f[
+      \chi = \left(\frac{R}{R_{\mathrm{WS}}}\right)^3
+      \f]
+      We need to use charge neutrality
+      \f[
+      \frac{4 \pi}{3} R_p^3 \left(n_p - n_{p,\mathrm{out}}\right)
+      + \frac{4 \pi}{3} R_{\mathrm{WS}}^3 n_{p,\mathrm{out}} = 
+      \frac{4 \pi}{3} R_{\mathrm{WS}}^3 n_{e,\mathrm{out}} 
+      \f]
+      or
+      \f[
+      \chi_p \left(n_p - n_{p,\mathrm{out}}\right) + 
+      n_{p,\mathrm{out}} = n_{e,\mathrm{out}} 
+      \f]
      
       <b>Bulk energy</b>
 
@@ -417,15 +439,6 @@ namespace o2scl {
       
       <b>Coulomb energy</b>
 
-      First, we define the volume fraction occupied by
-      protons, \f$ \chi_p \f$ which is
-      \f[
-      \chi_p = \left(\frac{R_p}{R_{\mathrm{WS}}}\right)^3
-      \f]
-      where \f$ R_{\mathrm{WS}} \f$ is determined from
-      \f[
-      \chi = \left(\frac{R}{R_{\mathrm{WS}}}\right)^3
-      \f]
       The Coulomb energy density is
       \f[
       \varepsilon_{\mathrm{Coul}} = 2 \pi \chi_p
@@ -544,7 +557,8 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout,
-                                         double chi, double dim, double T);
+                                         double neout, double dim, double T);
+    
     /// Return the type, \c "nucmass_ldrop_skin".
     virtual const char *type() { return "nucmass_ldrop_skin"; }
     //@}
@@ -649,7 +663,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d
       (double Z, double N, double npout, double nnout,
-       double chi, double dim, double T);
+       double neout, double dim, double T);
 
   };
 

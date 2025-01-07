@@ -689,7 +689,7 @@ class nucmass_ldrop
   - double N
   - double npout
   - double nnout
-  - double chi
+  - double neout
   - double dim
   - double T
 - eos_had_skyrme def_had_eos
