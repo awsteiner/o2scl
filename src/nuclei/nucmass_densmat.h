@@ -321,16 +321,16 @@ namespace o2scl {
 	\future Extend to negative N and Z?
     */
     virtual void binding_energy_densmat_derivs
-      (double Z, double N, double npout, double nnout, 
-       double nneg, double T, double &E, double &dEdnp, double &dEdnn,
-       double &dEdnneg, double &dEdT);
-
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT);
+    
     /** \brief Compute the binding energy of a nucleus in dense matter
 	without the derivatives
-     */
+    */
     virtual void binding_energy_densmat
-      (double Z, double N, double npout, double nnout, 
-       double nneg, double T, double &E);
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E);
 
   };
 

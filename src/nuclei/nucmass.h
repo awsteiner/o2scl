@@ -414,7 +414,7 @@ namespace o2scl {
     
     /// Fill array with guess from present values for fitting [abstract]
     virtual int guess_fun(size_t nv, ubvector &x)=0;
-    
+
   };
   
   /** \brief Semi-empirical mass formula

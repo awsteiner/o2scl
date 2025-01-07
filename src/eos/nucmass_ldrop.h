@@ -256,7 +256,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout, 
-                                         double neout, double dim,
+                                         double ne, double dim,
                                          double T);
 
     /// Return the type, \c "nucmass_ldrop".
@@ -395,10 +395,10 @@ namespace o2scl {
       <b>Surface energy</b>
 
       If \ref full_surface is false, then the surface energy per
-      baryon is just that from \ref nucmass_ldrop, with an extra
-      factor for the surface symmetry energy
+      baryon is just that from \ref nucmass_ldrop, with extra
+      factors for dimension and the surface symmetry energy
       \f[
-      E_{\mathrm{surf}}/A = \frac{\sigma d \chi}{3 n_L}
+      E_{\mathrm{surf}}/A = \frac{\sigma d}{3 n_L}
       \left(\frac{36 \pi n_L}{A} \right)^{1/3} 
       \left( 1- \sigma_{\delta} \delta^2 \right)
       \f]
@@ -407,11 +407,9 @@ namespace o2scl {
       If \ref full_surface is true, then the following
       temperature- and isospin-dependent surface energy is used.
       Taking
-      \f$ x \equiv n_p /(n_n+n_p) \f$, the new surface energy
-      density is
+      \f$ x \equiv n_p /(n_n+n_p) \f$, the new surface tension is
       \f[
-      {\varepsilon}_{\mathrm{surf}} =
-      \left( \frac{\sigma d \chi}{R} \right)
+      \sigma(x,T) = 
       \left[ \frac{16+b}{x^{-3}+b+(1-x)^{-3}} \right]
       \left[\frac{1-T^2/T_c(x)^2}{1+a(x) T^2/T_c(x)^2}\right]^{p}
       \f]
@@ -461,8 +459,8 @@ namespace o2scl {
       \f]
       instead. Thus
       \f[
-      E_{\mathrm{Coul}}/A = 2 \pi \left(\frac{1}{nL}\right)
-      e^2 R_p^2 (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
+      E_{\mathrm{Coul}}/A = \left(\frac{2 \pi e^2 R_p^2}{nL}\right)
+      (n_p-n_{p,\mathrm{out}})^2 f_d(\chi_p)
       \f]
       When \f$ d=3 \f$, \f$ f_3(\chi_p) \f$ reduces to
       \f[
@@ -517,27 +515,6 @@ namespace o2scl {
          
       \endverbatim
       
-      Excluded volume and \ref rel_vacuum:
-
-      Typically in a single-nucleus EOS with a neutron drip 
-      (ignoring translational degrees of freedom for the nucleus) 
-      \f[
-      f = n_N m_N + (1-\chi_n) f_{n,\mathrm{drip}}
-      \f]
-      where
-      \f[
-      m_N = \frac{A}{n_n+n_p}(f - n_n m_n - n_p m_p)
-      \f]
-      Since \f$ n_N = 3/(4 \pi R_{\mathrm{ws}}^3) \f$, and 
-      \f$ \chi_n = (R_n/R_{\mathrm{ws}})^3 \f$, this is 
-      \f[
-      f = \frac{3}{4 \pi R_{\mathrm{ws}}^3} 
-      \left[ m_N - f_{n,\mathrm{drip}} \frac{4 \pi}{3} R_n^3 \right]
-      + f_{n,\mathrm{drip}}
-      \f]
-
-      \endcomment
-
       <b>References</b>
 
       \verbatim embed:rst
@@ -559,7 +536,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d(double Z, double N,
                                          double npout, double nnout,
-                                         double neout, double dim, double T);
+                                         double ne, double dim, double T);
     
     /// Return the type, \c "nucmass_ldrop_skin".
     virtual const char *type() { return "nucmass_ldrop_skin"; }
@@ -665,7 +642,7 @@ namespace o2scl {
     */
     virtual double drip_binding_energy_d
       (double Z, double N, double npout, double nnout,
-       double neout, double dim, double T);
+       double ne, double dim, double T);
 
   };
 

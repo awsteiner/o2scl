@@ -75,7 +75,7 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
 }
 
 double nucmass_ldrop::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double neout,
+(double Z, double N, double npout, double nnout, double ne,
  double dim, double T) {
 
   double ret=0.0, A=Z+N, nL;
@@ -190,7 +190,7 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_skin::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double neout, double dim,
+(double Z, double N, double npout, double nnout, double ne, double dim,
  double T) {
   
   int err;
@@ -253,7 +253,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   Rp=cbrt(3.0*Z/np/4.0/o2scl_const::pi);
 
   // Use charge neutrality to compute chi_p
-  double chip=(neout-npout)/(np-npout);
+  double chip=(ne-npout)/(np-npout);
 
   // Then compute R_WS and chi
   double Rws=Rp/cbrt(chip);
@@ -416,13 +416,13 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     } else {
       bfun=0.0;
     }
-	
-    surf=surften*bfun*cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+
+    surf=surften*dim/3.0*bfun*cbrt(36.0*o2scl_const::pi*nL/A)/nL;
 	
   } else {
 	
-    surf=surften*(1.0-ss*delta*delta)*
-      cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+    surf=surften*(1.0-ss*delta*delta)*dim/3.0*
+      cbrt(36.0*o2scl_const::pi*nL/A)/nL;
 
   }
       
@@ -443,6 +443,8 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   // the energy density by chi, which corresponds to multiplying the
   // energy per baryon by 1/nL, but the latter actually fits the
   // nuclear data better, as currently testing in nucmass_ldrop_shell_ts .
+  // This may be the result of the diffuseness of the proton density
+  // distribution: the effective R_p is actually larger. 
   if (false) {
     coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
       o2scl_const::fine_structure_f<double>()*
@@ -483,7 +485,7 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_pair::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double neout,
+(double Z, double N, double npout, double nnout, double ne,
  double dim, double T) {
   
   double A=(Z+N);
@@ -492,5 +494,5 @@ double nucmass_ldrop_pair::drip_binding_energy_d
     2.0/pow(A,1.5);
   
   return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
-    (Z,N,npout,nnout,neout,dim,T);
+    (Z,N,npout,nnout,ne,dim,T);
 }
