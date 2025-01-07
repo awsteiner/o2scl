@@ -347,7 +347,7 @@ namespace o2scl {
       \f]
       and similarly for neutrons. We also define \f$ \chi \f$ as
       \f[
-      \chi = \left(\frac{R}{R_{\mathrm{WS}}}\right)^3
+      \chi = \left(\frac{R}{R_{\mathrm{WS}}}\right)^3 \, .
       \f]
       We need to use charge neutrality
       \f[
@@ -355,10 +355,10 @@ namespace o2scl {
       + \frac{4 \pi}{3} R_{\mathrm{WS}}^3 n_{p,\mathrm{out}} = 
       \frac{4 \pi}{3} R_{\mathrm{WS}}^3 n_{e,\mathrm{out}} 
       \f]
-      or
+      thus
       \f[
       \chi_p \left(n_p - n_{p,\mathrm{out}}\right) + 
-      n_{p,\mathrm{out}} = n_{e,\mathrm{out}} 
+      n_{p,\mathrm{out}} = n_{e,\mathrm{out}} \, .
       \f]
      
       <b>Bulk energy</b>
@@ -407,9 +407,11 @@ namespace o2scl {
       If \ref full_surface is true, then the following
       temperature- and isospin-dependent surface energy is used.
       Taking
-      \f$ x \equiv n_p /(n_n+n_p) \f$, 
+      \f$ x \equiv n_p /(n_n+n_p) \f$, the new surface energy
+      density is
       \f[
-      \sigma(x,T) = \left( \frac{\sigma d \chi}{3} \right)
+      {\varepsilon}_{\mathrm{surf}} =
+      \left( \frac{\sigma d \chi}{R} \right)
       \left[ \frac{16+b}{x^{-3}+b+(1-x)^{-3}} \right]
       \left[\frac{1-T^2/T_c(x)^2}{1+a(x) T^2/T_c(x)^2}\right]^{p}
       \f]
