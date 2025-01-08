@@ -126,7 +126,7 @@ namespace o2scl {
     }
 
     /** \brief Integrate function \c func, the internal wrapper
-        which uses a \ref funct_multip object
+        which uses a \ref funct_multip_tl object
 
         There are three tolerances:
         - \c target_tol is the target tolerance which is sent to
@@ -232,7 +232,7 @@ namespace o2scl {
     bool err_nonconv;
 
     /** \brief Verbosity parameter for the internal
-        \ref funct_multip object
+        \ref funct_multip_tl object
     */
     int fm_verbose;
     

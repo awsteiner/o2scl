@@ -2669,8 +2669,9 @@ namespace o2scl {
       vector is requested, i.e. <tt>operator[](i)</tt> always returns
       \c i.
 
-      9/16/24: This function is used in \ref acol_manager::comm_create
-      to create \ref o2scl::table objects.
+      9/16/24: This function is used in \ref
+      o2scl_acol::acol_manager::comm_create() to create \ref
+      o2scl::table objects.
    */
   template<class data_t> class vector_index_vector {
   public:

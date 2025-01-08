@@ -1541,7 +1541,7 @@ namespace o2scl {
         each pair of points.
 
         \note This is principally a function for internal use
-        by \ref interp_linear().
+        by \ref tensor_grid::interp_linear().
     */
     template<class vec2_t>
       double interp_linear_power_two(vec2_t &v) const {

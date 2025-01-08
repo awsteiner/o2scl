@@ -347,12 +347,12 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0.0,
-                                    3.0,0.0)/208.0 << endl;
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0.0,
+                                     0.0)/208.0 << endl;
   cout << endl;
 
   cout << "ldf,drip,dim=3: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,3.0,0.0)/208.0 
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0,0.0)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 
@@ -360,7 +360,7 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip,dim,T=0.01: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,3.0,0.01)/208.0 
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0,0.01)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 

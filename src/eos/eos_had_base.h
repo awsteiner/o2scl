@@ -755,7 +755,7 @@ namespace o2scl {
 
     /** \brief Compute derivatives at constant proton fraction
 
-        This function is currently used in \ref nstar_cold().
+        This function is currently used in \ref nstar_cold.
      */
     void const_pf_derivs(double nb, double pf, 
                          double &dednb_pf, double &dPdnb_pf);
@@ -940,7 +940,7 @@ namespace o2scl {
     /** \brief The default neutron
 
         By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_neutron converted to \f$ \mathrm{fm}^{-1} \f$. 
+        o2scl_const::mass_neutron_f() converted to \f$ \mathrm{fm}^{-1} \f$. 
         Also the value of 
         <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
@@ -949,7 +949,7 @@ namespace o2scl {
     /** \brief The default proton
 
         By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_proton converted to \f$ \mathrm{fm}^{-1} \f$. 
+        o2scl_const::mass_proton_f() converted to \f$ \mathrm{fm}^{-1} \f$. 
         <Also the value of 
         <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
@@ -1093,7 +1093,7 @@ namespace o2scl {
     /** \brief Equation for solving for beta-equilibrium at T=0
 
         This function is very similar to \ref
-        o2scl::nstar_cold::solve_fun().
+        nstar_cold::solve_fun().
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,

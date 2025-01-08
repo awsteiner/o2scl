@@ -76,7 +76,7 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
 
 double nucmass_ldrop::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double ne,
- double dim, double T) {
+ double T) {
   
   double ret=0.0, A=Z+N, nL;
   
@@ -190,7 +190,7 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_skin::binding_energy_densmat
-(double Z, double N, double npout, double nnout, double ne, double dim,
+(double Z, double N, double npout, double nnout, double ne, 
  double T) {
   
   int err;
@@ -203,6 +203,7 @@ double nucmass_ldrop_skin::binding_energy_densmat
                o2scl::exc_einval);
   }
   */
+  double dim=3.0;
   if (dim<0.0 || dim>3.0) {
     O2SCL_ERR2("Dimensionality less than zero or greater than three in ",
                "nucmass_ldrop_skin::binding_energy_densmat().",
@@ -486,7 +487,7 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
 
 double nucmass_ldrop_pair::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double ne,
- double dim, double T) {
+ double T) {
   
   double A=(Z+N);
   
@@ -494,5 +495,5 @@ double nucmass_ldrop_pair::binding_energy_densmat
     2.0/pow(A,1.5);
   
   return A*pair+nucmass_ldrop_skin::binding_energy_densmat
-    (Z,N,npout,nnout,ne,dim,T);
+    (Z,N,npout,nnout,ne,T);
 }

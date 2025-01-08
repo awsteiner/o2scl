@@ -930,7 +930,7 @@ namespace o2scl {
     /// Calculate effective chemical potential from density
     virtual int nu_from_n(fermion_deriv_t &f, fp_t temper)=0;
 
-    /** \brief Compute \( dn/d\nu \) at \( T=0 \) presuming
+    /** \brief Compute \f$ dn/d\nu \f$ at \f$ T=0 \f$ presuming
         the Fermi momentum and chemical potential have already
         been computed
      */

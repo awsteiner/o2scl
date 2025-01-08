@@ -23,14 +23,15 @@
 /** \file nucmass_ldrop.h
     \brief File defining \ref o2scl::nucmass_ldrop
 */
-#ifndef LDROP_MASS_H
-#define LDROP_MASS_H
+#ifndef NUCMASS_LDROP_H
+#define NUCMASS_LDROP_H
 
 #include <cmath>
 #include <string>
 #include <map>
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
+#include <o2scl/nucmass_densmat.h>
 #include <o2scl/constants.h>
 #include <o2scl/eos_had_base.h>
 #include <o2scl/eos_had_skyrme.h>
@@ -248,17 +249,28 @@ namespace o2scl {
       return mass_excess_d(Z,N);
     }
 
-    /** \brief Given \c Z and \c N, return the binding energy of
-        the nucleus in MeV
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, return the binding energy of the nucleus in MeV
 
         In this class, this function is currently independent of \c
         npout, \c nnout, \c dim, and \c chi.
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double dim=3.0,
-                                          double T=0.0);
+                                          double ne=0.0, double T=0.0);
 
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, compute the binding energy and the derivatives
+    */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT) {
+      O2SCL_ERR("binding_energy_densmat_derivs not defined.",
+                o2scl::exc_eunimpl);
+      return;
+    }
+    
     /// Return the type, \c "nucmass_ldrop".
     virtual const char *type() { return "nucmass_ldrop"; }
     //@}
@@ -536,8 +548,7 @@ namespace o2scl {
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double dim=3.0,
-                                          double T=0.0);
+                                          double ne=0.0, double T=0.0);
     
     /// Return the type, \c "nucmass_ldrop_skin".
     virtual const char *type() { return "nucmass_ldrop_skin"; }
@@ -643,8 +654,7 @@ namespace o2scl {
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double dim=3.0,
-                                          double T=0.0);
+                                          double ne=0.0, double T=0.0);
 
   };
 

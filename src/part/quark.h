@@ -24,7 +24,7 @@
 #define O2SCL_QUARK_H
 
 /** \file quark.h
-    \brief File defining \ref o2scl::quark
+    \brief File defining \ref o2scl::quark_tl
 */
 
 #include <string>

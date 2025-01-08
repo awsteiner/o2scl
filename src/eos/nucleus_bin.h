@@ -36,7 +36,6 @@
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/nucmass_gen.h>
 #include <o2scl/nucmass_ldrop_shell.h>
-#include <o2scl/nucmass_ldrop_ext.h>
 #include <o2scl/eos_had_skyrme.h>
 #include <o2scl/fermion.h>
 #include <o2scl/hdf_nucmass_io.h>
@@ -114,7 +113,6 @@ public:
   o2scl::nucmass_dz_fit_33 dzf33;
   o2scl::nucmass_frdm_shell frdm_shell;
   o2scl::nucmass_ldrop_shell ldrop_shell;
-  o2scl::nucmass_ldrop_ext ldrop_ext;
   //@}
 
   /// \name Other objects

@@ -230,7 +230,7 @@ namespace o2scl {
         automatically calculated to ensure that the vacuum has zero
         energy density and zero pressure. The functions set_quarks()
         and set_thermo() must be used before hand to specify the \ref
-        quark and \ref thermo objects.
+        quark_tl and \ref thermo objects.
         
     */
     virtual int set_parameters_cfl(double lambda=0.0, double fourferm=0.0, 

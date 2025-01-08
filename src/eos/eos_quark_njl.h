@@ -267,7 +267,7 @@ namespace o2scl {
 	automatically calculated to ensure that the energy density and
 	the pressure of the vacuum are zero. The functions
 	set_quarks() and set_thermo() can be used before hand to
-	specify the \ref quark and \ref thermo objects.
+	specify the \ref quark_tl and \ref thermo objects.
     */
     virtual int set_parameters(double lambda=0.0, double fourferm=0.0, 
 			       double sixferm=0.0);
@@ -329,7 +329,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 	
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
@@ -339,7 +339,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
@@ -349,7 +349,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
@@ -359,7 +359,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
@@ -563,7 +563,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
@@ -573,7 +573,7 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */

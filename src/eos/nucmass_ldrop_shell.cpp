@@ -33,10 +33,10 @@ nucmass_ldrop_shell::nucmass_ldrop_shell() {
 
 double nucmass_ldrop_shell::binding_energy_densmat
 (double Z, double N, double npout, double nnout, double neout,
- double dim, double T) {
+ double T) {
  
   double ret=nucmass_ldrop_pair::binding_energy_densmat
-    (Z,N,npout,nnout,neout,dim,T);
+    (Z,N,npout,nnout,neout,T);
 
   if (inc_shell==false) return ret;
 

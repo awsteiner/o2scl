@@ -60,9 +60,18 @@ namespace o2scl {
 	environment
     */
     virtual double binding_energy_densmat
-      (double Z, double N, double npout, double nnout,
-       double neout, double dim, double T);
+      (double Z, double N, double npout=0.0, double nnout=0.0,
+       double neout=0.0, double T=0.0);
 
+    /** \brief Desc
+     */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT) {
+      return;
+    }
+    
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
     

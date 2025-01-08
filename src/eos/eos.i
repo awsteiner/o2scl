@@ -690,7 +690,6 @@ class nucmass_ldrop
   - double npout
   - double nnout
   - double neout
-  - double dim
   - double T
 - eos_had_skyrme def_had_eos
 - fermion def_neutron

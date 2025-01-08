@@ -78,29 +78,6 @@ void dense_matter::dist_properties(double &ntot, double &A, double &Z,
   return;
 }
 
-double dense_matter::impurity(double ntot, double ave_Z) {
-    
-  double sum=0.0;
-  
-  for (size_t i=0;i<dist.size();i++) {
-    sum+=dist[i].n*pow(dist[i].Z-ave_Z,2.0);
-  }
-  
-  if (ntot==0.0) return 0.0;
-
-  return sum/ntot;
-}
-
-void dense_matter::densities(double &nn, double &np) {
-  double nn=n.n;
-  double np=p.n;
-  for (size_t i=0;i<dist.size();i++) {
-    nn+=dist[i].n*dist[i].N;
-    np+=dist[i].n*dist[i].Z;
-  }
-  return;
-}
-
 #endif
 
 void dense_matter::output(std::ostream &out, int verbose) {
@@ -393,17 +370,20 @@ nucmass_densmat::nucmass_densmat() {
   // It's important not to automatically load masses from
   // HDF5 by default because this causes issues instantiating
   // this class with many processors
-  massp=0;
+  //massp=0;
 }
 
+/*
 void nucmass_densmat::set_mass(nucmass &nm) {
   massp=&nm;
   return;
 }
+*/
 
 void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2, 
 				       double &t3, double &t4) {
 
+#ifdef O2SCL_NEVER_DEFINED
   if (massp==0) {
     O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
 	      exc_efailed);
@@ -455,13 +435,15 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
   } else {
     t4=fabs(dEdT-(E2-E1)/(T*eps))/fabs(dEdT);
   }
-      
+
+#endif
+  
   return;
 }
 
 double nucmass_densmat::binding_energy_densmat
 (double Z, double N, double npout, double nnout, 
- double nneg, double T, double dim) {
+ double nneg, double T) {
   double E;
   double dEdnn;
   double dEdnp;

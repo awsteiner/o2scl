@@ -381,7 +381,7 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision using the internal constant library
@@ -778,7 +778,7 @@ namespace o2scl {
       and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
-      \ref lib_settings_class::get_find_constants() to interpret
+      \ref find_constants to interpret
       constant values.
   */
   template<class fp_t=double>
@@ -798,7 +798,7 @@ namespace o2scl {
       and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
-      \ref lib_settings_class::get_find_constants() to interpret
+      \ref find_constants to interpret
       constant values.
   */
   int function_to_double_nothrow(std::string s, double &result,
@@ -810,7 +810,7 @@ namespace o2scl {
       and then uses \ref o2scl::calc_utf8 to convert strings like
       "-1.0e-3", "pi/3.0" and "exp(cos(-1.0e-2))" to floating point
       numbers. This function uses the \o2 constant database from
-      \ref lib_settings_class::get_find_constants() to interpret
+      \ref find_constants to interpret
       constant values.
   */
   double function_to_double(std::string s, int verbose=0);

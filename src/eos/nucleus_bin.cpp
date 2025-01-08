@@ -22,6 +22,7 @@
 */
 #include <o2scl/vec_stats.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/hdf_eos_io.h>
 #include <o2scl/nucleus_bin.h>
 #include <o2scl/eos_had_skyrme.h>
 
@@ -110,15 +111,14 @@ nucleus_bin::nucleus_bin() {
 	       "DZ 95","DDME2","DDMED","DDPC1","NL3S",
                "SLy4","SKM*","SkP","SV-min","UNEDF0","UNEDF1"};
 
-  nmfd={&se,&frdm,&dzf,&dzf33,&frdm_shell,&ldrop_shell,&ldrop_ext};
+  nmfd={&se,&frdm,&dzf,&dzf33,&frdm_shell,&ldrop_shell};
   n_fits=nmfd.size();
     
   fit_names={"Semi-empirical","FRDM","DZ fit 10","DZ fit 33","FRDM shell",
-             "Ldrop shell","Ldrop ext"};
+             "Ldrop shell"};
 
   o2scl_hdf::skyrme_load(sk,"SLy4");
   ldrop_shell.set_eos_had_temp_base(sk);
-  ldrop_ext.set_eos_had_temp_base(sk);
   
   if (true) {
     ubvector p(5);
@@ -226,21 +226,6 @@ nucleus_bin::nucleus_bin() {
     p[9]=1.659654542326672e-03;
     p[10]=1.136613448382515e-01;
     ldrop_shell.fit_fun(11,p);
-  }
-  if (true) {
-    ubvector p(11);
-    p[0]=8.994776301007761e-01;
-    p[1]=9.679865078598426e-01;
-    p[2]=8.751369188587536e-01;
-    p[3]=9.710432146736609e-01;
-    p[4]=-9.041294789462331e-03;
-    p[5]=1.390547985659261e-01;
-    p[6]=1.246579548574642e+01;
-    p[7]=-1.493972115439528e+00;
-    p[8]=1.419539065031770e-02;
-    p[9]=1.659654542326672e-03;
-    p[10]=1.136613448382515e-01;
-    ldrop_ext.fit_fun(11,p);
   }
 }
 
@@ -482,7 +467,6 @@ int nucleus_bin::fits(std::vector<std::string> &sv, bool itive_com) {
   
   nucdist_set(fitter.dist,ame20exp);
   ldrop_shell.large_vals_unphys=true;
-  ldrop_ext.large_vals_unphys=true;
   
   cout << "After fit: " << endl;
   for(size_t i=0;i<n_fits;i++) {

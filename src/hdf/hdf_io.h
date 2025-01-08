@@ -559,7 +559,7 @@ namespace o2scl_hdf {
       object is found, or if the object with the specified name is not
       of type \ref o2scl::table_units, then the error handler is called. If
       \c name is unspecified and there is no object with type \ref
-      table_units, then the error handler is called. Upon exit, \c
+      o2scl::table_units, then the error handler is called. Upon exit, \c
       name contains the name of the object which was read.
   */
   template<class vec_t> 
@@ -607,7 +607,7 @@ namespace o2scl_hdf {
       object is found, or if the object with the specified name is not
       of type \ref o2scl::table_units, then the error handler is called. If
       \c name is unspecified and there is no object with type \ref
-      table_units, then the error handler is called.
+      o2scl::table_units, then the error handler is called.
   */
   template<class vec_t> 
   void hdf_input(hdf_file &hf, o2scl::table_units<vec_t> &t, 

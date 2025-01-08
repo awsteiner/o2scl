@@ -902,7 +902,7 @@ double o2scl_nucmass_ldrop_mass_excess_d(void *vptr, double Z, double N);
 
 double o2scl_nucmass_ldrop_mass_excess(void *vptr, int Z, int N);
 
-double o2scl_nucmass_ldrop_drip_binding_energy_d(void *vptr, double Z, double N, double npout, double nnout, double chi, double dim, double T);
+double o2scl_nucmass_ldrop_binding_energy_densmat(void *vptr, double Z, double N, double npout, double nnout, double neout, double T);
 
 void o2scl_nucmass_ldrop_set_n_and_p(void *vptr, void *ptr_un, void *ptr_up);
 

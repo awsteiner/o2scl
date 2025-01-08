@@ -1225,7 +1225,7 @@ namespace o2scl_cblas {
   /** \brief Compute \f$ r=x \cdot y \f$ beginning with index \c ie and
       ending with index \c N-1
       
-      This function is used in \ref householder_hv().
+      This function is used in \ref o2scl_linalg::householder_hv().
 
       If <tt>ie</tt> is greater than <tt>N-1</tt> then the error 
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not
@@ -1270,7 +1270,7 @@ namespace o2scl_cblas {
   /** \brief Compute the norm of the vector \c X beginning with 
       index \c ie and ending with index \c N-1
       
-      Used in \ref householder_transform().
+      Used in \ref o2scl_linalg::householder_transform().
       
       \note The suffix "2" on the function name indicates that this
       computes the "2-norm", not that the norm is squared.
@@ -1324,7 +1324,7 @@ namespace o2scl_cblas {
   /** \brief Compute \f$ x=\alpha x \f$ beginning with index \c ie and
       ending with index \c N-1
       
-      This function is used in \ref householder_transform().
+      This function is used in \ref o2scl_linalg::householder_transform().
 
       If <tt>ie</tt> is greater than <tt>N-1</tt> then the error 
       handler will be called if \c O2SCL_NO_RANGE_CHECK is not

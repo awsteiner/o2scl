@@ -170,7 +170,7 @@ namespace o2scl {
       The neutron, proton, and electron masses and atomic mass unit
       are stored in \ref m_prot, \ref m_neut, \ref m_elec, and \ref
       m_amu . By default, this are assigned to the values in \ref
-      o2scl_mks times \ref o2scl_const::hc_mev_fm , but these default
+      o2scl_const times \ref o2scl_const::hc_mev_fm , but these default
       values are modified in the constructors of some children
       classes.
 

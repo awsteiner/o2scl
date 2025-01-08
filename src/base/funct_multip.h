@@ -168,7 +168,7 @@ namespace o2scl {
   
   //@}
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
   
   /** \brief One-dimensional function typedef in src/base/funct.h
@@ -204,7 +204,7 @@ namespace o2scl {
   // end of #ifdef O2SCL_MULTIP
 #endif
   
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
@@ -1310,7 +1310,7 @@ namespace o2scl {
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
 
-  // end of #ifdef O2SCL_MULTIP
+  // end of #if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 #endif
   
 }

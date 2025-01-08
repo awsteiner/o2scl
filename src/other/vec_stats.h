@@ -1190,9 +1190,9 @@ namespace o2scl {
   /** \brief Compute a normalization factor for weighted data
 
       This function is used internally in \ref wvector_variance(size_t
-      n, vec_t &data, const vec2_t &weights, double wmean) and \ref
-      wvector_stddev(size_t n, vec_t &data, const vec2_t &weights, double
-      wmean) .
+      n, const vec_t &data, const vec2_t &weights, double wmean) and
+      \ref wvector_stddev(size_t n, const vec_t &data, const vec2_t
+      &weights, double wmean) .
   */
   template<class vec_t> double wvector_factor(size_t n, const vec_t &weights) {
     
@@ -1213,9 +1213,9 @@ namespace o2scl {
   /** \brief Compute a normalization factor for weighted data
 
       This function is used internally in \ref wvector_variance(size_t
-      n, vec_t &data, const vec2_t &weights, double wmean) and \ref
-      wvector_stddev(size_t n, vec_t &data, const vec2_t &weights, double
-      wmean) .
+      n, const vec_t &data, const vec2_t &weights, double wmean) and
+      \ref wvector_stddev(size_t n, const vec_t &data, const vec2_t
+      &weights, double wmean) .
   */
   template<class vec_t> double wvector_factor(const vec_t &weights) {
     return wvector_factor<vec_t>(weights.size(),weights);

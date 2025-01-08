@@ -2490,9 +2490,9 @@ double o2scl_nucmass_ldrop_mass_excess(void *vptr, int Z, int N) {
   return ret;
 }
 
-double o2scl_nucmass_ldrop_drip_binding_energy_d(void *vptr, double Z, double N, double npout, double nnout, double chi, double dim, double T) {
+double o2scl_nucmass_ldrop_binding_energy_densmat(void *vptr, double Z, double N, double npout, double nnout, double neout, double T) {
   nucmass_ldrop *ptr=(nucmass_ldrop *)vptr;
-  double ret=ptr->drip_binding_energy_d(Z,N,npout,nnout,chi,dim,T);
+  double ret=ptr->binding_energy_densmat(Z,N,npout,nnout,neout,T);
   return ret;
 }
 

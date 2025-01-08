@@ -193,33 +193,34 @@ namespace o2scl {
     /// Fill array with guess from present values for fitting
     virtual int guess_fun(size_t nv, ubvector &x);
 
-    /** \brief Return the binding energy in MeV
-     */
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, return the binding energy of the nucleus in MeV
+    */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0,
-                                          double neout=0.0, double dim=3.0,
-                                          double T=0.0);
+                                          double neout=0.0, double T=0.0);
+                                          
 
-    /** \brief Given \c Z and \c N, return the mass excess in MeV
-        in a many-body environment
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, return the mass excess of the nucleus in MeV
 
         This is an experimental version of mass_excess_d which removes
         pairing, computes nn, np, Rn, and Rp, and attempts to correct
-        the surface. This function probably doesn't work at the
-        moment. It's not currently used by \ref
-        drip_binding_energy_d().
+        the surface. 
     */
     virtual double mass_excess_densmat(double Z, double N,
                                        double np_out=0.0, double nn_out=0.0,
-                                       double ne_out=0.0, double dim=3.0,
-                                       double T=0.0);
+                                       double ne_out=0.0, double T=0.0);
 
-    /** \brief Desc
-     */
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, compute the binding energy and the derivatives
+    */
     virtual void binding_energy_densmat_derivs
     (double Z, double N, double npout, double nnout, 
      double nneg, double T, double &E, double &dEdnp, double &dEdnn,
      double &dEdnneg, double &dEdT) {
+      O2SCL_ERR("binding_energy_densmat_derivs not defined.",
+                o2scl::exc_eunimpl);
       return;
     }
     
@@ -295,7 +296,7 @@ namespace o2scl {
       handler.
 
       There are several entries in the original table which are
-      blank because they are in some way not known, measured, or
+      blank because they are either not known, measured, or
       computable. These entries are filled with a positive number 
       larger than 1.0e90, given by the functions \ref blank(),
       \ref neither(), \ref beta_stable(), \ref beta_plus_and_minus(),
