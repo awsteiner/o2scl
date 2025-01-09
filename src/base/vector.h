@@ -834,6 +834,47 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Remove duplicates from a sorted vector
+   */
+  template<class vec_t, class vec2_t, class data_t>
+  void vector_remove_dups(size_t n, vec_t &data, vec2_t &out) {
+    std::vector<data_t> vtemp;
+    vtemp.push_back(data[0]);
+    for(size_t i=1;i<n;i++) {
+      if (data[i]!=data[i-1]) {
+        vtemp.push_back(data[i]);
+      }
+    }
+    size_t n2=vtemp.size();
+    out.resize(n2);
+    for(size_t i=0;i<n2;i++) {
+      out[i]=vtemp[i];
+    }
+    return;
+  }
+    
+  /** \brief Remove duplicates from a sorted vector given a tolerance
+   */
+  template<class vec_t, class vec2_t, class data_t>
+  void vector_remove_dups_tol
+  (size_t n, const vec_t &data, vec2_t &out, data_t tol) {
+   
+    std::vector<data_t> vtemp;
+    data_t one=1;
+    vtemp.push_back(data[0]);
+    for(size_t i=1;i<n;i++) {
+      if (abs(one-data[i-1]/data[i])>tol) {
+        vtemp.push_back(data[i]);
+      }
+    }
+    size_t n2=vtemp.size();
+    out.resize(n2);
+    for(size_t i=0;i<n2;i++) {
+      out[i]=vtemp[i];
+    }
+    return;
+  }
+    
   /** \brief Provide a downheap() function for vector_sort_index()
    */
   template<class vec_t, class vec_size_t> 

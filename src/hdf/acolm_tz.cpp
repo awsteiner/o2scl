@@ -1252,7 +1252,50 @@ int acol_manager::comm_to_tensor(std::vector<std::string> &sv,
 int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 				      bool itive_com) {
 
-  if (type=="table3d") {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Need grid and output columns." << endl;
+      return 1;
+    }
+    vector<vector<double>> grid;
+    vector<size_t> gs;
+    for(size_t i=1;i<sv.size()-1;i++) {
+      vector<double> g;
+      // Copy the column so we can sort it
+      vector<double> col=table_obj[sv[i]];
+      double tol=std::numeric_limits<double>::epsilon()*100;
+      vector_sort<vector<double>,double>(table_obj.get_nlines(),col);
+      vector_remove_dups_tol<vector<double>,vector<double>,double>
+        (table_obj.get_nlines(),col,g,tol);
+      grid.push_back(g);
+      gs.push_back(g.size());
+      vector_out(cout,g);
+      cout << " " << g.size() << endl;
+      cout << "acol_manager::comm_to_tensor_grid(): For column "
+           << sv[i] << " found grid with "
+           << g.size() << " entries." << endl;
+    }
+    tensor_grid_obj.resize(sv.size()-2,gs);
+    tensor_grid_obj.set_grid(grid);
+    tensor_grid_obj.set_all(0.0);
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      vector<double> gp;
+      for(size_t j=0;j<sv.size()-2;j++) {
+        gp.push_back(table_obj.get(sv[j+1],i));
+      }
+      cout << "Here: ";
+      vector_out(cout,gp,true);
+      tensor_grid_obj.set_val(gp,table_obj.get(sv[sv.size()-1],i));
+    }
+    
+    obj_name=sv[sv.size()-1];
+    command_del(type);
+    clear_obj();
+    command_add("tensor_grid");
+    type="tensor_grid";
+
+  } else if (type=="table3d") {
 
     if (sv.size()<2) {
       cerr << "Need slice name." << endl;
