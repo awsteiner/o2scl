@@ -3216,6 +3216,18 @@ namespace o2scl_acol {
 
     /** \brief Convert object to a \ref o2scl::tensor_grid object
 
+        For objects of type table:
+
+        Convert two or more columns to a tensor_grid object.
+
+        Arguments: <tt><grid col. 1> [grid col. 2] ... <value col.></tt>
+
+        This uses the specified columns to construct the grid for a
+        new tensor_grid object and then fills that tensor_grid object
+        with the values from the last column specified. Initially the
+        tensor_grid object is filled with zero values. Then, the
+        entries are in the table are used to fill the tensor.
+
         For objects of type table3d:
 
         Convert a slice of the table3d object to a tensor_grid object.
