@@ -19,6 +19,8 @@ jobs:
 
     - name: Git checkout
       uses: actions/checkout@v1
+      with:
+        ref: rc
 
 # AWS, 7/24/24: the release download doesn't work for this case,
 # I'm not sure why yet.

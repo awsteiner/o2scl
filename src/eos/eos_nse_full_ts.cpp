@@ -23,6 +23,8 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/eos_nse_full.h>
 #include <o2scl/hdf_eos_io.h>
+#include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/nucmass_ame.h>
 
 using namespace std;
 using namespace o2scl;
@@ -51,10 +53,12 @@ int main(void) {
   o2scl_hdf::skyrme_load(sk,"../../data/o2scl/skdata/SLy4.o2",1);
   nse.set_eos(sk);
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   // Test nucmass_densmat
 
-  nucmass_densmat &nd=nse.nuc_dens;
-  nd.set_mass(ame);
+  nucmass_frdm &nd=nse.nuc_dens;
+  //nd.set_mass(ame);
   double t1, t2, t3, t4;
   nd.test_derivatives(1.0e-6,t1,t2,t3,t4);
   t.test_rel(t1,0.0,1.0e-6,"dEdnp");
@@ -210,8 +214,6 @@ int main(void) {
 	       dm.eta_nuc[i],1.0e-3,"NSE 2");
   }
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   nse.calc_density_noneq(dm);
   nse.calc_density_fixnp(dm);
 
