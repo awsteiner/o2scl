@@ -2744,7 +2744,7 @@ namespace o2scl {
   */
   typedef fermion_rel_tl<> fermion_rel;
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
   
   /** \brief Long double version of 
       \ref o2scl::fermion_rel_tl 

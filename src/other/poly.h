@@ -2546,7 +2546,7 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
   
   /** \brief Use multiprecision to automatically solve a cubic to 
       a specified level of precision
