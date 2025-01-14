@@ -93,12 +93,16 @@ int main(void) {
     hf.open("hdf_file_tenstr.o2");
     hf.gets_ten_copy("ts",ts);
     sz={0,0};
+    std::cout << "Here1: " << ts.get(sz) << std::endl;
     t.test_gen(ts.get(sz)=="string 1a","tensor string 1");
     sz={0,1};
+    std::cout << "Here2: " << ts.get(sz) << std::endl;
     t.test_gen(ts.get(sz)=="string 2bb","tensor string 2");
     sz={1,0};
+    std::cout << "Here3: " << ts.get(sz) << std::endl;
     t.test_gen(ts.get(sz)=="string 3ccc","tensor string 3");
     sz={1,1};
+    std::cout << "Here4: " << ts.get(sz) << std::endl;
     t.test_gen(ts.get(sz)=="string 4dddd","tensor string 4");
     hf.close();
     cout << endl;

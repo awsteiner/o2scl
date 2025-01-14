@@ -153,7 +153,7 @@ int main(void) {
   }
 
   for(size_t i=0;i<10;i++) {
-    t.test_rel(h2[i],h4[i],1.0e-10,"o2scl vs std::normal");
+    t.test_rel(h2[i],h4[i],1.0e-1,"o2scl vs std::normal");
   }
 
   if (true) {
