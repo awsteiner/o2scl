@@ -90,6 +90,13 @@ int main(void) {
 
     ts.clear();
 
+#ifdef O2SCL_OPENSUSE_I386    
+    // This additional system call, and the "here"
+    // output just below, is to debug issues with
+    // i386 opensuse HDF5 output
+    int xret=system("h5dump hdf_file_tenstr.o2");
+#endif
+    
     hf.open("hdf_file_tenstr.o2");
     hf.gets_ten_copy("ts",ts);
     sz={0,0};
