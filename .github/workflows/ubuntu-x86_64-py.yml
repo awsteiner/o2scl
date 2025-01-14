@@ -44,7 +44,7 @@ jobs:
 
     - name: Find numpy
       run: |
-        find pip3 show numpy
+        pip show numpy
 
     - name: Set up autotools scripts
       run:
