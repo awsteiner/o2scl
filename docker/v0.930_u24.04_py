@@ -68,8 +68,8 @@ RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
 # The normflows package includes extra nvidia packages, and pipdeptree
 # includes a dependency on pip, so those are installed separately.
 
-COPY v0.930a6_u24.04_req.txt ./
-RUN pip3 install --break-system-packages -r v0.930a6_u24.04_req.txt
+COPY v0.930_u24.04_req.txt ./
+RUN pip3 install --break-system-packages -r v0.930_u24.04_req.txt
 RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
   pipdeptree==2.24.0
 RUN pip3 install --break-system-packages torch==2.5.1 \
@@ -84,8 +84,8 @@ RUN pip3 install --break-system-packages torch==2.5.1 \
 # This avoids all of the GPU libraries we don't need
 #RUN pip3 install --break-system-packages torch==2.5.1 \
 #  --index-url https://download.pytorch.org/whl/cpu
-#RUN pip3 freeze > v0.930a6_u24.04_req.txt
-#RUN cat v0.930a6_u24.04_req.txt
+#RUN pip3 freeze > v0.930_u24.04_req.txt
+#RUN cat v0.930_u24.04_req.txt
 #RUN XXX
 
 # ───────────────────────────────────────────────────────────────────
@@ -108,8 +108,8 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git fetch && git pull && \
-  git checkout bb46e848d0 && pip3 install --break-system-packages . 
+RUN git fetch && git pull && git checkout 9de0c6bdf178 && \
+  pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately

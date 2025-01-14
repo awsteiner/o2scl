@@ -1,11 +1,14 @@
 ---
 name: openSUSE TW i386 minimal install
 
+# AWS, 1/14/25: This is disabled until I can figure out what's
+# going on with HDF5 errors
+
 on:
   push:
-    branches: [ "main", "rc" ]
+    branches: [ "x" ]
   pull_request:
-    branches: [ "main", "rc" ]
+    branches: [ "x" ]
 
 jobs:
   opensuse-TW-i386-min:

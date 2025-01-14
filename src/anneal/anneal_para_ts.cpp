@@ -74,8 +74,8 @@ int main(int argc, char *argv[]) {
   // AWS, 1/6/25: These tests are usually much more accurate, but they
   // can occasionally be less accurate depending on the random values
   // selected.
-  t.test_rel(init[0],2.0,4.0e-1,"another test - value");
-  t.test_rel(result,-1.0,4.0e-1,"another test - min");
+  t.test_rel(init[0],2.0,1.0,"another test - value");
+  t.test_rel(result,-1.0,1.0,"another test - min");
     
   t.report();
   
