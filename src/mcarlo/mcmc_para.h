@@ -4159,6 +4159,8 @@ namespace o2scl {
       proposal distribution (i.e. through a virtual function
       mechanism), because that retraining requires a more careful
       consideration of autocorrelations.
+
+      This class is experimental.
       
       \note OpenMP threading probably doesn't work yet. This class
       currently requires Python support (for the classifier).

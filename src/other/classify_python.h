@@ -44,7 +44,9 @@
 
 namespace o2scl {
 
-  /** \brief Multidimensional interpolation interface for python
+  /** \brief Classification interface for python
+
+      This class is experimental.
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
            class vec_int_t=boost::numeric::ublas::vector<int>,

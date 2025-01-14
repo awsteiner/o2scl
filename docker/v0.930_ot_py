@@ -57,7 +57,7 @@ RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST \
 RUN make blank-doc && make && make install
 
 WORKDIR /opt
-ENV LD_LIBRARY_PATH /usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib
 
 # --------------------------------------------------------------------------
 # To ensure o2graph loads OpenMP appropriately
@@ -66,12 +66,18 @@ WORKDIR /usr/lib64
 RUN ln -s libgomp.so.1 libgomp.so
 
 WORKDIR /
-ENV O2SCL_ADDL_LIBS /usr/lib64/libgomp.so
+ENV O2SCL_ADDL_LIBS=/usr/lib64/libgomp.so
 
 # --------------------------------------------------------------------------
 # Clear the build directory and then run acol and o2graph
 
 RUN acol -h && acol -v && o2graph -h && o2graph -v
 
+# ───────────────────────────────────────────────────────────────────
+# Run tests
 
-
+WORKDIR /opt/o2scl
+#FROM working
+RUN make check && make o2scl-examples && make distclean
+WORKDIR /opt/o2sclpy
+RUN make testq

@@ -37,11 +37,12 @@ RUN make blank-doc && make && make install
 # Check that 'acol -v' works
 
 WORKDIR /
-ENV LD_LIBRARY_PATH /usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib
 RUN acol -v
 
+# ───────────────────────────────────────────────────────────────────
+# Run tests
 
-
-
-
-
+WORKDIR /opt/o2scl
+#FROM working
+RUN make check && make o2scl-examples && make distclean

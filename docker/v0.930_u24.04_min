@@ -35,7 +35,7 @@ RUN make blank-doc && make && make install
 # Run acol
 
 WORKDIR /opt
-ENV LD_LIBRARY_PATH /usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib
 RUN acol -h && acol -v
 
 # ───────────────────────────────────────────────────────────────────

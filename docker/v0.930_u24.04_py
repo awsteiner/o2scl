@@ -130,11 +130,3 @@ WORKDIR /opt/o2scl
 RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy
 RUN make testq
-
-
-
-
-
-
-
-

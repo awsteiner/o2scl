@@ -1,5 +1,37 @@
 Notes for 0.930 release:
 
+Improved documentation in several places.
+
+Improved docker files, github actions, and interaction with o2sclpy.
+
+Multiprecision support is now optional and off by default. It was
+slowing down compilation and testing time drastically.
+
+Improvements have been made in the gmm_python, fermion_deriv_rel,
+fermion_nonrel, quark_tl, mcmc_para_base, interpm_python, mroot_cern,
+fermion_rel, boson_rel, eos_leptons, interpm_krige_optim, eos_had_virial,
+
+Classes mcmc_para_emu and nflows_python, and an experimental
+ex_mcmc_nn example were created.
+
+Class boson_eff was deprecated.
+
+Functions mult_vector_gelman_rubin, vector_remove_dups and
+vector_remove_dups_tol were created.
+
+Functions set_thermo and get_thermo have been removed from EOS
+classes. 
+
+Some improvements have been made on nucmass_ldrop, nucmass_densmat,
+and related classes.
+
+The python interface for std::string and nuclei classes was improved.
+
+The nucleus and yanic executables were updated.
+
+Update to acol commands table to-tensor-grid, tensor_grid to-table,
+and tensor_grid values-table.
+
 ------------------------------------------------------------------------
 Notes for 0.929 release:
 
