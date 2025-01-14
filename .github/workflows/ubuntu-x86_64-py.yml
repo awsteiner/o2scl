@@ -36,7 +36,7 @@ jobs:
     - name: Install python packages
       run: |
         pip install --break-system-packages numpy==2.0.2 h5py
-        pip install --break-system-packages -r docker/v0.930a6_u24.04_req.txt
+        pip install --break-system-packages -r docker/v0.930_u24.04_req.txt
 
     - name: Find numpy
       run: |
