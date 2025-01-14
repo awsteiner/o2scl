@@ -22,6 +22,8 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/nucmass_densmat.h>
+#include <o2scl/nucmass_ame.h>
+#include <o2scl/nucdist.h>
 
 using namespace std;
 using namespace o2scl;

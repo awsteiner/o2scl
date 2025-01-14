@@ -34,7 +34,8 @@ jobs:
       run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip python3 python3-pip python3-numpy libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar cmake libz-dev libsz2 imagemagick texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
     - name: Install python packages
-      run: |
+b
+run: |
         pip install --break-system-packages numpy==2.0.2 h5py
         pip install --break-system-packages -r docker/v0.930a6_u24.04_req.txt
 
@@ -59,6 +60,7 @@ jobs:
     - name: Install o2sclpy
       run: |
         git clone https://github.com/awsteiner/o2sclpy
+        git checkout dev
         cd o2sclpy && pip3 install --break-system-packages --editable .
 
     - name: Build and install o2scl

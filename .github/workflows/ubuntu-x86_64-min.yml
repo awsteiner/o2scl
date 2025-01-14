@@ -49,8 +49,8 @@ jobs:
 
 # For when we're not using a release
     - name: Set up autotools
-        run:
-          ./autogen.sh
+      run:
+        ./autogen.sh
 
     - name: Configure
       run: |
