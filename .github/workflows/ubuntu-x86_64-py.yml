@@ -45,8 +45,12 @@ jobs:
         pip install --break-system-packages torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
 
     - name: Install apt packages (second pass)
-      run: sudo apt-get -y install ccache gzip tar libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev liblapack-dev libopenblas-dev libreadline-dev texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
+      run: sudo apt-get -y install ccache gzip tar libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev liblapack-dev libopenblas-dev libreadline-dev texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
+# Ensure libarmadillo doesn't install it's own HDF5
+    - name: Install apt packages (third pass)
+      run sudo apt-get -y install libarmadillo-dev libhdf5-dev-
+    
     - name: Find numpy
       run: |
         ls /home/runner/.local/lib/python3.12/site-packages/numpy
