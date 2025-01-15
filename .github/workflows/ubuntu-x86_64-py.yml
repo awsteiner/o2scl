@@ -43,7 +43,7 @@ jobs:
         pip install --break-system-packages -r docker/v0.930_u24.04_req.txt
 
     - name: Install apt packages (second pass)
-      run: sudo apt-get -y install ccache gzip tar libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
+      run: sudo apt-get -y install ccache gzip tar libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev liblapack-dev libopenblas-dev libreadline-dev texlive dvipng texlive-latex-extra cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
     - name: Find numpy
       run: |
@@ -59,7 +59,7 @@ jobs:
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
-        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include -I/home/runner/.local/lib/python3.12/site-packages/numpy/_core/include/"
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include -I/home/runner/hdf5/include -L/home/runner/hdf5/lib -I/home/runner/.local/lib/python3.12/site-packages/numpy/_core/include/"
         mkdir -p ${PWD}/build
         ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-python
 
