@@ -224,6 +224,11 @@ Some of the docker images available at
 https://hub.docker.com/r/awsteiner/o2scl include an installation of
 O₂sclpy and O₂scl with Python support. 
 
+O₂scl and O₂sclpy can take advantage of tensorflow, torch, sklearn,
+normflows, and other Python libraries for additional functionality.
+Tensorflow comes bundled with HDF5, so this creates some additional
+dependency complications. The docker files for the docker images
+show how a full installation can proceed. 
 .. 
   x .. _compile_snap:
   x- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`

@@ -50,7 +50,7 @@ ACLOCAL_AMFLAGS = -I m4
 # Note that in SUBDIRS below, include must come before src (so that
 # the necessary include files can be found) and bin must come after
 # src (so that the libraries can be found for the executables)
-SUBDIRS = include src bin data doc examples 
+SUBDIRS = include src bin data doc examples
 
 # Extra files to add to the distribution
 EXTRA_DIST = autogen.sh TODOS README m4 README.md 
