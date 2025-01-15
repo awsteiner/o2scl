@@ -49,7 +49,7 @@ jobs:
 
 # Ensure libarmadillo doesn't install it's own HDF5
     - name: Install apt packages (third pass)
-      run sudo apt-get -y install libarmadillo-dev libhdf5-dev-
+      run: sudo apt-get -y install libarmadillo-dev libhdf5-dev-
     
     - name: Find numpy
       run: |
