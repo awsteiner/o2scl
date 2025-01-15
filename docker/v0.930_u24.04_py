@@ -93,7 +93,7 @@ RUN pip3 install --break-system-packages torch==2.5.1 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout 2dedb923e60 && autoreconf -i
+RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -108,7 +108,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git fetch && git pull && git checkout 9de0c6bdf178 && \
+RUN git fetch && git pull && git checkout 527c6be5cc && \
   pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
