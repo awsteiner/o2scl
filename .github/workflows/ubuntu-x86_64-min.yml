@@ -42,7 +42,6 @@ jobs:
         key: cache-ubuntu-x86_64-min-${{ github.run_id }}
         restore-keys: |
           cache-ubuntu-x86_64-min
-        save-always: true
 
     - name: Install dependencies
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar

@@ -28,22 +28,18 @@ jobs:
         key: cache-ubuntu-x86_64-py-${{ github.run_id }}
         restore-keys: |
           cache-ubuntu-x86_64-py
-        save-always: true
-
-# Boost installs it's own version of numpy, which is not helpful,
-# so we need to install numpy with python first, and then
-# install boost afterwards.
 
     - name: Install apt packages (first pass)
       run: sudo apt-get -y update && sudo apt-get -y install g++ make autoconf automake libtool git curl cmake python3 libz-dev libsz2 imagemagick python3-pip
 
     - name: Install HDF5
       run: |
-        curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz" -o hdf5-1.14.4-3.tar.gz && tar xvzf hdf5-1.14.4-3.tar.gz && cd hdf5-1.14.4-3 && ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5 && make && make install
+        curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz" -o hdf5-1.14.4-3.tar.gz && tar xvzf hdf5-1.14.4-3.tar.gz && cd hdf5-1.14.4-3 && ./configure --with-zlib --with-szlib --prefix=/home/runner/hdf5 && make && make install
 
     - name: Install python packages
       run: |
-        pip install --break-system-packages numpy==2.0.2 h5py
+        pip install --break-system-packages numpy==2.0.2 
+        HDF5_DIR=/home/runner/hdf5 pip install --break-system-packages --no-binary=h5py h5py==3.12.1
         pip install --break-system-packages -r docker/v0.930_u24.04_req.txt
 
     - name: Install apt packages (second pass)

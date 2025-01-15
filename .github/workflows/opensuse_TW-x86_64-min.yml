@@ -42,7 +42,6 @@ jobs:
         key: cache-oSTW-x86_64-fast-test-nopy-${{ github.run_id }}
         restore-keys: |
           cache-oSTW-x86_64-fast-test-nopy
-        save-always: true
 
     - name: Install dependencies
       run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel boost-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
