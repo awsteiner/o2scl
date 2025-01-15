@@ -54,7 +54,7 @@ jobs:
 
     - name: Find hdf5
       run: |
-        find /usr --name "libhdf*"
+        find /usr -name "libhdf*"
 
     - name: Set up autotools scripts
       run:
