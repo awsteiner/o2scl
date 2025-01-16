@@ -84,17 +84,17 @@ jobs:
 
     - name: Try acol
       run: |
-        export LD_LIBRAY_PATH+=:${PWD}/build
+        export LD_LIBRARY_PATH+=:${PWD}/build
         ${PWD}/build/bin/acol -v
 
     - name: Check o2scl
       run: |
-        export LD_LIBRAY_PATH+=:${PWD}/build
+        export LD_LIBRARY_PATH+=:${PWD}/build
         make VERBOSE=1 o2scl-test -j4 -O -k
 
     - name: Test o2sclpy and run o2graph
       run: |
         export O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
-        export LD_LIBRAY_PATH+=:${PWD}/build
+        export LD_LIBRARY_PATH+=:${PWD}/build:/home/runner/work/o2scl/o2scl/build/lib
         cd o2sclpy && pytest -s -v
         o2graph -v
