@@ -70,7 +70,6 @@ jobs:
 
     - name: Try acol
       run: |
-        export LD_LIBRAY_PATH+=:${PWD}/build
         ${PWD}/build/bin/acol -v
 
     - name: Check
