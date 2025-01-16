@@ -327,9 +327,8 @@ AC_CHECK_LIB([ncurses], [initscr], [],
 AC_CHECK_LIB([hdf5], [H5Fopen], [], [
   AC_CHECK_LIB([hdf5_serial], [H5Fopen], [], [
     echo ""
-    echo "HDF5 not found. Either provide the location for "
-    echo "the hdf5 libraries or ensure that HDF5 support is "
-    echo "disabled with the --disable-hdf option to configure. "
+    echo "HDF5 not found. Please provide the location for "
+    echo "the hdf5 libraries."
     echo ""
     echo -n " The present value of LDFLAGS is: " 
     echo $LDFLAGS
@@ -343,10 +342,8 @@ AC_CHECK_LIB([hdf5], [H5Fopen], [], [
 AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [], [
   AC_CHECK_LIB([hdf5_serial_hl], [H5TBread_table], [], [
     echo ""
-    echo "High-level HDF5 interface not found. Either provide the "
-    echo "location for the hdf5_hl libraries or ensure that HDF5 "
-    echo "support is disabled with the --disable-hdf option to "
-    echo "configure. "
+    echo "High-level HDF5 interface not found. Please provide the "
+    echo "location for the hdf5_hl libraries."
     echo ""
     echo -n " The present value of LDFLAGS is: " 
     echo $LDFLAGS
