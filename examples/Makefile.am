@@ -297,7 +297,7 @@ ex_mcmc_nn_SOURCES = ex_mcmc_nn.cpp
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
 
-ex_mcmc_nn.scr: ex_mcmc.scr ex_mcmc_nn
+ex_mcmc_nn.scr: ex_mcmc.scr ex_mcmc_kde ex_mcmc ex_mcmc_nn
 	./ex_mcmc > ex_mcmc.scr
 	./ex_mcmc_kde > ex_mcmc_kde.scr
 	./ex_mcmc_nn > ex_mcmc_nn.scr
