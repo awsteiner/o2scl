@@ -91,9 +91,15 @@ RUN pip3 install --break-system-packages torch==2.5.1 \
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.930/o2scl-0.930.tar.gz \
+  --output o2scl-0.930.tar.gz
+RUN tar xzf o2scl-0.930.tar.gz
+WORKDIR /opt/o2scl-0.930
+
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
+#RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -125,7 +131,7 @@ RUN acol -h && acol -v && o2graph -h && o2graph -v
 # ───────────────────────────────────────────────────────────────────
 # Run tests
 
-WORKDIR /opt/o2scl
+WORKDIR /opt/o2scl-0.930
 #FROM working
 RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy

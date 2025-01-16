@@ -25,9 +25,17 @@ RUN ln -s libquadmath.so.0 libquadmath.so
 # Now install o2scl
 
 WORKDIR /opt
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
+
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.930/o2scl-0.930.tar.gz \
+  --output o2scl-0.930.tar.gz
+RUN tar xzf o2scl-0.930.tar.gz
+WORKDIR /opt/o2scl-0.930
+
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
+#RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
+
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST -I/usr/local/lib/python3.12/dist-packages/numpy/core/include" \
 ./configure --enable-eigen --enable-armadillo --enable-fftw \
 --enable-openmp --enable-ncurses
@@ -43,6 +51,6 @@ RUN acol -v
 # ───────────────────────────────────────────────────────────────────
 # Run tests
 
-WORKDIR /opt/o2scl
+WORKDIR /opt/o2scl-0.930
 #FROM working
 RUN make check && make o2scl-examples && make distclean
