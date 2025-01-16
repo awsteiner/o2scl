@@ -1901,6 +1901,14 @@ namespace o2scl {
         for(size_t it=0;it<n_threads;it++) {
           mcmc_iters[it]=0;
         }
+
+        double mcmc_start_time=0.0;
+
+#ifdef O2SCL_MPI
+        mcmc_start_time=MPI_Wtime();
+#else
+        mcmc_start_time=time(0);
+#endif
         
         while (!main_done) {
           
@@ -2116,9 +2124,9 @@ namespace o2scl {
 
           // Report MCMC performance
 #ifdef O2SCL_MPI
-            elapsed=MPI_Wtime()-mpi_start_time;
+            elapsed=MPI_Wtime()-mcmc_start_time;
 #else
-            elapsed=time(0)-mpi_start_time;
+            elapsed=time(0)-mcmc_start_time;
 #endif
           double t_accept=0.0, t_reject=0.0, t_iters=0.0;
 
@@ -2150,6 +2158,14 @@ namespace o2scl {
 
         bool main_done=false;
         size_t mcmc_iters=0;
+
+        double mcmc_start_time=0.0;
+
+#ifdef O2SCL_MPI
+        mcmc_start_time=MPI_Wtime();
+#else
+        mcmc_start_time=time(0);
+#endif
 
         while (!main_done) {
 
@@ -2514,6 +2530,34 @@ namespace o2scl {
 
           outside_parallel();
 
+          // Report MCMC performance
+
+          if (mcmc_iters%100==0) {
+            
+#ifdef O2SCL_MPI
+            elapsed=MPI_Wtime()-mcmc_start_time;
+#else
+            elapsed=time(0)-mcmc_start_time;
+#endif
+            double t_accept=0.0, t_reject=0.0;
+
+            for (size_t it=0; it<n_threads; it++) {
+              t_accept+=((double)n_accept[it]);
+              t_reject+=((double)n_reject[it]);
+            }
+
+            double n_iters=((double)mcmc_iters);
+            double acc_rate=t_accept/(t_accept+t_reject);
+
+            scr_out << std::fixed << std::setprecision(2) << std::endl;
+            scr_out << "Avg accept rate : " << acc_rate*100 
+                    << " %" << std::endl;
+            scr_out << "Time elapsed    : " << elapsed 
+                    << " sec" << std::endl;
+            scr_out << "Avg time/iter   : " << elapsed/n_iters
+                    << " sec" << std::endl;
+            scr_out << std::scientific << std::setprecision(6) << std::endl;
+          }
           // --------------------------------------------------------------
           // End of main loop for aff_inv=true
         }
