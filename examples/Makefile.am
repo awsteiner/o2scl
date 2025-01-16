@@ -81,12 +81,12 @@ EXAMPLE_BASE = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 	ex_nucleus_rmf.scr ex_eos_had_skyrme.scr \
 	ex_nucmass.scr ex_tensor.scr ex_nstar_rot.scr \
 	ex_interp.scr ex_eos_gibbs.scr \
-	ex_fermion_summ.scr ex_lambda.scr ex_mcmc.scr
+	ex_fermion_summ.scr ex_lambda.scr
 
 # When Python is enabled, ex_mcmc_kde needs to run after ex_mcmc,
 # since it uses the ex_mcmc results to train the KDE
 if O2SCL_PYTHON
-EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr ex_mcmc_nn.scr
+EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_nn.scr
 else
 EXAMPLE_PRGS = $(EXAMPLE_BASE) 
 endif
@@ -133,7 +133,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 # Distribution files
 # -------------------------------------------------------------
 
-EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h
+EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h data/README.md
 
 # -------------------------------------------------------------
 # Main targets
@@ -297,12 +297,9 @@ ex_mcmc_nn_SOURCES = ex_mcmc_nn.cpp
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
 
-ex_mcmc_kde.scr: ex_mcmc.scr ex_mcmc_kde
-	./ex_mcmc > ex_mcmc.scr
-	./ex_mcmc_kde > ex_mcmc_kde.scr
-
 ex_mcmc_nn.scr: ex_mcmc.scr ex_mcmc_nn
 	./ex_mcmc > ex_mcmc.scr
+	./ex_mcmc_kde > ex_mcmc_kde.scr
 	./ex_mcmc_nn > ex_mcmc_nn.scr
 
 # -------------------------------------------------------------------

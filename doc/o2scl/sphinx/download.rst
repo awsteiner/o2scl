@@ -61,7 +61,7 @@ dgst -sha256`` and compare with the following values.
    o2scl-0.927.tar.gz    201cec9ccbcf11bf704a824c774e6db2
    o2scl-0.928.tar.gz    16b5c2f2b1d2d3edea571a1108a11ceb
    o2scl-0.929.tar.gz    2d03c121a450f05504c33c2f532dc011
-   o2scl-0.930.tar.gz    faa7235307094d058f5f225b924d089b
+   o2scl-0.930.tar.gz    04ffb6ce3c9ee88c0253415ce7a4c3f0
    ===================== ================================
 
 ===================== ================================================================
@@ -104,7 +104,7 @@ o2scl-0.926.tar.gz    a4d5b90b9a83ddead19f3c01bf29c7c7a3f32134a15755746552417cc4
 o2scl-0.927.tar.gz    9bdbea171c1924c1ae7e0d3dc1f80683ac2c4081eec102a884d453494c9635ad
 o2scl-0.928.tar.gz    55843e5aa1eb2f45b2c0e12cf18b403eccc24ce474562f60989fc07a23afc830
 o2scl-0.929.tar.gz    3ffe0c486c588eed71a9b9e319ad2de28b81f4f938ae3bda0a90faf63eb2cacf
-o2scl-0.930.tar.gz    a93f1bec43d555daf4e7e5dea3bbca995dec0ef3c1978e10713926f0f9927de3
+o2scl-0.930.tar.gz    8c3fed520c76a8440023efb6c2fc8d699bf44907b04d6df97d8cfd755f7e2762
 ===================== ================================================================
 
 ======== ========== ========================= ==================
@@ -146,6 +146,6 @@ Version   Date       Rev. in Sourceforge SVN   Github repo hash
 0.927     07/23/22   N/A                       9061fb5c032e8ed2f80334336ca606afbe60e0d3
 0.928     07/18/23   N/A                       4dff7a3b143c2043ee5f08721d6b35a8dbbdfcab
 0.929     05/09/24   N/A                       c34a573040046e223f39f5c59d893c7172c68f68
-0.930     01/15/25   N/A                       c6c295e97d4e80f69b73a426b3480f964f3e194c
+0.930     01/15/25   N/A                       cc23ec93ad443610c11fbece2b88eb20758c9d66
 ======== ========== ========================= ==================
 
