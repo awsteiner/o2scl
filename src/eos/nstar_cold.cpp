@@ -261,10 +261,10 @@ int nstar_cold::calc_eos(double np_0) {
         hep->f_inv_number_suscept(neut.n,prot.n,dmundnn,
                                   dmupdnn,dmupdnp);
         double dmuBdnB=dmundnn;
-        double dmuLednLe=-dmundnn+dmupdnp;//+1.0/ed.dndmu;
-        double dmuLednB=0.0;
+        double dmuLednLe=-dmundnn+dmundnp;//+1.0/ed.dndmu;
+        double dmuLednB=dmuLednLe;
         double alpha=dmuLednB/dmuLednLe;
-        double cs2=n_B*dmuBdnB+e.n*e.n/n_B*dmuLednLe;
+        double cs2=(n_B*dmuBdnB+e.n*e.n/n_B*dmuLednLe)/neut.mu;
         //double fcs2=(n_B*dmuBdnB+alpha*e.n*dmuLednLe)/neut.mu;
 
         // AWS: 3/9/21: this is nothing other than the speed of
