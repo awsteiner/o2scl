@@ -38,16 +38,12 @@
 #include <o2scl/deriv_eqi.h>
 #include <o2scl/interp.h>
 #include <o2scl/test_mgr.h>
-#ifdef O2SCL_HDF
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
-#endif
 
 using namespace std;
 using namespace o2scl;
-#ifdef O2SCL_HDF
 using namespace o2scl_hdf;
-#endif
 
 int main(void) {
   cout.setf(ios::scientific);
@@ -92,13 +88,12 @@ int main(void) {
 		    fabs(y[i]-dydx[i])/y[i],fabs(y[i]-dydx2[i])/y[i]};
     ta.line_of_data(6,line);
   }
-  
-#ifdef O2SCL_HDF
+
+  // Output the results to a file
   hdf_file hf;
   hf.open_or_create("ex_diff.o2");
   o2scl_hdf::hdf_output(hf,ta,"table");
   hf.close();
-#endif
 
   t.report();
   return 0;

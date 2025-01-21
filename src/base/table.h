@@ -182,7 +182,7 @@ namespace o2scl {
       <tt>std::vector<double> </tt> requires a copy. 
 
       \verbatim embed:rst
-      See the the discussion in the sections :ref:`Vector and Matrix
+      See the discussion in the sections :ref:`Vector and Matrix
       Introduction` and :ref:`I/O and contiguous storage` of the
       User's Guide for more details.
       \endverbatim

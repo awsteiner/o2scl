@@ -75,14 +75,12 @@ namespace o2scl {
       \endverbatim
 
       The original results from Baym et al. (1971) are stored as a
-      \ref table in file <tt>data/o2scl/bps.eos</tt>. The testing code
-      for this class compares the calculations to the table and
-      matches to within .2 percent for the energy density and 9
-      percent for the pressure (for a fixed baryon number density).
+      \ref table in file <tt>data/o2scl/bps.eos</tt>.
 
-      \future Can the pressure be made to match more closely?
-      \future Convert to a \ref o2scl::eos_had_base object and offer an
-      associated interface?
+      \verbatim embed:rst
+      See the :ref:`Outer crust example` for this class which
+      compares the code to the table from the original paper.
+      \endverbatim
 
   */
   class eos_crust : public eos_base {
@@ -95,8 +93,8 @@ namespace o2scl {
     
     virtual ~eos_crust() {};
     
-    /** \brief Calculate the equation of state as a function of
-	the baryon number density \c barn
+    /** \brief Calculate the equation of state by minimizing the
+        energy as a function of the baryon number density
 	
 	This calculates the equation of state as a function of the
 	baryon number density in \f$\mathrm{fm}^{-3}\f$, returning the
@@ -106,8 +104,8 @@ namespace o2scl {
     */
     virtual int calc_density(double barn, int &Z, int &A);
 
-    /** \brief Calculate the equation of state as a function of
-	the pressure
+    /** \brief Calculate the equation of state by minimizing
+        the Gibbs energy as a function of the pressure
 
 	This calculates the equation of state as a function of the
 	pressure, returning the representative nucleus with proton
@@ -147,19 +145,25 @@ namespace o2scl {
     /// Compute the ground state assuming a fixed atomic number
     int calc_density_fixedA(double barn, int &Z, int A);
     
-    /** \brief The electron thermodynamics
+    /** \brief The electron object
 	
-	\note The electron rest mass is included by default in 
+	The electron rest mass is included by default in 
 	the energy density and the chemical potential
     */
     fermion e;
 
+    /** \brief Compute the EOS in beta-equilibrium at 
+	zero temperature
+    */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
 			   std::shared_ptr<table_units<> > results) {
       return 20;
     }
     
+    /** \brief Equation of state as a function of baryon, charge,
+        and strangeness density at finite temperature
+    */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
                                 double T, thermo &th) {
       return 20;

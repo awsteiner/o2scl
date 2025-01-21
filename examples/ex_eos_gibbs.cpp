@@ -220,9 +220,11 @@ public:
    */
   void leptons_out(size_t &ix, ubvector &y, double T, double nB) {
 
+    std::cout << "J1: " << e.mu << " " << T << std::endl;
     fr.pair_mu(e,T);
     
     mu.mu=e.mu-nu_e.mu+nu_mu.mu;
+    std::cout << "J2: " << mu.mu << " " << T << std::endl;
     fr.pair_mu(mu,T);
     
     lep.ed=e.ed+mu.ed;
@@ -473,8 +475,8 @@ public:
   int f_beg_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
 			double &nB) {
 
-    //cout << "x: ";
-    //vector_out(cout,nv,x,true);
+    cout << "x: ";
+    vector_out(cout,nv,x,true);
     
     size_t ix=0;
     n.n=x[ix++];
@@ -486,7 +488,9 @@ public:
     }
     leptons_in(ix,x);
 
+    cout << "H1." << endl;
     ptr_h->calc_temp_e(n,p,T,hth);
+    cout << "H2." << endl;
 
     // Compute total baryon density
     nB=n.n+p.n;
@@ -496,10 +500,14 @@ public:
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
+    cout << "H3." << endl;
     ptr_q->calc_temp_p(u,d,s,T,qth);
+    cout << "H4." << endl;
     
     ix=0;
+    cout << "H5." << endl;
     leptons_out(ix,y,T,nB);
+    cout << "H6." << endl;
     
     y[ix++]=hth.pr-qth.pr;
     // Ensure electric neutrality in the hadronic phase
@@ -951,7 +959,8 @@ public:
 	 << p.m*hc_mev_fm << " "
          << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
-    
+
+    /*
     cout << rmf.b << endl;
     cout << rmf.c << endl;
     cout << rmf.cr << endl;
@@ -970,6 +979,7 @@ public:
     cout << rmf.b2 << endl;
     cout << rmf.b3 << endl;
     exit(-1);
+    */
 
     // -----------------------------------------------------------------
     // Determine bag constant
@@ -1053,6 +1063,7 @@ public:
       }
       size_t nvar=ix;
       //mh.verbose=1;
+      cout << "nvar: " << nvar << endl;
       mh.msolve(nvar,x,fp_beg_mixed_phase);
       
       f_beg_mixed_phase(nvar,x,y,nB);
@@ -1111,7 +1122,7 @@ public:
     table_units<> tq;
     if (true) {
       tq.line_of_names("nB muQ mue ede pre edq prq edt prt");
-      cout << "Quark phase: " << endl;
+      cout << "Quark phase (nB,nu,nd,ns): " << endl;
       x[0]=mp_end_muQ;
       x[1]=mp_end_mue;
       for(nB=mp_end;nB<1.5001;nB+=0.01) {
@@ -1133,7 +1144,7 @@ public:
 
     table<> tmixed;
     if (true) {
-      cout << "Mixed phase: " << endl;
+      cout << "Mixed phase (nB,nn,np,nu,nd,ns,chi): " << endl;
       tmixed.line_of_names(((string)"nB nn np nu nd ns ede pre edt ")+
 			   "prt edh prh edq prq mun mup chi");
 
@@ -1291,7 +1302,9 @@ public:
       rmf.saturation();
       cout << "n0,m*/m: " << rmf.n0 << " " << rmf.msom << endl;
       
-      cout << "Selected the RMF model from SPL00 (no hyperons)." << endl;
+      cout << "Selected the RMF model from SPL00 "
+           << "(no hyperons, zeta=xi=0)." << endl;
+      
     } else if (sv[1]=="SPL00_hyp") {
       ptr_h=&rmf_hyp;
       rmf_hyp.n0=0.16;
@@ -1392,9 +1405,9 @@ public:
       mvsr(sv2,itive_com);
     }
 
-    sonB=0.5;
-    //YLe=0.4;
-    //YLmu=0.0;
+    sonB=1.0;
+    YLe=0.4;
+    YLmu=0.0;
     {
       vector<string> sv2={"mvsr","ex_eos_gibbs_spl00.o2"};
       mvsr(sv2,itive_com);
