@@ -144,12 +144,12 @@ if O2SCL_OPENMP
 if O2SCL_PYTHON
 
 # snap false, openmp true, python true
-acol_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
-nucleus_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB)
+acol_LDFLAGS = -L../src -L../src/hdf -fopenmp
+ame_parse_LDFLAGS = -L../src -L../src/hdf -fopenmp
+yanic_LDFLAGS = -L../src -L../src/hdf -fopenmp
+nucleus_LDFLAGS = -L../src -L../src/hdf -fopenmp
 if O2SCL_PUGIXML
-make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -l$(PYTHON_LIB) -lpugixml
+make_rst_LDFLAGS = -L../src -L../src/hdf -fopenmp -lpugixml
 endif
 
 else
@@ -201,12 +201,12 @@ endif
 
 if O2SCL_PYTHON
 
-acol_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-yanic_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
-nucleus_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB)
+acol_LDADD = -lo2scl -lgsl -lgslcblas -lpython3.9 -lhdf5
+ame_parse_LDADD = -lo2scl -lgsl -lgslcblas -lpython3.9 -lhdf5
+yanic_LDADD = -lo2scl -lgsl -lgslcblas -lpython3.9 -lhdf5
+nucleus_LDADD = -lo2scl -lgsl -lgslcblas -lpython3.9 -lhdf5
 if O2SCL_PUGIXML
-make_rst_LDADD = -lo2scl -lgsl -lgslcblas -l$(PYTHON_LIB) -lpugixml
+make_rst_LDADD = -lo2scl -lgsl -lgslcblas -lpugixml
 endif
 
 else

@@ -273,9 +273,9 @@ AM_CONDITIONAL(O2SCL_PYTHON, test x$python = xtrue)
 # If enabled, check for the python library
 # ------------------------------------------------------------------
 
-AS_IF([test "x$enable_python" == "xyes"], [
-        AX_PYTHON
-])
+#AS_IF([test "x$enable_python" == "xyes"], [
+#        AX_PYTHON
+#])
 
 # ------------------------------------------------------------------
 # If enabled, check for the polylogarithm library
