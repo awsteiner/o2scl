@@ -870,6 +870,13 @@ void o2scl_free_nucmass_wlw(void *vptr) {
   return;
 }
 
+int o2scl_nucmass_wlw_load(void *vptr, void *ptr_model, bool external) {
+  nucmass_wlw *ptr=(nucmass_wlw *)vptr;
+  std::string *model=(std::string *)ptr_model;
+  int ret=ptr->load(*model,external);
+  return ret;
+}
+
 void *o2scl_create_nucmass_fit() {
   nucmass_fit *ptr=new nucmass_fit;
   return ptr;
@@ -1065,6 +1072,15 @@ void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2,
   nucmass *nm2=(nucmass *)ptr_nm2;
   std::string *expr=(std::string *)ptr_expr;
   nucdist_pair_set(*dist,*nm,*nm2,*expr,maxA,include_neutron);
+  return;
+}
+
+void o2scl_nucdist_set_ext_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA, int n_chop) {
+  vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
+  vector<nucleus> *dist_ext=(vector<nucleus> *)ptr_dist_ext;
+  nucmass *nm=(nucmass *)ptr_nm;
+  std::string *expr=(std::string *)ptr_expr;
+  nucdist_set_ext(*dist,*dist_ext,*nm,*expr,maxA,n_chop);
   return;
 }
 

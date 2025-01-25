@@ -38,8 +38,6 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
   std::map<std::string,double> vars;
   calc.compile(expr.c_str(),&vars);
   
-  size_t dist_size=0;
-  
   // Now fill the vector with the nuclei
   size_t ix=0;
   for(int A=1;A<=maxA;A++) {
@@ -79,8 +77,6 @@ void o2scl::nucdist_pair_set(vector<nucleus> &dist, nucmass &nm,
   std::map<std::string,double> vars;
   calc.compile(expr.c_str(),&vars);
   
-  size_t dist_size=0;
-  
   // Now fill the vector with the nuclei
   size_t ix=0;
   for(int A=1;A<=maxA;A++) {
@@ -104,6 +100,63 @@ void o2scl::nucdist_pair_set(vector<nucleus> &dist, nucmass &nm,
 	}
       }
     }
+  }
+
+  return;
+}
+
+void o2scl::nucdist_set_ext
+(vector<nucleus> &dist, vector<nucleus> &dist_ext, nucmass &nm,
+ std::string expr, int maxA, int n_chop) {
+  
+  nucleus n;
+
+  if (dist.size()>0) dist.clear();
+
+  /// The function parser
+  calc_utf8<> calc;
+  std::map<std::string,double> vars;
+  calc.compile(expr.c_str(),&vars);
+  
+  // For each isotope
+  for(int Z=1;Z<=maxA;Z++) {
+    
+    int maxN=1, minN=0;
+    
+    for(int N=1;N<=maxA;N++) {
+
+      vars["Z"]=Z;
+      vars["A"]=N+Z;
+      vars["N"]=N;
+      
+      // Determine the maximum N
+      if (nm.is_included(Z,N) && calc.eval(&vars)>0.5) {
+        if (minN==0) {
+          minN=N;
+        }
+        if (minN>0) {
+          maxN=N;
+        }
+      }
+    }
+
+    if (minN>=maxN || maxN-minN<=n_chop) {
+      std::cerr << "Z,minN,maxN: "
+                << Z << " " << minN << " " << maxN << std::endl;
+      O2SCL_ERR("Could not find enough isotopes for extrapolation.",
+                o2scl::exc_einval);
+    }
+
+    for (int N=minN;N<=maxN;N++) {
+      dist_ext.push_back(n);
+      nm.get_nucleus(Z,N,dist_ext[dist_ext.size()-1]);
+      dist_ext.push_back(n);
+      if (N<=maxN-n_chop) {
+        dist.push_back(n);
+        nm.get_nucleus(Z,N,dist[dist.size()-1]);
+      }
+    }
+
   }
 
   return;

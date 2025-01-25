@@ -58,6 +58,11 @@ namespace o2scl {
                         nucmass &nm2, std::string expr="1", int maxA=400,
                         bool include_neutron=false);
 
+  /// Desc
+  void nucdist_set_ext(std::vector<nucleus> &dist,
+                       std::vector<nucleus> &dist_ext, nucmass &nm,
+                       std::string expr="1", int maxA=400, int n_chop=1);
+  
 }
 
 #endif

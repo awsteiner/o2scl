@@ -2665,6 +2665,28 @@ void o2scl_nucmass_ldrop_pair_set_pair(void *vptr, double v) {
   return;
 }
 
+void *o2scl_create_nucmass_ldrop_shell() {
+  nucmass_ldrop_shell *ptr=new nucmass_ldrop_shell;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ldrop_shell(void *vptr) {
+  nucmass_ldrop_shell *ptr=(nucmass_ldrop_shell *)vptr;
+  delete ptr;
+  return;
+}
+
+void *o2scl_create_nucmass_frdm_shell() {
+  nucmass_frdm_shell *ptr=new nucmass_frdm_shell;
+  return ptr;
+}
+
+void o2scl_free_nucmass_frdm_shell(void *vptr) {
+  nucmass_frdm_shell *ptr=(nucmass_frdm_shell *)vptr;
+  delete ptr;
+  return;
+}
+
 void *o2scl_create_nucleus_bin() {
   nucleus_bin *ptr=new nucleus_bin;
   return ptr;

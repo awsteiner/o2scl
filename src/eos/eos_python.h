@@ -964,6 +964,14 @@ double o2scl_nucmass_ldrop_pair_get_pair(void *vptr);
 
 void o2scl_nucmass_ldrop_pair_set_pair(void *vptr, double v);
 
+void *o2scl_create_nucmass_ldrop_shell();
+
+void o2scl_free_nucmass_ldrop_shell(void *vptr);
+
+void *o2scl_create_nucmass_frdm_shell();
+
+void o2scl_free_nucmass_frdm_shell(void *vptr);
+
 void *o2scl_create_nucleus_bin();
 
 void o2scl_free_nucleus_bin(void *vptr);

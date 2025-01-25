@@ -34,7 +34,7 @@ using namespace o2scl_hdf;
 nucleus_bin::nucleus_bin() {
 
   verbose=1;
-    
+
   //std::cout << "Reading nuclear mass tables." << std::endl;
     
   o2scl_hdf::ame_load(ame95rmd,"95rmd");
@@ -131,16 +131,16 @@ nucleus_bin::nucleus_bin() {
   }
   if (true) {
     ubvector p(10);
-    p[0]=1.470521168091704e+00;
-    p[1]=1.110599542324431e+00;
-    p[2]=4.233650770523403e+01;
-    p[3]=1.677705218132046e+01;
-    p[4]=2.646289872432062e+01;
-    p[5]=3.443846328788821e+01;
-    p[6]=2.585455547917483e+01;
-    p[7]=7.138147608954237e-01;
-    p[8]=1.284100176024626e+00;
-    p[9]=2.660955290904157e-01;
+    p[0]=6.262656723970295e-01;
+    p[1]=1.062118484793815e+00;
+    p[2]=4.278509731327071e+01;
+    p[3]=1.712865295142668e+01;
+    p[4]=2.750315169290062e+01;
+    p[5]=3.585974615126219e+01;
+    p[6]=2.488088599031062e+01;
+    p[7]=6.952310612512534e-01;
+    p[8]=1.133367354754059e+00;
+    p[9]=2.989576509602983e-01;
     frdm.fit_fun(10,p);
   }
   if (true) {
@@ -159,39 +159,39 @@ nucleus_bin::nucleus_bin() {
   }
   if (true) {
     ubvector p(33);
-    p[0]=9.089056134746128e+00;
-    p[1]=6.503243633083565e+00;
-    p[2]=4.508165895514288e+00;
-    p[3]=2.078535386636489e+01;
-    p[4]=1.725739163595326e+00;
-    p[5]=7.535149383516492e+00;
-    p[6]=-4.506924382606631e+00;
-    p[7]=-3.412765813834761e+01;
-    p[8]=-3.585539147281765e-01;
-    p[9]=7.344223304154160e-01;
-    p[10]=-7.511052798991504e-01;
-    p[11]=-3.761406531766877e+00;
-    p[12]=-1.776599459045521e-01;
-    p[13]=-8.995089717699093e-01;
-    p[14]=3.973338204326113e-01;
-    p[15]=1.807250910019584e+00;
-    p[16]=2.413813645058122e-01;
-    p[17]=1.066620521567073e+00;
-    p[18]=8.518733677001322e+00;
-    p[19]=5.373696129291158e+01;
-    p[20]=1.824339588062157e+01;
-    p[21]=7.270593853877729e+01;
-    p[22]=-2.714335458881215e+01;
-    p[23]=-1.284192451766697e+02;
-    p[24]=-5.001066637985519e+00;
-    p[25]=-3.299700362463194e+01;
-    p[26]=-3.794286672329046e+01;
-    p[27]=-5.392723600204433e+01;
-    p[28]=1.559715229007208e+00;
-    p[29]=5.448044100904870e+00;
-    p[30]=7.054620573104972e-01;
-    p[31]=6.182687849301996e+00;
-    p[32]=2.076508980189957e+01;
+    p[0]=9.088827842830527e+00;
+    p[1]=6.511564581987122e+00;
+    p[2]=4.462956108688138e+00;
+    p[3]=2.074222936534796e+01;
+    p[4]=1.754662224554880e+00;
+    p[5]=7.740340448804256e+00;
+    p[6]=-4.369191221566433e+00;
+    p[7]=-3.418368107217408e+01;
+    p[8]=-3.578727861463152e-01;
+    p[9]=7.269557856660328e-01;
+    p[10]=-7.501870792510353e-01;
+    p[11]=-3.771736481691423e+00;
+    p[12]=-1.779481045580030e-01;
+    p[13]=-9.057241132560844e-01;
+    p[14]=3.952971227188688e-01;
+    p[15]=1.800359380599373e+00;
+    p[16]=2.357449926816584e-01;
+    p[17]=1.051823513035010e+00;
+    p[18]=8.973655324903573e+00;
+    p[19]=5.612237450969798e+01;
+    p[20]=1.824848865708848e+01;
+    p[21]=7.426985283747025e+01;
+    p[22]=-2.690428328513786e+01;
+    p[23]=-1.280799866769777e+02;
+    p[24]=-4.169614442419837e+00;
+    p[25]=-2.917812343383905e+01;
+    p[26]=-3.792308695125627e+01;
+    p[27]=-5.385348566074595e+01;
+    p[28]=1.582609566178451e+00;
+    p[29]=5.568450543337717e+00;
+    p[30]=7.055984771856043e-01;
+    p[31]=6.196805198023444e+00;
+    p[32]=1.997170958626300e+01;
     dzf33.fit_fun(33,p);
   }
   if (true) {
@@ -457,33 +457,50 @@ int nucleus_bin::compare(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
-int nucleus_bin::fits(std::vector<std::string> &sv, bool itive_com) {
-  
-  size_t left_column=18;
+int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
 
+  std::cout << "1." << endl;
   fitter.def_mmin.ntrial*=100;
   
   double res;
+  kwargs kw;
+  if (sv.size()>=3) {
+    kw.set(sv[2]);
+  }
+  std::cout << "2." << endl;
   
   nucdist_set(fitter.dist,ame20exp);
   ldrop_shell.large_vals_unphys=true;
-  
-  cout << "After fit: " << endl;
-  for(size_t i=0;i<n_fits;i++) {
+
+  std::cout << "3." << endl;
+  fitter.def_mmin.verbose=kw.get_int("verbose",0);
+
+  size_t ix_start=0;
+  size_t ix_end=n_fits;
+  std::cout << "4." << endl;
+  if (sv.size()>=2) {
+    ix_start=o2scl::stoszt(sv[1]);
+    ix_end=ix_start+1;
+  }
+  for(size_t i=ix_start;i<ix_end;i++) {
+    std::cout << "5." << endl;
+    cout << fit_names[i] << ": "<< endl;
     fitter.fit(*nmfd[i],res);
-    cout.width(left_column);
     cout << fit_names[i] << ": " << res << endl;
     ubvector p(nmfd[i]->nfit);
     nmfd[i]->guess_fun(nmfd[i]->nfit,p);
     for(size_t k=0;k<nmfd[i]->nfit;k++) {
       cout << "    p[" << k << "]=" << dtos(p[k],0) << ";" << endl;
     }
+    std::cout << "6." << endl;
   }
     
   return 0;
 }
 
 void nucleus_bin::setup_cli(o2scl::cli &cl) {
+
+  std::cout << "A." << std::endl;
   
   static const int nopt=6;
   o2scl::comm_option_s options[nopt]={
@@ -502,13 +519,14 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
      "mass tables to experiment (currently AME 2020).",
      new o2scl::comm_option_mfptr<nucleus_bin>
      (this,&nucleus_bin::compare),o2scl::cli::comm_option_both},
-    {0,"fits","Fit theoretical mass models to experiment",
-     0,0,"",((std::string)"The 'fit' command adjusts the fit parameters ")+
-     "for all of the models for which these parameters can be varied "+
-     "and optimizes their fit with experiment. This takes awhile, likely "+
-     "at least an hour.",
+    {0,"fit","Fit theoretical mass model(s) to experiment",
+     0,2,"[index] [kwargs]",
+     ((std::string)"The 'fit' command adjusts the fit parameters ")+
+     "for one or all of the models for which these parameters can be "+
+     "varied and optimizes their fit with experiment. This takes "+
+     "awhile, likely at least an hour.",
      new o2scl::comm_option_mfptr<nucleus_bin>
-     (this,&nucleus_bin::fits),o2scl::cli::comm_option_both},
+     (this,&nucleus_bin::fit),o2scl::cli::comm_option_both},
     {0,"cdist","Create a distribution of nuclei common to several tables",
      0,0,"","",new o2scl::comm_option_mfptr<nucleus_bin>
      (this,&nucleus_bin::cdist),o2scl::cli::comm_option_both},
@@ -522,5 +540,7 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
   p_verbose.help="Verbosity parameter (default 1)";
   cl.par_list.insert(make_pair("verbose",&p_verbose));
 
+  std::cout << "B." << std::endl;
+  
   return;
 }

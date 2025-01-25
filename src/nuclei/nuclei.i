@@ -338,6 +338,10 @@ class nucmass_sdnp
 #
 class nucmass_wlw
 - parent nucmass_table
+- function load
+  - int
+  - std::string model [""]
+  - bool external [false]
 #
 # ------------------------------------------------------
 # 
@@ -459,4 +463,15 @@ function nucdist_pair_set
 - std::string expr ["1"]  
 - int maxA [400]
 - bool include_neutron [false]
+#
+# ------------------------------------------------------
+#
+function nucdist_set_ext
+- void
+- vector<nucleus> &dist
+- vector<nucleus> &dist_ext
+- nucmass &nm
+- std::string expr ["1"]  
+- int maxA [400]
+- int n_chop [1]
 

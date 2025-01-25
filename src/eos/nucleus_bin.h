@@ -40,7 +40,7 @@
 #include <o2scl/fermion.h>
 #include <o2scl/hdf_nucmass_io.h>
 
-/** \brief Desc
+/** \brief Class for the \c nucleus executable
  */
 class nucleus_bin {
   
@@ -117,9 +117,10 @@ public:
 
   /// \name Other objects
   //@{
+  /// EOS for \ref ldrop_shell
   o2scl::eos_had_skyrme sk;
-  o2scl::fermion nrn;
-  o2scl::fermion nrp;
+
+  /// Fitting object
   o2scl::nucmass_fit fitter;
   
   /// Mass of the neutron
@@ -172,10 +173,6 @@ protected:
   o2scl::cli::parameter_int p_verbose;
   //@}
 
-  // Compute the drip lines
-  //int drip_lines(std::vector<int> &v_Z, std::vector<int> &v_Npd,
-  //std::vector<int> &v_Nnd, int file_index=-1);
-  
 public:
   
   nucleus_bin();
@@ -183,10 +180,6 @@ public:
   virtual ~nucleus_bin() {
   }
 
-  /** \brief Desc
-   */
-  o2scl::table_units<> erler;
-  
   /** \brief Desc
    */
   std::vector<o2scl::nucleus> common_dist;
@@ -203,17 +196,13 @@ public:
    */
   int get(std::vector<std::string> &sv, bool itive_com);
   
-  /** \brief Desc
-   */
-  int isotope(std::vector<std::string> &sv, bool itive_com);
-  
   /** \brief Output all table names and number of nuclei
    */
   int tables(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Improve the fits using an optimizer
+  /** \brief Improve one the fits using an optimizer
    */
-  int fits(std::vector<std::string> &sv, bool itive_com);
+  int fit(std::vector<std::string> &sv, bool itive_com);
 
   /** \brief Compare the quality of the fits and tables to experiment
    */
@@ -226,18 +215,6 @@ public:
   /** \brief Desc
    */
   int cdist(std::vector<std::string> &sv, bool itive_com);
-
-  /** \brief Desc
-   */
-  int info_matrix(std::vector<std::string> &sv, bool itive_com);
-
-  /** \brief Desc
-   */
-  int mass_fit(std::vector<std::string> &sv, bool itive_com);
-    
-  /** \brief Compute the neutron and proton drip lines
-   */
-  int drip_lines_esym(std::vector<std::string> &sv, bool itive_com);
 
   /** \brief Setup the command-line interface
    */

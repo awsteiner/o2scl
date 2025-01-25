@@ -731,6 +731,20 @@ class nucmass_ldrop_pair
 #
 # ------------------------------------------------------
 #
+# Class nucmass_ldrop_shell
+#                              
+class nucmass_ldrop_shell
+- parent nucmass_ldrop_pair
+#
+# ------------------------------------------------------
+#
+# Class nucmass_frdm_shell
+#                              
+class nucmass_frdm_shell
+- parent nucmass_frdm
+#
+# ------------------------------------------------------
+#
 # Class nucleus_bin
 #                              
 class nucleus_bin

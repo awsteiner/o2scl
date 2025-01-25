@@ -78,6 +78,8 @@ namespace o2scl {
     static const int rms_me_Sn=4;
     /// Fit the mass excess and the one and two neutron separation energies
     static const int rms_me_Sn_S2n=5;
+    /// Fit the mass excess and the one and two neutron separation energies
+    static const int rms_me_S2n=6;
     //@}
     
     /// If true, then only fit doubly-even nuclei (default false)

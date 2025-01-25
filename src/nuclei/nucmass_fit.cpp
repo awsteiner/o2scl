@@ -177,11 +177,17 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 
   } else if (fit_method==rms_me_Sn) {
 
+    if (even_even==true) {
+      O2SCL_ERR("Fitting only even-even nuclei not supported with "
+                "fit method rms_me_Sn in nucmass_fit::eval().",
+                o2scl::exc_einval);
+    }
+
     size_t nn=0;
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
-      if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+      if (N>=minN && Z>=minZ) {
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
@@ -190,7 +196,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	}
 	nn++;
       }
-      if (even_even==false && N>1) {
+      if (N>1) {
         int N2=N-1;
         bool found=false;
         // The neutron separation energies aren't stored in, e.g.,
@@ -200,6 +206,10 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
         for(vector<nucleus>::iterator ndi2=dist.begin();
             ndi2!=dist.end() && found==false;ndi2++) {
           if (ndi2->Z==Z && ndi2->N==N2) {
+            std::cout << "H: "
+                      << (ndi2->be-ndi->be)*hc_mev_fm << " "
+                      << n.neutron_sep(Z,N) << std::endl;
+            exit(-1);
             fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
                       n.neutron_sep(Z,N),2.0);
             found=true;
@@ -212,11 +222,17 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 
   } else if (fit_method==rms_me_Sn_S2n) {
 
+    if (even_even==true) {
+      O2SCL_ERR("Fitting only even-even nuclei not supported with "
+                "fit method rms_me_Sn_S2n in nucmass_fit::eval().",
+                o2scl::exc_einval);
+    }
+
     size_t nn=0;
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
-      if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+      if (N>=minN && Z>=minZ) {
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
@@ -225,7 +241,7 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
 	}
 	nn++;
       }
-      if (even_even==false && N>1) {
+      if (N>1) {
         int N2=N-1;
         bool found=false;
         // The neutron separation energies aren't stored in, e.g.,
@@ -242,7 +258,42 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
           }
         }
       }
-      if (even_even==false && N>2) {
+      if (N>2) {
+        int N3=N-2;
+        bool found=false;
+        // The two neutron separation energies aren't stored in, e.g.,
+        // nucmass_ame, so the only way to find them is to find
+        // the other nucleus in the table and subtract the binding
+        // energy.
+        for(vector<nucleus>::iterator ndi2=dist.begin();
+            ndi2!=dist.end() && found==false;ndi2++) {
+          if (ndi2->Z==Z && ndi2->N==N3) {
+            fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
+                      n.two_neutron_sep(Z,N),2.0);
+            found=true;
+            nn++;
+          }
+        }
+      }
+    }
+    fmin=sqrt(fmin/nn);
+
+  } else if (fit_method==rms_me_S2n) {
+
+    size_t nn=0;
+    for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
+      int Z=ndi->Z;
+      int N=ndi->N;
+      if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+	if (!std::isfinite(fmin)) {
+	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
+	  O2SCL_ERR(s.c_str(),exc_efailed);
+	}
+	nn++;
+      }
+      if (N>2) {
         int N3=N-2;
         bool found=false;
         // The two neutron separation energies aren't stored in, e.g.,

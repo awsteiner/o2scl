@@ -334,6 +334,8 @@ void *o2scl_create_nucmass_wlw();
 
 void o2scl_free_nucmass_wlw(void *vptr);
 
+int o2scl_nucmass_wlw_load(void *vptr, void *ptr_model, bool external=false);
+
 void *o2scl_create_nucmass_fit();
 
 void o2scl_free_nucmass_fit(void *vptr);
@@ -399,5 +401,7 @@ void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false);
 
 void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA=400, bool include_neutron=false);
+
+void o2scl_nucdist_set_ext_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA=400, int n_chop=1);
 
 }

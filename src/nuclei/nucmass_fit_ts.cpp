@@ -98,6 +98,27 @@ int main(void) {
   cout << res << endl;
   t.test_rel(res,0.894578,1.0e-4,"Moller fit 3");
 
+  cout << "Testing:" << endl;
+  mf.fit_method=nucmass_fit::rms_mass_excess;
+  mf.fit(sem,res);
+  ubvector x3(5);
+  sem.guess_fun(5,x3);
+  cout << res << endl;
+  vector_out(cout,x3,true);
+  
+  mf.fit_method=nucmass_fit::rms_me_Sn;
+  mf.fit(sem,res);
+  sem.guess_fun(5,x3);
+  cout << res << endl;
+  vector_out(cout,x3,true);
+
+  mf.fit_method=nucmass_fit::rms_me_Sn_S2n;
+  mf.fit(sem,res);
+  cout << res << endl;
+  sem.guess_fun(5,x3);
+  vector_out(cout,x3,true);
+  exit(-1);
+  
   mf.fit_method=nucmass_fit::chi_squared_me;
   double chi2;
   ubmatrix covar;
