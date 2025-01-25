@@ -23,9 +23,11 @@
 #include <o2scl/nucmass.h>
 #include <o2scl/hdf_nucmass_io.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/cloud_file.h>
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 using namespace o2scl_const;
 
 nucmass_ame::nucmass_ame() {
@@ -422,7 +424,8 @@ nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
 }
 
 void nucmass_ame2::load_ext(std::string model, std::string filename,
-                            std::string nubase_file, bool exp_only) {
+                            std::string nubase_file, bool exp_only,
+                            int verbose) {
 
   nucmass_ame2::entry ae;
 
@@ -430,8 +433,6 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   std::string line;
 
   int count=0;
-
-  int verbose=0;
 
   mass.clear();
 
@@ -442,6 +443,9 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   }
   
   while (getline(fin,line)) {
+    if (verbose>0 && count%100==0) {
+      std::cout << "mass count: " << count << std::endl;
+    }
 
     vector<string> entries;
     
@@ -459,7 +463,8 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       if (verbose>2) {
       cout << "Entries:" << endl;
       for(size_t k=0;k<entries.size();k++) {
-      cout << k << " " << entries[k].size() << " '" << entries[k] << "'." << endl;
+      cout << k << " " << entries[k].size() << " '"
+      << entries[k] << "'." << endl;
       }
       }
     */
@@ -467,6 +472,7 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     // Read N and Z first to compute NMZ and A
     ae.N=o2scl::stoi(entries[2]);
     ae.Z=o2scl::stoi(entries[3]);
+    
     if (model=="20round" || model=="16round" || model=="03round") {
       ae.NMZ=ae.N-ae.Z;
       ae.A=ae.N+ae.Z;
@@ -536,6 +542,9 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     }
     
     while (getline(fin,line)) {
+      if (verbose>0 && count%100==0) {
+        std::cout << "nubase count: " << count << std::endl;
+      }
 
       vector<string> entries;
 
@@ -612,13 +621,16 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       } else {
         enu20.isomer_unc='\0';
       }
-      if (verbose>1) cout << "isomer_unc: '" << enu20.isomer_unc << "'" << endl;
-      if (entries.size()>10 && entries[10].length()>0 && entries[10][0]!=' ') {
+      if (verbose>1) cout << "isomer_unc: '"
+                          << enu20.isomer_unc << "'" << endl;
+      if (entries.size()>10 && entries[10].length()>0 &&
+          entries[10][0]!=' ') {
         enu20.isomer_inv=entries[10][0];
       } else {
         enu20.isomer_inv='\0';
       }
-      if (verbose>1) cout << "isomer_inv: '" << enu20.isomer_inv << "'" << endl;
+      if (verbose>1) cout << "isomer_inv: '" << enu20.isomer_inv
+                          << "'" << endl;
       if (entries.size()>11 && count_words(entries[11])>0) {
         remove_whitespace(entries[11]);
         if (entries[11]=="stbl") {
@@ -698,6 +710,8 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
       }
 
       mass[ix].props.push_back(enu20);
+
+      count++;
     }
 
     fin.close();
@@ -707,6 +721,87 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     //}
     
   }
+  
+  return;
+}
+
+void nucmass_ame2::load(std::string name, bool exp_only,
+                        int verbose) {
+
+  char *ed=getenv("O2SCL_EXT_DATA");
+  std::string ext_data;
+  if (ed) {
+    ext_data=ed;
+  }
+    
+  std::string prefix=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+
+  cloud_file cf;
+  cf.verbose=2;
+    
+  std::string filename, nubase_file;
+  
+  if (name=="20") {
+    
+    filename=prefix+"/ame20/mass20.txt";
+    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
+    
+  } else if (name=="20round") {
+    
+    filename=prefix+"/ame20/mass20round.txt";
+    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
+    
+  } else if (name=="16") {
+    
+    std::string sha=((std::string)"2167f57a2a98331e4649b2dd2b658a")+
+      "9006ed4fba1975729ebfe52a42b4b9218a";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass16.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame16/mass16.txt",sha,ext_data);
+
+    sha=((std::string)"f3d08e4af75892ec4626805ca3465b")+
+      "7925144d53e0bfee713f664c2abd4dd7c4";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("nubase2016.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame16/nubase2016.txt",sha,ext_data);
+    
+    filename=ext_data+"/mass16.txt";
+    nubase_file=ext_data+"/nubase2016.txt";
+    
+  } else if (name=="16round") {
+    
+    std::string sha=((std::string)"d34bc538daa65810aede5a7037e7712")+
+      "6d5218b319db4b2ad08694b783bc4f249";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass16round.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame16/mass16round.txt",sha,ext_data);
+
+    sha=((std::string)"f3d08e4af75892ec4626805ca3465b")+
+      "7925144d53e0bfee713f664c2abd4dd7c4";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("nubase2016.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame16/nubase2016.txt",sha,ext_data);
+    
+    filename=ext_data+"/mass16round.txt";
+    nubase_file=ext_data+"/nubase2016.txt";
+    
+  } else {
+    
+    std::string s=((std::string)"Invalid name '")+name+
+      "' in nucmass_ame2::load().";
+    O2SCL_ERR(s.c_str(),exc_einval);
+    
+  }
+  
+  load_ext(name,filename,nubase_file,exp_only,verbose);
   
   return;
 }

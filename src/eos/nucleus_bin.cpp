@@ -115,7 +115,7 @@ nucleus_bin::nucleus_bin() {
   n_fits=nmfd.size();
     
   fit_names={"Semi-empirical","FRDM","DZ fit 10","DZ fit 33","FRDM shell",
-             "Ldrop shell"};
+             "Liq drop shell"};
 
   o2scl_hdf::skyrme_load(sk,"SLy4");
   ldrop_shell.set_eos_had_temp_base(sk);
@@ -131,16 +131,16 @@ nucleus_bin::nucleus_bin() {
   }
   if (true) {
     ubvector p(10);
-    p[0]=6.262656723970295e-01;
-    p[1]=1.062118484793815e+00;
-    p[2]=4.278509731327071e+01;
-    p[3]=1.712865295142668e+01;
-    p[4]=2.750315169290062e+01;
-    p[5]=3.585974615126219e+01;
-    p[6]=2.488088599031062e+01;
-    p[7]=6.952310612512534e-01;
-    p[8]=1.133367354754059e+00;
-    p[9]=2.989576509602983e-01;
+    p[0]=3.613692309944690e-01;
+    p[1]=9.216607474662888e-01;
+    p[2]=5.170200810075372e+01;
+    p[3]=1.947090687326399e+01;
+    p[4]=4.084492571046316e+01;
+    p[5]=4.380015938017932e+01;
+    p[6]=2.092293766732548e+01;
+    p[7]=9.025789227326884e-01;
+    p[8]=1.618679100791941e+00;
+    p[9]=2.905166877962070e-01;
     frdm.fit_fun(10,p);
   }
   if (true) {
@@ -196,35 +196,35 @@ nucleus_bin::nucleus_bin() {
   }
   if (true) {
     ubvector p(14);
-    p[0]=2.657399203505667e+00;
-    p[1]=1.136316849511381e+00;
-    p[2]=3.548541967676024e+01;
-    p[3]=1.649009712939987e+01;
-    p[4]=2.331520244072635e+01;
-    p[5]=3.437294342444157e+01;
-    p[6]=2.660294896136239e+01;
-    p[7]=4.409661805078772e-01;
-    p[8]=2.501490274580595e+01;
-    p[9]=1.897879047364143e+00;
-    p[10]=-1.460475719478483e+00;
-    p[11]=1.928679183044334e-02;
-    p[12]=1.901033655300475e-03;
-    p[13]=8.970261351311239e-02;    
+    p[0]=2.862652716272743e+00;
+    p[1]=1.129807927418693e+00;
+    p[2]=3.559392452233342e+01;
+    p[3]=1.657931612140274e+01;
+    p[4]=2.369337715147342e+01;
+    p[5]=3.468919264623499e+01;
+    p[6]=2.635234363179206e+01;
+    p[7]=4.266240233807385e-01;
+    p[8]=1.257558181549950e+03;
+    p[9]=3.250151576606326e+00;
+    p[10]=-1.460177890508211e+00;
+    p[11]=1.961924905272880e-02;
+    p[12]=2.010431359292397e-03;
+    p[13]=8.873157422094327e-02;
     frdm_shell.fit_fun(14,p);
   }
   if (true) {
     ubvector p(11);
-    p[0]=8.994776301007761e-01;
-    p[1]=9.679865078598426e-01;
-    p[2]=8.751369188587536e-01;
-    p[3]=9.710432146736609e-01;
-    p[4]=-9.041294789462331e-03;
-    p[5]=1.390547985659261e-01;
-    p[6]=1.246579548574642e+01;
-    p[7]=-1.493972115439528e+00;
-    p[8]=1.419539065031770e-02;
-    p[9]=1.659654542326672e-03;
-    p[10]=1.136613448382515e-01;
+    p[0]=8.993854058157809e-01;
+    p[1]=9.692983376594209e-01;
+    p[2]=9.129367034093190e-01;
+    p[3]=9.709856845570888e-01;
+    p[4]=-1.004780591364136e-02;
+    p[5]=1.392239609972227e-01;
+    p[6]=1.096713554301717e+01;
+    p[7]=-1.498528880855952e+00;
+    p[8]=1.433936004772412e-02;
+    p[9]=1.666488914701955e-03;
+    p[10]=1.137565990431053e-01;
     ldrop_shell.fit_fun(11,p);
   }
 }
@@ -428,6 +428,16 @@ int nucleus_bin::cdist(std::vector<std::string> &sv, bool itive_com) {
   return 0;
 }
 
+int nucleus_bin::fit_method(std::vector<std::string> &sv, bool itive_com) {
+  if (sv.size()>=2) {
+    size_t method=o2scl::stoszt(sv[1]);
+    if (method<7) {
+      fitter.fit_method=method;
+    }
+  }
+  return 0;
+}
+  
 int nucleus_bin::compare(std::vector<std::string> &sv, bool itive_com) {
 
   size_t left_column=18;
@@ -466,6 +476,7 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()>=3) {
     kw.set(sv[2]);
   }
+  fitter.def_mmin.tol_abs=kw.get_double("tol_abs",1.0e-4);
   
   nucdist_set(fitter.dist,ame20exp);
   ldrop_shell.large_vals_unphys=true;
@@ -479,9 +490,11 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
     ix_end=ix_start+1;
   }
   for(size_t i=ix_start;i<ix_end;i++) {
-    cout << fit_names[i] << ": "<< endl;
+    fitter.eval(*nmfd[i],res);
+    cout << fit_names[i] << ": Before fit: " << res << endl;
     fitter.fit(*nmfd[i],res);
-    cout << fit_names[i] << ": " << res << endl;
+    fitter.eval(*nmfd[i],res);
+    cout << fit_names[i] << ": After fit: " << res << endl;
     ubvector p(nmfd[i]->nfit);
     nmfd[i]->guess_fun(nmfd[i]->nfit,p);
     for(size_t k=0;k<nmfd[i]->nfit;k++) {
@@ -494,7 +507,7 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
 
 void nucleus_bin::setup_cli(o2scl::cli &cl) {
 
-  static const int nopt=6;
+  static const int nopt=7;
   o2scl::comm_option_s options[nopt]={
     {0,"ZN","Information for a nucleus given Z and N.",
      2,2,"<Z> <N>",((std::string)"The 'ZN' command outputs ")+
@@ -524,7 +537,10 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
      (this,&nucleus_bin::cdist),o2scl::cli::comm_option_both},
     {0,"refs","List the references for all of the tables and models",
      0,0,"","",new o2scl::comm_option_mfptr<nucleus_bin>
-     (this,&nucleus_bin::refs),o2scl::cli::comm_option_both}
+     (this,&nucleus_bin::refs),o2scl::cli::comm_option_both},
+    {0,"fit-method","Desc",
+     1,1,"","",new o2scl::comm_option_mfptr<nucleus_bin>
+     (this,&nucleus_bin::fit_method),o2scl::cli::comm_option_both}
   };
   cl.set_comm_option_vec(nopt,options);
     

@@ -282,7 +282,7 @@ namespace o2scl {
     
   };
 
-  /** \brief 
+  /** \brief Masses from the Atomic Mass Evaluation 
       
       \note This version avoids storing a raw pointer, supports
       the NUBASE data, and provides more field information
@@ -468,6 +468,9 @@ namespace o2scl {
 
         \todo Why was this moved here from hdf_nucmass.h ?
     */
+    void load(std::string model, bool exp_only=false,
+              int verbose=0);
+    /*
     void load(std::string name="20", bool exp_only=false) {
       std::string file_name, nubase_name;
       file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
@@ -500,14 +503,17 @@ namespace o2scl {
       load_ext(name,file_name,nubase_name,exp_only);
       return;
     }
+    */
     
     /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
         specified in a file
-        
-        \todo Why was this moved here from hdf_nucmass.h ?
+
+        \note This was moved from hdf_nucmass_io.h because it
+        makes it more consistent with the other nucmass classes.
     */
     void load_ext(std::string name, std::string filename,
-                  std::string nubase_file, bool exp_only=false);
+                  std::string nubase_file, bool exp_only=false,
+                  int verbose=0);
     
     /** \brief Parse strings \c s1 and \c s2 from the AME into a value,
         \c d1, an uncertainty, \c d2, and an accuracy flag, \c acc
@@ -515,7 +521,7 @@ namespace o2scl {
         - If string \c s1 has an asterisk, then \c d1 and \c d2 are
         set to zero and \c acc is set to \ref nucmass_ame::not_calculable.
         - If string \c s2 contains the letter 'a', then \c d2 is set to
-        zero and \c ass is set to \ref nucmass_ame::unc_less_than_half_eV.
+        zero and \c acc is set to \ref nucmass_ame::unc_less_than_half_eV.
         The value of d1 is computed from <tt>stod_nothrow()</tt>.
         - Otherwise, if string \c s1 has a pound sign, then \c acc is set
         to \ref nucmass_ame::estimated, otherwise, \c acc is set to \ref

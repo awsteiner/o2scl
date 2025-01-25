@@ -216,6 +216,10 @@ public:
    */
   int cdist(std::vector<std::string> &sv, bool itive_com);
 
+  /** \brief Desc
+   */
+  int fit_method(std::vector<std::string> &sv, bool itive_com);
+
   /** \brief Setup the command-line interface
    */
   virtual void setup_cli(o2scl::cli &cl);
