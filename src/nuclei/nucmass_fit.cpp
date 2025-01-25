@@ -206,10 +206,6 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
         for(vector<nucleus>::iterator ndi2=dist.begin();
             ndi2!=dist.end() && found==false;ndi2++) {
           if (ndi2->Z==Z && ndi2->N==N2) {
-            std::cout << "H: "
-                      << (ndi2->be-ndi->be)*hc_mev_fm << " "
-                      << n.neutron_sep(Z,N) << std::endl;
-            exit(-1);
             fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
                       n.neutron_sep(Z,N),2.0);
             found=true;

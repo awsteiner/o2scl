@@ -459,7 +459,6 @@ int nucleus_bin::compare(std::vector<std::string> &sv, bool itive_com) {
 
 int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
 
-  std::cout << "1." << endl;
   fitter.def_mmin.ntrial*=100;
   
   double res;
@@ -467,23 +466,19 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
   if (sv.size()>=3) {
     kw.set(sv[2]);
   }
-  std::cout << "2." << endl;
   
   nucdist_set(fitter.dist,ame20exp);
   ldrop_shell.large_vals_unphys=true;
 
-  std::cout << "3." << endl;
   fitter.def_mmin.verbose=kw.get_int("verbose",0);
 
   size_t ix_start=0;
   size_t ix_end=n_fits;
-  std::cout << "4." << endl;
   if (sv.size()>=2) {
     ix_start=o2scl::stoszt(sv[1]);
     ix_end=ix_start+1;
   }
   for(size_t i=ix_start;i<ix_end;i++) {
-    std::cout << "5." << endl;
     cout << fit_names[i] << ": "<< endl;
     fitter.fit(*nmfd[i],res);
     cout << fit_names[i] << ": " << res << endl;
@@ -492,7 +487,6 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
     for(size_t k=0;k<nmfd[i]->nfit;k++) {
       cout << "    p[" << k << "]=" << dtos(p[k],0) << ";" << endl;
     }
-    std::cout << "6." << endl;
   }
     
   return 0;
@@ -500,8 +494,6 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
 
 void nucleus_bin::setup_cli(o2scl::cli &cl) {
 
-  std::cout << "A." << std::endl;
-  
   static const int nopt=6;
   o2scl::comm_option_s options[nopt]={
     {0,"ZN","Information for a nucleus given Z and N.",
@@ -540,7 +532,5 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
   p_verbose.help="Verbosity parameter (default 1)";
   cl.par_list.insert(make_pair("verbose",&p_verbose));
 
-  std::cout << "B." << std::endl;
-  
   return;
 }
