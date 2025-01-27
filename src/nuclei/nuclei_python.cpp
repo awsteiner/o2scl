@@ -430,13 +430,13 @@ double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N
   return ret;
 }
 
-void *o2scl_create_nucmass_ame2() {
-  nucmass_ame2 *ptr=new nucmass_ame2;
+void *o2scl_create_nucmass_ame() {
+  nucmass_ame *ptr=new nucmass_ame;
   return ptr;
 }
 
-void o2scl_free_nucmass_ame2(void *vptr) {
-  nucmass_ame2 *ptr=(nucmass_ame2 *)vptr;
+void o2scl_free_nucmass_ame(void *vptr) {
+  nucmass_ame *ptr=(nucmass_ame *)vptr;
   delete ptr;
   return;
 }

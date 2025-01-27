@@ -174,9 +174,9 @@ double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N);
 
 double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N);
 
-void *o2scl_create_nucmass_ame2();
+void *o2scl_create_nucmass_ame();
 
-void o2scl_free_nucmass_ame2(void *vptr);
+void o2scl_free_nucmass_ame(void *vptr);
 
 void *o2scl_create_nucmass_dz_table();
 

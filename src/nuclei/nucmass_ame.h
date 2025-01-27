@@ -37,8 +37,6 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   /** \brief Masses from the Atomic Mass Evaluation 
       
       \verbatim embed:rst

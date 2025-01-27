@@ -347,7 +347,7 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
   cout.unsetf(ios::showpos);
 
   if (ame20exp.is_included(Z,N)) {
-    nucmass_ame2::entry en=ame20exp.get_ZN(Z,N);
+    nucmass_ame::entry en=ame20exp.get_ZN(Z,N);
     cout << "From AME 2020:" << endl;
     cout << "data origin: "
          << ((std::string)&en.orig[0]) << std::endl;
