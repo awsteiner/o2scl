@@ -54,6 +54,9 @@ void test_mgr::process_test(bool ret, string d2, string description) {
       cout << "PASS: " << d2 << " " << description << endl;
     } else {
       cout << "FAIL: " << d2 << " " << description << endl;
+      if (output_level>2) {
+        exit(-1);
+      }
     }
   }
   return;

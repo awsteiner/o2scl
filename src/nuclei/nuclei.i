@@ -217,6 +217,13 @@ class nucmass_ame
 #
 # ------------------------------------------------------
 # 
+# Class nucmass_ame2
+#
+class nucmass_ame2
+- parent nucmass_table
+#
+# ------------------------------------------------------
+# 
 # Class nucmass_dz_table
 #
 class nucmass_dz_table

@@ -48,14 +48,14 @@ public:
   
   /// \name Atomic mass evaluations
   //@{
-  o2scl::nucmass_ame ame16;
-  o2scl::nucmass_ame ame20exp;
-  o2scl::nucmass_ame ame20round;
-  o2scl::nucmass_ame ame95rmd;
-  o2scl::nucmass_ame ame03round;
-  o2scl::nucmass_ame ame03;
-  o2scl::nucmass_ame ame95exp;
-  o2scl::nucmass_ame ame12;
+  o2scl::nucmass_ame2 ame16;
+  o2scl::nucmass_ame2 ame20exp;
+  o2scl::nucmass_ame2 ame20round;
+  o2scl::nucmass_ame2 ame95rmd;
+  o2scl::nucmass_ame2 ame03round;
+  o2scl::nucmass_ame2 ame03;
+  o2scl::nucmass_ame2 ame95exp;
+  o2scl::nucmass_ame2 ame12;
   //@}
 
   /// \name Nuclear mass tables from FRIB Mass Explorer

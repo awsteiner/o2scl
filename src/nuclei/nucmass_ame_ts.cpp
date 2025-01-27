@@ -37,7 +37,7 @@ int main(void) {
   cout.setf(ios::scientific);
   
   test_mgr t;
-  t.set_output_level(2);
+  t.set_output_level(3);
 
   if (true) {
     
@@ -50,38 +50,45 @@ int main(void) {
     nucmass_ame2 ame2;
     ame2.load("20",false,1);
     nucdist_set(dist2,ame2);
-    
-    cout << dist.size() << " " << dist2.size() << endl;
+
+    t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
       nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
       
-      if (en.NMZ!=en2.NMZ) exit(-1);
-      if (en.N!=en2.N) exit(-1);
-      if (en.Z!=en2.Z) exit(-1);
-      if (en.A!=en2.A) exit(-1);
-      if (((std::string)(&en.el[0]))!=((std::string)(&en2.el[0]))) exit(-1);
-      if (((std::string)(&en.orig[0]))!=
-          ((std::string)(&en2.orig[0]))) exit(-1);
-      if (en.mass!=en2.mass) exit(-1);
-      if (en.dmass!=en2.dmass) exit(-1);
-      if (en.mass_acc!=en2.mass_acc) exit(-1);
-      if (en.be!=en2.be) exit(-1);
-      if (en.dbe!=en2.dbe) exit(-1);
-      if (en.be_acc!=en2.be_acc) exit(-1);
-      if (en.beoa!=en2.beoa) exit(-1);
-      if (en.dbeoa!=en2.dbeoa) exit(-1);
-      if (en.beoa_acc!=en2.beoa_acc) exit(-1);
-      if (((std::string)(&en.bdmode[0]))!=
-          ((std::string)(&en2.bdmode[0]))) exit(-1);
-      if (en.bde!=en2.bde) exit(-1);
-      if (en.dbde!=en2.dbde) exit(-1);
-      if (en.bde_acc!=en2.bde_acc) exit(-1);
-      if (en.A2!=en2.A2) exit(-1);
-      if (en.amass!=en2.amass) exit(-1);
-      if (en.damass!=en2.damass) exit(-1);
-      if (en.amass_acc!=en2.amass_acc) exit(-1);
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      //t.test_gen(((std::string)(&en.bdmode[0]))==
+      //((std::string)(&en2.bdmode[0])),"16");
+      //<< en.bde << " " << en2.bde << endl;
+      //t.test_gen(en.bde==en2.bde,"17");
+      //cout << en.N << " " 
+      //<< (std::string)(&en.el[0]) << " "
+      //<< en.dbde << " " << en2.dbde << endl;
+      //t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      //t.test_gen(en.A2==en2.A2,"20");
+      //std::cout << en.Z << " " << en.N << " "
+      //<< (std::string)(&en.el[0]) << " "
+      //<< en.damass << " " << en2.damass << std::endl;
+      //t.test_gen(en.amass==en2.amass,"21");
+      //t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
     }
 
   }
@@ -89,46 +96,46 @@ int main(void) {
   if (true) {
     
     vector<nucleus> dist, dist2;
-    
+
     nucmass_ame ame;
     ame_load(ame,"20round");
     nucdist_set(dist,ame);
     
     nucmass_ame2 ame2;
-    ame2.load("20round",false,1);
+    ame2.load("20round",false,2);
     nucdist_set(dist2,ame2);
     
-    cout << dist.size() << " " << dist2.size() << endl;
+    t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
       nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
       
-      if (en.NMZ!=en2.NMZ) exit(-1);
-      if (en.N!=en2.N) exit(-1);
-      if (en.Z!=en2.Z) exit(-1);
-      if (en.A!=en2.A) exit(-1);
-      if (((std::string)(&en.el[0]))!=((std::string)(&en2.el[0]))) exit(-1);
-      if (((std::string)(&en.orig[0]))!=
-          ((std::string)(&en2.orig[0]))) exit(-1);
-      if (en.mass!=en2.mass) exit(-1);
-      if (en.dmass!=en2.dmass) exit(-1);
-      if (en.mass_acc!=en2.mass_acc) exit(-1);
-      if (en.be!=en2.be) exit(-1);
-      if (en.dbe!=en2.dbe) exit(-1);
-      if (en.be_acc!=en2.be_acc) exit(-1);
-      if (en.beoa!=en2.beoa) exit(-1);
-      if (en.dbeoa!=en2.dbeoa) exit(-1);
-      if (en.beoa_acc!=en2.beoa_acc) exit(-1);
-      if (((std::string)(&en.bdmode[0]))!=
-          ((std::string)(&en2.bdmode[0]))) exit(-1);
-      if (en.bde!=en2.bde) exit(-1);
-      if (en.dbde!=en2.dbde) exit(-1);
-      if (en.bde_acc!=en2.bde_acc) exit(-1);
-      if (en.A2!=en2.A2) exit(-1);
-      if (en.amass!=en2.amass) exit(-1);
-      if (en.damass!=en2.damass) exit(-1);
-      if (en.amass_acc!=en2.amass_acc) exit(-1);
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      t.test_gen(((std::string)(&en.bdmode[0]))==
+      ((std::string)(&en2.bdmode[0])),"16");
+      t.test_gen(en.bde==en2.bde,"17");
+      t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      t.test_gen(en.A2==en2.A2,"20");
+      t.test_gen(en.amass==en2.amass,"21");
+      t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
     }
 
   }
@@ -145,41 +152,181 @@ int main(void) {
     ame2.load("16",false,1);
     nucdist_set(dist2,ame2);
     
-    cout << dist.size() << " " << dist2.size() << endl;
+    t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
       nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
       
-      if (en.NMZ!=en2.NMZ) exit(-1);
-      if (en.N!=en2.N) exit(-1);
-      if (en.Z!=en2.Z) exit(-1);
-      if (en.A!=en2.A) exit(-1);
-      if (((std::string)(&en.el[0]))!=((std::string)(&en2.el[0]))) exit(-1);
-      if (((std::string)(&en.orig[0]))!=
-          ((std::string)(&en2.orig[0]))) exit(-1);
-      if (en.mass!=en2.mass) exit(-1);
-      if (en.dmass!=en2.dmass) exit(-1);
-      if (en.mass_acc!=en2.mass_acc) exit(-1);
-      if (en.be!=en2.be) exit(-1);
-      if (en.dbe!=en2.dbe) exit(-1);
-      if (en.be_acc!=en2.be_acc) exit(-1);
-      if (en.beoa!=en2.beoa) exit(-1);
-      if (en.dbeoa!=en2.dbeoa) exit(-1);
-      if (en.beoa_acc!=en2.beoa_acc) exit(-1);
-      if (((std::string)(&en.bdmode[0]))!=
-          ((std::string)(&en2.bdmode[0]))) exit(-1);
-      if (en.bde!=en2.bde) exit(-1);
-      if (en.dbde!=en2.dbde) exit(-1);
-      if (en.bde_acc!=en2.bde_acc) exit(-1);
-      if (en.A2!=en2.A2) exit(-1);
-      if (en.amass!=en2.amass) exit(-1);
-      if (en.damass!=en2.damass) exit(-1);
-      if (en.amass_acc!=en2.amass_acc) exit(-1);
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      t.test_gen(((std::string)(&en.bdmode[0]))==
+      ((std::string)(&en2.bdmode[0])),"16");
+      t.test_gen(en.bde==en2.bde,"17");
+      t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      t.test_gen(en.A2==en2.A2,"20");
+      t.test_gen(en.amass==en2.amass,"21");
+      t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
     }
 
   }
   
+  if (true) {
+    
+    vector<nucleus> dist, dist2;
+    
+    nucmass_ame ame;
+    ame_load(ame,"16round");
+    nucdist_set(dist,ame);
+    
+    nucmass_ame2 ame2;
+    ame2.load("16round",false,1);
+    nucdist_set(dist2,ame2);
+    
+    t.test_gen(dist.size()==dist2.size(),"size");
+    
+    for(size_t i=0;i<dist.size();i++) {
+      nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
+      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      t.test_gen(((std::string)(&en.bdmode[0]))==
+      ((std::string)(&en2.bdmode[0])),"16");
+      t.test_gen(en.bde==en2.bde,"17");
+      t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      t.test_gen(en.A2==en2.A2,"20");
+      t.test_gen(en.amass==en2.amass,"21");
+      t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
+    }
+
+  }
+  
+  if (true) {
+    
+    vector<nucleus> dist, dist2;
+    
+    nucmass_ame ame;
+    ame_load(ame,"12");
+    nucdist_set(dist,ame);
+    
+    nucmass_ame2 ame2;
+    ame2.load("12",false,1);
+    nucdist_set(dist2,ame2);
+    
+    t.test_gen(dist.size()==dist2.size(),"size");
+    
+    for(size_t i=0;i<dist.size();i++) {
+      nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
+      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      t.test_gen(((std::string)(&en.bdmode[0]))==
+      ((std::string)(&en2.bdmode[0])),"16");
+      t.test_gen(en.bde==en2.bde,"17");
+      t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      t.test_gen(en.A2==en2.A2,"20");
+      t.test_gen(en.amass==en2.amass,"21");
+      t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
+    }
+
+  }
+  
+  if (true) {
+    
+    vector<nucleus> dist, dist2;
+    
+    nucmass_ame ame;
+    ame_load(ame,"03");
+    nucdist_set(dist,ame);
+    
+    nucmass_ame2 ame2;
+    ame2.load("03",false,1);
+    nucdist_set(dist2,ame2);
+    
+    t.test_gen(dist.size()==dist2.size(),"size");
+    
+    for(size_t i=0;i<dist.size();i++) {
+      nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
+      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      
+      t.test_gen(en.NMZ==en2.NMZ,"1");
+      t.test_gen(en.N==en2.N,"2");
+      t.test_gen(en.Z==en2.Z,"3");
+      t.test_gen(en.A==en2.A,"4");
+      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.orig[0]))==
+          ((std::string)(&en2.orig[0])),"6");
+      t.test_gen(en.mass==en2.mass,"7");
+      t.test_gen(en.dmass==en2.dmass,"8");
+      t.test_gen(en.mass_acc==en2.mass_acc,"9");
+      t.test_gen(en.be==en2.be,"10");
+      t.test_gen(en.dbe==en2.dbe,"11");
+      t.test_gen(en.be_acc==en2.be_acc,"12");
+      t.test_gen(en.beoa==en2.beoa,"13");
+      t.test_gen(en.dbeoa==en2.dbeoa,"14");
+      t.test_gen(en.beoa_acc==en2.beoa_acc,"15");
+      t.test_gen(((std::string)(&en.bdmode[0]))==
+      ((std::string)(&en2.bdmode[0])),"16");
+      t.test_gen(en.bde==en2.bde,"17");
+      t.test_gen(en.dbde==en2.dbde,"18");
+      t.test_gen(en.bde_acc==en2.bde_acc,"19");
+      t.test_gen(en.A2==en2.A2,"20");
+      t.test_gen(en.amass==en2.amass,"21");
+      t.test_gen(en.damass==en2.damass,"22");
+      t.test_gen(en.amass_acc==en2.amass_acc,"23");
+    }
+
+  }
   
   t.report();
   return 0;

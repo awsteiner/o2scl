@@ -37,15 +37,15 @@ nucleus_bin::nucleus_bin() {
 
   //std::cout << "Reading nuclear mass tables." << std::endl;
     
-  o2scl_hdf::ame_load(ame95rmd,"95rmd");
-  o2scl_hdf::ame_load(ame95exp,"95exp");
-  o2scl_hdf::ame_load(ame03round,"03round");
-  o2scl_hdf::ame_load(ame03,"03");
-  o2scl_hdf::ame_load(ame12,"12");
-  o2scl_hdf::ame_load(ame16,"16");
-  o2scl_hdf::ame_load(ame20exp,"20");
-  o2scl_hdf::ame_load(ame20round,"20round");
-    
+  ame95rmd.load("95rmd");
+  ame95exp.load("95exp");
+  ame03round.load("03round");
+  ame03.load("03");
+  ame12.load("12");
+  ame16.load("16");
+  ame20exp.load("20");
+  ame20round.load("20round");
+  
   o2scl_hdf::mnmsk_load(m95,"mnmsk97");
   o2scl_hdf::mnmsk_load(m16,"msis16");
     
@@ -316,6 +316,22 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
       cout << endl;
     }
   }
+
+  if (ame20exp.is_included(Z,N)) {
+    nucmass_ame2::entry en=ame20exp.get_ZN(Z,N);
+    cout << "From AME 2020:" << endl;
+    cout << "data origin: " << en.orig[0] << " "
+         << ((std::string)&en.orig[0]) << std::endl;
+    cout << "mass excess unc.: " << en.dmass << " keV" << endl;
+    cout << "beta decay energy: " << en.bde << " keV" << endl;
+    cout << "beta decay energy unc.: " << en.dbde << " keV" << endl;
+    cout << "beta-decay mode: " << en.bdmode[0] << " "
+         << ((std::string)&en.bdmode[0]) << std::endl;
+    cout << "atomic mass: " << en.amass << " keV" << endl;
+    cout << "atomic mass unc.: " << en.damass << " keV" << endl;
+    cout << endl;
+  }
+  
   cout.precision(6);
     
   return 0;

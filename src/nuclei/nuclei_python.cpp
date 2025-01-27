@@ -441,6 +441,17 @@ void o2scl_free_nucmass_ame(void *vptr) {
   return;
 }
 
+void *o2scl_create_nucmass_ame2() {
+  nucmass_ame2 *ptr=new nucmass_ame2;
+  return ptr;
+}
+
+void o2scl_free_nucmass_ame2(void *vptr) {
+  nucmass_ame2 *ptr=(nucmass_ame2 *)vptr;
+  delete ptr;
+  return;
+}
+
 void *o2scl_create_nucmass_dz_table() {
   nucmass_dz_table *ptr=new nucmass_dz_table;
   return ptr;

@@ -423,7 +423,7 @@ nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
   return get_elA(el,A);
 }
 
-void nucmass_ame2::load_ext(std::string model, std::string filename,
+void nucmass_ame2::load_ext(std::string name, std::string filename,
                             std::string nubase_file, bool exp_only,
                             int verbose) {
 
@@ -432,31 +432,56 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   ifstream fin(filename.c_str());
   std::string line;
 
+  if (verbose>0) {
+    std::cout << "nucmass_ame2()::load_ext(): "
+              << "name,filename,nubase_file: " << name << " "
+              << filename << " " << nubase_file << std::endl;
+  }
+  
   int count=0;
 
   mass.clear();
 
-  if (model=="20") {
+  if (name=="20") {
     for(size_t i=0;i<36;i++) getline(fin,line);
-  } else if (model=="20round") {
+  } else if (name=="20round") {
     for(size_t i=0;i<34;i++) getline(fin,line);
+  } else {
+    for(size_t i=0;i<39;i++) getline(fin,line);
   }
   
   while (getline(fin,line)) {
+    
     if (verbose>0 && count%100==0) {
       std::cout << "mass count: " << count << std::endl;
     }
 
     vector<string> entries;
     
-    if (model=="20") {
-      
+    if (name=="20") {
+      // AWS, 1/26/25: this is different from what's quoted in the
+      // file, I think it may be a typo in the file.
       parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
-                           "1x,f14.6,f12.6,f15.5,f11.5,1x,a2,"+
+                           "1x,f14.6,f12.6,f13.5,f11.5,1x,a2,"+
                            "f13.5,f11.5,1x,i3,1x,f13.6,f12.6",entries);
-      
-      //} else if (model=="20round") {
-      
+    } else if (name=="20round") {
+      parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.5",entries);
+    } else if (name=="12" || name=="16round" || name=="16") {
+      parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.5",entries);
+    } else if (name=="03round" || name=="03") {
+      parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f13.5,f11.5,f11.3,f9.3,1x,a2,"+
+                           "f11.3,f9.3,1x,i3,1x,f12.5,f11.3,1x",entries);
+    } else if (name=="95exp" || name=="95rmd") {
+      parse_fortran_format(line,((string)"a1,i3,i5,i5,i5,1x,a3,a4,")+
+                           "1x,f11.3,f9.3,f11.3,f9.3,4x,a2,"+
+                           "f11.3,f9.3,2x,i3,1x,f10.3,f9.3",entries);
+    } else {
+      O2SCL_ERR("X.",o2scl::exc_efailed);
     }
 
     /*
@@ -473,7 +498,7 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     ae.N=o2scl::stoi(entries[2]);
     ae.Z=o2scl::stoi(entries[3]);
     
-    if (model=="20round" || model=="16round" || model=="03round") {
+    if (name=="20round" || name=="16round" || name=="03round") {
       ae.NMZ=ae.N-ae.Z;
       ae.A=ae.N+ae.Z;
     } else {
@@ -485,7 +510,7 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     parse(entries[7],entries[8],ae.mass,ae.dmass,
           ae.mass_acc);
     
-    if (model=="95rmd" || model=="95exp") {
+    if (name=="95rmd" || name=="95exp") {
       parse(entries[9],entries[10],ae.be,ae.dbe,
             ae.be_acc);
       // The 1995 files tabulate the binding energy
@@ -504,6 +529,13 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
     string_to_char_array(entries[11],ae.bdmode,3);
     parse(entries[12],entries[13],ae.bde,ae.dbde,ae.bde_acc);
     
+    /*if (ae.N==126 && ae.Z==82) {
+      cout << ae.N << " " << ae.Z << " x"
+           << entries[10] << "x x" << entries[11] << "x x" 
+           << entries[12] << "x" << endl;
+      cout << ae.bdmode[0] << " " << ae.bdmode[1] << endl;
+      }*/
+    
     ae.A2=o2scl::stoi(entries[14]);
     parse(entries[15],entries[16],ae.amass,ae.damass,
           ae.amass_acc);
@@ -518,9 +550,28 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
   n=count;
 
   last=mass.size()/2;
-
-  if (model=="20" || model=="20round") {
-    
+  
+  if (name=="95exp" || name=="95rmd") {
+    reference=((string)"G. Audi and A. H. Wapstra, ")+
+      "Nucl. Phys. A, 595 (1995) 409.";
+  } else if (name=="03" || name=="03round") {
+    reference=((string)"G. Audi, A. H. Wapstra and C. Thibault, ")+
+      "Nucl. Phys. A, 729 (2003) 337.";
+  } else if (name=="12") {
+    reference=((string)"G. Audi, M. Wang, A. H. Wapstra, ")+
+      "F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer, "+
+      "Chin. Phys. C, 36 (2012) 1287; "+
+      "M. Wang, G. Audi, A. H. Wapstra, "+
+      "F. G. Kondev, M. MacCormick, X. Xu, and B. Pfeiffer, "+
+      "Chin. Phys. C, 36 (2012) 1603.";
+  } else if (name=="16" || name=="16round") {
+    reference=((string)"W. J. Huang, G. Audi, M. Wang ")+
+      "F. G. Kondev, S. Naimi, and X. Xu, "
+      "Chin. Phys. C, 41 (2017) 030002; "+
+      "M. Wang, G. Audi, F. G. Kondev, "+
+      "W. J. Huang, , S. Naimi, and X. Xu, "
+      "Chin. Phys. C, 41 (2017) 030003.";
+  } else if (name=="20" || name=="20round") {
     reference=((string)"W. J. Huang, M. Wang ")+
       "F. G. Kondev, G. Audi, S. Naimi, X. Xu, "
       "Chin. Phys. C, 45 (2021) 030002; "+
@@ -531,17 +582,18 @@ void nucmass_ame2::load_ext(std::string model, std::string filename,
 
   fin.close();
 
-  if (model=="20") {
+  if (name=="20") {
     
     fin.open(nubase_file.c_str());
     
     count=0;
 
-    if (model=="20") {
+    if (name=="20") {
       for(size_t i=0;i<25;i++) getline(fin,line);
     }
     
     while (getline(fin,line)) {
+      
       if (verbose>0 && count%100==0) {
         std::cout << "nubase count: " << count << std::endl;
       }
@@ -793,12 +845,91 @@ void nucmass_ame2::load(std::string name, bool exp_only,
     filename=ext_data+"/mass16round.txt";
     nubase_file=ext_data+"/nubase2016.txt";
     
+  } else if (name=="12") {
+    
+    std::string sha=((std::string)"81e887c71c2c54c76caea36fd861b")+
+      "195a7f3eeb77d04b520e05fa97e0eedd7f3";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass.mas12",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame12/mass.mas12",sha,ext_data);
+    
+    sha=((std::string)"d69cac4f34e01e5d92ac2c415492c9ee05de")+
+      "2ca9b11e6cb3e71786ba66c8679c";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("nubase.mas12",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame12/nubase.mas12",sha,ext_data);
+    
+    filename=ext_data+"/mass.mas12";
+    nubase_file=ext_data+"/nubase.mas12";
+    
+  } else if (name=="03") {
+    
+    std::string sha=((std::string)"33405560376f2adfb190beec44213")+
+      "523ec79149804df94e436d608019a4c70d1";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass03.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame03/mass.mas03",sha,ext_data);
+
+    filename=ext_data+"/mass.mas03";
+    nubase_file="";
+    
+  } else if (name=="03round") {
+    
+    std::string sha=((std::string)"1e951122a0c2531f14ca7f45343c")+
+      "459f4b6d78353298af7c8d8b92fe58ecf403";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass03round.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame03/mass.mas03round",sha,ext_data);
+
+    filename=ext_data+"/mass.mas03round";
+    nubase_file="";
+    
+  } else if (name=="95exp") {
+    
+    std::string sha=((std::string)"bf8f6fb685100467b2f522d8fb48")+
+      "62089f4843b2354be3653e5b67488294eeb3";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass03.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame03/mass_exp.mas95",sha,ext_data);
+
+    filename=ext_data+"/mass_exp.mas95";
+    nubase_file="";
+    
+  } else if (name=="95rmd") {
+    
+    std::string sha=((std::string)"f05e9bf4041f2921f82a96186452b6")+
+      "d5d23d57ae4c62f476e5dea40a41e60943";
+    cf.hash_type=cloud_file::sha256;
+    cf.get_file_hash
+      ("mass03round.txt",
+       ((string)"https://isospin.roam.utk.edu/")+
+       "public_data/nucmass/ame03/mass_rmd.mas95",sha,ext_data);
+
+    filename=ext_data+"/mass_rmd.mas95";
+    nubase_file="";
+    
   } else {
     
     std::string s=((std::string)"Invalid name '")+name+
       "' in nucmass_ame2::load().";
     O2SCL_ERR(s.c_str(),exc_einval);
     
+  }
+  
+  if (verbose>0) {
+    std::cout << "nucmass_ame2()::load(): "
+              << "name,filename,nubase_file: " << name << " "
+              << filename << " " << nubase_file << std::endl;
   }
   
   load_ext(name,filename,nubase_file,exp_only,verbose);

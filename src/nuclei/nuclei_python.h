@@ -178,6 +178,10 @@ void *o2scl_create_nucmass_ame();
 
 void o2scl_free_nucmass_ame(void *vptr);
 
+void *o2scl_create_nucmass_ame2();
+
+void o2scl_free_nucmass_ame2(void *vptr);
+
 void *o2scl_create_nucmass_dz_table();
 
 void o2scl_free_nucmass_dz_table(void *vptr);

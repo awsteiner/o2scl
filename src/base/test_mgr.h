@@ -47,12 +47,16 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// The number of tests performed
     int ntests;
 
-    /// The output level
+    /** \brief The output level
+
+        0: output nothing
+        1: output failed tests
+        2: output all tests
+        3: output all tests and exit on any failed test
+     */
     int output_level;
   
     /// A helper function for processing tests
@@ -64,8 +68,6 @@ namespace o2scl {
     /// The description of the last failed test
     std::string last_fail;
 
-#endif
-  
   public:
 
     /// Create a \ref test_mgr object
