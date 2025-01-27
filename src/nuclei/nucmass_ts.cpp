@@ -121,27 +121,12 @@ int main(void) {
 
   // Create an instance of all the various mass formulae
 
-  nucmass_ame ame;
-  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame03.o2","ame03.o2");
-  nucmass_ame ame95rmd;
-  o2scl_hdf::ame_load_ext(ame95rmd,"../../data/o2scl/nucmass/ame95rmd.o2",
-		      "ame95rmd.o2");
-  nucmass_ame ame03round;
-  o2scl_hdf::ame_load_ext(ame03round,"../../data/o2scl/nucmass/ame03round.o2",
-		      "ame03round.o2");
-  nucmass_ame ame95exp;
-  o2scl_hdf::ame_load_ext(ame95exp,"../../data/o2scl/nucmass/ame95exp.o2",
-		      "ame95exp.o2");
-  nucmass_ame ame12;
-  o2scl_hdf::ame_load_ext(ame12,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  nucmass_ame2 ame;
+  ame.load("20");
 
   // Output the references
   cout << "References: " << endl;
   cout << ame.get_reference() << endl;
-  cout << ame03round.get_reference() << endl;
-  cout << ame95rmd.get_reference() << endl;
-  cout << ame95exp.get_reference() << endl;
-  cout << ame12.get_reference() << endl;
 
   nucmass_semi_empirical sm;
   nucmass_mnmsk m95;
@@ -201,7 +186,7 @@ int main(void) {
   //nucmass_dglg dglg;
 
   // Set up generic pointers for testing
-  nucmass_table *nmd[27]={&ame,&ame95rmd,&ame03round,&ame95exp,
+  nucmass_table *nmd[24]={&ame,
 			  &m95,&kt,&kt2,&hfb2,&hfb8,
 			  &hfb14,&hfb17,&hfb21,&hfb22,&hfb23,&hfb24,&hfb25,
 			  &hfb26,&hfb27,&wlw1,&wlw1,&wlw2,&wlw3,&wlw3,
@@ -216,7 +201,6 @@ int main(void) {
 
   // Test the various formulae for the binding energy of lead
 
-  t.test_rel(ame12.binding_energy(82,126)/208.0,-7.867,1.0e-4,"ame12 be");
   t.test_rel(ame.binding_energy(82,126)/208.0,-7.867,1.0e-4,"ame be");
   t.test_rel(sm.binding_energy(82,126)/208.0,-7.867,5.0e-2,"sm be");
   t.test_rel(m95.binding_energy(82,126)/208.0,-7.867,5.0e-4,"m95 be");
@@ -236,21 +220,20 @@ int main(void) {
   double mass_amu=o2scl_const::unified_atomic_mass_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
-  for(size_t i=0;i<27;i++) {
+  for(size_t i=0;i<24;i++) {
     nucleus n;
     nmd[i]->get_nucleus(82,126,n);
     t.test_rel(n.be*o2scl_const::hc_mev_fm/208.0,-7.867,4.0e-3,"ptr be");
     t.test_rel(n.m-126.0*mass_neutron-82.0*mass_proton,n.be,1.0e-12,"ptr be2");
     t.test_rel(n.m+82.0*mass_electron-208.0*mass_amu,n.mex,1.0e-11,
 	       "ptr mex");
+    cout << "H0." << i << endl;
   }
 
-  // Test size of ame95rmd
-  
-  t.test_gen(ame95rmd.get_nentries()==2931,"ame.n");
-
+  cout << "H1." << endl;
   // Test nucmass_radius
   nucmass_radius nr;
+  cout << "H2." << endl;
   double rho0, N, N_err;
   nr.eval_N_err(6.0,0.5,0.08,N,N_err);
   cout << N << " " << N_err << endl;

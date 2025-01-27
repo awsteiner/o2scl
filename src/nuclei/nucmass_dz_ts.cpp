@@ -38,12 +38,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  nucmass_ame ame;
-  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2");
-  nucmass_ame amex;
-  o2scl_hdf::ame_load_ext(amex,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2",true);
+  nucmass_ame2 ame;
+  ame.load("20");
 
   nucmass_dz_fit dmf;
   nucmass_dz_fit_33 dmf33;
@@ -82,21 +78,11 @@ int main(void) {
   double res;
   mf.eval(dmf,res);
   cout << "DZ 10-parameter fit: " << res << endl;
-  t.test_rel(res,1.154636,1.0e-5,"dmf10");
+  t.test_rel(res,1.305845,1.0e-5,"dmf10");
 
   mf.eval(dmf33,res);
   cout << "DZ 33-parameter fit: " << res << endl;
-  t.test_rel(res,0.94796338,1.0e-5,"dmf33");
-
-  nucdist_set(mf.dist,amex);
-
-  mf.eval(dmf,res);
-  cout << "DZ 10-parameter fit: " << res << endl;
-  t.test_rel(res,0.5890547,1.0e-5,"dmf10ex");
-  
-  mf.eval(dmf33,res);
-  cout << "DZ 33-parameter fit: " << res << endl;
-  t.test_rel(res,0.3967063,1.0e-5,"dmf33ex");
+  t.test_rel(res,1.072021,1.0e-5,"dmf33");
 
   if (false) {
     for(size_t i=0;i<5;i++) {
@@ -109,11 +95,11 @@ int main(void) {
 
   // Compare tables to Audi et al.
   mf.eval(dz2,res);
-  t.test_rel(res,0.3941622,1.0e-5,"95table");
+  t.test_rel(res,1.129766,1.0e-5,"95table");
   cout << "DZ 1995 table: " << res << endl;
 
   mf.eval(dz,res);
-  t.test_rel(res,0.5913276,1.0e-5,"96table");
+  t.test_rel(res,1.316777,1.0e-5,"96table");
   cout << "DZ 1996 table: " << res << endl;
   
   // Test the binding energy of lead from tables

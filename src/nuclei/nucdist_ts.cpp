@@ -23,6 +23,7 @@
 #include <o2scl/constants.h>
 #include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/nucmass_ame.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -38,27 +39,14 @@ int main(void) {
 
   // Load several mass formulae to make distributions out of
 
-  nucmass_ame ame12;
-  o2scl_hdf::ame_load_ext(ame12,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2");
-
-  nucmass_ame amex12;
-  o2scl_hdf::ame_load_ext(amex12,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2",true);
-
+  nucmass_ame2 ame;
+  ame.load("20");
+  
   nucmass_mnmsk mth;
   o2scl_hdf::mnmsk_load(mth,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
 
   nucmass_mnmsk_exp mexp;
   o2scl_hdf::mnmsk_load(mexp,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
-
-  nucmass_ame ame03;
-  o2scl_hdf::ame_load_ext(ame03,"../../data/o2scl/nucmass/ame03.o2",
-			  "ame03.o2");
-  
-  nucmass_ame amex03;
-  o2scl_hdf::ame_load_ext(amex03,"../../data/o2scl/nucmass/ame03.o2",
-			  "ame03.o2",true);
 
   vector<nucleus> fdx;
   nucdist_set(fdx,mth,"1",400,true);

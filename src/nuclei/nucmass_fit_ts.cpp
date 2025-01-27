@@ -43,12 +43,9 @@ int main(void) {
   nucmass_semi_empirical sem;
   nucmass_fit mf;
 
-  nucmass_ame ame;
-  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2");
-  nucmass_ame amex;
-  o2scl_hdf::ame_load_ext(amex,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2",true);
+  nucmass_ame2 ame;
+  ame.load("20");
+  
   nucmass_mnmsk_exp mexp;
   o2scl_hdf::mnmsk_load(mexp,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
   nucmass_mnmsk mm;
@@ -88,15 +85,10 @@ int main(void) {
   cout << res << endl;
   t.test_rel(res,0.6806,1.0e-4,"Moller fit 1");
 
-  nucdist_set(mf.dist,amex);
-  mf.eval(mm,res);
-  cout << res << endl;
-  t.test_rel(res,0.6540311,1.0e-4,"Moller fit 2");
-
   nucdist_set(mf.dist,ame);
   mf.eval(mm,res);
   cout << res << endl;
-  t.test_rel(res,0.894578,1.0e-4,"Moller fit 3");
+  t.test_rel(res,0.9933352,1.0e-4,"Moller fit 3");
 
   cout << "Testing:" << endl;
   mf.fit_method=nucmass_fit::rms_mass_excess;
@@ -117,7 +109,6 @@ int main(void) {
   cout << res << endl;
   sem.guess_fun(5,x3);
   vector_out(cout,x3,true);
-  exit(-1);
   
   mf.fit_method=nucmass_fit::chi_squared_me;
   double chi2;

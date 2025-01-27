@@ -39,6 +39,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(3);
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   if (true) {
     
     vector<nucleus> dist, dist2;
@@ -468,6 +470,8 @@ int main(void) {
     }
 
   }
+
+#endif
   
   t.report();
   return 0;

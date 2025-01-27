@@ -41,12 +41,11 @@ int main(void) {
   nucmass_mnmsk mo12;
   nucmass_mnmsk mo;
   nucmass_frdm frdm;
-  nucmass_ame au;
+  nucmass_ame2 au;
   nucmass_semi_empirical sm;
 
   // Load experimental and theoretical masses
-  o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2");
+  au.load("20");
   o2scl_hdf::mnmsk_load(mo,"mnmsk97",
 			"../../data/o2scl/nucmass/mnmsk.o2");
   o2scl_hdf::mnmsk_load(mo12,"msis16",
@@ -54,7 +53,7 @@ int main(void) {
 
   // Show that the nucmass_frdm gives reasonable (but not great)
   // values for the binding energy of Lead 208
-  cout << "AME2003   : ";
+  cout << "AME2020   : ";
   cout << au.mass_excess(82,126) << " ";
   cout << au.binding_energy(82,126) << " ";
   cout << au.total_mass(82,126) << endl;
@@ -163,7 +162,7 @@ int main(void) {
   mf.def_mmin.ntrial*=10;
   mf.fit(frdm,qual);
   cout << "After fit: " << qual << endl;
-  t.test_rel(qual,2.3836,1.0e-2,"FRDM post-fit.");
+  t.test_rel(qual,2.40972,1.0e-2,"FRDM post-fit.");
 
   nucmass_patch np;
   np.load();

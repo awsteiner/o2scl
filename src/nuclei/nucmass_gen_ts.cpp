@@ -38,10 +38,9 @@ int main(void) {
   cout.setf(ios::scientific);
 
   nucmass_gen ng;
-  nucmass_ame ame;
+  nucmass_ame2 ame;
 
-  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2",
-			  "ame12.o2");
+  ame.load("20");
   
   string fnames[10]={"../../data/o2scl/nucmass/frib_mex/ddme2.o2",
 		    "../../data/o2scl/nucmass/frib_mex/ddmed.o2",
@@ -56,7 +55,7 @@ int main(void) {
 		    
   // Show that the nucmass_gen gives reasonable (but not great)
   // values for the binding energy of Lead 208
-  cout << "AME2003 : ";
+  cout << "AME2020 : ";
   cout << ame.mass_excess(82,126) << " ";
   cout << ame.binding_energy(82,126) << " ";
   cout << ame.total_mass(82,126) << endl;
