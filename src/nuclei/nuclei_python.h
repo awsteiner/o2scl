@@ -174,10 +174,6 @@ double o2scl_nucmass_semi_empirical_mass_excess(void *vptr, int Z, int N);
 
 double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N);
 
-void *o2scl_create_nucmass_ame();
-
-void o2scl_free_nucmass_ame(void *vptr);
-
 void *o2scl_create_nucmass_ame2();
 
 void o2scl_free_nucmass_ame2(void *vptr);
@@ -391,10 +387,6 @@ size_t o2scl_std_vector_nucleus__size(void *vptr);
 void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n);
 
 void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr);
-
-void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only=false);
-
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only=false);
 
 void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename);
 

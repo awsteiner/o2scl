@@ -212,8 +212,8 @@ class nucmass_semi_empirical
 # 
 # Class nucmass_ame
 #
-class nucmass_ame
-- parent nucmass_table
+#class nucmass_ame
+#- parent nucmass_table
 #
 # ------------------------------------------------------
 # 
@@ -407,20 +407,20 @@ class std::vector<nucleus>
 #
 # ------------------------------------------------------
 #
-function ame_load
-- void
-- nucmass_ame &ame
-- std::string name ["20"]
-- bool exp_only [False]
+#function ame_load
+#- void
+#- nucmass_ame &ame
+#- std::string name ["20"]
+#- bool exp_only [False]
 #
 # ------------------------------------------------------
 #
-function ame_load_ext
-- void
-- nucmass_ame &ame
-- std::string file_name
-- std::string table_name
-- bool exp_only [False]
+#function ame_load_ext
+#- void
+#- nucmass_ame &ame
+#- std::string file_name
+#- std::string table_name
+#- bool exp_only [False]
 #
 # ------------------------------------------------------
 #

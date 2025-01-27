@@ -51,6 +51,8 @@
 
 namespace o2scl_hdf {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
       specified in a file
       
@@ -68,6 +70,8 @@ namespace o2scl_hdf {
   */
   void ame_load(o2scl::nucmass_ame &ame, std::string name="20",
                 bool exp_only=false);
+
+#endif
   
   /** \brief Read data for \ref o2scl::nucmass_mnmsk from an HDF table
 

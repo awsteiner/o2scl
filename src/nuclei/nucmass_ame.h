@@ -35,6 +35,8 @@
 #include <o2scl/table.h>
 #include <o2scl/nucmass.h>
 
+#ifdef O2SCL_NEVER_DEFINED
+
 // Forward definition of the nucmass_ame class for HDF I/O
 namespace o2scl {
   class nucmass_ame;
@@ -48,9 +50,13 @@ namespace o2scl_hdf {
   void ame_load(o2scl::nucmass_ame &ame, std::string name,
 		bool exp_only);
 }
+
+#endif
   
 namespace o2scl {
 
+#ifdef O2SCL_NEVER_DEFINED
+  
   /** \brief Masses from the Atomic Mass Evaluation 
       
       \verbatim embed:rst
@@ -281,6 +287,8 @@ namespace o2scl {
     int last;
     
   };
+
+#endif
 
   /** \brief Masses from the Atomic Mass Evaluation 
       

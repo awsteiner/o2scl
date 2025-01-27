@@ -30,6 +30,8 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
+#ifdef O2SCL_NEVER_DEFINED
+
 nucmass_ame::nucmass_ame() {
   n=0;
   reference="";
@@ -222,6 +224,8 @@ nucmass_ame::entry nucmass_ame::get(string nucleus) {
   int A=o2scl::stoi(nucleus.substr(1,nucleus.length()-1));
   return get_elA(el,A);
 }
+
+#endif
 
 nucmass_ame2::nucmass_ame2() {
   reference="";
@@ -517,13 +521,13 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
       // rather than the binding energy per nucleon
       ae.beoa=ae.be/ae.A;
       ae.dbeoa=ae.dbe/ae.A;
-      ae.beoa_acc=nucmass_ame::intl_computed;
+      ae.beoa_acc=nucmass_ame2::intl_computed;
     } else {
       parse(entries[9],entries[10],ae.beoa,ae.dbeoa,
             ae.beoa_acc);
       ae.be=ae.beoa*ae.A;
       ae.dbe=ae.dbeoa*ae.A;
-      ae.be_acc=nucmass_ame::intl_computed;
+      ae.be_acc=nucmass_ame2::intl_computed;
     }
 
     string_to_char_array(entries[11],ae.bdmode,3);
@@ -630,6 +634,7 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
         O2SCL_ERR("Couldn't find nubase nucleus.",o2scl::exc_efailed);
       }
 
+      /*
       if (Z==3 && A==7) {
         cout << "Entries:" << endl;
         for(size_t k=0;k<entries.size();k++) {
@@ -638,6 +643,7 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
         //char ch;
         //cin >> ch;
       }
+      */
       
       entry_nubase_20 enu20;
       if (entries[1].length()>3 && entries[1][3]!=' ') {
@@ -806,12 +812,14 @@ void nucmass_ame2::load(std::string name, bool exp_only,
   std::string filename, nubase_file;
   
   if (name=="20") {
-    
+
+    // These files don't need hashes because they're included in the repo
     filename=prefix+"/ame20/mass20.txt";
     nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
     
   } else if (name=="20round") {
     
+    // These files don't need hashes because they're included in the repo
     filename=prefix+"/ame20/mass20round.txt";
     nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
     

@@ -430,17 +430,6 @@ double o2scl_nucmass_semi_empirical_mass_excess_d(void *vptr, double Z, double N
   return ret;
 }
 
-void *o2scl_create_nucmass_ame() {
-  nucmass_ame *ptr=new nucmass_ame;
-  return ptr;
-}
-
-void o2scl_free_nucmass_ame(void *vptr) {
-  nucmass_ame *ptr=(nucmass_ame *)vptr;
-  delete ptr;
-  return;
-}
-
 void *o2scl_create_nucmass_ame2() {
   nucmass_ame2 *ptr=new nucmass_ame2;
   return ptr;
@@ -1029,21 +1018,6 @@ void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr) {
   std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
   nucleus *valptr2=(nucleus *)valptr;
   (*ptr)[i]=*valptr2;
-  return;
-}
-
-void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only) {
-  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  std::string *name=(std::string *)ptr_name;
-  ame_load(*ame,*name,exp_only);
-  return;
-}
-
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only) {
-  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  std::string *file_name=(std::string *)ptr_file_name;
-  std::string *table_name=(std::string *)ptr_table_name;
-  ame_load_ext(*ame,*file_name,*table_name,exp_only);
   return;
 }
 

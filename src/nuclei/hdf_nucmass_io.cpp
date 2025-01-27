@@ -27,6 +27,8 @@ using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 
+#ifdef O2SCL_NEVER_DEFINED
+
 void o2scl_hdf::ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
 			     std::string table_name, bool exp_only) {
 
@@ -168,6 +170,8 @@ void o2scl_hdf::ame_load(o2scl::nucmass_ame &ame, std::string name,
   ame_load_ext(ame,file_name,table_name,exp_only);
   return;
 }
+
+#endif
 
 void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
 			   string filename) {
