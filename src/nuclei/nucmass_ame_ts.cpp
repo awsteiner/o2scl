@@ -49,15 +49,15 @@ int main(void) {
     ame_load(ame,"20");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("20",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("20",false,1);
+    nucdist_set(dist2,ame);
 
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -103,15 +103,15 @@ int main(void) {
     ame_load(ame,"20round");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("20round",false,2);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("20round",false,2);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -150,15 +150,15 @@ int main(void) {
     ame_load(ame,"16");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("16",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("16",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -197,15 +197,15 @@ int main(void) {
     ame_load(ame,"16round");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("16round",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("16round",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -244,15 +244,15 @@ int main(void) {
     ame_load(ame,"12");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("12",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("12",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -291,15 +291,15 @@ int main(void) {
     ame_load(ame,"03");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("03",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("03",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -338,15 +338,15 @@ int main(void) {
     ame_load(ame,"03round");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("03round",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("03round",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -385,15 +385,15 @@ int main(void) {
     ame_load(ame,"95exp");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("95exp",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("95exp",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");
@@ -432,15 +432,15 @@ int main(void) {
     ame_load(ame,"95rmd");
     nucdist_set(dist,ame);
     
-    nucmass_ame2 ame2;
-    ame2.load("95rmd",false,1);
-    nucdist_set(dist2,ame2);
+    nucmass_ame ame;
+    ame.load("95rmd",false,1);
+    nucdist_set(dist2,ame);
     
     t.test_gen(dist.size()==dist2.size(),"size");
     
     for(size_t i=0;i<dist.size();i++) {
       nucmass_ame::entry en=ame.get_ZN(dist[i].Z,dist[i].N);
-      nucmass_ame2::entry en2=ame2.get_ZN(dist2[i].Z,dist2[i].N);
+      nucmass_ame::entry en2=ame.get_ZN(dist2[i].Z,dist2[i].N);
       
       t.test_gen(en.NMZ==en2.NMZ,"1");
       t.test_gen(en.N==en2.N,"2");

@@ -212,14 +212,7 @@ class nucmass_semi_empirical
 # 
 # Class nucmass_ame
 #
-#class nucmass_ame
-#- parent nucmass_table
-#
-# ------------------------------------------------------
-# 
-# Class nucmass_ame2
-#
-class nucmass_ame2
+class nucmass_ame
 - parent nucmass_table
 #
 # ------------------------------------------------------

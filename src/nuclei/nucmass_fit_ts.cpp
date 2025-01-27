@@ -43,7 +43,7 @@ int main(void) {
   nucmass_semi_empirical sem;
   nucmass_fit mf;
 
-  nucmass_ame2 ame;
+  nucmass_ame ame;
   ame.load("20");
   
   nucmass_mnmsk_exp mexp;

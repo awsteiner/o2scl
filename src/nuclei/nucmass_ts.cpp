@@ -121,7 +121,7 @@ int main(void) {
 
   // Create an instance of all the various mass formulae
 
-  nucmass_ame2 ame;
+  nucmass_ame ame;
   ame.load("20");
 
   // Output the references

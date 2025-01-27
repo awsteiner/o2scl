@@ -39,7 +39,7 @@ int main(void) {
 
   // Load several mass formulae to make distributions out of
 
-  nucmass_ame2 ame;
+  nucmass_ame ame;
   ame.load("20");
   
   nucmass_mnmsk mth;

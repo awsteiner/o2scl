@@ -40,7 +40,7 @@ int main(void) {
   int ret;
 
   // Nuclear masses
-  nucmass_ame2 ame;
+  nucmass_ame ame;
   ame.load("20");
 
   // Test dense_matter

@@ -151,7 +151,7 @@ namespace o2scl {
     nucmass_mnmsk mnmsk;
 
     /// Atomic mass evaluation masses
-    nucmass_ame2 ame;
+    nucmass_ame ame;
 
     /// HFB mass formula for an alternate spin degeneracy
     nucmass_hfb_sp hfb;

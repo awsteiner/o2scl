@@ -30,19 +30,12 @@ using namespace o2scl;
 using namespace o2scl_hdf;
 using namespace o2scl_const;
 
-#ifdef O2SCL_NEVER_DEFINED
-
 nucmass_ame::nucmass_ame() {
-  n=0;
   reference="";
-  mass=0;
   last=0;
 }
 
 nucmass_ame::~nucmass_ame() {
-  if (n>0) {
-    delete[] mass;
-  }
 }
 
 double nucmass_ame::mass_excess(int Z, int N) {
@@ -153,18 +146,10 @@ nucmass_ame::entry nucmass_ame::get_ZN(int l_Z, int l_N) {
 	      exc_einval);
     return ret;
   }
-  bool found=false;
-  for(size_t i=0;i<n && found==false;i++) {
+  for(size_t i=0;i<n;i++) {
     if (mass[i].Z==l_Z && mass[i].N==l_N) {
       ret=mass[i];
-      found=true;
     }
-  }
-  if (found==false) {
-    std::string err=((std::string)"Nucleus with (Z,N)=(")+
-      o2scl::itos(l_Z)+","+o2scl::itos(l_N)+") not found in "+
-      "nucmass_ame::get_ZN().";
-    O2SCL_ERR(err.c_str(),exc_einval);
   }
   return ret;
 }
@@ -212,188 +197,6 @@ nucmass_ame::entry nucmass_ame::get(string nucleus) {
     nucmass_ame::entry ret;
     ret.Z=0;
     ret.A=0;
-    ret.N=0;
-    return ret;
-  }
-  if (isalpha(nucleus[1])) {
-    string el=nucleus.substr(0,2);
-    int A=o2scl::stoi(nucleus.substr(2,nucleus.length()-2));
-    return get_elA(el,A);
-  } 
-  string el=nucleus.substr(0,1);
-  int A=o2scl::stoi(nucleus.substr(1,nucleus.length()-1));
-  return get_elA(el,A);
-}
-
-#endif
-
-nucmass_ame2::nucmass_ame2() {
-  reference="";
-  last=0;
-}
-
-nucmass_ame2::~nucmass_ame2() {
-}
-
-double nucmass_ame2::mass_excess(int Z, int N) {
-  entry ret;
-  ret=get_ZN(Z,N);
-  if (ret.Z==0 && ret.N==0) return 0.0;
-  return ret.mass/1.0e3;
-}
-
-bool nucmass_ame2::is_included(int l_Z, int l_N) {
-
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2::is_included().",
-		  exc_einval);
-  }
-
-  if (false) {
-
-    int l_A=l_Z+l_N, mid=last, lo=0, hi=0;
-
-    // Binary search for the correct A first
-    if (mass[mid].Z+mass[mid].N!=l_A) {
-      if (mass[mid].Z+mass[mid].N>l_A) {
-	lo=0;
-	hi=mid;
-      } else {
-	lo=mid;
-	hi=n-1;
-      }
-      while (hi>lo+1) {
-	int mp=(lo+hi)/2;
-	if (mass[mid].Z+mass[mid].N<l_A) {
-	  lo=mp;
-	} else {
-	  hi=mp;
-	}
-      }
-      mid=lo;
-      if (mass[mid].Z+mass[mid].N!=l_A) {
-	mid=hi;
-      }
-      if (mass[mid].Z+mass[mid].N!=l_A) {
-	return false;
-      }
-    }
-
-    // The cached point was the right one, so we're done
-    if (mass[mid].N==l_N) {
-      if (fabs(mass[mid].mass)>1.0e-20 &&
-	  fabs(mass[mid].mass)<1.0e90) {
-	return true;
-      } else {
-	return false;
-      }
-    }
-
-    // Now look for the right N among all the A's
-    while (mass[mid].Z+mass[mid].N==l_A) {
-      if (mass[mid].N==l_N) {
-	if (fabs(mass[mid].mass)>1.0e-20 &&
-	    fabs(mass[mid].mass)<1.0e90) {
-	  return true;
-	} else {
-	  return false;
-	}
-      } else if (mass[mid].N>l_N) {
-	if (mid==0) return false;
-	mid--;
-      } else {
-	if (mid==((int)(n-1))) return false;
-	mid++;
-      }
-    }
-
-    return false;
-  }
-
-  for(size_t i=0;i<n;i++) {
-    if (mass[i].Z==l_Z && mass[i].N==l_N) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/*
-bool nucmass_ame2_exp::is_included(int l_Z, int l_N) {
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2_exp::is_included().",
-	      exc_einval);
-  }
-  for(size_t i=0;i<n;i++) {
-    if (mass[i].Z==l_Z && mass[i].N==l_N && mass[i].mass_acc==0) {
-      return true;
-    }
-  }
-  return false;
-}
-*/
-
-nucmass_ame2::entry nucmass_ame2::get_ZN(int l_Z, int l_N) {
-  nucmass_ame2::entry ret;
-  ret.Z=0;
-  ret.A=0;
-  ret.N=0;
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2::get_ZN().",
-	      exc_einval);
-    return ret;
-  }
-  for(size_t i=0;i<n;i++) {
-    if (mass[i].Z==l_Z && mass[i].N==l_N) {
-      ret=mass[i];
-    }
-  }
-  return ret;
-}
-
-nucmass_ame2::entry nucmass_ame2::get_ZA(int l_Z, int l_A) {
-  nucmass_ame2::entry ret;
-  ret.Z=0;
-  ret.A=0;
-  ret.N=0;
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2::get_ZA().",
-	      exc_einval);
-    return ret;
-  }
-  for(size_t i=0;i<n;i++) {
-    if (mass[i].Z==l_Z && mass[i].A==l_A) {
-      ret=mass[i];
-    }
-  }
-  return ret;
-}
-
-nucmass_ame2::entry nucmass_ame2::get_elA(string l_el, int l_A) {
-  nucmass_ame2::entry ret;
-  ret.Z=0;
-  ret.A=0;
-  ret.N=0;
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2::get_elA().",
-	      exc_einval);
-    return ret;
-  }
-  for(size_t i=0;i<n;i++) {
-    if (mass[i].el==l_el && mass[i].A==l_A) {
-      ret=mass[i];
-    }
-  }
-  return ret;
-}
-
-nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
-  if (n==0) {
-    O2SCL_ERR("No masses loaded in nucmass_ame2::get().",
-	      exc_einval);
-    nucmass_ame2::entry ret;
-    ret.Z=0;
-    ret.A=0;
     ret.A2=0;
     ret.N=0;
     ret.NMZ=0;
@@ -427,17 +230,17 @@ nucmass_ame2::entry nucmass_ame2::get(string nucleus) {
   return get_elA(el,A);
 }
 
-void nucmass_ame2::load_ext(std::string name, std::string filename,
+void nucmass_ame::load_ext(std::string name, std::string filename,
                             std::string nubase_file, bool exp_only,
                             int verbose) {
 
-  nucmass_ame2::entry ae;
+  nucmass_ame::entry ae;
 
   ifstream fin(filename.c_str());
   std::string line;
 
   if (verbose>0) {
-    std::cout << "nucmass_ame2()::load_ext(): "
+    std::cout << "nucmass_ame()::load_ext(): "
               << "name,filename,nubase_file: " << name << " "
               << filename << " " << nubase_file << std::endl;
   }
@@ -521,13 +324,13 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
       // rather than the binding energy per nucleon
       ae.beoa=ae.be/ae.A;
       ae.dbeoa=ae.dbe/ae.A;
-      ae.beoa_acc=nucmass_ame2::intl_computed;
+      ae.beoa_acc=nucmass_ame::intl_computed;
     } else {
       parse(entries[9],entries[10],ae.beoa,ae.dbeoa,
             ae.beoa_acc);
       ae.be=ae.beoa*ae.A;
       ae.dbe=ae.dbeoa*ae.A;
-      ae.be_acc=nucmass_ame2::intl_computed;
+      ae.be_acc=nucmass_ame::intl_computed;
     }
 
     string_to_char_array(entries[11],ae.bdmode,3);
@@ -668,7 +471,7 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
       if (entries[6]=="non-exist") {
         enu20.exc_energy=0.0;
         enu20.dexc_energy=0.0;
-        enu20.exc_energy_acc=nucmass_ame2::does_not_exist;
+        enu20.exc_energy_acc=nucmass_ame::does_not_exist;
       } else {
         parse(entries[6],entries[7],enu20.exc_energy,enu20.dexc_energy,
               enu20.exc_energy_acc);
@@ -701,32 +504,32 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
         remove_whitespace(entries[11]);
         if (entries[11]=="stbl") {
           enu20.hlife=0.0;
-          enu20.hlife_acc=nucmass_ame2::unstable;
+          enu20.hlife_acc=nucmass_ame::unstable;
         } else if (entries[11]=="p-unst") {
           enu20.hlife=0.0;
-          enu20.hlife_acc=nucmass_ame2::part_unstable;
+          enu20.hlife_acc=nucmass_ame::part_unstable;
         } else if (entries[11][0]=='>') {
           entries[11]=entries[11].substr
             (1,entries[11].length()-1);
           enu20.hlife=o2scl::stod(entries[11]);
-          enu20.hlife_acc=nucmass_ame2::lower_limit;
+          enu20.hlife_acc=nucmass_ame::lower_limit;
         } else if (entries[11][0]=='<') {
           entries[11]=entries[11].substr
             (1,entries[11].length()-1);
           enu20.hlife=o2scl::stod(entries[11]);
-          enu20.hlife_acc=nucmass_ame2::upper_limit;
+          enu20.hlife_acc=nucmass_ame::upper_limit;
         } else if (entries[11][0]=='~') {
           entries[11]=entries[11].substr
             (1,entries[11].length()-1);
           enu20.hlife=o2scl::stod(entries[11]);
-          enu20.hlife_acc=nucmass_ame2::approximate;
+          enu20.hlife_acc=nucmass_ame::approximate;
         } else {
           enu20.hlife=o2scl::stod(entries[11]);
           enu20.hlife_acc=0;
         }
       } else {
         enu20.hlife=0.0;
-        enu20.hlife_acc=nucmass_ame2::blank;
+        enu20.hlife_acc=nucmass_ame::blank;
       }
       if (verbose>1) {
         cout << "hlife: " << enu20.hlife << " "
@@ -795,7 +598,7 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
   return;
 }
 
-void nucmass_ame2::load(std::string name, bool exp_only,
+void nucmass_ame::load(std::string name, bool exp_only,
                         int verbose) {
 
   char *ed=getenv("O2SCL_EXT_DATA");
@@ -814,14 +617,14 @@ void nucmass_ame2::load(std::string name, bool exp_only,
   if (name=="20") {
 
     // These files don't need hashes because they're included in the repo
-    filename=prefix+"/ame20/mass20.txt";
-    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
+    filename=prefix+"/ame0/mass20.txt";
+    nubase_file=prefix+"/ame0/nubase_4.mas20.txt";
     
   } else if (name=="20round") {
     
     // These files don't need hashes because they're included in the repo
-    filename=prefix+"/ame20/mass20round.txt";
-    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
+    filename=prefix+"/ame0/mass20round.txt";
+    nubase_file=prefix+"/ame0/nubase_4.mas20.txt";
     
   } else if (name=="16") {
     
@@ -941,13 +744,13 @@ void nucmass_ame2::load(std::string name, bool exp_only,
   } else {
     
     std::string s=((std::string)"Invalid name '")+name+
-      "' in nucmass_ame2::load().";
+      "' in nucmass_ame::load().";
     O2SCL_ERR(s.c_str(),exc_einval);
     
   }
   
   if (verbose>0) {
-    std::cout << "nucmass_ame2()::load(): "
+    std::cout << "nucmass_ame()::load(): "
               << "name,filename,nubase_file: " << name << " "
               << filename << " " << nubase_file << std::endl;
   }

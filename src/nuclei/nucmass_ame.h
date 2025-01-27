@@ -35,24 +35,6 @@
 #include <o2scl/table.h>
 #include <o2scl/nucmass.h>
 
-#ifdef O2SCL_NEVER_DEFINED
-
-// Forward definition of the nucmass_ame class for HDF I/O
-namespace o2scl {
-  class nucmass_ame;
-}
-
-// Forward definition of HDF I/O to extend friendship
-namespace o2scl_hdf { 
-  class hdf_file; 
-  void ame_load_ext(o2scl::nucmass_ame &ame, std::string file_name, 
-		    std::string table_name, bool exp_only);
-  void ame_load(o2scl::nucmass_ame &ame, std::string name,
-		bool exp_only);
-}
-
-#endif
-  
 namespace o2scl {
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -118,6 +100,9 @@ namespace o2scl {
       structure for each table entry in \ref
       o2scl::nucmass_ame::entry.
       
+      \note This version avoids storing a raw pointer, supports
+      the NUBASE data, and provides more field information
+      
       \future Create a caching and more intelligent search system for
       the table. The table is sorted by A and then N, so we could
       probably just copy the search routine from mnmsk_mass, which is
@@ -125,184 +110,16 @@ namespace o2scl {
       it doesn't work yet). 
       \future Should m_neut and m_prot be set to the neutron and
       proton masses from the table by default?
-  */
+
+   */
   class nucmass_ame : public nucmass_table {
     
   public:
 
-    friend void o2scl_hdf::ame_load_ext(nucmass_ame &ame,
-					std::string file_name, 
-					std::string table_name,
-					bool exp_only);
-    
-    friend void o2scl_hdf::ame_load(nucmass_ame &ame, std::string name,
-				    bool exp_only);
-
     /// Create an AME mass object
     nucmass_ame();
 
-    ~nucmass_ame();
-    
-    /// \name Accuracy modes
-    //@{
-    /// Measured value from source data
-    static const int measured=0;
-    /// Value estimated in source data
-    static const int estimated=1;
-    /// Value listed in data as not calculable
-    static const int not_calculable=2;
-    /// Value computed by \o2
-    static const int intl_computed=3;
-    /// Value computed by \o2
-    static const int unc_less_than_half_eV=4;
-    //@}
-
-    /** \brief Atomic mass entry structure
-
-	Atomic mass entry data object for \ref o2scl::nucmass_ame.
-
-	This has to be a struct, not a class, so that it can
-	be processed by the HDF5 make table functions.
-    */
-    struct entry {
-
-    public:
-
-      /// N-Z
-      int NMZ;
-    
-      /// Neutron number
-      int N;
-    
-      /// Proton number
-      int Z;
-    
-      /// Mass number
-      int A;
-    
-      /// Element name
-      char el[4];
-    
-      /// Data origin
-      char orig[5];
-    
-      /// Mass excess (in keV)
-      double mass;
-    
-      /// Mass excess uncertainty (in keV)
-      double dmass;
-
-      /// Mass accuracy flag 
-      int mass_acc;
-    
-      /// Binding energy (in keV, given in the '95 data)
-      double be;
-    
-      /// Binding energy uncertainty (in keV, given in the '95 data)
-      double dbe;
-
-      /// Binding energy accuracy flag
-      int be_acc;
-    
-      /// Binding energy / A (in keV, given in the '03 data)
-      double beoa;
-    
-      /// Binding energy / A uncertainty (in keV, given in the '03 data)
-      double dbeoa;
-    
-      /// Binding energy / A accuracy flag
-      int beoa_acc;
-
-      /// Beta decay mode
-      char bdmode[3];
-    
-      /// Beta-decay energy (in keV)
-      double bde;
-
-      /// Beta-decay energy uncertainty (in keV)
-      double dbde;
-    
-      /// Beta-decay energy accuracy flag
-      int bde_acc;
-
-      /// Mass number (reported twice in original table)
-      int A2;
-    
-      /// Atomic mass (in keV)
-      double amass;
-    
-      /// Atomic mass uncertainty (in keV)
-      double damass;
-    
-      /// Atomic mass accuracy flag
-      int amass_acc;
-
-    };
-    
-    /// Return the type, \c "nucmass_ame".
-    virtual const char *type() { return "nucmass_ame"; }
-
-    /** \brief Return false if the mass formula does not include 
-	specified nucleus
-    */
-    virtual bool is_included(int Z, int N);
-
-    /// Given \c Z and \c N, return the mass excess in MeV
-    virtual double mass_excess(int Z, int N);
-    
-    /// Get element with Z=l_Z and N=l_N (e.g. 82,126).
-    entry get_ZN(int l_Z, int l_N);
-    
-    /// Get element with Z=l_Z and A=l_A (e.g. 82,208).
-    entry get_ZA(int l_Z, int l_A);
-    
-    /// Get element with name l_el and A=l_A (e.g. "Pb",208).
-    entry get_elA(std::string l_el, int l_A);
-    
-    /// Get element with string (e.g. "Pb208")
-    entry get(std::string nucleus);
-    
-    /// Returns true if data has been loaded
-    bool is_loaded() { return (n>0); }
-
-    /// Return number of entries
-    size_t get_nentries() { return n; }
-
-    /// Return the reference
-    std::string get_reference() { return reference; }
-    
-  protected:
-
-    /** \brief The array containing the mass data of length ame::n
-	
-	\comment
-	Ideally I'd prefer to store a vector<entry> rather than 
-	a pointer, but the pointer is required to read the
-	HDF5 table.
-	\endcomment
-     */
-    entry *mass;
-    
-    /// The last table index for caching
-    int last;
-    
-  };
-
-#endif
-
-  /** \brief Masses from the Atomic Mass Evaluation 
-      
-      \note This version avoids storing a raw pointer, supports
-      the NUBASE data, and provides more field information
-   */
-  class nucmass_ame2 : public nucmass_table {
-    
-  public:
-
-    /// Create an AME mass object
-    nucmass_ame2();
-
-    virtual ~nucmass_ame2();
+    virtual ~nucmass_ame();
     
     /// \name Accuracy modes
     //@{
@@ -544,19 +361,19 @@ namespace o2scl {
       if (count_words(s1)==0) {
         d1=0.0;
         d2=0.0;
-        acc=nucmass_ame2::blank;
+        acc=nucmass_ame::blank;
         return 0;
       }
       if (s1.find('*')!=std::string::npos) {
         d1=0.0;
         d2=0.0;
-        acc=nucmass_ame2::not_calculable;
+        acc=nucmass_ame::not_calculable;
         return 0;
       } 
       if (s1.find('#')!=std::string::npos) {
-        acc=nucmass_ame2::estimated;
+        acc=nucmass_ame::estimated;
       } else {
-        acc=nucmass_ame2::measured;
+        acc=nucmass_ame::measured;
       }
       //std::cout << "Hz: '" << s1 << "'" << std::endl;
       int ret1=o2scl::stod_nothrow(s1,d1);
@@ -567,10 +384,10 @@ namespace o2scl {
       }
       if (count_words(s2)==0) {
         d2=0.0;
-        acc=nucmass_ame2::blank_unc;
+        acc=nucmass_ame::blank_unc;
       } else if (s2.find('a')!=std::string::npos) {
         d2=0.0;
-        acc=nucmass_ame2::unc_less_than_half_eV;
+        acc=nucmass_ame::unc_less_than_half_eV;
       } else {
         //std::cout << "Hy: '" << s2 << "'" << std::endl;
         int ret2=o2scl::stod_nothrow(s2,d2);
@@ -584,8 +401,8 @@ namespace o2scl {
       return 0;
     }
     
-    /// Return the type, \c "nucmass_ame2".
-    virtual const char *type() { return "nucmass_ame2"; }
+    /// Return the type, \c "nucmass_ame".
+    virtual const char *type() { return "nucmass_ame"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus

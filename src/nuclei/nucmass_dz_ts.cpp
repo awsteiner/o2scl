@@ -38,7 +38,7 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  nucmass_ame2 ame;
+  nucmass_ame ame;
   ame.load("20");
 
   nucmass_dz_fit dmf;

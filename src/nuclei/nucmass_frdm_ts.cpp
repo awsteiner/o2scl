@@ -41,7 +41,7 @@ int main(void) {
   nucmass_mnmsk mo12;
   nucmass_mnmsk mo;
   nucmass_frdm frdm;
-  nucmass_ame2 au;
+  nucmass_ame au;
   nucmass_semi_empirical sm;
 
   // Load experimental and theoretical masses
