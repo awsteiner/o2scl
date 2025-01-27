@@ -510,7 +510,7 @@ namespace o2scl {
     
   protected:
     
-    nucmass_ame ame;
+    nucmass_ame2 ame;
     
     nucmass_table *nt;
     

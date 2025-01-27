@@ -546,7 +546,6 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
     
   }
 
-  cout << "count: " << count << endl;
   n=count;
 
   last=mass.size()/2;
@@ -631,6 +630,15 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
         O2SCL_ERR("Couldn't find nubase nucleus.",o2scl::exc_efailed);
       }
 
+      if (Z==3 && A==7) {
+        cout << "Entries:" << endl;
+        for(size_t k=0;k<entries.size();k++) {
+          cout << k << " '" << entries[k] << "'." << endl;
+        }
+        //char ch;
+        //cin >> ch;
+      }
+      
       entry_nubase_20 enu20;
       if (entries[1].length()>3 && entries[1][3]!=' ') {
         enu20.Znote=entries[1][3];
@@ -640,7 +648,7 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
       if (verbose>1) cout << "Znote: " << ((int)enu20.Znote) << endl;
       string_to_char_array(entries[2],enu20.A_el,6);
       if (verbose>1) cout << "A_el: '" << enu20.A_el << "'" << endl;
-      if (entries[3].length()>0 && entries[4][0]!=' ') {
+      if (entries[3].length()>0 && entries[3][0]!=' ') {
         enu20.isomer=entries[3][0];
       } else {
         enu20.isomer='\0';
@@ -752,6 +760,10 @@ void nucmass_ame2::load_ext(std::string name, std::string filename,
       }
       if (verbose>1) cout << "discovery: " << enu20.discovery << endl;
       if (entries.size()>17) {
+        if (entries[17].size()>90) {
+          O2SCL_ERR("Decay intensity field too long for storage.",
+                    o2scl::exc_einval);
+        }
         string_to_char_array(entries[17],enu20.decay_intensity,91);
       } else {
         enu20.decay_intensity[0]='\0';
@@ -789,7 +801,7 @@ void nucmass_ame2::load(std::string name, bool exp_only,
   std::string prefix=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
 
   cloud_file cf;
-  cf.verbose=2;
+  cf.verbose=verbose;
     
   std::string filename, nubase_file;
   
@@ -872,7 +884,7 @@ void nucmass_ame2::load(std::string name, bool exp_only,
       "523ec79149804df94e436d608019a4c70d1";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
-      ("mass03.txt",
+      ("mass.mas03",
        ((string)"https://isospin.roam.utk.edu/")+
        "public_data/nucmass/ame03/mass.mas03",sha,ext_data);
 
@@ -885,7 +897,7 @@ void nucmass_ame2::load(std::string name, bool exp_only,
       "459f4b6d78353298af7c8d8b92fe58ecf403";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
-      ("mass03round.txt",
+      ("mass.mas03round",
        ((string)"https://isospin.roam.utk.edu/")+
        "public_data/nucmass/ame03/mass.mas03round",sha,ext_data);
 
@@ -898,9 +910,9 @@ void nucmass_ame2::load(std::string name, bool exp_only,
       "62089f4843b2354be3653e5b67488294eeb3";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
-      ("mass03.txt",
+      ("mass_exp.mas95",
        ((string)"https://isospin.roam.utk.edu/")+
-       "public_data/nucmass/ame03/mass_exp.mas95",sha,ext_data);
+       "public_data/nucmass/ame95/mass_exp.mas95",sha,ext_data);
 
     filename=ext_data+"/mass_exp.mas95";
     nubase_file="";
@@ -911,9 +923,9 @@ void nucmass_ame2::load(std::string name, bool exp_only,
       "d5d23d57ae4c62f476e5dea40a41e60943";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
-      ("mass03round.txt",
+      ("mass_rmd.mas95",
        ((string)"https://isospin.roam.utk.edu/")+
-       "public_data/nucmass/ame03/mass_rmd.mas95",sha,ext_data);
+       "public_data/nucmass/ame95/mass_rmd.mas95",sha,ext_data);
 
     filename=ext_data+"/mass_rmd.mas95";
     nubase_file="";

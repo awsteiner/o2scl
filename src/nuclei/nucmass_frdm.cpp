@@ -527,7 +527,7 @@ nucmass_mnmsk::entry nucmass_mnmsk::get_ZN(int l_Z, int l_N) {
 void nucmass_patch::load(bool include_fit) {
   
   // Load the nuclear masses
-  o2scl_hdf::ame_load(ame,"20",true);
+  ame.load("20",true);
   o2scl_hdf::mnmsk_load(def_table);
 
   inc_fit=include_fit;

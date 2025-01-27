@@ -138,6 +138,10 @@ public:
   /** \brief Verbosity parameter (default 1)
    */
   int verbose;
+
+  /** \brief Precision parameter (default 4)
+   */
+  int precision;
   //@}
   
 protected:
@@ -171,6 +175,9 @@ protected:
   //@{
   /// Verbosity parameter
   o2scl::cli::parameter_int p_verbose;
+
+  /// Precision parameter
+  o2scl::cli::parameter_int p_precision;
   //@}
 
 public:

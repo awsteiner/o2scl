@@ -334,7 +334,7 @@ namespace o2scl {
     class entry_nubase_20 {
 
     public:
-      
+
       /// Note
       char Znote;
       /// Element name

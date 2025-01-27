@@ -34,6 +34,7 @@ using namespace o2scl_hdf;
 nucleus_bin::nucleus_bin() {
 
   verbose=1;
+  precision=4;
 
   //std::cout << "Reading nuclear mass tables." << std::endl;
     
@@ -248,21 +249,23 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
     
   cout.width(left_column+1);
   cout << "Model ";
-  cout.width(10);
+  cout.width(6+precision);
   cout << "mass ex. MeV ";
-  cout.width(10);
+  cout.width(6+precision);
   cout << "BE/A MeV " << "  ";
   cout.width(left_column+1);
   cout << "Model  ";
-  cout.width(10);
+  cout.width(6+precision);
   cout << "mass ex. MeV ";
-  cout.width(10);
+  cout.width(6+precision);
   cout << "BE/A MeV " << endl;
   cout << endl;
     
   nucleus nuc;
 
-  cout.precision(4);
+  cout.precision(precision);
+  cout.setf(ios::showpos);
+  
   int n_out=0, last_endl=0;
   for(size_t i=0;i<n_tables;i+=2) {
     if (nmd[i]->is_included(Z,N)) {
@@ -272,6 +275,11 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
 	   << nuc.mex*o2scl_const::hc_mev_fm << " "
 	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << "  ";
       n_out++;
+    }
+    // End line after every pair of outputs
+    if (n_out-last_endl==2) {
+      cout << endl;
+      last_endl=n_out;
     }
     if (i+1<n_tables) {
       if (nmd[i+1]->is_included(Z,N)) {
@@ -295,14 +303,22 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
   if (n_out>0) {
     cout << endl;
   }
-    
+
+  n_out=0;
+  last_endl=0;
   for(size_t i=0;i<n_fits;i+=2) {
     if (nmfd[i]->is_included(Z,N)) {
       int ret=nmfd[i]->get_nucleus(Z,N,nuc);
       cout.width(left_column);
       cout << fit_names[i] << " "
 	   << nuc.mex*o2scl_const::hc_mev_fm << " "
-	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << " ";
+	   << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << "  ";
+      n_out++;
+    }
+    // End line after every pair of outputs
+    if (n_out-last_endl==2) {
+      cout << endl;
+      last_endl=n_out;
     }
     if (i+1<n_fits) {
       if (nmfd[i+1]->is_included(Z,N)) {
@@ -310,26 +326,118 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
         cout.width(left_column);
         cout << fit_names[i+1] << " "
              << nuc.mex*o2scl_const::hc_mev_fm << " "
-             << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << endl;
+             << nuc.be*o2scl_const::hc_mev_fm/(Z+N) << "  ";
+        n_out++;
       }
-    } else {
+    }
+    // End line after every pair of outputs
+    if (n_out-last_endl==2) {
       cout << endl;
+      last_endl=n_out;
     }
   }
+  // Additional end line if there is a left-over output
+  if (n_out>last_endl) cout << endl;
+  // No extra end line if no tables had results
+  if (n_out>0) {
+    cout << endl;
+  }
+  
+  cout << endl;
+  cout.unsetf(ios::showpos);
 
   if (ame20exp.is_included(Z,N)) {
     nucmass_ame2::entry en=ame20exp.get_ZN(Z,N);
     cout << "From AME 2020:" << endl;
-    cout << "data origin: " << en.orig[0] << " "
+    cout << "data origin: "
          << ((std::string)&en.orig[0]) << std::endl;
     cout << "mass excess unc.: " << en.dmass << " keV" << endl;
     cout << "beta decay energy: " << en.bde << " keV" << endl;
     cout << "beta decay energy unc.: " << en.dbde << " keV" << endl;
-    cout << "beta-decay mode: " << en.bdmode[0] << " "
+    cout << "beta-decay mode: " 
          << ((std::string)&en.bdmode[0]) << std::endl;
     cout << "atomic mass: " << en.amass << " keV" << endl;
     cout << "atomic mass unc.: " << en.damass << " keV" << endl;
     cout << endl;
+    cout.setf(ios::left);
+    cout << "Nubase entries:" << endl;
+    cout << "Z i ";
+    cout.width(precision+8);
+    cout << " mass ";
+    cout.width(precision+8);
+    cout << " dmass ";
+    cout << "a ";
+    cout.width(precision+8);
+    cout << " exc_energy ";
+    cout.width(precision+8);
+    cout << " dexc_en. ";
+    cout << "a ";
+    cout << "ori";
+    cout << "iu";
+    cout << "ii";
+    cout.width(precision+8);
+    cout << " hlife ";
+    cout << "a ";
+    cout << "hun ";
+    cout.width(9);
+    cout << "dhlife ";
+    cout.width(16);
+    cout << "spin parity ";
+    cout << "ENyr ";
+    cout << "disc ";
+    cout << "decay intensity" << endl;
+    
+    for(size_t j=0;j<en.props.size();j++) {
+      cout << en.props[j].Znote << " ";
+      if (en.props[j].isomer=='\0') {
+        cout << "_ ";
+      } else {
+        cout << en.props[j].isomer << " ";
+      }
+      cout.setf(ios::showpos);
+      cout << en.props[j].mass << " ";
+      cout << en.props[j].dmass << " ";
+      cout.unsetf(ios::showpos);
+      cout << en.props[j].mass_acc << " ";
+      cout.setf(ios::showpos);
+      cout << en.props[j].exc_energy << " ";
+      cout << en.props[j].dexc_energy << " ";
+      cout.unsetf(ios::showpos);
+      cout << en.props[j].exc_energy_acc << " ";
+      cout.width(2);
+      cout << ((std::string)(&(en.props[j].origin[0]))) << " ";
+      if (en.props[j].isomer_unc=='\0') {
+        cout << "_ ";
+      } else {
+        cout << en.props[j].isomer_unc << " ";
+      }
+      if (en.props[j].isomer_inv=='\0') {
+        cout << "_ ";
+      } else {
+        cout << en.props[j].isomer_inv << " ";
+      }
+      cout.setf(ios::showpos);
+      cout << en.props[j].hlife << " ";
+      cout.unsetf(ios::showpos);
+      cout << en.props[j].hlife_acc << " ";
+      cout.width(3);
+      cout << ((std::string)(&(en.props[j].hl_unit[0]))) << " ";
+      cout.width(8);
+      cout << ((std::string)(&(en.props[j].dhlife[0]))) << " ";
+      cout.width(15);
+      cout << ((std::string)(&(en.props[j].spinp[0]))) << " ";
+      cout.width(4);
+      cout << en.props[j].ENSDF_year << " ";
+      cout.width(4);
+      cout << en.props[j].discovery << " ";
+      if (en.props[j].decay_intensity[0]=='\0') {
+        cout << "_" << endl;
+      } else {
+        cout << ((std::string)(&(en.props[j].decay_intensity[0]))) << endl;
+      }
+    }
+    cout.unsetf(ios::left);
+    
   }
   
   cout.precision(6);
@@ -563,6 +671,10 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
   p_verbose.i=&verbose;
   p_verbose.help="Verbosity parameter (default 1)";
   cl.par_list.insert(make_pair("verbose",&p_verbose));
+
+  p_precision.i=&precision;
+  p_precision.help="Precision parameter (default 4)";
+  cl.par_list.insert(make_pair("precision",&p_precision));
 
   return;
 }

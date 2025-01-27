@@ -91,7 +91,7 @@ namespace o2scl {
         load_rt00(dir+"/pf_frdm_low.o2");
         load_r03(dir+"/pf_frdm_high.o2");
         load_g08(dir+"/bruslib.o2");
-        o2scl_hdf::ame_load_ext(ame,dir+"/ame20.o2","ame20.o2");
+        ame.load("20");
         o2scl_hdf::mnmsk_load(mnmsk,"msis16",
                               dir+"/msis16.o2");
         o2scl_hdf::hfb_sp_load(hfb,27,dir);
@@ -99,7 +99,7 @@ namespace o2scl {
         load_rt00();
         load_r03();
         load_g08();
-        o2scl_hdf::ame_load(ame);
+        ame.load("20");
         o2scl_hdf::mnmsk_load(mnmsk);
         o2scl_hdf::hfb_sp_load(hfb,27);
       }
@@ -151,7 +151,7 @@ namespace o2scl {
     nucmass_mnmsk mnmsk;
 
     /// Atomic mass evaluation masses
-    nucmass_ame ame;
+    nucmass_ame2 ame;
 
     /// HFB mass formula for an alternate spin degeneracy
     nucmass_hfb_sp hfb;
