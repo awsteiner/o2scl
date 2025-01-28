@@ -748,14 +748,14 @@ class nucmass_frdm_shell
 # Class nucleus_bin
 #                              
 class nucleus_bin
-- nucmass_ame2 ame16
-- nucmass_ame2 ame20exp
-- nucmass_ame2 ame20round
-- nucmass_ame2 ame95rmd
-- nucmass_ame2 ame03round
-- nucmass_ame2 ame03
-- nucmass_ame2 ame95exp
-- nucmass_ame2 ame12
+- nucmass_ame ame16
+- nucmass_ame ame20exp
+- nucmass_ame ame20round
+- nucmass_ame ame95rmd
+- nucmass_ame ame03round
+- nucmass_ame ame03
+- nucmass_ame ame95exp
+- nucmass_ame ame12
 - nucmass_gen ddme2 
 - nucmass_gen ddmed 
 - nucmass_gen ddpc1 

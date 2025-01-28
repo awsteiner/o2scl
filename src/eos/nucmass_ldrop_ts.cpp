@@ -47,7 +47,7 @@ int main(void) {
   
   double d1, d2, qual;
   nucmass_ame au;
-  o2scl_hdf::ame_load_ext(au,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  au.load("20");
 
   nucmass_semi_empirical sm;
   nucmass_ldrop ld;
@@ -95,7 +95,7 @@ int main(void) {
   nucmass_fit mf3;
   mf3.even_even=false;
   nucmass_ame ame;
-  o2scl_hdf::ame_load_ext(ame,"../../data/o2scl/nucmass/ame12.o2","ame12.o2");
+  ame.load("20");
   nucdist_set(mf3.dist,ame);
   //mf3.set_exp_mass(ame);
 

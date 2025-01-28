@@ -2705,7 +2705,7 @@ void *o2scl_nucleus_bin_get_ame16(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame16(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame16=*(p_tsot);
   return;
 }
@@ -2717,7 +2717,7 @@ void *o2scl_nucleus_bin_get_ame20exp(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame20exp(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame20exp=*(p_tsot);
   return;
 }
@@ -2729,7 +2729,7 @@ void *o2scl_nucleus_bin_get_ame20round(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame20round(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame20round=*(p_tsot);
   return;
 }
@@ -2741,7 +2741,7 @@ void *o2scl_nucleus_bin_get_ame95rmd(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame95rmd(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame95rmd=*(p_tsot);
   return;
 }
@@ -2753,7 +2753,7 @@ void *o2scl_nucleus_bin_get_ame03round(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame03round(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame03round=*(p_tsot);
   return;
 }
@@ -2765,7 +2765,7 @@ void *o2scl_nucleus_bin_get_ame03(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame03(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame03=*(p_tsot);
   return;
 }
@@ -2777,7 +2777,7 @@ void *o2scl_nucleus_bin_get_ame95exp(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame95exp(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame95exp=*(p_tsot);
   return;
 }
@@ -2789,7 +2789,7 @@ void *o2scl_nucleus_bin_get_ame12(void *vptr) {
 
 void o2scl_nucleus_bin_set_ame12(void *vptr, void *p_v) {
   nucleus_bin *ptr=(nucleus_bin *)vptr;
-  nucmass_ame2 *p_tsot=(nucmass_ame2 *)p_v;
+  nucmass_ame *p_tsot=(nucmass_ame *)p_v;
   ptr->ame12=*(p_tsot);
   return;
 }
