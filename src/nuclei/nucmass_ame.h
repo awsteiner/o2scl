@@ -45,9 +45,6 @@ namespace o2scl {
       [Huang17]_, [Wang17]_, [Huang21ta]_, and [Wang21ta]_.
       \endverbatim
 
-      To load data from the \o2 HDF5 data files, use
-      <tt>o2scl_hdf::ame_load()</tt> .
-
       The 1995 data provided the binding energy (stored in
       nucmass_ame::entry::be and nucmass_ame::entry::dbe), while the 2003
       data provided the binding energy divided by the mass number
@@ -97,9 +94,6 @@ namespace o2scl {
       \f$ MeV for lead. See also the documentation for the class
       structure for each table entry in \ref
       o2scl::nucmass_ame::entry.
-      
-      \note This version avoids storing a raw pointer, supports
-      the NUBASE data, and provides more field information
       
       \future Create a caching and more intelligent search system for
       the table. The table is sorted by A and then N, so we could

@@ -45,7 +45,8 @@ int main(void) {
   nucmass_semi_empirical sm;
 
   // Load experimental and theoretical masses
-  au.load("20");
+  au.load("20",false,1);
+  cout << au.get_nentries() << endl;
   o2scl_hdf::mnmsk_load(mo,"mnmsk97",
 			"../../data/o2scl/nucmass/mnmsk.o2");
   o2scl_hdf::mnmsk_load(mo12,"msis16",
@@ -53,6 +54,9 @@ int main(void) {
 
   // Show that the nucmass_frdm gives reasonable (but not great)
   // values for the binding energy of Lead 208
+  cout << "H1." << endl;
+  cout << au.mass_excess(82,126) << endl;
+  cout << "H2." << endl;
   cout << "AME2020   : ";
   cout << au.mass_excess(82,126) << " ";
   cout << au.binding_energy(82,126) << " ";

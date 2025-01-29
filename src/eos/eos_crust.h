@@ -196,6 +196,87 @@ namespace o2scl {
 
   };
 
+#ifdef O2SCL_NEVER_DEFINED
+  class eos_crust_ndrip {
+    
+  protected:
+    
+    /** \brief The electron object
+	
+	The electron rest mass is included by default in 
+	the energy density and the chemical potential
+    */
+    fermion e;
+    
+    fermion n;
+    fermion p;
+
+    /// Zero-temperature thermodynamics for the electrons
+    fermion_zerot fzt;
+
+    /// Default mass formula
+    nucmass_ldrop_shell nls;
+
+    /// Desc
+    nucmass_densmat *nd;
+    
+    /// Desc
+    eos_had_skyrme sk;
+
+    /// Desc
+    eos_had_base *ehb;
+    
+    /// Desc
+    double fr_ni(int Z, int N, double npout, double nnout, double ni) {
+      
+      double fr;
+
+      double phi=nd->exc_volumne(Z,N,npout,nnout);
+      double ne=Z*ni+(1.0-phi)*npout;
+      e.n=ne;
+
+      fzt.calc_density_zerot(e);
+      
+      double Eb=nd->binding_energy_densmat(Z,N,npout,nnout,ne,0.0);
+
+      thermo th;
+      n.n=nnout;
+      p.n=npout;
+      ehb->calc_e(n,p,th);
+      
+      fr=(1.0-phi)*th.ed+ni*(Eb+Z*p.m+N*n.m)+e.ed;
+      
+      return fr;
+    }
+    
+  public:
+    
+    /// Set the nuclear mass formula to be used
+    int set_mass_formula(nucmass_densmat &nm) {
+      nd=&nm;
+      return 0;
+    }
+
+    /// Set the nuclear mass formula to be used
+    int set_hom_eos(eos_had_base &eh) {
+      ehb=&eh;
+      return 0;
+    }
+
+    eos_crust_ndrip() {
+      ehb=&sk;
+      nd=&nls;
+      e.init(o2scl_settings.get_convert_units().convert
+             ("kg","1/fm",o2scl_const::mass_electron_f<double>()),2.0);
+      n.init(o2scl_settings.get_convert_units().convert
+             ("kg","1/fm",o2scl_const::mass_neutron_f<double>()),2.0);
+      p.init(o2scl_settings.get_convert_units().convert
+             ("kg","1/fm",o2scl_const::mass_proton_f<double>()),2.0);
+    }
+
+  };
+#endif
+  
 }
 
 #endif

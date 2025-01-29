@@ -259,6 +259,37 @@ namespace o2scl {
                                           double npout=0.0, double nnout=0.0, 
                                           double ne=0.0, double T=0.0);
 
+    /// Desc
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double T=0.0) {
+
+      double ret=0.0, A=Z+N, nL;
+      
+      // Determine the inner densities
+      double delta=(1-2.0*Z/A);
+      nL=n0+n1*delta*delta;
+      np=nL*(1.0-delta)/2.0;
+      nn=nL*(1.0+delta)/2.0;
+      if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
+        if (large_vals_unphys) return 1.0e99;
+        std::cout << "In nucmass_ldrop::binding_energy_densmat(): "
+                  << "either nn or np is negative or "
+                  << "  larger than 0.20." << endl;
+        std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
+                  << nn << " " << np << std::endl;
+        O2SCL_ERR2("Densities too large in ",
+                   "nucmass_ldrop::binding_energy_densmat().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Determine radii
+      Rn=cbrt(3.0*A/4.0/o2scl_const::pi/nL);
+
+      double phi=4.0/3.0*o2scl_const::pi*Rn*Rn*Rn;
+
+      return phi;
+    }
+    
     /** \brief Given \c Z and \c N, the external densities, and the
         temperature, compute the binding energy and the derivatives
     */

@@ -301,6 +301,10 @@ namespace o2scl {
     (double Z, double N, double npout, double nnout, 
      double nneg, double T, double &E, double &dEdnp, double &dEdnn,
      double &dEdnneg, double &dEdT)=0;
+
+    /// Desc
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double T=0.0)=0;
     
     /** \brief Compute the binding energy of a nucleus in dense matter
     */

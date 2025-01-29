@@ -617,14 +617,14 @@ void nucmass_ame::load(std::string name, bool exp_only,
   if (name=="20") {
 
     // These files don't need hashes because they're included in the repo
-    filename=prefix+"/ame0/mass20.txt";
-    nubase_file=prefix+"/ame0/nubase_4.mas20.txt";
+    filename=prefix+"/ame20/mass20.txt";
+    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
     
   } else if (name=="20round") {
     
     // These files don't need hashes because they're included in the repo
-    filename=prefix+"/ame0/mass20round.txt";
-    nubase_file=prefix+"/ame0/nubase_4.mas20.txt";
+    filename=prefix+"/ame20/mass20round.txt";
+    nubase_file=prefix+"/ame20/nubase_4.mas20.txt";
     
   } else if (name=="16") {
     
