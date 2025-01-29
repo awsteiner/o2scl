@@ -274,7 +274,7 @@ namespace o2scl {
         if (large_vals_unphys) return 1.0e99;
         std::cout << "In nucmass_ldrop::binding_energy_densmat(): "
                   << "either nn or np is negative or "
-                  << "  larger than 0.20." << endl;
+                  << "  larger than 0.20." << std::endl;
         std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
                   << nn << " " << np << std::endl;
         O2SCL_ERR2("Densities too large in ",

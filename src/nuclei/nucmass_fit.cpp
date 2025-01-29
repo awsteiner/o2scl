@@ -160,6 +160,7 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
   fmin=0.0;
 
   if (make_table) {
+    tab.clear();
     if (fit_method==rms_mass_excess) {
       tab.line_of_names("Z N me_exp me_th");
     } else if (fit_method==rms_me_Sn) {
@@ -168,12 +169,21 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
       tab.line_of_names("Z N me_exp me_th Sn_exp Sn_th S2n_exp S2n_th");
     } else if (fit_method==rms_me_S2n) {
       tab.line_of_names("Z N me_exp me_th S2n_exp S2n_th");
+    } else if (fit_method==rms_binding_energy) {
+      tab.line_of_names("Z N be_exp be_th");
+    } else if (fit_method==chi_squared_me) {
+      tab.line_of_names("Z N me_exp me_th me_unc");
+    } else if (fit_method==chi_squared_be) {
+      tab.line_of_names("Z N be_exp be_th be_unc");
+    } else {
+      O2SCL_ERR("Invalid fit method in nucmass_fit::eval_table().",
+                o2scl::exc_einval);
     }
   }
 
   if (dist.size()==0) {
-    O2SCL_ERR("No experimental masses to fit to in nucmass_fit::eval().",
-	      exc_efailed);
+    O2SCL_ERR2("No experimental masses to fit to in ",
+              "nucmass_fit::eval_table().",exc_efailed);
   }
 
   if (fit_method==rms_mass_excess) {
@@ -191,7 +201,7 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (1).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	nn++;
@@ -203,7 +213,7 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
 
     if (even_even==true) {
       O2SCL_ERR("Fitting only even-even nuclei not supported with "
-                "fit method rms_me_Sn in nucmass_fit::eval().",
+                "fit method rms_me_Sn in nucmass_fit::eval_table().",
                 o2scl::exc_einval);
     }
 
@@ -211,31 +221,50 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
+
+      double line[6]={((double)Z),((double)N),0.0,0.0,0.0,0.0};
+      bool line_has_data=false;
+      
       if (N>=minN && Z>=minZ) {
+        
+        line[2]=ndi->mex*hc_mev_fm;
+        line[3]=n.mass_excess(Z,N);
+        line_has_data=true;
+        
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+        
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (1).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	nn++;
-      }
-      if (N>1) {
-        int N2=N-1;
-        bool found=false;
-        // The neutron separation energies aren't stored in, e.g.,
-        // nucmass_ame, so the only way to find them is to find
-        // the other nucleus in the table and subtract the binding
-        // energy.
-        for(vector<nucleus>::iterator ndi2=dist.begin();
-            ndi2!=dist.end() && found==false;ndi2++) {
-          if (ndi2->Z==Z && ndi2->N==N2) {
-            fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
-                      n.neutron_sep(Z,N),2.0);
-            found=true;
-            nn++;
+
+        // Ensure N2 is not zero
+        if (minN>1 || N>1) {
+          
+          int N2=N-1;
+          bool found=false;
+          // The neutron separation energies aren't stored in, e.g.,
+          // nucmass_ame, so the only way to find them is to find
+          // the other nucleus in the table and subtract the binding
+          // energy.
+          for(vector<nucleus>::iterator ndi2=dist.begin();
+              ndi2!=dist.end() && found==false;ndi2++) {
+            if (ndi2->Z==Z && ndi2->N==N2) {
+              line[4]=(ndi2->be-ndi->be)*hc_mev_fm;
+              line[5]=n.neutron_sep(Z,N);
+              fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
+                        n.neutron_sep(Z,N),2.0);
+              found=true;
+              nn++;
+            }
           }
         }
+      }
+
+      if (make_table && line_has_data) {
+        tab.line_of_data(6,line);
       }
     }
     fmin=sqrt(fmin/nn);
@@ -244,56 +273,84 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
 
     if (even_even==true) {
       O2SCL_ERR("Fitting only even-even nuclei not supported with "
-                "fit method rms_me_Sn_S2n in nucmass_fit::eval().",
+                "fit method rms_me_Sn_S2n in nucmass_fit::eval_table().",
                 o2scl::exc_einval);
     }
 
     size_t nn=0;
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
+      
       int Z=ndi->Z;
       int N=ndi->N;
+
+      double line[8]={((double)Z),((double)N),0.0,0.0,0.0,0.0,0.0,0.0};
+      bool line_has_data=false;
+      
       if (N>=minN && Z>=minZ) {
+        
+        line[2]=ndi->mex*hc_mev_fm;
+        line[3]=n.mass_excess(Z,N);
+        line_has_data=true;
+        
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+        
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (1).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	nn++;
-      }
-      if (N>1) {
-        int N2=N-1;
-        bool found=false;
-        // The neutron separation energies aren't stored in, e.g.,
-        // nucmass_ame, so the only way to find them is to find
-        // the other nucleus in the table and subtract the binding
-        // energy.
-        for(vector<nucleus>::iterator ndi2=dist.begin();
-            ndi2!=dist.end() && found==false;ndi2++) {
-          if (ndi2->Z==Z && ndi2->N==N2) {
-            fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
-                      n.neutron_sep(Z,N),2.0);
-            found=true;
-            nn++;
+        
+        // Ensure N2 is not zero
+        if (minN>1 || N>1) {
+          int N2=N-1;
+          
+          bool found=false;
+          
+          // The neutron separation energies aren't stored in, e.g.,
+          // nucmass_ame, so the only way to find them is to find
+          // the other nucleus in the table and subtract the binding
+          // energy.
+          for(vector<nucleus>::iterator ndi2=dist.begin();
+              ndi2!=dist.end() && found==false;ndi2++) {
+            if (ndi2->Z==Z && ndi2->N==N2) {
+              line[4]=(ndi2->be-ndi->be)*hc_mev_fm;
+              line[5]=n.neutron_sep(Z,N);
+              fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
+                        n.neutron_sep(Z,N),2.0);
+              found=true;
+              nn++;
+            }
+          }
+        }
+        
+        // Ensure N2 is not zero
+        if (minN>2 || N>2) {
+          
+          int N3=N-2;
+          
+          bool found=false;
+          
+          // The two neutron separation energies aren't stored in, e.g.,
+          // nucmass_ame, so the only way to find them is to find
+          // the other nucleus in the table and subtract the binding
+          // energy.
+          for(vector<nucleus>::iterator ndi2=dist.begin();
+              ndi2!=dist.end() && found==false;ndi2++) {
+            if (ndi2->Z==Z && ndi2->N==N3) {
+              line[6]=(ndi2->be-ndi->be)*hc_mev_fm;
+              line[7]=n.two_neutron_sep(Z,N);
+              fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
+                        n.two_neutron_sep(Z,N),2.0);
+              found=true;
+              nn++;
+            }
           }
         }
       }
-      if (N>2) {
-        int N3=N-2;
-        bool found=false;
-        // The two neutron separation energies aren't stored in, e.g.,
-        // nucmass_ame, so the only way to find them is to find
-        // the other nucleus in the table and subtract the binding
-        // energy.
-        for(vector<nucleus>::iterator ndi2=dist.begin();
-            ndi2!=dist.end() && found==false;ndi2++) {
-          if (ndi2->Z==Z && ndi2->N==N3) {
-            fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
-                      n.two_neutron_sep(Z,N),2.0);
-            found=true;
-            nn++;
-          }
-        }
+      
+      if (make_table && line_has_data) {
+        tab.line_of_data(8,line);
       }
     }
     fmin=sqrt(fmin/nn);
@@ -304,46 +361,71 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
+      
+      double line[6]={((double)Z),((double)N),0.0,0.0,0.0,0.0};
+      bool line_has_data=false;
+      
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+        
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+        
+        line[2]=ndi->mex*hc_mev_fm;
+        line[3]=n.mass_excess(Z,N);
+        line_has_data=true;
+        
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (1).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (1).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	nn++;
-      }
-      if (N>2) {
-        int N3=N-2;
-        bool found=false;
-        // The two neutron separation energies aren't stored in, e.g.,
-        // nucmass_ame, so the only way to find them is to find
-        // the other nucleus in the table and subtract the binding
-        // energy.
-        for(vector<nucleus>::iterator ndi2=dist.begin();
-            ndi2!=dist.end() && found==false;ndi2++) {
-          if (ndi2->Z==Z && ndi2->N==N3) {
-            fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
-                      n.two_neutron_sep(Z,N),2.0);
-            found=true;
-            nn++;
+
+        // Ensure N2 is not zero
+        if (minN>2 || N>2) {
+          
+          int N3=N-2;
+          
+          bool found=false;
+          // The two neutron separation energies aren't stored in, e.g.,
+          // nucmass_ame, so the only way to find them is to find
+          // the other nucleus in the table and subtract the binding
+          // energy.
+          for(vector<nucleus>::iterator ndi2=dist.begin();
+              ndi2!=dist.end() && found==false;ndi2++) {
+            if (ndi2->Z==Z && ndi2->N==N3) {
+              fmin+=pow((ndi2->be-ndi->be)*hc_mev_fm-
+                        n.two_neutron_sep(Z,N),2.0);
+              line[4]=(ndi2->be-ndi->be)*hc_mev_fm;
+              line[5]=n.two_neutron_sep(Z,N);
+              found=true;
+              nn++;
+            }
           }
         }
       }
+      if (make_table && line_has_data) {
+        tab.line_of_data(6,line);
+      }
     }
     fmin=sqrt(fmin/nn);
-
+    
   } else if (fit_method==rms_binding_energy) {
-
+    
     size_t nn=0;
+      
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+        if (make_table) {
+          double line[4]={((double)Z),((double)N),
+                          ndi->be*hc_mev_fm,n.binding_energy(Z,N)};
+          tab.line_of_data(4,line);
+        }
 	fmin+=pow(ndi->be*hc_mev_fm-n.binding_energy(Z,N),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (2).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (2).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	nn++;
@@ -353,17 +435,28 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
     
   } else if (fit_method==chi_squared_me) {
 
+    if (uncs.size()==0) {
+      O2SCL_ERR2("No uncertainties specified in ",
+                 "nucmass_fit::eval_table().",o2scl::exc_einval);
+    }
+    
     size_t unc_ix=0;
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
 	if (unc_ix>=uncs.size()) unc_ix=0;
+        if (make_table) {
+          double line[5]={((double)Z),((double)N),
+                          ndi->mex*hc_mev_fm,n.mass_excess(Z,N),
+                          uncs[unc_ix]};
+          tab.line_of_data(5,line);
+        }
 	fmin+=pow((ndi->mex*hc_mev_fm-n.mass_excess(Z,N))/
 		  (uncs[unc_ix]),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (3).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (3).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	unc_ix++;
@@ -372,17 +465,28 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
 
   } else if (fit_method==chi_squared_be) {
 
+    if (uncs.size()==0) {
+      O2SCL_ERR2("No uncertainties specified in ",
+                "nucmass_fit::eval_table().",o2scl::exc_einval);
+    }
+    
     size_t unc_ix=0;
     for(vector<nucleus>::iterator ndi=dist.begin();ndi!=dist.end();ndi++) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
 	if (unc_ix>=uncs.size()) unc_ix=0;
+        if (make_table) {
+          double line[5]={((double)Z),((double)N),
+                          ndi->be*hc_mev_fm,n.binding_energy(Z,N),
+                          uncs[unc_ix]};
+          tab.line_of_data(5,line);
+        }
 	fmin+=pow((ndi->be*hc_mev_fm-n.binding_energy(Z,N))/
 		  (uncs[unc_ix]),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
-	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval() (4).";
+	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (4).";
 	  O2SCL_ERR(s.c_str(),exc_efailed);
 	}
 	unc_ix++;
@@ -390,7 +494,7 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
     }
 
   } else {
-    O2SCL_ERR("Unknown fit method in nucmass_fit::eval().",exc_einval);
+    O2SCL_ERR("Unknown fit method in nucmass_fit::eval_table().",exc_einval);
   }
     
   return;
