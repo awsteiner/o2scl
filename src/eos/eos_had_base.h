@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -50,6 +50,8 @@ namespace o2scl {
       powers of \f$ \mathrm{fm}^{-4} \f$ , except where otherwise
       specified. 
 
+      \b Expansion \b in \b density \b and \b asymmetry
+      
       Denote the number density of neutrons as \f$ n_n \f$, the number
       density of protons as \f$ n_p \f$, the total baryon density \f$
       n_B = n_n + n_p \f$, the asymmetry \f$ \delta \equiv
@@ -90,6 +92,8 @@ namespace o2scl {
       some of this documentation is based.
       \endverbatim
 
+      \b Incompressibility
+      
       The compression modulus is usually defined by \f$ \chi = -1/V
       (dV/dP) = 1/n (dP/dn)^{-1} \f$ . In nuclear physics it has
       become common to use the incompressibility (or bulk) modulus
@@ -123,6 +127,8 @@ namespace o2scl {
       between :math:`K` and :math:`\tilde{K}`.
       \endverbatim
 
+      \b Symmetry \b energy
+      
       The symmetry energy, \f$ S(n_B,\delta), \f$ can be defined as
       \f[
       S(n_B,\delta) \equiv \frac{1}{2 n_B}\frac{\partial^2 \varepsilon}
@@ -177,6 +183,10 @@ namespace o2scl {
       \f[
       \tilde{S}(n_B,T) = F(n_B,\delta=1,T)-F(n_B,\delta=0,T) \, .
       \f]
+      See \ref eos_had_temp_base::fesym_T() and
+      \ref eos_had_temp_base::fsyment_T() .
+      
+      \b Symmetry \b energy \b slope \b parameter
       
       The symmetry energy slope parameter \f$ L \f$, can be defined
       by 
@@ -212,6 +222,8 @@ namespace o2scl {
       \left(\mu_n + \mu_p\right) - 3 S(n_B,\delta) \, .
       \f}
 
+      \b Skewness \b and \b other \b higher \b derivatives
+      
       The third derivative with respect to the baryon density is
       sometimes called the skewness. Here, we define
       \f[
@@ -265,6 +277,8 @@ namespace o2scl {
       which is equal to \f$ K_{\mathrm{sym}} + 6 L \f$ to lowest order
       in \f$ \delta \f$ at \f$ n_B = n_0 \f$.
 
+      \b Quartic \b symmetry \b energy
+      
       The quartic symmetry energy \f$ S_4(n_B,\delta) \f$ can be defined as
       \f[
       S_4(n_B,\delta) \equiv \frac{1}{24 n_B}\frac{\partial^4 \varepsilon}
@@ -320,31 +334,84 @@ namespace o2scl {
       \left(\eta -1\right)\right]
       \f]
 
-      \future Replace fmsom() with f_effm_scalar(). This has to wait
-      until f_effm_scalar() has a sensible definition when mn is
-      not equal to mp
-      \future Could write a function to compute the "symmetry free energy"
-      or the "symmetry entropy"
-      \future Compute the speed of sound or the number susceptibilities?
-      \future A lot of the numerical derivatives here might possibly
-      request negative number densities for the nucleons, which 
-      may cause exceptions, espescially at very low densities. 
-      Since the default EOS objects are GSL derivatives, one can
-      get around these issues by setting the GSL derivative object
-      step size, but this is a temporary solution.
+      \b Single \b particle \b potential \b energy
+      
+      To define the single particle potential for nucleon \f$ i \f$,
+      one writes the nucleon distribution function as a function
+      of the momentum, \f$ p \f$,
+      \f[
+      f_i(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}} +
+      U_i(p)-\mu_i \right)/T \right] }
+      \f]
+      where \f$ \mu_i \f$ is the chemical potential. The
+      distribution function as computed by, e.g. the
+      \ref o2scl::fermion_rel_tl class is 
+      \f[
+      f_i(p) = \frac{1}{1+ \exp\left[ \left(\sqrt{p^2+m_i^{*2}}-
+      \nu_i \right)/T \right] }
+      \f]
+      and this gives a number density of
+      \f[
+      n_i = \frac{g_i}{2 \pi^2} \int p^2 f_i(p)~dp \, .
+      \f]
+      In the case when the single particle potential is momentum
+      independent, and comparing these two distribution functions, the
+      single particle potential for nucleon \f$ i \f$ is
+      \f[
+      U_i - \mu_i = - \nu_i 
+      \f]
+      thus 
+      \f[
+      U_i = \mu_i - \nu_i \, .
+      \f]
+      This definition works for nonrelativistic fermions as well. 
+      Thus, this momentum-independent single-particle potential
+      can be computed for equations of state like \ref o2scl::eos_had_skyrme
+      and \ref o2scl::eos_had_rmf . At a given density and temperature,
+      the chemical potential of the noninteracting Fermi gas
+      is the solution to 
+      \f[
+      n_i = \frac{g_i}{2 \pi^2} \int p^2 \frac{1}
+      {1+ \exp\left[ \left(\sqrt{p^2+m_i^{2}}-
+      \mu_i \right)/T \right] }~dp
+      \f]
+      thus the chemical potential of the noninteracting Fermi gas
+      provides an approximation for the quantity \f$ \nu \f$, in the
+      limit that \f$ m^{*} \rightarrow m \f$. This approximation could
+      be used in \ref o2scl::eos_had_virial to compute \f$ \nu \f$
+
+      \verbatim embed:rst
+      .. todo:: 
+
+         In \ref o2scl::eos_had_base:
+         - (Future) Replace fmsom() with f_effm_scalar(). This has to wait
+           until f_effm_scalar() has a sensible definition when mn is
+           not equal to mp.
+         - (Future) A lot of the numerical derivatives here might possibly
+           request negative number densities for the nucleons, which 
+           may cause exceptions, espescially at very low densities. 
+           Since the default EOS objects are GSL derivatives, one can
+           get around these issues by setting the GSL derivative object
+           step size, but this is a temporary solution.
+      \endverbatim
   */
   class eos_had_base : public eos_base {
 
   public:
 
-    eos_had_base();
-
-    virtual ~eos_had_base() {};
-
     /** \brief The uBlas vector type
      */
     typedef boost::numeric::ublas::vector<double> ubvector;
-    
+
+    /// \name Constructor and destructor
+    //@{
+    eos_had_base();
+
+    virtual ~eos_had_base() {};
+    //@}
+
+    /// \name Nuclear matter properties
+    //@{
     /** \brief Binding energy (without the rest mass) in 
         \f$ \mathrm{fm}^{-1} \f$
     */
@@ -359,16 +426,20 @@ namespace o2scl {
     /// Saturation density in \f$ \mathrm{fm}^{-3} \f$
     double n0;
 
-    /// Effective mass (neutron)
+    /// (Neutron) effective mass divided by bare mass
     double msom;
 
     /// Skewness in \f$ \mathrm{fm}^{-1} \f$
     double kprime;
-    
-    /** \brief If true, call the error handler if msolve() or
-        msolve_de() does not converge (default true)
+    //@}
+
+    /// \name Other settings
+    //@{
+    /** \brief If true, call the error handler if one of the
+        EOS functions does not converge (default true)
     */
     bool err_nonconv;
+    //@}
 
     /// \name Equation of state
     //@{
@@ -492,13 +563,13 @@ namespace o2scl {
 
     /** \brief Calculate reduced neutron effective mass using calc_e()
 
-        Neutron effective mass (as stored in <tt>part::ms</tt>)
-        divided by vacuum mass (as stored in <tt>part::m</tt>) in
-        nuclear matter at saturation density. Note that this simply
-        uses the value of n.ms from calc_e(), so that this effective
-        mass could be either the Landau or Dirac mass depending on the
-        context. Note that this may not be equal to the reduced proton
-        effective mass.
+        This function computes the neutron effective mass (as stored
+        in <tt>part::ms</tt>) divided by vacuum mass (as stored in
+        <tt>part::m</tt>) in nuclear matter at saturation density.
+        Note that this simply uses the calc_e() function, so that this
+        effective mass could be either the Landau or Dirac mass
+        depending on the context. Note that this may not be equal to
+        the reduced proton effective mass.
     */
     virtual double fmsom(double nb, double delta=0.0);
 
@@ -589,16 +660,22 @@ namespace o2scl {
         
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+        
+        This function is used in \ref f_inv_number_suscept() .
     */
     double calc_mun_e(double nn, double np);
 
     /** \brief Compute the energy density as a function of the nucleon
         densities
+
+        This function is used in \ref check_mu().
     */
     double calc_ed(double nn, double np);
 
     /** \brief Compute the pressure as a function of the nucleon
         chemical potentials
+
+        This function is used in \ref check_den().
     */
     double calc_pr(double nn, double np);
 
@@ -607,6 +684,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref f_inv_number_suscept() .
     */
     double calc_mup_e(double nn, double np);
 
@@ -615,6 +694,8 @@ namespace o2scl {
         
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref f_number_suscept() .
     */
     double calc_nn_p(double mun, double mup);
 
@@ -623,6 +704,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+        
+        This function is used in \ref f_number_suscept() .
     */
     double calc_np_p(double mun, double mup);
 
@@ -631,6 +714,8 @@ namespace o2scl {
 
         This function uses \ref neutron, \ref proton, \ref
         eos_base::eos_thermo, and \ref calc_e() .
+
+        This function is used in \ref fesym() and \ref fesym_err() .
     */
     double calc_dmu_delta(double delta, double nb);
     
@@ -639,16 +724,24 @@ namespace o2scl {
 
         This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
         and \ref calc_e() .
+
+        This function is used in \ref fesym_slope() .
     */
     double calc_musum_delta(double delta, double nb);
 
     /** \brief Compute the pressure as a function of baryon density
         at fixed isospin asymmetry
 
-        Used by fcomp().
+        This function is used in fcomp() and fcomp_err() .
     */
     double calc_pressure_nb(double nb, double delta=0.0);
-    
+
+    /** \brief Compute the pressure as a function of baryon density
+        at fixed isospin asymmetry
+
+        This is a wrapper to \ref calc_pressure_nb() which is
+        used by \ref fn0() .
+    */
     int calc_pressure_nb_mroot(size_t nv, const ubvector &x,
                                ubvector &y, double delta);
     
@@ -661,6 +754,8 @@ namespace o2scl {
     double calc_edensity_nb(double nb, double delta=0.0);
 
     /** \brief Compute derivatives at constant proton fraction
+
+        This function is currently used in \ref nstar_cold.
      */
     void const_pf_derivs(double nb, double pf, 
                          double &dednb_pf, double &dPdnb_pf);
@@ -668,17 +763,15 @@ namespace o2scl {
     /** \brief Calculate pressure / baryon density squared in nuclear
         matter as a function of baryon density at fixed isospin asymmetry
         
-        Used by fkprime().
-
         This uses \ref neutron, \ref proton, \ref eos_base::eos_thermo,
         and \ref calc_e() .
+
+        This function is used by fkprime() .
     */
     double calc_press_over_den2(double nb, double delta=0.0);
 
     /** \brief Calculate energy density as a function of the
         isospin asymmetry at fixed baryon density
-
-        Used by fesym().
 
         This function calls \ref eos_had_base::calc_e() with the
         internally stored neutron and proton objects.
@@ -728,13 +821,18 @@ namespace o2scl {
                            eos_leptons &elep,
                            std::shared_ptr<table_units<> > results);
 
-    /** \brief Compute (numerically) the number susceptibilities as a
+    /** \brief Compute the number susceptibilities as a
         function of the chemical potentials, \f$ \partial^2 P /
         \partial \mu_i \mu_j \f$
 
         This function works by taking derivatives of \ref calc_nn_p
         and \ref calc_np_p using the object specified in \ref
-        set_sat_deriv().
+        set_sat_deriv(). The base class method performs the
+        calculation numerically, but can be overloaded by exact
+        calculations in child classes.
+
+        See the finite-temperature generalization of this
+        function in \ref eos_had_temp_base::f_number_suscept_T() .
 
         \verbatim embed:rst
         .. todo:: 
@@ -746,10 +844,16 @@ namespace o2scl {
     virtual void f_number_suscept(double mun, double mup, double &dPdnn, 
                                   double &dPdnp, double &dPdpp);
 
-    /** \brief Compute (numerically) the 'inverse' number
+    /** \brief Compute the 'inverse' number
         susceptibilities as a function of the densities, \f$
         \partial^2 \varepsilon / \partial n_i n_j \f$
 
+        See the finite-temperature generalization of this
+        function in \ref eos_had_temp_base::f_inv_number_suscept_T() .
+        The base class method performs the
+        calculation numerically, but can be overloaded by exact
+        calculations in child classes.
+        
         \verbatim embed:rst
         .. todo:: 
 
@@ -758,7 +862,7 @@ namespace o2scl {
 
         \endverbatim
     */
-    virtual void f_inv_number_suscept(double mun, double mup, double &dednn, 
+    virtual void f_inv_number_suscept(double nn, double np, double &dednn, 
                                       double &dednp, double &dedpp);
     //@}
 
@@ -833,19 +937,19 @@ namespace o2scl {
     */
     mroot_hybrids<> def_sat_mroot;
 
-    /** \brief The defaut neutron
+    /** \brief The default neutron
 
         By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_neutron converted to \f$ \mathrm{fm}^{-1} \f$. 
+        o2scl_const::mass_neutron_f() converted to \f$ \mathrm{fm}^{-1} \f$. 
         Also the value of 
         <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
     fermion def_neutron;
 
-    /** \brief The defaut proton
+    /** \brief The default proton
 
         By default this has a spin degeneracy of 2 and a mass of \ref
-        o2scl_mks::mass_proton converted to \f$ \mathrm{fm}^{-1} \f$. 
+        o2scl_const::mass_proton_f() converted to \f$ \mathrm{fm}^{-1} \f$. 
         <Also the value of 
         <tt>part::non_interacting</tt> is set to <tt>false</tt>.
     */
@@ -854,11 +958,11 @@ namespace o2scl {
 
     /// \name Other functions
     //@{
-    /** \brief Calculate coefficients for \gradient \part of Hamiltonian
+    /** \brief Calculate coefficients for \gradient part of Hamiltonian
 
         \note This is still somewhat experimental.
 
-        We want the \gradient \part of the Hamiltonian in the form
+        We want the \gradient part of the Hamiltonian in the form
         \f[
         {\cal H}_{\mathrm{grad}} = \frac{1}{2} \sum_{i=n,p}
         \sum_{j=n,p} Q_{ij}
@@ -962,7 +1066,10 @@ namespace o2scl {
                    double &nn_err, double &np_err);
     //@}
 
-    /// Beta-equilibrium solver
+    /** \brief Beta-equilibrium solver
+
+        This is used by \ref beta_eq_T0() .
+     */
     mroot_hybrids<> beta_mroot;
     
 #ifndef DOXYGEN_INTERNAL
@@ -986,7 +1093,7 @@ namespace o2scl {
     /** \brief Equation for solving for beta-equilibrium at T=0
 
         This function is very similar to \ref
-        o2scl::nstar_cold::solve_fun().
+        nstar_cold::solve_fun().
      */
     virtual int solve_beta_eq_T0(size_t nv, const ubvector &x,
                                  ubvector &y, const double &nB,
@@ -1122,8 +1229,8 @@ namespace o2scl {
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
                                 double T, thermo &th) {
-      def_proton.n=-nQ;
-      def_neutron.n=nB+nQ;
+      def_proton.n=nQ;
+      def_neutron.n=nB-nQ;
       return calc_temp_e(def_neutron,def_proton,T,th);
     }
     

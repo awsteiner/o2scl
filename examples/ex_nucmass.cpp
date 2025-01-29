@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -150,7 +150,7 @@ int main(void) {
   // Output the table to a file
 
   hdf_file hf;
-  hf.open_or_create("ex_nucmass_table.o2");
+  hf.open_or_create("data/ex_nucmass_table.o2");
   hdf_output(hf,tu,"nuclear_masses");
   hf.close();
  

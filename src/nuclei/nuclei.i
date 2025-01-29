@@ -28,6 +28,7 @@ h_include <o2scl/nucmass_hfb.h>
 h_include <o2scl/nucmass_ktuy.h>
 h_include <o2scl/nucmass_fit.h>
 h_include <o2scl/nucmass_gen.h>
+h_include <o2scl/nucdist.h>
 h_include <o2scl/hdf_nucmass_io.h>
 # 
 # Include statement for C++ source code
@@ -42,6 +43,7 @@ cpp_using o2scl_hdf
 #
 # Additional python headers
 #
+py_header from o2sclpy.base import *
 py_header from o2sclpy.part import *
 #
 # ------------------------------------------------------
@@ -177,12 +179,14 @@ class nucmass_table abstract
 class nucmass_fit_base abstract
 - parent nucmass
 - size_t nfit
-#- function fit_fun
-#  - int
-#  - const ubvector &x
-#- function guess_fun
-#  - int
-#  - ubvector &x
+- function fit_fun
+  - int
+  - size_t nv
+  - const io boost::numeric::ublas::vector<double> &x
+- function guess_fun
+  - int
+  - size_t nv
+  - out boost::numeric::ublas::vector<double> &x
 #
 # ------------------------------------------------------
 # 
@@ -234,10 +238,17 @@ class nucmass_dz_fit_33
 #
 # ------------------------------------------------------
 # 
+# Class nucmass_densmat
+#
+class nucmass_densmat abstract
+- parent nucmass_fit_base
+#
+# ------------------------------------------------------
+# 
 # Class nucmass_frdm
 #
 class nucmass_frdm
-- parent nucmass_fit_base
+- parent nucmass_densmat
 - double a1
 - double J
 - double K
@@ -330,6 +341,57 @@ class nucmass_wlw
 #
 # ------------------------------------------------------
 # 
+# Class nucmass_fit
+#
+class nucmass_fit
+- int fit_method
+- static const int rms_mass_excess
+- static const int rms_binding_energy
+- static const int chi_squared_me
+- static const int chi_squared_be
+- bool even_even
+- int minZ
+- int minN
+- function fit
+  - void
+  - io nucmass_fit_base &n
+  - out double &res
+- function eval
+  - void
+  - io nucmass &n
+  - out double &res
+- function fit_covar
+  - void
+  - io nucmass_fit_base &n
+  - out double &chi2
+  - out ubmatrix &covar
+#
+# ------------------------------------------------------
+#
+# Class vector<nucleus>
+#                              
+class std::vector<nucleus>
+- py_name std_vector_nucleus
+- std_cc                             
+- function resize
+  - void
+  - size_t n                             
+- function size
+  - size_t
+- function operator[]
+  - nucleus &
+  - size_t n
+- extra_py |
+| def __len__(self):
+|     """
+|     Return the length of the vector
+|
+|     Returns: a Python int
+|     """
+|     return self.size()
+#
+# ------------------------------------------------------
+# 
 # HDF functions
 #
 # ------------------------------------------------------
@@ -337,8 +399,8 @@ class nucmass_wlw
 function ame_load
 - void
 - nucmass_ame &ame
-- std::string name
-- bool exp_only
+- std::string name ["20"]
+- bool exp_only [False]
 #
 # ------------------------------------------------------
 #
@@ -347,21 +409,23 @@ function ame_load_ext
 - nucmass_ame &ame
 - std::string file_name
 - std::string table_name
-- bool exp_only
+- bool exp_only [False]
 #
 # ------------------------------------------------------
 #
 function mnmsk_load
 - void
 - nucmass_mnmsk &mnmsk
-- std::string model
-- std::string filename
+- std::string model [""]
+- std::string filename [""]
 #
 # ------------------------------------------------------
 #
 function hfb_load
 - void
 - nucmass_hfb &hfb
+# We can't specify the default parameter for model because
+# we cannot specify a default parameter for string objects.
 - size_t model
 - std::string filename
 #
@@ -370,6 +434,29 @@ function hfb_load
 function hfb_sp_load
 - void
 - nucmass_hfb_sp &hfb
+# We can't specify the default parameter for model because
+# we cannot specify a default parameter for string objects.
 - size_t model
 - std::string filename
+#
+# ------------------------------------------------------
+#
+function nucdist_set
+- void
+- vector<nucleus> &dist
+- nucmass &nm
+- std::string expr ["1"]  
+- int maxA [400]
+- bool include_neutron [false]
+#
+# ------------------------------------------------------
+#
+function nucdist_pair_set
+- void
+- vector<nucleus> &dist
+- nucmass &nm
+- nucmass &nm2
+- std::string expr ["1"]  
+- int maxA [400]
+- bool include_neutron [false]
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -38,12 +38,6 @@
 #include <gsl/gsl_specfunc.h>
 
 #include <o2scl/set_mpfr.h>
-
-#include <boost/multiprecision/number.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_SET_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
 
 #include <o2scl/constants.h>
 #include <o2scl/funct.h>
@@ -122,6 +116,7 @@ namespace o2scl {
 
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
+#ifdef O2SCL_MULTIP
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<25> > >
   fermion_cdf25;
@@ -134,9 +129,11 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::cpp_dec_float<100> > >
   fermion_cdf100;
+#endif
 
 #ifdef O2SCL_SET_MPFR
 
+#ifdef O2SCL_MULTIP
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<25> > >
   fermion_mpfr25;
@@ -149,6 +146,7 @@ namespace o2scl {
   typedef fermion_tl<boost::multiprecision::number<
                        boost::multiprecision::mpfr_float_backend<100> > >
   fermion_mpfr100;
+#endif
 
 #endif
   
@@ -316,8 +314,8 @@ namespace o2scl {
 
       This is an abstract base for the computation of
       finite-temperature fermionic statistics. Different children
-      (e.g. \ref fermion_eff and \ref fermion_rel_tl) use different
-      techniques to computing the momentum integrations.
+      (e.g. \ref fermion_rel_tl) use different techniques to computing
+      the momentum integrations.
 
       Because massless fermions at finite temperature are much
       simpler, there are separate member functions included in this
@@ -499,7 +497,7 @@ namespace o2scl {
       fp_t limit=log(std::numeric_limits<fp_t>::min());
 
       if (verbose>0) {
-        std::cout << "psi+1/t,limit: "
+        std::cout << "fermion_thermo_tl::calc_mu_ndeg(): psi+1/t,limit: "
                   << psi+1.0/tt << " " << limit << std::endl;
       }
       
@@ -539,7 +537,8 @@ namespace o2scl {
       // If the ratio between the last term and the first term is 
       // not small enough, return false
       if (verbose>0) {
-        std::cout << "rat,prec: " << rat << " " << prec
+        std::cout << "fermion_thermo_tl::calc_mu_ndeg(): rat,prec: "
+                  << rat << " " << prec
                   << std::endl;
       }
       
@@ -558,9 +557,6 @@ namespace o2scl {
         
         ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);
-        if (verbose>0) {
-          std::cout << j << " " << nterm << std::endl;
-        }
         
         if (j==1) first_term=pterm;
         f.pr+=pterm;
@@ -577,6 +573,15 @@ namespace o2scl {
           return true;
         }
         
+        if (verbose>0) {
+          std::cout << "  " << j << " ";
+          std::cout.setf(std::ios::showpos);
+          std::cout << nterm << " ";
+          std::cout.unsetf(std::ios::showpos);
+          std::cout << fabs(pterm) << " "
+                    << prec*fabs(first_term) << std::endl;
+        }
+        
         // Stop if the last term is sufficiently small compared to
         // the first term
         if (j>1 && fabs(pterm)<prec*fabs(first_term)) {
@@ -584,6 +589,10 @@ namespace o2scl {
           f.n*=prefac;
           f.en*=prefac;
           f.ed=-f.pr+f.nu*f.n+temper*f.en;
+          if (verbose>0) {
+            std::cout << "fermion_thermo_tl::calc_mu_ndeg(): pr, en: "
+                      << f.pr << " " << f.en << std::endl;
+          }
           return true;
         }
         
@@ -832,14 +841,12 @@ namespace o2scl {
         \f]
         and the pressure is \f$ P = \varepsilon/3 \f$.
         When the chemical potential is finite, we have
-        \f{
-        \begin{eqnarray}
+        \f{eqnarray*}
         n &=& \frac{g \mu^3}{6 \pi^2} \left[ 1 + 
         \left( \frac{\pi T}{\mu} \right)^2 \right]
         \varepsilon &=& \frac{g \mu^4}{8 \pi^2} \left[ 1 + 
         2 \left( \frac{\pi T}{\mu} \right)^2 +
         \frac{7}{15} \left( \frac{\pi T}{\mu} \right)^4 \right]
-        \end{eqnarray}
         \f}
         and the pressure is \f$ P = \varepsilon/3 \f$.
     */
@@ -918,7 +925,7 @@ namespace o2scl {
         \frac{32}{729} \left(\frac{1}{\alpha}\right)^{5/2}
         \f]
 
-        This approach works to within about 1 \part in \f$ 10^{12} \f$,
+        This approach works to within about 1 part in \f$ 10^{12} \f$,
         and is tested in <tt>fermion_ts.cpp</tt>.
         
         \verbatim embed:rst
@@ -1009,7 +1016,7 @@ namespace o2scl {
     //@}
     
     /** \brief Set the solver for use in massless_calc_density() */ 
-    void set_massless_root(root<funct,funct,fp_t> &rp) {
+    void set_massless_root(root_t &rp) {
       massless_root=&rp;
       return;
     }
@@ -1025,6 +1032,9 @@ namespace o2scl {
     virtual const char *type() { return "fermion_thermo"; }
 
     /** \brief Compute a term in the nondegenerate expansion
+
+        This function uses \ref be_integ to perform the Bessel
+        integrals.
      */
     void ndeg_terms(size_t j, fp_t tt,
                     fp_t xx, fp_t m, bool inc_rest_mass,
@@ -1074,7 +1084,7 @@ namespace o2scl {
   protected:
     
     /// A pointer to the solver for massless fermions
-    root<func_t,func_t,fp_t> *massless_root;
+    root_t *massless_root;
     
     /// Solve for the chemical potential for massless fermions
     fp_t massless_solve_fun(fp_t x, fermion_t &f, fp_t temper) {

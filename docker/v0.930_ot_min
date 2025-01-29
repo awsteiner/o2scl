@@ -1,0 +1,59 @@
+FROM opensuse/tumbleweed
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+# I'm not sure if this is necessary for OpenSUSE.
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# Base apt libraries for OpenSUSE Tumbleweed
+
+RUN zypper install -y gcc-c++ make gsl-devel libquadmath0 \
+hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip awk \
+autoconf automake libtool git
+
+# -----------------------------------------------------------------
+# AWS, 7/13/24: The libquadmath0 package doesn't install the .so link,
+# so we do this manually
+
+WORKDIR /usr/lib64
+RUN ln -s libquadmath.so.0 libquadmath.so
+
+# -----------------------------------------------------------------
+# Now install o2scl
+
+WORKDIR /opt
+
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.930/o2scl-0.930.tar.gz \
+  --output o2scl-0.930.tar.gz
+RUN tar xzf o2scl-0.930.tar.gz
+WORKDIR /opt/o2scl-0.930
+
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
+#RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
+
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST" ./configure 
+RUN make blank-doc && make && make install
+
+# -----------------------------------------------------------------
+# Check that 'acol -v' works
+
+WORKDIR /
+ENV LD_LIBRARY_PATH=/usr/local/lib
+RUN acol -v
+
+# ───────────────────────────────────────────────────────────────────
+# Run tests
+
+WORKDIR /opt/o2scl-0.930
+#FROM working
+RUN make check && make o2scl-examples && make distclean
+
+
+
+
+

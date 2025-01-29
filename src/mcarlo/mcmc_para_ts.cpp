@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2016-2024, Andrew W. Steiner
+  Copyright (C) 2016-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -382,9 +382,11 @@ int main(int argc, char *argv[]) {
 
     cout << "Plain MCMC with a table: " << endl;
   
-    vector<string> pnames={"x","x2"};
-    vector<string> punits={"MeV","MeV^2"};
-    mpc.mct.set_names_units(pnames,punits);
+    vector<string> pnames={"x"};
+    vector<string> punits={"MeV"};
+    vector<string> dnames={"x2"};
+    vector<string> dunits={"MeV^2"};
+    mpc.mct.set_names_units(pnames,punits,dnames,dunits);
 
     mpc.mct.aff_inv=false;
     mpc.mct.step_fac=10.0;
@@ -653,22 +655,25 @@ int main(int argc, char *argv[]) {
     
     cout << "Independence MH with a KDE:" << endl;
 
-    vector<string> pnames_imh={"x","x2"};
-    vector<string> punits_imh={"MeV","MeV^2"};
+    vector<string> pnames_imh={"x"};
+    vector<string> punits_imh={"MeV"};
+    vector<string> dnames_imh={"x2"};
+    vector<string> dunits_imh={"MeV^2"};
     
     mpc.mct.stepper=shared_ptr<mcmc_stepper_base<point_hmc,
                                std::vector<double>,ubvector>>
       (new mcmc_stepper_mh<point_hmc,std::vector<double>,
        ubvector,ubmatrix,
        prob_cond_mdim_indep<>>);
-    mpc.mct.set_names_units(pnames_imh,punits_imh);
+    mpc.mct.set_names_units(pnames_imh,punits_imh,
+                            dnames_imh,dunits_imh);
 
     vector<vector<double>> data_vec_imh(2);
     data_vec_imh[0].resize(2);
     data_vec_imh[1].resize(2);
 
     mpc.mct.aff_inv=false;
-    mpc.mct.verbose=3;
+    mpc.mct.verbose=2;
     mpc.mct.n_threads=1;
     mpc.mct.max_iters=200;
     mpc.mct.prefix="mcmct_imh_kde";
@@ -705,8 +710,8 @@ int main(int argc, char *argv[]) {
     
     vector<double> weights;
     std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-    kp->set_function("o2sclpy",tin,
-                     weights,"verbose=0","kde_scipy");
+    kp->set_function("o2sclpy","verbose=0","kde_scipy");
+    kp->set_data(tin,weights);
     
     new_stepper->proposal[0].set_base(kp);
     
@@ -729,8 +734,10 @@ int main(int argc, char *argv[]) {
     
     cout << "HMC with a table: " << endl;
   
-    vector<string> pnames_hmc={"x","y","d1","d2"};
-    vector<string> punits_hmc={"km","fm","cm","mm"};
+    vector<string> pnames_hmc={"x","y"};
+    vector<string> punits_hmc={"km","fm"};
+    vector<string> dnames_hmc={"d1","d2"};
+    vector<string> dunits_hmc={"cm","mm"};
     vector<vector<double>> data_vec_hmc(2);
     data_vec_hmc[0].resize(2);
     data_vec_hmc[1].resize(2);
@@ -745,9 +752,12 @@ int main(int argc, char *argv[]) {
       point_hmc,std::vector<double>,ubvector>> new_stepper
       (new mcmc_stepper_hmc<
        point_hmc,std::vector<double>,ubvector>);
+    // Perform the allocation for the gradient cache
+    new_stepper->allocate(2,1);
     mpc.mct_hmc.stepper=new_stepper;
 
-    mpc.mct_hmc.set_names_units(pnames_hmc,punits_hmc);
+    mpc.mct_hmc.set_names_units(pnames_hmc,punits_hmc,
+                                dnames_hmc,dunits_hmc);
     
     mpc.mct_hmc.aff_inv=false;
     mpc.mct_hmc.verbose=3;
@@ -772,7 +782,7 @@ int main(int argc, char *argv[]) {
     hmc_fill_vec[0]=fh;
     
     mpc.mct_hmc.mcmc_fill(2,low_hmc,high_hmc,hmc_point_vec,
-                       hmc_fill_vec,data_vec_hmc);
+                          hmc_fill_vec,data_vec_hmc);
     
     std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct_hmc.get_table();
 
@@ -783,16 +793,27 @@ int main(int argc, char *argv[]) {
     cout << endl;
     
   }
+  
+#ifdef O2SCL_SET_PYTHON
 
+  // AWS, 11/3/24, The mcmc_para_emu class has a shared_ptr to a
+  // classify_python object so we need python support for this
+  // example even if we're not using a classifier.
+  
   if (true) {
+    
+    cout << "Test mcmc_para_emu: " << endl;
     
     mcmc_para_emu<point_funct,fill_funct,std::vector<double>,
                   ubvector> mpe;
 
-    vector<string> pnames={"x","x2"};
-    vector<string> punits={"MeV","MeV^2"};
-    mpe.set_names_units(pnames,punits);
+    vector<string> pnames={"x"};
+    vector<string> punits={"MeV"};
+    vector<string> dnames={"x2"};
+    vector<string> dunits={"MeV^2"};
+    mpe.set_names_units(pnames,punits,dnames,dunits);
 
+    mpe.n_retrain=0;
     mpe.aff_inv=false;
     mpe.verbose=2;
     mpe.n_threads=1;
@@ -800,9 +821,10 @@ int main(int argc, char *argv[]) {
     mpe.prefix="mpe";
     mpe.show_emu=1;
     mpe.def_stepper->step_fac[0]=10.0;
-
+    
     // Set up the shared pointer to the interpolation object
     std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
+    mpe.use_emulator=true;
     mpe.emu.resize(1);
     mpe.emu[0]=iko;
 
@@ -831,10 +853,12 @@ int main(int argc, char *argv[]) {
     iko->set_covar(vmfrn,param_lists);
     
     mpe.emu_file="mcmct_0_out";
-
+    
     mpe.mcmc_emu(1,low,high,gauss_vec,fill_vec,data_vec);
     
   }
+
+#endif
   
   tm.report();
   

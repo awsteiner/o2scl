@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2011-2024, Andrew W. Steiner
+  Copyright (C) 2011-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -219,8 +219,8 @@ namespace o2scl {
       
       ajac->set_function(func);
       (*ajac)(nvar,x,nvar,f,lu);
-      
-      o2scl_linalg::LU_decomp<>(nvar,lu,perm,signum);
+
+      o2scl_linalg::LU_decomp<ubmatrix,double>(nvar,lu,perm,signum);
       o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
       (nvar,lu,perm,H);
       
@@ -305,7 +305,7 @@ namespace o2scl {
 	    }
 	  }
 	  
-	  o2scl_linalg::LU_decomp(nvar,lu,perm,signum);
+	  o2scl_linalg::LU_decomp<ubmatrix,double>(nvar,lu,perm,signum);
 	  o2scl_linalg::LU_invert<ubmatrix,ubmatrix,ubmatrix_column>
 	    (nvar,lu,perm,H);
 	  o2scl_linalg::LU_solve(nvar,lu,perm,f,p);

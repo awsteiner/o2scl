@@ -8,6 +8,7 @@ Higher-dimensional Interpolation Contents
      
 - :ref:`Two-dimensional interpolation`
 - :ref:`Multi-dimensional interpolation`
+- :ref:`Interpolation specializations`  
 - :ref:`Interpolation on a rectangular grid`
 - :ref:`Contour lines`  
 
@@ -24,21 +25,29 @@ A slightly slower (but a bit more flexible) alternative is
 successive use of :ref:`interp_base <interp_base>` objects, implemented
 in :ref:`interp2_seq <interp2_seq>` . 
 
-If data is arranged without a grid, then :ref:`interp2_neigh
-<interp2_neigh>` performs nearest-neighbor interpolation. At present,
-the only way to compute :ref:`contour <contour>` lines on data which
-is not defined on a grid is to use this class or one of the
-multi-dimensional interpolation classes described below the data on a
-grid and then use :ref:`contour <contour>` afterwards.
-
-.. 
-  7/10/19: I removed the reference to interp2_planar because
-  it's unstable and I don't recommend using it. 
+If data is arranged without a grid, then you can either use one of the
+multi-dimensional interpolation classes described below or
+:ref:`interp2_neigh <interp2_neigh>`, which performs nearest-neighbor
+interpolation. At present, :ref:`contour <contour>` lines can only be
+computed with data which is defined on a grid.
 
 Multi-dimensional interpolation
 -------------------------------
 
-Multi-dimensional interpolation for table defined on a grid is
+There are three classes for multi-dimensional interpolation of data
+(where the independent variables may or may not be defined on a grid).
+Multidimensional-dimensional kriging (Gaussian process interpolation)
+is performed by :ref:`interpm_krige_optim <interpm_krige_optim>` .
+Eigen and Armadillo specifications are also available (see
+:ref:`Interpolation specializations`). A C++ interface for
+interpolation in Python using several different methods including
+Gaussian processes or neural networks from O₂sclpy is provided in
+:ref:`interpm_python <interpm_python>` when Python support is enabled.
+Finally, inverse distance weighted interpolation is performed by
+:ref:`interpm_idw <interpm_idw>`. These interpolation classes are all
+built upon :ref:`interpm_base <interpm_base>`.
+    
+Multi-dimensional interpolation for data defined on a grid is
 possible with :ref:`tensor_grid <tensor_grid>`. See the documentation
 for :cpp:func:`o2scl::tensor_grid::interpolate()`,
 :cpp:func:`o2scl::tensor_grid::interp_linear()` and
@@ -46,17 +55,13 @@ for :cpp:func:`o2scl::tensor_grid::interpolate()`,
 want to interpolate ``rank-1`` indices to get a vector result, you can
 use :cpp:func:`o2scl::tensor_grid::interp_linear_vec()` .
 
-If the data is not on a grid, then inverse distance weighted
-interpolation is performed by :ref:`interpm_idw <interpm_idw>`.
+Interpolation specializations
+-----------------------------
 
-An experimental class for multidimensional-dimensional kriging is also 
-provided in :ref:`interpm_krige_optim <interpm_krige_optim>` .
+.. doxygentypedef:: interpm_krige_optim_eigen
+                    
+.. doxygentypedef:: interpm_krige_optim_arma
 
-Finally, an experimental Python interface for interpolation using
-either Gaussian processes or neural networks from O₂sclpy is provided
-in :ref:`interpm_python <interpm_python>` when Python support is
-enabled.
-    
 Interpolation on a rectangular grid
 -----------------------------------
 
@@ -70,21 +75,6 @@ and performs some interpolations and compares them with the
 exact result.
 
 .. literalinclude:: ../../../examples/ex_interp2.scr
-
-..
-  AWS: 6/6/19: I'm commenting this out because interp2_planar is
-  unstable and probably not recommended.
-
-  \section ex_interp2_planar_sect Interpolation of randomly spaced points
-    
-  For example, with 10 random points in the x-y plane with \f$
-  -1<x<1 \f$ and \f$ -1<y<1 \f$, the figure contains several
-  polygonal regions, each of which represents the set of all points
-  in the domain which will be mapped to the same plane in order to
-  to approximate the original function.
-
-  \image html ex_planar_plot.png "Planes from interp2_planar class"
-  \image latex ex_planar_plot.pdf "Planes from interp2_planar class" width=9cm
 
 Contour lines
 -------------

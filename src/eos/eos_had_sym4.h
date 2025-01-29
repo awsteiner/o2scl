@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -108,6 +108,13 @@ namespace o2scl {
 
   public:
   
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /** \brief Compute the potential and kinetic parts separately
      */
     virtual int calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
@@ -130,6 +137,13 @@ namespace o2scl {
     
   public:
 
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /** \brief Compute the potential and kinetic parts separately
      */
     virtual int calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
@@ -151,6 +165,13 @@ namespace o2scl {
     
   public:
 
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /** \brief Compute the potential and kinetic parts separately
      */
     virtual int calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
@@ -185,6 +206,13 @@ namespace o2scl {
     
   public:
 
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /** \brief Compute the potential and kinetic parts separately
      */
     virtual int calc_e_sep(fermion &ne, fermion &pr, double &ed_kin, 
@@ -219,6 +247,13 @@ namespace o2scl {
 
   public:
 
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /// The strength of the quartic terms
     double alpha;
 

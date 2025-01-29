@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -236,6 +236,16 @@ int nstar_cold::calc_eos(double np_0) {
       O2SCL_CONV_RET(str_err.c_str(),o2scl::exc_efailed,err_nonconv);
     }
     
+    if (false) {
+      fermion_deriv_rel fdr;
+      fermion_deriv ed=e;
+      fermion_deriv mud=mu;
+      fdr.calc_deriv_zerot(ed);
+      if (include_muons) {
+        fdr.calc_deriv_zerot(mud);
+      }
+    }
+    
     if (tret!=0) {
       
       done=true;
@@ -246,6 +256,17 @@ int nstar_cold::calc_eos(double np_0) {
       sf(1,ux,uy);
       
       if (false) {
+        
+        double dmundnn, dmupdnn, dmupdnp;
+        hep->f_inv_number_suscept(neut.n,prot.n,dmundnn,
+                                  dmupdnn,dmupdnp);
+        double dmuBdnB=dmundnn;
+        double dmuLednLe=-dmundnn+dmupdnp;//+1.0/ed.dndmu;
+        double dmuLednB=0.0;
+        double alpha=dmuLednB/dmuLednLe;
+        double cs2=n_B*dmuBdnB+e.n*e.n/n_B*dmuLednLe;
+        //double fcs2=(n_B*dmuBdnB+alpha*e.n*dmuLednLe)/neut.mu;
+
         // AWS: 3/9/21: this is nothing other than the speed of
         // sound, which can be easily approximated by dP/deps,
         // saving the trouble of computing these derivatives.
@@ -295,7 +316,8 @@ int nstar_cold::calc_eos(double np_0) {
         
         h=hb+e+mu;
         
-        //double line[18]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,neut.n,prot.n,e.n,
+        //double line[18]={h.ed,h.pr,n_B,neut.mu,prot.mu,e.mu,
+        //neut.n,prot.n,e.n,
         //neut.kf,prot.kf,e.kf,fcs2,denom,numer,mu.mu,mu.n,mu.kf};
         //eost->line_of_data(18,line);
         
@@ -393,7 +415,8 @@ int nstar_cold::calc_eos(double np_0) {
   
   for(size_t i=0;i<eost->get_nlines();i++) {
     // Compute Urca threshold
-    double stmp=(eost->get("kfn",i)+eost->get("kfp",i)+eost->get("kfe",i))/2.0;
+    double stmp=(eost->get("kfn",i)+eost->get("kfp",i)+
+                 eost->get("kfe",i))/2.0;
     eost->set("s",i,stmp);
     double utmp=(stmp*(stmp-eost->get("kfn",i))*(stmp-eost->get("kfp",i))*
 		 (stmp-eost->get("kfe",i)));

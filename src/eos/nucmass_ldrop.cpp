@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,9 +21,11 @@
   ───────────────────────────────────────────────────────────────────
 */
 #include <o2scl/nucmass_ldrop.h>
+#include <o2scl/hdf_eos_io.h>
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_hdf;
 using namespace o2scl_const;
 
 nucmass_ldrop::nucmass_ldrop() {
@@ -41,40 +43,8 @@ nucmass_ldrop::nucmass_ldrop() {
   p=&def_proton;
   heos=&def_had_eos;
 
-  // Load NL4 EOS
-  def_had_eos.ms=508.194;
-  def_had_eos.mw=782.501;
-  def_had_eos.mr=763.0;
-  def_had_eos.mnuc=939.0;
-  def_had_eos.ms/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mw/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mr/=o2scl_const::hc_mev_fm; 
-  def_had_eos.mnuc/=o2scl_const::hc_mev_fm;
-	
-  double gs, gw, gr;
-  gs=10.217;
-  gw=12.868;
-  gr=4.474;
-  def_had_eos.b=-10.431;
-  def_had_eos.c=-28.885;
-  def_had_eos.b/=-def_had_eos.mnuc*pow(fabs(gs),3.0);
-  def_had_eos.c/=pow(gs,4.0);
-  gr*=2.0;
-  def_had_eos.cs=gs/def_had_eos.ms;
-  def_had_eos.cw=gw/def_had_eos.mw;
-  def_had_eos.cr=gr/def_had_eos.mr;
-	
-  def_had_eos.xi=0.0; 
-  def_had_eos.zeta=0.0;
-  def_had_eos.a1=0.0;
-  def_had_eos.a2=0.0;
-  def_had_eos.a3=0.0;
-  def_had_eos.a4=0.0;
-  def_had_eos.a5=0.0;
-  def_had_eos.a6=0.0;
-  def_had_eos.b1=0.0;
-  def_had_eos.b2=0.0;
-  def_had_eos.b3=0.0;
+  // Load NRAPR EOS
+  skyrme_load(def_had_eos,"NRAPR");
 
   n1=0.0;
   n0=0.16;
@@ -91,7 +61,7 @@ nucmass_ldrop::nucmass_ldrop() {
 double nucmass_ldrop::mass_excess_d(double Z, double N) {
   double ret=0.0;
   
-  ret=drip_binding_energy_d(Z,N,0.0,0.0,0.0,0.0);
+  ret=binding_energy_densmat(Z,N);
       
   // Convert from binding energy to mass excess
   ret-=((N+Z)*o2scl_const::unified_atomic_mass_f<double>()-
@@ -104,11 +74,12 @@ double nucmass_ldrop::mass_excess_d(double Z, double N) {
       
 }
 
-double nucmass_ldrop::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
-
+double nucmass_ldrop::binding_energy_densmat
+(double Z, double N, double npout, double nnout, double ne,
+ double T) {
+  
   double ret=0.0, A=Z+N, nL;
-      
+  
   // Force inc_rest_mass to true
   n->inc_rest_mass=true;
   p->inc_rest_mass=true;
@@ -118,39 +89,42 @@ double nucmass_ldrop::drip_binding_energy_d
   nL=n0+n1*delta*delta;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
-  if (nn>0.20 || np>0.20) {
+  if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large 1 (n0,n1,nn,np): "
-              << n0 << " " << n1 << " "
+    std::cout << "In nucmass_ldrop::binding_energy_densmat(): "
+              << "either nn or np is negative or "
+              << "  larger than 0.20." << endl;
+    std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
     O2SCL_ERR2("Densities too large in ",
-               "nucmass_ldrop::drip_binding_energy_d().",
+               "nucmass_ldrop::binding_energy_densmat().",
                o2scl::exc_efailed);
   }
 
   // Determine radii
-  Rn=cbrt(3.0*N/4.0/o2scl_const::pi/nn);
-  Rp=cbrt(3.0*Z/4.0/o2scl_const::pi/np);
+  Rn=cbrt(3.0*A/4.0/o2scl_const::pi/nL);
+  Rp=Rn;
       
   // Compute bulk energy per baryon
   n->n=nn;
   p->n=np;
 
-  // In principle, these next two lines shouldn't be needed
-  // but they're here for now just in case
+  // We provide an initial guess for the chemical potentials to
+  // ensure the mass is deterministic
   n->mu=n->m;
   p->mu=p->m;
 
   int err=heos->calc_e(*n,*p,th);
   if (err!=0) {
     O2SCL_ERR2("Hadronic EOS failed in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::binding_energy_densmat().",
+               exc_efailed);
   }
   bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
   ret+=bulk;
 
   // Determine surface energy per baryon
-  surf=surften*cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+  surf=surften*cbrt(36.0*o2scl_const::pi*nL/A)/nL;
   ret+=surf;
       
   // Add Coulomb energy per baryon
@@ -215,12 +189,33 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double nucmass_ldrop_skin::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+double nucmass_ldrop_skin::binding_energy_densmat
+(double Z, double N, double npout, double nnout, double ne, 
+ double T) {
   
   int err;
   double ret=0.0, A=Z+N, nL;
 
+  /*
+  if (chi<0.0 || chi>1.0) {
+    O2SCL_ERR2("Chi less than zero or greater than one in ",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
+               o2scl::exc_einval);
+  }
+  */
+  double dim=3.0;
+  if (dim<0.0 || dim>3.0) {
+    O2SCL_ERR2("Dimensionality less than zero or greater than three in ",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
+               o2scl::exc_einval);
+  }
+  if (full_surface==true && ss==0.0) {
+    O2SCL_ERR2("Surface symmetry cannot be zero when full_surface is true ",
+               "innucmass_ldrop_skin::binding_energy_densmat().",
+               o2scl::exc_einval);
+  }
+               
+  
   // Force inc_rest_mass to true
   n->inc_rest_mass=true;
   p->inc_rest_mass=true;
@@ -233,28 +228,38 @@ double nucmass_ldrop_skin::drip_binding_energy_d
   delta=I*doi;
   np=nL*(1.0-delta)/2.0;
   nn=nL*(1.0+delta)/2.0;
-  if (nn>0.20 || np>0.20) {
+  if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
     if (large_vals_unphys) return 1.0e99;
-    std::cout << "Densities too large 2 (n0,n1,nn,np):\n  "
-              << n0 << " " << n1 << " "
+    std::cout << "In nucmass_ldrop_skin::binding_energy_densmat(): "
+              << "either nn or np is negative or "
+              << "  larger than 0.20." << endl;
+    std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
 	      << nn << " " << np << std::endl;
-    std::cout << "nL,delta,I: " << nL << " " << delta << " " << I << endl;
     O2SCL_ERR2("Densities too large in ",
-               "nucmass_ldrop::drip_binding_energy_d().",
+               "nucmass_ldrop::binding_energy_densmat().",
                o2scl::exc_efailed);
   }
 
   if (!std::isfinite(nn) || !std::isfinite(np)) {
     O2SCL_ERR2("Neutron or proton density not finite in ",
-	       "nucmass_ldrop::drip_binding_energy_d().",exc_efailed);
+	       "nucmass_ldrop::binding_energy_densmat().",
+               exc_efailed);
     return 0.0;
   }
 
   // Determine radii
 
+  double R=cbrt(3.0*A/4.0/o2scl_const::pi/nL);
   Rn=cbrt(3.0*N/nn/4.0/o2scl_const::pi);
   Rp=cbrt(3.0*Z/np/4.0/o2scl_const::pi);
-	
+
+  // Use charge neutrality to compute chi_p
+  double chip=(ne-npout)/(np-npout);
+
+  // Then compute R_WS and chi
+  double Rws=Rp/cbrt(chip);
+  double chi=pow(R/Rws,3.0);
+
   // Bulk part of the free energy per baryon
 
   if (!new_skin_mode) {
@@ -263,12 +268,12 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     // bulk energy once, given nn and np
     n->n=nn;
     p->n=np;
+
+    // We provide an initial guess for the chemical potentials to
+    // ensure the mass is deterministic
     n->mu=n->m;
     p->mu=p->m;
     
-    if (n->n<0.0) n->n=1.0e-3;
-    if (p->n<0.0) p->n=1.0e-3;
-
     if (T<=0.0) {
       err=heos->calc_e(*n,*p,th);
       bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
@@ -278,7 +283,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::binding_energy_densmat().",
 		 exc_efailed);
     }
     ret+=bulk;
@@ -318,7 +323,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::drip_binding_energy_d().",
+		 "nucmass_ldrop_skin::binding_energy_densmat().",
 		 exc_efailed);
     }
 
@@ -340,7 +345,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::binding_energy_densmat().",
 		   exc_efailed);
       }
 
@@ -361,7 +366,7 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       }
       if (err!=0) {
 	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::drip_binding_energy_d().",
+		   "nucmass_ldrop_skin::binding_energy_densmat().",
 		   exc_efailed);
       }
     }
@@ -399,28 +404,26 @@ double nucmass_ldrop_skin::drip_binding_energy_d
     double x3=x*x*x;
     double omx=1.0-x;
     double omx3=omx*omx*omx;
-    double bcoeff;
-    if (ss==0.0) bcoeff=-16.0+96.0*surften/0.5;
-    else bcoeff=-16.0+96.0*surften/ss;
+    double bcoeff=-16.0+96.0/ss;
     double bfun=(16.0+bcoeff)/(1.0/x3+bcoeff+1.0/omx3);
     double y=0.5-x;
     double y2=y*y, y4=y2*y2;
     double a=a0+a2*y2+a4*y4;
     double arg=1.0-3.313*y2-7.362*y4;
-    double Tc=Tchalf*sqrt(1.0-3.313*y2-7.362*y4);
+    double Tc=Tchalf*sqrt(arg);
 	
     if (T<Tc) {
       bfun*=pow((1.0-T*T/Tc/Tc)/(1.0+a*T*T/Tc/Tc),pp);
     } else {
       bfun=0.0;
     }
-	
-    surf=surften*bfun*cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+
+    surf=surften*dim/3.0*bfun*cbrt(36.0*o2scl_const::pi*nL/A)/nL;
 	
   } else {
 	
-    surf=surften*(1.0-ss*delta*delta)*
-      cbrt(36.0*o2scl_const::pi*nL)/nL/cbrt(A);
+    surf=surften*(1.0-ss*delta*delta)*dim/3.0*
+      cbrt(36.0*o2scl_const::pi*nL/A)/nL;
 
   }
       
@@ -428,21 +431,30 @@ double nucmass_ldrop_skin::drip_binding_energy_d
       
   // Add Coulomb energy per baryon
 
-  double chip;
-  if (Rn>Rp) {
-    chip=chi*pow(Rp/Rn,3.0);
+  double fdu;
+  if (dim==2.0) {
+    fdu=chip/4.0-log(chip)/4.0-0.25;
   } else {
-    chip=chi;
+    fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/(dim+2.0);
   }
 
-  // This mass formula only works for d=3, but the full
-  // formula is given here for reference
-  double dim=3.0;
-  double fdu=(2.0/(dim-2.0)*(1.0-0.5*dim*pow(chip,1.0-2.0/dim))+chip)/
-    (dim+2.0);
-  coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure_f<double>()*
-    Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
+  // AWS, 12/23/24: It seems to me the correct thing to do is to multiply
+  // the energy density by chip, which corresponds to the first
+  // energy per baryon with a factor of Z/A/np, rather than multiplying
+  // the energy density by chi, which corresponds to multiplying the
+  // energy per baryon by 1/nL, but the latter actually fits the
+  // nuclear data better, as currently testing in nucmass_ldrop_shell_ts .
+  // This may be the result of the diffuseness of the proton density
+  // distribution: the effective R_p is actually larger. 
+  if (false) {
+    coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+      o2scl_const::fine_structure_f<double>()*
+      Rp*Rp*pow(fabs(np-npout),2.0)*Z/A/np*fdu;
+  } else {
+    coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+      o2scl_const::fine_structure_f<double>()*
+      Rp*Rp*pow(fabs(np-npout),2.0)/nL*fdu;
+  }
   ret+=coul;
   
   // Convert to total binding energy
@@ -473,14 +485,15 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
   return 0;
 }
 
-double nucmass_ldrop_pair::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+double nucmass_ldrop_pair::binding_energy_densmat
+(double Z, double N, double npout, double nnout, double ne,
+ double T) {
   
   double A=(Z+N);
   
   pair=-Epair*(cos(Z*o2scl_const::pi)+cos(N*o2scl_const::pi))/
     2.0/pow(A,1.5);
   
-  return A*pair+nucmass_ldrop_skin::drip_binding_energy_d
-    (Z,N,npout,nnout,chi,T);
+  return A*pair+nucmass_ldrop_skin::binding_energy_densmat
+    (Z,N,npout,nnout,ne,T);
 }

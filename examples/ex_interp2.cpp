@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,6 +21,7 @@
   -------------------------------------------------------------------
 */
 
+// sphinx-example-start
 /* Example: ex_interp2.cpp
    -------------------------------------------------------------------
    A simple example for two-dimensional interpolation using

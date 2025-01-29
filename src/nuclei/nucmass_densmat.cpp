@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -75,29 +75,6 @@ void dense_matter::dist_properties(double &ntot, double &A, double &Z,
   N/=ntot;
   a=cbrt(3.0/4.0/o2scl_const::pi/ntot);
 
-  return;
-}
-
-double dense_matter::impurity(double ntot, double ave_Z) {
-    
-  double sum=0.0;
-  
-  for (size_t i=0;i<dist.size();i++) {
-    sum+=dist[i].n*pow(dist[i].Z-ave_Z,2.0);
-  }
-  
-  if (ntot==0.0) return 0.0;
-
-  return sum/ntot;
-}
-
-void dense_matter::densities(double &nn, double &np) {
-  double nn=n.n;
-  double np=p.n;
-  for (size_t i=0;i<dist.size();i++) {
-    nn+=dist[i].n*dist[i].N;
-    np+=dist[i].n*dist[i].Z;
-  }
   return;
 }
 
@@ -393,17 +370,20 @@ nucmass_densmat::nucmass_densmat() {
   // It's important not to automatically load masses from
   // HDF5 by default because this causes issues instantiating
   // this class with many processors
-  massp=0;
+  //massp=0;
 }
 
+/*
 void nucmass_densmat::set_mass(nucmass &nm) {
   massp=&nm;
   return;
 }
+*/
 
 void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2, 
 				       double &t3, double &t4) {
 
+#ifdef O2SCL_NEVER_DEFINED
   if (massp==0) {
     O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
 	      exc_efailed);
@@ -455,20 +435,26 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
   } else {
     t4=fabs(dEdT-(E2-E1)/(T*eps))/fabs(dEdT);
   }
-      
+
+#endif
+  
   return;
 }
 
-void nucmass_densmat::binding_energy_densmat
+double nucmass_densmat::binding_energy_densmat
 (double Z, double N, double npout, double nnout, 
- double nneg, double T, double &E) {
+ double nneg, double T) {
+  double E;
   double dEdnn;
   double dEdnp;
   double dEdnneg;
   double dEdT;
-  return binding_energy_densmat_derivs
+  binding_energy_densmat_derivs
     (Z,N,nnout,npout,nneg,T,E,dEdnp,dEdnn,dEdnneg,dEdT);
+  return E;
 }
+
+#ifdef O2SCL_NEVER_DEFINED
 
 void nucmass_densmat::binding_energy_densmat_derivs
 (double Z, double N, double npout, double nnout, 
@@ -557,3 +543,5 @@ void nucmass_densmat::binding_energy_densmat_derivs
 
   return;
 }
+
+#endif

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2021, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -29,7 +29,8 @@ namespace o2scl_linalg {
   
   // (Eigen specialization)
   template<>
-    void QR_decomp_unpack<Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd>
+  void QR_decomp_unpack<Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd,
+                        double>
     (const size_t M, const size_t N, Eigen::MatrixXd &A, 
      Eigen::MatrixXd &Q, Eigen::MatrixXd &R);
      

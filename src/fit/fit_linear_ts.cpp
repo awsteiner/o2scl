@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2013-2024, Andrew W. Steiner
+  Copyright (C) 2013-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -84,7 +84,7 @@ int expb_fdf(const gsl_vector *x, void *params,
   return success;
 }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 
 template<class vec_t, class mat_t>
@@ -191,7 +191,7 @@ int main(void) {
   }
 
 #ifdef O2SCL_NEVER_DEFINED
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   {
     arma::rowvec aparms(npar), aydat(ndat);

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -40,12 +40,13 @@ namespace o2scl_linalg {
 
   /** \brief Invert a matrix and compute its determinant
    */
-  template<class mat_t=boost::numeric::ublas::matrix<double> >
+  template<class mat_t=boost::numeric::ublas::matrix<double>,
+           class fp_t=double>
   class matrix_invert_det {
     
   public:
 
-    /// Desc
+    /// If true, call the error handler on failure (default true)
     bool err_on_fail;
 
     matrix_invert_det() {
@@ -61,12 +62,12 @@ namespace o2scl_linalg {
         and the determinant in \c A_det
     */
     virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
-                            double &A_det)=0;
+                           fp_t &A_det)=0;
 
     /** \brief Determine the determinant of the matrix \c A without
         inverting
     */
-    virtual double det(size_t n, const mat_t &A)=0;
+    virtual fp_t det(size_t n, const mat_t &A)=0;
     
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         modifying the original matrix A 
@@ -94,16 +95,19 @@ namespace o2scl_linalg {
    */
   template <class mat_t=boost::numeric::ublas::matrix<double>,
             class mat_col_t=boost::numeric::ublas::matrix_column<
-              boost::numeric::ublas::matrix<double> > >
-  class matrix_invert_det_LU : public matrix_invert_det<mat_t> {
+              boost::numeric::ublas::matrix<double> >,
+            class fp_t=double> 
+  class matrix_invert_det_LU : public matrix_invert_det<mat_t,fp_t> {
     
   public:
 
-    /// Invert matrix \c A, returning the inverse in \c A_inv
+    /** \brief Invert matrix \c A, destroying \c A and
+        returning the inverse in \c A_inv
+    */
     virtual int invert_dest(size_t n, mat_t &A, mat_t &A_inv) {
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A,p,sig);
+      LU_decomp<mat_t,fp_t>(n,A,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
@@ -122,11 +126,11 @@ namespace o2scl_linalg {
     /** \brief Determine the determinant of the matrix \c A without
         inverting
     */
-    virtual double det(size_t n, const mat_t &A) {
+    virtual fp_t det(size_t n, const mat_t &A) {
       mat_t A2=A;
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A2,p,sig);
+      LU_decomp<mat_t,fp_t>(n,A2,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
@@ -138,11 +142,11 @@ namespace o2scl_linalg {
         and the determinant in \c A_det
     */
     virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
-                            double &A_det) {
+                            fp_t &A_det) {
       mat_t A2=A;
       int sig;
       o2scl::permutation p(n);
-      LU_decomp(n,A2,p,sig);
+      LU_decomp<mat_t,fp_t>(n,A2,p,sig);
       if (o2scl_linalg::diagonal_has_zero(n,A)) {
         O2SCL_ERR2("Matrix singular (LU method) ",
                    "in matrix_invert_det_LU::invert().",o2scl::exc_esing);
@@ -166,8 +170,9 @@ namespace o2scl_linalg {
 
   /** \brief Inverse symmetric positive matrix using Cholesky decomposition
    */
-  template <class mat_t=boost::numeric::ublas::matrix<double> > 
-  class matrix_invert_det_cholesky : public matrix_invert_det<mat_t> {
+  template <class mat_t=boost::numeric::ublas::matrix<double>,
+            class fp_t=double> 
+  class matrix_invert_det_cholesky : public matrix_invert_det<mat_t,fp_t> {
     
   public:
     
@@ -182,10 +187,10 @@ namespace o2scl_linalg {
         and the determinant in \c A_det
     */
     virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
-                            double &A_det) {
+                            fp_t &A_det) {
       A_inv=A;
       cholesky_decomp(n,A_inv,false);
-      double sqrt_det=cholesky_det(n,A_inv);
+      fp_t sqrt_det=cholesky_det(n,A_inv);
       A_det=sqrt_det*sqrt_det;
       cholesky_invert(n,A_inv);
       return 0;
@@ -194,10 +199,10 @@ namespace o2scl_linalg {
     /** \brief Determine the determinant of the matrix \c A without
         inverting
     */
-    virtual double det(size_t n, const mat_t &A) {
+    virtual fp_t det(size_t n, const mat_t &A) {
       mat_t A_copy=A;
       cholesky_decomp(n,A_copy,false);
-      double sqrt_det=cholesky_det(n,A_copy);
+      fp_t sqrt_det=cholesky_det(n,A_copy);
       return sqrt_det*sqrt_det;
     }
     
@@ -227,7 +232,7 @@ namespace o2scl_linalg {
       during installation
   */
   template<class arma_mat_t=arma::mat> class matrix_invert_det_arma : 
-    public matrix_invert_det<arma_mat_t> {
+    public matrix_invert_det<arma_mat_t,double> {
 
   public:
     
@@ -270,7 +275,7 @@ namespace o2scl_linalg {
       during installation
   */
   template<class arma_mat_t=arma::mat> class matrix_invert_det_sympd_arma : 
-    public matrix_invert_det<arma_mat_t> {
+    public matrix_invert_det<arma_mat_t,double> {
 
   public:
     
@@ -313,15 +318,16 @@ namespace o2scl_linalg {
 #include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   
-  /** \brief Eigen inverse using QR decomposition with 
-      column pivoting
+  /** \brief Eigen generic inverse and determinant
 
-      This class is only defined if Eigen support was enabled during
-      installation.
-
+      AWS, 7/21/24: I believe this uses Eigen's PartialPivLU method
+      except for smaller matrices where it uses faster explicit
+      calculations.
   */
-  template<class eigen_mat_t=Eigen::MatrixXd> class matrix_invert_det_eigen : 
-    public matrix_invert_det<eigen_mat_t> {
+  template<class eigen_mat_t=Eigen::Matrix
+           <double,Eigen::Dynamic,Eigen::Dynamic>,
+           class fp_t=double> class matrix_invert_det_eigen : 
+    public matrix_invert_det<eigen_mat_t,fp_t> {
     
   public:
     
@@ -351,6 +357,99 @@ namespace o2scl_linalg {
     /// Inver matrix \c A in place
     virtual int invert_inplace(size_t n, eigen_mat_t &A) {
       A=A.inverse();
+      return 0;
+    }
+    
+  };
+
+  /** \brief Eigen generic inverse and determinant using a
+      user-specified decomposition
+      
+      AWS, 10/26/24: Currently, only Eigen's PartialPivLU
+      and FullPivLU methods are supported.
+   */
+  template<class eigen_mat_t, class eigen_decomp_t>
+  class matrix_invert_det_eigen_decomp : 
+    public matrix_invert_det<eigen_mat_t,double> {
+
+  protected:
+
+    /// Pointer to see if matrix changes
+    eigen_mat_t *Aptr;
+
+    /// The decomposition object
+    std::shared_ptr<eigen_decomp_t> decomp_sp;
+    
+  public:
+
+    matrix_invert_det_eigen_decomp() {
+      Aptr=0;
+    }
+    
+    /// Perform the decomposition
+    void decomp(eigen_mat_t &A) {
+      Aptr=&A;
+      std::shared_ptr<eigen_decomp_t> decomp_loc=
+        new std::shared_ptr<eigen_decomp_t>(A);
+      decomp_sp=decomp_loc;
+      return;
+    }
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert_dest(size_t n, eigen_mat_t &A, eigen_mat_t &A_inv) {
+      if (&A!=Aptr) {
+        Aptr=&A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A));
+        decomp_sp=decomp_loc;
+      }
+      A_inv=decomp_sp->inverse();
+      return 0;
+    }
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const eigen_mat_t &A, eigen_mat_t &A_inv) {
+      eigen_mat_t A2=A;
+      invert_dest(n,A2,A_inv);
+      return 0;
+    }
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const eigen_mat_t &A,
+                           eigen_mat_t &A_inv, double &A_det) {
+      if (&A!=Aptr) {
+        eigen_mat_t A2=A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A2));
+        Aptr=0;
+        decomp_sp=decomp_loc;
+      }
+      A_inv=decomp_sp->inverse();
+      A_det=decomp_sp->determinant();
+      return 0;
+    }
+    
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const eigen_mat_t &A) {
+      if (&A!=Aptr) {
+        eigen_mat_t A2=A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A2));
+        Aptr=0;
+        decomp_sp=decomp_loc;
+      }
+      return decomp_sp->determinant();
+    }
+    
+    /// Inver matrix \c A in place
+    virtual int invert_inplace(size_t n, eigen_mat_t &A) {
+      if (&A!=Aptr) {
+        Aptr=&A;
+        std::shared_ptr<eigen_decomp_t> decomp_loc(new eigen_decomp_t(A));
+        decomp_sp=decomp_loc;
+      }
+      A=decomp_sp->inverse();
       return 0;
     }
     

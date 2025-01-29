@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2013-2024, Andrew W. Steiner
+  Copyright (C) 2013-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -25,9 +25,14 @@
 #include <o2scl/funct.h>
 #include <o2scl/funct_multip.h>
 
+using namespace std;
+using namespace o2scl;
+
 double gfn(double x) {
   return sin(x-0.2);
 }
+
+#ifdef O2SCL_MULTIP
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
@@ -39,8 +44,7 @@ cpp_dec_float_50 gfn_cdf(cpp_dec_float_50 x) {
   return sin(x-0.2);
 }
 
-using namespace std;
-using namespace o2scl;
+#endif
 
 int main(void) {
   cout.setf(ios::scientific);
@@ -48,6 +52,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   double a, b;
   funct f=gfn;
 
@@ -57,6 +63,8 @@ int main(void) {
   rt.solve_bkt(a,b,f);
   t.test_rel(a,0.2,1.0e-6,"1");
 
+#ifdef O2SCL_MULTIP
+  
   long double a_ld, b_ld;
   funct_ld f_ld=gfn_ld;
 
@@ -74,6 +82,10 @@ int main(void) {
   b_cdf=1.0;
   rt_cdf.solve_bkt(a_cdf,b_cdf,f_cdf);
   t.test_rel_boost<cpp_dec_float_50>(a_cdf,0.2,1.0e-6,"1");
+
+#endif
+  
+#endif
   
   t.report();
   return 0;

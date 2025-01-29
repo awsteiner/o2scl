@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -32,7 +32,6 @@
 #include <o2scl/constants.h>
 #include <o2scl/tensor_grid.h>
 #include <o2scl/table.h>
-#include <o2scl/boson_eff.h>
 #include <o2scl/fermion_rel.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/convert_units.h>
@@ -801,7 +800,7 @@ namespace o2scl {
       thermodynamic identity.
 
       \verbatim embed:rst
-      See also [Shen11]_.
+      See also [Shen11ne]_.
       \endverbatim
 
       \warning The NL3 model is probably ruled out by nuclear mass

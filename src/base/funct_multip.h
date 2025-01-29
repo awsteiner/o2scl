@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,7 +33,7 @@
 // for typeid()
 #include <typeinfo>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <o2scl/set_mpfr.h>
@@ -45,7 +45,7 @@
 
 namespace o2scl {
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
@@ -97,7 +97,7 @@ namespace o2scl {
   typedef long double o2fp_50;
   typedef long double o2fp_100;
   
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
   
 #endif
   
@@ -108,7 +108,7 @@ namespace o2scl {
   */
   typedef std::function<long double(long double)> funct_ld;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h
@@ -163,12 +163,12 @@ namespace o2scl {
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
 
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
 #endif
   
   //@}
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
   
   /** \brief One-dimensional function typedef in src/base/funct.h
@@ -201,10 +201,10 @@ namespace o2scl {
 
   // end of #if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
 #endif
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #ifdef O2SCL_MULTIP
 #endif
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 
   /** \brief Use multiprecision to automatically evaluate a function to
       a specified level of precision
@@ -744,8 +744,8 @@ namespace o2scl {
   typedef funct_multip_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip;
 
-  /** \brief The multiprecision function object with \t cpp_dec_float
-      types
+  /** \brief The multiprecision function object with <tt>cpp_dec_float
+      </tt> types
   */
   typedef funct_multip_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
@@ -764,7 +764,7 @@ namespace o2scl {
   /** \brief A multiprecision function evaluation class with 
       transformations useful for integrals
 
-      This class is used in \ref inte_adapt_cern .
+      This class is used in \ref inte_adapt_cern_tl .
   */
   template<class lim_fp_t, class fp_25_t, class fp_35_t, class fp_50_t,
            class fp_100_t> class funct_multip_transform_tl {
@@ -1299,7 +1299,7 @@ namespace o2scl {
   template <class fp_t> using funct_multip_transform=
     funct_multip_transform_tl<fp_t,o2fp_25,o2fp_35,o2fp_50,o2fp_100>;
   
-  /// Alias declarations for \t cpp_dec_float types
+  /// Alias declarations for <tt>cpp_dec_float</tt> types
   template <class fp_t> using funct_multip_transform_cdf=
     funct_multip_transform_tl<double,cpp_dec_float_25,cpp_dec_float_35,
                               cpp_dec_float_50,cpp_dec_float_100>;
@@ -1310,7 +1310,7 @@ namespace o2scl {
     funct_multip_transform_tl<double,mpfr_25,mpfr_35,mpfr_50,mpfr_100>;
 #endif
 
-  // end of #ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  // end of #if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 #endif
   
 }

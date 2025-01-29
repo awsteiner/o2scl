@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_BOSON_REL_H
 
 /** \file boson_rel.h
-    \brief File defining \ref o2scl::boson_rel
+    \brief File defining \ref o2scl::boson_rel_tl
 */
 
 #include <string>
@@ -41,13 +41,219 @@
 
 namespace o2scl {
 
+  /** \brief Class defining integrands for relativistic bosons
+   */
+  template<class fp_t> class boson_rel_integ {
+    
+  public:
+    
+    /** \brief A factor for the degenerate entropy integration
+        (default 30.0)
+    */
+    double deg_entropy_fac;
+
+    /** \brief The limit for exponentials to ensure integrals are finite 
+	(default 200.0)
+    */
+    double exp_limit;
+
+    /** \brief If true, call the error handler when convergence 
+	fails (default true)
+    */
+    bool err_nonconv;
+    
+    boson_rel_integ() {
+      exp_limit=300.0;
+      deg_entropy_fac=30.0;
+      err_nonconv=true;
+    }      
+    
+    /// The integrand for the density for non-degenerate bosons
+    template<class internal_fp_t>
+    internal_fp_t density_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      fp_t ret;
+      if (y>exp_limit && eta+u>exp_limit) {
+        if (eta+u-y>exp_limit) {
+          ret=0;
+        } else {
+          ret=(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1);
+        }
+      } else {
+        ret=(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+      }
+
+      return ret;
+    }
+
+    /// Non-degenerate energy integral
+    template<class internal_fp_t>
+    internal_fp_t energy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+
+      fp_t ret;
+      if (y-u>exp_limit && eta-u>exp_limit) {
+        if (eta+u+y>exp_limit) {
+          ret=0;
+        } else {
+          ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)/(exp(eta+u-y)-1);
+        }
+      } else {
+        ret=(eta+u)*(eta+u)*sqrt(u*u+2.0*eta*u)*exp(y)/(exp(eta+u)-exp(y));
+      }
+  
+      return ret;
+    }
+
+    /// Non-degenerate entropy integral
+    template<class internal_fp_t>
+    internal_fp_t entropy_fun(internal_fp_t u, fp_t &y2, fp_t &eta2) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+
+      fp_t arg1=u*u+2*eta*u;
+      fp_t arg2=eta+u-y;
+      fp_t arg3=eta+u;
+
+      fp_t fb=1/(-1+exp(arg2));
+      fp_t ret=arg3*sqrt(arg1)*((1+fb)*log(1+fb)-fb*log(fb));
+
+      if (!std::isfinite(ret)) {
+        return 0;
+      }
+      
+      return ret;
+    }
+
+    /// The integrand for the pressure for non-degenerate fermions
+    template<class internal_fp_t>
+    internal_fp_t pressure_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      
+      internal_fp_t arg1=u*u+2*eta*u;
+      internal_fp_t term1=sqrt(arg1);
+      internal_fp_t arg3=eta+u;
+      ret=term1*arg3*log1p(exp(y-arg3));
+      
+      if (!isfinite(ret)) {
+	ret=0.0;
+      }
+
+      return ret;
+    }
+
+    /// Degenerate density integral
+    template<class internal_fp_t>
+    internal_fp_t deg_density_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+
+      internal_fp_t ret;
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      ret=k*k/(exp(arg1)-1);
+
+      if (!isfinite(ret)) {
+        return 0;
+      }
+  
+      return ret;
+    }
+    
+    /// Degenerate energy integral
+    template<class internal_fp_t>
+    internal_fp_t deg_energy_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t ret;
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+      
+      ret=k*k*E*T/(exp(arg1)-1);
+      
+      if (!isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_energy_fun().",exc_einval);
+      }
+  
+      return ret;
+    }
+
+    /// Degenerate entropy integral
+    template<class internal_fp_t>
+    internal_fp_t deg_entropy_fun(internal_fp_t k, fp_t T2,
+                                  fp_t y2, fp_t eta2,
+                                  fp_t mot2, bool debug) {
+      
+      internal_fp_t y=static_cast<internal_fp_t>(y2);
+      internal_fp_t mot=static_cast<internal_fp_t>(mot2);
+      internal_fp_t eta=static_cast<internal_fp_t>(eta2);
+      internal_fp_t T=static_cast<internal_fp_t>(T2);
+      
+      internal_fp_t ret;
+      internal_fp_t E=hypot(k/T,eta)-mot;
+      internal_fp_t arg1=E-y;
+
+      // If the argument to the exponential is really small, then the
+      // value of the integrand is just zero
+      if (arg1<-exp_limit) {
+	ret=0.0;
+	// Otherwise, if the argument to the exponential is still small,
+	// then addition of 1 makes us lose precision, so we use an
+	// alternative:
+      } else if (arg1<-deg_entropy_fac) {
+	ret=-k*k*(-1+arg1)*exp(arg1);
+      } else {
+	internal_fp_t nx=(1+exp(arg1));
+        nx=1/nx;
+        internal_fp_t arg2=1-nx;
+        internal_fp_t t1=nx*log(nx);
+        internal_fp_t t2=arg2*log(arg2);
+        internal_fp_t t3=t1+t2;
+        ret=-k*k*t3;
+	//ret=-k*k*(nx*log(nx)+arg2*log(arg2));
+      }
+
+      if (!isfinite(ret)) {
+	O2SCL_ERR2("Returned not finite result ",
+		   "in fermion_rel::deg_entropy_fun().",exc_einval);
+      }
+
+      return ret;
+    }
+    
+    
+  };
+    
   /** \brief Equation of state for a relativistic boson
       
       \verbatim embed:rst
 
       .. todo:: 
 
-      - In class boson_rel: Testing not completely finished.
+         - In class boson_rel: Testing not completely finished.
          
       \endverbatim
   */
@@ -77,7 +283,7 @@ namespace o2scl {
     
     /** \brief Calculate properties as function of chemical potential
      */
-    virtual void calc_mu(boson &b, fp_t temper) {
+    virtual void calc_mu(boson_tl<fp_t> &b, fp_t temper) {
 
       if (temper<=0) {
         O2SCL_ERR2("Temperature less than or equal to zero in ",
@@ -100,7 +306,8 @@ namespace o2scl {
         psi=(b.nu+(b.m-b.ms))/temper;
         if (b.nu+b.m>b.ms) {
           std::cout.precision(12);
-          std::cout << "Here: " << b.nu << " " << b.m << " " << b.ms << " "
+          std::cout << "boson_rel_tl::calc_mu(): nu,m,ms,ms/m: "
+                    << b.nu << " " << b.m << " " << b.ms << " "
                     << b.ms/b.m << std::endl;
           O2SCL_ERR2("Chemical potential must be smaller than mass in ",
                      "boson_rel_tl<be_inte_t,fp_t>::calc_mu().",
@@ -155,13 +362,13 @@ namespace o2scl {
           return;
         }
 
-        funct fd=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fd=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_density_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
-        funct fe=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fe=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_energy_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
-        funct fs=std::bind(std::mem_fn<fp_t(fp_t,boson &,fp_t)>
+        funct fs=std::bind(std::mem_fn<fp_t(fp_t,boson_tl<fp_t> &,fp_t)>
                            (&boson_rel_tl<be_inte_t,fp_t>::deg_entropy_fun),
                            this,std::placeholders::_1,std::ref(b),temper);
 
@@ -286,7 +493,7 @@ namespace o2scl {
     
     /** \brief Calculate properties as function of density
      */
-    virtual void calc_density(boson &b, fp_t temper) {
+    virtual void calc_density(boson_tl<fp_t> &b, fp_t temper) {
 
       if (temper<=0) {
         O2SCL_ERR2("Temperature less than or equal to zero in ",
@@ -369,7 +576,7 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
         chemical potential
     */
-    virtual void pair_mu(boson &b, fp_t temper) {
+    virtual void pair_mu(boson_tl<fp_t> &b, fp_t temper) {
   
       if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
       calc_mu(b,temper);
@@ -389,18 +596,19 @@ namespace o2scl {
     /** \brief Calculate properties with antiparticles as function of
 	density
     */
-    virtual void pair_density(boson &b, fp_t temper) {
+    virtual void pair_density(boson_tl<fp_t> &b, fp_t temper) {
   
       if (b.non_interacting==true) { b.nu=b.mu; b.ms=b.m; }
 
       ubvector x(1);
       x[0]=b.nu/temper;
 
-      mm_funct mf=std::bind(std::mem_fn<int(size_t nv, const ubvector &,
-                                            ubvector &,fp_t,boson &,fp_t)>
-                            (&boson_rel_tl<be_inte_t,fp_t>::pair_density_fun),
-                            this,std::placeholders::_1,std::placeholders::_2,
-                            std::placeholders::_3,b.n,std::ref(b),temper);
+      mm_funct mf=std::bind
+        (std::mem_fn<int(size_t nv, const ubvector &,
+                         ubvector &,fp_t,boson &,fp_t)>
+         (&boson_rel_tl<be_inte_t,fp_t>::pair_density_fun),
+         this,std::placeholders::_1,std::placeholders::_2,
+         std::placeholders::_3,b.n,std::ref(b),temper);
       bool ec=density_mroot->err_nonconv;
       density_mroot->err_nonconv=false;
       int ret1=density_mroot->msolve(1,x,mf);
@@ -501,7 +709,7 @@ namespace o2scl {
 
     /// The default solver for calc_density().
     mroot_hybrids<> def_density_mroot;
-
+    
     /// Default nondegenerate integrator
     inte_qagiu_gsl<> def_nit;
 
@@ -661,7 +869,7 @@ namespace o2scl {
 
       
     /// Degenerate density integral
-    fp_t deg_density_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_density_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -682,7 +890,7 @@ namespace o2scl {
     }
     
     /// Degenerate energy density integral
-    fp_t deg_energy_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_energy_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -699,7 +907,7 @@ namespace o2scl {
     }
       
     /// Degenerate entropy integral
-    fp_t deg_entropy_fun(fp_t k, boson &b, fp_t T) {
+    fp_t deg_entropy_fun(fp_t k, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t E=hypot(k,b.ms);
       fp_t nx=o2scl::bose_function((E-b.nu)/T);
@@ -730,7 +938,7 @@ namespace o2scl {
 
     /// Solve for the density in calc_density()
     int solve_fun(size_t nv, const ubvector &x, ubvector &y,
-                  fp_t density, boson &b, fp_t T) {
+                  fp_t density, boson_tl<fp_t> &b, fp_t T) {
 
       fp_t nden;
   
@@ -826,7 +1034,7 @@ namespace o2scl {
       
     /// Solve for the density in pair_density()
     int pair_density_fun(size_t nv, const ubvector &x, ubvector &y,
-                         fp_t density, boson &b, fp_t T) {
+                         fp_t density, boson_tl<fp_t> &b, fp_t T) {
 
       b.nu=x[0]*T;
       if (b.non_interacting) {
@@ -846,8 +1054,30 @@ namespace o2scl {
 
   };
 
+  /** \brief Double precision version of \ref o2scl::boson_rel_tl
+  */
   typedef boson_rel_tl<> boson_rel;
 
+#ifdef O2SCL_MULTIP
+  
+  /** \brief Long double version of 
+      \ref o2scl::boson_rel_tl 
+  */
+  typedef boson_rel_tl
+  <bessel_K_exp_integ_boost<long double,
+                            cpp_dec_float_25>,
+   long double> boson_rel_ld;
+  
+  /** \brief 25-digit version of 
+      \ref o2scl::boson_rel_tl 
+  */
+  typedef boson_rel_tl
+  <bessel_K_exp_integ_boost<cpp_dec_float_25,
+                            cpp_dec_float_35>,
+   cpp_dec_float_25> boson_rel_cdf25;
+  
+#endif
+  
 }
 
 #endif

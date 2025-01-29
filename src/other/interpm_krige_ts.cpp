@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -29,7 +29,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 #endif
 #ifdef O2SCL_SET_EIGEN
@@ -471,6 +471,7 @@ int main(void) {
     
     iko.set_covar(vmfrn,param_lists);
     iko.rescale=true;
+    iko.verbose=2;
     iko.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
     cout << endl;
         
@@ -478,8 +479,9 @@ int main(void) {
       ubvector point(2), out(1);
       point[0]=gtn_x3.gen();
       point[1]=gtn_x3.gen();
-      
+
       if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        
         iko.eval(point,out);
         cout.setf(ios::showpos);
         cout << point[0] << " " << point[1] << " "
@@ -757,7 +759,7 @@ int main(void) {
 
 #ifdef O2SCL_NEVER_DEFINED
 
-#ifdef O2SCL_ARMA  
+#ifdef O2SCL_SET_ARMA  
   
   {
     

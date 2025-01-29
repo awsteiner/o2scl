@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -104,15 +104,17 @@ void o2scl_free_nucmass_info(void *vptr) {
   return;
 }
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A) {
+int o2scl_nucmass_info_parse_elstring(void *vptr, void *ptr_ela, int *Z, int *N, int *A) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->parse_elstring(ela,*Z,*N,*A);
+  std::string *ela=(std::string *)ptr_ela;
+  int ret=ptr->parse_elstring(*ela,*Z,*N,*A);
   return ret;
 }
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el) {
+int o2scl_nucmass_info_eltoZ(void *vptr, void *ptr_el) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->eltoZ(el);
+  std::string *el=(std::string *)ptr_el;
+  int ret=ptr->eltoZ(*el);
   return ret;
 }
 
@@ -120,33 +122,34 @@ void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoel(Z);
-  return sptr;
+  return sptr; // tag 2 Ztoel
 }
 
 void *o2scl_nucmass_info_Ztoname(void *vptr, size_t Z) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->Ztoname(Z);
-  return sptr;
+  return sptr; // tag 2 Ztoname
 }
 
 void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->tostring(Z,N);
-  return sptr;
+  return sptr; // tag 2 tostring
 }
 
 void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g) {
   nucmass_info *ptr=(nucmass_info *)vptr;
   std::string *sptr=new std::string;
   *sptr=ptr->int_to_spinp(g);
-  return sptr;
+  return sptr; // tag 2 int_to_spinp
 }
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s) {
+int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s) {
   nucmass_info *ptr=(nucmass_info *)vptr;
-  int ret=ptr->spinp_to_int(s);
+  std::string *s=(std::string *)ptr_s;
+  int ret=ptr->spinp_to_int(*s);
   return ret;
 }
 
@@ -298,6 +301,8 @@ void o2scl_nucmass_table_set_n(void *vptr, size_t v) {
 
 void *o2scl_nucmass_table_get_reference(void *vptr) {
   nucmass_table *ptr=(nucmass_table *)vptr;
+  // The ownership of the string pointer is passed to the Python class
+  // and the memory is freed later.
   std::string *sptr=new std::string;
   *sptr=ptr->reference;
   return sptr;
@@ -331,6 +336,20 @@ void o2scl_nucmass_fit_base_set_nfit(void *vptr, size_t v) {
   nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
   ptr->nfit=v;
   return;
+}
+
+int o2scl_nucmass_fit_base_fit_fun(void *vptr, size_t nv, void *ptr_x) {
+  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
+  boost::numeric::ublas::vector<double> *x=(boost::numeric::ublas::vector<double> *)ptr_x;
+  int ret=ptr->fit_fun(nv,*x);
+  return ret;
+}
+
+int o2scl_nucmass_fit_base_guess_fun(void *vptr, size_t nv, void *ptr_x) {
+  nucmass_fit_base *ptr=(nucmass_fit_base *)vptr;
+  boost::numeric::ublas::vector<double> *x=(boost::numeric::ublas::vector<double> *)ptr_x;
+  int ret=ptr->guess_fun(nv,*x);
+  return ret;
 }
 
 void *o2scl_create_nucmass_semi_empirical() {
@@ -851,33 +870,201 @@ void o2scl_free_nucmass_wlw(void *vptr) {
   return;
 }
 
-void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only) {
-  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  ame_load(*ame,name,exp_only);
+void *o2scl_create_nucmass_fit() {
+  nucmass_fit *ptr=new nucmass_fit;
+  return ptr;
+}
+
+void o2scl_free_nucmass_fit(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  delete ptr;
   return;
 }
 
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, char *file_name, char *table_name, bool exp_only) {
-  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
-  ame_load_ext(*ame,file_name,table_name,exp_only);
+int o2scl_nucmass_fit_get_fit_method(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->fit_method;
+}
+
+void o2scl_nucmass_fit_set_fit_method(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->fit_method=v;
   return;
 }
 
-void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, char *model, char *filename) {
+int o2scl_nucmass_fit_get_rms_mass_excess(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->rms_mass_excess;
+}
+
+
+int o2scl_nucmass_fit_get_rms_binding_energy(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->rms_binding_energy;
+}
+
+
+int o2scl_nucmass_fit_get_chi_squared_me(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->chi_squared_me;
+}
+
+
+int o2scl_nucmass_fit_get_chi_squared_be(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->chi_squared_be;
+}
+
+
+bool o2scl_nucmass_fit_get_even_even(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->even_even;
+}
+
+void o2scl_nucmass_fit_set_even_even(void *vptr, bool v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->even_even=v;
+  return;
+}
+
+int o2scl_nucmass_fit_get_minZ(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->minZ;
+}
+
+void o2scl_nucmass_fit_set_minZ(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->minZ=v;
+  return;
+}
+
+int o2scl_nucmass_fit_get_minN(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return ptr->minN;
+}
+
+void o2scl_nucmass_fit_set_minN(void *vptr, int v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  ptr->minN=v;
+  return;
+}
+
+void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass_fit_base *n=(nucmass_fit_base *)ptr_n;
+  ptr->fit(*n,*res);
+  return;
+}
+
+void o2scl_nucmass_fit_eval(void *vptr, void *ptr_n, double *res) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass *n=(nucmass *)ptr_n;
+  ptr->eval(*n,*res);
+  return;
+}
+
+void o2scl_nucmass_fit_fit_covar(void *vptr, void *ptr_n, double *chi2, void *ptr_covar) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  nucmass_fit_base *n=(nucmass_fit_base *)ptr_n;
+  ubmatrix *covar=(ubmatrix *)ptr_covar;
+  ptr->fit_covar(*n,*chi2,*covar);
+  return;
+}
+
+void *o2scl_create_std_vector_nucleus_() {
+  std::vector<nucleus> *ptr=new std::vector<nucleus>;
+  return ptr;
+}
+
+void o2scl_free_std_vector_nucleus_(void *vptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_copy_std_vector_nucleus_(void *vsrc, void *vdest) {
+  std::vector<nucleus> *src=(std::vector<nucleus> *)vsrc;
+  std::vector<nucleus> *dest=(std::vector<nucleus> *)vdest;
+  *dest=*src;
+  return; // tab 8
+}
+
+void o2scl_std_vector_nucleus__resize(void *vptr, size_t n) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  ptr->resize(n);
+  return;
+}
+
+size_t o2scl_std_vector_nucleus__size(void *vptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  size_t ret=ptr->size();
+  return ret;
+}
+
+void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  nucleus *ret=&(ptr->operator[](n));
+  return ret;
+}
+
+void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr) {
+  std::vector<nucleus> *ptr=(std::vector<nucleus> *)vptr;
+  nucleus *valptr2=(nucleus *)valptr;
+  (*ptr)[i]=*valptr2;
+  return;
+}
+
+void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only) {
+  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
+  std::string *name=(std::string *)ptr_name;
+  ame_load(*ame,*name,exp_only);
+  return;
+}
+
+void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only) {
+  nucmass_ame *ame=(nucmass_ame *)ptr_ame;
+  std::string *file_name=(std::string *)ptr_file_name;
+  std::string *table_name=(std::string *)ptr_table_name;
+  ame_load_ext(*ame,*file_name,*table_name,exp_only);
+  return;
+}
+
+void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename) {
   nucmass_mnmsk *mnmsk=(nucmass_mnmsk *)ptr_mnmsk;
-  mnmsk_load(*mnmsk,model,filename);
+  std::string *model=(std::string *)ptr_model;
+  std::string *filename=(std::string *)ptr_filename;
+  mnmsk_load(*mnmsk,*model,*filename);
   return;
 }
 
-void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, char *filename) {
+void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) {
   nucmass_hfb *hfb=(nucmass_hfb *)ptr_hfb;
-  hfb_load(*hfb,model,filename);
+  std::string *filename=(std::string *)ptr_filename;
+  hfb_load(*hfb,model,*filename);
   return;
 }
 
-void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, char *filename) {
+void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) {
   nucmass_hfb_sp *hfb=(nucmass_hfb_sp *)ptr_hfb;
-  hfb_sp_load(*hfb,model,filename);
+  std::string *filename=(std::string *)ptr_filename;
+  hfb_sp_load(*hfb,model,*filename);
+  return;
+}
+
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA, bool include_neutron) {
+  vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
+  nucmass *nm=(nucmass *)ptr_nm;
+  std::string *expr=(std::string *)ptr_expr;
+  nucdist_set(*dist,*nm,*expr,maxA,include_neutron);
+  return;
+}
+
+void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA, bool include_neutron) {
+  vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
+  nucmass *nm=(nucmass *)ptr_nm;
+  nucmass *nm2=(nucmass *)ptr_nm2;
+  std::string *expr=(std::string *)ptr_expr;
+  nucdist_pair_set(*dist,*nm,*nm2,*expr,maxA,include_neutron);
   return;
 }
 

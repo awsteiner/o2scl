@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,20 +31,7 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/nucmass.h>
 
-//#ifdef DOXYGEN
-/* \brief Placeholder namespace for global functions in \o2p 
-
-   This namespace is created to help doxygen understand 
-   functions in \o2p that are in the \c o2scl namespace.
-   Functions documented here should be called using, for example,
-   \verbatim
-   o2scl::nucdist_set(dist,nm);
-   \endverbatim
-*/
-//namespace o2scl_part {
-//#else
 namespace o2scl {
-  //#endif
 
   /** \brief Set a distribution of nuclei from a mass formula
       and a function string
@@ -53,19 +40,24 @@ namespace o2scl {
       <tt>std::vector</tt> object. The function \c expr, a function of
       \c Z and \c N, determines which nuclei will be added to the
       distribution.
-
-      \note This function is actually in the \c o2scl namespace.
-      Unfortunately doxygen has difficulty extending namespaces
-      in separate doxyfile instances. 
   */
   void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
                    std::string expr="1", int maxA=400,
                    bool include_neutron=false);
 
-  //#ifdef DOXYGEN
-  //}
-  //#else
+  /** \brief Set a distribution of nuclei from two sets of nuclear
+      masses and a function string
+
+      Given two nuclear mass formulas given in \c nm, and \c nm2, this
+      adds allo nuclei from \c nm which also appear in \c nm2 to a
+      <tt>std::vector</tt> of nuclei. The function \c expr, a function
+      of \c Z, \c N, and \c A, is also used to determine which nuclei
+      will be added to the distribution.
+  */
+  void nucdist_pair_set(std::vector<nucleus> &dist, nucmass &nm,
+                        nucmass &nm2, std::string expr="1", int maxA=400,
+                        bool include_neutron=false);
+
 }
-//#endif
 
 #endif

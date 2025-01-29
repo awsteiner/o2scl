@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -33,6 +33,7 @@
 #include <o2scl/nucmass_ktuy.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/nucmass_gen.h>
+#include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 extern "C" {
@@ -65,9 +66,9 @@ void *o2scl_create_nucmass_info();
 
 void o2scl_free_nucmass_info(void *vptr);
 
-int o2scl_nucmass_info_parse_elstring(void *vptr, char *ela, int *Z, int *N, int *A);
+int o2scl_nucmass_info_parse_elstring(void *vptr, void *ptr_ela, int *Z, int *N, int *A);
 
-int o2scl_nucmass_info_eltoZ(void *vptr, char *el);
+int o2scl_nucmass_info_eltoZ(void *vptr, void *ptr_el);
 
 void *o2scl_nucmass_info_Ztoel(void *vptr, size_t Z);
 
@@ -77,7 +78,7 @@ void *o2scl_nucmass_info_tostring(void *vptr, size_t Z, size_t N);
 
 void *o2scl_nucmass_info_int_to_spinp(void *vptr, int g);
 
-int o2scl_nucmass_info_spinp_to_int(void *vptr, char *s);
+int o2scl_nucmass_info_spinp_to_int(void *vptr, void *ptr_s);
 
 double o2scl_nucmass_get_m_prot(void *vptr);
 
@@ -140,6 +141,10 @@ size_t o2scl_nucmass_table_get_nentries(void *vptr);
 size_t o2scl_nucmass_fit_base_get_nfit(void *vptr);
 
 void o2scl_nucmass_fit_base_set_nfit(void *vptr, size_t v);
+
+int o2scl_nucmass_fit_base_fit_fun(void *vptr, size_t nv, void *ptr_x);
+
+int o2scl_nucmass_fit_base_guess_fun(void *vptr, size_t nv, void *ptr_x);
 
 void *o2scl_create_nucmass_semi_empirical();
 
@@ -329,14 +334,70 @@ void *o2scl_create_nucmass_wlw();
 
 void o2scl_free_nucmass_wlw(void *vptr);
 
-void o2scl_ame_load_wrapper(void *ptr_ame, char *name, bool exp_only);
+void *o2scl_create_nucmass_fit();
 
-void o2scl_ame_load_ext_wrapper(void *ptr_ame, char *file_name, char *table_name, bool exp_only);
+void o2scl_free_nucmass_fit(void *vptr);
 
-void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, char *model, char *filename);
+int o2scl_nucmass_fit_get_fit_method(void *vptr);
 
-void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, char *filename);
+void o2scl_nucmass_fit_set_fit_method(void *vptr, int v);
 
-void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, char *filename);
+int o2scl_nucmass_fit_get_rms_mass_excess(void *vptr);
+
+
+int o2scl_nucmass_fit_get_rms_binding_energy(void *vptr);
+
+
+int o2scl_nucmass_fit_get_chi_squared_me(void *vptr);
+
+
+int o2scl_nucmass_fit_get_chi_squared_be(void *vptr);
+
+
+bool o2scl_nucmass_fit_get_even_even(void *vptr);
+
+void o2scl_nucmass_fit_set_even_even(void *vptr, bool v);
+
+int o2scl_nucmass_fit_get_minZ(void *vptr);
+
+void o2scl_nucmass_fit_set_minZ(void *vptr, int v);
+
+int o2scl_nucmass_fit_get_minN(void *vptr);
+
+void o2scl_nucmass_fit_set_minN(void *vptr, int v);
+
+void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res);
+
+void o2scl_nucmass_fit_eval(void *vptr, void *ptr_n, double *res);
+
+void o2scl_nucmass_fit_fit_covar(void *vptr, void *ptr_n, double *chi2, void *ptr_covar);
+
+void *o2scl_create_std_vector_nucleus_();
+
+void o2scl_free_std_vector_nucleus_(void *vptr);
+
+void o2scl_copy_std_vector_nucleus_(void *vsrc, void *vdest);
+
+void o2scl_std_vector_nucleus__resize(void *vptr, size_t n);
+
+size_t o2scl_std_vector_nucleus__size(void *vptr);
+
+void *o2scl_std_vector_nucleus__getitem(void *vptr, size_t n);
+
+void o2scl_std_vector_nucleus__setitem(void *vptr, size_t i, void *valptr);
+
+void o2scl_ame_load_wrapper(void *ptr_ame, void *ptr_name, bool exp_only=false);
+
+void o2scl_ame_load_ext_wrapper(void *ptr_ame, void *ptr_file_name, void *ptr_table_name, bool exp_only=false);
+
+void o2scl_mnmsk_load_wrapper(void *ptr_mnmsk, void *ptr_model, void *ptr_filename);
+
+void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
+
+void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
+
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false);
+
+void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA=400, bool include_neutron=false);
 
 }

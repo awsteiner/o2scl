@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner
+  Copyright (C) 2017-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -148,9 +148,11 @@ int main(int argc, char *argv[]) {
   cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
   // Set parameter names and units
-  vector<string> pnames={"x","x2"};
-  vector<string> punits={"",""};
-  mct.set_names_units(pnames,punits);
+  vector<string> pnames={"x"};
+  vector<string> punits={""};
+  vector<string> dnames={"x2"};
+  vector<string> dunits={""};
+  mct.set_names_units(pnames,punits,dnames,dunits);
 
   // Set MCMC parameters
   mct.def_stepper->step_fac.resize(1);
@@ -188,7 +190,7 @@ int main(int argc, char *argv[]) {
 
   // Write the data to a file
   hdf_file hf;
-  hf.open_or_create("ex_mcmc.o2");
+  hf.open_or_create("data/ex_mcmc.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
   hf.close();

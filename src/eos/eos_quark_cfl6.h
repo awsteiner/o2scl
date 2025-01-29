@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -184,7 +184,7 @@ namespace o2scl {
       <b>References:</b>
 
       \verbatim embed:rst
-      Created for [Steiner05]_.
+      Created for [Steiner05ct]_.
       \endverbatim
   */
   class eos_quark_cfl6 : public eos_quark_cfl {

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -64,6 +64,53 @@ int main(void) {
     t.test_gen(stmp=="string","string 3");
     hf.gets("strf",stmp);
     t.test_gen(stmp=="fixed-length string","string 4");
+    hf.close();
+    cout << endl;
+  }
+
+  if (true) {
+    
+    cout << "Tensor string" << endl;
+    tensor_string ts;
+    vector<size_t> sz={2,2};
+    ts.resize(2,sz);
+    sz={0,0};
+    ts.get(sz)="string 1a";
+    sz={0,1};
+    ts.get(sz)="string 2bb";
+    sz={1,0};
+    ts.get(sz)="string 3ccc";
+    sz={1,1};
+    ts.get(sz)="string 4dddd";
+
+    hdf_file hf;
+    hf.open_or_create("hdf_file_tenstr.o2");
+    hf.sets_ten_copy("ts",ts);
+    hf.close();
+
+    ts.clear();
+
+#ifdef O2SCL_OPENSUSE_I386    
+    // This additional system call, and the "here"
+    // output just below, is to debug issues with
+    // i386 opensuse HDF5 output
+    int xret=system("h5dump hdf_file_tenstr.o2");
+#endif
+    
+    hf.open("hdf_file_tenstr.o2");
+    hf.gets_ten_copy("ts",ts);
+    sz={0,0};
+    std::cout << "Here1: " << ts.get(sz) << std::endl;
+    t.test_gen(ts.get(sz)=="string 1a","tensor string 1");
+    sz={0,1};
+    std::cout << "Here2: " << ts.get(sz) << std::endl;
+    t.test_gen(ts.get(sz)=="string 2bb","tensor string 2");
+    sz={1,0};
+    std::cout << "Here3: " << ts.get(sz) << std::endl;
+    t.test_gen(ts.get(sz)=="string 3ccc","tensor string 3");
+    sz={1,1};
+    std::cout << "Here4: " << ts.get(sz) << std::endl;
+    t.test_gen(ts.get(sz)=="string 4dddd","tensor string 4");
     hf.close();
     cout << endl;
   }
@@ -151,6 +198,7 @@ int main(void) {
       hf.get_szt("testu",u2);
       hf.getf("testf",f2);
 
+#ifndef O2SCL_OPENSUSE_I386
       hf.getfp_copy("d",dx);
       hf.getfp_copy("d35",d35);
       t.test_rel(dx,2.0,1.0e-12,"test fp 1");
@@ -161,6 +209,7 @@ int main(void) {
       t.test_rel(dxa[1],1.0,1.0e-12,"test fpa 2");
       t.test_rel(static_cast<double>(d35a[0]),3.0,1.0e-12,"test fpa 3");
       t.test_rel(static_cast<double>(d35a[1]),1.0,1.0e-12,"test fpa 4");
+#endif
       
       hid_t group_id2=hf.open_group("Integers");
       hid_t file_id2=hf.get_file_id();

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -36,7 +36,7 @@
 
 namespace o2scl {
 
-  /** \brief Equation of state base class
+  /** \brief Equation of state base class [abstract virtual base]
     
       A base class for an equation of state
   */
@@ -51,9 +51,6 @@ namespace o2scl {
     /// Set class thermo object
     virtual void set_thermo(thermo &th);
 
-    /// Get class thermo object
-    virtual const thermo &get_thermo();
-
     /// The default thermo object
     thermo def_thermo;
 
@@ -64,20 +61,33 @@ namespace o2scl {
     
     /** \brief Compute the EOS in beta-equilibrium at 
 	zero temperature
-
-        This solves the function \ref solve_beta_eq_T0(). This
-        function is different from \ref nstar_cold because it is a
-        generic interface which works for non-hadronic EOSs.
+        
+        This solves the function \ref solve_beta_eq_T0() . This
+        function is different from \ref o2scl::nstar_cold because it
+        is a generic interface which works for non-hadronic EOSs.
     */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
-			   std::shared_ptr<table_units<> > results);
+			   std::shared_ptr<table_units<> > results)=0;
 
     /** \brief Equation of state as a function of baryon, charge,
         and strangeness density at finite temperature
     */
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
-                                double T, thermo &th);
+                                double T, thermo &th)=0;
+
+    /// Copy constructor
+    eos_base(const eos_base &f) {
+      this->def_thermo=f.def_thermo;
+    }
+    
+    /// Copy construction with operator=()
+    eos_base &operator=(const eos_base &f) {
+      if (this!=&f) {
+        this->def_thermo=f.def_thermo;
+      }
+      return *this;
+    }
     
   protected:
 

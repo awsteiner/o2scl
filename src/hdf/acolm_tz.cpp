@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -307,18 +307,19 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
       }
       cout << "Herez: " << col_names.size() << " "
            << table_obj.get_nlines() << endl;
-      pkde_obj.set_function("o2sclpy",ttemp,
-                            weights,((string)"verbose=")+
+      pkde_obj.set_function("o2sclpy",((string)"verbose=")+
                             o2scl::itos(kde_verbose),
                             "kde_scipy",kde_verbose);
+      pkde_obj.set_data(ttemp,weights);
+                            
     } else {
       uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
       vector<double> bw_array;
       ug.vector(bw_array);
-      pkde_obj.set_function("o2sclpy",ttemp,
-                            bw_array,((string)"verbose=")+
+      pkde_obj.set_function("o2sclpy",((string)"verbose=")+
                             o2scl::itos(kde_verbose),"kde_sklearn",
                             kde_verbose);
+      pkde_obj.set_data(ttemp,bw_array);
     }
     
     command_del(type);
@@ -745,13 +746,65 @@ int acol_manager::comm_to_table(std::vector<std::string> &sv, bool itive_com) {
 	   << "New columns are: " << in[1] << " and " << in[2] << endl;
     }
 
+    // Begin creating the new table
     table_obj.clear();
     table_obj.new_column(in[1]);
     table_obj.new_column(in[2]);
-    for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
-      values[ix]=tensor_grid_obj.get_grid(ix,i);
-      double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
-      table_obj.line_of_data(2,line);
+
+    // Count the number of dimensions with size 1
+    size_t one_dims=0;
+    for(size_t i=0;i<rank;i++) {
+      if (tensor_grid_obj.get_size(i)==1) {
+        one_dims++;
+      }
+    }
+
+    // If one of the dimensions has a size of 1, then we cannot
+    // interpolate with tensor_grid::interp_linear(), so we have to
+    // use a two-step procedure with grid_rearrange_and_copy()
+    // instead.
+    if (one_dims>0) {
+
+      // First use grid_rearrange_and_copy() if necessary to reduce to
+      // a tensor where all indices but ix have size 1.
+      if (one_dims<rank-1) {
+        vector<o2scl::index_spec> vis;
+        for(size_t j=0;j<rank;j++) {
+          if (j==ix) {
+            vis.push_back(ix_index(j));
+          } else if (tensor_grid_obj.get_size(j)==1) {
+            vis.push_back(ix_fixed(j,0));
+          } else {
+            vis.push_back(ix_interp(j,values[j]));
+          }
+        }
+        tensor_grid_obj=grid_rearrange_and_copy<tensor_grid<>,double>
+          (tensor_grid_obj,vis);
+      }
+
+      // Begin constructing the index vector
+      vector<size_t> index(rank);
+      for(size_t j=0;j<rank;j++) {
+        if (j!=ix) index[j]=0;
+      }
+
+      // Perform the tensor_grid lookup to create the table
+      for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+        index[ix]=i;
+        double line[2]={tensor_grid_obj.get_grid(ix,i),
+                        tensor_grid_obj.get(index)};
+        table_obj.line_of_data(2,line);
+      }
+      
+    } else {
+      
+      // Otherwise, just interpolate using interp_linear()
+      for(size_t i=0;i<tensor_grid_obj.get_size(ix);i++) {
+        values[ix]=tensor_grid_obj.get_grid(ix,i);
+        double line[2]={values[ix],tensor_grid_obj.interp_linear(values)};
+        table_obj.line_of_data(2,line);
+      }
+      
     }
 
     command_del(type);
@@ -1199,7 +1252,50 @@ int acol_manager::comm_to_tensor(std::vector<std::string> &sv,
 int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
 				      bool itive_com) {
 
-  if (type=="table3d") {
+  if (type=="table") {
+
+    if (sv.size()<3) {
+      cerr << "Need grid and output columns." << endl;
+      return 1;
+    }
+    vector<vector<double>> grid;
+    vector<size_t> gs;
+    for(size_t i=1;i<sv.size()-1;i++) {
+      vector<double> g;
+      // Copy the column so we can sort it
+      vector<double> col=table_obj[sv[i]];
+      double tol=std::numeric_limits<double>::epsilon()*100;
+      vector_sort<vector<double>,double>(table_obj.get_nlines(),col);
+      vector_remove_dups_tol<vector<double>,vector<double>,double>
+        (table_obj.get_nlines(),col,g,tol);
+      grid.push_back(g);
+      gs.push_back(g.size());
+      vector_out(cout,g);
+      cout << " " << g.size() << endl;
+      cout << "acol_manager::comm_to_tensor_grid(): For column "
+           << sv[i] << " found grid with "
+           << g.size() << " entries." << endl;
+    }
+    tensor_grid_obj.resize(sv.size()-2,gs);
+    tensor_grid_obj.set_grid(grid);
+    tensor_grid_obj.set_all(0.0);
+    for(size_t i=0;i<table_obj.get_nlines();i++) {
+      vector<double> gp;
+      for(size_t j=0;j<sv.size()-2;j++) {
+        gp.push_back(table_obj.get(sv[j+1],i));
+      }
+      cout << "Here: ";
+      vector_out(cout,gp,true);
+      tensor_grid_obj.set_val(gp,table_obj.get(sv[sv.size()-1],i));
+    }
+    
+    obj_name=sv[sv.size()-1];
+    command_del(type);
+    clear_obj();
+    command_add("tensor_grid");
+    type="tensor_grid";
+
+  } else if (type=="table3d") {
 
     if (sv.size()<2) {
       cerr << "Need slice name." << endl;
@@ -1745,6 +1841,10 @@ int acol_manager::comm_values_table(std::vector<std::string> &sv,
       for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
         vars[((string)"i")+o2scl::szttos(j)]=ix[j];
       }
+      for (size_t j=0;j<tensor_grid_obj.get_rank();j++) {
+        vars[((string)"x")+o2scl::szttos(j)]=
+          tensor_grid_obj.get_grid(j,ix[j]);
+      }
       vars["v"]=tensor_grid_obj.get_data()[i];
       
       if (calc.eval(&vars)>0.5) {
@@ -1962,9 +2062,11 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "FFTW support: " << o2scl_settings.fftw_support() << endl;
   cout << "Cubature support: " << o2scl_settings.cubature_support() << endl;
+  cout << "Multiprecision support: "
+       << o2scl_settings.multiprecision_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
-  cout << "Module support: " << o2scl_settings.module_support() << endl;
+  cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << endl;
@@ -2021,8 +2123,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<double>::epsilon() << " "
-       << typeid(double).name() << std::endl;
+  cout << std::numeric_limits<double>::epsilon() << endl;
   
   cout.width(18);
   cout << "long double";
@@ -2035,10 +2136,9 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(15);
   cout << log(pow(10.0,std::numeric_limits<long double>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<long double>::epsilon() << " "
-       << typeid(long double).name() << std::endl;
+  cout << std::numeric_limits<long double>::epsilon() << endl;
   
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   cout.width(18);
   cout << "cpp_dec_float_25";
   cout.width(3);
@@ -2051,8 +2151,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_25>::epsilon() << " "
-       << ((std::string)typeid(cpp_dec_float_25).name()) << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_25>::epsilon() << endl;
   
   cout.width(18);
   cout << "cpp_dec_float_35";
@@ -2066,8 +2165,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_35>::epsilon() << " "
-       << ((std::string)typeid(cpp_dec_float_35).name()) << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_35>::epsilon() << endl;
   
   cout.width(18);
   cout << "cpp_dec_float_50";
@@ -2081,8 +2179,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_50>::epsilon() << " "
-       << ((std::string)typeid(cpp_dec_float_50).name()) << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_50>::epsilon() << endl;
   
   cout.width(18);
   cout << "cpp_dec_float_100";
@@ -2096,8 +2193,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<cpp_dec_float_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_100>::epsilon() << " "
-       << ((std::string)typeid(cpp_dec_float_100).name()) << std::endl;
+  cout << std::numeric_limits<cpp_dec_float_100>::epsilon() << endl;
 
 #ifdef O2SCL_SET_MPFR
 
@@ -2113,8 +2209,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_25>::epsilon() << " "
-       << ((std::string)typeid(mpfr_25).name()) << std::endl;
+  cout << std::numeric_limits<mpfr_25>::epsilon() << endl;
   
   cout.width(18);
   cout << "mpfr_35";
@@ -2128,8 +2223,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_35>::epsilon() << " "
-       << ((std::string)typeid(mpfr_35).name()) << std::endl;
+  cout << std::numeric_limits<mpfr_35>::epsilon() << endl;
   
   cout.width(18);
   cout << "mpfr_50";
@@ -2143,8 +2237,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_50>::epsilon() << " "
-       << ((std::string)typeid(mpfr_50).name()) << std::endl;
+  cout << std::numeric_limits<mpfr_50>::epsilon() << endl;
   
   cout.width(18);
   cout << "mpfr_100";
@@ -2158,8 +2251,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << log(pow(10.0,
                   std::numeric_limits<mpfr_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<mpfr_100>::epsilon() << " "
-       << ((std::string)typeid(mpfr_100).name()) << std::endl;
+  cout << std::numeric_limits<mpfr_100>::epsilon() << endl;
 
 #endif
 #endif

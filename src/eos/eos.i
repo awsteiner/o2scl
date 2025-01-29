@@ -32,6 +32,9 @@ h_include <o2scl/nstar_cold.h>
 h_include <o2scl/tov_love.h>
 h_include <o2scl/eos_tov.h>
 h_include <o2scl/nucleus_rmf.h>
+h_include <o2scl/nucmass_ldrop.h>
+h_include <o2scl/nucmass_ldrop_shell.h>
+h_include <o2scl/nucleus_bin.h>
 # 
 # Include statement for C++ source code
 # 
@@ -52,12 +55,13 @@ cpp_using o2scl_hdf
 #
 py_header from o2sclpy.base import *
 py_header from o2sclpy.part import *
+py_header from o2sclpy.nuclei import *
 #
 # ------------------------------------------------------
 # 
 # Class eos_base
 #
-class eos_base
+class eos_base abstract
 - o2scl::thermo def_thermo
 # 1/17/2021 removing set_thermo and get_thermo for now, as yanic does
 # not yet handle these kind of functions.
@@ -368,7 +372,7 @@ class eos_had_rmf
 # 
 # Class eos_quark
 #
-class eos_quark
+class eos_quark abstract
 - parent eos_base
 # 
 # Class eos_quark_bag
@@ -512,6 +516,7 @@ class eos_tov_interp
 # Class tov_solve
 #
 class tov_solve
+- no_cc  
 - size_t buffer_size
 - size_t max_table_size
 - double mass
@@ -625,6 +630,8 @@ class nstar_cold
 - bool include_muons
 - bool err_nonconv
 # 
+# ------------------------------------------------------
+#
 # Class nucleus_rmf
 #
 class nucleus_rmf
@@ -649,6 +656,127 @@ class nucleus_rmf
 #- function set_eos
 #  - int
 #  - io eos_had_rmf &r
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop
+#                              
+class nucmass_ldrop
+- parent nucmass_fit_base
+- double n1
+- double n0
+- double surften
+- double coul_coeff
+- double nn
+- double np
+- double Rn
+- double Rp
+- double surf
+- double bulk
+- double coul
+- bool large_vals_unphys
+- function mass_excess_d
+  - double
+  - double Z
+  - double N
+- function mass_excess
+  - double
+  - int Z
+  - int N
+- function binding_energy_densmat
+  - double
+  - double Z
+  - double N
+  - double npout
+  - double nnout
+  - double neout
+  - double T
+- eos_had_skyrme def_had_eos
+- fermion def_neutron
+- fermion def_proton
+- thermo th
+- function set_n_and_p
+  - void
+  - io fermion &un
+  - io fermion &up
+- function set_eos_had_temp_base
+  - int
+  - io eos_had_temp_base &uhe
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop_skin
+#                              
+class nucmass_ldrop_skin
+- parent nucmass_ldrop
+- bool full_surface
+- bool new_skin_mode
+- double doi
+- double ss
+- double pp
+- double a0
+- double a2
+- double a4
+- bool rel_vacuum
+- double Tchalf
+#
+# ------------------------------------------------------
+#
+# Class nucmass_ldrop_pair
+#                              
+class nucmass_ldrop_pair
+- parent nucmass_ldrop_skin
+- double Epair
+- double pair
+#
+# ------------------------------------------------------
+#
+# Class nucleus_bin
+#                              
+class nucleus_bin
+- nucmass_ame ame16
+- nucmass_ame ame20exp
+- nucmass_ame ame20round
+- nucmass_ame ame95rmd
+- nucmass_ame ame03round
+- nucmass_ame ame03
+- nucmass_ame ame95exp
+- nucmass_ame ame12
+- nucmass_gen ddme2 
+- nucmass_gen ddmed 
+- nucmass_gen ddpc1 
+- nucmass_gen nl3s 
+- nucmass_gen sly4 
+- nucmass_gen skms 
+- nucmass_gen skp 
+- nucmass_gen sv_min 
+- nucmass_gen unedf0 
+- nucmass_gen unedf1 
+- nucmass_mnmsk m95 
+- nucmass_mnmsk m16 
+- nucmass_ktuy kt 
+- nucmass_ktuy kt2 
+- nucmass_wlw wlw1 
+- nucmass_wlw wlw2 
+- nucmass_wlw wlw3 
+- nucmass_wlw wlw4 
+- nucmass_wlw wlw5 
+- nucmass_sdnp sdnp1 
+- nucmass_sdnp sdnp2 
+- nucmass_sdnp sdnp3 
+- nucmass_dz_table dz 
+- nucmass_hfb hfb2 
+- nucmass_hfb hfb8 
+- nucmass_hfb hfb14 
+- nucmass_hfb hfb14_v0 
+- nucmass_hfb_sp hfb17 
+- nucmass_hfb_sp hfb21 
+- nucmass_hfb_sp hfb22 
+- nucmass_hfb_sp hfb23 
+- nucmass_hfb_sp hfb24 
+- nucmass_hfb_sp hfb25 
+- nucmass_hfb_sp hfb26 
+- nucmass_hfb_sp hfb27 
 # 
 # HDF functions
 #

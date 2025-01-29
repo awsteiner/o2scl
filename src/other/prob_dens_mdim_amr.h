@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2018-2024, Andrew W. Steiner
+  Copyright (C) 2018-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -241,7 +241,7 @@ namespace o2scl {
       return 0;
     }
     
-    /** \brief If true, allow resampling in \ref operator() (default true)
+    /** \brief If true, allow resampling (default true)
      */
     bool allow_resampling;
     

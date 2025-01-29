@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2019-2024, Andrew W. Steiner
+  Copyright (C) 2019-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -145,7 +145,7 @@ public:
     double T=1.0;
 
     hdf_file hf;
-    hf.open_or_create("ex_fermion_summ.o2");
+    hf.open_or_create("data/ex_fermion_summ.o2");
 
     double refine=1.0;
 

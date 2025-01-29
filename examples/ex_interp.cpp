@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -145,7 +145,7 @@ int main(void) {
   }
 
   hdf_file hf;
-  hf.open_or_create("ex_interp.o2");
+  hf.open_or_create("data/ex_interp.o2");
   hdf_output(hf,tdata,"tdata");
   hdf_output(hf,tresult,"tresult");
   hf.close();

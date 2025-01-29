@@ -86,9 +86,9 @@ EXAMPLE_BASE = ex_diff.scr ex_fptr.scr ex_interp2.scr ex_table.scr \
 # When Python is enabled, ex_mcmc_kde needs to run after ex_mcmc,
 # since it uses the ex_mcmc results to train the KDE
 if O2SCL_PYTHON
-EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_kde.scr
+EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc_nn.scr
 else
-EXAMPLE_PRGS = $(EXAMPLE_BASE) ex_mcmc.scr
+EXAMPLE_PRGS = $(EXAMPLE_BASE) 
 endif
 
 
@@ -133,7 +133,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 # Distribution files
 # -------------------------------------------------------------
 
-EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h
+EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h data/README.md
 
 # -------------------------------------------------------------
 # Main targets
@@ -204,7 +204,7 @@ EXTRA_BASE = \
 	bm_polylog
 
 if O2SCL_PYTHON
-EXTRA_PROGRAMS = $(EXTRA_BASE) ex_mcmc_kde
+EXTRA_PROGRAMS = $(EXTRA_BASE) ex_mcmc_kde ex_mcmc_nn
 else
 EXTRA_PROGRAMS = $(EXTRA_BASE)
 endif
@@ -290,12 +290,17 @@ ex_mcmc_kde_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_mcmc_kde_LDADD = $(ADDL_TEST_LIBS)
 ex_mcmc_kde_SOURCES = ex_mcmc_kde.cpp
 
+ex_mcmc_nn_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_mcmc_nn_LDADD = $(ADDL_TEST_LIBS)
+ex_mcmc_nn_SOURCES = ex_mcmc_nn.cpp
+
 ex_mcmc.scr: ex_mcmc
 	./ex_mcmc > ex_mcmc.scr
 
-ex_mcmc_kde.scr: ex_mcmc ex_mcmc_kde
+ex_mcmc_nn.scr: ex_mcmc.scr ex_mcmc_kde ex_mcmc ex_mcmc_nn
 	./ex_mcmc > ex_mcmc.scr
 	./ex_mcmc_kde > ex_mcmc_kde.scr
+	./ex_mcmc_nn > ex_mcmc_nn.scr
 
 # -------------------------------------------------------------------
 

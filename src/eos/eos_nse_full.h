@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2024, Andrew W. Steiner
+  Copyright (C) 2014-2025, Andrew W. Steiner
   
   This file is part of O2scl.
 
@@ -39,6 +39,7 @@
 #include <o2scl/root_cern.h>
 
 #include <o2scl/eos_had_skyrme.h>
+#include <o2scl/nucmass_ldrop.h>
 
 #include <o2scl/mmin_simp2.h>
 
@@ -371,7 +372,7 @@ namespace o2scl {
     /// \name Nuclei and nuclear masses
     //@{
     /// Compute nuclei in dense matter
-    o2scl::nucmass_densmat nuc_dens;
+    o2scl::nucmass_ldrop nuc_dens;
 
     /** \brief Set nuclear mass formula
      */

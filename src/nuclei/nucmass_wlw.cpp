@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2024, Andrew W. Steiner
+  Copyright (C) 2014-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -42,14 +42,22 @@ int nucmass_wlw::load(std::string model, bool external) {
   } else {
     if (model=="WS3.2") {
       fname=dir+"/nucmass/wlw10.o2";
+      reference="N. Wang, M. Liu, and X. Wu, Phys. Rev. C 81 (2010) 044322.";
     } else if (model=="WS3.3") {
       fname=dir+"/nucmass/wllw10.o2";
+      reference=((std::string)"N. Wang, Z. Liang, M. Liu, and X. Wu, ")+
+        "Phys. Rev. C 82 (2010) 044304.";
     } else if (model=="WS3.6") {
       fname=dir+"/nucmass/lwdw11.o2";
+      reference=((std::string)"M. Liu, N. Wang, Y. Deng, and X. Wu, ")+
+        "Phys. Rev. C 84 (2011) 014333.";
     } else if (model=="WS3_RBF") {
       fname=dir+"/nucmass/wl11.o2";
+      reference="N. Wang and M. Liu, Phys. Rev. C 84 (2011) 051303(R).";
     } else if (model=="WS4_RBF") {
       fname=dir+"/nucmass/wlwm14.o2";
+      reference=((std::string)"N. Wang, M. Liu, X. Wu, and J. Meng, ")+
+        "Phys. Lett. B 734 (2014) 215.";
     } else {
       O2SCL_ERR("Invalid model in nucmass_sdnp().",exc_einval);
     }

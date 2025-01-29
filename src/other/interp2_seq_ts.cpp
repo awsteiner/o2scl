@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -505,7 +505,7 @@ int main(void) {
 
   }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   {
     // N=M

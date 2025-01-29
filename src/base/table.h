@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -148,7 +148,7 @@ namespace o2scl {
       - A numerical index from 0 to C-1 (where C is the number of
       columns). For example, data can be accessed through \ref
       table::get() and \ref table::set(size_t c, size_t r,
-      double val), or the overloaded [] operator, <tt>table[c][r]</tt>. 
+      fp_t val), or the overloaded [] operator, <tt>table[c][r]</tt>. 
       - A name of the column which is a string.
       For example, data can be accessed with table::get(string cname,
       int r) and table::set(string cname, int r, double val).

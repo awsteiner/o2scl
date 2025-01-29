@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -122,7 +122,7 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
       "list","max","min","nlines","refine","rename",
       "select","select-rows",
       "set-data","set-unit","sort","stats","sum",
-      "thin-mcmc","to-hist","to-hist-2d","to-table3d","wstats",
+      "thin-mcmc","to-hist","to-hist-2d","to-table3d","to-tensor-grid","wstats",
       "ser-hist-t3d","to-gaussian","to-pdma","to-gmm","to-kde","value-grid"
     };
     vector_sort<vector<string>,string>(itmp.size(),itmp);
@@ -634,7 +634,7 @@ void acol_manager::command_add(std::string new_type) {
     
   } else if (new_type=="table") {
     
-    static const size_t narr=48;
+    static const size_t narr=49;
     comm_option_s options_arr[narr]=
       {{0,"add-vec","",0,2,"","",
         new comm_option_mfptr<acol_manager>
@@ -774,6 +774,9 @@ void acol_manager::command_add(std::string new_type) {
        {0,"to-table3d","",0,4,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_to_table3d),both},
+       {0,"to-tensor-grid","",2,-1,"","",
+        new comm_option_mfptr<acol_manager>
+        (this,&acol_manager::comm_to_tensor_grid),both},
        {0,"value","",0,3,"","",
         new comm_option_mfptr<acol_manager>
         (this,&acol_manager::comm_value),both},

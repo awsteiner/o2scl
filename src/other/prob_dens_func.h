@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2024, Andrew W. Steiner
+  Copyright (C) 2012-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -273,8 +273,10 @@ namespace o2scl {
 		   "invert_cdf().",exc_einval);
       }
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_gaussian::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       return gsl_cdf_gaussian_Pinv(in_cdf,sigma_)+cent_;
     }
@@ -458,8 +460,10 @@ namespace o2scl {
 		   "invert_cdf().",exc_einval);
       }
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_uniform::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       if (in_cdf==1.0) return ul;
       if (in_cdf==0.0) return ll;
@@ -631,8 +635,10 @@ namespace o2scl {
     /// The inverse cumulative distribution function
     virtual double invert_cdf(double in_cdf) const {
       if (in_cdf<0.0 || in_cdf>1.0) {
-	O2SCL_ERR2("Requested cdf inverse outside of [0,1] in ",
-		   "prob_dens_lognormal::invert_cdf().",exc_einval);
+	O2SCL_ERR((((std::string)"Requested cdf inverse of ")+
+                   o2scl::dtos(in_cdf)+" which is outside of [0,1] "+
+                   "in prob_dens_gaussian::invert_cdf().").c_str(),
+                  exc_einval);
       }
       return gsl_cdf_lognormal_Pinv(in_cdf,mu_,sigma_);
     }
@@ -925,7 +931,7 @@ namespace o2scl {
         \f]
         is equal to the value given in \c integral, then this 
         function returns the value
-        \[f
+        \f[
         \frac{1}{2 \pi} \exp \left( - \frac{a^2}{2} \right) \, .
         \f]
     */
@@ -1017,8 +1023,8 @@ namespace o2scl {
       \note Note that, for example, a LU decomposition does not work
       for this class because a Cholesky decomposition (or a spectral
       decomposition) is required for sampling. For this reason, we
-      cannot use a generic \ref o2scl::matrix_invert_det object.
-      However, we still could use Cholesky decompositions from
+      cannot use a generic \ref o2scl_linalg::matrix_invert_det
+      object. However, we still could use Cholesky decompositions from
       armadillo or Eigen.
   */
   template<class vec_t=boost::numeric::ublas::vector<double>,

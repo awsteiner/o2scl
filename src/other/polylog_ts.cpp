@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,6 +31,8 @@
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_MULTIP
+
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
 cpp_dec_float_25;
@@ -49,12 +51,18 @@ typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
 typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;
 #endif
 
+#endif
+
 int main(void) {
 
   cout.setf(ios::scientific);
   
   test_mgr t;
   t.set_output_level(1);
+  
+#ifdef O2SCL_MULTIP
+  
+#ifndef O2SCL_OPENSUSE_I386
   
   // Compare polylog values with hard-coded values
   polylog<> p;
@@ -225,6 +233,10 @@ int main(void) {
       
     }
   }
+
+#endif
+  
+#endif
   
   t.report();
   

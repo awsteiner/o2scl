@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -315,9 +315,10 @@ int eos_had_base::fn0(double delta, double &nb, double &leoa) {
 int eos_had_base::saturation() {
   int sret=fn0(0.0,n0,eoa);
   if (sret!=0 || n0<0.08 || n0>0.24) {
-    O2SCL_CONV2_RET("Function eos_had_base::saturation() found an ",
-                    "unphysical saturation density.",
-                    o2scl::exc_efailed,err_nonconv);
+    O2SCL_CONV_RET((((std::string)"Function eos_had_base::saturati")+
+                    "on() found an unphysical saturation density ("+
+                    o2scl::dtos(n0)+").").c_str(),
+                   o2scl::exc_efailed,err_nonconv);
   }
   comp=fcomp(n0);
   esym=fesym(n0);

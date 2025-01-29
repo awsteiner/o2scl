@@ -34,8 +34,10 @@ Multi-dimensional distributions are children of :ref:`prob_dens_mdim
 - :ref:`prob_dens_mdim_gaussian <prob_dens_mdim_gaussian>`
 - :ref:`prob_dens_mdim_biv_gaussian <prob_dens_mdim_biv_gaussian>`
 - :ref:`prob_dens_mdim_amr <prob_dens_mdim_amr>`
-- :ref:`prob_dens_mdim_gmm <prob_dens_mdim_gmm>`
-- :ref:`kde_python <kde_python>`
+- :ref:`prob_dens_mdim_gmm <prob_dens_mdim_gmm>` (See also
+  :ref:`gmm_python <gmm_python>` if Python support is enabled)
+- :ref:`kde_python <kde_python>` (if Python support is enabled)
+- :ref:`nflows_python <nflows_python>` (if Python support is enabled)
 
 Conditional probability distributions are children of 
 :ref:`prob_cond_mdim <prob_cond_mdim>`. These classes can be used
@@ -44,7 +46,6 @@ as proposal distributions for the O₂scl MCMC classes.
 - :ref:`prob_cond_mdim_gaussian <prob_cond_mdim_gaussian>`
 - :ref:`prob_cond_mdim_fixed_step <prob_cond_mdim_fixed_step>`
 - :ref:`prob_cond_mdim_indep <prob_cond_mdim_indep>`
-
 
 Markov chain Monte Carlo (MCMC)
 -------------------------------

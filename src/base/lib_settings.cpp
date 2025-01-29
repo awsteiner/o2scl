@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -101,6 +101,10 @@ int lib_settings_class::py_init_nothrow(int verbose) {
     Py_SetProgramName(pe2.c_str());
     }
   */
+
+  if (py_initialized) {
+    return 0;
+  }
   
   if (verbose>0) {
     cout << "Running Py_Initialize()." << endl;
@@ -202,6 +206,10 @@ bool lib_settings_class::range_check() {
 PyObject *lib_settings_class::py_import_module(std::string module,
                                                int verbose) {
 
+  if (o2scl_settings.py_initialized==false) {
+    py_init(verbose);
+  }
+    
   PyObject *pModule, *pName;
   
   // Get the Unicode name of the user-specified module
@@ -619,6 +627,14 @@ bool lib_settings_class::cubature_support() {
 #endif
 }
 
+bool lib_settings_class::multiprecision_support() {
+#ifdef O2SCL_MULTIP
+  return true;
+#else
+  return false;
+#endif
+}
+
 bool lib_settings_class::python_support() {
 #ifdef O2SCL_SET_PYTHON
   return true;
@@ -643,8 +659,8 @@ bool lib_settings_class::readline_support() {
 #endif
 }
 
-bool lib_settings_class::module_support() {
-#ifdef O2SCL_MODULES
+bool lib_settings_class::cuda_support() {
+#ifdef O2SCL_CUDA
   return true;
 #else
   return false;

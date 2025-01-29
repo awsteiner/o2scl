@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -38,16 +38,6 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-  thermo th;
-
-  eos_base eo;
-  
-  th.ed=1.0;
-  th.pr=2.0;
-  th.en=3.0;
-
-  eo.set_thermo(th);
-  
   t.report();
   return 0;
 }

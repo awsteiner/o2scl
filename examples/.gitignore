@@ -61,9 +61,13 @@ mcmc_0_out
 mcmc_0_scr
 testlist
 ex_emulator
-
 ex_mcmc_kde
-
 ex_mcmc_kde_0_out
-
 ex_mcmc_kde_0_scr
+ex_mcmc_nn1_0_out
+ex_mcmc_nn1_0_scr
+ex_mcmc_nn
+ex_mcmc_nn2_0_scr
+ex_mcmc_nn2_0_out
+ex_mcmc_nn3_0_out
+ex_mcmc_nn3_0_scr

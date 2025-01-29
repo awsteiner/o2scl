@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2024, Andrew W. Steiner
+  Copyright (C) 2014-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -49,6 +49,9 @@ int nucmass_sdnp::load(std::string model, bool external) {
     } else {
       O2SCL_ERR("Invalid model in nucmass_sdnp().",exc_einval);
     }
+    reference=((std::string)"M. V. Stoitsov, J. Dobaczewski, ")+
+      "W. Nazarewicz, S. Pittel, and D. J. Dean, Phys. Rev. C "+
+      "68 (2003) 054312.";
   }
   
   table<> data;

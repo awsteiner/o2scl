@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_BOSON_H
 
 /** \file boson.h
-    \brief File defining \ref o2scl::boson
+    \brief File defining \ref o2scl::boson_tl
 */
 
 #include <string>
@@ -37,6 +37,14 @@
 #include <o2scl/polylog.h>
 
 #include <o2scl/part.h>
+
+#ifdef O2SCL_MULTIP
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
 
 namespace o2scl {
 
@@ -56,7 +64,7 @@ namespace o2scl {
     /** \brief The condensate
 	
 	The condensate variable is provided principally for
-	user storage and is mostly ignored by \o2p classes. 
+	user storage and is provided mostly for the user
     */
     fp_t co;
 
@@ -81,7 +89,19 @@ namespace o2scl {
 
   };
 
+  /// Boson type for double-precision values
   typedef boson_tl<double> boson;
+
+  /// Boson type for long double-precision values
+  typedef boson_tl<long double> boson_ld;
+  
+#ifdef O2SCL_MULTIP
+  
+  /// Boson type for 25-digit floating points
+  typedef boson_tl<boost::multiprecision::number<
+                     boost::multiprecision::cpp_dec_float<25> > > boson_cdf25;
+  
+#endif
 
   /** \brief Compute the thermodynamic properties of a boson 
       [abstract base]
@@ -95,6 +115,9 @@ namespace o2scl {
     be_inte_t be_integ;
     
     /** \brief Compute a term in the nondegenerate expansion
+
+        This function uses \ref be_integ to perform the Bessel
+        integrals.
      */
     void ndeg_terms(size_t j, fp_t tt,
                     fp_t xx, fp_t m, bool inc_rest_mass,

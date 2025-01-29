@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -2546,7 +2546,7 @@ namespace o2scl {
 
   };
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
   
   /** \brief Use multiprecision to automatically solve a cubic to 
       a specified level of precision

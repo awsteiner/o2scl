@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2021, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -29,9 +29,9 @@ namespace o2scl_linalg {
   
   // (Armadillo specialization)
   template<>
-    void QR_decomp_unpack<arma::mat,arma::mat,arma::mat>
-    (const size_t M, const size_t N, arma::mat &A, arma::mat &Q, 
-     arma::mat &R);
+  void QR_decomp_unpack<arma::mat,arma::mat,arma::mat,double>
+  (const size_t M, const size_t N, arma::mat &A, arma::mat &Q, 
+   arma::mat &R);
   
 }
 

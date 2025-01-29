@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2015-2024, Andrew W. Steiner
+  Copyright (C) 2015-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -113,13 +113,13 @@ int main(void) {
 
   // Output to a file
   hdf_file hf;
-  hf.open_or_create("ex_tensor_dat.o2");
+  hf.open_or_create("data/ex_tensor_dat.o2");
   hdf_output(hf,m3,"tens_grid_test");
   hf.close();
 
   // Now read from that file
   tensor_grid<> m3c;
-  hf.open("ex_tensor_dat.o2");
+  hf.open("data/ex_tensor_dat.o2");
   hdf_input(hf,m3c);
   hf.close();
 

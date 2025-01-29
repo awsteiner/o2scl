@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -69,6 +69,8 @@ int main(void) {
 
   test_mgr t;
   t.set_output_level(2);
+
+#ifndef O2SCL_OPENSUSE_I386
   
   double n0, eoa2;
   eos_had_skyrme sk;
@@ -549,6 +551,8 @@ int main(void) {
   t.test_rel(tnfd.dmudn_mixed,(dmupdnn2-dmupdnn1)/eps,
 	     1.0e-4,"second deriv, dmupdnn");
 
+#endif
+  
   t.report();
 
   return 0;

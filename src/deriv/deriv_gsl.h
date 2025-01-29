@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -148,6 +148,29 @@ namespace o2scl {
 
     virtual ~deriv_gsl() {}
     
+    /// Copy constructor
+    deriv_gsl(const deriv_gsl &f) {
+      this->verbose=f.verbose;
+      this->err_nonconv=f.err_nonconv;
+      this->h=f.h;
+      this->h_opt=f.h_opt;
+      this->func_max=f.func_max;
+      this->pow_tol_func=f.pow_tol_func;
+    }
+    
+    /// Copy construction with operator=()
+    deriv_gsl &operator=(const deriv_gsl &f) {
+      if (this!=&f) {
+        this->verbose=f.verbose;
+        this->err_nonconv=f.err_nonconv;
+        this->h=f.h;
+        this->h_opt=f.h_opt;
+        this->func_max=f.func_max;
+        this->pow_tol_func=f.pow_tol_func;
+      }
+      return *this;
+    }
+    
     /** \brief Initial stepsize
 	
 	This should be specified before a call to deriv() or
@@ -293,7 +316,7 @@ namespace o2scl {
 
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       // ─────────────────────────────────────────────────────────────────
       
@@ -638,7 +661,7 @@ namespace o2scl {
                              fp2_t &result, fp2_t &abserr_round,
                              fp2_t &abserr_trunc, double func_tol) {
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       funct_multip fm2;
       fm2.err_nonconv=false;

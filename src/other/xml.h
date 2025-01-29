@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2022-2024, Andrew W. Steiner
+  Copyright (C) 2022-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /** \file xml.h
-    \brief File defining \ref o2scl::xml
+    \brief File describing pugixml interface
 */
 #ifndef O2SCL_XML_H
 #define O2SCL_XML_H

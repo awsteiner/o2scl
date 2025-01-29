@@ -1,7 +1,6 @@
-/*
-  ───────────────────────────────────────────────────────────────────
+/* ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -152,7 +151,7 @@ namespace o2scl {
       This is abstract base class for the nuclear mass formulas. Some
       mass formulas are undefined for sufficiently exotic nuclei. You
       can use the function is_included() to find if a particular
-      \nucleus is included or not in a particular mass formula.
+      nucleus is included or not in a particular mass formula.
 
       The quantities below are returned in units of MeV. The functions
       include a version which takes Z and N as integers and a version
@@ -171,7 +170,7 @@ namespace o2scl {
       The neutron, proton, and electron masses and atomic mass unit
       are stored in \ref m_prot, \ref m_neut, \ref m_elec, and \ref
       m_amu . By default, this are assigned to the values in \ref
-      o2scl_mks times \ref o2scl_const::hc_mev_fm , but these default
+      o2scl_const times \ref o2scl_const::hc_mev_fm , but these default
       values are modified in the constructors of some children
       classes.
 
@@ -395,13 +394,8 @@ namespace o2scl {
       Nuclear mass formulas which are descendants of this class
       can be fit to experiment using \ref nucmass_fit.
 
-      Within \o2p, this class has only two children,
-      \ref nucmass_frdm and \ref nucmass_semi_empirical. There
-      is also a child <tt>nucmass_ldrop</tt> in \o2e.
-      \comment
-      (Note that nucmass_ldrop is in o2scl_eos so currently
-      can't be referenced)
-      \endcomment
+      This class has children, \ref nucmass_frdm, \ref
+      nucmass_semi_empirical, and \ref nucmass_ldrop.
   */
   class nucmass_fit_base : public nucmass {
     
@@ -420,7 +414,7 @@ namespace o2scl {
     
     /// Fill array with guess from present values for fitting [abstract]
     virtual int guess_fun(size_t nv, ubvector &x)=0;
-    
+
   };
   
   /** \brief Semi-empirical mass formula

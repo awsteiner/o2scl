@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -118,7 +118,7 @@ namespace o2scl {
       between the code and the paper a bit more transparent.
       
       \future There might be room to improve the testing
-      of the finite temperature \part a bit.
+      of the finite temperature part a bit.
       \future There is some repetition between calc_e() and calc_temp_e() 
       that possibly could be removed.
       \future Include the analytic relations from Constantinou et al. 

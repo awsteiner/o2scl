@@ -14,13 +14,12 @@ HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h \
 	nucmass_dglg.h nucmass_wlw.h nucmass_sdnp.h \
 	nucmass_densmat.h nucmass_gen.h nuclei_python.h \
-	part_funcs.h
+	part_funcs.h 
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
 	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr nucmass_ame.scr \
 	part_funcs.scr
-
 
 # ------------------------------------------------------------
 # Includes
@@ -50,17 +49,23 @@ else
 O2SCL_PYTHON_MVAR = 
 endif
 
+if O2SCL_MULTIP
+O2SCL_MULTIP_MVAR = -DO2SCL_MULTIP
+else 
+O2SCL_MULTIP_MVAR = 
+endif
+
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) \
 	-DO2SCL_COND_FLAG $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
+	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_MULTIP_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) \
 	-DO2SCL_COND_FLAG $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR)
+	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_MULTIP_MVAR)
 endif
 
 # ------------------------------------------------------------

@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -85,7 +85,7 @@ int main(void) {
   dat.deriv("x","sx","cx2");
 
   hdf_file hf;
-  hf.open_or_create("ex_table.o2");
+  hf.open_or_create("data/ex_table.o2");
   hdf_output(hf,dat,"table");
   hf.close();
   

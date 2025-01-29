@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -37,12 +37,11 @@
 #include <o2scl/tov_love.h>
 #include <o2scl/eos_tov.h>
 #include <o2scl/nucleus_rmf.h>
+#include <o2scl/nucmass_ldrop.h>
+#include <o2scl/nucmass_ldrop_shell.h>
+#include <o2scl/nucleus_bin.h>
 
 extern "C" {
-
-void *o2scl_create_eos_base();
-
-void o2scl_free_eos_base(void *vptr);
 
 void *o2scl_eos_base_get_def_thermo(void *vptr);
 
@@ -414,10 +413,6 @@ int o2scl_eos_had_rmf_get_fields(void *vptr, double *sig, double *ome, double *r
 
 int o2scl_eos_had_rmf_set_fields(void *vptr, double *sig, double *ome, double *rho);
 
-void *o2scl_create_eos_quark();
-
-void o2scl_free_eos_quark(void *vptr);
-
 void *o2scl_create_eos_quark_bag();
 
 void o2scl_free_eos_quark_bag(void *vptr);
@@ -530,19 +525,19 @@ void *o2scl_eos_tov_interp_get_full_vecnb(void *vptr);
 
 void o2scl_eos_tov_interp_set_full_vecnb(void *vptr, void *p_v);
 
-void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, char *s_cole, char *s_colp, char *s_colnb);
+void o2scl_eos_tov_interp_read_table(void *vptr, void *ptr_eos, void *ptr_s_cole, void *ptr_s_colp, void *ptr_s_colnb);
 
 void o2scl_eos_tov_interp_default_low_dens_eos(void *vptr);
 
 void o2scl_eos_tov_interp_sho11_low_dens_eos(void *vptr);
 
-void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, char *model, bool external=false);
+void o2scl_eos_tov_interp_s12_low_dens_eos(void *vptr, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, char *model, bool external=false);
+void o2scl_eos_tov_interp_gcp10_low_dens_eos(void *vptr, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, char *model, bool external=false);
+void o2scl_eos_tov_interp_ngl13_low_dens_eos(void *vptr, double L, void *ptr_model, bool external=false);
 
-void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, char *fname);
+void o2scl_eos_tov_interp_ngl13_low_dens_eos2(void *vptr, double S, double L, double nt, void *ptr_fname);
 
 void o2scl_eos_tov_interp_no_low_dens_eos(void *vptr);
 
@@ -835,8 +830,318 @@ void *o2scl_nucleus_rmf_get_profiles(void *vptr);
 
 void *o2scl_nucleus_rmf_get_chden(void *vptr);
 
-void o2scl_skyrme_load_wrapper(void *ptr_sk, char *model, bool external=false, int verbose=0);
+void *o2scl_create_nucmass_ldrop();
 
-void o2scl_rmf_load_wrapper(void *ptr_rmf, char *model, bool external=false);
+void o2scl_free_nucmass_ldrop(void *vptr);
+
+double o2scl_nucmass_ldrop_get_n1(void *vptr);
+
+void o2scl_nucmass_ldrop_set_n1(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_n0(void *vptr);
+
+void o2scl_nucmass_ldrop_set_n0(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_surften(void *vptr);
+
+void o2scl_nucmass_ldrop_set_surften(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_coul_coeff(void *vptr);
+
+void o2scl_nucmass_ldrop_set_coul_coeff(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_nn(void *vptr);
+
+void o2scl_nucmass_ldrop_set_nn(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_np(void *vptr);
+
+void o2scl_nucmass_ldrop_set_np(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_Rn(void *vptr);
+
+void o2scl_nucmass_ldrop_set_Rn(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_Rp(void *vptr);
+
+void o2scl_nucmass_ldrop_set_Rp(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_surf(void *vptr);
+
+void o2scl_nucmass_ldrop_set_surf(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_bulk(void *vptr);
+
+void o2scl_nucmass_ldrop_set_bulk(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_get_coul(void *vptr);
+
+void o2scl_nucmass_ldrop_set_coul(void *vptr, double v);
+
+bool o2scl_nucmass_ldrop_get_large_vals_unphys(void *vptr);
+
+void o2scl_nucmass_ldrop_set_large_vals_unphys(void *vptr, bool v);
+
+void *o2scl_nucmass_ldrop_get_def_had_eos(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_had_eos(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_def_neutron(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_neutron(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_def_proton(void *vptr);
+
+void o2scl_nucmass_ldrop_set_def_proton(void *vptr, void *p_v);
+
+void *o2scl_nucmass_ldrop_get_th(void *vptr);
+
+void o2scl_nucmass_ldrop_set_th(void *vptr, void *p_v);
+
+double o2scl_nucmass_ldrop_mass_excess_d(void *vptr, double Z, double N);
+
+double o2scl_nucmass_ldrop_mass_excess(void *vptr, int Z, int N);
+
+double o2scl_nucmass_ldrop_binding_energy_densmat(void *vptr, double Z, double N, double npout, double nnout, double neout, double T);
+
+void o2scl_nucmass_ldrop_set_n_and_p(void *vptr, void *ptr_un, void *ptr_up);
+
+int o2scl_nucmass_ldrop_set_eos_had_temp_base(void *vptr, void *ptr_uhe);
+
+void *o2scl_create_nucmass_ldrop_skin();
+
+void o2scl_free_nucmass_ldrop_skin(void *vptr);
+
+bool o2scl_nucmass_ldrop_skin_get_full_surface(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_full_surface(void *vptr, bool v);
+
+bool o2scl_nucmass_ldrop_skin_get_new_skin_mode(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_new_skin_mode(void *vptr, bool v);
+
+double o2scl_nucmass_ldrop_skin_get_doi(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_doi(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_ss(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_ss(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_pp(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_pp(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a0(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a0(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a2(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a2(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_skin_get_a4(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_a4(void *vptr, double v);
+
+bool o2scl_nucmass_ldrop_skin_get_rel_vacuum(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_rel_vacuum(void *vptr, bool v);
+
+double o2scl_nucmass_ldrop_skin_get_Tchalf(void *vptr);
+
+void o2scl_nucmass_ldrop_skin_set_Tchalf(void *vptr, double v);
+
+void *o2scl_create_nucmass_ldrop_pair();
+
+void o2scl_free_nucmass_ldrop_pair(void *vptr);
+
+double o2scl_nucmass_ldrop_pair_get_Epair(void *vptr);
+
+void o2scl_nucmass_ldrop_pair_set_Epair(void *vptr, double v);
+
+double o2scl_nucmass_ldrop_pair_get_pair(void *vptr);
+
+void o2scl_nucmass_ldrop_pair_set_pair(void *vptr, double v);
+
+void *o2scl_create_nucleus_bin();
+
+void o2scl_free_nucleus_bin(void *vptr);
+
+void *o2scl_nucleus_bin_get_ame16(void *vptr);
+
+void o2scl_nucleus_bin_set_ame16(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame20exp(void *vptr);
+
+void o2scl_nucleus_bin_set_ame20exp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame20round(void *vptr);
+
+void o2scl_nucleus_bin_set_ame20round(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame95rmd(void *vptr);
+
+void o2scl_nucleus_bin_set_ame95rmd(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame03round(void *vptr);
+
+void o2scl_nucleus_bin_set_ame03round(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame03(void *vptr);
+
+void o2scl_nucleus_bin_set_ame03(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame95exp(void *vptr);
+
+void o2scl_nucleus_bin_set_ame95exp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ame12(void *vptr);
+
+void o2scl_nucleus_bin_set_ame12(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddme2(void *vptr);
+
+void o2scl_nucleus_bin_set_ddme2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddmed(void *vptr);
+
+void o2scl_nucleus_bin_set_ddmed(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_ddpc1(void *vptr);
+
+void o2scl_nucleus_bin_set_ddpc1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_nl3s(void *vptr);
+
+void o2scl_nucleus_bin_set_nl3s(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sly4(void *vptr);
+
+void o2scl_nucleus_bin_set_sly4(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_skms(void *vptr);
+
+void o2scl_nucleus_bin_set_skms(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_skp(void *vptr);
+
+void o2scl_nucleus_bin_set_skp(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sv_min(void *vptr);
+
+void o2scl_nucleus_bin_set_sv_min(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_unedf0(void *vptr);
+
+void o2scl_nucleus_bin_set_unedf0(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_unedf1(void *vptr);
+
+void o2scl_nucleus_bin_set_unedf1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_m95(void *vptr);
+
+void o2scl_nucleus_bin_set_m95(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_m16(void *vptr);
+
+void o2scl_nucleus_bin_set_m16(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_kt(void *vptr);
+
+void o2scl_nucleus_bin_set_kt(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_kt2(void *vptr);
+
+void o2scl_nucleus_bin_set_kt2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw1(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw2(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw3(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw3(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw4(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw4(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_wlw5(void *vptr);
+
+void o2scl_nucleus_bin_set_wlw5(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp1(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp1(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp2(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_sdnp3(void *vptr);
+
+void o2scl_nucleus_bin_set_sdnp3(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_dz(void *vptr);
+
+void o2scl_nucleus_bin_set_dz(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb2(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb2(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb8(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb8(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb14(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb14(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb14_v0(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb14_v0(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb17(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb17(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb21(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb21(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb22(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb22(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb23(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb23(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb24(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb24(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb25(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb25(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb26(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb26(void *vptr, void *p_v);
+
+void *o2scl_nucleus_bin_get_hfb27(void *vptr);
+
+void o2scl_nucleus_bin_set_hfb27(void *vptr, void *p_v);
+
+void o2scl_skyrme_load_wrapper(void *ptr_sk, void *ptr_model, bool external=false, int verbose=0);
+
+void o2scl_rmf_load_wrapper(void *ptr_rmf, void *ptr_model, bool external=false);
 
 }

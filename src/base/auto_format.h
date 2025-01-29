@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,24 +35,30 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#endif
 
 namespace o2scl_auto_format {
 
+#ifdef O2SCL_MULTIP
   typedef
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<35> >
   cpp_dec_float_35;
   typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
   typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
+#endif
   
   // Declarations for friendship
   class auto_format;
   auto_format &operator<<(auto_format &at, double d);
   auto_format &operator<<(auto_format &at, long double d);
+#ifdef O2SCL_MULTIP
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
+#endif
 
   /** \brief Automatically format output
 
@@ -153,6 +159,7 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, long double d);
     
+#ifdef O2SCL_MULTIP
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_35 &d);
      
@@ -161,7 +168,8 @@ namespace o2scl_auto_format {
      
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_100 &d);
-     
+#endif
+    
     template<class data_t>
     friend auto_format &operator<<
     (auto_format &at,
@@ -245,6 +253,7 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
+#ifdef O2SCL_MULTIP
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
@@ -256,7 +265,8 @@ namespace o2scl_auto_format {
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_100 &d);
-
+#endif
+  
   /** \brief Output a single-precision number
    */
   auto_format &operator<<(auto_format &at, float f);

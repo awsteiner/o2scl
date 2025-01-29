@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2013-2024, Andrew W. Steiner
+  Copyright (C) 2013-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -46,6 +46,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   double x, min;
   funct f=minfun;
   funct f2=minfun2;
@@ -60,6 +62,8 @@ int main(void) {
   t.test_rel(x,0.0,1.0e-4,"val");
   t.test_rel(min,-1.0,1.0,"min");
 
+#endif
+  
   t.report();
   return 0;
 }

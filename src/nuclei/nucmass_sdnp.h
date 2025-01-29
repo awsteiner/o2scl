@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2024, Andrew W. Steiner
+  Copyright (C) 2014-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -130,9 +130,6 @@ namespace o2scl {
 
     /// The number of entries (about 3000).
     size_t n;
-    
-    /// The reference for the original data
-    std::string reference;
     
     /// The array containing the mass data of length n
     entry *mass;

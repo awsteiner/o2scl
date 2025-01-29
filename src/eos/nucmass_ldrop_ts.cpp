@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -62,52 +62,6 @@ int main(void) {
   rr.eval_rms_rsq(r2,126,0.3,r1,r2,r3);
   t.test_rel(r1,0.092,1.0e-6,"rms radius");
   cout << endl;
-
-  cout << "-------------------------------------------------\n" << endl;
-
-#ifdef O2SCL_NEVER_DEFINED
-  if (false) {
-    nucmass_ldrop_skin tst;
-    tst.new_skin_mode=true;
-    tst.set_eos_had_temp_base(apr);
-    tst.set_n_and_p(nrn,nrp);
-    tst.n0=0.17;
-    tst.n1=-0.05;
-    double be;
-    
-    double chi=1.0e-2, Rn, Rws, nN, t1, t2, f1, f2;
-    
-    thermo th;
-    nrn.n=1.0e-3;
-    nrp.n=0.0;
-    apr.calc_temp_e(nrn,nrp,1.0e-3,th);
-    double fdrip=th.ed-1.0e-3*th.en-nrn.n*nrn.m;
-
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,1.0e-3)/hc_mev_fm;
-    cout << "be: " << be << endl;
-    Rn=tst.Rn;
-    Rws=Rn/cbrt(chi);
-    nN=3.0/4.0/pi/pow(Rws,3.0);
-    cout << nN << " " << Rws << endl;
-    t1=be*nN;
-    t2=(1.0-chi)*fdrip;
-    f1=t1+t2;
-    cout << t1 << " " << t2 << " " << f1 << endl;
-    
-    tst.rel_vacuum=false;
-    be=tst.drip_binding_energy_d(40,80,0.0,1.0e-3,chi,1.0e-3)/hc_mev_fm;
-    Rn=tst.Rn;
-    Rws=Rn/cbrt(chi);
-    nN=3.0/4.0/pi/pow(Rws,3.0);
-    t1=be*nN;
-    t2=fdrip;
-    f2=t1+t2;
-    cout << t1 << " " << t2 << " " << f2 << endl;
-    cout << f1-f2 << endl;
-
-    exit(-1);
-  }
-#endif
 
   cout << "-------------------------------------------------\n" << endl;
 
@@ -393,11 +347,12 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0.0,0.0)/208.0 << endl;
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0.0,
+                                     0.0)/208.0 << endl;
   cout << endl;
 
   cout << "ldf,drip,dim=3: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,0.0)/208.0 
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0,0.0)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 
@@ -405,7 +360,7 @@ int main(void) {
   cout << endl;
 
   cout << "ldf,drip,dim,T=0.01: " 
-       << ldf.drip_binding_energy_d(82,126,0.02,0.02,0,0.01)/208.0 
+       << ldf.binding_energy_densmat(82,126,0.02,0.02,0,0.01)/208.0 
        << endl;
   cout << "nn,np: " << ldf.nn << " " << ldf.np << endl;
   cout << "bulk,surf,coul: " 

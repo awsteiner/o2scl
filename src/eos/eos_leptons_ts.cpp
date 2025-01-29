@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -38,7 +38,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   eos_leptons_multip elep;
 #else
   eos_leptons elep;
@@ -75,7 +75,7 @@ int main(void) {
   cout << "  dndT: " << dtos(elep.ed.dndT) << " dsdT: "
        << dtos(elep.ed.dsdT) << endl;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   elep.ld_acc();
   elep.pair_mu(0.1);
   cout << "n: " << dtos(elep.e.n,0) << " en: ";
@@ -115,7 +115,7 @@ int main(void) {
   cout << dtos(elep.e.n,0) << " dndmu: ";
   cout << dtos(elep.ed.dndmu,0) << endl;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   elep.ld_acc();
   elep.e.n=1.0e-6;

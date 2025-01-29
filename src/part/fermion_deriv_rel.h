@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -594,7 +594,8 @@ namespace o2scl {
            class dit_t=inte_qag_gsl<>,
 	   class fp_t=double>
   class fermion_deriv_rel_tl :
-    public fermion_deriv_thermo_tl<fermion_deriv_t,fp_t>,
+    public fermion_deriv_thermo_tl<fermion_deriv_t,
+                                   fermion_rel_t,fp_t>,
     public fermion_deriv_rel_integ<fp_t> {
     
   public:
@@ -705,8 +706,9 @@ namespace o2scl {
       int iret;
 
       if (temper<=0) {
-	O2SCL_ERR("T=0 not implemented in fermion_deriv_rel().",
-		  exc_eunimpl);
+        fr.calc_mu_zerot(f);
+        this->calc_deriv_zerot(f);
+        return 0;
       }
 
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
@@ -797,8 +799,9 @@ namespace o2scl {
 	}
         
         if (multip==true) {
-          
-          fp_t zero=0, tol_rel=0;
+
+          double tol_rel=0;
+          fp_t zero=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,f,temper](auto &&k) mutable {
               return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
@@ -814,7 +817,8 @@ namespace o2scl {
         
           // The non-degenerate case
           
-          funct density_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> density_T_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->density_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
 
@@ -832,7 +836,8 @@ namespace o2scl {
 
         if (multip==true) {
           
-          fp_t zero=0, tol_rel=0;
+          double tol_rel=0;
+          fp_t zero=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,f,temper](auto &&k) mutable {
               return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
@@ -846,7 +851,8 @@ namespace o2scl {
           
         } else {
           
-          funct density_mu_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> density_mu_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                          f.inc_rest_mass); };
 
@@ -864,8 +870,9 @@ namespace o2scl {
 	unc.dndmu*=prefac;
     
         if (multip==true) {
-          
-          fp_t zero=0, tol_rel=0;
+
+          double tol_rel=0;
+          fp_t zero=0;
           int ix=it_multip.integ_iu_err_multip
             ([this,f,temper](auto &&k) mutable {
               return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
@@ -879,7 +886,8 @@ namespace o2scl {
           
         } else {
           
-          funct entropy_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> entropy_T_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                         f.inc_rest_mass); };
           
@@ -971,7 +979,7 @@ namespace o2scl {
         
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
 
           if (this->intl_method==this->direct && ll>0) {
 
@@ -1004,7 +1012,8 @@ namespace o2scl {
           
         } else {
 	  
-          funct deg_density_mu_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_density_mu_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->deg_density_mu_fun(k,f.m,f.ms,f.nu,temper,
                                              f.inc_rest_mass); };
 	  
@@ -1029,7 +1038,7 @@ namespace o2scl {
     
         if (multip==true) {
           
-          fp_t tol_rel=0;
+          double tol_rel=0;
 
           if (this->intl_method==this->direct && ll>0) {
 
@@ -1062,7 +1071,8 @@ namespace o2scl {
 
         } else {
           
-          funct deg_density_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_density_T_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->deg_density_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 	  
@@ -1087,8 +1097,8 @@ namespace o2scl {
 
         if (multip==true) {
           
-          fp_t tol_rel=0;
-
+          double tol_rel=0;
+          
           if (this->intl_method==this->direct && ll>0) {
 
             int ix=it_multip.integ_err_multip
@@ -1121,7 +1131,8 @@ namespace o2scl {
 
         } else {
 
-          funct deg_entropy_T_fun_f=[this,f,temper](double k) -> double
+          std::function<fp_t(fp_t)> deg_entropy_T_fun_f=
+            [this,f,temper](fp_t k) -> fp_t
           { return this->deg_entropy_T_fun(k,f.m,f.ms,f.nu,temper,
                                             f.inc_rest_mass); };
 
@@ -1146,9 +1157,9 @@ namespace o2scl {
 
       }
   
-      if (!std::isfinite(f.en)) {
-	O2SCL_ERR2("Entropy not finite in ",
-		   "fermion_deriv_rel_tl<fermion_deriv_t,fp_t>::calc_mu().",
+      if (!isfinite(f.en)) {
+	O2SCL_ERR2("Entropy not finite in fermion_deriv_rel_tl",
+		   "<fermion_deriv_t,fp_t>::calc_mu().",
 		   exc_efailed);
       }
       f.pr=-f.ed+temper*f.en+f.nu*f.n;
@@ -1164,7 +1175,13 @@ namespace o2scl {
     virtual int calc_density(fermion_deriv_t &f, fp_t temper) {
   
       if (f.non_interacting==true) { f.ms=f.m; f.nu=f.mu; }
-  
+
+      if (temper<=0) {
+        fr.calc_density_zerot(f);
+        this->calc_deriv_zerot(f);
+        return 0;
+      }
+      
       nu_from_n(f,temper);
       int lm=last_method;
       std::string stmp=last_method_s;
@@ -1278,7 +1295,7 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
   
   /** \brief Long double version of 
       \ref o2scl::fermion_deriv_rel_tl 
@@ -1294,7 +1311,7 @@ namespace o2scl {
       \ref o2scl::fermion_deriv_rel_tl 
   */
   typedef fermion_deriv_rel_tl<fermion_deriv_tl<cpp_dec_float_25>,
-                               fermion_rel_ld,
+                               fermion_rel_cdf25,
 			       inte_double_exp_boost<>,
 			       inte_double_exp_boost<>,
 			       cpp_dec_float_25>

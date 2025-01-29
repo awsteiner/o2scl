@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -170,7 +170,7 @@ public:
     the type itself, \c prefix is used to store prefixes like "const"
     or "static" and \c suffix is used to store suffixes like "*", or
     "&".
- */
+*/
 class if_type : public if_base {
   
 public:
@@ -209,7 +209,7 @@ public:
   
   /** \brief Parse a vector string object as a type with a prefix,
       a suffix, and a name
-   */
+  */
   void parse(std::vector<std::string> &vs, size_t start, size_t end) {
 
     if (start>=end) {
@@ -393,7 +393,7 @@ public:
     The name of the variable is stored in \c name, the type is
     stored in \c type, and a default value (if present) is 
     stored in \c value.
- */
+*/
 class if_var : public if_base {
   
 public:
@@ -411,7 +411,7 @@ public:
 
       Note that this does not set the python name because that 
       is specified on a different line in the interface file.
-   */
+  */
   void parse(vector<string> &vs) {
 
     if (vs.size()==0) {
@@ -506,6 +506,9 @@ public:
   /// If true, the standard copy constructors are included
   bool std_cc;
 
+  /// If true, then the copy constructors are not available
+  bool no_cc;
+
   /// If true, then the default constructor is included (default true)
   bool def_cons;
   
@@ -531,6 +534,7 @@ public:
     is_abstract=false;
     std_cc=false;
     def_cons=true;
+    no_cc=false;
   }
   
 };
@@ -707,14 +711,14 @@ int main(int argc, char *argv[]) {
       next_line(fin,line,vs,done);
       
     } else if (vs[0]=="py_header") {
+
+      std::string pyh;
       
       if (vs.size()<2) {
-        cerr << "No argument for py_header." << endl;
-        exit(-1);
-      }
-      std::string pyh=vs[1];
-      for(size_t j=2;j<vs.size();j++) {
-        pyh+=" "+vs[j];
+        pyh="";
+      } else {
+        pyh=line.substr(10,line.length()-10);
+        cout << "py_header, line: " << pyh << endl;
       }
       py_headers.push_back(pyh);
       
@@ -992,6 +996,17 @@ int main(int argc, char *argv[]) {
           next_line(fin,line,vs,done);
           if (done) class_done=true;
           
+        } else if (vs.size()>=2 && vs[0]=="-" && vs[1]=="no_cc") {
+
+          // No copy constructor flag
+
+          ifc.no_cc=true;
+          cout << "  Class " << ifc.name << "'s "
+               << "copy constructors are not available." << endl;
+          
+          next_line(fin,line,vs,done);
+          if (done) class_done=true;
+          
         } else if (vs.size()>=3 && vs[0]=="-" && vs[1]=="py_name") {
 
           // Python name for the class
@@ -1169,7 +1184,7 @@ int main(int argc, char *argv[]) {
   // Close file
   fin.close();
 
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Post-process to handle function overloading
 
   // For each class, manually examine each pair of member functions to
@@ -1235,7 +1250,7 @@ int main(int argc, char *argv[]) {
   }
   
   // End of interface file parsing code
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create C++ header/source
 
   for(size_t kk=0;kk<2;kk++) {
@@ -1343,6 +1358,7 @@ int main(int argc, char *argv[]) {
           fout << "  " << ifc.name << " *dest=(" << ifc.name
                << " *)vdest;" << endl;
           fout << "  *dest=*src;" << endl;
+          fout << "  return; // tab 8" << endl;
           fout << "}" << endl;
         }
         fout << endl;
@@ -1391,6 +1407,9 @@ int main(int argc, char *argv[]) {
             fout << " {" << endl;
             fout << "  " << ifc.name << " *ptr=(" << ifc.name
                  << " *)vptr;" << endl;
+            fout << "  // The ownership of the string pointer is "
+                 << "passed to the Python class\n  // and the memory "
+                 << "is freed later." << endl;
             fout << "  std::string *sptr=new std::string;" << endl;
             fout << "  *sptr=ptr->" << ifv.name << ";" << endl;
             fout << "  return sptr;" << endl;
@@ -1433,9 +1452,11 @@ int main(int argc, char *argv[]) {
             //<< ifv.ift.name << " *)p_v;" << endl;
             //fout << "  *(p_tgot)=ptr->" << ifv.name << ";" << endl;
             if (ifv.ift.is_pointer()) {
-              fout << "  return (void *)((ptr->" << ifv.name << "));" << endl;
+              fout << "  return (void *)((ptr->" << ifv.name << "));"
+                   << endl;
             } else {
-              fout << "  return (void *)(&(ptr->" << ifv.name << "));" << endl;
+              fout << "  return (void *)(&(ptr->" << ifv.name << "));"
+                   << endl;
             }
             fout << "}" << endl;
           }
@@ -1464,6 +1485,7 @@ int main(int argc, char *argv[]) {
             }
           }
         } else {
+          
           // AWS, 9/12/21: We have to skip tov_solve types because
           // they have no copy constructor. This is a temporary hack
           // which we need for now. Just using "const tov_solve
@@ -1471,40 +1493,42 @@ int main(int argc, char *argv[]) {
           // because that doesn't allow the user to change the
           // properties of the tov_solve object.
           if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
-          // Set function for other types
-          fout << "void " << underscoreify(ifc.ns) << "_"
-               << underscoreify(ifc.name) << "_set_" << ifv.name
-               << "(void *vptr, void *p_v)";
-          if (header) {
-            fout << ";" << endl;
-          } else {
-            fout << " {" << endl;
-            fout << "  " << ifc.name << " *ptr=(" << ifc.name
-                 << " *)vptr;" << endl;
-            if (ifv.ift.is_shared_ptr()) {
-              // Shared pointers
-              fout << "  std::shared_ptr<" << ifv.ift.name
-                   << " > *p_tssp=(std::shared_ptr<"
-                   << ifv.ift.name << " > *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
-            } else if (ifv.ift.is_pointer()) {
-              // Other types
-              fout << "  " << ifv.ift.name << " *p_tsptr=("
-                   << ifv.ift.name << " *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=p_tsptr;" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
+            
+            // Set function for other types
+            fout << "void " << underscoreify(ifc.ns) << "_"
+                 << underscoreify(ifc.name) << "_set_" << ifv.name
+                 << "(void *vptr, void *p_v)";
+            
+            if (header) {
+              fout << ";" << endl;
             } else {
-              // Other types
-              fout << "  " << ifv.ift.name << " *p_tsot=("
-                   << ifv.ift.name << " *)p_v;" << endl;
-              fout << "  ptr->" << ifv.name << "=*(p_tsot);" << endl;
-              fout << "  return;" << endl;
-              fout << "}" << endl;
+              fout << " {" << endl;
+              fout << "  " << ifc.name << " *ptr=(" << ifc.name
+                   << " *)vptr;" << endl;
+              if (ifv.ift.is_shared_ptr()) {
+                // Shared pointers
+                fout << "  std::shared_ptr<" << ifv.ift.name
+                     << " > *p_tssp=(std::shared_ptr<"
+                     << ifv.ift.name << " > *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=*(p_tssp);" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              } else if (ifv.ift.is_pointer()) {
+                // Other types
+                fout << "  " << ifv.ift.name << " *p_tsptr=("
+                     << ifv.ift.name << " *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=p_tsptr;" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              } else {
+                // Other types
+                fout << "  " << ifv.ift.name << " *p_tsot=("
+                     << ifv.ift.name << " *)p_v;" << endl;
+                fout << "  ptr->" << ifv.name << "=*(p_tsot);" << endl;
+                fout << "  return;" << endl;
+                fout << "}" << endl;
+              }
             }
-          }
           }
         }
         fout << endl;
@@ -1565,7 +1589,7 @@ int main(int argc, char *argv[]) {
         for(size_t k=0;k<iff.args.size();k++) {
           if (iff.args[k].ift.suffix=="") {
             if (iff.args[k].ift.name=="std::string") {
-              fout << "char *" << iff.args[k].name;
+              fout << "void *ptr_" << iff.args[k].name;
             } else {
               fout << iff.args[k].ift.name << " " << iff.args[k].name;
             }
@@ -1579,8 +1603,8 @@ int main(int argc, char *argv[]) {
           }
           // Output default value if we're in the header file
           if (header) {
-            // String arguments are converted to char *'s, so
-            // they don't need a default value
+            // FIXME, Check this, AWS, 11/23/24
+            // String arguments don't need a default value
             if (iff.args[k].ift.name!="std::string") {
               if (iff.args[k].value.length()>0) {
                 if (iff.args[k].value=="True") {
@@ -1613,7 +1637,9 @@ int main(int argc, char *argv[]) {
           // If the argument is a reference and not a standard C type,
           // then we'll need to convert from a void *
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="&" && !iff.args[k].ift.is_ctype()) {
+            if ((iff.args[k].ift.name=="std::string" ||
+                 iff.args[k].ift.suffix=="&") &&
+                !iff.args[k].ift.is_ctype()) {
               std::string type_temp=iff.args[k].ift.name;
               if (type_temp=="std_vector") {
                 type_temp="std::vector<double>";
@@ -1644,21 +1670,23 @@ int main(int argc, char *argv[]) {
             // In case it's const, we have to explicitly typecast
             fout << "  const std::vector<double> &r=ptr->" << iff.name << "(";
           } else if (iff.name=="operator[]" || iff.name=="operator()") {
-            if (iff.ret.name=="std::string") {
-              fout << "  std::string *sptr=new std::string;" << endl;
-              fout << "  *sptr=ptr->" << iff.name << "(";
-            } else if (iff.ret.name=="std::vector<std::string>") {
+            if (iff.ret.name=="std::vector<std::string>") {
               fout << "  std::vector<std::string> *vsptr="
                    << "new std::vector<std::string>;" << endl;
               fout << "  *vsptr=ptr->" << iff.name << "(";
             } else if (iff.ret.name=="contour_line" ||
+                       iff.ret.name=="nucleus" ||
                        iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
               fout << "  " << iff.ret.name
                    << " *ret=&(ptr->" << iff.name << "(";
             } else if (iff.ret.name=="void") {
               fout << "  ptr->" << iff.name << "(";
+            } else if (iff.ret.name=="std::string") {
+              fout << "  " << iff.ret.name << " *sptr=new "
+                   << iff.ret.name << ";" << endl;
+              fout << "  /* tag 3 */ *sptr=ptr->" << iff.name << "(";
             } else {
-              fout << "  " << iff.ret.name
+              fout << "  /* tag 4 */ " << iff.ret.name
                    << " ret=ptr->" << iff.name << "(";
             }
           } else if (iff.ret.name=="void") {
@@ -1707,7 +1735,9 @@ int main(int argc, char *argv[]) {
           }
           
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
@@ -1716,8 +1746,12 @@ int main(int argc, char *argv[]) {
               fout << ",";
             }
           }
+
+          // FIXME, AWS, 11/23/24, remove explicit refs to contour_line,
+          // etc.
           if (iff.name=="operator[]" &&
               (iff.ret.name=="contour_line" ||
+               iff.ret.name=="nucleus" ||
                iff.ret.name=="prob_dens_mdim_amr<>::hypercube")) {
             fout << "));" << endl;
           } else {
@@ -1739,7 +1773,11 @@ int main(int argc, char *argv[]) {
           } else {
             
             if (iff.ret.name=="std::string") {
-              fout << "  return sptr;" << endl;
+              if (iff.name=="operator[]") {
+                fout << "  return sptr; // tag 1 " << iff.name << endl;
+              } else {
+                fout << "  return sptr; // tag 2 " << iff.name << endl;
+              }
             } else if (iff.ret.name=="std::vector<std::string>") {
               if (iff.ret.is_reference()) {
                 fout << "  return vsptr;" << endl;
@@ -1790,6 +1828,7 @@ int main(int argc, char *argv[]) {
                  << "_setitem(void *vptr, size_t i, "
                  << "void *valptr)";
           } else if (iff.ret.name=="contour_line" ||
+                     iff.ret.name=="nucleus" ||
                      iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
             fout << "void " << ifc.ns << "_" << underscoreify(ifc.name)
                  << "_setitem(void *vptr, size_t i, "
@@ -1810,6 +1849,7 @@ int main(int argc, char *argv[]) {
                    << "(std::vector<double> *)valptr;" << endl;
               fout << "  (*ptr)[i]=*valptr2;" << endl;
             } else if (iff.ret.name=="contour_line" ||
+                       iff.ret.name=="nucleus" ||
                        iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
               fout << "  " << iff.ret.name << " *valptr2="
                    << "(" << iff.ret.name << " *)valptr;" << endl;
@@ -2015,7 +2055,7 @@ int main(int argc, char *argv[]) {
         
         if (iff.args[k].ift.suffix=="") {
           if (iff.args[k].ift.name=="std::string") {
-            fout << "char *" << iff.args[k].name;
+            fout << "void *ptr_" << iff.args[k].name;
           } else {
             fout << iff.args[k].ift.name << " " << iff.args[k].name;
           }
@@ -2059,7 +2099,8 @@ int main(int argc, char *argv[]) {
 
         // Pointer assignments for arguments
         for(size_t k=0;k<iff.args.size();k++) {
-          if (iff.args[k].ift.suffix=="&") {
+          if (iff.args[k].ift.suffix=="&" ||
+              iff.args[k].ift.name=="std::string") {
             //if (iff.args[k].ift.name=="std::string") {
             //fout << "  std::string *"
             //<< iff.args[k].name
@@ -2082,7 +2123,9 @@ int main(int argc, char *argv[]) {
           vector<std::string> addl_code;
 
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
@@ -2097,8 +2140,8 @@ int main(int argc, char *argv[]) {
           }
           fout << ");" << endl;
           
-          for(size_t k=0;k<addl_code.size();k++) {
-            fout << "  " << addl_code[k] << endl;
+          for(size_t k2=0;k2<addl_code.size();k2++) {
+            fout << "  " << addl_code[k2] << endl;
           }
 
           fout << "  return;" << endl;
@@ -2114,7 +2157,9 @@ int main(int argc, char *argv[]) {
           }
 
           for(size_t k=0;k<iff.args.size();k++) {
-            if (iff.args[k].ift.suffix=="") {
+            if (iff.args[k].ift.name=="std::string") {
+              fout << "*" << iff.args[k].name;
+            } else if (iff.args[k].ift.suffix=="") {
               fout << iff.args[k].name;
             } else if (iff.args[k].ift.suffix=="&") {
               fout << "*" << iff.args[k].name;
@@ -2143,7 +2188,7 @@ int main(int argc, char *argv[]) {
 
   }
   
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create python source code
 
   ofstream fout;
@@ -2406,8 +2451,7 @@ int main(int argc, char *argv[]) {
 
         fout << "    def get_" << ifv.name << "(self):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Get object of type :class:`"
-             << ifv.ift.name << "`" << endl;
+        fout << "        Get byte array object." << endl;
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name)
@@ -2487,13 +2531,19 @@ int main(int argc, char *argv[]) {
           fout << endl;
           
         }
-        
+
+        // See above for the explanation of why the TOV classes
+        // need a special case. 
       } else if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
         
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;
-        fout << "        Set object of type :class:`"
-             << ifv.ift.name << "`" << endl;
+        if (ifv.ift.name=="std::string") {
+          fout << "        Set object from byte array" << endl;
+        } else {
+          fout << "        Set object of type :class:`"
+               << ifv.ift.name << "`" << endl;
+        }
         fout << "        \"\"\"" << endl;
         fout << "        func=self._link." << dll_name << "." << ifc.ns << "_"
              << underscoreify(ifc.name) << "_set_" << ifv.name << endl;
@@ -2502,6 +2552,10 @@ int main(int argc, char *argv[]) {
         if (ifv.ift.prefix.find("shared_ptr")!=std::string::npos ||
             ifv.ift.prefix.find("std::shared_ptr")!=std::string::npos) {
           fout << "        func(self._ptr,value._s_ptr)" << endl;
+        } else if (ifv.ift.name=="std::string") {
+          fout << "        s_=o2sclpy.std_string()" << endl;
+          fout << "        s_.init_bytes(force_bytes_string(value))" << endl;
+          fout << "        func(self._ptr,s_._ptr)" << endl;
         } else {
           fout << "        func(self._ptr,value._ptr)" << endl;
         }
@@ -2589,7 +2643,7 @@ int main(int argc, char *argv[]) {
           if (iff.args[k].value.length()>0) {
             fout << " =" << iff.args[k].value;
           }
-          fout << ": string" << endl;
+          fout << ": byte array" << endl;
         }
       }
 
@@ -2623,13 +2677,14 @@ int main(int argc, char *argv[]) {
           return_docs="std_vector_string object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name=="contour_line" ||
+                    iff.ret.name=="nucleus" ||
                     iff.ret.name=="prob_dens_mdim_amr<>::hypercube") &&
                    iff.ret.suffix=="&") {
           return_docs=iff.ret.name+" object";
           restype_string="ctypes.c_void_p";
         } else if ((iff.ret.name!="vector<double>" &&
-             iff.ret.name!="std::vector<double>") ||
-            iff.ret.suffix!="&") {
+                    iff.ret.name!="std::vector<double>") ||
+                   iff.ret.suffix!="&") {
           return_docs="";
           restype_string="ctypes.c_"+iff.ret.name;
         } else if (iff.ret.suffix=="&") {
@@ -2704,9 +2759,16 @@ int main(int argc, char *argv[]) {
       // Perform necessary conversions
       for(size_t k=0;k<iff.args.size();k++) {
         if (iff.args[k].ift.name=="std::string") {
-          fout << "        " << iff.args[k].name
-               << "_=ctypes.c_char_p(force_bytes("
-               << iff.args[k].name << "))" << endl;
+          if (iff.args[k].ift.is_out()) {
+            fout << "        # tag 6" << endl;
+          } else {
+            fout << "        s_" << iff.args[k].name
+                 << "=o2sclpy.std_string()" << endl;
+            fout << "        s_" << iff.args[k].name
+                 << ".init_bytes(force_bytes_string(" << iff.args[k].name
+                 << "))" << endl;
+            fout << "        # tag 7" << endl;
+          }
         }
       }
 
@@ -2780,7 +2842,7 @@ int main(int argc, char *argv[]) {
             fout << ",ctypes.c_void_p";
           }
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << ",ctypes.c_char_p";
+          fout << ",ctypes.c_void_p";
         } else {
           fout << ",ctypes.c_" << iff.args[k].ift.name;
         }
@@ -2823,7 +2885,7 @@ int main(int argc, char *argv[]) {
         
         function_start="ret=func(self._ptr";
         function_end=")";
-        post_func_code.push_back("strt=std_string(ret)");
+        post_func_code.push_back("strt=std_string(ret) # tag 5");
         post_func_code.push_back("strt._owner=True");
         
       } else if (iff.ret.name=="std::vector<std::string>") {
@@ -2841,6 +2903,13 @@ int main(int argc, char *argv[]) {
         function_start="ret=func(self._ptr";
         function_end=")";
         post_func_code.push_back("vcl=contour_line(ret)");
+        //post_func_code.push_back("vcl._owner=True");
+        
+      } else if (iff.ret.name=="nucleus") {
+        
+        function_start="ret=func(self._ptr";
+        function_end=")";
+        post_func_code.push_back("vcl=nucleus(ret)");
         //post_func_code.push_back("vcl._owner=True");
         
       } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
@@ -2895,7 +2964,7 @@ int main(int argc, char *argv[]) {
             fout << "," << iff.args[k].name << "._ptr";
           }
         } else if (iff.args[k].ift.name=="std::string") {
-          fout << "," << iff.args[k].name << "_";
+          fout << ",s_" << iff.args[k].name << "._ptr";
         } else {
           fout << "," << iff.args[k].name;
         }
@@ -2919,6 +2988,8 @@ int main(int argc, char *argv[]) {
       } else if (iff.ret.name=="std::vector<std::string>") {
         fout << "        return vstrt" << endl;
       } else if (iff.ret.name=="contour_line") {
+        fout << "        return vcl" << endl;
+      } else if (iff.ret.name=="nucleus") {
         fout << "        return vcl" << endl;
       } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
         fout << "        return hc" << endl;
@@ -2973,6 +3044,8 @@ int main(int argc, char *argv[]) {
           fout << "        | *value*: Python array" << endl;
         } else if (iff.ret.name=="contour_line") {
           fout << "        | *value*: contour_line object" << endl;
+        } else if (iff.ret.name=="nucleus") {
+          fout << "        | *value*: nucleus object" << endl;
         } else if (iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
           fout << "        | *value*: prob_dens_mdim_amr<>::hypercube object"
                << endl;
@@ -2998,6 +3071,7 @@ int main(int argc, char *argv[]) {
                << endl;
           fout << "        func(self._ptr,i,value._ptr)" << endl;
         } else if (iff.ret.name=="contour_line" ||
+                   iff.ret.name=="nucleus" ||
                    iff.ret.name=="prob_dens_mdim_amr<>::hypercube") {
           fout << "        func.argtypes=[ctypes.c_void_p,"
                << "ctypes.c_size_t,ctypes.c_void_p]"
@@ -3310,9 +3384,12 @@ int main(int argc, char *argv[]) {
           //fout << "    " << iff.args[k].name
           //<< "._ptr=ctypes.c_void_p()" << endl;
         } else {
-          fout << "    " << iff.args[k].name
-               << "_=ctypes.c_char_p(force_bytes("
-               << iff.args[k].name << "))" << endl;
+          fout << "    " << "s_" << iff.args[k].name
+               << "=o2sclpy.std_string()" << endl;
+          fout << "    s_" << iff.args[k].name
+               << ".init_bytes(force_bytes_string("
+               << iff.args[k].name << "))"
+               << endl;
         }
       }
     }
@@ -3330,7 +3407,7 @@ int main(int argc, char *argv[]) {
     }
     if (iff.ret.name!="void") {
       if (iff.ret.name=="std::string") {
-        fout << "    func.restype=ctypes.c_char_p" << endl;
+        fout << "    func.restype=ctypes.c_void_p" << endl;
       } else {
 
         if (iff.ret.is_ctype()) {
@@ -3366,7 +3443,7 @@ int main(int argc, char *argv[]) {
         fout << "ctypes.c_void_p";
         //}
       } else if (iff.args[k].ift.name=="std::string") {
-        fout << "ctypes.c_char_p";
+        fout << "ctypes.c_void_p";
       } else {
         fout << "ctypes.c_" << iff.args[k].ift.name;
       }
@@ -3390,7 +3467,7 @@ int main(int argc, char *argv[]) {
         fout << iff.args[k].name << "._ptr";
         //}
       } else if (iff.args[k].ift.name=="std::string") {
-        fout << iff.args[k].name << "_";
+        fout << "s_" << iff.args[k].name << "._ptr";
       } else {
         fout << iff.args[k].name;
       }
@@ -3432,7 +3509,7 @@ int main(int argc, char *argv[]) {
 
   fout.close();
 
-  // ----------------------------------------------------------------
+  // ────────────────────────────────────────────────────────────────
   // Create rst file for python documentation
 
   ofstream fout2;

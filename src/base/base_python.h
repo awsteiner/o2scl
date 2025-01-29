@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -38,20 +38,6 @@
 #include <o2scl/funct_to_fp.h>
 
 extern "C" {
-
-void *o2scl_create_std_string();
-
-void o2scl_free_std_string(void *vptr);
-
-void o2scl_copy_std_string(void *vsrc, void *vdest);
-
-size_t o2scl_std_string_length(void *vptr);
-
-char o2scl_std_string_getitem(void *vptr, size_t n);
-
-void o2scl_std_string_setitem(void *vptr, size_t i, char val);
-
-void o2scl_std_string_resize(void *vptr, size_t n);
 
 void *o2scl_create_std_vector_double_();
 
@@ -107,7 +93,7 @@ void o2scl_std_vector_std_string__resize(void *vptr, size_t n);
 
 size_t o2scl_std_vector_std_string__size(void *vptr);
 
-void o2scl_std_vector_std_string__push_back(void *vptr, char *x);
+void o2scl_std_vector_std_string__push_back(void *vptr, void *ptr_x);
 
 void *o2scl_std_vector_std_string__getitem(void *vptr, size_t n);
 
@@ -221,11 +207,11 @@ void o2scl_free_lib_settings_class(void *vptr);
 
 void *o2scl_lib_settings_class_get_data_dir(void *vptr);
 
-int o2scl_lib_settings_class_set_data_dir(void *vptr, char *dir);
+int o2scl_lib_settings_class_set_data_dir(void *vptr, void *ptr_dir);
 
 void *o2scl_lib_settings_class_get_doc_dir(void *vptr);
 
-int o2scl_lib_settings_class_set_doc_dir(void *vptr, char *dir);
+int o2scl_lib_settings_class_set_doc_dir(void *vptr, void *ptr_dir);
 
 bool o2scl_lib_settings_class_openmp_support(void *vptr);
 
@@ -261,11 +247,11 @@ void o2scl_free_table_(void *vptr);
 
 void o2scl_copy_table_(void *vsrc, void *vdest);
 
-void o2scl_table__getitem(void *vptr, char *col, double **dptr, int *n_);
+void o2scl_table__getitem(void *vptr, void *ptr_col, double **dptr, int *n_);
 
-void o2scl_table__set(void *vptr, char *col, size_t row, double val);
+void o2scl_table__set(void *vptr, void *ptr_col, size_t row, double val);
 
-double o2scl_table__get(void *vptr, char *col, size_t row);
+double o2scl_table__get(void *vptr, void *ptr_col, size_t row);
 
 size_t o2scl_table__get_ncolumns(void *vptr);
 
@@ -281,27 +267,27 @@ void o2scl_table__set_nlines_auto(void *vptr, size_t il);
 
 void o2scl_table__inc_maxlines(void *vptr, size_t llines);
 
-void o2scl_table__new_column(void *vptr, char *col);
+void o2scl_table__new_column(void *vptr, void *ptr_col);
 
 void *o2scl_table__get_column_name(void *vptr, size_t icol);
 
-void o2scl_table__rename_column(void *vptr, char *src, char *dest);
+void o2scl_table__rename_column(void *vptr, void *ptr_src, void *ptr_dest);
 
-void o2scl_table__delete_column(void *vptr, char *col);
+void o2scl_table__delete_column(void *vptr, void *ptr_col);
 
 void *o2scl_table__get_sorted_name(void *vptr, size_t icol);
 
-void o2scl_table__init_column(void *vptr, char *scol, double val);
+void o2scl_table__init_column(void *vptr, void *ptr_scol, double val);
 
-bool o2scl_table__is_column(void *vptr, char *scol);
+bool o2scl_table__is_column(void *vptr, void *ptr_scol);
 
-size_t o2scl_table__lookup_column(void *vptr, char *scol);
+size_t o2scl_table__lookup_column(void *vptr, void *ptr_scol);
 
-void o2scl_table__copy_column(void *vptr, char *src, char *dest);
+void o2scl_table__copy_column(void *vptr, void *ptr_src, void *ptr_dest);
 
-void o2scl_table__add_col_from_table(void *vptr, void *ptr_source, char *src_index, char *src_col, char *dest_index, char *dest_col);
+void o2scl_table__add_col_from_table(void *vptr, void *ptr_source, void *ptr_src_index, void *ptr_src_col, void *ptr_dest_index, void *ptr_dest_col);
 
-void o2scl_table__insert_table(void *vptr, void *ptr_source, char *src_index, bool allow_extrap, char *dest_index);
+void o2scl_table__insert_table(void *vptr, void *ptr_source, void *ptr_src_index, bool allow_extrap, void *ptr_dest_index);
 
 void o2scl_table__add_table(void *vptr, void *ptr_source);
 
@@ -309,53 +295,53 @@ void o2scl_table__new_row(void *vptr, size_t n);
 
 void o2scl_table__copy_row(void *vptr, size_t src, size_t dest);
 
-void o2scl_table__delete_row(void *vptr, char *scol, double val);
+void o2scl_table__delete_row(void *vptr, void *ptr_scol, double val);
 
-void o2scl_table__delete_rows_func(void *vptr, char *func);
+void o2scl_table__delete_rows_func(void *vptr, void *ptr_func);
 
 void o2scl_table__delete_rows_ends(void *vptr, size_t row_start, size_t row_end);
 
-void o2scl_table__line_of_names(void *vptr, char *names);
+void o2scl_table__line_of_names(void *vptr, void *ptr_names);
 
 void o2scl_table__line_of_data(void *vptr, void *ptr_data);
 
 void o2scl_table__insert_row(void *vptr, size_t nv, void *ptr_data, size_t row);
 
-size_t o2scl_table__ordered_lookup(void *vptr, char *scol, double val);
+size_t o2scl_table__ordered_lookup(void *vptr, void *ptr_scol, double val);
 
-size_t o2scl_table__lookup(void *vptr, char *scol, double val);
+size_t o2scl_table__lookup(void *vptr, void *ptr_scol, double val);
 
-size_t o2scl_table__lookup_val(void *vptr, char *scol, double val, char *scol2);
+size_t o2scl_table__lookup_val(void *vptr, void *ptr_scol, double val, void *ptr_scol2);
 
 void o2scl_table__set_interp_type(void *vptr, size_t interp_type);
 
 size_t o2scl_table__get_interp_type(void *vptr);
 
-double o2scl_table__interp(void *vptr, char *sx, double x0, char *sy);
+double o2scl_table__interp(void *vptr, void *ptr_sx, double x0, void *ptr_sy);
 
 double o2scl_table__interp_index(void *vptr, size_t ix, double x0, size_t iy);
 
-void o2scl_table__deriv_col(void *vptr, char *x, char *y, char *yp);
+void o2scl_table__deriv_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yp);
 
-double o2scl_table__deriv(void *vptr, char *sx, double x0, char *sy);
+double o2scl_table__deriv(void *vptr, void *ptr_sx, double x0, void *ptr_sy);
 
 double o2scl_table__deriv_index(void *vptr, size_t ix, double x0, size_t iy);
 
-void o2scl_table__deriv2_col(void *vptr, char *x, char *y, char *yp);
+void o2scl_table__deriv2_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yp);
 
-double o2scl_table__deriv2(void *vptr, char *sx, double x0, char *sy);
+double o2scl_table__deriv2(void *vptr, void *ptr_sx, double x0, void *ptr_sy);
 
 double o2scl_table__deriv2_index(void *vptr, size_t ix, double x0, size_t iy);
 
-double o2scl_table__integ(void *vptr, char *sx, double x1, double x2, char *sy);
+double o2scl_table__integ(void *vptr, void *ptr_sx, double x1, double x2, void *ptr_sy);
 
 double o2scl_table__integ_index(void *vptr, size_t ix, double x1, double x2, size_t iy);
 
-void o2scl_table__integ_col(void *vptr, char *x, char *y, char *yi);
+void o2scl_table__integ_col(void *vptr, void *ptr_x, void *ptr_y, void *ptr_yi);
 
-double o2scl_table__max(void *vptr, char *max);
+double o2scl_table__max(void *vptr, void *ptr_max);
 
-double o2scl_table__min(void *vptr, char *min);
+double o2scl_table__min(void *vptr, void *ptr_min);
 
 void o2scl_table__zero_table(void *vptr);
 
@@ -367,23 +353,23 @@ void o2scl_table__clear_table(void *vptr);
 
 void o2scl_table__clear_constants(void *vptr);
 
-void o2scl_table__sort_table(void *vptr, char *scol);
+void o2scl_table__sort_table(void *vptr, void *ptr_scol);
 
-void o2scl_table__sort_column(void *vptr, char *scol);
+void o2scl_table__sort_column(void *vptr, void *ptr_scol);
 
-void o2scl_table__average_col_roll(void *vptr, char *col_name, size_t window);
+void o2scl_table__average_col_roll(void *vptr, void *ptr_col_name, size_t window);
 
 void o2scl_table__average_rows(void *vptr, size_t window, bool rolling);
 
 void o2scl_table__is_valid(void *vptr);
 
-void o2scl_table__functions_columns(void *vptr, char *list);
+void o2scl_table__functions_columns(void *vptr, void *ptr_list);
 
-void o2scl_table__function_column(void *vptr, char *function, char *scol);
+void o2scl_table__function_column(void *vptr, void *ptr_function, void *ptr_scol);
 
-double o2scl_table__row_function(void *vptr, char *scol, size_t row);
+double o2scl_table__row_function(void *vptr, void *ptr_scol, size_t row);
 
-size_t o2scl_table__function_find_row(void *vptr, char *function);
+size_t o2scl_table__function_find_row(void *vptr, void *ptr_function);
 
 void o2scl_table__summary(void *vptr);
 
@@ -393,15 +379,15 @@ void o2scl_free_table_units_(void *vptr);
 
 void o2scl_copy_table_units_(void *vsrc, void *vdest);
 
-void o2scl_table_units__set_unit(void *vptr, char *col, char *unit);
+void o2scl_table_units__set_unit(void *vptr, void *ptr_col, void *ptr_unit);
 
-void *o2scl_table_units__get_unit(void *vptr, char *col);
+void *o2scl_table_units__get_unit(void *vptr, void *ptr_col);
 
-void o2scl_table_units__line_of_units(void *vptr, char *unit_line);
+void o2scl_table_units__line_of_units(void *vptr, void *ptr_unit_line);
 
-void o2scl_table_units__remove_unit(void *vptr, char *col);
+void o2scl_table_units__remove_unit(void *vptr, void *ptr_col);
 
-int o2scl_table_units__convert_to_unit(void *vptr, char *col, char *unit, bool err_on_fail=true);
+int o2scl_table_units__convert_to_unit(void *vptr, void *ptr_col, void *ptr_unit, bool err_on_fail=true);
 
 void *o2scl_create_uniform_grid_();
 
@@ -467,21 +453,21 @@ void o2scl_copy_table3d(void *vsrc, void *vdest);
 
 void o2scl_table3d_set_size(void *vptr, size_t nx, size_t ny);
 
-void o2scl_table3d_set_xy(void *vptr, char *x_name, size_t nx, void *ptr_x, char *y_name, size_t ny, void *ptr_y);
+void o2scl_table3d_set_xy(void *vptr, void *ptr_x_name, size_t nx, void *ptr_x, void *ptr_y_name, size_t ny, void *ptr_y);
 
-void o2scl_table3d_set_xy_grid(void *vptr, char *x_name, void *ptr_x_grid, char *y_name, void *ptr_y_grid);
+void o2scl_table3d_set_xy_grid(void *vptr, void *ptr_x_name, void *ptr_x_grid, void *ptr_y_name, void *ptr_y_grid);
 
-void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, char *name, double val);
+void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, void *ptr_name, double val);
 
-double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, char *name);
+double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, void *ptr_name);
 
 double o2scl_table3d_get_i(void *vptr, size_t ix, size_t iy, size_t iz);
 
 void o2scl_table3d_set_i(void *vptr, size_t ix, size_t iy, size_t iz, double val);
 
-void o2scl_table3d_set_val(void *vptr, double x, double y, char *name, double val);
+void o2scl_table3d_set_val(void *vptr, double x, double y, void *ptr_name, double val);
 
-double o2scl_table3d_get_val(void *vptr, double x, double y, char *name);
+double o2scl_table3d_get_val(void *vptr, double x, double y, void *ptr_name);
 
 void o2scl_table3d_set_grid_x(void *vptr, size_t ix, double val);
 
@@ -495,9 +481,9 @@ void *o2scl_table3d_get_x_name(void *vptr);
 
 void *o2scl_table3d_get_y_name(void *vptr);
 
-void o2scl_table3d_set_x_name(void *vptr, char *name);
+void o2scl_table3d_set_x_name(void *vptr, void *ptr_name);
 
-void o2scl_table3d_set_y_name(void *vptr, char *name);
+void o2scl_table3d_set_y_name(void *vptr, void *ptr_name);
 
 void o2scl_table3d_get_size(void *vptr, size_t *nx, size_t *ny);
 
@@ -513,45 +499,45 @@ bool o2scl_table3d_is_xy_set(void *vptr);
 
 void *o2scl_table3d_get_slice_name(void *vptr, size_t i);
 
-void o2scl_table3d_new_slice(void *vptr, char *slice);
+void o2scl_table3d_new_slice(void *vptr, void *ptr_slice);
 
-void o2scl_table3d_set_slice_all(void *vptr, char *name, double val);
+void o2scl_table3d_set_slice_all(void *vptr, void *ptr_name, double val);
 
-size_t o2scl_table3d_lookup_slice(void *vptr, char *name);
+size_t o2scl_table3d_lookup_slice(void *vptr, void *ptr_name);
 
-bool o2scl_table3d_is_slice(void *vptr, char *name, size_t *ix);
+bool o2scl_table3d_is_slice(void *vptr, void *ptr_name, size_t *ix);
 
-void o2scl_table3d_rename_slice(void *vptr, char *name1, char *name2);
+void o2scl_table3d_rename_slice(void *vptr, void *ptr_name1, void *ptr_name2);
 
-void o2scl_table3d_copy_slice(void *vptr, char *name1, char *name2);
+void o2scl_table3d_copy_slice(void *vptr, void *ptr_name1, void *ptr_name2);
 
-void *o2scl_table3d_get_slice(void *vptr, char *slice);
+void *o2scl_table3d_get_slice(void *vptr, void *ptr_slice);
 
-void *o2scl_table3d_get_slice_i(void *vptr, char *slice);
+void *o2scl_table3d_get_slice_i(void *vptr, void *ptr_slice);
 
 void o2scl_table3d_lookup_x(void *vptr, double val, size_t ix);
 
 void o2scl_table3d_lookup_y(void *vptr, double val, size_t iy);
 
-double o2scl_table3d_interp(void *vptr, double x, double y, char *name);
+double o2scl_table3d_interp(void *vptr, double x, double y, void *ptr_name);
 
-double o2scl_table3d_deriv_x(void *vptr, double x, double y, char *name);
+double o2scl_table3d_deriv_x(void *vptr, double x, double y, void *ptr_name);
 
-double o2scl_table3d_deriv_y(void *vptr, double x, double y, char *name);
+double o2scl_table3d_deriv_y(void *vptr, double x, double y, void *ptr_name);
 
-double o2scl_table3d_deriv_xy(void *vptr, double x, double y, char *name);
+double o2scl_table3d_deriv_xy(void *vptr, double x, double y, void *ptr_name);
 
-double o2scl_table3d_integ_x(void *vptr, double x1, double x2, double y, char *name);
+double o2scl_table3d_integ_x(void *vptr, double x1, double x2, double y, void *ptr_name);
 
-double o2scl_table3d_integ_y(void *vptr, double x, double y1, double y2, char *name);
+double o2scl_table3d_integ_y(void *vptr, double x, double y1, double y2, void *ptr_name);
 
 void o2scl_table3d_zero_table(void *vptr);
 
 void o2scl_table3d_clear(void *vptr);
 
-int o2scl_table3d_function_matrix(void *vptr, char *function, void *ptr_mat, bool throw_on_err);
+int o2scl_table3d_function_matrix(void *vptr, void *ptr_function, void *ptr_mat, bool throw_on_err);
 
-void o2scl_table3d_function_slice(void *vptr, char *function, char *slice);
+void o2scl_table3d_function_slice(void *vptr, void *ptr_function, void *ptr_slice);
 
 void o2scl_table3d_summary(void *vptr);
 
@@ -677,9 +663,9 @@ void o2scl_tensor__minmax(void *vptr, void *ptr_min_ix, double *min_value, void 
 
 double o2scl_tensor__total_sum(void *vptr);
 
-void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
-void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
 void *o2scl_tensor__create_size(size_t rank, void *ptr_sizes);
 
@@ -733,9 +719,9 @@ void o2scl_tensor_int_std_vector_int__minmax(void *vptr, void *ptr_index_min, in
 
 int o2scl_tensor_int_std_vector_int__total_sum(void *vptr);
 
-void o2scl_tensor_int_std_vector_int__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor_int_std_vector_int__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
-void o2scl_tensor_int_std_vector_int__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor_int_std_vector_int__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
 void *o2scl_tensor_int_std_vector_int__create_size(size_t rank, void *ptr_sizes);
 
@@ -785,9 +771,9 @@ void o2scl_tensor_size_t_std_vector_size_t__minmax(void *vptr, void *ptr_index_m
 
 size_t o2scl_tensor_size_t_std_vector_size_t__total_sum(void *vptr);
 
-void o2scl_tensor_size_t_std_vector_size_t__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d_sum(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
-void o2scl_tensor_size_t_std_vector_size_t__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor_size_t_std_vector_size_t__copy_table3d(void *vptr, size_t ix_x, size_t ix_y, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
 void *o2scl_tensor_size_t_std_vector_size_t__create_size(size_t rank, void *ptr_sizes);
 
@@ -815,7 +801,7 @@ void o2scl_tensor_grid__default_grid(void *vptr);
 
 void o2scl_tensor_grid__set_grid_i_vec(void *vptr, size_t i, void *ptr_grid);
 
-void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, char *func);
+void o2scl_tensor_grid__set_grid_i_func(void *vptr, size_t ix, void *ptr_func);
 
 double o2scl_tensor_grid__get_grid(void *vptr, size_t i, size_t j);
 
@@ -827,15 +813,15 @@ size_t o2scl_tensor_grid__lookup_grid(void *vptr, size_t i, double val);
 
 void *o2scl_tensor_grid__copy_slice_interp(void *vptr, void *ptr_ifix, void *ptr_vals);
 
-void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *z_name);
+void o2scl_tensor_grid__copy_table3d_align(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_z_name);
 
-void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *x_name, char *y_name, char *z_name);
+void o2scl_tensor_grid__copy_table3d_align_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_z_name);
 
-void o2scl_tensor_grid__copy_table3d_interp(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, char *slice_name);
+void o2scl_tensor_grid__copy_table3d_interp(void *vptr, size_t ix_x, size_t ix_y, void *ptr_index, void *ptr_tab, void *ptr_slice_name);
 
-void o2scl_tensor_grid__copy_table3d_interp_values(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *slice_name, int verbose=0);
+void o2scl_tensor_grid__copy_table3d_interp_values(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, void *ptr_slice_name, int verbose=0);
 
-void o2scl_tensor_grid__copy_table3d_interp_values_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, char *x_name, char *y_name, char *slice_name);
+void o2scl_tensor_grid__copy_table3d_interp_values_setxy(void *vptr, size_t ix_x, size_t ix_y, void *ptr_values, void *ptr_tab, void *ptr_x_name, void *ptr_y_name, void *ptr_slice_name);
 
 void o2scl_tensor_grid__clear(void *vptr);
 
@@ -845,7 +831,7 @@ double o2scl_tensor_grid__interp_linear_partial(void *vptr, void *ptr_ix_to_inte
 
 double o2scl_tensor_grid__interp_linear(void *vptr, void *ptr_v);
 
-void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, char *slice, size_t n_points, double low=0.0, double high=0.0, double width=0.0);
+void o2scl_tensor_grid__from_table3d_fermi(void *vptr, void *ptr_t3d, void *ptr_slice, size_t n_points, double low=0.0, double high=0.0, double width=0.0);
 
 void *o2scl_create_find_constants_const_entry();
 
@@ -969,9 +955,9 @@ bool o2scl_convert_units__get_combine_two_conv(void *vptr);
 
 void o2scl_convert_units__set_combine_two_conv(void *vptr, bool v);
 
-double o2scl_convert_units__convert(void *vptr, char *frm, char *to, double val);
+double o2scl_convert_units__convert(void *vptr, void *ptr_frm, void *ptr_to, double val);
 
-int o2scl_convert_units__convert_ret(void *vptr, char *frm, char *to, double val, double converted);
+int o2scl_convert_units__convert_ret(void *vptr, void *ptr_frm, void *ptr_to, double val, double converted);
 
 void o2scl_convert_units__del_unit(void *vptr, void *ptr_name);
 
@@ -979,9 +965,9 @@ void o2scl_convert_units__add_unit(void *vptr, void *ptr_d);
 
 void o2scl_convert_units__set_natural_units(void *vptr, bool c_is_one=true, bool hbar_is_one=true, bool kb_is_one=true);
 
-int o2scl_convert_units__is_in_cache(void *vptr, char *frm, char *to);
+int o2scl_convert_units__is_in_cache(void *vptr, void *ptr_frm, void *ptr_to);
 
-int o2scl_convert_units__remove_cache(void *vptr, char *frm, char *to);
+int o2scl_convert_units__remove_cache(void *vptr, void *ptr_frm, void *ptr_to);
 
 void o2scl_convert_units__clear_cache(void *vptr);
 
@@ -991,9 +977,9 @@ void o2scl_convert_units__print_cache(void *vptr);
 
 void o2scl_convert_units__print_units_cout(void *vptr);
 
-void o2scl_convert_units__find_print(void *vptr, char *name, char *unit, size_t prec, bool use_regex);
+void o2scl_convert_units__find_print(void *vptr, void *ptr_name, void *ptr_unit, size_t prec, bool use_regex);
 
-double o2scl_convert_units__find_unique(void *vptr, char *name, char *unit, bool use_regex=false);
+double o2scl_convert_units__find_unique(void *vptr, void *ptr_name, void *ptr_unit, bool use_regex=false);
 
 void *o2scl_create_columnify();
 
@@ -1027,7 +1013,7 @@ void o2scl_format_float_set_exp_limits(void *vptr, int min, int max);
 
 void o2scl_format_float_set_pad_zeros(void *vptr, bool pad);
 
-void o2scl_format_float_set_dec_point(void *vptr, char *dec_point);
+void o2scl_format_float_set_dec_point(void *vptr, void *ptr_dec_point);
 
 void o2scl_format_float_set_exp_digits(void *vptr, int d);
 
@@ -1096,7 +1082,7 @@ void o2scl_free_terminal(void *vptr);
 
 bool o2scl_terminal_is_redirected(void *vptr);
 
-size_t o2scl_terminal_str_len(void *vptr, char *str);
+size_t o2scl_terminal_str_len(void *vptr, void *ptr_str);
 
 void *o2scl_terminal_hrule(void *vptr, size_t n=78);
 
@@ -1160,7 +1146,7 @@ double o2scl_gen_test_number_double__gen(void *vptr);
 
 void o2scl_free_funct_string_double_(void *vptr);
 
-int o2scl_funct_string_double__set_parm(void *vptr, char *name, double val);
+int o2scl_funct_string_double__set_parm(void *vptr, void *ptr_name, double val);
 
 double o2scl_funct_string_double__getitem(void *vptr, double x);
 
@@ -1258,9 +1244,9 @@ int o2scl_cli_apply_aliases(void *vptr, void *ptr_sv, size_t istart, bool debug=
 
 void *o2scl_cli_get_option_list(void *vptr);
 
-void *o2scl_cli_parameter_desc(void *vptr, char *name);
+void *o2scl_cli_parameter_desc(void *vptr, void *ptr_name);
 
-void *o2scl_cli_option_short_desc(void *vptr, char *name);
+void *o2scl_cli_option_short_desc(void *vptr, void *ptr_name);
 
 void *o2scl_create_shared_ptr_table_units_();
 
@@ -1268,13 +1254,13 @@ void o2scl_free_shared_ptr_table_units_(void *vptr);
 
 void *o2scl_shared_ptr_table_units__ptr(void *vp);
 
-void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_double__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_int_int__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_rearrange_and_copy_tensor_size_t_size_t__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
-void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, char *spec, int verbose=0, bool err_on_fail=true);
+void *o2scl_grid_rearrange_and_copy_tensor_grid_double__wrapper(void *ptr_t, void *ptr_spec, int verbose=0, bool err_on_fail=true);
 
 double o2scl_fermi_function_wrapper(double x);
 
@@ -1286,7 +1272,7 @@ double o2scl_quadratic_extremum_y_double__wrapper(double x1, double x2, double x
 
 void o2scl_screenify_vector_std_string__wrapper(size_t nin, void *ptr_in_cols, void *ptr_out_cols, size_t max_size=80);
 
-bool o2scl_file_exists_wrapper(char *fname);
+bool o2scl_file_exists_wrapper(void *ptr_fname);
 
 void o2scl_RGBtoHSV_wrapper(double r, double g, double b, void *ptr_h, void *ptr_s, void *ptr_v);
 
@@ -1294,17 +1280,17 @@ void o2scl_HSVtoRGB_wrapper(double h, double s, double v, void *ptr_r, void *ptr
 
 void o2scl_wordexp_single_file_wrapper(void *ptr_fname);
 
-void o2scl_wordexp_wrapper_wrapper(char *word, void *ptr_matches);
+void o2scl_wordexp_wrapper_wrapper(void *ptr_word, void *ptr_matches);
 
-double o2scl_function_to_double_wrapper(char *s, int verbose=0);
+double o2scl_function_to_double_wrapper(void *ptr_s, int verbose=0);
 
-int o2scl_function_to_double_nothrow_wrapper(char *s, void *ptr_result, int verbose=0);
+int o2scl_function_to_double_nothrow_wrapper(void *ptr_s, void *ptr_result, int verbose=0);
 
-double o2scl_find_constant_wrapper(char *name, char *unit);
+double o2scl_find_constant_wrapper(void *ptr_name, void *ptr_unit);
 
 int o2scl_string_to_uint_list_vector_size_t__wrapper(void *ptr_x, void *ptr_list);
 
-void o2scl_rewrap_keep_endlines_wrapper(char *str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
+void o2scl_rewrap_keep_endlines_wrapper(void *ptr_str, void *ptr_sv, size_t ncol=79, int verbose=0, bool ignore_vt100=true);
 
 size_t o2scl_vector_level_count_std_vector_double_std_vector_double__wrapper(double level, size_t n, void *ptr_x, void *ptr_y);
 

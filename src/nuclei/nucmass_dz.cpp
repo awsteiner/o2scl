@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -166,8 +166,10 @@ nucmass_dz_table::nucmass_dz_table(std::string model, bool external) {
   } else {
     if (model=="96") {
       fname=dir+"/nucmass/du_zu_96.o2";
+      reference=" J. Duflo and A. P. Zuker, Phys. Rev. C 52 (1995) 23.";
     } else {
       fname=dir+"/nucmass/du_zu_95.o2";
+      reference=" J. Duflo and A. P. Zuker, Phys. Rev. C 52 (1995) 23.";
     }
   }
 

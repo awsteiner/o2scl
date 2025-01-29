@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -26,10 +26,20 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+
+#ifdef O2SCL_MULTIP
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
+
 #include <o2scl/constants.h>
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
 #include <o2scl/mroot.h>
+#include <o2scl/test_mgr.h>
 
 // To get directories for calibrate function
 #include <o2scl/lib_settings.h>
@@ -88,6 +98,20 @@ namespace o2scl {
    */
   typedef thermo_tl<double> thermo;
 
+  /** \brief Long double-precision thermodynamics object
+   */
+  typedef thermo_tl<long double> thermo_ld;
+  
+#ifdef O2SCL_MULTIP
+  
+  /** \brief 25-digit precision thermodynamics object
+   */
+  typedef thermo_tl<boost::multiprecision::number<
+                       boost::multiprecision::cpp_dec_float<25> > >
+  thermo_cdf25;
+  
+#endif
+  
   /** \brief Addition operator
    */
   extern thermo operator+(const thermo &left, const thermo &right);
@@ -233,6 +257,414 @@ namespace o2scl {
    */
   extern thermo operator-(const thermo &left, const part &right);
 
+  /** \brief Calibrate particle classes by comparing double to
+      multiprecision
+  */
+#ifdef O2SCL_MULTIP
+  template <class fp1_t=double,
+            class fp2_t=long double,
+            class fp3_t=cpp_dec_float_25> class part_cal_new
+#else
+  template <class fp1_t=double,
+            class fp2_t=long double,
+            class fp3_t=long double> class part_cal_new
+#endif
+    {
+    
+  public:
+    
+    /** \brief Test the ``calc_mu`` function
+     */
+    template<class part1_t, class part2_t, class part3_t,
+             class thermo1_t, class thermo2_t, class thermo3_t>
+    void test_calc_mu(part1_t &f, part2_t &fld, part3_t &f25,
+                      thermo1_t &fr, thermo2_t &frld,
+                      thermo3_t &fr25, o2scl::test_mgr &t,
+                      int &count, int first_test,
+                      int cmu_n_max, int cmu_en_max,
+                      int cmu_ld_n_max, int cmu_ld_en_max,
+                      int cmu_ti_max, int cmu_ld_ti_max,
+                      int cmu_25_ti_max) {
+
+      std::cout.precision(4);
+      
+      // Sums of calc_mu() comparisons between fp types
+      int cmu_n=0, cmu_en=0, cmu_ld_n=0, cmu_ld_en=0;
+      // Sums of calc_mu() accuracy via. thermodynamic identity
+      int cmu_ti=0, cmu_ld_ti=0, cmu_25_ti=0;
+      
+      std::cout << " cnt m          T           mu/n       "
+                << "d-ld  ld-25 ti verify" << std::endl;
+      
+      for(int im=-2;im<=1;im++) {
+        
+        f.m=im;
+        f.m=pow(10,f.m);
+        fld.m=im;
+        fld.m=pow(10,fld.m);
+        f25.m=im;
+        f25.m=pow(10,f25.m);
+        
+        for(int iT=-2;iT<=1;iT++) {
+          
+          fp1_t T=iT;
+          T=pow(10,T);
+          fp2_t Tld=iT;
+          Tld=pow(10,Tld);
+          fp3_t T25=iT;
+          T25=pow(10,T25);
+
+          for(int imu=0;imu<8;imu++) {
+
+            if (imu<4) {
+              f.mu=imu-2;
+              f.mu=pow(10,f.mu);
+              fld.mu=imu-2;
+              fld.mu=pow(10,fld.mu);
+              f25.mu=imu-2;
+              f25.mu=pow(10,f25.mu);
+            } else {
+              f.mu=imu-6;
+              f.mu=-pow(10,f.mu);
+              fld.mu=imu-6;
+              fld.mu=-pow(10,fld.mu);
+              f25.mu=imu-6;
+              f25.mu=-pow(10,f25.mu);
+            }
+            
+            std::cout.width(4);
+            std::cout << count << " ";
+            
+            if (count>=first_test) {
+              
+              std::cout << f.m << " " << T << " ";
+              std::cout.setf(std::ios::showpos);
+              std::cout << f.mu << " ";
+              std::cout.unsetf(std::ios::showpos);
+              
+              int ret=fr.calc_mu(f,T);
+              int retld=frld.calc_mu(fld,Tld);
+              int ret25=fr25.calc_mu(f25,T25);
+              
+              if (ret==0) {
+                
+                // Test with inc_rest_mass=false
+                part1_t f2=f;
+                f2.inc_rest_mass=false;
+                f2.mu-=f2.m;
+                fr.calc_mu(f2,T);
+                t.test_rel(f.ed,f2.ed+f2.m*f2.n,1.0e-11,"irm false ed");
+                t.test_rel(f.en,f2.en,1.0e-14,"irm false en");
+                
+                // Test with non_interacting=false
+                part1_t f3=f;
+                f3.non_interacting=false;
+                f3.nu=f3.mu;
+                f3.ms=f3.m;
+                f3.m*=sqrt(2.0);
+                fr.calc_mu(f3,T);
+                t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
+                t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+                
+                // Test with both equal to false
+                part1_t f4=f3;
+                f4.inc_rest_mass=false;
+                f4.non_interacting=false;
+                f4.nu-=f4.m;
+                fr.calc_mu(f4,T);
+                t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed");
+                t.test_rel(f3.en,f4.en,1.0e-13,"both false en");
+                
+                if (t.get_success()==false) {
+                  std::cout << "1" << std::endl;
+                  exit(-1);
+                }
+              }
+              
+              int idn=-2, iden=-2, ildn=-2, ilden=-2;
+              if (ret==0 && retld==0) {
+                idn=count_digits_same(f.n,fld.n);
+                iden=count_digits_same(f.en,fld.en);
+              }
+              cmu_n+=idn;
+              cmu_en+=iden;
+              if (retld==0 && ret25==0) {
+                ildn=count_digits_same(fld.n,f25.n);
+                ilden=count_digits_same(fld.en,f25.en);
+              }
+              cmu_ld_en+=ilden;
+              cmu_ld_n+=ildn;
+              
+              std::cout.width(2);
+              std::cout << idn << " ";
+              std::cout.width(2);
+              std::cout << iden << " ";
+              std::cout.width(2);
+              std::cout << ildn << " ";
+              std::cout.width(2);
+              std::cout << ilden << " ";
+              
+              int x=-2, xld=-2, x25=-2;
+              
+              if (ret==0) {
+                fp1_t pr2=-f.ed+f.n*f.mu+T*f.en;
+                x=count_digits_same(f.pr,pr2);
+              }
+              cmu_ti+=x;
+              std::cout.width(2);
+              std::cout << x << " ";
+              
+              if (retld==0) {
+                fp2_t pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+                xld=count_digits_same(fld.pr,pr2ld);
+              }
+              cmu_ld_ti+=xld;
+              std::cout.width(2);
+              std::cout << xld << " ";
+              
+              if (ret25==0) {
+                fp3_t pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+                x25=count_digits_same(f25.pr,pr225);
+              }
+              cmu_25_ti+=x25;
+              std::cout.width(2);
+              std::cout << x25 << " cmu" << std::endl;
+              
+            } else {
+              
+              std::cout << std::endl;
+              
+            }
+            
+            count++;
+            
+          }
+        }
+      }
+      
+      std::cout << "calc_mu density (double <-> long double): "
+           << cmu_n << std::endl;
+      std::cout << "calc_mu entropy (double <-> long double): "
+           << cmu_en << std::endl;
+      std::cout << "calc_mu density (long double <-> cdf_25): "
+           << cmu_ld_n << std::endl;
+      std::cout << "calc_mu entropy (long double <-> cdf_25): "
+           << cmu_ld_en << std::endl;
+      std::cout << "calc_mu ti: " << cmu_ti << std::endl;
+      std::cout << "calc_mu long double ti: " << cmu_ld_ti << std::endl;
+      std::cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << std::endl;
+      std::cout << std::endl;
+
+      t.test_gen(cmu_n>=cmu_n_max,"cmu_n");
+      t.test_gen(cmu_en>=cmu_en_max,"cmu_en");
+      t.test_gen(cmu_ld_n>=cmu_ld_n_max,"cmu_ld_n");
+      t.test_gen(cmu_ld_en>=cmu_ld_en_max,"cmu_ld_en");
+      t.test_gen(cmu_ti>=cmu_ti_max,"cmu_ti");
+      t.test_gen(cmu_ld_ti>=cmu_ld_ti_max,"cmu_ld_ti");
+      t.test_gen(cmu_25_ti>=cmu_25_ti_max,"cmu_25_ti");
+      
+      std::cout.precision(6);
+      
+      return;
+    }
+    
+    /** \brief Test the ``pair_mu`` function
+     */
+    template<class part1_t, class part2_t, class part3_t,
+             class thermo1_t, class thermo2_t, class thermo3_t>
+    void test_pair_mu(part1_t &f, part2_t &fld, part3_t &f25,
+                      thermo1_t &fr, thermo2_t &frld,
+                      thermo3_t &fr25, o2scl::test_mgr &t,
+                      int &count, int first_test,
+                      int pmu_n_max, int pmu_en_max,
+                      int pmu_ld_n_max, int pmu_ld_en_max,
+                      int pmu_ti_max, int pmu_ld_ti_max,
+                      int pmu_25_ti_max) {
+
+      std::cout.precision(4);
+      
+      // Sums of pair_mu() comparisons between fp types
+      int pmu_n=0, pmu_en=0, pmu_ld_n=0, pmu_ld_en=0;
+      // Sums of pair_mu() accuracy via. thermodynamic identity
+      int pmu_ti=0, pmu_ld_ti=0, pmu_25_ti=0;
+      
+      std::cout << " cnt m          T           mu/n       "
+                << "d-ld  ld-25 ti verify" << std::endl;
+      
+      for(int im=-2;im<=1;im++) {
+        
+        f.m=im;
+        f.m=pow(10,f.m);
+        fld.m=im;
+        fld.m=pow(10,fld.m);
+        f25.m=im;
+        f25.m=pow(10,f25.m);
+        
+        for(int iT=-2;iT<=1;iT++) {
+          
+          fp1_t T=iT;
+          T=pow(10,T);
+          fp2_t Tld=iT;
+          Tld=pow(10,Tld);
+          fp3_t T25=iT;
+          T25=pow(10,T25);
+
+          for(int imu=0;imu<8;imu++) {
+
+            if (imu<4) {
+              f.mu=imu-2;
+              f.mu=pow(10,f.mu);
+              fld.mu=imu-2;
+              fld.mu=pow(10,fld.mu);
+              f25.mu=imu-2;
+              f25.mu=pow(10,f25.mu);
+            } else {
+              f.mu=imu-6;
+              f.mu=-pow(10,f.mu);
+              fld.mu=imu-6;
+              fld.mu=-pow(10,fld.mu);
+              f25.mu=imu-6;
+              f25.mu=-pow(10,f25.mu);
+            }
+            
+            std::cout.width(4);
+            std::cout << count << " ";
+            
+            if (count>=first_test) {
+              
+              std::cout << f.m << " " << T << " ";
+              std::cout.setf(std::ios::showpos);
+              std::cout << f.mu << " ";
+              std::cout.unsetf(std::ios::showpos);
+              
+              int ret=fr.pair_mu(f,T);
+              int retld=frld.pair_mu(fld,Tld);
+              int ret25=fr25.pair_mu(f25,T25);
+              
+              if (ret==0) {
+                
+                // Test with inc_rest_mass=false
+                part1_t f2=f;
+                f2.inc_rest_mass=false;
+                f2.mu-=f2.m;
+                fr.pair_mu(f2,T);
+                t.test_rel(f.ed,f2.ed+f2.m*f2.n,1.0e-11,"irm false ed");
+                t.test_rel(f.en,f2.en,1.0e-13,"irm false en");
+                
+                // Test with non_interacting=false
+                part1_t f3=f;
+                f3.non_interacting=false;
+                f3.nu=f3.mu;
+                f3.ms=f3.m;
+                f3.m*=sqrt(2.0);
+                fr.pair_mu(f3,T);
+                t.test_rel(f.n,f3.n,1.0e-14,"ni false n");
+                t.test_rel(f.en,f3.en,1.0e-14,"ni false en");
+                
+                // Test with both equal to false
+                part1_t f4=f3;
+                f4.inc_rest_mass=false;
+                f4.non_interacting=false;
+                f4.nu-=f4.m;
+                fr.pair_mu(f4,T);
+                t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-11,"both false ed");
+                t.test_rel(f3.en,f4.en,1.0e-13,"both false en");
+                
+                if (t.get_success()==false) {
+                  std::cout << "1" << std::endl;
+                  exit(-1);
+                }
+              }
+              
+              int idn=-2, iden=-2, ildn=-2, ilden=-2;
+              if (ret==0 && retld==0) {
+                idn=count_digits_same(f.n,fld.n);
+                iden=count_digits_same(f.en,fld.en);
+              }
+              pmu_n+=idn;
+              pmu_en+=iden;
+              if (retld==0 && ret25==0) {
+                ildn=count_digits_same(fld.n,f25.n);
+                ilden=count_digits_same(fld.en,f25.en);
+              }
+              pmu_ld_en+=ilden;
+              pmu_ld_n+=ildn;
+              
+              std::cout.width(2);
+              std::cout << idn << " ";
+              std::cout.width(2);
+              std::cout << iden << " ";
+              std::cout.width(2);
+              std::cout << ildn << " ";
+              std::cout.width(2);
+              std::cout << ilden << " ";
+              
+              int x=-2, xld=-2, x25=-2;
+              
+              if (ret==0) {
+                fp1_t pr2=-f.ed+f.n*f.mu+T*f.en;
+                x=count_digits_same(f.pr,pr2);
+              }
+              pmu_ti+=x;
+              std::cout.width(2);
+              std::cout << x << " ";
+              
+              if (retld==0) {
+                fp2_t pr2ld=-fld.ed+fld.n*fld.mu+T*fld.en;
+                xld=count_digits_same(fld.pr,pr2ld);
+              }
+              pmu_ld_ti+=xld;
+              std::cout.width(2);
+              std::cout << xld << " ";
+              
+              if (ret25==0) {
+                fp3_t pr225=-f25.ed+f25.n*f25.mu+T*f25.en;
+                x25=count_digits_same(f25.pr,pr225);
+              }
+              pmu_25_ti+=x25;
+              std::cout.width(2);
+              std::cout << x25 << " pmu" << std::endl;
+              
+            } else {
+              
+              std::cout << std::endl;
+              
+            }
+            
+            count++;
+            
+          }
+        }
+      }
+      
+      std::cout << "pair_mu density (double <-> long double): "
+           << pmu_n << std::endl;
+      std::cout << "pair_mu entropy (double <-> long double): "
+           << pmu_en << std::endl;
+      std::cout << "pair_mu density (long double <-> cdf_25): "
+           << pmu_ld_n << std::endl;
+      std::cout << "pair_mu entropy (long double <-> cdf_25): "
+           << pmu_ld_en << std::endl;
+      std::cout << "pair_mu ti: " << pmu_ti << std::endl;
+      std::cout << "pair_mu long double ti: " << pmu_ld_ti << std::endl;
+      std::cout << "pair_mu cpp_dec_float_25 ti: " << pmu_25_ti << std::endl;
+      std::cout << std::endl;
+
+      t.test_gen(pmu_n>=pmu_n_max,"pmu_n");
+      t.test_gen(pmu_en>=pmu_en_max,"pmu_en");
+      t.test_gen(pmu_ld_n>=pmu_ld_n_max,"pmu_ld_n");
+      t.test_gen(pmu_ld_en>=pmu_ld_en_max,"pmu_ld_en");
+      t.test_gen(pmu_ti>=pmu_ti_max,"pmu_ti");
+      t.test_gen(pmu_ld_ti>=pmu_ld_ti_max,"pmu_ld_ti");
+      t.test_gen(pmu_25_ti>=pmu_25_ti_max,"pmu_25_ti");
+      
+      std::cout.precision(6);
+      
+      return;
+    }
+    
+  };
+  
   /** \brief Object to organize calibration of particle classes
       to results stored in a table
   */

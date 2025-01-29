@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2019-2024, Andrew W. Steiner
+  Copyright (C) 2019-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,7 +33,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <o2scl/funct_multip.h>
 #endif
 
@@ -126,7 +126,7 @@ namespace o2scl {
     }
 
     /** \brief Integrate function \c func, the internal wrapper
-        which uses a \ref funct_multip object
+        which uses a \ref funct_multip_tl object
 
         There are three tolerances:
         - \c target_tol is the target tolerance which is sent to
@@ -145,7 +145,7 @@ namespace o2scl {
                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -232,7 +232,7 @@ namespace o2scl {
     bool err_nonconv;
 
     /** \brief Verbosity parameter for the internal
-        \ref funct_multip object
+        \ref funct_multip_tl object
     */
     int fm_verbose;
     
@@ -370,7 +370,7 @@ namespace o2scl {
         }
       }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {

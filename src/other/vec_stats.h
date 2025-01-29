@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner and Jesse Farr 
+  Copyright (C) 2006-2025, Andrew W. Steiner and Jesse Farr 
   
   This file is part of O2scl.
   
@@ -359,6 +359,7 @@ namespace o2scl {
     }
     return sum/n;
   }
+
   //@}
 
   /// \name Vector absolute deviation, skewness, etc. in src/other/vec_stats.h
@@ -1103,7 +1104,7 @@ namespace o2scl {
     }
     
     // First, create a new vector with the rolling averages
-    std::vector<double> avgs(n);
+    std::vector<data_t> avgs(n);
     for(size_t i=0;i<n;i++) {
       size_t cnt=0;
       avgs[i]=0.0;
@@ -1114,7 +1115,7 @@ namespace o2scl {
 	  cnt++;
 	}
       }
-      avgs[i]/=((double)cnt);
+      avgs[i]/=((data_t)cnt);
     }
     
     // Second, copy the new vector on top of the old one
@@ -1189,9 +1190,9 @@ namespace o2scl {
   /** \brief Compute a normalization factor for weighted data
 
       This function is used internally in \ref wvector_variance(size_t
-      n, vec_t &data, const vec2_t &weights, double wmean) and \ref
-      wvector_stddev(size_t n, vec_t &data, const vec2_t &weights, double
-      wmean) .
+      n, const vec_t &data, const vec2_t &weights, double wmean) and
+      \ref wvector_stddev(size_t n, const vec_t &data, const vec2_t
+      &weights, double wmean) .
   */
   template<class vec_t> double wvector_factor(size_t n, const vec_t &weights) {
     
@@ -1212,9 +1213,9 @@ namespace o2scl {
   /** \brief Compute a normalization factor for weighted data
 
       This function is used internally in \ref wvector_variance(size_t
-      n, vec_t &data, const vec2_t &weights, double wmean) and \ref
-      wvector_stddev(size_t n, vec_t &data, const vec2_t &weights, double
-      wmean) .
+      n, const vec_t &data, const vec2_t &weights, double wmean) and
+      \ref wvector_stddev(size_t n, const vec_t &data, const vec2_t
+      &weights, double wmean) .
   */
   template<class vec_t> double wvector_factor(const vec_t &weights) {
     return wvector_factor<vec_t>(weights.size(),weights);
@@ -1922,6 +1923,9 @@ namespace o2scl {
       exponents are arbitrary. Also, it is generally beneficial for
       the last dimension of a real to complex or complex to real
       transform to be even.)
+
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_forward_fft(const std::vector<double> &data,
                           std::vector<std::complex<double>> &fft);
@@ -1934,7 +1938,10 @@ namespace o2scl {
       no optimization of the FFTW algorithm is performed. Given an
       input vector of size n, the output vector is resized to have
       size \f$ (n-1)*2 \f$ . 
-   */
+
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
+  */
   void vector_backward_fft(const std::vector<std::complex<double>> &data,
                           std::vector<double> &fft);
   
@@ -1946,6 +1953,9 @@ namespace o2scl {
       used and so little or no optimization of the FFTW algorithm is
       performed. Given an input vector of size n, the output vector is
       resized to have size \f$ n/2+1 \f$ .
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t>
   void vector_forward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -1980,6 +1990,9 @@ namespace o2scl {
       used and so little or no optimization of the FFTW algorithm is
       performed. Given an input vector of size n, the output vector is
       resized to have size \f$ (n-1)*2 \f$ .
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t>
   void vector_backward_fft_copy(const vec_t &data, resize_vec_t &fft) {
@@ -2012,6 +2025,9 @@ namespace o2scl {
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
       the FFTW algorithm is performed.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_forward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2024,6 +2040,9 @@ namespace o2scl {
       performed, so that it has the same size as the input vector. The
       FFTW_ESTIMATE flag is used and so little or no optimization of
       the FFTW algorithm is performed.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void vector_backward_complex_fft
   (const std::vector<std::complex<double>> &data,
@@ -2037,6 +2056,9 @@ namespace o2scl {
       and so little or no optimization of the FFTW algorithm is done.
       The output vector is resized to have the same size as the 
       input vector.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class cx_vec_t, class cx_resize_vec_t>
   void vector_forward_complex_fft_copy
@@ -2090,6 +2112,9 @@ namespace o2scl {
       and so little or no optimization of the FFTW algorithm is done.
       The output vector is resized to have the same size as the 
       input vector.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class cx_vec_t, class cx_resize_vec_t>
   void vector_backward_complex_fft_copy
@@ -2147,6 +2172,9 @@ namespace o2scl {
       have size \f$ m(n/2+1) \f$ representing a matrix with size1()
       equal to m and size2() equal to \f$ (n/2+1) \f$, stored in
       row-major order.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_forward_fft
   (size_t m, size_t n, const std::vector<double> &data,
@@ -2165,6 +2193,9 @@ namespace o2scl {
       equal to n, the output vector is resized to have size \f$
       2m(n-1) \f$ representing a matrix with size1() equal to m and
       size2() equal to \f$ 2(n-1) \f$, stored in row-major order.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_backward_fft_copy
   (size_t m, size_t n, const std::vector<std::complex<double>> &fft,
@@ -2179,6 +2210,9 @@ namespace o2scl {
       no optimization of the FFTW algorithm is done. Given an input
       implying a matrix with size1() equal to m and and size2() equal
       to n, the output vector is resized to have size \f$ m*n \f$.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   void matrix_forward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
@@ -2193,6 +2227,9 @@ namespace o2scl {
       no optimization of the FFTW algorithm is done. Given an input
       implying a matrix with size1() equal to m and and size2() equal
       to n, the output vector is resized to have size \f$ m*n \f$.
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   void matrix_backward_complex_fft
   (size_t m, size_t n, const std::vector<std::complex<double>> &data,
@@ -2228,6 +2265,9 @@ namespace o2scl {
       FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
       OTHER DEALINGS IN THE SOFTWARE.
       \endverbatim
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
   (const vec_t &data, resize_vec_t &ac_vec, double mean,
@@ -2283,6 +2323,9 @@ namespace o2scl {
   
   /** \brief Use FFTW to construct the autocorrelation vector with
       automatic calculation of the mean
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector_fftw
   (const vec_t &data, resize_vec_t &ac_vec, int verbose=0) {
@@ -2293,6 +2336,9 @@ namespace o2scl {
 
   /** \brief Use FFTW to construct the autocorrelation vector given
       a multiplier column
+      
+      \note This function calls the error handler if \o2 was not
+      compiled with FFTW support.
    */
   template<class vec_t, class resize_vec_t> void
   vector_autocorr_vector_fftw_mult
@@ -2793,6 +2839,88 @@ namespace o2scl {
   */
   double kl_div_gaussian(double mean_prior, double mean_post,
                          double covar_prior, double covar_post);
+  
+  /** \brief Compute the Gelman-Rubin statistic for a set of
+      vectors
+      
+      This function requires at least two vectors and all of the
+      vectors provided must have a length at least greater than two.
+      
+      An old recommendation by Gelman (2004) was that convergence is
+      indicated by R<1.1, subsequent works found but tighter
+      constraints may be required.
+      
+      Gelman (2004) is Gelman, A., Carlin, J. B., Stern, H. S., and
+      Rubin, D. B. (2004). Bayesian Data Analysis. Chapman & Hall/CRC,
+      Boca Raton, FL,.
+      
+      https://arxiv.org/pdf/1812.09384 may provide an interesting
+      alternative. 
+  */
+  template<class vec_t, class fp_t> fp_t mult_vector_gelman_rubin
+  (std::vector<vec_t> &v, int verbose=0) {
+    
+    size_t n=v.size();
+    if (n<2) {
+      O2SCL_ERR2("Must provide at least two vectors in ",
+                "mult_vector_gelman_rubin().",o2scl::exc_einval);
+    }
+    
+    // Determine the maximum vector length which is less than or
+    // equal to all of the vector lengths
+    size_t Lmax=v[0].size();
+    if (verbose>1) {
+      std::cout << "size 0: " << Lmax << std::endl;
+    }
+    for(size_t i=1;i<n;i++) {
+      if (v[i].size()<Lmax) Lmax=v[i].size();
+      if (verbose>1) {
+        std::cout << "size " << i << ": " << v[i].size() << " "
+                  << Lmax << std::endl;
+      }
+    }
+    if (Lmax<1) {
+      O2SCL_ERR2("All vectors must have at least two elements in ",
+                "mult_vector_gelman_rubin().",o2scl::exc_einval);
+    }
+    
+    // Double-precision version of Lmax 
+    fp_t L=((fp_t)Lmax);
+    
+    // Compute means and variances
+    std::vector<fp_t> means(n), vars(n);
+    if (verbose>1) {
+      std::cout << "i mean var" << std::endl;
+    }
+    for(size_t i=0;i<n;i++) {
+      means[i]=vector_mean<vec_t>(Lmax,v[i]);
+      vars[i]=vector_variance<vec_t>(Lmax,v[i],means[i]);
+      if (verbose>1) {
+        std::cout << i << " " << means[i] << " " << vars[i] << std::endl;
+      }
+    }
+    
+    // Finally, construct the GR statistic
+    fp_t mean_mean=vector_mean(n,means);
+    if (verbose>1) {
+      std::cout << "mean_mean: " << dtos(mean_mean,0) << std::endl;
+    }
+    fp_t B=0;
+    if (verbose>1) {
+      std::cout << "i B" << std::endl;
+    }
+    for(size_t i=0;i<n;i++) {
+      B+=pow(means[i]-mean_mean,2);
+      if (verbose>1) {
+        std::cout << i << " " << dtos(B,0) << std::endl;
+      }
+    }
+    B*=L/((fp_t)(n-1));
+    fp_t W=vector_mean(n,vars);
+    fp_t R=((L-1)/L*W+B/L)/W;
+    
+    return R;
+  }
   
 }
 

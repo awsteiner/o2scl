@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -46,8 +46,18 @@ namespace o2scl {
       \future Implement the finite temperature EOS properly.
   */
   class eos_had_ddc : public eos_had_eden_base {
+    
   public:
 
+    /** \brief Desc
+     */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /// \name Masses
     //@{
     /// nucleon mass

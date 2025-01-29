@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,11 +31,12 @@ nucmass_ldrop_shell::nucmass_ldrop_shell() {
   inc_shell=true;
 }
 
-double nucmass_ldrop_shell::drip_binding_energy_d
-(double Z, double N, double npout, double nnout, double chi, double T) {
+double nucmass_ldrop_shell::binding_energy_densmat
+(double Z, double N, double npout, double nnout, double neout,
+ double T) {
  
-  double ret=nucmass_ldrop_pair::drip_binding_energy_d
-    (Z,N,npout,nnout,chi,T);
+  double ret=nucmass_ldrop_pair::binding_energy_densmat
+    (Z,N,npout,nnout,neout,T);
 
   if (inc_shell==false) return ret;
 

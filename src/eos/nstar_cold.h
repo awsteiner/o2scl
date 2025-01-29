@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -56,7 +56,7 @@ namespace o2scl {
       of the User's Guide.
 
       The neutron, proton, electron and muon are given masses
-      according to their values in \ref o2scl_mks
+      according to their values in the <tt>o2scl_mks</tt> namespace
       after a conversion to units of \f$ 1/\mathrm{fm} \f$. The
       default neutron and proton objects have their values
       of <tt>inc_rest_mass</tt> set to true. The user can change
@@ -75,7 +75,7 @@ namespace o2scl {
       The baryon density range is specified by \ref nb_start, \ref nb_end
       and \ref dnb. Given the value of \f$ f \f$ defined by
       \f[
-      f = \frac{\mathrm{nb\_start} - \mathrm{nb\_end}}/{\mathrm{dnb}}
+      f = \frac{\mathrm{nb\_start} - \mathrm{nb\_end}}{\mathrm{dnb}}
       \f]
       if \f$ f<1 \f$ or \f$ f>10^8 \f$, then the error handler is 
       called.
@@ -296,14 +296,14 @@ namespace o2scl {
     double acausal_ed;
 
     /** \brief The last valid baryon density in the EOS 
-        (in \f$ \mathrm^{-3} \f$; default 2.0)
+        (in \f$ \mathrm{fm}^{-3} \f$; default 2.0)
 
         This value is computed by \ref calc_eos() .
      */
     double nb_last;
 
     /** \brief The minimum last valid baryon density in the EOS
-        (in \f$ \mathrm^{-3} \f$; default 0.48)
+        (in \f$ \mathrm{fm}^{-3} \f$; default 0.48)
 
         The function \ref calc_eos() requires that the EOS must
         be computable up to at least this density.

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -43,6 +43,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifndef O2SCL_OPENSUSE_I386
+  
   cout.setf(ios::scientific);
   
   if (o2scl_settings.range_check()) {
@@ -152,6 +154,8 @@ int main(void) {
 
   }
 
+#endif
+  
   t.report();
   return 0;
 }

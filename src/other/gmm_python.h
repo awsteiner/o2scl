@@ -1,7 +1,7 @@
  /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2023-2024, Andrew W. Steiner
+  Copyright (C) 2023-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -79,6 +79,11 @@ namespace o2scl {
     /// Python function
     PyObject *p_get_func;
 
+    /** \brief String representing options to be passed to the Python
+        set_data() function
+    */
+    std::string c_options;
+    
     /// Number of parameters
     size_t n_params;
     

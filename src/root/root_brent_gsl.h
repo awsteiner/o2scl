@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -54,6 +54,7 @@
 #include <o2scl/funct.h>
 #include <o2scl/funct_multip.h>
 #include <o2scl/root.h>
+#include <o2scl/table.h>
 
 namespace o2scl {
   
@@ -75,17 +76,17 @@ namespace o2scl {
 
       .. todo::
 
-      class root_brent_gsl
+         class root_brent_gsl
 
-      Future:
+         Future:
 
-      - There is some duplication in the variables \c x_lower, 
-      \c x_upper, \c a, and \c b, which could be removed. Some
-      better variable names would also be helpful.
-      - Create a meaningful enum list for \ref
-      o2scl::root_brent_gsl::test_form.
-      - There is code duplication between the test_interval here
-      and in root_toms748.
+         - There is some duplication in the variables \c x_lower, 
+         \c x_upper, \c a, and \c b, which could be removed. Some
+         better variable names would also be helpful.
+         - Create a meaningful enum list for \ref
+         o2scl::root_brent_gsl::test_form.
+         - There is code duplication between the test_interval here
+         and in root_toms748.
 
       \endverbatim
 
@@ -203,8 +204,8 @@ namespace o2scl {
             // This additional temporary seems to be required
             // for boost::multiprecision types
             fp2_t x_diff=lx_upper-lx_lower;
-            //this->print_iter(lroot,y,iter,interval,tol,
-            //"root_brent_gsl (test_interval)");
+            this->print_iter(lroot,y,iter,interval,tol,
+                             "root_brent_gsl (test_interval)");
           }
         }
 	
@@ -220,11 +221,19 @@ namespace o2scl {
 
           fp2_t y=f(lroot);
 
+          if (store_funcs) {
+            std::vector<fp_t> line={static_cast<fp_t>(lroot),
+                                    static_cast<fp_t>(y)};
+            tab.line_of_data(line);
+          }
+            
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
-            //this->print_iter(lroot,y,iter,abs(y),this->tol_rel,
-            //"root_brent_gsl (relative deviation)");
+            fp2_t ay=abs(y);
+            this->print_iter(lroot,y,iter,ay,
+                             static_cast<fp2_t>(this->tol_rel),
+                             "root_brent_gsl (relative deviation)");
           }
         }
 
@@ -246,22 +255,37 @@ namespace o2scl {
         
           if (status==o2scl::success) {
             fp2_t y=f(lroot);
+            
+            if (store_funcs) {
+              std::vector<fp_t> line={static_cast<fp_t>(lroot),
+                                      static_cast<fp_t>(y)};
+              tab.line_of_data(line);
+            }
+            
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
-              //this->print_iter(root,y,iter,abs(y),this->tol_rel,
-              //"root_brent_gsl (relative deviation 2)");
+              fp2_t ay=abs(y);
+              this->print_iter(lroot,y,iter,ay,
+                               static_cast<fp2_t>(this->tol_rel),
+                               "root_brent_gsl (relative deviation 2)");
             }
           } else {
+            
             if (this->verbose>0) {
+              
               fp2_t y=f(lroot);
+              
               // This additional temporary seems to be required
               // for boost::multiprecision types
               fp2_t x_diff=lx_upper-lx_lower;
-              std::cout << "lower,root,upper: "
+              std::cout << "root_brent_gsl::solve_bkt_int_multip(): "
+                        << "lower,root,upper: "
                         << lx_lower << " " << lroot << " "
                         << lx_upper << std::endl;
-              //this->print_iter(root,y,iter,interval,tol,
-              //"root_brent_gsl (test_interval 2)");
+              fp2_t ay=abs(y);
+              this->print_iter(lroot,y,iter,ay,
+                               static_cast<fp2_t>(this->tol_rel),
+                               "root_brent_gsl (test_interval 2)");
             }
           }
         }
@@ -288,6 +312,7 @@ namespace o2scl {
     root_brent_gsl() {
       test_form=0;
       pow_tol_func=1.33;
+      store_funcs=false;
     }
     
     /// Return the type, \c "root_brent_gsl".
@@ -297,7 +322,13 @@ namespace o2scl {
         with adaptive multiprecision (default 1.33)
     */
     double pow_tol_func;
+
+    /// If true, store function evaluations
+    bool store_funcs;
     
+    /// For storing function evaluations
+    o2scl::table<std::vector<fp_t>,fp_t> tab;
+
     /** \brief Perform an iteration
 
         This function currently always returns \ref success.
@@ -403,6 +434,11 @@ namespace o2scl {
       }
 	
       gfb=f(gb);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={gb,gfb};
+        tab.line_of_data(line);
+      }
   
       // Update the best estimate of the root and bounds on each
       // iteration
@@ -423,7 +459,7 @@ namespace o2scl {
       return o2scl::success;
     }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     
     /** \brief Perform an iteration (adaptive multiprecision version)
     */
@@ -617,10 +653,17 @@ namespace o2scl {
 
           fp_t y=f(groot);
 
+          if (store_funcs) {
+            std::vector<fp_t> line={groot,y};
+            tab.line_of_data(line);
+          }
+          
           if (abs(y)<this->tol_rel) status=o2scl::success;
       
           if (this->verbose>0) {
-            this->print_iter(groot,y,iter,abs(y),this->tol_rel,
+            fp_t ay=abs(y);
+            this->print_iter(groot,y,iter,ay,
+                             static_cast<fp_t>(this->tol_rel),
                              "root_brent_gsl (relative deviation)");
           }
         }
@@ -642,22 +685,32 @@ namespace o2scl {
         
           if (status==o2scl::success) {
             fp_t y=f(groot);
+            
+            if (store_funcs) {
+              std::vector<fp_t> line={groot,y};
+              tab.line_of_data(line);
+            }
+            
             if (abs(y)>=this->tol_rel) status=gsl_continue;
             if (this->verbose>0) {
-              this->print_iter(groot,y,iter,abs(y),this->tol_rel,
+              fp_t ay=abs(y);
+              this->print_iter(groot,y,iter,ay,
+                               static_cast<fp_t>(this->tol_rel),
                                "root_brent_gsl (relative deviation 2)");
             }
           } else {
             if (this->verbose>0) {
               fp_t y=f(groot);
+              
               // This additional temporary seems to be required
               // for boost::multiprecision types
               fp_t x_diff=gx_upper-gx_lower;
-              std::cout << "lower,root,upper: "
+              std::cout << "root_brent_gsl::solve_bkt(): "
+                        << "lower,root,upper: "
                         << gx_lower << " " << groot << " "
                         << gx_upper << std::endl;
               this->print_iter(groot,y,iter,interval,tol,
-                               "root_brent_gsl (test_interval 2)");
+                               "(test_interval 2)");
             }
           }
         }
@@ -777,7 +830,7 @@ namespace o2scl {
                   << std::endl;
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       // ─────────────────────────────────────────────────────────────────
       // 25-digit precision derivative evaluation
@@ -991,6 +1044,11 @@ namespace o2scl {
         This function currently always returns \ref success.
     */
     int set(func_t &ff, fp_t lower, fp_t upper) {
+
+      if (store_funcs) {
+        tab.clear();
+        tab.line_of_names("x y");
+      }
       
       if (lower > upper) {
         fp_t tmp=lower;
@@ -1007,6 +1065,13 @@ namespace o2scl {
     
       f_lower=ff(gx_lower);
       f_upper=ff(gx_upper);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={gx_lower,f_lower};
+        tab.line_of_data(line);
+        line={gx_upper,f_upper};
+        tab.line_of_data(line);
+      }
 	
       ga=gx_lower;
       gfa=f_lower;
@@ -1031,7 +1096,7 @@ namespace o2scl {
 	
     }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     
     /** \brief Set the information for the solver
         (adaptive multiprecision version)
@@ -1052,6 +1117,11 @@ namespace o2scl {
       fp2_t &lfb=storage[9];
       fp2_t &lfc=storage[10];
 
+      if (store_funcs) {
+        tab.clear();
+        tab.line_of_names("x y");
+      }
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -1072,6 +1142,15 @@ namespace o2scl {
       fp2_t err;
       int fm_ret1=fm2.eval_tol_err(ff,lx_lower,f_lower,err);
       int fm_ret2=fm2.eval_tol_err(ff,lx_upper,f_upper,err);
+
+      if (store_funcs) {
+        std::vector<fp_t> line={static_cast<fp_t>(lx_lower),
+                                static_cast<fp_t>(f_lower)};
+        tab.line_of_data(line);
+        line={static_cast<fp_t>(lx_upper),
+              static_cast<fp_t>(f_upper)};
+        tab.line_of_data(line);
+      }
       
       la=lx_lower;
       lfa=f_lower;

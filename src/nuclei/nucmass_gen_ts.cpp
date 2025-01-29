@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -50,7 +50,7 @@ int main(void) {
 		    "../../data/o2scl/nucmass/frib_mex/sly4_all.o2",
 		    "../../data/o2scl/nucmass/frib_mex/skms_all.o2",
 		    "../../data/o2scl/nucmass/frib_mex/skp_all.o2",
-		    "../../data/o2scl/nucmass/frib_mex/sv_min_all.o2",
+		    "../../data/o2scl/nucmass/frib_mex/sv-min_all.o2",
 		    "../../data/o2scl/nucmass/frib_mex/unedf0_all.o2",
 		    "../../data/o2scl/nucmass/frib_mex/unedf1_all.o2"};
 		    

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -77,7 +77,7 @@ namespace o2scl {
       together with their nucleon couplings, so \ref fields contains
       \f$ (g_{\sigma} \sigma, g_{\omega} \omega, g_{\rho} \rho, A )
       \f$ where \f$ g_{\sigma} \f$ is given, e.g. by the product of
-      \ref eos_had_rmf::ms times \ref eos_had_rmf::cs .
+      \ref eos_had_rmf::ms times <tt>eos_had_rmf::cs</tt>.
       
       Potential exceptions are
       - Failed to converge

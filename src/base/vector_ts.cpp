@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -309,7 +309,7 @@ int main(void) {
     t.test_rel(ub1(0,2),1.0,1.0e-12,"matrix col 4");
   }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
   {
     arma::mat ub1(3,3);
     ub1(0,0)=0.0;

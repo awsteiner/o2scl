@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2015-2024, Andrew W. Steiner
+  Copyright (C) 2015-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,8 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/nucmass_densmat.h>
+#include <o2scl/nucmass_ame.h>
+#include <o2scl/nucdist.h>
 
 using namespace std;
 using namespace o2scl;

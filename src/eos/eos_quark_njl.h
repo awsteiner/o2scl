@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -178,7 +178,7 @@ namespace o2scl {
       <b>References</b>
 
       \verbatim embed:rst
-      This class was created for [Steiner00]_. 
+      This class was created for [Steiner00qp]_. 
       See also [Bernard88]_, [Hatsuda94]_,
       [Buballa99]_, and [Alaverdyan21]_.
 
@@ -197,6 +197,14 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
 
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           eos_leptons &elep,
+			   std::shared_ptr<table_units<> > results) {
+      O2SCL_ERR("Function beta_eq_T0() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /// Class constructor
     eos_quark_njl();
 
@@ -259,7 +267,7 @@ namespace o2scl {
 	automatically calculated to ensure that the energy density and
 	the pressure of the vacuum are zero. The functions
 	set_quarks() and set_thermo() can be used before hand to
-	specify the \ref quark and \ref thermo objects.
+	specify the \ref quark_tl and \ref thermo objects.
     */
     virtual int set_parameters(double lambda=0.0, double fourferm=0.0, 
 			       double sixferm=0.0);
@@ -321,38 +329,42 @@ namespace o2scl {
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 	
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_ms(size_t nv, const ubvector &x, ubvector &y);
+    int gap_func_ms(size_t nv, const ubvector &x, ubvector &y,
+                    thermo &th);
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_qq(size_t nv, const ubvector &x, ubvector &y);
+    int gap_func_qq(size_t nv, const ubvector &x, ubvector &y,
+                    thermo &th);
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T,
+                      thermo &th);
     
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T,
+                      thermo &th);
     //@}
 
     /** \name The default quark masses (in inverse femtometers)
@@ -422,7 +434,8 @@ namespace o2scl {
       jac_funct> *solver;
     
     /// Used by calc_B0() to compute the bag constant
-    int B0_func(size_t nv, const ubvector &x, ubvector &y);
+    int B0_func(size_t nv, const ubvector &x, ubvector &y,
+                o2scl::thermo &th);
     
     /** \brief Calculates the contribution to the bag constant from 
         quark \c q 
@@ -539,29 +552,33 @@ namespace o2scl {
     //@{
     /** \brief The gap equations starting from the effective masses
      */
-    virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y);
+    virtual int gap_func_ms_vec(size_t nv, const ubvector &x, ubvector &y,
+                                thermo &th);
 
     /** \brief The gap equations starting from the effective masses
      */
-    virtual int gap_func_qq_vec(size_t nv, const ubvector &x, ubvector &y);
+    virtual int gap_func_qq_vec(size_t nv, const ubvector &x, ubvector &y,
+                                thermo &th);
 
     /** \brief Calculates gap equations in \c y as a function of the 
 	quark condensates in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T,
+                      thermo &th);
 
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
 
-	The function utilizes the \ref quark objects which can
+	The function utilizes the \ref quark_tl objects which can
 	be specified in set_quarks() and the \ref thermo object
 	which can be specified in eos::set_thermo().
     */
-    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T);
+    int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T,
+                      thermo &th);
     //@}
     
   };

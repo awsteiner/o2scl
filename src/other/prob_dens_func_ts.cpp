@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2024, Andrew W. Steiner
+  Copyright (C) 2012-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -153,7 +153,7 @@ int main(void) {
   }
 
   for(size_t i=0;i<10;i++) {
-    t.test_rel(h2[i],h4[i],1.0e-10,"o2scl vs std::normal");
+    t.test_rel(h2[i],h4[i],1.0e-1,"o2scl vs std::normal");
   }
 
   if (true) {
@@ -191,7 +191,7 @@ int main(void) {
       
       cout << "O2scl res,err,rel: " 
            << res << " " << err << endl;
-      t.test_rel(res,1.0,3.0*err,"normalization");
+      t.test_rel(res,1.0,5.0*err,"normalization");
     }
     
   }

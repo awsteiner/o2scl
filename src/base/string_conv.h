@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -460,10 +460,41 @@ namespace o2scl {
 
     /// Return true if \c name is found
     bool is_set(std::string name);
+
+    /// Output a summary to the screen
+    void summary(std::ostream &out) const;
+
   };
-  
-  
+
 }
 
+extern "C" {
+  
+  /** \brief Copy characters from a pointer to a C++ string
+
+      This function is used for the Python interface.
+      
+      This function copies the first \c n characters in \c p to the \c
+      std::string object at the address of \c strp. Note that this
+      function does not stop for null characters, it copies the first
+      \c n characters whether or not they are null.
+  */
+  void o2scl_char_p_to_string(int n, char *p, void *strp);
+  
+  /** \brief Copy characters from C++ string to a pointer
+
+      This function is used for the Python interface.
+
+      Presuming the address of a \c std::string object is passed in \c
+      strp, this function computes the length of the string and stores
+      it in <tt>*n</tt> (presuming \c n already points to a an
+      integer) and then copies the \c std::string object to the array
+      implied by \c p (presuming it is already allocated to hold
+      \c n characters).
+   */
+  void o2scl_string_to_char_p(void *strp, int *n, char *p);
+
+}
+  
 #endif
 

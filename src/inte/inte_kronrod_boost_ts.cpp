@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2019-2024, Andrew W. Steiner
+  Copyright (C) 2019-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -63,6 +63,8 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
+#ifdef O2SCL_MULTIP
+  
   inte_kronrod_boost<61> imkb;
 #ifdef O2SCL_SET_MPFR
   inte_kronrod_boost<61,mpfr_25,mpfr_35,mpfr_50,mpfr_100> imkb_mpfr;
@@ -105,7 +107,6 @@ int main(void) {
     cout << endl;
   }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
   {
     // Integrate test_func over [0,1] and compare to the exact result
     // at 50-digit precision

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -43,8 +43,12 @@ int nucmass_ktuy::load(std::string model, bool external) {
   } else {
     if (model=="04") {
       fname=dir+"/nucmass/ktuy04.o2";
+      reference=((std::string)"H. Koura, M. Uno, T. Tachibana, and ")+
+        "M. Yamada, Nucl. Phys. A 674 (2000) 47.";
     } else {
       fname=dir+"/nucmass/ktuy05.o2";
+      reference=((std::string)"H. Koura, T. Tachibana, M. Uno, and ")+
+        "M. Yamada, Prog. Theor. Phys. 113 (2005) 305.";
     }
   }
   

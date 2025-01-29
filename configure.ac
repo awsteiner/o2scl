@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.930a2],[awsteiner0@protonmail.com])
+AC_INIT([o2scl],[0.930],[awsteiner0@protonmail.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -108,11 +108,10 @@ AC_CHECK_LIB([gsl], [gsl_vector_get], [],
 AC_CHECK_LIB([quadmath], [isnanq], [], 
 	[echo ""
         echo "Quadmath not found."
-        echo "O2scl requires the libquadmath."
+        echo "O2scl typically requires libquadmath."
 	echo ""
 	echo -n " The present value of LDFLAGS is: " 
 	echo $LDFLAGS
-        exit -1
 	],[])
 
 # ------------------------------------------------------------------
@@ -148,15 +147,29 @@ AC_CHECK_LIB([readline], [add_history], [],
 # Check for module support
 # ------------------------------------------------------------------
 
-AC_ARG_ENABLE(modules,
-[  --enable-modules        Include module support @<:@default=no@:>@],
-	[case "${enableval}" in
-	yes) modules=true ;;
-	no)  modules=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-modules) ;;
-	esac],[modules=false])
+dnl AC_ARG_ENABLE(modules,
+dnl [  --enable-modules        Include module support @<:@default=no@:>@],
+dnl 	[case "${enableval}" in
+dnl 	yes) modules=true ;;
+dnl 	no)  modules=false ;;
+dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-modules) ;;
+dnl 	esac],[modules=false])
 
-AM_CONDITIONAL(O2SCL_MODULES, test x$modules = xtrue)
+dnl AM_CONDITIONAL(O2SCL_MODULES, test x$modules = xtrue)
+
+# ------------------------------------------------------------------
+# Check for cuda support
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(cuda,
+[  --enable-cuda        Include cuda support @<:@default=no@:>@],
+	[case "${enableval}" in
+	yes) cuda=true ;;
+	no)  cuda=false ;;
+	*) AC_MSG_ERROR(bad value ${enableval} for --enable-cuda) ;;
+	esac],[cuda=false])
+
+AM_CONDITIONAL(O2SCL_CUDA, test x$cuda = xtrue)
 
 # ------------------------------------------------------------------
 # Check for Mpfr library
@@ -191,7 +204,7 @@ AC_CHECK_LIB([mpfr], [mpfr_add], [],
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(pugixml,
-[  --enable-pugixml        Include pugixml support @<:@default=no@:>@],
+[  --enable-pugixml        Pugixml support (dev only) @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) pugixml=true ;;
 	no)  pugixml=false ;;
@@ -314,9 +327,8 @@ AC_CHECK_LIB([ncurses], [initscr], [],
 AC_CHECK_LIB([hdf5], [H5Fopen], [], [
   AC_CHECK_LIB([hdf5_serial], [H5Fopen], [], [
     echo ""
-    echo "HDF5 not found. Either provide the location for "
-    echo "the hdf5 libraries or ensure that HDF5 support is "
-    echo "disabled with the --disable-hdf option to configure. "
+    echo "HDF5 not found. Please provide the location for "
+    echo "the hdf5 libraries."
     echo ""
     echo -n " The present value of LDFLAGS is: " 
     echo $LDFLAGS
@@ -330,10 +342,8 @@ AC_CHECK_LIB([hdf5], [H5Fopen], [], [
 AC_CHECK_LIB([hdf5_hl], [H5TBread_table], [], [
   AC_CHECK_LIB([hdf5_serial_hl], [H5TBread_table], [], [
     echo ""
-    echo "High-level HDF5 interface not found. Either provide the "
-    echo "location for the hdf5_hl libraries or ensure that HDF5 "
-    echo "support is disabled with the --disable-hdf option to "
-    echo "configure. "
+    echo "High-level HDF5 interface not found. Please provide the "
+    echo "location for the hdf5_hl libraries."
     echo ""
     echo -n " The present value of LDFLAGS is: " 
     echo $LDFLAGS
@@ -398,6 +408,20 @@ AC_ARG_ENABLE(acol,
    esac],[acol=true])
 
 AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
+
+# ------------------------------------------------------------------
+# Enable or disable support for multiprecision
+# ------------------------------------------------------------------
+
+AC_ARG_ENABLE(multip,
+[  --enable-multip           Add multiprecision support @<:@default=no@:>@],
+   [case "${enableval}" in
+   yes) multip=true ;;
+   no)  multip=false ;;
+   *) AC_MSG_ERROR(bad value ${enableval} for --enable-multip) ;;
+   esac],[multip=false])
+
+AM_CONDITIONAL(O2SCL_MULTIP, test x$multip = xtrue)
 
 # ------------------------------------------------------------------
 # Enable or disable snap configurations
@@ -531,7 +555,6 @@ AC_CONFIG_FILES([Makefile
                  src/linalg/eigen/Makefile
 		 src/mcarlo/Makefile
                  src/min/Makefile
-                 src/modtest/Makefile
                  src/nuclei/Makefile
                  src/ode/Makefile
                  src/other/Makefile

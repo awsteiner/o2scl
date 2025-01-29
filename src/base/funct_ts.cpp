@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -77,21 +77,18 @@ int main(void) {
   o2scl_settings.py_init();
   o2scl_settings.add_python_path("../../data/o2scl/python",3);
   {
-    cout << "1." << endl;
     // We use the brackets to force the funct_python
     // destructor to run before py_final()
     funct_python fp("funct_test","fun",2);
     t.test_rel(fp(2.0),o2scl_const::pi*2.0,1.0e-12,"funct_python");
   }
   {
-    cout << "2." << endl;
     // We use the brackets to force the funct_python
     // destructor to run before py_final()
     funct_python_method fp("funct_test","c","fun2",2);
     t.test_rel(fp(2.0),o2scl_const::pi*4.0,1.0e-12,"funct_python 2");
   }
   {
-    cout << "3." << endl;
     // We use the brackets to force the funct_python
     // destructor to run before py_final()
     funct_python fp("o2sclpy","cpp_test",2);

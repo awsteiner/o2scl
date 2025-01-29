@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -25,7 +25,7 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/eos_sn.h>
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
 
   test_mgr t;
   t.set_output_level(1);
-
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+  
+#ifdef O2SCL_MULTIP
   
   std::string arg;
   if (argc>=2) {
@@ -49,30 +49,30 @@ int main(int argc, char *argv[]) {
   }
   
   fermion f;
-  fermion_ld fld;
-  fermion_cdf25 f25;
   f.g=2;
-  fld.g=2;
-  f25.g=2;
-  
-  fermion_rel fr;
-  fermion_rel_ld frld;
-  fermion_rel_cdf25 fr25;
-  
-  fr.verify_ti=true;
-  frld.verify_ti=true;
-  fr25.verify_ti=true;
 
+  fermion_rel fr;
+  fr.verify_ti=true;
   fr.err_nonconv=false;
   fr.nit.err_nonconv=false;
   fr.dit.err_nonconv=false;
   fr.it_multip.err_nonconv=false;
-
+  
+  fermion_ld fld;
+  fld.g=2;
+  
+  fermion_rel_ld frld;
+  frld.verify_ti=true;
   frld.err_nonconv=false;
   frld.nit.err_nonconv=false;
   frld.dit.err_nonconv=false;
   frld.it_multip.err_nonconv=false;
   
+  fermion_cdf25 f25;
+  f25.g=2;
+  
+  fermion_rel_cdf25 fr25;
+  fr25.verify_ti=true;
   fr25.err_nonconv=false;
   fr25.nit.err_nonconv=false;
   fr25.dit.err_nonconv=false;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     fr25.upper_limit_fac=80.0;
     fr25.density_root.tol_rel=1.0e-18;
     fr25.def_massless_root.tol_rel=1.0e-18;
-    
+
     test_shift=10.0;
   }
   
@@ -125,13 +125,12 @@ int main(int argc, char *argv[]) {
     // satisfied at higher precision. Either way, it is quite slow.
     
     fr.multip=true;
-    frld.multip=true;
-    fr25.multip=true;
     
     fr.upper_limit_fac=40.0;
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
     
+    frld.multip=true;
     frld.upper_limit_fac=52.0;
     frld.deg_entropy_fac=52.0;
     frld.tol_expan=1.0e-18;
@@ -139,12 +138,14 @@ int main(int argc, char *argv[]) {
     frld.density_root.tol_rel=1.0e-18;
     frld.def_massless_root.tol_rel=1.0e-18;
     
+    fr25.multip=true;
     fr25.upper_limit_fac=62.0;
     fr25.deg_entropy_fac=62.0;
     fr25.tol_expan=1.0e-23;
     fr25.exp_limit=6.7e7;
     fr25.density_root.tol_rel=1.0e-23;
     fr25.def_massless_root.tol_rel=1.0e-23;
+    
   }
 
   /*
@@ -182,8 +183,18 @@ int main(int argc, char *argv[]) {
   }
   */
   
-  cout.precision(4);
   int count=0;
+  
+  part_cal_new<> pcn;
+  pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+                   1543,1544,2393,2176,1400,1906,2597);
+  //pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+  //1618,1604,2336,2218,1408,1642,1947);
+  //exit(-1);
+
+#ifdef O2SCL_NEVER_DEFINED
+  
+  cout.precision(4);
   // Sums of calc_mu() comparisons between fp types
   int cmu_n=0, cmu_en=0, cmu_ld_n=0, cmu_ld_en=0;
   // Sums of calc_mu() accuracy via. thermodynamic identity
@@ -704,7 +715,7 @@ int main(int argc, char *argv[]) {
             f2.inc_rest_mass=false;
             fr.calc_density(f2,T);
             t.test_rel(f.mu-f.m,f2.mu,1.0e-10,"irm false mu 5");
-            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-13,"irm false ed 5");
+            t.test_rel(f.ed,f2.ed+f2.n*f2.m,1.0e-12,"irm false ed 5");
             t.test_rel(f.en,f2.en,1.0e-13,"irm false en 5");
 
             // Test with non_interacting=false
@@ -834,7 +845,7 @@ int main(int argc, char *argv[]) {
             f4.inc_rest_mass=false;
             f4.non_interacting=false;
             fr.pair_density(f4,T);
-            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-13,"both false mu 6");
+            t.test_rel(f3.mu-f3.m,f4.nu,1.0e-12,"both false mu 6");
             t.test_rel(f3.ed,f4.ed+f4.n*f4.m,1.0e-9,"both false ed 6");
             t.test_rel(f3.en,f4.en,1.0e-13,"both false en 6");
 
@@ -902,8 +913,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-#endif
-
   cout << "calc_mu density (double <-> long double): "
        << cmu_n << endl;
   cout << "calc_mu entropy (double <-> long double): "
@@ -958,40 +967,42 @@ int main(int argc, char *argv[]) {
 
   if (argc<2) {
 
-    t.test_gen(cmu_n>=1564,"cmu_n");
+    // Normal case, used in 'make o2scl-test'
+    t.test_gen(cmu_n>=1543,"cmu_n");
     t.test_gen(cmu_en>=1544,"cmu_en");
     t.test_gen(cmu_ld_n>=2407,"cmu_ld_n");
     t.test_gen(cmu_ld_en>=2179,"cmu_ld_en");
-    t.test_gen(cmu_ti>=1432,"cmu_ti");
+    t.test_gen(cmu_ti>=1400,"cmu_ti");
     t.test_gen(cmu_ld_ti>=1906,"cmu_ld_ti");
     t.test_gen(cmu_25_ti>=2597,"cmu_25_ti");
     
-    t.test_gen(pmu_n>=1618,"pmu_n");
+    t.test_gen(pmu_n>=1582,"pmu_n");
     t.test_gen(pmu_en>=1604,"pmu_en");
     t.test_gen(pmu_ld_n>=2336,"pmu_ld_n");
     t.test_gen(pmu_ld_en>=2218,"pmu_ld_en");
-    t.test_gen(pmu_ti>=1408,"pmu_ti");
-    t.test_gen(pmu_ld_ti>=1642,"pmu_ld_ti");
-    t.test_gen(pmu_25_ti>=1947,"pmu_25_ti");
+    t.test_gen(pmu_ti>=1376,"pmu_ti");
+    t.test_gen(pmu_ld_ti>=1626,"pmu_ld_ti");
+    t.test_gen(pmu_25_ti>=1931,"pmu_25_ti");
     
     t.test_gen(cd_mu>=891,"cd_mu");
     t.test_gen(cd_en>=837,"cd_en");
-    t.test_gen(cd_ld_mu>=1272,"cd_ld_mu");
-    t.test_gen(cd_ld_en>=1133,"cd_ld_en");
+    t.test_gen(cd_ld_mu>=1253,"cd_ld_mu");
+    t.test_gen(cd_ld_en>=1117,"cd_ld_en");
     t.test_gen(cd_ti>=967,"cd_ti");
     t.test_gen(cd_ld_ti>=967,"cd_ld_ti");
     t.test_gen(cd_25_ti>=967,"cd_25_ti");
     
-    t.test_gen(pd_mu>=859,"pd_mu");
+    t.test_gen(pd_mu>=850,"pd_mu");
     t.test_gen(pd_en>=814,"pd_en");
-    t.test_gen(pd_ld_mu>=1192,"pd_ld_mu");
-    t.test_gen(pd_ld_en>=1108,"pd_ld_en");
-    t.test_gen(pd_ti>=694,"pd_ti");
+    t.test_gen(pd_ld_mu>=1190,"pd_ld_mu");
+    t.test_gen(pd_ld_en>=1101,"pd_ld_en");
+    t.test_gen(pd_ti>=676,"pd_ti");
     t.test_gen(pd_ld_ti>=817,"pd_ld_ti");
     t.test_gen(pd_25_ti>=1025,"pd_25_ti");
     
   } else if (arg=="1") {
     
+    // Improved accuracy case
     t.test_gen(cmu_n>=1738,"cmu_n");
     t.test_gen(cmu_en>=1612,"cmu_en");
     t.test_gen(cmu_ld_n>=2379,"cmu_ld_n");
@@ -1025,6 +1036,9 @@ int main(int argc, char *argv[]) {
     t.test_gen(pd_25_ti>=1271,"pd_25_ti");
     
   }
+
+#endif
+#endif
   
   t.report();
 

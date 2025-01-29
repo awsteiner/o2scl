@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -723,8 +723,8 @@ void kwargs::set(std::string s) {
       std::vector<std::string> vs2;
       split_string_delim(vs[i],vs2,'=');
       if (vs2.size()!=2) {
-        O2SCL_ERR("Could not interpret in kwargs.",
-                  o2scl::exc_einval);
+        O2SCL_ERR((((std::string)"Could not interpret string \"")+
+		   s+"\" in kwargs.").c_str(),o2scl::exc_einval);
       }
       k.insert(std::make_pair(vs2[0],vs2[1]));
     }
@@ -776,4 +776,45 @@ std::string kwargs::get_string(std::string name, std::string def) {
     if (it->first==name) return it->second;
   }
   return def;
+}
+
+void kwargs::summary(std::ostream &out) const {
+  std::map<std::string,std::string>::const_iterator it;
+  for (it=k.begin();it!=k.end();it++) {
+    out << it->first << " " << it->second << endl;
+  }
+  return;
+}
+
+void o2scl_char_p_to_string(int n, char *p, void *strp) {
+  std::string &s=*((std::string *)strp);
+
+  // AWS, 11/23/24: In principle we could just use the std::string
+  // constructor which takes a 'char *' as an input. However, this
+  // function is used for Python bytearrays, which may constain null
+  // characters in the middle, rather than null-terminated C strings.
+  // Thus, we have to loop over all of the characters.
+
+  s.resize(n);
+  for(int i=0;i<n;i++) {
+    s[i]=p[i];
+  }
+  return;
+}
+  
+void o2scl_string_to_char_p(void *strp, int *n, char *p) {
+  std::string &s=*((std::string *)strp);
+
+  // AWS, 11/23/24: Ideally we would like to just use
+  // std::string.c_ptr() to send the character pointer back to Python,
+  // and thus avoid the additional copy, but (i) I haven't found a way
+  // to do that and (ii) it's dangerous to do this because it casts
+  // constness away from the (const char *) which is returned by the
+  // c_str() function.
+  
+  *n=s.length();
+  for(int i=0;i<(*n);i++) {
+    p[i]=s[i];
+  }
+  return;
 }

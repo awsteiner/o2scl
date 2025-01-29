@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -23,6 +23,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/eos_nse.h>
 #include <o2scl/nucmass_frdm.h>
+#include <o2scl/nucmass_densmat.h>
 #include <o2scl/hdf_nucmass_io.h>
 
 using namespace std;
@@ -100,6 +101,7 @@ int main(void) {
   // reproduced
   double nBnew=0.0;
   double Yenew=0.0;
+  cout << "Composition at nB=0.03 and Ye=0.36: " << endl;
   for(size_t i=0;i<ad.size();i++) {
     cout << ad[i].Z << " " << mm.Ztoel(ad[i].Z) << " " 
 	 << ad[i].A << " " << ad[i].n << " " 
@@ -114,9 +116,10 @@ int main(void) {
   t.test_rel(Yenew,0.36,1.0e-6,"Ye match.");
 
   // Now proceed to lower temperatures
+  cout << "ret T[MeV] mun mup nB Ye" << endl;
   for(;T>0.01/hc_mev_fm;T/=1.1) {
     ret=en.calc_density(nn,np,T,mun,mup,th,ad);
-    cout << ret << " " << T << " "
+    cout << ret << " " << T*hc_mev_fm << " "
 	 << mun << " " << mup << " ";
 
     nBnew=0.0;
@@ -132,6 +135,7 @@ int main(void) {
   cout << endl;
 
   // Output the distribution at the lowest temperature
+  cout << "Distribution at T ~ 0.01 MeV:" << endl;
   for(size_t i=0;i<ad.size();i++) {
     cout << ad[i].Z << " " << mm.Ztoel(ad[i].Z) << " " 
 	 << ad[i].A << " " << ad[i].n << endl;
@@ -147,6 +151,8 @@ int main(void) {
   // Test with a more complete distribution at large and
   // small Ye
 
+  cout << "Larger distribution:" << endl;
+  
   o2scl::nucdist_set(ad,mm,"1");
   double min=1.0, max=0.0;
   for(size_t i=0;i<ad.size();i++) {
@@ -158,7 +164,9 @@ int main(void) {
     }
   }
   cout << "min Ye, max Ye: " << min << " " << max << endl;
+  cout << endl;
 
+  cout << "Ye=0.24:" << endl;
   mun=1.0;
   mup=1.0;
   Ye=0.24;
@@ -166,25 +174,34 @@ int main(void) {
   np=1.0e-12*Ye;
   T=100.0/hc_mev_fm;
   double fact=2.0;
-  int ret1=0, ret2, ret3;
-  while (T>1.0/hc_mev_fm) {
+  int ret3;
+  cout << "ret3 T[MeV] mun mup A imp" << endl;
+  while (T>0.1/hc_mev_fm) {
     ret3=en.calc_density(nn,np,T,mun,mup,th,ad);
-    cout << ret1 << " " << ret3 << " " << T << " " << mun << " "
-	 << mup << endl;
+    dense_matter dm;
+    dm.dist=ad;
+    cout << ret3 << " " << T*hc_mev_fm << " " << mun << " "
+	 << mup << " " << dm.average_A() << " "
+         << dm.impurity() << endl;
     T/=1.5;
   }
   cout << endl;
   
+  cout << "Ye=0.67:" << endl;
   mun=1.0;
   mup=1.0;
   Ye=0.67;
   nn=1.0e-12*(1.0-Ye);
   np=1.0e-12*Ye;
   T=100.0/hc_mev_fm;
-  while (T>1.0/hc_mev_fm) {
+  cout << "ret3 T[MeV] mun mup A imp" << endl;
+  while (T>0.1/hc_mev_fm) {
     ret3=en.calc_density(nn,np,T,mun,mup,th,ad);
-    cout << ret1 << " " << ret3 << " " << T << " " << mun << " "
-	 << mup << endl;
+    dense_matter dm;
+    dm.dist=ad;
+    cout << ret3 << " " << T*hc_mev_fm << " " << mun << " "
+	 << mup << " " <<  dm.average_A() << " "
+         << dm.impurity() << endl;
     T/=1.1;
   }
   cout << endl;

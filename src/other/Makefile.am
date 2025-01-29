@@ -15,7 +15,8 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	hist_2d.h prob_dens_func.h interp2_seq.h interp2_neigh.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
 	slack_messenger.h xml.h exp_max.h interpm_python.h \
-	gmm_python.h kde_python.h interpm_base.h classify_python.h
+	gmm_python.h kde_python.h interpm_base.h classify_python.h \
+	nflows_python.h
 
 TEST_VAR = series_acc.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
@@ -23,7 +24,8 @@ TEST_VAR = series_acc.scr contour.scr \
 	pinside.scr interp2_seq.scr interp2_neigh.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
 	prob_dens_mdim_amr.scr xml.scr exp_max.scr interpm_python.scr \
-	gmm_python.scr kde_python.scr classify_python.scr 
+	gmm_python.scr kde_python.scr classify_python.scr \
+	nflows_python.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -53,17 +55,23 @@ else
 O2SCL_PYTHON_MVAR = 
 endif
 
+if O2SCL_MULTIP
+O2SCL_MULTIP_MVAR = -DO2SCL_MULTIP
+else 
+O2SCL_MULTIP_MVAR = 
+endif
+
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_PYTHON_MVAR)
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_MULTIP_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_PYTHON_MVAR)
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_MULTIP_MVAR)
 endif
 
 # ------------------------------------------------------------
@@ -85,7 +93,8 @@ check_PROGRAMS = series_acc_ts \
 	prob_dens_func_ts interp2_neigh_ts \
 	interpm_idw_ts interpm_krige_ts smooth_func_ts \
 	prob_dens_mdim_amr_ts xml_ts exp_max_ts interpm_python_ts \
-	gmm_python_ts kde_python_ts classify_python_ts
+	gmm_python_ts kde_python_ts classify_python_ts \
+	nflows_python_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -121,6 +130,7 @@ interpm_idw_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_python_ts_LDADD = $(ADDL_TEST_LIBS)
 classify_python_ts_LDADD = $(ADDL_TEST_LIBS)
 kde_python_ts_LDADD = $(ADDL_TEST_LIBS)
+nflows_python_ts_LDADD = $(ADDL_TEST_LIBS)
 gmm_python_ts_LDADD = $(ADDL_TEST_LIBS)
 smooth_func_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_krige_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -147,6 +157,7 @@ interpm_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 classify_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 gmm_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 kde_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nflows_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 smooth_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 contour_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -174,13 +185,15 @@ interp2_neigh.scr: interp2_neigh_ts$(EXEEXT)
 interpm_idw.scr: interpm_idw_ts$(EXEEXT) 
 	./interpm_idw_ts$(EXEEXT) > interpm_idw.scr
 interpm_python.scr: interpm_python_ts$(EXEEXT) 
-	./interpm_python_ts$(EXEEXT) > interpm_python.scr
+	./interpm_python_ts$(EXEEXT) | tee interpm_python.scr
 classify_python.scr: classify_python_ts$(EXEEXT) 
 	./classify_python_ts$(EXEEXT) > classify_python.scr
 gmm_python.scr: gmm_python_ts$(EXEEXT) 
 	./gmm_python_ts$(EXEEXT) > gmm_python.scr
 kde_python.scr: kde_python_ts$(EXEEXT) 
 	./kde_python_ts$(EXEEXT) > kde_python.scr
+nflows_python.scr: nflows_python_ts$(EXEEXT) 
+	./nflows_python_ts$(EXEEXT) > nflows_python.scr
 smooth_func.scr: smooth_func_ts$(EXEEXT) 
 	./smooth_func_ts$(EXEEXT) > smooth_func.scr
 interpm_krige.scr: interpm_krige_ts$(EXEEXT) 
@@ -223,6 +236,7 @@ interpm_python_ts_SOURCES = interpm_python_ts.cpp
 classify_python_ts_SOURCES = classify_python_ts.cpp
 gmm_python_ts_SOURCES = gmm_python_ts.cpp
 kde_python_ts_SOURCES = kde_python_ts.cpp
+nflows_python_ts_SOURCES = nflows_python_ts.cpp
 smooth_func_ts_SOURCES = smooth_func_ts.cpp
 interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp

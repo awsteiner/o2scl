@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -36,6 +36,8 @@
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
+typedef boost::numeric::ublas::vector<long double> ubvector_ld;
+typedef boost::numeric::ublas::matrix<long double> ubmatrix_ld;
 
 using namespace std;
 using namespace o2scl;
@@ -119,8 +121,56 @@ int main(void) {
                                            "Cholesky inverse");
   t.test_abs_mat<ubmatrix,ubmatrix,double>(5,5,gm2,gm5,1.0e-12,
                                            "LU vs. Cholesky");
+
+  cout << "Test LU inverse with multiprecision:" << endl;
+  {
+
+    cout << "Class matrix_invert_det_LU:" << endl;
+
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
+    ubmatrix um(5,5), umi(5,5);
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+	um(i,j)=1.0/(i+j+1);
+      }
+    }
+    
+    matrix_invert_det_LU<> mi;
+    mi.invert(5,um,umi);
+
+    matrix_out(cout,5,5,umi);
+    cout << dtos(umi(1,0),0) << endl;
+    cout << dtos(umi(2,1),0) << endl;
+    cout << endl;
+  }
+  {
+
+    cout << "Class matrix_invert_det_LU (long double):" << endl;
+
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
+    ubmatrix_ld um(5,5), umi(5,5);
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+	um(i,j)=1.0L/(i+j+1);
+      }
+    }
+    
+    matrix_invert_det_LU<boost::numeric::ublas::matrix<long double>,
+                         boost::numeric::ublas::matrix_column<
+                           boost::numeric::ublas::matrix<long double> >,
+                         long double> mi;
+    mi.invert(5,um,umi);
+
+    matrix_out(cout,5,5,umi);
+    cout << dtos(umi(1,0),0) << endl;
+    cout << dtos(umi(2,1),0) << endl;
+    cout << endl;
+  }
   
-#ifdef O2SCL_ARMA
+  
+#ifdef O2SCL_SET_ARMA
   
     arma::mat am1(5,5), am2(5,5), am3(5,5);
 
@@ -154,7 +204,8 @@ int main(void) {
   
   Eigen::MatrixXd em1(5,5), em2(5,5), em3(5,5);
     
-  {
+  if (true) {
+    
     cout << "Class matrix_invert_det_eigen: " << endl;
 
     for(size_t i=0;i<5;i++) {
@@ -175,13 +226,77 @@ int main(void) {
     matrix_out(cout,5,5,em3);
     cout << endl;
 
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,id,em3,1.0e-12,
+                                                    "Eigen inverse");
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,gm5,em2,1.0e-12,
+                                                    "Cholesky vs. Eigen");
+    
   }
 
-  t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,id,em3,1.0e-12,
-                                           "Eigen inverse");
-  t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>(5,5,gm5,em2,1.0e-12,
-                                           "Cholesky vs. Eigen");
-  
+  if (true) {
+    
+    cout << "Class matrix_invert_det_eigen_decomp with PartialPivLU: "
+         << endl;
+
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+        if (i==j) em1(i,j)=((double)(i+2));
+        else em1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
+      }
+    }
+    
+    matrix_invert_det_eigen_decomp<Eigen::MatrixXd,
+                                   Eigen::PartialPivLU
+                                   <Eigen::MatrixXd> > mide;
+    mide.invert(5,em1,em2);
+
+    dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
+          5,5,5,1.0,em1,em2,0.0,em3);
+
+    matrix_out(cout,5,5,em2);
+    cout << endl;
+    matrix_out(cout,5,5,em3);
+    cout << endl;
+
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>
+      (5,5,id,em3,1.0e-12,"Eigen decomp inverse");
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>
+      (5,5,gm5,em2,1.0e-12,"Cholesky vs. Eigen decomp");
+    
+  }
+
+  if (true) {
+    
+    cout << "Class matrix_invert_det_eigen_decomp with FullPivLU: "
+         << endl;
+
+    for(size_t i=0;i<5;i++) {
+      for(size_t j=0;j<5;j++) {
+        if (i==j) em1(i,j)=((double)(i+2));
+        else em1(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
+      }
+    }
+    
+    matrix_invert_det_eigen_decomp<Eigen::MatrixXd,
+                                   Eigen::FullPivLU
+                                   <Eigen::MatrixXd> > mide;
+    mide.invert(5,em1,em2);
+
+    dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
+          5,5,5,1.0,em1,em2,0.0,em3);
+
+    matrix_out(cout,5,5,em2);
+    cout << endl;
+    matrix_out(cout,5,5,em3);
+    cout << endl;
+    
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>
+      (5,5,id,em3,1.0e-12,"Eigen decomp inverse");
+    t.test_abs_mat<ubmatrix,Eigen::MatrixXd,double>
+      (5,5,gm5,em2,1.0e-12,"Cholesky vs. Eigen decomp");
+    
+  }
+
 #endif
 
   t.report();

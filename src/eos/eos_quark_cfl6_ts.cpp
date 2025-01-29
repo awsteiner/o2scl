@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -47,7 +47,7 @@ int main(void) {
     quark d2(cfl2.down_default_mass,6.0);
     quark s2(cfl2.strange_default_mass,6.0);
     cfl2.set_quarks(u2,d2,s2);
-    cfl2.set_thermo(th2);
+    //cfl2.set_thermo(th2);
 
     // Parameters
     cfl2.set_parameters_cfl();

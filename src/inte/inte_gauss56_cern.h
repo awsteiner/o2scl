@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -26,7 +26,7 @@
 #ifndef O2SCL_INTE_GAUSS56_CERN_H
 #define O2SCL_INTE_GAUSS56_CERN_H
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <o2scl/set_mpfr.h>
 #ifdef O2SCL_SET_MPFR
@@ -204,7 +204,7 @@ namespace o2scl {
 
   };
     
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
   /** \brief Specialization for inte_gauss56_cern in 25-digit precision
 

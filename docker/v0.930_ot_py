@@ -1,0 +1,90 @@
+FROM opensuse/tumbleweed
+MAINTAINER Andrew W. Steiner (awsteiner0@protonmail.com)
+
+# To fix tzdata asking for a timezone during installation
+# can set up later using sudo dpkg-reconfigure tzdata I think.
+# I'm not sure if this is necessary for opensuse.
+ARG DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------------------------------------------
+# Base apt libraries for OpenSUSE Tumbleweed
+
+RUN zypper install -y gcc-c++ make gsl-devel libquadmath0 \
+hdf5-devel ncurses-devel readline-devel boost-devel curl tar gzip awk \
+autoconf automake libtool git fftw3-devel armadillo-devel eigen3-devel \
+python3 python3-pip texlive dbus-1 cairo-devel pkg-config python3-devel \
+cmake gobject-introspection-devel
+
+# ?
+
+WORKDIR /usr/lib64
+RUN ln -s libquadmath.so.0 libquadmath.so
+
+# Python
+
+WORKDIR /opt
+
+RUN pip3 install --break-system-packages numpy==2.0.2
+RUN pip3 install --break-system-packages h5py==3.12.1
+COPY v0.930_ot_req.txt ./
+RUN pip3 install --no-cache-dir --break-system-packages -r v0.930_ot_req.txt
+RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
+  pipdeptree==2.24.0
+RUN pip3 install --break-system-packages torch==2.5.1 \
+  --index-url https://download.pytorch.org/whl/cpu
+
+# --------------------------------------------------------------------------
+# Install o2sclpy via pip. I like the editable flag for easier modifications
+# down the road
+
+RUN git clone https://github.com/awsteiner/o2sclpy
+WORKDIR /opt/o2sclpy
+RUN git fetch && git pull && git checkout 527c6be5cc
+RUN pip3 install --break-system-packages --editable . 
+
+# Now install o2scl
+
+WORKDIR /opt
+
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.930/o2scl-0.930.tar.gz \
+  --output o2scl-0.930.tar.gz
+RUN tar xzf o2scl-0.930.tar.gz
+WORKDIR /opt/o2scl-0.930
+
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
+#RUN git fetch && git pull && git checkout dc9e3966d7e && autoreconf -i
+  
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_FAST_TEST \
+-I/usr/local/lib64/python3.11/site-packages/numpy/core/include" \
+./configure --enable-eigen --enable-armadillo --enable-fftw \
+--enable-openmp --enable-ncurses --enable-python
+
+RUN make blank-doc && make && make install
+
+WORKDIR /opt
+ENV LD_LIBRARY_PATH=/usr/local/lib
+
+# --------------------------------------------------------------------------
+# To ensure o2graph loads OpenMP appropriately
+
+WORKDIR /usr/lib64
+RUN ln -s libgomp.so.1 libgomp.so
+
+WORKDIR /
+ENV O2SCL_ADDL_LIBS=/usr/lib64/libgomp.so
+
+# --------------------------------------------------------------------------
+# Clear the build directory and then run acol and o2graph
+
+RUN acol -h && acol -v && o2graph -h && o2graph -v
+
+# ───────────────────────────────────────────────────────────────────
+# Run tests
+
+WORKDIR /opt/o2scl-0.930
+#FROM working
+RUN make check && make o2scl-examples && make distclean
+WORKDIR /opt/o2sclpy
+RUN make testq

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -569,6 +569,7 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
   return at;
 }
 
+#ifdef O2SCL_MULTIP
 auto_format &o2scl_auto_format::operator<<(auto_format &at,
 					   const cpp_dec_float_35 &d) {
   string stmp;
@@ -592,6 +593,7 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
   at.add_string(stmp);
   return at;
 }
+#endif
 
 auto_format &o2scl_auto_format::operator<<(auto_format &at, float f) {
   string stmp;

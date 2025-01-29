@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner and Josue Bautista
+  Copyright (C) 2017-2025, Andrew W. Steiner and Josue Bautista
   
   This file is part of O2scl.
   
@@ -24,8 +24,7 @@
 #define O2SCL_INTERPM_KRIGE_H
 
 /** \file interpm_krige.h
-    \brief File defining \ref o2scl::interpm_krige,
-    \ref o2scl::interpm_krige_optim and \ref o2scl::interpm_krige_optim
+    \brief File defining \ref o2scl::interpm_krige_optim
 */
 
 #include <iostream>
@@ -33,6 +32,7 @@
 #include <cmath>
 #include <ctime>
 
+#include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/operation.hpp>
 
@@ -501,7 +501,7 @@ namespace o2scl {
     /** \brief Function to optimize the covariance parameters
      */
     virtual double qual_fun(size_t iout, int &success) {
-      
+
       // Select the row of the data matrix
       mat_y_col_t yiout2(this->y,iout);
       
@@ -542,7 +542,7 @@ namespace o2scl {
               }
             }
           }
-
+          
           // Construct the inverse of KXX
           this->mi.invert_inplace(size-1,inv_KXX2);
           
@@ -589,14 +589,11 @@ namespace o2scl {
             } else {
               this->inv_KXX[iout](irow,icol)=cf[iout]->covar2(xrow,xcol);
             }
-            //if (this->verbose>2) {
-            //std::cout << "5 " << irow << " " << icol << " "
-            //<< this->inv_KXX[iout](irow,icol) << std::endl;
-            //}
           }
         }
 
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Done creating covariance matrix with size "
                     << size << std::endl;
         }
@@ -607,6 +604,7 @@ namespace o2scl {
         
         // Construct the inverse of KXX
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Performing matrix inversion with size "
                     << size << std::endl;
         }
@@ -618,11 +616,13 @@ namespace o2scl {
 	
         if (timing) {
           t2=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Matrix inversion took "
                     << t2-t1 << " seconds." << std::endl;
         }
         
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Done performing matrix inversion with size "
                     << size << std::endl;
         }
@@ -636,6 +636,7 @@ namespace o2scl {
         
         if (timing) {
           t3=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Matrix vector multiply took "
                     << t3-t2 << " seconds." << std::endl;
         }
@@ -649,42 +650,32 @@ namespace o2scl {
           
           double yact=yiout[ii];
           
-          //if (this->verbose>2) {
-          //std::cout << "6 " << this->rescale << " "
-          //<< yact << std::endl;
-          //}
-          
           // Compute sigma and ypred from Eq. 5.12
           double sigma2=1.0/this->inv_KXX[iout](ii,ii);
           double ypred=yact-this->Kinvf[iout][ii]*sigma2;
-          
-          //if (this->verbose>2) {
-          //std::cout << "7 " << sigma2 << " " << ypred << std::endl;
-          //}
           
           // Then use Eq. 5.10
           ret+=pow(yact-ypred,2.0)/sigma2/2.0;
           ret+=0.5*log(sigma2);
 
-          //if (this->verbose>2) {
-          //std::cout << "8 " << ret << std::endl;
-          //}
-          
         }
 
         if (timing) {
           t4=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Final evaluation took "
                     << t4-t3 << " seconds." << std::endl;
         }
         
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "ret: " << ret << std::endl;
         }
       
       } else if (mode==mode_max_lml || mode==mode_final) {
 
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Creating covariance matrix with size "
                     << size << std::endl;
         }
@@ -694,22 +685,23 @@ namespace o2scl {
         for(size_t irow=0;irow<size;irow++) {
           mat_x_row_t xrow(this->x,irow);
           for(size_t icol=0;icol<size;icol++) {
-            mat_x_row_t xcol(this->x,icol);
+            mat_x_row_t xrow2(this->x,icol);
             if (irow>icol) {
               KXX(irow,icol)=KXX(icol,irow);
             } else {
-              KXX(irow,icol)=cf[iout]->covar2(xrow,xcol);
+              KXX(irow,icol)=cf[iout]->covar2(xrow,xrow2);
             }
           }
         }
 
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Done creating covariance matrix with size "
                     << size << std::endl;
         }
 
         // Perform the matrix inversion and compute the determinant
-
+        
         double lndet;
 	
         if (timing) {
@@ -718,6 +710,7 @@ namespace o2scl {
         
         // Construct the inverse of KXX
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Performing matrix inversion with size "
                     << size << std::endl;
         }
@@ -729,14 +722,23 @@ namespace o2scl {
         }
 	
         lndet=log(lndet);
+
+        // The determinant is only required if we're marginalizing the
+        // maximum likelihood.
+        if (mode!=mode_final && !std::isfinite(lndet)) {
+          success=5;
+          return 1.0e99;
+        }
 	
         if (this->verbose>2) {
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Done performing matrix inversion with size "
                     << size << std::endl;
         }
-        
+
         if (timing) {
           t2=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Matrix inversion took "
                     << t2-t1 << " seconds." << std::endl;
         }
@@ -750,6 +752,7 @@ namespace o2scl {
 	
         if (timing) {
           t3=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Matrix vector multiply took "
                     << t3-t2 << " seconds." << std::endl;
         }
@@ -765,6 +768,7 @@ namespace o2scl {
 
         if (timing) {
           t4=time(0);          
+          std::cout << "interpm_krige_optim::qual_fun(): ";
           std::cout << "Final evaluation took "
                     << t4-t3 << " seconds." << std::endl;
         }
@@ -793,8 +797,6 @@ namespace o2scl {
       if (success!=0) {
         ret=max_val;
       }
-      //vector_out(std::cout,v);
-      //std::cout << " " << ret << std::endl;
       return ret;
     }
     //@}
@@ -909,6 +911,7 @@ namespace o2scl {
 
       if (timing) {
         t2=time(0);
+        std::cout << "interpm_krige_optim::set_data(): ";
         std::cout << "Swap took " << t2-t1 << " seconds." << std::endl;
       }
       
@@ -920,6 +923,10 @@ namespace o2scl {
       }
 
       if (rescale==true) {
+        if (this->verbose>1) {
+          std::cout << "interpm_krige_optim::set_data(): "
+                    << "Rescaling data:" << std::endl;
+        }
         this->mean_y.resize(n_out);
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
@@ -927,22 +934,20 @@ namespace o2scl {
           this->mean_y[j]=vector_mean(this->n_points,vec);
           this->std_y[j]=vector_stddev(this->n_points,vec);
           if (this->verbose>1) {
-            std::cout << "Mean,stddev of y " << j << " of "
-                      << n_out << " is " << this->mean_y[j] << " "
-                      << this->std_y[j] << std::endl;
+            std::cout << "interpm_krige_optim::set_data(): ";
+            std::cout << "Mean, std. dev. of output " << j << " of "
+                      << n_out << " is\n  " << this->mean_y[j] << " and "
+                      << this->std_y[j] << "." << std::endl;
           }
           for(size_t i=0;i<this->n_points;i++) {
             this->y(i,j)=(this->y(i,j)-this->mean_y[j])/this->std_y[j];
           }
         }
-        if (this->verbose>1) {
-          std::cout << "interpm_krige_optim::set_data(): "
-                    << "data rescale." << std::endl;
-        }
       }
 
       if (timing) {
         t3=time(0);
+            std::cout << "interpm_krige_optim::set_data(): ";
         std::cout << "Rescale took " << t3-t2 << " seconds." << std::endl;
       }
       
@@ -1082,21 +1087,23 @@ namespace o2scl {
         
         } else {
           
-          if (this->verbose>1) {
-            std::cout << "qual fail min_qual" << std::endl;
-          }
-          
           bool min_set=false, done=false;
           
           if (this->verbose>1) {
-            std::cout << "interpm_krige_optim::set_data() : "
+            std::cout << "interpm_krige_optim::set_data(): "
                       << "simple minimization with " << np_covar
                       << " parameters." << std::endl;
             for(size_t jk=0;jk<plists[iout].size();jk++) {
-              std::cout << jk << " ";
+              std::cout << "  " << jk << " ";
               o2scl::vector_out(std::cout,plists[iout][jk],true);
             }
           }
+
+          if (this->verbose>1) {
+            std::cout << "interpm_krige_optim::set_data(): "
+                      << "indexes params qual fail min_qual" << std::endl;
+          }
+          
           std::vector<size_t> index_list(np_covar);
           vector_set_all(np_covar,index_list,0);
           
@@ -1116,7 +1123,7 @@ namespace o2scl {
             }
             
             if (this->verbose>1) {
-              std::cout << "interpm_krige_optim: ";
+              std::cout << "interpm_krige_optim::set_data(): ";
               o2scl::vector_out(std::cout,index_list);
               std::cout << " ";
               o2scl::vector_out(std::cout,params);
@@ -1146,30 +1153,43 @@ namespace o2scl {
         }
         
         if (this->verbose>1) {
-          std::cout << "interpm_krige_optim: ";
-          std::cout.width(2);
-          std::cout << "   " << min_qual << std::endl;
+          std::cout << "interpm_krige_optim::set_data(): ";
+          std::cout << "Minimum: " << min_qual << std::endl;
         }
+    
+        std::cout << "interpm_krige_optim::set_data(): "
+                  << "Mode final: " << std::endl;
         cf[iout]->set_params(min_params);
         size_t mode_temp=mode;
         mode=mode_final;
         qual[iout]=qual_fun(iout,success);
+        if (success!=0) {
+          std::cout << "interpm_krige_optim::set_data(): "
+                    << "Failed. Integer 'success' is "
+                    << success << "." << std::endl;
+          O2SCL_ERR2("Final calculation of Kinvf failed in ",
+                     "interpm_krige_optim::set_data().",
+                     o2scl::exc_efailed);
+        }
         mode=mode_temp;
+        std::cout << "interpm_krige_optim::set_data(): ";
+        std::cout << "Mode final done: " << std::endl;
 	
         if (this->verbose>0) {
-          std::cout << "interpm_krige_optim::set_data_"
-                    << "internal(),\n  "
-                    << "optimal parameters: ";
+          std::cout << "interpm_krige_optim::set_data():\n  "
+                    << "Optimal parameters: ";
           o2scl::vector_out(std::cout,min_params,true);
         }
         
         if (timing) {
           t5=time(0);
+          std::cout << "interpm_krige_optim::set_data(): ";
           std::cout << "Optimization of output " << iout << " took "
                     << t5-t4 << " seconds." << std::endl;
         }
         
         // End of loop over iout
+        //std::cout << "Going to next iout." << std::endl;
       }
 
       return 0;
@@ -1309,6 +1329,34 @@ namespace o2scl {
     //@}
 
   };
+
+#ifdef O2SCL_NEVER_DEFINED
+
+  // AWS, 10/28/24, These don't work yet I'm not sure why...
+  
+  /// An Eigen specialization for \ref interpm_krige_optim
+  typedef interpm_krige_optim
+  <class vec_t=boost::numeric::ublas::vector<double>,
+   class mat_x_t=o2scl::const_matrix_view_table<>,
+   class mat_x_row_t=const const_matrix_row_gen
+   <o2scl::const_matrix_view_table<>>, 
+   class mat_y_t=o2scl::matrix_view_table<>,
+   class mat_y_col_t=const matrix_column_gen<
+     o2scl::matrix_view_table<>>,Eigen::MatrixXd,
+   o2scl_linalg::matrix_invert_det_eigen<> > interpm_krige_optim_eigen;
+  
+  /// An Armadillo specialization for \ref interpm_krige_optim
+  typedef interpm_krige_optim
+  <class vec_t=boost::numeric::ublas::vector<double>,
+   class mat_x_t=o2scl::const_matrix_view_table<>,
+   class mat_x_row_t=const const_matrix_row_gen
+   <o2scl::const_matrix_view_table<>>, 
+   class mat_y_t=o2scl::matrix_view_table<>,
+   class mat_y_col_t=const matrix_column_gen<
+     o2scl::matrix_view_table<>>,arma::mat,
+   o2scl_linalg::matrix_invert_det_sympd_arma<> > interpm_krige_optim_arma;
+
+#endif
   
 }
     

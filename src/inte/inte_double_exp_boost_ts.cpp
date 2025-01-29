@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2019-2024, Andrew W. Steiner
+  Copyright (C) 2019-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -135,7 +135,7 @@ int main(void) {
     t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
     cout << endl;
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
     funct_ld tf1_ld=test_func<long double>;
     funct_ld tf2_ld=test_func_2<long double>;
@@ -192,9 +192,12 @@ int main(void) {
     t.test_rel_boost<cpp_dec_float_50>(ans_cdf,exact_cdf,1.0e-39,
                                        "tanh_sinh test cdf");
     cout << endl;
-
+    
+#endif
   }
 
+#ifdef O2SCL_MULTIP
+  
   {
     double val, err2, a=0, b=1;
     double exact=cos(100.0)-cos(1/1.01);

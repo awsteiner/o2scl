@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,6 +31,7 @@ using namespace o2scl;
 gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   p_set_func=0;
   p_components_func=0;
+  p_get_func=0;
   p_set_args=0;
   p_components_args=0;
   p_instance=0;
@@ -40,6 +41,8 @@ gmm_python::gmm_python() : pdm_gmm(new prob_dens_mdim_gmm<>) {
   n_params=0;
   n_points=0;
   n_components=0;
+
+  verbose=0;
 }
     
 /** \brief Specify the Python module and function
@@ -169,6 +172,8 @@ void *gmm_python::set_function_internal
  std::string options, std::string class_name, int v, int &ret) {
   
   ret=0;
+
+  verbose=v;
   
   if (params.get_rank()!=2) {
     O2SCL_ERR2("Invalid rank for input tensors in ",

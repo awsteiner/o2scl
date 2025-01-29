@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,7 +31,7 @@
 #include <cmath>
 
 #include <o2scl/nucleus.h>
-#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_densmat.h>
 #include <o2scl/nucmass_fit.h>
 #include <o2scl/constants.h>
 
@@ -102,7 +102,6 @@ namespace o2scl {
          In class nucmass_frdm:
 
          - Fix pairing energy and double vs. int
-         - Document drip_binding_energy(), etc.
          - Decide on number of fit parameters (10 or 12?) or
            let the user decide
          - Document the protected variables
@@ -113,7 +112,7 @@ namespace o2scl {
 
       \future Add microscopic part.
   */
-  class nucmass_frdm : public nucmass_fit_base {
+  class nucmass_frdm : public nucmass_densmat {
 
   public:
 
@@ -194,25 +193,37 @@ namespace o2scl {
     /// Fill array with guess from present values for fitting
     virtual int guess_fun(size_t nv, ubvector &x);
 
-    /** \brief Return the binding energy in MeV
-     */
-    virtual double drip_binding_energy_d(double Z, double N,
-                                         double npout, double nnout,
-                                         double chi);
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, return the binding energy of the nucleus in MeV
+    */
+    virtual double binding_energy_densmat(double Z, double N,
+                                          double npout=0.0, double nnout=0.0,
+                                          double neout=0.0, double T=0.0);
+                                          
 
-    /** \brief Given \c Z and \c N, return the mass excess in MeV
-        in a many-body environment
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, return the mass excess of the nucleus in MeV
 
         This is an experimental version of mass_excess_d which removes
         pairing, computes nn, np, Rn, and Rp, and attempts to correct
-        the surface. This function probably doesn't work at the
-        moment. It's not currently used by \ref
-        drip_binding_energy_d().
+        the surface. 
     */
-    virtual double drip_mass_excess_d(double Z, double N,
-                                      double np_out, double nn_out,
-                                      double chi);
+    virtual double mass_excess_densmat(double Z, double N,
+                                       double np_out=0.0, double nn_out=0.0,
+                                       double ne_out=0.0, double T=0.0);
 
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, compute the binding energy and the derivatives
+    */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT) {
+      O2SCL_ERR("binding_energy_densmat_derivs not defined.",
+                o2scl::exc_eunimpl);
+      return;
+    }
+    
   protected:
 
     /// Conversion from kg to inverse fm
@@ -285,7 +296,7 @@ namespace o2scl {
       handler.
 
       There are several entries in the original table which are
-      blank because they are in some way not known, measured, or
+      blank because they are either not known, measured, or
       computable. These entries are filled with a positive number 
       larger than 1.0e90, given by the functions \ref blank(),
       \ref neither(), \ref beta_stable(), \ref beta_plus_and_minus(),
@@ -457,9 +468,6 @@ namespace o2scl {
     int set_data(int n_mass, nucmass_mnmsk::entry *m, std::string ref);
 
   protected:
-    
-    /// The reference for the original data
-    std::string reference;
     
     /// The array containing the mass data of length ame::n
     nucmass_mnmsk::entry *mass;

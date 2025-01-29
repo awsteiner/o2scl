@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -744,6 +744,7 @@ int hdf_file::gets(std::string name, std::string &s) {
   }
 
   if (true) {
+    
     // Determine if this is a fixed-length string, and if so, use
     // gets_fixed() instead.
     hid_t filetype=H5Dget_type(dset);
@@ -2421,6 +2422,145 @@ int hdf_file::sets_vec_copy(std::string name,
     seti_vec("counter",ip);
     sets("data",cp);
   }
+
+  // Close the group
+  close_group(group);
+  
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::gets_ten_copy(std::string name, 
+                            tensor_base<std::string,
+                            std::vector<std::string>,
+                            std::vector<size_t>> &t) {
+		  
+  // Open the group
+  hid_t top=get_current_id();
+  hid_t group=open_group(name);
+  set_current_id(group);
+
+  // Obtain the type and verify that it's "tensor_string"
+  string o2t;
+  gets_fixed("o2scl_type",o2t);
+  if (o2t!="tensor_string") {
+    set_current_id(top);
+    O2SCL_ERR2("The specified name does not refer to data which ",
+	       "can be read by O2scl in hdf_file::gets_vec().",
+	       exc_efailed);
+  }
+
+  // Get rank
+  int rank;
+  geti("rank",rank);
+
+  // Get sizes
+  vector<size_t> size;
+  get_szt_vec("size",size);
+
+  // Resize
+  t.resize(rank,size);
+
+  // Read length tensor
+  tensor<size_t> tlens;
+  get_szt_ten("lengths",tlens);
+
+  // Read character array as a string object
+  std::string s;
+  gets("data",s);
+
+  // Set references for data objects
+  const std::vector<std::string> &sdat=t.get_data();
+  const std::vector<size_t> &ldat=tlens.get_data();
+
+  // Set strings from character array
+  size_t ctr=0;
+  for(size_t i=0;i<t.total_size();i++) {
+    vector<size_t> ix(rank);
+    t.unpack_index(i,ix);
+    std::string &sr=t.get(ix);
+    sr.clear();
+    for(size_t j=0;j<ldat[i];j++) {
+      sr+=s[ctr];
+      ctr++;
+    }
+  }
+
+  // Close the associated group
+  close_group(group);
+
+  // Return file location
+  set_current_id(top);
+
+  return 0;
+}
+
+int hdf_file::sets_ten_copy(std::string name,
+                            const tensor_base<std::string,
+                            std::vector<std::string>,
+                            std::vector<size_t>> &t) {
+
+  if (write_access==false) {
+    O2SCL_ERR2("File not opened with write access ",
+	       "in hdf_file::sets_ten().",exc_efailed);
+  }
+
+  // Create the group
+  hid_t top=current;
+  hid_t group=open_group(name);
+  set_current_id(group);
+  
+  sets_fixed("o2scl_type","tensor_string");
+
+  seti("rank",t.get_rank());
+
+  if (t.get_rank()>0) {
+    
+    const std::vector<size_t> &s=t.get_size_arr();
+    set_szt_vec("size",s);
+
+    // Create a tensor to store string lengths
+    tensor<size_t> tlens;
+    tlens.resize(t.get_rank(),s);
+
+    // Obtain data references
+    const std::vector<std::string> &sdat=t.get_data();
+    const std::vector<size_t> &ldat=tlens.get_data();
+
+    // Count total number of characters and set string length tensor
+    size_t nchars=0;
+    for(size_t i=0;i<sdat.size();i++) {
+      vector<size_t> ix(t.get_rank());
+      tlens.unpack_index(i,ix);
+      tlens.get(ix)=sdat[i].length();
+      nchars+=sdat[i].length();
+    }
+
+    // Store string length tensor
+    set_szt_ten("lengths",tlens);
+
+    // Allocate space for all characters
+    char *cp=new char[nchars];
+
+    // Fill array with characters
+    size_t ctr=0;
+    for(size_t i=0;i<sdat.size();i++) {
+      for(size_t j=0;j<sdat[i].length();j++) {
+        cp[ctr]=sdat[i][j];
+        ctr++;
+      }
+    }
+
+    // Store character array
+    setc_arr("data",ctr,cp);
+
+    // Free memory associated with character array
+    delete[] cp;
+    
+  }
+  
 
   // Close the group
   close_group(group);

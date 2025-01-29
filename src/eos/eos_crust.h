@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -36,15 +36,19 @@
 namespace o2scl {
 
   /** \brief Baym-Pethick-Sutherland equation of state
-    
-      This calculates the equation of state of electrons and nuclei
-      using the approach of Baym et al. (1971; based on the discussion
-      in Shapiro and Teukolsky (1983)) between about \f$8 \times
-      10^{6} ~\mathrm{g}/\mathrm{cm}^3\f$ and \f$4.3 \times 10^{11}
-      ~\mathrm{g}/\mathrm{cm}^3\f$. Below these densities, more
-      complex Coulomb corrections need to be considered, and above
-      these densities, neutron drip is important.
 
+      This calculates the equation of state of electrons and nuclei
+      between about \f$8 \times 10^{6} ~\mathrm{g}/\mathrm{cm}^3\f$
+      and \f$4.3 \times 10^{11} ~\mathrm{g}/\mathrm{cm}^3\f$. Below
+      these densities, more complex Coulomb corrections need to be
+      considered, and above these densities, neutron drip is
+      important.
+
+      \verbatim embed:rst
+      This class uses the approach of [Baym71tg]_, based on the
+      discussion from [Shapiro83]_.
+      \endverbatim
+      
       The default mass formula is semi-empirical
       \f{eqnarray*}
       M(A,Z)&=&(A-Z) m_n+Z (m_p+m_e)-
@@ -65,13 +69,11 @@ namespace o2scl {
       \f[
       \varepsilon_L = -1.444 Z^{2/3} e^2 n_e^{4/3}
       \f]
-      This is Eq. 2.7.2 in Shapiro and Teukolsky (1983). The rest mass
-      energy of the nucleons is included in the energy density.
-
       \verbatim embed:rst
-      See [Shapiro83]_.
+      This is Eq. 2.7.2 in [Shapiro83]_. The rest mass
+      energy of the nucleons is included in the energy density.
       \endverbatim
-      
+
       The original results from Baym et al. (1971) are stored as a
       \ref table in file <tt>data/o2scl/bps.eos</tt>. The testing code
       for this class compares the calculations to the table and
@@ -102,7 +104,7 @@ namespace o2scl {
 	number \c A.  The pressure and energy density are returned 
 	in \c th in \f$\mathrm{fm}^{-4}\f$.
     */
-    virtual int calc_density(double barn, thermo &th, int &Z, int &A);
+    virtual int calc_density(double barn, int &Z, int &A);
 
     /** \brief Calculate the equation of state as a function of
 	the pressure
@@ -113,7 +115,7 @@ namespace o2scl {
 	density \c barn in \f$\mathrm{fm}^{-3}\f$. The energy density
 	is also returned in \f$\mathrm{fm}^{-4}\f$ in \c th.
     */
-    virtual int calc_pressure(thermo &th, double &barn, int &Z, int &A);
+    virtual int calc_pressure(double &barn, int &Z, int &A);
 
     /** \brief The electron lattice energy */
     virtual double lattice_energy(int Z);
@@ -143,7 +145,7 @@ namespace o2scl {
     }
 
     /// Compute the ground state assuming a fixed atomic number
-    int calc_density_fixedA(double barn, thermo &th, int &Z, int A);
+    int calc_density_fixedA(double barn, int &Z, int A);
     
     /** \brief The electron thermodynamics
 	
@@ -152,6 +154,17 @@ namespace o2scl {
     */
     fermion e;
 
+    virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
+                           eos_leptons &elep,
+			   std::shared_ptr<table_units<> > results) {
+      return 20;
+    }
+    
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      return 20;
+    }
+    
   protected:
 
 #ifndef DOXYGEN_INTERNAL

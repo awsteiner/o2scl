@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -28,7 +28,7 @@
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 #include <armadillo>
 #endif
 #ifdef O2SCL_SET_EIGEN

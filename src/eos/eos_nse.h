@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -37,10 +37,10 @@ namespace o2scl {
 
   /** \brief Equation of state for nuclei in statistical equilibrium
 
-      This class computes the composition of matter in nuclear
-      statistical equilibrium. The chemical potential of a nucleus X
-      with proton number \f$ Z_X \f$ and neutron number \f$ N_X \f$ is
-      given by
+      This class computes the composition of matter consisting only of
+      nuclei in nuclear statistical equilibrium. The chemical
+      potential of a nucleus X with proton number \f$ Z_X \f$ and
+      neutron number \f$ N_X \f$ is given by
       \f[
       \mu_X = N \mu_n + Z \mu_p - E_{\mathrm{bind},X}
       \f]

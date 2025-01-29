@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /** \file inte_adapt_cern.h
-    \brief File defining \ref o2scl::inte_adapt_cern
+    \brief File defining \ref o2scl::inte_adapt_cern_tl
 */
 #ifndef O2SCL_INTE_ADAPT_CERN_H
 #define O2SCL_INTE_ADAPT_CERN_H
@@ -36,7 +36,7 @@
 namespace o2scl {
 
   /** \brief Integration subdivision object for \ref
-      o2scl::inte_adapt_cern
+      o2scl::inte_adapt_cern_tl
   */
   template<class fp_t> class inte_subdiv {
   public:
@@ -303,7 +303,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.lower_lim=a;
       fm2.err_nonconv=false;
@@ -346,7 +346,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.upper_lim=b;
       fm2.err_nonconv=false;
@@ -388,7 +388,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -442,7 +442,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -853,7 +853,7 @@ namespace o2scl {
         }
       }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
@@ -1034,7 +1034,7 @@ namespace o2scl {
         }
       }
 
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
@@ -1187,7 +1187,7 @@ namespace o2scl {
         }
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
@@ -1361,7 +1361,7 @@ namespace o2scl {
         }
       }
       
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {

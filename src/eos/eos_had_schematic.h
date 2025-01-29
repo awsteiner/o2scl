@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -52,6 +52,15 @@ namespace o2scl {
 
   public:
 
+    /** \brief Desc
+     */
+    virtual int calc_temp_f_gen(double nB, double nQ, double nS,
+                                double T, thermo &th) {
+      O2SCL_ERR("Function calc_temp_f_gen() not implemented.",
+                o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
+    }
+    
     /** \brief The kinetic energy symmetry coefficient in inverse fm 
         (default \f$ 17~\mathrm{MeV}~/(\hbar c) \f$)
 

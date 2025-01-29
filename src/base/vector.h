@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -70,7 +70,10 @@ namespace o2scl {
   /** \brief A simple convenience wrapper for GSL vector objects
 
       \warning This uses typecasts on externally allocated GSL 
-      pointers and is not safe or fully const-correct. 
+      pointers and is not safe or fully const-correct.
+
+      9/16/24: This class is currently used in fit_linear_ts.cpp
+      and several of the linalg testing codes.
   */
   class gsl_vector_wrap {
     /// A pointer to the data
@@ -97,6 +100,9 @@ namespace o2scl {
 
       \warning This uses typecasts on externally allocated GSL 
       pointers and is not safe or fully const-correct. 
+
+      9/16/24: This class is currently used in fit_linear_ts.cpp
+      and several of the linalg testing codes.
   */
   class gsl_matrix_wrap {
   protected:
@@ -135,6 +141,9 @@ namespace o2scl {
   //@{
   /** \brief Return true if the first \c n elements of 
       two vectors are equal
+
+      This function uses the <tt>!=</tt> operator. If you want to
+      compare within a finite tolerance, use \ref vectors_equal_tol().
    */
   template<class vec_t, class vec2_t> 
     bool vectors_equal(size_t n, const vec_t &v1, const vec2_t &v2) {
@@ -148,7 +157,10 @@ namespace o2scl {
   
   /** \brief Return true if two vectors are equal (tests size 
       and elements)
-   */
+
+      This function uses the <tt>!=</tt> operator. If you want to
+      compare within a finite tolerance, use \ref vectors_equal_tol().
+  */
   template<class vec_t, class vec2_t> 
     bool vectors_equal(const vec_t &v1, const vec2_t &v2) {
 
@@ -163,7 +175,7 @@ namespace o2scl {
   
   /** \brief Return true if the first \c n elements of 
       two vectors are equal within a specified tolerance
-   */
+  */
   template<class vec_t, class vec2_t> 
     bool vectors_equal_tol(size_t n, const vec_t &v1, const vec2_t &v2,
 			   double tol=1.0e-14) {
@@ -208,7 +220,7 @@ namespace o2scl {
   //@{
   /** \brief Simple vector copy
 
-      Copy \c src to \c dest, resizing \c dest if it is too small
+      Copy \c src to \c dest, resizing \c dest only if it is too small
       to hold <tt>src.size()</tt> elements.
 
       This function will work for any classes \c vec_t and
@@ -261,7 +273,8 @@ namespace o2scl {
 
   /** \brief Simple matrix copy
       
-      Copy \c src to \c dest, resizing \c dest if it is too small.
+      Copy \c src to \c dest, resizing \c dest only if either
+      of the two dimensions are too small.
       
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
@@ -306,8 +319,8 @@ namespace o2scl {
   //@{
   /** \brief Simple transpose
       
-      Copy the transpose of \c src to \c dest, resizing \c dest if it
-      is too small.
+      Copy the transpose of \c src to \c dest, resizing \c dest only
+      if one of the two dimensions are too small.
       
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
@@ -510,7 +523,7 @@ namespace o2scl {
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time. 
-  */
+*/
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(size_t N, vec_t &v1, vec2_t &v2) {
     data_t temp;
@@ -542,10 +555,9 @@ namespace o2scl {
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
 
-      \note It is almost always better to use <tt>std::swap</tt>
-      than this function, which is provided only in cases where
-      one knows one is going to be forced to use a vector type
-      without a properly defined <tt>std::swap</tt> method.
+      \note It is better to use <tt>std::swap</tt> than this function.
+      This function is provided for use in cases where one is using
+      vector types which do not provide a <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(vec_t &v1, vec2_t &v2) {
@@ -592,10 +604,9 @@ namespace o2scl {
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
 
-      \note It is almost always better to use <tt>std::swap</tt>
-      than this function, which is provided only in cases where
-      one knows one is going to be forced to use a vector type
-      without a properly defined <tt>std::swap</tt> method.
+      \note It is better to use <tt>std::swap</tt> than this function.
+      This function is provided for use in cases where one is using
+      vector types which do not provide a <tt>std::swap</tt> method.
   */
   template<class vec_t, class vec2_t>
     void vector_swap_double(vec_t &v1, vec2_t &v2) {
@@ -652,7 +663,7 @@ namespace o2scl {
       This function swaps the elements of \c m1 and \c m2, one element
       at a time.
   */
-  template<class mat_t, class mat2_t, class data_t> 
+  template<class mat_t, class mat2_t> 
     void matrix_swap_double(size_t M, size_t N, mat_t &m1, mat2_t &m2) {
     return matrix_swap<mat_t,mat2_t,double>(M,N,m1,m2);
   }
@@ -823,6 +834,47 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Remove duplicates from a sorted vector
+   */
+  template<class vec_t, class vec2_t, class data_t>
+  void vector_remove_dups(size_t n, vec_t &data, vec2_t &out) {
+    std::vector<data_t> vtemp;
+    vtemp.push_back(data[0]);
+    for(size_t i=1;i<n;i++) {
+      if (data[i]!=data[i-1]) {
+        vtemp.push_back(data[i]);
+      }
+    }
+    size_t n2=vtemp.size();
+    out.resize(n2);
+    for(size_t i=0;i<n2;i++) {
+      out[i]=vtemp[i];
+    }
+    return;
+  }
+    
+  /** \brief Remove duplicates from a sorted vector given a tolerance
+   */
+  template<class vec_t, class vec2_t, class data_t>
+  void vector_remove_dups_tol
+  (size_t n, const vec_t &data, vec2_t &out, data_t tol) {
+   
+    std::vector<data_t> vtemp;
+    data_t one=1;
+    vtemp.push_back(data[0]);
+    for(size_t i=1;i<n;i++) {
+      if (abs(one-data[i-1]/data[i])>tol) {
+        vtemp.push_back(data[i]);
+      }
+    }
+    size_t n2=vtemp.size();
+    out.resize(n2);
+    for(size_t i=0;i<n2;i++) {
+      out[i]=vtemp[i];
+    }
+    return;
+  }
+    
   /** \brief Provide a downheap() function for vector_sort_index()
    */
   template<class vec_t, class vec_size_t> 
@@ -1882,8 +1934,8 @@ namespace o2scl {
       return 0;
     }
     size_t row=0, i=0;
-    while(!std::isfinite(x[i]) && i<n-1) i++;
-    if (i==n-1) {
+    while(!std::isfinite(x[i]) && i<n) i++;
+    if (i==n) {
       O2SCL_ERR2("Entire vector not finite in ",
 		 "function vector_lookup()",exc_einval);
       return 0;
@@ -2267,7 +2319,7 @@ namespace o2scl {
       an exception.
 
       The corresponding tests for matrix functions are
-      in clbas_base.h .
+      in ``cblas_base.h`` .
   */
   template<class vec_t>
     bool vector_is_finite(size_t n, vec_t &data) {
@@ -2283,7 +2335,7 @@ namespace o2scl {
       an exception.
 
       The corresponding tests for matrix functions are
-      in clbas_base.h .
+      in ``cblas_base.h`` .
   */
   template<class vec_t> bool vector_is_finite(vec_t &data) {
     return vector_is_finite(data.size(),data);
@@ -2657,6 +2709,10 @@ namespace o2scl {
       This object just returns the index whenever an object in the
       vector is requested, i.e. <tt>operator[](i)</tt> always returns
       \c i.
+
+      9/16/24: This function is used in \ref
+      o2scl_acol::acol_manager::comm_create() to create \ref
+      o2scl::table objects.
    */
   template<class data_t> class vector_index_vector {
   public:
@@ -2802,7 +2858,10 @@ namespace o2scl {
   }
 
   /** \brief View a vector as a matrix
-  */
+
+      9/16/24: This class is used in ``vec_stats_ts.cpp`` to
+      test the 2D FFTs.
+   */
   template<class vec_t, class data_t=double> class vector_view_matrix {
 
   protected:
@@ -4148,7 +4207,7 @@ namespace o2scl {
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-#if defined (O2SCL_ARMA) || defined (DOXYGEN)
+#if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
 #include <armadillo>
 namespace o2scl {
 

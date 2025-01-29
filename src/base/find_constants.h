@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2020-2024, Andrew W. Steiner
+  Copyright (C) 2020-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -718,8 +718,11 @@ namespace o2scl {
     
     /// \name Other possible values of the unit flag
     //@{
+    /// Units unknown
     static const int fc_unknown=0;
+    /// Unitless
     static const int fc_none=3;
+    /// Other unit
     static const int fc_other=4;
     //@}
 

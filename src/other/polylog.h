@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -255,8 +255,8 @@ namespace o2scl {
       argument is too large. In this class, the value <tt>inf</tt>
       is returned in those cases instead. 
 
-      This class is used in \o2p in <tt>o2scl::fermion_thermo_tl</tt>,
-      <tt>o2scl::fermion_tl</tt> and <tt>o2scl::fermion_nonrel_tl</tt>
+      This class is used in \ref o2scl::fermion_thermo_tl,
+      \ref o2scl::fermion_tl and \ref o2scl::fermion_nonrel_tl
       to compute the Fermi-Dirac integrals for non-relativistic
       fermions.
    */
@@ -331,10 +331,10 @@ namespace o2scl {
 
       This class computes \f$ K_n(z) e^z\f$ for \f$ n=1,2,3 \f$.
 
-      \note This class is used in \o2p in
-      <tt>o2scl::fermion_thermo_tl</tt>,
-      <tt>o2scl::fermion_nonrel_tl</tt>, and
-      <tt>o2scl::fermion_rel_tl</tt>
+      \note This class is used in 
+      \ref o2scl::fermion_thermo_tl,
+      \ref o2scl::fermion_nonrel_tl, and
+      \ref o2scl::fermion_rel_tl.
    */
   class bessel_K_exp_integ_gsl {
     
@@ -596,7 +596,7 @@ namespace o2scl {
 
     /// \name The base integrators
     //@{
-#ifndef O2SCL_NO_BOOST_MULTIPRECISION
+#ifdef O2SCL_MULTIP
     inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
                        cpp_dec_float_50,cpp_dec_float_100> ikb;
 #else

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner
+  Copyright (C) 2017-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -846,10 +846,10 @@ namespace o2scl {
     /** \brief Sample the probability distribution for the interpolation
         at a specified point
 
-        This creates a new distribution at the point \x c0 and then
-        samples that distribution. If one wants to perform several
-        samples at the same point, it is much more efficient to
-        use gen_dist() instead.
+        This creates a new distribution at the point <tt>x0</tt> and
+        then samples that distribution. If one wants to perform
+        several samples at the same point, it is much more efficient
+        to use gen_dist() instead.
     */
     double sample(double x0) const {
       return gen_dist(x0)();

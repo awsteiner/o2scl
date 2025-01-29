@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -215,7 +215,7 @@ namespace o2scl {
   public:
     
     /// Create an exception with description provided in \c s
-  exc_overflow_error(const std::string &s) : std::overflow_error(s) {
+    exc_overflow_error(const std::string &s) : std::overflow_error(s) {
     }
     
     virtual ~exc_overflow_error() throw() {}
@@ -233,8 +233,8 @@ namespace o2scl {
       This class derives from <tt>std::ios::failure</tt>.
 
       The errors which are handled with this exception type are
-      - \ref o2scl::exc_eof=32 end of file \n
-      - \ref o2scl::exc_efilenotfound=35 File not found
+      - \ref o2scl::exc_eof (32) end of file \n
+      - \ref o2scl::exc_efilenotfound (35) File not found
   */
   class exc_ios_failure : public std::ios::failure {
     

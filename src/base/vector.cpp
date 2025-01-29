@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -29,7 +29,7 @@ void blank_func1() {
   return;
 }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
 template<> arma::subview_row<double> 
 o2scl::matrix_row<arma::mat,arma::subview_row<double> >

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O₂scl.
   
@@ -367,8 +367,6 @@ namespace o2scl_acol {
     void command_del(std::string ltype);
     
     /** \brief Get the verbose parameter
-        
-        This function is used in \ref o2scl_acol_mult_vectors_to_conts() .
     */
     int get_verbose() {
       return verbose;
@@ -610,9 +608,10 @@ namespace o2scl_acol {
 
         End of runtime documentation.
 
-        This function uses \ref funct_multip and \ref funct_multip_string
-        for adaptive multiprecision and \ref function_to_double()
-        or \ref function_to_fp_nothrow() otherwise.
+        This function uses \ref o2scl::funct_multip_tl and \ref
+        o2scl::funct_multip_string_tl for adaptive multiprecision and \ref
+        o2scl::function_to_double() or \ref
+        o2scl::function_to_fp_nothrow() otherwise.
     */
     virtual int comm_calc(std::vector<std::string> &sv, bool itive_com);
     
@@ -761,7 +760,7 @@ namespace o2scl_acol {
         is output to the screen, no file I/O is performed, and the
         current \c table3d object is unmodified.
 
-        Countours are computed by the \ref o2scl::contours class, by
+        Countours are computed by the \ref o2scl::contour class, by
         piecing together line segments across grid lines. The best way
         to obtain more accurate contours is to compute them using data
         with a smaller grid spacing. The \c refine command can be used
@@ -803,7 +802,7 @@ namespace o2scl_acol {
         integral is computed as the sum of w Δx Δy and thus there are
         no guarantees that the requested contours exist.
 
-        Countours are computed by the \ref o2scl::contours class, by
+        Countours are computed by the \ref o2scl::contour class, by
         piecing together line segments across grid lines. The best way
         to obtain more accurate contours is to compute them using data
         with a smaller grid spacing. The \c refine command can be used
@@ -1166,7 +1165,7 @@ namespace o2scl_acol {
     */
     virtual int comm_diag(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Open local HTML docs for O₂scl documentation.
+    /** \brief Open local O₂scl HTML documentation.
 
         Arguments: <tt>[section, class, or function]</tt>
 
@@ -1212,7 +1211,7 @@ namespace o2scl_acol {
         This function exits immediately if it fails, preventing the
         user from reading a data file which is corrupted.
 
-        This function uses \ref o2scl::cloud_file to handle the 
+        This function uses \ref o2scl_hdf::cloud_file to handle the 
         file acquisition.
     */
     virtual int comm_download(std::vector<std::string> &sv, bool itive_com);
@@ -3217,6 +3216,18 @@ namespace o2scl_acol {
 
     /** \brief Convert object to a \ref o2scl::tensor_grid object
 
+        For objects of type table:
+
+        Convert two or more columns to a tensor_grid object.
+
+        Arguments: <tt><grid col. 1> [grid col. 2] ... <value col.></tt>
+
+        This uses the specified columns to construct the grid for a
+        new tensor_grid object and then fills that tensor_grid object
+        with the values from the last column specified. Initially the
+        tensor_grid object is filled with zero values. Then, the
+        entries are in the table are used to fill the tensor.
+
         For objects of type table3d:
 
         Convert a slice of the table3d object to a tensor_grid object.
@@ -3485,10 +3496,11 @@ namespace o2scl_acol {
      */
     virtual int comm_version(std::vector<std::string> &sv, bool itive_com);
 
-    /** \brief Open remote HTML docs for acol or an O₂scl topic.
+    /** \brief Open remote HTML O₂scl or O₂sclpy docs
 
-        Arguments: <tt>["dev"] [search_term], [topic] or [section
-        search_term]</tt>
+        Arguments: <tt>[search_term], ["dev"] [search_term],
+        ["o2sclpy"] [search_term],
+        ["o2sclpy-dev"] [search_term]</tt>
         
         If no arguments are given, this command opens up the remote
         HTML documentation for acol in the default web browser using
@@ -3502,9 +3514,13 @@ namespace o2scl_acol {
         <tt>-wdocs \"Simulated annealing\"</tt>
 
         If the optional argument "dev" is given, then the development
-        rather than release documentation is used. In order to open
-        the local version of the documentation instead of the remote
-        copy, use <tt>docs</tt> instead of <tt>wdocs</tt>.
+        rather than release documentation is used. If the optional
+        argument "o2sclpy" or "o2sclpy-dev" are given, then the
+        O₂sclpy documentation is used.
+
+        In order to open the local version of the documentation
+        instead of the remote copy, use <tt>docs</tt> instead of
+        <tt>wdocs</tt>.
     */
     virtual int comm_wdocs(std::vector<std::string> &sv, bool itive_com);
 

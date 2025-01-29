@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -114,7 +114,7 @@ namespace o2scl {
       \beta^{\prime} \gamma} q_{j^{\prime} \beta^{\prime}}\right) \right] \,, 
       \f]
       
-      where \f$ \mu \f$ is the \quark number chemical potential.  
+      where \f$ \mu \f$ is the quark number chemical potential.  
       couplings \f$ G_S \f$, \f$ G_D \f$, and \f$ G_{DIQ} \f$
       ultra-violet three-momentum cutoff, \f$ \Lambda \f$
       
@@ -126,7 +126,7 @@ namespace o2scl {
       where \f$ i \f$ runs over all nine (three colors times three
       flavors) quarks. We assume that the condensates are independent
       of color and 
-      that the \quark chemical potentials
+      that the quark chemical potentials
       are of the form
       \f$ \mu_Q=\mu_{\mathrm{Flavor(Q)}}+\mu_{\mathrm{Color(Q)}} \f$
       with
@@ -202,7 +202,7 @@ namespace o2scl {
       <b>References:</b>
 
       \verbatim embed:rst
-      Created for [Steiner02]_.
+      Created for [Steiner02cs]_.
       \endverbatim
   */
   class eos_quark_cfl : public eos_quark_njl {
@@ -230,7 +230,7 @@ namespace o2scl {
         automatically calculated to ensure that the vacuum has zero
         energy density and zero pressure. The functions set_quarks()
         and set_thermo() must be used before hand to specify the \ref
-        quark and \ref thermo objects.
+        quark_tl and \ref thermo objects.
         
     */
     virtual int set_parameters_cfl(double lambda=0.0, double fourferm=0.0, 

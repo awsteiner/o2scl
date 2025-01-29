@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -30,10 +30,7 @@
 #include <o2scl/fermion_deriv_rel.h>
 #include <o2scl/boson_rel.h>
 
-#include <o2scl/nucmass_frdm.h>
-#include <o2scl/nucmass_ame.h>
-#include <o2scl/nucdist.h>
-#include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/nucmass.h>
 
 /** \file nucmass_densmat.h
     \brief File defining \ref o2scl::dense_matter and
@@ -265,26 +262,9 @@ namespace o2scl {
     
   };
 
-  /** \brief A nuclear mass formula for dense matter
-      
-      This class is experimental.
-
-      The default set of nuclear masses is from the AME 2012
-      mass evaluation and is automatically loaded in the 
-      constructor.
-
-      \future If this isn't going to be in a child of \ref nucmass,
-      then maybe we can simplify \ref binding_energy_densmat_derivs()
-      to just <tt>binding_energy()</tt>.
-      
+  /** \brief A nuclear mass formula for dense matter [abstract]
   */
-  class nucmass_densmat {
-
-  protected:
-    
-    /** \brief Pointer to the nuclear mass formula 
-     */
-    nucmass *massp;
+  class nucmass_densmat : public nucmass_fit_base {
 
   public:
     
@@ -292,9 +272,6 @@ namespace o2scl {
     virtual const char *type() { return "nucmass_densmat"; }
     
     nucmass_densmat();
-
-    /// Set base nuclear masses
-    void set_mass(nucmass &nm);
 
     /** \brief Test the derivatives for 
 	\ref binding_energy_densmat_derivs()
@@ -321,17 +298,38 @@ namespace o2scl {
 	\future Extend to negative N and Z?
     */
     virtual void binding_energy_densmat_derivs
-      (double Z, double N, double npout, double nnout, 
-       double nneg, double T, double &E, double &dEdnp, double &dEdnn,
-       double &dEdnneg, double &dEdT);
-
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT)=0;
+    
     /** \brief Compute the binding energy of a nucleus in dense matter
-	without the derivatives
-     */
-    virtual void binding_energy_densmat
-      (double Z, double N, double npout, double nnout, 
-       double nneg, double T, double &E);
+    */
+    virtual double binding_energy_densmat
+    (double Z, double N, double npout=0.0, double nnout=0.0, 
+     double nneg=0.0, double T=0.0);
 
+    /// Given \c Z and \c N, return the mass excess in MeV
+    virtual double mass_excess_d(double Z, double N) {
+      double ret=0.0;
+      
+      ret=binding_energy_densmat(Z,N);
+      
+      // Convert from binding energy to mass excess
+      ret-=((N+Z)*o2scl_const::unified_atomic_mass_f<double>()-
+            Z*o2scl_const::mass_electron_f<double>()-
+            N*o2scl_const::mass_neutron_f<double>()-
+            Z*o2scl_const::mass_proton_f<double>())*
+        o2scl_settings.get_convert_units().convert("kg","MeV",1.0);
+      
+      return ret;
+      
+    }
+
+    /// Given \c Z and \c N, return the mass excess in MeV
+    virtual double mass_excess(int Z, int N) {
+      return mass_excess_d(((double)Z),((double)N));
+    }
+    
   };
 
 }

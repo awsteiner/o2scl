@@ -19,9 +19,8 @@ rst_header |
 |
 | :ref:`O2sclpy <o2sclpy>`
 |
-| Note that this python interface is not intended
-| to provide the full functionality of the corresponding C++ 
-| class.
+| This python interface is not intended to provide the full 
+| functionality of the corresponding C++ class.
 # 
 # Include statements for C++ header file
 # 
@@ -52,8 +51,11 @@ cpp_using o2scl
 #
 # Additional python headers
 #
+py_header from o2sclpy.string import *
+py_header 
 #
 # The interpolation types
+#
 py_header itp_linear=1
 py_header itp_cspline=2
 py_header itp_cspline_peri=3
@@ -62,56 +64,21 @@ py_header itp_akima_peri=5
 py_header itp_monotonic=6
 py_header itp_steffen=7
 py_header itp_nearest_neigh=8
+py_header 
 #
-# ------------------------------------------------------
+# Define the force_bytes_string function
 #
-# Class string
-# 
-class std::string
-- py_class_doc |
-| Note that std_string objects are not "immutable" like Python
-| strings.
-- py_name std_string
-- std_cc                             
-- function length
-  - size_t
-- function operator[]
-  - char &
-  - size_t n
-- function resize
-  - void
-  - size_t n
-- extra_py |
-| def __len__(self):
-|     """
-|     Return the length of the vector
-|
-|     Returns: an int
-|     """
-|     return self.length()
-| 
-| def init_bytes(self,s):
-|     """
-|     Initialize the string from a Python bytes object
-|
-|     | Parameters:
-|     | *s*: a Python bytes string
-|     """
-|     self.resize(len(s))
-|     for i in range(0,len(s)):
-|         self.__setitem__(i,s[i])
-|     return
-|
-| def to_bytes(self):
-|     """
-|     Copy the string to a Python bytes object
-|
-|     Returns: a Python bytes string
-|     """
-|     ret=b''
-|     for i in range(0,self.length()):
-|         ret=ret+self.__getitem__(i)
-|     return ret
+py_header def force_bytes_string(obj):
+py_header     """
+py_header     This function returns the bytes object corresponding to ``obj``
+py_header     in case it is a string using UTF-8. 
+py_header     """
+py_header     if (isinstance(obj,numpy.bytes_)==True or
+py_header         isinstance(obj,bytes)==True):
+py_header         return obj
+py_header     if isinstance(obj,o2sclpy.base.std_string):
+py_header         return obj.to_bytes()
+py_header     return bytes(obj,'utf-8')
 #
 # ------------------------------------------------------
 #

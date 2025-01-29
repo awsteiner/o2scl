@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -62,7 +62,7 @@ int main(void) {
 	gm2(i,j)=1.0/(i+j+1);
       }
     }
-
+    
     /*
       cout << "A: " << endl;
       cout << gm1 << endl;
@@ -72,7 +72,7 @@ int main(void) {
 
     // -------------------------------------------------
 
-    linear_solver_LU<ubvector,ubmatrix> lus;
+    linear_solver_LU<ubvector,ubmatrix,double> lus;
     lus.solve(5,gm1,gv1,gv2);
 
     //cout << "x: " << endl;
@@ -148,7 +148,7 @@ int main(void) {
     t.test_rel_vec(5,gv1,gv3,1.0e-10,"linear_solver_HH");
   }
 
-#ifdef O2SCL_ARMA
+#ifdef O2SCL_SET_ARMA
 
   arma::mat am1(5,5), am2(5,5);
   arma::vec av1(5), av2(5), av3(5);

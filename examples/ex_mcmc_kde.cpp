@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2024, Andrew W. Steiner
+  Copyright (C) 2017-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -65,8 +65,8 @@ class mcmc_stepper_mh_record :
   }
   
   virtual void step(size_t i_thread, size_t n_params, point_funct &f,
-                    ubvector &current, ubvector &next, double w_current,
-                    double &w_next, ubvector &low, ubvector &high,
+                    const ubvector &current, ubvector &next, double w_current,
+                    double &w_next, const ubvector &low, const ubvector &high,
                     int &func_ret, bool &accept, std::vector<double> &dat,
                     rng<> &r, int verbose) {
     
@@ -200,13 +200,15 @@ int main(int argc, char *argv[]) {
   cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
   // Set parameter names and units
-  vector<string> pnames={"x","x2"};
-  vector<string> punits={"",""};
-  mct.set_names_units(pnames,punits);
+  vector<string> pnames={"x"};
+  vector<string> punits={""};
+  vector<string> dnames={"x2"};
+  vector<string> dunits={""};
+  mct.set_names_units(pnames,punits,dnames,dunits);
 
   // Read the preliminary data from a file
   hdf_file hf;
-  hf.open("ex_mcmc.o2");
+  hf.open("data/ex_mcmc.o2");
   table_units<> tab_in;
   hdf_input(hf,tab_in,"indep");
   hf.close();
@@ -230,8 +232,8 @@ int main(int argc, char *argv[]) {
   vector<double> bw_array;
   ug.vector(bw_array);
   std::shared_ptr<kde_python<ubvector>> kp(new kde_python<ubvector>);
-  kp->set_function("o2sclpy",ten_in,
-                   bw_array,"verbose=0","kde_sklearn");
+  kp->set_function("o2sclpy","verbose=0","kde_sklearn");
+  kp->set_data(ten_in,bw_array);
   
   // Setting the KDE as the base distribution for the independent
   // conditional probability.
@@ -275,7 +277,7 @@ int main(int argc, char *argv[]) {
        << ac_len << " " << indep.get_nlines() << endl;
   
   // Write these samples to a file
-  hf.open_or_create("ex_mcmc_kde.o2");
+  hf.open_or_create("data/ex_mcmc_kde.o2");
   hdf_output(hf,*t,"mcmc");
   hdf_output(hf,indep,"indep");
   hf.setd_vec("q_next",local_stepper->vq_next);
