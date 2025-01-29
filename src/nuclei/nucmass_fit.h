@@ -98,6 +98,11 @@ namespace o2scl {
      */
     virtual void eval(nucmass &n, double &res);
 
+    /** \brief Desc
+     */
+    void eval_table(nucmass &n, double &fmin,
+                    bool make_table, table<> &tab);
+    
     /** \brief Fit a nuclear mass formula using least squares
         and report the associated \f$ \chi^2 \f$ and 
         covariance matrix

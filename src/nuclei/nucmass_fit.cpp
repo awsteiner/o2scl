@@ -149,8 +149,27 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
 }
 
 void nucmass_fit::eval(nucmass &n, double &fmin) {
+  table t;
+  eval_table(n,fmin,false,t);
+  return;
+}
+
+void nucmass_fit::eval_table(nucmass &n, double &fmin,
+                             bool make_table, table<> &tab) {
 
   fmin=0.0;
+
+  if (make_table) {
+    if (fit_method==rms_mass_excess) {
+      tab.line_of_names("Z N me_exp me_th");
+    } else if (fit_method==rms_me_Sn) {
+      tab.line_of_names("Z N me_exp me_th Sn_exp Sn_th");
+    } else if (fit_method==rms_me_Sn_S2n) {
+      tab.line_of_names("Z N me_exp me_th Sn_exp Sn_th S2n_exp S2n_th");
+    } else if (fit_method==rms_me_S2n) {
+      tab.line_of_names("Z N me_exp me_th S2n_exp S2n_th");
+    }
+  }
 
   if (dist.size()==0) {
     O2SCL_ERR("No experimental masses to fit to in nucmass_fit::eval().",
@@ -164,6 +183,11 @@ void nucmass_fit::eval(nucmass &n, double &fmin) {
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+        if (make_table) {
+          double line[4]={((double)Z),((double)N),
+                          ndi->mex*hc_mev_fm,n.mass_excess(Z,N)};
+          tab.line_of_data(4,line);
+        }
 	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+

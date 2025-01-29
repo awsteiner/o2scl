@@ -36,6 +36,19 @@ nucmass_two_interp::nucmass_two_interp() {
 }
 
 void nucmass_two_interp::set_default() {
+
+  nucmass_ame ame;
+  ame.load("20");
+
+  nucmass_fit nf;
+  nucdist_set(nf.dist,ame);
+  double res;
+  nf.fit(*nfb,res);
+
+  table<> tab;
+  nf.eval_table(*nfb,res,true,tab);
+
+  // Now use 'tab' to initialize interpm_idw
   
   return;
 }

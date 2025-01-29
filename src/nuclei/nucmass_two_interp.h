@@ -64,7 +64,7 @@ namespace o2scl {
     }
     
     /// Default nuclear mass formula
-    nucmass_dz_fit_33 def_fit;
+    nucmass_dz_fit_10 def_fit;
 
     /// Default interpolation object
     interpm_idw def_ib;
