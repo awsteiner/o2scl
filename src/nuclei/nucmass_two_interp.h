@@ -52,22 +52,25 @@ namespace o2scl {
     }
 
     /// Set the nuclear mass formula
-    void set_fit_base(nucmass_fit_base &n) {
-      nfb=&n;
+    void set_fit_base(nucmass_fit_base &nfb_user) {
+      nfb=&nfb_user;
       return;
     }
 
     /// Set the default interpolator
-    void set_interpm_base(interpm_base &i) {
-      ib=&i;
+    void set_interpm_base(interpm_base<> &ib_user) {
+      ib=&ib_user;
       return;
     }
     
     /// Default nuclear mass formula
-    nucmass_dz_fit_10 def_fit;
+    nucmass_dz_fit def_fit;
 
     /// Default interpolation object
-    interpm_idw def_ib;
+    interpm_idw<> def_ib;
+
+    /// Desc
+    void set_default();
     
   protected:
 

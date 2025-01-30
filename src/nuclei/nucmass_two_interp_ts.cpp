@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2025, Andrew W. Steiner
+  Copyright (C) 2006-2025, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -20,53 +20,29 @@
 
   ───────────────────────────────────────────────────────────────────
 */
-
+#include <iostream>
+#include <o2scl/test_mgr.h>
 #include <o2scl/nucmass_two_interp.h>
-// For unit conversions
-#include <o2scl/lib_settings.h>
-
+#include <o2scl/nucdist.h>
 #include <o2scl/hdf_nucmass_io.h>
+#include <o2scl/cloud_file.h>
 
 using namespace std;
 using namespace o2scl;
+using namespace o2scl_const;
+using namespace o2scl_hdf;
 
-nucmass_two_interp::nucmass_two_interp() {
-  nfb=&def_fit;
-  ib=&def_ib;
-}
+int main(void) {
 
-void nucmass_two_interp::set_default() {
-
-  nucmass_ame ame;
-  ame.load("20");
-
-  nucmass_fit nf;
-  nucdist_set(nf.dist,ame);
-  double res;
-  nf.fit(*nfb,res);
-
-  table<> tab;
-  nf.eval_table(*nfb,res,true,tab);
-
-  // Now use 'tab' to initialize interpm_idw
-
-  const_matrix_view_table<> ix(tab,{"Z","N"});
-  std::vector<std::string> out_cols;
-  for(size_t j=2;j<tab.get_ncolumns();j++) {
-    out_cols.push_back(tab.get_column_name(j));
-  }
-  const_matrix_view_table<> iy(tab,out_cols);
-  ib->set_data(2,tab.get_ncolumns()-2,tab.get_nlines(),ix,iy);
+  cout.setf(ios::scientific);
   
-  return;
-}
+  test_mgr t;
+  t.set_output_level(3);
 
-double nucmass_two_interp::mass_excess_d(double Z, double N) {
-  double ret=nfb->mass_excess_d(Z,N);
-  ubvector x(2);
-  ubvector y(1);
-  ib->eval(x,y);
-  ret+=y[0];
-  return ret;
+  nucmass_two_interp nti;
+  nti.set();
+  
+  t.report();
+  return 0;
 }
 

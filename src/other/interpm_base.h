@@ -44,8 +44,8 @@ namespace o2scl {
   /** \brief Base class for multidimensional interpolation
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-           class mat_x_t=o2scl::matrix_view_table<>,
-           class mat_y_t=o2scl::matrix_view_table<> >
+           class mat_x_t=o2scl::const_matrix_view_table<>,
+           class mat_y_t=o2scl::const_matrix_view_table<> >
   class interpm_base {
 
   protected:
