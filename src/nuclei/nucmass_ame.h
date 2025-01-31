@@ -424,6 +424,14 @@ namespace o2scl {
 
     /// Return the reference
     std::string get_reference() { return reference; }
+
+    /// Desc
+    virtual void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
     
   protected:
 

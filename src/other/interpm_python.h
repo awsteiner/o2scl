@@ -51,8 +51,8 @@ namespace o2scl {
   /** \brief Multidimensional interpolation interface for python
    */
   template<class vec_t=boost::numeric::ublas::vector<double>,
-           class mat_x_t=o2scl::matrix_view_table<>,
-           class mat_y_t=o2scl::matrix_view_table_transpose<> >
+           class mat_x_t=o2scl::const_matrix_view_table<>,
+           class mat_y_t=o2scl::const_matrix_view_table<> >
   class interpm_python :
     public interpm_base<vec_t,mat_x_t,mat_y_t> {
     

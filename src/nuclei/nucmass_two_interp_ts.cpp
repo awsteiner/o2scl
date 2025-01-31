@@ -40,7 +40,31 @@ int main(void) {
   t.set_output_level(3);
 
   nucmass_two_interp nti;
-  nti.set();
+  nti.set_default();
+
+  nucmass_ame ame;
+  ame.load("20");
+  nucmass_mnmsk mo12;
+  o2scl_hdf::mnmsk_load(mo12,"msis16");
+  vector<nucleus> mdist;
+
+  nucdist_set(mdist,mo12);
+
+  for(size_t i=0;i<mdist.size();i++) {
+    int Z=mdist[i].Z;
+    int N=mdist[i].N;
+    if (ame.is_included(Z,N)) {
+      cout << nti.binding_energy(Z,N)/(Z+N) << " "
+           << ame.binding_energy(Z,N)/(Z+N) << " "
+           << mo12.binding_energy(Z,N)/(Z+N) << endl;
+    } else {
+      cout << nti.binding_energy(Z,N)/(Z+N) << " "
+           << 0.0 << " "
+           << mo12.binding_energy(Z,N)/(Z+N) << endl;
+    }
+    char ch;
+    cin >> ch;
+  }
   
   t.report();
   return 0;

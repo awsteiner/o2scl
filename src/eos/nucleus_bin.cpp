@@ -38,23 +38,11 @@ nucleus_bin::nucleus_bin() {
 
   //std::cout << "Reading nuclear mass tables." << std::endl;
     
-  ame95rmd.load("95rmd");
-  ame95exp.load("95exp");
-  ame03round.load("03round");
-  ame03.load("03");
-  ame12.load("12");
-  ame16.load("16");
   ame20exp.load("20");
   ame20round.load("20round");
   
-  o2scl_hdf::mnmsk_load(m95,"mnmsk97");
   o2scl_hdf::mnmsk_load(m16,"msis16");
     
-  o2scl_hdf::hfb_load(hfb2,2);
-  o2scl_hdf::hfb_load(hfb8,8);
-  o2scl_hdf::hfb_load(hfb14,14);
-  o2scl_hdf::hfb_load(hfb14_v0,15);
-  o2scl_hdf::hfb_sp_load(hfb17,17);
   o2scl_hdf::hfb_sp_load(hfb21,21);
   o2scl_hdf::hfb_sp_load(hfb22,22);
   o2scl_hdf::hfb_sp_load(hfb23,23);
@@ -63,19 +51,12 @@ nucleus_bin::nucleus_bin() {
   o2scl_hdf::hfb_sp_load(hfb26,26);
   o2scl_hdf::hfb_sp_load(hfb27,27);
 
-  kt.load("04");
-  kt2.load("05");
-
   wlw1.load("WS3.2");
   wlw2.load("WS3.3");
   wlw3.load("WS3.6");
   wlw4.load("WS3_RBF");
   wlw5.load("WS4_RBF");
     
-  sdnp1.load("sdnp03");
-  sdnp2.load("sd_skp_04");
-  sdnp3.load("sd_sly4_04");
-  
   ddme2.load_be("ddme2","E",1.0);
   ddmed.load_be("ddmed","E",1.0);
   ddpc1.load_be("ddpc1","E",1.0);
@@ -89,28 +70,25 @@ nucleus_bin::nucleus_bin() {
   
   //std::cout << "Done reading nuclear mass tables." << std::endl;
 
-  nmd={&ame95rmd,&ame95exp,&ame03round,&ame03,
-       &ame12,&ame16,&ame20exp,&ame20round,&m95,&m16,&kt,
-       &kt2,&hfb2,&hfb8,&hfb14,&hfb14_v0,
-       &hfb17,&hfb21,&hfb22,&hfb23,
+  nmd={&ame20exp,&ame20round,&m16,
+       &hfb21,&hfb22,&hfb23,
        &hfb24,&hfb25,&hfb26,&hfb27,
-       &wlw1,&wlw2,&wlw3,&wlw4,&wlw5,&sdnp1,
-       &sdnp2,&sdnp3,&dz,&ddme2,&ddmed,&ddpc1,
-       &nl3s,&sly4,&skms,&skp,&sv_min,&unedf0,&unedf1};
+       &wlw1,&wlw2,&wlw3,&wlw4,&wlw5,
+       &dz,&ddme2,&ddmed,&ddpc1,&nl3s,&sly4,&skms,
+       &skp,&sv_min,&unedf0,&unedf1};
        
   n_tables=nmd.size();
 
-  table_names={"AME rmd 95","AME 95 exp",
-	       "AME rnd 03","AME 03",
-	       "AME 12","AME 16","AME exp 20","AME rnd 20",
-	       "MNMSK 95","MSIS 16","KTUY 04","KTUY 05",
-	       "HFB2","HFB8","HFB14","HFB14_v0",
-	       "HFB17","HFB21","HFB22","HFB23",
+  table_names={"AME exp 20","AME rnd 20","MSIS 16",
+	       "HFB21","HFB22","HFB23",
 	       "HFB24","HFB25","HFB26","HFB27",
 	       "WLW 10","WLLW 10","LWDW 11","WL 11","WLWM 14",
-	       "SDNP1 05","SDNP2 05","SDNP3 05",
 	       "DZ 95","DDME2","DDMED","DDPC1","NL3S",
                "SLy4","SKM*","SkP","SV-min","UNEDF0","UNEDF1"};
+  if (table_names.size()!=nmd.size()) {
+    O2SCL_ERR2("Table list size problem in ",
+              "nucleus_bin::nucleus_bin().",o2scl::exc_esanity);
+  }
 
   nmfd={&se,&frdm,&dzf,&dzf33,&frdm_shell,&ldrop_shell};
   n_fits=nmfd.size();
@@ -228,10 +206,199 @@ nucleus_bin::nucleus_bin() {
     p[10]=1.137565990431053e-01;
     ldrop_shell.fit_fun(11,p);
   }
+
+  older_tables=false;
+}
+
+void nucleus_bin::update_older_tables() {
+
+  if (older_tables==true && ame16.get_nentries()==0) {
+
+    ame95rmd.load("95rmd");
+    ame95exp.load("95exp");
+    ame03round.load("03round");
+    ame03.load("03");
+    ame12.load("12");
+    ame16.load("16");
+
+    o2scl_hdf::mnmsk_load(m95,"mnmsk97");
+  
+    o2scl_hdf::hfb_load(hfb2,2);
+    o2scl_hdf::hfb_load(hfb8,8);
+    o2scl_hdf::hfb_load(hfb14,14);
+    o2scl_hdf::hfb_load(hfb14_v0,15);
+    o2scl_hdf::hfb_sp_load(hfb17,17);
+    
+    kt.load("04");
+    kt2.load("05");
+    
+    sdnp1.load("sdnp03");
+    sdnp2.load("sd_skp_04");
+    sdnp3.load("sd_sly4_04");
+
+    nmd.push_back(&ame95rmd);
+    nmd.push_back(&ame95exp);
+    nmd.push_back(&ame03round);
+    nmd.push_back(&ame03);
+    nmd.push_back(&ame12);
+    nmd.push_back(&ame16);
+
+    nmd.push_back(&m95);
+    
+    nmd.push_back(&kt);
+    nmd.push_back(&kt2);
+    
+    nmd.push_back(&sdnp1);
+    nmd.push_back(&sdnp2);
+    nmd.push_back(&sdnp3);
+    
+    nmd.push_back(&hfb2);
+    nmd.push_back(&hfb8);
+    nmd.push_back(&hfb14);
+    nmd.push_back(&hfb14_v0);
+    nmd.push_back(&hfb17);
+    
+    table_names.push_back("AME rmd 95");
+    table_names.push_back("AME 95 exp");
+    table_names.push_back("AME rnd 03");
+    table_names.push_back("AME 03");
+    table_names.push_back("AME 12");
+    table_names.push_back("AME 16");
+    
+    table_names.push_back("MNMSK 95");
+    
+    table_names.push_back("KTUY 04");
+    table_names.push_back("KTUY 05");
+    
+    table_names.push_back("SDNP1 05");
+    table_names.push_back("SDNP2 05");
+    table_names.push_back("SDNP3 05");
+    
+    table_names.push_back("HFB2");
+    table_names.push_back("HFB8");
+    table_names.push_back("HFB14");
+    table_names.push_back("HFB14_v0");
+    table_names.push_back("HFB17");
+
+  }
+
+  if (older_tables==false && ame16.get_nentries()>0) {
+
+    ame95rmd.clear();
+    ame95exp.clear();
+    ame03round.clear();
+    ame03.clear();
+    ame12.clear();
+    ame16.clear();
+
+    m95.clear();
+    
+    hfb2.clear();
+    hfb8.clear();
+    hfb14.clear();
+    hfb14_v0.clear();
+    hfb17.clear();
+    
+    kt.clear();
+    kt2.clear();
+    
+    sdnp1.clear();
+    sdnp2.clear();
+    sdnp3.clear();
+
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame95rmd),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame95exp),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame03round),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame03),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame12),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&ame16),nmd.end());
+    
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&m95),nmd.end());
+    
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&kt),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&kt2),nmd.end());
+    
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&sdnp1),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&sdnp2),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&sdnp3),nmd.end());
+    
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&hfb2),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&hfb8),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&hfb14),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&hfb14_v0),nmd.end());
+    nmd.erase(std::remove(nmd.begin(),nmd.end(),&hfb17),nmd.end());
+
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME rmd 95"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME 95 exp"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME rnd 03"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME 03"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME 12"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "AME 16"),table_names.end());
+    
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "MNMSK 95"),table_names.end());
+    
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "KTUY 04"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "KTUY 05"),table_names.end());
+    
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "SDNP1 05"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "SDNP2 05"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "SDNP3 05"),table_names.end());
+    
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "HFB2"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "HFB8"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "HFB14"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "HFB14_v0"),table_names.end());
+    table_names.erase(std::remove(table_names.begin(),
+                                  table_names.end(),
+                                  "HFB17"),table_names.end());
+  }
+
+  n_tables=nmd.size();
+  
+  if (table_names.size()!=nmd.size()) {
+    O2SCL_ERR2("Table list size problem in ",
+              "nucleus_bin::nucleus_bin().",o2scl::exc_esanity);
+  }
+  
+  return;
 }
 
 int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
 
+  update_older_tables();
+  
   if (sv.size()<3) {
     cerr << "Get function needs Z and N." << endl;
     return 1;
@@ -343,7 +510,6 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
     cout << endl;
   }
   
-  cout << endl;
   cout.unsetf(ios::showpos);
 
   if (ame20exp.is_included(Z,N)) {
@@ -359,6 +525,23 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
     cout << "atomic mass: " << en.amass << " keV" << endl;
     cout << "atomic mass unc.: " << en.damass << " keV" << endl;
     cout << endl;
+  }
+
+  if (hfb27.is_included(Z,N)) {
+    nucmass_hfb_sp::entry en=hfb27.get_ZN(Z,N);
+    if (en.Jexp>1.0e98 && en.Pexp>98) {
+      cout << "HFB27 spin and parity, theory: "
+           << en.Jth << " " << en.Pth << endl;
+    } else {
+      cout << "HFB27 spin and parity, expt.: "
+           << en.Jexp << " " << en.Pexp << ", theory: "
+           << en.Jth << " " << en.Pth << endl;
+    }
+    cout << endl;
+  }
+  
+  if (ame20exp.is_included(Z,N)) {
+    nucmass_ame::entry en=ame20exp.get_ZN(Z,N);
     cout.setf(ios::left);
     cout << "Nubase entries:" << endl;
     cout << "Z i ";
@@ -447,6 +630,8 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
 
 int nucleus_bin::tables(std::vector<std::string> &sv, bool itive_com) {
 
+  update_older_tables();
+  
   size_t left_column=18;
     
   cout << "Number of entries in nuclear mass tables: " << endl;
@@ -462,6 +647,8 @@ int nucleus_bin::tables(std::vector<std::string> &sv, bool itive_com) {
 
 int nucleus_bin::refs(std::vector<std::string> &sv, bool itive_com) {
 
+  update_older_tables();
+  
   size_t left_column=18;
 
   cout << "References: " << endl;
@@ -475,6 +662,8 @@ int nucleus_bin::refs(std::vector<std::string> &sv, bool itive_com) {
 
 int nucleus_bin::cdist(std::vector<std::string> &sv, bool itive_com) {
 
+  update_older_tables();
+  
   // Set a large distribution
   nucdist_set(moller_dist,m95);
 
@@ -564,6 +753,8 @@ int nucleus_bin::fit_method(std::vector<std::string> &sv, bool itive_com) {
   
 int nucleus_bin::compare(std::vector<std::string> &sv, bool itive_com) {
 
+  update_older_tables();
+  
   size_t left_column=18;
 
   double res;
@@ -675,6 +866,10 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
   p_precision.i=&precision;
   p_precision.help="Precision parameter (default 4)";
   cl.par_list.insert(make_pair("precision",&p_precision));
+
+  p_older_tables.b=&older_tables;
+  p_older_tables.help="Older tables (default false)";
+  cl.par_list.insert(make_pair("older_tables",&p_older_tables));
 
   return;
 }

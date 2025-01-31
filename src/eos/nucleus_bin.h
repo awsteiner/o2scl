@@ -142,6 +142,10 @@ public:
   /** \brief Precision parameter (default 4)
    */
   int precision;
+
+  /** \brief If true, include older tables (default false)
+   */
+  bool older_tables;
   //@}
   
 protected:
@@ -178,8 +182,14 @@ protected:
 
   /// Precision parameter
   o2scl::cli::parameter_int p_precision;
+
+  /// 
+  o2scl::cli::parameter_bool p_older_tables;
   //@}
 
+  /// Desc
+  void update_older_tables();
+  
 public:
   
   nucleus_bin();

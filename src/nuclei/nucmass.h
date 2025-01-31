@@ -379,6 +379,8 @@ namespace o2scl {
     /// Returns true if data has been loaded
     virtual bool is_loaded() { return (n>0); }
 
+    virtual void clear() { n=0; }
+    
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
 

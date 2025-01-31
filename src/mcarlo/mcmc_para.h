@@ -5052,7 +5052,7 @@ namespace o2scl {
 #endif
             
             cl_list[ix]->set_data(n_params_child,1,class_table.get_nlines(),
-                              cmvt_x,mvt_y);
+                                  cmvt_x,mvt_y);
             
 #ifdef O2SCL_MPI
             class_time[ix]=MPI_Wtime()-class_time[ix];

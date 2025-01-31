@@ -381,6 +381,12 @@ namespace o2scl {
   /** \brief Multi-dimensional interpolation using Kriging (a.k.a.
       Gaussian process interpolation)
 
+      \note The type mat_y_t should be const_matrix_view_table, but the
+      code would need to be modified because when the data is rescaled
+      the user copy of the data is modified. This should be fixed in
+      the future, as there's no need to change the user-specified data,
+      it would be better to just modify local storage.
+      
       \verbatim embed:rst
       See also the :ref:`Higher-dimensional Interpolation` 
       section of the User's guide. 
@@ -947,7 +953,7 @@ namespace o2scl {
 
       if (timing) {
         t3=time(0);
-            std::cout << "interpm_krige_optim::set_data(): ";
+        std::cout << "interpm_krige_optim::set_data(): ";
         std::cout << "Rescale took " << t3-t2 << " seconds." << std::endl;
       }
       

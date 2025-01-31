@@ -33,6 +33,10 @@ using namespace o2scl;
 nucmass_two_interp::nucmass_two_interp() {
   nfb=&def_fit;
   ib=&def_ib;
+  nfit=def_fit.nfit;
+}
+
+nucmass_two_interp::~nucmass_two_interp() {
 }
 
 void nucmass_two_interp::set_default() {
@@ -43,6 +47,7 @@ void nucmass_two_interp::set_default() {
   nucmass_fit nf;
   nucdist_set(nf.dist,ame);
   double res;
+  nf.def_mmin.verbose=2;
   nf.fit(*nfb,res);
 
   table<> tab;
@@ -51,12 +56,10 @@ void nucmass_two_interp::set_default() {
   // Now use 'tab' to initialize interpm_idw
 
   const_matrix_view_table<> ix(tab,{"Z","N"});
-  std::vector<std::string> out_cols;
-  for(size_t j=2;j<tab.get_ncolumns();j++) {
-    out_cols.push_back(tab.get_column_name(j));
-  }
+  std::vector<std::string> out_cols={"me_th"};
   const_matrix_view_table<> iy(tab,out_cols);
-  ib->set_data(2,tab.get_ncolumns()-2,tab.get_nlines(),ix,iy);
+  def_ib.verbose=2;
+  ib->set_data(2,out_cols.size(),tab.get_nlines(),ix,iy);
   
   return;
 }

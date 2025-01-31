@@ -37,11 +37,23 @@ namespace o2scl {
   
   /** \brief Desc
   */
-  class nucmass_two_interp : public nucmass_table {
+  class nucmass_two_interp : public nucmass_fit_base {
 
   public:
 
     nucmass_two_interp();
+
+    virtual ~nucmass_two_interp();
+    
+    /// Fix parameters from an array for fitting
+    virtual int fit_fun(size_t nv, const ubvector &x) {
+      return nfb->fit_fun(nv,x);
+    }
+
+    /// Fill array with guess from present values for fitting
+    virtual int guess_fun(size_t nv, ubvector &x) {
+      return nfb->guess_fun(nv,x);
+    }
 
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
@@ -54,6 +66,7 @@ namespace o2scl {
     /// Set the nuclear mass formula
     void set_fit_base(nucmass_fit_base &nfb_user) {
       nfb=&nfb_user;
+      nfit=nfb->nfit;
       return;
     }
 
