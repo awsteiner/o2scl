@@ -126,13 +126,21 @@ namespace o2scl {
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N);
     
+    /// Desc
+    void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
 
     /// The number of entries (about 3000).
     size_t n;
     
     /// The array containing the mass data of length n
-    entry *mass;
+    std::vector<entry> mass;
 
     /// The last table index for caching
     int last;

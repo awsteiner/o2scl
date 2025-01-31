@@ -31,9 +31,6 @@ nucmass_hfb::nucmass_hfb() {
 }
 
 nucmass_hfb::~nucmass_hfb() {
-  if (n>0) {
-    delete[] mass;
-  }
 }
 
 double nucmass_hfb::mass_excess(int Z, int N) {
@@ -43,7 +40,7 @@ double nucmass_hfb::mass_excess(int Z, int N) {
   return ret.Mcal;
 }
 
-int nucmass_hfb::set_data(int n_mass, nucmass_hfb::entry *m,
+int nucmass_hfb::set_data(int n_mass, std::vector<nucmass_hfb::entry> &m,
 			  std::string ref) {
   n=n_mass;
   mass=m;
@@ -175,9 +172,6 @@ nucmass_hfb_sp::nucmass_hfb_sp() {
 }
 
 nucmass_hfb_sp::~nucmass_hfb_sp() {
-  if (n>0) {
-    delete[] mass;
-  }
 }
 
 double nucmass_hfb_sp::mass_excess(int Z, int N) {
@@ -187,7 +181,8 @@ double nucmass_hfb_sp::mass_excess(int Z, int N) {
   return ret.Mcal;
 }
 
-int nucmass_hfb_sp::set_data(int n_mass, nucmass_hfb_sp::entry *m,
+int nucmass_hfb_sp::set_data(int n_mass,
+                             std::vector<nucmass_hfb_sp::entry> &m,
 			     std::string ref) {
   n=n_mass;
   mass=m;

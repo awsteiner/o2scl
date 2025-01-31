@@ -63,7 +63,7 @@ int nucmass_ktuy::load(std::string model, bool external) {
   
   n=data.get_nlines();
 
-  mass=new nucmass_ktuy::entry[n];
+  mass.resize(n);
   for(size_t i=0;i<n;i++) {
     nucmass_ktuy::entry kme={((int)(data.get("NN",i)+1.0e-6)),
 			 ((int)(data.get("ZZ",i)+1.0e-6)),
@@ -80,9 +80,6 @@ int nucmass_ktuy::load(std::string model, bool external) {
 }
 
 nucmass_ktuy::~nucmass_ktuy() {
-  if (n>0) {
-    delete[] mass;
-  }
 }
 
 bool nucmass_ktuy::is_included(int l_Z, int l_N) {

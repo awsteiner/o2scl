@@ -74,7 +74,7 @@ int nucmass_wlw::load(std::string model, bool external) {
   
   n=data.get_nlines();
   
-  mass=new nucmass_wlw::entry[n];
+  mass.resize(n);
   if (model=="WS3_RBF") {
     for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),

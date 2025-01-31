@@ -50,8 +50,8 @@ nucmass_dglg::nucmass_dglg(std::string model, bool external) {
   hf.close();
   
   n=data.get_nlines();
-  
-  mass=new nucmass_dglg::entry[n];
+
+  mass.resize(n);
   for(size_t i=0;i<n;i++) {
     nucmass_dglg::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			     ((int)(data.get("N",i)+1.0e-6)),

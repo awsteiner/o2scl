@@ -68,6 +68,14 @@ namespace o2scl {
     
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double get_string(int Z, int N, std::string column);
+
+    /// Desc
+    virtual void clear() {
+      data.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
     
   protected:
 

@@ -128,12 +128,21 @@ namespace o2scl {
         
         This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_hfb::entry *m, std::string ref);
+    int set_data(int n_mass,
+                 std::vector<nucmass_hfb::entry> &m, std::string ref);
 
+    /// Desc
+    virtual void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
     
     /// The array containing the mass data of length ame::n
-    nucmass_hfb::entry *mass;
+    std::vector<nucmass_hfb::entry> mass;
     
     /// The last table index for caching
     int last;
@@ -232,13 +241,22 @@ namespace o2scl {
         
         This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_hfb_sp::entry *m, std::string ref);
+    int set_data(int n_mass,
+                 std::vector<nucmass_hfb_sp::entry> &m, std::string ref);
 
+    /// Desc
+    virtual void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
     
     /// The array containing the mass data of length ame::n
-    nucmass_hfb_sp::entry *mass;
-
+    std::vector<nucmass_hfb_sp::entry> mass;
+    
     /// The last table index for caching
     int last;
     

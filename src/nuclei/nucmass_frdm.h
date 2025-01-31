@@ -326,7 +326,8 @@ namespace o2scl {
       /// Atomic number
       int A;
     
-      /** \name Ground state deformations (perturbed-spheroid parameterization)
+      /** \name Ground state deformations (perturbed-spheroid
+          parameterization)
        */
       //@{
       /// Quadrupole
@@ -341,7 +342,8 @@ namespace o2scl {
       double eps6sym;
       //@}
     
-      /** \name Ground state deformations in the spherical-harmonics expansion
+      /** \name Ground state deformations in the spherical-harmonics
+          expansion
        */
       //@{
       /// Quadrupole
@@ -465,12 +467,23 @@ namespace o2scl {
 
         This function is used by the HDF I/O routines.
     */
-    int set_data(int n_mass, nucmass_mnmsk::entry *m, std::string ref);
+    int set_data(int n_mass, std::vector<nucmass_mnmsk::entry> m,
+                 std::string ref);
 
+    /// Desc
+    virtual void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
     
     /// The array containing the mass data of length ame::n
-    nucmass_mnmsk::entry *mass;
+    //nucmass_mnmsk::entry *mass;
+
+    std::vector<nucmass_mnmsk::entry> mass;
     
     /// The last table index for caching
     int last;

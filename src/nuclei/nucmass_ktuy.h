@@ -109,10 +109,18 @@ namespace o2scl {
     /// Return number of entries
     virtual size_t get_nentries() { return n; }
     
+    /// Desc
+    virtual void clear() {
+      mass.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
     
     /// The array containing the mass data of length ame::n
-    entry *mass;
+    std::vector<entry> mass;
     
     /// The last table index for caching
     int last;

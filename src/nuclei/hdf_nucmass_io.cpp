@@ -125,9 +125,11 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
     }
     hf.gets("reference",reference);
 
-    o2scl::nucmass_mnmsk::entry *m=new o2scl::nucmass_mnmsk::entry[nrecords];
+    std::vector<o2scl::nucmass_mnmsk::entry> m(nrecords);
+    //=new o2scl::nucmass_mnmsk::entry[nrecords];
     herr_t status=H5TBread_table
-      (file,"mnmsk.o2",sizeof(o2scl::nucmass_mnmsk::entry),offset,sizes,m);
+      (file,"mnmsk.o2",sizeof(o2scl::nucmass_mnmsk::entry),offset,sizes,
+       &(m[0]));
     
     mnmsk.set_data(nrecords,m,reference);
     
@@ -142,7 +144,7 @@ void o2scl_hdf::mnmsk_load(o2scl::nucmass_mnmsk &mnmsk, std::string model,
     hdf_input_n(hf,tab,name);
     hf.close();
     size_t nr=tab.get_nlines();
-    o2scl::nucmass_mnmsk::entry *m=new o2scl::nucmass_mnmsk::entry[nr];
+    std::vector<o2scl::nucmass_mnmsk::entry> m(nr);
     for(size_t j=0;j<nr;j++) {
       m[j].N=tab.get("N",j);
       m[j].Z=tab.get("Z",j);
@@ -250,9 +252,10 @@ void o2scl_hdf::hfb_load(o2scl::nucmass_hfb &hfb, size_t model,
   }
   hf.gets("reference",reference);
 
-  o2scl::nucmass_hfb::entry *m=new o2scl::nucmass_hfb::entry[nrecords];
+  std::vector<o2scl::nucmass_hfb::entry> m(nrecords);
   herr_t status=H5TBread_table
-    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb::entry),offset,sizes,m);
+    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb::entry),offset,
+     sizes,&(m[0]));
     
   hfb.set_data(nrecords,m,reference);
     
@@ -336,9 +339,10 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model,
   }
   hf.gets("reference",reference);
 
-  o2scl::nucmass_hfb_sp::entry *m=new o2scl::nucmass_hfb_sp::entry[nrecords];
+  std::vector<o2scl::nucmass_hfb_sp::entry> m(nrecords);
   herr_t status=H5TBread_table
-    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb_sp::entry),offset,sizes,m);
+    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb_sp::entry),offset,
+     sizes,&(m[0]));
     
   hfb.set_data(nrecords,m,reference);
     

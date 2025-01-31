@@ -307,12 +307,9 @@ nucmass_mnmsk::nucmass_mnmsk() {
 }
 
 nucmass_mnmsk::~nucmass_mnmsk() {
-  if (n>0) {
-    delete[] mass;
-  }
 }
 
-int nucmass_mnmsk::set_data(int n_mass, nucmass_mnmsk::entry *m, 
+int nucmass_mnmsk::set_data(int n_mass, std::vector<nucmass_mnmsk::entry> m, 
 			    std::string ref) {
   n=n_mass;
   mass=m;

@@ -71,6 +71,14 @@ namespace o2scl {
     /// Return the type, \c "nucmass_dz_table".
     virtual const char *type() { return "nucmass_dz_table"; }
 
+    /// Desc
+    virtual void clear() {
+      data.clear();
+      this->n=0;
+      last=0;
+      return;
+    }
+    
   protected:
     
     /// Table containing the data
