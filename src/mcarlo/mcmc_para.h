@@ -3750,10 +3750,12 @@ namespace o2scl {
               this->scr_out << "mcmc: Thread " << i_thread
                             << " setting data at row " << next_row
                             << std::endl;
-              this->scr_out << "  func_ret: " << func_ret << " mcmc_accept: "
-                            << mcmc_accept << " walker_ix: "
-                            << walker_ix << " store_rejects: "
-                            << store_rejects << std::endl;
+              if (this->verbose>=3) {
+                this->scr_out << "  func_ret: " << func_ret << " mcmc_accept: "
+                              << mcmc_accept << " walker_ix: "
+                              << walker_ix << " store_rejects: "
+                              << store_rejects << std::endl;
+              }
             }
             if (this->verbose>=3) {
               for(size_t k=0;k<line.size();k++) {
