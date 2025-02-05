@@ -251,7 +251,7 @@ namespace o2scl {
     */
     double K;
     
-    /// The bag constant (in \f$ \mathrm{fm}^{-4} \f$)
+    /// The bag constant (in \f$ \mathrm{fm}^{-4} \f$; default 0)
     double B0;
     
     /** \brief Set the parameters and the bag constant \c B0 

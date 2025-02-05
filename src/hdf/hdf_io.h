@@ -2698,7 +2698,8 @@ namespace o2scl_hdf {
       Bessel functions:
 
       cyl_bessel_i(nu,x) [i.e. Iᵥ(x)], cyl_bessel_j(nu,x) [i.e. Jᵥ(x)], 
-      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)],
+      cyl_bessel_k(nu,x) [i.e. Kᵥ(x)], and cyl_neumann(nu,x) [i.e. Yᵥ(x)]
+      [all defined only for x>0],
 
       Additional integrals (experimental):
 

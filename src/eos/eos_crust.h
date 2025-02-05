@@ -227,12 +227,13 @@ namespace o2scl {
     eos_had_base *ehb;
     
     /// Desc
-    double fr_ni(int Z, int N, double npout, double nnout, double ni) {
+    double fr_ni(int Z, int N, double nB, double Ye, double ni) {
       
-      double fr;
-
-      double phi=nd->exc_volumne(Z,N,npout,nnout);
-      double ne=Z*ni+(1.0-phi)*npout;
+      double phi=nd->exc_volume(Z,N);
+      double ne=nB*Ye;
+      int A=N+Z;
+      double nn_out=(nB-N*ni-ne)/(1.0-phi);
+      double np_out=(ne-Z*ni)/(1.0-phi);
       e.n=ne;
 
       fzt.calc_density_zerot(e);
@@ -244,7 +245,29 @@ namespace o2scl {
       p.n=npout;
       ehb->calc_e(n,p,th);
       
-      fr=(1.0-phi)*th.ed+ni*(Eb+Z*p.m+N*n.m)+e.ed;
+      double fr=(1.0-phi)*th.ed+ni*(Eb+Z*p.m+N*n.m)+e.ed;
+      
+      return fr;
+    }
+    
+    /// Desc
+    double fr_ni(int Z, int N, double nB, double Ye) {
+      
+      double phi=nd->exc_volume(Z,N);
+      double ne=nB*Ye;
+      int A=N+Z;
+      double nn_out=(nB-N*ni-ne)/(1.0-phi);
+      double np_out=(ne-Z*ni)/(1.0-phi);
+      e.n=ne;
+
+      fzt.calc_density_zerot(e);
+      
+      thermo th;
+      n.n=nnout;
+      p.n=npout;
+      ehb->calc_e(n,p,th);
+
+      double ni=
       
       return fr;
     }

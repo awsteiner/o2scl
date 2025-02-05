@@ -477,7 +477,7 @@ namespace o2scl {
       }
       psi=psi_num/temper;
       fp_t tt=temper/f.ms;
-      
+
       // Return false immediately if we're degenerate
       if (inc_antip==false && psi>0.0) return false;
       
@@ -516,7 +516,7 @@ namespace o2scl {
       fp_t rat;
       fp_t dj1=((fp_t)max_term), jot1=max_term/tt;
       fp_t dj2=1, jot2=1/tt;
-      
+
       if (inc_antip==false) {
         rat=exp(dj1*psi)/jot1/jot1*be_integ.K2exp(jot1);
         rat/=exp(dj2*psi)/jot2/jot2*be_integ.K2exp(jot2);

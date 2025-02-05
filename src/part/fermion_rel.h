@@ -818,6 +818,17 @@ namespace o2scl {
 
       // Compute the degeneracy parameter
   
+      /// Handle massless case
+      if (f.ms<0.0) {
+        O2SCL_ERR2("Negative mass in ",
+                   "fermion_rel::calc_mu().",o2scl::exc_einval);
+      }
+      
+      if (f.ms==0.0) {
+        this->massless_calc_mu(f,temper);
+        return 0;
+      }
+      
       bool deg=true;
       fp_t psi;
       if (f.inc_rest_mass) {
@@ -1790,6 +1801,17 @@ namespace o2scl {
       
       if (f.non_interacting) { f.nu=f.mu; f.ms=f.m; }
 
+      /// Handle massless case
+      if (f.ms<0.0) {
+        O2SCL_ERR2("Negative mass in ",
+                  "fermion_rel::pair_mu().",o2scl::exc_einval);
+      }
+      
+      if (f.ms==0.0) {
+        this->massless_pair_mu(f,temper);
+        return 0;
+      }
+      
       // AWS: 6/26/21: Note that when the last argument is true, the
       // function calc_mu_ndeg() includes antiparticles. However, this
       // code caused problems for low densities. Additionally, I'm not

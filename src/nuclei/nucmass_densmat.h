@@ -303,8 +303,7 @@ namespace o2scl {
      double &dEdnneg, double &dEdT)=0;
 
     /// Determine the volume excluded by the nucleus
-    virtual double exc_volume(double Z, double N, double npout=0.0,
-                              double nnout=0.0, double T=0.0) {
+    virtual double exc_volume(double Z, double N, double T=0.0) {
 
       // Determine the inner densities
       double n0=0.16;

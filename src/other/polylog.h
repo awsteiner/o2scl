@@ -343,18 +343,30 @@ namespace o2scl {
     /** \brief Compute \f$ K_1(x) e^x \f$
      */
     double K1exp(double x) {
+      if (x<=0.0) {
+        O2SCL_ERR2("Argument cannot be zero or negative in ",
+                  "bessel_K_exp_integ_gsl::K1exp().",exc_edom);
+      }
       return gsl_sf_bessel_Kn_scaled(1.0,x);
     }
     
     /** \brief Compute \f$ K_2(x) e^x \f$
      */
     double K2exp(double x) {
+      if (x<=0.0) {
+        O2SCL_ERR2("Argument cannot be zero or negative in ",
+                  "bessel_K_exp_integ_gsl::K2exp().",exc_edom);
+      }
       return gsl_sf_bessel_Kn_scaled(2.0,x);
     }
     
     /** \brief Compute \f$ K_3(x) e^x \f$
      */
     double K3exp(double x) {
+      if (x<=0.0) {
+        O2SCL_ERR2("Argument cannot be zero or negative in ",
+                  "bessel_K_exp_integ_gsl::K3exp().",exc_edom);
+      }
       return gsl_sf_bessel_Kn_scaled(3.0,x);
     }
     
