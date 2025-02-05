@@ -586,6 +586,27 @@ public:
     return 0;
   }
 
+  /// Summarize saturation
+  int sat(vector<string> &sv, bool itive_com) {
+    
+    if (sv.size()<1) {
+      cout << "No model to summarize." << endl;
+      return exc_einval;
+    }
+
+    cout << "Model: " << name << endl;
+    cout << "-----------------------------------------------------" 
+	 << "-----------------------" << endl;
+    cout << endl;
+
+    int v=verbose;
+    if (verbose==0) verbose=1;
+    saturation_prop();
+    verbose=v;
+
+    return 0;
+  }
+  
   /// Summarize the results of one model
   int summary(vector<string> &sv, bool itive_com) {
     if (sv.size()<1) {
@@ -1052,7 +1073,7 @@ int main(int argc, char *argv[]) {
   int comm_option_cl_param=1;
   int comm_option_both=2;
 
-  static const int narr=7;
+  static const int narr=8;
   comm_option_s options_arr[narr]={
     {0,"run-all","Run all internally stored Skyrme models.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::run_all),
@@ -1060,10 +1081,10 @@ int main(int argc, char *argv[]) {
     {'s',"store","Store current model.",1,1,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::store),
      comm_option_both},
-    {'l',"load","Load internally stored model.",1,1,"","",
+    {'l',"load","Load Skyrme model from O2scl data.",1,1,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::load),
      comm_option_both},
-    {0,"unedf","Desc.",0,0,"","",
+    {0,"unedf","Create and test UNEDF .o2 files.",0,0,"","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::unedf),
      comm_option_both},
     {'t',"test","Test ex_eos_had_skyrme.",0,0,"",
@@ -1075,6 +1096,9 @@ int main(int argc, char *argv[]) {
     {'u',"summary","Summarize the properties of a Skyrme model.",
      1,1,"<model>","",
      new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::summary),
+     comm_option_both},
+    {0,"sat","Compute saturation properties.",0,0,"","",
+     new comm_option_mfptr<ex_eos_had_skyrme>(&se,&ex_eos_had_skyrme::sat),
      comm_option_both},
     {'j',"json","Summarize the properties of a Skyrme model.",
      1,1,"<model>","",
