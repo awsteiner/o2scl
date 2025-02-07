@@ -1,15 +1,21 @@
 gibbst1:
-	ex_eos_gibbs -quarks SPL00_bag -hadrons SPL00 -mvsr temp.o2
+	ex_eos_gibbs -quarks SPL00_bag -hadrons SPL00 -mvsr msbag0.o2
 
 gibbst2:
 	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
-		-quarks SPL00_bag -hadrons SPL00 -mvsr temp.o2
+		-quarks SPL00_bag -hadrons SPL00 -mvsr msbag1.o2
 
 gibbst3:
-	ex_eos_gibbs -set sonB 2.0 -set YLe 0.0 -set YLmu 0.0 \
+	ex_eos_gibbs -set sonB 2.0 -set YLe 0.15 -set YLmu 0.0 \
 		-quarks SPL00_bag -hadrons SPL00 \
 		-guess "beg-mixed" 0.2567 0.001594 0.1379 \
-		"(-0.7482)" "(-0.6419)" -mvsr temp.o2
+		"(-0.7482)" "(-0.6419)" -mvsr msbag2.o2
+
+gplot:
+	o2graph -set xlo 12 -set xhi 16 -set ylo 0 -set yhi 2.5 \
+		-read msbag0.o2 tov \
+		-plot r gm -read msbag1.o2 tov -plot r gm \
+		-read msbag2.o2 tov -plot r gm -show
 
 # The initial mixed phase determination doesn't work for NJL. This
 # could be solved simply by choosing a better initial guess.

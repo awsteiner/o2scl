@@ -25,11 +25,13 @@
 #include <o2scl/hdf_eos_io.h>
 #include <o2scl/nucleus_bin.h>
 #include <o2scl/eos_had_skyrme.h>
+#include <o2scl/auto_format.h>
 
 using namespace std;
 using namespace o2scl;
 using namespace o2scl_const;
 using namespace o2scl_hdf;
+using namespace o2scl_auto_format;
 
 nucleus_bin::nucleus_bin() {
 
@@ -620,6 +622,69 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
       }
     }
     cout.unsetf(ios::left);
+    cout << endl;
+    
+    auto_format at;
+    at.start_table();
+    at << "Z" << "i" << "mass" << "dmass" << "a" << "exc_energy";
+    at << "dexc_en." << "a" << "ori" << "iu";
+    at << "ii" << "hlife" << "a" << "hun" << "dhlife" << "spin parity";
+    at << "ENyr" << "disc" << "decay intensity" << endo;
+
+    for(size_t j=0;j<en.props.size();j++) {
+      at << en.props[j].Znote;
+      if (en.props[j].isomer=='\0') {
+        at << "_";
+      } else {
+        at << en.props[j].isomer;
+      }
+      at << en.props[j].mass;
+      at << en.props[j].dmass;
+      at << en.props[j].mass_acc;
+      at << en.props[j].exc_energy;
+      at << en.props[j].dexc_energy;
+      at << en.props[j].exc_energy_acc;
+      if (en.props[j].origin[0]=='\0') {
+        at << "_";
+      } else {
+        at << ((std::string)(&(en.props[j].origin[0])));
+      }
+      if (en.props[j].isomer_unc=='\0') {
+        at << "_";
+      } else {
+        at << en.props[j].isomer_unc;
+      }
+      if (en.props[j].isomer_inv=='\0') {
+        at << "_";
+      } else {
+        at << en.props[j].isomer_inv;
+      }
+      at << en.props[j].hlife;
+      at << en.props[j].hlife_acc;
+      if (en.props[j].hl_unit[0]=='\0') {
+        at << "_";
+      } else {
+        at << ((std::string)(&(en.props[j].hl_unit[0])));
+      }
+      if (en.props[j].dhlife[0]=='\0') {
+        at << "_";
+      } else {
+        at << ((std::string)(&(en.props[j].dhlife[0])));
+      }
+      if (en.props[j].spinp[0]=='\0') {
+        at << "_";
+      } else {
+        at << ((std::string)(&(en.props[j].spinp[0])));
+      }
+      at << en.props[j].ENSDF_year;
+      at << en.props[j].discovery;
+      if (en.props[j].decay_intensity[0]=='\0') {
+        at << "_" << endo;
+      } else {
+        at << ((std::string)(&(en.props[j].decay_intensity[0]))) << endo;
+      }
+    }
+    at.end_table();
     
   }
   

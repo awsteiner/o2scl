@@ -3388,7 +3388,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table.
 
-        Arguments: <tt><column> <row> [value or "none"]</tt>
+        Arguments: <tt><column> <row> [value-spec or "none"]</tt>
 
         This command gets or sets the value in the specified column
         and row. If "none" is specified as the third argument, then
@@ -3402,7 +3402,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a table3d object.
 
-        Arguments: <tt><slice> <x index> <y index> [value or "none"]</tt>
+        Arguments: <tt><slice> <x index> <y index> [value-spec or "none"]</tt>
 
         This command gets or sets the value in the specified slice at
         the location specified by <x index> and <y index>. If "none"
@@ -3417,7 +3417,7 @@ namespace o2scl_acol {
 
         Get or set a single entry in a tensor object.
 
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value-spec or
         "none"]</tt>
 
         This command gets or sets the value in the tensor at the
@@ -3430,7 +3430,8 @@ namespace o2scl_acol {
 
         Get or set a single entry in a tensor_grid object.
 
-        Arguments: <tt><index 1> <index 2> <index 3> ... [value or "none"]</tt>
+        Arguments: <tt><index 1> <index 2> <index 3> ... [value-spec or
+        "none"]</tt>
 
         The \c value command gets or sets a value in the \c
         tensor_grid object. The arguments are a list of indices and

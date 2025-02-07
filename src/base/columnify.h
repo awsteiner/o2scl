@@ -49,15 +49,11 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-         - Future: Create a single column version of add_spaces().
          - Future: Create a function which accepts delimited strings
            (e.g. like csv) instead of vector<vector<string>>. 
-         - Future: Move the screenify() functionality from misc.h into 
-           this class?
-         - Future: It might be better to allow the string table
-           to be specified with iterators.
          - Future: Consider a function which takes a \ref o2scl::table
            object as input?
+         - Future: Make a LaTeX output?
 
       \endverbatim
   */
@@ -67,6 +63,7 @@ namespace o2scl {
 
     columnify() {
       table_lines=0;
+      verbose=0;
     }
 
     /// Specification for table lines (experimental)
@@ -80,13 +77,18 @@ namespace o2scl {
     static const int align_lmid=3;
     /// Center, slightly to the right if spacing is uneven
     static const int align_rmid=4;
-    /// Align with decimal points
+    /// Align with decimal points, except for header rows
     static const int align_dp=5;
     /** \brief Align negative numbers to the left and use a space for 
 	positive numbers
     */
     static const int align_lnum=6;
-  
+
+    /// Desc
+    static const int align_left_border=11;
+
+    int verbose;
+    
     /** \brief Take \c table and create a new object \c ctable with 
 	appropriately formatted columns
 
@@ -104,160 +106,94 @@ namespace o2scl {
 	<tt>vector<vector<string> > </tt>
     */
     template<class mat_string_t, class vec_string_t, class vec_int_t>
-      int align(const mat_string_t &table, size_t ncols, size_t nrows, 
-		vec_string_t &ctable, vec_int_t &align_spec) {
-
-      terminal ter;
-      
-      // Make space for the size information
-      boost::numeric::ublas::vector<size_t> csizes(ncols);
-      boost::numeric::ublas::vector<size_t> csizes2(ncols);
-      for(size_t i=0;i<ncols;i++) {
-	csizes[i]=0;
-	csizes2[i]=0;
-      }
-  
-      // Compute the sizes of all the entries in all of the columns so
-      // we know how many spaces to add
-      for(size_t i=0;i<ncols;i++) {
-	for(size_t j=0;j<nrows;j++) {
-
-	  // If we're aligning with decimal points, we need to compute
-	  // the maximum width to the left and the right of the 
-	  // decimal point separately
-
-	  if (align_spec[i]==align_dp) {
-	    size_t loc=table[i][j].find('.');
-	    std::string left, right;
-	    if (loc!=std::string::npos) {
-	      left=table[i][j].substr(0,loc+1);
-	      right=table[i][j].substr(loc+1,
-				       table[i][j].length()-loc-1);
-	    } else {
-	      left=table[i][j]+' ';
-	      right="";
-	    }
-	    if (left.length()>csizes[i]) csizes[i]=left.length();
-	    if (right.length()>csizes2[i]) csizes2[i]=right.length();
-
-	  } else {
-
-	    // Otherwise just find the maximum width of each column
-	    if (table[i][j].length()>csizes[i]) {
-	      csizes[i]=table[i][j].length();
-	    }
-
-	  }
-
-	}
-      }
-
-      // Go through row by row, adding enough spaces to make one string
-      // per row
-      for(size_t j=0;j<nrows;j++) {
-
-	std::string tmp="";
-
-	for(size_t i=0;i<ncols;i++) {
-
-	  // Handle each alignment case separately
-	  if (align_spec[i]==align_right) {
-
-	    for(size_t k=table[i][j].length();k<csizes[i];k++) {
-	      tmp+=' ';
-	    }
-	    tmp+=table[i][j];
-
-	  } else if (align_spec[i]==align_left) {
-
-	    tmp+=table[i][j];
-	    for(size_t k=table[i][j].length();k<csizes[i];k++) {
-	      tmp+=' ';
-	    }
-
-	  } else if (align_spec[i]==align_lmid) {
-
-	    size_t le=(csizes[i]-table[i][j].length())/2;
-	    size_t ri=csizes[i]-table[i][j].length()-le;
-	    for(size_t k=0;k<le;k++) tmp+=' ';
-	    tmp+=table[i][j];
-	    for(size_t k=0;k<ri;k++) tmp+=' ';
-
-	  } else if (align_spec[i]==align_rmid) {
-
-	    size_t ri=(csizes[i]-table[i][j].length())/2;
-	    size_t le=csizes[i]-table[i][j].length()-ri;
-	    for(size_t k=0;k<le;k++) tmp+=' ';
-	    tmp+=table[i][j];
-	    for(size_t k=0;k<ri;k++) tmp+=' ';
-
-	  } else if (align_spec[i]==align_dp) {
-
-	    size_t loc=table[i][j].find('.');
-	    std::string left, right;
-	    if (loc!=std::string::npos) {
-	      left=table[i][j].substr(0,loc+1);
-	      right=table[i][j].substr(loc+1,
-				       table[i][j].length()-loc-1);
-	    } else {
-	      left=table[i][j]+' ';
-	      right="";
-	    }
-
-	    for(size_t k=left.length();k<csizes[i];k++) tmp+=' ';
-	    tmp+=left;
-	    tmp+=right;
-	    for(size_t k=right.length();k<csizes2[i];k++) tmp+=' ';
-
-	  } else if (align_spec[i]==align_lnum) {
-
-	    if (table[i][j].length()==csizes[i]) {
-	      tmp+=table[i][j];
-	    } else {
-	      if (table[i][j][0]>='0' && table[i][j][0]<='9') {
-		tmp+=' ';
-		tmp+=table[i][j];
-		for(size_t k=table[i][j].length();k<csizes[i]-1;k++) {
-		  tmp+=' ';
-		}
-	      } else {
-		tmp+=table[i][j];
-		for(size_t k=table[i][j].length();k<csizes[i];k++) {
-		  tmp+=' ';
-		}
-	      }
-	    }
-	  }
-	  
-	  if (i!=ncols-1) {
-	    if (table_lines>0) {
-	      tmp+=ter.alt_font()+" x "+ter.normal_font();
-	    } else {
-	      tmp+=' ';
-	    }
-	  }
-
-	  // Proceed to the next column
-	}
-
-	// Add the row to the user-specified array and go to the next row
-	ctable[j]=tmp;
-      
-      }
-
-      return 0;
-    }
-
-    /** \brief Add enough spaces to ensure all columns have the
-	same width
-     */
-    template<class mat_string_t, class vec_int_t>
-    int add_spaces(const mat_string_t &table_in, size_t ncols, size_t nrows, 
-		   vec_int_t &align_spec, mat_string_t &table_out) {
+    int align(const mat_string_t &table, size_t ncols, size_t nrows, 
+              vec_string_t &ctable, vec_int_t &align_spec,
+              size_t n_headers=0) {
 
       // Use this class to avoid counting vt100 sequences
       terminal ter;
       
+      std::vector<std::vector<std::string>> table_out;
+      
+      int xret=add_spaces(table,ncols,nrows,align_spec,
+                          table_out,n_headers);
+      if (xret!=0) {
+        return xret;
+      }
+      ctable.clear();
+      for(size_t j=0;j<nrows;j++) {
+        std::string tmp=table_out[0][j];
+        for(size_t i=1;i<ncols;i++) {
+          if (table_lines>1) {
+            tmp+=ter.alt_font()+" x "+ter.normal_font()+table_out[i][j];
+          } else if (table_lines>0) {
+            tmp+=" | ";
+          } else {
+            tmp+=' '+table_out[i][j];
+          }
+        }
+        ctable.push_back(tmp);
+        if (table_lines>1 && j+1==n_headers) {
+          tmp=ter.alt_font();
+          for(size_t k=0;k<ter.str_len(table_out[0][j]);k++) {
+            tmp+="q";
+          }
+          for(size_t i=1;i<ncols;i++) {
+            tmp+="qxq";
+            for(size_t k=0;k<ter.str_len(table_out[i][j]);k++) {
+              tmp+="q";
+            }
+          }
+          tmp+=ter.normal_font();
+          ctable.push_back(tmp);
+        } else if (table_lines>0 && j+1==n_headers) {
+          for(size_t k=0;k<ter.str_len(table_out[0][j]);k++) {
+            tmp+="-";
+          }
+          for(size_t i=1;i<ncols;i++) {
+            tmp+="-+-";
+            for(size_t k=0;k<ter.str_len(table_out[i][j]);k++) {
+              tmp+="-";
+            }
+          }
+          ctable.push_back(tmp);
+        }
+      }
+      return 0;
+    }
+
+    /// Desc
+    template<class vec_string_t>
+    int add_spaces_one(const vec_string_t &col_in, int align_spec,
+                       vec_string_t &col_out, size_t n_headers=0) {
+      std::vector<std::vector<std::string>> table_in, table_out;
+      table_in.push_back(col_in);
+      std::vector<int> valign;
+      valign.push_back(align_spec);
+      int ret=add_spaces(table_in,1,col_in.size(),valign,
+                         table_out,n_headers);
+      col_out=table_out[0];
+      return ret;
+    }
+      
+    /** \brief Add enough spaces to ensure all columns have the
+	same width
+     */
+    template<class mat_string_t, class mat_string2_t, class vec_int_t>
+    int add_spaces(const mat_string_t &table_in, size_t ncols,
+                   size_t nrows, vec_int_t &align_spec,
+                   mat_string2_t &table_out, size_t n_headers=0) {
+
+      // Use this class to avoid counting vt100 sequences
+      terminal ter;
+      
+      if (table_out.size()!=ncols) table_out.resize(ncols);
+      for(size_t i=0;i<ncols;i++) {
+        if (table_out[i].size()!=nrows) {
+          table_out[i].resize(nrows);
+        }
+      }
+      
       // Make space for the size information
       boost::numeric::ublas::vector<size_t> csizes(ncols);
       boost::numeric::ublas::vector<size_t> csizes2(ncols);
@@ -276,18 +212,37 @@ namespace o2scl {
 	  // decimal point separately
 
 	  if (align_spec[i]==align_dp) {
-	    size_t loc=table_in[i][j].find('.');
-	    std::string left, right;
-	    if (loc!=std::string::npos) {
-	      left=table_in[i][j].substr(0,loc+1);
-	      right=table_in[i][j].substr(loc+1,
-					  ter.str_len(table_in[i][j])-loc-1);
-	    } else {
-	      left=table_in[i][j]+' ';
-	      right="";
-	    }
-	    if (ter.str_len(left)>csizes[i]) csizes[i]=ter.str_len(left);
-	    if (ter.str_len(right)>csizes2[i]) csizes2[i]=ter.str_len(right);
+
+            if (j<n_headers) {
+              
+              // If we're in a header row, ignore the decimal
+              // point, but make more space for the header if
+              // necessary,
+              if (ter.str_len(table_in[i][j])>csizes[i]+csizes2[i]) {
+                csizes[i]=ter.str_len(table_in[i][j])-csizes2[i];
+              }
+              
+            } else {
+              
+              size_t loc=table_in[i][j].find('.');
+              std::string left, right;
+              if (loc!=std::string::npos) {
+                left=table_in[i][j].substr(0,loc+1);
+                right=table_in[i][j].substr
+                  (loc+1,ter.str_len(table_in[i][j])-loc-1);
+                   
+              } else {
+                left=table_in[i][j]+' ';
+                right="";
+              }
+              if (ter.str_len(left)>csizes[i]) {
+                csizes[i]=ter.str_len(left);
+              }
+              if (ter.str_len(right)>csizes2[i]) {
+                csizes2[i]=ter.str_len(right);
+              }
+
+            }
 
 	  } else {
 
@@ -306,12 +261,12 @@ namespace o2scl {
       for(size_t j=0;j<nrows;j++) {
 
 	for(size_t i=0;i<ncols;i++) {
-
+          
 	  std::string tmp="";
 	  
 	  // Handle each alignment case separately
 	  if (align_spec[i]==align_right) {
-
+            
 	    for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
 	      tmp+=' ';
 	    }
@@ -342,36 +297,48 @@ namespace o2scl {
 
 	  } else if (align_spec[i]==align_dp) {
 
-	    size_t loc=table_in[i][j].find('.');
-	    std::string left, right;
-	    if (loc!=std::string::npos) {
-	      left=table_in[i][j].substr(0,loc+1);
-	      right=table_in[i][j].substr(loc+1,
-				       ter.str_len(table_in[i][j])-loc-1);
-	    } else {
-	      left=table_in[i][j]+' ';
-	      right="";
-	    }
+            if (j<n_headers) {
 
-	    for(size_t k=ter.str_len(left);k<csizes[i];k++) tmp+=' ';
-	    tmp+=left;
-	    tmp+=right;
-	    for(size_t k=ter.str_len(right);k<csizes2[i];k++) tmp+=' ';
+              tmp=table_in[i][j];
+              if (ter.str_len(tmp)<csizes[i]+csizes2[i]) tmp+=' ';
+              
+            } else {
+            
+              size_t loc=table_in[i][j].find('.');
+              std::string left, right;
+              if (loc!=std::string::npos) {
+                left=table_in[i][j].substr(0,loc+1);
+                right=table_in[i][j].substr
+                  (loc+1,ter.str_len(table_in[i][j])-loc-1);
+                
+              } else {
+                left=table_in[i][j]+' ';
+                right="";
+              }
+              
+              for(size_t k=ter.str_len(left);k<csizes[i];k++) tmp+=' ';
+              tmp+=left;
+              tmp+=right;
+              for(size_t k=ter.str_len(right);k<csizes2[i];k++) tmp+=' ';
+            }
 
 	  } else if (align_spec[i]==align_lnum) {
 
 	    if (ter.str_len(table_in[i][j])==csizes[i]) {
 	      tmp+=table_in[i][j];
 	    } else {
-	      if (table_in[i][j][0]>='0' && table_in[i][j][0]<='9') {
+	      if (table_in[i][j][0]>='0' &&
+                  table_in[i][j][0]<='9') {
 		tmp+=' ';
 		tmp+=table_in[i][j];
-		for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i]-1;k++) {
+		for(size_t k=ter.str_len(table_in[i][j]);
+                    k<csizes[i]-1;k++) {
 		  tmp+=' ';
 		}
 	      } else {
 		tmp+=table_in[i][j];
-		for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
+		for(size_t k=ter.str_len(table_in[i][j]);
+                    k<csizes[i];k++) {
 		  tmp+=' ';
 		}
 	      }

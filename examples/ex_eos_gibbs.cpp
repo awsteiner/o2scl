@@ -30,7 +30,6 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/fermion.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/mmin_simp2.h>
 #include <o2scl/anneal_gsl.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/tov_solve.h>
@@ -133,17 +132,11 @@ public:
   thermo tot;
   //@}
 
-  /// Electron EOS
+  /// Lepton thermodynamics
   fermion_rel fr;
 
   /// Solver
   mroot_hybrids<> mh;
-
-  /// Minimizer
-  mmin_simp2<> mmin;
-  
-  /// Alternate minimizer (unused)
-  anneal_gsl<> mmin2;
 
   /// Bag constant
   double B;
@@ -173,15 +166,19 @@ public:
   */
   ubvector had_phase_guess;
 
-  /// Desc
+  /** \brief Guess for the quark phase
+
+      Quark number chemical potential, electron chemical potential,
+      temperature, electron neutrino chemical potential, and muon
+      neutrino chemical potential, in order
+   */
   ubvector quark_phase_guess;
 
   /** \brief Guess for the beginning of the mixed phase
       
-      neutron number density, proton number density,
-      temperature, electron neutrino chemical potential,
-      and muon neutrino chemical potential
-      
+      neutron number density, proton number density, temperature,
+      electron neutrino chemical potential, and muon neutrino chemical
+      potential
    */
   ubvector beg_mixed_phase_guess;
   
@@ -190,7 +187,10 @@ public:
   */
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
 		     double &nB) {
-    
+
+    //cout << "x: ";
+    //vector_out(cout,nv,x,true);
+
     n.n=x[0];
     p.n=nB-n.n;
 
@@ -215,6 +215,11 @@ public:
     y[0]=hth.pr-qth.pr;
     y[1]=p.n-e.n-mu.n;
 
+    tot=hth+qth+lep;
+    
+    //cout << "y: ";
+    //vector_out(cout,nv,y,true);
+    
     return 0;
   }
 
@@ -372,60 +377,15 @@ public:
     return 0;
   }
   
-  /** \brief Solve for the mixed phase (with no Coulomb or surface)
-   */
-  int f_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-		    double &nB, double &chi) {
-    
-    n.n=x[0];
-    p.n=x[1];
-    
-    double T=0.0;
-    if (sonB>0.0) {
-      T=x[2];
-    }
-
-    ptr_h->calc_temp_e(n,p,T,hth);
-    e.mu=n.mu-p.mu;
-    fr.pair_mu(e,T);
-    mu.mu=e.mu;
-    fr.pair_mu(mu,T);
-
-    double quark_nqch, quark_nQ;
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_temp_p(u,d,s,T,qth);
-    
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
-      
-    chi=(e.n+mu.n-quark_nqch)/(p.n-quark_nqch);
-
-    // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
-    tot.pr=hth.pr+e.pr;
-    if (sonB>0.0) {
-      tot.en=hth.en*chi+qth.en*(1.0-chi)+e.ed;
-    } else {
-      tot.en=0.0;
-    }
-
-    y[0]=hth.pr-qth.pr;
-    y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
-
-    if (sonB>0.0) {
-      y[2]=sonB-tot.en/nB;
-    }
-    
-    return 0;
-  }
-
   /** \brief Solve for the mixed phase at fixed chi
       (with no Coulomb or surface)
    */
   int f_mixed_phase_chi(size_t nv, const ubvector &x, ubvector &y,
                         const double &chi) {
+
+    //cout.precision(10);
+    //cout << "x: ";
+    //vector_out(cout,nv,x,true);
     
     size_t ix=0;
     XCHECK;
@@ -440,35 +400,38 @@ public:
       XCHECK;
       T=x[ix++];
     }
+    // Add neutrino chemical potential variables
     leptons_in(ix,x);
 
     ptr_h->calc_temp_e(n,p,T,hth);
     
     e.mu=n.mu-p.mu;
-    fr.pair_mu(e,T);
-    mu.mu=e.mu;
-    fr.pair_mu(mu,T);
 
-    double quark_nqch, quark_nQ;
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
+    
     ptr_q->calc_temp_p(u,d,s,T,qth);
     
+    double quark_nqch, quark_nQ;
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
-      
-    // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
-    tot.pr=hth.pr+e.pr;
+
+    // Use the electron and neutrino chemical potentials to compute
+    // the lepton thermodynamics, store in lep, and add y values for
+    // electron or muon lepton number
+    ix=0;
+    leptons_out(ix,y,T,nB);
+    
+    // Update the total thermodynamics
+    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+lep.ed;
+    tot.pr=hth.pr+lep.pr;
     if (sonB>0.0) {
-      tot.en=hth.en*chi+qth.en*(1.0-chi)+e.ed;
+      tot.en=hth.en*chi+qth.en*(1.0-chi)+lep.en;
     } else {
       tot.en=0.0;
     }
 
-    ix=0;
-    
     // pressure equality
     YCHECK;
     y[ix++]=hth.pr-qth.pr;
@@ -483,76 +446,8 @@ public:
       y[ix++]=sonB-tot.en/nB;
     }
 
-    leptons_out(ix,y,T,nB);
-  
-    return 0;
-  }
-
-  int f_mixed_phase_partial(size_t nv, const ubvector &x, ubvector &y,
-                            double &nB_H, double &nB_Q,
-                            double delta_T, double delta_mu_nu_e,
-                            double delta_mu_nu_mu) {
-
-    size_t ix=0;
-    n.n=x[ix++];
-    p.n=nB_H-n.n;
-    
-    double T_H=0.0;
-    if (sonB>0.0) {
-      T_H=x[ix++];
-    }
-    leptons_in(ix,x);
-    double mu_nu_e_H=0.0;
-    double mu_nu_mu_H=0.0;
-    if (YLe>-0.5 && YLmu>-0.5) {
-      mu_nu_e_H=x[ix-2];
-      mu_nu_mu_H=x[ix-1];
-    } else if (YLe>-0.5) {
-      mu_nu_e_H=x[ix-1];
-    } else if (YLmu>-0.5) {
-      mu_nu_mu_H=x[ix-1];
-    }
-
-    double T_Q=0.0;
-    if (sonB>0.0) {
-      T_Q=x[ix++];
-    }
-    leptons_in(ix,x);
-    double mu_nu_e_Q=0.0;
-    double mu_nu_mu_Q=0.0;
-    if (YLe>-0.5 && YLmu>-0.5) {
-      mu_nu_e_Q=x[ix-2];
-      mu_nu_mu_Q=x[ix-1];
-    } else if (YLe>-0.5) {
-      mu_nu_e_Q=x[ix-1];
-    } else if (YLmu>-0.5) {
-      mu_nu_mu_Q=x[ix-1];
-    }
-    
-    ptr_h->calc_temp_e(n,p,T_H,hth);
-    e.mu=n.mu-p.mu;
-    fr.pair_mu(e,T_H);
-    mu.mu=e.mu;
-    fr.pair_mu(mu,T_H);
-
-    double muQ=x[ix++];
-    e.mu=x[ix++];
-    fr.calc_mu(e,T_Q);
-    mu.mu=e.mu;
-    fr.calc_mu(mu,T_Q);
-    
-    u.mu=muQ-e.mu*2.0/3.0;
-    d.mu=muQ+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_temp_p(u,d,s,T_Q,qth);
-
-    tot=hth+e+mu+qth;
-
-    y[0]=hth.pr-qth.pr;
-
-    if (sonB>0.0) {
-      y[2]=sonB-tot.en/nB_H;
-    }
+    //cout << "y: ";
+    //vector_out(cout,nv,y,true);
     
     return 0;
   }
@@ -560,49 +455,63 @@ public:
   /** \brief Solve for the mixed phase (with no Coulomb or surface)
    */
   int f_mixed_phase_Ye(size_t nv, const ubvector &x, ubvector &y,
-                       double Ye, double &nB, double &chi) {
+                       double nB, double Ye, double &chi) {
     
-    n.n=x[0];
-    p.n=x[1];
-    e.mu=x[2];
+    size_t ix=0;
+    XCHECK;
+    n.n=x[ix++];
+    XCHECK;
+    p.n=x[ix++];
+    XCHECK;
+    e.mu=x[ix++];
     
     double T=0.0;
     if (sonB>0.0) {
-      T=x[3];
+      XCHECK;
+      T=x[ix++];
     }
-
+    // Add neutrino chemical potential variables
+    leptons_in(ix,x);
+    
     ptr_h->calc_temp_e(n,p,T,hth);
     
-    fr.pair_mu(e,T);
-    mu.mu=e.mu;
-    fr.pair_mu(mu,T);
-
-    double quark_nqch, quark_nQ;
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
+    
     ptr_q->calc_temp_p(u,d,s,T,qth);
     
+    double quark_nqch, quark_nQ;
     quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
     quark_nQ=u.n+d.n+s.n;
       
     chi=(e.n+mu.n-quark_nqch)/(p.n-quark_nqch);
 
-    // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
-    tot.pr=hth.pr+e.pr;
+    // Use the electron and neutrino chemical potentials to compute
+    // the lepton thermodynamics, store in lep, and add y values for
+    // electron or muon lepton number
+    ix=0;
+    leptons_out(ix,y,T,nB);
+    
+    // Compute the total thermodynamics
+    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+lep.ed;
+    tot.pr=hth.pr+lep.pr;
     if (sonB>0.0) {
-      tot.en=hth.en*chi+qth.en*(1.0-chi)+e.ed;
+      tot.en=hth.en*chi+qth.en*(1.0-chi)+lep.en;
     } else {
       tot.en=0.0;
     }
 
-    y[0]=hth.pr-qth.pr;
-    y[1]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
-    y[2]=e.n/nB-Ye;
+    YCHECK;
+    y[ix++]=hth.pr-qth.pr;
+    YCHECK;
+    y[ix++]=nB-(n.n+p.n)*chi-quark_nQ*(1.0-chi)/3.0;
+    YCHECK;
+    y[ix++]=e.n/nB-Ye;
 
     if (sonB>0.0) {
-      y[3]=sonB-tot.en/nB;
+      YCHECK;
+      y[ix++]=sonB-tot.en/nB;
     }
     
     return 0;
@@ -613,6 +522,9 @@ public:
   int f_quark_phase(size_t nv, const ubvector &x, ubvector &y,
 		    double &nB) {
 
+    //cout << "x: ";
+    //vector_out(cout,nv,x,true);
+    
     size_t ix=0;
     XCHECK;
     double muQ=x[ix++];
@@ -647,6 +559,9 @@ public:
       y[ix++]=sonB-tot.en/nB;
     }
     
+    //cout << "y: ";
+    //vector_out(cout,nv,y,true);
+    
     return 0;
   }
 
@@ -669,20 +584,24 @@ public:
       XCHECK;
       T=x[ix++];
     }
+    // Add neutrino chemical potential variables
     leptons_in(ix,x);
 
     ptr_h->calc_temp_e(n,p,T,hth);
 
     // Compute total baryon density
     nB=n.n+p.n;
-    
-    e.mu=n.mu-p.mu+nu_e.mu;
 
+    // Compute electron and quark chemical potentials
+    e.mu=n.mu-p.mu+nu_e.mu;
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
     ptr_q->calc_temp_p(u,d,s,T,qth);
-    
+
+    // Use the electron and neutrino chemical potentials to compute
+    // the lepton thermodynamics, store in lep, and add y values for
+    // electron or muon lepton number
     ix=0;
     leptons_out(ix,y,T,nB);
     
@@ -756,93 +675,6 @@ public:
     return 0;
   }
   
-  /** \brief Solve for the end of the mixed phase
-   */
-  int f_end_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-			double &nB) {
-
-    n.n=x[0];
-    p.n=x[1];
-    
-    double T=0.0;
-    if (sonB>0.0) {
-      T=x[2];
-    }
-
-    ptr_h->calc_temp_e(n,p,T,hth);
-    e.mu=n.mu-p.mu;
-    fr.calc_mu(e,T);
-    mu.mu=e.mu;
-    fr.calc_mu(mu,T);
-
-    double quark_nqch, quark_nQ;
-
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_temp_p(u,d,s,T,qth);
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
-    
-    // Update the energy density and pressure
-    tot.pr=qth.pr+e.pr;
-    tot.ed=qth.ed+e.ed;
-
-    // Compute total baryon density
-    nB=quark_nQ/3.0;
-    
-    y[0]=hth.pr-qth.pr;
-    // Ensure electric neutrality from quarks alone
-    y[1]=quark_nqch-e.n-mu.n;
-
-    return 0;
-  }
-
-  /** \brief Solve for the end of the mixed phase
-   */
-  int f_end_mixed_phase_Ye(size_t nv, const ubvector &x, ubvector &y,
-                           double Ye, double &nB) {
-
-    n.n=x[0];
-    p.n=x[1];
-    e.mu=x[2];
-    
-    double T=0.0;
-    if (sonB>0.0) {
-      T=x[3];
-    }
-
-    ptr_h->calc_temp_e(n,p,T,hth);
-    
-    fr.calc_mu(e,T);
-    mu.mu=e.mu;
-    fr.calc_mu(mu,T);
-
-    double quark_nqch, quark_nQ;
-
-    u.mu=n.mu/3.0-e.mu*2.0/3.0;
-    d.mu=n.mu/3.0+e.mu/3.0;
-    s.mu=d.mu;
-    ptr_q->calc_temp_p(u,d,s,T,qth);
-    quark_nqch=(2.0*u.n-d.n-s.n)/3.0;
-    quark_nQ=u.n+d.n+s.n;
-    
-    // Update the energy density and pressure
-    tot.pr=qth.pr+e.pr;
-    tot.ed=qth.ed+e.ed;
-
-    // Compute total baryon density
-    nB=quark_nQ/3.0;
-    
-    y[0]=hth.pr-qth.pr;
-    // Ensure electric neutrality from quarks alone
-    y[1]=quark_nqch-e.n-mu.n;
-    // Fix electron fraction
-    y[2]=e.n/nB-Ye;
-
-    return 0;
-  }
-
   /** \brief Minimize the free energy with respect to the densities
    */
   int f_min_densities(size_t nv, const ubvector &x, ubvector &y,
@@ -917,8 +749,8 @@ public:
     ptr_q->calc_p(u,d,s,qth);
 
     // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed;
-    tot.pr=hth.pr+e.pr;
+    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+lep.ed;
+    tot.pr=hth.pr+lep.pr;
 
     if (ret!=0 || chi>1.0) tot.ed+=1.0e6;
     
@@ -992,7 +824,7 @@ public:
     }
 
     // Update the energy density and pressure
-    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+e.ed+esurf+ecoul;
+    tot.ed=hth.ed*chi+qth.ed*(1.0-chi)+lep.ed+esurf+ecoul;
 
     // Use the thermodynamic identity for the pressure
     tot.pr=-tot.ed+n.n*chi*n.mu+p.n*chi*p.mu+
@@ -1069,15 +901,6 @@ public:
     casz.inc_rest_mass=true;
     casm.inc_rest_mass=true;
     
-    // Make the minimizer a bit more accurate
-    mmin.tol_rel/=1.0e2;
-    mmin.tol_abs/=1.0e2;
-    mmin.ntrial*=100.0;
-
-    // Set a small stepsize for the minimizer
-    double step[1]={0.01};
-    mmin.set_step(1,step);
-
     surften=1.0/hc_mev_fm;
     
     mp_start_fix=0.0;
@@ -1099,8 +922,12 @@ public:
     beg_mixed_phase_guess[2]=0.07;
     beg_mixed_phase_guess[3]=0.95;
     beg_mixed_phase_guess[4]=-0.06;
+
+    quark_phase_guess.resize(5);
   }
 
+  /** \brief Desc
+   */
   int guess(vector<string> &sv, bool itive_com) {
     if (sv.size()>3 && sv[1]=="beg-mixed") {
       size_t nv=sv.size()-2;
@@ -1131,12 +958,6 @@ public:
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &)>
        (&ex_eos_gibbs::f_had_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,std::ref(nB));
-    mm_funct fp_mixed_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &, double &)>
-       (&ex_eos_gibbs::f_mixed_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB),std::ref(chi));
     mm_funct fp_mixed_phase_chi=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,const double &)>
        (&ex_eos_gibbs::f_mixed_phase_chi),this,std::placeholders::_1,
@@ -1150,12 +971,6 @@ public:
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
 		       double &)>
        (&ex_eos_gibbs::f_beg_mixed_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB));
-    mm_funct fp_end_mixed_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &)>
-       (&ex_eos_gibbs::f_end_mixed_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
        std::ref(nB));
     multi_funct fp_mixed_phase_min=std::bind
@@ -1210,7 +1025,7 @@ public:
 	 (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
 	 std::placeholders::_2, std::placeholders::_3,
 	 std::ref(nB));
-
+      
       cout << "Determine B by fixing the "
 	   << "beginning of the mixed phase to\n n_B=" << mp_start
 	   << " fm^{-3}:" << endl;
@@ -1219,6 +1034,7 @@ public:
       x[1]=1.0;
       mh.msolve(2,x,fp_bag_constant);
       B=x[1];
+      
       cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
       cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
 	   << " fm^{-3}" << endl;
@@ -1239,25 +1055,23 @@ public:
       cout << "Total energy density: "
            << tot.ed*hc_mev_fm
 	   << " MeV/fm^3" << endl;
-      {
-	cout << "Skyrme energy density: "
-             << hth.ed*hc_mev_fm << " MeV/fm^3"
-	     << endl;
-	cout << "Skyrme pressure: "
-             << hth.pr*hc_mev_fm << " MeV/fm^3"
-	     << endl;
-      }
-      {
-	cout << "Quark energy dens. & pressure: "
-	     << qth.ed*hc_mev_fm << " MeV/fm^3, "
-	     << qth.pr*hc_mev_fm << " MeV/fm^3"
-	     << endl;
-	//cout << "Number density of quarks: " << quark_nQ
-        //<< " 1/fm^3" << endl;
-	//cout << "Charge density in quark matter: " << quark_nqch
-	//<< " 1/fm^3" << endl;
-      }
+      cout << "Hadronic energy density: "
+           << hth.ed*hc_mev_fm << " MeV/fm^3"
+           << endl;
+      cout << "Hadronic pressure: "
+           << hth.pr*hc_mev_fm << " MeV/fm^3"
+           << endl;
+      cout << "Quark energy dens. & pressure: "
+           << qth.ed*hc_mev_fm << " MeV/fm^3, "
+           << qth.pr*hc_mev_fm << " MeV/fm^3"
+           << endl;
       cout << endl;
+
+      beg_mixed_phase_guess[0]=n.n;
+      beg_mixed_phase_guess[1]=p.n;
+      beg_mixed_phase_guess[2]=0.05;
+      beg_mixed_phase_guess[3]=0.05;
+      beg_mixed_phase_guess[4]=0.05;
 
     } else {
 
@@ -1284,37 +1098,7 @@ public:
       }
       size_t nvar=ix;
 
-      mh.err_nonconv=false;
-      mh.def_jac.err_nonconv=false;
-      int ret=mh.msolve(nvar,x,fp_beg_mixed_phase);
-      if (ret!=0) {
-        cout << "Failed to find mixed phase. Starting with hadronic "
-             << "phase." << endl;
-
-        nB=had_phase_guess[0];
-        ix=0;
-        XCHECK;
-        x[ix++]=had_phase_guess[1];
-        if (sonB>0.0) {
-          XCHECK;
-          x[ix++]=had_phase_guess[2];
-        }
-        if (YLe>-0.5) {
-          XCHECK;
-          x[ix++]=had_phase_guess[3];
-        }
-        if (YLmu>-0.5) {
-          XCHECK;
-          x[ix++]=had_phase_guess[4];
-        }
-
-        mh.verbose=2;
-        ret=mh.msolve(nvar,x,fp_had_phase);
-        exit(-1);
-      }
-      
-      mh.err_nonconv=true;
-      mh.def_jac.err_nonconv=true;
+      mh.msolve(nvar,x,fp_beg_mixed_phase);
       
       f_beg_mixed_phase(nvar,x,y,nB);
       mp_start=nB;
@@ -1343,43 +1127,6 @@ public:
       
     }
 
-    // -----------------------------------------------------------------
-    // Find the end of the mixed phase with fp_end_mixed_phase()
-
-    double mp_end_muQ=1.0;
-    double mp_end_mue=0.1;
-    if (false) {
-      cout << "End of mixed phase: " << endl;
-      size_t ix=0;
-      
-      x[ix++]=0.5;
-      x[ix++]=0.4;
-
-      if (sonB>0.0) {
-	x[ix++]=0.05;
-      }
-      if (YLe>-0.5) {
-	x[ix++]=0.1;
-      }
-      if (YLmu>-0.5) {
-	x[ix++]=0.1;
-      }
-      
-      size_t nvar=ix;
-      mh.verbose=2;
-      mh.msolve(nvar,x,fp_end_mixed_phase);
-      
-      n.n=x[0];
-      p.n=x[1];
-      f_end_mixed_phase(2,x,y,nB);
-      
-      mp_end_muQ=(2.0*d.mu+u.mu)/3.0;
-      mp_end_mue=d.mu-u.mu;
-      mp_end=nB;
-      cout << "Mixed phase ends at nB: " << nB << " fm^{-3}" << endl;
-      cout << endl;
-    }
-    
     // -----------------------------------------------------------------
     // Tabulate full hadronic phase
 
@@ -1411,9 +1158,9 @@ public:
 	std::vector<double> line=
           {nB,n.n,p.n,e.n,mu.n,e.ed*hc_mev_fm,
            hth.ed*hc_mev_fm,
-           (hth.ed+e.ed+mu.ed)*hc_mev_fm,
+           (hth.ed+lep.ed)*hc_mev_fm,
            e.pr*hc_mev_fm,hth.pr*hc_mev_fm,
-           (hth.pr+e.pr+mu.pr)*hc_mev_fm};
+           (hth.pr+lep.pr)*hc_mev_fm};
 	thad.line_of_data(line);
       }
       cout << endl;
@@ -1454,7 +1201,9 @@ public:
       }
       size_t nvar=ix;
       
-      double delta=1.0e-3;
+      double mp_end_muQ=1.0;
+      double mp_end_mue=0.1;
+      
       for (chi=1.0;chi>-1.0e-4;chi-=0.05) {
 
 	mh.msolve(nvar,x,fp_mixed_phase_chi);
@@ -1464,9 +1213,19 @@ public:
         mp_end_muQ=(2.0*d.mu+u.mu)/3.0;
         mp_end_mue=d.mu-u.mu;
 
+        quark_phase_guess[0]=mp_end_muQ;
+        quark_phase_guess[1]=mp_end_mue;
+        if (sonB>0.0) {
+          quark_phase_guess[2]=x[3];
+        }
+        quark_phase_guess[3]=nu_e.mu;
+        quark_phase_guess[4]=nu_mu.mu;
+
         cout.precision(4);
 	cout << nB << " " << n.n << " " << p.n << " " << u.n << " "
              << d.n << " " << s.n << " " << chi << endl;
+        //cout << "  " << e.n << " " << mu.n << " "
+        //<< nu_e.n << " " << nu_mu.n << endl;
         cout.precision(6);
         
 	std::vector<double> line;
@@ -1510,20 +1269,22 @@ public:
       cout << "Quark phase (nB,nu,nd,ns): " << endl;
       size_t ix=0;
       XCHECK;
-      x[ix++]=mp_end_muQ;
+      //x[ix++]=mp_end_muQ;
+      x[ix++]=quark_phase_guess[0];
       XCHECK;
-      x[ix++]=mp_end_mue;
+      //x[ix++]=mp_end_mue;
+      x[ix++]=quark_phase_guess[1];
       if (sonB>0.0) {
         XCHECK;
-	x[ix++]=beg_mixed_phase_guess[2];
+	x[ix++]=quark_phase_guess[2];
       }
       if (YLe>-0.5) {
         XCHECK;
-	x[ix++]=beg_mixed_phase_guess[3];
+	x[ix++]=quark_phase_guess[3];
       }
       if (YLmu>-0.5) {
         XCHECK;
-	x[ix++]=beg_mixed_phase_guess[4];
+	x[ix++]=quark_phase_guess[4];
       }
       size_t nvar=ix;
       
@@ -1534,8 +1295,8 @@ public:
           {nB,x[0],x[1],e.ed*hc_mev_fm,
            e.pr*hc_mev_fm,qth.ed*hc_mev_fm,
            qth.pr*hc_mev_fm,
-           (qth.ed+e.ed+mu.ed)*hc_mev_fm,
-           (qth.pr+e.pr+mu.pr)*hc_mev_fm};
+           (qth.ed+lep.ed)*hc_mev_fm,
+           (qth.pr+lep.pr)*hc_mev_fm};
 	tq.line_of_data(line);
       }
       cout << endl;
@@ -1742,7 +1503,9 @@ public:
     
     return 0;
   }
-  
+
+  /** \brief Desc
+   */
   int spl00(vector<string> &sv, bool itive_com) {
 
     {

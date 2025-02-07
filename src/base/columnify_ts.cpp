@@ -44,29 +44,42 @@ int main(void) {
 
   columnify c;
 
+  // Demonstrate all of the various alignments
   align.push_back(1);
   align.push_back(2);
   align.push_back(3);
   align.push_back(4);
+  align.push_back(5);
   align.push_back(6);
+  
   table[0].push_back("left");
   table[1].push_back("right");
   table[2].push_back("lmid");
   table[3].push_back("rmid");
-  table[4].push_back("lnum");
+  table[4].push_back("decimal point");
+  table[5].push_back("lnum");
   for(size_t i=0;i<nr;i++) {
-    for(size_t j=0;j<5;j++) {
+    for(size_t j=0;j<6;j++) {
       table[j].push_back(dtos(sin((i+j)*100.0)));
     }
   }
+
+  c.align(table,6,nr,ctable,align);
   
-  c.align(table,5,nr,ctable,align);
-  
-  for(size_t i=0;i<nr;i++) {
+  for(size_t i=1;i<nr;i++) {
     cout << ctable[i] << endl;
-    t.test_gen(ctable[i].size()==69,"row size");
+    t.test_gen(ctable[i].size()==ctable[0].size(),"row size");
   }
   cout << endl;
+
+  c.align(table,6,nr,ctable,align,1);
+
+  for(size_t i=1;i<nr;i++) {
+    cout << ctable[i] << endl;
+    t.test_gen(ctable[i].size()==ctable[0].size(),"row size");
+  }
+  cout << endl;
+  exit(-1);
 
   align[4]=5;
   table[4][0]="dp";

@@ -23,7 +23,7 @@
 #ifndef O2SCL_AUTO_FORMAT_H
 #define O2SCL_AUTO_FORMAT_H
 /** \file auto_format.h
-    \brief Desc
+    \brief File describing the class \ref auto_format
 */
 
 #include <iostream>
@@ -127,7 +127,7 @@ namespace o2scl_auto_format {
     /// If true, try to automatically detect tables (default true)
     bool auto_tables;
     
-    /// The number of table header rows
+    /// The number of table header rows (default 0)
     size_t n_headers;
     
     /// Headers for table mode
@@ -384,7 +384,8 @@ namespace o2scl_auto_format {
   
   /* \brief Desc
    */
-  //auto_format &operator<<(auto_format &c, o2scl_auto_format::auto_format &(*f)(o2scl_auto_format::auto_format&));
+  //auto_format &operator<<(auto_format &c,
+  //o2scl_auto_format::auto_format &(*f)(o2scl_auto_format::auto_format&));
 
   /* \brief Desc
    */

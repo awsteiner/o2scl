@@ -1525,10 +1525,16 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
       cout << "Entry for column " << in[0] << " at row " << in[1] << " is "
 	   << table_obj.get(in[0],row) << endl;
     } else {
+      double d;
+      int vret=value_spec(in[2],d,verbose,false);
+      if (vret!=0) {
+        cerr << "Converting " << in[2] << " to value failed." << endl;
+        return 1;
+      }
       cout << "Entry for column " << in[0] << " at row " << in[1]
 	   << " is has been changed from "
 	   << table_obj.get(in[0],row);
-      table_obj.set(in[0],row,o2scl::function_to_double(in[2]));
+      table_obj.set(in[0],row,d);
       cout << " to " << table_obj.get(in[0],row) << endl;
     }
     
@@ -1588,10 +1594,16 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 	   << in[2] << ") is "
 	   << table3d_obj.get(xix,yix,in[0]) << endl;
     } else {
+      double d;
+      int vret=value_spec(in[3],d,verbose,false);
+      if (vret!=0) {
+        cerr << "Converting " << in[3] << " to value failed." << endl;
+        return 1;
+      }
       cout << "Entry for slice " << in[0] << " at (" << in[1] << ","
 	   << in[2] << ") has been changed from "
 	   << table3d_obj.get(xix,yix,in[0]);
-      table3d_obj.set(xix,yix,in[0],o2scl::function_to_double(in[3]));
+      table3d_obj.set(xix,yix,in[0],d);
       cout << " to " << table3d_obj.get(xix,yix,in[0]) << endl;
     }
     
@@ -1624,13 +1636,14 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 
     // Set value if necessary
     if (in.size()>tensor_grid_obj.get_rank()) {
-      // convert to lower case
-      std::transform(in[rk].begin(),
-		     in[rk].end(),
-		     in[rk].begin(),::tolower);
       if (in[rk]!="none") {
-	tensor_obj.set
-	  (ix,o2scl::stod(in[rk]));
+        double d;
+        int vret=value_spec(in[rk],d,verbose,false);
+        if (vret!=0) {
+          cerr << "Converting " << in[rk] << " to value failed." << endl;
+          return 1;
+        }
+	tensor_obj.set(ix,d);
       }
     }
 
@@ -1672,7 +1685,13 @@ int acol_manager::comm_value(std::vector<std::string> &sv, bool itive_com) {
 
     // Set value if necessary
     if (in.size()>rk && in[rk]!="none") {
-      tensor_grid_obj.set(ix,o2scl::stod(in[rk]));
+      double d;
+      int vret=value_spec(in[rk],d,verbose,false);
+      if (vret!=0) {
+        cerr << "Converting " << in[rk] << " to value failed." << endl;
+        return 1;
+      }
+      tensor_grid_obj.set(ix,d);
     }
 
     // Get associated grid points

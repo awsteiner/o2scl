@@ -139,7 +139,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
                        thermo &)>
        (&eos_quark_njl::gap_func_qq),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,std::ref(th));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -161,7 +161,7 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
                        thermo &)>
        (&eos_quark_njl::gap_func_ms),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,std::ref(th));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -208,7 +208,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
                        thermo &)>
        (&eos_quark_njl::gap_func_qq_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,th);
+       std::placeholders::_3,T,std::ref(th));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -235,7 +235,7 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
                        thermo &)>
        (&eos_quark_njl::gap_func_ms_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,th);
+       std::placeholders::_3,T,std::ref(th));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -504,7 +504,7 @@ int eos_quark_njl::gap_func_qq(size_t nv, const ubvector &x, ubvector &y,
 int eos_quark_njl::gap_func_ms(size_t nv, const ubvector &x, ubvector &y,
                                thermo &th) {
 
-  double gap1,gap2,gap3;
+  double gap1, gap2, gap3;
 
   up->ms=x[0];
   down->ms=x[1];
@@ -1090,7 +1090,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
                        thermo &)>
        (&eos_quark_njl_vec::gap_func_qq_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,th);
+       std::placeholders::_3,T,std::ref(th));
 
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {
@@ -1115,7 +1115,7 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
                        thermo &th)>
        (&eos_quark_njl_vec::gap_func_ms_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,th);
+       std::placeholders::_3,T,std::ref(th));
 
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {
@@ -1423,7 +1423,7 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
        (&eos_quark_njl_vec::gap_func_qq_vec),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,std::ref(th));
     
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {
@@ -1447,7 +1447,7 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
       (std::mem_fn<int(size_t,const ubvector &,ubvector &, thermo &)>
        (&eos_quark_njl_vec::gap_func_ms_vec),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,std::ref(th));
     
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {

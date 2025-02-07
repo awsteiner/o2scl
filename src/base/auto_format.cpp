@@ -135,7 +135,7 @@ void auto_format::end_table() {
 
   if (verbose>0) {
     (*outs) << "Running columnify::align() " << columns.size() << " "
-	 << columns[0].size() << endl;
+            << columns[0].size() << " " << n_headers << endl;
     (*outs) << "Column sizes: ";
     for(size_t k=0;k<columns.size();k++) {
       (*outs) << columns[k].size() << " ";
