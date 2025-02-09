@@ -626,10 +626,11 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
     
     auto_format at;
     at.start_table();
-    at << "Z" << "i" << "mass" << "dmass" << "a" << "exc_energy";
-    at << "dexc_en." << "a" << "ori" << "iu";
-    at << "ii" << "hlife" << "a" << "hun" << "dhlife" << "spin parity";
-    at << "ENyr" << "disc" << "decay intensity" << endo;
+    at << "Znote" << "iso" << "mass" << "δmass" << "mass acc." << "exc. energy";
+    at << "δexc. en." << "exc. en. acc." << "orig." << "iso. unc.";
+    at << "iso. inv." << "half life" << "HL acc." << "HL unit"
+       << "δHL" << "spin par.";
+    at << "ENSDF yr." << "disc. yr" << "decay inten." << endo;
 
     for(size_t j=0;j<en.props.size();j++) {
       at << en.props[j].Znote;

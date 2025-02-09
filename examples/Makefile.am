@@ -11,16 +11,46 @@ gibbst3:
 		-guess "beg-mixed" 0.2567 0.001594 0.1379 \
 		"(-0.7482)" "(-0.6419)" -mvsr msbag2.o2
 
+gibbst4:
+	ex_eos_gibbs -hadrons SPL00 -quarks SPL00_njl -mvsr msnjl0.o2
+
+gibbst5:
+	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
+		-hadrons SPL00 -quarks SPL00_njl -mvsr msnjl1.o2
+
+gibbst6:
+	ex_eos_gibbs -set sonB 2.0 -set YLe 0.0 -set YLmu 0.0 \
+		-hadrons SPL00 -quarks SPL00_njl -mvsr msnjl2.o2
+
+gibbsth1:
+	ex_eos_gibbs -quarks SPL00_bag -hadrons SPL00_hyp -mvsr mshbag0.o2
+
+gibbsth2:
+	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
+		-quarks SPL00_bag -hadrons SPL00_hyp -mvsr mshbag1.o2
+
+gibbsth3:
+	ex_eos_gibbs -set sonB 2.0 -set YLe 0.15 -set YLmu 0.0 \
+		-quarks SPL00_bag -hadrons SPL00_hyp \
+		-guess "beg-mixed" 0.2567 0.001594 0.1379 \
+		"(-0.7482)" "(-0.6419)" -mvsr mshbag2.o2
+
+gibbsth4:
+	ex_eos_gibbs -hadrons SPL00_hyp -quarks SPL00_njl -mvsr mshnjl0.o2
+
+gibbsth5:
+	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
+		-hadrons SPL00_hyp -quarks SPL00_njl -mvsr mshnjl1.o2
+
+gibbsth6:
+	ex_eos_gibbs -set sonB 2.0 -set YLe 0.0 -set YLmu 0.0 \
+		-hadrons SPL00_hyp -quarks SPL00_njl -mvsr mshnjl2.o2
+
 gplot:
 	o2graph -set xlo 12 -set xhi 16 -set ylo 0 -set yhi 2.5 \
 		-read msbag0.o2 tov \
 		-plot r gm -read msbag1.o2 tov -plot r gm \
 		-read msbag2.o2 tov -plot r gm -show
-
-# The initial mixed phase determination doesn't work for NJL. This
-# could be solved simply by choosing a better initial guess.
-gibbst4:
-	ex_eos_gibbs -hadrons SPL00 -quarks SPL00_njl -mvsr temp.o2
 
 emt:
 	o2graph -read ex_mcmc_bimodal.o2 -histplot x bins=40 -create \

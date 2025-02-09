@@ -39,46 +39,119 @@ int main(void) {
   t.set_output_level(1);
 
   size_t nr=10;
-  std::vector<std::string> table[5], ctable(nr);
+  std::vector<std::string> table[6], ctable;
   std::vector<int> align;
+  terminal ter;
 
   columnify c;
+  c.verbose=0;
 
   // Demonstrate all of the various alignments
-  align.push_back(1);
-  align.push_back(2);
-  align.push_back(3);
-  align.push_back(4);
-  align.push_back(5);
-  align.push_back(6);
-  
-  table[0].push_back("left");
-  table[1].push_back("right");
-  table[2].push_back("lmid");
-  table[3].push_back("rmid");
-  table[4].push_back("decimal point");
-  table[5].push_back("lnum");
-  for(size_t i=0;i<nr;i++) {
-    for(size_t j=0;j<6;j++) {
-      table[j].push_back(dtos(sin((i+j)*100.0)));
+  align.push_back(c.align_left);
+  align.push_back(c.align_right);
+  align.push_back(c.align_lmid);
+  align.push_back(c.align_rmid);
+  align.push_back(c.align_dp);
+  align.push_back(c.align_lnum);
+
+  if (true) {
+
+    // Test data
+    table[0].push_back("left");
+    table[1].push_back("right");
+    table[2].push_back("lmid");
+    table[3].push_back("rmid");
+    table[4].push_back("dec. point");
+    table[5].push_back("lnum");
+    for(size_t i=0;i<nr-1;i++) {
+      for(size_t j=0;j<6;j++) {
+        table[j].push_back(dtos(sin((i+j)*100.0)));
+      }
+    }
+    
+    // No headers, no lines
+    c.align(table,6,nr,ctable,align);
+    
+    for(size_t i=0;i<nr;i++) {
+      cout << ctable[i] << endl;
+      t.test_gen(ter.str_len(ctable[i])==ter.str_len(ctable[0]),"row size");
+    }
+    cout << endl;
+    
+    // No headers, simple lines
+    c.table_lines=1;
+    
+    c.align(table,6,nr,ctable,align);
+    
+    for(size_t i=0;i<nr;i++) {
+      cout << ctable[i] << endl;
+      t.test_gen(ter.str_len(ctable[i])==ter.str_len(ctable[0]),"row size");
+    }
+    cout << endl;
+    
+    // No headers, terminal lines
+    c.table_lines=2;
+    
+    c.align(table,6,nr,ctable,align);
+    
+    for(size_t i=0;i<nr;i++) {
+      cout << ctable[i] << endl;
+      t.test_gen(ter.str_len(ctable[i])==ter.str_len(ctable[0]),"row size");
+    }
+    cout << endl;
+
+    for(size_t i=0;i<6;i++) {
+      table[i].clear();
     }
   }
 
-  c.align(table,6,nr,ctable,align);
-  
-  for(size_t i=1;i<nr;i++) {
-    cout << ctable[i] << endl;
-    t.test_gen(ctable[i].size()==ctable[0].size(),"row size");
-  }
-  cout << endl;
+  if (true) {
 
-  c.align(table,6,nr,ctable,align,1);
+    // Test data
+    table[0].push_back("dec. point");
+    for(size_t j=0;j<1;j++) {
+      for(size_t i=0;i<nr-1;i++) {
+        table[j].push_back(dtos(sin((i+j)*100.0)));
+      }
+    }
+    align[0]=c.align_dp;
 
-  for(size_t i=1;i<nr;i++) {
-    cout << ctable[i] << endl;
-    t.test_gen(ctable[i].size()==ctable[0].size(),"row size");
+    // Two lines of headers, terminal lines
+    c.table_lines=2;
+    c.verbose=2;
+    c.align(table,1,nr,ctable,align,2);
+    
+    for(size_t i=0;i<nr;i++) {
+      cout << ctable[i] << " " << ter.str_len(ctable[i]) << endl;
+      t.test_gen(ter.str_len(ctable[i])==ter.str_len(ctable[0]),"row size");
+    }
+    cout << endl;
   }
-  cout << endl;
+
+  if (true) {
+
+    // Test data
+    table[0].push_back("dec. point");
+    table[1].push_back("lnum");
+    for(size_t j=0;j<2;j++) {
+      for(size_t i=0;i<nr-1;i++) {
+        table[j].push_back(dtos(sin((i+j)*100.0)));
+      }
+    }
+    align[0]=c.align_dp;
+    align[0]=c.align_lnum;
+
+    // Two lines of headers, terminal lines
+    c.table_lines=2;
+    c.verbose=2;
+    c.align(table,2,nr,ctable,align,2);
+    
+    for(size_t i=0;i<nr;i++) {
+      cout << ctable[i] << " " << ter.str_len(ctable[i]) << endl;
+      t.test_gen(ter.str_len(ctable[i])==ter.str_len(ctable[0]),"row size");
+    }
+    cout << endl;
+  }
   exit(-1);
 
   align[4]=5;

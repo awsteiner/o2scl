@@ -162,13 +162,13 @@ namespace o2scl {
       double mass;
       /// Mass excess uncertainty (in keV)
       double dmass;
-      /// Desc
+      /// Mass excess accuracy
       int mass_acc;
       /// Excitation energy
       double exc_energy;
       /// Excitation energy uncertainty
       double dexc_energy;
-      /// Desc
+      /// Excitation energy accuracy
       int exc_energy_acc;
       /// Excitation energy origin
       char origin[3];
@@ -178,7 +178,7 @@ namespace o2scl {
       char isomer_inv;
       /// Half-life
       double hlife;
-      /// Desc
+      /// Half life accuracy
       int hlife_acc;
       /// Half-life unit
       char hl_unit[3];

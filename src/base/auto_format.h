@@ -66,30 +66,27 @@ namespace o2scl_auto_format {
       automatic spacing and table formatting. Only scientific
       formatting for floating-point numbers is supported at present.
 
+      Experimental.
+
+      This class caches each line before sending to cout, so issuing
+      ``cout << std::flush`` in the middle of a line will not
+      output the buffer to the screen.
+
+      The attach() function stores a pointer to the output
+      stream, so the user must take care to make sure this pointer is
+      valid.
+
+      For now, this class is in its own namespace,
+      <tt>o2scl_auto_format</tt>.
+
       \verbatim embed:rst
       .. note::
-
-         Experimental.
-
-         This class caches each line before sending to cout,
-         so issuing ``cout << std::flush`` in the middle of 
-         a line will not output the buffer to the screen.
-
-         The attach() function stores a pointer to the output
-         stream, so the user must take care to make sure this pointer is
-         valid.
-
-         For now, this class is in its own namespace, 
-         ``o2scl_auto_format``.
 
       .. todo:: 
 
          In class auto_format:
 
          - Allow user-specified table alignments
-         - switch to columnify::add_spaces() and add more complicated
-           table line specifications
-         - Implement row_max
 
          Future:
 
@@ -106,29 +103,29 @@ namespace o2scl_auto_format {
     
   protected:
 
+    /// \name Other variables (protected)
+    //@{
     /** \brief If true, automatic formatting is enabled (default true)
      */
     bool enabled;
     
-    /// \name Standard buffer
-    //@{
     /// Output line buffer
     std::vector<std::string> lines;
 
-    // Index of line for next output
-    //size_t next_line;
-    //@}
-
     /// The output precision for floating-point numbers
     size_t precision_;
+    //@}
     
-    /// \name Table mode
+    /// \name Table mode (protected)
     //@{
     /// If true, try to automatically detect tables (default true)
     bool auto_tables;
     
     /// The number of table header rows (default 0)
     size_t n_headers;
+    
+    /// Pointer to the output stream
+    std::ostream *outs;
     
     /// Headers for table mode
     std::vector<std::vector<std::string> > headers;
@@ -149,17 +146,16 @@ namespace o2scl_auto_format {
     std::vector<int> aligns;
     //@}
 
-    /// Pointer to the output stream
-    std::ostream *outs;
-    
     // Ensure these operators are friends
+    /// \name Friend operators
+    //@{
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, double d);
      
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, long double d);
     
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_35 &d);
      
@@ -179,14 +175,15 @@ namespace o2scl_auto_format {
     friend auto_format &operator<<
     (auto_format &at,
      const std::vector<std::vector<data_t> > &vv);
+    //@}
     
   public:
 
+    /// \name Basic usage
+    //@{
+    /// Constructor
     auto_format();
 
-    /// If true, align the output of matrices (default true)
-    bool align_matrices;
-    
     /** \brief Attach an ostream, so that all future output goes
         there
      */
@@ -197,14 +194,6 @@ namespace o2scl_auto_format {
      */
     void unattach();
     
-    /** \brief Add a string to the output buffer
-     */
-    void add_string(std::string s);
-
-    /** \brief Set the precision of floating-point values
-     */
-    void precision(size_t p);
-    
     /** \brief Disable formatting and send all output 
         directly to \c cout
      */
@@ -214,31 +203,55 @@ namespace o2scl_auto_format {
      */
     void on();
     
-    /** \brief Add an endline
-     */
-    void endline();
-    
-    /** \brief Flush all buffered output to the screen
-     */
-    void done();
-
     /** \brief Start a table
      */
     void start_table();
-
-    /** \brief Debug the table
-     */
-    void debug_table();
 
     /** \brief End a table
      */
     void end_table();
 
+    /** \brief Flush all buffered output to the screen
+     */
+    void done();
+    //@}
+
+    /// \name Other functions
+    //@{
+    /** \brief Add an endline
+     */
+    void endline();
+    
+    /** \brief Debug the table by outputting detailed table information
+        to the attached stream.
+
+        This function is useful just before end_table() is called.
+     */
+    void debug_table();
+
+    /** \brief Add a string to the output buffer
+     */
+    void add_string(std::string s);
+    //@}
+
+    /// \name Settings
+    //@{
+    /// If true, align the output of matrices (default true)
+    bool align_matrices;
+    
     /// Verbosity parameter (default 0)
     int verbose;
 
-    /// Parameter for table line output
+    /** \brief Parameter for table line output
+
+        This parameter is used for \ref columnify::table_lines.
+     */
     int table_lines;
+
+    /** \brief Set the precision of floating-point values
+     */
+    void precision(size_t p);
+    //@}
 
   };
 
@@ -253,7 +266,11 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+  /** \brief Output a double-precision number
+   */
+  auto_format &operator<<(auto_format &at, const cpp_dec_float_25 &d);
+
   /** \brief Output a double-precision number
    */
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
