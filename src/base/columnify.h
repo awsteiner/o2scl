@@ -95,6 +95,9 @@ namespace o2scl {
 	positive numbers. Align headers to the left-most digit.
     */
     static const int align_lnum=6;
+    /** \brief Desc
+    */
+    static const int align_auto=7;
 
     /// Verbosity parameter (default 0)
     int verbose;
@@ -142,7 +145,7 @@ namespace o2scl {
         return xret;
       }
       ctable.clear();
-      
+
       for(size_t j=0;j<nrows;j++) {
         std::string tmp=table_out[0][j];
         for(size_t i=1;i<ncols;i++) {
@@ -223,9 +226,42 @@ namespace o2scl {
                    size_t nrows, vec_int_t &align_spec,
                    mat_string2_t &table_out, size_t n_headers=0) {
 
+      if (n_headers>nrows) {
+        O2SCL_ERR2("Number of headers larger than rows in ",
+                   "columnify::add_spaces().",o2scl::exc_einval);
+      }
+      
       // Use this class to avoid counting vt100 sequences
       terminal ter;
 
+      std::vector<int> align2;
+
+      for(size_t i=0;i<ncols;i++) {
+        if (align_spec[i]==align_auto) {
+          int cnt_int=0, cnt_fp=0, cnt_fp_sci=0, cnt_has_minus=0;
+          int cnt_not_num=0;
+          for(size_t j=n_headers;j<nrows;j++) {
+            bool is_int, is_fp, is_fp_sci, has_minus, not_num;
+            guess_type(table_in[i][j],is_int,is_fp,is_fp_sci,
+                       has_minus,not_num);
+            if (is_int) cnt_int++;
+            if (is_fp) cnt_fp++;
+            if (is_fp_sci) cnt_fp_sci++;
+            if (has_minus) cnt_has_minus++;
+            if (not_num) cnt_not_num++;
+          }
+          if (cnt_not_num>0) {
+            align_spec[i]=align_left;
+          } else if (cnt_int==0) {
+            align_spec[i]=align_lnum;
+          } else if (cnt_int==((int)(nrows-n_headers))) {
+            align_spec[i]=align_right;
+          } else {
+            align_spec[i]=align_dp;
+          }
+        }
+      }
+      
       // Ensure table_out has enough space to hold the output
       // data
       if (table_out.size()!=ncols) table_out.resize(ncols);
@@ -395,7 +431,9 @@ namespace o2scl {
             if (j<n_headers) {
 
               tmp=table_in[i][j];
-              if (ter.str_len(tmp)<csizes[i]+csizes2[i]) tmp+=' ';
+              while (ter.str_len(tmp)<csizes[i]+csizes2[i]) {
+                tmp+=' ';
+              }
               
             } else {
             
@@ -418,34 +456,38 @@ namespace o2scl {
             }
 
 	  } else if (align_spec[i]==align_lnum) {
-
+            
             if (j<n_headers) {
               if (table_in[i][j].length()>0 && has_negative[i]==true &&
                   table_in[i][j].length()<csizes[i]) {
-                tmp+=' ';
               }
-            }
+            } 
             
 	    if (ter.str_len(table_in[i][j])==csizes[i]) {
+              
+              // If the string is already max width, then just
+              // append it directly
 	      tmp+=table_in[i][j];
+              
 	    } else {
-	      if (table_in[i][j].length()>0 &&
-                  table_in[i][j][0]>='0' &&
-                  table_in[i][j][0]<='9') {
-		tmp+=' ';
-		tmp+=table_in[i][j];
-		for(size_t k=ter.str_len(table_in[i][j]);
-                    k<csizes[i]-1;k++) {
-		  tmp+=' ';
-		}
-	      } else {
-		tmp+=table_in[i][j];
-		for(size_t k=ter.str_len(table_in[i][j]);
-                    k<csizes[i];k++) {
-		  tmp+=' ';
-		}
-	      }
-	    }
+
+              // In header rows, add a space at the beginning if there
+              // is a negative value. Otherwise, add a space at the
+              // beginning if the first character is a digit.
+              if (has_negative[i]==true &&
+                  (j<n_headers ||
+                   (table_in[i][j].length()>0 &&
+                    table_in[i][j][0]>='0' && table_in[i][j][0]<='9'))) {
+                tmp+=' ';
+              }
+              
+              // Otherwise, we can just add spaces at the right
+              tmp+=table_in[i][j];
+              for(size_t k=ter.str_len(tmp);k<csizes[i];k++) {
+                tmp+=' ';
+              }
+              
+            }
 	  }
 	  
           if (verbose>1) {

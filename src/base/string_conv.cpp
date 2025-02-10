@@ -187,6 +187,52 @@ bool o2scl::has_minus_sign(double *x) {
   return false;
 }
 
+void guess_type(std::string s, bool &is_int, bool &is_fp,
+                bool &is_fp_sci, bool &has_minus, bool &not_num) {
+  
+  if (is_number(s)==false) {
+    not_num=true;
+    is_int=false;
+    has_minus=false;
+    is_fp=false;
+    is_fp_sci=false;
+    return;
+  }
+
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='e' || s[i]=='E' || s[i]=='d' || s[i]=='D') {
+      is_fp_sci=true;
+      is_fp=true;
+      is_int=false;
+      double d=o2scl::stod(s);
+      has_minus=has_minus_sign(&d);
+      not_num=false;
+      return;
+    }
+  }
+  
+  for(size_t i=0;i<s.length();i++) {
+    if (s[i]=='.') {
+      is_fp_sci=false;
+      is_fp=true;
+      is_int=false;
+      double d=o2scl::stod(s);
+      has_minus=has_minus_sign(&d);
+      not_num=false;
+      return;
+    }
+  }
+  
+  is_fp_sci=false;
+  is_fp=false;
+  is_int=true;
+  if (o2scl::stoi(s)<0) has_minus=true;
+  else has_minus=false;
+  not_num=false;
+  
+  return;
+}
+
 string o2scl::itos(int x) {
 #ifdef O2SCL_OLDER_COMPILER
   ostringstream strout;

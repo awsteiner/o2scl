@@ -7,6 +7,14 @@ Function operator<< (o2scl_auto_format)
 
 .. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, long double d)
 
+.. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, const cpp_dec_float_25 &d)
+
+.. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, const cpp_dec_float_35 &d)
+
+.. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, const cpp_dec_float_50 &d)
+
+.. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, const cpp_dec_float_100 &d)
+
 .. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, float f)
 
 .. doxygenfunction:: o2scl_auto_format::operator<<(auto_format &at, int i)

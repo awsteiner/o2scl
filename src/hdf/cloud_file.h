@@ -67,7 +67,9 @@ namespace o2scl_hdf {
   class cloud_file {
     
   public:
-  
+
+    /// \name User settings
+    //@{
     /** \brief If true, allow the use of \c wget to download the file
 	(default true)
      */
@@ -82,6 +84,7 @@ namespace o2scl_hdf {
     /** \brief If true, throw an exception on failure (default true)
      */
     bool throw_on_fail;
+    //@}
     
     /// \name Specify hash type
     //@{
@@ -91,7 +94,11 @@ namespace o2scl_hdf {
     static const int md5=1;
     static const int md5sum=2;
     //@}
-  
+
+    /// \name Basic usage
+    //@{
+    /// Constructor
+    
     cloud_file();
 
     /** \brief Open an HDF file named \c file in directory \c dir
@@ -130,6 +137,7 @@ namespace o2scl_hdf {
     */
     int get_file_hash(std::string file, std::string url, std::string hash="",
 		      std::string dir="");
+    //@}
     
   };
   

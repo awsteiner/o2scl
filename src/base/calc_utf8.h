@@ -143,6 +143,16 @@ namespace o2scl {
     
   protected:
 
+    /// \name Other objects [protected]
+    //@{
+    /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8
+     */
+    typedef std::queue<token_base *> token_queue_t;
+    
+    /** \brief The current expression in RPN
+     */
+    token_queue_t RPN;
+
     /// Pointer to a random number generator for \c rand
     rng<> *r;
 
@@ -154,11 +164,12 @@ namespace o2scl {
     */
     polylog_multip<fp_t,fp_t> pm;
     
-    /** \brief A typedef for a queue of tokens for \ref o2scl::calc_utf8
+    /** \brief A map denoting operator precedence
      */
-    typedef std::queue<token_base *> token_queue_t;
+    std::map<std::string, int> op_precedence;
+    //@}
     
-    /// \name Token types
+    /// \name Token types [protected]
     //@{
     static const int token_none=0;
     static const int token_op=1;
@@ -166,10 +177,8 @@ namespace o2scl {
     static const int token_num=3;
     //@}
 
-    /** \brief A map denoting operator precedence
-     */
-    std::map<std::string, int> op_precedence;
-    
+    /// \name Other functions [protected]
+    //@{
     /** \brief Build the operator precedence map
      */
     std::map<std::string, int> build_op_precedence() {
@@ -286,7 +295,7 @@ namespace o2scl {
       token_queue_t rpn_queue;
       std::stack<std::string> operator_stack;
       bool last_token_was_op = true;
-
+      
       // AWS, 8/13/23: the calc_RPN function doesn't have any unary
       // operators right now, and the code below doesn't parse ,-
       // properly, so this is a temporary hack to handle that case
@@ -1071,14 +1080,13 @@ namespace o2scl {
       }
       result=evaluation.top();
       return 0;
-    }      
+    }
+    //@}
     
-    /** \brief The current expression in RPN
-     */
-    token_queue_t RPN;
-
   public:
 
+    /// \name Basic usage
+    //@{
     /** \brief Create an empty calc_utf8 object
      */
     calc_utf8() {
@@ -1113,14 +1121,10 @@ namespace o2scl {
       // Clear memory associated with the RPN object
       cleanRPN(this->RPN);
     }
+    //@}
 
-    /** \brief Set the random number generator
-     */
-    void set_rng(rng<> &r_new) {
-      r=&r_new;
-      return;
-    }
-
+    /// \name Settings
+    //@{
     /** \brief If true, interpret "min" as the minimum function
         (default true)
 
@@ -1129,6 +1133,10 @@ namespace o2scl {
         function.
      */
     bool allow_min;
+    
+    /// Verbosity parameter
+    int verbose;
+    //@}
     
     /// \name Compile and evaluate 
     //@{
@@ -1435,11 +1443,15 @@ namespace o2scl {
     }
     //@}
     
-    /// Verbosity parameter
-    int verbose;
-
     /// \name Other functions
     //@{
+    /** \brief Set the random number generator
+     */
+    void set_rng(rng<> &r_new) {
+      r=&r_new;
+      return;
+    }
+
     /** \brief Convert the RPN expression to a string
 
 	\note This is mostly useful for debugging
@@ -1518,8 +1530,11 @@ namespace o2scl {
 
   private:
 
+    /// \name Prevent copy construction [private]
+    //@{
     calc_utf8(const calc_utf8 &);
     calc_utf8& operator=(const calc_utf8&);
+    //@}
     
   };
   

@@ -108,10 +108,10 @@ namespace o2scl_acol {
   */
   class acol_manager {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
+    /// name Other objects [protected]
+    //@{
     /// Random number generator
     o2scl::rng<> rng;
     
@@ -147,8 +147,9 @@ namespace o2scl_acol {
 
     /// The number formatter for unicode output
     o2scl::format_float ff;
+    //@}
 
-    /// \name Parameters modifiable by the user
+    /// \name Internal copy of parameters modifiable by the user [protected]
     //@{
     /// The output precision (default 6)
     int precision;
@@ -193,7 +194,7 @@ namespace o2scl_acol {
     bool scientific;
     //@}
 
-    /// \name The parameter objects
+    /// \name The parameter objects [protected]
     //@{
     o2scl::cli::parameter_string p_obj_name;
     o2scl::cli::parameter_string p_def_args;
@@ -209,14 +210,14 @@ namespace o2scl_acol {
     o2scl::cli::parameter_bool p_use_regex;
     //@}
 
-#endif
-
   public:
 
     acol_manager();
 
     virtual ~acol_manager() {}
 
+    /// \name Other data
+    //@{
     /// Default arguments from environment
     std::string def_args;
 
@@ -229,6 +230,37 @@ namespace o2scl_acol {
     /// Dummy cli object for cli::cli_gets()
     o2scl::cli *cl;
     
+    /** \brief True if we should run interactive mode after parsing
+        the command-line
+    */
+    bool post_interactive;
+
+    /// The environment variable to read from 
+    std::string env_var_name;
+
+    /// Default acol options for any type
+    std::vector<o2scl::comm_option_s> opts_new;
+
+    /** \brief Color specification for terminal output
+
+        Note that full 3 byte colors are not supported in OSX terminal
+        and not yet supported here.
+
+        The 16 basic VT100 colors are 1-15 except for black which is
+        assigned value 256. For 8 bit colors, use values greater than
+        15 and smaller than 256. The thousands digit is used for the
+        underline attribute, the tens of thousands digit is used for
+        the intensity attribute (0 is normal, 1 is high intensity, and
+        2 is low intensity). Background colors are specified similarly
+        to foreground colors, but multipled by 100,000.
+
+        By default, commands are cyan, types are magenta, parameters
+        are red, help topics are green, executable commands are white,
+        and URLS are underlined.
+    */
+    std::string color_spec;
+    //@}
+
     /// \name Object storage
     //@{
     o2scl::table_units<> table_obj;
@@ -263,14 +295,6 @@ namespace o2scl_acol {
     o2scl::kde_python<> pkde_obj;
     //@}
     
-    /** \brief True if we should run interactive mode after parsing
-        the command-line
-    */
-    bool post_interactive;
-
-    /// The environment variable to read from 
-    std::string env_var_name;
-
     /// \name Colors
     //@{
     /// Color for commands
@@ -289,37 +313,14 @@ namespace o2scl_acol {
     std::string default_color;
     //@}
 
-    /// Default acol options for any type
-    std::vector<o2scl::comm_option_s> opts_new;
+    /// \name Other functions
+    //@{
+    /** \brief Validate the setting of \ref interp_type
+        
+        Used in \ref comm_set().
+     */
+    int validate_interp_type();
     
-    /** \brief Color specification for terminal output
-
-        Note that full 3 byte colors are not supported in OSX terminal
-        and not yet supported here.
-
-        The 16 basic VT100 colors are 1-15 except for black which is
-        assigned value 256. For 8 bit colors, use values greater than
-        15 and smaller than 256. The thousands digit is used for the
-        underline attribute, the tens of thousands digit is used for
-        the intensity attribute (0 is normal, 1 is high intensity, and
-        2 is low intensity). Background colors are specified similarly
-        to foreground colors, but multipled by 100,000.
-
-        By default, commands are cyan, types are magenta, parameters
-        are red, help topics are green, executable commands are white,
-        and URLS are underlined.
-    */
-    std::string color_spec;
-    
-  protected:
-
-    /** \brief Clear memory associated with the current object and set
-        type to ""
-    */
-    void clear_obj();
-
-  public:
-
     /** \brief Return true if acol can provide help on the
         specified arguments
 
@@ -408,6 +409,7 @@ namespace o2scl_acol {
 
     /// Add the parameters for 'set' to the cli object
     virtual int setup_parameters();
+    //@}
 
     /// \name Functions for the command-line interface
     //@{
@@ -3578,7 +3580,14 @@ namespace o2scl_acol {
     //@}
     
   protected:
-    
+
+    /// \name Other functions [protected]
+    //@{
+    /** \brief Clear memory associated with the current object and set
+        type to ""
+    */
+    void clear_obj();
+
     /// An internal command for prompting the user for command arguments
     int get_input(std::vector<std::string> &sv, 
                   std::vector<std::string> &directions,
@@ -3589,14 +3598,9 @@ namespace o2scl_acol {
     int get_input_one(std::vector<std::string> &sv, std::string directions,
                       std::string &in, std::string comm_name,
                       bool itive_com);
+    //@}
 
   public:
-    
-    /** \brief Validate the setting of \ref interp_type
-        
-        Used in \ref comm_set().
-     */
-    int validate_interp_type();
     
     // End of class acol_manager
   };

@@ -134,9 +134,11 @@ void auto_format::end_table() {
   if (enabled==false) return;
 
   if (verbose>0) {
-    (*outs) << "Running columnify::align() " << columns.size() << " "
-            << columns[0].size() << " " << n_headers << endl;
-    (*outs) << "Column sizes: ";
+    (*outs) << "auto_format::end_table(): cols,rows,headers: "
+            << columns.size() << " " << columns[0].size() << " "
+            << n_headers << endl;
+    
+    (*outs) << "auto_format::end_table(): number of rows in each column: ";
     for(size_t k=0;k<columns.size();k++) {
       (*outs) << columns[k].size() << " ";
     }
@@ -145,21 +147,19 @@ void auto_format::end_table() {
 
   // Determine alignments
   size_t row=n_headers;
-  aligns.resize(columns.size()-1);
-  for(size_t i=0;i<columns.size()-1;i++) {
-    if (!is_number(columns[i][row])) {
-      aligns[i]=columnify::align_left;
-    } else {
-      aligns[i]=columnify::align_dp;
-    }
+  aligns.resize(columns.size());
+  for(size_t i=0;i<columns.size();i++) {
+    aligns[i]=columnify::align_lnum;
+    //if (!is_number(columns[i][row])) {
+    //} else {
+    //aligns[i]=columnify::align_dp;
+    //}
   }
   
   // Now output the table
-  columnify c;
-  c.table_lines=table_lines;
   vector<string> tab_out(columns[0].size());
-  c.align(columns,columns.size()-1,columns[0].size(),
-	  tab_out,aligns);
+  col.align(columns,columns.size(),columns[0].size(),
+            tab_out,aligns,n_headers);
 
   for(size_t j=0;j<tab_out.size();j++) {
     if (verbose>0) {

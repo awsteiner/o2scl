@@ -196,8 +196,6 @@ namespace o2scl {
 
   /** \brief Configurable command-line interface
 
-      This class is experimental.
-
       Default commands: help, get, set, quit, exit, license, no-intro,
       commands, warranty, alias, run, shell, and '!'.
 
@@ -211,11 +209,21 @@ namespace o2scl {
       \note In interactive mode, commands are limited to 300 characters,
       but this limit does not apply when readline is used.
 
+      <b>Concepts</b>
+
+      As a matter of definition, the command-line arguments are simply
+      called arguments. They are separated in commands (which begin
+      with either one dash or two) and parameters to these commands.
+      The word "parameter" is also used to refer to quantities which
+      are modifiable by <tt>get</tt> and <tt>set</tt>.
+      
       \verbatim embed:rst
       .. todo:: 
 
          In class cli:
-         - Future: Warn in run_interactive() when extra parameters are given.
+         
+         - Future: Warn in run_interactive() when extra parameters are
+           given.
          - Future: A replace command function, there's already some code
            in cli.cpp for this.
          - Future: There's some code duplication between comm_option_run()
@@ -225,13 +233,6 @@ namespace o2scl {
 
       \endverbatim
 
-      <b>Concepts</b>
-
-      As a matter of definition, the command-line arguments are simply
-      called arguments. They are separated in commands (which begin
-      with either one dash or two) and parameters to these commands.
-      The word "parameter" is also used to refer to quantities which
-      are modifiable by <tt>get</tt> and <tt>set</tt>.
   */
   class cli {
 
@@ -428,12 +429,15 @@ namespace o2scl {
     /// List of commands
     std::vector<comm_option_s> clist;
   
-    /// \name Help for parameters
+    /// \name Help for parameters [protected]
     //@{
-    std::vector<std::string> ph_name, ph_desc;
+    /// Parameter names
+    std::vector<std::string> ph_name;
+    /// Parameter descriptions
+    std::vector<std::string> ph_desc;
     //@}
 
-    /// \name Aliases
+    /// \name Aliases [protected]
     //@{
     std::map<std::string,std::string,std::greater<std::string> > als;
     typedef std::map<std::string,std::string,

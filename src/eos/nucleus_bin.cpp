@@ -544,92 +544,14 @@ int nucleus_bin::get(std::vector<std::string> &sv, bool itive_com) {
   
   if (ame20exp.is_included(Z,N)) {
     nucmass_ame::entry en=ame20exp.get_ZN(Z,N);
-    cout.setf(ios::left);
-    cout << "Nubase entries:" << endl;
-    cout << "Z i ";
-    cout.width(precision+8);
-    cout << " mass ";
-    cout.width(precision+8);
-    cout << " dmass ";
-    cout << "a ";
-    cout.width(precision+8);
-    cout << " exc_energy ";
-    cout.width(precision+8);
-    cout << " dexc_en. ";
-    cout << "a ";
-    cout << "ori";
-    cout << "iu";
-    cout << "ii";
-    cout.width(precision+8);
-    cout << " hlife ";
-    cout << "a ";
-    cout << "hun ";
-    cout.width(9);
-    cout << "dhlife ";
-    cout.width(16);
-    cout << "spin parity ";
-    cout << "ENyr ";
-    cout << "disc ";
-    cout << "decay intensity" << endl;
-    
-    for(size_t j=0;j<en.props.size();j++) {
-      cout << en.props[j].Znote << " ";
-      if (en.props[j].isomer=='\0') {
-        cout << "_ ";
-      } else {
-        cout << en.props[j].isomer << " ";
-      }
-      cout.setf(ios::showpos);
-      cout << en.props[j].mass << " ";
-      cout << en.props[j].dmass << " ";
-      cout.unsetf(ios::showpos);
-      cout << en.props[j].mass_acc << " ";
-      cout.setf(ios::showpos);
-      cout << en.props[j].exc_energy << " ";
-      cout << en.props[j].dexc_energy << " ";
-      cout.unsetf(ios::showpos);
-      cout << en.props[j].exc_energy_acc << " ";
-      cout.width(2);
-      cout << ((std::string)(&(en.props[j].origin[0]))) << " ";
-      if (en.props[j].isomer_unc=='\0') {
-        cout << "_ ";
-      } else {
-        cout << en.props[j].isomer_unc << " ";
-      }
-      if (en.props[j].isomer_inv=='\0') {
-        cout << "_ ";
-      } else {
-        cout << en.props[j].isomer_inv << " ";
-      }
-      cout.setf(ios::showpos);
-      cout << en.props[j].hlife << " ";
-      cout.unsetf(ios::showpos);
-      cout << en.props[j].hlife_acc << " ";
-      cout.width(3);
-      cout << ((std::string)(&(en.props[j].hl_unit[0]))) << " ";
-      cout.width(8);
-      cout << ((std::string)(&(en.props[j].dhlife[0]))) << " ";
-      cout.width(15);
-      cout << ((std::string)(&(en.props[j].spinp[0]))) << " ";
-      cout.width(4);
-      cout << en.props[j].ENSDF_year << " ";
-      cout.width(4);
-      cout << en.props[j].discovery << " ";
-      if (en.props[j].decay_intensity[0]=='\0') {
-        cout << "_" << endl;
-      } else {
-        cout << ((std::string)(&(en.props[j].decay_intensity[0]))) << endl;
-      }
-    }
-    cout.unsetf(ios::left);
-    cout << endl;
     
     auto_format at;
     at.start_table();
-    at << "Znote" << "iso" << "mass" << "δmass" << "mass acc." << "exc. energy";
-    at << "δexc. en." << "exc. en. acc." << "orig." << "iso. unc.";
+    at << "Znote" << "iso" << "mass" << "mass unc." << "mass acc."
+       << "exc. energy";
+    at << "exc. en. unc." << "exc. en. acc." << "orig." << "iso. unc.";
     at << "iso. inv." << "half life" << "HL acc." << "HL unit"
-       << "δHL" << "spin par.";
+       << "HL unc." << "spin par.";
     at << "ENSDF yr." << "disc. yr" << "decay inten." << endo;
 
     for(size_t j=0;j<en.props.size();j++) {

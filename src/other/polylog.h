@@ -95,10 +95,9 @@ namespace o2scl {
         \c res and the error in \c err
     */
     int calc_err(fp_t a, fp_t mu, fp_t &res, fp_t &err) {
-      func_t f=
-        std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
-                  (&fermi_dirac_integ_tl::obj_func),
-                  this,std::placeholders::_1,a,mu);
+      func_t f=std::bind(std::mem_fn<fp_t(fp_t,fp_t,fp_t)>
+                         (&fermi_dirac_integ_tl::obj_func),
+                         this,std::placeholders::_1,a,mu);
       fp_t zero=0;
       int iret=iiu.integ_iu_err(f,zero,res,err);
       return iret;
@@ -429,7 +428,10 @@ namespace o2scl {
 
       Note that the GSL definition of the Fermi-Dirac integral
       includes an additional factor of \f$ 1/\Gamma(a+1) \f$
-      which is not included here. 
+      which is not included here.
+
+      This class is used by \ref fermion_rel_ld and
+      \ref fermion_rel_cdf25.
 
       \verbatim embed:rst
       

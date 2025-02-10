@@ -243,7 +243,7 @@ namespace o2scl {
 
   protected:
 
-    /// \name EOS helper functions
+    /// \name EOS helper functions [protected]
     //@{
     /** \brief Compute the coefficients of the potential energy which
         have unique dependence on the densities
@@ -878,7 +878,7 @@ namespace o2scl {
     
   protected:
 
-    /// \name Functions and parameters for calpar()
+    /// \name Functions and parameters for calpar() [protected]
     //@{
     int calparfun(size_t nv, const ubvector &x, ubvector &y);
     int calparfun2(size_t nv, const ubvector &x, ubvector &y);

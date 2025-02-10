@@ -261,6 +261,8 @@ namespace o2scl {
   */
   bool has_minus_sign(double *x);
 
+  //bool has_minus_sign_i(int *x);
+
   /** \brief Return true if the string \c s is likely a integral or
       floating point number
       
@@ -269,6 +271,10 @@ namespace o2scl {
       non-numbers.
   */
   bool is_number(std::string s);
+
+  /// Try to guess the type of a string
+  void guess_type(std::string s, bool &is_int, bool &is_fp, bool &is_fp_sci,
+                  bool &has_minus, bool &not_num);
 
   /** \brief Split a string into words using whitespace for delimiters
       and (partially) respecting quotes

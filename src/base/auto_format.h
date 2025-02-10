@@ -31,6 +31,7 @@
 #include <vector>
 
 #include <o2scl/err_hnd.h>
+#include <o2scl/columnify.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -236,6 +237,9 @@ namespace o2scl_auto_format {
 
     /// \name Settings
     //@{
+    /// The columnify object for table formatting
+    o2scl::columnify col;
+    
     /// If true, align the output of matrices (default true)
     bool align_matrices;
     
