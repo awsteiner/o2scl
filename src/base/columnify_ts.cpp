@@ -64,12 +64,12 @@ int main(void) {
       }
     }
     // Demonstrate all of the various alignments
-    align.push_back(1);
-    align.push_back(2);
-    align.push_back(3);
-    align.push_back(4);
-    align.push_back(5);
-    align.push_back(6);
+    align.push_back(columnify::align_left);
+    align.push_back(columnify::align_right);
+    align.push_back(columnify::align_lmid);
+    align.push_back(columnify::align_rmid);
+    align.push_back(columnify::align_dp);
+    align.push_back(columnify::align_lnum);
     
     // No headers, no lines
     c.align(table,6,nr,ctable,align);
@@ -122,7 +122,7 @@ int main(void) {
         table[j].push_back(dtos(sin((i+j)*100.0)));
       }
     }
-    align.push_back(5);
+    align.push_back(columnify::align_dp);
     
     // Two lines of headers, terminal lines
     c.table_lines=2;
@@ -150,8 +150,8 @@ int main(void) {
         table[j].push_back(dtos(sin((i+j)*100.0)));
       }
     }
-    align.push_back(5);
-    align.push_back(6);
+    align.push_back(columnify::align_dp);
+    align.push_back(columnify::align_lnum);
 
     // Two lines of headers, terminal lines
     c.table_lines=2;
@@ -167,22 +167,24 @@ int main(void) {
   
   if (true) {
 
+    c.verbose=1;
     std::vector<std::vector<std::string>> table;
+    std::vector<std::string> ctable;
     std::vector<int> align;
-    table[0].push_back({"-1","+2","-100","+100","1234532"});
-    table[1].push_back({"-1","blah","-1.3e4","1e5"});
-    table[2].push_back({"-1.0e4","1.345e2","-1.22e2"});
-    table[3].push_back({"this","is","a","test"});
+    table.push_back({"-1","+2","-100","+100","1234532"});
+    table.push_back({"-1","10.0","-1.3e4","1e5","-1.234"});
+    table.push_back({"-1.0e4","1.345e2","-1.22e2","1.2345e2","-1.44e3"});
+    table.push_back({"this","is","a","test","blah"});
     
     // Test data
-    align.push_back(7);
-    align.push_back(7);
-    align.push_back(7);
-    align.push_back(7);
+    align.push_back(columnify::align_auto);
+    align.push_back(columnify::align_auto);
+    align.push_back(columnify::align_auto);
+    align.push_back(columnify::align_auto);
 
     // Two lines of headers, terminal lines
     c.table_lines=2;
-    c.align(table,table.size(),nr,ctable,align);
+    c.align(table,table.size(),5,ctable,align);
     
     for(size_t i=0;i<ctable.size();i++) {
       cout << ctable[i] << " " << ter.str_len(ctable[i]) << endl;

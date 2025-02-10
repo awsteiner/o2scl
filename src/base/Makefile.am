@@ -21,7 +21,7 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	test_mgr.cpp vector.cpp auto_format.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	tensor.cpp cursesw.cpp string_python.cpp \
-	base_python.cpp funct.cpp funct_to_fp.cpp
+	base_python.cpp funct.cpp funct_to_fp.cpp columnify.cpp
 #nvt.cpp
 
 BASE_SRCS = $(BASE_BASE_SRCS)

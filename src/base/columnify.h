@@ -259,6 +259,11 @@ namespace o2scl {
           } else {
             align_spec[i]=align_dp;
           }
+          if (verbose>0) {
+            std::cout << "columnify::add_spaces(): "
+                      << "Using align " << align_spec[i]
+                      << " for column " << i << "." << std::endl;
+          }
         }
       }
       
@@ -369,6 +374,15 @@ namespace o2scl {
 	      csizes[i]=ter.str_len(table_in[i][j]);
 	    }
 
+            /// Adjust for lnum if the largest width field is
+            // a positive number
+            if (align_spec[i]==align_lnum &&
+                table_in[i][j].length()>0 &&
+                table_in[i][j][0]!='-' &&
+                ter.str_len(table_in[i][j])==csizes[i]) {
+              csizes[i]++;
+            }
+
 	  }
 
           if (verbose>1) {
@@ -378,6 +392,7 @@ namespace o2scl {
                       << std::endl;
           }
 	}
+
       }
 
       // Second pass: go through row by row, adding enough spaces to

@@ -187,8 +187,8 @@ bool o2scl::has_minus_sign(double *x) {
   return false;
 }
 
-void guess_type(std::string s, bool &is_int, bool &is_fp,
-                bool &is_fp_sci, bool &has_minus, bool &not_num) {
+void o2scl::guess_type(std::string s, bool &is_int, bool &is_fp,
+                       bool &is_fp_sci, bool &has_minus, bool &not_num) {
   
   if (is_number(s)==false) {
     not_num=true;
