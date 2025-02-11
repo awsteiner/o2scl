@@ -240,9 +240,6 @@ namespace o2scl {
       return;
     }
 
- 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /** \brief Vector containing the tunable variable F and CR
@@ -283,14 +280,13 @@ namespace o2scl {
     }
 
     private:
-
-    diff_evo_adapt<func_t,vec_t,init_funct_t>
-    (const diff_evo_adapt<func_t,vec_t,init_funct_t> &);
-    diff_evo_adapt<func_t,vec_t,init_funct_t> &operator=
-    (const diff_evo_adapt<func_t,vec_t,init_funct_t>&);
-
-#endif
-
+      
+      diff_evo_adapt<func_t,vec_t,init_funct_t>
+      (const diff_evo_adapt<func_t,vec_t,init_funct_t> &);
+      
+      diff_evo_adapt<func_t,vec_t,init_funct_t> &operator=
+      (const diff_evo_adapt<func_t,vec_t,init_funct_t>&);
+      
     };
 
 }

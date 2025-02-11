@@ -171,8 +171,6 @@ namespace o2scl {
     
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// Zero-temperature thermodynamics for the electrons
     fermion_zerot fzt;
 
@@ -192,8 +190,6 @@ namespace o2scl {
     /// The nuclear mass formula
     nucmass *nmp;
     
-#endif
-
   };
 
 #ifdef O2SCL_NEVER_DEFINED

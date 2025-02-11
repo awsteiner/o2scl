@@ -71,8 +71,6 @@ namespace o2scl {
   template<class func_t=funct> class min_cern :
     public min_bkt_base<func_t> {
       
-#ifndef DOXGYEN_INTERNAL
-
       protected:
 
       /// C analog of Fortran's "Nearest integer" function 
@@ -81,8 +79,6 @@ namespace o2scl {
 	else return ((int)(x+0.5));
       }
     
-#endif      
-
     public:
       
       min_cern() {

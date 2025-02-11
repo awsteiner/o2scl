@@ -424,8 +424,6 @@ namespace o2scl {
     mroot_hybrids<> mh;
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Solve to ensure zero charge in \f$ \beta \f$-equilibrium
@@ -457,8 +455,6 @@ namespace o2scl {
     
     /// Storage for the EOS table
     std::shared_ptr<table_units<> > eost;
-
-#endif
 
   };
 

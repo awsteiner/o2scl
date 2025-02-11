@@ -261,8 +261,6 @@ namespace o2scl {
   */
   bool has_minus_sign(double *x);
 
-  //bool has_minus_sign_i(int *x);
-
   /** \brief Return true if the string \c s is likely a integral or
       floating point number
       

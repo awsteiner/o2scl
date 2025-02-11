@@ -45,12 +45,12 @@
 
 namespace o2scl {
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
 
   /// \name Floating point typedefs in src/base/funct_multip.h
   //@{
   
-#ifdef O2SCL_SET_MPFR
+#if defined (O2SCL_SET_MPFR) || defined (DOXYGEN)
   
   typedef boost::multiprecision::number<
     boost::multiprecision::mpfr_float_backend<25>> mpfr_25;
@@ -108,7 +108,7 @@ namespace o2scl {
   */
   typedef std::function<long double(long double)> funct_ld;
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
   
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h

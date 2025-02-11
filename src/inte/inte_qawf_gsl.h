@@ -127,8 +127,6 @@ namespace o2scl {
       return status;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// The integration workspace
@@ -379,8 +377,6 @@ namespace o2scl {
       return func(t)*sin(this->omega*t);
     }
 
-#endif
-  
     /// Return string denoting type ("inte_qawf_gsl_sin")
     const char *type() { return "inte_qawf_gsl_sin"; }
   
@@ -429,8 +425,6 @@ namespace o2scl {
       
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// Add the oscillating part to the integrand
@@ -438,8 +432,6 @@ namespace o2scl {
       return func(t)*cos(this->omega*t);
     }
 
-#endif
-  
     /// Return string denoting type ("inte_qawf_gsl_cos")
     const char *type() { return "inte_qawf_gsl_cos"; }
   

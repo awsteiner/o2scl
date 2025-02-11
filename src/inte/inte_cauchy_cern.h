@@ -177,12 +177,8 @@ namespace o2scl {
 
     protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// The base integration object
     inte<func_t,fp_t> *it;
-
-#endif
 
   };
 

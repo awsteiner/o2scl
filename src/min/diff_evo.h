@@ -331,8 +331,6 @@ namespace o2scl {
       return 0;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Vector containing the population.
@@ -414,18 +412,13 @@ namespace o2scl {
       return agents;
     }
 
-#endif
-
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     diff_evo<func_t,vec_t,init_funct_t>
     (const diff_evo<func_t,vec_t,init_funct_t> &);
+
     diff_evo<func_t,vec_t,init_funct_t> &operator=
     (const diff_evo<func_t,vec_t,init_funct_t>&);
-
-#endif
 
   }; 
 

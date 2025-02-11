@@ -895,8 +895,8 @@ namespace o2scl {
     */
     std::string get_column_name(size_t icol) const {
       if (icol+1>atree.size()) {
-        O2SCL_ERR((((std::string)"Index '")+o2scl::szttos(icol)+
-                   " larger than number of "+
+        O2SCL_ERR((((std::string)"Index ")+o2scl::szttos(icol)+
+                   " is greater than the number of "+
                    "columns in table::get_column_name().").c_str(),
                   exc_enotfound);
       }
@@ -1156,19 +1156,35 @@ namespace o2scl {
         present table named \c src_col which interpolates \c loc_index
         into \c src_index.  The interpolation objects from the \c
         source table will be used. If there is already a column in the
-        present table named \c src_col, then this will fail.
+        present table named \c dest_col, then this function will
+        call the error handler.
     */
-    template<class vec2_t>
-    void add_col_from_table(table<vec2_t> &source,
-                            std::string src_index, std::string src_col,
-                            std::string dest_index="",
-                            std::string dest_col="") {
+    template<class vec2_t> void add_col_from_table
+    (table<vec2_t> &source, std::string src_index, std::string src_col,
+     std::string dest_index="", std::string dest_col="") {
     
       if (dest_col=="") dest_col=src_col;
       if (dest_index=="") dest_index=src_index;
 
+      if (!is_column(dest_index)) {
+        O2SCL_ERR2("Index column does not exist in ",
+                   "table::add_col_from_table().",
+                   o2scl::exc_einval);
+      }
+      if (!source.is_column(src_index)) {
+        O2SCL_ERR2("Index column does not exist in source table in ",
+                   "table::add_col_from_table().",
+                   o2scl::exc_einval);
+      }
+      
       // Add the new column
-      if (!is_column(dest_col)) new_column(dest_col);
+      if (is_column(dest_col)) {
+        O2SCL_ERR((((std::string)"Trying to add column named ")+
+                   dest_col+" but it is already present in "+
+                   "table::add_col_from_table().").c_str(),
+                  o2scl::exc_einval);
+      }
+      new_column(dest_col);
   
       // Fill the new column
       for(size_t i=0;i<nlines;i++) {
@@ -1186,8 +1202,8 @@ namespace o2scl {
         the current table using interpolation, using the columns \c
         src_index and \c dest_index as the independent variable. The
         column named \c src_index is the column of the independent
-        variable in \c source and the column named \c dest_index
-        is the column of the independent variable in the current table.
+        variable in \c source and the column named \c dest_index is
+        the column of the independent variable in the current table.
         If \c dest_index is empty (the default) then the names in the
         two tables are taken to be the same.
 
@@ -1200,9 +1216,10 @@ namespace o2scl {
         and rows in the current table which have values of the independent
         variable which are outside the source table are unmodified. 
 
-        If a column for a dependent variable in \c source has the
-        same name as \c dest_index, then it is ignored and not inserted
-        into the current table.
+        If a column in \c source has the same name as that in the
+        destination, then those columns in the destination table are
+        not modified. If all columns in the source are already in the
+        destination table, then this function silently does nothing.
 
         If the column named \c src_index cannot be found in 
         \c source or the column names \c dest_index cannot be found
@@ -1219,10 +1236,12 @@ namespace o2scl {
       if (dest_index=="") dest_index=src_index;
 
       if (!source.is_column(src_index)) {
-        O2SCL_ERR("Source indep. var. column not found.",o2scl::exc_einval);
+        O2SCL_ERR2("Source index column not found in ",
+                   "table::insert_table().",o2scl::exc_einval);
       }
       if (!is_column(dest_index)) {
-        O2SCL_ERR("Dest. indep. var. column not found.",o2scl::exc_einval);
+        O2SCL_ERR2("Destination index column not found in ",
+                   "table::insert_table().",o2scl::exc_einval);
       }
 
       // Find limits to avoid extrapolation if necessary
@@ -1246,11 +1265,13 @@ namespace o2scl {
 
       // Create new columns and perform interpolation
       for(size_t i=0;i<col_list.size();i++) {
-        if (!is_column(col_list[i])) new_column(col_list[i]);
-        for(size_t j=0;j<get_nlines();j++) {
-          fp_t val=get(dest_index,j);
-          if (allow_extrap || (val>=min && val<=max)) {
-            set(col_list[i],j,source.interp(src_index,val,col_list[i]));
+        if (!is_column(col_list[i])) {
+          new_column(col_list[i]);
+          for(size_t j=0;j<get_nlines();j++) {
+            fp_t val=get(dest_index,j);
+            if (allow_extrap || (val>=min && val<=max)) {
+              set(col_list[i],j,source.interp(src_index,val,col_list[i]));
+            }
           }
         }
       }

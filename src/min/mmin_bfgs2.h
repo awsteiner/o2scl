@@ -821,16 +821,13 @@ namespace o2scl {
     return status;
   }
 
-#ifndef DOXYGEN_INTERNAL
-
  private:
 
   mmin_bfgs2<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>
   (const mmin_bfgs2<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t> &);
+    
   mmin_bfgs2<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>& operator=
   (const mmin_bfgs2<func_t,vec_t,dfunc_t,auto_grad_t,def_auto_grad_t>&);
-
-#endif
 
   };
 

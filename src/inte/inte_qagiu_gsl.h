@@ -50,15 +50,11 @@ namespace o2scl {
   template<class func_t=funct> class inte_qagiu_gsl : 
     public inte_transform_gsl<func_t> {
       
-#ifndef DOXGYEN_INTERNAL
-
   protected:
 
   /// The lower limit
   double lower_limit;
 
-#endif
-      
   public:
   
   /** \brief Integrate a function over the interval \f$ [a, \infty) \f$ 
@@ -83,8 +79,6 @@ namespace o2scl {
   /// Return string denoting type ("inte_qagiu_gsl")
   const char *type() { return "inte_qagiu_gsl"; }
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
   /// Transform to \f$ t \in (0,1] \f$
@@ -94,8 +88,6 @@ namespace o2scl {
     return y/t/t;
   }
 
-#endif
-      
   };
   
 }

@@ -84,8 +84,6 @@ namespace o2scl {
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_constr_spg : 
     public mmin_constr<func_t,dfunc_t,ool_hfunct,vec_t> {
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// A convenient typedef for the unused Hessian product type
@@ -217,8 +215,6 @@ namespace o2scl {
       }
       return 0;
     }
-
-#endif
 
     public:
 
@@ -411,17 +407,14 @@ namespace o2scl {
     /// Return string denoting type ("mmin_constr_spg")
     const char *type() { return "mmin_constr_spg"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
   mmin_constr_spg<func_t,dfunc_t,vec_t>
   (const mmin_constr_spg<func_t,dfunc_t,vec_t> &);
+    
   mmin_constr_spg<func_t,dfunc_t,vec_t>& operator=
   (const mmin_constr_spg<func_t,dfunc_t,vec_t>&);
 
-#endif
-      
   };
   
 }

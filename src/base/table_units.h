@@ -79,25 +79,26 @@ namespace o2scl {
   class table_units : public table<vec_t,double> {
     
   public:
-  
+    
 #ifdef O2SCL_NEVER_DEFINED
   }{
 #endif
     
     /** \brief Create a new table_units with space for nlines<=cmaxlines.
      */
-  table_units(int cmaxlines=0) : table<vec_t,double>(cmaxlines) {
+    table_units(int cmaxlines=0) : table<vec_t,double>(cmaxlines) {
       cup=&o2scl_settings.get_convert_units();
     }
     
     virtual ~table_units() {
       utree.clear();
     }
-
+    
     /// \name Copy constructors
     //@{
     /// Copy with constructor from \ref table_units
-  table_units(const table_units &t) : table<vec_t,double>(t.get_nlines()) {
+    table_units(const table_units &t) :
+      table<vec_t,double>(t.get_nlines()) {
   
       // Copy constants 
       this->constants=t.constants;
@@ -876,51 +877,136 @@ namespace o2scl {
       return 0;
     }
     
+    /** \brief Insert a column from a separate table, interpolating
+        it into a new column
+	
+        Given a pair of columns ( \c src_index, \c src_col ) in a
+        separate table (\c source), this creates a new column in the
+        present table named \c src_col which interpolates \c loc_index
+        into \c src_index.  The interpolation objects from the \c
+        source table will be used. If there is already a column in the
+        present table named \c dest_col, then this function will
+        call the error handler.
+
+        This function, in contrast to \ref table::add_col_from_table(),
+        requires the source and destination index columns to have the
+        same units. If they are not the same, the error handler is
+        called.
+    */
+    template<class vec2_t> void add_col_from_table_units
+      (table_units<vec2_t> &source, std::string src_index,
+       std::string src_col,
+       std::string dest_index="", std::string dest_col="") {
+    
+      if (dest_col=="") dest_col=src_col;
+      if (dest_index=="") dest_index=src_index;
+
+      if (!this->is_column(dest_index)) {
+        O2SCL_ERR2("Index column does not exist in ",
+                   "table_units::add_col_from_table_units().",
+                   o2scl::exc_einval);
+      }
+      if (!source.is_column(src_index)) {
+        O2SCL_ERR2("Index column does not exist in source table in ",
+                   "table_units::add_col_from_table_units().",
+                   o2scl::exc_einval);
+      }
+      
+      // Add the new column
+      if (this->is_column(dest_col)) {
+        O2SCL_ERR((((std::string)"Trying to add column named ")+
+                   dest_col+" but it is already present in "+
+                   "table::add_col_from_table().").c_str(),
+                  o2scl::exc_einval);
+      }
+      this->new_column(dest_col);
+
+      if (get_unit(dest_index)!=source.get_unit(src_index)) {
+        O2SCL_ERR((((std::string)"Source index column ")+
+                   src_index+" has units "+source.get_unit(src_index)+
+                   " but destination index column "+dest_index+
+                   " has units "+get_unit(dest_index)+
+                   " in table_units::add_col_from_table().").c_str(),
+                  o2scl::exc_einval);
+      }
+  
+      // Fill the new column
+      for(size_t i=0;i<this->nlines;i++) {
+        set(dest_col,i,source.interp(src_index,
+                                     this->get(dest_index,i),src_col));
+      }
+  
+      return;
+    }
+    
     /** \brief Insert columns from a source table into the new
 	table by interpolation (or extrapolation)
+        
+        This takes all of the columns in \c source, and adds them into
+        the current table using interpolation, using the columns \c
+        src_index and \c dest_index as the independent variable. The
+        column named \c src_index is the column of the independent
+        variable in \c source and the column named \c dest_index
+        is the column of the independent variable in the current table.
+        If \c dest_index is empty (the default) then the names in the
+        two tables are taken to be the same.
+        
+        If necessary, columns are created in the current table for the
+        dependent variable columns in \c source. Columns in the current
+        table which do not correspond to dependent variable columns in
+        \c source are left unchanged.
+        
+        If \c allow_extrap is false, then extrapolation is not allowed,
+        and rows in the current table which have values of the independent
+        variable which are outside the source table are unmodified. 
+        
+        If a column for a dependent variable in \c source has the
+        same name as \c dest_index, then it is ignored and not inserted
+        into the current table.
+        
+        If the column named \c src_index cannot be found in 
+        \c source or the column names \c dest_index cannot be found
+        in the current table, then the error handler is called.
+        
+        If the \c allow_extrap is false and either the minimum or
+        maximum values of the column named \c src_index in the \c source
+        table are not finite, then the error handler is called.
 
-      This takes all of the columns in \c source, and adds them into
-      the current table using interpolation, using the columns \c
-      src_index and \c dest_index as the independent variable. The
-      column named \c src_index is the column of the independent
-      variable in \c source and the column named \c dest_index
-      is the column of the independent variable in the current table.
-      If \c dest_index is empty (the default) then the names in the
-      two tables are taken to be the same.
-
-      If necessary, columns are created in the current table for the
-      dependent variable columns in \c source. Columns in the current
-      table which do not correspond to dependent variable columns in
-      \c source are left unchanged.
-
-      If \c allow_extrap is false, then extrapolation is not allowed,
-      and rows in the current table which have values of the independent
-      variable which are outside the source table are unmodified. 
-
-      If a column for a dependent variable in \c source has the
-      same name as \c dest_index, then it is ignored and not inserted
-      into the current table.
-
-      If the column named \c src_index cannot be found in 
-      \c source or the column names \c dest_index cannot be found
-      in the current table, then the error handler is called.
-
-      If the \c allow_extrap is false and either the minimum or
-      maximum values of the column named \c src_index in the \c source
-      table are not finite, then the error handler is called.
+        This function (as opposed to the function \ref
+        table::insert_table()) ensures that the new columns created in
+        the destination table have their unit field set to the value
+        which was in the source table.
+        
+        This function, in contrast to \ref table::insert_table(),
+        requires the source and destination index columns to have the
+        same units. If they are not the same, the error handler is
+        called.
     */
-    template<class vec2_t>
-      void insert_table(table_units<vec2_t> &source, std::string src_index,
-			bool allow_extrap=true, std::string dest_index="") {
+    template<class vec2_t> void insert_table_units
+      (table_units<vec2_t> &source, std::string src_index,
+       bool allow_extrap=true, std::string dest_index="") {
       
       if (dest_index=="") dest_index=src_index;
       
       if (!source.is_column(src_index)) {
-	O2SCL_ERR("Source indep. var. column not found.",o2scl::exc_einval);
+        O2SCL_ERR((((std::string)"Source index column,")+
+                   src_index+" not found in "+
+                   "table_units::insert_table_units().").c_str(),
+                  o2scl::exc_einval);
       }
       if (!this->is_column(dest_index)) {
-	O2SCL_ERR("Dest. indep. var. column not found.",o2scl::exc_einval);
+        O2SCL_ERR2("Destination index column not found in ",
+                   "table_units::insert_table_units().",o2scl::exc_einval);
       }
+      if (get_unit(dest_index)!=source.get_unit(src_index)) {
+        O2SCL_ERR((((std::string)"Source index column ")+
+                   src_index+" has units "+source.get_unit(src_index)+
+                   " but destination index column "+dest_index+
+                   " has units "+get_unit(dest_index)+
+                   " in table_units::add_col_from_table().").c_str(),
+                  o2scl::exc_einval);
+      }
+  
 
       // Find limits to avoid extrapolation if necessary
       double min=source.min(src_index);
@@ -935,29 +1021,33 @@ namespace o2scl {
       // Create list of columns to interpolate
       std::vector<std::string> col_list;
       for(size_t i=0;i<source.get_ncolumns();i++) {
-	std::string colx=source.get_column_name(i);
-	if (colx!=src_index && colx!=dest_index) {
-	  col_list.push_back(colx);
+	std::string col_name=source.get_column_name(i);
+	if (col_name!=src_index && col_name!=dest_index) {
+	  col_list.push_back(col_name);
 	}
       }
       
       // Create new columns and perform interpolation
       for(size_t i=0;i<col_list.size();i++) {
-	if (!this->is_column(col_list[i])) this->new_column(col_list[i]);
-	set_unit(col_list[i],source.get_unit(col_list[i]));
-	for(size_t j=0;j<this->get_nlines();j++) {
-	  double val=this->get(dest_index,j);
-	  if (allow_extrap || (val>=min && val<=max)) {
-	    this->set(col_list[i],j,source.interp(src_index,val,col_list[i]));
-	  }
-	}
+	if (!this->is_column(col_list[i])) {
+          this->new_column(col_list[i]);
+          set_unit(col_list[i],source.get_unit(col_list[i]));
+          for(size_t j=0;j<this->get_nlines();j++) {
+            double val=this->get(dest_index,j);
+            if (allow_extrap || (val>=min && val<=max)) {
+              this->set(col_list[i],j,source.interp(src_index,val,
+                                                    col_list[i]));
+            }
+          }
+        }
       }
       
       return;
     }
     
-    // ---------
+    // ───────────────────────────────────────────────────────────────────
     // Allow HDF I/O functions to access table_units data
+    
     friend void o2scl_hdf::hdf_output
       (o2scl_hdf::hdf_file &hf, table_units<> &t, std::string name);
     
@@ -970,9 +1060,7 @@ namespace o2scl {
     template<class vecf_t> friend void o2scl_hdf::hdf_input_data
       (o2scl_hdf::hdf_file &hf, table_units<vecf_t> &t);
 
-    // ---------
-
-#ifndef DOXYGEN_INTERNAL
+    // ───────────────────────────────────────────────────────────────────
 
   protected:
     
@@ -991,8 +1079,6 @@ namespace o2scl {
     /// Unit map
     std::map<std::string,std::string,std::greater<std::string> > utree;
   
-#endif
-
   };
 
   /** \brief Thin table \c src using window parameter \c window and

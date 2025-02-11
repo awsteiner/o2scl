@@ -35,11 +35,10 @@
 /** \brief A namespace for the quadrature coefficients for 
     non-adaptive integration
     
-    <b>Documentation from GSL</b>: \n
-    Gauss-Kronrod-Patterson quadrature coefficients for use in
-    quadpack routine qng. These coefficients were calculated with
-    101 decimal digit arithmetic by L. W. Fullerton, Bell Labs, Nov
-    1981. 
+    <b>Documentation from GSL</b>: Gauss-Kronrod-Patterson quadrature
+    coefficients for use in quadpack routine qng. These coefficients
+    were calculated with 101 decimal digit arithmetic by L. W.
+    Fullerton, Bell Labs, Nov 1981.
 
 */
 namespace o2scl_inte_qng_coeffs {

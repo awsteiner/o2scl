@@ -254,8 +254,6 @@ namespace o2scl {
 
   protected:
     
-#ifndef DOXYGEN_INTERNAL
-
     /// Non-relativistic fermion thermodyanmics
     fermion_nonrel nrf;
 
@@ -279,8 +277,6 @@ namespace o2scl {
     /// Compute the energy
     double energy(double x);
 
-#endif
-    
   };
   
 }

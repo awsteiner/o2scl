@@ -56,8 +56,6 @@ namespace o2scl {
    */
   class eos_had_sym4_base {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// An electron for the computation of the \f$ \hat{\mu}\f$
@@ -65,8 +63,6 @@ namespace o2scl {
 
     /// Zero-temperature fermion thermodynamics
     fermion_zerot fzt2;
-
-#endif
 
   public:
 
@@ -192,8 +188,6 @@ namespace o2scl {
   class eos_had_sym4_mdi : public eos_had_potential, 
     public eos_had_sym4_base {
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
     
     /// Compute the kinetic part of the energy density
@@ -202,8 +196,6 @@ namespace o2scl {
     /// Compute the potential part of the energy density
     double energy_pot(double var);
 
-#endif
-    
   public:
 
     virtual int calc_temp_f_gen(double nB, double nQ, double nS,
@@ -236,14 +228,10 @@ namespace o2scl {
   */
   class eos_had_sym4 : public eos_had_eden_base {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The base equation of state to use
     eos_had_sym4_base *sp;
-
-#endif
 
   public:
 

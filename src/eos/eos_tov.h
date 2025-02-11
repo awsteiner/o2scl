@@ -1022,8 +1022,6 @@ namespace o2scl {
     std::vector<double> full_vecnb;
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Internal function to reinterpolate if if either the
@@ -1079,8 +1077,6 @@ namespace o2scl {
     /// Transition width (unitless)
     double trans_width;
     //@}
-
-#endif
 
   };
 

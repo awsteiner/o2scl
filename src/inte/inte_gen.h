@@ -110,14 +110,10 @@ namespace o2scl {
     /// Return string denoting type ("inte_gen")
     const char *type() { return "inte_gen"; }
   
-#ifndef DOXYGEN_INTERNAL
-  
     protected:
   
     /// The uncertainty for the last integration computation
     double interror;
-  
-#endif
   
   };
 

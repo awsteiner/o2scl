@@ -125,8 +125,6 @@ namespace o2scl {
   */
   class eos_had_apr : public eos_had_temp_eden_base {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// Non-relativistic fermion thermodyanmics
@@ -140,8 +138,6 @@ namespace o2scl {
 
     /// An integer to indicate which phase was used in calc_e()
     int lp;
-
-#endif
 
   public:
 

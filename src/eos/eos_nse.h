@@ -87,8 +87,6 @@ namespace o2scl {
 
     typedef boost::numeric::ublas::vector<double> ubvector;
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /// Function to solve to match neutron and proton densities
@@ -109,8 +107,6 @@ namespace o2scl {
 
     /// Compute particle properties assuming classical thermodynamics
     classical_thermo cla;
-
-#endif
 
   public:
 

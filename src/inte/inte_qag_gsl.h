@@ -97,8 +97,6 @@ namespace o2scl {
     return qag(func,a,b,this->tol_abs,this->tol_rel,&res,&err);
   }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
   /** \brief Perform an adaptive integration given the coefficients,
@@ -304,8 +302,6 @@ namespace o2scl {
     return o2scl::success;
   }
     
-#endif
-
   public:
   
   /// Return string denoting type ("inte_qag_gsl")

@@ -16,7 +16,7 @@ This class is used to provide output for matrices in the functions
 The :ref:`format_float <format_float>` class will reformat double
 precision numbers into a form appropriate for HTML or LaTeX documents.
 
-A related function, :cpp:func:`o2scl::screenify()`, reformats a column
+THe function, :cpp:func:`o2scl::screenify()` reformats a column
 of strings into many columns stored row-by-row in a new string array.
 It operates very similar to the way the classic Unix command ``ls``
 organizes files and directories in multiple columns in order to save
@@ -65,6 +65,7 @@ Other functions in ``src/base/string_conv.h`` are:
 - :cpp:func:`o2scl::count_words()`
 - :cpp:func:`o2scl::find_constant()`
 - :cpp:func:`o2scl::float_expo_mant()`
+- :cpp:func:`o2scl::guess_type()`
 - :cpp:func:`o2scl::has_minus_sign()`
 - :cpp:func:`o2scl::is_number()`
 - :cpp:func:`o2scl::parse_fortran_format()`

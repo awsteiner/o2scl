@@ -140,14 +140,10 @@ namespace o2scl {
     /// Return string denoting type ("inte_multi")
     const char *type() { return "inte_multi"; }
   
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
   
     /// The uncertainty for the last integration computation
     double interror;
-  
-#endif
   
   };
 

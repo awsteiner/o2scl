@@ -69,8 +69,6 @@ namespace o2scl {
     class mmin_constr_gencan : 
     public ool_constr_min<param_t,func_t,dfunc_t,hfunc_t,vec_t> {
     
-#ifndef DOXYGEN_INTERNAL
-    
     protected:
 
     /// Desc (default 1.0)
@@ -654,8 +652,6 @@ namespace o2scl {
 
 #endif
 
-#endif
-
     public:
 
     mmin_constr_gencan() {
@@ -948,17 +944,14 @@ namespace o2scl {
     /// Return string denoting type ("mmin_constr_gencan")
     const char *type() { return "mmin_constr_gencan"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
   mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>
   (const mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t> &);
+    
   mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>& operator=
   (const mmin_constr_gencan<func_t,dfunc_t,hfunc_t,vec_t>&);
 
-#endif
-      
   };
   
 }

@@ -1343,8 +1343,6 @@ namespace o2scl {
     
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-    
     /// \name Iterator types
     //@{
     typedef std::map<std::string,size_t,
@@ -1406,8 +1404,6 @@ namespace o2scl {
     /// Return the end of the slice tree
     map_const_iter const_end() const {return tree.end();};
     //@}
-
-#endif
 
   };
 

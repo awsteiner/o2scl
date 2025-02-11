@@ -144,8 +144,6 @@ namespace o2scl {
     */
     virtual int saturation();
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The function for calc_e()
@@ -166,8 +164,6 @@ namespace o2scl {
       return 0;
     }
 
-#endif
-    
   };
   
 }

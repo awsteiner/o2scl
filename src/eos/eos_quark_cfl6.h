@@ -276,8 +276,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// Set the quark effective masses from the gaps and the condensates
     int set_masses();
     
@@ -317,9 +315,8 @@ namespace o2scl {
   private:
 
     eos_quark_cfl6(const eos_quark_cfl6 &);
+    
     eos_quark_cfl6& operator=(const eos_quark_cfl6&);
-
-#endif
 
   };
 

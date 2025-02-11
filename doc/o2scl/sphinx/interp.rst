@@ -15,12 +15,9 @@ Interpolation introduction
 Basic interpolation of generic vector types is performed by
 :ref:`interp_vec <interp_vec>` and its children. The vector
 representing the independent variable must be monotonic, but need not
-be equally-spaced. The difference between the two classes is analogous
-to the difference between using ``gsl_interp_eval()`` and
-``gsl_spline_eval()`` in GSL. You can create a :ref:`interp_vec
-<interp_vec>` object and use it to interpolate among any pair of
-chosen vectors. For example, cubic spline interpolation with natural
-boundary conditions::
+be equally-spaced. You can create a :ref:`interp_vec <interp_vec>`
+object and use it to interpolate among any pair of chosen vectors. For
+example, cubic spline interpolation with natural boundary conditions::
 
   boost::numeric::ublas::vector<double> x(20), y(20);
   // fill x and y with data

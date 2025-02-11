@@ -60,8 +60,6 @@ namespace o2scl {
   */
   template<class func_t=funct, class fp_t=double> class deriv_base {
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /** \brief A structure for passing the function to second and 
@@ -83,8 +81,6 @@ namespace o2scl {
 
     typedef std::function<fp_t(fp_t)> internal_func_t;
     
-#endif
-
   public:
 
     deriv_base() {
@@ -213,8 +209,6 @@ namespace o2scl {
     
   protected:
     
-#ifndef DOXYGEN_INTERNAL
-    
     /** \brief Calculate the first derivative of \c func w.r.t. x
 	
 	This is an internal version of deriv() which is used in
@@ -254,8 +248,6 @@ namespace o2scl {
       return val;
     }
     
-#endif
-
   };
   
 }

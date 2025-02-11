@@ -164,8 +164,6 @@ namespace o2scl {
     /// The output stream to send output information (default \c std::cout)
     std::ostream *outs;
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// Maximum number of bins
@@ -558,8 +556,6 @@ namespace o2scl {
 
     /// Point for function evaluation
     vec_t x;
-
-#endif
 
     public:
 

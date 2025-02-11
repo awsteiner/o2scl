@@ -80,8 +80,6 @@ namespace o2scl {
   template<class func_t=funct> class inte_qaws_gsl : 
   public inte_cheb_gsl<func_t> {
     
-#ifndef DOXYGEN_INTERNAL
-		
   protected:
 
   /** \name Data from \c gsl_integration_qaws_table
@@ -359,8 +357,6 @@ namespace o2scl {
     }
   }
 		
-#endif	
-  
   public:
 		
   /** \brief Initialize the adptive workspace as with the constructor

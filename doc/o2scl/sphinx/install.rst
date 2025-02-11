@@ -24,15 +24,15 @@ Installation Contents
 General notes
 -------------
 
-O₂scl requires Boost, GSL, libquadmath, and the HDF5 libraries (the
-precise procedure for installing these libraries differs from system
-to system, but some common cases and useful information is given
-below). O₂scl is designed to be used with the most recent release
-version of all of these libraries, but is sometimes compatible with
-recent older versions. The configure script attempts to add these
-libraries to LIBS and LDFLAGS during the installation of O₂scl. In
-order to compile your code with O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lquadmath -lm``, and you may need
+O₂scl requires Boost, GSL, and the HDF5 libraries (the precise
+procedure for installing these libraries differs from system to
+system, but some common cases and useful information is given below).
+O₂scl is designed to be used with the most recent release version of
+all of these libraries, but is sometimes compatible with recent older
+versions. The configure script attempts to add these libraries to LIBS
+and LDFLAGS during the installation of O₂scl. In order to compile your
+code with O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``, and you may need
 to include ``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl
 libraries. The sections below describe several different ways of
 installing O₂scl.
@@ -130,8 +130,8 @@ Compiling O₂scl from a release on Linux
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
 package), Boost (the ``libboost-all-dev`` package), GNU readline (the
-``libreadline-dev`` package), HDF5 (the ``libhdf5-dev`` package), and
-quadmath (the ``libquadmath0`` package). You can then install O₂scl
+``libreadline-dev`` package), and HDF5 (the ``libhdf5-dev`` package).
+You can then install O₂scl
 from one of the release distributions by using the standard GNU
 ``./configure`` script and then invoking ``make`` and ``make install``
 (which often requires ``sudo``).
@@ -145,7 +145,9 @@ should not have the ``hdf5/serial/`` prefix, then you can use
   CXXFLAGS="-DO2SCL_PLAIN_HDF5_HEADER" ./configure
 
 to instruct O₂scl to look for them there (for example, on bridges at
-the PSC). On many systems, one can use a parallel HDF5 library using
+the PSC). Compression in HDF5 can be enabled via the
+``O2SCL_HDF5_COMP`` constant, but this may require additional external
+libraries. On many systems, one can use a parallel HDF5 library using
 ``-DO2SCL_HDF5_PLAIN_HEADER`` and a ``-I`` option to select the proper
 location for the parallel HDF5 header files. Finally, if your version
 of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
@@ -155,10 +157,6 @@ of HDF5 is earlier than 1.12, you will need to let O₂scl know, using::
 Other Linux distributions are similar. For example, in OpenSUSE, you
 will need to use ``zypper`` to install ``gcc-c++, make, gsl-devel,
 hdf5-devel, readline-devel``, ``libquadmath0``, and ``boost-devel``.
-
-Note that if your boost installation is earlier than 1.70, you will
-need to use the -DO2SCL_OLD_BOOST flag to get all of the tests to run
-successfully.
 
 .. _compile_source:
 
@@ -181,9 +179,7 @@ Then, you will either need to generate the documentation from doxygen
 using ``make o2scl-doc`` or use ``make blank-doc`` to create blank
 documentation. Then you can proceed using ``make`` and ``make
 install`` (which may require ``sudo`` depending on your
-configuration). For a full installation with parallelism, I typically
-also install ``libopenmpi-dev`` and then use ``./configure
---enable-openmp``
+configuration). 
 
 .. _compile_docker:
 
@@ -228,7 +224,8 @@ O₂scl and O₂sclpy can take advantage of tensorflow, torch, sklearn,
 normflows, and other Python libraries for additional functionality.
 Tensorflow comes bundled with HDF5, so this creates some additional
 dependency complications. The docker files for the docker images
-show how a full installation can proceed. 
+show how a full installation can proceed.
+
 .. 
   x .. _compile_snap:
   x- :ref:`Compiling O₂scl on Ubuntu with Snap <compile_snap>`
@@ -252,6 +249,16 @@ show how a full installation can proceed.
   
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/snap/o2scl/current/usr/lib/x86_64-linux-gnu:/snap/o2scl/current/lib/x86_64-linux-gnu
 
+Multiprecision support
+----------------------
+
+O₂scl may be compiled with multiprecision support using the
+``--enable-multip`` flag to the ``configure`` script. This often
+additionally requires the quadmath library (e.g. the ``libquadmath0``
+package on Ubuntu). Note that this significantly increases the
+time and memory required to compile O₂scl (because of the way
+Boost implements multiprecision). 
+  
 Optional linear algebra libraries
 ---------------------------------
 
@@ -300,8 +307,8 @@ FFTW support (``-lfftw3``): O₂scl contains a few functions which
 require FFTW support, and this can be included if ``--enable-fftw`` is
 passed to the configure script.
 
-Module support, curses support, cubature support, and pugixml support
-are all experimental and not currently supported.
+Curses support, cubature support, and pugixml support are all
+experimental.
 
 Range-checking
 --------------

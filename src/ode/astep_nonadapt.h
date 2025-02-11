@@ -53,8 +53,6 @@ namespace o2scl {
 	   class func_t=ode_funct, class fp_t=double> class astep_nonadapt : 
     public astep_base<vec_y_t,vec_dydx_t,vec_yerr_t,func_t,fp_t> {
       
-#ifndef DOXYGEN_INTERNAL
-      
     protected:
 
     /// The allocated vector size
@@ -69,8 +67,6 @@ namespace o2scl {
     */
     vec_dydx_t dydx_int;
 
-#endif
-    
     public:
     
     astep_nonadapt()  {

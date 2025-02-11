@@ -203,8 +203,6 @@ namespace o2scl {
     */
     size_t n_levels_out;
   
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// Minimum number of calls to estimate the variance
@@ -347,8 +345,6 @@ namespace o2scl {
     /// The most recent integration point
     vec_t x;
 
-#endif
-    
     public:
     
     mcarlo_miser() {

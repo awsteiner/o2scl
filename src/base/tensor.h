@@ -580,8 +580,6 @@ namespace o2scl {
 
   public:
   
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
   
     /// The data
@@ -592,8 +590,6 @@ namespace o2scl {
   
     /// Rank
     size_t rk;
-  
-#endif
   
   public:
 

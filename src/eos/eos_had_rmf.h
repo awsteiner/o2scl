@@ -889,8 +889,6 @@ namespace o2scl {
     }
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief Temporary baryon density
@@ -950,8 +948,6 @@ namespace o2scl {
 
     /// Temperature storage for calc_temp_e()
     double ce_temp;
-
-#endif
 
   };
 

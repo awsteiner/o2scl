@@ -1072,8 +1072,6 @@ namespace o2scl {
      */
     mroot_hybrids<> beta_mroot;
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// \name Miscellaneous objects [protected]
@@ -1115,8 +1113,6 @@ namespace o2scl {
     deriv_base<> *sat_deriv2;
     //@}
     
-#endif
-    
   };
 
   /// A hadronic EOS based on a function of the densities [abstract base]
@@ -1152,8 +1148,6 @@ namespace o2scl {
   /// A finite temperature hadronic EOS [abstract base]
   class eos_had_temp_base : public eos_had_base {
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
     /// Fermion thermodynamics (default is \ref def_fet)
@@ -1201,8 +1195,6 @@ namespace o2scl {
         proton chemical potentials
     */
     double calc_dmu_delta_T(double delta, double nb, double T);
-
-#endif
 
   public:
 

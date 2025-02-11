@@ -149,11 +149,7 @@ void auto_format::end_table() {
   size_t row=n_headers;
   aligns.resize(columns.size());
   for(size_t i=0;i<columns.size();i++) {
-    aligns[i]=columnify::align_lnum;
-    //if (!is_number(columns[i][row])) {
-    //} else {
-    //aligns[i]=columnify::align_dp;
-    //}
+    aligns[i]=columnify::align_auto;
   }
   
   // Now output the table

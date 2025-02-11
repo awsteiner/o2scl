@@ -92,8 +92,6 @@ namespace o2scl {
            class vec2_t=vec_t, class fp_t=double> class interp_vec : 
     public interp_base<vec_t,vec2_t,fp_t> {
       
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
     
     /// Base interpolation object
@@ -108,8 +106,6 @@ namespace o2scl {
     /// Parameter list for Gaussian process interpolation
     std::vector<std::vector<fp_t>> param_list;
     
-#endif
-      
   public:
 
     /** \brief Create an interpolation object with interpolation type
@@ -338,8 +334,6 @@ namespace o2scl {
     }
     //@}
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
     interp_vec<vec_t,vec2_t,fp_t>
@@ -347,8 +341,6 @@ namespace o2scl {
     interp_vec<vec_t,vec2_t,fp_t> &operator=
     (const interp_vec<vec_t,vec2_t,fp_t> &it);
 
-#endif
-  
   };
 
   /// \name A function for inverse interpolation in src/base/interp.h

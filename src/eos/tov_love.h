@@ -187,8 +187,6 @@ namespace o2scl {
 			      const std::vector<double> &,
 			      std::vector<double> &)> ode_funct2;
     
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
 
     /// A pointer to the ODE integrator
@@ -219,8 +217,6 @@ namespace o2scl {
     /// List of discontinuities
     std::vector<double> disc;
     
-#endif
-
   public:
   
     tov_love();

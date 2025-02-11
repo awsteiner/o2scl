@@ -376,8 +376,6 @@ namespace o2scl {
       return this->qawc(func,a,b,s,this->tol_abs,this->tol_rel,&res,&err);
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief The full GSL integration routine called by integ_err()
@@ -630,8 +628,6 @@ namespace o2scl {
       return y/(t-s);
     }
 
-#endif
-  
     /// Return string denoting type ("inte_qawc_gsl")
     const char *type() { return "inte_qawc_gsl"; }
   

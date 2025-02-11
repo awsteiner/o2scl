@@ -265,15 +265,15 @@ some details about how O₂scl was compiled.
   calls :cpp:func:`o2scl::err_hnd_gsl::set()` instead of throwing a
   C++ exception. Used in ``src/base/exception.cpp``. This is useful,
   for example, with the ``g++`` flag ``-fno-exceptions``.
-- O2SCL_NO_SYSTEM_FUNC - If this is defined, then the :ref:`cli <cli>`
-  class will never allow shell commands, independent of the 
-  setting of :cpp:var:`o2scl::cli::shell_cmd_allowed`.
 - O2SCL_NO_RANGE_CHECK - If this is defined, range checking is turned
   off where it is used in :ref:`table <table>`, :ref:`tensor
   <tensor>`, :ref:`permutation <permutation>` and the functions in
   ``o2scl_cblas``. Some O₂scl header files use this define
   constant and so range checking can be turned off or on separately
   from the setting that was used during installation.
+- O2SCL_NO_SYSTEM_FUNC - If this is defined, then the :ref:`cli <cli>`
+  class will never allow shell commands, independent of the 
+  setting of :cpp:var:`o2scl::cli::shell_cmd_allowed`.
 - O2SCL_OLDER_COMPILER - A flag which can be defined both during
   compilation of O₂scl and compilation of code using O₂scl
   for compilers which do not have
@@ -297,6 +297,8 @@ some details about how O₂scl was compiled.
 - O2SCL_USE_GSL_HANDLER - If this is defined, then an object of type
   :ref:`err_hnd_gsl <err_hnd_gsl>` is the default error handler. Used
   in ``src/base/exception.cpp``
+
+..
 
 Error handler objects
 ---------------------

@@ -50,10 +50,6 @@ namespace o2scl {
       \verbatim embed:rst
       .. todo:: 
 
-         - Future: Consider an automatic option which uses
-           "left" for columns with text, "lnum" for columns of all
-           floating point numbers, "right" for integers, and "dp"
-           otherwise?
          - Future: Create a function which accepts delimited strings
            (e.g. like csv) instead of vector<vector<string>>. 
          - Future: Consider a function which takes a \ref o2scl::table
@@ -95,7 +91,13 @@ namespace o2scl {
 	positive numbers. Align headers to the left-most digit.
     */
     static const int align_lnum=6;
-    /** \brief Desc
+    /** \brief Pre-process the columns to decide their
+        alignment
+
+        This option uses \ref align_left for columns with text, \ref
+        align_lnum for columns of all floating point numbers, \ref
+        align_right for integers, and \ref align_dp otherwise.
+        Header rows are ignored when deciding the alignment.
     */
     static const int align_auto=7;
 
@@ -237,6 +239,7 @@ namespace o2scl {
       std::vector<int> align2;
 
       for(size_t i=0;i<ncols;i++) {
+        align2[i]=align_spec[i];
         if (align_spec[i]==align_auto) {
           int cnt_int=0, cnt_fp=0, cnt_fp_sci=0, cnt_has_minus=0;
           int cnt_not_num=0;
@@ -251,17 +254,17 @@ namespace o2scl {
             if (not_num) cnt_not_num++;
           }
           if (cnt_not_num>0) {
-            align_spec[i]=align_left;
+            align2[i]=align_left;
           } else if (cnt_int==0) {
-            align_spec[i]=align_lnum;
+            align2[i]=align_lnum;
           } else if (cnt_int==((int)(nrows-n_headers))) {
-            align_spec[i]=align_right;
+            align2[i]=align_right;
           } else {
-            align_spec[i]=align_dp;
+            align2[i]=align_dp;
           }
           if (verbose>0) {
             std::cout << "columnify::add_spaces(): "
-                      << "Using align " << align_spec[i]
+                      << "Using align " << align2[i]
                       << " for column " << i << "." << std::endl;
           }
         }
@@ -314,7 +317,7 @@ namespace o2scl {
           
           // For align_lnum, see if we need to add a space to the
           // left-hand side of the header for the minus sign
-	  if (align_spec[i]==align_lnum) {
+	  if (align2[i]==align_lnum) {
             if (has_negative[i]==false && table_in[i][j].length()>0 &&
                 table_in[i][j][0]=='-') {
               if (verbose>1) {
@@ -329,7 +332,7 @@ namespace o2scl {
 	  // If we're aligning with decimal points, we need to compute
 	  // the maximum width to the left and the right of the 
 	  // decimal point separately
-	  if (align_spec[i]==align_dp) {
+	  if (align2[i]==align_dp) {
 
             //std::cout << "j,nh: " << j << " " << n_headers
             //<< std::endl;
@@ -376,7 +379,7 @@ namespace o2scl {
 
             /// Adjust for lnum if the largest width field is
             // a positive number
-            if (align_spec[i]==align_lnum &&
+            if (align2[i]==align_lnum &&
                 table_in[i][j].length()>0 &&
                 table_in[i][j][0]!='-' &&
                 ter.str_len(table_in[i][j])==csizes[i]) {
@@ -411,21 +414,21 @@ namespace o2scl {
 	  std::string tmp="";
 	  
 	  // Handle each alignment case separately
-	  if (align_spec[i]==align_right) {
+	  if (align2[i]==align_right) {
 
 	    for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
 	      tmp+=' ';
 	    }
 	    tmp+=table_in[i][j];
 
-	  } else if (align_spec[i]==align_left) {
+	  } else if (align2[i]==align_left) {
 
 	    tmp+=table_in[i][j];
 	    for(size_t k=ter.str_len(table_in[i][j]);k<csizes[i];k++) {
 	      tmp+=' ';
 	    }
 
-	  } else if (align_spec[i]==align_lmid) {
+	  } else if (align2[i]==align_lmid) {
 
 	    size_t le=(csizes[i]-ter.str_len(table_in[i][j]))/2;
 	    size_t ri=csizes[i]-ter.str_len(table_in[i][j])-le;
@@ -433,7 +436,7 @@ namespace o2scl {
 	    tmp+=table_in[i][j];
 	    for(size_t k=0;k<ri;k++) tmp+=' ';
 
-	  } else if (align_spec[i]==align_rmid) {
+	  } else if (align2[i]==align_rmid) {
 
 	    size_t ri=(csizes[i]-ter.str_len(table_in[i][j]))/2;
 	    size_t le=csizes[i]-ter.str_len(table_in[i][j])-ri;
@@ -441,7 +444,7 @@ namespace o2scl {
 	    tmp+=table_in[i][j];
 	    for(size_t k=0;k<ri;k++) tmp+=' ';
 
-	  } else if (align_spec[i]==align_dp) {
+	  } else if (align2[i]==align_dp) {
 
             if (j<n_headers) {
 
@@ -470,7 +473,7 @@ namespace o2scl {
               for(size_t k=ter.str_len(right);k<csizes2[i];k++) tmp+=' ';
             }
 
-	  } else if (align_spec[i]==align_lnum) {
+	  } else if (align2[i]==align_lnum) {
             
             if (j<n_headers) {
               if (table_in[i][j].length()>0 && has_negative[i]==true &&

@@ -173,8 +173,6 @@ namespace o2scl {
     
   public:
   
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
 
 #ifdef O2SCL_NEVER_DEFINED
@@ -189,8 +187,6 @@ namespace o2scl {
 
     /// Interpolation type
     size_t itype;
-    
-#endif
     
   public:
 

@@ -64,8 +64,6 @@ namespace o2scl {
   /// Return string denoting type ("inte_qagi_gsl")
   const char *type() { return "inte_qagi_gsl"; }
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
   /// Tranformation to \f$ t \in (0,1] \f$ 
@@ -76,8 +74,6 @@ namespace o2scl {
     return (y1+y2)/t/t;
   }
     
-#endif
-      
   };
   
 }

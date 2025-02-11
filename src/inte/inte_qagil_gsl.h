@@ -50,14 +50,10 @@ namespace o2scl {
   template<class func_t=funct > class inte_qagil_gsl : 
     public inte_transform_gsl<func_t> {
 
-#ifndef DOXYGEN_INTERNAL      
-
   protected:
 
   /// The upper limit
   double upper_limit;
-
-#endif
 
   public:
     

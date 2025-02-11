@@ -56,7 +56,7 @@ namespace o2scl {
     int(size_t,const boost::numeric::ublas::vector<long double> &,
 	boost::numeric::ublas::vector<long double> &) > mm_funct_ld;
 
-#ifdef O2SCL_MULTIP
+#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
   
   typedef std::function<
     int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_25> &,

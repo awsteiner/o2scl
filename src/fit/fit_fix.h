@@ -300,8 +300,6 @@ namespace o2scl {
   }
   //@}
     
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
 
   /// Temporary vector to store full parameter list of size u_np
@@ -335,8 +333,6 @@ namespace o2scl {
     
   fit_fix_pars(const fit_fix_pars &);
   fit_fix_pars& operator=(const fit_fix_pars&);
-
-#endif
 
   };
 

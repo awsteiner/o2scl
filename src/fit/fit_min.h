@@ -166,8 +166,6 @@ namespace o2scl {
     /// Return string denoting type ("fit_min")
     virtual const char *type() { return "fit_min"; }
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// Storage for the function values
@@ -192,8 +190,6 @@ namespace o2scl {
       return ret;
     }
     
-#endif
-  
   };
 
 }

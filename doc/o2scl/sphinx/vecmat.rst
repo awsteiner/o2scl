@@ -210,6 +210,8 @@ Searching
 Vector properties
 -----------------
 
+- :cpp:func:`o2scl::linear_or_log()` [``src/base/interp_vec.h``]
+- :cpp:func:`o2scl::linear_or_log_chi2()` [``src/base/interp_vec.h``]
 - :cpp:func:`o2scl::vector_diffs()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vectors_equal()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vectors_equal_reorder()` [``src/base/vector.h``]
@@ -248,8 +250,6 @@ Vector rearrangement functions
 ------------------------------
 
 - :cpp:func:`o2scl::vector_grid()` [``src/base/vector.h``]
-- :cpp:func:`o2scl::vector_linear_or_log_chi2()` [``src/base/interp_vec.h``]
-- :cpp:func:`o2scl::vector_linear_or_log()` [``src/base/interp_vec.h``]
 - :cpp:func:`o2scl::vector_range()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_range_copy()` [``src/base/vector.h``]
 - :cpp:func:`o2scl::vector_rebin_xy()` [``src/base/interp.h``]

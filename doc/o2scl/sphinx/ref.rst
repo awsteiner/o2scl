@@ -477,6 +477,10 @@ Bibliography
    <https://doi.org/10.1016/0375-9474(75)90415-7>`_,
    Nucl. Phys. A **237** (1975) 507.
 
+.. [PDG2024] : `S. Navas and (none) others
+   <https://doi.org/10.1103/PhysRevD.110.030001>`_,
+   Phys. Rev. D **110** (2024) 030001.
+
 .. [Pearson11] : `J. M. Pearson, S. Goriely, and N. Chamel
    <https://doi.org/10.1103/PhysRevC.83.065810>`_,
    Phys. Rev. C **83** (2011) 065810.

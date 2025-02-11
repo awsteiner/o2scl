@@ -90,8 +90,6 @@ namespace o2scl {
       return y;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
     protected:
 
     /// The function parser
@@ -119,8 +117,6 @@ namespace o2scl {
     
     fit_funct_strings(const fit_funct_strings &);
     fit_funct_strings& operator=(const fit_funct_strings&);
-
-#endif
 
   };
 
@@ -155,15 +151,11 @@ namespace o2scl {
     /// Return the number of data points
     virtual size_t get_ndata()=0;
     
-#ifndef DOXYGEN_INTERNAL
-    
     private:
     
     gen_fit_funct(const gen_fit_funct &);
     gen_fit_funct& operator=(const gen_fit_funct&);
     
-#endif
-
   };
 
   /** \brief Standard fitting function based on one-dimensional
@@ -283,8 +275,6 @@ namespace o2scl {
   jacobian_gsl<std::function<int(size_t,const vec_t &,vec_t &)>,
   vec_t,mat_t> auto_jac;
 
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
 
   /// Reformulate <tt>operator()</tt> into a \ref mm_funct object
@@ -311,8 +301,6 @@ namespace o2scl {
   
   chi_fit_funct(const chi_fit_funct &);
   chi_fit_funct& operator=(const chi_fit_funct&);
-  
-#endif
   
   };
 

@@ -108,8 +108,6 @@ namespace o2scl_hdf {
     typedef boost::numeric::ublas::vector<int> ubvector_int;
     typedef boost::numeric::ublas::matrix<int> ubmatrix_int;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// Properties (protected)
@@ -142,8 +140,6 @@ namespace o2scl_hdf {
       return ch;
     }
     //@}
-    
-#endif
     
   public:
 

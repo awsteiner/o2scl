@@ -3,19 +3,16 @@ Multiprecision Support
 
 :ref:`O2scl <o2scl>`
 
-Some O₂scl classes support floating-point types beyond ``double``.
-Generally, these classes support both ``long double`` and the
+If O₂scl is compiled with multiprecision support using the
+``--enable-multip`` flag to the ``configure`` script, then some O₂scl
+classes support floating-point types beyond ``double``. Generally,
+these classes support both ``long double`` and the
 ``boost::multiprecision`` types. (Though some of the boost
 multiprecision types require additional libraries, such as GMP.) In
 some cases, O₂scl classes use *adaptive multiprecision*, i.e., they
 are able to automatically choose among several different floating
 point types to perform a calculation to a specified accuracy. See also
 :ref:`Multiprecision Support for Particles and EOSs`.
-
-Unfortunately, the multiprecision support also dramatically increases
-the compilation time and the associated memory requirements.
-Multiprecision support can be disabled with the
-``O2SCL_NO_BOOST_MULTIPRECISION`` flag.
 
 List of classes which support adaptive multiprecision:
 

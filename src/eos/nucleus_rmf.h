@@ -555,8 +555,6 @@ namespace o2scl {
      */
     bool generic_ode;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /** \brief The parameter for the charge density of the proton
@@ -827,8 +825,6 @@ namespace o2scl {
     double x12[6], w12[6];
     double x100[50], w100[50];
     //@}
-    
-#endif
     
   };
 

@@ -110,8 +110,6 @@ namespace o2scl {
       return;
     }
       
-#ifndef DOXYGEN_INTERNAL
-      
   protected:
       
     /// The function parsers
@@ -135,8 +133,6 @@ namespace o2scl {
       
     mm_funct_strings(const mm_funct_strings &);
     mm_funct_strings& operator=(const mm_funct_strings&);
-      
-#endif
       
   };
 

@@ -1,5 +1,5 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
   Copyright (C) 2019-2025, Andrew W. Steiner
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #include <iostream>
 
@@ -1012,7 +1012,7 @@ public:
       exit(-1);
     */
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Determine bag constant
 
     if (mp_start_fix>0 && (ptr_q==&bag || ptr_q==&njl)) {
@@ -1075,7 +1075,7 @@ public:
 
     } else {
 
-      // -----------------------------------------------------------------
+      // ───────────────────────────────────────────────────────────────────
       // Find the beginning of the mixed phase with fp_beg_mixed_phase()
       
       cout << "Beginning of mixed phase: " << endl;
@@ -1127,12 +1127,15 @@ public:
       
     }
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Tabulate full hadronic phase
 
     table_units<> thad;
     if (true) {
-      thad.line_of_names("nB nn np ne nmu ede edh edt pre prh prt");
+      thad.line_of_names("nB nn np ne nmu ede edh ed pre prh pr");
+      thad.line_of_units(((string)"1/fm^3 1/fm^3 1/fm^3 1/fm^3 ")+
+                         "1/fm^3 MeV/fm^3 MeV/fm^3 MeV/fm^3 "+
+                         "MeV/fm^3 MeV/fm^3 MeV/fm^3 ");
       size_t ix=0;
       
       x[ix++]=beg_mixed_phase_guess[0];
@@ -1168,14 +1171,18 @@ public:
       thad.sort_table("nB");
     }
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Tabulate full mixed phase without Coulomb or surface
 
-    table<> tmixed;
+    table_units<> tmixed;
     if (true) {
       cout << "Mixed phase (nB,nn,np,nu,nd,ns,chi): " << endl;
-      tmixed.line_of_names(((string)"nB nn np nu nd ns ede pre edt ")+
-			   "prt edh prh edq prq mun mup chi");
+      tmixed.line_of_names(((string)"nB nn np nu nd ns ede pre ed ")+
+			   "pr edh prh edq prq mun mup chi");
+      tmixed.line_of_units(((string)"1/fm^3 1/fm^3 1/fm^3 1/fm^3 ")+
+                         "1/fm^3 1/fm^3 MeV/fm^3 MeV/fm^3 MeV/fm^3 "+
+                         "MeV/fm^3 MeV/fm^3 MeV/fm^3 MeV/fm^3 "+
+                         "MeV/fm^3 MeV MeV .");
 
       size_t ix=0;
       XCHECK;
@@ -1256,12 +1263,15 @@ public:
       cout << endl;
     }
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Tabulate full quark phase
 
     table_units<> tq;
     if (true) {
-      tq.line_of_names("nB muQ mue ede pre edq prq edt prt");
+      tq.line_of_names("nB muQ mue ede pre edq prq ed pr");
+      tq.line_of_units(((string)"1/fm^3 MeV MeV ")+
+                         "MeV/fm^3 MeV/fm^3 MeV/fm^3 "+
+                         "MeV/fm^3 MeV/fm^3 MeV/fm^3 ");
 
       double nb_had_next=((double)((int)(mp_end*100.0)))/100.0+0.01;
       cout << "nb_had_next: " << nb_had_next << endl;
@@ -1302,55 +1312,67 @@ public:
       cout << endl;
     }
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Construct the neutron star EOS
     
     table_units<> ns;
-    ns.line_of_names("ed pr nb");
+    ns.line_of_names("ed pr nB");
     ns.set_unit("ed","MeV/fm^3");
     ns.set_unit("pr","MeV/fm^3");
-    ns.set_unit("nb","1/fm^3");
+    ns.set_unit("nB","1/fm^3");
 
     for(size_t i=0;i<thad.get_nlines();i++) {
-      double line[3]={thad.get("edt",i),
-                      thad.get("prt",i),
+      double line[3]={thad.get("ed",i),
+                      thad.get("pr",i),
                       thad.get("nB",i)
       };
       ns.line_of_data(3,line);
     }
     for(size_t i=0;i<tmixed.get_nlines();i++) {
-      double line[3]={tmixed.get("edt",i),
-                      tmixed.get("prt",i),
+      double line[3]={tmixed.get("ed",i),
+                      tmixed.get("pr",i),
                       tmixed.get("nB",i)};
       ns.line_of_data(3,line);
     }
     for(size_t i=0;i<tq.get_nlines();i++) {
-      double line[3]={tq.get("edt",i),
-                      tq.get("prt",i),
+      double line[3]={tq.get("ed",i),
+                      tq.get("pr",i),
                       tq.get("nB",i)};
       ns.line_of_data(3,line);
     }
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
     // Solve the TOV equations
     
     eos_tov_interp eti;
     eti.default_low_dens_eos();
-    eti.read_table(ns,"ed","pr","nb");
+    eti.read_table(ns,"ed","pr","nB");
     cout << "Going to tov_solve." << endl;
     tov_solve ts;
     ts.set_eos(eti);
     ts.mvsr();
+
+    // The tov_solve class uses 'nb', so we just rename
     std::shared_ptr<table_units<> > tov=ts.get_results();
+    tov->rename_column("nb","nB");
+    tov->summary(&cout);
     cout << "M_max: " << tov->max("gm") << endl;
     cout << "Central energy density of maximum mass star:\n  "
          << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << " "
          << tov->get_unit("ed") << " ." << endl;
     cout << "Central baryon density of maximum mass star:\n  "
-         << tov->get("nb",tov->lookup("gm",tov->max("gm"))) << " "
-         << tov->get_unit("nb") << " ." << endl;
+         << tov->get("nB",tov->lookup("gm",tov->max("gm"))) << " "
+         << tov->get_unit("nB") << " ." << endl;
 
-    // -----------------------------------------------------------------
+    // ───────────────────────────────────────────────────────────────────
+    // "Insert" the TOV table into the tables for the individual
+    // phases.
+
+    thad.insert_table_units(*tov,"nB");
+    tmixed.insert_table_units(*tov,"nB");
+    tq.insert_table_units(*tov,"nB");
+    
+    // ───────────────────────────────────────────────────────────────────
     // Output results to a file
 
     hdf_file hf;

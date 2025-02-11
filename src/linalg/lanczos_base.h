@@ -294,8 +294,6 @@ namespace o2scl_linalg {
     return 0;
   }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
       
   /** \brief Simple matrix-vector product
@@ -313,8 +311,6 @@ namespace o2scl_linalg {
     return;
   }
     
-#endif
-  
   };
 
 #ifdef DOXYGEN

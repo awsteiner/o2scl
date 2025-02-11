@@ -23,9 +23,10 @@ and sometimes more accurate, but also fails more often than
 :ref:`deriv_gsl <deriv_gsl>`, which never calls the error handler. The
 GSL derivative class :ref:`deriv_gsl <deriv_gsl>` supports numerical
 derivatives of functions which operate on multiprecision numbers (see
-also :ref:`Multiprecision Support`). The class :ref:`deriv_multip_gsl
-<deriv_multip_gsl>` uses multiprecision to automatically compute a
-derivative to within a requested precision.
+also :ref:`Multiprecision Support`). When multiprecision support is
+included, the class :ref:`deriv_gsl <deriv_gsl>` can adaptive
+multiprecision to automatically compute a derivative to within a
+requested precision.
 
 The estimatation of second and third derivatives by :ref:`deriv_gsl
 <deriv_gsl>` and :ref:`deriv_cern <deriv_cern>` can be particularly

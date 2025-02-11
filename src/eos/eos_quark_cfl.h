@@ -392,8 +392,6 @@ namespace o2scl {
     /// Return string denoting type ("eos_quark_cfl")
     virtual const char *type() { return "eos_quark_cfl"; };
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /** \brief The integrands
@@ -507,9 +505,8 @@ namespace o2scl {
   private:
     
     eos_quark_cfl(const eos_quark_cfl &);
-    eos_quark_cfl& operator=(const eos_quark_cfl&);
     
-#endif
+    eos_quark_cfl& operator=(const eos_quark_cfl&);
     
   };
   

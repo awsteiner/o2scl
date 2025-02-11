@@ -71,8 +71,6 @@ namespace o2scl {
   */
   template<class vec_t, class fp_t=double> class search_vec {
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// The vector to be searched
@@ -86,8 +84,6 @@ namespace o2scl {
     size_t cache;
 #endif
     
-#endif
-
   public:
 
     /** \brief Create a blank searching object
@@ -305,14 +301,10 @@ namespace o2scl {
       return row;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     search_vec<vec_t,fp_t>(const search_vec<vec_t,fp_t> &);
     search_vec<vec_t,fp_t>& operator=(const search_vec<vec_t,fp_t>&);
-
-#endif
 
   };
 
@@ -321,8 +313,6 @@ namespace o2scl {
   */
   template<class vec_t, class fp_t=double> class search_vec_ext {
     
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
 #ifndef O2SCL_SV_CACHE    
@@ -336,8 +326,6 @@ namespace o2scl {
     
     /// The vector size
     size_t n;
-
-#endif
 
   public:
 
@@ -420,14 +408,10 @@ namespace o2scl {
       return this->cache;
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     search_vec_ext<vec_t,fp_t>(const search_vec_ext<vec_t,fp_t> &);
     search_vec_ext<vec_t,fp_t>& operator=(const search_vec_ext<vec_t,fp_t>&);
-
-#endif
 
   };
 

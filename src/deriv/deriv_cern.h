@@ -165,8 +165,6 @@ namespace o2scl {
 
   protected:
 
-#ifndef DOXYGEN_INTERNAL
- 
     /** \brief Internal template version of the derivative function
     */
     template<class func2_t> int deriv_tlate(double x, func2_t &func,
@@ -260,8 +258,6 @@ namespace o2scl {
     double dx[10];
     double w[10][4];
     //@}
-
-#endif
 
   };
 

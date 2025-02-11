@@ -133,15 +133,11 @@ namespace o2scl {
     /// Return string denoting type ("eos_had_ddc")
     virtual const char *type() { return "eos_had_ddc"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// Zero-temperature fermion thermodynamics
     fermion_zerot fzt;
     
-#endif
-
   };
 
 }

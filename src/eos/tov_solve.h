@@ -361,8 +361,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::matrix_column<ubmatrix> ubmatrix_column;
     typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 
-#ifndef DOXYGEN_INTERNAL
-
   protected:
 
     /// ODE function object
@@ -485,8 +483,6 @@ namespace o2scl {
     virtual int integ_star(size_t ndvar, const ubvector &ndx, 
 			ubvector &ndy);
     
-#endif
-
   public:
 
     tov_solve();

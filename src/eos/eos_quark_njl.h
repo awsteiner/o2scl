@@ -422,8 +422,6 @@ namespace o2scl {
     
   protected:
 
-#ifndef DOXYGEN_INTERNAL
-
     /// \name Protected functions and variables
     //@{
     /// The integrator for finite temperature integrals
@@ -475,8 +473,6 @@ namespace o2scl {
                           double ms);
     //@}
   
-#endif
-    
   };
 
   /** \brief The Nambu-Jona-Lasinio model with vector interactions

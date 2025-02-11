@@ -66,21 +66,21 @@ namespace o2scl {
   /** \brief Interpolation types in src/base/interp.h
    */
   enum {
-    /// Linear
+    /// Linear (\ref interp_linear)
     itp_linear=1,
-    /// Cubic spline for natural boundary conditions
+    /// Cubic spline for natural boundary conditions (\ref interp_cspline)
     itp_cspline=2,
-    /// Cubic spline for periodic boundary conditions
+    /// Cubic spline for periodic boundary conditions 
     itp_cspline_peri=3,
-    /// Akima spline for natural boundary conditions
+    /// Akima spline for natural boundary conditions (\ref interp_akima)
     itp_akima=4,
     /// Akima spline for periodic boundary conditions
     itp_akima_peri=5,
     /// Monotonicity-preserving interpolation (unfinished)
     itp_monotonic=6,
-    /// Steffen's monotonic method
+    /// Steffen's monotonic method (\ref interp_steffen)
     itp_steffen=7,
-    /// Nearest-neighbor lookup
+    /// Nearest-neighbor lookup (\ref interp_nn)
     itp_nearest_neigh=8,
     /// Gaussian process with leave-one out cross validation (experimental)
     itp_gp_rbf_noise_loo_cv=9,
@@ -113,8 +113,6 @@ namespace o2scl {
   template<class vec_t, class vec2_t=vec_t, class fp_t=double>
   class interp_base {
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /** \brief To perform binary searches
@@ -148,8 +146,6 @@ namespace o2scl {
       
       return (b-a)*(ai+bterm+cterm+dterm);
     }
-    
-#endif
     
   public:
     
@@ -192,16 +188,12 @@ namespace o2scl {
     /// Return the type
     virtual const char *type() const=0;
  
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     interp_base<vec_t,vec2_t,fp_t>
     (const interp_base<vec_t,vec2_t,fp_t> &);
     interp_base<vec_t,vec2_t,fp_t>& operator=
     (const interp_base<vec_t,vec2_t,fp_t>&);
-
-#endif
 
   };
   
@@ -333,14 +325,13 @@ namespace o2scl {
     /// Return the type, \c "interp_linear".
     virtual const char *type() const { return "interp_linear"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
-    interp_linear<vec_t,vec2_t,fp_t>(const interp_linear<vec_t,vec2_t,fp_t> &);
-    interp_linear<vec_t,vec2_t,fp_t>& operator=(const interp_linear<vec_t,vec2_t,fp_t>&);
-
-#endif
+    interp_linear<vec_t,vec2_t,fp_t>
+    (const interp_linear<vec_t,vec2_t,fp_t> &);
+    
+    interp_linear<vec_t,vec2_t,fp_t>& operator=
+    (const interp_linear<vec_t,vec2_t,fp_t>&);
 
   };
   
@@ -402,16 +393,13 @@ namespace o2scl {
     /// Return the type, \c "interp_nearest_neigh".
     virtual const char *type() const { return "interp_nearest_neigh"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     interp_nearest_neigh<vec_t,vec2_t,fp_t>
       (const interp_nearest_neigh<vec_t,vec2_t,fp_t> &);
+    
     interp_nearest_neigh<vec_t,vec2_t,fp_t>& operator=
       (const interp_nearest_neigh<vec_t,vec2_t,fp_t>&);
-
-#endif
 
   };
   
@@ -439,8 +427,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::slice slice;
     typedef boost::numeric::ublas::range range;
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /// \name Storage for cubic spline interpolation
@@ -467,8 +453,6 @@ namespace o2scl {
       return;
     }
 
-#endif
-    
   public:
 
     /** \brief Create a base interpolation object with natural or
@@ -667,17 +651,14 @@ namespace o2scl {
     /// Return the type, \c "interp_cspline".
     virtual const char *type() const { return "interp_cspline"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
   interp_cspline<vec_t,vec2_t,fp_t>
   (const interp_cspline<vec_t,vec2_t,fp_t> &);
+    
   interp_cspline<vec_t,vec2_t,fp_t>& operator=
   (const interp_cspline<vec_t,vec2_t,fp_t>&);
   
-#endif
-
   };
   
   /** \brief Cubic spline interpolation with periodic 
@@ -810,17 +791,14 @@ namespace o2scl {
 
     }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
-
+    
     interp_cspline_peri<vec_t,vec2_t,fp_t>
-  (const interp_cspline_peri<vec_t,vec2_t,fp_t> &);
+    (const interp_cspline_peri<vec_t,vec2_t,fp_t> &);
+    
     interp_cspline_peri<vec_t,vec2_t,fp_t>& operator=
-      (const interp_cspline_peri<vec_t,vec2_t,fp_t>&);
-
-#endif
-
+    (const interp_cspline_peri<vec_t,vec2_t,fp_t>&);
+    
   };
 
   /** \brief Akima spline interpolation (GSL)
@@ -848,8 +826,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::slice slice;
     typedef boost::numeric::ublas::range range;
 
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
 
     /// \name Storage for Akima spline interpolation
@@ -891,8 +867,6 @@ namespace o2scl {
         }
       }
     }
-    
-#endif
     
   public:
 
@@ -1048,14 +1022,13 @@ namespace o2scl {
     /// Return the type, \c "interp_akima".
     virtual const char *type() const { return "interp_akima"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
-    interp_akima<vec_t,vec2_t,fp_t>(const interp_akima<vec_t,vec2_t,fp_t> &);
-    interp_akima<vec_t,vec2_t,fp_t>& operator=(const interp_akima<vec_t,vec2_t,fp_t>&);
-
-#endif
+    interp_akima<vec_t,vec2_t,fp_t>
+    (const interp_akima<vec_t,vec2_t,fp_t> &);
+    
+    interp_akima<vec_t,vec2_t,fp_t>& operator=
+    (const interp_akima<vec_t,vec2_t,fp_t>&);
 
   };
   
@@ -1131,16 +1104,13 @@ namespace o2scl {
       return;
     }
       
-#ifndef DOXYGEN_INTERNAL
-
   private:
 
     interp_akima_peri<vec_t,vec2_t,fp_t>
     (const interp_akima_peri<vec_t,vec2_t,fp_t> &);
+    
     interp_akima_peri<vec_t,vec2_t,fp_t>& operator=
       (const interp_akima_peri<vec_t,vec2_t,fp_t>&);
-
-#endif
 
   };
 
@@ -1163,8 +1133,6 @@ namespace o2scl {
     typedef boost::numeric::ublas::slice slice;
     typedef boost::numeric::ublas::range range;
     
-#ifndef DOXYGEN_INTERNAL
-    
   protected:
     
     /// \name Storage for cubic spline interpolation
@@ -1185,8 +1153,6 @@ namespace o2scl {
       return x;
     }
 
-#endif
-    
   public:
 
     /** \brief Create a base interpolation object */
@@ -1371,17 +1337,14 @@ namespace o2scl {
     /// Return the type, \c "interp_steffen".
     virtual const char *type() const { return "interp_steffen"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
   
   interp_steffen<vec_t,vec2_t,fp_t>
   (const interp_steffen<vec_t,vec2_t,fp_t> &);
+    
   interp_steffen<vec_t,vec2_t,fp_t>& operator=
   (const interp_steffen<vec_t,vec2_t,fp_t>&);
   
-#endif
-
   };
   
   /** \brief Monotonicity-preserving interpolation
@@ -1646,17 +1609,14 @@ namespace o2scl {
     /// Return the type, \c "interp_monotonic".
     virtual const char *type() const { return "interp_monotonic"; }
 
-#ifndef DOXYGEN_INTERNAL
-
   private:
-
+    
     interp_monotonic<vec_t,vec2_t,fp_t>
     (const interp_monotonic<vec_t,vec2_t,fp_t> &);
+    
     interp_monotonic<vec_t,vec2_t,fp_t>& operator=
-      (const interp_monotonic<vec_t,vec2_t,fp_t>&);
-
-#endif
-
+    (const interp_monotonic<vec_t,vec2_t,fp_t>&);
+    
   };
 
 }

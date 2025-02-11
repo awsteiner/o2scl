@@ -93,15 +93,11 @@ namespace o2scl {
     */
     fp_t get_error() { return interror; }
   
-#ifndef DOXYGEN_INTERNAL
-  
   protected:
   
     /// The uncertainty for the last integration computation
     fp_t interror;
   
-#endif
-
   public:
   
     /** \brief Integrate function \c func from \c a to \c b.
