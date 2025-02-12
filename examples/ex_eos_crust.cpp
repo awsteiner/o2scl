@@ -41,8 +41,7 @@ using namespace o2scl;
 using namespace o2scl_const;
 using namespace o2scl_hdf;
 
-// A simple function to load the BPS data without
-// HDF support, in case O2scl was compiled without it.
+// Load the BPS data
 int bps_load(table_units<> &bps);
 
 int main(void) {
@@ -308,16 +307,12 @@ int main(void) {
 // End of example
 
 int bps_load(table_units<> &bps) {
-  bps.line_of_names("rho P nb");
-  ifstream fin;
-  fin.open("ex_bps_input.txt");
-  string tmp;
-  fin >> tmp >> tmp >> tmp;
-  for(size_t i=0;i<43;i++) {
-    double line[3];
-    fin >> line[0] >> line[1] >> line[2];
-    bps.line_of_data(3,line);
-  }
-  fin.close();
+  std::string filename=o2scl::o2scl_settings.get_data_dir()+"/bps71.o2";
+  hdf_file hf;
+  hf.open(filename);
+  std::string name;
+  bps.clear();
+  hdf_input(hf,bps,name);
+  hf.close();
   return 0;
 }

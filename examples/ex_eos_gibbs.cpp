@@ -1418,7 +1418,7 @@ public:
       rmf.comp=250.0/hc_mev_fm;
       rmf.msom=0.6;
       rmf.esym=35.0/hc_mev_fm;
-      rmf.ms=500.0/hc_mev_fm;
+      rmf.ms=400.0/hc_mev_fm;
       rmf.mw=763.0/hc_mev_fm;
       rmf.mr=770.0/hc_mev_fm;
       rmf.zeta=0.0;
