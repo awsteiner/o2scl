@@ -144,7 +144,7 @@ int main(void) {
   gm4.ntrial*=10;
 
   // Simplex minimization
-  acl.fout.open("ex_mmin1.dat");
+  acl.fout.open("data/ex_mmin1.dat");
   vector_copy(3,guess,x);
   gm1.mmin(3,x,fmin,f1);
   acl.fout.close();
@@ -156,7 +156,7 @@ int main(void) {
   t.test_rel(x[2],0.0,1.0e-4,"1c");
 
   // Fletcher-Reeves conjugate 
-  acl.fout.open("ex_mmin2.dat");
+  acl.fout.open("data/ex_mmin2.dat");
   vector_copy(3,guess,x);
   gm2.mmin(3,x,fmin,f1);
   acl.fout.close();
@@ -168,7 +168,7 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e-3,"2c");
 
   // Fletcher-Reeves conjugate with gradients
-  acl.fout.open("ex_mmin2g.dat");
+  acl.fout.open("data/ex_mmin2g.dat");
   vector_copy(3,guess,x);
   gm2.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
@@ -180,7 +180,7 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e-3,"2gc");
 
   // Polak-Ribere conjugate
-  acl.fout.open("ex_mmin3.dat");
+  acl.fout.open("data/ex_mmin3.dat");
   vector_copy(3,guess,x);
   gm3.mmin(3,x,fmin,f1);
   acl.fout.close();
@@ -192,7 +192,7 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e-3,"3c");
 
   // Polak-Ribere conjugate with gradients
-  acl.fout.open("ex_mmin3g.dat");
+  acl.fout.open("data/ex_mmin3g.dat");
   vector_copy(3,guess,x);
   gm3.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
@@ -204,7 +204,7 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e-3,"3gc");
 
   // de
-  acl.fout.open("ex_mmin5.dat");
+  acl.fout.open("data/ex_mmin5.dat");
   vector_copy(3,guess,x);
   gm5.mmin(3,x,fmin,f1);
   acl.fout.close();
@@ -218,7 +218,7 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e0,"5c");
 
   // dea
-  acl.fout.open("ex_mmin6.dat");
+  acl.fout.open("data/ex_mmin6.dat");
   vector_copy(3,guess,x);
   gm6.mmin(3,x,fmin,f1);
   acl.fout.close();

@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
   mct.verbose=3;
   mct.n_threads=1;
   mct.max_iters=500;
-  mct.prefix="ex_mcmc_nn1";
+  mct.prefix="data/ex_mcmc_nn1";
 
   cout << "──────────────────────────────────────────────────────────"
        << endl;
@@ -382,7 +382,7 @@ int main(int argc, char *argv[]) {
 
   // Store proposal distribution tests to file
   hdf_file hf;
-  hf.open_or_create("ex_mcmc_nn2.o2");
+  hf.open_or_create("data/ex_mcmc_nn2.o2");
   hdf_output(hf,tprop[0],"prop_nflow");
   hdf_output(hf,tprop[1],"prop_KDE");
   hdf_output(hf,tprop[2],"prop_GMM");
@@ -480,7 +480,7 @@ int main(int argc, char *argv[]) {
   mct.use_classifier=true;
   mct.n_retrain=0;
   mct.max_iters=200;
-  mct.prefix="ex_mcmc_nn3";
+  mct.prefix="data/ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
   mct.show_emu=1;
@@ -488,9 +488,9 @@ int main(int argc, char *argv[]) {
   
   // Set up the file for the emulator and classifier input. In this
   // example, they're the same, but they need not be.
-  mct.emu_file="ex_mcmc_nn1_0_out";
+  mct.emu_file="data/ex_mcmc_nn1_0_out";
   mct.emu_tname="markov_chain_0";
-  mct.class_file="ex_mcmc_nn1_0_out";
+  mct.class_file="data/ex_mcmc_nn1_0_out";
   mct.class_tname="markov_chain_0";
 
   cout << "Calling mcmc_emu()" << endl;

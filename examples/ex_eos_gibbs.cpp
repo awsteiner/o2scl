@@ -1349,13 +1349,16 @@ public:
     eti.read_table(ns,"ed","pr","nB");
     cout << "Going to tov_solve." << endl;
     tov_solve ts;
+
+    // This additional accuracy is necessary to get the plots
+    // right
+    ts.princ=1.01;
     ts.set_eos(eti);
     ts.mvsr();
 
     // The tov_solve class uses 'nb', so we just rename
     std::shared_ptr<table_units<> > tov=ts.get_results();
     tov->rename_column("nb","nB");
-    tov->summary(&cout);
     cout << "M_max: " << tov->max("gm") << endl;
     cout << "Central energy density of maximum mass star:\n  "
          << tov->get("ed",tov->lookup("gm",tov->max("gm"))) << " "
@@ -1414,7 +1417,7 @@ public:
       rmf.eoa=16.0/hc_mev_fm;
       rmf.comp=250.0/hc_mev_fm;
       rmf.msom=0.6;
-      rmf.esym=36.0/hc_mev_fm;
+      rmf.esym=35.0/hc_mev_fm;
       rmf.ms=500.0/hc_mev_fm;
       rmf.mw=763.0/hc_mev_fm;
       rmf.mr=770.0/hc_mev_fm;
@@ -1436,7 +1439,9 @@ public:
       rmf.fix_saturation();
       cout << "Done." << endl;
       rmf.saturation();
-      cout << "n0,m*/m: " << rmf.n0 << " " << rmf.msom << endl;
+      cout << "n0,m*/m: " << rmf.n0 << " " << rmf.msom << " "
+           << rmf.eoa*hc_mev_fm << " " << rmf.comp*hc_mev_fm << " "
+           << rmf.esym*hc_mev_fm << endl;
       
       cout << "Selected the RMF model from SPL00 "
            << "(no hyperons, zeta=xi=0)." << endl;

@@ -46,6 +46,56 @@ gibbsth6:
 	ex_eos_gibbs -set sonB 2.0 -set YLe 0.0 -set YLmu 0.0 \
 		-hadrons SPL00_hyp -quarks SPL00_njl -mvsr mshnjl2.o2
 
+spl_fig1:
+	o2graph -set fig_dict "dpi=250" -set xlo 0 -set xhi 10 \
+		-set ylo 0 -set yhi 1.1 \
+		-read msbag0.o2 hadrons -function "nB/0.16" u \
+		-function 1.0 chi \
+		-plot u chi "color=black" \
+		-read msbag0.o2 mixed -function "nB/0.16" u \
+		-plot u chi "lw=3,color=black" \
+		-show
+
+spl_fig2:
+	o2graph -set fig_dict "dpi=250" -set xlo 0 -set xhi 6 \
+		-set ylo 0 -set yhi 250 \
+		-read msbag0.o2 hadrons -function "nB/0.16" u \
+		-plot u pr "color=black" \
+		-read msbag0.o2 mixed -function "nB/0.16" u \
+		-plot u pr "lw=3,color=black" \
+		-read msbag0.o2 quarks -function "nB/0.16" u \
+		-plot u pr "color=black" \
+		-read msbag1.o2 hadrons -function "nB/0.16" u \
+		-plot u pr "color=black,ls=:" \
+		-read msbag1.o2 mixed -function "nB/0.16" u \
+		-plot u pr "lw=3,color=black,ls=:" \
+		-read msbag1.o2 quarks -function "nB/0.16" u \
+		-plot u pr "color=black,ls=:" \
+		-read msbag2.o2 hadrons -function "nB/0.16" u \
+		-plot u pr "color=black,ls=-" \
+		-read msbag2.o2 mixed -function "nB/0.16" u \
+		-plot u pr "lw=3,color=black,ls=-" \
+		-read msbag2.o2 quarks -function "nB/0.16" u \
+		-plot u pr "color=black,ls=-" \
+		-show
+
+spl_fig4:
+	o2graph -set fig_dict "dpi=250" -set xlo 12 -set xhi 16 \
+		-set ylo 0 -set yhi 2.5 \
+		-read msbag0.o2 hadrons -plot r gm "color=black" \
+		-read msbag0.o2 mixed \
+		-plot r gm "lw=3,color=black" \
+		-read msbag0.o2 quarks -plot r gm "color=black" \
+		-read msbag1.o2 hadrons -plot r gm "color=black,ls=:" \
+		-read msbag1.o2 mixed \
+		-plot r gm "lw=3,color=black,ls=:" \
+		-read msbag1.o2 quarks -plot r gm "color=black,ls=:" \
+		-read msbag2.o2 hadrons -plot r gm "color=black,ls=-" \
+		-read msbag2.o2 mixed \
+		-plot r gm "lw=3,color=black,ls=-" \
+		-read msbag2.o2 quarks -plot r gm "color=black,ls=-" \
+		-show
+
 gplot:
 	o2graph -set xlo 12 -set xhi 16 -set ylo 0 -set yhi 2.5 \
 		-read msbag0.o2 tov \

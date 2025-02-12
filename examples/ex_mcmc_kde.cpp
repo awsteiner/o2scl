@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
   
   // Set the MCMC parameters
   mct.max_iters=20000;
-  mct.prefix="ex_mcmc_kde";
+  mct.prefix="data/ex_mcmc_kde";
   mct.n_threads=1;
   mct.verbose=3;
   

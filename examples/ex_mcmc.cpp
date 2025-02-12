@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
   mct.def_stepper->step_fac.resize(1);
   mct.def_stepper->step_fac[0]=2.0;
   mct.max_iters=20000;
-  mct.prefix="ex_mcmc";
+  mct.prefix="data/ex_mcmc";
   mct.table_prealloc=mct.max_iters/3;
   
   // Perform MCMC
