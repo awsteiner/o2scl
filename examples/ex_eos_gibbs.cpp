@@ -30,7 +30,6 @@
 #include <o2scl/convert_units.h>
 #include <o2scl/fermion.h>
 #include <o2scl/mroot_hybrids.h>
-#include <o2scl/anneal_gsl.h>
 #include <o2scl/mm_funct.h>
 #include <o2scl/tov_solve.h>
 #include <o2scl/test_mgr.h>
@@ -132,6 +131,9 @@ public:
   thermo tot;
   //@}
 
+  /// Minimum density for the hadronic phase (default 0.08)
+  double had_phase_min_nB;
+  
   /// Lepton thermodynamics
   fermion_rel fr;
 
@@ -186,7 +188,8 @@ public:
       the mixed phase begins at \f$ T=0 \f$
   */
   int f_bag_constant(size_t nv, const ubvector &x, ubvector &y,
-		     double &nB) {
+		     double &nB, bool &rmf_guess, double &sigma,
+                     double &omega, double &rho) {
 
     //cout << "x: ";
     //vector_out(cout,nv,x,true);
@@ -200,7 +203,20 @@ public:
       njl.B0=x[1];
     }
 
+    if (rmf_guess==true) {
+      if (ptr_h==&rmf) {
+        rmf.set_fields(sigma,omega,rho);
+      } else if (ptr_h==&rmf_hyp) {
+        rmf_hyp.set_fields(sigma,omega,rho);
+      }
+    }
     ptr_h->calc_e(n,p,hth);
+    if (ptr_h==&rmf) {
+      rmf.get_fields(sigma,omega,rho);
+    } else if (ptr_h==&rmf_hyp) {
+      rmf_hyp.get_fields(sigma,omega,rho);
+    }
+
     
     e.mu=n.mu-p.mu;
     fr.calc_mu_zerot(e);
@@ -288,7 +304,8 @@ public:
       s=\mathrm{constant} \f$
   */
   int f_had_phase(size_t nv, const ubvector &x, ubvector &y,
-		  double &nB) {
+		  double &nB, bool &rmf_guess, double &sigma,
+                  double &omega, double &rho) {
 
     //cout << "x: ";
     //vector_out(cout,nv,x,true);
@@ -304,8 +321,20 @@ public:
       T=x[ix++];
     }
     leptons_in(ix,x);
-    
-    int hret=ptr_h->calc_temp_e(n,p,T,hth);
+
+    if (rmf_guess==true) {
+      if (ptr_h==&rmf) {
+        rmf.set_fields(sigma,omega,rho);
+      } else if (ptr_h==&rmf_hyp) {
+        rmf_hyp.set_fields(sigma,omega,rho);
+      }
+    }
+    ptr_h->calc_temp_e(n,p,T,hth);
+    if (ptr_h==&rmf) {
+      rmf.get_fields(sigma,omega,rho);
+    } else if (ptr_h==&rmf_hyp) {
+      rmf_hyp.get_fields(sigma,omega,rho);
+    }
     
     e.mu=n.mu-p.mu+nu_e.mu;
 
@@ -410,7 +439,7 @@ public:
     u.mu=n.mu/3.0-e.mu*2.0/3.0;
     d.mu=n.mu/3.0+e.mu/3.0;
     s.mu=d.mu;
-    
+
     ptr_q->calc_temp_p(u,d,s,T,qth);
     
     double quark_nqch, quark_nQ;
@@ -448,6 +477,7 @@ public:
 
     //cout << "y: ";
     //vector_out(cout,nv,y,true);
+    //exit(-1);
     
     return 0;
   }
@@ -568,7 +598,8 @@ public:
   /** \brief Solve for the beginning of the mixed phase
    */
   int f_beg_mixed_phase(size_t nv, const ubvector &x, ubvector &y,
-			double &nB) {
+			double &nB, bool &rmf_guess, double &sigma,
+                        double &omega, double &rho) {
 
     //cout << "x: ";
     //vector_out(cout,nv,x,true);
@@ -587,7 +618,19 @@ public:
     // Add neutrino chemical potential variables
     leptons_in(ix,x);
 
+    if (rmf_guess==true) {
+      if (ptr_h==&rmf) {
+        rmf.set_fields(sigma,omega,rho);
+      } else if (ptr_h==&rmf_hyp) {
+        rmf_hyp.set_fields(sigma,omega,rho);
+      }
+    }
     ptr_h->calc_temp_e(n,p,T,hth);
+    if (ptr_h==&rmf) {
+      rmf.get_fields(sigma,omega,rho);
+    } else if (ptr_h==&rmf_hyp) {
+      rmf_hyp.get_fields(sigma,omega,rho);
+    }
 
     // Compute total baryon density
     nB=n.n+p.n;
@@ -618,8 +661,8 @@ public:
       y[ix++]=sonB-tot.en/nB;
     }
 
-    cout << "bmp: " << n.n << " " << p.n << " " << u.n << " "
-         << d.n << " " << s.n << endl;
+    cout << "bmp: nn,np,nu,nd,ns: " << n.n << " " << p.n << "\n  "
+         << u.n << " " << d.n << " " << s.n << endl;
     //cout << "y: ";
     //vector_out(cout,nv,y,true);
 
@@ -735,7 +778,6 @@ public:
     x2[1]=p.n;
     mh.err_nonconv=false;
     mh.def_jac.err_nonconv=false;
-    mh.ntrial=1000;
     int ret=mh.msolve(2,x2,fp_min_densities);
     mh.def_jac.err_nonconv=true;
     mh.err_nonconv=true;
@@ -924,6 +966,11 @@ public:
     beg_mixed_phase_guess[4]=-0.06;
 
     quark_phase_guess.resize(5);
+
+    mh.ntrial=1000;
+    rmf.def_mroot.ntrial=1000;
+
+    had_phase_min_nB=0.08;
   }
 
   /** \brief Desc
@@ -953,11 +1000,15 @@ public:
     }
     
     double mp_end, chi, nB, dim=3.0, esurf, ecoul, mp_start;
+    double sigma, omega, rho;
+    bool rmf_guess=false;
     
     mm_funct fp_had_phase=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,double &,
+                       bool &, double &, double &, double &)>
        (&ex_eos_gibbs::f_had_phase),this,std::placeholders::_1,
-       std::placeholders::_2,std::placeholders::_3,std::ref(nB));
+       std::placeholders::_2,std::placeholders::_3,std::ref(nB),
+       std::ref(rmf_guess),std::ref(sigma),std::ref(omega),std::ref(rho));
     mm_funct fp_mixed_phase_chi=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,const double &)>
        (&ex_eos_gibbs::f_mixed_phase_chi),this,std::placeholders::_1,
@@ -969,10 +1020,11 @@ public:
        std::ref(nB));
     mm_funct fp_beg_mixed_phase=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-		       double &)>
+		       double &, bool &, double &, double &, double &)>
        (&ex_eos_gibbs::f_beg_mixed_phase),this,std::placeholders::_1,
        std::placeholders::_2,std::placeholders::_3,
-       std::ref(nB));
+       std::ref(nB),std::ref(rmf_guess),std::ref(sigma),std::ref(omega),
+       std::ref(rho));
     multi_funct fp_mixed_phase_min=std::bind
       (std::mem_fn<double(size_t,const ubvector &, double &, double &)>
        (&ex_eos_gibbs::f_mixed_phase_min),this,std::placeholders::_1,
@@ -983,7 +1035,15 @@ public:
        (&ex_eos_gibbs::f_mixed_phase_min_r),this,std::placeholders::_1,
        std::placeholders::_2,std::ref(nB),std::ref(chi),std::ref(dim),
        std::ref(esurf),std::ref(ecoul));
-
+    mm_funct fp_bag_constant=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,
+                       double &, bool &, double &, double &,
+                       double &)>
+       (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
+       std::placeholders::_2, std::placeholders::_3,
+       std::ref(nB),std::ref(rmf_guess),std::ref(sigma),std::ref(omega),
+       std::ref(rho));
+    
     ubvector x(8), y(8);
     
     cout << "Masses (n,p,e): " << n.m*hc_mev_fm << " "
@@ -1019,13 +1079,6 @@ public:
       
       mp_start=mp_start_fix;
       
-      mm_funct fp_bag_constant=std::bind
-	(std::mem_fn<int(size_t,const ubvector &,ubvector &,
-			 double &)>
-	 (&ex_eos_gibbs::f_bag_constant),this,std::placeholders::_1,
-	 std::placeholders::_2, std::placeholders::_3,
-	 std::ref(nB));
-      
       cout << "Determine B by fixing the "
 	   << "beginning of the mixed phase to\n n_B=" << mp_start
 	   << " fm^{-3}:" << endl;
@@ -1036,6 +1089,10 @@ public:
       B=x[1];
       
       cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
+      if (ptr_h==&rmf || ptr_h==&rmf_hyp) {
+        cout << "  Meson fields (sig,ome,rho in 1/fm): "
+             << sigma << " " << omega << " " << rho << endl;
+      }
       cout << "Densities (n,p,e): " << n.n << " " << p.n << " " << e.n
 	   << " fm^{-3}" << endl;
       cout << "Quark densities (u,d,s): " << u.n << " " << d.n << " "
@@ -1100,9 +1157,13 @@ public:
 
       mh.msolve(nvar,x,fp_beg_mixed_phase);
       
-      f_beg_mixed_phase(nvar,x,y,nB);
+      fp_beg_mixed_phase(nvar,x,y);
       mp_start=nB;
       cout << "Mixed phase begins at nB: " << nB << " fm^{-3}" << endl;
+      if (ptr_h==&rmf || ptr_h==&rmf_hyp) {
+        cout << "  Meson fields (sig,ome,rho in 1/fm): "
+             << sigma << " " << omega << " " << rho << endl;
+      }
 
       // Copy successful results back over to beg_mixed_phase_guess
       ix=0;
@@ -1154,8 +1215,11 @@ public:
                                          
       cout << "nb_had_last is: " << nb_had_last << endl;
 
-      cout << "Hadronic phase (nB,nn,np):" << endl;
-      for(nB=nb_had_last;nB>0.07999;nB-=0.01) {
+      cout << "Hadronic phase (nB,nn,np): " << mh.ntrial << endl;
+      if (ptr_h==&rmf || ptr_h==&rmf_hyp) {
+        rmf_guess=true;
+      }
+      for(nB=nb_had_last;nB>had_phase_min_nB-1.0e-6;nB-=0.001) {
 	mh.msolve(nvar,x,fp_had_phase);
 	cout << nB << " " << n.n << " " << p.n << endl;
 	std::vector<double> line=
@@ -1169,6 +1233,9 @@ public:
       cout << endl;
 
       thad.sort_table("nB");
+      if (ptr_h==&rmf || ptr_h==&rmf_hyp) {
+        rmf_guess=false;
+      }
     }
 
     // ───────────────────────────────────────────────────────────────────
@@ -1213,6 +1280,7 @@ public:
       
       for (chi=1.0;chi>-1.0e-4;chi-=0.05) {
 
+        mh.verbose=2;
 	mh.msolve(nvar,x,fp_mixed_phase_chi);
         nB=x[2];
 
@@ -1626,6 +1694,11 @@ int main(int argc, char *argv[]) {
   p_YLmu.d=&ehg.YLmu;
   p_YLmu.help="Muon lepton fraction (default is -1 for no neutrinos)";
   cl.par_list.insert(make_pair("YLmu",&p_YLmu));
+
+  cli::parameter_double p_had_phase_min_nB;
+  p_had_phase_min_nB.d=&ehg.had_phase_min_nB;
+  p_had_phase_min_nB.help="min nB";
+  cl.par_list.insert(make_pair("had_phase_min_nB",&p_had_phase_min_nB));
 
   cl.run_auto(argc,argv);
   

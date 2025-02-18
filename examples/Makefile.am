@@ -3,10 +3,11 @@ gibbst1:
 
 gibbst2:
 	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
+		-set had_phase_min_nB 0.09 \
 		-quarks SPL00_bag -hadrons SPL00 -mvsr msbag1.o2
 
 gibbst3:
-	ex_eos_gibbs -set sonB 2.0 -set YLe 0.15 -set YLmu 0.0 \
+	ex_eos_gibbs -set sonB 2.0 -set YLe 0.0 -set YLmu 0.0 \
 		-quarks SPL00_bag -hadrons SPL00 \
 		-guess "beg-mixed" 0.2567 0.001594 0.1379 \
 		"(-0.7482)" "(-0.6419)" -mvsr msbag2.o2
@@ -14,8 +15,10 @@ gibbst3:
 gibbst4:
 	ex_eos_gibbs -hadrons SPL00 -quarks SPL00_njl -mvsr msnjl0.o2
 
+# 1-4 work I think, so now working on 5
 gibbst5:
 	ex_eos_gibbs -set sonB 1.0 -set YLe 0.4 -set YLmu 0.0 \
+		-set had_phase_min_nB 0.09 \
 		-hadrons SPL00 -quarks SPL00_njl -mvsr msnjl1.o2
 
 gibbst6:

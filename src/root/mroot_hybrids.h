@@ -674,9 +674,10 @@ namespace o2scl {
       this->last_ntrial=iter;
     
       if (((int)iter)>=this->ntrial) {
-        O2SCL_CONV2_RET("Function mroot_hybrids::msolve() ",
-                        "exceeded max. number of iterations.",
-                        exc_emaxiter,this->err_nonconv);
+        O2SCL_CONV_RET((((std::string)"Function mroot_hybrids::")+
+                        "msolve() exceeded maximum number ("+
+                        o2scl::itos(this->ntrial)+") of iterations.").c_str(),
+                       exc_emaxiter,this->err_nonconv);
       }
     
       return success;

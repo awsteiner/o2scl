@@ -319,12 +319,13 @@ namespace o2scl {
   class eos_had_rmf : public eos_had_temp_pres_base {
 
   public:
-    
+
+    /// Desc
     int check_derivs(double &dPds, double &dPdw, double &dPdr,
                      fermion &ne, fermion &pr,
                      double sig, double ome, double lrho);
     
-    /// \name Other data members
+    /// \name Other settings
     //@{
     /** \brief The number of separate calls to the solver 
         that the <tt>calc_e</tt> functions take (default 20)
@@ -392,12 +393,18 @@ namespace o2scl {
     double a1, a2, a3, a4, a5, a6, b1, b2, b3;
     //@}
 
+    /// \name Basic usage
+    //@{
+    /// Constructor
     eos_had_rmf();
 
     /// Destructor
     virtual ~eos_had_rmf() {
     }
+    //@}
 
+    /// \name Other functions
+    //@{
     /// Copy constructor
     eos_had_rmf(const eos_had_rmf &f) {
       this->def_thermo=f.def_thermo;
@@ -498,6 +505,10 @@ namespace o2scl {
        }
       return *this;
     }
+
+    /// Return string denoting type ("eos_had_rmf")
+    virtual const char *type() { return "eos_had_rmf"; }
+    //@}
     
     /* \brief Load parameters for model named 'model'
         
@@ -720,9 +731,6 @@ namespace o2scl {
     }
     //@}
 
-    /// Return string denoting type ("eos_had_rmf")
-    virtual const char *type() { return "eos_had_rmf"; }
-
     /// \name Functions dealing with naturalness
     //@{
         /** \brief Set the coefficients of a eos_had_rmf object to their 
@@ -891,6 +899,8 @@ namespace o2scl {
 
   protected:
 
+    /// \name Temporary storage [protected]
+    //@{
     /** \brief Temporary baryon density
      */
     double n_baryon;
@@ -901,23 +911,36 @@ namespace o2scl {
     */
     double n_charge;
 
-    /// \name The meson fields
-    //@{
-    double sigma, omega, rho;
-    //@}
-
-    /// Temperature for solving field equations at finite temperature
-    double fe_temp;
-
     /// For calc_e(), if true, then solve for neutron matter
     bool ce_neut_matter;
     
     /// For calc_e(), if true, then solve for proton matter
     bool ce_prot_matter;
 
+    /// Temperature for solving field equations at finite temperature
+    double fe_temp;
+
+    /// Temperature storage for calc_temp_e()
+    double ce_temp;
+    //@}
+
+    /// \name The meson fields [protected]
+    //@{
+    /// Scalar isoscalar meson
+    double sigma;
+
+    /// Vector isoscalar meson
+    double omega;
+    
+    /// Vector isovector meson
+    double rho;
+    
     /// True if a guess for the fields has been given
     bool guess_set;
+    //@}
 
+    /// \name Saturation functions [protected]
+    //@{
     /// The function for fix_saturation()
     int fix_saturation_fun(size_t nv, const ubvector &x, ubvector &y);
 
@@ -927,18 +950,6 @@ namespace o2scl {
                             double fix_eoa, double fix_comp,
                             double fix_esym, double fix_msom);
     
-    /// Compute matter at zero pressure (for saturation())
-    virtual int zero_pressure(size_t nv, const ubvector &ex, 
-                              ubvector &ey, o2scl::thermo &th);
-
-    /// The function for calc_e()
-    virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
-                                 ubvector &ey, o2scl::thermo &th);
-
-    /// The function for calc_temp_e()
-    virtual int calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
-                                      ubvector &ey, o2scl::thermo &th);
-
     /** \brief Calculate the \c cr coupling given \c sig and \c ome 
         at the density 'nb'.
         
@@ -946,8 +957,21 @@ namespace o2scl {
     */
     int calc_cr(double sig, double ome, double nb);
 
-    /// Temperature storage for calc_temp_e()
-    double ce_temp;
+    /// Compute matter at zero pressure (for saturation())
+    virtual int zero_pressure(size_t nv, const ubvector &ex, 
+                              ubvector &ey, o2scl::thermo &th);
+    //@}
+    
+    /// \name Solve the chemical potentials given the densities [protected]
+    //@{
+    /// The function for calc_e()
+    virtual int calc_e_solve_fun(size_t nv, const ubvector &ex, 
+                                 ubvector &ey, o2scl::thermo &th);
+
+    /// The function for calc_temp_e()
+    virtual int calc_temp_e_solve_fun(size_t nv, const ubvector &ex, 
+                                      ubvector &ey, o2scl::thermo &th);
+    //@}
 
   };
 
