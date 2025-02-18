@@ -140,9 +140,6 @@ public:
   /// Solver
   mroot_hybrids<> mh;
 
-  /// Bag constant
-  double B;
-
   /// Surface tension (default \f$ (1~\mathrm{MeV})/(\hbar c) \f$
   double surften;
 
@@ -216,7 +213,6 @@ public:
     } else if (ptr_h==&rmf_hyp) {
       rmf_hyp.get_fields(sigma,omega,rho);
     }
-
     
     e.mu=n.mu-p.mu;
     fr.calc_mu_zerot(e);
@@ -615,6 +611,8 @@ public:
       XCHECK;
       T=x[ix++];
     }
+    if (T<0.0) return 1;
+    
     // Add neutrino chemical potential variables
     leptons_in(ix,x);
 
@@ -661,8 +659,8 @@ public:
       y[ix++]=sonB-tot.en/nB;
     }
 
-    cout << "bmp: nn,np,nu,nd,ns: " << n.n << " " << p.n << "\n  "
-         << u.n << " " << d.n << " " << s.n << endl;
+    //cout << "bmp: nn,np,nu,nd,ns: " << n.n << " " << p.n << "\n  "
+    //<< u.n << " " << d.n << " " << s.n << endl;
     //cout << "y: ";
     //vector_out(cout,nv,y,true);
 
@@ -990,7 +988,7 @@ public:
     return 0;
   }
   
-  /** \brief Compute the EOS and M-R curve at T=0
+  /** \brief Compute the EOS and M-R curve
    */
   int mvsr(vector<string> &sv, bool itive_com) {
 
@@ -1051,29 +1049,8 @@ public:
          << e.m*hc_mev_fm << " MeV" << endl;
     cout << endl;
 
-    /*
-      cout << rmf.b << endl;
-      cout << rmf.c << endl;
-      cout << rmf.cr << endl;
-      cout << rmf.ms << endl;
-      cout << rmf.zeta << endl;
-      cout << rmf.cs << endl;
-      cout << rmf.cw << endl;
-      cout << rmf.b1 << endl;
-      cout << rmf.xi << endl;
-      cout << rmf.a1 << endl;
-      cout << rmf.a2 << endl;
-      cout << rmf.a3 << endl;
-      cout << rmf.a4 << endl;
-      cout << rmf.a5 << endl;
-      cout << rmf.a6 << endl;
-      cout << rmf.b2 << endl;
-      cout << rmf.b3 << endl;
-      exit(-1);
-    */
-
     // ───────────────────────────────────────────────────────────────────
-    // Determine bag constant
+    // Determine bag constant and/or beginning of the mixed phase
 
     if (mp_start_fix>0 && (ptr_q==&bag || ptr_q==&njl)) {
       
@@ -1083,12 +1060,18 @@ public:
 	   << "beginning of the mixed phase to\n n_B=" << mp_start
 	   << " fm^{-3}:" << endl;
       nB=mp_start;
+      // Neutron number density
       x[0]=mp_start*0.9;
+      // Bag constant, in 1/fm
       x[1]=1.0;
-      mh.msolve(2,x,fp_bag_constant);
-      B=x[1];
       
-      cout << "B: " << B*hc_mev_fm << " MeV/fm^3" << endl;
+      mh.msolve(2,x,fp_bag_constant);
+
+      // Make sure the bag constant is set to the optimal value
+      // by calling the function again
+      fp_bag_constant(2,x,y);
+      
+      cout << "B: " << x[1]*hc_mev_fm << " MeV/fm^3" << endl;
       if (ptr_h==&rmf || ptr_h==&rmf_hyp) {
         cout << "  Meson fields (sig,ome,rho in 1/fm): "
              << sigma << " " << omega << " " << rho << endl;
@@ -1126,9 +1109,63 @@ public:
 
       beg_mixed_phase_guess[0]=n.n;
       beg_mixed_phase_guess[1]=p.n;
-      beg_mixed_phase_guess[2]=0.05;
-      beg_mixed_phase_guess[3]=0.05;
-      beg_mixed_phase_guess[4]=0.05;
+      beg_mixed_phase_guess[2]=0.01;
+      beg_mixed_phase_guess[3]=0.01;
+      beg_mixed_phase_guess[4]=0.01;
+
+      if (sonB>0.0 && YLe>-0.5 && YLmu>-0.5) {
+        double target_sonB=sonB;
+        double target_YLe=YLe;
+        double target_YLmu=YLmu;
+        double init_YLe=e.n/(p.n+n.n);
+        double init_YLmu=mu.n/(p.n+n.n);
+
+        // Gradually increase sonB, YLe, and YLmu to their target values
+        static const size_t nstep=20;
+        
+        for(size_t il=0;il<=nstep;il++) {
+          
+          sonB=target_sonB/((double)nstep);
+          YLe=init_YLe+(target_YLe-init_YLe)*((double)il)/((double)nstep);
+          YLmu=init_YLmu+(target_YLmu-init_YLmu)*((double)il)/((double)nstep);
+
+          size_t ix=0;
+          // neutron number density
+          XCHECK;
+          x[ix++]=beg_mixed_phase_guess[0];
+          // proton number density
+          XCHECK;
+          x[ix++]=beg_mixed_phase_guess[1];
+          // temperature
+          if (sonB>0.0) {
+            XCHECK;
+            x[ix++]=beg_mixed_phase_guess[2];
+          }
+          // electron neutrino chemical potential
+          if (YLe>-0.5) {
+            XCHECK;
+            x[ix++]=beg_mixed_phase_guess[3];
+          }
+          // muon neutrino chemical potential
+          if (YLmu>-0.5) {
+            XCHECK;
+            x[ix++]=beg_mixed_phase_guess[4];
+          }
+          size_t nvar=ix;
+          
+          if (il<nstep*2 && (ptr_h==&rmf || ptr_h==&rmf_hyp)) {
+            rmf_guess=true;
+          }
+          mh.msolve(nvar,x,fp_beg_mixed_phase);
+          cout << "XX: " << sonB << " " << YLe << " " << YLmu << endl;
+          
+        }
+
+        sonB=target_sonB;
+        YLe=target_YLe;
+        YLmu=target_YLmu;
+        
+      }
 
     } else {
 
@@ -1137,18 +1174,23 @@ public:
       
       cout << "Beginning of mixed phase: " << endl;
       size_t ix=0;
+      // neutron number density
       XCHECK;
       x[ix++]=beg_mixed_phase_guess[0];
+      // proton number density
       XCHECK;
       x[ix++]=beg_mixed_phase_guess[1];
+      // temeprature
       if (sonB>0.0) {
         XCHECK;
 	x[ix++]=beg_mixed_phase_guess[2];
       }
+      // electron neutrino chemical potential
       if (YLe>-0.5) {
         XCHECK;
 	x[ix++]=beg_mixed_phase_guess[3];
       }
+      // muon neutrino chemical potential
       if (YLmu>-0.5) {
         XCHECK;
 	x[ix++]=beg_mixed_phase_guess[4];
