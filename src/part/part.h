@@ -429,6 +429,47 @@ namespace o2scl {
               cmu_25_ti+=x25;
               std::cout.width(2);
               std::cout << x25 << " cmu" << std::endl;
+
+              if (count==1) {
+                std::cout.setf(std::ios::showpos);
+                std::cout.setf(std::ios::left);
+                std::cout << "  ";
+                std::cout.width(32);
+                std::cout << dtos(f.n,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f.ed,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f.en,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f.pr,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f.n*f.mu+f.en*T-f.ed-f.pr,0) << std::endl;
+                std::cout << "  ";
+                std::cout.width(32);
+                std::cout << dtos(fld.n,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(fld.ed,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(fld.en,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(fld.pr,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(fld.n*fld.mu+fld.en*T-fld.ed-fld.pr,0) << std::endl;
+                std::cout << "  ";
+                std::cout.width(32);
+                std::cout << dtos(f25.n,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f25.ed,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f25.en,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f25.pr,0) << " ";
+                std::cout.width(32);
+                std::cout << dtos(f25.n*f25.mu+f25.en*T-f25.ed-f25.pr,0) << std::endl;
+                std::cout.unsetf(std::ios::left);
+                std::cout.unsetf(std::ios::showpos);
+                exit(-1);
+              }
               
             } else {
               

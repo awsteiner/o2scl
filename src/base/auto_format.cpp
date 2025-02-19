@@ -567,6 +567,14 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
 
 #ifdef O2SCL_MULTIP
 auto_format &o2scl_auto_format::operator<<(auto_format &at,
+					   const cpp_dec_float_25 &d) {
+  string stmp;
+  stmp=o2scl::dtos(d,at.precision_);
+  at.add_string(stmp);
+  return at;
+}
+
+auto_format &o2scl_auto_format::operator<<(auto_format &at,
 					   const cpp_dec_float_35 &d) {
   string stmp;
   stmp=o2scl::dtos(d,at.precision_);
