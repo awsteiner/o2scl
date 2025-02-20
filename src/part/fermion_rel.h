@@ -2781,13 +2781,16 @@ namespace o2scl {
     inte_double_exp_boost<>,
     inte_double_exp_boost<>,
     root_cern<funct_ld,long double>,
-    funct_ld,
-    long double> {
+    funct_ld,long double> {
     
   public:
     
     fermion_rel_ld() {
       //density_root.test_form=2;
+
+      // AWS, 2/19/25: I haven't yet optimized the value of
+      // upper_limit_fac for this type
+      upper_limit_fac=40;
     }
     
   };
@@ -2812,6 +2815,10 @@ namespace o2scl {
     
     fermion_rel_cdf25() {
       //density_root.test_form=2;
+
+      // AWS, 2/19/25: I haven't yet optimized the value of
+      // upper_limit_fac for this type
+      upper_limit_fac=60;
     }
     
   };

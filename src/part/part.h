@@ -281,10 +281,10 @@ namespace o2scl {
                       thermo1_t &fr, thermo2_t &frld,
                       thermo3_t &fr25, o2scl::test_mgr &t,
                       int &count, int first_test,
-                      int cmu_n_max, int cmu_en_max,
-                      int cmu_ld_n_max, int cmu_ld_en_max,
-                      int cmu_ti_max, int cmu_ld_ti_max,
-                      int cmu_25_ti_max) {
+                      int cmu_n_min, int cmu_en_min,
+                      int cmu_ld_n_min, int cmu_ld_en_min,
+                      int cmu_ti_min, int cmu_ld_ti_min,
+                      int cmu_25_ti_min) {
 
       std::cout.precision(4);
       
@@ -428,9 +428,11 @@ namespace o2scl {
               }
               cmu_25_ti+=x25;
               std::cout.width(2);
-              std::cout << x25 << " cmu" << std::endl;
+              std::cout << x25 << " cmu " << fr.last_method << " "
+                        << frld.last_method << " " << fr25.last_method
+                        << std::endl;
 
-              if (count==1) {
+              if (false && count==1) {
                 std::cout.setf(std::ios::showpos);
                 std::cout.setf(std::ios::left);
                 std::cout << "  ";
@@ -454,7 +456,8 @@ namespace o2scl {
                 std::cout.width(32);
                 std::cout << dtos(fld.pr,0) << " ";
                 std::cout.width(32);
-                std::cout << dtos(fld.n*fld.mu+fld.en*T-fld.ed-fld.pr,0) << std::endl;
+                std::cout << dtos(fld.n*fld.mu+
+                                  fld.en*T-fld.ed-fld.pr,0) << std::endl;
                 std::cout << "  ";
                 std::cout.width(32);
                 std::cout << dtos(f25.n,0) << " ";
@@ -465,7 +468,8 @@ namespace o2scl {
                 std::cout.width(32);
                 std::cout << dtos(f25.pr,0) << " ";
                 std::cout.width(32);
-                std::cout << dtos(f25.n*f25.mu+f25.en*T-f25.ed-f25.pr,0) << std::endl;
+                std::cout << dtos(f25.n*f25.mu+
+                                  f25.en*T-f25.ed-f25.pr,0) << std::endl;
                 std::cout.unsetf(std::ios::left);
                 std::cout.unsetf(std::ios::showpos);
                 exit(-1);
@@ -482,27 +486,38 @@ namespace o2scl {
           }
         }
       }
-      
-      std::cout << "calc_mu density (double <-> long double): "
-           << cmu_n << std::endl;
-      std::cout << "calc_mu entropy (double <-> long double): "
-           << cmu_en << std::endl;
-      std::cout << "calc_mu density (long double <-> cdf_25): "
-           << cmu_ld_n << std::endl;
-      std::cout << "calc_mu entropy (long double <-> cdf_25): "
-           << cmu_ld_en << std::endl;
-      std::cout << "calc_mu ti: " << cmu_ti << std::endl;
-      std::cout << "calc_mu long double ti: " << cmu_ld_ti << std::endl;
-      std::cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << std::endl;
-      std::cout << std::endl;
 
-      t.test_gen(cmu_n>=cmu_n_max,"cmu_n");
-      t.test_gen(cmu_en>=cmu_en_max,"cmu_en");
-      t.test_gen(cmu_ld_n>=cmu_ld_n_max,"cmu_ld_n");
-      t.test_gen(cmu_ld_en>=cmu_ld_en_max,"cmu_ld_en");
-      t.test_gen(cmu_ti>=cmu_ti_max,"cmu_ti");
-      t.test_gen(cmu_ld_ti>=cmu_ld_ti_max,"cmu_ld_ti");
-      t.test_gen(cmu_25_ti>=cmu_25_ti_max,"cmu_25_ti");
+      std::cout << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu density (double <-> long double): "
+      << cmu_n << " " << cmu_n_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu entropy (double <-> long double): "
+      << cmu_en << " " << cmu_en_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu density (long double <-> cdf_25): "
+      << cmu_ld_n << " " << cmu_ld_n_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu entropy (long double <-> cdf_25): "
+      << cmu_ld_en << " " << cmu_ld_en_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu ti: " << cmu_ti << " "
+      << cmu_ti_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu long double ti: " << cmu_ld_ti << " "
+      << cmu_ld_ti_min << std::endl;
+      std::cout.width(43);
+      std::cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << " "
+      << cmu_25_ti_min << std::endl;
+      std::cout << std::endl;
+      
+      t.test_gen(cmu_n>=cmu_n_min,"cmu_n");
+      t.test_gen(cmu_en>=cmu_en_min,"cmu_en");
+      t.test_gen(cmu_ld_n>=cmu_ld_n_min,"cmu_ld_n");
+      t.test_gen(cmu_ld_en>=cmu_ld_en_min,"cmu_ld_en");
+      t.test_gen(cmu_ti>=cmu_ti_min,"cmu_ti");
+      t.test_gen(cmu_ld_ti>=cmu_ld_ti_min,"cmu_ld_ti");
+      t.test_gen(cmu_25_ti>=cmu_25_ti_min,"cmu_25_ti");
       
       std::cout.precision(6);
       
@@ -517,10 +532,10 @@ namespace o2scl {
                       thermo1_t &fr, thermo2_t &frld,
                       thermo3_t &fr25, o2scl::test_mgr &t,
                       int &count, int first_test,
-                      int pmu_n_max, int pmu_en_max,
-                      int pmu_ld_n_max, int pmu_ld_en_max,
-                      int pmu_ti_max, int pmu_ld_ti_max,
-                      int pmu_25_ti_max) {
+                      int pmu_n_min, int pmu_en_min,
+                      int pmu_ld_n_min, int pmu_ld_en_min,
+                      int pmu_ti_min, int pmu_ld_ti_min,
+                      int pmu_25_ti_min) {
 
       std::cout.precision(4);
       
@@ -691,13 +706,13 @@ namespace o2scl {
       std::cout << "pair_mu cpp_dec_float_25 ti: " << pmu_25_ti << std::endl;
       std::cout << std::endl;
 
-      t.test_gen(pmu_n>=pmu_n_max,"pmu_n");
-      t.test_gen(pmu_en>=pmu_en_max,"pmu_en");
-      t.test_gen(pmu_ld_n>=pmu_ld_n_max,"pmu_ld_n");
-      t.test_gen(pmu_ld_en>=pmu_ld_en_max,"pmu_ld_en");
-      t.test_gen(pmu_ti>=pmu_ti_max,"pmu_ti");
-      t.test_gen(pmu_ld_ti>=pmu_ld_ti_max,"pmu_ld_ti");
-      t.test_gen(pmu_25_ti>=pmu_25_ti_max,"pmu_25_ti");
+      t.test_gen(pmu_n>=pmu_n_min,"pmu_n");
+      t.test_gen(pmu_en>=pmu_en_min,"pmu_en");
+      t.test_gen(pmu_ld_n>=pmu_ld_n_min,"pmu_ld_n");
+      t.test_gen(pmu_ld_en>=pmu_ld_en_min,"pmu_ld_en");
+      t.test_gen(pmu_ti>=pmu_ti_min,"pmu_ti");
+      t.test_gen(pmu_ld_ti>=pmu_ld_ti_min,"pmu_ld_ti");
+      t.test_gen(pmu_25_ti>=pmu_25_ti_min,"pmu_25_ti");
       
       std::cout.precision(6);
       
