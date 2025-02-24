@@ -35,15 +35,16 @@ be ``true``, and the fermionic distribution function is
 Then the energy density will also include the rest mass energy
 density, :math:`n m`. Note that, even when the particle is
 interacting, the rest mass is *not* equal to :math:`n m^{*}`. When
-:math:`\nu` does not include the rest mass, the fermionic distribution
-function is
+:math:`\nu` does not include the rest mass (denoted
+:math:`\bar{\nu}`), the fermionic distribution function is
    
 .. math::
 
-   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\nu-m)/T}}
+   f = \frac{1}{1+e^{(\sqrt{k^2+m^{* 2}}-\bar{\nu}-m)/T}}
 
 For convenience, we often define :math:`E^{*} \equiv \sqrt{k^2+m^{*
-2}}`. In the documentation below, expressions to the left of
+2}}`. In the documentation below, when semicolons are present,
+expressions to the left of
 the semicolon apply when ``inc_rest_mass`` is true, and
 expressions to the right of the semicolon apply when ``inc_rest_mass``
 is false.

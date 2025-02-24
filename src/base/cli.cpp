@@ -1261,7 +1261,7 @@ int cli::comm_option_help(vector<string> &sv, bool itive_com) {
 
       bool redirected=false;
       if (!isatty(STDOUT_FILENO)) redirected=true;
-      
+
       if (clist[ix].parm_desc.length()==0) {
 	cout << "Usage: " << command_color 
 	     << clist[ix].lng << default_color

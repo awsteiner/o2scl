@@ -209,14 +209,17 @@ namespace o2scl {
     /** \brief Add enough spaces to ensure all columns have the
 	same width
 
-	The first argument can be any type which is accessible
-	using two applications of <tt>operator[]</tt>, such 
+	The first argument, \c table_in, can be any type which is
+	accessible using two applications of <tt>operator[]</tt>, such
 	as <tt>string **</tt>, <tt>vector<string>[]</tt>, or
-	<tt>vector<vector<string>></tt>. The third type must be
-        a type which can be resized with one <tt>resize()</tt>
-        call (of size \c ncols) and then for the first index and
-        then an additional \c ncols calls to <tt>resize()</tt>
-        (of size \c nrows).
+	<tt>vector<vector<string>></tt>. The type for the fourth
+	argument, \c align_spec, can be any integer array type, but it
+	must have size greater than or equal to \c ncols. The type for
+	the fifth argument, \c table_out, must be a type which can be
+	resized with one <tt>resize()</tt> call (of size \c ncols) and
+	then for the first index and then an additional \c ncols calls
+	to <tt>resize()</tt> (of size \c nrows) (for example
+	<tt>vector<vector<string>></tt>).
 
         This function makes two passes through the input table.
         The first pass constructs the maximum width for each
@@ -236,7 +239,7 @@ namespace o2scl {
       // Use this class to avoid counting vt100 sequences
       terminal ter;
 
-      std::vector<int> align2;
+      std::vector<int> align2(ncols);
 
       for(size_t i=0;i<ncols;i++) {
         align2[i]=align_spec[i];
@@ -474,12 +477,16 @@ namespace o2scl {
             }
 
 	  } else if (align2[i]==align_lnum) {
+
+            // AWS, 2/20/25: I had to take this next section out
+            // because it didn't do anything. I'm not sure if it needs
+            // to be back in or what.
             
-            if (j<n_headers) {
-              if (table_in[i][j].length()>0 && has_negative[i]==true &&
-                  table_in[i][j].length()<csizes[i]) {
-              }
-            } 
+            //if (j<n_headers) {
+            //if (table_in[i][j].length()>0 && has_negative[i]==true &&
+            //table_in[i][j].length()<csizes[i]) {
+            //}
+            //} 
             
 	    if (ter.str_len(table_in[i][j])==csizes[i]) {
               

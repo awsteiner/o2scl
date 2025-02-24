@@ -320,11 +320,6 @@ namespace o2scl {
 
   public:
 
-    /// Desc
-    int check_derivs(double &dPds, double &dPdw, double &dPdr,
-                     fermion &ne, fermion &pr,
-                     double sig, double ome, double lrho);
-    
     /// \name Other settings
     //@{
     /** \brief The number of separate calls to the solver 
@@ -508,6 +503,17 @@ namespace o2scl {
 
     /// Return string denoting type ("eos_had_rmf")
     virtual const char *type() { return "eos_had_rmf"; }
+
+    /** \brief Check the derivatives of the field equations by computing
+        the derivative of the pressure at fixed chemical potentials
+        and zero temperature.
+
+        This function uses \ref calc_eq_p().
+    */
+    int check_derivs(double &dPds, double &dPdw, double &dPdr,
+                     fermion &ne, fermion &pr,
+                     double sig, double ome, double lrho);
+    
     //@}
     
     /* \brief Load parameters for model named 'model'

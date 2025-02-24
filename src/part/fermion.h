@@ -111,6 +111,24 @@ namespace o2scl {
       }
       return *this;
     }
+
+    /// Desc
+    template<class fp2_t>
+    init_stat_cast(fermion_tl<fp2_t> &f) {
+      this->g=static_cast<fp_t>(f.g);
+      this->m=static_cast<fp_t>(f.m);
+      this->ms=static_cast<fp_t>(f.ms);
+      this->n=static_cast<fp_t>(f.n);
+      this->ed=static_cast<fp_t>(f.ed);
+      this->pr=static_cast<fp_t>(f.pr);
+      this->mu=static_cast<fp_t>(f.mu);
+      this->en=static_cast<fp_t>(f.en);
+      this->nu=static_cast<fp_t>(f.nu);
+      this->inc_rest_mass=static_cast<fp_t>(f.inc_rest_mass);
+      this->non_interacting=static_cast<fp_t>(f.non_interacting);
+      this->kf=static_cast<fp_t>(f.kf);
+      this->del=static_cast<fp_t>(f.del);
+    }
     
   };
 
@@ -305,82 +323,6 @@ namespace o2scl {
     
   };
   
-  /** \brief Double-precision version of \ref o2scl::fermion_zerot_tl 
-   */
-  typedef fermion_zerot_tl<double> fermion_zerot;
-  
-  /** \brief Fermion with finite-temperature thermodynamics
-      [abstract base]
-
-      This is an abstract base for the computation of
-      finite-temperature fermionic statistics. Different children
-      (e.g. \ref fermion_rel_tl) use different techniques to computing
-      the momentum integrations.
-
-      Because massless fermions at finite temperature are much
-      simpler, there are separate member functions included in this
-      class to handle them. The functions massless_calc_density() and
-      massless_calc_mu() compute the thermodynamics of massless
-      fermions at finite temperature given the density or the chemical
-      potentials. The functions massless_pair_density() and
-      massless_pair_mu() perform the same task, but automatically
-      include antiparticles.
-
-      The function massless_calc_density() uses a \ref root object to
-      solve for the chemical potential as a function of the density.
-      The default is an object of type root_cern. The function
-      massless_pair_density() does not need to use the \ref root
-      object because of the simplification afforded by the inclusion
-      of antiparticles.
-
-      \verbatim embed:rst
-
-      .. todo::
-
-         In class fermion_thermo_tl:
-
-         - Future: Create a Chebyshev approximation for inverting the
-           the Fermi functions for massless_calc_density() functions?
-
-      \endverbatim
-
-      \hline 
-      <b>Template types:</b>
-
-      - fermion_t: the type of particle object which will be passed
-      to the methods defined by this class
-      - fd_inte_t: the integration object for massless fermions
-      - be_inte_t: the integration object for the nondegenerate limit
-      - root_t: the solver for massless fermions
-      - func_t: the function object type
-      - fp_t: the floating point type
-
-  */
-  template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
-           class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
-           class func_t=funct, class fp_t=double>
-  class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
-
-  protected:
-
-    /// Cubic solver for massless fermions
-    o2scl::cubic_real_coeff_gsl2<fp_t> crcg2;
-    
-  public:
-    
-    fermion_thermo_tl() {
-      massless_root=&def_massless_root;
-    }
-    
-    virtual ~fermion_thermo_tl() {
-    }
-    
-    /// Object for Fermi-Dirac integrals (for massless fermions)
-    fd_inte_t fd_integ;
-    
-    /// Object for Bessel-exp integrals (for nondegenerate expansion)
-    be_inte_t be_integ;
-    
     /** \brief Non-degenerate expansion for fermions
         
         Attempts to evaluate thermodynamics of a non-degenerate
@@ -458,10 +400,11 @@ namespace o2scl {
         10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
         \endcomment
     */
-    bool calc_mu_ndeg(fermion_t &f, fp_t temper, 
-                      fp_t prec=1.0e-18, bool inc_antip=false,
-                      int verbose=0) {
-      
+  template<class fp_t=double>
+  bool part_calc_mu_ndeg(fermion_tl<fp_t> &f, fp_t temper, 
+                         fp_t prec=1.0e-18, bool inc_antip=false,
+                         int verbose=0) {
+    
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
       // Compute psi and tt
@@ -603,6 +546,82 @@ namespace o2scl {
       return false;
     }
 
+  /** \brief Double-precision version of \ref o2scl::fermion_zerot_tl 
+   */
+  typedef fermion_zerot_tl<double> fermion_zerot;
+  
+  /** \brief Fermion with finite-temperature thermodynamics
+      [abstract base]
+
+      This is an abstract base for the computation of
+      finite-temperature fermionic statistics. Different children
+      (e.g. \ref fermion_rel_tl) use different techniques to computing
+      the momentum integrations.
+
+      Because massless fermions at finite temperature are much
+      simpler, there are separate member functions included in this
+      class to handle them. The functions massless_calc_density() and
+      massless_calc_mu() compute the thermodynamics of massless
+      fermions at finite temperature given the density or the chemical
+      potentials. The functions massless_pair_density() and
+      massless_pair_mu() perform the same task, but automatically
+      include antiparticles.
+
+      The function massless_calc_density() uses a \ref root object to
+      solve for the chemical potential as a function of the density.
+      The default is an object of type root_cern. The function
+      massless_pair_density() does not need to use the \ref root
+      object because of the simplification afforded by the inclusion
+      of antiparticles.
+
+      \verbatim embed:rst
+
+      .. todo::
+
+         In class fermion_thermo_tl:
+
+         - Future: Create a Chebyshev approximation for inverting the
+           the Fermi functions for massless_calc_density() functions?
+
+      \endverbatim
+
+      \hline 
+      <b>Template types:</b>
+
+      - fermion_t: the type of particle object which will be passed
+      to the methods defined by this class
+      - fd_inte_t: the integration object for massless fermions
+      - be_inte_t: the integration object for the nondegenerate limit
+      - root_t: the solver for massless fermions
+      - func_t: the function object type
+      - fp_t: the floating point type
+
+  */
+  template<class fermion_t=fermion, class fd_inte_t=fermi_dirac_integ_gsl,
+           class be_inte_t=bessel_K_exp_integ_gsl, class root_t=root_cern<>,
+           class func_t=funct, class fp_t=double>
+  class fermion_thermo_tl : public fermion_zerot_tl<fp_t> {
+
+  protected:
+
+    /// Cubic solver for massless fermions
+    o2scl::cubic_real_coeff_gsl2<fp_t> crcg2;
+    
+  public:
+    
+    fermion_thermo_tl() {
+      massless_root=&def_massless_root;
+    }
+    
+    virtual ~fermion_thermo_tl() {
+    }
+    
+    /// Object for Fermi-Dirac integrals (for massless fermions)
+    fd_inte_t fd_integ;
+    
+    /// Object for Bessel-exp integrals (for nondegenerate expansion)
+    be_inte_t be_integ;
+    
     /** \brief Compute the net density including antiparticles in
         the nondegenerate approximation
 

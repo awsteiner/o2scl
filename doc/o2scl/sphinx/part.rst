@@ -119,8 +119,7 @@ interacting particles is
 where :cpp:var:`o2scl::part_tl::nu` is used. This way, the particle
 class doesn't need to know about the structure of the interactions to
 ensure that the thermodynamic identity is satisfied. Note that in the
-O₂scl_eos library, where in the equations of state the
-normal thermodynamic identity is used
+EOS classes, the normal thermodynamic identity is used
 
 .. math::
    
