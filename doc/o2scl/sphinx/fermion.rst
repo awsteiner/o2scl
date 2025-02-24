@@ -147,8 +147,8 @@ alone. This is the form used to compute the energy density in
 :math:`\psi_{\mathrm{NR}}` used for nonrelativistic fermions in \ref
 :cpp:func:`o2scl::part_calibrate_class_tl::part_calibrate()`.
 
-Integration limits for degenerate fermions
-------------------------------------------
+Integration limits for relativistic degenerate fermions
+-------------------------------------------------------
 
 The fermionic integrands vanish when the argument of
 the exponential becomes large compared to a positive

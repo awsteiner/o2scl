@@ -113,8 +113,7 @@ namespace o2scl {
     }
 
     /// Desc
-    template<class fp2_t>
-    init_stat_cast(fermion_tl<fp2_t> &f) {
+    template<class fp2_t> void init_stat_cast(fermion_tl<fp2_t> &f) {
       this->g=static_cast<fp_t>(f.g);
       this->m=static_cast<fp_t>(f.m);
       this->ms=static_cast<fp_t>(f.ms);
@@ -128,6 +127,7 @@ namespace o2scl {
       this->non_interacting=static_cast<fp_t>(f.non_interacting);
       this->kf=static_cast<fp_t>(f.kf);
       this->del=static_cast<fp_t>(f.del);
+      return;
     }
     
   };
@@ -323,6 +323,57 @@ namespace o2scl {
     
   };
   
+    /** \brief Compute a term in the nondegenerate expansion
+
+        This function uses \ref be_integ to perform the Bessel
+        integrals.
+    */
+  template<class be_integ_t, class fp_t> 
+  void fermion_ndeg_terms(be_integ_t &be_integ, size_t j, fp_t tt,
+                  fp_t xx, fp_t m, bool inc_rest_mass,
+                  bool inc_antip, fp_t &pterm, fp_t &nterm,
+                  fp_t &enterm, fp_t &edterm) {
+    
+      fp_t dj=((fp_t)j);
+      fp_t jot=dj/tt;
+
+      fp_t K2j=be_integ.K2exp(jot);
+      if (inc_antip==false) {
+        fp_t K1j=be_integ.K1exp(jot);
+        pterm=exp(jot*xx)/jot/jot*K2j;
+        if (j%2==0) pterm=-pterm;
+        nterm=pterm*jot/m;
+        fp_t enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
+        fp_t enterm2=exp(jot*xx)/dj*K1j/m;
+        if (j%2==0) {
+          enterm=enterm1-enterm2;
+        } else {
+          enterm=enterm1+enterm2;
+        }
+        edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
+        if (j%2==0) edterm=-edterm;
+      } else {
+        fp_t K3j=be_integ.K3exp(jot);
+        pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
+        if (j%2==0) pterm*=-1;
+        nterm=pterm*tanh(jot*(xx+1))*jot/m;
+        fp_t enterm1=-(1+xx)/tt*nterm/m;
+        fp_t enterm2=2*exp(-jot)/dj*cosh(jot*(xx+1))*K3j/m;
+        if (j%2==0) {
+          enterm=enterm1-enterm2;
+        } else {
+          enterm=enterm1+enterm2;
+        }
+        edterm=2/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1))-
+                                     2*K2j*dj*xx*sinh(jot*(xx+1))-
+                                     2*K2j*dj*sinh(jot*(xx+1))-
+                                     K2j*tt*cosh(jot*(xx+1)));
+        if (j%2==0) edterm=-edterm;
+      }
+                    
+      return;
+    }
+    
     /** \brief Non-degenerate expansion for fermions
         
         Attempts to evaluate thermodynamics of a non-degenerate
@@ -401,9 +452,12 @@ namespace o2scl {
         \endcomment
     */
   template<class fp_t=double>
-  bool part_calc_mu_ndeg(fermion_tl<fp_t> &f, fp_t temper, 
+  bool fermion_calc_mu_ndeg(fermion_tl<fp_t> &f, fp_t temper, 
                          fp_t prec=1.0e-18, bool inc_antip=false,
                          int verbose=0) {
+
+    bessel_K_exp_integ_boost<fp_t,fp_t> be_integ;
+    fp_t pi2=boost::math::constants::pi_sqr<fp_t>();
     
       if (f.non_interacting==true) { f.nu=f.mu; f.ms=f.m; }
       
@@ -425,7 +479,7 @@ namespace o2scl {
       if (inc_antip==false && psi>0.0) return false;
       
       // Prefactor 'd' in Johns96
-      fp_t prefac=f.g/2/this->pi2*pow(f.ms,4);
+      fp_t prefac=f.g/2/pi2*pow(f.ms,4);
       
       // One term is always used, so only values of max_term greater than
       // 0 are useful.
@@ -498,7 +552,8 @@ namespace o2scl {
         
         fp_t pterm, nterm, enterm, edterm;
         
-        ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+        fermion_ndeg_terms(be_integ,j,tt,psi*tt,f.ms,
+                           f.inc_rest_mass,inc_antip,
                    pterm,nterm,enterm,edterm);
         
         if (j==1) first_term=pterm;
@@ -1050,56 +1105,6 @@ namespace o2scl {
     /// Return string denoting type ("fermion_thermo")
     virtual const char *type() { return "fermion_thermo"; }
 
-    /** \brief Compute a term in the nondegenerate expansion
-
-        This function uses \ref be_integ to perform the Bessel
-        integrals.
-     */
-    void ndeg_terms(size_t j, fp_t tt,
-                    fp_t xx, fp_t m, bool inc_rest_mass,
-                    bool inc_antip, fp_t &pterm, fp_t &nterm,
-                    fp_t &enterm, fp_t &edterm) {
-      
-      fp_t dj=((fp_t)j);
-      fp_t jot=dj/tt;
-
-      fp_t K2j=be_integ.K2exp(jot);
-      if (inc_antip==false) {
-        fp_t K1j=be_integ.K1exp(jot);
-        pterm=exp(jot*xx)/jot/jot*K2j;
-        if (j%2==0) pterm=-pterm;
-        nterm=pterm*jot/m;
-        fp_t enterm1=(4*tt-dj*xx-dj)/dj/tt*nterm;
-        fp_t enterm2=exp(jot*xx)/dj*K1j/m;
-        if (j%2==0) {
-          enterm=enterm1-enterm2;
-        } else {
-          enterm=enterm1+enterm2;
-        }
-        edterm=(K1j*dj+3.0*K2j*tt)/jot/dj*exp(xx*jot);
-        if (j%2==0) edterm=-edterm;
-      } else {
-        fp_t K3j=be_integ.K3exp(jot);
-        pterm=exp(-jot)*2*cosh(jot*(xx+1))/jot/jot*K2j;
-        if (j%2==0) pterm*=-1;
-        nterm=pterm*tanh(jot*(xx+1))*jot/m;
-        fp_t enterm1=-(1+xx)/tt*nterm/m;
-        fp_t enterm2=2*exp(-jot)/dj*cosh(jot*(xx+1))*K3j/m;
-        if (j%2==0) {
-          enterm=enterm1-enterm2;
-        } else {
-          enterm=enterm1+enterm2;
-        }
-        edterm=2/jot/dj*exp(-jot)*(K3j*dj*cosh(jot*(xx+1))-
-                                     2*K2j*dj*xx*sinh(jot*(xx+1))-
-                                     2*K2j*dj*sinh(jot*(xx+1))-
-                                     K2j*tt*cosh(jot*(xx+1)));
-        if (j%2==0) edterm=-edterm;
-      }
-                    
-      return;
-    }
-    
   protected:
     
     /// A pointer to the solver for massless fermions

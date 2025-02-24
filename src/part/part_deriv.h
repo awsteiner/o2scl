@@ -1045,10 +1045,12 @@ namespace o2scl {
     virtual bool calc_mu_ndeg(fermion_deriv_t &f, fp_t temper,
 			      fp_t prec, bool inc_antip=false) {
       
-      if (fr.calc_mu_ndeg(f,temper,prec,
-				inc_antip)==false) {
+      if (fermion_calc_mu_ndeg(f,temper,prec,
+                            inc_antip)==false) {
 	return false;
       }
+      
+      bessel_K_exp_integ_boost<fp_t,fp_t> be_integ;
       
       // Compute psi and tt
       fp_t psi, psi_num;
@@ -1090,8 +1092,8 @@ namespace o2scl {
 	fp_t pterm, nterm, enterm, edterm;
 	fp_t dndmu_term, dndT_term, dsdT_term;
 	
-	fr.ndeg_terms(j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-		      pterm,nterm,enterm,edterm);
+	fermion_ndeg_terms(be_integ,j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
+                           pterm,nterm,enterm,edterm);
 	
 	if (inc_antip==false) {
 	  dndmu_term=nterm*jot;

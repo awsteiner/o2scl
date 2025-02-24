@@ -133,12 +133,12 @@ class fermion_thermo abstract
   - fermion &f
   - double T
   - double prec
-- function calc_mu_ndeg
-  - bool
-  - fermion &f
-  - double T
-  - double prec
-  - bool inc_antip
+#- function calc_mu_ndeg
+#  - bool
+#  - fermion &f
+#  - double T
+#  - double prec
+#  - bool inc_antip
 - function massless_calc_mu
   - void
   - fermion &f

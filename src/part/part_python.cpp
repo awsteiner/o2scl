@@ -334,13 +334,6 @@ bool o2scl_fermion_thermo_calc_mu_deg(void *vptr, void *ptr_f, double T, double 
   return ret;
 }
 
-bool o2scl_fermion_thermo_calc_mu_ndeg(void *vptr, void *ptr_f, double T, double prec, bool inc_antip) {
-  fermion_thermo *ptr=(fermion_thermo *)vptr;
-  fermion *f=(fermion *)ptr_f;
-  bool ret=ptr->calc_mu_ndeg(*f,T,prec,inc_antip);
-  return ret;
-}
-
 void o2scl_fermion_thermo_massless_calc_mu(void *vptr, void *ptr_f, double T) {
   fermion_thermo *ptr=(fermion_thermo *)vptr;
   fermion *f=(fermion *)ptr_f;

@@ -334,7 +334,7 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         fp_t ntemp=f.n;
-        bool acc=part_calc_mu_ndeg(f,T,tol_expan);
+        bool acc=fermion_calc_mu_ndeg(f,T,tol_expan);
         if (acc) {
           unc.n=f.n*tol_expan;
           yy=(ntemp-f.n)/ntemp;
@@ -1036,7 +1036,7 @@ namespace o2scl {
       
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	bool acc=part_calc_mu_ndeg(f,temper,tol_expan,false,verbose);
+	bool acc=fermion_calc_mu_ndeg(f,temper,tol_expan,false,verbose);
 	if (verbose>1) {
 	  std::cout << "fermion_rel::calc_mu(): Non-deg expansion, "
                     << "acc, verbose: "
@@ -1677,7 +1677,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-	bool acc=part_calc_mu_ndeg(f,temper,tol_expan);
+	bool acc=fermion_calc_mu_ndeg(f,temper,tol_expan);
 	if (acc) {
 	  unc.ed=f.ed*tol_expan;
 	  unc.pr=f.pr*tol_expan;
@@ -2006,7 +2006,7 @@ namespace o2scl {
       // sure that the value of last_method=9 here is unambiguous.
 
       if (false && use_expansions) {
-	if (part_calc_mu_ndeg(f,temper,tol_expan,true)) {
+	if (fermion_calc_mu_ndeg(f,temper,tol_expan,true)) {
 	  unc.n=tol_expan*f.n;
 	  unc.ed=tol_expan*f.ed;
 	  unc.en=tol_expan*f.en;
@@ -2331,7 +2331,7 @@ namespace o2scl {
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
         fp_t ntemp=f.n;
-        bool acc=part_calc_mu_ndeg(f,T,tol_expan);
+        bool acc=fermion_calc_mu_ndeg(f,T,tol_expan);
         if (acc) {
           unc.n=f.n*tol_expan;
           yy=(ntemp-f.n)/ntemp;
@@ -2535,7 +2535,7 @@ namespace o2scl {
       // case and it causes the calibrate() test function to fail.
 
       if (false && use_expansions) {
-	if (part_calc_mu_ndeg(f,T,1.0e-18,true) && isfinite(f.n)) {
+	if (fermion_calc_mu_ndeg(f,T,1.0e-18,true) && isfinite(f.n)) {
           fp_t y1;
           if (density_match==0.0) {
             y1=f.n;
@@ -2574,7 +2574,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        bool acc=part_calc_mu_ndeg(f,T,1.0e-18);
+        bool acc=fermion_calc_mu_ndeg(f,T,1.0e-18);
 	if (acc && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
@@ -2767,7 +2767,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        bool acc=part_calc_mu_ndeg(f,T,1.0e-18);
+        bool acc=fermion_calc_mu_ndeg(f,T,1.0e-18);
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
