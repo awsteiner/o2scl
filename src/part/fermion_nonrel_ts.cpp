@@ -47,8 +47,8 @@ int main(void) {
 
   part_cal_new<> pcn;
   int count=0, first_test=0;
-  //pcn.test_calc_mu(f,f_ld,f_cdf25,fnr,fnr_ld,fnr_cdf25,t,count,first_test,
-  //0,0,0,0,0,0,0);
+  pcn.test_calc_mu(f,f_ld,f_cdf25,fnr,fnr_ld,fnr_cdf25,t,count,first_test,
+                   0,0,0,0,0,0,0);
 
   part_calibrate_class pcc;
   

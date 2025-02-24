@@ -281,6 +281,7 @@ namespace o2scl {
                       thermo1_t &fr, thermo2_t &frld,
                       thermo3_t &fr25, o2scl::test_mgr &t,
                       int &count, int first_test,
+                      int last_test, 
                       int cmu_n_min, int cmu_en_min,
                       int cmu_ld_n_min, int cmu_ld_en_min,
                       int cmu_ti_min, int cmu_ld_ti_min,
@@ -335,7 +336,7 @@ namespace o2scl {
             std::cout.width(4);
             std::cout << count << " ";
             
-            if (count>=first_test) {
+            if (count>=first_test && count<=last_test) {
               
               std::cout << f.m << " " << T << " ";
               std::cout.setf(std::ios::showpos);
@@ -428,9 +429,7 @@ namespace o2scl {
               }
               cmu_25_ti+=x25;
               std::cout.width(2);
-              std::cout << x25 << " cmu " << fr.last_method << " "
-                        << frld.last_method << " " << fr25.last_method
-                        << std::endl;
+              std::cout << x25 << " cmu " << std::endl;
 
               if (false && count==1) {
                 std::cout.setf(std::ios::showpos);
@@ -532,6 +531,7 @@ namespace o2scl {
                       thermo1_t &fr, thermo2_t &frld,
                       thermo3_t &fr25, o2scl::test_mgr &t,
                       int &count, int first_test,
+                      int last_test,
                       int pmu_n_min, int pmu_en_min,
                       int pmu_ld_n_min, int pmu_ld_en_min,
                       int pmu_ti_min, int pmu_ld_ti_min,
@@ -586,7 +586,7 @@ namespace o2scl {
             std::cout.width(4);
             std::cout << count << " ";
             
-            if (count>=first_test) {
+            if (count>=first_test && count<=last_test) {
               
               std::cout << f.m << " " << T << " ";
               std::cout.setf(std::ios::showpos);

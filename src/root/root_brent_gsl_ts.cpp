@@ -220,6 +220,7 @@ int main(void) {
   cout << endl;
 
 #ifdef O2SCL_MULTIP
+  
   cout << "Now using 50-digit precision:" << endl;
   cl_cdf acl_cdf;
   funct_cdf50 fmf_cdf=std::bind(std::mem_fn<cpp_dec_float_50(cpp_dec_float_50)>
@@ -241,6 +242,7 @@ int main(void) {
   { return cbrt_fun(tx); },errm);
   cout << dtos(am,0) << " " << dtos(cbrt(5.0),0) << endl;
   t.test_rel(am,cbrt(5.0),2.0e-15,"multiprecision");
+  
 #endif
   
   t.report();

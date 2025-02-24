@@ -1323,7 +1323,8 @@ namespace o2scl {
         unc.en*=prefac;
 
 	if (verbose>1) {
-	  std::cout << "fermion_rel::calc_mu(): deg entropy density, en, unc.en: "
+	  std::cout << "fermion_rel::calc_mu(): deg entropy "
+                    << "density, en, unc.en: "
                     << dtos(f.en,-1) << " " << dtos(unc.en,-1)
                     << std::endl;
 	}

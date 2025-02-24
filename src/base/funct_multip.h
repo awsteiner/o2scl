@@ -77,17 +77,17 @@ namespace o2scl {
   // so they're commented out, however, in the future, this should be
   // fixed as I think the MPFR types are faster.
   
-  //#ifdef O2SCL_SET_MPFR
-  //typedef mpfr_25 o2fp_25;
-  //typedef mpfr_35 o2fp_35;
-  //typedef mpfr_50 o2fp_50;
-  //typedef mpfr_100 o2fp_100;
-  //#else
+#ifdef O2SCL_SET_MPFR
+  typedef mpfr_25 o2fp_25;
+  typedef mpfr_35 o2fp_35;
+  typedef mpfr_50 o2fp_50;
+  typedef mpfr_100 o2fp_100;
+#else
   typedef cpp_dec_float_25 o2fp_25;
   typedef cpp_dec_float_35 o2fp_35;
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
-  //#endif
+#endif
   //@}
 
 #else

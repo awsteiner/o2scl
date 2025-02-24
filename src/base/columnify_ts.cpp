@@ -192,7 +192,6 @@ int main(void) {
                  "row size");
     }
     cout << endl;
-    exit(-1);
   }
   
   if (true) {

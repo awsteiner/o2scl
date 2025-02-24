@@ -79,6 +79,7 @@ int main(int argc, char *argv[]) {
   fr25.it_multip.err_nonconv=false;
 
   int first_test=0;
+  int last_test=1e6;
   double test_shift=1.0;
   
   // An exhaustive comparison of the fermion_rel class at various
@@ -120,12 +121,13 @@ int main(int argc, char *argv[]) {
   
   if (arg=="2") {
 
+    last_test=0;
+    
     // I think this runs without throwing any exceptions, but it needs
     // some work, especially to ensure the thermodynamic identity is
     // satisfied at higher precision. Either way, it is quite slow.
     
     fr.multip=true;
-    
     fr.upper_limit_fac=40.0;
     fr.density_root.tol_rel=1.0e-10;
     fr.def_massless_root.tol_rel=1.0e-10;
@@ -188,11 +190,10 @@ int main(int argc, char *argv[]) {
   if (argc<2) {
     
     part_cal_new<> pcn;
-    pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
+    pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
                      1502,1479,2370,2134,1400,1971,2694);
-    //pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,
-    //1618,1604,2336,2218,1408,1642,1947);
-    //exit(-1);
+    pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
+                     1502,1479,2272,2132,1376,2006,2680);
     
     /*
     // Normal case, used in 'make o2scl-test'
@@ -231,6 +232,10 @@ int main(int argc, char *argv[]) {
     
   } else if (arg=="1") {
 
+    part_cal_new<> pcn;
+    pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
+                     1738,1612,2371,2169,1540,1992,2702);
+    
     /*
     // Improved accuracy case
     t.test_gen(cmu_n>=1738,"cmu_n");
@@ -265,6 +270,12 @@ int main(int argc, char *argv[]) {
     t.test_gen(pd_ld_ti>=997,"pd_ld_ti");
     t.test_gen(pd_25_ti>=1271,"pd_25_ti");
     */
+    
+  } else if (arg=="2") {
+
+    part_cal_new<> pcn;
+    pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
+                     1826,1827,2420,2405,1754,2154,3311);
     
   }
 
