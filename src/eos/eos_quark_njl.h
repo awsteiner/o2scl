@@ -378,9 +378,6 @@ namespace o2scl {
 	quark (then divided by \ref o2scl_const::hc_mev_fm for the
 	conversion).
     */
-    //double up_default_mass;
-    //double down_default_mass;
-    //double strange_default_mass;
 
     /* \brief Set the quark objects to use
 

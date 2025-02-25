@@ -50,6 +50,11 @@ if O2SCL_FFTW
 else
 	test -r set_fftw.h || ln -s $(top_srcdir)/src/base/neither/set_fftw.h set_fftw.h
 endif
+if O2SCL_MULTIP
+	test -r set_multip.h || ln -s $(top_srcdir)/src/base/multip/set_multip.h set_multip.h
+else
+	test -r set_multip.h || ln -s $(top_srcdir)/src/base/neither/set_multip.h set_multip.h
+endif
 if O2SCL_READLINE
 	test -r set_readline.h || ln -s $(top_srcdir)/src/base/readline/set_readline.h set_readline.h
 else

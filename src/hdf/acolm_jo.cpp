@@ -547,7 +547,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
 
   deriv_gsl<> dg;
 
-#ifndef O2SCL_MULTIP
+#ifndef O2SCL_SET_MULTIP
   
   if (multiprecision) {
     multiprecision=false;
@@ -559,7 +559,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
   
   if (multiprecision) {
     
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
     funct_multip_string fms;
     fms.set_function(func,"x");
@@ -660,7 +660,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision differentiation
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
     if (precision>50) {
 
@@ -881,7 +881,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   std::string var=in[1];
 
   inte_kronrod_boost<61> ikb;
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   inte_double_exp_boost<> ideb;
 #else
   inte_double_exp_boost<double,double,double,double> ideb;
@@ -900,7 +900,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
   
   if (multiprecision) {
     
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
     funct_multip_string fms;
     fms.set_function(func,var);
@@ -1110,7 +1110,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     // Normal double-precision integration
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
     if (precision>50) {
       

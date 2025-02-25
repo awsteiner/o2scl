@@ -38,7 +38,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 TEST_VAR = $(BASE_TEST_VAR)
 
 SUBDIRS = arma eigen both neither python fftw openmp readline mpfr \
-	pugixml
+	pugixml multip
 
 # ------------------------------------------------------------
 # Includes
@@ -80,26 +80,20 @@ else
 O2SCL_CUDA_MVAR = 
 endif
 
-if O2SCL_MULTIP
-O2SCL_MULTIP_MVAR = -DO2SCL_MULTIP
-else 
-O2SCL_MULTIP_MVAR = 
-endif
-
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"/snap/o2scl/current/share/doc/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR) $(O2SCL_MULTIP_MVAR)
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"${docdir}/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR) $(O2SCL_MULTIP_MVAR)
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR)
 endif
 
 

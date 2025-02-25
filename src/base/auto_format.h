@@ -36,14 +36,14 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
 namespace o2scl_auto_format {
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   typedef
   boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
   cpp_dec_float_25;
@@ -59,7 +59,7 @@ namespace o2scl_auto_format {
   auto_format &operator<<(auto_format &at, double d);
   auto_format &operator<<(auto_format &at, long double d);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   auto_format &operator<<(auto_format &at, const cpp_dec_float_25 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_35 &d);
   auto_format &operator<<(auto_format &at, const cpp_dec_float_50 &d);
@@ -161,7 +161,7 @@ namespace o2scl_auto_format {
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, long double d);
     
-#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
     
     friend auto_format &o2scl_auto_format::operator<<
     (auto_format &at, const cpp_dec_float_25 &d);
@@ -280,7 +280,7 @@ namespace o2scl_auto_format {
    */
   auto_format &operator<<(auto_format &at, long double d);
 
-#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
   
   /** \brief Output a double-precision number
    */

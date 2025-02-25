@@ -35,6 +35,7 @@
 #include <codecvt>
 
 #include <o2scl/set_mpfr.h>
+#include <o2scl/set_multip.h>
 
 #define BOOST_DISABLE_ASSERTS
 #include <boost/multiprecision/cpp_dec_float.hpp>

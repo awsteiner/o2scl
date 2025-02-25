@@ -25,7 +25,7 @@
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/eos_sn.h>
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #endif
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   std::string arg;
   if (argc>=2) {

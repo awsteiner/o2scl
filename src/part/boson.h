@@ -38,7 +38,7 @@
 
 #include <o2scl/part.h>
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_SET_MPFR
@@ -95,7 +95,7 @@ namespace o2scl {
   /// Boson type for long double-precision values
   typedef boson_tl<long double> boson_ld;
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   /// Boson type for 25-digit floating points
   typedef boson_tl<boost::multiprecision::number<

@@ -2157,7 +2157,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << " ";
   cout << std::numeric_limits<long double>::epsilon() << endl;
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   cout.width(18);
   cout << "cpp_dec_float_25";
   cout.width(3);

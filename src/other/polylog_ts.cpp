@@ -31,7 +31,7 @@
 using namespace std;
 using namespace o2scl;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
@@ -60,7 +60,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
 #ifndef O2SCL_OPENSUSE_I386
   

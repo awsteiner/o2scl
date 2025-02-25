@@ -36,12 +36,12 @@ eos_quark_njl::eos_quark_njl() {
   //down_default_mass=5.5/hc_mev_fm;
   //strange_default_mass=140.7/hc_mev_fm;
 
-  def_up.non_interacting=true;
-  def_down.non_interacting=true;
-  def_strange.non_interacting=true;
-  def_up.init(mass_up_MeV_f<double>()/hc_mev_fm,6.0);
-  def_down.init(mass_down_MeV_f<double>()/hc_mev_fm,6.0);
-  def_strange.init(mass_strange_MeV_f<double>()/hc_mev_fm,6.0);
+  //def_up.non_interacting=true;
+  //def_down.non_interacting=true;
+  //def_strange.non_interacting=true;
+  //def_up.init(mass_up_MeV_f()/hc_mev_fm,6.0);
+  //def_down.init(mass_down_MeV_f()/hc_mev_fm,6.0);
+  //def_strange.init(mass_strange_MeV_f()/hc_mev_fm,6.0);
   
   //up=&def_up;
   //down=&def_down;
@@ -72,6 +72,11 @@ eos_quark_njl::eos_quark_njl() {
   //strange=&s;
 
 //return 0;
+//  up=&u;
+//  down=&d;
+//  strange=&s;
+
+//  return 0;
 //}
 
 int eos_quark_njl::set_parameters(quark &u, quark &d, quark &s,
@@ -1073,6 +1078,10 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
                                    double T, thermo &th) {
   ubvector x(6);
   int ret;
+
+  //up=&u;
+  //down=&d;
+  //strange=&s;
   
   if (verbose>0) {
     cout << "eos_quark_njl::calc_temp_p() from_qq=" << from_qq << endl;

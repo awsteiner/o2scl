@@ -36,7 +36,7 @@
 #include <boost/math/quadrature/sinh_sinh.hpp>
 
 #include <o2scl/inte.h>
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 #include <o2scl/funct_multip.h>
 #endif
 
@@ -237,7 +237,7 @@ namespace o2scl {
                       fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -292,7 +292,7 @@ namespace o2scl {
                          double target_tol, double integ_tol,
                          double func_tol) {
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -343,7 +343,7 @@ namespace o2scl {
                          double target_tol, double integ_tol,
                          double func_tol) {
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -393,7 +393,7 @@ namespace o2scl {
                         fp_t &L1norm_loc, double target_tol,
                         double integ_tol, double func_tol) {
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_tl<fp_25_t,fp_35_t,fp_50_t,fp_100_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -701,7 +701,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>
           pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
@@ -914,7 +914,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,-std::numeric_limits<long double>::digits10+3)) {
         if (verbose>0) {
@@ -1165,7 +1165,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
@@ -1359,7 +1359,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {

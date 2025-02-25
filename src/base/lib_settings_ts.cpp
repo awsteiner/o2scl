@@ -53,7 +53,7 @@ int main(void) {
   cout << "config.h: " << endl;
   o2scl_settings.config_h_report();
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   funct_multip_string fms;
   fms.set_function("log(1+x)","x");
   fms.verbose=2;

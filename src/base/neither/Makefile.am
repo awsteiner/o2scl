@@ -21,6 +21,12 @@ else
 FFTW_VAR = set_fftw.h
 endif
 
+if O2SCL_MULTIP
+MULTIP_VAR = 
+else
+MULTIP_VAR = set_multip.h
+endif
+
 if O2SCL_PYTHON
 PYTHON_VAR = 
 else
@@ -50,8 +56,10 @@ endif
 # ------------------------------------------------------------
 
 am__pkginclude_HEADERS_DIST = vector_special.h set_fftw.h set_mpfr.h \
-	set_openmp.h set_python.h set_readline.h set_pugixml.h
+	set_openmp.h set_python.h set_readline.h set_pugixml.h \
+	set_multip.h
 
 pkginclude_HEADERS = $(HEADER_VAR) $(MPFR_VAR) $(PYTHON_VAR) \
-	$(FFTW_VAR) $(OPENMP_VAR) $(READLINE_VAR) $(PUGIXML_VAR)
+	$(FFTW_VAR) $(OPENMP_VAR) $(READLINE_VAR) $(PUGIXML_VAR) \
+	$(MULTIP_VAR)
 

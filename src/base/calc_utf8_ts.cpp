@@ -211,7 +211,12 @@ int main(void) {
   
   calc.compile("hypot(3,4)");
   t.test_rel(calc.eval(0),5.0,1.0e-14,"hypot");
-  
+
+  // Make sure to test the o2scl default 50-digit type
+  calc_utf8<o2fp_50> calc_50b;
+  calc_50b.compile("cyl_bessel_k(2,3)",0);
+  std::cout << dtos(calc_50b.eval(0),0) << std::endl;
+
   t.report();
   return 0;
 }

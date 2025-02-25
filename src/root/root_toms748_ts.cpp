@@ -32,7 +32,7 @@ double gfn(double x) {
   return sin(x-0.2);
 }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 
@@ -63,7 +63,7 @@ int main(void) {
   rt.solve_bkt(a,b,f);
   t.test_rel(a,0.2,1.0e-6,"1");
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   long double a_ld, b_ld;
   funct_ld f_ld=gfn_ld;

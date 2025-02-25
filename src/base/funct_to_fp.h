@@ -377,7 +377,7 @@ namespace o2scl {
 
   };
 
-#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
 
   /** \brief Evaluate a one-dimensional function from a string
       at multiprecision using the internal constant library

@@ -158,7 +158,7 @@ int main(void) {
       (t,tf_ld,1.0e-15,"iac, long double, testfun",diff_ld);
     t.test_abs<long double>(diff_ld,0.0,1.0e-14,"inte_adapt_cern_ld");
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
     cout << "inte_adapt_cern, cpp_dec_float_50, testfun:\n  ";
     
@@ -214,7 +214,7 @@ int main(void) {
     cout << "inte_transform with inte_adapt_cern, long double precision, "
          << "sin_recip:\n  " << endl;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
     /*
     inte_transform<funct_ld,inte_adapt_cern
@@ -324,7 +324,7 @@ int main(void) {
     t.test_rel(ans,exact,1.0e-8,"imac test");
   }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   {
     inte_adapt_cern imac;
