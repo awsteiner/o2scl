@@ -68,6 +68,14 @@ eos_quark_cfl::eos_quark_cfl() {
   inte_npoints=0;
 }
 
+int eos_quark_cfl::set_quarks(quark &u, quark &d, quark &s) {
+  up=&u;
+  down=&d;
+  strange=&s;
+
+  return 0;
+}
+
 eos_quark_cfl::~eos_quark_cfl() {
   gsl_matrix_complex_free(iprop);
   gsl_matrix_complex_free(eivec);

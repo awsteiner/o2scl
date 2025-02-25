@@ -244,6 +244,8 @@ namespace o2scl {
     virtual int set_parameters_cfl(double lambda=0.0, double fourferm=0.0, 
                                    double sixferm=0.0, double fourgap=0.0);
     
+    int set_quarks(quark &u, quark &d, quark &s);
+    
     /** \brief Calculate the EOS
         
         Calculate the EOS from the quark condensates in \c u.qq, \c

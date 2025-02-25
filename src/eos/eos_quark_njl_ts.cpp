@@ -101,9 +101,10 @@ int main(void) {
   // respect to the up quark condensate
   funct fderiv_u=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,true);
+     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   df.h=0.01;
   double der_u=df.deriv(u.qq,fderiv_u);
@@ -113,9 +114,10 @@ int main(void) {
   nj.calc_p(u,d,s,th);
   funct fderiv_d=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,true);
+     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   double der_d=df.deriv(d.qq,fderiv_d);
   t.test_rel(der_d,0.0,1.0e-9,"fh_d");
@@ -124,9 +126,10 @@ int main(void) {
   nj.calc_p(u,d,s,th);
   funct fderiv_s=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,true);
+     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   double der_s=df.deriv(s.qq,fderiv_s);
   t.test_rel(der_s,0.0,1.0e-9,"fh_s");
@@ -146,9 +149,10 @@ int main(void) {
   
   funct fderiv2_u=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,false);
+     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,
+     std::ref(u),std::ref(d),std::ref(s),false);
 
   der_u=df.deriv(u.ms,fderiv2_u);
   t.test_rel(der_u,qqu,1.0e-8,"fh2_u");
@@ -162,9 +166,10 @@ int main(void) {
   
   funct fderiv2_d=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,false);
+     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,
+     std::ref(u),std::ref(d),std::ref(s),false);
 
   der_d=df.deriv(d.ms,fderiv2_d);
   t.test_rel(der_d,qqd,5.0e-8,"fh2_d");
@@ -178,9 +183,10 @@ int main(void) {
   
   funct fderiv2_s=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,bool)>
+                        double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot),
-     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,false);
+     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,
+     std::ref(u),std::ref(d),std::ref(s),false);
   
   der_s=df.deriv(s.ms,fderiv2_s);
   t.test_rel(der_s,qqs,1.0e-8,"fh2_s");
@@ -214,9 +220,10 @@ int main(void) {
   // respect to the up quark condensate
   funct fderivT_u=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,T,true);
+     &nj,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,T,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   der_u=df.deriv(u.qq,fderivT_u);
   t.test_rel(der_u,0.0,1.0e-9,"fhT_u");
@@ -225,9 +232,10 @@ int main(void) {
   nj.calc_temp_p(u,d,s,T,th);
   funct fderivT_d=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,T,true);
+     &nj,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,T,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   der_d=df.deriv(d.qq,fderivT_d);
   t.test_rel(der_d,0.0,1.0e-9,"fhT_d");
@@ -236,9 +244,10 @@ int main(void) {
   nj.calc_temp_p(u,d,s,T,th);
   funct fderivT_s=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,T,true);
+     &nj,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,T,
+     std::ref(u),std::ref(d),std::ref(s),true);
   
   der_s=df.deriv(s.qq,fderivT_s);
   t.test_rel(der_s,0.0,1.0e-9,"fhT_s");
@@ -258,9 +267,10 @@ int main(void) {
   
   funct fderivT2_u=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,T,false);
+     &nj,u.qq,d.qq,s.qq,std::placeholders::_1,d.ms,s.ms,T,
+     std::ref(u),std::ref(d),std::ref(s),false);
 
   der_u=df.deriv(u.ms,fderivT2_u);
   t.test_rel(der_u,qqu,1.0e-8,"fh2_u");
@@ -274,9 +284,10 @@ int main(void) {
   
   funct fderivT2_d=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,T,false);
+     &nj,u.qq,d.qq,s.qq,u.ms,std::placeholders::_1,s.ms,T,
+     std::ref(u),std::ref(d),std::ref(s),false);
 
   der_d=df.deriv(d.ms,fderivT2_d);
   t.test_rel(der_d,qqd,5.0e-8,"fh2_d");
@@ -290,9 +301,10 @@ int main(void) {
   
   funct fderivT2_s=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,bool)>
+                        double,double,quark &,quark &,quark &,bool)>
      (&eos_quark_njl::f_therm_pot_T),
-     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,T,false);
+     &nj,u.qq,d.qq,s.qq,u.ms,d.ms,std::placeholders::_1,T,
+     std::ref(u),std::ref(d),std::ref(s),false);
   
   der_s=df.deriv(s.ms,fderivT2_s);
   t.test_rel(der_s,qqs,1.0e-8,"fh2_s");
@@ -302,8 +314,9 @@ int main(void) {
   njv.def_up.m=5.5/hc_mev_fm;
   njv.def_down.m=5.5/hc_mev_fm;
   njv.def_strange.m=140.7/hc_mev_fm;
-
-  t.test_gen(njv.set_parameters()==0,"set_parameters().");
+  
+  t.test_gen(njv.set_parameters(njv.def_up,njv.def_down,
+                                njv.def_strange)==0,"set_parameters().");
   cout << njv.B0 << endl;
   t.test_rel(njv.B0,21.6084,1.0e-4,"bag constant");
   cout << endl;

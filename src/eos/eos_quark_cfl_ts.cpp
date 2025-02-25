@@ -47,15 +47,15 @@ int main(void) {
     eos_quark_njl njt;
     eos_quark_cfl cfl;
 
-    quark u(nj.up_default_mass,6.0);
-    quark d(nj.down_default_mass,6.0);
-    quark s(nj.strange_default_mass,6.0);
-    quark u2(nj.up_default_mass,6.0);
-    quark d2(nj.down_default_mass,6.0);
-    quark s2(nj.strange_default_mass,6.0);
-    quark u3(nj.up_default_mass,6.0);
-    quark d3(nj.down_default_mass,6.0);
-    quark s3(nj.strange_default_mass,6.0);
+    quark u(5.5/hc_mev_fm,6.0);
+    quark d(5.5/hc_mev_fm,6.0);
+    quark s(140.7/hc_mev_fm,6.0);
+    quark u2(5.5/hc_mev_fm,6.0);
+    quark d2(5.5/hc_mev_fm,6.0);
+    quark s2(140.7/hc_mev_fm,6.0);
+    quark u3(5.5/hc_mev_fm,6.0);
+    quark d3(5.5/hc_mev_fm,6.0);
+    quark s3(140.7/hc_mev_fm,6.0);
   
     u.m=5.5/hc_mev_fm;
     d.m=5.5/hc_mev_fm;
@@ -74,11 +74,9 @@ int main(void) {
     nd.tol_rel/=100.0;
     nd.tol_abs/=100.0;
   
-    nj.set_quarks(u,d,s);
-    nj.set_parameters();
+    nj.set_parameters(u,d,s);
 
-    njt.set_quarks(u2,d2,s2);
-    njt.set_parameters();
+    njt.set_parameters(u2,d2,s2);
 
     cfl.set_quarks(u3,d3,s3);
     cfl.set_parameters_cfl();
@@ -88,20 +86,23 @@ int main(void) {
     cfl.set_inte(ngnew);
 
     mm_funct fqq=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &,
+                       quark &, quark &, quark &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &nj,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,th,std::ref(u),std::ref(d),std::ref(s));
     mm_funct fqq2=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &,
+                       quark &, quark &, quark &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &njt,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,th,std::ref(u2),std::ref(d2),std::ref(s2));
     mm_funct fqq3=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &,thermo &,
+                       quark &, quark &, quark &)>
        (&eos_quark_njl::eos_quark_njl::gap_func_qq),
        &cfl,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,th);
+       std::placeholders::_3,th,std::ref(u3),std::ref(d3),std::ref(s3));
 
     //mm_funct_mfptr<eos_quark_njl> fqq(&nj,&eos_quark_njl::gap_func_qq);
     //mm_funct_mfptr<eos_quark_njl> fqq2(&njt,&eos_quark_njl::gap_func_qq);
@@ -135,7 +136,7 @@ int main(void) {
     ax[1]=d.ms;
     ax[2]=s.ms;
     nj.from_qq=false;
-    nj.gap_func_ms(3,ax,ay,th);
+    nj.gap_func_ms(3,ax,ay,th,u,d,s);
     t.test_rel(ay[0],0.0,5.0e-9,"zero T ungapped gap eqn 1");
     t.test_rel(ay[1],0.0,5.0e-9,"zero T ungapped gap eqn 2");
     t.test_rel(ay[2],0.0,1.0e-6,"zero T ungapped gap eqn 3");
@@ -395,9 +396,9 @@ int main(void) {
     double ss12,ss22,ss32,gap12,gap22,gap32,n32,n82;
     eos_quark_cfl cfl2;
     thermo th, th2;
-    quark u2(cfl2.up_default_mass,6.0);
-    quark d2(cfl2.down_default_mass,6.0);
-    quark s2(cfl2.strange_default_mass,6.0);
+    quark u2(5.5/hc_mev_fm,6.0);
+    quark d2(5.5/hc_mev_fm,6.0);
+    quark s2(140.7/hc_mev_fm,6.0);
     cfl2.set_quarks(u2,d2,s2);
 
     // Run test functions
