@@ -330,9 +330,9 @@ namespace o2scl {
     */
   template<class be_integ_t, class fp_t> 
   void fermion_ndeg_terms(be_integ_t &be_integ, size_t j, fp_t tt,
-                  fp_t xx, fp_t m, bool inc_rest_mass,
-                  bool inc_antip, fp_t &pterm, fp_t &nterm,
-                  fp_t &enterm, fp_t &edterm) {
+                          fp_t xx, fp_t m, bool inc_rest_mass,
+                          bool inc_antip, fp_t &pterm, fp_t &nterm,
+                          fp_t &enterm, fp_t &edterm) {
     
       fp_t dj=((fp_t)j);
       fp_t jot=dj/tt;
@@ -451,11 +451,11 @@ namespace o2scl {
         10^{-18} \f$ since \f$ (20/700)^{12} \sim 10^{-19} \f$.
         \endcomment
     */
-  template<class fp_t=double>
-  bool fermion_calc_mu_ndeg(fermion_tl<fp_t> &f, fp_t temper, 
-                         fp_t prec=1.0e-18, bool inc_antip=false,
-                         int verbose=0) {
-
+  template<class fermion_t, class fp_t=double>
+  bool fermion_calc_mu_ndeg(fermion_t &f, fp_t temper, 
+                            fp_t prec=1.0e-18, bool inc_antip=false,
+                            int verbose=0) {
+    
     bessel_K_exp_integ_boost<fp_t,fp_t> be_integ;
     fp_t pi2=boost::math::constants::pi_sqr<fp_t>();
     
@@ -551,10 +551,11 @@ namespace o2scl {
       for(size_t j=1;j<=max_term;j++) {
         
         fp_t pterm, nterm, enterm, edterm;
-        
-        fermion_ndeg_terms(be_integ,j,tt,psi*tt,f.ms,
+
+        fp_t tmpx=psi*tt;
+        fermion_ndeg_terms(be_integ,j,tt,tmpx,f.ms,
                            f.inc_rest_mass,inc_antip,
-                   pterm,nterm,enterm,edterm);
+                           pterm,nterm,enterm,edterm);
         
         if (j==1) first_term=pterm;
         f.pr+=pterm;

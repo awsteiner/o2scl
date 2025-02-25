@@ -536,6 +536,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/both/Makefile
                  src/base/eigen/Makefile
                  src/base/fftw/Makefile
+                 src/base/multip/Makefile
                  src/base/mpfr/Makefile
                  src/base/neither/Makefile
                  src/base/openmp/Makefile

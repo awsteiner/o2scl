@@ -51,7 +51,7 @@ namespace o2scl {
   /** \brief Class defining integrands for relativistic fermions
 
       This purpose of this class is to provide functions which
-      have template formats which are useful in adaptive
+      have template formats which can be used for adaptive
       multiprecision.
    */
   template<class fp_t> class fermion_rel_integ {
@@ -300,10 +300,13 @@ namespace o2scl {
     
     /** \brief Desc
      */
-    template<class internal_fp_t>
-    internal_fp_t solve_fun(internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
-                            bool use_expansions,
-                            double deg_limit, double min_psi) {
+    template<class nit_t, class dit_t, class mpit_t, class internal_fp_t>
+    internal_fp_t solve_fun_new
+    (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
+     bool use_expansions, double deg_limit,
+     double min_psi, double tol_expan,
+     nit_t &nit, dit_t &dit, mpit_t &it_multip) {
+                            
       
       internal_fp_t T=static_cast<internal_fp_t>(T2);
       fermion_tl<internal_fp_t> f;
@@ -333,7 +336,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        fp_t ntemp=f.n;
+        internal_fp_t ntemp=f.n;
         bool acc=fermion_calc_mu_ndeg(f,T,tol_expan);
         if (acc) {
           unc.n=f.n*tol_expan;
@@ -346,7 +349,7 @@ namespace o2scl {
 
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
-        fp_t ntemp=f.n;
+        internal_fp_t ntemp=f.n;
         bool acc=this->calc_mu_deg(f,T,tol_expan);
         if (acc) {
           unc.n=f.n*tol_expan;
@@ -360,7 +363,7 @@ namespace o2scl {
       // Otherwise, directly perform the integration
       if (!deg) {
 
-        fp_t y, eta;
+        internal_fp_t y, eta;
         if (f.inc_rest_mass) {
           y=f.nu/T;
         } else {
@@ -368,7 +371,7 @@ namespace o2scl {
         }
         eta=f.ms/T;
 
-        fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2;
+        internal_fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2;
         
         if (multip==true) {
           
@@ -385,7 +388,8 @@ namespace o2scl {
           
         } else {
           
-          std::function<fp_t(fp_t)> n_fun_f=[this,y,eta](fp_t k) -> fp_t
+          std::function<internal_fp_t(internal_fp_t)> n_fun_f=
+            [this,y,eta](internal_fp_t k) -> internal_fp_t
           { return this->density_fun(k,y,eta); };
           
           iret=nit.integ_iu_err(n_fun_f,zero,nden,unc.n);
@@ -404,23 +408,23 @@ namespace o2scl {
 
       } else {
     
-        fp_t y=f.nu/T;
-        fp_t eta=f.ms/T;
-        fp_t mot;
+        internal_fp_t y=f.nu/T;
+        internal_fp_t eta=f.ms/T;
+        internal_fp_t mot;
         if (f.inc_rest_mass) {
           mot=0;
         } else {
           mot=f.m/T;
         }
 
-        fp_t arg;
+        internal_fp_t arg;
         if (f.inc_rest_mass) {
           arg=pow(upper_limit_fac*T+f.nu,2)-f.ms*f.ms;
         } else {
           arg=pow(upper_limit_fac*T+f.nu+f.m,2)-f.ms*f.ms;
         }
 
-        fp_t ul;
+        internal_fp_t ul;
 
         if (arg>0.0) {
 
@@ -441,8 +445,8 @@ namespace o2scl {
             
           } else {
             
-            std::function<fp_t(fp_t)> n_fun_f=
-              [this,T,y,eta,mot,ul](fp_t k) -> fp_t
+            std::function<internal_fp_t(internal_fp_t)> n_fun_f=
+              [this,T,y,eta,mot,ul](internal_fp_t k) -> internal_fp_t
             { return this->deg_density_fun(k,T,y,eta,mot,false); };
             
             iret=dit.integ_err(n_fun_f,zero,ul,nden,unc.n);
@@ -2535,7 +2539,8 @@ namespace o2scl {
       // case and it causes the calibrate() test function to fail.
 
       if (false && use_expansions) {
-	if (fermion_calc_mu_ndeg(f,T,1.0e-18,true) && isfinite(f.n)) {
+        fp_t prec=1.0e-18;
+	if (fermion_calc_mu_ndeg(f,T,prec,true) && isfinite(f.n)) {
           fp_t y1;
           if (density_match==0.0) {
             y1=f.n;
@@ -2574,7 +2579,8 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        bool acc=fermion_calc_mu_ndeg(f,T,1.0e-18);
+        fp_t prec=1.0e-18;
+        bool acc=fermion_calc_mu_ndeg(f,T,prec);
 	if (acc && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
@@ -2767,7 +2773,8 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        bool acc=fermion_calc_mu_ndeg(f,T,1.0e-18);
+        fp_t prec=1.0e-18;
+        bool acc=fermion_calc_mu_ndeg(f,T,prec);
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
