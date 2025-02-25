@@ -43,9 +43,9 @@ int main(void) {
     double ss12,ss22,ss32,gap12,gap22,gap32,n32,n82;
     eos_quark_cfl6 cfl2;
     thermo th, th2;
-    quark u2(cfl2.up_default_mass,6.0);
-    quark d2(cfl2.down_default_mass,6.0);
-    quark s2(cfl2.strange_default_mass,6.0);
+    quark u2(5.5/hc_mev_fm,6.0);
+    quark d2(5.5/hc_mev_fm,6.0);
+    quark s2(140.7/hc_mev_fm,6.0);
     cfl2.set_quarks(u2,d2,s2);
     //cfl2.set_thermo(th2);
 
