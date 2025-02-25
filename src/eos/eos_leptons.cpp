@@ -568,7 +568,7 @@ int eos_leptons::pair_density_eq(double nq, double T) {
   return 0;
 }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
 eos_leptons_multip::eos_leptons_multip() {
 

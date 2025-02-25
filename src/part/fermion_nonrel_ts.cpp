@@ -35,7 +35,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   fermion_nonrel fnr;
   fermion_nonrel_ld fnr_ld;

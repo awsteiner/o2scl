@@ -33,7 +33,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 #include <o2scl/funct_multip.h>
 #endif
 
@@ -145,7 +145,7 @@ namespace o2scl {
                       fp_t &res, fp_t &err, fp_t &L1norm_loc,
                       double target_tol, double integ_tol, double func_tol) {
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       funct_multip fm2;
       fm2.err_nonconv=false;
@@ -370,7 +370,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {

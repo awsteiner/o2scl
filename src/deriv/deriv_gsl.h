@@ -316,7 +316,7 @@ namespace o2scl {
 
       }
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       // ─────────────────────────────────────────────────────────────────
       
@@ -661,7 +661,7 @@ namespace o2scl {
                              fp2_t &result, fp2_t &abserr_round,
                              fp2_t &abserr_trunc, double func_tol) {
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       funct_multip fm2;
       fm2.err_nonconv=false;

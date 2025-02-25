@@ -63,7 +63,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   inte_kronrod_boost<61> imkb;
 #ifdef O2SCL_SET_MPFR

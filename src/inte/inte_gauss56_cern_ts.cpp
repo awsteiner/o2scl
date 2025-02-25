@@ -62,7 +62,7 @@ int main(void) {
   diff=fabs(calc-exact);
   cout << calc << " " << exact << " " << diff << endl;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   // Moving to long double here doesn't really improve the accuracy
   // for this particular function, but it verifies that

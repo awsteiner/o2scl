@@ -125,7 +125,7 @@ int main(void) {
   t.test_rel(res,1.0/2.0/std::sqrt(1.0e-6),1.0e-7,"first, non-finite");
   cout << endl;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   // Try a long double derivative
   deriv_gsl<funct_ld,long double> de_ld;
   funct_ld tf_ld=sin_fun<long double>;

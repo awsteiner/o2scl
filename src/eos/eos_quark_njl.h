@@ -268,7 +268,8 @@ namespace o2scl {
 	set_quarks() and set_thermo() can be used before hand to
 	specify the \ref quark_tl and \ref thermo objects.
     */
-    virtual int set_parameters(double lambda=0.0, double fourferm=0.0, 
+    virtual int set_parameters(quark &u, quark &d, quark &s,
+                               double lambda=0.0, double fourferm=0.0, 
 			       double sixferm=0.0);
     //@}
 
@@ -296,6 +297,7 @@ namespace o2scl {
      */
     virtual double f_therm_pot(double qqu, double qqd, double qqs,
                                double msu, double msd, double mss,
+                               quark &u, quark &d, quark &s,
                                bool vac_terms=true);
     //@}
 
@@ -320,7 +322,9 @@ namespace o2scl {
      */
     virtual double f_therm_pot_T(double qqu, double qqd, double qqs,
                                  double msu, double msd, double mss,
-                                 double T, bool vac_terms=true);
+                                 double T,
+                                  quark &u, quark &d, quark &s,
+                                 bool vac_terms=true);
     //@}
 
     /// \name Gap equations
@@ -366,7 +370,7 @@ namespace o2scl {
                       thermo &th, quark &u, quark &d, quark &s);
     //@}
 
-    /** \name The default quark masses (in inverse femtometers)
+    /* \name The default quark masses (in inverse femtometers)
 
         \verbatim embed:rst
         These default masses are taken from [Buballa99]_, where they
@@ -380,17 +384,17 @@ namespace o2scl {
 	conversion).
     */
     //@{
-    double up_default_mass;
-    double down_default_mass;
-    double strange_default_mass;
+    //double up_default_mass;
+    //double down_default_mass;
+    //double strange_default_mass;
     //@}
 
-    /** \brief Set the quark objects to use
+    /* \brief Set the quark objects to use
 
 	The quark objects are used in gap_func_ms(), gap_func_qq(), 
 	gap_func_ms_T(), gap_func_qq_T(), and B0_func().
     */
-    int set_quarks(quark &u, quark &d, quark &s);
+    //int set_quarks(quark &u, quark &d, quark &s);
 
     /// Return string denoting type ("eos_quark_njl")
     virtual const char *type() { return "eos_quark_njl"; }
@@ -451,12 +455,12 @@ namespace o2scl {
      */
     void njl_bag(quark &q);
 
-    /// The up quark
-    quark *up;
-    /// The down quark
-    quark *down;
-    /// The strange quark
-    quark *strange;
+    // The up quark
+    //quark *up;
+    // The down quark
+    //quark *down;
+    // The strange quark
+    //quark *strange;
 
     /// The integrand for the quark condensate
     double integ_qq(double x, double T, double mu, double m,
@@ -565,7 +569,7 @@ namespace o2scl {
 	which can be specified in eos::set_thermo().
     */
     int gap_func_qq_T(size_t nv, const ubvector &x, ubvector &y, double T,
-                      thermo &th);
+                      thermo &th, quark &u, quark &d, quark &s);
 
     /** \brief Calculates gap equations in \c y as a function of the 
 	constituent masses in \c x
@@ -575,7 +579,7 @@ namespace o2scl {
 	which can be specified in eos::set_thermo().
     */
     int gap_func_ms_T(size_t nv, const ubvector &x, ubvector &y, double T,
-                      thermo &th);
+                      thermo &th, quark &u, quark &d, quark &s);
     //@}
     
   };

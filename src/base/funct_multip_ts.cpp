@@ -67,7 +67,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifdef O2SCL_MULTIP  
+#ifdef O2SCL_SET_MULTIP  
   {
     cout << "0." << endl;
     fmc f2;

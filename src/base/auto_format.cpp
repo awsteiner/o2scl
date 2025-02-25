@@ -565,7 +565,7 @@ auto_format &o2scl_auto_format::operator<<(auto_format &at,
   return at;
 }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 auto_format &o2scl_auto_format::operator<<(auto_format &at,
 					   const cpp_dec_float_25 &d) {
   string stmp;

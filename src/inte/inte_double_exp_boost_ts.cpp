@@ -135,7 +135,7 @@ int main(void) {
     t.test_rel(ans,exact,1.0e-8,"sinh_sinh test");
     cout << endl;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
     funct_ld tf1_ld=test_func<long double>;
     funct_ld tf2_ld=test_func_2<long double>;
@@ -196,7 +196,7 @@ int main(void) {
 #endif
   }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   {
     double val, err2, a=0, b=1;

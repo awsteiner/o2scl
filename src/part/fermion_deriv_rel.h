@@ -1295,7 +1295,7 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   /** \brief Long double version of 
       \ref o2scl::fermion_deriv_rel_tl 

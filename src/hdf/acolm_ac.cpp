@@ -507,7 +507,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
     ff.set_sig_figs(precision+1);
   }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   if (sv.size()>2 && o2scl::stob(sv[2])==true) {
     
@@ -638,7 +638,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
          << "command." << endl;
     return 2;
     
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     
   } else if (precision>50) {
     cpp_dec_float_100 d;
@@ -1086,7 +1086,7 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
     if (precision>50) {
       cerr << "Requested precision too large for the constant "
            << "command (the maximum is 50)." << endl;
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
     } else if (precision>35) {
       convert_units<cpp_dec_float_50> cu50;
       cu50.find_print(in[0],in[1],precision,false);

@@ -41,21 +41,15 @@ else
 O2SCL_OSX_MVAR = 
 endif
 
-if O2SCL_MULTIP
-O2SCL_MULTIP_MVAR = -DO2SCL_MULTIP
-else 
-O2SCL_MULTIP_MVAR = 
-endif
-
 if O2SCL_SNAP
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG $(O2SCL_OSX_MVAR) \
-	$(O2SCL_PYTHON_MVAR) $(O2SCL_MULTIP_MVAR)
+	$(O2SCL_PYTHON_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG $(O2SCL_OSX_MVAR) \
-	$(O2SCL_PYTHON_MVAR) $(O2SCL_MULTIP_MVAR)
+	$(O2SCL_PYTHON_MVAR)
 endif
 
 # ------------------------------------------------------------

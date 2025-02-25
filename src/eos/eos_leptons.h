@@ -345,7 +345,7 @@ namespace o2scl {
     
   };
   
-#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
 
   /** \brief Multiprecision version of \ref eos_leptons
 

@@ -303,7 +303,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.lower_lim=a;
       fm2.err_nonconv=false;
@@ -346,7 +346,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.upper_lim=b;
       fm2.err_nonconv=false;
@@ -388,7 +388,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip_transform<fp_t> fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -442,7 +442,7 @@ namespace o2scl {
       
       inte_subdiv<fp_t> is(nsub);
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -853,7 +853,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
@@ -1034,7 +1034,7 @@ namespace o2scl {
         }
       }
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,-std::numeric_limits
                         <cpp_dec_float_25>::digits10+3)) {
@@ -1187,7 +1187,7 @@ namespace o2scl {
         }
       }
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {
@@ -1361,7 +1361,7 @@ namespace o2scl {
         }
       }
       
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,
                         -std::numeric_limits<long double>::digits10+3)) {

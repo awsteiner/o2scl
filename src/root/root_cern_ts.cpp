@@ -80,7 +80,7 @@ int main(void) {
 
   t.test_rel(a,0.2,1.0e-6,"4");
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   cout << "Using adaptive multiprecision with a simple function and a\n"
        << "  lambda expression:" << endl;

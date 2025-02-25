@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   if (true) {
     // Testing dndmu
