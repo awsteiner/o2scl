@@ -42,10 +42,8 @@ namespace o2scl {
   public:
 
     /** \name The default quark objects
-	
-	The masses are automatically set in the constructor to
-	\c up_default_mass, \c down_default_mass, and 
-	\c strange_default_mass.c
+        
+	The masses are automatically set in the constructor.
     */
     //@{
     quark def_up; 

@@ -32,6 +32,13 @@ using namespace o2scl_const;
 
 eos_quark_cfl::eos_quark_cfl() {
 
+  def_up.m=5.5/hc_mev_fm;
+  def_down.m=5.5/hc_mev_fm;
+  def_strange.m=140.7/hc_mev_fm;
+  up=&def_up;
+  down=&def_down;
+  strange=&def_strange;
+  
   // Allocate storage for the eigenproblem
   
   iprop=gsl_matrix_complex_alloc(12,12);
@@ -325,9 +332,9 @@ int eos_quark_cfl::integ_err(double a, double b, const size_t nr,
 	    exc_etol);
   return exc_etol;
 }
-  
+
 int eos_quark_cfl::set_parameters_cfl(double lambda, double fourferm, 
-				 double sixferm, double fourgap) {
+                                      double sixferm, double fourgap) {
   int ret;
 
   if (fixed_mass) {
@@ -340,7 +347,8 @@ int eos_quark_cfl::set_parameters_cfl(double lambda, double fourferm,
   } else {
 
     // Run the parent method first
-    ret=eos_quark_njl::set_parameters(lambda,fourferm,sixferm);
+    ret=eos_quark_njl::set_parameters(def_up,def_down,def_strange,
+                                      lambda,fourferm,sixferm);
 
     if (fourgap==0.0) {
       GD=3.0*G/4.0;

@@ -175,7 +175,8 @@ than this). For :cpp:class:`o2scl::fermion_rel_tl`, the accuracy can
 be improved to 1 part in :math:`10^{10}` by decreasing the integration
 tolerances.
 
-See :ref:`Fermion Details` for more discussion on the fermion integrals.
+See :ref:`Fermion Thermodynamics` for more discussion on the fermion
+integrals.
 
 The class :cpp:class:`o2scl::fermion_nonrel_tl` assumes a non-relativistic
 dispersion relation for fermions. It uses an exact method for both

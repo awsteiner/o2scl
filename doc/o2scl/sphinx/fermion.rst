@@ -8,12 +8,12 @@ Fermion thermodynamics contents
 
 - :ref:`Interacting and non-interacting fermions`
 - :ref:`Relativistic versus non-relativistic fermions`
-- :ref:`Integration limits for degenerate fermions`
+- :ref:`Integration limits for relativistic degenerate fermions`
 - :ref:`Integrands for relativistic fermions`
 - :ref:`Non-degenerate integrands for relativistic fermions`
 - :ref:`Distribution function derivatives for relativistic fermions`
-- :ref:`Explicit forms for relativistic fermions`
-- :ref:`Expansions for fermions for relativistic fermions`  
+- :ref:`Explicit forms for derivatives with relativistic fermions`
+- :ref:`Expansions for relativistic fermions`  
 - :ref:`Degenerate expansion for relativistic fermions`
 - :ref:`Nondegenerate expansion for relativistic fermions`  
      

@@ -83,7 +83,7 @@ int eos_quark_bag::calc_e(quark &u, quark &d, quark &s, thermo &th) {
   return 0;
 }
 
-int eos_quark_bag::calc_temp_p(quark& u, quark& d, quark& s, 
+int eos_quark_bag::calc_temp_p(quark &u, quark &d, quark &s, 
 			      const double temper, thermo &th) {
 
   if (temper<=0.0) {
@@ -112,7 +112,7 @@ int eos_quark_bag::calc_temp_p(quark& u, quark& d, quark& s,
   return 0;
 }
 
-int eos_quark_bag::calc_temp_e(quark& u, quark& d, quark& s, 
+int eos_quark_bag::calc_temp_e(quark &u, quark &d, quark &s, 
 			      const double temper, thermo &th) {
 
   u.ms=u.m;

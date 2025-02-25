@@ -111,7 +111,8 @@ namespace o2scl {
       \epsilon_{\alpha \beta \gamma} q^C_{j \beta}\right)
       \left(\bar{q}_{i^{\prime} \alpha^{\prime}}^C i \gamma_5 
       \epsilon_{i^{\prime} j^{\prime} k} \epsilon_{\alpha^{\prime} 
-      \beta^{\prime} \gamma} q_{j^{\prime} \beta^{\prime}}\right) \right] \,, 
+      \beta^{\prime} \gamma} q_{j^{\prime} \beta^{\prime}}\right)
+      \right] \,, 
       \f]
       
       where \f$ \mu \f$ is the quark number chemical potential.  
@@ -212,6 +213,13 @@ namespace o2scl {
     
     virtual ~eos_quark_cfl();
     
+    /// The up quark
+    quark *up;
+    /// The down quark
+    quark *down;
+    /// The strange quark
+    quark *strange;
+
     /** \brief Set the parameters and the bag constant 'B0'
         
         This function allows the user to specify the momentum cutoff,

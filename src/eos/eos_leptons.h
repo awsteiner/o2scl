@@ -32,6 +32,7 @@
 #include <o2scl/fermion_rel.h>
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_deriv_rel.h>
+#include <o2scl/set_multip.h>
 
 namespace o2scl {
 
@@ -345,7 +346,7 @@ namespace o2scl {
     
   };
   
-#if defined (O2SCL_MULTIP) || defined (DOXYGEN)
+#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
 
   /** \brief Multiprecision version of \ref eos_leptons
 

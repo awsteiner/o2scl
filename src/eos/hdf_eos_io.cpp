@@ -824,17 +824,13 @@ eos_quark *o2scl_hdf::eos_quark_strings(std::string eos_str) {
   vector<string> vs;
   split_string(eos_str,vs);
 
-  if (vs[0]=="NLL_SPL00") {
+  if (vs[0]=="NJL_SPL00") {
     eos_quark_njl *njl=new eos_quark_njl;
-    njl->def_up.m=5.5/hc_mev_fm_f<double>();
-    njl->def_down.m=5.5/hc_mev_fm_f<double>();
-    njl->def_strange.m=140.7/hc_mev_fm_f<double>();
-    njl->up_default_mass=5.5/hc_mev_fm_f<double>();
-    njl->down_default_mass=5.5/hc_mev_fm_f<double>();
-    njl->strange_default_mass=140.7/hc_mev_fm_f<double>();
     double L=602.3/hc_mev_fm_f<double>();
-    njl->set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
+    njl->set_parameters(njl->def_up,njl->def_down,
+                        njl->def_strange,L,1.835/L/L,12.36/pow(L,5.0));
     return njl;
+  } else if (vs[0]=="NJL") {
   }
   
   O2SCL_ERR("Type not understood in eos_quark_strings().",exc_einval);
