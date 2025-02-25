@@ -296,17 +296,15 @@ namespace o2scl {
       return ret;
     }
 
-#ifdef O2SCL_NEVER_DEFINED
-    
     /** \brief Desc
      */
     template<class nit_t, class dit_t, class mpit_t, class internal_fp_t>
     internal_fp_t solve_fun_new
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
      bool use_expansions, double deg_limit,
-     double min_psi, double tol_expan,
-     nit_t &nit, dit_t &dit, mpit_t &it_multip) {
-                            
+     double min_psi, double tol_expan, double upper_limit_fac,
+     bool multip, nit_t &nit, dit_t &dit, mpit_t &it_multip,
+     fermion_tl<fp_t> unc) {
       
       internal_fp_t T=static_cast<internal_fp_t>(T2);
       fermion_tl<internal_fp_t> f;
@@ -480,8 +478,6 @@ namespace o2scl {
       return yy;
       
     }
-    
-#endif    
     
     /// The integrand for the entropy density for degenerate fermions
     template<class internal_fp_t>

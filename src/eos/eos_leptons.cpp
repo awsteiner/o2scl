@@ -693,7 +693,8 @@ int eos_leptons_multip::pair_density_eq(double nq, double T) {
   bool fr_en=frel.err_nonconv;
   frel.err_nonconv=false;
   
-  int retx;
+  int retx=-99;
+  
   if (include_muons) {
     if (verbose>1) {
       std::cout << "eos_leptons_multip::pair_density_eq(): "
@@ -855,7 +856,7 @@ int eos_leptons_multip::pair_density_eq_ld(long double nq, long double T) {
   bool fr_en=frel_ld.err_nonconv;
   frel_ld.err_nonconv=false;
   
-  int retx;
+  int retx=-99;
   if (include_muons) {
     if (verbose>1) {
       std::cout << "eos_leptons_multip::pair_density_eq_ld(): "
