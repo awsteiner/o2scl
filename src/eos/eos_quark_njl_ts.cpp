@@ -50,6 +50,9 @@ int main(void) {
   quark &d=nj.def_down;
   quark &s=nj.def_strange;
   thermo &th=nj.def_thermo;
+  u.m=5.5/hc_mev_fm;
+  d.m=5.5/hc_mev_fm;
+  s.m=140.7/hc_mev_fm;
   
   mroot_hybrids<mm_funct> mh;
   deriv_gsl<funct> df;
@@ -296,6 +299,9 @@ int main(void) {
   cout << endl;
     
   eos_quark_njl_vec njv;
+  njv.def_up.m=5.5/hc_mev_fm;
+  njv.def_down.m=5.5/hc_mev_fm;
+  njv.def_strange.m=140.7/hc_mev_fm;
 
   t.test_gen(njv.set_parameters()==0,"set_parameters().");
   cout << njv.B0 << endl;
@@ -350,10 +356,11 @@ int main(void) {
     
   funct fderiv_u2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,std::placeholders::_1,d.qq,s.qq,u.ms,d.ms,s.ms,
-     u.nu,d.nu,s.nu,true);
+     u.nu,d.nu,s.nu,std::ref(u),std::ref(d),std::ref(s),true);
   
   df.h=0.01;
   der_u=df.deriv(u.qq,fderiv_u2);
@@ -364,10 +371,11 @@ int main(void) {
   // respect to the down quark condensate
   funct fderiv_d2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,std::placeholders::_1,s.qq,u.ms,d.ms,s.ms,
-     u.nu,d.nu,s.nu,true);
+     u.nu,d.nu,s.nu,std::ref(u),std::ref(d),std::ref(s),true);
 
   df.h=0.01;
   der_d=df.deriv(d.qq,fderiv_d2);
@@ -378,10 +386,11 @@ int main(void) {
   // respect to the strange quark condensate
   funct fderiv_s2=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,std::placeholders::_1,u.ms,d.ms,s.ms,
-     u.nu,d.nu,s.nu,true);
+     u.nu,d.nu,s.nu,std::ref(u),std::ref(d),std::ref(s),true);
 
   df.h=0.01;
   der_s=df.deriv(s.qq,fderiv_s2);
@@ -390,10 +399,11 @@ int main(void) {
 
   funct fderiv_u3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
-     std::placeholders::_1,d.nu,s.nu,true);
+     std::placeholders::_1,d.nu,s.nu,std::ref(u),std::ref(d),std::ref(s),true);
     
   df.h=0.01;
   double der_u3=df.deriv(u.nu,fderiv_u3);
@@ -402,10 +412,11 @@ int main(void) {
 
   funct fderiv_d3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
-     u.nu,std::placeholders::_1,s.nu,true);
+     u.nu,std::placeholders::_1,s.nu,std::ref(u),std::ref(d),std::ref(s),true);
     
   df.h=0.01;
   double der_d3=df.deriv(d.nu,fderiv_d3);
@@ -414,10 +425,11 @@ int main(void) {
 
   funct fderiv_s3=std::bind
     (std::mem_fn<double(double,double,double,double,double,
-                        double,double,double,double,bool)>
+                        double,double,double,double,quark &, quark &,
+                        quark &,bool)>
      (&eos_quark_njl_vec::f_therm_pot_vec),
      &njv,u.qq,d.qq,s.qq,u.ms,d.ms,s.ms,
-     u.nu,d.nu,std::placeholders::_1,true);
+     u.nu,d.nu,std::placeholders::_1,std::ref(u),std::ref(d),std::ref(s),true);
     
   df.h=0.01;
   double der_s3=df.deriv(s.nu,fderiv_s3);

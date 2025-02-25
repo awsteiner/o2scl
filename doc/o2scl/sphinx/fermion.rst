@@ -9,13 +9,13 @@ Fermion thermodynamics contents
 - :ref:`Interacting and non-interacting fermions`
 - :ref:`Relativistic versus non-relativistic fermions`
 - :ref:`Integration limits for degenerate fermions`
-- :ref:`Integrands`
-- :ref:`Non-degenerate integrands`
-- :ref:`Distribution function derivatives`
-- :ref:`Explicit forms`
-- :ref:`Expansions for fermions`  
-- :ref:`Degenerate expansion`
-- :ref:`Nondegenerate expansion`  
+- :ref:`Integrands for relativistic fermions`
+- :ref:`Non-degenerate integrands for relativistic fermions`
+- :ref:`Distribution function derivatives for relativistic fermions`
+- :ref:`Explicit forms for relativistic fermions`
+- :ref:`Expansions for fermions for relativistic fermions`  
+- :ref:`Degenerate expansion for relativistic fermions`
+- :ref:`Nondegenerate expansion for relativistic fermions`  
      
 Interacting and non-interacting fermions
 ----------------------------------------
@@ -191,8 +191,8 @@ The solution is
 which is a valid lower limit only if the argument under
 the square root is positive.
 
-Integrands
-----------
+Integrands for relativistic fermions
+------------------------------------
     
 The energy density is
 
@@ -255,8 +255,8 @@ magnitude. Thus when :math:`(E^{*} - \nu)/T < \xi` (for :math:`\xi
 
 can be used.
     
-Non-degenerate integrands
--------------------------
+Non-degenerate integrands for relativistic fermions
+---------------------------------------------------
     
 ..
    (begin comment)
@@ -296,8 +296,8 @@ and the entropy density is
    s = -\frac{g T^3}{2 \pi^2} \int_0^{\infty}~du~
    \sqrt{u^2+2 u \eta} (u+\eta) {\cal S}
     
-Distribution function derivatives
----------------------------------
+Distribution function derivatives for relativistic fermions
+-----------------------------------------------------------
     
 The relevant
 derivatives of the distribution function are
@@ -353,8 +353,8 @@ Rewriting using :math:`g(k) = h(k) E^{*} T/k`
 
 as long as :math:`h(k)/k` vanishes at :math:`k=0` .
     
-Explicit forms
---------------
+Explicit forms for derivatives with relativistic fermions
+---------------------------------------------------------
     
 1) The derivative of the density wrt the chemical potential
 
@@ -480,8 +480,8 @@ Using :math:`h(k)=-(k^2 m^{*})/(E^{*} T)` we get
    \f]
    (end comment)
     
-Expansions for fermions
------------------------
+Expansions for relativistic fermions
+------------------------------------
 
 Presuming the chemical potential includes the rest mass,
 and :math:`E=\sqrt{k^2+m^2}`,
@@ -527,8 +527,8 @@ The pressure is
 
 where :math:`x = \psi t = (\mu-m)/m`. 
 
-Degenerate expansion
---------------------
+Degenerate expansion for relativistic fermions
+----------------------------------------------
 
 The Sommerfeld expansion for :math:`t \rightarrow 0` is
 
@@ -646,8 +646,8 @@ These expansions are used in
 :cpp:func:`o2scl::fermion_thermo_tl::calc_mu_deg()` and
 :cpp:func:`o2scl::fermion_deriv_thermo_tl::calc_mu_deg()`.
 
-Nondegenerate expansion
------------------------
+Nondegenerate expansion for relativistic fermions
+-------------------------------------------------
 
 There is a useful identity ([Chandrasekhar10]_ and [Tooper69]_)
 

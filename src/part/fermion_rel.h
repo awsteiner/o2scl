@@ -2539,8 +2539,8 @@ namespace o2scl {
       // case and it causes the calibrate() test function to fail.
 
       if (false && use_expansions) {
-        fp_t prec=1.0e-18;
-	if (fermion_calc_mu_ndeg(f,T,prec,true) && isfinite(f.n)) {
+	if (fermion_calc_mu_ndeg(f,T,tol_expan,
+                                 true) && isfinite(f.n)) {
           fp_t y1;
           if (density_match==0.0) {
             y1=f.n;
@@ -2579,8 +2579,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        fp_t prec=1.0e-18;
-        bool acc=fermion_calc_mu_ndeg(f,T,prec);
+        bool acc=fermion_calc_mu_ndeg(f,T,tol_expan); 
 	if (acc && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
@@ -2773,8 +2772,7 @@ namespace o2scl {
 
       // Try the non-degenerate expansion if psi is small enough
       if (use_expansions && psi<min_psi) {
-        fp_t prec=1.0e-18;
-        bool acc=fermion_calc_mu_ndeg(f,T,prec);
+        bool acc=fermion_calc_mu_ndeg(f,T,tol_expan);
 	if (acc) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;

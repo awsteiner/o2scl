@@ -323,11 +323,11 @@ namespace o2scl {
     
   };
   
-    /** \brief Compute a term in the nondegenerate expansion
-
-        This function uses \ref be_integ to perform the Bessel
-        integrals.
-    */
+  /** \brief Compute a term in the nondegenerate expansion
+      
+      This function uses \ref be_integ to perform the Bessel
+      integrals.
+  */
   template<class be_integ_t, class fp_t> 
   void fermion_ndeg_terms(be_integ_t &be_integ, size_t j, fp_t tt,
                           fp_t xx, fp_t m, bool inc_rest_mass,

@@ -49,6 +49,10 @@ int main(void) {
     cfl2.set_quarks(u2,d2,s2);
     //cfl2.set_thermo(th2);
 
+    u2.m=5.5/hc_mev_fm;
+    d2.m=5.5/hc_mev_fm;
+    s2.m=140.7/hc_mev_fm;
+    
     // Parameters
     cfl2.set_parameters_cfl();
     cfl2.KD=cfl2.K;

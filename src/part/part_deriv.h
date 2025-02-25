@@ -1093,8 +1093,8 @@ namespace o2scl {
 	fp_t dndmu_term, dndT_term, dsdT_term;
 
         fp_t tmpx=psi*tt;
-	fermion_ndeg_terms(be_integ,j,tt,tmpx,f.ms,f.inc_rest_mass,inc_antip,
-                           pterm,nterm,enterm,edterm);
+	fermion_ndeg_terms(be_integ,j,tt,tmpx,f.ms,f.inc_rest_mass,
+                           inc_antip,pterm,nterm,enterm,edterm);
 	
 	if (inc_antip==false) {
 	  dndmu_term=nterm*jot;

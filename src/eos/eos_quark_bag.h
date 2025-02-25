@@ -50,8 +50,8 @@ namespace o2scl {
     eos_quark_bag();
 
     virtual ~eos_quark_bag() {};
-
-    /** \brief Desc
+    
+    /** \brief Compute beta-equilibrium matter at \f$ T=0 \f$
      */
     virtual int beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                            eos_leptons &elep,
@@ -59,11 +59,12 @@ namespace o2scl {
       return 1;
     }
     
-    /** \brief Desc
+    /** \brief Calculate equation of state as a function of chemical
+        potentials
      */
     virtual int calc_p(quark &u, quark &d, quark &s, thermo &th);
 
-    /** \brief Desc
+    /** \brief Calculate equation of state as a function of density
      */
     virtual int calc_e(quark &u, quark &d, quark &s, thermo &th);
 

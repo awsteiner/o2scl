@@ -5,6 +5,7 @@ Acknowledgements
 
 Thank you to:
 
+* Satyajit Roy and Mahamudul Hasan Anik for their help with interpm_python
 * Atri Bhattacharya who contributed to the github actions and OpenSUSE
   support,
 * Evan O'Connor for his support of the work on the eos_sn_oo class,
