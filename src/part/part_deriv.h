@@ -1091,9 +1091,10 @@ namespace o2scl {
 	// they are used in computing the terms for the derivatives.
 	fp_t pterm, nterm, enterm, edterm;
 	fp_t dndmu_term, dndT_term, dsdT_term;
-	
-	fermion_ndeg_terms(be_integ,j,tt,psi*tt,f.ms,f.inc_rest_mass,inc_antip,
-                           pterm,nterm,enterm,edterm);
+
+        fp_t tmpx=psi*tt;
+	fermion_ndeg_terms(be_integ,j,tt,tmpx,f.ms,f.inc_rest_mass,
+                           inc_antip,pterm,nterm,enterm,edterm);
 	
 	if (inc_antip==false) {
 	  dndmu_term=nterm*jot;

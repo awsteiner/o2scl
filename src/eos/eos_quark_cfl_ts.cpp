@@ -57,6 +57,16 @@ int main(void) {
     quark d3(nj.down_default_mass,6.0);
     quark s3(nj.strange_default_mass,6.0);
   
+    u.m=5.5/hc_mev_fm;
+    d.m=5.5/hc_mev_fm;
+    s.m=140.7/hc_mev_fm;
+    u2.m=5.5/hc_mev_fm;
+    d2.m=5.5/hc_mev_fm;
+    s2.m=140.7/hc_mev_fm;
+    u3.m=5.5/hc_mev_fm;
+    d3.m=5.5/hc_mev_fm;
+    s3.m=140.7/hc_mev_fm;
+    
     mroot_hybrids<mm_funct> nd;
     inte_qng_gsl<funct> gl, gl2;
     thermo th, th2, th3;

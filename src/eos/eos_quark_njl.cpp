@@ -39,9 +39,9 @@ eos_quark_njl::eos_quark_njl() {
   def_up.non_interacting=true;
   def_down.non_interacting=true;
   def_strange.non_interacting=true;
-  def_up.init(up_default_mass,6.0);
-  def_down.init(down_default_mass,6.0);
-  def_strange.init(strange_default_mass,6.0);
+  def_up.init(mass_up_MeV_f()/hc_mev_fm,6.0);
+  def_down.init(mass_down_MeV_f()/hc_mev_fm,6.0);
+  def_strange.init(mass_strange_MeV_f()/hc_mev_fm,6.0);
   
   up=&def_up;
   down=&def_down;
@@ -98,9 +98,11 @@ int eos_quark_njl::set_parameters(double lambda, double fourferm,
   th.pr=0.0;
   mm_funct fmf=std::bind
     (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-                     thermo &)>(&eos_quark_njl::B0_func),
+                     thermo &, quark &, quark &, quark &)>
+     (&eos_quark_njl::B0_func),
      this,std::placeholders::_1,std::placeholders::_2,
-     std::placeholders::_3,std::ref(th));
+     std::placeholders::_3,std::ref(th),std::ref(u),
+     std::ref(d),std::ref(s));
 
   solver->msolve(3,bx,fmf);
   
@@ -136,10 +138,11 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-                       thermo &)>
+                       thermo &, quark &, quark &, quark &)>
        (&eos_quark_njl::gap_func_qq),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,std::ref(th));
+       std::placeholders::_3,std::ref(th),
+       std::ref(u),std::ref(d),std::ref(s));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -158,10 +161,11 @@ int eos_quark_njl::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,
-                       thermo &)>
+                       thermo &, quark &, quark &, quark &)>
        (&eos_quark_njl::gap_func_ms),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,std::ref(th));
+       std::placeholders::_3,std::ref(th),std::ref(u),
+       std::ref(d),std::ref(s));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -205,10 +209,11 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
-                       thermo &)>
+                       thermo &, quark &, quark &, quark &)>
        (&eos_quark_njl::gap_func_qq_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,std::ref(th));
+       std::placeholders::_3,T,std::ref(th),std::ref(u),
+       std::ref(d),std::ref(s));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -232,10 +237,11 @@ int eos_quark_njl::calc_temp_p(quark &u, quark &d, quark &s,
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
-                       thermo &)>
+                       thermo &, quark &, quark &, quark &)>
        (&eos_quark_njl::gap_func_ms_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,std::ref(th));
+       std::placeholders::_3,T,std::ref(th),std::ref(u),
+       std::ref(d),std::ref(s));
 
     ret=solver->msolve(3,x,fmf);
     if (ret!=0) {
@@ -479,17 +485,18 @@ void eos_quark_njl::njl_bag(quark &pp) {
 }
 
 int eos_quark_njl::gap_func_qq(size_t nv, const ubvector &x, ubvector &y,
-                               thermo &th) {
+                               thermo &th, quark &u, quark &d,
+                               quark &s) {
 
   double gap1,gap2,gap3;
   
-  up->qq=x[0];
-  down->qq=x[1];
-  strange->qq=x[2];
+  u.qq=x[0];
+  d.qq=x[1];
+  s.qq=x[2];
   
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
   
-  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,th);
+  calc_eq_p(u,d,s,gap1,gap2,gap3,th);
   
   y[0]=gap1;
   y[1]=gap2;
@@ -502,17 +509,18 @@ int eos_quark_njl::gap_func_qq(size_t nv, const ubvector &x, ubvector &y,
 }
 
 int eos_quark_njl::gap_func_ms(size_t nv, const ubvector &x, ubvector &y,
-                               thermo &th) {
+                               thermo &th, quark &u, quark &d,
+                               quark &s) {
 
   double gap1, gap2, gap3;
 
-  up->ms=x[0];
-  down->ms=x[1];
-  strange->ms=x[2];
+  u.ms=x[0];
+  d.ms=x[1];
+  s.ms=x[2];
 
   if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
 
-  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,th);
+  calc_eq_p(u,d,s,gap1,gap2,gap3,th);
 
   y[0]=gap1;
   y[1]=gap2;
@@ -526,13 +534,13 @@ int eos_quark_njl::gap_func_ms(size_t nv, const ubvector &x, ubvector &y,
 
 int eos_quark_njl::gap_func_qq_T(size_t nv, const ubvector &x,
                                  ubvector &y, double T,
-                                 thermo &th) {
+                                 thermo &th, quark &u, quark &d, quark &s) {
 
   double gap1, gap2, gap3;
   
-  up->qq=x[0];
-  down->qq=x[1];
-  strange->qq=x[2];
+  u.qq=x[0];
+  d.qq=x[1];
+  s.qq=x[2];
   
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) {
     if (verbose>0) {
@@ -541,7 +549,7 @@ int eos_quark_njl::gap_func_qq_T(size_t nv, const ubvector &x,
     return 1;
   }
 
-  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,
+  int ret=calc_eq_temp_p(u,d,s,gap1,gap2,gap3,
                          th,T);
   if (ret!=0) {
     if (verbose>0) {
@@ -550,7 +558,7 @@ int eos_quark_njl::gap_func_qq_T(size_t nv, const ubvector &x,
     return 3;
   }
   
-  if (up->ms<=0.0 || down->ms<=0.0 || strange->ms<=0.0) {
+  if (u.ms<=0.0 || d.ms<=0.0 || s.ms<=0.0) {
     if (verbose>0) {
       cout << "Quark mass negative." << endl;
     }
@@ -573,13 +581,13 @@ int eos_quark_njl::gap_func_qq_T(size_t nv, const ubvector &x,
 
 int eos_quark_njl::gap_func_ms_T(size_t nv, const ubvector &x,
                                  ubvector &y, double T,
-                                 thermo &th) {
+                                 thermo &th, quark &u, quark &d, quark &s) {
 
   double gap1,gap2,gap3;
 
-  up->ms=x[0];
-  down->ms=x[1];
-  strange->ms=x[2];
+  u.ms=x[0];
+  d.ms=x[1];
+  s.ms=x[2];
 
   if (x[0]<=0.0 || x[1]<=0.0 || x[2]<=0.0) {
     if (verbose>0) {
@@ -588,7 +596,7 @@ int eos_quark_njl::gap_func_ms_T(size_t nv, const ubvector &x,
     return 4;
   }
 
-  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,th,T);
+  int ret=calc_eq_temp_p(u,d,s,gap1,gap2,gap3,th,T);
   if (ret!=0) {
     if (verbose>0) {
       cout << "cetp returned non-zero." << endl;
@@ -596,7 +604,7 @@ int eos_quark_njl::gap_func_ms_T(size_t nv, const ubvector &x,
     return 3;
   }
 
-  if (up->qq>0.0 || down->qq>0.0 || strange->qq>0.0) {
+  if (u.qq>0.0 || d.qq>0.0 || s.qq>0.0) {
     if (verbose>0) {
       cout << "Quark condensate positive." << endl;
     }
@@ -618,21 +626,21 @@ int eos_quark_njl::gap_func_ms_T(size_t nv, const ubvector &x,
 }
 
 int eos_quark_njl::B0_func(size_t nv, const ubvector &x, ubvector &y,
-                           thermo &th) {
+                           thermo &th, quark &u, quark &d, quark &s) {
   
   double gap1,gap2,gap3;
   
-  up->ms=x[0];
-  down->ms=x[1];
-  strange->ms=x[2];
+  u.ms=x[0];
+  d.ms=x[1];
+  s.ms=x[2];
   
   if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
 
-  up->mu=up->ms;
-  down->mu=down->ms;
-  strange->mu=strange->ms;
+  u.mu=u.ms;
+  d.mu=d.ms;
+  s.mu=s.ms;
   
-  calc_eq_p(*up,*down,*strange,gap1,gap2,gap3,th);
+  calc_eq_p(u,d,s,gap1,gap2,gap3,th);
   
   y[0]=gap1;
   y[1]=gap2;
@@ -896,19 +904,19 @@ double eos_quark_njl::f_therm_pot(double qqu, double qqd, double qqs,
   
   double g1, g2, g3;
   
-  up->qq=qqu;
-  down->qq=qqd;
-  strange->qq=qqs;
-  up->ms=msu;
-  down->ms=msd;
-  strange->ms=mss;
+  u.qq=qqu;
+  d.qq=qqd;
+  s.qq=qqs;
+  u.ms=msu;
+  d.ms=msd;
+  s.ms=mss;
 
   thermo th;
-  calc_eq_p(*up,*down,*strange,g1,g2,g3,th);
+  calc_eq_p(u,d,s,g1,g2,g3,th);
   if (vac_terms==false) {
-    double ret=-th.pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                      strange->qq*strange->qq)+
-      4.0*K*up->qq*down->qq*strange->qq;
+    double ret=-th.pr-2.0*G*(u.qq*u.qq+d.qq*d.qq+
+                                      s.qq*s.qq)+
+      4.0*K*u.qq*d.qq*s.qq;
     return ret;
   }
   return -th.pr;
@@ -920,19 +928,19 @@ double eos_quark_njl::f_therm_pot_T(double qqu, double qqd, double qqs,
   
   double g1, g2, g3;
   
-  up->qq=qqu;
-  down->qq=qqd;
-  strange->qq=qqs;
-  up->ms=msu;
-  down->ms=msd;
-  strange->ms=mss;
+  u.qq=qqu;
+  d.qq=qqd;
+  s.qq=qqs;
+  u.ms=msu;
+  d.ms=msd;
+  s.ms=mss;
 
   thermo th;
-  calc_eq_temp_p(*up,*down,*strange,g1,g2,g3,th,temper);
+  calc_eq_temp_p(u,d,s,g1,g2,g3,th,temper);
   if (vac_terms==false) {
-    double ret=-th.pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                      strange->qq*strange->qq)+
-      4.0*K*up->qq*down->qq*strange->qq;
+    double ret=-th.pr-2.0*G*(u.qq*u.qq+d.qq*d.qq+
+                                      s.qq*s.qq)+
+      4.0*K*u.qq*d.qq*s.qq;
     return ret;
   }
   return -th.pr;
@@ -1112,10 +1120,11 @@ int eos_quark_njl_vec::calc_temp_p(quark &u, quark &d, quark &s,
 
     mm_funct fmf=std::bind
       (std::mem_fn<int(size_t,const ubvector &,ubvector &,double,
-                       thermo &th)>
+                       thermo &th, quark &, quark &, quark &)>
        (&eos_quark_njl_vec::gap_func_ms_T),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,T,std::ref(th));
+       std::placeholders::_3,T,std::ref(th),std::ref(u),
+       std::ref(d),std::ref(s));
 
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {
@@ -1332,20 +1341,21 @@ int eos_quark_njl_vec::calc_eq_temp_p(quark &u, quark &d, quark &s,
 }
 
 int eos_quark_njl_vec::gap_func_ms_vec(size_t nv, const ubvector &x,
-                                       ubvector &y, thermo &th) {
+                                       ubvector &y, thermo &th,
+                                       quark &u, quark &d, quark &s) {
 
   double gap1, gap2, gap3, vec1, vec2, vec3;
 
-  up->ms=x[0];
-  down->ms=x[1];
-  strange->ms=x[2];
-  up->nu=x[3];
-  down->nu=x[4];
-  strange->nu=x[5];
+  u.ms=x[0];
+  d.ms=x[1];
+  s.ms=x[2];
+  u.nu=x[3];
+  d.nu=x[4];
+  s.nu=x[5];
 
   if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) return 1;
 
-  calc_eq_p_vec(*up,*down,*strange,gap1,gap2,gap3,
+  calc_eq_p_vec(u,d,s,gap1,gap2,gap3,
                 vec1,vec2,vec3,th);
 
   y[0]=gap1;
@@ -1363,21 +1373,21 @@ int eos_quark_njl_vec::gap_func_ms_vec(size_t nv, const ubvector &x,
 }
 
 int eos_quark_njl_vec::gap_func_qq_vec(size_t nv, const ubvector &x,
-                                       ubvector &y,
-                                       thermo &th) {
+                                       ubvector &y, thermo &th,
+                                       quark &u, quark &d, quark &s) {
   
   double gap1, gap2, gap3, vec1, vec2, vec3;
 
-  up->qq=x[0];
-  down->qq=x[1];
-  strange->qq=x[2];
-  up->nu=x[3];
-  down->nu=x[4];
-  strange->nu=x[5];
+  u.qq=x[0];
+  d.qq=x[1];
+  s.qq=x[2];
+  u.nu=x[3];
+  d.nu=x[4];
+  s.nu=x[5];
 
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) return 1;
 
-  calc_eq_p_vec(*up,*down,*strange,gap1,gap2,gap3,
+  calc_eq_p_vec(u,d,s,gap1,gap2,gap3,
                 vec1,vec2,vec3,th);
 
   y[0]=gap1;
@@ -1444,10 +1454,12 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
     x[5]=s.nu;
     
     mm_funct fmf=std::bind
-      (std::mem_fn<int(size_t,const ubvector &,ubvector &, thermo &)>
+      (std::mem_fn<int(size_t,const ubvector &,ubvector &, thermo &,
+                       quark &, quark &, quark &)>
        (&eos_quark_njl_vec::gap_func_ms_vec),
        this,std::placeholders::_1,std::placeholders::_2,
-       std::placeholders::_3,std::ref(th));
+       std::placeholders::_3,std::ref(th),std::ref(u),
+       std::ref(d),std::ref(s));
     
     ret=solver->msolve(6,x,fmf);
     if (ret!=0) {
@@ -1465,28 +1477,30 @@ int eos_quark_njl_vec::calc_p(quark &u, quark &d, quark &s, thermo &th) {
 double eos_quark_njl_vec::f_therm_pot_vec(double qqu, double qqd, double qqs,
                                           double msu, double msd, double mss,
                                           double nuu, double nud, double nus,
+                                          quark &u, quark &d, quark &s,
                                           bool vac_terms) {
+                                          
   
   double g1, g2, g3, h1, h2, h3;
   
-  up->qq=qqu;
-  down->qq=qqd;
-  strange->qq=qqs;
-  up->ms=msu;
-  down->ms=msd;
-  strange->ms=mss;
-  up->nu=nuu;
-  down->nu=nud;
-  strange->nu=nus;
+  u.qq=qqu;
+  d.qq=qqd;
+  s.qq=qqs;
+  u.ms=msu;
+  d.ms=msd;
+  s.ms=mss;
+  u.nu=nuu;
+  d.nu=nud;
+  s.nu=nus;
 
   thermo th;
-  calc_eq_p_vec(*up,*down,*strange,g1,g2,g3,h1,h2,h3,th);
+  calc_eq_p_vec(u,d,s,g1,g2,g3,h1,h2,h3,th);
   
   if (vac_terms==false) {
-    double ret=-th.pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                      strange->qq*strange->qq)+
-      4.0*K*up->qq*down->qq*strange->qq+
-      2.0*GV*up->n*up->n+2.0*GV*down->n*down->n+2.0*GV*strange->n*strange->n;
+    double ret=-th.pr-2.0*G*(u.qq*u.qq+d.qq*d.qq+
+                                      s.qq*s.qq)+
+      4.0*K*u.qq*d.qq*s.qq+
+      2.0*GV*u.n*u.n+2.0*GV*d.n*d.n+2.0*GV*s.n*s.n;
     return ret;
   }
   return -th.pr;
@@ -1495,28 +1509,29 @@ double eos_quark_njl_vec::f_therm_pot_vec(double qqu, double qqd, double qqs,
 double eos_quark_njl_vec::f_therm_pot_T_vec(double qqu, double qqd, double qqs,
                                             double msu, double msd, double mss,
                                             double nuu, double nud, double nus,
-                                            double T, bool vac_terms) {
+                                            double T, quark &u,
+                                            quark &d, quark &s, bool vac_terms) {
   
   double g1, g2, g3, h1, h2, h3;
   
-  up->qq=qqu;
-  down->qq=qqd;
-  strange->qq=qqs;
-  up->ms=msu;
-  down->ms=msd;
-  strange->ms=mss;
-  up->nu=nuu;
-  down->nu=nud;
-  strange->nu=nus;
+  u.qq=qqu;
+  d.qq=qqd;
+  s.qq=qqs;
+  u.ms=msu;
+  d.ms=msd;
+  s.ms=mss;
+  u.nu=nuu;
+  d.nu=nud;
+  s.nu=nus;
 
   thermo th;
-  calc_eq_temp_p(*up,*down,*strange,g1,g2,g3,h1,h2,h3,th,T);
+  calc_eq_temp_p(u,d,s,g1,g2,g3,h1,h2,h3,th,T);
   
   if (vac_terms==false) {
-    double ret=-th.pr-2.0*G*(up->qq*up->qq+down->qq*down->qq+
-                                      strange->qq*strange->qq)+
-      4.0*K*up->qq*down->qq*strange->qq+
-      2.0*GV*up->n*up->n+2.0*GV*down->n*down->n+2.0*GV*strange->n*strange->n;
+    double ret=-th.pr-2.0*G*(u.qq*u.qq+d.qq*d.qq+
+                                      s.qq*s.qq)+
+      4.0*K*u.qq*d.qq*s.qq+
+      2.0*GV*u.n*u.n+2.0*GV*d.n*d.n+2.0*GV*s.n*s.n;
     return ret;
   }
   return -th.pr;
@@ -1524,16 +1539,17 @@ double eos_quark_njl_vec::f_therm_pot_T_vec(double qqu, double qqd, double qqs,
 
 int eos_quark_njl_vec::gap_func_qq_T(size_t nv, const ubvector &x,
                                      ubvector &y, double T,
-                                     thermo &th) {
+                                     thermo &th, quark &u,
+                                     quark &d, quark &s) {
 
   double gap1, gap2, gap3, vec1, vec2, vec3;
   
-  up->qq=x[0];
-  down->qq=x[1];
-  strange->qq=x[2];
-  up->nu=x[3];
-  down->nu=x[4];
-  strange->nu=x[5];
+  u.qq=x[0];
+  d.qq=x[1];
+  s.qq=x[2];
+  u.nu=x[3];
+  d.nu=x[4];
+  s.nu=x[5];
   
   if (x[0]>0.0 || x[1]>0.0 || x[2]>0.0) {
     if (verbose>0) {
@@ -1542,7 +1558,7 @@ int eos_quark_njl_vec::gap_func_qq_T(size_t nv, const ubvector &x,
     return 1;
   }
 
-  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,
+  int ret=calc_eq_temp_p(u,d,s,gap1,gap2,gap3,
                          vec1,vec2,vec3,th,T);
   
   if (ret!=0) {
@@ -1552,7 +1568,7 @@ int eos_quark_njl_vec::gap_func_qq_T(size_t nv, const ubvector &x,
     return 3;
   }
   
-  if (up->ms<=0.0 || down->ms<=0.0 || strange->ms<=0.0) {
+  if (u.ms<=0.0 || d.ms<=0.0 || s.ms<=0.0) {
     if (verbose>0) {
       cout << "Quark mass negative." << endl;
     }
@@ -1577,17 +1593,17 @@ int eos_quark_njl_vec::gap_func_qq_T(size_t nv, const ubvector &x,
 }
 
 int eos_quark_njl_vec::gap_func_ms_T(size_t nv, const ubvector &x,
-                                     ubvector &y, double T,
-                                     thermo &th) {
+                                     ubvector &y, double T, thermo &th,
+                                     quark &u, quark &d, quark &s) {
 
   double gap1, gap2, gap3, vec1, vec2, vec3;
   
-  up->ms=x[0];
-  down->ms=x[1];
-  strange->ms=x[2];
-  up->nu=x[3];
-  down->nu=x[4];
-  strange->nu=x[5];
+  u.ms=x[0];
+  d.ms=x[1];
+  s.ms=x[2];
+  u.nu=x[3];
+  d.nu=x[4];
+  s.nu=x[5];
   
   if (x[0]<0.0 || x[1]<0.0 || x[2]<0.0) {
     if (verbose>0) {
@@ -1596,7 +1612,7 @@ int eos_quark_njl_vec::gap_func_ms_T(size_t nv, const ubvector &x,
     return 1;
   }
 
-  int ret=calc_eq_temp_p(*up,*down,*strange,gap1,gap2,gap3,
+  int ret=calc_eq_temp_p(u,d,s,gap1,gap2,gap3,
                          vec1,vec2,vec3,th,T);
   
   if (ret!=0) {
@@ -1606,7 +1622,7 @@ int eos_quark_njl_vec::gap_func_ms_T(size_t nv, const ubvector &x,
     return 3;
   }
   
-  if (up->qq>0.0 || down->qq>0.0 || strange->qq>0.0) {
+  if (u.qq>0.0 || d.qq>0.0 || s.qq>0.0) {
     if (verbose>0) {
       cout << "Quark condensate positive." << endl;
     }
