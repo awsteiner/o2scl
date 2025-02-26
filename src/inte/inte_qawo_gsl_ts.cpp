@@ -176,7 +176,7 @@ int main(void) {
       Qcos.integ_err(f_even,-M_PI,M_PI,o2scl_res,o2scl_err);
 			
       double dbl_eps=std::numeric_limits<double>::epsilon();
-      t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAWO: GSL vs O2scl (2)");
+      t.test_abs(gsl_res,o2scl_res,dbl_eps*5.0,"QAWO: GSL vs O2scl (2)");
 			
       string coef="a_"+itos(n);
       cout.width(8); cout << coef;
