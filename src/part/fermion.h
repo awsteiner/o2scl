@@ -123,8 +123,8 @@ namespace o2scl {
       this->mu=static_cast<fp_t>(f.mu);
       this->en=static_cast<fp_t>(f.en);
       this->nu=static_cast<fp_t>(f.nu);
-      this->inc_rest_mass=static_cast<fp_t>(f.inc_rest_mass);
-      this->non_interacting=static_cast<fp_t>(f.non_interacting);
+      this->inc_rest_mass=f.inc_rest_mass;
+      this->non_interacting=f.non_interacting;
       this->kf=static_cast<fp_t>(f.kf);
       this->del=static_cast<fp_t>(f.del);
       return;

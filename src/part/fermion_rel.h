@@ -54,7 +54,7 @@ namespace o2scl {
       have template formats which can be used for adaptive
       multiprecision.
    */
-  template<class fp_t> class fermion_rel_integ {
+  class fermion_rel_integ {
     
   public:
     
@@ -80,7 +80,7 @@ namespace o2scl {
     }      
     
     /// The integrand for the density for non-degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t density_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
       
       internal_fp_t ret;
@@ -107,7 +107,7 @@ namespace o2scl {
     }
 
     /// The integrand for the pressure for non-degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t pressure_fun_old(internal_fp_t u, fp_t y2, fp_t eta2) {
 
       internal_fp_t ret;
@@ -123,12 +123,12 @@ namespace o2scl {
       if (!isfinite(ret)) {
 	ret=0.0;
       }
-
+      
       return ret;
     }
 
     /// The integrand for the pressure for non-degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t pressure_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
 
       internal_fp_t ret;
@@ -149,7 +149,7 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for non-degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t energy_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
 
       internal_fp_t ret;
@@ -174,7 +174,7 @@ namespace o2scl {
     }
 
     /// The integrand for the entropy density for non-degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t entropy_fun(internal_fp_t u, fp_t y2, fp_t eta2) {
 
       internal_fp_t ret;
@@ -212,7 +212,7 @@ namespace o2scl {
     }
 
     /// The integrand for the density for degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t deg_density_fun(internal_fp_t k, fp_t T2,
                                   fp_t y2, fp_t eta2,
                                   fp_t mot2, bool debug) {
@@ -240,7 +240,7 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t deg_energy_fun(internal_fp_t k, fp_t T2,
                                  fp_t y2, fp_t eta2,
                                  fp_t mot2) {
@@ -265,7 +265,7 @@ namespace o2scl {
     }
 
     /// The integrand for the energy density for degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t deg_pressure_fun(internal_fp_t k, fp_t T2,
                                    fp_t y2, fp_t eta2,
                                    fp_t mot2, bool debug) {
@@ -298,7 +298,7 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    template<class nit_t, class dit_t, class mpit_t, class internal_fp_t>
+    template<class nit_t, class dit_t, class mpit_t, class internal_fp_t, class fp_t>
     internal_fp_t solve_fun_new
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
      bool use_expansions, fp_t deg_limit2, fp_t min_psi2, 
@@ -394,7 +394,7 @@ namespace o2scl {
           
           std::function<internal_fp_t(internal_fp_t)> n_fun_f=
             [this,y,eta](internal_fp_t k) -> internal_fp_t
-          { return this->density_fun(k,y,eta); };
+            { return this->density_fun(k,y,eta); };
           
           internal_fp_t unc;
           iret=nit.integ_iu_err(n_fun_f,zero,nden,unc);
@@ -489,7 +489,7 @@ namespace o2scl {
     }
     
     /// The integrand for the entropy density for degenerate fermions
-    template<class internal_fp_t>
+    template<class internal_fp_t, class fp_t>
     internal_fp_t deg_entropy_fun(internal_fp_t k, fp_t T2,
                                   fp_t y2, fp_t eta2,
                                   fp_t mot2) {
@@ -726,7 +726,7 @@ namespace o2scl {
 	   class fp_t=double>
   class fermion_rel_tl :
     public fermion_thermo_tl<fermion_t,fd_inte_t,be_inte_t,root_t,
-			     func_t,fp_t>, public fermion_rel_integ<fp_t> {
+			     func_t,fp_t>, public fermion_rel_integ {
     
   public:
     
@@ -945,7 +945,7 @@ namespace o2scl {
 			   nit_t,dit_t,root_t,func_t,fp_t>::solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
-#ifndef O2SCL_NEVER_DEFINED
+#ifdef O2SCL_NEVER_DEFINED
       if (multip) {
         
         fp_t dr_err;
