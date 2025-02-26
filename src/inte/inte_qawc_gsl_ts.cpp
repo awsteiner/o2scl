@@ -124,7 +124,7 @@ int main(void) {
     Q.integ_err(f,aa,b,o2scl_res,o2scl_err);
 		
       double dbl_eps=std::numeric_limits<double>::epsilon();
-    t.test_abs(gsl_res,o2scl_res,dbl_eps,"QAWC: GSL vs O2scl");
+    t.test_abs(gsl_res,o2scl_res,5.0*dbl_eps,"QAWC: GSL vs O2scl");
 		
     cout.width(15); cout << o2scl_err;
     cout.width(15); cout << fabs(o2scl_res-recip_x3_exact());

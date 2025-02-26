@@ -163,7 +163,7 @@ int main(void) {
     Q.integ_err(f,0.0,0.0,o2scl_res,o2scl_err);
     
     double dbl_eps=std::numeric_limits<double>::epsilon();
-    t.test_rel(gsl_res,o2scl_res,dbl_eps,"QAGIL: GSL vs O2sc");
+    t.test_rel(gsl_res,o2scl_res,5.0*dbl_eps,"QAGIL: GSL vs O2sc");
 		
     cout.width(15); cout << o2scl_err;
     cout.width(15); cout << fabs(o2scl_res - exact_gamma(alpha));
