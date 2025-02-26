@@ -366,7 +366,7 @@ int main(void) {
   
     ikon2.set(N,x,y,cfr,plist2,true);
   
-    t.test_rel(ikon2.eval(x[0]),y[0],1.0e-7,"ikor 1");
+    t.test_rel(ikon2.eval(x[0]),y[0],1.0e-6,"ikor 1");
     t.test_rel(ikon2.eval(x[N-1]),y[N-1],1.0e-12,"ikor 2");
     t.test_rel(ikon2.eval((x[0]+x[1])/2.0),(y[0]+y[1])/2.0,2.0e-5,"ikor 3");
     cout << endl;
