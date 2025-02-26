@@ -3,9 +3,11 @@ name: Ubuntu 24.04 x86_64 Python install
 
 on:
   push:
-    branches: [ "rc" ]
+    branches: [ "x" ]
+#    branches: [ "rc" ]
   pull_request:
-    branches: [ "rc" ]
+    branches: [ "x" ]
+#    branches: [ "rc" ]
 
 jobs:
 

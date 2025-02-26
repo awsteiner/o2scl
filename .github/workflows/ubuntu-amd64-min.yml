@@ -1,20 +1,18 @@
 ---
-name: Ubuntu 24.04 x86_64 plus install
+name: Ubuntu 24.04 amd64 minimal install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  ubuntu-2404-x86_64-plus:
+  ubuntu-2404-amd64-min:
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
 
     steps:
     
@@ -41,12 +39,12 @@ jobs:
       with:
         path: ~/.ccache
         # Necessary to cache the ccache data on every run
-        key: cache-ubuntu-x86_64-plus-${{ github.run_id }}
+        key: cache-ubuntu-amd64-min-${{ github.run_id }}
         restore-keys: |
-          cache-ubuntu-x86_64-plus
+          cache-ubuntu-amd64-min
 
-    - name: Install and cache apt packages
-      run: sudo apt-get -y update && sudo apt-get -y install ccache curl g++ gzip libarmadillo-dev libarpack2-dev libboost-all-dev libeigen3-dev libfftw3-dev libgsl-dev libhdf5-dev liblapack-dev libopenblas-dev libreadline-dev make tar
+    - name: Install dependencies
+      run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
 
 # For when we're not using a release
     - name: Set up autotools
@@ -59,9 +57,9 @@ jobs:
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CCACHE_DIR=~/.ccache
-        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -DO2SCL_HDF5_COMP -I/usr/include"
+        export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -I/usr/include"
         mkdir -p ${PWD}/build
-        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp
+        ./configure --prefix=${PWD}/build --enable-shared --disable-static
 
     - name: Build and install
       run: |
