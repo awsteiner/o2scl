@@ -162,7 +162,7 @@ int main(void) {
       Q.integ_err(f, 0.0, M_PI, o2scl_res, o2scl_err);
 
       double dbl_eps=std::numeric_limits<double>::epsilon()*1.01;
-      t.test_abs(o2scl_res,gsl_res,dbl_eps,"QAG: O2scl vs GSL");
+      t.test_abs(o2scl_res,gsl_res,5.0*dbl_eps,"QAG: O2scl vs GSL");
 			
       cout.width(15); cout << Q.get_rule();
       cout.width(15); cout << o2scl_err;

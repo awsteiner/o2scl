@@ -673,9 +673,9 @@ namespace o2scl {
         (Checked once on 11/05/03)
     */
     void landau_nuclear(double n0, double m,
-                       double &f0, double &g0, double &f0p,
-                       double &g0p, double &f1, double &g1,
-                       double &f1p, double &g1p);
+                        double &f0, double &g0, double &f0p,
+                        double &g0p, double &f1, double &g1,
+                        double &f1p, double &g1p);
 
     /** \brief Calculate the Landau parameters for neutron matter
             

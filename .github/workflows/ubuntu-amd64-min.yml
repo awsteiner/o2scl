@@ -1,49 +1,47 @@
 ---
-name: Ubuntu 24.04 x86_64 minimal install
+name: Ubuntu 24.04 amd64 minimal install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  ubuntu-2404-x86_64-min:
+  ubuntu-2404-amd64-min:
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
 
     steps:
     
-    #- name: Git checkout
-    #  uses: actions/checkout@v4
-    #  with:
-    #    ref: rc
-
-    - name: Download release
-      uses: robinraju/release-downloader@v1
+    - name: Git checkout
+      uses: actions/checkout@v4
       with:
-        repository: 'awsteiner/o2scl'
-        tag: 'v0.930'
-        fileName: 'o2scl-0.930.tar.gz'
+        ref: main
 
-    - name: untar release
-      run: |
-           tar xvzf o2scl-0.930.tar.gz
-           mv o2scl-0.930/* .
-           rmdir o2scl-0.930
+    #- name: Download release
+    #  uses: robinraju/release-downloader@v1
+    #  with:
+    #    repository: 'awsteiner/o2scl'
+    #    tag: 'v0.930'
+    #    fileName: 'o2scl-0.930.tar.gz'
+
+    #- name: untar release
+    #  run: |
+    #       tar xvzf o2scl-0.930.tar.gz
+    #       mv o2scl-0.930/* .
+    #       rmdir o2scl-0.930
 
     - name: Cache action
       uses: actions/cache@v4
       with:
         path: ~/.ccache
         # Necessary to cache the ccache data on every run
-        key: cache-ubuntu-x86_64-min-${{ github.run_id }}
+        key: cache-ubuntu-amd64-min-${{ github.run_id }}
         restore-keys: |
-          cache-ubuntu-x86_64-min
+          cache-ubuntu-amd64-min
 
     - name: Install dependencies
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
@@ -61,7 +59,7 @@ jobs:
         export CCACHE_DIR=~/.ccache
         export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_PRE_1_12 -I/usr/include"
         mkdir -p ${PWD}/build
-        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static
+        ./configure --prefix=${PWD}/build --enable-shared --disable-static
 
     - name: Build and install
       run: |
