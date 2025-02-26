@@ -140,8 +140,6 @@ void o2scl_fermion_zerot_calc_mu_zerot(void *vptr, void *ptr_f);
 
 void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f);
 
-bool o2scl_fermion_thermo_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec);
-
 void o2scl_fermion_thermo_massless_calc_mu(void *vptr, void *ptr_f, double T);
 
 void o2scl_fermion_thermo_massless_pair_mu(void *vptr, void *ptr_f, double T);

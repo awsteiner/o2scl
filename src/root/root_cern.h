@@ -179,6 +179,9 @@ namespace o2scl {
 
 #ifdef O2SCL_SET_MULTIP
       
+      fp2_t scale2=static_cast<fp2_t>(scale);
+      fp2_t eps2=static_cast<fp2_t>(eps);
+      
       funct_multip fm2;
       fm2.err_nonconv=false;
       fm2.tol_rel=func_tol;
@@ -214,8 +217,8 @@ namespace o2scl {
 	set=true;
       }
 
-      fp2_t delta=scale*xnorm;
-      if (set==false) delta=scale;
+      fp2_t delta=scale2*xnorm;
+      if (set==false) delta=scale2;
 	
       fp2_t wmat, farr, w0arr, w1arr, w2arr;
 	
@@ -230,8 +233,8 @@ namespace o2scl {
 	// Compute step H for the divided difference which approximates
 	// the K-th row of the Jacobian matrix
 	
-	fp2_t h=eps*xnorm;
-	if (h==0) h=eps;
+	fp2_t h=eps2*xnorm;
+	if (h==0) h=eps2;
 
 	wmat=h;
 	w1arr=ux;
@@ -322,7 +325,7 @@ namespace o2scl {
 	  
 	// Update the bound on the correction vector
 
-	if(delta<scale*xnorm) delta=scale*xnorm;
+	if(delta<scale2*xnorm) delta=scale2*xnorm;
     
 	// Determine the progress of the iteration
 
@@ -332,7 +335,7 @@ namespace o2scl {
 	nier8++;
 	if (lcv) nier6=0;
 	if (fnorm<fnorm1 || difit<difit1) nier7=0;
-	if (difit>eps*xnorm) nier8=0;
+	if (difit>eps2*xnorm) nier8=0;
 
 	// Print iteration information
 	  
@@ -409,7 +412,7 @@ namespace o2scl {
      */
     template<typename func2_t, class fp2_t>
     int solve_multip(fp2_t &x1, func2_t &&f, fp2_t &err,
-                         double tol_loc=-1.0) {
+                     double tol_loc=-1.0) {
       
       if (tol_loc<=0.0) {
         tol_loc=pow(10.0,-std::numeric_limits<fp2_t>::digits10);

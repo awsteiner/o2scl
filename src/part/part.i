@@ -128,11 +128,11 @@ class fermion_thermo abstract
 - py_class_doc |
 | Python interface for :ref:`%name% <o2scl:%name%_tl>`.
 - parent fermion_zerot
-- function calc_mu_deg
-  - bool
-  - fermion &f
-  - double T
-  - double prec
+#- function calc_mu_deg
+#  - bool
+#  - fermion &f
+#  - double T
+#  - double prec
 #- function calc_mu_ndeg
 #  - bool
 #  - fermion &f

@@ -327,13 +327,6 @@ void o2scl_fermion_zerot_calc_density_zerot(void *vptr, void *ptr_f) {
   return;
 }
 
-bool o2scl_fermion_thermo_calc_mu_deg(void *vptr, void *ptr_f, double T, double prec) {
-  fermion_thermo *ptr=(fermion_thermo *)vptr;
-  fermion *f=(fermion *)ptr_f;
-  bool ret=ptr->calc_mu_deg(*f,T,prec);
-  return ret;
-}
-
 void o2scl_fermion_thermo_massless_calc_mu(void *vptr, void *ptr_f, double T) {
   fermion_thermo *ptr=(fermion_thermo *)vptr;
   fermion *f=(fermion *)ptr_f;

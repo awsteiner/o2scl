@@ -301,14 +301,21 @@ namespace o2scl {
     template<class nit_t, class dit_t, class mpit_t, class internal_fp_t>
     internal_fp_t solve_fun_new
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
-     bool use_expansions, double deg_limit,
-     double min_psi, double tol_expan, double upper_limit_fac,
-     bool multip, nit_t &nit, dit_t &dit, mpit_t &it_multip,
-     fermion_tl<fp_t> unc) {
+     bool use_expansions, fp_t deg_limit2, fp_t min_psi2, 
+     fp_t tol_expan2, fp_t upper_limit_fac2, bool multip, 
+     nit_t &nit, dit_t &dit, mpit_t &it_multip) {
       
       internal_fp_t T=static_cast<internal_fp_t>(T2);
+      internal_fp_t deg_limit=static_cast<internal_fp_t>(deg_limit2);
+      internal_fp_t min_psi=static_cast<internal_fp_t>(min_psi2);
+      internal_fp_t tol_expan=static_cast<internal_fp_t>(tol_expan2);
+      internal_fp_t upper_limit_fac=
+        static_cast<internal_fp_t>(upper_limit_fac2);
+      
       fermion_tl<internal_fp_t> f;
       f.init_stat_cast(f2);
+
+      internal_fp_t pi2=boost::math::constants::pi_sqr<internal_fp_t>();
       
       internal_fp_t nden=1.0e99, yy;
       
@@ -337,7 +344,6 @@ namespace o2scl {
         internal_fp_t ntemp=f.n;
         bool acc=fermion_calc_mu_ndeg(f,T,tol_expan);
         if (acc) {
-          unc.n=f.n*tol_expan;
           yy=(ntemp-f.n)/ntemp;
           f.n=ntemp;
           return yy;
@@ -348,9 +354,8 @@ namespace o2scl {
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
         internal_fp_t ntemp=f.n;
-        bool acc=this->calc_mu_deg(f,T,tol_expan);
+        bool acc=fermion_calc_mu_deg(f,T,tol_expan);
         if (acc) {
-          unc.n=f.n*tol_expan;
           yy=(ntemp-f.n)/ntemp;
           f.n=ntemp;
           return yy;
@@ -369,15 +374,16 @@ namespace o2scl {
         }
         eta=f.ms/T;
 
-        internal_fp_t prefac=f.g*pow(T,3.0)/2.0/this->pi2;
+        internal_fp_t prefac=f.g*pow(T,3.0)/2.0/pi2;
         
         if (multip==true) {
           
           double tol_rel=0;
+          internal_fp_t unc;
           int ix=it_multip.integ_iu_err_multip
             ([this,y,eta](auto &&k) mutable {
               return this->density_fun(k,y,eta); },
-              zero,nden,unc.n,tol_rel);
+              zero,nden,unc,tol_rel);
           if (ix!=0) {
             O2SCL_ERR2("n integration (ndeg, multip) failed in ",
                        "fermion_rel::calc_mu().",
@@ -390,7 +396,8 @@ namespace o2scl {
             [this,y,eta](internal_fp_t k) -> internal_fp_t
           { return this->density_fun(k,y,eta); };
           
-          iret=nit.integ_iu_err(n_fun_f,zero,nden,unc.n);
+          internal_fp_t unc;
+          iret=nit.integ_iu_err(n_fun_f,zero,nden,unc);
           if (iret!=0) {
             O2SCL_ERR2("n integration (ndeg) failed in ",
                        "fermion_rel::calc_mu().",
@@ -400,7 +407,6 @@ namespace o2scl {
         }
 
         nden*=prefac;
-        unc.n*=prefac;
         
         yy=(f.n-nden)/f.n;
 
@@ -431,10 +437,11 @@ namespace o2scl {
           if (multip==true) {
             
             double tol_rel=0;
+            internal_fp_t unc;
             int ix=it_multip.integ_err_multip
               ([this,T,y,eta,mot,ul](auto &&k) mutable {
                 return this->deg_density_fun(k,T,y,eta,mot,false); },
-                zero,ul,nden,unc.n,tol_rel);
+                zero,ul,nden,unc,tol_rel);
             if (ix!=0) {
               O2SCL_ERR2("n integration (deg, multip) failed in ",
                          "fermion_rel::calc_mu().",
@@ -446,8 +453,9 @@ namespace o2scl {
             std::function<internal_fp_t(internal_fp_t)> n_fun_f=
               [this,T,y,eta,mot,ul](internal_fp_t k) -> internal_fp_t
             { return this->deg_density_fun(k,T,y,eta,mot,false); };
+            internal_fp_t unc;
             
-            iret=dit.integ_err(n_fun_f,zero,ul,nden,unc.n);
+            iret=dit.integ_err(n_fun_f,zero,ul,nden,unc);
             if (iret!=0) {
               O2SCL_ERR2("n integration (deg) failed in ",
                          "fermion_rel::calc_mu().",
@@ -456,8 +464,7 @@ namespace o2scl {
             
           }
           
-          nden*=f.g/2.0/this->pi2;
-          unc.n*=f.g/2.0/this->pi2;
+          nden*=f.g/2.0/pi2;
           
         } else {
 
@@ -468,12 +475,14 @@ namespace o2scl {
         yy=(f.n-nden)/f.n;
       }
 
+      /*
       if (this->verbose>=2) {
         std::cout.precision(12);
         std::cout << "2 " << psi << " " << deg << " "
                   << x << " " << yy << std::endl;
         std::cout.precision(6);
       }
+      */
       
       return yy;
       
@@ -936,6 +945,26 @@ namespace o2scl {
 			   nit_t,dit_t,root_t,func_t,fp_t>::solve_fun),
 			  this,std::placeholders::_1,std::ref(f),temper);
 
+#ifndef O2SCL_NEVER_DEFINED
+      if (multip) {
+        
+        fp_t dr_err;
+        int amret=density_root.solve_multip(nex,[this,temper,f,
+                                                 ue=use_expansions,
+                                                 dl=deg_limit,
+                                                 mp=min_psi,te=tol_expan,
+                                                 ulf=upper_limit_fac,
+                                                 mtp=multip,
+                                                 nit2=nit,dit2=dit,
+                                                 itm2=it_multip](auto &&tx)
+                                            mutable
+        { return this->solve_fun_new(tx,temper,f,ue,dl,mp,te,ulf,mtp,
+                                     nit2,dit2,itm2); },dr_err);
+        std::cout << "Here" << std::endl;
+        exit(-1);
+      }
+#endif
+      
       // The default o2scl::root object is of type root_cern,
       // and this solver has problems when the root is near 0.
       // Below, we switch to a root_brent_gsl object in the case
@@ -1055,7 +1084,7 @@ namespace o2scl {
 
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
-	bool acc=this->calc_mu_deg(f,temper,tol_expan);
+	bool acc=fermion_calc_mu_deg(f,temper,tol_expan);
 	if (verbose>1) {
 	  std::cout << "fermion_rel::calc_mu(): deg expan " << acc
 		    << std::endl;
@@ -1695,7 +1724,7 @@ namespace o2scl {
   
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
-	bool acc=this->calc_mu_deg(f,temper,tol_expan);
+	bool acc=fermion_calc_mu_deg(f,temper,tol_expan);
 	if (acc) {
 	  unc.n=f.n*tol_expan;
 	  unc.ed=f.ed*tol_expan;
@@ -2344,7 +2373,7 @@ namespace o2scl {
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && psi>20.0) {
         fp_t ntemp=f.n;
-        bool acc=this->calc_mu_deg(f,T,tol_expan);
+        bool acc=fermion_calc_mu_deg(f,T,tol_expan);
         if (acc) {
           unc.n=f.n*tol_expan;
           yy=(ntemp-f.n)/ntemp;
@@ -2588,7 +2617,8 @@ namespace o2scl {
   
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && particles_done==false && psi>20.0) {
-	if (this->calc_mu_deg(f,T,1.0e-8) && isfinite(f.n)) {
+        fp_t oem8=static_cast<fp_t>(1.0e-8);
+	if (fermion_calc_mu_deg(f,T,oem8) && isfinite(f.n)) {
 	  particles_done=true;
 	  nden_p=f.n;
 	  if (!isfinite(nden_p)) {
@@ -2782,7 +2812,8 @@ namespace o2scl {
 
       // Try the degenerate expansion if psi is large enough
       if (use_expansions && antiparticles_done==false && psi>20.0) {
-	if (this->calc_mu_deg(f,T,1.0e-8)) {
+        fp_t oem8=static_cast<fp_t>(1.0e-8);
+	if (fermion_calc_mu_deg(f,T,oem8)) {
 	  antiparticles_done=true;
 	  nden_ap=f.n;
 	  if (!isfinite(nden_ap)) {

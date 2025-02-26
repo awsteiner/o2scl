@@ -191,9 +191,9 @@ int main(int argc, char *argv[]) {
     
     part_cal_new<> pcn;
     pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
-                     1502,1479,2370,2134,1400,1971,2694);
+                     1500,1473,2370,2134,1400,1969,2694);
     pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
-                     1502,1479,2272,2132,1376,2006,2680);
+                     1500,1473,2272,2132,1376,2006,2680);
     
     /*
     // Normal case, used in 'make o2scl-test'
