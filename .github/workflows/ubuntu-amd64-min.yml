@@ -1,5 +1,5 @@
 ---
-name: Ubuntu 24.04 amd64 minimal install
+name: Ubuntu 24.04 AMD64 minimal install
 
 on:
   push:

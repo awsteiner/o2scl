@@ -1,5 +1,5 @@
 ---
-name: Ubuntu 24.04 x86_64 Python install
+name: Ubuntu 24.04 AMD64 Python install
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
       run: |
         pip install --break-system-packages numpy==2.0.2 
         HDF5_DIR=/home/runner/hdf5 pip install --break-system-packages --no-binary=h5py h5py==3.12.1
-        pip install --break-system-packages -r docker/v0.930_u24.04_req.txt
+        pip install --break-system-packages -r docker/v0.930_u24.04_req_amd64.txt
         pip install --break-system-packages --no-deps normflows==1.7.3 pipdeptree==2.24.0
         pip install --break-system-packages torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
 
