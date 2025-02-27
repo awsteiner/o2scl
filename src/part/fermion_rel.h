@@ -298,8 +298,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    template<class nit_t, class dit_t, class mpit_t, class internal_fp_t, class fp_t>
-    internal_fp_t solve_fun_new
+    template<class nit_t, class dit_t, class mpit_t,
+              class internal_fp_t, class fp_t> internal_fp_t solve_fun_new
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
      bool use_expansions, fp_t deg_limit2, fp_t min_psi2, 
      fp_t tol_expan2, fp_t upper_limit_fac2, bool multip, 
@@ -376,36 +376,38 @@ namespace o2scl {
 
         internal_fp_t prefac=f.g*pow(T,3.0)/2.0/pi2;
         
-        if (multip==true) {
-          
-          double tol_rel=0;
-          internal_fp_t unc;
-          int ix=it_multip.integ_iu_err_multip
-            ([this,y,eta](auto &&k) mutable {
-              return this->density_fun(k,y,eta); },
-              zero,nden,unc,tol_rel);
-          if (ix!=0) {
-            O2SCL_ERR2("n integration (ndeg, multip) failed in ",
-                       "fermion_rel::calc_mu().",
-                       exc_efailed);
-          }
-          
-        } else {
+        //if (multip==true) {
+        
+        double tol_rel=0;
+        internal_fp_t unc;
+        int ix=it_multip.integ_iu_err_multip
+          ([this,y,eta](auto &&k) mutable {
+            return this->density_fun(k,y,eta); },
+            zero,nden,unc,tol_rel);
+        if (ix!=0) {
+          O2SCL_ERR2("n integration (ndeg, multip) failed in ",
+                     "fermion_rel::calc_mu().",
+                     exc_efailed);
+        }
+        
+        /*
+          } else {
           
           std::function<internal_fp_t(internal_fp_t)> n_fun_f=
-            [this,y,eta](internal_fp_t k) -> internal_fp_t
-            { return this->density_fun(k,y,eta); };
+          [this,y,eta](internal_fp_t k) -> internal_fp_t
+          { return this->density_fun(k,y,eta); };
           
           internal_fp_t unc;
           iret=nit.integ_iu_err(n_fun_f,zero,nden,unc);
           if (iret!=0) {
-            O2SCL_ERR2("n integration (ndeg) failed in ",
-                       "fermion_rel::calc_mu().",
-                       exc_efailed);
+          O2SCL_ERR2("n integration (ndeg) failed in ",
+          "fermion_rel::calc_mu().",
+          exc_efailed);
           }
           
-        }
-
+          }
+        */
+        
         nden*=prefac;
         
         yy=(f.n-nden)/f.n;
@@ -434,21 +436,22 @@ namespace o2scl {
 
           ul=sqrt(arg);
       
-          if (multip==true) {
+          //if (multip==true) {
             
-            double tol_rel=0;
-            internal_fp_t unc;
-            int ix=it_multip.integ_err_multip
-              ([this,T,y,eta,mot,ul](auto &&k) mutable {
-                return this->deg_density_fun(k,T,y,eta,mot,false); },
-                zero,ul,nden,unc,tol_rel);
-            if (ix!=0) {
-              O2SCL_ERR2("n integration (deg, multip) failed in ",
-                         "fermion_rel::calc_mu().",
-                         exc_efailed);
-            }
-            
-          } else {
+          double tol_rel=0;
+          internal_fp_t unc;
+          int ix=it_multip.integ_err_multip
+            ([this,T,y,eta,mot,ul](auto &&k) mutable {
+              return this->deg_density_fun(k,T,y,eta,mot,false); },
+              zero,ul,nden,unc,tol_rel);
+          if (ix!=0) {
+            O2SCL_ERR2("n integration (deg, multip) failed in ",
+                       "fermion_rel::calc_mu().",
+                       exc_efailed);
+          }
+          
+          /*
+            } else {
             
             std::function<internal_fp_t(internal_fp_t)> n_fun_f=
               [this,T,y,eta,mot,ul](internal_fp_t k) -> internal_fp_t
@@ -463,6 +466,7 @@ namespace o2scl {
             }
             
           }
+          */
           
           nden*=f.g/2.0/pi2;
           

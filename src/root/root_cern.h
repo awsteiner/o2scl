@@ -173,7 +173,7 @@ namespace o2scl {
     
     /// Internal multiprecision version of the solve function
     template<typename func2_t, class fp2_t>
-    int solve_int_multip(fp2_t &ux, func2_t &func,
+    int solve_int_multip(fp2_t &ux, func2_t &&func,
                          double root_tol, double func_tol) {
       
 

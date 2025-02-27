@@ -496,7 +496,7 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
-    int integ_err(func_t &func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
+    int integ_err(func_t &&func, fp_t a, fp_t b, fp_t &res, fp_t &err) {
       
       double tol_rel_loc;
       if (tol_rel<=0.0) {
@@ -530,7 +530,7 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
-    int integ_iu_err(func_t &func, fp_t a, fp_t &res, fp_t &err) {
+    int integ_iu_err(func_t &&func, fp_t a, fp_t &res, fp_t &err) {
       
       double tol_rel_loc;
       if (tol_rel<=0.0) {
@@ -568,7 +568,7 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
-    int integ_il_err(func_t &func, fp_t b, fp_t &res, fp_t &err) {
+    int integ_il_err(func_t &&func, fp_t b, fp_t &res, fp_t &err) {
       
       double tol_rel_loc;
       if (tol_rel<=0.0) {
@@ -602,7 +602,7 @@ namespace o2scl {
         the result in \c res and the error in \c err
     */
     template<typename func_t, class fp_t>
-    int integ_i_err(func_t &func, fp_t &res, fp_t &err) {
+    int integ_i_err(func_t &&func, fp_t &res, fp_t &err) {
       
       double tol_rel_loc;
       if (tol_rel<=0.0) {
