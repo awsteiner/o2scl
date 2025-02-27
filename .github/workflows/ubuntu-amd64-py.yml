@@ -3,47 +3,45 @@ name: Ubuntu 24.04 x86_64 Python install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main","rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main","rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  ubuntu-u2404-x86_64-py:
+  ubuntu-u2404-amd64-py:
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
 
     steps:
     
-    #- name: Git checkout
-    #  uses: actions/checkout@v4
-    #  with:
-    #    ref: rc
-
-    - name: Download release
-      uses: robinraju/release-downloader@v1
+    - name: Git checkout
+      uses: actions/checkout@v4
       with:
-        repository: 'awsteiner/o2scl'
-        tag: 'v0.930'
-        fileName: 'o2scl-0.930.tar.gz'
+        ref: main
 
-    - name: untar release
-      run: |
-           tar xvzf o2scl-0.930.tar.gz
-           mv o2scl-0.930/* .
-           rmdir o2scl-0.930
+    #- name: Download release
+    #  uses: robinraju/release-downloader@v1
+    #  with:
+    #    repository: 'awsteiner/o2scl'
+    #    tag: 'v0.930'
+    #    fileName: 'o2scl-0.930.tar.gz'
+
+    #- name: untar release
+    #  run: |
+    #       tar xvzf o2scl-0.930.tar.gz
+    #       mv o2scl-0.930/* .
+    #       rmdir o2scl-0.930
 
     - name: Cache action
       uses: actions/cache@v4
       with:
         path: ~/.ccache
         # Necessary to cache the ccache data on every run
-        key: cache-ubuntu-x86_64-py-${{ github.run_id }}
+        key: cache-ubuntu-amd64-py-${{ github.run_id }}
         restore-keys: |
-          cache-ubuntu-x86_64-py
+          cache-ubuntu-amd64-py
 
     - name: Install apt packages (first pass)
       run: sudo apt-get -y update && sudo apt-get -y install g++ make autoconf automake libtool git curl cmake python3 libz-dev libsz2 imagemagick python3-pip
@@ -84,12 +82,12 @@ jobs:
         export CXXFLAGS+="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/home/runner/hdf5/include -I/home/runner/.local/lib/python3.12/site-packages/numpy/_core/include/"
         export LDFLAGS="-L/home/runner/hdf5/lib"
         mkdir -p ${PWD}/build
-        ./configure --build=x86_64-ubuntu-linux --prefix=${PWD}/build --enable-shared --disable-static --enable-eigen --enable-fftw --enable-openmp --enable-python
+        ./configure --prefix=${PWD}/build --enable-shared --disable-static --enable-eigen --enable-fftw --enable-openmp --enable-python
 
     - name: Install o2sclpy
       run: |
         git clone https://github.com/awsteiner/o2sclpy
-        cd o2sclpy && git checkout dev
+        cd o2sclpy
         pip3 install --break-system-packages --editable .
 
     - name: Build and install o2scl
