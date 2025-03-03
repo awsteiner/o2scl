@@ -123,13 +123,13 @@ int main(void) {
 
     e.mu=-mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm1,nterm1,enterm1,edterm1);
     cout << pterm1 << " " << nterm1 << " " << enterm1 << " "
          << edterm1 << endl;
     e.mu=mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm2,nterm2,enterm2,edterm2);
     cout << pterm2 << " " << nterm2 << " " << enterm2 << " "
          << edterm2 << endl;
@@ -140,7 +140,7 @@ int main(void) {
 
     e.mu=-mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
@@ -152,7 +152,7 @@ int main(void) {
     
     e.mu=mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
@@ -170,13 +170,13 @@ int main(void) {
 
     e.mu=-mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm1,nterm1,enterm1,edterm1);
     cout << pterm1 << " " << nterm1 << " " << enterm1 << " "
          << edterm1 << endl;
     e.mu=mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm2,nterm2,enterm2,edterm2);
     cout << pterm2 << " " << nterm2 << " " << enterm2 << " "
          << edterm2 << endl;
@@ -187,7 +187,7 @@ int main(void) {
 
     e.mu=-mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
@@ -199,7 +199,7 @@ int main(void) {
     
     e.mu=mux;
     psi=(e.mu-e.m)/T;
-    ft.ndeg_terms(j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
+    fermion_ndeg_terms(ft.be_integ,j,tt,psi*tt,e.m,e.inc_rest_mass,inc_antip,
                pterm,nterm,enterm,edterm);
     cout << pterm << " " << nterm << " " << enterm << " "
          << edterm << endl;
@@ -224,7 +224,7 @@ int main(void) {
     psi=(8.0e-12-e.ms)/0.1*197.33;
     for(size_t j=1;j<6;j++) {
       double pterm, nterm, enterm, edterm;
-      fet.ndeg_terms(j,tt,psi*tt,e.ms,e.inc_rest_mass,false,
+      fermion_ndeg_terms(fet.be_integ,j,tt,psi*tt,e.ms,e.inc_rest_mass,false,
                  pterm,nterm,enterm,edterm);
       std::cout.setf(std::ios::showpos);
       std::cout.precision(8);
@@ -235,7 +235,7 @@ int main(void) {
     
     for(size_t j=1;j<6;j++) {
       double pterm, nterm, enterm, edterm;
-      fet.ndeg_terms(j,tt,psi*tt,e.ms,e.inc_rest_mass,true,
+      fermion_ndeg_terms(fet.be_integ,j,tt,psi*tt,e.ms,e.inc_rest_mass,true,
                      pterm,nterm,enterm,edterm);
       std::cout.setf(std::ios::showpos);
       std::cout.precision(8);
@@ -252,7 +252,7 @@ int main(void) {
     ft.pair_mu(e,Tx);
     cout << "e.n: " << e.n << endl;
     ft.pair_den_ndeg(e,Tx);
-    ft.calc_mu_ndeg(e,Tx,1.0e-18,true,1);
+    fermion_calc_mu_ndeg(e,Tx,1.0e-18,true,1);
   }
   
   t.report();

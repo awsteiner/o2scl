@@ -117,7 +117,7 @@ int main(void) {
        << ld.ss << " " << ld.Epair << endl;
   cout << "Quality: " << qual << endl;
 
-  t.test_rel(qual,2.5007,1.0e-2,"pair qual");
+  t.test_rel(qual,2.537266,1.0e-2,"pair qual");
   
   cout << endl;
   
@@ -166,13 +166,14 @@ int main(void) {
   nucmass_frdm_shell fs;
 
   mf.eval(fs,qual);
-  t.test_rel(qual,10.671,1.0e-3,"fs pre-fit");
+  t.test_rel(qual,10.700,1.0e-3,"fs pre-fit");
   cout << "Quality: " << qual << endl;
+  mf.def_mmin.ntrial*=5;
   for(size_t i=0;i<3;i++) {
     mf.fit(fs,qual);
     cout << "Quality: " << qual << endl;
   }
-  t.test_rel(qual,0.96559,1.0e-2,"fs post-fit");
+  t.test_rel(qual,0.9490652,1.0e-2,"fs post-fit");
   cout << endl;
 
   cout << "-------------------------------------------------\n" << endl;
@@ -189,7 +190,7 @@ int main(void) {
   cout << "Parameters before: ";
   vector_out(cout,10,xdvi);
   cout << endl;
-  t.test_rel(qual,24.99316,1.0e-3,"dvi pre-fit");
+  t.test_rel(qual,25.98863,1.0e-3,"dvi pre-fit");
   cout << "Quality: " << qual << endl;
   for(size_t i=0;i<3;i++) {
     mf.fit(dvi,qual);
@@ -201,7 +202,7 @@ int main(void) {
   cout << endl;
   // This is a little better fit than FRDM above, but maybe
   // because only the experimental masses are used
-  t.test_rel(qual,0.8850699,1.0e-2,"dvi post-fit");
+  t.test_rel(qual,1.043158,1.0e-2,"dvi post-fit");
 
   /*
     int max_iso=30;

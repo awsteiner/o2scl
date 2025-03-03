@@ -106,9 +106,9 @@ int main(void) {
     }
 
     classify_python<> cp("classify_sklearn_dtc",
-                         ((std::string)"verbose=2"),2);
+                         ((std::string)"verbose=3"),2);
     classify_python<> cp2("classify_sklearn_dtc",
-                          ((std::string)"verbose=2"),2);
+                          ((std::string)"verbose=3"),2);
                          
     cp.set_data_tensor(2,1,N,tin,tout);
     
