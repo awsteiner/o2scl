@@ -298,12 +298,12 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    template<class nit_t, class dit_t, class mpit_t,
-              class internal_fp_t, class fp_t> internal_fp_t solve_fun_new
+    template<class mpit_t,
+              class internal_fp_t, class fp_t> internal_fp_t solve_fun_multip
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
      bool use_expansions, fp_t deg_limit2, fp_t min_psi2, 
      fp_t tol_expan2, fp_t upper_limit_fac2, bool multip, 
-     nit_t &nit, dit_t &dit, mpit_t &it_multip) {
+     mpit_t &it_multip) {
       
       internal_fp_t T=static_cast<internal_fp_t>(T2);
       internal_fp_t deg_limit=static_cast<internal_fp_t>(deg_limit2);
@@ -943,13 +943,6 @@ namespace o2scl {
 			this->err_nonconv);
       }
 
-      // Perform full solution
-      func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
-			  (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
-			   nit_t,dit_t,root_t,func_t,fp_t>::solve_fun),
-			  this,std::placeholders::_1,std::ref(f),temper);
-
-#ifdef O2SCL_NEVER_DEFINED
       if (multip) {
         
         fp_t dr_err;
@@ -959,40 +952,47 @@ namespace o2scl {
                                                  mp=min_psi,te=tol_expan,
                                                  ulf=upper_limit_fac,
                                                  mtp=multip,
-                                                 nit2=nit,dit2=dit,
                                                  itm2=it_multip](auto &&tx)
                                             mutable
-        { return this->solve_fun_new(tx,temper,f,ue,dl,mp,te,ulf,mtp,
-                                     nit2,dit2,itm2); },dr_err);
+        { return this->solve_fun_multip(tx,temper,f,ue,dl,mp,te,ulf,mtp,
+                                        itm2); },dr_err);
         std::cout << "Here" << std::endl;
         exit(-1);
+        
+      } else {
+        
+        // Perform full solution
+        func_t mf=std::bind(std::mem_fn<fp_t(fp_t,fermion_t &,fp_t)>
+                            (&fermion_rel_tl<fermion_t,fd_inte_t,be_inte_t,
+                             nit_t,dit_t,root_t,func_t,fp_t>::solve_fun),
+                            this,std::placeholders::_1,std::ref(f),temper);
+        
+        // The default o2scl::root object is of type root_cern,
+        // and this solver has problems when the root is near 0.
+        // Below, we switch to a root_brent_gsl object in the case
+        // that the default solver fails.
+        
+        bool drec=density_root.err_nonconv;
+        density_root.err_nonconv=false;
+        int ret=density_root.solve(nex,mf);
+        
+        last_method=1;
+        last_method_s="default solver";
+        
+        if (ret!=0) {
+          
+          if (verbose>1) {
+            std::cout << "nu_from_n(): density_root (type "
+                      << density_root.type() << ") failed x="
+                      << nex << " ." << std::endl;
+          }
+          O2SCL_CONV2_RET("Density solver failed in ",
+                          "fermion_rel::nu_from_n().",exc_efailed,
+                          this->err_nonconv);
+        }
+        
+        density_root.err_nonconv=drec;
       }
-#endif
-      
-      // The default o2scl::root object is of type root_cern,
-      // and this solver has problems when the root is near 0.
-      // Below, we switch to a root_brent_gsl object in the case
-      // that the default solver fails.
-  
-      bool drec=density_root.err_nonconv;
-      density_root.err_nonconv=false;
-      int ret=density_root.solve(nex,mf);
-      last_method=1;
-      last_method_s="default solver";
-
-      if (ret!=0) {
-    
-	if (verbose>1) {
-	  std::cout << "nu_from_n(): density_root (type "
-                    << density_root.type() << ") failed x="
-		    << nex << " ." << std::endl;
-	}
-	O2SCL_CONV2_RET("Density solver failed in ",
-			"fermion_rel::nu_from_n().",exc_efailed,
-			this->err_nonconv);
-      }
-
-      density_root.err_nonconv=drec;
 
       f.nu=nex*temper;
 
