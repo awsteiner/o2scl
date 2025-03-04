@@ -103,7 +103,7 @@ RUN git fetch && git pull && git checkout ad3520b471 && autoreconf -i
 
 # We disable static to keep the image small
 
-RUN LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-multip
+RUN LIBS="-lquadmath" LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-multip
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt

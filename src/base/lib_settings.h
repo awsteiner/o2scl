@@ -136,9 +136,6 @@ namespace o2scl {
     /// Return true if \o2 was installed with FFTW support
     bool fftw_support();
 
-    /// Return true if \o2 was installed with CUBATURE support
-    bool cubature_support();
-
     /// Return true if \o2 was installed with multiprecision support
     bool multiprecision_support();
 

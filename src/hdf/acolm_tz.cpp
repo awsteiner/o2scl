@@ -2080,7 +2080,6 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
        << o2scl_settings.armadillo_support() << endl;
   cout << "Eigen support: " << o2scl_settings.eigen_support() << endl;
   cout << "FFTW support: " << o2scl_settings.fftw_support() << endl;
-  cout << "Cubature support: " << o2scl_settings.cubature_support() << endl;
   cout << "Multiprecision support: "
        << o2scl_settings.multiprecision_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;

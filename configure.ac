@@ -231,29 +231,29 @@ AC_CHECK_LIB([pugixml], [atoi], [],
 # Check for Cubature library
 # ------------------------------------------------------------------
 
-AC_ARG_ENABLE(cubature,
-[  --enable-cubature       Include cubature support @<:@default=no@:>@],
-	[case "${enableval}" in
-	yes) cubature=true ;;
-	no)  cubature=false ;;
-	*) AC_MSG_ERROR(bad value ${enableval} for --enable-cubature) ;;
-	esac],[cubature=false])
+dnl AC_ARG_ENABLE(cubature,
+dnl [  --enable-cubature       Include cubature support @<:@default=no@:>@],
+dnl 	[case "${enableval}" in
+dnl 	yes) cubature=true ;;
+dnl 	no)  cubature=false ;;
+dnl 	*) AC_MSG_ERROR(bad value ${enableval} for --enable-cubature) ;;
+dnl 	esac],[cubature=false])
 
-AM_CONDITIONAL(O2SCL_CUBATURE, test x$cubature = xtrue)
+dnl AM_CONDITIONAL(O2SCL_CUBATURE, test x$cubature = xtrue)
 
 # ------------------------------------------------------------------
 # If enabled, check for the cubature library
 # ------------------------------------------------------------------
 
-AS_IF([test "x$enable_cubature" == "xyes"], [
-AC_CHECK_LIB([cubature], [pcubature], [],
-	[echo ""
-        echo "Cubature not found. "
-	echo ""
-	echo -n " The present value of LDFLAGS is: "
-	echo $LDFLAGS
-	],[])
-])
+dnl AS_IF([test "x$enable_cubature" == "xyes"], [
+dnl AC_CHECK_LIB([cubature], [pcubature], [],
+dnl 	[echo ""
+dnl         echo "Cubature not found. "
+dnl 	echo ""
+dnl 	echo -n " The present value of LDFLAGS is: "
+dnl 	echo $LDFLAGS
+dnl 	],[])
+dnl ])
 
 # ------------------------------------------------------------------
 # Enable Python extensions

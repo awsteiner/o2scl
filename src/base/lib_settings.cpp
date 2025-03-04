@@ -619,14 +619,6 @@ bool lib_settings_class::fftw_support() {
 #endif
 }
 
-bool lib_settings_class::cubature_support() {
-#ifdef O2SCL_CUBATURE
-  return true;
-#else
-  return false;
-#endif
-}
-
 bool lib_settings_class::multiprecision_support() {
 #ifdef O2SCL_SET_MULTIP
   return true;
