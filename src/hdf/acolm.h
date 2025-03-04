@@ -1606,7 +1606,7 @@ namespace o2scl_acol {
 
         Interpolate a column from another file.
 
-        Arguments: <tt><file> <table> <oldx> <oldy> <newx> [newy]</tt>
+        Arguments: <tt><file> <table name> <oldx> <oldy> <newx> [newy]</tt>
 
         Insert a column from file <fname>, interpolating it into the
         current table. The column <oldy> is the column in the file
