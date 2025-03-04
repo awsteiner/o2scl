@@ -178,6 +178,10 @@ void *o2scl_create_nucmass_ame();
 
 void o2scl_free_nucmass_ame(void *vptr);
 
+void o2scl_nucmass_ame_load(void *vptr, void *ptr_name, bool exp_only=false);
+
+void o2scl_nucmass_ame_load_ext(void *vptr, void *ptr_name, void *ptr_filename, void *ptr_nubase_file, bool exp_only=false, int verbose=0);
+
 void *o2scl_create_nucmass_dz_table();
 
 void o2scl_free_nucmass_dz_table(void *vptr);

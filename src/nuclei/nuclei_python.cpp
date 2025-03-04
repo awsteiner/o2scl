@@ -441,6 +441,22 @@ void o2scl_free_nucmass_ame(void *vptr) {
   return;
 }
 
+void o2scl_nucmass_ame_load(void *vptr, void *ptr_name, bool exp_only) {
+  nucmass_ame *ptr=(nucmass_ame *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  ptr->load(*name,exp_only);
+  return;
+}
+
+void o2scl_nucmass_ame_load_ext(void *vptr, void *ptr_name, void *ptr_filename, void *ptr_nubase_file, bool exp_only, int verbose) {
+  nucmass_ame *ptr=(nucmass_ame *)vptr;
+  std::string *name=(std::string *)ptr_name;
+  std::string *filename=(std::string *)ptr_filename;
+  std::string *nubase_file=(std::string *)ptr_nubase_file;
+  ptr->load_ext(*name,*filename,*nubase_file,exp_only,verbose);
+  return;
+}
+
 void *o2scl_create_nucmass_dz_table() {
   nucmass_dz_table *ptr=new nucmass_dz_table;
   return ptr;

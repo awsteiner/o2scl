@@ -214,6 +214,17 @@ class nucmass_semi_empirical
 #
 class nucmass_ame
 - parent nucmass_table
+- function load
+  - void
+  - std::string name ["20"]
+  - bool exp_only [False]
+- function load_ext
+  - void
+  - std::string name
+  - std::string filename
+  - std::string nubase_file
+  - bool exp_only [False]
+  - int verbose [0]
 #
 # ------------------------------------------------------
 # 
