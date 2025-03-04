@@ -2325,7 +2325,7 @@ int main(int argc, char *argv[]) {
     fout << "        if self._owner==True:" << endl;
     fout << "            f=self._link." << dll_name << "." << ifc.ns
          << "_free_" << underscoreify(ifc.name) << endl;
-    //fout << "            f.argtypes=[ctypes.c_void_p]" << endl;
+    fout << "            f.argtypes=[ctypes.c_void_p]" << endl;
     fout << "            f(self._ptr)" << endl;
     fout << "            self._owner=False" << endl;
     fout << "            self._ptr=0" << endl;
