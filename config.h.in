@@ -15,9 +15,6 @@
 /* Define to 1 if you have the `cblas' library (-lcblas). */
 #undef HAVE_LIBCBLAS
 
-/* Define to 1 if you have the `cubature' library (-lcubature). */
-#undef HAVE_LIBCUBATURE
-
 /* Define to 1 if you have the `fftw3' library (-lfftw3). */
 #undef HAVE_LIBFFTW3
 
