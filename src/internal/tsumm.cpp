@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 /*
-  Just a short program to analyze and summarize O2scl test results.
+  A short program to analyze and summarize O2scl test results.
 */
 #include <iostream>
 #include <fstream>
@@ -112,6 +112,8 @@ int main(int argc, char *argv[]) {
 	  ntests+=itmp;
 	}
       } else {
+        cerr << "──────────────────────────────────────────"
+             << "─────────────────────────" << endl;
 	cerr << "Some tests failed in file: " << (*it) << endl;
 	string cmd=((string)"cat ")+*it;
 	int sret=system(cmd.c_str());
