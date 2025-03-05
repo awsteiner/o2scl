@@ -139,7 +139,7 @@ namespace o2scl {
       err_nonconv=true;
       
       if (o2scl_settings.py_initialized==false) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Running py_init()." << std::endl;
         }
         o2scl_settings.py_init();
@@ -167,65 +167,65 @@ namespace o2scl {
         \note This function does not finalize the Python interface.
     */
     void free() {
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Starting classify_python::free()." << std::endl;
       }
       if (p_set_func!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref set_func." << std::endl;
         }
         Py_DECREF(p_set_func);
       }
       if (p_eval_func!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref eval_func." << std::endl;
         }
         Py_DECREF(p_eval_func);
       }
       if (p_load_func!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref load_func." << std::endl;
         }
         Py_DECREF(p_load_func);
       }
       if (p_save_func!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref save_func." << std::endl;
         }
         Py_DECREF(p_save_func);
       }
       if (p_set_args!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref set_args." << std::endl;
         }
         Py_DECREF(p_set_args);
       }
       if (p_loadsave_args!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref load_args." << std::endl;
         }
         Py_DECREF(p_loadsave_args);
       }
       if (p_eval_args!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref eval_args." << std::endl;
         }
         Py_DECREF(p_eval_args);
       }
       if (p_instance!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref instance." << std::endl;
         }
         Py_DECREF(p_instance);
       }
       if (p_class!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref class." << std::endl;
         }
         Py_DECREF(p_class);
       }
       if (p_module!=0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "Decref module." << std::endl;
         }
         Py_DECREF(p_module);
@@ -246,7 +246,7 @@ namespace o2scl {
       this->n_outputs=0;
       this->n_points=0;
       
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Done in classify_python::free()." << std::endl;
       }
     }      
@@ -272,10 +272,10 @@ namespace o2scl {
       
       free();
       
-      p_module=o2scl_settings.py_import_module(c_module,this->verbose);
+      p_module=o2scl_settings.py_import_module(c_module,0);
       
       if (c_class_name.length()>0) {
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Obtaining python class name "
                     << c_class_name << "." << std::endl;
         }
@@ -286,7 +286,7 @@ namespace o2scl {
         }
         
         // Create an instance of the class
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python class." << std::endl;
         }
         if (PyCallable_Check(p_class)==false) {
@@ -295,7 +295,7 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
         
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python class instance." << std::endl;
         }
         p_instance=PyObject_CallObject(p_class,0);
@@ -307,7 +307,7 @@ namespace o2scl {
       }
       
       // Setup the arguments to the python set function
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Making argument object for set function."
                   << std::endl;
       }
@@ -319,7 +319,7 @@ namespace o2scl {
       }
 
       // Setup the arguments to the python load and save functions
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Making argument object for load and save functions."
                   << std::endl;
       }
@@ -331,7 +331,7 @@ namespace o2scl {
       }
 
       // Setup the arguments to the python eval function
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Making argument object for eval function."
                   << std::endl;
       }
@@ -345,7 +345,7 @@ namespace o2scl {
       if (c_class_name.length()>0) {
 
         // Load the python eval function
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python member function eval: "
                     << c_eval_func << std::endl;
         }
@@ -357,7 +357,7 @@ namespace o2scl {
         }
         
         // Load the python set function
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python member function set: "
                     << c_set_func << std::endl;
         }
@@ -370,7 +370,7 @@ namespace o2scl {
 
         // Load the python load function
         std::string c_load_func="load";
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python member function load: "
                     << c_load_func << std::endl;
         }
@@ -383,7 +383,7 @@ namespace o2scl {
 
         // Load the python save function
         std::string c_save_func="save";
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python member function save: "
                     << c_save_func << std::endl;
         }
@@ -397,7 +397,7 @@ namespace o2scl {
       } else {
     
         // Load the python set function
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python function " << c_set_func
                     << "." << std::endl;
         }
@@ -410,7 +410,7 @@ namespace o2scl {
         }
         
         // Load the python eval function
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python function eval." << std::endl;
         }
         p_eval_func=PyObject_GetAttrString(p_module,c_eval_func.c_str());
@@ -422,7 +422,7 @@ namespace o2scl {
 
         // Load the python load function
         std::string c_load_func="load";
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python function load." << std::endl;
         }
         p_load_func=PyObject_GetAttrString(p_module,c_load_func.c_str());
@@ -434,7 +434,7 @@ namespace o2scl {
 
         // Load the python save function
         std::string c_save_func="save";
-        if (this->verbose>0) {
+        if (this->verbose>2) {
           std::cout << "  Loading python function save." << std::endl;
         }
         p_save_func=PyObject_GetAttrString(p_module,c_save_func.c_str());
@@ -557,7 +557,7 @@ namespace o2scl {
                    "mm_funct_python::operator().",o2scl::exc_efailed);
       }
 
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Creating python unicode for string: "
                   << c_options.length() << " " << c_options << std::endl;
       }
@@ -574,7 +574,7 @@ namespace o2scl {
       }
 
       // Call the python function
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Calling python set function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
@@ -583,7 +583,7 @@ namespace o2scl {
                    "classify_python::operator().",o2scl::exc_efailed);
       }
 
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Done with classify_python::set_function()."
                   << std::endl;
       }
@@ -616,7 +616,7 @@ namespace o2scl {
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
-      if (this->verbose>1) {
+      if (this->verbose>2) {
         std::cout << "classify_python::operator():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
@@ -630,7 +630,7 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (this->verbose>1) {
+      if (this->verbose>2) {
         std::cout << "  Calling python eval function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
@@ -644,24 +644,24 @@ namespace o2scl {
                    "classify_python::operator().",o2scl::exc_efailed);
       }
       
-      if (this->verbose>1) {
+      if (this->verbose>2) {
         std::cout << "  Obtaining output." << std::endl;
       }
       void *vp=PyArray_DATA((PyArrayObject *)result);
       int *dp=(int *)vp;
       for(size_t i=0;i<this->n_outputs;i++) {
         y[i]=dp[i];
-        if (this->verbose>1) {
+        if (this->verbose>2) {
           std::cout << "  i,y[i]: " << i << " " << y[i] << std::endl;
         }
       }
       
-      if (this->verbose>1) {
+      if (this->verbose>2) {
         std::cout << "  Decref result." << std::endl;
       }
       Py_DECREF(result);
   
-      if (this->verbose>1) {
+      if (this->verbose>2) {
         std::cout << "Done in classify_python::operator()."
                   << std::endl;
       }
@@ -687,7 +687,7 @@ namespace o2scl {
     virtual void load(std::string filename,
                       std::string obj_name) {
       
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Creating python unicode for string: "
                   << filename.length() << " " << filename << std::endl;
       }
@@ -697,7 +697,7 @@ namespace o2scl {
                    "emulator_python::load().",o2scl::exc_efailed);
       }
       
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Creating python unicode for string: "
                   << obj_name.length() << " " << obj_name << std::endl;
       }
@@ -707,14 +707,12 @@ namespace o2scl {
                    "emulator_python::load().",o2scl::exc_efailed);
       }
 
-      std::cout << "Iere1." << std::endl;
       int ret1=PyTuple_SetItem(p_loadsave_args,0,p_filename);
       if (ret1!=0) {
         O2SCL_ERR2("Tuple set failed in ",
                    "mm_funct_python::operator().",o2scl::exc_efailed);
       }
 
-      std::cout << "Iere2." << std::endl;
       int ret2=PyTuple_SetItem(p_loadsave_args,1,p_obj_name);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set failed in ",
@@ -722,17 +720,16 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Calling python load function." << std::endl;
       }
-      std::cout << "Iere3." << std::endl;
       PyObject *result=PyObject_CallObject(p_load_func,p_loadsave_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
                    "classify_python::operator().",o2scl::exc_efailed);
       }
 
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Done with classify_python::load_function()."
                   << std::endl;
       }
@@ -746,7 +743,7 @@ namespace o2scl {
     virtual void save(std::string filename,
                       std::string obj_name) {
       
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Creating python unicode for string: "
                   << filename.length() << " " << filename << std::endl;
       }
@@ -756,7 +753,7 @@ namespace o2scl {
                    "emulator_python::save().",o2scl::exc_efailed);
       }
       
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Creating python unicode for string: "
                   << obj_name.length() << " " << obj_name << std::endl;
       }
@@ -779,7 +776,7 @@ namespace o2scl {
       }
       
       // Call the python function
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "  Calling python save function." << std::endl;
       }
       PyObject *result=PyObject_CallObject(p_save_func,p_loadsave_args);
@@ -788,7 +785,7 @@ namespace o2scl {
                    "classify_python::operator().",o2scl::exc_efailed);
       }
 
-      if (this->verbose>0) {
+      if (this->verbose>2) {
         std::cout << "Done with classify_python::save_function()."
                   << std::endl;
       }
