@@ -88,7 +88,9 @@ jobs:
       run: |
         git clone https://github.com/awsteiner/o2sclpy
         cd o2sclpy
-        git checkout 2c549451542
+        git checkout d8a6c8a0bcb3e
+        git fetch
+        git pull
         pip3 install --break-system-packages --editable .
 
     - name: Build and install o2scl
