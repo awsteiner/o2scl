@@ -132,9 +132,9 @@ public:
 
     /*
       plot with:
-      o2graph -set fig_dict "dpi=250" -create table3d \
+      o2graph -set colbar 1 -set fig_dict "dpi=250" -create table3d \
       x grid:0,3,0.02 y grid:0,4,0.02 z \
-      "if(10*(x-1)*(x-1.5)*(x-0.5)>y-2,-(x-1)^2-(y-2)^2,0)" \
+      "if(10*(x-1)*(x-1.5)*(x-0.5)>y-2,exp(-(x-1)^2-(y-2)^2),-1)" \
       -den-plot z -show
     */
     
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
   mct.stepper=hmc_stepper;
   hmc_stepper->mom_step.resize(1);
   hmc_stepper->mom_step[0]=0.5;
-  hmc_stepper->epsilon=0.02;
+  hmc_stepper->epsilon=0.04;
 
   /// MCMC parameters
   mct.store_pos_rets=true;
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
   mct.n_retrain=0;
   mct.verbose=3;
   mct.n_threads=1;
-  mct.max_iters=500;
+  mct.max_iters=10000;
   mct.prefix="data/ex_mcmc_nn1";
 
   cout << "──────────────────────────────────────────────────────────"
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
   
   mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
   cout << endl;
-  
+
   // ─────────────────────────────────────────────────────────────────
   // Proposal distributions
   
@@ -479,7 +479,8 @@ int main(int argc, char *argv[]) {
   mct.use_emulator=true;
   mct.use_classifier=true;
   mct.n_retrain=0;
-  mct.max_iters=200;
+  //mct.max_iters=200;
+  mct.max_iters=1;
   mct.prefix="data/ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
