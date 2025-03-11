@@ -340,7 +340,7 @@ int main(int argc, char *argv[]) {
   
   // Compute the average deviation in the log_wgt for MH steps
   vector<double> qual(3);
-  static const size_t N_test=200;
+  static const size_t N_test=2000;
   for(size_t i=0;i<N_test;i++) {
     (*nflows)(q[0]);
     (*kde)(q[1]);

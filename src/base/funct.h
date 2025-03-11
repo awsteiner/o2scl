@@ -179,6 +179,10 @@ namespace o2scl {
 
   };
 
+  /// Desc
+  double python_get_data_double(PyObject *pInstance,
+                                std::string name);
+  
 #endif
 
   /** \brief One-dimensional function typedef in src/base/funct.h
