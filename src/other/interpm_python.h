@@ -85,6 +85,15 @@ namespace o2scl {
     /// Python evaluation with uncertainties function
     PyObject *p_eval_list_func;
 
+    /// Python save function
+    PyObject *p_save_func;
+
+    /// Python load function
+    PyObject *p_load_func;
+
+    /// Python function arguments for the save and load functions
+    PyObject *p_loadsave_args;
+    
     /// Name of Python module 
     std::string c_module;
 
@@ -123,6 +132,9 @@ namespace o2scl {
       p_eval_func=0;
       p_eval_unc_func=0;
       p_eval_list_func=0;
+      p_load_func=0;
+      p_save_func=0;
+      p_loadsave_args=0;
       p_set_args=0;
       p_eval_args=0;
       p_instance=0;
@@ -173,6 +185,24 @@ namespace o2scl {
         }
         Py_DECREF(p_set_args);
       }
+      if (p_load_func!=0) {
+        if (this->verbose>2) {
+          std::cout << "Decref load_func." << std::endl;
+        }
+        Py_DECREF(p_load_func);
+      }
+      if (p_save_func!=0) {
+        if (this->verbose>2) {
+          std::cout << "Decref save_func." << std::endl;
+        }
+        Py_DECREF(p_save_func);
+      }
+      if (p_loadsave_args!=0) {
+        if (this->verbose>2) {
+          std::cout << "Decref load_args." << std::endl;
+        }
+        Py_DECREF(p_loadsave_args);
+      }
       if (p_eval_args!=0) {
         if (this->verbose>0) {
           std::cout << "Decref eval_args." << std::endl;
@@ -203,6 +233,9 @@ namespace o2scl {
       p_eval_unc_func=0;
       p_eval_list_func=0;
       p_eval_args=0;
+      p_load_func=0;
+      p_save_func=0;
+      p_loadsave_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;
@@ -312,6 +345,42 @@ namespace o2scl {
       
       p_module=o2scl_settings.py_import_module(c_module,this->verbose);
       
+      // Setup the arguments to the python function
+      if (this->verbose>0) {
+        std::cout << "  Making argument object for set function."
+                  << std::endl;
+      }
+      p_set_args=PyTuple_New(3);
+      if (p_set_args==0) {
+        O2SCL_ERR2("Create arg tuple failed in ",
+                   "interpm_python::set_function().",
+                   o2scl::exc_efailed);
+      }
+
+      // Setup the arguments to the python function
+      if (this->verbose>0) {
+        std::cout << "  Making argument object for eval function."
+                  << std::endl;
+      }
+      p_eval_args=PyTuple_New(1);
+      if (p_eval_args==0) {
+        O2SCL_ERR2("Create arg tuple failed in ",
+                   "interpm_python::set_function().",
+                   o2scl::exc_efailed);
+      }
+
+      // Setup the arguments to the python load and save functions
+      if (this->verbose>2) {
+        std::cout << "  Making argument object for load and save functions."
+                  << std::endl;
+      }
+      p_loadsave_args=PyTuple_New(2);
+      if (p_loadsave_args==0) {
+        O2SCL_ERR2("Create arg tuple for save and load functions failed ",
+                   "in classify_python::set_function().",
+                   o2scl::exc_efailed);
+      }
+
       if (c_class_name.length()>0) {
         if (this->verbose>0) {
           std::cout << "  Obtaining python class name "
@@ -342,33 +411,6 @@ namespace o2scl {
                      "funct_python_method::set_function().",
                      o2scl::exc_efailed);
         }
-      }
-      
-      // Setup the arguments to the python function
-      if (this->verbose>0) {
-        std::cout << "  Making argument object for set function."
-                  << std::endl;
-      }
-      p_set_args=PyTuple_New(3);
-      if (p_set_args==0) {
-        O2SCL_ERR2("Create arg tuple failed in ",
-                   "interpm_python::set_function().",
-                   o2scl::exc_efailed);
-      }
-
-      // Setup the arguments to the python function
-      if (this->verbose>0) {
-        std::cout << "  Making argument object for eval function."
-                  << std::endl;
-      }
-      p_eval_args=PyTuple_New(1);
-      if (p_eval_args==0) {
-        O2SCL_ERR2("Create arg tuple failed in ",
-                   "interpm_python::set_function().",
-                   o2scl::exc_efailed);
-      }
-
-      if (c_class_name.length()>0) {
 
         // Load the eval python function
         if (this->verbose>0) {
@@ -422,6 +464,32 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
 
+        // Load the load python function
+        std::string c_load_func="load";
+        if (this->verbose>0) {
+          std::cout << "  Loading python member function load: "
+                    << c_load_func << std::endl;
+        }
+        p_load_func=PyObject_GetAttrString(p_instance,c_load_func.c_str());
+        if (p_load_func==0) {
+          O2SCL_ERR2("Get load function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+
+        // Load the save python function
+        std::string c_save_func="save";
+        if (this->verbose>0) {
+          std::cout << "  Loading python member function save: "
+                    << c_save_func << std::endl;
+        }
+        p_save_func=PyObject_GetAttrString(p_instance,c_save_func.c_str());
+        if (p_save_func==0) {
+          O2SCL_ERR2("Get save function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+
       } else {
     
         // Load the set python function
@@ -430,6 +498,30 @@ namespace o2scl {
         }
         p_set_func=PyObject_GetAttrString(p_module,c_set_func.c_str());
         if (p_set_func==0) {
+          O2SCL_ERR2("Get function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+
+        // Load the load python function
+        std::string c_load_func="load";
+        if (this->verbose>0) {
+          std::cout << "  Loading python function load." << std::endl;
+        }
+        p_load_func=PyObject_GetAttrString(p_module,c_load_func.c_str());
+        if (p_load_func==0) {
+          O2SCL_ERR2("Get function failed in ",
+                     "interpm_python::set_function().",
+                     o2scl::exc_efailed);
+        }
+
+        // Load the save python function
+        std::string c_save_func="save";
+        if (this->verbose>0) {
+          std::cout << "  Loading python function save." << std::endl;
+        }
+        p_save_func=PyObject_GetAttrString(p_module,c_save_func.c_str());
+        if (p_save_func==0) {
           O2SCL_ERR2("Get function failed in ",
                      "interpm_python::set_function().",
                      o2scl::exc_efailed);
@@ -756,6 +848,118 @@ namespace o2scl {
       vector_copy(this->n_outputs,y2,y);
       vector_copy(this->n_outputs,y_unc2,y_unc);
       return ret;
+    }
+    
+    /** \brief Load classifier object from file named \c filename
+        and object name \c obj_name
+    */
+    virtual void load(std::string filename,
+                      std::string obj_name) {
+      
+      if (this->verbose>2) {
+        std::cout << "Creating python unicode for string: "
+                  << filename.length() << " " << filename << std::endl;
+      }
+      PyObject *p_filename=PyUnicode_FromString(filename.c_str());
+      if (p_filename==0) {
+        O2SCL_ERR2("String creation failed in ",
+                   "emulator_python::load().",o2scl::exc_efailed);
+      }
+      
+      if (this->verbose>2) {
+        std::cout << "Creating python unicode for string: "
+                  << obj_name.length() << " " << obj_name << std::endl;
+      }
+      PyObject *p_obj_name=PyUnicode_FromString(obj_name.c_str());
+      if (p_obj_name==0) {
+        O2SCL_ERR2("String creation failed in ",
+                   "emulator_python::load().",o2scl::exc_efailed);
+      }
+
+      int ret1=PyTuple_SetItem(p_loadsave_args,0,p_filename);
+      if (ret1!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+
+      int ret2=PyTuple_SetItem(p_loadsave_args,1,p_obj_name);
+      if (ret2!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (this->verbose>2) {
+        std::cout << "  Calling python load function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_load_func,p_loadsave_args);
+      if (result==0) {
+        O2SCL_ERR2("Function call failed in ",
+                   "classify_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (this->verbose>2) {
+        std::cout << "Done with classify_python::load_function()."
+                  << std::endl;
+      }
+
+      return;
+    }
+    
+    /** \brief Save classifier object to file named \c filename
+        and object name \c obj_name
+    */
+    virtual void save(std::string filename,
+                      std::string obj_name) {
+      
+      if (this->verbose>2) {
+        std::cout << "Creating python unicode for string: "
+                  << filename.length() << " " << filename << std::endl;
+      }
+      PyObject *p_filename=PyUnicode_FromString(filename.c_str());
+      if (p_filename==0) {
+        O2SCL_ERR2("String creation failed in ",
+                   "emulator_python::save().",o2scl::exc_efailed);
+      }
+      
+      if (this->verbose>2) {
+        std::cout << "Creating python unicode for string: "
+                  << obj_name.length() << " " << obj_name << std::endl;
+      }
+      PyObject *p_obj_name=PyUnicode_FromString(obj_name.c_str());
+      if (p_obj_name==0) {
+        O2SCL_ERR2("String creation failed in ",
+                   "emulator_python::save().",o2scl::exc_efailed);
+      }
+      
+      int ret1=PyTuple_SetItem(p_loadsave_args,0,p_filename);
+      if (ret1!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+
+      int ret2=PyTuple_SetItem(p_loadsave_args,1,p_obj_name);
+      if (ret2!=0) {
+        O2SCL_ERR2("Tuple set failed in ",
+                   "mm_funct_python::operator().",o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (this->verbose>2) {
+        std::cout << "  Calling python save function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_save_func,p_loadsave_args);
+      if (result==0) {
+        O2SCL_ERR2("Function call failed in ",
+                   "classify_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (this->verbose>2) {
+        std::cout << "Done with classify_python::save_function()."
+                  << std::endl;
+      }
+
+      return;
     }
     
   private:
