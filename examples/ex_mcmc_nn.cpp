@@ -480,12 +480,14 @@ int main(int argc, char *argv[]) {
   mct.use_classifier=true;
   mct.n_retrain=0;
   //mct.max_iters=200;
-  mct.max_iters=1;
+  mct.max_iters=5000;
   mct.prefix="data/ex_mcmc_nn3";
   mct.n_threads=1;
   mct.verbose=3;
   mct.show_emu=1;
   mct.test_size=0.1;
+  mct.max_emu_size=5000;
+  mct.max_class_size=5000;
   
   // Set up the file for the emulator and classifier input. In this
   // example, they're the same, but they need not be.

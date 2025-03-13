@@ -423,7 +423,6 @@ namespace o2scl {
                     << c_eval_func << std::endl;
         }
         p_eval_func=PyObject_GetAttrString(p_instance,c_eval_func.c_str());
-        std::cout << "Instance: " << p_instance << std::endl;
         if (p_eval_func==0) {
           O2SCL_ERR2("Get eval function failed in ",
                      "interpm_python::set_function().",
