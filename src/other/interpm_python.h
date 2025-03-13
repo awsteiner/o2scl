@@ -276,6 +276,11 @@ namespace o2scl {
       
       return 0;
     }
+
+    /// Desc
+    double get_score() {
+      return python_get_data_double(p_instance,"score");
+    }
     
     /** \brief Set the data to be interpolated
      */
@@ -418,6 +423,7 @@ namespace o2scl {
                     << c_eval_func << std::endl;
         }
         p_eval_func=PyObject_GetAttrString(p_instance,c_eval_func.c_str());
+        std::cout << "Instance: " << p_instance << std::endl;
         if (p_eval_func==0) {
           O2SCL_ERR2("Get eval function failed in ",
                      "interpm_python::set_function().",
@@ -716,7 +722,89 @@ namespace o2scl {
       Py_DECREF(result);
   
       if (this->verbose>1) {
-        std::cout << "Done in interpm_python::operator()."
+        std::cout << "Done in interpm_python::eval_std_vec()."
+                  << std::endl;
+      }
+
+      return 0;
+    }
+
+    /** \brief Compute the function at the points in \c x and
+        return the result
+     */
+    int eval_list_tensor(const o2scl::tensor2<> &x,
+                         o2scl::tensor2<> &y) const {
+
+      if (x.get_rank()!=2 || x.get_size(1)!=this->n_params) {
+        O2SCL_ERR("Input vector does not have correct size.",
+                  o2scl::exc_einval);
+      }
+      size_t n_pts=x.get_size(0);
+
+      // Resize the y tensor as needed
+      std::vector<size_t> y_dim={n_pts,this->n_outputs};
+      y.resize(2,y_dim);
+      
+      if (p_eval_list_func==0) {
+        O2SCL_ERR2("No functions found in ",
+                   "interpm_python::eval_list_tensor().",
+                   o2scl::exc_efailed);
+      }
+
+      npy_intp x_dims[]={(npy_intp)x.get_size(0),
+                         (npy_intp)x.get_size(1)};
+      if (this->verbose>1) {
+        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "  Array x: " << x.get_size(0) << " "
+                  << x.get_size(1) << std::endl;
+      }
+      PyObject *array_x=PyArray_SimpleNewFromData
+        (2,x_dims,NPY_DOUBLE,(void *)(&(x.get_data()[0])));
+      
+      int ret=PyTuple_SetItem(p_eval_args,0,array_x);
+      if (ret!=0) {
+        O2SCL_ERR2("Tuple set for eval_args failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
+      }
+      
+      // Call the python function
+      if (this->verbose>1) {
+        std::cout << "  Calling python eval_list function." << std::endl;
+      }
+      PyObject *result=PyObject_CallObject(p_eval_list_func,p_eval_args);
+      if (result==0) {
+        O2SCL_ERR2("Function eval_list failed in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
+      }
+
+      if (PyArray_Check(result)==0) {
+        O2SCL_ERR2("Function call did not return a numpy array in ",
+                   "interpm_python::operator().",o2scl::exc_efailed);
+      }
+      
+      if (this->verbose>1) {
+        std::cout << "  Obtaining output." << std::endl;
+      }
+      void *vp=PyArray_DATA((PyArrayObject *)result);
+      double *dp=(double *)vp;
+      size_t k=0;
+      for(size_t i=0;i<this->n_outputs;i++) {
+        for(size_t j=0;j<n_pts;j++) {
+          y.set(j,i,dp[k++]);
+          if (this->verbose>1) {
+            std::cout << "  i,j,k,y[i]: " << i << " " << j << " "
+                      << k << " " << y.get(j,i) << std::endl;
+          }
+        }
+      }
+      
+      if (this->verbose>1) {
+        std::cout << "  Decref result." << std::endl;
+      }
+      Py_DECREF(result);
+  
+      if (this->verbose>1) {
+        std::cout << "Done in interpm_python::eval_list_tensor()."
                   << std::endl;
       }
 

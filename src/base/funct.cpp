@@ -288,13 +288,9 @@ double funct_python_method::operator()(double x) const {
 
 double o2scl::python_get_data_double(PyObject *pInstance,
                                      std::string name) {
-
-  PyObject *pName=PyUnicode_FromString(name.c_str());
-  if (pName==0) {
-    O2SCL_ERR("Failed to get string.",o2scl::exc_einval);
-  }
-  PyObject *result=PyObject_GetAttr(pInstance,pName);
-  if (result!=0) {
+  
+  PyObject *result=PyObject_GetAttrString(pInstance,name.c_str());
+  if (result==0) {
     O2SCL_ERR("Failed to get attribute.",o2scl::exc_einval);
   }
   if (PyFloat_Check(result)==0) {
@@ -302,7 +298,6 @@ double o2scl::python_get_data_double(PyObject *pInstance,
   }
   double y=PyFloat_AsDouble(result);
   
-  Py_DECREF(pName);
   Py_DECREF(result);
 
   return y;
