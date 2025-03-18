@@ -459,6 +459,8 @@ namespace o2scl {
     */
     void rename_slice(std::string olds, std::string news);
 
+    /** \brief Delete slice named \c sl
+    */
     void delete_slice(std::string sl);
     
     /** \brief Make a new slice named \c dest which is a copy 

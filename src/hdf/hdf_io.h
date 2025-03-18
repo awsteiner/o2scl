@@ -2047,9 +2047,11 @@ namespace o2scl_hdf {
       Read one or more HDF5 files and obtain a vector from the object with
       the specified name. The remaining parts of the string contain
       additional information which may be needed depending on the type of
-      object stored in the HDF5 file. type: addl. spec. 
-      
-      table:<column pattern> table:<row list>:<column pattern>
+      object stored in the HDF5 file. 
+
+      type: addl. spec. 
+      table: <column pattern> table:<row list>:<column pattern>
+      table3d: <slice>:<index>
 
       Also, many normal vector specifications (from 'acol -help
       vector-spec') also work as multiple vector specifications. These
@@ -2609,6 +2611,62 @@ namespace o2scl_hdf {
           hf.close();
 
           // End of the table object case
+          
+        } else if (type=="table3d") {
+
+	  if (addl_spec.length()==0) {
+	    if (err_on_fail) {
+	      O2SCL_ERR2("No table3d slice or index specified ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+	    } else {
+	      return 6;
+	    }
+	  }
+
+          o2scl::table3d t3d;
+          o2scl_hdf::hdf_input(hf,t3d,obj_name);
+
+	  if (addl_spec.find(':')==std::string::npos) {
+            if (err_on_fail) {
+              O2SCL_ERR2("No additional spec. ",
+			 "in mult_vector_spec().",o2scl::exc_einval);
+            } else {
+              return 21;
+            }
+          }
+          
+          int pos=addl_spec.find(':');
+          if (pos==0 || pos==((int)addl_spec.length())-1) {
+            std::cout << "Colon at beginning or end of additional "
+                      << "specification in mult_vector_spec()."
+                      << std::endl;
+            return 22;
+          }
+          std::string slice_name=addl_spec.substr(0,pos);
+          int index=o2scl::stoi(addl_spec.substr(pos+1,
+                                                 addl_spec.length()-pos-1));
+
+          if (index==0) {
+            for(size_t i=0;i<t3d.get_nx();i++) {
+              std::vector<double> row;
+              for(size_t j=0;j<t3d.get_ny();j++) {
+                row.push_back(t3d.get(i,j,slice_name));
+              }
+              v.push_back(row);
+            }
+          } else if (index==1) {
+            for(size_t i=0;i<t3d.get_ny();i++) {
+              std::vector<double> col;
+              for(size_t j=0;j<t3d.get_nx();j++) {
+                col.push_back(t3d.get(j,i,slice_name));
+              }
+              v.push_back(col);
+            }
+          }
+
+          std::cout << "v.size(): " << v.size() << std::endl;
+          
+          hf.close();
           
 	} else if (type=="double" || type=="double[]" || type=="hist" ||
 		   type=="int" || type=="int[]" || type=="size_t" ||
