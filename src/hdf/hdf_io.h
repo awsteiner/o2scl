@@ -2049,9 +2049,9 @@ namespace o2scl_hdf {
       additional information which may be needed depending on the type of
       object stored in the HDF5 file. 
 
-      type: addl. spec. 
-      table: <column pattern> table:<row list>:<column pattern>
-      table3d: <slice>:<index>
+      - type: addl. spec. 
+      - table: <column pattern> table:<row list>:<column pattern>
+      - table3d: <slice>:<index>
 
       Also, many normal vector specifications (from 'acol -help
       vector-spec') also work as multiple vector specifications. These
