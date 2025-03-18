@@ -1111,8 +1111,8 @@ namespace o2scl_hdf {
    int verbose=0, bool err_on_fail=true) {
 
     if (verbose>2) {
-      std::cout << "Function vector_spec is parsing: " << spec << std::endl;
-      std::cout << "verbose is " << verbose << std::endl;
+      std::cout << "vector_spec(): parsing: " << spec << std::endl;
+      std::cout << "vector_spec(): verbose is " << verbose << std::endl;
     }
       
     if (spec.find("val:")==0) {
@@ -1142,7 +1142,8 @@ namespace o2scl_hdf {
       }
       if (verbose>1) {
 	std::cout << "vector_spec(): List " << list << std::endl;
-	std::cout << n << " " << sv[0] << " " << sv[n-1] << std::endl;
+	std::cout << "  " << n << " " << sv[0] << " ... "
+                  << sv[n-1] << std::endl;
       }
       v.resize(n);
       for(size_t i=0;i<n;i++) {
@@ -1188,7 +1189,7 @@ namespace o2scl_hdf {
       }
       std::string func=temp.substr(ncolon+1,temp.length()-ncolon-1);
       if (verbose>1) {
-	std::cout << "Function: " << func << std::endl;
+	std::cout << "vector_spec(): Function: " << func << std::endl;
       }
       o2scl::calc_utf8<> calc;
       std::map<std::string,double> vars;
@@ -1212,7 +1213,7 @@ namespace o2scl_hdf {
       o2scl::split_string_delim(temp,sv,',');
       if (sv.size()<3) {
         if (verbose>0) {
-          std::cerr << "Grid spec only given " << sv.size()
+          std::cerr << "vector_spec(): Grid spec only given " << sv.size()
                     << " arguments: " << temp << std::endl;
         }
 	if (err_on_fail) {
@@ -1223,7 +1224,7 @@ namespace o2scl_hdf {
 	}
       }
       if (verbose>1) {
-	std::cout << "Begin,end,width "
+	std::cout << "vector_spec(): Begin,end,width "
 		  << sv[0] << " " << sv[1] << " " << sv[2] << std::endl;
       }
       if (sv.size()>=4 && sv[3]=="log") {
@@ -1262,7 +1263,8 @@ namespace o2scl_hdf {
       // The column index is 'col'
       int col=o2scl::stoi(sv[2]);
       if (verbose>1) {
-	std::cout << "Filename,column " << sv[1] << " " << col << std::endl;
+	std::cout << "vector_spec(): Filename,column "
+                  << sv[1] << " " << col << std::endl;
       }
       if (col<0) {
 	if (err_on_fail) {
@@ -1290,10 +1292,11 @@ namespace o2scl_hdf {
 	  }
 	  if (i==col && verbose>2) {
 	    if (in_header) {
-	      std::cout << "Word: " << word << " header." << std::endl;
+	      std::cout << "vector_spec(): Word: " << word
+                        << " header." << std::endl;
 	    } else {
-	      std::cout << "Word: " << word << " start of data."
-			<< std::endl;
+	      std::cout << "vector_spec(): Word: " << word
+                        << " start of data." << std::endl;
 	    }
 	  }
 	}
@@ -1355,7 +1358,7 @@ namespace o2scl_hdf {
       }
       std::string fname=temp.substr(0,ncolon);
       if (verbose>1) {
-	std::cout << "Filename " << fname << std::endl;
+	std::cout << "vector_spec(): Filename " << fname << std::endl;
       }
       if (temp.length()<ncolon+1) {
 	if (err_on_fail) {
@@ -1375,11 +1378,12 @@ namespace o2scl_hdf {
       } 
       if (verbose>1) {
         if (obj_name[0]=='_') {
-          std::cout << "Object type: "
+          std::cout << "vector_spec(): Object type: "
                     << obj_name.substr(1,obj_name.length()) << std::endl;
         }
-	std::cout << "Object name: " << obj_name << std::endl;
-	std::cout << "Additional specification: " << addl_spec << std::endl;
+	std::cout << "vector_spec(): Object name: " << obj_name << std::endl;
+	std::cout << "vector_spec(): Additional specification: "
+                  << addl_spec << std::endl;
       }
       o2scl_hdf::hdf_file hf;
 	
@@ -1396,7 +1400,7 @@ namespace o2scl_hdf {
       }
       fname=matches[0];
       if (verbose>1) {
-	std::cout << "Filename after wordexp_wrapper(): "
+	std::cout << "vector_spec(): Filename after wordexp_wrapper(): "
                   << fname << std::endl;
       }
 	
@@ -1421,8 +1425,8 @@ namespace o2scl_hdf {
 	}
       }
       if (verbose>1) {
-        std::cout << "Object type and name: " << type << " " << obj_name
-                  << std::endl;
+        std::cout << "vector_spec(): Object type and name: "
+                  << type << " " << obj_name << std::endl;
       }
 	
       if (type=="table") {
@@ -1439,8 +1443,8 @@ namespace o2scl_hdf {
 	if (addl_spec.find(':')!=std::string::npos) {
 
 	  if (verbose>2) {
-	    std::cout << "Found colon, so assuming row:column patterns."
-		      << std::endl;
+	    std::cout << "vector_spec(): Found colon, so assuming "
+                      << "row:column patterns." << std::endl;
 	  }
 	  std::vector<std::string> sv2;
 	  o2scl::split_string_delim(addl_spec,sv2,':');
@@ -1449,7 +1453,7 @@ namespace o2scl_hdf {
 	  calc.compile(sv2[0].c_str(),0);
 	  int row=(int)calc.eval(0);
 	  if (verbose>2) {
-	    std::cout << "Row is: " << row << std::endl;
+	    std::cout << "vector_spec(): Row is: " << row << std::endl;
 	  }
 	  
 	  o2scl::table_units<> t;
@@ -1457,7 +1461,7 @@ namespace o2scl_hdf {
 	  
 	  if (row<0) row+=t.get_nlines();
 	  if (verbose>2) {
-	    std::cout << "Row+nlines is: " << row << std::endl;
+	    std::cout << "vector_spec(): Row+nlines is: " << row << std::endl;
 	  }
 	  
 	  if (row<0 || row>=((int)t.get_nlines())) {
@@ -1473,13 +1477,14 @@ namespace o2scl_hdf {
 	  std::vector<std::string> col_patterns;
 	  o2scl::split_string_delim(sv2[1],col_patterns,',');
 	  if (verbose>2) {
-	    std::cout << "Column patterns: ";
+	    std::cout << "vector_spec(): Column patterns: ";
 	    o2scl::vector_out(std::cout,col_patterns,true);
 	  }
 	  
 	  for(size_t k=0;k<col_patterns.size();k++) {
 	    if (verbose>2) {
-	      std::cout << "Column pattern " << col_patterns[k] << std::endl;
+	      std::cout << "vector_spec(): Column pattern "
+                        << col_patterns[k] << std::endl;
 	    }
 
             if (use_regex) {
@@ -1488,7 +1493,7 @@ namespace o2scl_hdf {
                 if (std::regex_search(t.get_column_name(j),r)) {
                   col_list.push_back(t.get_column_name(j));
                   if (verbose>2) {
-                    std::cout << "Found match (using regex): "
+                    std::cout << "vector_spec(): Found match (using regex): "
                               << t.get_column_name(j)
                               << std::endl;
                   }
@@ -1500,7 +1505,7 @@ namespace o2scl_hdf {
                             t.get_column_name(j).c_str(),0)==0) {
                   col_list.push_back(t.get_column_name(j));
                   if (verbose>2) {
-                    std::cout << "Found match (using fnmatch): "
+                    std::cout << "vector_spec(): Found match (using fnmatch): "
                               << t.get_column_name(j)
                               << std::endl;
                   }
@@ -1514,7 +1519,8 @@ namespace o2scl_hdf {
 	  for(size_t i=0;i<col_list.size();i++) {
 	    v[i]=t.get(col_list[i],row);
 	    if (verbose>2) {
-	      std::cout << "Getting entry at: " << col_list[i] << " "
+	      std::cout << "vector_spec(): Getting entry at: "
+                        << col_list[i] << " "
 			<< row << " " << v[i] << std::endl;
 	    }
 	  }
@@ -1522,8 +1528,8 @@ namespace o2scl_hdf {
 	} else {
 	  
 	  if (verbose>2) {
-	    std::cout << "No colon, so assuming column name " << addl_spec
-		      << std::endl;
+	    std::cout << "vector_spec(): No colon, so assuming "
+                      << "column name " << addl_spec << std::endl;
 	  }
 	  
 	  o2scl::table_units<> t;
@@ -2641,6 +2647,10 @@ namespace o2scl_hdf {
                       << "specification in mult_vector_spec()."
                       << std::endl;
             return 22;
+          }
+          if (verbose>2) {
+            std::cout << "Using slice name " << silce_name
+                      << " and index " << index << std::endl;
           }
           std::string slice_name=addl_spec.substr(0,pos);
           int index=o2scl::stoi(addl_spec.substr(pos+1,
