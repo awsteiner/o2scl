@@ -2649,7 +2649,7 @@ namespace o2scl_hdf {
             return 22;
           }
           if (verbose>2) {
-            std::cout << "Using slice name " << silce_name
+            std::cout << "Using slice name " << slice_name
                       << " and index " << index << std::endl;
           }
           std::string slice_name=addl_spec.substr(0,pos);
