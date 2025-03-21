@@ -2648,14 +2648,14 @@ namespace o2scl_hdf {
                       << std::endl;
             return 22;
           }
-          if (verbose>2) {
-            std::cout << "Using slice name " << slice_name
-                      << " and index " << index << std::endl;
-          }
           std::string slice_name=addl_spec.substr(0,pos);
           int index=o2scl::stoi(addl_spec.substr(pos+1,
                                                  addl_spec.length()-pos-1));
 
+          if (verbose>2) {
+            std::cout << "Using slice name " << slice_name
+                      << " and index " << index << std::endl;
+          }
           if (index==0) {
             for(size_t i=0;i<t3d.get_nx();i++) {
               std::vector<double> row;
