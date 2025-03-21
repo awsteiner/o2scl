@@ -354,7 +354,7 @@ int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
 	
 	if (debug) {
 	  cout << "cli::apply_aliases(): Replacing \"" << sv[i] << "\" with \""
-               << it->second "\"." << endl;
+               << it->second << "\"." << endl;
 	  cout << "  Before: " << endl;
 	  for(size_t j=0;j<sv.size();j++) {
 	    cout << sv[j] << " ";
