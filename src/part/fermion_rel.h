@@ -1420,7 +1420,8 @@ namespace o2scl {
         unc.ed*=prefac;
 
 	if (verbose>1) {
-	  std::cout << "fermion_rel::calc_mu(): deg energy density, ed, unc.ed: "
+	  std::cout << "fermion_rel::calc_mu(): deg "
+                    << "energy density, ed, unc.ed: "
                     << dtos(f.ed,-1) << " " << dtos(unc.ed,-1) << std::endl;
 	}
           

@@ -3755,6 +3755,11 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  
+  cout.precision(precision);
+  
   if (type=="table3d") {
     
     if (sv.size()<2) {

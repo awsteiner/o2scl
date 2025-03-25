@@ -208,6 +208,10 @@ int acol_manager::comm_list(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(precision);
+    
   if (type=="table3d") {
 
     if (table3d_obj.get_nslices()==0) {
@@ -354,7 +358,11 @@ int acol_manager::comm_max(std::vector<std::string> &sv, bool itive_com) {
 }
 
 int acol_manager::comm_min(std::vector<std::string> &sv, bool itive_com) {
-
+  
+    if (scientific) cout.setf(ios::scientific);
+    else cout.unsetf(ios::scientific);
+    cout.precision(precision);
+    
   if (type=="table3d") {
 
     if (type!="table3d" || table3d_obj.get_nslices()==0) {
