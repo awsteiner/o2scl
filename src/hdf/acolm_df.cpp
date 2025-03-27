@@ -1157,30 +1157,47 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
       }
     }
     
-    // Parse function(s)
-    calc_utf8<> calc;
-    calc_utf8<> calc_cond;
-    calc.set_rng(rng);
-    o2scl::rng<> r;
-    rng_set_seed(r);
-    calc_cond.set_rng(r);
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-    calc_cond.compile(cond_func.c_str(),&vars);
-
-    // Set
-    size_t rk=tensor_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_obj.total_size();i++) {
-      tensor_obj.unpack_index(i,ix);
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+#endif
+      
+      // Parse function(s)
+      calc_utf8<> calc, calc_cond;
+      // These are in the parallel region, but the rng_set_seed()
+      // function has a OpenMP critical region to ensure different
+      // seeds for different threads.
+      o2scl::rng<> r, r2;
+      rng_set_seed(r);
+      rng_set_seed(r2);
+      calc.set_rng(r);
+      calc_cond.set_rng(r2);
+      std::map<std::string,double> vars;
+      calc.compile(function.c_str(),&vars);
+      calc_cond.compile(cond_func.c_str(),&vars);
+      
+      // Set
+      size_t rk=tensor_obj.get_rank();
+      vector<size_t> ix(rk);
+      
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+      for(size_t i=0;i<tensor_obj.total_size();i++) {
+        tensor_obj.unpack_index(i,ix);
+        for(size_t j=0;j<rk;j++) {
+          vars[((string)"i")+szttos(j)]=ix[j];
+        }
+        vars["v"]=tensor_obj.get(ix);
+        if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
+          tensor_obj.set(ix,calc.eval(&vars));
+        }
       }
-      vars["v"]=tensor_obj.get(ix);
-      if (cond_func.length()>0 && calc_cond.eval(&vars)>0.5) {
-	tensor_obj.set(ix,calc.eval(&vars));
-      }
+      
+#ifdef O2SCL_SET_OPENMP
+      // End of parallel region
     }
+#endif
     
   } else if (type=="tensor_grid") {
 
@@ -1203,44 +1220,61 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
       }
     }
 
-    // Parse function(s)
-    calc_utf8<> calc;
-    calc_utf8<> calc_cond;
-    calc.set_rng(rng);
-    o2scl::rng<> r;
-    rng_set_seed(r);
-    calc_cond.set_rng(r);
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-    calc_cond.compile(cond_func.c_str(),&vars);
-
-    if (verbose>0) {
-      if (cond_func.length()==0) {
-	cout << "Command \"function\" using " << function
-	     << " to set all entries." << endl;
-      } else {
-	cout << "Command \"function\" using conditional " << cond_func
-	     << " and function " << function
-	     << " to set all entries." << endl;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+#endif
+      
+      // Parse function(s)
+      calc_utf8<> calc, calc_cond;
+      // These are in the parallel region, but the rng_set_seed()
+      // function has a OpenMP critical region to ensure different
+      // seeds for different threads.
+      o2scl::rng<> r, r2;
+      rng_set_seed(r);
+      rng_set_seed(r2);
+      calc.set_rng(r);
+      calc_cond.set_rng(r2);
+      std::map<std::string,double> vars;
+      calc.compile(function.c_str(),&vars);
+      calc_cond.compile(cond_func.c_str(),&vars);
+      
+      if (verbose>0) {
+        if (cond_func.length()==0) {
+          cout << "Command \"function\" using " << function
+               << " to set all entries." << endl;
+        } else {
+          cout << "Command \"function\" using conditional " << cond_func
+               << " and function " << function
+               << " to set all entries." << endl;
+        }
       }
-    }
+      
+      
+      // Set
+      size_t rk=tensor_grid_obj.get_rank();
+      vector<size_t> ix(rk);
+      
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+      for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+        tensor_grid_obj.unpack_index(i,ix);
+        for(size_t j=0;j<rk;j++) {
+          vars[((string)"i")+szttos(j)]=ix[j];
+          vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+        }
+        vars["v"]=tensor_grid_obj.get(ix);
+        if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
+          tensor_grid_obj.set(ix,calc.eval(&vars));
+        }
+      }
 
+#ifdef O2SCL_SET_OPENMP
+      // End of parallel region
+    }
+#endif
     
-    // Set
-    size_t rk=tensor_grid_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
-      tensor_grid_obj.unpack_index(i,ix);
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
-	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
-      }
-      vars["v"]=tensor_grid_obj.get(ix);
-      if (cond_func.length()==0 || calc_cond.eval(&vars)>0.5) {
-	tensor_grid_obj.set(ix,calc.eval(&vars));
-      }
-    }
-
   } else {
     cerr << "Not implemented for type " << type << " ." << endl;
     return exc_efailed;

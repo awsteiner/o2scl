@@ -2359,13 +2359,6 @@ namespace o2scl {
       o2scl::vector_out(std::cout,ix_to_interp,true);
     }
     
-    // Index arrays. For indices in the old tensor which we are
-    // interpolating, the value of ix_old is not used, so it
-    // is not set.
-    std::vector<size_t> ix_new(rank_new);
-    std::vector<size_t> ix_old(rank_old);
-    std::vector<size_t> sum_ix(n_sums);
-
     // The vector "interp_vals" below is ordered according to the
     // indices in the old vector, but ix_to_interp isn't always
     // ordered that way, so we sort ix_to_interp here. This sorting
@@ -2376,9 +2369,21 @@ namespace o2scl {
     o2scl::vector_sort<std::vector<size_t>,size_t>(ix_to_interp.size(),
                                                    ix_to_interp);
       
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+#pragma omp for
+#endif
     // Loop over the new tensor object
     for(size_t i=0;i<t_new.total_size();i++) {
-
+      
+      // Index arrays. For indices in the old tensor which we are
+      // interpolating, the value of ix_old is not used, so it
+      // is not set.
+      std::vector<size_t> ix_new(rank_new);
+      std::vector<size_t> ix_old(rank_old);
+      std::vector<size_t> sum_ix(n_sums);
+      
       // Find the location in the new tensor object
       t_new.unpack_index(i,ix_new);
 
@@ -2543,6 +2548,10 @@ namespace o2scl {
       t_new.set(ix_new,val);
     }
 
+#ifdef O2SCL_SET_OPENMP
+    }
+#endif
+    
     if (verbose>1) {
       std::cout << "grid_rearrange_and_copy(): Done." << std::endl;
     }
@@ -2727,19 +2736,19 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2,ix3)
     double &get(size_t ix1, size_t ix2, size_t ix3) { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor_grid<vec_t,vec_size_t>::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get_arr(sz); 
     }
  
     /// Get the element indexed by \c (ix1,ix2,ix3)
     const double &get(size_t ix1, size_t ix2, size_t ix3) const { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor_grid<vec_t,vec_size_t>::get(sz); 
+      return tensor_grid<vec_t,vec_size_t>::get_arr(sz); 
     }
  
     /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, double val) {
       size_t sz[3]={ix1,ix2, ix3};
-      tensor_grid<vec_t,vec_size_t>::set(sz,val); 
+      tensor_grid<vec_t,vec_size_t>::set_arr(sz,val); 
       return;
     }
     

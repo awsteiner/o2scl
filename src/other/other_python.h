@@ -431,7 +431,7 @@ void o2scl_prob_dens_mdim_amr__clear_mesh(void *vptr);
 
 double o2scl_prob_dens_mdim_amr__total_volume(void *vptr);
 
-double o2scl_vector_mean_std_vector_double__wrapper(size_t n, void *ptr_v);
+double o2scl_vector_mean_std_vector_double_double__wrapper(size_t n, void *ptr_v);
 
 double o2scl_vector_stddev_std_vector_double__wrapper(size_t n, void *ptr_v);
 

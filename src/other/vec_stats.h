@@ -58,13 +58,11 @@ namespace o2scl {
   //@{
   /** \brief Compute the mean of the first \c n elements of a vector
 
-      This function produces the same results
-      as <tt>gsl_stats_mean()</tt>.
-
       If \c n is zero, this function will return zero.
   */
-  template<class vec_t> double vector_mean(size_t n, const vec_t &data) {
-    long double mean=0.0;
+  template<class vec_t, class data_t>
+  data_t vector_mean(size_t n, const vec_t &data) {
+    data_t mean=0;
     for(size_t i=0;i<n;i++) {
       mean+=(data[i]-mean)/(i+1);
     }
@@ -79,7 +77,7 @@ namespace o2scl {
       If the vector size is zero, this function will return zero.
   */
   template<class vec_t> double vector_mean(const vec_t &data) {
-    return vector_mean(data.size(),data);
+    return vector_mean<vec_t,double>(data.size(),data);
   }
 
   /** \brief Compute variance with specified mean known in advance
@@ -268,7 +266,7 @@ namespace o2scl {
 		     " in vector_stddev().",exc_einval);
     }
     
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     double var=vector_variance_fmean<vec_t>(n,data,mean);
     return std::sqrt(var*n/(n-1));
   }
@@ -1094,7 +1092,7 @@ namespace o2scl {
 
   /** \brief Compute rolling averages for the first
       \c n entries in the vector \c v
-   */
+  */
   template<class vec_t, class data_t> void 
     vector_roll_avg(size_t n, vec_t &v, size_t window) {
 

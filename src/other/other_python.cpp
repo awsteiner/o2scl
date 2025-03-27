@@ -1250,9 +1250,9 @@ double o2scl_prob_dens_mdim_amr__total_volume(void *vptr) {
   return ret;
 }
 
-double o2scl_vector_mean_std_vector_double__wrapper(size_t n, void *ptr_v) {
+double o2scl_vector_mean_std_vector_double_double__wrapper(size_t n, void *ptr_v) {
   vector<double> *v=(vector<double> *)ptr_v;
-  double func_ret=vector_mean<std::vector<double>>(n,*v);
+  double func_ret=vector_mean<std::vector<double>,double>(n,*v);
   return func_ret;
 }
 

@@ -476,7 +476,7 @@ namespace o2scl {
 
       if (rescale==true) {
         rescaled=true;
-        mean_y=o2scl::vector_mean(n_dim,y);
+        mean_y=o2scl::vector_mean<vec2_t,double>(n_dim,y);
         std_y=o2scl::vector_stddev(n_dim,y,mean_y);
         y_r.resize(n_dim);
         for (size_t j=0;j<n_dim;j++) {
@@ -1332,7 +1332,7 @@ namespace o2scl {
       this->sz=size;
 
       if (this->rescaled) {
-        this->mean_y=o2scl::vector_mean(size,y);
+        this->mean_y=o2scl::vector_mean<vec2_t,double>(size,y);
         this->std_y=o2scl::vector_stddev(size,y,this->mean_y);
         this->y_r.resize(size);
         for (size_t j=0;j<size;j++) {

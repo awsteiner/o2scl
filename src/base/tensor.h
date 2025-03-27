@@ -2005,19 +2005,19 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2)
     data_t &get(size_t ix1, size_t ix2) { 
       size_t sz[2]={ix1,ix2};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+      return tensor<data_t,vec_t,vec_size_t>::get_arr(sz); 
     }
 
     /// Get the element indexed by \c (ix1,ix2)
     const data_t &get(size_t ix1, size_t ix2) const { 
       size_t sz[2]={ix1,ix2};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+      return tensor<data_t,vec_t,vec_size_t>::get_arr(sz); 
     }
 
     /// Set the element indexed by \c (ix1,ix2) to value \c val
     void set(size_t ix1, size_t ix2, data_t val) {
       size_t sz[2]={ix1,ix2};
-      tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
+      tensor<data_t,vec_t,vec_size_t>::set_arr(sz,val); 
       return;
     }
 
@@ -2110,6 +2110,17 @@ namespace o2scl {
     template<class size_vec_t>
     void set(const size_vec_t &index, data_t val) {
       tensor<data_t,vec_t,vec_size_t>::set(index,val);
+      return;
+    }
+
+    /** \brief Set the element indexed by \c index to value \c val
+
+        (We have to explicitly provide this version since the set()
+        function is overloaded in this child of \ref tensor.)
+    */
+    template<class size_vec_t>
+    void set_arr(const size_vec_t &index, data_t val) {
+      tensor<data_t,vec_t,vec_size_t>::set_arr(index,val);
       return;
     }
     //@}

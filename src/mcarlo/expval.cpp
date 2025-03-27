@@ -262,7 +262,7 @@ void expval_scalar::current_avg_stats(double &avg, double &std_dev,
     // for all the blocks which have been finished
     m_block=iblock;
     m_per_block=nperblock;
-    avg=vector_mean(iblock,vals);
+    avg=vector_mean<ubvector,double>(iblock,vals);
     std_dev=vector_stddev(iblock,vals);
     avg_err=std_dev/sqrt(((double)iblock));
 
@@ -306,7 +306,7 @@ void expval_scalar::reblock_avg_stats(size_t new_blocks, double &avg,
     dat[k]/=((double)fact);
   }
   // Compute average
-  avg=vector_mean(new_blocks,dat);
+  avg=vector_mean<ubvector,double>(new_blocks,dat);
   // Compute std. dev. and avg. err. if available
   if (new_blocks>1) {
     std_dev=vector_stddev(new_blocks,dat);
@@ -459,7 +459,7 @@ expval_matrix::expval_matrix
     size_t tot=vals.total_size();
     for(size_t ii=0;ii<tot;ii++) {
       vals.unpack_index(ii,dim);
-      vals.set(dim,0.0);
+      vals.set_arr(dim,0.0);
     }
   }
 }
@@ -518,7 +518,7 @@ void expval_matrix::set_blocks_mat(size_t nrows, size_t ncols, size_t n_blocks,
   size_t tot=vals.total_size();
   for(size_t ii=0;ii<tot;ii++) {
     vals.unpack_index(ii,dim);
-    vals.set(dim,0.0);
+    vals.set_arr(dim,0.0);
   }
   return;
 }
