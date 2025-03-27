@@ -710,6 +710,42 @@ namespace o2scl {
     void set(const size_vec_t &index, data_t val) {
 #if O2SCL_NO_RANGE_CHECK
 #else
+      if (index.size()<rk) {
+        O2SCL_ERR("Not enough index entries in tensor::set().",exc_einval);
+      }
+      if (rk==0) {
+        O2SCL_ERR("Empty tensor in tensor::set().",exc_einval);
+      }
+      if (index[0]>=size[0]) {
+        O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
+                   " greater than or equal to size[0]="+
+                   szttos(size[0])+" in tensor::set().").c_str(),
+                  exc_eindex);
+      }
+#endif
+      size_t ix=index[0];
+      for(size_t i=1;i<rk && i<index.size();i++) {
+#if O2SCL_NO_RANGE_CHECK
+#else
+        if (index[i]>=size[i]) {
+          O2SCL_ERR((((std::string)"Value of index[")+szttos(i)+"]="+
+                     szttos(index[i])+" greater than or equal to size "+
+                     szttos(size[i])+" in tensor::set().").c_str(),
+                    exc_eindex);
+        }
+#endif
+        ix*=size[i];
+        ix+=index[i];
+      }
+      data[ix]=val;
+      return;
+    }
+
+    /// Set the element indexed by \c index to value \c val
+    template<class size_vec_t>
+    void set_arr(const size_vec_t &index, data_t val) {
+#if O2SCL_NO_RANGE_CHECK
+#else
       if (rk==0) {
         O2SCL_ERR("Empty tensor in tensor::set().",exc_einval);
       }
@@ -722,15 +758,6 @@ namespace o2scl {
 #endif
       size_t ix=index[0];
       for(size_t i=1;i<rk;i++) {
-#if O2SCL_NO_RANGE_CHECK
-#else
-        if (index[i]>=size[i]) {
-          O2SCL_ERR((((std::string)"Value of index[")+szttos(i)+"]="+
-                     szttos(index[i])+" greater than or equal to size "+
-                     szttos(size[i])+" in tensor::set().").c_str(),
-                    exc_eindex);
-        }
-#endif
         ix*=size[i];
         ix+=index[i];
       }
@@ -788,6 +815,9 @@ namespace o2scl {
       if (rk==0) {
         O2SCL_ERR("Empty tensor in tensor_base::get().",exc_einval);
       }
+      if (index.size()<rk) {
+        O2SCL_ERR("Not enough index entries in tensor_base::get().",exc_einval);
+      }
       if (index[0]>=size[0]) {
         O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
                    " greater than or equal to size[0]="+
@@ -812,6 +842,28 @@ namespace o2scl {
       return data[ix];
     }
 
+    /// Get the element indexed by \c index
+    template<class size_vec_t> data_t &get_arr(const size_vec_t &index) {
+#if O2SCL_NO_RANGE_CHECK
+#else
+      if (rk==0) {
+        O2SCL_ERR("Empty tensor in tensor_base::get().",exc_einval);
+      }
+      if (index[0]>=size[0]) {
+        O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
+                   " greater than or equal to size[0]="+
+                   szttos(size[0])+" in tensor::get().").c_str(),
+                  exc_eindex);
+      }
+#endif
+      size_t ix=index[0];
+      for(size_t i=1;i<rk;i++) {
+        ix*=size[i];
+        ix+=index[i];
+      }
+      return data[ix];
+    }
+
     /// Get a const reference to the element indexed by \c index
     template<class size_vec_t> 
     data_t const &get(const size_vec_t &index) const {
@@ -819,6 +871,10 @@ namespace o2scl {
 #else
       if (rk==0) {
         O2SCL_ERR("Empty tensor in tensor::get() (const).",exc_einval);
+      }
+      if (index.size()<rk) {
+        O2SCL_ERR("Not enough index entries in tensor::get() (const).",
+                  exc_einval);
       }
       if (index[0]>=size[0]) {
         O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
@@ -838,6 +894,29 @@ namespace o2scl {
                     exc_eindex);
         }
 #endif
+        ix*=size[i];
+        ix+=index[i];
+      }
+      return data[ix];
+    }
+    
+    /// Get a const reference to the element indexed by \c index
+    template<class size_vec_t> 
+    data_t const &get_arr(const size_vec_t &index) const {
+#if O2SCL_NO_RANGE_CHECK
+#else
+      if (rk==0) {
+        O2SCL_ERR("Empty tensor in tensor::get() (const).",exc_einval);
+      }
+      if (index[0]>=size[0]) {
+        O2SCL_ERR((((std::string)"Value of index[0]=")+szttos(index[0])+
+                   " greater than or equal to size[0]="+
+                   szttos(size[0])+" in tensor::get() (const).").c_str(),
+                  exc_eindex);
+      }
+#endif
+      size_t ix=index[0];
+      for(size_t i=1;i<rk;i++) {
         ix*=size[i];
         ix+=index[i];
       }
@@ -1677,98 +1756,107 @@ namespace o2scl {
     
     // Create the new tensor object
     tensor_t t_new(rank_new,size_new);
-    
-    // Index arrays
-    std::vector<size_t> ix_new(rank_new);
-    std::vector<size_t> ix_old(rank_old);
-    std::vector<size_t> sum_ix(n_sums);
-    
-    // Loop over the new tensor object
-    for(size_t i=0;i<t_new.total_size();i++) {
-      
-      // Find the location in the new tensor object
-      t_new.unpack_index(i,ix_new);
-      
-      // Determine the location in the old tensor object
-      for(size_t j=0;j<rank_old;j++) {
-        if (spec_old[j].type==index_spec::index) {
-          ix_old[j]=ix_new[spec_old[j].ix1];
-        } else if (spec_old[j].type==index_spec::range) {
-          if (spec_old[j].ix2<spec_old[j].ix3) {
-            ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
-          } else {
-            ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+#pragma omp for
+#endif
+      // Loop over the new tensor object
+      for(size_t i=0;i<t_new.total_size();i++) {
+        
+        // Index arrays
+        std::vector<size_t> ix_new(rank_new);
+        std::vector<size_t> ix_old(rank_old);
+        std::vector<size_t> sum_ix(n_sums);
+        
+        // Find the location in the new tensor object
+        t_new.unpack_index(i,ix_new);
+        
+        // Determine the location in the old tensor object
+        for(size_t j=0;j<rank_old;j++) {
+          if (spec_old[j].type==index_spec::index) {
+            ix_old[j]=ix_new[spec_old[j].ix1];
+          } else if (spec_old[j].type==index_spec::range) {
+            if (spec_old[j].ix2<spec_old[j].ix3) {
+              ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
+            } else {
+              ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+            }
+          } else if (spec_old[j].type==index_spec::reverse) {
+            ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
+          } else if (spec_old[j].type==index_spec::fixed) {
+            ix_old[j]=spec_old[j].ix2;
           }
-        } else if (spec_old[j].type==index_spec::reverse) {
-          ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
-        } else if (spec_old[j].type==index_spec::fixed) {
-          ix_old[j]=spec_old[j].ix2;
         }
+        
+        data_t val=0;
+        
+        for(size_t j=0;j<n_sum_loop;j++) {
+          
+          // This code is similar to tensor::unpack_index(), it unpacks
+          // the index j to the indices which we are summing over.
+          size_t j2=j, sub_size;
+          for(size_t k=0;k<n_sums;k++) {
+            if (k==n_sums-1) {
+              sum_ix[k]=j2;
+            } else {
+              sub_size=1;
+              for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+              sum_ix[k]=j2/sub_size;
+              j2-=sub_size*(j2/sub_size);
+            }
+          }
+          if (verbose>2) {
+            std::cout << "rearrange_and_copy(): n_sum_loop: "
+                      << n_sum_loop << " n_sums: "
+                      << n_sums << " sum_sizes: ";
+            vector_out(std::cout,sum_sizes,true);
+            std::cout << "j: " << j << " sum_ix: ";
+            vector_out(std::cout,sum_ix,true);
+          }
+          
+          // Remap from sum_ix to ix_old
+          size_t cnt=0;
+          for(size_t k=0;k<rank_old;k++) {
+            if (spec_old[k].type==index_spec::sum) {
+              if (cnt>=sum_ix.size()) {
+                std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                O2SCL_ERR2("Bad sync 1 in sum_ix in ",
+                           "tensor::rearrange_and_copy()",o2scl::exc_esanity);
+              }
+              ix_old[k]=sum_ix[cnt];
+              cnt++;
+            } else if (spec_old[k].type==index_spec::trace &&
+                       spec_old[k].ix1<spec_old[k].ix2) {
+              if (cnt>=sum_ix.size()) {
+                std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                O2SCL_ERR2("Bad sync 2 in sum_ix in ",
+                           "tensor::rearrange_and_copy()",o2scl::exc_esanity);
+              }
+              ix_old[spec_old[k].ix1]=sum_ix[cnt];
+              ix_old[spec_old[k].ix2]=sum_ix[cnt];
+              cnt++;
+            }
+          }
+          
+          if (verbose>2) {
+            std::cout << "Here old: ";
+            vector_out(std::cout,ix_old,true);
+            std::cout << "Here new: ";
+            vector_out(std::cout,ix_new,true);
+          }
+          val+=t.get(ix_old);
+          
+        }
+        
+        // Set the new value
+        t_new.set(ix_new,val);
       }
       
-      data_t val=0;
-      
-      for(size_t j=0;j<n_sum_loop;j++) {
-        
-        // This code is similar to tensor::unpack_index(), it unpacks
-        // the index j to the indices which we are summing over.
-        size_t j2=j, sub_size;
-        for(size_t k=0;k<n_sums;k++) {
-          if (k==n_sums-1) {
-            sum_ix[k]=j2;
-          } else {
-            sub_size=1;
-            for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
-            sum_ix[k]=j2/sub_size;
-            j2-=sub_size*(j2/sub_size);
-          }
-        }
-        if (verbose>2) {
-          std::cout << "rearrange_and_copy(): n_sum_loop: "
-                    << n_sum_loop << " n_sums: "
-                    << n_sums << " sum_sizes: ";
-          vector_out(std::cout,sum_sizes,true);
-          std::cout << "j: " << j << " sum_ix: ";
-          vector_out(std::cout,sum_ix,true);
-        }
-        
-        // Remap from sum_ix to ix_old
-        size_t cnt=0;
-        for(size_t k=0;k<rank_old;k++) {
-          if (spec_old[k].type==index_spec::sum) {
-            if (cnt>=sum_ix.size()) {
-              std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
-              O2SCL_ERR2("Bad sync 1 in sum_ix in ",
-                         "tensor::rearrange_and_copy()",o2scl::exc_esanity);
-            }
-            ix_old[k]=sum_ix[cnt];
-            cnt++;
-          } else if (spec_old[k].type==index_spec::trace &&
-                     spec_old[k].ix1<spec_old[k].ix2) {
-            if (cnt>=sum_ix.size()) {
-              std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
-              O2SCL_ERR2("Bad sync 2 in sum_ix in ",
-                         "tensor::rearrange_and_copy()",o2scl::exc_esanity);
-            }
-            ix_old[spec_old[k].ix1]=sum_ix[cnt];
-            ix_old[spec_old[k].ix2]=sum_ix[cnt];
-            cnt++;
-          }
-        }
-        
-        if (verbose>2) {
-          std::cout << "Here old: ";
-          vector_out(std::cout,ix_old,true);
-          std::cout << "Here new: ";
-          vector_out(std::cout,ix_new,true);
-        }
-        val+=t.get(ix_old);
-        
-      }
-      
-      // Set the new value
-      t_new.set(ix_new,val);
+#ifdef O2SCL_SET_OPENMP
     }
+#endif
     
     return t_new;
   }
@@ -1998,7 +2086,7 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2,ix3)
     data_t &get(size_t ix1, size_t ix2, size_t ix3) { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+      return tensor<data_t,vec_t,vec_size_t>::get_arr(sz); 
     }
 
     /// Get the element indexed by \c (ix1,ix2,ix3)
@@ -2010,7 +2098,7 @@ namespace o2scl {
     /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
     void set(size_t ix1, size_t ix2, size_t ix3, data_t val) {
       size_t sz[3]={ix1,ix2,ix3};
-      tensor<data_t,vec_t,vec_size_t>::set(sz,val); 
+      tensor<data_t,vec_t,vec_size_t>::set_arr(sz,val); 
       return;
     }
 
