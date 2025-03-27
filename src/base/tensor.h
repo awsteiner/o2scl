@@ -740,7 +740,18 @@ namespace o2scl {
 
     /// Set all elements in a tensor to some fixed value
     void set_all(data_t x) {
-      for(size_t i=0;i<total_size();i++) data[i]=x;
+      size_t n=total_size();
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+      {
+#pragma omp for
+#endif
+        for(size_t i=0;i<n;i++) {
+          data[i]=x;
+        }
+#ifdef O2SCL_SET_OPENMP
+      }
+#endif
       return;
     }
   
@@ -1624,6 +1635,7 @@ namespace o2scl {
                 << " rank tensor to create\n  a new "
                 << rank_new << " rank tensor." << std::endl;
     }
+    
     if (verbose>1) {
       for(size_t i=0;i<rank_old;i++) {
         std::cout << "  Old index " << i;
@@ -1754,7 +1766,7 @@ namespace o2scl {
         
       }
       
-      // Set the new point by performing the linear interpolation
+      // Set the new value
       t_new.set(ix_new,val);
     }
     
