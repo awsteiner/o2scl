@@ -676,8 +676,8 @@ namespace o2scl {
     double vector_covariance(size_t n, const vec_t &data1, 
 			     const vec2_t &data2) {
     double covar=0.0;
-    double mean1=vector_mean<vec_t>(n,data1);
-    double mean2=vector_mean<vec_t>(n,data2);
+    double mean1=vector_mean<vec_t,double>(n,data1);
+    double mean2=vector_mean<vec_t,double>(n,data2);
     for(size_t i=0;i<n;i++) {
       long double delta1=(data1[i]-mean1);
       long double delta2=(data2[i]-mean2);

@@ -1219,7 +1219,18 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
 	cond_func=sv[1];
       }
     }
-
+    
+    if (verbose>0) {
+      if (cond_func.length()==0) {
+        cout << "Command \"function\" using " << function
+             << " to set all tensor_grid entries." << endl;
+      } else {
+        cout << "Command \"function\" using conditional " << cond_func
+             << " and function " << function
+             << " to set all tensor_grid entries." << endl;
+      }
+    }
+      
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
     {
@@ -1238,19 +1249,7 @@ int acol_manager::comm_function(std::vector<std::string> &sv,
       std::map<std::string,double> vars;
       calc.compile(function.c_str(),&vars);
       calc_cond.compile(cond_func.c_str(),&vars);
-      
-      if (verbose>0) {
-        if (cond_func.length()==0) {
-          cout << "Command \"function\" using " << function
-               << " to set all entries." << endl;
-        } else {
-          cout << "Command \"function\" using conditional " << cond_func
-               << " and function " << function
-               << " to set all entries." << endl;
-        }
-      }
-      
-      
+            
       // Set
       size_t rk=tensor_grid_obj.get_rank();
       vector<size_t> ix(rk);
