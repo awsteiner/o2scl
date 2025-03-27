@@ -1293,7 +1293,7 @@ namespace o2scl {
       // matrix with variance
       for(size_t i=0;i<p_mdim;i++) {
         const mat2_col_t col(pts,i);
-        peak_arg[i]=o2scl::vector_mean<mat2_col_t>(n_pts,col);
+        peak_arg[i]=o2scl::vector_mean<mat2_col_t,double>(n_pts,col);
         // Square standard deviation
         covar_arg(i,i)=o2scl::vector_stddev<mat2_col_t>(n_pts,col);
         covar_arg(i,i)*=covar_arg(i,i);

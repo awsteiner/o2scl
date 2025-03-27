@@ -1841,7 +1841,7 @@ namespace o2scl {
   */
   template<class vec_t> double vector_lagk_autocorr
     (size_t n, const vec_t &data, size_t k) {
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     return vector_lagk_autocorr(n,data,k,mean);
   }
 
@@ -1879,7 +1879,7 @@ namespace o2scl {
     if (kmax==0) {
       kmax=n/2;
     }
-    double mean=vector_mean(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     ac_vec.resize(kmax);
     ac_vec[0]=1.0;
     
