@@ -1315,13 +1315,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_max_value().",exc_efailed);
     }
-    data_t max=data[0];
+    data_t max_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(max:max_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]>max) {
-	max=data[i];
+      if (data[i]>max_val) {
+	max_val=data[i];
       }
     }
-    return max;
+    return max_val;
   }
 
   /** \brief Compute the maximum value of a vector
@@ -1333,13 +1336,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent empty vector to vector_max_value().",exc_efailed);
     }
-    data_t max=data[0];
+    data_t max_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(max:max_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]>max) {
-	max=data[i];
+      if (data[i]>max_val) {
+	max_val=data[i];
       }
     }
-    return max;
+    return max_val;
   }
 
   /** \brief Compute the index which holds the 
@@ -1390,13 +1396,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_min_value().",exc_efailed);
     }
-    data_t min=data[0];
+    data_t min_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(min:min_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]<min) {
-	min=data[i];
+      if (data[i]<min_val) {
+	min_val=data[i];
       }
     }
-    return min;
+    return min_val;
   }
 
   /** \brief Compute the minimum value in a vector
