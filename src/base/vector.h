@@ -229,8 +229,16 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t> 
     void vector_copy(const vec_t &src, vec2_t &dest) {
+    
     size_t N=src.size();
     if (dest.size()<N) dest.resize(N);
+    
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+    for(size_t i=0;i<N;i++) {
+      dest[i]=src[i];
+    }
+#else
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
       dest[i]=src[i];
@@ -241,6 +249,7 @@ namespace o2scl {
       dest[i+2]=src[i+2];
       dest[i+3]=src[i+3];
     }
+#endif
     return;
   }
   
@@ -258,6 +267,14 @@ namespace o2scl {
   */
   template<class vec_t, class vec2_t> 
     void vector_copy(size_t N, const vec_t &src, vec2_t &dest) {
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+    for(size_t i=0;i<N;i++) {
+      dest[i]=src[i];
+    }
+#else
+    
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
       dest[i]=src[i];
@@ -268,6 +285,8 @@ namespace o2scl {
       dest[i+2]=src[i+2];
       dest[i+3]=src[i+3];
     }
+    
+#endif
     return;
   }
 
@@ -284,12 +303,19 @@ namespace o2scl {
     void matrix_copy(mat_t &src, mat2_t &dest) {
     size_t m=src.size1();
     size_t n=src.size2();
+
     if (dest.size1()<m || dest.size2()<n) dest.resize(m,n);
+    
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	dest(i,j)=src(i,j);
       }
     }
+
+    return;
   }
 
   /** \brief Simple matrix copy of the first \f$ (M,N) \f$ 
@@ -307,11 +333,17 @@ namespace o2scl {
   */
   template<class mat_t, class mat2_t> 
     void matrix_copy(size_t M, size_t N, mat_t &src, mat2_t &dest) {
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<M;i++) {
       for(size_t j=0;j<N;j++) {
 	dest(i,j)=src(i,j);
       }
     }
+
+    return;
   }
   //@}
 
@@ -331,11 +363,17 @@ namespace o2scl {
     size_t m=src.size1();
     size_t n=src.size2();
     if (dest.size1()<n || dest.size2()<m) dest.resize(n,m);
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	dest(i,j)=src(j,i);
       }
     }
+
+    return;
   }
 
   /** \brief Simple transpose of the first \f$ (m,n) \f$
@@ -349,11 +387,17 @@ namespace o2scl {
   */
   template<class mat_t, class mat2_t> 
     void matrix_transpose(size_t m, size_t n, mat_t &src, mat2_t &dest) {
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<m;i++) {
       for(size_t j=0;j<n;j++) {
 	dest(i,j)=src(j,i);
       }
     }
+
+    return;
   }
 
   /** \brief Simple in-place transpose 
@@ -2353,6 +2397,9 @@ namespace o2scl {
     data_t vector_sum(size_t n, const vec_t &data) {
     
     data_t sum=0;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2395,7 +2442,11 @@ namespace o2scl {
   */
   template<class vec_t, class data_t> data_t vector_sum(vec_t &data) {
     data_t sum=0;
-    for(size_t i=0;i<data.size();i++) {
+    size_t n=data.size();
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
+    for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
     return sum;
@@ -2409,6 +2460,9 @@ namespace o2scl {
   */
   template<class vec_t>double vector_sum_double(size_t n, vec_t &data) {
     double sum=0;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2423,7 +2477,11 @@ namespace o2scl {
   */
   template<class vec_t> double vector_sum_double(vec_t &data) {
     double sum=0;
-    for(size_t i=0;i<data.size();i++) {
+    size_t n=data.size();
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
+    for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
     return sum;
@@ -2523,6 +2581,9 @@ namespace o2scl {
    */
   template<class vec_t, class data_t> 
     void vector_set_all(size_t N, vec_t &src, data_t val) {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<N;i++) {
       src[i]=val;
     }
@@ -2541,6 +2602,9 @@ namespace o2scl {
    */
   template<class mat_t, class data_t> 
     void matrix_set_all(size_t M, size_t N, mat_t &src, data_t val) {
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for
+#endif
     for(size_t i=0;i<M;i++) {
       for(size_t j=0;j<N;j++) {
 	src(i,j)=val;
