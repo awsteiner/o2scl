@@ -2092,7 +2092,7 @@ namespace o2scl {
     /// Get the element indexed by \c (ix1,ix2,ix3)
     const data_t &get(size_t ix1, size_t ix2, size_t ix3) const { 
       size_t sz[3]={ix1,ix2,ix3};
-      return tensor<data_t,vec_t,vec_size_t>::get(sz); 
+      return tensor<data_t,vec_t,vec_size_t>::get_arr(sz); 
     }
 
     /// Set the element indexed by \c (ix1,ix2,ix3) to value \c val
