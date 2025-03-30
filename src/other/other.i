@@ -636,7 +636,7 @@ class prob_dens_mdim_amr<>
 #
 # Functions from vec_stats.h
 # 
-function vector_mean<std::vector<double>>
+function vector_mean<std::vector<double>,double>
 - double
 - py_name vector_mean
 - size_t n  

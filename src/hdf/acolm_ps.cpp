@@ -1864,10 +1864,10 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     
     cout << "N        : " << doublev_obj.size() << endl;
     cout << "Sum      : "
-         << vector_mean(doublev_obj.size(),doublev_obj)*
-      doublev_obj.size() << endl;
-    cout << "Mean     : " << vector_mean(doublev_obj.size(),
-                                         doublev_obj) << endl;
+         << vector_mean<vector<double>,double>
+      (doublev_obj.size(),doublev_obj)*doublev_obj.size() << endl;
+    cout << "Mean     : " << vector_mean<vector<double>,double>
+      (doublev_obj.size(),doublev_obj) << endl;
     cout << "Std. dev.: " << vector_stddev(doublev_obj.size(),
                                            doublev_obj) << endl;
     size_t ix;
@@ -1938,9 +1938,10 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     
     const vector<double> &cref=table_obj.get_column(i1);
     cout << "N        : " << table_obj.get_nlines() << endl;
-    cout << "Sum      : " << vector_mean(table_obj.get_nlines(),cref)*
-      table_obj.get_nlines() << endl;
-    cout << "Mean     : " << vector_mean(table_obj.get_nlines(),cref) << endl;
+    cout << "Sum      : " << vector_mean<vector<double>,double>
+      (table_obj.get_nlines(),cref)*table_obj.get_nlines() << endl;
+    cout << "Mean     : " << vector_mean<vector<double>,double>
+      (table_obj.get_nlines(),cref) << endl;
     cout << "Std. dev.: " << vector_stddev(table_obj.get_nlines(),cref) << endl;
     size_t ix;
     double val;
@@ -2046,8 +2047,10 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     const std::vector<double> &data=tensor_obj.get_data();
     size_t N=data.size();
     cout << "N        : " << N << endl;
-    cout << "Sum      : " << vector_mean(N,data)*N << endl;
-    cout << "Mean     : " << vector_mean(N,data) << endl;
+    cout << "Sum      : " << vector_mean<vector<double>,double>
+      (N,data)*N << endl;
+    cout << "Mean     : " << vector_mean<vector<double>,double>
+      (N,data) << endl;
     cout << "Std. dev.: " << vector_stddev(N,data) << endl;
     size_t ix;
     vector<size_t> ix2(tensor_obj.get_rank());
@@ -2078,8 +2081,10 @@ int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
     const std::vector<double> &data=tensor_grid_obj.get_data();
     size_t N=data.size();
     cout << "N        : " << N << endl;
-    cout << "Sum      : " << vector_mean(N,data)*N << endl;
-    cout << "Mean     : " << vector_mean(N,data) << endl;
+    cout << "Sum      : " << vector_mean<vector<double>,double>
+      (N,data)*N << endl;
+    cout << "Mean     : " << vector_mean<vector<double>,double>
+      (N,data) << endl;
     cout << "Std. dev.: " << vector_stddev(N,data) << endl;
     size_t ix;
     vector<size_t> ix2(tensor_grid_obj.get_rank());
@@ -3755,6 +3760,11 @@ int acol_manager::comm_sample(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_sum(std::vector<std::string> &sv, bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  
+  cout.precision(precision);
+  
   if (type=="table3d") {
     
     if (sv.size()<2) {

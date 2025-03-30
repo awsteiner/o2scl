@@ -1334,12 +1334,17 @@ int eos_had_temp_pres_base::calc_temp_e(fermion &n, fermion &p,
 int eos_had_base::beta_eq_T0(ubvector &nB_grid, ubvector &guess,
                              eos_leptons &elep,
 			     std::shared_ptr<table_units<> > results) {
+
+  if (guess.size()==0) {
+    O2SCL_ERR2("No guess specified in ",
+               "eos_had_base::beta_eq_T0().",o2scl::exc_einval);
+  }
   
   // Ensure initial guess is valid
   if (guess[0]<=0.0 || guess[0]>=nB_grid[0]) guess[0]=nB_grid[0]/2.0;
 
   results->clear();
-  results->line_of_names("ed pr nb nn np mun mup kfn kfp");
+  results->line_of_names("ed pr nB nn np mun mup kfn kfp");
   results->line_of_units(((std::string)"1/fm^4 1/fm^4 1/fm^3 1/fm^3 ")+
 			 "1/fm^3 1/fm 1/fm 1/fm 1/fm");
   

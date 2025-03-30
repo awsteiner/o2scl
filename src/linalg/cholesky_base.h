@@ -164,8 +164,8 @@ namespace o2scl_linalg {
     return 0;
   }
 
-  /** \brief Compute the determinant of a matrix from its Cholesky decomposition
-      
+  /** \brief Compute the determinant of a matrix from its Cholesky
+      decomposition
   */
   template<class mat_t> 
     double cholesky_det(const size_t M, const mat_t &A) {

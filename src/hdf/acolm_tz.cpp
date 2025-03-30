@@ -2505,14 +2505,16 @@ void acol_manager::xml_replacements(std::string &s,
                  "[h]index-spec[d]");
 
   // Other miscellaneous replacements
-  string_replace(s,"<itemizedlist> <listitem>","★");
-  string_replace(s,"</listitem> <listitem>","★");
+  string_replace(s,"<itemizedlist> <listitem>","-");
+  string_replace(s,"</listitem> <listitem>","-");
   string_replace(s,"</listitem> </itemizedlist>","");
-  string_replace(s,"<orderedlist> <listitem>","★");
+  string_replace(s,"<orderedlist> <listitem>","-");
   string_replace(s,"</listitem> </orderedlist>","");
+  string_replace(s,"<listitem>","-");
+  string_replace(s,"</listitem>","");
   string_replace(s,"<simplesect>","");
   string_replace(s,"</simplesect>","");
-  string_replace(s," ★","★");
+  string_replace(s," -","-");
 
   /*
   if (s.find("<computeroutput>")!=std::string::npos &&

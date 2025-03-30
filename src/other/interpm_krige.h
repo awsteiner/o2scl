@@ -937,7 +937,8 @@ namespace o2scl {
         this->std_y.resize(n_out);
         for(size_t j=0;j<n_out;j++) {
           mat_y_col_t vec(this->y,j);
-          this->mean_y[j]=vector_mean(this->n_points,vec);
+          this->mean_y[j]=vector_mean<mat_y_col_t,double>
+            (this->n_points,vec);
           this->std_y[j]=vector_stddev(this->n_points,vec);
           if (this->verbose>1) {
             std::cout << "interpm_krige_optim::set_data(): ";

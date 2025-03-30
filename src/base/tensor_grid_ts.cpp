@@ -55,10 +55,10 @@ int main(void) {
 	j3[0]=i;
 	j3[1]=j;
 	j3[2]=k;
-	m3.set(j3,((double)i)+j+k);
+	m3.set_arr(j3,((double)i)+j+k);
 	size_t jp=m3.pack_indices(j3);
 	m3.unpack_index(jp,k3);
-	t.test_rel(m3.get(j3),((double)i+j+k),1.0e-12,"R2 element.");
+	t.test_rel(m3.get_arr(j3),((double)i+j+k),1.0e-12,"R2 element.");
 	t.test_gen(j3[0]==k3[0],"R3 pack/unpack.");
 	t.test_gen(j3[1]==k3[1],"R3 pack/unpack.");
 	t.test_gen(j3[2]==k3[2],"R3 pack/unpack.");
@@ -90,7 +90,7 @@ int main(void) {
 	j3[0]=i;
 	j3[1]=j;
 	j3[2]=k;
-	m3.set(j3,2.0*x*x-y-3.0*z*z);
+	m3.set_arr(j3,2.0*x*x-y-3.0*z*z);
 	size_t ix;
 	ix=m3.pack_indices(j3);
 	m3.unpack_index(ix,j4);
@@ -137,7 +137,7 @@ int main(void) {
 	  j3[0]=i;
 	  j3[1]=j;
 	  j3[2]=k;
-	  m3.set(j3,2.0*x*x-y-3.0*z*z);
+	  m3.set_arr(j3,2.0*x*x-y-3.0*z*z);
 	}
       }
     }
@@ -241,7 +241,7 @@ int main(void) {
 	  j3[0]=i;
 	  j3[1]=j;
 	  j3[2]=k;
-	  m3u.set(j3,2.0*x*x-y-3.0*z*z);
+	  m3u.set_arr(j3,2.0*x*x-y-3.0*z*z);
 	}
       }
     }
@@ -318,7 +318,7 @@ int main(void) {
 	ubvector_slice vx=m3u.vector_slice(2,j3);
 	for(size_t k=0;k<i3[2];k++) {
 	  j3[2]=k;
-	  t.test_rel(m3u.get(j3),vx[k],1.0e-12,"vector slice 1.");
+	  t.test_rel(m3u.get_arr(j3),vx[k],1.0e-12,"vector slice 1.");
 	}
       }
     }
@@ -329,7 +329,7 @@ int main(void) {
 	ubvector_slice vx=m3u.vector_slice(1,j3);
 	for(size_t j=0;j<i3[1];j++) {
 	  j3[1]=j;
-	  t.test_rel(m3u.get(j3),vx[j],1.0e-12,"vector slice 2.");
+	  t.test_rel(m3u.get_arr(j3),vx[j],1.0e-12,"vector slice 2.");
 	}
       }
     }
@@ -340,7 +340,7 @@ int main(void) {
 	ubvector_slice vx=m3u.vector_slice(0,j3);
 	for(size_t i=0;i<i3[0];i++) {
 	  j3[0]=i;
-	  t.test_rel(m3u.get(j3),vx[i],1.0e-12,"vector slice 3.");
+	  t.test_rel(m3u.get_arr(j3),vx[i],1.0e-12,"vector slice 3.");
 	}
       }
     }

@@ -222,3 +222,14 @@ pull_v0.930_u24.04_py_mp:
 all_v0.930_u24.04_py_mp: build_v0.930_u24.04_py_mp \
 	test2_v0.930_u24.04_py_mp push_v0.930_u24.04_py_mp 
 
+# ----------------------------------------------
+# cuda_test3
+
+build_ct3:
+	sudo docker buildx build -t cuda_test3 -f cuda_test3 .
+
+test_ct3:
+	sudo docker run --rm --gpus all cuda_test3
+
+run_ct3:
+	sudo docker run --rm -it --gpus all cuda_test3 /bin/bash

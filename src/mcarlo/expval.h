@@ -464,7 +464,7 @@ namespace o2scl {
 	  m_per_block=nperblock;
 	  typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 	  ubmatrix_row row(vals,k);
-	  avg[k]=vector_mean(iblock,row);
+	  avg[k]=vector_mean<ubmatrix_row,double>(iblock,row);
 	  std_dev[k]=vector_stddev(iblock,row);
 	  avg_err[k]=std_dev[k]/sqrt(((double)iblock));
 	
@@ -528,7 +528,7 @@ namespace o2scl {
 	typedef boost::numeric::ublas::matrix_row<ubmatrix> ubmatrix_row;
 	ubmatrix_row row(dat,ik);
 	// Compute average
-	avg[ik]=vector_mean(new_blocks,row);
+	avg[ik]=vector_mean<ubmatrix_row,double>(new_blocks,row);
 	// Compute std. dev. and avg. err. if available
 	if (new_blocks>1) {
 	  std_dev[ik]=vector_stddev(new_blocks,row);
@@ -779,7 +779,7 @@ namespace o2scl {
 	    }
 
 	    // Obtain stats from that vector
-	    avg(j,k)=vector_mean(iblock,col);
+	    avg(j,k)=vector_mean<std::vector<double>,double>(iblock,col);
 	    std_dev(j,k)=vector_stddev(iblock,col);
 	    avg_err(j,k)=std_dev(j,k)/sqrt(((double)iblock));
 
@@ -850,7 +850,7 @@ namespace o2scl {
 	  }
 
 	  // Compute average
-	  avg(ik,jk)=vector_mean(new_blocks,vec);
+	  avg(ik,jk)=vector_mean<std::vector<double>,double>(new_blocks,vec);
 	  // Compute std. dev. and avg. err. if available
 	  if (new_blocks>1) {
 	    std_dev(ik,jk)=vector_stddev(new_blocks,vec);

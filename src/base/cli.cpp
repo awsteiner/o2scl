@@ -353,11 +353,13 @@ int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
       } else if (sv[i]==it->first) {
 	
 	if (debug) {
-	  cout << "Replacing " << sv[i] << " with " << it->second << endl;
-	  cout << "Before: " << endl;
+	  cout << "cli::apply_aliases(): Replacing \"" << sv[i] << "\" with \""
+               << it->second << "\"." << endl;
+	  cout << "  Before: " << endl;
 	  for(size_t j=0;j<sv.size();j++) {
-	    cout << j << ": " << sv[j] << endl;
+	    cout << sv[j] << " ";
 	  }
+          cout << endl;
 	}
 	
 	// ---------------------------------------------------------
@@ -381,10 +383,11 @@ int cli::apply_aliases(vector<string> &sv, size_t istart, bool debug) {
 	}
 	
 	if (debug) {
-	  cout << "After: " << endl;
+	  cout << "  After: " << endl;
 	  for(size_t j=0;j<sv2.size();j++) {
-	    cout << j << ": " << sv2[j] << endl;
+	    cout << sv2[j] << " ";
 	  }
+          cout << endl;
 	}
 	
 	// Set sv equal to the new vector

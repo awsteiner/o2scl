@@ -1532,8 +1532,23 @@ namespace o2scl {
 
     /// \name Prevent copy construction [private]
     //@{
-    calc_utf8(const calc_utf8 &);
-    calc_utf8& operator=(const calc_utf8&);
+    calc_utf8(const calc_utf8 &cu) {
+      
+      verbose=cu.verbose;
+      allow_min=cu.allow_min;
+
+      return;
+    }
+    
+    calc_utf8& operator=(const calc_utf8 &cu) {
+      
+      if (this!=&cu) {
+        verbose=cu.verbose;
+        allow_min=cu.allow_min;
+      }
+
+      return *this;
+    }
     //@}
     
   };

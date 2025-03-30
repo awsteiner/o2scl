@@ -1,0 +1,23 @@
+# Use the official NVIDIA CUDA base image with Ubuntu 24.04
+FROM nvidia/cuda:12.6.1-devel-ubuntu24.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential cmake g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the C++ example source file into the container
+COPY eigen_solver.cu /workspace/eigen_solver.cu
+
+# Set the working directory
+WORKDIR /workspace
+
+# Compile the C++ program
+RUN nvcc -o eigen_solver eigen_solver.cu -lcusolver
+
+# Set the default command to run the compiled program
+CMD ["./eigen_solver"]
+

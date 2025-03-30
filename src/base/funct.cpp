@@ -286,4 +286,22 @@ double funct_python_method::operator()(double x) const {
   return y;
 }
 
+double o2scl::python_get_data_double(PyObject *pInstance,
+                                     std::string name) {
+  
+  PyObject *result=PyObject_GetAttrString(pInstance,name.c_str());
+  if (result==0) {
+    O2SCL_ERR("Failed to get attribute.",o2scl::exc_einval);
+  }
+  if (PyFloat_Check(result)==0) {
+    O2SCL_ERR("Attribute has wrong type.",o2scl::exc_einval);
+  }
+  double y=PyFloat_AsDouble(result);
+  
+  Py_DECREF(result);
+
+  return y;
+}
+
 #endif
+

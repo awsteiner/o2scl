@@ -149,8 +149,8 @@ namespace o2scl {
       p_eval_func=0;
       p_load_func=0;
       p_save_func=0;
-      p_set_args=0;
       p_loadsave_args=0;
+      p_set_args=0;
       p_eval_args=0;
       p_instance=0;
       p_class=0;
@@ -182,6 +182,12 @@ namespace o2scl {
         }
         Py_DECREF(p_eval_func);
       }
+      if (p_set_args!=0) {
+        if (this->verbose>2) {
+          std::cout << "Decref set_args." << std::endl;
+        }
+        Py_DECREF(p_set_args);
+      }
       if (p_load_func!=0) {
         if (this->verbose>2) {
           std::cout << "Decref load_func." << std::endl;
@@ -193,12 +199,6 @@ namespace o2scl {
           std::cout << "Decref save_func." << std::endl;
         }
         Py_DECREF(p_save_func);
-      }
-      if (p_set_args!=0) {
-        if (this->verbose>2) {
-          std::cout << "Decref set_args." << std::endl;
-        }
-        Py_DECREF(p_set_args);
       }
       if (p_loadsave_args!=0) {
         if (this->verbose>2) {
@@ -235,9 +235,9 @@ namespace o2scl {
       p_eval_func=0;
       p_load_func=0;
       p_save_func=0;
+      p_loadsave_args=0;
       p_set_args=0;
       p_eval_args=0;
-      p_loadsave_args=0;
       p_instance=0;
       p_class=0;
       p_module=0;

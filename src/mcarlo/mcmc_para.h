@@ -4815,6 +4815,8 @@ namespace o2scl {
             // location if necessary
             size_t k_best=vector_min_index<std::vector<double>,double>
               (kmax,qual);
+            (this->scr_out) << "mcmc_para_emu::emu_train(): k_best: "
+                            << k_best << std::endl;
             if (k_best!=0) {
               (this->scr_out) << "mcmc_para_emu::emu_train(): "
                               << "Swapping emulators "
@@ -5128,6 +5130,8 @@ namespace o2scl {
             // location if necessary
             size_t k_best=vector_min_index<std::vector<double>,double>
               (kmax,qual);
+            (this->scr_out) << "mcmc_para_emu::class_train(): k_best: "
+                            << k_best << std::endl;
             if (k_best!=0) {
               (this->scr_out) << "mcmc_para_emu::class_train(): "
                               << "Swapping classifiers "

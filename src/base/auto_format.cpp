@@ -45,6 +45,7 @@ auto_format::auto_format() {
   precision_=6;
   outs=&std::cout;
   align_matrices=true;
+  auto_space=true;
 }      
 
 void auto_format::attach(std::ostream &out) {
@@ -235,7 +236,7 @@ void auto_format::add_string(std::string s) {
     if (lines[next_line].length()==0 ||
 	lines[next_line][lines[next_line].length()-1]==' ') {
       lines[next_line]+=s;
-    } else {
+    } else if (auto_space) {
       // Otherwise, add a space
       lines[next_line]+=' '+s;
     }

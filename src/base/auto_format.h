@@ -265,6 +265,9 @@ namespace o2scl_auto_format {
     /** \brief Set the precision of floating-point values
      */
     void precision(size_t p);
+
+    /// If true, automatically add spaces between outputs (default true)
+    bool auto_space;
     //@}
 
   };

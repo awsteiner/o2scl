@@ -470,27 +470,41 @@ int acol_manager::comm_binary(std::vector<std::string> &sv, bool itive_com) {
       return 3;
     }
 
-    // Parse function(s)
-    calc_utf8<> calc;
-    calc.set_rng(rng);
-    std::map<std::string,double> vars;
-    calc.compile(function.c_str(),&vars);
-
-    // Set
-    size_t rk=tensor_grid_obj.get_rank();
-    vector<size_t> ix(rk);
-    for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
-      tensor_grid_obj.unpack_index(i,ix);
-      vector<double> xa;
-      for(size_t j=0;j<rk;j++) {
-	vars[((string)"i")+szttos(j)]=ix[j];
-	vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
-	xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+#endif
+      
+      // Parse function(s)
+      calc_utf8<> calc;
+      calc.set_rng(rng);
+      std::map<std::string,double> vars;
+      calc.compile(function.c_str(),&vars);
+      
+      // Set
+      size_t rk=tensor_grid_obj.get_rank();
+      vector<size_t> ix(rk);
+      
+#ifdef O2SCL_SET_OPENMP
+#pragma omp for
+#endif
+      for(size_t i=0;i<tensor_grid_obj.total_size();i++) {
+        tensor_grid_obj.unpack_index(i,ix);
+        vector<double> xa;
+        for(size_t j=0;j<rk;j++) {
+          vars[((string)"i")+szttos(j)]=ix[j];
+          vars[((string)"x")+szttos(j)]=tensor_grid_obj.get_grid(j,ix[j]);
+          xa.push_back(tensor_grid_obj.get_grid(j,ix[j]));
+        }
+        vars["v"]=tensor_grid_obj.get(ix);
+        vars["w"]=tg.interp_linear(xa);
+        tensor_grid_obj.set(ix,calc.eval(&vars));
       }
-      vars["v"]=tensor_grid_obj.get(ix);
-      vars["w"]=tg.interp_linear(xa);
-      tensor_grid_obj.set(ix,calc.eval(&vars));
+      
+#ifdef O2SCL_SET_OPENMP
+      // End of parallel region
     }
+#endif
     
   } else {
     cerr << "Not implemented for type " << type << " ." << endl;

@@ -53,7 +53,7 @@ int main(void) {
 #ifdef O2SCL_SET_PYTHON
   
   // Construct the data
-  static const size_t N=100;
+  static const size_t N=400;
   ubvector x(N), y(N), dp(N), dp2(N);
 
   for(size_t i=0;i<N;i++) {
@@ -92,22 +92,23 @@ int main(void) {
 
     // Sklearn Gaussian process, n_out=1
     
-    tensor<> tin, tout;
+    tensor2<> tin, tout;
     vector<size_t> in_size={N,2}, out_size={N,1};
     tin.resize(2,in_size);
     tout.resize(2,out_size);
     for(size_t j=0;j<N;j++) {
-      vector<size_t> ix;
-      ix={j,0};
-      tin.get(ix)=x[j];
-      tout.get(ix)=dp[j];
-      ix={j,1};
-      tin.get(ix)=y[j];
+      //vector<size_t> ix;
+      //ix={j,0};
+      tin.get(j,0)=x[j];
+      tout.get(j,0)=dp[j];
+      //ix={j,1};
+      tin.get(j,1)=y[j];
     }
 
-    interpm_python<> ip("interpm_sklearn_gp","verbose=3",1);
+    interpm_python<> ip("interpm_sklearn_gp","verbose=3,test_size=0.1",3);
                       
     ip.set_data_tensor(2,1,N,tin,tout);
+    cout << "score: " << ip.get_score() << endl;
     
     std::vector<double> ex(2), ey(1), eyp(1);
     ex[0]=0.5;
@@ -124,7 +125,18 @@ int main(void) {
     cout << f(0.5,0.5) << endl;
     t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
     t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 3");
-    
+
+    tensor2<> ttest, test_out;
+    vector<size_t> test_size={2,2};
+    ttest.resize(2,test_size);
+    ttest.set(0,0,0.45);
+    ttest.set(0,1,0.55);
+    ttest.set(1,0,0.65);
+    ttest.set(1,1,0.75);
+    ip.eval_list_tensor(ttest,test_out);
+    t.test_rel(test_out.get(0,0),f(0.45,0.55),1.0e-4,"sklearn gp3b");
+    t.test_rel(test_out.get(1,0),f(0.65,0.75),1.0e-4,"sklearn gp3c");
+
     cout << endl;
   }
     
@@ -149,7 +161,7 @@ int main(void) {
                       ((std::string)"verbose=3,kernel=ConstantKernel")+
                       "(1.0,constant_value_bounds=\"fixed\")*"+
                       "RBF(1.0,length_scale_bounds=\"fixed\")",
-                      1);
+                      3);
     ip.set_data_tensor(2,1,N,tin,tout);
     
     std::vector<double> ex(2), ey(1), eyp(1);
@@ -158,15 +170,15 @@ int main(void) {
     ip.eval_std_vec(ex,ey);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 4");
 
     ex[0]=0.5;
     ex[1]=0.5;
     ip.eval_unc_std_vec(ex,ey,eyp);
     cout << ey[0] << endl;
     cout << f(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 2");
-    t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 3");
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 5");
+    t.test_abs(eyp[0],0.0,1.0e-5,"sklearn gp 6");
     
     cout << endl;
   }
@@ -199,8 +211,8 @@ int main(void) {
     ip.eval_std_vec(ex,ey);
     cout << ey[0] << " " << ey[1] << endl;
     cout << f(0.5,0.5) << " " << f2(0.5,0.5) << endl;
-    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 1");
-    t.test_rel(ey[1],f2(ex[0],ex[1]),0.1,"sklearn gp 2");
+    t.test_rel(ey[0],f(ex[0],ex[1]),0.1,"sklearn gp 7");
+    t.test_rel(ey[1],f2(ex[0],ex[1]),0.1,"sklearn gp 8");
     
     for(size_t i=0;i<100;i++) {
       for(size_t j=0;j<100;j++) {
