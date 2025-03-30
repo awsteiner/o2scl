@@ -333,11 +333,10 @@ namespace o2scl {
               f25.mu=-pow(10,f25.mu);
             }
             
-            std::cout.width(4);
-            std::cout << count << " ";
-            
             if (count>=first_test && count<=last_test) {
               
+              std::cout.width(4);
+              std::cout << count << " ";
               std::cout << f.m << " " << T << " ";
               std::cout.setf(std::ios::showpos);
               std::cout << f.mu << " ";
@@ -474,10 +473,6 @@ namespace o2scl {
                 exit(-1);
               }
               
-            } else {
-              
-              std::cout << std::endl;
-              
             }
             
             count++;
@@ -583,10 +578,10 @@ namespace o2scl {
               f25.mu=-pow(10,f25.mu);
             }
             
-            std::cout.width(4);
-            std::cout << count << " ";
-            
             if (count>=first_test && count<=last_test) {
+              
+              std::cout.width(4);
+              std::cout << count << " ";
               
               std::cout << f.m << " " << T << " ";
               std::cout.setf(std::ios::showpos);
@@ -680,10 +675,6 @@ namespace o2scl {
               pmu_25_ti+=x25;
               std::cout.width(2);
               std::cout << x25 << " pmu" << std::endl;
-              
-            } else {
-              
-              std::cout << std::endl;
               
             }
             

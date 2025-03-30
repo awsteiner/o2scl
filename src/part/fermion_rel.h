@@ -946,6 +946,7 @@ namespace o2scl {
       if (multip) {
         
         fp_t dr_err;
+        density_root.verbose=2;
         int amret=density_root.solve_multip(nex,[this,temper,f,
                                                  ue=use_expansions,
                                                  dl=deg_limit,

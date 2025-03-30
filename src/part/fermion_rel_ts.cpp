@@ -276,6 +276,9 @@ int main(int argc, char *argv[]) {
     part_cal_new<> pcn;
     pcn.test_calc_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
                      1826,1827,2420,2405,1754,2154,3311);
+    count=0
+    pcn.test_pair_mu(f,fld,f25,fr,frld,fr25,t,count,first_test,last_test,
+                     1500,1473,2272,2132,1376,2006,2680);
     
   }
 
