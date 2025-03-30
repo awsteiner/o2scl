@@ -281,8 +281,8 @@ namespace o2scl {
 #pragma omp parallel default(shared)
     {
 #pragma omp for
-       for(size_t j=0;j<N;j++) {
-         dest[j]=src[j];
+      for(size_t j=0;j<N;j++) {
+        dest[j]=src[j];
       }
       // End of parallel region
     }
@@ -383,7 +383,7 @@ namespace o2scl {
       <tt>size()</tt>, and <tt>resize()</tt> methods.
   */
   template<class mat_t, class mat2_t> 
-    void matrix_transpose(mat_t &src, mat2_t &dest) {
+  void matrix_transpose(mat_t &src, mat2_t &dest) {
     
     size_t m=src.size1();
     size_t n=src.size2();
@@ -1488,13 +1488,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_max_value().",exc_efailed);
     }
-    data_t max=data[0];
+    data_t max_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(max:max_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]>max) {
-	max=data[i];
+      if (data[i]>max_val) {
+	max_val=data[i];
       }
     }
-    return max;
+    return max_val;
   }
 
   /** \brief Compute the maximum value of a vector
@@ -1506,13 +1509,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent empty vector to vector_max_value().",exc_efailed);
     }
-    data_t max=data[0];
+    data_t max_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(max:max_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]>max) {
-	max=data[i];
+      if (data[i]>max_val) {
+	max_val=data[i];
       }
     }
-    return max;
+    return max_val;
   }
 
   /** \brief Compute the index which holds the 
@@ -1563,13 +1569,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent size=0 to vector_min_value().",exc_efailed);
     }
-    data_t min=data[0];
+    data_t min_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(min:min_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]<min) {
-	min=data[i];
+      if (data[i]<min_val) {
+	min_val=data[i];
       }
     }
-    return min;
+    return min_val;
   }
 
   /** \brief Compute the minimum value in a vector
@@ -1581,13 +1590,16 @@ namespace o2scl {
     if (n==0) {
       O2SCL_ERR("Sent empty vector to vector_min_value().",exc_efailed);
     }
-    data_t min=data[0];
+    data_t min_val=data[0];
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(min:min_val)
+#endif
     for(size_t i=1;i<n;i++) {
-      if (data[i]<min) {
-	min=data[i];
+      if (data[i]<min_val) {
+	min_val=data[i];
       }
     }
-    return min;
+    return min_val;
   }
 
   /** \brief Compute the index which holds the 
@@ -2570,6 +2582,9 @@ namespace o2scl {
     data_t vector_sum(size_t n, const vec_t &data) {
     
     data_t sum=0;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2629,7 +2644,11 @@ namespace o2scl {
   */
   template<class vec_t, class data_t> data_t vector_sum(vec_t &data) {
     data_t sum=0;
-    for(size_t i=0;i<data.size();i++) {
+    size_t n=data.size();
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
+    for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
     return sum;
@@ -2643,6 +2662,9 @@ namespace o2scl {
   */
   template<class vec_t>double vector_sum_double(size_t n, vec_t &data) {
     double sum=0;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2657,7 +2679,11 @@ namespace o2scl {
   */
   template<class vec_t> double vector_sum_double(vec_t &data) {
     double sum=0;
-    for(size_t i=0;i<data.size();i++) {
+    size_t n=data.size();
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
+    for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
     return sum;

@@ -1100,9 +1100,11 @@ namespace o2scl {
                   exc_esanity);
         return;
       }
-      for(size_t i=0;i<nlines;i++) {
-        itd->second.dat[i]=its->second.dat[i];
-      }
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      vector_copy(nlines,its->second.dat,itd->second.dat);
+      //for(size_t i=0;i<nlines;i++) {
+      //itd->second.dat[i]=its->second.dat[i];
+      //}
       return;
     }
 
@@ -1114,9 +1116,11 @@ namespace o2scl {
     template<class resize_vec_t> 
     void column_to_vector(std::string scol, resize_vec_t &v) const {
       v.resize(nlines);
-      for(size_t i=0;i<nlines;i++) {
-        v[i]=this->get(scol,i);
-      }
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      vector_copy(nlines,scol,v);
+      //for(size_t i=0;i<nlines;i++) {
+      //v[i]=this->get(scol,i);
+      //}
       return;
     }
 
@@ -1141,9 +1145,11 @@ namespace o2scl {
         intp_set=false;
       }
 
-      for(size_t i=0;i<nlines;i++) {
-        it->second.dat[i]=v[i];
-      }
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      vector_copy(nlines,v,it->second.dat);
+      //for(size_t i=0;i<nlines;i++) {
+      //it->second.dat[i]=v[i];
+      //}
     
       return;
     }
@@ -1425,6 +1431,10 @@ namespace o2scl {
 
         If no rows match the delete condition, this function silently
         performs no changes to the table.
+
+        \note AWS, 3/29/25. This creates a calc_utf8 object for
+        every row, which is too slow, and can be sped up
+        (including OpenMP).
     */
     void delete_rows_func(std::string func, int loc_verbose=0) {
       size_t new_nlines=0;
@@ -1482,6 +1492,10 @@ namespace o2scl {
         necessary. It then copies all rows where \c func evaluates to a
         number greater than 0.5 to table \c dest by adding rows at
         the end of the table.
+
+        \note AWS, 3/29/25. This creates a calc_utf8 object for
+        every row, which is too slow, and can be sped up
+        (including OpenMP).
     */
     template<class vec2_t>
     void copy_rows(std::string func, table<vec2_t> &dest,
