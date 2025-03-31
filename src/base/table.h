@@ -1100,11 +1100,8 @@ namespace o2scl {
                   exc_esanity);
         return;
       }
-      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support?
       vector_copy(nlines,its->second.dat,itd->second.dat);
-      //for(size_t i=0;i<nlines;i++) {
-      //itd->second.dat[i]=its->second.dat[i];
-      //}
       return;
     }
 
@@ -1116,11 +1113,8 @@ namespace o2scl {
     template<class resize_vec_t> 
     void column_to_vector(std::string scol, resize_vec_t &v) const {
       v.resize(nlines);
-      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support?
       vector_copy(nlines,scol,v);
-      //for(size_t i=0;i<nlines;i++) {
-      //v[i]=this->get(scol,i);
-      //}
       return;
     }
 
@@ -1145,11 +1139,8 @@ namespace o2scl {
         intp_set=false;
       }
 
-      // AWS, 3/29/25, Use vector_copy() with OpenMP support
+      // AWS, 3/29/25, Use vector_copy() with OpenMP support?
       vector_copy(nlines,v,it->second.dat);
-      //for(size_t i=0;i<nlines;i++) {
-      //it->second.dat[i]=v[i];
-      //}
     
       return;
     }

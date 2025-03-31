@@ -234,18 +234,6 @@ namespace o2scl {
 
     if (dest.size()<N) dest.resize(N);
 
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-      for(size_t j=0;j<N;j++) {
-        dest[j]=src[j];
-      }
-      // End of parallel region
-    }
-    
-#else
-    
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
       dest[i]=src[i];
@@ -257,6 +245,36 @@ namespace o2scl {
       dest[i+3]=src[i+3];
     }
     
+    return;
+  }
+  
+  /** \brief Simple vector copy (with OpenMP)
+
+      Copy \c src to \c dest, resizing \c dest only if it is too small
+      to hold <tt>src.size()</tt> elements.
+
+      This function will work for any classes \c vec_t and
+      \c vec2_t which have suitably defined <tt>operator[]</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class vec_t, class vec2_t> 
+  void vector_copy_openmp(const vec_t &src, vec2_t &dest) {
+    size_t N=src.size();
+
+    if (dest.size()<N) dest.resize(N);
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+    {
+#pragma omp for
+      for(size_t j=0;j<N;j++) {
+        dest[j]=src[j];
+      }
+      // End of parallel region
+    }
+    
+#else
+    vector_copy(src,dest);
 #endif
     
     return;
@@ -277,6 +295,35 @@ namespace o2scl {
   template<class vec_t, class vec2_t> 
     void vector_copy(size_t N, const vec_t &src, vec2_t &dest) {
 
+    size_t i, m=N%4;
+    for(i=0;i<m;i++) {
+      dest[i]=src[i];
+    }
+    for(i=m;i+3<N;i+=4) {
+      dest[i]=src[i];
+      dest[i+1]=src[i+1];
+      dest[i+2]=src[i+2];
+      dest[i+3]=src[i+3];
+    }
+    
+    return;
+  }
+
+  /** \brief Simple vector copy of the first N elements (with OpenMP)
+
+      Copy the first \c N elements of \c src to \c dest.
+      It is assumed that the memory allocation for \c dest
+      has already been performed.
+
+      This function will work for any class <tt>vec2_t</tt> which has
+      an operator[] which returns a reference to the corresponding
+      element and class <tt>vec_t</tt> with an operator[] which
+      returns either a reference or the value of the corresponding
+      element.
+  */
+  template<class vec_t, class vec2_t> 
+    void vector_copy_openmp(size_t N, const vec_t &src, vec2_t &dest) {
+
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
     {
@@ -288,17 +335,8 @@ namespace o2scl {
     }
     
 #else
-    
-    size_t i, m=N%4;
-    for(i=0;i<m;i++) {
-      dest[i]=src[i];
-    }
-    for(i=m;i+3<N;i+=4) {
-      dest[i]=src[i];
-      dest[i+1]=src[i+1];
-      dest[i+2]=src[i+2];
-      dest[i+3]=src[i+3];
-    }
+
+    vector_copy(N,src,dest);
     
 #endif
     
@@ -316,6 +354,31 @@ namespace o2scl {
   */
   template<class mat_t, class mat2_t> 
     void matrix_copy(mat_t &src, mat2_t &dest) {
+    
+    size_t m=src.size1();
+    size_t n=src.size2();
+    if (dest.size1()<m || dest.size2()<n) dest.resize(m,n);
+    
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+        dest(i,j)=src(i,j);
+      }
+    }
+    
+    return;
+  }
+
+  /** \brief Simple matrix copy (with OpenMP)
+      
+      Copy \c src to \c dest, resizing \c dest only if either
+      of the two dimensions are too small.
+      
+      This function will work for any classes \c mat_t and
+      \c mat2_t which have suitably defined <tt>operator()</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class mat_t, class mat2_t> 
+    void matrix_copy_openmp(mat_t &src, mat2_t &dest) {
     
     size_t m=src.size1();
     size_t n=src.size2();
@@ -355,6 +418,30 @@ namespace o2scl {
   template<class mat_t, class mat2_t> 
   void matrix_copy(size_t M, size_t N, mat_t &src, mat2_t &dest) {
     
+    for(size_t i=0;i<M;i++) {
+      for(size_t j=0;j<N;j++) {
+        dest(i,j)=src(i,j);
+      }
+    }
+    return;
+  }
+
+  /** \brief Simple matrix copy of the first \f$ (M,N) \f$ 
+      matrix elements (with OpenMP)
+
+      Copy the first <tt>(M,N)</tt> elements of \c src to \c dest. It
+      is assumed that the memory allocation for \c dest has already
+      been performed.
+
+      This function will work for any class <tt>vec2_t</tt> which has
+      an operator[][] which returns a reference to the corresponding
+      element and class <tt>vec_t</tt> with an operator[][] which
+      returns either a reference or the value of the corresponding
+      element.
+  */
+  template<class mat_t, class mat2_t> 
+  void matrix_copy_openmp(size_t M, size_t N, mat_t &src, mat2_t &dest) {
+    
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
     {
@@ -368,7 +455,10 @@ namespace o2scl {
 #ifdef O2SCL_SET_OPENMP
     }
 #endif
+
+    return;
   }
+  
   //@}
 
   /// \name Tranpositions in src/base/vector.h
@@ -389,6 +479,31 @@ namespace o2scl {
     size_t n=src.size2();
     if (dest.size1()<n || dest.size2()<m) dest.resize(n,m);
     
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+        dest(i,j)=src(j,i);
+      }
+    }
+    
+    return;
+  }
+
+  /** \brief Simple transpose (with OpenMP)
+      
+      Copy the transpose of \c src to \c dest, resizing \c dest only
+      if one of the two dimensions are too small.
+      
+      This function will work for any classes \c mat_t and
+      \c mat2_t which have suitably defined <tt>operator()</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class mat_t, class mat2_t> 
+  void matrix_transpose_openmp(mat_t &src, mat2_t &dest) {
+    
+    size_t m=src.size1();
+    size_t n=src.size2();
+    if (dest.size1()<n || dest.size2()<m) dest.resize(n,m);
+    
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
     {
@@ -402,6 +517,7 @@ namespace o2scl {
 #ifdef O2SCL_SET_OPENMP
     }
 #endif
+    return;
   }
 
   /** \brief Simple transpose of the first \f$ (m,n) \f$
@@ -415,6 +531,27 @@ namespace o2scl {
   */
   template<class mat_t, class mat2_t> 
     void matrix_transpose(size_t m, size_t n, mat_t &src, mat2_t &dest) {
+
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+        dest(i,j)=src(j,i);
+      }
+    }
+    return;
+  }
+
+  /** \brief Simple transpose of the first \f$ (m,n) \f$
+      matrix elements (with OpenMP)
+
+      Copy the transpose of the first \c m rows and the first \c cols
+      of the matrix \c src into the matrix \c dest
+      
+      This function will work for any classes \c mat_t and \c mat2_t
+      which has a suitably defined <tt>operator()</tt> method.
+  */
+  template<class mat_t, class mat2_t> 
+    void matrix_transpose_openmp(size_t m, size_t n, mat_t &src,
+                                 mat2_t &dest) {
 
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel default(shared)
@@ -451,6 +588,34 @@ namespace o2scl {
     // Choose the smaller of n and m
     if (m<n) n=m;
     
+    for(size_t i=0;i<n;i++) {
+      for(size_t j=0;j<n;j++) {
+        data_t tmp=src(i,j);
+        src(i,j)=src(j,i);
+        src(j,i)=tmp;
+      }
+    }
+    return;
+  }
+
+  /** \brief Simple in-place transpose (with OpenMP)
+      
+      Transpose the matrix \c src . If the matrix is not square,
+      only the upper-left square part of the matrix will be
+      transposed.
+      
+      This function will work for any classes \c mat_t and
+      \c mat2_t which have suitably defined <tt>operator()</tt>,
+      <tt>size()</tt>, and <tt>resize()</tt> methods.
+  */
+  template<class mat_t, class data_t> 
+    void matrix_transpose_openmp(mat_t &src) {
+
+    size_t m=src.size1();
+    size_t n=src.size2();
+    // Choose the smaller of n and m
+    if (m<n) n=m;
+    
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
     {
@@ -472,6 +637,7 @@ namespace o2scl {
 #ifdef O2SCL_SET_OPENMP
     }
 #endif
+    return;
   }
 
   /** \brief Simple in-place transpose of the first \f$ (m,n) \f$ 
@@ -489,7 +655,34 @@ namespace o2scl {
       size).
   */
   template<class mat_t, class data_t> 
-    void matrix_transpose(size_t m, size_t n, mat_t &src) {
+  void matrix_transpose(size_t m, size_t n, mat_t &src) {
+    
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=0;j<n;j++) {
+        data_t tmp=src(i,j);
+        src(i,j)=src(j,i);
+        src(j,i)=tmp;
+      }
+    }
+    return;
+  }
+  
+  /** \brief Simple in-place transpose of the first \f$ (m,n) \f$ 
+      matrix elements (with OpenMP)
+      
+      Copy the transpose of the first \c m rows and the first \c cols
+      of the matrix \c src into the matrix \c dest
+      
+      This function will work for any classes \c mat_t and \c mat2_t
+      which has a suitably defined <tt>operator()</tt> method.
+
+      \warning No checking is performed to ensure that the matrix has
+      enough rows and columns to ensure that this makes sense, because
+      not all matrix types have the same way of determining the matrix
+      size).
+  */
+  template<class mat_t, class data_t> 
+  void matrix_transpose_openmp(size_t m, size_t n, mat_t &src) {
 
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
@@ -512,7 +705,8 @@ namespace o2scl {
 #ifdef O2SCL_SET_OPENMP
     }
 #endif
-    
+
+    return;
   }
   //@}
 
@@ -553,19 +747,11 @@ namespace o2scl {
   template<class mat_t> void matrix_make_lower(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
 	src(i,j)=0;
       }
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
   
@@ -575,19 +761,11 @@ namespace o2scl {
   template<class mat_t> void matrix_make_upper(mat_t &src) {
     size_t m=src.size1();
     size_t n=src.size2();
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
 	src(i,j)=0;
       }
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
 
@@ -624,19 +802,11 @@ namespace o2scl {
   */
   template<class mat_t> void matrix_make_lower(size_t m, size_t n, 
 					       mat_t &src) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
     for(size_t i=0;i<m;i++) {
       for(size_t j=i+1;j<n;j++) {
 	src(i,j)=0;
       }
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
   
@@ -645,19 +815,11 @@ namespace o2scl {
   */
   template<class mat_t> void matrix_make_upper(size_t m, size_t n, 
 					       mat_t &src) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
     for(size_t j=0;j<n;j++) {
       for(size_t i=j+1;i<m;i++) {
 	src(i,j)=0;
       }
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
   //@}
@@ -668,27 +830,11 @@ namespace o2scl {
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time. 
-*/
+  */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap(size_t N, vec_t &v1, vec2_t &v2) {
 
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel
-    {
-      
-      data_t temp;
-#pragma omp for
-      for(size_t i=0;i<N;i++) {
-        temp=v1[i];
-        v1[i]=v2[i];
-        v2[i]=temp;
-      }
-
-      // End of parallel region
-    }
-    
-#else
-
+    data_t temp;
     size_t i, m=N%4;
     for(i=0;i<m;i++) {
       temp=v1[i];
@@ -710,6 +856,37 @@ namespace o2scl {
       v2[i+3]=temp;
     }
     
+    return;
+  }
+
+  /** \brief Swap the first \c N elements of two vectors
+      (with OpenMP)
+
+      This function swaps the elements of \c v1 and \c v2, one element
+      at a time. 
+  */
+  template<class vec_t, class vec2_t, class data_t> 
+    void vector_swap_openmp(size_t N, vec_t &v1, vec2_t &v2) {
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+      
+      data_t temp;
+#pragma omp for
+      for(size_t i=0;i<N;i++) {
+        temp=v1[i];
+        v1[i]=v2[i];
+        v2[i]=temp;
+      }
+
+      // End of parallel region
+    }
+    
+#else
+
+    vector_swap(N,v1,v2);
+    
 #endif
     
     return;
@@ -728,23 +905,6 @@ namespace o2scl {
     void vector_swap(vec_t &v1, vec2_t &v2) {
     size_t N=v1.size();
     if (v2.size()<N) N=v2.size();
-    
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel
-    {
-      
-      data_t temp;
-#pragma omp for
-      for(size_t i=0;i<N;i++) {
-        temp=v1[i];
-        v1[i]=v2[i];
-        v2[i]=temp;
-      }
-
-      // End of parallel region
-    }
-    
-#else
     
     data_t temp;
     size_t i, m=N%4;
@@ -767,7 +927,43 @@ namespace o2scl {
       v1[i+3]=v2[i+3];
       v2[i+3]=temp;
     }
+    
+    return;
+  }
 
+  /** \brief Swap all elements in two vectors (with OpenMP)
+
+      This function swaps the elements of \c v1 and \c v2, one element
+      at a time.
+
+      \note It is better to use <tt>std::swap</tt> than this function.
+      This function is provided for use in cases where one is using
+      vector types which do not provide a <tt>std::swap</tt> method.
+  */
+  template<class vec_t, class vec2_t, class data_t> 
+    void vector_swap_openmp(vec_t &v1, vec2_t &v2) {
+    size_t N=v1.size();
+    if (v2.size()<N) N=v2.size();
+    
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel
+    {
+      
+      data_t temp;
+#pragma omp for
+      for(size_t i=0;i<N;i++) {
+        temp=v1[i];
+        v1[i]=v2[i];
+        v2[i]=temp;
+      }
+
+      // End of parallel region
+    }
+    
+#else
+
+    vector_swap(v1,v2);
+    
 #endif
     
     return;
@@ -833,6 +1029,26 @@ namespace o2scl {
   template<class mat_t, class mat2_t, class data_t> 
     void matrix_swap(size_t M, size_t N, mat_t &v1, mat2_t &v2) {
     
+    for(size_t i=0;i<M;i++) {
+      for(size_t j=0;j<N;j++) {
+        data_t temp=v1[i][j];
+        v1[i][j]=v2[i][j];
+        v2[i][j]=temp;
+      }
+    }
+      
+    return;
+  }
+
+  /** \brief Swap of the first \f$ (M,N) \f$ elements in two
+      matrices (with OpenMP)
+      
+      This function swaps the elements of \c v1 and \c v2, one element
+      at a time.
+  */
+  template<class mat_t, class mat2_t, class data_t> 
+    void matrix_swap_openmp(size_t M, size_t N, mat_t &v1, mat2_t &v2) {
+    
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
     {
@@ -895,23 +1111,12 @@ namespace o2scl {
       element <tt>(i2,j2)</tt> of matrix \c m1. 
   */
   template<class mat_t, class data_t> 
-    void matrix_swap_cols(size_t M, mat_t &m, size_t j1, size_t j2) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel
-    {
-#endif
-      data_t temp;
-#ifdef O2SCL_SET_OPENMP
-#pragma omp for
-#endif
-      for(size_t i=0;i<M;i++) {
-        temp=m(i,j1);
-        m(i,j1)=m(i,j2);
-        m(i,j2)=temp;
-      }
-#ifdef O2SCL_SET_OPENMP
+  void matrix_swap_cols(size_t M, mat_t &m, size_t j1, size_t j2) {
+    for(size_t i=0;i<M;i++) {
+      data_t temp=m(i,j1);
+      m(i,j1)=m(i,j2);
+      m(i,j2)=temp;
     }
-#endif
     return;
   }
   
@@ -934,22 +1139,11 @@ namespace o2scl {
   */
   template<class mat_t, class data_t> 
     void matrix_swap_rows(size_t N, mat_t &m, size_t i1, size_t i2) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel
-    {
-#endif
-      data_t temp;
-#ifdef O2SCL_SET_OPENMP
-#pragma omp for
-#endif
     for(size_t j=0;j<N;j++) {
-      temp=m(i1,j);
+      data_t temp=m(i1,j);
       m(i1,j)=m(i2,j);
       m(i2,j)=temp;
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
   
@@ -1489,9 +1683,6 @@ namespace o2scl {
       O2SCL_ERR("Sent size=0 to vector_max_value().",exc_efailed);
     }
     data_t max_val=data[0];
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(max:max_val)
-#endif
     for(size_t i=1;i<n;i++) {
       if (data[i]>max_val) {
 	max_val=data[i];
@@ -1510,9 +1701,6 @@ namespace o2scl {
       O2SCL_ERR("Sent empty vector to vector_max_value().",exc_efailed);
     }
     data_t max_val=data[0];
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(max:max_val)
-#endif
     for(size_t i=1;i<n;i++) {
       if (data[i]>max_val) {
 	max_val=data[i];
@@ -1570,9 +1758,6 @@ namespace o2scl {
       O2SCL_ERR("Sent size=0 to vector_min_value().",exc_efailed);
     }
     data_t min_val=data[0];
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(min:min_val)
-#endif
     for(size_t i=1;i<n;i++) {
       if (data[i]<min_val) {
 	min_val=data[i];
@@ -1591,9 +1776,6 @@ namespace o2scl {
       O2SCL_ERR("Sent empty vector to vector_min_value().",exc_efailed);
     }
     data_t min_val=data[0];
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(min:min_val)
-#endif
     for(size_t i=1;i<n;i++) {
       if (data[i]<min_val) {
 	min_val=data[i];
@@ -2582,9 +2764,6 @@ namespace o2scl {
     data_t vector_sum(size_t n, const vec_t &data) {
     
     data_t sum=0;
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(+:sum)
-#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2599,40 +2778,25 @@ namespace o2scl {
 
     size_t n=v_data.size();
     v_diffs.resize(n-1);
-
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
-      for(size_t i=0;i<n-1;i++) {
-        v_diffs[i]=v_data[i+1]-v_data[i];
-      }
-#ifdef O2SCL_SET_OPENMP
+    
+    for(size_t i=0;i<n-1;i++) {
+      v_diffs[i]=v_data[i+1]-v_data[i];
     }
-#endif
     
     return;
   }
-  
+
   /** \brief Create a new vector containing the differences between
       adjacent entries
   */
   template<class vec_t, class rvec_t>
   void vector_diffs(size_t n, const vec_t &v_data, rvec_t &v_diffs) {
-
+    
     v_diffs.resize(n-1);
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
+    
     for(size_t i=0;i<n-1;i++) {
       v_diffs[i]=v_data[i+1]-v_data[i];
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     
     return;
   }
@@ -2645,9 +2809,6 @@ namespace o2scl {
   template<class vec_t, class data_t> data_t vector_sum(vec_t &data) {
     data_t sum=0;
     size_t n=data.size();
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(+:sum)
-#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2662,9 +2823,6 @@ namespace o2scl {
   */
   template<class vec_t>double vector_sum_double(size_t n, vec_t &data) {
     double sum=0;
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(+:sum)
-#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2680,9 +2838,6 @@ namespace o2scl {
   template<class vec_t> double vector_sum_double(vec_t &data) {
     double sum=0;
     size_t n=data.size();
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel for reduction(+:sum)
-#endif
     for(size_t i=0;i<n;i++) {
       sum+=data[i];
     }
@@ -2782,18 +2937,10 @@ namespace o2scl {
   /** \brief Set the first N entries in a vector to a particular value
    */
   template<class vec_t, class data_t> 
-    void vector_set_all(size_t N, vec_t &src, data_t val) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
-      for(size_t i=0;i<N;i++) {
-        src[i]=val;
-      }
-#ifdef O2SCL_SET_OPENMP
+  void vector_set_all(size_t N, vec_t &src, data_t val) {
+    for(size_t i=0;i<N;i++) {
+      src[i]=val;
     }
-#endif
     return;
   }
   
@@ -2809,19 +2956,11 @@ namespace o2scl {
    */
   template<class mat_t, class data_t> 
     void matrix_set_all(size_t M, size_t N, mat_t &src, data_t val) {
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-    {
-#pragma omp for
-#endif
     for(size_t i=0;i<M;i++) {
       for(size_t j=0;j<N;j++) {
 	src(i,j)=val;
       }
     }
-#ifdef O2SCL_SET_OPENMP
-    }
-#endif
     return;
   }
   
