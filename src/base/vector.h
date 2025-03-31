@@ -256,6 +256,9 @@ namespace o2scl {
       This function will work for any classes \c vec_t and
       \c vec2_t which have suitably defined <tt>operator[]</tt>,
       <tt>size()</tt>, and <tt>resize()</tt> methods.
+
+      \note This OpenMP copy is only faster for sufficiently large
+      vectors (depending on the nature of the actual vector type).
   */
   template<class vec_t, class vec2_t> 
   void vector_copy_openmp(const vec_t &src, vec2_t &dest) {
@@ -320,6 +323,9 @@ namespace o2scl {
       element and class <tt>vec_t</tt> with an operator[] which
       returns either a reference or the value of the corresponding
       element.
+
+      \note This OpenMP copy is only faster for sufficiently large
+      vectors (depending on the nature of the actual vector type).
   */
   template<class vec_t, class vec2_t> 
     void vector_copy_openmp(size_t N, const vec_t &src, vec2_t &dest) {
@@ -376,6 +382,9 @@ namespace o2scl {
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
       <tt>size()</tt>, and <tt>resize()</tt> methods.
+
+      \note This OpenMP copy is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class mat2_t> 
     void matrix_copy_openmp(mat_t &src, mat2_t &dest) {
@@ -438,6 +447,9 @@ namespace o2scl {
       element and class <tt>vec_t</tt> with an operator[][] which
       returns either a reference or the value of the corresponding
       element.
+
+      \note This OpenMP copy is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class mat2_t> 
   void matrix_copy_openmp(size_t M, size_t N, mat_t &src, mat2_t &dest) {
@@ -496,6 +508,9 @@ namespace o2scl {
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
       <tt>size()</tt>, and <tt>resize()</tt> methods.
+
+      \note This OpenMP transpose is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class mat2_t> 
   void matrix_transpose_openmp(mat_t &src, mat2_t &dest) {
@@ -548,6 +563,9 @@ namespace o2scl {
       
       This function will work for any classes \c mat_t and \c mat2_t
       which has a suitably defined <tt>operator()</tt> method.
+
+      \note This OpenMP transpose is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class mat2_t> 
     void matrix_transpose_openmp(size_t m, size_t n, mat_t &src,
@@ -607,6 +625,9 @@ namespace o2scl {
       This function will work for any classes \c mat_t and
       \c mat2_t which have suitably defined <tt>operator()</tt>,
       <tt>size()</tt>, and <tt>resize()</tt> methods.
+
+      \note This OpenMP transpose is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class data_t> 
     void matrix_transpose_openmp(mat_t &src) {
@@ -680,6 +701,9 @@ namespace o2scl {
       enough rows and columns to ensure that this makes sense, because
       not all matrix types have the same way of determining the matrix
       size).
+
+      \note This OpenMP transpose is only faster for sufficiently large
+      matrices (depending on the nature of the actual vector type).
   */
   template<class mat_t, class data_t> 
   void matrix_transpose_openmp(size_t m, size_t n, mat_t &src) {
@@ -864,6 +888,9 @@ namespace o2scl {
 
       This function swaps the elements of \c v1 and \c v2, one element
       at a time. 
+
+      \note This OpenMP swap is only faster for sufficiently large
+      vectors (depending on the nature of the actual vector type).
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap_openmp(size_t N, vec_t &v1, vec2_t &v2) {
@@ -939,6 +966,9 @@ namespace o2scl {
       \note It is better to use <tt>std::swap</tt> than this function.
       This function is provided for use in cases where one is using
       vector types which do not provide a <tt>std::swap</tt> method.
+
+      \note This OpenMP swap is only faster for sufficiently large
+      vectors (depending on the nature of the actual vector type).
   */
   template<class vec_t, class vec2_t, class data_t> 
     void vector_swap_openmp(vec_t &v1, vec2_t &v2) {
@@ -1045,6 +1075,9 @@ namespace o2scl {
       
       This function swaps the elements of \c v1 and \c v2, one element
       at a time.
+
+      \note This OpenMP swap is only faster for sufficiently large
+      vectors (depending on the nature of the actual vector type).
   */
   template<class mat_t, class mat2_t, class data_t> 
     void matrix_swap_openmp(size_t M, size_t N, mat_t &v1, mat2_t &v2) {
