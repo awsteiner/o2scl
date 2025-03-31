@@ -60,7 +60,7 @@ namespace o2scl {
       derivatives.
 
       \endcomment
-   */
+  */
   class index_spec {
     
   public:
@@ -397,7 +397,7 @@ namespace o2scl {
   };
 
   /** \brief For a tensor_grid object, interpolate a grid
-  */
+   */
   class ix_grid : public index_spec {
 
   public:
@@ -417,7 +417,7 @@ namespace o2scl {
     /// Create an ix_grid object from the specified inputs
     ix_grid(size_t ix, double start, double finish, size_t bins,
             bool log=false) : begin(this->val1), end(this->val2),
-                        n_bins(this->ix2), log_flag(this->ix3) {
+                              n_bins(this->ix2), log_flag(this->ix3) {
       this->type=index_spec::grid;
       this->ix1=ix;
       this->ix2=bins;
@@ -471,7 +471,7 @@ namespace o2scl {
     /// Create an ix_gridw object from the specified inputs
     ix_gridw(size_t ix, double start, double finish, double wid,
              bool log=false) : begin(this->val1), end(this->val2),
-                         width(this->val3), log_flag(this->ix3) {
+                               width(this->val3), log_flag(this->ix3) {
       this->type=index_spec::gridw;
       this->ix1=ix;
       this->ix2=0;
@@ -555,22 +555,22 @@ namespace o2scl {
       
       .. todo:: 
 
-         In class tensor:
+      In class tensor:
         
-         - Future: Create an operator[] for tensor and not just tensor1?
+      - Future: Create an operator[] for tensor and not just tensor1?
 
-         - Future: Could implement arithmetic operators + and - and some
-           different products. 
+      - Future: Could implement arithmetic operators + and - and some
+      different products. 
 
-         - Future: Implement copies to and from vector
-           and matrices 
+      - Future: Implement copies to and from vector
+      and matrices 
 
-         - Future: Implement tensor contractions, i.e. tensor
-           = tensor * tensor 
+      - Future: Implement tensor contractions, i.e. tensor
+      = tensor * tensor 
 
-         - Future: Could be interesting to write an iterator for this class.
+      - Future: Could be interesting to write an iterator for this class.
 
-         - Future: Try character and string tensors?
+      - Future: Try character and string tensors?
 
       \endverbatim
 
@@ -768,17 +768,9 @@ namespace o2scl {
     /// Set all elements in a tensor to some fixed value
     void set_all(data_t x) {
       size_t n=total_size();
-#ifdef O2SCL_SET_OPENMP
-#pragma omp parallel default(shared)
-      {
-#pragma omp for
-#endif
-        for(size_t i=0;i<n;i++) {
-          data[i]=x;
-        }
-#ifdef O2SCL_SET_OPENMP
+      for(size_t i=0;i<n;i++) {
+        data[i]=x;
       }
-#endif
       return;
     }
   
@@ -1331,7 +1323,7 @@ namespace o2scl {
         vector (except for those at index \c ix_x and \c ix_y)
         are specified. If this is not the case, then this function
         will return unpredictable results.
-     */
+    */
     template<class size_vec2_t> 
     void copy_table3d(size_t ix_x, size_t ix_y, size_vec2_t &index, 
                       table3d &tab, std::string x_name="x",
@@ -1375,7 +1367,7 @@ namespace o2scl {
         In this function, all other indices are set to 0. The indices
         \c ix_x and \c ix_y may be the same, in which case this
         function effectively performs a trace over those two indices.
-     */
+    */
     void copy_table3d(size_t ix_x, size_t ix_y, 
                       table3d &tab, std::string x_name="x",
                       std::string y_name="y",
@@ -1452,8 +1444,8 @@ namespace o2scl {
       
   */
   int strings_to_indexes(std::vector<std::string> sv2,
-                          std::vector<o2scl::index_spec> &vis,
-                          int verbose=0, bool err_on_fail=false);
+                         std::vector<o2scl::index_spec> &vis,
+                         int verbose=0, bool err_on_fail=false);
   
   /** \brief Take a set of index specifications contained in a
       single string \c str and arrange them in \c sv
@@ -1462,17 +1454,17 @@ namespace o2scl {
       
       .. todo:: 
       
-         In tensor::index_spec_preprocess():
+      In tensor::index_spec_preprocess():
 
-         Future: Improve this to be more intelligent about whitespace
-         and other characters between index specifications. Right now,
-         this function fails if there are, e.g. two spaces between
-         index specs.
+      Future: Improve this to be more intelligent about whitespace
+      and other characters between index specifications. Right now,
+      this function fails if there are, e.g. two spaces between
+      index specs.
          
       \endverbatim
   */
   void index_spec_preprocess(std::string str,
-                              std::vector<std::string> &sv, int verbose=0);
+                             std::vector<std::string> &sv, int verbose=0);
   
   /** \brief Rearrange, sum and copy current tensor to a new tensor
       
@@ -1484,17 +1476,18 @@ namespace o2scl {
         
       .. todo:: 
 
-         In tensor::rarrange_and_copy(): 
+      In tensor::rarrange_and_copy(): 
 
-         Future: Return a scalar if possible as a rank 1 tensor with
-         1 element.
+      Future: Return a scalar if possible as a rank 1 tensor with
+      1 element.
            
       \endverbatim
   */
   template<class tensor_t, class data_t>
   tensor_t rearrange_and_copy(const tensor_t &t,
                               std::vector<index_spec> spec,
-                              int verbose=0, bool err_on_fail=true) {
+                              int verbose=0, bool use_openmp=false,
+                              bool err_on_fail=true) {
     
     // Old rank and new rank (computed later)
     size_t rank_old=t.get_rank();
@@ -1732,7 +1725,7 @@ namespace o2scl {
           std::cout << " is being traced with index "
                     << spec_old[i].ix2 << "." << std::endl;
         } else if (spec_old[i].type==index_spec::sum) {
-            std::cout << " is being summed." << std::endl;
+          std::cout << " is being summed." << std::endl;
         } else if (spec_old[i].type==index_spec::fixed) {
           std::cout << " is being fixed to " << spec_old[i].ix2
                     << "." << std::endl;
@@ -1756,12 +1749,113 @@ namespace o2scl {
     
     // Create the new tensor object
     tensor_t t_new(rank_new,size_new);
-
+    
+    if (use_openmp) {
+      
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
-    {
+      {
 #pragma omp for
 #endif
+        // Loop over the new tensor object
+        for(size_t i=0;i<t_new.total_size();i++) {
+        
+          // Index arrays
+          std::vector<size_t> ix_new(rank_new);
+          std::vector<size_t> ix_old(rank_old);
+          std::vector<size_t> sum_ix(n_sums);
+        
+          // Find the location in the new tensor object
+          t_new.unpack_index(i,ix_new);
+        
+          // Determine the location in the old tensor object
+          for(size_t j=0;j<rank_old;j++) {
+            if (spec_old[j].type==index_spec::index) {
+              ix_old[j]=ix_new[spec_old[j].ix1];
+            } else if (spec_old[j].type==index_spec::range) {
+              if (spec_old[j].ix2<spec_old[j].ix3) {
+                ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
+              } else {
+                ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+              }
+            } else if (spec_old[j].type==index_spec::reverse) {
+              ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
+            } else if (spec_old[j].type==index_spec::fixed) {
+              ix_old[j]=spec_old[j].ix2;
+            }
+          }
+        
+          data_t val=0;
+        
+          for(size_t j=0;j<n_sum_loop;j++) {
+          
+            // This code is similar to tensor::unpack_index(), it unpacks
+            // the index j to the indices which we are summing over.
+            size_t j2=j, sub_size;
+            for(size_t k=0;k<n_sums;k++) {
+              if (k==n_sums-1) {
+                sum_ix[k]=j2;
+              } else {
+                sub_size=1;
+                for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+                sum_ix[k]=j2/sub_size;
+                j2-=sub_size*(j2/sub_size);
+              }
+            }
+            if (verbose>2) {
+              std::cout << "rearrange_and_copy(): n_sum_loop: "
+                        << n_sum_loop << " n_sums: "
+                        << n_sums << " sum_sizes: ";
+              vector_out(std::cout,sum_sizes,true);
+              std::cout << "j: " << j << " sum_ix: ";
+              vector_out(std::cout,sum_ix,true);
+            }
+          
+            // Remap from sum_ix to ix_old
+            size_t cnt=0;
+            for(size_t k=0;k<rank_old;k++) {
+              if (spec_old[k].type==index_spec::sum) {
+                if (cnt>=sum_ix.size()) {
+                  std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                  O2SCL_ERR2("Bad sync 1 in sum_ix in ",
+                             "tensor::rearrange_and_copy()",o2scl::exc_esanity);
+                }
+                ix_old[k]=sum_ix[cnt];
+                cnt++;
+              } else if (spec_old[k].type==index_spec::trace &&
+                         spec_old[k].ix1<spec_old[k].ix2) {
+                if (cnt>=sum_ix.size()) {
+                  std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                  O2SCL_ERR2("Bad sync 2 in sum_ix in ",
+                             "tensor::rearrange_and_copy()",o2scl::exc_esanity);
+                }
+                ix_old[spec_old[k].ix1]=sum_ix[cnt];
+                ix_old[spec_old[k].ix2]=sum_ix[cnt];
+                cnt++;
+              }
+            }
+          
+            if (verbose>2) {
+              std::cout << "Here old: ";
+              vector_out(std::cout,ix_old,true);
+              std::cout << "Here new: ";
+              vector_out(std::cout,ix_new,true);
+            }
+            val+=t.get(ix_old);
+          
+          }
+        
+          // Set the new value
+          t_new.set(ix_new,val);
+        }
+      
+#ifdef O2SCL_SET_OPENMP
+        // End of parallel region
+      }
+#endif
+
+    } else {
+
       // Loop over the new tensor object
       for(size_t i=0;i<t_new.total_size();i++) {
         
@@ -1854,9 +1948,7 @@ namespace o2scl {
         t_new.set(ix_new,val);
       }
       
-#ifdef O2SCL_SET_OPENMP
     }
-#endif
     
     return t_new;
   }

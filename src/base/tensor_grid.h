@@ -50,25 +50,25 @@ namespace o2scl {
 namespace o2scl_hdf { 
   class hdf_file; 
   template<class vec_t, class vec_size_t>
-    void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
-                   std::string name);
+  void hdf_input(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
+                 std::string name);
   template<class vec_t, class vec_size_t>
-    void hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
-                    std::string name);
+  void hdf_output(hdf_file &hf, o2scl::tensor_grid<vec_t,vec_size_t> &t, 
+                  std::string name);
 }
 
 namespace o2scl {
 
   /** \brief A <tt>ublas::range</tt> typedef for \ref 
       o2scl::tensor_grid and related classes in src/base/tensor_grid.h
-   */
+  */
   typedef boost::numeric::ublas::range ub_range;
 
   /** \brief A <tt>ublas::vector_range</tt> typedef for \ref 
       o2scl::tensor_grid and related classes in src/base/tensor_grid.h
-   */
+  */
   typedef boost::numeric::ublas::vector_range
-    <boost::numeric::ublas::vector<double> > ubvector_range;
+  <boost::numeric::ublas::vector<double> > ubvector_range;
 
   typedef boost::numeric::ublas::vector<double> ubvector;
   typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -76,9 +76,9 @@ namespace o2scl {
   /** \brief A <tt>ublas::vector_range</tt> typedef (size_t version)
       for \ref o2scl::tensor_grid and related classes
       in src/base/tensor_grid.h
-   */
+  */
   typedef boost::numeric::ublas::vector_range
-    <boost::numeric::ublas::vector<size_t> > ubvector_size_t_range;
+  <boost::numeric::ublas::vector<size_t> > ubvector_size_t_range;
   
   /** \brief Tensor class with arbitrary dimensions with a grid
       
@@ -141,34 +141,34 @@ namespace o2scl {
 
       .. todo:: 
 
-         Class tensor_grid: It is possible for the user to create a
-         tensor_grid object, upcast it to a tensor object, and then
-         use tensor::resize() to resize the tensor, failing to resize
-         the grid. Following this, grid access functions will access
-         random parts of memory or segfault. This can be fixed by
-         ensuring that resize functions are virtual and have a version
-         in tensor_grid which ensure that the grid and tensor data are
-         matched. The problem is that the resize functions are
-         templates, so they cannot be virtual.
+      Class tensor_grid: It is possible for the user to create a
+      tensor_grid object, upcast it to a tensor object, and then
+      use tensor::resize() to resize the tensor, failing to resize
+      the grid. Following this, grid access functions will access
+      random parts of memory or segfault. This can be fixed by
+      ensuring that resize functions are virtual and have a version
+      in tensor_grid which ensure that the grid and tensor data are
+      matched. The problem is that the resize functions are
+      templates, so they cannot be virtual.
 
-         - Future: Create a swap function for the grid similar to the
-           data swap function in the parent \ref o2scl::tensor class?
+      - Future: Create a swap function for the grid similar to the
+      data swap function in the parent \ref o2scl::tensor class?
 
-         - Future: Only allocate space for grid if it is set.
+      - Future: Only allocate space for grid if it is set.
 
-         - Future: as with \ref o2scl::tensor, generalize to other
-           base data types.
+      - Future: as with \ref o2scl::tensor, generalize to other
+      base data types.
 
-         - Future: The function \ref interp_linear_partial() appears
-           to be a generalization of \ref
-           copy_table3d_interp_values_setxy(), so there may be some code
-           duplication between the two that can be avoided.
+      - Future: The function \ref interp_linear_partial() appears
+      to be a generalization of \ref
+      copy_table3d_interp_values_setxy(), so there may be some code
+      duplication between the two that can be avoided.
 
       \endverbatim
 
   */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t=std::vector<size_t> > class tensor_grid :
+           class vec_size_t=std::vector<size_t> > class tensor_grid :
     public tensor<double,vec_t,vec_size_t> {
     
   public:
@@ -193,7 +193,7 @@ namespace o2scl {
     /// \name Constructors and Destructors
     //@{
     /// Create an empty tensor with zero rank
-  tensor_grid() : tensor<double,vec_t,vec_size_t>() {
+    tensor_grid() : tensor<double,vec_t,vec_size_t>() {
       grid_set=false;
       itype=itp_linear;
     }
@@ -206,7 +206,7 @@ namespace o2scl {
     */
     template<class size_vec_t> 
       tensor_grid(size_t rank, const size_vec_t &dim) : 
-    tensor<double,vec_t,vec_size_t>(rank,dim) {
+      tensor<double,vec_t,vec_size_t>(rank,dim) {
       grid_set=false;
       itype=itp_linear;
       // Note that the parent method sets rk to be equal to rank
@@ -223,8 +223,8 @@ namespace o2scl {
     /** \brief Create a tensor with a grid defined by a set
         of \ref o2scl::uniform_grid objects
     */
-  tensor_grid(std::vector<uniform_grid<double> > &ugs) :
-    tensor<double,vec_t,vec_size_t>() {    
+    tensor_grid(std::vector<uniform_grid<double> > &ugs) :
+      tensor<double,vec_t,vec_size_t>() {    
       this->rk=ugs.size();
       itype=itp_linear;
       size_t tot=1;
@@ -513,8 +513,8 @@ namespace o2scl {
         
         .. todo:: 
 
-           In set_grid_packed(): Define a more generic interface for
-           matrix types
+        In set_grid_packed(): Define a more generic interface for
+        matrix types
 
         \endverbatim
     */
@@ -1294,8 +1294,8 @@ namespace o2scl {
         avoids explicit use of the 1-d interpolation types.
     */
     template<class range_t=ub_range,
-      class data_range_t=ubvector_range, 
-      class index_range_t=ubvector_size_t_range> 
+             class data_range_t=ubvector_range, 
+             class index_range_t=ubvector_size_t_range> 
       double interpolate(double *vals) {
 
       typedef interp_vec<vec_t> interp_t;
@@ -1395,10 +1395,10 @@ namespace o2scl {
         \verbatim embed:rst
         .. todo:: 
 
-           In tensor_grid::interp_linear_partial(): Double check and
-           document if the vector "ix_to_interp" needs to be ordered.
-           I'm pretty sure it doesn't, so long as the ordering in \c
-           val and \c ix_to_interp are consistent.
+        In tensor_grid::interp_linear_partial(): Double check and
+        document if the vector "ix_to_interp" needs to be ordered.
+        I'm pretty sure it doesn't, so long as the ordering in \c
+        val and \c ix_to_interp are consistent.
 
         \endverbatim
     */
@@ -1799,7 +1799,8 @@ namespace o2scl {
   template<class tensor_t, class data_t>
   tensor_t grid_rearrange_and_copy(const tensor_t &t,
                                    std::vector<index_spec> spec,
-                                   int verbose=0, bool err_on_fail=true) {
+                                   int verbose=0, bool use_openmp=false,
+                                   bool err_on_fail=true) {
     
     // Old rank and new rank (computed later)
     size_t rank_old=t.get_rank();
@@ -2368,189 +2369,369 @@ namespace o2scl {
     // examples/ex_tensor to work, so I put it back in.
     o2scl::vector_sort<std::vector<size_t>,size_t>(ix_to_interp.size(),
                                                    ix_to_interp);
-      
+
+    if (use_openmp) {
+    
 #ifdef O2SCL_SET_OPENMP
 #pragma omp parallel
-    {
+      {
 #pragma omp for
 #endif
-    // Loop over the new tensor object
-    for(size_t i=0;i<t_new.total_size();i++) {
+        // Loop over the new tensor object
+        for(size_t i=0;i<t_new.total_size();i++) {
       
-      // Index arrays. For indices in the old tensor which we are
-      // interpolating, the value of ix_old is not used, so it
-      // is not set.
-      std::vector<size_t> ix_new(rank_new);
-      std::vector<size_t> ix_old(rank_old);
-      std::vector<size_t> sum_ix(n_sums);
+          // Index arrays. For indices in the old tensor which we are
+          // interpolating, the value of ix_old is not used, so it
+          // is not set.
+          std::vector<size_t> ix_new(rank_new);
+          std::vector<size_t> ix_old(rank_old);
+          std::vector<size_t> sum_ix(n_sums);
       
-      // Find the location in the new tensor object
-      t_new.unpack_index(i,ix_new);
+          // Find the location in the new tensor object
+          t_new.unpack_index(i,ix_new);
 
-      // List of interpolated values (vector of size n_interps)
-      std::vector<double> interp_vals;
+          // List of interpolated values (vector of size n_interps)
+          std::vector<double> interp_vals;
 
-      // Determine the location in the old tensor object
-      for(size_t j=0;j<rank_old;j++) {
+          // Determine the location in the old tensor object
+          for(size_t j=0;j<rank_old;j++) {
           
-        if (spec_old[j].type==index_spec::index) {
-          ix_old[j]=ix_new[spec_old[j].ix1];
-        } else if (spec_old[j].type==index_spec::range) {
-          if (spec_old[j].ix2<spec_old[j].ix3) {
-            ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
-          } else {
-            ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
-          }
-        } else if (spec_old[j].type==index_spec::reverse) {
-          ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
-        } else if (spec_old[j].type==index_spec::fixed) {
-          ix_old[j]=spec_old[j].ix2;
-        } else if (spec_old[j].type==index_spec::interp) {
-          interp_vals.push_back(spec_old[j].val1);
-        } else if (spec_old[j].type==index_spec::grid) {
-          if (spec_old[j].ix3==1) {
-            double val=spec_old[j].val1*
-              pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
-            interp_vals.push_back(val);
-          } else {
-            double val=spec_old[j].val1+
-              ix_new[spec_old[j].ix1]*spec_old[j].val3;
-            interp_vals.push_back(val);
-          }
-        } else if (spec_old[j].type==index_spec::gridw) {
-          if (spec_old[j].ix3==1) {
-            double val=spec_old[j].val1*
-              pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
-            interp_vals.push_back(val);
-          } else {
-            double val=spec_old[j].val1+
-              ix_new[spec_old[j].ix1]*spec_old[j].val3;
-            interp_vals.push_back(val);
-          }
-        }
-
-      }
-        
-      size_t ntmp=t_new.total_size()/10;
-      if (ntmp==0) ntmp++;
-
-      if (verbose>1 && i%ntmp==0) {
-        for(size_t j2=0;j2<rank_old;j2++) {
-          size_t k;
-          if (vector_search(ix_to_interp,j2,k)==false) {
-            if (j2>=ix_old.size()) {
-              std::cout << "\n\nj2,ix_old.size(): "
-                        << j2 << " " << ix_old.size() << std::endl;
-              O2SCL_ERR2("Indexing problem 1 in",
-                         "tensor_grid::grid_rearrange_and_copy().",
-                         o2scl::exc_esanity);
-            } else {
-              std::cout << "  " << ix_old[j2] << " ";
+            if (spec_old[j].type==index_spec::index) {
+              ix_old[j]=ix_new[spec_old[j].ix1];
+            } else if (spec_old[j].type==index_spec::range) {
+              if (spec_old[j].ix2<spec_old[j].ix3) {
+                ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
+              } else {
+                ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+              }
+            } else if (spec_old[j].type==index_spec::reverse) {
+              ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
+            } else if (spec_old[j].type==index_spec::fixed) {
+              ix_old[j]=spec_old[j].ix2;
+            } else if (spec_old[j].type==index_spec::interp) {
+              interp_vals.push_back(spec_old[j].val1);
+            } else if (spec_old[j].type==index_spec::grid) {
+              if (spec_old[j].ix3==1) {
+                double val=spec_old[j].val1*
+                  pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+                interp_vals.push_back(val);
+              } else {
+                double val=spec_old[j].val1+
+                  ix_new[spec_old[j].ix1]*spec_old[j].val3;
+                interp_vals.push_back(val);
+              }
+            } else if (spec_old[j].type==index_spec::gridw) {
+              if (spec_old[j].ix3==1) {
+                double val=spec_old[j].val1*
+                  pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+                interp_vals.push_back(val);
+              } else {
+                double val=spec_old[j].val1+
+                  ix_new[spec_old[j].ix1]*spec_old[j].val3;
+                interp_vals.push_back(val);
+              }
             }
-          } else {
-            if (k>=interp_vals.size()) {
-              std::cout << "\n\nk,interp_vals.size(): "
-                        << k << " " << interp_vals.size()
-                        << std::endl;
-              o2scl::vector_out(std::cout,interp_vals,true);
-              O2SCL_ERR2("Indexing problem w in",
-                         "tensor_grid::grid_rearrange_and_copy().",
-                         o2scl::exc_esanity);
-            } else {
-              std::cout << "(" << interp_vals[k] << ") ";
-            }
+
           }
-        }
-        std::cout << " ix_new: ";
-        vector_out(std::cout,ix_new,true);
-      }
         
-      double val=0;
+          size_t ntmp=t_new.total_size()/10;
+          if (ntmp==0) ntmp++;
 
-      for(size_t j=0;j<n_sum_loop;j++) {
-
-        // This code is similar to tensor::unpack_index(), it unpacks
-        // the index j to the indices which we are summing over.
-        size_t j2=j, sub_size;
-        for(size_t k=0;k<n_sums;k++) {
-          if (k==n_sums-1) {
-            sum_ix[k]=j2;
-          } else {
-            sub_size=1;
-            for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
-            sum_ix[k]=j2/sub_size;
-            j2-=sub_size*(j2/sub_size);
+          if (verbose>1 && i%ntmp==0) {
+            for(size_t j2=0;j2<rank_old;j2++) {
+              size_t k;
+              if (vector_search(ix_to_interp,j2,k)==false) {
+                if (j2>=ix_old.size()) {
+                  std::cout << "\n\nj2,ix_old.size(): "
+                            << j2 << " " << ix_old.size() << std::endl;
+                  O2SCL_ERR2("Indexing problem 1 in",
+                             "tensor_grid::grid_rearrange_and_copy().",
+                             o2scl::exc_esanity);
+                } else {
+                  std::cout << "  " << ix_old[j2] << " ";
+                }
+              } else {
+                if (k>=interp_vals.size()) {
+                  std::cout << "\n\nk,interp_vals.size(): "
+                            << k << " " << interp_vals.size()
+                            << std::endl;
+                  o2scl::vector_out(std::cout,interp_vals,true);
+                  O2SCL_ERR2("Indexing problem w in",
+                             "tensor_grid::grid_rearrange_and_copy().",
+                             o2scl::exc_esanity);
+                } else {
+                  std::cout << "(" << interp_vals[k] << ") ";
+                }
+              }
+            }
+            std::cout << " ix_new: ";
+            vector_out(std::cout,ix_new,true);
           }
-        }
+        
+          double val=0;
+
+          for(size_t j=0;j<n_sum_loop;j++) {
+
+            // This code is similar to tensor::unpack_index(), it unpacks
+            // the index j to the indices which we are summing over.
+            size_t j2=j, sub_size;
+            for(size_t k=0;k<n_sums;k++) {
+              if (k==n_sums-1) {
+                sum_ix[k]=j2;
+              } else {
+                sub_size=1;
+                for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+                sum_ix[k]=j2/sub_size;
+                j2-=sub_size*(j2/sub_size);
+              }
+            }
           
-        if (verbose>2) {
-          std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
-                    << n_sums << " sum_sizes: ";
-          vector_out(std::cout,sum_sizes,true);
-          std::cout << "j: " << j << " sum_ix: ";
-          vector_out(std::cout,sum_ix,true);
-        }
-
-        // Remap from sum_ix to ix_old
-        size_t cnt=0;
-        for(size_t k=0;k<rank_old;k++) {
-          if (spec_old[k].type==index_spec::sum) {
-            if (cnt>=sum_ix.size()) {
-              std::cout << "X: " << cnt << " " << sum_ix.size()
-                        << std::endl;
-              O2SCL_ERR2("Bad sync 1 in sum_ix in ",
-                         "tensor_grid::grid_rearrange_and_copy()",
-                         o2scl::exc_esanity);
+            if (verbose>2) {
+              std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
+                        << n_sums << " sum_sizes: ";
+              vector_out(std::cout,sum_sizes,true);
+              std::cout << "j: " << j << " sum_ix: ";
+              vector_out(std::cout,sum_ix,true);
             }
-            ix_old[k]=sum_ix[cnt];
-            cnt++;
-          } else if (spec_old[k].type==index_spec::trace &&
-                     spec_old[k].ix1<spec_old[k].ix2) {
-            if (cnt>=sum_ix.size()) {
-              std::cout << "X: " << cnt << " " << sum_ix.size()
-                        << std::endl;
-              O2SCL_ERR2("Bad sync 2 in sum_ix in ",
-                         "tensor_grid::grid_rearrange_and_copy()",
-                         o2scl::exc_esanity);
-            }
-            ix_old[spec_old[k].ix1]=sum_ix[cnt];
-            ix_old[spec_old[k].ix2]=sum_ix[cnt];
-            cnt++;
-          }
-        }
 
-        if (verbose>2) {
-          std::cout << "Old: ";
-          for(size_t j3=0;j3<rank_old;j3++) {
-            std::cout << ix_old[j3] << " ";
+            // Remap from sum_ix to ix_old
+            size_t cnt=0;
+            for(size_t k=0;k<rank_old;k++) {
+              if (spec_old[k].type==index_spec::sum) {
+                if (cnt>=sum_ix.size()) {
+                  std::cout << "X: " << cnt << " " << sum_ix.size()
+                            << std::endl;
+                  O2SCL_ERR2("Bad sync 1 in sum_ix in ",
+                             "tensor_grid::grid_rearrange_and_copy()",
+                             o2scl::exc_esanity);
+                }
+                ix_old[k]=sum_ix[cnt];
+                cnt++;
+              } else if (spec_old[k].type==index_spec::trace &&
+                         spec_old[k].ix1<spec_old[k].ix2) {
+                if (cnt>=sum_ix.size()) {
+                  std::cout << "X: " << cnt << " " << sum_ix.size()
+                            << std::endl;
+                  O2SCL_ERR2("Bad sync 2 in sum_ix in ",
+                             "tensor_grid::grid_rearrange_and_copy()",
+                             o2scl::exc_esanity);
+                }
+                ix_old[spec_old[k].ix1]=sum_ix[cnt];
+                ix_old[spec_old[k].ix2]=sum_ix[cnt];
+                cnt++;
+              }
+            }
+
+            if (verbose>2) {
+              std::cout << "Old: ";
+              for(size_t j3=0;j3<rank_old;j3++) {
+                std::cout << ix_old[j3] << " ";
+              }
+              std::cout << "New: ";
+              vector_out(std::cout,ix_new,true);
+            }
+            if (n_interps>0) {
+              /*
+                std::cout << "ix_to_interp: ";
+                vector_out(std::cout,ix_to_interp,true);
+                std::cout << "ix_old: ";
+                vector_out(std::cout,ix_old,true);
+                std::cout << "interp_vals: ";
+                vector_out(std::cout,interp_vals,true);
+                std::cout << std::endl;
+              */
+              val+=t.interp_linear_partial(ix_to_interp,ix_old,interp_vals);
+            } else {
+              val+=t.get(ix_old);
+            }
+      
           }
-          std::cout << "New: ";
-          vector_out(std::cout,ix_new,true);
-        }
-        if (n_interps>0) {
-          /*
-          std::cout << "ix_to_interp: ";
-          vector_out(std::cout,ix_to_interp,true);
-          std::cout << "ix_old: ";
-          vector_out(std::cout,ix_old,true);
-          std::cout << "interp_vals: ";
-          vector_out(std::cout,interp_vals,true);
-          std::cout << std::endl;
-          */
-          val+=t.interp_linear_partial(ix_to_interp,ix_old,interp_vals);
-        } else {
-          val+=t.get(ix_old);
-        }
       
-      }
-      
-      // Set the new point by performing the linear interpolation
-      t_new.set(ix_new,val);
-    }
+          // Set the new point by performing the linear interpolation
+          t_new.set(ix_new,val);
+        }
 
 #ifdef O2SCL_SET_OPENMP
-    }
+      }
 #endif
+
+    } else {
+
+      // Loop over the new tensor object
+      for(size_t i=0;i<t_new.total_size();i++) {
+      
+        // Index arrays. For indices in the old tensor which we are
+        // interpolating, the value of ix_old is not used, so it
+        // is not set.
+        std::vector<size_t> ix_new(rank_new);
+        std::vector<size_t> ix_old(rank_old);
+        std::vector<size_t> sum_ix(n_sums);
+      
+        // Find the location in the new tensor object
+        t_new.unpack_index(i,ix_new);
+
+        // List of interpolated values (vector of size n_interps)
+        std::vector<double> interp_vals;
+
+        // Determine the location in the old tensor object
+        for(size_t j=0;j<rank_old;j++) {
+          
+          if (spec_old[j].type==index_spec::index) {
+            ix_old[j]=ix_new[spec_old[j].ix1];
+          } else if (spec_old[j].type==index_spec::range) {
+            if (spec_old[j].ix2<spec_old[j].ix3) {
+              ix_old[j]=ix_new[spec_old[j].ix1]+spec_old[j].ix2;
+            } else {
+              ix_old[j]=spec_old[j].ix2-ix_new[spec_old[j].ix1];
+            }
+          } else if (spec_old[j].type==index_spec::reverse) {
+            ix_old[j]=t.get_size(j)-1-ix_new[spec_old[j].ix1];
+          } else if (spec_old[j].type==index_spec::fixed) {
+            ix_old[j]=spec_old[j].ix2;
+          } else if (spec_old[j].type==index_spec::interp) {
+            interp_vals.push_back(spec_old[j].val1);
+          } else if (spec_old[j].type==index_spec::grid) {
+            if (spec_old[j].ix3==1) {
+              double val=spec_old[j].val1*
+                pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+              interp_vals.push_back(val);
+            } else {
+              double val=spec_old[j].val1+
+                ix_new[spec_old[j].ix1]*spec_old[j].val3;
+              interp_vals.push_back(val);
+            }
+          } else if (spec_old[j].type==index_spec::gridw) {
+            if (spec_old[j].ix3==1) {
+              double val=spec_old[j].val1*
+                pow(spec_old[j].val3,ix_new[spec_old[j].ix1]);
+              interp_vals.push_back(val);
+            } else {
+              double val=spec_old[j].val1+
+                ix_new[spec_old[j].ix1]*spec_old[j].val3;
+              interp_vals.push_back(val);
+            }
+          }
+
+        }
+        
+        size_t ntmp=t_new.total_size()/10;
+        if (ntmp==0) ntmp++;
+
+        if (verbose>1 && i%ntmp==0) {
+          for(size_t j2=0;j2<rank_old;j2++) {
+            size_t k;
+            if (vector_search(ix_to_interp,j2,k)==false) {
+              if (j2>=ix_old.size()) {
+                std::cout << "\n\nj2,ix_old.size(): "
+                          << j2 << " " << ix_old.size() << std::endl;
+                O2SCL_ERR2("Indexing problem 1 in",
+                           "tensor_grid::grid_rearrange_and_copy().",
+                           o2scl::exc_esanity);
+              } else {
+                std::cout << "  " << ix_old[j2] << " ";
+              }
+            } else {
+              if (k>=interp_vals.size()) {
+                std::cout << "\n\nk,interp_vals.size(): "
+                          << k << " " << interp_vals.size()
+                          << std::endl;
+                o2scl::vector_out(std::cout,interp_vals,true);
+                O2SCL_ERR2("Indexing problem w in",
+                           "tensor_grid::grid_rearrange_and_copy().",
+                           o2scl::exc_esanity);
+              } else {
+                std::cout << "(" << interp_vals[k] << ") ";
+              }
+            }
+          }
+          std::cout << " ix_new: ";
+          vector_out(std::cout,ix_new,true);
+        }
+        
+        double val=0;
+
+        for(size_t j=0;j<n_sum_loop;j++) {
+
+          // This code is similar to tensor::unpack_index(), it unpacks
+          // the index j to the indices which we are summing over.
+          size_t j2=j, sub_size;
+          for(size_t k=0;k<n_sums;k++) {
+            if (k==n_sums-1) {
+              sum_ix[k]=j2;
+            } else {
+              sub_size=1;
+              for(size_t kk=k+1;kk<n_sums;kk++) sub_size*=sum_sizes[kk];
+              sum_ix[k]=j2/sub_size;
+              j2-=sub_size*(j2/sub_size);
+            }
+          }
+          
+          if (verbose>2) {
+            std::cout << "n_sum_loop: " << n_sum_loop << " n_sums: "
+                      << n_sums << " sum_sizes: ";
+            vector_out(std::cout,sum_sizes,true);
+            std::cout << "j: " << j << " sum_ix: ";
+            vector_out(std::cout,sum_ix,true);
+          }
+
+          // Remap from sum_ix to ix_old
+          size_t cnt=0;
+          for(size_t k=0;k<rank_old;k++) {
+            if (spec_old[k].type==index_spec::sum) {
+              if (cnt>=sum_ix.size()) {
+                std::cout << "X: " << cnt << " " << sum_ix.size()
+                          << std::endl;
+                O2SCL_ERR2("Bad sync 1 in sum_ix in ",
+                           "tensor_grid::grid_rearrange_and_copy()",
+                           o2scl::exc_esanity);
+              }
+              ix_old[k]=sum_ix[cnt];
+              cnt++;
+            } else if (spec_old[k].type==index_spec::trace &&
+                       spec_old[k].ix1<spec_old[k].ix2) {
+              if (cnt>=sum_ix.size()) {
+                std::cout << "X: " << cnt << " " << sum_ix.size()
+                          << std::endl;
+                O2SCL_ERR2("Bad sync 2 in sum_ix in ",
+                           "tensor_grid::grid_rearrange_and_copy()",
+                           o2scl::exc_esanity);
+              }
+              ix_old[spec_old[k].ix1]=sum_ix[cnt];
+              ix_old[spec_old[k].ix2]=sum_ix[cnt];
+              cnt++;
+            }
+          }
+
+          if (verbose>2) {
+            std::cout << "Old: ";
+            for(size_t j3=0;j3<rank_old;j3++) {
+              std::cout << ix_old[j3] << " ";
+            }
+            std::cout << "New: ";
+            vector_out(std::cout,ix_new,true);
+          }
+          if (n_interps>0) {
+            /*
+              std::cout << "ix_to_interp: ";
+              vector_out(std::cout,ix_to_interp,true);
+              std::cout << "ix_old: ";
+              vector_out(std::cout,ix_old,true);
+              std::cout << "interp_vals: ";
+              vector_out(std::cout,interp_vals,true);
+              std::cout << std::endl;
+            */
+            val+=t.interp_linear_partial(ix_to_interp,ix_old,interp_vals);
+          } else {
+            val+=t.get(ix_old);
+          }
+      
+        }
+      
+        // Set the new point by performing the linear interpolation
+        t_new.set(ix_new,val);
+      }
+      
+    }
     
     if (verbose>1) {
       std::cout << "grid_rearrange_and_copy(): Done." << std::endl;
@@ -2579,16 +2760,16 @@ namespace o2scl {
       \future Make rank-specific get_val and set_val functions?
   */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t=std::vector<size_t> > class tensor_grid1 : 
+           class vec_size_t=std::vector<size_t> > class tensor_grid1 : 
     public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-  /// Create an empty tensor
-  tensor_grid1() : tensor_grid<vec_t,vec_size_t>() {}
+    /// Create an empty tensor
+    tensor_grid1() : tensor_grid<vec_t,vec_size_t>() {}
       
-  /// Create a rank 2 tensor of size \c (sz,sz2,sz3)
-  tensor_grid1(size_t sz) : tensor_grid<vec_t,vec_size_t>() {
+    /// Create a rank 2 tensor of size \c (sz,sz2,sz3)
+    tensor_grid1(size_t sz) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=1;
       this->size.resize(1);
       this->size[0]=sz;
@@ -2623,10 +2804,10 @@ namespace o2scl {
     
     /// Interpolate \c x and return the results
     template<class range_t=ub_range, class data_range_t=ubvector_range, 
-      class index_range_t=ubvector_size_t_range> 
+             class index_range_t=ubvector_size_t_range> 
       double interp(double x) {
       return tensor_grid<vec_t,vec_size_t>::template interpolate
-      <range_t,data_range_t,index_range_t>(&x);
+        <range_t,data_range_t,index_range_t>(&x);
     }
     
     /// Interpolate \c x and return the results
@@ -2640,16 +2821,16 @@ namespace o2scl {
   /** \brief Rank 2 tensor with a grid
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t=std::vector<size_t> > class tensor_grid2 : 
+           class vec_size_t=std::vector<size_t> > class tensor_grid2 : 
     public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-  /// Create an empty tensor
-  tensor_grid2() : tensor_grid<vec_t,vec_size_t>() {}
+    /// Create an empty tensor
+    tensor_grid2() : tensor_grid<vec_t,vec_size_t>() {}
 
-  /// Create a rank 2 tensor of size \c (sz,sz2)
-  tensor_grid2(size_t sz, size_t sz2) : tensor_grid<vec_t,vec_size_t>() {
+    /// Create a rank 2 tensor of size \c (sz,sz2)
+    tensor_grid2(size_t sz, size_t sz2) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=2;
       this->size.resize(2);
       this->size[0]=sz;
@@ -2687,11 +2868,11 @@ namespace o2scl {
     
     /// Interpolate \c (x,y) and return the results
     template<class range_t=ub_range, class data_range_t=ubvector_range, 
-      class index_range_t=ubvector_size_t_range> 
+             class index_range_t=ubvector_size_t_range> 
       double interp(double x, double y) {
       double arr[2]={x,y};
       return tensor_grid<vec_t,vec_size_t>::template interpolate
-      <range_t,data_range_t,index_range_t>(arr);
+        <range_t,data_range_t,index_range_t>(arr);
     }
     
     /// Interpolate \c (x,y) and return the results
@@ -2705,26 +2886,26 @@ namespace o2scl {
   /** \brief Rank 3 tensor with a grid
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t=std::vector<size_t> > class tensor_grid3 : 
+           class vec_size_t=std::vector<size_t> > class tensor_grid3 : 
     public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-  /// Create an empty tensor
-  tensor_grid3() : tensor_grid<vec_t,vec_size_t>() {}
+    /// Create an empty tensor
+    tensor_grid3() : tensor_grid<vec_t,vec_size_t>() {}
 
-  /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
-  tensor_grid3(size_t sz, size_t sz2, size_t sz3) : 
-  tensor_grid<vec_t,vec_size_t>() {
-    this->rk=3;
-    this->size.resize(3);
-    this->size[0]=sz;
-    this->size[1]=sz2;
-    this->size[2]=sz3;
-    size_t tot=sz*sz2*sz3;
-    this->data.resize(tot);
-    this->grid_set=false;
-  }
+    /// Create a rank 3 tensor of size \c (sz,sz2,sz3)
+    tensor_grid3(size_t sz, size_t sz2, size_t sz3) : 
+      tensor_grid<vec_t,vec_size_t>() {
+      this->rk=3;
+      this->size.resize(3);
+      this->size[0]=sz;
+      this->size[1]=sz2;
+      this->size[2]=sz3;
+      size_t tot=sz*sz2*sz3;
+      this->data.resize(tot);
+      this->grid_set=false;
+    }
    
 #ifdef O2SCL_NEVER_DEFINED
   }{
@@ -2754,11 +2935,11 @@ namespace o2scl {
     
     /// Interpolate \c (x,y,z) and return the results
     template<class range_t=ub_range, class data_range_t=ubvector_range, 
-      class index_range_t=ubvector_size_t_range> 
+             class index_range_t=ubvector_size_t_range> 
       double interp(double x, double y, double z) {
       double arr[3]={x,y,z};
       return tensor_grid<vec_t,vec_size_t>::template interpolate
-      <range_t,data_range_t,index_range_t>(arr);
+        <range_t,data_range_t,index_range_t>(arr);
     }
     
     /// Interpolate \c (x,y,z) and return the results
@@ -2772,17 +2953,17 @@ namespace o2scl {
   /** \brief Rank 4 tensor with a grid
    */
   template<class vec_t=std::vector<double>, 
-    class vec_size_t=std::vector<size_t> > class tensor_grid4 : 
+           class vec_size_t=std::vector<size_t> > class tensor_grid4 : 
     public tensor_grid<vec_t,vec_size_t> {
      
   public:
      
-  /// Create an empty tensor
-  tensor_grid4() : tensor_grid<vec_t,vec_size_t>() {}
+    /// Create an empty tensor
+    tensor_grid4() : tensor_grid<vec_t,vec_size_t>() {}
 
-  /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
-  tensor_grid4(size_t sz, size_t sz2, size_t sz3,
-               size_t sz4) : tensor_grid<vec_t,vec_size_t>() {
+    /// Create a rank 4 tensor of size \c (sz,sz2,sz3,sz4)
+    tensor_grid4(size_t sz, size_t sz2, size_t sz3,
+                 size_t sz4) : tensor_grid<vec_t,vec_size_t>() {
       this->rk=4;
       this->size.resize(4);
       this->size[0]=sz;
@@ -2824,11 +3005,11 @@ namespace o2scl {
 
     /// Interpolate \c (x,y,z,a) and return the results
     template<class range_t=ub_range, class data_range_t=ubvector_range, 
-      class index_range_t=ubvector_size_t_range> 
+             class index_range_t=ubvector_size_t_range> 
       double interp(double x, double y, double z, double a) {
       double arr[4]={x,y,z,a};
       return tensor_grid<vec_t,vec_size_t>::template interpolate
-      <range_t,data_range_t,index_range_t>(arr);
+        <range_t,data_range_t,index_range_t>(arr);
     }
 
     /// Interpolate \c (x,y,z,a) and return the results

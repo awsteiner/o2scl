@@ -3555,7 +3555,7 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     tensor<> t;
     t=rearrange_and_copy<tensor<>,double>
-      (tensor_obj,vis,verbose,false);
+      (tensor_obj,vis,verbose,true,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3573,7 +3573,8 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     strings_to_indexes(sv2,vis,verbose);
     
     tensor<int> t;
-    t=rearrange_and_copy<tensor<int>,int>(tensor_int_obj,vis,verbose,false);
+    t=rearrange_and_copy<tensor<int>,int>
+      (tensor_int_obj,vis,verbose,true,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3592,7 +3593,7 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     tensor<size_t> t;
     t=rearrange_and_copy<tensor<size_t>,size_t>(tensor_size_t_obj,
-                                                 vis,verbose,false);
+                                                vis,verbose,true,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
@@ -3611,7 +3612,7 @@ int acol_manager::comm_rearrange(std::vector<std::string> &sv,
     
     tensor_grid<> t;
     t=grid_rearrange_and_copy<tensor_grid<>,double>
-      (tensor_grid_obj,vis,verbose,false);
+      (tensor_grid_obj,vis,verbose,true,false);
     if (t.total_size()==0) {
       cerr << "Function rearrange_and_copy() failed." << endl;
       return 1;
