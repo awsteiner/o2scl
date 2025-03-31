@@ -184,7 +184,7 @@ namespace o2scl {
 		     " in vector_variance().",exc_einval);
     }
     
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     double var=vector_variance_fmean<vec_t>(n,data,mean);
     return var*n/(n-1);
   }
@@ -398,7 +398,7 @@ namespace o2scl {
   */
   template<class vec_t>
     double vector_absdev(size_t n, const vec_t &data) {
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     return vector_absdev(n,data,mean);
   }
 
@@ -486,7 +486,7 @@ namespace o2scl {
       without calling the error handler.
   */
   template<class vec_t> double vector_skew(size_t n, const vec_t &data) {
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     double sd=vector_stddev<vec_t>(n,data,mean);
     return vector_skew(n,data,mean,sd);
   }
@@ -577,7 +577,7 @@ namespace o2scl {
       without calling the error handler.
   */
   template<class vec_t> double vector_kurtosis(size_t n, const vec_t &data) {
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     double sd=vector_stddev<vec_t>(n,data,mean);
     return vector_kurtosis(n,data,mean,sd);
   }
@@ -1748,7 +1748,7 @@ namespace o2scl {
   */
   template<class vec_t> double vector_lag1_autocorr
     (size_t n, const vec_t &data) {
-    double mean=vector_mean<vec_t>(n,data);
+    double mean=vector_mean<vec_t,double>(n,data);
     return vector_lag1_autocorr(n,data,mean);
   }
 
@@ -2891,7 +2891,7 @@ namespace o2scl {
       std::cout << "i mean var" << std::endl;
     }
     for(size_t i=0;i<n;i++) {
-      means[i]=vector_mean<vec_t>(Lmax,v[i]);
+      means[i]=vector_mean<vec_t,double>(Lmax,v[i]);
       vars[i]=vector_variance<vec_t>(Lmax,v[i],means[i]);
       if (verbose>1) {
         std::cout << i << " " << means[i] << " " << vars[i] << std::endl;
@@ -2899,7 +2899,7 @@ namespace o2scl {
     }
     
     // Finally, construct the GR statistic
-    fp_t mean_mean=vector_mean(n,means);
+    fp_t mean_mean=vector_mean<vec_t,double>(n,means);
     if (verbose>1) {
       std::cout << "mean_mean: " << dtos(mean_mean,0) << std::endl;
     }
@@ -2914,7 +2914,7 @@ namespace o2scl {
       }
     }
     B*=L/((fp_t)(n-1));
-    fp_t W=vector_mean(n,vars);
+    fp_t W=vector_mean<vec_t,double>(n,vars);
     fp_t R=((L-1)/L*W+B/L)/W;
     
     return R;

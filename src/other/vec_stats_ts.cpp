@@ -54,7 +54,7 @@ int main(void) {
 	     gsl_stats_min(x,1,N),1.0e-8,"min");
   t.test_rel(vector_sum<double [N],double>(N,x),
 	     37.0,1.0e-8,"sum");
-  t.test_rel(vector_mean(N,x),
+  t.test_rel(vector_mean<double [N],double>(N,x),
 	     gsl_stats_mean(x,1,N),1.0e-8,"mean");
 
   t.test_rel(vector_variance<double [N]>(N,x),
@@ -96,11 +96,11 @@ int main(void) {
   t.test_rel(vector_covariance<double [N]>(N,x,x2),
 	     gsl_stats_covariance(x,1,x2,1,N),1.0e-8,"covariance 1");
   t.test_rel(vector_covariance<double [N]>
-	     (N,x,x2,vector_mean<double [N]>(N,x),
-	      vector_mean<double [N]>(N,x2)),
+	     (N,x,x2,vector_mean<double [N],double>(N,x),
+	      vector_mean<double [N],double>(N,x2)),
 	     gsl_stats_covariance_m
-	     (x,1,x2,1,N,vector_mean<double [N]>(N,x),
-	      vector_mean<double [N]>(N,x2)),
+	     (x,1,x2,1,N,vector_mean<double [N],double>(N,x),
+	      vector_mean<double [N],double>(N,x2)),
 	     1.0e-8,"covariance 2");
 
   t.test_rel(vector_correlation<double [N]>(N,x,x2),

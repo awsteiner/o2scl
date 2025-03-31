@@ -785,9 +785,10 @@ int main(int argc, char *argv[]) {
                           hmc_fill_vec,data_vec_hmc);
     
     std::shared_ptr<o2scl::table_units<> > hmc_table=mpc.mct_hmc.get_table();
-
-    tm.test_rel(vector_mean(hmc_table->get_nlines(),
-                           (*hmc_table)["x"]),0.0,0.2,"hmc mean");
+    
+    tm.test_rel(vector_mean<vector<double>,double>
+                (hmc_table->get_nlines(),(*hmc_table)["x"]),0.0,0.2,
+                "hmc mean");
     tm.test_rel(vector_stddev(hmc_table->get_nlines(),
                            (*hmc_table)["x"]),1.0,0.2,"hmc mean");
     cout << endl;
