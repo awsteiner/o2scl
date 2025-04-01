@@ -96,10 +96,10 @@ namespace o2scl {
       fmins.resize(pop_size_loc);
 
       // Set initial fmin
-      for (size_t x=0; x < pop_size_loc; ++x) {
+      for (size_t x=0;x<pop_size_loc;++x) {
 	vec_t agent_x;
 	agent_x.resize(nvar);
-	for (size_t i=0; i < nvar; ++i) {
+	for (size_t i=0;i<nvar;++i) {
 	  agent_x[i]=this->population[x*nvar+i];
 	}
 	double fmin_x=0;
@@ -107,12 +107,12 @@ namespace o2scl {
 	fmins[x]=fmin_x;
 	if (x==0) {
 	  fmin=fmin_x;
-	  for (size_t i=0; i<nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    x0[i]=agent_x[i];
 	  }
 	} else if (fmin_x<fmin) {
 	  fmin=fmin_x;
-	  for (size_t i=0; i<nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    x0[i]=agent_x[i];
 	  }
 	}
@@ -120,12 +120,12 @@ namespace o2scl {
       }
 
       int gen=0;
-      while (gen < this->ntrial && nconverged <= ((int)this->nconv)) {
+      while (gen<this->ntrial && nconverged <= ((int)this->nconv)) {
 	++nconverged;
 	++gen;
 
 	// For each agent x in the population do: 
-	for (size_t x=0; x < pop_size_loc; ++x) {
+	for (size_t x=0;x<pop_size_loc;++x) {
 
 	  std::vector<int> others;
 
@@ -133,17 +133,17 @@ namespace o2scl {
 	  vec_t agent_x, agent_y;
 	  agent_x.resize(nvar);
 	  agent_y.resize(nvar);
-	  for (size_t i=0; i < nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    agent_x[i]=this->population[x*nvar+i];
 	    agent_y[i]=this->population[x*nvar+i];
 	  }
 	  // Value of f and cr for this agent
 	  double f_x, cr_x;
-	  if (this->gr.random() >= tau_1) {
+	  if (this->gr.random()>=tau_1) {
 	    f_x=variables[x*2];
 	  } else {
 	    f_x=fl+this->gr.random()*fr;
-	  } if (this->gr.random() >= tau_2) {
+	  } if (this->gr.random()>=tau_2) {
 	    cr_x=variables[x*2+1];
 	  } else {
 	    cr_x=this->gr.random();
@@ -159,12 +159,12 @@ namespace o2scl {
 	  // to be optimized.
 	  size_t r=floor(this->gr.random()*nvar);
 
-	  for (size_t i=0; i < nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    // Pick ri~U(0,1) uniformly from the open range (0,1)
 	    double ri=this->gr.random();
 	    // If (i=R) or (ri<CR) let yi=ai + F(bi - ci), 
 	    // otherwise let yi=xi
-	    if (i == r || ri < cr_x) {
+	    if (i==r || ri<cr_x) {
 	      agent_y[i]=this->population[others[0]*nvar+i] + 
 		f_x*(this->population[others[1]*nvar+i]-
 		     this->population[others[2]*nvar+i]);
@@ -177,7 +177,7 @@ namespace o2scl {
                             
 	  fmin_y=func(nvar,agent_y);
 	  if (fmin_y<fmins[x]) {
-	    for (size_t i=0; i < nvar; ++i) {
+	    for (size_t i=0;i<nvar;++i) {
 	      this->population[x*nvar+i]=agent_y[i];
 	      fmins[x]=fmin_y;
 	    }
@@ -187,7 +187,7 @@ namespace o2scl {
 
 	    if (fmin_y<fmin) {
 	      fmin=fmin_y;
-	      for (size_t i=0; i<nvar; ++i) {  
+	      for (size_t i=0;i<nvar;++i) {  
 		x0[i]=agent_y[i];
 	      }
 	      nconverged=0;
@@ -195,8 +195,9 @@ namespace o2scl {
 	  }
 
 	}
-	if (this->verbose > 0) {
-	  this->print_iter(nvar,fmin,gen,x0,pop_size_loc);
+	if (this->verbose>0) {
+	  this->print_iter(nvar,fmin,gen,x0,pop_size_loc,nconverged,
+                           this->nconv);
 	}
       }
       
@@ -214,26 +215,32 @@ namespace o2scl {
      */
     virtual void print_iter(size_t nvar, double fmin, 
 			    int iter, vec_t &best_fit,
-                            size_t pop_size_loc) {
+                            size_t pop_size_loc,
+                            size_t nconverged_loc, size_t nconv_loc) {
       
-      std::cout << "Generation " << iter << std::endl;
-      std::cout << "Fmin: " << fmin << std::endl;
-      std::cout << "Parameters: ";
-      for (size_t i=0; i<nvar; ++i) {
+      std::cout << "diff_evo_adapt::print_iter():\n  "
+                << "Generation,minimum,n_converged: " << iter << " of "
+                << this->ntrial << ", " 
+                << fmin << ", " << nconverged_loc << " of "
+                << nconv_loc << std::endl;
+      std::cout << "diff_evo_adapt::print_iter(): Parameters: ";
+      for (size_t i=0;i<nvar;++i) {
 	std::cout << best_fit[i] << " ";
       }
       std::cout << std::endl;
-      std::cout << "Population: " << std::endl;
-      for (size_t i=0; i<pop_size_loc; ++i ) {
-	std::cout << i << ": ";
-	for (size_t j=0; j<nvar; ++j ) {
-	  std::cout << this->population[i*nvar+j] << " ";
-	}
-	std::cout << "fmin: " << fmins[i] << 
-	  " F: " << variables[i*2] <<
-	  " CR: " << variables[i*2+1] << std::endl;
-      }
+      
       if (this->verbose>1) {
+        std::cout << "diff_evo_adapt::print_iter(): Population: "
+                  << std::endl;
+        for (size_t i=0;i<pop_size_loc;++i) {
+          std::cout << i << ": ";
+          for (size_t j=0;j<nvar;++j) {
+            std::cout << this->population[i*nvar+j] << " ";
+          }
+          std::cout << "fmin: " << fmins[i] << 
+            " F: " << variables[i*2] <<
+            " CR: " << variables[i*2+1] << std::endl;
+        }
 	char ch;
 	std::cin >> ch;
       }
@@ -253,26 +260,31 @@ namespace o2scl {
      */
       virtual int initialize_population(size_t nvar, vec_t &x0,
                                         size_t pop_size_loc) {
+        
       this->population.resize(nvar*pop_size_loc);
       variables.resize(2*pop_size_loc);
       if (this->rand_init_funct==0) {
 	for(size_t i=0;i<pop_size_loc;i++) {
 	  for(size_t j=0;j<nvar;j++) {
-	    double stepj=this->step[j%this->step.size()];
-	    this->population[i*nvar+j]=x0[j]-stepj/2.0+
-              stepj*this->gr.random();
-	  }
-	  variables[i*2]=fl + this->gr.random()*fr;
+            if (this->use_initial_point && i==0) {
+              this->population[i*nvar+j]=x0[j];
+            } else {
+              double stepj=this->step[j%this->step.size()];
+              this->population[i*nvar+j]=x0[j]-stepj/2.0+
+                stepj*this->gr.random();
+            }
+          }
+	  variables[i*2]=fl+this->gr.random()*fr;
 	  variables[i*2+1]=this->gr.random();
 	}
       } else {
-	for (size_t i=0; i < pop_size_loc; ++i) {
+	for (size_t i=0;i<pop_size_loc;++i) {
 	  vec_t y(nvar);
 	  (*this->rand_init_funct)(nvar,x0,y);
-	  for (size_t j=0; j < nvar; ++j) {
-	    this->population[ i*nvar+j ]=y[j];
+	  for (size_t j=0;j<nvar;++j) {
+	    this->population[i*nvar+j]=y[j];
 	  }
-	  variables[i*2]=fl + this->gr.random()*fr;
+	  variables[i*2]=fl+this->gr.random()*fr;
 	  variables[i*2+1]=this->gr.random();
 	}
       }

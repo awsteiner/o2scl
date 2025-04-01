@@ -90,8 +90,7 @@ namespace o2scl {
 	Should be at least 4. Typically between \f$ 5 d \f$ and \f$ 10
 	d \f$ where \f$ d \f$ is the dimensionality of the problem.
 	  
-	If this is 0 (the default), then 
-	\f$ 10 d \f$ is used. 
+	If this is 0 (the default), then \f$ 10 d \f$ is used. 
     */
     size_t pop_size;
 
@@ -113,6 +112,11 @@ namespace o2scl {
     */
     double cr;
 
+    /** \brief If true, use the initial point specified in mmin()
+        (default true)
+     */
+    bool use_initial_point;
+    
     diff_evo() {
       this->ntrial=1000;
       f=0.75;
@@ -122,6 +126,7 @@ namespace o2scl {
       nconv=25;
       step.resize(1);
       step[0]=1.0e-2;
+      use_initial_point=true;
     }
 
     virtual ~diff_evo() {
@@ -185,10 +190,10 @@ namespace o2scl {
       fmins.resize(pop_size_loc);
 
       // Set initial fmin
-      for (size_t x=0; x < pop_size_loc; ++x) {
+      for (size_t x=0;x<pop_size_loc;++x) {
 	vec_t agent_x;
 	agent_x.resize(nvar);
-	for (size_t i=0; i < nvar; ++i) {
+	for (size_t i=0;i<nvar;++i) {
 	  agent_x[i]=population[x*nvar+i];
 	}
 	double fmin_x=0;
@@ -196,12 +201,12 @@ namespace o2scl {
 	fmins[x]=fmin_x;
 	if (x==0) {
 	  fmin=fmin_x;
-	  for (size_t i=0; i<nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    x0[i]=agent_x[i];
 	  }
 	} else if (fmin_x<fmin) {
 	  fmin=fmin_x;
-	  for (size_t i=0; i<nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    x0[i]=agent_x[i];
 	  }
 	}
@@ -214,7 +219,7 @@ namespace o2scl {
 	++gen;
 
 	// For each agent x in the population do: 
-	for (size_t x=0; x < pop_size_loc; ++x) {
+	for (size_t x=0;x<pop_size_loc;++x) {
 
 	  std::vector<int> others;
 
@@ -223,7 +228,7 @@ namespace o2scl {
 	  vec_t agent_x, agent_y;
 	  agent_x.resize(nvar);
 	  agent_y.resize(nvar);
-	  for (size_t i=0; i < nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    agent_x[i]=population[x*nvar+i];
 	    agent_y[i]=population[x*nvar+i];
 	  }
@@ -231,19 +236,19 @@ namespace o2scl {
 	  // Pick three agents a, b, and c from the population at 
 	  // random, they must be distinct from each other as well as
 	  // from agent x
-	  others=pick_unique_agents(3,x ,pop_size_loc);
+	  others=pick_unique_agents(3,x,pop_size_loc);
 
 	  // Pick a random index R in {1, ..., n}, where the highest 
 	  // possible value n is the dimensionality of the problem 
 	  // to be optimized.
 	  size_t r=floor(gr.random()*nvar);
 
-	  for (size_t i=0; i < nvar; ++i) {
+	  for (size_t i=0;i<nvar;++i) {
 	    // Pick ri~U(0,1) uniformly from the open range (0,1)
 	    double ri=gr.random();
 	    // If (i=R) or (ri<CR) let yi=ai + F(bi - ci), otherwise 
 	    // let yi=xi
-	    if (i == r || ri < cr) {
+	    if (i==r || ri<cr) {
 	      agent_y[i]=population[others[0]*nvar+i] + 
 		f*(population[others[1]*nvar+i]-
 		   population[others[2]*nvar+i]);
@@ -256,13 +261,13 @@ namespace o2scl {
                             
 	  fmin_y=func(nvar,agent_y);
 	  if (fmin_y<fmins[x]) {
-	    for (size_t i=0; i < nvar; ++i) {
+	    for (size_t i=0;i<nvar;++i) {
 	      population[x*nvar+i]=agent_y[i];
 	      fmins[x]=fmin_y;
 	    }
 	    if (fmin_y<fmin) {
 	      fmin=fmin_y;
-	      for (size_t i=0; i<nvar; ++i) {  
+	      for (size_t i=0;i<nvar;++i) {  
 		x0[i]=agent_y[i];
 	      }
 	      nconverged=0;
@@ -270,8 +275,9 @@ namespace o2scl {
 	  }
 
 	}
-	if (this->verbose > 0) {
-	  this->print_iter(nvar,fmin,gen,x0 ,pop_size_loc);
+	if (this->verbose>0) {
+	  this->print_iter(nvar,fmin,gen,x0,pop_size_loc,
+                           nconverged,nconv);
 	}
       }
 
@@ -299,23 +305,29 @@ namespace o2scl {
     */
     virtual void print_iter(size_t nvar, double fmin, 
                             int iter, vec_t &best_fit,
-                            size_t pop_size_loc) {
-      std::cout << "Generation " << iter << std::endl;
-      std::cout << "Fmin: " << fmin << std::endl;
-      std::cout << "Parameters: ";
-      for (size_t i=0; i<nvar; ++i) {
+                            size_t pop_size_loc,
+                            size_t nconverged_loc, size_t nconv_loc) {
+      
+      std::cout << "diff_evo::print_iter(): "
+                << "Generation,minimum,n_converged: " << iter << " of "
+                << this->ntrial << ", " 
+                << fmin << " " << nconverged_loc << " of "
+                << nconv_loc << std::endl;
+      std::cout << "diff_evo::print_iter(): Parameters: ";
+      for (size_t i=0;i<nvar;++i) {
 	std::cout << best_fit[i] << " ";
       }
       std::cout << std::endl;
-      std::cout << "Population: " << std::endl;
-      for (size_t i=0; i<pop_size_loc; ++i) {
-	std::cout << i << ": ";
-	for (size_t j=0; j<nvar; ++j) {
-	  std::cout << population[i*nvar+j] << " ";
-	}
-	std::cout << "fmin: " << fmins[i] << std::endl;
-      }
+      
       if (this->verbose>1) {
+        std::cout << "diff_evo::print_iter(): Population: " << std::endl;
+        for (size_t i=0;i<pop_size_loc;++i) {
+          std::cout << i << ": ";
+          for (size_t j=0;j<nvar;++j) {
+            std::cout << population[i*nvar+j] << " ";
+          }
+          std::cout << "fmin: " << fmins[i] << std::endl;
+        }
 	char ch;
 	std::cin >> ch;
       }
@@ -362,16 +374,20 @@ namespace o2scl {
       if (rand_init_funct==0) {
 	for(size_t i=0;i<pop_size_loc;i++) {
 	  for(size_t j=0;j<nvar;j++) {
-	    double stepj=step[j%step.size()];
-	    population[i*nvar+j]=x0[j]-stepj/2.0+stepj*gr.random();
+            if (use_initial_point && i==0) {
+              population[i*nvar+j]=x0[j];
+            } else {
+              double stepj=step[j%step.size()];
+              population[i*nvar+j]=x0[j]-stepj/2.0+stepj*gr.random();
+            }
 	  }
 	}
       } else {
-	for (size_t i=0; i < pop_size_loc; ++i) {
+	for (size_t i=0;i<pop_size_loc;++i) {
 	  vec_t y(nvar);
 	  (*rand_init_funct)(nvar,x0,y);
-	  for (size_t j=0; j < nvar; ++j) {
-	    population[ i*nvar+j ]=y[j];
+	  for (size_t j=0;j<nvar;++j) {
+	    population[i*nvar+j]=y[j];
 	    
 	  }
 	}
@@ -394,7 +410,7 @@ namespace o2scl {
       std::vector<int> ids;
       std::vector<int> agents;
       // Fill array with ids
-      for (size_t i=0; i<pop_size_loc-1; ++i){
+      for (size_t i=0;i<pop_size_loc-1;++i) {
 	if (i<x) {
 	  ids.push_back(i);
 	} else {
@@ -402,11 +418,11 @@ namespace o2scl {
 	}
       }
       // Shuffle according to Fisher-Yates
-      for (size_t i=ids.size()-1; i>ids.size()-nr-1; --i) {
+      for (size_t i=ids.size()-1;i>ids.size()-nr-1;--i) {
 	int j=round(gr.random()*i);
 	std::swap(ids[i],ids[j]);
       }
-      for (size_t i=ids.size()-1; i>ids.size()-nr-1; --i) {
+      for (size_t i=ids.size()-1;i>ids.size()-nr-1;--i) {
 	agents.push_back(ids[i]);
       }
       return agents;
