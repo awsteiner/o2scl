@@ -63,6 +63,8 @@ namespace o2scl {
   template<class vec_t, class data_t>
   data_t vector_mean(size_t n, const vec_t &data) {
     data_t mean=0;
+    // This is more numerically stable than the use of
+    // the simple sum.
     for(size_t i=0;i<n;i++) {
       mean+=(data[i]-mean)/(i+1);
     }
@@ -95,6 +97,8 @@ namespace o2scl {
   template<class vec_t>
     double vector_variance_fmean(size_t n, const vec_t &data, double mean) {
     long double var=0.0;
+    // This is more numerically stable than the use of
+    // the simple squared sum.
     for(size_t i=0;i<n;i++) {
       long double delta=(data[i]-mean);
       var+=(delta*delta-var)/(i+1);
@@ -328,7 +332,8 @@ namespace o2scl {
       If \c n is 0 or 1, this function will call the error
       handler.
   */
-  template<class vec_t> double vector_stddev(const vec_t &data, double mean) {
+  template<class vec_t> double vector_stddev(const vec_t &data,
+                                             double mean) {
     return vector_stddev(data.size(),data,mean);
   }
   
@@ -1863,14 +1868,17 @@ namespace o2scl {
     return vector_lagk_autocorr(data.size(),data,k);
   }
 
-  /** \brief Construct an autocorrelation vector
+  /** \brief Construct an autocorrelation vector (with OpenMP support)
 
       This constructs a vector \c ac_vec for which the kth entry
       stores the lag-k autocorrelation. This function chooses \f$
-      k_{\mathrm{max}} =n/2 \f$ where \f$ n \f$ is the length of the
+      k_{\mathrm{max}}=n/2 \f$ where \f$ n \f$ is the length of the
       \c data vector. The vector \c ac_vec is resized to accomodate
       exactly \f$ k_{\mathrm{max}} \f$ values, from 0 to 
       \f$ k_{\mathrm{max}}-1 \f$.
+
+      If \c verbose is greater than 0, then the progress is
+      output to \c cout after each 100 values of k
   */
   template<class vec_t, class resize_vec_t> void vector_autocorr_vector
   (size_t n, const vec_t &data, resize_vec_t &ac_vec,
@@ -2496,9 +2504,10 @@ namespace o2scl {
       using the first \c n2 elements of vectors \c data and \c mult
    */
   template<class vec_t, class vec2_t, class resize_vec_t>
-    void vector_autocorr_vector_mult
-    (size_t n2, const vec_t &data, const vec2_t &mult, resize_vec_t &ac_vec) {
-
+  void vector_autocorr_vector_mult
+  (size_t n2, const vec_t &data, const vec2_t &mult,
+   resize_vec_t &ac_vec) {
+    
     size_t n=0;
     for(size_t i=0;i<n2;i++) {
       n+=((size_t)(mult[i]*(1.0+1.0e-10)));

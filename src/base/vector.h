@@ -2803,6 +2803,25 @@ namespace o2scl {
     return sum;
   }
 
+  /** \brief Compute the sum of the first \c n elements of a vector
+      (OpenMP version)
+
+      If \c n is zero, this will return 0 without throwing
+      an exception.
+  */
+  template<class vec_t, class data_t>
+  data_t vector_sum_openmp(size_t n, const vec_t &data) {
+    
+    data_t sum=0;
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel for reduction(+:sum)
+#endif
+    for(size_t i=0;i<n;i++) {
+      sum+=data[i];
+    }
+    return sum;
+  }
+
   /** \brief Create a new vector containing the differences between
       adjacent entries
   */
