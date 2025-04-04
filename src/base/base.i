@@ -1043,6 +1043,12 @@ class table3d
   - io uniform_grid<double> &x_grid
   - std::string y_name
   - io uniform_grid<double> &y_grid
+- function set_interp_type
+  - void
+  - size_t interp_type
+- function line_of_names
+  - void
+  - std::string names
 - function set
   - void
   - py_name set

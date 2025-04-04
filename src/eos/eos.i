@@ -658,9 +658,9 @@ class eos_nstar_rot_interp
 - function set_eos_fm
   - void
   - size_t n
-  - std::vector<double> eden
-  - std::vector<double> pres
-  - std::vector<double> nb
+  - vector<double> &eden
+  - vector<double> &pres
+  - vector<double> &nb
 # 
 # ------------------------------------------------------
 # 
@@ -702,6 +702,27 @@ class nstar_rot
   - double cent_eden
   - double axis_rat
   - bool use_guess [false]
+- double Mass
+- double MSUN
+- double R_e
+- double Omega
+- double Omega_K
+- double T
+- double W
+- double J
+- double C
+- double G
+- double I
+- double mass_quadrupole
+- double KAPPA
+- double h_plus
+- double h_minus
+- double Z_p
+- double Z_f
+- double Z_b
+- double om_over_Om
+- double r_e
+- double r_ratio
 # 
 # ------------------------------------------------------
 #

@@ -457,6 +457,10 @@ void o2scl_table3d_set_xy(void *vptr, void *ptr_x_name, size_t nx, void *ptr_x, 
 
 void o2scl_table3d_set_xy_grid(void *vptr, void *ptr_x_name, void *ptr_x_grid, void *ptr_y_name, void *ptr_y_grid);
 
+void o2scl_table3d_set_interp_type(void *vptr, size_t interp_type);
+
+void o2scl_table3d_line_of_names(void *vptr, void *ptr_names);
+
 void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, void *ptr_name, double val);
 
 double o2scl_table3d_get(void *vptr, size_t ix, size_t iy, void *ptr_name);

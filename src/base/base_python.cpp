@@ -1356,6 +1356,19 @@ void o2scl_table3d_set_xy_grid(void *vptr, void *ptr_x_name, void *ptr_x_grid, v
   return;
 }
 
+void o2scl_table3d_set_interp_type(void *vptr, size_t interp_type) {
+  table3d *ptr=(table3d *)vptr;
+  ptr->set_interp_type(interp_type);
+  return;
+}
+
+void o2scl_table3d_line_of_names(void *vptr, void *ptr_names) {
+  table3d *ptr=(table3d *)vptr;
+  std::string *names=(std::string *)ptr_names;
+  ptr->line_of_names(*names);
+  return;
+}
+
 void o2scl_table3d_set(void *vptr, size_t ix, size_t iy, void *ptr_name, double val) {
   table3d *ptr=(table3d *)vptr;
   std::string *name=(std::string *)ptr_name;
