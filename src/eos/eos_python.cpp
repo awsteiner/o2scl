@@ -2179,6 +2179,123 @@ void *o2scl_nstar_cold_get_tov_results(void *vptr) {
   return ret;
 }
 
+double o2scl_eos_nstar_rot_enth_from_pr(void *vptr, double pr) {
+  eos_nstar_rot *ptr=(eos_nstar_rot *)vptr;
+  double ret=ptr->enth_from_pr(pr);
+  return ret;
+}
+
+double o2scl_eos_nstar_rot_pr_from_enth(void *vptr, double pr) {
+  eos_nstar_rot *ptr=(eos_nstar_rot *)vptr;
+  double ret=ptr->pr_from_enth(pr);
+  return ret;
+}
+
+double o2scl_eos_nstar_rot_enth_from_nb(void *vptr, double pr) {
+  eos_nstar_rot *ptr=(eos_nstar_rot *)vptr;
+  double ret=ptr->enth_from_nb(pr);
+  return ret;
+}
+
+void *o2scl_create_eos_nstar_rot_interp() {
+  eos_nstar_rot_interp *ptr=new eos_nstar_rot_interp;
+  return ptr;
+}
+
+void o2scl_free_eos_nstar_rot_interp(void *vptr) {
+  eos_nstar_rot_interp *ptr=(eos_nstar_rot_interp *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_eos_nstar_rot_interp_set_eos_fm(void *vptr, size_t n, std::vector<double> eden, std::vector<double> pres, std::vector<double> nb) {
+  eos_nstar_rot_interp *ptr=(eos_nstar_rot_interp *)vptr;
+  ptr->set_eos_fm(n,eden,pres,nb);
+  return;
+}
+
+void *o2scl_create_eos_nstar_rot_C() {
+  eos_nstar_rot_C *ptr=new eos_nstar_rot_C;
+  return ptr;
+}
+
+void o2scl_free_eos_nstar_rot_C(void *vptr) {
+  eos_nstar_rot_C *ptr=(eos_nstar_rot_C *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_eos_nstar_rot_C_set(void *vptr, bool rns_constants) {
+  eos_nstar_rot_C *ptr=(eos_nstar_rot_C *)vptr;
+  ptr->set(rns_constants);
+  return;
+}
+
+void *o2scl_create_eos_nstar_rot_L() {
+  eos_nstar_rot_L *ptr=new eos_nstar_rot_L;
+  return ptr;
+}
+
+void o2scl_free_eos_nstar_rot_L(void *vptr) {
+  eos_nstar_rot_L *ptr=(eos_nstar_rot_L *)vptr;
+  delete ptr;
+  return;
+}
+
+void o2scl_eos_nstar_rot_L_set(void *vptr, bool rns_constants) {
+  eos_nstar_rot_L *ptr=(eos_nstar_rot_L *)vptr;
+  ptr->set(rns_constants);
+  return;
+}
+
+void *o2scl_create_nstar_rot() {
+  nstar_rot *ptr=new nstar_rot;
+  return ptr;
+}
+
+void o2scl_free_nstar_rot(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_nstar_rot_get_verbose(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_nstar_rot_set_verbose(void *vptr, int v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+void o2scl_nstar_rot_output_table(void *vptr, void *ptr_t) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  table3d *t=(table3d *)ptr_t;
+  ptr->output_table(*t);
+  return;
+}
+
+void o2scl_nstar_rot_set_eos(void *vptr, void *ptr_eos) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  eos_nstar_rot *eos=(eos_nstar_rot *)ptr_eos;
+  ptr->set_eos(*eos);
+  return;
+}
+
+void o2scl_nstar_rot_polytrope_eos(void *vptr, double index) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->polytrope_eos(index);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_axis_rat(void *vptr, double cent_eden, double axis_rat, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_axis_rat(cent_eden,axis_rat,use_guess);
+  return;
+}
+
 void *o2scl_create_nucleus_rmf() {
   nucleus_rmf *ptr=new nucleus_rmf;
   return ptr;

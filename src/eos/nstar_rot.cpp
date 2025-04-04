@@ -166,6 +166,10 @@ double eos_nstar_rot_interp::interp(double xp[], double yp[], int np,
 }
 
 eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
+  set(rns_constants);
+}
+  
+void eos_nstar_rot_C::set(bool rns_constants) {
   if (rns_constants) {
     C=2.9979e10;                  
     G=6.6732e-8;                  
@@ -288,6 +292,10 @@ eos_nstar_rot_C::eos_nstar_rot_C(bool rns_constants) {
 }
 
 eos_nstar_rot_L::eos_nstar_rot_L(bool rns_constants) {
+  set(rns_constants);
+}
+
+void eos_nstar_rot_L::set(bool rns_constants) {
   if (rns_constants) {
     C=2.9979e10;                  
     G=6.6732e-8;                  

@@ -543,8 +543,15 @@ namespace o2scl {
       \endverbatim
    */
   class eos_nstar_rot_C : public eos_nstar_rot_interp {
+
   public:
+
+    /// Desc
     eos_nstar_rot_C(bool rns_constants=false);
+
+    /// Desc
+    void set(bool rns_constants=false);
+             
   };
   
   /** \brief Tabulated EOS for \ref nstar_rot from Pandharipande75 et al. 1975
@@ -554,8 +561,15 @@ namespace o2scl {
       \endverbatim
    */
   class eos_nstar_rot_L : public eos_nstar_rot_interp {
+
   public:
+    
+    /// Desc
     eos_nstar_rot_L(bool rns_constants=false);
+
+    /// Desc
+    void set(bool rns_constants=false);
+             
   };
   
   /** \brief Rotating neutron star class based on RNS v1.1d from

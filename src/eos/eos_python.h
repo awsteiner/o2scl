@@ -34,6 +34,7 @@
 #include <o2scl/fermion_deriv_nr.h>
 #include <o2scl/hdf_eos_io.h>
 #include <o2scl/nstar_cold.h>
+#include <o2scl/nstar_rot.h>
 #include <o2scl/tov_love.h>
 #include <o2scl/eos_tov.h>
 #include <o2scl/nucleus_rmf.h>
@@ -791,6 +792,46 @@ int o2scl_nstar_cold_fixed(void *vptr, double target_mass);
 void *o2scl_nstar_cold_get_eos_results(void *vptr);
 
 void *o2scl_nstar_cold_get_tov_results(void *vptr);
+
+double o2scl_eos_nstar_rot_enth_from_pr(void *vptr, double pr);
+
+double o2scl_eos_nstar_rot_pr_from_enth(void *vptr, double pr);
+
+double o2scl_eos_nstar_rot_enth_from_nb(void *vptr, double pr);
+
+void *o2scl_create_eos_nstar_rot_interp();
+
+void o2scl_free_eos_nstar_rot_interp(void *vptr);
+
+void o2scl_eos_nstar_rot_interp_set_eos_fm(void *vptr, size_t n, std::vector<double> eden, std::vector<double> pres, std::vector<double> nb);
+
+void *o2scl_create_eos_nstar_rot_C();
+
+void o2scl_free_eos_nstar_rot_C(void *vptr);
+
+void o2scl_eos_nstar_rot_C_set(void *vptr, bool rns_constants=false);
+
+void *o2scl_create_eos_nstar_rot_L();
+
+void o2scl_free_eos_nstar_rot_L(void *vptr);
+
+void o2scl_eos_nstar_rot_L_set(void *vptr, bool rns_constants=false);
+
+void *o2scl_create_nstar_rot();
+
+void o2scl_free_nstar_rot(void *vptr);
+
+int o2scl_nstar_rot_get_verbose(void *vptr);
+
+void o2scl_nstar_rot_set_verbose(void *vptr, int v);
+
+void o2scl_nstar_rot_output_table(void *vptr, void *ptr_t);
+
+void o2scl_nstar_rot_set_eos(void *vptr, void *ptr_eos);
+
+void o2scl_nstar_rot_polytrope_eos(void *vptr, double index);
+
+void o2scl_nstar_rot_fix_cent_eden_axis_rat(void *vptr, double cent_eden, double axis_rat, bool use_guess=false);
 
 void *o2scl_create_nucleus_rmf();
 

@@ -29,6 +29,7 @@ h_include <o2scl/fermion_nonrel.h>
 h_include <o2scl/fermion_deriv_nr.h>
 h_include <o2scl/hdf_eos_io.h>
 h_include <o2scl/nstar_cold.h>
+h_include <o2scl/nstar_rot.h>
 h_include <o2scl/tov_love.h>
 h_include <o2scl/eos_tov.h>
 h_include <o2scl/nucleus_rmf.h>
@@ -595,6 +596,8 @@ class tov_love
   - out double &lambda_km5
   - out double &lambda_cgs
 # 
+# ------------------------------------------------------
+# 
 # Class nstar_cold
 #
 class nstar_cold
@@ -629,6 +632,76 @@ class nstar_cold
 - bool remove_rows  
 - bool include_muons
 - bool err_nonconv
+# 
+# ------------------------------------------------------
+# 
+# Class eos_nstar_rot
+#
+class eos_nstar_rot abstract
+- parent eos_tov
+- function enth_from_pr
+  - double
+  - double pr
+- function pr_from_enth
+  - double
+  - double pr
+- function enth_from_nb
+  - double
+  - double pr
+# 
+# ------------------------------------------------------
+# 
+# Class eos_nstar_rot_interp
+#
+class eos_nstar_rot_interp
+- parent eos_nstar_rot
+- function set_eos_fm
+  - void
+  - size_t n
+  - std::vector<double> eden
+  - std::vector<double> pres
+  - std::vector<double> nb
+# 
+# ------------------------------------------------------
+# 
+# Class eos_nstar_rot_C
+#
+class eos_nstar_rot_C
+- parent eos_nstar_rot_interp
+- function set
+  - void
+  - bool rns_constants [false]
+# 
+# ------------------------------------------------------
+# 
+# Class eos_nstar_rot_L
+#
+class eos_nstar_rot_L
+- parent eos_nstar_rot_interp
+- function set
+  - void
+  - bool rns_constants [false]
+# 
+# ------------------------------------------------------
+# 
+# Class nstar_rot
+#
+class nstar_rot
+- int verbose
+- function output_table
+  - void
+  - io table3d &t
+- function set_eos
+  - void
+  - io eos_nstar_rot &eos
+- function polytrope_eos
+  - void
+  - double index
+- function fix_cent_eden_axis_rat
+  - void
+  - double cent_eden
+  - double axis_rat
+  - bool use_guess [false]
 # 
 # ------------------------------------------------------
 #
