@@ -1343,6 +1343,12 @@ void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double in
   return;
 }
 
+void o2scl_eos_tov_polytrope_set_baryon_density(void *vptr, double nb, double ed) {
+  eos_tov_polytrope *ptr=(eos_tov_polytrope *)vptr;
+  ptr->set_baryon_density(nb,ed);
+  return;
+}
+
 void *o2scl_create_eos_tov_linear() {
   eos_tov_linear *ptr=new eos_tov_linear;
   return ptr;

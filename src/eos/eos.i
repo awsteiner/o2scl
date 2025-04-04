@@ -464,6 +464,10 @@ class eos_tov_polytrope
   - void
   - double coeff
   - double index
+- function set_baryon_density
+  - void
+  - double nb
+  - double ed
 # 
 # Class eos_tov_linear
 #
@@ -687,7 +691,6 @@ class eos_nstar_rot_L
 # Class nstar_rot
 #
 class nstar_rot
-- int verbose
 - function output_table
   - void
   - io table3d &t
@@ -702,27 +705,99 @@ class nstar_rot
   - double cent_eden
   - double axis_rat
   - bool use_guess [false]
-- double Mass
-- double MSUN
+- function fix_cent_eden_grav_mass
+  - void
+  - double cent_eden
+  - double grav_mass
+- function fix_cent_eden_bar_mass
+  - void
+  - double cent_eden
+  - double bar_mass
+- function fix_cent_eden_with_kepler
+  - void
+  - double cent_eden
+- function fix_cent_eden_ang_vel
+  - void
+  - double cent_eden
+  - double ang_vel
+- function fix_cent_eden_ang_mom
+  - void
+  - double cent_eden
+  - double ang_mom
+- function fix_cent_eden_non_rot
+  - void
+  - double cent_eden
+- function fix_cent_eden_with_kepler_alt
+  - void
+  - double cent_eden
+  - bool use_guess [false]
+- function fix_cent_eden_grav_mass_alt
+  - void
+  - double cent_eden
+  - double grav_mass
+  - bool use_guess [false]
+- function fix_cent_eden_bar_mass_alt
+  - void
+  - double cent_eden
+  - double bar_mass
+  - bool use_guess [false]
+- function fix_cent_eden_ang_vel_alt
+  - void
+  - double cent_eden
+  - double ang_vel
+  - bool use_guess [false]
+- function fix_cent_eden_ang_mom_alt
+  - void
+  - double cent_eden
+  - double ang_mom
+  - bool use_guess [false]
+- function polytrope_eos
+  - void
+  - double index
+- function constants_rns
+  - void
+- function constants_o2scl
+  - void
+- double eq_radius_tol_rel
+- double alt_tol_rel
+- int verbose
+- double e_center
+- double r_ratio
+- double r_e
+- double r_p
+- double s_p
+- double s_e
 - double R_e
-- double Omega
-- double Omega_K
-- double T
-- double W
+- double Mass_p
+- double Mass
+- double Mass_0
 - double J
-- double C
-- double G
+- double Omega
+- double T
 - double I
-- double mass_quadrupole
-- double KAPPA
-- double h_plus
-- double h_minus
+- double W
 - double Z_p
 - double Z_f
 - double Z_b
+- double Omega_K
+- double eccentricity
+- double v_plus  
+- double v_minus
+- double vel_plus  
+- double vel_minus
+- double h_plus
+- double h_minus
+- double Omega_plus
 - double om_over_Om
-- double r_e
-- double r_ratio
+- double mass_quadrupole
+- double cf
+- double C
+- double G
+- double MSUN
+- double KAPPA
+- double MB
+- double KSCALE
+- double PI
 # 
 # ------------------------------------------------------
 #

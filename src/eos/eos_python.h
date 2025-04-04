@@ -500,6 +500,8 @@ void o2scl_free_eos_tov_polytrope(void *vptr);
 
 void o2scl_eos_tov_polytrope_set_coeff_index(void *vptr, double coeff, double index);
 
+void o2scl_eos_tov_polytrope_set_baryon_density(void *vptr, double nb, double ed);
+
 void *o2scl_create_eos_tov_linear();
 
 void o2scl_free_eos_tov_linear(void *vptr);
