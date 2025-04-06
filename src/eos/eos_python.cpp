@@ -2268,6 +2268,28 @@ void o2scl_free_nstar_rot(void *vptr) {
   return;
 }
 
+double o2scl_nstar_rot_get_eq_radius_tol_rel(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->eq_radius_tol_rel;
+}
+
+void o2scl_nstar_rot_set_eq_radius_tol_rel(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->eq_radius_tol_rel=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_alt_tol_rel(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->alt_tol_rel;
+}
+
+void o2scl_nstar_rot_set_alt_tol_rel(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->alt_tol_rel=v;
+  return;
+}
+
 int o2scl_nstar_rot_get_verbose(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
   return ptr->verbose;
@@ -2279,25 +2301,69 @@ void o2scl_nstar_rot_set_verbose(void *vptr, int v) {
   return;
 }
 
-double o2scl_nstar_rot_get_Mass(void *vptr) {
+double o2scl_nstar_rot_get_e_center(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->Mass;
+  return ptr->e_center;
 }
 
-void o2scl_nstar_rot_set_Mass(void *vptr, double v) {
+void o2scl_nstar_rot_set_e_center(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->Mass=v;
+  ptr->e_center=v;
   return;
 }
 
-double o2scl_nstar_rot_get_MSUN(void *vptr) {
+double o2scl_nstar_rot_get_r_ratio(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->MSUN;
+  return ptr->r_ratio;
 }
 
-void o2scl_nstar_rot_set_MSUN(void *vptr, double v) {
+void o2scl_nstar_rot_set_r_ratio(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->MSUN=v;
+  ptr->r_ratio=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_r_e(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->r_e;
+}
+
+void o2scl_nstar_rot_set_r_e(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->r_e=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_r_p(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->r_p;
+}
+
+void o2scl_nstar_rot_set_r_p(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->r_p=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_s_p(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->s_p;
+}
+
+void o2scl_nstar_rot_set_s_p(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->s_p=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_s_e(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->s_e;
+}
+
+void o2scl_nstar_rot_set_s_e(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->s_e=v;
   return;
 }
 
@@ -2312,47 +2378,36 @@ void o2scl_nstar_rot_set_R_e(void *vptr, double v) {
   return;
 }
 
-double o2scl_nstar_rot_get_Omega(void *vptr) {
+double o2scl_nstar_rot_get_Mass_p(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->Omega;
+  return ptr->Mass_p;
 }
 
-void o2scl_nstar_rot_set_Omega(void *vptr, double v) {
+void o2scl_nstar_rot_set_Mass_p(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->Omega=v;
+  ptr->Mass_p=v;
   return;
 }
 
-double o2scl_nstar_rot_get_Omega_K(void *vptr) {
+double o2scl_nstar_rot_get_Mass(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->Omega_K;
+  return ptr->Mass;
 }
 
-void o2scl_nstar_rot_set_Omega_K(void *vptr, double v) {
+void o2scl_nstar_rot_set_Mass(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->Omega_K=v;
+  ptr->Mass=v;
   return;
 }
 
-double o2scl_nstar_rot_get_T(void *vptr) {
+double o2scl_nstar_rot_get_Mass_0(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->T;
+  return ptr->Mass_0;
 }
 
-void o2scl_nstar_rot_set_T(void *vptr, double v) {
+void o2scl_nstar_rot_set_Mass_0(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->T=v;
-  return;
-}
-
-double o2scl_nstar_rot_get_W(void *vptr) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->W;
-}
-
-void o2scl_nstar_rot_set_W(void *vptr, double v) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->W=v;
+  ptr->Mass_0=v;
   return;
 }
 
@@ -2367,25 +2422,25 @@ void o2scl_nstar_rot_set_J(void *vptr, double v) {
   return;
 }
 
-double o2scl_nstar_rot_get_C(void *vptr) {
+double o2scl_nstar_rot_get_Omega(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->C;
+  return ptr->Omega;
 }
 
-void o2scl_nstar_rot_set_C(void *vptr, double v) {
+void o2scl_nstar_rot_set_Omega(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->C=v;
+  ptr->Omega=v;
   return;
 }
 
-double o2scl_nstar_rot_get_G(void *vptr) {
+double o2scl_nstar_rot_get_T(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->G;
+  return ptr->T;
 }
 
-void o2scl_nstar_rot_set_G(void *vptr, double v) {
+void o2scl_nstar_rot_set_T(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->G=v;
+  ptr->T=v;
   return;
 }
 
@@ -2400,47 +2455,14 @@ void o2scl_nstar_rot_set_I(void *vptr, double v) {
   return;
 }
 
-double o2scl_nstar_rot_get_mass_quadrupole(void *vptr) {
+double o2scl_nstar_rot_get_W(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->mass_quadrupole;
+  return ptr->W;
 }
 
-void o2scl_nstar_rot_set_mass_quadrupole(void *vptr, double v) {
+void o2scl_nstar_rot_set_W(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->mass_quadrupole=v;
-  return;
-}
-
-double o2scl_nstar_rot_get_KAPPA(void *vptr) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->KAPPA;
-}
-
-void o2scl_nstar_rot_set_KAPPA(void *vptr, double v) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->KAPPA=v;
-  return;
-}
-
-double o2scl_nstar_rot_get_h_plus(void *vptr) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->h_plus;
-}
-
-void o2scl_nstar_rot_set_h_plus(void *vptr, double v) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->h_plus=v;
-  return;
-}
-
-double o2scl_nstar_rot_get_h_minus(void *vptr) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->h_minus;
-}
-
-void o2scl_nstar_rot_set_h_minus(void *vptr, double v) {
-  nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->h_minus=v;
+  ptr->W=v;
   return;
 }
 
@@ -2477,6 +2499,107 @@ void o2scl_nstar_rot_set_Z_b(void *vptr, double v) {
   return;
 }
 
+double o2scl_nstar_rot_get_Omega_K(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->Omega_K;
+}
+
+void o2scl_nstar_rot_set_Omega_K(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->Omega_K=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_eccentricity(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->eccentricity;
+}
+
+void o2scl_nstar_rot_set_eccentricity(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->eccentricity=v;
+  return;
+}
+
+void *o2scl_nstar_rot_get_v_plus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return (void *)(&(ptr->v_plus));
+}
+
+void o2scl_nstar_rot_set_v_plus(void *vptr, void *p_v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ubvector *p_tsot=(ubvector *)p_v;
+  ptr->v_plus=*(p_tsot);
+  return;
+}
+
+void *o2scl_nstar_rot_get_v_minus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return (void *)(&(ptr->v_minus));
+}
+
+void o2scl_nstar_rot_set_v_minus(void *vptr, void *p_v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ubvector *p_tsot=(ubvector *)p_v;
+  ptr->v_minus=*(p_tsot);
+  return;
+}
+
+double o2scl_nstar_rot_get_vel_plus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->vel_plus;
+}
+
+void o2scl_nstar_rot_set_vel_plus(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->vel_plus=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_vel_minus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->vel_minus;
+}
+
+void o2scl_nstar_rot_set_vel_minus(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->vel_minus=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_h_plus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->h_plus;
+}
+
+void o2scl_nstar_rot_set_h_plus(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->h_plus=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_h_minus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->h_minus;
+}
+
+void o2scl_nstar_rot_set_h_minus(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->h_minus=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_Omega_plus(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->Omega_plus;
+}
+
+void o2scl_nstar_rot_set_Omega_plus(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->Omega_plus=v;
+  return;
+}
+
 double o2scl_nstar_rot_get_om_over_Om(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
   return ptr->om_over_Om;
@@ -2488,25 +2611,102 @@ void o2scl_nstar_rot_set_om_over_Om(void *vptr, double v) {
   return;
 }
 
-double o2scl_nstar_rot_get_r_e(void *vptr) {
+double o2scl_nstar_rot_get_mass_quadrupole(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->r_e;
+  return ptr->mass_quadrupole;
 }
 
-void o2scl_nstar_rot_set_r_e(void *vptr, double v) {
+void o2scl_nstar_rot_set_mass_quadrupole(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->r_e=v;
+  ptr->mass_quadrupole=v;
   return;
 }
 
-double o2scl_nstar_rot_get_r_ratio(void *vptr) {
+double o2scl_nstar_rot_get_cf(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  return ptr->r_ratio;
+  return ptr->cf;
 }
 
-void o2scl_nstar_rot_set_r_ratio(void *vptr, double v) {
+void o2scl_nstar_rot_set_cf(void *vptr, double v) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->r_ratio=v;
+  ptr->cf=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_C(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->C;
+}
+
+void o2scl_nstar_rot_set_C(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->C=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_G(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->G;
+}
+
+void o2scl_nstar_rot_set_G(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->G=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_MSUN(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->MSUN;
+}
+
+void o2scl_nstar_rot_set_MSUN(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->MSUN=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_KAPPA(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->KAPPA;
+}
+
+void o2scl_nstar_rot_set_KAPPA(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->KAPPA=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_MB(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->MB;
+}
+
+void o2scl_nstar_rot_set_MB(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->MB=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_KSCALE(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->KSCALE;
+}
+
+void o2scl_nstar_rot_set_KSCALE(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->KSCALE=v;
+  return;
+}
+
+double o2scl_nstar_rot_get_PI(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->PI;
+}
+
+void o2scl_nstar_rot_set_PI(void *vptr, double v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->PI=v;
   return;
 }
 
@@ -2533,6 +2733,84 @@ void o2scl_nstar_rot_polytrope_eos(void *vptr, double index) {
 void o2scl_nstar_rot_fix_cent_eden_axis_rat(void *vptr, double cent_eden, double axis_rat, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
   ptr->fix_cent_eden_axis_rat(cent_eden,axis_rat,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_grav_mass(void *vptr, double cent_eden, double grav_mass) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_grav_mass(cent_eden,grav_mass);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_bar_mass(void *vptr, double cent_eden, double bar_mass) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_bar_mass(cent_eden,bar_mass);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_with_kepler(void *vptr, double cent_eden) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_with_kepler(cent_eden);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_ang_vel(void *vptr, double cent_eden, double ang_vel) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_ang_vel(cent_eden,ang_vel);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_ang_mom(void *vptr, double cent_eden, double ang_mom) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_ang_mom(cent_eden,ang_mom);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_non_rot(void *vptr, double cent_eden) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_non_rot(cent_eden);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_with_kepler_alt(void *vptr, double cent_eden, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_with_kepler_alt(cent_eden,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_grav_mass_alt(void *vptr, double cent_eden, double grav_mass, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_grav_mass_alt(cent_eden,grav_mass,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_bar_mass_alt(void *vptr, double cent_eden, double bar_mass, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_bar_mass_alt(cent_eden,bar_mass,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_ang_vel_alt(void *vptr, double cent_eden, double ang_vel, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_ang_vel_alt(cent_eden,ang_vel,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_fix_cent_eden_ang_mom_alt(void *vptr, double cent_eden, double ang_mom, bool use_guess) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->fix_cent_eden_ang_mom_alt(cent_eden,ang_mom,use_guess);
+  return;
+}
+
+void o2scl_nstar_rot_constants_rns(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->constants_rns();
+  return;
+}
+
+void o2scl_nstar_rot_constants_o2scl(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->constants_o2scl();
   return;
 }
 

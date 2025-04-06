@@ -751,9 +751,6 @@ class nstar_rot
   - double cent_eden
   - double ang_mom
   - bool use_guess [false]
-- function polytrope_eos
-  - void
-  - double index
 - function constants_rns
   - void
 - function constants_o2scl
@@ -781,8 +778,9 @@ class nstar_rot
 - double Z_b
 - double Omega_K
 - double eccentricity
-- double v_plus  
-- double v_minus
+# I'm not sure if ubvectors work yet
+- ubvector v_plus  
+- ubvector v_minus
 - double vel_plus  
 - double vel_minus
 - double h_plus
