@@ -363,7 +363,7 @@ namespace o2scl {
       // Remove whitespace
       remove_whitespace(from);
       remove_whitespace(to);
-      
+
       int ret_cache=convert_cache(from,to,val,converted,factor);
       if (ret_cache==0) {
         if (verbose>=2) {
@@ -476,8 +476,8 @@ namespace o2scl {
         factor=m3->second.c;
         converted=val*factor;
         if (verbose>=2) {
-          std::cout << "Function convert_units::convert_cache(): "
-                    << "found forward conversion." << std::endl;
+          std::cout << "convert_units::convert_cache(): "
+                    << "Found forward conversion." << std::endl;
         }
         return 0;
       }
@@ -489,8 +489,8 @@ namespace o2scl {
         factor=1/m3->second.c;
         converted=val*factor;
         if (verbose>=2) {
-          std::cout << "Function convert_units::convert_cache(): "
-                    << "found inverse conversion." << std::endl;
+          std::cout << "convert_units::convert_cache(): "
+                    << "Found inverse conversion." << std::endl;
         }
         return 0;
       }
@@ -504,9 +504,10 @@ namespace o2scl {
             mciter m2=mcache.find(b);
             if (m2!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << " " << m->second.c << std::endl;
-                std::cout << " (1)          and: " << m2->second.f << " , "
+                std::cout << "  (1)           and: " << m2->second.f << " , "
                           << m2->second.t << " " << m2->second.c << std::endl;
               }
               factor=m->second.c*m2->second.c;
@@ -517,9 +518,10 @@ namespace o2scl {
             mciter m4=mcache.find(b2);
             if (m4!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << std::endl;
-                std::cout << " (2)          and: " << m4->second.f << " , "
+                std::cout << "  (2)           and: " << m4->second.f << " , "
                           << m4->second.t << std::endl;
               }
               factor=m->second.c/m4->second.c;
@@ -531,9 +533,10 @@ namespace o2scl {
             mciter m2=mcache.find(b);
             if (m2!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << std::endl;
-                std::cout << " (3)          and: " << m2->second.f << " , "
+                std::cout << "  (3)           and: " << m2->second.f << " , "
                           << m2->second.t << std::endl;
               }
               factor=m2->second.c/m->second.c;
@@ -545,9 +548,10 @@ namespace o2scl {
             mciter m2=mcache.find(b);
             if (m2!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << std::endl;
-                std::cout << " (4)          and: " << m2->second.f << " , "
+                std::cout << "  (4)           and: " << m2->second.f << " , "
                           << m2->second.t << std::endl;
               }
               factor=1/m->second.c/m2->second.c;
@@ -558,9 +562,10 @@ namespace o2scl {
             mciter m4=mcache.find(b2);
             if (m4!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << std::endl;
-                std::cout << " (5)          and: " << m4->second.f << " , "
+                std::cout << "  (5)           and: " << m4->second.f << " , "
                           << m4->second.t << std::endl;
               }
               factor=m4->second.c/m->second.c;
@@ -572,9 +577,10 @@ namespace o2scl {
             mciter m2=mcache.find(b);
             if (m2!=mcache.end()) {
               if (verbose>0) {
-                std::cout << "Using conversions: " << m->second.f << " , "
+                std::cout << "convert_units::convert_cache():\n";
+                std::cout << "  Using conversions: " << m->second.f << " , "
                           << m->second.t << std::endl;
-                std::cout << " (6)          and: " << m2->second.f << " , "
+                std::cout << "  (6)           and: " << m2->second.f << " , "
                           << m2->second.t << std::endl;
               }
               factor=m->second.c/m2->second.c;
@@ -586,6 +592,10 @@ namespace o2scl {
 
       }
 
+      if (verbose>0) {
+        std::cout << "convert_units::convert_cache(): Failed."
+                  << std::endl;
+      }
       return exc_efailed;
     }
     //@}
