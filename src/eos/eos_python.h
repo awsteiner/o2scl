@@ -823,6 +823,10 @@ void *o2scl_create_nstar_rot();
 
 void o2scl_free_nstar_rot(void *vptr);
 
+bool o2scl_nstar_rot_get_err_nonconv(void *vptr);
+
+void o2scl_nstar_rot_set_err_nonconv(void *vptr, bool v);
+
 double o2scl_nstar_rot_get_eq_radius_tol_rel(void *vptr);
 
 void o2scl_nstar_rot_set_eq_radius_tol_rel(void *vptr, double v);
@@ -995,23 +999,23 @@ void o2scl_nstar_rot_fix_cent_eden_grav_mass(void *vptr, double cent_eden, doubl
 
 void o2scl_nstar_rot_fix_cent_eden_bar_mass(void *vptr, double cent_eden, double bar_mass);
 
-void o2scl_nstar_rot_fix_cent_eden_with_kepler(void *vptr, double cent_eden);
+int o2scl_nstar_rot_fix_cent_eden_with_kepler(void *vptr, double cent_eden);
 
-void o2scl_nstar_rot_fix_cent_eden_ang_vel(void *vptr, double cent_eden, double ang_vel);
+int o2scl_nstar_rot_fix_cent_eden_ang_vel(void *vptr, double cent_eden, double ang_vel);
 
-void o2scl_nstar_rot_fix_cent_eden_ang_mom(void *vptr, double cent_eden, double ang_mom);
+int o2scl_nstar_rot_fix_cent_eden_ang_mom(void *vptr, double cent_eden, double ang_mom);
 
-void o2scl_nstar_rot_fix_cent_eden_non_rot(void *vptr, double cent_eden);
+int o2scl_nstar_rot_fix_cent_eden_non_rot(void *vptr, double cent_eden);
 
-void o2scl_nstar_rot_fix_cent_eden_with_kepler_alt(void *vptr, double cent_eden, bool use_guess=false);
+int o2scl_nstar_rot_fix_cent_eden_with_kepler_alt(void *vptr, double cent_eden, bool use_guess=false);
 
-void o2scl_nstar_rot_fix_cent_eden_grav_mass_alt(void *vptr, double cent_eden, double grav_mass, bool use_guess=false);
+int o2scl_nstar_rot_fix_cent_eden_grav_mass_alt(void *vptr, double cent_eden, double grav_mass, bool use_guess=false);
 
-void o2scl_nstar_rot_fix_cent_eden_bar_mass_alt(void *vptr, double cent_eden, double bar_mass, bool use_guess=false);
+int o2scl_nstar_rot_fix_cent_eden_bar_mass_alt(void *vptr, double cent_eden, double bar_mass, bool use_guess=false);
 
-void o2scl_nstar_rot_fix_cent_eden_ang_vel_alt(void *vptr, double cent_eden, double ang_vel, bool use_guess=false);
+int o2scl_nstar_rot_fix_cent_eden_ang_vel_alt(void *vptr, double cent_eden, double ang_vel, bool use_guess=false);
 
-void o2scl_nstar_rot_fix_cent_eden_ang_mom_alt(void *vptr, double cent_eden, double ang_mom, bool use_guess=false);
+int o2scl_nstar_rot_fix_cent_eden_ang_mom_alt(void *vptr, double cent_eden, double ang_mom, bool use_guess=false);
 
 void o2scl_nstar_rot_constants_rns(void *vptr);
 

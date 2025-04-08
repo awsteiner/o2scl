@@ -200,8 +200,10 @@ namespace o2scl {
       void set_eos_native(vec1_t &eden, vec2_t &pres, vec3_t &enth,
                           vec4_t &nb) {
       
-      double Cx=o2scl_const::speed_of_light_f<double>(o2scl_const::o2scl_cgs);
-      double Gx=o2scl_const::gravitational_constant_f<double>(o2scl_const::o2scl_cgs);
+      double Cx=o2scl_const::speed_of_light_f<double>
+        (o2scl_const::o2scl_cgs);
+      double Gx=o2scl_const::gravitational_constant_f<double>
+        (o2scl_const::o2scl_cgs);
       double KAPPAx=1.0e-15*Cx*Cx/Gx;
       double KSCALEx=KAPPAx*Gx/(Cx*Cx*Cx*Cx);
   
@@ -847,9 +849,9 @@ namespace o2scl {
       /** \brief The energy density
        */
       double _ee;
-
+      
     public:
-
+      
       /** \brief Create a function object with specified 
           polytropic index and ?
       */
@@ -1321,6 +1323,9 @@ namespace o2scl {
 
     nstar_rot();
 
+    /// (Default true)
+    bool err_nonconv;
+    
     /** \brief Relative accuracy for the equatorial radius,
         \f$ r_e \f$ (default \f$ 10^{-5} \f$) 
 

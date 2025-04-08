@@ -494,6 +494,8 @@ nstar_rot::nstar_rot() {
   comp_f_P();
 
   mrootp=&def_mroot;
+  
+  err_nonconv=true;
 }
 
 void nstar_rot::constants_rns() {
@@ -3424,8 +3426,12 @@ int nstar_rot::fix_cent_eden_with_kepler(double cent_eden) {
     }
     
     if (r_ratio>=1.0) {
-      O2SCL_ERR2("Variable r_ratio>=1.0 in ",
-		 "fix_cent_eden_with_kepler().",o2scl::exc_efailed);
+      if (err_nonconv) {
+        O2SCL_ERR2("Variable r_ratio>=1.0 in ",
+                   "fix_cent_eden_with_kepler().",o2scl::exc_efailed);
+      } else {
+        return o2scl::exc_efailed;
+      }
     }
   }
   comp();

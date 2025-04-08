@@ -2268,6 +2268,17 @@ void o2scl_free_nstar_rot(void *vptr) {
   return;
 }
 
+bool o2scl_nstar_rot_get_err_nonconv(void *vptr) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_nstar_rot_set_err_nonconv(void *vptr, bool v) {
+  nstar_rot *ptr=(nstar_rot *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
 double o2scl_nstar_rot_get_eq_radius_tol_rel(void *vptr) {
   nstar_rot *ptr=(nstar_rot *)vptr;
   return ptr->eq_radius_tol_rel;
@@ -2748,58 +2759,58 @@ void o2scl_nstar_rot_fix_cent_eden_bar_mass(void *vptr, double cent_eden, double
   return;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_with_kepler(void *vptr, double cent_eden) {
+int o2scl_nstar_rot_fix_cent_eden_with_kepler(void *vptr, double cent_eden) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_with_kepler(cent_eden);
-  return;
+  int ret=ptr->fix_cent_eden_with_kepler(cent_eden);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_ang_vel(void *vptr, double cent_eden, double ang_vel) {
+int o2scl_nstar_rot_fix_cent_eden_ang_vel(void *vptr, double cent_eden, double ang_vel) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_ang_vel(cent_eden,ang_vel);
-  return;
+  int ret=ptr->fix_cent_eden_ang_vel(cent_eden,ang_vel);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_ang_mom(void *vptr, double cent_eden, double ang_mom) {
+int o2scl_nstar_rot_fix_cent_eden_ang_mom(void *vptr, double cent_eden, double ang_mom) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_ang_mom(cent_eden,ang_mom);
-  return;
+  int ret=ptr->fix_cent_eden_ang_mom(cent_eden,ang_mom);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_non_rot(void *vptr, double cent_eden) {
+int o2scl_nstar_rot_fix_cent_eden_non_rot(void *vptr, double cent_eden) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_non_rot(cent_eden);
-  return;
+  int ret=ptr->fix_cent_eden_non_rot(cent_eden);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_with_kepler_alt(void *vptr, double cent_eden, bool use_guess) {
+int o2scl_nstar_rot_fix_cent_eden_with_kepler_alt(void *vptr, double cent_eden, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_with_kepler_alt(cent_eden,use_guess);
-  return;
+  int ret=ptr->fix_cent_eden_with_kepler_alt(cent_eden,use_guess);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_grav_mass_alt(void *vptr, double cent_eden, double grav_mass, bool use_guess) {
+int o2scl_nstar_rot_fix_cent_eden_grav_mass_alt(void *vptr, double cent_eden, double grav_mass, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_grav_mass_alt(cent_eden,grav_mass,use_guess);
-  return;
+  int ret=ptr->fix_cent_eden_grav_mass_alt(cent_eden,grav_mass,use_guess);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_bar_mass_alt(void *vptr, double cent_eden, double bar_mass, bool use_guess) {
+int o2scl_nstar_rot_fix_cent_eden_bar_mass_alt(void *vptr, double cent_eden, double bar_mass, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_bar_mass_alt(cent_eden,bar_mass,use_guess);
-  return;
+  int ret=ptr->fix_cent_eden_bar_mass_alt(cent_eden,bar_mass,use_guess);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_ang_vel_alt(void *vptr, double cent_eden, double ang_vel, bool use_guess) {
+int o2scl_nstar_rot_fix_cent_eden_ang_vel_alt(void *vptr, double cent_eden, double ang_vel, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_ang_vel_alt(cent_eden,ang_vel,use_guess);
-  return;
+  int ret=ptr->fix_cent_eden_ang_vel_alt(cent_eden,ang_vel,use_guess);
+  return ret;
 }
 
-void o2scl_nstar_rot_fix_cent_eden_ang_mom_alt(void *vptr, double cent_eden, double ang_mom, bool use_guess) {
+int o2scl_nstar_rot_fix_cent_eden_ang_mom_alt(void *vptr, double cent_eden, double ang_mom, bool use_guess) {
   nstar_rot *ptr=(nstar_rot *)vptr;
-  ptr->fix_cent_eden_ang_mom_alt(cent_eden,ang_mom,use_guess);
-  return;
+  int ret=ptr->fix_cent_eden_ang_mom_alt(cent_eden,ang_mom,use_guess);
+  return ret;
 }
 
 void o2scl_nstar_rot_constants_rns(void *vptr) {

@@ -691,6 +691,7 @@ class eos_nstar_rot_L
 # Class nstar_rot
 #
 class nstar_rot
+- bool err_nonconv
 - function output_table
   - void
   - io table3d &t
@@ -714,40 +715,40 @@ class nstar_rot
   - double cent_eden
   - double bar_mass
 - function fix_cent_eden_with_kepler
-  - void
+  - int
   - double cent_eden
 - function fix_cent_eden_ang_vel
-  - void
+  - int
   - double cent_eden
   - double ang_vel
 - function fix_cent_eden_ang_mom
-  - void
+  - int
   - double cent_eden
   - double ang_mom
 - function fix_cent_eden_non_rot
-  - void
+  - int
   - double cent_eden
 - function fix_cent_eden_with_kepler_alt
-  - void
+  - int
   - double cent_eden
   - bool use_guess [false]
 - function fix_cent_eden_grav_mass_alt
-  - void
+  - int
   - double cent_eden
   - double grav_mass
   - bool use_guess [false]
 - function fix_cent_eden_bar_mass_alt
-  - void
+  - int
   - double cent_eden
   - double bar_mass
   - bool use_guess [false]
 - function fix_cent_eden_ang_vel_alt
-  - void
+  - int
   - double cent_eden
   - double ang_vel
   - bool use_guess [false]
 - function fix_cent_eden_ang_mom_alt
-  - void
+  - int
   - double cent_eden
   - double ang_mom
   - bool use_guess [false]
