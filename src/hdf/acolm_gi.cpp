@@ -2095,7 +2095,7 @@ int acol_manager::comm_interp_table3d(std::vector<std::string> &sv,
         }
       }
       o2scl_settings.py_init();
-      interpm_python ip;
+      interpm_python<> ip;
       if (method=="py_gp") {
         ip.set_function("interpm_sklearn_gp","verbose=2",2);
         ip.set_data_tensor(2,table_obj.get_nlines(),in.size()-6,

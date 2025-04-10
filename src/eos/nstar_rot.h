@@ -1399,7 +1399,7 @@ namespace o2scl {
     double Z_f;
     /// Backward equatorial redshift
     double Z_b;
-    /** \brief Kepler rotation frequency (in 1/s) */  
+    /** \brief Kepler rotation frequency (in radians/s) */  
     double Omega_K;                      
     /// The eccentricity
     double eccentricity;

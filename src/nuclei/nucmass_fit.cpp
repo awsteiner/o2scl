@@ -149,7 +149,7 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
 }
 
 void nucmass_fit::eval(nucmass &n, double &fmin) {
-  table t;
+  table<> t;
   eval_table(n,fmin,false,t);
   return;
 }
