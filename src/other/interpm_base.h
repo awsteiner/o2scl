@@ -98,6 +98,43 @@ namespace o2scl {
     virtual int eval(const vec_t &x, vec_t &y) const=0;
     
     /** \brief Evaluate the interpolation at point \c x,
+        returning \c y
+    */
+    virtual int operator()(size_t nx, const vec_t &x,
+                         size_t ny, vec_t &y) {
+      if (nx!=n_params) {
+        O2SCL_ERR2("Mismatch in number of parameters in ",
+                   "interpm_base::operator().",o2scl::exc_einval);
+      }
+      if (ny!=n_outputs) {
+        O2SCL_ERR2("Mismatch in number of outputs in ",
+                   "interpm_base::operator().",o2scl::exc_einval);
+      }
+      return eval(x,y);
+    }
+    
+    /** \brief Evaluate the interpolation at point \c x,
+        returning \c y
+    */
+    virtual int operator()(size_t nx, const vec_t &x,
+                         vec_t &y) {
+      if (nx!=n_params) {
+        O2SCL_ERR2("Mismatch in number of parameters in ",
+                   "interpm_base::operator().",o2scl::exc_einval);
+      }
+      return eval(x,y);
+    }
+    
+    /** \brief Evaluate the interpolation at point \c x,
+        returning a single value
+    */
+    virtual double operator()(size_t nx, const vec_t &x) {
+      vec_t y;
+      eval(x,y);
+      return y[0];
+    }
+    
+    /** \brief Evaluate the interpolation at point \c x,
         returning \c y and the uncertainties in \c y_unc
     */
     virtual int eval_unc(const vec_t &x, vec_t &y, vec_t &y_unc) const {

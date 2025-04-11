@@ -722,8 +722,9 @@ namespace o2scl {
 	    std::cout << "n_extra,min_dist,k,n_outputs,val[k]: "
 		      << n_extra << " " << min_dist << " " << k << " "
 		      << this->n_outputs << " " << val[k] << std::endl;
-	    O2SCL_ERR("Infinite value in interpm_idw::eval_unc_tl_index() 1.",
-		      o2scl::exc_efailed);
+	    O2SCL_ERR2("Infinite value in ",
+                       "interpm_idw::eval_unc_tl_index() 1.",
+                       o2scl::exc_efailed);
 	  }
           err[k]=0.0;
           extrap[k]=0.0;
@@ -735,8 +736,8 @@ namespace o2scl {
         for(size_t k=0;k<this->n_outputs;k++) {
 
           if (this->verbose>2) {
-            std::cout << "  Output quantity " << k << " of " << this->n_outputs
-                      << std::endl;
+            std::cout << "  Output quantity " << k << " of "
+                      << this->n_outputs << std::endl;
           }
         
           std::vector<double> vals(points+1);

@@ -593,7 +593,7 @@ namespace o2scl {
       npy_intp params_dims[]={(npy_intp)params.get_size(0),
                               (npy_intp)params.get_size(1)};
       if (this->verbose>1) {
-        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "interpm_python::set_data_internal():" << std::endl;
       }
       PyObject *array_in=PyArray_SimpleNewFromData
         (2,params_dims,NPY_DOUBLE,(void *)(&(params.get_data()[0])));
@@ -601,13 +601,13 @@ namespace o2scl {
       int pret=PyTuple_SetItem(p_set_args,0,array_in);
       if (pret!=0) {
         O2SCL_ERR2("Tuple set array in failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::set_data_internal().",o2scl::exc_efailed);
       }
       
       npy_intp outputs_dims[]={(npy_intp)outputs.get_size(0),
                                (npy_intp)outputs.get_size(1)};
       if (this->verbose>1) {
-        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "interpm_python::set_data_internal():" << std::endl;
       }
       PyObject *array_out=PyArray_SimpleNewFromData
         (2,outputs_dims,NPY_DOUBLE,(void *)(&(outputs.get_data()[0])));
@@ -615,7 +615,7 @@ namespace o2scl {
       int ret2=PyTuple_SetItem(p_set_args,1,array_out);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set array out failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::set_data_internal().",o2scl::exc_efailed);
       }
 
       if (this->verbose>0) {
@@ -631,7 +631,7 @@ namespace o2scl {
       int ret3=PyTuple_SetItem(p_set_args,2,p_options);
       if (ret3!=0) {
         O2SCL_ERR2("Tuple set options failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::set_data_internal().",o2scl::exc_efailed);
       }
 
       // Call the python function
@@ -641,11 +641,11 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_set_func,p_set_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::set_data_internal().",o2scl::exc_efailed);
       }
 
       if (this->verbose>0) {
-        std::cout << "Done with interpm_python::set_function()."
+        std::cout << "Done with interpm_python::set_data_internal()."
                   << std::endl;
       }
 
@@ -670,13 +670,13 @@ namespace o2scl {
   
       if (p_set_func==0 || p_eval_func==0 || p_eval_unc_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "interpm_python::operator().",
+                   "interpm_python::eval_std_vec().",
                    o2scl::exc_efailed);
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (this->verbose>1) {
-        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "interpm_python::eval_std_vec():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
       PyObject *array_x=PyArray_SimpleNewFromData
@@ -685,7 +685,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_eval_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_std_vec().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -695,12 +695,12 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_eval_func,p_eval_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_std_vec().",o2scl::exc_efailed);
       }
 
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_std_vec().",o2scl::exc_efailed);
       }
       
       if (this->verbose>1) {
@@ -753,7 +753,7 @@ namespace o2scl {
       npy_intp x_dims[]={(npy_intp)x.get_size(0),
                          (npy_intp)x.get_size(1)};
       if (this->verbose>1) {
-        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "interpm_python::eval_list_tensor():" << std::endl;
         std::cout << "  Array x: " << x.get_size(0) << " "
                   << x.get_size(1) << std::endl;
       }
@@ -763,7 +763,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_eval_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set for eval_args failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_list_tensor().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -773,12 +773,12 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_eval_list_func,p_eval_args);
       if (result==0) {
         O2SCL_ERR2("Function eval_list failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_list_tensor().",o2scl::exc_efailed);
       }
 
       if (PyArray_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a numpy array in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_list_tensor().",o2scl::exc_efailed);
       }
       
       if (this->verbose>1) {
@@ -827,13 +827,13 @@ namespace o2scl {
   
       if (p_set_func==0 || p_eval_unc_func==0) {
         O2SCL_ERR2("No functions found in ",
-                   "interpm_python::operator().",
+                   "interpm_python::eval_unc_std_vec().",
                    o2scl::exc_efailed);
       }
 
       npy_intp x_dims[]={(npy_intp)x.size()};
       if (this->verbose>1) {
-        std::cout << "interpm_python::operator():" << std::endl;
+        std::cout << "interpm_python::eval_unc_std_vec():" << std::endl;
         std::cout << "  Array x: " << x.size() << std::endl;
       }
       PyObject *array_x=PyArray_SimpleNewFromData
@@ -842,7 +842,7 @@ namespace o2scl {
       int ret=PyTuple_SetItem(p_eval_args,0,array_x);
       if (ret!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_unc_std_vec().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -852,12 +852,12 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_eval_unc_func,p_eval_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_unc_std_vec().",o2scl::exc_efailed);
       }
 
       if (PyTuple_Check(result)==0) {
         O2SCL_ERR2("Function call did not return a Python tuple in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_unc_std_vec().",o2scl::exc_efailed);
       }
 
       PyObject *p_y, *p_yp;
@@ -866,11 +866,11 @@ namespace o2scl {
 
       if (PyArray_Check(p_y)==0) {
         O2SCL_ERR2("Python tuple does not contain array in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_unc_std_vec().",o2scl::exc_efailed);
       }
       if (PyArray_Check(p_yp)==0) {
         O2SCL_ERR2("Python tuple does not contain array in ",
-                   "interpm_python::operator().",o2scl::exc_efailed);
+                   "interpm_python::eval_unc_std_vec().",o2scl::exc_efailed);
       }
   
       if (this->verbose>1) {
@@ -901,7 +901,7 @@ namespace o2scl {
       Py_DECREF(result);
   
       if (this->verbose>1) {
-        std::cout << "Done in interpm_python::operator()."
+        std::cout << "Done in interpm_python::eval_unc_std_vec()."
                   << std::endl;
       }
 
@@ -966,13 +966,13 @@ namespace o2scl {
       int ret1=PyTuple_SetItem(p_loadsave_args,0,p_filename);
       if (ret1!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "mm_funct_python::load().",o2scl::exc_efailed);
       }
 
       int ret2=PyTuple_SetItem(p_loadsave_args,1,p_obj_name);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "mm_funct_python::load().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -982,7 +982,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_load_func,p_loadsave_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
-                   "classify_python::operator().",o2scl::exc_efailed);
+                   "classify_python::load().",o2scl::exc_efailed);
       }
 
       if (this->verbose>2) {
@@ -1022,13 +1022,13 @@ namespace o2scl {
       int ret1=PyTuple_SetItem(p_loadsave_args,0,p_filename);
       if (ret1!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "mm_funct_python::load().",o2scl::exc_efailed);
       }
 
       int ret2=PyTuple_SetItem(p_loadsave_args,1,p_obj_name);
       if (ret2!=0) {
         O2SCL_ERR2("Tuple set failed in ",
-                   "mm_funct_python::operator().",o2scl::exc_efailed);
+                   "mm_funct_python::load().",o2scl::exc_efailed);
       }
       
       // Call the python function
@@ -1038,7 +1038,7 @@ namespace o2scl {
       PyObject *result=PyObject_CallObject(p_save_func,p_loadsave_args);
       if (result==0) {
         O2SCL_ERR2("Function call failed in ",
-                   "classify_python::operator().",o2scl::exc_efailed);
+                   "classify_python::load().",o2scl::exc_efailed);
       }
 
       if (this->verbose>2) {
