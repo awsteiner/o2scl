@@ -92,6 +92,20 @@ namespace o2scl {
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y)=0;
 
+    /** \brief Add data to be interpolated
+
+        The arguments in this function should be arranged similarly to
+        the \ref set_data() function. Children may not implement this
+        function (in which case it calls the error handler), or they
+        may simply append the additional data set to the one
+        previously specified in \ref set_data() call.
+     */
+    virtual int add_data(size_t n_in, size_t n_out, size_t n_pts,
+                         mat_x_t &user_x, mat_y_t &user_y) {
+      O2SCL_ERR2_RET("No add_data() function for this interpolator",
+                     " in interpm_base().",o2scl::exc_eunimpl);
+    }
+    
     /** \brief Evaluate the interpolation at point \c x,
         returning \c y
     */
