@@ -52,7 +52,7 @@ six==1.17.0
 sympy==1.13.1
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
-tensorflow_cpu==2.18.0
+tensorflow==2.18.0
 termcolor==2.5.0
 threadpoolctl==3.5.0
 tomli_w==1.1.0

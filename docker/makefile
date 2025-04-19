@@ -223,6 +223,73 @@ all_v0.930_u24.04_py_mp: build_v0.930_u24.04_py_mp \
 	test2_v0.930_u24.04_py_mp push_v0.930_u24.04_py_mp 
 
 # ----------------------------------------------
+
+VERSIONS := 0.930 0.931a1 0.931a2
+
+OSS := u24.04 arch ot
+
+BTYPES := min py py_mp
+
+TEST_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).test)))
+
+CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).cuda)))
+
+DOCKERFILES := $(shell ls v* | grep -v req)
+
+dfl:
+	@echo $(DOCKERFILES)
+
+list:
+	@echo $(TEST_TARGETS)
+
+$(TEST_TARGETS) : %.test :
+	@echo "test"
+	@echo $@
+	@echo $*
+
+$(CUDA_TARGETS) : %.cuda :
+	@echo "test" --build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04
+	@echo $@
+	@echo $*
+
+# $(TARGETS) : %.build.cuda : 
+# 	@echo $@
+# 	@echo $*
+
+# $(TARGETS) : %.build : 
+# 	@echo $@
+# 	@echo $*
+
+# %.build:
+# 	sudo docker buildx build . \
+# 		-f $* -t awsteiner/o2scl:$* \
+# 		> $*.out 2>&1 
+
+# %.test1:
+# 	sudo docker run awsteiner/o2scl:$* sh -c \
+# 		"cd /opt/o2scl && make check && make o2scl-examples" \
+# 		> test1_$*.out 2>&1 
+
+# %.test2:
+# 	sudo docker run awsteiner/o2scl:$* sh -c \
+# 		"cd /opt/o2sclpy_mp && make testq" \
+# 		> test2_$*.out 2>&1 
+
+# %.push:
+# 	sudo docker push awsteiner/o2scl:$*
+
+# %.pull:
+# 	sudo docker pull awsteiner/o2scl:$*
+
+# %.all: %.build %.test1 %.test2
+
+# ----------------------------------------------
 # cuda_test3
 
 build_ct3:
