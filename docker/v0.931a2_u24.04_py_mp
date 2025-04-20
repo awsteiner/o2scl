@@ -23,20 +23,13 @@ RUN apt-get -y update && apt-get \
   python3 libz-dev libsz2 imagemagick && apt-get clean 
 
 # ───────────────────────────────────────────────────────────────────
-# The tensorflow package is compiled with HDF5 1.14.2, so we install
+# The tensorflow package is compiled with HDF5 1.14.6, so we install
 # that instead of the Ubuntu package in order to ensure we're matching
 # HDF5 libraries. 
 
 WORKDIR /opt
-RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_6/hdf5-1_14_6.tar.gz" \
-  -o hdf5-1.14.6.tar.gz
-RUN tar xvzf hdf5-1.14.6.tar.gz
-RUN rm hdf5-1.14.6.tar.gz
-# The github release has a non-traditional directory name
-WORKDIR /opt/hdfsrc
-RUN ./configure --with-zlib --with-szlib --prefix=/usr/local/hdf5
-RUN make
-RUN make install
+RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.6/hdf5-1.14.6-ubuntu-2404_gcc.deb" -o hdf5-1.14.6-ubuntu-2404_gcc.deb
+RUN dpkg -i hdf5-1.14.6-ubuntu-2404_gcc.deb
 
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages, second pass
@@ -62,7 +55,7 @@ WORKDIR /opt
 RUN pip3 install --break-system-packages numpy==2.0.2
 
 # Ensure h5py uses the updated version of HDF5
-RUN HDF5_DIR=/usr/local/hdf5 pip3 install --break-system-packages \
+RUN HDF5_DIR=/HDF_Group/HDF5/1.14.6 pip3 install --break-system-packages \
   --no-binary=h5py h5py==3.13.0
 
 # Install the remaining python packages from the requirements file.
@@ -99,11 +92,11 @@ RUN pip3 install --break-system-packages torch==2.6.0
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout b510aac7a0f && autoreconf -i
+RUN git fetch && git pull && git checkout 3796cbb0142d && autoreconf -i
 
 # We disable static to keep the image small
 
-RUN LIBS="-lquadmath" LDFLAGS="-L/usr/local/hdf5/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/usr/local/hdf5/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-multip
+RUN LIBS="-lquadmath" LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-multip
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
@@ -132,15 +125,8 @@ RUN acol -h && acol -v && o2graph -h && o2graph -v
 # Run tests
 
 WORKDIR /opt/o2scl
-#FROM working
 RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy
 RUN make testq
-
-
-
-
-
-
-
+FROM working
 

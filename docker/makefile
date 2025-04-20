@@ -56,173 +56,6 @@ testq:
 #		--user="awsteiner" 
 
 # ----------------------------------------------
-# v0.930_ot_min
-
-build_v0.930_ot_min:
-	sudo docker buildx build . -f v0.930_ot_min \
-		-t awsteiner/o2scl:v0.930_ot_min \
-		> v0.930_ot_min.out 2>&1
-
-test_v0.930_ot_min:
-	sudo docker run awsteiner/o2scl:v0.930_ot_min sh -c \
-		"cd /opt/o2scl && make check && make o2scl-examples" \
-		> test_v0.930_ot_min.out 2>&1
-
-push_v0.930_ot_min:
-	sudo docker push awsteiner/o2scl:v0.930_ot_min
-
-pull_v0.930_ot_min:
-	sudo docker pull awsteiner/o2scl:v0.930_ot_min
-
-all_v0.930_ot_min: build_v0.930_ot_min test_v0.930_ot_min
-
-# ----------------------------------------------
-# v0.930_ot_plus
-
-build_v0.930_ot_plus:
-	sudo docker buildx build . -f v0.930_ot_plus \
-		-t awsteiner/o2scl:v0.930_ot_plus \
-		> v0.930_ot_plus.out 2>&1
-
-test_v0.930_ot_plus:
-	sudo docker run awsteiner/o2scl:v0.930_ot_plus sh -c \
-		"cd /opt/o2scl && make check && make o2scl-examples" \
-		> test_v0.930_ot_plus.out 2>&1
-
-push_v0.930_ot_plus:
-	sudo docker push awsteiner/o2scl:v0.930_ot_plus
-
-pull_v0.930_ot_plus:
-	sudo docker pull awsteiner/o2scl:v0.930_ot_plus
-
-all_v0.930_ot_plus: build_v0.930_ot_plus test_v0.930_ot_plus
-
-# ----------------------------------------------
-# v0.930_ot_py
-
-build_v0.930_ot_py:
-	sudo docker buildx build . -f v0.930_ot_py \
-		-t awsteiner/o2scl:v0.930_ot_py \
-		> v0.930_ot_py.out 2>&1
-
-test_v0.930_ot_py:
-	sudo docker run awsteiner/o2scl:v0.930_ot_py sh -c \
-		"cd /opt/o2scl && make check && make o2scl-examples" \
-		> test_v0.930_ot_py.out 2>&1
-
-test2_v0.930_ot_py:
-	sudo docker run awsteiner/o2scl:v0.930_ot_py sh -c \
-		"cd /opt/o2sclpy && make testq" \
-		>> test2_v0.930_ot_py.out 2>&1
-
-push_v0.930_ot_py:
-	sudo docker push awsteiner/o2scl:v0.930_ot_py
-
-pull_v0.930_ot_py:
-	sudo docker pull awsteiner/o2scl:v0.930_ot_py
-
-all_v0.930_ot_py: build_v0.930_ot_py test_v0.930_ot_py
-
-# ----------------------------------------------
-# v0.930_u24.04_min
-
-#		--target working \
-#		--no-cache \
-
-build_v0.930_u24.04_min:
-	sudo docker buildx build . \
-		-f v0.930_u24.04_min \
-		-t awsteiner/o2scl:v0.930_u24.04_min \
-		> v0.930_u24.04_min.out 2>&1
-
-#	sudo docker buildx build . \
-#		--target working \
-#		--no-cache \
-
-#test1_v0.930_u24.04_min:
-#	sudo docker run awsteiner/o2scl:v0.930_u24.04_min sh -c \
-#	"cd /opt/o2scl && make check && make o2scl-examples" \
-#		> test1_v0.930_u24.04_min.out 2>&1
-
-test2_v0.930_u24.04_min:
-	sudo docker run awsteiner/o2scl:v0.930_u24.04_min sh -c \
-		"cd /opt/o2sclpy && make testq" \
-		> test2_v0.930_u24.04_min.out 2>&1
-
-push_v0.930_u24.04_min:
-	sudo docker push awsteiner/o2scl:v0.930_u24.04_min
-
-pull_v0.930_u24.04_min:
-	sudo docker pull awsteiner/o2scl:v0.930_u24.04_min
-
-all_v0.930_u24.04_min: build_v0.930_u24.04_min \
-	test2_v0.930_u24.04_min push_v0.930_u24.04_min 
-
-# ----------------------------------------------
-# v0.930_u24.04_py
-
-build_v0.930_u24.04_py:
-	sudo docker buildx build . \
-		-f v0.930_u24.04_py \
-		-t awsteiner/o2scl:v0.930_u24.04_py \
-		> v0.930_u24.04_py.out 2>&1
-
-#	sudo docker buildx build . \
-#		--no-cache \
-#		--target working \
-
-#test1_v0.930_u24.04_py:
-#	sudo docker run awsteiner/o2scl:v0.930_u24.04_py sh -c \
-#	"cd /opt/o2scl && make check && make o2scl-examples" \
-#		> test1_v0.930_u24.04_py.out 2>&1
-
-test2_v0.930_u24.04_py:
-	sudo docker run awsteiner/o2scl:v0.930_u24.04_py sh -c \
-		"cd /opt/o2sclpy && make testq" \
-		> test2_v0.930_u24.04_py.out 2>&1
-
-push_v0.930_u24.04_py:
-	sudo docker push awsteiner/o2scl:v0.930_u24.04_py
-
-pull_v0.930_u24.04_py:
-	sudo docker pull awsteiner/o2scl:v0.930_u24.04_py
-
-all_v0.930_u24.04_py: build_v0.930_u24.04_py \
-	test2_v0.930_u24.04_py push_v0.930_u24.04_py 
-
-# ----------------------------------------------
-# v0.930_u24.04_py_mp
-
-build_v0.930_u24.04_py_mp:
-	sudo docker buildx build . \
-		-f v0.930_u24.04_py_mp \
-		-t awsteiner/o2scl:v0.930_u24.04_py_mp \
-		> v0.930_u24.04_py_mp.out 2>&1
-
-#	sudo docker buildx build . \
-#		--no-cache \
-#		--target working \
-
-#test1_v0.930_u24.04_py_mp:
-#	sudo docker run awsteiner/o2scl:v0.930_u24.04_py_mp sh -c \
-#	"cd /opt/o2scl && make check && make o2scl-examples" \
-#		> test1_v0.930_u24.04_py_mp.out 2>&1
-
-test2_v0.930_u24.04_py_mp:
-	sudo docker run awsteiner/o2scl:v0.930_u24.04_py_mp sh -c \
-		"cd /opt/o2sclpy_mp && make testq" \
-		> test2_v0.930_u24.04_py_mp.out 2>&1
-
-push_v0.930_u24.04_py_mp:
-	sudo docker push awsteiner/o2scl:v0.930_u24.04_py_mp
-
-pull_v0.930_u24.04_py_mp:
-	sudo docker pull awsteiner/o2scl:v0.930_u24.04_py_mp
-
-all_v0.930_u24.04_py_mp: build_v0.930_u24.04_py_mp \
-	test2_v0.930_u24.04_py_mp push_v0.930_u24.04_py_mp 
-
-# ----------------------------------------------
 
 VERSIONS := 0.930 0.931a1 0.931a2
 
@@ -240,6 +73,11 @@ $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
 v$(vvar)_$(ovar)_$(bvar).cuda)))
 
+CUDA_TEST1_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).cuda.test1)))
+
 DOCKERFILES := $(shell ls v* | grep -v req)
 
 dfl:
@@ -254,9 +92,16 @@ $(TEST_TARGETS) : %.test :
 	@echo $*
 
 $(CUDA_TARGETS) : %.cuda :
-	@echo "test" --build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04
-	@echo $@
-	@echo $*
+	sudo docker buildx build . \
+		--build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04 \
+		-f $* -t awsteiner/o2scl:$*_cuda \
+		--target working \
+		> $*.cuda.out 2>&1 
+
+$(CUDA_TEST1_TARGETS) : %.cuda.test1 :
+	sudo docker run awsteiner/o2scl:$*_cuda --gpus all \
+		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
+		> test1_$*.out 2>&1 
 
 # $(TARGETS) : %.build.cuda : 
 # 	@echo $@
