@@ -102,8 +102,9 @@ namespace o2scl {
      */
     virtual int add_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y) {
-      O2SCL_ERR2_RET("No add_data() function for this interpolator",
-                     " in interpm_base().",o2scl::exc_eunimpl);
+      O2SCL_ERR2("No add_data() function for this interpolator",
+                 " in interpm_base().",o2scl::exc_eunimpl);
+      return o2scl::exc_eunimpl;
     }
     
     /** \brief Evaluate the interpolation at point \c x,
@@ -115,7 +116,7 @@ namespace o2scl {
         returning \c y
     */
     virtual int operator()(size_t nx, const vec_t &x,
-                         size_t ny, vec_t &y) {
+                         size_t ny, vec_t &y) const {
       if (nx!=n_params) {
         O2SCL_ERR2("Mismatch in number of parameters in ",
                    "interpm_base::operator().",o2scl::exc_einval);
@@ -131,7 +132,7 @@ namespace o2scl {
         returning \c y
     */
     virtual int operator()(size_t nx, const vec_t &x,
-                         vec_t &y) {
+                           vec_t &y) const {
       if (nx!=n_params) {
         O2SCL_ERR2("Mismatch in number of parameters in ",
                    "interpm_base::operator().",o2scl::exc_einval);
@@ -142,7 +143,7 @@ namespace o2scl {
     /** \brief Evaluate the interpolation at point \c x,
         returning a single value
     */
-    virtual double operator()(size_t nx, const vec_t &x) {
+    virtual double operator()(size_t nx, const vec_t &x) const {
       vec_t y;
       eval(x,y);
       return y[0];

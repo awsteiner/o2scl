@@ -299,8 +299,8 @@ namespace o2scl {
     //@{
     /** \brief Perform the interpolation over the first function
      */
-    template<class vec2_t> double operator()(const vec2_t &x) const {
-      return eval(x);
+    double operator()(size_t nv, const vec_t &x) const {
+      return eval_one_tl(x);
     }
 
     /** \brief Perform the interpolation over the first function
