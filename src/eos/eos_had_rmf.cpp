@@ -573,6 +573,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T, 
 			     thermo &lth) {
   
+  cout<<"inside calc_temp_e"<<endl;     	
   if (T<=0.0) return calc_e(ne,pr,lth);
 
   ubvector x(5), y(5);
@@ -637,7 +638,10 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
       cout << " Return value: " << ret << endl;
     }
     eos_mroot->err_nonconv=ent;
+
+    cout<<"Entering calc_temp_e_solve_fun"<<endl;
     calc_temp_e_solve_fun(5,x,y,lth);
+    cout<<"Returning from calc_temp_e_solve_fun"<<endl;
     
   } 
 
@@ -739,6 +743,7 @@ int eos_had_rmf::calc_eq_p(fermion &ne, fermion &pr, double sig, double ome,
 			   double lrho, double &f1, double &f2, double &f3, 
 			   thermo &lth) {
 
+  cout<<"Inside calc_eq_p"<<endl;	
   ne.non_interacting=false;
   pr.non_interacting=false;
   
