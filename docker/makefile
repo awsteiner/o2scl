@@ -61,7 +61,7 @@ VERSIONS := 0.930 0.931a1 0.931a2
 
 OSS := u24.04 arch ot
 
-BTYPES := min py py_mp
+BTYPES := min py
 
 TEST_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
@@ -72,6 +72,11 @@ CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
 v$(vvar)_$(ovar)_$(bvar).cuda)))
+
+MP_CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).mp.cuda)))
 
 CUDA_TEST1_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
@@ -94,6 +99,14 @@ $(TEST_TARGETS) : %.test :
 $(CUDA_TARGETS) : %.cuda :
 	sudo docker buildx build . \
 		--build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04 \
+		-f $* -t awsteiner/o2scl:$*_cuda \
+		--target working \
+		> $*.cuda.out 2>&1 
+
+$(MP_CUDA_TARGETS) : %.mp.cuda :
+	sudo docker buildx build . \
+		--build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04 \
+		--build-arg CONFIG=--enable-multip \
 		-f $* -t awsteiner/o2scl:$*_cuda \
 		--target working \
 		> $*.cuda.out 2>&1 
