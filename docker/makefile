@@ -2,23 +2,15 @@ help:
 	@echo "Docker targets (not part of autoconf package):"
 	@echo "---------------------------------------------------"
 	@echo "docker_clean:"
+	@echo "docker_clean2:"
 	@echo "docker_show:"
-	@echo "build_opensuse_leap:"
-	@echo "build_opensuse_leap_notest:"
-	@echo "build_opensuse_leap_dev:"
-	@echo "build_ubuntu:"
-	@echo "build_ubuntu_notest:"
-	@echo "build_ubuntu_dev_full:"
-	@echo "build_ubuntu_dev_min:"
+	@echo "docker_stop:"
 
 docker_clean:
 	-sudo docker rm \
 	`sudo docker ps --all | grep -i -v container | awk '{print $$1}'`
 	-sudo docker rmi \
 	`sudo docker images --all | grep -i -v container | awk '{print $$3}'`
-
-docker_clear_cache:
-	-sudo docker 
 
 docker_show:
 	- sudo docker ps --all
@@ -42,18 +34,6 @@ docker_clean2:
 	- sudo docker container prune
 	- sudo docker buildx prune -f
 	- sudo docker system df
-
-testq:
-	sudo docker run --rm -it \
-		--env="DISPLAY" \
-		--volume="/etc/group:/etc/group:ro" \
-		--volume="/etc/passwd:/etc/passwd:ro" \
-		--volume="/etc/shadow:/etc/shadow:ro" \
-		--volume="/etc/sudoers.d:/etc/sudoers.d:ro" \
-		--volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-		awsteiner/o2scl:v0.927_u22.04_min
-
-#		--user="awsteiner" 
 
 # ----------------------------------------------
 
@@ -116,6 +96,19 @@ $(CUDA_TEST1_TARGETS) : %.cuda.test1 :
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> test1_$*.out 2>&1 
 
+tf_2.18.out:
+	sudo docker buildx build . \
+		-f tf_2.18 -t awsteiner/foundation:tf_2.18 \
+		--target working
+
+tf_2.18.run:
+	sudo docker run -it --gpus all -t awsteiner/foundation:tf_2.18
+
+torch_2.6.out:
+	sudo docker buildx build . \
+		-f torch_2.6 -t awsteiner/foundation:torch_2.6 \
+		--target working
+
 # $(TARGETS) : %.build.cuda : 
 # 	@echo $@
 # 	@echo $*
@@ -158,3 +151,4 @@ test_ct3:
 
 run_ct3:
 	sudo docker run --rm -it --gpus all cuda_test3 /bin/bash
+
