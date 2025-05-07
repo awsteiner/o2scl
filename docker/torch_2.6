@@ -21,6 +21,9 @@ RUN apt-get -y update && apt-get install -y apt-utils && apt-get \
 # ───────────────────────────────────────────────────────────────────
 # Install tensorflow
 
+# PyTorch offers separate pip wheels for different CUDA versions.
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
 RUN pip3 install --break-system-packages torch==2.6.0
 
 # ───────────────────────────────────────────────────────────────────

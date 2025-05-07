@@ -1,0 +1,37 @@
+ARG BASE=pytorch/pytorch:2.7.0-cuda12.6-cudnn9-runtime
+FROM ${BASE} AS working
+
+# ───────────────────────────────────────────────────────────────────
+# Install Python and pip
+
+RUN apt-get -y update && apt-get -y install \
+  python3 python3-pip && apt-get clean 
+
+# ───────────────────────────────────────────────────────────────────
+# Install TensorFlow and Torch
+
+# Note that Tensorflow and Torch both include their own cuda libraries
+# which are separate from the base image.
+
+ARG TF_VERSION=tensorflow==2.18.0
+RUN pip3 install --break-system-packages ${TF_VERSION}
+
+# If desired, output pip requirements file
+ARG OUTPUT_REQ=true
+RUN if [ "$OUTPUT_REQ" = "true" ]; then pip3 freeze > req.txt; cat req.txt; fi
+
+# ───────────────────────────────────────────────────────────────────
+# Copy the test script, set permissions and environment variables
+
+WORKDIR /opt
+COPY tf_check.sh ./
+COPY torch_check.sh ./
+ENV TF_ENABLE_ONEDNN_OPTS=0
+RUN chmod 777 tf_check.sh torch_check.sh
+WORKDIR /
+
+        
+
+
+
+
