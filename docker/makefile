@@ -104,15 +104,16 @@ tf_2.18.out:
 tf_2.18.run:
 	sudo docker run -it --gpus all -t awsteiner/foundation:tf_2.18
 
-tt.out:
+tt.build:
 	sudo docker buildx build . \
 		-f cuda_12.6_tf_2.18_torch_2.6 \
 		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.6 \
 		--target working
 
 tt.run:
-	sudo docker run -it --gpus all \
+	sudo docker run --gpus all \
 		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.6 \
+		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh"
 
 torch_2.6.out:
 	sudo docker buildx build . \
