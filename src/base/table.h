@@ -2495,7 +2495,7 @@ namespace o2scl {
     void subtable(std::string list, size_t top, 
                   size_t bottom, table<vec_t,fp_t> &tnew) const {
 
-      tnew.clear_all();
+      tnew.clear();
       int sublines, i;
       std::string head;
       aciter it;
