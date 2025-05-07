@@ -2516,12 +2516,28 @@ namespace o2scl {
 
         Uses the columns specified in \c list from the row \c top
         to the row of index \c bottom to generate a new table
-        which is a copy of part of the original.
+        which is a copy of part of the original. The column names in
+        \c list should be separated by whitespace. The row with
+        index \c bottom is included in the destination table (
+        variable \c tnew), so the resulting table will have
+        <tt>bottom-top+1</tt> lines when this function is done.
+
+      \verbatim embed:rst
+
+      .. todo:: 
+
+         In table::subtable()
+
+         - Future: This function doesn't work if column names
+         contain whitespace.
+
+      \endverbatim
+
     */
     void subtable(std::string list, size_t top, 
                   size_t bottom, table<vec_t,fp_t> &tnew) const {
 
-      tnew.clear_all();
+      tnew.clear();
       int sublines, i;
       std::string head;
       aciter it;
@@ -2548,6 +2564,8 @@ namespace o2scl {
 
       tnew.set_nlines(sublines);
       while(is >> head) {
+
+        // Double check that 'head' is a column in the current table
         it=atree.find(head);
         if (it==atree.end()) {
           O2SCL_ERR
@@ -2555,10 +2573,11 @@ namespace o2scl {
               " in table::subtable(). Returning 0.").c_str(),
              exc_einval);
         }
+
+        // Add the new column
         tnew.new_column(head);
-        vec_t &dcol=tnew.get_column(head);
         for(i=0;i<sublines;i++) {
-          dcol[i]=it->second.dat[i+top];
+          tnew.set(head,i,it->second.dat[i+top]);
         }
       } 
       if (tnew.get_ncolumns()==0) {

@@ -213,11 +213,23 @@ int main(void) {
     double line[2]={((double)i),((double)i)*3.0};
     tabx.line_of_data(2,line);
   }
+
+  if (true) {
+    // Test subtable
+    table<> tabs;
+    tabx.subtable("x y",1,11,tabs);
+    t.test_gen(tabs.get_nlines()==11,"subtable 1");
+    t.test_gen(tabs.get_ncolumns()==2,"subtable 2");
+    for(size_t i=1;i<12;i++) {
+      t.test_rel(tabs.get("y",i-1),((double)i*3),1.0e-10,"subtable 3");
+    }
+  }
+  
   tabx.average_rows(10);
   for(size_t i=0;i<tabx.get_nlines();i++) {
     cout << tabx.get("x",i) << " " << tabx.get("y",i) << endl;
   }
-  
+
   t.report();
 
   return 0;
