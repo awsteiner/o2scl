@@ -22,10 +22,13 @@ RUN apt-get -y update && apt-get -y install \
 
 ARG TF_VERSION=tensorflow==2.18.0
 RUN pip3 install --break-system-packages ${TF_VERSION}
+RUN pip3 install --break-system-packages \
+  filelock fsspec jinja2 networkx setuptools sympy \
+  triton typing-extensions
 ARG TORCH_VERSION="torch==2.7.0"
 ARG TORCH_URL="https://download.pytorch.org/whl/cu128"
-RUN pip3 install --break-system-packages ${TORCH_VERSION} \
-        --index-url ${TORCH_URL}
+RUN pip3 install --break-system-packages --no-deps ${TORCH_VERSION} \
+  --index-url ${TORCH_URL}
 
 # If desired, output pip requirements file
 ARG OUTPUT_REQ=true

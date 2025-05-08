@@ -96,23 +96,30 @@ $(CUDA_TEST1_TARGETS) : %.cuda.test1 :
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> test1_$*.out 2>&1 
 
-tf_2.18.out:
+tt2.build:
 	sudo docker buildx build . \
-		-f tf_2.18 -t awsteiner/foundation:tf_2.18 \
+		-f tf_2.18_torch_2.7 \
+		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 \
 		--target working
 
-tf_2.18.run:
-	sudo docker run -it --gpus all -t awsteiner/foundation:tf_2.18
+tt2.run:
+	sudo docker run --gpus all \
+		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 \
+		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh"
+
+tt2.runb:
+	sudo docker run -it --gpus all \
+		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 
 
 tt.build:
 	sudo docker buildx build . \
-		-f cuda_12.6_tf_2.18_torch_2.6 \
-		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.6 \
+		-f cuda_12.6_tf_2.18_torch_2.7 \
+		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7 \
 		--target working
 
 tt.run:
 	sudo docker run --gpus all \
-		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.6 \
+		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7 \
 		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh"
 
 torch_2.6.out:
