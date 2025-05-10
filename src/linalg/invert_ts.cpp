@@ -51,7 +51,8 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_CUDA
+#ifdef O2SCL_SET_CUDA
+  
   if (true) {
     matrix_invert_det_cholesky_cuda midcc;
     

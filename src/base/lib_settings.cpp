@@ -652,7 +652,7 @@ bool lib_settings_class::readline_support() {
 }
 
 bool lib_settings_class::cuda_support() {
-#ifdef O2SCL_CUDA
+#ifdef O2SCL_SET_CUDA
   return true;
 #else
   return false;

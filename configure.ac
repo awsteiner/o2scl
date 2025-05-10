@@ -534,6 +534,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/Makefile
                  src/base/arma/Makefile
                  src/base/both/Makefile
+                 src/base/cuda/Makefile
                  src/base/eigen/Makefile
                  src/base/fftw/Makefile
                  src/base/multip/Makefile
