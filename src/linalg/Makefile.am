@@ -2,14 +2,20 @@
 # Basic variables
 # ------------------------------------------------------------
 
-LINALG_SRCS = permutation.cpp givens.cpp qr.cpp cholesky.cpp 
+if O2SCL_CUDA
+O2SCL_CUDA_HVAR = cuda_invert.h
+else
+O2SCL_CUDA_HVAR =
+endif
+
+LINALG_SRCS = permutation.cpp givens.cpp qr.cpp cholesky.cpp
 
 HEADER_VAR = cblas.h lu.h lanczos.h tridiag.h permutation.h qr.h \
 	householder.h givens.h hh.h cblas_base.h householder_base.h \
 	qr_base.h hh_base.h tridiag_base.h givens_base.h lanczos_base.h \
 	lu_base.h linear_solver.h svdstep_base.h svdstep.h cholesky.h \
 	cholesky_base.h qrpt.h qrpt_base.h bidiag.h bidiag_base.h \
-	svd.h svd_base.h invert.h 
+	svd.h svd_base.h invert.h $(O2SCL_CUDA_HVAR)
 
 TEST_VAR = cblas.scr permutation.scr lanczos.scr tridiag.scr lu.scr \
 	qr.scr qrpt.scr householder.scr hh.scr linear_solver.scr \
@@ -167,9 +173,14 @@ invert_ts_SOURCES = invert_ts.cpp
 # Library o2scl_linalg
 # ------------------------------------------------------------
 
+cuda_invert.lo: cuda_invert.cu
+	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+		--shared -c -o $@ $<
+
 noinst_LTLIBRARIES = libo2scl_linalg.la
 
 libo2scl_linalg_la_SOURCES = $(LINALG_SRCS)
+libo2scl_linalg_la_LIBADD = cuda_invert.lo
 
 am__libo2scl_linalg_la_SOURCES_DIST = $(LINALG_SRCS)
 
