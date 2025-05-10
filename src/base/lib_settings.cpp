@@ -48,6 +48,7 @@
 #include <o2scl/set_readline.h>
 #include <o2scl/set_fftw.h>
 #include <o2scl/set_mpfr.h>
+#include <o2scl/set_cuda.h>
 #include <o2scl/vector_special.h>
 
 #ifdef O2SCL_SET_OPENMP

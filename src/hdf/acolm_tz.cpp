@@ -27,6 +27,7 @@
 #include <o2scl/xml.h>
 #include <o2scl/gmm_python.h>
 #include <o2scl/set_python.h>
+#include <o2scl/set_cuda.h>
 #include <o2scl/set_mpfr.h>
 
 #include <boost/numeric/ublas/vector.hpp>

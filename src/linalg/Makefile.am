@@ -3,7 +3,7 @@
 # ------------------------------------------------------------
 
 if O2SCL_CUDA
-O2SCL_CUDA_HVAR = cuda_invert.h
+O2SCL_CUDA_HVAR = invert_cuda.h
 else
 O2SCL_CUDA_HVAR =
 endif
@@ -173,14 +173,14 @@ invert_ts_SOURCES = invert_ts.cpp
 # Library o2scl_linalg
 # ------------------------------------------------------------
 
-cuda_invert.lo: cuda_invert.cu
+invert_cuda.lo: invert_cuda.cu
 	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
 		--shared -c -o $@ $<
 
 noinst_LTLIBRARIES = libo2scl_linalg.la
 
 libo2scl_linalg_la_SOURCES = $(LINALG_SRCS)
-libo2scl_linalg_la_LIBADD = cuda_invert.lo
+libo2scl_linalg_la_LIBADD = invert_cuda.lo
 
 am__libo2scl_linalg_la_SOURCES_DIST = $(LINALG_SRCS)
 
