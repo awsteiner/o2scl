@@ -20,7 +20,7 @@
 
   ───────────────────────────────────────────────────────────────────
 */
-#include <o2scl/invert_cuda.h>
+#include "invert_cuda.h"
 
 #include <cuda_runtime.h>
 #include <cusolverDn.h>

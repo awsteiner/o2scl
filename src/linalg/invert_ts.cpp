@@ -34,7 +34,7 @@
 #include <o2scl/cblas.h>
 #include <o2scl/columnify.h>
 #include <o2scl/set_cuda.h>
-#include <o2scl/cuda_invert.h>
+#include <o2scl/invert_cuda.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;

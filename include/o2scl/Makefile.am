@@ -30,6 +30,11 @@ if O2SCL_OPENMP
 else
 	test -r set_openmp.h || ln -s $(top_srcdir)/src/base/neither/set_openmp.h set_openmp.h
 endif
+if O2SCL_CUDA
+	test -r set_cuda.h || ln -s $(top_srcdir)/src/base/cuda/set_cuda.h set_cuda.h
+else
+	test -r set_cuda.h || ln -s $(top_srcdir)/src/base/neither/set_cuda.h set_cuda.h
+endif
 if O2SCL_PYTHON
 	test -r set_python.h || ln -s $(top_srcdir)/src/base/python/set_python.h set_python.h
 else
