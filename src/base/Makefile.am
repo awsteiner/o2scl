@@ -2,6 +2,14 @@
 # Basic variables
 # ------------------------------------------------------------
 
+if O2SCL_CUDA
+O2SCL_CUDA_HVAR = cuda_invert.h
+O2SCL_CUDA_SVAR = 
+else
+O2SCL_CUDA_HVAR =
+O2SCL_CUDA_SVAR =
+endif
+
 BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	constants.h funct.h multi_funct.h mm_funct.h \
 	lib_settings.h search_vec.h interp.h \
@@ -12,9 +20,8 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
 	funct_multip.h interp_vec.h funct_to_fp.h \
 	string_python.h
-#nvt.h
 
-HEADER_VAR = $(BASE_HEADER_VAR)
+HEADER_VAR = $(BASE_HEADER_VAR) $(O2SCL_CUDA_HVAR)
 
 BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	lib_settings.cpp misc.cpp cli.cpp \
@@ -22,9 +29,8 @@ BASE_BASE_SRCS = err_hnd.cpp table3d.cpp \
 	string_conv.cpp exception.cpp format_float.cpp \
 	tensor.cpp cursesw.cpp string_python.cpp \
 	base_python.cpp funct.cpp funct_to_fp.cpp columnify.cpp
-#nvt.cpp
 
-BASE_SRCS = $(BASE_BASE_SRCS)
+BASE_SRCS = $(BASE_BASE_SRCS) $(O2SCL_CUDA_SVAR)
 
 BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 	lib_settings.scr misc.scr mm_funct.scr multi_funct.scr \
@@ -96,6 +102,8 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	$(O2SCL_PUGIXML_MVAR) $(O2SCL_CUDA_MVAR)
 endif
 
+cuda_invert.lo: cuda_invert.cu
+	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py --shared -c -o $@ $<
 
 # ------------------------------------------------------------
 # Install headers
@@ -283,18 +291,10 @@ uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
 # Library o2scl_base
 # ------------------------------------------------------------
 
-# nvt.o:
-# 	nvcc -c nvt.cpp
-
-# .libs/nvt.o:
-# 	nvcc -o .libs/nvt.o -c nvt.cpp
-
-# nvt.lo:
-# 	$(LIBTOOL) --tag=CXX --mode=compile nvcc -c nvt.cpp
-
 noinst_LTLIBRARIES = libo2scl_base.la
 
 libo2scl_base_la_SOURCES = $(BASE_SRCS)
+libo2scl_base_la_LIBADD = cuda_invert.lo
 
 am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 

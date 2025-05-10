@@ -33,6 +33,7 @@
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>
 #include <o2scl/columnify.h>
+#include <o2scl/cuda_invert.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -49,6 +50,26 @@ int main(void) {
   t.set_output_level(1);
 
   cout.setf(ios::scientific);
+
+#ifdef O2SCL_CUDA
+  if (true) {
+    matrix_invert_det_cholesky_cuda midcc;
+    
+    vector<double> A={
+      4.0,1.0,1.0,
+      1.0,3.0,0.0,
+      1.0,0.0,2.0
+    };
+
+    vector<double> A2(9);
+    midcc.invert(3,A,A2);
+
+    for(size_t i=0;i<9;i++) {
+      std::cout << A2[i] << " ";
+    }
+    std::cout << std::endl;
+  }
+#endif
 
   // Create a 5x5 identity matrix for testing
   ubmatrix id(5,5);
