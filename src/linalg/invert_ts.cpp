@@ -33,6 +33,7 @@
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>
 #include <o2scl/columnify.h>
+#include <o2scl/set_cuda.h>
 #include <o2scl/cuda_invert.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
@@ -70,6 +71,7 @@ int main(void) {
     }
     std::cout << std::endl;
   }
+  
 #endif
 
   // Create a 5x5 identity matrix for testing
