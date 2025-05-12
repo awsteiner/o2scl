@@ -82,11 +82,13 @@ int main(void) {
         double diff0=(double)(ts1.tv_sec-ts0.tv_sec);
         double ndiff0=(double)(ts1.tv_nsec-ts0.tv_nsec);
         //cout << (diff0+ndiff0*1.0e-9)/((double)mult) << " " << std::flush;
-        
-        for(size_t k=0;k<mult;k++) {
-          micf.invert(n,t1[k],t2[k]);
 
-          if (k==0) {
+        double det;
+        for(size_t k=0;k<mult;k++) {
+          if (k==mult-1) {
+            micf.invert_det(n,t1[k],t2[k],det);
+          } else {
+            micf.invert(n,t1[k],t2[k]);
           }
         }
         
@@ -97,14 +99,14 @@ int main(void) {
         double ndiff=(double)(ts2.tv_nsec-ts1.tv_nsec);
         cout << (diff+ndiff*1.0e-9)/((double)mult) << " " << std::flush;
         
-        if (mult>1) {
+        if (mult>1 && n==10) {
           std::cout << std::endl;
           tensor2<> t3;
           t3.resize(2,size);
+          cout << "det: " << det << endl;
           dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
                 n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
           matrix_out(cout,t3);
-          exit(-1);
         }
         
       } else {

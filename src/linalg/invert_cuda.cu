@@ -30,6 +30,13 @@ using namespace o2scl_linalg;
 int matrix_invert_det_cholesky_cuda::invert
 (size_t n, const std::vector<double> &A,
  std::vector<double> &A_inv) {
+
+  // Make a copy of the original matrix since the original
+  // will be destroyed?
+  std::vector<double> Acopy(n*n);
+  for(size_t i=0;i<n*n;i++) {
+    Acopy[i]=A[i];
+  }
   
   // Allocate device memory
   double *d_A=0;
@@ -39,7 +46,7 @@ int matrix_invert_det_cholesky_cuda::invert
   }
   
   // Copy data to device
-  cudaStat=cudaMemcpy(d_A,A.data(),n*n*sizeof(double),
+  cudaStat=cudaMemcpy(d_A,Acopy.data(),n*n*sizeof(double),
                       cudaMemcpyHostToDevice);
   if (cudaStat != cudaSuccess) {
     cudaFree(d_A);

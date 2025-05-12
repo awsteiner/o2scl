@@ -316,17 +316,13 @@ namespace o2scl_linalg {
         // We have to cast away constness :(
         double *Ap=(double *)(&A.get(0,0));
         arma::mat am(Ap,n,n,false);
-        double *Ap_inv=&A_inv.get(0,0);
-        arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.det(n,am);
         last_method=2;
         
       } else {
         
-        std::vector<double> vd_inv(n*n);
-        ret=cuda.invert(n,A.get_data(),vd_inv);
-        A_inv.swap_data(vd_inv);
+        ret=cuda.det(n,A.get_data());
         last_method=3;
 
       }
@@ -414,20 +410,18 @@ namespace o2scl_linalg {
         
       } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
         
-        // We have to cast away constness :(
         double *Ap=(double *)(&A.get(0,0));
         arma::mat am(Ap,n,n,false);
-        double *Ap_inv=&A_inv.get(0,0);
-        arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.invert_inplace(n,am);
         last_method=2;
         
       } else {
-        
-        std::vector<double> vd_inv(n*n);
-        ret=cuda.invert(n,A.get_data(),vd_inv);
-        A_inv.swap_data(vd_inv);
+
+        // We have to cast away constness :(
+        std::vector<double> &ref=(std::vector<double> &)(A.get_data());
+          
+        ret=cuda.invert_inplace(n,ref);
         last_method=3;
 
       }
@@ -442,9 +436,7 @@ namespace o2scl_linalg {
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
-        vector<double> vd_inv(n*n);
         ret=cuda.invert_inplace(n,A);
-        A_inv.swap_data(vd_inv);
         last_method=3;
       } else {
         ret=o2.invert_inplace(n,A);
@@ -464,13 +456,10 @@ namespace o2scl_linalg {
       }
       
       if (force_arma || (mode!=force_o2 && n>n_arma_o2)) {
-        // We have to cast away constness :(
         double *Ap=(double *)(&(A.get(0,0)));
         arma::mat am(Ap,n,n,false);
-        double *Ap_inv=&A_inv.get(0,0);
-        arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.invert_inplace(n,am);
         last_method=2;
       } else {
         ret=o2.invert_inplace(n,A);
