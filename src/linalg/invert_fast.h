@@ -34,23 +34,27 @@
 
 namespace o2scl_linalg {
 
-  /** \brief Desc
+  /** \brief Perform an inversion of a symmetric positive definite
+      matrix, choosing the fastest method available depending on the size
+      of the matrix
    */
   class matrix_invert_cholesky_fast :
     public matrix_invert_det<o2scl::tensor2<>,double> {
 
   protected:
 
-    /// Native O2scl Cholesky decomposition (slowest)
+    /// Native O2scl Cholesky decomposition (fastest only for tiny matrices)
     matrix_invert_det_cholesky<o2scl::tensor2<>,double> o2;
 
 #ifdef O2SCL_SET_ARMA    
-    /// Cholesky decomposition from Armadillo
+    /// Cholesky decomposition from Armadillo (fastest for small sizes)
     matrix_invert_det_sympd_arma<> arma;
 #endif
 
 #ifdef O2SCL_SET_CUDA
-    /// GPU-based Cholesky decomposition
+    /** \brief GPU-based Cholesky decomposition (fastest for medium and large
+        matrices)
+    */
     matrix_invert_det_cholesky_cuda cuda;
 #endif
 
@@ -65,7 +69,7 @@ namespace o2scl_linalg {
     /// The size over which to prefer Armadillo over native inversion
     size_t n_arma_o2;
 
-    /// The mode
+    /// The inversion mode
     //@{
     static const size_t fast=0;
     static const size_t force_o2=1;
@@ -74,11 +78,15 @@ namespace o2scl_linalg {
     int mode;
     //@}
 
+    /// Last method used
+    int last_method;
+    
     matrix_invert_cholesky_fast() {
       n_cuda_arma=400;
       n_cuda_o2=100;
       n_arma_o2=15;
       mode=fast;
+      last_method=0;
     }
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
@@ -88,16 +96,16 @@ namespace o2scl_linalg {
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
 
-      // Both cuda and Armadillo
+      // Both cuda and Armadillo are available
       int ret;
-      if (mode==force_o2) {
+      if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
+                             n<n_arma_o2)) {
         
-        //std::cout << "1";
         ret=o2.invert(n,A,A_inv);
+        last_method=1;
         
       } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
         
-        //std::cout << "2";
         // We have to cast away constness :(
         double *Ap=(double *)(&A.get(0,0));
         arma::mat am(Ap,n,n,false);
@@ -105,55 +113,65 @@ namespace o2scl_linalg {
         arma::mat am_inv(Ap_inv,n,n,false);
         
         ret=arma.invert(n,am,am_inv);
+        last_method=2;
         
       } else {
         
         std::vector<double> vd_inv(n*n);
-        //std::cout << "3";
         ret=cuda.invert(n,A.get_data(),vd_inv);
         A_inv.swap_data(vd_inv);
+        last_method=3;
 
       }
       
 #else
 
-      // Cuda only
+      // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      if (force_cuda || n>n_cuda_o2) {
+      if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
         vector<double> vd_inv(n*n);
         ret=cuda.invert(n,A,A_inv);
         A_inv.swap_data(vd_inv);
+        last_method=3;
       } else {
         ret=o2.invert(n,A,A_inv);
+        last_method=1;
       }
       
 #endif
 #else
 #ifdef O2SCL_SET_ARMA
 
-      // Armadillo only
+      // Armadillo is available, but not CUDA
 
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      // We have to cast away constness :(
-      double *Ap=(double *)(&(A.get(0,0)));
-      arma::mat am(Ap,n,n,false);
-      double *Ap_inv=&A_inv.get(0,0);
-      arma::mat am_inv(Ap_inv,n,n,false);
       
-      int ret=arma.invert(n,am,am_inv);
+      if (force_arma || (mode!=force_o2 && n>n_arma_o2)) {
+        // We have to cast away constness :(
+        double *Ap=(double *)(&(A.get(0,0)));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+      } else {
+        ret=o2.invert(n,A,A_inv);
+        last_method=1;
+      }
         
 #else
 
-      // Neither cuda norm Armadillo
+      // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
@@ -165,6 +183,7 @@ namespace o2scl_linalg {
                   
       }
       int ret=o2.invert(n,A,A_inv);
+      last_method=1;
       
 #endif
 #endif
@@ -177,46 +196,86 @@ namespace o2scl_linalg {
     */
     virtual int invert_det(size_t n, const o2scl::tensor2<> &A,
                            o2scl::tensor2<> &A_inv, double &A_det) {
-#ifdef O2SCL_NEVER_DEFINED
-      
+
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
 
-      // Both cuda and Armadillo
+      // Both cuda and Armadillo are available
       int ret;
-      if (mode==force_cuda || n>n_cuda_arma) {
-        ret=cuda.invert_det(n,A,A_inv,A_det);
-      } else if (mode==force_o2) {
+      if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
+                             n<n_arma_o2)) {
+        
         ret=o2.invert_det(n,A,A_inv,A_det);
+        last_method=1;
+        
+      } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
+        
+        // We have to cast away constness :(
+        double *Ap=(double *)(&A.get(0,0));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+        
       } else {
-        ret=arma.invert_det(n,A,A_inv,A_det);
+        
+        std::vector<double> vd_inv(n*n);
+        ret=cuda.invert(n,A.get_data(),vd_inv);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
+
       }
       
 #else
 
-      // Cuda only
+      // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      if (force_cuda || n>n_cuda_o2) {
+      if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
+        vector<double> vd_inv(n*n);
         ret=cuda.invert_det(n,A,A_inv,A_det);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
       } else {
         ret=o2.invert_det(n,A,A_inv,A_det);
+        last_method=1;
       }
       
 #endif
 #else
 #ifdef O2SCL_SET_ARMA
 
-      // Armadillo only
-      ret=arma.invert_det(n,A,A_inv,A_det);
+      // Armadillo is available, but not CUDA
+
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
       
+      if (force_arma || (mode!=force_o2 && n>n_arma_o2)) {
+        // We have to cast away constness :(
+        double *Ap=(double *)(&(A.get(0,0)));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+      } else {
+        ret=o2.invert_det(n,A,A_inv,A_det);
+        last_method=1;
+      }
+        
 #else
 
-      // Neither cuda norm Armadillo
+      // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
@@ -227,60 +286,99 @@ namespace o2scl_linalg {
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      ret=o2.invert_det(n,A,A_inv,A_det);
+      int ret=o2.invert_det(n,A,A_inv,A_det);
+      last_method=1;
       
 #endif
 #endif
       
       return ret;
-#endif
-      return 0;
     }
 
     /** \brief Determine the determinant of the matrix \c A without
         inverting
     */
     virtual double det(size_t n, const o2scl::tensor2<> &A) {
-#ifdef O2SCL_NEVER_DEFINED
 
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
 
-      // Both cuda and Armadillo
-      int ret;
-      if (mode==force_cuda || n>n_cuda_arma) {
-        ret=cuda.det(n,A);
-      } else if (mode==force_o2) {
+      // Both cuda and Armadillo are available
+      double ret;
+      if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
+                             n<n_arma_o2)) {
+        
         ret=o2.det(n,A);
+        last_method=1;
+        
+      } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
+        
+        // We have to cast away constness :(
+        double *Ap=(double *)(&A.get(0,0));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+        
       } else {
-        ret=arma.det(n,A);
+        
+        std::vector<double> vd_inv(n*n);
+        ret=cuda.invert(n,A.get_data(),vd_inv);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
+
       }
       
 #else
 
-      // Cuda only
-      int ret;
+      // Cuda is available, but not Armadillo
+      double ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      if (force_cuda || n>n_cuda_o2) {
+      if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
+        vector<double> vd_inv(n*n);
         ret=cuda.det(n,A);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
       } else {
         ret=o2.det(n,A);
+        last_method=1;
       }
       
 #endif
 #else
 #ifdef O2SCL_SET_ARMA
 
-      // Armadillo only
-      ret=arma.det(n,A);
+      // Armadillo is available, but not CUDA
+
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
       
+      if (force_arma || (mode!=force_o2 && n>n_arma_o2)) {
+        // We have to cast away constness :(
+        double *Ap=(double *)(&(A.get(0,0)));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+      } else {
+        ret=o2.det(n,A);
+        last_method=1;
+      }
+        
 #else
 
-      // Neither cuda norm Armadillo
+      // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
@@ -291,59 +389,97 @@ namespace o2scl_linalg {
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      ret=o2.det(n,A);
+      double ret=o2.det(n,A);
+      last_method=1;
       
 #endif
 #endif
       
       return ret;
-#endif
-      return 0;
     }      
     
     /// Invert matrix \c A in place
     virtual int invert_inplace(size_t n, o2scl::tensor2<> &A) {
 
-#ifdef O2SCL_NEVER_DEFINED
-      
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
 
-      // Both cuda and Armadillo
+      // Both cuda and Armadillo are available
       int ret;
-      if (mode==force_cuda || n>n_cuda_arma) {
-        ret=cuda.invert_inplace(n,A);
-      } else if (mode==force_o2) {
+      if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
+                             n<n_arma_o2)) {
+        
         ret=o2.invert_inplace(n,A);
+        last_method=1;
+        
+      } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
+        
+        // We have to cast away constness :(
+        double *Ap=(double *)(&A.get(0,0));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+        
       } else {
-        ret=arma.invert_inplace(n,A);
+        
+        std::vector<double> vd_inv(n*n);
+        ret=cuda.invert(n,A.get_data(),vd_inv);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
+
       }
       
 #else
 
-      // Cuda only
+      // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      if (force_cuda || n>n_cuda_o2) {
+      if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
+        vector<double> vd_inv(n*n);
         ret=cuda.invert_inplace(n,A);
+        A_inv.swap_data(vd_inv);
+        last_method=3;
       } else {
         ret=o2.invert_inplace(n,A);
+        last_method=1;
       }
       
 #endif
 #else
 #ifdef O2SCL_SET_ARMA
 
-      // Armadillo only
-      ret=arma.invert_inplace(n,A);
+      // Armadillo is available, but not CUDA
+
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
       
+      if (force_arma || (mode!=force_o2 && n>n_arma_o2)) {
+        // We have to cast away constness :(
+        double *Ap=(double *)(&(A.get(0,0)));
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        last_method=2;
+      } else {
+        ret=o2.invert_inplace(n,A);
+        last_method=1;
+      }
+        
 #else
 
-      // Neither cuda norm Armadillo
+      // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
@@ -354,14 +490,13 @@ namespace o2scl_linalg {
                   "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
                   
       }
-      ret=o2.invert_inplace(n,A);
+      int ret=o2.invert_inplace(n,A);
+      last_method=1;
       
 #endif
 #endif
       
       return ret;
-#endif
-      return 0;
     }
     
   };
