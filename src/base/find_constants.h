@@ -28,7 +28,6 @@
 #include <boost/algorithm/string.hpp>
 
 #include <o2scl/constants.h>
-#include <o2scl/string_conv.h>
 
 namespace o2scl {
 

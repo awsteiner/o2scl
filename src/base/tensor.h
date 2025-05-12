@@ -578,8 +578,6 @@ namespace o2scl {
   template<class data_t=double, class vec_t=std::vector<data_t>, 
            class vec_size_t=std::vector<size_t> > class tensor_base {
 
-  public:
-  
   protected:
   
     /// The data
@@ -2111,6 +2109,24 @@ namespace o2scl {
       size_t sz[2]={ix1,ix2};
       tensor<data_t,vec_t,vec_size_t>::set_arr(sz,val); 
       return;
+    }
+
+    /// The size of the first index, for matrix-like semantics
+    size_t size1() {
+      if (this->size.size()<1) {
+        O2SCL_ERR2("Requested first element of empty size vector ",
+                   "in tensor2::size1().",o2scl::exc_einval);
+      }
+      return this->size[0];
+    }
+
+    /// The size of the second index, for matrix-like semantics
+    size_t size2() {
+      if (this->size.size()<2) {
+        O2SCL_ERR2("Requested second element of one element size vector ",
+                   "in tensor2::size1().",o2scl::exc_einval);
+      }
+      return this->size[1];
     }
 
     /** \brief Set the element indexed by \c index to value \c val

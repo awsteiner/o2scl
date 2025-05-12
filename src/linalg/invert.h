@@ -312,9 +312,12 @@ namespace o2scl_linalg {
     
   };
 }
+
+// End of #if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
 #endif
 
 #if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
+
 #include <eigen3/Eigen/Dense>
 namespace o2scl_linalg {
   
@@ -455,11 +458,324 @@ namespace o2scl_linalg {
     
   };
   
-}
+  // End of #if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
+  
+  class matrix_invert_cholesky_fast :
+    public matrix_invert_det<class mat_t=o2scl::tensor2<>,
+                             class fp_t=double> {
+
+  protected:
+
+    /// Native O2scl Cholesky decomposition (slowest)
+    matrix_invert_det_cholesky<o2scl::tensor2<>,double> o2;
+
+#ifdef O2SCL_SET_ARMA    
+    /// Cholesky decomposition from Armadillo
+    matrix_invert_det_sympd_arma<> arma;
+#endif
+
+#ifdef O2SCL_SET_CUDA
+    /// GPU-based Cholesky decomposition
+    matrix_invert_det_cholesky_cuda cuda;
+#endif
+
+  public:
+
+    /// The size over which to prefer Cuda over Armadillo
+    int n_cuda_arma;
+    
+    /// The size over which to prefer Cuda over O2scl's native
+    int n_cuda_o2;
+
+    /// The mode
+    //@{
+    static const int fast=0;
+    static const int force_o2=1;
+    static const int force_arma=2;
+    static const int force_cuda=3;
+    int mode;
+    //@}
+
+    matrix_invert_choleksy_fast() {
+      n_cuda_arma=400;
+      n_cuda_o2=400;
+      mode=fast;
+    }
+    
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    virtual int invert(size_t n, const o2scl::tensor2<> &A,
+                       o2scl::tensor2<> &A_inv) {
+
+#ifdef O2SCL_SET_CUDA
+#ifdef O2SCL_SET_ARMA
+
+      // Both cuda and Armadillo
+      int ret;
+      if (mode==force_cuda || n>n_cuda_arma) {
+        vector<double> vd_inv(n*n);
+        ret=cuda.invert(n,A.get_data(),vd_inv);
+        A_inv.swap_data(vd_inv);
+      } else if (mode==force_o2) {
+        ret=o2.invert(n,A,A_inv);
+      } else {
+
+        double *Ap=&A.get(0,0);
+        arma::mat am(Ap,n,n,false);
+        double *Ap_inv=&A_inv.get(0,0);
+        arma::mat am_inv(Ap_inv,n,n,false);
+        
+        ret=arma.invert(n,am,am_inv);
+        
+      }
+      
 #else
+
+      // Cuda only
+      int ret;
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda || n>n_cuda_o2) {
+        vector<double> vd_inv(n*n);
+        ret=cuda.invert(n,A,A_inv);
+        A_inv.swap_data(vd_inv);
+      } else {
+        ret=o2.invert(n,A,A_inv);
+      }
+      
+#endif
+#else
+#ifdef O2SCL_SET_ARMA
+
+      // Armadillo only
+      
+      double *Ap=&A.get(0,0);
+      arma::mat am(Ap,n,n,false);
+      double *Ap_inv=&A_inv.get(0,0);
+      arma::mat am_inv(Ap_inv,n,n,false);
+      
+      ret=arma.invert(n,am,am_inv);
+        
+#else
+
+      // Neither cuda norm Armadillo
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      ret=o2.invert(n,A,A_inv);
+      
+#endif
+#endif
+      
+      return ret;
+    }
+    
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    virtual int invert_det(size_t n, const o2scl::tensor2<> &A,
+                           o2scl::tensor2<> &A_inv, double &A_det) {
+      
+#ifdef O2SCL_SET_CUDA
+#ifdef O2SCL_SET_ARMA
+
+      // Both cuda and Armadillo
+      int ret;
+      if (mode==force_cuda || n>n_cuda_arma) {
+        ret=cuda.invert_det(n,A,A_inv,A_det);
+      } else if (mode==force_o2) {
+        ret=o2.invert_det(n,A,A_inv,A_det);
+      } else {
+        ret=arma.invert_det(n,A,A_inv,A_det);
+      }
+      
+#else
+
+      // Cuda only
+      int ret;
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda || n>n_cuda_o2) {
+        ret=cuda.invert_det(n,A,A_inv,A_det);
+      } else {
+        ret=o2.invert_det(n,A,A_inv,A_det);
+      }
+      
+#endif
+#else
+#ifdef O2SCL_SET_ARMA
+
+      // Armadillo only
+      ret=arma.invert_det(n,A,A_inv,A_det);
+      
+#else
+
+      // Neither cuda norm Armadillo
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      ret=o2.invert_det(n,A,A_inv,A_det);
+      
+#endif
+#endif
+      
+      return ret;
+    }
+
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    virtual double det(size_t n, const o2scl::tensor2<> &A) {
+
+#ifdef O2SCL_SET_CUDA
+#ifdef O2SCL_SET_ARMA
+
+      // Both cuda and Armadillo
+      int ret;
+      if (mode==force_cuda || n>n_cuda_arma) {
+        ret=cuda.det(n,A);
+      } else if (mode==force_o2) {
+        ret=o2.det(n,A);
+      } else {
+        ret=arma.det(n,A);
+      }
+      
+#else
+
+      // Cuda only
+      int ret;
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda || n>n_cuda_o2) {
+        ret=cuda.det(n,A);
+      } else {
+        ret=o2.det(n,A);
+      }
+      
+#endif
+#else
+#ifdef O2SCL_SET_ARMA
+
+      // Armadillo only
+      ret=arma.det(n,A);
+      
+#else
+
+      // Neither cuda norm Armadillo
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      ret=o2.det(n,A);
+      
+#endif
+#endif
+      
+      return ret;
+    }      
+    
+    /// Invert matrix \c A in place
+    virtual int invert_inplace(size_t n, o2scl::tensor2<> &A) {
+
+#ifdef O2SCL_SET_CUDA
+#ifdef O2SCL_SET_ARMA
+
+      // Both cuda and Armadillo
+      int ret;
+      if (mode==force_cuda || n>n_cuda_arma) {
+        ret=cuda.invert_inplace(n,A);
+      } else if (mode==force_o2) {
+        ret=o2.invert_inplace(n,A);
+      } else {
+        ret=arma.invert_inplace(n,A);
+      }
+      
+#else
+
+      // Cuda only
+      int ret;
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda || n>n_cuda_o2) {
+        ret=cuda.invert_inplace(n,A);
+      } else {
+        ret=o2.invert_inplace(n,A);
+      }
+      
+#endif
+#else
+#ifdef O2SCL_SET_ARMA
+
+      // Armadillo only
+      ret=arma.invert_inplace(n,A);
+      
+#else
+
+      // Neither cuda norm Armadillo
+      if (force_arma) {
+        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      if (force_cuda) {
+        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  
+      }
+      ret=o2.invert_inplace(n,A);
+      
+#endif
+#endif
+      
+      return ret;
+    }
+    
+  };
+  
+#endif
+  
+}
+  
+#else
+
 #include <o2scl/invert_special.h>
+
+// End of #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 #endif
 
+// End of #ifndef O2SCL_MATRIX_INVERT_H
 #endif

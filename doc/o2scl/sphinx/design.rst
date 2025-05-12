@@ -47,49 +47,55 @@ that not all of the headers in the "base" directory are listed here
 (because they are less likely to cause problems)
 
 Tier 1
-  - constants.h : (none)
-  - err_hnd.h : (none)
-
-Tier 2    
-  - exception.h : err_hnd.h
-  - misc.h : err_hnd.h
-  - find_constants.h : constants.h
-  - rng.h (in the mcarlo directory) : err_hnd.h
-  - tridiag.h (in the linalg directory) : err_hnd.h
-
-Tier 3
-  - string_conv.h : misc.h
-  
-Tier 4
-  - calc_utf8.h : rng.h err_hnd.h string_conv.h find_constants.h
-  - columnify.h : misc.h string_conv.h
-  - uniform_grid.h : string_conv.h err_hnd.h
-  - format_float.h : err_hnd.h misc.h string_conv.h
-
-Tier 5
-  - funct.h : err_hnd.h calc_utf8.h
-  - vector.h : misc.h uniform_grid.h (vector_special.h)
-  - mm_funct.h : calc_utf8.h
-  - multi_funct.h : calc_utf8.h
-
-Tier 6    
-  - convert_units.h : find_constants.h calc_utf8.h misc.h string_conv.h
-    vector.h constants.h
-  - search_vec.h : err_hnd.h vector.h misc.h
-  - permutation.h : vector.h
-  - interp.h : search_vec.h tridiag.h vector.h
-
-Tier 7    
-  - lib_settings.h : convert_units.h find_constants.h
+  - ``err_hnd.h``
+  - ``set_*.h``
+  - ``vector_special.h``
     
-The interpolation, testing, and table headers are not
-as top-level as the ones above because they depend on 
-tridiagonalization in the linear algebra directory::
+Tier 2    
+  - ``misc.h`` : ``err_hnd.h``
+  - ``exception.h`` : ``err_hnd.h``
+  - ``rng.h`` (in the ``mcarlo`` directory) : ``err_hnd.h``
+  - ``tridiag.h`` (in the ``linalg`` directory) : ``err_hnd.h``
+  - ``funct.h`` : ``err_hnd.h``
+    
+Tier 3
+  - ``string_conv.h`` : ``misc.h``, ``set_mpfr.h``, ``set_multip.h``
+    
+Tier 4
+  - ``constants.h`` : ``string_conv.h``
+  - ``uniform_grid.h`` : ``string_conv.h``, ``err_hnd.h``
+  - ``format_float.h`` : ``err_hnd.h``, ``misc.h``, ``string_conv.h``
+  - ``funct_multip.h`` : ``string_conv.h``, ``set_mpfr.h``,
+    ``set_multip.h``
+    
+Tier 5
+  - ``find_constants.h`` : ``constants.h``, ``string_conv.h``
+  - ``vector.h`` : ``misc.h``, ``uniform_grid.h``,
+    ``vector_special.h``, ``set_openmp.h``
+    
+Tier 6
+  - ``columnify.h`` : ``misc.h``, ``string_conv.h``, ``vector.h``
+  - ``search_vec.h`` : ``err_hnd.h``, ``vector.h``
+  - ``permutation.h`` (in ``linalg``) : ``vector.h``
 
-  interp.h : search_vec.h tridiag.h vector.h
-  table.h : misc.h interp.h shunting_yard.h
-  table_units.h : table.h lib_settings.h
-  test_mgr.h : string_conv.h misc.h table_units.h
+Tier >7    
+  - ``calc_utf8.h`` : ``rng.h``, ``err_hnd.h``, ``string_conv.h``,
+    ``polylog.h``
+  - ``funct_to_fp.h`` :
+  - ``interp.h`` : ``search_vec.h``, ``tridiag.h``, ``invert.h``
+  - ``interp_vec.h``: ``interp.h``, ``interp_krige.h``, ``vector_special.h``
+  - ``mm_funct.h`` : ``calc_utf8.h``
+  - ``multi_funct.h`` : ``set_python.h``, ``lib_settings.h``, ``err_hnd.h``
+  - ``convert_units.h`` : ``find_constants.h``, ``calc_utf8.h``,
+    ``misc.h``, ``string_conv.h``, ``vector.h``, ``constants.h``
+  - ``interp.h`` : ``search_vec.h``, ``tridiag.h``, ``vector.h``,
+    ``invert.h`` (in linalg)
+  - ``lib_settings.h`` : ``convert_units.h``, ``find_constants.h``,
+    ``rng.h``, ``set_python.h``
+  - ``table.h`` : ``misc.h``, ``set_openmp.h``, ``interp_vec.h``,
+    ``vec_stats.h``, ``lib_settings.h``
+  - ``table_units.h`` : ``table.h``, ``lib_settings.h``
+  - ``test_mgr.h`` : ``string_conv.h``, ``misc.h``, ``table_units.h``
 
 The use of templates
 --------------------
