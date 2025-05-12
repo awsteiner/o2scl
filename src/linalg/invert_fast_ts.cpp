@@ -70,7 +70,8 @@ int main(void) {
           for(size_t i=0;i<n;i++) {
             for(size_t j=0;j<n;j++) {
               if (i==j) t1[k](i,j)=((double)(i+2));
-              else t1[k](i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
+              else t1[k](i,j)=1.0e-2*exp(-2.0*
+                                         pow(((double)i)+((double)j),2.0));
             }
           }
         }
@@ -84,6 +85,9 @@ int main(void) {
         
         for(size_t k=0;k<mult;k++) {
           micf.invert(n,t1[k],t2[k]);
+
+          if (k==0) {
+          }
         }
         
         struct timespec ts2;
@@ -92,6 +96,17 @@ int main(void) {
         double diff=(double)(ts2.tv_sec-ts1.tv_sec);
         double ndiff=(double)(ts2.tv_nsec-ts1.tv_nsec);
         cout << (diff+ndiff*1.0e-9)/((double)mult) << " " << std::flush;
+        
+        if (mult>1) {
+          std::cout << std::endl;
+          tensor2<> t3;
+          t3.resize(2,size);
+          dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
+                n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
+          matrix_out(cout,t3);
+          exit(-1);
+        }
+        
       } else {
         cout << 0.0 << " " << std::flush;
       }
