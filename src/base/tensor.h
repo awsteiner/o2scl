@@ -2112,7 +2112,7 @@ namespace o2scl {
     }
 
     /// The size of the first index, for matrix-like semantics
-    size_t size1() {
+    size_t size1() const {
       if (this->size.size()<1) {
         O2SCL_ERR2("Requested first element of empty size vector ",
                    "in tensor2::size1().",o2scl::exc_einval);
@@ -2121,7 +2121,7 @@ namespace o2scl {
     }
 
     /// The size of the second index, for matrix-like semantics
-    size_t size2() {
+    size_t size2() const {
       if (this->size.size()<2) {
         O2SCL_ERR2("Requested second element of one element size vector ",
                    "in tensor2::size1().",o2scl::exc_einval);

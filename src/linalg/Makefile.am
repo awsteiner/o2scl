@@ -15,11 +15,11 @@ HEADER_VAR = cblas.h lu.h lanczos.h tridiag.h permutation.h qr.h \
 	qr_base.h hh_base.h tridiag_base.h givens_base.h lanczos_base.h \
 	lu_base.h linear_solver.h svdstep_base.h svdstep.h cholesky.h \
 	cholesky_base.h qrpt.h qrpt_base.h bidiag.h bidiag_base.h \
-	svd.h svd_base.h invert.h $(O2SCL_CUDA_HVAR)
+	svd.h svd_base.h invert.h $(O2SCL_CUDA_HVAR) invert_fast.h
 
 TEST_VAR = cblas.scr permutation.scr lanczos.scr tridiag.scr lu.scr \
 	qr.scr qrpt.scr householder.scr hh.scr linear_solver.scr \
-	cholesky.scr bidiag.scr svdstep.scr svd.scr invert.scr
+	cholesky.scr bidiag.scr svdstep.scr svd.scr invert.scr invert_fast.scr
 
 SUBDIRS = arma eigen both neither
 
@@ -62,7 +62,7 @@ pkginclude_HEADERS = $(HEADER_VAR)
 
 check_PROGRAMS = cblas_ts permutation_ts lanczos_ts tridiag_ts lu_ts \
 	qr_ts householder_ts hh_ts linear_solver_ts svdstep_ts \
-	cholesky_ts qrpt_ts bidiag_ts svd_ts invert_ts
+	cholesky_ts qrpt_ts bidiag_ts svd_ts invert_ts invert_fast_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -105,6 +105,7 @@ cholesky_ts_LDADD = $(ADDL_TEST_LIBS)
 svd_ts_LDADD = $(ADDL_TEST_LIBS)
 bidiag_ts_LDADD = $(ADDL_TEST_LIBS)
 invert_ts_LDADD = $(ADDL_TEST_LIBS)
+invert_fast_ts_LDADD = $(ADDL_TEST_LIBS)
 
 cblas_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 permutation_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -121,6 +122,7 @@ cholesky_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 svd_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 bidiag_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 invert_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+invert_fast_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 cblas.scr: cblas_ts$(EXEEXT) 
 	./cblas_ts$(EXEEXT) > cblas.scr
@@ -152,6 +154,8 @@ bidiag.scr: bidiag_ts$(EXEEXT)
 	./bidiag_ts$(EXEEXT) > bidiag.scr
 invert.scr: invert_ts$(EXEEXT) 
 	./invert_ts$(EXEEXT) > invert.scr
+invert_fast.scr: invert_fast_ts$(EXEEXT) 
+	./invert_fast_ts$(EXEEXT) > invert_fast.scr
 
 cblas_ts_SOURCES = cblas_ts.cpp
 permutation_ts_SOURCES = permutation_ts.cpp
@@ -168,6 +172,7 @@ cholesky_ts_SOURCES = cholesky_ts.cpp
 svd_ts_SOURCES = svd_ts.cpp
 bidiag_ts_SOURCES = bidiag_ts.cpp
 invert_ts_SOURCES = invert_ts.cpp
+invert_fast_ts_SOURCES = invert_fast_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_linalg

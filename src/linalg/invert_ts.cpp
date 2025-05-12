@@ -35,6 +35,7 @@
 #include <o2scl/columnify.h>
 #include <o2scl/set_cuda.h>
 #include <o2scl/invert_cuda.h>
+#include <o2scl/tensor.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -52,7 +53,6 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-#ifdef O2SCL_NEVER_DEFINED
 #ifdef O2SCL_SET_CUDA
   
   if (true) {
@@ -69,10 +69,9 @@ int main(void) {
 
     tensor2<> t2(3,3);
     t2.swap_data(A2);
-    matrix_out(cout,t2,true);
+    matrix_out(cout,t2);
   }
   
-#endif
 #endif
 
   // Create a 5x5 identity matrix for testing
@@ -323,34 +322,6 @@ int main(void) {
   }
 
 #endif
-
-  {
-
-    /*
-
-    // We choose a nearly diagonal positive symmetric matrix which
-    // is easy to invert
-    tensor2<> t2(5,5);
-    for(size_t i=0;i<5;i++) {
-      for(size_t j=0;j<5;j++) {
-        if (i==j) g2(i,j)=((double)(i+2));
-        else g2(i,j)=1.0e-2*exp(-2.0*pow(((double)i)+((double)j),2.0));
-      }
-    }
-    
-    //matrix_invert_cholesky_fast micf;
-    mi.invert(5,gm1,gm2);
-
-    dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-          5,5,5,1.0,gm1,gm2,0.0,gm3);
-
-    matrix_out(cout,5,5,gm2);
-    cout << endl;
-    matrix_out(cout,5,5,gm3);
-    cout << endl;
-    */
-
-  }
 
   t.report();
   return 0;
