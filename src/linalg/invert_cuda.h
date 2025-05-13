@@ -31,6 +31,22 @@
 
 namespace o2scl_linalg {
 
+  /** \brief Use CUDA to perform a Cholesky decomposition of a
+      symmetric positive definite matrix
+
+      \note The function ``cusolverDnDpotrf`` only requires that the
+      lower-triangle of the matrix \c A is stored. It also presumes
+      that the matrix is stored in column-major, rather than row-major
+      order. In this function, it is presumed that \c A is stored in
+      row-major order, and thus only the upper triangular part of the
+      matrix \c A is used for the Cholesky decomposition.
+
+      After this function, the Cholesky decomposition is stored in
+      the upper-triangular part of \c A, presuming it is stored
+      in column-major order. 
+  */
+  int cholesky_decomp_cuda(const size_t M, std::vector<double> &A);
+  
   /** \brief Use CUDA to invert a symmetric positive definite matrix
       stored as a <tt>std::vector</tt> on the GPU
   */

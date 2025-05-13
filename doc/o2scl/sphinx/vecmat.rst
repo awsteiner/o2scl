@@ -107,9 +107,10 @@ For writing generic vectors to a stream, you can use the
 Rows and columns vs. x and y
 ----------------------------
 
-The most common convention is that the first index of a matrix is the
-row index, i.e. to print a matrix to the screen one uses something
-like::
+The most common convention (and the one that O₂scl uses) is that the
+first index of a matrix is the row index and the second index is the
+column index. In this case, to print a matrix to the screen one uses
+something like::
 
   for(size_t row=0;row<n_rows;row++) {
     for(size_t col=0;col<n_cols;col++) {
@@ -124,7 +125,7 @@ This is the form used in :cpp:func:`o2scl::matrix_out()` and
 :cpp:func:`o2scl::array_2d_trans_out()`.
 
 A related issue is how matrices are stored. In C, two-dimensional
-arrays are stored in row-major order, and the distance from the first
+arrays are stored in row-major order and the distance from the first
 element to the element at ``(row,col)`` is given by
 ``row*n_cols+col``. In row-major order storage, the matrix elements
 are stored in the same order in which they are output by the functions
@@ -132,21 +133,21 @@ are stored in the same order in which they are output by the functions
 The alternative is column-major order where the distance from the
 first element to the element at ``(row,col)`` is given by
 ``col*n_rows+row``. The :ref:`tensor <tensor>` class uses a simple
-generalization of row-major order. O₂scl classes and
-functions which use ``operator(,)`` operate independently of how the
-data is represented in memory.
+generalization of row-major order. O₂scl classes and functions which
+use ``operator(,)`` operate independently of how the data is
+represented in memory.
 
-Sometimes its useful to think about the rows and columns in a
-matrix as referring to a elements of a grid, and the matrix
-indices refer to points in a grid in :math:`(x,y)`. It might seem
-intuitive to think of a matrix as ``A[ix][iy]`` where ``ix``
-and ``iy`` are the :math:`x` and :math:`y` indices because the
-ordering of the indices is alphabetical. However, it is useful to
-note that because functions like :cpp:func:`o2scl::matrix_out()` print
-the first "row" first rather than the first column, a matrix
-constructed as ``A[ix][iy]`` will be printed out with x on
-the "vertical axis" and y on the "horizontal axis", which is
-backwards from the usual convention when plotting data.
+Sometimes its useful to think about the rows and columns in a matrix
+as referring to a elements of a grid, and the matrix indices refer to
+points in a grid in :math:`(x,y)`. It might seem intuitive to think of
+a matrix as ``A[ix][iy]`` where ``ix`` and ``iy`` are the :math:`x`
+and :math:`y` indices because the ordering of the indices is
+alphabetical. However, it is useful to note that because functions
+like :cpp:func:`o2scl::matrix_out()` print the first "row" first
+rather than the first column, a matrix constructed as ``A[ix][iy]``
+will be printed out with :math:`x` on the "vertical axis" and
+:math:`y` on the "horizontal axis", which is backwards from the usual
+convention when plotting data.
 
 O₂scl classes which interpret matrix data on a grid
 (:ref:`table3d <table3d>`, :ref:`contour <contour>`, :ref:`interp2_seq

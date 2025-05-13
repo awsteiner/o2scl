@@ -37,6 +37,72 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  if (true) {
+    tensor2<> t1(10,10);
+    std::vector<double> t2(100);
+        
+    for(size_t i=0;i<10;i++) {
+      for(size_t j=0;j<10;j++) {
+        if (i==j) {
+          t1(i,j)=((double)(i+2));
+          t2[i*10+j]=((double)(i+2));
+        } else if (i>j) {
+          t1(i,j)=1.0e-2*exp(-2.0*
+                             pow(((double)i)+((double)j),2.0));
+          t2[j*10+i]=1.0e-2*exp(-2.0*
+                                pow(((double)i)+((double)j),2.0));
+        } else {
+          t1(i,j)=0.0;
+          // Store the matrix in column-major order, as expected in
+          // O2scl, but store it in the upper- rather than the
+          // lower-triangular part
+          t2[j*10+i]=1.0e-2*exp(-2.0*
+                                pow(((double)i)+((double)j),2.0));
+        }
+      }
+    }
+
+    cout << "Original matrix:" << endl;
+    matrix_out(cout,t1);
+    cout << endl;
+
+    cholesky_decomp(10,t1);
+    cholesky_decomp_cuda(10,t2);
+    cout << "CD 1" << endl;
+    matrix_out(cout,t1);
+    cout << endl;
+    vector<double> t2x(100);
+    vector_copy(t2,t2x);
+    tensor2<> t3(10,10);
+    t3.swap_data(t2x);
+    cout << "CD 3" << endl;
+    matrix_out(cout,t3);
+    cout << endl;
+    
+    matrix_invert_cholesky_fast micf;
+    tensor2<> t1b(10,10), t3b(10,10);
+    vector<double> t2b(100);
+    
+    micf.mode=micf.force_o2;
+    micf.invert(10,t1,t1b);
+    matrix_out(cout,t1b);
+    cout << endl;
+
+    matrix_invert_det_cholesky_cuda midcc;
+    midcc.invert(10,t2,t2b);
+    tensor2<> t2c(10,10);
+    t2c.swap_data(t2b);
+    matrix_out(cout,t2c);
+    cout << endl;
+    
+    micf.mode=micf.force_cuda;
+    micf.invert(10,t3,t3b);
+    matrix_out(cout,t3b);
+    cout << endl;
+    
+    exit(-1);
+  }
+  
   // We choose a nearly diagonal positive symmetric matrix which
   // is easy to invert
   for(size_t n=10;n<10000;n*=2) {

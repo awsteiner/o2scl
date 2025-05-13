@@ -793,6 +793,34 @@ namespace o2scl {
     return;
   }
 
+  /** \brief Make matrix symmetric by copying the lower
+      triangular entries to the upper triangular part
+  */
+  template<class mat_t> void matrix_copy_lower(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    for(size_t i=0;i<m;i++) {
+      for(size_t j=i+1;j<n;j++) {
+	src(i,j)=src(j,i);
+      }
+    }
+    return;
+  }
+  
+  /** \brief Make matrix symmetric by copying the upper
+      triangular entries to the lower triangular part
+  */
+  template<class mat_t> void matrix_copy_upper(mat_t &src) {
+    size_t m=src.size1();
+    size_t n=src.size2();
+    for(size_t j=0;j<n;j++) {
+      for(size_t i=j+1;i<m;i++) {
+	src(i,j)=src(j,i);
+      }
+    }
+    return;
+  }
+
   /** \brief Simple test that a matrix is lower triangular
       for the first \c m rows and \c n columns
   */
