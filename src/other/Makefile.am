@@ -2,6 +2,12 @@
 # Basic variables
 # ------------------------------------------------------------
 
+if O2SCL_CUDA
+O2SCL_CUDA_HVAR = fft_cuda.h
+else
+O2SCL_CUDA_HVAR =
+endif
+
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
 	interp2_eqi.cpp pinside.cpp other_python.cpp \
 	contour.cpp smooth_gsl.cpp hist.cpp xml.cpp \
@@ -16,7 +22,7 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
 	slack_messenger.h xml.h exp_max.h interpm_python.h \
 	gmm_python.h kde_python.h interpm_base.h classify_python.h \
-	nflows_python.h
+	nflows_python.h $(O2SCL_CUDA_HVAR)
 
 TEST_VAR = series_acc.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
@@ -249,9 +255,14 @@ xml_ts_SOURCES = xml_ts.cpp
 # Library o2scl_other
 # ------------------------------------------------------------
 
+fft_cuda.lo: fft_cuda.cu
+	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+		--shared -c -o $@ $<
+
 noinst_LTLIBRARIES = libo2scl_other.la
 
 libo2scl_other_la_SOURCES = $(OTHER_SRCS)
+libo2scl_other_la_LIBADD = fft_cuda.lo
 
 am__libo2scl_other_la_SOURCES_DIST = $(OTHER_SRCS)
 

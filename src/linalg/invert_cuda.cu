@@ -28,10 +28,13 @@
 using namespace o2scl;
 using namespace o2scl_linalg;
 
+// AWS, 5/13/25: We avoid cout and use printf because I've had 
+// warnings regarding ABI compatibility.
+
 int o2scl::cuda_cores_per_sm(int major, int minor) {
     
-  // Defines for GPU Architecture types (using the SM version to determine
-  // the # of cores per SM
+  // Defines for GPU Architecture types (using the SM version to
+  // determine the # of cores per SM
   typedef struct {
     int SM;  // 0xMm (hexidecimal notation), M = SM Major version,
     // and m = SM minor version

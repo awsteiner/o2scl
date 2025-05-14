@@ -41,6 +41,51 @@ double o2scl::kl_div_gaussian(double mean_prior, double mean_post,
   return div;
 }
 
+void o2scl::vector_forward_fft_cuda(const std::vector<double> &data,
+                                    std::vector<std::complex<double>> &fft) {
+
+#ifdef O2SCL_SET_CUDA
+  
+  int ret=vector_forward_fft_cuda_nothrow(data.size(),data,fft);
+  if (ret!=0) {
+    std::string errs=((std::string)"Error number ")+o2scl::itos(ret)+
+      " in vector_forward_fft_cuda().";
+    O2SCL_ERR(errs.c_str(),o2scl::exc_einval);
+  }
+  
+#else
+  
+  O2SCL_ERR("CUDA support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+  
+#endif
+  
+  return 0;
+}
+
+void o2scl::vector_backward_fft_cuda
+(const std::vector<std::complex<double>> &fft,
+ std::vector<double> &data) {
+
+#ifdef O2SCL_SET_CUDA
+  
+  int ret=vector_backward_fft_cuda_nothrow(data.size(),data,fft);
+  if (ret!=0) {
+    std::string errs=((std::string)"Error number ")+o2scl::itos(ret)+
+      " in vector_backward_fft_cuda().";
+    O2SCL_ERR(errs.c_str(),o2scl::exc_einval);
+  }
+
+#else
+  
+  O2SCL_ERR("CUDA support not included in this O2scl installation.",
+            o2scl::exc_eunsup);
+  
+#endif
+  
+  return 0;
+}
+
 void o2scl::vector_forward_fft(const std::vector<double> &data,
                                std::vector<std::complex<double>> &fft) {
   

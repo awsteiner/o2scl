@@ -52,6 +52,10 @@
 #include <omp.h>
 #endif
 
+#ifdef O2SCL_SET_CUDA
+#include <o2scl/fft_cuda.h>
+#endif
+
 namespace o2scl {
 
   /// \name Vector mean, std. dev., and variance in src/other/vec_stats.h
@@ -1936,6 +1940,15 @@ namespace o2scl {
   void vector_forward_fft(const std::vector<double> &data,
                           std::vector<std::complex<double>> &fft);
 
+  /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
+      real data
+
+      \note This function calls the error handler if \o2 was not
+      compiled with CUDA support.
+   */
+  void vector_forward_fft_cuda(const std::vector<double> &data,
+                               std::vector<std::complex<double>> &fft);
+  
   /** \brief A one-dimensional FFTW wrapper for a backward FFT to
       real data
 
@@ -1950,6 +1963,15 @@ namespace o2scl {
   */
   void vector_backward_fft(const std::vector<std::complex<double>> &data,
                           std::vector<double> &fft);
+  
+  /** \brief A one-dimensional FFTW wrapper for a backward FFT to
+      real data
+
+      \note This function calls the error handler if \o2 was not
+      compiled with CUDA support.
+  */
+  void vector_backward_fft_cuda(const std::vector<std::complex<double>> &data,
+                                std::vector<double> &fft);
   
   /** \brief A one-dimensional FFTW wrapper for a forward FFT of 
       real data

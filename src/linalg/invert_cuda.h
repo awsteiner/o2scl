@@ -30,17 +30,25 @@
 
 namespace o2scl {
   
-  /// Desc
+  /** \brief Given a device ID, obtain the compute mode, major and
+      minor version
+   */
   int cuda_get_mode(int dev_id, int &mode, int &major, int &minor,
                     int verbose=0);
   
-  /// Desc
+  /** \brief Obtain the number of CUDA cores given the major and
+      minor version numbers
+   */
   int cuda_cores_per_sm(int major, int minor);
 
-  /// Desc
+  /** \brief Loop through \c dev_count devices, determining which
+      has the maximum number of GFLOPs
+   */
   int cuda_get_dev_max_gflops(int dev_count, int verbose=0);
 
-  /// Desc
+  /** \brief Find the best GPU device and return the ID, compute
+      mode, major, and minor version
+   */
   int cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
                                int &minor, int verbose=0);
   
