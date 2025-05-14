@@ -37,6 +37,15 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+  int id=-1, mode, major, minor;
+  int ret=cuda_find_device_nothrow(id,mode,major,minor,2);
+    
+  if (ret==0) {
+    cout << "ret: " << ret << " id: " << id << " mode: " << mode
+         << " major: " << major << " minor: " << minor << endl;
+    cout << endl;
+  }
+  
   if (true) {
     tensor2<> t1(10,10);
     std::vector<double> t2(100);
@@ -61,29 +70,38 @@ int main(void) {
         }
       }
     }
+    
+    tensor2<> tx=t1;
 
     cout << "Original matrix:" << endl;
     matrix_out(cout,t1);
     cout << endl;
 
     cholesky_decomp(10,t1);
-    cholesky_decomp_cuda(10,t2);
-    cout << "CD 1" << endl;
+    cout << "Native decomposition" << endl;
     matrix_out(cout,t1);
     cout << endl;
+
+    cholesky_decomp_two(10,tx);
+    cout << "Native decomposition (v2)" << endl;
+    matrix_out(cout,tx);
+    cout << endl;
+
+    cholesky_decomp_cuda(10,t2);
     vector<double> t2x(100);
     vector_copy(t2,t2x);
     tensor2<> t3(10,10);
     t3.swap_data(t2x);
-    cout << "CD 3" << endl;
+    cout << "CUDA decomposition" << endl;
     matrix_out(cout,t3);
     cout << endl;
-    
+
     matrix_invert_cholesky_fast micf;
     tensor2<> t1b(10,10), t3b(10,10);
     vector<double> t2b(100);
     
     micf.mode=micf.force_o2;
+    cout << "Native inverse" << endl;
     micf.invert(10,t1,t1b);
     matrix_out(cout,t1b);
     cout << endl;
@@ -92,15 +110,20 @@ int main(void) {
     midcc.invert(10,t2,t2b);
     tensor2<> t2c(10,10);
     t2c.swap_data(t2b);
+    cout << "CUDA inverse from midcc" << endl;
     matrix_out(cout,t2c);
     cout << endl;
+
+    t.test_rel_mat(10,10,t1b,t2c,1.0e-6,"inverse native vs. cuda");
     
     micf.mode=micf.force_cuda;
     micf.invert(10,t3,t3b);
+    cout << "CUDA inverse from micf" << endl;
     matrix_out(cout,t3b);
     cout << endl;
+
+    t.test_rel_mat(10,10,t1b,t3b,1.0e-6,"inverse native vs. cuda v2");
     
-    exit(-1);
   }
   
   // We choose a nearly diagonal positive symmetric matrix which
@@ -173,6 +196,12 @@ int main(void) {
           dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
                 n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
           matrix_out(cout,t3);
+
+          tensor2<> t4;
+          t4.resize(2,size);
+          matrix_set_identity(t4);
+
+          t.test_abs_mat(t3,t4,1.0e-6,"inverse");
         }
         
       } else {

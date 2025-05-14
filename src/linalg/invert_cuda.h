@@ -26,8 +26,25 @@
 #ifndef O2SCL_INVERT_CUDA_H
 #define O2SCL_INVERT_CUDA_H
 
-#include <iostream>
 #include <vector>
+
+namespace o2scl {
+  
+  /// Desc
+  int cuda_get_mode(int dev_id, int &mode, int &major, int &minor,
+                    int verbose=0);
+  
+  /// Desc
+  int cuda_cores_per_sm(int major, int minor);
+
+  /// Desc
+  int cuda_get_dev_max_gflops(int dev_count, int verbose=0);
+
+  /// Desc
+  int cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
+                               int &minor, int verbose=0);
+  
+};
 
 namespace o2scl_linalg {
 
@@ -45,12 +62,12 @@ namespace o2scl_linalg {
       the upper-triangular part of \c A, presuming it is stored
       in column-major order. 
   */
-  int cholesky_decomp_cuda(const size_t M, std::vector<double> &A);
+  int cholesky_decomp_cuda_base(const size_t M, std::vector<double> &A);
   
   /** \brief Use CUDA to invert a symmetric positive definite matrix
       stored as a <tt>std::vector</tt> on the GPU
   */
-  class matrix_invert_det_cholesky_cuda {
+  class matrix_invert_det_cholesky_cuda_base {
   
   public:
   

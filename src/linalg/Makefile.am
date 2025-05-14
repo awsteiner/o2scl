@@ -8,7 +8,8 @@ else
 O2SCL_CUDA_HVAR =
 endif
 
-LINALG_SRCS = permutation.cpp givens.cpp qr.cpp cholesky.cpp
+LINALG_SRCS = permutation.cpp givens.cpp qr.cpp cholesky.cpp \
+	invert_fast.cpp
 
 HEADER_VAR = cblas.h lu.h lanczos.h tridiag.h permutation.h qr.h \
 	householder.h givens.h hh.h cblas_base.h householder_base.h \

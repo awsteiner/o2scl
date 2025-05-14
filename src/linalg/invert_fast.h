@@ -34,6 +34,74 @@
 
 namespace o2scl_linalg {
 
+  /** \brief Use CUDA to perform a Cholesky decomposition of a
+      symmetric positive definite matrix
+  */
+  int cholesky_decomp_cuda(const size_t n,
+                           std::vector<double> &A);
+  
+  /** \brief Use CUDA to invert a symmetric positive definite matrix
+      stored as a <tt>std::vector</tt> on the GPU
+  */
+  class matrix_invert_det_cholesky_cuda :
+    public matrix_invert_det_cholesky_cuda_base, 
+    public matrix_invert_det<std::vector<double>,double> {
+  
+  public:
+  
+    /// Invert matrix \c A, returning the inverse in \c A_inv
+    int invert(size_t n, const std::vector<double> &A,
+               std::vector<double> &A_inv) {
+      int ret=matrix_invert_det_cholesky_cuda_base::invert(n,A,A_inv);
+      if (ret!=0) {
+        std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
+          " in o2scl_linalg::cholesky_decomp_cuda().";
+        O2SCL_ERR(err.c_str(),o2scl::exc_einval);
+      }
+      return ret;
+    }
+  
+    /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
+        and the determinant in \c A_det
+    */
+    int invert_det(size_t n, const std::vector<double> &A,
+                   std::vector<double> &A_inv, double &A_det) {
+      int ret=matrix_invert_det_cholesky_cuda_base::invert_det
+        (n,A,A_inv,A_det);
+      if (ret!=0) {
+        std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
+          " in o2scl_linalg::cholesky_decomp_cuda().";
+        O2SCL_ERR(err.c_str(),o2scl::exc_einval);
+      }
+      return ret;
+    }
+  
+    /** \brief Determine the determinant of the matrix \c A without
+        inverting
+    */
+    double det(size_t n, const std::vector<double> &A) {
+      int ret=matrix_invert_det_cholesky_cuda_base::det(n,A);
+      if (ret!=0) {
+        std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
+          " in o2scl_linalg::cholesky_decomp_cuda().";
+        O2SCL_ERR(err.c_str(),o2scl::exc_einval);
+      }
+      return ret;
+    }
+  
+    /// Invert matrix \c A in place
+    int invert_inplace(size_t n, std::vector<double> &A) {
+      int ret=matrix_invert_det_cholesky_cuda_base::invert_inplace(n,A);
+      if (ret!=0) {
+        std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
+          " in o2scl_linalg::cholesky_decomp_cuda().";
+        O2SCL_ERR(err.c_str(),o2scl::exc_einval);
+      }
+      return ret;
+    }
+  
+  };
+  
   /** \brief Perform an inversion of a symmetric positive definite
       matrix, choosing the fastest method available depending on the size
       of the matrix
@@ -56,6 +124,7 @@ namespace o2scl_linalg {
         matrices)
     */
     matrix_invert_det_cholesky_cuda cuda;
+    
 #endif
 
   public:
