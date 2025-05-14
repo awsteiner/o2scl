@@ -2,6 +2,12 @@
 # Basic variables
 # ------------------------------------------------------------
 
+if O2SCL_CUDA
+O2SCL_CUDA_HVAR = base_cuda.h
+else
+O2SCL_CUDA_HVAR =
+endif
+
 BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	constants.h funct.h multi_funct.h mm_funct.h \
 	lib_settings.h search_vec.h interp.h \
@@ -11,7 +17,7 @@ BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
 	interp_krige.h find_constants.h cursesw.h \
 	prev_commit.h auto_format.h base_python.h calc_utf8.h \
 	funct_multip.h interp_vec.h funct_to_fp.h \
-	string_python.h
+	string_python.h $(O2SCL_CUDA_HVAR)
 
 HEADER_VAR = $(BASE_HEADER_VAR)
 
@@ -274,9 +280,14 @@ uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
 # Library o2scl_base
 # ------------------------------------------------------------
 
+base_cuda.lo: base_cuda.cu
+	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+		--shared -c -o $@ $<
+
 noinst_LTLIBRARIES = libo2scl_base.la
 
 libo2scl_base_la_SOURCES = $(BASE_SRCS)
+libo2scl_base_la_LIBADD = base_cuda.lo
 
 am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 

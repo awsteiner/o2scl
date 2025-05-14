@@ -37,15 +37,6 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
-  int id=-1, mode, major, minor;
-  int ret=cuda_find_device_nothrow(id,mode,major,minor,2);
-    
-  if (ret==0) {
-    cout << "ret: " << ret << " id: " << id << " mode: " << mode
-         << " major: " << major << " minor: " << minor << endl;
-    cout << endl;
-  }
-  
   if (true) {
     tensor2<> t1(10,10);
     std::vector<double> t2(100);

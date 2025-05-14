@@ -29,6 +29,7 @@
 #include <o2scl/set_python.h>
 #include <o2scl/set_cuda.h>
 #include <o2scl/set_mpfr.h>
+#include <o2scl/base_cuda.h>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/vector_proxy.hpp>
@@ -2086,6 +2087,18 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
   cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
+
+#ifdef O2SCL_SET_CUDA
+  int id=-1, mode, major, minor;
+  int ret=cuda_find_device_nothrow(id,mode,major,minor,2);
+  
+  if (ret==0) {
+    cout << "  success: " << (!ret) << " id: " << id << " mode: " << mode
+         << " major: " << major << " minor: " << minor << endl;
+    cout << endl;
+  }
+#endif
+  
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << endl;

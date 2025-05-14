@@ -60,7 +60,7 @@ void o2scl::vector_forward_fft_cuda(const std::vector<double> &data,
   
 #endif
   
-  return 0;
+  return;
 }
 
 void o2scl::vector_backward_fft_cuda
@@ -83,7 +83,7 @@ void o2scl::vector_backward_fft_cuda
   
 #endif
   
-  return 0;
+  return;
 }
 
 void o2scl::vector_forward_fft(const std::vector<double> &data,
