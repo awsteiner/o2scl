@@ -22,6 +22,8 @@
 */
 #include "base_cuda.h"
 
+#include <cstdio>
+#include <cstdint>
 #include <cuda_runtime.h>
 
 using namespace o2scl;
@@ -90,7 +92,7 @@ int o2scl::cuda_get_mode(int dev_id, int &mode, int &major, int &minor,
   if (ret!=0) {
     if (verbose>0) {
       printf("cuda_get_mode(): ");
-      printf("Failed to obtain device compute mode.");
+      printf("Failed to obtain device compute mode.\n");
     }
     return -4;
   }
@@ -99,7 +101,7 @@ int o2scl::cuda_get_mode(int dev_id, int &mode, int &major, int &minor,
   if (ret!=0) {
     if (verbose>0) {
       printf("cuda_get_mode(): ");
-      printf("Failed to get device major mode.");
+      printf("Failed to get device major mode.\n");
     }
     return -5;
   }
@@ -108,7 +110,7 @@ int o2scl::cuda_get_mode(int dev_id, int &mode, int &major, int &minor,
   if (ret!=0) {
     if (verbose>0) {
       printf("cuda_get_mode(): ");
-      printf("Failed to get device minor mode.");
+      printf("Failed to get device minor mode.\n");
     }
     return -6;
   }
@@ -190,7 +192,7 @@ int o2scl::cuda_get_dev_max_gflops(int dev_count, int verbose) {
                compute_perf);
         printf("  multi_proc_count: %d, sm_per_multiproc: %d\n"
                ,multi_proc_count,sm_per_multiproc);
-        printf("  clock_rate: %d",clock_rate);
+        printf("  clock_rate: %d\n",clock_rate);
       }
       
       if (compute_perf>max_compute_perf) {
@@ -224,7 +226,7 @@ int o2scl::cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
   if (ret!=0) {
     if (verbose>0) {
       printf("cuda_find_device_nothrow(): ");
-      printf("Attempt to obtain device count failed.");
+      printf("Attempt to obtain device count failed.\n");
     }
     return -2;
   }
@@ -263,7 +265,7 @@ int o2scl::cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
 
     if (verbose>0) {
       printf("cuda_find_device_nothrow(): ");
-      printf("Looking for fastest device.");
+      printf("Looking for fastest device.\n");
     }
     dev_id=cuda_get_dev_max_gflops(dev_count,verbose);
     
@@ -277,7 +279,7 @@ int o2scl::cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
   if (mode==cudaComputeModeProhibited) {
     if (verbose>0) {
       printf("cuda_find_device_nothrow(): ");
-      printf("Device reported compute mode was prohibited.");
+      printf("Device reported compute mode was prohibited.\n");
     }
     return -7;
   }
@@ -285,7 +287,7 @@ int o2scl::cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
   if (major<1) {
     if (verbose>0) {
       printf("cuda_find_device_nothrow(): ");
-      printf("Device reported major mode less than 1." );
+      printf("Device reported major mode less than 1.\n" );
     }
     return -8;
   }
@@ -302,7 +304,7 @@ int o2scl::cuda_find_device_nothrow(int &dev_id, int &mode, int &major,
   }
   
   if (verbose>0) {
-    printf("cuda_find_device_nothrow(): Success! ");
+    printf("cuda_find_device_nothrow(): Success!\n");
   }
   return 0;
 }

@@ -74,11 +74,11 @@ namespace o2scl_linalg {
   template <class vec_t=boost::numeric::ublas::vector<double>, 
             class mat_t=boost::numeric::ublas::matrix<double>,
             class fp_t=double> 
-    class linear_solver_LU : public linear_solver<vec_t, mat_t> {
+  class linear_solver_LU : public linear_solver<vec_t, mat_t> {
     
   public:
     
-  /// Solve square linear system \f$ A x = b \f$ of size \c n
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, mat_t &A, 
                        vec_t &b, vec_t &x) {
       int sig;
@@ -88,7 +88,7 @@ namespace o2scl_linalg {
       return;
     };
     
-  virtual ~linear_solver_LU() {}
+    virtual ~linear_solver_LU() {}
     
   };
 
@@ -97,38 +97,38 @@ namespace o2scl_linalg {
   template <class vec_t=boost::numeric::ublas::vector<double>, 
             class mat_t=boost::numeric::ublas::matrix<double>,
             class fp_t=double> 
-    class linear_solver_QR : public linear_solver<vec_t, mat_t> {
+  class linear_solver_QR : public linear_solver<vec_t, mat_t> {
     
   public:
     
-  /// Solve square linear system \f$ A x = b \f$ of size \c n
-  virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
-    boost::numeric::ublas::vector<fp_t> tau(n);
-    QR_decomp<mat_t,vec_t,fp_t>(n,n,A,tau);
-    QR_solve<mat_t,vec_t,vec_t,vec_t,fp_t>(n,A,tau,b,x);
-    return;
-  };
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
+    virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
+      boost::numeric::ublas::vector<fp_t> tau(n);
+      QR_decomp<mat_t,vec_t,fp_t>(n,n,A,tau);
+      QR_solve<mat_t,vec_t,vec_t,vec_t,fp_t>(n,A,tau,b,x);
+      return;
+    };
     
-  virtual ~linear_solver_QR() {}
+    virtual ~linear_solver_QR() {}
     
   };
   
   /** \brief Generic Householder linear solver 
    */
   template <class vec_t=boost::numeric::ublas::vector<double>, 
-    class mat_t=boost::numeric::ublas::matrix<double> > 
-    class linear_solver_HH : 
-  public linear_solver<vec_t, mat_t> {
+            class mat_t=boost::numeric::ublas::matrix<double> > 
+  class linear_solver_HH : 
+    public linear_solver<vec_t, mat_t> {
     
   public:
     
-  /// Solve square linear system \f$ A x = b \f$ of size \c n
-  virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
-    HH_solve(n,A,b,x);
-    return;
-  };
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
+    virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
+      HH_solve(n,A,b,x);
+      return;
+    };
     
-  virtual ~linear_solver_HH() {}
+    virtual ~linear_solver_HH() {}
     
   };
 
@@ -145,8 +145,9 @@ namespace o2scl_linalg {
       during installation
   */
   template<class arma_vec_t, class arma_mat_t> class linear_solver_arma : 
-  public linear_solver<arma_vec_t,arma_mat_t> {
+    public linear_solver<arma_vec_t,arma_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, arma_mat_t &A, arma_vec_t &b,
 		       arma_vec_t &x) {
       x=arma::solve(A,b);
@@ -167,9 +168,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_houseQR : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_houseQR : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.householderQr().solve(b);
@@ -185,9 +187,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_colQR : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_colQR : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.colPivHouseholderQr().solve(b);
@@ -203,9 +206,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_fullQR : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_fullQR : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.fullPivHouseholderQr().solve(b);
@@ -223,9 +227,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_partLU : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_partLU : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.partialPivLu().solve(b);
@@ -241,9 +246,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_fullLU : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_fullLU : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.fullPivLu().solve(b);
@@ -261,9 +267,10 @@ namespace o2scl_linalg {
 
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_LLT : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_LLT : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.llt().solve(b);
@@ -281,20 +288,64 @@ namespace o2scl_linalg {
       installation.
   */
   template<class eigen_vec_t, class eigen_mat_t>
-    class linear_solver_eigen_LDLT : 
-  public linear_solver<eigen_vec_t,eigen_mat_t> {
+  class linear_solver_eigen_LDLT : 
+    public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
     virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.ldlt().solve(b);
       return;
     }
   };
+
+  
 }
+
+// end of #if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
 #endif
 
+#if defined (O2SCL_SET_CUDA) || defined (DOXYGEN)
+#include <solve_cuda.h>
+
+namespace o2scl_linalg {
+  
+  /** \brief CUDA linear solver using LU decomposition (partial
+      pivoting)
+
+      This class is only defined if CUDA support was enabled during
+      installation.
+
+  */
+  class linear_solver_LU_cuda :
+    public linear_solver_LU_cuda_base, linear_solver<vector<double>,
+                                                     vector<double> > {
+
+  public:
+
+    /// Solve square linear system \f$ A x = b \f$ of size \c n
+    virtual int solve(int n, const std::vector<double> &A,
+                      const std::vector<double> &B,
+                      std::vector<double> &x) {
+      int ret=this->solve_base(n,A,B,x);
+      if (ret!=0) {
+        O2SCL_ERR("Failed in linear_solver_LU_cuda::solve().",
+                  o2scl::exc_einval);
+      }
+      return ret;
+    }
+    
+  };
+
+}
+
+#endif
+    
 #else
+
 #include <o2scl/linear_special.h>
+
+// end of #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 #endif
 
 #endif

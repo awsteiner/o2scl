@@ -21,7 +21,7 @@
   ───────────────────────────────────────────────────────────────────
 */
 
-#include <o2scl/invert_fast.h>
+#include <o2scl/invert_auto.h>
 
 using namespace std;
 using namespace o2scl;

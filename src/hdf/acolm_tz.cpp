@@ -2086,6 +2086,8 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
        << o2scl_settings.multiprecision_support() << endl;
   cout << "OpenMP support: " << o2scl_settings.openmp_support() << endl;
   cout << "Readline support: " << o2scl_settings.readline_support() << endl;
+  cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
+  cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
 
 #ifdef O2SCL_SET_CUDA
@@ -2093,14 +2095,12 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   int ret=cuda_find_device_nothrow(id,mode,major,minor,2);
   
   if (ret==0) {
-    cout << "  success: " << (!ret) << " id: " << id << " mode: " << mode
+    cout << "CUDA report: ret: " << ret << " id: "
+         << id << " mode: " << mode
          << " major: " << major << " minor: " << minor << endl;
-    cout << endl;
   }
 #endif
   
-  cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
-  cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << endl;
 
   cout << "Data directory: " << o2scl_settings.get_data_dir() << endl;

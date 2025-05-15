@@ -66,7 +66,7 @@ namespace o2scl_linalg {
   /** \brief Eigen specialization of \ref cholesky_decomp()
    */
   template<>
-    int cholesky_decomp<Eigen::MatrixXd>
+  int cholesky_decomp<Eigen::MatrixXd>
     (const size_t M, Eigen::MatrixXd &A, bool err_on_fail);
      
 }

@@ -33,13 +33,18 @@ namespace o2scl_linalg {
   /** \brief Use CUDA to invert a symmetric positive definite matrix
       stored as a <tt>std::vector</tt> on the GPU
   */
-  class linear_solver_LU_cuda {
+  class linear_solver_LU_cuda_base {
     
   public:
-  
-    int solve(int n, const std::vector<double> &A,
-              const std::vector<double> &B,
-              std::vector<double> &x);
+
+    /** \brief Solve square linear system \f$ A x = b \f$ of size \c n
+
+        \note We name this something other than \c solve() to ensure
+        no confusion because of multiple inheritance.
+     */
+    int solve_base(int n, const std::vector<double> &A,
+                   const std::vector<double> &B,
+                   std::vector<double> &x);
   
   };
 

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <ctime>
 
-#include <o2scl/invert_fast.h>
+#include <o2scl/invert_auto.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -192,7 +192,7 @@ int main(void) {
           t4.resize(2,size);
           matrix_set_identity(t4);
 
-          t.test_abs_mat(t3,t4,1.0e-6,"inverse");
+          t.test_abs_mat(10,10,t3,t4,1.0e-6,"inverse");
         }
         
       } else {

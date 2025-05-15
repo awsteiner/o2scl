@@ -22,15 +22,18 @@
 */
 #include "solve_cuda.h"
 
+#include <iostream>
+
 #include <cuda_runtime.h>
 #include <cusolverDn.h>
 #include <cublas_v2.h>
 
+using namespace std;
 using namespace o2scl_linalg;
 
-int linear_solver_LU_cuda::solve(int n, const std::vector<double> &A,
-                                 const std::vector<double> &b,
-                                 std::vector<double> &x) {
+int linear_solver_LU_cuda_base::solve_base
+(int n, const std::vector<double> &A, const std::vector<double> &b,
+ std::vector<double> &x) {
   
   double *d_A;
   double *d_b;
@@ -150,6 +153,19 @@ int linear_solver_LU_cuda::solve(int n, const std::vector<double> &A,
   cudaFree(d_info);
   cudaFree(d_work);
   cusolverDnDestroy(cusolverH);
+
+  return 0;
+}
+
+int main(void) {
+
+  vector<double> A={1,0,0,0,2,0,0,0,3};
+  vector<double> b={4,5,6}, x(3);
+
+  linear_solver_LU_cuda lslc;
+  int ret=lslc.solve(3,A,b,x);
+  
+  cout << ret << " " << x[0] << " " << x[1] << " " << x[2] << endl;
 
   return 0;
 }

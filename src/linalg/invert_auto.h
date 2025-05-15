@@ -20,11 +20,11 @@
 
   ───────────────────────────────────────────────────────────────────
 */
-/** \file invert_fast.h
+/** \file invert_auto.h
     \brief File for matrix inversion classes
 */
-#ifndef O2SCL_INVERT_FAST_H
-#define O2SCL_INVERT_FAST_H
+#ifndef O2SCL_INVERT_AUTO_H
+#define O2SCL_INVERT_AUTO_H
 
 #include <o2scl/invert.h>
 #include <o2scl/invert_cuda.h>
@@ -199,7 +199,7 @@ namespace o2scl_linalg {
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
@@ -220,7 +220,7 @@ namespace o2scl_linalg {
 
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       
@@ -243,12 +243,12 @@ namespace o2scl_linalg {
       // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       int ret=o2.invert(n,A,A_inv);
@@ -303,7 +303,7 @@ namespace o2scl_linalg {
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
@@ -324,7 +324,7 @@ namespace o2scl_linalg {
 
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       
@@ -347,12 +347,12 @@ namespace o2scl_linalg {
       // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       int ret=o2.invert_det(n,A,A_inv,A_det);
@@ -402,7 +402,7 @@ namespace o2scl_linalg {
       double ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
@@ -423,7 +423,7 @@ namespace o2scl_linalg {
 
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       
@@ -446,12 +446,12 @@ namespace o2scl_linalg {
       // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       double ret=o2.det(n,A);
@@ -501,7 +501,7 @@ namespace o2scl_linalg {
       int ret;
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
@@ -520,7 +520,7 @@ namespace o2scl_linalg {
 
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       
@@ -540,12 +540,12 @@ namespace o2scl_linalg {
       // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
         O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
-                  "in matrix_invert_fast::invert().",o2scl::exc_eunimpl);
+                  "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       int ret=o2.invert_inplace(n,A);
@@ -561,5 +561,5 @@ namespace o2scl_linalg {
   
 }
   
-// End of #ifndef O2SCL_INVERT_FAST_H
+// End of #ifndef O2SCL_INVERT_AUTO_H
 #endif
