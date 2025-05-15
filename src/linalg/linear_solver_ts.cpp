@@ -32,6 +32,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/permutation.h>
 #include <o2scl/cblas.h>
+#include <o2scl/tensor.h>
 
 typedef boost::numeric::ublas::vector<double> ubvector;
 typedef boost::numeric::ublas::matrix<double> ubmatrix;
@@ -150,11 +151,11 @@ int main(void) {
 
 #ifdef O2SCL_SET_ARMA
 
-  arma::mat am1(5,5), am2(5,5);
-  arma::vec av1(5), av2(5), av3(5);
+  if (true) {
+    
+    arma::mat am1(5,5), am2(5,5);
+    arma::vec av1(5), av2(5), av3(5);
   
-  {
-
     for(size_t i=0;i<5;i++) {
       av1[i]=cos(((double)(i)));
       for(size_t j=0;j<5;j++) {
@@ -244,6 +245,39 @@ int main(void) {
   }
 
 #endif
+
+#ifdef O2SCL_SET_CUDA
+
+  if (true) {
+    tensor2<> am1(5,5), am2(5,5);
+    vector<double> av1(5), av2(5), av3(5);
+    
+    for(size_t i=0;i<5;i++) {
+      av1[i]=cos(((double)(i)));
+      for(size_t j=0;j<5;j++) {
+	am1(i,j)=1.0/(i+j+1);
+	am2(i,j)=1.0/(i+j+1);
+      }
+    }
+
+    // -------------------------------------------------
+
+    linear_solver_LU_cuda lslc;
+    vector<double> am1v(25);
+    am1.swap_data(am1v);
+    lslc.solve(5,am1v,av1,av2);
+
+    //cout << "x: " << endl;
+
+    dgemv(o2cblas_RowMajor,o2cblas_NoTrans,5,5,1.0,am2,av2,0.0,av3);
+
+    //cout << "A*x: " << endl;
+
+    t.test_rel_vec(5,av1,av3,1.0e-10,"linear_solver_cuda");
+  }
+
+#endif
+  
   
   t.report();
   return 0;

@@ -773,6 +773,10 @@ namespace o2scl {
     }
   
     /** \brief Swap the data vector
+
+        This function swaps \c dat and the internal data vector.
+        The variable \c dat must be preallocated to have the
+        correct size.
      */
     void swap_data(vec_t &dat) {
       if (data.size()!=dat.size()) {

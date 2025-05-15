@@ -157,6 +157,8 @@ int linear_solver_LU_cuda_base::solve_base
   return 0;
 }
 
+#ifdef O2SCL_NEVER_DEFINED
+
 int main(void) {
 
   vector<double> A={1,0,0,0,2,0,0,0,3};
@@ -169,3 +171,5 @@ int main(void) {
 
   return 0;
 }
+
+#endif

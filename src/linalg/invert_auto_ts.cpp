@@ -87,7 +87,7 @@ int main(void) {
     matrix_out(cout,t3);
     cout << endl;
 
-    matrix_invert_cholesky_fast micf;
+    matrix_invert_cholesky_auto micf;
     tensor2<> t1b(10,10), t3b(10,10);
     vector<double> t2b(100);
     
@@ -123,7 +123,7 @@ int main(void) {
 
     size_t mult=10;
     
-    matrix_invert_cholesky_fast micf;
+    matrix_invert_cholesky_auto micf;
     
     cout << ((double)n) << " " << std::flush;
     

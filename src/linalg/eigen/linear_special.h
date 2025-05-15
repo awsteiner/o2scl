@@ -36,7 +36,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_houseQR : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.householderQr().solve(b);
       return;
@@ -53,7 +53,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_colQR : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.colPivHouseholderQr().solve(b);
       return;
@@ -70,7 +70,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_fullQR : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.fullPivHouseholderQr().solve(b);
       return;
@@ -89,7 +89,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_partLU : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.partialPivLu().solve(b);
       return;
@@ -106,7 +106,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_fullLU : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.fullPivLu().solve(b);
       return;
@@ -125,7 +125,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_LLT : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.llt().solve(b);
       return;
@@ -144,7 +144,7 @@ namespace o2scl_linalg {
   template<class eigen_vec_t, class eigen_mat_t>
     class linear_solver_eigen_LDLT : 
   public linear_solver<eigen_vec_t,eigen_mat_t> {
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
+    virtual void solve(size_t n, const eigen_mat_t &A, const eigen_vec_t &b,
 		       eigen_vec_t &x) {
       x=A.ldlt().solve(b);
       return;

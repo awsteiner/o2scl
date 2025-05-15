@@ -3,7 +3,7 @@
 # ------------------------------------------------------------
 
 if O2SCL_CUDA
-O2SCL_CUDA_HVAR = invert_cuda.h
+O2SCL_CUDA_HVAR = invert_cuda.h solve_cuda.h
 else
 O2SCL_CUDA_HVAR =
 endif

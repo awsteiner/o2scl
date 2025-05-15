@@ -34,7 +34,7 @@ namespace o2scl_linalg {
    */
   template<class arma_vec_t, class arma_mat_t> class linear_solver_arma : 
   public linear_solver<arma_vec_t,arma_mat_t> {
-    virtual void solve(size_t n, arma_mat_t &A, arma_vec_t &b,
+    virtual void solve(size_t n, const arma_mat_t &A, const arma_vec_t &b,
 		       arma_vec_t &x) {
       x=arma::solve(A,b);
       return;

@@ -32,6 +32,7 @@
 #include <o2scl/lu.h>
 #include <o2scl/qr.h>
 #include <o2scl/hh.h>
+#include <o2scl/set_cuda.h>
 
 namespace o2scl_linalg {
 
@@ -53,7 +54,7 @@ namespace o2scl_linalg {
       
       \future The test code uses a Hilbert matrix, which is known
       to be ill-conditioned, especially for the larger sizes. This
-      should probably be changed.
+      could be changed.
       \endcomment
   */
   template<class vec_t=boost::numeric::ublas::vector<double>, 
@@ -65,7 +66,17 @@ namespace o2scl_linalg {
     virtual ~linear_solver() {}
     
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, mat_t &a, vec_t &b, vec_t &x)=0;
+    virtual void solve(size_t n, const mat_t &a, const vec_t &b,
+                       vec_t &x)=0;
+    
+    /** \brief Solve square linear system \f$ A x = b \f$ of size \c n,
+        possibly destroying \c a and \c b
+    */
+    virtual void solve_dest(size_t n, mat_t &a, vec_t &b,
+                            vec_t &x) {
+      solve(n,a,b,x);
+      return;
+    }
     
   };
 
@@ -79,8 +90,19 @@ namespace o2scl_linalg {
   public:
     
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, mat_t &A, 
-                       vec_t &b, vec_t &x) {
+    virtual void solve(size_t n, const mat_t &A, 
+                       const vec_t &b, vec_t &x) {
+      mat_t A2=A;
+      vec_t b2=b;
+      this->solve_dest(n,A2,b2,x);
+      return;
+    };
+    
+    /** \brief Solve square linear system \f$ A x = b \f$ of size \c n,
+        possibly destroying \c a and \c b
+    */
+    virtual void solve_dest(size_t n, mat_t &A, 
+                            vec_t &b, vec_t &x) {
       int sig;
       o2scl::permutation p(n);
       LU_decomp<mat_t,fp_t>(n,A,p,sig);
@@ -102,7 +124,19 @@ namespace o2scl_linalg {
   public:
     
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
+    virtual void solve(size_t n, const mat_t &A,
+                       const vec_t &b, vec_t &x) {
+      mat_t A2=A;
+      vec_t b2=b;
+      solve_dest(n,A2,b2,x);
+      return;
+    };
+    
+    /** \brief Solve square linear system \f$ A x = b \f$ of size \c n,
+        possibly destroying \c a and \c b
+    */
+    virtual void solve_dest(size_t n, mat_t &A,
+                            vec_t &b, vec_t &x) {
       boost::numeric::ublas::vector<fp_t> tau(n);
       QR_decomp<mat_t,vec_t,fp_t>(n,n,A,tau);
       QR_solve<mat_t,vec_t,vec_t,vec_t,fp_t>(n,A,tau,b,x);
@@ -123,7 +157,18 @@ namespace o2scl_linalg {
   public:
     
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, mat_t &A, vec_t &b, vec_t &x) {
+    virtual void solve(size_t n, const mat_t &A, const vec_t &b, vec_t &x) {
+      mat_t A2=A;
+      vec_t b2=b;
+      solve_dest(n,A2,b2,x);
+      return;
+    };
+    
+    /** \brief Solve square linear system \f$ A x = b \f$ of size \c n,
+        possibly destroying \c a and \c b
+    */
+    virtual void solve_dest(size_t n, mat_t &A, vec_t &b,
+                            vec_t &x) {
       HH_solve(n,A,b,x);
       return;
     };
@@ -148,8 +193,8 @@ namespace o2scl_linalg {
     public linear_solver<arma_vec_t,arma_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, arma_mat_t &A, arma_vec_t &b,
-		       arma_vec_t &x) {
+    virtual void solve(size_t n, const arma_mat_t &A,
+                       const arma_vec_t &b, arma_vec_t &x) {
       x=arma::solve(A,b);
       return;
     }
@@ -172,8 +217,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.householderQr().solve(b);
       return;
     }
@@ -191,8 +236,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.colPivHouseholderQr().solve(b);
       return;
     }
@@ -210,8 +255,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.fullPivHouseholderQr().solve(b);
       return;
     }
@@ -231,8 +276,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.partialPivLu().solve(b);
       return;
     }
@@ -250,8 +295,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.fullPivLu().solve(b);
       return;
     }
@@ -271,8 +316,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.llt().solve(b);
       return;
     }
@@ -292,8 +337,8 @@ namespace o2scl_linalg {
     public linear_solver<eigen_vec_t,eigen_mat_t> {
   public:
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual void solve(size_t n, eigen_mat_t &A, eigen_vec_t &b,
-		       eigen_vec_t &x) {
+    virtual void solve(size_t n, const eigen_mat_t &A,
+                       const eigen_vec_t &b, eigen_vec_t &x) {
       x=A.ldlt().solve(b);
       return;
     }
@@ -306,7 +351,7 @@ namespace o2scl_linalg {
 #endif
 
 #if defined (O2SCL_SET_CUDA) || defined (DOXYGEN)
-#include <solve_cuda.h>
+#include <o2scl/solve_cuda.h>
 
 namespace o2scl_linalg {
   
@@ -318,21 +363,22 @@ namespace o2scl_linalg {
 
   */
   class linear_solver_LU_cuda :
-    public linear_solver_LU_cuda_base, linear_solver<vector<double>,
-                                                     vector<double> > {
+    public linear_solver_LU_cuda_base,
+    linear_solver<std::vector<double>,std::vector<double> > {
 
   public:
 
     /// Solve square linear system \f$ A x = b \f$ of size \c n
-    virtual int solve(int n, const std::vector<double> &A,
-                      const std::vector<double> &B,
-                      std::vector<double> &x) {
-      int ret=this->solve_base(n,A,B,x);
+    virtual void solve(size_t n, const std::vector<double> &A,
+                       const std::vector<double> &B,
+                       std::vector<double> &x) {
+      int ret=this->solve_base((int)n,A,B,x);
       if (ret!=0) {
-        O2SCL_ERR("Failed in linear_solver_LU_cuda::solve().",
-                  o2scl::exc_einval);
+        std::string errs=((std::string)"Error number ")+
+          o2scl::itos(ret)+" in linear_solver_LU_cuda::solve().";
+        O2SCL_ERR(errs.c_str(),o2scl::exc_einval);
       }
-      return ret;
+      return;
     }
     
   };

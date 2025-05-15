@@ -106,7 +106,7 @@ namespace o2scl_linalg {
       matrix, choosing the fastest method available depending on the size
       of the matrix
    */
-  class matrix_invert_cholesky_fast :
+  class matrix_invert_cholesky_auto :
     public matrix_invert_det<o2scl::tensor2<>,double> {
 
   protected:
@@ -150,7 +150,7 @@ namespace o2scl_linalg {
     /// Last method used
     int last_method;
     
-    matrix_invert_cholesky_fast() {
+    matrix_invert_cholesky_auto() {
       n_cuda_arma=400;
       n_cuda_o2=100;
       n_arma_o2=15;

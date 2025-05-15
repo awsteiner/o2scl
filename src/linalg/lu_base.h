@@ -83,8 +83,8 @@ namespace o2scl_linalg {
       seem to improve the speed significantly.)
   */
   template<class mat_t, class fp_t>
-    int LU_decomp(const size_t N, mat_t &A, o2scl::permutation &p, 
-		  int &signum) {
+  int LU_decomp(const size_t N, mat_t &A, o2scl::permutation &p, 
+                int &signum) {
     
     size_t i, j, k;
   
