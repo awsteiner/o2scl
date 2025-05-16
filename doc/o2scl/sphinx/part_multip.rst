@@ -12,6 +12,8 @@ List of classes which currently use multiprecision:
 
 - Fermionic statistics :ref:`fermion_rel_ld <fermion_rel_ld>` and
   :ref:`fermion_rel_cdf25 <fermion_rel_cdf25>` and 
-  :ref:`fermion_deriv_rel <fermion_deriv_rel>`.
+  :ref:`fermion_deriv_rel_tl <fermion_deriv_rel_tl>`.
 - Lepton equation of state: :ref:`eos_leptons <eos_leptons>`
 
+.. I have to reference fermion_rel_deriv_tl rather than the typedef
+   because sphinx doesn't resolve the references to typedefs.

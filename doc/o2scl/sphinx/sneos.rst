@@ -14,7 +14,7 @@ formats:
 - :ref:`eos_sn_stos <eos_sn_stos>` - The H. Shen et al. EOS tables
   ([Shen98]_ and [Shen98b]_)
 - :ref:`eos_sn_sht <eos_sn_sht>` - The G. Shen et al. EOS tables 
-  ([Shen10a]_, [Shen10b]_, [Shen11]_)
+  ([Shen10a]_, [Shen10eo]_, [Shen11as]_)
 - :ref:`eos_sn_hfsl <eos_sn_hfsl>` - The M. Hempel et al. EOS tables
   ([Hempel10]_ and [Hempel12]_)
 - :ref:`eos_sn_oo <eos_sn_oo>` - The Lattimer-Swesty and H. Shen et al. tables
