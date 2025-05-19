@@ -198,7 +198,7 @@ namespace o2scl_linalg {
       // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -219,7 +219,7 @@ namespace o2scl_linalg {
       // Armadillo is available, but not CUDA
 
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -242,12 +242,12 @@ namespace o2scl_linalg {
 
       // Neither cuda nor Armadillo is available
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -302,7 +302,7 @@ namespace o2scl_linalg {
       // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -323,7 +323,7 @@ namespace o2scl_linalg {
       // Armadillo is available, but not CUDA
 
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -346,12 +346,12 @@ namespace o2scl_linalg {
 
       // Neither cuda nor Armadillo is available
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -401,7 +401,7 @@ namespace o2scl_linalg {
       // Cuda is available, but not Armadillo
       double ret;
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -422,7 +422,7 @@ namespace o2scl_linalg {
       // Armadillo is available, but not CUDA
 
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -445,12 +445,12 @@ namespace o2scl_linalg {
 
       // Neither cuda nor Armadillo is available
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -500,7 +500,7 @@ namespace o2scl_linalg {
       // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -519,7 +519,7 @@ namespace o2scl_linalg {
       // Armadillo is available, but not CUDA
 
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
@@ -539,12 +539,12 @@ namespace o2scl_linalg {
 
       // Neither cuda nor Armadillo is available
       if (force_arma) {
-        O2SCL_ERR("Mode is force_arma but O2SCL_SET_ARMA is false ",
+        O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
       if (force_cuda) {
-        O2SCL_ERR("Mode is force_cuda but O2SCL_SET_CUDA is false ",
+        O2SCL_ERR2("Mode is force_cuda but O2SCL_SET_CUDA is false ",
                   "in matrix_invert_auto::invert().",o2scl::exc_eunimpl);
                   
       }
