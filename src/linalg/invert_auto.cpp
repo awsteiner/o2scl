@@ -29,12 +29,17 @@ using namespace o2scl_linalg;
 
 int o2scl_linalg::cholesky_decomp_cuda(const size_t n,
                                        std::vector<double> &A) {
+#ifdef O2SCL_SET_CUDA
   int ret=cholesky_decomp_cuda_base(n,A);
   if (ret!=0) {
     std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
       " in o2scl_linalg::cholesky_decomp_cuda().";
     O2SCL_ERR(err.c_str(),o2scl::exc_einval);
   }
+#else
+  O2SCL_ERR("Cuda support not included in this O2scl installation.",
+            o2scl::exc_eunimpl);
+#endif
   return ret;
 }
 
