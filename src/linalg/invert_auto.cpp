@@ -38,8 +38,9 @@ int o2scl_linalg::cholesky_decomp_cuda(const size_t n,
   }
   return ret;
 #else
-  O2SCL_ERR_RET("Cuda support not included in this O2scl installation.",
-                o2scl::exc_eunimpl);
+  O2SCL_ERR("Cuda support not included in this O2scl installation.",
+            o2scl::exc_eunimpl);
+  return o2scl::exc_eunimpl;
 #endif
 }
 
