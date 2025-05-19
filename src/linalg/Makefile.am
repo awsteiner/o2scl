@@ -4,8 +4,10 @@
 
 if O2SCL_CUDA
 O2SCL_CUDA_HVAR = invert_cuda.h solve_cuda.h
+O2SCL_CUDA_LVAR = invert_cuda.lo solve_cuda.lo
 else
 O2SCL_CUDA_HVAR =
+O2SCL_CUDA_LVAR = 
 endif
 
 LINALG_SRCS = permutation.cpp givens.cpp qr.cpp cholesky.cpp \
@@ -190,7 +192,7 @@ solve_cuda.lo: solve_cuda.cu
 noinst_LTLIBRARIES = libo2scl_linalg.la
 
 libo2scl_linalg_la_SOURCES = $(LINALG_SRCS)
-libo2scl_linalg_la_LIBADD = invert_cuda.lo solve_cuda.lo
+libo2scl_linalg_la_LIBADD = $(O2SCL_CUDA_LVAR)
 
 am__libo2scl_linalg_la_SOURCES_DIST = $(LINALG_SRCS)
 

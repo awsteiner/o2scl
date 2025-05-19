@@ -4,8 +4,10 @@
 
 if O2SCL_CUDA
 O2SCL_CUDA_HVAR = fft_cuda.h
+O2SCL_CUDA_LVAR = fft_cuda.lo
 else
 O2SCL_CUDA_HVAR =
+O2SCL_CUDA_LVAR = 
 endif
 
 OTHER_SRCS = series_acc.cpp poly.cpp polylog.cpp \
@@ -262,7 +264,7 @@ fft_cuda.lo: fft_cuda.cu
 noinst_LTLIBRARIES = libo2scl_other.la
 
 libo2scl_other_la_SOURCES = $(OTHER_SRCS)
-libo2scl_other_la_LIBADD = fft_cuda.lo
+libo2scl_other_la_LIBADD = $(O2SCL_CUDA_LVAR)
 
 am__libo2scl_other_la_SOURCES_DIST = $(OTHER_SRCS)
 

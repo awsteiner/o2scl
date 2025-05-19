@@ -4,8 +4,10 @@
 
 if O2SCL_CUDA
 O2SCL_CUDA_HVAR = base_cuda.h
+O2SCL_CUDA_LVAR = base_cuda.lo
 else
 O2SCL_CUDA_HVAR =
+O2SCL_CUDA_LVAR =
 endif
 
 BASE_HEADER_VAR =  err_hnd.h misc.h test_mgr.h table.h \
@@ -287,7 +289,7 @@ base_cuda.lo: base_cuda.cu
 noinst_LTLIBRARIES = libo2scl_base.la
 
 libo2scl_base_la_SOURCES = $(BASE_SRCS)
-libo2scl_base_la_LIBADD = base_cuda.lo
+libo2scl_base_la_LIBADD = $(O2SCL_CUDA_LVAR)
 
 am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 
