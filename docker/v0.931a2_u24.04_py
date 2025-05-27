@@ -5,6 +5,8 @@ LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version with python, eigen, \
 armadillo, fftw, OpenMP, and HDF5 compression support."
 
+RUN sh -c 'echo "Here0: $ENV_LIBRARY_PATH"'
+
 # ───────────────────────────────────────────────────────────────────
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
