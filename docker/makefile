@@ -53,6 +53,11 @@ $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
 v$(vvar)_$(ovar)_$(bvar).cuda)))
 
+CPU_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).cpu)))
+
 MP_CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
@@ -75,6 +80,13 @@ $(TEST_TARGETS) : %.test :
 	@echo "test"
 	@echo $@
 	@echo $*
+
+$(CPU_TARGETS) : %.cpu :
+	sudo docker buildx build . \
+		--build-arg BASE=awsteiner/foundation:tf_2.18_torch_2.7 \
+		--no-cache -f $* -t awsteiner/o2scl:$* \
+		--target working \
+		> $*.cpu.out 2>&1 
 
 $(CUDA_TARGETS) : %.cuda :
 	sudo docker buildx build . \

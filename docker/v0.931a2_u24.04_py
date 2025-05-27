@@ -20,17 +20,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # recommendations are good, e.g. manpages and less.
 
 RUN apt-get -y update && apt-get \
-  -y install g++ make autoconf automake libtool git curl cmake \
-  python3 libz-dev libsz2 imagemagick && apt-get clean 
-
-# ───────────────────────────────────────────────────────────────────
-# The tensorflow package is compiled with HDF5 1.14.6, so we install
-# that instead of the Ubuntu package in order to ensure we're matching
-# HDF5 libraries. 
-
-WORKDIR /opt
-RUN curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.6/hdf5-1.14.6-ubuntu-2404_gcc.deb" -o hdf5-1.14.6-ubuntu-2404_gcc.deb
-RUN dpkg -i hdf5-1.14.6-ubuntu-2404_gcc.deb
+  -y install g++ make autoconf automake libtool git cmake \
+  libz-dev libsz2 imagemagick && apt-get clean 
 
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages, second pass
@@ -43,44 +34,12 @@ RUN apt-get -y update && apt-get \
   -y install libgsl-dev libreadline-dev libboost-all-dev libeigen3-dev \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libfftw3-dev texlive dvipng texlive-latex-extra libarmadillo-dev \
-  cm-super python3-pip libcairo2-dev libquadmath0 zlib1g-dev
+  cm-super libcairo2-dev libquadmath0 zlib1g-dev
 
 # ───────────────────────────────────────────────────────────────────
 # Install Python packages
 
 WORKDIR /opt
-
-# We have to fix the version for the numpy installation package before
-# we install h5py (since h5py requires numpy). We cannot use later
-# versions of numpy because of restrictions from tensorflow. 
-RUN pip3 install --break-system-packages numpy==2.0.2
-
-# Ensure h5py uses the updated version of HDF5
-RUN HDF5_DIR=/HDF_Group/HDF5/1.14.6 pip3 install --break-system-packages \
-  --no-binary=h5py h5py==3.13.0
-
-# Install the remaining python packages from the requirements file.
-# The normflows package includes extra nvidia packages, and pipdeptree
-# includes a dependency on pip, so those are installed separately.
-
-COPY v0.931_u24.04_req.txt ./
-RUN pip3 install --break-system-packages -r v0.931_u24.04_req.txt
-RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
-  pipdeptree==2.24.0
-RUN pip3 install --break-system-packages torch==2.6.0
-
-# This is the set of commands used to construct the original
-# requirements file
-#
-#RUN pip3 install --break-system-packages pytest Pillow tensorflow-cpu \
-#  numpy scipy matplotlib yt scikit-learn keras
-#RUN pip3 install --break-system-packages --no-deps normflows pipdeptree
-# This avoids all of the GPU libraries we don't need
-#RUN pip3 install --break-system-packages torch==2.5.1 \
-#  --index-url https://download.pytorch.org/whl/cpu
-#RUN pip3 freeze > v0.931_u24.04_req.txt
-#RUN cat v0.931_u24.04_req.txt
-#RUN XXX
 
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
@@ -93,7 +52,7 @@ RUN pip3 install --break-system-packages torch==2.6.0
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout 25c57e8d3fb && autoreconf -i
+RUN git fetch && git pull && git checkout 566fc089fa1 && autoreconf -i
 
 # We disable static to keep the image small
 
@@ -101,14 +60,16 @@ RUN LIBS="-lquadmath" LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2S
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
-ENV LD_LIBRARY_PATH=/usr/local/lib:/HDF_Group/HDF5/1.14.6/lib
+RUN sh -c 'echo "Here1: $ENV_LIBRARY_PATH"'
+ENV LD_LIBRARY_PATH=${ENV_LIBRARY_PATH}:/usr/local/lib
+RUN sh -c 'echo "Here2: $ENV_LIBRARY_PATH"'
 
 # ───────────────────────────────────────────────────────────────────
 # Install o2sclpy via pip
 
 RUN git clone https://github.com/awsteiner/o2sclpy
 WORKDIR /opt/o2sclpy
-RUN git fetch && git pull && git checkout 5541e643d8 && \
+RUN git fetch && git pull && git checkout e8718e7dc40 && \
   pip3 install --break-system-packages . 
 
 # ───────────────────────────────────────────────────────────────────
