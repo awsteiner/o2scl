@@ -5,8 +5,6 @@ LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version with python, eigen, \
 armadillo, fftw, OpenMP, and HDF5 compression support."
 
-RUN sh -c 'echo "Here0: $ENV_LIBRARY_PATH"'
-
 # ───────────────────────────────────────────────────────────────────
 # To fix tzdata asking for a timezone during installation
 # can set up later using sudo dpkg-reconfigure tzdata I think.
@@ -62,9 +60,7 @@ RUN LIBS="-lquadmath" LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2S
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
-RUN sh -c 'echo "Here1: $ENV_LIBRARY_PATH"'
-ENV LD_LIBRARY_PATH=${ENV_LIBRARY_PATH}:/usr/local/lib
-RUN sh -c 'echo "Here2: $ENV_LIBRARY_PATH"'
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
 
 # ───────────────────────────────────────────────────────────────────
 # Install o2sclpy via pip
