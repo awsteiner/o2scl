@@ -40,7 +40,9 @@ RUN apt-get -y update && apt-get \
 # Install Python packages
 
 WORKDIR /opt
-
+RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
+  pipdeptree==2.24.0
+  
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
