@@ -37,6 +37,9 @@ int main(void) {
 
   cout.setf(ios::scientific);
 
+#ifdef O2SCL_SET_CUDA
+#ifdef O2SCL_SET_ARMA
+  
   if (true) {
     tensor2<> t1(10,10);
     std::vector<double> t2(100);
@@ -203,6 +206,9 @@ int main(void) {
 
   }
 
+#endif
+#endif
+  
   t.report();
   return 0;
 }
