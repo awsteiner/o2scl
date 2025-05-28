@@ -54,7 +54,7 @@ RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout 566fc089fa1 && autoreconf -i
+RUN git fetch && git pull && git checkout e3cbedf007c9 && autoreconf -i
 
 # We disable static to keep the image small
 
