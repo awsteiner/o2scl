@@ -55,7 +55,7 @@ int main(void) {
 
   // Load the experimental data
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"12");
+  ame.load("12");
   nucdist_set(mf.dist,ame);
 
   // Perform the fit

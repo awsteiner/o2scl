@@ -60,7 +60,8 @@ int main(void) {
   // measured masses are included.
 
   nucmass_ame ame;
-  o2scl_hdf::ame_load(ame,"16",true);
+  ame.load("16",true);
+  //o2scl_hdf::ame_load(ame,"16",true);
 
   // ---------------------------------------------------------------
   // Instantiate and load all of the nuclear mass objects. Some of
@@ -76,7 +77,8 @@ int main(void) {
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27);
   nucmass_ame ame03;
-  o2scl_hdf::ame_load(ame03,"03",true);
+  ame03.load("03",true);
+  //o2scl_hdf::ame_load(ame03,"03",true);
   nucmass_dz_table dz;
   nucmass_ktuy ktuy05;
   ktuy05.load("05");

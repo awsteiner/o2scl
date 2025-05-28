@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
   // number of elements in the vector, indep["x2"], because the
   // table_units object often has space at the end to add extra rows.
   
-  double avg=vector_mean(indep.get_nlines(),indep["x2"]);
+  double avg=vector_mean<vector<double>,double>(indep.get_nlines(),indep["x2"]);
   double std=vector_stddev(indep.get_nlines(),indep["x2"]);
   tm.test_rel(avg,exact,10.0*std/sqrt(indep.get_nlines()),"ex_mcmc");
   cout << "avg. from MCMC, exact avg., diff., std. from MCMC, "

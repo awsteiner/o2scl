@@ -1615,18 +1615,21 @@ public:
       cout << "Selected the bag model from SPL00." << endl;
     } else if (sv[1]=="SPL00_njl") {
       ptr_q=&njl;
-      u.m=5.5/hc_mev_fm;
-      d.m=5.5/hc_mev_fm;
-      s.m=140.7/hc_mev_fm;
-      u.non_interacting=false;
-      d.non_interacting=false;
-      s.non_interacting=false;
-      njl.set_quarks(u,d,s);
-      njl.up_default_mass=5.5/hc_mev_fm;
-      njl.down_default_mass=5.5/hc_mev_fm;
-      njl.strange_default_mass=140.7/hc_mev_fm;
+      quark &ur=njl.def_up;
+      quark &dr=njl.def_down;
+      quark &sr=njl.def_strange;
+      ur.m=5.5/hc_mev_fm;
+      dr.m=5.5/hc_mev_fm;
+      sr.m=140.7/hc_mev_fm;
+      ur.non_interacting=false;
+      dr.non_interacting=false;
+      sr.non_interacting=false;
+      //njl.set_quarks(u,d,s);
+      //njl.up_default_mass=5.5/hc_mev_fm;
+      //njl.down_default_mass=5.5/hc_mev_fm;
+      //njl.strange_default_mass=140.7/hc_mev_fm;
       double L=602.3/hc_mev_fm;
-      njl.set_parameters(L,1.835/L/L,12.36/pow(L,5.0));
+      njl.set_parameters(ur,dr,sr,L,1.835/L/L,12.36/pow(L,5.0));
       mp_start_fix=0.32;
     } else if (sv[1]=="njl") {
       ptr_q=&njl;

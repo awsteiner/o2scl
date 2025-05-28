@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
   hf.close();
 
   // Compute the average of the correlated samples for comparison
-  double avg2=vector_mean(t->get_nlines(),(*t)["x2"]);
+  double avg2=vector_mean<vector<double>,double>(t->get_nlines(),(*t)["x2"]);
   cout << "Average of correlated samples: " << avg2 << endl;
   
   // Use the independent samples to compute the final integral and
@@ -293,7 +293,8 @@ int main(int argc, char *argv[]) {
   // number of elements in the vector, indep["x2"], because the
   // table_units object often has space at the end to add extra rows.
   
-  double avg=vector_mean(indep.get_nlines(),indep["x2"]);
+  double avg=vector_mean<vector<double>,double>
+    (indep.get_nlines(),indep["x2"]);
   double std=vector_stddev(indep.get_nlines(),indep["x2"]);
   cout << "Average and std. dev. of uncorrelated samples: "
        << avg << " " << std << endl;
