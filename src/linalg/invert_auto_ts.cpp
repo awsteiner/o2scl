@@ -31,7 +31,7 @@ using namespace o2scl;
 using namespace o2scl_cblas;
 using namespace o2scl_linalg;
 
-int main(void) {
+int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
 
@@ -39,8 +39,12 @@ int main(void) {
 
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
-  
-  if (true) {
+
+  // I don't want to enable this section of code by default in case
+  // O2scl was included with CUDA support but the GPU was temporarily
+  // unavailable.
+  if (argc>=2 && ((string)argv[1])==((string)"benchmark")) {
+    
     tensor2<> t1(10,10);
     std::vector<double> t2(100);
         
@@ -119,90 +123,94 @@ int main(void) {
     t.test_rel_mat(10,10,t1b,t3b,1.0e-6,"inverse native vs. cuda v2");
     
   }
-  
-  // We choose a nearly diagonal positive symmetric matrix which
-  // is easy to invert
-  for(size_t n=10;n<10000;n*=2) {
 
-    size_t mult=10;
+  if (argc>=2 && ((string)argv[1])==((string)"benchmark")) {
     
-    matrix_invert_cholesky_auto micf;
+    // We choose a nearly diagonal positive symmetric matrix which
+    // is easy to invert
+    for(size_t n=10;n<10000;n*=2) {
+
+      size_t mult=10;
     
-    cout << ((double)n) << " " << std::flush;
+      matrix_invert_cholesky_auto micf;
     
-    for(size_t ell=0;ell<3;ell++) {
+      cout << ((double)n) << " " << std::flush;
+    
+      for(size_t ell=0;ell<3;ell++) {
       
-      if (ell==0) {
-        micf.mode=micf.force_o2;
-      } else if (ell==1) {
-        micf.mode=micf.force_arma;
-      } else {
-        micf.mode=micf.force_cuda;
-      }
+        if (ell==0) {
+          micf.mode=micf.force_o2;
+        } else if (ell==1) {
+          micf.mode=micf.force_arma;
+        } else {
+          micf.mode=micf.force_cuda;
+        }
       
-      if (ell!=0 || n<=640) {
-        tensor2<> t1[mult], t2[mult];
-        vector<size_t> size={n,n};
+        if (ell!=0 || n<=640) {
+          tensor2<> t1[mult], t2[mult];
+          vector<size_t> size={n,n};
         
-        struct timespec ts0;
-        timespec_get(&ts0,TIME_UTC);
+          struct timespec ts0;
+          timespec_get(&ts0,TIME_UTC);
         
-        for(size_t k=0;k<mult;k++) {
-          t1[k].resize(2,size);
-          t2[k].resize(2,size);
-          for(size_t i=0;i<n;i++) {
-            for(size_t j=0;j<n;j++) {
-              if (i==j) t1[k](i,j)=((double)(i+2));
-              else t1[k](i,j)=1.0e-2*exp(-2.0*
-                                         pow(((double)i)+((double)j),2.0));
+          for(size_t k=0;k<mult;k++) {
+            t1[k].resize(2,size);
+            t2[k].resize(2,size);
+            for(size_t i=0;i<n;i++) {
+              for(size_t j=0;j<n;j++) {
+                if (i==j) t1[k](i,j)=((double)(i+2));
+                else t1[k](i,j)=1.0e-2*exp(-2.0*
+                                           pow(((double)i)+((double)j),2.0));
+              }
             }
           }
-        }
         
-        struct timespec ts1;
-        timespec_get(&ts1,TIME_UTC);
+          struct timespec ts1;
+          timespec_get(&ts1,TIME_UTC);
         
-        double diff0=(double)(ts1.tv_sec-ts0.tv_sec);
-        double ndiff0=(double)(ts1.tv_nsec-ts0.tv_nsec);
-        //cout << (diff0+ndiff0*1.0e-9)/((double)mult) << " " << std::flush;
+          double diff0=(double)(ts1.tv_sec-ts0.tv_sec);
+          double ndiff0=(double)(ts1.tv_nsec-ts0.tv_nsec);
+          //cout << (diff0+ndiff0*1.0e-9)/((double)mult) << " " << std::flush;
 
-        double det;
-        for(size_t k=0;k<mult;k++) {
-          if (k==mult-1) {
-            micf.invert_det(n,t1[k],t2[k],det);
-          } else {
-            micf.invert(n,t1[k],t2[k]);
+          double det;
+          for(size_t k=0;k<mult;k++) {
+            if (k==mult-1) {
+              micf.invert_det(n,t1[k],t2[k],det);
+            } else {
+              micf.invert(n,t1[k],t2[k]);
+            }
           }
-        }
         
-        struct timespec ts2;
-        timespec_get(&ts2,TIME_UTC);
+          struct timespec ts2;
+          timespec_get(&ts2,TIME_UTC);
         
-        double diff=(double)(ts2.tv_sec-ts1.tv_sec);
-        double ndiff=(double)(ts2.tv_nsec-ts1.tv_nsec);
-        cout << (diff+ndiff*1.0e-9)/((double)mult) << " " << std::flush;
+          double diff=(double)(ts2.tv_sec-ts1.tv_sec);
+          double ndiff=(double)(ts2.tv_nsec-ts1.tv_nsec);
+          cout << (diff+ndiff*1.0e-9)/((double)mult) << " " << std::flush;
         
-        if (mult>1 && n==10) {
-          std::cout << std::endl;
-          tensor2<> t3;
-          t3.resize(2,size);
-          cout << "det: " << det << endl;
-          dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
-                n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
-          matrix_out(cout,t3);
+          if (mult>1 && n==10) {
+            std::cout << std::endl;
+            tensor2<> t3;
+            t3.resize(2,size);
+            cout << "det: " << det << endl;
+            dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
+                  n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
+            matrix_out(cout,t3);
 
-          tensor2<> t4;
-          t4.resize(2,size);
-          matrix_set_identity(t4);
+            tensor2<> t4;
+            t4.resize(2,size);
+            matrix_set_identity(t4);
 
-          t.test_abs_mat(10,10,t3,t4,1.0e-6,"inverse");
-        }
+            t.test_abs_mat(10,10,t3,t4,1.0e-6,"inverse");
+          }
         
-      } else {
-        cout << 0.0 << " " << std::flush;
+        } else {
+          cout << 0.0 << " " << std::flush;
+        }
       }
+      cout << endl;
+
     }
-    cout << endl;
 
   }
 
