@@ -43,7 +43,8 @@ namespace o2scl {
   */
   void nucdist_set(std::vector<nucleus> &dist, nucmass &nm, 
                    std::string expr="1", int maxA=400,
-                   bool include_neutron=false);
+                   bool include_neutron=false,
+                   int verbose=0);
 
   /** \brief Set a distribution of nuclei from two sets of nuclear
       masses and a function string

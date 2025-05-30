@@ -27,7 +27,7 @@ using namespace o2scl;
 
 void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm, 
 			std::string expr, int maxA,
-			bool include_neutron) {
+			bool include_neutron, int verbose) {
   
   nucleus n;
 
@@ -41,6 +41,9 @@ void o2scl::nucdist_set(vector<nucleus> &dist, nucmass &nm,
   // Now fill the vector with the nuclei
   size_t ix=0;
   for(int A=1;A<=maxA;A++) {
+    if (verbose>0) {
+      std::cout << A << " " << maxA << std::endl;
+    }
     for(int Z=0;Z<=A;Z++) {
       if (A==1 && Z==0) {
 	if (include_neutron && nm.is_included(0,1)) {

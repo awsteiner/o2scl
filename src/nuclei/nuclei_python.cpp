@@ -1059,11 +1059,11 @@ void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) 
   return;
 }
 
-void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA, bool include_neutron) {
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA, bool include_neutron, int verbose) {
   vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
   nucmass *nm=(nucmass *)ptr_nm;
   std::string *expr=(std::string *)ptr_expr;
-  nucdist_set(*dist,*nm,*expr,maxA,include_neutron);
+  nucdist_set(*dist,*nm,*expr,maxA,include_neutron,verbose);
   return;
 }
 

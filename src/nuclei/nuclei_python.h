@@ -398,7 +398,7 @@ void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
 void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
-void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false);
+void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false, int verbose=0);
 
 void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA=400, bool include_neutron=false);
 

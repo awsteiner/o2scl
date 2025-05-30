@@ -463,6 +463,7 @@ function nucdist_set
 - std::string expr ["1"]  
 - int maxA [400]
 - bool include_neutron [false]
+- int verbose [0]
 #
 # ------------------------------------------------------
 #
