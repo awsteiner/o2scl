@@ -573,7 +573,7 @@ int eos_had_rmf::calc_e(fermion &ne, fermion &pr, thermo &lth) {
 int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T, 
 			     thermo &lth) {
   
-  cout<<"inside calc_temp_e"<<endl;     	
+ // cout<<"inside calc_temp_e"<<endl;     	
   if (T<=0.0) return calc_e(ne,pr,lth);
 
   ubvector x(5), y(5);
@@ -612,9 +612,14 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
      std::placeholders::_3,std::ref(lth));
 
   int ret=1;
+  
+  //guess_set=true;
+
+  //cout<<verbose<<endl;
 
   if (guess_set) {
-    
+     
+     cout<<"guess_set True"<<endl;   	  
     // If an initial guess is given, then use it to directly compute
     // the EOS
 
@@ -649,7 +654,8 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
   // begin at saturated nuclear matter and proceeding incrementally.
 
   if (ret!=0) {
-
+    
+    //cout<<"guess_set False"<<endl;	  
     double nn=ne.n;
     double np=pr.n;
 
