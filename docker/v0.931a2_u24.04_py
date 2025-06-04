@@ -1,5 +1,5 @@
 ARG BASE=ubuntu:24.04
-ARG CONFIG=
+ARG CONFIGX=
 FROM ${BASE} AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version with python, eigen, \
@@ -34,7 +34,7 @@ RUN apt-get -y update && apt-get \
   -y install libgsl-dev libreadline-dev libboost-all-dev libeigen3-dev \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
   libfftw3-dev texlive dvipng texlive-latex-extra libarmadillo-dev \
-  cm-super libcairo2-dev libquadmath0 zlib1g-dev
+  cm-super libcairo2-dev zlib1g-dev
 
 # ───────────────────────────────────────────────────────────────────
 # Install Python packages
@@ -58,7 +58,8 @@ RUN git fetch && git pull && git checkout e3cbedf007c9 && autoreconf -i
 
 # We disable static to keep the image small
 
-RUN LIBS="-lquadmath" LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static ${CONFIG}
+RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static ${CONFIGX}
+FROM working
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
@@ -90,5 +91,4 @@ WORKDIR /opt/o2scl
 RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy
 RUN make testq
-FROM working
 

@@ -1158,6 +1158,8 @@ namespace o2scl {
       }
   
       if (!isfinite(f.en)) {
+        std::cout << "Here: " << multip << " "
+                  << this->intl_method << std::endl;
 	O2SCL_ERR2("Entropy not finite in fermion_deriv_rel_tl",
 		   "<fermion_deriv_t,fp_t>::calc_mu().",
 		   exc_efailed);

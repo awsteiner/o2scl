@@ -48,10 +48,15 @@ $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
 v$(vvar)_$(ovar)_$(bvar).test)))
 
-CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
+CUDA1_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
 $(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).cuda)))
+v$(vvar)_$(ovar)_$(bvar).cuda1)))
+
+CUDA2_TARGETS := $(foreach vvar, $(VERSIONS), \
+$(foreach ovar, $(OSS), \
+$(foreach bvar, $(BTYPES), \
+v$(vvar)_$(ovar)_$(bvar).cuda2)))
 
 CPU_TARGETS := $(foreach vvar, $(VERSIONS), \
 $(foreach ovar, $(OSS), \
@@ -88,12 +93,24 @@ $(CPU_TARGETS) : %.cpu :
 		--target working \
 		> $*.cpu.out 2>&1 
 
-$(CUDA_TARGETS) : %.cuda :
+$(CUDA1_TARGETS) : %.cuda1 :
 	sudo docker buildx build . \
-		--build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04 \
-		-f $* -t awsteiner/o2scl:$*_cuda \
+		--build-arg \
+		BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
+		--build-arg CONFIGX=--enable-cuda \
+		-f $* -t awsteiner/o2scl:$*_cuda1 \
 		--target working \
-		> $*.cuda.out 2>&1 
+		> $*.cuda1.out 2>&1 
+
+$(CUDA2_TARGETS) : %.cuda2 :
+	sudo docker buildx build . \
+		--build-arg \
+		BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
+		--build-arg CONFIGX=--enable-cuda \
+		-f $* -t awsteiner/o2scl:$*_cuda2 \
+		--no-cache \
+		--target working \
+		> $*.cuda2.out 2>&1 
 
 $(MP_CUDA_TARGETS) : %.mp.cuda :
 	sudo docker buildx build . \

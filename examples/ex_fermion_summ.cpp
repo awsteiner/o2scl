@@ -179,10 +179,12 @@ public:
       t3d.set_xy("x",x_grid,"y",y_grid);
       t3d.line_of_names("log10_Pt phi psi s cv cp cs2 kfom lm");
       t3d.line_of_names("dndT dndmu dsdT");
-    
+
+      cout << "i j dndT dndmu dsdT cs2 f1 f2 f3 f4 f5 f6 lm" << endl;
       for(size_t i=0;i<t3d.get_nx();i++) {
         for(size_t j=0;j<t3d.get_ny();j++) {
 
+          cout << i << " " << j << endl;
           double log10_Pt, phi, psi, s, cv, cp, cs2, kfom;
           int lm;
 

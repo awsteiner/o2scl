@@ -30,7 +30,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_io.h>
-#include <o2scl/cubature.h>
+#include <o2scl/mcarlo_vegas.h>
 
 using namespace std;
 using namespace o2scl;
@@ -106,19 +106,19 @@ public:
 
 /** Function for exact integration of the Gaussian
  */
-int f_cub(unsigned ndim, size_t npt, const double *x, unsigned fdim,
-	  double *fval) {
-  for (size_t i=0;i<npt;i++) {
-    const double *x2=x+i*ndim;
-    double *f2=fval+i*fdim;
-    f2[0]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-		(x2[1]-0.5)*(x2[1]-0.5)));
-    f2[1]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0];
-    f2[2]=exp(-((x2[0]-0.2)*(x2[0]-0.2)+
-		(x2[1]-0.5)*(x2[1]-0.5)))*x2[0]*x2[0]*x2[1]*x2[1];
-  }
-  return 0;
+double f_exact(unsigned fdim, const ubvector &fval) {
+  return exp(-((fval[0]-0.2)*(fval[0]-0.2)+
+               (fval[1]-0.5)*(fval[1]-0.5)));
+}
+
+double f_exact_sq(unsigned fdim, const ubvector &fval) {
+  return exp(-((fval[0]-0.2)*(fval[0]-0.2)+
+               (fval[1]-0.5)*(fval[1]-0.5)))*fval[0]*fval[0];
+}
+
+double f_exact_sqsq(unsigned fdim, const ubvector &fval) {
+  return exp(-((fval[0]-0.2)*(fval[0]-0.2)+
+               (fval[1]-0.5)*(fval[1]-0.5)))*fval[0]*fval[0]*fval[1]*fval[1];
 }
 
 int main(int argc, char *argv[]) {
@@ -144,21 +144,21 @@ int main(int argc, char *argv[]) {
   low_bimodal[0]=-5.0;
   high_bimodal[0]=5.0;
 
-  // Use cubature to compute integrals
-  std::vector<double> dlow(2), dhigh(2);
+  // Use Monte Carlo to compute integrals
+  multi_funct tf[3]={f_exact,f_exact_sq,f_exact_sqsq};
+  ubvector dlow(2), dhigh(2);
   dlow[0]=-1.5;
   dlow[1]=-1.5;
   dhigh[0]=1.5;
   dhigh[1]=1.5;
   std::vector<double> dres(3), derr(3);
-  typedef std::function<
-    int(unsigned,size_t,const double *,unsigned,double *)> cub_funct_arr;
-  cub_funct_arr cfa=f_cub;
-  inte_hcubature<cub_funct_arr> hc;
-  inte_hcubature<cub_funct_arr>::error_norm enh=
-    inte_hcubature<cub_funct_arr>::ERROR_INDIVIDUAL;
-  int ret=hc.integ(3,cfa,2,dlow,dhigh,10000,0.0,1.0e-4,enh,dres,derr);
-  tm.test_gen(ret==0,"cubature success.");
+  mcarlo_vegas<> mv;
+  mv.tol_rel=1.0e-6;
+  mv.n_points=100000;
+  for(size_t j=0;j<3;j++) {
+    int mret=mv.minteg_err(tf[j],2,dlow,dhigh,dres[j],derr[j]);
+    cout << mret << " " << dres[j] << " " << derr[j] << endl;
+  }
   
   // Exact results
   double exact_res[2];
@@ -196,16 +196,19 @@ int main(int argc, char *argv[]) {
     cout << "Plain MCMC example with a bimodal distribution:" << endl;
     
     // Set parameter names and units
-    vector<string> pnames={"x","0","1"};
-    vector<string> punits={"","",""};
-    mct.set_names_units(pnames,punits);
+    vector<string> pnames={"x"};
+    vector<string> punits={""};
+    vector<string> dnames={"0","1"};
+    vector<string> dunits={"",""};
+    mct.set_names_units(pnames,punits,dnames,dunits);
 
     // Set MCMC parameters
     mct.step_fac=2.0;
     mct.max_iters=100000;
 
     // Perform MCMC
-    mct.mcmc(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec);
+    std::vector<std::array<double,2>> data_vec(2);
+    mct.mcmc(1,low_bimodal,high_bimodal,bimodal_vec,fill_vec,data_vec);
 
     // Compute autocorrelation length and effective sample size
     shared_ptr<table_units<> > t=mct.get_table();
@@ -667,7 +670,7 @@ int main(int argc, char *argv[]) {
     cout << endl;
 
   }
-  
+
   tm.report();
   
   return 0;
