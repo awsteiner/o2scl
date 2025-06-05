@@ -203,7 +203,7 @@ namespace o2scl_linalg {
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
-        vector<double> vd_inv(n*n);
+        std::vector<double> vd_inv(n*n);
         ret=cuda.invert(n,A,A_inv);
         A_inv.swap_data(vd_inv);
         last_method=3;
@@ -307,7 +307,7 @@ namespace o2scl_linalg {
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
-        vector<double> vd_inv(n*n);
+        std::vector<double> vd_inv(n*n);
         ret=cuda.invert_det(n,A,A_inv,A_det);
         A_inv.swap_data(vd_inv);
         last_method=3;
@@ -406,7 +406,7 @@ namespace o2scl_linalg {
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
-        vector<double> vd_inv(n*n);
+        std::vector<double> vd_inv(n*n);
         ret=cuda.det(n,A);
         A_inv.swap_data(vd_inv);
         last_method=3;

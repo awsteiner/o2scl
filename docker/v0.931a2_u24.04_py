@@ -67,7 +67,6 @@ RUN git fetch && git pull && git checkout 2cfbda7874db1 && autoreconf -i
 ENV CONFIG_VAR=${CONFIG}
 
 RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static $CONFIG_VAR
-FROM working
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
@@ -100,3 +99,4 @@ RUN make check && make o2scl-examples && make distclean
 WORKDIR /opt/o2sclpy
 RUN make testq
 
+FROM working
