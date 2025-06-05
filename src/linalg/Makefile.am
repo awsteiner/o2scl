@@ -182,11 +182,11 @@ invert_auto_ts_SOURCES = invert_auto_ts.cpp
 # ------------------------------------------------------------
 
 invert_cuda.lo: invert_cuda.cu
-	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+	$(LIBTOOL) --tag=CXX --mode=compile ./nvcc_wrap.py \
 		--shared -c -o $@ $<
 
 solve_cuda.lo: solve_cuda.cu
-	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+	$(LIBTOOL) --tag=CXX --mode=compile ./nvcc_wrap.py \
 		--shared -c -o $@ $<
 
 noinst_LTLIBRARIES = libo2scl_linalg.la

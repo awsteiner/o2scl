@@ -283,7 +283,7 @@ uniform_grid_ts_SOURCES = uniform_grid_ts.cpp
 # ------------------------------------------------------------
 
 base_cuda.lo: base_cuda.cu
-	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+	$(LIBTOOL) --tag=CXX --mode=compile ./nvcc_wrap.py \
 		--shared -c -o $@ $<
 
 noinst_LTLIBRARIES = libo2scl_base.la

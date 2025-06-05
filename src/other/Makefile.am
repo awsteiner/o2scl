@@ -258,7 +258,7 @@ xml_ts_SOURCES = xml_ts.cpp
 # ------------------------------------------------------------
 
 fft_cuda.lo: fft_cuda.cu
-	$(LIBTOOL) --tag=CXX --mode=compile nvcc_wrap.py \
+	$(LIBTOOL) --tag=CXX --mode=compile ./nvcc_wrap.py \
 		--shared -c -o $@ $<
 
 noinst_LTLIBRARIES = libo2scl_other.la
