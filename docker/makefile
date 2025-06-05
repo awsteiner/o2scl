@@ -13,9 +13,15 @@ docker_clean:
 	`sudo docker images --all | grep -i -v container | awk '{print $$3}'`
 
 docker_show:
-	- sudo docker ps --all
+	@echo "Containers:"
+	- @sudo docker ps --all
+	@echo " "
+	@echo "Images:"
 	- sudo docker images --all
+	@echo " "
+	@echo "System:"
 	- sudo docker system df
+	@echo " "
 
 docker_make_cache:
 	sudo docker create -v /mnt/ccache:/ccache --name ccache debian
@@ -97,7 +103,7 @@ $(CUDA1_TARGETS) : %.cuda1 :
 	sudo docker buildx build . \
 		--build-arg \
 		BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
-		--build-arg CONFIGX=--enable-cuda \
+		--build-arg CONFIG=--enable-cuda \
 		-f $* -t awsteiner/o2scl:$*_cuda1 \
 		--target working \
 		> $*.cuda1.out 2>&1 
@@ -106,7 +112,7 @@ $(CUDA2_TARGETS) : %.cuda2 :
 	sudo docker buildx build . \
 		--build-arg \
 		BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
-		--build-arg CONFIGX=--enable-cuda \
+		--build-arg CONFIG=--enable-cuda \
 		-f $* -t awsteiner/o2scl:$*_cuda2 \
 		--no-cache \
 		--target working \
