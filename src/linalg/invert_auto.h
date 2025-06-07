@@ -204,7 +204,7 @@ namespace o2scl_linalg {
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
         std::vector<double> vd_inv(n*n);
-        ret=cuda.invert(n,A,A_inv);
+        ret=cuda.invert(n,A.get_data(),vd_inv);
         A_inv.swap_data(vd_inv);
         last_method=3;
       } else {
@@ -308,7 +308,7 @@ namespace o2scl_linalg {
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
         std::vector<double> vd_inv(n*n);
-        ret=cuda.invert_det(n,A,A_inv,A_det);
+        ret=cuda.invert_det(n,A.get_data(),vd_inv,A_det);
         A_inv.swap_data(vd_inv);
         last_method=3;
       } else {
@@ -505,7 +505,11 @@ namespace o2scl_linalg {
                   
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
-        ret=cuda.invert_inplace(n,A);
+
+        // We have to cast away constness :(
+        std::vector<double> &ref=(std::vector<double> &)(A.get_data());
+        
+        ret=cuda.invert_inplace(n,ref);
         last_method=3;
       } else {
         ret=o2.invert_inplace(n,A);
