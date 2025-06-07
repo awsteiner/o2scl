@@ -407,8 +407,7 @@ namespace o2scl_linalg {
       }
       if (force_cuda || (mode!=force_o2 && n>n_cuda_o2)) {
         std::vector<double> vd_inv(n*n);
-        ret=cuda.det(n,A);
-        A_inv.swap_data(vd_inv);
+        ret=cuda.det(n,A.get_data());
         last_method=3;
       } else {
         ret=o2.det(n,A);
