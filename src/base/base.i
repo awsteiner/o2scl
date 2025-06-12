@@ -2677,6 +2677,18 @@ class funct_string<double>
 #
 # ------------------------------------------------------
 #
+class funct_python
+- int verbose  
+- function set_function
+  - int
+  - std::string module
+  - std::string func
+- function operator()
+  - double
+  - double x
+#
+# ------------------------------------------------------
+#
 class comm_option_s
 - char shrt
 - std::string lng

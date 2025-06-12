@@ -90,17 +90,17 @@ namespace o2scl {
     /// Python function
     PyObject *pFunc;
 
-    /// Verbosity parameter
-    int verbose;
-    
   public:
     
     /** \brief Specify the python and the parameters
      */
-    funct_python(std::string module, std::string func, int v=0);
+    funct_python(std::string module="", std::string func="", int v=0);
     
     virtual ~funct_python();
   
+    /// Verbosity parameter
+    int verbose;
+    
     /** \brief Specify the python and the parameters
 
         This function is called by the constructor and thus

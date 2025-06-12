@@ -24,6 +24,7 @@
 #include <ctime>
 
 #include <o2scl/invert_auto.h>
+#include <o2scl/interpm_krige.h>
 #include <o2scl/test_mgr.h>
 
 using namespace std;
@@ -154,13 +155,16 @@ int main(int argc, char *argv[]) {
           timespec_get(&ts0,TIME_UTC);
         
           for(size_t k=0;k<mult;k++) {
-            t1[k].resize(2,size);
-            t2[k].resize(2,size);
+            t1[k].resize(n,n);
+            t2[k].resize(n,n);
             for(size_t i=0;i<n;i++) {
               for(size_t j=0;j<n;j++) {
-                if (i==j) t1[k](i,j)=((double)(i+2));
-                else t1[k](i,j)=1.0e-2*exp(-2.0*
-                                           pow(((double)i)+((double)j),2.0));
+                if (i==j) {
+                  t1[k](i,j)=((double)(i+2));
+                } else {
+                  t1[k](i,j)=1.0e-2*
+                    exp(-2.0*pow(((double)i)+((double)j),2.0));
+                }
               }
             }
           }
@@ -191,14 +195,14 @@ int main(int argc, char *argv[]) {
           if (mult>1 && n==10) {
             std::cout << std::endl;
             tensor2<> t3;
-            t3.resize(2,size);
+            t3.resize(n,n);
             cout << "det: " << det << endl;
             dgemm(o2cblas_RowMajor,o2cblas_NoTrans,o2cblas_NoTrans,
                   n,n,n,1.0,t1[mult-1],t2[mult-1],0.0,t3);
             matrix_out(cout,t3);
 
             tensor2<> t4;
-            t4.resize(2,size);
+            t4.resize(n,n);
             matrix_set_identity(t4);
 
             t.test_abs_mat(10,10,t3,t4,1.0e-6,"inverse");
@@ -212,6 +216,13 @@ int main(int argc, char *argv[]) {
 
     }
 
+  }
+
+  if (true) {
+    interpm_krige_optim
+      <ubvector,tensor2<>,const const_matrix_row_gen<tensor2<>>,
+       tensor2<>,const matrix_column_gen<tensor2<>>,
+       tensor2<>,matrix_invert_cholesky_auto> iko_auto;
   }
 
 #endif

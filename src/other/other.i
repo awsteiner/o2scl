@@ -25,6 +25,7 @@ h_include <o2scl/contour.h>
 h_include <o2scl/vec_stats.h>
 h_include <o2scl/prob_dens_func.h>
 h_include <o2scl/prob_dens_mdim_amr.h>
+h_include <o2scl/root_brent_gsl.h>
 # 
 # Include statement for C++ source code
 # 
@@ -69,6 +70,23 @@ class slack_messenger
   - int
   - std::string message
   - bool err_on_fail [true]  
+#
+# ------------------------------------------------------
+#
+# Class root_brent_gsl
+# 
+class root_brent_gsl<funct_python,double>
+- py_name root_brent_gsl
+- double tol_rel
+- double tol_abs
+- int verbose
+- int ntrial
+- bool err_nonconv                               
+- function solve_bkt
+  - int
+  - io double &x1
+  - double x2                               
+  - io funct_python &fp                               
 #
 # ------------------------------------------------------
 #

@@ -30,6 +30,7 @@
 #include <o2scl/vec_stats.h>
 #include <o2scl/prob_dens_func.h>
 #include <o2scl/prob_dens_mdim_amr.h>
+#include <o2scl/root_brent_gsl.h>
 
 extern "C" {
 
@@ -70,6 +71,32 @@ bool o2scl_slack_messenger_set_username_from_env(void *vptr, void *ptr_env_var);
 int o2scl_slack_messenger_send(void *vptr, void *ptr_message, bool err_on_fail=true);
 
 void *o2scl_slack_messenger_init(char *p_channel, char *p_username, char *p_url, bool p_mpi_time);
+
+void *o2scl_create_root_brent_gsl_funct_python_double_();
+
+void o2scl_free_root_brent_gsl_funct_python_double_(void *vptr);
+
+double o2scl_root_brent_gsl_funct_python_double__get_tol_rel(void *vptr);
+
+void o2scl_root_brent_gsl_funct_python_double__set_tol_rel(void *vptr, double v);
+
+double o2scl_root_brent_gsl_funct_python_double__get_tol_abs(void *vptr);
+
+void o2scl_root_brent_gsl_funct_python_double__set_tol_abs(void *vptr, double v);
+
+int o2scl_root_brent_gsl_funct_python_double__get_verbose(void *vptr);
+
+void o2scl_root_brent_gsl_funct_python_double__set_verbose(void *vptr, int v);
+
+int o2scl_root_brent_gsl_funct_python_double__get_ntrial(void *vptr);
+
+void o2scl_root_brent_gsl_funct_python_double__set_ntrial(void *vptr, int v);
+
+bool o2scl_root_brent_gsl_funct_python_double__get_err_nonconv(void *vptr);
+
+void o2scl_root_brent_gsl_funct_python_double__set_err_nonconv(void *vptr, bool v);
+
+int o2scl_root_brent_gsl_funct_python_double__solve_bkt(void *vptr, double *x1, double x2, void *ptr_fp);
 
 void *o2scl_create_quadratic_real_coeff_gsl();
 

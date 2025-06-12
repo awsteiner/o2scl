@@ -2133,6 +2133,19 @@ namespace o2scl {
       return this->size[1];
     }
 
+    /** \brief Alternate resize method, for matrix-like semantics
+
+        AWS, 6/11/25: This hides the generic tensor::resize() method,
+        but I think this is worth it to make tensor2<> behave like a
+        mtrix.
+     */
+    void resize(size_t nr, size_t nc) {
+      this->rk=2;
+      this->size={nr,nc};
+      this->data.resize(nr*nc);
+      return;
+    }
+
     /** \brief Set the element indexed by \c index to value \c val
 
         (We have to explicitly provide this version since the set()

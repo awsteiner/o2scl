@@ -3574,6 +3574,31 @@ void *o2scl_funct_string_double__init(char *expr, char *var) {
   return ptr;
 }
 
+void o2scl_free_funct_python(void *vptr) {
+  funct_python *ptr=(funct_python *)vptr;
+  delete ptr;
+  return;
+}
+
+int o2scl_funct_python_set_function(void *vptr, void *ptr_module, void *ptr_func) {
+  funct_python *ptr=(funct_python *)vptr;
+  std::string *module=(std::string *)ptr_module;
+  std::string *func=(std::string *)ptr_func;
+  int ret=ptr->set_function(*module,*func);
+  return ret;
+}
+
+double o2scl_funct_python_getitem(void *vptr, double x) {
+  funct_python *ptr=(funct_python *)vptr;
+  /* tag 4 */ double ret=ptr->operator()(x);
+  return ret;
+}
+
+void *o2scl_funct_python_init(char *module, char *func, int verbose) {
+  funct_python *ptr=new funct_python(module,func,verbose);
+  return ptr;
+}
+
 void *o2scl_create_comm_option_s() {
   comm_option_s *ptr=new comm_option_s;
   return ptr;

@@ -741,8 +741,7 @@ namespace o2scl {
       size_t n_pts=x.get_size(0);
 
       // Resize the y tensor as needed
-      std::vector<size_t> y_dim={n_pts,this->n_outputs};
-      y.resize(2,y_dim);
+      y.resize(n_pts,this->n_outputs);
       
       if (p_eval_list_func==0) {
         O2SCL_ERR2("No functions found in ",

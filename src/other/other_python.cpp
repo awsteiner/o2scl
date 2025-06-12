@@ -156,6 +156,79 @@ void *o2scl_slack_messenger_init(char *p_channel, char *p_username, char *p_url,
   return ptr;
 }
 
+void *o2scl_create_root_brent_gsl_funct_python_double_() {
+  root_brent_gsl<funct_python,double> *ptr=new root_brent_gsl<funct_python,double>;
+  return ptr;
+}
+
+void o2scl_free_root_brent_gsl_funct_python_double_(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  delete ptr;
+  return;
+}
+
+double o2scl_root_brent_gsl_funct_python_double__get_tol_rel(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  return ptr->tol_rel;
+}
+
+void o2scl_root_brent_gsl_funct_python_double__set_tol_rel(void *vptr, double v) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  ptr->tol_rel=v;
+  return;
+}
+
+double o2scl_root_brent_gsl_funct_python_double__get_tol_abs(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  return ptr->tol_abs;
+}
+
+void o2scl_root_brent_gsl_funct_python_double__set_tol_abs(void *vptr, double v) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  ptr->tol_abs=v;
+  return;
+}
+
+int o2scl_root_brent_gsl_funct_python_double__get_verbose(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  return ptr->verbose;
+}
+
+void o2scl_root_brent_gsl_funct_python_double__set_verbose(void *vptr, int v) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  ptr->verbose=v;
+  return;
+}
+
+int o2scl_root_brent_gsl_funct_python_double__get_ntrial(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  return ptr->ntrial;
+}
+
+void o2scl_root_brent_gsl_funct_python_double__set_ntrial(void *vptr, int v) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  ptr->ntrial=v;
+  return;
+}
+
+bool o2scl_root_brent_gsl_funct_python_double__get_err_nonconv(void *vptr) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  return ptr->err_nonconv;
+}
+
+void o2scl_root_brent_gsl_funct_python_double__set_err_nonconv(void *vptr, bool v) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  ptr->err_nonconv=v;
+  return;
+}
+
+int o2scl_root_brent_gsl_funct_python_double__solve_bkt(void *vptr, double *x1, double x2, void *ptr_fp) {
+  root_brent_gsl<funct_python,double> *ptr=(root_brent_gsl<funct_python,double> *)vptr;
+  funct_python *fp=(funct_python *)ptr_fp;
+  int ret=ptr->solve_bkt(*x1,x2,*fp);
+  return ret;
+}
+
 void *o2scl_create_quadratic_real_coeff_gsl() {
   quadratic_real_coeff_gsl *ptr=new quadratic_real_coeff_gsl;
   return ptr;
