@@ -97,7 +97,9 @@ namespace o2scl {
     funct_python(std::string module="", std::string func="", int v=0);
     
     virtual ~funct_python();
-  
+
+    void free();
+    
     /// Verbosity parameter
     int verbose;
     
@@ -111,10 +113,6 @@ namespace o2scl {
     /** \brief Compute the function at point \c x and return the result
      */
     virtual double operator()(double x) const;
-
-  protected:
-
-    funct_python() {};
 
   private:
 

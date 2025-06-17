@@ -215,9 +215,13 @@ PyObject *lib_settings_class::py_import_module(std::string module,
   
   // Get the Unicode name of the user-specified module
   if (verbose>0) {
-    cout << "Getting unicode for module name()." << endl;
+    cout << "Getting unicode for module named " << module << endl;
   }
+  cout << "A" << endl;
+  o2scl_settings.add_python_path(".",3);
+  cout << "B" << endl;
   pName=PyUnicode_FromString(module.c_str());
+  cout << "Here " << pName << endl;
   if (pName==0) {
     O2SCL_ERR2("Create module name failed in ",
               "funct_python::set_function().",o2scl::exc_efailed);
@@ -307,6 +311,7 @@ void lib_settings_class::get_python_path(std::vector<std::string> &vs,
     cout << "Importing sys." << endl;
   }
   PyObject *sys_mod=PyImport_ImportModule("sys");
+  cout << "C:" << sys_mod << std::endl;
   if (sys_mod==0) {
     O2SCL_ERR2("Import system module failed in",
                "funct_python::set_function().",

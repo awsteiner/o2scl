@@ -75,18 +75,18 @@ class slack_messenger
 #
 # Class root_brent_gsl
 # 
-class root_brent_gsl<funct_python,double>
-- py_name root_brent_gsl
-- double tol_rel
-- double tol_abs
-- int verbose
-- int ntrial
-- bool err_nonconv                               
-- function solve_bkt
-  - int
-  - io double &x1
-  - double x2                               
-  - io funct_python &fp                               
+# class root_brent_gsl<funct_string<double>,double>
+# - py_name root_brent_gsl
+# - double tol_rel
+# - double tol_abs
+# - int verbose
+# - int ntrial
+# - bool err_nonconv                               
+# - function solve_bkt
+#   - int
+#   - io double &x1
+#   - double x2                               
+#   - io funct_string &fp                               
 #
 # ------------------------------------------------------
 #

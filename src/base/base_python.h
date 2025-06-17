@@ -1156,14 +1156,6 @@ double o2scl_funct_string_double__getitem(void *vptr, double x);
 
 void *o2scl_funct_string_double__init(char *expr, char *var);
 
-void o2scl_free_funct_python(void *vptr);
-
-int o2scl_funct_python_set_function(void *vptr, void *ptr_module, void *ptr_func);
-
-double o2scl_funct_python_getitem(void *vptr, double x);
-
-void *o2scl_funct_python_init(char *module, char *func, int verbose);
-
 void *o2scl_create_comm_option_s();
 
 void o2scl_free_comm_option_s(void *vptr);

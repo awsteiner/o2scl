@@ -40,7 +40,7 @@ using namespace o2scl;
 
 funct_python::funct_python(std::string module, std::string func,
                            int v) {
-
+  
   verbose=v;
   
   if (o2scl_settings.py_initialized==false) {
@@ -49,25 +49,42 @@ funct_python::funct_python(std::string module, std::string func,
     }
     o2scl_settings.py_init();
   }
-  set_function(module,func);
+  if (func.length()>0) {
+    set_function(module,func);
+  }
+  pFunc=0;
+  pArgs=0;
+  pModule=0;
 }
 
 funct_python::~funct_python() {
+  free();
+}
+
+void funct_python::free() {
   if (verbose>0) {
     cout << "Decref func." << endl;
   }
-  Py_DECREF(pFunc);
-  if (verbose>0) {
-    cout << "Decref args." << endl;
+  if (pFunc!=0) {
+    Py_DECREF(pFunc);
+    if (verbose>0) {
+      cout << "Decref args." << endl;
+    }
   }
-  Py_DECREF(pArgs);
-  if (verbose>0) {
-    cout << "Decref module." << endl;
+  if (pArgs!=0) {
+    Py_DECREF(pArgs);
+    if (verbose>0) {
+      cout << "Decref module." << endl;
+    }
   }
-  Py_DECREF(pModule);
-  if (verbose>0) {
-    cout << "Done in funct_python destructor." << endl;
+  if (pModule!=0) {
+    Py_DECREF(pModule);
+    if (verbose>0) {
+      cout << "Done in funct_python destructor." << endl;
+    }
   }
+  
+  return;
 }
 
 int funct_python::set_function(std::string module, std::string func) {
