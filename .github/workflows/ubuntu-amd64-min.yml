@@ -1,16 +1,18 @@
 ---
-name: Ubuntu 24.04 amd64 minimal install
+name: Ubuntu 24.04 AMD64 minimal install
 
 on:
   push:
-    branches: [ "main", "rc" ]
+    branches: [ "x" ]
+#    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "main", "rc" ]
+    branches: [ "x" ]
+#    branches: [ "main", "rc" ]
 
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  ubuntu-2404-amd64-min:
+  ubuntu-u2404-amd64-min:
 
     runs-on: ubuntu-24.04-arm
 

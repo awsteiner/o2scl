@@ -189,7 +189,7 @@ interpm_idw.scr: interpm_idw_ts$(EXEEXT)
 interpm_python.scr: interpm_python_ts$(EXEEXT) 
 	./interpm_python_ts$(EXEEXT) | tee interpm_python.scr
 classify_python.scr: classify_python_ts$(EXEEXT) 
-	./classify_python_ts$(EXEEXT) > classify_python.scr
+	./classify_python_ts$(EXEEXT) | tee classify_python.scr
 gmm_python.scr: gmm_python_ts$(EXEEXT) 
 	./gmm_python_ts$(EXEEXT) > gmm_python.scr
 kde_python.scr: kde_python_ts$(EXEEXT) 

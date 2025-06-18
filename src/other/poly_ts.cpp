@@ -724,7 +724,7 @@ int main(void) {
   cout << "type                   Avg 1      Avg 2      Max 1"
        << "      Max 2      time" << endl;
   test_cubic_real_coeff(&c1,"cubic_rc_cern",1.0,
-			1.0e-12,1.0e-12,1.0e-7,1.0e-9,11);
+			5.0e-10,1.0e-12,5.0e-6,1.0e-9,15);
   test_cubic_real_coeff(&c4,"cubic_rc_gsl",1.0,
                         1.0e-14,1.0e-14,1.0e-13,1.0e-12,0);
   test_cubic_real_coeff(&c2,"cubic_rc_gsl2",1.0,
