@@ -221,10 +221,12 @@ namespace o2scl_linalg {
 }
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
+
+namespace o2scl_linalg {
+
 #if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
 
 #include <armadillo>
-namespace o2scl_linalg {
   
   /** \brief Armadillo inverse 
 
@@ -463,6 +465,7 @@ namespace o2scl_linalg {
   
 }
   
+// Else statement associated with #if defined (O2SCL_COND_FLAG) ...
 #else
 
 #include <o2scl/invert_special.h>
