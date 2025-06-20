@@ -45,7 +45,7 @@ pexpect==4.9.0
 pillow==10.3.0
 pluggy==1.5.0
 prompt-toolkit==3.0.43
-protobuf==4.25.3
+protobuf==4.25.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
 Pygments==2.17.2
