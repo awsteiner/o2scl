@@ -3,11 +3,9 @@ name: Ubuntu 24.04 x86_64 plus install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
@@ -18,23 +16,23 @@ jobs:
 
     steps:
     
-    #- name: Git checkout
-    #  uses: actions/checkout@v4
-    #  with:
-    #    ref: rc
-
-    - name: Download release
-      uses: robinraju/release-downloader@v1
+    - name: Git checkout
+      uses: actions/checkout@v4
       with:
-        repository: 'awsteiner/o2scl'
-        tag: 'v0.930'
-        fileName: 'o2scl-0.930.tar.gz'
+        ref: rc
 
-    - name: untar release
-      run: |
-           tar xvzf o2scl-0.930.tar.gz
-           mv o2scl-0.930/* .
-           rmdir o2scl-0.930
+    #- name: Download release
+    #  uses: robinraju/release-downloader@v1
+    #  with:
+    #    repository: 'awsteiner/o2scl'
+    #    tag: 'v0.930'
+    #    fileName: 'o2scl-0.930.tar.gz'
+
+    #- name: untar release
+    #  run: |
+    #       tar xvzf o2scl-0.930.tar.gz
+    #       mv o2scl-0.930/* .
+    #       rmdir o2scl-0.930
 
     - name: Cache action
       uses: actions/cache@v4

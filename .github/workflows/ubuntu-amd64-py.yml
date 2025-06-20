@@ -19,7 +19,7 @@ jobs:
     - name: Git checkout
       uses: actions/checkout@v4
       with:
-        ref: main
+        ref: rc
 
     #- name: Download release
     #  uses: robinraju/release-downloader@v1

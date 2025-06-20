@@ -6,9 +6,9 @@ name: openSUSE TW i386 minimal install
 
 on:
   push:
-    branches: [ "x" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
+    branches: [ "main", "rc" ]
 
 jobs:
   opensuse-TW-i386-min:

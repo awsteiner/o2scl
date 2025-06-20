@@ -3,11 +3,9 @@ name: Ubuntu 24.04 x86_64 minimal install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 

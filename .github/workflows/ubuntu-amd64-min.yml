@@ -3,11 +3,9 @@ name: Ubuntu 24.04 AMD64 minimal install
 
 on:
   push:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
   pull_request:
-    branches: [ "x" ]
-#    branches: [ "main", "rc" ]
+    branches: [ "main", "rc" ]
 
 jobs:
 
@@ -21,7 +19,7 @@ jobs:
     - name: Git checkout
       uses: actions/checkout@v4
       with:
-        ref: main
+        ref: rc
 
     #- name: Download release
     #  uses: robinraju/release-downloader@v1
