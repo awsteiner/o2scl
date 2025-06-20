@@ -3311,13 +3311,13 @@ namespace o2scl {
         
         calc.compile(function.c_str(),0);
         
-        // Get the variable list as a list of u32string
-        std::vector<std::u32string> cols32=calc.get_var_list();
+        // Get the variable list as a list of wstring
+        std::vector<std::wstring> cols32=calc.get_var_list();
         
         // Convert it to a list of utf8 strings
         std::vector<std::string> cols(cols32.size());
         for(size_t ij=0;ij<cols32.size();ij++) {
-          char32_to_utf8(cols32[ij],cols[ij]);
+          wstring_to_utf8(cols32[ij],cols[ij]);
         }
         
         // At this point, the vector \c cols may contain the names

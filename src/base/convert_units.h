@@ -930,8 +930,8 @@ namespace o2scl {
           << std::endl;
       for(size_t i=0;i<SI.size();i++) {
 
-        std::u32string c32;
-        utf8_to_char32(SI[i].label,c32);
+        std::wstring c32;
+        utf8_to_wstring(SI[i].label,c32);
         int ns=c32.length();
 
         for(int j=0;j<15-ns;j++) out << ' ';
@@ -959,8 +959,8 @@ namespace o2scl {
       out << "------------------- ------------" << std::endl;
       for(size_t i=0;i<prefixes.size();i++) {
         
-        std::u32string c32;
-        utf8_to_char32(prefixes[i],c32);
+        std::wstring c32;
+        utf8_to_wstring(prefixes[i],c32);
         int ns=c32.length();
 
         for(int j=0;j<19-ns;j++) out << ' ';
@@ -978,8 +978,8 @@ namespace o2scl {
     
       for(size_t i=0;i<other.size();i++) {
         
-        std::u32string c32;
-        utf8_to_char32(other[i].label,c32);
+        std::wstring c32;
+        utf8_to_wstring(other[i].label,c32);
         int ns=c32.length();
         
         out << other[i].label;
@@ -1461,11 +1461,11 @@ namespace o2scl {
         return 2;
       }
       
-      std::vector<std::u32string> vars=calc.get_var_list();
+      std::vector<std::wstring> vars=calc.get_var_list();
       std::vector<std::string> vars_str;
       for(size_t ij=0;ij<vars.size();ij++) {
         std::string tmp;
-        char32_to_utf8(vars[ij],tmp);
+        wstring_to_utf8(vars[ij],tmp);
         vars_str.push_back(tmp);
       }
       if (verbose>=2) {
@@ -1473,11 +1473,11 @@ namespace o2scl {
         o2scl::vector_out(std::cout,vars_str,true);
       }
       
-      std::vector<std::u32string> vars2=calc2.get_var_list();
+      std::vector<std::wstring> vars2=calc2.get_var_list();
       std::vector<std::string> vars2_str;
       for(size_t ij=0;ij<vars2.size();ij++) {
         std::string tmp;
-        char32_to_utf8(vars2[ij],tmp);
+        wstring_to_utf8(vars2[ij],tmp);
         vars2_str.push_back(tmp);
       }
       if (verbose>=2) {

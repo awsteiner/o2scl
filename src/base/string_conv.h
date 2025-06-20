@@ -224,17 +224,17 @@ namespace o2scl {
   /** \brief Convert a string to a double returning non-zero
       value for failure
   */
-  int s32tod_nothrow(std::u32string s, double &result);
+  int wtod_nothrow(std::wstring s, double &result);
 
   /** \brief Convert a string to a long double returning non-zero
       value for failure
   */
-  int s32tod_nothrow(std::u32string s, long double &result);
+  int wtod_nothrow(std::wstring s, long double &result);
 
   /** \brief Convert a string to a multiprecision boost number
    */
-  template<class fp_t> int s32tod_nothrow
-  (std::u32string s, fp_t &result) {
+  template<class fp_t> int wtod_nothrow
+  (std::wstring s, fp_t &result) {
     
     std::string s2;
     bool done=false;
@@ -352,8 +352,8 @@ namespace o2scl {
       eventually be deprecated, but apparently haven't been
       replaced in C++20 yet?
   */
-  void utf8_to_char32(const std::string &in,
-                      std::u32string &out);
+  void utf8_to_wstring(const std::string &in,
+                      std::wstring &out);
 
   /** \brief Convert from 32-bit integers to UTF-8
 
@@ -361,7 +361,7 @@ namespace o2scl {
       eventually be deprecated, but apparently haven't been
       replaced in C++20 yet?
   */
-  void char32_to_utf8(const std::u32string &in,
+  void wstring_to_utf8(const std::wstring &in,
                       std::string &out);
   
   /** \brief Rewrap a string into a single column, avoiding

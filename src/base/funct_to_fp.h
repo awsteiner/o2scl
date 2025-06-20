@@ -498,7 +498,7 @@ namespace o2scl {
         c_50.compile(st_form.c_str());
         c_100.compile(st_form.c_str());
         
-        std::vector<std::u32string> vs=c.get_var_list();
+        std::vector<std::wstring> vs=c.get_var_list();
         
         // If there are undefined variables, then attempt to get them
         // from the constant database
@@ -507,7 +507,7 @@ namespace o2scl {
           for(size_t i=0;i<vs.size();i++) {
             
             std::string vsi2;
-            char32_to_utf8(vs[i],vsi2);
+            wstring_to_utf8(vs[i],vsi2);
 
             if (vsi2!=st_var) {
             
@@ -698,7 +698,7 @@ namespace o2scl {
       std::cout << calc.RPN_to_string() << std::endl;
     }
 
-    std::vector<std::u32string> vs=calc.get_var_list();
+    std::vector<std::wstring> vs=calc.get_var_list();
 
     // If there are undefined variables, then attempt to get them
     // from the constant database
@@ -712,7 +712,7 @@ namespace o2scl {
       for(size_t i=0;i<vs.size();i++) {
 
         std::string vsi2;
-        char32_to_utf8(vs[i],vsi2);
+        wstring_to_utf8(vs[i],vsi2);
 
         if (verbose>2) {
           std::cout << "Function function_to_fp_nothrow(): "

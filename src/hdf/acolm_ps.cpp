@@ -2674,10 +2674,10 @@ int acol_manager::comm_select_rows(std::vector<std::string> &sv,
   calc_utf8<> calc;
   calc.set_rng(rng);
   calc.compile(i1.c_str(),0);
-  vector<std::u32string> cols32=calc.get_var_list();
+  vector<std::wstring> cols32=calc.get_var_list();
   vector<std::string> cols(cols32.size());
   for(size_t ij=0;ij<cols32.size();ij++) {
-    char32_to_utf8(cols32[ij],cols[ij]);
+    wstring_to_utf8(cols32[ij],cols[ij]);
   }
   if (verbose>=2) {
     cout << "Calculating expression: " << i1 << endl;

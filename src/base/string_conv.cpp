@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <boost/locale.hpp>
+
 #include <o2scl/string_conv.h>
 #include <o2scl/err_hnd.h>
 #include <o2scl/calc_utf8.h>
@@ -145,10 +147,11 @@ std::string o2scl::unc_to_string(double val, double err, int verbose) {
   return ret;
 }
 
-void o2scl::utf8_to_char32(const std::string &in,
-                           std::u32string &out) {
-  wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
-  out=cv.from_bytes(in);
+void o2scl::utf8_to_wstring(const std::string &in,
+                           std::wstring &out) {
+  //wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
+  //out=cv.from_bytes(in);
+  out=boost::locale::conv::to_utf<wchar_t>(in,"UTF-8");
   return;
 }
 
@@ -168,11 +171,12 @@ size_t o2scl::string_replace(std::string &s, const std::string &s1,
   return nrep;
 }
 
-void o2scl::char32_to_utf8(const std::u32string &in,
+void o2scl::wstring_to_utf8(const std::wstring &in,
                            std::string &out) {
                            
-  wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
-  out=cv.to_bytes(in);
+  //wstring_convert<std::codecvt_utf8<char32_t>,char32_t> cv;
+  //out=cv.to_bytes(in);
+  out=boost::locale::conv::from_utf(in,"UTF-8");  
   return;
 }
 
@@ -361,7 +365,7 @@ int o2scl::stod_nothrow(string s, double &result) {
   return exc_einval;
 }
 
-int o2scl::s32tod_nothrow(u32string s, double &result) {
+int o2scl::wtod_nothrow(wstring s, double &result) {
 
   string s2;
   bool done=false;
@@ -384,7 +388,7 @@ int o2scl::s32tod_nothrow(u32string s, double &result) {
   return exc_einval;
 }
 
-int o2scl::s32tod_nothrow(u32string s, long double &result) {
+int o2scl::wtod_nothrow(wstring s, long double &result) {
 
   string s2;
   bool done=false;

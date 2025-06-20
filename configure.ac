@@ -69,6 +69,22 @@ AC_SUBST(OLIB_LT_VERSION)
 AC_CHECK_LIB([m],[cos])
 
 # ------------------------------------------------------------------
+# Check for Boost locale
+# ------------------------------------------------------------------
+
+#AX_BOOST_LOCALE
+
+#AC_CHECK_LIB([boost_locale], [boost::locale::conv::to_utf], [], 
+#	[echo ""
+#        echo "Boost not found."
+#        echo "O2scl requires the Boost library."
+#	echo ""
+#	echo -n " The present value of LDFLAGS is: " 
+#	echo $LDFLAGS
+#        exit -1
+#	],[])
+
+# ------------------------------------------------------------------
 # Check for BLAS
 # ------------------------------------------------------------------
 
