@@ -14,9 +14,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install apt packages
 
 # Base apt libraries for Ubuntu 25.04
-RUN apt-get -y update && apt-get -y install g++ make libgsl-dev curl tar \
-  gzip libhdf5-dev libreadline-dev libboost-all-dev git libz-dev libsz2 \
-  libquadmath0
+RUN apt-get -y update && apt-get -y install gcc-15 g++-15 make \
+  libgsl-dev curl tar gzip libhdf5-dev libreadline-dev \
+  libboost-all-dev git libz-dev libsz2 
 
 # ───────────────────────────────────────────────────────────────────
 # Now install o2scl
@@ -25,9 +25,9 @@ WORKDIR /opt
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout dev && autoreconf -i
+RUN git fetch && git pull && git checkout main && autoreconf -i
 
-RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12" \
+RUN CXX="g++-15" CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP" \
   ./configure --enable-openmp --disable-static
 RUN make blank-doc && make -j 10 && make install
 
