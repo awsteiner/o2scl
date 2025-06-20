@@ -660,7 +660,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     
     if (verbose>0) {
       cout << " Proceeding incrementally." << endl;
-      cout << " alpha       n_B         n_ch        mu_n        "
+      cout << " alpha       n_B         n_ch        T           mu_n        "
 	   << "mu_p        sigma       omega       rho         ret" << endl;
       cout.setf(ios::showpos);
       cout.precision(4);
@@ -669,6 +669,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
     for(size_t i=0;i<calc_e_steps;i++) {
 
       double alpha=((double)i)/((double)(calc_e_steps-1));
+      ce_temp=T*alpha;
 
       // At the last point, there are finite precision problems when 
       // alpha=1, so we handle the last point separately
@@ -703,6 +704,7 @@ int eos_had_rmf::calc_temp_e(fermion &ne, fermion &pr, const double T,
       ret=eos_mroot->msolve(5,x,fmf);
       if (verbose>0) {
 	cout << alpha << " " << n_baryon << " " << n_charge << " "
+             << ce_temp << " " 
 	     << x[0] << " " << x[1] << " " << x[2] << " " 
 	     << x[3] << " " << x[4] << " " << ret << endl;
       }

@@ -430,10 +430,8 @@ namespace o2scl_linalg {
         // We have to cast away constness :(
         double *Ap=(double *)(&(A.get(0,0)));
         arma::mat am(Ap,n,n,false);
-        double *Ap_inv=&A_inv.get(0,0);
-        arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.det(n,am);
         last_method=2;
       } else {
         ret=o2.det(n,A);
