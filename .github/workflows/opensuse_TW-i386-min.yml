@@ -44,7 +44,7 @@ jobs:
     # (Cache actions do not work for 32-bit containers on 64-bit runners.)
 
     - name: Install dependencies
-      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel libboost_locale-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
 
     - name: Set up autotools scripts
       run:

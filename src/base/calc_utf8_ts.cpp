@@ -171,24 +171,24 @@ int main(void) {
 
   calc.compile("-exp(0.2+sin(4+5))*aa",0);
   cout << calc.RPN_to_string() << endl;
-  std::map<std::u32string, double> vars;
-  std::u32string stmp;
-  utf8_to_char32("aa",stmp);
+  std::map<std::wstring, double> vars;
+  std::wstring stmp;
+  utf8_to_wstring("aa",stmp);
   vars.insert(std::make_pair(stmp,2.0));
-  t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,
+  t.test_rel(calc.eval_wstring(&vars),-exp(0.2+sin(4+5))*2.0,
              1.0e-12,"calc35");
 
   calc.compile("-exp(0.2+sin(4+5))*α",0);
   cout << calc.RPN_to_string() << endl;
-  utf8_to_char32("α",stmp);
+  utf8_to_wstring("α",stmp);
   vars.insert(std::make_pair(stmp,2.0));
-  t.test_rel(calc.eval_char32(&vars),-exp(0.2+sin(4+5))*2.0,
+  t.test_rel(calc.eval_wstring(&vars),-exp(0.2+sin(4+5))*2.0,
              1.0e-12,"calc35");
 
   calc.verbose=0;
   calc.compile("-exp(0.2+sin(4+5))*α+rand",0);
   for(size_t i=0;i<10;i++) {
-    cout << calc.eval_char32(&vars) << endl;
+    cout << calc.eval_wstring(&vars) << endl;
   }
 
   calc_utf8<cpp_dec_float_50> calc_50;

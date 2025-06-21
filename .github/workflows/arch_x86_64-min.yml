@@ -1,0 +1,53 @@
+name: Arch min install
+
+on:
+  push:
+    branches: [ "main", "rc" ]
+  pull_request:
+    branches: [ "main", "rc" ]
+
+jobs:
+
+  arch-min:
+  
+    runs-on: ubuntu-24.04
+    
+    container:
+    
+      image: archlinux:latest
+      
+    steps:
+    
+      - name: install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm gsl readline boost hdf5 gcc autoconf automake libtool git curl ccache
+
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          ref: rc
+
+      - name: Set up autotools
+        run:
+          ./autogen.sh
+  
+      - name: Configure
+        run: |
+          export CC='ccache gcc'
+          export CXX='ccache g++'
+          export CCACHE_DIR=~/.ccache
+          export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -I/usr/include"
+          mkdir -p ${PWD}/build
+          ./configure --prefix=/usr --enable-shared --disable-static
+
+      - name: Build and install
+        run: |
+          make VERBOSE=1 blank-doc -j4 -O
+          make VERBOSE=1 -j4 -O
+          make VERBOSE=1 install -j4 -O
+
+      - name: Try acol
+        run: |
+          ls
+          ${PWD}/build/bin/acol -v
