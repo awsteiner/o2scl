@@ -21,7 +21,7 @@ jobs:
       - name: install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm gsl readline boost hdf5 gcc autoconf automake libtool git curl ccache
+          pacman -S --noconfirm make gsl readline boost hdf5 gcc autoconf automake libtool git curl ccache
 
       - name: Git checkout
         uses: actions/checkout@v4
