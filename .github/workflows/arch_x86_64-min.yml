@@ -37,7 +37,7 @@ jobs:
           export CC='ccache gcc'
           export CXX='ccache g++'
           export CCACHE_DIR=~/.ccache
-          export CXXFLAGS+="-O3 -DO2SCL_UBUNTU_HDF5 -I/usr/include"
+          export CXXFLAGS+="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_UBUNTU_HDF5 -I/usr/include"
           mkdir -p ${PWD}/build
           ./configure --prefix=/usr --enable-shared --disable-static
 

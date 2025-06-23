@@ -49,14 +49,14 @@ jobs:
     - name: Set up autotools scripts
       run:
         ./autogen.sh
-
+        
     - name: Configure
       run: |
         cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
         export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE -DO2SCL_OPENSUSE_I386"
-        export LDFLAGS+="-lgomp"
+        export LDFLAGS+="-lgomp -lquadmath"
         export CCACHE_DIR=~/.ccache
         ./configure --build=i386-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
 

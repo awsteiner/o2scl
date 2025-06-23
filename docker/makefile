@@ -99,9 +99,9 @@ $(CPU_TARGETS) : %.cpu :
 		--target working \
 		> $*.cpu.out 2>&1 
 
-jun_test: v0.931a2_u25.04_min
+june_test: v0.931a2_u25.04_min
 	sudo docker buildx build . \
-		--no-cache -f v0.931a2_u25.04_min \
+		-f v0.931a2_u25.04_min -t june_test \
 		--target working > jt.out 2>&1 &
 
 $(CUDA1_TARGETS) : %.cuda1 :
