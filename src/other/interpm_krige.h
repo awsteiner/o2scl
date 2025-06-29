@@ -883,9 +883,11 @@ namespace o2scl {
    
       // Check that the data is properly sized
       if (user_x.size1()!=n_pts || user_x.size2()!=n_in) {
-        std::cout << "Object user_x, function size1() and size2(): "
+        std::cout << "interpm_krige_optim::set_data(): "
+                  << "Object user_x, function size1() and size2(): "
                   << user_x.size1() << " " << user_x.size2() << std::endl;
-        std::cout << "n_points: " << this->n_points << " n_in: "
+        std::cout << "interpm_krige_optim::set_data(): "
+                  << "n_points: " << n_pts << " n_in: "
                   << n_in << std::endl;
         O2SCL_ERR2("Size of x not correct in ",
                    "interpm_krige_new::set_data().",
@@ -893,7 +895,8 @@ namespace o2scl {
       }
     
       if (user_y.size1()!=n_pts || user_y.size2()!=n_out) {
-        std::cout << "Object user_y, function size1() and size2(): "
+        std::cout << "interpm_krige_optim::set_data(): "
+                  << "Object user_y, function size1() and size2(): "
                   << user_y.size1() << " " << user_y.size2() << std::endl;
         O2SCL_ERR2("Size of y not correct in ",
                    "interpm_krige_new::set_data().",

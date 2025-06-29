@@ -32,6 +32,10 @@ using namespace o2scl;
 using namespace o2scl_cblas;
 using namespace o2scl_linalg;
 
+double ft(double x, double y) {
+  return 3.0-2.0*x*x+7.0*y+5.0*x*x*y*y;
+}
+
 int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(1);
@@ -219,10 +223,74 @@ int main(int argc, char *argv[]) {
   }
 
   if (true) {
+    typedef tensor2<> mat_x_t;
+    typedef const const_matrix_row_gen<tensor2<>> mat_x_row_t;
+    typedef tensor2<> mat_y_t;
+    typedef const matrix_column_gen<tensor2<>> mat_y_col_t;
+    
+    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<mcovar_funct_rbf_noise<
+      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
+                                  mat_x_row_t>);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(2);
+    
     interpm_krige_optim
-      <ubvector,tensor2<>,const const_matrix_row_gen<tensor2<>>,
-       tensor2<>,const matrix_column_gen<tensor2<>>,
+      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,
        tensor2<>,matrix_invert_cholesky_auto> iko_auto;
+
+    static const size_t N=100;
+    tensor2<> in, out;
+    in.resize(N,2);
+    out.resize(N,1);
+    
+    for(size_t i=0;i<N;i++) {
+      double ix=((double)i);
+      double x=3.0*sin(ix*ix);
+      double y=5.0*cos(pow(ix,4.0));
+      in.set(i,0,x);
+      in.set(i,1,y);
+      out.set(i,0,ft(x,y));
+    }
+    
+    iko_auto.verbose=1;
+    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
+      1.0,1.25,1.5,2.0,3.0,7.0,10.0};
+    vector<double> l10_list={-15,-13,-11,-9};
+    vector<vector<double> > ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+    
+    iko_auto.set_covar(vmfrn,param_lists);
+    iko_auto.rescale=true;
+    iko_auto.set_data(2,1,N,in,out);
+    cout << endl;
+        
+    gen_test_number<> gtn_x3;
+    gtn_x3.set_radix(1.9);
+    
+    for(size_t j=0;j<20;j++) {
+      ubvector point(2), pout(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_x3.gen();
+      
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko_auto.eval(point,pout);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << pout[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(pout[0],ft(point[0],point[1]),8.0,
+                   "optim, rescaled, eigen, max_lml");
+      }
+
+    }
+    cout << endl;
+    
   }
 
 #endif
