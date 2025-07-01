@@ -981,8 +981,10 @@ int nucleus_rmf::dirac(int ilevel) {
   double scale, xnorm=0.0, factor, x1, x2, yf1, yf2, yg1, yg2;
   
   ubvector g(grid_size), v(grid_size), f(grid_size), xz(6);
-  
-  if ((*levp)[ilevel].energy>0) {
+
+  // AWS, 6/30/25, added ilevel>0 condition to fix problems
+  // when ilevel=0
+  if (ilevel>0 && (*levp)[ilevel].energy>0) {
     (*levp)[ilevel].energy=(*levp)[ilevel-1].eigen;
   }      
   (*levp)[ilevel].eigen=(*levp)[ilevel].energy;

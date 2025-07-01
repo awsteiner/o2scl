@@ -54,10 +54,6 @@ jobs:
     - name: Install apt packages (first pass)
       run: apt-get -y update && apt-get -y install g++ make autoconf automake libtool git curl cmake python3 libz-dev libsz2 imagemagick python3-pip
 
-#    - name: Install HDF5
-#      run: |
-#        curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.6/hdf5-1.14.4-6.tar.gz" -o hdf5-1.14.4-6.tar.gz && tar xvzf hdf5-1.14.4-6.tar.gz && cd hdf5-1.14.4-6 && ./configure --with-zlib --with-szlib --prefix=/home/runner/hdf5 && make && make install
-
     - name: Install python packages
       run: |
 #        pip install --break-system-packages numpy==2.0.2 

@@ -14,8 +14,8 @@ jobs:
     
     container:
     
-      image: archlinux:latest
-      
+      image: awsteiner/foundation:arch
+
     steps:
     
       - name: install dependencies
@@ -50,4 +50,4 @@ jobs:
       - name: Try acol
         run: |
           ls
-          ${PWD}/build/bin/acol -v
+          acol -v

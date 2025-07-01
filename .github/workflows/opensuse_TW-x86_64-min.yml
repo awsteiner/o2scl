@@ -12,7 +12,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: opensuse/tumbleweed
+      image: awsteiner/foundation:opensuse
 
     steps:
     
@@ -43,9 +43,6 @@ jobs:
         restore-keys: |
           cache-oSTW-x86_64-fast-test-nopy
 
-    - name: Install dependencies
-      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel boost-devel libboost_locale-devel libtool make pkgconfig python3 readline-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
-
     - name: Set up autotools
       run:
         ./autogen.sh
@@ -55,7 +52,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
-        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE"
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER"
         export LDFLAGS+="-lgomp -lquadmath"
         export CCACHE_DIR=~/.ccache
         ./configure --build=x86_64-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
