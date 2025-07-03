@@ -12,17 +12,6 @@ docker_clean:
 	-sudo docker rmi \
 	`sudo docker images --all | grep -i -v container | awk '{print $$3}'`
 
-docker_show:
-	@echo "Containers:"
-	- @sudo docker ps --all
-	@echo " "
-	@echo "Images:"
-	- sudo docker images --all
-	@echo " "
-	@echo "System:"
-	- sudo docker system df
-	@echo " "
-
 docker_make_cache:
 	sudo docker create -v /mnt/ccache:/ccache --name ccache debian
 
@@ -41,172 +30,69 @@ docker_clean2:
 	- sudo docker buildx prune -f
 	- sudo docker system df
 
-# ----------------------------------------------
+# ----------------------------------------------------------------------
 
-VERSIONS := 0.930 0.931a1 0.931a2
+# Nicknames
+NICKS := ost_min ost_plus ost_py u24.04_py
+# Dockerfiles
+DFILE := ost_min ost_plus ost_py u24.04_py
 
-OSS := u24.04 arch ot
+# Rule template
+define RULE_tlate
 
-BTYPES := min py
+# CPU-only builds
 
-TEST_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).test)))
-
-CUDA1_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).cuda1)))
-
-CUDA2_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).cuda2)))
-
-CPU_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).cpu)))
-
-MP_CUDA_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).mp.cuda)))
-
-CUDA_TEST1_TARGETS := $(foreach vvar, $(VERSIONS), \
-$(foreach ovar, $(OSS), \
-$(foreach bvar, $(BTYPES), \
-v$(vvar)_$(ovar)_$(bvar).cuda.test1)))
-
-DOCKERFILES := $(shell ls v* | grep -v req)
-
-dfl:
-	@echo $(DOCKERFILES)
-
-list:
-	@echo $(TEST_TARGETS)
-
-$(TEST_TARGETS) : %.test :
-	@echo "test"
-	@echo $@
-	@echo $*
-
-$(CPU_TARGETS) : %.cpu :
+$(1).nc: empty
 	sudo docker buildx build . \
-		--build-arg BASE=awsteiner/foundation:tf_2.18_torch_2.7 \
-		--no-cache -f $* -t awsteiner/o2scl:$* \
-		--target working \
-		> $*.cpu.out 2>&1 
-
-june_test: v0.931a2_u25.04_min
-	sudo docker buildx build . \
-		-f v0.931a2_u25.04_min -t june_test \
-		--target working > jt.out 2>&1 &
-
-$(CUDA1_TARGETS) : %.cuda1 :
-	sudo docker buildx build . \
-		--build-arg \
-		BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
-		--build-arg CONFIG=--enable-cuda \
-		-f $* -t awsteiner/o2scl:$*_cuda1 \
-		--target working \
-		> $*.cuda1.out 2>&1 
-
-$(CUDA2_TARGETS) : %.cuda2 :
-	sudo docker buildx build . \
-		--build-arg \
-		BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
-		--build-arg CONFIG=--enable-cuda \
-		-f $* -t awsteiner/o2scl:$*_cuda2 \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
 		--no-cache \
-		--target working \
-		> $*.cuda2.out 2>&1 
+		--target working 2>&1 | tee $(1).out &
 
-$(MP_CUDA_TARGETS) : %.mp.cuda :
+$(1).build: empty
 	sudo docker buildx build . \
-		--build-arg BASE=nvidia/cuda:12.6.1-devel-ubuntu24.04 \
-		--build-arg CONFIG=--enable-multip \
-		-f $* -t awsteiner/o2scl:$*_cuda \
-		--target working \
-		> $*.cuda.out 2>&1 
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		--target working 2>&1 | tee $(1).out &
 
-$(CUDA_TEST1_TARGETS) : %.cuda.test1 :
-	sudo docker run awsteiner/o2scl:$*_cuda --gpus all \
-		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
-		> test1_$*.out 2>&1 
+$(1).check: empty
+	sudo docker run --gpus all --rm \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh" \
+		| tee $(1).check &
 
-tt2.build:
+$(1).run:
+	sudo docker run --gpus all -it --rm \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))
+
+$(1).push:
+	sudo docker push \
+		awsteiner/o2scl:$$(word $(2), $(DFILE))
+
+# CUDA builds
+
+$(1).cuda1:
 	sudo docker buildx build . \
-		-f tf_2.18_torch_2.7 \
-		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 \
-		--target working
+		--build-arg \
+	BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
+		--build-arg CONFIG=--enable-cuda \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		--target working 2>&1 | tee $(1).out &
 
-tt2.run:
-	sudo docker run --gpus all \
-		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 \
-		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh"
-
-tt2.runb:
-	sudo docker run -it --gpus all \
-		-t awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7 
-
-tt.build:
+$(1).cuda2:
 	sudo docker buildx build . \
-		-f cuda_12.6_tf_2.18_torch_2.7 \
-		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7 \
-		--target working
+		--build-arg \
+	BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
+		--build-arg CONFIG=--enable-cuda \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		--target working 2>&1 | tee $(1).out &
 
-tt.run:
-	sudo docker run --gpus all \
-		-t awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7 \
-		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh"
+endef
 
-torch_2.6.out:
-	sudo docker buildx build . \
-		-f torch_2.6 -t awsteiner/foundation:torch_2.6 \
-		--target working
+# Loop over the indices of the targets
+INDEX := $(shell seq 1 $(words $(NICKS)))
+$(foreach i,$(INDEX),$(eval $(call RULE_tlate,$(word $(i),$(NICKS)),$(i))))
 
-# $(TARGETS) : %.build.cuda : 
-# 	@echo $@
-# 	@echo $*
-
-# $(TARGETS) : %.build : 
-# 	@echo $@
-# 	@echo $*
-
-# %.build:
-# 	sudo docker buildx build . \
-# 		-f $* -t awsteiner/o2scl:$* \
-# 		> $*.out 2>&1 
-
-# %.test1:
-# 	sudo docker run awsteiner/o2scl:$* sh -c \
-# 		"cd /opt/o2scl && make check && make o2scl-examples" \
-# 		> test1_$*.out 2>&1 
-
-# %.test2:
-# 	sudo docker run awsteiner/o2scl:$* sh -c \
-# 		"cd /opt/o2sclpy_mp && make testq" \
-# 		> test2_$*.out 2>&1 
-
-# %.push:
-# 	sudo docker push awsteiner/o2scl:$*
-
-# %.pull:
-# 	sudo docker pull awsteiner/o2scl:$*
-
-# %.all: %.build %.test1 %.test2
-
-# ----------------------------------------------
-# cuda_test3
-
-build_ct3:
-	sudo docker buildx build -t cuda_test3 -f cuda_test3 .
-
-test_ct3:
-	sudo docker run --rm --gpus all cuda_test3
-
-run_ct3:
-	sudo docker run --rm -it --gpus all cuda_test3 /bin/bash
-
+empty:

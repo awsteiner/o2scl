@@ -47,10 +47,6 @@ jobs:
         restore-keys: |
           cache-ubuntu-x86_64-py
 
-# Since we're in a docker container we don't need sudo. Most of these
-# might be in the docker container already, but I'm not sure which is
-# which
-
     - name: Install apt packages (first pass)
       run: apt-get -y update && apt-get -y install g++ make autoconf automake libtool git curl cmake python3 libz-dev libsz2 imagemagick python3-pip
 

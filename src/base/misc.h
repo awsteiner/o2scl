@@ -1007,8 +1007,8 @@ namespace o2scl {
     return;
   }
 
-  /** \brief Count the number of digits which two floating point numbers
-      share
+  /** \brief Count the number of digits which two
+      floating point numbers share
 
       This function returns the number of digits which two
       floating point numbers share, even if they have different

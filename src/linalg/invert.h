@@ -222,11 +222,10 @@ namespace o2scl_linalg {
 
 #if defined (O2SCL_COND_FLAG) || defined (DOXYGEN)
 
-namespace o2scl_linalg {
-
 #if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
 
 #include <armadillo>
+namespace o2scl_linalg {
   
   /** \brief Armadillo inverse 
 

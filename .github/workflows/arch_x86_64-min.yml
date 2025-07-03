@@ -1,4 +1,4 @@
-name: Arch min install
+name: Arch x86_64 minimal install
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
 
 jobs:
 
-  arch-min:
+  # Note that identifiers are not allowed to contain "."'s. 
+  arch-x86_64-min:
   
     runs-on: ubuntu-24.04
     
@@ -21,7 +22,9 @@ jobs:
       - name: install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm make gsl readline boost hdf5 gcc autoconf automake libtool git curl ccache
+          pacman -S --noconfirm make gsl unzip readline boost hdf5 gcc autoconf automake libtool ccache eigen lapack arpack superlu fftw openblas
+
+# python-matplotlib python-scikit-learn python-scipy python-ipykernel python-distro python-pytest
 
       - name: Git checkout
         uses: actions/checkout@v4
