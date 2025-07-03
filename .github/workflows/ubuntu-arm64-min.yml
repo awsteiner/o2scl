@@ -1,5 +1,5 @@
 ---
-name: Ubuntu 24.04 AMD64 minimal install
+name: Ubuntu 24.04 Arm64 minimal install
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 jobs:
 
   # Note that identifiers are not allowed to contain "."'s. 
-  ubuntu-u2404-amd64-min:
+  ubuntu-u2404-arm64-min:
 
     runs-on: ubuntu-24.04-arm
 
@@ -39,9 +39,9 @@ jobs:
       with:
         path: ~/.ccache
         # Necessary to cache the ccache data on every run
-        key: cache-ubuntu-amd64-min-${{ github.run_id }}
+        key: cache-ubuntu-arm64-min-${{ github.run_id }}
         restore-keys: |
-          cache-ubuntu-amd64-min
+          cache-ubuntu-arm64-min
 
     - name: Install dependencies
       run: sudo apt-get -y update && sudo apt-get -y install ccache g++ gzip libgsl-dev libhdf5-dev libboost-all-dev libreadline-dev make tar
