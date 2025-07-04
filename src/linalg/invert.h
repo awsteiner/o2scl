@@ -459,10 +459,10 @@ namespace o2scl_linalg {
     
   };
   
-  // End of #if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
-#endif
-  
 }
+
+// End of #if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
+#endif
   
 // Else statement associated with #if defined (O2SCL_COND_FLAG) ...
 #else
