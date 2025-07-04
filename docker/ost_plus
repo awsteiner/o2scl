@@ -1,5 +1,5 @@
 FROM opensuse/tumbleweed AS working
-LABEL maintainer="Andrew W. Steiner <awsteiner0@protonmail.com>"
+LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 
 # -----------------------------------------------------------------
 # Base apt libraries for OpenSUSE Tumbleweed
@@ -26,7 +26,6 @@ WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure --enable-fftw --enable-eigen --enable-arma --enable-openmp --enable-ncurses
-FROM working
 RUN make blank-doc && make && make install
 
 # -----------------------------------------------------------------
@@ -34,10 +33,5 @@ RUN make blank-doc && make && make install
 
 WORKDIR /
 ENV LD_LIBRARY_PATH=/usr/local/lib
-RUN acol -v
-
-
-
-
-
-
+RUN acol -h -v
+FROM working

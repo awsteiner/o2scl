@@ -11,8 +11,9 @@ jobs:
   opensuse-TW-x86_64-min:
 
     runs-on: ubuntu-latest
+    
     container:
-      image: awsteiner/foundation:opensuse
+      image: opensuse/tumbleweed
 
     steps:
     
@@ -43,27 +44,30 @@ jobs:
         restore-keys: |
           cache-oSTW-x86_64-fast-test-nopy
 
-    - name: Set up autotools
+    - name: Install dependencies
+      run: zypper --non-interactive install --no-recommends ccache gawk gcc-c++ hdf5-devel libtool make pkgconfig python3 readline-devel boost-devel libboost_locale-devel "pkgconfig(armadillo)" "pkgconfig(eigen3)" "pkgconfig(fftw3)" "pkgconfig(gsl)" "pkgconfig(mpfr)" "pkgconfig(ncurses)"
+
+    - name: Set up autotools scripts
       run:
         ./autogen.sh
-
+        
     - name: Configure
       run: |
         cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
-        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER"
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE -DO2SCL_OPENSUSE_I386"
         export LDFLAGS+="-lgomp -lquadmath"
         export CCACHE_DIR=~/.ccache
-        ./configure --build=x86_64-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
+        ./configure --build=i386-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python
 
     - name: Install
       run: |
         cd ${GITHUB_WORKSPACE}
-        make VERBOSE=1 sinstall -j4 -O
-        make VERBOSE=1 -C data install-data
+        make VERBOSE=1 -j4 -O
+        make VERBOSE=1 install -j4 -O
 
     - name: Check
       run: |
         cd ${GITHUB_WORKSPACE}
-        make VERBOSE=1 o2scl-test -j4 -O -k
+        make VERBOSE=1 o2scl-test -j4 -O

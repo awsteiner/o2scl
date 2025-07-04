@@ -1,5 +1,4 @@
-ARG BASE=awsteiner/foundation:u24.04_tf_2.18_torch_2.7
-FROM ${BASE} AS working
+FROM ubuntu:24.04 AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version of O2scl \
 with python, eigen, armadillo, fftw, OpenMP, and \
@@ -27,7 +26,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update && apt-get \
   -y install g++ make autoconf automake libtool git cmake \
-  libz-dev libsz2 imagemagick && apt-get clean 
+  libz-dev libsz2 && apt-get clean 
 
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages, second pass
@@ -39,19 +38,9 @@ RUN apt-get -y update && apt-get \
 RUN apt-get -y update && apt-get \
   -y install libgsl-dev libreadline-dev libboost-all-dev \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
-  libfftw3-dev texlive dvipng texlive-latex-extra libarmadillo-dev \
-  cm-super libcairo2-dev zlib1g-dev libeigen3-dev 
+  libfftw3-dev texlive libarmadillo-dev \
+  libeigen3-dev libhdf5-dev
 
-# ───────────────────────────────────────────────────────────────────
-# Install Python packages
-
-WORKDIR /opt
-RUN pip3 install --break-system-packages pytest==8.3.4 \
-  pillow==11.0.0 scipy==1.14.1 matplotlib==3.10.0 yt==4.4.0 \
-  scikit-learn==1.6.0
-RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
-  pipdeptree==2.24.0
-  
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
@@ -61,6 +50,7 @@ RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
 #RUN tar xzf o2scl-0.931.tar.gz
 #WORKDIR /opt/o2scl-0.931
 
+WORKDIR /opt
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
@@ -70,30 +60,17 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 # the build argument.
 ENV CONFIG_VAR=${CONFIG}
 
-RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static $CONFIG_VAR
+RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12 -I/usr/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-armadillo $CONFIG_VAR
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
+ENV LD_LIBRARY_PATH="/usr/local/lib"
 
 # ───────────────────────────────────────────────────────────────────
-# Install o2sclpy via pip
-
-RUN git clone https://github.com/awsteiner/o2sclpy
-WORKDIR /opt/o2sclpy
-RUN git fetch && git pull && git checkout rc && \
-  pip3 install --break-system-packages . 
-
-# ───────────────────────────────────────────────────────────────────
-# To ensure o2graph loads OpenMP appropriately
-
-ENV O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
-
-# ───────────────────────────────────────────────────────────────────
-# Run acol and o2graph
+# Run acol
 
 WORKDIR /
-RUN acol -h -v && o2graph -h -v
+RUN acol -h -v 
 
 # ───────────────────────────────────────────────────────────────────
 # Run tests
@@ -103,4 +80,3 @@ RUN acol -h -v && o2graph -h -v
 #WORKDIR /opt/o2sclpy
 #RUN make testq
 
-FROM working

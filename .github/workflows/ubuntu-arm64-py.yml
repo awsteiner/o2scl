@@ -48,7 +48,7 @@ jobs:
 
     - name: Install HDF5
       run: |
-        curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-6.tar.gz" -o hdf5-1.14.4-6.tar.gz && tar xvzf hdf5-1.14.4-6.tar.gz && cd hdf5-1.14.4-6 && ./configure --with-zlib --with-szlib --prefix=/home/runner/hdf5 && make && make install
+        curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.6/hdf5-1.14.4-6.tar.gz" -o hdf5-1.14.4-6.tar.gz && tar xvzf hdf5-1.14.4-6.tar.gz && cd hdf5-1.14.4-6 && ./configure --with-zlib --with-szlib --prefix=/home/runner/hdf5 && make && make install
 
     - name: Install python packages
       run: |

@@ -33,9 +33,11 @@ docker_clean2:
 # ----------------------------------------------------------------------
 
 # Nicknames
-NICKS := ost_min ost_plus ost_py u24.04_py
+NICKS := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
+	arch_min
 # Dockerfiles
-DFILE := ost_min ost_plus ost_py u24.04_py
+DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
+	arch_min
 
 # Rule template
 define RULE_tlate
@@ -47,19 +49,25 @@ $(1).nc: empty
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
 		--no-cache \
-		--target working 2>&1 | tee $(1).out &
+		--target working 2>&1 | tee out/$(1).out &
 
 $(1).build: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee $(1).out &
+		--target working 2>&1 | tee out/$(1).out &
 
 $(1).check: empty
 	sudo docker run --gpus all --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		sh -c "cd /opt; ./tf_check.sh; ./torch_check.sh" \
-		| tee $(1).check &
+		sh -c "cd /opt/o2scl; make -j 10 check o2scl-examples" \
+		| tee out/$(1).check &
+
+$(1).pycheck: empty
+	sudo docker run --gpus all --rm \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		sh -c "cd /opt/o2sclpy; make testq" \
+		| tee out/$(1).check &
 
 $(1).run:
 	sudo docker run --gpus all -it --rm \
@@ -78,7 +86,7 @@ $(1).cuda1:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee $(1).out &
+		--target working 2>&1 | tee out/$(1).cuda1 &
 
 $(1).cuda2:
 	sudo docker buildx build . \
@@ -87,7 +95,7 @@ $(1).cuda2:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee $(1).out &
+		--target working 2>&1 | tee out/$(1).cuda2 &
 
 endef
 

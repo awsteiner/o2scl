@@ -61,7 +61,6 @@ int main(void) {
 
   nucmass_ame ame;
   ame.load("16",true);
-  //o2scl_hdf::ame_load(ame,"16",true);
 
   // ---------------------------------------------------------------
   // Instantiate and load all of the nuclear mass objects. Some of
@@ -78,7 +77,6 @@ int main(void) {
   o2scl_hdf::hfb_sp_load(hfb27,27);
   nucmass_ame ame03;
   ame03.load("03",true);
-  //o2scl_hdf::ame_load(ame03,"03",true);
   nucmass_dz_table dz;
   nucmass_ktuy ktuy05;
   ktuy05.load("05");
