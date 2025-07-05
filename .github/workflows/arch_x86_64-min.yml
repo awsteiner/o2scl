@@ -15,42 +15,11 @@ jobs:
     
     container:
     
-      image: awsteiner/foundation:arch
+      image: awsteiner/o2scl:arch_min
 
     steps:
-    
-      - name: install dependencies
-        run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm make gsl unzip readline boost hdf5 gcc autoconf automake libtool ccache eigen lapack arpack superlu fftw openblas
 
-# python-matplotlib python-scikit-learn python-scipy python-ipykernel python-distro python-pytest
-
-      - name: Git checkout
-        uses: actions/checkout@v4
-        with:
-          ref: rc
-
-      - name: Set up autotools
-        run:
-          ./autogen.sh
-  
-      - name: Configure
-        run: |
-          export CC='ccache gcc'
-          export CXX='ccache g++'
-          export CCACHE_DIR=~/.ccache
-          export CXXFLAGS+="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_UBUNTU_HDF5 -I/usr/include"
-          mkdir -p ${PWD}/build
-          ./configure --prefix=/usr --enable-shared --disable-static
-
-      - name: Build and install
-        run: |
-          make VERBOSE=1 blank-doc -j4 -O
-          make VERBOSE=1 -j4 -O
-          make VERBOSE=1 install -j4 -O
-
-      - name: Try acol
-        run: |
-          ls
-          acol -v
+    - name: Check
+      run: |
+        cd /opt/o2scl
+        make VERBOSE=1 check o2scl-examples -j4 -O

@@ -15,7 +15,7 @@ jobs:
 
     container:
     
-      image: awsteiner/foundation:tf_2.18_torch_2.7
+      image: awsteiner/foundation:u24.04_tf_2.18_torch_2.7
       
     steps:
     
@@ -70,7 +70,7 @@ jobs:
 #        ls -lR /home/runner/hdf5
 
     - name: Set up autotools scripts
-      run:
+      run: |
         ./autogen.sh
 
     - name: Configure
