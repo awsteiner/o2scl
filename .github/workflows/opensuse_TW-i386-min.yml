@@ -1,9 +1,6 @@
 ---
 name: openSUSE TW i386 minimal install
 
-# AWS, 1/14/25: This is disabled until I can figure out what's
-# going on with HDF5 errors
-
 on:
   push:
     branches: [ "main", "rc" ]
@@ -55,7 +52,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}
         export CC='ccache gcc'
         export CXX='ccache g++'
-        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_OPENSUSE -DO2SCL_OPENSUSE_I386"
+        export CXXFLAGS+="-DO2SCL_PLAIN_HDF5_HEADER"
         export LDFLAGS+="-lgomp -lquadmath"
         export CCACHE_DIR=~/.ccache
         ./configure --build=i386-suse-linux --enable-shared --disable-static --enable-armadillo --enable-eigen --enable-fftw --enable-openmp --enable-ncurses --disable-pugixml --disable-python

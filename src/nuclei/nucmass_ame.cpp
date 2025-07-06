@@ -605,6 +605,8 @@ void nucmass_ame::load(std::string name, bool exp_only,
   std::string ext_data;
   if (ed) {
     ext_data=ed;
+  } else {
+    ext_data=".";
   }
     
   std::string prefix=o2scl::o2scl_settings.get_data_dir()+"/nucmass";

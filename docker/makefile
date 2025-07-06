@@ -34,10 +34,10 @@ docker_clean2:
 
 # Nicknames
 NICKS := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
-	arch_min
+	arch_min u25.04_min u25.04_plus
 # Dockerfiles
 DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
-	arch_min
+	arch_min u25.04_min u25.04_plus
 
 # Rule template
 define RULE_tlate
