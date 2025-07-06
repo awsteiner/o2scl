@@ -63,7 +63,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifndef O2SCL_OPENSUSE_I386
+  //#ifndef O2SCL_OPENSUSE_I386
   
   inte_qag_gsl<funct> it1;
 
@@ -177,7 +177,7 @@ int main(void) {
 	
   gsl_integration_workspace_free(work);
 
-#endif
+  //#endif
   
   t.report();
   return 0;

@@ -22,6 +22,7 @@
 */
 #include <o2scl/test_mgr.h>
 #include <o2scl/hdf_file.h>
+#include <o2scl/set_multip.h>
 
 using namespace std;
 using namespace o2scl;
@@ -90,12 +91,12 @@ int main(void) {
 
     ts.clear();
 
-#ifdef O2SCL_OPENSUSE_I386    
+    //#ifdef O2SCL_OPENSUSE_I386    
     // This additional system call, and the "here"
     // output just below, is to debug issues with
     // i386 opensuse HDF5 output
-    int xret=system("h5dump hdf_file_tenstr.o2");
-#endif
+    //int xret=system("h5dump hdf_file_tenstr.o2");
+    //#endif
     
     hf.open("hdf_file_tenstr.o2");
     hf.gets_ten_copy("ts",ts);
@@ -155,20 +156,26 @@ int main(void) {
       hf.close_group(group_id);
 
       double dx=2.0;
-      boost::multiprecision::number<
-        boost::multiprecision::cpp_dec_float<35> > d35("2.0");
       std::vector<double> dxa(2);
       dxa[0]=3.0;
       dxa[1]=1.0;
+#ifdef O2SCL_SET_MULTIP
+      boost::multiprecision::number<
+        boost::multiprecision::cpp_dec_float<35> > d35("2.0");
       std::vector<boost::multiprecision::number<
         boost::multiprecision::cpp_dec_float<35> > > d35a(2);
       d35a[0]=3;
       d35a[1]=1;
+#endif      
       
       hf.setfp_copy("d",dx);
+#ifdef O2SCL_SET_MULTIP
       hf.setfp_copy("d35",d35);
+#endif
       hf.setfp_vec_copy("da",dxa);
+#ifdef O2SCL_SET_MULTIP
       hf.setfp_vec_copy("d35a",d35a);
+#endif
     
       hf.sets("tests",s);
       hf.sets_fixed("testsb",sb);
@@ -183,12 +190,14 @@ int main(void) {
       hf.close();
 
       dx=3.0;
-      d35=boost::multiprecision::number<
-        boost::multiprecision::cpp_dec_float<35> >("3.0");
       dxa[0]=4.0;
       dxa[1]=5.0;
+#ifdef O2SCL_SET_MULTIP
+      d35=boost::multiprecision::number<
+        boost::multiprecision::cpp_dec_float<35> >("3.0");
       d35a[0]=4;
       d35a[1]=5;
+#endif
 
       // Re-open the file, get the scalar values
     
@@ -198,15 +207,16 @@ int main(void) {
       hf.get_szt("testu",u2);
       hf.getf("testf",f2);
 
-#ifndef O2SCL_OPENSUSE_I386
       hf.getfp_copy("d",dx);
-      hf.getfp_copy("d35",d35);
       t.test_rel(dx,2.0,1.0e-12,"test fp 1");
-      t.test_rel(static_cast<double>(d35),2.0,1.0e-12,"test fp 2");
       hf.getfp_vec_copy("da",dxa);
-      hf.getfp_vec_copy("d35a",d35a);
       t.test_rel(dxa[0],3.0,1.0e-12,"test fpa 1");
       t.test_rel(dxa[1],1.0,1.0e-12,"test fpa 2");
+      
+#ifndef O2SCL_SET_MULTIP
+      hf.getfp_copy("d35",d35);
+      t.test_rel(static_cast<double>(d35),2.0,1.0e-12,"test fp 2");
+      hf.getfp_vec_copy("d35a",d35a);
       t.test_rel(static_cast<double>(d35a[0]),3.0,1.0e-12,"test fpa 3");
       t.test_rel(static_cast<double>(d35a[1]),1.0,1.0e-12,"test fpa 4");
 #endif

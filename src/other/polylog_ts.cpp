@@ -62,7 +62,7 @@ int main(void) {
   
 #ifdef O2SCL_SET_MULTIP
   
-#ifndef O2SCL_OPENSUSE_I386
+  //#ifndef O2SCL_OPENSUSE_I386
   
   // Compare polylog values with hard-coded values
   polylog<> p;
@@ -234,7 +234,7 @@ int main(void) {
     }
   }
 
-#endif
+  //#endif
   
 #endif
   

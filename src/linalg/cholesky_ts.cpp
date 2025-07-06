@@ -43,7 +43,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(2);
 
-#ifndef O2SCL_OPENSUSE_I386
+  //#ifndef O2SCL_OPENSUSE_I386
   
   cout.setf(ios::scientific);
   
@@ -154,7 +154,7 @@ int main(void) {
 
   }
 
-#endif
+  //#endif
   
   t.report();
   return 0;

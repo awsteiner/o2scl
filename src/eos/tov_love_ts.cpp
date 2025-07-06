@@ -78,7 +78,6 @@ int main(void) {
   double Ibar=I/pow(schwarz_km/2.0,2.0)/pow(1.4,3.0);
   cout << "Dimensionless moment of inertia: "
        << Ibar << endl;
-    
 
   // Tidal deformability
   tov_love tl;

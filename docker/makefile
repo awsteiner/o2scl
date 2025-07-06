@@ -38,6 +38,8 @@ NICKS := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
 # Dockerfiles
 DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
 	arch_min u25.04_min u25.04_plus
+# Architectures
+ARCHS := amd64 arm64 i386
 
 # Rule template
 define RULE_tlate
@@ -77,6 +79,42 @@ $(1).push:
 	sudo docker push \
 		awsteiner/o2scl:$$(word $(2), $(DFILE))
 
+# i386 targets
+
+$(1)_i386: empty
+	sudo docker buildx build . \
+		--platform linux/386 \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386 \
+		--target working 2>&1 | tee out/$(1).i386 &
+
+$(1)_i386.run:
+	sudo docker run --gpus all -it --rm \
+		--platform linux/386 \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386
+
+$(1)_i386.push:
+	sudo docker push \
+		awsteiner/o2scl:$$(word $(2), $(DFILE))_i386
+
+# arm64 targets
+
+$(1)_arm64: empty
+	sudo docker buildx build . \
+		--platform linux/386 \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64 \
+		--target working 2>&1 | tee out/$(1).arm64 &
+
+$(1)_arm64.run:
+	sudo docker run --gpus all -it --rm \
+		--platform linux/386 \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
+
+$(1)_arm64.push:
+	sudo docker push \
+		awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
+
 # CUDA builds
 
 $(1).cuda1:
@@ -101,6 +139,8 @@ endef
 
 # Loop over the indices of the targets
 INDEX := $(shell seq 1 $(words $(NICKS)))
-$(foreach i,$(INDEX),$(eval $(call RULE_tlate,$(word $(i),$(NICKS)),$(i))))
+
+$(foreach i,$(INDEX),$(eval $(call RULE_tlate,\
+ $(word $(i),$(NICKS)),$(i))))
 
 empty:

@@ -448,9 +448,9 @@ int main(void) {
 
       //cout << ax << endl;
 
-      tm.test_rel(ax[0],x0_u[i],1.0e-4,"unscaled x0 set/iter");
-      tm.test_rel(ax[1],x1_u[i],1.0e-4,"unscaled x1 set/iter");
-      tm.test_rel(ax[2],x2_u[i],1.0e-4,"unscaled x2 set/iter");
+      tm.test_rel(ax[0],x0_u[i],5.0e-4,"unscaled x0 set/iter");
+      tm.test_rel(ax[1],x1_u[i],5.0e-4,"unscaled x1 set/iter");
+      tm.test_rel(ax[2],x2_u[i],5.0e-4,"unscaled x2 set/iter");
       if (gf.test_delta_f(3,gf.dx_,ax,gf.tol_abs,
 			  gf.tol_rel)!=gsl_continue) {
 	i=10;

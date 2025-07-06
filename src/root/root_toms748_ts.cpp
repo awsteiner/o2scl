@@ -52,7 +52,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
 
-#ifndef O2SCL_OPENSUSE_I386
+  //#ifndef O2SCL_OPENSUSE_I386
   
   double a, b;
   funct f=gfn;
@@ -85,7 +85,7 @@ int main(void) {
 
 #endif
   
-#endif
+  //#endif
   
   t.report();
   return 0;

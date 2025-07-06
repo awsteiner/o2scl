@@ -66,4 +66,8 @@ jobs:
     - name: Check
       run: |
         cd ${GITHUB_WORKSPACE}
+        cd src/base
+        make interp_krige_ts
+        ./interp_krige_ts
+        cd ../..
         make VERBOSE=1 o2scl-test -j4 -O

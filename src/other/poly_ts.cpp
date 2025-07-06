@@ -25,6 +25,7 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/misc.h>
 #include <o2scl/poly.h>
+#include <o2scl/set_multip.h>
 
 using namespace std;
 using namespace o2scl;
@@ -33,7 +34,7 @@ using namespace o2scl;
 
 typedef boost::multiprecision::cpp_complex_50 cpp_complex_50;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
 
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/multiprecision/cpp_bin_float.hpp>
@@ -582,7 +583,7 @@ int main(void) {
   cout.setf(ios::left | ios::scientific);
   cout.precision(4);
 
-#ifndef O2SCL_OPENSUSE_I386
+  //#ifndef O2SCL_OPENSUSE_I386
   
   // Generic polynomial solvers
   poly_real_coeff_gsl<> p3;
@@ -597,7 +598,7 @@ int main(void) {
   cubic_real_coeff_gsl c4;
   cubic_real_coeff_gsl2<> c2;
   cubic_complex_std<> c3;
-#ifdef O2SCL_MULTIP  
+#ifdef O2SCL_SET_MULTIP  
   cubic_real_coeff_multip c5;
   //c5.verbose=1;
 #endif
@@ -607,7 +608,7 @@ int main(void) {
   quartic_real_std<> q4;
   quartic_complex_std<> q5;
 
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   quadratic_real_coeff_gsl2<long double,std::complex<long double> > t1_ld;
   quadratic_real_coeff_gsl2<cpp_bin_float_50,cpp_complex_50> t1_cdf50;
@@ -655,7 +656,7 @@ int main(void) {
   test_quadratic_real_coeff(&p3,"poly_rc_gsl",1.0,
                             1.0e-14,1.0e-14,1.0e-12,1.0e-12,false);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quadratic_real_coeff<long double>(&t1_ld,"quad_rc_gsl2_ld",1.0,
                                          1.0e-18,1.0e-18,1.0e-16,1.0e-16,true);
@@ -685,7 +686,7 @@ int main(void) {
   test_quadratic_real_coeff(&p3,"poly_rc_gsl",1.0e-5,
                             1.0e-14,1.0e-14,1.0e-13,1.0e-12,false);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quadratic_real_coeff<long double>(&t1_ld,"quad_rc_gsl2_ld",1.0e-5,
                                          1.0e-18,1.0e-17,1.0e-16,1.0e-16,true);
@@ -708,7 +709,7 @@ int main(void) {
   test_quadratic_complex(&t2,"quad_c_std",
 			 1.0e-14,1.0e-14,1.0e-13,1.0e-3);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quadratic_complex<long double>(&t2_ld,"quad_c_std_ld",
                                       1.0e-17,1.0e-17,1.0e-17,1.0e-16);
@@ -729,7 +730,7 @@ int main(void) {
                         1.0e-14,1.0e-14,1.0e-13,1.0e-12,0);
   test_cubic_real_coeff(&c2,"cubic_rc_gsl2",1.0,
 			1.0e-14,1.0e-14,1.0e-13,1.0e-12,9);
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0,
                         1.0e-14,1.0e-14,1.0e-14,1.0e-12,9);
 #endif
@@ -738,7 +739,7 @@ int main(void) {
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0,
 			1.0e-13,1.0e-13,1.0e-13,1.0e-12,0);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c1_ld,"cubic_rc_cern_ld",
@@ -746,12 +747,12 @@ int main(void) {
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c2_ld,"cubic_rc_gsl2_ld",
      1.0,1.0e-17,1.0e-17,1.0e-16,1.0e-15,43);
-#ifndef O2SCL_OPENSUSE
+  //#ifndef O2SCL_OPENSUSE
   test_cubic_real_coeff<long double,std::complex<long double>,
                         cubic_real_coeff_multip>
     (&c5,"cubic_rc_mp_ld",
      1.0,1.0e-19,1.0e-17,1.0e-16,1.0e-15,9);
-#endif
+  //#endif
   test_cubic_real_coeff<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
      1.0,1.0e-13,1.0e-13,1.0e-9,1.0e-9,11910);
@@ -779,7 +780,7 @@ int main(void) {
 			1.0e-9,1.0e-8,1.0e-7,1.0e-6,0);
   test_cubic_real_coeff(&c2,"cubic_rc_gsl2",1.0e-3,
 			1.0e-9,1.0e-8,1.0e-7,1.0e-6,33);
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   test_cubic_real_coeff(&c5,"cubic_rc_mp",1.0e-3,
 			1.0e-14,1.0e-8,1.0e-14,1.0e-6,1);
 #endif
@@ -788,7 +789,7 @@ int main(void) {
   test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0e-3,
 			1.0e-13,1.0e-8,1.0e-12,1.0e-6,0);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   //p3.check_refine=true;
   //test_cubic_real_coeff(&p3,"poly_rc_gsl",1.0e-3,
@@ -826,7 +827,7 @@ int main(void) {
   test_cubic_complex(&c3,"cubic_c_std",
                      1.0e-13,1.0e-13,1.0e-12,1.0e-11);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_cubic_complex<long double,std::complex<long double> >
     (&c3_ld,"cubic_c_std_ld",
@@ -852,7 +853,7 @@ int main(void) {
   test_quartic_real(&p3,"poly_rc_gsl",1.0,
 		    1.0e-13,1.0,1.0e-11,1.0);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0,
@@ -891,7 +892,7 @@ int main(void) {
   test_quartic_real(&p3,"poly_rc_gsl",1.0e-5,
 		    1.0e-13,1.0,1.0e-12,1.0);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quartic_real<long double>
     (&q1_ld,"quartic_rc_cern_ld",1.0e-5,
@@ -926,7 +927,7 @@ int main(void) {
   test_quartic_real_coeff(&p3,"poly_rc_gsl",
 			  1.0e-13,1.0e-13,1.0e-12,1.0e-11);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quartic_real_coeff<long double,std::complex<long double> >
     (&q1_ld,"quartic_rc_cern_ld",
@@ -951,7 +952,7 @@ int main(void) {
   test_quartic_complex(&q5,"quartic_c_std",
 		       1.0e-13,1.0e-13,1.0e-9,1.0e-9);
   
-#ifdef O2SCL_MULTIP
+#ifdef O2SCL_SET_MULTIP
   
   test_quartic_complex<long double,std::complex<long double> >
     (&q5_ld,"quartic_c_std_ld",
@@ -964,7 +965,7 @@ int main(void) {
   
   cout << endl;
 
-#endif
+  //#endif
   
   tst.report();
 
