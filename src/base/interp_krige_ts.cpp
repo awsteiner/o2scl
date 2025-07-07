@@ -494,7 +494,8 @@ int main(void) {
   }
 
   if (true) {
-    
+
+    cout << "1." << endl;
     covar_funct_strings cfs;
     vector<string> vars={"len"};
     cfs.set("exp(-(x-y)^2/len^2/2)",
@@ -503,14 +504,19 @@ int main(void) {
             ((string)"sqrt(pi*len^2*2)/2*(erf(sqrt(1/len^2/2)*(b-x))-")+
             "erf(sqrt(1/len^2/2)*(a-x)))",vars,"x","y","a","b");
             
+    cout << "2." << endl;
     covar_funct_rbf_noise cfrn;
 
+    cout << "3." << endl;
     vector<double> p={1.0};
     cfs.set_params(p);
+    cout << "4." << endl;
     vector<double> p2={1.0,-15.0};
     cfrn.set_params(p);
+    cout << "5." << endl;
     
     t.test_rel(cfs(2.0,2.1),cfrn(2.0,2.1),1.0e-12,"covar_funct_string");
+    cout << "6." << endl;
     t.test_rel(cfs.deriv(2.0,2.1),
                cfrn.deriv(2.0,2.1),1.0e-12,"covar_funct_string d");
     t.test_rel(cfs.deriv2(2.0,2.1),
@@ -518,9 +524,11 @@ int main(void) {
     cout << cfs.integ(2.0,0.0,1.0) << " "
          << cfrn.integ(2.0,0.0,1.0) << endl;
     
+    cout << "7." << endl;
     vector<vector<double>> param_lists;
     param_lists.push_back({0.001,0.003,0.01,0.03,0.1,0.3,1.0});
     param_lists.push_back({-15.0,-13.0,-11.0,-9.0});
+    cout << "8." << endl;
     
     ubvector xxa(40), yya(40);
     for(size_t i=0;i<40;i++) {
@@ -528,14 +536,17 @@ int main(void) {
       double xx=xxa[i];
       yya[i]=xx*xx*xx*exp(-4.0*xx);
     }
+    cout << "9." << endl;
 
     funct_string<> fs("x^3*exp(-4*x)","x");
     inte_qag_gsl<funct_string<>> iqg2;
     
+    cout << "10." << endl;
     interp_krige_optim<ubvector,ubvector,covar_funct_rbf_noise> ikon;
     ikon.mode=1;
     ikon.verbose=2;
     ikon.set(40,xxa,yya,cfrn,param_lists,true);
+    cout << "11." << endl;
 
     cout.precision(4);
     for(double xt=0.017;xt<2.0;xt+=0.017) {
@@ -546,6 +557,7 @@ int main(void) {
            << ikon.integ(0.0,xt) << " "
            << iqg2.integ(fs,0.0,xt) << endl;
     }
+    cout << "12." << endl;
   }
   
   t.report();

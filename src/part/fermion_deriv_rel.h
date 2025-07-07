@@ -698,13 +698,6 @@ namespace o2scl {
       last_method=0;
       last_method_s="";
       
-      fr.calc_mu(f,temper);
-      last_method=fr.last_method*10;
-      last_method_s=((std::string)"base: ")+fr.last_method_s+
-	" deriv: ";
-  
-      int iret;
-
       if (temper<=0) {
         fr.calc_mu_zerot(f);
         this->calc_deriv_zerot(f);
@@ -772,6 +765,13 @@ namespace o2scl {
 	  return 0;
 	}
       }
+
+      fr.calc_mu(f,temper);
+      last_method=fr.last_method*10;
+      last_method_s=((std::string)"base: ")+fr.last_method_s+
+	" deriv: ";
+  
+      int iret;
 
       if (deg==false) {
     
@@ -1158,8 +1158,10 @@ namespace o2scl {
       }
   
       if (!isfinite(f.en)) {
-        std::cout << "Here: " << multip << " "
+        std::cerr << "fermion_deriv_rel::calc_mu(): Failing. "
+                  << "deg,multip,intl_method: " << deg << " " << multip << " "
                   << this->intl_method << std::endl;
+        std::cerr << f.en << " " << prefac << std::endl;
 	O2SCL_ERR2("Entropy not finite in fermion_deriv_rel_tl",
 		   "<fermion_deriv_t,fp_t>::calc_mu().",
 		   exc_efailed);

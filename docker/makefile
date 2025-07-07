@@ -33,11 +33,11 @@ docker_clean2:
 # ----------------------------------------------------------------------
 
 # Nicknames
-NICKS := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
-	arch_min u25.04_min u25.04_plus
+NICKS := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus arch_min
+#u25.04_min u25.04_plus
 # Dockerfiles
-DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus \
-	arch_min u25.04_min u25.04_plus
+DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus arch_min
+#u25.04_min u25.04_plus
 # Architectures
 ARCHS := amd64 arm64 i386
 
@@ -49,31 +49,33 @@ define RULE_tlate
 $(1).nc: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
 		--no-cache \
-		--target working 2>&1 | tee out/$(1).out &
+		--target working 2>&1 > \
+		out/$(1).out &
 
 $(1).build: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee out/$(1).out &
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
+		--target working 2>&1 > \
+		out/$(1).out &
 
 $(1).check: empty
 	sudo docker run --gpus all --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
 		sh -c "cd /opt/o2scl; make -j 10 check o2scl-examples" \
-		| tee out/$(1).check &
+		> $(1).check &
 
 $(1).pycheck: empty
 	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
-		| tee out/$(1).check &
+		> out/$(1).check &
 
 $(1).run:
 	sudo docker run --gpus all -it --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64
 
 $(1).push:
 	sudo docker push \
@@ -86,7 +88,8 @@ $(1)_i386: empty
 		--platform linux/386 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386 \
-		--target working 2>&1 | tee out/$(1).i386 &
+		--target working 2>&1 > \
+		out/$(1)_i386.out &
 
 $(1)_i386.run:
 	sudo docker run --gpus all -it --rm \
@@ -101,14 +104,15 @@ $(1)_i386.push:
 
 $(1)_arm64: empty
 	sudo docker buildx build . \
-		--platform linux/386 \
+		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64 \
-		--target working 2>&1 | tee out/$(1).arm64 &
+		--target working 2>&1 > \
+		out/$(1)_arm64.out &
 
 $(1)_arm64.run:
 	sudo docker run --gpus all -it --rm \
-		--platform linux/386 \
+		--platform linux/arm64 \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
 
 $(1)_arm64.push:
@@ -124,7 +128,7 @@ $(1).cuda1:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee out/$(1).cuda1 &
+		--target working 2>&1 > out/$(1).cuda1 &
 
 $(1).cuda2:
 	sudo docker buildx build . \
@@ -133,14 +137,13 @@ $(1).cuda2:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 | tee out/$(1).cuda2 &
+		--target working 2>&1 > out/$(1).cuda2 &
 
 endef
 
 # Loop over the indices of the targets
 INDEX := $(shell seq 1 $(words $(NICKS)))
 
-$(foreach i,$(INDEX),$(eval $(call RULE_tlate,\
- $(word $(i),$(NICKS)),$(i))))
+$(foreach i,$(INDEX),$(eval $(call RULE_tlate,$(word $(i),$(NICKS)),$(i))))
 
 empty:
