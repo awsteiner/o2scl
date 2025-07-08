@@ -40,6 +40,7 @@ DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus arch_min
 #u25.04_min u25.04_plus
 # Architectures
 ARCHS := amd64 arm64 i386
+PREFIX := v0.931rc
 
 # Rule template
 define RULE_tlate
@@ -49,29 +50,28 @@ define RULE_tlate
 $(1).nc: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--no-cache \
 		--target working 2>&1 > \
-		out/$(1).out &
+		out/$(1).out 2>&1 
 
 $(1).build: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
-		--target working 2>&1 > \
-		out/$(1).out &
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		--target working > out/$(1).out 2>&1 
 
 $(1).check: empty
 	sudo docker run --gpus all --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
 		sh -c "cd /opt/o2scl; make -j 10 check o2scl-examples" \
-		> $(1).check &
+		> $(1).check
 
 $(1).pycheck: empty
 	sudo docker run --gpus all --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
-		> out/$(1).check &
+		> out/$(1).check
 
 $(1).run:
 	sudo docker run --gpus all -it --rm \
@@ -87,9 +87,8 @@ $(1)_i386: empty
 	sudo docker buildx build . \
 		--platform linux/386 \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386 \
-		--target working 2>&1 > \
-		out/$(1)_i386.out &
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+		--target working > out/$(1)_i386.out 2>&1 
 
 $(1)_i386.run:
 	sudo docker run --gpus all -it --rm \
@@ -106,9 +105,16 @@ $(1)_arm64: empty
 	sudo docker buildx build . \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64 \
-		--target working 2>&1 > \
-		out/$(1)_arm64.out &
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+		--target working > out/$(1)_arm64.out 2>&1 
+
+$(1)_arm64.nc: empty
+	sudo docker buildx build . \
+		--platform linux/arm64 \
+		-f $$(word $(2), $(DFILE)) \
+		--no-cache \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+		--target working > out/$(1)_arm64.out 2>&1 
 
 $(1)_arm64.run:
 	sudo docker run --gpus all -it --rm \
@@ -128,7 +134,7 @@ $(1).cuda1:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 > out/$(1).cuda1 &
+		--target working 2>&1 > out/$(1).cuda1
 
 $(1).cuda2:
 	sudo docker buildx build . \
@@ -137,7 +143,7 @@ $(1).cuda2:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		--target working 2>&1 > out/$(1).cuda2 &
+		--target working 2>&1 > out/$(1).cuda2
 
 endef
 
@@ -146,4 +152,13 @@ INDEX := $(shell seq 1 $(words $(NICKS)))
 
 $(foreach i,$(INDEX),$(eval $(call RULE_tlate,$(word $(i),$(NICKS)),$(i))))
 
+# ----------------------------------------------------------------------
+
+# Note that the ubuntu:24.04 manifest does not include i386 support
+
+all1: u24.04_min.build u24.04_min_arm64 \
+	u24.04_plus.build u24.04_plus_arm64 \
+	ost_min.build ost_min_arm64 ost_min_i386 \
+	arch_min.build arch_min_arm64 arch_min_i386 \
+	@echo Done
 empty:
