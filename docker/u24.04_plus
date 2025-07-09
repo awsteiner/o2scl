@@ -38,8 +38,7 @@ RUN apt-get -y update && apt-get \
 RUN apt-get -y update && apt-get \
   -y install libgsl-dev libreadline-dev libboost-all-dev \
   libopenblas-dev liblapack-dev libarpack2-dev libsuperlu-dev \
-  libfftw3-dev texlive libarmadillo-dev \
-  libeigen3-dev libhdf5-dev
+  libfftw3-dev libarmadillo-dev libeigen3-dev libhdf5-dev
 
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
@@ -61,6 +60,7 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 ENV CONFIG_VAR=${CONFIG}
 
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12 -I/usr/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-armadillo $CONFIG_VAR
+FROM working
 RUN make blank-doc && make && make install 
 
 WORKDIR /opt

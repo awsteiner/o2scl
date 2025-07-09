@@ -15,7 +15,7 @@ jobs:
     
     container:
     
-      image: awsteiner/o2scl:arch_min
+      image: awsteiner/o2scl:v0.931rc_arch_min
 
     steps:
 

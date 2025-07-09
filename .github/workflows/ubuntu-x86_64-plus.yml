@@ -15,7 +15,7 @@ jobs:
 
     container:
     
-      image: awsteiner/o2scl:u24.04_plus
+      image: awsteiner/o2scl:v0.931rc_u24.04_plus
 
     steps:
     
