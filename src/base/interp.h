@@ -80,7 +80,7 @@ namespace o2scl {
     itp_monotonic=6,
     /// Steffen's monotonic method (\ref interp_steffen)
     itp_steffen=7,
-    /// Nearest-neighbor lookup (\ref interp_nn)
+    /// Nearest-neighbor lookup (\ref interp_nearest_neigh)
     itp_nearest_neigh=8,
     /// Gaussian process with leave-one out cross validation (experimental)
     itp_gp_rbf_noise_loo_cv=9,

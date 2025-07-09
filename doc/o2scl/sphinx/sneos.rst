@@ -80,8 +80,8 @@ the entire EOS into memory. Memory allocation is automatically
 performed, but not deallocated until ``free()`` or the destructor is
 called.
 
-After loading, you can interpolate the EOS by using 
-:cpp:func:`o2scl:tensor_grid::interp_linear()` directly. For example,
+After loading, you can interpolate the EOS by using
+``o2scl:tensor_grid::interp_linear()`` directly. For example,
 the following returns the mass number at an arbitrary
 baryon density, electron fraction, and temperature
 assuming the table is stored in ``skm.dat``::

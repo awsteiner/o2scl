@@ -23,7 +23,7 @@
 #ifndef O2SCL_AUTO_FORMAT_H
 #define O2SCL_AUTO_FORMAT_H
 /** \file auto_format.h
-    \brief File describing the class \ref auto_format
+    \brief File describing the class \ref o2scl_auto_format::auto_format
 */
 
 #include <iostream>
@@ -258,7 +258,7 @@ namespace o2scl_auto_format {
 
     /** \brief Parameter for table line output
 
-        This parameter is used for \ref columnify::table_lines.
+        This parameter is used for \ref o2scl::columnify::table_lines.
      */
     int table_lines;
 

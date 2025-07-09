@@ -325,7 +325,7 @@ namespace o2scl {
   
   /** \brief Compute a term in the nondegenerate expansion
       
-      This function uses \ref be_integ to perform the Bessel
+      This function uses \c be_integ to perform the Bessel
       integrals.
   */
   template<class be_integ_t, class fp_t> 

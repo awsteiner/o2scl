@@ -117,7 +117,7 @@ public:
 
   /// \name Other objects
   //@{
-  /// EOS for \ref ldrop_shell
+  /// EOS for \ref o2scl::nucmass_ldrop_shell
   o2scl::eos_had_skyrme sk;
 
   /// Fitting object

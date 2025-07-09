@@ -1396,7 +1396,7 @@ namespace o2scl {
     /** \brief Equation of state as a function of the chemical potentials
         at finite temperature
 
-        This function uses \ref eos_had_base::nuc_matter_temp_e() to
+        This function uses \ref eos_had_temp_base::nuc_matter_temp_e() to
         solve for the densities given the chemical potentials.
     */
     virtual int calc_temp_p(fermion &n, fermion &p, double T, 

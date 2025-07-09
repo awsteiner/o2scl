@@ -106,8 +106,7 @@ namespace o2scl {
       
       This class is based on the CERNLIB routines RGS56P and DGS56P
       were originally documented at
-      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html
-      .
+      http://wwwasdoc.web.cern.ch/wwwasdoc/shortwrupsdir/d106/top.html .
 
       Several specializations of this class template are provided for
       varying levels of precision, including \ref
