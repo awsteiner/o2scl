@@ -307,8 +307,8 @@ int acol_manager::comm_to_kde(std::vector<std::string> &sv,
           weights.push_back(table_obj.get(wcol,i));
         }
       }
-      cout << "Herez: " << col_names.size() << " "
-           << table_obj.get_nlines() << endl;
+      //cout << "Herez: " << col_names.size() << " "
+      //<< table_obj.get_nlines() << endl;
       pkde_obj.set_function("o2sclpy",((string)"verbose=")+
                             o2scl::itos(kde_verbose),
                             "kde_scipy",kde_verbose);
@@ -1286,8 +1286,8 @@ int acol_manager::comm_to_tensor_grid(std::vector<std::string> &sv,
       for(size_t j=0;j<sv.size()-2;j++) {
         gp.push_back(table_obj.get(sv[j+1],i));
       }
-      cout << "Here: ";
-      vector_out(cout,gp,true);
+      //cout << "Here: ";
+      //vector_out(cout,gp,true);
       tensor_grid_obj.set_val(gp,table_obj.get(sv[sv.size()-1],i));
     }
     

@@ -275,7 +275,7 @@ int main(int argc, char *argv[]) {
   ten_in_copy=ten_in;
   std::shared_ptr<nflows_python<ubvector>> nflows
     (new nflows_python<ubvector>);
-  nflows->set_function("o2sclpy",ten_in_copy,"max_iter=200,verbose=1",
+  nflows->set_function("o2sclpy",ten_in_copy,"max_iter=20,verbose=1",
                    "nflows_nsf",1);
   cout << "Done training the nflows proposal distribution.\n" << endl;
 

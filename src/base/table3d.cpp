@@ -849,7 +849,6 @@ void table3d::delete_slice(std::string sl) {
         if (mit2->second>ix) mit2->second--;
       }
       tree.erase(mit);
-      cout << "Here: " << list.size() << " " << tree.size() << endl;
       return;
     }
   }

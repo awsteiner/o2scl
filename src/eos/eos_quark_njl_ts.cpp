@@ -420,7 +420,6 @@ int main(void) {
     
   df.h=0.01;
   double der_u3=df.deriv(u.nu,fderiv_u3);
-  cout << "Here: " << der_u3 << endl;
   t.test_rel(der_u3,0.0,5.0e-6,"fh_u");
 
   funct fderiv_d3=std::bind
@@ -433,7 +432,6 @@ int main(void) {
     
   df.h=0.01;
   double der_d3=df.deriv(d.nu,fderiv_d3);
-  cout << "Here: " << der_d3 << endl;
   t.test_rel(der_d3,0.0,5.0e-6,"fh_d");
 
   funct fderiv_s3=std::bind
@@ -446,7 +444,6 @@ int main(void) {
     
   df.h=0.01;
   double der_s3=df.deriv(s.nu,fderiv_s3);
-  cout << "Here: " << der_s3 << endl;
   t.test_rel(der_s3,0.0,5.0e-5,"fh_s");
 
   t.report();

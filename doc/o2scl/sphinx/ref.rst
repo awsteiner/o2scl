@@ -49,9 +49,6 @@ Bibliography
    <https://doi.org/10.1016/0550-3213(88)90127-7>`_,
    Nucl. Phys. B **308** (1988) 753.
 
-.. [Berntsen91] : J. Berntsen, T. O. Espelid, and A. Genz,
-   ACM Trans. Math. Soft. **17** (1991) 437.
-
 .. [Bethe74] : `H. A. Bethe and M. B. Johnson
    <https://doi.org/10.1016/0375-9474(74)90528-4>`_,
    Nucl. Phys. A **230** (1974) 1.

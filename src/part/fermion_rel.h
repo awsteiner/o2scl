@@ -957,8 +957,8 @@ namespace o2scl {
                                             mutable
         { return this->solve_fun_multip(tx,temper,f,ue,dl,mp,te,ulf,mtp,
                                         itm2); },dr_err);
-        std::cout << "Here" << std::endl;
-        exit(-1);
+        //std::cout << "Here" << std::endl;
+        //exit(-1);
         
       } else {
         

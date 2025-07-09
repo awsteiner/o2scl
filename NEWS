@@ -1,3 +1,25 @@
+Notes for 0.931 release:
+
+Added experimental CUDA support for 1D FFTs and matrix inversion.
+Created a matrix inversion class which automatically switches between
+CPU/GPU methods.
+
+Fix to nucleus_rmf.
+
+Modified unicode conversions to use Boost locale.
+
+Fixed typo in table::subtable().
+
+Updated Python interface for eos_tov and nstar_rot.
+
+Improved OpenMP support in some vector functions.
+
+Improvements to classify_python, fermion_rel, ex_eos_gibbs,
+ex_eos_crust, columnify, auto_format, nucleus, nucmass_ame,
+
+Updating handling of quark objects in eos_quark_njl and children.
+
+------------------------------------------------------------------------
 Notes for 0.930 release:
 
 Improved documentation in several places.

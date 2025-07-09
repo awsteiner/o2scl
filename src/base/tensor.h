@@ -1818,7 +1818,10 @@ namespace o2scl {
             for(size_t k=0;k<rank_old;k++) {
               if (spec_old[k].type==index_spec::sum) {
                 if (cnt>=sum_ix.size()) {
-                  std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                  std::cout << "tensor::rearrange_and_copy(): Bad sync1. "
+                            << "cnt,sum_ix.size(): "
+                            << cnt << " " << sum_ix.size()
+                            << std::endl;
                   O2SCL_ERR2("Bad sync 1 in sum_ix in ",
                              "tensor::rearrange_and_copy()",o2scl::exc_esanity);
                 }
@@ -1827,7 +1830,10 @@ namespace o2scl {
               } else if (spec_old[k].type==index_spec::trace &&
                          spec_old[k].ix1<spec_old[k].ix2) {
                 if (cnt>=sum_ix.size()) {
-                  std::cout << "X: " << cnt << " " << sum_ix.size() << std::endl;
+                  std::cout << "tensor::rearrange_and_copy(): Bad sync2. "
+                            << "cnt,sum_ix.size(): "
+                            << cnt << " " << sum_ix.size()
+                            << std::endl;
                   O2SCL_ERR2("Bad sync 2 in sum_ix in ",
                              "tensor::rearrange_and_copy()",o2scl::exc_esanity);
                 }
