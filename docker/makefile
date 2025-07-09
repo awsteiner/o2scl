@@ -83,7 +83,15 @@ $(1).push:
 
 # i386 targets
 
-$(1)_i386: empty
+$(1)_i386.nc: empty
+	sudo docker buildx build . \
+		--platform linux/386 \
+		--no-cache
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+		--target working > out/$(1)_i386.out 2>&1 
+
+$(1)_i386.build: empty
 	sudo docker buildx build . \
 		--platform linux/386 \
 		-f $$(word $(2), $(DFILE)) \
@@ -101,18 +109,18 @@ $(1)_i386.push:
 
 # arm64 targets
 
-$(1)_arm64: empty
-	sudo docker buildx build . \
-		--platform linux/arm64 \
-		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working > out/$(1)_arm64.out 2>&1 
-
 $(1)_arm64.nc: empty
 	sudo docker buildx build . \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		--no-cache \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+		--target working > out/$(1)_arm64.out 2>&1 
+
+$(1)_arm64.build: empty
+	sudo docker buildx build . \
+		--platform linux/arm64 \
+		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
 		--target working > out/$(1)_arm64.out 2>&1 
 
@@ -156,9 +164,16 @@ $(foreach i,$(INDEX),$(eval $(call RULE_tlate,$(word $(i),$(NICKS)),$(i))))
 
 # Note that the ubuntu:24.04 manifest does not include i386 support
 
-all1: u24.04_min.build u24.04_min_arm64 \
-	u24.04_plus.build u24.04_plus_arm64 \
-	ost_min.build ost_min_arm64 ost_min_i386 \
-	arch_min.build arch_min_arm64 arch_min_i386 \
+all: u24.04_min.build u24.04_min_arm64.build \
+	u24.04_plus.build u24.04_plus_arm64.build \
+	ost_min.build ost_min_arm64.build ost_min_i386.build \
+	arch_min.build arch_min_arm64.build arch_min_i386.build
 	@echo Done
+
+all.nc: u24.04_min.nc u24.04_min_arm64.nc \
+	u24.04_plus.nc u24.04_plus_arm64.nc \
+	ost_min.nc ost_min_arm64.nc ost_min_i386.nc \
+	arch_min.nc arch_min_arm64.nc arch_min_i386.nc
+	@echo Done
+
 empty:
