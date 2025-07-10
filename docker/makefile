@@ -76,13 +76,13 @@ $(1).check: empty
 endif
 
 $(1).pycheck: empty
-	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64 \
+	sudo docker run --rm \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
 		> out/$(1).check
 
 $(1).run:
-	sudo docker run --gpus all -it --rm \
+	sudo docker run -it --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64
 
 $(1).push:
@@ -107,7 +107,7 @@ $(1)_i386.build: empty
 		--target working > out/$(1)_i386.out 2>&1 
 
 $(1)_i386.run:
-	sudo docker run --gpus all -it --rm \
+	sudo docker run -it --rm \
 		--platform linux/386 \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386
 
@@ -133,7 +133,7 @@ $(1)_arm64.build: empty
 		--target working > out/$(1)_arm64.out 2>&1 
 
 $(1)_arm64.run:
-	sudo docker run --gpus all -it --rm \
+	sudo docker run -it --rm \
 		--platform linux/arm64 \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
 
