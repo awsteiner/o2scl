@@ -61,11 +61,19 @@ $(1).build: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--target working > out/$(1).out 2>&1 
 
+ifeq ($(O2SCL_NPROCS), undefined)
 $(1).check: empty
 	sudo docker run --gpus all --rm \
 		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
-		sh -c "cd /opt/o2scl; make -j 10 check o2scl-examples" \
+		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> $(1).check
+else
+$(1).check: empty
+	sudo docker run --gpus all --rm \
+		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+		> $(1).check
+endif
 
 $(1).pycheck: empty
 	sudo docker run --gpus all --rm \
