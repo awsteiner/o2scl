@@ -213,7 +213,7 @@ int main(void) {
       t.test_rel(dxa[0],3.0,1.0e-12,"test fpa 1");
       t.test_rel(dxa[1],1.0,1.0e-12,"test fpa 2");
       
-#ifndef O2SCL_SET_MULTIP
+#ifdef O2SCL_SET_MULTIP
       hf.getfp_copy("d35",d35);
       t.test_rel(static_cast<double>(d35),2.0,1.0e-12,"test fp 2");
       hf.getfp_vec_copy("d35a",d35a);
