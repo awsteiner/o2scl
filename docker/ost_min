@@ -24,7 +24,7 @@ WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXX="g++-15" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure 
-RUN make blank-doc && make && make install
+RUN make blank-doc && make -j 10 && make install
 
 # -----------------------------------------------------------------
 # Check that 'acol -v' works

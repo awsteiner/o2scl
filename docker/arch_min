@@ -25,7 +25,7 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include" \
   ./configure --prefix=/usr --enable-openmp
-RUN make blank-doc && make && make install
+RUN make blank-doc && make -j 10 && make install
 
 # -----------------------------------------------------------------
 # Check that 'acol -v' works

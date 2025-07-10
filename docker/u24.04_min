@@ -25,12 +25,12 @@ WORKDIR /opt
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout main && autoreconf -i
+RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXX="g++" \
   CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12" \
   ./configure --enable-openmp --disable-static
-RUN make blank-doc && make && make install
+RUN make blank-doc && make -j 10 && make install
 
 # ───────────────────────────────────────────────────────────────────
 # Run acol

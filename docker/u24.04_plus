@@ -60,8 +60,7 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 ENV CONFIG_VAR=${CONFIG}
 
 RUN CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12 -I/usr/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-armadillo $CONFIG_VAR
-FROM working
-RUN make blank-doc && make && make install 
+RUN make blank-doc && make -j 10 && make install 
 
 WORKDIR /opt
 ENV LD_LIBRARY_PATH="/usr/local/lib"
@@ -80,3 +79,4 @@ RUN acol -h -v
 #WORKDIR /opt/o2sclpy
 #RUN make testq
 
+FROM working
