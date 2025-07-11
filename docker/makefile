@@ -64,30 +64,30 @@ $(1).build: empty
 ifeq ($(O2SCL_NPROCS), undefined)
 $(1).check: empty
 	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> $(1).check
 else
 $(1).check: empty
 	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
 		sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
 		> $(1).check
 endif
 
 $(1).pycheck: empty
 	sudo docker run --rm \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		-t awsteiner/o2scl:$(PREFIX)_$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
 		> out/$(1).check
 
 $(1).run:
 	sudo docker run -it --rm \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_amd64
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64
 
 $(1).push:
 	sudo docker push \
-		awsteiner/o2scl:$$(word $(2), $(DFILE))
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64
 
 # i386 targets
 
@@ -109,11 +109,11 @@ $(1)_i386.build: empty
 $(1)_i386.run:
 	sudo docker run -it --rm \
 		--platform linux/386 \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_i386
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386
 
 $(1)_i386.push:
 	sudo docker push \
-		awsteiner/o2scl:$$(word $(2), $(DFILE))_i386
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386
 
 # arm64 targets
 
@@ -142,11 +142,11 @@ $(1)_arm64.check: empty
 $(1)_arm64.run:
 	sudo docker run -it --rm \
 		--platform linux/arm64 \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64
 
 $(1)_arm64.push:
 	sudo docker push \
-		awsteiner/o2scl:$$(word $(2), $(DFILE))_arm64
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64
 
 # CUDA builds
 
@@ -156,7 +156,7 @@ $(1).cuda1:
 	BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
 		--target working 2>&1 > out/$(1).cuda1
 
 $(1).cuda2:
@@ -165,7 +165,7 @@ $(1).cuda2:
 	BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
 		--target working 2>&1 > out/$(1).cuda2
 
 endef
