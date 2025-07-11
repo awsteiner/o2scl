@@ -124,6 +124,13 @@ $(1)_arm64.build: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
 		--target working > out/$(1)_arm64.out 2>&1 
 
+$(1)_arm64.check: empty
+	sudo docker run --rm \
+		--platform linux/arm64 \
+                -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+                sh -c "cd /opt/o2scl && make -j 10 check && make -j 10 o2scl-examples" \
+		> out/$(1)_arm64.check
+
 $(1)_arm64.run:
 	sudo docker run -it --rm \
 		--platform linux/arm64 \
