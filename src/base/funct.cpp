@@ -187,7 +187,7 @@ funct_python_method::~funct_python_method() {
   free();
 }
 
-funct_python_method::free() {
+void funct_python_method::free() {
   if (pFunc!=0) {
     if (verbose>0) {
       cout << "Decref func." << endl;
@@ -221,6 +221,7 @@ funct_python_method::free() {
   if (verbose>0) {
     cout << "Done in funct_python_method::free()." << endl;
   }
+  return;
 }
 
 int funct_python_method::set_function(std::string module,

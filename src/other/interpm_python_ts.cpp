@@ -94,8 +94,8 @@ int main(void) {
     
     tensor2<> tin, tout;
     vector<size_t> in_size={N,2}, out_size={N,1};
-    tin.resize(2,in_size);
-    tout.resize(2,out_size);
+    tin.resize(N,2);
+    tout.resize(N,1);
     for(size_t j=0;j<N;j++) {
       //vector<size_t> ix;
       //ix={j,0};
@@ -128,7 +128,7 @@ int main(void) {
 
     tensor2<> ttest, test_out;
     vector<size_t> test_size={2,2};
-    ttest.resize(2,test_size);
+    ttest.resize(2,2);
     ttest.set(0,0,0.45);
     ttest.set(0,1,0.55);
     ttest.set(1,0,0.65);
