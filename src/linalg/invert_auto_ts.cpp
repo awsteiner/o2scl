@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  if (true) {
+  if (false) {
     typedef tensor2<> mat_x_t;
     typedef const const_matrix_row_gen<tensor2<>> mat_x_row_t;
     typedef tensor2<> mat_y_t;

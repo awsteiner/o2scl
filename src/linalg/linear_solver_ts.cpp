@@ -248,7 +248,12 @@ int main(void) {
 
 #ifdef O2SCL_SET_CUDA
 
-  if (true) {
+  // I don't want to enable this section of code by default in case
+  // O2scl was included with CUDA support but the GPU was temporarily
+  // unavailable.
+  
+  if (false) {
+    
     tensor2<> am1(5,5), am2(5,5);
     vector<double> av1(5), av2(5), av3(5);
     
