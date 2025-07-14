@@ -67,7 +67,7 @@ $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
-		> $(1).check
+		> out/$(1).check
 
 else
 
@@ -91,7 +91,7 @@ $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
-		> $(1).check
+		> out/$(1).check
 
 endif
 
