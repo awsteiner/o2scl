@@ -49,12 +49,12 @@ funct_python::funct_python(std::string module, std::string func,
     }
     o2scl_settings.py_init();
   }
-  if (func.length()>0) {
-    set_function(module,func);
-  }
   pFunc=0;
   pArgs=0;
   pModule=0;
+  if (func.length()>0) {
+    set_function(module,func);
+  }
 }
 
 funct_python::~funct_python() {
@@ -173,32 +173,53 @@ funct_python_method::funct_python_method(std::string module,
     }
     o2scl_settings.py_init();
   }
-  set_function(module,class_name,func);
+  pFunc=0;
+  pArgs=0;
+  pModule=0;
+  pInstance=0;
+  pClass=0;
+  if (func.length()>0) {
+    set_function(module,class_name,func);
+  }
 }
 
 funct_python_method::~funct_python_method() {
-  if (verbose>0) {
-    cout << "Decref func." << endl;
+  free();
+}
+
+funct_python_method::free() {
+  if (pFunc!=0) {
+    if (verbose>0) {
+      cout << "Decref func." << endl;
+    }
+    Py_DECREF(pFunc);
   }
-  Py_DECREF(pFunc);
-  if (verbose>0) {
-    cout << "Decref instance." << endl;
+  if (pInstance!=0) {
+    if (verbose>0) {
+      cout << "Decref instance." << endl;
+    }
+    Py_DECREF(pInstance);
   }
-  Py_DECREF(pInstance);
-  if (verbose>0) {
-    cout << "Decref class." << endl;
+  if (pClass!=0) {
+    if (verbose>0) {
+      cout << "Decref class." << endl;
+    }
+    Py_DECREF(pClass);
   }
-  Py_DECREF(pClass);
-  if (verbose>0) {
-    cout << "Decref args." << endl;
+  if (pArgs!=0) {
+    if (verbose>0) {
+      cout << "Decref args." << endl;
+    }
+    Py_DECREF(pArgs);
   }
-  Py_DECREF(pArgs);
-  if (verbose>0) {
-    cout << "Decref module." << endl;
+  if (pModule!=0) {
+    if (verbose>0) {
+      cout << "Decref module." << endl;
+    }
+    Py_DECREF(pModule);
   }
-  Py_DECREF(pModule);
   if (verbose>0) {
-    cout << "Done in funct_python_method destructor." << endl;
+    cout << "Done in funct_python_method::free()." << endl;
   }
 }
 

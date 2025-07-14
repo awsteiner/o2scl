@@ -98,6 +98,7 @@ namespace o2scl {
     
     virtual ~funct_python();
 
+    /// Free the memory associated with the Python objects
     void free();
     
     /// Verbosity parameter
@@ -149,11 +150,14 @@ namespace o2scl {
     
     /** \brief Specify the python and the parameters
      */
-    funct_python_method(std::string module, std::string class_name,
-                        std::string func, int v=0);
+    funct_python_method(std::string module="", std::string class_name="",
+                        std::string func="", int v=0);
     
     virtual ~funct_python_method();
-  
+
+    /// Free the memory associated with the Python objects
+    void free();
+    
     /** \brief Specify the python and the parameters
 
         This function is called by the constructor and thus
