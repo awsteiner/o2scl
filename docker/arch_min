@@ -4,9 +4,10 @@ LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 # -----------------------------------------------------------------
 # Base apt libraries for OpenSUSE Tumbleweed
 
-
 RUN pacman -Sy --noconfirm base-devel gcc git curl \
   gsl readline boost hdf5 autoconf automake libtool 
+
+ARG NPROCS=1
 
 # -----------------------------------------------------------------
 # Now install o2scl
@@ -25,7 +26,7 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include" \
   ./configure --prefix=/usr --enable-openmp
-RUN make blank-doc && make -j 10 && make install
+RUN make blank-doc && make -j ${NPROCS} && make install
 
 # -----------------------------------------------------------------
 # Check that 'acol -v' works

@@ -8,6 +8,8 @@ RUN zypper install -y gcc-c++-15 make gsl-devel hdf5-devel ncurses-devel \
 readline-devel libboost_headers-devel libboost_locale-devel \
 curl tar gzip awk autoconf automake libtool git
 
+ARG NPROCS=1
+
 # -----------------------------------------------------------------
 # Now install o2scl
 
@@ -24,7 +26,7 @@ WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXX="g++-15" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure 
-RUN make blank-doc && make -j 10 && make install
+RUN make blank-doc && make -j ${NPROCS} && make install
 
 # -----------------------------------------------------------------
 # Check that 'acol -v' works

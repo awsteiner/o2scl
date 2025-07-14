@@ -9,6 +9,7 @@ Ubuntu package with compression support."
 # can set up later using sudo dpkg-reconfigure tzdata I think.
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG NPROCS=1
 
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages
@@ -30,7 +31,7 @@ RUN git fetch && git pull && git checkout rc && autoreconf -i
 RUN CXX="g++" \
   CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -DO2SCL_HDF5_PRE_1_12" \
   ./configure --enable-openmp --disable-static
-RUN make blank-doc && make -j 10 && make install
+RUN make blank-doc && make -j ${NPROCS} && make install
 
 # ───────────────────────────────────────────────────────────────────
 # Run acol

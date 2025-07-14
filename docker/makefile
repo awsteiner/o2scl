@@ -47,6 +47,8 @@ define RULE_tlate
 
 # CPU-only builds
 
+ifeq ($(O2SCL_NPROCS), undefined)
+
 $(1).nc: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
@@ -61,18 +63,36 @@ $(1).build: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--target working > out/$(1).out 2>&1 
 
-ifeq ($(O2SCL_NPROCS), undefined)
 $(1).check: empty
-	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
+	sudo docker run --rm \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> $(1).check
+
 else
+
+$(1).nc: empty
+	sudo docker buildx build . \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		--no-cache \
+		--target working 2>&1 > \
+		out/$(1).out 2>&1 
+
+$(1).build: empty
+	sudo docker buildx build . \
+		-f $$(word $(2), $(DFILE)) \
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		--target working > out/$(1).out 2>&1 
+
 $(1).check: empty
-	sudo docker run --gpus all --rm \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
+	sudo docker run --rm \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
 		> $(1).check
+
 endif
 
 $(1).pycheck: empty
@@ -91,6 +111,8 @@ $(1).push:
 
 # i386 targets
 
+ifeq ($(O2SCL_NPROCS), undefined)
+
 $(1)_i386.nc: empty
 	sudo docker buildx build . \
 		--platform linux/386 \
@@ -106,6 +128,27 @@ $(1)_i386.build: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
 		--target working > out/$(1)_i386.out 2>&1 
 
+else
+
+$(1)_i386.nc: empty
+	sudo docker buildx build . \
+		--platform linux/386 \
+		--no-cache
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+		--target working > out/$(1)_i386.out 2>&1 
+
+$(1)_i386.build: empty
+	sudo docker buildx build . \
+		--platform linux/386 \
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		-f $$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+		--target working > out/$(1)_i386.out 2>&1 
+
+endif
+
 $(1)_i386.run:
 	sudo docker run -it --rm \
 		--platform linux/386 \
@@ -116,6 +159,8 @@ $(1)_i386.push:
 		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386
 
 # arm64 targets
+
+ifeq ($(O2SCL_NPROCS), undefined)
 
 $(1)_arm64.nc: empty
 	sudo docker buildx build . \
@@ -136,8 +181,36 @@ $(1)_arm64.check: empty
 	sudo docker run --rm \
 		--platform linux/arm64 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-                sh -c "cd /opt/o2scl && make -j 10 check && make -j 10 o2scl-examples" \
+                sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
 		> out/$(1)_arm64.check
+
+else
+
+$(1)_arm64.nc: empty
+	sudo docker buildx build . \
+		--platform linux/arm64 \
+		-f $$(word $(2), $(DFILE)) \
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		--no-cache \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+		--target working > out/$(1)_arm64.out 2>&1 
+
+$(1)_arm64.build: empty
+	sudo docker buildx build . \
+		--platform linux/arm64 \
+		-f $$(word $(2), $(DFILE)) \
+		--build-arg NPROCS=$(O2SCL_NPROCS) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+		--target working > out/$(1)_arm64.out 2>&1 
+
+$(1)_arm64.check: empty
+	sudo docker run --rm \
+		--platform linux/arm64 \
+                -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
+                sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+		> out/$(1)_arm64.check
+
+endif
 
 $(1)_arm64.run:
 	sudo docker run -it --rm \
