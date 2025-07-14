@@ -108,10 +108,12 @@ int lib_settings_class::py_init_nothrow(int verbose) {
   }
   
   if (verbose>0) {
+    cout << "lib_settings_class::py_init_nothrow(): ";
     cout << "Running Py_Initialize()." << endl;
   }
   Py_Initialize();
   if (verbose>0) {
+    cout << "lib_settings_class::py_init_nothrow(): ";
     cout << "Finished Py_Initialize()." << endl;
   }
   if (Py_IsInitialized()) {
@@ -134,20 +136,23 @@ void lib_settings_class::py_init(int verbose) {
 }
 
 std::string lib_settings_class::py_get_module_path(std::string module) {
+  
 #ifdef O2SCL_SET_PYTHON
+  
   PyObject *p_module;
   p_module=PyImport_ImportModule("o2sclpy");
-  //cout << "module: " << p_module << endl;
   PyObject *p_path=PyObject_GetAttrString(p_module,"__path__");
-  //cout << "path: " << p_path << endl;
-  //cout << PyList_Check(p_path) << endl;
   PyObject *p_item=PyList_GetItem(p_path,0);
   const char *result=PyUnicode_AsUTF8(p_item);
   std::string s_res=result;
   return s_res;
+  
 #else
+  
   return "";
+  
 #endif
+  
 }
 
 void *lib_settings_class::py_import_array() {
@@ -159,7 +164,8 @@ void *lib_settings_class::py_import_array() {
   // this function. This function uses PyErr_Occurred() to throw a C++
   // exception if an error occurs, so this function either fails, or
   // returns 0.
-
+  
+  cout << "lib_settings_class::py_import_array(): ";
   std::cout << "Running import_array()." << std::endl;
   import_array();
   if (PyErr_Occurred()) {
@@ -174,10 +180,12 @@ void *lib_settings_class::py_import_array() {
 int lib_settings_class::py_final_nothrow(int verbose) {
 #ifdef O2SCL_SET_PYTHON
   if (verbose>0) {
+    cout << "lib_settings_class::py_final_nothrow(): ";
     cout << "Running Py_Finalize()." << endl;
   }
   Py_Finalize();
   if (verbose>0) {
+    cout << "lib_settings_class::py_final_nothrow(): ";
     cout << "Finished Py_Finalize()." << endl;
   }
   py_initialized=false;
@@ -215,13 +223,11 @@ PyObject *lib_settings_class::py_import_module(std::string module,
   
   // Get the Unicode name of the user-specified module
   if (verbose>0) {
-    cout << "Getting unicode for module named " << module << endl;
+    cout << "lib_settings_class::py_import_module(): "
+         << "Getting unicode for module named " << module << endl;
   }
-  cout << "A" << endl;
   o2scl_settings.add_python_path(".",3);
-  cout << "B" << endl;
   pName=PyUnicode_FromString(module.c_str());
-  cout << "Here " << pName << endl;
   if (pName==0) {
     O2SCL_ERR2("Create module name failed in ",
               "funct_python::set_function().",o2scl::exc_efailed);
@@ -229,6 +235,7 @@ PyObject *lib_settings_class::py_import_module(std::string module,
 
   // Import the user-specified module
   if (verbose>0) {
+    cout << "lib_settings_class::py_import_module(): ";
     cout << "Importing module." << endl;
   }
   pModule=PyImport_Import(pName);

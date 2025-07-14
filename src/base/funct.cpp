@@ -45,6 +45,7 @@ funct_python::funct_python(std::string module, std::string func,
   
   if (o2scl_settings.py_initialized==false) {
     if (verbose>0) {
+      cout << "funct_python::funct_python(): ";
       cout << "Running py_init()." << endl;
     }
     o2scl_settings.py_init();
@@ -63,23 +64,27 @@ funct_python::~funct_python() {
 
 void funct_python::free() {
   if (verbose>0) {
+    cout << "funct_python::free(): ";
     cout << "Decref func." << endl;
   }
   if (pFunc!=0) {
     Py_DECREF(pFunc);
     if (verbose>0) {
+    cout << "funct_python::free(): ";
       cout << "Decref args." << endl;
     }
   }
   if (pArgs!=0) {
     Py_DECREF(pArgs);
     if (verbose>0) {
+    cout << "funct_python::free(): ";
       cout << "Decref module." << endl;
     }
   }
   if (pModule!=0) {
     Py_DECREF(pModule);
     if (verbose>0) {
+    cout << "funct_python::free(): ";
       cout << "Done in funct_python destructor." << endl;
     }
   }
@@ -93,6 +98,7 @@ int funct_python::set_function(std::string module, std::string func) {
   
   // Setup the arguments to the python function
   if (verbose>0) {
+    cout << "funct_python::set_function(): ";
     cout << "Getting arguments for python function." << endl;
   }
   pArgs=PyTuple_New(1);
@@ -103,6 +109,7 @@ int funct_python::set_function(std::string module, std::string func) {
 
   // Load the python function
   if (verbose>0) {
+    cout << "funct_python::set_function(): ";
     cout << "Loading python function." << endl;
   }
   pFunc=PyObject_GetAttrString(pModule,func.c_str());
@@ -118,6 +125,7 @@ double funct_python::operator()(double x) const {
 
   // Create a python object from the value
   if (verbose>0) {
+    cout << "funct_python::operator(): ";
     cout << "Creating python object from double." << endl;
   }
   PyObject *pValue=PyFloat_FromDouble(x);
@@ -128,6 +136,7 @@ double funct_python::operator()(double x) const {
 
   // Set the python function arguments
   if (verbose>0) {
+    cout << "funct_python::operator(): ";
     cout << "Setting item in tuple." << endl;
   }
   int ret=PyTuple_SetItem(pArgs,0,pValue);
@@ -138,6 +147,7 @@ double funct_python::operator()(double x) const {
 
   // Call the python function
   if (verbose>0) {
+    cout << "funct_python::operator(): ";
     cout << "Call python function." << endl;
   }
   PyObject *result=PyObject_CallObject(pFunc,pArgs);
@@ -149,12 +159,14 @@ double funct_python::operator()(double x) const {
   double y=PyFloat_AsDouble(result);
 
   if (verbose>0) {
+    cout << "funct_python::operator(): ";
     cout << "Decref value and result." << endl;
   }
   Py_DECREF(pValue);
   Py_DECREF(result);
   
   if (verbose>0) {
+    cout << "funct_python::operator(): ";
     cout << "Done in funct_python::operator()." << endl;
   }
     
@@ -169,6 +181,7 @@ funct_python_method::funct_python_method(std::string module,
   
   if (o2scl_settings.py_initialized==false) {
     if (verbose>0) {
+      cout << "funct_python_method::funct_python_method(): ";
       cout << "Running py_init()." << endl;
     }
     o2scl_settings.py_init();
@@ -190,35 +203,41 @@ funct_python_method::~funct_python_method() {
 void funct_python_method::free() {
   if (pFunc!=0) {
     if (verbose>0) {
+      cout << "funct_python_method::free(): ";
       cout << "Decref func." << endl;
     }
     Py_DECREF(pFunc);
   }
   if (pInstance!=0) {
     if (verbose>0) {
+      cout << "funct_python_method::free(): ";
       cout << "Decref instance." << endl;
     }
     Py_DECREF(pInstance);
   }
   if (pClass!=0) {
     if (verbose>0) {
+      cout << "funct_python_method::free(): ";
       cout << "Decref class." << endl;
     }
     Py_DECREF(pClass);
   }
   if (pArgs!=0) {
     if (verbose>0) {
+      cout << "funct_python_method::free(): ";
       cout << "Decref args." << endl;
     }
     Py_DECREF(pArgs);
   }
   if (pModule!=0) {
     if (verbose>0) {
+      cout << "funct_python_method::free(): ";
       cout << "Decref module." << endl;
     }
     Py_DECREF(pModule);
   }
   if (verbose>0) {
+      cout << "funct_python_method::free(): ";
     cout << "Done in funct_python_method::free()." << endl;
   }
   return;
@@ -232,6 +251,7 @@ int funct_python_method::set_function(std::string module,
   
   // Setup the arguments to the python function
   if (verbose>0) {
+    cout << "funct_python_method::set_function(): ";
     cout << "Getting arguments for python function." << endl;
   }
   pArgs=PyTuple_New(1);
@@ -242,6 +262,7 @@ int funct_python_method::set_function(std::string module,
 
   // Load the python class
   if (verbose>0) {
+    cout << "funct_python_method::set_function(): ";
     cout << "Loading python class." << endl;
   }
   pClass=PyObject_GetAttrString(pModule,class_name.c_str());
@@ -252,6 +273,7 @@ int funct_python_method::set_function(std::string module,
 
   // Create an instance of the class
   if (verbose>0) {
+    cout << "funct_python_method::set_function(): ";
     cout << "Loading python class instance." << endl;
   }
   if (PyCallable_Check(pClass)==false) {
@@ -267,6 +289,7 @@ int funct_python_method::set_function(std::string module,
   
   // Load the python function
   if (verbose>0) {
+    cout << "funct_python_method::set_function(): ";
     cout << "Loading python function." << endl;
   }
   pFunc=PyObject_GetAttrString(pInstance,func.c_str());
@@ -282,6 +305,7 @@ double funct_python_method::operator()(double x) const {
 
   // Create a python object from the value
   if (verbose>0) {
+    cout << "funct_python_method::operator(): ";
     cout << "Creating python object from double." << endl;
   }
   PyObject *pValue=PyFloat_FromDouble(x);
@@ -292,6 +316,7 @@ double funct_python_method::operator()(double x) const {
 
   // Set the python function arguments
   if (verbose>0) {
+    cout << "funct_python_method::operator(): ";
     cout << "Setting item in tuple." << endl;
   }
   int ret=PyTuple_SetItem(pArgs,0,pValue);
@@ -302,6 +327,7 @@ double funct_python_method::operator()(double x) const {
 
   // Call the python function
   if (verbose>0) {
+    cout << "funct_python_method::operator(): ";
     cout << "Call python function." << endl;
   }
   PyObject *result=PyObject_CallObject(pFunc,pArgs);
@@ -313,6 +339,7 @@ double funct_python_method::operator()(double x) const {
   double y=PyFloat_AsDouble(result);
 
   if (verbose>0) {
+    cout << "funct_python_method::operator(): ";
     cout << "Decref value and result." << endl;
   }
   Py_DECREF(pValue);

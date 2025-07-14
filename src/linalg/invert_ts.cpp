@@ -56,7 +56,11 @@ int main(void) {
 
 #ifdef O2SCL_SET_CUDA
   
-  if (true) {
+  // I don't want to enable this section of code by default in case
+  // O2scl was included with CUDA support but the GPU was temporarily
+  // unavailable.
+  
+  if (false) {
     matrix_invert_det_cholesky_cuda midcc;
     
     vector<double> A={
