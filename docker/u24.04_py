@@ -49,7 +49,7 @@ RUN apt-get -y update && apt-get \
 WORKDIR /opt
 RUN pip3 install --break-system-packages pytest==8.3.4 \
   pillow==11.0.0 scipy==1.14.1 matplotlib==3.10.0 yt==4.4.0 \
-  scikit-learn==1.6.0
+  scikit-learn==1.6.0 ipython==8.24.0
 RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
   pipdeptree==2.24.0
   

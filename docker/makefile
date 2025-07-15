@@ -97,7 +97,7 @@ endif
 
 $(1).pycheck: empty
 	sudo docker run --rm \
-		-t awsteiner/o2scl:$(PREFIX)_$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
 		> out/$(1).check
 
@@ -163,12 +163,12 @@ $(1)_i386.push:
 ifeq ($(O2SCL_NPROCS), undefined)
 
 $(1)_arm64.nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		--no-cache \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working > out/$(1)_arm64.out 2>&1 
+		--target working . > out/$(1)_arm64.out 2>&1 
 
 $(1)_arm64.build: empty
 	sudo docker buildx build . \
