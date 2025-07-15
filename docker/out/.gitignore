@@ -1,4 +1,4 @@
 *.out
 *.check
 *.i386
-
+*.pycheck

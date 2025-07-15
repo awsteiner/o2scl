@@ -99,11 +99,19 @@ $(1).pycheck: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
-		> out/$(1).check
+		> out/$(1).pycheck
 
+# You might need to run xhost +local: on your host beforehand to allow
+# Docker access to your display.
 $(1).run:
 	sudo docker run -it --rm \
+		-e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64
+
+$(1).pull:
+	sudo docker pull \
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64
 
 $(1).push:
 	sudo docker push \
@@ -152,7 +160,13 @@ endif
 $(1)_i386.run:
 	sudo docker run -it --rm \
 		--platform linux/386 \
+		-e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386
+
+$(1)_i386.pull:
+	sudo docker pull \
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386
 
 $(1)_i386.push:
 	sudo docker push \
@@ -215,7 +229,13 @@ endif
 $(1)_arm64.run:
 	sudo docker run -it --rm \
 		--platform linux/arm64 \
+		-e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64
+
+$(1)_arm64.pull:
+	sudo docker pull \
+		awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64
 
 $(1)_arm64.push:
 	sudo docker push \
