@@ -258,10 +258,16 @@ all: u24.04_min.build u24.04_min_arm64.build \
 	arch_min.build arch_min_arm64.build arch_min_i386.build
 	@echo Done
 
-all.nc: u24.04_min.nc u24.04_min_arm64.nc \
-	u24.04_plus.nc u24.04_plus_arm64.nc \
-	ost_min.nc ost_min_arm64.nc ost_min_i386.nc \
-	arch_min.nc arch_min_arm64.nc arch_min_i386.nc
-	@echo Done
+all.nc: empty
+	-make u24.04_min.nc
+	-make u24.04_min_arm64.nc
+	-make u24.04_plus.nc
+	-make u24.04_plus_arm64.nc
+	-make ost_min.nc
+	-make ost_min_arm64.nc
+	-make ost_min_i386.nc
+	-make arch_min.nc
+	-make arch_min_arm64.nc
+	-make arch_min_i386.nc
 
 empty:
