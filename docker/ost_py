@@ -6,7 +6,10 @@ LABEL maintainer="Andrew W. Steiner <awsteiner0@protonmail.com>"
 
 RUN zypper install -y gcc-c++ make gsl-devel hdf5-devel ncurses-devel \
 readline-devel libboost_headers-devel libboost_locale-devel \
-curl tar gzip awk autoconf automake libtool git
+curl tar gzip awk autoconf automake libtool git \
+eigen3-devel fftw3-devel armadillo-devel 
+
+ARG NPROCS=1
 
 # -----------------------------------------------------------------
 # Now install o2scl
@@ -14,16 +17,16 @@ curl tar gzip awk autoconf automake libtool git
 WORKDIR /opt
 
 #RUN curl -L \
-#https://github.com/awsteiner/o2scl/releases/download/v0.930/o2scl-0.930.tar.gz \
-#  --output o2scl-0.930.tar.gz
-#RUN tar xzf o2scl-0.930.tar.gz
-#WORKDIR /opt/o2scl-0.930
+#https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
+#  --output o2scl-0.931.tar.gz
+#RUN tar xzf o2scl-0.931.tar.gz
+#WORKDIR /opt/o2scl-0.931
 
 RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure 
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure --enable-fftw --enable-eigen --enable-arma --enable-openmp --enable-ncurses --enable-python
 RUN make blank-doc && make && make install
 
 # -----------------------------------------------------------------

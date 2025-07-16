@@ -124,7 +124,7 @@ ifeq ($(O2SCL_NPROCS), undefined)
 $(1)_i386.nc: empty
 	sudo docker buildx build . \
 		--platform linux/386 \
-		--no-cache
+		--no-cache \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
 		--target working > out/$(1)_i386.out 2>&1 
@@ -136,24 +136,37 @@ $(1)_i386.build: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
 		--target working > out/$(1)_i386.out 2>&1 
 
+$(1)_i386.check: empty
+	sudo docker run --rm \
+		--platform linux/386 \
+                -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+                sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
+		> out/$(1)_i386.check
 else
 
 $(1)_i386.nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build \
 		--platform linux/386 \
-		--no-cache
+		--no-cache \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working > out/$(1)_i386.out 2>&1 
+		--target working . > out/$(1)_i386.out 2>&1 
 
 $(1)_i386.build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build \
 		--platform linux/386 \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working > out/$(1)_i386.out 2>&1 
+		--target working . > out/$(1)_i386.out 2>&1 
+
+$(1)_i386.check: empty
+	sudo docker run --rm \
+		--platform linux/386 \
+                -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
+                sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+		> out/$(1)_i386.check
 
 endif
 
@@ -185,11 +198,11 @@ $(1)_arm64.nc: empty
 		--target working . > out/$(1)_arm64.out 2>&1 
 
 $(1)_arm64.build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working > out/$(1)_arm64.out 2>&1 
+		--target working . > out/$(1)_arm64.out 2>&1 
 
 $(1)_arm64.check: empty
 	sudo docker run --rm \
