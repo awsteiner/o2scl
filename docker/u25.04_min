@@ -18,6 +18,8 @@ RUN apt-get -y update && apt-get -y install gcc-15 g++-15 make \
   libgsl-dev curl tar gzip libhdf5-dev libreadline-dev \
   libboost-all-dev git libz-dev libsz2 
 
+ARG NPROCS=1
+
 # ───────────────────────────────────────────────────────────────────
 # Now install o2scl
 
@@ -30,7 +32,7 @@ RUN git fetch && git pull && git checkout main && autoreconf -i
 RUN CXX="g++-15" \
   CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP" \
   ./configure --enable-openmp --disable-static
-RUN make blank-doc && make -j 10 && make install
+RUN make blank-doc && make -j ${NPROCS} && make install
 
 # ───────────────────────────────────────────────────────────────────
 # Run acol

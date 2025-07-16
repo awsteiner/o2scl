@@ -27,7 +27,7 @@ RUN git clone https://github.com/awsteiner/o2scl
 WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include" \
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/include/python3.13 -I/usr/lib/python3.13/site-packages/numpy/_core/include" \
   ./configure --prefix=/usr --enable-openmp --enable-fftw --enable-eigen \
   --enable-python
 RUN make blank-doc && make -j ${NPROCS} && make install

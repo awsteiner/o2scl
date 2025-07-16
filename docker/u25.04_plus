@@ -28,6 +28,8 @@ RUN apt-get -y update && apt-get \
   -y install g++-15 make autoconf automake libtool git cmake \
   libz-dev libsz2 && apt-get clean 
 
+ARG NPROCS=1
+
 # ───────────────────────────────────────────────────────────────────
 # Install apt packages, second pass
 #
@@ -59,7 +61,7 @@ RUN CXX="g++-15" \
   CXXFLAGS="-O3 -DO2SCL_UBUNTU_HDF5 -DO2SCL_HDF5_COMP -I/usr/include" \
   ./configure --enable-eigen --enable-openmp --enable-fftw \
   --enable-armadillo $CONFIG_VAR
-RUN make blank-doc && make -j 10 && make install 
+RUN make blank-doc && make -j ${NPROCS} && make install 
 
 WORKDIR /opt
 ENV LD_LIBRARY_PATH="/usr/local/lib"

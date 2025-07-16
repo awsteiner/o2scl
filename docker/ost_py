@@ -27,7 +27,7 @@ WORKDIR /opt/o2scl
 RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER" ./configure --enable-fftw --enable-eigen --enable-arma --enable-openmp --enable-ncurses --enable-python
-RUN make blank-doc && make && make install
+RUN make blank-doc && make -j ${NPROCS} && make install
 
 # -----------------------------------------------------------------
 # Check that 'acol -v' works
