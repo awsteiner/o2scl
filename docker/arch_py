@@ -1,18 +1,30 @@
-FROM archlinux:latest AS working
+ARG BASE=awsteiner/foundation:arch
+FROM ${BASE} AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 
-# -----------------------------------------------------------------
+# ───────────────────────────────────────────────────────────────────
 # Dependencies
 
-RUN pacman -Sy --noconfirm base-devel gcc git curl \
-  gsl readline boost hdf5 autoconf automake libtool eigen \
-  lapack arpack superlu fftw hdf5 openblas python python-numpy \
-  python-pip python-matplotlib python-scikit-learn python-scipy \
-  python-tensorflow python-ipykernel python-distro
+RUN pacman -Sy --noconfirm \
+  gsl readline boost autoconf automake libtool eigen \
+  lapack arpack superlu fftw hdf5 openblas \
+  python-matplotlib python-scikit-learn python-scipy \
+  python-ipykernel python-distro python-pytest \
+  texlive-latexextra imagemagick
 
 ARG NPROCS=1
 
-# -----------------------------------------------------------------
+# ───────────────────────────────────────────────────────────────────
+# Install Python packages
+
+WORKDIR /opt
+RUN pip3 install --break-system-packages pillow==11.0.0 ipython==8.24.0 \
+  tqdm==4.66.2
+RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
+  pipdeptree==2.24.0
+
+  
+# ───────────────────────────────────────────────────────────────────
 # Now install o2scl
 
 WORKDIR /opt
@@ -32,9 +44,18 @@ RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/
   --enable-python
 RUN make blank-doc && make -j ${NPROCS} && make install
 
-# -----------------------------------------------------------------
+# ───────────────────────────────────────────────────────────────────
+# Install o2sclpy via pip
+
+WORKDIR /opt
+RUN git clone https://github.com/awsteiner/o2sclpy
+WORKDIR /opt/o2sclpy
+RUN git fetch && git pull && git checkout rc && \
+  pip3 install --break-system-packages . 
+
+# ───────────────────────────────────────────────────────────────────
 # Check that 'acol -v' works
 
 WORKDIR /
-RUN acol -h -v
+RUN acol -h -v && o2graph -h -v
 FROM working

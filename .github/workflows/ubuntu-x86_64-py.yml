@@ -1,0 +1,32 @@
+name: Ubuntu 24.04 x86_64 Python install
+
+on:
+  push:
+    branches: [ "main","rc" ]
+  pull_request:
+    branches: [ "main","rc" ]
+
+jobs:
+
+  # Note that identifiers are not allowed to contain "."'s. 
+  ubuntu-u2404-x86_64-py:
+
+    runs-on: ubuntu-24.04
+
+    container:
+    
+      image: awsteiner/o2scl:v0.931rc_u24.04_py_amd64
+      
+    steps:
+    
+    - name: Check o2scl
+      run: |
+        cd /opt/o2scl
+        make VERBOSE=1 o2scl-test -j4 -O -k
+        make VERBOSE=1 o2scl-examples -j4 -O -k
+
+    - name: Test o2sclpy and run o2graph
+      run: |
+        export O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
+        cd /opt/o2sclpy
+        make testq
