@@ -1037,7 +1037,7 @@ namespace o2scl_hdf {
          bash):
       
          <tt>acol -create double 
-         $'python:\"import numpy\nprint(numpy.sin(4))\"' -output</tt>
+         'python:\"import numpy;print(numpy.sin(4))\"' -output</tt>
   */
   int value_spec(std::string spec, double &d,
 		 int verbose=0, bool err_on_fail=true);

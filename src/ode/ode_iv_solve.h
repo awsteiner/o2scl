@@ -722,10 +722,11 @@ namespace o2scl {
 	If \ref verbose is greater than zero, The solution at each grid
 	point will be written to \c std::cout. If \ref verbose is
 	greater than one, a character will be required after each point.
-
+        
         \verbatim embed:rst
+        
         .. todo:: 
-
+           
 	   Future: Consider making a version of grid which gives the
            same answers as solve_final_value(). After each proposed
            step, it would go back and fill in the grid points if the
