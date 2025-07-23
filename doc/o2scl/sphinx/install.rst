@@ -24,17 +24,17 @@ Installation Contents
 General notes
 -------------
 
-O₂scl requires Boost, GSL, and the HDF5 libraries (the precise
-procedure for installing these libraries differs from system to
+O₂scl requires Boost, GSL, and the HDF5 libraries. The precise
+procedure for installing these dependencies differs from system to
 system, but some common cases and useful information is given below).
 O₂scl is designed to be used with the most recent release version of
 all of these libraries, but is sometimes compatible with recent older
 versions. The configure script attempts to add these libraries to LIBS
 and LDFLAGS during the installation of O₂scl. In order to compile your
 code with O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lm``, and you may need
-to include ``-I`` flags for O₂scl headers and ``-L`` flags for O₂scl
-libraries. The sections below describe several different ways of
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lboost_locale -lm``, and you may
+need to include ``-I`` flags for O₂scl headers and ``-L`` flags for
+O₂scl libraries. The sections below describe several different ways of
 installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
@@ -129,12 +129,12 @@ Compiling O₂scl from a release on Linux
 
 For example, to install O₂scl on Ubuntu, begin by installing g++ and
 make (the ``g++`` and ``make`` packages), GSL (the ``libgsl-dev``
-package), Boost (the ``libboost-all-dev`` package), GNU readline (the
-``libreadline-dev`` package), and HDF5 (the ``libhdf5-dev`` package).
-You can then install O₂scl
-from one of the release distributions by using the standard GNU
-``./configure`` script and then invoking ``make`` and ``make install``
-(which often requires ``sudo``).
+package), Boost libraries (the ``libboost-all-dev`` package), GNU
+readline (the ``libreadline-dev`` package), and HDF5 (the
+``libhdf5-dev`` package). You can then install O₂scl from one of the
+release distributions by using the standard GNU ``./configure`` script
+and then invoking ``make`` and ``make install`` (which often requires
+``sudo``).
  
 The HDF5 package for Ubuntu and many other Linux systems is installed
 in ``hdf5/serial/hdf5.h`` instead of ``hdf5.h``, so O₂scl presumes
