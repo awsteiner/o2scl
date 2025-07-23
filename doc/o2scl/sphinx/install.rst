@@ -24,18 +24,19 @@ Installation Contents
 General notes
 -------------
 
-O₂scl requires Boost, GSL, and the HDF5 libraries. The precise
-procedure for installing these dependencies differs from system to
-system, but some common cases and useful information is given below).
-O₂scl is designed to be used with the most recent release version of
-all of these libraries, but is sometimes compatible with recent older
-versions. The configure script attempts to add these libraries to LIBS
-and LDFLAGS during the installation of O₂scl. In order to compile your
-code with O₂scl, you will need to include, e.g.
-``-lo2scl -lhdf5 -lgsl -lgslcblas -lboost_locale -lm``, and you may
-need to include ``-I`` flags for O₂scl headers and ``-L`` flags for
-O₂scl libraries. The sections below describe several different ways of
-installing O₂scl.
+O₂scl requires Boost, GSL, and the HDF5 libraries. The readline
+library is optional, but it is assumed to be present by default. The
+precise procedure for installing these dependencies differs from
+system to system, but some common cases and useful information is
+given below). O₂scl is designed to be used with the most recent
+release version of all of these libraries, but is sometimes compatible
+with recent older versions. The configure script attempts to add these
+libraries to LIBS and LDFLAGS during the installation of O₂scl. In
+order to compile your code with O₂scl, you will need to include, e.g.
+``-lo2scl -lhdf5 -lgsl -lgslcblas -lboost_locale -lreadline -lm``, and
+you may need to include ``-I`` flags for O₂scl headers and ``-L``
+flags for O₂scl libraries. The sections below describe several
+different ways of installing O₂scl.
 
 It is important to ensure that O₂scl is compiled with the same version
 of the HDF5 libraries that it is linked with when compiling code based
@@ -103,16 +104,13 @@ in the ``LDFLAGS`` environment variable. Running ``./configure
 --help`` shows some information on this. For example, in a bash shell,
 you could do something like::
 
-  CXX="g++" CXXFLAGS="-I/dir/to/gsl/include" LDFLAGS="-L/dir/to/gsl/libs" ./configure --prefix=="/dir/to/destination_directory
+  CXX="g++" CXXFLAGS="-I/dir/to/gsl/include" LDFLAGS="-L/dir/to/gsl/libs" ./configure --prefix=="/dir/to/destination_directory"
 
 Along with GSL, a CBLAS library is also required, and ``./configure``
 will look for ``libcblas`` first, and if not found then it will look
 for ``libgslcblas``. If neither is present, then you may have to
 manually specify a CBLAS library using the ``LIBS`` and ``LDFLAGS``
 environment variables.
-
-Compiling with the readline library is optional, but it is assumed to
-be present by default.
 
 After ``make install``, you may test the library with ``make check``
 or ``make o2scl-test``. At the end, the phrase ``"All O2scl tests
@@ -307,7 +305,7 @@ FFTW support (``-lfftw3``): O₂scl contains a few functions which
 require FFTW support, and this can be included if ``--enable-fftw`` is
 passed to the configure script.
 
-Curses support, cubature support, and pugixml support are all
+Ncurses support, CUDA support, and pugixml support are all
 experimental.
 
 Range-checking

@@ -178,7 +178,7 @@ dnl AM_CONDITIONAL(O2SCL_MODULES, test x$modules = xtrue)
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(cuda,
-[  --enable-cuda        Include cuda support @<:@default=no@:>@],
+[  --enable-cuda           Include cuda support @<:@default=no@:>@],
 	[case "${enableval}" in
 	yes) cuda=true ;;
 	no)  cuda=false ;;
@@ -325,7 +325,7 @@ AM_CONDITIONAL(O2SCL_NCURSES, test x$ncurses = xtrue)
 # If enabled, check for the ncurses library
 # ------------------------------------------------------------------
 
-AS_IF([test "x$enable_ncurses" != "xno"], [
+AS_IF([test "x$enable_ncurses" == "xyes"], [
 AC_CHECK_LIB([ncurses], [initscr], [],
 	[echo ""
         echo "Ncurses not found. "
@@ -430,7 +430,7 @@ AM_CONDITIONAL(O2SCL_ENABLE_ACOL, test x$acol = xtrue)
 # ------------------------------------------------------------------
 
 AC_ARG_ENABLE(multip,
-[  --enable-multip           Add multiprecision support @<:@default=no@:>@],
+[  --enable-multip         Add multiprecision support @<:@default=no@:>@],
    [case "${enableval}" in
    yes) multip=true ;;
    no)  multip=false ;;
