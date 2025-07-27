@@ -635,7 +635,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass16.txt",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame16/mass16.txt",sha,ext_data);
 
     sha=((std::string)"f3d08e4af75892ec4626805ca3465b")+
@@ -643,7 +643,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("nubase2016.txt",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame16/nubase2016.txt",sha,ext_data);
     
     filename=ext_data+"/mass16.txt";
@@ -656,7 +656,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass16round.txt",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame16/mass16round.txt",sha,ext_data);
 
     sha=((std::string)"f3d08e4af75892ec4626805ca3465b")+
@@ -664,7 +664,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("nubase2016.txt",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame16/nubase2016.txt",sha,ext_data);
     
     filename=ext_data+"/mass16round.txt";
@@ -677,7 +677,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass.mas12",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame12/mass.mas12",sha,ext_data);
     
     sha=((std::string)"d69cac4f34e01e5d92ac2c415492c9ee05de")+
@@ -685,7 +685,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("nubase.mas12",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame12/nubase.mas12",sha,ext_data);
     
     filename=ext_data+"/mass.mas12";
@@ -698,7 +698,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass.mas03",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame03/mass.mas03",sha,ext_data);
 
     filename=ext_data+"/mass.mas03";
@@ -711,7 +711,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass.mas03round",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame03/mass.mas03round",sha,ext_data);
 
     filename=ext_data+"/mass.mas03round";
@@ -724,7 +724,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass_exp.mas95",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame95/mass_exp.mas95",sha,ext_data);
 
     filename=ext_data+"/mass_exp.mas95";
@@ -737,7 +737,7 @@ void nucmass_ame::load(std::string name, bool exp_only,
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("mass_rmd.mas95",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/nucmass/ame95/mass_rmd.mas95",sha,ext_data);
 
     filename=ext_data+"/mass_rmd.mas95";

@@ -41,7 +41,7 @@ Release procedure
 - Do a ``make install`` on isospin so that ``make utk-sync-doc``
   can copy docs from the post-installation directory
 - Copy the new distribution and the new sha256 hash to 
-  https://isospin.roam.utk.edu/public_data/o2scl_dists/
+  https://awsteiner.org/public_data/o2scl_dists/
 - Update homebrew recipe with the new version number and new hash.
 - Check installation using homebrew directly.
 - Check build using e.g. ``docker/ubuntu`` and ``docker/opensuse_leap``

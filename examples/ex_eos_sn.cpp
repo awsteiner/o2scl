@@ -249,7 +249,7 @@ protected:
       cf.hash_type=cloud_file::sha256;
       cf.get_file_hash
 	("FYSS_ver_1_27.tab",
-	 ((string)"https://isospin.roam.utk.edu/")+
+	 ((string)"https://awsteiner.org/")+
 	 "public_data/eos_tables/stos/"+
 	 "FYSS_ver_1_27.tab",sha,directory);
       name="fyss";

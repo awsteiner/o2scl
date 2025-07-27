@@ -994,7 +994,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("GShenFSU_1.7EOS_rho280_temp180_ye52_version_1.1_20120817.h5",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/eos_tables/scollapse/GShenFSU_1.7EOS_rho280_"+
        "temp180_ye52_version_1.1_20120817.h5",sha,directory);
     name="fsu17";
@@ -1009,7 +1009,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash(((string)"GShenFSU_2.1EOS_rho280_temp180_")+
 		     "ye52_version_1.1_20120824.h5",
-		     ((string)"https://isospin.roam.utk.edu/public")+
+		     ((string)"https://awsteiner.org/public")+
 		     "_data/eos_tables/scollapse/GShenFSU_2.1EOS_"+
 		     "rho280_temp180_ye52_version_1.1_20120824.h5",
 		     sha,directory);
@@ -1025,7 +1025,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash(((string)"GShen_NL3EOS_rho280_temp180_ye52_")+
 		     "version_1.1_20120817.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/GShen_NL3EOS_"+
 		     "rho280_temp180_ye52_version_1.1_20120817.h5",
 		     sha,directory);
@@ -1040,7 +1040,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
       "8f59849c5f65c4f9f72dd292b177c";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("HShenEOS_rho220_temp180_ye65_version_1.1_20120817.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/HShenEOS_rho220_"+
 		     "temp180_ye65_version_1.1_20120817.h5",
 		     sha,directory);
@@ -1053,7 +1053,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="stos_hyp";
@@ -1066,7 +1066,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="dd2";
@@ -1079,7 +1079,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="fsg";
@@ -1092,7 +1092,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="hfsl_nl3";
@@ -1105,7 +1105,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"82a4acd670189917800567f6b75bb2a")+
       "3605f6ae7f9068215a1eec0acf924cb3d";
     cf.hash_type=cloud_file::sha256;
-    cf.get_file_hash("_",((string)"https://isospin.roam.utk.edu/")+
+    cf.get_file_hash("_",((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/Hempel_SFHo"+
 		     "EOS_rho222_temp180_ye60_version_1.1_20120817.h5",
 		     sha,directory);
@@ -1121,7 +1121,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash(((string)"Hempel_SFHxEOS_rho234_temp180_ye60_")+
 		     "version_1.1_20120817.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/Hempel_SFHx"+
 		     "EOS_rho234_temp180_ye60_version_1.1_20120817.h5",
 		     sha,directory);
@@ -1135,7 +1135,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="tm1";
@@ -1148,7 +1148,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
     std::string sha=((std::string)"");
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/",
 		     sha,directory);
     name="tma";
@@ -1162,7 +1162,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
       "0d9a979e546902ad3f3b6285e27ca";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("LS180_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/LS180_234r_136t_50y_"+
 		     "analmu_20091212_SVNr26.h5",sha,directory);
     name="ls180";
@@ -1175,7 +1175,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
       "87f283e0ed552c8141d1ddba34c19";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("LS220_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/LS220_234r_136t_50y_"+
 		     "analmu_20091212_SVNr26.h5",sha,directory);
     name="ls220";
@@ -1188,7 +1188,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
       "8cd3f2d3bc14648698661cef35bdd";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("LS375_234r_136t_50y_analmu_20091212_SVNr26.h5",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/scollapse/LS375_234r_136t_50y_"+
 		     "analmu_20091212_SVNr26.h5",sha,directory);
     name="ls375";
@@ -1201,7 +1201,7 @@ void eos_sn_oo::load_auto(std::string model, std::string directory) {
       "3e2bc399e188d1d14354c35eed70ad14";
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash("NRAPR_3335_rho391_temp163_ye66.h5.bz2",
-		     ((string)"https://isospin.roam.utk.edu/")+
+		     ((string)"https://awsteiner.org/")+
 		     "public_data/eos_tables/sro/"+
 		     "NRAPR_3335_rho391_temp163_ye66.h5.bz2",sha,directory);
     name="sro_NRAPR";
@@ -1506,7 +1506,7 @@ void eos_sn_stos::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("eos1.tab",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/eos_tables/stos/"+
        "eos1.tab",sha,directory);
     mode=orig_mode;
@@ -1519,7 +1519,7 @@ void eos_sn_stos::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("FYSS_ver_1_27.tab",
-       ((string)"https://isospin.roam.utk.edu/")+
+       ((string)"https://awsteiner.org/")+
        "public_data/eos_tables/stos/"+
        "FYSS_ver_1_27.tab",sha,directory);
     mode=fyss_mode;
@@ -2125,7 +2125,7 @@ void eos_sn_hfsl::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("sfho_frdm_shen98_v1.03.tab",
-       ((string)"https://isospin.roam.utk.edu/public_data/eos_tables")+
+       ((string)"https://awsteiner.org/public_data/eos_tables")+
        "/hfsl/sfho_frdm_shen98_v1.03.tab",sha,directory);
     name="sfho";
     fname=directory+"/sfho_frdm_shen98_v1.03.tab";
@@ -2135,7 +2135,7 @@ void eos_sn_hfsl::load_auto(std::string model, std::string directory) {
     cf.hash_type=cloud_file::sha256;
     cf.get_file_hash
       ("sfhx_frdm_shen98_v1.03.tab",
-       ((string)"https://isospin.roam.utk.edu/public_data/eos_tables")+
+       ((string)"https://awsteiner.org/public_data/eos_tables")+
        "/hfsl/sfhx_frdm_shen98_v1.03.tab",sha,directory);
     name="sfhx";
     fname=directory+"/sfhx_frdm_shen98_v1.03.tab";
