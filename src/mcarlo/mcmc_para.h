@@ -399,7 +399,7 @@ namespace o2scl {
   template<class func_t, class data_t,
            class vec_t,
            class grad_t=std::function<int(size_t,const vec_t &,func_t &,
-                                          vec_t &,data_t &,bool &)>,
+                                          vec_t &,data_t &)>,
            class vec_bool_t=std::vector<bool> >
   class mcmc_stepper_hmc :
     public mcmc_stepper_base<func_t,data_t,vec_t> {
@@ -435,26 +435,10 @@ namespace o2scl {
      */
     vec_t hmc_step;
 
-    /** \brief Store current gradients to avoid recomputing when
-        the last HMC step is rejected.
-     */
-    vec_t grad_curr;
-
-    /** \brief If true, then discontinuities in the point function
-        must be fixed before a HMC step to keep gradients finite
-        (default: false).
-     */
-    bool fix_discont=false;
-
     /** \brief If true, print out additional debugging information
         (default: false).
      */
     bool debug_hmc=false;
-
-    /** \brief If true, initialize the stored gradients at the
-        current point (default: true).
-     */
-    bool init_step=true;
 
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
@@ -478,6 +462,12 @@ namespace o2scl {
     /// Error if gradient failed
     static const size_t grad_failed=30;
 
+    /// Cache for positions
+    std::vector<vec_t> curr_cache;
+
+    /// Cache for gradients
+    std::vector<vec_t> grad_cache;
+
     mcmc_stepper_hmc() {
       traj_length=20;
       hmc_step.resize(1);
@@ -489,6 +479,16 @@ namespace o2scl {
     }
 
     virtual ~mcmc_stepper_hmc() {
+    }
+
+    /** \brief Allocate cache
+     */
+    void allocate(size_t n_params, size_t n_threads) {
+      curr_cache.clear();
+      grad_cache.clear();
+      curr_cache.resize(n_threads,n_params);
+      grad_cache.resize(n_threads,n_params);
+      return;
     }
 
     /** \brief Write stepper parameters to the HDF5 file
@@ -603,108 +603,65 @@ namespace o2scl {
                       int &func_ret, bool &accept, data_t &dat,
                       rng<> &r, int verbose) {
 
+      // Here, the vector 'grad' stores the gradient of the log likelihood,
+      // which is minus the gradient of the potential energy
       vec_t mom(n_params), mom_next(n_params);
       vec_t grad(n_params), mom_step(n_params);
       int grad_ret;
 
       // Initialize func_ret to success
       func_ret=success;
+      
+      // If true, the first gradient evaluation failed
+      bool initial_grad_failed=false;
 
-      // Initialize the next point
-      // [Neal] q = current_q
-      for(size_t k=0;k<n_params;k++) {
-        next[k]=current[k];
+      // If true, the current point was found in the cache
+      bool found_in_cache=false;
+
+      // If we match the cache, just copy the gradient over
+      if (o2scl::vectors_equal(current,curr_cache[i_thread])) {
+        found_in_cache=true;
+        o2scl::vector_copy(grad_cache[i_thread],grad);
+      }
+
+      if (found_in_cache==false) {
+        
+        // First, if specified, use the user-specified gradient function
+        if (grad_ptr.size()>0) {
+          grad_ret=grad_ptr[i_thread](n_params,current,f,grad,dat);
+        
+        } else { // Try the finite-differencing gradient
+          grad_ret=grad_pot(n_params,current,f,grad,dat);
+        }
+        
+        if (grad_ret!=0) {
+          initial_grad_failed=true;
+          std::cout << "mcmc_stepper_hmc::step(): "
+                    << "Gradient computing failed." << std::endl;
+        }
+
+        // If initial gradient computation fails, return error because the
+        // point function or its user-provided gradient is problematic
+        if (initial_grad_failed) {
+          O2SCL_ERR2("Initial gradient computing failed in ",
+                  "mcmc_stepper_hmc::step().",o2scl::exc_ebadfunc);
+        } else {
+          // Store position and gradient to cache
+          o2scl::vector_copy(current,curr_cache[i_thread]);
+          o2scl::vector_copy(grad,grad_cache[i_thread]);
+        }
       }
       
-      // Initialize the momenta
+      // Otherwise, if the gradient succeeded, continue with the HMC
+      // Initialize the next point and momentum
+      // [Neal] q = current_q
       // [Neal] p = rnorm(length(q),0,1)
       // [Neal] current_p = p
       for(size_t k=0;k<n_params;k++) {
-        mom_next[k]=pdg();
-        mom[k]=mom_next[k];
+        next[k]=current[k];
+        mom[k]=pdg();
+        mom_next[k]=mom[k];
       }
-
-      /* Note: The initial momentum p at the current point q for this
-      step is always in U(0,1), i.e. we never remember the final
-      momentum at q from the last step. We are only interested in how
-      p evolves locally in this step. */
-      
-      // True if the first gradient evaluation failed
-      bool initial_grad_failed=false;
-      
-      // First, if specified, use the user-specified gradient function
-      if (grad_ptr.size()>0) {
-        if (init_step==true) {
-          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,
-                                      dat,fix_discont);
-          if (grad_ret!=0) initial_grad_failed=true;
-          grad_curr.resize(n_params);
-          for (size_t k=0;k<n_params;k++) {
-            grad_curr[k]=grad[k];
-          }
-          init_step=false;
-        } else {
-          if (fix_discont==true) {
-            grad_ret=grad_ptr[i_thread](n_params,next,f,grad,
-                                        dat,fix_discont);
-            if (grad_ret!=0) initial_grad_failed=true;
-            for (size_t k=0;k<n_params;k++) {
-              grad_curr[k]=grad[k];
-            }
-          } else {
-            for (size_t k=0;k<n_params;k++) {
-              grad[k]=grad_curr[k];
-            }
-          }
-        }
-      }
-      
-      // Then, additionally try the finite-differencing gradient
-      /*if (initial_grad_failed==false) {
-        grad_ret=grad_pot(n_params,next,f,grad,dat);
-        if (grad_ret!=0) {
-          initial_grad_failed=true;
-        }
-      }*/
-
-      // If the gradient failed, then use the fallback random-walk
-      // method, which doesn't require a gradient. In the future, we
-      // should probably distinguish between the automatic gradient
-      // (which isn't that great) and a user-specified gradient (which
-      // is probably very accurate). If the user-specified gradient
-      // fails, then there is probably a serious issue which should be
-      // handled separately.
-
-      if (initial_grad_failed) {
-
-        for(size_t k=0;k<n_params;k++) {
-          next[k]=current[k]+(r.random()*2.0-1.0)*
-            (high[k]-low[k])/step_fac[k % step_fac.size()];
-        }
-        
-        accept=false;
-        
-        this->check_bounds(i_thread,n_params,next,low,high,
-                           func_ret,verbose);
-        if (func_ret!=this->mcmc_skip) {
-          func_ret=f(n_params,next,w_next,dat);
-        } 
-        
-        if (func_ret==success) {
-          double rand=r.random();
-          
-          // Metropolis algorithm
-          if (rand<exp(w_next-w_current)) {
-            accept=true;
-          }
-        }
-
-        return;
-        
-      }
-      
-      // Otherwise, if the gradient succeeded, continue with the
-      // HMC method
 
       // Randomize the step sizes
       for (size_t k=0; k<n_params; k++) {
@@ -740,33 +697,22 @@ namespace o2scl {
         if (func_ret==this->mcmc_skip) {
           // If it is out of bounds, reject the step
           std::cout << "mcmc_stepper_hmc::step(): Skipping step "
-                    << "because we are out of bounds." << std::endl;
+                    << "out of bounds." << std::endl;
           accept=false;
           return;
         }
         
-        // Try the user-specified gradient, if specified
         if (grad_ptr.size()>0) {
-          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat,fix_discont);
-          if (grad_ret!=0) {
-            func_ret=grad_failed;
-            accept=false;
-            std::cout << "mcmc_stepper_hmc::step(): "
-                      << "User-specified gradient failed."
-                      << std::endl;
-            return;
-          }
+          grad_ret=grad_ptr[i_thread](n_params,next,f,grad,dat);
+        } else {
+          grad_ret=grad_pot(n_params,next,f,grad,dat);
         }
         
-        // Try the finite-differencing gradient
-        /*grad_ret=grad_pot(n_params,next,f,grad,dat);
         if (grad_ret!=0) {
-          func_ret=grad_failed;
-          std::cout << "Finite-difference gradient computation " 
-                    << "failed." << std::endl;
-          accept=false;
-          return;
-        }*/
+          initial_grad_failed=true;
+          std::cout << "mcmc_stepper_hmc::step(): "
+                    << "Gradient computing failed." << std::endl;
+        }
         
         // Perform a momentum step, unless we're at the end
         if (i<traj_length-1) {
@@ -791,7 +737,7 @@ namespace o2scl {
         for (size_t k=0;k<n_params;k++) {
           std::cout << "i=" << k << "\t e=" << mom_step[k]
                     << "\t g=" << grad[k]
-                    << "\t eg=" << mom_step[k]*grad[k]
+                    << "\t e*g=" << mom_step[k]*grad[k]
                     << "\t p'=" << mom_next[k]
                     << "\t dq=" << abs(next[k]-current[k]);
           if (abs(mom_step[k]*grad[k])>=1.0) {
@@ -833,7 +779,6 @@ namespace o2scl {
       // current_K-proposed_K))
       if (rx<exp(pot_curr-pot_next+kin_curr-kin_next)) {
         accept=true;
-        fix_discont=true;
         std::cout << "Accepted: log_wgt=" << w_next << std::endl;
       }
       
