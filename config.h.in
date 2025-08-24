@@ -9,52 +9,52 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the 'armadillo' library (-larmadillo). */
+/* Define to 1 if you have the `armadillo' library (-larmadillo). */
 #undef HAVE_LIBARMADILLO
 
-/* Define to 1 if you have the 'cblas' library (-lcblas). */
+/* Define to 1 if you have the `cblas' library (-lcblas). */
 #undef HAVE_LIBCBLAS
 
-/* Define to 1 if you have the 'cubature' library (-lcubature). */
+/* Define to 1 if you have the `cubature' library (-lcubature). */
 #undef HAVE_LIBCUBATURE
 
-/* Define to 1 if you have the 'fftw3' library (-lfftw3). */
+/* Define to 1 if you have the `fftw3' library (-lfftw3). */
 #undef HAVE_LIBFFTW3
 
-/* Define to 1 if you have the 'gsl' library (-lgsl). */
+/* Define to 1 if you have the `gsl' library (-lgsl). */
 #undef HAVE_LIBGSL
 
-/* Define to 1 if you have the 'gslcblas' library (-lgslcblas). */
+/* Define to 1 if you have the `gslcblas' library (-lgslcblas). */
 #undef HAVE_LIBGSLCBLAS
 
-/* Define to 1 if you have the 'hdf5' library (-lhdf5). */
+/* Define to 1 if you have the `hdf5' library (-lhdf5). */
 #undef HAVE_LIBHDF5
 
-/* Define to 1 if you have the 'hdf5_hl' library (-lhdf5_hl). */
+/* Define to 1 if you have the `hdf5_hl' library (-lhdf5_hl). */
 #undef HAVE_LIBHDF5_HL
 
-/* Define to 1 if you have the 'hdf5_serial' library (-lhdf5_serial). */
+/* Define to 1 if you have the `hdf5_serial' library (-lhdf5_serial). */
 #undef HAVE_LIBHDF5_SERIAL
 
-/* Define to 1 if you have the 'hdf5_serial_hl' library (-lhdf5_serial_hl). */
+/* Define to 1 if you have the `hdf5_serial_hl' library (-lhdf5_serial_hl). */
 #undef HAVE_LIBHDF5_SERIAL_HL
 
-/* Define to 1 if you have the 'm' library (-lm). */
+/* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define to 1 if you have the 'mpfr' library (-lmpfr). */
+/* Define to 1 if you have the `mpfr' library (-lmpfr). */
 #undef HAVE_LIBMPFR
 
-/* Define to 1 if you have the 'ncurses' library (-lncurses). */
+/* Define to 1 if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBNCURSES
 
-/* Define to 1 if you have the 'pugixml' library (-lpugixml). */
+/* Define to 1 if you have the `pugixml' library (-lpugixml). */
 #undef HAVE_LIBPUGIXML
 
-/* Define to 1 if you have the 'quadmath' library (-lquadmath). */
+/* Define to 1 if you have the `quadmath' library (-lquadmath). */
 #undef HAVE_LIBQUADMATH
 
-/* Define to 1 if you have the 'readline' library (-lreadline). */
+/* Define to 1 if you have the `readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 
 /* Define if popen exists */
@@ -93,7 +93,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type '_Bool'. */
+/* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
@@ -120,16 +120,16 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to the type of arg 1 for 'select'. */
+/* Define to the type of arg 1 for `select'. */
 #undef SELECT_TYPE_ARG1
 
-/* Define to the type of args 2, 3 and 4 for 'select'. */
+/* Define to the type of args 2, 3 and 4 for `select'. */
 #undef SELECT_TYPE_ARG234
 
-/* Define to the type of arg 5 for 'select'. */
+/* Define to the type of arg 5 for `select'. */
 #undef SELECT_TYPE_ARG5
 
-/* Define to 1 if all of the C89 standard headers exist (not just the ones
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -137,14 +137,14 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to empty if 'const' does not conform to ANSI C. */
+/* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* Define to '__inline__' or '__inline' if that's what the C compiler
+/* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
 #undef inline
 #endif
 
-/* Define as 'unsigned int' if <stddef.h> doesn't define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
