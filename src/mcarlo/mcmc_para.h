@@ -463,10 +463,10 @@ namespace o2scl {
     static const size_t grad_failed=30;
 
     /// Cache for positions
-    std::vector<vec_t> curr_cache;
+    std::vector<std::vector<double>> curr_cache;
 
     /// Cache for gradients
-    std::vector<vec_t> grad_cache;
+    std::vector<std::vector<double>> grad_cache;
 
     mcmc_stepper_hmc() {
       traj_length=20;
@@ -483,11 +483,11 @@ namespace o2scl {
 
     /** \brief Allocate cache
      */
-    void allocate(size_t n_params, size_t n_threads) {
+    void allocate(size_t n_threads, size_t n_params) {
       curr_cache.clear();
       grad_cache.clear();
-      curr_cache.resize(n_threads,n_params);
-      grad_cache.resize(n_threads,n_params);
+      curr_cache.assign(n_threads, std::vector<double>(n_params, 0.0));
+      grad_cache.assign(n_threads, std::vector<double>(n_params, 0.0));
       return;
     }
 
