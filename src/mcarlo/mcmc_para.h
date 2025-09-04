@@ -438,7 +438,7 @@ namespace o2scl {
     /** \brief If true, print out additional debugging information
         (default: false).
      */
-    bool debug_hmc=false;
+    bool debug_hmc;
 
     /** \brief Indicate which elements of the gradient need
         to be computed automatically (default is a one-element
@@ -476,6 +476,7 @@ namespace o2scl {
       auto_grad[0]=true;
       epsrel=1.0e-6;
       epsmin=1.0e-15;
+      debug_hmc=false;
     }
 
     virtual ~mcmc_stepper_hmc() {
@@ -2052,9 +2053,9 @@ namespace o2scl {
 
           // Report MCMC performance
 #ifdef O2SCL_MPI
-            elapsed=MPI_Wtime()-mcmc_start_time;
+            elapsed=MPI_Wtime()-mpi_start_time;
 #else
-            elapsed=time(0)-mcmc_start_time;
+            elapsed=double(time(0))-mpi_start_time;
 #endif
           double t_accept=0.0, t_reject=0.0, t_iters=0.0;
 
@@ -2070,12 +2071,13 @@ namespace o2scl {
           scr_out << std::fixed << std::setprecision(2) << std::endl;
           scr_out << "Avg accept rate : " << acc_rate*100 
                   << " %" << std::endl;
+          scr_out << std::scientific << std::setprecision(2);
           scr_out << "Time elapsed    : " << elapsed 
                   << " sec" << std::endl;
           scr_out << "Avg time/iter   : " << elapsed/avg_iters
                   << " sec" << std::endl;
           scr_out << std::scientific << std::setprecision(6) << std::endl;
-          
+
           // End of 'main_done' while loop for aff_inv=false
         }
         
@@ -2468,7 +2470,7 @@ namespace o2scl {
 #ifdef O2SCL_MPI
             elapsed=MPI_Wtime()-mcmc_start_time;
 #else
-            elapsed=time(0)-mcmc_start_time;
+            elapsed=double(time(0))-mcmc_start_time;
 #endif
             double t_accept=0.0, t_reject=0.0;
 
@@ -2483,6 +2485,7 @@ namespace o2scl {
             scr_out << std::fixed << std::setprecision(2) << std::endl;
             scr_out << "Avg accept rate : " << acc_rate*100 
                     << " %" << std::endl;
+            scr_out << std::scientific << std::setprecision(2);
             scr_out << "Time elapsed    : " << elapsed 
                     << " sec" << std::endl;
             scr_out << "Avg time/iter   : " << elapsed/n_iters
