@@ -234,11 +234,14 @@ void auto_format::add_string(std::string s) {
     // we don't need a space
     size_t next_line=lines.size()-1;
     if (lines[next_line].length()==0 ||
-	lines[next_line][lines[next_line].length()-1]==' ') {
+        lines[next_line][lines[next_line].length()-1]==' ') {
       lines[next_line]+=s;
     } else if (auto_space) {
       // Otherwise, add a space
       lines[next_line]+=' '+s;
+    } else {
+      // Append the string without inserting an automatic space
+      lines[next_line]+=s;
     }
     
   } else {

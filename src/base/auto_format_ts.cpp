@@ -22,6 +22,7 @@
 */
 #include <o2scl/auto_format.h>
 #include <o2scl/test_mgr.h>
+#include <sstream>
 
 using namespace std;
 using namespace o2scl;
@@ -93,9 +94,21 @@ int main(void) {
   vv.push_back({1,3,4});
   vv.push_back({2,5});
   at << vv << endo;
-  
+
   at.done();
-  
+
+  // Verify that disabling automatic spacing still appends text
+  {
+    auto_format at_ns;
+    at_ns.auto_space=false;
+    std::ostringstream ss;
+    at_ns.attach(ss);
+    at_ns << "foo" << "bar" << endo;
+    at_ns.unattach();
+    t.test_abs<int>(ss.str().compare("foobar\n"),0,0,
+                    "auto_format respects disabled automatic spacing");
+  }
+
   t.report();
   return 0;
 }
