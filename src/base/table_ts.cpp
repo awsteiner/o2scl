@@ -121,6 +121,28 @@ int main(void) {
     at4.summary(&cout);
     at5.summary(&cout);
     swap(at4,at5);
+
+    // -------------------------------------------------------------
+    // Test function_find_row()
+
+    table<> find_tab;
+    find_tab.new_column("val");
+
+    double val_line[1];
+    val_line[0]=1.0;
+    find_tab.line_of_data(1,val_line);
+    val_line[0]=2.0;
+    find_tab.line_of_data(1,val_line);
+    val_line[0]=5.0;
+    find_tab.line_of_data(1,val_line);
+
+    size_t best=find_tab.function_find_row("val");
+    t.test_gen(best==2,"function_find_row() finds last row");
+
+    find_tab.set("val",2,-1.0);
+    find_tab.set("val",1,0.5);
+    best=find_tab.function_find_row("-val");
+    t.test_gen(best==2,"function_find_row() evaluates expressions");
   }
 
   {
