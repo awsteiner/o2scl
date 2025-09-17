@@ -95,6 +95,19 @@ int main(void) {
   at << vv << endo;
   
   at.done();
+
+  // Verify that disabling automatic spacing still appends text
+  {
+    auto_format at_ns;
+    at_ns.auto_space=false;
+    std::ostringstream ss;
+    at_ns.attach(ss);
+    at_ns << "foo" << "bar" << endo;
+    at_ns.unattach();
+    cout << "H2: " << ss.str() << endl;
+    t.test_gen(ss.str().compare("foobar\n")==0,
+                    "auto_format respects disabled automatic spacing");
+  }
   
   t.report();
   return 0;

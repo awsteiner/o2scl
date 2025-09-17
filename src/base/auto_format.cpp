@@ -233,12 +233,17 @@ void auto_format::add_string(std::string s) {
     // If the current line is empty or ends with a space, then
     // we don't need a space
     size_t next_line=lines.size()-1;
-    if (lines[next_line].length()==0 ||
-	lines[next_line][lines[next_line].length()-1]==' ') {
+    if (auto_space) {
+      if (lines[next_line].length()==0 ||
+          lines[next_line][lines[next_line].length()-1]==' ') {
+        lines[next_line]+=s;
+      } else {
+        // Otherwise, add a space
+        lines[next_line]+=' '+s;
+      }
+    } else {
+      // If we're not auto spacing, just add it directly
       lines[next_line]+=s;
-    } else if (auto_space) {
-      // Otherwise, add a space
-      lines[next_line]+=' '+s;
     }
     
   } else {
