@@ -3381,15 +3381,22 @@ namespace o2scl {
       }
       calc.compile(function.c_str(),&vars);
 
-      fp_t best_val=0.0;
-      size_t best_row=0;
-      for(size_t row=0;row<nlines-1;row++) {
+      if (nlines==0) {
+        O2SCL_ERR("No rows in table::function_find_row().",
+                  o2scl::exc_einval);
+        return 0;
+      }
+      
+      fp_t best_val;
+      size_t best_row;
+      for(size_t row=0;row<nlines;row++) {
         for(aciter it=atree.begin();it!=atree.end();it++) {
           vars[it->first]=it->second.dat[row];
         }
         fp_t dtemp=calc.eval(&vars);
         if (row==0) {
           best_val=dtemp;
+          best_row=0;
         } else {
           if (dtemp>best_val) {
             best_val=dtemp;
