@@ -1,4 +1,4 @@
-ARG BASE=awsteiner/foundation:u24.04_tf_2.18_torch_2.7
+ARG BASE=awsteiner/foundation:u24.04_tf_2.20_torch_2.9
 FROM ${BASE} AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version of O2scl \
@@ -47,11 +47,11 @@ RUN apt-get -y update && apt-get \
 # Install Python packages
 
 WORKDIR /opt
-RUN pip3 install --break-system-packages pytest==8.3.4 \
-  pillow==11.0.0 scipy==1.14.1 matplotlib==3.10.0 yt==4.4.0 \
-  scikit-learn==1.6.0 ipython==8.24.0
+RUN pip3 install --break-system-packages pytest==8.4.2 \
+  pillow==12.0.0 scipy==1.16.3 matplotlib==3.10.7 yt==4.4.1 \
+  scikit-learn==1.7.2 ipython==9.6.0
 RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
-  pipdeptree==2.24.0
+  pipdeptree==2.29.0
   
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl

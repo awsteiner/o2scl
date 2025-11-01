@@ -54,20 +54,20 @@ $(1).nc: empty
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--no-cache \
-		--target working 2>&1 > \
-		out/$(1).out 2>&1 
+		--target working 2>&1 | tee \
+		out/$(1).out 2>&1 &
 
 $(1).build: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
-		--target working > out/$(1).out 2>&1 
+		--target working | tee out/$(1).out 2>&1 &
 
 $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
-		> out/$(1).check
+		| tee out/$(1).check &
 
 else
 
@@ -77,21 +77,21 @@ $(1).nc: empty
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		--no-cache \
-		--target working 2>&1 > \
-		out/$(1).out 2>&1 
+		--target working 2>&1 | tee \
+		out/$(1).out 2>&1 &
 
 $(1).build: empty
 	sudo docker buildx build . \
 		-f $$(word $(2), $(DFILE)) \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
-		--target working > out/$(1).out 2>&1 
+		--target working | tee out/$(1).out 2>&1 &
 
 $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
-		> out/$(1).check
+		| tee out/$(1).check &
 
 endif
 
@@ -99,7 +99,7 @@ $(1).pycheck: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		sh -c "cd /opt/o2sclpy; make testq" \
-		> out/$(1).pycheck
+		| tee out/$(1).pycheck &
 
 # You might need to run xhost +local: on your host beforehand to allow
 # Docker access to your display.
@@ -127,21 +127,21 @@ $(1)_i386.nc: empty
 		--no-cache \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working > out/$(1)_i386.out 2>&1 
+		--target working | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.build: empty
 	sudo docker buildx build . \
 		--platform linux/386 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working > out/$(1)_i386.out 2>&1 
+		--target working | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.check: empty
 	sudo docker run --rm \
 		--platform linux/386 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
                 sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
-		> out/$(1)_i386.check
+		| tee out/$(1)_i386.check &
 else
 
 $(1)_i386.nc: empty
@@ -151,7 +151,7 @@ $(1)_i386.nc: empty
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working . > out/$(1)_i386.out 2>&1 
+		--target working . | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.build: empty
 	sudo docker buildx build \
@@ -159,14 +159,14 @@ $(1)_i386.build: empty
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-		--target working . > out/$(1)_i386.out 2>&1 
+		--target working . | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.check: empty
 	sudo docker run --rm \
 		--platform linux/386 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
                 sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
-		> out/$(1)_i386.check
+		| tee out/$(1)_i386.check &
 
 endif
 
@@ -195,21 +195,21 @@ $(1)_arm64.nc: empty
 		-f $$(word $(2), $(DFILE)) \
 		--no-cache \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working . > out/$(1)_arm64.out 2>&1 
+		--target working . | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.build: empty
 	sudo docker buildx build \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working . > out/$(1)_arm64.out 2>&1 
+		--target working . | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.check: empty
 	sudo docker run --rm \
 		--platform linux/arm64 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
                 sh -c "cd /opt/o2scl && make check && make o2scl-examples" \
-		> out/$(1)_arm64.check
+		| tee out/$(1)_arm64.check &
 
 else
 
@@ -220,7 +220,7 @@ $(1)_arm64.nc: empty
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		--no-cache \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working > out/$(1)_arm64.out 2>&1 
+		--target working | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.build: empty
 	sudo docker buildx build . \
@@ -228,14 +228,14 @@ $(1)_arm64.build: empty
 		-f $$(word $(2), $(DFILE)) \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-		--target working > out/$(1)_arm64.out 2>&1 
+		--target working | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.check: empty
 	sudo docker run --rm \
 		--platform linux/arm64 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
                 sh -c "cd /opt/o2scl && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
-		> out/$(1)_arm64.check
+		| tee out/$(1)_arm64.check &
 
 endif
 
@@ -263,7 +263,7 @@ $(1).cuda1:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
-		--target working 2>&1 > out/$(1).cuda1
+		--target working 2>&1 | tee out/$(1).cuda1 &
 
 $(1).cuda2:
 	sudo docker buildx build . \
@@ -272,7 +272,7 @@ $(1).cuda2:
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
-		--target working 2>&1 > out/$(1).cuda2
+		--target working 2>&1 | tee out/$(1).cuda2 &
 
 endef
 

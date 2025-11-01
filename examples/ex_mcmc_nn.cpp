@@ -60,7 +60,7 @@ class mcmc_stepper_mh_record :
   public mcmc_stepper_mh<point_funct,data_t,ubvector,
                          ubmatrix,prob_cond_mdim_indep<>> {
   
-  public:
+public:
 
   std::vector<double> vw_next, vq_next;
 
@@ -112,7 +112,7 @@ mcmc_para_emu<point_funct,fill_funct,data_t,ubvector> mct;
 /** \brief A demonstration class for the MCMC example. This example
     could have been written with global functions, but we put them
     in a class to show how it would work in that case.
- */
+*/
 class exc {
 
 public:
@@ -180,324 +180,328 @@ int main(int argc, char *argv[]) {
   test_mgr tm;
   tm.set_output_level(1);
 
-  // ─────────────────────────────────────────────────────────────────
-  // Initial setup
+  if (argc>=2 && ((std::string)argv[1]=="nn")) {
   
-  // Parameter limits
-  ubvector low_tf(2), high_tf(2);
-  low_tf[0]=-5.0;
-  high_tf[0]=10.0;
-  low_tf[1]=-5.0;
-  high_tf[1]=10.0;
+    // ─────────────────────────────────────────────────────────────────
+    // Initial setup
+  
+    // Parameter limits
+    ubvector low_tf(2), high_tf(2);
+    low_tf[0]=-5.0;
+    high_tf[0]=10.0;
+    low_tf[1]=-5.0;
+    high_tf[1]=10.0;
 
-  // Function objects for the MCMC object
-  point_funct tf_func=std::bind
-    (std::mem_fn<int(size_t,const ubvector &,double &,
-		     data_t &)>(&exc::test_func),&e,
-     std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
-     std::placeholders::_4);
-  fill_funct fill_func=std::bind
-    (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
-		     data_t &)>(&exc::fill_line),&e,
-     std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
-     std::placeholders::_4);
+    // Function objects for the MCMC object
+    point_funct tf_func=std::bind
+      (std::mem_fn<int(size_t,const ubvector &,double &,
+                       data_t &)>(&exc::test_func),&e,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+       std::placeholders::_4);
+    fill_funct fill_func=std::bind
+      (std::mem_fn<int(const ubvector &,double,std::vector<double> &,
+                       data_t &)>(&exc::fill_line),&e,
+       std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,
+       std::placeholders::_4);
 
-  // Create function object vectors
-  vector<point_funct> tf_vec;
-  tf_vec.push_back(tf_func);
-  vector<fill_funct> fill_vec;
-  fill_vec.push_back(fill_func);
+    // Create function object vectors
+    vector<point_funct> tf_vec;
+    tf_vec.push_back(tf_func);
+    vector<fill_funct> fill_vec;
+    fill_vec.push_back(fill_func);
 
-  // Create and allocate data objects
-  vector<data_t> data_vec(2);
-  data_vec.resize(2);
-  data_vec[0].resize(2);
-  data_vec[1].resize(2);
+    // Create and allocate data objects
+    vector<data_t> data_vec(2);
+    data_vec.resize(2);
+    data_vec[0].resize(2);
+    data_vec[1].resize(2);
 
-  // Set parameter names and units
-  vector<string> pnames={"x","y"};
-  vector<string> punits={"",""};
-  vector<string> dnames={"cubic","class"};
-  vector<string> dunits={"",""};
-  mct.set_names_units(pnames,punits,dnames,dunits);
+    // Set parameter names and units
+    vector<string> pnames={"x","y"};
+    vector<string> punits={"",""};
+    vector<string> dnames={"cubic","class"};
+    vector<string> dunits={"",""};
+    mct.set_names_units(pnames,punits,dnames,dunits);
 
-  // Set up HMC stepper
-  shared_ptr<mcmc_stepper_hmc<point_funct,data_t,ubvector>> hmc_stepper
-    (new mcmc_stepper_hmc<point_funct,data_t,ubvector>);
-  mct.stepper=hmc_stepper;
-  hmc_stepper->mom_step.resize(1);
-  hmc_stepper->mom_step[0]=0.5;
-  hmc_stepper->epsilon=0.04;
+    // Set up HMC stepper
+    shared_ptr<mcmc_stepper_hmc<point_funct,data_t,ubvector>> hmc_stepper
+      (new mcmc_stepper_hmc<point_funct,data_t,ubvector>);
+    mct.stepper=hmc_stepper;
+    hmc_stepper->mom_step.resize(1);
+    hmc_stepper->mom_step[0]=0.5;
+    hmc_stepper->epsilon=0.04;
 
-  /// MCMC parameters
-  mct.store_pos_rets=true;
-  mct.store_rejects=true;
-  mct.n_retrain=0;
-  mct.verbose=3;
-  mct.n_threads=1;
-  mct.max_iters=10000;
-  mct.prefix="data/ex_mcmc_nn1";
+    /// MCMC parameters
+    mct.store_pos_rets=true;
+    mct.store_rejects=true;
+    mct.n_retrain=0;
+    mct.verbose=3;
+    mct.n_threads=1;
+    mct.max_iters=10000;
+    mct.prefix="data/ex_mcmc_nn1";
 
-  cout << "──────────────────────────────────────────────────────────"
-       << endl;
+    cout << "──────────────────────────────────────────────────────────"
+         << endl;
     
-  // ─────────────────────────────────────────────────────────────────
-  // Create an initial guess using HMC
+    // ─────────────────────────────────────────────────────────────────
+    // Create an initial guess using HMC
   
-  mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
-  cout << endl;
+    mct.mcmc_fill(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
+    cout << endl;
 
-  // ─────────────────────────────────────────────────────────────────
-  // Proposal distributions
+    // ─────────────────────────────────────────────────────────────────
+    // Proposal distributions
   
-  cout << "Training the proposal distributions." << endl;
+    cout << "Training the proposal distributions." << endl;
   
-  // Copy the table data to a tensor
-  tensor<> ten_in, ten_in_copy;
-  vector<size_t> in_size={mct.get_table()->get_nlines(),2};
-  ten_in.resize(2,in_size);
+    // Copy the table data to a tensor
+    tensor<> ten_in, ten_in_copy;
+    vector<size_t> in_size={mct.get_table()->get_nlines(),2};
+    ten_in.resize(2,in_size);
   
-  for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
-    // Only select lines which have mult greater than 0.5
-    // for training the proposal distribution.
-    if (mct.get_table()->get("mult",i)>0.5) {
-      vector<size_t> ix;
-      ix={i,0};
-      ten_in.get(ix)=mct.get_table()->get("x",i);
-      ix={i,1};
-      ten_in.get(ix)=mct.get_table()->get("y",i);
+    for(size_t i=0;i<mct.get_table()->get_nlines();i++) {
+      // Only select lines which have mult greater than 0.5
+      // for training the proposal distribution.
+      if (mct.get_table()->get("mult",i)>0.5) {
+        vector<size_t> ix;
+        ix={i,0};
+        ten_in.get(ix)=mct.get_table()->get("x",i);
+        ix={i,1};
+        ten_in.get(ix)=mct.get_table()->get("y",i);
+      }
     }
-  }
 
-  // Try three different kinds of proposal distributions
+    // Try three different kinds of proposal distributions
 
-  // Normalizing flows
-  ten_in_copy=ten_in;
-  std::shared_ptr<nflows_python<ubvector>> nflows
-    (new nflows_python<ubvector>);
-  nflows->set_function("o2sclpy",ten_in_copy,"max_iter=20,verbose=1",
-                   "nflows_nsf",1);
-  cout << "Done training the nflows proposal distribution.\n" << endl;
+    // Normalizing flows
+    ten_in_copy=ten_in;
+    std::shared_ptr<nflows_python<ubvector>> nflows
+      (new nflows_python<ubvector>);
+    nflows->set_function("o2sclpy",ten_in_copy,"max_iter=20,verbose=1",
+                         "nflows_nsf",1);
+    cout << "Done training the nflows proposal distribution.\n" << endl;
 
-  // KDE
-  ten_in_copy=ten_in;
-  std::shared_ptr<kde_python<ubvector>> kde
-    (new kde_python<ubvector>);
-  uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
-  vector<double> bw_array;
-  ug.vector(bw_array);
-  kde->set_function("o2sclpy","verbose=0","kde_sklearn",0);
-  kde->set_data(ten_in_copy,bw_array);
+    // KDE
+    ten_in_copy=ten_in;
+    std::shared_ptr<kde_python<ubvector>> kde
+      (new kde_python<ubvector>);
+    uniform_grid_log_end<double> ug(1.0e-3,1.0e3,99);
+    vector<double> bw_array;
+    ug.vector(bw_array);
+    kde->set_function("o2sclpy","verbose=0","kde_sklearn",0);
+    kde->set_data(ten_in_copy,bw_array);
                 
-  cout << "Done training the KDE proposal distribution.\n" << endl;
+    cout << "Done training the KDE proposal distribution.\n" << endl;
 
-  // GMM
-  ten_in_copy=ten_in;
-  std::shared_ptr<gmm_python> gmm(new gmm_python);
-  gmm->set_function("o2sclpy",4,ten_in_copy,"verbose=0","gmm_sklearn",0);
-  gmm->get_python();
-  std::shared_ptr<prob_dens_mdim_gmm<>> pdmg=gmm->get_gmm();
-  cout << "Done training the GMM proposal distribution.\n" << endl;
+    // GMM
+    ten_in_copy=ten_in;
+    std::shared_ptr<gmm_python> gmm(new gmm_python);
+    gmm->set_function("o2sclpy",4,ten_in_copy,"verbose=0","gmm_sklearn",0);
+    gmm->get_python();
+    std::shared_ptr<prob_dens_mdim_gmm<>> pdmg=gmm->get_gmm();
+    cout << "Done training the GMM proposal distribution.\n" << endl;
 
-  // Setup an array of shared pointers to the proposal distributions
+    // Setup an array of shared pointers to the proposal distributions
 
-  std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-                                  prob_cond_mdim_indep<>>> indep_stepper[3];
-  for(size_t k=0;k<3;k++) {
     std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-                                    prob_cond_mdim_indep<>>> snew
-      (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
-       prob_cond_mdim_indep<>>);
-    indep_stepper[k]=snew;
-  }
-  
-  indep_stepper[0]->proposal.resize(1);
-  indep_stepper[0]->proposal[0].set_base(nflows);
-  indep_stepper[1]->proposal.resize(1);
-  indep_stepper[1]->proposal[0].set_base(kde);
-  indep_stepper[2]->proposal.resize(1);
-  indep_stepper[2]->proposal[0].set_base(pdmg);
-
-  // ─────────────────────────────────────────────────────────────────
-  // Test each proposal distribution using several MH steps.
-
-  // First, sample the initial point from all three proposal
-  // distributions.
-  ubvector p[3], q[3];
-  for(size_t k=0;k<3;k++) {
-    p[k].resize(2);
-    q[k].resize(2);
-  }
-  (*nflows)(p[0]);
-  (*kde)(p[1]);
-  (*pdmg)(p[2]);
-
-  // Setup the testing tables
-  table<> tprop[3];
-  for(size_t k=0;k<3;k++) {
-    tprop[k].line_of_names("px py qx qy lwp lwq q_prop qual");
-  }
-  
-  // Compute the average deviation in the log_wgt for MH steps
-  vector<double> qual(3);
-  static const size_t N_test=2000;
-  for(size_t i=0;i<N_test;i++) {
-    (*nflows)(q[0]);
-    (*kde)(q[1]);
-    (*pdmg)(q[2]);
+                                    prob_cond_mdim_indep<>>> indep_stepper[3];
     for(size_t k=0;k<3;k++) {
-      double q_prop=(indep_stepper[k])->proposal[0].log_metrop_hast
-        (p[k],q[k]);
-
-      double lw_p, lw_q;
-      e.test_func(2,p[k],lw_p,data_vec[0]);
-      e.test_func(2,q[k],lw_q,data_vec[0]);
-      
-      qual[k]+=fabs(lw_q-lw_p+q_prop);
-      vector<double> line={p[k][0],p[k][1],q[k][0],q[k][1],
-                           lw_p,lw_q,q_prop,fabs(lw_q-lw_p+q_prop)};
-      tprop[k].line_of_data(line.size(),line);
-      
-      // "Accept" the step
-      p[k][0]=q[k][0];
-      p[k][1]=q[k][1];
+      std::shared_ptr<mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+                                      prob_cond_mdim_indep<>>> snew
+        (new mcmc_stepper_mh<point_funct,data_t,ubvector,ubmatrix,
+         prob_cond_mdim_indep<>>);
+      indep_stepper[k]=snew;
     }
+  
+    indep_stepper[0]->proposal.resize(1);
+    indep_stepper[0]->proposal[0].set_base(nflows);
+    indep_stepper[1]->proposal.resize(1);
+    indep_stepper[1]->proposal[0].set_base(kde);
+    indep_stepper[2]->proposal.resize(1);
+    indep_stepper[2]->proposal[0].set_base(pdmg);
+
+    // ─────────────────────────────────────────────────────────────────
+    // Test each proposal distribution using several MH steps.
+
+    // First, sample the initial point from all three proposal
+    // distributions.
+    ubvector p[3], q[3];
+    for(size_t k=0;k<3;k++) {
+      p[k].resize(2);
+      q[k].resize(2);
+    }
+    (*nflows)(p[0]);
+    (*kde)(p[1]);
+    (*pdmg)(p[2]);
+
+    // Setup the testing tables
+    table<> tprop[3];
+    for(size_t k=0;k<3;k++) {
+      tprop[k].line_of_names("px py qx qy lwp lwq q_prop qual");
+    }
+  
+    // Compute the average deviation in the log_wgt for MH steps
+    vector<double> qual(3);
+    static const size_t N_test=2000;
+    for(size_t i=0;i<N_test;i++) {
+      (*nflows)(q[0]);
+      (*kde)(q[1]);
+      (*pdmg)(q[2]);
+      for(size_t k=0;k<3;k++) {
+        double q_prop=(indep_stepper[k])->proposal[0].log_metrop_hast
+          (p[k],q[k]);
+
+        double lw_p, lw_q;
+        e.test_func(2,p[k],lw_p,data_vec[0]);
+        e.test_func(2,q[k],lw_q,data_vec[0]);
+      
+        qual[k]+=fabs(lw_q-lw_p+q_prop);
+        vector<double> line={p[k][0],p[k][1],q[k][0],q[k][1],
+                             lw_p,lw_q,q_prop,fabs(lw_q-lw_p+q_prop)};
+        tprop[k].line_of_data(line.size(),line);
+      
+        // "Accept" the step
+        p[k][0]=q[k][0];
+        p[k][1]=q[k][1];
+      }
     
-  }
-  for(size_t k=0;k<3;k++) qual[k]/=N_test;
-  std::cout << "Quality of proposal distributions: nflows: "
-            << qual[0] << " KDE: " << qual[1] << " GMM: "
-            << qual[2] << std::endl;
+    }
+    for(size_t k=0;k<3;k++) qual[k]/=N_test;
+    std::cout << "Quality of proposal distributions: nflows: "
+              << qual[0] << " KDE: " << qual[1] << " GMM: "
+              << qual[2] << std::endl;
 
-  // Select best proposal distribution and put it in index 0
-  if (qual[1]<qual[2] && qual[1]<qual[0]) {
-    cout << "Selecting KDE." << endl;
-    std::swap(indep_stepper[0],indep_stepper[1]);
-  } else if (qual[2]<qual[0] && qual[2]<qual[1]) {
-    cout << "Selecting GMM." << endl;
-    std::swap(indep_stepper[0],indep_stepper[2]);
-  } else {
-    cout << "Selecting nflows." << endl;
-  }
+    // Select best proposal distribution and put it in index 0
+    if (qual[1]<qual[2] && qual[1]<qual[0]) {
+      cout << "Selecting KDE." << endl;
+      std::swap(indep_stepper[0],indep_stepper[1]);
+    } else if (qual[2]<qual[0] && qual[2]<qual[1]) {
+      cout << "Selecting GMM." << endl;
+      std::swap(indep_stepper[0],indep_stepper[2]);
+    } else {
+      cout << "Selecting nflows." << endl;
+    }
 
-  // Store proposal distribution tests to file
-  hdf_file hf;
-  hf.open_or_create("data/ex_mcmc_nn2.o2");
-  hdf_output(hf,tprop[0],"prop_nflow");
-  hdf_output(hf,tprop[1],"prop_KDE");
-  hdf_output(hf,tprop[2],"prop_GMM");
-  hf.close();
+    // Store proposal distribution tests to file
+    hdf_file hf;
+    hf.open_or_create("data/ex_mcmc_nn2.o2");
+    hdf_output(hf,tprop[0],"prop_nflow");
+    hdf_output(hf,tprop[1],"prop_KDE");
+    hdf_output(hf,tprop[2],"prop_GMM");
+    hf.close();
   
-  // ─────────────────────────────────────────────────────────────────
-  // Setup the three classifiers
+    // ─────────────────────────────────────────────────────────────────
+    // Setup the three classifiers
   
-  for(size_t k=0;k<3;k++) {
-    std::shared_ptr<classify_python
-                    <ubvector,ubvector_int,
+    for(size_t k=0;k<3;k++) {
+      std::shared_ptr<classify_python
+                      <ubvector,ubvector_int,
+                       o2scl::const_matrix_view_table<>,
+                       o2scl::matrix_view_table<>>> cpnew
+        (new classify_python
+         <ubvector,ubvector_int,
+         o2scl::const_matrix_view_table<>,
+         o2scl::matrix_view_table<>>);
+      mct.cl_list.push_back(cpnew);
+    }
+    mct.cl_list[0]->set_function("classify_sklearn_dtc","verbose=1",0);
+    mct.cl_list[1]->set_function
+      ("classify_sklearn_mlpc",
+       ((std::string)"hlayers=[100,100],activation=")+
+       "relu,verbose=1,max_iter=2000,"+
+       "n_iter_no_change=40,tol=1.0e-5",0);
+    mct.cl_list[2]->set_function("classify_sklearn_gnb","verbose=1",0);
+
+    // ─────────────────────────────────────────────────────────────────
+    // Setup the three emulators
+  
+    // TensorFlow neural network
+    std::shared_ptr<interpm_python
+                    <ubvector,
                      o2scl::const_matrix_view_table<>,
-                     o2scl::matrix_view_table<>>> cpnew
-      (new classify_python
-       <ubvector,ubvector_int,
+                     o2scl::matrix_view_table<>>> emu0
+      (new interpm_python
+       <ubvector,
        o2scl::const_matrix_view_table<>,
        o2scl::matrix_view_table<>>);
-    mct.cl_list.push_back(cpnew);
+    emu0->set_function("interpm_tf_dnn",
+                       ((std::string)"hlayers=[100,100],activations=")+
+                       "[relu,relu],verbose=1,epochs=200",0);
+    mct.emu.push_back(emu0);
+
+    // Scikit-learn neural network
+    std::shared_ptr<interpm_python
+                    <ubvector,
+                     o2scl::const_matrix_view_table<>,
+                     o2scl::matrix_view_table<>>> emu1
+      (new interpm_python
+       <ubvector,
+       o2scl::const_matrix_view_table<>,
+       o2scl::matrix_view_table<>>);
+    emu1->set_function("interpm_sklearn_mlpr",
+                       ((std::string)"hlayers=[100,100],activation=")+
+                       "relu,verbose=1,max_iter=400",0);
+    mct.emu.push_back(emu1);
+
+    // Gaussian process
+    std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
+    typedef const const_matrix_row_gen
+      <o2scl::const_matrix_view_table<>> mat_x_row_t;
+  
+    // Setup the covariance object
+    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<mcovar_funct_rbf_noise<
+      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
+                                  mat_x_row_t>);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(1);
+
+    // Parameters for the Gaussian process optimization
+    iko->verbose=2;
+    iko->def_mmin.verbose=1;
+    vector<double> len_list={0.1,0.3,1.0,3.0};
+    vector<double> l10_list={-15,-13,-11};
+    vector<vector<double>> ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+  
+    iko->set_covar(vmfrn,param_lists);
+
+    // Send the GP emulator to the MCMC object
+    mct.emu.push_back(iko);
+  
+    // ─────────────────────────────────────────────────────────────────
+    // Run the final MCMC
+  
+    // Set the MCMC parameters
+    mct.stepper=indep_stepper[0];
+    mct.use_emulator=true;
+    mct.use_classifier=true;
+    mct.n_retrain=0;
+    mct.max_iters=200;
+    //mct.max_iters=5000;
+    mct.prefix="data/ex_mcmc_nn3";
+    mct.n_threads=1;
+    mct.verbose=3;
+    mct.show_emu=1;
+    mct.test_size=0.1;
+    mct.max_emu_size=1000;
+    mct.max_class_size=1000;
+  
+    // Set up the file for the emulator and classifier input. In this
+    // example, they're the same, but they need not be.
+    mct.emu_file="data/ex_mcmc_nn1_0_out";
+    mct.emu_tname="markov_chain_0";
+    mct.class_file="data/ex_mcmc_nn1_0_out";
+    mct.class_tname="markov_chain_0";
+
+    cout << "Calling mcmc_emu()" << endl;
+    mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
+
   }
-  mct.cl_list[0]->set_function("classify_sklearn_dtc","verbose=1",0);
-  mct.cl_list[1]->set_function
-    ("classify_sklearn_mlpc",
-     ((std::string)"hlayers=[100,100],activation=")+
-     "relu,verbose=1,max_iter=2000,"+
-     "n_iter_no_change=40,tol=1.0e-5",0);
-  mct.cl_list[2]->set_function("classify_sklearn_gnb","verbose=1",0);
-
-  // ─────────────────────────────────────────────────────────────────
-  // Setup the three emulators
-  
-  // TensorFlow neural network
-  std::shared_ptr<interpm_python
-                  <ubvector,
-                   o2scl::const_matrix_view_table<>,
-                   o2scl::matrix_view_table<>>> emu0
-      (new interpm_python
-       <ubvector,
-       o2scl::const_matrix_view_table<>,
-       o2scl::matrix_view_table<>>);
-  emu0->set_function("interpm_tf_dnn",
-                     ((std::string)"hlayers=[100,100],activations=")+
-                     "[relu,relu],verbose=1,epochs=200",0);
-  mct.emu.push_back(emu0);
-
-  // Scikit-learn neural network
-  std::shared_ptr<interpm_python
-                  <ubvector,
-                   o2scl::const_matrix_view_table<>,
-                   o2scl::matrix_view_table<>>> emu1
-      (new interpm_python
-       <ubvector,
-       o2scl::const_matrix_view_table<>,
-       o2scl::matrix_view_table<>>);
-  emu1->set_function("interpm_sklearn_mlpr",
-                           ((std::string)"hlayers=[100,100],activation=")+
-                           "relu,verbose=1,max_iter=400",0);
-  mct.emu.push_back(emu1);
-
-  // Gaussian process
-  std::shared_ptr<interpm_krige_optim<>> iko(new interpm_krige_optim<>);
-  typedef const const_matrix_row_gen
-    <o2scl::const_matrix_view_table<>> mat_x_row_t;
-  
-  // Setup the covariance object
-  vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
-  vmfrn.resize(1);
-  std::shared_ptr<mcovar_funct_rbf_noise<
-    ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                mat_x_row_t>);
-  vmfrn[0]=mfrn;
-  mfrn->len.resize(1);
-
-  // Parameters for the Gaussian process optimization
-  iko->verbose=2;
-  iko->def_mmin.verbose=1;
-  vector<double> len_list={0.1,0.3,1.0,3.0};
-  vector<double> l10_list={-15,-13,-11};
-  vector<vector<double>> ptemp;
-  ptemp.push_back(len_list);
-  ptemp.push_back(l10_list);
-  vector<vector<vector<double>>> param_lists;
-  param_lists.push_back(ptemp);
-  
-  iko->set_covar(vmfrn,param_lists);
-
-  // Send the GP emulator to the MCMC object
-  mct.emu.push_back(iko);
-  
-  // ─────────────────────────────────────────────────────────────────
-  // Run the final MCMC
-  
-  // Set the MCMC parameters
-  mct.stepper=indep_stepper[0];
-  mct.use_emulator=true;
-  mct.use_classifier=true;
-  mct.n_retrain=0;
-  mct.max_iters=200;
-  //mct.max_iters=5000;
-  mct.prefix="data/ex_mcmc_nn3";
-  mct.n_threads=1;
-  mct.verbose=3;
-  mct.show_emu=1;
-  mct.test_size=0.1;
-  mct.max_emu_size=1000;
-  mct.max_class_size=1000;
-  
-  // Set up the file for the emulator and classifier input. In this
-  // example, they're the same, but they need not be.
-  mct.emu_file="data/ex_mcmc_nn1_0_out";
-  mct.emu_tname="markov_chain_0";
-  mct.class_file="data/ex_mcmc_nn1_0_out";
-  mct.class_tname="markov_chain_0";
-
-  cout << "Calling mcmc_emu()" << endl;
-  mct.mcmc_emu(2,low_tf,high_tf,tf_vec,fill_vec,data_vec);
 
   tm.report();
   
