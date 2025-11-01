@@ -1860,6 +1860,11 @@ int acol_manager::comm_sort(std::vector<std::string> &sv, bool itive_com) {
 
 int acol_manager::comm_stats(std::vector<std::string> &sv, bool itive_com) {
 
+  if (scientific) cout.setf(ios::scientific);
+  else cout.unsetf(ios::scientific);
+  
+  cout.precision(precision);
+  
   if (type=="double[]") {
     
     cout << "N        : " << doublev_obj.size() << endl;
