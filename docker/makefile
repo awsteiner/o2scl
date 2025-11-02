@@ -50,7 +50,7 @@ define RULE_tlate
 ifeq ($(O2SCL_NPROCS), undefined)
 
 $(1).nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--no-cache \
@@ -58,7 +58,7 @@ $(1).nc: empty
 		out/$(1).out 2>&1 &
 
 $(1).build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--target working | tee out/$(1).out 2>&1 &
@@ -72,7 +72,7 @@ $(1).check: empty
 else
 
 $(1).nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
@@ -81,7 +81,7 @@ $(1).nc: empty
 		out/$(1).out 2>&1 &
 
 $(1).build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		-f $$(word $(2), $(DFILE)) \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
@@ -127,7 +127,7 @@ $(1).push:
 ifeq ($(O2SCL_NPROCS), undefined)
 
 $(1)_i386.nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--platform linux/386 \
 		--no-cache \
 		-f $$(word $(2), $(DFILE)) \
@@ -135,7 +135,7 @@ $(1)_i386.nc: empty
 		--target working | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--platform linux/386 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
@@ -150,7 +150,7 @@ $(1)_i386.check: empty
 else
 
 $(1)_i386.nc: empty
-	sudo docker buildx build \
+	sudo docker buildx build --progress=plain \
 		--platform linux/386 \
 		--no-cache \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
@@ -159,7 +159,7 @@ $(1)_i386.nc: empty
 		--target working . | tee out/$(1)_i386.out 2>&1 &
 
 $(1)_i386.build: empty
-	sudo docker buildx build \
+	sudo docker buildx build --progress=plain \
 		--platform linux/386 \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
 		-f $$(word $(2), $(DFILE)) \
@@ -195,7 +195,7 @@ $(1)_i386.push:
 ifeq ($(O2SCL_NPROCS), undefined)
 
 $(1)_arm64.nc: empty
-	sudo docker buildx build \
+	sudo docker buildx build --progress=plain \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		--no-cache \
@@ -203,7 +203,7 @@ $(1)_arm64.nc: empty
 		--target working . | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.build: empty
-	sudo docker buildx build \
+	sudo docker buildx build --progress=plain \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
@@ -219,7 +219,7 @@ $(1)_arm64.check: empty
 else
 
 $(1)_arm64.nc: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
@@ -228,7 +228,7 @@ $(1)_arm64.nc: empty
 		--target working | tee out/$(1)_arm64.out 2>&1 &
 
 $(1)_arm64.build: empty
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--platform linux/arm64 \
 		-f $$(word $(2), $(DFILE)) \
 		--build-arg NPROCS=$(O2SCL_NPROCS) \
@@ -262,7 +262,7 @@ $(1)_arm64.push:
 # CUDA builds
 
 $(1).cuda1:
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--build-arg \
 	BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
 		--build-arg CONFIG=--enable-cuda \
@@ -271,7 +271,7 @@ $(1).cuda1:
 		--target working 2>&1 | tee out/$(1).cuda1 &
 
 $(1).cuda2:
-	sudo docker buildx build . \
+	sudo docker buildx build . --progress=plain \
 		--build-arg \
 	BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
 		--build-arg CONFIG=--enable-cuda \
