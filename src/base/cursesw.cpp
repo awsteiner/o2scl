@@ -219,12 +219,12 @@ void o2scl::get_screen_size_tput(int &row, int &col) {
 
 int o2scl::get_screen_size_ioctl(int &row, int &col) {
   struct winsize w;
-  std::cout << "ioctl1." << std::endl;
   int ret=ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-  std::cout << "ioctl2." << std::endl;
-  
-  row=w.ws_row;
-  col=w.ws_col;
+
+  if (ret!=-1) {
+    row=w.ws_row;
+    col=w.ws_col;
+  }
   
   return ret;
 }

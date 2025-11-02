@@ -492,9 +492,7 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   int ncols_loc;
   if (ncols<=0) {
     int srow, scol;
-    std::cout << "ioctl3." << std::endl;
     int iret=get_screen_size_ioctl(srow,scol);
-    std::cout << "ioctl4." << std::endl;
     if (scol>10 || iret!=0) ncols_loc=80;
     else ncols_loc=scol;
   } else {
