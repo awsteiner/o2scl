@@ -101,6 +101,11 @@ $(1).pycheck: empty
 		sh -c "cd /opt/o2sclpy; make testq" \
 		| tee out/$(1).pycheck &
 
+$(1).pycheck2: empty
+	sudo docker run --rm \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
+		sh -c "cd /opt/o2sclpy; pytest -s -v examples/test_examples.py"
+
 # You might need to run xhost +local: on your host beforehand to allow
 # Docker access to your display.
 $(1).run:
