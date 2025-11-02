@@ -853,26 +853,34 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
         max_cols=table_obj.get_ncolumns();
       }
       
-      std::cout << "3." << std::endl;
+      std::cout << "3 " << sv.size() << " " << ncols_loc << " "
+                << precision << " " << max_cols << " "
+                << table_obj.get_ncolumns() << std::endl;
       
       //--------------------------------------------------------------------
       // Compute column and row increment
       
       if (sv.size()==2) {
 	int nrows;
+        std::cout << "nrows: " << sv[1] << std::endl;
 	int ret=o2scl::stoi_nothrow(sv[1],nrows);
+        std::cout << "nrows: " << nrows << " " << ret << std::endl;
 	if (ret!=0 || nrows<=0) {
 	  std::cerr << "Could not interpret " << sv[1]
 		    << " as a positive and nonzero number of rows." << endl;
 	  return exc_efailed;
 	}
+        std::cout << "Hx: " << table_obj.get_nlines() << std::endl;
 	inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
+        std::cout << inr << std::endl;
 	if (inr<1) inr=1;
       } else {
 	inr=(table_obj.get_nlines()+9)/10;
 	if (inr<1) inr=1;
       }
-      inc=(table_obj.get_ncolumns()+(1))/max_cols;
+      std::cout << "Hy " << ncols_loc << " " << max_cols << std::endl;
+      inc=(table_obj.get_ncolumns()+1)/max_cols;
+      std::cout << "Hz." << std::endl;
       if (inc<1) inc=1;
       
       std::cout << "4." << std::endl;
