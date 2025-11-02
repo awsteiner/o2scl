@@ -544,7 +544,7 @@ int acol_manager::comm_get_row(std::vector<std::string> &sv,
   if (ncols<=0) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
-    if (scol>10 || iret!=0) ncols_loc=80;
+    if (scol<10 || iret!=0) ncols_loc=80;
     else ncols_loc=scol;
   } else {
     ncols_loc=ncols;
