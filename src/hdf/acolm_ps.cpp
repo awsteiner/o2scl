@@ -493,10 +493,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
   if (ncols<=0) {
     int srow, scol;
     int iret=get_screen_size_ioctl(srow,scol);
-    if (scol>10 || iret!=0) ncols_loc=80;
+    if (scol<10 || iret!=0) ncols_loc=80;
     else ncols_loc=scol;
-    cout << "Preview: scol " << iret << " "
-         << ncols_loc << " " << scol << endl;
   } else {
     ncols_loc=ncols;
   }
@@ -830,8 +828,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     
   } else if (type=="table") {
 
-    std::cout << "1." << std::endl;
-    
     if (table_obj.get_nlines()==0) {
       cerr << "No table to preview." << endl;
       return exc_efailed;
@@ -843,8 +839,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       int inr;
       int inc;
       
-      std::cout << "2." << std::endl;
-    
       //----------------------------------------------------------------------
       // Compute number of columns which will fit
       
@@ -853,37 +847,25 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
         max_cols=table_obj.get_ncolumns();
       }
       
-      std::cout << "3 " << sv.size() << " " << ncols_loc << " "
-                << precision << " " << max_cols << " "
-                << table_obj.get_ncolumns() << std::endl;
-      
       //--------------------------------------------------------------------
       // Compute column and row increment
       
       if (sv.size()==2) {
 	int nrows;
-        std::cout << "nrows: " << sv[1] << std::endl;
 	int ret=o2scl::stoi_nothrow(sv[1],nrows);
-        std::cout << "nrows: " << nrows << " " << ret << std::endl;
 	if (ret!=0 || nrows<=0) {
 	  std::cerr << "Could not interpret " << sv[1]
 		    << " as a positive and nonzero number of rows." << endl;
 	  return exc_efailed;
 	}
-        std::cout << "Hx: " << table_obj.get_nlines() << std::endl;
 	inr=(table_obj.get_nlines()+(nrows-1))/(nrows);
-        std::cout << inr << std::endl;
 	if (inr<1) inr=1;
       } else {
 	inr=(table_obj.get_nlines()+9)/10;
 	if (inr<1) inr=1;
       }
-      std::cout << "Hy " << ncols_loc << " " << max_cols << std::endl;
       inc=(table_obj.get_ncolumns()+1)/max_cols;
-      std::cout << "Hz." << std::endl;
       if (inc<1) inc=1;
-      
-      std::cout << "4." << std::endl;
       
       //--------------------------------------------------------------------
       // Get last row number if necessary
@@ -894,8 +876,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       
       //--------------------------------------------------------------------
       // Output column names
-      
-      std::cout << "5." << std::endl;
       
       if (names_out==true) {
 	
@@ -927,8 +907,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       //--------------------------------------------------------------------
       // Output units
       
-      std::cout << "6." << std::endl;
-      
       if (names_out==true && table_obj.get_nunits()>0) {
 	
 	for(size_t ki=0;ki<max_cols;ki++) {
@@ -957,8 +935,6 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
 	cout << endl;
       }
-      
-      std::cout << "7." << std::endl;
       
       //--------------------------------------------------------------------
       // Output data
