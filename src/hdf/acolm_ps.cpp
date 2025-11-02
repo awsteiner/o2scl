@@ -495,6 +495,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     int iret=get_screen_size_ioctl(srow,scol);
     if (scol>10 || iret!=0) ncols_loc=80;
     else ncols_loc=scol;
+    cout << "Preview: scol " << iret << " "
+         << ncols_loc << " " << scol << endl;
   } else {
     ncols_loc=ncols;
   }
@@ -827,6 +829,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
     return 0;
     
   } else if (type=="table") {
+
+    std::cout << "1." << std::endl;
     
     if (table_obj.get_nlines()==0) {
       cerr << "No table to preview." << endl;
@@ -839,11 +843,17 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       int inr;
       int inc;
       
+      std::cout << "2." << std::endl;
+    
       //----------------------------------------------------------------------
       // Compute number of columns which will fit
       
       size_t max_cols=(ncols_loc)/(8+precision);
-      if (max_cols>table_obj.get_ncolumns()) max_cols=table_obj.get_ncolumns();
+      if (max_cols>table_obj.get_ncolumns()) {
+        max_cols=table_obj.get_ncolumns();
+      }
+      
+      std::cout << "3." << std::endl;
       
       //--------------------------------------------------------------------
       // Compute column and row increment
@@ -865,6 +875,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       inc=(table_obj.get_ncolumns()+(1))/max_cols;
       if (inc<1) inc=1;
       
+      std::cout << "4." << std::endl;
+      
       //--------------------------------------------------------------------
       // Get last row number if necessary
       
@@ -874,6 +886,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       
       //--------------------------------------------------------------------
       // Output column names
+      
+      std::cout << "5." << std::endl;
       
       if (names_out==true) {
 	
@@ -905,6 +919,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
       //--------------------------------------------------------------------
       // Output units
       
+      std::cout << "6." << std::endl;
+      
       if (names_out==true && table_obj.get_nunits()>0) {
 	
 	for(size_t ki=0;ki<max_cols;ki++) {
@@ -933,6 +949,8 @@ int acol_manager::comm_preview(std::vector<std::string> &sv, bool itive_com) {
 	}
 	cout << endl;
       }
+      
+      std::cout << "7." << std::endl;
       
       //--------------------------------------------------------------------
       // Output data
