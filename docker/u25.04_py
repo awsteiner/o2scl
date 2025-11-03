@@ -1,4 +1,4 @@
-ARG BASE=awsteiner/foundation:u24.04_tf_2.20_torch_2.9
+ARG BASE=awsteiner/foundation:u25.04_tf_2.20_torch_2.9
 FROM ${BASE} AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version of O2scl \
@@ -27,7 +27,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # recommendations are good, e.g. manpages and less.
 
 RUN apt-get -y update && apt-get \
-  -y install g++ make autoconf automake libtool git cmake \
+  -y install g++-15 make autoconf automake libtool git cmake \
   libz-dev libsz2 imagemagick && apt-get clean 
 
 # ───────────────────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ WORKDIR /opt/o2scl-0.931
 # the build argument.
 ENV CONFIG_VAR=${CONFIG}
 
-RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static $CONFIG_VAR
+RUN CXX="g++-15" LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.13/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static $CONFIG_VAR
 RUN make blank-doc && make -j ${NPROCS} && make install 
 
 WORKDIR /opt
@@ -88,7 +88,7 @@ RUN git fetch && git pull && git checkout rc && \
 # ───────────────────────────────────────────────────────────────────
 # To ensure o2graph loads OpenMP appropriately
 
-ENV O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so
+ENV O2SCL_ADDL_LIBS=/usr/lib/gcc/x86_64-linux-gnu/15/libgomp.so
 
 # ───────────────────────────────────────────────────────────────────
 # Run acol and o2graph
@@ -105,3 +105,4 @@ RUN acol -h -v && o2graph -h -v
 #RUN make testq
 
 FROM working
+

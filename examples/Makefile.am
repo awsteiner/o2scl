@@ -521,23 +521,29 @@ ex_tensor_SOURCES = ex_tensor.cpp
 ex_tensor.scr: ex_tensor
 	./ex_tensor > ex_tensor.scr
 
+# -------------------------------------------------------------------
+
+ex_eos_had_apr_LDFLAGS = $(ADDL_TEST_LDFLGS)
+ex_eos_had_apr_LDADD = $(ADDL_TEST_LIBS)
+ex_eos_had_apr_SOURCES = ex_eos_had_apr.cpp
+
 ex_eos_crust_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_eos_crust_LDADD = $(ADDL_TEST_LIBS)
 ex_eos_crust_SOURCES = ex_eos_crust.cpp
-ex_eos_crust.scr: ex_eos_crust
+
+ex_eos_had_apr.scr: ex_eos_had_apr
+	./ex_eos_had_apr > ex_eos_had_apr.scr
+
+ex_eos_crust.scr: ex_eos_crust ex_eos_had_apr.scr
 	./ex_eos_crust > ex_eos_crust.scr
+
+# -------------------------------------------------------------------
 
 ex_emulator_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_emulator_LDADD = $(ADDL_TEST_LIBS)
 ex_emulator_SOURCES = ex_emulator.cpp
 ex_emulator.scr: ex_emulator
 	./ex_emulator > ex_emulator.scr
-
-ex_eos_had_apr_LDFLAGS = $(ADDL_TEST_LDFLGS)
-ex_eos_had_apr_LDADD = $(ADDL_TEST_LIBS)
-ex_eos_had_apr_SOURCES = ex_eos_had_apr.cpp
-ex_eos_had_apr.scr: ex_eos_had_apr
-	./ex_eos_had_apr > ex_eos_had_apr.scr
 
 ex_eos_had_skyrme_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_eos_had_skyrme_LDADD = $(ADDL_TEST_LIBS)

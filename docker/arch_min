@@ -14,15 +14,15 @@ ARG NPROCS=1
 
 WORKDIR /opt
 
-#RUN curl -L \
-#https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
-#  --output o2scl-0.931.tar.gz
-#RUN tar xzf o2scl-0.931.tar.gz
-#WORKDIR /opt/o2scl-0.931
+RUN curl -L \
+https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
+  --output o2scl-0.931.tar.gz
+RUN tar xzf o2scl-0.931.tar.gz
+WORKDIR /opt/o2scl-0.931
 
-RUN git clone https://github.com/awsteiner/o2scl
-WORKDIR /opt/o2scl
-RUN git fetch && git pull && git checkout rc && autoreconf -i
+#RUN git clone https://github.com/awsteiner/o2scl
+#WORKDIR /opt/o2scl
+#RUN git fetch && git pull && git checkout rc && autoreconf -i
 
 RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include" \
   ./configure --prefix=/usr --enable-openmp
