@@ -12,7 +12,7 @@ help:
 	@echo 
 	@echo "Additional package-specific targets"
 	@echo "-----------------------------------"\
-	"-------------------------------------"
+	"---------------------------------------"
 	@echo "help:                 Show this help file"
 	@echo "o2scl-test:           Test installation "\
 	"('make check' works also)"
@@ -28,18 +28,16 @@ help:
 	@echo 
 	@echo "Developer targets"
 	@echo "-----------------------------------"\
-	"-------------------------------------"
+	"---------------------------------------"
 	@echo "sinstall:             Install headers and libraries only"
 	@echo "o2scl-doc:            Make HTML documentation"
 	@echo "o2scl-xml:            Generate XML from doxygen"
 	@echo "acol-docs-auto:       Update acol docs"
 	@echo "clean-doc:            Remove generated documentation files"
-	@echo "release-sync-doc:     Copy docs from /usr/local on isospin "\
-	"to the web page "
-	@echo "                      repository for uploading"
-	@echo "prerelease-sync-doc:  Copy docs from /usr/local on isospin "\
-	"to the internal "
-	@echo "                      web directory."
+	@echo "release-sync-doc:     Copy docs from /usr/local "\
+	"to the web page."
+	@echo "prerelease-sync-doc:  Copy docs from /usr/local "\
+	"to the development page."
 	@echo
 
 # -----------------------------------------------------------------

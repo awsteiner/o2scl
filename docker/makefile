@@ -40,7 +40,7 @@ DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus arch_min \
 u25.04_min u25.04_plus arch_plus arch_py
 # Architectures
 ARCHS := amd64 arm64 i386
-PREFIX := v0.931rc
+PREFIX := v0.931
 
 # Rule template
 define RULE_tlate

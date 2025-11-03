@@ -237,7 +237,7 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 # Distribution files
 # -------------------------------------------------------------
 
-EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex_bps_input.txt ex*.h data/README.md
+EXTRA_DIST = ex*.cpp bm*.cpp Makefile* ex*.h data/README.md
 
 # -------------------------------------------------------------
 # Main targets
@@ -265,7 +265,6 @@ EXTRA_BASE = \
 	ex_anneal \
 	ex_chebapp \
 	ex_conmin \
-	ex_const_vec \
 	ex_contour \
 	ex_deriv \
 	ex_diff \
@@ -557,12 +556,6 @@ ex_nucmass_LDADD = $(ADDL_TEST_LIBS)
 ex_nucmass_SOURCES = ex_nucmass.cpp
 ex_nucmass.scr: ex_nucmass
 	./ex_nucmass > ex_nucmass.scr
-
-ex_const_vec_LDFLAGS = $(ADDL_TEST_LDFLGS)
-ex_const_vec_LDADD = $(ADDL_TEST_LIBS)
-ex_const_vec_SOURCES = ex_const_vec.cpp
-ex_const_vec.scr: ex_const_vec
-	./ex_const_vec > ex_const_vec.scr
 
 ex_stiff_LDFLAGS = $(ADDL_TEST_LDFLGS)
 ex_stiff_LDADD = $(ADDL_TEST_LIBS)
