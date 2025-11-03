@@ -1,4 +1,6 @@
 *.out
+*.cuda2
+*.cuda1
 *.check
 *.i386
 *.pycheck
