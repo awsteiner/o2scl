@@ -1,4 +1,4 @@
-ARG BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2
+ARG BASE=awsteiner/foundation:cuda_13.0_tf_2.20_torch_2.9_m2
 FROM ${BASE} AS working
 LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
 LABEL description="A full development version of O2scl \
@@ -58,7 +58,7 @@ RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
 
 #RUN curl -L \
 #https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
-  --output o2scl-0.931.tar.gz
+#  --output o2scl-0.931.tar.gz
 #RUN tar xzf o2scl-0.931.tar.gz
 #WORKDIR /opt/o2scl-0.931
 
@@ -71,9 +71,8 @@ RUN git fetch && git pull && git checkout dev && autoreconf -i
 # the build argument.
 ENV CONFIG_VAR=${CONFIG}
 
-RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/HDF_Group/HDF5/1.14.6/include" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-cuda --enable-multip $CONFIG_VAR
-FROM working
-RUN make blank-doc && make -j ${NPROCS} && make install 
+RUN LDFLAGS="-L/HDF_Group/HDF5/1.14.6/lib -L/usr/local/cuda-13.0/targets/x86_64-linux/lib/" CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/local/lib/python3.12/dist-packages/numpy/_core/include -I/usr/local/cuda-13.0/targets/x86_64-linux/include/ -I/HDF_Group/HDF5/1.14.6/include" LIBS="-lcusolver -lcufft -lcublas -lcudart -lquadmath" ./configure --enable-eigen --enable-openmp --enable-fftw --enable-python --disable-static --enable-cuda --enable-multip $CONFIG_VAR
+RUN make blank-doc && make && make install
 
 WORKDIR /opt
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib"
@@ -104,4 +103,7 @@ RUN acol -h -v && o2graph -h -v
 #RUN make check && make o2scl-examples && make distclean
 #WORKDIR /opt/o2sclpy
 #RUN make testq
+
+RUN ln -s /opt/o2scl /opt/o2scl-0.931
+FROM working
 
