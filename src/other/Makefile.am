@@ -281,7 +281,7 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+EXTRA_DIST = *_ts.cpp fft_cuda.cu
 
 emacs-clean: 
 	-rm *~

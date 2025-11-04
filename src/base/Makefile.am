@@ -309,7 +309,7 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp output_path.py
+EXTRA_DIST = *_ts.cpp output_path.py base_cuda.cu
 
 emacs-clean: 
 	-rm *~
