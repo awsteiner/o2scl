@@ -21,6 +21,6 @@ jobs:
     
     - name: Check
       run: |
-        cd /opt/o2scl
+        cd /opt/o2scl-0.931
         make VERBOSE=1 check -j4 -O
         make VERBOSE=1 o2scl-examples -j4 -O
