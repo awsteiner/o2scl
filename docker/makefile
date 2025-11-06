@@ -40,7 +40,7 @@ DFILE := ost_min ost_plus ost_py u24.04_py u24.04_min u24.04_plus arch_min \
 u25.04_min u25.04_plus arch_plus arch_py u25.04_py u24.04_cuda
 # Architectures
 ARCHS := amd64 arm64 i386
-PREFIX := v0.931
+PREFIX := v0.932rc
 
 # Rule template
 define RULE_tlate
@@ -66,7 +66,7 @@ $(1).build: empty
 $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
-		sh -c "cd /opt/o2scl-0.931 && make check && make o2scl-examples" \
+		sh -c "cd /opt/o2scl-0.932 && make check && make o2scl-examples" \
 		| tee out/$(1).check &
 
 else
@@ -90,7 +90,7 @@ $(1).build: empty
 $(1).check: empty
 	sudo docker run --rm \
 		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_amd64 \
-		sh -c "cd /opt/o2scl-0.931 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+		sh -c "cd /opt/o2scl-0.932 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
 		| tee out/$(1).check &
 
 endif
@@ -145,7 +145,7 @@ $(1)_i386.check: empty
 	sudo docker run --rm \
 		--platform linux/386 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-                sh -c "cd /opt/o2scl-0.931 && make check && make o2scl-examples" \
+                sh -c "cd /opt/o2scl-0.932 && make check && make o2scl-examples" \
 		| tee out/$(1)_i386.check &
 else
 
@@ -170,7 +170,7 @@ $(1)_i386.check: empty
 	sudo docker run --rm \
 		--platform linux/386 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_i386 \
-                sh -c "cd /opt/o2scl-0.931 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+                sh -c "cd /opt/o2scl-0.932 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
 		| tee out/$(1)_i386.check &
 
 endif
@@ -213,7 +213,7 @@ $(1)_arm64.check: empty
 	sudo docker run --rm \
 		--platform linux/arm64 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-                sh -c "cd /opt/o2scl-0.931 && make check && make o2scl-examples" \
+                sh -c "cd /opt/o2scl-0.932 && make check && make o2scl-examples" \
 		| tee out/$(1)_arm64.check &
 
 else
@@ -239,7 +239,7 @@ $(1)_arm64.check: empty
 	sudo docker run --rm \
 		--platform linux/arm64 \
                 -t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))_arm64 \
-                sh -c "cd /opt/o2scl-0.931 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
+                sh -c "cd /opt/o2scl-0.932 && make -j $(O2SCL_NPROCS) check && make -j $(O2SCL_NPROCS) o2scl-examples" \
 		| tee out/$(1)_arm64.check &
 
 endif
@@ -267,7 +267,7 @@ $(1).cuda1:
 	BASE=awsteiner/foundation:cuda_12.6_tf_2.18_torch_2.7_m1 \
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))1 \
 		--target working 2>&1 | tee out/$(1).cuda1 &
 
 $(1).cuda2:
@@ -276,7 +276,7 @@ $(1).cuda2:
 	BASE=awsteiner/foundation:cuda_12.8_tf_2.18_torch_2.7_m2 \
 		--build-arg CONFIG=--enable-cuda \
 		-f $$(word $(2), $(DFILE)) \
-		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE)) \
+		-t awsteiner/o2scl:$(PREFIX)_$$(word $(2), $(DFILE))2 \
 		--target working 2>&1 | tee out/$(1).cuda2 &
 
 endef

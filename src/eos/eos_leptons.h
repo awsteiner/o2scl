@@ -427,7 +427,7 @@ namespace o2scl {
         density (25-digit version)
     */
     virtual int electron_density_cdf25(cpp_dec_float_25 T);
-    
+
     /** \brief Compute particle thermodynamics from the density
      */
     template <class part_t, class part_thermo_t, class fp_t>
@@ -541,13 +541,13 @@ namespace o2scl {
     /** \brief Function to solve for \ref pair_density_eq()
      */
     virtual int pair_density_eq_fun(size_t nv, const ubvector &x,
-                            ubvector &y, double T, double nq);
+                                    ubvector &y, double T, double nq);
     
     /** \brief Function to solve for \ref pair_density_eq_ld()
      */
     virtual long double pair_density_eq_ld_fun
     (long double x, long double T, long double nq);
-
+    
     /** \brief Function to solve for \ref pair_density_eq_cdf25()
      */
     virtual cpp_dec_float_25 pair_density_eq_cdf25_fun
