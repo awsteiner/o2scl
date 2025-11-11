@@ -167,6 +167,10 @@ nucmass_ldrop_skin::nucmass_ldrop_skin() {
   a2=-5.1;
   a4=-1.1;
   Tchalf=20.085/o2scl_const::hc_mev_fm;
+
+  Tc_c=3.313;
+  Tc_d=7.362;
+  
 }
 
 int nucmass_ldrop_skin::fit_fun(size_t nv, const ubvector &x) {
@@ -262,139 +266,142 @@ double nucmass_ldrop_skin::binding_energy_densmat
 
   // Bulk part of the free energy per baryon
 
-  if (!new_skin_mode) {
+  //if (!new_skin_mode) {
 
-    // If new_skin_mode is false, just compute the 
-    // bulk energy once, given nn and np
-    n->n=nn;
-    p->n=np;
-
-    // We provide an initial guess for the chemical potentials to
-    // ensure the mass is deterministic
-    n->mu=n->m;
-    p->mu=p->m;
-    
-    if (T<=0.0) {
-      err=heos->calc_e(*n,*p,th);
-      bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
-    } else {
-      err=heos->calc_temp_e(*n,*p,T,th);
-      bulk=(th.ed-T*th.en-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
-    }
-    if (err!=0) {
-      O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::binding_energy_densmat().",
-		 exc_efailed);
-    }
-    ret+=bulk;
-
+  // If new_skin_mode is false, just compute the 
+  // bulk energy once, given nn and np
+  n->n=nn;
+  p->n=np;
+  
+  // We provide an initial guess for the chemical potentials to
+  // ensure the mass is deterministic
+  n->mu=n->m;
+  p->mu=p->m;
+  
+  if (T<=0.0) {
+    err=heos->calc_e(*n,*p,th);
+    bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
   } else {
-
-    // Otherwise, try to separate out the contribution
-    // from the skin. 
-
-    // First compute the relative strength of the core
-    // and skin contributions 
-    double Acore, Askin;
-    if (N>=Z) {
-      Acore=Z*(nn+np)/np;
-      Askin=A-Acore;
-    } else {
-      Acore=N*(nn+np)/nn;
-      Askin=A-Acore;
-    }
-    if (Acore>A) {
-      Askin=0.0;
-      Acore=A;
-    }
-
-    // The "core" contribution
+    err=heos->calc_temp_e(*n,*p,T,th);
+    bulk=(th.ed-T*th.en-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm;
+  }
+  if (err!=0) {
+    O2SCL_ERR2("Hadronic eos failed in ",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
+               exc_efailed);
+  }
+  ret+=bulk;
+  
+  //} else {
+  
+#ifdef O2SCL_NEVER_DEFINED
+  
+  // Otherwise, try to separate out the contribution
+  // from the skin. 
+  
+  // First compute the relative strength of the core
+  // and skin contributions 
+  double Acore, Askin;
+  if (N>=Z) {
+    Acore=Z*(nn+np)/np;
+    Askin=A-Acore;
+  } else {
+    Acore=N*(nn+np)/nn;
+    Askin=A-Acore;
+  }
+  if (Acore>A) {
+    Askin=0.0;
+    Acore=A;
+  }
+  
+  // The "core" contribution
+  n->n=nn;
+  p->n=np;
+  n->mu=n->m;
+  p->mu=p->m;
+  if (T<=0.0) {
+    err=heos->calc_e(*n,*p,th);
+    bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm*(Acore/A);
+  } else {
+    err=heos->calc_temp_e(*n,*p,T,th);
+    bulk=(th.ed-T*th.en-nn*n->m-np*p->m)/nL*
+      o2scl_const::hc_mev_fm*(Acore/A);
+  }
+  if (err!=0) {
+    O2SCL_ERR2("Hadronic eos failed in ",
+               "nucmass_ldrop_skin::binding_energy_densmat().",
+               exc_efailed);
+  }
+  
+  // Note that, for this model, Rn>Rp iff N>Z.
+  if (Rn>Rp) {
+    
+    // A neutron skin
     n->n=nn;
+    p->n=npout;
+    n->mu=n->m;
+    p->mu=p->m;
+    if (T<=0.0) {
+      err=heos->calc_e(*n,*p,th);
+      bulk+=(th.ed-nn*n->m)/nL*o2scl_const::hc_mev_fm*(Askin/A);
+    } else {
+      err=heos->calc_temp_e(*n,*p,T,th);
+      bulk+=(th.ed-T*th.en-nn*n->m)/nL*
+        o2scl_const::hc_mev_fm*(Askin/A);
+    }
+    if (err!=0) {
+      O2SCL_ERR2("Hadronic eos failed in ",
+                 "nucmass_ldrop_skin::binding_energy_densmat().",
+                 exc_efailed);
+    }
+    
+  } else if (Rp>Rn) {
+    
+    // A proton skin
+    n->n=nnout;
     p->n=np;
     n->mu=n->m;
     p->mu=p->m;
     if (T<=0.0) {
       err=heos->calc_e(*n,*p,th);
-      bulk=(th.ed-nn*n->m-np*p->m)/nL*o2scl_const::hc_mev_fm*(Acore/A);
+      bulk+=(th.ed-np*p->m)/nL*o2scl_const::hc_mev_fm*(Askin/A);
     } else {
       err=heos->calc_temp_e(*n,*p,T,th);
-      bulk=(th.ed-T*th.en-nn*n->m-np*p->m)/nL*
-	o2scl_const::hc_mev_fm*(Acore/A);
+      bulk+=(th.ed-T*th.en-np*p->m)/nL*
+        o2scl_const::hc_mev_fm*(Askin/A);
     }
     if (err!=0) {
       O2SCL_ERR2("Hadronic eos failed in ",
-		 "nucmass_ldrop_skin::binding_energy_densmat().",
-		 exc_efailed);
+                 "nucmass_ldrop_skin::binding_energy_densmat().",
+                 exc_efailed);
     }
-
-    // Note that, for this model, Rn>Rp iff N>Z.
-    if (Rn>Rp) {
-
-      // A neutron skin
-      n->n=nn;
-      p->n=npout;
-      n->mu=n->m;
-      p->mu=p->m;
-      if (T<=0.0) {
-	err=heos->calc_e(*n,*p,th);
-	bulk+=(th.ed-nn*n->m)/nL*o2scl_const::hc_mev_fm*(Askin/A);
-      } else {
-	err=heos->calc_temp_e(*n,*p,T,th);
-	bulk+=(th.ed-T*th.en-nn*n->m)/nL*
-	  o2scl_const::hc_mev_fm*(Askin/A);
-      }
-      if (err!=0) {
-	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::binding_energy_densmat().",
-		   exc_efailed);
-      }
-
-    } else if (Rp>Rn) {
-
-      // A proton skin
-      n->n=nnout;
-      p->n=np;
-      n->mu=n->m;
-      p->mu=p->m;
-      if (T<=0.0) {
-	err=heos->calc_e(*n,*p,th);
-	bulk+=(th.ed-np*p->m)/nL*o2scl_const::hc_mev_fm*(Askin/A);
-      } else {
-	err=heos->calc_temp_e(*n,*p,T,th);
-	bulk+=(th.ed-T*th.en-np*p->m)/nL*
-	  o2scl_const::hc_mev_fm*(Askin/A);
-      }
-      if (err!=0) {
-	O2SCL_ERR2("Hadronic eos failed in ",
-		   "nucmass_ldrop_skin::binding_energy_densmat().",
-		   exc_efailed);
-      }
-    }
-    
-    if (!rel_vacuum && (nnout>0.0 || npout>0.0)) {
-      
-      double Rbig;
-      if (Rn>Rp) Rbig=Rn;
-      else Rbig=Rp;
-      
-      n->n=nnout;
-      p->n=npout;
-      n->mu=n->m;
-      p->mu=p->m;
-      if (T<=0.0) {
-	err=heos->calc_e(*n,*p,th);
-	bulk-=(th.ed-nnout*n->m-npout*p->m)*
-	  4.0*o2scl_const::pi/3.0*pow(Rbig,3.0)/A*o2scl_const::hc_mev_fm;
-      } else {
-	err=heos->calc_temp_e(*n,*p,T,th);
-	bulk-=(th.ed-T*th.en-nnout*n->m-npout*p->m)*
-	  4.0*o2scl_const::pi/3.0*pow(Rbig,3.0)/A*o2scl_const::hc_mev_fm;
-      }
-    }
-
-    ret+=bulk;
-
   }
+  //}
+    
+#endif
+  
+  if (!rel_vacuum && (nnout>0.0 || npout>0.0)) {
+    
+    double Rbig;
+    if (Rn>Rp) Rbig=Rn;
+    else Rbig=Rp;
+    
+    n->n=nnout;
+    p->n=npout;
+    n->mu=n->m;
+    p->mu=p->m;
+    if (T<=0.0) {
+      err=heos->calc_e(*n,*p,th);
+      bulk-=(th.ed-nnout*n->m-npout*p->m)*
+        4.0*o2scl_const::pi/3.0*pow(Rbig,3.0)/A*o2scl_const::hc_mev_fm;
+    } else {
+      err=heos->calc_temp_e(*n,*p,T,th);
+      bulk-=(th.ed-T*th.en-nnout*n->m-npout*p->m)*
+        4.0*o2scl_const::pi/3.0*pow(Rbig,3.0)/A*o2scl_const::hc_mev_fm;
+    }
+  }
+  
+  ret+=bulk;
 
   // Determine surface energy per baryon
 
@@ -409,7 +416,7 @@ double nucmass_ldrop_skin::binding_energy_densmat
     double y=0.5-x;
     double y2=y*y, y4=y2*y2;
     double a=a0+a2*y2+a4*y4;
-    double arg=1.0-3.313*y2-7.362*y4;
+    double arg=1.0-Tc_c*y2-Tc_d*y4;
     double Tc=Tchalf*sqrt(arg);
 	
     if (T<Tc) {
