@@ -53,19 +53,13 @@ namespace o2scl {
       \note This class sets part::inc_rest_mass to true for the
       particle objects specified in set_n_and_p().
 
-      \note The input parameter T (for the temperature) should be
-      given in units of inverse femtometers. This is a bit confusing,
-      since the binding energy is returned in MeV.
-      
       <b>Definition of </b> \f$ \chi \f$ <b> and </b> \f$ n_L \f$
 
       The variable \f$ \chi \f$ is defined as the fractional volume
-      occupied by and \f$ n_L \f$ is the density of nucleons inside
-      the nucleus. If \f$ V \f$ is the total volume of the nucleus
-      plus the surrounding Wigner-Seitz cell, then we have
-      \f[
-      A = V n_L \chi
-      \f]
+      occupied by the nucleus and \f$ n_L \f$ is the density of
+      nucleons inside the nucleus. If \f$ V \f$ is the total volume of
+      the nucleus plus the surrounding Wigner-Seitz cell, then we have
+      \f[ A = V n_L \chi \f]
       
       <b>Central densities</b>
 
@@ -76,8 +70,9 @@ namespace o2scl {
       \f[
       n_L = n_0 + n_1 \delta^2
       \f]
-      and then we can compute \f$ n_{p} = n_L (1 - \delta)/2 \f$ and
-      \f$ n_{n} = n_L (1 + \delta)/2 \f$ . 
+      and then we can compute the number densities of protons and
+      neutrons inside nuclei: \f$ n_{p} = n_L (1 - \delta)/2 \f$ and
+      \f$ n_{n} = n_L (1 + \delta)/2 \f$ .
 
       Note that \f$ \delta = I \f$ implies no neutron skin. A neutron
       skin occurs when \f$ \delta < I \f$, and \f$ \delta = 0 \f$
@@ -90,12 +85,12 @@ namespace o2scl {
 
       The nuclear radius is determined by
       \f{eqnarray*}
-      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3}
+      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3} \, .
       \f}
 
       <b>Bulk energy contribution</b>
       
-      The bulk binding energy contribution ( \f$ \sim -16 \f$
+      The bulk binding energy contribution ( \f$ \approx -16 \f$
       MeV per nucleon) and the symmetry energy are computing using the
       hadronic EOS (either \ref def_had_eos or the EOS specified in
       the most recent call to set_eos_had_temp_base() ). The bulk
@@ -253,15 +248,21 @@ namespace o2scl {
         temperature, return the binding energy of the nucleus in MeV
 
         In this class, this function is currently independent of \c
-        npout, \c nnout, \c dim, and \c chi.
+        npout, \c nnout, \c nneg, and \c chi.
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double T=0.0);
+                                          double nneg=0.0, double T=0.0);
 
-    /// Desc
+    /** \brief Compute the fractional volume occupied by nuclei
+
+        This function returns 0, since this class does not
+        include any medium effects.
+    */
     virtual double exc_volume(double Z, double N, double npout=0.0,
-                              double nnout=0.0, double T=0.0) {
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0) {
+      /*
 
       double ret=0.0, A=Z+N, nL;
       
@@ -288,6 +289,8 @@ namespace o2scl {
       double phi=4.0/3.0*o2scl_const::pi*Rn*Rn*Rn;
 
       return phi;
+      */
+      return 0.0;
     }
     
     /** \brief Given \c Z and \c N, the external densities, and the

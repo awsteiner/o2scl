@@ -190,7 +190,7 @@ int nucmass_ldrop_skin::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_skin::binding_energy_densmat
-(double Z, double N, double npout, double nnout, double ne, 
+(double Z, double N, double npout, double nnout, double nneg, 
  double T) {
   
   int err;
@@ -254,7 +254,7 @@ double nucmass_ldrop_skin::binding_energy_densmat
   Rp=cbrt(3.0*Z/np/4.0/o2scl_const::pi);
 
   // Use charge neutrality to compute chi_p
-  double chip=(ne-npout)/(np-npout);
+  double chip=(nneg-npout)/(np-npout);
 
   // Then compute R_WS and chi
   double Rws=Rp/cbrt(chip);

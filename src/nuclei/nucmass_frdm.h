@@ -224,6 +224,17 @@ namespace o2scl {
       return;
     }
     
+    /** \brief Compute the fractional volume occupied by nuclei
+
+        This function returns 0, since this class does not
+        include any medium effects.
+    */
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0) {
+      return 0.0;
+    }
+    
   protected:
 
     /// Conversion from kg to inverse fm

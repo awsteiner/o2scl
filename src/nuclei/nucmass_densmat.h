@@ -303,18 +303,9 @@ namespace o2scl {
      double &dEdnneg, double &dEdT)=0;
 
     /// Determine the volume excluded by the nucleus
-    virtual double exc_volume(double Z, double N, double T=0.0) {
-
-      // Determine the inner densities
-      double n0=0.16;
-      
-      // Determine radii
-      double R=cbrt(3.0*(Z+N)/4.0/o2scl_const::pi/n0);
-
-      double phi=4.0/3.0*o2scl_const::pi*R*R*R;
-
-      return phi;
-    }      
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0)=0;
     
     /** \brief Compute the binding energy of a nucleus in dense matter
     */
