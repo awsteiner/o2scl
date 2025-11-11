@@ -630,6 +630,14 @@ namespace o2scl {
                                           double npout=0.0, double nnout=0.0, 
                                           double nneg=0.0, double T=0.0);
     
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, compute the binding energy and the derivatives
+    */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT);
+    
     /** \brief Compute the volume occupied by the nucleus, in
         \f$ \mathrm{fm}^3 \f$
     */
@@ -734,6 +742,9 @@ namespace o2scl {
     
     /// Quartic coefficient for temperature dependence (default 7.362)
     double Tc_d;
+
+    /// If true, modify the Coulomb part (default true)
+    bool mod_coul;
     //@}
     
   };

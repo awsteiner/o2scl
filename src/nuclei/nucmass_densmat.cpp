@@ -367,28 +367,11 @@ void dense_matter::copy_densities_from(dense_matter &dm2) {
 }
 
 nucmass_densmat::nucmass_densmat() {
-  // It's important not to automatically load masses from
-  // HDF5 by default because this causes issues instantiating
-  // this class with many processors
-  //massp=0;
 }
-
-/*
-void nucmass_densmat::set_mass(nucmass &nm) {
-  massp=&nm;
-  return;
-}
-*/
 
 void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2, 
 				       double &t3, double &t4) {
 
-#ifdef O2SCL_NEVER_DEFINED
-  if (massp==0) {
-    O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
-	      exc_efailed);
-  }
-      
   double Z=26.0;
   double N=30.0;
 
@@ -406,6 +389,7 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
       
   binding_energy_densmat_derivs(Z,N,npout*(1.0+eps),nnout,nneg,T,E2,
 				temp1,temp2,temp3,temp4);
+
   if (fabs(dEdnp)<1.0e-20) {
     t1=fabs(dEdnp-(E2-E1)/(npout*eps));
   } else {
@@ -436,8 +420,6 @@ void nucmass_densmat::test_derivatives(double eps, double &t1, double &t2,
     t4=fabs(dEdT-(E2-E1)/(T*eps))/fabs(dEdT);
   }
 
-#endif
-  
   return;
 }
 
@@ -454,94 +436,3 @@ double nucmass_densmat::binding_energy_densmat
   return E;
 }
 
-#ifdef O2SCL_NEVER_DEFINED
-
-void nucmass_densmat::binding_energy_densmat_derivs
-(double Z, double N, double npout, double nnout, 
- double nneg, double T, double &E, double &dEdnp, double &dEdnn,
- double &dEdnneg, double &dEdT) {
-
-  if (massp==0) {
-    O2SCL_ERR("Masses not specified in nucmass_densmat::test_derivatives().",
-	      exc_efailed);
-  }
-
-  if (!massp->is_included(Z+1.0e-10,N+1.0e-10)) {
-    O2SCL_ERR((((string)"Mass with Z=")+o2scl::dtos(Z)+" and N="+
-	       o2scl::dtos(N)+" not included in nucmass_densmat"+
-	       "::binding_energy_densmat_derivs().").c_str(),exc_einval);
-  }
-
-  // Half saturation density
-  double n0o2=0.08;
-
-  if (nneg<npout) {
-    O2SCL_ERR2("Not enough negative charges in nucmass_densmat::",
-	       "binding_energy_densmat_derivs().",exc_einval);
-  }
-  if (npout>n0o2) {
-    O2SCL_ERR2("Too many protons in nucmass_densmat::",
-	       "binding_energy_densmat_derivs().",exc_einval);
-  }
-
-  // Radii
-  double R_p_3=3.0*Z/4.0/o2scl_const::pi/(n0o2-npout);
-  double R_n_3=3.0*N/4.0/o2scl_const::pi/(n0o2-nnout);
-  double R_p=cbrt(R_p_3), R_n=cbrt(R_n_3);
-  double R_WS_3=R_p_3*(n0o2-npout)/(nneg-npout);
-  double R_WS=cbrt(R_WS_3);
-
-  // Allow a small error from finite precision
-  if (R_p>R_WS) {
-    R_p=R_WS*(1.0-1.0e-8);
-    R_p_3=R_p*R_p*R_p;
-  }
-  if (R_p>R_WS) {
-    cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
-	 << npout << " " << nnout << " " << nneg << endl;
-    cout << "Rn,Rp,RWS: " << R_n << " "<< R_p << " " << R_WS << endl;
-    O2SCL_ERR2("Proton radius larger than cell in nucmass_densmat::",
-	       "binding_energy_densmat_derivs().",exc_einval);
-  }
-
-  // Allow a small error from finite precision
-  if (R_n>R_WS) {
-    R_n=R_WS*(1.0-1.0e-8);
-    R_n_3=R_n*R_n*R_n;
-  }
-  if (R_n>R_WS) {
-    cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
-	 << npout << " " << nnout << " " << nneg << endl;
-    cout << "Rn,Rp,RWS: " << R_n << " "<< R_p << " " << R_WS << endl;
-    O2SCL_ERR2("Neutron radius larger than cell in nucmass_densmat::",
-	       "binding_energy_densmat_derivs().",exc_einval);
-  }
-
-  // Volume fractions
-  double chi_p=R_p_3/R_WS_3;
-  double chi_n=R_n_3/R_WS_3;
-      
-  // Add the finite-size part of the Coulomb energy
-  double fdu=0.2*chi_p-0.6*cbrt(chi_p);
-  double coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
-    o2scl_const::fine_structure_f<double>()*R_p*R_p*
-    pow(fabs(n0o2-npout),2.0)/0.16*fdu;
-
-  // Total binding energy
-  E=massp->mass_excess_d(Z,N)+coul+(Z+N)*massp->m_amu-Z*massp->m_elec-
-    N*massp->m_neut-Z*massp->m_prot;
-      
-  // Derivatives
-  double dfof=(0.2-0.2*pow(chi_p,-2.0/3.0))/fdu;
-  double dchi_dnp=-(n0o2-nneg)/pow(n0o2-npout,2.0);
-  double dchi_dnneg=1.0/(n0o2-npout);
-
-  dEdnp=-4.0/3.0*coul/(n0o2-npout)+coul*dfof*dchi_dnp;
-  dEdnneg=coul*dfof*dchi_dnneg;
-  dEdT=0.0;
-  dEdnn=0.0;
-
-  return;
-}
-
-#endif

@@ -170,7 +170,7 @@ nucmass_ldrop_skin::nucmass_ldrop_skin() {
 
   Tc_c=3.313;
   Tc_d=7.362;
-  
+  mod_coul=true;
 }
 
 int nucmass_ldrop_skin::fit_fun(size_t nv, const ubvector &x) {
@@ -452,7 +452,7 @@ double nucmass_ldrop_skin::binding_energy_densmat
   // nuclear data better, as currently testing in nucmass_ldrop_shell_ts .
   // This may be the result of the diffuseness of the proton density
   // distribution: the effective R_p is actually larger. 
-  if (false) {
+  if (mod_coul==false) {
     coul=coul_coeff*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
       o2scl_const::fine_structure_f<double>()*
       Rp*Rp*pow(fabs(np-npout),2.0)*Z/A/np*fdu;
@@ -467,6 +467,79 @@ double nucmass_ldrop_skin::binding_energy_densmat
   ret*=A;
 
   return ret;
+}
+
+void nucmass_ldrop_skin::binding_energy_densmat_derivs
+(double Z, double N, double npout, double nnout, 
+ double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+ double &dEdnneg, double &dEdT) {
+
+  // Half saturation density
+  double n0o2=0.08;
+
+  if (nneg<npout) {
+    O2SCL_ERR2("Not enough negative charges in nucmass_densmat::",
+	       "binding_energy_densmat_derivs().",exc_einval);
+  }
+  if (npout>n0o2) {
+    O2SCL_ERR2("Too many protons in nucmass_densmat::",
+	       "binding_energy_densmat_derivs().",exc_einval);
+  }
+
+  // Radii
+  double R_p_3=3.0*Z/4.0/o2scl_const::pi/(n0o2-npout);
+  double R_n_3=3.0*N/4.0/o2scl_const::pi/(n0o2-nnout);
+  double R_p=cbrt(R_p_3), R_n=cbrt(R_n_3);
+  double R_WS_3=R_p_3*(n0o2-npout)/(nneg-npout);
+  double R_WS=cbrt(R_WS_3);
+
+  // Allow a small error from finite precision
+  if (R_p>R_WS) {
+    R_p=R_WS*(1.0-1.0e-8);
+    R_p_3=R_p*R_p*R_p;
+  }
+  if (R_p>R_WS) {
+    cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
+	 << npout << " " << nnout << " " << nneg << endl;
+    cout << "Rn,Rp,RWS: " << R_n << " "<< R_p << " " << R_WS << endl;
+    O2SCL_ERR2("Proton radius larger than cell in nucmass_densmat::",
+	       "binding_energy_densmat_derivs().",exc_einval);
+  }
+
+  // Allow a small error from finite precision
+  if (R_n>R_WS) {
+    R_n=R_WS*(1.0-1.0e-8);
+    R_n_3=R_n*R_n*R_n;
+  }
+  if (R_n>R_WS) {
+    cout << "Z,N,np,nn,ne: " << Z << " " << N << " " 
+	 << npout << " " << nnout << " " << nneg << endl;
+    cout << "Rn,Rp,RWS: " << R_n << " "<< R_p << " " << R_WS << endl;
+    O2SCL_ERR2("Neutron radius larger than cell in nucmass_densmat::",
+	       "binding_energy_densmat_derivs().",exc_einval);
+  }
+
+  // Volume fractions
+  double chi_p=R_p_3/R_WS_3;
+  double chi_n=R_n_3/R_WS_3;
+      
+  // Add the finite-size part of the Coulomb energy
+  double fdu=0.2*chi_p-0.6*cbrt(chi_p);
+  coul=(Z+N)*2.0*o2scl_const::pi*o2scl_const::hc_mev_fm*
+    o2scl_const::fine_structure_f<double>()*R_p*R_p*
+    pow(fabs(n0o2-npout),2.0)/0.16*fdu;
+      
+  // Derivatives
+  double dfof=(0.2-0.2*pow(chi_p,-2.0/3.0))/fdu;
+  double dchi_dnp=-(n0o2-nneg)/pow(n0o2-npout,2.0);
+  double dchi_dnneg=1.0/(n0o2-npout);
+
+  dEdnp=-4.0/3.0*coul/(n0o2-npout)+coul*dfof*dchi_dnp;
+  dEdnneg=coul*dfof*dchi_dnneg;
+  dEdT=0.0;
+  dEdnn=0.0;
+
+  return;
 }
 
 int nucmass_ldrop_pair::fit_fun(size_t nv, const ubvector &x) {
@@ -492,7 +565,7 @@ int nucmass_ldrop_pair::guess_fun(size_t nv, ubvector &x) {
 }
 
 double nucmass_ldrop_pair::binding_energy_densmat
-(double Z, double N, double npout, double nnout, double ne,
+(double Z, double N, double npout, double nnout, double nneg,
  double T) {
   
   double A=(Z+N);
@@ -501,5 +574,6 @@ double nucmass_ldrop_pair::binding_energy_densmat
     2.0/pow(A,1.5);
   
   return A*pair+nucmass_ldrop_skin::binding_energy_densmat
-    (Z,N,npout,nnout,ne,T);
+    (Z,N,npout,nnout,nneg,T);
 }
+
