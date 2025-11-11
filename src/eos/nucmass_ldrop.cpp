@@ -290,7 +290,6 @@ double nucmass_ldrop_skin::binding_energy_densmat
                "nucmass_ldrop_skin::binding_energy_densmat().",
                exc_efailed);
   }
-  ret+=bulk;
   
   //} else {
   

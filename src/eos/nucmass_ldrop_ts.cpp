@@ -224,6 +224,7 @@ int main(void) {
   ldf.full_surface=false;
 
   cout << ld.mass_excess(82,126) << endl;
+  cout << ld.bulk << " " << ld.surf << " " << ld.coul << endl;
   cout << ld.binding_energy(82,126)/208.0 << endl;
   cout << ld.bulk << " " << ld.surf << " " << ld.coul << endl;
   cout << (ld.bulk+ld.surf+ld.coul) << endl;
@@ -231,6 +232,7 @@ int main(void) {
   cout << endl;
 
   cout << ldf.mass_excess(82,126) << endl;
+  cout << ldf.bulk << " " << ldf.surf << " " << ldf.coul << endl;
   cout << ldf.binding_energy(82,126)/208.0 << endl;
   cout << ldf.bulk << " " << ldf.surf << " " << ldf.coul << endl;
   cout << (ldf.bulk+ldf.surf+ldf.coul) << endl;
