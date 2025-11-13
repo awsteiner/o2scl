@@ -199,14 +199,7 @@ double nucmass_ldrop_skin::binding_energy_densmat
   
   int err;
   double ret=0.0, A=Z+N, nL;
-
-  /*
-  if (chi<0.0 || chi>1.0) {
-    O2SCL_ERR2("Chi less than zero or greater than one in ",
-               "nucmass_ldrop_skin::binding_energy_densmat().",
-               o2scl::exc_einval);
-  }
-  */
+  
   double dim=3.0;
   if (dim<0.0 || dim>3.0) {
     O2SCL_ERR2("Dimensionality less than zero or greater than three in ",

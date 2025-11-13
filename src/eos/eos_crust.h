@@ -222,7 +222,20 @@ namespace o2scl {
     /// Desc
     eos_had_base *ehb;
     
-    /// Desc
+    /** \brief Single nucleus, T=0, fixed nB, Ye, and ni
+
+        \f{eqnarray*}
+        n_B = (Z+N) n_i + (1- V_i n_i) (n_{n,\mathrm{out}}+
+        n_{p,\mathrm{out}})
+        n_B Y_e = Z n_i + (1-V_i n_i) n_{p,\mathrm{out}}
+        \f}
+        where \f$ V_i \f$ is the volume of nucleus \f$ i \f$,
+        and \f$ n_i \f$ is the number of nuclei per unit
+        volume.
+
+        Todo: we should be able to determine ni with a Saha
+        equation.
+     */
     double fr_ni(int Z, int N, double nB, double Ye, double ni) {
       
       double phi=nd->exc_volume(Z,N);
@@ -237,8 +250,8 @@ namespace o2scl {
       double Eb=nd->binding_energy_densmat(Z,N,npout,nnout,ne,0.0);
 
       thermo th;
-      n.n=nnout;
-      p.n=npout;
+      n.n=nn_out;
+      p.n=np_out;
       ehb->calc_e(n,p,th);
       
       double fr=(1.0-phi)*th.ed+ni*(Eb+Z*p.m+N*n.m)+e.ed;
@@ -259,8 +272,8 @@ namespace o2scl {
       fzt.calc_density_zerot(e);
       
       thermo th;
-      n.n=nnout;
-      p.n=npout;
+      n.n=nn_out;
+      p.n=np_out;
       ehb->calc_e(n,p,th);
 
       double ni=
@@ -272,13 +285,13 @@ namespace o2scl {
     
     /// Set the nuclear mass formula to be used
     int set_mass_formula(nucmass_densmat &nm) {
-      nd=&nm;
+      nd=&nls;
       return 0;
     }
 
     /// Set the nuclear mass formula to be used
     int set_hom_eos(eos_had_base &eh) {
-      ehb=&eh;
+      ehb=&sk;
       return 0;
     }
 
