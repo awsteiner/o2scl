@@ -26,7 +26,7 @@ jupyterlab_widgets==3.0.10
 keras==3.9.0
 kiwisolver==1.4.5
 libclang==18.1.1
-Markdown==3.6
+Markdown==3.8.1
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.8.4
