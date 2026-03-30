@@ -51,7 +51,7 @@ prompt_toolkit==3.0.48
 protobuf==5.28.3
 ptyprocess==0.7.0
 pure_eval==0.2.3
-Pygments==2.18.0
+Pygments==2.20.0
 PyGObject==3.48.2
 pyparsing==3.2.0
 pytest==8.3.3
