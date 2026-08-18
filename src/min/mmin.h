@@ -1,0 +1,365 @@
+/*
+  ───────────────────────────────────────────────────────────────────
+  
+  Copyright (C) 2006-2026, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  ───────────────────────────────────────────────────────────────────
+*/
+#ifndef O2SCL_MULTI_MIN_H
+#define O2SCL_MULTI_MIN_H
+
+/** \file mmin.h
+    \brief File defining \ref o2scl::mmin_base, \ref
+    o2scl::mmin_parallel_base, \ref o2scl::grad_funct, \ref
+    o2scl::gradient, and \ref o2scl::gradient_gsl
+*/
+
+#include <o2scl/multi_funct.h>
+#include <o2scl/mm_funct.h>
+#include <o2scl/string_conv.h>
+
+namespace o2scl {
+
+  /// Array of multi-dimensional functions typedef in src/min/mmin.h
+  typedef std::function<int(size_t,boost::numeric::ublas::vector<double> &,
+			    boost::numeric::ublas::vector<double> &)> 
+    grad_funct;
+  
+  /** \brief Class for automatically computing gradients [abstract base]
+
+      Default template arguments
+      - \c func_t - (no default)
+      - \c vec_t - \ref boost::numeric::ublas::vector \< double \> 
+
+      \future Consider making an exact_grad class for computing exact
+      gradients.
+  */
+  template<class func_t, class vec_t=boost::numeric::ublas::vector<double> > 
+    class gradient {
+    
+  public:
+
+  // (Need to have empty default constructor since we
+  // have private copy constructor)
+  gradient() {}
+
+  virtual ~gradient() {}
+
+  /// Set the function to compute the gradient of
+  virtual int set_function(func_t &f) {
+    func=&f;
+    return 0;
+  }
+
+  /** \brief Compute the gradient \c g at the point \c x
+   */
+  virtual int operator()(size_t nv, vec_t &x, vec_t &g)=0;
+
+  protected:
+
+  /// A pointer to the user-specified function
+  func_t *func;
+  
+  private:
+  
+  gradient(const gradient &);
+  gradient& operator=(const gradient&);
+  
+  };
+
+  /** \brief Simple automatic computation of gradient by finite 
+      differencing
+
+      \comment
+      \endcomment
+  */
+  template<class func_t, class vec_t> class gradient_gsl :
+  public gradient<func_t,vec_t> {
+    
+  public:
+    
+    gradient_gsl() {
+      epsrel=1.0e-6;
+      epsmin=1.0e-15;
+    }
+    
+    virtual ~gradient_gsl() {}
+
+    /** \brief The relative stepsize for finite-differencing
+        (default \f$ 10^{-6} \f$ )
+    */
+    double epsrel;
+
+    /// The minimum stepsize (default \f$ 10^{-15} \f$)
+    double epsmin;
+
+    /** \brief Compute the gradient \c g at the point \c x
+     */
+    virtual int operator()(size_t nv, vec_t &x, vec_t &g) {
+      double fv1, fv2, h;
+
+      fv1=(*this->func)(nv,x);
+      
+      for(size_t i=0;i<nv;i++) {
+	
+	h=epsrel*fabs(x[i]);
+	if (fabs(h)<=epsmin) h=epsrel;
+	
+	x[i]+=h;
+	fv2=(*this->func)(nv,x);
+	x[i]-=h;
+	g[i]=(fv2-fv1)/h;
+	
+      }
+      
+      return 0;
+    }
+
+  };
+    
+  /** \brief Interface for minimizers which may evaluate the
+      function being minimized concurrently from several threads
+
+      Minimizers which internally use OpenMP to evaluate several
+      candidate points at once (e.g. \ref diff_evo_para) should
+      inherit from this class, in addition to their normal \ref
+      mmin_base ancestry, so that code which is handed a minimizer
+      only through a generic <tt>mmin_base<> *</tt> (or similar)
+      can still discover, via <tt>dynamic_cast</tt>, whether that
+      minimizer may call the user's function from more than one
+      thread at once --- and if so, how many --- without needing to
+      know the minimizer's concrete, possibly heavily templated,
+      type.
+
+      This matters whenever the function being minimized wraps some
+      external, non-thread-safe object (for example, \ref
+      nucmass_fit::fit() wrapping a user-supplied \ref
+      nucmass_fit_base): such a caller can query \ref mmin_n_threads()
+      to decide whether it needs to give each thread its own private
+      copy of that object. A minimizer that does not inherit from
+      this class is assumed, by any code performing this query, to
+      call the function from a single thread only.
+  */
+  class mmin_parallel_base {
+
+  public:
+
+    virtual ~mmin_parallel_base() {}
+
+    /** \brief Return the number of threads this minimizer may use
+        to concurrently evaluate the function being minimized
+
+        This is a maximum: a minimizer may use fewer threads than
+        this at runtime (e.g. if OpenMP grants fewer threads than
+        requested), but should never use more.
+    */
+    virtual size_t mmin_n_threads() const=0;
+
+  };
+
+  /** \brief Multidimensional minimization [abstract base]
+
+      <b>The template parameters:</b>
+      The template parameter \c func_t specifies the function to 
+      min and should be a class containing a definition 
+      \code
+      func_t::operator()(size_t nv, const vec_t &x, double &f);
+      \endcode
+      where \c f is the value of the function at \c x ,
+      where \c x is a array-like class defining \c operator[] of size \c nv.
+      The parameter \c dfunc_t (if used) should provide the gradient with
+      \code
+      func_t::operator()(size_t nv, vec_t &x, vec_t &g);
+      \endcode
+      where \c g is the gradient of the function at \c x. 
+
+      Verbose I/O is sent through \c std::cout and \c std::cin by
+      default, but this can be modified using \ref
+      set_verbose_stream(). Note that this function
+      stores pointers to the user-specified output streams,
+      and these pointers are not copied in child copy
+      constructors.
+
+      \note Comparing minimizers by \ref ntrial alone is not
+      meaningful across algorithm families, since one "iteration"
+      can cost a very different number of function evaluations
+      depending on the algorithm (for example, a single \ref
+      o2scl::mmin_simp2 iteration costs anywhere from 1 to
+      \f$ n+2 \f$ evaluations depending on which Nelder-Mead step is
+      taken, while one \ref o2scl::cma_es generation always costs
+      exactly \c lambda evaluations). Descendants for which limiting
+      (and reporting) the total number of function evaluations is
+      meaningful and practical to implement are encouraged to follow
+      the convention established by \ref o2scl::cma_es: a \c
+      max_evals member (default 0, meaning "unbounded, rely on \ref
+      ntrial alone") that caps the total number of function
+      evaluations, and a \c last_n_evals member (analogous to \ref
+      last_ntrial) reporting how many evaluations the most recent
+      call to <tt>mmin()</tt> actually used. This makes it possible
+      to compare different minimizers on a common, algorithm-neutral
+      budget. As of this writing, \ref o2scl::cma_es, \ref
+      o2scl::mmin_simp2, \ref o2scl::diff_evo, \ref
+      o2scl::diff_evo_adapt, \ref o2scl::mmin_conf, \ref
+      o2scl::mmin_conp, and \ref o2scl::mmin_bfgs2 follow this
+      convention.
+  */
+  template<class func_t=multi_funct, class dfunc_t=func_t,
+    class vec_t=boost::numeric::ublas::vector<double> > class mmin_base {
+
+  protected:
+
+  /// Stream for verbose output
+  std::ostream *outs;
+  
+  /// Stream for verbose input
+  std::istream *ins;
+    
+  public:
+    
+  mmin_base() {
+    verbose=0;
+    ntrial=100;
+    tol_rel=1.0e-4;
+    tol_abs=1.0e-4;
+    last_ntrial=0;
+    err_nonconv=true;
+    outs=&std::cout;
+    ins=&std::cin;
+  }
+
+  virtual ~mmin_base() {}
+      
+  /// Output control
+  int verbose;
+      
+  /// Maximum number of iterations
+  int ntrial;
+      
+  /// Function value tolerance
+  double tol_rel;
+      
+  /// The independent variable tolerance
+  double tol_abs;
+
+  /// The number of iterations for in the most recent minimization
+  int last_ntrial;
+      
+  /// If true, call the error handler if the routine does not "converge"
+  bool err_nonconv;
+      
+  /** \brief Set streams for verbose I/O
+      
+      Note that this function stores pointers to the user-specified
+      output streams, and these pointers are not copied in child copy
+      constructors.
+  */
+  int set_verbose_stream(std::ostream &out, std::istream &in) {
+    outs=&out;
+    ins=&in;
+    return 0;
+  }
+    
+  /** \brief Calculate the minimum \c min of \c func w.r.t. the
+      array \c x of size \c nvar.
+  */
+  virtual int mmin(size_t nvar, vec_t &x, double &fmin, 
+		   func_t &func)=0;
+      
+  /** \brief Calculate the minimum \c min of \c func
+      w.r.t. the array \c x of size \c nvar with gradient
+      \c dfunc
+  */
+  virtual int mmin_de(size_t nvar, vec_t &x, double &fmin, 
+		      func_t &func, dfunc_t &dfunc)
+  {
+    return mmin(nvar,x,fmin,func);
+  }
+      
+  /** \brief Print out iteration information.
+	  
+      Depending on the value of the variable verbose, this prints out
+      the iteration information. If verbose=0, then no information is
+      printed, while if verbose>1, then after each iteration, the
+      present values of x and y are output to std::cout along with the
+      iteration number. If verbose>=2 then each iteration waits for a
+      character.
+  */
+  template<class vec2_t> 
+  int print_iter(size_t nv, vec2_t &x, double y, int iter,
+		 double value, double limit, std::string comment) 
+  {
+
+    if (verbose<=0) return 0;
+    
+    int i;
+    char ch;
+
+    (*outs) << comment << " Iteration: " << iter << std::endl;
+    {
+      (*outs) << "x: " << std::endl;
+      for(i=0;i<((int)nv);i++) (*outs) << x[i] << " ";
+      (*outs) << std::endl;
+    }
+    (*outs) << "y: " << y << " Val: " << value << " Lim: " 
+    << limit << std::endl;
+    if (verbose>1) {
+      (*outs) << "Press a key and type enter to continue. ";
+      (*ins) >> ch;
+    }
+	
+    return 0;
+  }
+      
+  /// Return string denoting type ("mmin_base")
+  const char *type() { return "mmin_base"; }
+
+  /** \brief Copy constructor
+   */
+  mmin_base<func_t,dfunc_t,vec_t>
+  (const mmin_base<func_t,dfunc_t,vec_t> &mb) {
+    this->verbose=mb.verbose;
+    this->ntrial=mb.ntrial;
+    this->tol_rel=mb.tol_rel;
+    this->tol_abs=mb.tol_abs;
+    this->last_ntrial=mb.last_ntrial;
+    this->err_nonconv=mb.err_nonconv;
+  }
+  
+  /** \brief Copy constructor from operator=
+   */
+  mmin_base<func_t,dfunc_t,vec_t>& operator=
+  (const mmin_base<func_t,dfunc_t,vec_t> &mb) {
+
+    if (this != &mb) {
+      this->verbose=mb.verbose;
+      this->ntrial=mb.ntrial;
+      this->tol_rel=mb.tol_rel;
+      this->tol_abs=mb.tol_abs;
+      this->last_ntrial=mb.last_ntrial;
+      this->err_nonconv=mb.err_nonconv;
+    }
+
+    return *this;
+  }
+      
+  };
+  
+}
+
+#endif
+

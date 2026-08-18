@@ -1,0 +1,1251 @@
+Notes for 0.931 release:
+
+Added experimental CUDA support for 1D FFTs and matrix inversion.
+Created a matrix inversion class which automatically switches between
+CPU/GPU methods.
+
+Fix to nucleus_rmf.
+
+Modified unicode conversions to use Boost locale.
+
+Fixed typo in table::subtable().
+
+Updated Python interface for eos_tov and nstar_rot.
+
+Improved OpenMP support in some vector functions.
+
+Improvements to classify_python, fermion_rel, ex_eos_gibbs,
+ex_eos_crust, columnify, auto_format, nucleus, nucmass_ame,
+
+Updating handling of quark objects in eos_quark_njl and children.
+
+------------------------------------------------------------------------
+Notes for 0.930 release:
+
+Improved documentation in several places.
+
+Improved docker files, github actions, and interaction with o2sclpy.
+
+Multiprecision support is now optional and off by default. It was
+slowing down compilation and testing time drastically.
+
+Improvements have been made in the gmm_python, fermion_deriv_rel,
+fermion_nonrel, quark_tl, mcmc_para_base, interpm_python, mroot_cern,
+fermion_rel, boson_rel, eos_leptons, interpm_krige_optim, eos_had_virial,
+
+Classes mcmc_para_emu and nflows_python, and an experimental
+ex_mcmc_nn example were created.
+
+Class boson_eff was deprecated.
+
+Functions mult_vector_gelman_rubin, vector_remove_dups and
+vector_remove_dups_tol were created.
+
+Functions set_thermo and get_thermo have been removed from EOS
+classes. 
+
+Some improvements have been made on nucmass_ldrop, nucmass_densmat,
+and related classes.
+
+The python interface for std::string and nuclei classes was improved.
+
+The nucleus and yanic executables were updated.
+
+Update to acol commands table to-tensor-grid, tensor_grid to-table,
+and tensor_grid values-table.
+
+------------------------------------------------------------------------
+Notes for 0.929 release:
+
+Improved documentation in several places.
+
+Created example ex_mcmc_kde.cpp.
+
+Created new steppers for mcmc_para.
+
+Updated docker files for Ubuntu 24.04.
+
+Improved Python, multiprecision, MPFR support in several classes. 
+
+Updated classes and methods inte_kronrod_boost, cli::xml_to_o2(),
+eos_leptons, eos_leptons_multip, inte_double_exp_boost, ode_boost,
+fermion_deriv_rel, inte_gauss_cern, inte_adapt_cern, astep_boost,
+boson_rel, calc_utf8, funct_multip, eos_sn, lib_settings,
+fermi_function, and boson_thermo.
+
+Allowed for virtual environments in py_init()
+
+Updates to acol commands: table rename, table3d refine, table cat,
+table3d contours, table autocorr, table thin-mcmc. Updated acol
+function support. 
+
+Updated yanic.
+
+Created a new O2SCL_NO_BOOST_MULTIPRECISION ifdef for speed. 
+
+------------------------------------------------------------------------
+Notes for 0.928 release:
+
+Several improvements to documentation and examples.
+
+Reworked interp_krige, interp_krige_optim, interpm_krige and
+interpm_krige_optim.
+
+Fixed ioctl calls and removed default ncurses requirement. 
+
+Improved multiprecision support in the integrators and created
+funct_multip_transform. Created a getfp, setfp, sets_vec_vec, and
+setd_vec_vec functions for hdf_file.
+
+Updated mcmc_para, eos_tov_interp, polylog, and eos_sn_hfsl classes.
+
+Removed old acolm_o2graph functions. 
+
+Updated fermion_rel class, continuing work on multiprecision support.
+
+Updated python interface for several classes. 
+
+Created new classes vec_prob_dens_mdim, vec_prob_cond_mdim,
+prob_dens_func_gmm,
+
+Created new classes gmm_python, kde_python, interpm_python and reworked
+python support.
+
+Created new FFT functions, rng_set_seed(), rng_set_seed_mpi(),
+screenify_trans(), backslashify(), 
+
+Created new example ex_tensor.
+
+Created acol command to-hist for table3d objects, interp-table3d for
+table objects, to-gmm for table objects, refine for table3d and
+hist_2d objects. Improved commands generic, autocorr, to-gaussian.
+Improved handling of string[] objects. Renamed entry to value and
+entry-grid to value-grid. Fixed color specs.
+
+Work on experimental emulator classes and experimental exp_max.
+
+Deprecated class interp, now superceded by interp_vec.
+
+Generalized axpy_prod() for other linear algebra libraries. 
+
+Updated docker files, now including python support, tensorflow,
+and sckit-learn.
+
+Fixed table::delete_column(), tensor_grid::copy_table3d_align(), 
+tensor_grid::grid_rearrange_and_copy().
+
+Created new unicode mode for format_float().
+
+------------------------------------------------------------------------
+Notes for 0.927 release:
+
+The internal structure has been reworked so that the HDF5, EOS, and
+particle libraries are always included and there is only one library
+file, libo2scl.
+
+Constants, unit conversions, the find_constants class, and the
+associated documentation have been improved.
+
+The boost integration and multiprecision libraries are now enabled by
+default. The precision parameter in the dtos() function has been updated
+to automatically output either digits or max_digits as requested by
+the user. Multiprecision support has been improved throughout.
+
+The old cubature classes have been removed but there is still a
+./configure flag for cubature support (principally for the separate
+EOS code which is under development).
+
+Classes funct_python, fermion_rel, polylog, eos_quark_njl, nstar_cold,
+eos_had_rmf_hyp, multi_funct_python, mm_funct_python, interp_krige,
+interpm_krige, inte_qagi_gsl, inte_adapt_cern, eos_had_base,
+bessel_K_exp_integ_boost, nucmass_dz, calc_utf8, convert_units,
+boson_rel, part_pdg, and inte_double_exp_boost, have been updated.
+
+Class eos_cs2_const was removed since its functionality is in
+contained in eos_tov_linear.
+
+New classes eos_leptons, emulator, emulator_python,
+emulator_interpm_idw_table, fermi_dirac_integ_bf, part_funcs, and
+eos_quark_njl_vec have been created.
+
+The strings_spec function has been updated. New function unc_to_string()
+has been added.
+
+The ex_eos_gibbs and ex_lambda examples have been updated.
+
+The C++/python interface and the yanic executable have been significantly
+improved. The python interface is much more detailed and there has
+been corresponding work on the examples in o2sclpy.
+
+The Doxygen XML and run-time acol documentation has been synchronized
+so that acol documentation will be clearer and more easily updated.
+A corresponding new "vec_vec_string" type has been added to acol
+and hdf_file. New command 'ninteg' was added to acol.
+
+New index classes ix_fixed, ix_sum, etc. have been created for index
+specifications. These are used in the tensor rearrange_and_copy()
+functions.
+
+------------------------------------------------------------------------
+Notes for 0.926 release:
+
+The gen_test_number class has been rewritten and improved to allow for
+more flexbility.
+
+Improvements to polylogs and associated testing. 
+
+Started process of using C++ std random number generators instead of
+GSL.
+
+Improved the verbose output in root_brent_gsl, the behavior of
+tensor::rearrange(), the polynomial classes (especially for larger
+floating-point types).
+
+Improved OpenMP integration.
+
+Created functions to compute KL divergence and a new set of classes,
+matrix_invert_det to handle the inversion and determinants with Eigen
+or Armadillo.
+
+Updated to more recent versions of AME and FRDM.
+
+Created a new vector_autocorr_fftw function for autocorrelations.
+
+Created dockerfiles in a docker directory for common configurations.
+
+The fnmatch() function is being replaced by regex, enabled if
+O2SCL_REGEX is defined. This is not yet enabled by default, because it
+has caused some problems with o2graph.
+
+A new version of the calculator class which partially supports UTF8 is
+in implemented in calc_utf8. This new UTF-8 compatible class is used
+in O2scl unless O2SCL_NO_CALC_UTF8 is defined. There are still some
+complications with regex and UTF8 which haven't fully been resolved.
+
+The convert_units class has been reworked to enable UTF8 support.
+
+Created a new set of HDF5 input functions, hdf_input_n(), to allow
+input with or without a name.
+
+More work on the python interface everywhere and the snapcraft
+configuration.
+
+Improved citations for nuclear masses, handling of electrons and
+photons in eos_sn, the fermion_rel nondegenerate expansion, the
+fermion_rel pair_density() function, the nstar_cold class (including a
+small change to the default crust), the fermion_mag_zerot class, the
+tov_love class, the eos_tov_buchdahl class, the command ser-hist-t3d
+in acol, the function table3d::create_hist_set().
+
+Updated nucmass_ldrop to avoid unphysical central densities.
+
+Created experimental exp_max, nstar_hot, eos_quark_njl_vec, and
+eos_had_virial_spin. Progress on the experimental interp_krige
+classes.
+
+Improved documentation everywhere.
+
+Cleaned the "acol -commands" and "acol -help" output.
+
+------------------------------------------------------------------------
+Notes for 0.925 release:
+
+Fixed interpolation bug and log grid bug in
+tensor_grid::rearrange_and_copy().
+
+Improved acol docs everywhere. Created acol table3d to-tensor-grid,
+acol table3d to-hist-2d, acol table3d get-grid, acol create table-mv,
+acol table3d slice-hist, acol table3d select, acol h5-copy, acol table
+correl, acol constant, acol binary, acol docs, and acol wdocs. The
+acol help documentation has also been reformatted and improved.
+
+The integration routines for semi-infinite intervals have been
+refactored to use \ref integ_iu(), \ref integ_il() and \ref integ_i().
+
+Improved error handling and documentation in cloud_file.
+
+Several updates to eos_sn, nstar_rot, eos_had_rmf, eos_had_rmf_hyp_ts,
+and ex_eos_gibbs. Created new beta-equilibrium functions in some
+EOS classes. Created new function nucmass_fit::fit_covar() to
+fit nuclear masses with a covariance matrix.
+
+Reworked documentation in sphinx/breathe.
+
+Fixed spacing bug in rewrap_keep_endlines().
+
+Updated strings_spec(), vector_spec(), mult_vector_spec() and
+value_spec().
+
+Added OpenMP support to some table functions. Updated table::swap().
+
+Created experimental new convert_units::convert_calc() function
+and created find_constants class. Updated solar system constants.
+
+Improvements to the vec_index class.
+
+Updated the vector_acor() function. Created vectors_equal() and
+vectors_equal_tol().
+
+Fixed hidden virtual function warnings.
+
+Created columnify::add_spaces().
+
+Worked on multiprecision support for several particle classes.
+Cleaned up polylogs and created bessel_K_exp class.
+
+Fixed HDF5 1.12-related deprecation warnings.
+
+Renamed integration classes for infinite or semi-infinite limits.
+
+Created a new experimental auto_format class.
+
+Created new vt100 string functions and moved them into a new
+terminal class.
+
+Added quadratic and cubic discriminants.
+
+Added experimental part_pdg. 
+
+------------------------------------------------------------------------
+Notes for 0.924 release:
+
+Updated second derivatives of the pressure for the particle clases and
+updated the eos_had_skyrme class to compute second derivatives.
+
+Created a new system for OS detection to make compilation a bit
+more user-friendly. HDF5 headers have been reworked a bit
+accordingly. 
+
+Improved integration between acol and o2sclpy. 
+
+Improved the handling of aliases in acol and cli.
+
+Generalized convert_units, several of the integration classes, a few
+derivative and solver classes, and several of the particle classes to
+templates to allow for other floating point types.
+
+Improvements to the ex_mmin example and the example plots. Created
+new example ex_fermion_summ.
+
+Improvements to the ode_iv_solve_grid class.
+
+Improved error handling for calculator class.
+
+Created functions vector_refine(), file_exists(), and o2isfinite().
+
+Created classes inte_tanh_sinh_boost, inte_sinh_sinh_boost,
+inte_kronrod_boost, inte_exp_tanh_boost, nucmass_gen, and frib_mex.
+
+Created a couple_threads option and an ac_coeffs() function for
+mcmc_para.
+
+Creating strings_spec() for string list specifications and updated
+vector_spec() and mult_vector_spec().
+
+Improved tabulate option for tov_love::calc_y().
+
+Updated constants for CODATA 2018 release.
+
+------------------------------------------------------------------------
+Notes for 0.923 release:
+
+A new function "rearrange_and_copy()" was added to the tensor
+and tensor_grid classes for several kinds of tensor rearrangements.
+
+A new matrix_view_transpose class and a new wordexp() function were
+created.
+
+The classes cloud_file, boson_rel, eos_had_skyrme, eos_tov_buchdahl,
+fermion_deriv_rel, fermion_eff, fermion_nonrel, fermion_rel,
+eos_had_rmf, hist, interpm_krige, and interp_krige_optim classes were
+improved improved. The particle calibration routines were improved.
+
+The constants were updated for the CODATA 2014 release.
+
+Several updates were made to acol. The handling of tensor and
+tensor_grid classes was improved. Vector and value specifications were
+added. The help text was reworked. The autocorr command was improved.
+
+A new class slack_messenger was created to send messages to Slack.
+
+------------------------------------------------------------------------
+
+Notes for 0.922 release:
+
+In the table class, the set() function no longer automatically adds
+rows or columns. This prevents some behavior which was not intuitive for
+users. 
+
+Several tensor functions have been added, including
+tensor::swap_data(), tensor_out(), tensor::min(), tensor::max(),
+tensor::copy(), tensor::is_valid(). Slicing for tensor_grid objects
+has been improved. Copy constructors for tensor and tensor_grid have
+been created.
+
+A few long double integration classes have been added when higher
+accuracy is required.
+
+The MCMC classes have been completely reworked, offering better
+support for OpenMP and MPI parallelism.
+
+The acol command has been expanded and improved in several ways.
+Code for o2graph has been moved out and the documentation has
+been improved.
+
+The conversion functions in convert_units now has a const version
+
+The documentation has been improved everywhere.
+
+A new nearest neighbor interpolation type has been added.
+
+A seed bug in rng_gsl has been fixed.
+
+HDF5 I/0 for table3d types now allows const references.
+
+The cloud_file class is updated and simplified.
+
+The prob_dens_func_amr class has been updated.
+
+Some work has been done on heat capacity functions for particle
+objects.
+
+The fermion_rel::calc_mu() and pair_mu() functions work better
+now with bad initial guesses.
+
+The tov_solve, eos_tov, eos_cs2_const, and eos_had_rmf_hyp classes
+are improved.
+
+------------------------------------------------------------------------
+
+Notes for 0.921 release:
+
+New vector_autocorr() functions were created to analyze
+autocorrelations.
+
+The class serach_vec now has improved thread safety.
+
+Kriging classes interpm_krige_nn, interpm_krige, and interp_krige were
+created. These are still a bit experimental.
+
+A new Robbins-Monro iteration root-finding class has been created. A
+class smooth_func for smoothing multivariate functions by averaging in
+a neighborhood has been created. These should help dealing with noisy
+functions.
+
+All 'funct11' classes have been renamed to 'funct'.
+
+New vector bin size functions have been created. 
+
+The 'acol' command has been reworked to handle HDF5 I/O for more
+types. It can now manipulate vectors, matrices, and tensors
+in several new ways. The interaction with o2graph in o2sclpy
+has also been improved.
+
+The Markov chain Monte Carlo classes have been updated, but
+are still experimental. Similarly with the probability
+density distribution classes where new bivariate gaussian
+and AMR-like probability densities were created. 
+
+The internal bibliography mechanics have been improved.
+
+Error handling in nucleus_rmf has been improved.
+
+Updates to eos_tov_vectors, eos_had_rmf, eos_tov_vectors,
+eos_had_skyrme.
+
+Created an eos_cs2_poly class and anneal_para_ts. 
+
+Nuclear masses were updated for the 2016 AME data set.
+
+The calculation of dndT, dndmu, and dsdT for relativistic
+fermions has been improved. 
+
+The SFHo and SFHx EOSs were updated.
+
+Several internal changes have been made to allow Ubuntu-style
+packages. The 'make check' target now works without 'make install'. A
+snapcraft snap has also been created. These are still in progress.
+
+------------------------------------------------------------------------
+
+Notes for 0.920 release:
+
+A new set of Markov chain Monte Carlo classes has been created.
+
+Experimental conditional and multidimensional probability
+distributions haven't been added.
+
+A new experimental class cloud_file has been created which
+assists in using and downloading files from URLs.
+
+The interpm_idw class has been improved, including a new function
+which computes partial derivatives and uncertainties.
+
+A new helper class vector_range has been created for vector
+objects which don't already have associated range types. 
+
+The command-line option 'acol -filelist' has been updated to be more
+informative. New commands 'cat' and 'sum' perform concatenation and
+addition of table objects.
+
+The class root_cern now throws if the root is infinite.
+
+Several classes have clear() methods, and the nomenclature has
+been made more consistent.
+
+A new function tov_solve::fixed_pr() computes a configuration with
+a fixed central pressure. The surface gravity units have been fixed.
+
+Error handling in nstar_cold has been improved.
+
+The cubature classes have been improved. 
+
+Much more work has been done on python integration with o2sclpy,
+and this is still experimental. The o2sclpy package now has a
+binary o2graph which supports plotting of O2scl data files with
+matplotlib.
+
+Several documentation improvements everywhere.
+
+------------------------------------------------------------------------
+
+Notes for 0.919 release:
+
+The old "FunctionParser" class has been replaced by a much nicer
+"calculator" class adapted from Brandon Amos' code.
+
+Travis testing has been implemented, and works for Linux and Mac OS X.
+
+The 'table' class copy constructor was fixed. 
+
+A new tov_love class has been created to compute tidal deformability.
+The class 'nstar_rot' has been improved significantly.
+
+Some upgrades have been implemented to work well with GSL versions 2.0
+and later. A new flag to ./configure, --enable-gsl2 , enables
+extensions built on new GSL code.
+
+Improvements have been made to ode_it_solve and associated
+testing.
+
+Exception safety has been improved in several classes.
+
+The 'contour' class internals have been reworked to make
+the code easier to understand. 
+
+A new acol command gen3-list was created. The auxillary python
+code o2py.py has been updated.
+
+Documentation has been improved everywhere.
+
+------------------------------------------------------------------------
+
+Notes for 0.918 release:
+
+The GNU-style target 'make check' now works, and is equivalent to
+'make o2scl-test'
+
+The ./configure script now properly detects the flags for c++11. 
+
+O2scl can now be installed using homebrew, using 'brew tap
+awsteiner/science'. 
+
+O2scl is now reimplementing Cubature from Steven G. Johnson for
+multi-dimensional integration. The current implementation just uses
+simple wrappers to allow the use of std::function objects. Later work
+will more fully implement template methods in the Cubature code.
+
+Fixes for step size and normalization in anneal_gsl.
+
+Added tensor clear(), min() and max() methods.
+
+Fixed several warnings from gcc-5 and clang.
+
+Created a new vec_index class similar to a python dictionary. 
+
+Improved solving for eos_had_base::calc_temp_p().
+
+Created RMF EOS example ex_eos_had_rmf.
+
+Improvements and better documentation for eos_nse.
+
+Added units and updated I/O in eos_sn.
+
+Updates and new testing for dense_matter and nucmass_densmat. 
+
+------------------------------------------------------------------------
+
+Notes for 0.917 release:
+
+Documentation improvements everywhere.
+
+Moved tensor_grid to template class.
+
+Better exception descriptions in test_mgr.
+
+Added UNEDF parameterizations and exceptions for negative
+masses in eos_had_skyrme.
+
+Added monotonicity preserving interpolation from GSL.
+
+Created 'upper' and 'lower' functions to test upper and lower
+triangularity for matrices.
+
+Added functions to vector.h to operate on vectors without an
+additional size_t parameter.
+
+Improved bracketing to avoid undefined regions in root_bkt::solve().
+
+Created a new class nstar_rot, based on RNS, which computes the
+structure of rotating neutron stars, and an associated set of
+EOS classes. This infrastructure is still in progress.
+
+Created functions for computing number susceptibilities for the
+hadronic EOSs.
+
+Created new copy constructors for part, fermion, and nucleus.
+
+Created eos_had_base::check_mu() to check chemical potentials.
+
+Improvements to the nuclear mass example.
+
+Added new tests for the eos_had_hlps class.
+
+Improved accuracy and convergence of fermion_rel::pair_density() in
+degenerate and nondegenerate limits.
+
+Improved eos_crust_virial and eos_sn classes.
+
+More work on eos_nse_full. 
+
+------------------------------------------------------------------------
+
+Notes for 0.916 release:
+
+Several updates for C++11 and function types. Created funct_gsl.
+
+Several improvements to the particle classes. 
+
+Some updates to EOS classes including: eos_had_base, eos_tov_buchdahl,
+eos_sn, eos_had_apr, eos_tov_interp, eos_tov, eos_had_hlps, and
+tov_solve.
+
+Updated vector stats functions and added wvector_covariance().
+
+Updates to the nuclear mass files, adding new nuclear mass tables,
+reorganizing nucmass entry structures, and recast nucdist as 
+vector<nucleus>. 
+
+Documentation improvements everywhere. 
+
+------------------------------------------------------------------------
+
+Notes for 0.915 release:
+
+O2scl now assumes some C++11 support by default. This can be disabled
+by ./configure --disable-cpp11. C++11 support may be required in
+future versions as supporting earlier versions is becoming intrusive.
+
+The sourceforge svn repository for the development branch is now
+synchronized to github.
+
+The EOS, particle and nuclei classes have been renamed to be more
+consistent everywhere. Documentation has improved in several places.
+
+The two-dimensional and multi-dimensional interpolation classes have
+been reworked. Preliminary work on monotonicity-preserving
+interpolation has been done.
+
+Latex documentation is being phased out and may not appear in
+future releases. 
+
+Some return values were incorrect in functions in vector.h. These are
+fixed. Calls to finite() have been replaced with the O2scl version,
+which is a compatibility wrapper.
+
+Linear interpolation was improved in the tensor_grid classes. 
+
+Some copy constructors were missing and have been properly added.
+
+Some of the example plots have been converted to python.
+
+HDF5 I/O for uniform grid classes was implemented.
+
+Convergence has been improved in fermion_rel and
+eos_had_rmf::calc_temp_e(). A new eos_had_hlps class was added. The
+TOV EOS class, eos_tov, has been updated to do interpolation a bit
+better. The TOV solver now computes enclosed baryon masses for
+pressures in pr_list. The eos_crust_virial and eos_sn_base classes
+have been updated.
+
+------------------------------------------------------------------------
+
+Notes for 0.914 release:
+
+Several classes have been renamed to make the nomenclature
+more consistent everywhere. The exception enums have also
+been renamed.
+
+Interpolation classes have been reworked in several ways to be
+more consistent. Two-dimensional interpolation has been improved
+in several ways, including the addition of a faster interp2_direct.
+
+The tensor class was updated to a template and based by default
+on std::vector<double>.
+
+The last_conv member has been removed everywhere to be more
+consistent. Convergence errors are reported in integer
+return values instead.
+
+The interp2_planar class has been updated to avoid failure
+from colinear points in the data.
+
+Some I/O functions in hdf_file have been renamed to make it
+clear that they require a copy. 
+
+The rmf_eos class has better verbose output. It now handles
+the inc_rest_mass=false case. A bug was fixed in calc_temp_e()
+and some typos were fixed in the documentation.
+
+A bug was fixed in table::delete_rows().
+
+The new function arb_dist::add_dist() was added.
+
+The core-crust boundary was improved in tov_interp_eos. The tov_solve
+class is now faster. Fixed radius interpolation was also implemented
+in tov_solve. The documentation for the TOV solver was improved.
+
+Several updates have been made for C++11. GSL_MIN and GSL_DBL_EPSILON
+have been replaced with it's C++11 equivalent when possible.
+
+Template types in the ODE classes have been updated to allow
+more flexbility. C++11 support is also better for the ODE classes.
+
+A function hist::normalize() has been added.
+
+Boost-related solvers and minimizers have been added. 
+
+Linear fitting in fit_linear has been updated.
+
+------------------------------------------------------------------------
+
+Notes for 0.913 release:
+
+All of the O2scl vector and matrix classes have been deprecated. O2scl
+now requires Boost, and works with the Boost vector and matrix types. 
+O2scl also has support for working directly with the Armadillo and 
+Eigen linear algebra libraries. Deeper integration of these 
+linear algebra libraries with O2scl is in progress.
+
+The new 2012 AME nuclear masses are included.
+
+The degenerate and nondegerate expansions for fermions have been
+improved. 
+
+The table class is now a template class, operating on any
+suitably-defined vector type.
+
+The contour class has been improved, and some small typos fixed. 
+
+SV decompositions are now included, as well as linear fits based on
+GSL. 
+
+The Gogny and Virial EOSs have been added.
+
+The ODE classes ode_it_solve and ode_bv_solve have been updated. 
+
+Several improvements have been made in tov_eos and tov_solve. 
+Some new crusts have been added. 
+
+Several improvements have been made in the internal 'agraph'
+command-line utility.
+
+------------------------------------------------------------------------
+
+Notes for 0.912 release:
+
+A new differential evolution minimizer has been added by Edwin van
+Leeuwen which performs minimization of functions without the use of
+derivative information.
+
+Memory allocation in uvector/umatrix classes now uses new and delete
+instead of malloc() and free().
+
+The interp_smart classes have been deprecated.
+
+Minor fixes have been made to the cli and ode_iv_solve classes.
+
+The TOV solver now allows one to compute the moment of inertia after
+considering rotation. The TOV documentation has been improved
+considerably.
+
+A couple of bugs have been repaired in ovector_cx_tlate,
+umatrix_tlate, matrix_ev, uvector_tlate and arb_dist classes.
+
+The gsl_fit class has been reworked to allow generic vector types and
+several other improvements. For this, QRPT decomposition was also
+improved. The fit_fix class has also been updated.
+
+Some template types in vec_stats.h have been added.
+
+Constants have been updated, and their namespaces are reorganized and
+renamed. The 'convert_units' class has also been updated and a new
+global unit conversion object is now present and accessible from
+o2scl_settings.
+
+------------------------------------------------------------------------
+
+Notes for 0.911 release:
+
+O2scl has been updated to compile gracefully with newer versions of gcc. 
+
+Most of the 1-dimensional function objects have been converted to
+be const where appropriate. 
+
+The interpolation classes have been reworked. Interpolation managers
+have been replaced with an integer interpolation type. 
+
+In several places functions which return 'int' now return 'void', bringing
+O2scl more in line with C++ error-handling rather than GSL-like integer
+return values. 
+
+The contour and two-dimensional interpolation classes have been updated
+in several places. 
+
+The experimental expectation value classes have been improved. 
+
+HDF I/O has been improved and extended, so that more objects are now
+writable to and readable from HDF files. 
+
+The nuclear mass classes have been updated and reworked slightly. The
+associated documentation has also been improved.
+
+Added an experimental set of classes for univariate probability density
+functions and a class mag_fermion_zerot for quasi-free fermions in 
+a magnetic field. Finally, an experimental Bayesian fit classes, 
+bayes_fit, has been added. 
+
+The TOV solver has been improved, and some bugs have been fixed,
+including the addition of convergence information flags.
+
+Function parsing has been moved from o2scl_ext to the main library.
+As a result, o2scl_ext development has stopped temporarily while more
+of its functionality is being included into o2scl. 
+
+------------------------------------------------------------------------
+
+Notes for 0.910 release: 
+
+Some of the constants have been updated to the CODATA 2010 values.
+
+Major updates have been made on the supernova EOSs. 
+
+The particle classes have been extensively reworked, to seprate data
+classes for algorithm classes. The calibration for fermions has also
+been improved.
+
+A bug in QR_update() has been fixed.
+
+The class gsl_mroot_hybrids now internally uses uvectors, and a
+Broyden solver has been added. 
+
+The histogram classes have been updated.
+
+New copy constructors have been added tensor, hist, expect_val, and
+related classes. 
+
+Bugs in uvector_subvector have been fixed.
+
+A shared_ptr class has been created.
+
+The grid class was renamed to uniform grid. 
+
+The hdf_nucmass routines now allow the data files to be in different
+directories. 
+
+A bug in gsl_vegas was fixed.
+
+Epxerimental examples ex_methast, ex_apr_eos and ex_skryme_eos have 
+been added.
+
+Two-dimensional histogram I/O has been fixed.
+
+Documentation and improvements in the rmf_nucleus class.
+
+The Duflo-Zuker mass formula was added and updates have been made
+to the nuclear mass classes. 
+
+The hadronic_eos class has been updated to compute the 
+properties of nculear saturation better. 
+
+The classes gsl_miser and gsl_series have been improved.
+
+------------------------------------------------------------------------
+
+Notes for 0.909 release:
+
+The adaptive stepper class gsl_astep, and the ODE IV and BV solvers
+have been updated considerably to correspond to the GSL 1.15 release
+of ode-initval2. The classes ode_iv_table and ode_bv_mshoot are 
+still experimental and under development.
+
+The histogram classes have been updated. The hist_grid class has been
+replaced with a more generic grid class.
+
+HDF I/O has been developed for histograms and tensors.
+
+The cblas routines have been reworked a bit to make their interface
+more consistent and to improve teh documentation. 
+
+Some experimental classes for expectation values have been added 
+which inherit from expect_val. 
+
+The interpolation classes have been reworked, to improve
+acceleration and improve error handling. 
+
+The variables tolf and tolx appearing in several classes have been
+renamed to 'tol_rel' and 'tol_abs' repectively.
+
+The examples and several associated plots have been updated.
+
+Some bug fixes and improvements in the cold_nstar class.
+
+A nuclear mass model based on FRDM has been added as frdm_mass.
+
+Some new classes have been added to process supernova EOSs, based
+on gen_sn_eos.
+
+A class to compute nuclei in the Hartree approximation based 
+on rmf_eos has been added, rmf_nucleus.
+
+------------------------------------------------------------------------
+
+Notes for 0.908 release:
+
+The GSL integration routines have been reworked, in large part due to
+the efforts of Jerry Gagelman. The GSL integration workspace is now a
+separate class and the QAWS integration now works. The documentation
+has been improved considerably. Error handling and verbose reporting
+has been improved. Testing is also much more complete.
+
+A couple C++ language issues were fixed to assist compilation with
+newer compilers and a few small updates to gsl_chebapp and
+gsl_mmin_conf were made corresponding to the GSL-1.15 update.
+
+The documentation of the ODE classes was improved. 
+
+Bugs were fixed in umatrix_tlate::set_all() and hdf_nucmass_io. 
+
+The TOV solver classes have been updated in several places. 
+
+The command-line interface class, cli, has been updated, along with
+the acol command-line utility in o2scl_ext. 
+
+------------------------------------------------------------------------
+
+Notes for 0.907 release:
+
+The most significant change for this release is that the old I/O
+classes are being deprecated in favor of a new I/O system
+utilizing HDF files. This means that version 0.907 is likely
+the last version of O2scl which will support I/O using the old
+classes. In the case of the o2scl_ext additional library, the 
+command-line utility 'acol' now manipulates HDF files. 
+
+The temporary command-line utility 'acol_old' performs input of data
+tables using the old I/O format and outputs HDF files. Thus 'acol_old'
+can be used to convert data files from the old to the new format. I
+don't expect this to be a significant issue for a large number of
+users, but please post to the o2scl-help mailing list if you have
+difficulty.
+
+The sole drawback of HDF file I/O is that users will now either
+have to specify the location of the HDF library on their system
+or give the configure script the option '--disable-hdf'. The new
+I/O system using HDF files is much easier to use than the old I/O
+classes. All of the native O2scl data files have been updated to 
+the new HDF format. 
+
+The o2scl-test makefile targets have been upgraded.
+
+------------------------------------------------------------------------
+
+Notes for 0.906 release:
+
+The table histogram functions have been updated, though these will
+eventually be replaced by a new histogram data type. 
+
+Some new statistics functions have been added to smart_interp.h,
+and some of the functions in vec_stats.h have been improved.
+
+The nuclear mass data from the Atomic Mass Evaluation has been
+updated.
+
+The fermion classes have been updated and a new calibration function
+has been added to the fermion_T class. 
+
+The IML linear solvers have been updated, and a new example
+demonstrating their use, 'ex_it_iml' has been added to the O2scl_ext
+package.
+
+The source code to plot the output of the examples has been moved to
+a new directory 'examples/plot'. 
+
+A chi-squared test has been added.
+
+A new Markov chain example has been added.
+
+The documentation has been improved in several places and exception
+messages have been modified to be more informative.
+
+------------------------------------------------------------------------
+
+Notes for 0.905 release:
+
+O2scl now uses C++ exceptions for error handling. By default O2scl and
+GSL errors will now throw C++ exceptions. GSL errors are mapped to C++
+exception objects. This default behavior can be easily modified.
+
+The ODE routines have all been updated to include error information
+and perform more efficiently, and a stiff integrator gsl_bsimp has
+been added along with an example ex_stiff. A new example ex_ode_it
+has also been added. 
+
+Several vector functions have been added in vector.h and some of 
+the currently existing functions were reworked. 
+
+The binary search functions have been moved to vector.h and there have
+been some changes to the search_vec class. Documentation in both cases
+was improved significantly.
+
+The statistics functions in vec_stats.h were updated.
+
+Some template types have been added to the linalg functions to 
+make them more generic. 
+
+The gsl_miser and gsl_vegas classes have been updated, and there
+were some small changes in the other GSL integrators. 
+
+The annealing classes have been updated. 
+
+A gsl_smooth class has been added which employs the GSL basis spline
+functions to smooth data. 
+
+There were a couple of fixes to table and table_units.
+
+A few updates have been made to the nuclear mass fitting class,
+mass_fit, and a class arb_dist was added for an arbitrary 
+nuclear distribution.
+
+The function tensor::matrix_slice() has been fixed.
+
+New example ex_mandel was added.
+
+------------------------------------------------------------------------
+
+Notes for 0.904 release:
+
+Created new classes convert_units and table_units to facilitate unit
+conversion. The tests have been reworked so that they no longer
+require the user to have grep, awk, and tail. There were a couple
+fixes to ensure compatibility with the Intel compiler. Several other
+documentation updates.
+
+------------------------------------------------------------------------
+
+Notes for 0.903 release:
+
+There is no version 0.903 in order to make the version matching
+with o2scl_ext more clear.
+
+------------------------------------------------------------------------
+
+Notes for 0.902 release:
+
+Reworked the vector and matrix classes to solve const-correctness
+issues. Reworked gsl_anneal class to allow more flexibility in
+changing the algorithm.
+
+Added classes anneal_mt (threaded version of gsl_anneal), format_float
+(which replaces the old double_to_latex() and double_to_html()
+functions), gsl_rkf45, nonrel_fermion_zerot, hadronic_eos_temp (to
+clearly separate the zero and finite temperature parts of
+hadronic_eos), and nse_eos. Added several Skyrme parameterizations.
+
+Fixed bugs in hh_base and qr_base found in the gsl-1.12 update. Added
+gsl_mmin_simp2, corresponding to the gsl-1.12 simplex2 minimizer. 
+
+Several documentation updates and minor bug fixes.
+
+------------------------------------------------------------------------
+
+Notes for 0.901 release:
+
+The function pointer classes didn't allow the user to specify const
+member functions so that flexibility has been added with classes
+named with 'cmfptr' rather than 'mfptr'. 
+
+A ODE multiple shooting class (from Julien Garaud) and a unit
+conversion class have been added. The gsl_chebapp class was updated. 
+Some classes have been added associated with nuclear reactions.
+A implicit ODE stepper was added based on the GSL 'bsimp' stepper.
+
+There are also several other small fixes in nonrel_fermion, rmf_eos,
+the QR routines, skyrme_eos, schematic_eos, and the ovector classes.
+
+There are also several documentation updates.
+
+------------------------------------------------------------------------
+
+Notes for 0.9 release:
+
+This is the first beta release of O2scl. The majority of the classes
+are stable enough for general use. The full library, all of the tests,
+and all of the examples should compile on most systems. Generally,
+the library testing should also succeed without failure.
+
+There are still some classes and functions which are experimental. The
+decision to release a beta version while some of the classes are still
+in development was intentional: it allows users to use the more
+experimental classes and see what may be possible with O2scl in the 
+future, hopefully without causing too many difficulties in testing and
+compilaion for the casual end-user. 
+
+Since version 0.805, several changes have been made:
+
+There have been extensive documentation updates, and all experimental
+classes are explicitly indicated as such, so that users are properly
+warned.
+
+The gsl_min_brent class has been fixed. The composite integration 
+classes composite_inte and comp_gen_inte have been updated. The
+class search_vec was fixed. 
+
+Most of the unnecessary void *'s have been removed.
+
+Error handling has been reworked slightly, so that the user has more
+control over when an error is called. The default error handler now
+aborts execution if the error handler is called. 
+
+Some problems with executable file name suffixes in Cygwin have 
+been fixed.
+
+Self-assignment is now properly handled in ovector and related classes.
+
+The o2scl_arith namespace was removed, as it caused problems
+with Koenig lookup.
+
+A new table3d class was created -- a 3-dimensional version of the 
+table class. 
+
+The contour and twod_intp classes were been updated.
+
+Interpolation managers were created, to make memory management simpler.
+
+The linear solvers have been reworked slightly,
+especially so that they will work better with the O2scl_ext package.
+An error in the linalg makefile was also fixed. The basic matrix-matrix
+multiply function was also fixed.
+
+Some of the particle and EOS classes have been reworked slightly,
+and the old CFL EOSs have been removed, There were small changes
+in skyrme_eos, hadronic_eos, eff_boson, nonrel_femrion, and eff_fermion.
+
+Some major work has been performed on the collection class, but this
+and related classes are still experimental.
+
+------------------------------------------------------------------------
+
+Notes for 0.806 release:
+
+Version 0.806 was a quick release to fix some compilation difficulties
+on Mac OS X. 
+
+------------------------------------------------------------------------
+
+Notes for 0.805 release:
+
+There are several new examples and new associated documentation. The
+examples are still a work in progress, but hopefully this will make
+the library more transparent.
+
+There are several fixes to ensure classes are purely virtual when they
+should be.
+
+A few of the vector functions have been moved around slightly, 
+and the documentation for vectors and matrices has been improved 
+significantly. 
+
+Finally, the linear algebra functions now have their own namespace
+and offer operator[] and operator() versions. 
+
+------------------------------------------------------------------------
+
+Notes for 0.804 release:
+
+The test targets have been reimplemented so that they are automake
+targets and use libtool. This should make them a little more portable
+and easier to use.
+
+A small set of linear algebra routines has been added, which provides
+for LU, QR, householder, and tridiagonal solvers for generic vector
+and matrix types. Also, a << operator has been defined for the
+permutation class.
+
+Several classes have been updated and or fixed, including eff_fermion,
+rel_boson, eff_boson, cern_adapt, and cern_gauss56, ode_iv_solve,
+tov_eos and tov_solve.  The GSL solver class gsl_mroot_hybrids has
+been updated to be faster and is now properly generalized to generic
+vector and matrix types.
+
+Also, the documentation has been improved and updated in several places.
+
+------------------------------------------------------------------------
+
+Notes for 0.803 release:
+
+A permutation class, which is fully compatible with gsl_permutation
+objects (ovector and omatrix are also compatible with gsl_vector and
+gsl_matrix). The functions which apply a permutation to a user-specified
+vector are member template functions in the permutation class. 
+
+New classes based on the Open Optimization Library (OOL) (available
+from http://ool.sourceforge.net) which perfom constrained minimization
+have been added. At present, only the projected gradient and spectral
+projected gradient methods are implemented, and the "gencan" method is
+in progress. These minimizers work consistently with the other
+multidimensional minimizers in O2scl and are now sufficiently flexible
+to accept member functions as arguments, but are still essentially
+identical to the original versions. 
+
+The class gsl_miser has been updated to be compatibile with generic
+vector types. 
+
+------------------------------------------------------------------------
+
+Notes for 0.802 release:
+
+The classes gsl_monte, gsl_vegas, and gsl_anneal have all been
+updated. They are now compatible with any sufficiently constructed
+vector type. In the case of class gsl_vegas, the interface has been
+significantly updated so that the user should have a lot more freedom
+(even more freedom than in the original GSL) to use or modify the
+integration algorithm as desired.
+
+There were a couple bugs in gsl_rkck, gsl_rk8pd, and the interpolation
+in the new tensor class which have been fixed. The ODE classes now
+properly allow one to choose the same objects for y and yout or
+the same objects for dydx and dydx_out, which should be easier for 
+more "casual" users. 
+
+Statistics functions (mean, standard deviation, autocorrelation, etc)
+have been added and are defined in vec_stats.h for generic double 
+vector types. 
+
+The range checking is (at present) performed with "#if
+O2SCL_NO_RANGE_CHECK...#endif" blocks. This is similar to how GSL used
+to do range checking in earlier versions. There is now a function in
+the class lib_settings_class which checks to see if range checking was
+turned on at the library compile time. 
+
+------------------------------------------------------------------------

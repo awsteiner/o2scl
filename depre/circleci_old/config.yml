@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: cimg/base:2021.04
+    steps:
+    - run:
+        name: Dependencies 1
+        command: |
+          sudo apt-get update
+          sudo apt-get install -y libgsl0-dev libboost-all-dev libreadline-dev
+    - run:
+        name: Dependencies 2
+        command: |
+          sudo apt-get install -y libncurses-dev libhdf5-dev git
+    - run:
+        name: Git clone
+        command: |
+          git clone https://github.com/awsteiner/o2scl
+    - run:
+        name: Autoconf
+        command: |
+          cd o2scl && mkdir m4 && autoreconf -i
+    - run:
+        name: Configure, make install
+        command: |
+          cd o2scl && ./configure && make blank-doc && make -j 2 && sudo make -j 2 install 
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - build
+

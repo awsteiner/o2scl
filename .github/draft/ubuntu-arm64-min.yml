@@ -1,0 +1,26 @@
+---
+name: Ubuntu 24.04 arm64 minimal install
+
+on:
+  push:
+    branches: [ "main", "rc" ]
+  pull_request:
+    branches: [ "main", "rc" ]
+
+jobs:
+  ubuntu-2404-arm64-min:
+
+    runs-on: ubuntu-24.04-arm
+    
+    container:
+    
+      image: awsteiner/o2scl:v0.931rc_u24.04_min_arm64
+      options: --platform "linux/arm64"
+
+    steps:
+    
+    - name: Check
+      run: |
+        cd /opt/o2scl
+        make VERBOSE=1 check -j4 -O
+        make VERBOSE=1 o2scl-examples -j4 -O

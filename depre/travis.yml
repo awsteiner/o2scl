@@ -1,0 +1,99 @@
+# O2scl Travis script
+#
+# On OSX, homebrew is used to do the installation. On Ubuntu, we use
+# apt to install the dependencies and then do a normal source
+# installation.
+#
+# Todo: Right now, we check only the current version, not the latest dist.
+#
+# Todo: Try adding eigen, armadillo, openmp, HDF5 compression support
+#
+
+language: cpp
+
+os:
+  - linux
+  - osx
+
+# 12/25/19: Currently xenial (16.04) is the default for Travis on
+# Ubuntu, we use bionic (18.04) for now, but xenial might work as well.
+
+osx_image: xcode11.2
+dist: bionic
+
+# Speed up the tests on linux and presume old HDF5
+env:
+  - CXXFLAGS="-DO2SCL_FAST_TEST -DO2SCL_HDF5_PRE_1_12" 
+
+addons:
+  apt:
+    packages:
+    - libgsl0-dev
+    - libboost-all-dev
+    - libreadline-dev
+    - libncurses-dev
+    - libhdf5-dev
+    
+  # 8/22/20: The o2scl homebrew ruby script should install autotools,
+  # but it doesn't seem to do so right now, so I'm trying to do it
+  # here
+
+  homebrew:
+    taps: awsteiner/science
+    packages:
+    - gcc
+    - eigen
+    - hdf5
+    - automake
+    - autoconf
+    - libtool
+
+# 
+# Prepare autotools and install dependencies before installation
+#
+before_install:
+  # 
+  # Use GNU autotools to generate ./configure automatically on linux
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      mkdir m4 ;
+      autoreconf -i ;
+    fi
+    
+#
+# Installation script
+#
+# On Mac, using "install:" doesn't work here b/c it additionally
+# tries to run ./configure after doing the homebrew installation,
+# so we use "script:" here instead
+#
+script:
+  # 
+  # Perform the installation on linux. Since there is no documentation,
+  # 'make blank-doc' is used to create dummy documentation so that
+  # 'make install' does not fail. 
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+    fi
+  #
+  # Use homebrew to install the HEAD version on OSX. At the end, 'acol
+  # --version' is used to double check that the install worked. We
+  # need to use '-v' for brew install so that the build doesn't
+  # timeout. 
+  # 
+  # 10/11/18: I removed --with-examples from this line because
+  # the travis.ci runs were taking too long
+  #
+  # 12/13/19: Removing test because it goes beyond the 50 minute limit
+  # 
+  #      brew install o2scl --with-eigen --with-check
+  # --with-fast-test --HEAD -v && acol --version ;
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew install o2scl --with-eigen --HEAD -v && acol --version ;
+    fi
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never

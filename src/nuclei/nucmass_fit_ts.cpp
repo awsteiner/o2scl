@@ -1,0 +1,138 @@
+/*
+  ───────────────────────────────────────────────────────────────────
+  
+  Copyright (C) 2006-2026, Andrew W. Steiner
+  
+  This file is part of O2scl.
+  
+  O2scl is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+  
+  O2scl is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with O2scl. If not, see <http://www.gnu.org/licenses/>.
+
+  ───────────────────────────────────────────────────────────────────
+*/
+#include <iostream>
+#include <o2scl/test_mgr.h>
+#include <o2scl/nucmass_fit.h>
+#include <o2scl/hdf_nucmass_io.h>
+
+using namespace std;
+using namespace o2scl;
+using namespace o2scl_const;
+using namespace o2scl_hdf;
+
+typedef boost::numeric::ublas::vector<double> ubvector;
+typedef boost::numeric::ublas::matrix<double> ubmatrix;
+
+int main(void) {
+  test_mgr t;
+  t.set_output_level(1);
+  
+  cout.setf(ios::scientific);
+
+  double res;
+  nucmass_semi_empirical sem;
+  nucmass_fit mf;
+
+  nucmass_ame ame;
+  ame.load("20");
+  
+  nucmass_mnmsk_exp mexp;
+  o2scl_hdf::mnmsk_load(mexp,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
+  nucmass_mnmsk mm;
+  o2scl_hdf::mnmsk_load(mm,"mnmsk97","../../data/o2scl/nucmass/mnmsk.o2");
+
+  nucdist_set(mf.dist,ame);
+  mf.fit(sem,res);
+  cout << sem.B << " " << sem.Sv << " " << sem.Ss << " " 
+       << sem.Ec << " " << sem.Epair << endl;
+  cout << res << endl;
+  t.test_gen(res<4.0,"Successful fit.");
+  
+  ubvector unc(1);
+  unc[0]=3.0;
+  mf.set_uncerts(unc);
+  mf.fit_method=nucmass_fit::chi_squared_me;
+  mf.fit(sem,res);
+  cout << sem.B << " " << sem.Sv << " " << sem.Ss << " " 
+       << sem.Ec << " " << sem.Epair << endl;
+
+  /*
+    int max_iso=30;
+    ubvector qual, qual2;
+    ubvector_int n_qual, n_qual2;
+    
+    mf.eval_isospin(sem,n_qual,qual);
+    mf.eval_isospin(mm,n_qual2,qual2);
+    for(size_t i=0;i<qual.size();i++) {
+    cout << i << " " << n_qual[i] << " " << qual[i] << " ";
+    cout << n_qual2[i] << " " << qual2[i] << endl;
+    }
+  */
+
+  mf.fit_method=nucmass_fit::rms_mass_excess;
+  nucdist_set(mf.dist,mexp);
+  mf.eval(mm,res);
+  cout << res << endl;
+  t.test_rel(res,0.6806,1.0e-4,"Moller fit 1");
+
+  nucdist_set(mf.dist,ame);
+  mf.eval(mm,res);
+  cout << res << endl;
+  t.test_rel(res,0.9933352,1.0e-4,"Moller fit 3");
+
+  cout << "Testing:" << endl;
+  mf.fit_method=nucmass_fit::rms_mass_excess;
+  mf.fit(sem,res);
+  ubvector x3(5);
+  sem.guess_fun(5,x3);
+  cout << res << endl;
+  vector_out(cout,x3,true);
+  
+  mf.fit_method=nucmass_fit::rms_me_Sn;
+  mf.fit(sem,res);
+  sem.guess_fun(5,x3);
+  cout << res << endl;
+  vector_out(cout,x3,true);
+
+  mf.fit_method=nucmass_fit::rms_me_Sn_S2n;
+  mf.fit(sem,res);
+  cout << res << endl;
+  sem.guess_fun(5,x3);
+  vector_out(cout,x3,true);
+  
+  mf.fit_method=nucmass_fit::chi_squared_me;
+  double chi2;
+  ubmatrix covar;
+  mf.fit_covar(sem,chi2,covar);
+  cout << "chi2: " << chi2 << endl;
+  ubvector par2(sem.nfit);
+  sem.guess_fun(sem.nfit,par2);
+  cout << "parameters: ";
+  vector_out(cout,par2,true);
+  cout << "covariance matrix: " << endl;
+  matrix_out(cout,covar);
+
+  for(size_t i=0;i<sem.nfit;i++) {
+    for(size_t j=0;j<sem.nfit;j++) {
+      covar(i,j)/=sqrt(covar(i,i))*sqrt(covar(j,j));
+    }
+  }
+
+  cout << "covariance matrix2: " << endl;
+  matrix_out(cout,covar);
+  
+  
+  t.report();
+  return 0;
+}
+  

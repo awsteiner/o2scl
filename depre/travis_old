@@ -1,0 +1,90 @@
+#
+# Todo: Right now, we check only the current version, not the latest dist.
+#
+# Todo: the Travis OS seems to fool the automatic detection for C++11
+# support, so CXXFLAGS="-std=c++0x" is required here. This is
+# done in O2scl's Travis CI settings page.
+#
+# Todo: Try adding eigen, armadillo, openmp, HDF5 compression support
+#
+
+language: cpp
+
+os:
+  - linux
+  - osx
+
+dist: trusty
+sudo: required
+
+# 
+# Prepare autotools and install dependencies before installation
+#
+before_install:
+  # 
+  # Use GNU autotools to generate ./configure automatically on linux
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      mkdir m4 ;
+      autoreconf -i ;
+    fi
+    
+  # 
+  # Install GSL, Boost, HDF5, readline, ncurses
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      sudo apt-get install libgsl0-dev && sudo apt-get install libboost-all-dev  libreadline-dev libncurses-dev libhdf5-dev;
+    fi
+    
+  # The ubuntu HDF5 package cannot be used because it is configured to
+  # be compatibile only the with older API. Newer versions of the
+  # Ubuntu HDF5 package do not seem to have this problem. So we can
+  # now use the libhdf5-dev package. Note that even more recent Ubuntu
+  # distributions install HDF5 in a different location do distinguish
+  # between parallel and serial versions (which will require
+  # -DO2SCL_UBUNTU_HDF5), but trusty doesn't have this issue yet.
+  
+  #  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+  #      wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/
+  # hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz ;
+  #      tar -xzf hdf5-1.10.0-patch1.tar.gz ;
+  #      cd hdf5-1.10.0-patch1 && ./configure
+  # --build=x86_64-unknown-linux-gnu --prefix=/usr && make >
+  # /dev/null 2> /dev/null && sudo make install && cd .. ;
+  #    fi
+    
+#
+# Installation script
+#
+# On Mac, using "install:" doesn't work here b/c it additionally
+# tries to run ./configure after doing the homebrew installation,
+# so we use "script:" here instead
+#
+script:
+  # 
+  # Perform the installation on linux. Since there is no documentation,
+  # 'make blank-doc' is used to create dummy documentation so that
+  # 'make install' does not fail. Note that the GSL installation in
+  # trusty is 1.6, so we leave out --enable-gsl2
+  # 
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      ./configure && make blank-doc && make && sudo make install && make check && make o2scl-examples;
+    fi
+  #
+  # Use homebrew to install the HEAD version on OSX. At the end, 'acol
+  # --version' is used to double check that the install worked. We
+  # need to use '-v' for brew install so that the build doesn't
+  # timeout. We use ';' rather than '&&' to ignore
+  # homebrew errors when installing gcc.
+  # 
+  # 10/11/18: I removed --with-examples from this line because
+  # the travis.ci runs were taking too long
+  #
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew update && brew install gcc; brew link --overwrite gcc; brew install eigen && brew install hdf5 && brew tap awsteiner/science && which autoconf && brew install o2scl --with-eigen --with-check --HEAD -v && acol --version ;
+    fi
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never

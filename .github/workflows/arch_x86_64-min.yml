@@ -1,0 +1,26 @@
+name: Arch x86_64 minimal install
+
+on:
+  push:
+    branches: [ "main", "rc" ]
+  pull_request:
+    branches: [ "main", "rc" ]
+
+jobs:
+
+  # Note that identifiers are not allowed to contain "."'s. 
+  arch-x86_64-min:
+  
+    runs-on: ubuntu-24.04
+    
+    container:
+    
+      image: awsteiner/o2scl:v0.931_arch_min_amd64
+
+    steps:
+
+    - name: Check
+      run: |
+        cd /opt/o2scl-0.931
+        make VERBOSE=1 check -j4 -O
+        make VERBOSE=1 o2scl-examples -j4 -O

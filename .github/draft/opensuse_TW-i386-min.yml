@@ -1,0 +1,26 @@
+---
+name: openSUSE TW i386 minimal install
+
+on:
+  push:
+    branches: [ "main", "rc" ]
+  pull_request:
+    branches: [ "main", "rc" ]
+
+jobs:
+  opensuse-TW-i386-min:
+
+    runs-on: ubuntu-latest
+    
+    container:
+    
+      image: awsteiner/o2scl:v0.931rc_ost_min
+      options: --platform "linux/386"
+
+    steps:
+    
+    - name: Check
+      run: |
+        cd /opt/o2scl
+        make VERBOSE=1 check -j4 -O
+        make VERBOSE=1 o2scl-examples -j4 -O
