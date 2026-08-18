@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -59,24 +59,24 @@ namespace o2scl {
 #if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
   
   typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_25> &,
-	boost::numeric::ublas::vector<cpp_dec_float_25> &) >
-  mm_funct_cdf25;
+    int(size_t,const boost::numeric::ublas::vector<o2fp_25> &,
+	boost::numeric::ublas::vector<o2fp_25> &) >
+  mm_funct_fp25;
   
   typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_35> &,
-	boost::numeric::ublas::vector<cpp_dec_float_35> &) >
-  mm_funct_cdf35;
+    int(size_t,const boost::numeric::ublas::vector<o2fp_35> &,
+	boost::numeric::ublas::vector<o2fp_35> &) >
+  mm_funct_fp35;
 
   typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_50> &,
-	boost::numeric::ublas::vector<cpp_dec_float_50> &) >
-  mm_funct_cdf50;
+    int(size_t,const boost::numeric::ublas::vector<o2fp_50> &,
+	boost::numeric::ublas::vector<o2fp_50> &) >
+  mm_funct_fp50;
 
   typedef std::function<
-    int(size_t,const boost::numeric::ublas::vector<cpp_dec_float_100> &,
-	boost::numeric::ublas::vector<cpp_dec_float_100> &) >
-  mm_funct_cdf100;
+    int(size_t,const boost::numeric::ublas::vector<o2fp_100> &,
+	boost::numeric::ublas::vector<o2fp_100> &) >
+  mm_funct_fp100;
   
 #endif
   

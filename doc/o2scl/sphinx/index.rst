@@ -1,6 +1,6 @@
 .. _o2scl:
 
-Object-oriented Scientific Computing Library: v0.931
+Object-oriented Scientific Computing Library: v0.932
 ====================================================
 
 O₂scl is a C++ library for object-oriented scientific computing which

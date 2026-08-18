@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2025, Andrew W. Steiner
+  Copyright (C) 2020-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -972,6 +972,24 @@ void o2scl_nucmass_fit_set_minN(void *vptr, int v) {
   return;
 }
 
+void *o2scl_nucmass_fit_get_dist(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return (void *)(&(ptr->dist));
+}
+
+void o2scl_nucmass_fit_set_dist(void *vptr, void *p_v) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  std::vector<nucleus> *p_tsot=(std::vector<nucleus> *)p_v;
+  ptr->dist=*(p_tsot);
+  return;
+}
+
+void *o2scl_nucmass_fit_get_def_mmin(void *vptr) {
+  nucmass_fit *ptr=(nucmass_fit *)vptr;
+  return (void *)(&(ptr->def_mmin));
+}
+
+
 void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res) {
   nucmass_fit *ptr=(nucmass_fit *)vptr;
   nucmass_fit_base *n=(nucmass_fit_base *)ptr_n;
@@ -1059,6 +1077,13 @@ void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) 
   return;
 }
 
+void o2scl_bskg_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename) {
+  nucmass_hfb_sp *hfb=(nucmass_hfb_sp *)ptr_hfb;
+  std::string *filename=(std::string *)ptr_filename;
+  bskg_load(*hfb,model,*filename);
+  return;
+}
+
 void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA, bool include_neutron, int verbose) {
   vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
   nucmass *nm=(nucmass *)ptr_nm;
@@ -1076,12 +1101,12 @@ void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2,
   return;
 }
 
-void o2scl_nucdist_set_ext_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA, int n_chop) {
+void o2scl_nucdist_split_iso_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA, int n_hold) {
   vector<nucleus> *dist=(vector<nucleus> *)ptr_dist;
   vector<nucleus> *dist_ext=(vector<nucleus> *)ptr_dist_ext;
   nucmass *nm=(nucmass *)ptr_nm;
   std::string *expr=(std::string *)ptr_expr;
-  nucdist_set_ext(*dist,*dist_ext,*nm,*expr,maxA,n_chop);
+  nucdist_split_iso(*dist,*dist_ext,*nm,*expr,maxA,n_hold);
   return;
 }
 

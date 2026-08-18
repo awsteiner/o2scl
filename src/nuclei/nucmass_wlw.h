@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2025, Andrew W. Steiner
+  Copyright (C) 2014-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -92,7 +92,7 @@ namespace o2scl {
     };
   
     /// Return the type, \c "nucmass_wlw".
-    virtual const char *type() { return "nucmass_wlw"; }
+    virtual const char *type() const { return "nucmass_wlw"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus

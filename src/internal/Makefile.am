@@ -10,7 +10,7 @@ update_lic: update_lic.cpp
 	g++ -o update_lic update_lic.cpp
 
 EXTRA_DIST = binsiz.f \
-	gesvd.cpp zheev.cpp hfb_parse.cpp mnk_parse.cpp \
+	gesvd.cpp zheev.cpp hfb_parse.cpp bskg_parse.cpp mnk_parse.cpp \
 	o2comm.cpp osni88.cpp make_units.cpp
 
 # contour3.pdf contour4.pdf contour_gr.cpp
@@ -85,6 +85,25 @@ hfb_all:
 	hfb_parse ../../../../data/nucmass hfb25.o2
 	hfb_parse ../../../../data/nucmass hfb26.o2
 	hfb_parse ../../../../data/nucmass hfb27.o2
+	hfb_parse ../../../../data/nucmass hfb28.o2
+	hfb_parse ../../../../data/nucmass hfb29.o2
+	hfb_parse ../../../../data/nucmass hfb30.o2
+	hfb_parse ../../../../data/nucmass hfb31.o2
+	hfb_parse ../../../../data/nucmass hfb32.o2
+
+bskg_parse.o: bskg_parse.cpp
+	$(CXX) $(CPPFLAGS) -I$(includedir) -o bskg_parse.o -c bskg_parse.cpp
+
+bskg_parse: bskg_parse.o
+	$(CXX) $(CPPFLAGS) -o bskg_parse bskg_parse.o $(LDFLAGS) -L$(libdir) \
+		-lo2scl_part -lo2scl -lgsl -lgslcblas -lo2scl_hdf -lhdf5 \
+		-lhdf5_hl
+
+bskg_all:
+	bskg_parse ../../../../data/nucmass bskg1.o2
+	bskg_parse ../../../../data/nucmass bskg2.o2
+	bskg_parse ../../../../data/nucmass bskg3.o2
+	bskg_parse ../../../../data/nucmass bskg4.o2
 
 mnk_parse.o: mnk_parse.cpp
 	$(CXX) -O3 -DGSL_RANGE_CHECK=0 -DO2SCL_NO_RANGE_CHECK \

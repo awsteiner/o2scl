@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -44,6 +44,16 @@
 #include <o2scl/vector.h>
 #include <o2scl/tensor.h>
 #include <o2scl/format_float.h>
+
+#include <o2scl/set_mpfr.h>
+#include <o2scl/set_multip.h>
+
+#ifdef O2SCL_SET_MULTIP
+#include <boost/multiprecision/cpp_dec_float.hpp>
+#ifdef O2SCL_SET_MPFR
+#include <boost/multiprecision/mpfr.hpp>
+#endif
+#endif
 
 /** \brief The \o2 namespace for I/O with HDF
  */
@@ -359,6 +369,7 @@ namespace o2scl_hdf {
       return 0;
     }
 
+#ifdef O2SCL_SET_MULTIP
     /** \brief Get a boost multiprecision floating point named \c name
         (specialization for Boost multiprecision numbers)
 
@@ -375,6 +386,7 @@ namespace o2scl_hdf {
       f=f(s);
       return 0;
     }
+#endif
     
     /** \brief Get a generic floating point vector named \c name
 
@@ -393,6 +405,7 @@ namespace o2scl_hdf {
       return 0;
     }
 
+#ifdef O2SCL_SET_MULTIP
     /** \brief Get a generic floating point vector named \c name
         (specialization for Boost multiprecision numbers)
 
@@ -444,6 +457,7 @@ namespace o2scl_hdf {
       }
       return 0;
     }
+#endif
     //@}
     
     /// \name Group manipulation

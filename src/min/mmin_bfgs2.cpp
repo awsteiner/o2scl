@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -157,7 +157,7 @@ int mmin_linmin_gsl::minimize(mmin_wrap_gsl &wrap, double rho,
 
   /* Begin bracketing */
 
-  while (i++ < bracket_iters) {
+  while (i++ < bracket_iters && !wrap.over_budget()) {
 
     falpha=wrap.wrap_f(alpha);
 	
@@ -207,7 +207,7 @@ int mmin_linmin_gsl::minimize(mmin_wrap_gsl &wrap, double rho,
 
   /*  Sectioning of bracket [a,b] */
 
-  while (i++ < section_iters) {
+  while (i++ < section_iters && !wrap.over_budget()) {
     delta = b - a;
 	
     {

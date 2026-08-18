@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -27,6 +27,7 @@
 #include <o2scl/eos_base.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
+#include <o2scl/eos_leptons_multip.h>
 
 using namespace std;
 using namespace o2scl;

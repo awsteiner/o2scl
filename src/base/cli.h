@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -533,7 +533,9 @@ namespace o2scl {
     comm_option_s c_quit;
     comm_option_s c_run;
     comm_option_s c_set;
+#ifndef O2SCL_NO_SYSTEM_FUNC
     comm_option_s c_shell;
+#endif
     comm_option_s c_warranty;
     comm_option_s c_xml_to_o2;
     //@}

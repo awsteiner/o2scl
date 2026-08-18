@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -48,6 +48,114 @@ namespace o2scl_linalg {
 #endif
 
   /** \brief Compute the in-place Cholesky decomposition of a symmetric
+      positive-definite square matrix (version two)
+    
+      On input, the upper triangular part of A is ignored (only the 
+      lower triangular part and diagonal are used). On output
+      the diagonal and lower triangular part contain the matrix L.
+    
+      If the matrix is not positive-definite, the error handler 
+      will be called, unless \c err_on_fail is false, in which
+      case a non-zero value will be returned.
+      
+      This version does not copy the lower triangular part to the
+      upper triangular part at the end.
+  */
+  template<class mat_t> int cholesky_decomp_nocopy
+  (const size_t M, mat_t &A, bool err_on_fail=true) {
+  
+    size_t i,j,k;
+
+    /* [GSL] Do the first 2 rows explicitly. It is simple, and faster.
+       And one can return if the matrix has only 1 or 2 rows.
+    */
+
+    double A_00=O2SCL_IX2(A,0,0);
+  
+    // AWS: The GSL version stores GSL_NAN in L_00 and then throws
+    // an error if A_00 <= 0. We throw the error first and then
+    // the square root should always be safe?
+
+    if (A_00<=0.0) {
+      if (err_on_fail) {
+	O2SCL_ERR((((std::string)"Matrix not positive definite ")+
+                   "(A[0][0]="+o2scl::dtos(A_00)+"<=0) in "+
+                   "cholesky_decomp().").c_str(),o2scl::exc_einval);
+      } else {
+	return 1;
+      }
+    }
+  
+    double L_00=sqrt(A_00);
+    O2SCL_IX2(A,0,0)=L_00;
+  
+    if (M>1) {
+      double A_10=O2SCL_IX2(A,1,0);
+      double A_11=O2SCL_IX2(A,1,1);
+          
+      double L_10=A_10/L_00;
+      double diag=A_11-L_10*L_10;
+    
+      if (diag<=0.0) {
+	if (err_on_fail) {
+          std::cerr.setf(std::ios::scientific);
+          std::cerr << A_00 << " " << A_10 << " " << A_11 << std::endl;
+	  O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
+		     "cholesky_decomp().",o2scl::exc_einval);
+	} else {
+	  return 2;
+	}
+      }
+      double L_11=sqrt(diag);
+
+      O2SCL_IX2(A,1,0)=L_10;
+      O2SCL_IX2(A,1,1)=L_11;
+    }
+      
+    for (k=2;k<M;k++) {
+      double A_kk=O2SCL_IX2(A,k,k);
+          
+      for (i=0;i<k;i++) {
+	double sum=0.0;
+
+	double A_ki=O2SCL_IX2(A,k,i);
+	double A_ii=O2SCL_IX2(A,i,i);
+
+	// AWS: Should change to use a form of ddot() here
+	if (i>0) {
+	  sum=0.0;
+	  for(j=0;j<i;j++) {
+	    sum+=O2SCL_IX2(A,i,j)*O2SCL_IX2(A,k,j);
+	  }
+	}
+
+	A_ki=(A_ki-sum)/A_ii;
+	O2SCL_IX2(A,k,i)=A_ki;
+      } 
+
+      {
+	double sum=dnrm2_subrow(A,k,0,k);
+	double diag=A_kk-sum*sum;
+
+	if (diag<=0.0) {
+	  if (err_on_fail) {
+	    O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
+		       "cholesky_decomp().",o2scl::exc_einval);
+	  } else {
+	    return 3;
+	  }
+	}
+
+	double L_kk=sqrt(diag);
+      
+	O2SCL_IX2(A,k,k)=L_kk;
+      }
+    }
+
+    return 0;
+  }
+
+  /** \brief Compute the in-place Cholesky decomposition of a symmetric
       positive-definite square matrix
     
       On input, the upper triangular part of A is ignored (only the 
@@ -58,215 +166,27 @@ namespace o2scl_linalg {
       If the matrix is not positive-definite, the error handler 
       will be called, unless \c err_on_fail is false, in which
       case a non-zero value will be returned.
+
+      This version, similar to the GSL version, copies the lower
+      triangular part to the upper triangular part at the end.
   */
   template<class mat_t> int cholesky_decomp(const size_t M, mat_t &A,
 					    bool err_on_fail=true) {
   
-    size_t i,j,k;
-
-    /* [GSL] Do the first 2 rows explicitly. It is simple, and faster.
-       And one can return if the matrix has only 1 or 2 rows.
-    */
-
-    double A_00=O2SCL_IX2(A,0,0);
-  
-    // AWS: The GSL version stores GSL_NAN in L_00 and then throws
-    // an error if A_00 <= 0. We throw the error first and then
-    // the square root should always be safe?
-
-    if (A_00<=0.0) {
-      if (err_on_fail) {
-	O2SCL_ERR((((std::string)"Matrix not positive definite ")+
-                   "(A[0][0]="+o2scl::dtos(A_00)+"<=0) in "+
-                   "cholesky_decomp().").c_str(),o2scl::exc_einval);
-      } else {
-	return 1;
-      }
-    }
-  
-    double L_00=sqrt(A_00);
-    O2SCL_IX2(A,0,0)=L_00;
-  
-    if (M>1) {
-      double A_10=O2SCL_IX2(A,1,0);
-      double A_11=O2SCL_IX2(A,1,1);
-          
-      double L_10=A_10/L_00;
-      double diag=A_11-L_10*L_10;
+    int ret=cholesky_decomp_nocopy(M,A,err_on_fail);
     
-      if (diag<=0.0) {
-	if (err_on_fail) {
-          std::cerr.setf(std::ios::scientific);
-          std::cerr << A_00 << " " << A_10 << " " << A_11 << std::endl;
-	  O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
-		     "cholesky_decomp().",o2scl::exc_einval);
-	} else {
-	  return 2;
-	}
-      }
-      double L_11=sqrt(diag);
-
-      O2SCL_IX2(A,1,0)=L_10;
-      O2SCL_IX2(A,1,1)=L_11;
-    }
-      
-    for (k=2;k<M;k++) {
-      double A_kk=O2SCL_IX2(A,k,k);
-          
-      for (i=0;i<k;i++) {
-	double sum=0.0;
-
-	double A_ki=O2SCL_IX2(A,k,i);
-	double A_ii=O2SCL_IX2(A,i,i);
-
-	// AWS: Should change to use a form of ddot() here
-	if (i>0) {
-	  sum=0.0;
-	  for(j=0;j<i;j++) {
-	    sum+=O2SCL_IX2(A,i,j)*O2SCL_IX2(A,k,j);
-	  }
-	}
-
-	A_ki=(A_ki-sum)/A_ii;
-	O2SCL_IX2(A,k,i)=A_ki;
-      } 
-
-      {
-	double sum=dnrm2_subrow(A,k,0,k);
-	double diag=A_kk-sum*sum;
-
-	if (diag<=0.0) {
-	  if (err_on_fail) {
-	    O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
-		       "cholesky_decomp().",o2scl::exc_einval);
-	  } else {
-	    return 3;
-	  }
-	}
-
-	double L_kk=sqrt(diag);
-      
-	O2SCL_IX2(A,k,k)=L_kk;
-      }
-    }
-
     /* [GSL] Now copy the transposed lower triangle to the upper
        triangle, the diagonal is common.
     */
       
-    for (i=1;i<M;i++) {
-      for (j=0;j<i;j++) {
+    for (size_t i=1;i<M;i++) {
+      for (size_t j=0;j<i;j++) {
 	double A_ij=O2SCL_IX2(A,i,j);
 	O2SCL_IX2(A,j,i)=A_ij;
       }
     } 
   
-    return 0;
-  }
-
-  /** \brief Compute the in-place Cholesky decomposition of a symmetric
-      positive-definite square matrix (version two)
-    
-      On input, the upper triangular part of A is ignored (only the 
-      lower triangular part and diagonal are used). On output
-      the diagonal and lower triangular part contain the matrix L.
-    
-      If the matrix is not positive-definite, the error handler 
-      will be called, unless \c err_on_fail is false, in which
-      case a non-zero value will be returned.
-  */
-  template<class mat_t> int cholesky_decomp_two(const size_t M, mat_t &A,
-                                                bool err_on_fail=true) {
-  
-    size_t i,j,k;
-
-    /* [GSL] Do the first 2 rows explicitly. It is simple, and faster.
-       And one can return if the matrix has only 1 or 2 rows.
-    */
-
-    double A_00=O2SCL_IX2(A,0,0);
-  
-    // AWS: The GSL version stores GSL_NAN in L_00 and then throws
-    // an error if A_00 <= 0. We throw the error first and then
-    // the square root should always be safe?
-
-    if (A_00<=0.0) {
-      if (err_on_fail) {
-	O2SCL_ERR((((std::string)"Matrix not positive definite ")+
-                   "(A[0][0]="+o2scl::dtos(A_00)+"<=0) in "+
-                   "cholesky_decomp().").c_str(),o2scl::exc_einval);
-      } else {
-	return 1;
-      }
-    }
-  
-    double L_00=sqrt(A_00);
-    O2SCL_IX2(A,0,0)=L_00;
-  
-    if (M>1) {
-      double A_10=O2SCL_IX2(A,1,0);
-      double A_11=O2SCL_IX2(A,1,1);
-          
-      double L_10=A_10/L_00;
-      double diag=A_11-L_10*L_10;
-    
-      if (diag<=0.0) {
-	if (err_on_fail) {
-          std::cerr.setf(std::ios::scientific);
-          std::cerr << A_00 << " " << A_10 << " " << A_11 << std::endl;
-	  O2SCL_ERR2("Matrix not positive definite (diag<=0 for 2x2) in ",
-		     "cholesky_decomp().",o2scl::exc_einval);
-	} else {
-	  return 2;
-	}
-      }
-      double L_11=sqrt(diag);
-
-      O2SCL_IX2(A,1,0)=L_10;
-      O2SCL_IX2(A,1,1)=L_11;
-    }
-      
-    for (k=2;k<M;k++) {
-      double A_kk=O2SCL_IX2(A,k,k);
-          
-      for (i=0;i<k;i++) {
-	double sum=0.0;
-
-	double A_ki=O2SCL_IX2(A,k,i);
-	double A_ii=O2SCL_IX2(A,i,i);
-
-	// AWS: Should change to use a form of ddot() here
-	if (i>0) {
-	  sum=0.0;
-	  for(j=0;j<i;j++) {
-	    sum+=O2SCL_IX2(A,i,j)*O2SCL_IX2(A,k,j);
-	  }
-	}
-
-	A_ki=(A_ki-sum)/A_ii;
-	O2SCL_IX2(A,k,i)=A_ki;
-      } 
-
-      {
-	double sum=dnrm2_subrow(A,k,0,k);
-	double diag=A_kk-sum*sum;
-
-	if (diag<=0.0) {
-	  if (err_on_fail) {
-	    O2SCL_ERR2("Matrix not positive definite (diag<=0) in ",
-		       "cholesky_decomp().",o2scl::exc_einval);
-	  } else {
-	    return 3;
-	  }
-	}
-
-	double L_kk=sqrt(diag);
-      
-	O2SCL_IX2(A,k,k)=L_kk;
-      }
-    }
-
-    return 0;
+    return ret;
   }
 
   /** \brief Compute the determinant of a matrix from its Cholesky
@@ -350,8 +270,9 @@ namespace o2scl_linalg {
   /** \brief Compute the inverse of a symmetric positive definite matrix
       given the Cholesky decomposition
 
-      Given a Cholesky decomposition produced by \ref cholesky_decomp(),
-      this function returns the inverse of that matrix in \c LLT.
+      Given a Cholesky decomposition produced by \ref
+      cholesky_decomp(), this function returns the inverse of that
+      matrix in \c LLT.
   */
   template<class mat_t> void cholesky_invert(const size_t N, mat_t &LLT) {
   

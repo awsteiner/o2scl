@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -2042,7 +2042,7 @@ namespace o2scl {
   /** \brief Compute the maximum of the lower-left part of a matrix
    */
   template<class mat_t, class data_t>
-    data_t matrix_max_value(size_t m, const size_t n, const mat_t &data) {
+  data_t matrix_max_value(size_t m, size_t n, const mat_t &data) {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
@@ -2059,6 +2059,40 @@ namespace o2scl {
       }
     }
     return max;
+  }
+  
+  /** \brief Compute the maximum of the lower-left part of a matrix
+      (OpenMP version)
+   */
+  template<class mat_t, class data_t>
+  data_t matrix_max_value_openmp
+  (size_t m, size_t n, const mat_t &data) {
+    
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	o2scl::itos(m)+","+o2scl::itos(n)+") in "+
+	"matrix_max_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
+    }
+    data_t max_val=data(0,0);
+    
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+    {
+#pragma omp for reduction(max:max_val)
+#endif
+      for(size_t i=0;i<m;i++) {
+        for(size_t j=0;j<n;j++) {
+          if (data(i,j)>max_val) {
+            max_val=data(i,j);
+          }
+        }
+      }
+#ifdef O2SCL_SET_OPENMP
+    }
+#endif
+    
+    return max_val;
   }
 
   /** \brief Compute the maximum of a matrix
@@ -2082,6 +2116,39 @@ namespace o2scl {
       }
     }
     return max;
+  }
+
+  /** \brief Compute the maximum of a matrix
+   */
+  template<class mat_t, class data_t> data_t
+    matrix_max_value_openmp(const mat_t &data) {
+    size_t m=data.size1();
+    size_t n=data.size2();
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
+	"matrix_max_value().";
+      O2SCL_ERR(str.c_str(),exc_einval);
+    }
+    data_t max_val=data(0,0);
+
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+    {
+#pragma omp for reduction(max:max_val)
+#endif
+      for(size_t i=0;i<m;i++) {
+        for(size_t j=0;j<n;j++) {
+          if (data(i,j)>max_val) {
+            max_val=data(i,j);
+          }
+        }
+      }
+#ifdef O2SCL_SET_OPENMP
+    }
+#endif
+    
+    return max_val;
   }
 
   /** \brief Compute the maximum of a matrix
@@ -2168,7 +2235,8 @@ namespace o2scl {
   /** \brief Compute the minimum of a matrix
    */
   template<class mat_t, class data_t>
-    data_t matrix_min_value(size_t m, size_t n, const mat_t &data) {
+    data_t matrix_min_value(size_t m, size_t n,
+                            const mat_t &data) {
     
     if (m==0 || n==0) {
       std::string str=((std::string)"Matrix with zero size (")+
@@ -2186,7 +2254,7 @@ namespace o2scl {
     }
     return min;
   }
-
+  
   /** \brief Compute the minimum of a matrix
    */
   template<class mat_t, class data_t>
@@ -2209,6 +2277,38 @@ namespace o2scl {
       }
     }
     return min;
+  }
+
+  /** \brief Compute the minimum of a matrix
+   */
+  template<class mat_t, class data_t>
+    data_t matrix_min_value_openmp(const mat_t &data) {
+    
+    size_t m=data.size1();
+    size_t n=data.size2();
+    if (m==0 || n==0) {
+      std::string str=((std::string)"Matrix with zero size (")+
+	o2scl::szttos(m)+","+o2scl::szttos(n)+") in "+
+	"matrix_min_value_openmp().";
+      O2SCL_ERR(str.c_str(),exc_einval);
+    }
+    data_t min_val=data(0,0);
+#ifdef O2SCL_SET_OPENMP
+#pragma omp parallel default(shared)
+    {
+#pragma omp for reduction(min:min_val)
+#endif
+      for(size_t i=0;i<m;i++) {
+        for(size_t j=0;j<n;j++) {
+          if (data(i,j)<min_val) {
+            min_val=data(i,j);
+          }
+        }
+      }
+#ifdef O2SCL_SET_OPENMP
+    }
+#endif
+    return min_val;
   }
 
   /** \brief Compute the minimum of a matrix

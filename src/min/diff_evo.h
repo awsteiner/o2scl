@@ -1,7 +1,7 @@
 /* 
    ───────────────────────────────────────────────────────────────────
    
-   Copyright (C) 2010-2025, Edwin van Leeuwen and Andrew W. Steiner
+   Copyright (C) 2010-2026, Edwin van Leeuwen and Andrew W. Steiner
    
    This file is part of O2scl.
    
@@ -116,7 +116,33 @@ namespace o2scl {
         (default true)
      */
     bool use_initial_point;
-    
+
+    /** \brief The maximum total number of function evaluations
+        (default 0)
+
+        If zero (the default), then the number of function
+        evaluations is unbounded and only \ref
+        o2scl::mmin_base::ntrial generations limits the search,
+        exactly as before this option was added. If nonzero, the
+        search also stops once this many evaluations of the
+        function have been used, even if \ref
+        o2scl::mmin_base::ntrial generations have not yet elapsed.
+        This follows the convention described in the documentation
+        of \ref o2scl::mmin_base and mirrors \ref
+        o2scl::cma_es::max_evals, making it possible to compare
+        \ref diff_evo to other minimizers on a common,
+        algorithm-neutral evaluation budget.
+    */
+    size_t max_evals;
+
+    /** \brief The number of function evaluations used by the most
+        recent call to <tt>mmin()</tt> (default 0)
+
+        This is analogous to \ref o2scl::mmin_base::last_ntrial,
+        but counts function evaluations rather than generations.
+    */
+    size_t last_n_evals;
+
     diff_evo() {
       this->ntrial=1000;
       f=0.75;
@@ -127,6 +153,9 @@ namespace o2scl {
       step.resize(1);
       step[0]=1.0e-2;
       use_initial_point=true;
+      max_evals=0;
+      n_evals=0;
+      last_n_evals=0;
     }
 
     virtual ~diff_evo() {
@@ -186,8 +215,9 @@ namespace o2scl {
       }
 
       initialize_population(nvar,x0,pop_size_loc);
-      
+
       fmins.resize(pop_size_loc);
+      n_evals=0;
 
       // Set initial fmin
       for (size_t x=0;x<pop_size_loc;++x) {
@@ -198,6 +228,7 @@ namespace o2scl {
 	}
 	double fmin_x=0;
 	fmin_x=func(nvar,agent_x);
+	n_evals++;
 	fmins[x]=fmin_x;
 	if (x==0) {
 	  fmin=fmin_x;
@@ -213,7 +244,8 @@ namespace o2scl {
       }
 
       int gen=0;
-      while (gen < this->ntrial && nconverged <= nconv) {
+      while (gen < this->ntrial && nconverged <= nconv &&
+             (max_evals==0 || n_evals<max_evals)) {
 	     
 	++nconverged;
 	++gen;
@@ -260,6 +292,7 @@ namespace o2scl {
 	  double fmin_y;
                             
 	  fmin_y=func(nvar,agent_y);
+	  n_evals++;
 	  if (fmin_y<fmins[x]) {
 	    for (size_t i=0;i<nvar;++i) {
 	      population[x*nvar+i]=agent_y[i];
@@ -274,6 +307,8 @@ namespace o2scl {
 	    }
 	  }
 
+	  if (max_evals>0 && n_evals>=max_evals) break;
+
 	}
 	if (this->verbose>0) {
 	  this->print_iter(nvar,fmin,gen,x0,pop_size_loc,
@@ -282,10 +317,15 @@ namespace o2scl {
       }
 
       this->last_ntrial=gen;
-      
+      last_n_evals=n_evals;
+
       if (gen>=this->ntrial) {
 	std::string str="Exceeded maximum number of iterations ("+
 	  itos(this->ntrial)+") in diff_evo::mmin().";
+	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (max_evals>0 && n_evals>=max_evals) {
+	std::string str="Exceeded maximum number of function "
+          "evaluations ("+itos(max_evals)+") in diff_evo::mmin().";
 	O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -309,24 +349,28 @@ namespace o2scl {
                             size_t nconverged_loc, size_t nconv_loc) {
       
       std::cout << "diff_evo::print_iter(): "
-                << "Generation,minimum,n_converged: " << iter << " of "
-                << this->ntrial << ", " 
-                << fmin << " " << nconverged_loc << " of "
+                << "Generation, min., n_converged:\n  "
+                << iter << " of " << this->ntrial << ", " 
+                << fmin << ", " << nconverged_loc << " of "
                 << nconv_loc << std::endl;
-      std::cout << "diff_evo::print_iter(): Parameters: ";
+      std::cout << "  Parameters: ";
+      std::cout.setf(std::ios::showpos);
       for (size_t i=0;i<nvar;++i) {
 	std::cout << best_fit[i] << " ";
       }
+      std::cout.unsetf(std::ios::showpos);
       std::cout << std::endl;
       
       if (this->verbose>1) {
-        std::cout << "diff_evo::print_iter(): Population: " << std::endl;
+        std::cout << "  Population (index: parameters, min): " << std::endl;
         for (size_t i=0;i<pop_size_loc;++i) {
-          std::cout << i << ": ";
+          std::cout << "  " << i << ": ";
+          std::cout.setf(std::ios::showpos);
           for (size_t j=0;j<nvar;++j) {
             std::cout << population[i*nvar+j] << " ";
           }
           std::cout << "fmin: " << fmins[i] << std::endl;
+          std::cout.unsetf(std::ios::showpos);
         }
 	char ch;
 	std::cin >> ch;
@@ -365,6 +409,9 @@ namespace o2scl {
 
     /// Step size for initialization
     std::vector<double> step;
+
+    /// Number of function evaluations used so far in the current call
+    size_t n_evals;
     
     /** \brief Initialize a population of random agents
      */
@@ -395,18 +442,27 @@ namespace o2scl {
       return 0;
     }
 
-    /** \brief Pick number of unique agent id's
-	
+    /** \brief Pick number of unique agent id's, using the
+        specified random number generator
+
 	Unique from x and each other
-	
-	Uses the Fisher-Yates algorithm.  
+
+	Uses the Fisher-Yates algorithm.
+
+	This overload takes an explicit random number generator
+	rather than using \ref gr directly, so that it can be
+	called safely with a thread-local generator from a
+	parallel context (see \ref o2scl::diff_evo_para). The
+	no-argument overload below is unchanged and simply calls
+	this one with \ref gr.
 
 	\future AWS, 7/25/19: GSL may have a better Fisher-Yates
 	implementation we should use here. Or is it in the
 	\ref o2scl::permutation class?
     */
     virtual std::vector<int> pick_unique_agents(int nr, size_t x,
-                                                size_t pop_size_loc) {
+                                                size_t pop_size_loc,
+                                                rng<> &r_gen) {
       std::vector<int> ids;
       std::vector<int> agents;
       // Fill array with ids
@@ -419,13 +475,24 @@ namespace o2scl {
       }
       // Shuffle according to Fisher-Yates
       for (size_t i=ids.size()-1;i>ids.size()-nr-1;--i) {
-	int j=round(gr.random()*i);
+	int j=round(r_gen.random()*i);
 	std::swap(ids[i],ids[j]);
       }
       for (size_t i=ids.size()-1;i>ids.size()-nr-1;--i) {
 	agents.push_back(ids[i]);
       }
       return agents;
+    }
+
+    /** \brief Pick number of unique agent id's
+
+	Unique from x and each other. Identical to the four-argument
+	overload above, using \ref gr as the random number
+	generator.
+    */
+    virtual std::vector<int> pick_unique_agents(int nr, size_t x,
+                                                size_t pop_size_loc) {
+      return pick_unique_agents(nr,x,pop_size_loc,gr);
     }
 
   private:

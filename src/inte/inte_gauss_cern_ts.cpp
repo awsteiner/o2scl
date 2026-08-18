@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -28,13 +28,16 @@
 #include <o2scl/inte_gauss_cern.h>
 #include <o2scl/test_mgr.h>
 #include <o2scl/set_mpfr.h>
+#include <o2scl/set_multip.h>
 
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_SET_MULTIP
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 #ifdef O2SCL_SET_MPFR
 typedef boost::multiprecision::mpfr_float_50 mpfr_float_50;
+#endif
 #endif
 
 double testfun(double tx, double &a);
@@ -51,6 +54,8 @@ long double testfun2_ld(long double tx) {
   return 4.0*sqrtl(1.0-tx*tx);
 }
 
+#ifdef O2SCL_SET_MULTIP
+
 cpp_dec_float_50 testfun2_cdf(cpp_dec_float_50 tx) {
   cpp_dec_float_50 one=1;
   cpp_dec_float_50 four=4;
@@ -63,6 +68,8 @@ mpfr_float_50 testfun2_mp(mpfr_float_50 tx) {
   mpfr_float_50 four=4;
   return four*sqrt(one-tx*tx);
 }
+#endif
+
 #endif
 
 int main(void) {

@@ -1,6 +1,6 @@
 ndatadir=$(datadir)/o2scl/nucmass
 
-dist_ndata_DATA = hfb*.o2 Makefile.am mnmsk.o2 \
+dist_ndata_DATA = hfb*.o2 bskg*.o2 Makefile.am mnmsk.o2 \
 			du_zu_95.o2 du_zu_96.o2 ktuy04.o2 ktuy05.o2 \
 			wl11.o2 wllw10.o2 wlw10.o2 \
 			wlwm14.o2 lwdw11.o2 sd*.o2 dglg10.o2 msis16.o2

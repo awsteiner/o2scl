@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2025, Andrew W. Steiner
+  Copyright (C) 2020-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -372,6 +372,13 @@ int o2scl_nucmass_fit_get_minN(void *vptr);
 
 void o2scl_nucmass_fit_set_minN(void *vptr, int v);
 
+void *o2scl_nucmass_fit_get_dist(void *vptr);
+
+void o2scl_nucmass_fit_set_dist(void *vptr, void *p_v);
+
+void *o2scl_nucmass_fit_get_def_mmin(void *vptr);
+
+
 void o2scl_nucmass_fit_fit(void *vptr, void *ptr_n, double *res);
 
 void o2scl_nucmass_fit_eval(void *vptr, void *ptr_n, double *res);
@@ -398,10 +405,12 @@ void o2scl_hfb_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
 void o2scl_hfb_sp_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
 
+void o2scl_bskg_load_wrapper(void *ptr_hfb, size_t model, void *ptr_filename);
+
 void o2scl_nucdist_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_expr, int maxA=400, bool include_neutron=false, int verbose=0);
 
 void o2scl_nucdist_pair_set_wrapper(void *ptr_dist, void *ptr_nm, void *ptr_nm2, void *ptr_expr, int maxA=400, bool include_neutron=false);
 
-void o2scl_nucdist_set_ext_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA=400, int n_chop=1);
+void o2scl_nucdist_split_iso_wrapper(void *ptr_dist, void *ptr_dist_ext, void *ptr_nm, void *ptr_expr, int maxA=400, int n_hold=1);
 
 }

@@ -62,6 +62,10 @@ check_SCRIPTS = o2scl-test
 o2scl-examples:
 	cd examples && $(MAKE) o2scl-examples
 
+# Compile and run all benchmarks
+o2scl-benchmarks:
+	cd benchmarks && $(MAKE) o2scl-benchmarks
+
 # Run the tests and summarize using the tsumm program
 #
 # The command echo " " > ./testlist creates a blank testlist file

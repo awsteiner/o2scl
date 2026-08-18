@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -31,13 +31,13 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+
 #include <o2scl/constants.h>
 #include <o2scl/root_cern.h>
 #include <o2scl/inte.h>
 #include <o2scl/inte_qag_gsl.h>
 #include <o2scl/inte_qagiu_gsl.h>
 #include <o2scl/inte_double_exp_boost.h>
-
 #include <o2scl/part_deriv.h>
 #include <o2scl/fermion_rel.h>
 
@@ -1299,30 +1299,6 @@ namespace o2scl {
   */
   typedef fermion_deriv_rel_tl<> fermion_deriv_rel;
 
-#ifdef O2SCL_SET_MULTIP
-  
-  /** \brief Long double version of 
-      \ref o2scl::fermion_deriv_rel_tl 
-  */
-  typedef fermion_deriv_rel_tl<fermion_deriv_tl<long double>,
-                               fermion_rel_ld,
-			       inte_double_exp_boost<>,
-			       inte_double_exp_boost<>,
-			       long double>
-  fermion_deriv_rel_ld;
-
-  /** \brief 25-digit version of 
-      \ref o2scl::fermion_deriv_rel_tl 
-  */
-  typedef fermion_deriv_rel_tl<fermion_deriv_tl<cpp_dec_float_25>,
-                               fermion_rel_cdf25,
-			       inte_double_exp_boost<>,
-			       inte_double_exp_boost<>,
-			       cpp_dec_float_25>
-  fermion_deriv_rel_cdf25;
-  
-#endif  
-  
 }
 
 #endif

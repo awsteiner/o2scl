@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -1699,7 +1699,35 @@ int acol_manager::comm_internal(std::vector<std::string> &sv, bool itive_com) {
   } else if (type=="uniform_grid<double>") {
 
     hdf_output(hf,ug_obj,obj_name);
-    
+
+  } else if (type=="nucmass_semi_empirical") {
+
+    nmse_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_ldrop_pair") {
+
+    nmldp_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_frdm") {
+
+    nmfrdm_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_dz_fit") {
+
+    nmdzf_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_dz_fit_33") {
+
+    nmdzf33_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_frdm_shell") {
+
+    nmfrdms_obj.hdf_output(hf,obj_name);
+
+  } else if (type=="nucmass_ldrop_shell") {
+
+    nmlds_obj.hdf_output(hf,obj_name);
+
   } else if (type=="") {
 
     cerr << "There is no current object, so the 'internal' command "

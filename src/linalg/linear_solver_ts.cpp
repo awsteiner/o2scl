@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -42,7 +42,7 @@ using namespace o2scl;
 using namespace o2scl_cblas;
 using namespace o2scl_linalg;
 
-int main(void) {
+int main(int argc, char *argv[]) {
   test_mgr t;
   t.set_output_level(2);
 
@@ -252,7 +252,7 @@ int main(void) {
   // O2scl was included with CUDA support but the GPU was temporarily
   // unavailable.
   
-  if (false) {
+  if (argc>=2 && ((string)argv[1])==((string)"cuda")) {
     
     tensor2<> am1(5,5), am2(5,5);
     vector<double> av1(5), av2(5), av3(5);

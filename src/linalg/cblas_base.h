@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -768,7 +768,7 @@ namespace o2scl_cblas {
 	}
 
       } else {
-	O2SCL_ERR("Unrecognized operation in dgemm().",o2scl::exc_einval);
+	O2SCL_ERR("Unrecognized operation in gemm().",o2scl::exc_einval);
       }
 
     } else {
@@ -855,7 +855,7 @@ namespace o2scl_cblas {
 	}
 
       } else {
-	O2SCL_ERR("Unrecognized operation in dgemm().",o2scl::exc_einval);
+	O2SCL_ERR("Unrecognized operation in gemm().",o2scl::exc_einval);
       }
     }
 

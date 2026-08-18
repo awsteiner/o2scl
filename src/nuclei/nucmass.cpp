@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -355,6 +355,76 @@ double nucmass_table::mass_excess_d(double Z, double N) {
   return mz1+(Z-Z1)*(mz2-mz1);
 }
 
+int nucmass_fit_base::hdf_output(o2scl_hdf::hdf_file &hf,
+                                  std::string name) const {
+
+  if (!hf.has_write_access()) {
+    O2SCL_ERR2("File not opened with write access in ",
+               "nucmass_fit_base::hdf_output().",exc_efailed);
+  }
+
+  // Start group
+  hid_t top=hf.get_current_id();
+  hid_t group=hf.open_group(name);
+  hf.set_current_id(group);
+
+  // Add typename and fit-parameter count
+  hf.sets_fixed("o2scl_type",type());
+  hf.set_szt("nfit",nfit);
+
+  // Add the current parameter values
+  ubvector p(nfit);
+  guess_fun(nfit,p);
+  hf.setd_vec_copy("params",p);
+
+  // Close group
+  hf.close_group(group);
+
+  // Return location to previous value
+  hf.set_current_id(top);
+
+  return 0;
+}
+
+void nucmass_fit_base::hdf_input(o2scl_hdf::hdf_file &hf,
+                                  std::string name) {
+
+  // Open main group
+  hid_t top=hf.get_current_id();
+  hid_t group=hf.open_group(name);
+  hf.set_current_id(group);
+
+  // Check typename
+  std::string type2;
+  hf.gets_fixed("o2scl_type",type2);
+  if (type2!=((std::string)type())) {
+    O2SCL_ERR((((std::string)"Typename ")+type2+" in HDF group "+
+               "does not match class ("+type()+" in "+
+               "nucmass_fit_base::hdf_input().").c_str(),exc_einval);
+  }
+
+  // Check the fit-parameter count
+  size_t nfit2;
+  hf.get_szt("nfit",nfit2);
+  if (nfit2!=nfit) {
+    O2SCL_ERR2("Parameter count in HDF group does not match nfit in ",
+               "nucmass_fit_base::hdf_input().",exc_einval);
+  }
+
+  // Load and set the parameter values
+  ubvector p;
+  hf.getd_vec_copy("params",p);
+  fit_fun(nfit,p);
+
+  // Close group
+  hf.close_group(group);
+
+  // Return location to previous value
+  hf.set_current_id(top);
+
+  return;
+}
+
 nucmass_semi_empirical::nucmass_semi_empirical() {
   B=-16.0;
   Ss=18.0;
@@ -380,7 +450,7 @@ int nucmass_semi_empirical::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int nucmass_semi_empirical::guess_fun(size_t nv, ubvector &x) {
+int nucmass_semi_empirical::guess_fun(size_t nv, ubvector &x) const {
   x[0]=-B; x[1]=Sv; x[2]=Ss; x[3]=Ec; x[4]=Epair;
   return 0;
 }
@@ -430,7 +500,7 @@ int nucmass_dvi::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int nucmass_dvi::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dvi::guess_fun(size_t nv, ubvector &x) const {
   x[0]=av;
   x[1]=as;
   x[2]=sv;

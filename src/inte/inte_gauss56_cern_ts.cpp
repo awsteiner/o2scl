@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,11 +24,14 @@
 #include <o2scl/funct_multip.h>
 #include <o2scl/inte_gauss56_cern.h>
 #include <o2scl/test_mgr.h>
+#include <o2scl/set_multip.h>
 
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_SET_MULTIP
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
+#endif
 
 double testfun(double tx, double &pa) {
   return (pa*sin(tx)/(tx+0.01));
@@ -38,11 +41,13 @@ long double testfun_ld(long double tx, long double &pa) {
   return (pa*sinl(tx)/(tx+0.01L));
 }
 
+#ifdef O2SCL_SET_MULTIP
 cpp_dec_float_50 testfun_cdf(cpp_dec_float_50 tx, cpp_dec_float_50 &pa) {
   cpp_dec_float_50 one=1;
   cpp_dec_float_50 hundred=100;
   return (pa*sin(tx)/(tx+one/hundred));
 }
+#endif
 
 int main(void) {
   cout.setf(ios::scientific);

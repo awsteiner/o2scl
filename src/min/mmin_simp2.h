@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -223,6 +223,7 @@ namespace o2scl {
       }
         
       newval=f(nvar,xc);
+      n_evals++;
 
       return 0;
     }
@@ -299,6 +300,7 @@ namespace o2scl {
             x1[i][j]=0.5*(x1[i][j]+x1[best][j]);
           }
           y1[i]=f(nvar,x1[i]);
+          n_evals++;
           if (!std::isfinite(y1[i])) {
             std::string err=((std::string)"Function not finite (returned ")+
               dtos(y1[i])+" in mmin_simp2::contract_by_best().";
@@ -347,6 +349,9 @@ namespace o2scl {
     /// Function
     func_t *func;
 
+    /// Number of function evaluations used so far in the current call
+    size_t n_evals;
+
     /// True if set() has been called
     bool set_called;
 
@@ -369,10 +374,39 @@ namespace o2scl {
       step_vec.resize(1);
       step_vec[0]=1.0;
       avoid_nonzero=false;
+      max_evals=0;
+      n_evals=0;
+      last_n_evals=0;
     }
-    
+
     virtual ~mmin_simp2() {
     }
+
+    /** \brief The maximum total number of function evaluations
+        (default 0)
+
+        If zero (the default), then the number of function
+        evaluations is unbounded and only \ref
+        o2scl::mmin_base::ntrial limits the search, exactly as
+        before this option was added. If nonzero, the search also
+        stops once this many evaluations of the function have been
+        used, even if \ref o2scl::mmin_base::ntrial iterations have
+        not yet elapsed. This follows the convention described in
+        the documentation of \ref o2scl::mmin_base and mirrors \ref
+        o2scl::cma_es::max_evals, making it possible to compare
+        \ref mmin_simp2 to other minimizers on a common,
+        algorithm-neutral evaluation budget.
+    */
+    size_t max_evals;
+
+    /** \brief The number of function evaluations used by the most
+        recent call to <tt>mmin()</tt>, <tt>mmin_twovec()</tt>, or
+        <tt>mmin_simplex()</tt> (default 0)
+
+        This is analogous to \ref o2scl::mmin_base::last_ntrial,
+        but counts function evaluations rather than iterations.
+    */
+    size_t last_n_evals;
 
     /// Set the step sizes for each independent variable
     template<class vec2_t> int set_step(size_t nv, vec2_t &step) {
@@ -414,9 +448,10 @@ namespace o2scl {
       }
 
       int ret=0,status,iter=0;
-      
+
       allocate(nn);
 
+      n_evals=0;
       vec_t ss(nn);
       for (size_t is=0;is<nn;is++) ss[is]=step_vec[is % step_vec.size()];
       ret=set(ufunc,nn,xx,ss);
@@ -424,30 +459,36 @@ namespace o2scl {
       if(ret!=0) {
         return ret;
       }
-  
+
       do {
         iter++;
-          
+
         status=iterate();
         if(status) break;
-          
+
         if(this->verbose>0) {
           print_iter(nn,x,x1,fval,iter,size,this->tol_abs,
                      "mmin_simp2");
         }
-    
+
         status=gsl_multimin_test_size(size,this->tol_abs);
-          
-      } while(status == GSL_CONTINUE && iter<this->ntrial);
-        
+
+      } while(status == GSL_CONTINUE && iter<this->ntrial &&
+              (max_evals==0 || n_evals<max_evals));
+
       for (size_t i=0;i<nn;i++) xx[i]=x[i];
       fmin=fval;
-  
+
       this->last_ntrial=iter;
-        
+      last_n_evals=n_evals;
+
       if(iter>=this->ntrial) {
         std::string str="Exceeded maximum number of iterations ("+
           itos(this->ntrial)+") in mmin_simp2::mmin().";
+        O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (max_evals>0 && n_evals>=max_evals) {
+        std::string str="Exceeded maximum number of function "
+          "evaluations ("+itos(max_evals)+") in mmin_simp2::mmin().";
         O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -462,20 +503,21 @@ namespace o2scl {
                             func_t &ufunc) {
       
       int ret=0,i,status,iter=0;
-      
+
       allocate(nn);
 
+      n_evals=0;
       vec_t ss(nn);
       for (size_t is=0;is<nn;is++) ss[is]=xx2[is]-xx[is];
       ret=set(ufunc,nn,xx,ss);
-      
+
       if(ret!=0) {
         return ret;
       }
-  
+
       do {
         iter++;
-          
+
         status=iterate();
         if(status) break;
 
@@ -483,19 +525,26 @@ namespace o2scl {
           print_iter(nn,x,x1,fval,iter,size,this->tol_abs,
                      "mmin_simp2");
         }
-        
+
         status=gsl_multimin_test_size(size,this->tol_abs);
-          
-      } while(status == GSL_CONTINUE && iter<this->ntrial);
-        
+
+      } while(status == GSL_CONTINUE && iter<this->ntrial &&
+              (max_evals==0 || n_evals<max_evals));
+
       for (i=0;i<((int)nn);i++) xx[i]=x[i];
       fmin=fval;
-  
+
       this->last_ntrial=iter;
+      last_n_evals=n_evals;
 
       if(iter>=this->ntrial) {
         std::string str="Exceeded maximum number of iterations ("+
           itos(this->ntrial)+") in mmin_simp2::mmin_twovec().";
+        O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (max_evals>0 && n_evals>=max_evals) {
+        std::string str="Exceeded maximum number of function "
+          "evaluations ("+itos(max_evals)+
+          ") in mmin_simp2::mmin_twovec().";
         O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -514,17 +563,18 @@ namespace o2scl {
                      func_t &ufunc) {
       
       int ret=0,i,status,iter=0;
-      
+
       allocate(nn);
-        
+
+      n_evals=0;
       ret=set_simplex(ufunc,sx);
       if(ret!=0) {
         return ret;
       }
-  
+
       do {
         iter++;
-          
+
         status=iterate();
         if(status) break;
 
@@ -532,19 +582,26 @@ namespace o2scl {
           print_iter(nn,x,x1,fval,iter,size,this->tol_abs,
                      "mmin_simp2");
         }
-    
+
         status=gsl_multimin_test_size(size,this->tol_abs);
-          
-      } while(status == GSL_CONTINUE && iter<this->ntrial);
-        
+
+      } while(status == GSL_CONTINUE && iter<this->ntrial &&
+              (max_evals==0 || n_evals<max_evals));
+
       for (i=0;i<((int)nn);i++) sx(0,i)=x[i];
       fmin=fval;
-  
+
       this->last_ntrial=iter;
+      last_n_evals=n_evals;
 
       if (iter>=this->ntrial) {
         std::string str="Exceeded maximum number of iterations ("+
           itos(this->ntrial)+") in mmin_simp2::mmin_simplex().";
+        O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (max_evals>0 && n_evals>=max_evals) {
+        std::string str="Exceeded maximum number of function "
+          "evaluations ("+itos(max_evals)+
+          ") in mmin_simp2::mmin_simplex().";
         O2SCL_CONV_RET(str.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -585,19 +642,21 @@ namespace o2scl {
       // first point is the original x0 
       
       y1[0]=ufunc(dim,ax);
+      n_evals++;
       if (!std::isfinite(y1[0])) {
         std::string err=((std::string)"Function not finite (returned ")+
           dtos(y1[0])+" in mmin_simp2::set().";
         O2SCL_ERR(err.c_str(),exc_ebadfunc);
       }
       for(i=0;i<dim;i++) x1[0][i]=ax[i];
-  
+
       /* following points are initialized to x0+step_size */
-      
+
       for (i=1;i<dim+1;i++) {
         for(size_t j=0;j<dim;j++) x1[i][j]=x[j];
         x1[i][i-1]=x1[i][i-1]+step_size[i-1];
         y1[i]=ufunc(dim,x1[i]);
+        n_evals++;
       }
  
       /* Initialize simplex size */
@@ -631,6 +690,7 @@ namespace o2scl {
           x1[i][j]=sx(i,j);
         }
         y1[i]=ufunc(dim,x1[i]);
+        n_evals++;
         if (!std::isfinite(y1[i])) {
           std::string err=((std::string)"Function not finite (returned ")+
             dtos(y1[i])+" in mmin_simp2::set_simplex().";
@@ -835,7 +895,7 @@ namespace o2scl {
         }
       }
       (*this->outs) << "y: " << y << " Val: " << value << " Lim: " 
-                    << limit << std::endl;
+                    << limit << " Evals: " << n_evals << std::endl;
       if (this->verbose>1) {
         (*this->outs) << "Press a key and type enter to continue. ";
         (*this->ins) >> ch;

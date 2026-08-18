@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -191,7 +191,10 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
 
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
+
+    /// Return the type, \c "nucmass_frdm".
+    virtual const char *type() const { return "nucmass_frdm"; }
 
     /** \brief Given \c Z and \c N, the external densities, and the
         temperature, return the binding energy of the nucleus in MeV
@@ -222,6 +225,17 @@ namespace o2scl {
       O2SCL_ERR("binding_energy_densmat_derivs not defined.",
                 o2scl::exc_eunimpl);
       return;
+    }
+    
+    /** \brief Compute the fractional volume occupied by nuclei
+
+        This function returns 0, since this class does not
+        include any medium effects.
+    */
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0) {
+      return 0.0;
     }
     
   protected:
@@ -278,6 +292,77 @@ namespace o2scl {
     /// Desc
     double B4;
 
+    /// Copy constructor
+    nucmass_frdm(const nucmass_frdm &t) {
+      
+      a1=t.a1;
+      J=t.J;
+      K=t.K;
+      a2=t.a2;
+      Q=t.Q;
+      a3=t.a3;
+      ca=t.ca;
+      W=t.W;
+      ael=t.ael;
+      rp=t.rp;
+      r0=t.r0;
+      MH=t.MH;
+      Mn=t.Mn;
+      e2=t.e2;
+      a=t.a;
+      aden=t.aden;
+      rmac=t.rmac;
+      h=t.h;
+      L=t.L;
+      C=t.C;
+      gamma=t.gamma;
+      amu=t.amu;
+      kg_to_invfm=t.kg_to_invfm;
+      
+      nfit=t.nfit;
+      m_neut=t.m_neut;
+      m_prot=t.m_prot;
+
+      return;
+    }
+
+    /// Copy constructor
+    nucmass_frdm &operator=(const nucmass_frdm &t) {
+
+      if (this!=&t) {
+        
+        a1=t.a1;
+        J=t.J;
+        K=t.K;
+        a2=t.a2;
+        Q=t.Q;
+        a3=t.a3;
+        ca=t.ca;
+        W=t.W;
+        ael=t.ael;
+        rp=t.rp;
+        r0=t.r0;
+        MH=t.MH;
+        Mn=t.Mn;
+        e2=t.e2;
+        a=t.a;
+        aden=t.aden;
+        rmac=t.rmac;
+        h=t.h;
+        L=t.L;
+        C=t.C;
+        gamma=t.gamma;
+        amu=t.amu;
+        kg_to_invfm=t.kg_to_invfm;
+        
+        nfit=t.nfit;
+        m_neut=t.m_neut;
+        m_prot=t.m_prot;
+      }
+      
+      return *this;
+    }
+    
   };
   
   /** \brief Nuclear masses from Moller, et al.
@@ -461,7 +546,7 @@ namespace o2scl {
     double very_large() { return 1.0e94; };
 
     /// Return the type, \c "nucmass_mnmsk".
-    virtual const char *type() { return "nucmass_mnmsk"; }
+    virtual const char *type() const { return "nucmass_mnmsk"; }
     
     /** \brief Set data
 
@@ -522,13 +607,17 @@ namespace o2scl {
   class nucmass_patch : public nucmass_table {
     
   protected:
-    
+
+    /// Desc
     nucmass_ame ame;
     
+    /// Desc
     nucmass_table *nt;
     
+    /// Desc
     nucmass_fit_base *nf;
 
+    /// Desc
     bool inc_fit;
     
   public:
@@ -540,14 +629,17 @@ namespace o2scl {
       nf=&def_fit;
     }
     
+    /// Desc
     void load(bool include_fit=true);
     
+    /// Desc
     nucmass_mnmsk def_table;
     
+    /// Desc
     nucmass_frdm def_fit;
     
     /// Return the type, \c "nucmass_patch".
-    virtual const char *type() { return "nucmass_patch"; }
+    virtual const char *type() const { return "nucmass_patch"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus

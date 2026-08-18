@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -22,6 +22,7 @@
 */
 #ifndef O2SCL_FUNCT_TO_FP_H
 #define O2SCL_FUNCT_TO_FP_H
+
 #include <iostream>
 #include <string>
 
@@ -650,9 +651,16 @@ namespace o2scl {
 
   /** \brief Typedef for cpp_dec_float types
    */
+  typedef funct_multip_string_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
+  funct_multip_string_fp;
+  
+#ifdef O2SCL_NEVER_DEFINED
+  /** \brief Typedef for cpp_dec_float types
+   */
   typedef funct_multip_string_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
   funct_multip_string_cdf;
+#endif
 
 #ifdef O2SCL_SET_MPFR
   /** \brief Typedef for mpfr types

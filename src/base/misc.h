@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -42,11 +42,6 @@
 #ifndef O2SCL_OLDER_COMPILER
 #include <initializer_list>
 #endif
-
-#define BOOST_DISABLE_ASSERTS
-#include <boost/multiprecision/number.hpp>
-#include <boost/multiprecision/cpp_bin_float.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
 
 #include <o2scl/err_hnd.h>
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -2570,14 +2570,14 @@ namespace o2scl {
     //@{
     cubic_real_coeff_cern<double,std::complex<double>> q_d;
     cubic_real_coeff_cern<long double,std::complex<long double>> q_ld;
-    cubic_real_coeff_cern<cpp_dec_float_25,std::complex<cpp_dec_float_25>>
-    q_cdf25;
-    cubic_real_coeff_cern<cpp_dec_float_35,std::complex<cpp_dec_float_35>>
-    q_cdf35;
-    cubic_real_coeff_cern<cpp_dec_float_50,std::complex<cpp_dec_float_50>>
-    q_cdf50;
-    cubic_real_coeff_cern<cpp_dec_float_100,std::complex<cpp_dec_float_100>>
-    q_cdf100;
+    cubic_real_coeff_cern<o2fp_25,std::complex<o2fp_25>>
+    q_fp25;
+    cubic_real_coeff_cern<o2fp_35,std::complex<o2fp_35>>
+    q_fp35;
+    cubic_real_coeff_cern<o2fp_50,std::complex<o2fp_50>>
+    q_fp50;
+    cubic_real_coeff_cern<o2fp_100,std::complex<o2fp_100>>
+    q_fp100;
     //@}
     
   public:
@@ -2727,261 +2727,261 @@ namespace o2scl {
     
       /// Second pass, compare long double and 25-digit precision
 
-      cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
-      cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
-      cpp_dec_float_25 c_cdf25=static_cast<cpp_dec_float_25>(c);
-      cpp_dec_float_25 d_cdf25=static_cast<cpp_dec_float_25>(d);
-      cpp_dec_float_25 x1_cdf25;
-      std::complex<cpp_dec_float_25> x2_cdf25, x3_cdf25;
+      o2fp_25 a_fp25=static_cast<o2fp_25>(a);
+      o2fp_25 b_fp25=static_cast<o2fp_25>(b);
+      o2fp_25 c_fp25=static_cast<o2fp_25>(c);
+      o2fp_25 d_fp25=static_cast<o2fp_25>(d);
+      o2fp_25 x1_fp25;
+      std::complex<o2fp_25> x2_fp25, x3_fp25;
       
-      int ret_cdf25=q_cdf25.solve_rc(a_cdf25,b_cdf25,c_cdf25,d_cdf25,
-                                     x1_cdf25,x2_cdf25,x3_cdf25);
+      int ret_fp25=q_fp25.solve_rc(a_fp25,b_fp25,c_fp25,d_fp25,
+                                     x1_fp25,x2_fp25,x3_fp25);
 
-      if (ret_ld==ret_cdf25) {
+      if (ret_ld==ret_fp25) {
         // If d is 0 and the first root is near 0, then avoid dividing
         // by it
         err=0;
-        if (d==0 && (ret_cdf25==1 ||
-                     (abs(x1_cdf25)<abs(x2_cdf25) &&
-                      abs(x1_cdf25)<abs(x3_cdf25)))) {
-          x1_cdf25=0;
+        if (d==0 && (ret_fp25==1 ||
+                     (abs(x1_fp25)<abs(x2_fp25) &&
+                      abs(x1_fp25)<abs(x3_fp25)))) {
+          x1_fp25=0;
         } else {
-          err=static_cast<fp_t>(abs(x1_cdf25-x1_ld)/abs(x1_cdf25));
+          err=static_cast<fp_t>(abs(x1_fp25-x1_ld)/abs(x1_fp25));
         }
-        if (d==0 && abs(x2_cdf25)<abs(x1_cdf25) &&
-            abs(x2_cdf25)<abs(x3_cdf25)) {
-          x2_cdf25=0;
-        } else if (x2_cdf25.real()!=0 || x2_cdf25.imag()!=0 ||
+        if (d==0 && abs(x2_fp25)<abs(x1_fp25) &&
+            abs(x2_fp25)<abs(x3_fp25)) {
+          x2_fp25=0;
+        } else if (x2_fp25.real()!=0 || x2_fp25.imag()!=0 ||
                    x2_ld.real()!=0 || x2_ld.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x2_cdf25)-abs(x2_ld))/
-                                 abs(x2_cdf25));
+          err+=static_cast<fp_t>(abs(abs(x2_fp25)-abs(x2_ld))/
+                                 abs(x2_fp25));
         }
-        if (d==0 && abs(x3_cdf25)<abs(x1_cdf25) &&
-            abs(x3_cdf25)<abs(x2_cdf25)) {
-          x3_cdf25=0;
-        } else if (x3_cdf25.real()!=0 || x3_cdf25.imag()!=0 ||
+        if (d==0 && abs(x3_fp25)<abs(x1_fp25) &&
+            abs(x3_fp25)<abs(x2_fp25)) {
+          x3_fp25=0;
+        } else if (x3_fp25.real()!=0 || x3_fp25.imag()!=0 ||
                    x3_ld.real()!=0 || x3_ld.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x3_cdf25)-abs(x3_ld))/
-                                 abs(x3_cdf25));
+          err+=static_cast<fp_t>(abs(abs(x3_fp25)-abs(x3_ld))/
+                                 abs(x3_fp25));
                                      
         }
         if (err<tol_loc) {
-          x1=static_cast<fp_t>(x1_cdf25);
-          x2.real(static_cast<fp_t>(x2_cdf25.real()));
-          x2.imag(static_cast<fp_t>(x2_cdf25.imag()));
-          x3.real(static_cast<fp_t>(x3_cdf25.real()));
-          x3.imag(static_cast<fp_t>(x3_cdf25.imag()));
+          x1=static_cast<fp_t>(x1_fp25);
+          x2.real(static_cast<fp_t>(x2_fp25.real()));
+          x2.imag(static_cast<fp_t>(x2_fp25.imag()));
+          x3.real(static_cast<fp_t>(x3_fp25.real()));
+          x3.imag(static_cast<fp_t>(x3_fp25.imag()));
           return ret_ld;
         }
       }
       
       if (verbose>0) {
-        std::cout << "Failed 2: " << ret_ld << " " << ret_cdf25 
+        std::cout << "Failed 2: " << ret_ld << " " << ret_fp25 
                   << "\n  " << dtos(x1_ld,10) << " "
-                  << dtos(x1_cdf25,10) << " "
+                  << dtos(x1_fp25,10) << " "
                   << "\n  (" << dtos(x2_ld.real(),10) << ","
                   << dtos(x2_ld.imag(),10) << ") ("
-                  << dtos(x2_cdf25.real(),10) << ","
-                  << dtos(x2_cdf25.imag(),10) << ")"
+                  << dtos(x2_fp25.real(),10) << ","
+                  << dtos(x2_fp25.imag(),10) << ")"
                   << "\n  (" << dtos(x3_ld.real(),10) << ","
                   << dtos(x3_ld.imag(),10) << ") ("
-                  << dtos(x3_cdf25.real(),10) << ","
-                  << dtos(x3_cdf25.imag(),10) << ")"
+                  << dtos(x3_fp25.real(),10) << ","
+                  << dtos(x3_fp25.imag(),10) << ")"
                   << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Third pass, compare 25- and 35-digit precision
 
-      cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
-      cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
-      cpp_dec_float_35 c_cdf35=static_cast<cpp_dec_float_35>(c);
-      cpp_dec_float_35 d_cdf35=static_cast<cpp_dec_float_35>(d);
-      cpp_dec_float_35 x1_cdf35;
-      std::complex<cpp_dec_float_35> x2_cdf35, x3_cdf35;
+      o2fp_35 a_fp35=static_cast<o2fp_35>(a);
+      o2fp_35 b_fp35=static_cast<o2fp_35>(b);
+      o2fp_35 c_fp35=static_cast<o2fp_35>(c);
+      o2fp_35 d_fp35=static_cast<o2fp_35>(d);
+      o2fp_35 x1_fp35;
+      std::complex<o2fp_35> x2_fp35, x3_fp35;
       
-      int ret_cdf35=q_cdf35.solve_rc(a_cdf35,b_cdf35,c_cdf35,d_cdf35,
-                                     x1_cdf35,x2_cdf35,x3_cdf35);
+      int ret_fp35=q_fp35.solve_rc(a_fp35,b_fp35,c_fp35,d_fp35,
+                                     x1_fp35,x2_fp35,x3_fp35);
 
-      if (ret_cdf25==ret_cdf35) {
+      if (ret_fp25==ret_fp35) {
         // If d is 0 and the first root is near 0, then avoid dividing
         // by it
         err=0;
-        if (d==0 && (ret_cdf35==1 ||
-                     (abs(x1_cdf35)<abs(x2_cdf35) &&
-                      abs(x1_cdf35)<abs(x3_cdf35)))) {
-          x1_cdf35=0;
+        if (d==0 && (ret_fp35==1 ||
+                     (abs(x1_fp35)<abs(x2_fp35) &&
+                      abs(x1_fp35)<abs(x3_fp35)))) {
+          x1_fp35=0;
         } else {
-          err=static_cast<fp_t>(abs(x1_cdf35-x1_cdf25)/abs(x1_cdf35));
+          err=static_cast<fp_t>(abs(x1_fp35-x1_fp25)/abs(x1_fp35));
         }
-        if (d==0 && abs(x2_cdf35)<abs(x1_cdf35) &&
-            abs(x2_cdf35)<abs(x3_cdf35)) {
-          x2_cdf35=0;
-        } else if (x2_cdf35.real()!=0 || x2_cdf35.imag()!=0 ||
-                   x2_cdf25.real()!=0 || x2_cdf25.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x2_cdf35)-abs(x2_cdf25))/
-                                 abs(x2_cdf35));
+        if (d==0 && abs(x2_fp35)<abs(x1_fp35) &&
+            abs(x2_fp35)<abs(x3_fp35)) {
+          x2_fp35=0;
+        } else if (x2_fp35.real()!=0 || x2_fp35.imag()!=0 ||
+                   x2_fp25.real()!=0 || x2_fp25.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_fp35)-abs(x2_fp25))/
+                                 abs(x2_fp35));
         }
-        if (d==0 && abs(x3_cdf35)<abs(x1_cdf35) &&
-            abs(x3_cdf35)<abs(x2_cdf35)) {
-          x3_cdf35=0;
-        } else if (x3_cdf35.real()!=0 || x3_cdf35.imag()!=0 ||
-                   x3_cdf25.real()!=0 || x3_cdf25.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x3_cdf35)-abs(x3_cdf25))/
-                                 abs(x3_cdf35));
+        if (d==0 && abs(x3_fp35)<abs(x1_fp35) &&
+            abs(x3_fp35)<abs(x2_fp35)) {
+          x3_fp35=0;
+        } else if (x3_fp35.real()!=0 || x3_fp35.imag()!=0 ||
+                   x3_fp25.real()!=0 || x3_fp25.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_fp35)-abs(x3_fp25))/
+                                 abs(x3_fp35));
                                      
         }
         if (err<tol_loc) {
-          x1=static_cast<fp_t>(x1_cdf35);
-          x2.real(static_cast<fp_t>(x2_cdf35.real()));
-          x2.imag(static_cast<fp_t>(x2_cdf35.imag()));
-          x3.real(static_cast<fp_t>(x3_cdf35.real()));
-          x3.imag(static_cast<fp_t>(x3_cdf35.imag()));
-          return ret_cdf25;
+          x1=static_cast<fp_t>(x1_fp35);
+          x2.real(static_cast<fp_t>(x2_fp35.real()));
+          x2.imag(static_cast<fp_t>(x2_fp35.imag()));
+          x3.real(static_cast<fp_t>(x3_fp35.real()));
+          x3.imag(static_cast<fp_t>(x3_fp35.imag()));
+          return ret_fp25;
         }
       }
       
       if (verbose>0) {
-        std::cout << "Failed 3: " << ret_cdf25 << " " << ret_cdf35 
-                  << "\n  " << dtos(x1_cdf25,10) << " "
-                  << dtos(x1_cdf35,10) << " "
-                  << "\n  (" << dtos(x2_cdf25.real(),10) << ","
-                  << dtos(x2_cdf25.imag(),10) << ") ("
-                  << dtos(x2_cdf35.real(),10) << ","
-                  << dtos(x2_cdf35.imag(),10) << ")"
-                  << "\n  (" << dtos(x3_cdf25.real(),10) << ","
-                  << dtos(x3_cdf25.imag(),10) << ") ("
-                  << dtos(x3_cdf35.real(),10) << ","
-                  << dtos(x3_cdf35.imag(),10) << ")"
+        std::cout << "Failed 3: " << ret_fp25 << " " << ret_fp35 
+                  << "\n  " << dtos(x1_fp25,10) << " "
+                  << dtos(x1_fp35,10) << " "
+                  << "\n  (" << dtos(x2_fp25.real(),10) << ","
+                  << dtos(x2_fp25.imag(),10) << ") ("
+                  << dtos(x2_fp35.real(),10) << ","
+                  << dtos(x2_fp35.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_fp25.real(),10) << ","
+                  << dtos(x3_fp25.imag(),10) << ") ("
+                  << dtos(x3_fp35.real(),10) << ","
+                  << dtos(x3_fp35.imag(),10) << ")"
                   << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     
       /// Fourth pass, compare 35- and 50-digit precision
       
-      cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
-      cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
-      cpp_dec_float_50 c_cdf50=static_cast<cpp_dec_float_50>(c);
-      cpp_dec_float_50 d_cdf50=static_cast<cpp_dec_float_50>(d);
-      cpp_dec_float_50 x1_cdf50;
-      std::complex<cpp_dec_float_50> x2_cdf50, x3_cdf50;
+      o2fp_50 a_fp50=static_cast<o2fp_50>(a);
+      o2fp_50 b_fp50=static_cast<o2fp_50>(b);
+      o2fp_50 c_fp50=static_cast<o2fp_50>(c);
+      o2fp_50 d_fp50=static_cast<o2fp_50>(d);
+      o2fp_50 x1_fp50;
+      std::complex<o2fp_50> x2_fp50, x3_fp50;
       
-      int ret_cdf50=q_cdf50.solve_rc(a_cdf50,b_cdf50,c_cdf50,d_cdf50,
-                                     x1_cdf50,x2_cdf50,x3_cdf50);
+      int ret_fp50=q_fp50.solve_rc(a_fp50,b_fp50,c_fp50,d_fp50,
+                                     x1_fp50,x2_fp50,x3_fp50);
 
-      if (ret_cdf35==ret_cdf50) {
+      if (ret_fp35==ret_fp50) {
         // If d is 0 and the first root is near 0, then avoid dividing
         // by it
         err=0;
-        if (d==0 && (ret_cdf50==1 ||
-                     (abs(x1_cdf50)<abs(x2_cdf50) &&
-                      abs(x1_cdf50)<abs(x3_cdf50)))) {
-          x1_cdf50=0;
+        if (d==0 && (ret_fp50==1 ||
+                     (abs(x1_fp50)<abs(x2_fp50) &&
+                      abs(x1_fp50)<abs(x3_fp50)))) {
+          x1_fp50=0;
         } else {
-          err=static_cast<fp_t>(abs(x1_cdf50-x1_cdf35)/abs(x1_cdf50));
+          err=static_cast<fp_t>(abs(x1_fp50-x1_fp35)/abs(x1_fp50));
         }
-        if (d==0 && abs(x2_cdf50)<abs(x1_cdf50) &&
-            abs(x2_cdf50)<abs(x3_cdf50)) {
-          x2_cdf50=0;
-        } else if (x2_cdf50.real()!=0 || x2_cdf50.imag()!=0 ||
-                   x2_cdf35.real()!=0 || x2_cdf35.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x2_cdf50)-abs(x2_cdf35))/
-                                 abs(x2_cdf50));
+        if (d==0 && abs(x2_fp50)<abs(x1_fp50) &&
+            abs(x2_fp50)<abs(x3_fp50)) {
+          x2_fp50=0;
+        } else if (x2_fp50.real()!=0 || x2_fp50.imag()!=0 ||
+                   x2_fp35.real()!=0 || x2_fp35.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_fp50)-abs(x2_fp35))/
+                                 abs(x2_fp50));
         }
-        if (d==0 && abs(x3_cdf50)<abs(x1_cdf50) &&
-            abs(x3_cdf50)<abs(x2_cdf50)) {
-          x3_cdf50=0;
-        } else if (x3_cdf50.real()!=0 || x3_cdf50.imag()!=0 ||
-                   x3_cdf35.real()!=0 || x3_cdf35.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x3_cdf50)-abs(x3_cdf35))/
-                                 abs(x3_cdf50));
+        if (d==0 && abs(x3_fp50)<abs(x1_fp50) &&
+            abs(x3_fp50)<abs(x2_fp50)) {
+          x3_fp50=0;
+        } else if (x3_fp50.real()!=0 || x3_fp50.imag()!=0 ||
+                   x3_fp35.real()!=0 || x3_fp35.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_fp50)-abs(x3_fp35))/
+                                 abs(x3_fp50));
                                      
         }
         if (err<tol_loc) {
-          x1=static_cast<fp_t>(x1_cdf50);
-          x2.real(static_cast<fp_t>(x2_cdf50.real()));
-          x2.imag(static_cast<fp_t>(x2_cdf50.imag()));
-          x3.real(static_cast<fp_t>(x3_cdf50.real()));
-          x3.imag(static_cast<fp_t>(x3_cdf50.imag()));
-          return ret_cdf35;
+          x1=static_cast<fp_t>(x1_fp50);
+          x2.real(static_cast<fp_t>(x2_fp50.real()));
+          x2.imag(static_cast<fp_t>(x2_fp50.imag()));
+          x3.real(static_cast<fp_t>(x3_fp50.real()));
+          x3.imag(static_cast<fp_t>(x3_fp50.imag()));
+          return ret_fp35;
         }
       }
       
       if (verbose>0) {
-        std::cout << "Failed 4: " << ret_cdf35 << " " << ret_cdf50 
-                  << "\n  " << dtos(x1_cdf35,10) << " "
-                  << dtos(x1_cdf50,10) << " "
-                  << "\n  (" << dtos(x2_cdf35.real(),10) << ","
-                  << dtos(x2_cdf35.imag(),10) << ") ("
-                  << dtos(x2_cdf50.real(),10) << ","
-                  << dtos(x2_cdf50.imag(),10) << ")"
-                  << "\n  (" << dtos(x3_cdf35.real(),10) << ","
-                  << dtos(x3_cdf35.imag(),10) << ") ("
-                  << dtos(x3_cdf50.real(),10) << ","
-                  << dtos(x3_cdf50.imag(),10) << ")"
+        std::cout << "Failed 4: " << ret_fp35 << " " << ret_fp50 
+                  << "\n  " << dtos(x1_fp35,10) << " "
+                  << dtos(x1_fp50,10) << " "
+                  << "\n  (" << dtos(x2_fp35.real(),10) << ","
+                  << dtos(x2_fp35.imag(),10) << ") ("
+                  << dtos(x2_fp50.real(),10) << ","
+                  << dtos(x2_fp50.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_fp35.real(),10) << ","
+                  << dtos(x3_fp35.imag(),10) << ") ("
+                  << dtos(x3_fp50.real(),10) << ","
+                  << dtos(x3_fp50.imag(),10) << ")"
                   << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
         
       /// Final pass, compare 50- and 100-digit precision
       
-      cpp_dec_float_100 a_cdf100=static_cast<cpp_dec_float_100>(a);
-      cpp_dec_float_100 b_cdf100=static_cast<cpp_dec_float_100>(b);
-      cpp_dec_float_100 c_cdf100=static_cast<cpp_dec_float_100>(c);
-      cpp_dec_float_100 d_cdf100=static_cast<cpp_dec_float_100>(d);
-      cpp_dec_float_100 x1_cdf100;
-      std::complex<cpp_dec_float_100> x2_cdf100, x3_cdf100;
+      o2fp_100 a_fp100=static_cast<o2fp_100>(a);
+      o2fp_100 b_fp100=static_cast<o2fp_100>(b);
+      o2fp_100 c_fp100=static_cast<o2fp_100>(c);
+      o2fp_100 d_fp100=static_cast<o2fp_100>(d);
+      o2fp_100 x1_fp100;
+      std::complex<o2fp_100> x2_fp100, x3_fp100;
       
-      int ret_cdf100=q_cdf100.solve_rc(a_cdf100,b_cdf100,c_cdf100,d_cdf100,
-                                       x1_cdf100,x2_cdf100,x3_cdf100);
+      int ret_fp100=q_fp100.solve_rc(a_fp100,b_fp100,c_fp100,d_fp100,
+                                       x1_fp100,x2_fp100,x3_fp100);
 
-      if (ret_cdf50==ret_cdf100) {
+      if (ret_fp50==ret_fp100) {
         // If d is 0 and the first root is near 0, then avoid dividing
         // by it
         err=0;
-        if (d==0 && (ret_cdf100==1 ||
-                     (abs(x1_cdf100)<abs(x2_cdf100) &&
-                      abs(x1_cdf100)<abs(x3_cdf100)))) {
-          x1_cdf100=0;
+        if (d==0 && (ret_fp100==1 ||
+                     (abs(x1_fp100)<abs(x2_fp100) &&
+                      abs(x1_fp100)<abs(x3_fp100)))) {
+          x1_fp100=0;
         } else {
-          err=static_cast<fp_t>(abs(x1_cdf100-x1_cdf50)/abs(x1_cdf100));
+          err=static_cast<fp_t>(abs(x1_fp100-x1_fp50)/abs(x1_fp100));
         }
-        if (d==0 && abs(x2_cdf100)<abs(x1_cdf100) &&
-            abs(x2_cdf100)<abs(x3_cdf100)) {
-          x2_cdf100=0;
-        } else if (x2_cdf100.real()!=0 || x2_cdf100.imag()!=0 ||
-                   x2_cdf50.real()!=0 || x2_cdf50.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x2_cdf100)-abs(x2_cdf50))/
-                                 abs(x2_cdf100));
+        if (d==0 && abs(x2_fp100)<abs(x1_fp100) &&
+            abs(x2_fp100)<abs(x3_fp100)) {
+          x2_fp100=0;
+        } else if (x2_fp100.real()!=0 || x2_fp100.imag()!=0 ||
+                   x2_fp50.real()!=0 || x2_fp50.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x2_fp100)-abs(x2_fp50))/
+                                 abs(x2_fp100));
         }
-        if (d==0 && abs(x3_cdf100)<abs(x1_cdf100) &&
-            abs(x3_cdf100)<abs(x2_cdf100)) {
-          x3_cdf100=0;
-        } else if (x3_cdf100.real()!=0 || x3_cdf100.imag()!=0 ||
-                   x3_cdf50.real()!=0 || x3_cdf50.imag()!=0) {
-          err+=static_cast<fp_t>(abs(abs(x3_cdf100)-abs(x3_cdf50))/
-                                 abs(x3_cdf100));
+        if (d==0 && abs(x3_fp100)<abs(x1_fp100) &&
+            abs(x3_fp100)<abs(x2_fp100)) {
+          x3_fp100=0;
+        } else if (x3_fp100.real()!=0 || x3_fp100.imag()!=0 ||
+                   x3_fp50.real()!=0 || x3_fp50.imag()!=0) {
+          err+=static_cast<fp_t>(abs(abs(x3_fp100)-abs(x3_fp50))/
+                                 abs(x3_fp100));
                                      
         }
         if (err<tol_loc) {
-          x1=static_cast<fp_t>(x1_cdf100);
-          x2.real(static_cast<fp_t>(x2_cdf100.real()));
-          x2.imag(static_cast<fp_t>(x2_cdf100.imag()));
-          x3.real(static_cast<fp_t>(x3_cdf100.real()));
-          x3.imag(static_cast<fp_t>(x3_cdf100.imag()));
-          return ret_cdf50;
+          x1=static_cast<fp_t>(x1_fp100);
+          x2.real(static_cast<fp_t>(x2_fp100.real()));
+          x2.imag(static_cast<fp_t>(x2_fp100.imag()));
+          x3.real(static_cast<fp_t>(x3_fp100.real()));
+          x3.imag(static_cast<fp_t>(x3_fp100.imag()));
+          return ret_fp50;
         }
       }
       
       if (verbose>0) {
-        std::cout << "Failed 5: " << ret_cdf50 << " " << ret_cdf100 
-                  << "\n  " << dtos(x1_cdf50,10) << " "
-                  << dtos(x1_cdf100,10) << " "
-                  << "\n  (" << dtos(x2_cdf50.real(),10) << ","
-                  << dtos(x2_cdf50.imag(),10) << ") ("
-                  << dtos(x2_cdf100.real(),10) << ","
-                  << dtos(x2_cdf100.imag(),10) << ")"
-                  << "\n  (" << dtos(x3_cdf50.real(),10) << ","
-                  << dtos(x3_cdf50.imag(),10) << ") ("
-                  << dtos(x3_cdf100.real(),10) << ","
-                  << dtos(x3_cdf100.imag(),10) << ")"
+        std::cout << "Failed 5: " << ret_fp50 << " " << ret_fp100 
+                  << "\n  " << dtos(x1_fp50,10) << " "
+                  << dtos(x1_fp100,10) << " "
+                  << "\n  (" << dtos(x2_fp50.real(),10) << ","
+                  << dtos(x2_fp50.imag(),10) << ") ("
+                  << dtos(x2_fp100.real(),10) << ","
+                  << dtos(x2_fp100.imag(),10) << ")"
+                  << "\n  (" << dtos(x3_fp50.real(),10) << ","
+                  << dtos(x3_fp50.imag(),10) << ") ("
+                  << dtos(x3_fp100.real(),10) << ","
+                  << dtos(x3_fp100.imag(),10) << ")"
                   << "\n  " << dtos(err,10) << " " << tol_loc << std::endl;
       }
     

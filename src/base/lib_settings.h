@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,6 +33,7 @@
 #include <o2scl/find_constants.h>
 #include <o2scl/rng.h>
 #include <o2scl/set_python.h>
+#include <o2scl/set_libtorch.h>
 
 #ifdef O2SCL_MPI
 #include <mpi.h>
@@ -120,6 +121,9 @@ namespace o2scl {
 
     /// Return true if \o2 was installed with cuda support
     bool cuda_support();
+
+    /// Return true if \o2 was installed with libtorch support
+    bool libtorch_support();
 
     /// Return true if \o2 was installed with mpfr support
     bool mpfr_support();

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -165,7 +165,7 @@ int nucmass_frdm::fit_fun(size_t nv, const ubvector &x) {
 
 }
 
-int nucmass_frdm::guess_fun(size_t nv, ubvector &x) {
+int nucmass_frdm::guess_fun(size_t nv, ubvector &x) const {
   x[0]=K/200.0;
   x[1]=r0;
   x[2]=W;

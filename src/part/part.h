@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -27,17 +27,10 @@
 #include <iostream>
 #include <cmath>
 
-#ifdef O2SCL_SET_MULTIP
-#include <boost/multiprecision/number.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_SET_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
-#endif
-
 #include <o2scl/constants.h>
 #include <o2scl/inte.h>
 #include <o2scl/funct.h>
+#include <o2scl/funct_multip.h>
 #include <o2scl/mroot.h>
 #include <o2scl/test_mgr.h>
 
@@ -101,16 +94,6 @@ namespace o2scl {
   /** \brief Long double-precision thermodynamics object
    */
   typedef thermo_tl<long double> thermo_ld;
-  
-#ifdef O2SCL_SET_MULTIP
-  
-  /** \brief 25-digit precision thermodynamics object
-   */
-  typedef thermo_tl<boost::multiprecision::number<
-                       boost::multiprecision::cpp_dec_float<25> > >
-  thermo_cdf25;
-  
-#endif
   
   /** \brief Addition operator
    */
@@ -260,16 +243,9 @@ namespace o2scl {
   /** \brief Calibrate particle classes by comparing double to
       multiprecision
   */
-#ifdef O2SCL_SET_MULTIP
   template <class fp1_t=double,
             class fp2_t=long double,
-            class fp3_t=cpp_dec_float_25> class part_cal_new
-#else
-  template <class fp1_t=double,
-            class fp2_t=long double,
-            class fp3_t=long double> class part_cal_new
-#endif
-    {
+            class fp3_t=long double> class part_cal_new {
     
   public:
     
@@ -489,10 +465,10 @@ namespace o2scl {
       std::cout << "calc_mu entropy (double <-> long double): "
       << cmu_en << " " << cmu_en_min << std::endl;
       std::cout.width(43);
-      std::cout << "calc_mu density (long double <-> cdf_25): "
+      std::cout << "calc_mu density (long double <-> fp_25): "
       << cmu_ld_n << " " << cmu_ld_n_min << std::endl;
       std::cout.width(43);
-      std::cout << "calc_mu entropy (long double <-> cdf_25): "
+      std::cout << "calc_mu entropy (long double <-> fp_25): "
       << cmu_ld_en << " " << cmu_ld_en_min << std::endl;
       std::cout.width(43);
       std::cout << "calc_mu ti: " << cmu_ti << " "
@@ -501,7 +477,7 @@ namespace o2scl {
       std::cout << "calc_mu long double ti: " << cmu_ld_ti << " "
       << cmu_ld_ti_min << std::endl;
       std::cout.width(43);
-      std::cout << "calc_mu cpp_dec_float_25 ti: " << cmu_25_ti << " "
+      std::cout << "calc_mu o2fp_25 ti: " << cmu_25_ti << " "
       << cmu_25_ti_min << std::endl;
       std::cout << std::endl;
       
@@ -688,13 +664,13 @@ namespace o2scl {
            << pmu_n << std::endl;
       std::cout << "pair_mu entropy (double <-> long double): "
            << pmu_en << std::endl;
-      std::cout << "pair_mu density (long double <-> cdf_25): "
+      std::cout << "pair_mu density (long double <-> fp_25): "
            << pmu_ld_n << std::endl;
-      std::cout << "pair_mu entropy (long double <-> cdf_25): "
+      std::cout << "pair_mu entropy (long double <-> fp_25): "
            << pmu_ld_en << std::endl;
       std::cout << "pair_mu ti: " << pmu_ti << std::endl;
       std::cout << "pair_mu long double ti: " << pmu_ld_ti << std::endl;
-      std::cout << "pair_mu cpp_dec_float_25 ti: " << pmu_25_ti << std::endl;
+      std::cout << "pair_mu o2fp_25 ti: " << pmu_25_ti << std::endl;
       std::cout << std::endl;
 
       t.test_gen(pmu_n>=pmu_n_min,"pmu_n");

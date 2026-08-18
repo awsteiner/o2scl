@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -510,38 +510,38 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
       // 25-digit precision derivative evaluation
       
-      bool called_cdf25=false;
-      cpp_dec_float_25 x1_cdf25;
+      bool called_fp25=false;
+      o2fp_25 x1_fp25;
       
       // Attempt to evaluate at 25-digit precision, but only if
       // 25-digit precision is enough for the function evaluations
       if (tol_loc>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_25>::digits10)) {
+                       <o2fp_25>::digits10)) {
         
-        x1_cdf25=static_cast<double>(x1);
-        solve_int_multip(x1_cdf25,f,tol_loc,func_tol);
+        x1_fp25=static_cast<double>(x1);
+        solve_int_multip(x1_fp25,f,tol_loc,func_tol);
                          
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "[cpp_dec_float_25]\n "
+                    << "[o2fp_25]\n "
                     << "x1: "
-                    << o2scl::dtos(x1_cdf25,0) << std::endl;
+                    << o2scl::dtos(x1_fp25,0) << std::endl;
         }
         
-        called_cdf25=true;
+        called_fp25=true;
         
         // If the comparison between the long double and 25-digit
         // precision results shows an accurate result, then return
         if (called_ld) {
-          err=static_cast<fp2_t>(abs(x1_cdf25-x1_ld)/abs(x1_cdf25));
+          err=static_cast<fp2_t>(abs(x1_fp25-x1_ld)/abs(x1_fp25));
           if (this->verbose>0) {
             std::cout << "root_cern::solve_multip() "
-                      << "[cpp_dec_float_25]\n "
+                      << "[o2fp_25]\n "
                       << "err,tol_loc: " << err << " " << tol_loc
                       << std::endl;
           }
           if (err<tol_loc) {
-            x1=static_cast<fp2_t>(x1_cdf25);
+            x1=static_cast<fp2_t>(x1_fp25);
             return 0;
           }
         }
@@ -550,7 +550,7 @@ namespace o2scl {
           std::cout << "root_cern::solve_multip() "
                     << "after cpp_dec_25:\n  "
                     << dtos(x1_ld,0) << " "
-                    << dtos(x1_cdf25,0) << " "
+                    << dtos(x1_fp25,0) << " "
                     << dtos(err,0) << " " 
                     << tol_loc << std::endl;
         }
@@ -560,41 +560,41 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
       // 35-digit precision derivative evaluation
 
-      bool called_cdf35=false;
-      cpp_dec_float_35 x1_cdf35;
+      bool called_fp35=false;
+      o2fp_35 x1_fp35;
 
       // Attempt to evaluate at 35-digit precision, but only if
       // 35-digit precision is enough for the function evaluations
       if (tol_loc>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_35>::digits10)) {
+                       <o2fp_35>::digits10)) {
         
-        x1_cdf35=static_cast<double>(x1);
-        solve_int_multip(x1_cdf35,f,tol_loc,func_tol);
+        x1_fp35=static_cast<double>(x1);
+        solve_int_multip(x1_fp35,f,tol_loc,func_tol);
                          
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "[cpp_dec_float_35]\n "
+                    << "[o2fp_35]\n "
                     << "x1,err: "
-                    << x1_cdf35 << std::endl;
+                    << x1_fp35 << std::endl;
         }
         
-        called_cdf35=true;
+        called_fp35=true;
         
         // If the comparison between the 25-digit and 35-digit
         // precision results shows an accurate result, then return
-        if (called_cdf25 && x1_cdf35!=0) {
-          err=static_cast<fp2_t>(abs(x1_cdf35-x1_cdf25)/abs(x1_cdf35));
+        if (called_fp25 && x1_fp35!=0) {
+          err=static_cast<fp2_t>(abs(x1_fp35-x1_fp25)/abs(x1_fp35));
           if (err<tol_loc) {
-            x1=static_cast<fp2_t>(x1_cdf35);
+            x1=static_cast<fp2_t>(x1_fp35);
             return 0;
           }
         }
         
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "failed after cpp_dec_float_35:\n  "
-                    << dtos(x1_cdf25,0) << " "
-                    << dtos(x1_cdf35,0) << " "
+                    << "failed after o2fp_35:\n  "
+                    << dtos(x1_fp25,0) << " "
+                    << dtos(x1_fp35,0) << " "
                     << dtos(err,0) << " " 
                     << tol_loc << std::endl;
         }
@@ -604,41 +604,41 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
       // 50-digit precision derivative evaluation
       
-      bool called_cdf50=false;
-      cpp_dec_float_50 x1_cdf50;
+      bool called_fp50=false;
+      o2fp_50 x1_fp50;
       
       // Attempt to evaluate at 50-digit precision, but only if
       // 50-digit precision is enough for the function evaluations
       if (tol_loc>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_50>::digits10)) {
+                       <o2fp_50>::digits10)) {
         
-        x1_cdf50=static_cast<double>(x1);
-        solve_int_multip(x1_cdf50,f,tol_loc,func_tol);
+        x1_fp50=static_cast<double>(x1);
+        solve_int_multip(x1_fp50,f,tol_loc,func_tol);
                          
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "[cpp_dec_float_50]\n "
+                    << "[o2fp_50]\n "
                     << "x1,err: "
-                    << x1_cdf50 << std::endl;
+                    << x1_fp50 << std::endl;
         }
         
-        called_cdf50=true;
+        called_fp50=true;
         
         // If the comparison between the 35-digit and 50-digit
         // precision results shows an accurate result, then return
-        if (called_cdf35 && x1_cdf50!=0) {
-          err=static_cast<fp2_t>(abs(x1_cdf50-x1_cdf35)/abs(x1_cdf50));
+        if (called_fp35 && x1_fp50!=0) {
+          err=static_cast<fp2_t>(abs(x1_fp50-x1_fp35)/abs(x1_fp50));
           if (err<tol_loc) {
-            x1=static_cast<fp2_t>(x1_cdf50);
+            x1=static_cast<fp2_t>(x1_fp50);
             return 0;
           }
         }
       
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "failed after cpp_dec_float_50:\n  "
-                    << dtos(x1_cdf35,0) << " "
-                    << dtos(x1_cdf50,0) << " "
+                    << "failed after o2fp_50:\n  "
+                    << dtos(x1_fp35,0) << " "
+                    << dtos(x1_fp50,0) << " "
                     << dtos(err,0) << " " 
                     << tol_loc << std::endl;
         }
@@ -648,42 +648,42 @@ namespace o2scl {
       // ─────────────────────────────────────────────────────────────────
       // 100-digit precision derivative evaluation
       
-      bool called_cdf100=false;
-      cpp_dec_float_100 x1_cdf100;
+      bool called_fp100=false;
+      o2fp_100 x1_fp100;
       
       // Attempt to evaluate at 100-digit precision, but only if
       // 100-digit precision is enough for the function evaluations
       if (tol_loc>pow(10.0,-std::numeric_limits
-                       <cpp_dec_float_100>::digits10)) {
+                       <o2fp_100>::digits10)) {
         
-        x1_cdf100=static_cast<double>(x1);
-        solve_int_multip(x1_cdf100,f,tol_loc,func_tol);
+        x1_fp100=static_cast<double>(x1);
+        solve_int_multip(x1_fp100,f,tol_loc,func_tol);
                          
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "[cpp_dec_float_100]\n "
+                    << "[o2fp_100]\n "
                     << "x1,err: "
-                    << x1_cdf100 << std::endl;
+                    << x1_fp100 << std::endl;
         }
         
-        called_cdf100=true;
+        called_fp100=true;
         
         // If the comparison between the 50-digit and 100-digit
         // precision results shows an accurate result, then return
-        if (called_cdf50 && x1_cdf100!=0) {
-          err=static_cast<fp2_t>(abs(x1_cdf100-x1_cdf50)/
-                                 abs(x1_cdf100));
+        if (called_fp50 && x1_fp100!=0) {
+          err=static_cast<fp2_t>(abs(x1_fp100-x1_fp50)/
+                                 abs(x1_fp100));
           if (err<tol_loc) {
-            x1=static_cast<fp2_t>(x1_cdf100);
+            x1=static_cast<fp2_t>(x1_fp100);
             return 0;
           }
         }
       
         if (this->verbose>0) {
           std::cout << "root_cern::solve_multip() "
-                    << "failed after cpp_dec_float_100:\n  "
-                    << dtos(x1_cdf50,0) << " "
-                    << dtos(x1_cdf100,0) << " "
+                    << "failed after o2fp_100:\n  "
+                    << dtos(x1_fp50,0) << " "
+                    << dtos(x1_fp100,0) << " "
                     << dtos(err,0) << " " 
                     << tol_loc << std::endl;
         }

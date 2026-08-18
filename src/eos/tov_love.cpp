@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2012-2025, Andrew W. Steiner
+  Copyright (C) 2012-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -64,6 +64,79 @@ double tov_love::eval_k2(double beta, double yR) {
      log(1.0-2.0*beta));
   return k2;
 }
+
+#ifdef O2SCL_NEVER_DEFINED
+/** \brief Desc
+    
+    Compute the ell=3 tidal Love number k3 given the compactness
+    beta = G*M/(c^2*R) and the value of y at the stellar surface yR.
+    
+    This follows Hinderer (2008), ApJ 677, 1216 and the corrected
+    expressions in Damour & Nagar (2009), Phys.Rev.D 80, 084035.
+    
+    The formula is:
+    
+    k3 = (8/7) * beta^7 * (1-2*beta)^2 *
+    (3 - yR + beta*(2*yR - 4)) /
+    D3(beta, yR)
+    
+    where D3 is given below.
+*/
+double tov_love::eval_k3(double beta, double yR) {
+  
+  /*
+    Precompute powers of beta to avoid repetition and
+    improve readability.
+  */
+  double b2=beta*beta;
+  double b3=b2*beta;
+  double b4=b3*beta;
+  double b5=b4*beta;
+  double b6=b5*beta;
+  double b7=b6*beta;
+
+  /*
+    Precompute (1-2*beta)^2, which appears in both the
+    numerator and the logarithmic term.
+  */
+  double omtb=1.0-2.0*beta;
+  double omtb2=omtb*omtb;
+
+  /*
+    Numerator: (8/7) * beta^7 * (1-2*beta)^2 * (3 - yR + beta*(2*yR-4))
+  */
+  double num=8.0/7.0*b7*omtb2*(3.0-yR+beta*(2.0*yR-4.0));
+
+  /*
+    Denominator polynomial in beta and yR.
+    This is assembled in pieces for clarity.
+
+    The first piece collects terms linear in beta through beta^2.
+  */
+  double d1=4.0*beta*(15.0-6.0*yR+beta*(2.0*yR-12.0));
+
+  /*
+    The second piece collects terms from beta^3 through beta^6.
+  */
+  double d2=8.0*b3*(14.0-yR+beta*(32.0*yR-76.0)+
+                    b2*(6.0*yR-4.0)+
+                    b3*(2.0-yR));
+
+  /*
+    The third piece is the logarithmic term, proportional to
+    (1-2*beta)^2 times the same linear combination of yR that
+    appears in the numerator.
+  */
+  double d3=5.0*omtb2*(3.0-yR+beta*(2.0*yR-4.0))*
+    log(1.0-2.0*beta);
+
+  double denom=d1+d2+d3;
+
+  double k3=num/denom;
+
+  return k3;
+}
+#endif
 
 int tov_love::y_derivs(double r, size_t nv, const std::vector<double> &vals,
 			  std::vector<double> &ders) {

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2025, Andrew W. Steiner
+  Copyright (C) 2025-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -50,7 +50,7 @@ namespace o2scl_linalg {
   public:
   
     /// Invert matrix \c A, returning the inverse in \c A_inv
-    int invert(size_t n, const std::vector<double> &A,
+    virtual int invert(size_t n, const std::vector<double> &A,
                std::vector<double> &A_inv) {
       int ret=matrix_invert_det_cholesky_cuda_base::invert(n,A,A_inv);
       if (ret!=0) {
@@ -64,7 +64,7 @@ namespace o2scl_linalg {
     /** \brief Invert matrix \c A, returning the inverse in \c A_inv, 
         and the determinant in \c A_det
     */
-    int invert_det(size_t n, const std::vector<double> &A,
+    virtual int invert_det(size_t n, const std::vector<double> &A,
                    std::vector<double> &A_inv, double &A_det) {
       int ret=matrix_invert_det_cholesky_cuda_base::invert_det
         (n,A,A_inv,A_det);
@@ -79,7 +79,7 @@ namespace o2scl_linalg {
     /** \brief Determine the determinant of the matrix \c A without
         inverting
     */
-    double det(size_t n, const std::vector<double> &A) {
+    virtual double det(size_t n, const std::vector<double> &A) {
       int ret=matrix_invert_det_cholesky_cuda_base::det(n,A);
       if (ret!=0) {
         std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
@@ -90,7 +90,7 @@ namespace o2scl_linalg {
     }
   
     /// Invert matrix \c A in place
-    int invert_inplace(size_t n, std::vector<double> &A) {
+    virtual int invert_inplace(size_t n, std::vector<double> &A) {
       int ret=matrix_invert_det_cholesky_cuda_base::invert_inplace(n,A);
       if (ret!=0) {
         std::string err=((std::string)"Error number ")+o2scl::itos(ret)+
@@ -149,6 +149,9 @@ namespace o2scl_linalg {
 
     /// Last method used
     int last_method;
+
+    /// Verbosity (default 0)
+    int verbose;
     
     matrix_invert_cholesky_auto() {
       n_cuda_arma=400;
@@ -156,6 +159,7 @@ namespace o2scl_linalg {
       n_arma_o2=15;
       mode=fast;
       last_method=0;
+      verbose=0;
     }
     
     /// Invert matrix \c A, returning the inverse in \c A_inv
@@ -165,6 +169,11 @@ namespace o2scl_linalg {
 #ifdef O2SCL_SET_CUDA
 #ifdef O2SCL_SET_ARMA
 
+      if (verbose>0) {
+        std::cout << "matrix_invert_cholesky_auto::invert(): "
+                  << "cuda/arma mode: "
+                  << mode << " " << n << std::endl;
+      }
       // Both cuda and Armadillo are available
       int ret;
       if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
@@ -195,6 +204,11 @@ namespace o2scl_linalg {
       
 #else
 
+      if (verbose>0) {
+        std::cout << "matrix_invert_cholesky_auto::invert(): "
+                  << "cuda mode: "
+                  << mode << " " << n << std::endl;
+      }
       // Cuda is available, but not Armadillo
       int ret;
       if (force_arma) {
@@ -216,6 +230,11 @@ namespace o2scl_linalg {
 #else
 #ifdef O2SCL_SET_ARMA
 
+      if (verbose>0) {
+        std::cout << "matrix_invert_cholesky_auto::invert(): "
+                  << "arma mode: "
+                  << mode << " " << n << std::endl;
+      }
       // Armadillo is available, but not CUDA
       int ret;
       if (force_cuda) {
@@ -240,6 +259,11 @@ namespace o2scl_linalg {
         
 #else
 
+      if (verbose>0) {
+        std::cout << "matrix_invert_cholesky_auto::invert(): "
+                  << "mode: "
+                  << mode << " " << n << std::endl;
+      }
       // Neither cuda nor Armadillo is available
       if (force_arma) {
         O2SCL_ERR2("Mode is force_arma but O2SCL_SET_ARMA is false ",
@@ -270,28 +294,45 @@ namespace o2scl_linalg {
 #ifdef O2SCL_SET_ARMA
 
       // Both cuda and Armadillo are available
+      if (verbose>0) {
+        std::cout << "matrix_invert_cholesky_auto::invert_det(): "
+                  << "cuda/arma mode,n: "
+                  << mode << " " << n << std::endl;
+      }
       int ret;
       if (mode==force_o2 || (mode!=force_arma && mode!=force_cuda &&
                              n<n_arma_o2)) {
         
+        if (verbose>0) {
+          std::cout << "matrix_invert_cholesky_auto::invert_det(): "
+                    << "o2" << std::endl;
+        }
         ret=o2.invert_det(n,A,A_inv,A_det);
         last_method=1;
         
       } else if (mode==force_arma || (mode!=force_cuda && n<n_cuda_arma)) {
         
+        if (verbose>0) {
+          std::cout << "matrix_invert_cholesky_auto::invert_det(): "
+                    << "arma" << std::endl;
+        }
         // We have to cast away constness :(
         double *Ap=(double *)(&A.get(0,0));
         arma::mat am(Ap,n,n,false);
         double *Ap_inv=&A_inv.get(0,0);
         arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.invert_det(n,am,am_inv,A_det);
         last_method=2;
         
       } else {
         
+        if (verbose>0) {
+          std::cout << "matrix_invert_cholesky_auto::invert_det(): "
+                    << "cuda" << std::endl;
+        }
         std::vector<double> vd_inv(n*n);
-        ret=cuda.invert(n,A.get_data(),vd_inv);
+        ret=cuda.invert_det(n,A.get_data(),vd_inv,A_det);
         A_inv.swap_data(vd_inv);
         last_method=3;
 
@@ -335,7 +376,7 @@ namespace o2scl_linalg {
         double *Ap_inv=&A_inv.get(0,0);
         arma::mat am_inv(Ap_inv,n,n,false);
         
-        ret=arma.invert(n,am,am_inv);
+        ret=arma.invert_det(n,am,am_inv,A_det);
         last_method=2;
       } else {
         ret=o2.invert_det(n,A,A_inv,A_det);

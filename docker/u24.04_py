@@ -47,8 +47,8 @@ RUN apt-get -y update && apt-get \
 # Install Python packages
 
 WORKDIR /opt
-RUN pip3 install --break-system-packages pytest==8.4.2 \
-  pillow==12.0.0 scipy==1.16.3 matplotlib==3.10.7 yt==4.4.1 \
+RUN pip3 install --break-system-packages pytest==9.0.3 \
+  pillow==12.3.0 scipy==1.16.3 matplotlib==3.10.7 yt==4.4.1 \
   scikit-learn==1.7.2 ipython==9.6.0
 RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
   pipdeptree==2.29.0
@@ -56,15 +56,16 @@ RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
 # ───────────────────────────────────────────────────────────────────
 # Install O2scl
 
-RUN curl -L \
-https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
-  --output o2scl-0.931.tar.gz
-RUN tar xzf o2scl-0.931.tar.gz
-WORKDIR /opt/o2scl-0.931
-
-#RUN git clone https://github.com/awsteiner/o2scl
+#RUN curl -L \
+#https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
+#  --output o2scl-0.931.tar.gz
+#RUN tar xzf o2scl-0.931.tar.gz
+#RUN ln -s /opt/o2scl-0.931 /opt/o2scl
 #WORKDIR /opt/o2scl
-#RUN git fetch && git pull && git checkout rc && autoreconf -i
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git fetch && git pull && git checkout dev && autoreconf -i
 
 # We disable static to keep the image small. Build arguments are not
 # available to the shell, so we create an environment variable from

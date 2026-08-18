@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2025, Andrew W. Steiner
+  Copyright (C) 2025-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -48,6 +48,10 @@ namespace o2scl_linalg {
   
   /** \brief Use CUDA to invert a symmetric positive definite matrix
       stored as a <tt>std::vector</tt> on the GPU
+
+      \note Cholesky classes in \o2 only need the lower triangular part
+      of the input matrix to be filled. The full inverse (not just either
+      the upper or lower triangular part) is computed. 
   */
   class matrix_invert_det_cholesky_cuda_base {
   

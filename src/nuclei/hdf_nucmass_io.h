@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -103,25 +103,61 @@ namespace o2scl_hdf {
 
   /** \brief Read data for \ref o2scl::nucmass_hfb from an HDF table
       
-      Valid values of \c model at present are 17, and 21 through 27.
+      Valid values of \c model at present are 17, and 21 through 32.
       The first two correspond to the HFB17 (Goriely02) and HFB21
-      (Samyn04). If a number outside this range is given, then 27
+      (Samyn04). If a number outside this range is given, then 32
       is assumed.
 
       \verbatim embed:rst
       See also [Goriely02]_, [Samyn04]_, and [Goriely07]_.
 
-      .. todo:: 
+      .. todo::
 
-         In hfb_sp_load(): Document models 22 through 27.
+         In hfb_sp_load(): Document models 22 through 32.
 
       \endverbatim
 
       \note This function is in the o2scl_hdf namespace,
       see \ref hdf_nucmass_io.h .
   */
-  void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27, 
+  void hfb_sp_load(o2scl::nucmass_hfb_sp &hfb, size_t model=27,
                    std::string filename="");
+
+  /** \brief Read data for \ref o2scl::nucmass_hfb_sp from an HDF
+      table of Brussels-Skyrme-on-a-Grid (BSkG) masses
+
+      Valid values of \c model are 1, 2, 3, and 4, corresponding to
+      BSkG1 [Scamps21]_, BSkG2 [Ryssens22]_, BSkG3 [Grams23]_, and
+      BSkG4 [Grams24]_, respectively. If a number outside this
+      range is given, the error handler is called.
+
+      The BSkG tables fill in various extra fields in \ref
+      o2scl::nucmass_hfb_sp::entry which are left unused by \ref
+      hfb_sp_load() . BSkG3 fills in the extra deformation,
+      separation-energy, odd-even staggering, and moment of
+      inertia fields (\ref o2scl::nucmass_hfb_sp::entry::gamma
+      through \ref o2scl::nucmass_hfb_sp::entry::I3). BSkG1, BSkG2,
+      and BSkG4 instead fill in the rotational-correction,
+      pairing-gap, experimental-radius, moment-of-inertia, and
+      subsystem-parity fields (\ref
+      o2scl::nucmass_hfb_sp::entry::Erot through \ref
+      o2scl::nucmass_hfb_sp::entry::par_n), and BSkG1 and BSkG2 do
+      not provide \ref o2scl::nucmass_hfb_sp::entry::beta30 or \ref
+      o2scl::nucmass_hfb_sp::entry::beta32 . None of the BSkG
+      tables provide a value for \ref
+      o2scl::nucmass_hfb_sp::entry::def_wig, which is thus left at
+      zero.
+
+      \verbatim embed:rst
+      See also [Scamps21]_, [Ryssens22]_, [Grams23]_, and
+      [Grams24]_.
+      \endverbatim
+
+      \note This function is in the o2scl_hdf namespace,
+      see \ref hdf_nucmass_io.h .
+  */
+  void bskg_load(o2scl::nucmass_hfb_sp &hfb, size_t model=3,
+                 std::string filename="");
 
 }
 

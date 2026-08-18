@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -41,6 +41,7 @@
 #include <o2scl/mmin_bfgs2.h>
 #include <o2scl/diff_evo.h>
 #include <o2scl/diff_evo_adapt.h>
+#include <o2scl/cma_es.h>
 #include <o2scl/rng.h>
 
 using namespace std;
@@ -66,6 +67,9 @@ public:
   /// Random number generator
   rng<> rg;
 
+  int evals;
+  int grad_evals;
+  
   /// Updated spring function
   double spring_two(size_t nv, const ubvector &x) {
     double theta=atan2(x[1],x[0]);
@@ -77,6 +81,7 @@ public:
     double ret=fact+exp(rm1*rm1)+z*z/param;
     fout << x[0] << " " << x[1] << " " << x[2] << " " << ret << " "
 	 << fact << " " << rm1 << " " << endl;
+    evals++;
     return ret;
   }
 
@@ -104,6 +109,7 @@ public:
     g[1]=dfdr*drdy+dfdt*dtdy;
     g[2]=dfdz;
 
+    grad_evals++;
     return 0;
   }
   
@@ -133,6 +139,7 @@ int main(void) {
   mmin_bfgs2<> gm4;
   diff_evo<> gm5;
   diff_evo_adapt<> gm6;
+  cma_es<> gm7;
 
   vector<double> guess={2.0,1.0,7.0*o2scl_const::pi};
   
@@ -144,47 +151,59 @@ int main(void) {
   gm4.ntrial*=10;
 
   // Simplex minimization
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin1.dat");
   vector_copy(3,guess,x);
   gm1.mmin(3,x,fmin,f1);
   acl.fout.close();
-  cout << gm1.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "mmin_simp2: last_ntrial=" << gm1.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,1.0e-4,"1a");
   t.test_rel(x[1],0.0,1.0e-4,"1b");
   t.test_rel(x[2],0.0,1.0e-4,"1c");
 
   // Fletcher-Reeves conjugate 
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin2.dat");
   vector_copy(3,guess,x);
   gm2.mmin(3,x,fmin,f1);
   acl.fout.close();
-  cout << gm2.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "mmin_conf: last_ntrial=" << gm2.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"2a");
   t.test_rel(x[1],0.0,4.0e-3,"2b");
   t.test_rel(x[2],0.0,4.0e-3,"2c");
 
   // Fletcher-Reeves conjugate with gradients
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin2g.dat");
   vector_copy(3,guess,x);
   gm2.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
-  cout << gm2.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "mmin_conf (with gradients): last_ntrial=" << gm2.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"2ga");
   t.test_rel(x[1],0.0,4.0e-3,"2gb");
   t.test_rel(x[2],0.0,4.0e-3,"2gc");
 
   // Polak-Ribere conjugate
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin3.dat");
   vector_copy(3,guess,x);
   gm3.mmin(3,x,fmin,f1);
   acl.fout.close();
-  cout << gm3.last_ntrial << endl;
+  cout << "mmin_conp: last_ntrial=" << gm3.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
   cout << "Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"3a");
@@ -192,24 +211,30 @@ int main(void) {
   t.test_rel(x[2],0.0,4.0e-3,"3c");
 
   // Polak-Ribere conjugate with gradients
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin3g.dat");
   vector_copy(3,guess,x);
   gm3.mmin_de(3,x,fmin,f1,f1g);
   acl.fout.close();
-  cout << gm3.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "mmin_conp (with gradients): last_ntrial=" << gm3.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,4.0e-3,"3ga");
   t.test_rel(x[1],0.0,4.0e-3,"3gb");
   t.test_rel(x[2],0.0,4.0e-3,"3gc");
 
-  // de
+  // Differential evolution
+  acl.evals=0;
+  acl.grad_evals=0;
   acl.fout.open("data/ex_mmin5.dat");
   vector_copy(3,guess,x);
   gm5.mmin(3,x,fmin,f1);
   acl.fout.close();
-  cout << gm5.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "diff_evo: last_ntrial=" << gm5.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   // AWS, 7/23/22: this method sometimes fails so increasing
   // tolerances
@@ -217,19 +242,36 @@ int main(void) {
   t.test_rel(x[1],0.0,4.0e0,"5b");
   t.test_rel(x[2],0.0,4.0e0,"5c");
 
-  // dea
-  
+  // Adaptive differential evolution
+  acl.evals=0;
+  acl.grad_evals=0;
   // 7/17/25: This algorithm can be more unpredictable
   acl.fout.open("data/ex_mmin6.dat");
   vector_copy(3,guess,x);
   gm6.mmin(3,x,fmin,f1);
   acl.fout.close();
-  cout << gm6.last_ntrial << endl;
-  cout << "Found minimum at: " 
+  cout << "diff_evo_adapt: last_ntrial=" << gm6.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: " 
        << x[0] << " " << x[1] << " " << x[2] << endl;
   t.test_rel(x[0],1.0,10.0,"6a");
   t.test_rel(x[1],0.0,10.0,"6b");
   t.test_rel(x[2],0.0,10.0,"6c");
+
+  // cma_es
+  acl.evals=0;
+  acl.grad_evals=0;
+  acl.fout.open("data/ex_mmin7.dat");
+  vector_copy(3,guess,x);
+  gm7.mmin(3,x,fmin,f1);
+  acl.fout.close();
+  cout << "cma_es: last_ntrial=" << gm7.last_ntrial
+       << " evals: " << acl.evals << " " << acl.grad_evals << endl;
+  cout << "  Found minimum at: "
+       << x[0] << " " << x[1] << " " << x[2] << endl;
+  t.test_rel(x[0],1.0,10.0,"7a");
+  t.test_rel(x[1],0.0,10.0,"7b");
+  t.test_rel(x[2],0.0,10.0,"7c");
 
   t.report();
   return 0;

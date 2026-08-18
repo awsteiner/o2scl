@@ -1,7 +1,7 @@
 /*
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2024, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with O2scl. If not, see <http://www.gnu.org/licenses/>.
 
-  -------------------------------------------------------------------
+  ───────────────────────────────────────────────────────────────────
 */
 #ifndef O2SCL_MROOT_SPECIAL_H
 #define O2SCL_MROOT_SPECIAL_H

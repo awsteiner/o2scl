@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -29,8 +29,6 @@
 #include <o2scl/misc.h>
 #include <o2scl/inte.h>
  
-#include <boost/multiprecision/cpp_dec_float.hpp>
-
 namespace o2scl {
 
   /** \brief Integration weights and abcissas for
@@ -134,10 +132,10 @@ namespace o2scl {
 
   /** \brief Integration weights and abcissas for
       o2scl::inte_gauss_cern and \ref o2scl::inte_cauchy_cern for 
-      the cpp_dec_float_50 type
+      the o2fp_50 type
 
       \comment
-      Weights and abcissas originally generated using cpp_dec_float_100
+      Weights and abcissas originally generated using o2fp_100
       numbers by AWS using code in ~/wcs/int5/sbox on 10/7/19. 
       \endcomment
   */

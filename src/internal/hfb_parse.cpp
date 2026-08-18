@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -26,6 +26,7 @@
 */
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -55,8 +56,8 @@ int main(int argc, char *argv[]) {
   }
   string outname=argv[2];
 
-  vector<nucmass_hfb_entry> list;
-  vector<nucmass_hfb_sp_entry> list_sp;
+  vector<nucmass_hfb::entry> list;
+  vector<nucmass_hfb_sp::entry> list_sp;
   
   string dir=argv[1];
   string out_fname=argv[2];
@@ -64,7 +65,13 @@ int main(int argc, char *argv[]) {
   size_t jmax;
   string stemp;
   bool inc_spin_parity=false;
-  
+  // AWS, 8/11/26: The hfb28-32 ascii files use a different format
+  // than hfb17-hfb27: three header lines (two dashed rules
+  // surrounding a column-name line) followed by whitespace-
+  // separated (rather than fixed-width) columns, so they're read
+  // with an istringstream instead of substr().
+  bool new_format=false;
+
   ifstream fin;
 
   if ((string)(argv[2])=="hfb2.o2") {
@@ -195,13 +202,73 @@ int main(int argc, char *argv[]) {
     }
     jmax=9482;
     inc_spin_parity=true;
+  } else if ((string)(argv[2])=="hfb28.o2") {
+    orig_file="hfb28-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9511;
+    inc_spin_parity=true;
+    new_format=true;
+  } else if ((string)(argv[2])=="hfb29.o2") {
+    orig_file="hfb29-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9481;
+    inc_spin_parity=true;
+    new_format=true;
+  } else if ((string)(argv[2])=="hfb30.o2") {
+    orig_file="hfb30-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9570;
+    inc_spin_parity=true;
+    new_format=true;
+  } else if ((string)(argv[2])=="hfb31.o2") {
+    orig_file="hfb31-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9569;
+    inc_spin_parity=true;
+    new_format=true;
+  } else if ((string)(argv[2])=="hfb32.o2") {
+    orig_file="hfb32-dat";
+    string in_fname=dir+"/"+orig_file;
+    cout << "Opening file '" << in_fname << "'." << endl;
+    fin.open(in_fname.c_str());
+    for(size_t j=0;j<3;j++) {
+      getline(fin,stemp);
+      cout << stemp << endl;
+    }
+    jmax=9569;
+    inc_spin_parity=true;
+    new_format=true;
   } else {
     O2SCL_ERR("Bad argument 2.",exc_efailed);
   }
 
   if (!inc_spin_parity) {
     
-    nucmass_hfb_entry he;
+    nucmass_hfb::entry he;
     string ssp, ssn;
     int N2, A2;
     for(size_t j=0;j<jmax;j++) {
@@ -317,18 +384,18 @@ int main(int argc, char *argv[]) {
     }
     
     // Make HDF table
-    size_t offset[12]={HOFFSET(nucmass_hfb_entry,N),
-		       HOFFSET(nucmass_hfb_entry,Z),
-		       HOFFSET(nucmass_hfb_entry,A),
-		       HOFFSET(nucmass_hfb_entry,bet2),
-		       HOFFSET(nucmass_hfb_entry,bet4),
-		       HOFFSET(nucmass_hfb_entry,Rch),
-		       HOFFSET(nucmass_hfb_entry,def_wig),
-		       HOFFSET(nucmass_hfb_entry,Sn),
-		       HOFFSET(nucmass_hfb_entry,Sp),
-		       HOFFSET(nucmass_hfb_entry,Qbet),
-		       HOFFSET(nucmass_hfb_entry,Mcal),
-		       HOFFSET(nucmass_hfb_entry,Err)};
+    size_t offset[12]={HOFFSET(nucmass_hfb::entry,N),
+		       HOFFSET(nucmass_hfb::entry,Z),
+		       HOFFSET(nucmass_hfb::entry,A),
+		       HOFFSET(nucmass_hfb::entry,bet2),
+		       HOFFSET(nucmass_hfb::entry,bet4),
+		       HOFFSET(nucmass_hfb::entry,Rch),
+		       HOFFSET(nucmass_hfb::entry,def_wig),
+		       HOFFSET(nucmass_hfb::entry,Sn),
+		       HOFFSET(nucmass_hfb::entry,Sp),
+		       HOFFSET(nucmass_hfb::entry,Qbet),
+		       HOFFSET(nucmass_hfb::entry,Mcal),
+		       HOFFSET(nucmass_hfb::entry,Err)};
     
     size_t sizes[12]={sizeof(he.N),
 		      sizeof(he.Z),
@@ -364,11 +431,9 @@ int main(int argc, char *argv[]) {
 			  H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
 			  H5T_NATIVE_DOUBLE};
 
-    hid_t file=H5Fcreate(outname.c_str(),H5F_ACC_TRUNC,
-			 H5P_DEFAULT,H5P_DEFAULT);
-      
     hdf_file hf;
-    hf.set_current_id(file);
+    hf.open_or_create(outname);
+    hid_t file=hf.get_current_id();
     hf.seti("nrecords",list.size());
     cout << "nrecords: " << list.size() << endl;
     hf.sets_fixed("comment",
@@ -377,7 +442,7 @@ int main(int argc, char *argv[]) {
 		  "See http://o2scl.sourceforge.net for details.");
     
     herr_t status=H5TBmake_table(orig_file.c_str(),file,outname.c_str(),
-				 12,list.size(),sizeof(nucmass_hfb_entry),
+				 12,list.size(),sizeof(nucmass_hfb::entry),
 				 names,offset,field_type,100,0,0,&list[0]);
 
     hf.sets("orig_file",orig_file);
@@ -394,15 +459,59 @@ int main(int argc, char *argv[]) {
 	      ((string)"S. Goriely, M. Samyn, and J. M. Pearson, ")+
 	      "Phys. Rev. C 75 (2007) 064312.");
     }
-    H5Fclose(file);
+    hf.close();
 
   } else {
 
-    nucmass_hfb_sp_entry he;
+    nucmass_hfb_sp::entry he;
     string ssp, ssn;
     int N2, A2;
     for(size_t j=0;j<jmax;j++) {
       getline(fin,stemp);
+      if (new_format) {
+        // The hfb28-32 files are whitespace-delimited (15 tokens
+        // per line: Z A bet2 bet4 Rch Edef Sn Sp Qbet Mcal
+        // Mexp-Mcal Jexp Jth Pexp Pth), unlike the fixed-width
+        // files handled below, so read with a stringstream and
+        // apply the same sentinel-value conversions (999.99,
+        // 99.9, and 9 all indicate a missing value).
+        istringstream iss(stemp);
+        double dtemp;
+        int itemp;
+        iss >> he.Z >> he.A;
+        he.N=he.A-he.Z;
+        iss >> he.bet2 >> he.bet4 >> he.Rch >> he.def_wig;
+        iss >> he.Sn;
+        if (fabs(he.Sn-999.99)<1.0e-6) he.Sn=1.0e99;
+        iss >> he.Sp;
+        if (fabs(he.Sp-999.99)<1.0e-6) he.Sp=1.0e99;
+        iss >> he.Qbet;
+        if (fabs(he.Qbet-999.99)<1.0e-6) he.Qbet=1.0e99;
+        iss >> he.Mcal;
+        iss >> he.Err;
+        if (fabs(he.Err-999.99)<1.0e-6) he.Err=1.0e99;
+        iss >> he.Jexp;
+        if (fabs(he.Jexp-99.9)<1.0e-6) he.Jexp=1.0e99;
+        iss >> he.Jth;
+        iss >> he.Pexp;
+        if (he.Pexp==9) he.Pexp=99;
+        iss >> he.Pth;
+        if (j==0 || j==jmax-1) {
+          if (j==0) {
+            cout << "First line: " << endl;
+          } else {
+            cout << "Last line: " << endl;
+          }
+          cout << j << " " << he.Z << " " << he.A << " " << he.N << endl;
+          cout << "\t" << he.bet2 << " " << he.bet4 << " " << he.Rch << endl;
+          cout << "\t" << he.def_wig << " " << he.Sn << " " << he.Sp << endl;
+          cout << "\t" << he.Qbet << " " << he.Mcal << " " << he.Err << endl;
+          cout << "\t" << he.Jexp << " " << he.Jth << " "
+               << he.Pexp << " " << he.Pth << endl;
+        }
+        list_sp.push_back(he);
+        continue;
+      }
       he.Z=o2scl::stoi(stemp.substr(0,4));
       he.A=o2scl::stoi(stemp.substr(4,4));
       he.N=he.A-he.Z;
@@ -506,22 +615,22 @@ int main(int argc, char *argv[]) {
     cout << list_sp.size() << endl;
     
     // Make HDF table
-    size_t offset[16]={HOFFSET(nucmass_hfb_sp_entry,N),
-		       HOFFSET(nucmass_hfb_sp_entry,Z),
-		       HOFFSET(nucmass_hfb_sp_entry,A),
-		       HOFFSET(nucmass_hfb_sp_entry,bet2),
-		       HOFFSET(nucmass_hfb_sp_entry,bet4),
-		       HOFFSET(nucmass_hfb_sp_entry,Rch),
-		       HOFFSET(nucmass_hfb_sp_entry,def_wig),
-		       HOFFSET(nucmass_hfb_sp_entry,Sn),
-		       HOFFSET(nucmass_hfb_sp_entry,Sp),
-		       HOFFSET(nucmass_hfb_sp_entry,Qbet),
-		       HOFFSET(nucmass_hfb_sp_entry,Mcal),
-		       HOFFSET(nucmass_hfb_sp_entry,Err),
-		       HOFFSET(nucmass_hfb_sp_entry,Jexp),
-		       HOFFSET(nucmass_hfb_sp_entry,Jth),
-		       HOFFSET(nucmass_hfb_sp_entry,Pexp),
-		       HOFFSET(nucmass_hfb_sp_entry,Pth)};
+    size_t offset[16]={HOFFSET(nucmass_hfb_sp::entry,N),
+		       HOFFSET(nucmass_hfb_sp::entry,Z),
+		       HOFFSET(nucmass_hfb_sp::entry,A),
+		       HOFFSET(nucmass_hfb_sp::entry,bet2),
+		       HOFFSET(nucmass_hfb_sp::entry,bet4),
+		       HOFFSET(nucmass_hfb_sp::entry,Rch),
+		       HOFFSET(nucmass_hfb_sp::entry,def_wig),
+		       HOFFSET(nucmass_hfb_sp::entry,Sn),
+		       HOFFSET(nucmass_hfb_sp::entry,Sp),
+		       HOFFSET(nucmass_hfb_sp::entry,Qbet),
+		       HOFFSET(nucmass_hfb_sp::entry,Mcal),
+		       HOFFSET(nucmass_hfb_sp::entry,Err),
+		       HOFFSET(nucmass_hfb_sp::entry,Jexp),
+		       HOFFSET(nucmass_hfb_sp::entry,Jth),
+		       HOFFSET(nucmass_hfb_sp::entry,Pexp),
+		       HOFFSET(nucmass_hfb_sp::entry,Pth)};
     
     size_t sizes[16]={sizeof(he.N),
 		      sizeof(he.Z),
@@ -564,11 +673,9 @@ int main(int argc, char *argv[]) {
 			  H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
 			  H5T_NATIVE_DOUBLE,H5T_NATIVE_INT,H5T_NATIVE_INT};
 
-    hid_t file=H5Fcreate(outname.c_str(),H5F_ACC_TRUNC,
-			 H5P_DEFAULT,H5P_DEFAULT);
-      
     hdf_file hf;
-    hf.set_current_id(file);
+    hf.open_or_create(outname);
+    hid_t file=hf.get_current_id();
     hf.seti("nrecords",list_sp.size());
     cout << "nrecords: " << list_sp.size() << endl;
     hf.sets_fixed("comment",
@@ -577,7 +684,7 @@ int main(int argc, char *argv[]) {
 		  "See http://o2scl.sourceforge.net for details.");
     
     herr_t status=H5TBmake_table(orig_file.c_str(),file,outname.c_str(),
-				 16,list_sp.size(),sizeof(nucmass_hfb_sp_entry),
+				 16,list_sp.size(),sizeof(nucmass_hfb_sp::entry),
 				 names,offset,field_type,100,0,0,&list_sp[0]);
 
     hf.sets("orig_file",orig_file);
@@ -585,12 +692,23 @@ int main(int argc, char *argv[]) {
       hf.sets("reference",
 	      ((string)"S. Goriely, M. Samyn, P.-H. Heenen, J.M. Pearson, ")+
 	      "and F. Tondeur, Phys. Rev. C 66 (2002) 024326.");
+    } else if (new_format) {
+      // AWS, 8/11/26: the exact publication for each of hfb28
+      // through hfb32 individually has not been confirmed; as
+      // with hfb21-hfb27 below, this uses the general HFB mass
+      // formula series reference as a placeholder until the
+      // precise per-model citation is verified.
+      hf.sets("reference",
+	      ((string)"S. Goriely, N. Chamel, and J. M. Pearson, ")+
+	      "Phys. Rev. C (BRUSLIB HFB mass model series); "
+	      "see http://www.astro.ulb.ac.be/bruslib/ for the "
+	      "specific model reference.");
     } else {
       hf.sets("reference",
 	      ((string)"S. Goriely, M. Samyn, and J. M. Pearson, ")+
 	      "Phys. Rev. C 75 (2007) 064312.");
     }
-    H5Fclose(file);
+    hf.close();
 
   }
 

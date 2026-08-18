@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2019-2025, Andrew W. Steiner
+  Copyright (C) 2019-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,9 +33,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include <o2scl/inte.h>
-#ifdef O2SCL_SET_MULTIP
 #include <o2scl/funct_multip.h>
-#endif
 
 namespace o2scl {
 
@@ -415,22 +413,22 @@ namespace o2scl {
                            <fp_25_t>::digits10+3)
                     << " for fp_25_t integration." << std::endl;
         }
-        fp_25_t a_cdf25=static_cast<fp_25_t>(a);
-        fp_25_t b_cdf25=static_cast<fp_25_t>(b);
-        fp_25_t res_cdf25, err_cdf25, L1norm_cdf25;
+        fp_25_t a_fp25=static_cast<fp_25_t>(a);
+        fp_25_t b_fp25=static_cast<fp_25_t>(b);
+        fp_25_t res_fp25, err_fp25, L1norm_fp25;
 
-        ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
-                          err_cdf25,L1norm_cdf25,target_tol,
+        ret=integ_err_int(func,a_fp25,b_fp25,res_fp25,
+                          err_fp25,L1norm_fp25,target_tol,
                           integ_tol,func_tol);
 
         if (verbose>1) {
           std::cout << "ret,res,err,tol: " << ret << " "
-                    << res_cdf25 << " " << err_cdf25 << " "
+                    << res_fp25 << " " << err_fp25 << " "
                     << integ_tol << std::endl;
         }
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
+        if (ret==0 && err_fp25/abs(res_fp25)<integ_tol) {
+          res=static_cast<fp_t>(res_fp25);
+          err=static_cast<fp_t>(err_fp25);
           return 0;
         } else {
           if (verbose>0) {
@@ -439,7 +437,7 @@ namespace o2scl {
                         << std::endl;
             } else {
               std::cout << "  Failed. Relative error "
-                        << err_cdf25/abs(res_cdf25) << " >= " << integ_tol
+                        << err_fp25/abs(res_fp25) << " >= " << integ_tol
                         << std::endl;
             }
           }
@@ -456,17 +454,17 @@ namespace o2scl {
                            <fp_35_t>::digits10+3)
                     << " for fp_35_t integration." << std::endl;
         }
-        fp_35_t a_cdf35=static_cast<fp_35_t>(a);
-        fp_35_t b_cdf35=static_cast<fp_35_t>(b);
-        fp_35_t res_cdf35, err_cdf35, L1norm_cdf35;
+        fp_35_t a_fp35=static_cast<fp_35_t>(a);
+        fp_35_t b_fp35=static_cast<fp_35_t>(b);
+        fp_35_t res_fp35, err_fp35, L1norm_fp35;
         
-        ret=integ_err_int(func,a_cdf35,b_cdf35,res_cdf35,
-                          err_cdf35,L1norm_cdf35,target_tol,
+        ret=integ_err_int(func,a_fp35,b_fp35,res_fp35,
+                          err_fp35,L1norm_fp35,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
+        if (ret==0 && err_fp35/abs(res_fp35)<integ_tol) {
+          res=static_cast<fp_t>(res_fp35);
+          err=static_cast<fp_t>(err_fp35);
           return 0;
         } else {
           if (verbose>0) {
@@ -475,7 +473,7 @@ namespace o2scl {
                         << std::endl;
             } else {
               std::cout << "  Failed. Relative error "
-                        << err_cdf35/abs(res_cdf35) << " >= " << integ_tol
+                        << err_fp35/abs(res_fp35) << " >= " << integ_tol
                         << std::endl;
             }
           }
@@ -492,17 +490,17 @@ namespace o2scl {
                            <fp_50_t>::digits10+3)
                     << " for fp_50_t integration." << std::endl;
         }
-        fp_50_t a_cdf50=static_cast<fp_50_t>(a);
-        fp_50_t b_cdf50=static_cast<fp_50_t>(b);
-        fp_50_t res_cdf50, err_cdf50, L1norm_cdf50;
+        fp_50_t a_fp50=static_cast<fp_50_t>(a);
+        fp_50_t b_fp50=static_cast<fp_50_t>(b);
+        fp_50_t res_fp50, err_fp50, L1norm_fp50;
         
-        ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
-                          err_cdf50,L1norm_cdf50,target_tol,
+        ret=integ_err_int(func,a_fp50,b_fp50,res_fp50,
+                          err_fp50,L1norm_fp50,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
+        if (ret==0 && err_fp50/abs(res_fp50)<integ_tol) {
+          res=static_cast<fp_t>(res_fp50);
+          err=static_cast<fp_t>(err_fp50);
           return 0;
         } else {
           if (verbose>0) {
@@ -511,7 +509,7 @@ namespace o2scl {
                         << std::endl;
             } else {
               std::cout << "  Failed. Relative error "
-                        << err_cdf50/abs(res_cdf50) << " >= " << integ_tol
+                        << err_fp50/abs(res_fp50) << " >= " << integ_tol
                         << std::endl;
             }
           }
@@ -528,17 +526,17 @@ namespace o2scl {
                            <fp_100_t>::digits10+3)
                     << " for fp_100_t integration." << std::endl;
         }
-        fp_100_t a_cdf100=static_cast<fp_100_t>(a);
-        fp_100_t b_cdf100=static_cast<fp_100_t>(b);
-        fp_100_t res_cdf100, err_cdf100, L1norm_cdf100;
+        fp_100_t a_fp100=static_cast<fp_100_t>(a);
+        fp_100_t b_fp100=static_cast<fp_100_t>(b);
+        fp_100_t res_fp100, err_fp100, L1norm_fp100;
         
-        ret=integ_err_int(func,a_cdf100,b_cdf100,res_cdf100,
-                          err_cdf100,L1norm_cdf100,target_tol,
+        ret=integ_err_int(func,a_fp100,b_fp100,res_fp100,
+                          err_fp100,L1norm_fp100,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf100/abs(res_cdf100)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf100);
-          err=static_cast<fp_t>(err_cdf100);
+        if (ret==0 && err_fp100/abs(res_fp100)<integ_tol) {
+          res=static_cast<fp_t>(res_fp100);
+          err=static_cast<fp_t>(err_fp100);
           return 0;
         } else {
           if (verbose>0) {
@@ -547,7 +545,7 @@ namespace o2scl {
                         << std::endl;
             } else {
               std::cout << "  Failed. Relative error "
-                        << err_cdf100/abs(res_cdf100) << " >= " << integ_tol
+                        << err_fp100/abs(res_fp100) << " >= " << integ_tol
                         << std::endl;
             }
           }

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -33,15 +33,6 @@
 #include <fstream>
 #include <sstream>
 #include <codecvt>
-
-#include <o2scl/set_mpfr.h>
-#include <o2scl/set_multip.h>
-
-#define BOOST_DISABLE_ASSERTS
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_SET_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
 
 // For numeric_limits for dtos()
 #include <limits>
@@ -379,6 +370,14 @@ namespace o2scl {
 
   /** \brief Convert a string-based list of unsigned integers
       to a list
+
+      This function supports strings like <tt>"1-3,5,10-12"</tt> and
+      converts them to a list, e.g., <tt>{1,2,3,5,10,11,12}</tt>. The
+      \c list parameter is cleared before being filled with the list
+      specified in \c x.
+
+      \todo Explain how this function handles strings like "10,12,10",
+      and whether or not the list is sorted at the end.
   */
   template<class size_vec_t>
   int string_to_uint_list(const std::string &x,

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2021-2025, Andrew W. Steiner
+  Copyright (C) 2021-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -53,6 +53,11 @@ nucleus_bin::nucleus_bin() {
   o2scl_hdf::hfb_sp_load(hfb26,26);
   o2scl_hdf::hfb_sp_load(hfb27,27);
 
+  o2scl_hdf::bskg_load(bskg1,1);
+  o2scl_hdf::bskg_load(bskg2,2);
+  o2scl_hdf::bskg_load(bskg3,3);
+  o2scl_hdf::bskg_load(bskg4,4);
+
   wlw1.load("WS3.2");
   wlw2.load("WS3.3");
   wlw3.load("WS3.6");
@@ -75,15 +80,17 @@ nucleus_bin::nucleus_bin() {
   nmd={&ame20exp,&ame20round,&m16,
        &hfb21,&hfb22,&hfb23,
        &hfb24,&hfb25,&hfb26,&hfb27,
+       &bskg1,&bskg2,&bskg3,&bskg4,
        &wlw1,&wlw2,&wlw3,&wlw4,&wlw5,
        &dz,&ddme2,&ddmed,&ddpc1,&nl3s,&sly4,&skms,
        &skp,&sv_min,&unedf0,&unedf1};
-       
+
   n_tables=nmd.size();
 
   table_names={"AME exp 20","AME rnd 20","MSIS 16",
 	       "HFB21","HFB22","HFB23",
 	       "HFB24","HFB25","HFB26","HFB27",
+	       "BSkG1","BSkG2","BSkG3","BSkG4",
 	       "WLW 10","WLLW 10","LWDW 11","WL 11","WLWM 14",
 	       "DZ 95","DDME2","DDMED","DDPC1","NL3S",
                "SLy4","SKM*","SkP","SV-min","UNEDF0","UNEDF1"};
@@ -98,118 +105,29 @@ nucleus_bin::nucleus_bin() {
   fit_names={"Semi-empirical","FRDM","DZ fit 10","DZ fit 33","FRDM shell",
              "Liq drop shell"};
 
+  fit_var_names={"se","frdm","dzf","dzf33","frdm_shell","ldrop_shell"};
+
   o2scl_hdf::skyrme_load(sk,"SLy4");
   ldrop_shell.set_eos_had_temp_base(sk);
-  
-  if (true) {
-    ubvector p(5);
-    p[0]=1.534012717750970e+01;
-    p[1]=2.261032660770839e+01;
-    p[2]=1.617898540187606e+01;
-    p[3]=6.941932590175626e-01;
-    p[4]=1.162846797031895e+01;
-    se.fit_fun(5,p);
-  }
-  if (true) {
-    ubvector p(10);
-    p[0]=3.613692309944690e-01;
-    p[1]=9.216607474662888e-01;
-    p[2]=5.170200810075372e+01;
-    p[3]=1.947090687326399e+01;
-    p[4]=4.084492571046316e+01;
-    p[5]=4.380015938017932e+01;
-    p[6]=2.092293766732548e+01;
-    p[7]=9.025789227326884e-01;
-    p[8]=1.618679100791941e+00;
-    p[9]=2.905166877962070e-01;
-    frdm.fit_fun(10,p);
-  }
-  if (true) {
-    ubvector p(10);
-    p[0]=7.067453190240083e-01;
-    p[1]=1.777839083682484e+01;
-    p[2]=1.633713770563290e+01;
-    p[3]=3.791636389950607e+01;
-    p[4]=5.483429204783442e+01;
-    p[5]=3.496320427597641e-01;
-    p[6]=1.561301751231576e+00;
-    p[7]=1.942514988061515e-02;
-    p[8]=4.392327118808018e+01;
-    p[9]=6.218195946263423e+00;
-    dzf.fit_fun(10,p);
-  }
-  if (true) {
-    ubvector p(33);
-    p[0]=9.088827842830527e+00;
-    p[1]=6.511564581987122e+00;
-    p[2]=4.462956108688138e+00;
-    p[3]=2.074222936534796e+01;
-    p[4]=1.754662224554880e+00;
-    p[5]=7.740340448804256e+00;
-    p[6]=-4.369191221566433e+00;
-    p[7]=-3.418368107217408e+01;
-    p[8]=-3.578727861463152e-01;
-    p[9]=7.269557856660328e-01;
-    p[10]=-7.501870792510353e-01;
-    p[11]=-3.771736481691423e+00;
-    p[12]=-1.779481045580030e-01;
-    p[13]=-9.057241132560844e-01;
-    p[14]=3.952971227188688e-01;
-    p[15]=1.800359380599373e+00;
-    p[16]=2.357449926816584e-01;
-    p[17]=1.051823513035010e+00;
-    p[18]=8.973655324903573e+00;
-    p[19]=5.612237450969798e+01;
-    p[20]=1.824848865708848e+01;
-    p[21]=7.426985283747025e+01;
-    p[22]=-2.690428328513786e+01;
-    p[23]=-1.280799866769777e+02;
-    p[24]=-4.169614442419837e+00;
-    p[25]=-2.917812343383905e+01;
-    p[26]=-3.792308695125627e+01;
-    p[27]=-5.385348566074595e+01;
-    p[28]=1.582609566178451e+00;
-    p[29]=5.568450543337717e+00;
-    p[30]=7.055984771856043e-01;
-    p[31]=6.196805198023444e+00;
-    p[32]=1.997170958626300e+01;
-    dzf33.fit_fun(33,p);
-  }
-  if (true) {
-    ubvector p(14);
-    p[0]=2.862652716272743e+00;
-    p[1]=1.129807927418693e+00;
-    p[2]=3.559392452233342e+01;
-    p[3]=1.657931612140274e+01;
-    p[4]=2.369337715147342e+01;
-    p[5]=3.468919264623499e+01;
-    p[6]=2.635234363179206e+01;
-    p[7]=4.266240233807385e-01;
-    p[8]=1.257558181549950e+03;
-    p[9]=3.250151576606326e+00;
-    p[10]=-1.460177890508211e+00;
-    p[11]=1.961924905272880e-02;
-    p[12]=2.010431359292397e-03;
-    p[13]=8.873157422094327e-02;
-    frdm_shell.fit_fun(14,p);
-  }
-  if (true) {
-    ubvector p(11);
-    p[0]=8.993854058157809e-01;
-    p[1]=9.692983376594209e-01;
-    p[2]=9.129367034093190e-01;
-    p[3]=9.709856845570888e-01;
-    p[4]=-1.004780591364136e-02;
-    p[5]=1.392239609972227e-01;
-    p[6]=1.096713554301717e+01;
-    p[7]=-1.498528880855952e+00;
-    p[8]=1.433936004772412e-02;
-    p[9]=1.666488914701955e-03;
-    p[10]=1.137565990431053e-01;
-    ldrop_shell.fit_fun(11,p);
-  }
+
+  load_fit_params();
 
   older_tables=false;
+}
+
+void nucleus_bin::load_fit_params() {
+
+  std::string fname=o2scl::o2scl_settings.get_data_dir()+
+    "/nucleus_bin_data.o2";
+
+  hdf_file hf;
+  hf.open(fname);
+  for(size_t i=0;i<n_fits;i++) {
+    nmfd[i]->hdf_input(hf,fit_var_names[i]);
+  }
+  hf.close();
+
+  return;
 }
 
 void nucleus_bin::update_older_tables() {
@@ -653,7 +571,7 @@ int nucleus_bin::cdist(std::vector<std::string> &sv, bool itive_com) {
   update_older_tables();
   
   // Set a large distribution
-  nucdist_set(moller_dist,m95);
+  nucdist_set(moller_dist,m16);
 
   // Find all nucleus in all the tables
   size_t min_N=400, min_Z=400, max_N=0, max_Z=0;
@@ -772,7 +690,7 @@ int nucleus_bin::compare(std::vector<std::string> &sv, bool itive_com) {
 
 int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
 
-  fitter.def_mmin.ntrial*=100;
+  fitter.def_mmin.ntrial=1e5;
   
   double res;
   kwargs kw;
@@ -804,13 +722,33 @@ int nucleus_bin::fit(std::vector<std::string> &sv, bool itive_com) {
       cout << "    p[" << k << "]=" << dtos(p[k],0) << ";" << endl;
     }
   }
-    
+
+  return 0;
+}
+
+int nucleus_bin::store_fits(std::vector<std::string> &sv, bool itive_com) {
+
+  std::string fname=o2scl::o2scl_settings.get_data_dir()+
+    "/nucleus_bin_data.o2";
+
+  hdf_file hf;
+  hf.open_or_create(fname);
+  for(size_t i=0;i<n_fits;i++) {
+    nmfd[i]->hdf_output(hf,fit_var_names[i]);
+    if (verbose>0) {
+      cout << "Stored " << nmfd[i]->nfit << " parameters for "
+           << fit_names[i] << " (" << fit_var_names[i]
+           << ") to " << fname << endl;
+    }
+  }
+  hf.close();
+
   return 0;
 }
 
 void nucleus_bin::setup_cli(o2scl::cli &cl) {
 
-  static const int nopt=7;
+  static const int nopt=8;
   o2scl::comm_option_s options[nopt]={
     {0,"ZN","Information for a nucleus given Z and N.",
      2,2,"<Z> <N>",((std::string)"The 'ZN' command outputs ")+
@@ -843,7 +781,17 @@ void nucleus_bin::setup_cli(o2scl::cli &cl) {
      (this,&nucleus_bin::refs),o2scl::cli::comm_option_both},
     {0,"fit-method","Desc",
      1,1,"","",new o2scl::comm_option_mfptr<nucleus_bin>
-     (this,&nucleus_bin::fit_method),o2scl::cli::comm_option_both}
+     (this,&nucleus_bin::fit_method),o2scl::cli::comm_option_both},
+    {0,"store-fits",
+     "Store the current best-fit mass formula parameters to disk",
+     0,0,"",((std::string)"The 'store-fits' command writes the ")+
+     "current best-fit parameters for all of the mass formulas "+
+     "(i.e. those most recently computed by the 'fit' command) "+
+     "to the 'nucleus_bin_data.o2' file in the O2scl data "+
+     "directory, so that they are automatically reloaded the "+
+     "next time the 'nucleus' command is used.",
+     new o2scl::comm_option_mfptr<nucleus_bin>
+     (this,&nucleus_bin::store_fits),o2scl::cli::comm_option_both}
   };
   cl.set_comm_option_vec(nopt,options);
     

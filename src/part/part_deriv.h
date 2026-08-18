@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -177,17 +177,6 @@ namespace o2scl {
    */
   typedef part_deriv_press_tl<long double> part_deriv_press_ld;
   
-#ifdef O2SCL_SET_MULTIP
-  
-  /** \brief 25-digit precision version of \ref
-      o2scl::part_deriv_press_tl
-   */
-  typedef part_deriv_press_tl<boost::multiprecision::number<
-                                boost::multiprecision::cpp_dec_float<25> > >
-  part_deriv_press_cdf25;
-  
-#endif
-  
   /** \brief A fermion with derivative information
    */
   template<class fp_t=double>
@@ -297,12 +286,6 @@ namespace o2scl {
    */
   typedef fermion_deriv_tl<long double> fermion_deriv_ld;
   
-#ifdef O2SCL_SET_MULTIP
-  /** \brief 25-digit floating point version of \ref fermion_deriv_tl
-   */
-  typedef fermion_deriv_tl<cpp_dec_float_25> fermion_deriv_cdf25;
-#endif
-
   /** \brief A boson with derivative information
    */
   template<class fp_t=double>
@@ -408,12 +391,6 @@ namespace o2scl {
    */
   typedef boson_deriv_tl<long double> boson_deriv_ld;
   
-#ifdef O2SCL_SET_MULTIP
-  /** \brief 25-digit floating point version of \ref boson_deriv_tl
-   */
-  typedef boson_deriv_tl<cpp_dec_float_25> boson_deriv_cdf25;
-#endif
-
   /** \brief A part with derivative information
    */
   template<class fp_t=double>
@@ -475,12 +452,6 @@ namespace o2scl {
    */
   typedef part_deriv_tl<long double> part_deriv_ld;
   
-#ifdef O2SCL_SET_MULTIP
-  /** \brief 25-digit floating point version of \ref part_deriv_tl
-   */
-  typedef part_deriv_tl<cpp_dec_float_25> part_deriv_cdf25;
-#endif
-
   /** \brief Base quantities for thermodynamic derivatives
 
       The quantities \f$ c_P \f$ computed by 

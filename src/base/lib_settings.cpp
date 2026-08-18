@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -318,10 +318,9 @@ void lib_settings_class::get_python_path(std::vector<std::string> &vs,
     cout << "Importing sys." << endl;
   }
   PyObject *sys_mod=PyImport_ImportModule("sys");
-  cout << "C:" << sys_mod << std::endl;
   if (sys_mod==0) {
-    O2SCL_ERR2("Import system module failed in",
-               "funct_python::set_function().",
+    O2SCL_ERR2("Import system module failed in ",
+               "lib_settings_class::get_python_path().",
                o2scl::exc_efailed);
   }
   
@@ -331,8 +330,8 @@ void lib_settings_class::get_python_path(std::vector<std::string> &vs,
   }
   PyObject *sys_path=PyObject_GetAttrString(sys_mod,"path");
   if (sys_path==0) {
-    O2SCL_ERR2("Obtain sys.path failed in",
-               "funct_python::set_function().",
+    O2SCL_ERR2("Obtain sys.path failed in" ,
+               "lib_settings_class::get_python_path().",
                o2scl::exc_efailed);
   }
   if (verbose>0) {
@@ -666,6 +665,14 @@ bool lib_settings_class::readline_support() {
 
 bool lib_settings_class::cuda_support() {
 #ifdef O2SCL_SET_CUDA
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool lib_settings_class::libtorch_support() {
+#ifdef O2SCL_SET_LIBTORCH
   return true;
 #else
   return false;

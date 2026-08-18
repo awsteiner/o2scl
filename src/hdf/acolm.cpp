@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -100,6 +100,13 @@ acol_manager::acol_manager() : cset(this,&acol_manager::comm_set),
   type_list.push_back("prob_dens_mdim_kde");
   type_list.push_back("vec_vec_string");
   type_list.push_back("vec_vec_double");
+  type_list.push_back("nucmass_semi_empirical");
+  type_list.push_back("nucmass_ldrop_pair");
+  type_list.push_back("nucmass_frdm");
+  type_list.push_back("nucmass_dz_fit");
+  type_list.push_back("nucmass_dz_fit_33");
+  type_list.push_back("nucmass_frdm_shell");
+  type_list.push_back("nucmass_ldrop_shell");
   vector_sort<vector<string>,string>(type_list.size(),type_list);
   
   {

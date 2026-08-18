@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -431,7 +431,7 @@ namespace o2scl {
       which is not included here.
 
       This class is used by \ref fermion_rel_ld and
-      \ref fermion_rel_cdf25.
+      \ref fermion_rel_fp25.
 
       \verbatim embed:rst
       
@@ -611,8 +611,8 @@ namespace o2scl {
     /// \name The base integrators
     //@{
 #ifdef O2SCL_SET_MULTIP
-    inte_kronrod_boost<61,cpp_dec_float_25,cpp_dec_float_35,
-                       cpp_dec_float_50,cpp_dec_float_100> ikb;
+    inte_kronrod_boost<61,o2fp_25,o2fp_35,
+                       o2fp_50,o2fp_100> ikb;
 #else
     inte_kronrod_boost<61,double,double,double,double> ikb;
 #endif

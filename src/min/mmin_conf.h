@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -86,6 +86,9 @@ namespace o2scl {
     /// Memory size
     size_t dim;
 
+    /// Number of function evaluations used so far in the current call
+    size_t n_evals;
+
     /// Take a step
     void take_step(const vec_t &x, const vec_t &px,
 		   double stepx, double lambda, vec_t &x1x, 
@@ -149,14 +152,21 @@ namespace o2scl {
 
 	// Evaluate the function
 	fb=(*func)(dim,x1x);
-	  
+	n_evals++;
+
 	trial_failed=false;
 	if (fb >= fa  && stepb > 0.0) {
-	  // [GSL] downhill step failed, reduce step-size and try again 
+	  // [GSL] downhill step failed, reduce step-size and try again
 	  fc = fb;
 	  stepc = stepb;
 	  trial_failed=true;
 	}
+
+	// Stop retrying once the function-evaluation budget is
+	// exhausted, even if the downhill step technically failed;
+	// the caller (iterate()) will detect this via n_evals on
+	// its next check and stop as well.
+	if (max_evals>0 && n_evals>=max_evals) trial_failed=false;
 
       } while (trial_failed);
 
@@ -214,7 +224,14 @@ namespace o2scl {
 
 	if (xiter > nmaxiter) {
 	  // Exceeded maximum number of iterations
-	  return;  
+	  return;
+	}
+
+	if (max_evals>0 && n_evals>=max_evals) {
+	  // Exceeded the function-evaluation budget; stop without
+	  // spending another evaluation, leaving *f, *xstep, and
+	  // *gnorm_u at the best point found so far.
+	  return;
 	}
 	
 	{
@@ -243,7 +260,8 @@ namespace o2scl {
 	take_step (x, xp, stepm, lambda, x1x, dx1x);
 
 	fm=(*func)(dim,x1x);
-	
+	n_evals++;
+
 	if (fm > fb) {
 
 	  if (fm < fv) {
@@ -326,14 +344,54 @@ namespace o2scl {
       
     /// Default automatic \gradient object
     def_auto_grad_t def_grad;
-      
+
+    /** \brief The maximum total number of function evaluations
+        (default 0)
+
+        If zero (the default), then the number of function
+        evaluations is unbounded and only \ref
+        o2scl::mmin_base::ntrial iterations limits the search,
+        exactly as before this option was added. If nonzero, the
+        search also stops once this many evaluations of the
+        function have been used, even if \ref
+        o2scl::mmin_base::ntrial iterations have not yet elapsed.
+        This follows the convention described in the documentation
+        of \ref o2scl::mmin_base and mirrors \ref
+        o2scl::cma_es::max_evals, making it possible to compare
+        \ref o2scl::mmin_conf and \ref o2scl::mmin_conp to other
+        minimizers on a common, algorithm-neutral evaluation
+        budget. Shared here in \ref mmin_gsl_base so that both
+        descendants need only one copy.
+
+        \note Each call to \ref intermediate_point() or \ref min()
+        always evaluates the function at least once before it can
+        check the budget, so \ref last_n_evals may exceed \c
+        max_evals by a handful of evaluations (bounded by how many
+        line-search steps a single \ref
+        o2scl::mmin_conf::iterate()/\ref o2scl::mmin_conp::iterate()
+        call needs); it will not run away unboundedly.
+    */
+    size_t max_evals;
+
+    /** \brief The number of function evaluations used by the most
+        recent call to <tt>mmin()</tt> or <tt>mmin_de()</tt>
+        (default 0)
+
+        This is analogous to \ref o2scl::mmin_base::last_ntrial,
+        but counts function evaluations rather than iterations.
+    */
+    size_t last_n_evals;
+
     mmin_gsl_base() {
       deriv_h=1.0e-4;
       nmaxiter=10;
       grad_given=false;
       agrad=&def_grad;
+      max_evals=0;
+      n_evals=0;
+      last_n_evals=0;
     }
-      
+
     /// Set the function
     int base_set(func_t &ufunc, auto_grad_t &u_def_grad) {
       func=&ufunc;
@@ -501,6 +559,7 @@ namespace o2scl {
       /* [GSL] Evaluate function and gradient at new point xc */
 	
       fc=(*this->func)(this->dim,x1);
+      this->n_evals++;
 
       if (fc < fa) {
 
@@ -614,6 +673,7 @@ namespace o2scl {
     
       /// Evaluate the function and its gradient
       it_min=ufunc(this->dim,x);
+      this->n_evals++;
       this->agrad->set_function(ufunc);
       (*this->agrad)(this->dim,x,ugg);
 	
@@ -650,6 +710,7 @@ namespace o2scl {
 
       // Evaluate the function and its gradient
       it_min=ufunc(this->dim,x);
+      this->n_evals++;
       udfunc(this->dim,x,ugg);
 	
       /* Use the gradient as the initial direction */
@@ -682,45 +743,53 @@ namespace o2scl {
       }
 
       int xiter=0, status;
-	
+
       allocate(nn);
-	
+
+      this->n_evals=0;
       set(xx,step_size,lmin_tol,ufunc);
-	
+
       do {
 
 	xiter++;
-	  
+
 	status=iterate();
-	  
+
 	if (status) {
 	  break;
 	}
-	  
+
 	// Equivalent to gsl_multimin_test_gradient with
 	// additional code to print out present iteration
 
 	double norm=o2scl_cblas::dnrm2(nn,ugg);
-	  
+
 	if(this->verbose>0) {
 	  this->print_iter(nn,ugx,it_min,xiter,
 			   norm,this->tol_rel,type());
 	}
-    
+
 	if (norm<this->tol_rel) status=success;
 	else status=gsl_continue;
 
-      } while (status==gsl_continue && xiter < this->ntrial);
+      } while (status==gsl_continue && xiter < this->ntrial &&
+               (this->max_evals==0 || this->n_evals<this->max_evals));
 
       for(size_t i=0;i<nn;i++) xx[i]=ugx[i];
       fmin=it_min;
-	
+
       free();
       this->last_ntrial=xiter;
-	
+      this->last_n_evals=this->n_evals;
+
       if (status==gsl_continue && xiter==this->ntrial) {
 	std::string err="Exceeded max number of iterations, "+
 	  dtos(this->ntrial)+", in mmin_conf::mmin().";
+	O2SCL_CONV_RET(err.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (status==gsl_continue && this->max_evals>0 &&
+                 this->n_evals>=this->max_evals) {
+	std::string err="Exceeded max number of function evaluations, "+
+	  dtos(this->max_evals)+", in mmin_conf::mmin().";
 	O2SCL_CONV_RET(err.c_str(),exc_emaxiter,this->err_nonconv);
       }
 
@@ -739,45 +808,53 @@ namespace o2scl {
       }
 
       int xiter=0, status;
-	
+
       allocate(nn);
-	
+
+      this->n_evals=0;
       set_de(xx,step_size,lmin_tol,ufunc,udfunc);
-	
+
       do {
 	xiter++;
-	  
+
 	status=iterate();
-	  
+
 	if (status) {
 	  break;
 	}
-	  
+
 	// Equivalent to gsl_multimin_test_gradient with
 	// additional code to print out present iteration
 
 	double norm=o2scl_cblas::dnrm2(nn,ugg);
-	  
+
 	if(this->verbose>0) {
 	  this->print_iter(nn,ugx,it_min,xiter,
 			   norm,this->tol_rel,type());
 	}
-    
+
 	if (norm<this->tol_rel) status=success;
 	else status=gsl_continue;
 
       }
-      while (status==gsl_continue && xiter < this->ntrial);
-     
+      while (status==gsl_continue && xiter < this->ntrial &&
+             (this->max_evals==0 || this->n_evals<this->max_evals));
+
       for(size_t i=0;i<nn;i++) xx[i]=ugx[i];
       fmin=it_min;
-	
+
       free();
       this->last_ntrial=xiter;
+      this->last_n_evals=this->n_evals;
 
       if (status==gsl_continue && xiter==this->ntrial) {
 	std::string err="Exceeded max number of iterations, "+
 	  dtos(this->ntrial)+", in mmin_conf::mmin().";
+	O2SCL_CONV_RET(err.c_str(),exc_emaxiter,this->err_nonconv);
+      } else if (status==gsl_continue && this->max_evals>0 &&
+                 this->n_evals>=this->max_evals) {
+	std::string err="Exceeded max number of function evaluations, "+
+	  dtos(this->max_evals)+", in mmin_conf::mmin().";
 	O2SCL_CONV_RET(err.c_str(),exc_emaxiter,this->err_nonconv);
       }
 

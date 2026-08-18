@@ -1,6 +1,6 @@
 /* ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,6 +35,7 @@
 #include <o2scl/nucleus.h>
 #include <o2scl/constants.h>
 #include <o2scl/table.h>
+#include <o2scl/hdf_file.h>
 #include <o2scl/inte_qagiu_gsl.h>
 #include <o2scl/root_cern.h>
 #include <o2scl/root_brent_gsl.h>
@@ -218,7 +219,7 @@ namespace o2scl {
     virtual ~nucmass() {};
 
     /// Return the type, \c "nucmass".
-    virtual const char *type() { return "nucmass"; }
+    virtual const char *type() const { return "nucmass"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus
@@ -374,7 +375,7 @@ namespace o2scl {
     std::string reference;
     
     /// Return the type, \c "nucmass_table".
-    virtual const char *type() { return "nucmass_table"; }
+    virtual const char *type() const { return "nucmass_table"; }
 
     /// Returns true if data has been loaded
     virtual bool is_loaded() { return (n>0); }
@@ -406,16 +407,84 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<double> ubvector;
 
     /// Return the type, \c "nucmass_fit_base".
-    virtual const char *type() { return "nucmass_fit_base"; }
+    virtual const char *type() const { return "nucmass_fit_base"; }
 
     /// Number of fitting parameters
     size_t nfit;
 
     /// Fix parameters from an array for fitting [abstract]
     virtual int fit_fun(size_t nv, const ubvector &x)=0;
-    
+
     /// Fill array with guess from present values for fitting [abstract]
-    virtual int guess_fun(size_t nv, ubvector &x)=0;
+    virtual int guess_fun(size_t nv, ubvector &x) const=0;
+
+    /** \brief Return a new heap-allocated copy of this object
+
+        Used by classes such as \ref nucmass_fit_iso which need an
+        independent copy of a fit formula for each of several
+        separate fits. The default implementation calls the error
+        handler; classes which support this must override it to
+        return <tt>new my_type(*this)</tt> (which requires
+        my_type's compiler-generated (or explicit) copy constructor
+        to be usable). The caller is responsible for the lifetime
+        of the returned object.
+    */
+    virtual nucmass_fit_base *clone() {
+      O2SCL_ERR2("Function clone() not implemented for this ",
+                 "nucmass_fit_base child in nucmass_fit_base::clone().",
+                 exc_eunimpl);
+      return 0;
+    }
+
+    /** \brief Fit any secondary stage on top of the (already-fit)
+        primary formula, for classes which need a training pass
+        beyond \ref fit_fun() and \ref guess_fun()
+
+        Some \ref nucmass_fit_base descendants (e.g. \ref
+        nucmass_two_interp) combine a primary formula, fit through
+        \ref fit_fun()/guess_fun() by \ref nucmass_fit::fit()'s
+        derivative-free simplex search, with a secondary
+        interpolator trained separately (e.g. by gradient descent)
+        on the residual the primary formula leaves behind. The
+        default implementation does nothing and returns 1, meaning
+        "no secondary stage"; classes with one should override this
+        to perform that training and return 0 on success. Called by
+        \ref nucmass_fit_iso::fit_interp_pass() on every fitted
+        chain, regardless of concrete type, so that class needs no
+        \c dynamic_cast or other knowledge of which chains actually
+        have a secondary stage.
+    */
+    virtual int fit_interp(std::vector<nucleus> &dist) {
+      return 1;
+    }
+
+    /** \brief Store the fit parameters in a named HDF5 group
+
+        The default implementation writes \ref nucmass::type() (as
+        the group's "o2scl_type" entry, checked by \ref
+        hdf_input()), \ref nfit, and the current parameter values
+        (obtained via \ref guess_fun()) as a flat vector named
+        "params".
+
+        Descendants whose fit state can't be reduced to a flat
+        parameter vector -- for example, a future per-isotope fit
+        based on a neural network, whose weights and architecture
+        don't reduce to \ref nfit numbers -- should override both
+        this function and \ref hdf_input() to store (and restore)
+        whatever data that fit actually needs, following the same
+        open-a-named-group convention. This allows classes such as
+        \ref nucmass_fit_iso, which store one independently-fit
+        formula per isotopic chain in its own HDF5 subgroup, to
+        serialize any nucmass_fit_base descendant without needing
+        to know anything about its internal representation.
+    */
+    virtual int hdf_output(o2scl_hdf::hdf_file &hf,
+                            std::string name) const;
+
+    /** \brief Load the fit parameters from a named HDF5 group
+        written by \ref hdf_output()
+    */
+    virtual void hdf_input(o2scl_hdf::hdf_file &hf, std::string name);
 
   };
   
@@ -475,12 +544,17 @@ namespace o2scl {
     double Epair;
     
     /// Return the type, \c "nucmass_semi_empirical".
-    virtual const char *type() { return "nucmass_semi_empirical"; }
+    virtual const char *type() const { return "nucmass_semi_empirical"; }
 
     nucmass_semi_empirical();
 
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess_d(double Z, double N);
+    
+    /// Return a new heap-allocated copy of this object
+    virtual nucmass_semi_empirical *clone() {
+      return new nucmass_semi_empirical(*this);
+    }
     
     /// Given \c Z and \c N, return the mass excess in MeV
     virtual double mass_excess(int Z, int N) {
@@ -491,7 +565,7 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
 
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
     
   };
 
@@ -567,7 +641,7 @@ namespace o2scl {
     double y;
     
     /// Return the type, \c "nucmass_dvi".
-    virtual const char *type() { return "nucmass_dvi"; }
+    virtual const char *type() const { return "nucmass_dvi"; }
 
     nucmass_dvi();
 
@@ -583,7 +657,7 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
 
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
     
   };
   

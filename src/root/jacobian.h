@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -50,28 +50,28 @@ namespace o2scl {
 #ifdef O2SCL_SET_MULTIP
 
   typedef std::function<
-    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_25> &,
-	size_t,boost::numeric::ublas::vector<cpp_dec_float_25> &,
-	boost::numeric::ublas::matrix<cpp_dec_float_25> &) >
-  jac_funct_cdf25;
+    int(size_t,boost::numeric::ublas::vector<o2fp_25> &,
+	size_t,boost::numeric::ublas::vector<o2fp_25> &,
+	boost::numeric::ublas::matrix<o2fp_25> &) >
+  jac_funct_fp25;
   
   typedef std::function<
-    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_35> &,
-	size_t,boost::numeric::ublas::vector<cpp_dec_float_35> &,
-	boost::numeric::ublas::matrix<cpp_dec_float_35> &) >
-  jac_funct_cdf35;
+    int(size_t,boost::numeric::ublas::vector<o2fp_35> &,
+	size_t,boost::numeric::ublas::vector<o2fp_35> &,
+	boost::numeric::ublas::matrix<o2fp_35> &) >
+  jac_funct_fp35;
   
   typedef std::function<
-    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_50> &,
-	size_t,boost::numeric::ublas::vector<cpp_dec_float_50> &,
-	boost::numeric::ublas::matrix<cpp_dec_float_50> &) >
-  jac_funct_cdf50;
+    int(size_t,boost::numeric::ublas::vector<o2fp_50> &,
+	size_t,boost::numeric::ublas::vector<o2fp_50> &,
+	boost::numeric::ublas::matrix<o2fp_50> &) >
+  jac_funct_fp50;
   
   typedef std::function<
-    int(size_t,boost::numeric::ublas::vector<cpp_dec_float_100> &,
-	size_t,boost::numeric::ublas::vector<cpp_dec_float_100> &,
-	boost::numeric::ublas::matrix<cpp_dec_float_100> &) >
-  jac_funct_cdf100;
+    int(size_t,boost::numeric::ublas::vector<o2fp_100> &,
+	size_t,boost::numeric::ublas::vector<o2fp_100> &,
+	boost::numeric::ublas::matrix<o2fp_100> &) >
+  jac_funct_fp100;
   
 #endif
   

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -169,6 +169,10 @@ namespace o2scl_linalg {
   };
 
   /** \brief Inverse symmetric positive matrix using Cholesky decomposition
+
+      \note Cholesky classes in \o2 only need the lower triangular part
+      of the input matrix to be filled. The full inverse (not just either
+      the upper or lower triangular part) is computed. 
    */
   template <class mat_t=boost::numeric::ublas::matrix<double>,
             class fp_t=double> 
@@ -189,7 +193,7 @@ namespace o2scl_linalg {
     virtual int invert_det(size_t n, const mat_t &A, mat_t &A_inv,
                             fp_t &A_det) {
       A_inv=A;
-      cholesky_decomp(n,A_inv,false);
+      cholesky_decomp_nocopy(n,A_inv,false);
       fp_t sqrt_det=cholesky_det(n,A_inv);
       A_det=sqrt_det*sqrt_det;
       cholesky_invert(n,A_inv);
@@ -201,14 +205,14 @@ namespace o2scl_linalg {
     */
     virtual fp_t det(size_t n, const mat_t &A) {
       mat_t A_copy=A;
-      cholesky_decomp(n,A_copy,false);
+      cholesky_decomp_nocopy(n,A_copy,false);
       fp_t sqrt_det=cholesky_det(n,A_copy);
       return sqrt_det*sqrt_det;
     }
     
     /// Invert matrix \c A in place
     virtual int invert_inplace(size_t n, mat_t &A) {
-      cholesky_decomp(n,A,false);
+      cholesky_decomp_nocopy(n,A,false);
       cholesky_invert(n,A);
       return 0;
     }

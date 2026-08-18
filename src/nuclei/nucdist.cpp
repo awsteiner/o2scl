@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -108,13 +108,14 @@ void o2scl::nucdist_pair_set(vector<nucleus> &dist, nucmass &nm,
   return;
 }
 
-void o2scl::nucdist_set_ext
+void o2scl::nucdist_split_iso
 (vector<nucleus> &dist, vector<nucleus> &dist_ext, nucmass &nm,
- std::string expr, int maxA, int n_chop) {
+ std::string expr, int maxA, int n_hold) {
   
   nucleus n;
 
   if (dist.size()>0) dist.clear();
+  if (dist_ext.size()>0) dist_ext.clear();
 
   /// The function parser
   calc_utf8<> calc;
@@ -122,11 +123,11 @@ void o2scl::nucdist_set_ext
   calc.compile(expr.c_str(),&vars);
   
   // For each isotope
-  for(int Z=1;Z<=maxA;Z++) {
+  for(int Z=1;Z<=maxA-1;Z++) {
     
     int maxN=1, minN=0;
-    
-    for(int N=1;N<=maxA;N++) {
+
+    for(int N=1;N<=maxA-Z;N++) {
 
       vars["Z"]=Z;
       vars["A"]=N+Z;
@@ -143,23 +144,24 @@ void o2scl::nucdist_set_ext
       }
     }
 
-    if (minN>=maxN || maxN-minN<=n_chop) {
-      std::cerr << "Z,minN,maxN: "
-                << Z << " " << minN << " " << maxN << std::endl;
-      O2SCL_ERR("Could not find enough isotopes for extrapolation.",
-                o2scl::exc_einval);
-    }
+    if (minN!=0) {
 
-    for (int N=minN;N<=maxN;N++) {
-      dist_ext.push_back(n);
-      nm.get_nucleus(Z,N,dist_ext[dist_ext.size()-1]);
-      dist_ext.push_back(n);
-      if (N<=maxN-n_chop) {
-        dist.push_back(n);
-        nm.get_nucleus(Z,N,dist[dist.size()-1]);
+      if (minN>=maxN || maxN-minN<=n_hold) {
+        std::cerr << "Z,minN,maxN: "
+                  << Z << " " << minN << " " << maxN << std::endl;
+        O2SCL_ERR("Could not find enough isotopes for extrapolation.",
+                  o2scl::exc_einval);
+      }
+      
+      for (int N=minN;N<=maxN;N++) {
+        nm.get_nucleus(Z,N,n);
+        if (N<=maxN-n_hold) {
+          dist.push_back(n);
+        } else {
+          dist_ext.push_back(n);
+        }
       }
     }
-
   }
 
   return;

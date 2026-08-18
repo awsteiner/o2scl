@@ -2,19 +2,19 @@
 # Basic variables
 # ------------------------------------------------------------
 
-MIN_SRCS = mmin_bfgs2.cpp
+MIN_SRCS = mmin_bfgs2.cpp min_python.cpp
 
 HEADER_VAR = min.h min_cern.h min_brent_gsl.h min_brent_boost.h mmin_fix.h \
 	mmin.h mmin_conf.h mmin_simp2.h \
 	mmin_conp.h mmin_bfgs2.h mmin_constr.h mmin_constr_pgrad.h \
 	mmin_constr_spg.h mmin_constr_gencan.h min_quad_golden.h diff_evo.h \
-	diff_evo_adapt.h
+	diff_evo_adapt.h diff_evo_para.h min_python.h cma_es.h
 
 TEST_VAR = min_cern.scr min_brent_gsl.scr min_brent_boost.scr \
 	mmin_conf.scr mmin_conp.scr mmin_bfgs2.scr \
 	mmin_fix.scr mmin_constr_pgrad.scr mmin_constr_spg.scr \
 	min.scr mmin_simp2.scr min_quad_golden.scr diff_evo.scr \
-	diff_evo_adapt.scr
+	diff_evo_adapt.scr diff_evo_para.scr cma_es.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -52,7 +52,7 @@ check_PROGRAMS = min_cern_ts min_brent_gsl_ts \
 	mmin_conf_ts mmin_conp_ts mmin_bfgs2_ts \
 	mmin_fix_ts mmin_constr_pgrad_ts mmin_constr_spg_ts \
 	min_ts mmin_simp2_ts min_quad_golden_ts diff_evo_ts \
-	diff_evo_adapt_ts min_brent_boost_ts
+	diff_evo_adapt_ts diff_evo_para_ts min_brent_boost_ts cma_es_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -93,6 +93,8 @@ mmin_constr_pgrad_ts_LDADD = $(ADDL_TEST_LIBS)
 mmin_constr_spg_ts_LDADD = $(ADDL_TEST_LIBS)
 diff_evo_ts_LDADD = $(ADDL_TEST_LIBS)
 diff_evo_adapt_ts_LDADD = $(ADDL_TEST_LIBS)
+diff_evo_para_ts_LDADD = $(ADDL_TEST_LIBS)
+cma_es_ts_LDADD = $(ADDL_TEST_LIBS)
 min_ts_LDADD = $(ADDL_TEST_LIBS)
 
 min_cern_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -108,6 +110,8 @@ mmin_constr_pgrad_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 mmin_constr_spg_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 diff_evo_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 diff_evo_adapt_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+diff_evo_para_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+cma_es_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 min_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 min_cern.scr: min_cern_ts$(EXEEXT) 
@@ -134,8 +138,12 @@ mmin_constr_spg.scr: mmin_constr_spg_ts$(EXEEXT)
 	./mmin_constr_spg_ts$(EXEEXT) > mmin_constr_spg.scr
 diff_evo.scr: diff_evo_ts$(EXEEXT) 
 	./diff_evo_ts$(EXEEXT) > diff_evo.scr
-diff_evo_adapt.scr: diff_evo_adapt_ts$(EXEEXT) 
+diff_evo_adapt.scr: diff_evo_adapt_ts$(EXEEXT)
 	./diff_evo_adapt_ts$(EXEEXT) > diff_evo_adapt.scr
+diff_evo_para.scr: diff_evo_para_ts$(EXEEXT)
+	./diff_evo_para_ts$(EXEEXT) > diff_evo_para.scr
+cma_es.scr: cma_es_ts$(EXEEXT)
+	./cma_es_ts$(EXEEXT) > cma_es.scr
 min.scr: min_ts$(EXEEXT) 
 	./min_ts$(EXEEXT) > min.scr
 
@@ -152,6 +160,8 @@ mmin_constr_pgrad_ts_SOURCES = mmin_constr_pgrad_ts.cpp
 mmin_constr_spg_ts_SOURCES = mmin_constr_spg_ts.cpp
 diff_evo_ts_SOURCES = diff_evo_ts.cpp
 diff_evo_adapt_ts_SOURCES = diff_evo_adapt_ts.cpp
+diff_evo_para_ts_SOURCES = diff_evo_para_ts.cpp
+cma_es_ts_SOURCES = cma_es_ts.cpp
 min_ts_SOURCES = min_ts.cpp
 
 # ------------------------------------------------------------
@@ -163,6 +173,15 @@ noinst_LTLIBRARIES = libo2scl_min.la
 libo2scl_min_la_SOURCES = $(MIN_SRCS)
 
 am__libo2scl_min_la_SOURCES_DIST = $(MIN_SRCS)
+
+# ------------------------------------------------------------
+
+interface: empty
+	../../bin/yanic min.i min_python $(O2SCLPY_ROOT)/o2sclpy/min \
+		$(O2SCLPY_ROOT)/doc/min  ../../bin/yanic_header.txt \
+		| tee min_python.yanic.out
+
+empty:
 
 # ------------------------------------------------------------
 # Misc

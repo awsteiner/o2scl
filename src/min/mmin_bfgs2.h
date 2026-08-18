@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -50,6 +50,18 @@ namespace o2scl {
     virtual double wrap_df(double alpha)=0;
     /// Function and derivative
     virtual void wrap_fdf(double alpha, double *f, double *df)=0;
+    /** \brief True if the owning minimizer's function-evaluation
+        budget (\ref o2scl::mmin_bfgs2::max_evals) has been reached
+
+        Used by \ref o2scl::mmin_linmin_gsl::minimize() to cut its
+        internal bracketing/sectioning line search short once the
+        budget is exhausted, since that search can otherwise use up
+        to <tt>bracket_iters+section_iters</tt> (200) evaluations of
+        its own within a single call, far exceeding a small \ref
+        o2scl::mmin_bfgs2::max_evals budget before \ref
+        o2scl::mmin_bfgs2::iterate() ever gets a chance to check it.
+    */
+    virtual bool over_budget()=0;
   };
 
   /** \brief Wrapper class for the mmin_bfgs2 minimizer
@@ -101,7 +113,7 @@ namespace o2scl {
   double x_cache_key;
   double g_cache_key;
   //@}
-    
+
   /// Move to a new point, using the cached value if possible
   void moveto(double alpha) {
 
@@ -132,6 +144,7 @@ namespace o2scl {
     }
     moveto(alpha);
     f_alpha=(*func)(dim,av_x_alpha);
+    if (n_evals_ptr!=0) (*n_evals_ptr)++;
 
     f_cache_key=alpha;
     return f_alpha;
@@ -175,6 +188,7 @@ namespace o2scl {
       
     moveto(alpha);
     f_alpha=(*func)(dim,av_x_alpha);
+    if (n_evals_ptr!=0) (*n_evals_ptr)++;
     if (grad_given) {
       (*dfunc)(dim,av_x_alpha,av_g_alpha);
     } else {
@@ -193,6 +207,38 @@ namespace o2scl {
   }
     
   public:
+
+  mmin_wrapper_gsl() {
+    n_evals_ptr=0;
+    max_evals_ptr=0;
+  }
+
+  /** \brief Pointer to the owning \ref o2scl::mmin_bfgs2 object's
+      function-evaluation counter, set by the owner right after
+      \ref prepare_wrapper()
+
+      Used to increment the owner's evaluation count exactly once
+      per actual (non-cached) call to the user's function, from
+      \ref wrap_f() and \ref wrap_fdf(), following the \c
+      max_evals/\c n_evals convention described in the
+      documentation of \ref o2scl::mmin_base.
+  */
+  size_t *n_evals_ptr;
+
+  /** \brief Pointer to the owning \ref o2scl::mmin_bfgs2 object's
+      \ref o2scl::mmin_bfgs2::max_evals budget, set by the owner
+      right after \ref prepare_wrapper()
+
+      Zero (the null pointer default, matching an unset \c
+      max_evals of 0) means unbounded. See \ref over_budget().
+  */
+  size_t *max_evals_ptr;
+
+  /// See \ref o2scl::mmin_wrap_gsl::over_budget()
+  virtual bool over_budget() {
+    return (n_evals_ptr!=0 && max_evals_ptr!=0 && *max_evals_ptr>0 &&
+            *n_evals_ptr>=*max_evals_ptr);
+  }
 
   /// Temporary storage
   vec_t av_x_alpha;
@@ -424,16 +470,55 @@ namespace o2scl {
 
   /// Automatic gradient object
   auto_grad_t *agrad;
-    
+
+  /// Number of function evaluations used so far in the current call
+  size_t n_evals;
+
   public:
-     
+
   mmin_bfgs2() {
     // The default values of lmin_tol and step_size from the
     // example in the GSL documentation
     lmin_tol=1.0e-4;
     step_size=0.01;
     agrad=&def_grad;
+    max_evals=0;
+    n_evals=0;
+    last_n_evals=0;
   }
+
+  /** \brief The maximum total number of function evaluations
+      (default 0)
+
+      If zero (the default), then the number of function
+      evaluations is unbounded and only \ref
+      o2scl::mmin_base::ntrial iterations limits the search,
+      exactly as before this option was added. If nonzero, the
+      search also stops once this many evaluations of the function
+      have been used, even if \ref o2scl::mmin_base::ntrial
+      iterations have not yet elapsed. This follows the convention
+      described in the documentation of \ref o2scl::mmin_base and
+      mirrors \ref o2scl::cma_es::max_evals, making it possible to
+      compare \ref mmin_bfgs2 to other minimizers on a common,
+      algorithm-neutral evaluation budget.
+
+      \note The internal line search (\ref
+      o2scl::mmin_linmin_gsl::minimize()) always evaluates the
+      function (and gradient) once at its starting point before it
+      can check the budget, so \ref last_n_evals may exceed \ref
+      max_evals by exactly one evaluation; it will never exceed it
+      by more than that.
+  */
+  size_t max_evals;
+
+  /** \brief The number of function evaluations used by the most
+      recent call to <tt>mmin()</tt> or <tt>mmin_de()</tt> (default
+      0)
+
+      This is analogous to \ref o2scl::mmin_base::last_ntrial, but
+      counts function evaluations rather than iterations.
+  */
+  size_t last_n_evals;
     
   virtual ~mmin_bfgs2() {}
 
@@ -613,8 +698,9 @@ namespace o2scl {
     delta_f=0;
       
     st_x=&x;
-      
+
     st_f=ufunc(dim,x);
+    n_evals++;
     agrad->set_function(ufunc);
     (*agrad)(dim,x,st_grad);
       
@@ -637,7 +723,9 @@ namespace o2scl {
     /* Prepare the wrapper */
       
     wrap.prepare_wrapper(ufunc,0,x0,st_f,g0,p,agrad);
-      
+    wrap.n_evals_ptr=&n_evals;
+    wrap.max_evals_ptr=&max_evals;
+
     /* Prepare 1d minimisation parameters */
 
     rho=0.01;
@@ -645,11 +733,11 @@ namespace o2scl {
     tau1=9;
     tau2=0.05;
     tau3=0.5;
-    // use cubic interpolation where possible 
-    order=3;  
+    // use cubic interpolation where possible
+    order=3;
 
     return success;
- 
+
   }
 
   /// Set the function, the gradient, and the initial guess
@@ -661,8 +749,9 @@ namespace o2scl {
     delta_f=0;
       
     st_x=&x;
-      
+
     st_f=ufunc(dim,x);
+    n_evals++;
     udfunc(dim,x,st_grad);
       
     /* Use the gradient as the initial direction */
@@ -684,7 +773,9 @@ namespace o2scl {
     /* Prepare the wrapper */
       
     wrap.prepare_wrapper(ufunc,&udfunc,x0,st_f,g0,p,agrad);
-      
+    wrap.n_evals_ptr=&n_evals;
+    wrap.max_evals_ptr=&max_evals;
+
     /* Prepare 1d minimisation parameters */
 
     rho=0.01;
@@ -692,11 +783,11 @@ namespace o2scl {
     tau1=9;
     tau2=0.05;
     tau3=0.5;
-    // use cubic interpolation where possible 
-    order=3;  
+    // use cubic interpolation where possible
+    order=3;
 
     return success;
- 
+
   }
 
   /// The size of the first trial step (default 0.01)
@@ -723,6 +814,7 @@ namespace o2scl {
 
     allocate(nn);
 
+    n_evals=0;
     set(xx,step_size,lmin_tol,ufunc);
 
     do {
@@ -730,16 +822,16 @@ namespace o2scl {
       xiter++;
 
       status=iterate();
-	
+
       if (status) {
 	break;
       }
 
       // Equivalent to gsl_multimin_test_gradient with
       // additional code to print out present iteration
-	
+
       double norm=o2scl_cblas::dnrm2(nn,st_grad);
-	
+
       if(this->verbose>0) {
 	this->print_iter(nn,*st_x,st_f,xiter,
 			 norm,this->tol_rel,"mmin_bfgs2");
@@ -750,17 +842,23 @@ namespace o2scl {
       } else {
 	status=gsl_continue;
       }
-	
-    } while (status == gsl_continue && xiter < this->ntrial);
+
+    } while (status == gsl_continue && xiter < this->ntrial &&
+             (max_evals==0 || n_evals<max_evals));
 
     for(size_t i=0;i<nn;i++) xx[i]=(*st_x)[i];
     fmin=st_f;
-      
+
     free();
     this->last_ntrial=xiter;
-      
+    last_n_evals=n_evals;
+
     if (status==gsl_continue && xiter==this->ntrial) {
       O2SCL_CONV_RET("Too many iterations in mmin_bfgs2::mmin().",
+		     exc_emaxiter,this->err_nonconv);
+    } else if (status==gsl_continue && max_evals>0 &&
+               n_evals>=max_evals) {
+      O2SCL_CONV_RET("Too many function evaluations in mmin_bfgs2::mmin().",
 		     exc_emaxiter,this->err_nonconv);
     }
     return status;
@@ -781,22 +879,23 @@ namespace o2scl {
 
     allocate(nn);
 
+    n_evals=0;
     set_de(xx,step_size,lmin_tol,ufunc,udfunc);
 
     do {
       xiter++;
 
       status=iterate();
-	
+
       if (status) {
 	break;
       }
 
       // Equivalent to gsl_multimin_test_gradient with
       // additional code to print out present iteration
-	
+
       double norm=o2scl_cblas::dnrm2(nn,st_grad);
-	
+
       if(this->verbose>0) {
 	this->print_iter(nn,*st_x,st_f,xiter,
 			 norm,this->tol_rel,"mmin_bfgs2");
@@ -805,16 +904,23 @@ namespace o2scl {
       if (norm<this->tol_rel) status=success;
       else status=gsl_continue;
 
-    } while (status == gsl_continue && xiter < this->ntrial);
-      
+    } while (status == gsl_continue && xiter < this->ntrial &&
+             (max_evals==0 || n_evals<max_evals));
+
     for(size_t i=0;i<nn;i++) xx[i]=(*st_x)[i];
     fmin=st_f;
-      
+
     free();
     this->last_ntrial=xiter;
+    last_n_evals=n_evals;
 
     if (status==gsl_continue && xiter==this->ntrial) {
       O2SCL_CONV_RET("Too many iterations in mmin_bfgs2::mmin_de().",
+		     exc_emaxiter,this->err_nonconv);
+    } else if (status==gsl_continue && max_evals>0 &&
+               n_evals>=max_evals) {
+      O2SCL_CONV_RET("Too many function evaluations in "
+                     "mmin_bfgs2::mmin_de().",
 		     exc_emaxiter,this->err_nonconv);
     }
 

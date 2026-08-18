@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,13 +24,16 @@
 #include <o2scl/inte_adapt_cern.h>
 #include <o2scl/polylog.h>
 
+#ifdef O2SCL_SET_MULTIP
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/multiprecision/mpfr.hpp>
+#endif
 
 using namespace std;
 using namespace o2scl;
 
+#ifdef O2SCL_SET_MULTIP
 typedef
 boost::multiprecision::number<boost::multiprecision::cpp_dec_float<25> >
 cpp_dec_float_25;
@@ -48,6 +51,7 @@ cpp_dec_float_75;
 
 typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 typedef boost::multiprecision::mpfr_float_100 mpfr_float_100;
+#endif
 
 int main(void) {
 
@@ -56,6 +60,7 @@ int main(void) {
   test_mgr t;
   t.set_output_level(1);
   
+#ifdef O2SCL_SET_MULTIP
   gen_test_number<> gn;
   gen_test_number<long double> gn_ld;
   gen_test_number<cpp_dec_float_25> gn_cdf25;
@@ -235,6 +240,8 @@ int main(void) {
     }
   }
   cout << endl;
+
+#endif
   
   t.report();
   return 0;

@@ -7,19 +7,20 @@ NUCLEI_SRCS = nucmass.cpp nucdist.cpp nucleus.cpp nucmass_fit.cpp \
 	nucmass_dz.cpp nucmass_ame.cpp nucmass_hfb.cpp nucmass_ktuy.cpp \
 	nucmass_dglg.cpp nucmass_wlw.cpp nucmass_sdnp.cpp \
 	nucmass_densmat.cpp nucmass_gen.cpp nuclei_python.cpp \
-	part_funcs.cpp nucmass_two_interp.cpp
+	part_funcs.cpp nucmass_fit_iso.cpp
 
 HEADER_VAR = nucmass.h nucdist.h nucleus.h nucmass_fit.h \
 	reaction_lib.h hdf_nucmass_io.h nucmass_frdm.h \
 	nucmass_dz.h nucmass_ame.h nucmass_hfb.h nucmass_ktuy.h \
 	nucmass_dglg.h nucmass_wlw.h nucmass_sdnp.h \
 	nucmass_densmat.h nucmass_gen.h nuclei_python.h \
-	part_funcs.h nucmass_two_interp.h
+	part_funcs.h nucmass_two_interp.h nucmass_fit_iso.h
 
 TEST_VAR = nucmass.scr nucdist.scr nucleus.scr nucmass_fit.scr \
 	reaction_lib.scr hdf_nucmass_io.scr nucmass_frdm.scr \
 	nucmass_dz.scr nucmass_densmat.scr nucmass_gen.scr nucmass_ame.scr \
-	part_funcs.scr
+	part_funcs.scr nucmass_fit_iso.scr nucmass_two_interp.scr \
+	nucmass_fit_iso_para.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -77,7 +78,8 @@ pkginclude_HEADERS = $(HEADER_VAR)
 check_PROGRAMS = nucmass_ts nucdist_ts nucleus_ts \
 	nucmass_fit_ts reaction_lib_ts hdf_nucmass_io_ts nucmass_frdm_ts \
 	nucmass_dz_ts nucmass_densmat_ts nucmass_gen_ts nucmass_ame_ts \
-	part_funcs_ts
+	part_funcs_ts nucmass_fit_iso_ts nucmass_two_interp_ts \
+	nucmass_fit_iso_para_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -117,6 +119,9 @@ nucmass_ame_ts_LDADD = $(ADDL_TEST_LIBS)
 part_funcs_ts_LDADD = $(ADDL_TEST_LIBS)
 nucmass_dz_ts_LDADD = $(ADDL_TEST_LIBS)
 nucmass_densmat_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_fit_iso_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_two_interp_ts_LDADD = $(ADDL_TEST_LIBS)
+nucmass_fit_iso_para_ts_LDADD = $(ADDL_TEST_LIBS)
 
 nucmass_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 reaction_lib_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -130,6 +135,9 @@ nucmass_ame_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 part_funcs_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 nucmass_dz_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 nucmass_densmat_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_fit_iso_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_two_interp_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+nucmass_fit_iso_para_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 
 nucmass.scr: nucmass_ts$(EXEEXT)
 	./nucmass_ts$(EXEEXT) > nucmass.scr
@@ -155,6 +163,12 @@ nucmass_dz.scr: nucmass_dz_ts$(EXEEXT)
 	./nucmass_dz_ts$(EXEEXT) > nucmass_dz.scr
 nucmass_densmat.scr: nucmass_densmat_ts$(EXEEXT)
 	./nucmass_densmat_ts$(EXEEXT) > nucmass_densmat.scr
+nucmass_fit_iso.scr: nucmass_fit_iso_ts$(EXEEXT)
+	./nucmass_fit_iso_ts$(EXEEXT) > nucmass_fit_iso.scr
+nucmass_two_interp.scr: nucmass_two_interp_ts$(EXEEXT)
+	./nucmass_two_interp_ts$(EXEEXT) > nucmass_two_interp.scr
+nucmass_fit_iso_para.scr: nucmass_fit_iso_para_ts$(EXEEXT)
+	./nucmass_fit_iso_para_ts$(EXEEXT) > nucmass_fit_iso_para.scr
 
 nucmass_ts_SOURCES = nucmass_ts.cpp
 reaction_lib_ts_SOURCES = reaction_lib_ts.cpp
@@ -168,6 +182,9 @@ nucmass_ame_ts_SOURCES = nucmass_ame_ts.cpp
 part_funcs_ts_SOURCES = part_funcs_ts.cpp
 nucmass_dz_ts_SOURCES = nucmass_dz_ts.cpp
 nucmass_densmat_ts_SOURCES = nucmass_densmat_ts.cpp
+nucmass_fit_iso_ts_SOURCES = nucmass_fit_iso_ts.cpp
+nucmass_two_interp_ts_SOURCES = nucmass_two_interp_ts.cpp
+nucmass_fit_iso_para_ts_SOURCES = nucmass_fit_iso_para_ts.cpp
 
 # ------------------------------------------------------------
 # Library o2scl_nuclei

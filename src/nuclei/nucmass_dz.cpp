@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -237,7 +237,7 @@ int nucmass_dz_fit::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
 
-int nucmass_dz_fit::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dz_fit::guess_fun(size_t nv, ubvector &x) const {
   for(size_t i=0;i<10;i++) x[i]=b[i];
   return 0;
 }
@@ -584,7 +584,7 @@ int nucmass_dz_fit_33::fit_fun(size_t nv, const ubvector &x) {
   return 0;
 }
     
-int nucmass_dz_fit_33::guess_fun(size_t nv, ubvector &x) {
+int nucmass_dz_fit_33::guess_fun(size_t nv, ubvector &x) const {
   for(size_t i=0;i<33;i++) x[i]=a[i];
   return 0;
 }

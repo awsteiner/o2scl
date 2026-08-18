@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -856,31 +856,31 @@ namespace o2scl {
 #ifdef O2SCL_SET_MULTIP
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_25>::digits10+3)) {
+                        <o2fp_25>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                           <o2fp_25>::digits10+3)
+                    << "\n  for o2fp_25 integration." << std::endl;
         }
-        cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
-        cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
-        cpp_dec_float_25 res_cdf25, err_cdf25;
+        o2fp_25 a_fp25=static_cast<o2fp_25>(a);
+        o2fp_25 b_fp25=static_cast<o2fp_25>(b);
+        o2fp_25 res_fp25, err_fp25;
 
         set_nsub(10000);
-        ret=integ_err_int(func,a_cdf25,b_cdf25,res_cdf25,
-                          err_cdf25,target_tol,
+        ret=integ_err_int(func,a_fp25,b_fp25,res_fp25,
+                          err_fp25,target_tol,
                           integ_tol,func_tol);
 
         if (verbose>1) {
           std::cout << "ret,res,err,tol: " << ret << " "
-                    << res_cdf25 << " " << err_cdf25 << " "
+                    << res_fp25 << " " << err_fp25 << " "
                     << integ_tol << std::endl;
         }
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
+        if (ret==0 && err_fp25/abs(res_fp25)<integ_tol) {
+          res=static_cast<fp_t>(res_fp25);
+          err=static_cast<fp_t>(err_fp25);
           return 0;
         } else {
           target_tol/=10;
@@ -888,26 +888,26 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_35>::digits10+3)) {
+                        <o2fp_35>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                           <o2fp_35>::digits10+3)
+                    << "\n  for o2fp_35 integration." << std::endl;
         }
-        cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
-        cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
-        cpp_dec_float_35 res_cdf35, err_cdf35;
+        o2fp_35 a_fp35=static_cast<o2fp_35>(a);
+        o2fp_35 b_fp35=static_cast<o2fp_35>(b);
+        o2fp_35 res_fp35, err_fp35;
         
         set_nsub(10000);
-        ret=integ_err_int(func,a_cdf35,b_cdf35,res_cdf35,
-                          err_cdf35,target_tol,
+        ret=integ_err_int(func,a_fp35,b_fp35,res_fp35,
+                          err_fp35,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
+        if (ret==0 && err_fp35/abs(res_fp35)<integ_tol) {
+          res=static_cast<fp_t>(res_fp35);
+          err=static_cast<fp_t>(err_fp35);
           return 0;
         } else {
           target_tol/=10;
@@ -915,26 +915,26 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_50>::digits10+3)) {
+                        <o2fp_50>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                           <o2fp_50>::digits10+3)
+                    << "\n  for o2fp_50 integration." << std::endl;
         }
-        cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
-        cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
-        cpp_dec_float_50 res_cdf50, err_cdf50;
+        o2fp_50 a_fp50=static_cast<o2fp_50>(a);
+        o2fp_50 b_fp50=static_cast<o2fp_50>(b);
+        o2fp_50 res_fp50, err_fp50;
         
         set_nsub(100000);
-        ret=integ_err_int(func,a_cdf50,b_cdf50,res_cdf50,
-                          err_cdf50,target_tol,
+        ret=integ_err_int(func,a_fp50,b_fp50,res_fp50,
+                          err_fp50,target_tol,
                           integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
+        if (ret==0 && err_fp50/abs(res_fp50)<integ_tol) {
+          res=static_cast<fp_t>(res_fp50);
+          err=static_cast<fp_t>(err_fp50);
           return 0;
         } else {
           target_tol/=10;
@@ -943,7 +943,7 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err() "
-                  << "failed after cpp_dec_float_100:\n  "
+                  << "failed after o2fp_100:\n  "
                   << integ_tol << std::endl;
       }
 
@@ -1037,30 +1037,30 @@ namespace o2scl {
 #ifdef O2SCL_SET_MULTIP
       
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_25>::digits10+3)) {
+                        <o2fp_25>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                           <o2fp_25>::digits10+3)
+                    << "\n  for o2fp_25 integration." << std::endl;
         }
-        cpp_dec_float_25 a_cdf25=static_cast<cpp_dec_float_25>(a);
-        cpp_dec_float_25 res_cdf25, err_cdf25;
+        o2fp_25 a_fp25=static_cast<o2fp_25>(a);
+        o2fp_25 res_fp25, err_fp25;
 
         set_nsub(10000);
-        ret=integ_iu_err_int(func,a_cdf25,res_cdf25,
-                             err_cdf25,target_tol,
+        ret=integ_iu_err_int(func,a_fp25,res_fp25,
+                             err_fp25,target_tol,
                              integ_tol,func_tol);
 
         if (verbose>1) {
           std::cout << "ret,res,err,tol: " << ret << " "
-                    << res_cdf25 << " " << err_cdf25 << " "
+                    << res_fp25 << " " << err_fp25 << " "
                     << integ_tol << std::endl;
         }
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
+        if (ret==0 && err_fp25/abs(res_fp25)<integ_tol) {
+          res=static_cast<fp_t>(res_fp25);
+          err=static_cast<fp_t>(err_fp25);
           return 0;
         } else {
           target_tol/=10;
@@ -1068,24 +1068,24 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_35>::digits10+3)) {
+                        <o2fp_35>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                           <o2fp_35>::digits10+3)
+                    << "\n  for o2fp_35 integration." << std::endl;
         }
-        cpp_dec_float_35 a_cdf35=static_cast<cpp_dec_float_35>(a);
-        cpp_dec_float_35 res_cdf35, err_cdf35;
+        o2fp_35 a_fp35=static_cast<o2fp_35>(a);
+        o2fp_35 res_fp35, err_fp35;
         
         set_nsub(10000);
-        ret=integ_iu_err_int(func,a_cdf35,res_cdf35,
-                             err_cdf35,target_tol,
+        ret=integ_iu_err_int(func,a_fp35,res_fp35,
+                             err_fp35,target_tol,
                              integ_tol,func_tol);
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
+        if (ret==0 && err_fp35/abs(res_fp35)<integ_tol) {
+          res=static_cast<fp_t>(res_fp35);
+          err=static_cast<fp_t>(err_fp35);
           return 0;
         } else {
           target_tol/=10;
@@ -1093,25 +1093,25 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_50>::digits10+3)) {
+                        <o2fp_50>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                           <o2fp_50>::digits10+3)
+                    << "\n  for o2fp_50 integration." << std::endl;
         }
-        cpp_dec_float_50 a_cdf50=static_cast<cpp_dec_float_50>(a);
-        cpp_dec_float_50 res_cdf50, err_cdf50;
+        o2fp_50 a_fp50=static_cast<o2fp_50>(a);
+        o2fp_50 res_fp50, err_fp50;
         
         set_nsub(100000);
-        ret=integ_iu_err_int(func,a_cdf50,res_cdf50,
-                             err_cdf50,target_tol,
+        ret=integ_iu_err_int(func,a_fp50,res_fp50,
+                             err_fp50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
+        if (ret==0 && err_fp50/abs(res_fp50)<integ_tol) {
+          res=static_cast<fp_t>(res_fp50);
+          err=static_cast<fp_t>(err_fp50);
           return 0;
         } else {
           target_tol/=10;
@@ -1120,7 +1120,7 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err() "
-                  << "failed after cpp_dec_float_100:\n  "
+                  << "failed after o2fp_100:\n  "
                   << integ_tol << std::endl;
       }
 
@@ -1214,29 +1214,29 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_25>::digits10+3)) {
+                        <o2fp_25>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                           <o2fp_25>::digits10+3)
+                    << "\n  for o2fp_25 integration." << std::endl;
         }
-        cpp_dec_float_25 b_cdf25=static_cast<cpp_dec_float_25>(b);
-        cpp_dec_float_25 res_cdf25, err_cdf25;
+        o2fp_25 b_fp25=static_cast<o2fp_25>(b);
+        o2fp_25 res_fp25, err_fp25;
 
-        ret=integ_il_err_int(func,b_cdf25,res_cdf25,
-                             err_cdf25,target_tol,
+        ret=integ_il_err_int(func,b_fp25,res_fp25,
+                             err_fp25,target_tol,
                              integ_tol,func_tol);
 
         if (verbose>1) {
           std::cout << "ret,res,err,tol: " << ret << " "
-                    << res_cdf25 << " " << err_cdf25 << " "
+                    << res_fp25 << " " << err_fp25 << " "
                     << integ_tol << std::endl;
         }
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
+        if (ret==0 && err_fp25/abs(res_fp25)<integ_tol) {
+          res=static_cast<fp_t>(res_fp25);
+          err=static_cast<fp_t>(err_fp25);
           return 0;
         } else {
           target_tol/=10;
@@ -1244,24 +1244,24 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_35>::digits10+3)) {
+                        <o2fp_35>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                           <o2fp_35>::digits10+3)
+                    << "\n  for o2fp_35 integration." << std::endl;
         }
-        cpp_dec_float_35 b_cdf35=static_cast<cpp_dec_float_35>(b);
-        cpp_dec_float_35 res_cdf35, err_cdf35;
+        o2fp_35 b_fp35=static_cast<o2fp_35>(b);
+        o2fp_35 res_fp35, err_fp35;
         
-        ret=integ_il_err_int(func,b_cdf35,res_cdf35,
-                             err_cdf35,target_tol,
+        ret=integ_il_err_int(func,b_fp35,res_fp35,
+                             err_fp35,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
+        if (ret==0 && err_fp35/abs(res_fp35)<integ_tol) {
+          res=static_cast<fp_t>(res_fp35);
+          err=static_cast<fp_t>(err_fp35);
           return 0;
         } else {
           target_tol/=10;
@@ -1269,24 +1269,24 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_50>::digits10+3)) {
+                        <o2fp_50>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                           <o2fp_50>::digits10+3)
+                    << "\n  for o2fp_50 integration." << std::endl;
         }
-        cpp_dec_float_50 b_cdf50=static_cast<cpp_dec_float_50>(b);
-        cpp_dec_float_50 res_cdf50, err_cdf50;
+        o2fp_50 b_fp50=static_cast<o2fp_50>(b);
+        o2fp_50 res_fp50, err_fp50;
         
-        ret=integ_il_err_int(func,b_cdf50,res_cdf50,
-                             err_cdf50,target_tol,
+        ret=integ_il_err_int(func,b_fp50,res_fp50,
+                             err_fp50,target_tol,
                              integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
+        if (ret==0 && err_fp50/abs(res_fp50)<integ_tol) {
+          res=static_cast<fp_t>(res_fp50);
+          err=static_cast<fp_t>(err_fp50);
           return 0;
         } else {
           target_tol/=10;
@@ -1295,7 +1295,7 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err() "
-                  << "failed after cpp_dec_float_100:\n  "
+                  << "failed after o2fp_100:\n  "
                   << integ_tol << std::endl;
       }
 
@@ -1387,28 +1387,28 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_25>::digits10+3)) {
+                        <o2fp_25>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_25>::digits10+3)
-                    << "\n  for cpp_dec_float_25 integration." << std::endl;
+                           <o2fp_25>::digits10+3)
+                    << "\n  for o2fp_25 integration." << std::endl;
         }
-        cpp_dec_float_25 res_cdf25, err_cdf25;
+        o2fp_25 res_fp25, err_fp25;
 
-        ret=integ_i_err_int(func,res_cdf25,
-                            err_cdf25,target_tol,
+        ret=integ_i_err_int(func,res_fp25,
+                            err_fp25,target_tol,
                             integ_tol,func_tol);
 
         if (verbose>1) {
           std::cout << "ret,res,err,tol: " << ret << " "
-                    << res_cdf25 << " " << err_cdf25 << " "
+                    << res_fp25 << " " << err_fp25 << " "
                     << integ_tol << std::endl;
         }
-        if (ret==0 && err_cdf25/abs(res_cdf25)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf25);
-          err=static_cast<fp_t>(err_cdf25);
+        if (ret==0 && err_fp25/abs(res_fp25)<integ_tol) {
+          res=static_cast<fp_t>(res_fp25);
+          err=static_cast<fp_t>(err_fp25);
           return 0;
         } else {
           target_tol/=10;
@@ -1416,23 +1416,23 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_35>::digits10+3)) {
+                        <o2fp_35>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_35>::digits10+3)
-                    << "\n  for cpp_dec_float_35 integration." << std::endl;
+                           <o2fp_35>::digits10+3)
+                    << "\n  for o2fp_35 integration." << std::endl;
         }
-        cpp_dec_float_35 res_cdf35, err_cdf35;
+        o2fp_35 res_fp35, err_fp35;
         
-        ret=integ_i_err_int(func,res_cdf35,
-                            err_cdf35,target_tol,
+        ret=integ_i_err_int(func,res_fp35,
+                            err_fp35,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf35/abs(res_cdf35)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf35);
-          err=static_cast<fp_t>(err_cdf35);
+        if (ret==0 && err_fp35/abs(res_fp35)<integ_tol) {
+          res=static_cast<fp_t>(res_fp35);
+          err=static_cast<fp_t>(err_fp35);
           return 0;
         } else {
           target_tol/=10;
@@ -1440,23 +1440,23 @@ namespace o2scl {
       }
 
       if (integ_tol>pow(10.0,-std::numeric_limits
-                        <cpp_dec_float_50>::digits10+3)) {
+                        <o2fp_50>::digits10+3)) {
         if (verbose>0) {
           std::cout << "inte_adapt_cern_tl::integ_err(): "
                     << integ_tol << " > "
                     << pow(10.0,-std::numeric_limits
-                           <cpp_dec_float_50>::digits10+3)
-                    << "\n  for cpp_dec_float_50 integration." << std::endl;
+                           <o2fp_50>::digits10+3)
+                    << "\n  for o2fp_50 integration." << std::endl;
         }
-        cpp_dec_float_50 res_cdf50, err_cdf50;
+        o2fp_50 res_fp50, err_fp50;
         
-        ret=integ_i_err_int(func,res_cdf50,
-                            err_cdf50,target_tol,
+        ret=integ_i_err_int(func,res_fp50,
+                            err_fp50,target_tol,
                             integ_tol,func_tol);
         
-        if (ret==0 && err_cdf50/abs(res_cdf50)<integ_tol) {
-          res=static_cast<fp_t>(res_cdf50);
-          err=static_cast<fp_t>(err_cdf50);
+        if (ret==0 && err_fp50/abs(res_fp50)<integ_tol) {
+          res=static_cast<fp_t>(res_fp50);
+          err=static_cast<fp_t>(err_fp50);
           return 0;
         } else {
           target_tol/=10;
@@ -1465,7 +1465,7 @@ namespace o2scl {
 
       if (verbose>0) {
         std::cout << "inte_kronrod_boost::integ_err() "
-                  << "failed after cpp_dec_float_100:\n  "
+                  << "failed after o2fp_100:\n  "
                   << integ_tol << std::endl;
       }
 

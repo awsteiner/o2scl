@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -147,11 +147,11 @@ int main(void) {
   wlw2.load("../../data/o2scl/nucmass/wllw10.o2",1);
   nucmass_wlw wlw3;
   wlw3.load("../../data/o2scl/nucmass/lwdw11.o2",1);
-  //cout << "Here2b4." << endl;
-  //nucmass_wlw wlw4("../../data/o2scl/nucmass/wl11.o2",1);
-  //cout << "Here2b5." << endl;
-  //  nucmass_wlw wlw5("../../data/o2scl/nucmass/wlwm14.o2",1);
-  
+  nucmass_wlw wlw4;
+  wlw4.load("../../data/o2scl/nucmass/wl11.o2",1);
+  nucmass_wlw wlw5;
+  wlw5.load("../../data/o2scl/nucmass/wlwm14.o2",1);
+
   nucmass_sdnp sdnp1;
   sdnp1.load("../../data/o2scl/nucmass/sdnp03.o2",1);
   nucmass_sdnp sdnp2;
@@ -183,14 +183,34 @@ int main(void) {
   o2scl_hdf::hfb_sp_load(hfb26,26,"../../data/o2scl/nucmass/");
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27,"../../data/o2scl/nucmass/");
-  //nucmass_dglg dglg;
+  nucmass_hfb_sp hfb28;
+  o2scl_hdf::hfb_sp_load(hfb28,28,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp hfb29;
+  o2scl_hdf::hfb_sp_load(hfb29,29,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp hfb30;
+  o2scl_hdf::hfb_sp_load(hfb30,30,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp hfb31;
+  o2scl_hdf::hfb_sp_load(hfb31,31,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp hfb32;
+  o2scl_hdf::hfb_sp_load(hfb32,32,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp bskg1;
+  o2scl_hdf::bskg_load(bskg1,1,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp bskg2;
+  o2scl_hdf::bskg_load(bskg2,2,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp bskg3;
+  o2scl_hdf::bskg_load(bskg3,3,"../../data/o2scl/nucmass/");
+  nucmass_hfb_sp bskg4;
+  o2scl_hdf::bskg_load(bskg4,4,"../../data/o2scl/nucmass/");
+  nucmass_dglg dglg("../../data/o2scl/nucmass/dglg10.o2",1);
 
   // Set up generic pointers for testing
-  nucmass_table *nmd[24]={&ame,
+  nucmass_table *nmd[33]={&ame,
 			  &m95,&kt,&kt2,&hfb2,&hfb8,
 			  &hfb14,&hfb17,&hfb21,&hfb22,&hfb23,&hfb24,&hfb25,
-			  &hfb26,&hfb27,&wlw1,&wlw1,&wlw2,&wlw3,&wlw3,
-			  &wlw3,&sdnp1,&sdnp2,&sdnp3};
+			  &hfb26,&hfb27,&hfb28,&hfb29,&hfb30,&hfb31,&hfb32,
+			  &bskg1,&bskg2,&bskg3,&bskg4,
+			  &wlw1,&wlw2,&wlw3,&wlw4,
+			  &wlw5,&dglg,&sdnp1,&sdnp2,&sdnp3};
 
   // Test the spins obtained from mnmsk
 
@@ -209,6 +229,37 @@ int main(void) {
   t.test_rel(hfb14.binding_energy(82,126)/208.0,-7.867,1.0e-3,"hfb3 be");
   t.test_rel(kt.binding_energy(82,126)/208.0,-7.867,1.0e-3,"kt be");
   t.test_rel(kt2.binding_energy(82,126)/208.0,-7.867,1.0e-3,"kt2 be");
+  t.test_rel(bskg1.binding_energy(82,126)/208.0,-7.878,2.0e-3,"bskg1 be");
+  t.test_rel(bskg2.binding_energy(82,126)/208.0,-7.874,2.0e-3,"bskg2 be");
+  t.test_rel(bskg3.binding_energy(82,126)/208.0,-7.867,2.0e-3,"bskg3 be");
+  t.test_rel(bskg4.binding_energy(82,126)/208.0,-7.878,2.0e-3,"bskg4 be");
+  t.test_rel(wlw4.binding_energy(82,126)/208.0,-7.867,2.0e-3,"wlw4 be");
+  t.test_rel(wlw5.binding_energy(82,126)/208.0,-7.867,2.0e-3,"wlw5 be");
+  t.test_rel(dglg.binding_energy(82,126)/208.0,-7.867,2.0e-3,"dglg be");
+
+  // Test that the BSkG3-specific fields in nucmass_hfb_sp::entry
+  // (from gamma to I3, unused by the plain HFB17-HFB27 tables and
+  // by BSkG1, BSkG2, and BSkG4) were read correctly for Pb-208
+  nucmass_hfb_sp::entry bskg3_pb208=bskg3.get_ZN(82,126);
+  t.test_rel(bskg3_pb208.Rch,5.498,1.0e-4,"bskg3 Rch");
+  t.test_rel(bskg3_pb208.S2n,14.55,1.0e-4,"bskg3 S2n");
+  t.test_rel(bskg3_pb208.S2p,15.69,1.0e-4,"bskg3 S2p");
+  t.test_rel(bskg3_pb208.rc4,5.839,1.0e-4,"bskg3 rc4");
+
+  // Test that the BSkG1/BSkG2/BSkG4-specific fields in
+  // nucmass_hfb_sp::entry (from Erot to par_n, unused by the plain
+  // HFB17-HFB27 tables and by BSkG3) were read correctly for
+  // Pb-208
+  nucmass_hfb_sp::entry bskg1_pb208=bskg1.get_ZN(82,126);
+  t.test_rel(bskg1_pb208.rc_exp,5.5012,1.0e-4,"bskg1 rc_exp");
+  t.test_rel(bskg1_pb208.rc_err,0.0042,1.0e-2,"bskg1 rc_err");
+  t.test_gen(bskg1_pb208.par_p==1,"bskg1 par_p");
+  t.test_gen(bskg1_pb208.par_n==1,"bskg1 par_n");
+
+  nucmass_hfb_sp::entry bskg4_pb208=bskg4.get_ZN(82,126);
+  t.test_rel(bskg4_pb208.rc_exp,5.5012,1.0e-4,"bskg4 rc_exp");
+  t.test_gen(bskg4_pb208.par_p==1,"bskg4 par_p");
+  t.test_gen(bskg4_pb208.par_n==1,"bskg4 par_n");
 
   // Test the binding energy and mass excess from get_nucleus()
   double mass_neutron=o2scl_const::mass_neutron_f<double>()*
@@ -220,20 +271,18 @@ int main(void) {
   double mass_amu=o2scl_const::unified_atomic_mass_f<double>()*
     o2scl_settings.get_convert_units().convert("kg","1/fm",1.0);
 
-  for(size_t i=0;i<24;i++) {
+  for(size_t i=0;i<33;i++) {
     nucleus n;
     nmd[i]->get_nucleus(82,126,n);
     t.test_rel(n.be*o2scl_const::hc_mev_fm/208.0,-7.867,4.0e-3,"ptr be");
-    t.test_rel(n.m-126.0*mass_neutron-82.0*mass_proton,n.be,1.0e-12,"ptr be2");
+    t.test_rel(n.m-126.0*mass_neutron-82.0*mass_proton,n.be,1.0e-12,
+               "ptr be2");
     t.test_rel(n.m+82.0*mass_electron-208.0*mass_amu,n.mex,1.0e-11,
 	       "ptr mex");
-    cout << "H0." << i << endl;
   }
 
-  cout << "H1." << endl;
   // Test nucmass_radius
   nucmass_radius nr;
-  cout << "H2." << endl;
   double rho0, N, N_err;
   nr.eval_N_err(6.0,0.5,0.08,N,N_err);
   cout << N << " " << N_err << endl;
@@ -241,26 +290,27 @@ int main(void) {
 
   // Test nuclear_mass_info::spinp_to_int()
   nucmass_info nmi;
-  cout << nmi.spinp_to_int("9") << endl;
-  cout << nmi.spinp_to_int("99") << endl;
-  cout << nmi.spinp_to_int("9+") << endl;
-  cout << nmi.spinp_to_int("+9") << endl;
-  cout << nmi.spinp_to_int("99+") << endl;
-  cout << nmi.spinp_to_int("+99") << endl;
-  cout << nmi.spinp_to_int("9/2+") << endl;
-  cout << nmi.spinp_to_int("+9/2") << endl;
-  cout << nmi.spinp_to_int("99/2+") << endl;
-  cout << nmi.spinp_to_int("+99/2") << endl;
-  cout << nmi.spinp_to_int("9-") << endl;
-  cout << nmi.spinp_to_int("-9") << endl;
-  cout << nmi.spinp_to_int("99-") << endl;
-  cout << nmi.spinp_to_int("-99") << endl;
-  cout << nmi.spinp_to_int("9/2-") << endl;
-  cout << nmi.spinp_to_int("-9/2") << endl;
-  cout << nmi.spinp_to_int("99/2-") << endl;
-  cout << nmi.spinp_to_int("-99/2") << endl;
-  
+  t.test_gen(nmi.spinp_to_int("9")==18,"spinp_to_int 1");
+  t.test_gen(nmi.spinp_to_int("99")==198,"spinp_to_int 2");
+  t.test_gen(nmi.spinp_to_int("9+")==18,"spinp_to_int 3");
+  t.test_gen(nmi.spinp_to_int("+9")==18,"spinp_to_int 4");
+  t.test_gen(nmi.spinp_to_int("99+")==198,"spinp_to_int 5");
+  t.test_gen(nmi.spinp_to_int("+99")==198,"spinp_to_int 6");
+  t.test_gen(nmi.spinp_to_int("9/2+")==9,"spinp_to_int 7");
+  t.test_gen(nmi.spinp_to_int("+9/2")==9,"spinp_to_int 8");
+  t.test_gen(nmi.spinp_to_int("99/2+")==99,"spinp_to_int 9");
+  t.test_gen(nmi.spinp_to_int("+99/2")==99,"spinp_to_int 10");
+  t.test_gen(nmi.spinp_to_int("9-")==-18,"spinp_to_int 11");
+  t.test_gen(nmi.spinp_to_int("-9")==-18,"spinp_to_int 12");
+  t.test_gen(nmi.spinp_to_int("99-")==-198,"spinp_to_int 13");
+  t.test_gen(nmi.spinp_to_int("-99")==-198,"spinp_to_int 14");
+  t.test_gen(nmi.spinp_to_int("9/2-")==-9,"spinp_to_int 15");
+  t.test_gen(nmi.spinp_to_int("-9/2")==-9,"spinp_to_int 16");
+  t.test_gen(nmi.spinp_to_int("99/2-")==-99,"spinp_to_int 17");
+  t.test_gen(nmi.spinp_to_int("-99/2")==-99,"spinp_to_int 18");
+
   t.report();
+  
   return 0;
 }
 

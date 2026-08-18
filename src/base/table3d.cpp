@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -1017,7 +1017,7 @@ void table3d::deriv_y(std::string fname, std::string fpname) {
     ubmatrix_row row(list[z],i);
     itp.set(numy,yval,row,itype);
     for(size_t j=0;j<numy;j++) {
-      set(i,j,zp,itp.deriv(xval[i]));
+      set(i,j,zp,itp.deriv(yval[j]));
     }
   }
   

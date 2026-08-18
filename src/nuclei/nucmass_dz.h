@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -69,7 +69,7 @@ namespace o2scl {
     virtual double mass_excess(int Z, int N);
     
     /// Return the type, \c "nucmass_dz_table".
-    virtual const char *type() { return "nucmass_dz_table"; }
+    virtual const char *type() const { return "nucmass_dz_table"; }
 
     /// Desc
     virtual void clear() {
@@ -121,7 +121,7 @@ namespace o2scl {
       .. todo:: 
 
          In class nucmass_dz_fit: Document each field.
-
+      
       \endverbatim
   */
   class nucmass_dz_fit : public nucmass_fit_base {
@@ -195,14 +195,19 @@ namespace o2scl {
     virtual bool is_included(int Z, int N);
 
     /// Return the type, \c "nucmass_dz_fit".
-    virtual const char *type() { return "nucmass_dz_fit"; }
+    virtual const char *type() const { return "nucmass_dz_fit"; }
     
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
 
+    /// Return a new heap-allocated copy of this object
+    virtual nucmass_dz_fit *clone() {
+      return new nucmass_dz_fit(*this);
+    }
+    
     /** \brief Return the binding energy in MeV
         
         This function reproduces the original function called
@@ -225,6 +230,52 @@ namespace o2scl {
      */
     virtual double mass_excess_d(double Z, double N);
 
+    /// Copy constructor
+    nucmass_dz_fit(const nucmass_dz_fit &t) {
+      onp=t.onp;
+      y=t.y;
+      pp=t.pp;
+      oei=t.oei;
+      dei=t.dei;
+      qx=t.qx;
+      dx=t.dx;
+      op=t.op;
+      os=t.os;
+      dyda=t.dyda;
+      n2=t.n2;
+      noc=t.noc;
+      nfit=t.nfit;
+      m_neut=t.m_neut;
+      m_prot=t.m_prot;
+      b=t.b;
+      return;
+    }
+
+    /// Copy constructor
+    nucmass_dz_fit &operator=(const nucmass_dz_fit &t) {
+
+      if (this!=&t) {
+        onp=t.onp;
+        y=t.y;
+        pp=t.pp;
+        oei=t.oei;
+        dei=t.dei;
+        qx=t.qx;
+        dx=t.dx;
+        op=t.op;
+        os=t.os;
+        dyda=t.dyda;
+        n2=t.n2;
+        noc=t.noc;
+        nfit=t.nfit;
+        m_neut=t.m_neut;
+        m_prot=t.m_prot;
+        b=t.b;
+      }
+      
+      return *this;
+    }
+    
   };
 
   /** \brief The 33-parameter Duflo-Zuker mass formula
@@ -321,21 +372,26 @@ namespace o2scl {
     ubvector a;
     
     /// Return the type, \c "nucmass_dz_fit_33".
-    virtual const char *type() { return "nucmass_dz_fit_33"; }
+    virtual const char *type() const { return "nucmass_dz_fit_33"; }
     
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
 
-    /** \brief Return false if the mass formula does not include 
+    /** \brief Return false if the mass formula does not include
         specified nucleus
     */
     virtual bool is_included(int Z, int N);
 
+    /// Return a new heap-allocated copy of this object
+    virtual nucmass_dz_fit_33 *clone() {
+      return new nucmass_dz_fit_33(*this);
+    }
+
     /** \brief Return the binding energy in MeV
-        
+
         This function reproduces the original function called
         <tt>EMASSDZ()</tt>, except that, to be consistent
         with the other \o2 nuclear mass classes, it returns 
@@ -356,6 +412,82 @@ namespace o2scl {
      */
     virtual double mass_excess_d(double Z, double N);
 
+    /// Copy constructor
+    nucmass_dz_fit_33(const nucmass_dz_fit_33 &t) {
+
+      onp=t.onp;
+      op=t.op;
+      ot=t.ot;
+      
+      dyda=t.dyda;
+      fyda=t.fyda;
+      fyd0=t.fyd0;
+      onps=t.onps;
+      oei=t.oei;
+      dei=t.dei;
+      op2=t.op2;
+      ym=t.ym;
+      op1=t.op1;
+      
+      shell=t.shell;
+      sshell=t.sshell;
+
+      n4=t.n4;
+      nn=t.nn;
+      jup=t.jup;
+      jud=t.jud;
+      n2=t.n2;
+      
+      noc=t.noc;
+      
+      nfit=t.nfit;
+      m_neut=t.m_neut;
+      m_prot=t.m_prot;
+      a=t.a;
+
+      return;
+    }
+
+    /// Copy constructor
+    nucmass_dz_fit_33 &operator=(const nucmass_dz_fit_33 &t) {
+
+      if (this!=&t) {
+        
+        onp=t.onp;
+        op=t.op;
+        ot=t.ot;
+        
+        dyda=t.dyda;
+        fyda=t.fyda;
+        fyd0=t.fyd0;
+        onps=t.onps;
+        oei=t.oei;
+        dei=t.dei;
+        op2=t.op2;
+        ym=t.ym;
+        op1=t.op1;
+        
+        shell=t.shell;
+        sshell=t.sshell;
+        
+        n4=t.n4;
+        nn=t.nn;
+        jup=t.jup;
+        jud=t.jud;
+        n2=t.n2;
+        
+        noc=t.noc;
+        
+        nfit=t.nfit;
+        m_neut=t.m_neut;
+        m_prot=t.m_prot;
+        a=t.a;
+        
+      }
+      
+      return *this;
+    }
+    
   };
 
 }

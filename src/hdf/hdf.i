@@ -438,7 +438,9 @@ class acol_manager
   - io std::vector<std::string> &args
 - function command_add
   - void
-  - std::string new_type    
+  - std::string new_type
+- function clear_obj
+  - void
 - function command_del
   - void
   - std::string ltype    

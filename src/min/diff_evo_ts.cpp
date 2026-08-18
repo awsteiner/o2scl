@@ -1,7 +1,7 @@
 /* 
    ───────────────────────────────────────────────────────────────────
    
-   Copyright (C) 2006-2025, Andrew W. Steiner and Edwin van Leeuwen
+   Copyright (C) 2006-2026, Andrew W. Steiner and Edwin van Leeuwen
    
    This file is part of O2scl.
    
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   mm_funct init_f=init_function;
   
   de.set_init_function(init_f);
-  de.verbose = 1;
+  de.verbose=1;
   de.ntrial=1000;
   
   // Perform the minimization

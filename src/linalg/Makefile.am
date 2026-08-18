@@ -200,7 +200,7 @@ am__libo2scl_linalg_la_SOURCES_DIST = $(LINALG_SRCS)
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+EXTRA_DIST = *_ts.cpp invert_cuda.cu solve_cuda.cu
 
 emacs-clean: 
 	-rm *~

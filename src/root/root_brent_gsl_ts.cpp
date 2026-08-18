@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -48,6 +48,7 @@ public:
 };
 
     
+#ifdef O2SCL_SET_MULTIP
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
 typedef boost::multiprecision::number<
@@ -55,6 +56,7 @@ typedef boost::multiprecision::number<
 typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
 typedef boost::multiprecision::number<
   boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+#endif
 
 template<class fp_t> fp_t cbrt_fun(fp_t x) {
   return x*x*x-5;
@@ -73,6 +75,7 @@ public:
   }
 };
 
+#ifdef O2SCL_SET_MULTIP
 class cl_cdf {
 
 public:
@@ -85,6 +88,7 @@ public:
                                  (one+one/ten));
   }
 };
+#endif
 
 int main(void) {
 

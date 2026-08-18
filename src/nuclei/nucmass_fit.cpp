@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -32,7 +32,7 @@ using namespace o2scl_const;
 
 nucmass_fit::nucmass_fit() {
   mm=&def_mmin;
-  def_mmin.ntrial*=10;
+  def_mmin.ntrial=1e5;
   even_even=false;
   minZ=8;
   minN=8;
@@ -44,11 +44,27 @@ nucmass_fit::nucmass_fit() {
 double nucmass_fit::min_fun(size_t nv, const ubvector &x) {
 
   double y=0.0;
-  
-  nmf->fit_fun(nv,x);
-  
-  eval(*nmf,y);
-  
+
+  // If fit() set up per-thread clones (because mm is a parallel
+  // minimizer), use this thread's own clone instead of the shared
+  // nmf, so concurrent calls to fit_fun() from different threads
+  // don't race on the same nucmass_fit_base object's internal
+  // parameter state. See fit()'s doc comment for details.
+  nucmass_fit_base *use_nmf=nmf;
+  if (thread_clones.size()>0) {
+    size_t ithread=0;
+#ifdef O2SCL_SET_OPENMP
+    ithread=omp_get_thread_num();
+#endif
+    if (ithread<thread_clones.size()) {
+      use_nmf=thread_clones[ithread].get();
+    }
+  }
+
+  use_nmf->fit_fun(nv,x);
+
+  eval(*use_nmf,y);
+
   return y;
 }
 
@@ -136,13 +152,38 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
   size_t nv=nmf->nfit;
   ubvector mx(nv);
   nmf->guess_fun(nv,mx);
-  
+
+  // If mm reports (via mmin_parallel_base) that it may call the
+  // function being minimized from more than one thread at once,
+  // give each of those threads its own private clone of n, so
+  // min_fun()'s concurrent calls into n's fit_fun()/eval() don't
+  // race on n's shared internal parameter state. See fit()'s and
+  // min_fun()'s doc comments for details.
+  mmin_parallel_base *mmpb=dynamic_cast<mmin_parallel_base *>(mm);
+  size_t mm_n_threads=(mmpb==0) ? 1 : mmpb->mmin_n_threads();
+  if (mm_n_threads<1) mm_n_threads=1;
+
+  if (mm_n_threads>1) {
+    thread_clones.resize(mm_n_threads);
+    for(size_t it=0;it<mm_n_threads;it++) {
+      thread_clones[it]=std::shared_ptr<nucmass_fit_base>(n.clone());
+    }
+  } else {
+    thread_clones.clear();
+  }
+
   multi_funct mfm=
     std::bind(std::mem_fn<double(size_t,const ubvector &)>
 	      (&nucmass_fit::min_fun),
 	      this,std::placeholders::_1,std::placeholders::_2);
-  
+
   mm->mmin(nv,mx,fmin,mfm);
+
+  // Whether or not per-thread clones were used above, make sure n
+  // itself (not just one of its clones) ends up holding the
+  // best-fit parameters found.
+  thread_clones.clear();
+  nmf=&n;
   fmin=mfm(nv,mx);
 
   return;
@@ -150,11 +191,19 @@ void nucmass_fit::fit(nucmass_fit_base &n, double &fmin) {
 
 void nucmass_fit::eval(nucmass &n, double &fmin) {
   table<> t;
-  eval_table(n,fmin,false,t);
+  double max_abs_dev;
+  eval_table(n,fmin,max_abs_dev,false,t);
   return;
 }
 
-void nucmass_fit::eval_table(nucmass &n, double &fmin,
+void nucmass_fit::eval_max(nucmass &n, double &fmin,
+                           double &max_abs_dev) {
+  table<> t;
+  eval_table(n,fmin,max_abs_dev,false,t);
+  return;
+}
+
+void nucmass_fit::eval_table(nucmass &n, double &fmin, double &max_abs_dev,
                              bool make_table, table<> &tab) {
 
   fmin=0.0;
@@ -186,6 +235,8 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
               "nucmass_fit::eval_table().",exc_efailed);
   }
 
+  max_abs_dev=0.0;
+  
   if (fit_method==rms_mass_excess) {
 
     size_t nn=0;
@@ -193,12 +244,16 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
       int Z=ndi->Z;
       int N=ndi->N;
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
+        double dev=ndi->mex*hc_mev_fm-n.mass_excess(Z,N);
         if (make_table) {
           double line[4]={((double)Z),((double)N),
                           ndi->mex*hc_mev_fm,n.mass_excess(Z,N)};
           tab.line_of_data(4,line);
         }
-	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+        if (fabs(dev)>max_abs_dev) {
+          max_abs_dev=fabs(dev);
+        }
+	fmin+=pow(dev,2.0);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (1).";
@@ -227,11 +282,13 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
       
       if (N>=minN && Z>=minZ) {
         
+        double dev=ndi->mex*hc_mev_fm-n.mass_excess(Z,N);
+        
         line[2]=ndi->mex*hc_mev_fm;
         line[3]=n.mass_excess(Z,N);
         line_has_data=true;
         
-	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+	fmin+=pow(dev,2);
         
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
@@ -287,12 +344,14 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
       bool line_has_data=false;
       
       if (N>=minN && Z>=minZ) {
-        
+
+        double dev=ndi->mex*hc_mev_fm-n.mass_excess(Z,N);
+
         line[2]=ndi->mex*hc_mev_fm;
         line[3]=n.mass_excess(Z,N);
         line_has_data=true;
         
-	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+	fmin+=pow(dev,2);
         
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
@@ -367,7 +426,9 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
       
       if (N>=minN && Z>=minZ && (even_even==false || (N%2==0 && Z%2==0))) {
         
-	fmin+=pow(ndi->mex*hc_mev_fm-n.mass_excess(Z,N),2.0);
+        double dev=ndi->mex*hc_mev_fm-n.mass_excess(Z,N);
+        
+	fmin+=pow(dev,2);
         
         line[2]=ndi->mex*hc_mev_fm;
         line[3]=n.mass_excess(Z,N);
@@ -422,7 +483,8 @@ void nucmass_fit::eval_table(nucmass &n, double &fmin,
                           ndi->be*hc_mev_fm,n.binding_energy(Z,N)};
           tab.line_of_data(4,line);
         }
-	fmin+=pow(ndi->be*hc_mev_fm-n.binding_energy(Z,N),2.0);
+        double dev=ndi->be*hc_mev_fm-n.binding_energy(Z,N);
+	fmin+=pow(dev,2);
 	if (!std::isfinite(fmin)) {
 	  std::string s=((std::string)"Non-finite value for nucleus with Z=")+
 	    itos(Z)+" and N="+itos(N)+" in nucmass_fit::eval_table() (2).";

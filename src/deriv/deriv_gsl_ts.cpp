@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -27,22 +27,10 @@
 #include <o2scl/test_mgr.h>
 #include <o2scl/deriv_gsl.h>
 
-// AWS, 7/22/22, commenting this out because this is a relatively
-// new function in boost and not available everywhere yet
-#ifndef O2SCL_OLD_BOOST
 #include <boost/math/differentiation/finite_difference.hpp>
-#endif
-#include <boost/multiprecision/cpp_dec_float.hpp>
 
 using namespace std;
 using namespace o2scl;
-
-typedef boost::multiprecision::number<
-  boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
-typedef boost::multiprecision::number<
-  boost::multiprecision::cpp_dec_float<35>> cpp_dec_float_35;
-typedef boost::multiprecision::cpp_dec_float_50 cpp_dec_float_50;
-typedef boost::multiprecision::cpp_dec_float_100 cpp_dec_float_100;
 
 template<class fp_t> fp_t sin_fun(fp_t x) {
   return sin(x);
@@ -137,19 +125,19 @@ int main(void) {
        << " " << std::cos(0.5L) << endl;
   t.test_rel(ld_res,std::cos(0.5L),4.0e-14L,"simple derivative long double");
 
-  deriv_gsl<funct_cdf50,cpp_dec_float_50> de_cdf;
-  funct_cdf50 tf_cdf=sin_fun<cpp_dec_float_50>;
-  cpp_dec_float_50 cdf_res;
-  cpp_dec_float_50 one=1;
-  cpp_dec_float_50 two=2;
-  cpp_dec_float_50 half=one/two;
+  deriv_gsl<funct_fp50,o2fp_50> de_fp;
+  funct_fp50 tf_fp=sin_fun<o2fp_50>;
+  o2fp_50 fp_res;
+  o2fp_50 one=1;
+  o2fp_50 two=2;
+  o2fp_50 half=one/two;
 
-  cdf_res=de_cdf.deriv(half,tf_cdf);
+  fp_res=de_fp.deriv(half,tf_fp);
   cout << "First derivative: " << endl;
-  cout << cdf_res << " " << de.get_err() 
+  cout << fp_res << " " << de.get_err() 
        << " " << cos(half) << endl;
-  t.test_rel_boost<cpp_dec_float_50>(cdf_res,cos(half),1.0e-50,
-				     "simple derivative cpp_dec_float_50");
+  t.test_rel_boost<o2fp_50>(fp_res,cos(half),1.0e-50,
+				     "simple derivative o2fp_50");
 
   // A difficult function
   funct df=difficult_fun<double>;

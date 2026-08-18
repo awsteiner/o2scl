@@ -18,8 +18,8 @@ ARG NPROCS=1
 # Install Python packages
 
 WORKDIR /opt
-RUN pip3 install --break-system-packages pillow==12.0.0 ipython==9.6.0 \
-  tqdm==4.67.1
+RUN pip3 install --break-system-packages pillow==12.3.0 ipython==9.6.0 \
+  tqdm==4.67.1 pyasn1==0.6.3 requests==2.33.0
 RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
   pipdeptree==2.29.0
 
@@ -29,19 +29,21 @@ RUN pip3 install --break-system-packages --no-deps normflows==1.7.3 \
 
 WORKDIR /opt
 
-RUN curl -L \
-https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
+#RUN curl -L \
+#https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
   --output o2scl-0.931.tar.gz
-RUN tar xzf o2scl-0.931.tar.gz
-WORKDIR /opt/o2scl-0.931
-
-#RUN git clone https://github.com/awsteiner/o2scl
+#RUN tar xzf o2scl-0.931.tar.gz
+#RUN ln -s /opt/o2scl-0.931 /opt/o2scl
 #WORKDIR /opt/o2scl
-#RUN git fetch && git pull && git checkout rc && autoreconf -i
 
-RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/include/python3.13 -I/usr/lib/python3.13/site-packages/numpy/_core/include" \
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git fetch && git pull && git checkout dev && autoreconf -i
+
+RUN CXXFLAGS="-O3 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP -I/usr/include -I/usr/include/python3.14 -I/usr/lib/python3.14/site-packages/numpy/_core/include" \
   ./configure --prefix=/usr --enable-openmp --enable-fftw --enable-eigen \
   --enable-python
+
 RUN make blank-doc && make -j ${NPROCS} && make install
 
 # ───────────────────────────────────────────────────────────────────

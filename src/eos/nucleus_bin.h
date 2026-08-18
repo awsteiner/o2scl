@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2021-2025, Andrew W. Steiner
+  Copyright (C) 2021-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -105,6 +105,14 @@ public:
   o2scl::nucmass_hfb_sp hfb27;
   //@}
 
+  /// \name Brussels-Skyrme-on-a-Grid (BSkG) mass tables
+  //@{
+  o2scl::nucmass_hfb_sp bskg1;
+  o2scl::nucmass_hfb_sp bskg2;
+  o2scl::nucmass_hfb_sp bskg3;
+  o2scl::nucmass_hfb_sp bskg4;
+  //@}
+
   /// \name Nuclear mass fits
   //@{
   o2scl::nucmass_semi_empirical se;
@@ -173,7 +181,32 @@ protected:
 
   /// List of fit names
   std::vector<std::string> fit_names;
+
+  /** \brief List of names used to store fit parameters in the
+      HDF5 data file (set in constructor)
+
+      Each entry is used as the HDF5 group name for the
+      corresponding \ref nmfd entry's own hdf_output()/hdf_input(),
+      called polymorphically through the \ref
+      o2scl::nucmass_fit_base pointer in \ref nmfd. Most of these
+      formulas currently just inherit \ref
+      o2scl::nucmass_fit_base's default implementation (a named
+      group holding the formula's type, its fit-parameter count,
+      and its current parameters as a flat vector), but any formula
+      that overrides hdf_output()/hdf_input() with something more
+      specific (e.g. \ref o2scl::nucmass_two_interp, which also
+      stores a trained interpolator) is handled correctly here too,
+      with no changes needed in \ref o2scl::nucleus_bin itself.
+  */
+  std::vector<std::string> fit_var_names;
   //@}
+
+  /** \brief Load the fit parameters for all of the mass formulas
+      in \ref nmfd from the data file 'nucleus_bin_data.o2' in the
+      O2scl data directory, via each formula's own (type-specific)
+      hdf_input()
+  */
+  void load_fit_params();
   
   /// \name Parameter objects
   //@{
@@ -183,11 +216,11 @@ protected:
   /// Precision parameter
   o2scl::cli::parameter_int p_precision;
 
-  /// 
+  /// If true, include older tables
   o2scl::cli::parameter_bool p_older_tables;
   //@}
 
-  /// Desc
+  /// Load older tables if \ref older_tables is true
   void update_older_tables();
   
 public:
@@ -197,15 +230,15 @@ public:
   virtual ~nucleus_bin() {
   }
 
-  /** \brief Desc
+  /** \brief List of nuclei common to several mass tables
    */
   std::vector<o2scl::nucleus> common_dist;
 
-  /** \brief Desc
+  /** \brief List of experimental nuclei
    */
   std::vector<o2scl::nucleus> exp_dist;
 
-  /** \brief Desc
+  /** \brief List of nuclei from \ref m16
    */
   std::vector<o2scl::nucleus> moller_dist;
 
@@ -229,13 +262,20 @@ public:
    */
   int refs(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Create a list of nuclei common to several mass tables
    */
   int cdist(std::vector<std::string> &sv, bool itive_com);
 
-  /** \brief Desc
+  /** \brief Choose the fitting method to use
    */
   int fit_method(std::vector<std::string> &sv, bool itive_com);
+
+  /** \brief Store the current best-fit parameters for all of the
+      mass formulas in \ref nmfd to the data file
+      'nucleus_bin_data.o2' in the O2scl data directory, via each
+      formula's own hdf_output()
+  */
+  int store_fits(std::vector<std::string> &sv, bool itive_com);
 
   /** \brief Setup the command-line interface
    */

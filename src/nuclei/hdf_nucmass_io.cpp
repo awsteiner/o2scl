@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -286,8 +286,18 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model,
     tname="/hfb25.o2";
   } else if (model==26) {
     tname="/hfb26.o2";
-  } else {
+  } else if (model==27) {
     tname="/hfb27.o2";
+  } else if (model==28) {
+    tname="/hfb28.o2";
+  } else if (model==29) {
+    tname="/hfb29.o2";
+  } else if (model==30) {
+    tname="/hfb30.o2";
+  } else if (model==31) {
+    tname="/hfb31.o2";
+  } else {
+    tname="/hfb32.o2";
   }
   filename=filename+tname;
   
@@ -343,9 +353,228 @@ void o2scl_hdf::hfb_sp_load(nucmass_hfb_sp &hfb, size_t model,
   herr_t status=H5TBread_table
     (file,tname.c_str(),sizeof(o2scl::nucmass_hfb_sp::entry),offset,
      sizes,&(m[0]));
-    
+
   hfb.set_data(nrecords,m,reference);
-    
+
+  hf.close();
+
+  return;
+}
+
+void o2scl_hdf::bskg_load(nucmass_hfb_sp &hfb, size_t model,
+                          string filename) {
+
+  if (filename.size()==0) {
+    filename=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
+  }
+
+  std::string tname;
+  if (model==1) {
+    tname="/bskg1.o2";
+  } else if (model==2) {
+    tname="/bskg2.o2";
+  } else if (model==3) {
+    tname="/bskg3.o2";
+  } else if (model==4) {
+    tname="/bskg4.o2";
+  } else {
+    O2SCL_ERR("Invalid model in bskg_load().",exc_einval);
+  }
+  filename=filename+tname;
+
+  // BSkG1, BSkG2, and BSkG4 fill in a different set of extra
+  // fields than BSkG3 (see the documentation in hdf_nucmass_io.h),
+  // so they are stored in a table with 8 additional columns beyond
+  // the 30 used for BSkG3.
+  if (model==1 || model==2 || model==4) {
+
+    size_t offset2[38]={HOFFSET(o2scl::nucmass_hfb_sp::entry,N),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Z),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,A),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,bet2),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,bet4),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Rch),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Sn),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Sp),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Qbet),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Mcal),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Err),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Jexp),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Jth),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Pexp),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Pth),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,gamma),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,beta20),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,beta22),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,beta30),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,beta32),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,S2n),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,S2p),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,delta3n),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,delta3p),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,delta5n),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,delta5p),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,rc4),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,I1),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,I2),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,I3),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,Erot),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,avgap_n),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,avgap_p),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,rc_exp),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,rc_err),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,MOI),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,par_p),
+                        HOFFSET(o2scl::nucmass_hfb_sp::entry,par_n)};
+
+    o2scl::nucmass_hfb_sp::entry he2;
+
+    size_t sizes2[38]={sizeof(he2.N),
+                       sizeof(he2.Z),
+                       sizeof(he2.A),
+                       sizeof(he2.bet2),
+                       sizeof(he2.bet4),
+                       sizeof(he2.Rch),
+                       sizeof(he2.Sn),
+                       sizeof(he2.Sp),
+                       sizeof(he2.Qbet),
+                       sizeof(he2.Mcal),
+                       sizeof(he2.Err),
+                       sizeof(he2.Jexp),
+                       sizeof(he2.Jth),
+                       sizeof(he2.Pexp),
+                       sizeof(he2.Pth),
+                       sizeof(he2.gamma),
+                       sizeof(he2.beta20),
+                       sizeof(he2.beta22),
+                       sizeof(he2.beta30),
+                       sizeof(he2.beta32),
+                       sizeof(he2.S2n),
+                       sizeof(he2.S2p),
+                       sizeof(he2.delta3n),
+                       sizeof(he2.delta3p),
+                       sizeof(he2.delta5n),
+                       sizeof(he2.delta5p),
+                       sizeof(he2.rc4),
+                       sizeof(he2.I1),
+                       sizeof(he2.I2),
+                       sizeof(he2.I3),
+                       sizeof(he2.Erot),
+                       sizeof(he2.avgap_n),
+                       sizeof(he2.avgap_p),
+                       sizeof(he2.rc_exp),
+                       sizeof(he2.rc_err),
+                       sizeof(he2.MOI),
+                       sizeof(he2.par_p),
+                       sizeof(he2.par_n)};
+
+    hdf_file hf2;
+    hf2.open(filename);
+    hid_t file2=hf2.get_current_id();
+
+    int nrecords2;
+    std::string reference2;
+    hf2.geti("nrecords",nrecords2);
+    if (nrecords2<=0) {
+      O2SCL_ERR("Number of records <= 0 in bskg_load().",exc_efailed);
+    }
+    hf2.gets("reference",reference2);
+
+    std::vector<o2scl::nucmass_hfb_sp::entry> m2(nrecords2);
+    herr_t status2=H5TBread_table
+      (file2,tname.c_str(),sizeof(o2scl::nucmass_hfb_sp::entry),offset2,
+       sizes2,&(m2[0]));
+
+    hfb.set_data(nrecords2,m2,reference2);
+
+    hf2.close();
+
+    return;
+  }
+
+  size_t offset[30]={HOFFSET(o2scl::nucmass_hfb_sp::entry,N),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Z),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,A),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,bet2),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,bet4),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Rch),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Sn),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Sp),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Qbet),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Mcal),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Err),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Jexp),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Jth),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Pexp),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,Pth),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,gamma),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,beta20),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,beta22),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,beta30),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,beta32),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,S2n),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,S2p),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,delta3n),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,delta3p),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,delta5n),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,delta5p),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,rc4),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,I1),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,I2),
+                     HOFFSET(o2scl::nucmass_hfb_sp::entry,I3)};
+
+  o2scl::nucmass_hfb_sp::entry he;
+
+  size_t sizes[30]={sizeof(he.N),
+                    sizeof(he.Z),
+                    sizeof(he.A),
+                    sizeof(he.bet2),
+                    sizeof(he.bet4),
+                    sizeof(he.Rch),
+                    sizeof(he.Sn),
+                    sizeof(he.Sp),
+                    sizeof(he.Qbet),
+                    sizeof(he.Mcal),
+                    sizeof(he.Err),
+                    sizeof(he.Jexp),
+                    sizeof(he.Jth),
+                    sizeof(he.Pexp),
+                    sizeof(he.Pth),
+                    sizeof(he.gamma),
+                    sizeof(he.beta20),
+                    sizeof(he.beta22),
+                    sizeof(he.beta30),
+                    sizeof(he.beta32),
+                    sizeof(he.S2n),
+                    sizeof(he.S2p),
+                    sizeof(he.delta3n),
+                    sizeof(he.delta3p),
+                    sizeof(he.delta5n),
+                    sizeof(he.delta5p),
+                    sizeof(he.rc4),
+                    sizeof(he.I1),
+                    sizeof(he.I2),
+                    sizeof(he.I3)};
+
+  hdf_file hf;
+  hf.open(filename);
+  hid_t file=hf.get_current_id();
+
+  int nrecords;
+  std::string reference;
+  hf.geti("nrecords",nrecords);
+  if (nrecords<=0) {
+    O2SCL_ERR("Number of records <= 0 in bskg_load().",exc_efailed);
+  }
+  hf.gets("reference",reference);
+
+  std::vector<o2scl::nucmass_hfb_sp::entry> m(nrecords);
+  herr_t status=H5TBread_table
+    (file,tname.c_str(),sizeof(o2scl::nucmass_hfb_sp::entry),offset,
+     sizes,&(m[0]));
+
+  hfb.set_data(nrecords,m,reference);
+
   hf.close();
 
   return;

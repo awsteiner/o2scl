@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O₂scl.
   
@@ -49,6 +49,11 @@
 #include <o2scl/kde_python.h>
 #include <o2scl/rng.h>
 #include <o2scl/set_readline.h>
+#include <o2scl/nucmass.h>
+#include <o2scl/nucmass_frdm.h>
+#include <o2scl/nucmass_dz.h>
+#include <o2scl/nucmass_ldrop.h>
+#include <o2scl/nucmass_ldrop_shell.h>
 
 #ifdef O2SCL_SET_READLINE
 #include <o2scl/cli_readline.h>
@@ -293,6 +298,17 @@ namespace o2scl_acol {
     o2scl::prob_dens_mdim_gaussian<> pdmg_obj;
     o2scl::prob_dens_mdim_gmm<> pgmm_obj;
     o2scl::kde_python<> pkde_obj;
+
+    /// \name Nuclear mass fit formula objects
+    //@{
+    o2scl::nucmass_semi_empirical nmse_obj;
+    o2scl::nucmass_ldrop_pair nmldp_obj;
+    o2scl::nucmass_frdm nmfrdm_obj;
+    o2scl::nucmass_dz_fit nmdzf_obj;
+    o2scl::nucmass_dz_fit_33 nmdzf33_obj;
+    o2scl::nucmass_frdm_shell nmfrdms_obj;
+    o2scl::nucmass_ldrop_shell nmlds_obj;
+    //@}
     //@}
     
     /// \name Colors
@@ -338,6 +354,11 @@ namespace o2scl_acol {
     /** \brief Add new commands for type \c new_type
      */
     void command_add(std::string new_type);
+
+    /** \brief Clear memory associated with the current object and set
+        type to ""
+    */
+    void clear_obj();
 
     /** \brief Perform the current color replacements on string \c s
 
@@ -3583,11 +3604,6 @@ namespace o2scl_acol {
 
     /// \name Other functions [protected]
     //@{
-    /** \brief Clear memory associated with the current object and set
-        type to ""
-    */
-    void clear_obj();
-
     /// An internal command for prompting the user for command arguments
     int get_input(std::vector<std::string> &sv, 
                   std::vector<std::string> &directions,

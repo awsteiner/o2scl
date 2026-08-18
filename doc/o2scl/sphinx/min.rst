@@ -38,8 +38,9 @@ Multi-dimensional minimization is performed by descendants of
 :ref:`mmin_simp2 <mmin_simp2>`), traditional minimizers which use
 gradient information (:ref:`mmin_conp <mmin_conp>`, :ref:`mmin_conf
 <mmin_conf>`, and :ref:`mmin_bfgs2 <mmin_bfgs2>`), and differential
-evolution minimizers :ref:`diff_evo <diff_evo>` and
-:ref:`diff_evo_adapt <diff_evo_adapt>`). Minimization by simulated
+evolution minimizers (:ref:`diff_evo <diff_evo>`,
+:ref:`diff_evo_adapt <diff_evo_adapt>`, and
+:ref:`diff_evo_para <diff_evo_para>`). Minimization by simulated
 annealing is included and described in the :ref:`Simulated Annealing`
 section. Constrained minimization is also included and described in
 separately in :ref:`Constrained Minimization`.

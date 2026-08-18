@@ -1,0 +1,42 @@
+FROM alpine AS working
+LABEL org.opencontainers.image.authors="awsteiner0@protonmail.com"
+LABEL description="A (nearly) minimal O2scl installation. \
+built on Alpine, readline, OpenMP and HDF5 from the \
+with compression support."
+
+# ───────────────────────────────────────────────────────────────────
+# Install apt packages
+
+# Base apk
+RUN apk add g++ make git curl tar gzip libtool automake autoconf \
+  gsl-dev hdf5-dev readline-dev boost-dev zlib-dev openssl
+
+ARG NPROCS=1
+
+# ───────────────────────────────────────────────────────────────────
+# Now install o2scl
+
+WORKDIR /opt
+
+#RUN curl -L \
+#https://github.com/awsteiner/o2scl/releases/download/v0.931/o2scl-0.931.tar.gz \
+#  --output o2scl-0.931.tar.gz
+#RUN tar xzf o2scl-0.931.tar.gz
+#RUN ln -s /opt/o2scl-0.931 /opt/o2scl
+#WORKDIR /opt/o2scl
+
+RUN git clone https://github.com/awsteiner/o2scl
+WORKDIR /opt/o2scl
+RUN git fetch && git pull && git checkout dev && autoreconf -i
+
+RUN CXXFLAGS="-O3 -DO2SCL_HDF5_PRE_1_12 -DHDF5_DISABLE_VERSION_CHECK=1 -DO2SCL_PLAIN_HDF5_HEADER -DO2SCL_HDF5_COMP" \
+  ./configure --enable-openmp --disable-static
+RUN make blank-doc && make -j ${NPROCS} && make install
+
+# ───────────────────────────────────────────────────────────────────
+# Run acol
+
+WORKDIR /opt
+ENV LD_LIBRARY_PATH=/usr/local/lib
+RUN acol -h -v
+

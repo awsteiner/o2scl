@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -100,7 +100,8 @@ namespace o2scl {
       /* Evaluate function and gradient at new point xc */
       
       fc=(*this->func)(this->dim,this->x1);
-      
+      this->n_evals++;
+
       if (fc < fa) {
 
 	/* Success, reduced the function value */

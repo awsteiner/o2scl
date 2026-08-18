@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2025, Andrew W. Steiner
+  Copyright (C) 2020-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -927,6 +927,12 @@ void o2scl_hdf_acol_manager_command_add(void *vptr, void *ptr_new_type) {
   acol_manager *ptr=(acol_manager *)vptr;
   std::string *new_type=(std::string *)ptr_new_type;
   ptr->command_add(*new_type);
+  return;
+}
+
+void o2scl_hdf_acol_manager_clear_obj(void *vptr) {
+  acol_manager *ptr=(acol_manager *)vptr;
+  ptr->clear_obj();
   return;
 }
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -287,40 +287,6 @@ namespace o2scl {
     */
     void load(std::string model, bool exp_only=false,
               int verbose=0);
-    /*
-    void load(std::string name="20", bool exp_only=false) {
-      std::string file_name, nubase_name;
-      file_name=o2scl::o2scl_settings.get_data_dir()+"/nucmass";
-      if (name=="95exp") {
-        file_name+="/ame95exp.o2";
-      } else if (name=="95rmd") {
-        file_name+="/ame95rmd.o2";
-      } else if (name=="03round") {
-        file_name+="/ame03round.o2";
-      } else if (name=="03") {
-        file_name+="/ame03.o2";
-      } else if (name==((std::string)"12")) { 
-        file_name+="/ame12.o2";
-      } else if (name==((std::string)"16")) { 
-        file_name+="/ame16.o2";
-      } else if (name==((std::string)"16round")) { 
-        file_name+="/ame16round.o2";
-      } else if (name==((std::string)"20")) { 
-        nubase_name=file_name;
-        file_name+="/mass.mas20.txt";
-        nubase_name+="/nubase_1.mas20.txt";
-      } else if (name==((std::string)"20round")) { 
-        file_name+="/massround.mas20.txt";
-      } else {
-        std::string s=((std::string)"Invalid name '")+name+
-          "' in o2scl_hdf::ame_load().";
-        O2SCL_ERR(s.c_str(),exc_einval);
-      }
-      
-      load_ext(name,file_name,nubase_name,exp_only);
-      return;
-    }
-    */
     
     /** \brief Read data for \ref o2scl::nucmass_ame from an HDF table
         specified in a file
@@ -394,7 +360,7 @@ namespace o2scl {
     }
     
     /// Return the type, \c "nucmass_ame".
-    virtual const char *type() { return "nucmass_ame"; }
+    virtual const char *type() const { return "nucmass_ame"; }
 
     /** \brief Return false if the mass formula does not include 
 	specified nucleus

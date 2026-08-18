@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,8 +24,9 @@
 #define O2SCL_MULTI_MIN_H
 
 /** \file mmin.h
-    \brief File defining \ref o2scl::mmin_base, \ref o2scl::grad_funct,
-    \ref o2scl::gradient, and \ref o2scl::gradient_gsl
+    \brief File defining \ref o2scl::mmin_base, \ref
+    o2scl::mmin_parallel_base, \ref o2scl::grad_funct, \ref
+    o2scl::gradient, and \ref o2scl::gradient_gsl
 */
 
 #include <o2scl/multi_funct.h>
@@ -131,6 +132,46 @@ namespace o2scl {
 
   };
     
+  /** \brief Interface for minimizers which may evaluate the
+      function being minimized concurrently from several threads
+
+      Minimizers which internally use OpenMP to evaluate several
+      candidate points at once (e.g. \ref diff_evo_para) should
+      inherit from this class, in addition to their normal \ref
+      mmin_base ancestry, so that code which is handed a minimizer
+      only through a generic <tt>mmin_base<> *</tt> (or similar)
+      can still discover, via <tt>dynamic_cast</tt>, whether that
+      minimizer may call the user's function from more than one
+      thread at once --- and if so, how many --- without needing to
+      know the minimizer's concrete, possibly heavily templated,
+      type.
+
+      This matters whenever the function being minimized wraps some
+      external, non-thread-safe object (for example, \ref
+      nucmass_fit::fit() wrapping a user-supplied \ref
+      nucmass_fit_base): such a caller can query \ref mmin_n_threads()
+      to decide whether it needs to give each thread its own private
+      copy of that object. A minimizer that does not inherit from
+      this class is assumed, by any code performing this query, to
+      call the function from a single thread only.
+  */
+  class mmin_parallel_base {
+
+  public:
+
+    virtual ~mmin_parallel_base() {}
+
+    /** \brief Return the number of threads this minimizer may use
+        to concurrently evaluate the function being minimized
+
+        This is a maximum: a minimizer may use fewer threads than
+        this at runtime (e.g. if OpenMP grants fewer threads than
+        requested), but should never use more.
+    */
+    virtual size_t mmin_n_threads() const=0;
+
+  };
+
   /** \brief Multidimensional minimization [abstract base]
 
       <b>The template parameters:</b>
@@ -152,7 +193,30 @@ namespace o2scl {
       set_verbose_stream(). Note that this function
       stores pointers to the user-specified output streams,
       and these pointers are not copied in child copy
-      constructors. 
+      constructors.
+
+      \note Comparing minimizers by \ref ntrial alone is not
+      meaningful across algorithm families, since one "iteration"
+      can cost a very different number of function evaluations
+      depending on the algorithm (for example, a single \ref
+      o2scl::mmin_simp2 iteration costs anywhere from 1 to
+      \f$ n+2 \f$ evaluations depending on which Nelder-Mead step is
+      taken, while one \ref o2scl::cma_es generation always costs
+      exactly \c lambda evaluations). Descendants for which limiting
+      (and reporting) the total number of function evaluations is
+      meaningful and practical to implement are encouraged to follow
+      the convention established by \ref o2scl::cma_es: a \c
+      max_evals member (default 0, meaning "unbounded, rely on \ref
+      ntrial alone") that caps the total number of function
+      evaluations, and a \c last_n_evals member (analogous to \ref
+      last_ntrial) reporting how many evaluations the most recent
+      call to <tt>mmin()</tt> actually used. This makes it possible
+      to compare different minimizers on a common, algorithm-neutral
+      budget. As of this writing, \ref o2scl::cma_es, \ref
+      o2scl::mmin_simp2, \ref o2scl::diff_evo, \ref
+      o2scl::diff_evo_adapt, \ref o2scl::mmin_conf, \ref
+      o2scl::mmin_conp, and \ref o2scl::mmin_bfgs2 follow this
+      convention.
   */
   template<class func_t=multi_funct, class dfunc_t=func_t,
     class vec_t=boost::numeric::ublas::vector<double> > class mmin_base {

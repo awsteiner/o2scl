@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2020-2025, Andrew W. Steiner
+  Copyright (C) 2020-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -639,6 +639,8 @@ int main(int argc, char *argv[]) {
                          "ublas_matrix_int"));
   class_py_names.insert(std::make_pair("std::vector<contour_line>",
                                        "vector_contour_line"));
+  class_py_names.insert(std::make_pair("std::vector<nucleus>",
+                                       "std_vector_nucleus"));
   class_py_names.insert
     (std::make_pair("prob_dens_mdim_amr<>::hypercube",
                     "hypercube"));
@@ -1492,7 +1494,15 @@ int main(int argc, char *argv[]) {
           // def_tov" in the interface file doesn't quite work,
           // because that doesn't allow the user to change the
           // properties of the tov_solve object.
-          if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
+          //
+          // AWS, 8/10/26: Similarly, mmin_simp2's def_mmin has a
+          // private assignment operator (it owns non-copyable
+          // internal state), so skip the setter for it too. The
+          // getter still returns a live, non-owning reference, so
+          // e.g. fitter.get_def_mmin().ntrial=1e5 works fine from
+          // python without a setter.
+          if ((ifv.ift.name!="tov_solve" || ifv.name!="def_tov") &&
+              (ifv.ift.name!="mmin_simp2<>" || ifv.name!="def_mmin")) {
             
             // Set function for other types
             fout << "void " << underscoreify(ifc.ns) << "_"
@@ -2533,8 +2543,9 @@ int main(int argc, char *argv[]) {
         }
 
         // See above for the explanation of why the TOV classes
-        // need a special case. 
-      } else if (ifv.ift.name!="tov_solve" || ifv.name!="def_tov") {
+        // (and mmin_simp2's def_mmin) need a special case. 
+      } else if ((ifv.ift.name!="tov_solve" || ifv.name!="def_tov") &&
+                 (ifv.ift.name!="mmin_simp2<>" || ifv.name!="def_mmin")) {
         
         fout << "    def set_" << ifv.name << "(self,value):" << endl;
         fout << "        \"\"\"" << endl;

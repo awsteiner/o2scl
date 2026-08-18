@@ -1,6 +1,6 @@
 /* ───────────────────────────────────────────────────────────────────
   
-   Copyright (C) 2006-2025, Andrew W. Steiner
+   Copyright (C) 2006-2026, Andrew W. Steiner
   
    This file is part of O2scl.
   
@@ -31,10 +31,6 @@
 #include <fstream>
 #include <cmath>
 
-#ifdef O2SCL_SET_MULTIP
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#endif
-
 #include <o2scl/constants.h>
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
@@ -45,6 +41,7 @@
 #include <o2scl/polylog.h>
 #include <o2scl/inte_kronrod_boost.h>
 #include <o2scl/inte_adapt_cern.h>
+#include <o2scl/funct_multip.h>
 
 namespace o2scl {
 
@@ -298,8 +295,8 @@ namespace o2scl {
 
     /** \brief Desc
      */
-    template<class mpit_t,
-              class internal_fp_t, class fp_t> internal_fp_t solve_fun_multip
+    template<class mpit_t, class internal_fp_t, class fp_t>
+    internal_fp_t solve_fun_multip
     (internal_fp_t x, fp_t T2, fermion_tl<fp_t> f2,
      bool use_expansions, fp_t deg_limit2, fp_t min_psi2, 
      fp_t tol_expan2, fp_t upper_limit_fac2, bool multip, 
@@ -2991,65 +2988,6 @@ namespace o2scl {
   /** \brief Double precision version of \ref o2scl::fermion_rel_tl
   */
   typedef fermion_rel_tl<> fermion_rel;
-
-#if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
-  
-  /** \brief Long double version of 
-      \ref o2scl::fermion_rel_tl 
-  */
-  class fermion_rel_ld : public
-  fermion_rel_tl<
-    fermion_tl<long double>,
-    fermi_dirac_integ_direct<long double,funct_cdf25,
-                             cpp_dec_float_25>,
-    bessel_K_exp_integ_boost<long double,
-                             cpp_dec_float_25>,
-    inte_double_exp_boost<>,
-    inte_double_exp_boost<>,
-    root_cern<funct_ld,long double>,
-    funct_ld,long double> {
-    
-  public:
-    
-    fermion_rel_ld() {
-      //density_root.test_form=2;
-
-      // AWS, 2/19/25: I haven't yet optimized the value of
-      // upper_limit_fac for this type
-      upper_limit_fac=40;
-    }
-    
-  };
-  
-  /** \brief 25-digit version of 
-      \ref o2scl::fermion_rel_tl 
-  */
-  class fermion_rel_cdf25 : public
-  fermion_rel_tl<fermion_tl<cpp_dec_float_25>,
-                 fermi_dirac_integ_direct<
-                   cpp_dec_float_25,funct_cdf35,
-                   cpp_dec_float_35>,
-                 bessel_K_exp_integ_boost<cpp_dec_float_25,
-                                          cpp_dec_float_35>,
-                 inte_double_exp_boost<>,
-                 inte_double_exp_boost<>,
-                 root_cern<funct_cdf25,cpp_dec_float_25>,
-                 funct_cdf25,
-                 cpp_dec_float_25> {
-
-  public:
-    
-    fermion_rel_cdf25() {
-      //density_root.test_form=2;
-
-      // AWS, 2/19/25: I haven't yet optimized the value of
-      // upper_limit_fac for this type
-      upper_limit_fac=60;
-    }
-    
-  };
-  
-#endif  
   
 }
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -2235,21 +2235,23 @@ int acol_manager::comm_set(std::vector<std::string> &sv, bool itive_com) {
     exec_color=cl->exec_color;
     url_color=cl->url_color;
     default_color=cl->default_color;
-    
-    string stemp;
-    stemp="Terminal colors updated. Types are denoted as "+type_color+"char";
-    stemp+=default_color+", commands as "+command_color;
-    stemp+="function"+default_color+", get/set parameters as ";
-    stemp+=param_color+"verbose"+default_color;
-    stemp+=", help topics as ";
-    stemp+=help_color+"functions"+default_color+", command-line ";
-    stemp+="scripts as "+exec_color+"acol -help"+default_color;
-    stemp+=", and URLs as "+url_color+"https://arxiv.org";
-    stemp+=default_color+".";
-    vector<string> vsx;
-    rewrap_ignore_vt100(stemp,vsx);
-    for(size_t ik=0;ik<vsx.size();ik++) {
-      cout << vsx[ik] << endl;
+
+    if (verbose>1) {
+      string stemp;
+      stemp="Terminal colors updated. Types are denoted as "+type_color+"char";
+      stemp+=default_color+", commands as "+command_color;
+      stemp+="function"+default_color+", get/set parameters as ";
+      stemp+=param_color+"verbose"+default_color;
+      stemp+=", help topics as ";
+      stemp+=help_color+"functions"+default_color+", command-line ";
+      stemp+="scripts as "+exec_color+"acol -help"+default_color;
+      stemp+=", and URLs as "+url_color+"https://arxiv.org";
+      stemp+=default_color+".";
+      vector<string> vsx;
+      rewrap_ignore_vt100(stemp,vsx);
+      for(size_t ik=0;ik<vsx.size();ik++) {
+        cout << vsx[ik] << endl;
+      }
     }
 
     // Update the doc colors for the type-independent commands
@@ -3108,6 +3110,76 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
       type="uniform_grid<double>";
       if (in_group) hf.close_group(group_id);
       return 0;
+    } else if (ip.type=="nucmass_semi_empirical") {
+      if (verbose>2) {
+	cout << "Reading nucmass_semi_empirical." << endl;
+      }
+      nmse_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_semi_empirical");
+      type="nucmass_semi_empirical";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_ldrop_pair") {
+      if (verbose>2) {
+	cout << "Reading nucmass_ldrop_pair." << endl;
+      }
+      nmldp_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_ldrop_pair");
+      type="nucmass_ldrop_pair";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_frdm") {
+      if (verbose>2) {
+	cout << "Reading nucmass_frdm." << endl;
+      }
+      nmfrdm_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_frdm");
+      type="nucmass_frdm";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_dz_fit") {
+      if (verbose>2) {
+	cout << "Reading nucmass_dz_fit." << endl;
+      }
+      nmdzf_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_dz_fit");
+      type="nucmass_dz_fit";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_dz_fit_33") {
+      if (verbose>2) {
+	cout << "Reading nucmass_dz_fit_33." << endl;
+      }
+      nmdzf33_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_dz_fit_33");
+      type="nucmass_dz_fit_33";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_frdm_shell") {
+      if (verbose>2) {
+	cout << "Reading nucmass_frdm_shell." << endl;
+      }
+      nmfrdms_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_frdm_shell");
+      type="nucmass_frdm_shell";
+      if (in_group) hf.close_group(group_id);
+      return 0;
+    } else if (ip.type=="nucmass_ldrop_shell") {
+      if (verbose>2) {
+	cout << "Reading nucmass_ldrop_shell." << endl;
+      }
+      nmlds_obj.hdf_input(hf,in[1]);
+      obj_name=in[1];
+      command_add("nucmass_ldrop_shell");
+      type="nucmass_ldrop_shell";
+      if (in_group) hf.close_group(group_id);
+      return 0;
     } else if (ip.type=="string[]") {
       if (verbose>2) {
 	cout << "Reading string[]." << endl;
@@ -3372,7 +3444,106 @@ int acol_manager::comm_read(std::vector<std::string> &sv,
     type="uniform_grid<double>";
     return 0;
   }
-  
+
+  ret=hf.find_object_by_type("nucmass_semi_empirical",in[1],use_regex,
+                              verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_semi_empirical "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmse_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_semi_empirical");
+    type="nucmass_semi_empirical";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_ldrop_pair",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_ldrop_pair "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmldp_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_ldrop_pair");
+    type="nucmass_ldrop_pair";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_frdm",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_frdm "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmfrdm_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_frdm");
+    type="nucmass_frdm";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_dz_fit",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_dz_fit "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmdzf_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_dz_fit");
+    type="nucmass_dz_fit";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_dz_fit_33",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_dz_fit_33 "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmdzf33_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_dz_fit_33");
+    type="nucmass_dz_fit_33";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_frdm_shell",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_frdm_shell "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmfrdms_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_frdm_shell");
+    type="nucmass_frdm_shell";
+    return 0;
+  }
+
+  ret=hf.find_object_by_type("nucmass_ldrop_shell",in[1],use_regex,verbose);
+  if (ret==success) {
+    if (verbose>0) {
+      cout << "No name specified, found first nucmass_ldrop_shell "
+	   << "object named '"
+	   << in[1] << "'." << endl;
+    }
+    nmlds_obj.hdf_input(hf,in[1]);
+    obj_name=in[1];
+    command_add("nucmass_ldrop_shell");
+    type="nucmass_ldrop_shell";
+    return 0;
+  }
+
   ret=hf.find_object_by_type("prob_dens_mdim_amr",in[1],use_regex,verbose);
   if (ret==success) {
     if (verbose>0) {

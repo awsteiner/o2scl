@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -60,9 +60,7 @@ int main(void) {
   // measured masses are included.
 
   nucmass_ame ame;
-  cout << "1a." << endl;
   ame.load("16",true,2);
-  cout << "1b." << endl;
 
   // ---------------------------------------------------------------
   // Instantiate and load all of the nuclear mass objects. Some of
@@ -78,9 +76,7 @@ int main(void) {
   nucmass_hfb_sp hfb27;
   o2scl_hdf::hfb_sp_load(hfb27,27);
   nucmass_ame ame03;
-  cout << "2a." << endl;
   ame03.load("03",true,2);
-  cout << "2b." << endl;
   nucmass_dz_table dz;
   nucmass_ktuy ktuy05;
   ktuy05.load("05");

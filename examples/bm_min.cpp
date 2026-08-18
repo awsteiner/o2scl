@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -33,7 +33,7 @@
 #include <o2scl/min_brent_gsl.h>
 #include <o2scl/min_cern.h>
 #include <o2scl/min_brent_boost.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/hist.h>
 #include <o2scl/expval.h>
 
@@ -58,7 +58,7 @@ int main(void) {
 
   const size_t N=500;
 
-  rng_gsl gr;
+  rng<> gr;
 
   // Choose a logarithmic grid
   hist h;
@@ -84,7 +84,7 @@ int main(void) {
   vector<bool> has_data2(h.size());
   vector<bool> has_data3(h.size());
   
-  funct11 ff=func;
+  funct ff=func;
   std::pair<double,double> res;
   std::function<double (double)> f2=func;
   double x0,x1,x2,min;

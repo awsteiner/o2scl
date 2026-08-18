@@ -45,7 +45,9 @@ The mass formulas which can be fit to data are
 - :cpp:class:`o2scl::nucmass_dvi` : 10-parameter formula from
   [Dieperink09]_ with :cpp:class:`o2scl::nucmass_ibm_shell` for shell
   effects
-    
+- :cpp:class:`o2scl::nucmass_fit_iso` fits an independent copy of
+  a user-specified formula to each isotopic chain
+
 In order to create a set of nuclei stored in a ``std::vector``
 object, one can use :cpp:func:`o2scl_part::nucdist_set()`.
 

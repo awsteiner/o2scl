@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -34,7 +34,7 @@
 #include <o2scl/root_brent_gsl.h>
 #include <o2scl/root_stef.h>
 #include <o2scl/root_toms748.h>
-#include <o2scl/rng_gsl.h>
+#include <o2scl/rng.h>
 #include <o2scl/hist.h>
 #include <o2scl/expval.h>
 
@@ -106,7 +106,7 @@ int main(void) {
 
   const size_t N=300;
 
-  rng_gsl gr;
+  rng<> gr;
 
   // Choose a logarithmic grid
   hist h;
@@ -163,10 +163,10 @@ int main(void) {
   vector<bool> data_grs(h.size());
   vector<bool> data_bnr(h.size());
 
-  funct11 ff=func;
-  funct11 ff2=func2;
-  funct11 df2=dfunc2;
-  funct11 ff3=func3;
+  funct ff=func;
+  funct ff2=func2;
+  funct df2=dfunc2;
+  funct ff3=func3;
 
   std::function<double (double)> fb=func;
   std::function<double (double)> fb3=func3;

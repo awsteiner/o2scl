@@ -35,6 +35,11 @@ if O2SCL_CUDA
 else
 	test -r set_cuda.h || ln -s $(top_srcdir)/src/base/neither/set_cuda.h set_cuda.h
 endif
+if O2SCL_LIBTORCH
+	test -r set_libtorch.h || ln -s $(top_srcdir)/src/base/libtorch/set_libtorch.h set_libtorch.h
+else
+	test -r set_libtorch.h || ln -s $(top_srcdir)/src/base/neither/set_libtorch.h set_libtorch.h
+endif
 if O2SCL_PYTHON
 	test -r set_python.h || ln -s $(top_srcdir)/src/base/python/set_python.h set_python.h
 else

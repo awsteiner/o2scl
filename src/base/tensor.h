@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -507,14 +507,15 @@ namespace o2scl {
 
       The elements of a tensor are typically specified as a list of
       <tt>size_t</tt> numbers with length equal to the tensor rank.
-      For a rank-4 tensor named \c t, the element 
-      <tt>t[1][2][0][3]</tt> can be obtained with something similar to 
+      For a rank-4 tensor named \c t, the element
+      <tt>t[1][2][0][3]</tt> can be obtained with something similar to
       \code
       size_t ix[4]={1,2,0,3};
       double x=t.get(ix);
       \endcode
 
-      Empty tensors have zero rank.
+      Empty tensors have zero rank and all zero rank tensors of this
+      class have no data.
 
       The type <tt>vec_t</tt> can be any vector type with
       <tt>operator[]</tt>, <tt>size()</tt> and <tt>resize()</tt>
@@ -780,8 +781,12 @@ namespace o2scl {
      */
     void swap_data(vec_t &dat) {
       if (data.size()!=dat.size()) {
-        O2SCL_ERR2("Size of new vector does not equal tensor size in ",
-                   "tensor::swap_data().",o2scl::exc_einval);
+        O2SCL_ERR((((std::string)"Size of new vector (")+
+                   o2scl::szttos(dat.size())+
+                   ") does not equal tensor size ("+
+                   o2scl::szttos(data.size())+
+                   ") in tensor::swap_data().").c_str(),
+                  o2scl::exc_einval);
       }
       std::swap(dat,data);
       return;
@@ -1016,7 +1021,9 @@ namespace o2scl {
         given in \c dim
 	
         The parameter \c dim must be a vector of sizes with a length
-        equal to \c rank. This resize method is always destructive.
+        equal to \c rank. This resize method is destructive if
+        and only if the total number of elements in the tensor
+        will be changed.
 	
         If the user requests any of the sizes to be zero, this
         function will call the error handler.
@@ -1040,7 +1047,9 @@ namespace o2scl {
           size[i]=dim[i];
           tot*=size[i];
         }
-        data.resize(tot);
+        if (tot!=data.size()) {
+          data.resize(tot);
+        }
       }
       return;
     }
@@ -1077,9 +1086,7 @@ namespace o2scl {
     */
     size_t total_size() const { 
       if (rk==0) return 0;
-      size_t tot=1;
-      for(size_t i=0;i<rk;i++) tot*=size[i];
-      return tot;
+      return data.size();
     }
     //@}
 
@@ -1286,7 +1293,8 @@ namespace o2scl {
       
         // If there's no grid, then create a grid in the table3d
         // object which just enumerates the indices
-        std::vector<double> grid_x(this->size[ix_x]), grid_y(this->size[ix_y]);
+        std::vector<double> grid_x(this->size[ix_x]);
+        std::vector<double> grid_y(this->size[ix_y]);
         for(size_t i=0;i<this->size[ix_x];i++) {
           grid_x[i]=((double)i);
         }

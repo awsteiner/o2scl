@@ -4,7 +4,7 @@ int write_file(double x1) {
   c.set_parameter();
   ofstream fout;
   double p=1.1;
-  fout.open("ex_fptr.out");
+  fout.open("data/ex_fptr.out");
   fout << "x y" << endl;
   for(double x=-1.0;x<=2.00001;x+=0.001) {
     fout << x << " " << c.member_function(x,p) << endl;

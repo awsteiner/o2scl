@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -269,7 +269,7 @@ namespace o2scl {
   public:
     
     /// Return the type, \c "nucmass_densmat".
-    virtual const char *type() { return "nucmass_densmat"; }
+    virtual const char *type() const { return "nucmass_densmat"; }
     
     nucmass_densmat();
 
@@ -303,18 +303,9 @@ namespace o2scl {
      double &dEdnneg, double &dEdT)=0;
 
     /// Determine the volume excluded by the nucleus
-    virtual double exc_volume(double Z, double N, double T=0.0) {
-
-      // Determine the inner densities
-      double n0=0.16;
-      
-      // Determine radii
-      double R=cbrt(3.0*(Z+N)/4.0/o2scl_const::pi/n0);
-
-      double phi=4.0/3.0*o2scl_const::pi*R*R*R;
-
-      return phi;
-    }      
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0)=0;
     
     /** \brief Compute the binding energy of a nucleus in dense matter
     */

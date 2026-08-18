@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2025, Andrew W. Steiner
+  Copyright (C) 2025-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -50,87 +50,154 @@ int main(int argc, char *argv[]) {
   // unavailable.
   if (argc>=2 && ((string)argv[1])==((string)"benchmark")) {
     
-    tensor2<> t1(10,10);
-    std::vector<double> t2(100);
+    tensor2<> ten_orig(10,10);
+    std::vector<double> svd_orig(100);
         
+    // Store the lower-triangular part of the matrix in row-major
+    // order. O2scl cholesky functions typically need only the lower
+    // triangular part (in row-major order) to be filled.
     for(size_t i=0;i<10;i++) {
       for(size_t j=0;j<10;j++) {
         if (i==j) {
-          t1(i,j)=((double)(i+2));
-          t2[i*10+j]=((double)(i+2));
+          ten_orig(i,j)=((double)(i+2));
+          svd_orig[i*10+j]=((double)(i+2));
         } else if (i>j) {
-          t1(i,j)=1.0e-2*exp(-2.0*
+          ten_orig(i,j)=1.0e-2*exp(-2.0*
                              pow(((double)i)+((double)j),2.0));
-          t2[j*10+i]=1.0e-2*exp(-2.0*
-                                pow(((double)i)+((double)j),2.0));
+          svd_orig[i*10+j]=1.0e-2*exp(-2.0*
+                             pow(((double)i)+((double)j),2.0));
         } else {
-          t1(i,j)=0.0;
-          // Store the matrix in column-major order, as expected in
-          // O2scl, but store it in the upper- rather than the
-          // lower-triangular part
-          t2[j*10+i]=1.0e-2*exp(-2.0*
-                                pow(((double)i)+((double)j),2.0));
+          ten_orig(i,j)=0.0;
+          svd_orig[i*10+j]=0.0;
         }
       }
     }
-    
-    tensor2<> tx=t1;
+
+    tensor2<> ten_decomp=ten_orig;
+    tensor2<> ten_decomp2=ten_orig;
+    std::vector<double> svd_decomp=svd_orig;
 
     cout << "Original matrix:" << endl;
-    matrix_out(cout,t1);
+    matrix_out(cout,ten_orig);
     cout << endl;
 
-    cholesky_decomp(10,t1);
-    cout << "Native decomposition" << endl;
-    matrix_out(cout,t1);
+    cout << "Native decomposition:" << endl;
+    cholesky_decomp(10,ten_decomp);
+    matrix_out(cout,ten_decomp);
     cout << endl;
 
-    cholesky_decomp_two(10,tx);
-    cout << "Native decomposition (v2)" << endl;
-    matrix_out(cout,tx);
+    cout << "Native decomposition (nocopy):" << endl;
+    cholesky_decomp_nocopy(10,ten_decomp2);
+    matrix_out(cout,ten_decomp2);
     cout << endl;
 
-    cholesky_decomp_cuda(10,t2);
-    vector<double> t2x(100);
-    vector_copy(t2,t2x);
-    tensor2<> t3(10,10);
-    t3.swap_data(t2x);
-    cout << "CUDA decomposition" << endl;
-    matrix_out(cout,t3);
+    cout << "CUDA decomposition:" << endl;
+    cholesky_decomp_cuda(10,svd_decomp);
+    tensor2<> ten_temp(10,10);
+    ten_temp.swap_data(svd_decomp);
+    matrix_out(cout,ten_temp);
     cout << endl;
 
+    t.test_abs_mat(10,10,ten_decomp2,ten_temp,1.0e-6,
+                   "decomp native vs. cuda");
+    
     matrix_invert_cholesky_auto micf;
-    tensor2<> t1b(10,10), t3b(10,10);
-    vector<double> t2b(100);
+    tensor2<> ten_invert=ten_orig, ten_inverse, ten_prod(10,10);
+    tensor2<> ten_fordet=ten_orig;
     
+    cout << "Native inverse and det:" << endl;
     micf.mode=micf.force_o2;
-    cout << "Native inverse" << endl;
-    micf.invert(10,t1,t1b);
-    matrix_out(cout,t1b);
+    micf.invert(10,ten_invert,ten_inverse);
+    double det=micf.det(10,ten_fordet);
+    matrix_out(cout,ten_inverse);
+    cout << det << endl;
     cout << endl;
 
-    matrix_invert_det_cholesky_cuda midcc;
-    midcc.invert(10,t2,t2b);
-    tensor2<> t2c(10,10);
-    t2c.swap_data(t2b);
-    cout << "CUDA inverse from midcc" << endl;
-    matrix_out(cout,t2c);
+    // In order to check the inverse with dgemm(), we need to compute
+    // the full original matrix
+    tensor2<> ten_full=ten_orig;
+    for(size_t j=0;j<10;j++) {
+      for(size_t i=0;i<j;i++) {
+        if (i<j) {
+          ten_full(i,j)=ten_full(j,i);
+        }
+      }
+    }
+
+    cout << "Check native inverse:" << endl;
+    o2scl_cblas::dgemm(o2scl_cblas::o2cblas_RowMajor,
+                       o2scl_cblas::o2cblas_NoTrans,
+                       o2scl_cblas::o2cblas_NoTrans,
+                       10,10,10,1.0,ten_full,ten_inverse,0.0,ten_prod);
+    matrix_out(cout,ten_prod);
     cout << endl;
 
-    t.test_rel_mat(10,10,t1b,t2c,1.0e-6,"inverse native vs. cuda");
+    cout << "Native inverse_det() function:" << endl;
+    tensor2<> ten_invert2=ten_orig, ten_inverse2;
+    double det2;
+    micf.invert_det(10,ten_invert2,ten_inverse2,det2);
+    matrix_out(cout,ten_inverse2);
+    cout << det2 << endl;
+    cout << endl;
     
-    micf.mode=micf.force_cuda;
-    micf.invert(10,t3,t3b);
-    cout << "CUDA inverse from micf" << endl;
-    matrix_out(cout,t3b);
+    t.test_abs_mat(10,10,ten_inverse,ten_inverse2,1.0e-6,
+                   "invert() vs. invert_det()");
+    t.test_abs(det,det2,1.0e-6,"invert() vs. invert_det()");
+    
+    cout << "CUDA inverse from midcc" << endl;
+    matrix_invert_det_cholesky_cuda midcc;
+    std::vector<double> svd_cuda_invert=svd_orig, svd_cuda_inverse;
+    midcc.invert(10,svd_cuda_invert,svd_cuda_inverse);
+    tensor2<> ten_cuda_temp(10,10);
+    ten_cuda_temp.swap_data(svd_cuda_inverse);
+    matrix_out(cout,ten_cuda_temp);
     cout << endl;
 
-    t.test_rel_mat(10,10,t1b,t3b,1.0e-6,"inverse native vs. cuda v2");
+    t.test_abs_mat(10,10,ten_inverse,ten_cuda_temp,1.0e-6,
+                   "inverse native vs. cuda");
+    
+    cout << "CUDA inverse from micf" << endl;
+    tensor2<> ten_invert3=ten_orig, ten_inverse3(10,10);
+    micf.mode=micf.force_cuda;
+    micf.invert(10,ten_invert3,ten_inverse3);
+    matrix_out(cout,ten_inverse3);
+    cout << endl;
+
+    t.test_abs_mat(10,10,ten_inverse,ten_inverse3,
+                   1.0e-6,"inverse native vs. cuda v2");
+    
+    cout << "Armadillo inverse from micf" << endl;
+    tensor2<> ten_invert4=ten_orig, ten_inverse4(10,10);
+    for (size_t j=0;j<10;j++) {
+      for (size_t i=0;i<10;i++) {
+        if (i<j) {
+          ten_invert4(i,j)=ten_invert4(j,i);
+        }
+      }
+    }
+    micf.mode=micf.force_arma;
+    micf.invert(10,ten_invert4,ten_inverse4);
+    matrix_out(cout,ten_inverse4);
+    cout << endl;
+
+    t.test_abs_mat(10,10,ten_inverse,ten_inverse4,
+                   1.0e-6,"inverse native vs. arma v2");
     
   }
 
   if (argc>=2 && ((string)argv[1])==((string)"benchmark")) {
-    
+
+    cout.setf(ios::left);
+    cout.width(12);
+    std::cout << "size";
+    cout.width(13);
+    std::cout << " o2";
+    cout.width(13);
+    std::cout << " arma";
+    cout.width(13);
+    std::cout << " cuda" << std::endl;
+    cout.unsetf(ios::left);
+
     // We choose a nearly diagonal positive symmetric matrix which
     // is easy to invert
     for(size_t n=10;n<10000;n*=2) {
@@ -196,7 +263,8 @@ int main(int argc, char *argv[]) {
           double ndiff=(double)(ts2.tv_nsec-ts1.tv_nsec);
           cout << (diff+ndiff*1.0e-9)/((double)mult) << " " << std::flush;
         
-          if (mult>1 && n==10) {
+          //if (mult>1 && n==10) {
+          if (false) {
             std::cout << std::endl;
             tensor2<> t3;
             t3.resize(n,n);

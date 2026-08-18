@@ -44,7 +44,7 @@ BASE_TEST_VAR = err_hnd.scr funct.scr table3d.scr \
 TEST_VAR = $(BASE_TEST_VAR)
 
 SUBDIRS = arma eigen both neither python fftw openmp readline mpfr \
-	pugixml multip cuda
+	pugixml multip cuda libtorch
 
 # ------------------------------------------------------------
 # Includes
@@ -60,6 +60,12 @@ if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
 else 
 O2SCL_LINUX_MVAR = 
+endif
+
+if O2SCL_LIBTORCH
+O2SCL_LIBTORCH_MVAR = -DO2SCL_LIBTORCH
+else 
+O2SCL_LIBTORCH_MVAR = 
 endif
 
 if O2SCL_OSX
@@ -86,14 +92,14 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DOC_DIR=\"/snap/o2scl/current/share/doc/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR)
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_LIBTORCH_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	-DO2SCL_DOC_DIR=\"${docdir}/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) $(O2SCL_PYTHON_MVAR) \
-	$(O2SCL_PUGIXML_MVAR)
+	$(O2SCL_PUGIXML_MVAR) $(O2SCL_LIBTORCH_MVAR)
 endif
 
 # ------------------------------------------------------------
@@ -296,11 +302,11 @@ am__libo2scl_base_la_SOURCES_DIST = $(BASE_SRCS)
 # ------------------------------------------------------------
 
 interface: empty
-	../../bin/yanic base.i base_python ~/wcs/o2sclpy/o2sclpy/base \
-		~/wcs/o2sclpy/doc/base ../../bin/yanic_header.txt \
+	../../bin/yanic base.i base_python $(O2SCLPY_ROOT)/o2sclpy/base \
+		$(O2SCLPY_ROOT)/doc/base ../../bin/yanic_header.txt \
 		| tee base_python.yanic.out
-	../../bin/yanic string.i string_python ~/wcs/o2sclpy/o2sclpy/string \
-		~/wcs/o2sclpy/doc/string ../../bin/yanic_header.txt \
+	../../bin/yanic string.i string_python $(O2SCLPY_ROOT)/o2sclpy/string \
+		$(O2SCLPY_ROOT)/doc/string ../../bin/yanic_header.txt \
 		| tee string_python.yanic.out
 
 empty:
@@ -309,7 +315,7 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp output_path.py
+EXTRA_DIST = *_ts.cpp output_path.py base_cuda.cu
 
 emacs-clean: 
 	-rm *~

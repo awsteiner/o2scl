@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
 
   This file is part of O2scl.
   
@@ -3997,7 +3997,7 @@ herr_t hdf_file::iterate_copy_func(hid_t loc, const char *name,
   hid_t top=hf.get_current_id();
 
   H5O_info_t infobuf;
-
+  
   // AWS, 3/12/2020: modified to support hdf5 v1.12 which deprecates
   // the 4 parameter form.
 #ifdef O2SCL_HDF5_PRE_1_12
@@ -4322,7 +4322,7 @@ herr_t hdf_file::iterate_func(hid_t loc, const char *name,
   hid_t top=hf.get_current_id();
 
   H5O_info_t infobuf;
-
+  
   // AWS, 3/12/2020: modified to support hdf5 v1.12 which deprecates
   // the 4 parameter form.
 #ifdef O2SCL_HDF5_PRE_1_12

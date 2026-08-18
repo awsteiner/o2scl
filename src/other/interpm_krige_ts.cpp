@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -28,6 +28,7 @@
 #include <o2scl/table.h>
 #include <o2scl/hdf_file.h>
 #include <o2scl/hdf_io.h>
+#include <o2scl/invert_auto.h>
 
 #ifdef O2SCL_SET_ARMA
 #include <armadillo>
@@ -121,6 +122,13 @@ int main(void) {
   typedef const const_matrix_row_gen<mat_x_t> mat_x_row_t;
   typedef o2scl::matrix_view_table<> mat_y_t;
   typedef const matrix_column_gen<mat_y_t> mat_y_col_t;
+  typedef o2scl_linalg::matrix_invert_det_cholesky<
+    boost::numeric::ublas::matrix<double>> mat_inv_t;
+  typedef std::vector<std::vector<std::vector<double>>> vec3_t;
+  typedef interpm_krige_optim<ubvector,mat_x_t,mat_x_row_t,
+                             mat_y_t,mat_y_col_t,
+                             ubmatrix,mat_inv_t,vec3_t>::covar_t covar_t;
+  typedef mcovar_funct_rbf_noise<ubvector,mat_x_row_t> rbf_t;
 
   if (true) {
 
@@ -190,16 +198,13 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, unscaled, loo_cv\n" << endl;
     
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(2);
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     iko.mode=iko.mode_loo_cv;
 
     table<> tab3;
@@ -252,16 +257,13 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, max_lml\n" << endl;
   
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(2);
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     iko.mode=iko.mode_max_lml;
 
     table<> tab3;
@@ -343,16 +345,13 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, max_lml, full min.\n" << endl;
   
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(2);
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     iko.mode=iko.mode_max_lml;
     iko.full_min=true;
 
@@ -434,16 +433,13 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, rescaled, loo_cv_bf\n" << endl;
   
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(2);
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     iko.mode=iko.mode_loo_cv_bf;
 
     table<> tab3;
@@ -554,15 +550,11 @@ int main(void) {
     const_matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table<> mvt_y4(tab4,{"y"});
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(1);
     
@@ -640,15 +632,11 @@ int main(void) {
     const_matrix_view_table<> mvt_x4(tab4,{"x"});
     matrix_view_table<> mvt_y4(tab4,{"y"});
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_col_t,ubmatrix> iko;
+    interpm_krige_optim<> iko;
     
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(1);
 
@@ -695,19 +683,13 @@ int main(void) {
     cout << "--------------------------------------------" << endl;
     cout << "interpm_krige_optim, eigen, rescaled, max_lml\n" << endl;
   
-    vector<std::shared_ptr<mcovar_base<ubvector,mat_x_row_t>>> vmfrn;
+    covar_t vmfrn;
     vmfrn.resize(1);
-    std::shared_ptr<mcovar_funct_rbf_noise<
-      ubvector,mat_x_row_t>> mfrn(new mcovar_funct_rbf_noise<ubvector,
-                                  mat_x_row_t>);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
     vmfrn[0]=mfrn;
     mfrn->len.resize(2);
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_col_t,Eigen::MatrixXd,
-       matrix_invert_det_eigen<> > iko_eigen;
-    
+    interpm_krige_optim_eigen iko_eigen;    
     iko_eigen.mode=iko_eigen.mode_max_lml;
 
     table<> tab3;
@@ -757,30 +739,47 @@ int main(void) {
   
 #endif
 
-#ifdef O2SCL_NEVER_DEFINED
-
 #ifdef O2SCL_SET_ARMA  
   
   {
     
-    interpm_krige_optim
-      <ubvector,mat_x_t,mat_x_row_t,
-       mat_y_t,mat_y_col_t,arma::mat,
-       matrix_invert_det_sympd_arma<> > iko_arma;
+    cout << "--------------------------------------------" << endl;
+    cout << "interpm_krige_optim, arma, rescaled, max_lml\n" << endl;
+  
+    covar_t vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<rbf_t> mfrn(new rbf_t);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(2);
+
+    interpm_krige_optim_arma iko_arma;
+    iko_arma.mode=iko_arma.mode_max_lml;
 
     table<> tab3;
     generate_table(tab3);
     
-    matrix_view_table<> mvt_x3(tab3,col_list_x);
+    const_matrix_view_table<> mvt_x3(tab3,col_list_x);
     matrix_view_table<> mvt_y3(tab3,col_list_y);
 
     gen_test_number<> gtn_x3;
     gtn_x3.set_radix(1.9);
     
     iko_arma.verbose=1;
-    iko_arma.nlen=50;
-    iko.rescale=false;
+    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
+                             1.0,1.25,1.5,2.0,3.0,7.0,10.0};
+    vector<double> l10_list={-15,-13,-11,-9};
+    vector<vector<double> > ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+
+    iko_arma.set_covar(vmfrn,param_lists);
+    iko_arma.rescale=true;;
     iko_arma.set_data(2,1,tab3.get_nlines(),mvt_x3,mvt_y3);
+    
+    cout << endl;
     
     for(size_t j=0;j<20;j++) {
       ubvector point(2), out(1);
@@ -793,7 +792,8 @@ int main(void) {
         cout << point[0] << " " << point[1] << " "
              << out[0] << " " << ft(point[0],point[1]) << endl;
         cout.unsetf(ios::showpos);
-        t.test_rel(out[0],ft(point[0],point[1]),4.0e-1,"unscaled arma 2");
+        t.test_rel(out[0],ft(point[0],point[1]),8.0,
+                   "optim, rescaled, arma, max_lml");
       }
 
     }
@@ -801,7 +801,94 @@ int main(void) {
     
   }
 
-#endif  
+#endif
+  
+#ifdef O2SCL_SET_CUDA
+  
+  {
+    
+    typedef interpm_krige_optim
+      <std::vector<double>,
+       o2scl::tensor2<>,const const_matrix_row_gen<o2scl::tensor2<>>,
+       o2scl::tensor2<>,const const_matrix_column_gen<o2scl::tensor2<>>,
+       o2scl::tensor2<>,matrix_invert_cholesky_auto,
+       std::vector<std::vector<std::vector<double>>> >
+      interpm_krige_optim_cuda;
+    typedef interpm_krige_optim
+      <std::vector<double>,
+       o2scl::tensor2<>,const const_matrix_row_gen<o2scl::tensor2<>>,
+       o2scl::tensor2<>,const const_matrix_column_gen<o2scl::tensor2<>>,
+       o2scl::tensor2<>,matrix_invert_cholesky_auto,
+       std::vector<std::vector<std::vector<double>>> >::covar_t
+      covar_cuda_t;
+    typedef mcovar_funct_rbf_noise
+      <vector<double>,
+      const const_matrix_row_gen<o2scl::tensor2<>>> rbf_cuda_t;
+  
+    cout << "--------------------------------------------" << endl;
+    cout << "interpm_krige_optim, cuda, rescaled, max_lml\n" << endl;
+  
+    covar_cuda_t vmfrn;
+    vmfrn.resize(1);
+    std::shared_ptr<rbf_cuda_t> mfrn(new rbf_cuda_t);
+    vmfrn[0]=mfrn;
+    mfrn->len.resize(2);
+
+    interpm_krige_optim_cuda iko_cuda;
+    iko_cuda.mode=iko_cuda.mode_max_lml;
+
+    table<> tab3;
+    generate_table(tab3);
+
+    tensor2<> x3, y3;
+    x3.resize(tab3.get_nlines(),2);
+    y3.resize(tab3.get_nlines(),1);
+
+    for(size_t i=0;i<tab3.get_nlines();i++) {
+      x3.get(i,0)=tab3.get("x",i);
+      x3.get(i,1)=tab3.get("y",i);
+      y3.get(i,0)=tab3.get("z",i);
+    }
+
+    gen_test_number<> gtn_x3;
+    gtn_x3.set_radix(1.9);
+    
+    iko_cuda.verbose=1;
+    vector<double> len_list={0.3,0.7,0.8,0.9,0.95,
+                             1.0,1.25,1.5,2.0,3.0,7.0,10.0};
+    vector<double> l10_list={-15,-13,-11,-9};
+    vector<vector<double> > ptemp;
+    ptemp.push_back(len_list);
+    ptemp.push_back(len_list);
+    ptemp.push_back(l10_list);
+    vector<vector<vector<double>>> param_lists;
+    param_lists.push_back(ptemp);
+
+    iko_cuda.set_covar(vmfrn,param_lists);
+    iko_cuda.rescale=true;
+    iko_cuda.set_data(2,1,tab3.get_nlines(),x3,y3);
+    
+    cout << endl;
+    
+    for(size_t j=0;j<20;j++) {
+      vector<double> point(2), out(1);
+      point[0]=gtn_x3.gen();
+      point[1]=gtn_x3.gen();
+      
+      if (fabs(point[0])<3.0 && fabs(point[1])<5.0) {
+        iko_cuda.eval(point,out);
+        cout.setf(ios::showpos);
+        cout << point[0] << " " << point[1] << " "
+             << out[0] << " " << ft(point[0],point[1]) << endl;
+        cout.unsetf(ios::showpos);
+        t.test_rel(out[0],ft(point[0],point[1]),8.0,
+                   "optim, rescaled, cuda, max_lml");
+      }
+
+    }
+    cout << endl;
+    
+  }
 
 #endif
   

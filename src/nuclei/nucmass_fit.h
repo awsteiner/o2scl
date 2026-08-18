@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -27,6 +27,8 @@
     \brief File defining \ref o2scl::nucmass_fit
 */
 
+#include <memory>
+
 #include <boost/numeric/ublas/vector.hpp>
 
 #include <o2scl/constants.h>
@@ -37,6 +39,11 @@
 #include <o2scl/nucmass_ame.h>
 #include <o2scl/nucdist.h>
 #include <o2scl/fit_nonlin.h>
+#include <o2scl/set_openmp.h>
+
+#ifdef O2SCL_SET_OPENMP
+#include <omp.h>
+#endif
 
 namespace o2scl {
 
@@ -59,8 +66,83 @@ namespace o2scl {
     typedef boost::numeric::ublas::vector<size_t> ubvector_size_t;
 
     nucmass_fit();
-    
+
     virtual ~nucmass_fit() {};
+
+    /** \brief Copy constructor
+
+        \ref def_mmin is an \ref mmin_simp2 object, which
+        intentionally disallows copying (as do most O2scl
+        minimizers) since a blind field-by-field copy of its
+        internal scratch state (e.g. its simplex, mid-search) would
+        not be meaningful. This constructor therefore doesn't copy
+        \ref def_mmin itself; instead, as \ref mmin_base's own copy
+        constructor does for its own copyable descendants, it copies
+        just \ref def_mmin's tunable settings (verbose, ntrial,
+        tol_rel, tol_abs, err_nonconv) onto a freshly-constructed
+        \ref def_mmin, alongside \c nf's other settings (\ref
+        fit_method, \ref even_even, \ref minZ, \ref minN, \ref dist,
+        and the protected uncertainty vector and minimizer pointer
+        set via \ref set_uncerts() and \ref set_mmin()). This is
+        primarily intended to let callers such as \ref
+        nucmass_fit_iso give each of several OpenMP threads its own
+        independent copy of a tuned \ref nucmass_fit object.
+
+        \ref mm defaults (in the ordinary constructor) to
+        <tt>&def_mmin</tt>, i.e. "use my own \ref def_mmin". If \c
+        nf's \ref mm is still pointing at \c nf's own \ref def_mmin
+        (the common case, when \ref set_mmin() was never called),
+        this copy points the new object's \ref mm at its own \ref
+        def_mmin too, not \c nf's -- otherwise every copy made this
+        way would still share (and race on) \c nf's single \ref
+        def_mmin regardless of how many independent copies exist.
+        If \c nf's \ref mm was redirected to some other, external
+        minimizer via \ref set_mmin(), that pointer is copied as-is;
+        note that doing so means several thread-local copies of \c
+        nf would then share (and need to independently be safe for
+        concurrent use of) that same external minimizer object --
+        \ref n_threads greater than 1 in \ref nucmass_fit_iso is
+        only guaranteed race-free through this copy when using the
+        default \ref def_mmin.
+    */
+    nucmass_fit(const nucmass_fit &nf) {
+      fit_method=nf.fit_method;
+      even_even=nf.even_even;
+      minZ=nf.minZ;
+      minN=nf.minN;
+      dist=nf.dist;
+      uncs=nf.uncs;
+      mm=(nf.mm==&nf.def_mmin) ? &def_mmin : nf.mm;
+      def_mmin.verbose=nf.def_mmin.verbose;
+      def_mmin.ntrial=nf.def_mmin.ntrial;
+      def_mmin.tol_rel=nf.def_mmin.tol_rel;
+      def_mmin.tol_abs=nf.def_mmin.tol_abs;
+      def_mmin.err_nonconv=nf.def_mmin.err_nonconv;
+    }
+
+    /** \brief Copy from operator=
+
+        See the copy constructor above for exactly what is (and
+        isn't) copied, and the caveat about \ref mm when \ref
+        set_mmin() has redirected it to an external minimizer.
+    */
+    nucmass_fit &operator=(const nucmass_fit &nf) {
+      if (this!=&nf) {
+        fit_method=nf.fit_method;
+        even_even=nf.even_even;
+        minZ=nf.minZ;
+        minN=nf.minN;
+        dist=nf.dist;
+        uncs=nf.uncs;
+        mm=(nf.mm==&nf.def_mmin) ? &def_mmin : nf.mm;
+        def_mmin.verbose=nf.def_mmin.verbose;
+        def_mmin.ntrial=nf.def_mmin.ntrial;
+        def_mmin.tol_rel=nf.def_mmin.tol_rel;
+        def_mmin.tol_abs=nf.def_mmin.tol_abs;
+        def_mmin.err_nonconv=nf.def_mmin.err_nonconv;
+      }
+      return *this;
+    }
 
     /// \name Fitting method
     //@{
@@ -91,16 +173,39 @@ namespace o2scl {
     /// Minimum neutron number to fit (default 8)
     int minN;
 
-    /// Fit the nuclear mass formula
+    /** \brief Fit the nuclear mass formula
+
+        If \ref set_mmin() has been used to install a minimizer
+        which inherits from \ref mmin_parallel_base and reports
+        (via \ref mmin_parallel_base::mmin_n_threads()) that it may
+        call the function being minimized from more than one thread
+        at once, this method gives each of those threads its own
+        private clone of \c n (via \ref
+        nucmass_fit_base::clone()), so that concurrent calls into
+        \c n's \ref nucmass_fit_base::fit_fun() from different
+        threads don't race by writing to and reading from \c n's
+        shared internal parameter state. This requires \c n's
+        concrete type to actually implement \ref
+        nucmass_fit_base::clone() (the default implementation calls
+        the error handler); with a serial minimizer (the default),
+        no cloning happens and \c n's own \ref
+        nucmass_fit_base::clone() is never called. Regardless of
+        which path is taken, \c n itself always ends up holding the
+        best-fit parameters found once this function returns.
+    */
     virtual void fit(nucmass_fit_base &n, double &res);
     
     /** \brief Evaluate quality without fitting
      */
     virtual void eval(nucmass &n, double &res);
 
+    /** \brief Evaluate quality without fitting
+     */
+    virtual void eval_max(nucmass &n, double &res, double &max_abs_dev);
+
     /** \brief Desc
      */
-    void eval_table(nucmass &n, double &fmin,
+    void eval_table(nucmass &n, double &fmin, double &max_abs_dev,
                     bool make_table, table<> &tab);
     
     /** \brief Fit a nuclear mass formula using least squares
@@ -195,7 +300,18 @@ namespace o2scl {
         This pointer is set by fit() and eval().
      */
     nucmass_fit_base *nmf;
-    
+
+    /** \brief Per-thread clones of the formula being fit, used only
+        while a call to \ref fit() is in progress with a parallel
+        minimizer
+
+        Empty at all other times, including while \ref eval(), \ref
+        fit_covar(), and similar are running (those always operate
+        serially through \ref nmf directly). See \ref fit() and
+        \ref min_fun() for how this is used.
+    */
+    std::vector<std::shared_ptr<nucmass_fit_base> > thread_clones;
+
   };
 
 }

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -134,40 +134,7 @@ namespace o2scl {
 
   typedef fermion_tl<double> fermion;
   typedef fermion_tl<long double> fermion_ld;
-#ifdef O2SCL_SET_MULTIP
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::cpp_dec_float<25> > >
-  fermion_cdf25;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::cpp_dec_float<35> > >
-  fermion_cdf35;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::cpp_dec_float<50> > >
-  fermion_cdf50;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::cpp_dec_float<100> > >
-  fermion_cdf100;
-#endif
 
-#ifdef O2SCL_SET_MPFR
-
-#ifdef O2SCL_SET_MULTIP
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::mpfr_float_backend<25> > >
-  fermion_mpfr25;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::mpfr_float_backend<35> > >
-  fermion_mpfr35;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::mpfr_float_backend<50> > >
-  fermion_mpfr50;
-  typedef fermion_tl<boost::multiprecision::number<
-                       boost::multiprecision::mpfr_float_backend<100> > >
-  fermion_mpfr100;
-#endif
-
-#endif
-  
   /** \brief Fermion properties at zero temperature
 
       This is a base class for the computation of fermionic statistics

@@ -25,6 +25,10 @@ Bibliography
    <https://doi.org/10.1016/0375-9474(95)00445-9>`_,
    Nucl. Phys. A **595** (1995) 409.
 
+.. [Auger05] : `A. Auger and N. Hansen
+   <https://doi.org/10.1109/CEC.2005.1554902>`_,
+   2005 IEEE Congress on Evolutionary Computation **2** (2005) 1769.
+
 .. [Bader83] : `G. Bader and P. Deuflhard
    <https://doi.org/10.1007/BF01418331>`_,
    Numer. Math.  **41** (1983) 373.
@@ -264,9 +268,26 @@ Bibliography
    <https://doi.org/10.1088/0264-9381/11/2/015>`_,
    Class. Quantum Grav. **11** (1994) 443.
 
+.. [Grams23] : `G. Grams, W. Ryssens, G. Scamps, S. Goriely, and N. Chamel
+   <https://doi.org/10.1140/epja/s10050-023-01158-6>`_,
+   Eur. Phys. J. A **59** (2023) 270.
+
+.. [Grams24] : `G. Grams, W. Ryssens, N. Shchechilin, A. Sanchez-Fernandez,
+   N. Chamel, and S. Goriely <https://arxiv.org/abs/2411.08007>`_,
+   arXiv:2411.08007 (2024).
+
 .. [Hairer09] : E. Hairer and G. Norsett S. P. and Wanner,
    `Solving ordinary differential equations I, Nonstiff Problems <https://www.worldcat.org/isbn/9783642051630>`_,
    (2009) Springer, 2nd edition.
+
+.. [Hansen01] : `N. Hansen and A. Ostermeier
+   <https://doi.org/10.1162/106365601750190398>`_,
+   Evol. Comput. **9** (2001) 159.
+
+.. [Hansen09] : `N. Hansen
+   <https://doi.org/10.1145/1570256.1570333>`_,
+   Proc. of the 11th Annual Conf. Companion on Genetic and
+   Evolutionary Computation Conf.: Late Breaking Papers (2009) 2389.
 
 .. [Hatsuda94] : `T. Hatsuda and T. Kunihiro
    <https://doi.org/10.1016/0370-1573(94)90022-1>`_,
@@ -537,9 +558,17 @@ Bibliography
    <https://doi.org/10.1007/BF01385877>`_,
    Numer. Math. **5** (1963) 48.
 
+.. [Ryssens22] : `W. Ryssens, G. Scamps, S. Goriely, and M. Bender
+   <https://doi.org/10.1140/epja/s10050-022-00894-5>`_,
+   Eur. Phys. J. A **58** (2022) 246.
+
 .. [Samyn04] : `M. Samyn, S. Goriely, M. Bender, and J. M. Pearson
    <https://doi.org/10.1103/PhysRevC.70.044309>`_,
    Phys. Rev. C **70** (2004) 044309.
+
+.. [Scamps21] : `G. Scamps, S. Goriely, E. Olsen, M. Bender, and W. Ryssens
+   <https://doi.org/10.1140/epja/s10050-021-00642-1>`_,
+   Eur. Phys. J. A **57** (2021) 333.
 
 .. [Scott79] : `D. W. Scott
    <https://doi.org/10.1093/biomet/66.3.605>`_,

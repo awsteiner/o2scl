@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -205,6 +205,7 @@ cli::cli() {
   c_run.func=new comm_option_mfptr<cli>(this,&cli::comm_option_run);
   c_run.type=comm_option_both;
       
+#ifndef O2SCL_NO_SYSTEM_FUNC
   c_shell.shrt=0;
   c_shell.lng="shell";
   c_shell.min_parms=1;
@@ -219,6 +220,7 @@ cli::cli() {
     "be run using ! instead of \"shell \", i.e. \"!ls\".";
   c_shell.func=new comm_option_mfptr<cli>(this,&cli::comm_option_shell);
   c_shell.type=comm_option_both;
+#endif
       
   c_set.shrt=0;
   c_set.lng="set";
@@ -276,7 +278,8 @@ cli::cli() {
   c_warranty.desc="Show warranty information.";
   c_warranty.help="This command shows the GPLv3 no warranty statement.";
   c_warranty.parm_desc="";
-  c_warranty.func=new comm_option_mfptr<cli>(this,&cli::comm_option_warranty);
+  c_warranty.func=new comm_option_mfptr<cli>(this,
+                                             &cli::comm_option_warranty);
   c_warranty.type=comm_option_both;
   
   c_xml_to_o2.shrt=0;
@@ -286,7 +289,8 @@ cli::cli() {
   c_xml_to_o2.desc="Read doxygen XML files to create run-time documentation.";
   c_xml_to_o2.help="X";
   c_xml_to_o2.parm_desc="(no parameters).";
-  c_xml_to_o2.func=new comm_option_mfptr<cli>(this,&cli::comm_option_xml_to_o2);
+  c_xml_to_o2.func=new comm_option_mfptr<cli>(this,
+                                              &cli::comm_option_xml_to_o2);
   c_xml_to_o2.type=comm_option_both;
   
   clist.push_back(c_alias);
@@ -299,7 +303,9 @@ cli::cli() {
   clist.push_back(c_quit);
   clist.push_back(c_run);
   clist.push_back(c_set);
+#ifndef O2SCL_NO_SYSTEM_FUNC
   clist.push_back(c_shell);
+#endif
   clist.push_back(c_warranty);
   clist.push_back(c_xml_to_o2);
 
@@ -328,7 +334,9 @@ cli::~cli() {
   delete c_alias.func;
   delete c_get.func;
   delete c_run.func;
+#ifndef O2SCL_NO_SYSTEM_FUNC
   delete c_shell.func;
+#endif
   delete c_set.func;
   delete c_license.func;
   delete c_warranty.func;
@@ -1545,6 +1553,7 @@ int cli::run_interactive() {
 #ifndef O2SCL_NO_SYSTEM_FUNC
       
       if (shell_cmd_allowed) {
+        
 	entry=entry.substr(1,entry.length()-1);
 	if (verbose>0) {
 	  cout << cmd_name << ": Executing system command: " 
@@ -3560,72 +3569,72 @@ void cli::set_colors(std::string c, int verbose_arg) {
                 o2scl::exc_einval);
     }
     if (vs[j][0]=='c') {
-      if (verbose_arg>0) cout << "Set command color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set command color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         command_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         command_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) {
+      if (verbose_arg>1) {
         cout << command_color << "command" << default_color << endl;
       }
     } else if (vs[j][0]=='t') {
-      if (verbose_arg>0) cout << "Set type color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set type color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         type_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         type_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) cout << type_color << "type" << default_color << endl;
+      if (verbose_arg>1) cout << type_color << "type" << default_color << endl;
     } else if (vs[j][0]=='p') {
-      if (verbose_arg>0) cout << "Set param color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set param color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         param_color="";
       } else {
           std::string scol=vs[j].substr(2,vs[j].length()-2);
           param_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) cout << param_color << "param" << default_color << endl;
+      if (verbose_arg>1) cout << param_color << "param" << default_color << endl;
     } else if (vs[j][0]=='h') {
-      if (verbose_arg>0) cout << "Set help color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set help color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         help_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         help_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) cout << help_color << "help" << default_color << endl;
+      if (verbose_arg>1) cout << help_color << "help" << default_color << endl;
     } else if (vs[j][0]=='e') {
-      if (verbose_arg>0) cout << "Set exec color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set exec color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         exec_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         exec_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) cout << exec_color << "exec" << default_color << endl;
+      if (verbose_arg>1) cout << exec_color << "exec" << default_color << endl;
     } else if (vs[j][0]=='d') {
-      if (verbose_arg>0) cout << "Set default color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set default color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         default_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         default_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) {
+      if (verbose_arg>1) {
         cout << default_color << "default" << default_color << endl;
       }
     } else if (vs[j][0]=='u') {
-      if (verbose_arg>0) cout << "Set url color with: " << vs[j] << endl;
+      if (verbose_arg>1) cout << "Set url color with: " << vs[j] << endl;
       if (vs[j].size()<3) {
         url_color="";
       } else {
         std::string scol=vs[j].substr(2,vs[j].length()-2);
         url_color=ter.color_from_int(o2scl::stoi(scol));
       }
-      if (verbose_arg>0) cout << url_color << "url" << default_color << endl;
+      if (verbose_arg>1) cout << url_color << "url" << default_color << endl;
     } else {
       O2SCL_ERR("Invalid prefix in set_colors().",
                 o2scl::exc_einval);

@@ -44,6 +44,7 @@ cpp_using o2scl_hdf
 # Additional python headers
 #
 py_header from o2sclpy.base import *
+py_header from o2sclpy.min import *
 py_header from o2sclpy.part import *
 #
 # ------------------------------------------------------
@@ -367,6 +368,8 @@ class nucmass_fit
 - bool even_even
 - int minZ
 - int minN
+- std::vector<nucleus> dist
+- mmin_simp2<> def_mmin
 - function fit
   - void
   - io nucmass_fit_base &n
@@ -456,6 +459,16 @@ function hfb_sp_load
 #
 # ------------------------------------------------------
 #
+function bskg_load
+- void
+- nucmass_hfb_sp &hfb
+# We can't specify the default parameter for model because
+# we cannot specify a default parameter for string objects.
+- size_t model
+- std::string filename
+#
+# ------------------------------------------------------
+#
 function nucdist_set
 - void
 - vector<nucleus> &dist
@@ -478,12 +491,12 @@ function nucdist_pair_set
 #
 # ------------------------------------------------------
 #
-function nucdist_set_ext
+function nucdist_split_iso
 - void
 - vector<nucleus> &dist
 - vector<nucleus> &dist_ext
 - nucmass &nm
 - std::string expr ["1"]  
 - int maxA [400]
-- int n_chop [1]
+- int n_hold [1]
 

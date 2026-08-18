@@ -11,6 +11,22 @@ help:
 	@echo "in generating the documentation plots and is not"
 	@echo "for use by the casual end-user."
 	@echo
+	@echo "Developer targets"
+	@echo "-----------------------------------"\
+	"---------------------------------------"
+	@echo "plot-all:             Make all plots (requires make o2scl-examples)"
+	@echo
+	@echo "Working on 8/15/26:"
+	@echo "  ex_anneal_plot ex_chebapp_plot"
+	@echo "  ex_contour_plot1 ex_contour_plot2 ex_fptr_plot"
+	@echo "  ex_mmin_plot ex_mmin_plot2"
+	@echo "  ex_nuc_prof"
+	@echo
+	@echo "Not yet working or not yet tested:"
+	@echo "  ex_nucmass_plots"
+	@echo "  ex_ode_airy_plot ex_ode_bessel_plot"
+	@echo "  ex_ode_bessel2_plot"
+	@echo "  ex_ode_bessel3_plot ex_stiff_plot"
 
 # -------------------------------------------------------------------- 
 # This directory generates the documentation images after all of
@@ -30,7 +46,7 @@ plot-all: ex_anneal_plot ex_chebapp_plot ex_contour_plots \
 # Use 'open' for OSX and 'eyes of gnome' for linux
 
 if O2SCL_LINUX
-IMAGE_VIEW = eog
+IMAGE_VIEW = open
 IMAGE_VIEW2 = &
 else
 if O2SCL_OSX
@@ -45,10 +61,10 @@ endif
 # -------------------------------------------------------------------- 
 
 ex_interp_plot:
-	o2graph -read ../ex_interp.o2 tdata \
+	o2graph -read ../data/ex_interp.o2 tdata \
 		-set ylo "(-2.0)" -set yhi 1.5 \
 		-scatter x y \
-		-read ../ex_interp.o2 tresult \
+		-read ../data/ex_interp.o2 tresult \
 		-plot x ylin color=k -plot x ycsp color=r \
 		-plot x ystef color=b \
 		-plot x yiko color=r,ls=: \
@@ -78,7 +94,7 @@ ex_interp_plot:
 
 ex_anneal_plot:
 	o2graph -backend Agg -set colbar 1 \
-		-read ../ex_anneal_plot.o2 -set xtitle x -set ytitle y \
+		-read ../data/ex_anneal_plot.o2 -xtitle x -ytitle y \
 		-den-plot f \
 		-contours "(-0.9)" f ex_anneal_conts.o2 l1 \
 		-contours "(-0.7)" f ex_anneal_conts.o2 l2 \
@@ -109,23 +125,23 @@ ex_anneal_plot:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_contour_plot1:
-	o2graph -backend Agg -read ../ex_contour.o2 c1_cl \
-		-set xtitle x -set ytitle y \
+	o2graph -backend Agg -read ../data/ex_contour.o2 c1_cl \
+		-xtitle x -ytitle y \
 		-plot -save ex_contour_plot1_new.png
 	convert +append ex_contour_plot1.png ex_contour_plot1_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_contour_plot2:
-	o2graph -backend Agg -read ../ex_contour.o2 c2_cl \
-		-set xtitle x -set ytitle y \
+	o2graph -backend Agg -read ../data/ex_contour.o2 c2_cl \
+		-xtitle x -ytitle y \
 		-plot -save ex_contour_plot2_new.png
 	convert +append ex_contour_plot2.png ex_contour_plot2_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_chebapp_plot: 
-	o2graph -backend Agg -generic table ../ex_chebapp.out \
+	o2graph -backend Agg -generic table ../data/ex_chebapp.out \
 		-plot c1 c2 color=black -plot c1 c4 color=red \
 		-plot c1 c5 color=blue,ls=: \
 		-line 0.8 "(-0.5)" 0.95 "(-0.5)" color=black \
@@ -141,15 +157,15 @@ ex_chebapp_plot:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_eos_had_eos:
-	o2graph -backend agg -read ../ex_eos_had_apr_nstar.o2 \
-		-set xtitle \
+	o2graph -backend agg -read ../data/ex_eos_had_apr_nstar.o2 \
+		-xtitle \
 		"$$ \varepsilon (\mathrm{MeV}/\mathrm{fm}^{3}) $$" \
-		-set ytitle \
+		-ytitle \
 		"$$ P (\mathrm{MeV}/\mathrm{fm}^{3}) $$" \
 		-function "ed*197.33" edhc -function "pr*197.33" prhc \
 		-set xlo 0 -set xhi 2000 -set ylo 0.1 -set yhi 2000 \
 		-set logy 1 -plot edhc prhc \
-		-read ../ex_eos_had_skyrme_SLy4_eos.o2 \
+		-read ../data/ex_eos_had_skyrme_SLy4_eos.o2 \
 		-function "ed*197.33" edhc -function "pr*197.33" prhc \
 		-plot edhc prhc -save ex_eos_had_eos_new.png
 	convert +append ex_eos_had_eos.png ex_eos_had_eos_new.png \
@@ -157,15 +173,15 @@ ex_eos_had_eos:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_eos_had_gibbs:
-	o2graph -backend agg -read ../ex_eos_had_apr_nstar.o2 \
-		-set xtitle \
+	o2graph -backend agg -read ../data/ex_eos_had_apr_nstar.o2 \
+		-xtitle \
 		"$$ \varepsilon (\mathrm{MeV}/\mathrm{fm}^{3}) $$" \
-		-set ytitle \
+		-ytitle \
 		"$$ P (\mathrm{MeV}/\mathrm{fm}^{3}) $$" \
 		-function "ed*197.33" edhc -function "pr*197.33" prhc \
 		-set xlo 0 -set xhi 2000 -set ylo 0.1 -set yhi 2000 \
 		-set logy 1 -plot edhc prhc \
-		-read ../ex_eos_had_skyrme_SLy4_eos.o2 \
+		-read ../data/ex_eos_had_skyrme_SLy4_eos.o2 \
 		-function "ed*197.33" edhc -function "pr*197.33" prhc \
 		-plot edhc prhc -save ex_eos_had_gibbs_new.png
 	convert +append ex_eos_had_gibbs.png ex_eos_had_gibbs_new.png \
@@ -173,22 +189,23 @@ ex_eos_had_gibbs:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_eos_had_mvsr:
-	o2graph -backend agg -read ../ex_eos_had_apr_mvsr.o2 \
-		-set xtitle \
+	o2graph -backend agg -read ../data/ex_eos_had_apr_mvsr.o2 \
+		-xtitle \
 		"$$ R~(\mathrm{km}) $$" \
-		-set ytitle \
+		-ytitle \
 		"$$ M~(\mathrm{M}_{\odot}) $$" \
 		-set xlo 9 -set xhi 16 -set ylo 0 -set yhi 2.3 \
 		-plot r gm \
-		-read ../ex_eos_had_skyrme_SLy4_mvsr.o2 \
+		-read ../data/ex_eos_had_skyrme_SLy4_mvsr.o2 \
 		-plot r gm -save ex_eos_had_mvsr_new.png
 	convert +append ex_eos_had_mvsr.png ex_eos_had_mvsr_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_fptr_plot:
-	cat ../ex_fptr.scr | grep -v t > exftemp1
-	acol -generic table ../ex_fptr.out -internal exftemp2.o2
+	cat ../ex_fptr.scr | grep -v t \
+		| awk '{print $$2 " " $$3 " " $$4 " " $$5}' > exftemp1
+	acol -generic table ../data/ex_fptr.out -internal exftemp2.o2
 	o2graph -backend Agg -set xlo "(-1)" -set xhi 2 \
 		-read exftemp2.o2 -plot x y color=red \
 		-ttext 0.5 "(-0.1)" x -ttext "(-0.1)" 0.5 y \
@@ -204,11 +221,11 @@ ex_mcmc_plot:
 		-set fig_dict "fig_size_x=6.0,fig_size_y=4.0" \
 		-subplots 1 2 -subadj \
 		"left=0.12,right=0.99,top=0.99,bottom=0.11,wspace=0.38" \
-		-selax 0 -read ../ex_mcmc.o2 indep \
+		-selax 0 -read ../data/ex_mcmc.o2 indep \
 		-hist-plot x bins=20 -create table x "grid:-5,5,0.1" \
 		-function "1000*exp(-x^2)*(sin(x-1.4)+1)" y \
 		-plot x y "lw=2" -xtitle "x" -ytitle "y" \
-		-selax 1 -read ../ex_mcmc_kde.o2 indep \
+		-selax 1 -read ../data/ex_mcmc_kde.o2 indep \
 		-hist-plot x bins=20 -create table x "grid:-5,5,0.1" \
 		-function "5500*exp(-x^2)*(sin(x-1.4)+1)" y \
 		-plot x y "lw=2" -xtitle "x" -ytitle "y" \
@@ -233,24 +250,24 @@ LEG_Y6c = 6.0
 
 ex_mmin_plot:
 	o2graph -set xlo "(-2)" -set xhi 5.5 -set ylo "(-1)" -set yhi 15 \
-		-set fig-dict "top_margin=0.05" -set xtitle x \
-		-set ytitle z \
+		-set fig_dict "top_margin=0.05" -xtitle x \
+		-ytitle z \
 		-ttext 0.5 1.03 "Minimizer trajectories in x-z plane" \
-		-generic table ../ex_mmin6.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin6.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=paleturquoise,ls=-- \
-		-generic table ../ex_mmin5.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin5.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=navajowhite,ls=-- \
-		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin1.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=green,ls=: \
-		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin2.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=red \
-		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin2g.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=blue \
-		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin3.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=magenta,ls=-. \
-		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin3g.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=brown,ls=-- \
-		-generic table ../ex_mmin4g.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin7.dat -internal ex_mmin.o2 \
 		-plot c1 c3 color=black,ls=-- \
 		-rect 1.9 5.6 5.45 11.65 0 lw=0,fc=white,fill=True,zorder=20 \
 		-line $(LEG_X1) $(LEG_Y1) $(LEG_X2) $(LEG_Y1) \
@@ -269,7 +286,7 @@ ex_mmin_plot:
 			color=sandybrown,ls=:,zorder=24 \
 		-line $(LEG_X1) $(LEG_Y6c) $(LEG_X2) $(LEG_Y6c) \
 			color=mediumturquoise,ls=:,zorder=25 \
-		-text $(LEG_X3) $(LEG_Y1) "BFGS with gradient" \
+		-text $(LEG_X3) $(LEG_Y1) "CMA-ES" \
 			color=black,ha=left,zorder=36 \
 		-text $(LEG_X3) $(LEG_Y2) "PR with gradient" \
 			color=brown,ha=left,zorder=35 \
@@ -305,33 +322,33 @@ LEG_Y12 = 3.5
 
 ex_mmin_plot2:
 	o2graph -set xlo "(-2)" -set xhi 3.5 -set ylo "(-2)" -set yhi 3.8 \
-		-set fig-dict "top_margin=0.05" -set xtitle x \
-		-set ytitle y \
+		-set fig_dict "top_margin=0.05" -xtitle x \
+		-ytitle y \
 		-ttext 0.5 1.03 "Minimizer trajectories in x-y plane" \
-		-generic table ../ex_mmin1.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin7.dat -internal ex_mmin.o2 \
+		-plot c1 c2 color=black,ls=-- \
+		-generic table ../data/ex_mmin1.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=green,ls=: \
 		-line $(LEG_X4) $(LEG_Y7) $(LEG_X5) $(LEG_Y7) color=green,ls=: \
 		-text $(LEG_X6) $(LEG_Y7) "Nelder-Mead" color=green,ha=left \
-		-generic table ../ex_mmin2.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin2.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=red \
 		-line $(LEG_X4) $(LEG_Y8) $(LEG_X5) $(LEG_Y8) color=red \
 		-text $(LEG_X6) $(LEG_Y8) "Fletcher-Reeves" color=red,ha=left \
-		-generic table ../ex_mmin2g.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin2g.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=blue \
 		-line $(LEG_X4) $(LEG_Y9) $(LEG_X5) $(LEG_Y9) color=blue \
 		-text $(LEG_X6) $(LEG_Y9) "FR with gradient" color=blue,ha=left \
-		-generic table ../ex_mmin3.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin3.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=magenta,ls=-. \
 		-line $(LEG_X4) $(LEG_Y10) $(LEG_X5) $(LEG_Y10) color=magenta,ls=-. \
 		-text $(LEG_X6) $(LEG_Y10) "Polak-Ribere" color=magenta,ha=left \
-		-generic table ../ex_mmin3g.dat -internal ex_mmin.o2 \
+		-generic table ../data/ex_mmin3g.dat -internal ex_mmin.o2 \
 		-plot c1 c2 color=brown,ls=-- \
 		-line $(LEG_X4) $(LEG_Y11) $(LEG_X5) $(LEG_Y11) color=brown,ls=-- \
 		-text $(LEG_X6) $(LEG_Y11) "PR with gradient" color=brown,ha=left \
-		-generic table ../ex_mmin4g.dat -internal ex_mmin.o2 \
-		-plot c1 c2 color=black,ls=-- \
 		-line $(LEG_X4) $(LEG_Y12) $(LEG_X5) $(LEG_Y12) color=black,ls=-- \
-		-text $(LEG_X6) $(LEG_Y12) "BFGS with gradient" color=black,ha=left \
+		-text $(LEG_X6) $(LEG_Y12) "CMA-ES" color=black,ha=left \
 		-point 1 0 marker=o,color=black \
 		-point "(-1.6)" 3.2 marker=o,color=black \
 		-text "(-1.4)" 3.2 "Actual minimum" ha=left \
@@ -341,9 +358,9 @@ ex_mmin_plot2:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_nuc_prof:
-	o2graph -read ../ex_nucleus_rmf_prof.o2 -set xlo 0 -set xhi 10 \
+	o2graph -read ../data/ex_nucleus_rmf_prof.o2 -set xlo 0 -set xhi 10 \
 		-set ylo 0 -set yhi 0.1 \
-		-set xtitle "$$ r~(\mathrm{fm})$$" -set ytitle \
+		-xtitle "$$ r~(\mathrm{fm})$$" -ytitle \
 		"$$ \mathrm{density}~(\mathrm{fm}^{-3}) $$" \
 		-plot r rhon color=red -plot r rhop color=blue \
 		-plot r chden color=black -plot r chden_exp \
@@ -360,7 +377,7 @@ ex_nuc_prof:
 
 ex_nucmass_plots:
 	o2graph -backend Agg \
-		-set xtitle N -set ytitle Z -read ../ex_nucmass_table.o2 \
+		-xtitle N -ytitle Z -read ../data/ex_nucmass_table.o2 \
 		-to-table3d N Z -set colbar 1 \
 		-den-plot se cmap=PuOr \
 		-ttext 0.6 0.95 "$$ \mathrm{Semi-empirical} $$" \
@@ -395,17 +412,14 @@ ex_nucmass_plots:
 		-clf -den-plot ws36 cmap=PuOr \
 		-ttext 0.6 0.95 "$$ \mathrm{Liu~et~al.~(2011)} $$" \
 		-save ex_nucmass_ws36.png 
-	convert +append ex_anneal_plot.png ex_anneal_plot_new.png \
-		temp.png
-	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_airy: 
-	o2graph -read ../ex_ode.o2 table_2 \
-		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+	o2graph -read ../data/ex_ode.o2 table_2 \
+		-xtitle x -ytitle y -set fig_dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err)" abserr \
 		-plot x abserr -plot x diff \
-		-read ../ex_ode.o2 table_3 \
+		-read ../data/ex_ode.o2 table_3 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err)" abserr \
 		-plot x abserr -plot x diff \
@@ -420,11 +434,11 @@ ex_ode_airy:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel: 
-	o2graph -backend Agg -read ../ex_ode.o2 table_0 \
-		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+	o2graph -backend Agg -read ../data/ex_ode.o2 table_0 \
+		-xtitle x -ytitle y -set fig_dict "top_margin=0.05" \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-plot x err -plot x diff \
-		-read ../ex_ode.o2 table_1 \
+		-read ../data/ex_ode.o2 table_1 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-plot x err -plot x diff \
 		-ttext 0.46 0.87 "Prince-Dormand act. error" \
@@ -438,17 +452,17 @@ ex_ode_bessel:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel2: 
-	o2graph -backend Agg -read ../ex_ode.o2 table_4 \
-		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+	o2graph -backend Agg -read ../data/ex_ode.o2 table_4 \
+		-xtitle x -ytitle y -set fig_dict "top_margin=0.05" \
 		-set ylo 1.0e-11 -set yhi 2.5e-6 \
 		-function "abs(calc-exact)" diff -set logy 1 \
 		-function "abs(err0)" abserr \
 		-plot x abserr color=black,ls=-. -plot x diff color=black \
-		-read ../ex_ode.o2 table_5 \
+		-read ../data/ex_ode.o2 table_5 \
 		-function "abs(calc-exact)" diff \
 		-function "abs(err0)" abserr \
 		-plot x abserr color=red,ls=-. -plot x diff color=red \
-		-read ../ex_ode.o2 table_6 \
+		-read ../data/ex_ode.o2 table_6 \
 		-function "abs(calc-exact)" diff \
 		-function "abs(err0)" abserr \
 		-plot x abserr color=blue,ls=-. -plot x diff color=blue \
@@ -465,8 +479,8 @@ ex_ode_bessel2:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_ode_bessel3: 
-	o2graph -backend Agg -read ../ex_ode.o2 table_7 \
-		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+	o2graph -backend Agg -read ../data/ex_ode.o2 table_7 \
+		-xtitle x -ytitle y -set fig_dict "top_margin=0.05" \
 		-set ylo 1.0e-11 -set yhi 5.0e-8 \
 		-set xlo 0 -set xhi 10 -set logy 1 \
 		-function "abs(err0)" abserr \
@@ -481,12 +495,12 @@ ex_ode_bessel3:
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
 
 ex_stiff_plot:
-	o2graph -backend Agg -read ../ex_stiff.o2 table_0 \
-		-set xtitle x -set ytitle y -set fig-dict "top_margin=0.05" \
+	o2graph -backend Agg -read ../data/ex_stiff.o2 table_0 \
+		-xtitle x -ytitle y -set fig_dict "top_margin=0.05" \
 		-set ylo 1.0e-16 -set yhi 1.0e8 -set logy 1 \
 		-set xlo 0 -set xhi 4 -plot x rel_err color=black \
 		-plot x rel_diff color=red \
-		-read ../ex_stiff.o2 table_1 -plot x rel_err color=blue \
+		-read ../data/ex_stiff.o2 table_1 -plot x rel_err color=blue \
 		-plot x rel_diff color=green \
 		-ttext 0.35 0.83 \
 		"Explicit actual err." color=green \
@@ -502,68 +516,3 @@ ex_stiff_plot:
 	convert +append ex_stiff.png ex_stiff_plot_new.png \
 		temp.png
 	$(IMAGE_VIEW) temp.png $(IMAGE_VIEW2)
-
-# Old targets
-
-# ex_mmin_plot.o: ex_mmin_plot.cpp
-# 	$(CXX) $(CPPFLAGS) $(CPPFLAGS) -o ex_mmin_plot.o -c ex_mmin_plot.cpp
-
-# ex_mmin_plot: ex_mmin_plot.o  ../../src/other/graph.o
-# 	$(CXX) -o ex_mmin_plot ex_mmin_plot.o \
-# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-# ex_stiff_plot.o: ex_stiff_plot.cpp
-# 	$(CXX) $(CPPFLAGS) -o ex_stiff_plot.o -c ex_stiff_plot.cpp
-
-# ex_stiff_plot: ex_stiff_plot.o  ../../src/other/graph.o
-# 	$(CXX) -o ex_stiff_plot ex_stiff_plot.o \
-# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl \
-# 		-lo2scl_hdf
-
-# ex_anneal_plot.o: ex_anneal_plot.cpp
-# 	$(CXX) $(CPPFLAGS) -o ex_anneal_plot.o -c ex_anneal_plot.cpp
-
-# ex_anneal_plot: ex_anneal_plot.o  ../../src/other/graph.o
-# 	$(CXX) -o ex_anneal_plot ex_anneal_plot.o \
-# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-#ex_chebapp_plot.eps: ex_chebapp_plot.py
-#	python ex_chebapp_plot.py
-
-#ex_fptr_plot.eps: ex_fptr_plot.py
-#	python ex_fptr_plot.py
-
-# ex_mandel_plot.o: ex_mandel_plot.cpp
-# 	$(CXX) $(CPPFLAGS) -o ex_mandel_plot.o -c ex_mandel_plot.cpp
-
-# ex_mandel_plot: ex_mandel_plot.o  ../../src/other/graph.o
-# 	$(CXX) -o ex_mandel_plot ex_mandel_plot.o \
-# 		$(ROOT_LIB) $(CPPFLAGS) $(LDFLAGS) -lo2scl -lo2scl_hdf
-
-# ex_mandel_plot_all: ex_mandel_plot
-# 	./ex_mandel_plot
-# 	convert ex_mandel_plot.png ex_mandel_plot.pdf
-
-#ex_ode_bessel.eps: ex_ode_plot.py
-#	python ex_ode_plot.py
-
-# ex_planar_plot.o: ex_planar_plot.cpp
-# 	$(CXX) $(CPPFLAGS) -o ex_planar_plot.o -c ex_planar_plot.cpp
-
-# ex_planar_plot: ex_planar_plot.o ../../src/other/graph.o
-# 	$(CXX) $(CPPFLAGS) -o ex_planar_plot ex_planar_plot.o \
-# 		-lo2scl_hdf -lo2scl $(ROOT_LIB) $(LDFLAGS) 
-
-# ex_planar_plot.pdf: ex_planar_plot
-# 	./ex_planar_plot
-# 	convert ex_planar_plot.png ex_planar_plot.pdf
-
-# ex_ublas.o: ex_ublas.cpp
-# 	$(CXX) -I/home/asteiner/install/include $(INCLUDES) \
-# 		-o ex_ublas.o -c ex_ublas.cpp
-
-# ex_ublas: ex_ublas.o  ../../src/other/graph.o
-# 	$(CXX) -I/home/asteiner/install/include -L/usr/lib64/atlas \
-# 		-L/home/asteiner/install/lib -o ex_ublas ex_ublas.o -lgsl \
-# 		-lo2scl
-

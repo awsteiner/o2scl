@@ -1,7 +1,7 @@
 /*
   -------------------------------------------------------------------
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -138,7 +138,7 @@ int main(void) {
 void write_file(cheb_approx &gc) {
 
   ofstream fout;
-  fout.open("ex_chebapp.out");
+  fout.open("data/ex_chebapp.out");
   fout.setf(ios::scientific);
   
   for(double x=0.0;x<1.0001;x+=0.01) {

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([o2scl],[0.931],[awsteiner0@protonmail.com])
+AC_INIT([o2scl],[0.932],[awsteiner0@protonmail.com])
 AC_CONFIG_SRCDIR(config.h.in)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -39,9 +39,9 @@ AC_CHECK_FUNC([popen],[AC_DEFINE([HAVE_POPEN],[1],
 
 # For the time being, current and age are always
 # "version number minus 910"
-OLIB_CURRENT=21
+OLIB_CURRENT=22
 OLIB_REVISION=0
-OLIB_AGE=21
+OLIB_AGE=22
 
 OLIB_LT_VERSION="${OLIB_CURRENT}:${OLIB_REVISION}:${OLIB_AGE}"
 AC_SUBST(OLIB_LT_VERSION)
@@ -56,8 +56,8 @@ AC_SUBST(OLIB_LT_VERSION)
 #	[echo ""
 #        echo "Boost not found. O2scl requires Boost."
 #	echo ""
-#	echo -n " The present value of CPPFLAGS is: " 
-#	echo $CPPFLAGS
+#	echo -n " The present value of CXXFLAGS is: " 
+#	echo $CXXFLAGS
 #	echo ""
 #	exit -1
 #	],[])
@@ -513,6 +513,57 @@ AC_ARG_ENABLE(openmp,
 AM_CONDITIONAL(O2SCL_OPENMP, test x$openmp = xtrue)
 
 # ------------------------------------------------------------------
+# torch checks
+
+AC_ARG_WITH([libtorch],
+  AS_HELP_STRING([--with-libtorch=PATH],
+                 [Enable LibTorch support (specify installation path)]),
+  [LIBTORCH_DIR="$withval"],
+  [LIBTORCH_DIR="no"])
+
+O2SCL_LIBTORCH=no
+
+if test "x$LIBTORCH_DIR" != "xno"; then
+
+  AC_MSG_NOTICE([Checking for LibTorch in $LIBTORCH_DIR])
+
+  CXXFLAGS_SAVE="$CXXFLAGS"
+  LDFLAGS_SAVE="$LDFLAGS"
+  LIBS_SAVE="$LIBS"
+
+  CXXFLAGS="$CXXFLAGS -I$LIBTORCH_DIR/include"
+  CXXFLAGS="$CXXFLAGS -I$LIBTORCH_DIR/include/torch/csrc/api/include"
+  LDFLAGS="$LDFLAGS -L$LIBTORCH_DIR/lib"
+  LIBS="$LIBS -ltorch -ltorch_cpu -lc10"
+
+  AC_LANG_PUSH([C++])
+  AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
+
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM(
+       [[#include <torch/torch.h>]],
+       [[torch::Tensor t = torch::rand({2,2});]])],
+    [
+      O2SCL_LIBTORCH=yes
+      AC_DEFINE([HAVE_LIBTORCH], [1],
+                [Define if LibTorch support is enabled])
+    ],
+    [
+      AC_MSG_ERROR([LibTorch requested but not found])
+    ])
+
+  AC_LANG_POP([C++])
+
+dnl  CPPFLAGS="$CPPFLAGS_SAVE"
+dnl  LDFLAGS="$LDFLAGS_SAVE"
+dnl  LIBS="$LIBS_SAVE"
+
+fi
+
+AM_CONDITIONAL([O2SCL_LIBTORCH],
+               [test "x$O2SCL_LIBTORCH" = "xyes"])
+
+# ------------------------------------------------------------------
 # Define 'host_os' to determine target system
 # from https://stackoverflow.com/questions/38898591/how-to-check-the-os-with-automake
 
@@ -553,6 +604,7 @@ AC_CONFIG_FILES([Makefile
                  src/base/cuda/Makefile
                  src/base/eigen/Makefile
                  src/base/fftw/Makefile
+                 src/base/libtorch/Makefile
                  src/base/multip/Makefile
                  src/base/mpfr/Makefile
                  src/base/neither/Makefile

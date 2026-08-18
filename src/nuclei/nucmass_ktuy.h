@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -104,7 +104,7 @@ namespace o2scl {
     bool is_loaded() { return (n>0); }
     
     /// Return the type, \c "nucmass_ktuy".
-    virtual const char *type() { return "nucmass_ktuy"; }
+    virtual const char *type() const { return "nucmass_ktuy"; }
 
     /// Return number of entries
     virtual size_t get_nentries() { return n; }

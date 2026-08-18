@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -471,34 +471,6 @@ namespace o2scl {
   /** \brief Double precision version of \ref o2scl::fermion_nonrel_tl
   */
   typedef fermion_nonrel_tl<> fermion_nonrel;
-
-#ifdef O2SCL_SET_MULTIP
-  
-  /** \brief Long double version of 
-      \ref o2scl::fermion_nonrel_tl 
-  */
-  typedef fermion_nonrel_tl
-  <fermion_tl<long double>,
-   fermi_dirac_integ_direct<long double,funct_cdf25,
-                            cpp_dec_float_25>,
-   bessel_K_exp_integ_boost<long double,
-                            cpp_dec_float_25>,
-   root_brent_gsl<funct_ld,long double>,
-   funct_ld,long double> fermion_nonrel_ld;
-  
-  /** \brief 25-digit version of 
-      \ref o2scl::fermion_nonrel_tl 
-  */
-  typedef fermion_nonrel_tl
-  <fermion_tl<cpp_dec_float_25>,
-   fermi_dirac_integ_direct<cpp_dec_float_25,funct_cdf25,
-                            cpp_dec_float_25>,
-   bessel_K_exp_integ_boost<cpp_dec_float_25,
-                            cpp_dec_float_25>,
-   root_brent_gsl<funct_cdf25,cpp_dec_float_25>,
-   funct_cdf25,cpp_dec_float_25> fermion_nonrel_cdf25;
-
-#endif
 
 }
 

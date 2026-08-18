@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -53,19 +53,13 @@ namespace o2scl {
       \note This class sets part::inc_rest_mass to true for the
       particle objects specified in set_n_and_p().
 
-      \note The input parameter T (for the temperature) should be
-      given in units of inverse femtometers. This is a bit confusing,
-      since the binding energy is returned in MeV.
-      
       <b>Definition of </b> \f$ \chi \f$ <b> and </b> \f$ n_L \f$
 
       The variable \f$ \chi \f$ is defined as the fractional volume
-      occupied by and \f$ n_L \f$ is the density of nucleons inside
-      the nucleus. If \f$ V \f$ is the total volume of the nucleus
-      plus the surrounding Wigner-Seitz cell, then we have
-      \f[
-      A = V n_L \chi
-      \f]
+      occupied by the nucleus and \f$ n_L \f$ is the density of
+      nucleons inside the nucleus. If \f$ V \f$ is the total volume of
+      the nucleus plus the surrounding Wigner-Seitz cell, then we have
+      \f[ A = V n_L \chi \f]
       
       <b>Central densities</b>
 
@@ -76,8 +70,9 @@ namespace o2scl {
       \f[
       n_L = n_0 + n_1 \delta^2
       \f]
-      and then we can compute \f$ n_{p} = n_L (1 - \delta)/2 \f$ and
-      \f$ n_{n} = n_L (1 + \delta)/2 \f$ . 
+      and then we can compute the number densities of protons and
+      neutrons inside nuclei: \f$ n_{p} = n_L (1 - \delta)/2 \f$ and
+      \f$ n_{n} = n_L (1 + \delta)/2 \f$ .
 
       Note that \f$ \delta = I \f$ implies no neutron skin. A neutron
       skin occurs when \f$ \delta < I \f$, and \f$ \delta = 0 \f$
@@ -90,12 +85,12 @@ namespace o2scl {
 
       The nuclear radius is determined by
       \f{eqnarray*}
-      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3}
+      R &=& \left( \frac{3 A}{4 \pi n_L} \right)^{1/3} \, .
       \f}
 
       <b>Bulk energy contribution</b>
       
-      The bulk binding energy contribution ( \f$ \sim -16 \f$
+      The bulk binding energy contribution ( \f$ \approx -16 \f$
       MeV per nucleon) and the symmetry energy are computing using the
       hadronic EOS (either \ref def_had_eos or the EOS specified in
       the most recent call to set_eos_had_temp_base() ). The bulk
@@ -253,15 +248,21 @@ namespace o2scl {
         temperature, return the binding energy of the nucleus in MeV
 
         In this class, this function is currently independent of \c
-        npout, \c nnout, \c dim, and \c chi.
+        npout, \c nnout, \c nneg, and \c chi.
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double T=0.0);
+                                          double nneg=0.0, double T=0.0);
 
-    /// Desc
+    /** \brief Compute the fractional volume occupied by nuclei
+
+        This function returns 0, since this class does not
+        include any medium effects.
+    */
     virtual double exc_volume(double Z, double N, double npout=0.0,
-                              double nnout=0.0, double T=0.0) {
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0) {
+      /*
 
       double ret=0.0, A=Z+N, nL;
       
@@ -288,6 +289,8 @@ namespace o2scl {
       double phi=4.0/3.0*o2scl_const::pi*Rn*Rn*Rn;
 
       return phi;
+      */
+      return 0.0;
     }
     
     /** \brief Given \c Z and \c N, the external densities, and the
@@ -303,7 +306,7 @@ namespace o2scl {
     }
     
     /// Return the type, \c "nucmass_ldrop".
-    virtual const char *type() { return "nucmass_ldrop"; }
+    virtual const char *type() const { return "nucmass_ldrop"; }
     //@}
 
     /// \name EOS and particle parameters
@@ -340,7 +343,7 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
     //@}
     
   protected:
@@ -406,34 +409,25 @@ namespace o2scl {
      
       <b>Bulk energy</b>
 
-      If \ref new_skin_mode is false, then the bulk energy is 
-      also computed as in \ref nucmass_ldrop. Otherwise, the
-      number of nucleons in the core is computed with
-      \f{eqnarray*}
-      A_{\mathrm{core}} = Z (n_n+n_p)/n_p~\mathrm{for}~N\geq Z \\
-      A_{\mathrm{core}} = N (n_n+n_p)/n_p~\mathrm{for}~Z>N \\
-      \f}
-      and \f$ A_{\mathrm{skin}} = A - A_{\mathrm{core}} \f$.
-      The core contribution to the bulk energy is 
+      If \ref rel_vacuum is false, then the bulk energy is computed
+      as in \ref nucmass_ldrop. If \ref rel_vacuum is true,
+      then we must subtract the double counting of the
+      bulk contribution outside nuclei inside the nucleus,
       \f[
-      E_{\mathrm{core}}/A = \left(\frac{A_{\mathrm{core}}}{A}\right)
-      \frac{1}{n_{L} }
-      \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right]
+      E_{\mathrm{bulk}}/A = \frac{1}{n_{L} }
+      \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right] -
+      P \varepsilon(n_{n,\mathrm{out}},
+      n_{p,\mathrm{out}}) 
       \f]
-      then the skin contribution is 
+      where
       \f[
-      E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
-      \frac{1}{n_{L} }
-      \left[\varepsilon(n_n,0) - n_n m_n \right]
-      \quad\mathrm{for}\quad N>Z
+      P = \frac{4\pi}{3}R_n^3 = \frac{N}{n_n}
       \f]
-      and
+      when \f$ N \geq Z \f$, and 
       \f[
-      E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
-      \frac{1}{n_{L} }
-      \left[\varepsilon(0,n_p) - n_p m_p \right]
-      \quad\mathrm{for}\quad Z>N
+      P=\frac{4\pi}{3}R_p^3 = \frac{Z}{n_p}
       \f]
+      otherwise.
 
       <b>Surface energy</b>
 
@@ -550,8 +544,6 @@ namespace o2scl {
          In class nucmass_ldrop_skin: 
 
          - (future) Add translational energy?
-         - (future) Remove excluded volume correction and compute nuclear
-           mass relative to the gas rather than relative to the vacuum.
          - (future) In principle, Tc should be self-consistently determined
            from the EOS.
          - (future) Does this class work if the nucleus is "inside-out"?
@@ -565,6 +557,63 @@ namespace o2scl {
       on [Lattimer85]_ and [Lattimer91]_.
       \endverbatim
   */
+  /*
+    AWS, 11/10/25: This is the old new_skin_mode=true stuff, but it
+    never really worked IIRC, and it's probably not worth pursuing.
+    
+      If \ref new_skin_mode is false, then the bulk energy is 
+      also computed as in \ref nucmass_ldrop. If \ref new_skin_mode
+      is true, then we separate out the contributions to the bulk
+      energy from the core and the skin.
+      \f[
+      E_{\mathrm{bulk}}/A = V_{\mathrm{core}}/A
+      \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right] +
+      V_{\mathrm{skin}}/A
+      \left[\varepsilon(n_n,0) - n_n m_n \right]
+      \f]
+      When \f$ N \geq Z \f$,
+      \f{eqnarray*}
+      V_{\mathrm{core}} = \frac{4}{3} \pi R_n^3 = N/n_n \\
+      V_{\mathrm{skin}} = \frac{4}{3} \pi R_p^3 = Z/n_p \\
+      A_{\mathm{core}} = \frac{4}{3} \pi R_p^3 n_L =
+      \frac{Z n_L}{n_p}
+      \f}
+      Otherwise, 
+      \f{eqnarray*}
+      V_{\mathrm{core}} = \frac{4}{3} \pi R_n^3 = Z/n_p \\
+      V_{\mathrm{skin}} = \frac{4}{3} \pi R_p^3 = N/n_n \\
+      A_{\mathm{core}} = \frac{4}{3} \pi R_n^3 n_L =
+      \frac{N n_L}{n_n}
+      \f}
+
+      the
+      number of nucleons in the core is computed with
+      \f{eqnarray*}
+      A_{\mathrm{core}} = Z (n_n+n_p)/n_p~\mathrm{for}~N\geq Z \\
+      A_{\mathrm{core}} = N (n_n+n_p)/n_p~\mathrm{for}~Z>N \\
+      \f}
+      and \f$ A_{\mathrm{skin}} = A - A_{\mathrm{core}} \f$.
+      The core contribution to the bulk energy is 
+      \f[
+      E_{\mathrm{core}}/A = \left(\frac{A_{\mathrm{core}}}{A}\right)
+      \frac{1}{n_{L} }
+      \left[\varepsilon(n_n,n_p) - n_n m_n - n_p m_p \right]
+      \f]
+      then the skin contribution is 
+      \f[
+      E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
+      \frac{1}{n_{L} }
+      \left[\varepsilon(n_n,0) - n_n m_n \right]
+      \quad\mathrm{for}\quad N>Z
+      \f]
+      and
+      \f[
+      E_{\mathrm{skin}}/A = \left(\frac{A_{\mathrm{skin}}}{A}\right)
+      \frac{1}{n_{L} }
+      \left[\varepsilon(0,n_p) - n_p m_p \right]
+      \quad\mathrm{for}\quad Z>N
+      \f]
+   */
   class nucmass_ldrop_skin : public nucmass_ldrop {
     
   public:
@@ -579,10 +628,58 @@ namespace o2scl {
     */
     virtual double binding_energy_densmat(double Z, double N,
                                           double npout=0.0, double nnout=0.0, 
-                                          double ne=0.0, double T=0.0);
+                                          double nneg=0.0, double T=0.0);
+    
+    /** \brief Given \c Z and \c N, the external densities, and the
+        temperature, compute the binding energy and the derivatives
+    */
+    virtual void binding_energy_densmat_derivs
+    (double Z, double N, double npout, double nnout, 
+     double nneg, double T, double &E, double &dEdnp, double &dEdnn,
+     double &dEdnneg, double &dEdT);
+    
+    /** \brief Compute the volume occupied by the nucleus, in
+        \f$ \mathrm{fm}^3 \f$
+    */
+    virtual double exc_volume(double Z, double N, double npout=0.0,
+                              double nnout=0.0, double nneg=0.0,
+                              double T=0.0) {
+
+      double ret=0.0, A=Z+N, nL;
+      
+      // Determine the inner densities
+      double delta=(1-2.0*Z/A);
+      nL=n0+n1*delta*delta;
+      np=nL*(1.0-delta)/2.0;
+      nn=nL*(1.0+delta)/2.0;
+      if (nn>0.20 || np>0.20 || nn<=0.0 || np<=0.0) {
+        if (large_vals_unphys) return 1.0e99;
+        std::cout << "In nucmass_ldrop_skin::exc_volume(): "
+                  << "either nn or np is negative or "
+                  << "  larger than 0.20." << std::endl;
+        std::cout << "  n0,n1,nn,np: " << n0 << " " << n1 << " "
+                  << nn << " " << np << std::endl;
+        O2SCL_ERR2("Densities too large in ",
+                   "nucmass_ldrop::binding_energy_densmat().",
+                   o2scl::exc_efailed);
+      }
+      
+      // Determine radii
+      Rn=cbrt(3.0*N/4.0/o2scl_const::pi/nn);
+      Rp=cbrt(3.0*Z/4.0/o2scl_const::pi/np);
+
+      double V;
+      if (N>Z) {
+        V=4.0/3.0*o2scl_const::pi*Rn*Rn*Rn;
+      } else {
+        V=4.0/3.0*o2scl_const::pi*Rp*Rp*Rp;
+      }
+      
+      return V;
+    }
     
     /// Return the type, \c "nucmass_ldrop_skin".
-    virtual const char *type() { return "nucmass_ldrop_skin"; }
+    virtual const char *type() const { return "nucmass_ldrop_skin"; }
     //@}
 
     /// \name Fitting functions
@@ -591,7 +688,7 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
     //@}
 
     /// \name Settings
@@ -639,6 +736,15 @@ namespace o2scl {
         \f$ \mathrm{fm}^{-1} \f$ (default \f$ 20.085/(\hbar c)\f$.)
     */
     double Tchalf;
+
+    /// Quadratic coefficient for temperature dependence (default 3.313)
+    double Tc_c;
+    
+    /// Quartic coefficient for temperature dependence (default 7.362)
+    double Tc_d;
+
+    /// If true, modify the Coulomb part (default true)
+    bool mod_coul;
     //@}
     
   };
@@ -661,7 +767,7 @@ namespace o2scl {
   public:
 
     /// Return the type, \c "nucmass_ldrop_pair".
-    virtual const char *type() { return "nucmass_ldrop_pair"; }
+    virtual const char *type() const { return "nucmass_ldrop_pair"; }
 
     nucmass_ldrop_pair() {
       nfit=7;
@@ -672,7 +778,7 @@ namespace o2scl {
     virtual int fit_fun(size_t nv, const ubvector &x);
     
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
 
     /// Pairing energy coefficient (default 13 MeV)
     double Epair;

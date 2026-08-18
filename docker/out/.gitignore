@@ -1,3 +1,4 @@
+*.cout
 *.out
 *.cuda2
 *.cuda1

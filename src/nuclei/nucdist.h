@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -59,10 +59,14 @@ namespace o2scl {
                         nucmass &nm2, std::string expr="1", int maxA=400,
                         bool include_neutron=false);
 
-  /// Desc
-  void nucdist_set_ext(std::vector<nucleus> &dist,
-                       std::vector<nucleus> &dist_ext, nucmass &nm,
-                       std::string expr="1", int maxA=400, int n_chop=1);
+  /** \brief Create two distributions, one with the most neutron-rich
+      nuclei of each isotope
+   */
+  void nucdist_split_iso(std::vector<nucleus> &dist,
+                         std::vector<nucleus> &dist_ext, nucmass &nm,
+                         std::string expr="1",
+                         int maxA=400, int n_hold=1);
+                         
   
 }
 

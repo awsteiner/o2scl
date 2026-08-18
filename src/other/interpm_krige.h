@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2017-2025, Andrew W. Steiner and Josue Bautista
+  Copyright (C) 2017-2026, Andrew W. Steiner and Josue Bautista
   
   This file is part of O2scl.
   
@@ -70,7 +70,7 @@ namespace o2scl {
     virtual size_t get_n_params()=0;
     
     /// Set the parameters
-    virtual void set_params(const ubvector &p)=0;
+    virtual void set_params(const vec_t &p)=0;
 
     /// The covariance function
     virtual double operator()(const vec_t &x1, const vec2_t &x2)=0;
@@ -347,7 +347,6 @@ namespace o2scl {
       double elly=len[iy];
       double my=slope[iy];
       double ny=pos[iy];
-      double sum=0.0;
       double K=covar_tl(x1,x2), deriv2;
       double d2ix=ellx*ellx+mx*mx*pow((x1[ix]+x2[ix])-nx,2);
       double zix=(mx*mx*(nx-2.0*x2[ix])*(x1[ix]+x2[ix]-nx)-ellx*ellx)*
@@ -421,7 +420,7 @@ namespace o2scl {
 
     /** \brief Inverse covariance matrix times function vector
      */
-    std::vector<ubvector> Kinvf;
+    std::vector<vec_t> Kinvf;
     
     /** \brief The inverse of the covariance matrix for each output
         quantity
@@ -441,8 +440,13 @@ namespace o2scl {
      /// The quality factor of the optimization for each output function
     std::vector<double> qual;
 
+    typedef std::function<double(size_t,const vec_t &)>
+    multi_funct_t;
+    typedef std::function<double(size_t,const vec_t &,vec_t &)>
+    mm_funct_t;
+    
     /// Pointer to the user-specified minimizer
-    mmin_base<multi_funct,multi_funct,ubvector> *mp;
+    mmin_base<multi_funct_t,multi_funct_t,vec_t> *mp;
 
     /// The input data
     mat_x_t x;
@@ -481,16 +485,16 @@ namespace o2scl {
     /// \name Minimizers and settings
     //@{
     /// Default minimizer
-    mmin_simp2<multi_funct,ubvector> def_mmin;
+    mmin_simp2<multi_funct_t,vec_t> def_mmin;
 
     /// Alternate minimizer
-    diff_evo_adapt<> alt_mmin;
+    diff_evo_adapt<multi_funct_t,vec_t,mm_funct_t> alt_mmin;
 
     /// If true, use the alternate minimizer
     bool use_alt_mmin;
     
     /// Set the minimizer to use
-    void set_mmin(mmin_base<multi_funct,multi_funct,ubvector> &mb) {
+    void set_mmin(mmin_base<multi_funct_t,multi_funct_t,vec_t> &mb) {
       mp=&mb;
       return;
     }
@@ -795,7 +799,7 @@ namespace o2scl {
 
     /** \brief Minimization function for the covariance parameters
      */
-    double min_fun(size_t iout, size_t n, const ubvector &v,
+    double min_fun(size_t iout, size_t n, const vec_t &v,
                    double max_val) {
       cf[iout]->set_params(v);
       int success;
@@ -844,14 +848,16 @@ namespace o2scl {
 
     /// \name Covariance function
     //@{
+    /// Typedef for array of shared pointers to covariance functions
+    typedef std::vector<std::shared_ptr<mcovar_base<
+                                          vec_t,mat_x_row_t>>> covar_t;
+    
     /// Pointer to the covariance function
-    std::vector<std::shared_ptr<mcovar_base<vec_t,mat_x_row_t>>> cf;
+    covar_t cf;
 
     /** \brief Set the covariance function and parameter lists
      */
-    int set_covar(std::vector<std::shared_ptr<mcovar_base<vec_t,
-                  mat_x_row_t>>> covar,
-                  vec3_t &param_lists) {
+    int set_covar(covar_t covar, vec3_t &param_lists) {
       cf=covar;
       plists=param_lists;
       return 0;
@@ -861,6 +867,9 @@ namespace o2scl {
     /// \name Basic interpolation functions
     //@{
     /** \brief Initialize the data for the interpolation
+
+        This function uses <tt>std::swap</tt> to take ownership
+        of \c user_x and \c user_y.
      */
     virtual int set_data(size_t n_in, size_t n_out, size_t n_pts,
                          mat_x_t &user_x, mat_y_t &user_y) {
@@ -999,7 +1008,7 @@ namespace o2scl {
           
           // Create the simplex
           ubmatrix sx(np_covar+1,np_covar);
-          ubvector sv(np_covar);
+          vec_t sv(np_covar);
           
           if (use_alt_mmin==false) {
             
@@ -1037,13 +1046,15 @@ namespace o2scl {
               }
             }
             if (max_val_set==false) {
-              O2SCL_ERR("Max val failed.",o2scl::exc_efailed);
+              O2SCL_ERR2("Max val set failed in ",
+                        "interpm_krige_optim::set_data().",
+                        o2scl::exc_efailed);
             }
             
           } else {
             
             for(size_t j=0;j<np_covar;j++) {
-              sv(j)=plists[iout][j][plists[iout][j].size()/2];
+              sv[j]=plists[iout][j][plists[iout][j].size()/2];
             }
             cf[iout]->set_params(sv);
             max_val=qual_fun(iout,success);
@@ -1067,8 +1078,8 @@ namespace o2scl {
             }
           }
           
-          multi_funct mf=std::bind
-            (std::mem_fn<double(size_t,size_t,const ubvector &,double)>
+          multi_funct_t mf=std::bind
+            (std::mem_fn<double(size_t,size_t,const vec_t &,double)>
              (&class_t::min_fun),this,iout,
              std::placeholders::_1,std::placeholders::_2,max_val);
 
@@ -1133,7 +1144,7 @@ namespace o2scl {
             }
             
             if (this->verbose>1) {
-              std::cout << "interpm_krige_optim::set_data(): ";
+              std::cout << "interpm_krige_optim::set_data():\n  ";
               o2scl::vector_out(std::cout,index_list);
               std::cout << " ";
               o2scl::vector_out(std::cout,params);
@@ -1166,9 +1177,11 @@ namespace o2scl {
           std::cout << "interpm_krige_optim::set_data(): ";
           std::cout << "Minimum: " << min_qual << std::endl;
         }
-    
-        std::cout << "interpm_krige_optim::set_data(): "
-                  << "Mode final: " << std::endl;
+
+        if (this->verbose>0) {
+          std::cout << "interpm_krige_optim::set_data(): "
+                    << "Mode final: " << std::endl;
+        }
         cf[iout]->set_params(min_params);
         size_t mode_temp=mode;
         mode=mode_final;
@@ -1182,8 +1195,10 @@ namespace o2scl {
                      o2scl::exc_efailed);
         }
         mode=mode_temp;
-        std::cout << "interpm_krige_optim::set_data(): ";
-        std::cout << "Mode final done: " << std::endl;
+        if (this->verbose>0) {
+          std::cout << "interpm_krige_optim::set_data(): ";
+          std::cout << "Mode final done: " << std::endl;
+        }
 	
         if (this->verbose>0) {
           std::cout << "interpm_krige_optim::set_data():\n  "
@@ -1340,29 +1355,31 @@ namespace o2scl {
 
   };
 
-#ifdef O2SCL_NEVER_DEFINED
-
-  // AWS, 10/28/24, These don't work yet I'm not sure why...
+#if defined (O2SCL_SET_EIGEN) || defined (DOXYGEN)
   
   /// An Eigen specialization for \ref interpm_krige_optim
   typedef interpm_krige_optim
-  <class vec_t=boost::numeric::ublas::vector<double>,
-   class mat_x_t=o2scl::const_matrix_view_table<>,
-   class mat_x_row_t=const const_matrix_row_gen
+  <boost::numeric::ublas::vector<double>,
+   o2scl::const_matrix_view_table<>,
+   const const_matrix_row_gen
    <o2scl::const_matrix_view_table<>>, 
-   class mat_y_t=o2scl::matrix_view_table<>,
-   class mat_y_col_t=const matrix_column_gen<
+   o2scl::matrix_view_table<>,
+   const matrix_column_gen<
      o2scl::matrix_view_table<>>,Eigen::MatrixXd,
    o2scl_linalg::matrix_invert_det_eigen<> > interpm_krige_optim_eigen;
   
+#endif
+  
+#if defined (O2SCL_SET_ARMA) || defined (DOXYGEN)
+  
   /// An Armadillo specialization for \ref interpm_krige_optim
   typedef interpm_krige_optim
-  <class vec_t=boost::numeric::ublas::vector<double>,
-   class mat_x_t=o2scl::const_matrix_view_table<>,
-   class mat_x_row_t=const const_matrix_row_gen
+  <boost::numeric::ublas::vector<double>,
+   o2scl::const_matrix_view_table<>,
+   const const_matrix_row_gen
    <o2scl::const_matrix_view_table<>>, 
-   class mat_y_t=o2scl::matrix_view_table<>,
-   class mat_y_col_t=const matrix_column_gen<
+   o2scl::matrix_view_table<>,
+   const matrix_column_gen<
      o2scl::matrix_view_table<>>,arma::mat,
    o2scl_linalg::matrix_invert_det_sympd_arma<> > interpm_krige_optim_arma;
 

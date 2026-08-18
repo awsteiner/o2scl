@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -2089,6 +2089,7 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout << "MPFR support: " << o2scl_settings.mpfr_support() << endl;
   cout << "Ncurses support: " << o2scl_settings.ncurses_support() << endl;
   cout << "Cuda support: " << o2scl_settings.cuda_support() << endl;
+  cout << "Libtorch support: " << o2scl_settings.libtorch_support() << endl;
 
 #ifdef O2SCL_SET_CUDA
   int id=-1, mode, major, minor;
@@ -2174,58 +2175,58 @@ int acol_manager::comm_version(std::vector<std::string> &sv, bool itive_com) {
   cout.width(18);
   cout << "cpp_dec_float_25";
   cout.width(3);
-  cout << std::numeric_limits<cpp_dec_float_25>::digits10 << " ";
+  cout << std::numeric_limits<o2fp_25>::digits10 << " ";
   cout.width(4);
-  cout << std::numeric_limits<cpp_dec_float_25>::max_digits10 << " "; 
+  cout << std::numeric_limits<o2fp_25>::max_digits10 << " "; 
   cout.width(17);
-  cout << std::numeric_limits<cpp_dec_float_25>::max() << " ";
+  cout << std::numeric_limits<o2fp_25>::max() << " ";
   cout.width(15);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_25>::max_digits10));
+                  std::numeric_limits<o2fp_25>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_25>::epsilon() << endl;
+  cout << std::numeric_limits<o2fp_25>::epsilon() << endl;
   
   cout.width(18);
-  cout << "cpp_dec_float_35";
+  cout << "o2fp_35";
   cout.width(3);
-  cout << std::numeric_limits<cpp_dec_float_35>::digits10 << " ";
+  cout << std::numeric_limits<o2fp_35>::digits10 << " ";
   cout.width(4);
-  cout << std::numeric_limits<cpp_dec_float_35>::max_digits10 << " "; 
+  cout << std::numeric_limits<o2fp_35>::max_digits10 << " "; 
   cout.width(17);
-  cout << std::numeric_limits<cpp_dec_float_35>::max() << " ";
+  cout << std::numeric_limits<o2fp_35>::max() << " ";
   cout.width(15);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_35>::max_digits10));
+                  std::numeric_limits<o2fp_35>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_35>::epsilon() << endl;
+  cout << std::numeric_limits<o2fp_35>::epsilon() << endl;
   
   cout.width(18);
-  cout << "cpp_dec_float_50";
+  cout << "o2fp_50";
   cout.width(3);
-  cout << std::numeric_limits<cpp_dec_float_50>::digits10 << " ";
+  cout << std::numeric_limits<o2fp_50>::digits10 << " ";
   cout.width(4);
-  cout << std::numeric_limits<cpp_dec_float_50>::max_digits10 << " ";
+  cout << std::numeric_limits<o2fp_50>::max_digits10 << " ";
   cout.width(17);
-  cout << std::numeric_limits<cpp_dec_float_50>::max() << " ";
+  cout << std::numeric_limits<o2fp_50>::max() << " ";
   cout.width(15);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_50>::max_digits10));
+                  std::numeric_limits<o2fp_50>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_50>::epsilon() << endl;
+  cout << std::numeric_limits<o2fp_50>::epsilon() << endl;
   
   cout.width(18);
-  cout << "cpp_dec_float_100";
+  cout << "o2fp_100";
   cout.width(3);
-  cout << std::numeric_limits<cpp_dec_float_100>::digits10 << " ";
+  cout << std::numeric_limits<o2fp_100>::digits10 << " ";
   cout.width(4);
-  cout << std::numeric_limits<cpp_dec_float_100>::max_digits10 << " ";
+  cout << std::numeric_limits<o2fp_100>::max_digits10 << " ";
   cout.width(17);
-  cout << std::numeric_limits<cpp_dec_float_100>::max() << " ";
+  cout << std::numeric_limits<o2fp_100>::max() << " ";
   cout.width(15);
   cout << log(pow(10.0,
-                  std::numeric_limits<cpp_dec_float_100>::max_digits10));
+                  std::numeric_limits<o2fp_100>::max_digits10));
   cout << " ";
-  cout << std::numeric_limits<cpp_dec_float_100>::epsilon() << endl;
+  cout << std::numeric_limits<o2fp_100>::epsilon() << endl;
 
 #ifdef O2SCL_SET_MPFR
 

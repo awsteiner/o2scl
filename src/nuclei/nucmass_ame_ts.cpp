@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -37,17 +37,15 @@ int main(void) {
   cout.setf(ios::scientific);
   
   test_mgr t;
-  t.set_output_level(3);
+  t.set_output_level(1);
 
-#ifdef O2SCL_NEVER_DEFINED
-  
   if (true) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"20");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("20",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("20",false,1);
@@ -63,7 +61,8 @@ int main(void) {
       t.test_gen(en.N==en2.N,"2");
       t.test_gen(en.Z==en2.Z,"3");
       t.test_gen(en.A==en2.A,"4");
-      t.test_gen(((std::string)(&en.el[0]))==((std::string)(&en2.el[0])),"5");
+      t.test_gen(((std::string)(&en.el[0]))==
+                 ((std::string)(&en2.el[0])),"5");
       t.test_gen(((std::string)(&en.orig[0]))==
           ((std::string)(&en2.orig[0])),"6");
       t.test_gen(en.mass==en2.mass,"7");
@@ -99,9 +98,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
 
-    nucmass_ame ame;
-    ame_load(ame,"20round");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("20round",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("20round",false,2);
@@ -146,9 +145,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"16");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("16",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("16",false,1);
@@ -193,9 +192,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"16round");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("16round",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("16round",false,1);
@@ -240,9 +239,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"12");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("12",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("12",false,1);
@@ -287,9 +286,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"03");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("03",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("03",false,1);
@@ -334,9 +333,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"03round");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("03round",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("03round",false,1);
@@ -381,9 +380,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"95exp");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("95exp",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("95exp",false,1);
@@ -428,9 +427,9 @@ int main(void) {
     
     vector<nucleus> dist, dist2;
     
-    nucmass_ame ame;
-    ame_load(ame,"95rmd");
-    nucdist_set(dist,ame);
+    nucmass_ame ame_exp;
+    ame_exp.load("95rmd",true);
+    nucdist_set(dist,ame_exp);
     
     nucmass_ame ame;
     ame.load("95rmd",false,1);
@@ -471,8 +470,6 @@ int main(void) {
 
   }
 
-#endif
-  
   t.report();
   return 0;
 }

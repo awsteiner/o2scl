@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -24,7 +24,7 @@
 #define O2SCL_FUNCT_MULTIP_H
 
 /** \file funct.h
-    \brief Multiprecisions extension to Function object classes
+    \brief Multiprecisions extension to function object classes
 */
 
 // For o2scl::dtos()
@@ -32,16 +32,16 @@
 
 // for typeid()
 #include <typeinfo>
+#include <functional>
 
-#ifdef O2SCL_SET_MULTIP
-
-#include <boost/multiprecision/cpp_dec_float.hpp>
 #include <o2scl/set_mpfr.h>
 #include <o2scl/set_multip.h>
+#ifdef O2SCL_SET_MULTIP
+//#include <boost/multiprecision/cpp_dec_float.hpp>
 #ifdef O2SCL_SET_MPFR
 #include <boost/multiprecision/mpfr.hpp>
+#else
 #endif
-
 #endif
 
 namespace o2scl {
@@ -64,6 +64,7 @@ namespace o2scl {
   
 #endif
 
+#ifdef O2SCL_NEVER_DEFINED
   typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<25>> cpp_dec_float_25;
   typedef boost::multiprecision::number<
@@ -72,23 +73,24 @@ namespace o2scl {
     boost::multiprecision::cpp_dec_float<50>> cpp_dec_float_50;
   typedef boost::multiprecision::number<
     boost::multiprecision::cpp_dec_float<100>> cpp_dec_float_100;
+#endif
 
   // Choose the best floating point type depending on what is
   // available. 7/28/23: I'm currently having problems with mpfr types
   // so they're commented out, however, in the future, this should be
   // fixed as I think the MPFR types are faster.
   
-  //#ifdef O2SCL_SET_MPFR
-  //typedef mpfr_25 o2fp_25;
-  //typedef mpfr_35 o2fp_35;
-  //typedef mpfr_50 o2fp_50;
-  //typedef mpfr_100 o2fp_100;
-  //#else
+#ifdef O2SCL_SET_MPFR
+  typedef mpfr_25 o2fp_25;
+  typedef mpfr_35 o2fp_35;
+  typedef mpfr_50 o2fp_50;
+  typedef mpfr_100 o2fp_100;
+#else
   typedef cpp_dec_float_25 o2fp_25;
   typedef cpp_dec_float_35 o2fp_35;
   typedef cpp_dec_float_50 o2fp_50;
   typedef cpp_dec_float_100 o2fp_100;
-  //#endif
+#endif
   //@}
 
 #else
@@ -110,6 +112,8 @@ namespace o2scl {
   typedef std::function<long double(long double)> funct_ld;
 
 #if defined (O2SCL_SET_MULTIP) || defined (DOXYGEN)
+
+#ifdef O2SCL_NEVER_DEFINED
   
   /** \brief One-dimensional Boost 25-digit function in 
       src/base/funct_multip.h
@@ -163,6 +167,59 @@ namespace o2scl {
   */
   typedef std::function<int(cpp_dec_float_100,cpp_dec_float_100 &)>
   funct_ret_cdf100;
+
+#endif
+
+  /** \brief One-dimensional Boost 25-digit function in 
+      src/base/funct_multip.h
+  */
+  typedef std::function<o2fp_25(o2fp_25)> funct_fp25;
+  
+  /** \brief One-dimensional Boost 35-digit function in 
+      src/base/funct_multip.h
+  */
+  typedef std::function<o2fp_35(o2fp_35)> funct_fp35;
+  
+  /** \brief One-dimensional Boost 50-digit function in 
+      src/base/funct_multip.h
+  */
+  typedef std::function<o2fp_50(o2fp_50)>
+  funct_fp50;
+  
+  /** \brief One-dimensional Boost 100-digit function in 
+      src/base/funct_multip.h
+  */
+  typedef std::function<o2fp_100(o2fp_100)>
+  funct_fp100;
+
+  /** \brief One-dimensional long double function with integer
+      return in src/base/funct_multip.h
+  */
+  typedef std::function<int(long double,long double &)> funct_ret_ld;
+  
+  /** \brief One-dimensional Boost 25-digit function with integer
+      return in src/base/funct_multip.h
+  */
+  typedef std::function<int(o2fp_25,o2fp_25 &)>
+  funct_ret_fp25;
+  
+  /** \brief One-dimensional Boost 35-digit function with integer
+      return in src/base/funct_multip.h
+  */
+  typedef std::function<int(o2fp_35,o2fp_35 &)>
+  funct_ret_fp35;
+  
+  /** \brief One-dimensional Boost 50-digit function with integer
+      return in src/base/funct_multip.h
+  */
+  typedef std::function<int(o2fp_50,o2fp_50 &)>
+  funct_ret_fp50;
+
+  /** \brief One-dimensional Boost 100-digit function with integer
+      return in src/base/funct_multip.h
+  */
+  typedef std::function<int(o2fp_100,o2fp_100 &)>
+  funct_ret_fp100;
 
   // end of #ifdef O2SCL_SET_MULTIP
 #endif
@@ -417,17 +474,17 @@ namespace o2scl {
     
       /// Second pass, compare long double and 25-digit precision
       
-      bool cdf25_eval=false;
-      fp_25_t x_cdf25=0, y_cdf25=0;
+      bool fp25_eval=false;
+      fp_25_t x_fp25=0, y_fp25=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_25_t>::digits10)) {
-        x_cdf25=static_cast<fp_25_t>(x);
-        y_cdf25=f(x_cdf25);
-        cdf25_eval=true;
+        x_fp25=static_cast<fp_25_t>(x);
+        y_fp25=f(x_fp25);
+        fp25_eval=true;
       }
 
-      if (ld_eval && cdf25_eval) {
-        if (y_cdf25==0 && y_ld==0) {
+      if (ld_eval && fp25_eval) {
+        if (y_fp25==0 && y_ld==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -443,12 +500,12 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf25!=0) {
-	  fp_25_t temp1=abs(y_cdf25-static_cast<fp_25_t>(y_ld));
-	  fp_25_t temp2=abs(y_cdf25);
+        if (y_fp25!=0) {
+	  fp_25_t temp1=abs(y_fp25-static_cast<fp_25_t>(y_ld));
+	  fp_25_t temp2=abs(y_fp25);
           err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf25);
+            val=static_cast<fp_t>(y_fp25);
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with long double and 25-digit:\n  "
@@ -467,20 +524,20 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (ld_eval && cdf25_eval) {
+        if (ld_eval && fp25_eval) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed second round: " << dtos(y_cdf25,0) << " "
+                    << "Failed second round: " << dtos(y_fp25,0) << " "
                     << dtos(y_ld,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf25_eval && verbose>1) {
+        } else if (fp25_eval && verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
                     << "Failed second round (ld_eval is false): "
-                    << dtos(y_cdf25,0) << " "
+                    << dtos(y_fp25,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
                     << "Failed second round (ld_eval and "
-                    << "cdf25_eval are both false)." << std::endl;
+                    << "fp25_eval are both false)." << std::endl;
         }
         if (verbose>2) {
           std::cout << "funct_multip_tl::eval_tol_err() waiting "
@@ -492,17 +549,17 @@ namespace o2scl {
     
       /// Third pass, compare 25- and 35-digit precision
 
-      bool cdf35_eval=false;
-      fp_35_t x_cdf35=0, y_cdf35=0;
+      bool fp35_eval=false;
+      fp_35_t x_fp35=0, y_fp35=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_35_t>::digits10)) {
-        x_cdf35=static_cast<fp_35_t>(x);
-        y_cdf35=f(x_cdf35);
-        cdf35_eval=true;
+        x_fp35=static_cast<fp_35_t>(x);
+        y_fp35=f(x_fp35);
+        fp35_eval=true;
       }
 
-      if (cdf25_eval && cdf35_eval) {
-        if (y_cdf35==0 && y_cdf25==0) {
+      if (fp25_eval && fp35_eval) {
+        if (y_fp35==0 && y_fp25==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -518,12 +575,12 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf35!=0) {
-	  fp_35_t temp1=abs(y_cdf35-static_cast<fp_35_t>(y_cdf25));
-	  fp_35_t temp2=abs(y_cdf35);
+        if (y_fp35!=0) {
+	  fp_35_t temp1=abs(y_fp35-static_cast<fp_35_t>(y_fp25));
+	  fp_35_t temp2=abs(y_fp35);
           err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf35);
+            val=static_cast<fp_t>(y_fp35);
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 25-digit and 35-digit:\n  "
@@ -542,20 +599,20 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf25_eval && cdf35_eval) {
+        if (fp25_eval && fp35_eval) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed third round: " << dtos(y_cdf35,0) << " "
-                    << dtos(y_cdf25,0) << " "
+                    << "Failed third round: " << dtos(y_fp35,0) << " "
+                    << dtos(y_fp25,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf35_eval && verbose>1) {
+        } else if (fp35_eval && verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed third round (cdf25_eval is false): "
-                    << dtos(y_cdf35,0) << " "
+                    << "Failed third round (fp25_eval is false): "
+                    << dtos(y_fp35,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed third round (cdf25_eval and "
-                    << "cdf35_eval are both false)." << std::endl;
+                    << "Failed third round (fp25_eval and "
+                    << "fp35_eval are both false)." << std::endl;
         }
         if (verbose>2) {
           std::cout << "funct_multip_tl::eval_tol_err() waiting "
@@ -567,17 +624,17 @@ namespace o2scl {
     
       /// Fourth pass, compare 35- and 50-digit precision
       
-      bool cdf50_eval=false;
-      fp_50_t x_cdf50=0, y_cdf50=0;
+      bool fp50_eval=false;
+      fp_50_t x_fp50=0, y_fp50=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_50_t>::digits10)) {
-        x_cdf50=static_cast<fp_50_t>(x);
-        y_cdf50=f(x_cdf50);
-        cdf50_eval=true;
+        x_fp50=static_cast<fp_50_t>(x);
+        y_fp50=f(x_fp50);
+        fp50_eval=true;
       }
 
-      if (cdf35_eval && cdf50_eval) {
-        if (y_cdf50==0 && y_cdf35==0) {
+      if (fp35_eval && fp50_eval) {
+        if (y_fp50==0 && y_fp35==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -587,12 +644,12 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf50!=0) {
-	  fp_50_t temp1=abs(y_cdf50-static_cast<fp_50_t>(y_cdf35));
-	  fp_50_t temp2=abs(y_cdf50);
+        if (y_fp50!=0) {
+	  fp_50_t temp1=abs(y_fp50-static_cast<fp_50_t>(y_fp35));
+	  fp_50_t temp2=abs(y_fp50);
           err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf50);
+            val=static_cast<fp_t>(y_fp50);
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 35-digit and 50-digit:\n  "
@@ -611,20 +668,20 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf35_eval && cdf50_eval) {
+        if (fp35_eval && fp50_eval) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed fourth round: " << dtos(y_cdf50,0) << " "
-                    << dtos(y_cdf35,0) << " "
+                    << "Failed fourth round: " << dtos(y_fp50,0) << " "
+                    << dtos(y_fp35,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf50_eval && verbose>1) {
+        } else if (fp50_eval && verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed fourth round (cdf35_eval is false): "
-                    << dtos(y_cdf50,0) << " "
+                    << "Failed fourth round (fp35_eval is false): "
+                    << dtos(y_fp50,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed fourth round (cdf35_eval and "
-                    << "cdf50_eval are both false)." << std::endl;
+                    << "Failed fourth round (fp35_eval and "
+                    << "fp50_eval are both false)." << std::endl;
         }
         if (verbose>2) {
           std::cout << "funct_multip_tl::eval_tol_err() waiting "
@@ -636,17 +693,17 @@ namespace o2scl {
     
       /// Final pass, compare 50- and 100-digit precision
       
-      bool cdf100_eval=false;
-      fp_100_t x_cdf100=0, y_cdf100=0;
+      bool fp100_eval=false;
+      fp_100_t x_fp100=0, y_fp100=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_100_t>::digits10)) {
-        x_cdf100=static_cast<fp_100_t>(x);
-        y_cdf100=f(x_cdf100);
-        cdf100_eval=true;
+        x_fp100=static_cast<fp_100_t>(x);
+        y_fp100=f(x_fp100);
+        fp100_eval=true;
       }
 
-      if (cdf100_eval && cdf50_eval) {
-        if (y_cdf100==0 && y_cdf50==0) {
+      if (fp100_eval && fp50_eval) {
+        if (y_fp100==0 && y_fp50==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -662,12 +719,12 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf100!=0) {
-	  fp_100_t temp1=abs(y_cdf100-static_cast<fp_100_t>(y_cdf50));
-	  fp_100_t temp2=abs(y_cdf100);
+        if (y_fp100!=0) {
+	  fp_100_t temp1=abs(y_fp100-static_cast<fp_100_t>(y_fp50));
+	  fp_100_t temp2=abs(y_fp100);
           err=static_cast<fp_t>(temp1/temp2);
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf100);
+            val=static_cast<fp_t>(y_fp100);
             if (verbose>0) {
               std::cout << "funct_multip_tl::eval_tol_err() "
                         << "succeeded with 50-digit and 100-digit:\n  "
@@ -686,20 +743,20 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf50_eval && cdf100_eval) {
+        if (fp50_eval && fp100_eval) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed last round: " << dtos(y_cdf100,0) << " "
-                    << dtos(y_cdf50,0) << " "
+                    << "Failed last round: " << dtos(y_fp100,0) << " "
+                    << dtos(y_fp50,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf100_eval && verbose>1) {
+        } else if (fp100_eval && verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed last round (cdf50_eval is false): "
-                    << dtos(y_cdf100,0) << " "
+                    << "Failed last round (fp50_eval is false): "
+                    << dtos(y_fp100,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_tl::eval_tol_err():\n  "
-                    << "Failed last round (cdf50_eval and "
-                    << "cdf100_eval are both false)." << std::endl;
+                    << "Failed last round (fp50_eval and "
+                    << "fp100_eval are both false)." << std::endl;
           if (verbose>2) {
             std::cout << "funct_multip_tl::eval_tol_err() waiting "
                       << "for a key: " << std::flush;
@@ -745,12 +802,14 @@ namespace o2scl {
   typedef funct_multip_tl<o2fp_25,o2fp_35,o2fp_50,o2fp_100>
   funct_multip;
 
+#ifdef O2SCL_NEVER_DEFINED
   /** \brief The multiprecision function object with <tt>cpp_dec_float
       </tt> types
   */
   typedef funct_multip_tl<cpp_dec_float_25,cpp_dec_float_35,
                           cpp_dec_float_50,cpp_dec_float_100>
-  funct_multip_cdf;
+  funct_multip_fp;
+#endif
 
 #ifdef O2SCL_SET_MPFR
   
@@ -947,31 +1006,31 @@ namespace o2scl {
     
       /// Second pass, compare long double and 25-digit precision
       
-      bool cdf25_eval=false;
-      fp_25_t x_cdf25=0, y_cdf25=0;
+      bool fp25_eval=false;
+      fp_25_t x_fp25=0, y_fp25=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_25_t>::digits10)) {
-        fp_25_t t_cdf25=static_cast<fp_25_t>(t);
+        fp_25_t t_fp25=static_cast<fp_25_t>(t);
         if (mode=='u') {
-          x_cdf25=static_cast<fp_25_t>(lower_lim)+
-            (1-t_cdf25)/t_cdf25;
-          y_cdf25=f(x_cdf25)/t_cdf25/t_cdf25;
+          x_fp25=static_cast<fp_25_t>(lower_lim)+
+            (1-t_fp25)/t_fp25;
+          y_fp25=f(x_fp25)/t_fp25/t_fp25;
         } else if (mode=='l') {
-          x_cdf25=static_cast<fp_25_t>(upper_lim)-
-            (1-t_cdf25)/t_cdf25;
-          y_cdf25=f(x_cdf25)/t_cdf25/t_cdf25;
+          x_fp25=static_cast<fp_25_t>(upper_lim)-
+            (1-t_fp25)/t_fp25;
+          y_fp25=f(x_fp25)/t_fp25/t_fp25;
         } else {
-          x_cdf25=(1-t_cdf25)/t_cdf25;
-          fp_25_t res_p=f(x_cdf25);
-          fp_25_t x2=-x_cdf25;
+          x_fp25=(1-t_fp25)/t_fp25;
+          fp_25_t res_p=f(x_fp25);
+          fp_25_t x2=-x_fp25;
           fp_25_t res_m=f(x2);
-          y_cdf25=(res_p+res_m)/t_cdf25/t_cdf25;
+          y_fp25=(res_p+res_m)/t_fp25/t_fp25;
         }
-        cdf25_eval=true;
+        fp25_eval=true;
       }
 
-      if (ld_eval && cdf25_eval) {
-        if (y_cdf25==0 && y_ld==0) {
+      if (ld_eval && fp25_eval) {
+        if (y_fp25==0 && y_ld==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -981,10 +1040,10 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf25!=0) {
-          err=static_cast<fp_t>(abs(y_cdf25-y_ld)/abs(y_cdf25));
+        if (y_fp25!=0) {
+          err=static_cast<fp_t>(abs(y_fp25-y_ld)/abs(y_fp25));
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf25);
+            val=static_cast<fp_t>(y_fp25);
             if (verbose>0) {
               std::cout << "funct_multip_transform_tl::eval_tol_err() "
                         << "succeeded with long double and 25-digit:\n  "
@@ -996,50 +1055,50 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (ld_eval && cdf25_eval) {
+        if (ld_eval && fp25_eval) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed second round: " << dtos(y_cdf25,0) << " "
+                    << "Failed second round: " << dtos(y_fp25,0) << " "
                     << dtos(y_ld,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf25_eval && verbose>1) {
+        } else if (fp25_eval && verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
                     << "Failed second round (ld_eval is false): "
-                    << dtos(y_cdf25,0) << " "
+                    << dtos(y_fp25,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
                     << "Failed second round (ld_eval and "
-                    << "cdf25_eval are both false)." << std::endl;
+                    << "fp25_eval are both false)." << std::endl;
         }
       }
     
       /// Third pass, compare 25- and 35-digit precision
 
-      bool cdf35_eval=false;
-      fp_35_t x_cdf35=0, y_cdf35=0;
+      bool fp35_eval=false;
+      fp_35_t x_fp35=0, y_fp35=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_35_t>::digits10)) {
-        fp_35_t t_cdf35=static_cast<fp_35_t>(t);
+        fp_35_t t_fp35=static_cast<fp_35_t>(t);
         if (mode=='u') {
-          x_cdf35=static_cast<fp_35_t>(lower_lim)+
-            (1-t_cdf35)/t_cdf35;
-          y_cdf35=f(x_cdf35)/t_cdf35/t_cdf35;
+          x_fp35=static_cast<fp_35_t>(lower_lim)+
+            (1-t_fp35)/t_fp35;
+          y_fp35=f(x_fp35)/t_fp35/t_fp35;
         } else if (mode=='l') {
-          x_cdf35=static_cast<fp_35_t>(upper_lim)-
-            (1-t_cdf35)/t_cdf35;
-          y_cdf35=f(x_cdf35)/t_cdf35/t_cdf35;
+          x_fp35=static_cast<fp_35_t>(upper_lim)-
+            (1-t_fp35)/t_fp35;
+          y_fp35=f(x_fp35)/t_fp35/t_fp35;
         } else {
-          x_cdf35=(1-t_cdf35)/t_cdf35;
-          fp_35_t res_p=f(x_cdf35);
-          fp_35_t x2=-x_cdf35;
+          x_fp35=(1-t_fp35)/t_fp35;
+          fp_35_t res_p=f(x_fp35);
+          fp_35_t x2=-x_fp35;
           fp_35_t res_m=f(x2);
-          y_cdf35=(res_p+res_m)/t_cdf35/t_cdf35;
+          y_fp35=(res_p+res_m)/t_fp35/t_fp35;
         }
-        cdf35_eval=true;
+        fp35_eval=true;
       }
 
-      if (cdf25_eval && cdf35_eval) {
-        if (y_cdf35==0 && y_cdf25==0) {
+      if (fp25_eval && fp35_eval) {
+        if (y_fp35==0 && y_fp25==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -1049,10 +1108,10 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf35!=0) {
-          err=static_cast<fp_t>(abs(y_cdf35-y_cdf25)/abs(y_cdf35));
+        if (y_fp35!=0) {
+          err=static_cast<fp_t>(abs(y_fp35-y_fp25)/abs(y_fp35));
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf35);
+            val=static_cast<fp_t>(y_fp35);
             if (verbose>0) {
               std::cout << "funct_multip_transform_tl::eval_tol_err() "
                         << "succeeded with 25-digit and 35-digit:\n  "
@@ -1064,50 +1123,50 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf25_eval && cdf35_eval) {
+        if (fp25_eval && fp35_eval) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed third round: " << dtos(y_cdf35,0) << " "
-                    << dtos(y_cdf25,0) << " "
+                    << "Failed third round: " << dtos(y_fp35,0) << " "
+                    << dtos(y_fp25,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf35_eval && verbose>1) {
+        } else if (fp35_eval && verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed third round (cdf25_eval is false): "
-                    << dtos(y_cdf35,0) << " "
+                    << "Failed third round (fp25_eval is false): "
+                    << dtos(y_fp35,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed third round (cdf25_eval and "
-                    << "cdf35_eval are both false)." << std::endl;
+                    << "Failed third round (fp25_eval and "
+                    << "fp35_eval are both false)." << std::endl;
         }
       }
     
       /// Fourth pass, compare 35- and 50-digit precision
       
-      bool cdf50_eval=false;
-      fp_50_t x_cdf50=0, y_cdf50=0;
+      bool fp50_eval=false;
+      fp_50_t x_fp50=0, y_fp50=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_50_t>::digits10)) {
-        fp_50_t t_cdf50=static_cast<fp_50_t>(t);
+        fp_50_t t_fp50=static_cast<fp_50_t>(t);
         if (mode=='u') {
-          x_cdf50=static_cast<fp_50_t>(lower_lim)+
-            (1-t_cdf50)/t_cdf50;
-          y_cdf50=f(x_cdf50)/t_cdf50/t_cdf50;
+          x_fp50=static_cast<fp_50_t>(lower_lim)+
+            (1-t_fp50)/t_fp50;
+          y_fp50=f(x_fp50)/t_fp50/t_fp50;
         } else if (mode=='l') {
-          x_cdf50=static_cast<fp_50_t>(upper_lim)-
-            (1-t_cdf50)/t_cdf50;
-          y_cdf50=f(x_cdf50)/t_cdf50/t_cdf50;
+          x_fp50=static_cast<fp_50_t>(upper_lim)-
+            (1-t_fp50)/t_fp50;
+          y_fp50=f(x_fp50)/t_fp50/t_fp50;
         } else {
-          x_cdf50=(1-t_cdf50)/t_cdf50;
-          fp_50_t res_p=f(x_cdf50);
-          fp_50_t x2=-x_cdf50;
+          x_fp50=(1-t_fp50)/t_fp50;
+          fp_50_t res_p=f(x_fp50);
+          fp_50_t x2=-x_fp50;
           fp_50_t res_m=f(x2);
-          y_cdf50=(res_p+res_m)/t_cdf50/t_cdf50;
+          y_fp50=(res_p+res_m)/t_fp50/t_fp50;
         }
-        cdf50_eval=true;
+        fp50_eval=true;
       }
 
-      if (cdf35_eval && cdf50_eval) {
-        if (y_cdf50==0 && y_cdf35==0) {
+      if (fp35_eval && fp50_eval) {
+        if (y_fp50==0 && y_fp35==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -1117,10 +1176,10 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf50!=0) {
-          err=static_cast<fp_t>(abs(y_cdf50-y_cdf35)/abs(y_cdf50));
+        if (y_fp50!=0) {
+          err=static_cast<fp_t>(abs(y_fp50-y_fp35)/abs(y_fp50));
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf50);
+            val=static_cast<fp_t>(y_fp50);
             if (verbose>0) {
               std::cout << "funct_multip_transform_tl::eval_tol_err() "
                         << "succeeded with 35-digit and 50-digit:\n  "
@@ -1132,50 +1191,50 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf35_eval && cdf50_eval) {
+        if (fp35_eval && fp50_eval) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed fourth round: " << dtos(y_cdf50,0) << " "
-                    << dtos(y_cdf35,0) << " "
+                    << "Failed fourth round: " << dtos(y_fp50,0) << " "
+                    << dtos(y_fp35,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf50_eval && verbose>1) {
+        } else if (fp50_eval && verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed fourth round (cdf35_eval is false): "
-                    << dtos(y_cdf50,0) << " "
+                    << "Failed fourth round (fp35_eval is false): "
+                    << dtos(y_fp50,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed fourth round (cdf35_eval and "
-                    << "cdf50_eval are both false)." << std::endl;
+                    << "Failed fourth round (fp35_eval and "
+                    << "fp50_eval are both false)." << std::endl;
         }
       }
     
       /// Final pass, compare 50- and 100-digit precision
       
-      bool cdf100_eval=false;
-      fp_100_t x_cdf100=0, y_cdf100=0;
+      bool fp100_eval=false;
+      fp_100_t x_fp100=0, y_fp100=0;
       if (tol_loc>pow(10.0,-std::numeric_limits
                       <fp_100_t>::digits10)) {
-        fp_100_t t_cdf100=static_cast<fp_100_t>(t);
+        fp_100_t t_fp100=static_cast<fp_100_t>(t);
         if (mode=='u') {
-          x_cdf100=static_cast<fp_100_t>(lower_lim)+
-            (1-t_cdf100)/t_cdf100;
-          y_cdf100=f(x_cdf100)/t_cdf100/t_cdf100;
+          x_fp100=static_cast<fp_100_t>(lower_lim)+
+            (1-t_fp100)/t_fp100;
+          y_fp100=f(x_fp100)/t_fp100/t_fp100;
         } else if (mode=='l') {
-          x_cdf100=static_cast<fp_100_t>(upper_lim)-
-            (1-t_cdf100)/t_cdf100;
-          y_cdf100=f(x_cdf100)/t_cdf100/t_cdf100;
+          x_fp100=static_cast<fp_100_t>(upper_lim)-
+            (1-t_fp100)/t_fp100;
+          y_fp100=f(x_fp100)/t_fp100/t_fp100;
         } else {
-          x_cdf100=(1-t_cdf100)/t_cdf100;
-          fp_100_t res_p=f(x_cdf100);
-          fp_100_t x2=-x_cdf100;
+          x_fp100=(1-t_fp100)/t_fp100;
+          fp_100_t res_p=f(x_fp100);
+          fp_100_t x2=-x_fp100;
           fp_100_t res_m=f(x2);
-          y_cdf100=(res_p+res_m)/t_cdf100/t_cdf100;
+          y_fp100=(res_p+res_m)/t_fp100/t_fp100;
         }
-        cdf100_eval=true;
+        fp100_eval=true;
       }
 
-      if (cdf100_eval && cdf50_eval) {
-        if (y_cdf100==0 && y_cdf50==0) {
+      if (fp100_eval && fp50_eval) {
+        if (y_fp100==0 && y_fp50==0) {
           val=0;
           err=0;
           if (verbose>0) {
@@ -1185,10 +1244,10 @@ namespace o2scl {
           }
           return 0;
         }
-        if (y_cdf100!=0) {
-          err=static_cast<fp_t>(abs(y_cdf100-y_cdf50)/abs(y_cdf100));
+        if (y_fp100!=0) {
+          err=static_cast<fp_t>(abs(y_fp100-y_fp50)/abs(y_fp100));
           if (err<tol_loc) {
-            val=static_cast<fp_t>(y_cdf100);
+            val=static_cast<fp_t>(y_fp100);
             if (verbose>0) {
               std::cout << "funct_multip_transform_tl::eval_tol_err() "
                         << "succeeded with 50-digit and 100-digit:\n  "
@@ -1200,20 +1259,20 @@ namespace o2scl {
       }
       
       if (verbose>0) {
-        if (cdf50_eval && cdf100_eval) {
+        if (fp50_eval && fp100_eval) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed last round: " << dtos(y_cdf100,0) << " "
-                    << dtos(y_cdf50,0) << " "
+                    << "Failed last round: " << dtos(y_fp100,0) << " "
+                    << dtos(y_fp50,0) << " "
                     << dtos(err,0) << " " << tol_loc << std::endl;
-        } else if (cdf100_eval && verbose>1) {
+        } else if (fp100_eval && verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed last round (cdf50_eval is false): "
-                    << dtos(y_cdf100,0) << " "
+                    << "Failed last round (fp50_eval is false): "
+                    << dtos(y_fp100,0) << " "
                     << tol_loc << std::endl;
         } else if (verbose>1) {
           std::cout << "funct_multip_transform_tl::eval_tol_err():\n  "
-                    << "Failed last round (cdf50_eval and "
-                    << "cdf100_eval are both false)." << std::endl;
+                    << "Failed last round (fp50_eval and "
+                    << "fp100_eval are both false)." << std::endl;
         }
       }
     
@@ -1299,11 +1358,13 @@ namespace o2scl {
   /// Alias declarations using default types
   template <class fp_t> using funct_multip_transform=
     funct_multip_transform_tl<fp_t,o2fp_25,o2fp_35,o2fp_50,o2fp_100>;
-  
+
+#ifdef O2SCL_NEVER_DEFINED
   /// Alias declarations for <tt>cpp_dec_float</tt> types
-  template <class fp_t> using funct_multip_transform_cdf=
+  template <class fp_t> using funct_multip_transform_fp=
     funct_multip_transform_tl<double,cpp_dec_float_25,cpp_dec_float_35,
                               cpp_dec_float_50,cpp_dec_float_100>;
+#endif
 
 #ifdef O2SCL_SET_MPFR  
   /// Alias declarations for \t mpfr types

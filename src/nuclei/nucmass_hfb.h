@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -122,7 +122,7 @@ namespace o2scl {
     double blank() { return 1.0e99; };
 
     /// Return the type, \c "nucmass_hfb".
-    virtual const char *type() { return "nucmass_hfb"; }
+    virtual const char *type() const { return "nucmass_hfb"; }
 
     /** \brief Set data
         
@@ -150,7 +150,22 @@ namespace o2scl {
   };
 
   /** \brief HFB Mass formula with spin and parity information
-   */
+
+      This class stores the HFB17 through HFB27 tables, loaded by
+      \ref o2scl_hdf::hfb_sp_load() , and also the newer
+      Brussels-Skyrme-on-a-Grid (BSkG1 through BSkG4) tables,
+      loaded by \ref o2scl_hdf::bskg_load() . The BSkG tables
+      provide several additional deformation, separation-energy,
+      odd-even staggering, rotational-correction, pairing-gap, and
+      moment-of-inertia fields beyond what the earlier HFB tables
+      provide; see \ref nucmass_hfb_sp::entry for details. Not all
+      of these additional fields are provided by every BSkG model:
+      \ref nucmass_hfb_sp::entry::S2n through \ref
+      nucmass_hfb_sp::entry::I3 are only filled in for BSkG3, while
+      \ref nucmass_hfb_sp::entry::Erot through \ref
+      nucmass_hfb_sp::entry::par_n are only filled in for BSkG1,
+      BSkG2, and BSkG4.
+  */
   class nucmass_hfb_sp : public nucmass_table {
     
   public:
@@ -165,18 +180,29 @@ namespace o2scl {
 
         \note This cannot be a child of nucmass_hfb::entry in order
         for the HDF I/O preprocessor macros, like HOFFSET, to work
+
+        \note The fields after \ref Pth (from \ref gamma to \ref
+        I3) are only filled in by tables which provide the extra
+        deformation, separation-energy, odd-even staggering, and
+        moment of inertia information, e.g. the Brussels-Skyrme-
+        on-a-Grid (BSkG) tables read by \ref
+        o2scl_hdf::bskg_load() . For tables which do not provide
+        this information, e.g. HFB17 through HFB27, these fields
+        are unused and are left at zero. Similarly, \ref def_wig
+        is not provided by the BSkG tables and is left at zero
+        for entries obtained from \ref o2scl_hdf::bskg_load() .
     */
     struct entry {
-    
+
       /// Neutron number
       int N;
-    
+
       /// Proton number
       int Z;
-    
+
       /// Atomic number
       int A;
-    
+
       /// Beta 2 deformation
       double bet2;
 
@@ -206,15 +232,97 @@ namespace o2scl {
 
       /// Experimental spin
       double Jexp;
-    
+
       /// Theoretical spin
       double Jth;
-    
+
       /// Experimental parity
       int Pexp;
 
       /// Theoretical parity
       int Pth;
+
+      /** \brief Triaxial deformation angle gamma, in degrees
+          (BSkG tables only)
+      */
+      double gamma;
+
+      /// Axial quadrupole deformation, beta_20 (BSkG tables only)
+      double beta20;
+
+      /// Non-axial quadrupole deformation, beta_22 (BSkG tables only)
+      double beta22;
+
+      /// Axial octupole deformation, beta_30 (BSkG tables only)
+      double beta30;
+
+      /// Non-axial octupole deformation, beta_32 (BSkG tables only)
+      double beta32;
+
+      /// Two-neutron separation energy (BSkG tables only)
+      double S2n;
+
+      /// Two-proton separation energy (BSkG tables only)
+      double S2p;
+
+      /// Three-point neutron odd-even mass staggering (BSkG tables only)
+      double delta3n;
+
+      /// Three-point proton odd-even mass staggering (BSkG tables only)
+      double delta3p;
+
+      /// Five-point neutron odd-even mass staggering (BSkG tables only)
+      double delta5n;
+
+      /// Five-point proton odd-even mass staggering (BSkG tables only)
+      double delta5p;
+
+      /** \brief Fourth radial moment of the charge density, to the
+          one-fourth power, i.e. <r_c^4>^(1/4) (BSkG tables only)
+      */
+      double rc4;
+
+      /// Moment of inertia about the first axis (BSkG tables only)
+      double I1;
+
+      /// Moment of inertia about the second axis (BSkG tables only)
+      double I2;
+
+      /// Moment of inertia about the third axis (BSkG tables only)
+      double I3;
+
+      /** \brief Rotational correction energy (BSkG1, BSkG2, and
+          BSkG4 tables only)
+      */
+      double Erot;
+
+      /// Average neutron pairing gap (BSkG1, BSkG2, and BSkG4 tables only)
+      double avgap_n;
+
+      /// Average proton pairing gap (BSkG1, BSkG2, and BSkG4 tables only)
+      double avgap_p;
+
+      /** \brief Experimental RMS charge radius (BSkG1, BSkG2, and
+          BSkG4 tables only)
+      */
+      double rc_exp;
+
+      /** \brief Error between \ref Rch and \ref rc_exp (BSkG1,
+          BSkG2, and BSkG4 tables only)
+      */
+      double rc_err;
+
+      /** \brief Moment of inertia (BSkG1, BSkG2, and BSkG4 tables
+          only, distinct from \ref I1, \ref I2, and \ref I3 which
+          are only given for BSkG3)
+      */
+      double MOI;
+
+      /// Parity of the proton subsystem (BSkG1, BSkG2, and BSkG4 tables only)
+      int par_p;
+
+      /// Parity of the neutron subsystem (BSkG1, BSkG2, and BSkG4 tables only)
+      int par_n;
 
     };
 
@@ -235,7 +343,7 @@ namespace o2scl {
     nucmass_hfb_sp::entry get_ZN(int l_Z, int l_N);
     
     /// Return the type, \c "nucmass_hfb".
-    virtual const char *type() { return "nucmass_hfb_sp"; }
+    virtual const char *type() const { return "nucmass_hfb_sp"; }
 
     /** \brief Set data
         

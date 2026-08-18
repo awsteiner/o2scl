@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -1058,26 +1058,6 @@ namespace o2scl {
   */
   typedef boson_rel_tl<> boson_rel;
 
-#ifdef O2SCL_SET_MULTIP
-  
-  /** \brief Long double version of 
-      \ref o2scl::boson_rel_tl 
-  */
-  typedef boson_rel_tl
-  <bessel_K_exp_integ_boost<long double,
-                            cpp_dec_float_25>,
-   long double> boson_rel_ld;
-  
-  /** \brief 25-digit version of 
-      \ref o2scl::boson_rel_tl 
-  */
-  typedef boson_rel_tl
-  <bessel_K_exp_integ_boost<cpp_dec_float_25,
-                            cpp_dec_float_35>,
-   cpp_dec_float_25> boson_rel_cdf25;
-  
-#endif
-  
 }
 
 #endif

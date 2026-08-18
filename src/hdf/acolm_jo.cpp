@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -583,8 +583,8 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
 
     } else if (precision>34) {
       
-      cpp_dec_float_50 d, dfdx, err;
-      convert_units<cpp_dec_float_50> cu;
+      o2fp_50 d, dfdx, err;
+      convert_units<o2fp_50> cu;
       function_to_fp_nothrow(val,d,cu);
       int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
       { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
@@ -593,14 +593,14 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+      if (verbose>0) cout << "Result (o2fp_50): ";
       cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else if (precision>24) {
       
-      cpp_dec_float_35 d, dfdx, err;
-      convert_units<cpp_dec_float_35> cu;
+      o2fp_35 d, dfdx, err;
+      convert_units<o2fp_35> cu;
       function_to_fp_nothrow(val,d,cu);
       int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
       { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
@@ -609,14 +609,14 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+      if (verbose>0) cout << "Result (o2fp_35): ";
       cout << dtos(dfdx,precision) << endl;
       return 0;
       
     } else if (precision>17) {
       
-      cpp_dec_float_25 d, dfdx, err;
-      convert_units<cpp_dec_float_25> cu;
+      o2fp_25 d, dfdx, err;
+      convert_units<o2fp_25> cu;
       function_to_fp_nothrow(val,d,cu);
       int retx=dg.deriv_err_multip(d,[fmsp](auto &&t) mutable
       { return (*fmsp)(t); },dfdx,err,pow(10.0,-precision-1));
@@ -625,7 +625,7 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+      if (verbose>0) cout << "Result (o2fp_25): ";
       cout << dtos(dfdx,precision) << endl;
       return 0;
       
@@ -672,18 +672,18 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
     
     if (precision>50) {
 
-      cpp_dec_float_100 d, dfdx, err;
-      convert_units<cpp_dec_float_100> cu;
+      o2fp_100 d, dfdx, err;
+      convert_units<o2fp_100> cu;
       function_to_fp_nothrow(val,d,cu);
       
-      funct_string<cpp_dec_float_100> fs(func,"x");
-      funct_cdf100 f=std::bind(std::mem_fn<cpp_dec_float_100
-                               (cpp_dec_float_100) const>
-                               (&funct_string<cpp_dec_float_100>::operator()
+      funct_string<o2fp_100> fs(func,"x");
+      funct_fp100 f=std::bind(std::mem_fn<o2fp_100
+                               (o2fp_100) const>
+                               (&funct_string<o2fp_100>::operator()
                                 ),&fs,
                                std::placeholders::_1);
       
-      deriv_gsl<funct_cdf100,cpp_dec_float_100> dgld;
+      deriv_gsl<funct_fp100,o2fp_100> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -698,17 +698,17 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       
     } else if (precision>35) {
 
-      cpp_dec_float_50 d, dfdx, err;
-      convert_units<cpp_dec_float_50> cu;
+      o2fp_50 d, dfdx, err;
+      convert_units<o2fp_50> cu;
       function_to_fp_nothrow(val,d,cu);
       
-      funct_string<cpp_dec_float_50> fs(func,"x");
-      funct_cdf50 f=std::bind(std::mem_fn<cpp_dec_float_50
-                           (cpp_dec_float_50) const>
-                        (&funct_string<cpp_dec_float_50>::operator()),&fs,
+      funct_string<o2fp_50> fs(func,"x");
+      funct_fp50 f=std::bind(std::mem_fn<o2fp_50
+                           (o2fp_50) const>
+                        (&funct_string<o2fp_50>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_cdf50,cpp_dec_float_50> dgld;
+      deriv_gsl<funct_fp50,o2fp_50> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -723,17 +723,17 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       
     } else if (precision>25) {
 
-      cpp_dec_float_35 d, dfdx, err;
-      convert_units<cpp_dec_float_35> cu;
+      o2fp_35 d, dfdx, err;
+      convert_units<o2fp_35> cu;
       function_to_fp_nothrow(val,d,cu);
       
-      funct_string<cpp_dec_float_35> fs(func,"x");
-      funct_cdf35 f=std::bind(std::mem_fn<cpp_dec_float_35
-                           (cpp_dec_float_35) const>
-                        (&funct_string<cpp_dec_float_35>::operator()),&fs,
+      funct_string<o2fp_35> fs(func,"x");
+      funct_fp35 f=std::bind(std::mem_fn<o2fp_35
+                           (o2fp_35) const>
+                        (&funct_string<o2fp_35>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_cdf35,cpp_dec_float_35> dgld;
+      deriv_gsl<funct_fp35,o2fp_35> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -748,17 +748,17 @@ int acol_manager::comm_nderiv(std::vector<std::string> &sv, bool itive_com) {
       
     } else if (precision>18) {
 
-      cpp_dec_float_25 d, dfdx, err;
-      convert_units<cpp_dec_float_25> cu;
+      o2fp_25 d, dfdx, err;
+      convert_units<o2fp_25> cu;
       function_to_fp_nothrow(val,d,cu);
       
-      funct_string<cpp_dec_float_25> fs(func,"x");
-      funct_cdf25 f=std::bind(std::mem_fn<cpp_dec_float_25
-                           (cpp_dec_float_25) const>
-                        (&funct_string<cpp_dec_float_25>::operator()),&fs,
+      funct_string<o2fp_25> fs(func,"x");
+      funct_fp25 f=std::bind(std::mem_fn<o2fp_25
+                           (o2fp_25) const>
+                        (&funct_string<o2fp_25>::operator()),&fs,
                         std::placeholders::_1);
       
-      deriv_gsl<funct_cdf25,cpp_dec_float_25> dgld;
+      deriv_gsl<funct_fp25,o2fp_25> dgld;
       int retx=dgld.deriv_err(d,f,dfdx,err);
       
       if (retx!=0) {
@@ -941,15 +941,15 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
 
     } else if (precision>34) {
       
-      cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_50> cu;
+      o2fp_50 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_50> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_50>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_50>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_50>::infinity();
+        upper_lim=std::numeric_limits<o2fp_50>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
@@ -969,21 +969,21 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+      if (verbose>0) cout << "Result (o2fp_50): ";
       cout << dtos(d,precision) << endl;
       return 0;
       
     } else if (precision>24) {
       
-      cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_35> cu;
+      o2fp_35 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_35> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_35>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_35>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_35>::infinity();
+        upper_lim=std::numeric_limits<o2fp_35>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
@@ -1003,21 +1003,21 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+      if (verbose>0) cout << "Result (o2fp_35): ";
       cout << dtos(d,precision) << endl;
       return 0;
       
     } else if (precision>17) {
       
-      cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_25> cu;
+      o2fp_25 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_25> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_25>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_25>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_25>::infinity();
+        upper_lim=std::numeric_limits<o2fp_25>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
@@ -1037,7 +1037,7 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Integrating " << func << " failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+      if (verbose>0) cout << "Result (o2fp_25): ";
       cout << dtos(d,precision) << endl;
       
       return 0;
@@ -1128,22 +1128,22 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     } else if (precision>35) {
       
-      cpp_dec_float_50 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_50> cu;
+      o2fp_50 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_50> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_50>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_50>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_50>::infinity();
+        upper_lim=std::numeric_limits<o2fp_50>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      funct_string<cpp_dec_float_50> fs(func,var);
-      funct_cdf50 f=std::bind(std::mem_fn<cpp_dec_float_50
-                              (cpp_dec_float_50) const>
-                              (&funct_string<cpp_dec_float_50>::operator()),
+      funct_string<o2fp_50> fs(func,var);
+      funct_fp50 f=std::bind(std::mem_fn<o2fp_50
+                              (o2fp_50) const>
+                              (&funct_string<o2fp_50>::operator()),
                               &fs,std::placeholders::_1);
                               
       int retx;
@@ -1166,22 +1166,22 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     } else if (precision>25) {
       
-      cpp_dec_float_35 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_35> cu;
+      o2fp_35 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_35> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_35>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_35>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_35>::infinity();
+        upper_lim=std::numeric_limits<o2fp_35>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      funct_string<cpp_dec_float_35> fs(func,var);
-      funct_cdf35 f=std::bind(std::mem_fn<cpp_dec_float_35
-                              (cpp_dec_float_35) const>
-                           (&funct_string<cpp_dec_float_35>::operator()),
+      funct_string<o2fp_35> fs(func,var);
+      funct_fp35 f=std::bind(std::mem_fn<o2fp_35
+                              (o2fp_35) const>
+                           (&funct_string<o2fp_35>::operator()),
                               &fs,std::placeholders::_1);
                               
       int retx;
@@ -1204,22 +1204,22 @@ int acol_manager::comm_ninteg(std::vector<std::string> &sv, bool itive_com) {
     
     } else if (precision>18) {
       
-      cpp_dec_float_25 d=0, err, lower_lim, upper_lim;
-      convert_units<cpp_dec_float_25> cu;
+      o2fp_25 d=0, err, lower_lim, upper_lim;
+      convert_units<o2fp_25> cu;
       if (in[2]=="-infty") {
-        lower_lim=-std::numeric_limits<cpp_dec_float_25>::infinity();
+        lower_lim=-std::numeric_limits<o2fp_25>::infinity();
       } else {
         function_to_fp_nothrow(in[2],lower_lim,cu);
       }
       if (in[3]=="infty") {
-        upper_lim=std::numeric_limits<cpp_dec_float_25>::infinity();
+        upper_lim=std::numeric_limits<o2fp_25>::infinity();
       } else {
         function_to_fp_nothrow(in[3],upper_lim,cu);
       }
-      funct_string<cpp_dec_float_25> fs(func,var);
-      funct_cdf25 f=std::bind(std::mem_fn<cpp_dec_float_25
-                              (cpp_dec_float_25) const>
-                           (&funct_string<cpp_dec_float_25>::operator()),
+      funct_string<o2fp_25> fs(func,var);
+      funct_fp25 f=std::bind(std::mem_fn<o2fp_25
+                              (o2fp_25) const>
+                           (&funct_string<o2fp_25>::operator()),
                               &fs,std::placeholders::_1);
                               
       int retx;
@@ -1655,9 +1655,9 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
       vector<string> svx, sv_out;
       for(size_t k=0;k<doublev_obj.size();k++) {
 	if (has_minus_sign(&doublev_obj[k])) {
-	  svx.push_back(o2scl::dtos(doublev_obj[k])+' ');
+	  svx.push_back(o2scl::dtos(doublev_obj[k],precision)+' ');
 	} else {
-	  svx.push_back(' '+o2scl::dtos(doublev_obj[k])+' ');
+	  svx.push_back(' '+o2scl::dtos(doublev_obj[k],precision)+' ');
 	}
       }
 
@@ -1783,6 +1783,69 @@ int acol_manager::comm_output(std::vector<std::string> &sv, bool itive_com) {
     (*fout) << ug_obj.get_end() << " ";
     (*fout) << ug_obj.get_width() << " ";
     (*fout) << ug_obj.is_log() << endl;
+
+  } else if (type=="nucmass_semi_empirical") {
+
+    (*fout) << "Type: " << nmse_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmse_obj.nfit << endl;
+    ubvector p(nmse_obj.nfit);
+    nmse_obj.guess_fun(nmse_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_ldrop_pair") {
+
+    (*fout) << "Type: " << nmldp_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmldp_obj.nfit << endl;
+    ubvector p(nmldp_obj.nfit);
+    nmldp_obj.guess_fun(nmldp_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_frdm") {
+
+    (*fout) << "Type: " << nmfrdm_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmfrdm_obj.nfit << endl;
+    ubvector p(nmfrdm_obj.nfit);
+    nmfrdm_obj.guess_fun(nmfrdm_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_dz_fit") {
+
+    (*fout) << "Type: " << nmdzf_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmdzf_obj.nfit << endl;
+    ubvector p(nmdzf_obj.nfit);
+    nmdzf_obj.guess_fun(nmdzf_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_dz_fit_33") {
+
+    (*fout) << "Type: " << nmdzf33_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmdzf33_obj.nfit << endl;
+    ubvector p(nmdzf33_obj.nfit);
+    nmdzf33_obj.guess_fun(nmdzf33_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_frdm_shell") {
+
+    (*fout) << "Type: " << nmfrdms_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmfrdms_obj.nfit << endl;
+    ubvector p(nmfrdms_obj.nfit);
+    nmfrdms_obj.guess_fun(nmfrdms_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
+
+  } else if (type=="nucmass_ldrop_shell") {
+
+    (*fout) << "Type: " << nmlds_obj.type() << endl;
+    (*fout) << "Number of fit parameters: " << nmlds_obj.nfit << endl;
+    ubvector p(nmlds_obj.nfit);
+    nmlds_obj.guess_fun(nmlds_obj.nfit,p);
+    (*fout) << "Parameters: ";
+    vector_out(*fout,p,true);
 
   } else {
 

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -550,7 +550,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 
     } else if (precision>33) {
       
-      cpp_dec_float_50 d=0, err;
+      o2fp_50 d=0, err;
       int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },d,d,err);
         
@@ -558,13 +558,13 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+      if (verbose>0) cout << "Result (o2fp_50): ";
       cout << dtos(d,precision) << endl;
       return 0;
       
     } else if (precision>23) {
       
-      cpp_dec_float_35 d=0, err;
+      o2fp_35 d=0, err;
       int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },d,d,err);
         
@@ -572,13 +572,13 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+      if (verbose>0) cout << "Result (o2fp_35): ";
       cout << dtos(d,precision) << endl;
       return 0;
       
     } else if (precision>16) {
       
-      cpp_dec_float_25 d=0, err;
+      o2fp_25 d=0, err;
       int retx=fm2.eval_tol_err([fmsp](auto &&t) mutable
       { return (*fmsp)(t); },d,d,err);
         
@@ -586,7 +586,7 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
         cerr << "Converting " << i1 << " to value failed." << endl;
         return 1;
       }
-      if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+      if (verbose>0) cout << "Result (o2fp_25): ";
       cout << dtos(d,precision) << endl;
       
       return 0;
@@ -655,51 +655,51 @@ int acol_manager::comm_calc(std::vector<std::string> &sv, bool itive_com) {
 #ifdef O2SCL_SET_MULTIP
     
   } else if (precision>50) {
-    cpp_dec_float_100 d;
-    convert_units<cpp_dec_float_100> cu100;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_100>
+    o2fp_100 d;
+    convert_units<o2fp_100> cu100;
+    int retx=o2scl::function_to_fp_nothrow<o2fp_100>
       (i1,d,cu100,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
     }
-    if (verbose>0) cout << "Result (cpp_dec_float_100): ";
+    if (verbose>0) cout << "Result (o2fp_100): ";
     cout << dtos(d,precision) << endl;
     return 0;
   } else if (precision>35) {
-    cpp_dec_float_50 d;
-    convert_units<cpp_dec_float_50> cu50;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_50>
+    o2fp_50 d;
+    convert_units<o2fp_50> cu50;
+    int retx=o2scl::function_to_fp_nothrow<o2fp_50>
       (i1,d,cu50,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
     }
-    if (verbose>0) cout << "Result (cpp_dec_float_50): ";
+    if (verbose>0) cout << "Result (o2fp_50): ";
     cout << dtos(d,precision) << endl;
     return 0;
   } else if (precision>25) {
-    cpp_dec_float_35 d;
-    convert_units<cpp_dec_float_35> cu35;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_35>
+    o2fp_35 d;
+    convert_units<o2fp_35> cu35;
+    int retx=o2scl::function_to_fp_nothrow<o2fp_35>
       (i1,d,cu35,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
     }
-    if (verbose>0) cout << "Result (cpp_dec_float_35): ";
+    if (verbose>0) cout << "Result (o2fp_35): ";
     cout << dtos(d,precision) << endl;
     return 0;
   } else if (precision>18) {
-    cpp_dec_float_25 d;
-    convert_units<cpp_dec_float_25> cu25;
-    int retx=o2scl::function_to_fp_nothrow<cpp_dec_float_25>
+    o2fp_25 d;
+    convert_units<o2fp_25> cu25;
+    int retx=o2scl::function_to_fp_nothrow<o2fp_25>
       (i1,d,cu25,verbose);
     if (retx!=0) {
       cerr << "Converting " << i1 << " to value failed." << endl;
       return 1;
     }
-    if (verbose>0) cout << "Result (cpp_dec_float_25): ";
+    if (verbose>0) cout << "Result (o2fp_25): ";
     cout << dtos(d,precision) << endl;
     return 0;
   } else if (precision>15) {
@@ -1102,13 +1102,13 @@ int acol_manager::comm_constant(std::vector<std::string> &sv,
            << "command (the maximum is 50)." << endl;
 #ifdef O2SCL_SET_MULTIP
     } else if (precision>35) {
-      convert_units<cpp_dec_float_50> cu50;
+      convert_units<o2fp_50> cu50;
       cu50.find_print(in[0],in[1],precision,false);
     } else if (precision>25) {
-      convert_units<cpp_dec_float_35> cu35;
+      convert_units<o2fp_35> cu35;
       cu35.find_print(in[0],in[1],precision,false);
     } else if (precision>18) {
-      convert_units<cpp_dec_float_25> cu25;
+      convert_units<o2fp_25> cu25;
       cu25.find_print(in[0],in[1],precision,false);
     } else if (precision>15) {
       convert_units<long double> culd;

@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2014-2025, Andrew W. Steiner
+  Copyright (C) 2014-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -73,9 +73,18 @@ int nucmass_wlw::load(std::string model, bool external) {
   hf.close();
   
   n=data.get_nlines();
-  
+
   mass.resize(n);
-  if (model=="WS3_RBF") {
+  // Which column holds the theoretical mass excess depends on the
+  // model, but when external is true, model holds a file path
+  // rather than one of the model name strings handled above, so it
+  // can't be used to select the column here. The wl11.o2 and
+  // wlwm14.o2 tables (models "WS3_RBF" and "WS4_RBF") don't have a
+  // "Mth" column at all -- they store the mass excess under
+  // "WS3_RBF"/"WS4_RBF" instead -- so select the column based on
+  // what's actually present in the loaded table, which works
+  // whether or not external is true.
+  if (data.is_column("WS3_RBF")) {
     for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			      ((int)(data.get("A",i)+1.0e-6))-
@@ -83,7 +92,7 @@ int nucmass_wlw::load(std::string model, bool external) {
 			      data.get("WS3_RBF",i)};
       mass[i]=nde;
     }
-  } else if (model=="WS4_RBF") {
+  } else if (data.is_column("WS4_RBF")) {
     for(size_t i=0;i<n;i++) {
       nucmass_wlw::entry nde={((int)(data.get("Z",i)+1.0e-6)),
 			      ((int)(data.get("A",i)+1.0e-6))-

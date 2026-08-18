@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -35,16 +35,8 @@
 #include <o2scl/mroot.h>
 #include <o2scl/inte.h>
 #include <o2scl/polylog.h>
-
+#include <o2scl/funct_multip.h>
 #include <o2scl/part.h>
-
-#ifdef O2SCL_SET_MULTIP
-#include <boost/multiprecision/number.hpp>
-#include <boost/multiprecision/cpp_dec_float.hpp>
-#ifdef O2SCL_SET_MPFR
-#include <boost/multiprecision/mpfr.hpp>
-#endif
-#endif
 
 namespace o2scl {
 
@@ -95,14 +87,6 @@ namespace o2scl {
   /// Boson type for long double-precision values
   typedef boson_tl<long double> boson_ld;
   
-#ifdef O2SCL_SET_MULTIP
-  
-  /// Boson type for 25-digit floating points
-  typedef boson_tl<boost::multiprecision::number<
-                     boost::multiprecision::cpp_dec_float<25> > > boson_cdf25;
-  
-#endif
-
   /** \brief Compute the thermodynamic properties of a boson 
       [abstract base]
    */

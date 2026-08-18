@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
   
-  Copyright (C) 2006-2025, Andrew W. Steiner
+  Copyright (C) 2006-2026, Andrew W. Steiner
   
   This file is part of O2scl.
   
@@ -74,17 +74,20 @@ namespace o2scl {
     
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
-    
+
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
+
+    /// Return the type, \c "nucmass_ldrop_shell".
+    virtual const char *type() const { return "nucmass_ldrop_shell"; }
 
   };
 
-  /** \brief Mass formula adding simple shell effects to the 
+  /** \brief Mass formula adding simple shell effects to the
       finite-range liquid droplet model
    */
   class nucmass_frdm_shell : public nucmass_frdm, public nucmass_ibm_shell {
-    
+
   public:
 
     nucmass_frdm_shell();
@@ -96,9 +99,12 @@ namespace o2scl {
 
     /// Fix parameters from an array for fitting
     virtual int fit_fun(size_t nv, const ubvector &x);
-    
+
     /// Fill array with guess from present values for fitting
-    virtual int guess_fun(size_t nv, ubvector &x);
+    virtual int guess_fun(size_t nv, ubvector &x) const;
+
+    /// Return the type, \c "nucmass_frdm_shell".
+    virtual const char *type() const { return "nucmass_frdm_shell"; }
 
   };
 

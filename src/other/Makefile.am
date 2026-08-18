@@ -24,7 +24,8 @@ HEADER_VAR = contour.h cheb_approx.h other_python.h \
 	interpm_idw.h interp2.h interpm_krige.h prob_dens_mdim_amr.h \
 	slack_messenger.h xml.h exp_max.h interpm_python.h \
 	gmm_python.h kde_python.h interpm_base.h classify_python.h \
-	nflows_python.h $(O2SCL_CUDA_HVAR)
+	nflows_python.h interpm_libtorch.h interpm_rbf_libtorch.h \
+	$(O2SCL_CUDA_HVAR) transform.h
 
 TEST_VAR = series_acc.scr contour.scr \
 	poly.scr polylog.scr cheb_approx.scr vec_stats.scr smooth_gsl.scr \
@@ -33,7 +34,8 @@ TEST_VAR = series_acc.scr contour.scr \
 	interpm_idw.scr interpm_krige.scr smooth_func.scr \
 	prob_dens_mdim_amr.scr xml.scr exp_max.scr interpm_python.scr \
 	gmm_python.scr kde_python.scr classify_python.scr \
-	nflows_python.scr
+	nflows_python.scr interpm_libtorch.scr interpm_rbf_libtorch.scr \
+	transform.scr
 
 # ------------------------------------------------------------
 # Includes
@@ -49,6 +51,12 @@ if O2SCL_LINUX
 O2SCL_LINUX_MVAR = -DO2SCL_LINUX
 else 
 O2SCL_LINUX_MVAR = 
+endif
+
+if O2SCL_LIBTORCH
+O2SCL_LIBTORCH_MVAR = -DO2SCL_LIBTORCH
+else 
+O2SCL_LIBTORCH_MVAR = 
 endif
 
 if O2SCL_OSX
@@ -68,12 +76,12 @@ AM_CPPFLAGS = -I@top_srcdir@/include/ \
 	-DO2SCL_DATA_DIR=\"/snap/o2scl/current/share/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_PYTHON_MVAR)
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_LIBTORCH_MVAR)
 else
 AM_CPPFLAGS = -I@top_srcdir@/include/ -DO2SCL_DATA_DIR=\"${datadir}/o2scl/\" \
 	$(O2SCL_OPENMP_MVAR) -DO2SCL_COND_FLAG \
 	$(O2SCL_OSX_MVAR) $(O2SCL_LINUX_MVAR) \
-	$(O2SCL_PYTHON_MVAR)
+	$(O2SCL_PYTHON_MVAR) $(O2SCL_LIBTORCH_MVAR)
 endif
 
 # ------------------------------------------------------------
@@ -92,11 +100,11 @@ check_PROGRAMS = series_acc_ts \
 	contour_ts poly_ts polylog_ts pinside_ts \
 	interp2_direct_ts vec_stats_ts cheb_approx_ts \
 	smooth_gsl_ts hist_ts hist_2d_ts interp2_seq_ts \
-	prob_dens_func_ts interp2_neigh_ts \
+	prob_dens_func_ts interp2_neigh_ts transform_ts \
 	interpm_idw_ts interpm_krige_ts smooth_func_ts \
 	prob_dens_mdim_amr_ts xml_ts exp_max_ts interpm_python_ts \
 	gmm_python_ts kde_python_ts classify_python_ts \
-	nflows_python_ts
+	nflows_python_ts interpm_libtorch_ts interpm_rbf_libtorch_ts
 
 check_SCRIPTS = o2scl-test
 
@@ -136,6 +144,9 @@ nflows_python_ts_LDADD = $(ADDL_TEST_LIBS)
 gmm_python_ts_LDADD = $(ADDL_TEST_LIBS)
 smooth_func_ts_LDADD = $(ADDL_TEST_LIBS)
 interpm_krige_ts_LDADD = $(ADDL_TEST_LIBS)
+transform_ts_LDADD = $(ADDL_TEST_LIBS)
+interpm_libtorch_ts_LDADD = $(ADDL_TEST_LIBS)
+interpm_rbf_libtorch_ts_LDADD = $(ADDL_TEST_LIBS)
 contour_ts_LDADD = $(ADDL_TEST_LIBS)
 poly_ts_LDADD = $(ADDL_TEST_LIBS)
 polylog_ts_LDADD = $(ADDL_TEST_LIBS)
@@ -162,6 +173,9 @@ kde_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 nflows_python_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 smooth_func_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 interpm_krige_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+transform_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interpm_libtorch_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
+interpm_rbf_libtorch_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 contour_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 poly_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
 polylog_ts_LDFLAGS = $(ADDL_TEST_LDFLGS)
@@ -200,6 +214,12 @@ smooth_func.scr: smooth_func_ts$(EXEEXT)
 	./smooth_func_ts$(EXEEXT) > smooth_func.scr
 interpm_krige.scr: interpm_krige_ts$(EXEEXT) 
 	./interpm_krige_ts$(EXEEXT) > interpm_krige.scr
+transform.scr: transform_ts$(EXEEXT) 
+	./transform_ts$(EXEEXT) > transform.scr
+interpm_libtorch.scr: interpm_libtorch_ts$(EXEEXT) 
+	./interpm_libtorch_ts$(EXEEXT) > interpm_libtorch.scr
+interpm_rbf_libtorch.scr: interpm_rbf_libtorch_ts$(EXEEXT) 
+	./interpm_rbf_libtorch_ts$(EXEEXT) > interpm_rbf_libtorch.scr
 contour.scr: contour_ts$(EXEEXT) 
 	./contour_ts$(EXEEXT) > contour.scr
 poly.scr: poly_ts$(EXEEXT) 
@@ -241,6 +261,9 @@ kde_python_ts_SOURCES = kde_python_ts.cpp
 nflows_python_ts_SOURCES = nflows_python_ts.cpp
 smooth_func_ts_SOURCES = smooth_func_ts.cpp
 interpm_krige_ts_SOURCES = interpm_krige_ts.cpp
+transform_ts_SOURCES = transform_ts.cpp
+interpm_libtorch_ts_SOURCES = interpm_libtorch_ts.cpp
+interpm_rbf_libtorch_ts_SOURCES = interpm_rbf_libtorch_ts.cpp
 interp2_seq_ts_SOURCES = interp2_seq_ts.cpp
 prob_dens_mdim_amr_ts_SOURCES = prob_dens_mdim_amr_ts.cpp
 interp2_direct_ts_SOURCES = interp2_direct_ts.cpp
@@ -271,8 +294,8 @@ am__libo2scl_other_la_SOURCES_DIST = $(OTHER_SRCS)
 # ------------------------------------------------------------
 
 interface: empty
-	../../bin/yanic other.i other_python ~/wcs/o2sclpy/o2sclpy/other \
-		~/wcs/o2sclpy/doc/other ../../bin/yanic_header.txt \
+	../../bin/yanic other.i other_python $(O2SCLPY_ROOT)/o2sclpy/other \
+		$(O2SCLPY_ROOT)/doc/other ../../bin/yanic_header.txt \
 		| tee other_python.yanic.out
 
 empty:
@@ -281,7 +304,7 @@ empty:
 # Misc
 # ------------------------------------------------------------
 
-EXTRA_DIST = *_ts.cpp
+EXTRA_DIST = *_ts.cpp fft_cuda.cu
 
 emacs-clean: 
 	-rm *~

@@ -171,7 +171,7 @@ help:
 
 SUBDIRS = plot
 
-BENCHMARK_PRGS = bm_poly.scr bm_root.scr bm_min.scr bm_polylog.scr
+BENCHMARK_PRGS = bm_mmin.scr bm_root.scr bm_min.scr bm_polylog.scr
 #	bm_mroot.scr bm_rkck.scr bm_mroot2.scr bm_lu.scr \
 #	bm_part.scr bm_part2.scr 
 # bm_mmin.scr
@@ -303,7 +303,7 @@ EXTRA_BASE = \
 	ex_tensor \
 	bm_root \
 	bm_min \
-	bm_poly \
+	bm_mmin \
 	bm_polylog
 
 if O2SCL_PYTHON
@@ -629,7 +629,8 @@ ex_nucleus_rmf.scr: ex_nucleus_rmf
 # bm_mroot2.scr: bm_mroot2 bm_mroot2.cpp
 # 	./bm_mroot2 > bm_mroot2.scr
 
-bm_root_LDADD = $(OOLIBS) $(OOLIBSTWO)
+bm_root_LDFLAGS = $(ADDL_TEST_LDFLGS)
+bm_root_LDADD = $(ADDL_TEST_LIBS)
 bm_root_SOURCES = bm_root.cpp
 bm_root.scr: bm_root bm_root.cpp
 	./bm_root > bm_root.scr
@@ -640,7 +641,8 @@ bm_polylog_SOURCES = bm_polylog.cpp
 bm_polylog.scr: bm_polylog bm_polylog.cpp
 	./bm_polylog > bm_polylog.scr
 
-bm_min_LDADD = $(OOLIBS) $(OOLIBSTWO)
+bm_min_LDFLAGS = $(ADDL_TEST_LDFLGS)
+bm_min_LDADD = $(ADDL_TEST_LIBS)
 bm_min_SOURCES = bm_min.cpp
 bm_min.scr: bm_min bm_min.cpp
 	./bm_min > bm_min.scr
@@ -660,10 +662,11 @@ bm_min.scr: bm_min bm_min.cpp
 # bm_part2.scr: bm_part2 bm_part2.cpp
 # 	./bm_part2 > bm_part2.scr
 
-bm_poly_LDADD = $(OOLIBS) $(OOLIBSTWO)
-bm_poly_SOURCES = bm_poly.cpp
-bm_poly.scr: bm_poly bm_poly.cpp
-	./bm_poly > bm_poly.scr
+bm_mmin_LDFLAGS = $(ADDL_TEST_LDFLGS)
+bm_mmin_LDADD = $(ADDL_TEST_LIBS)
+bm_mmin_SOURCES = bm_mmin.cpp
+bm_mmin.scr: bm_mmin bm_mmin.cpp
+	./bm_mmin > bm_mmin.scr
 
 # bm_rk8pd_LDADD = $(OOLIBS) $(OOLIBSTWO)
 # bm_rk8pd_SOURCES = bm_rk8pd.cpp

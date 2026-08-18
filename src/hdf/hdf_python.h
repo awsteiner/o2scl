@@ -1,7 +1,7 @@
 /*
   ───────────────────────────────────────────────────────────────────
 
-  Copyright (C) 2020-2025, Andrew W. Steiner
+  Copyright (C) 2020-2026, Andrew W. Steiner
 
   This file is part of O2scl.
 
@@ -290,6 +290,8 @@ int o2scl_hdf_acol_manager_validate_interp_type(void *vptr);
 void o2scl_hdf_acol_manager_parse_vec_string(void *vptr, void *ptr_args);
 
 void o2scl_hdf_acol_manager_command_add(void *vptr, void *ptr_new_type);
+
+void o2scl_hdf_acol_manager_clear_obj(void *vptr);
 
 void o2scl_hdf_acol_manager_command_del(void *vptr, void *ptr_ltype);
 
